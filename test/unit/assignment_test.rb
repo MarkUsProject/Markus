@@ -318,6 +318,23 @@ class AssignmentTest < ActiveSupport::TestCase
       end
     end # end noteable context
 
+    context 'without marks but with annotations' do
+      setup do
+        @membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
+        sub = Submission.make(:grouping => @membership.grouping)
+        @result = sub.get_latest_result
+        @result.marking_state = Result::MARKING_STATES[:complete]
+        @result.released_to_students = true
+        @result.save
+      end
+
+      should 'return the correct results average mark' do
+        assert @assignment.set_results_statistics
+        assert_equal(0, @assignment.results_average)
+        assert_equal(0, @assignment.results_median)
+      end
+    end # end without marks context
+
     context 'with a student in a group with a marked submission' do
       setup do
         @membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])

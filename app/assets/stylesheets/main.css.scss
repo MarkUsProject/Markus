@@ -1690,13 +1690,21 @@ tfoot tr td:hover
   color: #000;
 }
 
+.FilterTable_header,
+.FilterTable_footer {
+  padding-left: 1.3em;
+}
+
+#list td{
+  padding-left: 1.3em;
+}
+
 th.FilterTable_sorting_by,
 tfoot tr td.FilterTable_sorting_by {
   color: #000;
   background-image: url('icons/bullet_arrow_up.png');
   background-repeat: no-repeat;
   background-position: left;
-  padding-left: 1.3em;
 }
 
 th.FilterTable_sorting_by_reverse,
@@ -1706,7 +1714,6 @@ tfoot tr td.FilterTable_sorting_by_reverse
   background-image: url(icons/bullet_arrow_down.png);
   background-repeat: no-repeat;
   background-position: left;
-  padding-left: 1.3em;
 }
 
 tfoot tr td {
