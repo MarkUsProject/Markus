@@ -19,10 +19,10 @@
   if assignment != @assignment
     if (controller.controller_name == "assignments" &&
           (controller.action_name == "index" or
-          controller.action_name == 'new')) ||
+          controller.action_name == 'new') ||
           controller.controller_name == "results" or
           controller.controller_name == "grade_entry_forms" or
-          controller.controller_name == "marks_graders"
+          controller.controller_name == "marks_graders")
       if @current_user.student? %>
         <li class="level2">
           <% 
@@ -70,7 +70,8 @@
                target_controller = 'flexible_criteria'
              end
            else
-             target_controller = controller.controller_name
+             target_controller = controller.controller_name == 'assignments' ? nil : controller.controller_name
+             target_action = controller.action_name == 'index' ? nil : controller.action_name
            end %>
         <% # If the current controller action is repo_browser, the drop down
            # menu for assignments should go to browse, and not repo_browser
@@ -89,18 +90,18 @@
                       :id => assignment.id %>
             <% else %>
               <%= link_to h(assignment.short_identifier),
-                      :controller => target_controller,
-                      :action => controller.action_name,
-                      :id => assignment.id %>
+                          polymorphic_url([assignment, target_controller], action: target_action)
+              %>
             <% end %>
           <%
             # student user, so show only non-hidden assignments
             else %>
             <% if !assignment.is_hidden %>
               <%= link_to h(assignment.short_identifier),
-                      :controller => target_controller,
-                      :action => controller.action_name,
-                      :id => assignment.id %>
+                          :controller => 'assignments',
+                          :action => 'student_interface',
+                          :id => assignment.id
+              %>
             <% end %>
           <% end %>
       </li>
