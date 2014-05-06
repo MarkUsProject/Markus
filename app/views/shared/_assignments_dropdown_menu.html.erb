@@ -90,7 +90,7 @@
                       :id => assignment.id %>
             <% else %>
               <%= link_to h(assignment.short_identifier),
-                          polymorphic_url([assignment, target_controller], action: target_action)
+                          polymorphic_url([assignment, target_controller], :action => target_action)
               %>
             <% end %>
           <%
