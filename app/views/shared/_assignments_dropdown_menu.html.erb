@@ -25,8 +25,7 @@
           controller.controller_name == "marks_graders")
       if @current_user.student? %>
         <li class="level2">
-          <% 
-              # Don't show hidden assignments to students
+          <%  # Don't show hidden assignments to students
               if !assignment.is_hidden %>
                 <%= link_to h(assignment.short_identifier),
                     :controller => 'assignments',
@@ -37,11 +36,11 @@
       <% elsif @current_user.ta? %>
         <li class="level2">
           <% if assignment.is_hidden %>
-              <%= link_to t("assignment.hidden", :assignment_text => h(assignment.short_identifier)), 
-                  browse_assignment_submissions_path(assignment) %>
+            <%= link_to t("assignment.hidden", :assignment_text => h(assignment.short_identifier)), 
+                browse_assignment_submissions_path(assignment) %>
           <% else %>
-              <%= link_to h(assignment.short_identifier), browse_assignment_submissions_path(assignment) %>
-           <% end %>
+            <%= link_to h(assignment.short_identifier), browse_assignment_submissions_path(assignment) %>
+          <% end %>
 		    </li>
       <% else %>
         <li class="level2">
@@ -57,29 +56,28 @@
                     :action => "edit",
                     :id => assignment.id %>
            <% end %>
-		</li>
+		    </li>
       <% end %>
     <% else %>
       <li class="level2">
-      	<% # If the current controller is rubrics or flexible_criteria, we have to choose
-           # the appropritate controller according to the selected assignment's marking scheme type.
-           if controller.controller_name == 'rubrics' || controller.controller_name == 'flexible_criteria'
-		     if assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-               target_controller = 'rubrics'
-             else
-               target_controller = 'flexible_criteria'
-             end
-           else
-             target_controller = controller.controller_name == 'assignments' ? nil : controller.controller_name
-             target_action = controller.action_name == 'index' ? nil : controller.action_name
-           end %>
-        <% # If the current controller action is repo_browser, the drop down
-           # menu for assignments should go to browse, and not repo_browser
-           if controller.action_name == 'repo_browser'
-             controller.action_name = 'browse'
-           end %>
-		<%
-            # Don't show hidden assignments in the dropdown menu for students
+      	<%  # If the current controller is rubrics or flexible_criteria, we have to choose
+            # the appropritate controller according to the selected assignment's marking scheme type.
+            if controller.controller_name == 'rubrics' || controller.controller_name == 'flexible_criteria'
+  		        if assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
+                target_controller = 'rubrics'
+              else
+                target_controller = 'flexible_criteria'
+              end
+            else
+              target_controller = controller.controller_name == 'assignments' ? nil : controller.controller_name
+              target_action = controller.action_name == 'index' ? nil : controller.action_name
+            end %>
+        <%  # If the current controller action is repo_browser, the drop down
+            # menu for assignments should go to browse, and not repo_browser
+            if target_action == 'repo_browser'
+              target_action = 'browse'
+            end %>
+		    <%  # Don't show hidden assignments in the dropdown menu for students
             # either. Append "(hidden)" for TAs and Admins.
             if !@current_user.student? %>
             <% if assignment.is_hidden %>
@@ -93,8 +91,7 @@
                           polymorphic_url([assignment, target_controller], :action => target_action)
               %>
             <% end %>
-          <%
-            # student user, so show only non-hidden assignments
+          <%  # student user, so show only non-hidden assignments
             else %>
             <% if !assignment.is_hidden %>
               <%= link_to h(assignment.short_identifier),
@@ -107,11 +104,11 @@
       </li>
     <% end %>
   <% else %>
-      <li class="level2">
-        <p id="drop_down_current_assignment">
-          <%= assignment.short_identifier %>
-        </p>
-      </li>
+    <li class="level2">
+      <p id="drop_down_current_assignment">
+        <%= assignment.short_identifier %>
+      </p>
+    </li>
   <% end %>
 <% end %>
 
@@ -123,17 +120,17 @@
     <% if @current_user.admin? %>
       <li class="level2">
         <%= link_to grade_entry_form.short_identifier,
-		    edit_grade_entry_form_path(grade_entry_form) %>
+		        edit_grade_entry_form_path(grade_entry_form) %>
       </li>
     <% elsif @current_user.ta? %>
       <li class="level2">
         <%= link_to grade_entry_form.short_identifier,
-		    grades_grade_entry_form_path(grade_entry_form) %>
+		        grades_grade_entry_form_path(grade_entry_form) %>
       </li>
     <% elsif @current_user.student? %>
       <li class="level2">
         <%= link_to grade_entry_form.short_identifier,
-		  student_interface_grade_entry_form_path(grade_entry_form) %>
+		        student_interface_grade_entry_form_path(grade_entry_form) %>
       </li>
     <% end %>
   <% else %>
@@ -144,5 +141,3 @@
     </li>
   <% end %>
 <% end %>
-
-
