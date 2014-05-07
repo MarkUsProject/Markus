@@ -309,18 +309,12 @@ class Assignment < ActiveRecord::Base
       end
     end
     if results_count == 0
-      return false # no marks released for this assignment
+      return false # No marks released for this assignment
     end
     self.results_fails = results_fails
     self.results_zeros = results_zeros
     results_sorted = results.sort
-    median_quantity = 0
-    if (results_count % 2) == 0
-      median_quantity = (results_sorted[results_count/2 - 1]
-                        + results_sorted[results_count/2]).to_f / 2
-    else
-      median_quantity = results_sorted[results_count/2]
-    end
+    median_quantity = calculate_median(results_sorted, results_count)
     # Avoiding division by 0
     if self.total_mark == 0
       self.results_average = 0
@@ -336,6 +330,15 @@ class Assignment < ActiveRecord::Base
     # compute average in percent
     self.results_average = (avg_quantity * 100 / self.total_mark)
     self.save
+  end
+
+  def calculate_median(results, count)
+    if (count % 2) == 0
+      median_quantity = (results[count/2 - 1] + results[count/2]).to_f / 2
+    else
+      median_quantity = results[count/2]
+    end
+    median_quantity
   end
 
   def update_remark_request_count
