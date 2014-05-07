@@ -70,6 +70,7 @@ GEM
       thor (>= 0.14, < 2.0)
     json (1.8.1)
     kgio (2.9.2)
+    libv8 (3.16.14.3)
     linecache (0.46)
       rbx-require-relative (> 0.0.4)
     machinist (1.0.6)
@@ -184,6 +185,7 @@ DEPENDENCIES
   iconv
   jquery-rails
   json
+  libv8
   machinist (< 2)
   minitest (= 4.7.5)
   mocha
