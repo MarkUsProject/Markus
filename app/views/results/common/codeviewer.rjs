@@ -4,36 +4,35 @@
     # Non-binary files
 
     if !SubmissionFile.is_binary?(@file_contents)
-
-       if RUBY_VERSION > '1.9'
-         begin
-           @file_encode = @file_contents.encode(Encoding::UTF_8,
-                                                Encoding::UTF_8)
-           page.replace_html 'codeviewer',
-             :partial => 'results/common/text_codeviewer',
-             :locals => { :uid => params[:uid],
-             :file_contents => @file_encode,
-             :annots => @annots, :code_type => @code_type}
-         rescue Exception => e
-           page.alert e.message
-           page.replace_html 'codeviewer',
-             :partial => 'results/common/text_codeviewer',
-             :locals => { :uid => params[:uid],
-             :file_contents => @file_contents,
-             :annots => @annots, :code_type => @code_type}
-         end
-       else
-         begin
-           @file_contents = Iconv.iconv('utf-8', 'utf-8', @file_contents)
-         rescue Iconv::Failure
-           @file_contents = Iconv.iconv('utf-8', 'ISO-8859-1', @file_contents)
-         end
-         page.replace_html 'codeviewer',
-                           :partial => 'results/common/text_codeviewer',
-                           :locals => { :uid => params[:uid],
-                                        :file_contents => @file_contents,
-                                        :annots => @annots, :code_type => @code_type}
-       end
+      if RUBY_VERSION > '1.9'
+        begin
+          @file_encode = @file_contents.encode(Encoding::UTF_8,
+                                               Encoding::UTF_8)
+          page.replace_html 'codeviewer',
+            :partial => 'results/common/text_codeviewer',
+            :locals => { :uid => params[:uid],
+            :file_contents => @file_encode,
+            :annots => @annots, :code_type => @code_type}
+        rescue Exception => e
+          page.alert e.message
+          page.replace_html 'codeviewer',
+            :partial => 'results/common/text_codeviewer',
+            :locals => { :uid => params[:uid],
+            :file_contents => @file_contents,
+            :annots => @annots, :code_type => @code_type}
+        end
+      else
+        begin
+          @file_contents = Iconv.iconv('utf-8', 'utf-8', @file_contents)
+        rescue Iconv::Failure
+          @file_contents = Iconv.iconv('utf-8', 'ISO-8859-1', @file_contents)
+        end
+        page.replace_html 'codeviewer',
+                          :partial => 'results/common/text_codeviewer',
+                          :locals => { :uid => params[:uid],
+                                       :file_contents => @file_contents,
+                                       :annots => @annots, :code_type => @code_type}
+      end
     # Supported image files
     elsif @file.is_supported_image?
       page.replace_html 'codeviewer',
@@ -71,8 +70,6 @@
         :submission_file_id => @submission_file_id}
     end
 
-
-
   rescue Exception => e
     # There's a bug in Rails as of 2.3.2 - #1112 - some binary strings
     # will result in a "redundant UTF-8 sequence" error when attempting
@@ -84,4 +81,3 @@
     page.alert e.message
 
 end
-
