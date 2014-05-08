@@ -295,6 +295,7 @@ pt:
         previous_mark: "Nota antiga&nbsp;"
         old: "Antiga:&nbsp;"
         show_old_marks: "Mostrar antigo resumo de notas"
+        reset_mark: "Restablecer nota"
       annotation:
         from_line_to: "%{file_path}: Linha %{line_start} até %{line_end}"
         remark_flag: "(Reavaliado)"
@@ -576,7 +577,7 @@ pt:
     unhide_students:    "Marcar como ativo"
     students_not_successfully_added_message_1: "Os seguintes alunos não foram adicionados com êxito:"
     students_not_successfully_added_message_2: "Tenha certeza que:"
-    students_not_successfully_added_message_3: "Nome dos alunos são 
+    students_not_successfully_added_message_3: "Nome dos alunos são
     alfa-numéricos."
     students_not_successfully_added_message_4: "Cada campo é separado por uma vírgula (sem espaços)."
     students_not_successfully_added_message_5: "Cada linha tem os campos necesários especificados junto ao formulário de carregamento."

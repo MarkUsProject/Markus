@@ -297,6 +297,7 @@ fr:
         previous_mark: "Note précédente : "
         old: "Précédent : "
         show_old_marks: "Afficher la note précédente "
+        reset_mark: "Réinitialiser note"
       annotation:
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
         remark_flag: "(retour)"
@@ -695,7 +696,7 @@ fr:
       #upload:
       download:
         download_grader_students_csv: "Étudiants / attribution des correcteurs CSV"
-      upload: 
+      upload:
         upload_grader_map: "Envoi de étudiants / Attribution des correcteurs"
         description_grader_map: "Format du fichier CSV : <br />
             <code>student_user_name,grader_user_name,grader_user_name,... </code><br />"

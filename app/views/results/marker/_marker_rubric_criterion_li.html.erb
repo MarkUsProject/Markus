@@ -11,8 +11,8 @@
     </div>
 
     <div id="mark_<%=mark.id%>_nil" class="mark_reset"
-      onclick="new Ajax.Request('<%= update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => nil) %>',{asynchronous:true, evalScripts:true})">
-      <%=image_tag "icons/pencil_delete.png", :title => "Reset mark"%>
+         onclick="new Ajax.Request('<%= update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => nil) %>',{asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
+      <%=image_tag "icons/pencil_delete.png", :title => I18n.t("marker.marks.reset_mark") %>
     </div>
 
     <%= render :partial => 'results/common/rubric_criterion',
@@ -39,8 +39,10 @@
               <tr>
                  <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
   			             onclick="new Ajax.Request('<%= update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => num_levels) %>',{asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
-                   <strong><%=num_levels%>: <%= level_name %></strong>
-                   &nbsp;<%=level_desc%>
+                   <span>
+                    <strong><%=num_levels%>: <%= level_name %></strong>
+                    <%=level_desc%>
+                   </span>
                  </td>
               </tr>
             <% end -%>
