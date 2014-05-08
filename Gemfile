@@ -65,6 +65,7 @@ end
 # for production.
 group :development, :test do
   gem 'rdoc'
+  gem 'thin'
   gem 'iconv', :platforms => :mri_20
   gem 'rcov', :platforms => :mri_18
   gem 'simplecov', :platforms => [:mri_19,:mri_20]
@@ -82,6 +83,7 @@ group :development, :test do
   gem 'ruby-debug', :platforms => :mri_18
   gem 'debugger', :platforms =>  [:mri_19,:mri_20]
   gem 'mocha', :require => false
+  gem 'quiet_assets'
 end
 
 # If you  plan to use unicorn servers for production
