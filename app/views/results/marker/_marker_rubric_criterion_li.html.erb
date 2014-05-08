@@ -2,16 +2,19 @@
 # Erb template for display rubric criterion in the grader view
 %>
 
-<li class="<%= cycle('mark_criterion_holder_A', 'mark_criterion_holder_B') %>" id="<%= "mark_criterion_#{mark_criterion.id}" %>">
+<li class="<%= cycle('mark_criterion_holder_A', 'mark_criterion_holder_B') %>"
+    id="<%= "mark_criterion_#{mark_criterion.id}" %>">
 
-  <div class="criterion_title" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>" onclick="<%="focus_mark_criterion(#{mark_criterion.id})"%>">
+  <div class="criterion_title" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>"
+       onclick="<%="focus_mark_criterion(#{mark_criterion.id})"%>">
 
-    <div id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>"
-      class="float_left mark_criterion_expand expanded" >- &nbsp;
+    <div class="float_left mark_criterion_expand expanded"
+         id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>">- &nbsp;
     </div>
 
     <div id="mark_<%=mark.id%>_nil" class="mark_reset"
-         onclick="new Ajax.Request('<%= update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => nil) %>',{asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
+         onclick="new Ajax.Request('<%= update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => nil) %>',
+         {asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
       <%=image_tag "icons/pencil_delete.png", :title => I18n.t("marker.marks.reset_mark") %>
     </div>
 
@@ -37,12 +40,13 @@
 
             if level_desc && !level_desc.empty? -%>
               <tr>
-                 <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
-  			             onclick="new Ajax.Request('<%= update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => num_levels) %>',{asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
-                   <span>
-                    <strong><%=num_levels%>: <%= level_name %></strong>
-                    <%=level_desc%>
-                   </span>
+                  <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
+  			              onclick="new Ajax.Request('<%= update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => num_levels) %>',
+                      {asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
+                    <span>
+                      <strong><%=num_levels%>: <%= level_name %></strong>
+                      <%=level_desc%>
+                    </span>
                  </td>
               </tr>
             <% end -%>

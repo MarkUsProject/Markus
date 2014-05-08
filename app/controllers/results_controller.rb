@@ -336,7 +336,7 @@ class ResultsController < ApplicationController
                          "#{submission.id}) of assignment '#{assignment.short_identifier}' for group" +
                          " '#{group.group_name}'.", MarkusLogger::INFO)
         render :partial => 'results/marker/update_mark',
-               :locals => { :result_mark => result_mark, :mark_value => result_mark.mark}
+               :locals => {:result_mark => result_mark, :mark_value => result_mark.mark}
       end
     else
       render :partial => 'results/marker/mark_verify_result',
