@@ -1,16 +1,6 @@
 @import 'reset';
 @import 'mixins';
-
-
-/* Variables */
-
-$sans-serif-font-stack: "Lucida Grande", Verdana, Arial, sans-serif;
-     $serif-font-stack: "Georgia", serif;
-             $bg-color: #d2dbda;
-        $primary-color: #fff;
-           $light-blue: #89b1dd;
-                 $blue: #003399;
-
+@import 'constants';
 
 /* Core Elements */
 
@@ -79,16 +69,16 @@ form.download_zip {
 }
 
 input, textarea {
-  min-width: 100px;
-  font-family: $sans-serif-font-stack;
-  font-size: 1em;
-  background: #f5f5f5;
   @include border-radius(5px);
-  outline: none;
+  background: #f5f5f5;
   border: 1px solid #ccc;
   color: #222;
-  padding: 4px 10px;
+  font-family: $sans-serif-font-stack;
+  font-size: 1em;
   margin: 5px;
+  min-width: 100px;
+  outline: none;
+  padding: 4px 10px;
 }
 
 input {
@@ -344,20 +334,21 @@ legend {
   min-width: 0;
 }
 
-/* menu */
+/* Menu */
 
 #menu {
+  border-bottom: 2px solid $light-blue;
   display: block;
-  padding: 0 0 0 130px;
-  margin-top: -30px;
-  border-bottom: 2px solid #464646;
   min-width: 70em;
+  padding: 0 0 0 130px;
+  position: relative;
+  top: -40px;
 }
 
 #sub_menu, #sub_sub_menu {
   display: block;
+  margin-top: -52px;
   min-width: 70em;
-  margin-top: -12px;
 }
 
 #sub_menu li {
@@ -374,15 +365,15 @@ legend {
 }
 
 #menu a, #sub_menu a, #sub_sub_menu a {
-  width: 150px;
-  height: 40px;
-  padding: 10px;
   display: inline-block;
-  text-align: center;
+  font-size: 1em;
   font-weight: bold;
-  margin: -2px 0;
-  font-family: "Lucida Grande", Verdana, Arial,  sans-serif;
-  font-size: 12px;
+  height: 34px;
+  padding: 10px;
+  text-align: center;
+  transition: all 0.25s;
+  width: 150px;
+  vertical-align: bottom;
 }
 
 #menu a {
@@ -392,24 +383,27 @@ legend {
 }
 
 #sub_menu_active a {
+  @include border-radius-top(10px);
   background-color: #fff;
   color: #464646;
-  @include border-radius-top(10px);
 }
 
 #sub_menu a, #sub_sub_menu a {
-  margin-top: 5px;
   color: #464646;
+  margin-top: 5px;
 }
 
 #sub_menu a {
   color: #fff;
 }
 
+#menu a:hover,
+#sub_menu a:hover,
+#sub_sub_menu a:hover,
 #menu_active a {
-  background: #464646;
+  background: $light-blue;
   color: #fff;
-  border: 2px solid #464646;
+  height: 36px;
 }
 
 #sub_menu_active a {
@@ -418,9 +412,9 @@ legend {
 }
 
 #sub_sub_menu_active a {
+  @include border-radius-top(10px);
   background: #464646;
   color: #fff;
-  @include border-radius-top(10px);
 }
 
 #sub_menu li li, #sub_sub_menu li li {
@@ -429,25 +423,25 @@ legend {
 }
 
 #sub_menu ul, #sub_sub_menu ul {
-  min-height: 35px;
   display: block;
   list-style: none;
+  min-height: 35px;
 }
 
 #sub_menu ul.dropdown {
-  visibility: hidden;
-  background: #fff;
-  margin: 0 0 0 40px;
   @include border-radius(10px);
+  background: #fff;
   border: 2px solid #464646;
-  padding: 5px 15px;
+  margin: 0 0 0 40px;
   min-width: 15em;
-  z-index: 1;
+  padding: 5px 15px;
+  visibility: hidden;
+  z-index: 10;
 }
 
 #sub_menu ul.dropdown li {
-  float: none;
   display: block;
+  float: none;
   padding: 5px;
 }
 
@@ -457,18 +451,17 @@ legend {
 }
 
 #sub_menu ul.dropdown a:hover {
-	text-decoration: underline;
-	color: $blue;
+  color: $blue;
 }
 
-#sub_menu, #sub_sub_menu {
-  background: #464646;
+#sub_menu {
+  background: $light-blue;
   padding-left: 10px;
 }
 
 #sub_sub_menu {
-  background: #fff;
   border-bottom: 2px solid #464646;
+  padding-left: 10px;
 }
 
 .level1 {
@@ -496,16 +489,16 @@ legend {
 }
 
 span#choose_an_assignment {
-  background-color: #fff;
   @include border-radius(10px);
+  background: #fff;
   border: 2px solid #464646;
-  min-width: 15.5em;
-  height: 2.5em;
-  padding: 0.5em 1em;
+  cursor: pointer;
   display: inline-block;
   font-weight: bold;
+  height: 2.5em;
+  min-width: 15.5em;
+  padding: 0.5em 1em;
   text-align: center;
-  cursor: pointer;
 }
 
 
@@ -650,7 +643,7 @@ tbody tr:hover {
 .table_menu a, .table_menu button {
   color: $blue;
   font-size: 0.8em;
-  font-family: Georgia, "Times New Roman", sans-serif;
+  font-family: $serif-font-stack;
   text-decoration: none;
   cursor: pointer;
   font-weight: normal;
@@ -662,17 +655,16 @@ tbody tr:hover {
 }
 
 .table_menu button:hover, .table_menu a:hover {
-   color: #ee6415;
+  color: #ee6415;
 }
 
 .table_menu button.delete:hover, .table_menu a.delete:hover {
-   color: red;
+  color: red;
 }
 
 .table_menu button.valid:hover, .table_menu a.valid:hover {
-   color: green;
+  color: green;
 }
-
 
 tr:hover .table_menu {
   visibility: visible;
@@ -730,14 +722,14 @@ table.display td {
 .paging_two_button .ui-button {
   float: left;
   cursor: pointer;
-  * cursor: hand;
+  *cursor: hand;
 }
 
 .paging_full_numbers .ui-button {
   padding: 2px 6px;
   margin: 0;
   cursor: pointer;
-  * cursor: hand;
+  *cursor: hand;
   color: #333 !important;
 }
 
@@ -764,7 +756,7 @@ table.display td {
 table.display thead th {
   padding: 3px 0 3px 10px;
   cursor: pointer;
-  * cursor: hand;
+  *cursor: hand;
 }
 
 div.dataTables_wrapper .ui-widget-header {
@@ -850,7 +842,7 @@ td.student_total input:hover {
   color: #000;
 }
 
-/* groups table*/
+/* Groups table*/
 #checkbox{
   width: 2em;
   padding: 0;
@@ -865,16 +857,16 @@ td.student_total input:hover {
 }
 
 #FilterTable_header_valid{
-   width: 2.5%;
+  width: 2.5%;
 }
 
 
 #FilterTable_header_name{
-   width: 35%;
+  width: 35%;
 }
 
 #FilterTable_manage_graders_header_name{
-   width: 32%;
+  width: 32%;
 }
 
 #FilterTable_manage_graders_header_members{
@@ -921,21 +913,20 @@ input#extra_mark_description{
    font-style: italic;
 }
 
-
 .mark_total{
-   font-style: italic;
-   font-weight: bold;
-   font-size: 1.4em;
   @include border-radius-top(8px);
-   background-color: #efefef;
-   border: 1px solid #acacac;
-   padding: 10px;
-   margin: 10px;
+  background-color: #efefef;
+  border: 1px solid #acacac;
+  font-size: 1.4em;
+  font-style: italic;
+  font-weight: bold;
+  margin: 10px;
+  padding: 10px;
 }
 
 .final_mark{
-   font-size: 1.4em;
-   float: right;
+  float: right;
+  font-size: 1.4em;
 }
 
 #current_total_mark_div {
@@ -944,22 +935,22 @@ input#extra_mark_description{
 
 /* flash messages, & warning */
 .success {
-  text-align: left;
-  border: 1px solid #458B00;
-  padding: 3px 30px;
-  background: #BDFCC9 url(icons/accept.png) no-repeat;
   background-position: 7px;
+  background: #BDFCC9 url(icons/accept.png) no-repeat;
+  border: 1px solid #458B00;
   margin: 5px;
+  padding: 3px 30px;
+  text-align: left;
 }
 
 .error, .errorExplanation{
-  text-align: left;
-  border: 1px solid #E6DB55;
-  padding: 3px 3em;
-  margin: 1em 4em 1em 4em;
-  background: #FFFFE0 url('icons/exclamation.png') no-repeat;
   background-position: 7px;
+  background: #FFFFE0 url('icons/exclamation.png') no-repeat;
+  border: 1px solid #E6DB55;
+  margin: 1em 4em 1em 4em;
   margin: 5px;
+  padding: 3px 3em;
+  text-align: left;
 }
 
 .error h2, .errorExplanation h2{
@@ -980,14 +971,14 @@ input#extra_mark_description{
   margin: 0;
 }
 
-.notice{
+.notice {
   background: #ffffe0;
-  border: 1px solid #E6DB55;
+  border: 1px solid #e6db55;
   padding: 3px 30px;
   margin: 5px;
 }
 
-.information{
+.information {
   border: 1px solid #0047FF;
   padding: 3px 30px;
   background: #efefef url(icons/information.png) no-repeat;
@@ -1017,99 +1008,94 @@ input#extra_mark_description{
 }
 
 #create_group_dialog, #create_annotation_dialog {
-   background: #fff;
-   padding: 0 10px 0 10px;
-   border: 2px solid #464646;
   @include border-radius(5px);
+  background: #fff;
+  border: 2px solid #464646;
+  padding: 0 10px 0 10px;
 }
 
 /* Commented out for now due to conflicts with jQuery UI Dialog */
 
 #rename_group_dialog, #upload_dialog, #download_dialog,
 #groups_coverage_dialog, #grader_criteria_dialog {
-   background: #fff;
-   padding: 0 10px 0 10px;
-   border: 1px solid #000;
   @include border-radius(5px);
+  background: #fff;
+  border: 1px solid #000;
+  padding: 0 10px 0 10px;
 }
 
 #notes_dialog {
-   background: #fff;
-   padding: 0 10px 0 10px;
-   border: 1px solid #000;
   @include border-radius(5px);
-   max-height: 80%;
-   max-width: 80%;
+  background: #fff;
+  border: 1px solid #000;
+  max-height: 80%;
+  max-width: 80%;
+  padding: 0 10px 0 10px;
 }
 
 #notes_dialog form {
-   margin-left: 2px;
+  margin-left: 2px;
 }
 
 #notes_dialog textarea {
-   resize: none;
-   margin-top: 0;
+  margin-top: 0;
+  resize: none;
 }
 
 #notes_dialog button {
-   margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 #notes_dialog .error {
-   padding-top: 0;
-   padding-right: 1em;
-   padding-bottom: 0;
-   padding-left: 3em;
+  padding: 0 1em 0 3em;
 }
 
 #assignment_group_use_dialog, #add_member_dialog, #invite_dialog {
-   background: #fff;
-   padding: 0 10px 0 10px;
-   border: 1px solid #000;
+  background: #fff;
+  border: 1px solid #000;
+  padding: 0 10px;
   @include border-radius(5px);
 }
 
 #redirect_dialog {
-   background: #fff;
-   padding: 20px;
+  background: #fff;
+  padding: 20px;
 }
 
 #about_dialog {
+  @include border-radius(5px);
   background: #fff;
   border: 1px solid #000;
-  @include border-radius(5px);
-  width: 600px;
   height: 600px;
+  width: 600px;
 }
 
 #about_dialog #about_text {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 550px;
   height: 500px;
+  left: 20px;
   overflow: scroll;
   padding: 10px;
+  position: absolute;
+  top: 20px;
+  width: 550px;
 }
 
 #about_dialog #about_close {
-  position: absolute;
   bottom: 20px;
   left: 300px;
-  width: 100px;
   margin-left: -50px;
+  position: absolute;
+  width: 100px;
 }
 
 #role_switch_dialog {
   background-color: #fff;
-  padding: 10px;
   border: 10px solid #333;
+  padding: 10px;
 }
 
 #about_icon, #switch_role_icon {
-  margin-left: 0.5em;
-  margin-right: 0.5em;
-  margin-top: 2px;
+  margin: 2px 0.5em 0 0.5em;
   position: relative;
   top: 0.3em;
 }
@@ -1119,38 +1105,38 @@ input#extra_mark_description{
 }
 
 .p_modal{
-  margin-top: 5px;
   border-top: 1px solid #000;
+  margin-top: 5px;
   padding-top: 10px;
-
 }
 
 #mark_pane, #annotation_pane {
-   float: left;
+  float: left;
 }
 
-
 .float_left{
-   float: left;
+  float: left;
 }
 
 .float_right {
-   float: right;
+  float: right;
 }
+
 .cursor_hand {
 	float: left;
 	cursor: pointer;
 }
+
 .bonus_deduction {
-  padding: 5px;
   background-color: #B7D3EC;
+  padding: 5px;
 }
 
 #standby_highlighting {
-   background: yellow;
-   font-size: 2em;
-   padding: 5px;
-   margin: 5px;
+  background: yellow;
+  font-size: 2em;
+  margin: 5px;
+  padding: 5px;
 }
 
 .hidden_student {
@@ -1167,25 +1153,19 @@ input#extra_mark_description{
 }
 
 #notes_dialog div.notes_existing {
-	width: 250px;
-	height: 248px;
   @include border-radius(10px);
-	border: 2px solid #ccc;
-	overflow: auto;
-	word-wrap: break-word;
-	float: left;
+  border: 2px solid #ccc;
+  float: left;
+  height: 248px;
+  overflow: auto;
+  width: 250px;
+  word-wrap: break-word;
 }
 #notes_dialog div.notes_wrapper {
 	display: table;
 }
 #notes_dialog div.notes_wrapper_row {
 	display: table-row-group;
-}
-div.float_right {
-	float: right;
-}
-div.float_left {
-	float: left;
 }
 
 .colLeft{
@@ -1200,42 +1180,41 @@ div.float_left {
 
 .colLeftGroups{
   float: left;
-  width: 38%;
   margin-right: -17px;
+  width: 38%;
 }
 
 .colRightGroups{
   float: right;
-  width: 62%;
   margin-left: -17px;
+  width: 62%;
 }
 
 .colLeftGraders{
   float: left;
-  width: 35%;
   margin-right: -17px;
+  width: 35%;
 }
 
 .colRightGraders{
   float: right;
-  width: 65%;
   margin-left: -17px;
+  width: 65%;
 }
 
 .centreColumn{
-  position: relative;
-  top: 110px;
-  right: 0;
   overflow: hidden;
+  position: relative;
+  right: 0;
+  top: 110px;
 }
 
 .centreColumnGraders{
-  position: relative;
-  top: 110px;
-  right: 0;
   overflow: hidden;
+  position: relative;
+  right: 0;
+  top: 110px;
 }
-
 
 .pane {
   @include border-radius-top(5px);
@@ -1246,19 +1225,19 @@ div.float_left {
 }
 
 .headingButtons {
+  margin-top: -2em;
+  padding: 0 1.3em;
   position: absolute;
   right: 0;
-  padding: 0 1.3em;
-  margin-top: -2em;
 }
 
 .globalActionIconsTop, .globalActionIconsBottom{
   background: #DFDFDF;
-  width: 60px;
   margin-bottom: -5px;
   margin-top: -5px;
   padding-left: 5px;
   padding-right: 5px;
+  width: 60px;
 }
 
 .globalActionIconsTop{
@@ -1273,20 +1252,20 @@ div.float_left {
 /* Login screen styling (uses its own layout) */
 
 .login {
-  background: #fff;
   @include border-radius(5px);
   @include box-shadow(0, 3px, 0, 0, #a4adac);
+  background: #fff;
   height: 400px;
-  width: 360px;
-  position: absolute;
   left: 50%;
   margin-left: -180px;
-  top: 50%;
   margin-top: -200px;
+  position: absolute;
+  top: 50%;
+  width: 360px;
 
   .login-form {
-    width: 300px;
     margin: 20px auto;
+    width: 300px;
 
     input[type=text],
     input[type=password],
@@ -1310,9 +1289,9 @@ div.float_left {
 
   .login-course {
     color: #777;
+    margin: auto;
     text-align: center;
     width: 300px;
-    margin: auto;
   }
 
   .login-image {
@@ -1325,8 +1304,8 @@ div.float_left {
     }
 
   .error {
-    text-align: center;
     margin-top: -15px;
+    text-align: center;
   }
 }
 
@@ -1338,28 +1317,28 @@ div.float_left {
 /* Student Interface: Assignment View*/
 
 .block {
-  width: 95%;
-  padding: 0;
-  margin: 10px;
   @include border-radius(5px);
   border: 1px solid #ccc;
+  margin: 10px;
+  padding: 0;
+  width: 95%;
 }
 
 .block h2{
   background: #dfdfdf;
-  margin: 0;
-  padding: 5px 10px;
-  font-size: 1.1em;
   border-bottom: 1px solid #ccc;
   color: #464646;
+  font-size: 1.1em;
+  margin: 0;
+  padding: 5px 10px;
 }
 
 .block h3, .section h3, #section h3{
+  border-bottom: 1px solid #ccc;
+  color: #464646;
+  font-size: 1.1em;
   font-style: italic;
   font-weight: normal;
-  font-size: 1.1em;
-  color: #464646;
-  border-bottom: 1px solid #ccc;
   padding: 3px;
 }
 
@@ -1368,9 +1347,9 @@ div.float_left {
 }
 
 .block_line{
+  border-top: 1px solid #ccc;
   display: block;
   margin: 5px;
-  border-top: 1px solid #ccc;
 }
 
 .sub_block{
@@ -1379,9 +1358,9 @@ div.float_left {
 
 div.sub_block span.prop_label{
   display: block;
-  min-width: 150px;
   float: left;
   font-weight: bold;
+  min-width: 150px;
 }
 
 div.sub_block span.box{
@@ -1401,84 +1380,79 @@ div.sub_block span.box{
   color: #464646;
 }
 
-
 span.info_red, span.info {
   font-size: 1em;
   line-height: 1.5em;
 }
-
 
 span.info_red{
   color: #ee6415;
 }
 
 span.info_number{
-  font-size: 1.5em;
-  font-family: "Georgia";
+  font: 1.5em/1.5em $serif-font-stack;
   margin-right: 5px;
-  line-height: 1.5em;
 }
 
 span.info_date{
-   font-size: 1.2em;
-   font-family: "Georgia";
-   margin-right: 5px;
-   line-height: 1.5em;
+  font: 1.2em/1.5em $serif-font-stack;
+  margin-right: 5px;
 }
 
-
 .section .info_date{
-   margin-left: 10px;
-   color: #464646;
-   font-style: italic;
+  color: #464646;
+  font-style: italic;
+  margin-left: 10px;
 }
 
 a.assignment_list{
-  font-size: 1.2em;
   display: inline-block;
+  font-size: 1.2em;
   min-width: 15em;
 }
 
 span.title{
-  font-family: "Georgia";
-  display: block;
-  font-style: italic;
-  color: #464646;
-  font-size: 0.9em;
-  width: 100%;
   border-bottom: 1px solid #ccc;
-  padding-left: 5px;
+  color: #464646;
+  display: block;
+  font-family: $serif-font-stack;
+  font-size: 0.9em;
+  font-style: italic;
   margin-bottom: 5px;
-
+  padding-left: 5px;
+  width: 100%;
 }
 
 /* Submissions table */
 td#thinking_table_row {
- text-align: center;
+  text-align: center;
 }
-
 
 .ap_filters {
   float: right;
   padding: 5px;
 }
+
 .ap_page_links {
   float: right;
 }
+
 .ap_selector {
   float: left;
 }
+
 #ap_select_all_div {
-  border: 1px solid #000;
   background: #FFFFE0;
-  text-align: center;
+  border: 1px solid #000;
   padding: 5px;
+  text-align: center;
 }
+
 #ap_select_full_div {
-  border: 1px solid #000;
   background: #FFFFE0;
-  text-align: center;
+  border: 1px solid #000;
   padding: 5px;
+  text-align: center;
 }
 
 .ap_prev_link {
@@ -1490,31 +1464,31 @@ td#thinking_table_row {
 }
 
 th.ap_sorting_by {
-  color: #000;
   background-image: url('icons/bullet_arrow_up.png');
-  background-repeat: no-repeat;
   background-position: left;
+  background-repeat: no-repeat;
+  color: #000;
   padding-left: 1.3em;
 }
 
 th.ap_sorting_by a {
+  background: none;
   color: #000;
   font-weight: bold;
-  background: none;
 }
 
 th.ap_sorting_by_desc {
-  color: #000;
   background-image: url(icons/bullet_arrow_down.png);
-  background-repeat: no-repeat;
   background-position: left;
+  background-repeat: no-repeat;
+  color: #000;
   padding-left: 1.3em;
 }
 
 .ap_nav_box {
-  width: 100%;
-  border: 1px solid #DDDDDD;
+  border: 1px solid #ddd;
   padding: 5px 0;
+  width: 100%;
 }
 
 /* end Submissions table */
@@ -1540,8 +1514,7 @@ th#FilterTable_header_filename:hover,
 th#FilterTable_header_revision_number:hover,
 th#FilterTable_header_revision_by:hover,
 th.FilterTable_sortable:hover,
-tfoot tr td:hover
-{
+tfoot tr td:hover {
   cursor: pointer;
   color: #000;
 }
@@ -1557,19 +1530,18 @@ tfoot tr td:hover
 
 th.FilterTable_sorting_by,
 tfoot tr td.FilterTable_sorting_by {
-  color: #000;
   background-image: url('icons/bullet_arrow_up.png');
-  background-repeat: no-repeat;
   background-position: left;
+  background-repeat: no-repeat;
+  color: #000;
 }
 
 th.FilterTable_sorting_by_reverse,
-tfoot tr td.FilterTable_sorting_by_reverse
-{
-  color: #000;
+tfoot tr td.FilterTable_sorting_by_reverse {
   background-image: url(icons/bullet_arrow_down.png);
-  background-repeat: no-repeat;
   background-position: left;
+  background-repeat: no-repeat;
+  color: #000;
 }
 
 tfoot tr td {
@@ -1600,13 +1572,13 @@ td.grade_entry_form_result {
 
 /* floating object */
 .column_floatRight{
-   float: right;
-   width: 49%;
+  float: right;
+  width: 50%;
 }
 
 .column_floatLeft{
-   float: left;
-   width: 49%;
+  float: left;
+  width: 50%;
 }
 
 .floatLeft {
@@ -1622,9 +1594,7 @@ td.grade_entry_form_result {
 }
 
 .invisible_list {
-  list-style-image: none;
-  list-style-position: outside;
-  list-style-type: none;
+  list-style: none;
   margin: 0;
   padding: 0;
 }
@@ -1637,15 +1607,15 @@ td.grade_entry_form_result {
 }
 
 a.icon_remove {
-  width: 20px;
-  height: 20px;
-  text-indent: -90000px;
   background: no-repeat url('icons/cancel.png');
+  height: 20px;
+  text-indent: -3000em;
+  width: 20px;
 }
 
 a.icon_remove:hover {
-  text-indent: -9000px;
   background: no-repeat url('icons/cancel.png');
+  text-indent: -3000em;
 }
 
 a img{
@@ -1665,12 +1635,12 @@ div.align_text_right {
 }
 
 #rubric_criteria_pane, #flexible_criteria_pane, #annotation_category_pane {
-   float: left;
+  float: left;
 }
 
 #flexible_criteria_pane, #annotation_category_pane	{
-   padding: 0 2%;
-   width: 24%;
+  padding: 0 2%;
+  width: 24%;
 }
 
 #rubric_criteria_pane .criteria_fieldset, #flexible_criteria_pane .criteria_fieldset, #annotation_category_pane .annotation_categories_fieldset {
@@ -1685,49 +1655,50 @@ div.align_text_right {
   margin: 0;
   padding: 0;
 }
+
 #annotation_category_pane ul{
-  padding: 1em;
-  margin: 0;
   list-style: none;
+  margin: 0;
+  padding: 1em;
 }
 
 #rubric_levels_pane_list, #annotation_category_pane_list{
-   padding-left: 10px;
+  padding-left: 10px;
 }
 
 .weight_bump_button{
-  width: 10px;
-  padding: 0 9px;
   min-width: 10px;
+  padding: 0 9px;
+  width: 10px;
 }
 
 .criterion_input_weight{
-   width: 18px;
-   padding: 2px 9px;
+  padding: 2px 9px;
+  width: 18px;
 }
 
 .level_textarea_description{
-   width: 90%;
+  width: 90%;
 }
 
 #rubric_criteria_list_title_bar, #flexible_criteria_list_title_bar, .annotation_categories_list_bar{
   margin-bottom: 5px;
-  padding-bottom: 5px;
   min-height: 15px;
+  padding-bottom: 5px;
 }
 
 #flexible_edition_pane, #annotations_pane{
-   width: 66%;
-   float: right;
-   margin-right: 2em;
-   border: 2px solid #ccc;
   @include border-radius(10px);
+  border: 2px solid #ccc;
+  float: right;
+  margin-right: 2em;
+  width: 66%;
 }
 
 #rubric_levels_pane {
-   border: 2px solid #ccc;
   @include border-radius(10px);
-   margin-left: 300px;
+  border: 2px solid #ccc;
+  margin-left: 300px;
 }
 
 #rubric_levels_pane h2, #flexible_edition_pane h2, #annotations_pane_menu h2{
@@ -1735,34 +1706,33 @@ div.align_text_right {
 }
 
 #rubrics_help, #annotations_help{
-  padding: 0 10px 10px 10px;
   font-style: italic;
   line-height: 1.6em;
+  padding: 0 10px 10px 10px;
 }
 
 #rubrics_help h2{
-  padding: 0 10px;
   color: #464646;
+  padding: 0 10px;
 }
 
 #rubrics_help h3{
   color: #464646;
 }
 
-
 .criterion_holder_selected{
   background: #ccc;
 }
 
 #rubric_criteria_pane ul, #flexible_criteria_pane ul{
-   list-style: none;
+  list-style: none;
 }
 
 #rubric_criteria_pane li, #flexible_criteria_pane li{
-   width: 100%;
-   border-top: 1px solid #ccc;
-   min-height: 35px;
-   padding: 2px 0;
+  border-top: 1px solid #ccc;
+  min-height: 35px;
+  padding: 2px 0;
+  width: 100%;
 }
 
 .mark_tools form, form.button_to div {
@@ -1770,40 +1740,40 @@ div.align_text_right {
 }
 
 input.button_to_criteria_expansion, input.button_to_delete_deduction {
-   min-width: 0;
-   font-size: 0.8em;
-   margin: 1px;
-   margin-bottom: 4px;
-   padding: 2px;
+  font-size: 0.8em;
+  margin-bottom: 4px;
+  margin: 1px;
+  min-width: 0;
+  padding: 2px;
 }
 
 #annotation_category_pane_list li{
-   width: 100%;
-   border-top: 1px solid #ccc;
-   min-height: 25px;
-   padding: 2px 0;
+  border-top: 1px solid #ccc;
+  min-height: 25px;
+  padding: 2px 0;
+  width: 100%;
 }
 
 
-.criterion_handle{
-  padding-left: 3px;
+.criterion_handle {
   cursor: move;
-  float:left;
+  float: left;
+  padding-left: 3px;
 }
 
-.criterion_title_div, .annotation_category_title{
-   padding: 2px 2px 0 10px;
-   float: left;
+.criterion_title_div, .annotation_category_title {
+  float: left;
+  padding: 2px 2px 0 10px;
 }
 
-.criterion_arrow{
+.criterion_arrow {
 	float: right;
 	padding-left: 3px;
 }
 
 .criterion_weight, .criterion_max {
-   float: right;
-   padding: 2px 4px 0 2px;
+  float: right;
+  padding: 2px 4px 0 2px;
 }
 
 .delete_criterion a img{
@@ -1811,56 +1781,56 @@ input.button_to_criteria_expansion, input.button_to_delete_deduction {
 }
 
 .main_rubric_criteria_edit, .main_flexible_criteria_edit, #flexible_criteria_preview{
-   background: #F8F8F8;
-   margin: 10px;
-   padding: 10px;
-   border: 2px solid #ccc;
   @include border-radius(10px);
+  background: #F8F8F8;
+  border: 2px solid #ccc;
+  margin: 10px;
+  padding: 10px;
 }
 
 .main_rubric_criteria_edit {
-  width: 280px;
   margin-bottom: -16em;
+  width: 280px;
 }
 
 .rubric_criteria_levels{
-   margin-right: 1em;
-   margin-left: 340px;
+  margin-left: 340px;
+  margin-right: 1em;
 }
 
 #flexible_criteria_preview h3 {
-   margin: 0 0 10px 0;
+  margin: 0 0 10px 0;
 }
 
 #flexible_criteria_preview ul li {
-   list-style: disc outside none;
-   padding: 0;
+  list-style: disc outside none;
+  padding: 0;
 }
 
 #flexible_criteria_preview ol li {
-   list-style: decimal outside none;
-   padding: 0;
+  list-style: decimal outside none;
+  padding: 0;
 }
 
 .criterion_description_preview {
-   background-color: #fff;
-   padding: 10px;
-   border: solid 2px #ccc;
+  background-color: #fff;
+  border: solid 2px #ccc;
+  padding: 10px;
 }
 
 input.criterion_input_name{
-   background: #fff;
-   width: 25em;
-   text-align: left;
+  background: #fff;
+  text-align: left;
+  width: 25em;
 }
 
 .criteria_edit_total_mark{
-   font-style: italic;
+  font-style: italic;
 }
 
 #rubric_levels_pane_menu li, #flexible_edition_pane_menu li{
-   padding-bottom: 1em;
-   list-style: none;
+  list-style: none;
+  padding-bottom: 1em;
 }
 
 /* Annotation category*/
@@ -1873,7 +1843,6 @@ input.criterion_input_name{
   margin: 0;
 }
 
-
 ul#annotation_list{
   list-style: none;
 }
@@ -1882,66 +1851,60 @@ ul#annotation_list li{
   border-bottom: 1px solid #ccc;
 }
 
-
 #annotation_list textarea{
-   width: 90%;
+  width: 90%;
 }
 
 .annotation_texts_size{
-   color: #464646;
-   font-style: italic;
-   margin-left: 5px;
-   font-size: 0.9em;
+  color: #464646;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-left: 5px;
 }
 
 .annotation_text_authors{
-   color: #464646;
-   font-style: italic;
-   margin-left: 5px;
-   display:inline-block;
-   width:200px;
+  color: #464646;
+  display: inline-block;
+  font-style: italic;
+  margin-left: 5px;
+  width: 200px;
  }
 
 /* Admin interface: Assignment View*/
 .disable {
-  font-style: italic;
   color: #464646;
+  font-style: italic;
 }
 
 .assignment_info{
-  font-style: italic;
   font-size: 0.9em;
+  font-style: italic;
 }
 
 fieldset.period p{
-   margin: 0;
-   padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .PeriodDeltaChain{
-  padding-left: 10em;
-  font-style: italic;
   font-size: 0.9em;
+  font-style: italic;
+  padding-left: 10em;
 }
 
-.PeriodDeltaChain_ToTime{
-   font-weight: bold;
-   padding: 0 10px;
-}
-
+.PeriodDeltaChain_ToTime,
 .PeriodDeltaChain_FromTime{
-   font-weight: bold;
+  font-weight: bold;
   padding: 0 10px;
-
 }
 
 span.due_date{
-  display: block;
-  font-style: italic;
   color: #464646;
+  display: block;
   font-size: 0.9em;
-  padding-left: 5px;
+  font-style: italic;
   margin-bottom: 5px;
+  padding-left: 5px;
 }
 
 fieldset.period{
@@ -1949,12 +1912,12 @@ fieldset.period{
 }
 
 #penalty_periods, #grace_periods, #penalty_decay_periods {
-   margin-left: 5em;
-   width: 80%;
+  margin-left: 5em;
+  width: 80%;
 }
 
 #sub_rule_link{
-    margin-left: 5em;
+  margin-left: 5em;
 }
 
 #grade_entry_items {
@@ -1962,27 +1925,23 @@ fieldset.period{
 }
 
 #rubric_viewer #criteria_pane{
-  width: 100%;
   margin: 0;
   padding: 0;
+  width: 100%;
 }
 
-#rubric_viewer table{
-  background:#fff;
-  padding: 4px;
-}
-
+#rubric_viewer table,
 #rubric_viewer table tr{
-  background:#fff;
+  background: #fff;
   padding: 4px;
 }
 
 .fieldWithErrors label{
-   font-style: italic;
+  font-style: italic;
 }
 
 .fieldWithErrors input{
-  border: 2px #E6CB55 solid;
+  border: 2px solid #E6CB55;
 }
 
 fieldset.disabled{
@@ -1991,12 +1950,12 @@ fieldset.disabled{
 }
 
 .disabled label, .disabled span, .disabled p{
-  font-style: italic;
   color: #464646;
+  font-style: italic;
 }
 
 .invalid, .required_field {
-  color: #FF0000;
+  color: #f00;
 }
 
 .hidden {
@@ -2004,10 +1963,10 @@ fieldset.disabled{
 }
 
 #api_key_box {
-  padding: 10px;
   @include border-radius(5px);
   border: 1px solid #ccc;
   overflow: auto;
+  padding: 10px;
 }
 
 div#test_results_controls {
@@ -2029,16 +1988,16 @@ pre#test_result_content {
 }
 
 .graph_layout{
-	margin-top:20px;
-	margin-left:20px;
-	width:500px;
-	height:350px;
+  height:350px;
+  margin-left:20px;
+  margin-top:20px;
+  width:500px;
 }
 
 /* Language chooser styles */
 #lang_chooser {
-  border-right: 1px solid #000;
   border-left: 1px solid #000;
+  border-right: 1px solid #000;
   padding-left: 5px;
 }
 
@@ -2049,31 +2008,31 @@ pre#test_result_content {
 
 /* Dashboard Assignment Summary */
 .assignment_summary {
-	display: table;
-	margin-bottom: 20px;
-	margin-top: 20px;
-	padding: 20px;
-	border-style: none;
-	background-color: #f4f4f4;
+  background-color: #f4f4f4;
+  border-style: none;
+  display: table;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  padding: 20px;
 }
 
 .assignment_summary .left {
-	float: left;
-	display: block;
-	width: 400px;
+  display: block;
+  float: left;
+  width: 400px;
 }
 
 .assignment_summary .right {
-	float: left;
-	display: inline-block;
-	width: auto;
-	margin-left: 15px;
+  display: inline-block;
+  float: left;
+  margin-left: 15px;
+  width: auto;
 }
 
 .assignment_summary .title {
-	padding: 0;
-	margin: 0 0 15px 0;
-	color: #0a67ad;
+  color: #0a67ad;
+  margin: 0 0 15px 0;
+  padding: 0;
 }
 
 .assignment_summary .due_date {
@@ -2089,13 +2048,13 @@ pre#test_result_content {
 }
 
 .assignment_summary table tr td {
-	padding-right: 10px;
-	border-bottom: none;
+  border-bottom: none;
+  padding-right: 10px;
 }
 
 .assignment_summary ul {
-	margin-top: 0;
-	list-style-type: square;
+  list-style-type: square;
+  margin-top: 0;
 }
 
 .assignment_summary .grader_distribution {
@@ -2103,53 +2062,50 @@ pre#test_result_content {
 }
 
 #section_due_dates_type_form {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .section_due_date_form {
-    margin-left: 60px;
+  margin-left: 60px;
 }
 
 
 /* styles specific to the graphs on the dashboard */
 
 .bluff-tooltip {
-	background: #fff;
-	margin: 0;
-	padding: 0;
-	border: 1px solid #000;
+  background: #fff;
+  border: 1px solid #000;
+  margin: 0;
+  padding: 0;
 }
 
 .bluff-tooltip span.label {
-	display: inline;
-	float: none;
-	margin: 0;
-	padding: 0;
+  display: inline;
+  float: none;
+  margin: 0;
+  padding: 0;
 }
 
 .bluff-tooltip span.data {
-	display: inline;
-	float: none;
-	margin: 0;
-	padding: 0;
+  display: inline;
+  float: none;
+  margin: 0;
+  padding: 0;
 }
 
 .bluff-tooltip span {
 	display: none;
 }
 
-
-#curent_time{
+#curent_time {
   padding: 10px 0 10px 0;
 }
 
 .table-button {
-	margin: 2px;
-	padding: 2px;
-	min-width: 0;
+  margin: 2px;
+  min-width: 0;
+  padding: 2px;
 }
-
-
 
 
 /* styles specific to the graphing on the dashboard */
@@ -2158,7 +2114,7 @@ pre#test_result_content {
 
 .no-close .ui-dialog-titlebar,
 .no-close .ui-dialog-buttonpane {
-    display: none;
+  display: none;
 }
 
 /* end */
