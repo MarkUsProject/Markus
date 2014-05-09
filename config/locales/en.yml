@@ -11,10 +11,10 @@ en:
 
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
-    welcome_to_markus:     "%{user_name}, welcome to MarkUs, the online marking tool."
+    welcome_to_markus:     "Welcome to MarkUs, the online marking tool, %{user_name}."
     log_in:             "Log in"
     logging_in:         "Logging in..."
-    login:              "Login"
+    login:              "Username"
     login_failed:       "Login failed"
     cookies_off:        "Please configure your browser to accept cookies."
     password_not_blank: "Your password must not be blank."
