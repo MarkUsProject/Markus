@@ -7,7 +7,6 @@
 body {
 	background-color: $bg-color;
   font: 0.8em/1.2em $sans-serif-font-stack;
-	padding-bottom: 3em;
   min-width: 600px;
 }
 
@@ -59,6 +58,11 @@ h4 {
   padding-bottom: 3px;
   padding-left: 3px;
   border-bottom: 1px solid #ccc;
+}
+
+#container {
+  background: $primary-color;
+  padding-bottom: 3em;
 }
 
 
@@ -248,13 +252,13 @@ legend {
 }
 
 #logo {
-   margin: 5px 10px 10px 10px;
-   font-size: 14px;
+  font-size: 0.875em;
+  margin: 5px 10px 10px 10px;
 }
 
 #logo a {
   padding: 5px;
-  font-size: 14px;
+  font-size: 0.875em;
   font-family: Lucida;
 }
 
@@ -294,32 +298,32 @@ legend {
 
 #title_bar input, #title_bar a, .sub_title a {
   background: none;
-  color: $blue;
   border: none;
+  color: $blue;
+  cursor: pointer;
   font-size: 12px;
   font-weight: bold;
   margin: 0;
-  padding: 0 4px;
   min-width: 5px;
-  cursor: pointer;
-  }
+  padding: 0 4px;
+}
 
 #title_bar span.menu_bar {
   background: none;
-  color: #464646;
   border: none;
+  color: #464646;
   font-size: 0.5em;
   font-weight: bold;
 }
 
 .sub_title a {
-   font-size: 0.7em;
+ font-size: 0.7em;
 }
 
 #title_bar input:hover, #title_bar a:hover {
   background: none;
-  color: #EE6415;
   border: none;
+  color: #EE6415;
 }
 
 #new_files input {
@@ -372,8 +376,8 @@ legend {
   padding: 10px;
   text-align: center;
   transition: all 0.25s;
-  width: 150px;
   vertical-align: bottom;
+  width: 150px;
 }
 
 #menu a {
@@ -1016,6 +1020,10 @@ input#extra_mark_description{
 
 /* Commented out for now due to conflicts with jQuery UI Dialog */
 
+.ui-widget-overlay {
+  background: #777 !important;
+}
+
 #rename_group_dialog, #upload_dialog, #download_dialog,
 #groups_coverage_dialog, #grader_criteria_dialog {
   @include border-radius(5px);
@@ -1089,12 +1097,12 @@ input#extra_mark_description{
 }
 
 #role_switch_dialog {
-  background-color: #fff;
-  border: 10px solid #333;
+  background: #fff;
   padding: 10px;
 }
 
-#about_icon, #switch_role_icon {
+#about_icon,
+#switch_role_icon {
   margin: 2px 0.5em 0 0.5em;
   position: relative;
   top: 0.3em;
@@ -1104,17 +1112,18 @@ input#extra_mark_description{
   text-transform: none;
 }
 
-.p_modal{
+.p_modal {
   border-top: 1px solid #000;
   margin-top: 5px;
   padding-top: 10px;
 }
 
-#mark_pane, #annotation_pane {
+#mark_pane,
+#annotation_pane {
   float: left;
 }
 
-.float_left{
+.float_left {
   float: left;
 }
 
@@ -2009,23 +2018,23 @@ pre#test_result_content {
 /* Dashboard Assignment Summary */
 .assignment_summary {
   background-color: #f4f4f4;
-  border-style: none;
-  display: table;
+  display: inline-block;
   margin-bottom: 20px;
   margin-top: 20px;
+  min-width: 700px;
   padding: 20px;
+  width: auto;
 }
 
 .assignment_summary .left {
-  display: block;
-  float: left;
+  display: inline-block;
   width: 400px;
 }
 
 .assignment_summary .right {
   display: inline-block;
-  float: left;
   margin-left: 15px;
+  vertical-align: top;
   width: auto;
 }
 

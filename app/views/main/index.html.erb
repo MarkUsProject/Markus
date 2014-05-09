@@ -8,7 +8,7 @@
    <h1><%= I18n.t(:dashboard) %></h1>
 </div>
 <div class="wrapLeft">
-<p><%= I18n.t(:welcome_to_markus, {:user_name => @current_user.first_name}) %></p>
+  <p><%= I18n.t(:welcome_to_markus, {:user_name => @current_user.first_name}) %></p>
 
   <% @assignments.each do |a| %>
     <%= render :partial => "assignment_summary", :locals => { :assignment => a } %>
