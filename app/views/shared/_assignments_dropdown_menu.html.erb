@@ -5,11 +5,10 @@
 		      :action => 'new' %>
   </li>
   <li class="level2">
-    <div id="admin_items">
-      <%= link_to I18n.t(:create_new_grade_entry_form),
-  	        :controller => 'grade_entry_forms',
-        		:action => 'new' %>
-    </div>
+    <%= link_to I18n.t(:create_new_grade_entry_form),
+	        :controller => 'grade_entry_forms',
+      		:action => 'new' %>
+    <div id="admin_items"></div>
   </li>
   <li class="level2"></li>
 <% end %>

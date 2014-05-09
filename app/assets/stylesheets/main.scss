@@ -67,7 +67,9 @@ h4 {
 
 #content {
   background: $primary-color;
-  padding: 3em;
+  margin: auto;
+  padding: 1.5em 2.5em;
+  width: auto;
 }
 
 
@@ -252,13 +254,12 @@ legend {
 /* Header */
 
 #header {
-  padding: 3px;
-  border-bottom: 1px solid #000;
+  padding: 0.5em 2.5em;
+  border-bottom: 1px solid $light-blue;
 }
 
 #user_info {
   float: right;
-  margin-right: 3px;
 }
 
 #logout_area {
@@ -267,35 +268,24 @@ legend {
   top: -6px;
 }
 
-#user_name {
-  padding-bottom: 3px;
-  position: relative;
-}
-
 #logo {
   font-size: 0.875em;
-  margin: 5px 10px 10px 30px;
+  margin: 5px 10px 10px 2.5em;
+
+  a {
+    padding: 5px;
+    font-size: 0.875em;
+    font-family: Lucida;
+  }
 }
 
-#logo a {
-  padding: 5px;
-  font-size: 0.875em;
-  font-family: Lucida;
-}
-
-.wrapLeft {
-  padding: 0 1.3em;
-  min-width: 75%;
-}
+.wrapLeft,
 .wrapRight {
   padding: 0 1.3em;
   min-width: 75%;
 }
 
-.wrapLeftGroups {
-  padding: 0 1.5em;
-  min-width: 75%;
-}
+.wrapLeftGroups,
 .wrapRightGroups {
   padding: 0 1.5em;
   min-width: 75%;
@@ -312,12 +302,15 @@ legend {
   padding-left: 15px;
 }
 
-#title_bar h1, .title_bar h1 {
-  font-size: 24px;
+#title_bar h1,
+.title_bar h1 {
+  font-size: 1.5em;
   color: #464646;
 }
 
-#title_bar input, #title_bar a, .sub_title a {
+#title_bar input,
+#title_bar a,
+.sub_title a {
   background: none;
   border: none;
   color: $blue;
@@ -338,10 +331,11 @@ legend {
 }
 
 .sub_title a {
- font-size: 0.7em;
+  font-size: 0.7em;
 }
 
-#title_bar input:hover, #title_bar a:hover {
+#title_bar input:hover,
+#title_bar a:hover {
   background: none;
   border: none;
   color: #EE6415;
@@ -366,30 +360,32 @@ legend {
   display: block;
   min-width: 70em;
   padding: 0 0 0 160px;
-  position: relative;
-  top: -40px;
+  margin-top: -40px;
 }
 
-#sub_menu, #sub_sub_menu {
+#sub_menu,
+#sub_sub_menu {
   display: block;
-  margin-top: -52px;
+  margin-top: -12px;
   min-width: 70em;
 }
 
 #sub_menu li {
-  float: left;
+  display: inline;
   width: 140px;
-}
-
-#sub_sub_menu li {
-  float: left;
 }
 
 #sub_menu li.visible_dropdown {
   width: 170px;
 }
 
-#menu a, #sub_menu a, #sub_sub_menu a {
+#sub_sub_menu li {
+  display: inline;
+}
+
+#menu a,
+#sub_menu a,
+#sub_sub_menu a {
   display: inline-block;
   font-size: 1em;
   font-weight: bold;
@@ -459,8 +455,8 @@ legend {
 #sub_menu ul.dropdown {
   @include border-radius(10px);
   background: #fff;
-  border: 2px solid #464646;
-  margin: 0 0 0 10px;
+  border: 2px solid $blue;
+  margin: 10px 0 0 10px;
   min-width: 15em;
   padding: 0;
   visibility: hidden;
@@ -484,6 +480,7 @@ legend {
 
 #sub_menu {
   background: $light-blue;
+  height: 46px;
   padding-left: 10px;
 }
 
@@ -493,7 +490,7 @@ legend {
 }
 
 .level1 {
-  padding: 3px 70px 2px 10px;
+  padding: 3px 10px 2px 10px;
 }
 
 #sub_menu li.level2 a {
@@ -507,7 +504,8 @@ legend {
 
 #admin_items {
   border-bottom: 1px solid #444;
-  margin-bottom: 1em;
+  margin: 0.5em 0;
+  margin-left: -2px;
   width: 15em;
 }
 
@@ -525,7 +523,7 @@ legend {
 span#choose_an_assignment {
   @include border-radius(10px);
   background: #fff;
-  border: 2px solid #464646;
+  border: 2px solid $blue;
   cursor: pointer;
   display: inline-block;
   font-weight: bold;
@@ -1061,7 +1059,8 @@ input#extra_mark_description{
 #about_dialog,
 #role_switch_dialog,
 #create_group_dialog,
-#create_annotation_dialog {
+#create_annotation_dialog,
+#redirect_dialog {
   @include border-radius(5px);
   @include box-shadow(0, 0, 10px, 3px, #aaa);
   background: #fff !important;
@@ -1094,11 +1093,6 @@ input#extra_mark_description{
   }
 }
 
-#redirect_dialog {
-  background: #fff;
-  padding: 20px;
-}
-
 #about_dialog {
   @include border-radius(5px);
   height: 455px !important;
@@ -1126,9 +1120,13 @@ input#extra_mark_description{
   }
 }
 
+#about_icon {
+  border-right: 1px solid #777;
+}
+
 #about_icon,
 #switch_role_icon {
-  margin: 2px 0.5em 0 0.5em;
+  padding: 0 0.5em;
   position: relative;
   top: 0.3em;
 }
@@ -1353,7 +1351,7 @@ input#extra_mark_description{
 .block {
   @include border-radius(5px);
   border: 1px solid #ccc;
-  margin: 10px;
+  margin: 10px auto;
   padding: 0;
   width: 95%;
 }
@@ -1605,13 +1603,10 @@ td.grade_entry_form_result {
 }
 
 /* floating object */
-.column_floatRight{
-  float: right;
-  width: 50%;
-}
-
-.column_floatLeft{
-  float: left;
+.column_floatRight,
+.column_floatLeft {
+  display: inline-block;
+  vertical-align: top;
   width: 50%;
 }
 
@@ -2030,14 +2025,13 @@ pre#test_result_content {
 
 /* Language chooser styles */
 #lang_chooser {
-  border-left: 1px solid #000;
-  border-right: 1px solid #000;
+  border-left: 1px solid #777;
+  border-right: 1px solid #777;
   padding-left: 5px;
 }
 
 #lang_chooser select {
   border: none;
-  font-size: smaller;
 }
 
 /* Dashboard Assignment Summary */

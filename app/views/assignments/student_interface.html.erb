@@ -59,9 +59,7 @@
   <div class="block">
     <%= render :partial => 'read'%>
   </div>
-</div>
-
-<div class="column_floatLeft">
+</div><div class="column_floatRight"> <!-- The 2 divs need to be side by side to work with 50% widths -->
   <div class="block">
     <h2><%= I18n.t("student.group_information") %></h2>
     <div class="block_content">
@@ -83,7 +81,6 @@
 
         <%
         # See if the student has been invited to some group
-
         if @student.has_pending_groupings_for?(@assignment.id) %>
           <h3><%= I18n.t("student.invitations") %></h3>
 
@@ -99,8 +96,8 @@
             </p>
             <% grouping.student_memberships.each do |member|%>
               <ul>
-                  <%= render :partial => "assignments/member", :locals =>
-                    {:member => member, :grouping => grouping} %>
+                <%= render :partial => "assignments/member", :locals =>
+                  {:member => member, :grouping => grouping} %>
               </ul>
             <% end -%>
 
@@ -122,7 +119,6 @@
         # If students are allowed to form groups and
         # the grace period for this assignment has not yet passed,
         # render UI elements for group creation
-
         if !@assignment.past_collection_date? &&
            @assignment.student_form_groups %>
 
@@ -170,7 +166,6 @@
           # If a group is valid, the current user is the inviter of the group and
           # she is the _only_ member of this group, she should be possible to delete
           # her group, provided there haven't been any files submitted.
-
           if !@grouping.nil? &&
               @grouping.deletable_by?(@current_user) %>
             <%= link_to(I18n.t(:delete),
@@ -224,7 +219,6 @@
         <%
         # If the group does not have the right amount of members yet, display
         # "group is not valid" warning.
-
         if !@grouping.is_valid? %>
           <p class="warning">
             <%= I18n.t("student.invite_more_students") %>
@@ -290,13 +284,13 @@
   <% if @assignment.enable_test %>
   <div class="block">
     <h2><%= I18n.t("automated_tests.test") %></h2>
-  <% if @grouping.nil? %>
-          <div class="sub_block">
-            <br />
-            <%= I18n.t("automated_tests.need_group_for_test") %>
-            <br />
-          </div>
-  <% else %>
+      <% if @grouping.nil? %>
+        <div class="sub_block">
+          <br />
+          <%= I18n.t("automated_tests.need_group_for_test") %>
+          <br />
+        </div>
+     <% else %>
           <div class="block_content">
             <h3><%= I18n.t("automated_tests.information") %></h3>
             <% if !@grouping.submissions.empty? %>
@@ -362,7 +356,6 @@
 
 <%
 # HTML for the invite dialog
-
 if !@grouping.nil? &&
    @grouping.inviter == @current_user &&
    !@assignment.invalid_override %>
