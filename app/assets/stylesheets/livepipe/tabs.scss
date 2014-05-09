@@ -1,0 +1,65 @@
+@import '../mixins';
+
+/* Goes around the whole tab component, including the tabs. */
+.tabbedContainer {
+  @include border-radius(5px);
+  background: #ececec;
+  border: 1px solid #ddd;
+  margin: 0;
+  padding: 10px;
+}
+
+/* Goes around each content area that is associated with a tab. */
+.tabbedArea {
+  @include border-radius-bottom(5px);
+  background: #fff;
+  padding: 10px;
+}
+
+ul.subsection_tabs {
+  border-bottom: 1px solid #fff;
+  height: 27px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li.tab {
+    @include border-radius-top(5px);
+    background: #B7D3EC;
+    float: left;
+    margin: 0 2px 0 0;
+    text-align: center;
+
+    a {
+      @include border-radius-top(5px);
+      background: #B7D3EC;
+      display: block;
+      height: 23px;
+      padding: 4px 10px 0 10px;
+    }
+
+    a:hover,
+    a:focus {
+      background: #fff;
+    }
+  }
+
+  li.tab_selected {
+    @include border-radius-top(5px);
+    background: #fff;
+    float: left;
+    margin: 0 2px 0 0;
+    text-align: center;
+  }
+
+  li.button_tab {
+    float: left;
+    margin: -10px 25px 0 0;
+    position: absolute;
+    right: 0;
+  }
+
+  li.source_code {
+    float: right;
+  }
+}

@@ -62,7 +62,7 @@ h4 {
 
 #container {
   background: $primary-color;
-  padding-bottom: 3em;
+  padding: 3em 0;
 }
 
 
@@ -2016,13 +2016,16 @@ pre#test_result_content {
 }
 
 /* Dashboard Assignment Summary */
+#assignment_summaries {
+  text-align: center;
+}
+
 .assignment_summary {
   background-color: #f4f4f4;
   display: inline-block;
-  margin-bottom: 20px;
-  margin-top: 20px;
-  min-width: 700px;
+  margin: 20px 0;
   padding: 20px;
+  text-align: left;
   width: auto;
 }
 
