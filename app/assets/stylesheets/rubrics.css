@@ -1,6 +1,6 @@
 #rubric_status_pane {
-        float: right;
-        text-align: right;
+  float: right;
+  text-align: right;
 }
 
 #rubric_criteria_pane, #flexible_criteria_pane, #rubric_levels_pane {
@@ -14,7 +14,7 @@
 }
 
 #rubric_criteria_pane_menu, #flexible_criteria_pane_menu, #rubric_levels_pane_menu, #flexible_edition_pane_menu {
-   background: #ccc;
+  background: #ccc;
 }
 
 #rubric_criteria_pane_menu h2, #flexible_criteria_pane_menu, #rubric_levels_pane_menu h2, #flexible_edition_pane_menu h2 {
