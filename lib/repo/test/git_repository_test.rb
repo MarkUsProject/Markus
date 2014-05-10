@@ -86,10 +86,13 @@ class GitRepositoryTest < Test::Unit::TestCase
        conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/config/giolite.conf"
 
        # create repository first
-       Repository.get_class("git", conf_admin).create(TEST_REPO)
+       GitRepository.create(TEST_REPO)
+       #Repository.get_class("git", conf_admin).create(TEST_REPO)
        # open the repository
-       @repo = Repository.get_class("git", conf_admin).open(TEST_REPO)
-     end
+       # @repo = Repository.get_class("git", conf_admin).open(TEST_REPO)
+       @repo = GitRepository.open(TEST_REPO)
+  
+    end
 
      # removes the Git repository at TEST_REPO
      teardown do
@@ -147,50 +150,55 @@ class GitRepositoryTest < Test::Unit::TestCase
   #     end
   #   end
 
-  #   should "have been instanciated and a Subversion repository in the filesystem created" do
-  #     assert_not_nil(@repo, "Could not create/open Repository: look into the tests' setup")
-  #     @repo.close()
-  #   end
+     should "have been instanciated and a Git repository in the filesystem created" do
+       assert_not_nil(@repo, "Could not create/open Repository: look into the tests' setup")
+       @repo.close()
+    end
 
-  #   should "provide a transaction" do
-  #     transaction = @repo.get_transaction(TEST_USER)
-  #     assert_not_nil(transaction, "Could not retrieve transaction")
-  #     assert_instance_of(Repository::Transaction, transaction, "Transaction is not of correct type!")
-  #     @repo.close()
-  #   end
+     should "provide a transaction" do
+       transaction = @repo.get_transaction(TEST_USER)
+       assert_not_nil(transaction, "Could not retrieve transaction")
+       assert_instance_of(Repository::Transaction, transaction, "Transaction is not of correct type!")
+       @repo.close()
+     end
 
-  #   should "give the latest revision" do
-  #     revision = @repo.get_latest_revision()
-  #     assert_not_nil(revision, "Could not retrieve latest revision")
-  #     assert_instance_of(Repository::SubversionRevision, revision, "Revision is of wrong type!")
-  #     assert_equal(revision.revision_number, 0, "Wrong revision number")
-  #     @repo.close()
-  #   end
+     should "give the latest revision" do
+       revision = @repo.get_latest_revision()
+       assert_not_nil(revision, "Could not retrieve latest revision")
+       assert_instance_of(Repository::GitRevision, revision, "Revision is of wrong type!")
+       # Assuming that our head is our last revision,
+       # as the sha number is not constant, 
+       # we are going to use the name
+      assert_equal("refs/heads/master", revision.revision_number.name, "Wrong revision number")
+       @repo.close()
+     end
 
-  #   should "be able to retrieve a revision given a valid revision as integer number" do
-  #     r = @repo.get_latest_revision()
-  #     assert_not_nil(r, "Could not retrieve latest revision")
-  #     rev_int = r.revision_number
-  #     new_revision = @repo.get_revision(rev_int)
-  #     assert_instance_of(Repository::SubversionRevision, new_revision, "Revision not of class SubversionRevision")
-  #     assert_equal(new_revision.revision_number, rev_int, "Revision numbers (int values) should be equal")
-  #     @repo.close()
-  #   end
+     should "be able to retrieve a revision given a valid revision as integer number" do
+       r = @repo.get_latest_revision()
+       assert_not_nil(r, "Could not retrieve latest revision")
+       rev_int = r.revision_number
+       new_revision = @repo.get_revision(rev_int)
+       assert_instance_of(Repository::GitRevision, new_revision, "Revision not of class SubversionRevision")
+       assert_equal(new_revision.revision_number, rev_int, "Revision numbers (int values) should be equal")
+       @repo.close()
+     end
 
-  #   should "raise a RevisionDoesNotExist exception" do
-  #     r = @repo.get_latest_revision()
-  #     assert_not_nil(r, "Could not retrieve latest revision")
-  #     revision_non_existent = r.revision_number + 3
-  #     assert_raise(RevisionDoesNotExist) do
-  #       @repo.get_revision(revision_non_existent) # raises exception
-  #     end
-  #     @repo.close()
-  #   end
+     should "raise a RevisionDoesNotExist exception" do
+       r = @repo.get_latest_revision()
+       assert_not_nil(r, "Could not retrieve latest revision")
+       # creates a random 40 characters string
+       some_commit_sha = (0...40).map { (65 + rand(26)).chr }.join 
+       revision_non_existent = Rugged::Reference.create(@repo.get_repos,"refs/heads/unit_test",some_commit_sha)
+       assert_raise(RevisionDoesNotExist) do
+         @repo.get_revision(revision_non_existent) # raises exception
+       end
+       @repo.close()
+     end
 
-  #   should "be able to close its repository using the close() method" do
-  #     @repo.close()
-  #     FileUtils.remove_dir(TEST_REPO)#Will fail under Windows if not closed
-  #   end
+     should "be able to close its repository using the close() method" do
+       @repo.close()
+       FileUtils.remove_dir(TEST_REPO)#Will fail under Windows if not closed
+     end
 
      should "know whether or not it is closed" do
        assert(!@repo.closed?, "opened repository identified as closed")
@@ -198,45 +206,44 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert(@repo.closed?, "closed repository identified as open")
      end
 
-  #   should "be able to create a directory in repository" do
-  #     dir_single_level = "/folder1"
-  #     dir_multi_level = "/folder2/subfolder1"
+     should "be able to create a directory in repository" do
+       dir_single_level = "/folder1"
+       dir_multi_level = "/folder2/subfolder1"
+       txn = @repo.get_transaction(TEST_USER)
+       txn.add_path(dir_single_level)
+       txn.add_path(dir_multi_level)
+       @repo.commit(txn)
+       revision = @repo.get_latest_revision()
 
-  #     txn = @repo.get_transaction(TEST_USER)
-  #     txn.add_path(dir_single_level)
-  #     txn.add_path(dir_multi_level)
-  #     @repo.commit(txn)
-  #     revision = @repo.get_latest_revision()
+       assert_equal(true, revision.path_exists?(dir_single_level), message = "Repository folder not created")
+       assert_equal(true, revision.path_exists?(dir_multi_level), message = "Repository folder not created")
+       @repo.close()
+     end
 
-  #     assert_equal(true, revision.path_exists?(dir_single_level), message = "Repository folder not created")
-  #     assert_equal(true, revision.path_exists?(dir_multi_level), message = "Repository folder not created")
-  #     @repo.close()
-  #   end
+     add_file_test = "add a new file to an empty repository"
+     should(add_file_test) do
+       rev_num = @repo.get_latest_revision().revision_number
+       txn = @repo.get_transaction(TEST_USER)
+       filename = "MyClass.java"
+       file_contents = File.read(RESOURCE_DIR + "/" + filename)
+       txn.add(filename, file_contents)
+       latest_revision = @repo.get_latest_revision().revision_number
+       assert_equal(rev_num.target, latest_revision.target, "Revision # should be the same!")
+       @repo.commit(txn) # svn commit
+       latest_revision = @repo.get_latest_revision().revision_number
 
-  #   add_file_test = "add a new file to an empty repository"
-  #   should(add_file_test) do
-  #     rev_num = @repo.get_latest_revision().revision_number
-  #     txn = @repo.get_transaction(TEST_USER)
-  #     filename = "MyClass.java"
-  #     file_contents = File.read(RESOURCE_DIR + "/" + filename)
-  #     txn.add(filename, file_contents)
-  #     latest_revision = @repo.get_latest_revision().revision_number
-  #     assert_equal(rev_num, latest_revision, "Revision # should be the same!")
-  #     @repo.commit(txn) # svn commit
-  #     latest_revision = @repo.get_latest_revision().revision_number
+       assert_not_equal(rev_num, latest_revision, "Revision # has not changed!")
 
-  #     assert_not_equal(rev_num, latest_revision, "Revision # has not changed!")
-
-  #     # look if new file is available
-  #     svn_rev = @repo.get_latest_revision()
-  #     files = svn_rev.files_at_path("/")
-  #     assert_not_nil(files[filename], "Could not find file '" + filename + "'")
-  #     # test download_as_string
-  #     assert_equal(@repo.download_as_string(files[filename]),
-  #                  file_contents,
-  #                  "Mismatching content")
-  #     @repo.close()
-  #   end
+       # look if new file is available
+       svn_rev = @repo.get_latest_revision()
+       files = svn_rev.files_at_path("/")
+       assert_not_nil(files[filename], "Could not find file '" + filename + "'")
+       # test download_as_string
+       assert_equal(@repo.download_as_string(files[filename]),
+                    file_contents,
+                    "Mismatching content")
+       @repo.close()
+     end
 
   #   should "delete a commited file from repository" do
   #     add_file_test.intern() # call add_file_test to make sure it works, not sure if that's useful
