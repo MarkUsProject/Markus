@@ -7,7 +7,7 @@
 body {
 	background-color: $bg-color;
   font: 0.8em/1.2em $sans-serif-font-stack;
-  min-width: 600px;
+  // min-width: 600px;
 }
 
 .clear {
@@ -486,11 +486,11 @@ legend {
 
 #sub_sub_menu {
   border-bottom: 2px solid #464646;
-  padding-left: 10px;
+  padding-left: 2.5em;
 }
 
 .level1 {
-  padding: 3px 10px 2px 10px;
+  padding: 5px 10px 2px 10px;
 }
 
 #sub_menu li.level2 a {
@@ -1296,8 +1296,8 @@ input#extra_mark_description{
   width: 360px;
 
   .login-form {
-    margin: 20px auto;
-    width: 300px;
+    margin: 20px auto 0 auto;
+    width: 80%;
 
     input[type=text],
     input[type=password],
@@ -1307,14 +1307,16 @@ input#extra_mark_description{
 
     input[type=text],
     input[type=password] {
+      margin: 0.5em 0;
       padding: 1em;
     }
 
     .submit {
-      margin-top: 25px;
+      margin: 15px 0 25px 0;
 
       input[type=submit] {
-        padding: 10px 10px;
+        margin: 0.5em 0;
+        padding: 10px;
       }
     }
   }
@@ -1327,13 +1329,14 @@ input#extra_mark_description{
   }
 
   .login-image {
-    padding: 20px 0;
+    padding: 25px 0;
     text-align: center;
-  }
 
-    .login-image img {
-      width: 250px;
+    img {
+      height: auto;
+      width: 65%;
     }
+  }
 
   .error {
     margin-top: -15px;
@@ -1341,8 +1344,15 @@ input#extra_mark_description{
   }
 }
 
-#login_form label {
-  display: inline-block;
+/* Mobile friendly login page */
+@media all and (max-width: 360px) {
+  .login {
+    @include border-radius(0);
+    @include box-shadow(0, 0, 0, 0, transparent);
+    left: 0;
+    margin-left: 0;
+    width: 100%;
+  }
 }
 
 

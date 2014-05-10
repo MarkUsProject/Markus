@@ -36,7 +36,12 @@
 
 @mixin background-gradient($start, $end) {
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0, $start), color-stop(1, $end));
-  background: -moz-linear-gradient( center top, $start 0%, $end 100% );
+  background: -moz-linear-gradient(center top, $start 0%, $end 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$start', endColorstr='$end');
   background-color: $start;
+}
+
+@mixin size($width, $height: $width) {
+  width: $width;
+  height: $height;
 }
