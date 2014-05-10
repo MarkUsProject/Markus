@@ -11,7 +11,6 @@ module Repository
   # It implements the following paradigm:
   #   1. Repositories are created by using ???
   #   2. Existing repositories are opened by using either ???
-
   class GitRepository < Repository::AbstractRepository
 
     # Constructor: Connects to an existing Git

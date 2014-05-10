@@ -199,6 +199,50 @@ class GitRepositoryTest < Test::Unit::TestCase
        @repo.close()
        FileUtils.remove_dir(TEST_REPO)#Will fail under Windows if not closed
      end
+  #   should "have been instanciated and a Subversion repository in the filesystem created" do
+  #     assert_not_nil(@repo, "Could not create/open Repository: look into the tests' setup")
+  #     @repo.close()
+  #   end
+
+  #   should "provide a transaction" do
+  #     transaction = @repo.get_transaction(TEST_USER)
+  #     assert_not_nil(transaction, "Could not retrieve transaction")
+  #     assert_instance_of(Repository::Transaction, transaction, "Transaction is not of correct type!")
+  #     @repo.close()
+  #   end
+
+  #   should "give the latest revision" do
+  #     revision = @repo.get_latest_revision()
+  #     assert_not_nil(revision, "Could not retrieve latest revision")
+  #     assert_instance_of(Repository::SubversionRevision, revision, "Revision is of wrong type!")
+  #     assert_equal(revision.revision_number, 0, "Wrong revision number")
+  #     @repo.close()
+  #   end
+
+  #   should "be able to retrieve a revision given a valid revision as integer number" do
+  #     r = @repo.get_latest_revision()
+  #     assert_not_nil(r, "Could not retrieve latest revision")
+  #     rev_int = r.revision_number
+  #     new_revision = @repo.get_revision(rev_int)
+  #     assert_instance_of(Repository::SubversionRevision, new_revision, "Revision not of class SubversionRevision")
+  #     assert_equal(new_revision.revision_number, rev_int, "Revision numbers (int values) should be equal")
+  #     @repo.close()
+  #   end
+
+  #   should "raise a RevisionDoesNotExist exception" do
+  #     r = @repo.get_latest_revision()
+  #     assert_not_nil(r, "Could not retrieve latest revision")
+  #     revision_non_existent = r.revision_number + 3
+  #     assert_raise(RevisionDoesNotExist) do
+  #       @repo.get_revision(revision_non_existent) # raises exception
+  #     end
+  #     @repo.close()
+  #   end
+
+  #   should "be able to close its repository using the close() method" do
+  #     @repo.close()
+  #     FileUtils.remove_dir(TEST_REPO)#Will fail under Windows if not closed
+  #   end
 
      should "know whether or not it is closed" do
        assert(!@repo.closed?, "opened repository identified as closed")
