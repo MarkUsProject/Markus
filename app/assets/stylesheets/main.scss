@@ -433,18 +433,14 @@ legend {
 
     li:hover {
       background: $light-blue;
-    }
 
-    // li:first-child {
-    //   @include border-radius-top(10px);
-    // }
+      a {
+        color: #fff !important;
+      }
+    }
 
     li:last-child {
       @include border-radius-bottom(10px);
-    }
-
-    a:hover {
-      color: $blue;
     }
 
     #drop_down_current_assignment {
@@ -484,8 +480,8 @@ span#choose_an_assignment {
   }
 
   #choose_an_assignment {
-    @include border-radius-top(10px);
     @include border-radius-bottom(0);
+    @include border-radius-top(10px);
   }
 }
 
@@ -507,34 +503,23 @@ span#choose_an_assignment {
   }
 }
 
-#sub_menu li:hover,
-#sub_menu_active {
-  @include border-radius-top(10px);
-  background: #fff;
-
-  a {
-    color: #464646 !important;
-    font-weight: bold;
-  }
-}
-
-#sub_sub_menu li:hover,
-#sub_sub_menu_active {
-  @include border-radius-top(10px);
-  background: #464646;
-
-  a {
-    color: #fff;
-    font-weight: bold;
-  }
-}
-
 #sub_menu {
   background: $light-blue;
-  height: 42px;
+  min-height: 40px;
 
   a {
     color: #fff;
+  }
+
+  li:hover,
+  #sub_menu_active {
+    @include border-radius-top(10px);
+    background: #fff;
+
+    a {
+      color: #464646 !important;
+      font-weight: bold;
+    }
   }
 }
 
@@ -544,6 +529,17 @@ span#choose_an_assignment {
 
   ul {
     padding-top: 5px;
+  }
+
+  li:hover,
+  #sub_sub_menu_active {
+    @include border-radius-top(10px);
+    background: #464646;
+
+    a {
+      color: #fff;
+      font-weight: bold;
+    }
   }
 }
 
@@ -1653,22 +1649,21 @@ td.grade_entry_form_result {
 }
 
 #working {
-  background: red;
+  background: #f00;
   color: #fff;
   position: absolute;
   right: 0;
 }
 
 a.icon_remove {
-  background: no-repeat url('icons/cancel.png');
+  background: url('icons/cancel.png') no-repeat;
   height: 20px;
   text-indent: -3000em;
   width: 20px;
 }
 
 a.icon_remove:hover {
-  background: no-repeat url('icons/cancel.png');
-  text-indent: -3000em;
+  background: url('icons/cancel.png') no-repeat;
 }
 
 a img{
@@ -1690,7 +1685,6 @@ div.align_text_right {
 #rubric_criteria_pane,
 #flexible_criteria_pane,
 #annotation_category_pane {
-  // float: left;
   display: inline-block;
 }
 
@@ -1751,7 +1745,6 @@ div.align_text_right {
 #annotations_pane {
   @include border-radius(10px);
   border: 2px solid #ccc;
-  // float: right;
   display: inline-block;
   margin-right: 2em;
   width: 66%;
