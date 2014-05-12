@@ -20,13 +20,11 @@ a {
 
 a:hover {
   color: #ee6415;
-  // border-bottom: 1px dotted $blue;
 }
 
 h2 a, h3 a, h4 a {
-  font-family: $serif-font-stack;
+  font: 0.75em $serif-font-stack;
   padding-left: 5px;
-  font-size: 0.75em;
 }
 
 h2 a.title {
@@ -38,25 +36,25 @@ a.delete{
 }
 
 a.delete:hover{
-  color: red;
+  color: #f00;
 }
 
 a.rubric_criterion_link {
-	font-weight: bold;
-	color: #000
+	color: #000;
+  font-weight: bold;
 }
 
 h1 {
-  font-size: 1.5em;
   color: #464646;
+  font-size: 1.5em;
 }
 
 h4 {
+  border-bottom: 1px solid #ccc;
   color: #464646;
   font-style: italic;
   padding-bottom: 3px;
   padding-left: 3px;
-  border-bottom: 1px solid #ccc;
 }
 
 #loggedIn, #container, #content {
@@ -86,8 +84,7 @@ input, textarea {
   background: #f5f5f5;
   border: 1px solid #ccc;
   color: #222;
-  font-family: $sans-serif-font-stack;
-  font-size: 1em;
+  font: 1em $sans-serif-font-stack;
   margin: 5px;
   min-width: 100px;
   outline: none;
@@ -117,8 +114,7 @@ button,
   @include background-gradient(#ededed, #dfdfdf);
   @include border-radius(6px);
   @include box-shadow(0, 1px, 0, 0, #fff, inset);
-  border-color: #a7b8be;
-  border: 1px solid #ccc;
+  border: 1px solid #a7b8be;
   color: #147;
   cursor: pointer;
   display: inline-block;
@@ -1097,7 +1093,7 @@ input#extra_mark_description{
 
 #about_dialog {
   @include border-radius(5px);
-  height: 455px !important;
+  height: 430px !important;
   width: 600px;
 
   #about_text {
