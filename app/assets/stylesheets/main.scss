@@ -1687,16 +1687,22 @@ div.align_text_right {
   margin-bottom: -3em;
 }
 
-#rubric_criteria_pane, #flexible_criteria_pane, #annotation_category_pane {
-  float: left;
+#rubric_criteria_pane,
+#flexible_criteria_pane,
+#annotation_category_pane {
+  // float: left;
+  display: inline-block;
 }
 
-#flexible_criteria_pane, #annotation_category_pane	{
+#flexible_criteria_pane,
+#annotation_category_pane	{
   padding: 0 2%;
   width: 24%;
 }
 
-#rubric_criteria_pane .criteria_fieldset, #flexible_criteria_pane .criteria_fieldset, #annotation_category_pane .annotation_categories_fieldset {
+#rubric_criteria_pane .criteria_fieldset,
+#flexible_criteria_pane .criteria_fieldset,
+#annotation_category_pane .annotation_categories_fieldset {
   @include border-radius(10px);
   border: 2px solid #ccc;
   list-style: none;
@@ -1709,41 +1715,44 @@ div.align_text_right {
   padding: 0;
 }
 
-#annotation_category_pane ul{
+#annotation_category_pane ul {
   list-style: none;
   margin: 0;
   padding: 1em;
 }
 
-#rubric_levels_pane_list, #annotation_category_pane_list{
+#rubric_levels_pane_list,
+#annotation_category_pane_list {
   padding-left: 10px;
 }
 
-.weight_bump_button{
+.weight_bump_button {
   min-width: 10px;
   padding: 0 9px;
   width: 10px;
 }
 
-.criterion_input_weight{
+.criterion_input_weight {
   padding: 2px 9px;
   width: 18px;
 }
 
-.level_textarea_description{
+.level_textarea_description {
   width: 90%;
 }
 
-#rubric_criteria_list_title_bar, #flexible_criteria_list_title_bar, .annotation_categories_list_bar{
+#rubric_criteria_list_title_bar, #flexible_criteria_list_title_bar, .annotation_categories_list_bar {
   margin-bottom: 5px;
   min-height: 15px;
   padding-bottom: 5px;
 }
 
-#flexible_edition_pane, #annotations_pane{
+#flexible_edition_pane,
+#annotations_pane {
   @include border-radius(10px);
   border: 2px solid #ccc;
-  float: right;
+  // float: right;
+  display: inline-block;
   margin-right: 2em;
   width: 66%;
 }
