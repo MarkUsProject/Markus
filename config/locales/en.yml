@@ -604,7 +604,7 @@ en:
       last_revision_date: "Last Revision Date:<br /><span class=\"info_date\">%{last_modified_date}</span>"
       files: "files"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> missing required files</span>"
-      no_submission_yet: "You don't have any submission yet"
+      no_submission_yet: "You have not made any submissions yet"
       no_group_yet: "You don't have a group yet"
       grace_date_passed: "and the grace period for this assignment has passed"
       not_allowed_to_form_group: "You are not allowed to form groups yourself for this assignment.
