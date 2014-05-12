@@ -353,6 +353,19 @@ li.annotation_category {
   margin: 0;
   padding: 0;
   width: 100%;
+
+  li {
+    border-bottom: 1px solid #dadada;
+    padding: 5px;
+  }
+
+  li:nth-child(odd) {
+    background: #ededed;
+  }
+
+  li:nth-child(even) {
+    background: #fff;
+  }
 }
 
 .mark_tools {
@@ -364,29 +377,13 @@ li.annotation_category {
   display: none;
 }
 
-.mark_criterion_holder_A {
-  background: #EDEDED;
-  border-bottom: 1px solid #DADADA;
-  padding: 5px;
-}
-
-.mark_criterion_holder_B {
-  background: #fff;
-  border-bottom: 1px solid #DADADA;
-  padding: 5px;
-}
-
 .assigned {
-  border: 4px solid #B7D3EC;
+  border: 4px solid #b7d3ec;
 }
 
   .mark_criterion_title {
     cursor: pointer;
   }
-
-    .mark_criterion_title_div_level {
-        font-size: 12px;
-    }
 
   .mark_criterion_holder_selected,
   .mark_level {
@@ -418,14 +415,14 @@ li.annotation_category {
 
   table {
     background: #fff;
-    border-collapse:c ollapse;
-    border: 1px solid #DADADA;
+    border-collapse: collapse;
+    border: 1px solid #dadada;
     padding: 4px;
   }
 
   td {
-    border-bottom:1px solid #DADADA;
-    border-top:1px solid #DADADA;
+    border-bottom:1px solid #dadada;
+    border-top:1px solid #dadada;
     font-size: 1.1em;
     padding: 4px;
   }
@@ -436,11 +433,11 @@ li.annotation_category {
 }
 
 .rubric_criterion_level_selected {
-  background: #C4FEBC;
+  background: #c4bebc;
 }
 
 .rubric_criterion_level_old_mark {
-  background: #FDFEBC;
+  background: #fdfebc;
 }
 
 .mark_grade_input{
@@ -468,8 +465,8 @@ li.annotation_category {
 
 .extra_mark_holder,
 .link {
-  background: #FBFBFB;
-  border-bottom: 1px solid #DADADA;
+  background: #fbfbfb;
+  border-bottom: 1px solid #dadada;
   min-width: 5px;
   padding: 5px;
 }
@@ -487,12 +484,11 @@ li.annotation_category {
   }
 
   .extra_marks_pane {
-    border: 1px solid #DADADA;
-    font-size: 0.75em;
+    border: 1px solid #dadada;
   }
 
   .extra_marks_pane_list {
-    border-bottom: 1px solid #DADADA;
+    border-bottom: 1px solid #dadada;
     margin: 0;
     padding: 0;
   }
@@ -500,23 +496,12 @@ li.annotation_category {
 /* Criterion summary holder */
 
 .marks_summary_pane {
-  font-size: 0.75em;
 }
 
   .mark_summary_holder {
     background: #FBFBFB;
-    border-bottom: 1px solid #DADADA;
+    border-bottom: 1px solid #dadada;
     padding: 5px;
-  }
-
-  .mark_summary_holderA {
-    background: #EDEDED;
-    padding-left: 5px;
-  }
-
-  .mark_summary_holderB {
-    background: #fff;
-    padding-left: 5px;
   }
 
   .marks_summary_pane_list {
@@ -524,19 +509,28 @@ li.annotation_category {
     padding: 0;
 
     th {
-      background-color:#B7D3EC;
+      background-color: #B7D3EC;
       padding: 5px;
+    }
+    tr {
+      padding-left: 5px;
+    }
+
+    tr:nth-child(odd) {
+      background: #EDEDED;
+    }
+
+    tr:nth-child(even) {
+      background: #fff;
     }
   }
 
 .mark_subtotal {
-  font-size: 0.75em;
   font-weight: bold;
   padding: 10px 20px;
 }
 
 .mark_total {
-  font-size: 0.75em;
   font-weight: bold;
   padding: 10px;
 }

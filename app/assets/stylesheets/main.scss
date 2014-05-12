@@ -981,18 +981,16 @@ input#extra_mark_description{
 
 /* flash messages, & warning */
 .success {
-  background-position: 7px;
-  background: #BDFCC9 url(icons/accept.png) no-repeat;
-  border: 1px solid #458B00;
+  background: #bdfcc9 url(icons/accept.png) no-repeat 5px center;
+  border: 1px solid #458b00;
   margin: 5px;
   padding: 3px 30px;
   text-align: left;
 }
 
 .error, .errorExplanation{
-  background-position: 7px;
-  background: #FFFFE0 url('icons/exclamation.png') no-repeat;
-  border: 1px solid #E6DB55;
+  background: #ffffe0 url('icons/exclamation.png') no-repeat 5px center;
+  border: 1px solid #e6db55;
   margin: 1em 4em 1em 4em;
   margin: 5px;
   padding: 3px 3em;
@@ -1353,7 +1351,7 @@ input#extra_mark_description{
   }
 
   .error {
-    margin-top: -15px;
+    margin-top: 15px;
     text-align: center;
   }
 }

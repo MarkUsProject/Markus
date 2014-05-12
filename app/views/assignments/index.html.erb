@@ -1,4 +1,3 @@
-
 <% content_for :head do %>
   <%= javascript_include_tag 'Assignments/index' %>
 <% end %>
@@ -6,7 +5,6 @@
 <div id="title_bar"><h1><%= I18n.t(:manage_course_work) %></h1></div>
 
 <div class="wrapLeft">
-
   <%= render 'shared/flash_message' %>
 
   <%= link_to I18n.t(:create_new_assignment),
@@ -80,7 +78,7 @@
 
 
 <div class="wrapLeft">
-<%= link_to I18n.t(:download_csv_grade_report),
+  <%= link_to I18n.t(:download_csv_grade_report),
             download_csv_grades_report_assignments_path() if @current_user.admin? %>
 </div>
 
