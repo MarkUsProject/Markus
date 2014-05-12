@@ -186,7 +186,7 @@ li.annotation_category {
 }
 
   #pane_divider {
-    background-color: DDDDDD;
+    background-color: #ddd;
     background: #eee url(handle.png) no-repeat 50%;
     cursor: col-resize;
     float: left;
@@ -221,7 +221,7 @@ li.annotation_category {
     }
 
     #code_holder {
-      padding: 0px;
+      padding: 0;
     }
 
       #sel_box {
@@ -288,34 +288,34 @@ li.annotation_category {
   min-width: 150px;
   padding: 10px;
   text-align: center;
-}
 
-.window .window_contents {
-  height: 100%;
-  margin-top: 10px;
-  width: 100%;
-}
+  .window_contents {
+    height: 100%;
+    margin-top: 10px;
+    width: 100%;
+  }
 
-.window .window_header {
-  text-align: center;
-}
+  .window_header {
+    text-align: center;
+  }
 
-.window .window_title {
-  cursor:move;
-  font-size:11px;
-  margin-bottom:7px;
-  margin-top:-7px;
-}
+  .window_title {
+    cursor:move;
+    font-size:11px;
+    margin-bottom:7px;
+    margin-top:-7px;
+  }
 
-.window .window_close {
-  background-image:url("/stylesheets/window_close.gif");
-  cursor:pointer;
-  display:block;
-  height:13px;
-  left:5px;
-  position:absolute;
-  top:4px;
-  width:13px;
+  .window_close {
+    background-image:url("/stylesheets/window_close.gif");
+    cursor:pointer;
+    display:block;
+    height:13px;
+    left:5px;
+    position:absolute;
+    top:4px;
+    width:13px;
+  }
 }
 
 /* Annotation summary list styles */
@@ -325,7 +325,6 @@ li.annotation_category {
   list-style: none;
   margin: 0 0 20px 0;
   padding: 0;
-
 
   li {
     border-bottom: 1px solid #dadada;
@@ -416,20 +415,20 @@ li.annotation_category {
 .mark_criterion_level_container {
   margin-left: 20px;
   margin-top: 10px;
-}
 
-.mark_criterion_level_container table {
-  background: #fff;
-  border-collapse:c ollapse;
-  border: 1px solid #DADADA;
-  padding: 4px;
-}
+  table {
+    background: #fff;
+    border-collapse:c ollapse;
+    border: 1px solid #DADADA;
+    padding: 4px;
+  }
 
-.mark_criterion_level_container td {
-  border-bottom:1px solid #DADADA;
-  border-top:1px solid #DADADA;
-  font-size: 1.1em;
-  padding: 4px;
+  td {
+    border-bottom:1px solid #DADADA;
+    border-top:1px solid #DADADA;
+    font-size: 1.1em;
+    padding: 4px;
+  }
 }
 
 .rubric_criterion_level {
@@ -456,7 +455,6 @@ li.annotation_category {
     border: 1px dashed #d6de78;
   }
 
-
 #selected_criterion_name {
   font-weight: bold;
 }
@@ -468,7 +466,8 @@ li.annotation_category {
 
 /* Extra Mark holder */
 
-.extra_mark_holder, .link {
+.extra_mark_holder,
+.link {
   background: #FBFBFB;
   border-bottom: 1px solid #DADADA;
   min-width: 5px;
@@ -498,7 +497,7 @@ li.annotation_category {
     padding: 0;
   }
 
-/* criterion summary holder */
+/* Criterion summary holder */
 
 .marks_summary_pane {
   font-size: 0.75em;
@@ -523,12 +522,12 @@ li.annotation_category {
   .marks_summary_pane_list {
     margin: 0;
     padding: 0;
-  }
 
-.marks_summary_pane_list th {
-  background-color:#B7D3EC;
-  padding: 5px;
-}
+    th {
+      background-color:#B7D3EC;
+      padding: 5px;
+    }
+  }
 
 .mark_subtotal {
   font-size: 0.75em;

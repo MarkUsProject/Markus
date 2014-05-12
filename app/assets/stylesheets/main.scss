@@ -680,32 +680,36 @@ tbody tr:hover {
 
 .table_menu {
   padding-left: 10px;
-}
 
-.table_menu a, .table_menu button {
-  color: $blue;
-  font-size: 0.8em;
-  font-family: $serif-font-stack;
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: normal;
-  background: none;
-  border: none;
-  padding: 2px;
-  margin: 1px;
-  min-width: 5px;
-}
+  a,
+  button {
+    color: $blue;
+    font-size: 0.8em;
+    font-family: $serif-font-stack;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: normal;
+    background: none;
+    border: none;
+    padding: 2px;
+    margin: 1px;
+    min-width: 5px;
+  }
 
-.table_menu button:hover, .table_menu a:hover {
-  color: #ee6415;
-}
+  a:hover,
+  button:hover {
+    color: #ee6415;
+  }
 
-.table_menu button.delete:hover, .table_menu a.delete:hover {
-  color: red;
-}
+  a.delete:hover,
+  button.delete:hover {
+    color: red;
+  }
 
-.table_menu button.valid:hover, .table_menu a.valid:hover {
-  color: green;
+  a.valid:hover,
+  button.valid:hover {
+    color: green;
+  }
 }
 
 tr:hover .table_menu {
@@ -730,7 +734,7 @@ tr:hover .table_menu {
 
 table.display thead th {
   padding: 3px 18px 3px 10px;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid #000;
   font-weight: bold;
   cursor: pointer;
   *cursor: hand;
@@ -738,7 +742,7 @@ table.display thead th {
 
 table.display tfoot th {
   padding: 3px 18px 3px 10px;
-  border-top: 1px solid black;
+  border-top: 1px solid #000;
   font-weight: bold;
 }
 
@@ -1747,6 +1751,7 @@ div.align_text_right {
   border: 2px solid #ccc;
   display: inline-block;
   margin-right: 2em;
+  vertical-align: top;
   width: 66%;
 }
 
