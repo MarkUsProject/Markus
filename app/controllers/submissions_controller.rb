@@ -260,7 +260,7 @@ class SubmissionsController < ApplicationController
       @revision_number = repo.get_latest_revision.revision_number
       @revision_timestamp = repo.get_latest_revision.timestamp
     end
-    # generate an revisions' history with date and num
+    # Generate a revisions' history with date and num
     @revisions_history = []
     rev_number = repo.get_latest_revision.revision_number + 1
     rev_number.times.each do |rev|
