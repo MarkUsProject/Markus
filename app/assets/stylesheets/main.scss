@@ -7,7 +7,6 @@
 body {
 	background-color: $bg-color;
   font: 0.8em/1.2em $sans-serif-font-stack;
-  // min-width: 600px;
 }
 
 .clear {
@@ -61,13 +60,16 @@ h4 {
 }
 
 #loggedIn, #container, #content {
-  min-height: 100%;
-  // height: auto;
+  height: 100%;
+}
+
+#container {
+  background: $primary-color;
 }
 
 #content {
-  background: $primary-color;
   margin: auto;
+  min-height: 100%;
   padding: 1.5em 2.5em;
   width: auto;
 }
@@ -93,7 +95,7 @@ input, textarea {
 }
 
 input {
-  transition: all 0.3s;
+  @include transition(all, 0.3s);
 }
 
 input:focus,
@@ -114,7 +116,7 @@ button,
 .button {
   @include background-gradient(#ededed, #dfdfdf);
   @include border-radius(6px);
-  @include box-shadow-inset(0, 1px, 0, 0, #fff);
+  @include box-shadow(0, 1px, 0, 0, #fff, inset);
   border-color: #a7b8be;
   border: 1px solid #ccc;
   color: #147;
@@ -386,13 +388,13 @@ legend {
 #menu a,
 #sub_menu a,
 #sub_sub_menu a {
+  @include transition(all, 0.25s);
   display: inline-block;
   font-size: 1em;
   font-weight: bold;
   height: 34px;
   padding: 10px;
   text-align: center;
-  transition: all 0.25s;
   vertical-align: bottom;
   width: 150px;
 }
@@ -1287,7 +1289,7 @@ input#extra_mark_description{
   @include border-radius(5px);
   @include box-shadow(0, 3px, 0, 0, #a4adac);
   background: #fff;
-  height: 400px;
+  height: auto;
   left: 50%;
   margin-left: -180px;
   margin-top: -200px;

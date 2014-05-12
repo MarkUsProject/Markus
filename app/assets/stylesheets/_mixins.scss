@@ -22,16 +22,10 @@
            border-bottom-left-radius: $radius;
 }
 
-@mixin box-shadow($h, $v, $blur, $spread, $color) {
-  -webkit-box-shadow: $h $v $blur $spread $color;
-     -moz-box-shadow: $h $v $blur $spread $color;
-          box-shadow: $h $v $blur $spread $color;
-}
-
-@mixin box-shadow-inset($h, $v, $blur, $spread, $color) {
-  -webkit-box-shadow: $h $v $blur $spread $color inset;
-     -moz-box-shadow: $h $v $blur $spread $color inset;
-          box-shadow: $h $v $blur $spread $color inset;
+@mixin box-shadow($h, $v, $blur, $spread, $color, $inset:"") {
+  -webkit-box-shadow: $h $v $blur $spread $color #{$inset};
+     -moz-box-shadow: $h $v $blur $spread $color #{$inset};
+          box-shadow: $h $v $blur $spread $color #{$inset};
 }
 
 @mixin background-gradient($start, $end) {
@@ -41,7 +35,15 @@
   background-color: $start;
 }
 
-@mixin size($width, $height: $width) {
-  width: $width;
+@mixin size($width, $height:$width) {
   height: $height;
+  width: $width;
+}
+
+@mixin transition($property, $duration, $timing-function:"ease", $delay:"0s") {
+  -webkit-transition: $property $duration #{$timing-function} #{$delay};
+     -moz-transition: $property $duration #{$timing-function} #{$delay};
+      -ms-transition: $property $duration #{$timing-function} #{$delay};
+       -o-transition: $property $duration #{$timing-function} #{$delay};
+          transition: $property $duration #{$timing-function} #{$delay};
 }
