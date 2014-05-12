@@ -65,9 +65,9 @@ end
 # for production.
 group :development, :test do
   gem 'rdoc'
-  gem 'iconv', :platforms => :mri_20
+  gem 'iconv', :platforms => [:mri_20, :mri_21]
   gem 'rcov', :platforms => :mri_18
-  gem 'simplecov', :platforms => [:mri_19,:mri_20]
+  gem 'simplecov', :platforms => [:mri_19,:mri_20, :mri_21]
   # FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
   # we have to fix before doing an upgrade
   gem 'shoulda', '<3.4'
@@ -80,7 +80,7 @@ group :development, :test do
   gem 'railroady'
   gem 'time-warp'
   gem 'ruby-debug', :platforms => :mri_18
-  gem 'debugger', :platforms =>  [:mri_19,:mri_20]
+  gem 'debugger', :platforms =>  [:mri_19,:mri_20, :mri_21]
   gem 'mocha', :require => false
 end
 
