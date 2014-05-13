@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=latin,latin-ext);
+
 @import 'reset';
 @import 'mixins';
 @import 'constants';
@@ -320,6 +322,7 @@ legend {
   background: none;
   border: none;
   color: #464646;
+  font-weight: normal;
 }
 
 .sub_title a {
@@ -548,6 +551,7 @@ span#choose_an_assignment {
 /* Footer */
 
 footer {
+  color: #777;
   padding: 2em;
   text-align: center;
 }
