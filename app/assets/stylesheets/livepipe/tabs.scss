@@ -26,15 +26,14 @@ ul.subsection_tabs {
   li.tab {
     @include border-radius-top(5px);
     background: #B7D3EC;
-    float: left;
-    margin: 0 2px 0 0;
+    display: inline-block;
     text-align: center;
 
     a {
       @include border-radius-top(5px);
       background: #B7D3EC;
       display: block;
-      height: 23px;
+      height: 26px;
       padding: 4px 10px 0 10px;
     }
 
