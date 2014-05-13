@@ -3,6 +3,8 @@
 <tr
 <% if grouping.is_collected? %>
   style="background-color: #90EE90"
+<% elsif grouping.error_collecting %>
+  style="background-color: #FA2A00"
 <% end %>>
 
 <td>

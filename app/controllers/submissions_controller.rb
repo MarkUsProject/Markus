@@ -488,6 +488,11 @@ class SubmissionsController < ApplicationController
       end
     end
 
+    # Check if any groupings have an error and log it
+    if @groupings.any? {|group| group.error_collecting}
+      flash[:error] = I18n.t('browse_submissions.error_collecting')
+    end
+
     if cookies[@c_per_page].blank?
        cookies[@c_per_page] = params[:per_page]
     end
