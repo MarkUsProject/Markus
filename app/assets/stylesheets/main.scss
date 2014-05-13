@@ -64,7 +64,7 @@ h4 {
 #content {
   background: $primary-color;
   margin: auto;
-  padding: 1.5em 2.5em;
+  padding: 1.5em 3.5em;
   width: auto;
 }
 
@@ -251,13 +251,13 @@ legend {
 /* Header */
 
 #header {
-  padding: 0.5em 2.5em;
+  padding: 0.5em 3.5em;
   border-bottom: 1px solid $light-blue;
 }
 
 #user_info {
   position: absolute;
-  right: 5px;
+  right: 3.5em;
   top: 0;
   width: auto;
 }
@@ -268,7 +268,7 @@ legend {
 
 #logo {
   font-size: 0.875em;
-  margin: 5px 10px 10px 2.5em;
+  margin: 5px 10px 10px 3.5em;
 
   a {
     padding: 5px;
@@ -279,13 +279,12 @@ legend {
 
 .wrapLeft,
 .wrapRight {
-  padding: 0 1.3em;
+  // padding: 0 1.3em;
   min-width: 75%;
 }
 
 .wrapLeftGroups,
 .wrapRightGroups {
-  padding: 0 1.5em;
   min-width: 75%;
 }
 
@@ -297,7 +296,7 @@ legend {
 /* Title Bar*/
 
 #title_bar {
-  padding-left: 15px;
+  // padding-left: 15px;
 }
 
 #title_bar h1,
@@ -334,7 +333,7 @@ legend {
 #title_bar a:hover {
   background: none;
   border: none;
-  color: #EE6415;
+  color: #ee6415;
 }
 
 #new_files input {
@@ -407,7 +406,7 @@ legend {
     background: #fff;
     border: 2px solid $blue;
     display: none;
-    left: 2.5em;
+    left: 3.5em;
     opacity: 0;
     padding: 0;
     position: absolute;
@@ -420,15 +419,9 @@ legend {
       @include border-radius(0);
     }
 
-    a,
-    #drop_down_current_assignment {
-      color: #464646;
-      display: block;
-      height: auto;
-      margin: 0;
-      padding: 0.5em;
-      text-align: left;
-      width: 188px;
+    li:last-child,
+    li:last-child #drop_down_current_assignment {
+      @include border-radius-bottom(10px);
     }
 
     li:hover {
@@ -439,8 +432,15 @@ legend {
       }
     }
 
-    li:last-child {
-      @include border-radius-bottom(10px);
+    a,
+    #drop_down_current_assignment {
+      color: #464646;
+      display: block;
+      height: auto;
+      margin: 0;
+      padding: 0.5em;
+      text-align: left;
+      width: 188px;
     }
 
     #drop_down_current_assignment {
@@ -490,7 +490,7 @@ span#choose_an_assignment {
 #sub_sub_menu {
   display: block;
   margin: 0;
-  padding-left: 2.5em;
+  padding-left: 3.5em;
 
   a {
     color: #464646;
@@ -1283,7 +1283,7 @@ input#extra_mark_description{
 
 .headingButtons {
   margin-top: -2em;
-  padding: 0 1.3em;
+  padding: 0 3.5em;
   position: absolute;
   right: 0;
 }
@@ -1587,11 +1587,8 @@ tfoot tr td:hover {
 }
 
 .FilterTable_header,
-.FilterTable_footer {
-  padding-left: 1.3em;
-}
-
-#list td{
+.FilterTable_footer,
+#list td {
   padding-left: 1.3em;
 }
 
@@ -1701,10 +1698,6 @@ div.align_text_right {
 #flexible_criteria_pane,
 #annotation_category_pane {
   display: inline-block;
-}
-
-#flexible_criteria_pane,
-#annotation_category_pane {
   padding: 0 2%;
   width: 24%;
 }
@@ -1750,12 +1743,15 @@ div.align_text_right {
   width: 90%;
 }
 
-#rubric_criteria_list_title_bar, #flexible_criteria_list_title_bar, .annotation_categories_list_bar {
+#rubric_criteria_list_title_bar,
+#flexible_criteria_list_title_bar,
+.annotation_categories_list_bar {
   margin-bottom: 5px;
   min-height: 15px;
   padding-bottom: 5px;
 }
 
+#rubric_levels_pane,
 #flexible_edition_pane,
 #annotations_pane {
   @include border-radius(10px);
@@ -1764,19 +1760,14 @@ div.align_text_right {
   margin-right: 2em;
   vertical-align: top;
   width: 66%;
+
+  h2 {
+    padding-left: 10px;
+  }
 }
 
-#rubric_levels_pane {
-  @include border-radius(10px);
-  border: 2px solid #ccc;
-  margin-left: 300px;
-}
-
-#rubric_levels_pane h2, #flexible_edition_pane h2, #annotations_pane_menu h2{
-  padding-left:10px;
-}
-
-#rubrics_help, #annotations_help{
+#rubrics_help,
+#annotations_help{
   font-style: italic;
   line-height: 1.6em;
   padding: 0 10px 10px 10px;
@@ -1795,11 +1786,14 @@ div.align_text_right {
   background: #ccc;
 }
 
-#rubric_criteria_pane ul, #flexible_criteria_pane ul{
+#rubric_criteria_pane ul,
+#flexible_criteria_pane ul{
   list-style: none;
 }
 
-#rubric_criteria_pane li, #flexible_criteria_pane li{
+#rubric_criteria_pane li,
+#flexible_criteria_pane li,
+#annotation_category_pane_list li {
   border-top: 1px solid #ccc;
   min-height: 35px;
   padding: 2px 0;
@@ -1810,7 +1804,8 @@ div.align_text_right {
   display: inline;
 }
 
-input.button_to_criteria_expansion, input.button_to_delete_deduction {
+input.button_to_criteria_expansion,
+input.button_to_delete_deduction {
   font-size: 0.8em;
   margin-bottom: 4px;
   margin: 1px;
@@ -1818,21 +1813,15 @@ input.button_to_criteria_expansion, input.button_to_delete_deduction {
   padding: 2px;
 }
 
-#annotation_category_pane_list li{
-  border-top: 1px solid #ccc;
-  min-height: 25px;
-  padding: 2px 0;
-  width: 100%;
-}
-
-
 .criterion_handle {
   cursor: move;
   float: left;
   padding-left: 3px;
 }
 
-.criterion_title_div, .annotation_category_title {
+.annotation_title_div,
+.criterion_title_div,
+.annotation_category_title {
   float: left;
   padding: 2px 2px 0 10px;
 }
@@ -1842,16 +1831,19 @@ input.button_to_criteria_expansion, input.button_to_delete_deduction {
   padding-left: 3px;
 }
 
-.criterion_weight, .criterion_max {
+.criterion_weight,
+.criterion_max {
   float: right;
   padding: 2px 4px 0 2px;
 }
 
-.delete_criterion a img{
+.delete_criterion a img {
   border: none;
 }
 
-.main_rubric_criteria_edit, .main_flexible_criteria_edit, #flexible_criteria_preview{
+.main_rubric_criteria_edit,
+.main_flexible_criteria_edit,
+#flexible_criteria_preview{
   @include border-radius(10px);
   background: #F8F8F8;
   border: 2px solid #ccc;
@@ -1864,7 +1856,7 @@ input.button_to_criteria_expansion, input.button_to_delete_deduction {
   width: 280px;
 }
 
-.rubric_criteria_levels{
+.rubric_criteria_levels {
   margin-left: 340px;
   margin-right: 1em;
 }
@@ -1895,11 +1887,12 @@ input.criterion_input_name{
   width: 25em;
 }
 
-.criteria_edit_total_mark{
+.criteria_edit_total_mark {
   font-style: italic;
 }
 
-#rubric_levels_pane_menu li, #flexible_edition_pane_menu li{
+#rubric_levels_pane_menu li,
+#flexible_edition_pane_menu li {
   list-style: none;
   padding-bottom: 1em;
 }

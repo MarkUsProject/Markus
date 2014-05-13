@@ -21,16 +21,13 @@
 #rubric_levels_pane_menu,
 #flexible_edition_pane_menu {
   background: #ccc;
-}
 
-#rubric_criteria_pane_menu h2,
-#flexible_criteria_pane_menu,
-#rubric_levels_pane_menu h2,
-#flexible_edition_pane_menu h2 {
-  border-bottom: 2px solid #dadada;
-  color: #000;
-  margin: 0;
-  padding: 10px;
+  h2 {
+    border-bottom: 2px solid #dadada;
+    color: #000;
+    margin: 0;
+    padding: 10px;
+  }
 }
 
 #rubric_criteria_pane_menu{
@@ -64,8 +61,8 @@ ul#rubric_levels_pane_list {
   width: 100%;
 }
 
-  #rubric_levels_pane_list .rowA { background: #fffcc4; }
-  #rubric_levels_pane_list .rowB { background: #fffbb6; }
+  #rubric_levels_pane_list li:nth-child(even) { background: #fffcc4; }
+  #rubric_levels_pane_list li:nth-child(odd) { background: #fffbb6; }
 
 /* ================ CRITERIONS ============== */
 
@@ -98,10 +95,12 @@ ul#rubric_levels_pane_list {
 .criterion_delete {
   float: right;
 }
+
 .criterion_input_name {
   float: left;
   width: 300px;
 }
+
 .criterion_input_weight {
   display: inline;
   text-align: center;
