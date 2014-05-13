@@ -5,7 +5,7 @@ Rules:
 **/
 
 var PeriodDeltaChain = Class.create({
- 
+
   initialize: function(params) {
     if (Date.parseFormattedString == null || Date.parseFormattedString == undefined) {
       throw("Expected Date.prototype.parseFormattedString implemented.  See CalendarDateSelect plugin for Rails");
@@ -26,18 +26,17 @@ var PeriodDeltaChain = Class.create({
       var from_time = new Date(current_time);
       var to_time = new Date(current_time);
       to_time.setTime(to_time.getTime() + (me.hour * hours_value));
-      
-      from_time_node.update(from_time.toDateString() + ' ' + from_time.toLocaleTimeString());
-      to_time_node.update(to_time.toDateString() + ' ' + to_time.toLocaleTimeString());
+
+      from_time_node.update(from_time.toLocaleString());
+      to_time_node.update(to_time.toLocaleString());
 
       current_time = to_time;
-
     });
   },
   set_due_date: function(new_due_date) {
     delete this.due_date;
     this.due_date = (typeof new_due_date == 'undefined' ?
-                     new Date() : new Date(Date.parseFormattedString(new_due_date)) );
+                     new Date() : new Date(Date.parseFormattedString(new_due_date)));
   },
   set_or_default: function(value, default_value) {
     if (typeof value == 'undefined') {
