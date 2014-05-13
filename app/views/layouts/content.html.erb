@@ -1,7 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
+<!DOCTYPE html>
+<html>
 <head>
 	<%= render :partial => 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
@@ -17,7 +15,6 @@
   <%= csrf_meta_tags %>
   <%= yield :head %>
 </head>
-
 <body>
   <div id="<%= controller.action_name == 'login' ? "loggedOut" : "loggedIn" %>">
     <%= render :partial => 'layouts/header' %>
@@ -27,12 +24,10 @@
     <%= render :partial => 'layouts/about' %>
     <%= render :partial => 'layouts/role_switch' %>
     <%= render :partial => 'layouts/redirect' %>
-    <div id="container">
-      <div id="content">
-        <%= render :partial => 'layouts/noscript'%>
-        <%= content_for?(:content) ? yield(:content) : yield %>
-      </div> <!-- content -->
-    </div> <!-- container -->
+    <div id="content">
+      <%= render :partial => 'layouts/noscript'%>
+      <%= content_for?(:content) ? yield(:content) : yield %>
+    </div> <!-- content -->
   </div>
 
   <!-- Toggle jQuery's noConflict mode so it does not conflict with Prototype -->
