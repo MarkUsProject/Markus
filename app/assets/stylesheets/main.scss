@@ -256,14 +256,11 @@ legend {
 }
 
 #user_info {
+  padding-top: 6px;
   position: absolute;
   right: 3.5em;
   top: 0;
   width: auto;
-}
-
-#logout_area {
-  margin-top: -5px;
 }
 
 #logo {
@@ -545,6 +542,14 @@ span#choose_an_assignment {
       font-weight: bold;
     }
   }
+}
+
+
+/* Footer */
+
+footer {
+  padding: 2em;
+  text-align: center;
 }
 
 
@@ -1136,15 +1141,15 @@ input#extra_mark_description{
   }
 }
 
-#about_icon {
-  border-right: 1px solid #777;
-}
-
 #about_icon,
 #switch_role_icon {
   padding: 0 0.5em;
   position: relative;
   top: 0.3em;
+}
+
+#switch_role_icon {
+  margin-top: -1em;
 }
 
 #about_dialog a {

@@ -24,10 +24,11 @@
     <%= render :partial => 'layouts/about' %>
     <%= render :partial => 'layouts/role_switch' %>
     <%= render :partial => 'layouts/redirect' %>
-    <div id="content">
+    <section id="content">
       <%= render :partial => 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
-    </div> <!-- content -->
+    </section>
+    <%= render :partial => 'layouts/footer' %>
   </div>
 
   <!-- Toggle jQuery's noConflict mode so it does not conflict with Prototype -->
