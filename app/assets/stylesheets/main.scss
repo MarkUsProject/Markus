@@ -1,5 +1,3 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=latin,latin-ext);
-
 @import 'reset';
 @import 'mixins';
 @import 'constants';
@@ -8,7 +6,7 @@
 
 body {
   background-color: $bg-color;
-  font: 0.8em/1.2em $sans-serif-font-stack;
+  font: 0.8em/1.2em $font-stack;
 }
 
 .clear {
@@ -16,16 +14,19 @@ body {
 }
 
 a {
+  @include transition(all, 0.2s);
   color: $blue;
   font-size: 1em;
 }
 
 a:hover {
-  color: #ee6415;
+  color: $hover;
 }
 
-h2 a, h3 a, h4 a {
-  font: 0.75em $serif-font-stack;
+h2 a,
+h3 a,
+h4 a {
+  font: 0.75em $font-stack;
   padding-left: 5px;
 }
 
@@ -34,7 +35,7 @@ h2 a.title {
 }
 
 a.delete{
-  color: #ee6415;
+  color: $hover;
 }
 
 a.delete:hover{
@@ -43,23 +44,24 @@ a.delete:hover{
 
 a.rubric_criterion_link {
   color: #000;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 h1 {
   color: $grey;
   font-size: 1.5em;
+  line-height: 1.25em;
 }
 
 h4 {
   border-bottom: 1px solid #ccc;
   color: $grey;
-  font-style: italic;
   padding-bottom: 3px;
   padding-left: 3px;
 }
 
-#loggedIn, #content {
+#loggedIn,
+#content {
   min-height: 100%;
 }
 
@@ -77,12 +79,13 @@ form.download_zip {
   display: inline;
 }
 
-input, textarea {
+input,
+textarea {
   @include border-radius(5px);
   background: #f5f5f5;
   border: 1px solid #ccc;
   color: #222;
-  font: 1em $sans-serif-font-stack;
+  font: 1em $font-stack;
   margin: 5px;
   min-width: 100px;
   outline: none;
@@ -101,7 +104,7 @@ textarea:focus {
 
 input:hover,
 textarea:hover {
-  border-color: #77989e;
+  border-color: $hover;
 }
 
 input[type=button],
@@ -109,19 +112,24 @@ input[type=submit],
 input[type=reset],
 button,
 .button {
-  @include background-gradient(#ededed, #dfdfdf);
-  @include border-radius(6px);
-  @include box-shadow(0, 1px, 0, 0, #fff, inset);
-  border: 1px solid #a7b8be;
-  color: #147;
+  @include background-gradient(#ededed, #e3e3e3);
+  @include border-radius(5px);
+  @include box-shadow(0 1px 0 0 #fff inset);
+  @include transition(all, 0.15s);
+  border: 1px solid $light-blue;
+  color: $grey;
   cursor: pointer;
   display: inline-block;
-  font-size: 0.9em;
-  font-weight: bold;
+  font-size: 1em;
+  font-weight: 600;
   outline: none;
-  padding: 6px 24px;
+  padding: 0.5em 2em;
   text-decoration: none;
   text-shadow: 1px 1px 0 $primary-color;
+}
+
+.button {
+  padding: 0.6em 2em;
 }
 
 input[type=button]:hover,
@@ -129,9 +137,9 @@ input[type=submit]:hover,
 input[type=reset]:hover,
 button:hover,
 .button:hover {
-  @include background-gradient(#fefefe, #dfdfdf);
-  border-color: $light-blue;
-  color: #147;  /* override for a.button */
+  @include box-shadow(0 1px 0 0 #ccc, 0 1px 0 0 #fefefe inset);
+  border-color: $hover;
+  color: $grey;  /* override for a.button */
 }
 
 input[type=button]:focus,
@@ -147,7 +155,8 @@ input[type=submit]:active,
 input[type=reset]:active,
 button:active,
 .button:active {
-  @include background-gradient(#dfdfdf, #ededed);
+  @include background-gradient(#e3e3e3, #ededed);
+  @include box-shadow(none);
   border-color: #77989e;
   position: relative;
   top: 1px;
@@ -159,12 +168,15 @@ input[type=reset][disabled],
 button[disabled],
 .button[disabled] {
   @include background-gradient(#eee, #ddd);
+  @include box-shadow(none);
   border-color: #a7b8be;
   top: 0;
 }
 
   /* .thin-button, a button sized to fit inline */
-  input[type=button].thin-button, input[type=submit].thin-button, button.thin-button {
+  input[type=button].thin-button,
+  input[type=submit].thin-button,
+  button.thin-button {
     padding: 3px 15px;
   }
 
@@ -184,14 +196,15 @@ input[disabled]:hover {
 }
 
 select {
-  background: none;
-  padding-left: 5px;
-  margin: 5px;
   @include border-radius(4x);
+  background: none;
   border: 1px solid #a7b8be;
+  margin: 5px;
+  padding-left: 5px;
 }
 
-label, .label {
+label,
+.label {
   display: inline-block;
   width: 150px;
   padding-top: 3px;
@@ -199,7 +212,9 @@ label, .label {
   padding-left: 5px;
 }
 
-label.radio_label, label.checkbox_label, label.inline_label {
+label.radio_label,
+label.checkbox_label,
+label.inline_label {
   float: none;
   display: inline;
   min-width: 0;
@@ -231,14 +246,14 @@ label.bold_inline_label {
 
 fieldset {
   @include border-radius(10px);
-  border: 2px solid #ccc;
-  margin-bottom: 2.5em;
+  border: 1px solid #ccc;
+  margin: 1.5em 0;
 }
 
 legend {
   color: $grey;
   font-style: italic;
-  font-weight: bold;
+  font-weight: 600;
   margin: 0 0.5em;
   padding: 0 0.4em;
 }
@@ -253,16 +268,24 @@ legend {
 /* Header */
 
 #header {
-  padding: 0.5em 3.5em;
   border-bottom: 1px solid $light-blue;
+  padding: 0.5em 3.5em;
+  text-align: right;
 }
 
 #user_info {
-  padding-top: 6px;
-  position: absolute;
-  right: 3.5em;
-  top: 0;
+  display: inline;
   width: auto;
+}
+
+#user_name {
+  font-weight: 300;
+}
+
+#course {
+  display: inline;
+  float: left;
+  text-align: left;
 }
 
 #logo {
@@ -278,7 +301,6 @@ legend {
 
 .wrapLeft,
 .wrapRight {
-  // padding: 0 1.3em;
   min-width: 75%;
 }
 
@@ -305,6 +327,10 @@ legend {
   color: $grey;
 }
 
+#second_title {
+  margin-top: 3.5em;
+}
+
 #title_bar input,
 #title_bar a,
 .sub_title a {
@@ -313,7 +339,7 @@ legend {
   color: $blue;
   cursor: pointer;
   font-size: 12px;
-  font-weight: bold;
+  font-weight: 600;
   margin: 0;
   min-width: 5px;
   padding: 0 4px;
@@ -335,7 +361,7 @@ legend {
 #title_bar a:hover {
   background: none;
   border: none;
-  color: #ee6415;
+  color: $hover;
 }
 
 #new_files input {
@@ -361,7 +387,7 @@ legend {
 
   a {
     display: block;
-    height: 40px;
+    height: 41px;
     margin: 0;
     padding: 0.85em;
     text-align: center;
@@ -394,7 +420,7 @@ legend {
 
   a {
     color: #fff !important;
-    font-weight: bold;
+    font-weight: 600;
   }
 }
 
@@ -406,13 +432,13 @@ legend {
   ul.dropdown {
     @include border-radius-bottom(10px);
     background: $primary-color;
-    border: 2px solid $blue;
+    border: 1px solid $blue;
     display: none;
     left: 3.5em;
     opacity: 0;
     padding: 0;
     position: absolute;
-    top: 105px;
+    top: 107px;
     visibility: hidden;
     width: 15em;
     z-index: 10;
@@ -440,21 +466,21 @@ legend {
       display: block;
       height: auto;
       margin: 0;
-      padding: 0.5em;
+      padding: 0.6em 0.75em;
       text-align: left;
-      width: 188px;
+      width: 190px;
     }
 
     #drop_down_current_assignment {
       background: $light-blue;
       color: $primary-color;
-      font-weight: bold;
+      font-weight: 600;
     }
 
     #admin_items {
       border-bottom: 1px solid #444;
       margin: 0.5em 0;
-      width: 188px;
+      width: 190px;
     }
   }
 }
@@ -462,10 +488,10 @@ legend {
 span#choose_an_assignment {
   @include border-radius(10px);
   background: $primary-color;
-  border: 2px solid $blue;
+  border: 1px solid $blue;
   cursor: pointer;
   display: inline-block;
-  font-weight: bold;
+  font-weight: 400;
   height: 2.5em;
   margin-top: 4px;
   padding: 0.5em 1em;
@@ -491,6 +517,7 @@ span#choose_an_assignment {
 #sub_menu,
 #sub_sub_menu {
   display: block;
+  height: auto;
   margin: 0;
   padding-left: 3.5em;
 
@@ -512,7 +539,7 @@ span#choose_an_assignment {
 
 #sub_menu {
   background: $light-blue;
-  height: 42px;
+  min-height: 42px;
 
   a {
     color: $primary-color;
@@ -524,7 +551,7 @@ span#choose_an_assignment {
 
     a {
       color: $grey !important;
-      font-weight: bold;
+      font-weight: 600;
     }
   }
 }
@@ -544,7 +571,7 @@ span#choose_an_assignment {
 
     a {
       color: $primary-color;
-      font-weight: bold;
+      font-weight: 600;
     }
   }
 }
@@ -554,8 +581,25 @@ span#choose_an_assignment {
 
 footer {
   color: #777;
+  font-size: 0.95em;
   padding: 2em;
   text-align: center;
+
+  a {
+    color: #777;
+  }
+}
+
+#lang_chooser {
+  border-left: 1px solid #aaa;
+  margin: 0 1em;
+  padding-left: 1em;
+
+  select {
+    border: none;
+    color: #777;
+    margin: 0;
+  }
 }
 
 
@@ -614,7 +658,7 @@ footer {
   min-width: 0;
   @include border-radius(0);
   border: transparent;
-  font-weight: bold;
+  font-weight: 600;
   padding: 0;
   margin: 0;
   background-color: transparent;
@@ -634,12 +678,12 @@ footer {
 
 .filter_selected {
   color: #000;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 a.filter_selected:hover {
   color: #000;
-  font-weight: bold;
+  font-weight: 600;
   cursor: default;
 }
 
@@ -649,24 +693,31 @@ table {
   margin: 4px 0;
 }
 
-table tr td.loading, table tr td:hover.loading {
+table tr td.loading,
+table tr td:hover.loading {
   height: 30px;
   padding-left: 8px;
   border: 0;
   background-color: $primary-color;
 }
 
-thead, tfoot {
+thead,
+tfoot {
   background: #dfdfdf;
   text-align: left;
 }
 
-th, tfoot tr td {
+thead {
+  border-bottom: 1px solid #ccc;
+}
+
+th,
+tfoot tr td {
   height: 18px;
   color: $grey;
-  font-weight: bold;
+  font-weight: 600;
   border: none;
-  padding: 3px;
+  padding: 0.5em 3px;
 }
 
 th.center {
@@ -676,8 +727,12 @@ th.center {
 td {
   border: none;
   border-bottom: 1px solid #ccc;
-  padding: 3px;
+  padding: 0.5em 3px;
   margin-left: 2px;
+
+  p {
+    margin: 0.5em 0 0 0;
+  }
 }
 
 td.center {
@@ -687,6 +742,19 @@ td.center {
 td.note {
   padding: 5px;
   text-align: left;
+
+  form {
+    display: inline-block;
+    width: auto;
+  }
+}
+
+td.note:last-child {
+  text-align: right;
+}
+
+tbody tr {
+  @include transition(all, 0.2s);
 }
 
 tbody tr:hover {
@@ -700,7 +768,7 @@ tbody tr:hover {
   button {
     color: $blue;
     font-size: 0.8em;
-    font-family: $serif-font-stack;
+    font-family: $font-stack;
     text-decoration: none;
     cursor: pointer;
     font-weight: normal;
@@ -713,7 +781,7 @@ tbody tr:hover {
 
   a:hover,
   button:hover {
-    color: #ee6415;
+    color: $hover;
   }
 
   a.delete:hover,
@@ -732,7 +800,7 @@ tr:hover .table_menu {
 }
 
 .link {
-  font-weight: bold;
+  font-weight: 600;
   color: $blue;
   cursor: pointer;
   padding: 0.1em;
@@ -750,7 +818,7 @@ tr:hover .table_menu {
 table.display thead th {
   padding: 3px 18px 3px 10px;
   border-bottom: 1px solid #000;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   *cursor: hand;
 }
@@ -758,7 +826,7 @@ table.display thead th {
 table.display tfoot th {
   padding: 3px 18px 3px 10px;
   border-top: 1px solid #000;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 table.display tr.heading2 td {
@@ -967,7 +1035,7 @@ input#extra_mark_description{
 
 .status_inviter{
    font-style: italic;
-   font-weight: bold;
+   font-weight: 600;
 }
 
 .status_pending{
@@ -980,7 +1048,7 @@ input#extra_mark_description{
   border: 1px solid #acacac;
   font-size: 1.4em;
   font-style: italic;
-  font-weight: bold;
+  font-weight: 600;
   margin: 10px;
   padding: 10px;
 }
@@ -995,26 +1063,45 @@ input#extra_mark_description{
 }
 
 /* flash messages, & warning */
+.banner {
+  @include border-radius(5px);
+  padding: 0.5em 2em;
+  margin: 0.5em 0;
+}
+
 .success {
+  @extend .banner;
   background: #bdfcc9 url(icons/accept.png) no-repeat 5px center;
   border: 1px solid #458b00;
-  margin: 5px;
-  padding: 3px 30px;
-  text-align: left;
+}
+
+.notice {
+  @extend .banner;
+  background: #ffffe0;
+  border: 1px solid #e6db55;
+}
+
+.information {
+  @extend .banner;
+  background: #efefef url(icons/information.png) no-repeat 5px center;
+  border: 1px solid #d1d1d1;
+}
+
+.warning {
+  @extend .banner;
+  background: #ffffe0 url(icons/error.png) no-repeat 5px center;
+  border: 1px solid #e6db55;
 }
 
 .error,
-.errorExplanation{
-  background: #ffffe0 url('icons/exclamation.png') no-repeat 5px center;
-  border: 1px solid #e6db55;
-  margin: 1em 4em 1em 4em;
-  margin: 5px;
-  padding: 3px 3em;
-  text-align: left;
+.errorExplanation {
+  @extend .banner;
+  background: #fbc5c5 url('icons/exclamation.png') no-repeat 5px center;
+  border: 1px solid #cf3c2b;
 
   h2 {
     font-size: 1em;
-    font-weight: bold;
+    font-weight: 600;
     margin: 0;
     padding: 0.5em 0;
   }
@@ -1031,27 +1118,6 @@ input#extra_mark_description{
   }
 }
 
-.notice,
-.information,
-.warning {
-  @include border-radius(5px);
-  padding: 3px 30px;
-  margin: 5px;
-}
-
-.notice {
-  background: #ffffe0;
-  border: 1px solid #e6db55;
-}
-
-.information {
-  background: #efefef url(icons/information.png) no-repeat 7px 0;
-}
-
-.warning {
-  background: #ffffe0 url(icons/error.png) no-repeat 7px 0;
-}
-
 .group form {
   margin: 0;
 }
@@ -1063,10 +1129,18 @@ input#extra_mark_description{
 
 /* Modal windows*/
 
-#control_overlay {
-  background: #000;
+.ui-widget {
+  font-family: $font-stack !important;
+
+  input,
+  select,
+  textarea,
+  button {
+    font-family: $font-stack !important;
+  }
 }
 
+#control_overlay,
 .ui-widget-overlay {
   background: #777 !important;
 }
@@ -1090,7 +1164,7 @@ input#extra_mark_description{
 #create_annotation_dialog,
 #redirect_dialog {
   @include border-radius(5px);
-  @include box-shadow(0, 0, 10px, 3px, #aaa);
+  @include box-shadow(0 0 10px 3px #aaa);
   background: #fff !important;
   padding: 2em;
 }
@@ -1322,7 +1396,7 @@ input#extra_mark_description{
 
 .login {
   @include border-radius(5px);
-  @include box-shadow(0, 3px, 0, 0, #a4adac);
+  @include box-shadow(0 3px 0 0 #a4adac);
   background: $primary-color;
   height: auto;
   left: 50%;
@@ -1331,6 +1405,15 @@ input#extra_mark_description{
   position: absolute;
   top: 50%;
   width: 360px;
+
+  /* Mobile friendly login page */
+  @include breakpoint(tiny) {
+    @include border-radius(0);
+    @include box-shadow(none);
+    left: 0;
+    margin-left: 0;
+    width: 100%;
+  }
 
   .login-form {
     margin: 20px auto 0 auto;
@@ -1381,34 +1464,25 @@ input#extra_mark_description{
   }
 }
 
-/* Mobile friendly login page */
-@media all and (max-width: 360px) {
-  .login {
-    @include border-radius(0);
-    @include box-shadow(0, 0, 0, 0, transparent);
-    left: 0;
-    margin-left: 0;
-    width: 100%;
-  }
-}
-
 
 /* Student Interface: Assignment View*/
 
 .block {
   @include border-radius(5px);
-  border: 1px solid #ccc;
-  margin: 10px auto;
+  border: 1px solid $light-blue;
+  margin: 15px auto;
   padding: 0;
   width: 95%;
 
   h2 {
-    background: #dfdfdf;
+    @include border-radius-top(5px);
+    background: #eee;
     border-bottom: 1px solid #ccc;
     color: $grey;
-    font-size: 1.1em;
+    font-size: 1.5em;
+    font-weight: 300;
     margin: 0;
-    padding: 5px 10px;
+    padding: 0.75em 10px;
   }
 }
 
@@ -1417,14 +1491,24 @@ input#extra_mark_description{
 #section h3 {
   border-bottom: 1px solid #ccc;
   color: $grey;
-  font-size: 1.1em;
-  font-style: italic;
-  font-weight: normal;
-  padding: 3px;
+  font-size: 1.25em;
+  font-weight: 300;
+  margin: 0 0 1em 0;
+  padding: 0.5em 0.1em;
 }
 
 .block_content {
-  padding: 10px;
+  padding: 10px 15px;
+
+  li {
+    margin-bottom: 0.5em;
+    margin-left: -1em;
+  }
+
+  // Invite button
+  input[type=button] {
+    margin-bottom: 2em;
+  }
 }
 
 .block_line {
@@ -1434,22 +1518,21 @@ input#extra_mark_description{
 }
 
 .sub_block {
-  margin: 0 15px;
+  margin: 0 0 1em 0;
 }
 
 div.sub_block span.prop_label {
-  display: block;
-  float: left;
-  font-weight: bold;
+  display: inline-block;
+  font-weight: 600;
   min-width: 150px;
 }
 
 div.sub_block span.box {
-  display: block;
+  display: inline-block;
 }
 
 #member_inviter {
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .membership_status_pending {
@@ -1461,22 +1544,23 @@ div.sub_block span.box {
   color: $grey;
 }
 
-span.info_red, span.info {
+span.info_red,
+span.info {
   font-size: 1em;
   line-height: 1.5em;
 }
 
 span.info_red {
-  color: #ee6415;
+  color: #f00;
 }
 
 span.info_number  {
-  font: 1.5em/1.5em $serif-font-stack;
+  font: 1.5em/1.5em $font-stack;
   margin-right: 5px;
 }
 
 span.info_date{
-  font: 1.2em/1.5em $serif-font-stack;
+  font: 300 1.2em/1.5em $font-stack;
   margin-right: 5px;
 }
 
@@ -1500,7 +1584,7 @@ span.title{
   border-bottom: 1px solid #ccc;
   color: $grey;
   display: block;
-  font-family: $serif-font-stack;
+  font-family: $font-stack;
   font-size: 0.9em;
   font-style: italic;
   margin-bottom: 5px;
@@ -1559,7 +1643,7 @@ th.ap_sorting_by {
 th.ap_sorting_by a {
   background: none;
   color: #000;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 th.ap_sorting_by_desc {
@@ -1658,6 +1742,11 @@ td.grade_entry_form_result {
   display: inline-block;
   vertical-align: top;
   width: 50%;
+
+  @include breakpoint(small) {
+    display: block;
+    width: 100%;
+  }
 }
 
 .floatLeft {
@@ -1679,10 +1768,18 @@ td.grade_entry_form_result {
 }
 
 #working {
-  background: #f00;
+  @include border-radius(5px);
+  @include box-shadow(0 0 5px 0 #aaa);
+  background: $light-blue;
   color: $primary-color;
+  font-weight: 600;
+  left: 50%;
+  margin-left: -7.5em;
+  padding: 0.5em;
   position: absolute;
-  right: 0;
+  text-align: center;
+  top: 1em;
+  width: 15em;
 }
 
 a.icon_remove {
@@ -1724,13 +1821,14 @@ div.align_text_right {
 #flexible_criteria_pane .criteria_fieldset,
 #annotation_category_pane .annotation_categories_fieldset {
   @include border-radius(10px);
-  border: 2px solid #ccc;
+  border: 1px solid #ccc;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-#rubric_criteria_pane ul, #flexible_criteria_pane ul{
+#rubric_criteria_pane ul,
+#flexible_criteria_pane ul{
   margin: 0;
   padding: 0;
 }
@@ -1773,31 +1871,25 @@ div.align_text_right {
 #flexible_edition_pane,
 #annotations_pane {
   @include border-radius(10px);
-  border: 2px solid #ccc;
+  border: 1px solid #ccc;
   display: inline-block;
   margin-right: 2em;
+  padding: 10px 15px;
   vertical-align: top;
   width: 66%;
-
-  h2 {
-    padding-left: 10px;
-  }
 }
 
 #rubrics_help,
 #annotations_help{
   font-style: italic;
   line-height: 1.6em;
-  padding: 0 10px 10px 10px;
 }
 
-#rubrics_help h2{
-  color: $grey;
-  padding: 0 10px;
-}
-
-#rubrics_help h3{
-  color: $grey;
+#rubrics_help {
+  h2,
+  h3 {
+    color: $grey;
+  }
 }
 
 .criterion_holder_selected{
@@ -1813,7 +1905,7 @@ div.align_text_right {
 #flexible_criteria_pane li,
 #annotation_category_pane_list li {
   border-top: 1px solid #ccc;
-  min-height: 35px;
+  min-height: 40px;
   padding: 2px 0;
   width: 100%;
 }
@@ -1864,7 +1956,7 @@ input.button_to_delete_deduction {
 #flexible_criteria_preview{
   @include border-radius(10px);
   background: #F8F8F8;
-  border: 2px solid #ccc;
+  border: 1px solid #ccc;
   margin: 10px;
   padding: 10px;
 }
@@ -1917,15 +2009,15 @@ input.criterion_input_name{
 
 /* Annotation category*/
 
-#annotation_list_holder{
-  padding: 0 1em;
+#annotation_list_holder {
+  // padding: 0 1em;
 
   h2 {
     margin: 0;
   }
 }
 
-ul#annotation_list{
+ul#annotation_list {
   list-style: none;
 
   li {
@@ -1976,7 +2068,7 @@ fieldset.period p{
 
 .PeriodDeltaChain_ToTime,
 .PeriodDeltaChain_FromTime{
-  font-weight: bold;
+  font-weight: 600;
   padding: 0 10px;
 }
 
@@ -2036,8 +2128,13 @@ fieldset.disabled{
   font-style: italic;
 }
 
-.invalid, .required_field {
+.invalid,
+.required_field {
   color: #f00;
+}
+
+.required_field {
+  margin-left: 0.25em;
 }
 
 .hidden {
@@ -2048,7 +2145,13 @@ fieldset.disabled{
   @include border-radius(5px);
   border: 1px solid #ccc;
   overflow: auto;
-  padding: 10px;
+  padding: 0.75em;
+
+  #api_key,
+  form {
+    display: inline-block;
+    width: auto;
+  }
 }
 
 div#test_results_controls {
@@ -2074,17 +2177,6 @@ pre#test_result_content {
   margin-left:20px;
   margin-top:20px;
   width:500px;
-}
-
-/* Language chooser styles */
-#lang_chooser {
-  border-left: 1px solid #777;
-  border-right: 1px solid #777;
-  padding-left: 5px;
-}
-
-#lang_chooser select {
-  border: none;
 }
 
 /* Dashboard Assignment Summary */
@@ -2115,12 +2207,13 @@ pre#test_result_content {
 
 .assignment_summary .title {
   color: #0a67ad;
+  font-weight: 300;
   margin: 0 0 15px 0;
   padding: 0;
 }
 
 .assignment_summary .due_date {
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .assignment_summary .due_date .after {

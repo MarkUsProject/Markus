@@ -1,8 +1,10 @@
-$sans-serif-font-stack: "Open Sans", "Lucida Grande", Verdana, Arial, sans-serif;
-     $serif-font-stack: "Georgia", "Times New Roman", serif;
-      $mono-font-stack: "Consolas", "Courier New", Courier, mono, serif;
-             $bg-color: #d2dbda;
-        $primary-color: #fff;
-           $light-blue: #89b1dd;
-                 $blue: #003399;
-                 $grey: #464646;
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=latin,latin-ext);
+
+     $font-stack: "Open Sans", "Lucida Grande", Verdana, Arial, sans-serif;
+$mono-font-stack: "Consolas", "Courier New", Courier, mono, serif;
+       $bg-color: #d2dbda;
+  $primary-color: #fff;
+     $light-blue: #89b1dd;
+           $blue: #086ae0;
+          $hover: #5197e3;
+           $grey: #464646;

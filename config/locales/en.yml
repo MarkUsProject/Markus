@@ -1,5 +1,5 @@
 en:
-    choose_language:    "Choose Language:"
+    choose_language:    "Language:"
     answer_yes:         "Yes"
     answer_no:          "No"
     markus:             "MarkUs"
@@ -134,7 +134,7 @@ en:
         properties:     "Assignment Properties"
         required_files:  "Required files"
         submission_rules:  "Submission Rules<span class='required_field'>*</span>"
-        required_files_read:  "Files required for this assignment"
+        required_files_read:  "Required files"
         no_required_files_read:  "There are no required files for this assignment."
         required_files_by_student:  "Add filename(s) that students would be required to submit:"
         add_required_file:  "Add a Required File"

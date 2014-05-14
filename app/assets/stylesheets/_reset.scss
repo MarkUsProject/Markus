@@ -395,6 +395,7 @@ select,
 textarea {
   font-size: 100%; /* 1 */
   margin: 0; /* 2 */
+  padding: 0;
   vertical-align: baseline; /* 3 */
   *vertical-align: middle; /* 3 */
 }
@@ -450,6 +451,7 @@ input[type="radio"] {
   padding: 0; /* 2 */
   *height: 13px; /* 3 */
   *width: 13px; /* 3 */
+  vertical-align: middle;
 }
 
 /*

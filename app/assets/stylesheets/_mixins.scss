@@ -22,10 +22,10 @@
            border-bottom-left-radius: $radius;
 }
 
-@mixin box-shadow($h, $v, $blur, $spread, $color, $inset:"") {
-  -webkit-box-shadow: $h $v $blur $spread $color #{$inset};
-     -moz-box-shadow: $h $v $blur $spread $color #{$inset};
-          box-shadow: $h $v $blur $spread $color #{$inset};
+@mixin box-shadow($shadow...) {
+  -webkit-box-shadow: $shadow;
+     -moz-box-shadow: $shadow;
+          box-shadow: $shadow;
 }
 
 @mixin background-gradient($start, $end) {
@@ -46,4 +46,23 @@
       -ms-transition: $property $duration #{$timing-function} #{$delay};
        -o-transition: $property $duration #{$timing-function} #{$delay};
           transition: $property $duration #{$timing-function} #{$delay};
+}
+
+$breakpoints: (
+  'tiny':   ( max-width:  360px ),
+  'small':  ( max-width:  500px ),
+  'medium': ( min-width:  992px ),
+  'large':  ( min-width: 1200px ),
+  'custom': ( min-height:  40em )
+);
+
+@mixin breakpoint($name) {
+  @if map-has-key($breakpoints, $name) {
+    @media #{inspect(map-get($breakpoints, $name))} {
+      @content;
+    }
+  }
+  @else {
+    @warn "Couldn't find a breakpoint named `#{$name}`.";
+  }
 }

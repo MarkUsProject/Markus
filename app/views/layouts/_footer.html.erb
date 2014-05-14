@@ -1,5 +1,8 @@
 <footer>
-  <%= t(:markus) %>
+  <%= link_to(I18n.t(:about_markus),
+      about_main_index_path(),
+      :remote => true) %>
+
   <span id="lang_chooser">
     <%= I18n.t(:choose_language) %>
     <%=
@@ -12,10 +15,4 @@
                    :selected => "#{I18n.locale}"),
                    { :onchange => "javascript:window.location.href = '/' + this.options[this.selectedIndex].value + '#{relative}';"}) %>
   </span>
-  <%= link_to(image_tag("icons/information.png",
-      :alt => I18n.t(:about_markus),
-      :title => I18n.t(:about_markus),
-      :id => "about_icon"),
-      about_main_index_path(),
-      :remote => true) %>
 </footer>

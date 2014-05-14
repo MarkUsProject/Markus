@@ -87,7 +87,7 @@
 }
 
 #annotation_menu {
-  @include border-radius(5px);
+  @include border-radius-top(5px);
   background: #b7d3ec;
 	padding: 5px;
   margin: 0 0 10px 0;
@@ -102,7 +102,8 @@
 
 #new_annotation_button {
   float: left;
-  margin: 0;
+  font-weight: 300;
+  margin: 0 5px 0 0;
 }
 
 .edit_remove_annotation_button {
@@ -110,7 +111,7 @@
   background: #fff;
   border: 2px solid #ccc;
   color: #464646;
-  font: bold 0.85em $sans-serif-font-stack;
+  font: bold 0.85em $font-stack;
   margin: 5px;
   min-width: 0;
   padding: 3px 10px 3px 10px;
@@ -119,10 +120,10 @@
 li.annotation_category {
   @include border-radius(10px);
   background: #fff;
-  border: 2px #ccc solid;
-  color: #464646;
-  float: left;
-  font-weight: bold;
+  border: 1px solid #ccc;
+  color: $grey;
+  display: inline-block;
+  font-weight: 600;
   padding: 3px 5px;
 }
 
@@ -283,7 +284,7 @@ li.annotation_category {
   @include border-radius(10px);
   background: url("/stylesheets/window_background.png") top left;
   color: #fff;
-  font: bold 0.8em $sans-serif-font-stack;
+  font: bold 0.8em $font-stack;
   min-height: 100px;
   min-width: 150px;
   padding: 10px;
@@ -455,10 +456,6 @@ li.annotation_category {
 
 #selected_criterion_name {
   font-weight: bold;
-}
-
-.clear {
-  clear: both;
 }
 
 
