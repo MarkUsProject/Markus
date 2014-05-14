@@ -47,13 +47,13 @@ a.rubric_criterion_link {
 }
 
 h1 {
-  color: #464646;
+  color: $grey;
   font-size: 1.5em;
 }
 
 h4 {
   border-bottom: 1px solid #ccc;
-  color: #464646;
+  color: $grey;
   font-style: italic;
   padding-bottom: 3px;
   padding-left: 3px;
@@ -95,7 +95,7 @@ input {
 
 input:focus,
 textarea:focus {
-  background: #fff;
+  background: $primary-color;
   border-color: $light-blue;
 }
 
@@ -121,7 +121,7 @@ button,
   outline: none;
   padding: 6px 24px;
   text-decoration: none;
-  text-shadow: 1px 1px 0 #fff;
+  text-shadow: 1px 1px 0 $primary-color;
 }
 
 input[type=button]:hover,
@@ -236,7 +236,7 @@ fieldset {
 }
 
 legend {
-  color: #464646;
+  color: $grey;
   font-style: italic;
   font-weight: bold;
   margin: 0 0.5em;
@@ -300,8 +300,9 @@ legend {
 
 #title_bar h1,
 .title_bar h1 {
-  font-size: 1.5em;
-  color: #464646;
+  font-size: 2.5em;
+  font-weight: 300;
+  color: $grey;
 }
 
 #title_bar input,
@@ -321,7 +322,8 @@ legend {
 #title_bar span.menu_bar {
   background: none;
   border: none;
-  color: #464646;
+  color: $grey;
+  font-size: 1rem;
   font-weight: normal;
 }
 
@@ -361,7 +363,7 @@ legend {
     display: block;
     height: 40px;
     margin: 0;
-    padding: 10px;
+    padding: 0.85em;
     text-align: center;
     width: 11em;
   }
@@ -403,7 +405,7 @@ legend {
 
   ul.dropdown {
     @include border-radius-bottom(10px);
-    background: #fff;
+    background: $primary-color;
     border: 2px solid $blue;
     display: none;
     left: 3.5em;
@@ -434,7 +436,7 @@ legend {
 
     a,
     #drop_down_current_assignment {
-      color: #464646;
+      color: $grey;
       display: block;
       height: auto;
       margin: 0;
@@ -445,7 +447,7 @@ legend {
 
     #drop_down_current_assignment {
       background: $light-blue;
-      color: #fff;
+      color: $primary-color;
       font-weight: bold;
     }
 
@@ -459,7 +461,7 @@ legend {
 
 span#choose_an_assignment {
   @include border-radius(10px);
-  background: #fff;
+  background: $primary-color;
   border: 2px solid $blue;
   cursor: pointer;
   display: inline-block;
@@ -493,7 +495,7 @@ span#choose_an_assignment {
   padding-left: 3.5em;
 
   a {
-    color: #464646;
+    color: $grey;
   }
 
   ul {
@@ -510,26 +512,26 @@ span#choose_an_assignment {
 
 #sub_menu {
   background: $light-blue;
-  min-height: 40px;
+  height: 42px;
 
   a {
-    color: #fff;
+    color: $primary-color;
   }
 
   li:hover,
   #sub_menu_active {
-    background: #fff;
+    background: $primary-color;
 
     a {
-      color: #464646 !important;
+      color: $grey !important;
       font-weight: bold;
     }
   }
 }
 
 #sub_sub_menu {
-  background: #fff;
-  border-bottom: 2px solid #464646;
+  background: $primary-color;
+  border-bottom: 2px solid $grey;
 
   ul {
     padding-top: 5px;
@@ -538,10 +540,10 @@ span#choose_an_assignment {
   li:hover,
   #sub_sub_menu_active {
     @include border-radius-top(10px);
-    background: #464646;
+    background: $grey;
 
     a {
-      color: #fff;
+      color: $primary-color;
       font-weight: bold;
     }
   }
@@ -651,7 +653,7 @@ table tr td.loading, table tr td:hover.loading {
   height: 30px;
   padding-left: 8px;
   border: 0;
-  background-color: #fff;
+  background-color: $primary-color;
 }
 
 thead, tfoot {
@@ -661,7 +663,7 @@ thead, tfoot {
 
 th, tfoot tr td {
   height: 18px;
-  color: #464646;
+  color: $grey;
   font-weight: bold;
   border: none;
   padding: 3px;
@@ -1001,52 +1003,53 @@ input#extra_mark_description{
   text-align: left;
 }
 
-.error, .errorExplanation{
+.error,
+.errorExplanation{
   background: #ffffe0 url('icons/exclamation.png') no-repeat 5px center;
   border: 1px solid #e6db55;
   margin: 1em 4em 1em 4em;
   margin: 5px;
   padding: 3px 3em;
   text-align: left;
+
+  h2 {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0;
+    padding: 0.5em 0;
+  }
+
+  p {
+    font-size: 1em;
+    padding: 0.2em 0;
+    margin: 0;
+  }
+
+  ul {
+    font-size: 1em;
+    margin: 0;
+  }
 }
 
-.error h2, .errorExplanation h2{
-  font-weight: bold;
-  font-size: 1em;
-  padding: 0.5em 0;
-  margin: 0;
-}
-
-.error p, .errorExplanation p{
-  font-size: 1em;
-  padding: 0.2em 0;
-  margin: 0;
-}
-
-.error ul, .errorExplanation ul{
-  font-size: 1em;
-  margin: 0;
+.notice,
+.information,
+.warning {
+  @include border-radius(5px);
+  padding: 3px 30px;
+  margin: 5px;
 }
 
 .notice {
   background: #ffffe0;
   border: 1px solid #e6db55;
-  padding: 3px 30px;
-  margin: 5px;
 }
 
 .information {
-  border: 1px solid #0047FF;
-  padding: 3px 30px;
-  background: #efefef url(icons/information.png) no-repeat;
-  background-position: 7px;
+  background: #efefef url(icons/information.png) no-repeat 7px 0;
 }
 
 .warning {
-  border: 1px solid #E6DB55;
-  padding: 3px 30px;
-  background: #ffffe0 url(icons/error.png) no-repeat;
-  background-position: 7px;
+  background: #ffffe0 url(icons/error.png) no-repeat 7px 0;
 }
 
 .group form {
@@ -1094,7 +1097,7 @@ input#extra_mark_description{
 
 #notes_dialog {
   @include border-radius(5px);
-  background: #fff;
+  background: $primary-color;
   border: 1px solid #000;
   max-height: 80%;
   max-width: 80%;
@@ -1320,7 +1323,7 @@ input#extra_mark_description{
 .login {
   @include border-radius(5px);
   @include box-shadow(0, 3px, 0, 0, #a4adac);
-  background: #fff;
+  background: $primary-color;
   height: auto;
   left: 50%;
   margin-left: -180px;
@@ -1398,62 +1401,64 @@ input#extra_mark_description{
   margin: 10px auto;
   padding: 0;
   width: 95%;
+
+  h2 {
+    background: #dfdfdf;
+    border-bottom: 1px solid #ccc;
+    color: $grey;
+    font-size: 1.1em;
+    margin: 0;
+    padding: 5px 10px;
+  }
 }
 
-.block h2{
-  background: #dfdfdf;
+.block h3,
+.section h3,
+#section h3 {
   border-bottom: 1px solid #ccc;
-  color: #464646;
-  font-size: 1.1em;
-  margin: 0;
-  padding: 5px 10px;
-}
-
-.block h3, .section h3, #section h3{
-  border-bottom: 1px solid #ccc;
-  color: #464646;
+  color: $grey;
   font-size: 1.1em;
   font-style: italic;
   font-weight: normal;
   padding: 3px;
 }
 
-.block_content{
+.block_content {
   padding: 10px;
 }
 
-.block_line{
+.block_line {
   border-top: 1px solid #ccc;
   display: block;
   margin: 5px;
 }
 
-.sub_block{
+.sub_block {
   margin: 0 15px;
 }
 
-div.sub_block span.prop_label{
+div.sub_block span.prop_label {
   display: block;
   float: left;
   font-weight: bold;
   min-width: 150px;
 }
 
-div.sub_block span.box{
+div.sub_block span.box {
   display: block;
 }
 
-#member_inviter{
+#member_inviter {
   font-weight: bold;
 }
 
-.membership_status_pending{
+.membership_status_pending {
   font-style: italic;
 }
 
-.membership_status_rejected{
+.membership_status_rejected {
   font-style: italic;
-  color: #464646;
+  color: $grey;
 }
 
 span.info_red, span.info {
@@ -1461,11 +1466,11 @@ span.info_red, span.info {
   line-height: 1.5em;
 }
 
-span.info_red{
+span.info_red {
   color: #ee6415;
 }
 
-span.info_number{
+span.info_number  {
   font: 1.5em/1.5em $serif-font-stack;
   margin-right: 5px;
 }
@@ -1475,13 +1480,17 @@ span.info_date{
   margin-right: 5px;
 }
 
-.section .info_date{
-  color: #464646;
+.section .info_date {
+  color: $grey;
   font-style: italic;
   margin-left: 10px;
 }
 
-a.assignment_list{
+.section li {
+  padding: 0.5em 0;
+}
+
+a.assignment_list {
   display: inline-block;
   font-size: 1.2em;
   min-width: 15em;
@@ -1489,7 +1498,7 @@ a.assignment_list{
 
 span.title{
   border-bottom: 1px solid #ccc;
-  color: #464646;
+  color: $grey;
   display: block;
   font-family: $serif-font-stack;
   font-size: 0.9em;
@@ -1671,7 +1680,7 @@ td.grade_entry_form_result {
 
 #working {
   background: #f00;
-  color: #fff;
+  color: $primary-color;
   position: absolute;
   right: 0;
 }
@@ -1783,12 +1792,12 @@ div.align_text_right {
 }
 
 #rubrics_help h2{
-  color: #464646;
+  color: $grey;
   padding: 0 10px;
 }
 
 #rubrics_help h3{
-  color: #464646;
+  color: $grey;
 }
 
 .criterion_holder_selected{
@@ -1885,13 +1894,13 @@ input.button_to_delete_deduction {
 }
 
 .criterion_description_preview {
-  background-color: #fff;
+  background-color: $primary-color;
   border: solid 2px #ccc;
   padding: 10px;
 }
 
 input.criterion_input_name{
-  background: #fff;
+  background: $primary-color;
   text-align: left;
   width: 25em;
 }
@@ -1910,33 +1919,33 @@ input.criterion_input_name{
 
 #annotation_list_holder{
   padding: 0 1em;
-}
 
-#annotation_list_holder h2{
-  margin: 0;
+  h2 {
+    margin: 0;
+  }
 }
 
 ul#annotation_list{
   list-style: none;
+
+  li {
+    border-bottom: 1px solid #ccc;
+  }
+
+  textarea {
+    width: 90%;
+  }
 }
 
-ul#annotation_list li{
-  border-bottom: 1px solid #ccc;
-}
-
-#annotation_list textarea{
-  width: 90%;
-}
-
-.annotation_texts_size{
-  color: #464646;
+.annotation_texts_size {
+  color: $grey;
   font-size: 0.9em;
   font-style: italic;
   margin-left: 5px;
 }
 
 .annotation_text_authors{
-  color: #464646;
+  color: $grey;
   display: inline-block;
   font-style: italic;
   margin-left: 5px;
@@ -1945,7 +1954,7 @@ ul#annotation_list li{
 
 /* Admin interface: Assignment View*/
 .disable {
-  color: #464646;
+  color: $grey;
   font-style: italic;
 }
 
@@ -1972,7 +1981,7 @@ fieldset.period p{
 }
 
 span.due_date{
-  color: #464646;
+  color: $grey;
   display: block;
   font-size: 0.9em;
   font-style: italic;
@@ -2005,7 +2014,7 @@ fieldset.period{
 
 #rubric_viewer table,
 #rubric_viewer table tr{
-  background: #fff;
+  background: $primary-color;
   padding: 4px;
 }
 
@@ -2023,7 +2032,7 @@ fieldset.disabled{
 }
 
 .disabled label, .disabled span, .disabled p{
-  color: #464646;
+  color: $grey;
   font-style: italic;
 }
 
@@ -2086,7 +2095,7 @@ pre#test_result_content {
 .assignment_summary {
   background-color: #f4f4f4;
   display: inline-block;
-  margin: 20px 0;
+  margin: 20px;
   padding: 20px;
   text-align: left;
   width: auto;
@@ -2148,7 +2157,7 @@ pre#test_result_content {
 /* styles specific to the graphs on the dashboard */
 
 .bluff-tooltip {
-  background: #fff;
+  background: $primary-color;
   border: 1px solid #000;
   margin: 0;
   padding: 0;
