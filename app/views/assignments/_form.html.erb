@@ -16,7 +16,6 @@
     function check() {
       var empty = false;
       jQuery("input[required]").each(function(index) {
-        console.log(jQuery(this)[0]);
         if (jQuery(this)[0].value == "") {
           empty = true;
         }
