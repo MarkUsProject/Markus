@@ -23,6 +23,10 @@ a:hover {
   color: $hover;
 }
 
+a:active {
+  color: $grey;
+}
+
 h2 a,
 h3 a,
 h4 a {
@@ -494,7 +498,7 @@ span#choose_an_assignment {
   font-weight: 400;
   height: 2.5em;
   margin-top: 4px;
-  padding: 0.5em 1em;
+  padding: 0.55em 1em;
   text-align: center;
   width: 15em;
 }
@@ -1169,6 +1173,17 @@ input#extra_mark_description{
   padding: 2em;
 }
 
+#invite_dialog {
+  #buttons {
+    text-align: center;
+  }
+
+  #invite_modal_spinner {
+    display: block;
+    margin-top: 1em;
+  }
+}
+
 #notes_dialog {
   @include border-radius(5px);
   background: $primary-color;
@@ -1197,7 +1212,8 @@ input#extra_mark_description{
 
 #about_dialog {
   @include border-radius(5px);
-  height: 430px !important;
+  height: 440px !important;
+  padding: 2em 2em 0 !important;
   width: 600px;
 
   #about_text {
@@ -1231,10 +1247,6 @@ input#extra_mark_description{
 
 #switch_role_icon {
   margin-top: -1em;
-}
-
-#about_dialog a {
-  text-transform: none;
 }
 
 .p_modal {
@@ -1459,7 +1471,7 @@ input#extra_mark_description{
   }
 
   .error {
-    margin-top: 15px;
+    margin: 1.5em 1em 0;
     text-align: center;
   }
 }
