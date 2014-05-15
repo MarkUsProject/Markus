@@ -109,7 +109,7 @@
   <% @grade_entry_form.grade_entry_items.each do |grade_entry_item| %>
     <th class="out_of">
       <%= grade_entry_item.name %>
-      <br />
+      <br>
       <%= "(" + grade_entry_item.out_of.to_s + ")" %>
     </th>
   <% end %>
@@ -121,7 +121,7 @@
 		<th class="student_total" >
 		<%= t('grade_entry_forms.grades.total') + " " + @grade_entry_form.out_of_total.to_s %>
 		<% if @current_user.admin? or @current_user.ta? %>
-			<br /> <a href="#" onclick="toggleTotalColVisibility()"> <%= t('grade_entry_forms.toggle_column') %> </a>
+			<br> <a href="#" onclick="toggleTotalColVisibility()"> <%= t('grade_entry_forms.toggle_column') %> </a>
 		<% end %>
 		</th>
   <% end %>

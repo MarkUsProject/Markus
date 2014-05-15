@@ -31,8 +31,8 @@
                     download_assignment_list_assignments_path(
                             :file_format => 'csv'),
                     :class => 'button' if @current_user.admin? %>
-      <br />
-      <br />
+      <br>
+      <br>
       <%= link_to t(:assignment_format, :file => 'yml'),
                     download_assignment_list_assignments_path(
                             :file_format => 'yml'),
@@ -86,7 +86,7 @@
 %>
 <% if @current_user.admin? %>
   <div class="wrapLeft">
-    <br />
+    <br>
     <%= render :partial => "grade_entry_forms/list_manage",
                :locals => { :action => 'edit' } -%>
   </div>

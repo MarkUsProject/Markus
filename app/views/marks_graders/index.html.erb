@@ -164,13 +164,13 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
       :alt => I18n.t('groups.randomly_assign_graders'),
       :title => I18n.t('groups.randomly_assign_graders'),
       :class =>'image_input' %>
-    <br/><br/>
+    <br><br>
     <%= image_submit_tag "add_arrow.png",
       :onclick => "$('global_actions').setValue('assign');",
       :alt => I18n.t('add_graders'),
       :class =>'image_input',
       :title => I18n.t('add_graders') %>
-    <br/><br/>
+    <br><br>
     <%= image_submit_tag "remove_arrow.png",
       :onclick => "$('global_actions').setValue('unassign');",
       :alt => I18n.t('remove_graders'),
@@ -206,7 +206,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
     <p>
-      <%= file_field_tag :grader_mapping, :size => 2 %><br />
+      <%= file_field_tag :grader_mapping, :size => 2 %><br>
       <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
       <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>
     </p>

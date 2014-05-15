@@ -45,7 +45,7 @@ en:
     markus_credits_thanks:      "Thanks to everyone who contributed to and made MarkUs possible. In particular to:"
     supervisors:        "Supervisors: "
     contact_us:         "Contact Us"
-    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br/>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information.<br/>To submit a bug or issue please visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
+    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information.<br>To submit a bug or issue please visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
     # app/views/api/_key_display.html.erb
     api_key:            "Your API Key"
@@ -454,8 +454,8 @@ en:
                              <ul><li>two lines at the top which specify the question names and totals;</li>
                              <li>one line for each student record;</li>
                              <li>each line should be terminated by a carriage-return line-feed.</li></ul>
-                             <code>\"\",q1_name,q2_name,q3_name</code><br/>
-                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br/>
+                             <code>\"\",q1_name,q2_name,q3_name</code><br>
+                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "There are currently no marks spreadsheets."
@@ -505,15 +505,15 @@ en:
       upload:
         upload: "Upload"
         upload_groups_file: "Upload Groups File"
-        description: "CSV file format:<br />
-            <code>group_name,repository_name,user_name,<br />user_name ... </code><br />"
+        description: "CSV file format:<br>
+            <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"
         upload_grader_map: "Upload Group / Grader Map"
         upload_grader_criteria_map: "Upload Criteria / Grader Map"
-        description_grader_map: "CSV file format:<br />
-            <code>group_name,grader_user_name,grader_user_name,... </code><br />"
-        description_grader_criteria_map: "CSV file format:<br />
-            <code>criterion_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "CSV file format:<br>
+            <code>group_name,grader_user_name,grader_user_name,... </code><br>"
+        description_grader_criteria_map: "CSV file format:<br>
+            <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
         download: "Download"
         download_groups_file: "Download Groups File"
@@ -601,7 +601,7 @@ en:
       group_information: "Group Information"
       group_not_valid: "Your group is not valid. You can't submit anything."
       overview: "Overview"
-      last_revision_date: "Last Revision Date:<br /><span class=\"info_date\">%{last_modified_date}</span>"
+      last_revision_date: "Last Revision Date:<br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "files"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> missing required files</span>"
       no_submission_yet: "You have not made any submissions yet"
@@ -708,8 +708,8 @@ en:
         download_grader_students_csv: "Student / Grader map CSV format"
       upload:
         upload_grader_map: "Upload Student / Grader Map"
-        description_grader_map: "CSV file format:<br />
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "CSV file format:<br>
+            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     #Admins' View
     admins:
@@ -811,13 +811,13 @@ en:
         upload_annotations: "Upload Annotations"
         upload_message_csv: "
         <p>
-            Select a CSV file of the following form:<br />
-            <code>category_name,annotation_text,annotation_text ... </code><br />
+            Select a CSV file of the following form:<br>
+            <code>category_name,annotation_text,annotation_text ... </code><br>
           </p>"
         upload_message_yml: "
         <p>
-            Select a YAML file of the following form:<br />
-            <code>category_name: <br />- category_text<br />- category_text</code><br />
+            Select a YAML file of the following form:<br>
+            <code>category_name: <br>- category_text<br>- category_text</code><br>
 
           </p>"
         success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
@@ -922,8 +922,8 @@ en:
       weight_not_number: "weight is not a number."
 
     csv_special_characters_html: "
-    <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").<br />
-    If you wish to use double quotes in a CSV field, you should surround the field with double quotes and<br />
+    <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").<br>
+    If you wish to use double quotes in a CSV field, you should surround the field with double quotes and<br>
     double each one of your double quotes (\"\").</p>
     <p>Here's an example of a CSV field containing commas and double quotes:</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
@@ -978,17 +978,17 @@ en:
         <p>The file should have the following format:</p>
         <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br />
+        <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br>
         and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
         by commas)."
         format_yml_html: "
-          <p>The file should have the following format:<br />
-              <code>criterion_name:<br />
-                    &nbsp;&nbsp;weight: weight<br />
-                    &nbsp;&nbsp;level_0:<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br />
-                    &nbsp;&nbsp;level_1:<br />
+          <p>The file should have the following format:<br>
+              <code>criterion_name:<br>
+                    &nbsp;&nbsp;weight: weight<br>
+                    &nbsp;&nbsp;level_0:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+                    &nbsp;&nbsp;level_1:<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]
           </p>"
         error: "Some rubric criteria were invalid:"
@@ -1184,7 +1184,7 @@ en:
       due_date_is_passed: "You can not run test as the due date for this assignment is passed"
       information: "Information"
       run_tests: "Run tests"
-      need_one_file: "You need at least one file submitted in order to run tests.<br />
+      need_one_file: "You need at least one file submitted in order to run tests.<br>
                       If you already submitted one file and you want to run tests on it, use the \"Collect and Prepare Test\" button below."
       collect_and_test: "Collect and Prepare Test"
       build_xml: "build.xml"

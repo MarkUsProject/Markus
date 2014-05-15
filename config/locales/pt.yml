@@ -45,7 +45,7 @@ pt:
     markus_credits_thanks:      "Obrigado a todos que contribuiram para tornar MarkUs possível. Em particular para:"
     supervisors:        "Supervisores:"
     contact_us:         "Contate-nos"
-    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br/>Por favor visite: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> para mais informações.<br/>Para enviar um problema ou por favor visite visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
+    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br>Por favor visite: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> para mais informações.<br>Para enviar um problema ou por favor visite visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
     # app/views/api/_key_display.html.erb
     api_key:            "Chave da API"
@@ -454,8 +454,8 @@ pt:
                              <ul><li>duas linhas no topo que devem especificar o nome da questão e o total;</li>
                              <li>uma linha para cada aluno;</li>
                              <li>cada linha deve ser terminada por um carriage-return line-feed.</li></ul>
-                             <code>\"\",q1_name,q2_name,q3_name</code><br/>
-                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br/>
+                             <code>\"\",q1_name,q2_name,q3_name</code><br>
+                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "Atualmente não há notas nas planilhas."
@@ -505,12 +505,12 @@ pt:
       upload:
         upload: "Carregar"
         upload_groups_file: "Carregar arquivo de grupos"
-        description: "Formato do arquivo CSV:<br /> <code>group_name,repository_name,user_name,<br />user_name ... </code><br />"
+        description: "Formato do arquivo CSV:<br> <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Ao importar groupos via carregamento CSV no MarkUs você irá apagar os grupos existentes!"
         upload_grader_map: "Carregar grupo / Mapa avaliador"
         upload_grader_criteria_map: "Carregar critério / Mapa avaliador"
-        description_grader_map: "Formato do arquivo CSV:<br /> <code>group_name,grader_user_name,grader_user_name,... </code><br />"
-        description_grader_criteria_map: "Formato do arquivo CSV:<br /> <code>criterion_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "Formato do arquivo CSV:<br> <code>group_name,grader_user_name,grader_user_name,... </code><br>"
+        description_grader_criteria_map: "Formato do arquivo CSV:<br> <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
         download: "Baixar"
         download_groups_file: "Baixar arquivo de grupos"
@@ -576,7 +576,7 @@ pt:
     unhide_students:    "Marcar como ativo"
     students_not_successfully_added_message_1: "Os seguintes alunos não foram adicionados com êxito:"
     students_not_successfully_added_message_2: "Tenha certeza que:"
-    students_not_successfully_added_message_3: "Nome dos alunos são 
+    students_not_successfully_added_message_3: "Nome dos alunos são
     alfa-numéricos."
     students_not_successfully_added_message_4: "Cada campo é separado por uma vírgula (sem espaços)."
     students_not_successfully_added_message_5: "Cada linha tem os campos necesários especificados junto ao formulário de carregamento."
@@ -596,7 +596,7 @@ pt:
       group_information: "Informação do Grupo"
       group_not_valid: "Seu grupo não é válido. Você não pode enviar nada."
       overview: "Visão global"
-      last_revision_date: "Última data de revisão:<br /><span class=\"info_date\">%{last_modified_date}</span>"
+      last_revision_date: "Última data de revisão:<br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "arquivos"
       missing_required_files: "Faltando <span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> arquivos exigidos</span>"
       no_submission_yet: "Você não tem nenhum envio ainda."
@@ -700,8 +700,8 @@ pt:
         download_grader_students_csv: "Alunos / Atribuição de corretores CSV "
       upload:
         upload_grader_map: "Carregar alunos / Atribuição de corretores"
-        description_grader_map: "Formato arquivo CSV:<br />
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "Formato arquivo CSV:<br>
+            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     #Admins' View
     admins:
@@ -803,13 +803,13 @@ pt:
         upload_annotations: "Carregar anotações"
         upload_message_csv: "
         <p>
-            Selecione um arquivo CSV no seguinte formato: <br />
-            <code>category_name,annotation_text,annotation_text ... </code><br />
+            Selecione um arquivo CSV no seguinte formato: <br>
+            <code>category_name,annotation_text,annotation_text ... </code><br>
           </p>"
         upload_message_yml: "
         <p>
-            Selecione um arquivo YAML no seguinte formato: <br />
-            <code>category_name: <br />- category_text<br />- category_text</code><br />
+            Selecione um arquivo YAML no seguinte formato: <br>
+            <code>category_name: <br>- category_text<br>- category_text</code><br>
 
           </p>"
         success:  "Carregado com sucesso %{annotation_category_number} categorias de anotações"
@@ -914,8 +914,8 @@ pt:
       weight_not_number: "peso não é um número."
 
     csv_special_characters_html: "
-    <p>Se você quer user uma vírgula (,) no campo do arquivo CSV , você deve cercar o campo com aspas duplas (\").<br />
-    Se você quiser usar aspas duplas em um campo do aruivo field, você deve cerca-lo com aspas duplas e<br />
+    <p>Se você quer user uma vírgula (,) no campo do arquivo CSV , você deve cercar o campo com aspas duplas (\").<br>
+    Se você quiser usar aspas duplas em um campo do aruivo field, você deve cerca-lo com aspas duplas e<br>
     duplique cada uma de suas aspas duplas(\"\").</p>
     <p>Segue um exemplo de um campo contendo vírgulas e aspas duplas:</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
@@ -969,16 +969,16 @@ pt:
         <p>O arquivo deve possuir o seguinte formato:</p>
         <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>onde <em>level_names</em> deve conter o nome de cada nível (separado por vírgulas)<br />
+        <p>onde <em>level_names</em> deve conter o nome de cada nível (separado por vírgulas)<br>
         e <em>level_descriptions</em> deve conter a descrição de cada nível (opcional, também separado por vírgulas)."
         format_yml_html: "
-          <p>O aruivo deve possuir o seguinte formato:<br />
-              <code>criterion_name:<br />
-                    &nbsp;&nbsp;weight: weight<br />
-                    &nbsp;&nbsp;level_0:<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br />
-                    &nbsp;&nbsp;level_1:<br />
+          <p>O aruivo deve possuir o seguinte formato:<br>
+              <code>criterion_name:<br>
+                    &nbsp;&nbsp;weight: weight<br>
+                    &nbsp;&nbsp;level_0:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+                    &nbsp;&nbsp;level_1:<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]
           </p>"
         error: "Alguns critérios de rúbrica eram inválidos:"
@@ -1168,7 +1168,7 @@ pt:
       due_date_is_passed: "Você não pode executar o teste pois a sua entrega está fora do prazo "
       information: "Informação"
       run_tests: "Executar testes"
-      need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br />
+      need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br>
                       Se você já enviou um arquivo e que executar os testes nele, use o botao \"Coletar e preparar testes\" abaixo."
       collect_and_test: "Colete e prepare os testes"
       build_xml: "build.xml"

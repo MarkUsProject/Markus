@@ -28,20 +28,20 @@
                          :onchange =>  "set_onbeforeunload(true);
                          $('assignment_repository_folder').setValue(
                            $(this).getValue() )",
-                         :maxlength => 30 )%><br />
+                         :maxlength => 30 )%><br>
       <% else %>
         <%= raw( f.text_field :short_identifier ,
                               :onchange =>  "set_onbeforeunload(true);",
-                              :maxlength => 30 ) %><br />
+                              :maxlength => 30 ) %><br>
       <% end %>
 
       <%= raw( f.label :description, t("assignment.name").html_safe ) %>
       <%= raw( f.text_field :description,
-                            :onchange => "set_onbeforeunload(true);" ) %><br />
+                            :onchange => "set_onbeforeunload(true);" ) %><br>
       <%= raw( f.label :message ) %>
       <%= raw( f.text_area  :message,
                             :rows => 8, :cols => 65,
-                            :onchange => "set_onbeforeunload(true);" ) %><br />
+                            :onchange => "set_onbeforeunload(true);" ) %><br>
 
       <% if !@sections.empty? %>
         <div id="section_due_dates_type_form_right" class="information">
@@ -63,9 +63,9 @@
             <%= f.fields_for :section_due_dates, @section_due_dates do |due_date_f| %>
               <p>
                 <%= label 'section', t("section.legend") %> <%= Section.find(due_date_f.object.section_id).name %>
-                <br />
+                <br>
                 <%= due_date_f.text_field :section_id, :class => 'hidden'%>
-                <br />
+                <br>
                 <%= due_date_f.label :due_date, t("due_date") %>
                 <%= due_date_f.calendar_date_select :due_date, { :time => "mixed",
                                             :after_close => "refresh_due_date();",
@@ -89,10 +89,10 @@
 
       <%# TODO The following code seriously needs some clean up  !!!!  %>
 
-      <%= t(:iso_due_date_format_example) %><br />
+      <%= t(:iso_due_date_format_example) %><br>
 
       <%= raw( f.label :repository_folder, t(:repository_folder).html_safe ) %>
-      /<%= raw( f.text_field :repository_folder, :onchange => "set_onbeforeunload(true);" ) %><br />
+      /<%= raw( f.text_field :repository_folder, :onchange => "set_onbeforeunload(true);" ) %><br>
       <%= raw( f.label :allow_web_submits, t("assignment.allow_web_submits").html_safe ) %>&nbsp;&nbsp;
       <%= raw( f.radio_button :allow_web_submits,
                         true,
@@ -106,7 +106,7 @@
                         :onchange => "set_onbeforeunload(true);" ) %>
       <%= raw( f.label :allow_web_submits_false,
                  t("answer_no"),
-                 :class => "radio_label" )  %><br />
+                 :class => "radio_label" )  %><br>
       <%= raw( f.label :display_grader_names_to_students,
                   t("assignment.display_grader_names_to_students").html_safe ) %>&nbsp;&nbsp;
       <%= raw( f.radio_button :display_grader_names_to_students,
@@ -123,7 +123,7 @@
       <%= raw( f.label :display_grader_names_to_students_false,
                   t("answer_no"),
                   :class => "radio_label" ) %>
-     <br />
+     <br>
 
      <%= f.label :is_hidden, t("assignment.is_hidden") %>&nbsp;&nbsp;
      <%= f.radio_button :is_hidden, true,
@@ -134,8 +134,8 @@
                               :checked => !@assignment.is_hidden,
                               :onchange => "set_onbeforeunload(true);" %>
      <%= f.label :is_hidden_false, t("answer_no"), :class => "radio_label"%>
-     <br />
-     <br />
+     <br>
+     <br>
   </fieldset>
   <!--select scheme -->
   <div id='marking_scheme_notice' class="warning" style="display:none">
@@ -386,7 +386,7 @@
                                   :id => "remark_due_date",
                                   :onchange => "set_onbeforeunload(true);"  } ) %>
 
-      <%=t(:iso_due_date_format_example)%><br />
+      <%=t(:iso_due_date_format_example)%><br>
       <%= raw( f.label("remark_message",
                   I18n.t("assignment.remark.message"),
                   :class => "textbox_label") ) %>

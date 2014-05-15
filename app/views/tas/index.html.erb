@@ -55,12 +55,12 @@
    <%= form_tag upload_ta_list_tas_path(), {:multipart => true} %>
     <label for="userlist"><%= I18n.t("graders.upload.csv_file") %></label>
     <input type="file" name="userlist" id="userlist"/>
-    <br />
-    <br />
+    <br>
+    <br>
     <%= I18n.t("encoding") %>
     <%= select_tag(:encoding, options_for_select(@encodings)) %>
-    <br />
-    <br />
+    <br>
+    <br>
     <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
     <%= button_to_function I18n.t(:close), 'modal_upload.close()' %>
   </form>

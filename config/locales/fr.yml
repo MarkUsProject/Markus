@@ -45,7 +45,7 @@ fr:
     markus_credits_thanks:      "Merci à tous ceux qui ont contribué à MarkUs. Remerciements particuliers à :"
     supervisors:        "Chefs de projet :"
     contact_us:         "Contactez-nous"
-    email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br/>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br/>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
+    email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
     # app/views/api/_key_display.html.erb
     api_key:            "Votre clé - API"
@@ -455,8 +455,8 @@ fr:
                              <ul><li>les deux lignes du haut spécifient le nom de la note et le total ;</li>
                              <li>une ligne pour chaque étudiant(e) ;</li>
                              <li>chaque ligne doit être terminée par un retour charriot.</li></ul>
-                             <code>\"\",q1_name,q2_name,q3_name</code><br/>
-                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br/>
+                             <code>\"\",q1_name,q2_name,q3_name</code><br>
+                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "Il n'y a pas de feuille de notes pour le moment."
@@ -506,15 +506,15 @@ fr:
       upload:
         upload: "Envoi"
         upload_groups_file: "Envoyer un fichier contenant des groupes"
-        description: "Format du fichier CSV : <br />
-            <code>group_name,repository_name,user_name,<br />user_name ... </code><br />"
+        description: "Format du fichier CSV : <br>
+            <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Importer les groupes par un fichier CSV dans MarkUs va detruire tous les groupes existants ! "
         upload_grader_map: "Envoi de groupes / Attribution des correcteurs"
         upload_grader_criteria_map: "Envoyer un fichier de critères / attribution des correcteurs"
-        description_grader_map: "Format du fichier CSV : <br />
-            <code>group_name,grader_user_name,grader_user_name,... </code><br />"
-        description_grader_criteria_map: "Format du fichier CSV : <br />
-                       <code>criterion_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "Format du fichier CSV : <br>
+            <code>group_name,grader_user_name,grader_user_name,... </code><br>"
+        description_grader_criteria_map: "Format du fichier CSV : <br>
+                       <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
         download: "Télécharger la liste des groupes"
         download_groups_file: "Télécharger groupes"
@@ -593,7 +593,7 @@ fr:
       group_information: "Informations sur le groupe"
       group_not_valid: "Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment."
       overview: "Vue d'ensemble"
-      last_revision_date: "Dernière révision : <br /><span class=\"info_date\">%{last_modified_date}</span>"
+      last_revision_date: "Dernière révision : <br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "Fichiers"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> fichier(s) requis sont manquants</span>"
       no_submission_yet: "Vous n'avez encore rien envoyé"
@@ -695,10 +695,10 @@ fr:
       #upload:
       download:
         download_grader_students_csv: "Étudiants / attribution des correcteurs CSV"
-      upload: 
+      upload:
         upload_grader_map: "Envoi de étudiants / Attribution des correcteurs"
-        description_grader_map: "Format du fichier CSV : <br />
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "Format du fichier CSV : <br>
+            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     #Admins' View
     admins:
@@ -801,13 +801,13 @@ fr:
         upload_annotations: "Envoi d'annotations"
         upload_message_csv: "
         <p>
-            Sélectionner un fichier CSV formaté comme suit : <br />
-            <code>category_name,annotation_text,annotation_text … </code><br />
+            Sélectionner un fichier CSV formaté comme suit : <br>
+            <code>category_name,annotation_text,annotation_text … </code><br>
           </p>"
         upload_message_yml: "
         <p>
-            Sélectionner un fichier YAML formaté comme suit :<br />
-            <code>category_name: <br />- category_text<br />- category_text</code><br />
+            Sélectionner un fichier YAML formaté comme suit :<br>
+            <code>category_name: <br>- category_text<br>- category_text</code><br>
 
           </p>"
         success:  "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
@@ -912,8 +912,8 @@ fr:
       weight_not_number: "le coefficient n'est pas un nombre."
 
     csv_special_characters_html: "
-    <p>Si vous souhaitez utiliser des virgules (,) dans un champ CSV, il faut placer tout le contenu du champ dans des doubles quotes ou guillemets droits (\").<br />
-    Si vous souhaitez utiliser des double quotes (ou guillemets droits) dans un champ CSV, il faut placer tout le contenu du champ dans des double quotes et<br />
+    <p>Si vous souhaitez utiliser des virgules (,) dans un champ CSV, il faut placer tout le contenu du champ dans des doubles quotes ou guillemets droits (\").<br>
+    Si vous souhaitez utiliser des double quotes (ou guillemets droits) dans un champ CSV, il faut placer tout le contenu du champ dans des double quotes et<br>
     doubler chaque double quotes (\"\").</p>
     <p>Voici un exemple d'un champ CSV contenant des virgules et des doubles quotes :</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
@@ -966,7 +966,7 @@ fr:
         <p>Le fichier devra être au format suivant : </p>
         <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br />
+        <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br>
         et <em>level_descriptions</em> doi contenir la description de chaque niveau (optionnel,
         séparé aussi par les virgules)."
       error_total: "total weight must be positive"
@@ -1155,7 +1155,7 @@ fr:
       due_date_is_passed: "Vous ne pouvez pas exécuter de test après la date de retour."
       information: "Information"
       run_tests: "Exécuter les tests."
-      need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test.<br />
+      need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test.<br>
                       Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
       collect_and_test: "Récupérer et préparer test"
       build_xml: "build.xml"

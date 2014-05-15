@@ -111,7 +111,7 @@
           <% if @current_user.admin? %>
               <%= render :partial => 'ajax_paginate/selector'%>
           <% else %>
-              <br />
+              <br>
           <% end %>
         </div>
         <div class="floatLeft">
@@ -146,8 +146,8 @@
       <p>
         <%= I18n.t("encoding") %>
         <%= select_tag(:encoding, options_for_select(@encodings)) %>
-        <br />
-        <br />
+        <br>
+        <br>
         <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
         <%= button_to I18n.t(:close), '#', :onclick => 'modal_upload.close(); return false;' %>
       </p>

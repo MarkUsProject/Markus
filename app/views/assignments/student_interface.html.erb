@@ -47,10 +47,10 @@
         <span class="info_number">
           <%= @num_submitted_files.to_s %>
         </span>
-        <span class="info"><%= I18n.t("student.files") %></span> <br />
+        <span class="info"><%= I18n.t("student.files") %></span> <br>
         <%=raw( I18n.t("student.missing_required_files",
                     :missing_files => @num_missing_assignment_files.to_s) )%>
-        <br />
+        <br>
       <% else %>
         <p class="notice"><%= I18n.t("student.no_submission_yet") %></p>
       <% end %>
@@ -286,9 +286,9 @@
     <h2><%= I18n.t("automated_tests.test") %></h2>
       <% if @grouping.nil? %>
         <div class="sub_block">
-          <br />
+          <br>
           <%= I18n.t("automated_tests.need_group_for_test") %>
-          <br />
+          <br>
         </div>
      <% else %>
           <div class="block_content">
@@ -299,15 +299,15 @@
                                 :revision => @revision_number) ) %>
               </div>
             <% end %>
-            <br />
+            <br>
             <div class="sub_block">
-              <br />
+              <br>
               <%= raw( I18n.t("automated_tests.token.tokens_per_day",
                               :tokens => @assignment.tokens_per_day) ) %>
             </div>
-            <br />
+            <br>
             <div class="sub_block">
-              <br />
+              <br>
               <% if @token.nil? %>
                <%= raw ( I18n.t("automated_tests.token.tokens_not_given_yet") ) %>
               <% else %>
@@ -318,17 +318,17 @@
                                     :tokens => @token.tokens) ) %>
                 <% end %>
               <% end %>
-              <br />
+              <br>
              </div>
-           <br />
+           <br>
            <h3><%= I18n.t("automated_tests.run_tests") %></h3>
            <% if @grouping.assignment.submission_rule.can_collect_now? %>
              <%= I18n.t("automated_tests.due_date_is_passed") %>
-             <br />
+             <br>
            <% else %>
              <% if @result.nil? && @test_result_files.nil? %>
                 <%= I18n.t("automated_tests.need_one_file") %>
-                <br />
+                <br>
              <% else %>
                 <%
                 # Javascript for test result window
@@ -338,14 +338,14 @@
                 <div id="test_results_controls">
                    <%= render :partial => 'results/common/test_selector', :formats => [:html],
                      :locals => {:test_result_files => @test_result_files, :result => @result} %>
-                   <br />
+                   <br>
                 </div>
-               <br />
+               <br>
              <% end %>
              <% if @grouping.submissions.empty? %>
-               <br />
+               <br>
                <%= link_to I18n.t("automated_tests.collect_and_test"), {:controller => 'assignments', :action => 'student_interface', :id => @assignment.id, :grouping_id => @grouping.id , :revision_number => @revision_number, :collect => true}, :class => "button"%>
-               <br />
+               <br>
              <% end %>
            <% end %>
     <% end %>

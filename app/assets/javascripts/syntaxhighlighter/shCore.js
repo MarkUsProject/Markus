@@ -352,7 +352,7 @@ dp.sh.Highlighter.prototype.ProcessSmartTabs = function(code) {
 }
 
 dp.sh.Highlighter.prototype.SwitchToList = function() {
-  // thanks to Lachlan Donald from SitePoint.com for this <br/> tag fix.
+  // thanks to Lachlan Donald from SitePoint.com for this <br> tag fix.
   var html = this.div.innerHTML.replace(/<(br)\/?>/gi, '\n');
   var lines = html.split('\n');
 

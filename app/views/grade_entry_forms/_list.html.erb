@@ -32,7 +32,7 @@
             <td>
             	<strong><%= l(grade_entry_form.date, :format => :short_date) %></strong>
               <% if grade_entry_form.date > Time.zone.now.to_date %>
-                <br />
+                <br>
                 <%= t(:days_left,
                       :days => grade_entry_form.date - Time.zone.now.to_date)
                  %>
