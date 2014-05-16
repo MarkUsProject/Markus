@@ -15,9 +15,9 @@
             :id => @assignment.id) %>
     <%= link_to_function t('annotations.add_annotation_category'),
                          :onclick => "add_annotation_category('#{path}')" %>
-    <span class="menu_bar">|</span>
+    <span class="menu_bar"></span>
     <%= button_to_function t('upload'), 'modal_upload.open();' %>
-    <span class="menu_bar">|</span>
+    <span class="menu_bar"></span>
     <%= button_to_function t('download'), 'modal_download.open();' %>
 
   </h1>

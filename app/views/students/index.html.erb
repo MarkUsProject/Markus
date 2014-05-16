@@ -22,7 +22,7 @@
 <% end %>
 
 <div id="title_bar"><h1><%= I18n.t("students.manage_students") %></h1>
-  <div class="headingButtons">
+  <div class="heading_buttons">
     <%= link_to I18n.t(:add_new), new_student_path() %> |
     <%= link_to I18n.t(:upload),'#', :onclick => 'modal_upload.open(); return false;' %> |
     <%= link_to I18n.t(:download),'#', :onclick => 'modal_download.open(); return false;' %>

@@ -340,10 +340,10 @@ pt:
       invalid_csv: "O formato do arquivo CSV não foi reconhecido"
 
     pagination:
-      first: "<< Primeiro"
+      first: "≪ Primeiro"
       prev: "< Anterior"
       next: "Próximo >"
-      last: "Último >>"
+      last: "Último ≫"
       per_page: "Por página"
       jump_to: "Ir para:"
       show: "mostrar"

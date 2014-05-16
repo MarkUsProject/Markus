@@ -17,7 +17,7 @@
   <h1><%= I18n.t("rubric_criteria.criteria_management",
                  :identifier => @assignment.short_identifier) %>
   </h1>
-  <div class="headingButtons">
+  <div class="heading_buttons">
         <%= link_to_function t("add_criterion"),
             %| if($('new_rubric_criterion') != null) {
               $('rubric_criterion_rubric_criterion_name').select();
@@ -26,9 +26,9 @@
               #{remote_function :url => new_assignment_rubric_path(@assignment),
                                 :method => 'get'}
             }|%>
-  <span class="menu_bar" >|</span>
+  <span class="menu_bar"></span>
     <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
-  <span class="menu_bar" >|</span>
+  <span class="menu_bar"></span>
     <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
   </div>
 </div><!-- Title bar-->

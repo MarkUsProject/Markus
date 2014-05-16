@@ -19,6 +19,10 @@
     color: $grey;
     font-size: 1rem;
     font-weight: normal;
+
+    &::before {
+      content: "|";
+    }
   }
 
   input:hover,
@@ -64,10 +68,11 @@
   width: 300px;
 }
 
-.headingButtons {
+.heading_buttons {
   display: inline-block;
   float: right;
-  margin-top: 2.5em;
+  margin-top: 2.75em;
+  text-align: right;
 }
 
 .wrapLeft,
@@ -588,8 +593,9 @@ input#extra_mark_description {
   background: #fbc5c5 url('icons/exclamation.png') no-repeat 5px center;
   border: 1px solid #cf3c2b;
 
+  h1,
   h2 {
-    font-size: 1em;
+    font-size: 1.2em;
     font-weight: 600;
     margin: 0;
     padding: 0.5em 0;
