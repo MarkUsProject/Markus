@@ -17,14 +17,18 @@ a {
   @include transition(all, 0.2s);
   color: $blue;
   font-size: 1em;
-}
 
-a:hover {
-  color: $hover;
-}
+  &:hover {
+    color: $hover;
+  }
 
-a:active {
-  color: $grey;
+  &:active {
+    color: $grey;
+  }
+
+  img {
+    border: none;
+  }
 }
 
 h2 a,
@@ -38,12 +42,12 @@ h2 a.title {
   font-size: 1.5em;
 }
 
-a.delete{
+a.delete {
   color: $hover;
-}
 
-a.delete:hover{
-  color: #f00;
+  &:hover {
+    color: #f00;
+  }
 }
 
 a.rubric_criterion_link {
@@ -60,8 +64,7 @@ h1 {
 h4 {
   border-bottom: 1px solid #ccc;
   color: $grey;
-  padding-bottom: 3px;
-  padding-left: 3px;
+  padding: 0 0 3px 3px;
 }
 
 #content {
@@ -82,6 +85,7 @@ form.download_zip {
 input,
 textarea {
   @include border-radius(5px);
+  @include transition(all, 0.3s);
   background: #f5f5f5;
   border: 1px solid #ccc;
   color: #222;
@@ -90,21 +94,15 @@ textarea {
   min-width: 100px;
   outline: none;
   padding: 4px 10px;
-}
 
-input {
-  @include transition(all, 0.3s);
-}
+  &:focus {
+    background: $primary-color;
+    border-color: $light-blue;
+  }
 
-input:focus,
-textarea:focus {
-  background: $primary-color;
-  border-color: $light-blue;
-}
-
-input:hover,
-textarea:hover {
-  border-color: $hover;
+  &:hover {
+    border-color: $hover;
+  }
 }
 
 input[type=button],
@@ -126,70 +124,48 @@ button,
   padding: 0.5em 2em;
   text-decoration: none;
   text-shadow: 1px 1px 0 $primary-color;
+
+  &:hover {
+    @include box-shadow(0 1px 0 0 #ccc, 0 1px 0 0 #fefefe inset);
+    border-color: $hover;
+    color: $grey;  /* override for a.button */
+  }
+
+  &:focus {
+    border-color: #77989e;
+  }
+
+  &:active {
+    @include background-gradient(#e3e3e3, #ededed);
+    @include box-shadow(none);
+    border-color: #77989e;
+    position: relative;
+    top: 1px;
+  }
+
+  &[disabled] {
+    @include background-gradient(#eee, #ddd);
+    @include box-shadow(none);
+    border-color: #a7b8be;
+    top: 0;
+  }
+
+  /* Button sized to fit inline */
+  &.thin-button {
+    padding: 3px 15px;
+  }
 }
 
 .button {
   padding: 0.6em 2em;
 }
 
-input[type=button]:hover,
-input[type=submit]:hover,
-input[type=reset]:hover,
-button:hover,
-.button:hover {
-  @include box-shadow(0 1px 0 0 #ccc, 0 1px 0 0 #fefefe inset);
-  border-color: $hover;
-  color: $grey;  /* override for a.button */
-}
-
-input[type=button]:focus,
-input[type=submit]:focus,
-input[type=reset]:focus,
-button:focus,
-.button:focus {
-  border-color: #77989e;
-}
-
-input[type=button]:active,
-input[type=submit]:active,
-input[type=reset]:active,
-button:active,
-.button:active {
-  @include background-gradient(#e3e3e3, #ededed);
-  @include box-shadow(none);
-  border-color: #77989e;
-  position: relative;
-  top: 1px;
-}
-
-input[type=button][disabled],
-input[type=submit][disabled],
-input[type=reset][disabled],
-button[disabled],
-.button[disabled] {
-  @include background-gradient(#eee, #ddd);
-  @include box-shadow(none);
-  border-color: #a7b8be;
-  top: 0;
-}
-
-  /* .thin-button, a button sized to fit inline */
-  input[type=button].thin-button,
-  input[type=submit].thin-button,
-  button.thin-button {
-    padding: 3px 15px;
-  }
-
 input[type="radio"] {
   min-width: 30px;
   max-width: 30px;
 }
 
-input[disabled] {
-  background-color: #ddd;
-  color: #aaa;
-}
-
+input[disabled],
 input[disabled]:hover {
   background-color: #ddd;
   color: #aaa;
@@ -445,18 +421,18 @@ legend {
 
     li {
       @include border-radius(0);
-    }
 
-    li:last-child,
-    li:last-child #drop_down_current_assignment {
-      @include border-radius-bottom(10px);
-    }
+      &:hover {
+        background: $light-blue;
 
-    li:hover {
-      background: $light-blue;
+        a {
+          color: #fff !important;
+        }
+      }
 
-      a {
-        color: #fff !important;
+      &:last-child,
+      &:last-child #drop_down_current_assignment {
+        @include border-radius-bottom(10px);
       }
     }
 
@@ -625,7 +601,7 @@ footer {
 }
 
 
-/* switch view*/
+/* Switch view*/
 
 .switch_view {
   float: right;
@@ -637,10 +613,10 @@ footer {
 
 #toggle_actions {
   display: inline;
-}
 
-#toggle_actions a {
-  padding: 0 4px;
+  a {
+    padding: 0 4px;
+  }
 }
 
 .rubric_level_input {
@@ -655,13 +631,13 @@ footer {
 }
 
 .image_input {
-  min-width: 0;
   @include border-radius(0);
+  background-color: transparent;
   border: transparent;
   font-weight: 600;
-  padding: 0;
   margin: 0;
-  background-color: transparent;
+  min-width: 0;
+  padding: 0;
 }
 
 .inline_checkbox,
@@ -679,26 +655,25 @@ footer {
 .filter_selected {
   color: #000;
   font-weight: 600;
-}
 
-a.filter_selected:hover {
-  color: #000;
-  font-weight: 600;
-  cursor: default;
+  &:hover {
+    color: #000;
+    cursor: default;
+  }
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   margin: 4px 0;
-}
 
-table tr td.loading,
-table tr td:hover.loading {
-  height: 30px;
-  padding-left: 8px;
-  border: 0;
-  background-color: $primary-color;
+  tr td.loading,
+  tr td:hover.loading {
+    height: 30px;
+    padding-left: 8px;
+    border: 0;
+    background-color: $primary-color;
+  }
 }
 
 thead,
@@ -738,10 +713,10 @@ td {
   p {
     margin: 0.5em 0 0 0;
   }
-}
 
-td.center {
-  text-align: center;
+  &.center {
+    text-align: center;
+  }
 }
 
 td.note {
@@ -752,18 +727,18 @@ td.note {
     display: inline-block;
     width: auto;
   }
-}
 
-td.note:last-child {
-  text-align: right;
+  &:last-child {
+    text-align: right;
+  }
 }
 
 tbody tr {
   @include transition(all, 0.2s);
-}
 
-tbody tr:hover {
-  background: #ececec;
+  &:hover {
+    background: #ececec;
+  }
 }
 
 .table_menu {
@@ -782,21 +757,18 @@ tbody tr:hover {
     padding: 2px;
     margin: 1px;
     min-width: 5px;
-  }
 
-  a:hover,
-  button:hover {
-    color: $hover;
-  }
+    &:hover {
+      color: $hover;
+    }
 
-  a.delete:hover,
-  button.delete:hover {
-    color: red;
-  }
+    &.delete:hover {
+      color: #f00;
+    }
 
-  a.valid:hover,
-  button.valid:hover {
-    color: green;
+    &.valid:hover {
+      color: #0f0;
+    }
   }
 }
 
@@ -820,26 +792,28 @@ tr:hover .table_menu {
   float: right;
 }
 
-table.display thead th {
-  padding: 3px 18px 3px 10px;
-  border-bottom: 1px solid #000;
-  font-weight: 600;
-  cursor: pointer;
-  *cursor: hand;
-}
+table.display {
+  thead th {
+    padding: 3px 18px 3px 10px;
+    border-bottom: 1px solid #000;
+    font-weight: 600;
+    cursor: pointer;
+    *cursor: hand;
+  }
 
-table.display tfoot th {
-  padding: 3px 18px 3px 10px;
-  border-top: 1px solid #000;
-  font-weight: 600;
-}
+  tfoot th {
+    padding: 3px 18px 3px 10px;
+    border-top: 1px solid #000;
+    font-weight: 600;
+  }
 
-table.display tr.heading2 td {
-  border-bottom: 1px solid #aaa;
-}
+  tr.heading2 td {
+    border-bottom: 1px solid #aaa;
+  }
 
-table.display td {
-  padding: 3px 10px;
+  td {
+    padding: 3px 10px;
+  }
 }
 
 .dataTables_info {
@@ -859,45 +833,39 @@ table.display td {
   *cursor: hand;
 }
 
-.paging_full_numbers .ui-button {
-  padding: 2px 6px;
-  margin: 0;
-  cursor: pointer;
-  *cursor: hand;
-  color: #333 !important;
-}
+.dataTables_paginate {
+  width: auto;
 
-.dataTables_paginate .ui-button {
-  margin-right: -0.1em !important;
+  .ui-button {
+    margin-right: -0.1em !important;
+  }
 }
 
 .paging_full_numbers {
   width: 350px !important;
+
+  .ui-button {
+    padding: 2px 6px;
+    margin: 0;
+    cursor: pointer;
+    *cursor: hand;
+    color: #333 !important;
+  }
 }
 
 .dataTables_wrapper .ui-toolbar {
   padding: 5px;
 }
 
-.dataTables_paginate {
-  width: auto;
-}
-
 .dataTables_info {
   padding-top: 3px;
-}
-
-table.display thead th {
-  padding: 3px 0 3px 10px;
-  cursor: pointer;
-  *cursor: hand;
 }
 
 div.dataTables_wrapper .ui-widget-header {
   font-weight: normal;
 }
 
-/*DataTable sort icon positioning*/
+/* DataTable sort icon positioning */
 div.DataTables_sort_wrapper span {
   display: inline-block;
 }
@@ -930,7 +898,8 @@ td.grades_table_cell {
 
 /* Grades table checkbox */
 
-td.grades_table_checkbox, th.student_total {
+td.grades_table_checkbox,
+th.student_total {
   width: 7%;
   text-align: center;
 }
@@ -941,10 +910,10 @@ td.grades_table_checkbox, th.student_total {
 td.grade {
   width: 5%;
   text-align: center;
-}
 
-td.grade input {
-  min-width: 5%;
+  input {
+    min-width: 5%;
+  }
 }
 
 
@@ -958,96 +927,99 @@ th.out_of {
 /* A student's total mark in grades table */
 td.student_total {
   text-align: center;
+
+  input {
+    background-color: transparent;
+    border: none;
+    color: #000;
+    min-width: 7%;
+    text-align: left;
+
+    &:hover {
+      background-color: transparent;
+      border: none;
+      color: #000;
+      min-width: 7%;
+      text-align: left;
+    }
+  }
 }
 
-td.student_total input {
-  min-width: 7%;
-  border: none;
-  background-color: transparent;
-  text-align: left;
-  color: #000;
-}
-
-td.student_total input:hover {
-  min-width: 7%;
-  border: none;
-  background-color: transparent;
-  text-align: left;
-  color: #000;
-}
 
 /* Groups table*/
-#checkbox{
+
+#checkbox {
   width: 2em;
   padding: 0;
 }
 
-#FilterTable_header_members{
+#FilterTable_header_members {
   width: 55%;
 }
 
-#FilterTable_header_graders{
+#FilterTable_header_graders {
   width: 20%;
 }
 
-#FilterTable_header_valid{
+#FilterTable_header_valid {
   width: 2.5%;
 }
 
-
-#FilterTable_header_name{
+#FilterTable_header_name {
   width: 35%;
 }
 
-#FilterTable_manage_graders_header_name{
+#FilterTable_manage_graders_header_name {
   width: 32%;
 }
 
-#FilterTable_manage_graders_header_members{
+#FilterTable_manage_graders_header_members {
   width: 40%;
 }
 
-#FilterTable_manage_graders_header_section{
+#FilterTable_manage_graders_header_section {
   width: 12%;
 }
 
-#FilterTable_manage_graders_header_coverage, #FilterTable_header_coverage{
+#FilterTable_manage_graders_header_coverage,
+#FilterTable_header_coverage {
   width: 8em;
 }
 
-input#extra_mark_description{
+input#extra_mark_description {
   width: 50%;
 }
 
-#add_extra_mark_prompt label{
+#add_extra_mark_prompt label {
   min-width: 20%;
 }
 
 .summary_block {
-  float: right;
-  padding: 5px;
-  line-height: 1.6em;
   border: 1px solid #ccc;
+  float: right;
+  line-height: 1.6em;
   margin: 5px 5px;
   min-width: 50%;
+  padding: 5px;
 }
 
-.total_extra_points_label, #total_extra_points{
+.total_extra_points_label,
+#total_extra_points {
   font-style: italic;
   margin: 2px 0;
   padding: 2px;
 }
 
-.status_inviter{
-   font-style: italic;
-   font-weight: 600;
+.status_inviter {
+  font-style: italic;
+  font-weight: 600;
 }
 
-.status_pending{
-   font-style: italic;
+.status_pending {
+  font-style: italic;
 }
 
-.mark_total{
+.mark_total {
   @include border-radius(8px);
   background-color: #efefef;
   border: 1px solid #acacac;
@@ -1057,7 +1029,7 @@ input#extra_mark_description{
   padding: 10px;
 }
 
-.final_mark{
+.final_mark {
   float: right;
   font-size: 1.2em;
 }
@@ -1274,7 +1246,7 @@ input#extra_mark_description{
 }
 
 .bonus_deduction {
-  background-color: #B7D3EC;
+  background-color: #b7d3ec;
   padding: 5px;
 }
 
@@ -1290,11 +1262,11 @@ input#extra_mark_description{
 }
 
 /* accordeon menu */
-.left_section:hover .left_section_container{
+.left_section:hover .left_section_container {
   display: block;
 }
 
-.left_section_container{
+.left_section_container {
   display: none;
 }
 
@@ -1318,12 +1290,12 @@ input#extra_mark_description{
   }
 }
 
-.colLeft{
+.colLeft {
   float: left;
   width: 75%;
 }
 
-.colRight{
+.colRight {
   float: right;
   width: 25%;
 }
@@ -1337,7 +1309,7 @@ input#extra_mark_description{
   vertical-align: top;
 }
 
-.colLeftGroups{
+.colLeftGroups {
   width: 35%;
 }
 
@@ -1349,11 +1321,11 @@ input#extra_mark_description{
   width: 30%;
 }
 
-.colRightGraders{
+.colRightGraders {
   width: 60%;
 }
 
-.centreColumn{
+.centreColumn {
   display: inline-block;
   overflow: hidden;
   width: 10%;
@@ -1386,8 +1358,9 @@ input#extra_mark_description{
   right: 0;
 }
 
-.globalActionIconsTop, .globalActionIconsBottom{
-  background: #DFDFDF;
+.globalActionIconsTop,
+.globalActionIconsBottom{
+  background: #dfdfdf;
   margin-bottom: -5px;
   margin-top: -5px;
   padding-left: 5px;
@@ -1395,11 +1368,11 @@ input#extra_mark_description{
   width: 60px;
 }
 
-.globalActionIconsTop{
+.globalActionIconsTop {
   @include border-radius-top(5px);
 }
 
-.globalActionIconsBottom{
+.globalActionIconsBottom {
   @include border-radius-bottom(5px);
 }
 
@@ -1517,7 +1490,7 @@ input#extra_mark_description{
     margin-left: -1em;
   }
 
-  // Invite button
+  /* Invite button */
   input[type=button] {
     margin-bottom: 2em;
   }
@@ -1533,14 +1506,17 @@ input#extra_mark_description{
   margin: 0 0 1em 0;
 }
 
-div.sub_block span.prop_label {
-  display: inline-block;
-  font-weight: 600;
-  min-width: 150px;
-}
+div.sub_block {
 
-div.sub_block span.box {
-  display: inline-block;
+  span.prop_label {
+    display: inline-block;
+    font-weight: 600;
+    min-width: 150px;
+  }
+
+  span.box {
+    display: inline-block;
+  }
 }
 
 #member_inviter {
@@ -1552,8 +1528,8 @@ div.sub_block span.box {
 }
 
 .membership_status_rejected {
-  font-style: italic;
   color: $grey;
+  font-style: italic;
 }
 
 span.info_red,
@@ -1576,14 +1552,16 @@ span.info_date{
   margin-right: 5px;
 }
 
-.section .info_date {
-  color: $grey;
-  font-style: italic;
-  margin-left: 10px;
-}
+.section {
+  .info_date {
+    color: $grey;
+    font-style: italic;
+    margin-left: 10px;
+  }
 
-.section li {
-  padding: 0.5em 0;
+  li {
+    padding: 0.5em 0;
+  }
 }
 
 a.assignment_list {
@@ -1622,13 +1600,7 @@ td#thinking_table_row {
   float: left;
 }
 
-#ap_select_all_div {
-  background: #FFFFE0;
-  border: 1px solid #000;
-  padding: 5px;
-  text-align: center;
-}
-
+#ap_select_all_div,
 #ap_select_full_div {
   background: #FFFFE0;
   border: 1px solid #000;
@@ -1648,12 +1620,12 @@ th.ap_sorting_by {
   background: url('icons/bullet_arrow_up.png') no-repeat left;
   color: #000;
   padding-left: 1.3em;
-}
 
-th.ap_sorting_by a {
-  background: none;
-  color: #000;
-  font-weight: 600;
+  a {
+    background: none;
+    color: #000;
+    font-weight: 600;
+  }
 }
 
 th.ap_sorting_by_desc {
@@ -1671,7 +1643,7 @@ th.ap_sorting_by_desc {
 /* end Submissions table */
 
 /* Submission's file_manager*/
-th#FilterTable_header_filename{
+th#FilterTable_header_filename {
   width: 30%;
 }
 
@@ -1679,11 +1651,12 @@ th#FilterTable_header_last_modified_date {
   width: 20%;
 }
 
-th#FilterTable_header_revision_by{
+th#FilterTable_header_revision_by {
   width: 20%;
 }
 
-th#FilterTable_header_delete_file, td#FilterTable_footer_delete_file {
+th#FilterTable_header_delete_file,
+td#FilterTable_footer_delete_file {
   text-align: center;
 }
 
@@ -1765,7 +1738,7 @@ td.grade_entry_form_result {
   float: right;
 }
 
-.search_box{
+.search_box {
   overflow: hidden;
 }
 
@@ -1795,19 +1768,15 @@ a.icon_remove {
   height: 20px;
   text-indent: -3000em;
   width: 20px;
+
+  &:hover {
+    background: url('icons/cancel.png') no-repeat;
+  }
 }
 
-a.icon_remove:hover {
-  background: url('icons/cancel.png') no-repeat;
-}
-
-a img{
-  border: none;
-}
 
 /* Rubric Criteria view*/
 
-/* Float right was causing issues */
 div.align_text_right {
   text-align: right;
   width: 100%;
@@ -1837,6 +1806,7 @@ div.align_text_right {
 
 #rubric_criteria_pane ul,
 #flexible_criteria_pane ul{
+  list-style: none;
   margin: 0;
   padding: 0;
 }
@@ -1904,11 +1874,6 @@ div.align_text_right {
   background: #ccc;
 }
 
-#rubric_criteria_pane ul,
-#flexible_criteria_pane ul{
-  list-style: none;
-}
-
 #rubric_criteria_pane li,
 #flexible_criteria_pane li,
 #annotation_category_pane_list li {
@@ -1918,7 +1883,8 @@ div.align_text_right {
   width: 100%;
 }
 
-.mark_tools form, form.button_to div {
+.mark_tools form,
+form.button_to div {
   display: inline;
 }
 
@@ -1955,15 +1921,11 @@ input.button_to_delete_deduction {
   padding: 2px 4px 0 2px;
 }
 
-.delete_criterion a img {
-  border: none;
-}
-
 .main_rubric_criteria_edit,
 .main_flexible_criteria_edit,
-#flexible_criteria_preview{
+#flexible_criteria_preview {
   @include border-radius(10px);
-  background: #F8F8F8;
+  background: #f8f8f8;
   border: 1px solid #ccc;
   margin: 10px;
   padding: 10px;
@@ -1979,18 +1941,20 @@ input.button_to_delete_deduction {
   margin-right: 1em;
 }
 
-#flexible_criteria_preview h3 {
-  margin: 0 0 10px 0;
-}
+#flexible_criteria_preview {
+  h3 {
+    margin: 0 0 10px 0;
+  }
 
-#flexible_criteria_preview ul li {
-  list-style: disc outside none;
-  padding: 0;
-}
+  ul li {
+    list-style: disc outside none;
+    padding: 0;
+  }
 
-#flexible_criteria_preview ol li {
-  list-style: decimal outside none;
-  padding: 0;
+  ol li {
+    list-style: decimal outside none;
+    padding: 0;
+  }
 }
 
 .criterion_description_preview {
@@ -2058,29 +2022,33 @@ ul#annotation_list {
   font-style: italic;
 }
 
-.assignment_info{
+.assignment_info {
   font-size: 0.9em;
   font-style: italic;
 }
 
-fieldset.period p{
-  margin: 0;
-  padding: 0;
+fieldset.period {
+  margin: 10px 0;
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
 }
 
-.PeriodDeltaChain{
+.PeriodDeltaChain {
   font-size: 0.9em;
   font-style: italic;
   padding-left: 10em;
 }
 
 .PeriodDeltaChain_ToTime,
-.PeriodDeltaChain_FromTime{
+.PeriodDeltaChain_FromTime {
   font-weight: 600;
   padding: 0 10px;
 }
 
-span.due_date{
+span.due_date {
   color: $grey;
   display: block;
   font-size: 0.9em;
@@ -2089,16 +2057,14 @@ span.due_date{
   padding-left: 5px;
 }
 
-fieldset.period{
-  margin: 10px 0;
-}
-
-#penalty_periods, #grace_periods, #penalty_decay_periods {
+#penalty_periods,
+#grace_periods,
+#penalty_decay_periods {
   margin-left: 5em;
   width: 80%;
 }
 
-#sub_rule_link{
+#sub_rule_link {
   margin-left: 5em;
 }
 
@@ -2106,32 +2072,38 @@ fieldset.period{
   width: 500px;
 }
 
-#rubric_viewer #criteria_pane{
-  margin: 0;
-  padding: 0;
-  width: 100%;
+#rubric_viewer {
+  #criteria_pane{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  table,
+  table tr {
+    background: $primary-color;
+    padding: 4px;
+  }
 }
 
-#rubric_viewer table,
-#rubric_viewer table tr{
-  background: $primary-color;
-  padding: 4px;
+.fieldWithErrors {
+  label{
+    font-style: italic;
+  }
+
+  input{
+    border: 2px solid #e6cb55;
+  }
 }
 
-.fieldWithErrors label{
-  font-style: italic;
-}
-
-.fieldWithErrors input{
-  border: 2px solid #E6CB55;
-}
-
-fieldset.disabled{
+fieldset.disabled {
   background-color: #eee;
   font-style: italic;
 }
 
-.disabled label, .disabled span, .disabled p{
+.disabled label,
+.disabled span,
+.disabled p{
   color: $grey;
   font-style: italic;
 }
@@ -2180,11 +2152,11 @@ pre#test_result_content {
   color: red;
 }
 
-.graph_layout{
-  height:350px;
-  margin-left:20px;
-  margin-top:20px;
-  width:500px;
+.graph_layout {
+  height: 350px;
+  margin-left: 20px;
+  margin-top: 20px;
+  width: 500px;
 }
 
 /* Dashboard Assignment Summary */
@@ -2199,51 +2171,51 @@ pre#test_result_content {
   padding: 20px;
   text-align: left;
   width: auto;
-}
 
-.assignment_summary .left {
-  display: inline-block;
-  width: 400px;
-}
+  .left {
+    display: inline-block;
+    width: 400px;
+  }
 
-.assignment_summary .right {
-  display: inline-block;
-  margin-left: 15px;
-  vertical-align: top;
-  width: auto;
-}
+  .right {
+    display: inline-block;
+    margin-left: 15px;
+    vertical-align: top;
+    width: auto;
+  }
 
-.assignment_summary .title {
-  color: #0a67ad;
-  font-weight: 300;
-  margin: 0 0 15px 0;
-  padding: 0;
-}
+  .title {
+    color: #0a67ad;
+    font-weight: 300;
+    margin: 0 0 15px 0;
+    padding: 0;
+  }
 
-.assignment_summary .due_date {
-  font-weight: 600;
-}
+  .due_date {
+    font-weight: 600;
 
-.assignment_summary .due_date .after {
-  color: red;
-}
+    .after {
+      color: red;
+    }
 
-.assignment_summary .due_date .before {
-  color: green;
-}
+    .before {
+      color: green;
+    }
+  }
 
-.assignment_summary table tr td {
-  border-bottom: none;
-  padding-right: 10px;
-}
+  table tr td {
+    border-bottom: none;
+    padding-right: 10px;
+  }
 
-.assignment_summary ul {
-  list-style-type: square;
-  margin-top: 0;
-}
+  ul {
+    list-style-type: square;
+    margin-top: 0;
+  }
 
-.assignment_summary .grader_distribution {
-  margin-bottom: 0;
+  .grader_distribution {
+    margin-bottom: 0;
+  }
 }
 
 #section_due_dates_type_form {
@@ -2262,28 +2234,28 @@ pre#test_result_content {
   border: 1px solid #000;
   margin: 0;
   padding: 0;
+
+  span {
+    display: none;
+
+    &.label {
+      display: inline;
+      float: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    &.data {
+      display: inline;
+      float: none;
+      margin: 0;
+      padding: 0;
+    }
+  }
 }
 
-.bluff-tooltip span.label {
-  display: inline;
-  float: none;
-  margin: 0;
-  padding: 0;
-}
-
-.bluff-tooltip span.data {
-  display: inline;
-  float: none;
-  margin: 0;
-  padding: 0;
-}
-
-.bluff-tooltip span {
-  display: none;
-}
-
-#curent_time {
-  padding: 10px 0 10px 0;
+#current_time {
+  padding: 0 0 10px 0;
 }
 
 .table-button {

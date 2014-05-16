@@ -61,8 +61,17 @@ ul#rubric_levels_pane_list {
   width: 100%;
 }
 
-  #rubric_levels_pane_list li:nth-child(even) { background: #fffcc4; }
-  #rubric_levels_pane_list li:nth-child(odd) { background: #fffbb6; }
+  #rubric_levels_pane_list {
+    li {
+      &:nth-child(even) {
+        background: #fffcc4;
+      }
+
+      &:nth-child(odd) {
+        background: #fffbb6;
+      }
+    }
+  }
 
 /* ================ CRITERIONS ============== */
 
@@ -131,16 +140,11 @@ ul#rubric_levels_pane_list {
 
 #rubric_status {
   font-weight: bold;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding: 0 10px;
 }
 
 #selected_criterion_name {
   font-weight: bold;
-}
-
-.clear {
-  clear: both;
 }
 
 .error {

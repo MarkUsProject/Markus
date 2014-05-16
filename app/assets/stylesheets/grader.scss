@@ -26,8 +26,9 @@
 /****************************************************
   Style for the actual annotations content
 *****************************************************/
-.annotationContent, .manageAnnotations {
-  font: italic 0.85em "Verdana", sans-serif;
+.annotationContent,
+.manageAnnotations {
+  font: italic 0.85em $font-stack;
   margin: 0 0 10px 0;
   padding: 0 0 0 10px;
 }
@@ -196,7 +197,8 @@ li.annotation_category {
     width: 4px;
   }
 
-  #code_pane, #mark_pane {
+  #code_pane,
+  #mark_pane {
     @include border-radius(5px);
     background: #ececec;
     border: 1px solid #ddd;
@@ -208,15 +210,15 @@ li.annotation_category {
 
   #code_pane {
     width: 60%;
-   /* width: 536px;*/
   }
 
   #mark_pane {
-   width: 34%;
-    /*width: 370px;*/
+    width: 34%;
   }
 
-    #mark_viewer, #summary_viewer, #annotations_summary {
+    #mark_viewer,
+    #summary_viewer,
+    #annotations_summary {
       height: 650px;
       overflow: auto;
     }
@@ -226,7 +228,7 @@ li.annotation_category {
     }
 
       #sel_box {
-        border: thin dashed red;
+        border: thin dashed #f00;
         display: none;
         position: absolute;
       }
@@ -236,12 +238,11 @@ li.annotation_category {
       }
 
       .annotation_holder {
-        position: absolute;
-        opacity: 0.2;
-        filter: alpha(opacity=20);
         background: orange;
-        border: solid;
-        border-color: black;
+        border: 1px solid #000;
+        filter: alpha(opacity=20);
+        opacity: 0.2;
+        position: absolute;
       }
 
 #toolbar {
@@ -337,7 +338,7 @@ li.annotation_category {
   }
 }
 
-/* CSS for grading view */
+/* Grading view */
 /* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
 .padding_left {
   padding-left: 30px;
@@ -358,14 +359,14 @@ li.annotation_category {
   li {
     border-bottom: 1px solid #dadada;
     padding: 5px;
-  }
 
-  li:nth-child(odd) {
-    background: #ededed;
-  }
+    &:nth-child(odd) {
+      background: #ededed;
+    }
 
-  li:nth-child(even) {
-    background: #fff;
+    &:nth-child(even) {
+      background: #fff;
+    }
   }
 }
 
@@ -497,7 +498,7 @@ li.annotation_category {
 }
 
   .mark_summary_holder {
-    background: #FBFBFB;
+    background: #fbfbfb;
     border-bottom: 1px solid #dadada;
     padding: 5px;
   }
@@ -507,19 +508,20 @@ li.annotation_category {
     padding: 0;
 
     th {
-      background-color: #B7D3EC;
+      background-color: #b7d3ec;
       padding: 5px;
     }
+
     tr {
       padding-left: 5px;
-    }
 
-    tr:nth-child(odd) {
-      background: #EDEDED;
-    }
+      &:nth-child(odd) {
+        background: #EDEDED;
+      }
 
-    tr:nth-child(even) {
-      background: #fff;
+      &:nth-child(even) {
+        background: #fff;
+      }
     }
   }
 
