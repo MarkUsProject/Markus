@@ -14,8 +14,8 @@
   </div> <!-- rightjustify-->
 </div> <!-- title_bar-->
 
-<!-- <div class="wrapLeft"></div>
-<div class="clear"></div> -->
+<div class="wrapLeft"></div>
+<div class="clear"></div>
 
 <div id="notice">
   <div class="success" id="add_success" style="display: none;"></div>
@@ -78,7 +78,7 @@
       <div id="assigned"></div>
 
       <div class="tabbedArea">
-        <div class="searchBox">
+        <div class="search_box">
           <%= text_field_tag 'search_graders', nil,
               :onkeyup => "graders_table.add_filter('search'); graders_table.render();",
               :onkeypress => "stop_submit(event);",

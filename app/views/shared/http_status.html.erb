@@ -8,7 +8,9 @@
   <%= stylesheet_link_tag 'main.css', :media => 'all' %>
 </head>
 <body>
-  <h1><%= code + " " + HttpStatusHelper::ERROR_CODE[code] %></h1>
-  <p><%= message %></p>
+  <div id="error">
+    <h1><%= code + " " + HttpStatusHelper::ERROR_CODE[code] %></h1>
+    <p>Uh oh! <%= message %></p>
+  </div>
 </body>
 </html>

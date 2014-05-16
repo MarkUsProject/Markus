@@ -37,81 +37,11 @@
   }
 }
 
-.wrapLeft,
-.wrapRight {
-  min-width: 75%;
-}
-
-.wrapLeftGroups,
-.wrapRightGroups {
-  min-width: 75%;
-}
-
-.colsLeftHeavy {
-  min-width: 78.125em;
-}
-
-
-/* Title Bar*/
-
-#title_bar {
-  // padding-left: 15px;
-
-  span.menu_bar {
-    background: none;
-    border: none;
-    color: $grey;
-    font-size: 1rem;
-    font-weight: normal;
-  }
-
-  input:hover,
-  a:hover {
-    background: none;
-    border: none;
-    color: $hover;
-  }
-}
-
-#title_bar h1,
-.title_bar h1 {
-  color: $grey;
-  display: inline-block;
-  font-size: 2.5em;
-  font-weight: 300;
-}
-
-#second_title {
-  margin-top: 3.5em;
-}
-
-#title_bar input,
-#title_bar a,
-.sub_title a {
-  @include box-shadow(none);
-  background: none;
-  border: none;
-  color: $blue;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  margin: 0;
-  min-width: 5px;
-  padding: 0 4px;
-}
-
-.sub_title a {
-  font-size: 0.7em;
-}
-
-#new_files input {
-  width: 300px;
-}
-
-.headingButtons {
-  display: inline-block;
-  float: right;
-  margin-top: 2.5em;
+#switch_role_icon {
+  margin-top: -1em;
+  padding: 0 0.5em;
+  position: relative;
+  top: 0.3em;
 }
 
 

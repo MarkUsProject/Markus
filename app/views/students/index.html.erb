@@ -98,7 +98,7 @@
         <%= submit_tag t(:apply), :id => 'apply_bulk_action', :disable_with => I18n.t('working'), :name => 'commit', :class => 'thin-button' %>
       </div>
 
-      <div class="searchBox">
+      <div class="search_box">
         <%= text_field_tag 'search_students', nil,
             :onkeyup => "users_table.add_filter('search'); users_table.render();",
             :onkeypress => "stop_submit(event);",

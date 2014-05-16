@@ -1,4 +1,5 @@
 @import '../mixins';
+@import '../constants';
 
 /* Goes around the whole tab component, including the tabs. */
 .tabbedContainer {
@@ -13,7 +14,6 @@
 .tabbedArea {
   @include border-radius-bottom(5px);
   background: #fff;
-  // padding: 10px;
 }
 
 ul.subsection_tabs {
@@ -23,42 +23,51 @@ ul.subsection_tabs {
   margin: 0;
   padding: 0;
 
-  li.tab {
-    @include border-radius-top(5px);
-    background: #B7D3EC;
-    display: inline-block;
-    text-align: center;
-
-    a {
+  li {
+    &.tab {
       @include border-radius-top(5px);
-      background: #B7D3EC;
-      display: block;
-      height: 26px;
-      padding: 4px 10px 0 10px;
+      background: $light-blue;
+      display: inline-block;
+      text-align: center;
+
+      a {
+        @include border-radius-top(5px);
+        background: $light-blue;
+        color: #fff;
+        display: block;
+        height: 26px;
+        padding: 4px 10px 0 10px;
+
+        &.active,
+        &:hover,
+        &:focus {
+          background: #fff;
+          color: #000;
+        }
+
+        &.active {
+          font-weight: 400;
+        }
+      }
     }
 
-    a:hover,
-    a:focus {
+    &.tab_selected {
+      @include border-radius-top(5px);
       background: #fff;
+      float: left;
+      margin: 0 2px 0 0;
+      text-align: center;
     }
-  }
 
-  li.tab_selected {
-    @include border-radius-top(5px);
-    background: #fff;
-    float: left;
-    margin: 0 2px 0 0;
-    text-align: center;
-  }
+    &.button_tab {
+      float: left;
+      margin: -10px 25px 0 0;
+      position: absolute;
+      right: 0;
+    }
 
-  li.button_tab {
-    float: left;
-    margin: -10px 25px 0 0;
-    position: absolute;
-    right: 0;
-  }
-
-  li.source_code {
-    float: right;
+    &.source_code {
+      float: right;
+    }
   }
 }

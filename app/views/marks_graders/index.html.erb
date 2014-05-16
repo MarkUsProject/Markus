@@ -140,7 +140,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
         <div id="assigned"></div>
 
         <div class="tabbedArea">
-          <div class="searchBox">
+          <div class="search_box">
             <%= text_field_tag 'search_graders', nil,
                 :onkeyup => "graders_table.add_filter('search'); graders_table.render();",
                 :onkeypress => "stop_submit(event);",
