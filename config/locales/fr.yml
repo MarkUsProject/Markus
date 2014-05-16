@@ -1,5 +1,5 @@
 fr:
-    choose_language:    "Langue :"
+    choose_language:    "Langue:"
     answer_yes:         "Oui"
     answer_no:          "Non"
     markus:             "MarkUs"
@@ -7,7 +7,7 @@ fr:
     password:           "Mot de passe"
     all:                "Tous"
     none:               "Aucun"
-    search:             "Recherche :"
+    search:             "Recherche:"
 
     # app/views/main/login.html.erb
     welcome_to:         "Bienvenue sur MarkUs !"
@@ -48,8 +48,8 @@ fr:
     email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
     # app/views/api/_key_display.html.erb
-    api_key:            "Votre clé - API"
-    api_key_unavailable:        "Non disponible"
+    api_key:              "Votre clé - API"
+    api_key_unavailable:  "Non disponible"
     reset_api_key:        "Générer une nouvelle clé"
 
     # app/views/layouts/_menu.html.erb
@@ -183,6 +183,7 @@ fr:
     add_members:        "Ajouter des membres"
     remove_members:     "Enlever des membres"
     graders:            "Correcteurs"
+    search_graders:     "Recherche les correcteurs"
     add_graders:        "Ajouter des correcteurs"
     remove_graders:     "Enlever des correcteurs"
     admins:             "Administrateurs"
@@ -470,6 +471,7 @@ fr:
 
     groups:
       groups: "Groupes"
+      search_groups: "Rechercher les groupes"
       add_new: "Nouvelle groupe"
       manage_groups: "Gérer les groupes"
       all_students: "Tous les étudiants(<span id=\"all_students_count\"></span>)"
@@ -567,6 +569,7 @@ fr:
         error: "Erreur dans la mise à jour de l'étudiant(e)"
       create_success: "L'étudiant(e) %{user_name} a bien été créé(e)."
       students: "Étudiants"
+      search_students: "Rechercher les étudiants"
       no_students_selected: "Aucun(e) étudiant(e) n'étant sélectionné(e), aucun changement n'a été effectué."
       upload:
         upload_a_class_list: "Envoyer une liste d'étudiants"
@@ -663,17 +666,18 @@ fr:
 
     #Graders' View
     graders:
-      create_new_grader: "Créer un nouveau correcteur"
-      edit_grader:       "Modifier un correcteur"
-      manage_graders: "Gestion des correcteurs"
-      graders:        "Correcteurs"
+      create_new_grader:  "Créer un nouveau correcteur"
+      edit_grader:        "Modifier un correcteur"
+      manage_graders:     "Gestion des correcteurs"
+      graders:            "Correcteurs"
       all_graders:        "Tous les correcteurs"
       assigned_graders:   "Correcteurs assignés"
       possible_graders:   "Correcteurs possibles"
       unassigned_graders: "Correcteurs non assignés"
       not_covered:        "Pas couvert"
       covered:            "Couvert"
-      coverage: "Couverture"
+      coverage:           "Couverture"
+      search_criteria:    "Rechercher les critères"
       assign_to_criteria: "Attribuer les correcteurs aux critères"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
       upload:

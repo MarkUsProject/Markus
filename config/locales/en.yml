@@ -181,6 +181,7 @@ en:
     add_members:        "Add Members"
     remove_members:     "Remove Members"
     graders:            "Graders"
+    search_graders:     "Search Graders"
     add_graders:        "Add Graders"
     remove_graders:     "Remove Graders"
     admins:             "Admins"
@@ -468,10 +469,11 @@ en:
     converting_pdfs: "Now converting pdf files...%{converted}/%{total}"
 
     groups:
-      groups: "Groups"
-      add_new: "Add new group"
-      manage_groups: "Manage Groups"
-      all_students: "All students(<span id=\"all_students_count\"></span>)"
+      groups:           "Groups"
+      search_groups:    "Search Groups"
+      add_new:          "Add new group"
+      manage_groups:    "Manage Groups"
+      all_students:     "All students(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Unassigned(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigned(<span id=\"assigned_students_count\"></span>)"
       another_assignment_group: "Use another assignment's groups"
@@ -505,15 +507,12 @@ en:
       upload:
         upload: "Upload"
         upload_groups_file: "Upload Groups File"
-        description: "CSV file format:<br>
-            <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
+        description: "CSV file format:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"
         upload_grader_map: "Upload Group / Grader Map"
         upload_grader_criteria_map: "Upload Criteria / Grader Map"
-        description_grader_map: "CSV file format:<br>
-            <code>group_name,grader_user_name,grader_user_name,... </code><br>"
-        description_grader_criteria_map: "CSV file format:<br>
-            <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
+        description_grader_map: "CSV file format:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
+        description_grader_criteria_map: "CSV file format:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
         download: "Download"
         download_groups_file: "Download Groups File"
@@ -556,9 +555,10 @@ en:
       processing: "Processing..."
       manage_students: "Manage Students"
       edit_student:    "Edit a Student"
-      edit_success: "%{user_name} has been updated."
-      create_new:      "Create a new Student"
-      students: "Students"
+      edit_success:     "%{user_name} has been updated."
+      create_new:       "Create a new Student"
+      students:         "Students"
+      search_students:  "Search Students"
       no_students_selected: "No students were selected, so no changes were made."
       upload:
         upload_a_class_list: "Upload a class list"
@@ -685,6 +685,7 @@ en:
       not_covered:        "Not Covered"
       covered:            "Covered"
       coverage: "Coverage"
+      search_criteria:    "Search Criteria"
       assign_to_criteria: "Assign Graders to Criteria"
       lines_not_processed: "The following lines could not be processed:"
       upload:

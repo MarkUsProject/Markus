@@ -165,7 +165,6 @@
   <%= render 'shared/flash_message' %>
 </div><!-- Notice -->
 
-
 <%= form_tag global_actions_assignment_groups_path(@assignment),
              :id => "global_action_form",
              :remote => true do %>
@@ -179,16 +178,24 @@
     <div class="wrapLeftGroups">
       <div class="pane">
         <span id="loading_students_list">
-          <%= image_tag("spinner.gif") %><%= t("groups.loading_list") %></span>
+          <%= image_tag("spinner.gif") %><%= t("groups.loading_list") %>
+        </span>
         <ul id="students_tabs" class="subsection_tabs">
           <li class="tab">
             <a href="#students_none" id="filter_link_students_none">
-              <%= raw(I18n.t("groups.all_students")) %></a></li>
+              <%= raw(I18n.t("groups.all_students")) %>
+            </a>
+          </li>
           <li class="tab">
             <a href="#unassigned" id="filter_link_students_unassigned" class="filter_selected">
-              <%= raw(I18n.t("groups.unassigned_students")) %></a></li>
-          <li class="tab"><a href="#assigned" id="filter_link_students_assigned">
-            <%= raw(I18n.t("groups.assigned_students")) %></a></li>
+              <%= raw(I18n.t("groups.unassigned_students")) %>
+            </a>
+          </li>
+          <li class="tab">
+            <a href="#assigned" id="filter_link_students_assigned">
+              <%= raw(I18n.t("groups.assigned_students")) %>
+            </a>
+          </li>
         </ul>
 
         <div id="students_none"></div>
@@ -197,16 +204,13 @@
 
         <div class="tabbedArea">
           <div class="searchBox">
-            <%= label_tag 'search_students', "Search:",
-              :class => 'bold_inline_label'%>
             <%= text_field_tag 'search_students', nil,
-               :onkeyup => "students_table.add_filter('search'); students_table.render();",
-               :onkeypress => "stop_submit(event);" %>
+                :onkeyup => "students_table.add_filter('search'); students_table.render();",
+                :onkeypress => "stop_submit(event);",
+                :placeholder => I18n.t("students.search_students") %>
           </div>
-          <table class="students" id="students">
-          </table>
+          <table class="students" id="students"></table>
         </div>
-
       </div>
     </div>
   </div> <!-- colLeftGroups -->
@@ -253,10 +257,10 @@
         <div id="groups_container" class="tabbedArea">
 
           <div class="search_box">
-            <%= label_tag 'search_groupings', "Search:", :class => 'bold_inline_label'%>
             <%= text_field_tag 'search_groupings', nil,
-              :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
-              :onkeypress => "stop_submit(event);"%>
+                :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
+                :onkeypress => "stop_submit(event);",
+                :placeholder => I18n.t("groups.search_groups") %>
             <%= button_to_function t('groups.add_new'), "make_new_group()", :class=> 'floatRight' %>
           </div>
 

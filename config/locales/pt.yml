@@ -181,6 +181,7 @@ pt:
     add_members:        "Adicionar membros"
     remove_members:     "Remover membros"
     graders:            "Avaliadores"
+    search_graders:     "Pesquisar avaliadores"
     add_graders:        "Adicionar avaliadores"
     remove_graders:     "Remover avaliadores"
     admins:             "Administradores"
@@ -469,6 +470,7 @@ pt:
 
     groups:
       groups: "Grupos"
+      search_groups: "Pesquisar os grupos"
       add_new: "Adicionar um novo grupo"
       manage_groups: "Gerenciar grupos"
       all_students: "Todos os alunos(<span id=\"all_students_count\"></span>)"
@@ -556,6 +558,7 @@ pt:
       edit_success: "%{user_name} foi atualizado."
       create_new:      "Criar um novo aluno"
       students: "Alunos"
+      search_students:      "Pesquisar os alunos"
       no_students_selected: "Nenhum aluno foi selecionado, portanto nenhuma mudança foi salva."
       upload:
         upload_a_class_list: "Carregar lista de alunos"
@@ -677,6 +680,7 @@ pt:
       not_covered:        "Não coberto"
       covered:            "Coberto"
       coverage: "Cobertura"
+      search_criteria:    "Pesquisar os critérios"
       assign_to_criteria: "Atribuir avaliador aos critérios"
       lines_not_processed: "As linhas a seguir não puderam ser processadas:"
       upload:

@@ -99,11 +99,10 @@
       </div>
 
       <div class="searchBox">
-        <%= label_tag 'search_students', "Search:",
-          :class => 'bold_inline_label'%>
         <%= text_field_tag 'search_students', nil,
-           :onkeyup => "users_table.add_filter('search'); users_table.render();",
-           :onkeypress => "stop_submit(event);" %>
+            :onkeyup => "users_table.add_filter('search'); users_table.render();",
+            :onkeypress => "stop_submit(event);",
+            :placeholder => I18n.t("students.search_students") %>
       </div>
 
       <div style="overflow:auto; height: 400px;">
