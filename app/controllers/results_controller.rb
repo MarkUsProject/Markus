@@ -1,15 +1,15 @@
 class ResultsController < ApplicationController
   before_filter :authorize_only_for_admin,
                 :except => [:codeviewer, :edit, :update_mark, :view_marks, :create,
-                  :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
-                  :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
-                  :update_marking_state, :download, :download_zip, :note_message,
-                  :update_overall_remark_comment, :update_remark_request, :cancel_remark_request]
+                            :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
+                            :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
+                            :update_marking_state, :download, :download_zip, :note_message,
+                            :update_overall_remark_comment, :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
                 :only => [:edit, :update_mark, :create, :add_extra_mark,
-                  :next_grouping, :update_overall_comment, :expand_criteria,
-                  :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
-                  :update_marking_state, :note_message, :update_overall_remark_comment]
+                          :next_grouping, :update_overall_comment, :expand_criteria,
+                          :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
+                          :update_marking_state, :note_message, :update_overall_remark_comment]
   before_filter :authorize_for_user,
                 :only => [:codeviewer, :download, :download_zip]
   before_filter :authorize_for_student,
