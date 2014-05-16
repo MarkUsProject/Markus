@@ -7,13 +7,11 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("graders.manage_graders") %></h1>
-  <div class="colRightGroups">
-    <div class="headingButtons">
-      <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
-      <span class="menu_bar">|</span>
-      <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
-    </div> <!-- rightjustify-->
-  </div> <!-- colrightgroups-->
+  <div class="headingButtons">
+    <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
+    <span class="menu_bar">|</span>
+    <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
+  </div> <!-- rightjustify-->
 </div> <!-- title_bar-->
 
 <!-- <div class="wrapLeft"></div>
@@ -69,7 +67,7 @@
       </span>
       <ul id="graders_tabs" class="subsection_tabs">
         <li class="tab">
-          <a href="#graders_none" id="filter_link_graders_none"  class="filter_selected">
+          <a href="#graders_none" id="filter_link_graders_none" class="filter_selected">
             <%= I18n.t("graders.graders") %>
           </a>
         </li>

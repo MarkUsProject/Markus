@@ -2,10 +2,10 @@
 @import 'mixins';
 @import 'constants';
 
-/* Other parts */
 @import 'core';
-@import 'navigation';
+@import 'grader';
 @import 'login';
+@import 'navigation';
 
 
 /* Left aligns show total checkbox on
@@ -787,13 +787,6 @@ input#extra_mark_description {
   border: 1px solid $light-blue;
   margin: 0 0 10px 0;
   padding: 10px;
-}
-
-.headingButtons {
-  margin-top: -2em;
-  padding: 0 3.5em;
-  position: absolute;
-  right: 0;
 }
 
 .globalActionIconsTop,
