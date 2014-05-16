@@ -388,7 +388,7 @@ en:
       subversion_repo_list: "Subversion Repo List"
       subversion_export_file: "Subversion Export File"
       errors:               "Errors"
-      filter:               "Filter :"
+      filter:               "Filter:"
       show:                 "Show"
       per_page:             "per page"
       filename:             "Filename"

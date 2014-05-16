@@ -64,14 +64,10 @@ h4 {
   padding-left: 3px;
 }
 
-#loggedIn,
-#content {
-  min-height: 100%;
-}
-
 #content {
   background: $primary-color;
   margin: auto;
+  min-height: 100%;
   padding: 1.5em 3.5em;
   width: auto;
 }
@@ -543,7 +539,7 @@ span#choose_an_assignment {
 
 #sub_menu {
   background: $light-blue;
-  min-height: 42px;
+  min-height: 41px;
 
   a {
     color: $primary-color;
@@ -709,6 +705,11 @@ thead,
 tfoot {
   background: #dfdfdf;
   text-align: left;
+
+  a {
+    color: $grey;
+    font-weight: 600;
+  }
 }
 
 thead {
@@ -1047,19 +1048,18 @@ input#extra_mark_description{
 }
 
 .mark_total{
-  @include border-radius-top(8px);
+  @include border-radius(8px);
   background-color: #efefef;
   border: 1px solid #acacac;
-  font-size: 1.4em;
+  font-size: 1.2em;
   font-style: italic;
   font-weight: 600;
-  margin: 10px;
   padding: 10px;
 }
 
 .final_mark{
   float: right;
-  font-size: 1.4em;
+  font-size: 1.2em;
 }
 
 #current_total_mark_div {
@@ -1645,9 +1645,7 @@ td#thinking_table_row {
 }
 
 th.ap_sorting_by {
-  background-image: url('icons/bullet_arrow_up.png');
-  background-position: left;
-  background-repeat: no-repeat;
+  background: url('icons/bullet_arrow_up.png') no-repeat left;
   color: #000;
   padding-left: 1.3em;
 }
@@ -1659,16 +1657,14 @@ th.ap_sorting_by a {
 }
 
 th.ap_sorting_by_desc {
-  background-image: url(icons/bullet_arrow_down.png);
-  background-position: left;
-  background-repeat: no-repeat;
+  background: url(icons/bullet_arrow_down.png) no-repeat left;
   color: #000;
   padding-left: 1.3em;
 }
 
 .ap_nav_box {
   border: 1px solid #ddd;
-  padding: 5px 0;
+  padding: 0.5em;
   width: 100%;
 }
 
@@ -2048,7 +2044,7 @@ ul#annotation_list {
   margin-left: 5px;
 }
 
-.annotation_text_authors{
+.annotation_text_authors {
   color: $grey;
   display: inline-block;
   font-style: italic;
