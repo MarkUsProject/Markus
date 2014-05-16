@@ -43,7 +43,7 @@ fr:
     markus_copyright:   "Copyright (c) 2008-2011 par les auteurs."
     markus_credits:     "Crédits"
     markus_credits_thanks:      "Merci à tous ceux qui ont contribué à MarkUs. Remerciements particuliers à :"
-    supervisors:        "Chefs de projet :"
+    supervisors:        "Chefs de projet : "
     contact_us:         "Contactez-nous"
     email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
@@ -56,6 +56,7 @@ fr:
     dashboard:          "Tableau de bord"
     assignments:        "Projets"
     users:              "Utilisateurs"
+    sections:           "Sections"
     home:               "Accueil"
     settings:           "Paramètres"
 

@@ -37,7 +37,7 @@
     <li <% if controller.controller_name == 'sections' %>
           id = "menu_active"
         <% end %>>
-      <%= link_to 'Sections', :controller => 'sections' %>
+      <%= link_to I18n.t(:sections), :controller => 'sections' %>
     </li>
   <% else %>
     <li <% if controller.controller_name == 'assignments' or

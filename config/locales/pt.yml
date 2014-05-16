@@ -26,7 +26,7 @@ pt:
     # app/views/layouts/_header.html.erb
     log_out:            "Sair"
     clear_role_switch_session_link: "Cancelar troca de papel"
-    working:            "Trabalhando..."
+    working:            "Trabalhando…"
     login_as:           "Fazer login como "
 
     # app/views/main/_about_content.html.erb
@@ -43,7 +43,7 @@ pt:
     markus_copyright:   "Copyright (c) 2008-2011 pelos autores."
     markus_credits:     "Créditos"
     markus_credits_thanks:      "Obrigado a todos que contribuiram para tornar MarkUs possível. Em particular para:"
-    supervisors:        "Supervisores:"
+    supervisors:        "Supervisores: "
     contact_us:         "Contate-nos"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br>Por favor visite: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> para mais informações.<br>Para enviar um problema ou por favor visite visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
@@ -56,6 +56,7 @@ pt:
     dashboard:          "Painel"
     assignments:        "Projetos"
     users:              "Usuários"
+    sections:           "Sessões"
     home:               "Home"
     settings:           "Configurações"
 
