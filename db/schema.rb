@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140207162800) do
+ActiveRecord::Schema.define(:version => 20140513140924) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -214,6 +213,7 @@ ActiveRecord::Schema.define(:version => 20140207162800) do
     t.boolean  "is_collected",            :default => false
     t.integer  "notes_count",             :default => 0
     t.integer  "criteria_coverage_count", :default => 0
+    t.boolean  "error_collecting",        :default => false
   end
 
   add_index "groupings", ["assignment_id", "group_id"], :name => "groupings_u1", :unique => true
@@ -334,8 +334,9 @@ ActiveRecord::Schema.define(:version => 20140207162800) do
   create_table "submission_files", :force => true do |t|
     t.integer "submission_id"
     t.string  "filename"
-    t.string  "path",          :default => "/",   :null => false
-    t.boolean "is_converted",  :default => false
+    t.string  "path",             :default => "/",   :null => false
+    t.boolean "is_converted",     :default => false
+    t.boolean "error_converting", :default => false
   end
 
   add_index "submission_files", ["filename"], :name => "index_submission_files_on_filename"
