@@ -21,6 +21,7 @@ gem 'dynamic_form'
 gem 'exception_notification', '<4.0'
 gem 'minitest',"4.7.5", :platforms => :ruby_20
 gem 'calendar_date_select', :git => 'git://github.com/paneq/calendar_date_select.git'
+gem 'auto_complete'
 gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
