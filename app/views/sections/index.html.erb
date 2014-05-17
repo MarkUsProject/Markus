@@ -1,4 +1,11 @@
-<div id="title_bar"><h1><%= I18n.t("section.manage_users") %></h1></div>
+<%= javascript_include_tag 'help_system' %>
+
+<div id="title_bar">
+  <h1><%= I18n.t("section.manage_users") %><span class="title-help sections_manage_users_help"></span></h1>
+</div>
+
+<p class="help-message-title sections_manage_users_help"><%= t("section.help.manage_users")%></p>
+<div class="help-break sections_manage_users_help"></div>
 
 <div class="wrapLeft">
 

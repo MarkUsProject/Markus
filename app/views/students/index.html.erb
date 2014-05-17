@@ -3,6 +3,7 @@
                              'FilterTable/FilterTable',
                              'effects.js',
                              'Students/index' %>
+<%= javascript_include_tag "help_system" %>
 
 <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
  <%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
@@ -21,12 +22,16 @@
 </script>
 <% end %>
 
-<div id="title_bar"><h1><%= I18n.t("students.manage_students") %></h1>
+
+<div id="title_bar"><h1><%= I18n.t("students.manage_students") %><span class="title-help manage_students_help"></span></h1>
+
   <div class="headingButtons">
     <%= link_to I18n.t(:add_new), new_student_path() %> |
     <%= link_to I18n.t(:upload),'#', :onclick => 'modal_upload.open(); return false;' %> |
     <%= link_to I18n.t(:download),'#', :onclick => 'modal_download.open(); return false;' %>
   </div>
+  <p class="help-message-title manage_students_help" ><%= t("students.help.manage_students")%></p>
+  <div class="help-break manage_students_help"></div>
 </div>
 
 <div class="colsLeftHeavy">

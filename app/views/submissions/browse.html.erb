@@ -1,5 +1,6 @@
 <%= javascript_include_tag "submissions_manager" %>
 <%= javascript_include_tag "ajax_paginate" %>
+<%= javascript_include_tag "help_system" %>
 
 <div class="notice">
   <% if Time.zone.now >= @assignment.submission_rule.calculate_collection_time %>
@@ -58,10 +59,17 @@
                       :confirm => I18n.t("collect_submissions.marking_incomplete_warning")
                        %>
   <% end %>
-
+    <div class="help submissions_help"></div>
 </h1>
 </div>
-
+<p class="help-message-title submissions_help" >
+  <% if @current_user.ta? %>
+      <%=t("assignment.help.submissions_graders")%>
+  <% else %>
+      <%= t("assignment.help.submissions_admins")%>
+  <%end%>
+</p>
+<div class="help-break submissions_help"></div>
 <div class="wrapLeft">
   <% if flash[:error] %>
     <div class="error">

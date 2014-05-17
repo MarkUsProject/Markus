@@ -8,6 +8,7 @@
    <%= calendar_date_select_includes "silver", :locale => I18n.default_locale %>
 <% end %>
 <%= javascript_include_tag "PeriodDeltaChain/PeriodDeltaChain" %>
+<%= javascript_include_tag "help_system" %>
 
 <%= render :partial => 'boot', :formats => [:js] %>
 
@@ -28,21 +29,26 @@
                          :onchange =>  "set_onbeforeunload(true);
                          $('assignment_repository_folder').setValue(
                            $(this).getValue() )",
-                         :maxlength => 30 )%><br />
+                         :maxlength => 30 )%>
+
       <% else %>
         <%= raw( f.text_field :short_identifier ,
                               :onchange =>  "set_onbeforeunload(true);",
-                              :maxlength => 30 ) %><br />
+                              :maxlength => 30 ) %>
       <% end %>
 
+      <div class="help assignment_properties_help"></div>
+      <p class="help-message-box assignment_properties_help" ><%= t("assignment.help.assignment_form.properties")%></p></br>
       <%= raw( f.label :description, t("assignment.name").html_safe ) %>
       <%= raw( f.text_field :description,
-                            :onchange => "set_onbeforeunload(true);" ) %><br />
+                            :onchange => "set_onbeforeunload(true);" ) %>
+      <br />
       <%= raw( f.label :message ) %>
       <%= raw( f.text_area  :message,
                             :rows => 8, :cols => 65,
-                            :onchange => "set_onbeforeunload(true);" ) %><br />
-
+                            :onchange => "set_onbeforeunload(true);" ) %>
+    <br />
+    <br />
       <% if !@sections.empty? %>
         <div id="section_due_dates_type_form_right" class="information">
           <%= t("assignment.section_due_date_option") %>
@@ -89,7 +95,8 @@
 
       <%# TODO The following code seriously needs some clean up  !!!!  %>
 
-      <%= t(:iso_due_date_format_example) %><br />
+      <%= t(:iso_due_date_format_example) %>
+      <br />
 
       <%= raw( f.label :repository_folder, t(:repository_folder).html_safe ) %>
       /<%= raw( f.text_field :repository_folder, :onchange => "set_onbeforeunload(true);" ) %><br />
@@ -106,7 +113,8 @@
                         :onchange => "set_onbeforeunload(true);" ) %>
       <%= raw( f.label :allow_web_submits_false,
                  t("answer_no"),
-                 :class => "radio_label" )  %><br />
+                 :class => "radio_label" )  %>
+      <br />
       <%= raw( f.label :display_grader_names_to_students,
                   t("assignment.display_grader_names_to_students").html_safe ) %>&nbsp;&nbsp;
       <%= raw( f.radio_button :display_grader_names_to_students,
@@ -123,7 +131,7 @@
       <%= raw( f.label :display_grader_names_to_students_false,
                   t("answer_no"),
                   :class => "radio_label" ) %>
-     <br />
+      <br />
       
      <%= f.label :is_hidden, t("assignment.is_hidden") %>&nbsp;&nbsp;
      <%= f.radio_button :is_hidden, true,
@@ -143,6 +151,9 @@
   </div>
   <fieldset>
     <legend><%= t("assignment.marking_scheme.title").html_safe %></legend>
+    <div class="help assignment_marking_scheme_help"> </div>
+    <p class="help-message-box assignment_marking_scheme_help" ><%= t("assignment.help.assignment_form.marking_scheme")%></p>
+    <br />
     <% Assignment::MARKING_SCHEME_TYPE.each do |key,value| %>
       <p>
         <%= raw( f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[key],
@@ -159,6 +170,8 @@
     <% end %>
   </fieldset>
   <fieldset>
+    <div class="help assignment_required_files_help"> </div>
+    <p class="help-message-box assignment_required_files_help" ><%= t("assignment.help.assignment_form.required_files")%></p>
     <legend><%= t("assignment.required_files") %></legend>
     <h4><%= t("assignment.required_files_by_student") %></h4>
      <div id="assignment_files">
@@ -175,6 +188,8 @@
 
   <fieldset>
     <legend><%= t("assignment.type") %></legend>
+    <div class="help assignment_assignment_type_help"> </div>
+    <p class="help-message-box assignment_assignment_type_help" ><%= t("assignment.help.assignment_form.assignment_type")%></p>
     <p id="persist_groups_assignment_style" <%='style="display:none;"' unless @assignments.size > 0 && @assignment.id.nil? %> class="disable">
       <%= check_box_tag "persist_groups", true, false, :id => "persist_groups", :onclick => "toggle_persist_groups($(this).getValue());", :disabled => true%>
       <%= label_tag "persist_groups",
@@ -244,7 +259,8 @@
 
   <fieldset>
     <legend><%= t("assignment.submission_rules").html_safe %></legend>
-
+    <div class="help assignment_submission_rules_help"> </div>
+    <p class="help-message-box assignment_submission_rules_help" ><%= t("assignment.help.assignment_form.submission_rules")%></p>
     <%= f.fields_for :submission_rule do |rule| %>
       <h5><%= t("assignment.submission.penalty_rules").html_safe %></h5>
 
@@ -361,6 +377,8 @@
 
   <fieldset>
     <legend><%= t("assignment.remark.rules")%></legend>
+    <div class="help assignment_remark_request_rules_help"> </div>
+    <p class="help-message-box assignment_remark_request_rules_help" ><%= t("assignment.help.assignment_form.remark_request_rules")%></p>
     <p id="allow_remark_requests">
       <%= raw( f.check_box(:allow_remarks,
                       {:id => "allow_remarks",
