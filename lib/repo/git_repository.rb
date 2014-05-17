@@ -1,6 +1,6 @@
-require "rugged"
-require "gitolite"
-require "digest/md5"
+require 'rugged'
+require 'gitolite'
+require 'digest/md5'
 require 'rubygems'
 require 'ruby-debug'
 require File.join(File.dirname(__FILE__),'repository') # load repository module
@@ -89,13 +89,33 @@ module Repository
       ref.delete!
     end
 
-    def export(repo_dest_dir, filepath=nil, revision_number=nil)
-      # exports git repo to a new folder
 
+
+      # Exports git repo to a new folder (clone repository)
       # If a filepath is given, the repo_dest_dir needs to point to a file, and
       # all the repository on that path need to exist, or the export will fail.
-
-      # refer to Subversion_repository for implementation.
+    def export(repo_dest_dir, filepath=nil)
+      
+      # Case 1: clone all the repo to repo_dest_dir
+      if(filepath.nil?)
+        # Raise an error if the destination repository already exists
+        if (File.exists?(repo_dest_dir))
+          raise(ExportRepositoryAlreadyExists,
+                "Exported repository already exists")
+        end
+        
+        repo = Rugged::Repository.clone_at(@repos_path, repo_dest_dir)
+      else
+        # Case 2: clone a file to a folder
+        # Raise an error if the destination file already exists
+        if (File.exists?(repo_dest_dir))
+          raise(ExportRepositoryAlreadyExists,
+                "Exported file already exists")
+        end
+        FileUtils.cp(get_repos_workdir + filepath, repo_dest_dir)
+        return true
+      end
+      
     end
 
     def self.closable?
@@ -116,14 +136,31 @@ module Repository
       return @repos
     end
 
+    def get_repos_index
+      # Get rugged repository from GitRepository
+      return @repos.index
+    end
+
+    def get_repos_workdir
+      # Get work directory from GitRepository
+      # workdir = path/to/my/repository/
+      return @repos.workdir
+    end
+
+    def get_repos_path
+      # Get Rugged repository from GitRepository
+      # workdir = path/to/my/repository/.git
+      return @repos.path
+    end
+
     # Static method: Reports if a Git repository exists.
     # Done in a similarly hacky method as the git side.
     # TODO - find a better way to do this.
     def self.repository_exists?(repos_path)
       repos_meta_files_exist = false
-      if File.exist?(File.join(repos_path, "config"))
-        if File.exist?(File.join(repos_path, "description"))
-          if File.exist?(File.join(repos_path, "HEAD"))
+      if File.exist?(File.join(repos_path, ".git/config"))
+        if File.exist?(File.join(repos_path, ".git/description"))
+          if File.exist?(File.join(repos_path, ".git/HEAD"))
             repos_meta_files_exist = true
           end
         end
@@ -170,15 +207,14 @@ module Repository
       # 'transaction'. In case of certain conflicts corresponding
       # Repositor::Conflict(s) are added to the transaction object
 
-      debugger
       jobs = transaction.jobs
-      txn = @repos.fs.transaction # transaction date is set implicitly
-      txn.set_prop(Repository::SVN_CONSTANTS[:author], transaction.user_id)
+      #txn = @repos.fs.transaction # transaction date is set implicitly
+      #txn.set_prop(Repository::SVN_CONSTANTS[:author], transaction.user_id)
       jobs.each do |job|
         case job[:action]
         when :add_path
           begin
-            txn = make_directory(txn, job[:path])
+            make_directory(job[:path])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -206,7 +242,15 @@ module Repository
       if transaction.conflicts?
         return false
       end
-      txn.commit
+
+      jobs.each do |job|
+        oid = self.get_repos.write("Directory creation.", :blob)
+        index = self.get_repos.index
+        index.add(:path => job[:path], :oid => oid, :mode => 0100644)
+        index.write
+        #debugger
+      end
+      
       return true
     end
 
@@ -271,6 +315,7 @@ module Repository
     
     def expand_path(file_name, dir_string = "/")
       # Converts a pathname to an absolute pathname and then return the path
+      return File.expand_path(file_name, dir_string)
     end
 
     ####################################################################
@@ -433,35 +478,48 @@ module Repository
     def write_file(txn, path, file_data=nil, mime_type=nil)
       # writes to file using transaction, path, data, and mime
       # refer to Subversion_repo for implementation
+      if (!__path_exists?(path))
+        pieces = path.split("/").delete_if {|x| x == ""}
+        dir_path = ""
+
+        (0..pieces.length - 2).each do |index|
+          dir_path += "/" + pieces[index]
+          make_directory(txn, dir_path)
+        end
+        make_file(txn, path)
+      end
+      #stream = txn.root.apply_text(path)
+      #stream.write(file_data)
+      #stream.close
     end
 
     # Make a file if it's not already present.
     def make_file(txn, path)
-      if (txn.root.check_path(path) == 0)
-        txn.root.make_file(path)
-      end
-      return txn
+      #if (txn.root.check_path(path) == 0)
+        #txn.root.make_file(path)
+      #end
+      #return txn
     end
 
     # Make a directory if it's not already present.
-    def make_directory(txn, path)
+    def make_directory(path)
+
       # turn "path" into absolute path
       path = expand_path(path, "/")
       # do nothiing if "path" is the root
-      return txn if path == "/"
+      return if path == "/"
 
       # get the path of parent folder
       parent_path = File.dirname(path)
       # and create parent folder before the current folder (recursively)
-      txn = make_directory(txn, parent_path)
+      make_directory(parent_path)
 
       # now that the parent folder has been created,
       # create the current folder
-      if (txn.root.check_path(path) == 0)
-        txn.root.make_dir(path)
-      end
+      #if (txn.root.check_path(path) == 0)
+        FileUtils.mkdir_p(path)
+      #end
 
-      return txn
     end
 
     # Parses repository permissions from provided auth_file
@@ -578,6 +636,7 @@ module Repository
     # returns a index object, consult rugged docs for available methods
     def files_at_path(path)
       begin 
+        #debugger
         return Rugged::Index.new(path)
         #exception should be cast if file is not found
       rescue Exception
@@ -594,11 +653,16 @@ module Repository
     # added and the git config file is not updated
     def path_exists?(path)
       begin 
-        file = Rugged::Index.new(path)
+        # exist in the file system?
+        File.directory?(path)
+        # we could use index to see if it is in the staging area
+        #index = Rugged::Index.new(path)
+        # Re-read the index file from disk.
+        #index.reload
         return true
         #exception should be cast if file is not found
       rescue Exception
-        # raise Repository::FileDoesNotExistConflict # I don't think raise an exception is needed
+        raise Repository::FileDoesNotExistConflict # I don't think raise an exception is needed
         return false
       end
     end

@@ -5,6 +5,7 @@ require 'rubygems'
 require 'fileutils'
 require 'shoulda'   # load Thoughtbot Shoulda (used as testing framework)
 require 'time'
+require 'rugged'
 
 # bring Repository::GitRepository into current namespace
 include Repository
@@ -72,7 +73,7 @@ class GitRepositoryTest < Test::Unit::TestCase
    context "A GitRepository instance" do
 
      # setup and teardown for the current context
-
+    
      # creates a new Git repository at TEST_REPO
      setup do
        #make sure there is not a leftover directory here from a previous run
@@ -106,49 +107,49 @@ class GitRepositoryTest < Test::Unit::TestCase
 
      # beginning of tests
 
-     #should "have exported the Git repository" do
-     #  assert_not_nil(@repo.export(TEST_EXPORT_REPO),
-     #                 "Did not properly export git repository")
-     #  assert(File.exists?(TEST_EXPORT_REPO),
-     #         "Did not properly export git repository")
-     #  @repo.close()
-     #end
+     should "have exported the Git repository" do
+       assert_not_nil(@repo.export(TEST_EXPORT_REPO),
+                      "Did not properly export git repository")
 
-  #   should "export one file of the Subversion repository into a file" do
-  #     file = "not-on-the-shelves-2009.pdf"
+       assert(File.exists?(TEST_EXPORT_REPO),
+              "Did not properly export git repository")
+       @repo.close()
+    end
 
-  #     # Let's start by adding the file to the svn repository
-  #     add_file_helper(@repo, file)
-  #     assert_not_nil(@repo.export("myfile.pdf",
-  #                                 file),
-  #                    "Did not properly export the file from the svn repo")
-  #     assert(File.exists?("myfile.pdf"),
-  #            "The file does not exist in the destination repository")
+     should "export one file of the Git repository into a file" do
+       file = "not-on-the-shelves-2009.pdf"
 
-  #     FileUtils.remove_file("myfile.pdf", true)
-  #     @repo.close()
-  #   end
+       # Let's start by adding the file to the git repository
+       add_file_helper(@repo, file)
+       assert_not_nil(@repo.export("myfile.pdf",
+                                   file),
+                      "Did not properly export the file from the git repo")
+       assert(File.exists?("myfile.pdf"),
+              "The file does not exist in the destination repository")
+       FileUtils.remove_file("myfile.pdf", true)
+       @repo.close()
+     end
 
-  #   should "export one file of the Subversion repository into a repository" do
-  #     file = "not-on-the-shelves-2009.pdf"
-  #     repo_to_export_to = File.join(TEST_EXPORT_REPO_2, file)
-  #     # Let's start by adding the file to the svn repository
-  #     add_file_helper(@repo, file)
-  #     assert_not_nil(@repo.export(repo_to_export_to,
-  #                                 file),
-  #                    "Did not properly export the file from the svn repo")
-  #     assert(File.exists?(repo_to_export_to),
-  #            "The file does not exist in the destination repository")
-  #     @repo.close()
-  #   end
+     should "export one file of the Git repository into a repository" do
+       file = "not-on-the-shelves-2009.pdf"
+       repo_to_export_to = File.join(TEST_EXPORT_REPO_2, file)
+       # Let's start by adding the file to the git repository
+       add_file_helper(@repo, file)
+       assert_not_nil(@repo.export(repo_to_export_to,
+                                   file),
+                      "Did not properly export the file from the git repo")
+       assert(File.exists?(repo_to_export_to),
+              "The file does not exist in the destination repository")
+       @repo.close()
+     end
 
 
-  #   should "raise an error if the repository where you want to export exists" do
-  #     @repo.export(TEST_EXPORT_REPO)
-  #     assert_raise(ExportRepositoryAlreadyExists) do
-  #       @repo.export(TEST_EXPORT_REPO)
-  #     end
-  #   end
+     should "raise an error if the repository where you want to export exists" do
+       @repo.export(TEST_EXPORT_REPO)
+       assert_raise(ExportRepositoryAlreadyExists) do
+         @repo.export(TEST_EXPORT_REPO)
+       end
+     end
 
      should "have been instanciated and a Git repository in the filesystem created" do
        assert_not_nil(@repo, "Could not create/open Repository: look into the tests' setup")
@@ -199,50 +200,6 @@ class GitRepositoryTest < Test::Unit::TestCase
        @repo.close()
        FileUtils.remove_dir(TEST_REPO)#Will fail under Windows if not closed
      end
-  #   should "have been instanciated and a Subversion repository in the filesystem created" do
-  #     assert_not_nil(@repo, "Could not create/open Repository: look into the tests' setup")
-  #     @repo.close()
-  #   end
-
-  #   should "provide a transaction" do
-  #     transaction = @repo.get_transaction(TEST_USER)
-  #     assert_not_nil(transaction, "Could not retrieve transaction")
-  #     assert_instance_of(Repository::Transaction, transaction, "Transaction is not of correct type!")
-  #     @repo.close()
-  #   end
-
-  #   should "give the latest revision" do
-  #     revision = @repo.get_latest_revision()
-  #     assert_not_nil(revision, "Could not retrieve latest revision")
-  #     assert_instance_of(Repository::SubversionRevision, revision, "Revision is of wrong type!")
-  #     assert_equal(revision.revision_number, 0, "Wrong revision number")
-  #     @repo.close()
-  #   end
-
-  #   should "be able to retrieve a revision given a valid revision as integer number" do
-  #     r = @repo.get_latest_revision()
-  #     assert_not_nil(r, "Could not retrieve latest revision")
-  #     rev_int = r.revision_number
-  #     new_revision = @repo.get_revision(rev_int)
-  #     assert_instance_of(Repository::SubversionRevision, new_revision, "Revision not of class SubversionRevision")
-  #     assert_equal(new_revision.revision_number, rev_int, "Revision numbers (int values) should be equal")
-  #     @repo.close()
-  #   end
-
-  #   should "raise a RevisionDoesNotExist exception" do
-  #     r = @repo.get_latest_revision()
-  #     assert_not_nil(r, "Could not retrieve latest revision")
-  #     revision_non_existent = r.revision_number + 3
-  #     assert_raise(RevisionDoesNotExist) do
-  #       @repo.get_revision(revision_non_existent) # raises exception
-  #     end
-  #     @repo.close()
-  #   end
-
-  #   should "be able to close its repository using the close() method" do
-  #     @repo.close()
-  #     FileUtils.remove_dir(TEST_REPO)#Will fail under Windows if not closed
-  #   end
 
      should "know whether or not it is closed" do
        assert(!@repo.closed?, "opened repository identified as closed")
@@ -250,44 +207,45 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert(@repo.closed?, "closed repository identified as open")
      end
 
-     should "be able to create a directory in repository" do
-       dir_single_level = "/folder1"
-       dir_multi_level = "/folder2/subfolder1"
-       txn = @repo.get_transaction(TEST_USER)
-       txn.add_path(dir_single_level)
-       txn.add_path(dir_multi_level)
-       @repo.commit(txn)
-       revision = @repo.get_latest_revision()
+     #should "be able to create a directory in repository" do
+     #  dir_single_level = GIT_TEST_REPOS_DIR + "/folder1"
+     #  dir_multi_level = GIT_TEST_REPOS_DIR  + "/folder2/subfolder1"
+     #  txn = @repo.get_transaction(TEST_USER)
+     #  txn.add_path(dir_single_level)
+     #  txn.add_path(dir_multi_level)
+     #  @repo.commit(txn)
+     #  revision = @repo.get_latest_revision()
+     # 
+     #  assert_equal(true, revision.path_exists?(dir_single_level), message = "Repository folder not created")
+     #  assert_equal(true, revision.path_exists?(dir_multi_level), message = "Repository folder not created")
+     #  @repo.close()
+     #end
 
-       assert_equal(true, revision.path_exists?(dir_single_level), message = "Repository folder not created")
-       assert_equal(true, revision.path_exists?(dir_multi_level), message = "Repository folder not created")
-       @repo.close()
-     end
-
-     add_file_test = "add a new file to an empty repository"
-     should(add_file_test) do
-       rev_num = @repo.get_latest_revision().revision_number
-       txn = @repo.get_transaction(TEST_USER)
-       filename = "MyClass.java"
-       file_contents = File.read(RESOURCE_DIR + "/" + filename)
-       txn.add(filename, file_contents)
-       latest_revision = @repo.get_latest_revision().revision_number
-       assert_equal(rev_num.target, latest_revision.target, "Revision # should be the same!")
-       @repo.commit(txn) # svn commit
-       latest_revision = @repo.get_latest_revision().revision_number
-
-       assert_not_equal(rev_num, latest_revision, "Revision # has not changed!")
-
-       # look if new file is available
-       svn_rev = @repo.get_latest_revision()
-       files = svn_rev.files_at_path("/")
-       assert_not_nil(files[filename], "Could not find file '" + filename + "'")
-       # test download_as_string
-       assert_equal(@repo.download_as_string(files[filename]),
-                    file_contents,
-                    "Mismatching content")
-       @repo.close()
-     end
+     #add_file_test = "add a new file to an empty repository"
+     #should(add_file_test) do
+     #  rev_num = @repo.get_latest_revision().revision_number
+     #  txn = @repo.get_transaction(TEST_USER)
+     #  filename = "MyClass.java"
+     #  file_contents = File.read(RESOURCE_DIR + "/" + filename)
+     #  debugger
+     #  txn.add(filename, file_contents)
+     #  latest_revision = @repo.get_latest_revision().revision_number
+     #  assert_equal(rev_num.target, latest_revision.target, "Revision # should be the same!")
+     #  @repo.commit(txn) # svn commit
+     #  latest_revision = @repo.get_latest_revision().revision_number
+     # 
+     #  assert_not_equal(rev_num, latest_revision, "Revision # has not changed!")
+     # 
+     #  # look if new file is available
+     #  svn_rev = @repo.get_latest_revision()
+     #  files = svn_rev.files_at_path("/")
+     #  assert_not_nil(files[filename], "Could not find file '" + filename + "'")
+     #  # test download_as_string
+     #  assert_equal(@repo.download_as_string(files[filename]),
+     #               file_contents,
+     #               "Mismatching content")
+     #  @repo.close()
+     # end
 
   #   should "delete a commited file from repository" do
   #     add_file_test.intern() # call add_file_test to make sure it works, not sure if that's useful
@@ -790,12 +748,27 @@ class GitRepositoryTest < Test::Unit::TestCase
 
   # private # private helper methods for this class
 
-  # def add_file_helper(repo, file)
-  #   txn = repo.get_transaction(TEST_USER)
-  #   file_contents = File.read(RESOURCE_DIR + "/" + file)
-  #   txn.add(file, file_contents)
-  #   repo.commit(txn)
-  # end
+   def add_file_helper(repo, file)
+
+     # copy example file to repository folder
+     # workdir = path/to/my/repository/ 
+     # path =  path/to/my/repository/.git
+     FileUtils.cp(RESOURCE_DIR + "/" + file,repo.get_repos_workdir)
+     # Get index for commit copied file
+     index = repo.get_repos_index 
+     index.add file
+     
+     #committing file
+     options = {}
+     options[:tree] = index.write_tree(repo.get_repos)
+    
+     options[:author] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
+     options[:committer] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
+     options[:message] ||= "Adding File with add_file_helper"
+     options[:parents] = repo.get_repos.empty? ? [] : [ repo.get_repos.head.target ].compact
+     options[:update_ref] = 'HEAD'
+     Rugged::Commit.create(repo.get_repos, options)
+   end
 
   # def add_some_files_helper(repo, files)
   #   txn = repo.get_transaction(TEST_USER)
