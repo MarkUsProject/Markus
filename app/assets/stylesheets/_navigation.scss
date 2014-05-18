@@ -9,6 +9,10 @@
   border-bottom: 1px solid $light-blue;
   padding: 0.5em 3.5em;
   text-align: right;
+
+  @include breakpoint(small) {
+    text-align: left !important;
+  }
 }
 
 #user_info {
@@ -24,6 +28,11 @@
   display: inline;
   float: left;
   text-align: left;
+
+  @include breakpoint(small) {
+    float: none;
+    display: block;
+  }
 }
 
 #logo {

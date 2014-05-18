@@ -399,6 +399,7 @@ pt:
       replace:              "Substituir"
       delete:               "Apagar"
       can_begin_grading:    "Pode começar a ser avaliado"
+      error_collecting:     "Houve problemas em obter os arquivos."
       section:              "Sessão"
       collect_work_for_section: "Coletar submissões para a sessão:"
       download_groupings_files: "Baixar todas as submissões"

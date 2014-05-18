@@ -174,11 +174,18 @@ class SubmissionCollector < ActiveRecord::Base
     # Apply the SubmissionRule
     new_submission = assignment.submission_rule.apply_submission_rule(
       new_submission)
-    #convert any pdf submission files to jpgs
+    #convert any pdf submission files to jpgs, catching any errors
     new_submission.submission_files.each do |subm_file|
       subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
+      if subm_file.error_converting
+        grouping.error_collecting = true
+      end
     end
-    grouping.is_collected = true
+    
+    unless grouping.error_collecting
+      grouping.is_collected = true
+    end
+
     remove_grouping_from_queue(grouping)
     grouping.save
   end
