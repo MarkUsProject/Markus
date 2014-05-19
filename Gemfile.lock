@@ -75,8 +75,6 @@ GEM
     json (1.8.1)
     kgio (2.9.2)
     libv8 (3.16.14.3)
-    linecache (0.46)
-      rbx-require-relative (> 0.0.4)
     machinist (1.0.6)
     mail (2.5.4)
       mime-types (~> 1.16)
@@ -119,17 +117,11 @@ GEM
       thor (>= 0.14.6, < 2.0)
     raindrops (0.13.0)
     rake (10.1.1)
-    rbx-require-relative (0.0.9)
     rcov (1.0.0)
     rdoc (3.12.2)
       json (~> 1.4)
     ref (1.0.5)
     rghost (0.9.3)
-    ruby-debug (0.10.4)
-      columnize (>= 0.1)
-      ruby-debug-base (~> 0.10.4.0)
-    ruby-debug-base (0.10.4)
-      linecache (>= 0.3)
     rubyzip (0.9.9)
     sass (3.3.3)
     sass-rails (3.2.6)
@@ -209,7 +201,6 @@ DEPENDENCIES
   rcov
   rdoc
   rghost
-  ruby-debug
   rubyzip (= 0.9.9)
   sass-rails (~> 3.2.3)
   shoulda (< 3.4)
