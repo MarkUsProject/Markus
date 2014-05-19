@@ -67,7 +67,7 @@ class GradeEntryStudent < ActiveRecord::Base
     if encoding != nil
       csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents).join)
     end
-    CsvHelper::Csv.parse(csv_file_contents) do |row|
+    CSV.parse(csv_file_contents) do |row|
       student_name = row.shift # Knocks the first item from array
       student = Student.find_by_user_name(student_name)
       if student.nil?

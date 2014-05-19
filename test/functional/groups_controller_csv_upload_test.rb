@@ -2,7 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__),  'authenticated_contr
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
-include CsvHelper
 require 'shoulda'
 require 'mocha/setup'
 require 'fileutils'
