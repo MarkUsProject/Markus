@@ -18,7 +18,7 @@ namespace :coverage do
 
   desc 'Measures lib test coverage'
   task :lib => :clean do
-    puts "lib test coverage are not yet configured"
+    Rake::Task['test:lib'].execute
   end
 
   desc 'All test coverage'
