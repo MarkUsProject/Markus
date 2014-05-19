@@ -40,9 +40,9 @@ document.observe("dom:loaded", function() {
 <div id="title_bar">
   <h1><%= I18n.t("graders.manage_graders") %></h1>
   <div class="colRightGroups">
-      <div class="headingButtons">
+      <div class="heading_buttons">
         <%= button_to_function I18n.t("download"), "download_groups();" %>
-        <span class="menu_bar">|</span>
+        <span class="menu_bar"></span>
         <%= button_to_function I18n.t("upload"), "upload_groups();" %>
     </div>
   </div>
@@ -105,14 +105,11 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
         <div id="groups_table">
           <div class="clear"></div>
           <div id="students_container" class="tabbedArea">
-            <%= label_tag 'search_students', I18n.t('search'),
-              :class => 'bold_inline_label',
-              :id => 'search_students_label' %>
             <%= text_field_tag 'search_students', nil,
-              :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
-              :onkeypress => "stop_submit(event);" %>
-            <table class="groups" id="groups">
-            </table>
+                :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
+                :onkeypress => "stop_submit(event);",
+                :placeholder => I18n.t("students.search_students") %>
+            <table class="groups" id="groups"></table>
           </div><!-- group container -->
         </div>
       </div>
@@ -143,15 +140,13 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
         <div id="assigned"></div>
 
         <div class="tabbedArea">
-          <div class="searchBox">
-            <%= label_tag 'search_graders', "Search:",
-              :class => 'bold_inline_label'%>
+          <div class="search_box">
             <%= text_field_tag 'search_graders', nil,
-               :onkeyup => "graders_table.add_filter('search'); graders_table.render();",
-               :onkeypress => "stop_submit(event);" %>
+                :onkeyup => "graders_table.add_filter('search'); graders_table.render();",
+                :onkeypress => "stop_submit(event);",
+                :placeholder => I18n.t("graders.search_graders") %>
           </div>
-          <table class="graders" id="graders">
-          </table>
+          <table class="graders" id="graders"></table>
         </div>
 
       </div>
@@ -164,13 +159,13 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
       :alt => I18n.t('groups.randomly_assign_graders'),
       :title => I18n.t('groups.randomly_assign_graders'),
       :class =>'image_input' %>
-    <br/><br/>
+    <br><br>
     <%= image_submit_tag "add_arrow.png",
       :onclick => "$('global_actions').setValue('assign');",
       :alt => I18n.t('add_graders'),
       :class =>'image_input',
       :title => I18n.t('add_graders') %>
-    <br/><br/>
+    <br><br>
     <%= image_submit_tag "remove_arrow.png",
       :onclick => "$('global_actions').setValue('unassign');",
       :alt => I18n.t('remove_graders'),
@@ -206,7 +201,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
     <p>
-      <%= file_field_tag :grader_mapping, :size => 2 %><br />
+      <%= file_field_tag :grader_mapping, :size => 2 %><br>
       <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
       <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>
     </p>

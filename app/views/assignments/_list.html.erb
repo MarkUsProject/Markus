@@ -35,7 +35,6 @@
                 <% end %>
               <% else %>
                 <% if assignment.section_due_date(@section) < Time.zone.now %>
-                  <strong><%= I18n.l(assignment.section_due_date(@section), :format => :long_date) %></strong>
                 <% else %>
                   <strong><%= I18n.l(assignment.section_due_date(@section), :format => :long_date) %></strong>
                   <p>

@@ -1,11 +1,11 @@
 <h2><%= @grader.user_name %></h2>
 <% assigned = @grader.get_criterion_associations_by_assignment(@assignment)%>
 <b><%= I18n.t('criteria') %>:</b>
-<br />
+<br>
 <% assigned.each do |association| %>
   <%= association.criterion.get_name %>
-  <br />
+  <br>
 <% end %>
-<br />
+<br>
 <button onclick="modal_criteria.close();"><%= I18n.t('close') %>
 </button>

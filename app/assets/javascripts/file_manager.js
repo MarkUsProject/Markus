@@ -1,10 +1,10 @@
   // add new row of input
 function injectFileInput() {
-  var new_file_field = jQuery('<input>', {  
+  var new_file_field = jQuery('<input>', {
 		type: 'file',
     name: 'new_files[]',
     multiple: true
-  });  
+  });
 
 	new_file_field.change(function() {
 		sanitized_filename_check(this);
@@ -33,6 +33,7 @@ function injectFileInput() {
   new_file_field_row.append(remove_new_file_field_column);
 
   jQuery('#add_file_tbody').prepend(new_file_field_row);
+
   new_file_field.focus();
   enableDisableSubmit();
 }
@@ -40,12 +41,12 @@ function injectFileInput() {
 function enableDisableSubmit() {
   var hasRows = false;
   jQuery('tbody').each(function(i) {
-      var oRows = this.getElementsByTagName('tr');
-      var iRowCount = oRows.length;
-      if (iRowCount >0) {
-          hasRows = true;
-        }
-    });
+    var oRows = this.getElementsByTagName('tr');
+    var iRowCount = oRows.length;
+    if (iRowCount >0) {
+      hasRows = true;
+    }
+  });
   if (hasRows) {
     jQuery('#submit_form input[type=submit]').each(function(i) {
   		jQuery(this).find('input, textarea').each(function(i) { jQuery(this).removeAttr("readonly"); });
