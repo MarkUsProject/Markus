@@ -548,12 +548,7 @@ class AssignmentsController < ApplicationController
     end
 
     encoding = params[:encoding]
-    assignment_list = if encoding != nil
-                        StringIO.new(Iconv.iconv('UTF-8', encoding,
-                                                 assignment_list.read).join)
-                      else
-                        assignment_list.read
-                      end
+    assignment_list = assignment_list.utf8_encode encoding
 
     case params[:file_format]
       when 'csv'

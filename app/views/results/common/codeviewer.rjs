@@ -24,9 +24,9 @@
          end
        else
          begin
-           @file_contents = Iconv.iconv('utf-8', 'utf-8', @file_contents)
-         rescue Iconv::Failure
-           @file_contents = Iconv.iconv('utf-8', 'ISO-8859-1', @file_contents)
+           @file_contents = @file_contents.utf8_encode Encoding::UTF_8
+         rescue Encoding::InvalidByteSequenceError, Encoding::UndefinedConversionError
+           @file_contents = @file_contents.utf8_encode Encoding::ISO_8859_1
          end
          page.replace_html 'codeviewer',
                            :partial => 'results/common/text_codeviewer',

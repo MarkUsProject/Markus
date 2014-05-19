@@ -102,12 +102,9 @@ class RubricsController < ApplicationController
       return
     end
     file = params[:yml_upload][:rubric]
-    if !file.nil? && !file.blank?
+    unless file.blank?
       begin
-        if encoding != nil
-          file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
-        end
-        rubrics = YAML::load(file)
+        rubrics = YAML::load(file.utf8_encode encoding)
       rescue ArgumentError => e
         flash[:error] = I18n.t('rubric_criteria.upload.error') + '  ' +
            I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")

@@ -1,5 +1,5 @@
 include CsvHelper
-require 'iconv'
+require 'encoding'
 
 class RubricCriterion < ActiveRecord::Base
   before_save :round_weight
@@ -225,10 +225,8 @@ class RubricCriterion < ActiveRecord::Base
   # The number of successfully created criteria.
   def self.parse_csv(file, assignment, invalid_lines, encoding)
     nb_updates = 0
-    if encoding != nil
-      file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
-    end
-    CsvHelper::Csv.parse(file.read) do |row|
+    file_contents = file.utf8_encode encoding
+    CsvHelper::Csv.parse(file_contents) do |row|
       next if CsvHelper::Csv.generate_line(row).strip.empty?
       begin
         RubricCriterion.create_or_update_from_csv_row(row, assignment)
@@ -306,9 +304,7 @@ class RubricCriterion < ActiveRecord::Base
   # Returns an array containing the criterion names that didn't exist
   def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
     failures = []
-    if encoding != nil
-      csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents.read).join)
-    end
+    csv_file_contents = csv_file_contents.utf8_encode encoding
     CsvHelper::Csv.parse(csv_file_contents) do |row|
       criterion_name = row.shift # Knocks the first item from array
       criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(assignment_id, criterion_name)

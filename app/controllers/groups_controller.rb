@@ -1,5 +1,5 @@
 include CsvHelper
-require 'iconv'
+require 'encoding'
 require 'auto_complete'
 require 'csv_invalid_line_error'
 
@@ -171,16 +171,14 @@ class GroupsController < ApplicationController
       # Transaction allows us to potentially roll back if something
       # really bad happens.
       ActiveRecord::Base.transaction do
-        if encoding != nil
-          file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
-        end
+        file = file.utf8_encode encoding
         # Old groupings get wiped out
         if !@assignment.groupings.nil? && @assignment.groupings.length > 0
           @assignment.groupings.destroy_all
         end
         begin
           # Loop over each row, which lists the members to be added to the group.
-          CsvHelper::Csv.parse(file.read).each_with_index do |row, line_nr|
+          CsvHelper::Csv.parse(file).each_with_index do |row, line_nr|
             begin
               # Potentially raises CSVInvalidLineError
               collision_error = @assignment.add_csv_group(row)

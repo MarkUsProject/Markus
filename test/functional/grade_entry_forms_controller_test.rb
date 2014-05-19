@@ -980,7 +980,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       end
 
       should 'have invalid values in database after an upload of an ISO-8859-1 encoded file parsed as UTF-8' do
-        assert_raise Iconv::IllegalSequence do
+        assert_raise ArgumentError, "invalid byte sequence in UTF-8" do
           post_as @admin,
                   :csv_upload,
                   :id => @grade_entry_form_with_grade_entry_items.id,
