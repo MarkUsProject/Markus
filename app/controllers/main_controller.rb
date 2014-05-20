@@ -150,9 +150,9 @@ class MainController < ApplicationController
       redirect_to :controller => 'assignments', :action => 'index'
       return
     end
-    @assignments = Assignment.unscoped.includes
+    @assignments = Assignment.unscoped.includes(
                              [:assignment_stat, :ta_memberships, :submission_rule, :groupings,
-                              :groupings => :current_submission_used, :submission_rule => :assignment]
+                              :groupings => :current_submission_used, :submission_rule => :assignment])
                              .all(:order => 'due_date DESC')
 
     render :index, :layout => 'content'
