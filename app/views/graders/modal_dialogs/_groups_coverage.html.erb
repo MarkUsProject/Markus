@@ -7,7 +7,7 @@
     <%=  image_tag("icons/tick.png", :alt => I18n.t('graders.covered'),
       :title => I18n.t('graders.covered')) %>
     <b> <%= criterion.get_name %> </b>
-    <br />
+    <br>
     <%= I18n.t('graders.assigned_graders') %>:
     <% @grouping.assigned_tas_for_criterion(criterion).each do |ta|%>
       <%= ta.user_name %>
@@ -17,7 +17,7 @@
       :title => I18n.t('graders.not_covered')) %>
     <b> <%= criterion.get_name %> </b>
     <% if criterion.tas.count > 0 %>
-      <br />
+      <br>
       <%= I18n.t('graders.possible_graders') %>:
       <% criterion.tas.each do |ta|%>
         <%= link_to ta.user_name,
@@ -27,8 +27,8 @@
       <% end %>
     <% end %>
   <% end %>
-    <br />
-    <br />
+    <br>
+    <br>
 <% end %>
 <button onclick="modal_coverage.close();"><%= I18n.t('close') %>
 </button>

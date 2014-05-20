@@ -17,7 +17,7 @@
   <h1><%= I18n.t("rubric_criteria.criteria_management",
                  :identifier => @assignment.short_identifier) %>
   </h1>
-  <div class="headingButtons">
+  <div class="heading_buttons">
         <%= link_to_function t("add_criterion"),
             %| if($('new_rubric_criterion') != null) {
               $('rubric_criterion_rubric_criterion_name').select();
@@ -26,9 +26,9 @@
               #{remote_function :url => new_assignment_rubric_path(@assignment),
                                 :method => 'get'}
             }|%>
-  <span class="menu_bar" >|</span>
+  <span class="menu_bar"></span>
     <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
-  <span class="menu_bar" >|</span>
+  <span class="menu_bar"></span>
     <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
   </div>
 </div><!-- Title bar-->
@@ -65,12 +65,12 @@
     <p><%= f.file_field :rubric %></p>
     <%= t('rubric_criteria.upload.format_csv_html') %>
 	<%= t('csv_special_characters_html') %>
-    <br />
-    <br />
+    <br>
+    <br>
     <%= I18n.t("encoding") %>
     <%= select_tag(:encoding, options_for_select(@encodings)) %>
-    <br />
-    <br />
+    <br>
+    <br>
     <p>
       <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
       <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
@@ -84,12 +84,12 @@
                :html => {:multipart => true, :size => 1 } do |f| %>
     <p><%= f.file_field :rubric %></p>
     <%= t('rubric_criteria.upload.format_yml_html') %>
-    <br />
-    <br />
+    <br>
+    <br>
     <%= I18n.t("encoding") %>
     <%= select_tag(:encoding, options_for_select(@encodings)) %>
-    <br />
-    <br />
+    <br>
+    <br>
     <p>
       <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
       <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">

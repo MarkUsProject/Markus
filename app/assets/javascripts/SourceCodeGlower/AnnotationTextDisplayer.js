@@ -35,12 +35,12 @@ var AnnotationTextDisplayer = Class.create({
     collection.each(function(annotation_text) {
       final_string += "<p>" + annotation_text.getContent() + "</p>";
     });
-    
+
     //Update the Display node (a div, in this case) to be in the right
     //position, and to have the right contents
-    final_string = final_string.replace(/\n/g, '<br/>');
+    final_string = final_string.replace(/\n/g, '<br>');
     this.updateDisplayNode(final_string, x, y);
-    
+
     //Show the Displayer
     this.show();
   },
@@ -74,5 +74,5 @@ var AnnotationTextDisplayer = Class.create({
   getDisplayNode: function() {
     return $(this.display_node);
   }
-  
+
 });

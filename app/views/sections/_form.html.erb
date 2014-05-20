@@ -8,7 +8,7 @@
     <legend><%= I18n.t('section.legend') %></legend>
     <%= raw(f.label :name, t("section.name")) %>
     <%= raw(f.text_field :name) %>
-    <br />
+    <br>
     <%= f.submit I18n.t(:save) , :disable_with => I18n.t('working')%>
 
     <% if controller.action_name == "edit" %>

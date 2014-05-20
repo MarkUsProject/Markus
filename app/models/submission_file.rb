@@ -124,18 +124,21 @@ class SubmissionFile < ActiveRecord::Base
 
     # Convert a pdf file into a an array of jpg files (one jpg file = one page
     # of the pdf file)
-    file = RGhost::Convert.new(File.join(storage_path,
-                                  self.filename))
-    results = file.to :jpeg,
-                      :filename => file_path,
-                      :multipage => true,
-                      :resolution => 150
-    if file.error
-      m_logger.log('rghost: Image conversion error')
+    begin
+      file = RGhost::Convert.new(File.join(storage_path, self.filename))
+      results = file.to :jpeg,
+                        :filename => file_path,
+                        :multipage => true,
+                        :resolution => 150
+
+    rescue RGhost::RenderException
+      self.is_converted = false
+      self.error_converting = true
+    else
+      self.is_converted = true
     end
 
     FileUtils.remove_file(File.join(storage_path, self.filename), true)
-    self.is_converted = true
     self.save
   end
 

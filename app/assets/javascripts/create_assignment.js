@@ -225,7 +225,7 @@ function toggle_sections_due_date( section_due_dates_type ) {
 
 function check_due_date(new_due_date) {
   var now = new Date();
-  if(Date.parseFormattedString(new_due_date) < now) {
+  if (Date.parseFormattedString(new_due_date) < now) {
     alert(past_due_date_edit_warning);
   }
 }

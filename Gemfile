@@ -21,6 +21,7 @@ gem 'dynamic_form'
 gem 'exception_notification', '<4.0'
 gem 'minitest',"4.7.5", :platforms => :ruby_20
 gem 'calendar_date_select', :git => 'git://github.com/paneq/calendar_date_select.git'
+gem 'auto_complete'
 gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
@@ -32,6 +33,7 @@ group :assets do
   gem 'coffee-rails', '~> 3.2.1'
   gem 'uglifier',     '>= 1.0.3'
   gem 'execjs'
+  gem 'libv8'
   gem 'therubyracer'
 end
 
@@ -64,6 +66,7 @@ end
 # for production.
 group :development, :test do
   gem 'rdoc'
+  gem 'thin'
   gem 'iconv', :platforms => :mri_20
   gem 'rcov', :platforms => :mri_18
   gem 'simplecov', :platforms => [:mri_19,:mri_20]
@@ -81,6 +84,7 @@ group :development, :test do
   gem 'ruby-debug', :platforms => :mri_18
   gem 'debugger', :platforms =>  [:mri_19,:mri_20]
   gem 'mocha', :require => false
+  gem 'quiet_assets'
 end
 
 # If you  plan to use unicorn servers for production

@@ -337,21 +337,22 @@ function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
 }
 
 function focus_source_code_line(line_num) {
-  if(typeof(line_num) == 'undefined' || line_num == null) {
+  if (typeof(line_num) == 'undefined' || line_num == null) {
     return;
   }
-  //Grab the dom node that represents this source code line,
-  //and scroll to it.
+
+  // Grab the dom node that represents this source code line,
+  // and scroll to it.
   var line = annotation_manager.getLineManager().getLine(line_num);
-  if(line != null) {
+  if (line != null) {
     $(line.getLineNode()).scrollIntoView();
   }
 }
 
 function setup_divider(widen_target, dragger) {
-    var divider = new ResizePane(widen_target, dragger);
-    $('mark_pane').setStyle({'width': $('mark_pane').getStyle('width')});
-    return;
+  var divider = new ResizePane(widen_target, dragger);
+  $('mark_pane').setStyle({'width': $('mark_pane').getStyle('width')});
+  return;
 }
 
 function hide_all_annotation_content_editors() {
@@ -361,14 +362,14 @@ function hide_all_annotation_content_editors() {
   var box = $("sel_box");
   if (box) {
     box.style.display = "none";
-    box.style.width = "0";
-    box.style.height = "0";
+    box.style.width   = "0";
+    box.style.height  = "0";
   }
 }
 
-//Hide all display boxes on the screen.
+//H ide all display boxes on the screen.
 function hide_image_annotations() {
-  if(annotation_manager == null){ return;}
+  if (annotation_manager == null) { return; }
   annotation_manager.getAnnotationTextDisplayer().hideShowing();
 }
 //]]>

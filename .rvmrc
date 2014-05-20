@@ -29,7 +29,7 @@ if ! command -v bundle ; then
   gem install bundler
 fi
 
-# Bundle while redcing excess noise.
+# Bundle while reducing excess noise.
 echo "\nInstalling gems.... this might take a while depending on how many you \
 have yet to install and your internet connection. Please wait.\n"
 bundle | grep -v 'Using' | grep -v 'complete' | sed '/^$/d'

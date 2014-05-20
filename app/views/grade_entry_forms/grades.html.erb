@@ -9,9 +9,9 @@
   <h1>
     <%= t('grade_entry_forms.grades.title') + " " + @grade_entry_form.short_identifier %>
   </h1>
-  <div class="headingButtons">
+  <div class="heading_buttons">
     <%= button_to_function t(:upload), 'modal_upload.open();'%>
-    <span class="menu_bar">|</span>
+    <span class="menu_bar"></span>
     <%= link_to t(:download),
                 csv_download_grade_entry_form_path(@grade_entry_form) %>
   </div>
@@ -111,7 +111,7 @@
           <% if @current_user.admin? %>
               <%= render :partial => 'ajax_paginate/selector'%>
           <% else %>
-              <br />
+              <br>
           <% end %>
         </div>
         <div class="floatLeft">
@@ -146,8 +146,8 @@
       <p>
         <%= I18n.t("encoding") %>
         <%= select_tag(:encoding, options_for_select(@encodings)) %>
-        <br />
-        <br />
+        <br>
+        <br>
         <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
         <%= button_to I18n.t(:close), '#', :onclick => 'modal_upload.close(); return false;' %>
       </p>

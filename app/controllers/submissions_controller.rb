@@ -293,7 +293,9 @@ class SubmissionsController < ApplicationController
         @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
         @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
       rescue Exception => @find_revision_error
-        render :template => 'submissions/repo_browser/find_revision_error'
+        respond_to do |format|
+          format.js { render :action => 'submissions/repo_browser/find_revision_error' }
+        end
         return
       end
       @table_rows = {}
@@ -303,7 +305,10 @@ class SubmissionsController < ApplicationController
       @directories.sort.each do |directory_name, directory|
         @table_rows[directory.object_id] = construct_repo_browser_directory_table_row(directory_name, directory)
       end
-      render :template => 'submissions/repo_browser/populate_repo_browser'
+      respond_to do |format|
+        format.js
+      end
+
     end
   end
 
@@ -346,12 +351,17 @@ class SubmissionsController < ApplicationController
       @files.sort.each do |file_name, file|
         @table_rows[file.object_id] = construct_file_manager_table_row(file_name, file)
       end
+        
       if @grouping.repository_external_commits_only?
         @directories.sort.each do |directory_name, directory|
           @table_rows[directory.object_id] = construct_file_manager_dir_table_row(directory_name, directory)
         end
       end
-      render :file_manager_populate
+
+      respond_to do |format|
+        format.js
+      end
+
     end
   end
 
@@ -486,6 +496,11 @@ class SubmissionsController < ApplicationController
       @groupings.detect do |unsorted_grouping|
         unsorted_grouping == sorted_grouping
       end
+    end
+
+    # Check if any groupings have an error and log it
+    if @groupings.any? {|group| group.error_collecting}
+      flash[:error] = I18n.t('browse_submissions.error_collecting')
     end
 
     if cookies[@c_per_page].blank?
