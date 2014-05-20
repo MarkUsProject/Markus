@@ -2,36 +2,20 @@
   <%= stylesheet_link_tag("livepipe/tabs") %>
 <% end %>
 
-<div id="header">
+<header id="header">
+  <div id="course">
+    <strong><%= MarkusConfigurator.markus_config_course_name %></strong>
+  </div>
   <div id="user_info">
     <span id="logout_area">
-      <span id="lang_chooser">
-        <%= I18n.t(:choose_language) %>
-        <%=
-            #gets the relative path without the language choice, then on change of the languge, it adds this relative path
-            #to the end of the new language that was chosen.
-            relative = request.path
-            relative = relative.gsub("/#{I18n.locale}", "")
-
-            select_tag( :locale, options_for_select( @available_locales, :selected => "#{I18n.locale}" ),
-                      { :onchange => "javascript:window.location.href = '/' + this.options[this.selectedIndex].value + '#{relative}';"} ) %>
-
-      </span>
-      <%= link_to(image_tag("icons/information.png",
-          :alt => I18n.t(:about_markus),
-          :title => I18n.t(:about_markus),
-          :id => "about_icon"),
-          about_main_index_path(),
-          :remote => true) %>
-
       <span id="admin_logged_in_as">
         <% if !session[:real_uid].nil? %>
-          <b> <%= User.find_by_id(session[:real_uid]).first_name %> </b>
+          <strong> <%= User.find_by_id(session[:real_uid]).first_name %> </strong>
         <% end %>
       </span>
       <span id="user_name">
         <%= @current_user.first_name %> <%= @current_user.last_name %>
-        ( <b><%= @current_user.user_name %></b> )
+        ( <strong><%= @current_user.user_name %></strong> )
       </span>
       <% if @current_user.admin? %>
         <%= link_to(image_tag("icons/group_go.png",
@@ -59,10 +43,7 @@
   <div id="working" style="display:none;">
     <%= I18n.t(:working) %>
   </div>
-  <div id="course">
-    <b><%= MarkusConfigurator.markus_config_course_name %></b>
-  </div>
-</div>
+</header>
 <div id="logo">
   <%= render :partial => 'layouts/breadcrumb'%>
 </div>

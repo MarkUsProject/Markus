@@ -77,7 +77,7 @@ class RubricCriterion < ActiveRecord::Base
   #
   # ===Returns:
   #
-  # Wether the save operation was successful or not.
+  # Whether the save operation was successful or not.
   def set_level_names(levels)
     levels.each_with_index do |level, index|
       self['level_' + index.to_s + '_name'] = level

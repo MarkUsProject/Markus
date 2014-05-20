@@ -11,7 +11,7 @@ Rules:
   For example, 5 lines of source could be "glowed", and then three lines within that
   original 5 could be glowed again - their glow depth will increase.
 - This is an abstract class that needs to be implemented for the particular source
-  code highlighting library being used 
+  code highlighting library being used
 **/
 
 var SourceCodeLine = Class.create({
@@ -27,30 +27,22 @@ var SourceCodeLine = Class.create({
   glow: function() {
     //Increase the depth
     this.incGlowDepth(1);
-    
-    //A callback to subclasses in the event that something needs to happen
-    //to the DOM node before the new css class is applied
-    this.beforeGlow();
+
     //Add the appropriate glow class
     $(this.getLineNode()).addClassName('source_code_glowing_' + this.getGlowDepth());
-    
-    //A callback to subclasses in case anything needs to happen after glowing
-    this.afterGlow();
   },
   // Decrease a Source Code Line's glow depth
   unGlow: function() {
-    this.beforeUnGlow();
     //Is this line glowing?
     if(this.isGlowing()) {
       $(this.getLineNode()).removeClassName('source_code_glowing_' + this.getGlowDepth());
-      
+
     }
     //Decrease the glow depth
     this.decGlowDepth(1);
-    this.afterUnGlow();
   },
   incGlowDepth: function(amount) {
-    this.setGlowDepth(this.getGlowDepth() + amount); 
+    this.setGlowDepth(this.getGlowDepth() + amount);
   },
   decGlowDepth: function(amount) {
     this.setGlowDepth(this.getGlowDepth() - amount);
@@ -72,12 +64,6 @@ var SourceCodeLine = Class.create({
     return this.getGlowDepth() > 0;
   },
   //Some hook functions for before/after glowing
-  beforeGlow: function() {
-    //hook
-  },
-  afterGlow: function() {
-    //hook
-  },
   beforeUnGlow: function() {
     //hook
   },
@@ -124,5 +110,4 @@ var SourceCodeLine = Class.create({
   setObserving: function(is_observing) {
     this.is_observing = is_observing;
   }
-  
 });
