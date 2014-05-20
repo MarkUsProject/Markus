@@ -120,7 +120,7 @@
 
 
 <% # Display grade entry forms in the dropdown menu %>
-<% if !GradeEntryForm.all.blank? %>
+<% unless GradeEntryForm.all.blank? %>
   <div class='separator'></div>
 <% end %>
 
