@@ -27,13 +27,13 @@ var PeriodDeltaChain = Class.create({
       var to_time = new Date(current_time);
       to_time.setTime(to_time.getTime() + (me.hour * hours_value));
 
-      var language = window.navigator.userLanguage || window.navigator.language;
+      var language = document.getElementById("locale").value;
       if (language.indexOf('fr') >= 0) {
         /* French locale */
         from_time_node.update(from_time.toLocale('fr'));
         to_time_node.update(to_time.toLocale('fr'));
       } else if (language.indexOf('pt') >= 0) {
-        /* Portuguese */
+        /* Portuguese locale */
         from_time_node.update(from_time.toLocale('pt'));
         to_time_node.update(to_time.toLocale('pt'));
       } else {
@@ -58,7 +58,7 @@ var PeriodDeltaChain = Class.create({
   }
 });
 
-Date.prototype.toLocale = function (locale) {
+Date.prototype.toLocale = function(locale) {
   if (locale == 'fr') {
     var months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
     return pad(this.getDate()) + " " + months[this.getMonth()] + " " + this.getFullYear() + ", " +
@@ -68,18 +68,8 @@ Date.prototype.toLocale = function (locale) {
     return pad(this.getDate()) + " de " + months[this.getMonth()] + " de " + this.getFullYear() + ", " +
            pad(this.getHours()) + ":" + pad(this.getMinutes()) + ":" + pad(this.getSeconds());
   }
-
 }
 
 function pad(number) {
   return (number < 10) ? "0" + number : number;
 }
-
-// var strDateInEnglish = "5/31/2014, 12:00:00 AM";
-// var d = new Date(strDateInEnglish);
-// // var strDateInFrench = d.toLongFrFormat();
-// var strDateInFrench = d.toLocale("fr");
-// console.log(strDateInFrench);
-// var strDateInPt = d.toLocale("pt");
-// // var strDateInPt = d.toLongPtFormat();
-// console.log(strDateInPt);
