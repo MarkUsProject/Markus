@@ -27,8 +27,20 @@ var PeriodDeltaChain = Class.create({
       var to_time = new Date(current_time);
       to_time.setTime(to_time.getTime() + (me.hour * hours_value));
 
-      from_time_node.update(from_time.toLocaleString());
-      to_time_node.update(to_time.toLocaleString());
+      var language = window.navigator.userLanguage || window.navigator.language;
+      if (language.indexOf('fr') >= 0) {
+        /* French locale */
+        from_time_node.update(from_time.toLocale('fr'));
+        to_time_node.update(to_time.toLocale('fr'));
+      } else if (language.indexOf('pt') >= 0) {
+        /* Portuguese */
+        from_time_node.update(from_time.toLocale('pt'));
+        to_time_node.update(to_time.toLocale('pt'));
+      } else {
+        /* English locale, or something else: no need to change */
+        from_time_node.update(from_time.toLocaleString());
+        to_time_node.update(to_time.toLocaleString());
+      }
 
       current_time = to_time;
     });
@@ -45,3 +57,29 @@ var PeriodDeltaChain = Class.create({
     return value;
   }
 });
+
+Date.prototype.toLocale = function (locale) {
+  if (locale == 'fr') {
+    var months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+    return pad(this.getDate()) + " " + months[this.getMonth()] + " " + this.getFullYear() + ", " +
+           pad(this.getHours()) + ":" + pad(this.getMinutes()) + ":" + pad(this.getSeconds());
+  } else if (locale == 'pt') {
+    var months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+    return pad(this.getDate()) + " de " + months[this.getMonth()] + " de " + this.getFullYear() + ", " +
+           pad(this.getHours()) + ":" + pad(this.getMinutes()) + ":" + pad(this.getSeconds());
+  }
+
+}
+
+function pad(number) {
+  return (number < 10) ? "0" + number : number;
+}
+
+// var strDateInEnglish = "5/31/2014, 12:00:00 AM";
+// var d = new Date(strDateInEnglish);
+// // var strDateInFrench = d.toLongFrFormat();
+// var strDateInFrench = d.toLocale("fr");
+// console.log(strDateInFrench);
+// var strDateInPt = d.toLocale("pt");
+// // var strDateInPt = d.toLongPtFormat();
+// console.log(strDateInPt);
