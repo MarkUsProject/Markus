@@ -28,8 +28,6 @@ Markus::Application.configure do
   # Show Deprecated Warnings (to :log or to :stderr)
   config.active_support.deprecation = :stderr
 
-  require 'debugger'
-
   # Raise exception on mass assignment protection for Active Record models
   config.active_record.mass_assignment_sanitizer = :strict
 
