@@ -7,12 +7,6 @@ document.observe("dom:loaded", function() {
   // Hide AJAX errors DIV
   $('errors').hide();
 
-  //force the middle column to be moved on the y-axis as the page is scrolled
-	Event.observe(document, "scroll", function() {
-		//110 is the displacement for "top" for .centreColumnGraders as can be seen in the main.css
-		$("centreColumn").setStyle({top: (document.viewport.getScrollOffsets().top + 110) +'px' });
-	});
-
   //This reuses client-side javascript from assignment graders view for performance reasons, hence "groupings_table" name.
   groupings_table = new FilterTable({
     table_id: $('groups'),

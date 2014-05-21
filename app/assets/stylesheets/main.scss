@@ -700,7 +700,7 @@ input#extra_mark_description {
 .colLeftGraders,
 .colRightGraders {
   display: inline-block;
-  margin-right: -17px;
+  margin-right: -5px;
   vertical-align: top;
 }
 
@@ -711,15 +711,24 @@ input#extra_mark_description {
 
 .colRightGroups {
   width: 55%;
+
+  @include breakpoint(large) {
+    width: auto;
+  }
 }
 
 .colLeftGraders {
+  float: left;
   min-width: 335px;
   width: 30%;
 }
 
 .colRightGraders {
   width: 60%;
+
+  @include breakpoint(large) {
+    width: auto;
+  }
 }
 
 .centreColumn {
@@ -727,11 +736,19 @@ input#extra_mark_description {
   overflow: hidden;
   width: 10%;
 
+  @include breakpoint(large) {
+    width: 65px;
+  }
+
   #icons {
     position: fixed;
     text-align: center;
     top: 50%;
     width: 10%;
+
+    @include breakpoint(large) {
+      width: 65px;
+    }
   }
 
   input {

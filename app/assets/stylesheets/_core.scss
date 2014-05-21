@@ -8,6 +8,7 @@
 body {
   background-color: $bg-color;
   font: 0.8em/1.2em $font-stack;
+  min-width: 960px;
 }
 
 .clear {
