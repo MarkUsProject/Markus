@@ -411,6 +411,22 @@ input {
 }
 
 /*
+ * Resets all textboxes' styling.
+ */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  outline: 0;
+  box-shadow: none;
+}
+
+/*
  * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
  * and `video` controls.
  * 2. Corrects inability to style clickable `input` types in iOS.

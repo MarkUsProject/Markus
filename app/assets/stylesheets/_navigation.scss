@@ -36,12 +36,19 @@
   @include breakpoint(small) {
     background: #777;
     height: 100%;
-    overflow-y: scroll;
-    padding: 1em 0;
+    overflow: hidden;
     position: fixed;
-    top: 3em;
-    width: 100%%;
+    top: 3.5em;
+    width: 100%;
     z-index: 0;
+  }
+}
+
+#menus_child {
+  @include breakpoint(small) {
+    height: 100%;
+    overflow: auto;
+    width: 100%;
   }
 }
 
@@ -56,7 +63,7 @@
 
   #content,
   footer {
-    @include box-shadow(-5px 0 10px #000);
+    border-left: 1px solid #ccc;
     -webkit-transform: translateX(75%);
     transform: translateX(75%);
   }
@@ -68,6 +75,8 @@ footer {
   position: relative;
   width: 100%;
   z-index: 100;
+  -webkit-transform: translateX(0%);
+  transform: translateX(0%);
 }
 
 
@@ -79,31 +88,40 @@ footer {
   text-align: right;
 
   @include breakpoint(small) {
-    padding: 0.5em;
+    padding: 0;
     text-align: left !important;
     width: 75%;
   }
 }
 
-#course {
+#course,
+#user_info {
   display: inline;
-  float: left;
-  text-align: left;
 
   @include breakpoint(small) {
-    float: none;
+    background: #eee;
+    border-bottom: 1px solid #ccc;
     display: block;
-    margin-bottom: 1em;
+    float: none !important;
+    padding: 1em;
   }
 }
 
+#course {
+  float: left;
+  text-align: left;
+}
+
 #user_info {
-  display: inline;
-  width: auto;
+  width: auto
 }
 
 #user_name {
   font-weight: 300;
+
+  @include breakpoint(small) {
+    display: block;
+  }
 }
 
 #logo {
@@ -131,20 +149,39 @@ footer {
 
 /* Menus */
 
-#menu li,
-#sub_menu li,
-#sub_sub_menu li {
-  @include transition(all, 0.25s);
-  display: inline-block;
-  font-size: 1em;
+#menu,
+#sub_menu,
+#sub_sub_menu {
+  @include breakpoint(small) {
+    border-bottom: 1px solid #ccc;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 75% !important;
+  }
 
-  a {
-    display: block;
-    height: 41px;
-    margin: 0;
-    padding: 0.85em;
-    text-align: center;
-    width: 12em;
+  li {
+    @include transition(all, 0.25s);
+    display: inline-block;
+    font-size: 1em;
+
+    @include breakpoint(small) {
+      display: block;
+      width: 100%;
+    }
+
+    a {
+      display: block;
+      height: 41px;
+      margin: 0;
+      padding: 0.85em;
+      text-align: center;
+      width: 12em;
+
+      @include breakpoint(small) {
+        text-align: left;
+        width: 100%;
+      }
+    }
   }
 }
 
@@ -157,12 +194,6 @@ footer {
   min-height: 42px;
   padding: 0 0 0 160px;
   width: 100%;
-
-  @include breakpoint(small) {
-    margin: 0;
-    padding: 0;
-    width: 75%;
-  }
 
   li {
     background: #ccc;
@@ -200,7 +231,16 @@ footer {
     top: 107px;
     visibility: hidden;
     width: 15em;
-    z-index: 10;
+    z-index: 500;
+
+    @include breakpoint(small) {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+      position: relative;
+      top: 0;
+      left: 0;
+    }
 
     li {
       @include border-radius(0);
@@ -256,6 +296,10 @@ span#choose_an_assignment {
   padding: 0.55em 1em;
   text-align: center;
   width: 15em;
+
+  @include breakpoint(small) {
+    display: none;
+  }
 }
 
 #dropdown:hover {
@@ -280,10 +324,6 @@ span#choose_an_assignment {
   margin: 0;
   padding-left: 3.5em;
 
-  @include breakpoint(small) {
-    width: 75%;
-  }
-
   a {
     color: $grey;
   }
@@ -297,6 +337,10 @@ span#choose_an_assignment {
 
   li {
     @include border-radius-top(10px);
+
+    @include breakpoint(small) {
+      @include border-radius(0);
+    }
   }
 }
 

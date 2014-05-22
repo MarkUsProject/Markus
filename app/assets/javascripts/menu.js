@@ -233,6 +233,17 @@ function initMenu() {
       jQuery('body').addClass('show_menu');
   }, false);
 
+  /* Close menu if content clicked, or if window resized and no longer "mobile" */
+  document.getElementById('content').addEventListener('click', function() {
+    if (jQuery('body').hasClass('show_menu'))
+      jQuery('body').removeClass('show_menu');
+  }, false);
+
+  document.getElementsByTagName('footer')[0].addEventListener('click', function() {
+    if (jQuery('body').hasClass('show_menu'))
+      jQuery('body').removeClass('show_menu');
+  }, false);
+
   window.onresize = function(event) {
     if (window.innerWidth > 500) {
       jQuery('body').removeClass('show_menu');

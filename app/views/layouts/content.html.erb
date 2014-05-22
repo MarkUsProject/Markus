@@ -21,10 +21,12 @@
       <a id="menu_icon"></a>
     </div>
     <div id="menus">
-      <%= render :partial => 'layouts/header' %>
-      <%= render :partial => 'layouts/menu' %>
-      <%= render :partial => 'layouts/sub_menu' %>
-      <%= render :partial => 'layouts/sub_sub_menu' %>
+      <div id="menus_child">
+        <%= render :partial => 'layouts/header' %>
+        <%= render :partial => 'layouts/menu' %>
+        <%= render :partial => 'layouts/sub_menu' %>
+        <%= render :partial => 'layouts/sub_sub_menu' %>
+      </div>
     </div>
     <%= render :partial => 'layouts/about' %>
     <%= render :partial => 'layouts/role_switch' %>
