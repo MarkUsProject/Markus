@@ -32,7 +32,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     end
 
     should 'and I should be able to populate file' do
-      get_as @student, :populate_file_manager, :assignment_id => @assignment.id
+      get_as @student, :populate_file_manager, :assignment_id => @assignment.id, :format => 'js'
       assert_response :success
     end
 
@@ -283,7 +283,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                :populate_repo_browser,
                :assignment_id => @assignment.id,
                :id => Grouping.last.id,
-               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number
+               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number,
+               :format => 'js'
         assert_response :success
       end
 
@@ -397,7 +398,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @admin,
                :populate_repo_browser,
                :assignment_id => 1,
-               :id => Grouping.first.id
+               :id => Grouping.first.id,
+               :format => 'js'
         assert_response :success
       end
 
