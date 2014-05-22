@@ -736,6 +736,15 @@ class Assignment < ActiveRecord::Base
     self.rubric_criteria.count + 1
   end
 
+  # Returns the class of the criteria that belong to this assignment.
+  def criterion_class
+    if marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
+      FlexibleCriterion
+    else
+      RubricCriterion
+    end
+  end
+
   def get_criteria
     if self.marking_scheme_type == 'rubric'
       self.rubric_criteria

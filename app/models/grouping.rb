@@ -44,6 +44,12 @@ class Grouping < ActiveRecord::Base
            :through => :non_rejected_student_memberships
 
   has_one :token
+  has_one :inviter_membership,
+          class_name: 'StudentMembership',
+          conditions: {
+            membership_status: StudentMembership::STATUSES[:inviter]
+          }
+  has_one :inviter, source: :user, through: :inviter_membership
 
   scope :approved_groupings, :conditions => {:admin_approved => true}
 
@@ -57,6 +63,96 @@ class Grouping < ActiveRecord::Base
   validates_associated :group, :message => 'associated group need to be valid'
 
   validates_inclusion_of :is_collected, :in => [true, false]
+
+  # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
+  # grouping in a list of groupings specified by +grouping_ids+. The groupings
+  # must belong to the given assignment +assignment+.
+  def self.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+    assign_tas(grouping_ids, ta_ids, assignment) do
+      |grouping_ids, ta_ids|
+      # Assign TAs in a round-robin fashion to a list of random groupings.
+      grouping_ids.shuffle.zip(ta_ids.cycle)
+    end
+  end
+
+  # Assigns all TAs in a list of TAs specified by +ta_ids+ to each grouping in
+  # a list of groupings specified by +grouping_ids+. The groupings must belong
+  # to the given assignment +assignment+.
+  def self.assign_all_tas(grouping_ids, ta_ids, assignment)
+    assign_tas(grouping_ids, ta_ids, assignment) do
+      |grouping_ids, ta_ids|
+      # Get the Cartesian product of group IDs and TA IDs.
+      grouping_ids.product(ta_ids)
+    end
+  end
+
+  # Assigns TAs to groupings using a caller-specified block. The block is given
+  # a list of grouping IDs and a list of TA IDs and must return a list of
+  # grouping-ID-TA-ID pair that represents the TA assignment.
+  #
+  #   # Assign the TA with ID 3 to the grouping with ID 1 and the TA
+  #   # with ID 4 to the grouping with ID 2.
+  #   assign_tas([1, 2], [3, 4], a) do |grouping_ids, ta_ids|
+  #     grouping_ids.zip(ta_ids)  # => [[1, 3], [2, 4]]
+  #   end
+  #
+  # The groupings must belong to the given assignment +assignment+.
+  def self.assign_tas(grouping_ids, ta_ids, assignment)
+    grouping_ids, ta_ids = Array(grouping_ids), Array(ta_ids)
+
+    # Only use IDs that identify existing model instances.
+    ta_ids = Ta.where(id: ta_ids).pluck(:id)
+    grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)
+
+    columns = [:grouping_id, :user_id]
+    # Get all existing memberships to avoid violating the unique constraint.
+    # TODO replace this with Membership.pluck when migrated to Rails 4.
+    existing_values = TaMembership.select(columns)
+      .where(grouping_id: grouping_ids, user_id: ta_ids)
+      .map { |membership| [membership.grouping_id, membership.user_id] }
+    # Delegate the assign function to the caller-specified block and remove
+    # values that already exist in the database.
+    values = yield(grouping_ids, ta_ids) - existing_values
+    # TODO replace TaMembership.import with TaMembership.create when the PG
+    # driver supports bulk create, then remove the activerecord-import gem.
+    TaMembership.import(columns, values, validate: false)
+
+    update_criteria_coverage_counts(grouping_ids)
+    assignment.criterion_class.update_assigned_groups_counts(assignment.id)
+  end
+
+  # Unassigns TAs from groupings. +ta_membership_ids+ is a list of TA
+  # membership IDs that specifies the unassignment to be done. +grouping_ids+
+  # is a list of grouping IDs involved in the unassignment. The memberships
+  # and groupings must belong to the given assignment +assignment+.
+  def self.unassign_tas(ta_membership_ids, grouping_ids, assignment)
+    TaMembership.delete_all(id: ta_membership_ids)
+
+    update_criteria_coverage_counts(grouping_ids)
+    assignment.criterion_class.update_assigned_groups_counts(assignment.id)
+  end
+
+  # Updates the +criteria_coverage_count+ field of all groupings specified
+  # by +grouping_ids+.
+  def self.update_criteria_coverage_counts(grouping_ids)
+    grouping_ids = Array(grouping_ids)
+    return if grouping_ids.empty?
+
+    # Sanitize the IDs in the input.
+    grouping_ids_str = Array(grouping_ids)
+      .map { |grouping_id| connection.quote(grouping_id) }
+      .join(',')
+    # TODO replace this raw SQL with dynamic SET clause with Active Record
+    # language when the latter supports subquery in the SET clause.
+    connection.execute(<<-UPDATE_SQL)
+      UPDATE groupings AS g SET criteria_coverage_count =
+        (SELECT count(DISTINCT c.criterion_id) FROM memberships AS m
+          INNER JOIN criterion_ta_associations AS c ON m.user_id = c.ta_id
+          WHERE m.grouping_id = g.id AND m.type = 'TaMembership'
+            AND c.assignment_id = g.assignment_id)
+        WHERE id IN (#{grouping_ids_str})
+    UPDATE_SQL
+  end
 
   def accepted_students
     self.accepted_student_memberships.collect do |memb|
@@ -100,16 +196,6 @@ class Grouping < ActiveRecord::Base
       membership.user.user_name
     end
   end
-
-  # Returns the member with 'inviter' status for this group
-  def inviter
-   member = student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
-    if member.nil?
-      return nil
-    end
-    Student.find(member.user_id)
-  end
-
 
   # Returns true if this user has a pending status for this group;
   # false otherwise, or if user is not in this group.
