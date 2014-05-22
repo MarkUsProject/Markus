@@ -38,7 +38,7 @@
     <%= raw(f.label :date, t(:shortened_date).html_safe) %>
     <%= raw(f.calendar_date_select :date,
                             {:year_range => 0.years.ago..1.years.from_now,
-	                           :locale => I18n.default_locale}) %>
+                             :locale => I18n.default_locale}) %>
     <%= raw(t(:iso_date_format_example)) %>
 
 <br>
@@ -48,15 +48,25 @@
     <br>
 
     <h4><%= t('grade_entry_forms.specify_columns') %></h4>
-
+    
     <% # Display the column names and totals
     %>
     <div id="grade_entry_items">
+      <% # Ensures there is at least one column whenever the form is loaded.
+      %>
+      <% if @grade_entry_form.grade_entry_items.size == 0 %>
+        <%= render(:partial => 'grade_entry_item',
+                                    :locals => {:form => f,
+                                                :new_position => 0,
+                                                :grade_entry_item => GradeEntryItem.new})
+                                                %>
+      <% end %>
+
       <% sort_items_by_position(@grade_entry_form.grade_entry_items).each_with_index do |item, index| %>
         <%= f.fields_for :grade_entry_items, item do |entry_item| %>
           <%= render :partial => 'grade_entry_item',
-            		   :locals => {:grade_entry_item => entry_item.object,
-                                   :new_position => index+1,
+                   :locals => {:grade_entry_item => entry_item.object,
+                                   :new_position => index + 1,
                                    :form => f} %>
         <% end %>
       <% end %>
