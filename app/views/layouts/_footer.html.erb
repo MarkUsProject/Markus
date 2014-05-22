@@ -16,6 +16,8 @@
   </span>
 
   <% if @current_user.admin? or @current_user.ta? %>
-    <a id="issues" href="https://github.com/MarkUsProject/Markus/issues/">GitHub issues list</a>
+    <span id="issues">
+      <a href="https://github.com/MarkUsProject/Markus/issues/"><%= I18n.t(:issues) %></a>
+    </span>
   <% end %>
 </footer>
