@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<%= render :partial => 'layouts/head' %>
+  <%= render :partial => 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
   <%= javascript_include_tag 'application.js', 'prototype.js' %>
   <%= stylesheet_link_tag 'application.css', :media => 'all' %>
@@ -17,10 +17,15 @@
 </head>
 <body>
   <div id="<%= controller.action_name == 'login' ? "loggedOut" : "loggedIn" %>">
-    <%= render :partial => 'layouts/header' %>
-    <%= render :partial => 'layouts/menu' %>
-    <%= render :partial => 'layouts/sub_menu' %>
-    <%= render :partial => 'layouts/sub_sub_menu' %>
+    <div id="mobile_menu">
+      <a id="menu_icon"></a>
+    </div>
+    <div id="menus">
+      <%= render :partial => 'layouts/header' %>
+      <%= render :partial => 'layouts/menu' %>
+      <%= render :partial => 'layouts/sub_menu' %>
+      <%= render :partial => 'layouts/sub_sub_menu' %>
+    </div>
     <%= render :partial => 'layouts/about' %>
     <%= render :partial => 'layouts/role_switch' %>
     <%= render :partial => 'layouts/redirect' %>

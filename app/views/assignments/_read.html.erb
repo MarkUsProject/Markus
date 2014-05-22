@@ -10,7 +10,7 @@
   </div>
   <div class="sub_block">
     <span class="prop_label"><%= t("message") %>:</span>
-    <span class="box sub_block clear"><%= @assignment.message %></span>
+    <span class="box clear"><%= @assignment.message %></span>
   </div>
   <div class="sub_block">
     <span class="prop_label"><%= t("due_date") %>:</span>
@@ -39,7 +39,7 @@
   <% else %>
     <ul>
       <% @assignment.assignment_files.each do |assignment_file| %>
-	      <li><%= assignment_file.filename %></li>
+        <li><%= assignment_file.filename %></li>
       <% end %>
     </ul>
   <% end %>

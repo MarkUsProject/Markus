@@ -3,6 +3,74 @@
  * sub-sub-menu, and the footer.
  */
 
+
+/* Mobile friendly menu */
+
+#mobile_menu {
+  background: $bg-color url(markus_logo_small.png) no-repeat center center;
+  display: none;
+  height: 3.5em;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 500;
+
+  @include breakpoint(small) {
+    display: block;
+  }
+
+  #menu_icon {
+    color: $light-blue;
+    cursor: pointer;
+    font-size: 2.5em;
+    line-height: 1.25em;
+    padding: 0.5em;
+
+    &::before {
+      content: "≡";
+    }
+  }
+}
+
+#menus {
+  @include breakpoint(small) {
+    background: #777;
+    height: 100%;
+    overflow-y: scroll;
+    padding: 1em 0;
+    position: fixed;
+    top: 3em;
+    width: 100%%;
+    z-index: 0;
+  }
+}
+
+.show_menu {
+  overflow: hidden;
+
+  #mobile_menu #menu_icon {
+    &::before {
+      content: "✕";
+    }
+  }
+
+  #content,
+  footer {
+    @include box-shadow(-5px 0 10px #000);
+    -webkit-transform: translateX(75%);
+    transform: translateX(75%);
+  }
+}
+
+#content,
+footer {
+  @include transition(all, 0.3s);
+  position: relative;
+  width: 100%;
+  z-index: 100;
+}
+
+
 /* Header */
 
 #header {
@@ -11,7 +79,21 @@
   text-align: right;
 
   @include breakpoint(small) {
+    padding: 0.5em;
     text-align: left !important;
+    width: 75%;
+  }
+}
+
+#course {
+  display: inline;
+  float: left;
+  text-align: left;
+
+  @include breakpoint(small) {
+    float: none;
+    display: block;
+    margin-bottom: 1em;
   }
 }
 
@@ -24,20 +106,13 @@
   font-weight: 300;
 }
 
-#course {
-  display: inline;
-  float: left;
-  text-align: left;
-
-  @include breakpoint(small) {
-    float: none;
-    display: block;
-  }
-}
-
 #logo {
   font-size: 0.875em;
   margin: 5px 10px 10px 3.5em;
+
+  @include breakpoint(small) {
+    display: none;
+  }
 
   a {
     padding: 5px;
@@ -82,6 +157,12 @@
   min-height: 42px;
   padding: 0 0 0 160px;
   width: 100%;
+
+  @include breakpoint(small) {
+    margin: 0;
+    padding: 0;
+    width: 75%;
+  }
 
   li {
     background: #ccc;
@@ -199,6 +280,10 @@ span#choose_an_assignment {
   margin: 0;
   padding-left: 3.5em;
 
+  @include breakpoint(small) {
+    width: 75%;
+  }
+
   a {
     color: $grey;
   }
@@ -258,6 +343,7 @@ span#choose_an_assignment {
 /* Footer */
 
 footer {
+  background: $bg-color;
   color: #777;
   font-size: 0.95em;
   padding: 2em;
@@ -272,6 +358,12 @@ footer {
   border-left: 1px solid #aaa;
   margin: 0 1em;
   padding-left: 1em;
+
+  @include breakpoint(tiny) {
+    border: none;
+    display: block;
+    margin: 1em;
+  }
 
   select {
     border: none;
