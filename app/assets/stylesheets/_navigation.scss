@@ -153,7 +153,8 @@ footer {
 #sub_menu,
 #sub_sub_menu {
   @include breakpoint(small) {
-    border-bottom: 1px solid #ccc;
+    background: #eee !important;
+    border-bottom: 1px solid #ccc !important;
     margin: 0 !important;
     padding: 0 !important;
     width: 75% !important;
@@ -219,6 +220,29 @@ footer {
   margin-right: 2.5em;
   width: 15em;
 
+  &:hover {
+    background: none !important;
+
+    ul.dropdown {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+
+      a {
+        color: $grey !important;
+      }
+    }
+
+    #choose_an_assignment {
+      @include border-radius-bottom(0);
+      @include border-radius-top(10px);
+    }
+
+    a {
+      font-weight: 400 !important;
+    }
+  }
+
   ul.dropdown {
     @include border-radius-bottom(10px);
     background: $primary-color;
@@ -234,12 +258,17 @@ footer {
     z-index: 500;
 
     @include breakpoint(small) {
+      @include border-radius(0);
+      background: #eee;
+      border: 0;
+      border-bottom: 1px solid #ccc;
       display: block;
       opacity: 1;
       visibility: visible;
       position: relative;
       top: 0;
       left: 0;
+      width: 100%;
     }
 
     li {
@@ -256,6 +285,10 @@ footer {
       &:last-child,
       &:last-child #drop_down_current_assignment {
         @include border-radius-bottom(10px);
+
+        @include breakpoint(small) {
+          @include border-radius(0);
+        }
       }
     }
 
@@ -268,6 +301,10 @@ footer {
       padding: 0.6em 0.75em;
       text-align: left;
       width: 190px;
+
+      @include breakpoint(small) {
+        width: 100%;
+      }
     }
 
     #drop_down_current_assignment {
@@ -280,6 +317,10 @@ footer {
       border-bottom: 1px solid #444;
       margin: 0.5em 0;
       width: 190px;
+
+      @include breakpoint(small) {
+        width: 100%;
+      }
     }
   }
 }
@@ -299,21 +340,6 @@ span#choose_an_assignment {
 
   @include breakpoint(small) {
     display: none;
-  }
-}
-
-#dropdown:hover {
-  background: none !important;
-
-  ul.dropdown {
-    display: block;
-    opacity: 1;
-    visibility: visible;
-  }
-
-  #choose_an_assignment {
-    @include border-radius-bottom(0);
-    @include border-radius-top(10px);
   }
 }
 
@@ -350,15 +376,27 @@ span#choose_an_assignment {
 
   a {
     color: $primary-color;
+
+    @include breakpoint(small) {
+      color: $grey;
+    }
   }
 
   li:hover,
   #sub_menu_active {
     background: $primary-color;
 
+    @include breakpoint(small) {
+      background: $light-blue;
+    }
+
     a {
       color: $grey !important;
       font-weight: 600;
+
+      @include breakpoint(small) {
+        color: $primary-color !important;
+      }
     }
   }
 }
@@ -369,6 +407,10 @@ span#choose_an_assignment {
 
   ul {
     padding-top: 5px;
+
+    @include breakpoint(small) {
+      padding: 0;
+    }
   }
 
   li:hover,
@@ -376,9 +418,17 @@ span#choose_an_assignment {
     @include border-radius-top(10px);
     background: $grey;
 
+    @include breakpoint(small) {
+      @include border-radius(0);
+    }
+
     a {
       color: $primary-color;
       font-weight: 600;
+
+      @include breakpoint(small) {
+        color: #fff;
+      }
     }
   }
 }
