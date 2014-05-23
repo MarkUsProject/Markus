@@ -6,6 +6,16 @@
 
 /* Mobile friendly menu */
 
+#content,
+footer {
+  @include transition(all, 0.3s);
+  position: relative;
+  width: 100%;
+  z-index: 100;
+  -webkit-transform: translateX(0%);
+  transform: translateX(0%);
+}
+
 #mobile_menu {
   background: $bg-color url(markus_logo_small.png) no-repeat center center;
   display: none;
@@ -34,8 +44,10 @@
 
 #menus {
   @include breakpoint(mobile) {
-    background: #777;
+    @include transition(all, 0.3s);
+    background: $bg-color;
     height: 100%;
+    opacity: 0;
     overflow: hidden;
     position: fixed;
     top: 3.5em;
@@ -46,17 +58,23 @@
 
 #menus_child {
   @include breakpoint(mobile) {
+    background: #777;
     height: 100%;
     overflow: auto;
-    width: 100%;
+    width: 75%;
   }
 }
 
 .show_menu {
   overflow: hidden;
 
+  #menus {
+    opacity: 1;
+  }
+
   #mobile_menu #menu_icon::before {
     content: "✕";
+    font-size: 0.8em;
   }
 
   #content,
@@ -64,17 +82,8 @@
     border-left: 1px solid $grey;
     -webkit-transform: translateX(75%);
     transform: translateX(75%);
+    opacity: 0.75;
   }
-}
-
-#content,
-footer {
-  @include transition(all, 0.3s);
-  position: relative;
-  width: 100%;
-  z-index: 100;
-  -webkit-transform: translateX(0%);
-  transform: translateX(0%);
 }
 
 #header,
@@ -88,7 +97,7 @@ footer {
     display: block !important;
     margin: 0 0 1em 0 !important;
     padding: 0 !important;
-    width: 75% !important;
+    width: 100% !important;
   }
 }
 
@@ -104,37 +113,37 @@ footer {
     border: 0;
     text-align: left !important;
   }
-}
 
-#course,
-#user_info {
-  display: inline;
+  #course,
+  #user_info {
+    display: inline;
 
-  @include breakpoint(mobile) {
-    display: block;
-    float: none !important;
-    padding: 1em;
+    @include breakpoint(mobile) {
+      display: block;
+      float: none !important;
+      padding: 1em;
+    }
   }
-}
 
-#course {
-  float: left;
-  text-align: left;
+  #course {
+    float: left;
+    text-align: left;
 
-  @include breakpoint(mobile) {
-    border-bottom: 1px solid $grey;
+    @include breakpoint(mobile) {
+      border-bottom: 1px solid $grey;
+    }
   }
-}
 
-#user_info {
-  width: auto;
-}
+  #user_info {
+    width: auto;
+  }
 
-#user_name {
-  font-weight: 300;
+  #user_id {
+    font-weight: 300;
 
-  @include breakpoint(mobile) {
-    display: block;
+    @include breakpoint(mobile) {
+      display: block;
+    }
   }
 }
 

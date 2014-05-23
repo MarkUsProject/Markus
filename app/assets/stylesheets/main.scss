@@ -741,16 +741,6 @@ input#extra_mark_description {
   }
 }
 
-.colLeft {
-  float: left;
-  width: 75%;
-}
-
-.colRight {
-  float: right;
-  width: 25%;
-}
-
 .colLeftGroups,
 .colRightGroups,
 .colLeftGraders,
@@ -760,27 +750,15 @@ input#extra_mark_description {
   vertical-align: top;
 }
 
-.colLeftGroups {
+.colLeftGroups,
+.colLeftGraders {
   min-width: 365px;
   width: 35%;
 }
 
-.colRightGroups {
-  width: 55%;
-
-  @include breakpoint(large) {
-    width: auto;
-  }
-}
-
-.colLeftGraders {
-  float: left;
-  min-width: 335px;
-  width: 30%;
-}
-
+.colRightGroups,
 .colRightGraders {
-  width: 60%;
+  width: 55%;
 
   @include breakpoint(large) {
     width: auto;
@@ -799,7 +777,7 @@ input#extra_mark_description {
   #icons {
     position: fixed;
     text-align: center;
-    top: 50%;
+    // top: 50%;
     width: 10%;
 
     @include breakpoint(large) {
@@ -819,10 +797,11 @@ input#extra_mark_description {
   border: 1px solid $light-blue;
   margin: 0 0 10px 0;
   padding: 10px;
+  height: 100%;
 }
 
 .globalActionIconsTop,
-.globalActionIconsBottom{
+.globalActionIconsBottom {
   background: #dfdfdf;
   margin-bottom: -5px;
   margin-top: -5px;
