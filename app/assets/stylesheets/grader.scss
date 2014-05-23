@@ -195,6 +195,10 @@ li.annotation_category {
     height: 722px;
     margin: 0 2px 10px 2px;
     width: 4px;
+
+    @include breakpoint(small) {
+      display: none;
+    }
   }
 
   #code_pane,
@@ -206,6 +210,12 @@ li.annotation_category {
     height: 700px;
     margin: 0 0 10px 0;
     padding: 10px;
+
+    @include breakpoint(small) {
+      display: block;
+      float: none;
+      width: 100% !important;
+    }
   }
 
   #code_pane {
@@ -484,12 +494,18 @@ li.annotation_category {
 
   .extra_marks_pane {
     border: 1px solid #dadada;
+    margin-top: 1em;
   }
 
   .extra_marks_pane_list {
     border-bottom: 1px solid #dadada;
     margin: 0;
     padding: 0;
+  }
+
+  #extra_marks_bonus,
+  #extra_marks_deducted {
+    text-align: right;
   }
 
 /* Criterion summary holder */
@@ -531,6 +547,7 @@ li.annotation_category {
 }
 
 .mark_total {
-  font-weight: bold;
+  font-weight: 600;
+  margin: 1em 0;
   padding: 10px;
 }
