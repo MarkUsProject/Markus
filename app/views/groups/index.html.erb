@@ -2,7 +2,8 @@
   <%= javascript_include_tag 'manage_groups.js',
                              'FilterTable/FilterTable.js',
                              'Groups/tabs_boot.js',
-                             'Groups/index' %>
+                             'Groups/index',
+                             :async => true %>
 
   <%= render :partial => 'layouts/head' %>
 

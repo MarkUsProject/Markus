@@ -1,12 +1,13 @@
 <% content_for :head do %>
-    <%= stylesheet_link_tag('livepipe/tabs') %>
+  <%= stylesheet_link_tag('livepipe/tabs') %>
 <% end %>
 
 <% # UI LIBRARIES %>
 <%= javascript_include_tag 'livepipe/livepipe',
                            'livepipe/window',
                            'livepipe/tabs',
-                           'AnnotationCategories/index' %>
+                           'AnnotationCategories/index',
+                           :async => true %>
 
 <div id="title_bar">
   <h1><%= I18n.t("annotations.title",

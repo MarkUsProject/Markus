@@ -1,10 +1,11 @@
-
-<%= javascript_include_tag 'Students/new' %>
+<%= javascript_include_tag 'Students/new', :async => true %>
 
 <div id="title_bar">
-<h1><%= I18n.t("students.create_new") %></h1>
+  <h1><%= I18n.t("students.create_new") %></h1>
 </div>
 
 <div class="wrapLeft">
-  <%= render :partial => "student_form", :locals => {:action => 'create', :new_student => true} %>
+  <%= render :partial => "student_form",
+             :locals => { :action => 'create',
+                          :new_student => true } %>
 </div>

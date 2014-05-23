@@ -1,4 +1,4 @@
-<%= javascript_include_tag 'jquery' %>
+<%= javascript_include_tag 'jquery', :async => true %>
 <div class="login">
   <div class="login-image">
     <%= image_tag("markus_logo_big.png", :alt => "[Logo] Markus Beta") %>
@@ -10,7 +10,7 @@
   <div class="login-form">
     <%= form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
 
-      <%= text_field_tag 'user_login', nil, :tabindex => 10, :placeholder => I18n.t(:login) %>
+      <%= text_field_tag 'user_login', nil, :tabindex => 10, :placeholder => I18n.t(:login), :autofocus => true %>
       <%= password_field_tag 'user_password', nil, :tabindex => 20, :placeholder => I18n.t(:password) %>
 
       <div class="submit">

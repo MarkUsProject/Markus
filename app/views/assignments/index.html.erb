@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'Assignments/index' %>
+  <%= javascript_include_tag 'Assignments/index', :async => true %>
 <% end %>
 
 <div id="title_bar"><h1><%= I18n.t(:manage_course_work) %></h1></div>

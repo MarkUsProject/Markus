@@ -1,11 +1,12 @@
 <% content_for :head do %>
 <%= javascript_include_tag 'users_manager',
-                             'FilterTable/FilterTable',
-                             'effects.js',
-                             'Students/index' %>
+                           'FilterTable/FilterTable',
+                           'effects.js',
+                           'Students/index',
+                           :async => true %>
 
 <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
- <%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
+<%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
 
 <script type="text/javascript">
   jQuery(document).ready(function() {
@@ -53,17 +54,17 @@
     <div id="toggle_actions">
      <%= I18n.t(:filters) %>:
      <%= link_to raw(I18n.t(:all) + " (<span id=\"all_students_count\"></span>)"), '#',
-		  :onclick => "filter('none');",
-		  :id => "filter_link_none",
-		  :class => "filter_selected" %>
-     |
+      :onclick => "filter('none');",
+      :id => "filter_link_none",
+      :class => "filter_selected" %>
+     <span class="menu_bar"></span>
      <%= link_to raw(I18n.t(:active) + " (<span id=\"active_students_count\"></span>)"), '#',
-		  :onclick => "filter('active');",
-		  :id => "filter_link_active" %>
-     |
+      :onclick => "filter('active');",
+      :id => "filter_link_active" %>
+     <span class="menu_bar"></span>
      <%= link_to raw(I18n.t(:not_active) + " (<span id=\"inactive_students_count\"></span>)"), '#',
-		  :onclick => "filter('inactive');",
-		  :id => "filter_link_inactive"%>
+      :onclick => "filter('inactive');",
+      :id => "filter_link_inactive"%>
     </div>
 
     <div class="global_action">
@@ -72,7 +73,7 @@
                         detect_bulk_action_change();">
         <option value=""><%= t(:bulk_action)%></option>
         <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
-	      <option value="add_section"><%= I18n.t(:add_section)%></option>
+        <option value="add_section"><%= I18n.t(:add_section)%></option>
         <option value="hide"><%= t(:hide_students)%></option>
         <option value="unhide"><%= t(:unhide_students)%></option>
       </select>
@@ -82,12 +83,12 @@
       </span>
 
       <span id="section_input" style="display: none;">
-	      <select name="section" id="section">
-		      <option value=""> - </option>
-	        <% @sections.each do |section| %>
-		        <option value="<%= section.id %>"><%= section.name %></option>
-	        <% end %>
-	      </select>
+        <select name="section" id="section">
+          <option value=""> - </option>
+          <% @sections.each do |section| %>
+            <option value="<%= section.id %>"><%= section.name %></option>
+          <% end %>
+        </select>
       </span>
       <%= submit_tag t(:apply), :id => 'apply_bulk_action', :disable_with => I18n.t('working'),
                                 :name => 'commit', :class => 'thin-button' %>

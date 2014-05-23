@@ -1,7 +1,8 @@
 <%= javascript_include_tag 'manage_graders.js',
                            'FilterTable/FilterTable.js',
                            'Graders/tabs_boot.js',
-                           'Graders/index' %>
+                           'Graders/index',
+                           :async => true %>
 
 <%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
 
@@ -175,13 +176,13 @@
   <ul>
     <li>
       <%= link_to t('groups.download.download_grader_groups_csv'),
-		              download_grader_groupings_mapping_assignment_graders_path(@assignment),
-		              :onclick => 'modal_download.close();' %>
+                  download_grader_groupings_mapping_assignment_graders_path(@assignment),
+                  :onclick => 'modal_download.close();' %>
     </li>
     <li>
       <%= link_to t('groups.download.download_grader_criteria_csv'),
-		              download_grader_criteria_mapping_assignment_graders_path(@assignment),
-		              :onclick => 'modal_download.close();' %>
+                  download_grader_criteria_mapping_assignment_graders_path(@assignment),
+                  :onclick => 'modal_download.close();' %>
       </li>
   </ul>
   <%= button_to_function I18n.t('cancel'), 'modal_download.close();' %>

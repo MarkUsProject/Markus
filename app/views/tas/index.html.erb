@@ -1,6 +1,7 @@
 <%= javascript_include_tag 'FilterTable/FilterTable',
                            'users_manager',
-                           'Graders/index' %>
+                           'Graders/index',
+                           :async => true %>
 
 <%= render :partial => "boot", :formats => [:js] %>
 

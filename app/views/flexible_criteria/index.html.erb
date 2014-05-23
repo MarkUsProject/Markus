@@ -7,7 +7,8 @@
                            'livepipe/tabs.js',
                            'effects.js',
                            'dragdrop.js',
-                           'FlexibleCriteria/index' %>
+                           'FlexibleCriteria/index',
+                           :async => true %>
 
 <div id="title_bar">
   <h1><%= I18n.t("flexible_criteria.criteria_management", :identifier => @assignment.short_identifier) %>
@@ -38,7 +39,7 @@
   <div id="flexible_edition_pane">
     <div id="flexible_edition_pane_menu">
 
-	  <%= render :partial => 'flexible_criteria_manager_help' %>
+    <%= render :partial => 'flexible_criteria_manager_help' %>
 
     </div>
   </div>

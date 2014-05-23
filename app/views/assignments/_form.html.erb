@@ -7,7 +7,8 @@
 <% else %>
    <%= calendar_date_select_includes "silver", :locale => I18n.default_locale %>
 <% end %>
-<%= javascript_include_tag "PeriodDeltaChain/PeriodDeltaChain" %>
+
+<%= javascript_include_tag "PeriodDeltaChain/PeriodDeltaChain", :async => true %>
 
 <%= render :partial => 'boot', :formats => [:js] %>
 
