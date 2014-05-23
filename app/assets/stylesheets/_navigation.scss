@@ -6,14 +6,13 @@
 
 /* Mobile friendly menu */
 
-#content,
-footer {
-  @include transition(all, 0.3s);
-  position: relative;
-  width: 100%;
-  z-index: 100;
+#mobile_menu,
+#content {
+  @include transition(all, $time-quick);
   -webkit-transform: translateX(0%);
   transform: translateX(0%);
+  width: 100%;
+  z-index: 100;
 }
 
 #mobile_menu {
@@ -44,21 +43,34 @@ footer {
 
 #menus {
   @include breakpoint(mobile) {
-    @include transition(all, 0.3s);
+    @include transition(all, $time-medium);
     background: $bg-color;
     height: 100%;
     opacity: 0;
     overflow: hidden;
     position: fixed;
-    top: 3.5em;
+    top: 0;
     width: 100%;
     z-index: 0;
+  }
+
+  footer {
+    background: $light-grey !important;
+    border-bottom: 1px solid $grey !important;
+    border-top: 1px solid $grey !important;
+    display: none;
+    padding: 1em;
+
+    @include breakpoint(mobile) {
+      display: block;
+    }
   }
 }
 
 #menus_child {
   @include breakpoint(mobile) {
     background: #777;
+    border-right: 1px solid $grey;
     height: 100%;
     overflow: auto;
     width: 75%;
@@ -77,12 +89,18 @@ footer {
     font-size: 0.8em;
   }
 
-  #content,
-  footer {
-    border-left: 1px solid $grey;
+  #mobile_menu,
+  #content {
     -webkit-transform: translateX(75%);
     transform: translateX(75%);
-    opacity: 0.75;
+  }
+
+  #content {
+    background: $primary-color;
+    display: block;
+    opacity: 0.5;
+    position: fixed;
+    width: 100%;
   }
 }
 
@@ -176,7 +194,7 @@ footer {
 #sub_menu,
 #sub_sub_menu {
   li {
-    @include transition(all, 0.25s);
+    @include transition(all, $time-quick);
     display: inline-block;
     font-size: 1em;
 
@@ -454,6 +472,10 @@ footer {
   padding: 2em;
   text-align: center;
 
+  @include breakpoint(mobile) {
+    display: none;
+  }
+
   a {
     color: #777;
   }
@@ -467,7 +489,7 @@ footer {
   @include breakpoint(tiny) {
     border: none;
     display: block;
-    margin: 1em;
+    margin: 1em 1em 0 1em;
   }
 
   select {

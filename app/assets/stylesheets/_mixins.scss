@@ -56,7 +56,6 @@
           transition: $property $duration #{$timing-function} #{$delay};
 }
 
-
 /* For easier size breakpoints. */
 $breakpoints: (
   'tiny':   ( max-width:  360px ),

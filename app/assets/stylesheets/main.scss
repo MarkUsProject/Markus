@@ -250,7 +250,7 @@ td.note {
 }
 
 tbody tr {
-  @include transition(all, 0.2s);
+  @include transition(all, $time-quick);
 
   &:hover {
     background: #ececec;

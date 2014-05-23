@@ -247,7 +247,6 @@ function initMenu() {
 
   /* Close menu if content clicked, or if window resized and no longer "mobile" */
   document.getElementById('content').addEventListener('click', hideMenu, false);
-  document.getElementsByTagName('footer')[0].addEventListener('click', hideMenu, false);
 
   window.onresize = function(e) {
     if (window.innerWidth > 500) { hideMenu(); }
