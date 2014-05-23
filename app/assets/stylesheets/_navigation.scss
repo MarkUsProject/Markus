@@ -15,7 +15,7 @@
   width: 100%;
   z-index: 500;
 
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     display: block;
   }
 
@@ -33,7 +33,7 @@
 }
 
 #menus {
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     background: #777;
     height: 100%;
     overflow: hidden;
@@ -45,7 +45,7 @@
 }
 
 #menus_child {
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     height: 100%;
     overflow: auto;
     width: 100%;
@@ -81,7 +81,7 @@ footer {
 #menu,
 #sub_menu,
 #sub_sub_menu {
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     background: $light-grey !important;
     border-bottom: 1px solid $grey !important;
     border-top: 1px solid $grey !important;
@@ -100,7 +100,7 @@ footer {
   padding: 0.5em 3.5em;
   text-align: right;
 
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     border: 0;
     text-align: left !important;
   }
@@ -110,7 +110,7 @@ footer {
 #user_info {
   display: inline;
 
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     display: block;
     float: none !important;
     padding: 1em;
@@ -121,7 +121,7 @@ footer {
   float: left;
   text-align: left;
 
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     border-bottom: 1px solid $grey;
   }
 }
@@ -133,7 +133,7 @@ footer {
 #user_name {
   font-weight: 300;
 
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     display: block;
   }
 }
@@ -142,7 +142,7 @@ footer {
   font-size: 0.875em;
   margin: 5px 10px 10px 3.5em;
 
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     display: none;
   }
 
@@ -171,7 +171,7 @@ footer {
     display: inline-block;
     font-size: 1em;
 
-    @include breakpoint(small) {
+    @include breakpoint(mobile) {
       display: block;
       width: 100%;
     }
@@ -180,11 +180,11 @@ footer {
       display: block;
       height: 41px;
       margin: 0;
-      padding: 0.85em;
+      padding: 0.9em;
       text-align: center;
       width: 12em;
 
-      @include breakpoint(small) {
+      @include breakpoint(mobile) {
         text-align: left;
         width: 100%;
       }
@@ -202,12 +202,8 @@ footer {
   padding: 0 0 0 160px;
   width: 100%;
 
-  li {
-    background: $grey;
-
-    a {
-      color: #003366;
-    }
+  li a {
+    color: #003366;
   }
 }
 
@@ -263,7 +259,7 @@ footer {
     width: 15em;
     z-index: 500;
 
-    @include breakpoint(small) {
+    @include breakpoint(mobile) {
       @include border-radius(0);
       background: $light-grey;
       border: 0;
@@ -292,7 +288,7 @@ footer {
       &:last-child #drop_down_current_assignment {
         @include border-radius-bottom(10px);
 
-        @include breakpoint(small) {
+        @include breakpoint(mobile) {
           @include border-radius(0);
         }
       }
@@ -308,7 +304,7 @@ footer {
       text-align: left;
       width: 190px;
 
-      @include breakpoint(small) {
+      @include breakpoint(mobile) {
         width: 100%;
       }
     }
@@ -324,7 +320,7 @@ footer {
       margin: 0.5em 0;
       width: 190px;
 
-      @include breakpoint(small) {
+      @include breakpoint(mobile) {
         width: 100%;
       }
     }
@@ -344,7 +340,7 @@ span#choose_an_assignment {
   text-align: center;
   width: 15em;
 
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     display: none;
   }
 }
@@ -370,7 +366,7 @@ span#choose_an_assignment {
   li {
     @include border-radius-top(10px);
 
-    @include breakpoint(small) {
+    @include breakpoint(mobile) {
       @include border-radius(0);
     }
   }
@@ -383,7 +379,7 @@ span#choose_an_assignment {
   a {
     color: $primary-color;
 
-    @include breakpoint(small) {
+    @include breakpoint(mobile) {
       color: $grey;
     }
   }
@@ -392,7 +388,7 @@ span#choose_an_assignment {
   #sub_menu_active {
     background: $primary-color;
 
-    @include breakpoint(small) {
+    @include breakpoint(mobile) {
       background: $light-blue;
     }
 
@@ -400,7 +396,7 @@ span#choose_an_assignment {
       color: $grey !important;
       font-weight: 600;
 
-      @include breakpoint(small) {
+      @include breakpoint(mobile) {
         color: $primary-color !important;
       }
     }
@@ -414,7 +410,7 @@ span#choose_an_assignment {
   ul {
     padding-top: 5px;
 
-    @include breakpoint(small) {
+    @include breakpoint(mobile) {
       padding: 0;
     }
   }
@@ -424,7 +420,7 @@ span#choose_an_assignment {
     @include border-radius-top(10px);
     background: $grey;
 
-    @include breakpoint(small) {
+    @include breakpoint(mobile) {
       @include border-radius(0);
     }
 
@@ -432,7 +428,7 @@ span#choose_an_assignment {
       color: $primary-color;
       font-weight: 600;
 
-      @include breakpoint(small) {
+      @include breakpoint(mobile) {
         color: #fff;
       }
     }

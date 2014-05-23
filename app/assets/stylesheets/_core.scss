@@ -69,7 +69,9 @@ h4 {
 }
 
 #loggedIn {
-  height: 100%;
+  @include breakpoint(mobile) {
+    height: 100%;
+  }
 }
 
 #content {
@@ -79,7 +81,7 @@ h4 {
   padding: 1.5em 3.5em;
   width: auto;
 
-  @include breakpoint(small) {
+  @include breakpoint(mobile) {
     padding: 1.5em;
     margin-top: 3.5em; /* For the mobile menu header */
   }

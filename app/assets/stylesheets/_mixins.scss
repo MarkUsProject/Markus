@@ -60,9 +60,9 @@
 /* For easier size breakpoints. */
 $breakpoints: (
   'tiny':   ( max-width:  360px ),
-  'small':  ( max-width:  650px ),
-  'medium': ( max-width:  990px ),
-  'large':  ( max-width: 1200px )
+  'small':  ( max-width:  500px ),
+  'mobile': ( max-width:  745px ),
+  'medium': ( max-width:  990px )
 );
 
 @mixin breakpoint($name) {
@@ -72,7 +72,7 @@ $breakpoints: (
     }
   }
   @else {
-    @media ($name) {
+    @media ("#{$name}") {
       @content;
     }
   }

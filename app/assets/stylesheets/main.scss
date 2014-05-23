@@ -342,60 +342,60 @@ table.display {
 }
 
 /*
-  Max width before this PARTICULAR table gets nasty
-  This query will take effect for any screen smaller than 760px
-  and also iPads specifically.
-  */
-  @media only screen and (max-width: 500px), (min-device-width: 500px) and (max-device-width: 500px)  {
+Max width before this PARTICULAR table gets nasty
+This query will take effect for any screen smaller than 760px
+and also iPads specifically.
+*/
+// @media only screen and (max-width: 500px), (min-device-width: 500px) and (max-device-width: 500px)  {
 
-    /* Force table to not be like tables anymore */
-    table, thead, tbody, th, td, tr {
-      display: block;
-    }
+//   /* Force table to not be like tables anymore */
+//   table, thead, tbody, th, td, tr {
+//     display: block;
+//   }
 
-    /* Hide table headers (but not display: none;, for accessibility) */
-    thead tr {
-      position: absolute;
-      top: -3000em;
-      left: -3000em;
-    }
+//   /* Hide table headers (but not display: none;, for accessibility) */
+//   thead tr {
+//     position: absolute;
+//     top: -3000em;
+//     left: -3000em;
+//   }
 
-    tr {
-      border: 1px solid #ccc;
-    }
+//   tr {
+//     border: 1px solid #ccc;
+//   }
 
-    td {
-      /* Behave  like a "row" */
-      border: none;
-      border-bottom: 1px solid #eee;
-      position: relative;
-      padding: 0.5em 0.5em 0.5em 50%;
-      min-height: 2.5em;
-      width: 100% !important;
-    }
+//   td {
+//     /* Behave  like a "row" */
+//     border: none;
+//     border-bottom: 1px solid #eee;
+//     position: relative;
+//     padding: 0.5em 0.5em 0.5em 50%;
+//     min-height: 2.5em;
+//     width: 100% !important;
+//   }
 
-    td:last-child {
-      border-bottom: none;
-    }
+//   td:last-child {
+//     border-bottom: none;
+//   }
 
-    td:before {
-      /* Now like a table header */
-      position: absolute;
-      /* Top/left values mimic padding */
-      top: 6px;
-      left: 6px;
-      width: 45%;
-      padding-right: 10px;
-      white-space: nowrap;
-    }
+//   td:before {
+//     /* Now like a table header */
+//     position: absolute;
+//     /* Top/left values mimic padding */
+//     top: 6px;
+//     left: 6px;
+//     width: 45%;
+//     padding-right: 10px;
+//     white-space: nowrap;
+//   }
 
-    /*
-    Label the data
-    */
-    // td:nth-of-type(1):before { content: "Name"; }
-    // td:nth-of-type(2):before { content: "Due Date"; }
-    // td:nth-of-type(3):before { content: "Results"; }
-  }
+//   /*
+//   Label the data
+//   */
+//   // td:nth-of-type(1):before { content: "Name"; }
+//   // td:nth-of-type(2):before { content: "Due Date"; }
+//   // td:nth-of-type(3):before { content: "Results"; }
+// }
 
 /* Pagination nested */
 
@@ -897,7 +897,6 @@ input#extra_mark_description {
 }
 
 div.sub_block {
-
   span.prop_label {
     display: inline-block;
     font-weight: 600;
