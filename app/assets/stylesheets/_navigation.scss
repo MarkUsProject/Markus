@@ -55,15 +55,13 @@
 .show_menu {
   overflow: hidden;
 
-  #mobile_menu #menu_icon {
-    &::before {
-      content: "✕";
-    }
+  #mobile_menu #menu_icon::before {
+    content: "✕";
   }
 
   #content,
   footer {
-    border-left: 1px solid #ccc;
+    border-left: 1px solid $grey;
     -webkit-transform: translateX(75%);
     transform: translateX(75%);
   }
@@ -79,6 +77,21 @@ footer {
   transform: translateX(0%);
 }
 
+#header,
+#menu,
+#sub_menu,
+#sub_sub_menu {
+  @include breakpoint(small) {
+    background: $light-grey !important;
+    border-bottom: 1px solid $grey !important;
+    border-top: 1px solid $grey !important;
+    display: block !important;
+    margin: 0 0 1em 0 !important;
+    padding: 0 !important;
+    width: 75% !important;
+  }
+}
+
 
 /* Header */
 
@@ -88,9 +101,8 @@ footer {
   text-align: right;
 
   @include breakpoint(small) {
-    padding: 0;
+    border: 0;
     text-align: left !important;
-    width: 75%;
   }
 }
 
@@ -99,8 +111,6 @@ footer {
   display: inline;
 
   @include breakpoint(small) {
-    background: #eee;
-    border-bottom: 1px solid #ccc;
     display: block;
     float: none !important;
     padding: 1em;
@@ -110,10 +120,14 @@ footer {
 #course {
   float: left;
   text-align: left;
+
+  @include breakpoint(small) {
+    border-bottom: 1px solid $grey;
+  }
 }
 
 #user_info {
-  width: auto
+  width: auto;
 }
 
 #user_name {
@@ -152,14 +166,6 @@ footer {
 #menu,
 #sub_menu,
 #sub_sub_menu {
-  @include breakpoint(small) {
-    background: #eee !important;
-    border-bottom: 1px solid #ccc !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 75% !important;
-  }
-
   li {
     @include transition(all, 0.25s);
     display: inline-block;
@@ -197,7 +203,7 @@ footer {
   width: 100%;
 
   li {
-    background: #ccc;
+    background: $grey;
 
     a {
       color: #003366;
@@ -259,9 +265,9 @@ footer {
 
     @include breakpoint(small) {
       @include border-radius(0);
-      background: #eee;
+      background: $light-grey;
       border: 0;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid $grey;
       display: block;
       opacity: 1;
       visibility: visible;

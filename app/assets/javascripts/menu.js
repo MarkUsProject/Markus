@@ -220,8 +220,14 @@ function configMenu() {
   this.closeDelayTime = 300;
 }
 
+function hideMenu() {
+  if (jQuery('body').hasClass('show_menu')) {
+    jQuery('body').removeClass('show_menu');
+  }
+}
+
 function initMenu() {
-  if($('root') != null) {
+  if ($('root') != null) {
     menu = new Menu('root', 'menu', configMenu);
   }
 
@@ -229,27 +235,23 @@ function initMenu() {
   document.getElementById('mobile_menu').addEventListener('click', function() {
     if (jQuery('body').hasClass('show_menu'))
       jQuery('body').removeClass('show_menu');
-    else
+    else {
       jQuery('body').addClass('show_menu');
+
+      // Prevent native touch scrolling
+      // jQuery('#content, footer').on('touchstart touchmove', function(e){
+      //   e.preventDefault();
+      // });
+    }
   }, false);
 
   /* Close menu if content clicked, or if window resized and no longer "mobile" */
-  document.getElementById('content').addEventListener('click', function() {
-    if (jQuery('body').hasClass('show_menu'))
-      jQuery('body').removeClass('show_menu');
-  }, false);
+  document.getElementById('content').addEventListener('click', hideMenu, false);
+  document.getElementsByTagName('footer')[0].addEventListener('click', hideMenu, false);
 
-  document.getElementsByTagName('footer')[0].addEventListener('click', function() {
-    if (jQuery('body').hasClass('show_menu'))
-      jQuery('body').removeClass('show_menu');
-  }, false);
-
-  window.onresize = function(event) {
-    if (window.innerWidth > 500) {
-      jQuery('body').removeClass('show_menu');
-    }
+  window.onresize = function(e) {
+    if (window.innerWidth > 500) { hideMenu(); }
   }
 }
-
 
 Event.observe(window, 'load', initMenu, false);
