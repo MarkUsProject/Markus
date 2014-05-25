@@ -104,7 +104,7 @@ class RubricsController < ApplicationController
     file = params[:yml_upload][:rubric]
     unless file.blank?
       begin
-        rubrics = YAML::load(file.utf8_encode encoding)
+        rubrics = YAML::load(file.utf8_encode(encoding))
       rescue ArgumentError => e
         flash[:error] = I18n.t('rubric_criteria.upload.error') + '  ' +
            I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")

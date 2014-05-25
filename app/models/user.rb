@@ -145,7 +145,7 @@ class User < ActiveRecord::Base
     result[:invalid_lines] = []  # store lines that were not processed
     # read each line of the file and update classlist
     begin
-      user_list = user_list.utf8_encode encoding
+      user_list = user_list.utf8_encode(encoding)
       User.transaction do
         processed_users = []
         CsvHelper::Csv.parse(user_list,

@@ -110,7 +110,7 @@ class AnnotationCategoriesController < ApplicationController
     annotation_category_number = 0
     annotation_line = 0
     if annotation_category_list
-      annotation_category_list = annotation_category_list.utf8_encode encoding
+      annotation_category_list = annotation_category_list.utf8_encode(encoding)
       CsvHelper::Csv.parse(annotation_category_list) do |row|
         next if CsvHelper::Csv.generate_line(row).strip.empty?
         annotation_line += 1
@@ -143,7 +143,7 @@ class AnnotationCategoriesController < ApplicationController
     annotation_line = 0
     unless file.blank?
       begin
-        annotations = YAML::load(file.utf8_encode encoding)
+        annotations = YAML::load(file.utf8_encode(encoding))
       rescue ArgumentError => e
         flash[:error] = I18n.t('annotations.upload.syntax_error',
           :error => "#{e}")

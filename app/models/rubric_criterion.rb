@@ -225,7 +225,7 @@ class RubricCriterion < ActiveRecord::Base
   # The number of successfully created criteria.
   def self.parse_csv(file, assignment, invalid_lines, encoding)
     nb_updates = 0
-    file_contents = file.utf8_encode encoding
+    file_contents = file.utf8_encode(encoding)
     CsvHelper::Csv.parse(file_contents) do |row|
       next if CsvHelper::Csv.generate_line(row).strip.empty?
       begin

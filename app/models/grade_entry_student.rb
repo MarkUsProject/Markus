@@ -64,7 +64,7 @@ class GradeEntryStudent < ActiveRecord::Base
   # Returns an array containing the student names that didn't exist
   def self.assign_tas_by_csv(csv_file_contents, grade_entry_form_id, encoding)
     grade_entry_form  = GradeEntryForm.find(grade_entry_form_id)
-    csv_file_contents = csv_file_contents.utf8_encode encoding
+    csv_file_contents = csv_file_contents.utf8_encode(encoding)
 
     failures = []
     CsvHelper::Csv.parse(csv_file_contents) do |row|

@@ -171,7 +171,7 @@ class GroupsController < ApplicationController
       # Transaction allows us to potentially roll back if something
       # really bad happens.
       ActiveRecord::Base.transaction do
-        file = file.utf8_encode encoding
+        file = file.utf8_encode(encoding)
         # Old groupings get wiped out
         if !@assignment.groupings.nil? && @assignment.groupings.length > 0
           @assignment.groupings.destroy_all

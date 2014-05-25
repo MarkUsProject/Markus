@@ -548,7 +548,7 @@ class AssignmentsController < ApplicationController
     end
 
     encoding = params[:encoding]
-    assignment_list = assignment_list.utf8_encode encoding
+    assignment_list = assignment_list.utf8_encode(encoding)
 
     case params[:file_format]
       when 'csv'

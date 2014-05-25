@@ -217,7 +217,7 @@ class GradeEntryForm < ActiveRecord::Base
     num_lines_read = 0
     names = []
     totals = []
-    grades_file = StringIO.new(grades_file.read.utf8_encode encoding)
+    grades_file = StringIO.new(grades_file.read.utf8_encode(encoding))
 
     # Parse the question names
     CsvHelper::Csv.parse(grades_file.readline) do |row|
