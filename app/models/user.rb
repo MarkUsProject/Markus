@@ -148,8 +148,8 @@ class User < ActiveRecord::Base
       User.transaction do
         processed_users = []
         CSV.parse(user_list,
-                             :skip_blanks => true,
-                             :row_sep => :auto) do |row|
+                  :skip_blanks => true,
+                  :row_sep => :auto) do |row|
           # don't know how to fetch line so we concat given array
           next if CSV.generate_line(row).strip.empty?
           if processed_users.include?(row[0])
