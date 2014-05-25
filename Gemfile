@@ -14,7 +14,6 @@ gem 'rubyzip', '0.9.9'
 gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
-gem 'fastercsv', :platforms => :ruby_18
 gem 'dynamic_form'
 # FIXME: The 'exception_notification' gem version 4
 # is not compatible with Rails 3.0.x

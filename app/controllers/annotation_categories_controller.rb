@@ -1,4 +1,3 @@
-include CsvHelper
 require 'encoding'
 
 class AnnotationCategoriesController < ApplicationController
@@ -111,8 +110,8 @@ class AnnotationCategoriesController < ApplicationController
     annotation_line = 0
     if annotation_category_list
       annotation_category_list = annotation_category_list.utf8_encode(encoding)
-      CsvHelper::Csv.parse(annotation_category_list) do |row|
-        next if CsvHelper::Csv.generate_line(row).strip.empty?
+      CSV.parse(annotation_category_list) do |row|
+        next if CSV.generate_line(row).strip.empty?
         annotation_line += 1
         result = AnnotationCategory.add_by_row(row, @assignment, current_user)
         if result[:annotation_upload_invalid_lines].size > 0

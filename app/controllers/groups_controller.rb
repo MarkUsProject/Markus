@@ -1,4 +1,3 @@
-include CsvHelper
 require 'encoding'
 require 'auto_complete'
 require 'csv_invalid_line_error'
@@ -178,7 +177,7 @@ class GroupsController < ApplicationController
         end
         begin
           # Loop over each row, which lists the members to be added to the group.
-          CsvHelper::Csv.parse(file).each_with_index do |row, line_nr|
+          CSV.parse(file).each_with_index do |row, line_nr|
             begin
               # Potentially raises CSVInvalidLineError
               collision_error = @assignment.add_csv_group(row)
@@ -218,7 +217,7 @@ class GroupsController < ApplicationController
     #get all the groups
     groupings = assignment.groupings #FIXME: optimize with eager loading
 
-    file_out = CsvHelper::Csv.generate do |csv|
+    file_out = CSV.generate do |csv|
        groupings.each do |grouping|
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc

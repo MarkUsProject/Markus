@@ -67,7 +67,7 @@ class GradeEntryStudent < ActiveRecord::Base
     csv_file_contents = csv_file_contents.utf8_encode(encoding)
 
     failures = []
-    CsvHelper::Csv.parse(csv_file_contents) do |row|
+    CSV.parse(csv_file_contents) do |row|
       student_name = row.shift # Knocks the first item from array
       student = Student.find_by_user_name(student_name)
       if student.nil?

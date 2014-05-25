@@ -500,7 +500,7 @@ class Grouping < ActiveRecord::Base
   def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
     failures = []
     csv_file_contents = csv_file_contents.utf8_encode(encoding)
-    CsvHelper::Csv.parse(csv_file_contents) do |row|
+    CSV.parse(csv_file_contents) do |row|
       group_name = row.shift # Knocks the first item from array
       group = Group.find_by_group_name(group_name)
       if group.nil?

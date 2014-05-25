@@ -1,4 +1,3 @@
-include CsvHelper
 require 'encoding'
 
 class RubricCriterion < ActiveRecord::Base
@@ -91,7 +90,7 @@ class RubricCriterion < ActiveRecord::Base
   #
   # A string. See create_or_update_from_csv_row for format reference.
   def self.create_csv(assignment)
-    csv_string = CsvHelper::Csv.generate do |csv|
+    csv_string = CSV.generate do |csv|
       assignment.rubric_criteria.each do |criterion|
         criterion_array = [criterion.rubric_criterion_name,criterion.weight]
         (0..RUBRIC_LEVELS - 1).each do |i|
@@ -226,8 +225,8 @@ class RubricCriterion < ActiveRecord::Base
   def self.parse_csv(file, assignment, invalid_lines, encoding)
     nb_updates = 0
     file_contents = file.utf8_encode(encoding)
-    CsvHelper::Csv.parse(file_contents) do |row|
-      next if CsvHelper::Csv.generate_line(row).strip.empty?
+    CSV.parse(file) do |row|
+      next if CSV.generate_line(row).strip.empty?
       begin
         RubricCriterion.create_or_update_from_csv_row(row, assignment)
         nb_updates += 1
@@ -305,7 +304,7 @@ class RubricCriterion < ActiveRecord::Base
   def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
     failures = []
     csv_file_contents = csv_file_contents.utf8_encode encoding
-    CsvHelper::Csv.parse(csv_file_contents) do |row|
+    CSV.parse(csv_file_contents) do |row|
       criterion_name = row.shift # Knocks the first item from array
       criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(assignment_id, criterion_name)
       if criterion.nil?

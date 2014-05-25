@@ -1,4 +1,3 @@
-include CsvHelper
 require 'encoding'
 require 'digest' # required for {set,reset}_api_token
 require 'base64' # required for {set,reset}_api_token
@@ -123,7 +122,7 @@ class User < ActiveRecord::Base
 
   # Classlist parsing --------------------------------------------------------
   def self.generate_csv_list(user_list)
-     file_out = CsvHelper::Csv.generate do |csv|
+     file_out = CSV.generate do |csv|
        user_list.each do |user|
          # csv format is user_name,last_name,first_name
          # We check for user's section
@@ -148,11 +147,11 @@ class User < ActiveRecord::Base
       user_list = user_list.utf8_encode(encoding)
       User.transaction do
         processed_users = []
-        CsvHelper::Csv.parse(user_list,
+        CSV.parse(user_list,
                              :skip_blanks => true,
                              :row_sep => :auto) do |row|
           # don't know how to fetch line so we concat given array
-          next if CsvHelper::Csv.generate_line(row).strip.empty?
+          next if CSV.generate_line(row).strip.empty?
           if processed_users.include?(row[0])
             result[:invalid_lines] = I18n.t('csv_upload_user_duplicate',
                                             {:user_name => row[0]})
