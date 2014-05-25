@@ -118,6 +118,7 @@ GEM
     raindrops (0.13.0)
     rake (10.1.1)
     rbx-require-relative (0.0.9)
+    rcov (1.0.0)
     rdoc (3.12.2)
       json (~> 1.4)
     ref (1.0.5)
@@ -201,9 +202,9 @@ DEPENDENCIES
   quiet_assets
   railroady
   rails (= 3.2.16)
+  rcov
   rdoc
   rghost
-  ruby-debug
   rubyzip (= 0.9.9)
   sass-rails (~> 3.2.3)
   shoulda (< 3.4)
