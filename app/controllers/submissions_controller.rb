@@ -1,4 +1,3 @@
-include CsvHelper
 require 'zip/zip'
 require 'cgi'
 

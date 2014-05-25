@@ -11,3 +11,6 @@ if RUBY_VERSION > "1.9"
   require 'yaml'
   YAML::ENGINE.yamler = 'syck' if (defined?(Syck) || defined?(YAML::Syck)) && defined?(YAML::ENGINE)
 end
+
+require 'csv'
+
