@@ -66,9 +66,8 @@ end
 group :development, :test do
   gem 'rdoc'
   gem 'thin'
-  gem 'rcov', :platforms => :mri_18
-  gem 'simplecov', :platforms => [:mri_19,:mri_20]
-  # FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
+  gem 'simplecov'
+# FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
   # we have to fix before doing an upgrade
   gem 'shoulda', '<3.4'
   # FIXME: shoulda-matchers (>= 2) is incompatible with Ruby 1.8
