@@ -1,5 +1,5 @@
 include CsvHelper
-require 'iconv'
+require 'encoding'
 
 # GradeEntryForm can represent a test, lab, exam, etc.
 # A grade entry form has many columns which represent the questions and their total
@@ -217,10 +217,7 @@ class GradeEntryForm < ActiveRecord::Base
     num_lines_read = 0
     names = []
     totals = []
-    grades_file = StringIO.new(grades_file.read)
-    if encoding != nil
-      grades_file = StringIO.new(Iconv.iconv('UTF-8', encoding, grades_file.read).join)
-    end
+    grades_file = StringIO.new(grades_file.read.utf8_encode encoding)
 
     # Parse the question names
     CsvHelper::Csv.parse(grades_file.readline) do |row|

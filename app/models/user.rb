@@ -1,5 +1,5 @@
 include CsvHelper
-require 'iconv'
+require 'encoding'
 require 'digest' # required for {set,reset}_api_token
 require 'base64' # required for {set,reset}_api_token
 # required for repository actions
@@ -145,11 +145,7 @@ class User < ActiveRecord::Base
     result[:invalid_lines] = []  # store lines that were not processed
     # read each line of the file and update classlist
     begin
-      if encoding != nil
-        user_list = StringIO.new(Iconv.iconv('UTF-8',
-                                            encoding,
-                                            user_list.read).join)
-      end
+      user_list = user_list.utf8_encode encoding
       User.transaction do
         processed_users = []
         CsvHelper::Csv.parse(user_list,
