@@ -69,7 +69,6 @@
 
 #menus_child {
   @include breakpoint(mobile) {
-    background: #777;
     border-right: 1px solid $grey;
     height: 100%;
     overflow: auto;
@@ -490,6 +489,7 @@ footer {
     border: none;
     display: block;
     margin: 1em 1em 0 1em;
+    padding: 0;
   }
 
   select {
@@ -503,4 +503,11 @@ footer {
   border-left: 1px solid #aaa;
   margin: 0 1em;
   padding-left: 1em;
+
+  @include breakpoint(tiny) {
+    border: none;
+    display: block;
+    margin: 1em 1em 0 1em;
+    padding: 0;
+  }
 }

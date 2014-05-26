@@ -1188,7 +1188,7 @@ div.align_text_right {
 #annotation_category_pane ul {
   list-style: none;
   margin: 0;
-  padding: 1em;
+  padding: 0;
 }
 
 #rubric_levels_pane_list,
@@ -1280,7 +1280,7 @@ input.button_to_delete_deduction {
 .annotation_title_div,
 .criterion_title_div,
 .annotation_category_title {
-  float: left;
+  // float: left;
   padding: 2px 2px 0 10px;
 }
 
