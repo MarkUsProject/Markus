@@ -1,31 +1,44 @@
-<%= javascript_include_tag 'jquery' %>
-<div class="login">
-  <div class="login-image">
-    <%= image_tag("markus_logo_big.png", :alt => "[Logo] Markus Beta") %>
+<%= javascript_include_tag 'jquery', :async => true %>
+
+<div class='login'>
+  <div class='login-image'>
+    <%= image_tag('markus_logo_big.png',
+                  :alt => '[Logo] Markus Beta') %>
   </div>
 
-  <p class="login-course"><%= MarkusConfigurator.markus_config_course_name %></p>
+  <p class='login-course'><%= MarkusConfigurator.markus_config_course_name %></p>
 
   <%= render 'shared/flash_message' %>
-  <div class="login-form">
-    <%= form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
 
-      <%= text_field_tag 'user_login', nil, :tabindex => 10, :placeholder => I18n.t(:login) %>
-      <%= password_field_tag 'user_password', nil, :tabindex => 20, :placeholder => I18n.t(:password) %>
+  <div class='login-form'>
+    <%= form_tag({ :action => 'login',
+                   :id => nil },
+                 :id => 'login_form') do %>
+      <%= text_field_tag 'user_login',
+                         nil,
+                         :tabindex => 10,
+                         :placeholder => I18n.t(:login),
+                         :autofocus => true %>
 
-      <div class="submit">
-        <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100 %>
+      <%= password_field_tag 'user_password',
+                             nil,
+                             :tabindex => 20,
+                             :placeholder => I18n.t(:password) %>
+
+      <div class='submit'>
+        <%= submit_tag I18n.t(:log_in),
+                       :disable_with => I18n.t(:logging_in),
+                       :tabindex => 100 %>
       </div>
-
     <% end %>
   </div>
 </div>
 
-<script type="text/javascript">
+<script type='text/javascript'>
 //<![CDATA[
   <%# Try to put focus on the login text field on load %>
   jQuery(document).ready(function() {
-    document.getElementById("user_login").focus();
+    document.getElementById('user_login').focus();
   });
 //]]>
 </script>

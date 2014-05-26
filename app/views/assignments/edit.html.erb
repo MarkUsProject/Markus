@@ -1,7 +1,9 @@
-<%= javascript_include_tag "create_assignment" %>
+<%= javascript_include_tag 'create_assignment',
+                           :async => true %>
 
-<div id="title_bar">
-  <h1><%= t("assignment.edit") %> <%= @assignment.short_identifier %></h1>
-  <p><%= t("grade_entry_forms.required_fields").html_safe %></p>
+<div id='title_bar'>
+  <h1><%= t('assignment.edit') %><%= @assignment.short_identifier %></h1>
+  <p><%= t('grade_entry_forms.required_fields').html_safe %></p>
 </div>
+
 <%= render :partial => 'form' %>
