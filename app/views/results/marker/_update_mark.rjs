@@ -13,7 +13,11 @@ end
 page.replace_html "mark_#{result_mark.id.to_s}_summary_mark", result_mark.mark
 page.replace_html "current_subtotal_div", result_mark.result.get_subtotal
 
-page['released'].disable
+# Check if the released button exists (only for admins, not TAs)
+page << "if (jQuery('released')) {"
+  page['released'].disable
+page << "}"
+
 page.call 'update_marking_state_selected', result_mark.result.marking_state.to_s, Result::MARKING_STATES[:partial]
 
 page.call "update_total_mark", result_mark.result.total_mark
