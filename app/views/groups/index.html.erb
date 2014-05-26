@@ -377,7 +377,7 @@
     </p>
     <%= f.file_field :grouplist, :size => 2 %>
     <div>
-      <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <%= button_to_function I18n.t('cancel'),
                              'modal_upload.close(); return false;' %>
     </div>

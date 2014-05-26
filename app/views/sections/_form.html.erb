@@ -9,7 +9,7 @@
     <%= raw(f.label :name, t("section.name")) %>
     <%= raw(f.text_field :name) %>
     <br>
-    <%= f.submit I18n.t(:save) , :disable_with => I18n.t('working')%>
+    <%= f.submit I18n.t(:save) , :'data-disable-with' => I18n.t('working')%>
 
     <% if controller.action_name == "edit" %>
       <% unless @students.empty? %>

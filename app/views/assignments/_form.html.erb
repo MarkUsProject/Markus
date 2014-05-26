@@ -394,6 +394,6 @@
       </p>
     </fieldset>
 
-    <%= f.submit t(:submit), :disable_with => I18n.t('working'), :onclick => "set_onbeforeunload(false);" %>
+    <%= f.submit t(:submit), :'data-disable-with' => I18n.t('working'), :onclick => "set_onbeforeunload(false);" %>
   <% end %>
 </div>
