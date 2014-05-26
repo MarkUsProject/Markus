@@ -7,8 +7,7 @@
 <% # UI LIBRARIES %>
 <%= javascript_include_tag 'livepipe/livepipe.js',
                            'livepipe/window.js',
-                           'livepipe/tabs.js',
-                           :async => true %>
+                           'livepipe/tabs.js' %>
 
 <%= javascript_include_tag 'controls.js',
                            :async => true %>
@@ -67,7 +66,7 @@
 %>
 <%= render :partial => 'assignments/test_result_window',
            :formats => [:html],
-           :locals => { :aid => @assignment.id } %>
+           :locals => { :aid => @assignment.id }  %>
 
 <%= render :partial => 'results/common/annotations',
            :formats => [:js] %>
