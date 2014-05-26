@@ -608,7 +608,6 @@ class Grouping < ActiveRecord::Base
   ##
   def past_due_date?
 
-    #timestamp = group.repo.get_latest_revision.timestamp
     timestamp = assignment_folder_last_modified_date
     due_dates = assignment.section_due_dates
     section = unless inviter.blank?
