@@ -1,14 +1,14 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag('livepipe/tabs') %>
 <% end %>
+
 <% # UI LIBRARIES %>
 <%= javascript_include_tag 'livepipe/livepipe.js',
                            'livepipe/window.js',
                            'livepipe/tabs.js',
                            'effects.js',
                            'dragdrop.js',
-                           'FlexibleCriteria/index',
-                           :async => true %>
+                           'FlexibleCriteria/index' %>
 
 <div id='title_bar'>
   <h1>

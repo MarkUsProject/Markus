@@ -1,9 +1,6 @@
 <%= javascript_include_tag 'manage_graders.js',
-                           :async => true %>
-<%= javascript_include_tag 'FilterTable/FilterTable.js',
-                           :async => true %>
-<%= javascript_include_tag 'Graders/tabs_boot.js',
-                           :async => true %>
+                           'FilterTable/FilterTable.js',
+                           'Graders/tabs_boot.js' %>
 
 <%= render :partial => 'boot',
            :formats => [:js],

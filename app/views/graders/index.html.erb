@@ -1,10 +1,11 @@
 <%= javascript_include_tag 'manage_graders.js',
                            'FilterTable/FilterTable.js',
                            'Graders/tabs_boot.js',
-                           'Graders/index',
-                           :async => true %>
+                           'Graders/index' %>
 
-<%= render :partial => 'boot', :formats => [:js], :handlers => [:erb] %>
+<%= render :partial => 'boot',
+           :formats => [:js],
+           :handlers => [:erb] %>
 
 <div id='title_bar'>
   <h1><%= I18n.t('graders.manage_graders') %></h1>
@@ -81,10 +82,10 @@
         <div class='tabbedArea'>
           <div class='search_box'>
             <%= text_field_tag 'search_graders',
-                nil,
-                :onkeyup => 'graders_table.add_filter("search"); graders_table.render();',
-                :onkeypress => 'stop_submit(event);',
-                :placeholder => I18n.t('search_graders') %>
+                               nil,
+                               :onkeyup => 'graders_table.add_filter("search"); graders_table.render();',
+                               :onkeypress => 'stop_submit(event);',
+                               :placeholder => I18n.t('search_graders') %>
           </div>
           <table class='graders' id='graders'></table>
         </div>

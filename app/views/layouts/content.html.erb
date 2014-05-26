@@ -7,12 +7,13 @@
   <%= stylesheet_link_tag 'application.css', :media => 'all' %>
   <% # UI LIBRARIES %>
   <%= javascript_include_tag 'menu.js',
-                             'livepipe/livepipe.js',
-                             'livepipe/window.js',
-                             'livepipe/tabs.js',
                              'layouts',
                              'prototype-snippet',
                              :async => true %>
+
+  <%= javascript_include_tag 'livepipe/livepipe.js',
+                             'livepipe/window.js',
+                             'livepipe/tabs.js' %>
   <%= csrf_meta_tags %>
   <%= yield :head %>
 </head>

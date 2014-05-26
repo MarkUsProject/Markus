@@ -2,8 +2,7 @@
 <%= javascript_include_tag 'users_manager',
                            'FilterTable/FilterTable',
                            'effects.js',
-                           'Students/index',
-                           :async => true %>
+                           'Students/index' %>
 
 <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
 <%= render :partial => 'boot',
