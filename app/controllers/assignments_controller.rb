@@ -1,4 +1,3 @@
-include CsvHelper
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin,
                      :except => [:deletegroup,
@@ -295,7 +294,7 @@ class AssignmentsController < ApplicationController
   def download_csv_grades_report
     assignments = Assignment.all(:order => 'id')
     students = Student.all
-    csv_string = CsvHelper::Csv.generate do |csv|
+    csv_string = CSV.generate do |csv|
       students.each do |student|
         row = []
         row.push(student.user_name)
@@ -517,7 +516,7 @@ class AssignmentsController < ApplicationController
         output = map.to_yaml
         format = 'text/yml'
       when 'csv'
-        output = CsvHelper::Csv.generate do |csv|
+        output = CSV.generate do |csv|
           assignments.map do |ass|
             array = []
             DEFAULT_FIELDS.map do |f|
@@ -548,17 +547,12 @@ class AssignmentsController < ApplicationController
     end
 
     encoding = params[:encoding]
-    assignment_list = if encoding != nil
-                        StringIO.new(Iconv.iconv('UTF-8', encoding,
-                                                 assignment_list.read).join)
-                      else
-                        assignment_list.read
-                      end
+    assignment_list = assignment_list.utf8_encode(encoding)
 
     case params[:file_format]
       when 'csv'
         begin
-          CsvHelper::Csv.parse(assignment_list) do |row|
+          CSV.parse(assignment_list) do |row|
             map = {}
             row.length.times do |i|
               map[DEFAULT_FIELDS[i]] = row[i]
