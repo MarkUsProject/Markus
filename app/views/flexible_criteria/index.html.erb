@@ -16,12 +16,15 @@
                :identifier => @assignment.short_identifier) %>
   </h1>
   <div class='heading_buttons'>
-    <%= link_to_function t('add_criterion'), %| if($('new_flexible_criterion') != null) {
+    <%= link_to_function t('add_criterion'),
+                         %| if($('new_flexible_criterion') != null) {
                            $('flexible_criterion_flexible_criterion_name').select();
                            $('flexible_criterion_flexible_criterion_name').focus();
                          } else {
-                         #{remote_function :url => {:action => 'new', :id => @assignment.id}, :method => 'get'}
-                         }|%>
+                           #{remote_function :url => { :action => 'new',
+                                                       :id => @assignment.id },
+                                             :method => 'get'}
+                         }| %>
     <span class='menu_bar'></span>
       <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
     <span class='menu_bar'></span>
@@ -48,11 +51,12 @@
 <div id='upload_dialog'>
   <h1><%= t('flexible_criteria.upload.title') %></h1>
   <p><%= t('flexible_criteria.upload.prompt') %></p>
-  <%= form_for :upload, :url => { :controller=>'flexible_criteria',
-                                  :action => 'upload',
-                                  :id => @assignment.id},
-                                  :html => { :multipart => true,
-                                             :size => 1 } do |f| %>
+  <%= form_for :upload,
+               :url => { :controller=>'flexible_criteria',
+                         :action => 'upload',
+                         :id => @assignment.id },
+               :html => { :multipart => true,
+                          :size => 1 } do |f| %>
     <p><%= f.file_field :flexible %></p>
     <%= t('flexible_criteria.upload.format_html') %>
     <%= t('csv_special_characters_html') %>
@@ -78,4 +82,3 @@
 
   <input type='reset' value='<%= t(:cancel) %>' onclick='modal_download.close();'>
 </div>
-

@@ -17,7 +17,7 @@
   <%= yield :head %>
 </head>
 <body>
-  <div id="<%= controller.action_name == 'login' ? "loggedOut" : "loggedIn" %>">
+  <div id='<%= controller.action_name == "login" ? "loggedOut" : "loggedIn" %>'>
     <%= render :partial => 'layouts/header' %>
     <%= render :partial => 'layouts/menu' %>
     <%= render :partial => 'layouts/sub_menu' %>
@@ -25,7 +25,7 @@
     <%= render :partial => 'layouts/about' %>
     <%= render :partial => 'layouts/role_switch' %>
     <%= render :partial => 'layouts/redirect' %>
-    <section id="content">
+    <section id='content'>
       <%= render :partial => 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
     </section>
@@ -33,9 +33,12 @@
   </div>
 
   <!-- Toggle jQuery's noConflict mode so it does not conflict with Prototype -->
-  <script type="text/javascript">
+  <script type='text/javascript'>
     jQuery.noConflict();
   </script>
-  <%= render 'layouts/redirect', :formats => [:js], :handlers => [:erb] %>
+
+  <%= render 'layouts/redirect',
+             :formats => [:js],
+             :handlers => [:erb] %>
 </body>
 </html>

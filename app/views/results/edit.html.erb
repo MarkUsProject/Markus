@@ -51,7 +51,8 @@
                            :async => true %>
 
 <% # This file can't be cached %>
-<%= javascript_include_tag 'Grader/tabs_boot.js', :async => true %>
+<%= javascript_include_tag 'Grader/tabs_boot.js',
+                           :async => true %>
 
 <script type='text/javascript'>
   //<![CDATA[
@@ -81,14 +82,14 @@
   function check_working() {
     return '<%= t(:still_working_warning) %>';
   }
-
   //]]>
 </script>
 
 <%
 # Javascript for showing/hiding old marks
 %>
-<%= render :partial => 'results/common/old_marks_view_functions', :formats => [:html] %>
+<%= render :partial => 'results/common/old_marks_view_functions',
+           :formats => [:html] %>
 
 <%
 # Javascript for test result window
@@ -97,8 +98,11 @@
            :formats => [:html],
            :locals => { :aid => @assignment.id } %>
 
-<%= render :partial => 'results/common/annotations', :formats => [:js] %>
-<%= render :partial => 'results/marker/setup_annotation_categories', :formats => [:js] %>
+<%= render :partial => 'results/common/annotations',
+           :formats => [:js] %>
+
+<%= render :partial => 'results/marker/setup_annotation_categories',
+           :formats => [:js] %>
 
 <%= render :partial => 'results/marker/boot',
            :formats => [:js],
@@ -138,7 +142,8 @@
                           :previous_grouping => @previous_grouping,
                           :next_grouping => @next_grouping } %>
 
-  <%= render :partial => 'results/common/errors':formats => [:html] %>
+  <%= render :partial => 'results/common/errors'
+             :formats => [:html] %>
 
   <div id='file_selector'>
     <%= render :partial => 'results/common/file_selector',
@@ -155,7 +160,8 @@
 
 
   <% if @result.released_to_students %>
-    <%= render :partial => 'results/result_summary':formats => [:html] %>
+    <%= render :partial => 'results/result_summary'
+               :formats => [:html] %>
   <% else %>
     <%= render :partial => 'results/marker/marker_panes',
                :locals => { :extra_marks_points => @extra_marks_points,
