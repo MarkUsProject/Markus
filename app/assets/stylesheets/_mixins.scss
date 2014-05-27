@@ -56,6 +56,14 @@
           transition: $property $duration #{$timing-function} #{$delay};
 }
 
+@mixin transform($value...) {
+  -webkit-transform: $value;
+     -moz-transform: $value;
+      -ms-transform: $value;
+       -o-transform: $value;
+          transform: $value;
+}
+
 /* For easier size breakpoints. */
 $breakpoints: (
   'tiny':   ( max-width:  360px ),

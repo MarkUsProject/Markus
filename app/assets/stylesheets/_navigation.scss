@@ -8,9 +8,8 @@
 
 #mobile_menu,
 #content {
+  @include transform(translate(0px, 0px));
   @include transition(all, $time-quick);
-  -webkit-transform: translateX(0%);
-  transform: translateX(0%);
   width: 100%;
   z-index: 100;
 }
@@ -90,8 +89,7 @@
 
   #mobile_menu,
   #content {
-    -webkit-transform: translateX(75%);
-    transform: translateX(75%);
+    @include transform(translate(75%, 0px));
   }
 
   #content {
