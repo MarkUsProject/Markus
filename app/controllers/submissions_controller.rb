@@ -342,7 +342,7 @@ class SubmissionsController < ApplicationController
       if revision_number.nil?
         @revision = repo.get_latest_revision
       else
-       @revision = repo.get_revision(revision_number.to_i)
+        @revision = repo.get_revision(revision_number.to_i)
       end
       @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
       @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
