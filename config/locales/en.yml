@@ -298,6 +298,7 @@ en:
         previous_mark: "Previous Mark&nbsp;"
         old: "Old:&nbsp;"
         show_old_marks: "Show Old Mark Summary"
+        reset_mark: "Reset mark"
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
         remark_flag: "(remark)"
@@ -591,7 +592,7 @@ en:
     invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
     rejected_invitation: "declined"
 
-    #Sutdent's View (student)
+    #Student's View (student)
     student:
       create:
         success: "Successfully created student %{user_name}."

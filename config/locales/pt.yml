@@ -298,6 +298,7 @@ pt:
         previous_mark: "Nota antiga&nbsp;"
         old: "Antiga:&nbsp;"
         show_old_marks: "Mostrar antigo resumo de notas"
+        reset_mark: "Restablecer nota"
       annotation:
         from_line_to: "%{file_path}: Linha %{line_start} até %{line_end}"
         remark_flag: "(Reavaliado)"

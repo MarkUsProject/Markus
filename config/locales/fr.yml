@@ -300,6 +300,7 @@ fr:
         previous_mark: "Note précédente : "
         old: "Précédent : "
         show_old_marks: "Afficher la note précédente "
+        reset_mark: "Réinitialiser note"
       annotation:
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
         remark_flag: "(retour)"
