@@ -23,7 +23,7 @@
 		 I18n.t("annotations.update.annotation_category_name") %>
      <%= f.text_field :annotation_category_name, :rows => '3' %>
    </span>
- <%= f.submit t(:save), :disable_with => I18n.t('working') %>
+ <%= f.submit t(:save), :'data-disable-with' => I18n.t('working') %>
  <% end %>
 </fieldset>
   </div>
