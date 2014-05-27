@@ -25,9 +25,9 @@
           <% # Don't show hidden assignments to students
             if !assignment.is_hidden %>
             <%= link_to h(assignment.short_identifier),
-                        :controller => 'assignments',
-                        :action => 'student_interface',
-                        :id => assignment.id,
+                        { :controller => 'assignments',
+                          :action => 'student_interface',
+                          :id => assignment.id },
                         :title => assignment.description %>
           <% end %>
         </li>
@@ -49,15 +49,15 @@
           <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
                           :assignment_text => h(assignment.short_identifier)),
-                        :controller => 'assignments',
-                        :action => 'edit',
-                        :id => assignment.id,
+                        { :controller => 'assignments',
+                          :action => 'edit',
+                          :id => assignment.id },
                         :title => assignment.description %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
-                        :controller => 'assignments',
-                        :action => 'edit',
-                        :id => assignment.id,
+                        { :controller => 'assignments',
+                          :action => 'edit',
+                          :id => assignment.id },
                         :title => assignment.description %>
           <% end %>
         </li>
@@ -65,8 +65,8 @@
     <% else %>
       <li>
         <% # If the current controller is rubrics or flexible_criteria, we have to choose
-           # the appropritate controller according to the selected assignment's marking scheme type.
-          if controller.controller_name == 'rubrics' || controller.controller_name == 'flexible_criteria'
+           # the appropriate controller according to the selected assignment's marking scheme type.
+           if controller.controller_name == 'rubrics' || controller.controller_name == 'flexible_criteria'
           if assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
             target_controller = 'rubrics'
           else
@@ -76,37 +76,37 @@
           target_controller = controller.controller_name == 'assignments' ? nil : controller.controller_name
           target_action = controller.action_name == 'index' ? nil : controller.action_name
         end %>
-          <% # If the current controller action is repo_browser, the drop down
-             # menu for assignments should go to browse, and not repo_browser
-            if target_action == 'repo_browser'
-            target_action = 'browse'
-          end %>
-          <% # Don't show hidden assignments in the dropdown menu for students
-             # either. Append '(hidden)' for TAs and Admins.
-            if !@current_user.student? %>
-            <% if assignment.is_hidden %>
-              <%= link_to t('assignment.hidden',
-                            :assignment_text => h(assignment.short_identifier)),
-                          :controller => target_controller,
+        <% # If the current controller action is repo_browser, the drop down
+           # menu for assignments should go to browse, and not repo_browser
+           if target_action == 'repo_browser'
+          target_action = 'browse'
+        end %>
+        <% # Don't show hidden assignments in the dropdown menu for students
+           # either. Append '(hidden)' for TAs and Admins.
+           if !@current_user.student? %>
+          <% if assignment.is_hidden %>
+            <%= link_to t('assignment.hidden',
+                          :assignment_text => h(assignment.short_identifier)),
+                        { :controller => target_controller,
                           :action => controller.action_name,
-                          :id => assignment.id,
-                          :title => assignment.description %>
-            <% else %>
-              <%= link_to h(assignment.short_identifier),
-                          polymorphic_url([assignment, target_controller],
-                                          :action => target_action),
-                          :title => assignment.description %>
-            <% end %>
-          <% # student user, so show only non-hidden assignments
-            else %>
-            <% if !assignment.is_hidden %>
-              <%= link_to h(assignment.short_identifier),
-                          :controller => 'assignments',
-                          :action => 'student_interface',
-                          :id => assignment.id,
-                          :title => assignment.description %>
-            <% end %>
+                          :id => assignment.id },
+                        :title => assignment.description %>
+          <% else %>
+            <%= link_to h(assignment.short_identifier),
+                        polymorphic_url([assignment, target_controller],
+                                        :action => target_action),
+                        :title => assignment.description %>
           <% end %>
+        <% # student user, so show only non-hidden assignments
+           else %>
+          <% if !assignment.is_hidden %>
+            <%= link_to h(assignment.short_identifier),
+                        { :controller => 'assignments',
+                          :action => 'student_interface',
+                          :id => assignment.id },
+                        :title => assignment.description %>
+          <% end %>
+        <% end %>
       </li>
     <% end %>
   <% else %>
