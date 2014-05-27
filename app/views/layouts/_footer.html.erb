@@ -1,18 +1,23 @@
 <footer>
   <%= link_to(I18n.t(:about_markus),
-      about_main_index_path(),
-      :remote => true) %>
+              about_main_index_path(),
+              :remote => true) %>
 
   <span id="lang_chooser">
     <%= I18n.t(:choose_language) %>
-    <%=
-        #gets the relative path without the language choice, then on change of the language,
+    <%= #gets the relative path without the language choice, then on change of the language,
         #it adds this relative path to the end of the new language that was chosen.
         relative = request.path
         relative = relative.gsub("/#{I18n.locale}", "")
 
         select_tag(:locale, options_for_select(@available_locales,
                    :selected => "#{I18n.locale}"),
-                   { :onchange => "javascript:window.location.href = '/' + this.options[this.selectedIndex].value + '#{relative}';"}) %>
+                   { :onchange => "javascript:window.location.href = '/' + this.options[this.selectedIndex].value + '#{relative}';" }) %>
   </span>
+
+  <% if @current_user.admin? or @current_user.ta? %>
+    <span id="issues">
+      <a href="https://github.com/MarkUsProject/Markus/issues/"><%= I18n.t(:issues) %></a>
+    </span>
+  <% end %>
 </footer>

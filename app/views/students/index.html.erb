@@ -89,7 +89,7 @@
 	        <% end %>
 	      </select>
       </span>
-      <%= submit_tag t(:apply), :id => 'apply_bulk_action', :disable_with => I18n.t('working'),
+      <%= submit_tag t(:apply), :id => 'apply_bulk_action', :'data-disable-with' => I18n.t('working'),
                                 :name => 'commit', :class => 'thin-button' %>
     </div>
 
@@ -130,7 +130,7 @@
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
       <br>
       <br>
-      <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <%= button_to I18n.t(:close), '#', :onclick => 'modal_upload.close(); return false;' %>
     </form>
 </div>

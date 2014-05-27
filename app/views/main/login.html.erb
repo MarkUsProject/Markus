@@ -8,15 +8,20 @@
 
   <%= render 'shared/flash_message' %>
   <div class="login-form">
-    <%= form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
-
+    <%= form_tag({ :action => 'login',
+                   :id => nil },
+                 { # Quotes for onsubmit must be like this to show string properly
+                   :onsubmit => "jQuery('#submit').attr('disabled', 'disabled');
+                                 jQuery('#submit').val('#{I18n.t(:logging_in)}');",
+                   :id => 'login_form' }) do %>
       <%= text_field_tag 'user_login', nil, :tabindex => 10, :placeholder => I18n.t(:login) %>
       <%= password_field_tag 'user_password', nil, :tabindex => 20, :placeholder => I18n.t(:password) %>
 
       <div class="submit">
-        <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100 %>
+        <%= submit_tag I18n.t(:log_in),
+                       :tabindex => 100,
+                       :id => 'submit' %>
       </div>
-
     <% end %>
   </div>
 </div>

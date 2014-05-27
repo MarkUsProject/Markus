@@ -8,7 +8,7 @@ namespace :markus do
     else
       ::Rails.env = ENV['environment']
     end
-    Rake::Task['repos:drop'].invoke   # drop repositories
+    Rake::Task['markus:repos:drop'].invoke   # drop repositories
     Rake::Task['db:reset'].invoke     # reset the DB
     sleep(2) # need to sleep a little, otherwise the reset doesn't seem to work
     Rake::Task['db:seed'].invoke  # repopulate DB

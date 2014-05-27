@@ -15,7 +15,7 @@
       <%= password_field_tag 'admin_password', nil, :tabindex => 20 %>
     <% end %>
     <br>
-    <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100, :class => 'button indent_button'%>
+    <%= submit_tag I18n.t(:log_in), :'data-disable-with' => I18n.t(:logging_in), :tabindex => 100, :class => 'button indent_button'%>
     <%= button_to_function I18n.t(:cancel),
                            'role_switch_modal.close()', :tabindex => 110 %>
   <% end %>

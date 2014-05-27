@@ -7,6 +7,6 @@
     <%= f.text_field :flexible_criterion_name,
 		     :size => 15,
 		     :id => 'new_flexible_criterion_prompt' %><br>
-    <%= f.submit t("flexible_criteria.save"), :disable_with => I18n.t('working')%>
+    <%= f.submit t("flexible_criteria.save"), :'data-disable-with' => I18n.t('working')%>
   <% end %>
 </li>
