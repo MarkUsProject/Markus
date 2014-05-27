@@ -30,18 +30,9 @@ var PeriodDeltaChain = Class.create({
       var language = document.getElementById('locale').value;
       var options = { weekday: "long", year: "numeric", month: "long", day: "numeric",
                       hour: "numeric", minute: "numeric", second: "numeric" };
-      var locale = 'en-CA';
 
-      if (language.indexOf('fr') >= 0) {
-        /* French locale */
-        locale = 'fr-FR';
-      } else if (language.indexOf('pt') >= 0) {
-        /* Portuguese locale */
-        locale = 'pt-BR';
-      }
-
-      from_time_node.update(from_time.toLocaleString(locale, options));
-      to_time_node.update(to_time.toLocaleString(locale, options));
+      from_time_node.update(from_time.toLocaleString(language, options));
+      to_time_node.update(to_time.toLocaleString(language, options));
 
       current_time = to_time;
     });
