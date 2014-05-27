@@ -15,7 +15,6 @@ var is_image;
 
 function source_code_ready() {
   annotation_manager = null;
-  $('loading_code').hide();
   $('select_file_id').enable();
   syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
       $$('.dp-highlighter').first().getElementsBySelector('ol').first());
@@ -46,7 +45,6 @@ function source_code_ready_for_image() {
   annotation_manager = new ImageAnnotationGrid(image_event_handler,
       annotation_text_manager, annotation_text_displayer);
 
-  $('loading_code').hide();
   $('select_file_id').enable();
 
   is_image = true;
@@ -265,11 +263,12 @@ function load_submitted_file(submission_file_id, focus_line) {
   annotation_manager = null;
   new Ajax.Request('<%=
                   codeviewer_assignment_submission_result_path(:id => @assignment.id, :uid => @uid) %>',
-                   { asynchronous:true,
+                  { asynchronous:true,
                     evalScripts:true,
                     parameters:'submission_file_id=' + submission_file_id
                       + '&focus_line=' + focus_line
-                      + '&authenticity_token=' + AUTH_TOKEN })
+                      + '&authenticity_token=' + AUTH_TOKEN,
+                    onComplete: function() { $('loading_code').hide(); }})
 }
 
 function load_submitted_file_and_focus(submission_file_id, focus_line) {

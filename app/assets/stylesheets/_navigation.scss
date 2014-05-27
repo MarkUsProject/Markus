@@ -270,7 +270,7 @@ footer {
 
 #lang_chooser {
   border-left: 1px solid #aaa;
-  margin: 0 1em;
+  margin: 0 0 0 1em;
   padding-left: 1em;
 
   select {
@@ -278,4 +278,10 @@ footer {
     color: #777;
     margin: 0;
   }
+}
+
+#issues {
+  border-left: 1px solid #aaa;
+  margin: 0 1em;
+  padding-left: 1em;
 }

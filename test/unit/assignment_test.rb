@@ -51,6 +51,23 @@ class AssignmentTest < ActiveSupport::TestCase
     destroy_repos
   end
 
+  def create_marked_submission(submission_mark, rubric_criteria)
+    # Create student group and submission.
+    @membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),
+      :membership_status => StudentMembership::STATUSES[:accepted])
+    sub = Submission.make(:grouping => @membership.grouping)
+    @result = sub.get_latest_result
+
+    # Input submission_mark using provided rubric_criteria.
+    (0..3).each do |index|
+      Mark.make({:mark => submission_mark, :result => @result, :markable => rubric_criteria[index]})
+    end
+
+    @result.marking_state = Result::MARKING_STATES[:complete]
+    @result.released_to_students = true
+    @result.save
+  end
+
   context 'validate' do
     setup do
       @a = Assignment.make
@@ -372,6 +389,85 @@ class AssignmentTest < ActiveSupport::TestCase
       # Test if assignments can fetch the group for a user
       should 'return the correct group for a given student' do
         assert_equal @membership.grouping.group, @assignment.group_by(@membership.user).group
+      end
+    end
+
+    context 'with odd number of submissions graded' do
+      setup do
+        criteria = []
+        [2,2,2,2].each do |weight|
+          criteria.push RubricCriterion.make({:assignment => @assignment,:weight => weight})
+        end
+
+        4.times do
+          create_marked_submission(4, criteria)
+        end
+
+        5.times do
+          create_marked_submission(2, criteria)
+        end
+
+        @assignment.set_results_statistics
+      end
+
+      should 'return the correct average mark' do
+        assert_equal(72, @assignment.results_average.to_int)
+      end
+
+      should 'return the correct median mark' do
+        assert_equal(50, @assignment.results_median)
+      end
+    end
+
+    context 'with even number of submissions graded' do
+      setup do
+        criteria = []
+        [2,2,2,2].each do |weight|
+          criteria.push RubricCriterion.make({:assignment => @assignment,:weight => weight})
+        end
+
+        5.times do
+          create_marked_submission(4, criteria)
+        end
+
+        5.times do
+          create_marked_submission(2, criteria)
+        end
+      end
+
+      should 'return the correct average mark' do
+        assert @assignment.set_results_statistics
+        assert_equal(75, @assignment.results_average)
+      end
+
+      should 'return the correct median mark' do
+        assert @assignment.set_results_statistics
+        assert_equal(75, @assignment.results_median)
+      end
+    end
+
+    context 'with varied grades for marked submissions' do
+      setup do
+        criteria = []
+        [2,2,2,2].each do |weight|
+          criteria.push RubricCriterion.make({:assignment => @assignment,:weight => weight})
+        end
+
+        (0..4).each do |mark|
+          2.times do
+            create_marked_submission(mark, criteria)
+          end
+        end
+      end
+
+      should 'return the correct average mark' do
+        assert @assignment.set_results_statistics
+        assert_equal(50, @assignment.results_average)
+      end
+
+      should 'return the correct median mark' do
+        assert @assignment.set_results_statistics
+        assert_equal(50, @assignment.results_median)
       end
     end
 

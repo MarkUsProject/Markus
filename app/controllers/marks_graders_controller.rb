@@ -1,5 +1,3 @@
-include CsvHelper
-
 # Manages actions relating to assigning graders.
 class MarksGradersController < ApplicationController
   include MarksGradersHelper
@@ -45,7 +43,7 @@ class MarksGradersController < ApplicationController
     grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     students = Student.all
 
-    file_out = CsvHelper::Csv.generate do |csv|
+    file_out = CSV.generate do |csv|
       students.each do |student|
         # csv format is student_name, ta1_name, ta2_name, ... etc
         student_array = [student.user_name]

@@ -8,6 +8,7 @@ fr:
     all:                "Tous"
     none:               "Aucun"
     search:             "Recherche:"
+    issues:             "GitHub liste des problèmes"
 
     # app/views/main/login.html.erb
     welcome_to:         "Bienvenue sur MarkUs !"
