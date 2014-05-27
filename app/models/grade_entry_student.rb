@@ -1,3 +1,5 @@
+require 'encoding'
+
 # GradeEntryStudent represents a row (i.e. a student's grades for each question)
 # in a grade entry form.
 class GradeEntryStudent < ActiveRecord::Base
@@ -61,13 +63,11 @@ class GradeEntryStudent < ActiveRecord::Base
 
   # Returns an array containing the student names that didn't exist
   def self.assign_tas_by_csv(csv_file_contents, grade_entry_form_id, encoding)
-    grade_entry_form = GradeEntryForm.find(grade_entry_form_id)
+    grade_entry_form  = GradeEntryForm.find(grade_entry_form_id)
+    csv_file_contents = csv_file_contents.utf8_encode(encoding)
 
     failures = []
-    if encoding != nil
-      csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents).join)
-    end
-    CsvHelper::Csv.parse(csv_file_contents) do |row|
+    CSV.parse(csv_file_contents) do |row|
       student_name = row.shift # Knocks the first item from array
       student = Student.find_by_user_name(student_name)
       if student.nil?

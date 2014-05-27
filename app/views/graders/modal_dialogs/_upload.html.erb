@@ -4,7 +4,7 @@
   :action => 'csv_upload_grader_groups_mapping',:id => @assignment.id},
   {:multipart => true}) do -%>
   <p><%= file_field_tag :grader_mapping, :size => 2 %> <br>
-    <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+    <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
     <button onclick="modalUpload.close(); return false;"><%= I18n.t('cancel') %>
     </button>
   </p>
@@ -17,7 +17,7 @@
     :action => 'csv_upload_grader_criteria_mapping',:id => @assignment.id},
     {:multipart => true}) do -%>
     <p><%= file_field_tag :grader_criteria_mapping, :size => 2 %> <br>
-      <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <button onclick="modalUpload.close(); return false;"><%= I18n.t('cancel') %>
       </button>
     </p>

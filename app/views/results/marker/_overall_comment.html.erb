@@ -1,8 +1,8 @@
 <div id="overall_comment">
       <div id="overall_comment_edit">
-        <%= form_for @result,
+        <%= form_for result,
           :remote => true,
-          :url => { :action => 'update_overall_comment', :id => @result.id } do |f| %>
+          :url => { :action => 'update_overall_comment', :id => result.id } do |f| %>
           <%= f.text_area :overall_comment,
             :cols => 50,
             :rows => 5,
@@ -10,7 +10,7 @@
             :onkeydown => "$('overall_comment_submit').enable();" %>
        <div>
          <%= f.submit t(:save_changes),
-           :disable_with => I18n.t('working'),
+           :'data-disable-with' => I18n.t('working'),
            :disabled => true,
            :id => "overall_comment_submit" %>
        </div>

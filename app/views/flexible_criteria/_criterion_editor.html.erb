@@ -33,7 +33,7 @@
   <span><%= t('flexible_criteria.description_hint') %></span>
 </div>
 
-<%= f.submit t("flexible_criteria.save"), :disable_with => I18n.t('working')%>
+<%= f.submit t("flexible_criteria.save"), :'data-disable-with' => I18n.t('working')%>
 <% end %>
 
 <% if !criterion.description.nil? && !criterion.description.empty? %>

@@ -31,8 +31,7 @@ Markus::Application.configure do
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
 
-  require 'ruby-debug' if RUBY_VERSION == "1.8.7"
-  require 'debugger' if RUBY_VERSION > "1.9"
+  require 'debugger'
 
   # Raise exception on mass assignment protection for Active Record models
   config.active_record.mass_assignment_sanitizer = :strict

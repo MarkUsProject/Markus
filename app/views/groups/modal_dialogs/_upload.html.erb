@@ -15,7 +15,7 @@
                                :id => @assignment.id } do |f| -%>
   <p>
     <%= f.file_field :grouplist, :size => 2 %> <br>
-    <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+    <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
     <button onclick="modalUpload.close(); return false;"><%= I18n.t('cancel') %></button>
   </p>
 <% end %>
