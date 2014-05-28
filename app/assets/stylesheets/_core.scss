@@ -171,7 +171,9 @@ input[type="radio"] {
 }
 
 input[disabled],
-input[disabled]:hover {
+input[disabled]:hover,
+textarea[disabled],
+textarea[disabled]:hover {
   background-color: #ddd;
   color: #aaa;
 }
