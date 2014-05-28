@@ -672,17 +672,18 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and all graders from one grouping are selected' do
-          TaMembership.make(:user => @ta1, :grouping => @grouping1)
-          TaMembership.make(:user => @ta2, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping1)
+          ta_memberships = [
+            TaMembership.make(user: @ta1, grouping: @grouping1),
+            TaMembership.make(user: @ta2, grouping: @grouping1),
+            TaMembership.make(user: @ta3, grouping: @grouping1),
+          ]
           TaMembership.make(:user => @ta3, :grouping => @grouping3)
-          post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-            :global_actions => 'unassign',
-            :groupings => [@grouping1],
-            "#{@grouping1.id}_#{@ta1.user_name}" => true,
-            "#{@grouping1.id}_#{@ta2.user_name}" => true,
-            "#{@grouping1.id}_#{@ta3.user_name}" => true,
-            :current_table => 'groups_table'}
+          post_as @admin, :global_actions,
+                  assignment_id: @assignment.id,
+                  global_actions:'unassign',
+                  groupings: [@grouping1],
+                  grader_memberships: ta_memberships,
+                  current_table: 'groups_table'
           assert_response :success
           assert @grouping1.tas == []
           assert @grouping2.tas == []
@@ -690,18 +691,19 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and all groupings from one grader are selected' do
-          TaMembership.make(:user => @ta1, :grouping => @grouping1)
-          TaMembership.make(:user => @ta2, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping2)
-          TaMembership.make(:user => @ta3, :grouping => @grouping3)
-          post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-            :global_actions => 'unassign',
-            :groupings => [@grouping1, @grouping2, @grouping3],
-            "#{@grouping1.id}_#{@ta3.user_name}" => true,
-            "#{@grouping2.id}_#{@ta3.user_name}" => true,
-            "#{@grouping3.id}_#{@ta3.user_name}" => true,
-            :current_table => 'groups_table'}
+          TaMembership.make(user: @ta1, grouping: @grouping1)
+          TaMembership.make(user: @ta2, grouping: @grouping1)
+          ta_memberships = [
+            TaMembership.make(user: @ta3, grouping: @grouping1),
+            TaMembership.make(user: @ta3, grouping: @grouping2),
+            TaMembership.make(user: @ta3, grouping: @grouping3)
+          ]
+          post_as @admin, :global_actions,
+                  assignment_id: @assignment.id,
+                  global_actions: 'unassign',
+                  groupings: [@grouping1, @grouping2, @grouping3],
+                  grader_memberships: ta_memberships,
+                  current_table: 'groups_table'
           assert_response :success
           assert !@grouping1.tas.include?(@ta3)
           assert !@grouping2.tas.include?(@ta3)
@@ -711,20 +713,21 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and one grader and one grouping is selected where the grader and grouping have other memberships' do
-          TaMembership.make(:user => @ta1, :grouping => @grouping1)
-          TaMembership.make(:user => @ta2, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping1)
-          TaMembership.make(:user => @ta1, :grouping => @grouping2)
-          TaMembership.make(:user => @ta2, :grouping => @grouping2)
-          TaMembership.make(:user => @ta3, :grouping => @grouping2)
-          TaMembership.make(:user => @ta1, :grouping => @grouping3)
-          TaMembership.make(:user => @ta2, :grouping => @grouping3)
-          TaMembership.make(:user => @ta3, :grouping => @grouping3)
-          post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-            :global_actions => 'unassign',
-            :groupings => [@grouping2],
-            "#{@grouping2.id}_#{@ta1.user_name}" => true,
-            :current_table => 'groups_table'}
+          ta_membership = TaMembership.make(user: @ta1, grouping: @grouping2)
+          TaMembership.make(user: @ta1, grouping: @grouping1)
+          TaMembership.make(user: @ta2, grouping: @grouping1)
+          TaMembership.make(user: @ta3, grouping: @grouping1)
+          TaMembership.make(user: @ta2, grouping: @grouping2)
+          TaMembership.make(user: @ta3, grouping: @grouping2)
+          TaMembership.make(user: @ta1, grouping: @grouping3)
+          TaMembership.make(user: @ta2, grouping: @grouping3)
+          TaMembership.make(user: @ta3, grouping: @grouping3)
+          post_as @admin, :global_actions,
+                  assignment_id: @assignment.id,
+                  global_actions: 'unassign',
+                  groupings: [@grouping2],
+                  grader_memberships: ta_membership,
+                  current_table: 'groups_table'
           assert_response :success
           assert !@grouping2.tas.include?(@ta1)
           assert @grouping1.tas.include?(@ta1)
@@ -738,28 +741,23 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and multiple graders and multiple groupings are selected' do
-          TaMembership.make(:user => @ta1, :grouping => @grouping1)
-          TaMembership.make(:user => @ta2, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping1)
-          TaMembership.make(:user => @ta1, :grouping => @grouping2)
-          TaMembership.make(:user => @ta2, :grouping => @grouping2)
-          TaMembership.make(:user => @ta3, :grouping => @grouping2)
-          TaMembership.make(:user => @ta1, :grouping => @grouping3)
-          TaMembership.make(:user => @ta2, :grouping => @grouping3)
-          TaMembership.make(:user => @ta3, :grouping => @grouping3)
-          post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-            :global_actions => 'unassign',
-            :groupings => [@grouping1, @grouping2, @grouping3],
-            "#{@grouping1.id}_#{@ta1.user_name}" => true,
-            "#{@grouping1.id}_#{@ta2.user_name}" => true,
-            "#{@grouping1.id}_#{@ta3.user_name}" => true,
-            "#{@grouping2.id}_#{@ta1.user_name}" => true,
-            "#{@grouping2.id}_#{@ta2.user_name}" => true,
-            "#{@grouping2.id}_#{@ta3.user_name}" => true,
-            "#{@grouping3.id}_#{@ta1.user_name}" => true,
-            "#{@grouping3.id}_#{@ta2.user_name}" => true,
-            "#{@grouping3.id}_#{@ta3.user_name}" => true,
-            :current_table => 'groups_table'}
+          ta_memberships = [
+            TaMembership.make(user: @ta1, grouping: @grouping1),
+            TaMembership.make(user: @ta2, grouping: @grouping1),
+            TaMembership.make(user: @ta3, grouping: @grouping1),
+            TaMembership.make(user: @ta1, grouping: @grouping2),
+            TaMembership.make(user: @ta2, grouping: @grouping2),
+            TaMembership.make(user: @ta3, grouping: @grouping2),
+            TaMembership.make(user: @ta1, grouping: @grouping3),
+            TaMembership.make(user: @ta2, grouping: @grouping3),
+            TaMembership.make(user: @ta3, grouping: @grouping3)
+          ]
+          post_as @admin, :global_actions,
+                  assignment_id: @assignment.id,
+                  global_actions: 'unassign',
+                  groupings: [@grouping1, @grouping2, @grouping3],
+                  grader_memberships: ta_memberships,
+                  current_table: 'groups_table'
           assert_response :success
           assert @grouping1.tas == []
           assert @grouping2.tas == []
