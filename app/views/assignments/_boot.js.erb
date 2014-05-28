@@ -1,45 +1,44 @@
-<script type="text/javascript">
+<script type='text/javascript'>
 //<![CDATA[
-  var past_due_date_edit_warning = "<%= t(:past_due_date_edit_warning) %>";
+  var past_due_date_edit_warning = '<%= t(:past_due_date_edit_warning) %>';
 
   var grace_periods = null;
   var penalty_decay_periods = null;
   var penalty_periods = null;
 
 
-
   function create_grace_periods() {
-    if(!grace_periods) {
+    if (!grace_periods) {
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
-        date_format: "",
+        date_format: '',
         due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
 
   function create_penalty_decay_periods() {
-    if(!penalty_decay_periods) {
+    if (!penalty_decay_periods) {
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
-        date_format: "",
+        date_format: '',
         due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
 
   function create_penalty_periods() {
-    if(!penalty_periods) {
+    if (!penalty_periods) {
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
-        date_format: "",
+        date_format: '',
         due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
 
   jQuery(document).ready(function() {
-    if(jQuery('#assignment_due_date').val()) {
+    if (jQuery('#assignment_due_date').val()) {
       create_grace_periods();
       create_penalty_decay_periods();
       create_penalty_periods();
@@ -50,8 +49,8 @@
 
       default_group_fields();
       <% if !@assignment.nil? %>
-      toggle_group_assignment(<%= @assignment.group_assignment? %>);
-      toggle_remark_requests(<%= @assignment.allow_remarks? %>);
+        toggle_group_assignment(<%= @assignment.group_assignment? %>);
+        toggle_remark_requests(<%= @assignment.allow_remarks? %>);
       <% end %>
     }
   });

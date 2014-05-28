@@ -28,8 +28,8 @@ var PeriodDeltaChain = Class.create({
       to_time.setTime(to_time.getTime() + (me.hour * hours_value));
 
       var language = document.getElementById('locale').value;
-      var options = { weekday: "long", year: "numeric", month: "long", day: "numeric",
-                      hour: "numeric", minute: "numeric", second: "numeric" };
+      var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                      hour: 'numeric', minute: 'numeric', second: 'numeric' };
 
       from_time_node.update(from_time.toLocaleString(language, options));
       to_time_node.update(to_time.toLocaleString(language, options));
