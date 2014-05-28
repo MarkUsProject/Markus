@@ -112,6 +112,18 @@ class AssignmentTest < ActiveSupport::TestCase
     assert !a.valid?, 'assignment expected to be invalid when tokens_per_day is < 0'
   end
 
+  should 'have correct criterion class when the marking scheme is rubric' do
+    marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
+    @assignment = Assignment.new(marking_scheme_type: marking_scheme_type)
+    assert_equal RubricCriterion, @assignment.criterion_class
+  end
+
+  should 'have correct criterion class when the marking scheme is flexible' do
+    marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:flexible]
+    @assignment = Assignment.new(marking_scheme_type: marking_scheme_type)
+    assert_equal FlexibleCriterion, @assignment.criterion_class
+  end
+
   context 'A past due assignment w/ No Late submission rule' do
     context 'without sections' do
       setup do
