@@ -4,15 +4,11 @@
 
 jQuery(document).ready(function() {
   jQuery('#assignment_due_date').change(function() {
-    // update_due_date(jQuery(this).val());
+    update_due_date(jQuery(this).val());
   });
 
   jQuery('#assignment_section_due_dates_type').change(function() {
     toggle_sections_due_date(jQuery(this).is(':checked'));
-  });
-
-  jQuery('#remark_due_date').change(function() {
-    check_due_date(jQuery(this).val());
   });
 });
 
@@ -185,7 +181,6 @@ function update_due_date(new_due_date) {
   create_penalty_decay_periods();
   create_penalty_periods();
 
-  check_due_date(new_due_date);
   grace_periods.set_due_date(new_due_date);
   penalty_decay_periods.set_due_date(new_due_date);
   penalty_periods.set_due_date(new_due_date);
@@ -194,20 +189,8 @@ function update_due_date(new_due_date) {
   penalty_periods.refresh();
 }
 
-// Is this even used?
-// function refresh_due_date() {
-//   update_due_date(jQuery('#assignment_due_date').val());
-// }
-
 function toggle_sections_due_date(section_due_dates_type) {
   jQuery('#section_due_dates_information').toggle(section_due_dates_type);
-}
-
-function check_due_date(new_due_date) {
-  var now = new Date();
-  // if (Date.parseFormattedString(new_due_date) < now) {
-  //   alert(past_due_date_edit_warning);
-  // }
 }
 
 function change_submission_rule() {
