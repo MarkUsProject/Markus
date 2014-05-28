@@ -202,7 +202,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
     </p>
     <p>
       <%= file_field_tag :grader_mapping, :size => 2 %><br>
-      <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>
     </p>
   <% end %>

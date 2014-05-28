@@ -199,7 +199,7 @@
     </p>
     <%= file_field_tag :grader_mapping, :size => 2 %>
     <div>
-      <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <%= button_to_function I18n.t('cancel'), 'modal_upload.close();' %>
     </div>
   <% end %>
@@ -216,7 +216,7 @@
       </p>
       <%= file_field_tag :grader_criteria_mapping, :size => 2 %>
       <div>
-        <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+        <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
         <%= button_to_function I18n.t('cancel'), 'modal_upload.close();' %>
       </div>
     <% end %>

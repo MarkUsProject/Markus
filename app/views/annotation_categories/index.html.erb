@@ -80,7 +80,7 @@
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
       <br>
       <br>
-      <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();" />
     </p>
   <% end %>
@@ -92,7 +92,7 @@
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
       <br>
       <br>
-      <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();" />
     </p>
   <% end %>

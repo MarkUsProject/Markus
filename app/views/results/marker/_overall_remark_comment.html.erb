@@ -13,7 +13,7 @@
 		    :onkeypress => "$('overall_remark_comment_submit').enable();" %>
     <div>
       <%= f.submit t(:save_changes),
-      	   :disable_with => I18n.t('working'),
+      	   :'data-disable-with' => I18n.t('working'),
 		   :disabled => true,
 		   :id => "overall_remark_comment_submit" %>
     </div>

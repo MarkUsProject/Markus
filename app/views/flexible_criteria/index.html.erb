@@ -56,7 +56,7 @@
   <%= t('flexible_criteria.upload.format_html') %>
   <%= t('csv_special_characters_html') %>
   <p>
-    <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
+    <%= f.submit t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
     <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
   </p>
   <% end %>

@@ -4,36 +4,35 @@
     # Non-binary files
 
     if !SubmissionFile.is_binary?(@file_contents)
-
-       if RUBY_VERSION > '1.9'
-         begin
-           @file_encode = @file_contents.encode(Encoding::UTF_8,
-                                                Encoding::UTF_8)
-           page.replace_html 'codeviewer',
-             :partial => 'results/common/text_codeviewer',
-             :locals => { :uid => params[:uid],
-             :file_contents => @file_encode,
-             :annots => @annots, :code_type => @code_type}
-         rescue Exception => e
-           page.alert e.message
-           page.replace_html 'codeviewer',
-             :partial => 'results/common/text_codeviewer',
-             :locals => { :uid => params[:uid],
-             :file_contents => @file_contents,
-             :annots => @annots, :code_type => @code_type}
-         end
-       else
-         begin
-           @file_contents = @file_contents.utf8_encode(Encoding::UTF_8)
-         rescue Encoding::InvalidByteSequenceError, Encoding::UndefinedConversionError
-           @file_contents = @file_contents.utf8_encode(Encoding::ISO_8859_1)
-         end
-         page.replace_html 'codeviewer',
-                           :partial => 'results/common/text_codeviewer',
-                           :locals => { :uid => params[:uid],
-                                        :file_contents => @file_contents,
-                                        :annots => @annots, :code_type => @code_type}
-       end
+      if RUBY_VERSION > '1.9'
+        begin
+          @file_encode = @file_contents.encode(Encoding::UTF_8,
+                                               Encoding::UTF_8)
+          page.replace_html 'codeviewer',
+            :partial => 'results/common/text_codeviewer',
+            :locals => { :uid => params[:uid],
+            :file_contents => @file_encode,
+            :annots => @annots, :code_type => @code_type}
+        rescue Exception => e
+          page.alert e.message
+          page.replace_html 'codeviewer',
+            :partial => 'results/common/text_codeviewer',
+            :locals => { :uid => params[:uid],
+            :file_contents => @file_contents,
+            :annots => @annots, :code_type => @code_type}
+        end
+      else
+        begin
+          @file_contents = @file_contents.utf8_encode(Encoding::UTF_8)
+        rescue Encoding::InvalidByteSequenceError, Encoding::UndefinedConversionError
+          @file_contents = @file_contents.utf8_encode(Encoding::ISO_8859_1)
+        end
+        page.replace_html 'codeviewer',
+                          :partial => 'results/common/text_codeviewer',
+                          :locals => { :uid => params[:uid],
+                                       :file_contents => @file_contents,
+                                       :annots => @annots, :code_type => @code_type}
+      end
     # Supported image files
     elsif @file.is_supported_image?
       page.replace_html 'codeviewer',

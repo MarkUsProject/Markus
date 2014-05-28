@@ -23,7 +23,7 @@
     </div>
 
     <%= f.hidden_field :id %>
-    <%= f.submit t(:submit), :name => 'submit', :disable_with => I18n.t('working'),
+    <%= f.submit t(:submit), :name => 'submit', :'data-disable-with' => I18n.t('working'),
       :class => 'button' %>
     <%= link_to t(:cancel), students_path(), :class => "button" %>
 

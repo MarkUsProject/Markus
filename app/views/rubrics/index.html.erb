@@ -72,7 +72,7 @@
     <br>
     <br>
     <p>
-      <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= f.submit t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
     </p>
   <% end %>
@@ -91,7 +91,7 @@
     <br>
     <br>
     <p>
-      <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= f.submit t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
     </p>
   <% end %>
