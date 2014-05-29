@@ -345,11 +345,12 @@
     }
 
     .separator {
-      border-bottom: 1px solid #444;
+      border-bottom: 1px solid $grey;
       margin: 0.5em 0;
       width: 190px;
 
       @include breakpoint(mobile) {
+        border-color: $lighter-blue;
         width: 100%;
       }
     }
@@ -457,6 +458,7 @@ span#choose_an_assignment {
 
     @include breakpoint(mobile) {
       @include border-radius(0);
+      background: $light-blue;
     }
 
     a {
