@@ -8,17 +8,21 @@
 <%
   # For the internationalization of the Calendar
 %>
-<% if I18n.default_locale == :en %>
-  <%= calendar_date_select_includes "silver" %>
-<% else %>
-  <%= calendar_date_select_includes "silver", :locale => I18n.default_locale %>
+
+<% content_for :head do %>
+  <%= javascript_include_tag 'jquery', 'jquery-ui' %>
+  <%= stylesheet_link_tag 'jquery-ui' %>
 <% end %>
 
-<div class="wrapLeft">
+<%= render :partial => 'boot',
+           :formats => [:js],
+           :handlers => [:erb] %>
+
+<div class='wrapLeft'>
   <%= render 'shared/flash_message' %>
 
   <%= form_for @grade_entry_form, :as => :grade_entry_form do |f| %>
-    <%= render :partial => "shared/error_explanation",
+    <%= render :partial => 'shared/error_explanation',
                :locals => { :model => @grade_entry_form } %>
 
     <fieldset>
@@ -44,11 +48,12 @@
         </div>
 
         <div>
-          <%= raw(f.label :date, t(:shortened_date), :class => 'required_field') %>
-          <%= raw(f.calendar_date_select :date,
-                  {:year_range => 0.years.ago..1.years.from_now,
-                   :locale => I18n.default_locale}) %>
-          <%#= raw(t(:iso_date_format_example)) %>
+          <%= raw(f.label :date,
+                          t(:shortened_date),
+                          :class => 'required_field') %>
+          <%= raw(f.text_field :date,
+                               :id => 'date',
+                               :class => 'datepicker') %>
         </div>
 
         <div>
@@ -61,33 +66,45 @@
         <h4><%= t('grade_entry_forms.specify_columns') %></h4>
         <% # Display the column names and totals
         %>
-        <div id="grade_entry_items">
+        <div id='grade_entry_items'>
           <% # Ensures there is at least one column whenever the form is loaded. %>
           <% if @grade_entry_form.grade_entry_items.empty? %>
             <%= render(:partial => 'grade_entry_item',
-                       :locals => {:form => f,
-                                   :new_position => 0,
-                                   :grade_entry_item => GradeEntryItem.new}) %>
+                       :locals => { :form => f,
+                                    :new_position => 0,
+                                    :grade_entry_item => GradeEntryItem.new }) %>
           <% end %>
 
           <% sort_items_by_position(@grade_entry_form.grade_entry_items).each_with_index do |item, index| %>
             <%= f.fields_for :grade_entry_items, item do |entry_item| %>
               <%= render :partial => 'grade_entry_item',
-                         :locals => {:grade_entry_item => entry_item.object,
-                                     :new_position => index + 1,
-                                     :form => f} %>
+                         :locals => { :grade_entry_item => entry_item.object,
+                                      :new_position => index + 1,
+                                      :form => f } %>
             <% end %>
           <% end %>
         </div>
 
-       <% # Allow the user to add a new column to the form
-        %>
-        <p id="grade_entry_item_add_link">
+        <% # Allow the user to add a new column to the form %>
+        <p id='grade_entry_item_add_link'>
           <%= add_grade_entry_item_link t('grade_entry_forms.add_column'), f %>
         </p>
-
     </fieldset>
 
-    <%= f.submit  :'data-disable-with' => I18n.t('working') %>
+    <%= f.submit :'data-disable-with' => I18n.t('working') %>
   <% end %>
 </div>
+
+<script>
+  jQuery('.datepicker').datepicker({
+    numberOfMonths: 2,
+    minDateTime:  0,
+    secondMax:    0,
+    dateFormat:   "<%= raw I18n.t('date.formats.locale_date') %>",
+    monthNames:   <%= raw I18n.t('date.months') %>,
+    dayNames:     <%= raw I18n.t('date.weekdays') %>,
+    dayNamesMin:  <%= raw I18n.t('date.weekdays_min') %>,
+    prevText:     "<%= I18n.t('time.prev') %>",
+    nextText:     "<%= I18n.t('time.next') %>"
+  });
+</script>

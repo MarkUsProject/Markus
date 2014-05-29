@@ -92,7 +92,9 @@
               <br>
               <%= due_date_f.text_field :section_id, :class => 'hidden' %>
               <%= due_date_f.label :due_date, t('due_date') %>
-              <%= raw(f.text_field :due_date, :id => 'section_due_date') %>
+              <%= raw(f.text_field :due_date,
+                                   :id => 'section_due_date',
+                                   :class => 'datetimepicker') %>
             </p>
           <% end %>
         </div>
@@ -106,8 +108,8 @@
                       :class => 'required_field') %>
       <%= raw(f.text_field :due_date,
                            :id => 'assignment_due_date',
+                           :class => 'datetimepicker',
                            :onchange => 'set_onbeforeunload(true);') %>
-      <%#= t(:iso_due_date_format_example) %>
     </div>
 
     <div>
@@ -402,9 +404,8 @@
                         :class => 'inline_label')) %>
         <%= raw(f.text_field :remark_due_date,
                              :id => 'remark_due_date',
+                             :class => 'datetimepicker',
                              :disabled => !@assignment.allow_remarks) %>
-
-        <%#= t(:iso_due_date_format_example) %>
       </div>
 
       <div>
@@ -426,27 +427,21 @@
 <% end %>
 
 <script>
-  jQuery('#section_due_date').datetimepicker({
-    dateFormat: "<%= I18n.t('date.formats.locale_date') %>",
-    timeFormat: "<%= I18n.t('time.formats.locale_time') %>",
+  jQuery('.datetimepicker').datetimepicker({
     numberOfMonths: 2,
-    minDateTime: 0,
-    secondMax: 0
-  });
-
-  jQuery('#assignment_due_date').datetimepicker({
-    dateFormat: "<%= I18n.t('date.formats.locale_date') %>",
-    timeFormat: "<%= I18n.t('time.formats.locale_time') %>",
-    numberOfMonths: 2,
-    minDateTime: 0,
-    secondMax: 0
-  });
-
-  jQuery('#remark_due_date').datetimepicker({
-    dateFormat: "<%= I18n.t('date.formats.locale_date') %>",
-    timeFormat: "<%= I18n.t('time.formats.locale_time') %>",
-    numberOfMonths: 2,
-    minDateTime: 0,
-    secondMax: 0
+    minDateTime:  0,
+    secondMax:    0,
+    dateFormat:   "<%= raw I18n.t('date.formats.locale_date') %>",
+    timeFormat:   "<%= I18n.t('time.formats.locale_time') %>",
+    monthNames:   <%= raw I18n.t('date.months') %>,
+    dayNames:     <%= raw I18n.t('date.weekdays') %>,
+    dayNamesMin:  <%= raw I18n.t('date.weekdays_min') %>,
+    hourText:     "<%= I18n.t('time.hour') %>",
+    minuteText:   "<%= I18n.t('time.minute') %>",
+    timeText:     "<%= I18n.t('time.time') %>",
+    prevText:     "<%= I18n.t('time.prev') %>",
+    nextText:     "<%= I18n.t('time.next') %>",
+    closeText:    "<%= I18n.t('time.close') %>",
+    currentText:  "<%= I18n.t('time.now') %>"
   });
 </script>

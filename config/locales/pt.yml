@@ -1103,7 +1103,7 @@ pt:
       long_date: "%B %d, %Y: %I:%M%p"
       #MarkUs SHORT_DATE_TIME_FORMAT
       short_date: "%B %d, %Y"
-      locale_date: "DD, MM d, yy"
+      locale_date: "DD, d 'de' MM 'de' yy"
 
     day_names: [Domingo, Segunda-feira, Terça-feira, Quarta-feira, Quinta-feira, Sexta-feira, Sábado]
     abbr_day_names: [Dom, Seg, Ter, Qua, Qui, Sex, Sab]
@@ -1113,6 +1113,9 @@ pt:
       - day
       - month
       - year
+    months:       ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
+    weekdays:     ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado']
+    weekdays_min: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab']
 
   time:
     formats:
@@ -1128,9 +1131,16 @@ pt:
       short_date: "%d de %B, %Y"
       #MarkUs ANT_LOG_DATE_TIME_FORMAT
       ant_date: "%d-%B-%Y_%I:%M"
-      locale_time: "h:mm tt"
-    am: 'am'
-    pm: 'pm'
+      locale_time: "HH:mm"
+    am:     "am"
+    pm:     "pm"
+    hour:   "Hora"
+    minute: "Minuto"
+    time:   "Tempo"
+    next:   "Seguinte"
+    prev:   "Anterior"
+    close:  "Fechar"
+    now:    "Atualmente"
 
   #app/views/assignments/_read.html.erb
   no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
