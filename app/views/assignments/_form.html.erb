@@ -15,8 +15,8 @@
   jQuery(document).ready(function() {
     function check() {
       var empty = false;
-      jQuery("input[required]").each(function(index) {
-        if (jQuery(this)[0].value == "") {
+      jQuery("input[required]").each(function() {
+        if (this.value == "") {
           empty = true;
         }
       });
