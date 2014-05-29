@@ -16,6 +16,7 @@
 
 #mobile_menu {
   background: $bg-color url(markus_logo_small.png) no-repeat center center;
+  border-bottom: 1px solid $lighter-blue;
   display: none;
   height: 3.5em;
   position: fixed;
@@ -43,7 +44,7 @@
 #menus {
   @include breakpoint(mobile) {
     @include transition(all, $time-medium);
-    background: $bg-color;
+    background: #000;
     height: 100%;
     opacity: 0;
     overflow: hidden;
@@ -55,8 +56,8 @@
 
   footer {
     background: $light-grey !important;
-    border-bottom: 1px solid $grey !important;
-    border-top: 1px solid $grey !important;
+    border-bottom: 1px solid $lighter-blue !important;
+    border-top: 1px solid $lighter-blue !important;
     display: none;
     padding: 1em;
 
@@ -68,6 +69,7 @@
 
 #menus_child {
   @include breakpoint(mobile) {
+    background: $bg-color;
     border-right: 1px solid $grey;
     height: 100%;
     overflow: auto;
@@ -107,8 +109,8 @@
 #sub_sub_menu {
   @include breakpoint(mobile) {
     background: $light-grey !important;
-    border-bottom: 1px solid $grey !important;
-    border-top: 1px solid $grey !important;
+    border-bottom: 1px solid $lighter-blue !important;
+    border-top: 1px solid $lighter-blue !important;
     display: block !important;
     margin: 0 0 1em 0 !important;
     padding: 0 !important;
@@ -145,7 +147,7 @@
     text-align: left;
 
     @include breakpoint(mobile) {
-      border-bottom: 1px solid $grey;
+      border-bottom: 1px solid $lighter-blue;
     }
   }
 
@@ -287,7 +289,7 @@
       @include border-radius(0);
       background: $light-grey;
       border: 0;
-      border-bottom: 1px solid $grey;
+      border-bottom: 1px solid $lighter-blue;
       display: block;
       opacity: 1;
       visibility: visible;
@@ -329,6 +331,9 @@
       width: 190px;
 
       @include breakpoint(mobile) {
+        font-size: 1em !important;
+        height: auto !important;
+        padding: 0.6em 0.75em !important;
         width: 100%;
       }
     }
@@ -378,6 +383,12 @@ span#choose_an_assignment {
 
   a {
     color: $grey;
+
+    @include breakpoint(mobile) {
+      font-size: 0.95em !important;
+      height: 36px !important;
+      padding: 0.8em 0.75em 0.8em 2em !important;
+    }
   }
 
   ul {
