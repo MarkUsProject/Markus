@@ -1,8 +1,4 @@
-/** PeriodLister Class
-
-Rules:
-- This class requires/assumes the Prototype javascript library
-**/
+/** PeriodLister Class */
 
 var PeriodDeltaChain = Class.create({
 
