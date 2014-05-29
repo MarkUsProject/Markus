@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="float_right">
-	                <%= submit_tag I18n.t('notes.save'), :disable_with => I18n.t('working'), :id => "notes_submit" %>
+	                <%= submit_tag I18n.t('notes.save'), :'data-disable-with' => I18n.t('working'), :id => "notes_submit" %>
 	                <button onclick="modalNotesGroup.close(); return false;">
 	                    <%= I18n.t(:cancel) %>
 	                </button>

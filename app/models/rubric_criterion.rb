@@ -1,5 +1,4 @@
-include CsvHelper
-require 'iconv'
+require 'encoding'
 
 class RubricCriterion < ActiveRecord::Base
   before_save :round_weight
@@ -77,7 +76,7 @@ class RubricCriterion < ActiveRecord::Base
   #
   # ===Returns:
   #
-  # Wether the save operation was successful or not.
+  # Whether the save operation was successful or not.
   def set_level_names(levels)
     levels.each_with_index do |level, index|
       self['level_' + index.to_s + '_name'] = level
@@ -91,7 +90,7 @@ class RubricCriterion < ActiveRecord::Base
   #
   # A string. See create_or_update_from_csv_row for format reference.
   def self.create_csv(assignment)
-    csv_string = CsvHelper::Csv.generate do |csv|
+    csv_string = CSV.generate do |csv|
       assignment.rubric_criteria.each do |criterion|
         criterion_array = [criterion.rubric_criterion_name,criterion.weight]
         (0..RUBRIC_LEVELS - 1).each do |i|
@@ -225,11 +224,9 @@ class RubricCriterion < ActiveRecord::Base
   # The number of successfully created criteria.
   def self.parse_csv(file, assignment, invalid_lines, encoding)
     nb_updates = 0
-    if encoding != nil
-      file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
-    end
-    CsvHelper::Csv.parse(file.read) do |row|
-      next if CsvHelper::Csv.generate_line(row).strip.empty?
+    file = file.utf8_encode(encoding)
+    CSV.parse(file) do |row|
+      next if CSV.generate_line(row).strip.empty?
       begin
         RubricCriterion.create_or_update_from_csv_row(row, assignment)
         nb_updates += 1
@@ -306,10 +303,8 @@ class RubricCriterion < ActiveRecord::Base
   # Returns an array containing the criterion names that didn't exist
   def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
     failures = []
-    if encoding != nil
-      csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents.read).join)
-    end
-    CsvHelper::Csv.parse(csv_file_contents) do |row|
+    csv_file_contents = csv_file_contents.utf8_encode encoding
+    CSV.parse(csv_file_contents) do |row|
       criterion_name = row.shift # Knocks the first item from array
       criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(assignment_id, criterion_name)
       if criterion.nil?

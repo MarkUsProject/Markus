@@ -14,13 +14,13 @@ gem 'rubyzip', '0.9.9'
 gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
-gem 'fastercsv', :platforms => :ruby_18
 gem 'dynamic_form'
 # FIXME: The 'exception_notification' gem version 4
 # is not compatible with Rails 3.0.x
 gem 'exception_notification', '<4.0'
 gem 'minitest',"4.7.5", :platforms => :ruby_20
 gem 'calendar_date_select', :git => 'git://github.com/paneq/calendar_date_select.git'
+gem 'auto_complete'
 gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
@@ -32,6 +32,7 @@ group :assets do
   gem 'coffee-rails', '~> 3.2.1'
   gem 'uglifier',     '>= 1.0.3'
   gem 'execjs'
+  gem 'libv8'
   gem 'therubyracer'
 end
 
@@ -64,10 +65,9 @@ end
 # for production.
 group :development, :test do
   gem 'rdoc'
-  gem 'iconv', :platforms => :mri_20
-  gem 'rcov', :platforms => :mri_18
-  gem 'simplecov', :platforms => [:mri_19,:mri_20]
-  # FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
+  gem 'thin'
+  gem 'simplecov'
+# FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
   # we have to fix before doing an upgrade
   gem 'shoulda', '<3.4'
   # FIXME: shoulda-matchers (>= 2) is incompatible with Ruby 1.8
@@ -78,9 +78,10 @@ group :development, :test do
   gem 'faker'
   gem 'railroady'
   gem 'time-warp'
-  gem 'ruby-debug', :platforms => :mri_18
-  gem 'debugger', :platforms =>  [:mri_19,:mri_20]
+  gem 'debugger', :platforms => :mri_19
+  gem 'byebug', :platforms => [:mri_20, :mri_21]
   gem 'mocha', :require => false
+  gem 'quiet_assets'
 end
 
 # If you  plan to use unicorn servers for production

@@ -12,16 +12,16 @@
 <div id="title_bar">
   <h1><%= I18n.t("flexible_criteria.criteria_management", :identifier => @assignment.short_identifier) %>
   </h1>
-  <div class="headingButtons">
+  <div class="heading_buttons">
     <%= link_to_function t("add_criterion"), %| if($('new_flexible_criterion') != null) {
           $('flexible_criterion_flexible_criterion_name').select();
           $('flexible_criterion_flexible_criterion_name').focus();
         } else {
         #{remote_function :url => {:action => "new", :id => @assignment.id}, :method => 'get'}
         }|%>
-    <span class="menu_bar" >|</span>
+    <span class="menu_bar"></span>
       <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
-    <span class="menu_bar" >|</span>
+    <span class="menu_bar"></span>
       <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
   </div>
 </div><!-- Title bar-->
@@ -56,7 +56,7 @@
   <%= t('flexible_criteria.upload.format_html') %>
   <%= t('csv_special_characters_html') %>
   <p>
-    <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
+    <%= f.submit t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
     <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
   </p>
   <% end %>

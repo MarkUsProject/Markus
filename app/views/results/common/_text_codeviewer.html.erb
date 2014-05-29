@@ -2,10 +2,9 @@
   Standby - Highlighting...
 </div>
 <pre id="code" name="code" class="<%=(@code_type)%>" cols="80" rows="50">
-<% # The "h" before the filetext allows us to escape HTML/Javascript strings %>
-<%= file_contents %>
+  <% # The "h" before the filetext allows us to escape HTML/Javascript strings %>
+  <%= file_contents %>
 </pre>
-
 
 <script type="text/javascript">
 //<![CDATA[
@@ -19,18 +18,15 @@
 
     <% if (defined? annots) %>
         <% annots.each do |annot| %>
-            add_annotation_text(<%=annot.annotation_text.id%>,
+          add_annotation_text(<%=annot.annotation_text.id%>,
             '<%=simple_format(escape_javascript(annot.annotation_text.content.to_s))%>');
-            add_annotation(<%=annot.id%>, $R(<%= annot.line_start %>, <%= annot.line_end %>),
-             '<%=annot.annotation_text.id%>');
-
+          add_annotation(<%=annot.id%>, $R(<%= annot.line_start %>, <%= annot.line_end %>),
+            '<%=annot.annotation_text.id%>');
         <% end %>
     <% end %>
-
 
     <% if !@focus_line.nil? %>
       focus_source_code_line(<%=@focus_line%>);
     <% end %>
 //]]>
 </script>
-

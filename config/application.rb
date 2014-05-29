@@ -16,11 +16,6 @@ module Markus
   # -- all .rb files in that directory are automatically loaded.
   # See Rails::Configuration for more options.
 
-  # Only load the plugins named here, in the order given. By default, all plugins
-  # in vendor/plugins are loaded in alphabetical order.
-  # :all can be used as a placeholder for all plugins not explicitly named
-  config.plugins = [ :auto_complete]
-
   # Javascripts files always loaded in views
   config.action_view.javascript_expansions[:defaults] = %w(prototype rails application )
 

@@ -1,4 +1,3 @@
-
 <% content_for :head do %>
   <%= javascript_include_tag 'Assignments/index' %>
 <% end %>
@@ -6,7 +5,6 @@
 <div id="title_bar"><h1><%= I18n.t(:manage_course_work) %></h1></div>
 
 <div class="wrapLeft">
-
   <%= render 'shared/flash_message' %>
 
   <%= link_to I18n.t(:create_new_assignment),
@@ -18,7 +16,7 @@
                 :action => 'new' },
               :class => 'button' %>
 
-  <div id="title_bar" class="headingButtons">
+  <div id="title_bar" class="heading_buttons">
     <%= link_to I18n.t(:upload), '#',
                 :onclick => 'modal_upload.open()' %> |
     <%= link_to I18n.t(:download), '#',
@@ -33,8 +31,8 @@
                     download_assignment_list_assignments_path(
                             :file_format => 'csv'),
                     :class => 'button' if @current_user.admin? %>
-      <br />
-      <br />
+      <br>
+      <br>
       <%= link_to t(:assignment_format, :file => 'yml'),
                     download_assignment_list_assignments_path(
                             :file_format => 'yml'),
@@ -80,7 +78,7 @@
 
 
 <div class="wrapLeft">
-<%= link_to I18n.t(:download_csv_grade_report),
+  <%= link_to I18n.t(:download_csv_grade_report),
             download_csv_grades_report_assignments_path() if @current_user.admin? %>
 </div>
 
@@ -88,7 +86,7 @@
 %>
 <% if @current_user.admin? %>
   <div class="wrapLeft">
-    <br />
+    <br>
     <%= render :partial => "grade_entry_forms/list_manage",
                :locals => { :action => 'edit' } -%>
   </div>

@@ -26,38 +26,45 @@
     %>
 
     <%= raw(f.label :short_identifier, t(:short_identifier).html_safe) %>
-    <%= raw(f.text_field :short_identifier) %><br />
+    <%= raw(f.text_field :short_identifier) %><br>
 
     <%= raw(f.label :description, t(:description)) %>
-    <%= raw(f.text_field :description) %><br />
+    <%= raw(f.text_field :description) %><br>
 
 
     <%= raw(f.label :message) %>
-    <%= raw(f.text_area :message, :rows => 8, :cols => 65) %><br />
+    <%= raw(f.text_area :message, :rows => 8, :cols => 65) %><br>
 
     <%= raw(f.label :date, t(:shortened_date).html_safe) %>
     <%= raw(f.calendar_date_select :date,
-                            {:year_range => 0.years.ago..1.years.from_now,
-	                           :locale => I18n.default_locale}) %>
+            {:year_range => 0.years.ago..1.years.from_now,
+             :locale => I18n.default_locale}) %>
     <%= raw(t(:iso_date_format_example)) %>
 
-<br />
+    <br>
 
     <%= raw(f.label :show_total, t('grade_entry_forms.show_total')) %>
-    <%= raw(f.check_box :show_total) %><br />
-    <br />
+    <%= raw(f.check_box :show_total) %><br>
+    <br>
 
     <h4><%= t('grade_entry_forms.specify_columns') %></h4>
-
     <% # Display the column names and totals
     %>
     <div id="grade_entry_items">
+      <% # Ensures there is at least one column whenever the form is loaded. %>
+      <% if @grade_entry_form.grade_entry_items.empty? %>
+        <%= render(:partial => 'grade_entry_item',
+                   :locals => {:form => f,
+                               :new_position => 0,
+                               :grade_entry_item => GradeEntryItem.new}) %>
+      <% end %>
+
       <% sort_items_by_position(@grade_entry_form.grade_entry_items).each_with_index do |item, index| %>
         <%= f.fields_for :grade_entry_items, item do |entry_item| %>
           <%= render :partial => 'grade_entry_item',
-            		   :locals => {:grade_entry_item => entry_item.object,
-                                   :new_position => index+1,
-                                   :form => f} %>
+                     :locals => {:grade_entry_item => entry_item.object,
+                                 :new_position => index + 1,
+                                 :form => f} %>
         <% end %>
       <% end %>
     </div>
@@ -70,7 +77,7 @@
 
 </fieldset>
 
-<%= f.submit  :disable_with => I18n.t('working') %>
+<%= f.submit  :'data-disable-with' => I18n.t('working') %>
 <% end %>
 
 </div>

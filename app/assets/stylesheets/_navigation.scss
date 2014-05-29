@@ -1,0 +1,287 @@
+/**
+ * This contains the styles for the header, menu, sub-menu,
+ * sub-sub-menu, and the footer.
+ */
+
+/* Header */
+
+#header {
+  border-bottom: 1px solid $light-blue;
+  padding: 0.5em 3.5em;
+  text-align: right;
+
+  @include breakpoint(small) {
+    text-align: left !important;
+  }
+}
+
+#user_info {
+  display: inline;
+  width: auto;
+}
+
+#user_name {
+  font-weight: 300;
+}
+
+#course {
+  display: inline;
+  float: left;
+  text-align: left;
+
+  @include breakpoint(small) {
+    float: none;
+    display: block;
+  }
+}
+
+#logo {
+  font-size: 0.875em;
+  margin: 5px 10px 10px 3.5em;
+
+  a {
+    padding: 5px;
+    font-size: 0.875em;
+    font-family: Lucida;
+  }
+}
+
+#switch_role_icon {
+  margin-top: -1em;
+  padding: 0 0.5em;
+  position: relative;
+  top: 0.3em;
+}
+
+
+/* Menus */
+
+#menu li,
+#sub_menu li,
+#sub_sub_menu li {
+  @include transition(all, 0.25s);
+  display: inline-block;
+  font-size: 1em;
+
+  a {
+    display: block;
+    height: 41px;
+    margin: 0;
+    padding: 0.85em;
+    text-align: center;
+    width: 12em;
+  }
+}
+
+#menu {
+  border-bottom: 2px solid $light-blue;
+  display: block;
+  height: auto;
+  list-style: none;
+  margin: -48px 0 0 0;
+  min-height: 42px;
+  padding: 0 0 0 160px;
+  width: 100%;
+
+  li {
+    background: #ccc;
+
+    a {
+      color: #003366;
+    }
+  }
+}
+
+#menu li:hover,
+#menu_active {
+  background: $light-blue !important;
+
+  a {
+    color: #fff !important;
+    font-weight: 600;
+  }
+}
+
+#dropdown {
+  list-style: none;
+  margin-right: 2.5em;
+  width: 15em;
+
+  ul.dropdown {
+    @include border-radius-bottom(10px);
+    background: $primary-color;
+    border: 1px solid $blue;
+    display: none;
+    left: 3.5em;
+    opacity: 0;
+    padding: 0;
+    position: absolute;
+    top: 107px;
+    visibility: hidden;
+    width: 15em;
+    z-index: 10;
+
+    li {
+      @include border-radius(0);
+
+      &:hover {
+        background: $light-blue;
+
+        a {
+          color: #fff !important;
+        }
+      }
+
+      &:last-child,
+      &:last-child #drop_down_current_assignment {
+        @include border-radius-bottom(10px);
+      }
+    }
+
+    a,
+    #drop_down_current_assignment {
+      color: $grey;
+      display: block;
+      height: auto;
+      margin: 0;
+      padding: 0.6em 0.75em;
+      text-align: left;
+      width: 190px;
+    }
+
+    #drop_down_current_assignment {
+      background: $light-blue;
+      color: $primary-color;
+      font-weight: 600;
+    }
+
+    .separator {
+      border-bottom: 1px solid #444;
+      margin: 0.5em 0;
+      width: 190px;
+    }
+  }
+}
+
+span#choose_an_assignment {
+  @include border-radius(10px);
+  background: $primary-color;
+  border: 1px solid $blue;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 400;
+  height: 2.5em;
+  margin-top: 4px;
+  padding: 0.55em 1em;
+  text-align: center;
+  width: 15em;
+}
+
+#dropdown:hover {
+  background: none !important;
+
+  ul.dropdown {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  #choose_an_assignment {
+    @include border-radius-bottom(0);
+    @include border-radius-top(10px);
+  }
+}
+
+#sub_menu,
+#sub_sub_menu {
+  display: block;
+  height: auto;
+  margin: 0;
+  padding-left: 3.5em;
+
+  a {
+    color: $grey;
+  }
+
+  ul {
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    @include border-radius-top(10px);
+  }
+}
+
+#sub_menu {
+  background: $light-blue;
+  min-height: 41px;
+
+  a {
+    color: $primary-color;
+  }
+
+  li:hover,
+  #sub_menu_active {
+    background: $primary-color;
+
+    a {
+      color: $grey !important;
+      font-weight: 600;
+    }
+  }
+}
+
+#sub_sub_menu {
+  background: $primary-color;
+  border-bottom: 2px solid $grey;
+
+  ul {
+    padding-top: 5px;
+  }
+
+  li:hover,
+  #sub_sub_menu_active {
+    @include border-radius-top(10px);
+    background: $grey;
+
+    a {
+      color: $primary-color;
+      font-weight: 600;
+    }
+  }
+}
+
+
+/* Footer */
+
+footer {
+  color: #777;
+  font-size: 0.95em;
+  padding: 2em;
+  text-align: center;
+
+  a {
+    color: #777;
+  }
+}
+
+#lang_chooser {
+  border-left: 1px solid #aaa;
+  margin: 0 0 0 1em;
+  padding-left: 1em;
+
+  select {
+    border: none;
+    color: #777;
+    margin: 0;
+  }
+}
+
+#issues {
+  border-left: 1px solid #aaa;
+  margin: 0 1em;
+  padding-left: 1em;
+}
