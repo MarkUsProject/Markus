@@ -20,14 +20,12 @@
           empty = true;
         }
       });
-      if (!empty) {
-        jQuery("input[type='submit']").removeAttr("disabled");
-      } else {
-        jQuery("input[type='submit']").attr("disabled", "disabled");
-      }
+
+      jQuery("input[type='submit']").prop("disabled", empty);
     }
 
     check();
+    jQuery("input[required]").change(check);
     jQuery("input[required]").keyup(check);
   });
 </script>
@@ -48,7 +46,7 @@
         <%= raw(f.text_field :short_identifier,
                              :onchange => "set_onbeforeunload(true);
                                $('assignment_repository_folder').setValue($(this).getValue());
-                               jQuery('input[required]').trigger('change')",
+                               jQuery('input[required]').change()",
                              :maxlength => 30,
                              :required => true) %><br>
       <% else %>
@@ -114,7 +112,7 @@
             :year_range => 0.years.ago..1.years.from_now,
             :id => "assignment_due_date",
             :onchange => "set_onbeforeunload(true);
-                          jQuery('input[required]').trigger('change')",
+                          jQuery('input[required]').change()",
             :required => true })%>
 
       <%= t(:iso_due_date_format_example) %><br>
