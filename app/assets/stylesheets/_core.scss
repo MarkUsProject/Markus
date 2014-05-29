@@ -140,8 +140,10 @@ button,
   display: inline-block;
   font-size: 1em;
   font-weight: 600;
+  min-width: 100px;
   outline: none;
   padding: 0.5em 2em;
+  text-align: center;
   text-decoration: none;
   text-shadow: 1px 1px 0 $primary-color;
 

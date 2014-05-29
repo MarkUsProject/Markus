@@ -46,6 +46,11 @@
     float: left;
   }
 
+  .left,
+  .right {
+    margin-top: 6px;
+  }
+
   .left {
     text-align: left;
     width: 20%;
@@ -119,7 +124,7 @@
 }
 
 li.annotation_category {
-  @include border-radius(10px);
+  @include border-radius(5px);
   background: #fff;
   border: 1px solid #ccc;
   color: $grey;
@@ -134,9 +139,10 @@ li.annotation_category {
 }
 
 .annotation_text_list {
-  background: #ddd;
-  border: 1px solid #000;
-  height: 350px;
+  @include border-radius(5px);
+  background: $light-grey;
+  border: 1px solid #aaa;
+  height: auto;
   margin: 0;
   overflow: auto;
   padding: 0;
@@ -146,15 +152,23 @@ li.annotation_category {
   li {
     background: #fff;
     border-bottom: 1px solid #aaa;
-    border-top: 1px solid #aaa;
     color: #464646;
     padding: 5px;
-  }
 
-  li:hover {
-    background: #fffc4;
-    color: #000;
-    cursor: pointer;
+    &:hover {
+      background: $light-grey;
+      color: #000;
+      cursor: pointer;
+    }
+
+    &:first-child {
+      @include border-radius-top(5px);
+    }
+
+    &:last-child {
+      @include border-radius-bottom(5px);
+      border: 0;
+    }
   }
 }
 
@@ -330,6 +344,11 @@ li.annotation_category {
   }
 }
 
+#next_button,
+#back_button {
+  min-width: 0;
+}
+
 /* Annotation summary list styles */
 
 #annotation_summary_list {
@@ -381,7 +400,7 @@ li.annotation_category {
 }
 
 .mark_tools {
-  margin-bottom: 1em;
+  margin: 1em 0;
   text-align: center;
 }
 
