@@ -105,7 +105,9 @@ class RubricsController < ApplicationController
     unless file.blank?
       begin
         rubrics = YAML::load(file.utf8_encode(encoding))
-      rescue ArgumentError => e
+      # ArgumentError is thrown by Syck in Ruby 1.* whereas Psych::SyntaxError
+      # is thrown by Psych in Ruby 2.*.
+      rescue ArgumentError, Psych::SyntaxError => e
         flash[:error] = I18n.t('rubric_criteria.upload.error') + '  ' +
            I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")
         redirect_to :action => 'index', :id => assignment.id
