@@ -68,7 +68,8 @@ function toggle_persist_groups(persist_groups) {
 function toggle_group_assignment(is_group_assignment) {
   jQuery('#is_group_assignment').prop('checked', is_group_assignment);
 
-  jQuery('.group_properties').prop('disabled', !is_group_assignment)
+  jQuery('.group_properties').toggle(is_group_assignment)
+                             .prop('disabled', !is_group_assignment)
                              .toggleClass('disable', !is_group_assignment);
   jQuery('#assignment_group_min').prop('disabled', !is_group_assignment);
   jQuery('#assignment_group_max').prop('disabled', !is_group_assignment);
@@ -96,7 +97,8 @@ function toggle_remark_requests(allow_remark_requests) {
   jQuery('#remark_due_date').prop('disabled', !allow_remark_requests);
   jQuery('#assignment_remark_message').prop('disabled', !allow_remark_requests);
 
-  jQuery('#remark_properties').toggleClass('disable', !allow_remark_requests);
+  jQuery('#remark_properties').toggle(allow_remark_requests)
+                              .toggleClass('disable', !allow_remark_requests);
 }
 
 /* This isn't being used yet... (needs to be converted to jQuery when it is) */

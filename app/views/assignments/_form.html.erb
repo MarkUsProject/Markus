@@ -222,7 +222,7 @@
                         t('assignment.group.work_in_groups'),
                         :class => 'checkbox_label') %>
     </p>
-    <fieldset class='group_properties disable' disabled>
+    <fieldset class='group_properties disable' style='display: none' disabled>
       <legend><%= t('assignment.group.properties') %></legend>
       <div id='group_properties'>
         <p id='student_form_groups_style'>
@@ -402,7 +402,9 @@
                       :for => 'allow_remarks') %>
     </p>
 
-    <div id='remark_properties' class="<%= 'disable' unless @assignment.allow_remarks %>">
+    <div id='remark_properties'
+         style="<%= 'display:none' unless @assignment.allow_remarks %>"
+         class="<%= 'disable' unless @assignment.allow_remarks %>">
       <div>
         <%= raw(f.label('remark_due_date',
                         t('assignment.remark.due_date'),
