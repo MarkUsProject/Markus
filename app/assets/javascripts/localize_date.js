@@ -13,8 +13,8 @@ function pad(number, length) {
 function get_timezone_offset() {
   var offset = new Date().getTimezoneOffset() / 60;
   offset = ((offset < 0 ? '+' : '-') +
-          pad(Math.abs(offset%60), 2) +
-          pad(parseInt(Math.abs(offset/60)), 2));
+            pad(Math.abs(offset%60), 2) +
+            pad(parseInt(Math.abs(offset/60)), 2));
   return offset;
 }
 
@@ -27,7 +27,7 @@ function convert_date_to_iso(date) {
 
 /** Localize the date, taking into account the time zone offset. */
 function localize_date(actual_date_div, date_div, language) {
-  if (actual_date_div.value != '') {
+  if (actual_date_div.value !== '') {
     var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     var offset = get_timezone_offset();
     date_div.value = new Date(actual_date_div.value + "T00:00" + offset).toLocaleString(language, options);

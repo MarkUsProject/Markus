@@ -28,6 +28,8 @@ jQuery(document).ready(function() {
     toggle_group_assignment(jQuery(this).is(':checked'));
   });
 
+  toggle_group_assignment(jQuery('#is_group_assignment').is(':checked'));
+
   jQuery('#student_form_groups').change(function() {
     toggle_student_form_groups(jQuery(this).is(':checked'));
   });
@@ -183,25 +185,25 @@ function change_submission_rule() {
   jQuery('.period').hide();
   jQuery('.period input').prop('disabled', true);
 
-  if (jQuery('#grace_period_submission_rule').is(':checked') == true) {
+  if (jQuery('#grace_period_submission_rule').is(':checked') === true) {
     jQuery('#grace_periods .period').show();
-    if (jQuery('#grace_periods .period').length == 0) {
+    if (jQuery('#grace_periods .period').length === 0) {
       jQuery('#grace_period_link').click();
     }
     jQuery('#grace_periods .period input').prop('disabled', false);
   }
 
-  if (jQuery('#penalty_decay_period_submission_rule').is(':checked') == true) {
+  if (jQuery('#penalty_decay_period_submission_rule').is(':checked') === true) {
     jQuery('#penalty_decay_periods .period').show();
-    if (jQuery('#penalty_decay_periods .period').length == 0) {
+    if (jQuery('#penalty_decay_periods .period').length === 0) {
       jQuery('#penalty_decay_period_link').click();
     }
     jQuery('#penalty_decay_periods .period input').prop('disabled', false);
   }
 
-  if (jQuery('#penalty_period_submission_rule').is(':checked') == true) {
+  if (jQuery('#penalty_period_submission_rule').is(':checked') === true) {
     jQuery('#penalty_periods .period').show();
-    if (jQuery('#penalty_periods .period').length == 0) {
+    if (jQuery('#penalty_periods .period').length === 0) {
       jQuery('#penalty_period_link').click();
     }
     jQuery('#penalty_periods .period input').prop('disabled', false);
@@ -209,7 +211,7 @@ function change_submission_rule() {
 }
 
 function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme_type, marking_scheme_type) {
-  if (is_assignment_new != true && clicked_marking_scheme_type != marking_scheme_type) {
+  if (is_assignment_new !== true && clicked_marking_scheme_type !== marking_scheme_type) {
     jQuery('#marking_scheme_notice').removeClass('hidden')
                                     .show();
   } else {
