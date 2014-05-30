@@ -98,8 +98,13 @@
               <%= due_date_f.text_field :section_id, :class => 'hidden' %>
               <%= due_date_f.label :due_date, t('due_date') %>
               <%= raw(f.text_field :due_date,
-                                   :id => 'section_due_date',
-                                   :class => 'datetimepicker') %>
+                                   :id => 'actual_section_due_date',
+                                   :class => 'hidden') %>
+              <%= text_field_tag 'section_due_date',
+                                 nil,
+                                 { :class => 'datetimepicker',
+                                   :onchange => 'set_onbeforeunload(true);',
+                                   :size => 30 } %>
             </p>
           <% end %>
         </div>
@@ -112,10 +117,14 @@
                       t('assignment.due_date'),
                       :class => 'required_field') %>
       <%= raw(f.text_field :due_date,
-                           :id => 'assignment_due_date',
-                           :class => 'datetimepicker',
+                           :id => 'actual_assignment_due_date',
+                           :class => 'hidden') %>
+      <%= text_field_tag 'assignment_due_date',
+                         nil,
+                         { :class => 'datetimepicker',
                            :onchange => 'set_onbeforeunload(true);',
-                           :required => true) %>
+                           :size => 30,
+                           :required => true } %>
     </div>
 
     <div>
@@ -411,9 +420,12 @@
                         t('assignment.remark.due_date'),
                         :class => 'inline_label')) %>
         <%= raw(f.text_field :remark_due_date,
-                             :id => 'remark_due_date',
-                             :class => 'datetimepicker',
-                             :disabled => !@assignment.allow_remarks) %>
+                             :id => 'actual_remark_due_date',
+                             :class => 'hidden') %>
+        <%= text_field_tag 'remark_due_date',
+                           nil,
+                           { :class => 'datetimepicker',
+                             :size => 30 } %>
       </div>
 
       <div>
@@ -423,8 +435,7 @@
         <%= raw(f.text_area :remark_message,
                             :rows => 8,
                             :cols => 65,
-                            :onchange => 'set_onbeforeunload(true);',
-                            :disabled => !@assignment.allow_remarks) %>
+                            :onchange => 'set_onbeforeunload(true);') %>
       </div>
     </div>
   </fieldset>
@@ -435,21 +446,69 @@
 <% end %>
 
 <script>
-  jQuery('.datetimepicker').datetimepicker({
-    numberOfMonths: 2,
-    minDateTime:  0,
-    secondMax:    0,
-    dateFormat:   "<%= raw I18n.t('date.formats.locale_date') %>",
-    timeFormat:   "<%= I18n.t('time.formats.locale_time') %>",
-    monthNames:   <%= raw I18n.t('date.months') %>,
-    dayNames:     <%= raw I18n.t('date.weekdays') %>,
-    dayNamesMin:  <%= raw I18n.t('date.weekdays_min') %>,
-    hourText:     "<%= I18n.t('time.hour') %>",
-    minuteText:   "<%= I18n.t('time.minute') %>",
-    timeText:     "<%= I18n.t('time.time') %>",
-    prevText:     "<%= I18n.t('time.prev') %>",
-    nextText:     "<%= I18n.t('time.next') %>",
-    closeText:    "<%= I18n.t('time.close') %>",
-    currentText:  "<%= I18n.t('time.now') %>"
+  jQuery('#section_due_date').datetimepicker({
+    altField:         '#actual_section_due_date',
+    altFieldTimeOnly: false,
+    altFormat:        'yy-mm-dd',
+    altTimeFormat:    'HH:mm',
+    numberOfMonths:   2,
+    minDateTime:      0,
+    secondMax:        0,
+    dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
+    timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+    monthNames:       <%= raw I18n.t('date.months') %>,
+    dayNames:         <%= raw I18n.t('date.weekdays') %>,
+    dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+    hourText:         "<%= I18n.t('time.hour') %>",
+    minuteText:       "<%= I18n.t('time.minute') %>",
+    timeText:         "<%= I18n.t('time.time') %>",
+    prevText:         "<%= I18n.t('time.prev') %>",
+    nextText:         "<%= I18n.t('time.next') %>",
+    closeText:        "<%= I18n.t('time.close') %>",
+    currentText:      "<%= I18n.t('time.now') %>"
+  });
+
+  jQuery('#assignment_due_date').datetimepicker({
+    altField:         '#actual_assignment_due_date',
+    altFieldTimeOnly: false,
+    altFormat:        'yy-mm-dd',
+    altTimeFormat:    'HH:mm',
+    numberOfMonths:   2,
+    minDateTime:      0,
+    secondMax:        0,
+    dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
+    timeFormat:       "<%= raw I18n.t('time.formats.locale_time') %>",
+    monthNames:       <%= raw I18n.t('date.months') %>,
+    dayNames:         <%= raw I18n.t('date.weekdays') %>,
+    dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+    hourText:         "<%= I18n.t('time.hour') %>",
+    minuteText:       "<%= I18n.t('time.minute') %>",
+    timeText:         "<%= I18n.t('time.time') %>",
+    prevText:         "<%= I18n.t('time.prev') %>",
+    nextText:         "<%= I18n.t('time.next') %>",
+    closeText:        "<%= I18n.t('time.close') %>",
+    currentText:      "<%= I18n.t('time.now') %>"
+  });
+
+  jQuery('#remark_due_date').datetimepicker({
+    altField:         '#actual_remark_due_date',
+    altFieldTimeOnly: false,
+    altFormat:        'yy-mm-dd',
+    altTimeFormat:    'HH:mm',
+    numberOfMonths:   2,
+    minDateTime:      0,
+    secondMax:        0,
+    dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
+    timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+    monthNames:       <%= raw I18n.t('date.months') %>,
+    dayNames:         <%= raw I18n.t('date.weekdays') %>,
+    dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+    hourText:         "<%= I18n.t('time.hour') %>",
+    minuteText:       "<%= I18n.t('time.minute') %>",
+    timeText:         "<%= I18n.t('time.time') %>",
+    prevText:         "<%= I18n.t('time.prev') %>",
+    nextText:         "<%= I18n.t('time.next') %>",
+    closeText:        "<%= I18n.t('time.close') %>",
+    currentText:      "<%= I18n.t('time.now') %>"
   });
 </script>

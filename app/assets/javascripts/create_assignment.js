@@ -1,11 +1,12 @@
-/**
- * Page-specific event handlers for assignments/new.html.erb
- */
-
 jQuery(document).ready(function() {
   // Localize the due dates
-  convert_date_to_locale(document.getElementById('assignment_due_date'));
-  convert_date_to_locale(document.getElementById('remark_due_date'));
+  var language = document.getElementById('locale').value;
+  localize_datetime(document.getElementById('actual_assignment_due_date'),
+                    document.getElementById('assignment_due_date'),
+                    language);
+  localize_datetime(document.getElementById('actual_remark_due_date'),
+                    document.getElementById('remark_due_date'),
+                    language);
 
   jQuery('#short_identifier').change(function() {
     jQuery("#assignment_repository_folder").val(jQuery(this).val());
@@ -35,26 +36,6 @@ jQuery(document).ready(function() {
     toggle_remark_requests(jQuery(this).is(':checked'));
   });
 });
-
-/** Convert a date to the ISO 8601 format.
-    Example: 2014-08-21 14:38:00 UTC -> 2014-08-27T14:38:00+0000 */
-function convert_date_to_iso(date) {
-  var arr_date = date.split(' ');
-  return arr_date[0] + 'T' + arr_date[1] + '+0000';
-}
-
-/** Convert a date in the given div to ISO 8601 format, then to a
-    localized format. */
-function convert_date_to_locale(date_div) {
-  if (date_div.value.indexOf('UTC') > -1) {
-    var language = document.getElementById('locale').value;
-    var options  = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-                     hour: 'numeric', minute: 'numeric', timeZoneName: 'short' };
-
-    var iso_date = convert_date_to_iso(date_div.value);
-    date_div.value = new Date(Date.parse(iso_date)).toLocaleString(language, options);
-  }
-}
 
 function toggle_persist_groups(persist_groups) {
   jQuery('#is_group_assignment').prop('disabled', persist_groups);
