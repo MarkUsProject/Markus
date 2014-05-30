@@ -1124,7 +1124,7 @@ dans la liste."
       short_date: "%d %B %Y"
       #MarkUs ANT_LOG_DATE_TIME_FORMAT
       ant_date: "%d-%B-%Y_%H:%M"
-      locale_time: "HH:mm"
+      locale_time: "HH:mm z"
     am:     "am"
     pm:     "pm"
     hour:   "Heure"

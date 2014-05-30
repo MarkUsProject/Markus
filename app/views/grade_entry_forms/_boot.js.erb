@@ -1,14 +1,11 @@
-<script type='text/javascript'>
+<script>
 //<![CDATA[
   jQuery(document).ready(function() {
+    var actual_date_div = document.getElementById('actual_date');
     var date_div = document.getElementById('date');
+    var language = document.getElementById('locale').value;
 
-    if (date_div.value != '') {
-      var language = document.getElementById('locale').value;
-      var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-
-      date_div.value = new Date(date_div.value).toLocaleString(language, options);
-    }
+    localize_date(actual_date_div, date_div, language);
   });
 //]]>
 </script>

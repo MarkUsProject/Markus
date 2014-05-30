@@ -114,7 +114,7 @@
   <table class='files' id='files'></table>
 </div>
 
-<script type='text/javascript'>
+<script>
   new PeriodicalExecuter(function() {
     new Ajax.Request('<%= update_converted_pdfs_assignment_submissions_path(@assignment, :grouping_id => @grouping.id) %>',
       {
