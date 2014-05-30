@@ -1097,6 +1097,7 @@ dans la liste."
       short_date: "%d %B %Y"
       locale_date: "DD d MM yy"
       locale_date_only: "DD d MM yy"
+      locale_repo_date: "d MM yy à"
 
     day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
     abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
@@ -1125,6 +1126,7 @@ dans la liste."
       #MarkUs ANT_LOG_DATE_TIME_FORMAT
       ant_date: "%d-%B-%Y_%H:%M"
       locale_time: "HH:mm"
+      locale_repo_time: "HH:mm"
     am:     "am"
     pm:     "pm"
     hour:   "Heure"

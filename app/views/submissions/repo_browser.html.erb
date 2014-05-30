@@ -31,13 +31,16 @@
       <div id='find_revision_error' class='error' style='display:none;'></div>
 
       <%= form_tag repo_browser_assignment_submission_path(
-                       @assignment.id,
-                       @grouping.id,
-                       :find_revision_by => 'revision_timestamp') do %>
-        <%= text_field_tag :revision_timestamp,
-                           @revision_timestamp,
-                           :id => 'revision_timestamp',
-                           :class => 'datetimepicker' %>
+                     @assignment.id,
+                     @grouping.id,
+                     :find_revision_by => 'actual_revision_timestamp') do %>
+        <%= text_field_tag 'actual_revision_timestamp',
+                           l(@revision_timestamp, :format => :long_date),
+                           :class => 'hidden' %>
+        <%= text_field_tag 'revision_timestamp',
+                           l(@revision_timestamp, :format => :long_date),
+                           { :class => 'datetimepicker',
+                             :size => 30 } %>
         <%= submit_tag I18n.t('browse_submissions.find_by_revision_timestamp') %>
       <% end %>
 
@@ -47,9 +50,9 @@
         <%= select_tag('revision_number',
                        options_for_select(@revisions_history.collect { |s|
                           [t('browse_submissions.revision_history',
-                           :num => s[:num]) +
-                              l(s[:date], :format => :long_date), s[:num]] },
-                                      @revision_number)) %>
+                           :num => s[:num]) + l(s[:date], :format => :long_date),
+                           s[:num]] },
+                          @revision_number)) %>
         <%= submit_tag I18n.t('browse_submissions.find_by_revision_number') %>
       <% end %>
     </fieldset>
@@ -89,8 +92,8 @@
     </div>
 
     <%= form_tag manually_collect_and_begin_grading_assignment_submission_path(
-                  :id => @grouping.id,
-                  :assignment_id => @assignment.id),
+                   :id => @grouping.id,
+                   :assignment_id => @assignment.id),
                  :remote => true do %>
       <%= hidden_field_tag 'current_revision_number', @revision_number %>
       <input type='submit' value='<%= I18n.t("browse_submissions.collect_and_grab") %>'
@@ -124,23 +127,25 @@
       }
     )
   }, 3)
-</script>
 
-<script>
-  jQuery('.datetimepicker').datetimepicker({
-    numberOfMonths: 2,
-    secondMax:    0,
-    dateFormat:   "<%= raw I18n.t('date.formats.locale_date') %>",
-    timeFormat:   "<%= I18n.t('time.formats.locale_time') %>",
-    monthNames:   <%= raw I18n.t('date.months') %>,
-    dayNames:     <%= raw I18n.t('date.weekdays') %>,
-    dayNamesMin:  <%= raw I18n.t('date.weekdays_min') %>,
-    hourText:     "<%= I18n.t('time.hour') %>",
-    minuteText:   "<%= I18n.t('time.minute') %>",
-    timeText:     "<%= I18n.t('time.time') %>",
-    prevText:     "<%= I18n.t('time.prev') %>",
-    nextText:     "<%= I18n.t('time.next') %>",
-    closeText:    "<%= I18n.t('time.close') %>",
-    currentText:  "<%= I18n.t('time.now') %>"
+  jQuery('#revision_timestamp').datetimepicker({
+    altField:         '#actual_revision_timestamp',
+    altFieldTimeOnly: false,
+    altFormat:        'yy-mm-dd',
+    altTimeFormat:    'HH:mm',
+    numberOfMonths:   2,
+    secondMax:        0,
+    dateFormat:       "<%= raw I18n.t('date.formats.locale_repo_date') %>",
+    timeFormat:       "<%= raw I18n.t('time.formats.locale_repo_time') %>",
+    monthNames:       <%= raw I18n.t('date.months') %>,
+    dayNames:         <%= raw I18n.t('date.weekdays') %>,
+    dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+    hourText:         "<%= I18n.t('time.hour') %>",
+    minuteText:       "<%= I18n.t('time.minute') %>",
+    timeText:         "<%= I18n.t('time.time') %>",
+    prevText:         "<%= I18n.t('time.prev') %>",
+    nextText:         "<%= I18n.t('time.next') %>",
+    closeText:        "<%= I18n.t('time.close') %>",
+    currentText:      "<%= I18n.t('time.now') %>"
   });
 </script>

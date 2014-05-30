@@ -1,4 +1,6 @@
-function pad(number, length){
+/** Pad number with leading 0s until it's length matches
+    the specified length. */
+function pad(number, length) {
   var str = "" + number;
   while (str.length < length) {
     str = '0' + str;
@@ -6,6 +8,8 @@ function pad(number, length){
   return str;
 }
 
+/** Get the time zone offset (from UTC) in hours.
+    Examples: -0400, +0630, etc. */
 function get_timezone_offset() {
   var offset = new Date().getTimezoneOffset() / 60;
   offset = ((offset < 0 ? '+' : '-') +

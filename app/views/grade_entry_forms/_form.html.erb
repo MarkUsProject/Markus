@@ -69,8 +69,7 @@
         <br>
 
         <h4><%= t('grade_entry_forms.specify_columns') %></h4>
-        <% # Display the column names and totals
-        %>
+        <% # Display the column names and totals %>
         <div id='grade_entry_items'>
           <% # Ensures there is at least one column whenever the form is loaded. %>
           <% if @grade_entry_form.grade_entry_items.empty? %>
@@ -103,16 +102,16 @@
 
 <script>
   jQuery('.datepicker').datepicker({
-    altField:     '#actual_date',
-    altFormat:    'yy-mm-dd',
+    altField:       '#actual_date',
+    altFormat:      'yy-mm-dd',
     numberOfMonths: 2,
-    minDateTime:  0,
-    secondMax:    0,
-    dateFormat:   "<%= raw I18n.t('date.formats.locale_date_only') %>",
-    monthNames:   <%= raw I18n.t('date.months') %>,
-    dayNames:     <%= raw I18n.t('date.weekdays') %>,
-    dayNamesMin:  <%= raw I18n.t('date.weekdays_min') %>,
-    prevText:     "<%= I18n.t('time.prev') %>",
-    nextText:     "<%= I18n.t('time.next') %>"
+    minDateTime:    0,
+    secondMax:      0,
+    dateFormat:     "<%= raw I18n.t('date.formats.locale_date_only') %>",
+    monthNames:     <%= raw I18n.t('date.months') %>,
+    dayNames:       <%= raw I18n.t('date.weekdays') %>,
+    dayNamesMin:    <%= raw I18n.t('date.weekdays_min') %>,
+    prevText:       "<%= I18n.t('time.prev') %>",
+    nextText:       "<%= I18n.t('time.next') %>"
   });
 </script>
