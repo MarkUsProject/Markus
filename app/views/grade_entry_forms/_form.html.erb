@@ -91,7 +91,8 @@
         </p>
     </fieldset>
 
-    <%= f.submit :'data-disable-with' => I18n.t('working') %>
+    <%= f.submit t('submit'),
+                 :'data-disable-with' => t('working') %>
   <% end %>
 </div>
 
@@ -100,7 +101,7 @@
     numberOfMonths: 2,
     minDateTime:  0,
     secondMax:    0,
-    dateFormat:   "<%= raw I18n.t('date.formats.locale_date') %>",
+    dateFormat:   "<%= raw I18n.t('date.formats.locale_date_only') %>",
     monthNames:   <%= raw I18n.t('date.months') %>,
     dayNames:     <%= raw I18n.t('date.weekdays') %>,
     dayNamesMin:  <%= raw I18n.t('date.weekdays_min') %>,

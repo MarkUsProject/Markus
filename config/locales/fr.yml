@@ -1096,6 +1096,7 @@ dans la liste."
       #MarkUs SHORT_DATE_TIME_FORMAT
       short_date: "%d %B %Y"
       locale_date: "DD d MM yy"
+      locale_date_only: "DD d MM yy"
 
     day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
     abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]

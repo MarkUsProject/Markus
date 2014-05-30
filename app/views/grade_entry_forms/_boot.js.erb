@@ -1,11 +1,14 @@
 <script type='text/javascript'>
 //<![CDATA[
   jQuery(document).ready(function() {
-    var language = document.getElementById('locale').value;
-    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-
     var date_div = document.getElementById('date');
-    date_div.value = new Date(date_div.value).toLocaleString(language, options);
+
+    if (date_div.value != '') {
+      var language = document.getElementById('locale').value;
+      var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+      date_div.value = new Date(date_div.value).toLocaleString(language, options);
+    }
   });
 //]]>
 </script>

@@ -36,11 +36,13 @@
         <%= raw(f.text_field :short_identifier,
                              :id => 'short_identifier',
                              :onchange => 'set_onbeforeunload(true);',
-                             :maxlength => 30) %>
+                             :maxlength => 30,
+                             :required => true) %>
       <% else %>
         <%= raw(f.text_field :short_identifier,
                              :onchange => 'set_onbeforeunload(true);',
-                             :maxlength => 30) %>
+                             :maxlength => 30,
+                             :required => true) %>
       <% end %>
     </div>
 
@@ -49,7 +51,8 @@
                       t('assignment.name'),
                       :class => 'required_field') %>
       <%= raw(f.text_field :description,
-                           :onchange => 'set_onbeforeunload(true);') %>
+                           :onchange => 'set_onbeforeunload(true);',
+                             :required => true) %>
     </div>
 
     <div>
@@ -63,7 +66,8 @@
     <div>
       <%= raw(f.label :repository_folder,
                       t(:repository_folder),
-                      :class => 'required_field') %>
+                      :class => 'required_field',
+                             :required => true) %>
       /
       <%= raw(f.text_field :repository_folder, :onchange => 'set_onbeforeunload(true);') %>
     </div>
@@ -109,7 +113,8 @@
       <%= raw(f.text_field :due_date,
                            :id => 'assignment_due_date',
                            :class => 'datetimepicker',
-                           :onchange => 'set_onbeforeunload(true);') %>
+                           :onchange => 'set_onbeforeunload(true);',
+                           :required => true) %>
     </div>
 
     <div>
