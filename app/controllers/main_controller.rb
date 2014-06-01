@@ -280,7 +280,7 @@ class MainController < ApplicationController
     clear_session
     cookies.delete :auth_token
     reset_session
-    redirect_to :action => 'login'
+    redirect_to :action => 'index'
   end
 
 private

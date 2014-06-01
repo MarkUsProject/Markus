@@ -29,11 +29,13 @@
   }
 
   #menu_icon {
-    color: $light-blue;
+    color: $blue;
     cursor: pointer;
+    display: inline-block;
     font-size: 2.5em;
+    height: 2.75rem;
     line-height: 1.25em;
-    padding: 0.5em;
+    padding: 0 0.5em;
 
     &::before {
       content: "≡";

@@ -222,16 +222,15 @@ th.center {
 
 td {
   border: none;
-  border-bottom: 1px solid #ccc;
   padding: 0.5em 3px;
   margin-left: 2px;
 
-  p {
-    margin: 0.5em 0 0 0;
-  }
-
   &.center {
     text-align: center;
+  }
+
+  p {
+    margin: 0.5em 0 0 0;
   }
 }
 
@@ -251,6 +250,11 @@ td.note {
 
 tbody tr {
   @include transition(all, $time-quick);
+  border-bottom: 1px solid #ccc;
+
+  &:first-child {
+    border-top: 1px solid #ccc;
+  }
 
   &:hover {
     background: #ececec;
@@ -341,61 +345,6 @@ table.display {
   text-align: right;
 }
 
-/*
-Max width before this PARTICULAR table gets nasty
-This query will take effect for any screen smaller than 760px
-and also iPads specifically.
-*/
-// @media only screen and (max-width: 500px), (min-device-width: 500px) and (max-device-width: 500px)  {
-
-//   /* Force table to not be like tables anymore */
-//   table, thead, tbody, th, td, tr {
-//     display: block;
-//   }
-
-//   /* Hide table headers (but not display: none;, for accessibility) */
-//   thead tr {
-//     position: absolute;
-//     top: -3000em;
-//     left: -3000em;
-//   }
-
-//   tr {
-//     border: 1px solid #ccc;
-//   }
-
-//   td {
-//     /* Behave  like a "row" */
-//     border: none;
-//     border-bottom: 1px solid #eee;
-//     position: relative;
-//     padding: 0.5em 0.5em 0.5em 50%;
-//     min-height: 2.5em;
-//     width: 100% !important;
-//   }
-
-//   td:last-child {
-//     border-bottom: none;
-//   }
-
-//   td:before {
-//     /* Now like a table header */
-//     position: absolute;
-//     /* Top/left values mimic padding */
-//     top: 6px;
-//     left: 6px;
-//     width: 45%;
-//     padding-right: 10px;
-//     white-space: nowrap;
-//   }
-
-//   /*
-//   Label the data
-//   */
-//   // td:nth-of-type(1):before { content: "Name"; }
-//   // td:nth-of-type(2):before { content: "Due Date"; }
-//   // td:nth-of-type(3):before { content: "Results"; }
-// }
 
 /* Pagination nested */
 
@@ -1539,7 +1488,9 @@ pre#test_result_content {
 }
 
 .assignment_summary {
-  background-color: #f4f4f4;
+  @include border-radius(5px);
+  background-color: $light-grey;
+  border: 1px solid $light-blue;
   display: inline-block;
   margin: 20px;
   padding: 20px;
@@ -1555,7 +1506,7 @@ pre#test_result_content {
     display: inline-block;
     margin-left: 15px;
     vertical-align: top;
-    width: auto;
+    width: 250px;
   }
 
   .title {
@@ -1577,9 +1528,15 @@ pre#test_result_content {
     }
   }
 
-  table tr td {
-    border-bottom: none;
-    padding-right: 10px;
+  table {
+    tr {
+      border: none;
+
+      td {
+        border: none;
+        padding-right: 10px;
+      }
+    }
   }
 
   ul {
