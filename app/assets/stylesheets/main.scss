@@ -1544,34 +1544,6 @@ pre#test_result_content {
   margin-left: 60px;
 }
 
-
-/* styles specific to the graphs on the dashboard */
-
-.bluff-tooltip {
-  background: $primary-color;
-  border: 1px solid #000;
-  margin: 0;
-  padding: 0;
-
-  span {
-    display: none;
-
-    &.label {
-      display: inline;
-      float: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    &.data {
-      display: inline;
-      float: none;
-      margin: 0;
-      padding: 0;
-    }
-  }
-}
-
 #current_time {
   padding: 0 0 10px 0;
 }
