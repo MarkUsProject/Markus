@@ -1,26 +1,21 @@
-/**
- * page specific event handlers for grader/index.html.erb
- */
-document.observe("dom:loaded", function() {
-// jQuery(document).ready(function () {
+/** Page- specific event handlers for grader/index.html.erb */
 
-  new Form.Element.EventObserver('assign_criteria', function(element, value) {
-
-    var value = value || false;
-    var url = element.readAttribute('data-action');
+jQuery(document).ready(function () {
+  jQuery('#assign_criteria').change(function() {
+    var path = this.readAttribute('data-action');
 
     var params = {
-      'value': value,
+      'value': this.value || false,
       'authenticity_token': AUTH_TOKEN
     }
 
-    new Ajax.Request(url, {
-      asynchronous: true,
-      evalScripts: true,
-      parameters: params
-    })
-  })
-
+    jQuery.ajax({
+      url: path,
+      type: 'POST',
+      async: true,
+      data: params
+    });
+  });
 });
 
 function populate(json_data) {
@@ -39,9 +34,9 @@ function populate_criteria(json_data) {
 }
 
 function filter(filter_name) {
-  $('loading_list').show();
+  document.getElementById('loading_list').style.display = '';
   try {
-    switch(filter_name) {
+    switch (filter_name) {
       case 'validated':
       case 'unvalidated':
         groupings_table.filter_only_by(filter_name).render();
@@ -55,11 +50,10 @@ function filter(filter_name) {
       default:
         groupings_table.clear_filters().render();
     }
-  }
-  catch (e) {
+  } catch (e) {
     alert(e);
   }
-  $('loading_list').hide();
+  document.getElementById('loading_list').style.display = 'none';
 }
 
 function modify_grader(grader_json) {
@@ -78,11 +72,12 @@ function modify_grouping(grouping_json, focus_after) {
   var grouping = grouping_json.evalJSON();
   groupings_table.write_row(grouping.id, grouping);
   groupings_table.resort_rows().render();
-  if(focus_after) {
+  if (focus_after) {
     groupings_table.focus_row(grouping.id);
   }
 }
 
+// TODO: Switch to jQuery
 function modify_groupings(groupings_json) {
   var groupings = $H(groupings_json.evalJSON());
   groupings.each(function(grouping_record) {
@@ -116,19 +111,18 @@ function remove_groupings(grouping_ids_json) {
 }
 
 function thinking() {
-  $('global_action_form').disable();
-  $('loading_list').show();
+  document.getElementById('global_action_form').disabled = true;
+  document.getElementById('loading_list').style.display = '';
 }
 
 function done_thinking() {
-  $('global_action_form').enable();
-  $('loading_list').hide();
+  document.getElementById('global_action_form').disabled = false;
+  document.getElementById('loading_list').style.display = 'none';
 }
 
 function press_on_enter(event, element_id) {
-  if (event.keyCode == 13)
-  {
-    $(element_id).click();
+  if (event.keyCode == 13) {
+    jQuery(element_id).click();
     return false;
   }
 }
@@ -149,23 +143,20 @@ function stop_submit(event) {
 }
 
 function clear_all() {
-  cbox=document.getElementsByTagName('INPUT');
-  for (i=0; i<cbox.length; i++){
-    if (cbox[i].name != 'assign_groups' && cbox[i].name != 'assign_criteria')
-    cbox[i].checked = null;
+  cbox = document.getElementsByTagName('input');
+  for (var i = 0; i < cbox.length; i++) {
+    if (cbox[i].name != 'assign_groups' && cbox[i].name != 'assign_criteria') {
+      cbox[i].checked = null;
+    }
   }
 }
 
-function check_all (prefix, check) {
-  cbox=document.getElementsByTagName('INPUT');
-  for (i = 0; i < cbox.length; i++){
-    if (cbox[i].type == 'checkbox'){
+function check_all(prefix, check) {
+  cbox = document.getElementsByTagName('input');
+  for (var i = 0; i < cbox.length; i++) {
+    if (cbox[i].type == 'checkbox') {
       if (cbox[i].name.split('_')[0] == prefix) {
-        if (check == true) {
-          cbox[i].checked = true;
-        } else {
-          cbox[i].checked = null;
-        }
+        cbox[i].checked = check;
       }
     }
   }

@@ -1,4 +1,4 @@
-document.observe('dom:loaded', function () {
+jQuery(document).ready(function() {
 
   // Prevent the enter key from releasing grades
   preventEnterSubmit();
@@ -23,23 +23,23 @@ document.observe('dom:loaded', function () {
 
   // select the target node, which is 'content' in our case. This is the highest level
   // DOM with an ID that contains the grades table
-  var target = document.querySelector('#content');
+  var target = document.getElementById('content');
 
   // create an observer instance
   var observer = new MutationObserver(function (mutations) {
-      // For any mutation observed, call bindEventToGradeEntry();
-      mutations.forEach(function (mutation) {
+    // For any mutation observed, call bindEventToGradeEntry();
+    mutations.forEach(function (mutation) {
 
-          // We only want bindEventToGradeEntry() to be called only when it hasn't been
-          // called on a set of grade boxes already. To accomplish this, check if an
-          // attribute exists in the table. If it exists, we called bindEventToGradeEntry()
-          // already. If not, call bindEventToGradeEntry(), then add the attribute.
-          var attr = $('grades').attributes["bound"];
-          if (attr == undefined) {
-              $('grades').attributes['bound'] = 'true';
-              bindEventToGradeEntry();
-          }
-      });
+      // We only want bindEventToGradeEntry() to be called only when it hasn't been
+      // called on a set of grade boxes already. To accomplish this, check if an
+      // attribute exists in the table. If it exists, we called bindEventToGradeEntry()
+      // already. If not, call bindEventToGradeEntry(), then add the attribute.
+      var attr = jQuery('#grades').attr('bound');
+      if (attr == undefined) {
+        jQuery('#grades').attr('bound', 'true');
+        bindEventToGradeEntry();
+      }
+    });
   });
 
   // configuration of the observer: we want to detect changes to the subtree (when the
@@ -67,8 +67,8 @@ function preventEnterSubmit(){
  */
 function update_cell(cell, value) {
   // If the cell exists, change it's value to the one supplied
-  if ($(cell)) {
-    $(cell).value = value;
+  if (jQuery(cell)) {
+    jQuery(cell).val(value);
   }
 }
 
@@ -77,21 +77,21 @@ function update_cell(cell, value) {
  * the grade when it is changed.
  */
 function bindEventToGradeEntry() {
-  $$('.grade-input').each(function (item) {
-    new Form.Element.EventObserver(item, function (element, value) {
-
-      var url = element.readAttribute('data-action');
+  jQuery'.grade-input').each(function(index) {
+    $(this).change(function() {
+      var path = this.readAttribute('data-action');
       var params = {
-          'updated_grade': value,
-          'student_id': element.readAttribute('data-student-id'),
-          'grade_entry_item_id': element.readAttribute('data-grade-entry-item-id'),
-          'authenticity_token': AUTH_TOKEN
+        'updated_grade': this.value,
+        'student_id': this.readAttribute('data-student-id'),
+        'grade_entry_item_id': this.readAttribute('data-grade-entry-item-id'),
+        'authenticity_token': AUTH_TOKEN
       }
 
-      new Ajax.Request(url, {
-          asynchronous: true,
-          evalScripts: true,
-          parameters: params
+      jQuery.ajax({
+        url: path,
+        type: 'POST',
+        async: true,
+        data: params
       });
     });
   });
