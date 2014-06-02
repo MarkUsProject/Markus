@@ -65,8 +65,6 @@ group :development, :test do
   gem 'rdoc'
   gem 'thin'
   gem 'simplecov'
-# FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
-  # we have to fix before doing an upgrade
   gem 'shoulda'
   gem 'machinist', '< 2'
   gem 'faker'
