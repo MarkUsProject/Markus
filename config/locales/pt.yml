@@ -109,6 +109,7 @@ pt:
     collect_submissions:
       collect_all: "Coletar todas as submissões"
       collect_ta: "Coletar todas as submissões atribuidos à você"
+      disable_collect: "Coleta de submissões desabilitada, já existe um monitor avaliando as submissões exibidas."
       could_not_collect: "Não foi possível coletar todas as submissões para o projeto %{assignment_identifier} - a data da coleta não foi atingida"
       collection_job_started: "Coleta das submissões para o projeto %{assignment_identifier} começou. O processo pode demorar, você poderá acessar as submissões assim que elas tornarem-se disponíveis."
       priority_given: "A submissão foi dada prioridade de coleta. Ela estará pronta em breve."
