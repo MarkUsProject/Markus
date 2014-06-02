@@ -5,15 +5,14 @@
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
   <%= stylesheet_link_tag 'main.css', :media => 'all' %>
   <%= javascript_include_tag :defaults -%>
-  <%= javascript_include_tag 'menu.js' -%>
   <%= yield :head %>
 </head>
 <body>
-  <div id="<%= if (controller.action_name == 'login') then
+  <div id='<%= if (controller.action_name == 'login') then
                 "loggedOut"
                else
                 "loggedIn"
-               end %>">
+               end %>'>
 
     <%= render :partial => 'layouts/header' unless controller.action_name == 'login' %>
     <%= render :partial => 'layouts/menu' unless controller.action_name == 'login' %>
@@ -21,11 +20,13 @@
     <%= render :partial => 'layouts/about' %>
     <%= render :partial => 'layouts/redirect' %>
 
-    <div id="content">
-       <%= yield :layout %>
+    <div id='content'>
+      <%= yield :layout %>
     </div><!-- Content -->
   </div>
 
-  <%= render 'layouts/redirect', :formats => [:js], :handlers => [:erb] %>
+  <%= render 'layouts/redirect',
+             :formats => [:js],
+             :handlers => [:erb] %>
 </body>
 </html>
