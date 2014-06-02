@@ -15,9 +15,7 @@ gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
 gem 'dynamic_form'
-# FIXME: The 'exception_notification' gem version 4
-# is not compatible with Rails 3.0.x
-gem 'exception_notification', '<4.0'
+gem 'exception_notification'
 gem 'minitest',"4.7.5", :platforms => :ruby_20
 gem 'calendar_date_select', :git => 'git://github.com/paneq/calendar_date_select.git'
 gem 'auto_complete'
