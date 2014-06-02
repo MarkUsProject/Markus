@@ -42,8 +42,8 @@
       <% end %>
 
       <% if @grade_entry_form.show_total %>
-        <td class="student_total">
-          <div class="total_value" style="display:inline-block;">
+        <td class='student_total'>
+          <div class='total_value'>
             <%= text_field_tag 'total_' + student.id.to_s,
                 grade_entry_student.total_grade,
                 :size => 4, :disabled => true %>

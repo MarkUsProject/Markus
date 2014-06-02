@@ -1593,3 +1593,8 @@ pre#test_result_content {
   top: 50%;
   width: 100%;
 }
+
+/* Hiding spreadsheets totals */
+.hide_total .total_value {
+  display: none;
+}
