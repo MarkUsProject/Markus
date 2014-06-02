@@ -74,6 +74,7 @@ group :development, :test do
   # Remove next line once MarkUs will not support Ruby 1.8,
   # as shoulda-matchers is a dependency of shoulda
   gem 'shoulda-matchers', '~>1.5'
+  gem 'shoulda-context', '~> 1.1.6'
   gem 'machinist', '< 2'
   gem 'faker'
   gem 'railroady'
