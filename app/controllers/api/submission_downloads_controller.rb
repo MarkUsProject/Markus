@@ -1,5 +1,5 @@
 module Api
-  require 'zip/zip'
+  require 'zip'
 
   # Allows for downloading of submission files and their annotations
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
@@ -77,7 +77,7 @@ module Api
           send_data file_contents, :disposition => 'inline', :filename => file.filename
         else
           # Otherwise zip up the requested submission files
-          Zip::ZipFile.open("tmp/#{zip_name}", Zip::ZipFile::CREATE) do |zipfile|
+          Zip::File.open("tmp/#{zip_name}", Zip::File::CREATE) do |zipfile|
             unless zipfile.find_entry(file.path)
               zipfile.mkdir(file.path)
             end

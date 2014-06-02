@@ -1,4 +1,4 @@
-require 'zip/zip'
+require 'zip'
 require 'cgi'
 
 class SubmissionsController < ApplicationController
@@ -726,7 +726,7 @@ class SubmissionsController < ApplicationController
     groupings = Grouping.find(grouping_ids)
 
     ## build the zip file
-    Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zip_file|
+    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
 
       groupings.map do |grouping|
 
@@ -788,7 +788,7 @@ class SubmissionsController < ApplicationController
         return
       end
       # Open Zip file and fill it with all the files in the repo_folder
-      Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zip_file|
+      Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
 
         files = @revision.files_at_path(full_path)
         if files.count == 0

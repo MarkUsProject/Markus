@@ -552,7 +552,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@grouping.group.group_name}_r#{@grouping.group.repo.
                   get_latest_revision.revision_number}.zip"
-          Zip::ZipFile.open(zip_path) do |zip_file|
+          Zip::File.open(zip_path) do |zip_file|
             file1_path = File.join("#{@assignment.repository_folder}-" +
                                        "#{@grouping.group.repo_name}",
                                    @file1_name)
@@ -625,7 +625,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :success
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@admin.user_name}.zip"
-          Zip::ZipFile.open(zip_path) do |zip_file|
+          Zip::File.open(zip_path) do |zip_file|
             (1..3).to_a.each do |i|
               instance_variable_set(:"@file#{i}_path", File.join(
                   "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
@@ -646,7 +646,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :success
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@ta.user_name}.zip"
-          Zip::ZipFile.open(zip_path) do |zip_file|
+          Zip::File.open(zip_path) do |zip_file|
             (1..3).to_a.each do |i|
               instance_variable_set(:"@file#{i}_path", File.join(
                   "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",

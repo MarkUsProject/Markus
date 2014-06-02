@@ -240,7 +240,7 @@ class ResultsController < ApplicationController
 
     files = submission.submission_files
 
-    Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zip_file|
+    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       files.each do |file|
         begin
           if params[:include_annotations] == 'true' && !file.is_supported_image?

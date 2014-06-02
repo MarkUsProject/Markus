@@ -120,7 +120,7 @@ GEM
       json (~> 1.4)
     ref (1.0.5)
     rghost (0.9.4)
-    rubyzip (0.9.9)
+    rubyzip (1.1.4)
     sass (3.3.8)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -196,7 +196,7 @@ DEPENDENCIES
   rails (= 3.2.18)
   rdoc
   rghost
-  rubyzip (= 0.9.9)
+  rubyzip
   sass-rails (~> 3.2.3)
   shoulda
   simplecov
