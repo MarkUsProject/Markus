@@ -23,7 +23,7 @@ jQuery(document).ready(function() {
   jQuery('#released').change(function() {
     var path = this.readAttribute('data-action');
     var params = {
-      'value': jQuery(this).is(':checked') || '',
+      'value': this.checked || '',
       'authenticity_token': AUTH_TOKEN
     }
 
