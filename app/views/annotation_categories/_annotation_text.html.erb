@@ -16,7 +16,7 @@
     :remote => true %>
 </div>
 <div class="annotation_text_authors">
-  <p><%= t("annotations.created_by") %> 
+  <p><%= t("annotations.created_by") %>
     <% if annotation_text.get_creator.nil? %>
       <%= "N/A" %>
     <% else %>
@@ -25,7 +25,7 @@
   </p>
 </div>
 <div class="annotation_text_authors">
-  <p><%= t("annotations.last_edited_by") %>  
+  <p><%= t("annotations.last_edited_by") %>
     <% if annotation_text.get_last_editor.nil? %>
       <%= "N/A" %>
     <% else %>
@@ -41,7 +41,7 @@
              :method => 'put',
 	     :remote => true do |f| %>
   <%= f.text_area(:content, :size => "50x5") %>
-  <%= f.submit t(:save) , :disable_with => I18n.t('working')%>
+  <%= f.submit t(:save) , :'data-disable-with' => I18n.t('working')%>
     <input type="reset" value="<%= t(:cancel) %>"
            onclick="jQuery('#annotation_text_' + <%= annotation_text.id %> + '_edit').hide();
              jQuery('#annotation_text_' + <%= annotation_text.id %> + '_control').show();">

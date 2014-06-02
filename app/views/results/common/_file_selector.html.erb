@@ -11,7 +11,7 @@
                      @grouping.current_submission_used.get_latest_result.id),
              :class => 'download_zip') do %>
   <%= label_tag "select_file_id", I18n.t("common.submission_file"), :class => "inline_label" %>
-  <input type="button" onclick="bump_select($('select_file_id'), -1,back_button,next_button); return false;" value="<-" id="back_button" disabled/>
+  <input type="button" onclick="bump_select($('select_file_id'), -1,back_button,next_button); return false;" value="←" id="back_button" disabled>
   <select id="select_file_id" name="select_file_id" onchange="bump_select($('select_file_id'), 0,back_button,next_button); if ($(this).getValue() != '') { load_submitted_file($(this).getValue()); }">
     <% if files.empty? %>
       <option value=""><%= I18n.t("common.no_file_in_repository") %></option>
@@ -22,7 +22,7 @@
         </option>
     <% end %>
   </select>
-  <input type="button" onclick="bump_select($('select_file_id'), 1,back_button,next_button); return false;" value="->" id="next_button"/>
+  <input type="button" onclick="bump_select($('select_file_id'), 1,back_button,next_button); return false;" value="→" id="next_button">
   <span id="loading_code" style="display:none;">
     <%=image_tag('spinner.gif')%> <%= I18n.t("common.loading_code") %>
   </span>

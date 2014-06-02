@@ -653,6 +653,33 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @groupings = @assignment.groupings.all(:order => 'id ASC')
             end
 
+            should 'have two separate edit forms with correct actions for' +
+                   'overall comment and overall remark comment respectively' do
+              # Use a released result as the original result.
+              original_result = @result
+              submission = original_result.submission
+
+              # Create a remark result associated with the created submission.
+              remark_result = Result.make(:submission => submission)
+              submission.remark_result_id = remark_result.id
+              submission.save!
+
+              get_as @admin,
+                     :edit,
+                     :assignment_id => @assignment.id,
+                     :submission_id => submission.id,
+                     :id => remark_result.id
+
+              path_prefix = "/en/assignments/#{@assignment.id}" +
+                            "/submissions/#{submission.id}/results"
+              assert_select '#overall_comment_edit form[action=' +
+                            "#{path_prefix}/#{original_result.id}" +
+                            '/update_overall_comment]'
+              assert_select '#overall_remark_comment_edit form[action=' +
+                            "#{path_prefix}/#{remark_result.id}" +
+                            '/update_overall_remark_comment]'
+            end
+
             should 'edit third result' do
 
               @result = @groupings[0].current_submission_used.get_latest_result
