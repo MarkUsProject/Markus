@@ -191,6 +191,13 @@ module Repository
     def get_revision_by_timestamp(target_timestamp, path = nil)
       # returns a Git instance representing the revision at the 
       # current timestamp, should be a ruby time stamp instance
+      walker = Rugged::Walker.new(@repo)
+      walker.push(@repo.head.target)
+      walker.each do |c|
+        if c.time <= target_timestamp
+          return c
+        end
+      end
     end
 
     # Returns a Repository::TransAction object, to work with. Do operations,
