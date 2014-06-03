@@ -1,5 +1,5 @@
-<script text="text/javascript">
-  //<![CDATA[
+<script>
+//<![CDATA[
   // After DOM is loaded, load up the first submitted file
   jQuery(document).ready(function () {
     <% if !first_file.nil? %>
@@ -7,9 +7,9 @@
     <% end %>
 
     // Set up the divider
-    init_content_width   = document.getElementById("content").offsetWidth;
-    init_code_pane_width = document.getElementById("code_pane").offsetWidth;
-    setup_divider(document.getElementById("code_pane"), document.getElementById("pane_divider"));
+    init_content_width   = document.getElementById('content').offsetWidth;
+    init_code_pane_width = document.getElementById('code_pane').offsetWidth;
+    setup_divider(document.getElementById('code_pane'), document.getElementById('pane_divider'));
   });
 //]]>
 </script>

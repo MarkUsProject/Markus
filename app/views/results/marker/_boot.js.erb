@@ -1,5 +1,5 @@
-<script type="text/javascript">
-  //<![CDATA[
+<script>
+//<![CDATA[
   jQuery(document).ready(function () {
     // After DOM is loaded, load up the first submitted file
     <% if !first_file.nil? %>
@@ -20,14 +20,14 @@
     modal = new Control.Modal(document.getElementById('create_annotation_dialog'), { fade: false });
   });
 
-  Event.observe(window, 'load', function() {
+  window.onload = function() {
     <% @mark_criteria.each do |criterion| %>
       <% if criterion.has_associated_ta?(@current_user) %>
-        $('mark_criterion_' + <%= criterion.id %>).addClassName('assigned');
+        jQuery('#mark_criterion_' + <%= criterion.id %>).addClass('assigned');
       <% elsif @current_user.type == "Ta" %>
         hide_criterion(<%= criterion.id %>);
       <% end %>
     <% end %>
-  });
-  //]]>
+  };
+//]]>
 </script>
