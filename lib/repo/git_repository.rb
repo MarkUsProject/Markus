@@ -636,38 +636,35 @@ module Repository
     end
 
     # Return all of the files in this repository at the root directory
-    # *** Not sure if using path is best here, maybe use repo instead?
-    #
-    # method not thoroughly tested!!
-    #
-    # returns a index object, consult rugged docs for available methods
-    def files_at_path(path)
+    def files_at_path(repo)
       begin 
-        #debugger
-        return Rugged::Index.new(path)
+        files = []
+      
+        repos.index.each do |c|
+          files << c[:path]
+        end
+      
         #exception should be cast if file is not found
       rescue Exception
         raise Repository::FileDoesNotExistConflict
+        return nil
       end
+
+      return files
     end
 
     # returns true if the file at the given path exists for the
     # class's revision_number (commit name)
     #
-    # method not thoroughly tested!!
-    #
     # erros with this function can occur with files are incorrectly
     # added and the git config file is not updated
     def path_exists?(path)
       begin 
-        # exist in the file system?
-        File.directory?(path)
-        # we could use index to see if it is in the staging area
-        #index = Rugged::Index.new(path)
-        # Re-read the index file from disk.
-        #index.reload
+        # if path exists in the git repository 
+        # discover should not give an error
+        Rugged::Repository.discover(path)
         return true
-        #exception should be cast if file is not found
+        #exception should be cast if path is not found
       rescue Exception
         raise Repository::FileDoesNotExistConflict # I don't think raise an exception is needed
         return false
