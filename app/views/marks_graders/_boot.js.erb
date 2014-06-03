@@ -130,6 +130,15 @@
       }
     });
 
+    // jQuery.ajax({
+    //   url: '<%= populate_graders_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
+    //   async: true,
+    //   data: { 'authenticity_token': AUTH_TOKEN },
+    //   type: 'POST'
+    // }).done(function() {
+    //   document.getElementById('loading_graders_list').style.display = 'none';
+    // });
+
     new Ajax.Request('<%= populate_graders_grade_entry_form_marks_graders_path(@grade_entry_form) %>', {
       asynchronous: true,
       evalScripts: true,
