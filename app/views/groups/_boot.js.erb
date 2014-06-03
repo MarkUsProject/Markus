@@ -124,13 +124,23 @@
       }
     });
 
-    new Ajax.Request('<%= populate_assignment_groups_path(@assignment.id) %>',
-                      {
-                        asynchronous:true,
-                        evalScripts:true,
-                        onComplete: function() { $('loading_list').hide(); },
-                        parameters: 'authenticity_token=' + AUTH_TOKEN
-                      })
+    jQuery.ajax({
+      url: '<%= populate_assignment_groups_path(@assignment.id) %>',
+      async: true,
+      data: { 'authenticity_token': AUTH_TOKEN },
+      type: 'POST'
+    }).done(function() {
+      document.getElementById('loading_list').style.display = 'none';
+    });
+
+    // jQuery.ajax({
+    //   url: '<%= populate_students_assignment_groups_path(@assignment.id) %>',
+    //   async: true,
+    //   data: { 'authenticity_token': AUTH_TOKEN },
+    //   type: 'GET'
+    // }).done(function() {
+    //   document.getElementById('loading_students_list').style.display = 'none';
+    // });
 
     new Ajax.Request('<%= populate_students_assignment_groups_path(@assignment.id) %>',
                       {

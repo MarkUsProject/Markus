@@ -8,13 +8,9 @@
   // Set up labels
   var intervals = 20;
   var steps = 100 / intervals; // number of percentage steps in each interval
-  var lab = []
+  var lab = [];
   for (var i = 0; i < intervals; i++) {
-    if (i == 0) {
-      lower = 0;
-    } else {
-      lower = 1 + i * steps;
-    }
+    lower = (i == 0) ? 0 : 1 + i * steps;
     upper = (i + 1) * steps;
     lab[i] = lower + '% - ' + upper + '%';
   }

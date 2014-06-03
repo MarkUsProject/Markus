@@ -196,13 +196,22 @@
       }
     });
 
-    new Ajax.Request('<%= populate_assignment_graders_path(@assignment) %>', {
-      asynchronous: true,
-      evalScripts: true,
-      onComplete: function(request){$('loading_list').hide()},
-      parameters: {
-        'authenticity_token': AUTH_TOKEN
-      }
+    // jQuery.ajax({
+    //   url: '<%= populate_graders_assignment_graders_path(@assignment) %>',
+    //   async: true,
+    //   data: { 'authenticity_token': AUTH_TOKEN },
+    //   type: 'POST'
+    // }).done(function() {
+    //   document.getElementById('loading_graders_list').style.display = 'none';
+    // });
+
+    jQuery.ajax({
+      url: '<%= populate_assignment_graders_path(@assignment) %>',
+      async: true,
+      data: { 'authenticity_token': AUTH_TOKEN },
+      type: 'POST'
+    }).done(function() {
+      document.getElementById('loading_list').style.display = 'none';
     });
 
     <% if !@assignment.assign_graders_to_criteria %>
@@ -210,25 +219,13 @@
       document.getElementById('search_criteria').style.display = 'none';
       document.getElementById('search_criteria_label').style.display = 'none';
     <% else %>
-
-  // jQuery.ajax({
-  //   url:      "<%= populate_admins_path() %>",
-  //   data:     'authenticity_token=' + AUTH_TOKEN,
-  //   type:     'POST',
-  //   async:    true,
-  //   dataType: 'json'
-  // }).done(function(data) {
-  //   jQuery('#loading_list').hide();
-  //   populate(JSON.stringify(data));
-  // });
-
-      new Ajax.Request('<%= populate_criteria_assignment_graders_path(@assignment) %>', {
-        asynchronous: true,
-        evalScripts: true,
-        onComplete: function(request){$('loading_list').hide()},
-        parameters: {
-          'authenticity_token': AUTH_TOKEN
-        }
+      jQuery.ajax({
+        url: '<%= populate_criteria_assignment_graders_path(@assignment) %>',
+        async: true,
+        data: { 'authenticity_token': AUTH_TOKEN },
+        type: 'POST'
+      }).done(function() {
+        document.getElementById('loading_list').style.display = 'none';
       });
     <% end %>
   });
