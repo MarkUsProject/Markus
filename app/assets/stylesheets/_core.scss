@@ -19,6 +19,14 @@ body {
   clear: both;
 }
 
+::selection {
+  background: $light-blue;
+}
+
+::-moz-selection {
+  background: $light-blue;
+}
+
 a {
   @include transition(all, $time-quick);
   color: $blue;
@@ -131,7 +139,7 @@ input[type=submit],
 input[type=reset],
 button,
 .button {
-  @include background-gradient(#ededed, #e3e3e3);
+  @include background-gradient(#f9f9f9, #eee);
   @include border-radius(5px);
   @include box-shadow(0 1px 0 0 #fff inset);
   @include transition(all, $time-quick);
@@ -149,9 +157,9 @@ button,
   text-shadow: 1px 1px 0 $primary-color;
 
   &:hover {
-    @include box-shadow(0 1px 0 0 #ccc, 0 1px 0 0 #fefefe inset);
+    @include box-shadow(0 1px 0 0 #cdcdcd, 0 1px 0 0 #fefefe inset);
     border-color: $hover;
-    color: $grey;  /* override for a.button */
+    color: $hover;  /* override for a.button */
   }
 
   &:focus {
@@ -159,7 +167,7 @@ button,
   }
 
   &:active {
-    @include background-gradient(#e3e3e3, #ededed);
+    @include background-gradient(#eee, #f9f9f9);
     @include box-shadow(none);
     border-color: #77989e;
     position: relative;
