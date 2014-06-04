@@ -140,7 +140,7 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
           output.binmode
           output << @response.body
           File.open('tmp/sub_test.zip', 'w') {|f| f.write(output.string)}
-          Zip::ZipFile.open('tmp/sub_test.zip') do |zipfile|
+          Zip::File.open('tmp/sub_test.zip') do |zipfile|
             assert_not_nil zipfile.find_entry(@file1_path)
             assert_not_nil zipfile.find_entry(@file2_path)
             assert_equal(@file1_content, zipfile.read(@file1_path))
