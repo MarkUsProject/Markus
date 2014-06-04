@@ -23,7 +23,7 @@ class GradeEntryFormsController < ApplicationController
   # Filters will be added as the student UI is implemented (eg. Show Released,
   # Show All,...)
   G_TABLE_PARAMS = {:model => GradeEntryStudent,
-                    :per_pages => [15, 30, 50, 100, 150],
+                    :per_pages => [15, 30, 50, 100, 150, 500, 1000],
                     :filters => {
                         'none' => {
                             :display => 'Show All',
