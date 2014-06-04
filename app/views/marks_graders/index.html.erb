@@ -3,37 +3,35 @@
 <%= javascript_include_tag "Graders/tabs_boot.js" %>
 
 <%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
-<script type="text/javascript">
+<script>
 //<![CDATA[
+  var modalCreate = null;
+  var modalAssignmentGroupReUse = null;
+  var modalRenameGroup = null;
+  var modalAddMember = null;
+  var modalNotesGroup = null;
+  var modalUpload = null;
+  var modalDownload = null;
 
-var modalCreate = null;
-var modalAssignmentGroupReUse = null;
-var modalRenameGroup = null;
-var modalAddMember = null;
-var modalNotesGroup = null;
-var modalUpload = null;
-var modalDownload = null;
-
-function upload_groups(){
-  modalUpload.open();
-  return false;
-}
-
-function download_groups(){
-  modalDownload.open();
-  return false;
-}
-
-document.observe("dom:loaded", function() {
-  var getOverlayOptions = function(name) {
-    return { overlayOpacity: 0.75, className: name, fade: false }
+  function upload_groups(){
+    modalUpload.open();
+    return false;
   }
 
-  //Create the modal dialogs
-  modalUpload = new Control.Modal($('upload_dialog'), getOverlayOptions('modalUpload'));
-  modalDownload = new Control.Modal($('download_dialog'), getOverlayOptions('modalDownload'));
-})
+  function download_groups(){
+    modalDownload.open();
+    return false;
+  }
 
+  document.observe("dom:loaded", function() {
+    var getOverlayOptions = function(name) {
+      return { overlayOpacity: 0.75, className: name, fade: false }
+    }
+
+    //Create the modal dialogs
+    modalUpload = new Control.Modal($('upload_dialog'), getOverlayOptions('modalUpload'));
+    modalDownload = new Control.Modal($('download_dialog'), getOverlayOptions('modalDownload'));
+  })
 //]]>
 </script>
 
@@ -72,14 +70,14 @@ document.observe("dom:loaded", function() {
 <%= form_tag global_actions_grade_entry_form_marks_graders_path(@grade_entry_form),
   :id => "global_action_form", :remote => true do %>
 
-<script type='text/javascript'>
-$("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
-  thinking();
-});
+<script>
+  $("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
+    thinking();
+  });
 
-$("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
-  done_thinking();
-});
+  $("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
+    done_thinking();
+  });
 </script>
 
 <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>

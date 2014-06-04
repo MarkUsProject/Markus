@@ -40,7 +40,7 @@
              :id => "global_action_form",
              :remote => true do %>
 
-<script type='text/javascript'>
+<script>
   $("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
     thinking();
   });
@@ -175,13 +175,13 @@
   <ul>
     <li>
       <%= link_to t('groups.download.download_grader_groups_csv'),
-		              download_grader_groupings_mapping_assignment_graders_path(@assignment),
-		              :onclick => 'modal_download.close();' %>
+                  download_grader_groupings_mapping_assignment_graders_path(@assignment),
+                  :onclick => 'modal_download.close();' %>
     </li>
     <li>
       <%= link_to t('groups.download.download_grader_criteria_csv'),
-		              download_grader_criteria_mapping_assignment_graders_path(@assignment),
-		              :onclick => 'modal_download.close();' %>
+                  download_grader_criteria_mapping_assignment_graders_path(@assignment),
+                  :onclick => 'modal_download.close();' %>
       </li>
   </ul>
   <%= button_to_function I18n.t('cancel'), 'modal_download.close();' %>

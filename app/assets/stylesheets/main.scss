@@ -1426,12 +1426,13 @@ fieldset.disabled {
   font-style: italic;
 }
 
-.invalid,
-.required_field {
+.invalid {
   color: #f00;
 }
 
-.required_field {
+.required_field::after {
+  color: #f00;
+  content: "*";
   margin-left: 0.25em;
 }
 
