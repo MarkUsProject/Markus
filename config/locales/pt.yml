@@ -442,7 +442,6 @@ pt:
       errors: "Erros"
       no_mark: "N/A"
       marking_state: "Estado da avaliação"
-
     students:
       title: "Suas notas"
       no_results: "Não há notas disponíveis ainda..."

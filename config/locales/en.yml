@@ -442,7 +442,6 @@ en:
       errors: "Errors"
       no_mark: "N/A"
       marking_state: "Marking State"
-
     students:
       title: "Your Term Marks"
       no_results: "There are no marks available yet."
