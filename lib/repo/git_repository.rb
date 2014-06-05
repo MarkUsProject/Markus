@@ -2,8 +2,20 @@ require 'rugged'
 require 'gitolite'
 require 'digest/md5'
 require 'rubygems'
-require 'ruby-debug'
+require 'byebug'
+
 require File.join(File.dirname(__FILE__),'repository') # load repository module
+
+def commit_options(repo)
+  {
+    author:  { email: "markus@markus.com", name: "Markus", time: Time.now },
+    committer: { email: "markus@markus.com", name: "Markus", time: Time.now },
+    message: "Automatically create by the system",
+    tree: repo.index.write_tree(repo),
+    parents: repo.empty? ? [] : [repo.head.target].compact,
+    update_ref: "HEAD"
+  }
+end
 
 module Repository
 
@@ -89,11 +101,13 @@ module Repository
       ref.delete!
     end
 
-
-
-      # Exports git repo to a new folder (clone repository)
-      # If a filepath is given, the repo_dest_dir needs to point to a file, and
-      # all the repository on that path need to exist, or the export will fail.
+    # Exports git repo to a new folder (clone repository)
+    # If a filepath is given, the repo_dest_dir needs to point to a file, and
+    # all the repository on that path need to exist, or the export will fail.
+    # Exports git repo to a new folder (clone repository)
+    # If a filepath is given, the repo_dest_dir needs to point to a file, and
+    # all the repository on that path need to exist, or the export will fail.
+    # if export means exporting repo as zip/tgz git-ruby library should be used
     def export(repo_dest_dir, filepath=nil)
       
       # Case 1: clone all the repo to repo_dest_dir
@@ -136,11 +150,6 @@ module Repository
       return @repos
     end
 
-    def get_repos_index
-      # Get rugged repository from GitRepository
-      return @repos.index
-    end
-
     def get_repos_workdir
       # Get work directory from GitRepository
       # workdir = path/to/my/repository/
@@ -168,10 +177,19 @@ module Repository
       return repos_meta_files_exist
     end
 
+    # TODO: verify how markus use it
     def stringify_files(files)
       # Given a single object, or an array of objects of type
       # RevisionFile, try to find the file in question, and
       # return it as a string
+      #  stringfy = []
+      @repos.index.each do |c|
+        if files == c[:path]
+          blob = @repos.lookup(c[:oid])
+          byebug
+          return blob.content
+        end
+      end
     end
     alias download_as_string stringify_files # create alias
 
@@ -248,14 +266,6 @@ module Repository
 
       if transaction.conflicts?
         return false
-      end
-
-      jobs.each do |job|
-        oid = self.get_repos.write("Directory creation.", :blob)
-        index = self.get_repos.index
-        index.add(:path => job[:path], :oid => oid, :mode => 0100644)
-        index.write
-        #debugger
       end
       
       return true
@@ -485,6 +495,7 @@ module Repository
     def write_file(txn, path, file_data=nil, mime_type=nil)
       # writes to file using transaction, path, data, and mime
       # refer to Subversion_repo for implementation
+      
       if (!__path_exists?(path))
         pieces = path.split("/").delete_if {|x| x == ""}
         dir_path = ""
@@ -493,7 +504,7 @@ module Repository
           dir_path += "/" + pieces[index]
           make_directory(txn, dir_path)
         end
-        make_file(txn, path)
+        make_file(txn, path,file_data)
       end
       #stream = txn.root.apply_text(path)
       #stream.write(file_data)
@@ -501,7 +512,11 @@ module Repository
     end
 
     # Make a file if it's not already present.
-    def make_file(txn, path)
+    def make_file(txn, path,file_data)
+      repo = @repos
+      oid = repo.write(file_data, :blob)
+      repo.index.add(path: path, oid: oid, mode: 0100644)
+      Rugged::Commit.create(repo, commit_options(repo))
       #if (txn.root.check_path(path) == 0)
         #txn.root.make_file(path)
       #end
@@ -513,7 +528,7 @@ module Repository
 
       # turn "path" into absolute path
       path = expand_path(path, "/")
-      # do nothiing if "path" is the root
+      # do nothing if "path" is the root
       return if path == "/"
 
       # get the path of parent folder
@@ -524,7 +539,7 @@ module Repository
       # now that the parent folder has been created,
       # create the current folder
       #if (txn.root.check_path(path) == 0)
-        FileUtils.mkdir_p(path)
+      FileUtils.mkdir_p(path)
       #end
 
     end
@@ -636,12 +651,15 @@ module Repository
     end
 
     # Return all of the files in this repository at the root directory
-    def files_at_path(repo)
+    def files_at_path(repos)
+      byebug
       begin 
-        files = []
+        files = Hash.new(nil)
       
-        repos.index.each do |c|
-          files << c[:path]
+        repos.get_repos.index.each do |c|
+          print "Arquivos encontrados:"
+          print c
+          files[c[:path]] = c
         end
       
         #exception should be cast if file is not found

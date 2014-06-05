@@ -16,24 +16,23 @@ class GitRepositoryTest < Test::Unit::TestCase
 
   # NOTE: PATHS PROVIDED MUST BE "/" TERMINATED
   # AS COMPARED TO SUBVERSION REPOSITORIES
-   GIT_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/git_repos"))
-   TEST_REPO = GIT_TEST_REPOS_DIR + "/repo1/"
-   TEST_EXPORT_REPO = GIT_TEST_REPOS_DIR + "/exported_repo1"
-   TEST_EXPORT_REPO_2 = GIT_TEST_REPOS_DIR + "/exported_repo2"
-   RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/input_files"))
-   TEST_USER = "testuser"
-
-   context "GitRepository class" do
-
+  GIT_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/git_repos"))
+  TEST_REPO = GIT_TEST_REPOS_DIR + "/repo1/"
+  TEST_EXPORT_REPO = GIT_TEST_REPOS_DIR + "/exported_repo1"
+  TEST_EXPORT_REPO_2 = GIT_TEST_REPOS_DIR + "/exported_repo2"
+  RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/input_files"))
+  TEST_USER = "testuser"
+  
+  context "GitRepository class" do
+    
      teardown do
-       FileUtils.remove_dir(TEST_REPO, true)
-     end
-
+      FileUtils.remove_dir(TEST_REPO, true)
+    end
+    
     should "be able to create a new Git repository" do
       GitRepository.create(TEST_REPO)
-      assert_equal(File.exists?(TEST_REPO),
-                   true,
-                   "Unable to creat a Git repository")
+      assert_not_nil(Rugged::Repository.discover(TEST_REPO),
+                    "Unable to creat a Git repository")
     end
     
     should "be able to open an existing Git repository" do
@@ -207,45 +206,53 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert(@repo.closed?, "closed repository identified as open")
      end
 
-     #should "be able to create a directory in repository" do
-     #  dir_single_level = GIT_TEST_REPOS_DIR + "/folder1"
-     #  dir_multi_level = GIT_TEST_REPOS_DIR  + "/folder2/subfolder1"
-     #  txn = @repo.get_transaction(TEST_USER)
-     #  txn.add_path(dir_single_level)
-     #  txn.add_path(dir_multi_level)
-     #  @repo.commit(txn)
-     #  revision = @repo.get_latest_revision()
-     # 
-     #  assert_equal(true, revision.path_exists?(dir_single_level), message = "Repository folder not created")
-     #  assert_equal(true, revision.path_exists?(dir_multi_level), message = "Repository folder not created")
-     #  @repo.close()
-     #end
+     should "be able to create a directory in repository" do
+       dir_single_level = TEST_REPO + "/folder1"
+       dir_multi_level =  TEST_REPO  + "/folder2/subfolder1"
+       txn = @repo.get_transaction(TEST_USER)
 
-     #add_file_test = "add a new file to an empty repository"
-     #should(add_file_test) do
-     #  rev_num = @repo.get_latest_revision().revision_number
-     #  txn = @repo.get_transaction(TEST_USER)
-     #  filename = "MyClass.java"
-     #  file_contents = File.read(RESOURCE_DIR + "/" + filename)
-     #  debugger
-     #  txn.add(filename, file_contents)
-     #  latest_revision = @repo.get_latest_revision().revision_number
-     #  assert_equal(rev_num.target, latest_revision.target, "Revision # should be the same!")
-     #  @repo.commit(txn) # svn commit
-     #  latest_revision = @repo.get_latest_revision().revision_number
-     # 
-     #  assert_not_equal(rev_num, latest_revision, "Revision # has not changed!")
-     # 
-     #  # look if new file is available
-     #  svn_rev = @repo.get_latest_revision()
-     #  files = svn_rev.files_at_path("/")
-     #  assert_not_nil(files[filename], "Could not find file '" + filename + "'")
-     #  # test download_as_string
-     #  assert_equal(@repo.download_as_string(files[filename]),
-     #               file_contents,
-     #               "Mismatching content")
-     #  @repo.close()
-     # end
+       # observation: git dont add empty folders to staging area
+       txn.add_path(dir_single_level)
+       txn.add_path(dir_multi_level)
+       @repo.commit(txn)
+       revision = @repo.get_latest_revision()
+      
+       assert_equal(true, revision.path_exists?(dir_single_level), message = "Repository folder not created")
+       assert_equal(true, revision.path_exists?(dir_multi_level), message = "Repository folder not created")
+       @repo.close()
+     end
+
+     add_file_test = "add a new file to an empty repository"
+     should(add_file_test) do
+       rev_num = @repo.get_latest_revision().revision_number
+       txn = @repo.get_transaction(TEST_USER)
+       filename = "MyClass.java"
+       file_contents = File.read(RESOURCE_DIR + "/" + filename)
+       txn.add(filename, file_contents)
+       latest_revision = @repo.get_latest_revision().revision_number
+       assert_equal(rev_num.target, latest_revision.target, "Revision # should be the same!")
+       @repo.commit(txn) # git commit
+       latest_revision = @repo.get_latest_revision().revision_number
+      
+       assert_not_equal(rev_num, latest_revision, "Revision # has not changed!")
+
+       txn = @repo.get_transaction(TEST_USER)
+       filename = 'MyInterface.java'
+       file_contents = File.read(RESOURCE_DIR + "/" + filename)
+       txn.add(filename, file_contents)
+       @repo.commit(txn) # git commit
+      
+       # look if new file is available
+       git_rev = @repo.get_latest_revision()
+       files = git_rev.files_at_path(@repo)
+       assert_not_nil(files[filename], "Could not find file '" + filename + "'")
+       # test download_as_string
+       byebug
+       assert_equal(@repo.download_as_string(filename),
+                    file_contents,
+                    "Mismatching content")
+       @repo.close()
+      end
 
   #   should "delete a commited file from repository" do
   #     add_file_test.intern() # call add_file_test to make sure it works, not sure if that's useful
@@ -755,12 +762,11 @@ class GitRepositoryTest < Test::Unit::TestCase
      # path =  path/to/my/repository/.git
      FileUtils.cp(RESOURCE_DIR + "/" + file,repo.get_repos_workdir)
      # Get index for commit copied file
-     index = repo.get_repos_index 
-     index.add file
+     repo.get_repos.index.add file
      
      #committing file
      options = {}
-     options[:tree] = index.write_tree(repo.get_repos)
+     options[:tree] = repo.get_repos.index.write_tree(repo.get_repos)
     
      options[:author] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
      options[:committer] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
