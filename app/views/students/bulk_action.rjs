@@ -1,1 +1,2 @@
+# Can probably delete this.
 page.redirect_to :controller => 'students', :action => 'index'

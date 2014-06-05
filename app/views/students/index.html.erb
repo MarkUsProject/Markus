@@ -1,11 +1,7 @@
 <% content_for :head do %>
 <%= javascript_include_tag 'users_manager',
-                             'FilterTable/FilterTable',
                              'effects.js',
                              'Students/index' %>
-
-<!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
- <%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
 
 <script type="text/javascript">
   jQuery(document).ready(function() {
@@ -30,8 +26,6 @@
 </div>
 
 <div class="wrapLeft">
-  <%= form_tag bulk_modify_students_path(),
-    :remote => true do %>
   <div id="ajax_error" class="error" style="display:none;"></div>
 
   <div id="list">
@@ -48,69 +42,16 @@
         <li><%= I18n.t(:students_not_successfully_added_message_5) %></li>
       </ul>
     </div>
-    <% end -%>
+    <% end %>
 
-    <div id="toggle_actions">
-     <%= I18n.t(:filters) %>:
-     <%= link_to raw(I18n.t(:all) + " (<span id=\"all_students_count\"></span>)"), '#',
-		  :onclick => "filter('none');",
-		  :id => "filter_link_none",
-		  :class => "filter_selected" %>
-     |
-     <%= link_to raw(I18n.t(:active) + " (<span id=\"active_students_count\"></span>)"), '#',
-		  :onclick => "filter('active');",
-		  :id => "filter_link_active" %>
-     |
-     <%= link_to raw(I18n.t(:not_active) + " (<span id=\"inactive_students_count\"></span>)"), '#',
-		  :onclick => "filter('inactive');",
-		  :id => "filter_link_inactive"%>
+    <div class="table">
+      <%= react_component("StudentsTable", :columns => @columns, :search => @search,
+                        :rows => @rows, :filters => @filters,
+                        :actions => @actions) %>
     </div>
 
-    <div class="global_action">
-      <select name="bulk_action" id="bulk_action"
-              onchange="$('bulk_action').setValue($(this).getValue());
-                        detect_bulk_action_change();">
-        <option value=""><%= t(:bulk_action)%></option>
-        <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
-	      <option value="add_section"><%= I18n.t(:add_section)%></option>
-        <option value="hide"><%= t(:hide_students)%></option>
-        <option value="unhide"><%= t(:unhide_students)%></option>
-      </select>
-
-      <span id="grace_credit_input" style="display:none;">
-        <%= text_field_tag :number_of_grace_credits, nil, :size => 1, :id => 'number_of_grace_credits' %>
-      </span>
-
-      <span id="section_input" style="display: none;">
-	      <select name="section" id="section">
-		      <option value=""> - </option>
-	        <% @sections.each do |section| %>
-		        <option value="<%= section.id %>"><%= section.name %></option>
-	        <% end %>
-	      </select>
-      </span>
-      <%= submit_tag t(:apply), :id => 'apply_bulk_action', :'data-disable-with' => I18n.t('working'),
-                                :name => 'commit', :class => 'thin-button' %>
-    </div>
-
-    <div class="search_box">
-      <%= text_field_tag 'search_students', nil,
-          :onkeyup => "users_table.add_filter('search'); users_table.render();",
-          :onkeypress => "stop_submit(event);",
-          :placeholder => I18n.t("students.search_students") %>
-    </div>
-
-    <div style="overflow:auto; height: 400px;">
-      <table id="students">
-        <tr id="loading_list">
-          <td class="loading">
-            <%= image_tag("spinner.gif")%> <%= I18n.t("groups.loading_list") %>
-          </td>
-        </tr>
-      </table>
     </div>
   </div>
-  <% end %> <!-- remote form tag -->
 </div>
 
 <!-- Modal Windows -->
