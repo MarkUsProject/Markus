@@ -247,28 +247,30 @@ class GitRepositoryTest < Test::Unit::TestCase
        files = git_rev.files_at_path(@repo)
        assert_not_nil(files[filename], "Could not find file '" + filename + "'")
        # test download_as_string
-       byebug
        assert_equal(@repo.download_as_string(filename),
                     file_contents,
                     "Mismatching content")
        @repo.close()
       end
 
-  #   should "delete a commited file from repository" do
-  #     add_file_test.intern() # call add_file_test to make sure it works, not sure if that's useful
-  #     # add MyClass.java to repo
-  #     filename = "MyClass.java"
-  #     add_file_helper(@repo, filename)
-  #     txn = @repo.get_transaction(TEST_USER)
-  #     txn.remove(filename, @repo.get_latest_revision().revision_number)
-  #     @repo.commit(txn)
+     should "delete a commited file from repository" do
+       add_file_test.intern() # call add_file_test to make sure it works, not sure if that's useful
+       # add MyClass.java to repo
+       filename = "MyClass.java"
+       add_file_helper(@repo, filename)
+       txn = @repo.get_transaction(TEST_USER)
+       txn.remove(filename, @repo.get_latest_revision().revision_number)
+      byebug
+       @repo.commit(txn)
+      byebug
 
-  #     # filename should not be available in repo now
-  #     svn_rev = @repo.get_latest_revision()
-  #     files = svn_rev.files_at_path("/")
-  #     assert_nil(files[filename], "File '" + filename + "' should have been removed!")
-  #     @repo.close()
-  #   end
+       # filename should not be available in repo now
+       git_rev = @repo.get_latest_revision()
+       files = git_rev.files_at_path(@repo)
+       #files = svn_rev.files_at_path("/")
+       assert_nil(files[filename], "File '" + filename + "' should have been removed!")
+       @repo.close()
+     end
 
   #   should "be able to add multiple files using a single transaction" do
   #     files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
