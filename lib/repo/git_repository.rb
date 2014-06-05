@@ -182,9 +182,8 @@ module Repository
       # Given a single object, or an array of objects of type
       # RevisionFile, try to find the file in question, and
       # return it as a string
-      #  stringfy = []
       @repos.index.each do |c|
-        if files == c[:path]
+        if files == c
           blob = @repos.lookup(c[:oid])
           return blob.content
         end

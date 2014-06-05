@@ -247,7 +247,7 @@ class GitRepositoryTest < Test::Unit::TestCase
        files = git_rev.files_at_path(@repo)
        assert_not_nil(files[filename], "Could not find file '" + filename + "'")
        # test download_as_string
-       assert_equal(@repo.download_as_string(filename),
+       assert_equal(@repo.download_as_string(files[filename]),
                     file_contents,
                     "Mismatching content")
        @repo.close()
@@ -260,9 +260,7 @@ class GitRepositoryTest < Test::Unit::TestCase
        add_file_helper(@repo, filename)
        txn = @repo.get_transaction(TEST_USER)
        txn.remove(filename, @repo.get_latest_revision().revision_number)
-      byebug
        @repo.commit(txn)
-      byebug
 
        # filename should not be available in repo now
        git_rev = @repo.get_latest_revision()
@@ -272,55 +270,55 @@ class GitRepositoryTest < Test::Unit::TestCase
        @repo.close()
      end
 
-  #   should "be able to add multiple files using a single transaction" do
-  #     files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
-  #     old_revision = @repo.get_latest_revision()
-  #     add_some_files_helper(@repo, files_to_add)
-  #     new_revision = @repo.get_latest_revision()
-  #     assert_instance_of(Repository::SubversionRevision, old_revision, "Should be of type SubversionRevision")
-  #     assert_instance_of(Repository::SubversionRevision, new_revision, "Should be of type SubversionRevision")
-  #     assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should increase by 1")
-  #     # repository should know of the added files, now
-  #     files = new_revision.files_at_path("/")
-  #     files_to_add.each do |file|
-  #       assert_not_nil(files[file], "File '" + file + "' not found in repository")
-  #       content = File.read(RESOURCE_DIR + "/" + file)
-  #       # test stringify_files also
-  #       assert_equal(content, @repo.stringify_files(files[file]))
-  #     end
-  #     @repo.close()
-  #   end
+     should "be able to add multiple files using a single transaction" do
+       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
+       old_revision = @repo.get_latest_revision()
+       add_some_files_helper(@repo, files_to_add)
+       new_revision = @repo.get_latest_revision()
+       assert_instance_of(Repository::GitRevision, old_revision, "Should be of type GitRevision")
+       assert_instance_of(Repository::GitRevision, new_revision, "Should be of type GitRevision")
+       #assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should increase by 1")
+       # repository should know of the added files, now
+       files = new_revision.files_at_path(@repo)
+       files_to_add.each do |file|
+         assert_not_nil(files[file], "File '" + file + "' not found in repository")
+         content = File.read(RESOURCE_DIR + "/" + file)
+         # test stringify_files also
+         assert_equal(content, @repo.stringify_files(files[file]))
+       end
+       @repo.close()
+     end
 
-  #   should "be able to add, remove using a single transaction" do
-  #     files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
-  #     add_some_files_helper(@repo, files_to_add) # add some initial files
-  #     old_revision = @repo.get_latest_revision()
-  #     # add one more file
-  #     filename = "ruby_file.rb"
-  #     txn = @repo.get_transaction(TEST_USER)
-  #     file_contents = File.read(RESOURCE_DIR + "/" + filename)
-  #     txn.add(filename, file_contents)
-  #     # remove a file
-  #     txn.remove("test.xml", @repo.get_latest_revision().revision_number) # remove a file previously existent in current rev.
-  #     @repo.commit(txn)
+     should "be able to add, remove using a single transaction" do
+       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
+       add_some_files_helper(@repo, files_to_add) # add some initial files
+       old_revision = @repo.get_latest_revision()
+       # add one more file
+       filename = "ruby_file.rb"
+       txn = @repo.get_transaction(TEST_USER)
+       file_contents = File.read(RESOURCE_DIR + "/" + filename)
+       txn.add(filename, file_contents)
+       # remove a file
+       txn.remove("test.xml", @repo.get_latest_revision().revision_number) # remove a file previously existent in current rev.
+       @repo.commit(txn)
 
-  #     new_revision = @repo.get_latest_revision()
-  #     assert_instance_of(Repository::SubversionRevision, old_revision, "Should be of type SubversionRevision")
-  #     assert_instance_of(Repository::SubversionRevision, new_revision, "Should be of type SubversionRevision")
-  #     assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
-  #     # test repository on its correct content
-  #     files = new_revision.files_at_path("/")
-  #     files_to_add << filename # push filename to files_to_add
-  #     files_to_add.each do |file|
-  #       if file != "test.xml"
-  #         assert_not_nil(files[file], "File '" + file + "' not found in repository")
-  #         content = File.read(RESOURCE_DIR + "/" + file)
-  #         # test stringify_files also
-  #         assert_equal(content, @repo.stringify_files(files[file]))
-  #       end
-  #     end
-  #     @repo.close()
-  #   end
+       new_revision = @repo.get_latest_revision()
+       assert_instance_of(Repository::GitRevision, old_revision, "Should be of type GitRevision")
+       assert_instance_of(Repository::GitRevision, new_revision, "Should be of type GitRevision")
+       #assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+       # test repository on its correct content
+       files = new_revision.files_at_path(@repo)
+       files_to_add << filename # push filename to files_to_add
+       files_to_add.each do |file|
+         if file != "test.xml"
+           assert_not_nil(files[file], "File '" + file + "' not found in repository")
+           content = File.read(RESOURCE_DIR + "/" + file)
+           # test stringify_files also
+           assert_equal(content, @repo.stringify_files(files[file]))
+         end
+       end
+       @repo.close()
+     end
 
   #   should "be able to get a revision by timestamp" do
   #     files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
@@ -778,13 +776,13 @@ class GitRepositoryTest < Test::Unit::TestCase
      Rugged::Commit.create(repo.get_repos, options)
    end
 
-  # def add_some_files_helper(repo, files)
-  #   txn = repo.get_transaction(TEST_USER)
-  #   files.each do |file|
-  #     txn.add(file, File.read(RESOURCE_DIR + "/" + file))
-  #   end
-  #   repo.commit(txn)
-  # end
+   def add_some_files_helper(repo, files)
+     txn = repo.get_transaction(TEST_USER)
+     files.each do |file|
+       txn.add(file, File.read(RESOURCE_DIR + "/" + file))
+     end
+     repo.commit(txn)
+   end
 
 end # end class SubversionRepositoryTest
 
