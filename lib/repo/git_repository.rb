@@ -182,12 +182,8 @@ module Repository
       # Given a single object, or an array of objects of type
       # RevisionFile, try to find the file in question, and
       # return it as a string
-      @repos.index.each do |c|
-        if files == c
-          blob = @repos.lookup(c[:oid])
-          return blob.content
-        end
-      end
+      blob = @repos.lookup(files[:oid])
+      return blob.content
     end
     alias download_as_string stringify_files # create alias
 
@@ -207,11 +203,11 @@ module Repository
     def get_revision_by_timestamp(target_timestamp, path = nil)
       # returns a Git instance representing the revision at the 
       # current timestamp, should be a ruby time stamp instance
-      walker = Rugged::Walker.new(@repo)
-      walker.push(@repo.head.target)
+      walker = Rugged::Walker.new(self.get_repos)
+      walker.push(self.get_repos.head.target)
       walker.each do |c|
         if c.time <= target_timestamp
-          return c
+          return get_revision(c)
         end
       end
     end
@@ -635,8 +631,11 @@ module Repository
       @repo = repo.get_repos
       begin
         # Get object using target of the reference (Object ID)
-        @commit = @repo.lookup(revision_number.target);
-
+        if revision_number.type == :direct
+          @commit = @repo.lookup(revision_number.target);
+          else
+          @commit = revision_number;
+        end
         @timestamp = @commit.time
          if @timestamp.instance_of?(String)
           @timestamp = Time.parse(@timestamp).localtime
@@ -646,18 +645,19 @@ module Repository
       rescue Exception
         raise RevisionDoesNotExist
       end 
-      super(revision_number)
+      super(@commit)
     end
 
     # Return all of the files in this repository at the root directory
-    def files_at_path(repos)
+    def files_at_path(commit)
       begin 
         files = Hash.new(nil)
-      
-        repos.get_repos.index.each do |c|
+   
+        @commit.tree.each do |c|
+        # repos.get_repos.index.each do |c|
           print "Arquivos encontrados:"
           print c
-          files[c[:path]] = c
+          files[c[:name]] = c
         end
       
         #exception should be cast if file is not found

@@ -169,7 +169,7 @@ class GitRepositoryTest < Test::Unit::TestCase
        # Assuming that our head is our last revision,
        # as the sha number is not constant, 
        # we are going to use the name
-      assert_equal("refs/heads/master", revision.revision_number.name, "Wrong revision number")
+      assert_equal( @repo.get_repos.lookup(@repo.get_repos.head.target).tree.oid, revision.revision_number.tree.oid, "Wrong revision number")
        @repo.close()
      end
 
@@ -230,7 +230,7 @@ class GitRepositoryTest < Test::Unit::TestCase
        file_contents = File.read(RESOURCE_DIR + "/" + filename)
        txn.add(filename, file_contents)
        latest_revision = @repo.get_latest_revision().revision_number
-       assert_equal(rev_num.target, latest_revision.target, "Revision # should be the same!")
+       assert_equal(rev_num.tree.oid, latest_revision.tree.oid, "Revision # should be the same!")
        @repo.commit(txn) # git commit
        latest_revision = @repo.get_latest_revision().revision_number
       
@@ -244,7 +244,7 @@ class GitRepositoryTest < Test::Unit::TestCase
       
        # look if new file is available
        git_rev = @repo.get_latest_revision()
-       files = git_rev.files_at_path(@repo)
+       files = git_rev.files_at_path(git_rev)
        assert_not_nil(files[filename], "Could not find file '" + filename + "'")
        # test download_as_string
        assert_equal(@repo.download_as_string(files[filename]),
@@ -264,7 +264,7 @@ class GitRepositoryTest < Test::Unit::TestCase
 
        # filename should not be available in repo now
        git_rev = @repo.get_latest_revision()
-       files = git_rev.files_at_path(@repo)
+       files = git_rev.files_at_path(git_rev)
        #files = svn_rev.files_at_path("/")
        assert_nil(files[filename], "File '" + filename + "' should have been removed!")
        @repo.close()
@@ -279,7 +279,7 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert_instance_of(Repository::GitRevision, new_revision, "Should be of type GitRevision")
        #assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should increase by 1")
        # repository should know of the added files, now
-       files = new_revision.files_at_path(@repo)
+       files = new_revision.files_at_path(new_revision)
        files_to_add.each do |file|
          assert_not_nil(files[file], "File '" + file + "' not found in repository")
          content = File.read(RESOURCE_DIR + "/" + file)
@@ -307,7 +307,7 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert_instance_of(Repository::GitRevision, new_revision, "Should be of type GitRevision")
        #assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
        # test repository on its correct content
-       files = new_revision.files_at_path(@repo)
+       files = new_revision.files_at_path(new_revision)
        files_to_add << filename # push filename to files_to_add
        files_to_add.each do |file|
          if file != "test.xml"
@@ -320,60 +320,65 @@ class GitRepositoryTest < Test::Unit::TestCase
        @repo.close()
      end
 
-  #   should "be able to get a revision by timestamp" do
-  #     files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
-  #     add_some_files_helper(@repo, files_to_add) # add some initial files
-  #     old_revision = @repo.get_latest_revision()
-  #     # add one more file
-  #     filename = "ruby_file.rb"
-  #     txn = @repo.get_transaction(TEST_USER)
-  #     file_contents = File.read(RESOURCE_DIR + "/" + filename)
-  #     txn.add(filename, file_contents)
+     should "be able to get a revision by timestamp" do
+       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
+       add_some_files_helper(@repo, files_to_add) # add some initial files
+       old_revision = @repo.get_latest_revision()
+       # add one more file
+       filename = "ruby_file.rb"
+       txn = @repo.get_transaction(TEST_USER)
+       file_contents = File.read(RESOURCE_DIR + "/" + filename)
+       txn.add(filename, file_contents)
 
-  #     # collect a timestamp for later use
-  #     repo_timestamp = Time.now
+       # collect a timestamp for later use
+       repo_timestamp = Time.now
 
-  #     # remove a file
-  #     txn.remove("test.xml", @repo.get_latest_revision().revision_number) # remove a file previously existent in current rev.
-  #     @repo.commit(txn)
+       # delay last commit for our test
+       @repo.commit(txn)
+       sleep(2)
 
-  #     new_revision = @repo.get_latest_revision()
-  #     assert_instance_of(Repository::SubversionRevision, old_revision, "Should be of type SubversionRevision")
-  #     assert_instance_of(Repository::SubversionRevision, new_revision, "Should be of type SubversionRevision")
-  #     assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
-  #     # test repository on its correct content
-  #     files = new_revision.files_at_path("/")
-  #     files_to_add << filename # push filename to files_to_add
-  #     files_to_add.each do |file|
-  #       if file != "test.xml"
-  #         assert_not_nil(files[file], "File '" + file + "' not found in repository")
-  #         content = File.read(RESOURCE_DIR + "/" + file)
-  #         # test stringify_files also
-  #         assert_equal(content, @repo.stringify_files(files[file]))
-  #       end
-  #     end
+       # remove a file
+       txn.remove("test.xml", @repo.get_latest_revision().revision_number) # remove a file previously existent in current rev.
+       @repo.commit(txn)
 
-  #     # test the timestamp-revision stuff
-  #     rev_num_by_timestamp = @repo.get_revision_by_timestamp(Time.now)
-  #     latest_rev = @repo.get_latest_revision()
-  #     assert_instance_of(Repository::SubversionRevision, rev_num_by_timestamp, "Revision number is of wrong type")
-  #     assert_instance_of(Repository::SubversionRevision, latest_rev, "Revision number is of wrong type")
-  #     assert_equal(rev_num_by_timestamp.revision_number, latest_rev.revision_number, "Revision number (int values) do not match")
+       new_revision = @repo.get_latest_revision()
+       assert_instance_of(Repository::GitRevision, old_revision, "Should be of type GitRevision")
+       assert_instance_of(Repository::GitRevision, new_revision, "Should be of type GitRevision")
+       #assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+       # test repository on its correct content
+       files = new_revision.files_at_path(new_revision)
+       files_to_add << filename # push filename to files_to_add
+       files_to_add.each do |file|
+         if file != "test.xml"
+           assert_not_nil(files[file], "File '" + file + "' not found in repository")
+           content = File.read(RESOURCE_DIR + "/" + file)
+           # test stringify_files also
+           assert_equal(content, @repo.stringify_files(files[file]))
+         end
+       end
 
-  #     # test.xml should be in the repository for the timestamp "repo_timestamp"
-  #     rev_num_by_timestamp = @repo.get_revision_by_timestamp(repo_timestamp)
-  #     assert_instance_of(Repository::SubversionRevision, rev_num_by_timestamp, "Revision number is of wrong type")
-  #     files = rev_num_by_timestamp.files_at_path("/")
-  #     files_to_add.each do |file|
-  #       if file == "test.xml"
-  #         assert_not_nil(files[file], "File '" + file + "' not found in repository")
-  #         content = File.read(RESOURCE_DIR + "/" + file)
-  #         # test stringify_files also
-  #         assert_equal(content, @repo.stringify_files(files[file]))
-  #       end
-  #     end
-  #     @repo.close()
-  #   end
+       # test the timestamp-revision stuff
+       rev_num_by_timestamp = @repo.get_revision_by_timestamp(Time.now)
+       latest_rev = @repo.get_latest_revision()
+       assert_instance_of(Repository::GitRevision, rev_num_by_timestamp, "Revision number is of wrong type")
+       assert_instance_of(Repository::GitRevision, latest_rev, "Revision number is of wrong type")
+       assert_equal(rev_num_by_timestamp.revision_number, latest_rev.revision_number, "Revision number (int values) do not match")
+
+       # test.xml should be in the repository for the timestamp "repo_timestamp"
+       byebug
+       rev_num_by_timestamp = @repo.get_revision_by_timestamp(repo_timestamp)
+       assert_instance_of(Repository::GitRevision, rev_num_by_timestamp, "Revision number is of wrong type")
+       files = rev_num_by_timestamp.files_at_path(rev_num_by_timestamp)
+       files_to_add.each do |file|
+         if file == "test.xml"
+           assert_not_nil(files[file], "File '" + file + "' not found in repository")
+           content = File.read(RESOURCE_DIR + "/" + file)
+           # test stringify_files also
+           assert_equal(content, @repo.stringify_files(files[file]))
+         end
+       end
+       @repo.close()
+     end
 
   #   should "be able to get the last_modified_date of a file" do
   #     files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
