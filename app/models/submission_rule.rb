@@ -1,8 +1,8 @@
 class SubmissionRule < ActiveRecord::Base
 
   belongs_to :assignment
-  has_many :periods, :dependent => :destroy, :order => 'id'
-  accepts_nested_attributes_for :periods, :allow_destroy => true
+  has_many :periods, dependent: :destroy, order: 'id'
+  accepts_nested_attributes_for :periods, allow_destroy: true
 
   attr_accessible :type, :periods_attributes
 

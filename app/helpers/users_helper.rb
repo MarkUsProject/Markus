@@ -28,11 +28,11 @@ module UsersHelper
     end
     result[:hidden] = user.hidden
     result[:filter_table_row_contents] =
-       render_to_string :partial => 'users/table_row/filter_table_row',
-                        :formats => [:html], :handlers => [:erb],
-                        :locals => {:user => user,
-                                    :controller => self.controller_name,
-                                    :render_note_link => @render_note_link}
+       render_to_string partial: 'users/table_row/filter_table_row',
+                        formats: [:html], handlers: [:erb],
+                        locals: {user: user,
+                                    controller: self.controller_name,
+                                    render_note_link: @render_note_link}
     result
   end
 

@@ -8,10 +8,10 @@ module GradeEntryFormsHelper
   # is creating a new grade entry form).
   def add_grade_entry_item_link(name, form)
     link_to_function name do |page|
-      grade_entry_item = render(:partial => 'grade_entry_item',
-                                :locals => {:form => form,
-                                            :new_position => 0,
-                                            :grade_entry_item => GradeEntryItem.new})
+      grade_entry_item = render(partial: 'grade_entry_item',
+                                locals: {form: form,
+                                            new_position: 0,
+                                            grade_entry_item: GradeEntryItem.new})
       page << %{
       var new_grade_entry_item_id = "new_" + new Date().getTime();
       $('grade_entry_items').insert({bottom: "#{ escape_javascript grade_entry_item }".replace(/attributes_\\d+|\\d+\(?=\\]\)/g, new_grade_entry_item_id) });
@@ -30,7 +30,7 @@ module GradeEntryFormsHelper
         grade_entry_student.released_to_student = release
         unless grade_entry_student.save
           raise I18n.t('grade_entry_forms.grades.update_error',
-                       :user_name => grade_entry_student.user.user_name)
+                       user_name: grade_entry_student.user.user_name)
         end
         numGradeEntryStudentsChanged += 1
       rescue Exception => e
