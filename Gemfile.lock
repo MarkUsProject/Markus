@@ -4,6 +4,16 @@ GIT
   specs:
     calendar_date_select (1.16.2)
 
+GIT
+  remote: git://github.com/reactjs/react-rails.git
+  revision: c09a0c6522301db7cb2bcea6673aa349298847f2
+  specs:
+    react-rails (1.0.0.pre)
+      connection_pool
+      execjs
+      rails (>= 3.1)
+      react-source (= 0.9.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -48,7 +58,8 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.7.0)
-    columnize (0.8.9)
+    columnize (0.3.6)
+    connection_pool (2.0.0)
     daemons (1.1.9)
     debugger (1.6.8)
       columnize (>= 0.3.1)
@@ -119,6 +130,7 @@ GEM
     rake (10.3.2)
     rdoc (3.12.2)
       json (~> 1.4)
+    react-source (0.9.0)
     ref (1.0.5)
     rghost (0.9.4)
     rubyzip (1.1.4)
@@ -196,6 +208,7 @@ DEPENDENCIES
   railroady
   rails (= 3.2.18)
   rdoc
+  react-rails!
   rghost
   rubyzip
   sass-rails (~> 3.2.3)

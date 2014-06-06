@@ -270,6 +270,7 @@ class Student < User
 
   def self.give_grace_credits(student_ids, number_of_grace_credits)
     students = Student.find(student_ids)
+    # TODO instead make sure num is a valid num then do update_all
     students.each do |student|
       student.grace_credits += number_of_grace_credits.to_i
       if student.grace_credits < 0

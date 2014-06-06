@@ -62,6 +62,7 @@ end
 # Other development related required gems. You don't need them
 # for production.
 group :development, :test do
+  gem 'react-rails', :git => 'git://github.com/reactjs/react-rails.git'
   gem 'rdoc'
   gem 'thin'
   gem 'simplecov'
