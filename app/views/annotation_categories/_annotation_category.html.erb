@@ -3,9 +3,9 @@
     <%= image_tag "handle.png" %>
   </span>
   <span class="annotation_title_div">
-    <%= link_to(truncate(annotation_category.annotation_category_name, :length => 30),
+    <%= link_to(truncate(annotation_category.annotation_category_name, length: 30),
                 get_annotations_assignment_annotation_category_path(@assignment,
-                    annotation_category), :remote => true) %>
+                    annotation_category), remote: true) %>
   </span>
   <span class="annotation_texts_size">
     (<%= annotation_category.annotation_texts.size() %>)

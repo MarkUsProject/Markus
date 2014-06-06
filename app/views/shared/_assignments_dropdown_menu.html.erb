@@ -1,18 +1,18 @@
 <% if @current_user.admin? %>
   <li>
     <%= link_to I18n.t(:create_new_assignment),
-                :controller => 'assignments',
-                :action => 'new' %>
+                controller: 'assignments',
+                action: 'new' %>
   </li>
   <li>
     <%= link_to I18n.t(:create_new_grade_entry_form),
-                :controller => 'grade_entry_forms',
-                :action => 'new' %>
+                controller: 'grade_entry_forms',
+                action: 'new' %>
   </li>
   <div class='separator'></div>
 <% end %>
 
-<% Assignment.all(:order => 'short_identifier ASC').each do |assignment|
+<% Assignment.all(order: 'short_identifier ASC').each do |assignment|
   if assignment != @assignment
     if (controller.controller_name == 'assignments' &&
         (controller.action_name == 'index' ||
@@ -25,40 +25,40 @@
           <% # Don't show hidden assignments to students
             if !assignment.is_hidden %>
             <%= link_to h(assignment.short_identifier),
-                        { :controller => 'assignments',
-                          :action => 'student_interface',
-                          :id => assignment.id },
-                        :title => assignment.description %>
+                        { controller: 'assignments',
+                          action: 'student_interface',
+                          id: assignment.id },
+                        title: assignment.description %>
           <% end %>
         </li>
       <% elsif @current_user.ta? %>
         <li>
           <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
-                          :assignment_text => h(assignment.short_identifier)),
+                          assignment_text: h(assignment.short_identifier)),
                         browse_assignment_submissions_path(assignment),
-                        :title => assignment.description %>
+                        title: assignment.description %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
                         browse_assignment_submissions_path(assignment),
-                        :title => assignment.description %>
+                        title: assignment.description %>
           <% end %>
         </li>
       <% else %>
         <li>
           <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
-                          :assignment_text => h(assignment.short_identifier)),
-                        { :controller => 'assignments',
-                          :action => 'edit',
-                          :id => assignment.id },
-                        :title => assignment.description %>
+                          assignment_text: h(assignment.short_identifier)),
+                        { controller: 'assignments',
+                          action: 'edit',
+                          id: assignment.id },
+                        title: assignment.description %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
-                        { :controller => 'assignments',
-                          :action => 'edit',
-                          :id => assignment.id },
-                        :title => assignment.description %>
+                        { controller: 'assignments',
+                          action: 'edit',
+                          id: assignment.id },
+                        title: assignment.description %>
           <% end %>
         </li>
       <% end %>
@@ -86,25 +86,25 @@
            if !@current_user.student? %>
           <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
-                          :assignment_text => h(assignment.short_identifier)),
-                        { :controller => target_controller,
-                          :action => controller.action_name,
-                          :id => assignment.id },
-                        :title => assignment.description %>
+                          assignment_text: h(assignment.short_identifier)),
+                        { controller: target_controller,
+                          action: controller.action_name,
+                          id: assignment.id },
+                        title: assignment.description %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
                         polymorphic_url([assignment, target_controller],
-                                        :action => target_action),
-                        :title => assignment.description %>
+                                        action: target_action),
+                        title: assignment.description %>
           <% end %>
         <% # student user, so show only non-hidden assignments
            else %>
           <% if !assignment.is_hidden %>
             <%= link_to h(assignment.short_identifier),
-                        { :controller => 'assignments',
-                          :action => 'student_interface',
-                          :id => assignment.id },
-                        :title => assignment.description %>
+                        { controller: 'assignments',
+                          action: 'student_interface',
+                          id: assignment.id },
+                        title: assignment.description %>
           <% end %>
         <% end %>
       </li>
@@ -124,25 +124,25 @@
   <div class='separator'></div>
 <% end %>
 
-<% GradeEntryForm.all(:order => 'short_identifier ASC').each do |grade_entry_form| %>
+<% GradeEntryForm.all(order: 'short_identifier ASC').each do |grade_entry_form| %>
   <% if grade_entry_form != @grade_entry_form %>
     <% if @current_user.admin? %>
       <li>
         <%= link_to grade_entry_form.short_identifier,
                     edit_grade_entry_form_path(grade_entry_form),
-                    :title => grade_entry_form.description %>
+                    title: grade_entry_form.description %>
       </li>
     <% elsif @current_user.ta? %>
       <li>
         <%= link_to grade_entry_form.short_identifier,
                     grades_grade_entry_form_path(grade_entry_form),
-                    :title => grade_entry_form.description %>
+                    title: grade_entry_form.description %>
       </li>
     <% elsif @current_user.student? %>
       <li>
         <%= link_to grade_entry_form.short_identifier,
                     student_interface_grade_entry_form_path(grade_entry_form),
-                    :title => grade_entry_form.description %>
+                    title: grade_entry_form.description %>
       </li>
     <% end %>
   <% else %>

@@ -2,10 +2,10 @@
 	location.reload();
 <% else %>
 	jQuery('#remark_request_edit').html("<%= escape_javascript(
-     render :partial => 'results/student/remark_request_form',
-            :locals => {
-                        :submission => @submission,
-                        :assignment => @assignment}).html_safe %>");
+     render partial: 'results/student/remark_request_form',
+            locals: {
+                        submission: @submission,
+                        assignment: @assignment}).html_safe %>");
   jQuery('#remark_request_text_area').effect('highlight',
                                                  { color: '#BDFCC9' }, 1000);
 <% end %>

@@ -9,14 +9,14 @@
 # sort_by
 %>
 
-<%= label_tag "filter", " " + I18n.t("browse_submissions.filter"), :class => "inline_label" %>
+<%= label_tag "filter", " " + I18n.t("browse_submissions.filter"), class: "inline_label" %>
 <%= select_tag  "filter",
                 options_for_select(filters, filter),
-                :onchange => "top.location.href = '" +
+                onchange: "top.location.href = '" +
                   browse_assignment_submissions_path(
-                    :desc => desc,
-                    :sort_by => sort_by,
-                    :per_page => per_page
+                    desc: desc,
+                    sort_by: sort_by,
+                    per_page: per_page
                   ) + "&filter=' + $F(this);"
                       # prototype  ^^^^^ evaluates the selected value for you
 %>
@@ -31,11 +31,11 @@
 %>
 <%= select_tag  "per_page",
                 options_for_select(per_pages, per_page.to_i),
-                :onchange =>  "top.location.href = '" +
+                onchange:  "top.location.href = '" +
                   browse_assignment_submissions_path(
-                    :desc => desc,
-                    :sort_by => sort_by,
-                    :filter => filter
+                    desc: desc,
+                    sort_by: sort_by,
+                    filter: filter
                   ) + "&per_page=' + $F(this);"
 %>
-<%= label_tag "per_page", " " + I18n.t("browse_submissions.per_page"), :class => "inline_label" %>
+<%= label_tag "per_page", " " + I18n.t("browse_submissions.per_page"), class: "inline_label" %>

@@ -21,16 +21,16 @@
               <%=
                 # Grade entry form name
                 link_to grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
-                :controller => 'grade_entry_forms',
-                :action => 'student_interface',
-                :id => grade_entry_form.id %>
+                controller: 'grade_entry_forms',
+                action: 'student_interface',
+                id: grade_entry_form.id %>
             </td>
             <td>
-              <strong><%= l(grade_entry_form.date, :format => :short_date) %></strong>
+              <strong><%= l(grade_entry_form.date, format: :short_date) %></strong>
               <% if grade_entry_form.date > Time.zone.now.to_date %>
                 <p>
                   <%= t(:days_left,
-                        :days => (grade_entry_form.date - Time.zone.now.to_date).to_i)
+                        days: (grade_entry_form.date - Time.zone.now.to_date).to_i)
                   %>
                 </p>
               <% end %>
@@ -46,7 +46,7 @@
                       ('%.2f' % (grade_entry_form.calculate_total_percent(
                         @g_id_entries[grade_entry_form.id]).to_s) + '%') %>
                   <% end %>
-                  <%= '(' + t(:class_average, :results_average =>
+                  <%= '(' + t(:class_average, results_average:
                       ('%.2f' % (grade_entry_form.calculate_released_average)).to_s) + '%)' %>
                 <% else %>
                   <strong> <%= t('grade_entry_forms.students.detailed_marks_message') %> </strong>

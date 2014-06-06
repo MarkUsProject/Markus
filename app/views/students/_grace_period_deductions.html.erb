@@ -24,10 +24,10 @@
     </td>
     <td>
       <%= button_to(t('submission_rules.grace_period_submission_rule.remove_deduction'),
-              delete_grace_period_deduction_student_path(:deduction_id => grace_period_deduction.id),
-              :confirm => t('submission_rules.grace_period_submission_rule.confirm_remove_deduction'),
-              :class => "button_to_delete_deduction",
-              :remote => true) %>
+              delete_grace_period_deduction_student_path(deduction_id: grace_period_deduction.id),
+              confirm: t('submission_rules.grace_period_submission_rule.confirm_remove_deduction'),
+              class: "button_to_delete_deduction",
+              remote: true) %>
     </td>
   </tr>
   <% end %>
