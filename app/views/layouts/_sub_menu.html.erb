@@ -1,8 +1,10 @@
 <% if @current_user.admin? %>
+<<<<<<< HEAD
   <% if controller.controller_name == 'assignments' or
         controller.controller_name == 'rubrics' or
         controller.controller_name == 'flexible_criteria' or
         controller.controller_name == 'submissions' or
+        controller.controller_name == 'summaries' or
         controller.controller_name == 'groups' or
         controller.controller_name == 'graders' or
         controller.controller_name == 'marks_graders' or
@@ -97,6 +99,12 @@
                     id="sub_menu_active"
               <%end%>>
     	       <%= link_to I18n.t(:submissions), browse_assignment_submissions_path(@assignment) %>
+          </li>
+          <li <% if controller.controller_name == 'summaries' %>
+                id="sub_menu_active"
+              <%end%>>
+            <%= link_to I18n.t(:summaries),
+                        assignment_summaries_path(@assignment) %>
           </li>
         <% end %>
       <% end %>
