@@ -37,7 +37,18 @@
     }
   }
 
+  function check_required_fields() {
+    var empty = false;
+    jQuery('input[required]').each(function() {
+      if (this.value === '') {
+        empty = true;
+      }
+    });
+    jQuery('input[type="submit"]').prop('disabled', empty);
+  }
+
   jQuery(document).ready(function() {
+    // Handle periods and hiding/showing things
     if (jQuery('#assignment_due_date').val()) {
       create_grace_periods();
       create_penalty_decay_periods();
@@ -53,6 +64,11 @@
         toggle_remark_requests(<%= @assignment.allow_remarks? %>);
       <% end %>
     }
+
+    // Handle required fields
+    check_required_fields();
+    jQuery('input[required]').change(check_required_fields)
+                             .keyup(check_required_fields);
   });
 //]]>
 </script>
