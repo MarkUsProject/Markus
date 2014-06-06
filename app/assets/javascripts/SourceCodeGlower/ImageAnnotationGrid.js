@@ -6,10 +6,9 @@ It requires a Image Event Handler, an Annotation Text Manager,
 and an Annotation Text Displayer be provided in the constructor.
 
 Rules:
-- This class requires/assumes the Prototype javascript library
-- A Source Code Line Manager, an Annotation Text Manager,
-and an Annotation Text Displayer must be provided in the constructor
-**/
+- A Source Code Line Manager, an Annotation Text Manager, and an
+  Annotation Text Displayer must be provided in the constructor
+*/
 
 var HORIZONTAL_SCROLLBAR_COMPENSATION = 21;
 var VERTICAL_SCROLLBAR_COMPENSATION = 4;
@@ -102,7 +101,7 @@ var ImageAnnotationGrid = Class.create({
       extracted_coords.y_range = $R(extracted_coords.y_range.start, extracted_coords.y_range.end);
       this.annotation_grid.push(extracted_coords);
       this.share_grid_with_event_handler();
-      
+
       var new_holder = new Element('div', {'id': "annotation_holder_" + extracted_coords.id, 'style' : 'position: absolute; opacity:0.2; filter:alpha(opacity=20); cursor: crosshair; background: orange; border: solid; borderColor: black;'});
       new_holder.onmousemove = this.getImageEventHandler().check_for_annotations.bind(this.getImageEventHandler());
       new_holder.onmousedown = this.getImageEventHandler().start_select_box.bind(this.getImageEventHandler());
