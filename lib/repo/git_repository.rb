@@ -388,7 +388,7 @@ module Repository
       # of Subversion repository file
     end
 
-    def __get_node_last_modified_date(path, revision_number)
+    def __get_node_last_modified_date(path, commit)
       # Not (!) part of the AbstractRepository API:
       # Returns
       #    The last modified date
@@ -480,9 +480,9 @@ module Repository
 
     # replaces file at provided path with file_data
     def replace_file(txn, path, file_data=nil, mime_type=nil, expected_revision_number=0)
-      if latest_revision_number(path).to_i != expected_revision_number.to_i
-        raise Repository::FileOutOfSyncConflict.new(path)
-      end
+      #if latest_revision_number(path).to_i != expected_revision_number.to_i
+      #  raise Repository::FileOutOfSyncConflict.new(path)
+      #end
       txn = write_file(txn, path, file_data, mime_type)
       return txn
     end
@@ -711,6 +711,10 @@ module Repository
     # Return changed files at 'path' (recursively)
     def changed_files_at_path(path)
       return files_at_path_helper(path, true)
+    end
+
+    def last_modified_date()
+      return self.timestamp
     end
 
     private

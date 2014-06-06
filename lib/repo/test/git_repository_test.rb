@@ -365,7 +365,6 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert_equal(rev_num_by_timestamp.revision_number, latest_rev.revision_number, "Revision number (int values) do not match")
 
        # test.xml should be in the repository for the timestamp "repo_timestamp"
-       byebug
        rev_num_by_timestamp = @repo.get_revision_by_timestamp(repo_timestamp)
        assert_instance_of(Repository::GitRevision, rev_num_by_timestamp, "Revision number is of wrong type")
        files = rev_num_by_timestamp.files_at_path(rev_num_by_timestamp)
@@ -380,25 +379,27 @@ class GitRepositoryTest < Test::Unit::TestCase
        @repo.close()
      end
 
-  #   should "be able to get the last_modified_date of a file" do
-  #     files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
-  #     add_some_files_helper(@repo, files_to_add) # add some initial files
-  #     revision = @repo.get_latest_revision
+     should "be able to get the last_modified_date of a file" do
+       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
+       add_some_files_helper(@repo, files_to_add) # add some initial files
+       revision = @repo.get_latest_revision
 
-  #     files_to_add.each do |file_name|
-  #       assert_not_nil revision.files_at_path('/')[file_name].last_modified_date
-  #       assert (revision.files_at_path('/')[file_name].last_modified_date - Time.now) < 1
-  #     end
+       files_to_add.each do |file_name|
+         assert_not_nil revision.last_modified_date()
+         assert (revision.last_modified_date - Time.now) < 1
+       end
 
-  #     txn = @repo.get_transaction(TEST_USER)
-  #     txn.replace('MyClass.java', 'new data', 'text', 1)
-  #     @repo.commit(txn)
+       # giving times for diferent commits 
+       sleep(2)
+       txn = @repo.get_transaction(TEST_USER)
+       txn.replace('MyClass.java', 'new data', 'text', 1)
+       @repo.commit(txn)
 
-  #     new_revision = @repo.get_latest_revision
-  #     assert_not_nil new_revision.files_at_path('/')['MyClass.java'].last_modified_date
-  #     assert_not_equal new_revision.files_at_path('/')['MyClass.java'].last_modified_date, revision.files_at_path('/')['MyClass.java'].last_modified_date
-  #     @repo.close()
-  #   end
+       new_revision = @repo.get_latest_revision
+       assert_not_nil new_revision.last_modified_date()
+       assert_not_equal new_revision.last_modified_date, revision.last_modified_date
+       @repo.close()
+     end
 
   end # end context
 
