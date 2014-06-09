@@ -1,4 +1,3 @@
-jQuery('#notes_error_list').html('<%= escape_javascript(
-     render :partial => 'notes/modal_dialogs/notes_dialog_error_list',
-            :locals => {:errors => @note.errors}).html_safe %>');
-jQuery('#notes_error').show();
+document.getElementById('notes_error_list').innerHTML =
+  '<%= escape_javascript( render :partial => "notes/modal_dialogs/notes_dialog_error_list", :locals => {:errors => @note.errors}).html_safe %>';
+document.getElementById('notes_error').style.display = '';

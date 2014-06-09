@@ -1,23 +1,21 @@
-/**
-* page specific event handlers for notes/new.html.erb
-*/
-document.observe("dom:loaded", function() {
+/** Page-specific event handlers for notes/new.html.erb */
 
-  new Form.Element.EventObserver('noteable_type', function(element, value) {
+jQuery(document).ready(function() {
+  jQuery('#noteable_type').change(function() {
+    document.getElementById('loading_selector').style.display = '';
 
-    params = {
-      'noteable_type': value,
+    var params = {
+      'noteable_type': this.value,
       'authenticity_token': AUTH_TOKEN
     }
-    $('loading_selector').show();
 
-    new Ajax.Request('/en/notes/noteable_object_selector', {
-      asynchronous: true,
-      evalScripts: true,
-      onSuccess: function(request) {
-        $('loading_selector').hide()
-      },
-      parameters: params
+    jQuery.ajax({
+      url: '/en/notes/noteable_object_selector',
+      type: 'POST',
+      async: true,
+      data: params
+    }).done(function() {
+      document.getElementById('loading_selector').style.display = 'none';
     });
   });
 });

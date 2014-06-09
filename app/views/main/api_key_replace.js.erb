@@ -1,1 +1,2 @@
-jQuery("#section").html("<%= escape_javascript(render(:partial => 'api/key_display', :locals => { :user => @current_user })) %>");
+document.getElementById('section').innerHTML =
+  "<%= escape_javascript(render(:partial => 'api/key_display', :locals => { :user => @current_user })) %>";

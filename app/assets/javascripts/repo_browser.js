@@ -1,3 +1,3 @@
-function populate(files_json){
+function populate(files_json) {
   files_table.populate(files_json).render();
 }

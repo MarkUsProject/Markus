@@ -1,1 +1,2 @@
-jQuery('#rubric_criteria_pane').html("<%= escape_javascript(render :partial => 'rubrics/rubric_criteria_pane').html_safe %>");
+document.getElementById('rubric_criteria_pane').innerHTML =
+  "<%= escape_javascript(render :partial => 'rubrics/rubric_criteria_pane').html_safe %>";

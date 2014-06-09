@@ -4,9 +4,10 @@ function populate(json_data) {
 }
 
 function filter(filter_name) {
-  $('loading_list').show();
+  document.getElementById('loading_list').style.display = '';
+
   try {
-    switch(filter_name) {
+    switch (filter_name) {
       case 'active':
       case 'inactive':
         users_table.filter_only_by(filter_name).render();
@@ -14,11 +15,11 @@ function filter(filter_name) {
       default:
         users_table.clear_filters().render();
     }
-  }
-  catch (e) {
+  } catch (e) {
     alert(e);
   }
-  $('loading_list').hide();
+
+  document.getElementById('loading_list').style.display = 'none';
 }
 
 function modify_students(users_json) {
@@ -27,21 +28,21 @@ function modify_students(users_json) {
 }
 
 function detect_bulk_action_change() {
-  if($F('bulk_action') == 'give_grace_credits') {
-    $('grace_credit_input').show();
-    $('number_of_grace_credits').select();
-    $('number_of_grace_credits').focus();
-
+  var action = document.getElementById('bulk_action').value;
+  if (action == 'give_grace_credits') {
+    document.getElementById('grace_credit_input').style.display = '';
+    document.getElementById('number_of_grace_credits').select()
+                                                      .focus();
   } else {
-    $('grace_credit_input').hide();
+    document.getElementById('grace_credit_input').style.display = 'none';
   }
 
-  if($F('bulk_action') == 'add_section') {
-    $('section_input').show();
-    $('section').select();
-    $('section').focus();
+  if (action == 'add_section') {
+    document.getElementById('section_input').style.display = '';
+    document.getElementById('section').select()
+                                      .focus();
   } else {
-    $('section_input').hide();
+    document.getElementById('section_input').style.display = 'none';
   }
 }
 
