@@ -95,6 +95,7 @@ module Repository
     end
 
     # static method that deletes the git repo
+    # rm everything? or only .git?
     def self.delete(repo_path)
       #does not acutally delete repo, just removes reference to master. This prevents any other git operations.
       ref = Rugged::Reference.lookup(repo, "refs/heads/master")
@@ -272,12 +273,28 @@ module Repository
     def get_users(permissions)
       # Gets a list of users with AT LEAST the provided permissions.
       # Returns nil if there aren't any.
-    end
 
-    def get_permissions(user_id)
+      # R, for read only
+      # RW, for push existing ref or create new ref
+      # RW+, for "push -f" or ref deletion allowed (i.e., destroy information)
+      # - (the minus sign), to deny access.
+      end
+
+    def get_permissions(user_id,config_path)
+      
+      ga_repo = Gitolite::GitoliteAdmin.new(config_path)
+      repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
+      
       # Gets permissions of a particular user
+      if(repo.permissions[0]["RW+"][""].include? user_id)
+        return Repository::Permission::READ_WRITE
+      elsif(repo.permissions[0]["W"][""].include? user_id)
+        return Repository::Permission::READ_WRITE
+      elsif(repo.permissions[0]["R"][""].include? user_id)
+        return Repository::Permission::READ
+      end
     end
-
+    
     def set_permissions(user_id, permissions)
       # Set permissions for a single given user
     end
@@ -297,14 +314,14 @@ module Repository
       if !Repository.conf[:IS_REPOSITORY_ADMIN] # Are we admin?
         raise NotAuthorityError.new("Unable to set bulk permissions:  Not in authoritative mode!");
       end
-
+      
       #check if gitolite admin repo exists
       #TODO paths should be in config file
-
+      
       #gitolite admin repo
       ga_repo = Gitolite::GitoliteAdmin.new("#{::Rails.root.to_s}/data/dev/repos/git_auth")
       conf = ga_repo.config
-
+      
       repo_names.each do |repo_name|
         repo_name = File.basename(repo_name)
         repo = Gitolite::Config::Repo.new(repo_name)

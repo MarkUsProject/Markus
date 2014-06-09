@@ -65,7 +65,7 @@ class GitRepositoryTest < Test::Unit::TestCase
      should "be able to delete a Git repository" do
        GitRepository.create(TEST_REPO)
        GitRepository.delete(TEST_REPO)
-      assert(Rugged::Reference.lookup(Rugged::Repository.new(TEST_REPO), "refs/heads/master").nil?,'Did not properly delete the repository')
+      assert_equal(GitRepository.repository_exists?(TEST_REPO),false,'Did not properly delete the repository')
      end
   end
 
@@ -81,9 +81,9 @@ class GitRepositoryTest < Test::Unit::TestCase
        # configure and create repositories
        conf_admin = Hash.new
        conf_admin["IS_REPOSITORY_ADMIN"] = true
-       # TODO: Change to make it work with gitolie
+       # TODO: Change to make it work with gitolite
        # Ref: http://gitolite.com/gitolite/repos.html
-       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/config/giolite.conf"
+       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/config/gitolite.conf"
 
        # create repository first
        GitRepository.create(TEST_REPO)
@@ -403,71 +403,72 @@ class GitRepositoryTest < Test::Unit::TestCase
 
   end # end context
 
-  # context "A repository with an authorization file specified" do
+   context "A repository with an authorization file specified" do
 
-  #   SVN_AUTHZ_FILE = SVN_TEST_REPOS_DIR + "/svn_authz"
+    GIT_AUTH_FILE = GIT_TEST_REPOS_DIR + "/git_auth/conf/gitolite.conf"
 
-  #   setup do
-  #     #cleanup any files that may be left over
-  #     FileUtils.remove_dir(SVN_TEST_REPOS_DIR + "/Testrepo1", true)
-  #     FileUtils.remove_dir(SVN_TEST_REPOS_DIR + "/Repository2", true)
-  #     FileUtils.remove_dir(TEST_REPO, true)
-  #     FileUtils.rm(SVN_AUTHZ_FILE, :force => true)
-  #     # have a clean authz file
-  #     FileUtils.cp(SVN_AUTHZ_FILE + '.orig', SVN_AUTHZ_FILE)
-  #     # create repository first
-  #     repo1 = SVN_TEST_REPOS_DIR + "/Testrepo1"
-  #     repo2 = SVN_TEST_REPOS_DIR + "/Repository2"
-  #     conf_admin = Hash.new
-  #     conf_admin["IS_REPOSITORY_ADMIN"] = true
-  #     conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
-  #     Repository.get_class("svn", conf_admin).create(repo1)
-  #     Repository.get_class("svn", conf_admin).create(repo2)
-  #     Repository.get_class("svn", conf_admin).create(TEST_REPO)
-  #     # open the repository
-  #     conf_non_admin = Hash.new
-  #     conf_non_admin["IS_REPOSITORY_ADMIN"] = false
-  #     conf_non_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+     setup do
+       #cleanup any files that may be left over
+       FileUtils.remove_dir(GIT_TEST_REPOS_DIR + "/Testrepo1", true)
+       FileUtils.remove_dir(GIT_TEST_REPOS_DIR + "/Repository2", true)
+       FileUtils.remove_dir(TEST_REPO, true)
+       FileUtils.rm(GIT_AUTH_FILE, :force => true)
+       # have a clean auth file
+       FileUtils.cp(GIT_AUTH_FILE + '.orig', GIT_AUTH_FILE)
+       # create repository first
+       repo1 = GIT_TEST_REPOS_DIR + "/Testrepo1"
+       repo2 = GIT_TEST_REPOS_DIR + "/Repository2"
+       conf_admin = Hash.new
+       conf_admin["IS_REPOSITORY_ADMIN"] = true
+       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FILE
+       Repository.get_class("git", conf_admin).create(repo1)
+       Repository.get_class("git", conf_admin).create(repo2)
+       Repository.get_class("git", conf_admin).create(TEST_REPO)
+       # open the repository
+       conf_non_admin = Hash.new
+       conf_non_admin["IS_REPOSITORY_ADMIN"] = false
+       conf_non_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FILE
 
-  #     @repo1 = Repository.get_class("svn", conf_non_admin).open(repo1) # non-admin repository
-  #     @repo2 = Repository.get_class("svn", conf_non_admin).open(repo2) # again, a non-admin repo
-  #     @repo = Repository.get_class("svn", conf_admin).open(TEST_REPO)     # repo with admin-privs
+       @repo1 = Repository.get_class("git", conf_non_admin).open(repo1) # non-admin repository
+       @repo2 = Repository.get_class("git", conf_non_admin).open(repo2) # again, a non-admin repo
+       @repo = Repository.get_class("git", conf_admin).open(TEST_REPO)     # repo with admin-privs
 
-  #     # add some files
-  #     files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
-  #     add_some_files_helper(@repo1, files_to_add)
-  #     add_some_files_helper(@repo2, files_to_add)
-  #   end
+       # add some files
+       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
+       add_some_files_helper(@repo1, files_to_add)
+       add_some_files_helper(@repo2, files_to_add)
+     end
 
-  #   # removes Subversion repositories
-  #   teardown do
-  #     if !@repo.nil? and !@repo.closed?
-  #       @repo.close()
-  #       @repo1.close()
-  #       @repo2.close()
-  #     end
-  #     SubversionRepository.delete(SVN_TEST_REPOS_DIR + "/Testrepo1")
-  #     SubversionRepository.delete(SVN_TEST_REPOS_DIR + "/Repository2")
-  #     SubversionRepository.delete(TEST_REPO)
-  #     FileUtils.rm(SVN_AUTHZ_FILE, :force => true)
-  #   end
+     # removes Git repositories
+     teardown do
+       if !@repo.nil? and !@repo.closed?
+         @repo.close()
+         @repo1.close()
+         @repo2.close()
+       end
+      GitRepository.delete(GIT_TEST_REPOS_DIR + "/Testrepo1")
+      GitRepository.delete(GIT_TEST_REPOS_DIR + "/Repository2")
+      GitRepository.delete(TEST_REPO)
+       FileUtils.rm(GIT_AUTH_FILE, :force => true)
+     end
 
-  #   should "be able to get permissions for a user" do
-  #     # check if permission constants are working
-  #     assert_equal(2, Repository::Permission::WRITE)
-  #     assert_equal(4, Repository::Permission::READ)
-  #     assert_equal(6, Repository::Permission::READ_WRITE)
-  #     assert_equal(4, Repository::Permission::ANY)
+     should "be able to get permissions for a user" do
+       # check if permission constants are working
+       assert_equal(2, Repository::Permission::WRITE)
+       assert_equal(4, Repository::Permission::READ)
+       assert_equal(6, Repository::Permission::READ_WRITE)
+       assert_equal(4, Repository::Permission::ANY)
+       
+       byebug
+       assert_equal(Repository::Permission::READ_WRITE, @repo1.get_permissions("user1",GIT_TEST_REPOS_DIR + "/git_auth/"))
+       assert_equal(Repository::Permission::READ, @repo1.get_permissions("someother_user",GIT_TEST_REPOS_DIR + "/git_auth/"))
+       assert_equal(Repository::Permission::READ, @repo2.get_permissions("test",GIT_TEST_REPOS_DIR + "/git_auth/"))
 
-  #     assert_equal(Repository::Permission::READ_WRITE, @repo1.get_permissions("user1"))
-  #     assert_equal(Repository::Permission::READ, @repo1.get_permissions("someother_user"))
-  #     assert_equal(Repository::Permission::READ, @repo2.get_permissions("test"))
-
-  #     #For some reason it does not work to just put these lines in the teardown
-  #     @repo.close()
-  #     @repo1.close()
-  #     @repo2.close()
-  #   end
+       #For some reason it does not work to just put these lines in the teardown
+       @repo.close()
+       @repo1.close()
+       @repo2.close()
+     end
 
   #   should "raise a UserNotFound exception" do
   #     # check if permission constants are working
@@ -757,7 +758,7 @@ class GitRepositoryTest < Test::Unit::TestCase
   #       repo.close()
   #     end
   #   end
-  # end#end context
+  end#end context
 
   # private # private helper methods for this class
 
