@@ -25,7 +25,6 @@ var ImageAnnotationGrid = Class.create({
       this.draw_holders();
       image_event_handler.init_listeners($('enable_annotations?').value);
       $('code_pane').onmousemove = this.draw_holders.bind(this);
-
     },
     getAnnotationTextManager: function() {
       return this.annotation_text_manager;
@@ -37,14 +36,13 @@ var ImageAnnotationGrid = Class.create({
       return this.annotation_text_displayer;
     },
     get_annotation_grid: function(){
-        return this.annotation_grid;
+      return this.annotation_grid;
     },
     process_grid: function(){
       this.annotation_grid = $('annotation_grid').value.evalJSON();
-      var i;
       var annot_grid = this.get_annotation_grid();
-      //convert the ranges to a javascript ObjectRange to use the include() method
-      for(i = 0; i < annot_grid.length; i++) {
+      // Convert the ranges to a javascript ObjectRange to use the include() method
+      for (var i = 0; i < annot_grid.length; i++) {
         annot_grid[i].x_range = $R(
             annot_grid[i].x_range.start, annot_grid[i].x_range.end);
         annot_grid[i].y_range = $R(

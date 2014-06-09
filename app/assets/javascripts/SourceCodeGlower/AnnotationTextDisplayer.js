@@ -63,7 +63,7 @@ var AnnotationTextDisplayer = Class.create({
     var display_node = this.getDisplayNode();
     display_node.innerHTML = text;
     display_node.style.left = (x + TEXT_DISPLAY_X_OFFSET)  + 'px';
-    display_node.style.top = (y + TEXT_DISPLAY_Y_OFFSET)  + 'px';
+    display_node.style.top  = (y + TEXT_DISPLAY_Y_OFFSET)  + 'px';
   },
 
   // Hide the displayer
