@@ -266,18 +266,36 @@ module Repository
       return true
     end
 
-    def add_user(user_id, permissions)
+    def add_user(user_id, permissions,config_path)
       # Adds a user with given permissions to the repository      
+      ga_repo = Gitolite::GitoliteAdmin.new(config_path)
+      repo_name = self.get_repos.workdir.split('/').last
+      
+      repo = ga_repo.config.get_repo(repo_name)
+
+      if repo.nil?
+        repo = Gitolite::Config::Repo.new(repo_name)
+      elsif(repo.permissions[0]["RW+"][""].include? user_id)
+        raise UserAlreadyExistent.new(user_id + " already existent")
+      elsif(repo.permissions[0]["R"][""].include? user_id)
+        raise UserAlreadyExistent.new(user_id + " already existent")
+      end
+      
+      git_permission = self.class.__translate_to_git_perms(permissions)
+      byebug
+      repo.add_permission(git_permission,"",user_id)
+      ga_repo.config.add_repo(repo)
+      ga_repo.save
+      ga_repo.save_and_apply
+
     end
     
     def get_users(permissions)
       # Gets a list of users with AT LEAST the provided permissions.
       # Returns nil if there aren't any.
 
-      # R, for read only
-      # RW, for push existing ref or create new ref
-      # RW+, for "push -f" or ref deletion allowed (i.e., destroy information)
-      # - (the minus sign), to deny access.
+      # Permissions provided
+      # http://gitolite.com/gitolite/write-types.html
       end
 
     def get_permissions(user_id,config_path)
@@ -292,15 +310,20 @@ module Repository
         return Repository::Permission::READ_WRITE
       elsif(repo.permissions[0]["R"][""].include? user_id)
         return Repository::Permission::READ
+      elsif
+        raise UserNotFound.new(user_id + " not found")
       end
+      
     end
     
     def set_permissions(user_id, permissions)
       # Set permissions for a single given user
+      repo.add_permission("RW+", "", "bob", "joe", "susan")
     end
 
     def remove_user(user_id)
       # Delete user from access list
+      # There is no remove support from gitolite ruby library 
     end
 
     # Sets permissions over several repositories. Use set_permissions to set

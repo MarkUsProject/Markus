@@ -413,6 +413,8 @@ class GitRepositoryTest < Test::Unit::TestCase
        FileUtils.remove_dir(GIT_TEST_REPOS_DIR + "/Repository2", true)
        FileUtils.remove_dir(TEST_REPO, true)
        FileUtils.rm(GIT_AUTH_FILE, :force => true)
+
+       ga_repo =  Gitolite::GitoliteAdmin.bootstrap(GIT_TEST_REPOS_DIR + "/git_auth/")
        # have a clean auth file
        FileUtils.cp(GIT_AUTH_FILE + '.orig', GIT_AUTH_FILE)
        # create repository first
@@ -446,9 +448,9 @@ class GitRepositoryTest < Test::Unit::TestCase
          @repo1.close()
          @repo2.close()
        end
-      GitRepository.delete(GIT_TEST_REPOS_DIR + "/Testrepo1")
-      GitRepository.delete(GIT_TEST_REPOS_DIR + "/Repository2")
-      GitRepository.delete(TEST_REPO)
+       GitRepository.delete(GIT_TEST_REPOS_DIR + "/Testrepo1")
+       GitRepository.delete(GIT_TEST_REPOS_DIR + "/Repository2")
+       GitRepository.delete(TEST_REPO)
        FileUtils.rm(GIT_AUTH_FILE, :force => true)
      end
 
@@ -459,7 +461,6 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert_equal(6, Repository::Permission::READ_WRITE)
        assert_equal(4, Repository::Permission::ANY)
        
-       byebug
        assert_equal(Repository::Permission::READ_WRITE, @repo1.get_permissions("user1",GIT_TEST_REPOS_DIR + "/git_auth/"))
        assert_equal(Repository::Permission::READ, @repo1.get_permissions("someother_user",GIT_TEST_REPOS_DIR + "/git_auth/"))
        assert_equal(Repository::Permission::READ, @repo2.get_permissions("test",GIT_TEST_REPOS_DIR + "/git_auth/"))
@@ -470,45 +471,45 @@ class GitRepositoryTest < Test::Unit::TestCase
        @repo2.close()
      end
 
-  #   should "raise a UserNotFound exception" do
-  #     # check if permission constants are working
-  #     assert_equal(2, Repository::Permission::WRITE)
-  #     assert_equal(4, Repository::Permission::READ)
-  #     assert_equal(6, Repository::Permission::READ_WRITE)
-  #     assert_equal(4, Repository::Permission::ANY)
+     should "raise a UserNotFound exception" do
+       # check if permission constants are working
+       assert_equal(2, Repository::Permission::WRITE)
+       assert_equal(4, Repository::Permission::READ)
+       assert_equal(6, Repository::Permission::READ_WRITE)
+       assert_equal(4, Repository::Permission::ANY)
 
-  #     assert_raise(UserNotFound) do
-  #       @repo1.get_permissions("non_existent_user")
-  #     end
-  #     assert_raise(UserNotFound) do
-  #       @repo2.get_permissions("non_existent_user")
-  #     end
-  #     assert_raise(UserNotFound) do
-  #       @repo.set_permissions("non_existent_user", Repository::Permission::READ_WRITE)
-  #     end
-  #     assert_raise(UserNotFound) do
-  #       @repo.remove_user("non_existent_user")
-  #     end
-  #     @repo.close()
-  #     @repo1.close()
-  #     @repo2.close()
-  #   end
+       assert_raise(UserNotFound) do
+         @repo1.get_permissions("non_existent_user",GIT_TEST_REPOS_DIR + "/git_auth/")
+       end
+       assert_raise(UserNotFound) do
+         @repo2.get_permissions("non_existent_user",GIT_TEST_REPOS_DIR + "/git_auth/")
+       end
+       #assert_raise(UserNotFound) do
+         # @repo.set_permissions("non_existent_user", Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
+       #end
+       #assert_raise(UserNotFound) do
+       #  @repo.remove_user("non_existent_user")
+       #end
+       @repo.close()
+       @repo1.close()
+       @repo2.close()
+     end
 
-  #   should "raise a UserAlreadyExistent exception" do
-  #     # check if permission constants are working
-  #     assert_equal(2, Repository::Permission::WRITE)
-  #     assert_equal(4, Repository::Permission::READ)
-  #     assert_equal(6, Repository::Permission::READ_WRITE)
-  #     assert_equal(4, Repository::Permission::ANY)
+     should "raise a UserAlreadyExistent exception" do
+       # check if permission constants are working
+       assert_equal(2, Repository::Permission::WRITE)
+       assert_equal(4, Repository::Permission::READ)
+       assert_equal(6, Repository::Permission::READ_WRITE)
+       assert_equal(4, Repository::Permission::ANY)
 
-  #     @repo.add_user("user_x", Repository::Permission::READ)
-  #     assert_raise(UserAlreadyExistent) do
-  #       @repo.add_user("user_x", Repository::Permission::READ_WRITE) # user_x exists already
-  #     end
-  #     @repo.close()
-  #     @repo1.close()
-  #     @repo2.close()
-  #   end
+       @repo.add_user("user_x", Repository::Permission::READ,GIT_TEST_REPOS_DIR + "/git_auth/")
+       assert_raise(UserAlreadyExistent) do
+        @repo.add_user("user_x", Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/") # user_x exists already
+       end
+       @repo.close()
+       @repo1.close()
+       @repo2.close()
+     end
 
   #   should "not be allowed to modify permissions when not it authoritative mode" do
   #     # check if permission constants are working
