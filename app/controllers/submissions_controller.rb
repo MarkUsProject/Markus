@@ -45,14 +45,28 @@ class SubmissionsController < ApplicationController
 
   # Proc for sorting by criteria
   criterion_mark_compare = Proc.new do |a, b, cid|
-    ret = -1 if (!a.has_submission? \
-                 || a.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).nil? \
-                 || a.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).mark.nil?)
-    ret ||= 1 if (!b.has_submission? \
-                  || b.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).nil? \
-                  || b.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).mark.nil?)
-    ret ||= a.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).mark <=>
-          b.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).mark
+    ret = -1 if !a.has_submission? ||
+                 a.current_submission_used
+                  .get_latest_result.marks
+                  .find_by_markable_id(cid).nil? ||
+                 a.current_submission_used
+                  .get_latest_result.marks
+                  .find_by_markable_id(cid).mark.nil?
+
+    ret ||= 1 if !b.has_submission? ||
+                  b.current_submission_used
+                   .get_latest_result.marks
+                   .find_by_markable_id(cid).nil? ||
+                  b.current_submission_used
+                   .get_latest_result.marks
+                   .find_by_markable_id(cid).mark.nil?
+
+    ret ||= a.current_submission_used
+             .get_latest_result.marks
+             .find_by_markable_id(cid).mark <=>
+            b.current_submission_used
+             .get_latest_result.marks
+             .find_by_markable_id(cid).mark
   end
 
   # TABLE FOR TAs
