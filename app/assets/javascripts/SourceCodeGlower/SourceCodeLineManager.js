@@ -13,8 +13,8 @@ var SourceCodeLineManager = Class.create({
   initialize: function(adapter, line_factory, empty_collection) {
     // Uses a SourceCodeLineCollection to hold source code lines
     this.collection = empty_collection;
-    // Take the passed adapter, and start pulling DOM nodes and indexes (line numbers)
 
+    // Take the passed adapter, and start pulling DOM nodes and indexes (line numbers)
     // Since it's easy to confuse scope when passing functions around, I'll temporarily
     // alias this as 'me'.
     var me = this;
@@ -26,7 +26,7 @@ var SourceCodeLineManager = Class.create({
   },
 
   // Given a DOM node, see if it's one of the DOM nodes representing the source code,
-  // and if so, return it's line number.  If not, return -1.
+  // and if so, return it's line number. If not, return -1.
   getLineNumber: function(line_node) {
     return this.collection.getLineNumOfNode(line_node) + 1;
   },

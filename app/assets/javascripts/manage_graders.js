@@ -2,15 +2,13 @@
 
 jQuery(document).ready(function () {
   jQuery('#assign_criteria').change(function() {
-    var path = this.readAttribute('data-action');
-
     var params = {
       'value': this.value || false,
       'authenticity_token': AUTH_TOKEN
     }
 
     jQuery.ajax({
-      url: path,
+      url: this.readAttribute('data-action'),
       type: 'POST',
       async: true,
       data: params

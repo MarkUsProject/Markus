@@ -79,7 +79,6 @@ function update_cell(cell, value) {
 function bindEventToGradeEntry() {
   jQuery'.grade-input').each(function(index) {
     $(this).change(function() {
-      var path = this.readAttribute('data-action');
       var params = {
         'updated_grade': this.value,
         'student_id': this.readAttribute('data-student-id'),
@@ -88,7 +87,7 @@ function bindEventToGradeEntry() {
       }
 
       jQuery.ajax({
-        url: path,
+        url: this.readAttribute('data-action'),
         type: 'POST',
         async: true,
         data: params

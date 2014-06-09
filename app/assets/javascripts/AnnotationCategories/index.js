@@ -28,6 +28,7 @@ function add_annotation_category(path) {
       url: path,
       type: 'GET'
     });
+
     var info = jQuery('#no_annotation_categories_info');
     if (info.size()) {
       info.hide();

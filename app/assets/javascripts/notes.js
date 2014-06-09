@@ -2,15 +2,15 @@
 
 jQuery(document).ready(function() {
   jQuery('#noteable_type').change(function() {
-    var path = '/en/notes/noteable_object_selector';
+    document.getElementById('loading_selector').style.display = '';
+
     var params = {
       'noteable_type': this.value,
       'authenticity_token': AUTH_TOKEN
     }
-    document.getElementById('loading_selector').style.display = '';
 
     jQuery.ajax({
-      url: path,
+      url: '/en/notes/noteable_object_selector',
       type: 'POST',
       async: true,
       data: params

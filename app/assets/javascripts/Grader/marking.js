@@ -5,14 +5,13 @@ jQuery(document).ready(function() {
   });
 
   function update_status(element, value) {
-    var path = element.readAttribute('data-action');
     var params = {
       'value': value || '',
       'authenticity_token': AUTH_TOKEN
     }
 
     jQuery.ajax({
-      url: path,
+      url: element.readAttribute('data-action'),
       type: 'POST',
       async: true,
       data: params
@@ -21,14 +20,13 @@ jQuery(document).ready(function() {
 
   // Releasing the grades, only available on the admin page
   jQuery('#released').change(function() {
-    var path = this.readAttribute('data-action');
     var params = {
       'value': this.checked || '',
       'authenticity_token': AUTH_TOKEN
     }
 
     jQuery.ajax({
-      url: path,
+      url: this.readAttribute('data-action'),
       type: 'POST',
       async: true,
       data: params
@@ -47,14 +45,13 @@ jQuery(document).ready(function() {
     });
 
     jQuery(this).change(function() {
-      var path = this.readAttribute('data-action');
       var params = {
         'mark': this.value || '',
         'authenticity_token': AUTH_TOKEN
       }
 
       jQuery.ajax({
-        url: path,
+        url: this.readAttribute('data-action'),
         type: 'POST',
         async: true,
         data: params
@@ -79,13 +76,13 @@ function hide_criterion(id) {
   document.getElementById('mark_criterion_inputs_' + id).style.display = 'none';
   document.getElementById('mark_criterion_title_' + id).style.display = '';
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
-  jQuery('#mark_criterion_title_' + id + '_expand').removeClass('expanded');
+  document.getElementById('mark_criterion_title_' + id + '_expand').classList.remove('expanded');
 }
 
 function show_criterion(id) {
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
   document.getElementById('mark_criterion_inputs_' + id).style.display = '';
-  jQuery('#mark_criterion_title_' + id + '_expand').addClass('expanded');
+  document.getElementById('mark_criterion_title_' + id + '_expand').classList.add('expanded');
 }
 
 function select_mark(mark_id, mark) {
@@ -96,7 +93,7 @@ function select_mark(mark_id, mark) {
   }
 
   if (mark !== null) {
-    jQuery('#mark_' + mark_id + '_' + mark).addClass('rubric_criterion_level_selected');
+    document.getElementById('mark_' + mark_id + '_' + mark).classList.add('rubric_criterion_level_selected');
   }
 }
 

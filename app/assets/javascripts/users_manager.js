@@ -5,6 +5,7 @@ function populate(json_data) {
 
 function filter(filter_name) {
   document.getElementById('loading_list').style.display = '';
+
   try {
     switch (filter_name) {
       case 'active':
@@ -17,6 +18,7 @@ function filter(filter_name) {
   } catch (e) {
     alert(e);
   }
+
   document.getElementById('loading_list').style.display = 'none';
 }
 

@@ -25,7 +25,7 @@ jQuery(document).ready(function() {
     async:    true,
     dataType: 'json'
   }).done(function(data) {
-    jQuery('#loading_list').hide();
+    document.getElementById('loading_list').style.display = 'none';
     populate(JSON.stringify(data));
   });
 });

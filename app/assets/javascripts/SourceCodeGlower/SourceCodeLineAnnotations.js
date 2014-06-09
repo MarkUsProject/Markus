@@ -9,7 +9,6 @@ Rules:
 - A Source Code Line Manager, an Annotation Text Manager, and an Annotation Text Displayer must be provided in the constructor
 **/
 
-
 var SourceCodeLineAnnotations = Class.create({
   initialize: function(line_manager, annotation_text_manager, annotation_text_displayer) {
     // Make sure we got what we wanted...
