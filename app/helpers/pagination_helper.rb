@@ -62,7 +62,7 @@ module PaginationHelper
 
   def get_filtered_items(hash, filter, sort_by, object_hash, desc)
     to_include = []
-    # eager load only the tables needed for the type of sort, eager load the 
+    # eager load only the tables needed for the type of sort, eager load the
     # rest of the tables after the groupings have been paginated
     case sort_by
     when 'group_name' then
@@ -86,11 +86,13 @@ module PaginationHelper
     items = hash[:filters][filter][:proc].call(object_hash, to_include)
     unless sort_by.blank?
       if sort_by == 'criterion'
-        items = items
-                  .sort { |a, b| hash[:sorts][sort_by]
-                  .call(a,b,object_hash[:cid]) }
+        items = items.sort do |a, b|
+          hash[:sorts][sort_by].call(a, b, object_hash[:cid])
+        end
       else
-        items = items.sort { |a, b| hash[:sorts][sort_by].call(a,b) }
+        items = items.sort do |a, b|
+          hash[:sorts][sort_by].call(a, b)
+        end
       end
     end
 
