@@ -179,6 +179,7 @@
 
   function make_new_image_annotation() {
     var box = get_selection_box();
+    if (!box) { return; }
 
     // Open the modal dialog to ask for new Annotation details
     modal.open();
@@ -192,6 +193,7 @@
   function add_existing_annotation(annotation_text_id) {
     if (is_image) {
       var box = get_selection_box();
+      if (!box) { return; }
 
       jQuery.ajax({
         url:  "<%= add_existing_annotation_annotations_path() %>",
