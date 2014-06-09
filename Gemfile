@@ -88,5 +88,5 @@ end
 # installed for rghost to work well. You also need to set
 # the PDF_SUPPORT bool to true in the config file(s).
 group :rghost do
-  gem 'rghost'
+  gem 'rghost', '<=0.9.3'
 end
