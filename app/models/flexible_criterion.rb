@@ -1,7 +1,7 @@
 require 'encoding'
 # Represents a flexible criterion used to mark an assignment that
 # has the marking_scheme_type attribute set to 'flexible'.
-class FlexibleCriterion < ActiveRecord::Base
+class FlexibleCriterion < Criterion
 
   self.table_name =  'flexible_criteria' # set table name correctly
   belongs_to :assignment, :counter_cache => true
