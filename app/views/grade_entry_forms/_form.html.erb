@@ -5,14 +5,16 @@
    # #{date} - The date the exam/test/lab corresponding to this grade entry form took place
    # #{grade_entry_item(s)} - Column name and total
 %>
-<%
-  # For the internationalization of the Calendar
-%>
-<% if I18n.default_locale == :en %>
-   <%= calendar_date_select_includes "silver" %>
-<% else %>
-   <%= calendar_date_select_includes "silver", :locale => I18n.default_locale %>
+
+<% content_for :head do %>
+  <%= javascript_include_tag 'jquery', 'jquery-ui' %>
+  <%= stylesheet_link_tag 'jquery-ui' %>
+  <%= javascript_include_tag 'localize_date' %>
 <% end %>
+
+<%= render partial: 'boot',
+           formats: [:js],
+           handlers: [:erb] %>
 
 <div class="wrapLeft">
 <%= render 'shared/flash_message' %>
@@ -36,10 +38,13 @@
     <%= raw(f.text_area :message, :rows => 8, :cols => 65) %><br>
 
     <%= raw(f.label :date, t(:shortened_date).html_safe) %>
-    <%= raw(f.calendar_date_select :date,
-            {:year_range => 0.years.ago..1.years.from_now,
-             :locale => I18n.default_locale}) %>
-    <%= raw(t(:iso_date_format_example)) %>
+    <%= raw(f.text_field :date,
+                         id: 'actual_date',
+                         class: 'hidden') %>
+    <%= text_field_tag 'date',
+                       nil,
+                       { class: 'datepicker',
+                         size: 30 } %>
 
     <br>
 
