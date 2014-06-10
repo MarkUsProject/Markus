@@ -12,7 +12,7 @@
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
         date_format: '',
-        due_date: jQuery('#assignment_due_date').val()
+        due_date: jQuery('#actual_assignment_due_date').val()
       });
     }
   }
@@ -22,7 +22,7 @@
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
         date_format: '',
-        due_date: jQuery('#assignment_due_date').val()
+        due_date: jQuery('#actual_assignment_due_date').val()
       });
     }
   }
@@ -32,7 +32,7 @@
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
         date_format: '',
-        due_date: jQuery('#assignment_due_date').val()
+        due_date: jQuery('#actual_assignment_due_date').val()
       });
     }
   }
@@ -49,7 +49,7 @@
 
   jQuery(document).ready(function() {
     // Handle periods and hiding/showing things
-    if (jQuery('#assignment_due_date').val()) {
+    if (jQuery('#actual_assignment_due_date').val()) {
       create_grace_periods();
       create_penalty_decay_periods();
       create_penalty_periods();

@@ -1,12 +1,8 @@
-<% if I18n.default_locale == :en %>
-  <%= calendar_date_select_includes 'silver' %>
-<% else %>
-  <%= calendar_date_select_includes 'silver', locale: I18n.default_locale %>
-<% end %>
-
 <% content_for :head do %>
-  <%= javascript_include_tag 'jquery' %>
+  <%= javascript_include_tag 'jquery', 'jquery-ui', 'jquery-ui-timepicker-addon' %>
+  <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'PeriodDeltaChain/PeriodDeltaChain' %>
+  <%= javascript_include_tag 'localize_date' %>
 <% end %>
 
 <%= render partial: 'boot',
@@ -97,33 +93,31 @@
               <%= due_date_f.text_field :section_id, class: 'hidden'%>
               <br>
               <%= due_date_f.label :due_date, t('due_date') %>
-              <%= due_date_f.calendar_date_select :due_date,
-                                                  { time: 'mixed',
-                                                    after_close: 'check_required_fields();',
-                                                    year_range: 0.years.ago..1.years.from_now } %>
+              <%= raw(f.text_field :due_date,
+                                   id: 'actual_section_due_date',
+                                   class: 'hidden') %>
+              <%= text_field_tag 'section_due_date',
+                                 nil,
+                                 { onchange: 'set_onbeforeunload(true);',
+                                   size: 30 } %>
             </p>
           <% end %>
         </div>
       </div>
     <% end %>
 
+    <%# TODO update the global due date with the first due date added. %>
     <div>
       <%= raw(f.label :due_date,
-                      t('assignment.due_date').html_safe,
-                      onchange: 'set_onbeforeunload(true);') %>
-
-      <%# TODO update the global due date with the first due date added. %>
-
-      <%=raw(f.calendar_date_select :due_date,
-                                    { time: 'mixed',
-                                      locale: I18n.default_locale,
-                                      after_close: 'check_required_fields();',
-                                      year_range: 0.years.ago..1.years.from_now,
-                                      id: 'assignment_due_date',
-                                      onchange: 'set_onbeforeunload(true);',
-                                      required: true }) %>
-
-      <%= t(:iso_due_date_format_example) %>
+                      t('assignment.due_date').html_safe) %>
+      <%= raw(f.text_field :due_date,
+                           id: 'actual_assignment_due_date',
+                           class: 'hidden') %>
+      <%= text_field_tag 'assignment_due_date',
+                         nil,
+                         { onchange: 'set_onbeforeunload(true);',
+                           size: 30,
+                           required: true } %>
     </div>
 
     <div>
@@ -410,16 +404,14 @@
       <div>
         <%= raw(f.label('remark_due_date',
                         t('assignment.remark.due_date'),
-                        class: 'inline_label') ) %>
-        <%= raw(f.calendar_date_select :remark_due_date,
-                                       { time: 'mixed',
-                                         locale: I18n.default_locale,
-                                         after_close: 'check_due_date($F("remark_due_date"))',
-                                         year_range: 0.years.ago..1.years.from_now,
-                                         id: 'remark_due_date',
-                                         onchange: 'set_onbeforeunload(true);' }) %>
-
-        <%= t(:iso_due_date_format_example) %>
+                        class: 'inline_label')) %>
+        <%= raw(f.text_field :remark_due_date,
+                             id: 'actual_remark_due_date',
+                             class: 'hidden') %>
+        <%= text_field_tag 'remark_due_date',
+                           nil,
+                           { onchange: 'set_onbeforeunload(true);',
+                             size: 30 } %>
       </div>
 
       <div>
@@ -437,5 +429,40 @@
   <%= f.submit t(:submit),
                'data-disable-with' => I18n.t('working'),
                onclick: 'set_onbeforeunload(false);' %>
-
 <% end %>
+
+<script>
+  jQuery('#section_due_date').datetimepicker({
+    altField:         '#actual_section_due_date',
+    altFieldTimeOnly: false,
+    altFormat:        'yy-mm-dd',
+    altTimeFormat:    'HH:mm',
+    altSeparator:     'T',
+    controlType:      'select',
+    numberOfMonths:   2,
+    secondMax:        0
+  });
+
+  jQuery('#assignment_due_date').datetimepicker({
+    altField:         '#actual_assignment_due_date',
+    altFieldTimeOnly: false,
+    altFormat:        'yy-mm-dd',
+    altTimeFormat:    'HH:mm',
+    altSeparator:     'T',
+    controlType:      'select',
+    numberOfMonths:   2,
+    secondMax:        0,
+    onClose:          function() { jQuery('#assignment_due_date').change(); }
+  });
+
+  jQuery('#remark_due_date').datetimepicker({
+    altField:         '#actual_remark_due_date',
+    altFieldTimeOnly: false,
+    altFormat:        'yy-mm-dd',
+    altTimeFormat:    'HH:mm',
+    altSeparator:     'T',
+    controlType:      'select',
+    numberOfMonths:   2,
+    secondMax:        0
+  });
+</script>

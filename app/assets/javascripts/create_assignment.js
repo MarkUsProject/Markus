@@ -1,10 +1,19 @@
 jQuery(document).ready(function() {
+  // Localize the due dates
+  var language = document.getElementById('locale').value;
+  localize_datetime(document.getElementById('actual_assignment_due_date'),
+                    document.getElementById('assignment_due_date'),
+                    language);
+  localize_datetime(document.getElementById('actual_remark_due_date'),
+                    document.getElementById('remark_due_date'),
+                    language);
+
   jQuery('#short_identifier').change(function() {
     jQuery("#assignment_repository_folder").val(jQuery(this).val());
   });
 
   jQuery('#assignment_due_date').change(function() {
-    update_due_date(jQuery(this).val());
+    update_due_date(jQuery('#actual_assignment_due_date').val());
   });
 
   jQuery('#assignment_section_due_dates_type').change(function() {
@@ -164,7 +173,7 @@ function update_due_date(new_due_date) {
   create_penalty_decay_periods();
   create_penalty_periods();
 
-  check_due_date(new_due_date);
+  // check_due_date(new_due_date);
   grace_periods.set_due_date(new_due_date);
   penalty_decay_periods.set_due_date(new_due_date);
   penalty_periods.set_due_date(new_due_date);
@@ -216,8 +225,8 @@ function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme
 }
 
 function check_due_date(new_due_date) {
-  var now = new Date();
-  if (Date.parseFormattedString(new_due_date) < now) {
-    alert(past_due_date_edit_warning);
-  }
+  // var now = new Date();
+  // if (Date.parseFormattedString(new_due_date) < now) {
+  //   alert(past_due_date_edit_warning);
+  // }
 }
