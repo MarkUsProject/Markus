@@ -23,6 +23,7 @@ gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
 gem 'prototype-rails' # FIXME: Will be needed with Rails3.1
+gem 'activerecord-import'
 
 group :assets do
   gem 'tilt', '~> 1.3.7'
@@ -88,5 +89,5 @@ end
 # installed for rghost to work well. You also need to set
 # the PDF_SUPPORT bool to true in the config file(s).
 group :rghost do
-  gem 'rghost'
+  gem 'rghost', '<=0.9.3'
 end
