@@ -1,6 +1,6 @@
 require 'encoding'
 
-class RubricCriterion < ActiveRecord::Base
+class RubricCriterion < Criterion
   before_save :round_weight
   after_save :update_existing_results
   self.table_name = 'rubric_criteria' # set table name correctly

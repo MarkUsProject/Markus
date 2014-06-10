@@ -31,7 +31,7 @@ document.observe("dom:loaded", function() {
     select_all_top_id: "grouping_select_all_top",
     select_all_bottom_id: "grouping_select_all_bottom",
     selectable_class: "FilterTable_groupings_selectable",
-    select_onclick: "check_all(this.id.split('_')[2],this.checked)",
+    select_onclick: "check_all(this.parentNode.parentNode,this.checked)",
     footer: true,
     default_sort: 'name',
     header_id_prefix: "FilterTable_manage_graders_header_",
