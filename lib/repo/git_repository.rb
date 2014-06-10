@@ -332,24 +332,24 @@ module Repository
     end
 
     def get_permissions(user_id,config_path)
-
+      
       #if @repos_admin # Are we admin?
-        # Adds a user with given permissions to the repository      
+      # Adds a user with given permissions to the repository      
       
-        ga_repo = Gitolite::GitoliteAdmin.new(config_path)
-        repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
+      ga_repo = Gitolite::GitoliteAdmin.new(config_path)
+      repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
       
-        # Gets permissions of a particular user
-        if(repo.permissions[0]["RW+"][""].include? user_id)
-          return Repository::Permission::READ_WRITE
-        elsif(repo.permissions[0]["W"][""].include? user_id)
-          return Repository::Permission::READ_WRITE
-        elsif(repo.permissions[0]["R"][""].include? user_id)
+      # Gets permissions of a particular user
+      if(repo.permissions[0]["RW+"][""].include? user_id)
+        return Repository::Permission::READ_WRITE
+      elsif(repo.permissions[0]["W"][""].include? user_id)
+        return Repository::Permission::READ_WRITE
+      elsif(repo.permissions[0]["R"][""].include? user_id)
         return Repository::Permission::READ
-        elsif
+      elsif
         raise UserNotFound.new(user_id + " not found")
-        end
-
+      end
+      
       #else
       #  raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
       #end
@@ -442,6 +442,35 @@ module Repository
       end
     end
 
+
+    def self.add_user(user_id, permissions,config_path,repo_name)
+
+        # Adds a user with given permissions to the repository      
+        if !File.exist?( config_path + "/conf/gitolite.conf")
+          File.open(config_path + "/conf/gitolite.conf", "w").close() # create file if not existent
+        end
+
+        ga_repo = Gitolite::GitoliteAdmin.new(config_path)
+        
+        repo = ga_repo.config.get_repo(repo_name)
+        
+        if repo.nil?
+          repo = Gitolite::Config::Repo.new(repo_name)
+          ga_repo.config.add_repo(repo)
+          else
+          repo.permissions[0].each do |perm|
+            if(repo.permissions[0][perm[0]][""].include? user_id)
+              raise UserAlreadyExistent.new(user_id + " already existent")
+            end
+          end
+        end
+        
+        git_permission = GitRepository.__translate_to_git_perms(permissions)
+        repo.add_permission(git_permission,"",user_id)
+        ga_repo.save_and_apply
+
+    end
+
     # Sets permissions over several repositories. Use set_permissions to set
     # permissions on a single repository.
     def self.set_bulk_permissions(repo_names, user_id_permissions_map)
@@ -458,12 +487,16 @@ module Repository
       #TODO paths should be in config file
       
       #gitolite admin repo
-      ga_repo = Gitolite::GitoliteAdmin.new("#{::Rails.root.to_s}/data/dev/repos/git_auth")
+      #ga_repo = Gitolite::GitoliteAdmin.new("#{::Rails.root.to_s}/data/dev/repos/git_auth")
+      ga_repo = Gitolite::GitoliteAdmin.new("/home/tsilva/Documentos/Markus/lib/repo/test/git_repos/git_auth")
       conf = ga_repo.config
       
       repo_names.each do |repo_name|
         repo_name = File.basename(repo_name)
-        repo = Gitolite::Config::Repo.new(repo_name)
+        repo = ga_repo.config.get_repo(repo_name)
+        if repo.nil?
+          repo = Gitolite::Config::Repo.new(repo_name)
+        end
         user_id_permissions_map.each do |user_id, permissions|
           perm_string = __translate_to_git_perms(permissions)
           repo.add_permission(perm_string, "", user_id)
@@ -478,6 +511,64 @@ module Repository
     def self.delete_bulk_permissions(repo_names, user_ids)
       # Deletes permissions over several repositories. Use remove_user to remove
       # permissions of a single repository.
+
+      # There is no user remove support from gitolite ruby library 
+      # Work-around:
+      # - copy permissions from repo
+      # - remove repo from config and save and apply
+      # - add again permissions not removed
+
+      #if @repos_admin # Are we admin?
+        # Adds a user with given permissions to the repository      
+      config_path = "/home/tsilva/Documentos/Markus/lib/repo/test/git_repos/git_auth"
+      ga_repo = Gitolite::GitoliteAdmin.new(config_path)
+
+      repo_names.each do |repo_name|
+        repo_name = File.basename(repo_name)
+        repo = ga_repo.config.get_repo(repo_name)
+        rw_list = []
+        r_list  = []
+        found = false
+        if !repo.nil?
+
+          repo.permissions[0]["RW+"][""].each do |user|
+            if(!user_ids.include? user)
+              rw_list.push(user)
+            else
+              found = true
+            end
+          end
+          
+          repo.permissions[0]["R"][""].each do |user|
+            if(!user_ids.include? user)
+              r_list.push(user)
+            else
+              found = true
+            end
+          end
+          if found==true
+            ga_repo.reload!
+            ga_repo.config.rm_repo(repo)
+            ga_repo.save_and_apply
+            rw_list.each do |user|
+              add_user(user,Repository::Permission::READ_WRITE,config_path,repo_name)
+            end
+         
+            r_list.each do |user|
+              add_user(user,Repository::Permission::READ,config_path,repo_name)
+            end
+          else 
+            raise UserNotFound.new(user_id + " not found")
+          end
+          else 
+            raise UserNotFound.new(user_id + " not found")
+        end
+      end
+
+      #else
+      #  raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+      #end
+
     end
     
     def expand_path(file_name, dir_string = "/")
@@ -813,8 +904,6 @@ module Repository
    
         @commit.tree.each do |c|
         # repos.get_repos.index.each do |c|
-          print "Arquivos encontrados:"
-          print c
           files[c[:name]] = c
         end
       

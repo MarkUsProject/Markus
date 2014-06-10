@@ -83,7 +83,7 @@ class GitRepositoryTest < Test::Unit::TestCase
        conf_admin["IS_REPOSITORY_ADMIN"] = true
        # TODO: Change to make it work with gitolite
        # Ref: http://gitolite.com/gitolite/repos.html
-       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/config/gitolite.conf"
+       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/conf/gitolite.conf"
 
        # create repository first
        GitRepository.create(TEST_REPO)
@@ -654,7 +654,6 @@ class GitRepositoryTest < Test::Unit::TestCase
        repository_names.each do |repo_name|
          Repository.get_class("git", conf_admin).create(repo_name)
          repo = Repository.get_class("git", conf_admin).open(repo_name)
-        byebug
          repo.add_user("some_user", Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
          repo.add_user("another_user", Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
          repositories.push(repo)
@@ -676,91 +675,92 @@ class GitRepositoryTest < Test::Unit::TestCase
        end
        # remove repositories repositories created
        repository_names.each do |repo_name|
-         GitRepository.delete(repo_name)
+        GitRepository.delete(repo_name)
        end
 
      end
    end # end context
 
-  # context "SubversionRepository" do
-  #   should "raise an exception if not properly configured" do
-  #     conf = Hash.new
-  #     conf["REPOSITORY_PERMISSION_FILE"] = 'something'
-  #     assert_raise(ConfigurationError) do
-  #       Repository.get_class("svn", conf) # missing a required constant
-  #     end
-  #   end
-  # end # end context
+   context "GitRepository" do
+     should "raise an exception if not properly configured" do
+       conf = Hash.new
+       conf["REPOSITORY_PERMISSION_FILE"] = 'something'
+       assert_raise(ConfigurationError) do
+         Repository.get_class("git", conf) # missing a required constant
+       end
+     end
+   end # end context
 
-  # context "Setting and deleting bulk permissions" do
-  #   setup do
-  #     # use a different svn_authz file for this test
-  #     new_svn_authz = SVN_TEST_REPOS_DIR + "/svn_authz_bulk_stuff2"
-  #     @conf_admin = Hash.new
-  #     @conf_admin["IS_REPOSITORY_ADMIN"] = true
-  #     @conf_admin["REPOSITORY_PERMISSION_FILE"] = new_svn_authz
+   context "Setting and deleting bulk permissions" do
+     setup do
+       # use a different svn_authz file for this test
+       new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2"
 
-  #     # create some repositories, add some users
-  #     repo_base_name = "Group_"
-  #     @repository_names = []
-  #     (1..5).each do |counter|
-  #       @repository_names.push(repo_base_name + counter.to_s.rjust(3, "0"))
-  #     end
+       @conf_admin = Hash.new
+       @conf_admin["IS_REPOSITORY_ADMIN"] = true
+       @conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth
 
-  #     @repositories = []
-  #     @repository_names.each do |repo_name|
-  #       Repository.get_class("svn", @conf_admin).create(SVN_TEST_REPOS_DIR + "/" + repo_name)
-  #       repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
-  #       @repositories.push(repo)
-  #     end
-  #   end
+       # create some repositories, add some users
+       repo_base_name = "Group_"
+       @repository_names = []
+       (1..5).each do |counter|
+         @repository_names.push(repo_base_name + counter.to_s.rjust(3, "0"))
+       end
 
-  #   teardown do
-  #     new_svn_authz = SVN_TEST_REPOS_DIR + "/svn_authz_bulk_stuff2"
-  #     # remove authz file if it exists
-  #     if File.exist?(new_svn_authz)
-  #       FileUtils.rm(new_svn_authz)
-  #     end
+       @repositories = []
+       @repository_names.each do |repo_name|
+         Repository.get_class("git", @conf_admin).create(GIT_TEST_REPOS_DIR + "/" + repo_name)
+         repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
+         @repositories.push(repo)
+       end
+     end
 
-  #     # remove repositories, if they exist
-  #     @repository_names.each do |repo_name|
-  #       if SubversionRepository.repository_exists?(SVN_TEST_REPOS_DIR + "/" + repo_name)
-  #         SubversionRepository.delete(SVN_TEST_REPOS_DIR + "/" + repo_name)
-  #       end
-  #     end
-  #   end
+     teardown do
+       new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2"
 
-  #   should "Add a user and set permissions to every Group repository" do
+       # remove authz file if it exists
+       if File.exist?(new_git_auth)
+         FileUtils.rm(new_git_auth)
+       end
 
-  #     # Ok, now lets try to add a few bulk users
-  #     assert SubversionRepository.set_bulk_permissions(@repository_names, {"test_user" => Repository::Permission::READ})
-  #     assert SubversionRepository.set_bulk_permissions(@repository_names, {"test_user2" => Repository::Permission::READ_WRITE})
+       # remove repositories, if they exist
+       @repository_names.each do |repo_name|
+         if GitRepository.repository_exists?(GIT_TEST_REPOS_DIR + "/" + repo_name)
+           GitRepository.delete(GIT_TEST_REPOS_DIR + "/" + repo_name)
+         end
+       end
+     end
 
-  #     # Test to make sure they got attached to each repository
-  #     @repository_names.each do |repo_name|
-  #       repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
-  #       assert_equal(Repository::Permission::READ, repo.get_permissions("test_user"))
-  #       assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))
-  #       repo.close()
-  #     end
+     should "Add a user and set permissions to every Group repository" do
 
-  #     # Ok, now let's try to remove them
-  #     assert SubversionRepository.delete_bulk_permissions(@repository_names, ['test_user'])
+       # Ok, now lets try to add a few bulk users
+       assert GitRepository.set_bulk_permissions(@repository_names, {"test_user" => Repository::Permission::READ})
+       assert GitRepository.set_bulk_permissions(@repository_names, {"test_user2" => Repository::Permission::READ_WRITE})
 
-  #     # Test to make sure they got attached to each repository
-  #     @repository_names.each do |repo_name|
-  #       repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
-  #       assert_raises Repository::UserNotFound do
-  #         repo.get_permissions("test_user")
-  #       end
-  #       assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))
-  #       repo.close()
-  #     end
-  #     @repositories.each do|repo|
-  #       repo.close()
-  #     end
-  #   end
-  #end#end context
+       # Test to make sure they got attached to each repository
+       @repository_names.each do |repo_name|
+         repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
+         assert_equal(Repository::Permission::READ, repo.get_permissions("test_user",GIT_TEST_REPOS_DIR + "/git_auth/"))
+         assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2",GIT_TEST_REPOS_DIR + "/git_auth/"))
+         repo.close()
+       end
+
+       # Ok, now let's try to remove them
+       assert GitRepository.delete_bulk_permissions(@repository_names, ['test_user'])
+       # Test to make sure they got attached to each repository
+       @repository_names.each do |repo_name|
+         repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
+         assert_raises Repository::UserNotFound do
+           repo.get_permissions("test_user",GIT_TEST_REPOS_DIR + "/git_auth/")
+         end
+         assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2",GIT_TEST_REPOS_DIR + "/git_auth/"))
+         repo.close()
+       end
+       @repositories.each do|repo|
+         repo.close()
+       end
+     end
+  end#end context
 
   # private # private helper methods for this class
 
