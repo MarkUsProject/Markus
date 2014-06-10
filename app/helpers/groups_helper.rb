@@ -70,6 +70,7 @@ module GroupsHelper
     table_row[:first_name] = student.first_name
     table_row[:last_name] = student.last_name
     table_row[:filter_student_assigned] = students_in_assignment.include?(student)
+    table_row[:active] = !student.hidden
 
     table_row
 end
