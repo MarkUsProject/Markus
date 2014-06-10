@@ -1,5 +1,5 @@
 jQuery(document).ready(function() {
-  // Localize the due dates
+  // Localize the due dates on load
   var language = document.getElementById('locale').value;
   localize_datetime(document.getElementById('actual_assignment_due_date'),
                     document.getElementById('assignment_due_date'),
@@ -8,6 +8,7 @@ jQuery(document).ready(function() {
                     document.getElementById('remark_due_date'),
                     language);
 
+  // Change repo folder to be same as short identifier
   jQuery('#short_identifier').change(function() {
     jQuery("#assignment_repository_folder").val(jQuery(this).val());
   });
@@ -28,8 +29,6 @@ jQuery(document).ready(function() {
     toggle_group_assignment(jQuery(this).is(':checked'));
   });
 
-  toggle_group_assignment(jQuery('#is_group_assignment').is(':checked'));
-
   jQuery('#student_form_groups').change(function() {
     toggle_student_form_groups(jQuery(this).is(':checked'));
   });
@@ -41,6 +40,10 @@ jQuery(document).ready(function() {
   jQuery('#remark_due_date').change(function() {
     check_due_date(jQuery(this).val());
   });
+
+  toggle_group_assignment(jQuery('#is_group_assignment').is(':checked'));
+
+  change_submission_rule();  // Opens the correct rule
 });
 
 function toggle_persist_groups(persist_groups) {
@@ -173,7 +176,7 @@ function update_due_date(new_due_date) {
   create_penalty_decay_periods();
   create_penalty_periods();
 
-  // check_due_date(new_due_date);
+  check_due_date(new_due_date);
   grace_periods.set_due_date(new_due_date);
   penalty_decay_periods.set_due_date(new_due_date);
   penalty_periods.set_due_date(new_due_date);

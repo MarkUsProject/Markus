@@ -430,39 +430,3 @@
                'data-disable-with' => I18n.t('working'),
                onclick: 'set_onbeforeunload(false);' %>
 <% end %>
-
-<script>
-  jQuery('#section_due_date').datetimepicker({
-    altField:         '#actual_section_due_date',
-    altFieldTimeOnly: false,
-    altFormat:        'yy-mm-dd',
-    altTimeFormat:    'HH:mm',
-    altSeparator:     'T',
-    controlType:      'select',
-    numberOfMonths:   2,
-    secondMax:        0
-  });
-
-  jQuery('#assignment_due_date').datetimepicker({
-    altField:         '#actual_assignment_due_date',
-    altFieldTimeOnly: false,
-    altFormat:        'yy-mm-dd',
-    altTimeFormat:    'HH:mm',
-    altSeparator:     'T',
-    controlType:      'select',
-    numberOfMonths:   2,
-    secondMax:        0,
-    onClose:          function() { jQuery('#assignment_due_date').change(); }
-  });
-
-  jQuery('#remark_due_date').datetimepicker({
-    altField:         '#actual_remark_due_date',
-    altFieldTimeOnly: false,
-    altFormat:        'yy-mm-dd',
-    altTimeFormat:    'HH:mm',
-    altSeparator:     'T',
-    controlType:      'select',
-    numberOfMonths:   2,
-    secondMax:        0
-  });
-</script>

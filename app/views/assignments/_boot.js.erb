@@ -69,6 +69,77 @@
     check_required_fields();
     jQuery('input[required]').change(check_required_fields)
                              .keyup(check_required_fields);
+
+    // Handle date/time pickers
+    jQuery('#section_due_date').datetimepicker({
+      altField:         '#actual_section_due_date',
+      altFieldTimeOnly: false,
+      altFormat:        'yy-mm-dd',
+      altTimeFormat:    'HH:mm',
+      altSeparator:     'T',
+      controlType:      'select',
+      numberOfMonths:   2,
+      secondMax:        0,
+      dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
+      timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+      monthNames:       <%= raw I18n.t('date.months') %>,
+      dayNames:         <%= raw I18n.t('date.weekdays') %>,
+      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+      hourText:         "<%= I18n.t('time.hour') %>",
+      minuteText:       "<%= I18n.t('time.minute') %>",
+      timeText:         "<%= I18n.t('time.time') %>",
+      prevText:         "<%= I18n.t('time.prev') %>",
+      nextText:         "<%= I18n.t('time.next') %>",
+      closeText:        "<%= I18n.t('time.close') %>",
+      currentText:      "<%= I18n.t('time.now') %>"
+    });
+
+    jQuery('#assignment_due_date').datetimepicker({
+      altField:         '#actual_assignment_due_date',
+      altFieldTimeOnly: false,
+      altFormat:        'yy-mm-dd',
+      altTimeFormat:    'HH:mm',
+      altSeparator:     'T',
+      controlType:      'select',
+      numberOfMonths:   2,
+      secondMax:        0,
+      onClose:          function() { jQuery('#assignment_due_date').change(); },
+      dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
+      timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+      monthNames:       <%= raw I18n.t('date.months') %>,
+      dayNames:         <%= raw I18n.t('date.weekdays') %>,
+      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+      hourText:         "<%= I18n.t('time.hour') %>",
+      minuteText:       "<%= I18n.t('time.minute') %>",
+      timeText:         "<%= I18n.t('time.time') %>",
+      prevText:         "<%= I18n.t('time.prev') %>",
+      nextText:         "<%= I18n.t('time.next') %>",
+      closeText:        "<%= I18n.t('time.close') %>",
+      currentText:      "<%= I18n.t('time.now') %>"
+    });
+
+    jQuery('#remark_due_date').datetimepicker({
+      altField:         '#actual_remark_due_date',
+      altFieldTimeOnly: false,
+      altFormat:        'yy-mm-dd',
+      altTimeFormat:    'HH:mm',
+      altSeparator:     'T',
+      controlType:      'select',
+      numberOfMonths:   2,
+      secondMax:        0,
+      dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
+      timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+      monthNames:       <%= raw I18n.t('date.months') %>,
+      dayNames:         <%= raw I18n.t('date.weekdays') %>,
+      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+      hourText:         "<%= I18n.t('time.hour') %>",
+      minuteText:       "<%= I18n.t('time.minute') %>",
+      timeText:         "<%= I18n.t('time.time') %>",
+      prevText:         "<%= I18n.t('time.prev') %>",
+      nextText:         "<%= I18n.t('time.next') %>",
+      closeText:        "<%= I18n.t('time.close') %>",
+      currentText:      "<%= I18n.t('time.now') %>"
+    });
   });
 //]]>
 </script>
