@@ -99,7 +99,7 @@
               <%= due_date_f.label :due_date, t('due_date') %>
               <%= due_date_f.calendar_date_select :due_date,
                                                   { time: 'mixed',
-                                                    after_close: 'refresh_due_date();',
+                                                    after_close: 'check_required_fields();',
                                                     year_range: 0.years.ago..1.years.from_now } %>
             </p>
           <% end %>
@@ -117,7 +117,7 @@
       <%=raw(f.calendar_date_select :due_date,
                                     { time: 'mixed',
                                       locale: I18n.default_locale,
-                                      after_close: 'refresh_due_date();',
+                                      after_close: 'check_required_fields();',
                                       year_range: 0.years.ago..1.years.from_now,
                                       id: 'assignment_due_date',
                                       onchange: 'set_onbeforeunload(true);',
