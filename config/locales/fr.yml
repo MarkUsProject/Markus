@@ -130,6 +130,7 @@ fr:
         required_fields: "Champs obligatoires <span class='required_field'>*</span>"
         short_identifier:   "Identifiant du projet<span class='required_field'>*</span>"
         name:           "Nom du projet<span class='required_field'>*</span>"
+        due_date:           "Date de retour<span class='required_field'>*</span>"
         update_success: "Projet mis à jour"
         create_success:        "Projet créé"
         error: "La règle d'envoi n'a pas pu être mise en place : #%{message}"
