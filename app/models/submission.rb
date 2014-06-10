@@ -5,14 +5,14 @@ require 'fileutils' # FileUtils used here
 # Use Assignment.submission_by(user) to retrieve the correct submission.
 class Submission < ActiveRecord::Base
   after_create :create_result
-  before_validation(:bump_old_submissions, :on => :create)
+  before_validation(:bump_old_submissions, on: :create)
 
-  validates_numericality_of :submission_version, :only_integer => true
+  validates_numericality_of :submission_version, only_integer: true
   belongs_to :grouping
-  has_many   :results, :dependent => :destroy
-  has_many   :submission_files, :dependent => :destroy
-  has_many   :annotations, :through => :submission_files
-  has_many   :test_results, :dependent => :destroy
+  has_many   :results, dependent: :destroy
+  has_many   :submission_files, dependent: :destroy
+  has_many   :annotations, through: :submission_files
+  has_many   :test_results, dependent: :destroy
 
   def self.create_by_timestamp(grouping, timestamp)
      unless timestamp.kind_of? Time
@@ -56,16 +56,16 @@ class Submission < ActiveRecord::Base
   # returns the original result
   def get_original_result
     if self.remark_result_id.nil?
-      Result.first(:conditions => ['submission_id = ?', self.id])
+      Result.first(conditions: ['submission_id = ?', self.id])
     else
-      Result.first(:conditions => ['submission_id = ? AND id != ?',
+      Result.first(conditions: ['submission_id = ? AND id != ?',
                                    self.id, self.remark_result_id])
     end
   end
 
   # returns the remark result if exists, returns nil if does not exist
   def get_remark_result
-    Result.first(:conditions => ['id = ?', self.remark_result_id])
+    Result.first(conditions: ['id = ?', self.remark_result_id])
   end
 
   # returns the latest result - remark result if exists and submitted, else original result
@@ -118,7 +118,7 @@ class Submission < ActiveRecord::Base
   # (for now, called "BACKUP")
   def remove_file(filename)
     # get all submissions for this filename
-    files = submission_files.all(:conditions => ['filename = ?', filename])
+    files = submission_files.all(conditions: ['filename = ?', filename])
     return unless files && !files.empty?
     files.each { |f| f.destroy }  # destroy all records first
 
@@ -128,7 +128,7 @@ class Submission < ActiveRecord::Base
 
     source_file = File.join(_adir, filename)
     dest_file = File.join(backup_dir, filename)
-    FileUtils.mv(source_file, dest_file, :force => true)
+    FileUtils.mv(source_file, dest_file, force: true)
   end
 
 
@@ -211,16 +211,16 @@ class Submission < ActiveRecord::Base
     old_extra_marks = original_result.extra_marks
     old_extra_marks.each do |old_extra_mark|
       remark_extra_mark = ExtraMark.new(old_extra_mark.attributes.merge(
-        {:result_id => self.remark_result_id, :created_at => Time.zone.now}))
-      remark_extra_mark.save(:validate => false)
+        {result_id: self.remark_result_id, created_at: Time.zone.now}))
+      remark_extra_mark.save(validate: false)
       remark_result.extra_marks << remark_extra_mark
     end
 
     old_marks = original_result.marks
     old_marks.each do |old_mark|
       remark_mark = Mark.new(old_mark.attributes.merge(
-        {:result_id => self.remark_result_id, :created_at => Time.zone.now}))
-      remark_mark.save(:validate => false)
+        {result_id: self.remark_result_id, created_at: Time.zone.now}))
+      remark_mark.save(validate: false)
       remark_result.marks << remark_mark
     end
   end

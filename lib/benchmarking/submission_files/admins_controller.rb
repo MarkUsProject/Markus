@@ -6,7 +6,7 @@ class AdminsController < ApplicationController
   end
 
   def populate
-    admins_data = Admin.all(:order => "user_name")
+    admins_data = Admin.all(order: "user_name")
     # construct_table_rows defined in UsersHelper
     @admins = construct_table_rows(admins_data)
   end
@@ -22,7 +22,7 @@ class AdminsController < ApplicationController
     # update_attributes supplied by ActiveRecords
     if @user.update_attributes(attrs)
       flash[:edit_notice] = @user.user_name + ' has been updated.'
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
     else
       render :edit
     end
@@ -40,6 +40,6 @@ class AdminsController < ApplicationController
     # updates the existing record
     return unless @user.save
 
-    redirect_to :action => 'index'
+    redirect_to action: 'index'
   end
 end

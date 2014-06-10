@@ -3,11 +3,11 @@ require 'fastercsv'
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
 
-  before_filter    :authorize_only_for_admin, :except => [:populate_file_manager, :browse,
+  before_filter    :authorize_only_for_admin, except: [:populate_file_manager, :browse,
   :index, :file_manager, :update_files,
   :download, :populate_submissions_table, :collect_and_begin_grading,
   :manually_collect_and_begin_grading, :repo_browser, :populate_repo_browser]
-  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :populate_submissions_table, :collect_and_begin_grading,
+  before_filter    :authorize_for_ta_and_admin, only: [:browse, :index, :populate_submissions_table, :collect_and_begin_grading,
   :manually_collect_and_begin_garding, :repo_browser, :populate_repo_browser]
 
 
@@ -58,7 +58,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
-      redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
+      redirect_to controller: 'assignments', action: 'student_interface', id: params[:id]
       return
     end
 
@@ -112,7 +112,7 @@ class SubmissionsController < ApplicationController
     new_submission = Submission.create_by_revision_number(grouping, revision_number)
     new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
     result = new_submission.get_latest_result
-    redirect_to :controller => 'results', :action => 'edit', :id => result.id
+    redirect_to controller: 'results', action: 'edit', id: result.id
   end
 
   def collect_and_begin_grading
@@ -127,18 +127,18 @@ class SubmissionsController < ApplicationController
       # Apply the SubmissionRule
       new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
       result = new_submission.get_latest_result
-      redirect_to :controller => 'results', :action => 'edit', :id => result.id
+      redirect_to controller: 'results', action: 'edit', id: result.id
       return
     else
       flash[:error] = "Could not collect submission for group #{grouping.
           group.group_name} - the collection date has not been reached yet."
     end
-    redirect_to :action => 'browse', :id => assignment.id
+    redirect_to action: 'browse', id: assignment.id
   end
 
 
   def populate_submissions_table
-    assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :accepted_students, :group, {:submissions => :result}]}, {:submission_rule => :periods}])
+    assignment = Assignment.find(params[:id], include: [{groupings: [{student_memberships: :user, ta_memberships: :user}, :accepted_students, :group, {submissions: :result}]}, {submission_rule: :periods}])
 
     @details = params[:details]
 
@@ -168,8 +168,8 @@ class SubmissionsController < ApplicationController
   end
 
   def index
-    @assignments = Assignment.all(:order => :id)
-    render :index, :layout => 'sidebar'
+    @assignments = Assignment.all(order: :id)
+    render :index, layout: 'sidebar'
   end
 
   # controller handles transactional submission of files
@@ -179,7 +179,7 @@ class SubmissionsController < ApplicationController
     path = params[:path] || '/'
     grouping = current_user.accepted_grouping_for(assignment_id)
     unless grouping.is_valid?
-      redirect_to :action => :file_manager, :id => assignment_id
+      redirect_to action: :file_manager, id: assignment_id
       return
     end
     repo = grouping.group.repo
@@ -229,7 +229,7 @@ class SubmissionsController < ApplicationController
       unless txn.has_jobs?
         flash[:transaction_warning] = 'No actions were detected in the last submit.' +
             ' Nothing was changed.'
-        redirect_to :action => 'file_manager', :id => assignment_id
+        redirect_to action: 'file_manager', id: assignment_id
         return
       end
       unless repo.commit(txn)
@@ -241,11 +241,11 @@ class SubmissionsController < ApplicationController
         flash[:commit_notice] = assignment.submission_rule.commit_after_collection_message
       end
 
-      redirect_to :action => 'file_manager', :id => assignment_id
+      redirect_to action: 'file_manager', id: assignment_id
 
     rescue Exception => e
       flash[:commit_error] = e.message
-      redirect_to :action => 'file_manager', :id => assignment_id
+      redirect_to action: 'file_manager', id: assignment_id
     end
   end
 
@@ -266,15 +266,15 @@ class SubmissionsController < ApplicationController
      file = @revision.files_at_path(File.join(@assignment.repository_folder, path))[params[:file_name]]
      file_contents = repo.download_as_string(file)
     rescue Exception => e
-      render :text => "Could not download #{params[:file_name]}: #{e.message}.  File may be missing."
+      render text: "Could not download #{params[:file_name]}: #{e.message}.  File may be missing."
       return
     end
     if SubmissionFile.is_binary?(file_contents)
       # If the file appears to be binary, send it as a download
-      send_data file_contents, :disposition => 'attachment', :filename => params[:file_name]
+      send_data file_contents, disposition: 'attachment', filename: params[:file_name]
     else
       # Otherwise, blast it out to the screen
-      render :text => file_contents, :layout => 'sanitized_html'
+      render text: file_contents, layout: 'sanitized_html'
     end
   end
 
@@ -299,7 +299,7 @@ class SubmissionsController < ApplicationController
             next
           end
           if submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
-            flash[:release_errors].push(I18n.t('marking_state.not_complete', :group_name => grouping.group.group_name))
+            flash[:release_errors].push(I18n.t('marking_state.not_complete', group_name: grouping.group.group_name))
             next
           end
           if flash[:release_errors].nil? or flash[:release_errors].size == 0
@@ -316,7 +316,7 @@ class SubmissionsController < ApplicationController
         end
       end
     end
-    redirect_to :action => 'browse', :id => params[:id]
+    redirect_to action: 'browse', id: params[:id]
     if params[:groupings]
       grouping = Grouping.find(params[:groupings].first)
       grouping.assignment.set_results_statistics
@@ -333,7 +333,7 @@ class SubmissionsController < ApplicationController
         g.unrelease_results
       end
     end
-    redirect_to :action => 'browse', :id => params[:id]
+    redirect_to action: 'browse', id: params[:id]
   end
 
   def download_simple_csv_report
@@ -354,7 +354,7 @@ class SubmissionsController < ApplicationController
        end
     end
 
-    send_data csv_string, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier}_simple_report.csv"
+    send_data csv_string, disposition: 'attachment', type: 'application/vnd.ms-excel', filename: "#{assignment.short_identifier}_simple_report.csv"
   end
 
   def download_detailed_csv_report
@@ -400,14 +400,14 @@ class SubmissionsController < ApplicationController
     end
 
 
-    send_data csv_string, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier}_detailed_report.csv"
+    send_data csv_string, disposition: 'attachment', type: 'application/vnd.ms-excel', filename: "#{assignment.short_identifier}_detailed_report.csv"
   end
 
   # See Assignment.get_svn_commands for details
   def download_svn_export_commands
     assignment = Assignment.find(params[:id])
     string = assignment.get_svn_commands
-    send_data string, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_exports.csv"
+    send_data string, disposition: 'attachment', type: 'text/plain', filename: "#{assignment.short_identifier}_svn_exports.csv"
   end
 
 end

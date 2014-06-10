@@ -309,12 +309,12 @@ module Repository
         raise FileExistsConflict # raise conflict if path exists
       end
       dir = RevisionDirectory.new(rev.revision_number, {
-        :name => File.basename(full_path),
-        :path => File.dirname(full_path),
-        :last_modified_revision => rev.revision_number,
-        :last_modified_date => Time.now,
-        :changed => true,
-        :user_id => rev.user_id
+        name: File.basename(full_path),
+        path: File.dirname(full_path),
+        last_modified_revision: rev.revision_number,
+        last_modified_date: Time.now,
+        changed: true,
+        user_id: rev.user_id
       })
       rev.__add_directory(dir)
       return rev
@@ -327,12 +327,12 @@ module Repository
       end
       # file does not exist, so add it
       file = RevisionFile.new(rev.revision_number, {
-        :name => File.basename(full_path),
-        :path => File.dirname(full_path),
-        :last_modified_revision => rev.revision_number,
-        :changed => true,
-        :user_id => rev.user_id,
-        :last_modified_date => Time.now
+        name: File.basename(full_path),
+        path: File.dirname(full_path),
+        last_modified_revision: rev.revision_number,
+        changed: true,
+        user_id: rev.user_id,
+        last_modified_date: Time.now
       })
       rev.__add_file(file, content)
       return rev
@@ -382,22 +382,22 @@ module Repository
       original.files.each do |object|
         if object.instance_of?(RevisionFile)
           new_object = RevisionFile.new(object.from_revision, {
-            :name => object.name,
-            :path => object.path,
-            :last_modified_revision => object.last_modified_revision,
-            :changed => false, # for copies, set this to false
-            :user_id => object.user_id,
-            :last_modified_date => object.last_modified_date
+            name: object.name,
+            path: object.path,
+            last_modified_revision: object.last_modified_revision,
+            changed: false, # for copies, set this to false
+            user_id: object.user_id,
+            last_modified_date: object.last_modified_date
           })
           new_revision.files_content[new_object.to_s] = original.files_content[object.to_s]
         else
           new_object = RevisionDirectory.new(object.from_revision, {
-            :name => object.name,
-            :path => object.path,
-            :last_modified_revision => object.last_modified_revision,
-            :last_modified_date => object.last_modified_date,
-            :changed => false, # for copies, set this to false
-            :user_id => object.user_id
+            name: object.name,
+            path: object.path,
+            last_modified_revision: object.last_modified_revision,
+            last_modified_date: object.last_modified_date,
+            changed: false, # for copies, set this to false
+            user_id: object.user_id
           })
         end
         new_revision.files.push(new_object)
