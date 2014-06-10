@@ -37,10 +37,6 @@ jQuery(document).ready(function() {
     toggle_remark_requests(jQuery(this).is(':checked'));
   });
 
-  jQuery('#remark_due_date').change(function() {
-    check_due_date(jQuery(this).val());
-  });
-
   toggle_group_assignment(jQuery('#is_group_assignment').is(':checked'));
 
   change_submission_rule();  // Opens the correct rule
@@ -176,10 +172,10 @@ function update_due_date(new_due_date) {
   create_penalty_decay_periods();
   create_penalty_periods();
 
-  check_due_date(new_due_date);
   grace_periods.set_due_date(new_due_date);
   penalty_decay_periods.set_due_date(new_due_date);
   penalty_periods.set_due_date(new_due_date);
+
   grace_periods.refresh();
   penalty_decay_periods.refresh();
   penalty_periods.refresh();
@@ -228,8 +224,7 @@ function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme
 }
 
 function check_due_date(new_due_date) {
-  // var now = new Date();
-  // if (Date.parseFormattedString(new_due_date) < now) {
-  //   alert(past_due_date_edit_warning);
-  // }
+  if (new Date(new_due_date) < new Date()) {
+    alert(past_due_date);
+  }
 }

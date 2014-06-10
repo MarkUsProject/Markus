@@ -1,6 +1,6 @@
 <script>
 //<![CDATA[
-  var past_due_date_edit_warning = '<%= t(:past_due_date_edit_warning) %>';
+  var past_due_date = '<%= t(:past_due_date_edit_warning) %>';
 
   var grace_periods = null;
   var penalty_decay_periods = null;
@@ -80,6 +80,7 @@
       controlType:      'select',
       numberOfMonths:   2,
       secondMax:        0,
+      onClose:          function() { check_due_date(jQuery('#actual_section_due_date').val()); },
       dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
       monthNames:       <%= raw I18n.t('date.months') %>,
@@ -103,7 +104,8 @@
       controlType:      'select',
       numberOfMonths:   2,
       secondMax:        0,
-      onClose:          function() { jQuery('#assignment_due_date').change(); },
+      onClose:          function() { jQuery('#assignment_due_date').change();
+                                     check_due_date(jQuery('#actual_assignment_due_date').val()); },
       dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
       monthNames:       <%= raw I18n.t('date.months') %>,
@@ -127,6 +129,7 @@
       controlType:      'select',
       numberOfMonths:   2,
       secondMax:        0,
+      onClose:          function() { check_due_date(jQuery('#actual_remark_due_date').val()); },
       dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
       monthNames:       <%= raw I18n.t('date.months') %>,
