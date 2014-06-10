@@ -83,7 +83,7 @@ class GitRepositoryTest < Test::Unit::TestCase
        conf_admin["IS_REPOSITORY_ADMIN"] = true
        # TODO: Change to make it work with gitolite
        # Ref: http://gitolite.com/gitolite/repos.html
-       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/conf/gitolite.conf"
+       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/git_auth/"
 
        # create repository first
        GitRepository.create(TEST_REPO)
@@ -405,7 +405,8 @@ class GitRepositoryTest < Test::Unit::TestCase
 
    context "A repository with an authorization file specified" do
 
-    GIT_AUTH_FILE = GIT_TEST_REPOS_DIR + "/git_auth/conf/gitolite.conf"
+    GIT_AUTH_FOLDER = GIT_TEST_REPOS_DIR + "/git_auth"
+    GIT_AUTH_FILE = GIT_AUTH_FOLDER + "/conf/gitolite.conf"
 
      setup do
        #cleanup any files that may be left over
@@ -414,7 +415,7 @@ class GitRepositoryTest < Test::Unit::TestCase
        FileUtils.remove_dir(TEST_REPO, true)
        FileUtils.rm(GIT_AUTH_FILE, :force => true)
 
-       ga_repo =  Gitolite::GitoliteAdmin.bootstrap(GIT_TEST_REPOS_DIR + "/git_auth/")
+       ga_repo =  Gitolite::GitoliteAdmin.bootstrap(GIT_AUTH_FOLDER)
        # have a clean auth file
        FileUtils.cp(GIT_AUTH_FILE + '.orig', GIT_AUTH_FILE)
        # create repository first
@@ -422,14 +423,15 @@ class GitRepositoryTest < Test::Unit::TestCase
        repo2 = GIT_TEST_REPOS_DIR + "/Repository2"
        conf_admin = Hash.new
        conf_admin["IS_REPOSITORY_ADMIN"] = true
-       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FILE
+       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
+
        Repository.get_class("git", conf_admin).create(repo1)
        Repository.get_class("git", conf_admin).create(repo2)
        Repository.get_class("git", conf_admin).create(TEST_REPO)
        # open the repository
        conf_non_admin = Hash.new
        conf_non_admin["IS_REPOSITORY_ADMIN"] = false
-       conf_non_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FILE
+       conf_non_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
 
        @repo1 = Repository.get_class("git", conf_non_admin).open(repo1) # non-admin repository
        @repo2 = Repository.get_class("git", conf_non_admin).open(repo2) # again, a non-admin repo
@@ -461,9 +463,9 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert_equal(6, Repository::Permission::READ_WRITE)
        assert_equal(4, Repository::Permission::ANY)
        
-       assert_equal(Repository::Permission::READ_WRITE, @repo1.get_permissions("user1",GIT_TEST_REPOS_DIR + "/git_auth/"))
-       assert_equal(Repository::Permission::READ, @repo1.get_permissions("someother_user",GIT_TEST_REPOS_DIR + "/git_auth/"))
-       assert_equal(Repository::Permission::READ, @repo2.get_permissions("test",GIT_TEST_REPOS_DIR + "/git_auth/"))
+       assert_equal(Repository::Permission::READ_WRITE, @repo1.get_permissions("user1"))
+       assert_equal(Repository::Permission::READ, @repo1.get_permissions("someother_user"))
+       assert_equal(Repository::Permission::READ, @repo2.get_permissions("test"))
 
        #For some reason it does not work to just put these lines in the teardown
        @repo.close()
@@ -479,16 +481,16 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert_equal(4, Repository::Permission::ANY)
 
        assert_raise(UserNotFound) do
-         @repo1.get_permissions("non_existent_user",GIT_TEST_REPOS_DIR + "/git_auth/")
+         @repo1.get_permissions("non_existent_user")
        end
        assert_raise(UserNotFound) do
-         @repo2.get_permissions("non_existent_user",GIT_TEST_REPOS_DIR + "/git_auth/")
+         @repo2.get_permissions("non_existent_user")
        end
        assert_raise(UserNotFound) do
-        @repo.set_permissions("non_existent_user", Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
+        @repo.set_permissions("non_existent_user", Repository::Permission::READ_WRITE)
        end
        assert_raise(UserNotFound) do
-         @repo.remove_user("non_existent_user",GIT_TEST_REPOS_DIR + "/git_auth/")
+         @repo.remove_user("non_existent_user")
        end
        @repo.close()
        @repo1.close()
@@ -502,9 +504,9 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert_equal(6, Repository::Permission::READ_WRITE)
        assert_equal(4, Repository::Permission::ANY)
 
-       @repo.add_user("user_x", Repository::Permission::READ,GIT_TEST_REPOS_DIR + "/git_auth/")
+       @repo.add_user("user_x", Repository::Permission::READ)
        assert_raise(UserAlreadyExistent) do
-        @repo.add_user("user_x", Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/") # user_x exists already
+        @repo.add_user("user_x", Repository::Permission::READ_WRITE) # user_x exists already
        end
        @repo.close()
        @repo1.close()
@@ -519,10 +521,10 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert_equal(4, Repository::Permission::ANY)
 
        assert_raise(NotAuthorityError) do
-         @repo1.add_user("user_x", Repository::Permission::READ,GIT_TEST_REPOS_DIR + "/git_auth/")
+         @repo1.add_user("user_x", Repository::Permission::READ)
        end
        assert_raise(NotAuthorityError) do
-         @repo2.set_permissions("test", Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
+         @repo2.set_permissions("test", Repository::Permission::READ_WRITE)
        end
        #assert_raise(NotAuthorityError) do
        #  @repo2.remove_user("test")
@@ -538,8 +540,8 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert_equal(4, Repository::Permission::READ)
        assert_equal(6, Repository::Permission::READ_WRITE)
        assert_equal(4, Repository::Permission::ANY)
-       @repo.add_user(TEST_USER, Repository::Permission::READ,GIT_TEST_REPOS_DIR + "/git_auth/")
-       assert_equal(Repository::Permission::READ, @repo.get_permissions(TEST_USER,GIT_TEST_REPOS_DIR + "/git_auth/"))
+       @repo.add_user(TEST_USER, Repository::Permission::READ)
+       assert_equal(Repository::Permission::READ, @repo.get_permissions(TEST_USER))
        @repo.close()
        @repo1.close()
        @repo2.close()
@@ -560,59 +562,59 @@ class GitRepositoryTest < Test::Unit::TestCase
        assert_equal(6, Repository::Permission::READ_WRITE)
        assert_equal(4, Repository::Permission::ANY)
 
-       users_with_any_perm = @repo.get_users(Repository::Permission::ANY,GIT_TEST_REPOS_DIR + "/git_auth/")
+       users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
        assert_nil(users_with_any_perm, "There aren't any users, yet")
-       users_with_read_perm = @repo.get_users(Repository::Permission::READ,GIT_TEST_REPOS_DIR + "/git_auth/")
+       users_with_read_perm = @repo.get_users(Repository::Permission::READ)
        assert_nil(users_with_read_perm, "There aren't any users, yet")
-       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
+       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
        assert_nil(users_with_read_write_perm, "There aren't any users, yet")
 
-       @repo.add_user(TEST_USER, Repository::Permission::READ,GIT_TEST_REPOS_DIR + "/git_auth/")
-       users_with_any_perm = @repo.get_users(Repository::Permission::ANY,GIT_TEST_REPOS_DIR + "/git_auth/")
+       @repo.add_user(TEST_USER, Repository::Permission::READ)
+       users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
        assert_not_nil(users_with_any_perm, "There is a user with some permissions")
        assert_equal(TEST_USER, users_with_any_perm.shift, TEST_USER + " should have some permissions")
-       users_with_read_perm = @repo.get_users(Repository::Permission::READ,GIT_TEST_REPOS_DIR + "/git_auth/")
+       users_with_read_perm = @repo.get_users(Repository::Permission::READ)
        assert_not_nil(users_with_read_perm, TEST_USER + " should have read permissions")
        assert_equal(TEST_USER, users_with_read_perm.shift, TEST_USER + " should have read permissions")
-       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
+       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
        assert_nil(users_with_read_write_perm, "There is no user with read and write permissions")
        # see if permissions have been set accordingly
-       assert_equal(Repository::Permission::READ, @repo.get_permissions(TEST_USER,GIT_TEST_REPOS_DIR + "/git_auth/"), "Permissions don't match")
+       assert_equal(Repository::Permission::READ, @repo.get_permissions(TEST_USER), "Permissions don't match")
 
        # set (overwrite) permissions
-       @repo.set_permissions(TEST_USER, Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
-       assert_equal(Repository::Permission::READ_WRITE, @repo.get_permissions(TEST_USER,GIT_TEST_REPOS_DIR + "/git_auth/"), "Permissions don't match")
-       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
+       @repo.set_permissions(TEST_USER, Repository::Permission::READ_WRITE)
+       assert_equal(Repository::Permission::READ_WRITE, @repo.get_permissions(TEST_USER), "Permissions don't match")
+       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
        assert_not_nil(users_with_read_write_perm, "There is a user with read and write permissions")
        assert_equal(TEST_USER, users_with_read_write_perm.shift, TEST_USER + " should have read and write permissions")
 
        # add another user
-       @repo.add_user(another_user, Repository::Permission::READ,GIT_TEST_REPOS_DIR + "/git_auth/")
-       assert_equal(Repository::Permission::READ, @repo.get_permissions(another_user,GIT_TEST_REPOS_DIR + "/git_auth/"), "Permissions don't match")
-       users_with_any_perm = @repo.get_users(Repository::Permission::ANY,GIT_TEST_REPOS_DIR + "/git_auth/")
+       @repo.add_user(another_user, Repository::Permission::READ)
+       assert_equal(Repository::Permission::READ, @repo.get_permissions(another_user), "Permissions don't match")
+       users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
        assert_not_nil(users_with_any_perm, "There are some users with some permissions")
        assert_equal([TEST_USER, another_user].sort, users_with_any_perm.sort, "There are some missing users")
-       users_with_read_perm = @repo.get_users(Repository::Permission::READ,GIT_TEST_REPOS_DIR + "/git_auth/").sort
+       users_with_read_perm = @repo.get_users(Repository::Permission::READ).sort
        assert_not_nil(users_with_read_perm, "Some user has read permissions")
        assert_equal(another_user, users_with_read_perm.shift, another_user + " should have read permissions")
-       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/").sort
+       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE).sort
        assert_not_nil(users_with_read_write_perm, "There are some users with read and write permissions")
        assert_equal(TEST_USER, users_with_read_write_perm.shift, TEST_USER + " should have read and write permissions")
 
        # remove user
-       @repo.remove_user(TEST_USER,GIT_TEST_REPOS_DIR + "/git_auth/")
-       assert_equal(Repository::Permission::READ, @repo.get_permissions(another_user,GIT_TEST_REPOS_DIR + "/git_auth/"), "Permissions don't match")
-       users_with_any_perm = @repo.get_users(Repository::Permission::ANY,GIT_TEST_REPOS_DIR + "/git_auth/").sort
+       @repo.remove_user(TEST_USER)
+       assert_equal(Repository::Permission::READ, @repo.get_permissions(another_user), "Permissions don't match")
+       users_with_any_perm = @repo.get_users(Repository::Permission::ANY).sort
        assert_not_nil(users_with_any_perm, "There are some users with some permissions")
        assert_equal(another_user, users_with_any_perm.shift, another_user +" still has some perms")
-       users_with_read_perm = @repo.get_users(Repository::Permission::READ,GIT_TEST_REPOS_DIR + "/git_auth/").sort
+       users_with_read_perm = @repo.get_users(Repository::Permission::READ).sort
        assert_not_nil(users_with_read_perm, "Some user has read permissions")
        assert_equal(another_user, users_with_read_perm.shift, another_user + " should have read permissions")
-       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
+       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
        assert_nil(users_with_read_write_perm, "There are NO users with read and write permissions")
 
-       @repo.remove_user(another_user,GIT_TEST_REPOS_DIR + "/git_auth/")
-       users_with_any_perm = @repo.get_users(Repository::Permission::ANY,GIT_TEST_REPOS_DIR + "/git_auth/")
+       @repo.remove_user(another_user)
+       users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
        assert_nil(users_with_any_perm, "There are NO users with any permissions")
        @repo.close()
        @repo1.close()
@@ -627,10 +629,15 @@ class GitRepositoryTest < Test::Unit::TestCase
        # use a different svn_authz file for this test
        old_git_auth = GIT_AUTH_FILE
        new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff"
+       new_git_auth_file = new_git_auth + "/conf/gitolite.conf"
+
+      if !File.directory?(new_git_auth)
+        FileUtils.mkdir_p(new_git_auth)
+      end
 
        # remove auth file if it exists
-       if File.exist?(new_git_auth)
-         FileUtils.rm(new_git_auth)
+       if File.exist?(new_git_auth_file)
+         FileUtils.rm(new_git_auth_file)
        end
 
        # create some repositories, add some users
@@ -650,23 +657,24 @@ class GitRepositoryTest < Test::Unit::TestCase
        repositories = []
        conf_admin = Hash.new
        conf_admin["IS_REPOSITORY_ADMIN"] = true
-       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FILE
+       conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth
+
        repository_names.each do |repo_name|
-         Repository.get_class("git", conf_admin).create(repo_name)
-         repo = Repository.get_class("git", conf_admin).open(repo_name)
-         repo.add_user("some_user", Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
-         repo.add_user("another_user", Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
+        Repository.get_class("git", conf_admin).create(repo_name)
+        repo = Repository.get_class("git", conf_admin).open(repo_name)
+         repo.add_user("some_user", Repository::Permission::READ_WRITE)
+         repo.add_user("another_user", Repository::Permission::READ_WRITE)
          repositories.push(repo)
        end
 
        # add a user for each repository
        repositories.each do |repo|
-         repo.add_user(TEST_USER, Repository::Permission::READ_WRITE,GIT_TEST_REPOS_DIR + "/git_auth/")
+         repo.add_user(TEST_USER, Repository::Permission::READ_WRITE)
        end
 
        # assertions
        repositories.each do |r|
-         assert_equal(Repository::Permission::READ_WRITE, r.get_permissions(TEST_USER,GIT_TEST_REPOS_DIR + "/git_auth/"))
+         assert_equal(Repository::Permission::READ_WRITE, r.get_permissions(TEST_USER))
        end
 
        #close all repositories
@@ -694,12 +702,15 @@ class GitRepositoryTest < Test::Unit::TestCase
    context "Setting and deleting bulk permissions" do
      setup do
        # use a different svn_authz file for this test
-       new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2"
+      new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2"
+
+      if !File.directory?(new_git_auth)
+        FileUtils.mkdir_p(new_git_auth)
+      end
 
        @conf_admin = Hash.new
        @conf_admin["IS_REPOSITORY_ADMIN"] = true
-       @conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth
-
+       @conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth 
        # create some repositories, add some users
        repo_base_name = "Group_"
        @repository_names = []
@@ -716,11 +727,17 @@ class GitRepositoryTest < Test::Unit::TestCase
      end
 
      teardown do
-       new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2"
+      new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2"
+      new_git_auth_file = new_git_auth + "/conf/gitolite.conf"
 
-       # remove authz file if it exists
-       if File.exist?(new_git_auth)
-         FileUtils.rm(new_git_auth)
+      # remove auth file if it exists
+      if File.directory?(new_git_auth)
+        FileUtils.rm_rf(GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2/")
+      end
+
+       # remove auth file if it exists
+       if File.exist?(new_git_auth_file)
+         FileUtils.rm(new_git_auth_file)
        end
 
        # remove repositories, if they exist
@@ -740,8 +757,8 @@ class GitRepositoryTest < Test::Unit::TestCase
        # Test to make sure they got attached to each repository
        @repository_names.each do |repo_name|
          repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
-         assert_equal(Repository::Permission::READ, repo.get_permissions("test_user",GIT_TEST_REPOS_DIR + "/git_auth/"))
-         assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2",GIT_TEST_REPOS_DIR + "/git_auth/"))
+         assert_equal(Repository::Permission::READ, repo.get_permissions("test_user"))
+         assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))
          repo.close()
        end
 
@@ -751,9 +768,9 @@ class GitRepositoryTest < Test::Unit::TestCase
        @repository_names.each do |repo_name|
          repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
          assert_raises Repository::UserNotFound do
-           repo.get_permissions("test_user",GIT_TEST_REPOS_DIR + "/git_auth/")
+           repo.get_permissions("test_user")
          end
-         assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2",GIT_TEST_REPOS_DIR + "/git_auth/"))
+         assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))
          repo.close()
        end
        @repositories.each do|repo|
