@@ -2,7 +2,7 @@
                            'users_manager',
                            'Graders/index' %>
 
-<%= render :partial => "boot", :formats => [:js] %>
+<%= render partial: "boot", formats: [:js] %>
 
 <div id="title_bar">
   <h1><%= I18n.t("graders.manage_graders") %></h1>
@@ -52,7 +52,7 @@
 
   <p><%= I18n.t("graders.upload.grader_same_user") %></p>
 
-   <%= form_tag upload_ta_list_tas_path(), {:multipart => true} %>
+   <%= form_tag upload_ta_list_tas_path(), {multipart: true} %>
     <label for="userlist"><%= I18n.t("graders.upload.csv_file") %></label>
     <input type="file" name="userlist" id="userlist"/>
     <br>
@@ -70,7 +70,7 @@
 <div id="download_dialog">
   <h2><%= I18n.t("download") %></h2>
   <p><%= link_to I18n.t("graders.download.download_list"),
-  {:controller => 'tas', :action => 'download_ta_list',
-  :format => "csv"}, :onclick => "modalDownload.close();" %></p>
+  {controller: 'tas', action: 'download_ta_list',
+  format: "csv"}, onclick: "modalDownload.close();" %></p>
   <%= button_to_function I18n.t(:close), 'modal_download.close()' %>
 </div>

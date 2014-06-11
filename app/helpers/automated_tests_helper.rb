@@ -3,10 +3,10 @@ module AutomatedTestsHelper
 
   def add_test_file_link(name, form)
     link_to_function name do |page|
-      test_file = render(:partial => 'test_file',
-                         :locals => {:form => form,
-                                     :test_file => TestFile.new,
-                                     :file_type => 'test'})
+      test_file = render(partial: 'test_file',
+                         locals: {form: form,
+                                     test_file: TestFile.new,
+                                     file_type: 'test'})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -21,10 +21,10 @@ module AutomatedTestsHelper
 
   def add_lib_file_link(name, form)
     link_to_function name do |page|
-      test_file = render(:partial => 'test_file',
-                         :locals => {:form => form,
-                                     :test_file => TestFile.new,
-                                     :file_type => 'lib'})
+      test_file = render(partial: 'test_file',
+                         locals: {form: form,
+                                     test_file: TestFile.new,
+                                     file_type: 'lib'})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -39,10 +39,10 @@ module AutomatedTestsHelper
 
   def add_parser_file_link(name, form)
     link_to_function name do |page|
-      test_file = render(:partial => 'test_file',
-                         :locals => {:form => form,
-                                     :test_file => TestFile.new,
-                                     :file_type => 'parse'})
+      test_file = render(partial: 'test_file',
+                         locals: {form: form,
+                                     test_file: TestFile.new,
+                                     file_type: 'parse'})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -62,13 +62,13 @@ module AutomatedTestsHelper
       @ant_build_file.assignment = assignment
       @ant_build_file.filetype = 'build.xml'
       @ant_build_file.filename = 'tempbuild.xml'        # temporary placeholder for now
-      @ant_build_file.save(:validate => false)
+      @ant_build_file.save(validate: false)
 
       @ant_build_prop = TestFile.new
       @ant_build_prop.assignment = assignment
       @ant_build_prop.filetype = 'build.properties'
       @ant_build_prop.filename = 'tempbuild.properties' # temporary placeholder for now
-      @ant_build_prop.save(:validate => false)
+      @ant_build_prop.save(validate: false)
 
       # Setup Testing Framework repository
       test_dir = File.join(
@@ -222,7 +222,7 @@ module AutomatedTestsHelper
   def copy_ant_files(assignment, repo_dest_dir)
     # Check if the repository where you want to copy Ant files to exists
     unless File.exists?(repo_dest_dir)
-      raise I18n.t('automated_tests.dir_not_exist', {:dir => repo_dest_dir})
+      raise I18n.t('automated_tests.dir_not_exist', {dir: repo_dest_dir})
     end
 
     # Create the src repository to put student's files
@@ -233,7 +233,7 @@ module AutomatedTestsHelper
     # Move student's source files to the src repository
     pwd = FileUtils.pwd
     FileUtils.cd(repo_assignment_dir)
-    FileUtils.mv(Dir.glob('*'), File.join(repo_assignment_dir, 'src'), :force => true )
+    FileUtils.mv(Dir.glob('*'), File.join(repo_assignment_dir, 'src'), force: true )
 
     # You always have to come back to your former working directory if you want to avoid errors
     FileUtils.cd(pwd)
@@ -273,7 +273,7 @@ module AutomatedTestsHelper
         FileUtils.cp_r(File.join(assignment_dir, 'parse'), repo_assignment_dir)
       end
     else
-      raise I18n.t('automated_tests.dir_not_exist', {:dir => assignment_dir})
+      raise I18n.t('automated_tests.dir_not_exist', {dir: assignment_dir})
     end
   end
 
@@ -281,7 +281,7 @@ module AutomatedTestsHelper
   def run_ant_file(result, assignment, repo_dest_dir)
     # Check if the repository where you want to copy Ant files to exists
     unless File.exists?(repo_dest_dir)
-      raise I18n.t('automated_tests.dir_not_exist', {:dir => repo_dest_dir})
+      raise I18n.t('automated_tests.dir_not_exist', {dir: repo_dest_dir})
     end
 
     # Go to the directory where the Ant program must be run
@@ -297,7 +297,7 @@ module AutomatedTestsHelper
     FileUtils.cd(pwd)
 
     # File to store build details
-    filename = I18n.l(Time.zone.now, :format => :ant_date) + '.log'
+    filename = I18n.l(Time.zone.now, format: :ant_date) + '.log'
     # Status of Ant build
     status = ''
 
@@ -342,11 +342,11 @@ module AutomatedTestsHelper
 
     # Create TestResult object
     # (Build failures and errors will be logged and stored as well for diagnostic purposes)
-    TestResult.create(:filename => filename,
-      :file_content => data,
-      :submission_id => result.submission.id,
-      :status => status,
-      :user_id => @current_user.id)
+    TestResult.create(filename: filename,
+      file_content: data,
+      submission_id: result.submission.id,
+      status: status,
+      user_id: @current_user.id)
   end
 
   # Send output to parser(s) if any

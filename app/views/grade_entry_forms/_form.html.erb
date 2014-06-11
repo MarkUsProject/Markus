@@ -16,73 +16,79 @@
            formats: [:js],
            handlers: [:erb] %>
 
-<div class="wrapLeft">
-<%= render 'shared/flash_message' %>
+<div class='wrapLeft'>
+  <%= render 'shared/flash_message' %>
 
-<%= form_for @grade_entry_form, :as => :grade_entry_form do |f| %>
-  <%= render :partial => "shared/error_explanation", :locals => { :model => @grade_entry_form } %>
-<fieldset>
-  <legend><%= t('grade_entry_forms.properties') %></legend>
+  <%= form_for @grade_entry_form, as: :grade_entry_form do |f| %>
+    <%= render partial: 'shared/error_explanation',
+               locals: { model: @grade_entry_form } %>
 
-    <% # Basic grade entry form properties
-    %>
+    <fieldset>
+      <legend><%= t('grade_entry_forms.properties') %></legend>
 
-    <%= raw(f.label :short_identifier, t(:short_identifier).html_safe) %>
-    <%= raw(f.text_field :short_identifier) %><br>
+        <% # Basic grade entry form properties %>
 
-    <%= raw(f.label :description, t(:description)) %>
-    <%= raw(f.text_field :description) %><br>
+        <div>
+          <%= raw(f.label :short_identifier, t(:short_identifier).html_safe) %>
+          <%= raw(f.text_field :short_identifier) %>
+        </div>
 
+        <div>
+          <%= raw(f.label :description, t(:description)) %>
+          <%= raw(f.text_field :description) %>
+        </div>
 
-    <%= raw(f.label :message) %>
-    <%= raw(f.text_area :message, :rows => 8, :cols => 65) %><br>
+        <div>
+          <%= raw(f.label :message) %>
+          <%= raw(f.text_area :message, rows: 8, cols: 65) %>
+        </div>
 
-    <%= raw(f.label :date, t(:shortened_date).html_safe) %>
-    <%= raw(f.text_field :date,
-                         id: 'actual_date',
-                         class: 'hidden') %>
-    <%= text_field_tag 'date',
-                       nil,
-                       { class: 'datepicker',
-                         size: 30 } %>
+        <div>
+          <%= raw(f.label :date, t(:shortened_date).html_safe) %>
+          <%= raw(f.text_field :date,
+                               id: 'actual_date',
+                               class: 'hidden') %>
+          <%= text_field_tag 'date',
+                             nil,
+                             { class: 'datepicker',
+                               size: 30 } %>
+        </div>
 
-    <br>
+        <div>
+          <%= raw(f.label :show_total, t('grade_entry_forms.show_total')) %>
+          <%= raw(f.check_box :show_total) %>
+        </div>
 
-    <%= raw(f.label :show_total, t('grade_entry_forms.show_total')) %>
-    <%= raw(f.check_box :show_total) %><br>
-    <br>
+        <h4><%= t('grade_entry_forms.specify_columns') %></h4>
 
-    <h4><%= t('grade_entry_forms.specify_columns') %></h4>
-    <% # Display the column names and totals
-    %>
-    <div id="grade_entry_items">
-      <% # Ensures there is at least one column whenever the form is loaded. %>
-      <% if @grade_entry_form.grade_entry_items.empty? %>
-        <%= render(:partial => 'grade_entry_item',
-                   :locals => {:form => f,
-                               :new_position => 0,
-                               :grade_entry_item => GradeEntryItem.new}) %>
-      <% end %>
+        <% # Display the column names and totals %>
+        <div id='grade_entry_items'>
+          <% # Ensures there is at least one column whenever the form is loaded. %>
+          <% if @grade_entry_form.grade_entry_items.empty? %>
+            <%= render partial: 'grade_entry_item',
+                       locals: { form: f,
+                                 new_position: 0,
+                                 grade_entry_item: GradeEntryItem.new } %>
+          <% end %>
 
-      <% sort_items_by_position(@grade_entry_form.grade_entry_items).each_with_index do |item, index| %>
-        <%= f.fields_for :grade_entry_items, item do |entry_item| %>
-          <%= render :partial => 'grade_entry_item',
-                     :locals => {:grade_entry_item => entry_item.object,
-                                 :new_position => index + 1,
-                                 :form => f} %>
-        <% end %>
-      <% end %>
-    </div>
+          <% sort_items_by_position(@grade_entry_form.grade_entry_items).each_with_index do |item, index| %>
+            <%= f.fields_for :grade_entry_items, item do |entry_item| %>
+              <%= render partial: 'grade_entry_item',
+                         locals: { grade_entry_item: entry_item.object,
+                                   new_position: index + 1,
+                                   form: f } %>
+            <% end %>
+          <% end %>
+        </div>
 
-   <% # Allow the user to add a new column to the form
-    %>
-    <p id="grade_entry_item_add_link">
-      <%= add_grade_entry_item_link t('grade_entry_forms.add_column'), f %>
-    </p>
+       <% # Allow the user to add a new column to the form
+        %>
+        <p id='grade_entry_item_add_link'>
+          <%= add_grade_entry_item_link t('grade_entry_forms.add_column'), f %>
+        </p>
 
-</fieldset>
+    </fieldset>
 
-<%= f.submit  :'data-disable-with' => I18n.t('working') %>
-<% end %>
-
+    <%= f.submit data: { disable_with: I18n.t('working') } %>
+  <% end %>
 </div>

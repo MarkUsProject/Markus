@@ -5,19 +5,20 @@
   <%= javascript_include_tag "repo_browser.js" %>
 <% end %>
 
-<%= render :partial => "repo_browser_boot", :formats => [:js], :handlers => [:erb] %>
-
+<%= render partial: "repo_browser_boot",
+           formats: [:js],
+           handlers: [:erb] %>
 
 <% if flash[:error] -%>
-<div class="error">
-  <%= flash[:error] %>
-</div>
+  <div class="error">
+    <%= flash[:error] %>
+  </div>
 <% end %>
 
 <div id="title_bar">
   <h1><%= I18n.t("browse_submissions.repository_name",
-                 :repository => @repository_name)%>
-      (<%= @grouping.get_all_students_in_group%>)
+                 repository: @repository_name) %>
+      (<%= @grouping.get_all_students_in_group %>)
   </h1>
 </div>
 
@@ -32,7 +33,7 @@
      <%= form_tag repo_browser_assignment_submission_path(
                       @assignment.id,
                       @grouping.id,
-                      :find_revision_by => 'revision_timestamp') do %>
+                      find_revision_by: 'revision_timestamp') do %>
         <%= text_field_tag 'actual_revision_timestamp',
                            l(@revision_timestamp, format: :long_date),
                            class: 'hidden' %>
@@ -44,20 +45,20 @@
      <% end %>
       <%= form_tag repo_browser_assignment_submission_path(
                            @assignment, @grouping),
-                   :find_revision_by => 'revision_number' do %>
+                   find_revision_by: 'revision_number' do %>
         <%= select_tag('revision_number',
                    options_for_select(@revisions_history.collect { |s|
-                     [t('browse_submissions.revision_history', :num => s[:num])+
-                              l(s[:date], :format => :long_date), s[:num]] },
+                     [t('browse_submissions.revision_history', num: s[:num])+
+                              l(s[:date], format: :long_date), s[:num]] },
                                       @revision_number)) %>
         <%= submit_tag I18n.t('browse_submissions.find_by_revision_number') %>
       <% end %>
     </fieldset>
   </div>
 <div class="global_actions">
-  <h2><%= raw(I18n.t("browse_submissions.viewing_revision", :revision_number => @revision_number)) %>
+  <h2><%= raw(I18n.t("browse_submissions.viewing_revision", revision_number: @revision_number)) %>
       (<span id="current_revision_timestamp_display">
-         <%= I18n.l(@revision_timestamp, :format => :long_date) %>
+         <%= I18n.l(@revision_timestamp, format: :long_date) %>
       </span>)
   </h2>
   <span id="loading_list"><%= image_tag("spinner.gif") %><%= I18n.t("groups.loading_list") %>
@@ -70,17 +71,17 @@
      links = []
      @path.split('/').each do |folder|
      path_memory = File.join(path_memory, folder)
-     links.push(link_to folder, :action => 'repo_browser', :path => path_memory, :id => @grouping.id, :revision_number => @revision_number)
+     links.push(link_to folder, action: 'repo_browser', path: path_memory, id: @grouping.id, revision_number: @revision_number)
   end %>
-  <%= link_to "/#{@assignment.repository_folder}", :action => 'repo_browser', :id => @grouping.id, :path => '/', :revision_number => @revision_number %>
+  <%= link_to "/#{@assignment.repository_folder}", action: 'repo_browser', id: @grouping.id, path: '/', revision_number: @revision_number %>
   <%= links.join('/')%>
 
 </p>
 </div>
 
-  <%= form_tag manually_collect_and_begin_grading_assignment_submission_path(:id => @grouping.id,
-      :assignment_id => @assignment.id),
-         :remote => true do %>
+  <%= form_tag manually_collect_and_begin_grading_assignment_submission_path(id: @grouping.id,
+                assignment_id: @assignment.id),
+               remote: true do %>
     <%= hidden_field_tag "current_revision_number", @revision_number %>
     <input type="submit" value="<%=I18n.t("browse_submissions.collect_and_grab")%>"
            onclick="if (!confirm('<%=t(:collect_and_grade_overwrite_warning)%>'))
@@ -89,9 +90,9 @@
              return true;" name="commit">
     </input>
     <%= link_to t('browse_submissions.download_all_files'),
-                { :action => :downloads, :revision_number => @revision_number,
-                  :grouping_id => @grouping.id, :path => @path },
-                :class => 'button' %>
+                { action: :downloads, revision_number: @revision_number,
+                  grouping_id: @grouping.id, path: @path },
+                class: 'button' %>
     <div id="progress_text"></div>
   <% end %>
 </div>
@@ -106,7 +107,7 @@
 
 <script type="text/javascript">
   new PeriodicalExecuter(function() {
-    new Ajax.Request('<%= update_converted_pdfs_assignment_submissions_path(@assignment, :grouping_id => @grouping.id) %>',
+    new Ajax.Request('<%= update_converted_pdfs_assignment_submissions_path(@assignment, grouping_id: @grouping.id) %>',
       {
         asynchronous:true,
         evalScripts:true,

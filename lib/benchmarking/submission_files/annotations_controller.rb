@@ -11,9 +11,9 @@ class AnnotationsController < ApplicationController
     @submission_file = SubmissionFile.find(@submission_file_id)
     @annotation = Annotation.new
     @annotation.update_attributes({
-      :line_start => params[:line_start],
-      :line_end => params[:line_end],
-      :submission_file_id => params[:submission_file_id]
+      line_start: params[:line_start],
+      line_end: params[:line_end],
+      submission_file_id: params[:submission_file_id]
     })
     @annotation.annotation_text = @text
     @annotation.save
@@ -23,16 +23,16 @@ class AnnotationsController < ApplicationController
 
   def create
     @text = AnnotationText.create({
-      :content => params[:content],
-      :annotation_category_id => params[:category_id]
+      content: params[:content],
+      annotation_category_id: params[:category_id]
     })
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
     @annotation = Annotation.create({
-      :line_start => params[:line_start],
-      :line_end => params[:line_end],
-      :annotation_text_id => @text.id,
-      :submission_file_id => params[:submission_file_id]
+      line_start: params[:line_start],
+      line_end: params[:line_end],
+      annotation_text_id: @text.id,
+      submission_file_id: params[:submission_file_id]
     })
     @submission = @submission_file.submission
     @annotations = @submission.annotations
@@ -73,7 +73,7 @@ class AnnotationsController < ApplicationController
     result.marking_state = params[:value]
     result.save
     render :update do |page|
-       page.redirect_to :controller => 'results', :action => 'edit', :id =>
+       page.redirect_to controller: 'results', action: 'edit', id:
        result.id
     end
   end

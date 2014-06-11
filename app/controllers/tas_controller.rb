@@ -3,15 +3,15 @@ class TasController < ApplicationController
   before_filter  :authorize_only_for_admin
 
   def index
-    @tas = Ta.all(:order => 'user_name')
+    @tas = Ta.all(order: 'user_name')
   end
 
   def populate
-    @tas_data = Ta.all(:order => 'user_name')
+    @tas_data = Ta.all(order: 'user_name')
     # construct_table_rows defined in UsersHelper
     @tas = construct_table_rows(@tas_data)
     respond_to do |format|
-      format.json { render :json => @tas }
+      format.json { render json: @tas }
     end
   end
 
@@ -29,9 +29,9 @@ class TasController < ApplicationController
     # update_attributes supplied by ActiveRecords
     if @user.update_attributes(attrs)
       flash[:success] = I18n.t('tas.update.success',
-                               :user_name => @user.user_name)
+                               user_name: @user.user_name)
 
-      redirect_to :action => :index
+      redirect_to action: :index
     else
       flash[:error] = I18n.t('tas.update.error')
       render :edit
@@ -48,8 +48,8 @@ class TasController < ApplicationController
     # updates the existing record
     if @user.save
       flash[:success] = I18n.t('tas.create.success',
-                               :user_name => @user.user_name)
-      redirect_to :action => 'index' # Redirect
+                               user_name: @user.user_name)
+      redirect_to action: 'index' # Redirect
     else
       flash[:error] = I18n.t('tas.create.error')
       render :new
@@ -59,7 +59,7 @@ class TasController < ApplicationController
   #downloads users with the given role as a csv list
   def download_ta_list
     #find all the users
-    tas = Ta.all(:order => 'user_name')
+    tas = Ta.all(order: 'user_name')
     case params[:format]
     when 'csv'
       output = User.generate_csv_list(tas)
@@ -72,7 +72,7 @@ class TasController < ApplicationController
       output = tas.to_xml
       format = 'text/xml'
     end
-    send_data(output, :type => format, :disposition => 'inline')
+    send_data(output, type: format, disposition: 'inline')
   end
 
   def upload_ta_list
@@ -80,7 +80,7 @@ class TasController < ApplicationController
       result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
       if !result
         flash[:notice] = I18n.t('csv.invalid_csv')
-        redirect_to :action => 'index'
+        redirect_to action: 'index'
         return
       end
       if result[:invalid_lines].length > 0
@@ -88,6 +88,6 @@ class TasController < ApplicationController
       end
       flash[:notice] = result[:upload_notice]
     end
-    redirect_to :action => 'index'
+    redirect_to action: 'index'
   end
 end
