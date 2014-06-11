@@ -1,44 +1,39 @@
-<canvas id="assignment_<%= assignment.id %>" width="400" height="350"></canvas>
+<canvas id='assignment_<%= assignment.id %>' width='420' height='350'></canvas>
 
-<script type="text/javascript">
+<script>
 //<![CDATA[
-    // Set-up the graph
-    var g = new Bluff.SideBar('assignment_<%= assignment.id %>', '400x350');
-    g.title = '<%= I18n.t(:grade_distribution) %>';
-    g.tooltips = true;
+  // Set up graph
+  var ctx = document.getElementById('assignment_<%= assignment.id %>').getContext('2d');
 
-    // Set-up the theme
-    g.set_theme({
-        colors: ['#0a67ad'],
-        marker_color: '#aea9a9',
-        font_color: '#000',
-        background_colors: '#fff'
-    });
+  // Set up labels
+  var intervals = 20;
+  var steps = 100 / intervals; // number of percentage steps in each interval
+  var lab = [];
+  for (var i = 0; i < intervals; i++) {
+    lower = (i == 0) ? 0 : 1 + i * steps;
+    upper = (i + 1) * steps;
+    lab[i] = lower + '% - ' + upper + '%';
+  }
 
-    // Build the data
-    var legend = '';
-    <% if assignment.group_assignment? %>
-        legend = '<%= I18n.t("groups.groups") %>'
-    <% else %>
-        legend = '<%= I18n.t("students.students") %>'
-    <% end %>
-    g.data(legend, <%= assignment.assignment_stat.grade_distribution_array %> );
+  var data = {
+    labels : lab,
+    datasets : [
+      {
+        fillColor : 'rgba(151,187,205,0.5)',
+        strokeColor : 'rgba(151,187,205,1)',
+        data : <%= assignment.assignment_stat.grade_distribution_array %>
+      }
+    ]
+  };
 
-    // Create the labels
-    var intervals = 20;
-    var steps = 100 / intervals; // number of percentage steps in each interval
-    g.labels = {}
-    for(i = 0; i < intervals; i++){
-        if(i == 0) {
-            lower = 0;
-        } else {
-            lower = 1 + i * steps;
-        }
-        upper = (i + 1) * steps;
-        g.labels[i] = lower + '%-' + upper + '%';
-    }
+  var options = {
+    scaleLineWidth:  2,
+    barStrokeWidth:  1,
+    barValueSpacing: 2,
+    animationSteps:  50
+  }
 
-    // Draw the graph
-    g.draw();
+  // Draw it
+  new Chart(ctx).Bar(data, options);
 //]]>
 </script>
