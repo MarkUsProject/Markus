@@ -12,14 +12,14 @@ class User < ActiveRecord::Base
 
   # Group relationships
   has_many :memberships
-  has_many :groupings, :through => :memberships
-  has_many :notes, :as => :noteable, :dependent => :destroy
-  has_many :accepted_memberships, :class_name => 'Membership', :conditions => {:membership_status => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
+  has_many :groupings, through: :memberships
+  has_many :notes, as: :noteable, dependent: :destroy
+  has_many :accepted_memberships, class_name: 'Membership', conditions: {membership_status: [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
 
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
 
-  validates_format_of       :type,          :with => /Student|Admin|Ta/
+  validates_format_of       :type,          with: /Student|Admin|Ta/
   # role constants
   STUDENT = 'Student'
   ADMIN = 'Admin'
@@ -92,8 +92,8 @@ class User < ActiveRecord::Base
   #TODO: make these proper associations. They work fine for now but
   # they'll be slow in production
   def active_groupings
-    self.groupings.all(:conditions => ['memberships.membership_status != :u',
-                                       { :u => StudentMembership::STATUSES[:rejected]}])
+    self.groupings.all(conditions: ['memberships.membership_status != :u',
+                                       { u: StudentMembership::STATUSES[:rejected]}])
   end
 
   # Helper methods -----------------------------------------------------
@@ -148,13 +148,13 @@ class User < ActiveRecord::Base
       User.transaction do
         processed_users = []
         CSV.parse(user_list,
-                  :skip_blanks => true,
-                  :row_sep => :auto) do |row|
+                  skip_blanks: true,
+                  row_sep: :auto) do |row|
           # don't know how to fetch line so we concat given array
           next if CSV.generate_line(row).strip.empty?
           if processed_users.include?(row[0])
             result[:invalid_lines] = I18n.t('csv_upload_user_duplicate',
-                                            {:user_name => row[0]})
+                                            {user_name: row[0]})
           else
             if User.add_user(user_class, row).nil?
               result[:invalid_lines] << row.join(',')
