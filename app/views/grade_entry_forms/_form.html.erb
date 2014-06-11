@@ -11,14 +11,14 @@
 <% if I18n.default_locale == :en %>
    <%= calendar_date_select_includes "silver" %>
 <% else %>
-   <%= calendar_date_select_includes "silver", :locale => I18n.default_locale %>
+   <%= calendar_date_select_includes "silver", locale: I18n.default_locale %>
 <% end %>
 
 <div class="wrapLeft">
 <%= render 'shared/flash_message' %>
 
-<%= form_for @grade_entry_form, :as => :grade_entry_form do |f| %>
-  <%= render :partial => "shared/error_explanation", :locals => { :model => @grade_entry_form } %>
+<%= form_for @grade_entry_form, as: :grade_entry_form do |f| %>
+  <%= render partial: "shared/error_explanation", locals: { model: @grade_entry_form } %>
 <fieldset>
   <legend><%= t('grade_entry_forms.properties') %></legend>
 
@@ -33,12 +33,12 @@
 
 
     <%= raw(f.label :message) %>
-    <%= raw(f.text_area :message, :rows => 8, :cols => 65) %><br>
+    <%= raw(f.text_area :message, rows: 8, cols: 65) %><br>
 
     <%= raw(f.label :date, t(:shortened_date).html_safe) %>
     <%= raw(f.calendar_date_select :date,
-            {:year_range => 0.years.ago..1.years.from_now,
-             :locale => I18n.default_locale}) %>
+            {year_range: 0.years.ago..1.years.from_now,
+             locale: I18n.default_locale}) %>
     <%= raw(t(:iso_date_format_example)) %>
 
     <br>
@@ -53,18 +53,18 @@
     <div id="grade_entry_items">
       <% # Ensures there is at least one column whenever the form is loaded. %>
       <% if @grade_entry_form.grade_entry_items.empty? %>
-        <%= render(:partial => 'grade_entry_item',
-                   :locals => {:form => f,
-                               :new_position => 0,
-                               :grade_entry_item => GradeEntryItem.new}) %>
+        <%= render(partial: 'grade_entry_item',
+                   locals: {form: f,
+                               new_position: 0,
+                               grade_entry_item: GradeEntryItem.new}) %>
       <% end %>
 
       <% sort_items_by_position(@grade_entry_form.grade_entry_items).each_with_index do |item, index| %>
         <%= f.fields_for :grade_entry_items, item do |entry_item| %>
-          <%= render :partial => 'grade_entry_item',
-                     :locals => {:grade_entry_item => entry_item.object,
-                                 :new_position => index + 1,
-                                 :form => f} %>
+          <%= render partial: 'grade_entry_item',
+                     locals: {grade_entry_item: entry_item.object,
+                                 new_position: index + 1,
+                                 form: f} %>
         <% end %>
       <% end %>
     </div>

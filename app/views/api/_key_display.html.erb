@@ -2,7 +2,7 @@
 <div id="api_key_box">
   <% if !user.api_key.nil? %>
     <%= form_tag reset_api_key_main_index_path,
-          :remote => true do %>
+          remote: true do %>
       <%= submit_tag I18n.t(:reset_api_key) %>
     <% end %>
     <div id="api_key"><%= user.api_key %></div>

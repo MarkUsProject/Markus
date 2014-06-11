@@ -86,26 +86,26 @@ function check_working() {
 <%
 # Javascript for showing/hiding old marks
 %>
-<%= render :partial => "results/common/old_marks_view_functions", :formats => [:html] %>
+<%= render partial: "results/common/old_marks_view_functions", formats: [:html] %>
 
 <%
 # Javascript for test result window
 %>
-<%= render :partial => "assignments/test_result_window", :formats => [:html],
-  :locals => {:aid => @assignment.id}  %>
+<%= render partial: "assignments/test_result_window", formats: [:html],
+  locals: {aid: @assignment.id}  %>
 
-<%= render :partial => "results/common/annotations", :formats => [:js] %>
-<%= render :partial => "results/marker/setup_annotation_categories", :formats => [:js] %>
+<%= render partial: "results/common/annotations", formats: [:js] %>
+<%= render partial: "results/marker/setup_annotation_categories", formats: [:js] %>
 
-<%= render :partial => "results/marker/boot",
-  :formats => [:js], :locals => {:first_file => @first_file} %>
+<%= render partial: "results/marker/boot",
+  formats: [:js], locals: {first_file: @first_file} %>
 
 <div id="notes_dialog">
 </div>
 
 <div id="title_bar">
 <h1>
-<%= t('results.title', {:assignment_name => @assignment.short_identifier, :group_name => @group.group_name}) %>
+<%= t('results.title', {assignment_name: @assignment.short_identifier, group_name: @group.group_name}) %>
 (<%= @grouping.get_all_students_in_group %>)
 </h1>
 </div>
@@ -120,21 +120,21 @@ function check_working() {
 <% if @grouping.past_due_date? %>
   <p class="warning">
     <%= t(:past_due_date_edit_result_warning,
-          :href => link_to(t(:last_commit),
+          href: link_to(t(:last_commit),
                            repo_browser_assignment_submission_path(
                                    @assignment, @grouping))).html_safe %>
   </p>
 <% end %>
 
-<%= render :partial => 'results/common/submission_selector', :locals => {:group => @group, :result => @result, :assignment => @assignment, :previous_grouping => @previous_grouping, :next_grouping => @next_grouping} %>
+<%= render partial: 'results/common/submission_selector', locals: {group: @group, result: @result, assignment: @assignment, previous_grouping: @previous_grouping, next_grouping: @next_grouping} %>
 
-<%= render :partial => 'results/common/errors' %>
+<%= render partial: 'results/common/errors' %>
 
 <div id="file_selector">
-  <%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true} %>
+  <%= render partial: 'results/common/file_selector', locals: {files: @files, can_download: true} %>
   <% if @assignment.enable_test %>
     <div id="test_results_controls">
-      <%= render :partial => 'results/common/test_selector', :locals => {:test_result_files => @test_result_files, :result => @result} %>
+      <%= render partial: 'results/common/test_selector', locals: {test_result_files: @test_result_files, result: @result} %>
     </div>
   <% end %>
 </div>
@@ -142,18 +142,18 @@ function check_working() {
 
 <% if !@result.released_to_students %>
 
-<%= render :partial => 'results/marker/marker_panes',
-           :locals => {:extra_marks_points => @extra_marks_points,
-                       :extra_marks_percentage => @extra_marks_percentage,
-                       :annotation_categories => @annotation_categories,
-                       :result => @result,
-                       :assignment => @assignment,
-                       :marks_map => @marks_map,
-                       :mark_criteria =>@mark_criteria,
-                       :submission => @submission,
-                       :old_result => @old_result} %>
+<%= render partial: 'results/marker/marker_panes',
+           locals: {extra_marks_points: @extra_marks_points,
+                    extra_marks_percentage: @extra_marks_percentage,
+                    annotation_categories: @annotation_categories,
+                    result: @result,
+                    assignment: @assignment,
+                    marks_map: @marks_map,
+                    mark_criteria:@mark_criteria,
+                    submission: @submission,
+                    old_result: @old_result} %>
 <% else %>
-<%= render :partial => 'results/result_summary'%>
+<%= render partial: 'results/result_summary'%>
 
 <% end %>
 </div>
