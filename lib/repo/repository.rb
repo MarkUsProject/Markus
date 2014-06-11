@@ -290,19 +290,19 @@ module Repository
     end
 
     def add_path(path)
-      @jobs.push(:action => :add_path, :path => path)
+      @jobs.push(action: :add_path, path: path)
     end
 
     def add(path, file_data=nil, mime_type=nil)
-      @jobs.push(:action => :add, :path => path, :file_data => file_data, :mime_type => mime_type)
+      @jobs.push(action: :add, path: path, file_data: file_data, mime_type: mime_type)
     end
 
     def remove(path, expected_revision_number)
-      @jobs.push(:action => :remove, :path => path, :expected_revision_number => expected_revision_number)
+      @jobs.push(action: :remove, path: path, expected_revision_number: expected_revision_number)
     end
 
     def replace(path, file_data, mime_type, expected_revision_number)
-      @jobs.push(:action => :replace, :path => path, :file_data => file_data, :mime_type => mime_type, :expected_revision_number => expected_revision_number)
+      @jobs.push(action: :replace, path: path, file_data: file_data, mime_type: mime_type, expected_revision_number: expected_revision_number)
     end
 
     def add_conflict(conflict)

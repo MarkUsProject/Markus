@@ -48,7 +48,7 @@ module PaginationHelper
       params[:page] = AP_DEFAULT_PAGE
     end
 
-    return items.paginate(:per_page => params[:per_page], :page => params[:page]).clone, items.size
+    return items.paginate(per_page: params[:per_page], page: params[:page]).clone, items.size
 
   end
 
@@ -82,7 +82,6 @@ module PaginationHelper
     when 'criterion' then
       to_include = [{ current_submission_used: :results }]
     end
-
     items = hash[:filters][filter][:proc].call(object_hash, to_include)
     unless sort_by.blank?
       if sort_by == 'criterion'
@@ -95,10 +94,11 @@ module PaginationHelper
         end
       end
     end
-
     unless desc.blank?
       items.reverse!
     end
     items
   end
+
 end
+

@@ -33,9 +33,9 @@ module MarksGradersHelper
 
       table_row[:id] = student.id
       table_row[:filter_table_row_contents] =
-        render_to_string :partial => 'marks_graders/table_row/filter_table_row',
-        :formats => [:html], :handlers => [:erb],
-        :locals => { :student => student, :grade_entry_form => grade_entry_form }
+        render_to_string partial: 'marks_graders/table_row/filter_table_row',
+        formats: [:html], handlers: [:erb],
+        locals: { student: student, grade_entry_form: grade_entry_form }
 
       #These are used for sorting
       table_row[:user_name] = student.user_name
@@ -58,8 +58,8 @@ module MarksGradersHelper
 
     table_row[:id] = grader.id
     table_row[:filter_table_row_contents] =
-      render_to_string :partial => 'marks_graders/table_row/filter_table_grader_row',
-      :locals => { :grader => grader }
+      render_to_string partial: 'marks_graders/table_row/filter_table_grader_row',
+      locals: { grader: grader }
 
     #These used only for searching
     table_row[:first_name] = grader.first_name
