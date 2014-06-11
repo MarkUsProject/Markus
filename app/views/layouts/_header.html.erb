@@ -19,24 +19,24 @@
       </span>
       <% if @current_user.admin? %>
         <%= link_to(image_tag('icons/group_go.png',
-                              :alt => I18n.t(:switch_role),
-                              :title => I18n.t(:switch_role),
-                              :id => 'switch_role_icon'),
+                              alt: I18n.t(:switch_role),
+                              title: I18n.t(:switch_role),
+                              id: 'switch_role_icon'),
             role_switch_main_index_path(),
-            :remote => true) %>
+            remote: true) %>
       <% end %>
 
       <%= link_to(I18n.t(:log_out),
-                  :id => 'logout_link',
-                  :controller => 'main',
-                  :action => 'logout') unless
-                    MarkusConfigurator.markus_config_logout_redirect == 'NONE' %>
+                  id: 'logout_link',
+                  controller: 'main',
+                  action: 'logout') unless
+                  MarkusConfigurator.markus_config_logout_redirect == 'NONE' %>
 
       <% if MarkusConfigurator.markus_config_remote_user_auth &&
             !session[:real_uid].nil? %>
         <%= link_to(I18n.t(:clear_role_switch_session_link),
-                    :controller => 'main',
-                    :action => 'clear_role_switch_session') %>
+                    controller: 'main',
+                    action: 'clear_role_switch_session') %>
       <% end %>
     </span>
   </div>
@@ -45,5 +45,5 @@
   </div>
 </header>
 <div id='logo'>
-  <%= render :partial => 'layouts/breadcrumb' %>
+  <%= render partial: 'layouts/breadcrumb' %>
 </div>

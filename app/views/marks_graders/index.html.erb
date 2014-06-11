@@ -2,9 +2,9 @@
 <%= javascript_include_tag 'FilterTable/FilterTable.js' %>
 <%= javascript_include_tag 'Graders/tabs_boot.js' %>
 
-<%= render :partial => 'boot',
-           :formats => [:js],
-           :handlers => [:erb] %>
+<%= render partial: 'boot',
+           formats: [:js],
+           handlers: [:erb] %>
 
 <script>
 //<![CDATA[
@@ -72,8 +72,7 @@
 </div><!-- Notice -->
 
 <%= form_tag global_actions_grade_entry_form_marks_graders_path(@grade_entry_form),
-             :id => 'global_action_form',
-             :remote => true do %>
+             id: "global_action_form", remote: true do %>
 
   <script>
     $('global_action_form').observe('ajax:after', function(evt, status, data, xhr) {
@@ -85,8 +84,8 @@
     });
   </script>
 
-  <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>
-  <%= hidden_field_tag 'current_table', 'groups_table', :id => 'current_table' %>
+  <%= hidden_field_tag 'submit_type', 'global_action', id: 'submit_type' %>
+  <%= hidden_field_tag 'current_table', 'groups_table', id: 'current_table' %>
   <%= hidden_field_tag 'global_actions'%>
 
   <div class='clear'></div>
@@ -116,10 +115,11 @@
 
         <div class='tabbedArea'>
           <div class='search_box'>
-            <%= text_field_tag 'search_graders', nil,
-                :onkeyup => 'graders_table.add_filter("search"); graders_table.render();',
-                :onkeypress => 'stop_submit(event);',
-                :placeholder => I18n.t('search_graders') %>
+            <%= text_field_tag 'search_graders',
+                               nil,
+                               onkeyup: "graders_table.add_filter('search'); graders_table.render();",
+                               onkeypress: "stop_submit(event);",
+                               placeholder: I18n.t("search_graders") %>
           </div>
           <table class='graders' id='graders'></table>
         </div>
@@ -131,20 +131,20 @@
   <div class='centreColumn'>
     <div id='icons'>
       <%= image_submit_tag 'random_arrow.png',
-                           :onclick => '$("global_actions").setValue("random_assign");',
-                           :alt => I18n.t('groups.randomly_assign_graders'),
-                           :title => I18n.t('groups.randomly_assign_graders'),
-                           :class =>'image_input' %>
+                           onclick: '$("global_actions").setValue("random_assign");',
+                           alt: I18n.t('groups.randomly_assign_graders'),
+                           title: I18n.t('groups.randomly_assign_graders'),
+                           class:'image_input' %>
       <%= image_submit_tag 'add_arrow.png',
-                           :onclick => '$("global_actions").setValue("assign");',
-                           :alt => I18n.t('add_graders'),
-                           :class =>'image_input',
-                           :title => I18n.t('add_graders') %>
+                           onclick: '$("global_actions").setValue("assign");',
+                           alt: I18n.t('add_graders'),
+                           class:'image_input',
+                           title: I18n.t('add_graders') %>
       <%= image_submit_tag 'remove_arrow.png',
-                           :onclick => '$("global_actions").setValue("unassign");',
-                           :alt => I18n.t('remove_graders'),
-                           :title => I18n.t('remove_graders'),
-                           :class =>'image_input' %>
+                           onclick: '$("global_actions").setValue("unassign");',
+                           alt: I18n.t('remove_graders'),
+                           title: I18n.t('remove_graders'),
+                           class:'image_input' %>
     </div>
   </div>
 
@@ -184,11 +184,9 @@
   <h2><%= t('groups.download.download_grader_maps') %></h2>
   <ul>
     <li>
-      <%= link_to t('marks_graders.download.download_grader_students_csv'),
-                  { :controller=>'marks_graders',
-                    :action=>'download_grader_students_mapping',
-                    :id=> @grade_entry_form.id },
-                  :onclick => 'modalDownload.close();' %>
+      <%= link_to t("marks_graders.download.download_grader_students_csv"),
+        { controller:"marks_graders", action:"download_grader_students_mapping",
+          id: @grade_entry_form.id}, onclick: "modalDownload.close();" %>
     </li>
   </ul>
   <%= button_to_function I18n.t('cancel'), 'modalDownload.close(); return false;' %>
@@ -197,16 +195,16 @@
 <div id='upload_dialog'>
   <h2><%= I18n.t('marks_graders.upload.upload_grader_map') %></h2>
   <%= raw(I18n.t('marks_graders.upload.description_grader_map')) %>
-  <%= form_tag({ :controller => 'marks_graders',
-                 :action => 'csv_upload_grader_groups_mapping',
-                 :id => @grade_entry_form.id },
-               { :multipart => true }) do %>
+  <%= form_tag({ controller: 'marks_graders',
+                 action: 'csv_upload_grader_groups_mapping',
+                 id: @grade_entry_form.id },
+               { multipart: true }) do %>
     <p>
       <%= I18n.t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
     <p>
-      <%= file_field_tag :grader_mapping, :size => 2 %><br>
+      <%= file_field_tag :grader_mapping, size: 2 %><br>
       <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <%= button_to_function I18n.t('cancel'), 'modalUpload.close(); return false;' %>
     </p>

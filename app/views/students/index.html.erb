@@ -5,7 +5,7 @@
                              'Students/index' %>
 
 <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
- <%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
+ <%= render partial: "boot", formats: [:js], handlers: [:erb] %>
 
 <script type="text/javascript">
   jQuery(document).ready(function() {
@@ -24,14 +24,14 @@
 <div id="title_bar"><h1><%= I18n.t("students.manage_students") %></h1>
   <div class="heading_buttons">
     <%= link_to I18n.t(:add_new), new_student_path() %> |
-    <%= link_to I18n.t(:upload),'#', :onclick => 'modal_upload.open(); return false;' %> |
-    <%= link_to I18n.t(:download),'#', :onclick => 'modal_download.open(); return false;' %>
+    <%= link_to I18n.t(:upload),'#', onclick: 'modal_upload.open(); return false;' %> |
+    <%= link_to I18n.t(:download),'#', onclick: 'modal_download.open(); return false;' %>
   </div>
 </div>
 
 <div class="wrapLeft">
   <%= form_tag bulk_modify_students_path(),
-    :remote => true do %>
+    remote: true do %>
   <div id="ajax_error" class="error" style="display:none;"></div>
 
   <div id="list">
@@ -51,19 +51,19 @@
     <% end -%>
 
     <div id="toggle_actions">
-     <%= I18n.t(:filters) %>:
-     <%= link_to raw(I18n.t(:all) + " (<span id=\"all_students_count\"></span>)"), '#',
-      :onclick => "filter('none');",
-      :id => "filter_link_none",
-      :class => "filter_selected" %>
-     |
-     <%= link_to raw(I18n.t(:active) + " (<span id=\"active_students_count\"></span>)"), '#',
-      :onclick => "filter('active');",
-      :id => "filter_link_active" %>
-     |
-     <%= link_to raw(I18n.t(:not_active) + " (<span id=\"inactive_students_count\"></span>)"), '#',
-      :onclick => "filter('inactive');",
-      :id => "filter_link_inactive"%>
+      <%= I18n.t(:filters) %>:
+      <%= link_to raw(I18n.t(:all) + " (<span id=\"all_students_count\"></span>)"), '#',
+                  onclick: "filter('none');",
+                  id: "filter_link_none",
+                  class: "filter_selected" %>
+      |
+      <%= link_to raw(I18n.t(:active) + " (<span id=\"active_students_count\"></span>)"), '#',
+                  onclick: "filter('active');",
+                  id: "filter_link_active" %>
+      |
+      <%= link_to raw(I18n.t(:not_active) + " (<span id=\"inactive_students_count\"></span>)"), '#',
+                  onclick: "filter('inactive');",
+                  id: "filter_link_inactive"%>
     </div>
 
     <div class="global_action">
@@ -78,7 +78,7 @@
       </select>
 
       <span id="grace_credit_input" style="display:none;">
-        <%= text_field_tag :number_of_grace_credits, nil, :size => 1, :id => 'number_of_grace_credits' %>
+        <%= text_field_tag :number_of_grace_credits, nil, size: 1, id: 'number_of_grace_credits' %>
       </span>
 
       <span id="section_input" style="display: none;">
@@ -89,15 +89,15 @@
           <% end %>
         </select>
       </span>
-      <%= submit_tag t(:apply), :id => 'apply_bulk_action', :'data-disable-with' => I18n.t('working'),
-                                :name => 'commit', :class => 'thin-button' %>
+      <%= submit_tag t(:apply), id: 'apply_bulk_action', :'data-disable-with' => I18n.t('working'),
+                                name: 'commit', class: 'thin-button' %>
     </div>
 
     <div class="search_box">
       <%= text_field_tag 'search_students', nil,
-          :onkeyup => "users_table.add_filter('search'); users_table.render();",
-          :onkeypress => "stop_submit(event);",
-          :placeholder => I18n.t("students.search_students") %>
+          onkeyup: "users_table.add_filter('search'); users_table.render();",
+          onkeypress: "stop_submit(event);",
+          placeholder: I18n.t("students.search_students") %>
     </div>
 
     <div style="overflow:auto;">
@@ -121,7 +121,7 @@
     <p><%= I18n.t("students.upload.student_same_number") %></p>
 
     <%= form_tag upload_student_list_students_path(),
-      {:multipart => true} %>
+      {multipart: true} %>
       <label for="userlist"><%= I18n.t("students.upload.csv_file") %></label>
       <input type="file" name="userlist" id="userlist"/>
       <br>
@@ -131,19 +131,19 @@
       <br>
       <br>
       <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
-      <%= button_to I18n.t(:close), '#', :onclick => 'modal_upload.close(); return false;' %>
+      <%= button_to I18n.t(:close), '#', onclick: 'modal_upload.close(); return false;' %>
     </form>
 </div>
 
 <div id="download_dialog">
   <h2><%= I18n.t("download") %></h2>
   <p><%= link_to I18n.t("students.download.download_csv_format"),
-    {:controller => 'students', :action => 'download_student_list',
-    :format => "csv"}, :onclick => "modal_download.close();"  %></p>
+    {controller: 'students', action: 'download_student_list',
+    format: "csv"}, onclick: "modal_download.close();"  %></p>
   <p><%= link_to I18n.t("students.download.download_xml_format"),
-    {:action => 'download_student_list',
-    :format => 'xml'}, :onclick => "modal_download.close();"  %></p>
-  <%= button_to I18n.t(:close), '#' , :onclick => 'modal_download.close();return false;' %>
+    {action: 'download_student_list',
+    format: 'xml'}, onclick: "modal_download.close();"  %></p>
+  <%= button_to I18n.t(:close), '#' , onclick: 'modal_download.close();return false;' %>
 </div>
 
 <div id="notes_dialog"></div>
