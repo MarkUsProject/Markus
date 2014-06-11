@@ -1,19 +1,16 @@
 /** Annotation Text Class
 
-This class holds the annotation texts in client memory.  
-
-Rules:
-- This class requires/assumes the Prototype javascript library
-**/
+This class holds the annotation texts in client memory.
+*/
 
 var AnnotationText = Class.create({
-  //Constructor:  Create the Annotation Text
+  // Constructor: Create the Annotation Text
   initialize: function(annotation_text_id, annotation_category_id, content) {
     this.annotation_text_id = annotation_text_id;
     this.annotation_category_id = annotation_category_id;
     this.content = content;
   },
-  //Getters and Setters
+  // Getters and Setters
   setContent: function(content) {
     this.content = content;
   },
@@ -21,7 +18,7 @@ var AnnotationText = Class.create({
     return this.content;
   },
   getId: function() {
-    return this.annotation_text_id
+    return this.annotation_text_id;
   },
   getCategoryId: function() {
     return this.annotation_category_id;
