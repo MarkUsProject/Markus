@@ -48,7 +48,7 @@ module PaginationHelper
       params[:page] = AP_DEFAULT_PAGE
     end
 
-    return items.paginate(:per_page => params[:per_page], :page => params[:page]).clone, items.size
+    return items.paginate(per_page: params[:per_page], page: params[:page]).clone, items.size
 
   end
 
@@ -69,8 +69,8 @@ module PaginationHelper
       when 'repo_name' then to_include = [:group]
       when 'section' then to_include = [:group]
       when 'revision_timestamp' then to_include = [:current_submission_used]
-      when 'marking_state' then to_include = [{:current_submission_used => :results}]
-      when 'total_mark' then to_include = [{:current_submission_used => :results}]
+      when 'marking_state' then to_include = [{current_submission_used: :results}]
+      when 'total_mark' then to_include = [{current_submission_used: :results}]
       when 'grace_credits_used' then to_include = [:grace_period_deductions]
     end
     items = hash[:filters][filter][:proc].call(object_hash, to_include)
