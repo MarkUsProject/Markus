@@ -338,15 +338,13 @@ module Repository
       repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
 
       # Gets permissions of a particular user
-      if(repo.permissions[0]["RW+"][""].include? user_id)
-        return Repository::Permission::READ_WRITE
-      elsif(repo.permissions[0]["W"][""].include? user_id)
-        return Repository::Permission::READ_WRITE
-      elsif(repo.permissions[0]["R"][""].include? user_id)
-        return Repository::Permission::READ
-      elsif
-        raise UserNotFound.new(user_id + " not found")
+      repo.permissions[0].each do |perm|
+        if(repo.permissions[0][perm[0]][""].include? user_id)
+          return self.class.__translate_perms_from_file(perm[0])
+        end
       end
+
+      raise UserNotFound.new(user_id + " not found")
 
       #else
       #  raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
@@ -448,7 +446,6 @@ module Repository
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
-
       repo = ga_repo.config.get_repo(repo_name)
 
       if repo.nil?
