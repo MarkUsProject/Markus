@@ -262,7 +262,7 @@ function load_submitted_file(submission_file_id, focus_line) {
   positions = null;
   annotation_manager = null;
   new Ajax.Request('<%=
-                  codeviewer_assignment_submission_result_path(:id => @assignment.id, :uid => @uid) %>',
+                  codeviewer_assignment_submission_result_path(id: @assignment.id, uid: @uid) %>',
                   { asynchronous:true,
                     evalScripts:true,
                     parameters:'submission_file_id=' + submission_file_id

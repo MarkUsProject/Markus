@@ -1,12 +1,12 @@
 <td>
 <%=raw( image_tag('icons/page_white_text.png') )%>
-<%=raw( link_to file_name, :action => 'download', :id => @assignment.id,
- :revision_number => @revision.revision_number, :file_name => file_name,
-  :path => @path )%>
+<%=raw( link_to file_name, action: 'download', id: @assignment.id,
+ revision_number: @revision.revision_number, file_name: file_name,
+  path: @path )%>
 </td>
 
 <td>
-<%=I18n.l(file.last_modified_date, :format => :long_date) %>
+<%=I18n.l(file.last_modified_date, format: :long_date) %>
 </td>
 
 <td>
