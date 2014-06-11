@@ -109,6 +109,7 @@ en:
     collect_submissions:
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
+      disable_collect: "Collection disabled, more than one TA marking displayed submissions."
       could_not_collect: "Could not collect submissions for assignment %{assignment_identifier} - the collection date has not been reached"
       collection_job_started: "Submission collection for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
       priority_given: "The submission has been given collection priority. It will be ready soon."
@@ -135,7 +136,7 @@ en:
         edit:           "Edit Assignment:"
         properties:     "Assignment Properties"
         required_files:  "Required files"
-        submission_rules:  "Submission Rules<span class='required_field'>*</span>"
+        submission_rules:  "Submission Rules"
         required_files_read:  "Required files"
         no_required_files_read:  "There are no required files for this assignment."
         required_files_by_student:  "Add filename(s) that students would be required to submit:"
@@ -167,14 +168,14 @@ en:
             due_date:  "Remark Due Date"
             message:   "Remark Message"
         marking_scheme:
-            title: "Marking Scheme<span class='required_field'>*</span>"
+            title: "Marking Scheme"
             rubric: "Rubric"
             flexible: "Flexible"
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
-        allow_web_submits: "Allow Web Submits?<span class='required_field'>*</span>"
+        allow_web_submits: "Allow Web Submits?"
         is_hidden: "Hide assignment from students?"
-        display_grader_names_to_students: "Display grader names to students?<span class='required_field'>*</span>"
+        display_grader_names_to_students: "Display grader names to students?"
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
@@ -212,6 +213,7 @@ en:
     properties:         "Properties"
     grades:             "Grades"
     submissions:        "Submissions"
+    summaries:          "Summaries"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
@@ -406,6 +408,20 @@ en:
       download_groupings_files: "Download all submissions"
       sections:             "Section:"
       revision_history:     "%{num}: "
+
+    summaries_index:
+      group_name:           "Group Name"
+      repository_name:      "Repository: %{repository}"
+      repository:           "Repository"
+      commit_date:          "Commit Date"
+      marking_state:        "Marking State"
+      grace_credits_used:   "Grace Credits Used"
+      final_grade:          "Final Grade"
+      criterion:             "criterion"
+      per_page:             "per page"
+      filename:             "Filename"
+      section:              "Section"
+      sections:             "Section:"
 
     grade_entry_forms:
       blank_field: "can't be blank"

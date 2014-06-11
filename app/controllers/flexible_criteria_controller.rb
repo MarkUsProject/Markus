@@ -10,7 +10,7 @@ class FlexibleCriteriaController < ApplicationController
     # TODO until Assignment gets its criteria method
     @criteria =
       FlexibleCriterion.find_all_by_assignment_id( @assignment.id,
-                                                   :order => :position)
+                                                   order: :position)
   end
 
   def edit
@@ -66,9 +66,9 @@ class FlexibleCriteriaController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     file_out = FlexibleCriterion.create_csv(@assignment)
     send_data(file_out,
-              :type => 'text/csv',
-              :filename => "#{@assignment.short_identifier}_flexible_criteria.csv",
-              :disposition => 'inline')
+              type: 'text/csv',
+              filename: "#{@assignment.short_identifier}_flexible_criteria.csv",
+              disposition: 'inline')
   end
 
   def upload
@@ -86,25 +86,25 @@ class FlexibleCriteriaController < ApplicationController
           end
           if nb_updates > 0
             flash[:notice] = I18n.t('flexible_criteria.upload.success',
-              :nb_updates => nb_updates)
+              nb_updates: nb_updates)
           end
         end
       end
     end
-    redirect_to :action => 'index', :assignment_id => @assignment.id
+    redirect_to action: 'index', assignment_id: @assignment.id
   end
 
   # This method handles the drag/drop criteria sorting
   def update_positions
     unless request.post?
-      render :nothing => true
+      render nothing: true
       return
     end
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.flexible_criteria
     params[:flexible_criteria_pane_list].each_with_index do |id, position|
       unless id == ''
-        FlexibleCriterion.update(id, :position => position + 1)
+        FlexibleCriterion.update(id, position: position + 1)
       end
     end
   end
@@ -116,7 +116,7 @@ class FlexibleCriteriaController < ApplicationController
     elsif  params[:direction] == 'down'
       offset = 1
     else
-      render :nothing => true
+      render nothing: true
       return
     end
 
@@ -126,7 +126,7 @@ class FlexibleCriteriaController < ApplicationController
     index = @criteria.index(criterion)
     other_criterion = @criteria[index + offset]
     if other_criterion.nil?
-      render :nothing => true
+      render nothing: true
       return
     end
     # Increase the index by one as the position value is 1 greater than the index

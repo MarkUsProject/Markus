@@ -953,7 +953,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
                     get_latest_revision.revision_number}_ann.zip"
-            Zip::ZipFile.open(zip_path) do |zip_file|
+            Zip::File.open(zip_path) do |zip_file|
               file1_path = File.join("#{@assignment.repository_folder}-" +
                                          "#{@grouping.group.repo_name}",
                                      @file1_name)
@@ -975,7 +975,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
                     get_latest_revision.revision_number}.zip"
-            Zip::ZipFile.open(zip_path) do |zip_file|
+            Zip::File.open(zip_path) do |zip_file|
               file1_path = File.join("#{@assignment.repository_folder}-" +
                                          "#{@grouping.group.repo_name}",
                                      @file1_name)

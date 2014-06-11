@@ -178,6 +178,7 @@ button,
     @include background-gradient(#eee, #ddd);
     @include box-shadow(none);
     border-color: #a7b8be;
+    cursor: not-allowed;
     top: 0;
   }
 

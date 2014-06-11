@@ -11,28 +11,28 @@ module Api
 
     # Unless overridden by a subclass, all routes are 404's by default
     def index
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404']}, :status => 404
+      render 'shared/http_status', locals: {code: '404', message:
+        HttpStatusHelper::ERROR_CODE['message']['404']}, status: 404
     end
 
     def show
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
+      render 'shared/http_status', locals: {code: '404', message:
+        HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404
     end
 
     def create
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
+      render 'shared/http_status', locals: {code: '404', message:
+        HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404
     end
 
     def update
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
+      render 'shared/http_status', locals: {code: '404', message:
+        HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404
     end
 
     def destroy
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
+      render 'shared/http_status', locals: {code: '404', message:
+        HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404
     end
 
     private
@@ -48,8 +48,8 @@ module Api
           @current_user = User.find_by_user_name(markus_auth_remote_user)
         else
           # REMOTE_USER_AUTH is true, but REMOTE_USER wasn't set, bail out
-          render 'shared/http_status', :locals => {:code => '403', :message =>
-            HttpStatusHelper::ERROR_CODE['message']['403']}, :status => 403
+          render 'shared/http_status', locals: {code: '403', message:
+            HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
           return
         end
       else
@@ -57,8 +57,8 @@ module Api
         auth_token = parse_auth_token(request.headers['HTTP_AUTHORIZATION'])
         # pretend resource not found if missing or authentication is invalid
         if auth_token.nil?
-          render 'shared/http_status', :locals => {:code => '403', :message =>
-            HttpStatusHelper::ERROR_CODE['message']['403']}, :status => 403
+          render 'shared/http_status', locals: {code: '403', message:
+            HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
           return
         end
         # Find user by api_key_md5
@@ -67,24 +67,24 @@ module Api
 
       if @current_user.nil?
         # Key/username does not exist, return 403 error
-        render 'shared/http_status', :locals => {:code => '403', :message =>
-          HttpStatusHelper::ERROR_CODE['message']['403']}, :status => 403
+        render 'shared/http_status', locals: {code: '403', message:
+          HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
         return
       elsif markus_auth_remote_user.blank?
         # see if the MD5 matches only if REMOTE_USER wasn't used
         curr_user_md5 = Base64.decode64(@current_user.api_key)
         if Base64.decode64(auth_token) != curr_user_md5
           # MD5 mismatch, return 403 error
-          render 'shared/http_status', :locals => {:code => '403', :message =>
-            HttpStatusHelper::ERROR_CODE['message']['403']}, :status => 403
+          render 'shared/http_status', locals: {code: '403', message:
+            HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
           return
         end
       end
       # Student's aren't allowed yet
       if @current_user.student?
         # API is available for TAs and Admins only
-        render 'shared/http_status', :locals => {:code => '403', :message =>
-          HttpStatusHelper::ERROR_CODE['message']['403']}, :status => 403
+        render 'shared/http_status', locals: {code: '403', message:
+          HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
       end
     end
 
@@ -99,7 +99,7 @@ module Api
       request_format = request.format.symbol
       if request_format != :xml && request_format != :json
         # 406 is the default status code when the format is not support
-        render :nothing => true, :status => 406
+        render nothing: true, status: 406
       end
     end
 
