@@ -48,7 +48,7 @@ module GradeEntryFormsPaginationHelper
       params[:page] = AP_DEFAULT_PAGE
     end
 
-    return items.paginate(:per_page => params[:per_page], :page => params[:page]).clone, items.size
+    return items.paginate(per_page: params[:per_page], page: params[:page]).clone, items.size
 
   end
 

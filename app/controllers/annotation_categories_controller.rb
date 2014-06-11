@@ -84,17 +84,17 @@ class AnnotationCategoriesController < ApplicationController
     case params[:format]
     when 'csv'
       send_data convert_to_csv(@annotation_categories),
-                :filename => "#{@assignment.short_identifier}_annotations.csv",
-                :disposition => 'attachment'
+                filename: "#{@assignment.short_identifier}_annotations.csv",
+                disposition: 'attachment'
     when 'yml'
       send_data convert_to_yml(@annotation_categories),
-                :filename => "#{@assignment.short_identifier}_annotations.yml",
-                :disposition => 'attachment'
+                filename: "#{@assignment.short_identifier}_annotations.yml",
+                disposition: 'attachment'
     else
       flash[:error] = I18n.t('annotations.upload.flash_error',
-        :format => params[:format])
-      redirect_to :action => 'index',
-                  :id => params[:id]
+        format: params[:format])
+      redirect_to action: 'index',
+                  id: params[:id]
     end
   end
 
@@ -102,7 +102,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     encoding = params[:encoding]
     unless request.post?
-      redirect_to :action => 'index', :id => @assignment.id
+      redirect_to action: 'index', id: @assignment.id
       return
     end
     annotation_category_list = params[:annotation_category_list_csv]
@@ -116,7 +116,7 @@ class AnnotationCategoriesController < ApplicationController
         result = AnnotationCategory.add_by_row(row, @assignment, current_user)
         if result[:annotation_upload_invalid_lines].size > 0
           flash[:error] = I18n.t('annotations.upload.error',
-            :annotation_category => row, :annotation_line => annotation_line)
+            annotation_category: row, annotation_line: annotation_line)
           break
         else
           annotation_category_number += 1
@@ -124,17 +124,17 @@ class AnnotationCategoriesController < ApplicationController
       end
       if annotation_category_number > 0
         flash[:success] = I18n.t('annotations.upload.success',
-          :annotation_category_number => annotation_category_number)
+          annotation_category_number: annotation_category_number)
       end
     end
-    redirect_to :action => 'index', :id => @assignment.id
+    redirect_to action: 'index', id: @assignment.id
   end
 
   def yml_upload
     @assignment = Assignment.find(params[:assignment_id])
     encoding = params[:encoding]
     unless request.post?
-      redirect_to :action => 'index', :assignment_id => @assignment.id
+      redirect_to action: 'index', assignment_id: @assignment.id
       return
     end
     file = params[:annotation_category_list_yml]
@@ -147,8 +147,8 @@ class AnnotationCategoriesController < ApplicationController
       # is thrown by Psych in Ruby 2.*.
       rescue ArgumentError, Psych::SyntaxError => e
         flash[:error] = I18n.t('annotations.upload.syntax_error',
-          :error => "#{e}")
-        redirect_to :action => 'index', :assignment_id => @assignment.id
+          error: "#{e}")
+        redirect_to action: 'index', assignment_id: @assignment.id
         return
       end
       annotations.each_key do |key|
@@ -156,7 +156,7 @@ class AnnotationCategoriesController < ApplicationController
       annotation_line += 1
       if result[:annotation_upload_invalid_lines].size > 0
         flash[:error] = I18n.t('annotations.upload.error',
-          :annotation_category => key, :annotation_line => annotation_line)
+          annotation_category: key, annotation_line: annotation_line)
         break
       else
         annotation_category_number += 1
@@ -164,9 +164,9 @@ class AnnotationCategoriesController < ApplicationController
      end
      if annotation_category_number > 0
         flash[:success] = I18n.t('annotations.upload.success',
-          :annotation_category_number => annotation_category_number)
+          annotation_category_number: annotation_category_number)
      end
     end
-    redirect_to :action => 'index', :assignment_id => @assignment.id
+    redirect_to action: 'index', assignment_id: @assignment.id
   end
 end

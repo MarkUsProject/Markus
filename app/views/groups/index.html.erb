@@ -4,9 +4,9 @@
                              'Groups/tabs_boot.js',
                              'Groups/index' %>
 
-  <%= render :partial => 'layouts/head' %>
+  <%= render partial: 'layouts/head' %>
 
-  <%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
+  <%= render partial: "boot", formats: [:js], handlers: [:erb] %>
 
   <script type="text/javascript">
     //<![CDATA[
@@ -121,7 +121,7 @@
         # for this assignment.
         if !@assignment.allow_web_submits %>
       <%= button_to_function t("groups.another_assignment_group"),
-        'assignment_group_use(); return false;', :class => "button" %>
+        'assignment_group_use(); return false;', class: "button" %>
       <span class="menu_bar"></span>
     <% end %>
     <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
@@ -164,8 +164,8 @@
 </div><!-- Notice -->
 
 <%= form_tag global_actions_assignment_groups_path(@assignment),
-             :id => "global_action_form",
-             :remote => true do %>
+             id: "global_action_form",
+             remote: true do %>
 
   <div class="colLeftGroups">
     <% # order of processing students is important. we go through each member
@@ -203,9 +203,9 @@
         <div class="tabbedArea">
           <div class="search_box">
             <%= text_field_tag 'search_students', nil,
-                :onkeyup => "students_table.add_filter('search'); students_table.render();",
-                :onkeypress => "stop_submit(event);",
-                :placeholder => I18n.t("students.search_students") %>
+                onkeyup: "students_table.add_filter('search'); students_table.render();",
+                onkeypress: "stop_submit(event);",
+                placeholder: I18n.t("students.search_students") %>
           </div>
           <table class="students" id="students"></table>
         </div>
@@ -216,15 +216,15 @@
   <div class="centreColumn">
     <div id="icons">
       <%= image_submit_tag "add_arrow.png",
-        :onclick => "$('global_actions').setValue('assign');",
-        :alt => I18n.t('add_members'),
-        :class =>'image_input',
-        :title => I18n.t('add_members') %>
+        onclick: "$('global_actions').setValue('assign');",
+        alt: I18n.t('add_members'),
+        class:'image_input',
+        title: I18n.t('add_members') %>
       <%= image_submit_tag "remove_arrow.png",
-        :onclick => "$('global_actions').setValue('unassign');",
-        :alt => I18n.t('remove_members'),
-        :title => I18n.t('remove_members'),
-        :class =>'image_input' %>
+        onclick: "$('global_actions').setValue('unassign');",
+        alt: I18n.t('remove_members'),
+        title: I18n.t('remove_members'),
+        class:'image_input' %>
     </div>
   </div>
 
@@ -256,49 +256,49 @@
 
           <div class="search_box">
             <%= text_field_tag 'search_groupings', nil,
-                :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
-                :onkeypress => "stop_submit(event);",
-                :placeholder => I18n.t("groups.search_groups") %>
-            <%= button_to_function t('groups.add_new'), "make_new_group()", :class=> 'floatRight' %>
+                onkeyup: "groupings_table.add_filter('search'); groupings_table.render();",
+                onkeypress: "stop_submit(event);",
+                placeholder: I18n.t("groups.search_groups") %>
+            <%= button_to_function t('groups.add_new'), "make_new_group()", class: 'floatRight' %>
           </div>
 
           <div class="globalActionIconsTop">
             <%= image_submit_tag "icons/tick.png",
-              :class =>'image_input',
-              :title => I18n.t("groups.action.validate"),
-              :alt => I18n.t("groups.action.validate"),
-              :onclick => "$('global_actions').setValue('valid');" %>
+              class:'image_input',
+              title: I18n.t("groups.action.validate"),
+              alt: I18n.t("groups.action.validate"),
+              onclick: "$('global_actions').setValue('valid');" %>
             <%= image_submit_tag "icons/cross.png",
-              :class =>'image_input',
-              :title => I18n.t("groups.action.invalidate"),
-              :alt => I18n.t("groups.action.invalidate"),
-              :onclick => "$('global_actions').setValue('invalid');" %>
+              class:'image_input',
+              title: I18n.t("groups.action.invalidate"),
+              alt: I18n.t("groups.action.invalidate"),
+              onclick: "$('global_actions').setValue('invalid');" %>
             <%= image_submit_tag "icons/bin_closed.png",
-              :class =>'image_input', :title => I18n.t("groups.action.delete"),
-              :alt => I18n.t("groups.action.delete"),
-              :onclick => "$('global_actions').setValue('delete');" %>
+              class:'image_input', title: I18n.t("groups.action.delete"),
+              alt: I18n.t("groups.action.delete"),
+              onclick: "$('global_actions').setValue('delete');" %>
           </div>
 
           <table class="groups" id="groups"></table>
 
-          <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>
+          <%= hidden_field_tag 'submit_type', 'global_action', id: 'submit_type' %>
           <%= hidden_field_tag 'global_actions'%>
           <div class="globalActionIconsBottom">
             <%= image_submit_tag "icons/tick.png",
-              :class =>'image_input',
-              :title => I18n.t("groups.action.validate"),
-              :alt => I18n.t("groups.action.validate"),
-              :onclick => "$('global_actions').setValue('valid');" %>
+              class:'image_input',
+              title: I18n.t("groups.action.validate"),
+              alt: I18n.t("groups.action.validate"),
+              onclick: "$('global_actions').setValue('valid');" %>
             <%= image_submit_tag "icons/cross.png",
-              :class =>'image_input',
-              :title => I18n.t("groups.action.invalidate"),
-              :alt => I18n.t("groups.action.invalidate"),
-              :onclick => "$('global_actions').setValue('invalid');" %>
+              class:'image_input',
+              title: I18n.t("groups.action.invalidate"),
+              alt: I18n.t("groups.action.invalidate"),
+              onclick: "$('global_actions').setValue('invalid');" %>
             <%= image_submit_tag "icons/bin_closed.png",
-              :class =>'image_input',
-              :title => I18n.t("groups.action.delete"),
-              :alt => I18n.t("groups.action.delete"),
-              :onclick => "$('global_actions').setValue('delete');" %>
+              class:'image_input',
+              title: I18n.t("groups.action.delete"),
+              alt: I18n.t("groups.action.delete"),
+              onclick: "$('global_actions').setValue('delete');" %>
           </div>
         </div><!-- group container -->
       </div>
@@ -348,9 +348,9 @@
 <div id="download_dialog">
   <h2><%= I18n.t("groups.download.download_groups_file") %></h2>
   <%= link_to t('groups.download.download_csv'),
-              { :controller => 'groups', :action => 'download_grouplist',
-                :id => @assignment.id },
-                :onclick => 'modal_download.close();' %>
+              { controller: 'groups', action: 'download_grouplist',
+                id: @assignment.id },
+                onclick: 'modal_download.close();' %>
   <div>
     <%= button_to_function I18n.t('cancel'),
                          'modal_download.close(); return false;' %>
@@ -367,15 +367,15 @@
       </div>
     <% end %>
   </p>
-  <%= form_for :group, :html => {:multipart => true},
-                       :url => { :controller=>"groups",
-                               :action => 'csv_upload',
-                               :id => @assignment.id } do |f| %>
+  <%= form_for :group, html: {multipart: true},
+                       url: { controller:"groups",
+                              action: 'csv_upload',
+                              id: @assignment.id } do |f| %>
     <p>
       <%= I18n.t("encoding") %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
-    <%= f.file_field :grouplist, :size => 2 %>
+    <%= f.file_field :grouplist, size: 2 %>
     <div>
       <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
       <%= button_to_function I18n.t('cancel'),

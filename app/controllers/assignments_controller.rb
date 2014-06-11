@@ -1,6 +1,6 @@
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin,
-                     :except => [:deletegroup,
+                     except: [:deletegroup,
                                  :delete_rejected,
                                  :disinvite_member,
                                  :invite_member,
@@ -13,7 +13,7 @@ class AssignmentsController < ApplicationController
                                  :render_test_result]
 
   before_filter      :authorize_for_student,
-                     :only => [:student_interface,
+                     only: [:student_interface,
                               :deletegroup,
                               :delete_rejected,
                               :disinvite_member,
@@ -23,7 +23,7 @@ class AssignmentsController < ApplicationController
                               :decline_invitation]
 
   before_filter      :authorize_for_user,
-                     :only => [:index, :render_test_result]
+                     only: [:index, :render_test_result]
 
   auto_complete_for  :assignment,
                      :name
@@ -50,18 +50,18 @@ class AssignmentsController < ApplicationController
     if current_user.student? &&
         (@test_result.submission.grouping.membership_status(current_user).nil? ||
         @test_result.submission.get_latest_result.released_to_students == false)
-      render :partial => 'shared/handle_error',
-       :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
+      render partial: 'shared/handle_error',
+       locals: {error: I18n.t('test_result.error.no_access', test_result_id: @test_result.id)}
       return
     end
 
-    render :template => 'assignments/render_test_result', :layout => 'plain'
+    render template: 'assignments/render_test_result', layout: 'plain'
   end
 
   def student_interface
     @assignment = Assignment.find(params[:id])
     if @assignment.is_hidden
-      render :file => "public/404.html", :status => 404
+      render file: "public/404.html", status: 404
       return
     end
 
@@ -92,10 +92,10 @@ class AssignmentsController < ApplicationController
             Grouping.find_by_group_id_and_assignment_id( Group.find_by_group_name(@student.user_name), @assignment.id).destroy
           end
         rescue RuntimeError => @error
-          render 'shared/generic_error', :layout => 'error'
+          render 'shared/generic_error', layout: 'error'
           return
         end
-        redirect_to :action => 'student_interface', :id => @assignment.id
+        redirect_to action: 'student_interface', id: @assignment.id
       else
         render :student_interface
       end
@@ -140,12 +140,12 @@ class AssignmentsController < ApplicationController
   # assignment information
   def index
     #@assignments = Assignment.all(:order => :id)
-    @grade_entry_forms = GradeEntryForm.all(:order => :id)
+    @grade_entry_forms = GradeEntryForm.all(order: :id)
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
-      @assignments = Assignment.find(:all, :conditions =>
-                                             { :is_hidden => false },
-                                            :order => :id)
+      @assignments = Assignment.find(:all, conditions:
+                                             { is_hidden: false },
+                                            order: :id)
       #get the section of current user
       @section = current_user.section
       # get results for assignments for the current user
@@ -177,10 +177,10 @@ class AssignmentsController < ApplicationController
 
       render :student_assignment_list
     elsif current_user.ta?
-      @assignments = Assignment.all(:order => :id)
+      @assignments = Assignment.all(order: :id)
       render :grader_index
     else
-      @assignments = Assignment.all(:order => :id)
+      @assignments = Assignment.all(order: :id)
       render :index
     end
   end
@@ -193,7 +193,7 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all
     @sections = Section.all
 
-    @section_due_dates = SectionDueDate.where(:assignment_id => @assignment.id).order('due_date DESC').joins(:section).order('name ASC')
+    @section_due_dates = SectionDueDate.where(assignment_id: @assignment.id).order('due_date DESC').joins(:section).order('name ASC')
 
     unless @past_date.nil? || @past_date.empty?
       flash.now[:notice] = t('past_due_date_notice') + @past_date.join(', ')
@@ -202,7 +202,7 @@ class AssignmentsController < ApplicationController
     # build section_due_dates for each section that doesn't already have a due date
     Section.all.each do |s|
       unless SectionDueDate.find_by_assignment_id_and_section_id(@assignment.id, s.id)
-        @assignment.section_due_dates.build(:section => s)
+        @assignment.section_due_dates.build(section: s)
       end
     end
   end
@@ -229,16 +229,16 @@ class AssignmentsController < ApplicationController
       @assignment = process_assignment_form(@assignment, params)
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, I18n.t('assignment.error',
-                                              :message => e.message))
-        render :edit, :id => @assignment.id
+                                              message: e.message))
+        render :edit, id: @assignment.id
       return
     end
 
     if @assignment.save
       flash[:success] = I18n.t('assignment.update_success')
-      redirect_to :action => 'edit', :id => params[:id]
+      redirect_to action: 'edit', id: params[:id]
     else
-      render :edit, :id => @assignment.id
+      render :edit, id: @assignment.id
     end
   end
 
@@ -252,7 +252,7 @@ class AssignmentsController < ApplicationController
     @assignment.build_assignment_stat
 
     # build section_due_dates for each section
-    Section.all.each { |s| @assignment.section_due_dates.build(:section => s)}
+    Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
 
     # set default value if web submits are allowed
     @assignment.allow_web_submits =
@@ -284,7 +284,7 @@ class AssignmentsController < ApplicationController
       end
     end
 
-    redirect_to :action => 'edit', :id => @assignment.id
+    redirect_to action: 'edit', id: @assignment.id
   end
 
   def update_group_properties_on_persist
@@ -292,7 +292,7 @@ class AssignmentsController < ApplicationController
   end
 
   def download_csv_grades_report
-    assignments = Assignment.all(:order => 'id')
+    assignments = Assignment.all(order: 'id')
     students = Student.all
     csv_string = CSV.generate do |csv|
       students.each do |student|
@@ -322,8 +322,8 @@ class AssignmentsController < ApplicationController
     end
     course_name = "#{COURSE_NAME}"
     course_name_underscore = course_name.squish.downcase.tr(" ", "_")
-    send_data csv_string, :disposition => 'attachment',
-                          :filename => "#{course_name_underscore}_grades_report.csv"
+    send_data csv_string, disposition: 'attachment',
+                          filename: "#{course_name_underscore}_grades_report.csv"
   end
 
 
@@ -337,7 +337,7 @@ class AssignmentsController < ApplicationController
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{@user.user_name}' joined group '#{@grouping.group.group_name}'" +
                  '(accepted invitation).')
-    redirect_to :action => 'student_interface', :id => params[:id]
+    redirect_to action: 'student_interface', id: params[:id]
   end
 
   def decline_invitation
@@ -348,7 +348,7 @@ class AssignmentsController < ApplicationController
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{@user.user_name}' declined invitation for group '" +
                  "#{@grouping.group.group_name}'.")
-    redirect_to :action => 'student_interface', :id => params[:id]
+    redirect_to action: 'student_interface', id: params[:id]
   end
 
   def creategroup
@@ -372,7 +372,7 @@ class AssignmentsController < ApplicationController
       if params[:workalone]
         if @assignment.group_min != 1
           raise I18n.t('create_group.fail.can_not_work_alone',
-                        :group_min => @assignment.group_min)
+                        group_min: @assignment.group_min)
         end
         # fix for issue #627
         # currently create_group_for_working_alone_student only returns false
@@ -393,7 +393,7 @@ class AssignmentsController < ApplicationController
       m_logger.log("Failed to create group. User: '#{@student.user_name}', Error: '" +
                    "#{e.message}'.", MarkusLogger::ERROR)
     end
-    redirect_to :action => 'student_interface', :id => @assignment.id
+    redirect_to action: 'student_interface', id: @assignment.id
   end
 
   def deletegroup
@@ -411,7 +411,7 @@ class AssignmentsController < ApplicationController
       if @grouping.has_submission?
         raise I18n.t('groups.cant_delete_already_submitted')
       end
-      @grouping.student_memberships.all(:include => :user).each do |member|
+      @grouping.student_memberships.all(include: :user).each do |member|
         member.destroy
       end
       # update repository permissions
@@ -432,7 +432,7 @@ class AssignmentsController < ApplicationController
                      "#{current_user.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
       end
     end
-    redirect_to :action => 'student_interface', :id => params[:id]
+    redirect_to action: 'student_interface', id: params[:id]
   end
 
   def invite_member
@@ -455,7 +455,7 @@ class AssignmentsController < ApplicationController
     if flash[:fail_notice].blank?
       flash[:success] = I18n.t('invite_student.success')
     end
-    redirect_to :action => 'student_interface', :id => @assignment.id
+    redirect_to action: 'student_interface', id: @assignment.id
   end
 
   # Called by clicking the cancel link in the student's interface
@@ -485,7 +485,7 @@ class AssignmentsController < ApplicationController
     end
     membership.delete
     membership.save
-    redirect_to :action => 'student_interface', :id => params[:id]
+    redirect_to action: 'student_interface', id: params[:id]
   end
 
   def update_collected_submissions
@@ -496,7 +496,7 @@ class AssignmentsController < ApplicationController
   def refresh_graph
     assignment = Assignment.find(params[:id])
     assignment.assignment_stat.refresh_grade_distribution
-    redirect_to :controller => 'main'
+    redirect_to controller: 'main'
   end
 
   def download_assignment_list
@@ -528,21 +528,21 @@ class AssignmentsController < ApplicationController
         format = 'text/csv'
       else
         flash[:error] = t(:incorrect_format)
-        redirect_to :action => 'index'
+        redirect_to action: 'index'
         return
     end
 
     send_data(output,
-              :filename => "assignments_#{Time.
+              filename: "assignments_#{Time.
                   now.strftime('%Y%m%dT%H%M%S')}.#{params[:file_format]}",
-              :type => format, :disposition => 'inline')
+              type: format, disposition: 'inline')
   end
 
   def upload_assignment_list
     assignment_list = params[:assignment_list]
 
     if assignment_list.blank?
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
       return
     end
 
@@ -562,7 +562,7 @@ class AssignmentsController < ApplicationController
           end
         rescue ActiveRecord::ActiveRecordError, ArgumentError => e
           flash[:error] = e.message
-          redirect_to :action => 'index'
+          redirect_to action: 'index'
           return
         end
       when 'yml'
@@ -573,14 +573,14 @@ class AssignmentsController < ApplicationController
           end
         rescue ActiveRecord::ActiveRecordError, ArgumentError => e
           flash[:error] = e.message
-          redirect_to :action => 'index'
+          redirect_to action: 'index'
           return
         end
       else
         return
     end
 
-    redirect_to :action => 'index'
+    redirect_to action: 'index'
   end
 
   private
@@ -628,7 +628,7 @@ class AssignmentsController < ApplicationController
 
     unless potential_rule && potential_rule.ancestors.include?(SubmissionRule)
       raise I18n.t('assignment.not_valid_submission_rule',
-        :type => params[:assignment][:submission_rule_attributes][:type])
+        type: params[:assignment][:submission_rule_attributes][:type])
     end
 
     # Was the SubmissionRule changed?  If so, switch the type of the SubmissionRule.

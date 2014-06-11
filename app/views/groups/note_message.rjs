@@ -1,1 +1,1 @@
-page.redirect_to :action => 'manage', :id => @assignment.id
+page.redirect_to action: 'manage', id: @assignment.id
