@@ -308,24 +308,21 @@ module Repository
 
       ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
       repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
+
       if !repo.nil?
-        if self.class.__translate_perms_from_file("RW+") >= permissions
-          repo.permissions[0]["RW+"][""].each do |user|
-            result_list.push(user)
+        repo.permissions[0].each do |perm|
+          if self.class.__translate_perms_from_file(perm[0]) >= permissions
+            repo.permissions[0][perm[0]][""].each do |user|
+              result_list.push(user)
+            end
           end
         end
+      end
 
-        if self.class.__translate_perms_from_file("R") >= permissions
-          repo.permissions[0]["R"][""].each do |user|
-            result_list.push(user)
-          end
-        end
-
-        if !result_list.empty?
-          return result_list
-        else
-          return nil
-        end
+      if !result_list.empty?
+        return result_list
+      else
+        return nil
       end
     end
 
@@ -364,7 +361,6 @@ module Repository
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
         repo_name = self.get_repos.workdir.split('/').last
-
         repo = ga_repo.config.get_repo(repo_name)
 
         if repo.nil?
@@ -373,7 +369,6 @@ module Repository
 
         git_permission = self.class.__translate_to_git_perms(permissions)
         repo.add_permission(git_permission, "", user_id)
-
         ga_repo.config.add_repo(repo)
         ga_repo.save_and_apply
       else
