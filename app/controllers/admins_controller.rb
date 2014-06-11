@@ -6,11 +6,11 @@ class AdminsController < ApplicationController
   end
 
   def populate
-    admins_data = Admin.all(:order => 'user_name')
+    admins_data = Admin.all(order: 'user_name')
     # construct_table_rows defined in UsersHelper
     @admins = construct_table_rows(admins_data)
     respond_to do |format|
-      format.json { render :json => @admins }
+      format.json { render json: @admins }
     end
   end
 
@@ -31,8 +31,8 @@ class AdminsController < ApplicationController
       render :edit
     else
       flash[:success] = I18n.t('admins.update.success',
-        :user_name => @user.user_name)
-      redirect_to :action => 'index'
+        user_name: @user.user_name)
+      redirect_to action: 'index'
     end
   end
 
@@ -47,9 +47,9 @@ class AdminsController < ApplicationController
     # updates the existing record
     if @user.save
       flash[:success] = I18n.t('admins.create.success',
-        :user_name => @user.user_name)
+        user_name: @user.user_name)
 
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
     else
       flash[:error] = I18n.t('admins.create.error')
       render 'new'
