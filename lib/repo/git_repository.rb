@@ -274,7 +274,6 @@ module Repository
 
         ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
         repo_name = self.get_repos.workdir.split('/').last
-
         repo = ga_repo.config.get_repo(repo_name)
 
         if repo.nil?
@@ -732,23 +731,6 @@ module Repository
       # create the current folder
       FileUtils.mkdir_p(path)
 
-    end
-
-    # Parses repository permissions from provided auth_file
-    def get_repo_permissions_from_file_string(auth_string)
-      u_perm_mapping = {}
-      repo_name = File.basename(@repos_path)
-      if /\[#{repo_name}:\/\]([^\[]+)/.match(auth_string)
-        perm_string = $1
-        perm_string.strip().split("\n").each do |line|
-          if /\s*(\w+)\s*=\s*(\w+)\s*/.match(line)
-            u_perm_mapping[$1.to_s] = $2.to_s
-          end
-        end
-        return u_perm_mapping
-      else
-        return {} # repo name not found
-      end
     end
 
     # Helper method to check file permissions of git auth file
