@@ -4,7 +4,7 @@ class Token < ActiveRecord::Base
   validate   :last_used_date
 
   validates_presence_of :grouping_id, :tokens
-  validates_numericality_of :tokens, :only_integer => true,  :greater_than_or_equal_to => 0
+  validates_numericality_of :tokens, only_integer: true,  greater_than_or_equal_to: 0
 
   def last_used_date
     if self.last_token_used_date

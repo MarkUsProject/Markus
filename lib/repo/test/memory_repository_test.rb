@@ -517,32 +517,32 @@ class MemoryRevisionTest < Test::Unit::TestCase
       @mem_rev = MemoryRevision.new(0) # create new revision
       # add some files to revision
       dir1 = RevisionDirectory.new( @mem_rev.revision_number, {
-          :name => "dir_1",
-          :path => "/",
-          :last_modified_revision => @mem_rev.revision_number,
-          :changed => true,
-          :user_id => TEST_USER
+          name: "dir_1",
+          path: "/",
+          last_modified_revision: @mem_rev.revision_number,
+          changed: true,
+          user_id: TEST_USER
       })
       file1 = RevisionFile.new( @mem_rev.revision_number, {
-          :name => "MyClass.java",
-          :path => "/dir_1", # put MyClass.java into directory "dir_1"
-          :last_modified_revision => @mem_rev.revision_number,
-          :changed => true,
-          :user_id => TEST_USER
+          name: "MyClass.java",
+          path: "/dir_1", # put MyClass.java into directory "dir_1"
+          last_modified_revision: @mem_rev.revision_number,
+          changed: true,
+          user_id: TEST_USER
       })
       file2 = RevisionFile.new( @mem_rev.revision_number, {
-          :name => "MyInterface.java",
-          :path => "/dir_1",
-          :last_modified_revision => @mem_rev.revision_number,
-          :changed => true,
-          :user_id => TEST_USER
+          name: "MyInterface.java",
+          path: "/dir_1",
+          last_modified_revision: @mem_rev.revision_number,
+          changed: true,
+          user_id: TEST_USER
       })
       file3 = RevisionFile.new( @mem_rev.revision_number, {
-          :name => "test.xml",
-          :path => "/",
-          :last_modified_revision => @mem_rev.revision_number,
-          :changed => true,
-          :user_id => TEST_USER
+          name: "test.xml",
+          path: "/",
+          last_modified_revision: @mem_rev.revision_number,
+          changed: true,
+          user_id: TEST_USER
       })
       @mem_rev.__add_file(file3, File.read(RESOURCE_DIR+"/"+file3.name))
       @mem_rev.__add_file(file1, File.read(RESOURCE_DIR+"/"+file1.name))
@@ -581,32 +581,32 @@ class MemoryRevisionTest < Test::Unit::TestCase
       mem_rev = MemoryRevision.new(0) # create new revision
       # add some files to revision
       dir1 = RevisionDirectory.new( mem_rev.revision_number, {
-          :name => "dir_1",
-          :path => "/",
-          :last_modified_revision => mem_rev.revision_number,
-          :changed => false,
-          :user_id => TEST_USER
+          name: "dir_1",
+          path: "/",
+          last_modified_revision: mem_rev.revision_number,
+          changed: false,
+          user_id: TEST_USER
       })
       file1 = RevisionFile.new( mem_rev.revision_number, {
-          :name => "MyClass.java",
-          :path => "/dir_1", # put MyClass.java into directory "dir_1"
-          :last_modified_revision => mem_rev.revision_number,
-          :changed => true,
-          :user_id => TEST_USER
+          name: "MyClass.java",
+          path: "/dir_1", # put MyClass.java into directory "dir_1"
+          last_modified_revision: mem_rev.revision_number,
+          changed: true,
+          user_id: TEST_USER
       })
       file2 = RevisionFile.new( mem_rev.revision_number, {
-          :name => "MyInterface.java",
-          :path => "/dir_1",
-          :last_modified_revision => mem_rev.revision_number,
-          :changed => false,
-          :user_id => TEST_USER
+          name: "MyInterface.java",
+          path: "/dir_1",
+          last_modified_revision: mem_rev.revision_number,
+          changed: false,
+          user_id: TEST_USER
       })
       file3 = RevisionFile.new( mem_rev.revision_number, {
-          :name => "test.xml",
-          :path => "/",
-          :last_modified_revision => mem_rev.revision_number,
-          :changed => true,
-          :user_id => TEST_USER
+          name: "test.xml",
+          path: "/",
+          last_modified_revision: mem_rev.revision_number,
+          changed: true,
+          user_id: TEST_USER
       })
       mem_rev.__add_file(file3, File.read(RESOURCE_DIR+"/"+file3.name))
       mem_rev.__add_file(file2, File.read(RESOURCE_DIR+"/"+file2.name))
@@ -625,11 +625,11 @@ class MemoryRevisionTest < Test::Unit::TestCase
       # more testing
       mem_rev = MemoryRevision.new(0) # create new revision
       file1 = RevisionFile.new( mem_rev.revision_number, {
-          :name => "MyClass.java",
-          :path => "/",
-          :last_modified_revision => mem_rev.revision_number,
-          :changed => false,
-          :user_id => TEST_USER
+          name: "MyClass.java",
+          path: "/",
+          last_modified_revision: mem_rev.revision_number,
+          changed: false,
+          user_id: TEST_USER
       })
       mem_rev.__add_file(file1, File.read(RESOURCE_DIR+"/"+file1.name))
       files = mem_rev.changed_files_at_path("/")

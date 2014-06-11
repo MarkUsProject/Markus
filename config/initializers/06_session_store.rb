@@ -9,14 +9,14 @@
 # the :secret string to something else than you find below.
 
 Rails.application.config.session_store :cookie_store,
-  :key => MarkusConfigurator.markus_config_session_cookie_name,
-  :secret      => MarkusConfigurator.markus_config_session_cookie_secret,
-  :path => '/',
-  :expire_after => MarkusConfigurator.markus_config_session_cookie_expire_after,
-  :http_only => MarkusConfigurator.markus_config_session_cookie_http_only,
+  key: MarkusConfigurator.markus_config_session_cookie_name,
+  secret:      MarkusConfigurator.markus_config_session_cookie_secret,
+  path: '/',
+  expire_after: MarkusConfigurator.markus_config_session_cookie_expire_after,
+  http_only: MarkusConfigurator.markus_config_session_cookie_http_only,
   # if you use secure in Base.session, you will have to do an https connection,
   # but https is not implemented yet in MarkUs
-  :secure => MarkusConfigurator.markus_config_session_cookie_secure
+  secure: MarkusConfigurator.markus_config_session_cookie_secure
 
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information

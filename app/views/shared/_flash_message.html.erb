@@ -2,10 +2,10 @@
   <% unless flash[key].nil? -%>
     <% if flash[key].is_a?(Array) -%>
       <% flash[key].each do |msg| -%>
-        <%= content_tag :div, msg, :class => key %>
+        <%= content_tag :div, msg, class: key %>
       <% end -%>
     <% else -%>
-      <%= content_tag :div, flash[key], :class => key %>
+      <%= content_tag :div, flash[key], class: key %>
     <% end -%>
   <% end -%>
 <% end -%>

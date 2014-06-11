@@ -1,2 +1,2 @@
 jQuery('#noteable_selector').html('<%= escape_javascript(
-             render :partial => params[:noteable_type].downcase).html_safe %>');
+             render partial: params[:noteable_type].downcase).html_safe %>');

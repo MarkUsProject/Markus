@@ -17,30 +17,30 @@
               <%=
                 # assignment name
                 link_to sanitize(assignment.short_identifier) + ': ' + assignment.description,
-                :controller => controller,
-                :action => action,
-                :id => assignment.id %>
+                controller: controller,
+                action: action,
+                id: assignment.id %>
             </td>
             <td>
               <% if !assignment.section_due_dates_type %>
                 <% if assignment.due_date < Time.zone.now %>
-                  <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong>
+                  <strong><%= I18n.l(assignment.due_date, format: :long_date) %></strong>
                 <% else %>
-                  <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong>
+                  <strong><%= I18n.l(assignment.due_date, format: :long_date) %></strong>
                   <p>
                     <%= I18n.t(:days_and_hours_left,
-                               :days => ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
-                               :hours => ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
+                               days: ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
+                               hours: ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
                   </p>
                 <% end %>
               <% else %>
                 <% if assignment.section_due_date(@section) < Time.zone.now %>
                 <% else %>
-                  <strong><%= I18n.l(assignment.section_due_date(@section), :format => :long_date) %></strong>
+                  <strong><%= I18n.l(assignment.section_due_date(@section), format: :long_date) %></strong>
                   <p>
                     <%= I18n.t(:days_and_hours_left,
-                               :days => ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
-                               :hours => ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
+                               days: ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
+                               hours: ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
                   </p>
                 <% end %>
               <% end %>
@@ -58,9 +58,9 @@
                 </p>
                 <%= link_to I18n.t('results.results_name'),
                             view_marks_assignment_submission_result_path(
-                              :assignment_id => assignment.id,
-                              :submission_id => @a_id_results[assignment.id].submission_id,
-                              :id => @a_id_results[assignment.id].id) %>
+                              assignment_id: assignment.id,
+                              submission_id: @a_id_results[assignment.id].submission_id,
+                              id: @a_id_results[assignment.id].id) %>
               <% elsif assignment.due_date < Time.zone.now %>
                 <%= I18n.t(:no_result) %>
               <% end %>

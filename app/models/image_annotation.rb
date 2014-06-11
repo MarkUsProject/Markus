@@ -15,9 +15,9 @@ class ImageAnnotation < Annotation
   # and (x2, y2) is the bottom right corner of the rectangle and id is the
   # annotation_text_id instance.
   def extract_coords
-    horiz_range = {:start => [x1, x2].min, :end => [x1, x2].max}
-    vert_range = {:start => [y1, y2].min, :end => [y1, y2].max}
-    {:id => annotation_text_id, :x_range => horiz_range, :y_range => vert_range}
+    horiz_range = {start: [x1, x2].min, end: [x1, x2].max}
+    vert_range = {start: [y1, y2].min, end: [y1, y2].max}
+    {id: annotation_text_id, x_range: horiz_range, y_range: vert_range}
   end
 
   def add_annotation_js_string
