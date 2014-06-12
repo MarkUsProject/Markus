@@ -3,7 +3,13 @@
 %>
 
 <span id="<%= "asc_#{association.id}" %>">
-  <%= check_box_tag "#{association.criterion.id}_#{association.ta.user_name}", true, false, class: 'inline_checkbox', onclick: "$('criterion_select_' + #{association.criterion.id}).checked = true;"%>
-  <%=  label_tag "#{association.criterion.id}_#{association.ta.user_name}", association.ta.user_name, class: 'inline_label' %>
+  <% id = "criterion_graders_#{association.id}" %>
+  <%=
+    check_box_tag(
+      'criterion_graders[]', association.id, false,
+      id: id, class: 'inline_checkbox',
+      onclick: "$('criterion_select_' + #{criterion.id}).checked = true;"
+    )
+  %>
+  <%= label_tag id, association.ta.user_name, class: 'inline_label' %>
 </span>
-

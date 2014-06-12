@@ -8,7 +8,7 @@ class GradersController < ApplicationController
                     ta_memberships: :user, inviter: :section]
   # The names of the associations of criteria required by the view, which
   # should be eagerly loaded.
-  CRITERION_ASSOC = [:criterion_ta_associations]
+  CRITERION_ASSOC = [criterion_ta_associations: :ta]
 
   # Administrator
   # -
@@ -166,13 +166,13 @@ class GradersController < ApplicationController
 
   #These actions act on all currently selected graders & groups
   def global_actions
+    @assignment = Assignment.find(params[:assignment_id])
     grouping_ids = params[:groupings]
     grader_ids = params[:graders]
     criterion_ids = params[:criteria]
 
     case params[:current_table]
       when 'groups_table'
-        @assignment = Assignment.find(params[:assignment_id])
         if params[:groupings].nil? or params[:groupings].size ==  0
          #if there is a global action than there should be a group selected
           if params[:global_actions]
@@ -203,16 +203,11 @@ class GradersController < ApplicationController
             return
         end
       when 'criteria_table'
-        @assignment = Assignment.find(params[:assignment_id],
-          include: [{groupings: [:students,
-                {tas: :criterion_ta_associations}, :group]}])
         if params[:criteria].nil? or params[:criteria].size ==  0
       #don't do anything if no criteria
           render nothing: true
           return
         end
-        criteria = criteria_with_assoc(@assignment,
-                                       criterion_ids: criterion_ids)
         case params[:global_actions]
           when 'assign'
           if params[:graders].nil? or params[:graders].size ==  0
@@ -220,11 +215,11 @@ class GradersController < ApplicationController
             render nothing: true
             return
           end
-            graders = Ta.where(id: grader_ids)
-            add_graders_to_criteria(criteria, graders)
+          assign_all_graders_to_criteria(criterion_ids, grader_ids)
             return
           when 'unassign'
-            remove_graders_from_criteria(criteria, params)
+            criterion_grader_ids = params[:criterion_graders]
+            unassign_graders_from_criteria(criterion_grader_ids, criterion_ids)
             return
           when 'random_assign'
             if params[:graders].nil? or params[:graders].size ==  0
@@ -232,7 +227,7 @@ class GradersController < ApplicationController
               render nothing: true
               return
             end
-            randomly_assign_graders_to_criteria(criteria, grader_ids)
+            randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
             return
         end
     end
@@ -264,29 +259,9 @@ class GradersController < ApplicationController
     criterion_ids ? criteria.where(id: criterion_ids) : criteria
   end
 
-  def randomly_assign_graders_to_criteria(criteria, grader_ids)
-    graders = Ta.where(id: grader_ids)
-    # Shuffle the criteria
-    criteria = criteria.sort_by{rand}
-    # Now, deal them out like cards...
-    criteria.each_with_index do |criterion, index|
-      # Choose the next grader to deal out to...
-      grader = graders[index % graders.size]
-      criterion.add_tas(grader)
-      criterion.save
-    end
-    groupings = []
-    graders.each do |grader|
-      groupings.concat(grader.get_groupings_by_assignment(@assignment))
-    end
-    groupings = groupings.uniq
-    groupings.each do |grouping|
-      covered_criteria = grouping.all_assigned_criteria(grouping.tas)
-      grouping.criteria_coverage_count = covered_criteria.length
-      grouping.save
-    end
-    construct_all_rows(groupings, graders, criteria)
-    render :modify_criteria, formats: [:js]
+  def randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
+    Criterion.randomly_assign_tas(criterion_ids, grader_ids, @assignment)
+    render_criterion_modifications(criterion_ids, grader_ids)
   end
 
   def randomly_assign_graders(grouping_ids, grader_ids)
@@ -299,48 +274,14 @@ class GradersController < ApplicationController
     render_grouping_modifications(grouping_ids, grader_ids)
   end
 
-  def add_graders_to_criteria(criteria, graders)
-    criteria.each do |criterion|
-      criterion.add_tas(graders)
-      criterion.save
-    end
-    groupings = []
-    graders.each do |grader|
-      groupings.concat(grader.get_groupings_by_assignment(@assignment))
-    end
-    groupings = groupings.uniq
-    groupings.each do |grouping|
-      covered_criteria = grouping.all_assigned_criteria(grouping.tas)
-      grouping.criteria_coverage_count = covered_criteria.length
-      grouping.save
-    end
-    construct_all_rows(groupings, graders, criteria)
-    render :modify_criteria, formats: [:js]
+  def assign_all_graders_to_criteria(criterion_ids, grader_ids)
+    Criterion.assign_all_tas(criterion_ids, grader_ids, @assignment)
+    render_criterion_modifications(criterion_ids, grader_ids)
   end
 
-  def remove_graders_from_criteria(criteria, params)
-    all_graders = []
-    criteria.each do |criterion|
-      graders = criterion.tas.delete_if do |grader|
-                  !params["#{criterion.id}_#{grader.user_name}"]
-                end
-      criterion.remove_tas(graders)
-      criterion.save
-      all_graders.concat(graders)
-    end
-    all_graders = all_graders.uniq
-    groupings = []
-    all_graders.each do |grader|
-      groupings.concat(grader.get_groupings_by_assignment(@assignment))
-    end
-    groupings = groupings.uniq
-    groupings.each do |grouping|
-      covered_criteria = grouping.all_assigned_criteria(grouping.tas)
-      grouping.criteria_coverage_count = covered_criteria.length
-      grouping.save
-    end
-    construct_all_rows(groupings , all_graders, criteria)
-    render :modify_criteria, formats: [:js]
+  def unassign_graders_from_criteria(criterion_grader_ids, criterion_ids)
+    Criterion.unassign_tas(criterion_grader_ids, criterion_ids, @assignment)
+    render_criterion_modifications(criterion_ids)
   end
 
   def unassign_graders(grader_membership_ids, grouping_ids)
@@ -357,6 +298,17 @@ class GradersController < ApplicationController
     criteria = criteria_with_assoc(@assignment)
     construct_all_rows(groupings, graders, criteria)
     render :modify_groupings, formats: [:js]
+  end
+
+  # Renders the grader, grouping and criterion table in response to
+  # modifications to criteria.
+  def render_criterion_modifications(criterion_ids, grader_ids = nil)
+    criteria = criteria_with_assoc(@assignment, criterion_ids: criterion_ids)
+    # Also update the various counts in graders and groupings table.
+    graders = grader_ids ? Ta.where(id: grader_ids) : Ta.all
+    groupings = groupings_with_assoc(@assignment)
+    construct_all_rows(groupings, graders, criteria)
+    render :modify_criteria, formats: [:js]
   end
 
   def construct_all_rows(groupings, graders, criteria)
