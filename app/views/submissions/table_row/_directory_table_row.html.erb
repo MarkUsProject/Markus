@@ -1,10 +1,10 @@
 <td>
 <%=image_tag('icons/folder.png') %>
-<%= link_to directory_name, :action => 'file_manager', :id => @assignment.id, :path => File.join(@path, directory_name) %>
+<%= link_to directory_name, action: 'file_manager', id: @assignment.id, path: File.join(@path, directory_name) %>
 </td>
 
 <td>
-<%= I18n.l(directory.last_modified_date, :format => :long_date) %>
+<%= I18n.l(directory.last_modified_date, format: :long_date) %>
 </td>
 
 <td>

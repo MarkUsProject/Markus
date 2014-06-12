@@ -1,159 +1,161 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag("livepipe/tabs") %>
-  <%= stylesheet_link_tag("SyntaxHighlighter") %>
-  <%= stylesheet_link_tag("grader") %>
+  <%= stylesheet_link_tag('livepipe/tabs') %>
+  <%= stylesheet_link_tag('SyntaxHighlighter') %>
+  <%= stylesheet_link_tag('grader') %>
 <% end %>
 
 <% # UI LIBRARIES %>
-<%= javascript_include_tag "effects.js",
-  "dragdrop.js",
-  "controls.js",
-  "DropDownMenu/DropDownMenu.js",
-  "ResizePane/ResizePane.js",
-  "jquery-ui.min.js" %>
+<%= javascript_include_tag 'effects.js',
+                           'dragdrop.js',
+                           'controls.js',
+                           'DropDownMenu/DropDownMenu.js',
+                           'ResizePane/ResizePane.js',
+                           'jquery-ui.min.js' %>
 
 <% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
-<%= javascript_include_tag "SourceCodeGlower/AnnotationText.js",
-  "SourceCodeGlower/AnnotationTextDisplayer.js",
-  "SourceCodeGlower/AnnotationTextManager.js",
-  "SourceCodeGlower/SourceCodeLine.js",
-  "SourceCodeGlower/SourceCodeLineAnnotations.js",
-  "SourceCodeGlower/SourceCodeLineCollection.js",
-  "SourceCodeGlower/SourceCodeLineArray.js",
-  "SourceCodeGlower/SourceCodeLine.js",
-  "SourceCodeGlower/SyntaxHighlighter1p5Line.js",
-  "SourceCodeGlower/SourceCodeLineManager.js",
-  "SourceCodeGlower/SourceCodeLineFactory.js",
-  "SourceCodeGlower/SourceCodeAdapter.js",
-  "SourceCodeGlower/SyntaxHighlighter1p5Adapter.js",
-  "SourceCodeGlower/ImageAnnotationGrid.js",
-  "SourceCodeGlower/ImageEventHandler.js" %>
+<%= javascript_include_tag 'SourceCodeGlower/AnnotationText.js',
+                           'SourceCodeGlower/AnnotationTextDisplayer.js',
+                           'SourceCodeGlower/AnnotationTextManager.js',
+                           'SourceCodeGlower/SourceCodeLine.js',
+                           'SourceCodeGlower/SourceCodeLineAnnotations.js',
+                           'SourceCodeGlower/SourceCodeLineCollection.js',
+                           'SourceCodeGlower/SourceCodeLineArray.js',
+                           'SourceCodeGlower/SourceCodeLine.js',
+                           'SourceCodeGlower/SyntaxHighlighter1p5Line.js',
+                           'SourceCodeGlower/SourceCodeLineManager.js',
+                           'SourceCodeGlower/SourceCodeLineFactory.js',
+                           'SourceCodeGlower/SourceCodeAdapter.js',
+                           'SourceCodeGlower/SyntaxHighlighter1p5Adapter.js',
+                           'SourceCodeGlower/ImageAnnotationGrid.js',
+                           'SourceCodeGlower/ImageEventHandler.js' %>
 
 <% # SYNTAX HIGHLIGHTER %>
-<%= javascript_include_tag "syntaxhighlighter/shCore.js",
-  "syntaxhighlighter/shBrushJava.js",
-  "syntaxhighlighter/shBrushXml.js",
-  "syntaxhighlighter/shBrushRuby.js",
-  "syntaxhighlighter/shBrushPython.js",
-  "syntaxhighlighter/shBrushJScript.js",
-  "syntaxhighlighter/shBrushCpp.js",
-  "syntaxhighlighter/shBrushScheme.js",
-  "syntaxhighlighter/shBrushScilab.js",
-  "syntaxhighlighter/shBrushUnknown.js" %>
+<%= javascript_include_tag 'syntaxhighlighter/shCore.js',
+                           'syntaxhighlighter/shBrushJava.js',
+                           'syntaxhighlighter/shBrushXml.js',
+                           'syntaxhighlighter/shBrushRuby.js',
+                           'syntaxhighlighter/shBrushPython.js',
+                           'syntaxhighlighter/shBrushJScript.js',
+                           'syntaxhighlighter/shBrushCpp.js',
+                           'syntaxhighlighter/shBrushScheme.js',
+                           'syntaxhighlighter/shBrushScilab.js',
+                           'syntaxhighlighter/shBrushUnknown.js' %>
 
 <% # EDITING MARKS FUNCTIONS AND BOOT SCRIPTS%>
-<%= javascript_include_tag "Grader/file_selector.js",
-  "Grader/marking.js",
-  "Grader/mouse_selections.js" %>
+<%= javascript_include_tag 'Grader/file_selector.js',
+                           'Grader/marking.js',
+                           'Grader/mouse_selections.js' %>
 
 <% # This file can't be cached %>
-<%= javascript_include_tag "Grader/tabs_boot.js"%>
+<%= javascript_include_tag 'Grader/tabs_boot.js'%>
 
-<script type="text/javascript">
+<script>
 //<![CDATA[
-
   var modalNotesGroup = null;
-  document.observe("dom:loaded", function(){
-    modalNotesGroup = new Control.Modal($('notes_dialog'),
-     {
-       overlayOpacity: 0.75,
-       className: 'modalNotesGroup',
-       fade:false
-      });
 
-  // Set up the "working" notices
-  Ajax.Responders.register({
-    onCreate: function() {
-      $('working').show();
+  jQuery(document).ready(function() {
+    window.modalNotesGroup = new ModalMarkus('#notes_dialog');
+
+    // Set up the 'working' notices
+    jQuery('#working').ajaxStart(function() {
+      this.style.display = '';
       window.onbeforeunload = check_working;
-    },
-    onComplete: function() {
-      $('working').hide();
+    }).ajaxStop(function() {
+      this.style.display = 'none';
       window.onbeforeunload = null;
-    }
+    })
   });
 
- })
-
-
-function check_working() {
-  return '<%=t(:still_working_warning)%>';
-}
-
+  function check_working() {
+    return '<%= t(:still_working_warning) %>';
+  }
 //]]>
 </script>
 
-<%
-# Javascript for showing/hiding old marks
-%>
-<%= render partial: "results/common/old_marks_view_functions", formats: [:html] %>
+<% # Javascript for showing/hiding old marks %>
+<%= render partial: 'results/common/old_marks_view_functions',
+           formats: [:html] %>
 
-<%
-# Javascript for test result window
-%>
-<%= render partial: "assignments/test_result_window", formats: [:html],
-  locals: {aid: @assignment.id}  %>
+<% # Javascript for test result window %>
+<%= render partial: 'assignments/test_result_window',
+           formats: [:html],
+           locals: { aid: @assignment.id } %>
 
-<%= render partial: "results/common/annotations", formats: [:js] %>
-<%= render partial: "results/marker/setup_annotation_categories", formats: [:js] %>
+<%= render partial: 'results/common/annotations',
+           formats: [:js] %>
 
-<%= render partial: "results/marker/boot",
-  formats: [:js], locals: {first_file: @first_file} %>
+<%= render partial: 'results/marker/setup_annotation_categories',
+           formats: [:js] %>
 
-<div id="notes_dialog">
+<%= render partial: 'results/marker/boot',
+           formats: [:js],
+           locals: { first_file: @first_file } %>
+
+<div id='notes_dialog'></div>
+
+<div id='title_bar'>
+  <h1>
+  <%= t('results.title',
+      { assignment_name: @assignment.short_identifier,
+        group_name: @group.group_name }) %>
+  (<%= @grouping.get_all_students_in_group %>)
+  </h1>
 </div>
 
-<div id="title_bar">
-<h1>
-<%= t('results.title', {assignment_name: @assignment.short_identifier, group_name: @group.group_name}) %>
-(<%= @grouping.get_all_students_in_group %>)
-</h1>
-</div>
-<div class="wrapLeft">
-<% if flash[:fail_notice] %>
-  <p class="error"><%= flash[:fail_notice] %></p>
-<% end %>
-<% if @result.released_to_students %>
-  <p class="notice"><%=t(:marks_released_notice)%></p>
-<% end %>
-
-<% if @grouping.past_due_date? %>
-  <p class="warning">
-    <%= t(:past_due_date_edit_result_warning,
-          href: link_to(t(:last_commit),
-                           repo_browser_assignment_submission_path(
-                                   @assignment, @grouping))).html_safe %>
-  </p>
-<% end %>
-
-<%= render partial: 'results/common/submission_selector', locals: {group: @group, result: @result, assignment: @assignment, previous_grouping: @previous_grouping, next_grouping: @next_grouping} %>
-
-<%= render partial: 'results/common/errors' %>
-
-<div id="file_selector">
-  <%= render partial: 'results/common/file_selector', locals: {files: @files, can_download: true} %>
-  <% if @assignment.enable_test %>
-    <div id="test_results_controls">
-      <%= render partial: 'results/common/test_selector', locals: {test_result_files: @test_result_files, result: @result} %>
-    </div>
+<div class='wrapLeft'>
+  <% if flash[:fail_notice] %>
+    <p class='error'><%= flash[:fail_notice] %></p>
   <% end %>
-</div>
 
+  <% if @result.released_to_students %>
+    <p class='notice'><%=t(:marks_released_notice)%></p>
+  <% end %>
 
-<% if !@result.released_to_students %>
+  <% if @grouping.past_due_date? %>
+    <p class='warning'>
+      <%= t(:past_due_date_edit_result_warning,
+            href: link_to(t(:last_commit),
+                          repo_browser_assignment_submission_path(
+                             @assignment, @grouping))).html_safe %>
+    </p>
+  <% end %>
 
-<%= render partial: 'results/marker/marker_panes',
-           locals: {extra_marks_points: @extra_marks_points,
-                    extra_marks_percentage: @extra_marks_percentage,
-                    annotation_categories: @annotation_categories,
-                    result: @result,
-                    assignment: @assignment,
-                    marks_map: @marks_map,
-                    mark_criteria:@mark_criteria,
-                    submission: @submission,
-                    old_result: @old_result} %>
-<% else %>
-<%= render partial: 'results/result_summary'%>
+  <%= render partial: 'results/common/submission_selector',
+             locals: { group: @group,
+                       result: @result,
+                       assignment: @assignment,
+                       previous_grouping: @previous_grouping,
+                       next_grouping: @next_grouping } %>
 
-<% end %>
+  <%= render partial: 'results/common/errors' %>
+
+  <div id='file_selector'>
+    <%= render partial: 'results/common/file_selector',
+               locals: { files: @files,
+                         can_download: true } %>
+    <% if @assignment.enable_test %>
+      <div id='test_results_controls'>
+        <%= render partial: 'results/common/test_selector',
+                   locals: { test_result_files: @test_result_files,
+                             result: @result } %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if !@result.released_to_students %>
+    <%= render partial: 'results/marker/marker_panes',
+               locals: { extra_marks_points: @extra_marks_points,
+                         extra_marks_percentage: @extra_marks_percentage,
+                         annotation_categories: @annotation_categories,
+                         result: @result,
+                         assignment: @assignment,
+                         marks_map: @marks_map,
+                         mark_criteria:@mark_criteria,
+                         submission: @submission,
+                         old_result: @old_result } %>
+  <% else %>
+    <%= render partial: 'results/result_summary',
+               formats: [:html],
+               handlers: [:erb] %>
+  <% end %>
 </div>
