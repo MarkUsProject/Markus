@@ -66,8 +66,15 @@
     });
 
     // Only show unmarked criteria
-    jQuery('#collapse_all').click();
-    jQuery('#expand_unmarked').click();
+    jQuery.ajax({
+      url: "<%= collapse_criteria_assignment_submission_results_path(assignment_id: @assignment.id) %>",
+      type: 'GET'
+    });
+
+    jQuery.ajax({
+      url: "<%= expand_unmarked_criteria_assignment_submission_results_path(assignment_id: @assignment.id, id: @result.id) %>",
+      type: 'GET'
+    });
   });
 
   function check_working() {
