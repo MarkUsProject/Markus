@@ -55,7 +55,7 @@ var AnnotationTextDisplayer = Class.create({
   // Hide all showing annotations.
   hideShowing: function() {
     if (this.getShowing()) {
-      this.style.display = 'none';
+      this.hide();
     }
   },
 
@@ -73,12 +73,12 @@ var AnnotationTextDisplayer = Class.create({
 
   // Show the displayer
   show: function() {
-    this.display_node.style.display = '';
+    this.display_node.style.display = 'block';
   },
 
   // Returns whether or not the Displayer is showing
   getShowing: function() {
-    return this.getDisplayNode().style.display == '';
+    return this.getDisplayNode().style.display != 'none';
   },
   // Returns the div that we're displaying in
   getDisplayNode: function() {
