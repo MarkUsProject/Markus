@@ -158,7 +158,7 @@
   <fieldset>
     <legend><%= t('assignment.marking_scheme.title') %></legend>
 
-    <% Assignment::MARKING_SCHEME_TYPE.each do |key,value| %>
+    <% Assignment::MARKING_SCHEME_TYPE.each do |key, value| %>
       <p>
         <%= raw(f.radio_button :marking_scheme_type,
                                Assignment::MARKING_SCHEME_TYPE[key],
@@ -197,7 +197,7 @@
     <p id='persist_groups_assignment_style'
        style='<%= 'display: none' unless @assignments.size > 0 && @assignment.id.nil? %>'>
       <%= check_box_tag 'persist_groups',
-                        true,
+                        '0',
                         false,
                         id: 'persist_groups',
                         onclick: 'set_onbeforeunload(true);' %>
@@ -206,11 +206,7 @@
                     class: 'checkbox_label' %>
       <select id='persist_groups_assignment'
               name='persist_groups_assignment'
-              onchange = 'new Ajax.Request(
-                            "<%= update_group_properties_on_persist_assignments_path() %>",
-                            { asynchronous: true,
-                              evalScripts: true,
-                              parameters: "assignment_id=" + $F("persist_groups_assignment") });'>
+              disabled>
         <% @assignments.each do |assignment| %>
           <option value='<%= assignment.id %>'>
             <%= assignment.short_identifier %>
@@ -220,7 +216,7 @@
     </p>
     <p id='is_group_assignment_style'>
       <%= raw(check_box_tag 'is_group_assignment',
-                            true,
+                            '0',
                             false,
                             id: 'is_group_assignment',
                             onchange: 'set_onbeforeunload(true);') %>
