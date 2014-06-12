@@ -50,7 +50,7 @@ class MainController < ApplicationController
     # check cookies
     if cookies_enabled
       unless params[:cookieTest].nil?
-        # remove the :cookieTest => "currentlyTesting" parameter after testing for cookies by redirecting
+        # remove the cookieTest: "currentlyTesting" parameter after testing for cookies by redirecting
         redirect_to controller: 'main', action: 'login'
       end
     else

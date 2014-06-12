@@ -243,7 +243,7 @@ class GradersController < ApplicationController
   # Returns a list of groupings with included associations.
   #
   #   # Include the tas asociation of grouping.
-  #   groupings_with_assoc(a, :includes => [:tas])
+  #   groupings_with_assoc(a, includes: [:tas])
   #   # Include all associations in GROUPING_ASSOC.
   #   groupings_with_assoc(a)
   def groupings_with_assoc(assignment, options = {})

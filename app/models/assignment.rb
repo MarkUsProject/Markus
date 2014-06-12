@@ -78,7 +78,7 @@ class Assignment < ActiveRecord::Base
   before_save :reset_collection_time
   validate :minimum_number_of_groups
   # Call custom validator in order to validate the :due_date attribute
-  # :date => true maps to DateValidator (:custom_name => true maps to CustomNameValidator)
+  # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
   validates :due_date, date: true
   after_save :update_assigned_tokens
@@ -247,7 +247,7 @@ class Assignment < ActiveRecord::Base
     # condition += " and memberships.status != 'rejected'"
     # add non-pending status clause to condition
     # condition += " and memberships.status != 'pending'" unless pending
-    # groupings.first(:include => :memberships, :conditions => [condition, uid]) #FIXME: needs schema update
+    # groupings.first(include: :memberships, conditions: [condition, uid]) #FIXME: needs schema update
 
     #FIXME: needs to be rewritten using a proper query...
     User.find(uid).accepted_grouping_for(self.id)

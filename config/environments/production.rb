@@ -42,19 +42,19 @@ Markus::Application.configure do
   # Defaults to:
   config.action_mailer.delivery_method = :sendmail
   #config.action_mailer.sendmail_settings = {
-  #  :location => '/usr/sbin/sendmail',
-  #  :arguments => '-i -t'  }
+  #  location: '/usr/sbin/sendmail',
+  #  arguments: '-i -t'  }
 
   # or using smtp configuration
   #config.action_mailer.delivery_method = :smtp
   #config.action_mailer.smtp_settings = {
-  #  :address              => "smtp.gmail.com",
-  #  :port                 => 587,
-  #  :domain               => 'gmail.com',
-  #  :user_name            => '<username>',
-  #  :password             => '<password>',
-  #  :authentication       => 'plain',
-  #  :enable_starttls_auto => true  }
+  #  address: "smtp.gmail.com",
+  #  port: 587,
+  #  domain: 'gmail.com',
+  #  user_name: '<username>',
+  #  password: '<password>',
+  #  authentication: 'plain',
+  #  enable_starttls_auto: true  }
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store # place where to put cached files is configured in config/environment.rb
