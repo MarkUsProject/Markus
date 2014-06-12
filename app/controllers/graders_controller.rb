@@ -45,7 +45,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     groupings = groupings_with_assoc(@assignment)
     @table_rows = construct_table_rows(groupings, @assignment)
-    render :populate, :formats => [:js] 
+    render :populate, formats: [:js]
   end
 
   def populate_graders
@@ -58,7 +58,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     criteria = criteria_with_assoc(@assignment)
     @table_rows = construct_criterion_table_rows(criteria, @assignment)
-    render :populate_criteria, :formats => [:js] 
+    render :populate_criteria, formats: [:js]
   end
 
   def set_assign_criteria
