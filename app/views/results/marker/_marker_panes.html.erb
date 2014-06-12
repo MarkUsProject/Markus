@@ -66,16 +66,19 @@
                        expand_criteria_assignment_submission_results_path(assignment_id: @assignment.id),
                       method: :get,
                       class: "button_to_criteria_expansion",
+                      id: 'expand_all',
                       remote: true) %>
         <%= button_to(I18n.t("marker.marks.collapse_all"),
                       collapse_criteria_assignment_submission_results_path(assignment_id: @assignment.id),
                       method: :get,
                       class: "button_to_criteria_expansion",
+                      id: 'collapse_all',
                       remote: true) %>
         <%= button_to(I18n.t("marker.marks.expand_unmarked"),
                       expand_unmarked_criteria_assignment_submission_results_path(assignment_id: @assignment.id, id: @result.id),
                       method: :get,
                       class: "button_to_criteria_expansion",
+                      id: 'expand_unmarked',
                       remote: true) %>
       </div>
       <div class="clear"></div> <!-- Criterion Tools -->

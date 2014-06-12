@@ -63,7 +63,11 @@
     }).ajaxStop(function() {
       this.style.display = 'none';
       window.onbeforeunload = null;
-    })
+    });
+
+    // Only show unmarked criteria
+    jQuery('#collapse_all').click();
+    jQuery('#expand_unmarked').click();
   });
 
   function check_working() {
