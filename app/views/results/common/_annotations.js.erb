@@ -273,14 +273,14 @@
     modal.close();
 
     // Send AJAX request
-    if (positions !== null) {
+    if (positions != null) {
       // Text annotation
       jQuery.ajax({
         url:   "<%= annotations_path() %>",
         async: true,
         type: 'POST',
         data: 'annotation_type=text' +
-              'submission_file_id='+ document.getElementById('select_file_id').value +
+              '&submission_file_id='+ document.getElementById('select_file_id').value +
               '&line_start=' + positions.line_start +
               '&line_end=' + positions.line_end +
               '&content=' + encodeURIComponent(content) +
@@ -294,7 +294,7 @@
         async: true,
         type: 'POST',
         data: 'annotation_type=image' +
-              'submission_file_id='+ document.getElementById('select_file_id').value +
+              '&submission_file_id='+ document.getElementById('select_file_id').value +
               '&content=' + encodeURIComponent(content) +
               '&category_id=' + category_id +
               '&x1=' + x1 +
