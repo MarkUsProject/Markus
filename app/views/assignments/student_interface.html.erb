@@ -236,7 +236,9 @@
         <% if @grouping.inviter == @current_user &&
               @assignment.student_form_groups &&
               !@assignment.past_collection_date? %>
-          <% if @grouping.student_membership_number < @assignment.group_max %>
+          <% if @grouping.student_membership_number < @assignment.group_max &&
+                # Student wants to work alone.
+                @group.group_name != @current_user.user_name %>
             <%= button_to_function I18n.t(:invite), 'invite(); return false;' %>
           <% end %>
         <% end %>
