@@ -50,7 +50,10 @@ module GradersHelper
 
       #These are used for sorting
       table_row[:name] = grouping.group.group_name
-      table_row[:members] = grouping.tas.collect{ |grader| grader.user_name}.join(',')
+      # ta_memberships and their users are eagerly loaded and can be reused.
+      table_row[:members] = grouping.ta_memberships
+        .map { |ta_membership| ta_membership.user.user_name }
+        .join(',')
       table_row[:coverage] = grouping.criteria_coverage_count
 
       #These 2 are used for searching
