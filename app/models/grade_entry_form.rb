@@ -13,7 +13,7 @@ class GradeEntryForm < ActiveRecord::Base
   has_many                  :grades, through: :grade_entry_items
 
   # Call custom validator in order to validate the date attribute
-  # :date => true maps to DateValidator (:custom_name => true maps to CustomNameValidator)
+  # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
   validates                 :date, date: true
 

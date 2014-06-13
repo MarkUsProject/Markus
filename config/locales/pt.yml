@@ -481,6 +481,7 @@ pt:
       all_students: "Todos os alunos(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Não-atribuídos(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Atribuídos(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inativo(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Use grupos de outro projeto"
       graders: "Avaliadores (%{graders})"
       all_grouping_counts: "Todos os grupos(<span id=\"all_groupings_count\"></span>)"

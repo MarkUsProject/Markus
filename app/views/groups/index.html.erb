@@ -194,11 +194,17 @@
               <%= raw(I18n.t("groups.assigned_students")) %>
             </a>
           </li>
+          <li class="tab">
+            <a href="#inactive" id="filter_link_students_inactive">
+              <%= raw(I18n.t("groups.inactive_students")) %>
+            </a>
+          </li>
         </ul>
 
         <div id="students_none"></div>
         <div id="unassigned"></div>
         <div id="assigned"></div>
+        <div id="inactive"></div>
 
         <div class="tabbedArea">
           <div class="search_box">

@@ -496,6 +496,7 @@ en:
       all_students:     "All students(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Unassigned(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigned(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inactive(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Use another assignment's groups"
       graders: "Graders (%{graders})"
       all_grouping_counts: "All Groups(<span id=\"all_groupings_count\"></span>)"
