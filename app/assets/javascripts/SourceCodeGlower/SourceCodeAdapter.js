@@ -1,6 +1,6 @@
 /** Source Code Adapter Class
 
-This adapts pre-existing source code, preparing it for the SourceCodeManager.  
+This adapts pre-existing source code, preparing it for the SourceCodeManager.
 This is a bit like an abstract class, and needs to be implemented for the particular method of adaptation.  Must return an indexable/Enumerable series of DOM nodes, where each is a source code line.
 
 Rules:
