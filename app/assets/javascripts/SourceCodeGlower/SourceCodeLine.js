@@ -66,14 +66,6 @@ SourceCodeLine.prototype.isGlowing = function() {
   return this.getGlowDepth() > 0;
 }
 
-// Some hook functions for before/after glowing
-SourceCodeLine.prototype.beforeUnGlow = function() {
-  //hook
-}
-SourceCodeLine.prototype.afterUnGlow = function() {
-  //hook
-}
-
 // Handle all observations, and store references in the functions so that
 // we can remove observations easily
 SourceCodeLine.prototype.observe = function(over_func, out_func) {
