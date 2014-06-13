@@ -58,7 +58,7 @@
 
   // Register an image_annotation with the image annotation_grid
   function add_to_annotation_grid(extracted_coords) {
-    annotation_manager.add_to_grid(extracted_coords.evalJSON());
+    annotation_manager.add_to_grid(JSON.parse(extracted_coords));
   }
 
   function add_annotation(annotation_id, range, annotation_text_id) {

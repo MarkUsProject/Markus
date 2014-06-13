@@ -34,13 +34,13 @@ var SourceCodeLine = Class.create({
 
   // Decrease a Source Code Line's glow depth
   unGlow: function() {
-    // Decrease the glow depth
-    this.decGlowDepth(1);
-
     // Is this line glowing?
     if (this.isGlowing()) {
       this.getLineNode().classList.remove('source_code_glowing_' + this.getGlowDepth());
     }
+
+    // Decrease the glow depth
+    this.decGlowDepth(1);
   },
 
   incGlowDepth: function(amount) {
@@ -48,7 +48,7 @@ var SourceCodeLine = Class.create({
   },
 
   decGlowDepth: function(amount) {
-    this.setGlowDepth(Math.max(this.getGlowDepth() - amount, 0);
+    this.setGlowDepth(Math.max(this.getGlowDepth() - amount, 0));
   },
 
   getLineNode: function() {
