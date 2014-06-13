@@ -26,18 +26,23 @@ var ImageAnnotationGrid = Class.create({
       image_event_handler.init_listeners(document.getElementById('enable_annotations?').value);
       document.getElementById('code_pane').onmousemove = this.draw_holders.bind(this);
     },
+
     getAnnotationTextManager: function() {
       return this.annotation_text_manager;
     },
+
     getImageEventHandler: function() {
       return this.image_event_handler;
     },
+
     getAnnotationTextDisplayer: function() {
       return this.annotation_text_displayer;
     },
+
     get_annotation_grid: function(){
       return this.annotation_grid;
     },
+
     process_grid: function(){
       this.annotation_grid = document.getElementById('annotation_grid').value.evalJSON();
       var annot_grid = this.get_annotation_grid();
@@ -49,6 +54,7 @@ var ImageAnnotationGrid = Class.create({
             annot_grid[i].y_range.start, annot_grid[i].y_range.end);
       }
     },
+
     draw_holders: function(){
       var annot_grid = this.get_annotation_grid();
       var holder, annot_text_id, horiz_range, vert_range, holder_width,
@@ -79,7 +85,7 @@ var ImageAnnotationGrid = Class.create({
         holder_height = parseInt(vert_range.end) - parseInt(vert_range.start);
 
         holder.style.left = Math.max(0, holder_left - left_edge) + image_preview.offsetLeft + "px";
-        holder.style.top = Math.max(0, holder_top - top_edge) + image_preview.offsetTop + "px";
+        holder.style.top  = Math.max(0, holder_top - top_edge) + image_preview.offsetTop + "px";
 
         if (holder_left > right_edge || holder_top > bottom_edge || holder_left + holder_width < left_edge ||
             holder_top + holder_height < top_edge) {
@@ -93,24 +99,34 @@ var ImageAnnotationGrid = Class.create({
         }
       })
     },
+
     add_to_grid: function(extracted_coords){
       extracted_coords.x_range = $R(extracted_coords.x_range.start, extracted_coords.x_range.end);
       extracted_coords.y_range = $R(extracted_coords.y_range.start, extracted_coords.y_range.end);
       this.annotation_grid.push(extracted_coords);
       this.share_grid_with_event_handler();
 
-      var new_holder = new Element('div', {'id': "annotation_holder_" + extracted_coords.id, 'style' : 'position: absolute; opacity:0.2; filter:alpha(opacity=20); cursor: crosshair; background: orange; border: solid; borderColor: black;'});
+      var new_holder = document.createElement('div');
+      new_holder.id = 'annotation_holder_' + extracted_coords.id;
+      new_holder.style.position = 'absolute';
+      new_holder.style.opacity = '0.2';
+      new_holder.style.filter = 'alpha(opacity=20)';
+      new_holder.style.cursor = 'crosshair';
+      new_holder.style.background = 'orange';
+      new_holder.style.border = '1px solid #000';
       new_holder.onmousemove = this.getImageEventHandler().check_for_annotations.bind(this.getImageEventHandler());
       new_holder.onmousedown = this.getImageEventHandler().start_select_box.bind(this.getImageEventHandler());
-      $('codeviewer').appendChild(new_holder);
+
+      jQuery('#codeviewer').append(new_holder);
     },
+
     remove_annotation: function(unused_param1, unused_param2, annotation_text_id){
       if (this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
         this.getAnnotationTextManager().removeAnnotationText(annotation_text_id);
       }
-      var i = 0;
+
       var annot_grid = this.get_annotation_grid();
-      for (i = 0; i < annot_grid.length; i++){
+      for (var i = 0; i < annot_grid.length; i++){
         if (annot_grid[i].id == annotation_text_id){
           annot_grid.splice(i, 1);
           break;
@@ -118,17 +134,21 @@ var ImageAnnotationGrid = Class.create({
       }
       this.share_grid_with_event_handler();
     },
+
     registerAnnotationText: function(annotation_text) {
       // If the Annotation Text is already in the manager, we don't need to re-add it
       if (this.getAnnotationTextManager().annotationTextExists(annotation_text.getId())) {
         return;
       }
+
       this.getAnnotationTextManager().addAnnotationText(annotation_text);
     },
+
     // Call this anytime the annotation_grid gets modified
     share_grid_with_event_handler: function(){
       this.getImageEventHandler().set_annotation_grid(this.annotation_grid);
     },
+
     // Display the text associated with the annotation text id's inside annots_to_display.
     // annots_to_display is an array of annotation text ids, and x and y are the
     // coordinates relative to the page where the display box should pop up.

@@ -11,9 +11,8 @@ jQuery(document).ready(function() {
     }
 
     jQuery.ajax({
-      url: element.readAttribute('data-action'),
+      url:  element.readAttribute('data-action'),
       type: 'POST',
-      async: true,
       data: params
     });
   }
@@ -26,9 +25,8 @@ jQuery(document).ready(function() {
     }
 
     jQuery.ajax({
-      url: this.readAttribute('data-action'),
+      url:  this.readAttribute('data-action'),
       type: 'POST',
-      async: true,
       data: params
     }).done(function() {
       onbeforeunload.window = null;
@@ -51,9 +49,8 @@ jQuery(document).ready(function() {
       }
 
       jQuery.ajax({
-        url: this.readAttribute('data-action'),
+        url:  this.readAttribute('data-action'),
         type: 'POST',
-        async: true,
         data: params
       });
     });
@@ -98,7 +95,7 @@ function select_mark(mark_id, mark) {
 }
 
 function update_total_mark(total_mark) {
-  document.getElementById('current_mark_div').innerHTML = total_mark;
+  document.getElementById('current_mark_div').innerHTML       = total_mark;
   document.getElementById('current_total_mark_div').innerHTML = total_mark;
 }
 

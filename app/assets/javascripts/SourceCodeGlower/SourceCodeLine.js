@@ -48,7 +48,7 @@ var SourceCodeLine = Class.create({
   },
 
   decGlowDepth: function(amount) {
-    this.setGlowDepth(max(this.getGlowDepth() - amount, 0);
+    this.setGlowDepth(Math.max(this.getGlowDepth() - amount, 0);
   },
 
   getLineNode: function() {
