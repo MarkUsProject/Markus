@@ -236,8 +236,17 @@
         <% if @grouping.inviter == @current_user &&
               @assignment.student_form_groups &&
               !@assignment.past_collection_date? %>
-          <% if @grouping.student_membership_number < @assignment.group_max %>
+          <% # Student not reached the group max and is not working alone %>
+          <% if @grouping.student_membership_number < @assignment.group_max &&
+                @group.group_name != @current_user.user_name
+          %>
             <%= button_to_function I18n.t(:invite), 'invite(); return false;' %>
+          <% # Student has reached the group max and is not working alone %>
+          <% elsif @grouping.student_membership_number ==
+                   @assignment.group_max &&
+                   @group.group_name != @current_user.user_name
+          %>
+            <%= button_to_function I18n.t(:invite), disabled: true %>
           <% end %>
         <% end %>
         <%

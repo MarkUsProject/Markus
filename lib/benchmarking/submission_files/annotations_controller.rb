@@ -84,7 +84,7 @@ class AnnotationsController < ApplicationController
 
 #  def get_gradesfile
 #    file_out = ""
-#    assignments = Assignment.find(:all, :order => "id")
+#    assignments = Assignment.find(:all, order: "id")
 #    students = User.find_all_by_role('student')
 #    results = Result.all
 #    #need to create the header, which is the list of assignments and their total
@@ -120,7 +120,7 @@ class AnnotationsController < ApplicationController
 #      file_out << str + "\n"
 #    end
 
-#    send_data(file_out, :type => "text", :disposition => "inline")
+#    send_data(file_out, type: "text", disposition: "inline")
 #  end
 #
 end

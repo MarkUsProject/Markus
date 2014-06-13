@@ -10,9 +10,9 @@
 </td>
 
 <td>
-<%= render :partial => 'graders/manage/member',
-  :formats => [:html], :handlers => [:erb],
-  :locals => {:grouping => grouping } %>
+<%= render partial: 'graders/manage/member',
+  formats: [:html], handlers: [:erb],
+  locals: {grouping: grouping } %>
 </td>
 
 <td>
@@ -20,15 +20,15 @@
     <span class="table_menu">
       <% assigned_count = grouping.criteria_coverage_count %>
       <% if assigned_count == total_criteria_count %>
-        <%= link_to image_tag("icons/tick.png", :alt => I18n.t('graders.covered'),
-          :title => I18n.t('graders.covered')),
-          groups_coverage_dialog_assignment_graders_path(:id => @assignment.id, :grouping => grouping.id),
-          :remote => true %>
+        <%= link_to image_tag("icons/tick.png", alt: I18n.t('graders.covered'),
+          title: I18n.t('graders.covered')),
+          groups_coverage_dialog_assignment_graders_path(id: @assignment.id, grouping: grouping.id),
+          remote: true %>
       <% else %>
-        <%= link_to image_tag("icons/cross.png", :alt => I18n.t('graders.not_covered'),
-          :title => I18n.t('graders.not_covered')),
-          groups_coverage_dialog_assignment_graders_path(:id => @assignment.id, :grouping => grouping.id),
-          :remote => true %>
+        <%= link_to image_tag("icons/cross.png", alt: I18n.t('graders.not_covered'),
+          title: I18n.t('graders.not_covered')),
+          groups_coverage_dialog_assignment_graders_path(id: @assignment.id, grouping: grouping.id),
+          remote: true %>
       <% end %>
     </span>
       (<%= assigned_count %>/<%=  total_criteria_count %>)

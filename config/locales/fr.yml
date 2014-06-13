@@ -497,6 +497,7 @@ fr:
       all_students: "Tous les étudiants(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Non assigné(s)(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigné(s)(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inactif(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Utiliser les groupes d'un autre projet"
       graders: "Correcteurs (%{graders})"
       all_grouping_counts: "Tous (<span id=\"all_groupings_count\"></span>)"
