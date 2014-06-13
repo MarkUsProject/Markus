@@ -139,7 +139,6 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
-    #@assignments = Assignment.all(:order => :id)
     @grade_entry_forms = GradeEntryForm.all(order: :id)
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
