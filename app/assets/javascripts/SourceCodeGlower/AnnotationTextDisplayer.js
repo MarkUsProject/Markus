@@ -1,13 +1,13 @@
 /** Annotation Text Displayer Class
 
-This class is in charge of displaying collections of Annotation Texts.  It puts
-them in a div with a class called 'annotation_text_display' and is in charge of
-displaying that div at given coordinates, and hiding that div.
+    This class is in charge of displaying collections of Annotation Texts. It puts
+    them in a div with a class called 'annotation_text_display' and is in charge of
+    displaying that div at given coordinates, and hiding that div.
 
-Multiple texts are displayed at once, and each one is contained with a <p> tag.
+    Multiple texts are displayed at once, and each one is contained with a <p> tag.
 
-Rules:
-- Assumes existence of AnnotationText class
+    Rules:
+    - Assumes existence of AnnotationText class
 */
 
 var TEXT_DISPLAY_X_OFFSET = 5;
@@ -25,7 +25,6 @@ var AnnotationTextDisplayer = Class.create({
     this.hide();
   },
 
-  // Assumes collection is subclass of Prototype Enumerable class
   // x and y is the location on the screen where this collection will display
   displayCollection: function(collection, x, y) {
     // Are we already showing some Annotations?  Hide them then
@@ -52,7 +51,7 @@ var AnnotationTextDisplayer = Class.create({
     this.show();
   },
 
-  // Hide all showing annotations.
+  // Hide all showing annotations
   hideShowing: function() {
     if (this.getShowing()) {
       this.hide();
@@ -61,7 +60,7 @@ var AnnotationTextDisplayer = Class.create({
 
   updateDisplayNode: function(text, x, y) {
     var display_node = this.getDisplayNode();
-    display_node.innerHTML = text;
+    display_node.innerHTML  = text;
     display_node.style.left = (x + TEXT_DISPLAY_X_OFFSET)  + 'px';
     display_node.style.top  = (y + TEXT_DISPLAY_Y_OFFSET)  + 'px';
   },
@@ -80,6 +79,7 @@ var AnnotationTextDisplayer = Class.create({
   getShowing: function() {
     return this.getDisplayNode().style.display != 'none';
   },
+
   // Returns the div that we're displaying in
   getDisplayNode: function() {
     return this.display_node;

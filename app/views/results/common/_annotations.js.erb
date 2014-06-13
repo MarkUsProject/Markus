@@ -34,7 +34,7 @@
     is_image = false;
   }
 
-  //A version of source_code_ready for image files.
+  // A version of source_code_ready for image files.
   function source_code_ready_for_image() {
     annotation_manager = null;
 
@@ -43,7 +43,8 @@
     var annotation_text_displayer = new AnnotationTextDisplayer(document.getElementById('annotation_holder'));
 
     annotation_manager = new ImageAnnotationGrid(image_event_handler,
-        annotation_text_manager, annotation_text_displayer);
+                                                 annotation_text_manager,
+                                                 annotation_text_displayer);
 
     document.getElementById('select_file_id').disabled = false;
 
@@ -55,8 +56,8 @@
     annotation_manager.registerAnnotationText(annotation_text);
   }
 
-  //Register an image_annotation with the image annotation_grid
-  function add_to_annotation_grid(extracted_coords){
+  // Register an image_annotation with the image annotation_grid
+  function add_to_annotation_grid(extracted_coords) {
     annotation_manager.add_to_grid(extracted_coords.evalJSON());
   }
 
@@ -89,8 +90,7 @@
     var mouse_anchor = get_anchor();
     var mouse_focus  = get_focus();
 
-    // Use the SourceCodeAdapter to get the nodes that represent source code
-    // lines.
+    // Use the SourceCodeAdapter to get the nodes that represent source code lines.
     var anchor_node = syntax_highlighter_adapter.getRootFromSelection(mouse_anchor);
     var focus_node  = syntax_highlighter_adapter.getRootFromSelection(mouse_focus);
 
@@ -117,9 +117,9 @@
 
     // If line_start > line_end, swap
     if (line_start > line_end) {
-      var temp = line_start;
+      var temp   = line_start;
       line_start = line_end;
-      line_end = temp;
+      line_end   = temp;
     }
 
     // Return positions as an object
@@ -139,11 +139,11 @@
   function get_selection_box() {
     var box = document.getElementById('sel_box');
     var x1 = parseInt(box.style.left) -
-             document.getElementById('image_preview').offsetLeft +
-             document.getElementById('image_container').scrollLeft;
+               document.getElementById('image_preview').offsetLeft +
+               document.getElementById('image_container').scrollLeft;
     var y1 = parseInt(box.style.top) -
-             document.getElementById('image_preview').offsetTop +
-             document.getElementById('image_container').scrollTop;
+               document.getElementById('image_preview').offsetTop +
+               document.getElementById('image_container').scrollTop;
     var x2 = x1 + parseInt(box.style.width);
     var y2 = y1 + parseInt(box.style.height);
 
@@ -196,8 +196,7 @@
       if (!box) { return; }
 
       jQuery.ajax({
-        url:  "<%= add_existing_annotation_annotations_path() %>",
-        async: true,
+        url:  '<%= add_existing_annotation_annotations_path %>',
         type: 'POST',
         data: 'annotation_type=image' +
               '&submission_file_id=' + document.getElementById('select_file_id').value +
@@ -213,10 +212,9 @@
       if (!positions) { return false; }
 
       jQuery.ajax({
-        url:  "<%= add_existing_annotation_annotations_path() %>",
-        async: true,
+        url:  '<%= add_existing_annotation_annotations_path %>',
         type: 'POST',
-        data: 'submission_file_id='+ document.getElementById('select_file_id').value +
+        data: 'submission_file_id=' + document.getElementById('select_file_id').value +
               '&line_start=' + positions.line_start +
               '&line_end=' + positions.line_end +
               '&annotation_text_id=' + annotation_text_id +
@@ -239,8 +237,7 @@
     annotation_manager = null;
 
     jQuery.ajax({
-      url:  '<%= codeviewer_assignment_submission_result_path(:id => @assignment.id, :uid => @uid) %>',
-      async: true,
+      url:  '<%= codeviewer_assignment_submission_result_path(id: @assignment.id, uid: @uid) %>',
       type: 'POST',
       data: 'submission_file_id=' + submission_file_id +
             '&focus_line=' + focus_line +
@@ -276,11 +273,10 @@
     if (positions != null) {
       // Text annotation
       jQuery.ajax({
-        url:   "<%= annotations_path() %>",
-        async: true,
+        url:  '<%= annotations_path %>',
         type: 'POST',
         data: 'annotation_type=text' +
-              '&submission_file_id='+ document.getElementById('select_file_id').value +
+              '&submission_file_id=' + document.getElementById('select_file_id').value +
               '&line_start=' + positions.line_start +
               '&line_end=' + positions.line_end +
               '&content=' + encodeURIComponent(content) +
@@ -290,11 +286,10 @@
     } else {
       // Image annotation
       jQuery.ajax({
-        url:  "<%= annotations_path() %>",
-        async: true,
+        url:  '<%= annotations_path %>',
         type: 'POST',
         data: 'annotation_type=image' +
-              '&submission_file_id='+ document.getElementById('select_file_id').value +
+              '&submission_file_id=' + document.getElementById('select_file_id').value +
               '&content=' + encodeURIComponent(content) +
               '&category_id=' + category_id +
               '&x1=' + x1 +
@@ -311,8 +306,7 @@
       return;
     }
 
-    // Grab the dom node that represents this source code line,
-    // and scroll to it.
+    // Scroll to the DOM node that represents this source code line
     var line = annotation_manager.getLineManager().getLine(line_num);
     if (line != null) {
       line.getLineNode().scrollIntoView();
@@ -328,6 +322,7 @@
     jQuery('.annotation_text_content_editor').each(function(index) {
       this.hide();
     });
+
     var box = document.getElementById('sel_box');
     if (box) {
       box.style.display = 'none';

@@ -1,23 +1,23 @@
 /** Image Annotation Grid Class
 
-This is where most of the action happens:
-this class tracks/edits which Annotation Texts are connected to areas of the image.
-It requires a Image Event Handler, an Annotation Text Manager,
-and an Annotation Text Displayer be provided in the constructor.
+    This is where most of the action happens:
+    this class tracks/edits which Annotation Texts are connected to areas of the image.
+    It requires a Image Event Handler, an Annotation Text Manager,
+    and an Annotation Text Displayer be provided in the constructor.
 
-Rules:
-- A Source Code Line Manager, an Annotation Text Manager, and an
-  Annotation Text Displayer must be provided in the constructor
+    Rules:
+    - A Source Code Line Manager, an Annotation Text Manager, and an
+      Annotation Text Displayer must be provided in the constructor
 */
 
 var HORIZONTAL_SCROLLBAR_COMPENSATION = 21;
 var VERTICAL_SCROLLBAR_COMPENSATION   = 4;
 
+
 var ImageAnnotationGrid = Class.create({
-    initialize: function(image_event_handler,
-                  annotation_text_manager, annotation_text_displayer) {
-      this.image_event_handler = image_event_handler;
-      this.annotation_text_manager = annotation_text_manager;
+    initialize: function(image_event_handler, annotation_text_manager, annotation_text_displayer) {
+      this.image_event_handler       = image_event_handler;
+      this.annotation_text_manager   = annotation_text_manager;
       this.annotation_text_displayer = annotation_text_displayer;
 
       this.process_grid();
@@ -85,7 +85,7 @@ var ImageAnnotationGrid = Class.create({
             holder_top + holder_height < top_edge) {
           // Draw nothing, as holder is out of bounds of codeviewer
           holder.style.display = 'none';
-        } else{
+        } else {
           // Holder within codeviewer, draw as much of it as fits.
           holder.style.display = 'block';
           holder.style.width = Math.min(Math.min(holder_width, (holder_left + holder_width) - left_edge), right_edge - holder_left - VERTICAL_SCROLLBAR_COMPENSATION) + "px";
@@ -110,8 +110,8 @@ var ImageAnnotationGrid = Class.create({
       }
       var i = 0;
       var annot_grid = this.get_annotation_grid();
-      for(i = 0; i < annot_grid.length ; i++){
-        if(annot_grid[i].id == annotation_text_id){
+      for (i = 0; i < annot_grid.length; i++){
+        if (annot_grid[i].id == annotation_text_id){
           annot_grid.splice(i, 1);
           break;
         }

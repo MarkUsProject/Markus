@@ -4,7 +4,9 @@
   var drop_down_menus = [];
   function setup_annotation_categories() {
     <% @annotation_categories.each do |annotation_category| %>
-      drop_down_menus[<%= annotation_category.id %>] = new DropDownMenu(jQuery('#annotation_category_<%= annotation_category.id %>'), jQuery('#annotation_text_list_<%= annotation_category.id %>'));
+      drop_down_menus[<%= annotation_category.id %>] =
+        new DropDownMenu(jQuery('#annotation_category_<%= annotation_category.id %>'),
+                         jQuery('#annotation_text_list_<%= annotation_category.id %>'));
     <% end %>
   }
 //]]>
