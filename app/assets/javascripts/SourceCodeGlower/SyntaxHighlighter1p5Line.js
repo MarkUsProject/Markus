@@ -9,8 +9,8 @@ Rules:
 - Assumes existence of SourceCodeLine abstract class
 **/
 
-var SyntaxHighlighter1p5Line = Class.create(SourceCodeLine, {
-  initialize: function($super, line_node) {
-    $super(line_node);
-  }
-});
+function SyntaxHighlighter1p5Line(line_node) {
+  SourceCodeLine.call(this, line_node);
+}
+
+SyntaxHighlighter1p5Line.prototype = Object.create(SourceCodeLine.prototype);
