@@ -17,10 +17,10 @@ jQuery(document).ready(function() {
 
   jQuery('#persist_groups_assignment').change(function() {
     jQuery.ajax({
-      url: "<%= update_group_properties_on_persist_assignments_path() %>",
-      async: true,
+      url:  this.getAttribute('data-path'),
       type: 'POST',
-      data: "assignment_id=" + this.value
+      data: 'assignment_id=' + this.value +
+            '&authenticity_token=' + AUTH_TOKEN
     });
   });
 

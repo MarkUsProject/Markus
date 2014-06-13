@@ -206,6 +206,7 @@
                     class: 'checkbox_label' %>
       <select id='persist_groups_assignment'
               name='persist_groups_assignment'
+              data-path='<%= update_group_properties_on_persist_assignments_path %>'
               disabled>
         <% @assignments.each do |assignment| %>
           <option value='<%= assignment.id %>'>
