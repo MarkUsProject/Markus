@@ -18,6 +18,7 @@ function filter(filter_name) {
         break;
       case 'assigned':
       case 'unassigned':
+      case 'inactive':
         students_table.filter_only_by(filter_name).render();
         break;
       case 'students_none':
