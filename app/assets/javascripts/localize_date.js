@@ -37,7 +37,7 @@ function localize_date(actual_date_div, date_div, language) {
 /** Convert a date in the given div to ISO 8601 format, then to a
     localized format. */
 function localize_datetime(actual_date_div, date_div, language) {
-  if (actual_date_div.value.indexOf('UTC') > -1) {
+  if (actual_date_div.value.indexOf(' ') > -1) {
     var options  = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
                      hour: 'numeric', minute: 'numeric', timeZoneName: 'short' };
 
