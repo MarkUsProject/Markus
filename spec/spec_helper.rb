@@ -17,7 +17,7 @@ RSpec.configure do |config|
   # config.mock_with :flexmock
   # config.mock_with :rr
 
-  # Ensure all new testing is done using the recommended expect syntax of 
+  # Ensure all new testing is done using the recommended expect syntax of
   # RSpec.
   config.expect_with :rspec do |c|
     c.syntax = :expect

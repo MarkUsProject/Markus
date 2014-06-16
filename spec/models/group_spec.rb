@@ -16,13 +16,13 @@ describe Group do
                    repo_name: 'g2markus')
       end
 
-      its(:repo_name) { should eq 'g2markus' }
+        it { expect(group.repo_name).to eq 'g2markus' }
     end
 
     context 'when name is not specified' do
       subject(:group) { create(:group) }
 
-      its(:repo_name) { should start_with('group_') }
+        it { expect(group.repo_name).to start_with('group_') }
     end
   end
 
