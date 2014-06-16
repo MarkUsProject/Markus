@@ -132,6 +132,9 @@ GEM
     rspec-core (2.99.0)
     rspec-expectations (2.99.0)
       diff-lcs (>= 1.1.3, < 2.0)
+    rspec-its (1.0.1)
+      rspec-core (>= 2.99.0.beta1)
+      rspec-expectations (>= 2.99.0.beta1)
     rspec-mocks (2.99.1)
     rspec-rails (2.99.0)
       actionpack (>= 3.0)
@@ -219,6 +222,7 @@ DEPENDENCIES
   rails (= 3.2.18)
   rdoc
   rghost
+  rspec-its
   rspec-rails (~> 2.99)
   rubyzip
   sass-rails (~> 3.2.3)

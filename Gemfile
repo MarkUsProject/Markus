@@ -76,6 +76,7 @@ group :development, :test do
   gem 'quiet_assets'
   gem 'rspec-rails', '~> 2.99'
   gem 'factory_girl_rails'
+  gem 'rspec-its'
 end
 
 # If you  plan to use unicorn servers for production
