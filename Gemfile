@@ -74,7 +74,7 @@ group :development, :test do
   gem 'byebug', :platforms => [:mri_20, :mri_21]
   gem 'mocha', :require => false
   gem 'quiet_assets'
-  gem 'rspec-rails', '~> 2.14.0'
+  gem 'rspec-rails', '~> 2.99'
   gem 'factory_girl_rails'
 end
 
