@@ -81,16 +81,17 @@
 .annotation_text_display {
   @include border-radius(5px);
   background: #f6f6f6;
-  border: 2px solid #ccc;
-  padding: 15px;
+  border: 1px solid $grey;
+  max-width: 400px;
+  padding: 0.25em 1em;
   position: absolute;
-  width: 400px;
+  width: auto;
 }
 
 #annotation_menu {
   @include border-radius-top(5px);
   background: #b7d3ec;
-	padding: 5px;
+  padding: 5px;
   margin: 0 0 10px 0;
 }
 
@@ -202,18 +203,9 @@ li.annotation_category {
     @include border-radius(5px);
     background: #ececec;
     border: 1px solid #ddd;
-    float: left;
-    height: 700px;
+    height: 100%;
     margin: 0 0 10px 0;
     padding: 10px;
-  }
-
-  #code_pane {
-    width: 60%;
-  }
-
-  #mark_pane {
-    width: 34%;
   }
 
     #mark_viewer,
@@ -275,50 +267,6 @@ li.annotation_category {
   overflow: auto;
 }
 
-.modal {
-  background-color: #fff;
-  padding: 12px;
-  border: 1px solid #333;
-}
-
-.window {
-  @include border-radius(10px);
-  background: url("/stylesheets/window_background.png") top left;
-  color: #fff;
-  font: bold 0.8em $font-stack;
-  min-height: 100px;
-  min-width: 150px;
-  padding: 10px;
-  text-align: center;
-
-  .window_contents {
-    height: 100%;
-    margin-top: 10px;
-    width: 100%;
-  }
-
-  .window_header {
-    text-align: center;
-  }
-
-  .window_title {
-    cursor:move;
-    font-size:11px;
-    margin-bottom:7px;
-    margin-top:-7px;
-  }
-
-  .window_close {
-    background-image:url("/stylesheets/window_close.gif");
-    cursor:pointer;
-    display:block;
-    height:13px;
-    left:5px;
-    position:absolute;
-    top:4px;
-    width:13px;
-  }
-}
 
 /* Annotation summary list styles */
 
@@ -494,36 +442,33 @@ li.annotation_category {
 
 /* Criterion summary holder */
 
-.marks_summary_pane {
+.mark_summary_holder {
+  background: #fbfbfb;
+  border-bottom: 1px solid #dadada;
+  padding: 5px;
 }
 
-  .mark_summary_holder {
-    background: #fbfbfb;
-    border-bottom: 1px solid #dadada;
+.marks_summary_pane_list {
+  margin: 0;
+  padding: 0;
+
+  th {
+    background-color: #b7d3ec;
     padding: 5px;
   }
 
-  .marks_summary_pane_list {
-    margin: 0;
-    padding: 0;
+  tr {
+    padding-left: 5px;
 
-    th {
-      background-color: #b7d3ec;
-      padding: 5px;
+    &:nth-child(odd) {
+      background: #EDEDED;
     }
 
-    tr {
-      padding-left: 5px;
-
-      &:nth-child(odd) {
-        background: #EDEDED;
-      }
-
-      &:nth-child(even) {
-        background: #fff;
-      }
+    &:nth-child(even) {
+      background: #fff;
     }
   }
+}
 
 .mark_subtotal {
   font-weight: bold;

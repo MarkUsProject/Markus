@@ -620,13 +620,6 @@ input#extra_mark_description {
   width: 250px;
 }
 
-
-
-#mark_pane,
-#annotation_pane {
-  float: left;
-}
-
 .float_left {
   float: left;
 }
@@ -1564,4 +1557,49 @@ pre#test_result_content {
   text-align: center;
   top: 50%;
   width: 100%;
+}
+
+
+/* Resizable column panes */
+#panes-content {
+  height: 100%;
+  width: 100%;
+
+  #panes {
+    height: 100%;
+    position: relative;
+    width: 100%;
+  }
+
+  #left-pane,
+  #drag,
+  #right-pane {
+    display: inline-block;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+  }
+
+  #left-pane,
+  #right-pane {
+    overflow: auto;
+  }
+
+  #left-pane {
+    padding-right: 0.5em;
+  }
+
+  #right-pane {
+    padding-left: 0.5em;
+  }
+
+  #drag {
+    background: #ccc;
+    cursor: col-resize;
+    margin-left: -5px;
+    overflow: hidden;
+    position: absolute;
+    width: 5px;
+  }
 }

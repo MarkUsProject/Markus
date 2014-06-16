@@ -2,6 +2,7 @@
   <%= stylesheet_link_tag('livepipe/tabs') %>
   <%= stylesheet_link_tag('SyntaxHighlighter') %>
   <%= stylesheet_link_tag('grader') %>
+  <%= javascript_include_tag 'panes.js' %>
 <% end %>
 
 <% # UI LIBRARIES %>
@@ -9,7 +10,6 @@
                            'dragdrop.js',
                            'controls.js',
                            'DropDownMenu/DropDownMenu.js',
-                           'ResizePane/ResizePane.js',
                            'jquery-ui.min.js' %>
 
 <% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
@@ -67,11 +67,13 @@
     // Only show unmarked criteria
     jQuery.ajax({
       url: "<%= collapse_criteria_assignment_submission_results_path(assignment_id: @assignment.id) %>",
+      async: false,
       type: 'GET'
     });
 
     jQuery.ajax({
       url: "<%= expand_unmarked_criteria_assignment_submission_results_path(assignment_id: @assignment.id, id: @result.id) %>",
+      async: false,
       type: 'GET'
     });
   });
@@ -106,8 +108,8 @@
 <div id='title_bar'>
   <h1>
   <%= t('results.title',
-      { assignment_name: @assignment.short_identifier,
-        group_name: @group.group_name }) %>
+        { assignment_name: @assignment.short_identifier,
+          group_name: @group.group_name }) %>
   (<%= @grouping.get_all_students_in_group %>)
   </h1>
 </div>
@@ -118,7 +120,7 @@
   <% end %>
 
   <% if @result.released_to_students %>
-    <p class='notice'><%=t(:marks_released_notice)%></p>
+    <p class='notice'><%= t(:marks_released_notice) %></p>
   <% end %>
 
   <% if @grouping.past_due_date? %>
