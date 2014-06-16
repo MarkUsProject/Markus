@@ -1,3 +1,10 @@
+# We need to force loading of all submission rules so that methods
+# like .const_defined? work correctly (rails abuse of autoload was
+# causing issues)
+Dir.glob('app/models/*_submission_rule.rb').each do |rule|
+  require File.expand_path(rule)
+end
+
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin,
                      except: [:deletegroup,
@@ -226,11 +233,13 @@ class AssignmentsController < ApplicationController
     end
 
     begin
-      @assignment = process_assignment_form(@assignment, params)
-      rescue Exception, RuntimeError => e
-        @assignment.errors.add(:base, I18n.t('assignment.error',
-                                              message: e.message))
-        render :edit, id: @assignment.id
+      @assignment.transaction do
+        @assignment = process_assignment_form(@assignment)
+      end
+    rescue SubmissionRule::InvalidRuleType => e
+      @assignment.errors.add(:base, I18n.t('assignment.error',
+                                           message: e.message))
+      render :edit, id: @assignment.id
       return
     end
 
@@ -264,9 +273,10 @@ class AssignmentsController < ApplicationController
   def create
     @assignment = Assignment.new
     @assignment.build_assignment_stat
+    @assignment.build_submission_rule
     @assignment.transaction do
       begin
-        @assignment = process_assignment_form(@assignment, params)
+        @assignment = process_assignment_form(@assignment)
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, e.message)
       end
@@ -599,8 +609,8 @@ class AssignmentsController < ApplicationController
       flash[:success] = t('assignment.create_success')
     end
 
-  def process_assignment_form(assignment, params)
-    assignment.attributes = params[:assignment]
+  def process_assignment_form(assignment)
+    assignment.update_attributes(assignment_params)
 
     # if there are no section due dates, destroy the objects that were created
     if params[:assignment][:section_due_dates_type] == '0'
@@ -610,34 +620,44 @@ class AssignmentsController < ApplicationController
     else
       assignment.section_due_dates_type = true
       assignment.section_groups_only = true
+      due_dates = params[:assignment][:section_due_dates_attributes]
+      if due_dates
+        due_dates.each_pair do |section, attributes|
+          assignment.section_due_dates[section.to_i] =
+            SectionDueDate.new(attributes)
+        end
+      end
     end
 
     # Some protective measures here to make sure we haven't been duped...
-    rule_name = params[:assignment][:submission_rule_attributes][:type]
-    potential_rule = Module.const_get(rule_name) rescue nil
+    rule_attributes = params[:assignment][:submission_rule_attributes]
+    rule_name       = rule_attributes[:type]
+    potential_rule  = if SubmissionRule.const_defined?(rule_name)
+                        SubmissionRule.const_get(rule_name)
+                      end
 
     unless potential_rule && potential_rule.ancestors.include?(SubmissionRule)
-      raise I18n.t('assignment.not_valid_submission_rule',
-        type: params[:assignment][:submission_rule_attributes][:type])
+      raise SubmissionRule::InvalidRuleType, rule_name
     end
 
-    # Was the SubmissionRule changed?  If so, switch the type of the SubmissionRule.
-    # This little conditional has to do some hack-y workarounds, since
-    # accepts_nested_attributes_for is a little...dumb.
-    if assignment.submission_rule.attributes['type'] !=
-         params[:assignment][:submission_rule_attributes][:type]
+    # Was the SubmissionRule changed?  If so, switch the type of the
+    # SubmissionRule. This little conditional has to do some hack-y
+    # workarounds, since accepts_nested_attributes_for is a little...dumb.
+    if assignment.submission_rule.attributes['type'] != rule_attributes[:type]
 
       # delete all the previously created periods for the given submission_rule
       # note that we should not delete this if the current submission rule
       # cannot be saved ( not valid )
       # otherwise we would end up with no periods!
       if assignment.submission_rule.valid?
-        assignment.submission_rule.periods.where('id != ?',
-                                                 assignment.submission_rule.id).
-                                                 delete_all
+        assignment.submission_rule
+                  .periods.where('id != ?', assignment.submission_rule.id)
+                  .delete_all
       end
 
-      assignment.submission_rule.type = params[:assignment][:submission_rule_attributes][:type]
+      assignment.submission_rule.type = rule_attributes[:type]
+      assignment.submission_rule.update_attributes(submission_rule_params)
+
       # add the submission type for validate in the model
       assignment.submission_rule.periods.each do |period|
         period.submission_rule_type = assignment.submission_rule.type
@@ -646,7 +666,7 @@ class AssignmentsController < ApplicationController
 
     if params[:is_group_assignment] == 'true'
       # Is the instructor forming groups?
-      if params[:assignment][:student_form_groups] == '0'
+      if assignment_params[:student_form_groups] == '0'
         assignment.invalid_override = true
       else
         assignment.student_form_groups = true
@@ -659,6 +679,7 @@ class AssignmentsController < ApplicationController
       assignment.group_min = 1
       assignment.group_max = 1
     end
+
     assignment
   end
 
@@ -698,4 +719,44 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  private
+
+  def assignment_params
+    params.require(:assignment).permit(
+        :short_identifier,
+        :description,
+        :message,
+        :repository_folder,
+        :due_date,
+        :allow_web_submits,
+        :display_grader_names_to_students,
+        :is_hidden,
+        :marking_scheme_type,
+        :group_min,
+        :group_max,
+        :student_form_groups,
+        :group_name_autogenerated,
+        :allow_remarks,
+        :remark_due_date,
+        :remark_message,
+        :section_groups_only,
+        :enable_test,
+        :assign_graders_to_criteria,
+        :tokens_per_day,
+        :group_name_displayed,
+        :invalid_override,
+        :section_groups_only,
+        assignment_files_attributes: [:_destroy, :id, :filename]
+    )
+  end
+
+  def submission_rule_params
+    params.require(:assignment)
+          .require(:submission_rule_attributes)
+          .permit(:_destroy, :id, periods_attributes: [:id,
+                                                       :deduction,
+                                                       :interval,
+                                                       :hours,
+                                                       :_destroy])
+  end
 end

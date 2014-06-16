@@ -23,6 +23,7 @@ gem 'coffee-script'
 gem 'jquery-rails'
 gem 'prototype-rails' # FIXME: Will be needed with Rails3.1
 gem 'activerecord-import'
+gem 'strong_parameters' # NOTE: this goes away when upgrading to Rails4
 
 group :assets do
   gem 'tilt', '~> 1.3.7'
