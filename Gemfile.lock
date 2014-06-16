@@ -199,7 +199,7 @@ DEPENDENCIES
   dynamic_form
   exception_notification
   execjs
-  factory_girl_rails (~> 4.2.1)
+  factory_girl_rails
   faker
   i18n
   jquery-rails
