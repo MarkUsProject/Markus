@@ -85,28 +85,30 @@
           <%= raw t('assignment.section_due_dates_info') %>
         </p>
         <div class='section_due_date_form'>
+          <% @index = 1 %>
           <%= f.fields_for :section_due_dates,
                            @section_due_dates do |due_date_f| %>
             <p>
               <%= label 'section', t('section.legend') %> <%= Section.find(due_date_f.object.section_id).name %>
               <br>
-              <%= due_date_f.text_field :section_id, class: 'hidden'%>
+              <%= due_date_f.text_field :section_id, class: 'hidden' %>
               <br>
               <%= due_date_f.label :due_date, t('due_date') %>
-              <%= raw(f.text_field :due_date,
-                                   id: 'actual_section_due_date',
-                                   class: 'hidden') %>
-              <%= text_field_tag 'section_due_date',
+              <%= raw(due_date_f.text_field :due_date,
+                                            id: "actual_section_due_date_#{@index}",
+                                            class: 'hidden actual_section_due_date') %>
+              <%= text_field_tag "section_due_date_#{@index}",
                                  nil,
                                  { onchange: 'set_onbeforeunload(true);',
-                                   size: 30 } %>
+                                   size: 30,
+                                   class: 'section_due_date' } %>
             </p>
+            <% @index += 1 %>
           <% end %>
         </div>
       </div>
     <% end %>
 
-    <%# TODO update the global due date with the first due date added. %>
     <div>
       <%= raw(f.label :due_date,
                       t('assignment.due_date').html_safe) %>
@@ -152,7 +154,7 @@
   <fieldset>
     <legend><%= t('assignment.marking_scheme.title') %></legend>
 
-    <% Assignment::MARKING_SCHEME_TYPE.each do |key,value| %>
+    <% Assignment::MARKING_SCHEME_TYPE.each do |key, value| %>
       <p>
         <%= raw(f.radio_button :marking_scheme_type,
                                Assignment::MARKING_SCHEME_TYPE[key],

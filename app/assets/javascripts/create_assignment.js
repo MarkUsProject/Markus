@@ -7,6 +7,11 @@ jQuery(document).ready(function() {
   localize_datetime(document.getElementById('actual_remark_due_date'),
                     document.getElementById('remark_due_date'),
                     language);
+  jQuery('.section_due_date').each(function(i) {
+    localize_datetime(document.getElementById('actual_section_due_date_' + (i+1)),
+                      document.getElementById('section_due_date_' + (i+1)),
+                      language);
+  });
 
   // Change repo folder to be same as short identifier
   jQuery('#short_identifier').change(function() {
@@ -19,6 +24,19 @@ jQuery(document).ready(function() {
 
   jQuery('#assignment_section_due_dates_type').change(function() {
     toggle_sections_due_date(jQuery(this).is(':checked'));
+  });
+
+  toggle_sections_due_date(jQuery('#assignment_section_due_dates_type').is(':checked'));
+
+  /* Update the global due date with the first section due date added, if the global due date
+     has not been set yet. */
+  var first = true;
+  jQuery('.section_due_date').change(function() {
+    if (first && (jQuery('#actual_assignment_due_date').val() == '')) {
+      jQuery('#actual_assignment_due_date').val(jQuery(this).siblings('.actual_section_due_date').val());
+      jQuery('#assignment_due_date').val(jQuery(this).val());
+      first = false;
+    }
   });
 
   jQuery('#persist_groups').change(function() {
