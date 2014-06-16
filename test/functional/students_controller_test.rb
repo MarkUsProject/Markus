@@ -42,7 +42,7 @@ class StudentsControllerTest < AuthenticatedControllerTest
     end
 
     should 'be able to get :new' do
-      get_as @admin, :new
+      get_as @admin, :new, user_params
       assert_response :success
     end
 
@@ -128,10 +128,11 @@ class StudentsControllerTest < AuthenticatedControllerTest
       should 'be able to update student (and change his section)' do
         put_as @admin,
                :update,
-               :id => @student.id,
-               :user => {:last_name => 'Doe',
-                         :first_name => 'John',
-                         :section_id => @section.id }
+               id: @student.id,
+             user: { user_name: 'machinist_student1',
+                     last_name: 'Doe',
+                    first_name: 'John',
+                    section_id: @section.id }
         assert_response :redirect
         assert_equal I18n.t('students.update.success',
                             :user_name => @student.user_name),

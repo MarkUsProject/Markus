@@ -39,9 +39,8 @@ class StudentsController < ApplicationController
 
   def update
     @user = Student.find_by_id(params[:id])
-    attrs = params[:user]
     # update_attributes supplied by ActiveRecords
-    if @user.update_attributes(attrs)
+    if @user.update_attributes(user_params)
       flash[:success] = I18n.t('students.update.success',
                                user_name: @user.user_name)
       redirect_to action: 'index'
@@ -80,7 +79,7 @@ class StudentsController < ApplicationController
   end
 
   def new
-    @user = Student.new(params[:user])
+    @user = Student.new(user_params)
     @sections = Section.all(order: 'name')
   end
 
@@ -88,7 +87,7 @@ class StudentsController < ApplicationController
     # Default attributes: role = TA or role = STUDENT
     # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
-    @user = Student.new(params[:user])
+    @user = Student.new(user_params)
     if @user.save
       flash[:success] = I18n.t('students.create.success',
                                user_name: @user.user_name)
@@ -151,4 +150,13 @@ class StudentsController < ApplicationController
     @grace_period_deductions = student.grace_period_deductions
   end
 
+  private
+
+  def user_params
+    params.require(:user).permit(:user_name,
+                                 :last_name,
+                                 :first_name,
+                                 :grace_credits,
+                                 :section_id)
+  end
 end

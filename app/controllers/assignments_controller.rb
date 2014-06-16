@@ -226,11 +226,13 @@ class AssignmentsController < ApplicationController
     end
 
     begin
-      @assignment = process_assignment_form(@assignment, params)
-      rescue Exception, RuntimeError => e
-        @assignment.errors.add(:base, I18n.t('assignment.error',
-                                              message: e.message))
-        render :edit, id: @assignment.id
+      @assignment.transaction do
+        @assignment = process_assignment_form(@assignment, params)
+      end
+    rescue SubmissionRule::InvalidRuleType => e
+      @assignment.errors.add(:base, I18n.t('assignment.error',
+                                           message: e.message))
+      render :edit, id: @assignment.id
       return
     end
 
@@ -264,6 +266,7 @@ class AssignmentsController < ApplicationController
   def create
     @assignment = Assignment.new
     @assignment.build_assignment_stat
+    @assignment.build_submission_rule
     @assignment.transaction do
       begin
         @assignment = process_assignment_form(@assignment, params)
@@ -600,7 +603,7 @@ class AssignmentsController < ApplicationController
     end
 
   def process_assignment_form(assignment, params)
-    assignment.attributes = params[:assignment]
+    assignment.update_attributes(assignment_params)
 
     # if there are no section due dates, destroy the objects that were created
     if params[:assignment][:section_due_dates_type] == '0'
@@ -610,34 +613,44 @@ class AssignmentsController < ApplicationController
     else
       assignment.section_due_dates_type = true
       assignment.section_groups_only = true
+      due_dates = params[:assignment][:section_due_dates_attributes]
+      if due_dates
+        due_dates.each_pair do |section, attributes|
+          assignment.section_due_dates[section.to_i] =
+            SectionDueDate.new(attributes)
+        end
+      end
     end
 
     # Some protective measures here to make sure we haven't been duped...
-    rule_name = params[:assignment][:submission_rule_attributes][:type]
-    potential_rule = Module.const_get(rule_name) rescue nil
+    rule_attributes = params[:assignment][:submission_rule_attributes]
+    rule_name       = rule_attributes[:type]
+    potential_rule  = if Module.const_defined?(rule_name)
+                        Module.const_get(rule_name)
+                      end
 
     unless potential_rule && potential_rule.ancestors.include?(SubmissionRule)
-      raise I18n.t('assignment.not_valid_submission_rule',
-        type: params[:assignment][:submission_rule_attributes][:type])
+      raise SubmissionRule::InvalidRuleType.new(rule_name)
     end
 
-    # Was the SubmissionRule changed?  If so, switch the type of the SubmissionRule.
-    # This little conditional has to do some hack-y workarounds, since
-    # accepts_nested_attributes_for is a little...dumb.
-    if assignment.submission_rule.attributes['type'] !=
-         params[:assignment][:submission_rule_attributes][:type]
+    # Was the SubmissionRule changed?  If so, switch the type of the
+    # SubmissionRule. This little conditional has to do some hack-y
+    # workarounds, since accepts_nested_attributes_for is a little...dumb.
+    if assignment.submission_rule.attributes['type'] != rule_attributes[:type]
 
       # delete all the previously created periods for the given submission_rule
       # note that we should not delete this if the current submission rule
       # cannot be saved ( not valid )
       # otherwise we would end up with no periods!
       if assignment.submission_rule.valid?
-        assignment.submission_rule.periods.where('id != ?',
-                                                 assignment.submission_rule.id).
-                                                 delete_all
+        assignment.submission_rule
+                  .periods.where('id != ?', assignment.submission_rule.id)
+                  .delete_all
       end
 
-      assignment.submission_rule.type = params[:assignment][:submission_rule_attributes][:type]
+      assignment.submission_rule.type = rule_attributes[:type]
+      assignment.submission_rule.update_attributes(submission_rule_params)
+
       # add the submission type for validate in the model
       assignment.submission_rule.periods.each do |period|
         period.submission_rule_type = assignment.submission_rule.type
@@ -646,7 +659,7 @@ class AssignmentsController < ApplicationController
 
     if params[:is_group_assignment] == 'true'
       # Is the instructor forming groups?
-      if params[:assignment][:student_form_groups] == '0'
+      if assignment_params[:student_form_groups] == '0'
         assignment.invalid_override = true
       else
         assignment.student_form_groups = true
@@ -659,6 +672,7 @@ class AssignmentsController < ApplicationController
       assignment.group_min = 1
       assignment.group_max = 1
     end
+
     assignment
   end
 
@@ -698,4 +712,43 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  private
+
+  def assignment_params
+    params.require(:assignment).permit(
+        :short_identifier,
+        :description,
+        :message,
+        :due_date,
+        :group_min,
+        :group_max,
+        :student_form_groups,
+        :group_name_autogenerated,
+        :group_name_displayed,
+        :repository_folder,
+        :invalid_override,
+        :marking_scheme_type,
+        :allow_web_submits,
+        :section_groups_only, # this might need to be taken out
+        :display_grader_names_to_students,
+        :enable_test,
+        :notes_count,
+        :assign_graders_to_criteria,
+        :rubric_criterions_count,
+        :flexible_criterions_count,
+        :groupings_count,
+        :tokens_per_day,
+        :allow_remarks,
+        :remark_due_dates,
+        :remark_message,
+        :is_hidden,
+        assignment_files_attributes: [:id, :filename, :_destroy]
+    )
+  end
+
+  def submission_rule_params
+    params.require(:assignment)
+          .require(:submission_rule_attributes)
+          .permit(:id, periods_attributes: [:deduction, :hours])
+  end
 end
