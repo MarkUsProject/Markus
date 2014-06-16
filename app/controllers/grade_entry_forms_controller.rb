@@ -62,7 +62,7 @@ class GradeEntryFormsController < ApplicationController
     # Process input properties
     @grade_entry_form.transaction do
       # Edit params before updating model
-      new_params = update_grade_entry_form_params params[:grade_entry_form]
+      new_params = update_grade_entry_form_params grade_entry_form_params
       if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.create.success')
@@ -85,7 +85,7 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form.transaction do
 
       # Edit params before updating model
-      new_params = update_grade_entry_form_params params[:grade_entry_form]
+      new_params = update_grade_entry_form_params grade_entry_form_params
       if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.edit.success')
@@ -337,7 +337,16 @@ class GradeEntryFormsController < ApplicationController
         end
       end
     end
-  redirect_to action: 'grades', id: @grade_entry_form.id
+    redirect_to action: 'grades', id: @grade_entry_form.id
   end
 
+  private
+
+  def grade_entry_form_params
+    params.require(:grade_entry_form).permit(:description,
+                                             :message,
+                                             :date,
+                                             :show_total,
+                                             :short_identifier)
+  end
 end
