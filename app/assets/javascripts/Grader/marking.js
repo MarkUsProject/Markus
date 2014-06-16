@@ -1,73 +1,64 @@
-// $(document).ready(function() {
-document.observe('dom:loaded', function() {
-  // changing the marking status
-  new Form.Element.EventObserver('marking_state', update_status);
+jQuery(document).ready(function() {
+  // Changing the marking status
+  jQuery('#marking_state').change(function() {
+    update_status(this, this.value)
+  });
 
   function update_status(element, value) {
-    var url = element.readAttribute('data-action');
-
     var params = {
       'value': value || '',
       'authenticity_token': AUTH_TOKEN
     }
 
-    new Ajax.Request(url, {
-      asynchronous: true,
-      evalScripts: true,
-      parameters: params
+    jQuery.ajax({
+      url:  element.readAttribute('data-action'),
+      type: 'POST',
+      data: params
     });
   }
 
-  // releasing the grades, only available on the admin page
-  var release = document.getElementById('released');
-  if (release) {
-    new Form.Element.EventObserver(release, function(element, value) {
-      var url = element.readAttribute('data-action');
+  // Releasing the grades, only available on the admin page
+  jQuery('#released').change(function() {
+    var params = {
+      'value': this.checked || '',
+      'authenticity_token': AUTH_TOKEN
+    }
 
+    jQuery.ajax({
+      url:  this.readAttribute('data-action'),
+      type: 'POST',
+      data: params
+    }).done(function() {
+      onbeforeunload.window = null;
+    });
+  });
+
+  // Event handlers for the flexible criteria grades
+  jQuery('.mark_grade_input').each(function(index) {
+
+    // Prevent clicks from hiding the grade
+    jQuery(this).click(function(event) {
+      event.preventDefault();
+      return false;
+    });
+
+    jQuery(this).change(function() {
       var params = {
-        'value': value || '',
+        'mark': this.value || '',
         'authenticity_token': AUTH_TOKEN
       }
 
-      new Ajax.Request(url, {
-        asynchronous: true,
-        evalScripts: true,
-        parameters: params,
-        onSuccess: function(request) { window.onbeforeunload = null; }
-      });
-    });
-  }
-
-  /**
-   * event handlers for the flexible criteria grades
-   */
-  $$('.mark_grade_input').each(function(item) {
-
-    // prevent clicks from hiding the grade
-    item.observe('click', function(event){
-      event.stop();
-    });
-
-    new Form.Element.EventObserver(item, function(element, value) {
-      var url = element.readAttribute('data-action');
-
-      var params = {
-        'mark': value || '',
-        'authenticity_token': AUTH_TOKEN
-      }
-
-      new Ajax.Request(url, {
-        asynchronous: true,
-        evalScripts: true,
-        parameters: params
+      jQuery.ajax({
+        url:  this.readAttribute('data-action'),
+        type: 'POST',
+        data: params
       });
     });
   });
 
-  /* Update Server status if state change is not currently reflected on server */
-  if (event.target == $('marking_state') && event.memo.reason == 'Update Server'){
-    update_status($('marking_state'), $('marking_state').value);
-  }
+  // Update server status
+  var state = document.getElementById('marking_state');
+  update_status(state, state.value);
 });
 
 function focus_mark_criterion(id) {
@@ -79,43 +70,42 @@ function focus_mark_criterion(id) {
 }
 
 function hide_criterion(id) {
-  document.getElementById("mark_criterion_inputs_" + id).style.display = "none";
-  document.getElementById("mark_criterion_title_" + id).style.display = "";
-  document.getElementById("mark_criterion_title_" + id + "_expand").innerHTML = "+ &nbsp;";
-  jQuery('#mark_criterion_title_' + id + "_expand").removeClass('expanded');
+  document.getElementById('mark_criterion_inputs_' + id).style.display = 'none';
+  document.getElementById('mark_criterion_title_' + id).style.display = '';
+  document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
+  document.getElementById('mark_criterion_title_' + id + '_expand').classList.remove('expanded');
 }
 
 function show_criterion(id) {
-  document.getElementById("mark_criterion_title_" + id + "_expand").innerHTML = "- &nbsp;";
-  document.getElementById("mark_criterion_inputs_" + id).style.display = "";
-  jQuery('#mark_criterion_title_' + id + "_expand").addClass('expanded');
+  document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
+  document.getElementById('mark_criterion_inputs_' + id).style.display = '';
+  document.getElementById('mark_criterion_title_' + id + '_expand').classList.add('expanded');
 }
 
 function select_mark(mark_id, mark) {
-  original_mark = $$('#mark_' + mark_id + '_table .rubric_criterion_level_selected').first();
+  original_mark = jQuery('#mark_' + mark_id + '_table .rubric_criterion_level_selected').first();
 
-  if (typeof(original_mark) != "undefined") {
-    original_mark.removeClassName('rubric_criterion_level_selected');
+  if (typeof(original_mark) !== 'undefined') {
+    original_mark.removeClass('rubric_criterion_level_selected');
   }
 
-  if (mark != null) {
-	  $('mark_' + mark_id + '_' + mark).addClassName('rubric_criterion_level_selected');
+  if (mark !== null) {
+    document.getElementById('mark_' + mark_id + '_' + mark).classList.add('rubric_criterion_level_selected');
   }
 }
 
 function update_total_mark(total_mark) {
-  document.getElementById("current_mark_div").innerHTML = total_mark;
-  document.getElementById("current_total_mark_div").innerHTML = total_mark;
+  document.getElementById('current_mark_div').innerHTML       = total_mark;
+  document.getElementById('current_total_mark_div').innerHTML = total_mark;
 }
 
 function update_marking_state_selected(current_marking_state, new_marking_state) {
-  document.getElementById("marking_state").value = new_marking_state;
-
-  var error_message = document.getElementById('criterion_incomplete_error');
+  document.getElementById('marking_state').value = new_marking_state;
 
   /* Update server state if error displayed or new state is different from server state */
+  var error_message = document.getElementById('criterion_incomplete_error');
   if (error_message.style.display != 'none' || current_marking_state != new_marking_state) {
     error_message.style.display = 'none';
-    Event.fire(document.getElementById("marking_state"), "dom:loaded", {reason: 'Update Server'});
+    jQuery.ready();
   }
 }
