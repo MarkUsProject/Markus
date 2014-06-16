@@ -23,6 +23,9 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
+  # Automatically infer an example group's spec type from the file location.
+  config.infer_spec_type_from_file_location!
+
   # Include Factory Girl syntax to simplify calls to factory.
   config.include FactoryGirl::Syntax::Methods
 

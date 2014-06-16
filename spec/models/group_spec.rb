@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Group do
 
-  it { should validate_presence_of(:group_name) }
-  it { should validate_uniqueness_of(:group_name) }
+  it { is_expected.to validate_presence_of(:group_name) }
+  it { is_expected.to validate_uniqueness_of(:group_name) }
   # it { should ensure_length_of(:group_name).is_at_most(30) }
 
   describe '#set_repo_name' do
