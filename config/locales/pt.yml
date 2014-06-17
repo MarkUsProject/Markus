@@ -27,7 +27,7 @@ pt:
     # app/views/layouts/_header.html.erb
     log_out:            "Sair"
     clear_role_switch_session_link: "Cancelar troca de papel"
-    working:            "Trabalhando"
+    working:            "Carregando"
     login_as:           "Fazer login como "
 
     # app/views/main/_about_content.html.erb
@@ -314,7 +314,6 @@ pt:
 
     #app/views/results/common
     common:
-      loading_code: "Carregando código..."
       submission_file: "Arquivo enviado:"
       test_results: "Resultado dos testes:"
       no_file_in_repository: "[Nenhum arquivo no respositório]"

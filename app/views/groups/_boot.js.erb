@@ -9,7 +9,7 @@ document.observe("dom:loaded", function() {
 
   // force the middle column to be moved on the y-axis as the page is scrolled
   Event.observe(document, "scroll", function() {
-  	// 110 is the displacement for "top" for .centreColumn as can be seen in the main.css
+    // 110 is the displacement for "top" for .centreColumn as can be seen in the main.css
     $("centreColumn").setStyle({ top: (document.viewport.getScrollOffsets().top + 110 ) +'px' });
   });
 
@@ -139,7 +139,9 @@ document.observe("dom:loaded", function() {
                     {
                       asynchronous:true,
                       evalScripts:true,
-                      onComplete: function() { $('loading_list').hide(); },
+                      onComplete: function() {
+                        document.getElementById('working').style.display = 'none';
+                      },
                       parameters: 'authenticity_token=' + AUTH_TOKEN
                     })
 
@@ -147,7 +149,9 @@ document.observe("dom:loaded", function() {
                     {
                       asynchronous:true,
                       evalScripts:true,
-                      onComplete: function() { $('loading_students_list').hide(); },
+                      onComplete: function() {
+                        document.getElementById('working').style.display = 'none';
+                      },
                       parameters: 'authenticity_token=' + AUTH_TOKEN
                     })
 });

@@ -33,7 +33,9 @@ document.observe("dom:loaded", function() {
                                 path: @path,
                                 revision_number: @revision_number) %>',
                    {asynchronous:true, evalScripts:true,
-                   onComplete:function(request){$('loading_list').hide();},
+                   onComplete:function(request){
+                      document.getElementById('working').style.display = 'none';
+                    },
                    parameters: 'authenticity_token=' + AUTH_TOKEN})
 
 });

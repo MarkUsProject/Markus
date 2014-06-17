@@ -57,7 +57,7 @@
 <% end %>
 
 <% if @assignment.submission_rule.can_collect_now? &&
-	flash[:commit_notice] != @assignment.submission_rule.commit_after_collection_message %>
+  flash[:commit_notice] != @assignment.submission_rule.commit_after_collection_message %>
   <div class="warning">
     <%= @assignment.submission_rule.after_collection_message %>
   </div>
@@ -118,8 +118,6 @@
 
 
 <div class="global_action">
-<span id="loading_list"><%= image_tag("spinner.gif") %> <%= I18n.t("groups.loading_list") %>
-</span>
 
 <% if (@grouping.is_valid? && !@grouping.repository_external_commits_only?) %>
   <%= button_to_function I18n.t("add_new"), "injectFileInput(); set_onbeforeunload(true);" %>
@@ -135,11 +133,11 @@
 <%= link_to( I18n.t(:cancel),
         {controller: 'submissions',
            action: 'file_manager'},
-	 id: @assignment.id,
-	 disabled: !@grouping.is_valid?,
-	 class: "button",
-	 onclick: "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
-	 ) unless @grouping.repository_external_commits_only? %>
+   id: @assignment.id,
+   disabled: !@grouping.is_valid?,
+   class: "button",
+   onclick: "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
+   ) unless @grouping.repository_external_commits_only? %>
 <% end %>
 </div>
 
@@ -157,11 +155,11 @@
 <%= link_to( I18n.t(:cancel),
         {controller: 'submissions',
            action: 'file_manager'},
-	 id: @assignment.id,
-	 disabled: !@grouping.is_valid?,
-	 class: "button",
-	 onclick: "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
-	 ) unless @grouping.repository_external_commits_only? %>
+   id: @assignment.id,
+   disabled: !@grouping.is_valid?,
+   class: "button",
+   onclick: "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
+   ) unless @grouping.repository_external_commits_only? %>
 </div>
 </form>
 <% end %>
