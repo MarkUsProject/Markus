@@ -1079,6 +1079,7 @@ td.grade_entry_form_result {
   text-align: center;
   top: 1em;
   width: 15em;
+  z-index: 99999;
 
   #ellipsis {
     display: inline-block;
