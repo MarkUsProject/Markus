@@ -1075,11 +1075,51 @@ td.grade_entry_form_result {
   left: 50%;
   margin-left: -7.5em;
   padding: 0.5em;
-  position: absolute;
+  position: fixed;
   text-align: center;
   top: 1em;
   width: 15em;
+
+  #ellipsis {
+    display: inline-block;
+    text-align: left;
+    width: 1em;
+
+    &::after {
+      -webkit-animation: ellipsis 2s infinite;
+      -moz-animation: ellipsis 2s infinite;
+      -ms-animation: ellipsis 2s infinite;
+      -o-animation: ellipsis 2s infinite;
+      animation: ellipsis 2s infinite;
+      content: "\2026";
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+    }
+  }
 }
+
+@-webkit-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 12px; }
+}
+@-moz-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 12px; }
+}
+@-ms-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 12px; }
+}
+@-o-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 12px; }
+}
+@keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 12px; }
+}
+
 
 a.icon_remove {
   background: url('icons/cancel.png') no-repeat;

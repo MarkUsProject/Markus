@@ -27,7 +27,7 @@ en:
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
     clear_role_switch_session_link: "Cancel role switch"
-    working:            "Working…"
+    working:            "Working"
     login_as:           "Login as"
 
     # app/views/main/_about_content.html.erb

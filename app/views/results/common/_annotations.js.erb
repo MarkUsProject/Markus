@@ -230,7 +230,7 @@
       this.remove();
     });
 
-    document.getElementById('loading_code').style.display = '';
+    document.getElementById('working').style.display = '';
     document.getElementById('select_file_id').disabled = true;
 
     positions = null;
@@ -243,7 +243,7 @@
             '&focus_line=' + focus_line +
             '&authenticity_token=' + AUTH_TOKEN
     }).done(function() {
-      document.getElementById('loading_code').style.display = 'none';
+      document.getElementById('working').style.display = 'none';
     });
   }
 

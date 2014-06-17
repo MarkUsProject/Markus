@@ -27,7 +27,7 @@ fr:
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
     clear_role_switch_session_link: "Annuler le changement d'utilisateur."
-    working:            "Chargement…"
+    working:            "Chargement"
     login_as:           "Connexion en tant que"
 
     # app/views/main/_about_content.html.erb
