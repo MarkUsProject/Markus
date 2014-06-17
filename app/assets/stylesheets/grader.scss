@@ -479,3 +479,48 @@ li.annotation_category {
   font-weight: bold;
   padding: 10px;
 }
+
+
+/* Resizable column panes */
+
+#panes-content {
+  height: 100%;
+  width: 100%;
+
+  #panes {
+    height: 100%;
+    width: 100%;
+  }
+
+  #left-pane,
+  #drag,
+  #right-pane {
+    display: inline-block;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+  }
+
+  #left-pane,
+  #right-pane {
+    overflow: auto;
+  }
+
+  #left-pane {
+    padding-right: 0.5em;
+  }
+
+  #right-pane {
+    padding-left: 0.5em;
+  }
+
+  #drag {
+    background: #ccc;
+    cursor: col-resize;
+    margin-left: -5px;
+    overflow: hidden;
+    position: absolute;
+    width: 5px;
+  }
+}
