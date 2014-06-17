@@ -216,6 +216,7 @@ fr:
     properties:         "Propriétés"
     grades:             "Notes"
     submissions:        "Envois"
+    summaries:          "Récapitulatif"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"
     join:               "Rejoindre"
@@ -313,6 +314,7 @@ fr:
         change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"
         select_some_text: "Vous devez sélectionner du texte"
         select_an_area: "Vous devez sélectionner une zone sur l'image pour annoter"
+        provide_text:   "Vous devez fournir une annotation"
 
     #app/views/results/common
     common:
@@ -411,6 +413,20 @@ fr:
       sections:             "Section :"
       revision_history:     "%{num} : "
 
+    summaries_index:
+      group_name:           "Nom du groupe"
+      repository:           "Répertoire"
+      repository_name:      "Répertoire : %{repository}"
+      commit_date:          "Date d'envoi (commit)"
+      marking_state:        "Affichage de la note"
+      grace_credits_used:   "Utilisation des \"grace credits\""
+      final_grade:          "Note finale"
+      criterion:             "critère"
+      per_page:             "par page"
+      filename:             "Fichier"
+      section:              "Section"
+      sections:             "Section :"
+
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
       invalid_name: "est déjà utilisé"
@@ -482,6 +498,7 @@ fr:
       all_students: "Tous les étudiants(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Non assigné(s)(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigné(s)(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inactif(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Utiliser les groupes d'un autre projet"
       graders: "Correcteurs (%{graders})"
       all_grouping_counts: "Tous (<span id=\"all_groupings_count\"></span>)"

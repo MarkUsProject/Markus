@@ -706,11 +706,11 @@ input#extra_mark_description {
 
 .colLeftGroups {
   min-width: 365px;
-  width: 35%;
+  width: 40%;
 }
 
 .colRightGroups {
-  width: 55%;
+  width: 51%;
 }
 
 .colLeftGraders {
@@ -1542,34 +1542,6 @@ pre#test_result_content {
 
 .section_due_date_form {
   margin-left: 60px;
-}
-
-
-/* styles specific to the graphs on the dashboard */
-
-.bluff-tooltip {
-  background: $primary-color;
-  border: 1px solid #000;
-  margin: 0;
-  padding: 0;
-
-  span {
-    display: none;
-
-    &.label {
-      display: inline;
-      float: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    &.data {
-      display: inline;
-      float: none;
-      margin: 0;
-      padding: 0;
-    }
-  }
 }
 
 #current_time {

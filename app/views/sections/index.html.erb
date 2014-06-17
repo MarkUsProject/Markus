@@ -4,7 +4,7 @@
 
 <%= render 'shared/flash_message' %>
 
-<%= link_to I18n.t('section.add_section'), new_section_path, :class => 'button' %>
+<%= link_to I18n.t('section.add_section'), new_section_path, class: 'button' %>
 <% if @sections.empty? %>
   <p><%= I18n.t('section.no_sections') %></p>
 <% else %>
@@ -15,12 +15,12 @@
         <span class="info">(<%= section.students.count %>)</span>
       </td>
       <td><%= button_to I18n.t('delete'),
-        { :action => 'destroy', :id => section.id },
-        :class => 'delete',
-        :confirm => I18n.t('section.delete.link_confirm'),
-        :method => 'delete',
-        :disabled => !section.students.empty?,
-        :class => 'thin-button'
+        { action: 'destroy', id: section.id },
+        class: 'delete',
+        confirm: I18n.t('section.delete.link_confirm'),
+        method: 'delete',
+        disabled: !section.students.empty?,
+        class: 'thin-button'
       %></td>
     </tr>
     <% end %>

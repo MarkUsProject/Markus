@@ -19,7 +19,7 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
     # Calculate the penalty that the grouping will suffer
     potential_penalty = calculate_penalty(overtime_hours)
 
-    I18n.t 'submission_rules.penalty_decay_period_submission_rule.overtime_message', :potential_penalty => potential_penalty
+    I18n.t 'submission_rules.penalty_decay_period_submission_rule.overtime_message', potential_penalty: potential_penalty
   end
 
   def apply_submission_rule(submission)
@@ -34,7 +34,7 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
       penalty.extra_mark = -penalty_amount
       penalty.unit = ExtraMark::UNITS[:percentage]
 
-      penalty.description = I18n.t 'submission_rules.penalty_decay_period_submission_rule.extramark_description', :overtime_hours => overtime_hours, :penalty_amount => penalty_amount
+      penalty.description = I18n.t 'submission_rules.penalty_decay_period_submission_rule.extramark_description', overtime_hours: overtime_hours, penalty_amount: penalty_amount
       penalty.save
     end
 

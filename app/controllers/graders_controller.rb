@@ -16,28 +16,28 @@ class GradersController < ApplicationController
 
   def upload_dialog
     @assignment = Assignment.find(params[:assignment_id])
-    render :partial => 'graders/modal_dialogs/upload_dialog',
-           :handlers => [:rjs]
+    render partial: 'graders/modal_dialogs/upload_dialog',
+           handlers: [:rjs]
   end
 
   def download_dialog
     @assignment = Assignment.find(params[:assignment_id])
-    render :partial => 'graders/modal_dialogs/download_dialog',
-           :handlers => [:rjs]
+    render partial: 'graders/modal_dialogs/download_dialog',
+           handlers: [:rjs]
   end
 
   def groups_coverage_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping])
-    render :partial => 'graders/modal_dialogs/groups_coverage_dialog',
-           :handlers => [:rjs]
+    render partial: 'graders/modal_dialogs/groups_coverage_dialog',
+           handlers: [:rjs]
   end
 
   def grader_criteria_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @grader = Ta.find(params[:grader])
-    render :partial => 'graders/modal_dialogs/grader_criteria_dialog',
-           :handlers => [:rjs]
+    render partial: 'graders/modal_dialogs/grader_criteria_dialog',
+           handlers: [:rjs]
   end
 
 
@@ -45,7 +45,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     groupings = groupings_with_assoc(@assignment)
     @table_rows = construct_table_rows(groupings, @assignment)
-    render :populate, :formats => [:js] 
+    render :populate, formats: [:js]
   end
 
   def populate_graders
@@ -58,7 +58,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     criteria = criteria_with_assoc(@assignment)
     @table_rows = construct_criterion_table_rows(criteria, @assignment)
-    render :populate_criteria, :formats => [:js] 
+    render :populate_criteria, formats: [:js]
   end
 
   def set_assign_criteria
@@ -80,7 +80,7 @@ class GradersController < ApplicationController
   def csv_upload_grader_groups_mapping
     if !request.post? || params[:grader_mapping].nil?
       flash[:error] = I18n.t('csv.group_to_grader')
-      redirect_to :action => 'index', :assignment_id => params[:assignment_id]
+      redirect_to action: 'index', assignment_id: params[:assignment_id]
       return
     end
 
@@ -89,7 +89,7 @@ class GradersController < ApplicationController
     if invalid_lines.size > 0
       flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
     end
-    redirect_to :action => 'index', :assignment_id => params[:assignment_id]
+    redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
 
   # Assign TAs to Criteria via a csv file
@@ -97,7 +97,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     if !request.post? || params[:grader_criteria_mapping].nil?
       flash[:error] = I18n.t('csv.criteria_to_grader')
-      redirect_to :action => 'index', :assignment_id => params[:assignment_id]
+      redirect_to action: 'index', assignment_id: params[:assignment_id]
       return
     end
 
@@ -109,7 +109,7 @@ class GradersController < ApplicationController
     if invalid_lines.size > 0
       flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
     end
-    redirect_to :action => 'index', :assignment_id => params[:assignment_id]
+    redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
 
   def download_grader_groupings_mapping
@@ -127,7 +127,7 @@ class GradersController < ApplicationController
        end
      end
 
-    send_data(file_out, :type => 'text/csv', :disposition => 'inline')
+    send_data(file_out, type: 'text/csv', disposition: 'inline')
   end
 
   def download_grader_criteria_mapping
@@ -145,13 +145,13 @@ class GradersController < ApplicationController
        end
      end
 
-    send_data(file_out, :type => 'text/csv', :disposition => 'inline')
+    send_data(file_out, type: 'text/csv', disposition: 'inline')
   end
 
   def add_grader_to_grouping
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id],
-                                :include => [:students, :tas, :group])
+                                include: [:students, :tas, :group])
     grader = Ta.find(params[:grader_id])
     @grouping.add_tas(grader)
     @groupings_data = construct_table_rows([@grouping.reload],@assignment)
@@ -161,7 +161,7 @@ class GradersController < ApplicationController
       criterion.save
     end
     @criteria_data = construct_criterion_table_rows(criteria, @assignment)
-    render :add_grader_to_grouping, :formats => [:js] 
+    render :add_grader_to_grouping, formats: [:js]
   end
 
   #These actions act on all currently selected graders & groups
@@ -177,7 +177,7 @@ class GradersController < ApplicationController
          #if there is a global action than there should be a group selected
           if params[:global_actions]
               @global_action_warning = I18n.t('assignment.group.select_a_group')
-              render :partial => 'shared/global_action_warning', :handlers => [:rjs]
+              render partial: 'shared/global_action_warning', handlers: [:rjs]
               return
           end
         end
@@ -185,7 +185,7 @@ class GradersController < ApplicationController
           when 'assign'
             if params[:graders].nil? or params[:graders].size ==  0
               @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render :partial => 'shared/global_action_warning', :handlers => [:rjs]
+              render partial: 'shared/global_action_warning', handlers: [:rjs]
               return
             end
             assign_all_graders(grouping_ids, grader_ids)
@@ -196,7 +196,7 @@ class GradersController < ApplicationController
           when 'random_assign'
             if params[:graders].nil? or params[:graders].size ==  0
               @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render :partial => 'shared/global_action_warning', :handlers => [:rjs]
+              render partial: 'shared/global_action_warning', handlers: [:rjs]
               return
             end
             randomly_assign_graders(grouping_ids, grader_ids)
@@ -204,11 +204,11 @@ class GradersController < ApplicationController
         end
       when 'criteria_table'
         @assignment = Assignment.find(params[:assignment_id],
-          :include => [{:groupings => [:students,
-                {:tas => :criterion_ta_associations}, :group]}])
+          include: [{groupings: [:students,
+                {tas: :criterion_ta_associations}, :group]}])
         if params[:criteria].nil? or params[:criteria].size ==  0
       #don't do anything if no criteria
-          render :nothing => true
+          render nothing: true
           return
         end
         criteria = criteria_with_assoc(@assignment,
@@ -217,10 +217,10 @@ class GradersController < ApplicationController
           when 'assign'
           if params[:graders].nil? or params[:graders].size ==  0
             #don't do anything if no graders
-            render :nothing => true
+            render nothing: true
             return
           end
-            graders = Ta.where(:id => grader_ids)
+            graders = Ta.where(id: grader_ids)
             add_graders_to_criteria(criteria, graders)
             return
           when 'unassign'
@@ -229,7 +229,7 @@ class GradersController < ApplicationController
           when 'random_assign'
             if params[:graders].nil? or params[:graders].size ==  0
               #don't do anything if no graders
-              render :nothing => true
+              render nothing: true
               return
             end
             randomly_assign_graders_to_criteria(criteria, grader_ids)
@@ -243,7 +243,7 @@ class GradersController < ApplicationController
   # Returns a list of groupings with included associations.
   #
   #   # Include the tas asociation of grouping.
-  #   groupings_with_assoc(a, :includes => [:tas])
+  #   groupings_with_assoc(a, includes: [:tas])
   #   # Include all associations in GROUPING_ASSOC.
   #   groupings_with_assoc(a)
   def groupings_with_assoc(assignment, options = {})
@@ -265,7 +265,7 @@ class GradersController < ApplicationController
   end
 
   def randomly_assign_graders_to_criteria(criteria, grader_ids)
-    graders = Ta.where(:id => grader_ids)
+    graders = Ta.where(id: grader_ids)
     # Shuffle the criteria
     criteria = criteria.sort_by{rand}
     # Now, deal them out like cards...
@@ -286,7 +286,7 @@ class GradersController < ApplicationController
       grouping.save
     end
     construct_all_rows(groupings, graders, criteria)
-    render :modify_criteria, :formats => [:js] 
+    render :modify_criteria, formats: [:js]
   end
 
   def randomly_assign_graders(grouping_ids, grader_ids)
@@ -315,7 +315,7 @@ class GradersController < ApplicationController
       grouping.save
     end
     construct_all_rows(groupings, graders, criteria)
-    render :modify_criteria, :formats => [:js] 
+    render :modify_criteria, formats: [:js]
   end
 
   def remove_graders_from_criteria(criteria, params)
@@ -340,7 +340,7 @@ class GradersController < ApplicationController
       grouping.save
     end
     construct_all_rows(groupings , all_graders, criteria)
-    render :modify_criteria, :formats => [:js] 
+    render :modify_criteria, formats: [:js]
   end
 
   def unassign_graders(grader_membership_ids, grouping_ids)

@@ -15,6 +15,15 @@ jQuery(document).ready(function() {
     toggle_persist_groups(jQuery(this).is(':checked'));
   });
 
+  jQuery('#persist_groups_assignment').change(function() {
+    jQuery.ajax({
+      url:  this.getAttribute('data-path'),
+      type: 'POST',
+      data: 'assignment_id=' + this.value +
+            '&authenticity_token=' + AUTH_TOKEN
+    });
+  });
+
   jQuery('#is_group_assignment').change(function() {
     toggle_group_assignment(jQuery(this).is(':checked'));
   });
@@ -35,6 +44,7 @@ jQuery(document).ready(function() {
 });
 
 function toggle_persist_groups(persist_groups) {
+  jQuery('#persist_groups_assignment').prop('disabled', !persist_groups);
   jQuery('#is_group_assignment').prop('disabled', persist_groups);
   jQuery('#is_group_assignment_style').toggleClass('disable', persist_groups);
 
@@ -53,7 +63,6 @@ function toggle_group_assignment(is_group_assignment) {
   jQuery('#assignment_group_max').prop('disabled', !is_group_assignment);
 
   jQuery('#persist_groups').prop('disabled', is_group_assignment);
-  jQuery('#persist_groups_assignment').prop('disabled', is_group_assignment);
   jQuery('#persist_groups_assignment_style').toggleClass('disable', is_group_assignment);
 }
 

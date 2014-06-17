@@ -8,18 +8,18 @@ class GradeEntryStudent < ActiveRecord::Base
 
   attr_accessor :total_grade
 
-  has_many  :grades, :dependent => :destroy
-  has_many  :grade_entry_items, :through => :grades
+  has_many  :grades, dependent: :destroy
+  has_many  :grade_entry_items, through: :grades
 
   has_and_belongs_to_many :tas
 
   validates_associated :user
   validates_associated :grade_entry_form
 
-  validates_numericality_of :user_id, :only_integer => true, :greater_than => 0,
-                            :message => I18n.t('invalid_id')
-  validates_numericality_of :grade_entry_form_id, :only_integer => true, :greater_than => 0,
-                            :message => I18n.t('invalid_id')
+  validates_numericality_of :user_id, only_integer: true, greater_than: 0,
+                            message: I18n.t('invalid_id')
+  validates_numericality_of :grade_entry_form_id, only_integer: true, greater_than: 0,
+                            message: I18n.t('invalid_id')
 
   # Given a row from a CSV file in the format
   # username,q1mark,q2mark,...,

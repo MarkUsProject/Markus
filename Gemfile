@@ -16,8 +16,8 @@ gem 'i18n'
 gem 'will_paginate'
 gem 'dynamic_form'
 gem 'exception_notification'
-gem 'minitest',"4.7.5", :platforms => :ruby_20
-gem 'calendar_date_select', :git => 'git://github.com/paneq/calendar_date_select.git'
+gem 'minitest',"4.7.5", platforms: :ruby_20
+gem 'calendar_date_select', git: 'git://github.com/paneq/calendar_date_select.git'
 gem 'auto_complete'
 gem 'json'
 gem 'coffee-script'
@@ -71,9 +71,9 @@ group :development, :test do
   gem 'faker'
   gem 'railroady'
   gem 'time-warp'
-  gem 'debugger', :platforms => :mri_19
-  gem 'byebug', :platforms => [:mri_20, :mri_21]
-  gem 'mocha', :require => false
+  gem 'debugger', platforms: :mri_19
+  gem 'byebug', platforms: [:mri_20, :mri_21]
+  gem 'mocha', require: false
   gem 'quiet_assets'
 end
 

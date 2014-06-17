@@ -12,8 +12,8 @@ class StudentsController < ApplicationController
   end
 
   def index
-    @students = Student.all(:order => 'user_name')
-    @sections = Section.all(:order => 'name')
+    @students = Student.all(order: 'user_name')
+    @sections = Section.all(order: 'name')
   end
 
   def populate
@@ -21,20 +21,20 @@ class StudentsController < ApplicationController
     # 1. AJAX call made by jQuery to populate the student table
     # 2. Find students from the database
     # 3. Pass in the student data into the helper function (construct_table_rows defined in UsersHelper)
-    @students_data = Student.all(:order => 'user_name',
-                                 :include => [:section,
+    @students_data = Student.all(order: 'user_name',
+                                 include: [:section,
                                               :grace_period_deductions])
 
     # Function below contained within helpers/users_helper.rb
     @students = construct_table_rows(@students_data)
     respond_to do |format|
-      format.json { render :json => @students }
+      format.json { render json: @students }
     end
   end
 
   def edit
     @user = Student.find_by_id(params[:id])
-    @sections = Section.all(:order => 'name')
+    @sections = Section.all(order: 'name')
   end
 
   def update
@@ -43,11 +43,11 @@ class StudentsController < ApplicationController
     # update_attributes supplied by ActiveRecords
     if @user.update_attributes(attrs)
       flash[:success] = I18n.t('students.update.success',
-                               :user_name => @user.user_name)
-      redirect_to :action => 'index'
+                               user_name: @user.user_name)
+      redirect_to action: 'index'
     else
       flash[:error] = I18n.t('students.update.error')
-      @sections = Section.all(:order => 'name')
+      @sections = Section.all(order: 'name')
       render :edit
     end
   end
@@ -72,7 +72,7 @@ class StudentsController < ApplicationController
           Student.update_section(student_ids, params[:section])
           @students = construct_table_rows(Student.find(student_ids))
       end
-      render :bulk_modify, :formats => [:js]
+      render :bulk_modify, formats: [:js]
     rescue RuntimeError => e
       @error = e.message
       render :display_error
@@ -81,7 +81,7 @@ class StudentsController < ApplicationController
 
   def new
     @user = Student.new(params[:user])
-    @sections = Section.all(:order => 'name')
+    @sections = Section.all(order: 'name')
   end
 
   def create
@@ -91,10 +91,10 @@ class StudentsController < ApplicationController
     @user = Student.new(params[:user])
     if @user.save
       flash[:success] = I18n.t('students.create.success',
-                               :user_name => @user.user_name)
-      redirect_to :action => 'index' # Redirect
+                               user_name: @user.user_name)
+      redirect_to action: 'index' # Redirect
     else
-      @sections = Section.all(:order => 'name')
+      @sections = Section.all(order: 'name')
       flash[:error] = I18n.t('students.create.error')
       render :new
     end
@@ -110,7 +110,7 @@ class StudentsController < ApplicationController
   #downloads users with the given role as a csv list
   def download_student_list
     #find all the users
-    students = Student.all(:order => 'user_name')
+    students = Student.all(order: 'user_name')
     case params[:format]
     when 'csv'
       output = User.generate_csv_list(students)
@@ -123,7 +123,7 @@ class StudentsController < ApplicationController
       output = students.to_xml
       format = 'text/xml'
     end
-    send_data(output, :type => format, :disposition => 'inline')
+    send_data(output, type: format, disposition: 'inline')
   end
 
   def upload_student_list
@@ -140,7 +140,7 @@ class StudentsController < ApplicationController
       end
 
     end
-    redirect_to :action => 'index'
+    redirect_to action: 'index'
   end
 
   def delete_grace_period_deduction

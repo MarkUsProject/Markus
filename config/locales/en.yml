@@ -213,6 +213,7 @@ en:
     properties:         "Properties"
     grades:             "Grades"
     submissions:        "Submissions"
+    summaries:          "Summaries"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
@@ -310,6 +311,7 @@ en:
         change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
         select_some_text: "You must select some source code text"
         select_an_area: "You should select an area on the image to annotate"
+        provide_text:   "You must provide some annotation text"
 
     #app/views/results/common
     common:
@@ -408,6 +410,20 @@ en:
       sections:             "Section:"
       revision_history:     "%{num}: "
 
+    summaries_index:
+      group_name:           "Group Name"
+      repository_name:      "Repository: %{repository}"
+      repository:           "Repository"
+      commit_date:          "Commit Date"
+      marking_state:        "Marking State"
+      grace_credits_used:   "Grace Credits Used"
+      final_grade:          "Final Grade"
+      criterion:             "criterion"
+      per_page:             "per page"
+      filename:             "Filename"
+      section:              "Section"
+      sections:             "Section:"
+
     grade_entry_forms:
       blank_field: "can't be blank"
       invalid_name: "is already taken"
@@ -480,6 +496,7 @@ en:
       all_students:     "All students(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Unassigned(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigned(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inactive(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Use another assignment's groups"
       graders: "Graders (%{graders})"
       all_grouping_counts: "All Groups(<span id=\"all_groupings_count\"></span>)"

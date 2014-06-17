@@ -3,11 +3,11 @@ class TasController < ApplicationController
   before_filter  :authorize_only_for_admin
 
   def index
-    @tas = Ta.all(:order => "user_name")
+    @tas = Ta.all(order: "user_name")
   end
 
   def populate
-    @tas_data = Ta.all(:order => "user_name")
+    @tas_data = Ta.all(order: "user_name")
     # construct_table_rows defined in UsersHelper
     @tas = construct_table_rows(@tas_data)
   end
@@ -23,7 +23,7 @@ class TasController < ApplicationController
     # update_attributes supplied by ActiveRecords
     if @user.update_attributes(attrs)
       flash[:edit_notice] = @user.user_name + ' has been updated.'
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
     else
       render :edit
     end
@@ -39,14 +39,14 @@ class TasController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     return unless @user.save
-    redirect_to :action => 'index' # Redirect
+    redirect_to action: 'index' # Redirect
   end
 
 
   #downloads users with the given role as a csv list
   def download_ta_list
     #find all the users
-    tas = Ta.all(:order => "user_name")
+    tas = Ta.all(order: "user_name")
     case params[:format]
     when 'csv'
       output = User.generate_csv_list(tas)
@@ -59,7 +59,7 @@ class TasController < ApplicationController
       output = tas.to_xml
       format = 'text/xml'
     end
-    send_data(output, :type => format, :disposition => 'inline')
+    send_data(output, type: format, disposition: 'inline')
   end
 
 
@@ -71,6 +71,6 @@ class TasController < ApplicationController
       end
       flash[:upload_notice] = result[:upload_notice]
     end
-    redirect_to :action => 'index'
+    redirect_to action: 'index'
   end
 end

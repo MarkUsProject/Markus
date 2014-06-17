@@ -3,8 +3,8 @@
 class GradeEntryItem < ActiveRecord::Base
   belongs_to  :grade_entry_form
 
-  has_many   :grades, :dependent => :destroy
-  has_many   :grade_entry_students, :through => :grades
+  has_many   :grades, dependent: :destroy
+  has_many   :grade_entry_students, through: :grades
 
   validates_presence_of   :name
   validates_presence_of   :out_of
@@ -12,11 +12,11 @@ class GradeEntryItem < ActiveRecord::Base
 
   validates_associated    :grade_entry_form
 
-  validates_uniqueness_of   :name, :scope => :grade_entry_form_id,
-                            :message => I18n.t('grade_entry_forms.invalid_name')
-  validates_numericality_of :out_of, :greater_than_or_equal_to => 0,
-                            :message => I18n.t('grade_entry_forms.invalid_column_out_of')
-  validates_numericality_of :position, :greater_than_or_equal_to => 0
+  validates_uniqueness_of   :name, scope: :grade_entry_form_id,
+                            message: I18n.t('grade_entry_forms.invalid_name')
+  validates_numericality_of :out_of, greater_than_or_equal_to: 0,
+                            message: I18n.t('grade_entry_forms.invalid_column_out_of')
+  validates_numericality_of :position, greater_than_or_equal_to: 0
 
   # Create new grade entry items (or update them if they already exist) using
   # the first two rows from a CSV file
