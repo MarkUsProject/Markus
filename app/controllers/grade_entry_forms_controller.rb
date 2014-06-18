@@ -101,17 +101,10 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form = GradeEntryForm.find(params[:id])
     @filter = 'none'
 
-    # Pagination options
-    #if params[:per_page].present?
-    #  @per_page = params[:per_page]
-    #else
-    #  @per_page = 150
-    #end
-
     @current_page = 1
 
     # The cookies are handled here
-    @c_per_page = current_user.id.to_s + '_' + @grade_entry_form.id.to_s + '_per_page'
+    @c_per_page = current_user.id.to_s + '_' + @grade_entry_form.id.to_s + '_per_page_sp'
     if params[:per_page].present?
       cookies[@c_per_page] = params[:per_page]
     elsif cookies[@c_per_page].present?
@@ -161,7 +154,7 @@ class GradeEntryFormsController < ApplicationController
         {grade_entry_form: @grade_entry_form},
         params)
     # During Ajax Request, it is important to set the :per_page cookie here as well
-    @ajx_per_page = current_user.id.to_s + '_' + @grade_entry_form.id.to_s + '_per_page'
+    @ajx_per_page = current_user.id.to_s + '_' + @grade_entry_form.id.to_s + '_per_page_sp'
     if params[:per_page].present?
       cookies[@ajx_per_page] = params[:per_page]
     elsif cookies[@c_per_page].present?
