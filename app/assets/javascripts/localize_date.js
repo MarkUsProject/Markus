@@ -39,7 +39,7 @@ function localize_date(actual_date_div, date_div, language) {
 function localize_datetime(actual_date_div, date_div, language) {
   if (actual_date_div.value.indexOf(' ') > -1) {
     var options  = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-                     hour: 'numeric', minute: 'numeric', timeZoneName: 'short' };
+                     hour: 'numeric', minute: 'numeric' };
 
     var iso_date = convert_date_to_iso(actual_date_div.value);
     date_div.value = new Date(Date.parse(iso_date)).toLocaleString(language, options);

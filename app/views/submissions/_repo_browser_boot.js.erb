@@ -49,8 +49,8 @@
       showTime:         false,
       numberOfMonths:   2,
       secondMax:        0,
-      dateFormat:       "<%= raw I18n.t('date.formats.locale_repo_date') %>",
-      timeFormat:       "<%= I18n.t('time.formats.locale_repo_time') %>",
+      dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
+      timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
       monthNames:       <%= raw I18n.t('date.months') %>,
       dayNames:         <%= raw I18n.t('date.weekdays') %>,
       dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
@@ -60,7 +60,6 @@
       prevText:         "<%= I18n.t('time.prev') %>",
       nextText:         "<%= I18n.t('time.next') %>",
       closeText:        "<%= I18n.t('time.close') %>",
-      currentText:      "<%= I18n.t('time.now') %>"
     });
   });
 //]]>

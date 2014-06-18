@@ -1131,12 +1131,11 @@ en:
         long_ordinal: "%e %B %Y"
         only_day: "%e"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%B %d, %Y: %I:%M%p"
+        long_date: "%e, %B %d, %Y, %I:%M %p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
         locale_date:      "DD, MM d, yy,"
         locale_date_only: "DD, MM d, yy"
-        locale_repo_date: "MM d, yy"
 
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
@@ -1148,33 +1147,31 @@ en:
         - day
       months:       ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
       weekdays:     ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-      weekdays_min: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+      weekdays_min: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
     time:
       formats:
         default: "%d %B %Y %H:%M"
         time: "%H:%M"
         short: "%d %b %H:%M"
-        long: "%A %d %B %Y %H:%M:%S %Z"
+        long: "%A %d %B %Y %H:%M %Z"
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%B %d, %Y: %I:%M%p"
+        long_date: "%A, %B %d, %Y, %l:%M %p"
         #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date: "%B %d, %Y"
+        short_date:       "%B %d, %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
-        ant_date: "%B-%d-%Y_%I:%M"
-        locale_time: "h:mm TT"
-        locale_repo_time: "hh:mm TT"
-      am: 'am'
-      pm: 'pm'
+        ant_date:         "%B-%d-%Y_%I:%M"
+        locale_time:      "h:mm TT"
+      am:     "am"
+      pm:     "pm"
       hour:   "Hour"
       minute: "Minute"
       time:   "Time"
       next:   "Next"
       prev:   "Previous"
       close:  "Close"
-      now:    "Now"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"

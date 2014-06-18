@@ -1115,7 +1115,6 @@ fr:
         short_date: "%d %B %Y"
         locale_date:      "DD d MM yy"
         locale_date_only: "DD d MM yy"
-        locale_repo_date: "d MM yy à"
 
       day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
       abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
@@ -1127,7 +1126,7 @@ fr:
         - year
       months:       ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
       weekdays:     ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
-      weekdays_min: ['di', 'lu', 'ma', 'me', 'je', 've', 'sa']
+      weekdays_min: ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam']
 
     time:
       formats:
@@ -1138,13 +1137,12 @@ fr:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d %B %Y à %H:%M"
+        long_date: "%d %B %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
         ant_date: "%d-%B-%Y_%H:%M"
-        locale_time:      "HH:mm"
-        locale_repo_time: "HH:mm"
+        locale_time: "HH:mm"
       am: 'am'
       pm: 'pm'
       hour:   "Heure"
@@ -1153,7 +1151,6 @@ fr:
       next:   "Suivante"
       prev:   "Précédente"
       close:  "Fermer"
-      now:    "Maintenant"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."

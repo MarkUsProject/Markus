@@ -21,7 +21,7 @@ var PeriodDeltaChain = Class.create({
 
       var language = document.getElementById('locale').value;
       var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-                      hour: 'numeric', minute: 'numeric', timeZoneName: 'short' };
+                      hour: 'numeric', minute: 'numeric' };
 
       from_time_node.update(from_time.toLocaleString(language, options));
       to_time_node.update(to_time.toLocaleString(language, options));
