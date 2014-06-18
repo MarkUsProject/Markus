@@ -702,12 +702,12 @@ input#extra_mark_description {
 .colLeftGroups,
 .colLeftGraders {
   min-width: 365px;
-  width: 35%;
+  width: 40%;
 }
 
 .colRightGroups,
 .colRightGraders {
-  width: 55%;
+  width: 50%;
 
   @include breakpoint(large) {
     width: auto;
@@ -726,7 +726,7 @@ input#extra_mark_description {
   #icons {
     position: fixed;
     text-align: center;
-    // top: 50%;
+    top: 50%;
     width: 10%;
 
     @include breakpoint(large) {
@@ -746,7 +746,6 @@ input#extra_mark_description {
   border: 1px solid $light-blue;
   margin: 0 0 10px 0;
   padding: 10px;
-  height: 100%;
 }
 
 .globalActionIconsTop,
@@ -1553,34 +1552,6 @@ pre#test_result_content {
 
 .section_due_date_form {
   margin-left: 60px;
-}
-
-
-/* styles specific to the graphs on the dashboard */
-
-.bluff-tooltip {
-  background: $primary-color;
-  border: 1px solid #000;
-  margin: 0;
-  padding: 0;
-
-  span {
-    display: none;
-
-    &.label {
-      display: inline;
-      float: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    &.data {
-      display: inline;
-      float: none;
-      margin: 0;
-      padding: 0;
-    }
-  }
 }
 
 #current_time {

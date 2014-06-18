@@ -6,9 +6,8 @@
   </p>
   <div id="old_summary_criteria_pane">
 
-    <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
-               :locals => { :mark_criteria => mark_criteria,
-                            :marks_map => old_marks_map } %>
+    <%= render partial: "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
+               locals: {mark_criteria: mark_criteria, marks_map: old_marks_map} %>
 
     <div class="mark_subtotal">
       <div class="float_left"><%= I18n.t("marker.marks.old_subtotal") %> </div>
@@ -17,15 +16,15 @@
     </div>
 
     <div class="clear"></div>
-
+    s
     <div id="extra_marks_pane" class="extra_marks_pane">
       <div class="bonus_deduction">
         <strong><%= I18n.t("marker.marks.bonus_deductions") %></strong>
       </div>
 
-      <%= render :partial => 'results/student/extra_marks_table',
-                 :locals => { :extra_marks_points => old_result.extra_marks.points,
-                              :result_id => old_result.id } %>
+      <%= render partial: 'results/student/extra_marks_table',
+                 locals: { extra_marks_points: old_result.extra_marks.points,
+                           result_id: old_result.id } %>
 
       <table>
         <tr>
@@ -47,12 +46,10 @@
       </table>
     </div>
 
-    <div class="clear"></div>
-
     <div id="extra_percentage_pane" class="extra_percentage_pane">
-      <%= render :partial => 'results/student/extra_percentage_table',
-                 :locals => { :extra_marks_percentage => old_result.extra_marks.percentage,
-                              :result_id => old_result.id } %>
+      <%= render partial: 'results/student/extra_percentage_table',
+                 locals: { extra_marks_percentage: old_result.extra_marks.percentage,
+                           result_id: old_result.id } %>
     </div>
 
     <div class="clear"></div>
@@ -67,9 +64,9 @@
 <% end %>
 
 <div id="summary_criteria_pane">
-  <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
-             :locals => { :mark_criteria => mark_criteria,
-                          :marks_map => marks_map } %>
+  <%= render partial: "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
+             locals: { mark_criteria: mark_criteria,
+                       marks_map: marks_map } %>
 
   <!-- Summary Criteria Pane -->
 
@@ -86,9 +83,9 @@
       <strong><%= I18n.t("marker.marks.bonus_deductions") %></strong>
     </div>
 
-    <%= render :partial => 'results/student/extra_marks_table',
-               :locals => { :extra_marks_points => extra_marks_points,
-                            :result_id => result.id } %>
+    <%= render partial: 'results/student/extra_marks_table',
+               locals: { extra_marks_points: extra_marks_points,
+                         result_id: result.id } %>
 
     <table>
       <tr>
@@ -113,9 +110,9 @@
   <div class="clear"></div>
 
   <div id="extra_percentage_pane" class="extra_percentage_pane">
-    <%= render :partial => 'results/student/extra_percentage_table',
-               :locals => { :extra_marks_percentage => extra_marks_percentage,
-                            :result_id => result.id } %>
+    <%= render partial: 'results/student/extra_percentage_table',
+               locals: { extra_marks_percentage: extra_marks_percentage,
+                         result_id: result.id } %>
   </div>
 
   <div class="clear"></div>
@@ -131,9 +128,9 @@
 <div class="clear"></div>
 
 <div id="extra_percentage_pane" class="extra_percentage_pane">
-  <%= render :partial => 'results/student/extra_percentage_table',
-             :locals => { :extra_marks_percentage => extra_marks_percentage,
-                          :result_id => result.id } %>
+  <%= render partial: 'results/student/extra_percentage_table',
+             locals: { extra_marks_percentage: extra_marks_percentage,
+                       result_id: result.id } %>
 </div>
 
 <div class="clear"></div>

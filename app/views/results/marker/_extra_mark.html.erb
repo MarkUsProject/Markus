@@ -11,8 +11,8 @@
   </td>
   <td>
     <%= button_to I18n.t("remove"),
-         remove_extra_mark_assignment_submission_result_path(:id => extra_mark.id),
-         :class => "table-button", :confirm => I18n.t("marker.marks.confirm_remove_mark"),
-         :remote => true %>
+         remove_extra_mark_assignment_submission_result_path(id: extra_mark.id),
+         class: "table-button", confirm: I18n.t("marker.marks.confirm_remove_mark"),
+         remote: true %>
   </td>
 </tr>

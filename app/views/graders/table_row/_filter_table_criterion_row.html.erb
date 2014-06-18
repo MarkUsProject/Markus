@@ -8,8 +8,8 @@
 
 <td>
 <% criterion.criterion_ta_associations.each do |association| %>
-   <%= render :partial => "graders/manage/ta",
-      :locals => {:association => association, :criterion => criterion} %>
+   <%= render partial: "graders/manage/ta",
+      locals: {association: association, criterion: criterion} %>
 <% end -%>
 </td>
 
@@ -17,11 +17,11 @@
   <span class="table_menu">
     <% assigned_length = criterion.assigned_groups_count %>
     <% if assigned_length == assignment.groupings.size %>
-      <%= image_tag("icons/tick.png", :alt => I18n.t('graders.covered'),
-        :title => I18n.t('graders.covered')) %>
+      <%= image_tag("icons/tick.png", alt: I18n.t('graders.covered'),
+        title: I18n.t('graders.covered')) %>
     <% else %>
-      <%= image_tag("icons/cross.png", :alt => I18n.t('graders.not_covered'),
-        :title => I18n.t('graders.not_covered')) %>
+      <%= image_tag("icons/cross.png", alt: I18n.t('graders.not_covered'),
+        title: I18n.t('graders.not_covered')) %>
     <% end %>
   </span>
   (<%= assigned_length %>/<%=  assignment.groupings.size %>)

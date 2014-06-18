@@ -29,6 +29,7 @@
 #grader_criteria_dialog,
 #assignment_group_use_dialog,
 #add_member_dialog,
+#notes_dialog,
 #invite_dialog,
 #about_dialog,
 #role_switch_dialog,
@@ -59,6 +60,7 @@
   max-height: 80%;
   max-width: 80%;
   padding: 0 10px;
+  width: 730px !important;
 
   form {
     margin-left: 2px;

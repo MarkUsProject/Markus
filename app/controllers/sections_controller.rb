@@ -16,8 +16,6 @@ class SectionsController < ApplicationController
 
   # Creates a new section
   def create
-    @user = Student.new(params[:user])
-
     @section = Section.new(params[:section])
     if @section.save
       @sections = Section.all

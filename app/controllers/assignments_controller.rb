@@ -139,7 +139,6 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
-    #@assignments = Assignment.all(:order => :id)
     @grade_entry_forms = GradeEntryForm.all(order: :id)
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
@@ -599,18 +598,6 @@ class AssignmentsController < ApplicationController
 
   def process_assignment_form(assignment, params)
     assignment.attributes = params[:assignment]
-    # Work around rails' (v2.3.8 and potentially v2.3.9)
-    # accept_nested_attributes_for bug, which do not allow
-    # us to remove assignment files. We do not support rails
-    # < 2.3.8.
-    if %w(2.3.8 2.3.9).include?(Rails.version) && !params[:assignment][:assignment_files_attributes].nil?
-      params[:assignment][:assignment_files_attributes].each do |key,assignment_file|
-        if assignment_file[:_destroy] == '1'
-          file_to_destroy = assignment.assignment_files.find_by_id(assignment_file[:id])
-          file_to_destroy.destroy
-        end
-      end
-    end
 
     # if there are no section due dates, destroy the objects that were created
     if params[:assignment][:section_due_dates_type] == '0'

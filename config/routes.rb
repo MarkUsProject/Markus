@@ -1,16 +1,16 @@
 Markus::Application.routes.draw do
   # Install the default routes as the lowest priority.
-  root :controller => "main", :action => "login"
+  root controller: "main", action: "login"
 
   # optional path scope (denoted by the parentheses)
-  scope "(:locale)", :locale => /en|fr|pt/  do
+  scope "(:locale)", locale: /en|fr|pt/  do
     # API routes
     namespace :api do
-      resources :users, :except => [:new, :edit]
-      resources :assignments, :except => [:new, :edit] do
-        resources :groups, :except => [:new, :edit] do
-          resources :submission_downloads, :except => [:new, :edit]
-          resources :test_results, :except => [:new, :edit]
+      resources :users, except: [:new, :edit]
+      resources :assignments, except: [:new, :edit] do
+        resources :groups, except: [:new, :edit] do
+          resources :submission_downloads, except: [:new, :edit]
+          resources :test_results, except: [:new, :edit]
         end
       end
       resources :main_api
@@ -337,10 +337,10 @@ Markus::Application.routes.draw do
     end
   end
 
-  match 'main', :controller => 'main', :action => 'index'
-  match 'main/about', :controller => 'main', :action => 'about'
-  match 'main/logout', :controller => 'main', :action => 'logout'
+  match 'main', controller: 'main', action: 'index'
+  match 'main/about', controller: 'main', action: 'about'
+  match 'main/logout', controller: 'main', action: 'logout'
 
   # Return a 404 when no route is match
-  match '*path', :controller => 'main', :action => 'page_not_found'
+  match '*path', controller: 'main', action: 'page_not_found'
 end

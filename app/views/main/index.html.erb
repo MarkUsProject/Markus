@@ -1,22 +1,20 @@
 <% content_for :head do %>
-	<%= javascript_include_tag 'Bluff/js-class.js',
-                             'Bluff/bluff.js',
-                             'Bluff/excanvas.js' %>
+  <%= javascript_include_tag 'Chart.min.js' %>
 <% end %>
 
-<div id="title_bar">
+<div id='title_bar'>
    <h1><%= I18n.t(:dashboard) %></h1>
 </div>
-<div class="wrapLeft">
+<div class='wrapLeft'>
   <p><%= I18n.t(:welcome_to_markus, {user_name: @current_user.first_name}) %></p>
 
-  <div id="assignment_summaries">
+  <div id='assignment_summaries'>
     <% @assignments.each do |a| %>
-      <%= render partial: "assignment_summary", locals: { assignment: a } %>
+      <%= render partial: 'assignment_summary', locals: { assignment: a } %>
     <% end %>
   </div>
 
-  <div id="section">
-    <%= render partial: "api/key_display", locals: { user: @current_user } %>
+  <div id='section'>
+    <%= render partial: 'api/key_display', locals: { user: @current_user } %>
   </div>
 </div>

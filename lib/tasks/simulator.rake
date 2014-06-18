@@ -22,7 +22,7 @@ end
 namespace :markus do
   namespace :simulator do
     desc "Generate assignments, random students, submissions and TA data"
-    task(:create => :environment) do
+    task(create: :environment) do
 
       num_of_assignments = Integer(ENV["NUM_OF_ASSIGNMENTS"])
       # If the uer did not provide the environment variable "NUM_OF_ASSIGNMENTS",
@@ -55,7 +55,7 @@ namespace :markus do
 
         # The default assignemnt_due_date is a randon date whithin six months
         # before and six months after now.
-        assignment_due_date = Time.random(:year_range=>1)
+        assignment_due_date = Time.random(year_range:1)
         # If the user wants the assignment's due date to be passed, set the
         # assignment_due_date to Time.now.
         if (!ENV["PASSED_DUE_DATE"].nil? and ENV["PASSED_DUE_DATE"] == "true")
@@ -86,15 +86,15 @@ namespace :markus do
         weight_3 = rand(5) + 5
         weight_4 = rand(5) + 5
         rubric_criterias = [{
-            :rubric_criterion_name => "Uses Conditionals",
-            :weight => weight_1},
-          {:rubric_criterion_name => "Code Clarity",
-            :weight => weight_2}, {
-            :rubric_criterion_name => "Code Is Documented",
-            :weight => weight_3},
-          {:rubric_criterion_name => "Uses For Loop",
-            :weight => weight_4}]
-        default_levels = {:level_0_name => "Quite Poor", :level_0_description => "This criterion was not satisifed whatsoever", :level_1_name => "Satisfactory", :level_1_description => "This criterion was satisfied", :level_2_name => "Good", :level_2_description => "This criterion was satisfied well", :level_3_name => "Great", :level_3_description => "This criterion was satisfied really well!", :level_4_name => "Excellent", :level_4_description => "This criterion was satisfied excellently"}
+            rubric_criterion_name: "Uses Conditionals",
+            weight: weight_1},
+          {rubric_criterion_name: "Code Clarity",
+            weight: weight_2}, {
+            rubric_criterion_name: "Code Is Documented",
+            weight: weight_3},
+          {rubric_criterion_name: "Uses For Loop",
+            weight: weight_4}]
+        default_levels = {level_0_name: "Quite Poor", level_0_description: "This criterion was not satisifed whatsoever", level_1_name: "Satisfactory", level_1_description: "This criterion was satisfied", level_2_name: "Good", level_2_description: "This criterion was satisfied well", level_3_name: "Great", level_3_description: "This criterion was satisfied really well!", level_4_name: "Excellent", level_4_description: "This criterion was satisfied excellently"}
         rubric_criterias.each do |rubric_criteria|
           rc = RubricCriterion.create
           rc.update_attributes(rubric_criteria)
@@ -127,7 +127,7 @@ namespace :markus do
           ta_user_name = "TA" + ta_last_name
 
           puts "Start generating " + ta_user_name.to_s + "... "
-          ta = Ta.create(:user_name => ta_user_name, :first_name => 'TA', :last_name => ta_last_name)
+          ta = Ta.create(user_name: ta_user_name, first_name: 'TA', last_name: ta_last_name)
 
           puts "Finish creating TA #" + ta_user_name.to_s + "... "
 
@@ -147,10 +147,10 @@ namespace :markus do
             student_user_name = "Student # " +  student_last_name
 
             puts "Start generating " + student_user_name.to_s + "... "
-            student = Student.create(:user_name => student_user_name,
-                    :last_name => student_last_name,
-                    :first_name => 'Student',
-                    :type => 'Student')
+            student = Student.create(user_name: student_user_name,
+                    last_name: student_last_name,
+                    first_name: 'Student',
+                    type: 'Student')
 
             student.save!
             student.create_group_for_working_alone_student(assignment.id)
@@ -190,7 +190,7 @@ namespace :markus do
             curr_submission_num = 1
 
             while (curr_submission_num <= num_of_submissions)
-              date_of_submission = Time.random(:year_range=>1)
+              date_of_submission = Time.random(year_range:1)
               submission = Submission.create_by_timestamp(grouping, date_of_submission)
               submission.save!
               curr_submission_num += 1
@@ -243,12 +243,12 @@ namespace :markus do
 
     # Create s standard admin; if it does not already exist.
     if (!Admin.find_by_user_name("a"))
-      Admin.create(:user_name => 'a', :first_name => 'admin', :last_name => 'admin')
+      Admin.create(user_name: 'a', first_name: 'admin', last_name: 'admin')
     end
 
     # Create Reid; if it does not already exist.
     if (!Admin.find_by_user_name("reid"))
-      Admin.create(:user_name => 'reid', :first_name => 'Karen', :last_name => 'Reid')
+      Admin.create(user_name: 'reid', first_name: 'Karen', last_name: 'Reid')
     end
 
     end

@@ -9,7 +9,7 @@
 
   <%= render 'shared/flash_message' %>
   <div class='login-form'>
-    <%= form_tag({ actio: => 'login',
+    <%= form_tag({ action: 'login',
                    id: nil },
                  { # Quotes for onsubmit must be like this to show string properly
                    onsubmit: "jQuery('#submit').prop('disabled', true);
