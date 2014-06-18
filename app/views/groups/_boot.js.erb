@@ -135,6 +135,8 @@ document.observe("dom:loaded", function() {
     }
   });
 
+  document.getElementById('working').style.display = '';
+
   new Ajax.Request('<%= populate_assignment_groups_path(@assignment.id) %>',
                     {
                       asynchronous:true,
@@ -155,6 +157,5 @@ document.observe("dom:loaded", function() {
                       parameters: 'authenticity_token=' + AUTH_TOKEN
                     })
 });
-
 //]]>
 </script>

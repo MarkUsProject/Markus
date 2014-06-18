@@ -194,10 +194,14 @@ document.observe("dom:loaded", function() {
     }
   });
 
+  document.getElementById('working').style.display = '';
+
   new Ajax.Request('<%= populate_graders_assignment_graders_path(@assignment) %>', {
     asynchronous: true,
     evalScripts: true,
-    onComplete: function(request){$('loading_graders_list').hide()},
+    onComplete: function(request){
+      document.getElementById('working').style.display = 'none';
+    },
     parameters: {
       'authenticity_token': AUTH_TOKEN
     }

@@ -56,16 +56,18 @@ jQuery(document).ready(function() {
     },
     total_count_id: 'all_students_count'
   });
-});
 
-jQuery.ajax({
-  url: "<%= populate_students_path() %>",
-  data: 'authenticity_token=' + AUTH_TOKEN,
-  type: "POST",
-  async: true,
-  dataType: 'json'
-}).done(function (data) {
-  document.getElementById('working').style.display = 'none';
-  populate(JSON.stringify(data));
+  document.getElementById('working').style.display = '';
+
+  jQuery.ajax({
+    url: "<%= populate_students_path() %>",
+    data: 'authenticity_token=' + AUTH_TOKEN,
+    type: "POST",
+    async: true,
+    dataType: 'json'
+  }).done(function (data) {
+    document.getElementById('working').style.display = 'none';
+    populate(JSON.stringify(data));
+  });
 });
 </script>
