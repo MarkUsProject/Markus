@@ -1,0 +1,342 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  StudentsTable = React.createClass({
+    getDefaultProps: function() {
+      var columns = [
+        {
+          id: 'checkbox',
+          content: <div>
+            <input type='checkbox' 
+              onChange={this.checkboxAllClicked.bind(this)} />
+            </div>,
+          sortable: false,
+          searchable: false
+        },
+        {
+          id: 'user_name',
+          content: '<%= j raw I18n.t('user.user_name') %>',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'last_name',
+          content: '<%= j raw I18n.t('user.last_name') %>',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'first_name',
+          content: '<%= j raw I18n.t('user.first_name') %>',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'section',
+          content: '<%= j raw I18n.t('user.section') %>',
+          sortable: true
+        },
+        {
+          id: 'grace_credits',
+          content: '<%= j raw I18n.t('user.grace_credits') %>',
+          sortable: true
+        },
+        {
+          id: 'notes',
+          content: '<%= j raw I18n.t('user.notes_count') %>',
+          sortable: false
+        }
+      ];
+
+      var filters = [
+        {
+          name: 'all',
+          text: '<%= j raw I18n.t('all') %>',
+          func: function(student) {
+            return true;
+          }
+        },
+        {
+          name: 'active',
+          text: '<%= j raw I18n.t('active') %>',
+          func: function(student) {
+            return !student.hidden;
+          }
+        },
+        {
+          name: 'not_active',
+          text: '<%= j raw I18n.t('not_active') %>',
+          func: function(student) {
+            return student.hidden;
+          }
+        }
+      ];
+
+      var actions_text = {
+          give_grace_credits: '<%= j raw I18n.t('give_grace_credits') %>',
+          add_section: '<%= j raw I18n.t('add_section') %>',
+          hide_students: '<%= j raw I18n.t('hide_students') %>',
+          unhide_students: '<%= j raw I18n.t('unhide_students') %>',
+          no_sections: '<%= j raw I18n.t('section.no_sections') %>'
+      };
+
+      return {
+        columns: columns,
+        filters: filters,
+        actions_text: actions_text
+      };
+
+    },
+    getInitialState: function() {
+      return {
+        loading: true,
+        students: [],
+        selected_students: []
+      };
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      jQuery.ajax({
+        method: 'GET',
+        url: '/students',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            students: data,
+            loading: false
+          });
+        }.bind(this)
+      });
+    },
+    // Checkbox clicked (this must be in the parent since we're passing the box down from here)
+    checkboxAllClicked: function(event) {
+      var value = event.currentTarget.checked;
+      if (value) {
+        var new_selected_students = this.state.students.map(function(x) { return x.id; }).slice();
+        this.setState({
+          selected_students: new_selected_students
+        });
+      } else {
+        this.setState({
+          selected_students: []
+        });
+      }
+    },
+    // The checkbox on one of the table rows was clicked.
+    checkboxChanged: function(event) {
+      var value = event.currentTarget.checked;
+      var student_id = event.currentTarget.parentNode.parentNode.getAttribute('id') 
+
+      // Figure out new selected_students state...
+      var new_selected_students = this.state.selected_students.splice(0);
+      if (value == true) {
+        new_selected_students.push(parseInt(student_id));
+      } else {
+        new_selected_students.splice(new_selected_students.indexOf(student_id), 1);
+      }
+      this.setState({
+        selected_students: new_selected_students
+      });
+
+      // If we change a checkbox and all of them become checked
+      // or unchecked, change AllCheckbox appropriately.
+      if (this.state.selected_students == this.state.students) {
+        this.synchronizeCheckboxAll(true);
+      } else if (this.state.selected_students == []) {
+        this.synchronizeCheckboxAll(false);
+      }
+    },
+
+    render: function() {
+      // Do student-specific table stuff here.
+      // possibly move this to getdefaultprops.
+      var students_data = this.state.students.map(function(student) {
+        var s = {};
+
+        s['id'] = student.id;
+        s['checkbox'] = <input type='checkbox'
+          onChange={this.checkboxChanged}
+          checked={this.state.selected_students.indexOf(student.id) != -1 ? true : false} />;
+        s['user_name'] = student.user_name;
+        s['last_name'] = student.last_name;
+        s['first_name'] = student.first_name;
+        s['section'] = student.section_name ? student.section_name : '-';
+        s['grace_credits'] = student.grace_credits_remaining + ' / ' + student.grace_credits;
+        s['notes'] = <span>
+          <a key={student.edit_link} 
+            href={student.edit_link}><%= j raw I18n.t('edit') %></a>
+          | 
+          <a key={student.notes_link}
+            href={student.notes_link}
+            data-remote='true'
+            id='notes_highlight_user_id'><%= j raw I18n.t('notes.title') %> ({student.num_notes})</a>
+          </span>;
+        s['hidden'] = student.hidden;
+    
+        return s;
+      }.bind(this));
+      
+      if (this.state.loading) {
+        return (
+          <div><%= j raw I18n.t('working') %></div>
+        );
+      } else {
+        return (
+          <div>
+            <StudentsActionBox actions_text={this.props.actions_text} 
+              selected_students={this.state.selected_students}
+              sections={this.props.sections} refresh={this.refresh} />
+            <Table data={students_data}
+              search_placeholder={'<%= j raw I18n.t('students.search_students') %>'}
+              columns={this.props.columns}
+              filters={this.props.filters} />
+          </div>
+        );
+      }
+    }
+  });
+
+  // The bulk action box where you can give grace credits,
+  // change sections, or mark as active or inactive.
+  StudentsActionBox = React.createClass({
+    propTypes: {
+      actions_text: React.PropTypes.object,
+      selected_students: React.PropTypes.array,
+      sections: React.PropTypes.array,
+      refresh: React.PropTypes.func
+    },
+    render: function() {
+      // Create apply button and secondary select input based on current state.
+      var applyButton = 
+        <button onClick={this.performAction}
+          disabled={this.state.button_disabled}>
+          <%= I18n.t(:apply) %>
+        </button>;
+      var optionalInputBox = null;
+      if (this.state.select_value == 'give_grace_credits') {
+        optionalInputBox =
+          <input type='text' value={this.state.grace_credits_input} onChange={this.graceCreditsChanged} />
+      } else if (this.state.select_value == 'update_section') {
+        if (this.props.sections) {
+          var section_options = [];
+          for (var i = 0; i < this.props.sections.length; i++) {
+            var section = this.props.sections[i];
+            var option = 
+              <option value={section.id} onChange={this.sectionSelectChanged}>
+                {section.name}
+              </option>
+            section_options.push(option);
+          }
+          optionalInputBox =
+            <select value={this.state.section_id} onChange={this.sectionSelectChanged}>
+              {section_options}
+            </select>
+        } else {
+          optionalInputBox =
+            <span>
+              {this.props.actions_text.no_sections}
+            </span>
+        }
+      }
+
+      // If more than one student is selected render the div. Otherwise nothing.
+      if (this.props.selected_students.length > 0) {
+        return (
+          <div>
+            <select value={this.state.select_value} onChange={this.actionSelectChanged}>
+              <option value='give_grace_credits'>{this.props.actions_text.give_grace_credits}</option>
+              <option value='update_section'>{this.props.actions_text.add_section}</option>
+              <option value='hide'>{this.props.actions_text.hide_students}</option>
+              <option value='unhide'>{this.props.actions_text.unhide_students}</option>
+            </select>
+            {optionalInputBox}
+            {applyButton}
+          </div>
+        );
+      } else {
+        return (
+          <div></div>
+        );
+      }
+    },
+
+    getInitialState: function() {
+      return {
+        select_value: 'give_grace_credits',
+        grace_credits_input: '0',
+        button_disabled: false
+      };
+    },
+    actionSelectChanged: function(event) {
+      // Reset state based on action selected.
+      this.setState({
+        select_value: event.target.value,
+      button_disabled: false
+      });
+      if (event.target.value == 'give_grace_credits') {
+        this.setState({
+          grace_credits_input: '0',
+          section_id: ''
+        });
+      } else if (event.target.value == 'update_section') {
+        if (this.props.sections) {
+          var initial_section = this.props.sections[0].id;
+          this.setState({
+            grace_credits_input: '0',
+            section_id: initial_section
+          });
+        } else {
+          this.setState({
+            grace_credits_input: '0',
+            section_id: '',
+            button_disabled: true
+          });
+        }
+      }
+    },
+    sectionSelectChanged: function(event) {
+      this.setState({
+        section_id: event.target.value
+      });
+    },
+    graceCreditsChanged: function(event) {
+      // Checks that the input is valid (integer)
+      var value = event.target.value;
+      if (!isNaN(+value)) {
+        this.setState({
+          grace_credits_input: value, 
+          button_disabled: false
+        });
+      } else {
+        this.setState({
+          grace_credits_input: value,
+          button_disabled: true});
+      }
+    },
+    performAction: function() {
+      // Gets student ids and other relevant info from this.state and
+      // sends an AJAX call over to the appropriate backend. Then tells
+      // parent to refresh.
+      var dataLoad = {
+        student_ids: this.props.selected_students,
+        bulk_action: this.state.select_value,
+        number_of_grace_credits: this.state.grace_credits_input,
+        section: this.state.section_id
+      };
+
+      jQuery.ajax({
+        method: 'POST',
+        url: '/students/bulk_modify',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this)
+      });
+    }
+  });
+
+  React.renderComponent(<StudentsTable sections={<%= raw @sections.to_json %>} />, document.getElementById('studentsTable'));
+</script>

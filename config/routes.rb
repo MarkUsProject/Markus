@@ -296,7 +296,6 @@ Markus::Application.routes.draw do
     resources :students do
       collection do
         post 'bulk_modify'
-        post 'populate'
         get 'manage'
         get 'add_new_section'
         get 'download_student_list'

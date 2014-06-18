@@ -1,3 +1,0 @@
-page.replace_html 'students_table',
-                  partial: 'students/students_table',
-                  locals: {students: @students}
