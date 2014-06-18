@@ -1,14 +1,42 @@
 jQuery(document).ready(function() {
+  // Localize the due dates on load
+  var language = document.getElementById('locale').value;
+  localize_datetime(document.getElementById('actual_assignment_due_date'),
+                    document.getElementById('assignment_due_date'),
+                    language);
+  localize_datetime(document.getElementById('actual_remark_due_date'),
+                    document.getElementById('remark_due_date'),
+                    language);
+  jQuery('.section_due_date').each(function(i) {
+    localize_datetime(document.getElementById('actual_section_due_date_' + (i+1)),
+                      document.getElementById('section_due_date_' + (i+1)),
+                      language);
+  });
+
+  // Change repo folder to be same as short identifier
   jQuery('#short_identifier').change(function() {
     jQuery("#assignment_repository_folder").val(jQuery(this).val());
   });
 
   jQuery('#assignment_due_date').change(function() {
-    update_due_date(jQuery(this).val());
+    update_due_date(jQuery('#actual_assignment_due_date').val());
   });
 
   jQuery('#assignment_section_due_dates_type').change(function() {
     toggle_sections_due_date(jQuery(this).is(':checked'));
+  });
+
+  toggle_sections_due_date(jQuery('#assignment_section_due_dates_type').is(':checked'));
+
+  /* Update the global due date with the first section due date added, if the global due date
+     has not been set yet. */
+  var first = true;
+  jQuery('.section_due_date').change(function() {
+    if (first && (jQuery('#actual_assignment_due_date').val() == '')) {
+      jQuery('#actual_assignment_due_date').val(jQuery(this).siblings('.actual_section_due_date').val());
+      jQuery('#assignment_due_date').val(jQuery(this).val());
+      first = false;
+    }
   });
 
   jQuery('#persist_groups').change(function() {
@@ -28,8 +56,6 @@ jQuery(document).ready(function() {
     toggle_group_assignment(jQuery(this).is(':checked'));
   });
 
-  toggle_group_assignment(jQuery('#is_group_assignment').is(':checked'));
-
   jQuery('#student_form_groups').change(function() {
     toggle_student_form_groups(jQuery(this).is(':checked'));
   });
@@ -38,9 +64,9 @@ jQuery(document).ready(function() {
     toggle_remark_requests(jQuery(this).is(':checked'));
   });
 
-  jQuery('#remark_due_date').change(function() {
-    check_due_date(jQuery(this).val());
-  });
+  toggle_group_assignment(jQuery('#is_group_assignment').is(':checked'));
+
+  change_submission_rule();  // Opens the correct rule
 });
 
 function toggle_persist_groups(persist_groups) {
@@ -173,10 +199,10 @@ function update_due_date(new_due_date) {
   create_penalty_decay_periods();
   create_penalty_periods();
 
-  check_due_date(new_due_date);
   grace_periods.set_due_date(new_due_date);
   penalty_decay_periods.set_due_date(new_due_date);
   penalty_periods.set_due_date(new_due_date);
+
   grace_periods.refresh();
   penalty_decay_periods.refresh();
   penalty_periods.refresh();
@@ -225,8 +251,7 @@ function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme
 }
 
 function check_due_date(new_due_date) {
-  var now = new Date();
-  if (Date.parseFormattedString(new_due_date) < now) {
-    alert(past_due_date_edit_warning);
+  if (new Date(new_due_date) < new Date()) {
+    alert(past_due_date);
   }
 }

@@ -46,6 +46,11 @@
     float: left;
   }
 
+  .left,
+  .right {
+    margin-top: 6px;
+  }
+
   .left {
     text-align: left;
     width: 20%;
@@ -120,7 +125,7 @@
 }
 
 li.annotation_category {
-  @include border-radius(10px);
+  @include border-radius(5px);
   background: #fff;
   border: 1px solid #ccc;
   color: $grey;
@@ -135,9 +140,10 @@ li.annotation_category {
 }
 
 .annotation_text_list {
-  background: #ddd;
-  border: 1px solid #000;
-  height: 350px;
+  @include border-radius(5px);
+  background: $light-grey;
+  border: 1px solid #aaa;
+  height: auto;
   margin: 0;
   overflow: auto;
   padding: 0;
@@ -147,15 +153,23 @@ li.annotation_category {
   li {
     background: #fff;
     border-bottom: 1px solid #aaa;
-    border-top: 1px solid #aaa;
     color: #464646;
     padding: 5px;
-  }
 
-  li:hover {
-    background: #fffc4;
-    color: #000;
-    cursor: pointer;
+    &:hover {
+      background: $light-grey;
+      color: #000;
+      cursor: pointer;
+    }
+
+    &:first-child {
+      @include border-radius-top(5px);
+    }
+
+    &:last-child {
+      @include border-radius-bottom(5px);
+      border: 0;
+    }
   }
 }
 
@@ -196,6 +210,10 @@ li.annotation_category {
     height: 722px;
     margin: 0 2px 10px 2px;
     width: 4px;
+
+    @include breakpoint(small) {
+      display: none;
+    }
   }
 
   #code_pane,
@@ -206,6 +224,12 @@ li.annotation_category {
     height: 100%;
     margin: 0 0 10px 0;
     padding: 10px;
+
+    @include breakpoint(small) {
+      display: block;
+      float: none;
+      width: 100% !important;
+    }
   }
 
     #mark_viewer,
@@ -268,6 +292,11 @@ li.annotation_category {
 }
 
 
+#next_button,
+#back_button {
+  min-width: 0;
+}
+
 /* Annotation summary list styles */
 
 #annotation_summary_list {
@@ -319,7 +348,7 @@ li.annotation_category {
 }
 
 .mark_tools {
-  margin-bottom: 1em;
+  margin: 1em 0;
   text-align: center;
 }
 
@@ -432,12 +461,18 @@ li.annotation_category {
 
   .extra_marks_pane {
     border: 1px solid #dadada;
+    margin-top: 1em;
   }
 
   .extra_marks_pane_list {
     border-bottom: 1px solid #dadada;
     margin: 0;
     padding: 0;
+  }
+
+  #extra_marks_bonus,
+  #extra_marks_deducted {
+    text-align: right;
   }
 
 /* Criterion summary holder */
@@ -476,7 +511,8 @@ li.annotation_category {
 }
 
 .mark_total {
-  font-weight: bold;
+  font-weight: 600;
+  margin: 1em 0;
   padding: 10px;
 }
 

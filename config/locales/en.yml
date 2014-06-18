@@ -812,7 +812,7 @@ en:
 
     annotations:
       annotation_category: "Annotation Category"
-      no_annotation_categories: "There are no annotation categories, yet."
+      no_annotation_categories: "There are no annotation categories yet."
       title: "Annotations: %{assignment_short_identifier}"
       name: "Category name"
       help_message: "Click on an annotation category to add annotations."
@@ -1134,6 +1134,9 @@ en:
         long_date: "%B %d, %Y: %I:%M%p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
+        locale_date:      "DD, MM d, yy,"
+        locale_date_only: "DD, MM d, yy"
+        locale_repo_date: "MM d, yy"
 
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
@@ -1143,6 +1146,9 @@ en:
         - year
         - month
         - day
+      months:       ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      weekdays:     ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+      weekdays_min: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 
     time:
       formats:
@@ -1158,8 +1164,17 @@ en:
         short_date: "%B %d, %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
         ant_date: "%B-%d-%Y_%I:%M"
+        locale_time: "h:mm TT"
+        locale_repo_time: "hh:mm TT"
       am: 'am'
       pm: 'pm'
+      hour:   "Hour"
+      minute: "Minute"
+      time:   "Time"
+      next:   "Next"
+      prev:   "Previous"
+      close:  "Close"
+      now:    "Now"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"

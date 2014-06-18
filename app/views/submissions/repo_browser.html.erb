@@ -1,19 +1,24 @@
-<%= javascript_include_tag "FilterTable/FilterTable.js" %>
-<%= javascript_include_tag "repo_browser.js" %>
-<%= render partial: "repo_browser_boot", formats: [:js], handlers: [:erb] %>
-<%= calendar_date_select_includes "silver" %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'jquery', 'jquery-ui', 'jquery-ui-timepicker-addon' %>
+  <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
+  <%= javascript_include_tag "FilterTable/FilterTable.js" %>
+  <%= javascript_include_tag "repo_browser.js" %>
+<% end %>
 
+<%= render partial: "repo_browser_boot",
+           formats: [:js],
+           handlers: [:erb] %>
 
 <% if flash[:error] -%>
-<div class="error">
-  <%= flash[:error] %>
-</div>
+  <div class="error">
+    <%= flash[:error] %>
+  </div>
 <% end %>
 
 <div id="title_bar">
   <h1><%= I18n.t("browse_submissions.repository_name",
-                 repository: @repository_name)%>
-			(<%= @grouping.get_all_students_in_group%>)
+                 repository: @repository_name) %>
+      (<%= @grouping.get_all_students_in_group %>)
   </h1>
 </div>
 
@@ -29,7 +34,13 @@
                       @assignment.id,
                       @grouping.id,
                       find_revision_by: 'revision_timestamp') do %>
-     <%= calendar_date_select_tag "revision_timestamp", @revision_timestamp, time: true %>
+        <%= text_field_tag 'actual_revision_timestamp',
+                           l(@revision_timestamp, format: :long_date),
+                           class: 'hidden' %>
+        <%= text_field_tag 'revision_timestamp',
+                           l(@revision_timestamp, format: :long_date),
+                           { class: 'datetimepicker',
+                             size: 30 } %>
      <%= submit_tag I18n.t("browse_submissions.find_by_revision_timestamp") %>
      <% end %>
       <%= form_tag repo_browser_assignment_submission_path(
@@ -69,8 +80,8 @@
 </div>
 
   <%= form_tag manually_collect_and_begin_grading_assignment_submission_path(id: @grouping.id,
-      assignment_id: @assignment.id),
-	       remote: true do %>
+                assignment_id: @assignment.id),
+               remote: true do %>
     <%= hidden_field_tag "current_revision_number", @revision_number %>
     <input type="submit" value="<%=I18n.t("browse_submissions.collect_and_grab")%>"
            onclick="if (!confirm('<%=t(:collect_and_grade_overwrite_warning)%>'))
