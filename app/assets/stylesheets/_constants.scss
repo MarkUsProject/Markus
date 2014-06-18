@@ -1,10 +1,12 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=latin,latin-ext);
-
      $font-stack: "Open Sans", "Lucida Grande", Verdana, Arial, sans-serif;
 $mono-font-stack: "Consolas", "Courier New", Courier, mono, serif;
-       $bg-color: #d2dbda;
+       $bg-color: #e8f4f2;
   $primary-color: #fff;
+   $lighter-blue: #cee3ea;
      $light-blue: #89b1dd;
            $blue: #086ae0;
           $hover: #5197e3;
            $grey: #464646;
+     $light-grey: #eee;
+     $time-quick: 0.25s;
+    $time-medium: 0.35s;

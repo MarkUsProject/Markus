@@ -1,23 +1,30 @@
 <%= javascript_include_tag 'jquery' %>
-<div class="login">
-  <div class="login-image">
-    <%= image_tag("markus_logo_big.png", alt: "[Logo] Markus Beta") %>
+
+<div class='login'>
+  <div class='login-image'>
+    <%= image_tag('markus_logo_big.png', alt: '[Logo] Markus', title: 'MarkUs logo') %>
   </div>
 
-  <p class="login-course"><%= MarkusConfigurator.markus_config_course_name %></p>
+  <p class='login-course'><%= MarkusConfigurator.markus_config_course_name %></p>
 
   <%= render 'shared/flash_message' %>
-  <div class="login-form">
+  <div class='login-form'>
     <%= form_tag({ action: 'login',
                    id: nil },
                  { # Quotes for onsubmit must be like this to show string properly
-                   onsubmit: "jQuery('#submit').attr('disabled', 'disabled');
-                                 jQuery('#submit').val('#{I18n.t(:logging_in)}');",
+                   onsubmit: "jQuery('#submit').prop('disabled', true);
+                              jQuery('#submit').val('#{ I18n.t(:logging_in) }');",
                    id: 'login_form' }) do %>
-      <%= text_field_tag 'user_login', nil, tabindex: 10, placeholder: I18n.t(:login) %>
-      <%= password_field_tag 'user_password', nil, tabindex: 20, placeholder: I18n.t(:password) %>
-
-      <div class="submit">
+      <%= text_field_tag 'user_login',
+                         nil,
+                         tabindex: 10,
+                         placeholder: I18n.t(:login),
+                         autocorrect: 'off' %>
+      <%= password_field_tag 'user_password',
+                             nil,
+                             tabindex: 20,
+                             placeholder: I18n.t(:password) %>
+      <div class='submit'>
         <%= submit_tag I18n.t(:log_in),
                        tabindex: 100,
                        id: 'submit' %>
@@ -26,11 +33,11 @@
   </div>
 </div>
 
-<script type="text/javascript">
+<script>
 //<![CDATA[
   <%# Try to put focus on the login text field on load %>
   jQuery(document).ready(function() {
-    document.getElementById("user_login").focus();
+    document.getElementById('user_login').focus();
   });
 //]]>
 </script>
