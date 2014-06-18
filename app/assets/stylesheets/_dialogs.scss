@@ -21,6 +21,12 @@
   border: none !important;
 }
 
+.ui-datepicker {
+  @include border-radius(5px);
+  background: #fff !important;
+  border: 1px solid $light-blue !important;
+}
+
 #add_new_section_dialog,
 #rename_group_dialog,
 #upload_dialog,
@@ -119,4 +125,9 @@
   .ui-dialog-buttonpane {
     display: none;
   }
+}
+
+// Datepicker "Now" button
+.ui-datepicker-current {
+  display: none;
 }
