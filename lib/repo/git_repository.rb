@@ -59,26 +59,13 @@ module Repository
         raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists already")
       end
 
-      #Create it
-      repo = Rugged::Repository.init_at(connect_string, :bare)
+      #Create it (we're not going to use a bare repository)
+      repo = Rugged::Repository.init_at(connect_string)
 
-      #Do an initial commit to get master.
-      #TODO. find a better way.
-      index = Rugged::Index.new
-      options = {}
-      options[:tree] = index.write_tree(repo)
-      options[:author] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
-      options[:committer] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
-      options[:message] ||= "Making a commit via Rugged!"
-      options[:parents] = repo.empty? ? [] : [ repo.head.target ].compact
-      options[:update_ref] = 'HEAD'
-      options[:time] =  Time.now
-
-      Rugged::Commit.create(repo, options)
-
-      #TODO checks.
-      repo = Rugged::Repository.new(connect_string)
-
+      #Do an initial commit to create index.
+      oid = repo.write("Initial commit.", :blob)
+      repo.index.add(:path => "README.md", :oid => oid, :mode => 0100644)
+      Rugged::Commit.create(repo, commit_options(repo, "Creation of initial file"))
       return true
     end
 
@@ -97,9 +84,10 @@ module Repository
     # static method that deletes the git repo
     # rm everything? or only .git?
     def self.delete(repo_path)
-      #does not acutally delete repo, just removes reference to master. This prevents any other git operations.
-      ref = Rugged::Reference.lookup(repo, "refs/heads/master")
-      ref.delete!
+      #repo = Rugged::Repository.new(repo_path)
+      #ref = Rugged::Reference.lookup(repo, "refs/heads/master")
+      #ref.delete!
+      FileUtils.rm_rf(repo_path)
     end
 
     # Exports git repo to a new folder (clone repository)
@@ -140,10 +128,13 @@ module Repository
 
     def close
       # closes the git repo
+      @repos.close
+      @closed = true
     end
 
-    def self.closed?
+    def closed?
       # checks if the repo is closed
+      return @closed
     end
 
     def get_repos

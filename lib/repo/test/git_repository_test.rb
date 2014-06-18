@@ -819,3 +819,10 @@ class GitRepositoryTest < Test::Unit::TestCase
   end
 
 end # end class GitRepositoryTest
+
+# Test suite for testing proper functioning of
+# SubversionRevision, an implementation of AbstractRevision
+
+#class SubversionRevisionTest < Test::Unit::TestCase
+  # TODO: Test SubversionRevision here
+#end

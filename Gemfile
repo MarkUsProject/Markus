@@ -92,5 +92,3 @@ group :rghost do
   gem 'rghost', '<=0.9.3'
 end
 
-gem 'rugged'
-gem 'gitolite'
