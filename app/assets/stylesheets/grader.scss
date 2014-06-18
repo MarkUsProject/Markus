@@ -234,13 +234,11 @@ li.annotation_category {
 
     #mark_viewer,
     #summary_viewer,
-    #annotations_summary {
+    #annotations_summary,
+    #submission_rule_viewer,
+    #code_holder {
       height: 650px;
       overflow: auto;
-    }
-
-    #code_holder {
-      padding: 0;
     }
 
       #sel_box {
@@ -269,7 +267,6 @@ li.annotation_category {
 }
 
 .code_scroller {
-  height: 550px;
   margin: 0;
   overflow: auto;
   padding: 0 0 0 50px !important;
