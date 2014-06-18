@@ -4,7 +4,7 @@ function populate(json_data) {
 }
 
 function filter(filter_name) {
-  $('loading_list').show();
+  document.getElementById('working').style.display = '';
   try {
     switch(filter_name) {
       case 'active':
@@ -18,7 +18,7 @@ function filter(filter_name) {
   catch (e) {
     alert(e);
   }
-  $('loading_list').hide();
+  document.getElementById('working').style.display = 'none';
 }
 
 function modify_students(users_json) {

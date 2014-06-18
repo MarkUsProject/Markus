@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 //<![CDATA[
 
 var groupings_table = null;
@@ -137,22 +137,33 @@ document.observe("dom:loaded", function() {
     }
   });
 
+  document.getElementById('working').style.display = '';
+
+  var loading_graders  = true;
+  var loading_students = true;
+
   jQuery.ajax({
     url:      '<%= populate_graders_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
     type:     'POST',
     dataType: 'script',
-    data: { 'authenticity_token': AUTH_TOKEN }
+    data:     { 'authenticity_token': AUTH_TOKEN }
   }).done(function() {
-    $('loading_graders_list').hide();
+    loading_graders = false;
+    if (!loading_students) {
+      document.getElementById('working').style.display = 'none';
+    }
   });
 
   jQuery.ajax({
     url:      '<%= populate_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
     type:     'POST',
     dataType: 'script',
-    data: { 'authenticity_token': AUTH_TOKEN }
+    data:     { 'authenticity_token': AUTH_TOKEN }
   }).done(function() {
-    $('loading_list').hide();
+    loading_students = false;
+    if (!loading_graders) {
+      document.getElementById('working').style.display = 'none';
+    }
   });
 });
 
