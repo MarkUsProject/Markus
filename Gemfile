@@ -74,9 +74,8 @@ group :development, :test do
   gem 'byebug', :platforms => [:mri_20, :mri_21]
   gem 'mocha', :require => false
   gem 'quiet_assets'
-  gem 'rspec-rails', '~> 2.99'
+  gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails'
-  gem 'rspec-its'
 end
 
 # If you  plan to use unicorn servers for production
