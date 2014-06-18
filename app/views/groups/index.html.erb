@@ -130,10 +130,6 @@
   </div> <!-- rightjustify-->
 </div> <!-- title_bar-->
 
-<div class="wrapLeft"></div>
-
-<div class="clear"></div>
-
 <div id="notice">
   <div class="success" id="add_success" style="display: none;"></div>
   <% # This is for error display injected by JavaScript %>
@@ -219,18 +215,18 @@
     </div>
   </div> <!-- colLeftGroups -->
 
-  <div class="centreColumn">
-    <div id="icons">
-      <%= image_submit_tag "add_arrow.png",
-        onclick: "$('global_actions').setValue('assign');",
-        alt: I18n.t('add_members'),
-        class:'image_input',
-        title: I18n.t('add_members') %>
-      <%= image_submit_tag "remove_arrow.png",
-        onclick: "$('global_actions').setValue('unassign');",
-        alt: I18n.t('remove_members'),
-        title: I18n.t('remove_members'),
-        class:'image_input' %>
+  <div class='centreColumn'>
+    <div id='icons'>
+      <%= image_submit_tag 'add_arrow.png',
+                           onclick: "$('global_actions').setValue('assign');",
+                           alt: I18n.t('add_members'),
+                           class:'image_input',
+                           title: I18n.t('add_members') %>
+      <%= image_submit_tag 'remove_arrow.png',
+                           onclick: "$('global_actions').setValue('unassign');",
+                           alt: I18n.t('remove_members'),
+                           title: I18n.t('remove_members'),
+                           class:'image_input' %>
     </div>
   </div>
 
@@ -242,15 +238,20 @@
         <ul id="groups_tabs"class="subsection_tabs">
           <li class="tab">
             <a href="#none" id="filter_link_none" class="filter_selected">
-              <%= raw(I18n.t("groups.all_grouping_counts")) %></a></li>
+              <%= raw(I18n.t("groups.all_grouping_counts")) %>
+            </a>
+          </li>
           <li class="tab">
             <a href="#validated" id="filter_link_validated">
-              <%= raw(I18n.t("groups.valid_grouping_counts")) %></a></li>
+              <%= raw(I18n.t("groups.valid_grouping_counts")) %>
+            </a>
+          </li>
           <li class="tab">
             <a href="#unvalidated" id="filter_link_unvalidated">
-              <%= raw(I18n.t("groups.not_valid_grouping_counts")) %></a></li>
-          <li class="button_tab">
+              <%= raw(I18n.t("groups.not_valid_grouping_counts")) %>
+            </a>
           </li>
+          <li class="button_tab"></li>
         </ul>
 
         <div id="none"></div>
