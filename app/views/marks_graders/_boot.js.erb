@@ -8,10 +8,10 @@ document.observe("dom:loaded", function() {
   $('errors').hide();
 
   //force the middle column to be moved on the y-axis as the page is scrolled
-	Event.observe(document, "scroll", function() {
-		//110 is the displacement for "top" for .centreColumnGraders as can be seen in the main.css
-		$("centreColumn").setStyle({top: (document.viewport.getScrollOffsets().top + 110) +'px' });
-	});
+  Event.observe(document, "scroll", function() {
+    //110 is the displacement for "top" for .centreColumnGraders as can be seen in the main.css
+    $("centreColumn").setStyle({top: (document.viewport.getScrollOffsets().top + 110) +'px' });
+  });
 
   //This reuses client-side javascript from assignment graders view for performance reasons, hence "groupings_table" name.
   groupings_table = new FilterTable({
@@ -149,7 +149,9 @@ document.observe("dom:loaded", function() {
   new Ajax.Request('<%= populate_grade_entry_form_marks_graders_path(@grade_entry_form) %>', {
     asynchronous: true,
     evalScripts: true,
-    onComplete: function(request){$('loading_list').hide()},
+    onComplete: function(request){
+      document.getElementById('working').style.display = 'none';
+    },
     parameters: {
       'authenticity_token': AUTH_TOKEN
     }
