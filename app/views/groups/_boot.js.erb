@@ -7,11 +7,13 @@ document.observe("dom:loaded", function() {
   // Hide AJAX errors DIV
   $('errors').hide();
 
-  // force the middle column to be moved on the y-axis as the page is scrolled
-  Event.observe(document, "scroll", function() {
-  	// 110 is the displacement for "top" for .centreColumn as can be seen in the main.css
-    $("centreColumn").setStyle({ top: (document.viewport.getScrollOffsets().top + 110 ) +'px' });
-  });
+  // Keep the icons in the middle of the screen
+  var icons = document.getElementById('icons');
+  icons.style.top = document.viewport.getScrollOffsets().top + (window.innerHeight / 2) - icons.offsetHeight + 'px';
+
+  window.onscroll = function() {
+    icons.style.top = document.viewport.getScrollOffsets().top + (window.innerHeight / 2) - icons.offsetHeight + 'px';
+  };
 
   groupings_table = new FilterTable({
     table_id: $('groups'),

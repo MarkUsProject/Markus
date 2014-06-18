@@ -28,10 +28,10 @@
     <div class="clear"></div>
 
     <div class="summary_block">
-      <b class="total_extra_points_label">
-        <strong><%= I18n.t("marker.marks.total_extra_marks").html_safe %></strong>
-        <span id="total_extra_points"><%= result.get_total_extra_points %></span><br>
-      </b>
+      <strong class="total_extra_points_label">
+        <%= I18n.t("marker.marks.total_extra_marks").html_safe %>
+      </strong>
+      <span id="total_extra_points"><%= result.get_total_extra_points %></span>
     </div>
 
     <div class="clear"></div>
@@ -74,12 +74,10 @@
     <div class="clear"></div>
 
     <div class="summary_block">
-      <b class="total_extra_points_label">
+      <strong class="total_extra_points_label">
         <%= I18n.t("marker.marks.total_extra_marks").html_safe %>
-        <span id="total_extra_points">
-          <%= old_result.get_total_extra_points %>
-        </span><br/>
-      </b>
+      </strong>
+      <span id="total_extra_points"><%= old_result.get_total_extra_points %></span>
     </div>
 
     <div class="clear"></div>
