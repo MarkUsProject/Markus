@@ -1,9 +1,12 @@
 <script>
 //<![CDATA[
   jQuery(document).ready(function() {
+    // Set locale for language localisation with Moment.js
+    moment.lang(document.getElementById('locale').value);
+
     localize_date(document.getElementById('actual_date'),
                   document.getElementById('date'),
-                  document.getElementById('locale').value);
+                  document.getElementById('format').value);
 
     jQuery('.datepicker').datepicker({
       altField:         '#actual_date',
