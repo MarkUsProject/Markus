@@ -1136,6 +1136,7 @@ en:
         locale_date:      "DD, MM d, yy,"
         locale_date_only: "DD, MM d, yy"
         js_date_time:     "dddd, MMMM D, YYYY, h:mm A"
+        js_date:          "dddd, MMMM D, YYYY"
 
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]

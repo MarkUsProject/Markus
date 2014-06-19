@@ -1110,6 +1110,7 @@ pt:
         locale_date:      "DD, d 'de' MM 'de' yy"
         locale_date_only: "DD, d 'de' MM 'de' yy"
         js_date_time:     "dddd, D [de] MMMM [de] YYYY HH:mm"
+        js_date:          "dddd, D [de] MMMM [de] YYYY"
 
       day_names: [domingo, segunda-feira, terça-feira, quarta-feira, quinta-feira, sexta-feira, sábado]
       abbr_day_names: [dom, seg, ter, qua, qui, sex, sab]
