@@ -2,7 +2,7 @@
   <%= javascript_include_tag 'jquery', 'jquery-ui', 'jquery-ui-timepicker-addon' %>
   <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'PeriodDeltaChain/PeriodDeltaChain' %>
-  <%= javascript_include_tag 'localize_date' %>
+  <%= javascript_include_tag 'moment-with-langs.min', 'localize_date' %>
 <% end %>
 
 <%= render partial: 'boot',
@@ -19,6 +19,13 @@
 
   <%= render partial: 'shared/error_explanation',
              locals: { model: @assignment } %>
+
+  <!-- The locale format string used for localising the date/time -->
+  <%= raw(f.text_field nil,
+                       id: 'format',
+                       class: 'hidden',
+                       value: t('date.formats.js_date_time'),
+                       disabled: true) %>
 
   <!-- Assignment properties -->
   <fieldset>

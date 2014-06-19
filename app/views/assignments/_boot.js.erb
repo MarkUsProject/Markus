@@ -48,6 +48,9 @@
   }
 
   jQuery(document).ready(function() {
+    // Set locale for language localisation with Moment.js
+    moment.lang(document.getElementById('locale').value);
+
     // Handle periods and hiding/showing things
     if (jQuery('#actual_assignment_due_date').val()) {
       create_grace_periods();
@@ -70,8 +73,21 @@
     jQuery('input[required]').change(check_required_fields)
                              .keyup(check_required_fields);
 
-    // Handle date/time pickers
+    // Localize the due dates on load
+    var format = document.getElementById('format').value;
+    localize_datetime(document.getElementById('actual_assignment_due_date'),
+                      document.getElementById('assignment_due_date'),
+                      format);
+    localize_datetime(document.getElementById('actual_remark_due_date'),
+                      document.getElementById('remark_due_date'),
+                      format);
+    jQuery('.section_due_date').each(function(i) {
+      localize_datetime(document.getElementById('actual_section_due_date_' + (i+1)),
+                        document.getElementById('section_due_date_' + (i+1)),
+                        format);
+    });
 
+    // Handle date/time pickers
     jQuery('.section_due_date').each(function(i) {
       jQuery('#section_due_date_' + (i+1)).datetimepicker({
         altField:         '#actual_section_due_date_' + (i+1),

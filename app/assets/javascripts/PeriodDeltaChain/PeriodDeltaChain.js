@@ -31,7 +31,7 @@ var PeriodDeltaChain = Class.create({
   },
   set_due_date: function(new_due_date) {
     delete this.due_date;
-    this.due_date = new Date(convert_date(new_due_date));
+    // this.due_date = new Date(convert_date(new_due_date));
   },
   set_or_default: function(value, default_value) {
     if (typeof value == 'undefined') {

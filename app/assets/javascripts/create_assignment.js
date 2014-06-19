@@ -1,18 +1,4 @@
 jQuery(document).ready(function() {
-  // Localize the due dates on load
-  var language = document.getElementById('locale').value;
-  localize_datetime(document.getElementById('actual_assignment_due_date'),
-                    document.getElementById('assignment_due_date'),
-                    language);
-  localize_datetime(document.getElementById('actual_remark_due_date'),
-                    document.getElementById('remark_due_date'),
-                    language);
-  jQuery('.section_due_date').each(function(i) {
-    localize_datetime(document.getElementById('actual_section_due_date_' + (i+1)),
-                      document.getElementById('section_due_date_' + (i+1)),
-                      language);
-  });
-
   // Change repo folder to be same as short identifier
   jQuery('#short_identifier').change(function() {
     jQuery("#assignment_repository_folder").val(jQuery(this).val());

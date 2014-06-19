@@ -1131,11 +1131,12 @@ en:
         long_ordinal: "%e %B %Y"
         only_day: "%e"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%e, %B %d, %Y, %I:%M %p"
+        long_date: "%A, %B %d, %Y, %l:%M %p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
         locale_date:      "DD, MM d, yy,"
         locale_date_only: "DD, MM d, yy"
+        js_date_time:     "dddd, MMMM D, YYYY, h:mm A"
 
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]

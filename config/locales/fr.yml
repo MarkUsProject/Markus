@@ -1110,11 +1110,12 @@ fr:
         long_ordinal: "%e %B %Y"
         only_day: "%e"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d %B %Y à %H:%M"
+        long_date: "%A %d %B %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
         locale_date:      "DD d MM yy"
         locale_date_only: "DD d MM yy"
+        js_date_time:     "dddd D MMMM YYYY HH:mm"
 
       day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
       abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
@@ -1137,7 +1138,7 @@ fr:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d %B %Y %H:%M"
+        long_date: "%A %d %B %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
