@@ -1,12 +1,8 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'FilterTable/FilterTable',
-                             'users_manager',
+  <%= javascript_include_tag 'users_manager',
                              'help_system' %>
-
-  <%= render partial: 'boot',
-             formats: [:js],
-             handlers: [:erb] %>
 <% end %>
+<%= render partial: 'admins_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
 <div class='title_bar'>
   <h1>
@@ -23,30 +19,29 @@
   </div>
 </div>
 
-<div class='wrapper'>
-  <%= render 'shared/flash_message' %>
+<div class="colsLeftHeavy">
+  <div class="wrapLeft">
+    <div id="list">
+      <%# TODO: there is no csv functionality on this page, why is this here? %>
 
-  <%# TODO: there is no csv functionality on this page, why is this here? %>
-
-  <%# Display lines in csv file that has not been successfully processed %>
-  <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? %>
-    <div class='errorExplanation' id='errorExplanation'>
-      <p><%= t('admins.not_added') %></p>
-      <ul>
+      <%# Display lines in csv file that has not been successfully processed %>
+      <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? %>
+      <div class='errorExplanation' id='errorExplanation'>
+        <p><%= t('admins.not_added') %></p>
+        <ul>
         <% for line in flash[:invalid_lines] %>
           <li><%= line %></li>
         <% end %>
-      </ul>
-      <p><%= t('graders.make_sure') %></p>
-      <ul>
-        <li><%= t('admins.ta_names') %></li>
-        <li><%= t('admins.each_field') %></li>
-        <li><%= t('admins.each_line') %></li>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class='table'>
-    <table id='admins'></table>
+        </ul>
+        <p><%= t('graders.make_sure') %></p>
+        <ul>
+          <li><%= t('admins.ta_names') %></li>
+          <li><%= t('admins.each_field') %></li>
+          <li><%= t('admins.each_line') %></li>
+        </ul>
+      </div>
+      <% end %>
+      <%= render 'shared/flash_message' %>
+    <div id='adminsTable' class='table'></div>
   </div>
 </div>

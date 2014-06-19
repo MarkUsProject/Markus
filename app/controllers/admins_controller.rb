@@ -1,16 +1,12 @@
 class AdminsController < ApplicationController
-  include UsersHelper
   before_filter  :authorize_only_for_admin
-
+  include AdminsHelper
   def index
-  end
-
-  def populate
-    admins_data = Admin.all(order: 'user_name')
-    # construct_table_rows defined in UsersHelper
-    @admins = construct_table_rows(admins_data)
     respond_to do |format|
-      format.json { render json: @admins }
+      format.html
+      format.json do
+        render json: get_admins_table_info
+      end
     end
   end
 
