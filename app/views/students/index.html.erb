@@ -62,9 +62,8 @@
 
     <div class="global_action">
       <select name="bulk_action" id="bulk_action"
-              onchange="$('bulk_action').setValue($(this).getValue());
-                        detect_bulk_action_change();">
-        <option value=""><%= t(:bulk_action)%></option>
+              onchange="detect_bulk_action_change();">
+        <option><%= t(:bulk_action)%></option>
         <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
         <option value="add_section"><%= I18n.t(:add_section)%></option>
         <option value="hide"><%= t(:hide_students)%></option>
@@ -83,8 +82,11 @@
           <% end %>
         </select>
       </span>
-      <%= submit_tag t(:apply), id: 'apply_bulk_action', :'data-disable-with' => I18n.t('working'),
-                                name: 'commit', class: 'thin-button' %>
+      <%= submit_tag t(:apply),
+                     id: 'apply_bulk_action',
+                     data: { disable_with: I18n.t('working') },
+                     name: 'commit',
+                     class: 'thin-button' %>
     </div>
 
     <div class="search_box">
@@ -96,11 +98,6 @@
 
     <div style="overflow:auto;">
       <table id="students">
-        <tr id="loading_list">
-          <td class="loading">
-            <%= image_tag("spinner.gif")%> <%= I18n.t("groups.loading_list") %>
-          </td>
-        </tr>
       </table>
     </div>
   </div>

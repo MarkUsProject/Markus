@@ -30,9 +30,6 @@
          onclick='bump_select("select_file_id", 1, "back_button", "next_button"); return false;'
          value='→'
          id='next_button'>
-  <span id='loading_code' style='display:none;'>
-    <%= image_tag('spinner.gif')%> <%= I18n.t('common.loading_code') %>
-  </span>
   <%= submit_tag I18n.t(:download) if can_download && !files.empty? %>
   <%= label_tag('include_annotations',
                 I18n.t('marker.include_annotations'),

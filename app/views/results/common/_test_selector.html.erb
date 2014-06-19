@@ -7,10 +7,10 @@
 
     <script type='text/javascript'>
     $("test_select_link").observe('ajax:after', function(evt, status, data, xhr) {
-      $('running_tests').show();
+      document.getElementById('working').style.display = '';
     });
     $("test_select_link").observe('ajax:complete', function(evt, status, data, xhr) {
-      $('running_tests').hide();
+      document.getElementById('working').style.display = 'none';
       $('tests_complete').show();
     });
     </script>
@@ -28,12 +28,6 @@
   </select>
   <input type="button" onclick="if ($('select_test_result_id').getValue() != '') { load_test_result($('select_test_result_id').getValue()); }"
       value="<%= I18n.t("test_result.button.load")%>" />
-  <span id="loading_test_result" style="display:none;">
-    <%= image_tag('spinner.gif') %> <%= I18n.t("test_result.loading_results") %>
-  </span>
-  <span id="running_tests" style="display:none;">
-    <%= image_tag('spinner.gif') %> <%= I18n.t("test_result.running_tests") %>
-  </span>
   <span id="tests_complete" style="display:none;">
     <% if test_result_files.find_last_by_user_id(@current_user.id) %>
       <% if test_result_files.find_last_by_user_id(@current_user.id).status == 'success' %>

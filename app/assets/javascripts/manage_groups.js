@@ -9,7 +9,7 @@ function populate_students(json_data) {
 }
 
 function filter(filter_name) {
-  $('loading_list').show();
+  document.getElementById('working').style.display = '';
   try {
     switch(filter_name) {
       case 'validated':
@@ -30,7 +30,7 @@ function filter(filter_name) {
   catch (e) {
     alert(e);
   }
-  $('loading_list').hide();
+  document.getElementById('working').style.display = 'none';
 }
 
 function modify_student(student_json) {
@@ -74,12 +74,12 @@ function remove_groupings(grouping_ids_json) {
 
 function thinking() {
   $('global_action_form').disable();
-  $('loading_list').show();
+  document.getElementById('working').style.display = '';
 }
 
 function done_thinking() {
   $('global_action_form').enable();
-  $('loading_list').hide();
+  document.getElementById('working').style.display = 'none';
 }
 
 function press_on_enter(event, element_id) {

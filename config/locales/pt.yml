@@ -27,7 +27,7 @@ pt:
     # app/views/layouts/_header.html.erb
     log_out:            "Sair"
     clear_role_switch_session_link: "Cancelar troca de papel"
-    working:            "Trabalhando…"
+    working:            "Carregando"
     login_as:           "Fazer login como "
 
     # app/views/main/_about_content.html.erb
@@ -131,7 +131,7 @@ pt:
         update_success:        "Projeto atualizado com sucesso"
         create_success:        "Projeto criado com sucesso"
         error: "Não foi possível atribuir a regra de submissão: #%{message}"
-        not_valid_submission_rule: "%{type} não é uma regra de submissão valida"
+        not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
         edit:           "Editar projeto:"
         properties:     "Propriedades do projeto"
@@ -314,7 +314,6 @@ pt:
 
     #app/views/results/common
     common:
-      loading_code: "Carregando código..."
       submission_file: "Arquivo enviado:"
       test_results: "Resultado dos testes:"
       no_file_in_repository: "[Nenhum arquivo no respositório]"
@@ -1167,7 +1166,7 @@ pt:
     assignments_graded:        "Projetos avalidos:"
     assignments_failed:        "Número de falhas:"
     assignments_zeros:         "Número de zeros:"
-    refresh_graph:             "Atulizar grafo"
+    refresh_graph:             "Atualizar gráfico"
     outstanding_remark_request: "%{request_count} pedidos de avaliação"
     outstanding_remark_requests: "%{request_count} pedidos de avaliação"
 
@@ -1180,7 +1179,7 @@ pt:
 
     #lib/validators/
     date_validator:
-      invalid_date: "Não é uma data valida"
+      invalid_date: "Não é uma data válida"
 
     #Test Framework
     automated_tests:

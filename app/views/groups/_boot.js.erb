@@ -129,11 +129,15 @@ document.observe("dom:loaded", function() {
     }
   });
 
+  document.getElementById('working').style.display = '';
+
   new Ajax.Request('<%= populate_assignment_groups_path(@assignment.id) %>',
                     {
                       asynchronous:true,
                       evalScripts:true,
-                      onComplete: function() { $('loading_list').hide(); },
+                      onComplete: function() {
+                        document.getElementById('working').style.display = 'none';
+                      },
                       parameters: 'authenticity_token=' + AUTH_TOKEN
                     })
 
@@ -141,10 +145,11 @@ document.observe("dom:loaded", function() {
                     {
                       asynchronous:true,
                       evalScripts:true,
-                      onComplete: function() { $('loading_students_list').hide(); },
+                      onComplete: function() {
+                        document.getElementById('working').style.display = 'none';
+                      },
                       parameters: 'authenticity_token=' + AUTH_TOKEN
                     })
 });
-
 //]]>
 </script>
