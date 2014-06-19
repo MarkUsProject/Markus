@@ -1,17 +1,13 @@
 class TasController < ApplicationController
-  include UsersHelper
+  include TasHelper
   before_filter  :authorize_only_for_admin
 
   def index
-    @tas = Ta.all(order: 'user_name')
-  end
-
-  def populate
-    @tas_data = Ta.all(order: 'user_name')
-    # construct_table_rows defined in UsersHelper
-    @tas = construct_table_rows(@tas_data)
     respond_to do |format|
-      format.json { render json: @tas }
+      format.html
+      format.json do
+        render json: get_tas_table_info
+      end
     end
   end
 
