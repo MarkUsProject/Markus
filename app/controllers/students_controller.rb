@@ -62,8 +62,7 @@ class StudentsController < ApplicationController
       end
       head :ok
     rescue RuntimeError => e
-      @error = e.message
-      render :display_error
+      render text: e.message, status: 500
     end
   end
 

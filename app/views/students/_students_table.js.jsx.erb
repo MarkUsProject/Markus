@@ -3,6 +3,9 @@
 
   StudentsTable = React.createClass({
     getDefaultProps: function() {
+      // Defines the columns used for the table and whether they
+      // are sortable searchable. The default initially sorted
+      // column is the first sortable column in the array.
       var columns = [
         {
           id: 'checkbox',
@@ -15,69 +18,73 @@
         },
         {
           id: 'user_name',
-          content: '<%= j raw I18n.t('user.user_name') %>',
+          content: '<%= j raw I18n.t(:'user.user_name') %>',
           sortable: true,
           searchable: true
         },
         {
           id: 'last_name',
-          content: '<%= j raw I18n.t('user.last_name') %>',
+          content: '<%= j raw I18n.t(:'user.last_name') %>',
           sortable: true,
           searchable: true
         },
         {
           id: 'first_name',
-          content: '<%= j raw I18n.t('user.first_name') %>',
+          content: '<%= j raw I18n.t(:'user.first_name') %>',
           sortable: true,
           searchable: true
         },
         {
           id: 'section',
-          content: '<%= j raw I18n.t('user.section') %>',
+          content: '<%= j raw I18n.t(:'user.section') %>',
           sortable: true
         },
         {
           id: 'grace_credits',
-          content: '<%= j raw I18n.t('user.grace_credits') %>',
+          content: '<%= j raw I18n.t(:'user.grace_credits') %>',
           sortable: true
         },
         {
           id: 'notes',
-          content: '<%= j raw I18n.t('user.notes_count') %>',
+          content: '<%= j raw I18n.t(:'user.notes_count') %>',
           sortable: false
         }
       ];
 
+      // Defines the filters used for the table filters. func
+      // must implement the filter method that valid objects
+      // should return true for, and invalid ones should return false.
       var filters = [
         {
           name: 'all',
-          text: '<%= j raw I18n.t('all') %>',
+          text: '<%= j raw I18n.t(:'all') %>',
           func: function(student) {
             return true;
           }
         },
         {
           name: 'active',
-          text: '<%= j raw I18n.t('active') %>',
+          text: '<%= j raw I18n.t(:'active') %>',
           func: function(student) {
             return !student.hidden;
           }
         },
         {
           name: 'not_active',
-          text: '<%= j raw I18n.t('not_active') %>',
+          text: '<%= j raw I18n.t(:'not_active') %>',
           func: function(student) {
             return student.hidden;
           }
         }
       ];
 
+      // Internationalized text for ActionBox.
       var actions_text = {
-          give_grace_credits: '<%= j raw I18n.t('give_grace_credits') %>',
-          add_section: '<%= j raw I18n.t('add_section') %>',
-          hide_students: '<%= j raw I18n.t('hide_students') %>',
-          unhide_students: '<%= j raw I18n.t('unhide_students') %>',
-          no_sections: '<%= j raw I18n.t('section.no_sections') %>'
+          give_grace_credits: '<%= j raw I18n.t(:'give_grace_credits') %>',
+          add_section: '<%= j raw I18n.t(:'add_section') %>',
+          hide_students: '<%= j raw I18n.t(:'hide_students') %>',
+          unhide_students: '<%= j raw I18n.t(:'unhide_students') %>',
+          no_sections: '<%= j raw I18n.t(:'section.no_sections') %>'
       };
 
       return {
@@ -85,11 +92,11 @@
         filters: filters,
         actions_text: actions_text
       };
-
     },
     getInitialState: function() {
       return {
         loading: true,
+        error: null,
         students: [],
         selected_students: []
       };
@@ -106,9 +113,16 @@
         success: function(data) {
           this.setState({
             students: data,
-            loading: false
+            loading: false,
+            error: null
           });
-        }.bind(this)
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }
       });
     },
     // Checkbox clicked (this must be in the parent since we're passing the box down from here)
@@ -128,12 +142,12 @@
     // The checkbox on one of the table rows was clicked.
     checkboxChanged: function(event) {
       var value = event.currentTarget.checked;
-      var student_id = event.currentTarget.parentNode.parentNode.getAttribute('id') 
+      var student_id = parseInt(event.currentTarget.parentNode.parentNode.getAttribute('id'));
 
       // Figure out new selected_students state...
-      var new_selected_students = this.state.selected_students.splice(0);
+      var new_selected_students = this.state.selected_students.slice();
       if (value == true) {
-        new_selected_students.push(parseInt(student_id));
+        new_selected_students.push(student_id);
       } else {
         new_selected_students.splice(new_selected_students.indexOf(student_id), 1);
       }
@@ -143,13 +157,17 @@
 
       // If we change a checkbox and all of them become checked
       // or unchecked, change AllCheckbox appropriately.
-      if (this.state.selected_students == this.state.students) {
+      if (this.state.selected_students.length === this.state.students.length) {
         this.synchronizeCheckboxAll(true);
-      } else if (this.state.selected_students == []) {
+      } else if (this.state.selected_students === []) {
         this.synchronizeCheckboxAll(false);
       }
     },
-
+    onError: function(error) {
+      this.setState({
+        error: error
+      });
+    },
     render: function() {
       // Do student-specific table stuff here.
       // possibly move this to getdefaultprops.
@@ -159,7 +177,7 @@
         s['id'] = student.id;
         s['checkbox'] = <input type='checkbox'
           onChange={this.checkboxChanged}
-          checked={this.state.selected_students.indexOf(student.id) != -1 ? true : false} />;
+          checked={this.state.selected_students.indexOf(student.id) !== -1 ? true : false} />;
         s['user_name'] = student.user_name;
         s['last_name'] = student.last_name;
         s['first_name'] = student.first_name;
@@ -167,12 +185,12 @@
         s['grace_credits'] = student.grace_credits_remaining + ' / ' + student.grace_credits;
         s['notes'] = <span>
           <a key={student.edit_link} 
-            href={student.edit_link}><%= j raw I18n.t('edit') %></a>
+            href={student.edit_link}><%= j raw I18n.t(:'edit') %></a>
           | 
           <a key={student.notes_link}
             href={student.notes_link}
             data-remote='true'
-            id='notes_highlight_user_id'><%= j raw I18n.t('notes.title') %> ({student.num_notes})</a>
+            id='notes_highlight_user_id'><%= j raw I18n.t(:'notes.title') %> ({student.num_notes})</a>
           </span>;
         s['hidden'] = student.hidden;
     
@@ -181,19 +199,42 @@
       
       if (this.state.loading) {
         return (
-          <div><%= j raw I18n.t('working') %></div>
+          <div><%= j raw I18n.t(:'working') %></div>
         );
       } else {
         return (
           <div>
+            <Error error={this.state.error} />
             <StudentsActionBox actions_text={this.props.actions_text} 
               selected_students={this.state.selected_students}
-              sections={this.props.sections} refresh={this.refresh} />
+              sections={this.props.sections}
+              refresh={this.refresh}
+              errorThrown={this.onError} />
             <Table data={students_data}
-              search_placeholder={'<%= j raw I18n.t('students.search_students') %>'}
+              search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
               columns={this.props.columns}
               filters={this.props.filters} />
           </div>
+        );
+      }
+    }
+  });
+
+  // Error div in case refreshing or sending action
+  // causes server error
+  Error = React.createClass({
+    propTypes: {
+      error: React.PropTypes.string
+    },
+    render: function() {
+      if (this.props.error) {
+        return (
+          <div className={'error'}>{this.props.error}</div>
+        );
+      }
+      else {
+        return (
+          <div></div>
         );
       }
     }
@@ -241,7 +282,6 @@
             </span>
         }
       }
-
       // If more than one student is selected render the div. Otherwise nothing.
       if (this.props.selected_students.length > 0) {
         return (
@@ -262,7 +302,6 @@
         );
       }
     },
-
     getInitialState: function() {
       return {
         select_value: 'give_grace_credits',
@@ -332,7 +371,12 @@
         url: '/students/bulk_modify',
         data: dataLoad,
         success: function(data) {
+          this.props.errorThrown(null);
           this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.errorThrown(error);
         }.bind(this)
       });
     }
