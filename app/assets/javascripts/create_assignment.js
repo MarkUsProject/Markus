@@ -200,10 +200,12 @@ function toggle_sections_due_date(section_due_dates_type) {
 
 function change_submission_rule() {
   jQuery('.period').hide();
+  jQuery('#sub_rule_link a').hide();
   jQuery('.period input').prop('disabled', true);
 
   if (jQuery('#grace_period_submission_rule').is(':checked') === true) {
     jQuery('#grace_periods .period').show();
+    jQuery('#grace_period_link').show();
     if (jQuery('#grace_periods .period').length === 0) {
       jQuery('#grace_period_link').click();
     }
@@ -212,6 +214,7 @@ function change_submission_rule() {
 
   if (jQuery('#penalty_decay_period_submission_rule').is(':checked') === true) {
     jQuery('#penalty_decay_periods .period').show();
+    jQuery('#penalty_decay_period_link').show();
     if (jQuery('#penalty_decay_periods .period').length === 0) {
       jQuery('#penalty_decay_period_link').click();
     }
@@ -220,6 +223,7 @@ function change_submission_rule() {
 
   if (jQuery('#penalty_period_submission_rule').is(':checked') === true) {
     jQuery('#penalty_periods .period').show();
+    jQuery('#penalty_period_link').show();
     if (jQuery('#penalty_periods .period').length === 0) {
       jQuery('#penalty_period_link').click();
     }
