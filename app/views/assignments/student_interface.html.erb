@@ -371,7 +371,7 @@ if !@grouping.nil? &&
   <div id="invite_dialog">
     <%= form_tag({action: 'invite_member',
         id: @assignment.id},
-        {onsubmit: "$('invite_modal_spinner').show();"}) do %>
+        {onsubmit: "document.getElementById('working').style.display = '';"}) do %>
       <h2><%= I18n.t("student.invite") %></h2>
       <p class="information"><%= t(:seperate_multiple_with_commas) %></p>
       <fieldset>
@@ -380,10 +380,10 @@ if !@grouping.nil? &&
       </fieldset>
       <p id="buttons">
         <%= submit_tag I18n.t(:submit) %>
-        <input type="reset" value="<%= I18n.t("cancel") %>" onclick="invite_modal.close();">
-        <span id="invite_modal_spinner" style="display:none;">
-          <%= image_tag("spinner.gif")%><%= I18n.t("student.please_wait") %>
-        </span>
+        <input type="reset"
+               value="<%= I18n.t("cancel") %>"
+               onclick="invite_modal.close();
+                        document.getElementById('working').style.display = 'none';">
       </p>
     <% end %>
   </div>

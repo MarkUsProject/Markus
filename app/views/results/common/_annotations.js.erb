@@ -230,7 +230,7 @@
       this.remove();
     });
 
-    document.getElementById('loading_code').style.display = '';
+    document.getElementById('working').style.display = '';
     document.getElementById('select_file_id').disabled = true;
 
     positions = null;
@@ -242,8 +242,8 @@
       data: 'submission_file_id=' + submission_file_id +
             '&focus_line=' + focus_line +
             '&authenticity_token=' + AUTH_TOKEN
-    }).done(function() {
-      document.getElementById('loading_code').style.display = 'none';
+    }).always(function() {
+      document.getElementById('working').style.display = 'none';
     });
   }
 

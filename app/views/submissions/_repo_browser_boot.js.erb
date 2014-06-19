@@ -36,7 +36,7 @@
       type:   'POST',
       data:   'authenticity_token=' + AUTH_TOKEN
     }).always(function() {
-      document.getElementById('loading_list').style.display = 'none';
+      document.getElementById('working').style.display = 'none';
     });
 
     jQuery('.datetimepicker').datetimepicker({

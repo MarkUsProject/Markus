@@ -27,7 +27,7 @@ en:
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
     clear_role_switch_session_link: "Cancel role switch"
-    working:            "Working…"
+    working:            "Loading"
     login_as:           "Login as"
 
     # app/views/main/_about_content.html.erb
@@ -315,7 +315,6 @@ en:
 
     #app/views/results/common
     common:
-      loading_code: "Loading Code..."
       submission_file: "Submission File:"
       test_results: "Test Results:"
       no_file_in_repository: "[No files in repository]"
