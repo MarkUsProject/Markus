@@ -24,7 +24,7 @@ ImageEventHandler.prototype.init_listeners = function(enable_annotations) {
 
   for (var i = 0; i < annot_grid.length; i++) {
     var grid_element = document.getElementById('annotation_holder_' + annot_grid[i].id);
-    grid_element.onmousemove  = this.check_for_annotations.bind(this);
+    grid_element.onmousemove = this.check_for_annotations.bind(this);
 
     if (enable_annotations) {
       grid_element.style.cursor = 'crosshair';

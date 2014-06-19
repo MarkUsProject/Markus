@@ -1,18 +1,4 @@
 jQuery(document).ready(function() {
-  // Localize the due dates on load
-  var language = document.getElementById('locale').value;
-  localize_datetime(document.getElementById('actual_assignment_due_date'),
-                    document.getElementById('assignment_due_date'),
-                    language);
-  localize_datetime(document.getElementById('actual_remark_due_date'),
-                    document.getElementById('remark_due_date'),
-                    language);
-  jQuery('.section_due_date').each(function(i) {
-    localize_datetime(document.getElementById('actual_section_due_date_' + (i+1)),
-                      document.getElementById('section_due_date_' + (i+1)),
-                      language);
-  });
-
   // Change repo folder to be same as short identifier
   jQuery('#short_identifier').change(function() {
     jQuery("#assignment_repository_folder").val(jQuery(this).val());
@@ -214,10 +200,12 @@ function toggle_sections_due_date(section_due_dates_type) {
 
 function change_submission_rule() {
   jQuery('.period').hide();
+  jQuery('#sub_rule_link a').hide();
   jQuery('.period input').prop('disabled', true);
 
   if (jQuery('#grace_period_submission_rule').is(':checked') === true) {
     jQuery('#grace_periods .period').show();
+    jQuery('#grace_period_link').show();
     if (jQuery('#grace_periods .period').length === 0) {
       jQuery('#grace_period_link').click();
     }
@@ -226,6 +214,7 @@ function change_submission_rule() {
 
   if (jQuery('#penalty_decay_period_submission_rule').is(':checked') === true) {
     jQuery('#penalty_decay_periods .period').show();
+    jQuery('#penalty_decay_period_link').show();
     if (jQuery('#penalty_decay_periods .period').length === 0) {
       jQuery('#penalty_decay_period_link').click();
     }
@@ -234,6 +223,7 @@ function change_submission_rule() {
 
   if (jQuery('#penalty_period_submission_rule').is(':checked') === true) {
     jQuery('#penalty_periods .period').show();
+    jQuery('#penalty_period_link').show();
     if (jQuery('#penalty_periods .period').length === 0) {
       jQuery('#penalty_period_link').click();
     }

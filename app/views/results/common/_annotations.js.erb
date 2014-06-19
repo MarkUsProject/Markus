@@ -27,7 +27,7 @@
     var line_factory = new SourceCodeLineFactory();
     var line_manager = new SourceCodeLineManager(syntax_highlighter_adapter, line_factory, collection);
     var annotation_text_manager   = new AnnotationTextManager();
-    var annotation_text_displayer = new AnnotationTextDisplayer(document.getElementById('annotation_holder'));
+    var annotation_text_displayer = new AnnotationTextDisplayer();
 
     annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
 
@@ -40,7 +40,7 @@
 
     var image_event_handler       = new ImageEventHandler();
     var annotation_text_manager   = new AnnotationTextManager();
-    var annotation_text_displayer = new AnnotationTextDisplayer(document.getElementById('annotation_holder'));
+    var annotation_text_displayer = new AnnotationTextDisplayer();
 
     annotation_manager = new ImageAnnotationGrid(image_event_handler,
                                                  annotation_text_manager,
