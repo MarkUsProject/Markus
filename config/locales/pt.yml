@@ -131,7 +131,7 @@ pt:
         update_success:        "Projeto atualizado com sucesso"
         create_success:        "Projeto criado com sucesso"
         error: "Não foi possível atribuir a regra de submissão: #%{message}"
-        not_valid_submission_rule: "%{type} não é uma regra de submissão valida"
+        not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
         edit:           "Editar projeto:"
         properties:     "Propriedades do projeto"
@@ -1166,7 +1166,7 @@ pt:
     assignments_graded:        "Projetos avalidos:"
     assignments_failed:        "Número de falhas:"
     assignments_zeros:         "Número de zeros:"
-    refresh_graph:             "Atulizar grafo"
+    refresh_graph:             "Atualizar gráfico"
     outstanding_remark_request: "%{request_count} pedidos de avaliação"
     outstanding_remark_requests: "%{request_count} pedidos de avaliação"
 
@@ -1179,7 +1179,7 @@ pt:
 
     #lib/validators/
     date_validator:
-      invalid_date: "Não é uma data valida"
+      invalid_date: "Não é uma data válida"
 
     #Test Framework
     automated_tests:
