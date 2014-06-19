@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 //<![CDATA[
 
 var groupings_table = null;
@@ -137,26 +137,34 @@ document.observe("dom:loaded", function() {
     }
   });
 
-  new Ajax.Request('<%= populate_graders_grade_entry_form_marks_graders_path(@grade_entry_form) %>', {
-    asynchronous: true,
-    evalScripts: true,
-    onComplete: function(request){$('loading_graders_list').hide()},
-    parameters: {
-      'authenticity_token': AUTH_TOKEN
-    }
-  });
+  document.getElementById('working').style.display = '';
 
-  new Ajax.Request('<%= populate_grade_entry_form_marks_graders_path(@grade_entry_form) %>', {
-    asynchronous: true,
-    evalScripts: true,
-    onComplete: function(request){
+  var loading_graders  = true;
+  var loading_students = true;
+
+  jQuery.ajax({
+    url:      '<%= populate_graders_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
+    type:     'POST',
+    dataType: 'script',
+    data:     { 'authenticity_token': AUTH_TOKEN }
+  }).done(function() {
+    loading_graders = false;
+    if (!loading_students) {
       document.getElementById('working').style.display = 'none';
-    },
-    parameters: {
-      'authenticity_token': AUTH_TOKEN
     }
   });
 
+  jQuery.ajax({
+    url:      '<%= populate_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
+    type:     'POST',
+    dataType: 'script',
+    data:     { 'authenticity_token': AUTH_TOKEN }
+  }).done(function() {
+    loading_students = false;
+    if (!loading_graders) {
+      document.getElementById('working').style.display = 'none';
+    }
+  });
 });
 
 //]]>
