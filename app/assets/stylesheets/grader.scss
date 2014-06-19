@@ -81,6 +81,10 @@
     background-color: #dd5;
     color: blue;
   }
+
+  ol {
+    height: 590px;
+  }
 }
 
 .annotation_text_display {
@@ -221,24 +225,35 @@ li.annotation_category {
     @include border-radius(5px);
     background: #ececec;
     border: 1px solid #ddd;
-    height: 100%;
+    height: 700px;
     margin: 0 0 10px 0;
     padding: 10px;
-
-    @include breakpoint(small) {
-      display: block;
-      float: none;
-      width: 100% !important;
-    }
   }
 
     #mark_viewer,
     #summary_viewer,
-    #annotations_summary,
     #submission_rule_viewer,
-    #code_holder {
-      height: 650px;
+    #codeviewer,
+    #annotations_summary {
+      @include border-radius-bottom(5px);
       overflow: auto;
+    }
+
+    #codeviewer,
+    #mark_viewer,
+    #summary_viewer,
+    #submission_rule_viewer,
+    #annotations_summary,
+    #remark_request_tab {
+      height: 650px;
+    }
+
+    #annotations_summary_head {
+      padding: 0 1em;
+    }
+
+    #remark_request {
+      padding: 1em;
     }
 
       #sel_box {
@@ -273,7 +288,6 @@ li.annotation_category {
 }
 
 .image_container {
-  height: 650px;
   overflow: auto;
   width: auto;
 }
@@ -538,14 +552,28 @@ li.annotation_category {
   #left-pane,
   #right-pane {
     overflow: auto;
+
+    @include breakpoint(small) {
+      display: block;
+      float: none;
+      width: 100% !important;
+    }
   }
 
   #left-pane {
     padding-right: 0.5em;
+
+    @include breakpoint(small) {
+      padding-right: 0;
+    }
   }
 
   #right-pane {
     padding-left: 0.5em;
+
+    @include breakpoint(small) {
+      padding-left: 0;
+    }
   }
 
   #drag {
@@ -556,5 +584,9 @@ li.annotation_category {
     overflow: hidden;
     position: absolute;
     width: 5px;
+
+    @include breakpoint(small) {
+      display: none;
+    }
   }
 }

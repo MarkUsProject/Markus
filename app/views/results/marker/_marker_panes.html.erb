@@ -28,18 +28,20 @@
         </div> <!-- End of Code holder -->
 
         <div id='annotations_summary' class='tabbedArea'>
-          <h3><%= I18n.t('marker.overall_comments') %></h3>
+          <div id='annotations_summary_head'>
+            <h3><%= I18n.t('marker.overall_comments') %></h3>
 
-          <%= render partial: 'results/marker/overall_comment',
-                     locals: { result: old_result ? old_result : result } %>
+            <%= render partial: 'results/marker/overall_comment',
+                       locals: { result: old_result ? old_result : result } %>
 
-          <h3><%= I18n.t('marker.current_annotations') %></h3>
-          <p><%= I18n.t('marker.across_all_submission_files') %></p>
+            <h3><%= I18n.t('marker.current_annotations') %></h3>
+            <p><%= I18n.t('marker.across_all_submission_files') %></p>
+          </div>
 
           <ul id='annotation_summary_list'></ul>
         </div> <!-- Remark Request -->
 
-        <div id='remark_request_tab' class='tabbedArea'>
+        <div id='remark_request_tab' class='tabbedArea' style='display:none;'>
           <% if @submission.has_remark? %>
             <%= render partial: 'results/marker/remark_request',
                        locals: { result: result,

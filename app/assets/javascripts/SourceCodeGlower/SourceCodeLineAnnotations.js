@@ -54,7 +54,6 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_
 
   line.getLineNode().addEventListener("mouseover", function(event) {
     me.displayTextsForLine(line_num, Event.pointerX(event), Event.pointerY(event));
-    console.log(Event.pointerX(event) + ', ' + Event.pointerY(event));
   });
 
   line.getLineNode().addEventListener("mouseout", function(event) {
