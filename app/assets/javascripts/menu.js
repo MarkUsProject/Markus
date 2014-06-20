@@ -14,11 +14,6 @@ function initMenu() {
       body_classes.remove('show_menu');
     } else {
       body_classes.add('show_menu');
-
-      // Prevent native touch scrolling
-      // jQuery('#content, footer').on('touchstart touchmove', function(e){
-      //   e.preventDefault();
-      // });
     }
   }, false);
 

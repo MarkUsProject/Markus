@@ -29,16 +29,32 @@
   }
 
   #menu_icon {
-    color: $blue;
     cursor: pointer;
     display: inline-block;
-    font-size: 2.5em;
-    height: 2.75rem;
-    line-height: 1.25em;
-    padding: 0 0.5em;
+    height: 2em;
+    width: 2em;
+    margin: 0.5em 0 0 0.5em;
+
+    &::before,
+    &::after {
+      @include transition(all, $time-quick);
+      content: "";
+      position: absolute;
+      left: 1em;
+      width: 1.5em;
+    }
 
     &::before {
-      content: "≡";
+      top: 1em;
+      height: 1.5em;
+      border-top: 0.2em solid $blue;
+    }
+
+    &::after {
+      top: 1.65em;
+      height: 0.8em;
+      border-top: 0.2em solid $blue;
+      border-bottom: 0.2em solid $blue;
     }
   }
 }
@@ -86,9 +102,19 @@
     opacity: 1;
   }
 
-  #mobile_menu #menu_icon::before {
-    content: "✕";
-    font-size: 0.8em;
+  #mobile_menu #menu_icon {
+    &::before {
+      @include transform(rotate(45deg));
+      @include transform-origin(top left);
+      width: 1.8em;
+    }
+
+    &::after {
+      @include transform(rotate(-45deg));
+      @include transform-origin(bottom left);
+      border-top: 0;
+      width: 1.8em;
+    }
   }
 
   #mobile_menu,
