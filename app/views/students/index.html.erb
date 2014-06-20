@@ -1,27 +1,21 @@
 <% content_for :head do %>
-<%= javascript_include_tag 'users_manager',
+  <%= javascript_include_tag 'users_manager',
                              'FilterTable/FilterTable',
                              'effects.js',
                              'Students/index' %>
 
-<!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
- <%= render partial: "boot", formats: [:js], handlers: [:erb] %>
+  <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
+  <%= render partial: "boot", formats: [:js], handlers: [:erb] %>
 
-<script type="text/javascript">
-  jQuery(document).ready(function() {
-
-    modalNotesGroup = new Control.Modal($('notes_dialog'), //jQuery('#notes_dialog').dialog(
-    {
-      overlayOpacity: 0.75,
-      className: 'modalNotesGroup',
-      fade:false
+  <script>
+    jQuery(document).ready(function() {
+      modalNotesGroup = new ModalMarkus('#notes_dialog');
     });
-
-  });
-</script>
+  </script>
 <% end %>
 
-<div id="title_bar"><h1><%= I18n.t("students.manage_students") %></h1>
+<div id="title_bar">
+  <h1><%= I18n.t("students.manage_students") %></h1>
   <div class="heading_buttons">
     <%= link_to I18n.t(:add_new), new_student_path() %> |
     <%= link_to I18n.t(:upload),'#', onclick: 'modal_upload.open(); return false;' %> |
@@ -31,7 +25,7 @@
 
 <div class="wrapLeft">
   <%= form_tag bulk_modify_students_path(),
-    remote: true do %>
+               remote: true do %>
   <div id="ajax_error" class="error" style="display:none;"></div>
 
   <div id="list">
@@ -51,19 +45,19 @@
     <% end -%>
 
     <div id="toggle_actions">
-     <%= I18n.t(:filters) %>:
-     <%= link_to raw(I18n.t(:all) + " (<span id=\"all_students_count\"></span>)"), '#',
-                 onclick: "filter('none');",
-                 id: "filter_link_none",
-                 class: "filter_selected" %>
-     |
-     <%= link_to raw(I18n.t(:active) + " (<span id=\"active_students_count\"></span>)"), '#',
-                 onclick: "filter('active');",
-                 id: "filter_link_active" %>
-     |
-     <%= link_to raw(I18n.t(:not_active) + " (<span id=\"inactive_students_count\"></span>)"), '#',
-                 onclick: "filter('inactive');",
-                 id: "filter_link_inactive"%>
+      <%= I18n.t(:filters) %>:
+      <%= link_to raw(I18n.t(:all) + " (<span id=\"all_students_count\"></span>)"), '#',
+                  onclick: "filter('none');",
+                  id: "filter_link_none",
+                  class: "filter_selected" %>
+      |
+      <%= link_to raw(I18n.t(:active) + " (<span id=\"active_students_count\"></span>)"), '#',
+                  onclick: "filter('active');",
+                  id: "filter_link_active" %>
+      |
+      <%= link_to raw(I18n.t(:not_active) + " (<span id=\"inactive_students_count\"></span>)"), '#',
+                  onclick: "filter('inactive');",
+                  id: "filter_link_inactive"%>
     </div>
 
     <div class="global_action">
@@ -102,7 +96,7 @@
           placeholder: I18n.t("students.search_students") %>
     </div>
 
-    <div style="overflow:auto; height: 400px;">
+    <div style="overflow:auto;">
       <table id="students">
       </table>
     </div>
