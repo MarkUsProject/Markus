@@ -490,7 +490,6 @@ pt:
       problem: "Houve um problema..."
       warning: "Alerta"
       lines_not_processed: "As seguintes linhas não puderam ser processadas:"
-      loading_list: "Carregando a lista..."
       editing_past_due_date_warning: "O prazo deste projeto já expirou. Além de designar avaliadores para grupos, não é recomendado que nenhuma outra configuração seja alterada dessa vez."
       validate: "Valide o grupo:"
       validate_confirm: "Isso permitirá que o grupo envie sem o número exigido de alunos. Você tem certeza disso?"

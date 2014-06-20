@@ -504,7 +504,6 @@ en:
       problem: "There was a problem..."
       warning: "Warning"
       lines_not_processed: "The following lines could not be processed:"
-      loading_list: "Loading List..."
       editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
       validate: "Validate this group:"
       validate_confirm: "This will allow this group to submit without the required number of students. Are you sure?"
