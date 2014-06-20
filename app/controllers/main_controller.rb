@@ -391,7 +391,6 @@ private
       # This message actually means "User not allowed to use MarkUs",
       # but it's from a security-perspective
       # not a good idea to report this to the outside world. It makes it
-      # easier for attempted break-ins
       # if one can distinguish between existent and non-existent users.
       validation_result[:error] = I18n.t(:login_failed)
       return validation_result

@@ -1,11 +1,15 @@
 <% content_for :head do %>
-<%= javascript_include_tag 'Students/index',
-                           'help_system' %>
-<script>
-    var modalNotesGroup = null;
+  <%= javascript_include_tag 'Students/index'
+                             'help_system' %>
 
-    jQuery(document).ready(function() {
-      modalNotesGroup = new ModalMarkus('#notes_dialog');
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+
+    modalNotesGroup = new Control.Modal($('notes_dialog'), //jQuery('#notes_dialog').dialog(
+    {
+      overlayOpacity: 0.75,
+      className: 'modalNotesGroup',
+      fade:false
     });
   });
 </script>

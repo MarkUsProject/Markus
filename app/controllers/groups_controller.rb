@@ -7,7 +7,6 @@ require 'csv_invalid_line_error'
 class GroupsController < ApplicationController
   include GroupsHelper
   # Administrator
-  # -
   before_filter      :authorize_only_for_admin
 
   auto_complete_for :student, :user_name
@@ -44,18 +43,16 @@ class GroupsController < ApplicationController
     @assignment = grouping.assignment
     @errors = []
     @removed_groupings = []
-    students_to_remove = grouping.students.all
-    grouping.student_memberships.all.each do |member|
-      grouping.remove_member(member.id)
-    end
-    @students_data = construct_student_table_rows(students_to_remove, @assignment)
+		students_to_remove = grouping.students.all
+		grouping.student_memberships.all.each do |member|
+			grouping.remove_member(member.id)
+		end
+    # TODO: return errors through request
     if grouping.has_submission?
         @errors.push(grouping.group.group_name)
-        render :delete_groupings, formats: [:js]
     else
       grouping.delete_grouping
       @removed_groupings.push(grouping)
-      render :delete_groupings, formats: [:js]
     end
   end
 
@@ -111,22 +108,29 @@ class GroupsController < ApplicationController
         @grouping.update_attribute(:group_id, groupexist_id)
       end
     end
+<<<<<<< HEAD
     @grouping_data = construct_table_row(@grouping, @assignment)
     render :rename_group, formats: [:js]
+=======
+>>>>>>> Replace groups manager in React
   end
 
   def valid_grouping
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id])
     @grouping.validate_grouping
+<<<<<<< HEAD
     @grouping_data = construct_table_row(@grouping, @assignment)
     render :valid_grouping, formats: [:js]
+=======
+>>>>>>> Replace groups manager in React
   end
 
   def invalid_grouping
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id])
     @grouping.invalidate_grouping
+<<<<<<< HEAD
     @grouping_data = construct_table_row(@grouping, @assignment)
     render :invalid_grouping, formats: [:js]
   end
@@ -149,11 +153,23 @@ class GroupsController < ApplicationController
                                   include: [:groupings])
     @students = Student.all
     @table_rows = construct_student_table_rows(@students, @assignment)
+=======
+>>>>>>> Replace groups manager in React
   end
 
   def index
-    @all_assignments = Assignment.all(order: :id)
     @assignment = Assignment.find(params[:assignment_id])
+    respond_to do |format|
+      format.html do
+        @all_assignments = Assignment.all(order: :id)
+        render 'index'
+      end
+      format.json do
+        students_table_info = get_students_table_info
+        groupings_table_info = get_groupings_table_info
+        render json: [students_table_info, groupings_table_info]
+      end
+    end
   end
 
   # Allows the user to upload a csv file listing groups. If group_name is equal
@@ -257,6 +273,7 @@ class GroupsController < ApplicationController
     @tas = Ta.all
     grouping_ids = params[:groupings]
     student_ids = params[:students]
+<<<<<<< HEAD
 
     if params[:groupings].nil? or params[:groupings].size ==  0
       # If there is a global action than there should be a group selected
@@ -269,49 +286,76 @@ class GroupsController < ApplicationController
       render nothing: true
       return
     end
+=======
+    students_to_remove = params[:students_to_remove]
+>>>>>>> Replace groups manager in React
 
     @grouping_data = {}
     @groupings = []
-    groupings = Grouping.find(grouping_ids)
+    groupings = Grouping.find_by_id(grouping_ids)
+
+    unless params[:global_actions] == 'unassign'
+      if !groupings
+        render text: I18n.t('assignment.group.select_a_group'), 
+               status: 400 and return
+      end
+    end
 
     case params[:global_actions]
       when 'delete'
         delete_groupings(groupings)
-        return
       when 'invalid'
         invalidate_groupings(groupings)
-        return
       when 'valid'
         validate_groupings(groupings)
-        return
       when 'assign'
         if grouping_ids.length != 1
-          @error = I18n.t('assignment.group.select_only_one_group')
-          render :error_single
+          render text: I18n.t('assignment.group.select_only_one_group'),
+                 status: 400 and return
         elsif student_ids
-          add_members(student_ids, grouping_ids[0], @assignment)
-          return
+          if error = add_members(student_ids, grouping_ids[0], @assignment)
+            error and return
+          end
         else
+<<<<<<< HEAD
           @global_action_warning = t('assignment.group.select_a_student')
           render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
           return
+=======
+          render text: I18n.t('assignment.group.select_a_student'),
+                 status: 400 and return
+>>>>>>> Replace groups manager in React
         end
       when 'unassign'
-        remove_members(groupings, params)
-        return
+        if error = remove_members(students_to_remove)
+          error and return
+        end
     end
+    head :ok
   end
 
   private
   #These methods are called through global actions
+
+  # Check that there is at least one grouping selected
+  def check_for_groupings(groupings)
+    if !groupings
+      return render text: I18n.t('assignment.group.select_a_group'), status: 400
+    else
+      return nil
+    end
+  end
 
   # Given a list of grouping, sets their group status to invalid if possible
   def invalidate_groupings(groupings)
     groupings.each do |grouping|
      grouping.invalidate_grouping
     end
+<<<<<<< HEAD
     @groupings_data = construct_table_rows(groupings, @assignment)
     render :modify_groupings, formats: [:js]
+=======
+>>>>>>> Replace groups manager in React
   end
 
   # Given a list of grouping, sets their group status to valid if possible
@@ -319,8 +363,11 @@ class GroupsController < ApplicationController
     groupings.each do |grouping|
       grouping.validate_grouping
     end
+<<<<<<< HEAD
     @groupings_data = construct_table_rows(groupings, @assignment)
     render :modify_groupings, formats: [:js]
+=======
+>>>>>>> Replace groups manager in React
   end
 
   # Deletes the given list of groupings if possible. Removes each member first.
@@ -340,8 +387,11 @@ class GroupsController < ApplicationController
           @removed_groupings.push(grouping)
         end
       end
+<<<<<<< HEAD
       @students_data = construct_student_table_rows(students_to_remove, @assignment)
       render :delete_groupings, formats: [:js]
+=======
+>>>>>>> Replace groups manager in React
   end
 
   # Adds the students given in student_ids to the grouping given in grouping_id
@@ -349,10 +399,11 @@ class GroupsController < ApplicationController
     students = Student.find(student_ids)
     grouping = Grouping.find(grouping_id)
     students.each do |student|
-      add_member(student, grouping, assignment)
+      # Try adding every time. If an error occurs percolate upwards.
+      if possible_error = add_member(student, grouping, assignment)
+        return possible_error
+      end
     end
-    @groupings_data = construct_table_rows([grouping], @assignment)
-    @students_data = construct_student_table_rows(students, @assignment)
 
     # Generate warning if the number of people assigned to a group exceeds
     # the maximum size of a group
@@ -360,22 +411,24 @@ class GroupsController < ApplicationController
     group_name = grouping.group.group_name
     if assignment.student_form_groups
       if students_in_group > assignment.group_max
-        @warning_group_size = I18n.t('assignment.group.assign_over_limit',
-          group: group_name)
-
+        return render text: I18n.t('assignment.group.assign_over_limit',
+                                   group: group_name), status: 400
       end
     end
+<<<<<<< HEAD
     render :add_members, formats: [:js]
+=======
+    return nil
+>>>>>>> Replace groups manager in React
   end
 
   # Adds the student given in student_id to the grouping given in grouping
-  def add_member  (student, grouping, assignment)
+  def add_member(student, grouping, assignment)
     set_membership_status = grouping.student_memberships.empty? ?
           StudentMembership::STATUSES[:inviter] :
           StudentMembership::STATUSES[:accepted]
     @messages = []
     @bad_user_names = []
-    @error = false
 
     begin
       if student.hidden
@@ -409,13 +462,11 @@ class GroupsController < ApplicationController
           group: grouping.group.group_name)
       end
     rescue Exception => e
-      @error = true
-      @messages.push(e.message)
+      return render text: e.message, status: 400
     end
 
     grouping.reload
-    @grouping = construct_table_row(grouping, assignment)
-    @group_name = grouping.group.group_name
+    return nil
   end
 
   # Removes the students contained in params from the groupings given
@@ -423,32 +474,27 @@ class GroupsController < ApplicationController
   # This is meant to be called with the params from global_actions, and for
   # each student to delete it will have a parameter
   # of the form "groupid_studentid"
-  def remove_members(groupings, params)
-    all_members = []
-    groupings.each do |grouping|
-      members = grouping.students.delete_if do |student|
-                  !params["#{grouping.id}_#{student.user_name}"]
-                end
-      memberships = members.map do |member|
-        grouping.student_memberships.find_by_user_id(member.id)
-      end
-      memberships.each do |membership|
-        remove_member(membership, grouping, @assignment)
-      end
-      all_members = all_members.concat(members)
+  # This code is possibly not safe. (should add error checking)
+  def remove_members(member_ids_to_remove)
+    members_to_remove = Student.where(id: member_ids_to_remove)
+    members_to_remove.each do |member|
+      grouping = member.accepted_grouping_for(@assignment.id)
+      membership = grouping.student_memberships.find_by_user_id(member.id)
+      remove_member(membership, grouping, @assignment)
     end
+<<<<<<< HEAD
     @students_data = construct_student_table_rows(all_members, @assignment)
     @groupings_data = construct_table_rows(groupings, @assignment)
     render :remove_members, formats: [:js]
+=======
+    return nil
+>>>>>>> Replace groups manager in React
   end
 
-  #Removes the given student membership from the given grouping
+  # Removes the given student membership from the given grouping
   def remove_member(membership, grouping, assignment)
-    @grouping = grouping
     grouping.remove_member(membership.id)
     grouping.reload
-    unless grouping.inviter.nil?
-      @inviter = grouping.accepted_student_memberships.find_by_user_id(grouping.inviter.id)
-    end
+    return nil
   end
 end

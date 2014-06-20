@@ -4,8 +4,8 @@ module TasHelper
     @tas_table_info = tas.map do |ta|
       t = ta.attributes
       t['edit_link'] = url_for(controller: 'tas',
-                                action: 'edit',
-                                id: ta.id)
+                               action: 'edit',
+                               id: ta.id)
       t
     end
   end

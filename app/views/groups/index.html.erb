@@ -1,15 +1,10 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'manage_groups.js',
-                             'FilterTable/FilterTable.js',
-                             'Groups/tabs_boot.js',
                              'Groups/index',
                              'help_system' %>
 
   <%= render partial: 'layouts/head' %>
-
-  <%= render partial: "boot",
-             formats: [:js],
-             handlers: [:erb] %>
+  <%= render partial: 'groups_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 
   <script>
   //<![CDATA[
@@ -69,6 +64,7 @@
                         })
     }
 
+<<<<<<< HEAD
     jQuery(document).ready(function() {
       // set up event handlers to show the loading spinner while
       // an ajax call us working
@@ -79,6 +75,30 @@
       $("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
         done_thinking();
       });
+=======
+    document.observe("dom:loaded", function() {
+      modalCreate = new Control.Modal($('create_group_dialog'),
+      {
+        overlayOpacity: 0.75,
+        className: 'modalCreate',
+        fade:false
+      });
+
+      modalNotesGroup = new Control.Modal($('notes_dialog'),
+      {
+        overlayOpacity: 0.75,
+        className: 'modalNotesGroup',
+        fade:false
+      });
+
+      modalAssignmentGroupReUse = new Control.Modal($('assignment_group_use_dialog'),
+      {
+        overlayOpacity: 0.75,
+        className: 'modalAssignmentGroupReUse',
+        fade:false
+      });
+
+>>>>>>> Replace groups manager in React
     });
   //]]>
   </script>
@@ -143,6 +163,7 @@
   <%= render 'shared/flash_message' %>
 </div>
 
+<<<<<<< HEAD
 <%= form_tag global_actions_assignment_groups_path(@assignment),
              id: "global_action_form",
              remote: true do %>
@@ -281,6 +302,9 @@
   </div>
 <% end %>
 
+=======
+<div id='groupsManager'><//div>
+>>>>>>> Replace groups manager in React
 
 <!-- Modal Windows -->
 
