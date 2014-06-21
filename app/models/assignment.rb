@@ -297,7 +297,7 @@ class Assignment < ActiveRecord::Base
           results.push result.total_mark
           results_sum += result.total_mark * grouping.student_membership_number
           students_count += grouping.student_membership_number
-          if result.total_mark < (self.total_mark / 2)
+          if result.total_mark < (self.total_mark / 2.0)
             results_fails += 1
           end
           if result.total_mark == 0
