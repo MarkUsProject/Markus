@@ -285,7 +285,6 @@ class Assignment < ActiveRecord::Base
   def set_results_statistics
     groupings = Grouping.find_all_by_assignment_id(self.id)
     results = Array.new
-    results_count = 0
     results_sum = 0
     results_fails = 0
     results_zeros = 0
@@ -297,7 +296,6 @@ class Assignment < ActiveRecord::Base
         if result.marking_state == Result::MARKING_STATES[:complete]
           results.push result.total_mark
           results_sum += result.total_mark * grouping.student_membership_number
-          results_count += 1
           students_count += grouping.student_membership_number
           if result.total_mark < (self.total_mark / 2)
             results_fails += 1
@@ -308,13 +306,12 @@ class Assignment < ActiveRecord::Base
         end
       end
     end
-    if results_count == 0
-      return false # No marks released for this assignment
-    end
+    # No marks released for this assignment.
+    return false if results.empty?
     self.results_fails = results_fails
     self.results_zeros = results_zeros
     results_sorted = results.sort
-    median_quantity = calculate_median(results_sorted, results_count)
+    median_quantity = calculate_median(results_sorted)
     # Avoiding division by 0
     if self.total_mark == 0
       self.results_average = 0
@@ -332,7 +329,8 @@ class Assignment < ActiveRecord::Base
     self.save
   end
 
-  def calculate_median(results, count)
+  def calculate_median(results)
+    count = results.size
     if (count % 2) == 0
       median_quantity = (results[count/2 - 1] + results[count/2]).to_f / 2
     else
