@@ -1,31 +1,25 @@
 <% # UI LIBRARIES %>
-<%= javascript_include_tag "livepipe/livepipe.js",
-  "livepipe/window.js" %>
+<%= javascript_include_tag 'livepipe/livepipe.js',
+                           'livepipe/window.js' %>
 
-<script type="text/javascript">
+<script>
 //<![CDATA[
-
   var invite_modal = null;
 
-  function invite(){
+  function invite() {
     invite_modal.open();
-    $('invite_member').setValue('');
-    $('invite_member').focus();
-    return false;
+    document.getElementById('invite_member').value = '';
+    document.getElementById('invite_member').focus();
   }
 
-  document.observe("dom:loaded", function(){
-    invite_modal = new Control.Modal($('invite_dialog'), {
-      overlayOpacity: 0.75,
-      className: 'invite_modal',
-      fade: false
-    });
+  jQuery(document).ready(function() {
+    invite_modal = new ModalMarkus('#invite_dialog');
   });
 //]]>
 </script>
 
-<div id="title_bar">
-  <h1><%= I18n.t("student.assignment", short_identifier: @assignment.short_identifier) %></h1>
+<div id='title_bar'>
+  <h1><%= I18n.t('student.assignment', short_identifier: @assignment.short_identifier) %></h1>
 </div>
 
 <div class="column_floatLeft">
