@@ -1,17 +1,24 @@
 class ResultsController < ApplicationController
   before_filter :authorize_only_for_admin,
                 except: [:codeviewer, :edit, :update_mark, :view_marks,
-                         :create, :add_extra_mark, :next_grouping, :update_overall_comment,
-                         :remove_extra_mark, :update_marking_state, :download,
-                         :download_zip, :note_message, :update_overall_remark_comment,
+                         :create, :add_extra_mark, :next_grouping,
+                         :update_overall_comment, :remove_extra_mark,
+                         :update_marking_state, :download, :download_zip,
+                         :note_message, :update_overall_remark_comment,
                          :update_remark_request, :cancel_remark_request]
-  before_filter      :authorize_for_ta_and_admin, only: [:edit, :update_mark, :create, :add_extra_mark,
-                        :next_grouping, :update_overall_comment, :remove_extra_mark,
-                        :update_marking_state, :note_message, :update_overall_remark_comment]
-  before_filter      :authorize_for_user, only: [:codeviewer, :download, :download_zip]
-  before_filter      :authorize_for_student, only: [:view_marks, :update_remark_request, :cancel_remark_request]
-  after_filter       :update_remark_request_count, only:
-   [:update_remark_request, :cancel_remark_request, :set_released_to_students]
+  before_filter :authorize_for_ta_and_admin,
+                only: [:edit, :update_mark, :create, :add_extra_mark,
+                       :next_grouping, :update_overall_comment,
+                       :remove_extra_mark, :update_marking_state, :note_message,
+                       :update_overall_remark_comment]
+  before_filter :authorize_for_user,
+                only: [:codeviewer, :download, :download_zip]
+  before_filter :authorize_for_student,
+                only: [:view_marks, :update_remark_request,
+                       :cancel_remark_request]
+  after_filter  :update_remark_request_count,
+                only: [:update_remark_request, :cancel_remark_request,
+                       :set_released_to_students]
 
   def note_message
     @result = Result.find(params[:id])
