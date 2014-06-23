@@ -255,7 +255,7 @@ en:
       overall_comments: "Overall Comments"
       current_annotations: "Current Annotations"
       across_all_submission_files: "Current annotations across all submission files. Click on the line number to jump to the location in the file."
-      annot_summary: "Annot. Summary"
+      annot_summary: "Annotations"
       source_code: "Source Code"
       remark_request: "Remark Request"
       remark_submitted_on: "Remark Request Submitted On"

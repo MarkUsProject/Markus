@@ -126,3 +126,16 @@
 .ui-datepicker-current {
   display: none;
 }
+
+#create_annotation_dialog {
+  textarea {
+    height: 150px;
+    width: 350px;
+  }
+
+  #annotation_submit {
+    border-top: 1px solid $grey;
+    margin-top: 5px;
+    padding-top: 10px;
+  }
+}
