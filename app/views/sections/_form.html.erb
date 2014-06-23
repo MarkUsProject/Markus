@@ -1,15 +1,15 @@
 
 <%= render 'shared/flash_message' %>
-<%= render :partial => "shared/error_explanation",
-    :locals => { :model => @section } %>
+<%= render partial: "shared/error_explanation",
+    locals: { model: @section } %>
 
-<%= form_for @section, :as => :section do |f| %>
+<%= form_for @section, as: :section do |f| %>
   <fieldset>
     <legend><%= I18n.t('section.legend') %></legend>
     <%= raw(f.label :name, t("section.name")) %>
     <%= raw(f.text_field :name) %>
     <br>
-    <%= f.submit I18n.t(:save) , :disable_with => I18n.t('working')%>
+    <%= f.submit I18n.t(:save) , :'data-disable-with' => I18n.t('working')%>
 
     <% if controller.action_name == "edit" %>
       <% unless @students.empty? %>
@@ -27,8 +27,8 @@
               <td><%= student.user_name%></td>
               <td><%= student.last_name%></td>
               <td><%= student.first_name%></td>
-              <td><%= link_to I18n.t(:edit), :controller => 'students', :action =>
-                'edit', :id => student%></td>
+              <td><%= link_to I18n.t(:edit), controller: 'students', action:
+                'edit', id: student%></td>
             </tr>
           <% end %>
         </table>

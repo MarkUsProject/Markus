@@ -5,13 +5,13 @@ class MainController < ApplicationController
 
   include ApplicationHelper, MainHelper, CookieDetection
 
-  protect_from_forgery :except => [:login, :page_not_found]
+  protect_from_forgery except: [:login, :page_not_found]
 
   # check for authorization
   before_filter      :authorize_for_user,
-                     :except => [:login,
+                     except: [:login,
                                  :page_not_found]
-  before_filter :authorize_only_for_admin, :only => [:login_as]
+  before_filter :authorize_only_for_admin, only: [:login_as]
 
   layout 'main'
 
@@ -27,7 +27,7 @@ class MainController < ApplicationController
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
       if @markus_auth_remote_user.nil?
-        render 'shared/http_status', :formats => [:html], :locals => { :code => '403', :message => HttpStatusHelper::ERROR_CODE['message']['403'] }, :status => 403, :layout => false
+        render 'shared/http_status', formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] }, status: 403, layout: false
         return
       else
         login_success = login_without_authentication(@markus_auth_remote_user)
@@ -37,7 +37,7 @@ class MainController < ApplicationController
           refresh_timeout
           current_user.set_api_key # set api key in DB for user if not yet set
           # redirect to last visited page or to main page
-          redirect_to( uri || { :action => 'index' } )
+          redirect_to( uri || { action: 'index' } )
           return
         else
           @login_error = flash[:error][0]
@@ -50,8 +50,8 @@ class MainController < ApplicationController
     # check cookies
     if cookies_enabled
       unless params[:cookieTest].nil?
-        # remove the :cookieTest => "currentlyTesting" parameter after testing for cookies by redirecting
-        redirect_to :controller => 'main', :action => 'login'
+        # remove the cookieTest: "currentlyTesting" parameter after testing for cookies by redirecting
+        redirect_to controller: 'main', action: 'login'
       end
     else
       flash_message(:error, I18n.t(:cookies_off))
@@ -73,7 +73,7 @@ class MainController < ApplicationController
     @current_user = current_user
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
       return
     end
     return unless request.post?
@@ -86,7 +86,7 @@ class MainController < ApplicationController
     validation_result = validate_user(params[:user_login], params[:user_login], params[:user_password])
     unless validation_result[:error].nil?
       flash_message(:error, validation_result[:error])
-      redirect_to :action => 'login'
+      redirect_to action: 'login'
       return
     end
     # validation worked
@@ -98,7 +98,7 @@ class MainController < ApplicationController
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
       flash_message(:error, I18n.t('account_disabled'))
-      redirect_to(:action => 'login') && return
+      redirect_to(action: 'login') && return
     end
 
     self.current_user = found_user
@@ -109,7 +109,7 @@ class MainController < ApplicationController
       refresh_timeout
       current_user.set_api_key # set api key in DB for user if not yet set
       # redirect to last visited page or to main page
-      redirect_to( uri || { :action => 'index' } )
+      redirect_to( uri || { action: 'index' } )
     else
       flash_message(:error, I18n.t(:login_failed))
     end
@@ -138,7 +138,7 @@ class MainController < ApplicationController
     cookies.delete :auth_token
     reset_session
     if logout_redirect == 'DEFAULT'
-      redirect_to :action => 'login'
+      redirect_to action: 'login'
     else
       redirect_to logout_redirect
     end
@@ -147,11 +147,16 @@ class MainController < ApplicationController
   def index
     @current_user = current_user
     if @current_user.student? or @current_user.ta?
-      redirect_to :controller => 'assignments', :action => 'index'
+      redirect_to controller: 'assignments', action: 'index'
       return
     end
-    @assignments = Assignment.unscoped.all(:order => 'due_date DESC')
-    render :index, :layout => 'content'
+    @assignments = Assignment.unscoped.includes([
+      :assignment_stat, :ta_memberships,
+      groupings: :current_submission_used,
+      submission_rule: :assignment
+    ]).all(order: 'due_date DESC')
+
+    render :index, layout: 'content'
   end
 
   def about
@@ -160,22 +165,22 @@ class MainController < ApplicationController
   end
 
   def reset_api_key
-    render 'shared/http_status', :formats => [:html], :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false and return unless request.post?
+    render 'shared/http_status', formats: [:html], locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404, layout: false and return unless request.post?
     # Students shouldn't be able to change their API key
     unless @current_user.student?
       @current_user.reset_api_key
       @current_user.save
     else
-      render 'shared/http_status', :formats => [:html], :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false and return
+      render 'shared/http_status', formats: [:html], locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404, layout: false and return
     end
-    render 'api_key_replace', :locals => {:user => @current_user },
-      :formats => [:js], :handlers => [:erb]
+    render 'api_key_replace', locals: {user: @current_user },
+      formats: [:js], handlers: [:erb]
   end
 
   # Render 404 error (page not found) if no other route matches.
   # See config/routes.rb
   def page_not_found
-    render 'shared/http_status', :formats => [:html], :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false
+    render 'shared/http_status', formats: [:html], locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404, layout: false
   end
 
   # Authenticates the admin (i.e. validates her password). Given the user, that
@@ -203,9 +208,9 @@ class MainController < ApplicationController
     end
     unless validation_result[:error].nil?
       # There were validation errors
-      render :partial => 'role_switch_handler',
-        :formats => [:js], :handlers => [:erb],
-        :locals => { :error => validation_result[:error] }
+      render partial: 'role_switch_handler',
+        formats: [:js], handlers: [:erb],
+        locals: { error: validation_result[:error] }
       return
     end
 
@@ -217,9 +222,9 @@ class MainController < ApplicationController
     # Check if an admin is trying to login as another admin. Should not be allowed
     if found_user.admin?
       # error
-      render :partial => 'role_switch_handler',
-        :formats => [:js], :handlers => [:erb],
-        :locals => { :error => I18n.t(:cannot_login_as_another_admin) }
+      render partial: 'role_switch_handler',
+        formats: [:js], handlers: [:erb],
+        locals: { error: I18n.t(:cannot_login_as_another_admin) }
       return
     end
 
@@ -240,13 +245,13 @@ class MainController < ApplicationController
       current_user.set_api_key # set api key in DB for user if not yet set
       # All good, redirect to the main page of the viewer, discard
       # role switch modal
-      render :partial => 'role_switch_handler',
-        :formats => [:js], :handlers => [:erb],
-        :locals => { :error => nil }
+      render partial: 'role_switch_handler',
+        formats: [:js], handlers: [:erb],
+        locals: { error: nil }
     else
-      render :partial => 'role_switch_handler',
-        :formats => [:js], :handlers => [:erb],
-        :locals => { :error => I18n.t(:login_failed) }
+      render partial: 'role_switch_handler',
+        formats: [:js], handlers: [:erb],
+        locals: { error: I18n.t(:login_failed) }
     end
   end
 
@@ -275,7 +280,7 @@ class MainController < ApplicationController
     clear_session
     cookies.delete :auth_token
     reset_session
-    redirect_to :action => 'login'
+    redirect_to action: 'login'
   end
 
 private

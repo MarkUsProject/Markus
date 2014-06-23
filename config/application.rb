@@ -57,6 +57,6 @@ module Markus
   config.assets.version = '1.0'
 
   # Validate passed locales
-  config.i18n.enforce_available_locales = true
+  I18n.enforce_available_locales = true
   end
 end

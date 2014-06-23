@@ -9,22 +9,20 @@
 source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem 'rails', '3.2.16'
-gem 'rubyzip', '0.9.9'
+gem 'rails', '3.2.18'
+gem 'rubyzip'
 gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
 gem 'dynamic_form'
-# FIXME: The 'exception_notification' gem version 4
-# is not compatible with Rails 3.0.x
-gem 'exception_notification', '<4.0'
-gem 'minitest',"4.7.5", :platforms => :ruby_20
-gem 'calendar_date_select', :git => 'git://github.com/paneq/calendar_date_select.git'
+gem 'exception_notification'
+gem 'minitest',"4.7.5", platforms: :ruby_20
 gem 'auto_complete'
 gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
 gem 'prototype-rails' # FIXME: Will be needed with Rails3.1
+gem 'activerecord-import'
 
 group :assets do
   gem 'tilt', '~> 1.3.7'
@@ -67,19 +65,14 @@ group :development, :test do
   gem 'rdoc'
   gem 'thin'
   gem 'simplecov'
-# FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
-  # we have to fix before doing an upgrade
-  gem 'shoulda', '<3.4'
-  # FIXME: shoulda-matchers (>= 2) is incompatible with Ruby 1.8
-  # Remove next line once MarkUs will not support Ruby 1.8,
-  # as shoulda-matchers is a dependency of shoulda
-  gem 'shoulda-matchers', '~>1.5'
+  gem 'shoulda'
   gem 'machinist', '< 2'
   gem 'faker'
   gem 'railroady'
   gem 'time-warp'
-  gem 'debugger'
-  gem 'mocha', :require => false
+  gem 'debugger', platforms: :mri_19
+  gem 'byebug', platforms: [:mri_20, :mri_21]
+  gem 'mocha', require: false
   gem 'quiet_assets'
 end
 
@@ -95,5 +88,5 @@ end
 # installed for rghost to work well. You also need to set
 # the PDF_SUPPORT bool to true in the config file(s).
 group :rghost do
-  gem 'rghost'
+  gem 'rghost', '<=0.9.3'
 end

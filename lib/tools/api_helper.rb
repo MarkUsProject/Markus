@@ -61,7 +61,7 @@ end
 
 def load_params
   # By default, non verbose output
-  params = {:verbose => false}
+  params = {verbose: false}
 
   OPTS.each do |opt, arg|
     case opt

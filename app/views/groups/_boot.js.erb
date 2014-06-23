@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 //<![CDATA[
 
 var groupings_table = null;
@@ -6,12 +6,6 @@ var groupings_table = null;
 document.observe("dom:loaded", function() {
   // Hide AJAX errors DIV
   $('errors').hide();
-
-  // force the middle column to be moved on the y-axis as the page is scrolled
-  Event.observe(document, "scroll", function() {
-  	// 110 is the displacement for "top" for .centreColumn as can be seen in the main.css
-    $("centreColumn").setStyle({ top: (document.viewport.getScrollOffsets().top + 110 ) +'px' });
-  });
 
   groupings_table = new FilterTable({
     table_id: $('groups'),
@@ -96,10 +90,13 @@ document.observe("dom:loaded", function() {
     default_filters: ['unassigned'],
     filters: {
       assigned: function(row) {
-        return row.filter_student_assigned;
+        return row.filter_student_assigned && row.active;
       },
       unassigned: function(row) {
-        return !row.filter_student_assigned;
+        return !row.filter_student_assigned && row.active;
+      },
+      inactive: function(row) {
+        return !row.active;
       },
       search: function(row) {
         return (row.user_name.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1
@@ -127,15 +124,20 @@ document.observe("dom:loaded", function() {
     total_count_id: 'all_students_count',
     filter_count_ids: {
       assigned: 'assigned_students_count',
-      unassigned: 'unassigned_students_count'
+      unassigned: 'unassigned_students_count',
+      inactive: 'inactive_students_count'
     }
   });
+
+  document.getElementById('working').style.display = '';
 
   new Ajax.Request('<%= populate_assignment_groups_path(@assignment.id) %>',
                     {
                       asynchronous:true,
                       evalScripts:true,
-                      onComplete: function() { $('loading_list').hide(); },
+                      onComplete: function() {
+                        document.getElementById('working').style.display = 'none';
+                      },
                       parameters: 'authenticity_token=' + AUTH_TOKEN
                     })
 
@@ -143,10 +145,11 @@ document.observe("dom:loaded", function() {
                     {
                       asynchronous:true,
                       evalScripts:true,
-                      onComplete: function() { $('loading_students_list').hide(); },
+                      onComplete: function() {
+                        document.getElementById('working').style.display = 'none';
+                      },
                       parameters: 'authenticity_token=' + AUTH_TOKEN
                     })
 });
-
 //]]>
 </script>

@@ -8,6 +8,7 @@ fr:
     all:                "Tous"
     none:               "Aucun"
     search:             "Recherche:"
+    issues:             "GitHub liste des problèmes"
 
     # app/views/main/login.html.erb
     welcome_to:         "Bienvenue sur MarkUs !"
@@ -26,7 +27,7 @@ fr:
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
     clear_role_switch_session_link: "Annuler le changement d'utilisateur."
-    working:            "Chargement…"
+    working:            "Chargement"
     login_as:           "Connexion en tant que"
 
     # app/views/main/_about_content.html.erb
@@ -111,6 +112,7 @@ fr:
     collect_submissions:
       collect_all: "Récupérer tous les envois"
       collect_ta: "Récupérer tous les envois qui me sont assignés"
+      disable_collect: "Récupération des envois n'est pas disponible, il y a déjà un correcteur assigné aux envois."
       could_not_collect: "Les envois du projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération n'est pas encore passée."
       collection_job_started: "La récupération des envois pour le projet %{assignment_identifier} a débuté. Cela peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
       priority_given: "Une priorité importante a été donné à cet envoi. Il va bientot être prêt."
@@ -128,6 +130,7 @@ fr:
         required_fields: "Champs obligatoires <span class='required_field'>*</span>"
         short_identifier:   "Identifiant du projet<span class='required_field'>*</span>"
         name:           "Nom du projet<span class='required_field'>*</span>"
+        due_date:           "Date de retour<span class='required_field'>*</span>"
         update_success: "Projet mis à jour"
         create_success:        "Projet créé"
         error: "La règle d'envoi n'a pas pu être mise en place : #%{message}"
@@ -136,7 +139,7 @@ fr:
         edit:           "Édition du projet :"
         properties:     "Propriétés du projet"
         required_files:  "Fichiers requis"
-        submission_rules:  "Règles d'envoi<span class='required_field'>*</span>"
+        submission_rules:  "Règles d'envoi"
         required_files_read:  "Fichiers requis pour le projet."
         no_required_files_read:  "Aucun fichier n'est requis pour ce projet."
         required_files_by_student:  "Ajouter le(s) fichier(s) que les étudiants devront envoyer :"
@@ -168,14 +171,14 @@ fr:
             due_date:  "Révision de la date de retour"
             message:   "Révision des informations"
         marking_scheme:
-            title: "Barème<span class='required_field'>*</span>"
+            title: "Barème"
             rubric: "Rubrique (barème pré-défini)"
             flexible: "Flexible (barème à définir par le correcteur)"
         notice:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
-        allow_web_submits: "Envois <em>via</em> l'interface web ?<span class='required_field'>*</span>"
+        allow_web_submits: "Envois via l'interface web?"
         is_hidden: "Cacher le projet aux étudiants ?"
-        display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?<span class='required_field'>*</span>"
+        display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
         section_due_dates_info:  "<b>Important</b> La date de retour « globale » doit être indiquée. Si une section n'a pas de date de retour spécifique, la date « globale » sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date « globale » qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
     your_mark:  "Votre note : "
@@ -213,6 +216,7 @@ fr:
     properties:         "Propriétés"
     grades:             "Notes"
     submissions:        "Envois"
+    summaries:          "Récapitulatif"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"
     join:               "Rejoindre"
@@ -310,10 +314,10 @@ fr:
         change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"
         select_some_text: "Vous devez sélectionner du texte"
         select_an_area: "Vous devez sélectionner une zone sur l'image pour annoter"
+        provide_text:   "Vous devez fournir une annotation"
 
     #app/views/results/common
     common:
-      loading_code: "Chargement du code source…"
       submission_file: "Fichier envoyé : "
       test_results: "Résultat des tests : "
       no_file_in_repository: "[Pas de fichiers dans le dépôt]"
@@ -408,6 +412,20 @@ fr:
       sections:             "Section :"
       revision_history:     "%{num} : "
 
+    summaries_index:
+      group_name:           "Nom du groupe"
+      repository:           "Répertoire"
+      repository_name:      "Répertoire : %{repository}"
+      commit_date:          "Date d'envoi (commit)"
+      marking_state:        "Affichage de la note"
+      grace_credits_used:   "Utilisation des \"grace credits\""
+      final_grade:          "Note finale"
+      criterion:             "critère"
+      per_page:             "par page"
+      filename:             "Fichier"
+      section:              "Section"
+      sections:             "Section :"
+
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
       invalid_name: "est déjà utilisé"
@@ -479,6 +497,7 @@ fr:
       all_students: "Tous les étudiants(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Non assigné(s)(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigné(s)(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inactif(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Utiliser les groupes d'un autre projet"
       graders: "Correcteurs (%{graders})"
       all_grouping_counts: "Tous (<span id=\"all_groupings_count\"></span>)"
@@ -487,7 +506,6 @@ fr:
       problem: "Il y a un problème…"
       warning: "Attention"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
-      loading_list: "Chargement de la liste…"
       editing_past_due_date_warning: " La date de retour de ce projet est passée. En conséquence, à part ajouter des correcteurs aux groupes, il n'est pas recommandé d'effectuer d'autres modifications."
       validate: "Valider ce groupe : "
       validate_confirm: "Ceci autorisera ce groupe à poster sans avoir le nombre requis d'étudiants. Est-ce correct ?"
@@ -1090,9 +1108,13 @@ fr:
         long_ordinal: "%e %B %Y"
         only_day: "%e"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d %B %Y à %H:%M"
+        long_date: "%A %d %B %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
+        locale_date:      "DD d MM yy"
+        locale_date_only: "DD d MM yy"
+        js_date_time:     "dddd D MMMM YYYY HH:mm"
+        js_date:          "dddd D MMMM YYYY"
 
       day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
       abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
@@ -1102,6 +1124,9 @@ fr:
         - day
         - month
         - year
+      months:       ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+      weekdays:     ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
+      weekdays_min: ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam']
 
     time:
       formats:
@@ -1112,13 +1137,20 @@ fr:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d %B %Y à %H:%M"
+        long_date: "%A %d %B %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
         ant_date: "%d-%B-%Y_%H:%M"
+        locale_time: "HH:mm"
       am: 'am'
       pm: 'pm'
+      hour:   "Heure"
+      minute: "Minute"
+      time:   "Temps"
+      next:   "Suivante"
+      prev:   "Précédente"
+      close:  "Fermer"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."

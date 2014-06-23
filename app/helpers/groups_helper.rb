@@ -17,7 +17,7 @@ module GroupsHelper
   # Called whenever it is necessary to update the students table with multiple
   # changes.
   def construct_student_table_rows(students, assignment)
-    student_memberships = StudentMembership.all(:conditions => {:grouping_id => assignment.groupings, :user_id => students})
+    student_memberships = StudentMembership.all(conditions: {grouping_id: assignment.groupings, user_id: students})
     students_in_assignment = student_memberships.collect do |membership|
       membership.user
     end
@@ -36,12 +36,12 @@ module GroupsHelper
 
       table_row[:id] = grouping.id
       table_row[:filter_table_row_contents] =
-          render_to_string :partial => 'groups/table_row/filter_table_row',
-                           :formats => [:html],
-                           :handlers => [:erb],
-                           :locals => {
-                               :grouping => grouping,
-                               :assignment => assignment }
+          render_to_string partial: 'groups/table_row/filter_table_row',
+                           formats: [:html],
+                           handlers: [:erb],
+                           locals: {
+                               grouping: grouping,
+                               assignment: assignment }
 
       table_row[:name] = grouping.group.group_name
 
@@ -64,12 +64,13 @@ module GroupsHelper
     table_row = {}
 
     table_row[:id] = student.id
-    table_row[:filter_table_row_contents] = render_to_string :partial => 'groups/table_row/filter_table_student_row', :locals => {:student => student}
+    table_row[:filter_table_row_contents] = render_to_string partial: 'groups/table_row/filter_table_student_row', locals: {student: student}
 
     table_row[:user_name] = student.user_name
     table_row[:first_name] = student.first_name
     table_row[:last_name] = student.last_name
     table_row[:filter_student_assigned] = students_in_assignment.include?(student)
+    table_row[:active] = !student.hidden
 
     table_row
 end

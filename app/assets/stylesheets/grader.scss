@@ -46,6 +46,11 @@
     float: left;
   }
 
+  .left,
+  .right {
+    margin-top: 6px;
+  }
+
   .left {
     text-align: left;
     width: 20%;
@@ -76,21 +81,26 @@
     background-color: #dd5;
     color: blue;
   }
+
+  ol {
+    height: 590px;
+  }
 }
 
 .annotation_text_display {
   @include border-radius(5px);
   background: #f6f6f6;
-  border: 2px solid #ccc;
-  padding: 15px;
+  border: 1px solid $grey;
+  max-width: 400px;
+  padding: 0.25em 1em;
   position: absolute;
-  width: 400px;
+  width: auto;
 }
 
 #annotation_menu {
   @include border-radius-top(5px);
   background: #b7d3ec;
-	padding: 5px;
+  padding: 5px;
   margin: 0 0 10px 0;
 }
 
@@ -119,7 +129,7 @@
 }
 
 li.annotation_category {
-  @include border-radius(10px);
+  @include border-radius(5px);
   background: #fff;
   border: 1px solid #ccc;
   color: $grey;
@@ -134,10 +144,13 @@ li.annotation_category {
 }
 
 .annotation_text_list {
-  background: #ddd;
-  border: 1px solid #000;
-  height: 350px;
+  @include border-radius(5px);
+  background: $light-grey;
+  border: 1px solid #aaa;
+  height: auto;
+  left: -0.5em;
   margin: 0;
+  min-height: 1.5em;
   overflow: auto;
   padding: 0;
   position: absolute;
@@ -146,15 +159,23 @@ li.annotation_category {
   li {
     background: #fff;
     border-bottom: 1px solid #aaa;
-    border-top: 1px solid #aaa;
     color: #464646;
     padding: 5px;
-  }
 
-  li:hover {
-    background: #fffc4;
-    color: #000;
-    cursor: pointer;
+    &:hover {
+      background: $light-grey;
+      color: #000;
+      cursor: pointer;
+    }
+
+    &:first-child {
+      @include border-radius-top(5px);
+    }
+
+    &:last-child {
+      @include border-radius-bottom(5px);
+      border: 0;
+    }
   }
 }
 
@@ -195,6 +216,10 @@ li.annotation_category {
     height: 722px;
     margin: 0 2px 10px 2px;
     width: 4px;
+
+    @include breakpoint(small) {
+      display: none;
+    }
   }
 
   #code_pane,
@@ -202,29 +227,35 @@ li.annotation_category {
     @include border-radius(5px);
     background: #ececec;
     border: 1px solid #ddd;
-    float: left;
     height: 700px;
     margin: 0 0 10px 0;
     padding: 10px;
   }
 
-  #code_pane {
-    width: 60%;
-  }
-
-  #mark_pane {
-    width: 34%;
-  }
-
     #mark_viewer,
     #summary_viewer,
+    #submission_rule_viewer,
+    #codeviewer,
     #annotations_summary {
-      height: 650px;
+      @include border-radius-bottom(5px);
       overflow: auto;
     }
 
-    #code_holder {
-      padding: 0;
+    #codeviewer,
+    #mark_viewer,
+    #summary_viewer,
+    #submission_rule_viewer,
+    #annotations_summary,
+    #remark_request_tab {
+      height: 650px;
+    }
+
+    #annotations_summary_head {
+      padding: 0 1em;
+    }
+
+    #remark_request {
+      padding: 1em;
     }
 
       #sel_box {
@@ -253,14 +284,12 @@ li.annotation_category {
 }
 
 .code_scroller {
-  height: 550px;
   margin: 0;
   overflow: auto;
   padding: 0 0 0 50px !important;
 }
 
 .image_container {
-  height: 650px;
   overflow: auto;
   width: auto;
 }
@@ -275,49 +304,10 @@ li.annotation_category {
   overflow: auto;
 }
 
-.modal {
-  background-color: #fff;
-  padding: 12px;
-  border: 1px solid #333;
-}
 
-.window {
-  @include border-radius(10px);
-  background: url("/stylesheets/window_background.png") top left;
-  color: #fff;
-  font: bold 0.8em $font-stack;
-  min-height: 100px;
-  min-width: 150px;
-  padding: 10px;
-  text-align: center;
-
-  .window_contents {
-    height: 100%;
-    margin-top: 10px;
-    width: 100%;
-  }
-
-  .window_header {
-    text-align: center;
-  }
-
-  .window_title {
-    cursor:move;
-    font-size:11px;
-    margin-bottom:7px;
-    margin-top:-7px;
-  }
-
-  .window_close {
-    background-image:url("/stylesheets/window_close.gif");
-    cursor:pointer;
-    display:block;
-    height:13px;
-    left:5px;
-    position:absolute;
-    top:4px;
-    width:13px;
-  }
+#next_button,
+#back_button {
+  min-width: 0;
 }
 
 /* Annotation summary list styles */
@@ -371,7 +361,7 @@ li.annotation_category {
 }
 
 .mark_tools {
-  margin-bottom: 1em;
+  margin: 1em 0;
   text-align: center;
 }
 
@@ -484,6 +474,7 @@ li.annotation_category {
 
   .extra_marks_pane {
     border: 1px solid #dadada;
+    margin-top: 1em;
   }
 
   .extra_marks_pane_list {
@@ -492,38 +483,40 @@ li.annotation_category {
     padding: 0;
   }
 
+  #extra_marks_bonus,
+  #extra_marks_deducted {
+    text-align: right;
+  }
+
 /* Criterion summary holder */
 
-.marks_summary_pane {
+.mark_summary_holder {
+  background: #fbfbfb;
+  border-bottom: 1px solid #dadada;
+  padding: 5px;
 }
 
-  .mark_summary_holder {
-    background: #fbfbfb;
-    border-bottom: 1px solid #dadada;
+.marks_summary_pane_list {
+  margin: 0;
+  padding: 0;
+
+  th {
+    background-color: #b7d3ec;
     padding: 5px;
   }
 
-  .marks_summary_pane_list {
-    margin: 0;
-    padding: 0;
+  tr {
+    padding-left: 5px;
 
-    th {
-      background-color: #b7d3ec;
-      padding: 5px;
+    &:nth-child(odd) {
+      background: #EDEDED;
     }
 
-    tr {
-      padding-left: 5px;
-
-      &:nth-child(odd) {
-        background: #EDEDED;
-      }
-
-      &:nth-child(even) {
-        background: #fff;
-      }
+    &:nth-child(even) {
+      background: #fff;
     }
   }
+}
 
 .mark_subtotal {
   font-weight: bold;
@@ -531,6 +524,71 @@ li.annotation_category {
 }
 
 .mark_total {
-  font-weight: bold;
+  font-weight: 600;
+  margin: 1em 0;
   padding: 10px;
+}
+
+
+/* Resizable column panes */
+
+#panes-content {
+  height: 100%;
+  width: 100%;
+
+  #panes {
+    height: 100%;
+    width: 100%;
+  }
+
+  #left-pane,
+  #drag,
+  #right-pane {
+    display: inline-block;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+  }
+
+  #left-pane,
+  #right-pane {
+    overflow: auto;
+
+    @include breakpoint(small) {
+      display: block;
+      float: none;
+      width: 100% !important;
+    }
+  }
+
+  #left-pane {
+    padding-right: 0.5em;
+
+    @include breakpoint(small) {
+      padding-right: 0;
+    }
+  }
+
+  #right-pane {
+    padding-left: 0.5em;
+
+    @include breakpoint(small) {
+      padding-left: 0;
+    }
+  }
+
+  #drag {
+    background: #ccc;
+    cursor: col-resize;
+    height: 700px;
+    margin-left: -5px;
+    overflow: hidden;
+    position: absolute;
+    width: 5px;
+
+    @include breakpoint(small) {
+      display: none;
+    }
+  }
 }

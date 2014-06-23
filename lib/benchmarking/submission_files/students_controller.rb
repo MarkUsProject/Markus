@@ -3,11 +3,11 @@ class StudentsController < ApplicationController
   before_filter    :authorize_only_for_admin
 
   def index
-    @students = Student.all(:order => "user_name")
+    @students = Student.all(order: "user_name")
   end
 
   def populate
-    @students_data = Student.all(:order => "user_name")
+    @students_data = Student.all(order: "user_name")
     # construct_table_rows defined in UsersHelper
     @students = construct_table_rows(@students_data)
   end
@@ -23,7 +23,7 @@ class StudentsController < ApplicationController
     # update_attributes supplied by ActiveRecords
     if @user.update_attributes(attrs)
       flash[:edit_notice] = @user.user_name + ' has been updated.'
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
     else
       render :edit
     end
@@ -58,11 +58,11 @@ class StudentsController < ApplicationController
   def filter
   case params[:filter]
     when 'hidden'
-       @students = Student.all(:conditions => {:hidden => true}, :order => :user_name)
+       @students = Student.all(conditions: {hidden: true}, order: :user_name)
     when 'visible'
-       @students = Student.all(:conditions => {:hidden => false}, :order => :user_name)
+       @students = Student.all(conditions: {hidden: false}, order: :user_name)
     else
-      @students = Student.all(:order => :user_name)
+      @students = Student.all(order: :user_name)
     end
 
   end
@@ -77,14 +77,14 @@ class StudentsController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     return unless @user.save
-    redirect_to :action => 'index' # Redirect
+    redirect_to action: 'index' # Redirect
   end
 
 
   #downloads users with the given role as a csv list
   def download_student_list
     #find all the users
-    students = Student.all(:order => "user_name")
+    students = Student.all(order: "user_name")
     case params[:format]
     when 'csv'
       output = User.generate_csv_list(students)
@@ -97,7 +97,7 @@ class StudentsController < ApplicationController
       output = students.to_xml
       format = 'text/xml'
     end
-    send_data(output, :type => format, :disposition => 'inline')
+    send_data(output, type: format, disposition: 'inline')
   end
 
   def upload_student_list
@@ -113,7 +113,7 @@ class StudentsController < ApplicationController
       end
 
     end
-    redirect_to :action => 'index'
+    redirect_to action: 'index'
   end
 
 end

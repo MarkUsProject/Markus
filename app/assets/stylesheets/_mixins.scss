@@ -56,13 +56,29 @@
           transition: $property $duration #{$timing-function} #{$delay};
 }
 
+@mixin transform($value...) {
+  -webkit-transform: $value;
+     -moz-transform: $value;
+      -ms-transform: $value;
+       -o-transform: $value;
+          transform: $value;
+}
+
+@mixin transform-origin($value...) {
+  -webkit-transform-origin: $value;
+     -moz-transform-origin: $value;
+      -ms-transform-origin: $value;
+       -o-transform-origin: $value;
+          transform-origin: $value;
+}
 
 /* For easier size breakpoints. */
 $breakpoints: (
   'tiny':   ( max-width:  360px ),
   'small':  ( max-width:  500px ),
-  'medium': ( max-width:  992px ),
-  'large':  ( max-width: 1200px )
+  'mobile': ( max-width:  745px ),
+  'medium': ( max-width:  990px ),
+  'large':  ( max-width: 1040px )
 );
 
 @mixin breakpoint($name) {
@@ -72,7 +88,7 @@ $breakpoints: (
     }
   }
   @else {
-    @media ($name) {
+    @media ("#{$name}") {
       @content;
     }
   }

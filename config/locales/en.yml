@@ -8,6 +8,7 @@ en:
     all:                "All"
     none:               "None"
     search:             "Search:"
+    issues:             "GitHub issues list"
 
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
@@ -26,7 +27,7 @@ en:
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
     clear_role_switch_session_link: "Cancel role switch"
-    working:            "Working…"
+    working:            "Loading"
     login_as:           "Login as"
 
     # app/views/main/_about_content.html.erb
@@ -108,6 +109,7 @@ en:
     collect_submissions:
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
+      disable_collect: "Collection disabled, more than one TA marking displayed submissions."
       could_not_collect: "Could not collect submissions for assignment %{assignment_identifier} - the collection date has not been reached"
       collection_job_started: "Submission collection for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
       priority_given: "The submission has been given collection priority. It will be ready soon."
@@ -134,7 +136,7 @@ en:
         edit:           "Edit Assignment:"
         properties:     "Assignment Properties"
         required_files:  "Required files"
-        submission_rules:  "Submission Rules<span class='required_field'>*</span>"
+        submission_rules:  "Submission Rules"
         required_files_read:  "Required files"
         no_required_files_read:  "There are no required files for this assignment."
         required_files_by_student:  "Add filename(s) that students would be required to submit:"
@@ -166,14 +168,14 @@ en:
             due_date:  "Remark Due Date"
             message:   "Remark Message"
         marking_scheme:
-            title: "Marking Scheme<span class='required_field'>*</span>"
+            title: "Marking Scheme"
             rubric: "Rubric"
             flexible: "Flexible"
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
-        allow_web_submits: "Allow Web Submits?<span class='required_field'>*</span>"
+        allow_web_submits: "Allow Web Submits?"
         is_hidden: "Hide assignment from students?"
-        display_grader_names_to_students: "Display grader names to students?<span class='required_field'>*</span>"
+        display_grader_names_to_students: "Display grader names to students?"
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
@@ -211,6 +213,7 @@ en:
     properties:         "Properties"
     grades:             "Grades"
     submissions:        "Submissions"
+    summaries:          "Summaries"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
@@ -308,10 +311,10 @@ en:
         change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
         select_some_text: "You must select some source code text"
         select_an_area: "You should select an area on the image to annotate"
+        provide_text:   "You must provide some annotation text"
 
     #app/views/results/common
     common:
-      loading_code: "Loading Code..."
       submission_file: "Submission File:"
       test_results: "Test Results:"
       no_file_in_repository: "[No files in repository]"
@@ -406,6 +409,20 @@ en:
       sections:             "Section:"
       revision_history:     "%{num}: "
 
+    summaries_index:
+      group_name:           "Group Name"
+      repository_name:      "Repository: %{repository}"
+      repository:           "Repository"
+      commit_date:          "Commit Date"
+      marking_state:        "Marking State"
+      grace_credits_used:   "Grace Credits Used"
+      final_grade:          "Final Grade"
+      criterion:             "criterion"
+      per_page:             "per page"
+      filename:             "Filename"
+      section:              "Section"
+      sections:             "Section:"
+
     grade_entry_forms:
       blank_field: "can't be blank"
       invalid_name: "is already taken"
@@ -478,6 +495,7 @@ en:
       all_students:     "All students(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Unassigned(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigned(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inactive(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Use another assignment's groups"
       graders: "Graders (%{graders})"
       all_grouping_counts: "All Groups(<span id=\"all_groupings_count\"></span>)"
@@ -486,7 +504,6 @@ en:
       problem: "There was a problem..."
       warning: "Warning"
       lines_not_processed: "The following lines could not be processed:"
-      loading_list: "Loading List..."
       editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
       validate: "Validate this group:"
       validate_confirm: "This will allow this group to submit without the required number of students. Are you sure?"
@@ -793,7 +810,7 @@ en:
 
     annotations:
       annotation_category: "Annotation Category"
-      no_annotation_categories: "There are no annotation categories, yet."
+      no_annotation_categories: "There are no annotation categories yet."
       title: "Annotations: %{assignment_short_identifier}"
       name: "Category name"
       help_message: "Click on an annotation category to add annotations."
@@ -1112,9 +1129,13 @@ en:
         long_ordinal: "%e %B %Y"
         only_day: "%e"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%B %d, %Y: %I:%M%p"
+        long_date: "%A, %B %d, %Y, %l:%M %p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
+        locale_date:      "DD, MM d, yy,"
+        locale_date_only: "DD, MM d, yy"
+        js_date_time:     "dddd, MMMM D, YYYY, h:mm A"
+        js_date:          "dddd, MMMM D, YYYY"
 
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
@@ -1124,23 +1145,33 @@ en:
         - year
         - month
         - day
+      months:       ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      weekdays:     ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+      weekdays_min: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
     time:
       formats:
         default: "%d %B %Y %H:%M"
         time: "%H:%M"
         short: "%d %b %H:%M"
-        long: "%A %d %B %Y %H:%M:%S %Z"
+        long: "%A %d %B %Y %H:%M %Z"
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%B %d, %Y: %I:%M%p"
+        long_date: "%A, %B %d, %Y, %l:%M %p"
         #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date: "%B %d, %Y"
+        short_date:       "%B %d, %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
-        ant_date: "%B-%d-%Y_%I:%M"
-      am: 'am'
-      pm: 'pm'
+        ant_date:         "%B-%d-%Y_%I:%M"
+        locale_time:      "h:mm TT"
+      am:     "am"
+      pm:     "pm"
+      hour:   "Hour"
+      minute: "Minute"
+      time:   "Time"
+      next:   "Next"
+      prev:   "Previous"
+      close:  "Close"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"

@@ -24,7 +24,7 @@ class MarksGradersController < ApplicationController
   def csv_upload_grader_groups_mapping
     if !request.post? || params[:grader_mapping].nil?
       flash[:error] = I18n.t('csv.student_to_grader')
-      redirect_to :action => 'index', :grade_entry_form_id => params[:grade_entry_form_id]
+      redirect_to action: 'index', grade_entry_form_id: params[:grade_entry_form_id]
       return
     end
 
@@ -35,7 +35,7 @@ class MarksGradersController < ApplicationController
       flash[:error] = I18n.t('graders.lines_not_processed') + invalid_lines.join(', ')
     end
 
-    redirect_to :action => 'index', :grade_entry_form_id => params[:grade_entry_form_id]
+    redirect_to action: 'index', grade_entry_form_id: params[:grade_entry_form_id]
   end
 
   #Download grader/student mappings in CSV format.
@@ -56,7 +56,7 @@ class MarksGradersController < ApplicationController
       end
     end
 
-    send_data(file_out, :type => 'text/csv', :disposition => 'inline')
+    send_data(file_out, type: 'text/csv', disposition: 'inline')
   end
 
   # These actions act on all currently selected graders & students
@@ -72,17 +72,17 @@ class MarksGradersController < ApplicationController
          # If there is a global action than there should be a student selected
           if params[:global_actions]
               @global_action_warning = I18n.t('assignment.group.select_a_student')
-              render :partial => 'shared/global_action_warning', :handlers => [:rjs]
+              render partial: 'shared/global_action_warning', handlers: [:rjs]
               return
           end
         end
-        students = Student.where(:id => student_ids)
+        students = Student.where(id: student_ids)
 
         case params[:global_actions]
           when "assign"
             if params[:graders].nil? or params[:graders].size ==  0
               @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render :partial => 'shared/global_action_warning', :handlers => [:rjs]
+              render partial: 'shared/global_action_warning', handlers: [:rjs]
               return
             end
             add_graders(students, grader_ids)
@@ -93,7 +93,7 @@ class MarksGradersController < ApplicationController
           when "random_assign"
             if params[:graders].nil? or params[:graders].size ==  0
               @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render :partial => 'shared/global_action_warning', :handlers => [:rjs]
+              render partial: 'shared/global_action_warning', handlers: [:rjs]
               return
             end
             randomly_assign_graders(students, grader_ids)
@@ -106,7 +106,7 @@ class MarksGradersController < ApplicationController
   # These methods are called through global actions
 
   def randomly_assign_graders(students, grader_ids)
-    graders = Ta.where(:id => grader_ids)
+    graders = Ta.where(id: grader_ids)
     # Shuffle the students
     students = students.sort_by{rand}
     # Now, deal them out like cards...
@@ -122,7 +122,7 @@ class MarksGradersController < ApplicationController
   end
 
   def add_graders(students, grader_ids)
-    graders = Ta.where(:id => grader_ids)
+    graders = Ta.where(id: grader_ids)
     # Only want valid graders
     graders = graders.collect { |grader| grader if grader.valid? }
     students.each do |student|

@@ -222,16 +222,15 @@ th.center {
 
 td {
   border: none;
-  border-bottom: 1px solid #ccc;
   padding: 0.5em 3px;
   margin-left: 2px;
 
-  p {
-    margin: 0.5em 0 0 0;
-  }
-
   &.center {
     text-align: center;
+  }
+
+  p {
+    margin: 0.5em 0 0 0;
   }
 }
 
@@ -250,7 +249,12 @@ td.note {
 }
 
 tbody tr {
-  @include transition(all, 0.2s);
+  @include transition(all, $time-quick);
+  border-bottom: 1px solid #ccc;
+
+  &:first-child {
+    border-top: 1px solid #ccc;
+  }
 
   &:hover {
     background: #ececec;
@@ -340,6 +344,7 @@ table.display {
   float: right;
   text-align: right;
 }
+
 
 /* Pagination nested */
 
@@ -620,13 +625,6 @@ input#extra_mark_description {
   width: 250px;
 }
 
-
-
-#mark_pane,
-#annotation_pane {
-  float: left;
-}
-
 .float_left {
   float: left;
 }
@@ -685,41 +683,28 @@ input#extra_mark_description {
   }
 }
 
-.colLeft {
-  float: left;
-  width: 75%;
-}
-
-.colRight {
-  float: right;
-  width: 25%;
-}
-
 .colLeftGroups,
 .colRightGroups,
 .colLeftGraders,
 .colRightGraders {
   display: inline-block;
-  margin-right: -17px;
+  margin-right: -5px;
   vertical-align: top;
 }
 
-.colLeftGroups {
-  min-width: 365px;
-  width: 35%;
-}
-
-.colRightGroups {
-  width: 55%;
-}
-
+.colLeftGroups,
 .colLeftGraders {
-  min-width: 335px;
-  width: 30%;
+  min-width: 365px;
+  width: 40%;
 }
 
+.colRightGroups,
 .colRightGraders {
-  width: 60%;
+  width: 50%;
+
+  @include breakpoint(large) {
+    width: auto;
+  }
 }
 
 .centreColumn {
@@ -727,11 +712,19 @@ input#extra_mark_description {
   overflow: hidden;
   width: 10%;
 
+  @include breakpoint(large) {
+    width: 65px;
+  }
+
   #icons {
     position: fixed;
     text-align: center;
     top: 50%;
     width: 10%;
+
+    @include breakpoint(large) {
+      width: 65px;
+    }
   }
 
   input {
@@ -749,7 +742,7 @@ input#extra_mark_description {
 }
 
 .globalActionIconsTop,
-.globalActionIconsBottom{
+.globalActionIconsBottom {
   background: #dfdfdf;
   margin-bottom: -5px;
   margin-top: -5px;
@@ -824,11 +817,15 @@ input#extra_mark_description {
 }
 
 div.sub_block {
-
   span.prop_label {
     display: inline-block;
     font-weight: 600;
     min-width: 150px;
+
+    @include breakpoint(small) {
+      display: block;
+      min-width: 0;
+    }
   }
 
   span.box {
@@ -871,8 +868,6 @@ span.info_date{
 
 .section {
   .info_date {
-    color: $grey;
-    font-style: italic;
     margin-left: 10px;
   }
 
@@ -1030,7 +1025,7 @@ td.grade_entry_form_result {
 
 /* Grader's view*/
 
-#file_selector button{
+#file_selector button {
   min-width: 8px;
 }
 
@@ -1068,18 +1063,61 @@ td.grade_entry_form_result {
 
 #working {
   @include border-radius(5px);
-  @include box-shadow(0 0 5px 0 #aaa);
+  @include box-shadow(0 0 5px 0 $light-blue);
   background: $light-blue;
+  border: 1px solid $blue;
   color: $primary-color;
+  font-size: 1.25em;
   font-weight: 600;
   left: 50%;
   margin-left: -7.5em;
   padding: 0.5em;
-  position: absolute;
+  position: fixed;
   text-align: center;
-  top: 1em;
+  top: 1.5em;
   width: 15em;
+  z-index: 99999;
+
+  #ellipsis {
+    display: inline-block;
+    text-align: left;
+    width: 1em;
+
+    &::after {
+      -webkit-animation: ellipsis 2s infinite;
+      -moz-animation: ellipsis 2s infinite;
+      -ms-animation: ellipsis 2s infinite;
+      -o-animation: ellipsis 2s infinite;
+      animation: ellipsis 2s infinite;
+      content: "\2026";
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+    }
+  }
 }
+
+@-webkit-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@-moz-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@-ms-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@-o-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+
 
 a.icon_remove {
   background: url('icons/cancel.png') no-repeat;
@@ -1132,7 +1170,7 @@ div.align_text_right {
 #annotation_category_pane ul {
   list-style: none;
   margin: 0;
-  padding: 1em;
+  padding: 0;
 }
 
 #rubric_levels_pane_list,
@@ -1224,7 +1262,7 @@ input.button_to_delete_deduction {
 .annotation_title_div,
 .criterion_title_div,
 .annotation_category_title {
-  float: left;
+  // float: left;
   padding: 2px 2px 0 10px;
 }
 
@@ -1483,7 +1521,9 @@ pre#test_result_content {
 }
 
 .assignment_summary {
-  background-color: #f4f4f4;
+  @include border-radius(5px);
+  background-color: $light-grey;
+  border: 1px solid $light-blue;
   display: inline-block;
   margin: 20px;
   padding: 20px;
@@ -1499,7 +1539,7 @@ pre#test_result_content {
     display: inline-block;
     margin-left: 15px;
     vertical-align: top;
-    width: auto;
+    width: 250px;
   }
 
   .title {
@@ -1521,9 +1561,15 @@ pre#test_result_content {
     }
   }
 
-  table tr td {
-    border-bottom: none;
-    padding-right: 10px;
+  table {
+    tr {
+      border: none;
+
+      td {
+        border: none;
+        padding-right: 10px;
+      }
+    }
   }
 
   ul {
@@ -1542,34 +1588,6 @@ pre#test_result_content {
 
 .section_due_date_form {
   margin-left: 60px;
-}
-
-
-/* styles specific to the graphs on the dashboard */
-
-.bluff-tooltip {
-  background: $primary-color;
-  border: 1px solid #000;
-  margin: 0;
-  padding: 0;
-
-  span {
-    display: none;
-
-    &.label {
-      display: inline;
-      float: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    &.data {
-      display: inline;
-      float: none;
-      margin: 0;
-      padding: 0;
-    }
-  }
 }
 
 #current_time {

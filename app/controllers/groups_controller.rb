@@ -35,7 +35,7 @@ class GroupsController < ApplicationController
       return
     end
     @new_grouping = construct_table_row(new_grouping_data, @assignment)
-    render :add_group, :formats => [:js] 
+    render :add_group, formats: [:js] 
   end
 
   def remove_group
@@ -51,29 +51,29 @@ class GroupsController < ApplicationController
 		@students_data = construct_student_table_rows(students_to_remove, @assignment)
     if grouping.has_submission?
         @errors.push(grouping.group.group_name)
-        render :delete_groupings, :formats => [:js] 
+        render :delete_groupings, formats: [:js] 
     else
       grouping.delete_grouping
       @removed_groupings.push(grouping)
-      render :delete_groupings, :formats => [:js] 
+      render :delete_groupings, formats: [:js] 
     end
   end
 
   def upload_dialog
     @assignment = Assignment.find(params[:id])
-    render :partial => 'groups/modal_dialogs/upload_dialog', :handlers => [:rjs]
+    render partial: 'groups/modal_dialogs/upload_dialog', handlers: [:rjs]
   end
 
   def download_dialog
     @assignment = Assignment.find(params[:id])
-    render :partial => 'groups/modal_dialogs/download_dialog', :handlers => [:rjs]
+    render partial: 'groups/modal_dialogs/download_dialog', handlers: [:rjs]
   end
 
   def rename_group_dialog
     @assignment = Assignment.find(params[:assignment_id])
     # id is really the grouping_id, this is due to rails routing
     @grouping_id = params[:id]
-    render :partial => 'groups/modal_dialogs/rename_group_dialog', :handlers => [:rjs]
+    render partial: 'groups/modal_dialogs/rename_group_dialog', handlers: [:rjs]
   end
 
   def rename_group
@@ -84,7 +84,7 @@ class GroupsController < ApplicationController
 
     # Checking if a group with this name already exists
 
-    if (@groups = Group.first(:conditions => {:group_name =>
+    if (@groups = Group.first(conditions: {group_name:
     [params[:new_groupname]]}))
        existing = true
        groupexist_id = @groups.id
@@ -103,16 +103,16 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.all(:conditions => ["assignment_id =
-      :assignment_id and group_id = :groupexist_id", {:groupexist_id =>
-      groupexist_id, :assignment_id => @assignment.id}])
+      if Grouping.all(conditions: ["assignment_id =
+      :assignment_id and group_id = :groupexist_id", {groupexist_id:
+      groupexist_id, assignment_id: @assignment.id}])
          flash[:error] = I18n.t('groups.rename_group.already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
       end
     end
     @grouping_data = construct_table_row(@grouping, @assignment)
-    render :rename_group, :formats => [:js] 
+    render :rename_group, formats: [:js] 
   end
 
   def valid_grouping
@@ -120,7 +120,7 @@ class GroupsController < ApplicationController
     @grouping = Grouping.find(params[:grouping_id])
     @grouping.validate_grouping
     @grouping_data = construct_table_row(@grouping, @assignment)
-    render :valid_grouping, :formats => [:js] 
+    render :valid_grouping, formats: [:js] 
   end
 
   def invalid_grouping
@@ -128,31 +128,31 @@ class GroupsController < ApplicationController
     @grouping = Grouping.find(params[:grouping_id])
     @grouping.invalidate_grouping
     @grouping_data = construct_table_row(@grouping, @assignment)
-    render :invalid_grouping, :formats => [:js] 
+    render :invalid_grouping, formats: [:js] 
   end
 
   def populate
     @assignment = Assignment.find(params[:assignment_id],
-                                  :include => [{
-                                      :groupings => [
+                                  include: [{
+                                      groupings: [
                                           :students,
                                           :non_rejected_student_memberships,
                                           :group]}])
     @groupings = @assignment.groupings
     @table_rows = {}
     @table_rows = construct_table_rows(@groupings, @assignment)
-    render :populate, :formats => [:js] 
+    render :populate, formats: [:js] 
   end
 
   def populate_students
     @assignment = Assignment.find(params[:assignment_id],
-                                  :include => [:groupings])
+                                  include: [:groupings])
     @students = Student.all
     @table_rows = construct_student_table_rows(@students, @assignment)
   end
 
   def index
-    @all_assignments = Assignment.all(:order => :id)
+    @all_assignments = Assignment.all(order: :id)
     @assignment = Assignment.find(params[:assignment_id])
   end
 
@@ -183,19 +183,19 @@ class GroupsController < ApplicationController
               collision_error = @assignment.add_csv_group(row)
               unless collision_error.nil?
                 flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
-                  { :line_number => line_nr + 1 }) + " #{collision_error}")
+                  { line_number: line_nr + 1 }) + " #{collision_error}")
               end
             rescue CSVInvalidLineError => e
               flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
-                { :line_number => line_nr + 1 }) + " #{e.message}")
+                { line_number: line_nr + 1 }) + " #{e.message}")
             end
           end
           @assignment.reload # Need to reload to get newly created groupings
           number_groupings_added = @assignment.groupings.length
           if number_groupings_added > 0 && flash[:error].is_a?(Array)
             invalid_lines_count = flash[:error].length
-            flash[:notice] = I18n.t('csv.groups_added_msg', { :number_groups =>
-              number_groupings_added, :number_lines => invalid_lines_count })
+            flash[:notice] = I18n.t('csv.groups_added_msg', { number_groups:
+              number_groupings_added, number_lines: invalid_lines_count })
           end
         rescue Exception
           # We should only get here if something *really* bad/unexpected
@@ -208,7 +208,7 @@ class GroupsController < ApplicationController
       # This is not handled by the roll back.
       @assignment.update_repository_permissions_forall_groupings
     end
-    redirect_to :action => 'index', :id => params[:id]
+    redirect_to action: 'index', id: params[:id]
   end
 
   def download_grouplist
@@ -221,14 +221,14 @@ class GroupsController < ApplicationController
        groupings.each do |grouping|
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc
-         grouping.student_memberships.all(:include => :user).each do |member|
+         grouping.student_memberships.all(include: :user).each do |member|
             group_array.push(member.user.user_name)
          end
          csv << group_array
        end
      end
 
-    send_data(file_out, :type => 'text/csv', :disposition => 'inline')
+    send_data(file_out, type: 'text/csv', disposition: 'inline')
   end
 
   def use_another_assignment_groups
@@ -249,10 +249,10 @@ class GroupsController < ApplicationController
   #These actions act on all currently selected students & groups
   def global_actions
     @assignment = Assignment.find(params[:assignment_id],
-                                  :include => [{
-                                      :groupings => [{
-                                          :student_memberships => :user,
-                                          :ta_memberships => :user},
+                                  include: [{
+                                      groupings: [{
+                                          student_memberships: :user,
+                                          ta_memberships: :user},
                                         :group]}])
     @tas = Ta.all
     grouping_ids = params[:groupings]
@@ -262,11 +262,11 @@ class GroupsController < ApplicationController
 	 #if there is a global action than there should be a group selected
          if params[:global_actions]
                @global_action_warning = I18n.t('assignment.group.select_a_group')
-               render :partial => 'shared/global_action_warning', :handlers => [:rjs]
+               render partial: 'shared/global_action_warning', handlers: [:rjs]
                return
          end
       #Just do nothing
-      render :nothing => true
+      render nothing: true
       return
     end
 
@@ -293,7 +293,7 @@ class GroupsController < ApplicationController
           return
         else
           @global_action_warning = I18n.t('assignment.group.select_a_student')
-          render :partial => 'shared/global_action_warning', :handlers => [:rjs]
+          render partial: 'shared/global_action_warning', handlers: [:rjs]
           return
         end
       when 'unassign'
@@ -311,7 +311,7 @@ class GroupsController < ApplicationController
      grouping.invalidate_grouping
     end
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :modify_groupings, :formats => [:js] 
+    render :modify_groupings, formats: [:js] 
   end
 
   # Given a list of grouping, sets their group status to valid if possible
@@ -320,7 +320,7 @@ class GroupsController < ApplicationController
       grouping.validate_grouping
     end
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :modify_groupings, :formats => [:js] 
+    render :modify_groupings, formats: [:js] 
   end
 
   # Deletes the given list of groupings if possible. Removes each member first.
@@ -341,7 +341,7 @@ class GroupsController < ApplicationController
         end
       end
 			@students_data = construct_student_table_rows(students_to_remove, @assignment)
-      render :delete_groupings, :formats => [:js] 
+      render :delete_groupings, formats: [:js] 
   end
 
   # Adds the students given in student_ids to the grouping given in grouping_id
@@ -361,11 +361,11 @@ class GroupsController < ApplicationController
     if assignment.student_form_groups
       if students_in_group > assignment.group_max
         @warning_group_size = I18n.t('assignment.group.assign_over_limit',
-          :group => group_name)
+          group: group_name)
 
       end
     end
-    render :add_members, :formats => [:js] 
+    render :add_members, formats: [:js] 
   end
 
   # Adds the student given in student_id to the grouping given in grouping
@@ -379,11 +379,11 @@ class GroupsController < ApplicationController
 
     begin
       if student.hidden
-        raise I18n.t('add_student.fail.hidden', :user_name => student.user_name)
+        raise I18n.t('add_student.fail.hidden', user_name: student.user_name)
       end
       if student.has_accepted_grouping_for?(@assignment.id)
         raise I18n.t('add_student.fail.already_grouped',
-          :user_name => student.user_name)
+          user_name: student.user_name)
       end
       membership_count = grouping.student_memberships.length
       grouping.invite(student.user_name, set_membership_status, true)
@@ -392,10 +392,10 @@ class GroupsController < ApplicationController
       # report success only if # of memberships increased
       if membership_count < grouping.student_memberships.length
         @messages.push(I18n.t('add_student.success',
-            :user_name => student.user_name))
+            user_name: student.user_name))
       else # something clearly went wrong
         raise I18n.t('add_student.fail.general',
-          :user_name => student.user_name)
+          user_name: student.user_name)
       end
 
       # only the first student should be the "inviter"
@@ -406,7 +406,7 @@ class GroupsController < ApplicationController
       # have less grace days credits than already used by that group
       if student.remaining_grace_credits < grouping.grace_period_deduction_single
         @warning_grace_day = I18n.t('assignment.group.grace_day_over_limit',
-          :group => grouping.group.group_name)
+          group: grouping.group.group_name)
       end
     rescue Exception => e
       @error = true
@@ -439,7 +439,7 @@ class GroupsController < ApplicationController
     end
     @students_data = construct_student_table_rows(all_members, @assignment)
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :remove_members, :formats => [:js] 
+    render :remove_members, formats: [:js] 
   end
 
   #Removes the given student membership from the given grouping

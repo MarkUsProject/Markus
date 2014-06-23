@@ -8,13 +8,13 @@ module Repository
   # subversion specific module constants
   if !defined? SVN_CONSTANTS # avoid constants already defined warnings
     SVN_CONSTANTS = {
-      :author => Svn::Core::PROP_REVISION_AUTHOR,
-      :date => Svn::Core::PROP_REVISION_DATE,
-      :mime_type => Svn::Core::PROP_MIME_TYPE
+      author: Svn::Core::PROP_REVISION_AUTHOR,
+      date: Svn::Core::PROP_REVISION_DATE,
+      mime_type: Svn::Core::PROP_MIME_TYPE
     }
   end
   if !defined? SVN_FS_TYPES
-    SVN_FS_TYPES = {:fsfs => Svn::Fs::TYPE_FSFS, :bdb => Svn::Fs::TYPE_BDB}
+    SVN_FS_TYPES = {fsfs: Svn::Fs::TYPE_FSFS, bdb: Svn::Fs::TYPE_BDB}
   end
 
   class InvalidSubversionRepository < Repository::ConnectionError; end
@@ -949,12 +949,12 @@ module Repository
           last_modified_revision = @repo.__get_history(File.join(path, file_name)).last
           last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_number)
           new_directory = Repository::RevisionDirectory.new(@revision_number, {
-            :name => file_name,
-            :path => path,
-            :last_modified_revision => last_modified_revision,
-            :last_modified_date => last_modified_date,
-            :changed => (last_modified_revision == @revision_number),
-            :user_id => @repo.__get_property(:author, last_modified_revision)
+            name: file_name,
+            path: path,
+            last_modified_revision: last_modified_revision,
+            last_modified_date: last_modified_date,
+            changed: (last_modified_revision == @revision_number),
+            user_id: @repo.__get_property(:author, last_modified_revision)
           })
           result[file_name] = new_directory
         end
@@ -982,13 +982,13 @@ module Repository
 
           if(!only_changed || (last_modified_revision == @revision_number))
             new_file = Repository::RevisionFile.new(@revision_number, {
-              :name => file_name,
-              :path => path,
-              :last_modified_revision => last_modified_revision,
-              :changed => (last_modified_revision == @revision_number),
-              :user_id => @repo.__get_property(:author, last_modified_revision),
-              :mime_type => @repo.__get_file_property(:mime_type, File.join(path, file_name), last_modified_revision),
-              :last_modified_date => last_modified_date
+              name: file_name,
+              path: path,
+              last_modified_revision: last_modified_revision,
+              changed: (last_modified_revision == @revision_number),
+              user_id: @repo.__get_property(:author, last_modified_revision),
+              mime_type: @repo.__get_file_property(:mime_type, File.join(path, file_name), last_modified_revision),
+              last_modified_date: last_modified_date
             })
             result[file_name] = new_file
           end

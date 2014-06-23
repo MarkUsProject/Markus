@@ -1,5 +1,5 @@
 module Api
-  require 'zip/zip'
+  require 'zip'
 
   # Allows for downloading of submission files and their annotations
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
@@ -15,16 +15,16 @@ module Api
       assignment = Assignment.find_by_id(params[:assignment_id])
       if assignment.nil?
         # No assignment with that id
-        render 'shared/http_status', :locals => {:code => '404', :message =>
-          'No assignment exists with that id'}, :status => 404
+        render 'shared/http_status', locals: {code: '404', message:
+          'No assignment exists with that id'}, status: 404
         return
       end
 
       group = Group.find_by_id(params[:group_id])
       if group.nil?
         # No group exists with that id
-        render 'shared/http_status', :locals => {:code => '404', :message =>
-          'No group exists with that id'}, :status => 404
+        render 'shared/http_status', locals: {code: '404', message:
+          'No group exists with that id'}, status: 404
         return
       end
 
@@ -32,8 +32,8 @@ module Api
         group[:group_name], assignment[:short_identifier])
       if submission.nil?
         # No assignment submission by that group
-        render 'shared/http_status', :locals => {:code => '404', :message =>
-          'Submission was not found'}, :status => 404
+        render 'shared/http_status', locals: {code: '404', message:
+          'Submission was not found'}, status: 404
         return
       end
 
@@ -53,8 +53,8 @@ module Api
       files.each do |file|
         if file.nil?
           # No such file in the submission
-          render 'shared/http_status', :locals => {:code => '422', :message =>
-            'File was not found'}, :status => 422
+          render 'shared/http_status', locals: {code: '422', message:
+            'File was not found'}, status: 422
           return
         end
 
@@ -67,17 +67,17 @@ module Api
           end
         rescue Exception
             # Could not retrieve file
-            render 'shared/http_status', :locals => {:code => '500', :message =>
-              HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500
+            render 'shared/http_status', locals: {code: '500', message:
+              HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
           return
         end
 
         if files.length == 1
           # If we only have 1 file being requested, send it
-          send_data file_contents, :disposition => 'inline', :filename => file.filename
+          send_data file_contents, disposition: 'inline', filename: file.filename
         else
           # Otherwise zip up the requested submission files
-          Zip::ZipFile.open("tmp/#{zip_name}", Zip::ZipFile::CREATE) do |zipfile|
+          Zip::File.open("tmp/#{zip_name}", Zip::File::CREATE) do |zipfile|
             unless zipfile.find_entry(file.path)
               zipfile.mkdir(file.path)
             end
@@ -89,7 +89,7 @@ module Api
 
       # Send the zip
       if files.length > 1
-        send_file "tmp/#{zip_name}", :disposition => 'inline', :filename =>
+        send_file "tmp/#{zip_name}", disposition: 'inline', filename:
           zip_name
       end
     end

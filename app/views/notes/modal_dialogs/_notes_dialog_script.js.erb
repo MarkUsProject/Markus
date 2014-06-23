@@ -1,5 +1,5 @@
 jQuery('#notes_dialog').html('<%= escape_javascript(
-       render :partial => 'notes/modal_dialogs/notes_dialog').html_safe %>');
+       render partial: 'notes/modal_dialogs/notes_dialog').html_safe %>');
 
 modalNotesGroup.open();
 jQuery('#new_notes').select();

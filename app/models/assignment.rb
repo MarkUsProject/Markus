@@ -3,39 +3,39 @@ require 'csv_invalid_line_error'
 class Assignment < ActiveRecord::Base
 
   MARKING_SCHEME_TYPE = {
-    :flexible => 'flexible',
-    :rubric => 'rubric'
+    flexible: 'flexible',
+    rubric: 'rubric'
   }
 
   has_many :rubric_criteria,
-           :class_name => 'RubricCriterion',
-           :order => :position
+           class_name: 'RubricCriterion',
+           order: :position
   has_many :flexible_criteria,
-           :class_name => 'FlexibleCriterion',
-           :order => :position
+           class_name: 'FlexibleCriterion',
+           order: :position
   has_many :assignment_files
   has_many :test_files
   has_many :criterion_ta_associations
   has_one :submission_rule
   has_one :assignment_stat
-  accepts_nested_attributes_for :submission_rule, :allow_destroy => true
-  accepts_nested_attributes_for :assignment_files, :allow_destroy => true
-  accepts_nested_attributes_for :test_files, :allow_destroy => true
-  accepts_nested_attributes_for :assignment_stat, :allow_destroy => true
+  accepts_nested_attributes_for :submission_rule, allow_destroy: true
+  accepts_nested_attributes_for :assignment_files, allow_destroy: true
+  accepts_nested_attributes_for :test_files, allow_destroy: true
+  accepts_nested_attributes_for :assignment_stat, allow_destroy: true
 
   has_many :annotation_categories
 
   has_many :groupings
   has_many :ta_memberships,
-           :class_name => 'TaMembership',
-           :through => :groupings
-  has_many :student_memberships, :through => :groupings
-  has_many :tokens, :through => :groupings
+           class_name: 'TaMembership',
+           through: :groupings
+  has_many :student_memberships, through: :groupings
+  has_many :tokens, through: :groupings
 
-  has_many :submissions, :through => :groupings
-  has_many :groups, :through => :groupings
+  has_many :submissions, through: :groupings
+  has_many :groups, through: :groupings
 
-  has_many :notes, :as => :noteable, :dependent => :destroy
+  has_many :notes, as: :noteable, dependent: :destroy
 
   has_many :section_due_dates
   accepts_nested_attributes_for :section_due_dates
@@ -44,15 +44,15 @@ class Assignment < ActiveRecord::Base
 
   validates_presence_of :repository_folder
   validates_presence_of :short_identifier, :group_min
-  validates_uniqueness_of :short_identifier, :case_sensitive => true
+  validates_uniqueness_of :short_identifier, case_sensitive: true
 
   validates_numericality_of :group_min,
-                            :only_integer => true,
-                            :greater_than => 0
-  validates_numericality_of :group_max, :only_integer => true
+                            only_integer: true,
+                            greater_than: 0
+  validates_numericality_of :group_max, only_integer: true
   validates_numericality_of :tokens_per_day,
-                            :only_integer => true,
-                            :greater_than_or_equal_to => 0
+                            only_integer: true,
+                            greater_than_or_equal_to: 0
 
   validates_associated :submission_rule
   validates_associated :assignment_stat
@@ -62,25 +62,25 @@ class Assignment < ActiveRecord::Base
 
   # For those, please refer to issue #1126
   # Because of app/views/assignments/_list_manage.html.erb line:13
-  validates :description, :presence => true
+  validates :description, presence: true
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
-  validates :assignment_stat, :presence => true
+  validates :assignment_stat, presence: true
 
   # since allow_web_submits is a boolean, validates_presence_of does not work:
   # see the Rails API documentation for validates_presence_of (Model
   # validations)
-  validates_inclusion_of :allow_web_submits, :in => [true, false]
-  validates_inclusion_of :is_hidden, :in => [true, false]
-  validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
-  validates_inclusion_of :enable_test, :in => [true, false]
-  validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
+  validates_inclusion_of :allow_web_submits, in: [true, false]
+  validates_inclusion_of :is_hidden, in: [true, false]
+  validates_inclusion_of :display_grader_names_to_students, in: [true, false]
+  validates_inclusion_of :enable_test, in: [true, false]
+  validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
 
   before_save :reset_collection_time
   validate :minimum_number_of_groups
   # Call custom validator in order to validate the :due_date attribute
-  # :date => true maps to DateValidator (:custom_name => true maps to CustomNameValidator)
+  # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
-  validates :due_date, :date => true
+  validates :due_date, date: true
   after_save :update_assigned_tokens
 
   # Set the default order of assignments: in ascending order of due_date
@@ -247,7 +247,7 @@ class Assignment < ActiveRecord::Base
     # condition += " and memberships.status != 'rejected'"
     # add non-pending status clause to condition
     # condition += " and memberships.status != 'pending'" unless pending
-    # groupings.first(:include => :memberships, :conditions => [condition, uid]) #FIXME: needs schema update
+    # groupings.first(include: :memberships, conditions: [condition, uid]) #FIXME: needs schema update
 
     #FIXME: needs to be rewritten using a proper query...
     User.find(uid).accepted_grouping_for(self.id)
@@ -255,7 +255,7 @@ class Assignment < ActiveRecord::Base
 
   # Make a list of students without any groupings
   def no_grouping_students_list
-   @students = Student.all(:order => :last_name, :conditions => {:hidden => false})
+   @students = Student.all(order: :last_name, conditions: {hidden: false})
    @students_list = []
    @students.each do |s|
      unless s.has_accepted_grouping_for?(self.id)
@@ -309,18 +309,12 @@ class Assignment < ActiveRecord::Base
       end
     end
     if results_count == 0
-      return false # no marks released for this assignment
+      return false # No marks released for this assignment
     end
     self.results_fails = results_fails
     self.results_zeros = results_zeros
     results_sorted = results.sort
-    median_quantity = 0
-    if (results_count % 2) == 0
-      median_quantity = (results_sorted[results_count/2 - 1]
-                        + results_sorted[results_count/2]).to_f / 2
-    else
-      median_quantity = results_sorted[results_count/2]
-    end
+    median_quantity = calculate_median(results_sorted, results_count)
     # Avoiding division by 0
     if self.total_mark == 0
       self.results_average = 0
@@ -336,6 +330,15 @@ class Assignment < ActiveRecord::Base
     # compute average in percent
     self.results_average = (avg_quantity * 100 / self.total_mark)
     self.save
+  end
+
+  def calculate_median(results, count)
+    if (count % 2) == 0
+      median_quantity = (results[count/2 - 1] + results[count/2]).to_f / 2
+    else
+      median_quantity = results[count/2]
+    end
+    median_quantity
   end
 
   def update_remark_request_count
@@ -361,13 +364,13 @@ class Assignment < ActiveRecord::Base
   def add_group(new_group_name=nil)
     if self.group_name_autogenerated
       group = Group.new
-      group.save(:validate => false)
+      group.save(validate: false)
       group.group_name = group.get_autogenerated_group_name
       group.save
     else
       return nil if new_group_name.nil?
-      if Group.first(:conditions => {:group_name => new_group_name})
-        group = Group.first(:conditions => {:group_name => new_group_name})
+      if Group.first(conditions: {group_name: new_group_name})
+        group = Group.first(conditions: {group_name: new_group_name})
         unless self.groupings.find_by_group_id(group.id).nil?
           raise "Group #{new_group_name} already exists"
         end
@@ -487,13 +490,13 @@ class Assignment < ActiveRecord::Base
     group.save
     unless group.errors[:base].blank?
       collision_error = I18n.t('csv.repo_collision_warning',
-                          { :repo_name => group.errors.on_base,
-                            :group_name => row[0] })
+                          { repo_name: group.errors.on_base,
+                            group_name: row[0] })
     end
 
     # Create a new Grouping for this assignment and the newly
     # crafted group
-    grouping = Grouping.new(:assignment => self, :group => group)
+    grouping = Grouping.new(assignment: self, group: group)
     grouping.save
 
     # Form groups
@@ -536,12 +539,12 @@ class Assignment < ActiveRecord::Base
   end
 
   def ungrouped_students
-    Student.all(:conditions => {:hidden => false}) - grouped_students
+    Student.all(conditions: {hidden: false}) - grouped_students
   end
 
   def valid_groupings
     result = []
-    groupings.all(:include => [{:student_memberships => :user}]).each do |grouping|
+    groupings.all(include: [{student_memberships: :user}]).each do |grouping|
       if grouping.admin_approved || grouping.student_memberships.count >= group_min
         result.push(grouping)
       end
@@ -554,7 +557,7 @@ class Assignment < ActiveRecord::Base
   end
 
   def assigned_groupings
-    groupings.all(:joins => :ta_memberships, :include => [{:ta_memberships => :user}]).uniq
+    groupings.all(joins: :ta_memberships, include: [{ta_memberships: :user}]).uniq
   end
 
   def unassigned_groupings
@@ -733,6 +736,15 @@ class Assignment < ActiveRecord::Base
     self.rubric_criteria.count + 1
   end
 
+  # Returns the class of the criteria that belong to this assignment.
+  def criterion_class
+    if marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
+      FlexibleCriterion
+    else
+      RubricCriterion
+    end
+  end
+
   def get_criteria
     if self.marking_scheme_type == 'rubric'
       self.rubric_criteria
@@ -761,7 +773,7 @@ class Assignment < ActiveRecord::Base
     end
 
     steps = 100 / intervals # number of percentage steps in each interval
-    groupings = self.groupings.all(:include => [{:current_submission_used => :results}])
+    groupings = self.groupings.all(include: [{current_submission_used: :results}])
 
     groupings.each do |grouping|
       submission = grouping.current_submission_used
