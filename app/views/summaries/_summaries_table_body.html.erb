@@ -1,5 +1,7 @@
-<tbody id="submissions">
+<tbody id='submissions'>
   <% groupings.each do |grouping| %>
-    <%= render partial: 'summaries/summaries_table_row/table_row', locals: {grouping: grouping, assignment: assignment} %>
+    <%= render partial: 'summaries/summaries_table_row/table_row',
+               locals: { grouping: grouping,
+                         assignment: assignment } %>
   <% end %>
 <tbody>
