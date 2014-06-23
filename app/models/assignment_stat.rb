@@ -12,7 +12,7 @@ class AssignmentStat < ActiveRecord::Base
   # Used by Chart.js to draw the graphs
   def grade_distribution_array
     if self.grade_distribution_percentage
-      self.grade_distribution_percentage.parse_csv.map{ |x| x.to_i }.to_json
+      self.grade_distribution_percentage.parse_csv.map{ |x| x.to_i }
     else
       # Default, empty distribution
       '[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]'
