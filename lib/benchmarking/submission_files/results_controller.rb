@@ -1,10 +1,14 @@
 class ResultsController < ApplicationController
-  before_filter      :authorize_only_for_admin, except: [:codeviewer,
-  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping, :update_overall_comment, :remove_extra_mark]
-  before_filter      :authorize_for_ta_and_admin, only: [:edit,
-  :update_mark, :create, :add_extra_mark, :download, :next_grouping, :update_overall_comment, :remove_extra_mark]
-  before_filter      :authorize_for_user, only: [:codeviewer]
-  before_filter      :authorize_for_student, only: [:view_marks]
+  before_filter :authorize_only_for_admin,
+                except: [:codeviewer, :edit, :update_mark, :view_marks, :create,
+                         :add_extra_mark, :next_grouping,
+                         :update_overall_comment, :remove_extra_mark]
+  before_filter :authorize_for_ta_and_admin,
+                only: [:edit, :update_mark, :create, :add_extra_mark, :download,
+                       :next_grouping, :update_overall_comment,
+                       :remove_extra_mark]
+  before_filter :authorize_for_user, only: [:codeviewer]
+  before_filter :authorize_for_student, only: [:view_marks]
 
   def create
     # Create new Result for this Submission
