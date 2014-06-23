@@ -8,9 +8,8 @@
 
   <%= render partial: "boot", formats: [:js], handlers: [:erb] %>
 
-  <script type="text/javascript">
-    //<![CDATA[
-
+  <script>
+  //<![CDATA[
     var modalCreate = null;
     var modalAssignmentGroupReUse = null;
     var modalAddMember = null;
@@ -28,16 +27,15 @@
 
       } else {
         modalCreate.open();
-        $('new_group_name').setValue('');
+        document.getElementById('new_group_name').value = '';
         return false;
       }
     }
 
     function submit_new_group(new_group_name) {
-
-      //close the dialog
+      // Close the dialog
       modalCreate.close();
-      //send AJAX request
+      // Send AJAX request
       new Ajax.Request('<%= new_assignment_group_path(@assignment)%>',
                        {
                           asynchronous:true,
@@ -49,17 +47,16 @@
     }
 
     function assignment_group_use() {
-        modalAssignmentGroupReUse.open();
-        $('clone_groups_assignment_id').setValue('');
-        return false;
-     }
+      modalAssignmentGroupReUse.open();
+      document.getElementById('clone_groups_assignment_id').val = '';
+      return false;
+    }
 
     function submit_assignment_group_use(clone_groups_assignment_id) {
-
-      // close the dialog
+      // Close the dialog
       modalAssignmentGroupReUse.close();
 
-      // send AJAX request
+      // Send AJAX request
       new Ajax.Request('<%= use_another_assignment_groups_assignment_groups_path(@assignment)%> ',
                         {
                           asynchronous:true,
@@ -69,27 +66,10 @@
                         })
     }
 
-    document.observe("dom:loaded", function() {
-      modalCreate = new Control.Modal($('create_group_dialog'),
-      {
-        overlayOpacity: 0.75,
-        className: 'modalCreate',
-        fade:false
-      });
-
-      modalNotesGroup = new Control.Modal($('notes_dialog'),
-      {
-        overlayOpacity: 0.75,
-        className: 'modalNotesGroup',
-        fade:false
-      });
-
-      modalAssignmentGroupReUse = new Control.Modal($('assignment_group_use_dialog'),
-      {
-        overlayOpacity: 0.75,
-        className: 'modalAssignmentGroupReUse',
-        fade:false
-      });
+    jQuery(document).ready(function() {
+      modalCreate = new ModalMarkus('#create_group_dialog');
+      modalNotesGroup = new ModalMarkus('#notes_dialog');
+      modalAssignmentGroupReUse = new ModalMarkus('#assignment_group_use_dialog');
 
       // set up event handlers to show the loading spinner while
       // an ajax call us working
@@ -100,13 +80,10 @@
       $("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
         done_thinking();
       });
-
     });
-
-    //]]>
+  //]]>
   </script>
 <% end %>
-
 
 <% if @assignment.past_due_date? %>
   <div class="notice">
