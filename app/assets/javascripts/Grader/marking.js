@@ -59,6 +59,29 @@ jQuery(document).ready(function() {
   // Update server status
   var state = document.getElementById('marking_state');
   update_status(state, state.value);
+
+  // Handle the expand/collapse buttons
+  jQuery('#expand_all').click(function() {
+    jQuery('.mark_description').each(function() {
+      show_criterion(parseInt(this.dataset.id));
+    });
+  });
+
+  jQuery('#collapse_all').click(function() {
+    jQuery('.mark_description').each(function() {
+      hide_criterion(parseInt(this.dataset.id));
+    });
+  });
+
+  jQuery('#expand_unmarked').click(function() {
+    jQuery('.mark_description').each(function() {
+      if (this.innerHTML.trim()) {
+        hide_criterion(parseInt(this.dataset.id));
+      } else {
+        show_criterion(parseInt(this.dataset.id));
+      }
+    });
+  });
 });
 
 function focus_mark_criterion(id) {
