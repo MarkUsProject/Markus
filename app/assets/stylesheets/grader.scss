@@ -43,7 +43,7 @@
 }
 
 .annotationContent p {
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 #student_selector {
@@ -107,7 +107,7 @@
   max-width: 400px;
   padding: 0.25em 1em;
   position: absolute;
-  white-space: pre;
+  white-space: pre-wrap;
   width: auto;
   z-index: 100000;
 }
