@@ -59,6 +59,25 @@ jQuery(document).ready(function() {
   // Update server status
   var state = document.getElementById('marking_state');
   update_status(state, state.value);
+
+  // Handle indenting in the new annotation textarea (2 spaces)
+  jQuery('#new_annotation_content').keydown(function(e) {
+    var keyCode = e.keyCode || e.which;
+
+    if (keyCode == 9) {
+      e.preventDefault();
+      var start = this.selectionStart;
+      var end   = this.selectionEnd;
+
+      // Add the 2 spaces
+      this.value = this.value.substring(0, start)
+                   + '  '
+                   + this.value.substring(end);
+
+      // Put caret in correct position
+      this.selectionStart = this.selectionEnd = start + 2;
+    }
+  })
 });
 
 function focus_mark_criterion(id) {
