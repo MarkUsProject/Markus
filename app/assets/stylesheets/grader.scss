@@ -9,8 +9,17 @@
   Annotations highlight; two colours, one for single comment
   one for overlapping comment
  ****************************************************/
-.annotations1 { background-color: #fffcc4; }
-.annotations2 { background-color: #ff9; }
+ #annotation_summary_list {
+  li {
+    &:nth-child(odd) {
+      background-color: #fffcc4;
+    }
+
+    &:nth-child(even) {
+      background-color: #ff9;
+    }
+  }
+ }
 
 /****************************************************
   Link to line number in Annotations Summary
@@ -31,6 +40,10 @@
   font: italic 0.85em $font-stack;
   margin: 0 0 10px 0;
   padding: 0 0 0 10px;
+}
+
+.annotationContent p {
+  white-space: pre;
 }
 
 #student_selector {
@@ -252,6 +265,10 @@ li.annotation_category {
 
     #annotation_menu + #codeviewer {
       height: 600px;
+
+      .dp-highlighter ol {
+        height: 540px;
+      }
     }
 
     #annotations_summary_head {
