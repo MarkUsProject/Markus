@@ -37,7 +37,7 @@
 *****************************************************/
 .annotationContent,
 .manageAnnotations {
-  font: italic 0.85em $font-stack;
+  font: 0.85em/0.9em $font-stack;
   margin: 0 0 10px 0;
   padding: 0 0 0 10px;
 }
@@ -107,7 +107,9 @@
   max-width: 400px;
   padding: 0.25em 1em;
   position: absolute;
+  white-space: pre;
   width: auto;
+  z-index: 100000;
 }
 
 #annotation_menu {

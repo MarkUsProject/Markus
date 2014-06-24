@@ -9,8 +9,8 @@
     </div>
 
     <%= button_to_function t('edit'),
-                           "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();
-                            $('annotation_text_content_display_#{annot.annotation_text.id}').hide();",
+                           "jQuery('#annotation_text_content_edit_#{annot.annotation_text.id}').show();
+                            jQuery('#annotation_text_content_display_#{annot.annotation_text.id}').hide();",
                            { class: 'float_left edit_remove_annotation_button' } %>
 
     <%= button_to t('remove'),
@@ -37,8 +37,8 @@
                          confirm: t('marker.annotation.change_across_submissions') %>
           <input type='reset'
                  value='<%= t('cancel') %>'
-                 onclick="$('annotation_text_content_edit_<%= annot.annotation_text.id %>').hide();
-                          $('annotation_text_content_display_<%= annot.annotation_text.id %>').show();">
+                 onclick="jQuery('#annotation_text_content_edit_<%= annot.annotation_text.id %>').hide();
+                          jQuery('#annotation_text_content_display_<%= annot.annotation_text.id %>').show();">
         </p>
       <% end %>
     </div>
