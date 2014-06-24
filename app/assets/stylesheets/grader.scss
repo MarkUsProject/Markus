@@ -67,10 +67,6 @@
   }
 }
 
-#file_selector {
-  margin: 20px 0 10px 0;
-}
-
 .dp-highlighter {
   .annotation_highlighted_text {
     background-color: #f99;
@@ -534,7 +530,7 @@ li.annotation_category {
 
 #panes-content {
   height: 100%;
-  margin-top: 2.5em;
+  margin-top: 1em;
   width: 100%;
 
   #panes {
