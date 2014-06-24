@@ -64,17 +64,12 @@
       window.onbeforeunload = null;
     });
 
-    // Only show unmarked criteria
-    jQuery.ajax({
-      url: "<%= collapse_criteria_assignment_submission_results_path(assignment_id: @assignment.id) %>",
-      async: false,
-      type: 'GET'
-    });
-
-    jQuery.ajax({
-      url: "<%= expand_unmarked_criteria_assignment_submission_results_path(assignment_id: @assignment.id, id: @result.id) %>",
-      async: false,
-      type: 'GET'
+    // If the mark_description div is empty, that means it isn't marked
+    // Hide the criterion that AREN'T empty (i.e. are marked)
+    jQuery('.mark_description').each(function() {
+      if (this.innerHTML.trim()) {
+        hide_criterion(parseInt(this.dataset.id));
+      }
     });
   });
 

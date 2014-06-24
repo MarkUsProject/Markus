@@ -78,6 +78,29 @@ jQuery(document).ready(function() {
       this.selectionStart = this.selectionEnd = start + 2;
     }
   })
+
+  // Handle the expand/collapse buttons
+  jQuery('#expand_all').click(function() {
+    jQuery('.mark_description').each(function() {
+      show_criterion(parseInt(this.dataset.id));
+    });
+  });
+
+  jQuery('#collapse_all').click(function() {
+    jQuery('.mark_description').each(function() {
+      hide_criterion(parseInt(this.dataset.id));
+    });
+  });
+
+  jQuery('#expand_unmarked').click(function() {
+    jQuery('.mark_description').each(function() {
+      if (this.innerHTML.trim()) {
+        hide_criterion(parseInt(this.dataset.id));
+      } else {
+        show_criterion(parseInt(this.dataset.id));
+      }
+    });
+  });
 });
 
 function focus_mark_criterion(id) {
