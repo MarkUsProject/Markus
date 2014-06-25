@@ -160,7 +160,8 @@ TableHeader = React.createClass({displayName: 'TableHeader',
           }
         }
         return React.DOM.th( {key:column.id, id:column.id, className:clss,
-        onClick:this.headerColumnClicked}, column.content + arrow_indicator)
+          onClick:this.headerColumnClicked}, React.DOM.span(null,
+          [column.content, arrow_indicator]))
       }
       return React.DOM.th( {key:column.id, id:column.id}, column.content)
     }.bind(this));
