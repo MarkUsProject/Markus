@@ -215,12 +215,8 @@ DEPENDENCIES
   railroady
   rails (= 3.2.18)
   rdoc
-<<<<<<< HEAD
-  rghost
-  rspec-rails (~> 3.0)
-=======
   rghost (<= 0.9.3)
->>>>>>> 126327ba07f1cdbc02656a29883e37b212c542dd
+  rspec-rails (~> 3.0)
   rubyzip
   sass-rails (~> 3.2.3)
   shoulda
