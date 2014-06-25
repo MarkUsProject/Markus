@@ -29,12 +29,10 @@ class GroupsController < ApplicationController
     begin
       new_grouping_data = @assignment.add_group(params[:new_group_name])
     rescue Exception => e
-      @error = e.message
-      render :error_single
-      return
+      render text: e.message,
+             status: 400 and return
     end
-    @new_grouping = construct_table_row(new_grouping_data, @assignment)
-    render :add_group, formats: [:js]
+    head :ok
   end
 
   def remove_group
@@ -108,53 +106,18 @@ class GroupsController < ApplicationController
         @grouping.update_attribute(:group_id, groupexist_id)
       end
     end
-<<<<<<< HEAD
-    @grouping_data = construct_table_row(@grouping, @assignment)
-    render :rename_group, formats: [:js]
-=======
->>>>>>> Replace groups manager in React
   end
 
   def valid_grouping
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id])
     @grouping.validate_grouping
-<<<<<<< HEAD
-    @grouping_data = construct_table_row(@grouping, @assignment)
-    render :valid_grouping, formats: [:js]
-=======
->>>>>>> Replace groups manager in React
   end
 
   def invalid_grouping
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id])
     @grouping.invalidate_grouping
-<<<<<<< HEAD
-    @grouping_data = construct_table_row(@grouping, @assignment)
-    render :invalid_grouping, formats: [:js]
-  end
-
-  def populate
-    @assignment = Assignment.find(params[:assignment_id],
-                                  include: [{
-                                      groupings: [
-                                          :students,
-                                          :non_rejected_student_memberships,
-                                          :group]}])
-    @groupings = @assignment.groupings
-    @table_rows = {}
-    @table_rows = construct_table_rows(@groupings, @assignment)
-    render :populate, formats: [:js]
-  end
-
-  def populate_students
-    @assignment = Assignment.find(params[:assignment_id],
-                                  include: [:groupings])
-    @students = Student.all
-    @table_rows = construct_student_table_rows(@students, @assignment)
-=======
->>>>>>> Replace groups manager in React
   end
 
   def index
@@ -273,22 +236,7 @@ class GroupsController < ApplicationController
     @tas = Ta.all
     grouping_ids = params[:groupings]
     student_ids = params[:students]
-<<<<<<< HEAD
-
-    if params[:groupings].nil? or params[:groupings].size ==  0
-      # If there is a global action than there should be a group selected
-      if params[:global_actions]
-        @global_action_warning = t('assignment.group.select_a_group')
-        render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
-        return
-      end
-      # Just do nothing
-      render nothing: true
-      return
-    end
-=======
     students_to_remove = params[:students_to_remove]
->>>>>>> Replace groups manager in React
 
     @grouping_data = {}
     @groupings = []
@@ -317,14 +265,8 @@ class GroupsController < ApplicationController
             error and return
           end
         else
-<<<<<<< HEAD
-          @global_action_warning = t('assignment.group.select_a_student')
-          render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
-          return
-=======
           render text: I18n.t('assignment.group.select_a_student'),
                  status: 400 and return
->>>>>>> Replace groups manager in React
         end
       when 'unassign'
         if error = remove_members(students_to_remove)
@@ -351,11 +293,6 @@ class GroupsController < ApplicationController
     groupings.each do |grouping|
      grouping.invalidate_grouping
     end
-<<<<<<< HEAD
-    @groupings_data = construct_table_rows(groupings, @assignment)
-    render :modify_groupings, formats: [:js]
-=======
->>>>>>> Replace groups manager in React
   end
 
   # Given a list of grouping, sets their group status to valid if possible
@@ -363,11 +300,6 @@ class GroupsController < ApplicationController
     groupings.each do |grouping|
       grouping.validate_grouping
     end
-<<<<<<< HEAD
-    @groupings_data = construct_table_rows(groupings, @assignment)
-    render :modify_groupings, formats: [:js]
-=======
->>>>>>> Replace groups manager in React
   end
 
   # Deletes the given list of groupings if possible. Removes each member first.
@@ -387,11 +319,6 @@ class GroupsController < ApplicationController
           @removed_groupings.push(grouping)
         end
       end
-<<<<<<< HEAD
-      @students_data = construct_student_table_rows(students_to_remove, @assignment)
-      render :delete_groupings, formats: [:js]
-=======
->>>>>>> Replace groups manager in React
   end
 
   # Adds the students given in student_ids to the grouping given in grouping_id
@@ -415,11 +342,6 @@ class GroupsController < ApplicationController
                                    group: group_name), status: 400
       end
     end
-<<<<<<< HEAD
-    render :add_members, formats: [:js]
-=======
-    return nil
->>>>>>> Replace groups manager in React
   end
 
   # Adds the student given in student_id to the grouping given in grouping
@@ -482,13 +404,6 @@ class GroupsController < ApplicationController
       membership = grouping.student_memberships.find_by_user_id(member.id)
       remove_member(membership, grouping, @assignment)
     end
-<<<<<<< HEAD
-    @students_data = construct_student_table_rows(all_members, @assignment)
-    @groupings_data = construct_table_rows(groupings, @assignment)
-    render :remove_members, formats: [:js]
-=======
-    return nil
->>>>>>> Replace groups manager in React
   end
 
   # Removes the given student membership from the given grouping
