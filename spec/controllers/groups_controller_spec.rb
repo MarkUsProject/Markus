@@ -20,12 +20,13 @@ describe GroupsController do
       context 'when no group name is specified' do
         it 'assigns the requested assignment to @assignment' do
           get :new, assignment_id: assignment
-          expect(assigns(:assignment)).to eq assignment
+          expect(assigns(:assignment)).to eq(assignment)
         end
 
         it 'adds a new group to assignment' do
-          expect(assignment).to receive(:add_group).with(nil)
-                                                   .and_return(grouping)
+          expect(assignment).to receive(:add_group)
+            .with(nil)
+            .and_return(grouping)
           get :new, assignment_id: assignment
         end
       end
@@ -33,28 +34,93 @@ describe GroupsController do
       context 'when a group name is specified' do
         let(:group_name) { 'g2avatar' }
 
-        context 'when successful' do
+        context 'when group creation successful' do
           it 'creates a new group with specified name' do
-            expect(assignment).to receive(:add_group).with(group_name)
-                                                     .and_return(grouping)
+            expect(assignment).to receive(:add_group)
+              .with(group_name)
+              .and_return(grouping)
             get :new, assignment_id: assignment, new_group_name: group_name
           end
         end
 
-        context 'when unsuccessful' do
-          it 'assigns the error message to @error' do
+        context 'when group creation unsuccessful' do
+          before :each do
             allow(assignment).to receive(:add_group)
-                                    .with(group_name)
-                                    .and_raise(
-                                      'Group #{group_name} already exists')
+              .with(group_name)
+              .and_raise('Group #{group_name} already exists')
+
             get :new, assignment_id: assignment, new_group_name: group_name
-            expect(assigns(:error)).to eq 'Group #{group_name} already exists'
+          end
+
+          it 'assigns the error message to @error' do
+            expect(assigns(:error)).to eq('Group #{group_name} already exists')
           end
         end
       end
     end
 
-    describe 'DELETE #remove_group'
+    describe 'DELETE #remove_group' do
+      before :each do
+        allow(Grouping).to receive(:find).and_return(grouping)
+      end
+
+      context 'when grouping has no submissions' do
+        before :each do
+          allow(grouping).to receive(:delete_grouping)
+          allow(grouping).to receive(:has_submission?).and_return(false)
+
+          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+        end
+
+        it 'assigns the requested grouping\'s assignment to @assignment' do
+          expect(assigns(:assignment)).to eq(assignment)
+        end
+
+        it 'assigns empty array to @errors' do
+          expect(assigns(:errors)).to match_array([])
+        end
+
+        it 'populates @removed_groupings with deleted groupings' do
+          expect(assigns(:removed_groupings)).to match_array([grouping])
+        end
+
+        it 'calls grouping.has_submission?' do
+          expect(grouping).to receive(:has_submission?).and_return(false)
+          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+        end
+
+        it 'calls grouping.delete_groupings' do
+          expect(grouping).to receive(:delete_grouping)
+          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+        end
+      end
+
+      context 'when grouping has submissions' do
+        before :each do
+          allow(grouping).to receive(:has_submission?).and_return(true)
+
+          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+        end
+
+        it 'assigns the requested grouping\'s assignment to @assignment' do
+          expect(assigns(:assignment)).to eq(assignment)
+        end
+
+        it 'populates @errors with group_name of grouping\'s group' do
+          expect(assigns(:errors)).to match_array([grouping.group.group_name])
+        end
+
+        it 'assigns empty array to @removed_groupings' do
+          expect(assigns(:removed_groupings)).to match_array([])
+        end
+
+        it 'calls grouping.has_submission?' do
+          expect(grouping).to receive(:has_submission?).and_return(true)
+          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+        end
+      end
+    end
+
     describe '#upload_dialog'
     describe '#download_dialog'
     describe '#rename_group_dialog'
@@ -71,15 +137,15 @@ describe GroupsController do
       end
 
       it 'populates @all_assignments with assignments' do
-        expect(assigns(:all_assignments)).to match_array [assignment]
+        expect(assigns(:all_assignments)).to match_array([assignment])
       end
 
       it 'assigns the requested assignment to @assignment' do
-        expect(assigns(:assignment)).to eq assignment
+        expect(assigns(:assignment)).to eq(assignment)
       end
 
       it 'renders the :index template' do
-        expect(response).to render_template :index
+        expect(response).to render_template(:index)
       end
     end
 
