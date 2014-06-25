@@ -294,6 +294,7 @@ li.annotation_category {
       .annotation_holder {
         background: orange;
         border: 1px solid #000;
+        cursor: crosshair;
         filter: alpha(opacity=20);
         opacity: 0.2;
         position: absolute;
