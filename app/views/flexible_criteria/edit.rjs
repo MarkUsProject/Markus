@@ -1,1 +1,1 @@
-page.replace_html 'flexible_edition_pane_menu', :partial => 'criterion_editor', :locals => {:criterion => @criterion}
+page.replace_html 'flexible_edition_pane_menu', partial: 'criterion_editor', locals: {criterion: @criterion}

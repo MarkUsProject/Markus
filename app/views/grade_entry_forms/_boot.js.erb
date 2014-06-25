@@ -1,0 +1,24 @@
+<script>
+//<![CDATA[
+  jQuery(document).ready(function() {
+    // Set locale for language localisation with Moment.js
+    moment.lang(document.getElementById('locale').value);
+
+    localize_date(document.getElementById('actual_date'),
+                  document.getElementById('date'),
+                  document.getElementById('format').value);
+
+    jQuery('.datepicker').datepicker({
+      altField:         '#actual_date',
+      altFormat:        'yy-mm-dd',
+      numberOfMonths:   2,
+      dateFormat:       "<%= raw I18n.t('date.formats.locale_date_only') %>",
+      monthNames:       <%= raw I18n.t('date.months') %>,
+      dayNames:         <%= raw I18n.t('date.weekdays') %>,
+      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+      prevText:         "<%= I18n.t('time.prev') %>",
+      nextText:         "<%= I18n.t('time.next') %>"
+    });
+  });
+//]]>
+</script>

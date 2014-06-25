@@ -10,17 +10,17 @@
   <ul id="flexible_criteria_pane_list">
     <% @criteria.each do |criterion| -%>
       <% if @criteria.length == 1 %>
-      <%= render :partial => "flexible_criteria/flexible_criterion", :locals => {:criterion => criterion, :location => :single} %>
+      <%= render partial: "flexible_criteria/flexible_criterion", locals: {criterion: criterion, location: :single} %>
       <% elsif criterion == @criteria.first %>
-      <%= render :partial => "flexible_criteria/flexible_criterion", :locals => {:criterion => criterion, :location => :first} %>
+      <%= render partial: "flexible_criteria/flexible_criterion", locals: {criterion: criterion, location: :first} %>
       <% elsif criterion == @criteria.last %>
-      <%= render :partial => "flexible_criteria/flexible_criterion", :locals => {:criterion => criterion, :location => :last} %>
+      <%= render partial: "flexible_criteria/flexible_criterion", locals: {criterion: criterion, location: :last} %>
       <% else %>
-      <%= render :partial => "flexible_criteria/flexible_criterion", :locals => {:criterion => criterion, :location => :middle} %>
+      <%= render partial: "flexible_criteria/flexible_criterion", locals: {criterion: criterion, location: :middle} %>
      <% end %>
     <% end %>
   </ul>
 </div>
 <%= sortable_element("flexible_criteria_pane_list",
-                     :url => update_positions_assignment_flexible_criteria_path(
+                     url: update_positions_assignment_flexible_criteria_path(
                       @assignment)) %>

@@ -18,12 +18,12 @@
 # process communication bypassing the need for pipes or signals.
 class SubmissionCollector < ActiveRecord::Base
 
-  has_many :grouping_queues, :dependent => :destroy
+  has_many :grouping_queues, dependent: :destroy
 
-  validates_numericality_of :child_pid, :only_integer => true,
-    :allow_nil => true
+  validates_numericality_of :child_pid, only_integer: true,
+    allow_nil: true
 
-  validates_inclusion_of :stop_child, :in => [true, false]
+  validates_inclusion_of :stop_child, in: [true, false]
 
   #Always use the instance method to get an object of this class, never call
   #new or create directly
@@ -38,8 +38,8 @@ class SubmissionCollector < ActiveRecord::Base
   #Get two fresh grouping_queues
   def init_queues
     self.grouping_queues.clear
-    self.grouping_queues.create(:priority_queue => false)
-    self.grouping_queues.create(:priority_queue => true)
+    self.grouping_queues.create(priority_queue: false)
+    self.grouping_queues.create(priority_queue: true)
   end
 
   #Add all the groupings belonging to assignment to the grouping queue

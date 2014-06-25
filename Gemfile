@@ -16,13 +16,13 @@ gem 'i18n'
 gem 'will_paginate'
 gem 'dynamic_form'
 gem 'exception_notification'
-gem 'minitest',"4.7.5", :platforms => :ruby_20
-gem 'calendar_date_select', :git => 'git://github.com/paneq/calendar_date_select.git'
+gem 'minitest',"4.7.5", platforms: :ruby_20
 gem 'auto_complete'
 gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
 gem 'prototype-rails' # FIXME: Will be needed with Rails3.1
+gem 'activerecord-import'
 
 group :assets do
   gem 'tilt', '~> 1.3.7'
@@ -70,9 +70,9 @@ group :development, :test do
   gem 'faker'
   gem 'railroady'
   gem 'time-warp'
-  gem 'debugger', :platforms => :mri_19
-  gem 'byebug', :platforms => [:mri_20, :mri_21]
-  gem 'mocha', :require => false
+  gem 'debugger', platforms: :mri_19
+  gem 'byebug', platforms: [:mri_20, :mri_21]
+  gem 'mocha', require: false
   gem 'quiet_assets'
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails'
@@ -90,5 +90,5 @@ end
 # installed for rghost to work well. You also need to set
 # the PDF_SUPPORT bool to true in the config file(s).
 group :rghost do
-  gem 'rghost'
+  gem 'rghost', '<=0.9.3'
 end

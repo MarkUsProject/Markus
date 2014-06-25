@@ -2,7 +2,7 @@
 <%= javascript_include_tag 'users_manager' %>
 
 <script type="text/javascript">
-  <%= render :partial => 'boot', :formats => [:js], :handlers => [:erb] %>
+  <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
 </script>
 
 <div id="title_bar">
@@ -39,9 +39,6 @@
     <% end %>
 
     <table id="admins">
-      <tr id="loading_list"><td class="loading">
-        <%= image_tag("spinner.gif")%> <%= I18n.t("groups.loading_list") %>
-      </td></tr>
     </table>
 
     </div>

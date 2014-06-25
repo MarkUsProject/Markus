@@ -1,28 +1,33 @@
-<div id="<%="mark_criterion_title_#{mark_criterion.id}_name"%>"
-class="mark_criterion_title_div_level" class="float_left">
-  <strong><%=link_to_function mark_criterion.rubric_criterion_name, "return false", :class => "rubric_criterion_link" %></strong>
+<div id="<%= "mark_criterion_title_#{mark_criterion.id}_name" %>"
+     class="mark_criterion_title_div_level float_left">
+  <strong>
+    <%= link_to_function mark_criterion.rubric_criterion_name,
+                         'return false;',
+                         class: 'rubric_criterion_link' %>
+  </strong>
 </div>
-<div class="clear"></div>
+
+<div class='clear'></div>
 
 <% if old_mark and !old_mark.mark.nil? %>
-<div id="<%="mark_criterion_title_#{mark.id}_oldmark"%>" class="padding_left_old">
-  <strong>
-    <%= I18n.t("marker.marks.old").html_safe %>
-    <%= old_mark.mark %>: <%= mark_criterion["level_" + old_mark.mark.to_i.to_s + "_name"] %>&nbsp;
-  </strong>
-  <%= mark_criterion["level_" + old_mark.mark.to_i.to_s + "_description"] %>
-</div>
+  <div id="<%= "mark_criterion_title_#{mark.id}_oldmark" %>" class="padding_left_old">
+    <strong>
+      <%= t('marker.marks.old').html_safe %>
+      <%= old_mark.mark %>: <%= mark_criterion['level_' + old_mark.mark.to_i.to_s + '_name'] %>&nbsp;
+    </strong>
+    <%= mark_criterion['level_' + old_mark.mark.to_i.to_s + '_description'] %>
+  </div>
 <% end %>
 
-<div id="<%="mark_criterion_title_#{mark.id}_mark"%>" class="padding_left">
-
-<% if !mark.mark.nil? -%>
-  <strong>
-    <%= mark.mark %>: <%= mark_criterion["level_" + mark.mark.to_i.to_s + "_name"] %>&nbsp;
-  </strong>
-  <%= mark_criterion["level_" + mark.mark.to_i.to_s + "_description"] %>
-<% end -%>
-
+<div id="<%="mark_criterion_title_#{mark.id}_mark"%>"
+     class='padding_left mark_description'
+     data-id='<%= mark_criterion.id %>'>
+  <% if !mark.mark.nil? -%>
+    <strong>
+      <%= mark.mark %>: <%= mark_criterion['level_' + mark.mark.to_i.to_s + '_name'] %>&nbsp;
+    </strong>
+    <%= mark_criterion['level_' + mark.mark.to_i.to_s + '_description'] %>
+  <% end -%>
 </div>
-<div class="clear"></div>
 
+<div class='clear'></div>

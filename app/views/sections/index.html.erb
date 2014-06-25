@@ -1,32 +1,38 @@
-<div id="title_bar"><h1><%= I18n.t("section.manage_users") %></h1></div>
-
-<div class="wrapLeft">
-
-<%= render 'shared/flash_message' %>
-
-<%= link_to I18n.t('section.add_section'), new_section_path, :class => 'button' %>
-<% if @sections.empty? %>
-  <p><%= I18n.t('section.no_sections') %></p>
-<% else %>
-  <table>
-    <% @sections.each do |section| %>
-    <tr>
-      <td><%= link_to section.name, edit_section_path(section) %>
-        <span class="info">(<%= section.students.count %>)</span>
-      </td>
-      <td><%= button_to I18n.t('delete'),
-        { :action => 'destroy', :id => section.id },
-        :class => 'delete',
-        :confirm => I18n.t('section.delete.link_confirm'),
-        :method => 'delete',
-        :disabled => !section.students.empty?,
-        :class => 'thin-button'
-      %></td>
-    </tr>
-    <% end %>
-  </table>
-<% end %>
+<div id='title_bar'>
+  <h1><%= t('section.manage_users') %></h1>
 </div>
 
-<div class="wrapLeft">
+<div class='wrapLeft'>
+  <%= render 'shared/flash_message' %>
+
+  <%= link_to t('section.add_section'),
+              new_section_path,
+              class: 'button' %>
+
+  <% if @sections.empty? %>
+    <p><%= t('section.no_sections') %></p>
+  <% else %>
+    <table>
+      <% @sections.each do |section| %>
+        <tr>
+          <td>
+            <%= link_to section.name, edit_section_path(section) %>
+            <span class='info'>(<%= section.students.count %>)</span>
+          </td>
+          <td>
+            <%= button_to t('delete'),
+                          { action: 'destroy',
+                            id: section.id },
+                          class: 'delete',
+                          confirm: t('section.delete.link_confirm'),
+                          method: 'delete',
+                          disabled: !section.students.empty?,
+                          class: 'thin-button' %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
 </div>
+
+<div class='wrapLeft'></div>

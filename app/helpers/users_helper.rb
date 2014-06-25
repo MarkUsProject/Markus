@@ -28,11 +28,11 @@ module UsersHelper
     end
     result[:hidden] = user.hidden
     result[:filter_table_row_contents] =
-       render_to_string :partial => 'users/table_row/filter_table_row',
-                        :formats => [:html], :handlers => [:erb],
-                        :locals => {:user => user,
-                                    :controller => self.controller_name,
-                                    :render_note_link => @render_note_link}
+       render_to_string partial: 'users/table_row/filter_table_row',
+                        formats: [:html], handlers: [:erb],
+                        locals: {user: user,
+                                    controller: self.controller_name,
+                                    render_note_link: @render_note_link}
     result
   end
 
@@ -56,7 +56,7 @@ module UsersHelper
         @render_note_link = true
       end
       result[5] = user.hidden
-      result[6] = "<%= link_to I18n.t(:edit), :controller => 'students', :action =>'edit', :id => #{user.id} %>"
+      result[6] = "<%= link_to I18n.t(:edit), controller: 'students', action: 'edit', id: #{user.id} %>"
     end
     return student_list
   end

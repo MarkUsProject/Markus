@@ -1,32 +1,32 @@
 require 'encoding'
 # Represents a flexible criterion used to mark an assignment that
 # has the marking_scheme_type attribute set to 'flexible'.
-class FlexibleCriterion < ActiveRecord::Base
+class FlexibleCriterion < Criterion
 
   self.table_name =  'flexible_criteria' # set table name correctly
-  belongs_to :assignment, :counter_cache => true
+  belongs_to :assignment, counter_cache: true
 
-  has_many :marks, :as => :markable, :dependent => :destroy
+  has_many :marks, as: :markable, dependent: :destroy
 
   has_many :criterion_ta_associations,
-           :as => :criterion,
-           :dependent => :destroy
+           as: :criterion,
+           dependent: :destroy
 
-  has_many :tas, :through => :criterion_ta_associations
+  has_many :tas, through: :criterion_ta_associations
 
   validates_associated :assignment,
-                  :message => 'association is not strong with an assignment'
+                  message: 'association is not strong with an assignment'
   validates_uniqueness_of :flexible_criterion_name,
-                          :scope => :assignment_id,
-                          :message => 'is already taken'
+                          scope: :assignment_id,
+                          message: 'is already taken'
   validates_presence_of :flexible_criterion_name, :assignment_id, :max
   validates_numericality_of :assignment_id,
-                        :only_integer => true,
-                        :greater_than => 0,
-                        :message => 'can only be whole number greater than 0'
+                        only_integer: true,
+                        greater_than: 0,
+                        message: 'can only be whole number greater than 0'
   validates_numericality_of :max,
-                            :message => 'must be a number greater than 0.0',
-                            :greater_than => 0.0
+                            message: 'must be a number greater than 0.0',
+                            greater_than: 0.0
 
 #  before_save :update_assigned_groups_count
 
@@ -48,7 +48,7 @@ class FlexibleCriterion < ActiveRecord::Base
   def self.create_csv(assignment)
     csv_string = CSV.generate do |csv|
       # TODO temporary until Assignment gets its criteria method
-      criteria = FlexibleCriterion.find_all_by_assignment_id(assignment.id, :order => :position)
+      criteria = FlexibleCriterion.find_all_by_assignment_id(assignment.id, order: :position)
       criteria.each do |c|
         criterion_array = [c.flexible_criterion_name, c.max, c.description]
         csv << criterion_array
@@ -131,7 +131,7 @@ class FlexibleCriterion < ActiveRecord::Base
   def self.next_criterion_position(assignment)
     # TODO temporary, until Assignment gets its criteria method
     #      nevermind the fact that this computation should really belong in assignment
-    last_criterion = FlexibleCriterion.find_last_by_assignment_id(assignment.id, :order => :position)
+    last_criterion = FlexibleCriterion.find_last_by_assignment_id(assignment.id, order: :position)
     return last_criterion.position + 1 unless last_criterion.nil?
     1
   end
@@ -150,10 +150,10 @@ class FlexibleCriterion < ActiveRecord::Base
 
   def add_tas(ta_array)
     ta_array = Array(ta_array)
-    associations = criterion_ta_associations.all(:conditions => {:ta_id => ta_array})
+    associations = criterion_ta_associations.all(conditions: {ta_id: ta_array})
     ta_array.each do |ta|
       if (ta.criterion_ta_associations & associations).size < 1
-        criterion_ta_associations.create(:ta => ta, :criterion => self, :assignment => self.assignment)
+        criterion_ta_associations.create(ta: ta, criterion: self, assignment: self.assignment)
       end
     end
   end
@@ -164,7 +164,7 @@ class FlexibleCriterion < ActiveRecord::Base
 
   def remove_tas(ta_array)
     ta_array = Array(ta_array)
-    associations_for_criteria = criterion_ta_associations.all(:conditions => {:ta_id => ta_array})
+    associations_for_criteria = criterion_ta_associations.all(conditions: {ta_id: ta_array})
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
       assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)

@@ -25,7 +25,7 @@ class GracePeriodSubmissionRule < SubmissionRule
       I18n.t 'submission_rules.grace_period_submission_rule.overtime_message_without_days_left'
     else
       # This grouping still has some grace credits to spend.
-      I18n.t 'submission_rules.grace_period_submission_rule.overtime_message_with_days_left', :grace_credits_remaining => grace_credits_remaining, :grace_credits_to_use => grace_credits_to_use
+      I18n.t 'submission_rules.grace_period_submission_rule.overtime_message_with_days_left', grace_credits_remaining: grace_credits_remaining, grace_credits_to_use: grace_credits_to_use
     end
   end
 

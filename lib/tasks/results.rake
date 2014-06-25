@@ -1,7 +1,7 @@
 namespace :markus do
   namespace :load do
     desc "Loads 'faked' results into database"
-    task(:results => :environment) do
+    task(results: :environment) do
 
       if ENV['short_id'].nil?
         $stderr.puts "Usage: rake load:results short_id=string\n\nNOTE: Assignment must not exist."
@@ -49,8 +49,8 @@ namespace :markus do
       end
 
       # create rubric criteria for a1
-      rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, {:rubric_criterion_name => "Code Clarity", :weight => 2}, {:rubric_criterion_name => "Code Is Documented", :weight => 3}, {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
-      default_levels = {:level_0_name => "Quite Poor", :level_0_description => "This criterion was not satisifed whatsoever", :level_1_name => "Satisfactory", :level_1_description => "This criterion was satisfied", :level_2_name => "Good", :level_2_description => "This criterion was satisfied well", :level_3_name => "Great", :level_3_description => "This criterion was satisfied really well!", :level_4_name => "Excellent", :level_4_description => "This criterion was satisfied excellently"}
+      rubric_criteria = [{rubric_criterion_name: "Uses Conditionals", weight: 1}, {rubric_criterion_name: "Code Clarity", weight: 2}, {rubric_criterion_name: "Code Is Documented", weight: 3}, {rubric_criterion_name: "Uses For Loop", weight: 1}]
+      default_levels = {level_0_name: "Quite Poor", level_0_description: "This criterion was not satisifed whatsoever", level_1_name: "Satisfactory", level_1_description: "This criterion was satisfied", level_2_name: "Good", level_2_description: "This criterion was satisfied well", level_3_name: "Great", level_3_description: "This criterion was satisfied really well!", level_4_name: "Excellent", level_4_description: "This criterion was satisfied excellently"}
       rubric_criteria.each do |rubric_criteria|
         rc = RubricCriterion.new
         rc.update_attributes(rubric_criteria)

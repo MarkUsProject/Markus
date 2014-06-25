@@ -1,9 +1,3 @@
-GIT
-  remote: git://github.com/paneq/calendar_date_select.git
-  revision: 977048211b94599fe0f08eb37a481f3d69df48f6
-  specs:
-    calendar_date_select (1.16.2)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -28,6 +22,8 @@ GEM
       activesupport (= 3.2.18)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
+    activerecord-import (0.5.0)
+      activerecord (>= 3.0)
     activeresource (3.2.18)
       activemodel (= 3.2.18)
       activesupport (= 3.2.18)
@@ -126,7 +122,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     ref (1.0.5)
-    rghost (0.9.4)
+    rghost (0.9.3)
     rspec-core (3.0.1)
       rspec-support (~> 3.0.0)
     rspec-expectations (3.0.1)
@@ -194,9 +190,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord-import
   auto_complete
   byebug
-  calendar_date_select!
   coffee-rails (~> 3.2.1)
   coffee-script
   debugger
@@ -219,8 +215,12 @@ DEPENDENCIES
   railroady
   rails (= 3.2.18)
   rdoc
+<<<<<<< HEAD
   rghost
   rspec-rails (~> 3.0)
+=======
+  rghost (<= 0.9.3)
+>>>>>>> 126327ba07f1cdbc02656a29883e37b212c542dd
   rubyzip
   sass-rails (~> 3.2.3)
   shoulda

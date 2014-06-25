@@ -27,7 +27,7 @@ pt:
     # app/views/layouts/_header.html.erb
     log_out:            "Sair"
     clear_role_switch_session_link: "Cancelar troca de papel"
-    working:            "Trabalhando…"
+    working:            "Carregando"
     login_as:           "Fazer login como "
 
     # app/views/main/_about_content.html.erb
@@ -131,12 +131,12 @@ pt:
         update_success:        "Projeto atualizado com sucesso"
         create_success:        "Projeto criado com sucesso"
         error: "Não foi possível atribuir a regra de submissão: #%{message}"
-        not_valid_submission_rule: "%{type} não é uma regra de submissão valida"
+        not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
         edit:           "Editar projeto:"
         properties:     "Propriedades do projeto"
         required_files:  "Arquivos exigidos"
-        submission_rules:  "Regras de envio<span class='required_field'>*</span>"
+        submission_rules:  "Regras de envio"
         required_files_read:  "Arquivos exigidos para esse projeto"
         no_required_files_read:  "Não há arquivos exigidos para esse projeto."
         required_files_by_student:  "Inserir nome dos arquivos(s) exigidos para submissão:"
@@ -168,14 +168,14 @@ pt:
             due_date:  "Prazo de entrega da revisão"
             message:   "Mensagem da revisão"
         marking_scheme:
-            title: "Escala de avalição<span class='required_field'>*</span>"
+            title: "Escala de avalição"
             rubric: "Rúbrica (pré-definido)"
             flexible: "Flexível (à definir pelo avaliador)"
         notice:
             change_marking_scheme_type: "Alterar a escala de avaliação ira apagar avalições e critérios."
-        allow_web_submits: "Permitir envio pelo web?<span class='required_field'>*</span>"
+        allow_web_submits: "Permitir envio pelo web?"
         is_hidden: "Ocultar este projeto dos alunos?"
-        display_grader_names_to_students: "Mostrar nome de avaliador para alunos?<span class='required_field'>*</span>"
+        display_grader_names_to_students: "Mostrar nome de avaliador para alunos?"
         section_due_date_option:  "Se a opção de prazo de entrega por sessão foi selecionada, alunos só podem formar grupos dentro da sua sessão."
         section_due_dates_info:  "<b>Importante</b>: o prazo de entrega final deve ser preenchido. Se a sessão não possui uma data específica, o prazo global será usado no lugar. Alunos que não foram atribuídos a uma sessão só poderão formar grupos com alunos que também não estão atribuídos."
     your_mark:  "Sua nota:"
@@ -213,6 +213,7 @@ pt:
     properties:         "Propriedades"
     grades:             "Notas"
     submissions:        "Submissões"
+    summaries:          "Resumos"
     rubrics:            "Rúbricas"
     marking_scheme:     "Esquema de avalição"
     join:               "Juntar"
@@ -310,10 +311,10 @@ pt:
         change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"
         select_some_text: "Você deve selecionar algum texto do código fonte"
         select_an_area: "Você deve selecionar uma área da imagem para anotar"
+        provide_text:   "Você deve fornecer alguma anotação"
 
     #app/views/results/common
     common:
-      loading_code: "Carregando código..."
       submission_file: "Arquivo enviado:"
       test_results: "Resultado dos testes:"
       no_file_in_repository: "[Nenhum arquivo no respositório]"
@@ -480,6 +481,7 @@ pt:
       all_students: "Todos os alunos(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Não-atribuídos(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Atribuídos(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inativo(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Use grupos de outro projeto"
       graders: "Avaliadores (%{graders})"
       all_grouping_counts: "Todos os grupos(<span id=\"all_groupings_count\"></span>)"
@@ -488,7 +490,6 @@ pt:
       problem: "Houve um problema..."
       warning: "Alerta"
       lines_not_processed: "As seguintes linhas não puderam ser processadas:"
-      loading_list: "Carregando a lista..."
       editing_past_due_date_warning: "O prazo deste projeto já expirou. Além de designar avaliadores para grupos, não é recomendado que nenhuma outra configuração seja alterada dessa vez."
       validate: "Valide o grupo:"
       validate_confirm: "Isso permitirá que o grupo envie sem o número exigido de alunos. Você tem certeza disso?"
@@ -1101,18 +1102,26 @@ pt:
         long_ordinal: "%e %B %Y"
         only_day: "%e"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%B %d, %Y: %I:%M%p"
+        long_date: "%A, %d de %B de %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
+        short_date: "%d de %B de %Y"
         short_date: "%B %d, %Y"
+        locale_date:      "DD, d 'de' MM 'de' yy"
+        locale_date_only: "DD, d 'de' MM 'de' yy"
+        js_date_time:     "dddd, D [de] MMMM [de] YYYY HH:mm"
+        js_date:          "dddd, D [de] MMMM [de] YYYY"
 
-      day_names: [Domingo, Segunda-feira, Terça-feira, Quarta-feira, Quinta-feira, Sexta-feira, Sábado]
-      abbr_day_names: [Dom, Seg, Ter, Qua, Qui, Sex, Sab]
-      month_names: [~, Janeiro, Fevereiro, Março, Abril, Maio, Junho, Julho, Agosto, Setembro, Outubro, Novembro, Dezembro]
-      abbr_month_names: [~, Jan, Feb, Mar, Apr, Mai, Jun, Jul, Aug, Sep, Out, Nov, Dez]
+      day_names: [domingo, segunda-feira, terça-feira, quarta-feira, quinta-feira, sexta-feira, sábado]
+      abbr_day_names: [dom, seg, ter, qua, qui, sex, sab]
+      month_names: [~, janeiro, fevereiro, março, abril, maio, junho, julho, agosto, setembro, outubro, novembro, dezembro]
+      abbr_month_names: [~, jan, feb, mar, apr, mai, jun, jul, aug, sep, out, nov, dez]
       order:
         - day
         - month
         - year
+      months:       ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
+      weekdays:     ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado']
+      weekdays_min: ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab']
 
     time:
       formats:
@@ -1123,13 +1132,21 @@ pt:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d de %B, %Y: %I:%M%p"
+        long_date: "%A, %d de %B de %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date: "%d de %B, %Y"
+        short_date: "%d de %B de %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
         ant_date: "%d-%B-%Y_%I:%M"
+        locale_time: "HH:mm"
       am: 'am'
       pm: 'pm'
+      hour:   "Hora"
+      minute: "Minuto"
+      time:   "Tempo"
+      next:   "Seguinte"
+      prev:   "Anterior"
+      close:  "Fechar"
+      now:    "Atualmente"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
@@ -1150,7 +1167,7 @@ pt:
     assignments_graded:        "Projetos avalidos:"
     assignments_failed:        "Número de falhas:"
     assignments_zeros:         "Número de zeros:"
-    refresh_graph:             "Atulizar grafo"
+    refresh_graph:             "Atualizar gráfico"
     outstanding_remark_request: "%{request_count} pedidos de avaliação"
     outstanding_remark_requests: "%{request_count} pedidos de avaliação"
 
@@ -1163,7 +1180,7 @@ pt:
 
     #lib/validators/
     date_validator:
-      invalid_date: "Não é uma data valida"
+      invalid_date: "Não é uma data válida"
 
     #Test Framework
     automated_tests:

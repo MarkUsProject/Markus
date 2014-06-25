@@ -1,29 +1,29 @@
 require 'encoding'
 
-class RubricCriterion < ActiveRecord::Base
+class RubricCriterion < Criterion
   before_save :round_weight
   after_save :update_existing_results
   self.table_name = 'rubric_criteria' # set table name correctly
-  belongs_to :assignment, :counter_cache => true
-  has_many :marks, :as => :markable, :dependent => :destroy
+  belongs_to :assignment, counter_cache: true
+  has_many :marks, as: :markable, dependent: :destroy
   has_many :criterion_ta_associations,
-           :as => :criterion,
-           :dependent => :destroy
-  has_many :tas, :through => :criterion_ta_associations
+           as: :criterion,
+           dependent: :destroy
+  has_many :tas, through: :criterion_ta_associations
 
-  validates_associated  :assignment, :on => :create
+  validates_associated  :assignment, on: :create
   validates_uniqueness_of :rubric_criterion_name,
-                          :scope => :assignment_id
+                          scope: :assignment_id
   validates_presence_of :rubric_criterion_name
   validates_presence_of :weight
   validates_presence_of :assignment_id
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assignment_id,
-                            :only_integer => true,
-                            :greater_than => 0
+                            only_integer: true,
+                            greater_than: 0
   validates_numericality_of :weight
   validates_numericality_of :assigned_groups_count
-  validate(:validate_total_weight, :on => :update)
+  validate(:validate_total_weight, on: :update)
 
   before_validation :update_assigned_groups_count
 
@@ -256,11 +256,11 @@ class RubricCriterion < ActiveRecord::Base
 
   def add_tas(ta_array)
     ta_array = Array(ta_array)
-    associations = criterion_ta_associations.all(:conditions => {:ta_id => ta_array})
+    associations = criterion_ta_associations.all(conditions: {ta_id: ta_array})
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
       if (ta.criterion_ta_associations & associations).size < 1
-        criterion_ta_associations.create(:ta => ta, :criterion => self, :assignment => self.assignment)
+        criterion_ta_associations.create(ta: ta, criterion: self, assignment: self.assignment)
       end
     end
   end
@@ -272,7 +272,7 @@ class RubricCriterion < ActiveRecord::Base
 
   def remove_tas(ta_array)
     ta_array = Array(ta_array)
-    associations_for_criteria = criterion_ta_associations.all(:conditions => {:ta_id => ta_array})
+    associations_for_criteria = criterion_ta_associations.all(conditions: {ta_id: ta_array})
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
       assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)

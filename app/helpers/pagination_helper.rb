@@ -48,7 +48,7 @@ module PaginationHelper
       params[:page] = AP_DEFAULT_PAGE
     end
 
-    return items.paginate(:per_page => params[:per_page], :page => params[:page]).clone, items.size
+    return items.paginate(per_page: params[:per_page], page: params[:page]).clone, items.size
 
   end
 
@@ -62,20 +62,37 @@ module PaginationHelper
 
   def get_filtered_items(hash, filter, sort_by, object_hash, desc)
     to_include = []
-    #eager load only the tables needed for the type of sort, eager load the rest
-    #of the tables after the groupings have been paginated
+    # eager load only the tables needed for the type of sort, eager load the
+    # rest of the tables after the groupings have been paginated
     case sort_by
-      when 'group_name' then to_include = [:group]
-      when 'repo_name' then to_include = [:group]
-      when 'section' then to_include = [:group]
-      when 'revision_timestamp' then to_include = [:current_submission_used]
-      when 'marking_state' then to_include = [{:current_submission_used => :results}]
-      when 'total_mark' then to_include = [{:current_submission_used => :results}]
-      when 'grace_credits_used' then to_include = [:grace_period_deductions]
+    when 'group_name' then
+      to_include = [:group]
+    when 'repo_name' then
+      to_include = [:group]
+    when 'section' then
+      to_include = [:group]
+    when 'revision_timestamp' then
+      to_include = [:current_submission_used]
+    when 'marking_state' then
+      to_include = [{ current_submission_used: :results }]
+    when 'total_mark' then
+      to_include = [{ current_submission_used: :results }]
+    when 'grace_credits_used' then
+      to_include = [:grace_period_deductions]
+    when 'criterion' then
+      to_include = [{ current_submission_used: :results }]
     end
     items = hash[:filters][filter][:proc].call(object_hash, to_include)
     unless sort_by.blank?
-      items = items.sort{|a,b| hash[:sorts][sort_by].call(a,b)}
+      if sort_by == 'criterion'
+        items = items.sort do |a, b|
+          hash[:sorts][sort_by].call(a, b, object_hash[:cid])
+        end
+      else
+        items = items.sort do |a, b|
+          hash[:sorts][sort_by].call(a, b)
+        end
+      end
     end
     unless desc.blank?
       items.reverse!
