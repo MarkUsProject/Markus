@@ -78,10 +78,6 @@
   }
 }
 
-#file_selector {
-  margin: 20px 0 10px 0;
-}
-
 .dp-highlighter {
   .annotation_highlighted_text {
     background-color: #f99;
@@ -516,6 +512,7 @@ li.annotation_category {
 
 #panes-content {
   height: 100%;
+  margin-top: 1em;
   width: 100%;
 
   #panes {
@@ -572,5 +569,24 @@ li.annotation_category {
     @include breakpoint(small) {
       display: none;
     }
+  }
+}
+
+
+/* File selector/download buttons */
+.file_selector,
+.download_file {
+  @include border-radius(5px);
+  background: $light-grey;
+  border: 1px solid #ddd;
+  display: inline-block;
+  padding: 0.5em;
+}
+
+.file_selector {
+  margin-right: 1em;
+
+  @include breakpoint(mobile) {
+    margin-bottom: 1em;
   }
 }
