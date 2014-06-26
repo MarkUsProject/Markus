@@ -463,7 +463,7 @@ span#choose_an_assignment {
 
 #sub_sub_menu {
   background: $primary-color;
-  border-bottom: 2px solid $grey;
+  border-bottom: 2px solid $light-blue;
 
   ul {
     padding-top: 5px;
@@ -476,11 +476,10 @@ span#choose_an_assignment {
   li:hover,
   #sub_sub_menu_active {
     @include border-radius-top(10px);
-    background: $grey;
+    background: $light-blue;
 
     @include breakpoint(mobile) {
       @include border-radius(0);
-      background: $light-blue;
     }
 
     a {

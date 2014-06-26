@@ -19,14 +19,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
                        :submission_id => '1'},
                       {:path => 'assignments/1/submissions/1/results/update_mark',
                        :method => :post})
-
-    assert_recognizes({:controller => 'results',
-                       :action => 'expand_criteria',
-                       :assignment_id => '1',
-                       :submission_id => '1'},
-                      {:path => 'assignments/1/submissions/1/results/expand_criteria',
-                       :method => :get})
-
   end
 
   context 'A user' do
@@ -147,30 +139,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
     should 'not be able to remove extra marks' do
       get :remove_extra_mark,
-          :assignment_id => 1,
-          :submission_id => 1,
-          :id => 1
-      assert_response :redirect
-    end
-
-    should 'not be able to expand criteria' do
-      get :expand_criteria,
-          :assignment_id => 1,
-          :submission_id => 1,
-          :id => 1
-      assert_response :redirect
-    end
-
-    should 'not be able to collaps criteria' do
-      get :collapse_criteria,
-          :assignment_id => 1,
-          :submission_id => 1,
-          :id => 1
-      assert_response :redirect
-    end
-
-    should 'not be able to expand unmarked criteria' do
-      get :expand_unmarked_criteria,
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
@@ -588,37 +556,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => @result.id
-          assert_response :missing
-          assert render_template 404
-        end
-
-        should 'GET on :expand_criteria' do
-          get_as @student,
-                 :expand_criteria,
-                 :assignment_id => @assignment.id,
-                 :submission_id => 1,
-                 :id => 1
-          assert_response :missing
-          assert render_template 404
-        end
-
-        should 'GET on :collapse_criteria' do
-          get_as @student,
-                 :collapse_criteria,
-                 :assignment_id => 1,
-                 :submission_id => 1,
-                 :id => 1
-          assert_response :missing
-          assert render_template 404
-        end
-
-        should 'GET on :expand_unmarked_criteria' do
-          get_as @student,
-                 :expand_unmarked_criteria,
-                 :assignment_id => 1,
-                 :submission_id => 1,
-                 :id => 1,
-                 :rid => 1
           assert_response :missing
           assert render_template 404
         end
@@ -1187,46 +1124,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert_equal @old_total_mark - @extra_mark.extra_mark, @result.total_mark
         end
 
-        should 'GET on :expand_criteria' do
-          get_as @admin,
-                 :expand_criteria,
-                 :assignment_id => @assignment.id,
-                 :submission_id => 1
-          assert_not_nil assigns :assignment
-          assert_not_nil assigns :mark_criteria
-          assert render_template 'results/marker/_expand_criteria.rjs'
-          assert_response :success
-        end
-
-        should 'GET on :collapse_criteria' do
-          get_as @admin,
-                 :collapse_criteria,
-                 :assignment_id => @assignment.id,
-                 :submission_id => 1,
-                 :id => 1
-          assert_not_nil assigns :assignment
-          assert_not_nil assigns :mark_criteria
-          assert render_template 'results/marker/_collapse_criteria.rjs'
-          assert_response :success
-        end
-
-        should 'GET on :expand_unmarked_criteria' do
-          g = Grouping.make(:assignment => @assignment)
-          s = Submission.make(:grouping => g)
-          @result = s.get_latest_result
-
-          get_as @admin,
-                  :expand_unmarked_criteria,
-                  :assignment_id => @assignment.id,
-                  :submission_id => 1,
-                  :id => @result.id
-          assert_not_nil assigns :assignment
-          assert_not_nil assigns :result
-          assert_not_nil assigns :nil_marks
-          assert render_template 'results/marker/_expand_unmarked_criteria'
-          assert_response :success
-        end
-
         should 'POST on :update_overall_comment' do
           @result = Result.make
           @overall_comment = 'A new overall comment!'
@@ -1568,45 +1465,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result.reload
           assert_equal @old_total_mark - @extra_mark.extra_mark,
                         @result.total_mark
-        end
-
-        should 'GET on :expand_criteria' do
-          get_as @ta,
-                 :expand_criteria,
-                 :assignment_id => @assignment.id,
-                 :submission_id => 1
-          assert_not_nil assigns :assignment
-          assert_not_nil assigns :mark_criteria
-          assert render_template 'results/marker/_expand_criteria.rjs'
-          assert_response :success
-        end
-
-        should 'be able to collapse_criteria' do
-          get_as @ta,
-                 :collapse_criteria,
-                 :assignment_id => @assignment.id,
-                 :submission_id => 1,
-                 :id => 1
-          assert_not_nil assigns :assignment
-          assert_not_nil assigns :mark_criteria
-          assert render_template 'results/marker/_collapse_criteria.rjs'
-          assert_response :success
-        end
-
-        should 'GET on :expand_unmarked_criteria' do
-          g = Grouping.make(:assignment => @assignment)
-          s = Submission.make(:grouping => g)
-
-          get_as @ta,
-                  :expand_unmarked_criteria,
-                  :assignment_id => @assignment.id,
-                  :submission_id => 1,
-                  :id => s.get_latest_result.id
-          assert_not_nil assigns :assignment
-          assert_not_nil assigns :result
-          assert_not_nil assigns :nil_marks
-          assert render_template 'results/marker/_expand_unmarked_criteria'
-          assert_response :success
         end
 
         should 'POST on :update_overall_comment' do

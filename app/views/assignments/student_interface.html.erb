@@ -1,31 +1,25 @@
 <% # UI LIBRARIES %>
-<%= javascript_include_tag "livepipe/livepipe.js",
-  "livepipe/window.js" %>
+<%= javascript_include_tag 'livepipe/livepipe.js',
+                           'livepipe/window.js' %>
 
-<script type="text/javascript">
+<script>
 //<![CDATA[
-
   var invite_modal = null;
 
-  function invite(){
+  function invite() {
     invite_modal.open();
-    $('invite_member').setValue('');
-    $('invite_member').focus();
-    return false;
+    document.getElementById('invite_member').value = '';
+    document.getElementById('invite_member').focus();
   }
 
-  document.observe("dom:loaded", function(){
-    invite_modal = new Control.Modal($('invite_dialog'), {
-      overlayOpacity: 0.75,
-      className: 'invite_modal',
-      fade: false
-    });
+  jQuery(document).ready(function() {
+    invite_modal = new ModalMarkus('#invite_dialog');
   });
 //]]>
 </script>
 
-<div id="title_bar">
-  <h1><%= I18n.t("student.assignment", short_identifier: @assignment.short_identifier) %></h1>
+<div id='title_bar'>
+  <h1><%= I18n.t('student.assignment', short_identifier: @assignment.short_identifier) %></h1>
 </div>
 
 <div class="column_floatLeft">
@@ -101,15 +95,17 @@
               </ul>
             <% end -%>
 
-            <%= link_to I18n.t(:join), action: 'join_group',
-                    id: @assignment.id,
-              grouping_id: grouping.id
-            %>
-            <%= link_to(I18n.t(:refuse),{action: 'decline_invitation',
-              id: @assignment.id, grouping_id: grouping.id},
-              {class: "delete",confirm:
-              I18n.t("student.decline_invitation")})
-            %>
+            <%= link_to I18n.t(:join),
+                        { action: 'join_group',
+                          id: @assignment.id,
+                          grouping_id: grouping.id },
+                        { class: 'button' } %>
+            <%= link_to I18n.t(:refuse),
+                        { action: 'decline_invitation',
+                          id: @assignment.id,
+                          grouping_id: grouping.id },
+                        { class: 'delete button',
+                          confirm: I18n.t("student.decline_invitation") } %>
             </div>
             <div class="block_line"></div>
           <% end %>
@@ -130,20 +126,25 @@
 
           <% if @assignment.group_min == 1 %>
             <p>
-              <%= link_to I18n.t("student.work_alone"),
-                {action: 'creategroup', id: @assignment.id, workalone: 'true'}%>
+              <%= link_to I18n.t('student.work_alone'),
+                          { action: 'creategroup',
+                            id: @assignment.id,
+                            workalone: 'true' },
+                          { class: 'button' } %>
             </p>
           <% end %>
           <p>
           <% if @student.has_pending_groupings_for?(@assignment.id)%>
-            <%= link_to(I18n.t(:create),{action: 'creategroup',
-               id: @assignment.id},{confirm:
-               I18n.t("student.decline_invitation2")})
-            %>
+            <%= link_to I18n.t(:create),
+                        { action: 'creategroup',
+                          id: @assignment.id },
+                        { class: 'button',
+                          confirm: I18n.t("student.decline_invitation2") } %>
           <% else %>
-            <%= link_to(I18n.t(:create),{action: 'creategroup',
-                id: @assignment.id})
-            %>
+            <%= link_to I18n.t(:create),
+                        { action: 'creategroup',
+                          id: @assignment.id },
+                        { class: 'button' } %>
           <% end %>
           </p>
         <%end %>

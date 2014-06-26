@@ -2,6 +2,7 @@
 
 .ui-widget {
   font-family: $font-stack !important;
+  max-width: 100% !important;
 
   input,
   select,
@@ -92,7 +93,6 @@
     height: 350px;
     overflow: scroll;
     padding: 10px;
-    width: 550px;
 
     h1 {
       font-size: 2em;
