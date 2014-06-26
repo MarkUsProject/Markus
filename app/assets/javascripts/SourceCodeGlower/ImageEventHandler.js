@@ -20,6 +20,9 @@ ImageEventHandler.prototype.init_listeners = function(enable_annotations) {
     image_preview.style.cursor = 'crosshair';
     image_preview.onmousedown  = this.start_select_box.bind(this);
     sel_box.style.cursor = 'crosshair';
+
+    // Disable FireFox's default click and drag behaviour for images
+    image_preview.ondragstart  = function(e) { e.preventDefault() ; }
   }
 
   for (var i = 0; i < annot_grid.length; i++) {
@@ -67,9 +70,6 @@ ImageEventHandler.prototype.get_absolute_cursor_pos = function(e) {
 
 // Start tracking the mouse to create an annotation.
 ImageEventHandler.prototype.start_select_box = function(e) {
-  // Disable FireFox's default click and drag behaviour for images
-  if (e.preventDefault) { e.preventDefault(); }
-
   hide_image_annotations();
   var xy_coords  = this.get_absolute_cursor_pos(e);
   var annot_grid = this.get_annotation_grid();
