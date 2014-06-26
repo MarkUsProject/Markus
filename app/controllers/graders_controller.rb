@@ -74,6 +74,15 @@ class GradersController < ApplicationController
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @sections = Section.all
+    respond_to do |format|
+      format.html
+      format.json do
+        graders_table_info = get_graders_table_info_no_criteria(@assignment)
+        groups_table_info = get_groups_table_info_no_criteria(@assignment)
+        sections = Section.all
+        render json: [graders_table_info, groups_table_info, sections]
+      end
+    end
   end
 
   # Assign TAs to Groupings via a csv file
@@ -173,14 +182,7 @@ class GradersController < ApplicationController
 
     case params[:current_table]
       when 'groups_table'
-        if params[:groupings].nil? or params[:groupings].size ==  0
-         #if there is a global action than there should be a group selected
-          if params[:global_actions]
-            @global_action_warning = t('assignment.group.select_a_group')
-            render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
-            return
-          end
-        end
+        @assignment = Assignment.find(params[:assignment_id])
         case params[:global_actions]
           when 'assign'
             if params[:graders].nil? or params[:graders].size ==  0
@@ -189,9 +191,13 @@ class GradersController < ApplicationController
               return
             end
             assign_all_graders(grouping_ids, grader_ids)
+            head :ok
             return
           when 'unassign'
-            unassign_graders(params[:grader_memberships], grouping_ids)
+            # change this to not requred rgouping ids
+            # check that there are grader_memberships
+            unassign_graders(params[:grader_memberships])
+            head :ok
             return
           when 'random_assign'
             if params[:graders].nil? or params[:graders].size ==  0
@@ -200,11 +206,12 @@ class GradersController < ApplicationController
               return
             end
             randomly_assign_graders(grouping_ids, grader_ids)
+            head :ok
             return
         end
       when 'criteria_table'
         if params[:criteria].nil? or params[:criteria].size ==  0
-      #don't do anything if no criteria
+          # don't do anything if no criteria
           render nothing: true
           return
         end
@@ -266,12 +273,10 @@ class GradersController < ApplicationController
 
   def randomly_assign_graders(grouping_ids, grader_ids)
     Grouping.randomly_assign_tas(grouping_ids, grader_ids, @assignment)
-    render_grouping_modifications(grouping_ids, grader_ids)
   end
 
   def assign_all_graders(grouping_ids, grader_ids)
     Grouping.assign_all_tas(grouping_ids, grader_ids, @assignment)
-    render_grouping_modifications(grouping_ids, grader_ids)
   end
 
   def assign_all_graders_to_criteria(criterion_ids, grader_ids)
@@ -284,20 +289,12 @@ class GradersController < ApplicationController
     render_criterion_modifications(criterion_ids)
   end
 
-  def unassign_graders(grader_membership_ids, grouping_ids)
+  def unassign_graders(grader_membership_ids)
+    grader_memberships = TaMembership.find(grader_membership_ids)
+    grouping_ids = grader_memberships.map do |membership|
+      membership.grouping.id
+    end
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
-    render_grouping_modifications(grouping_ids)
-  end
-
-  # Renders the grader, grouping and criterion table in response to
-  # modifications to groupings.
-  def render_grouping_modifications(grouping_ids, grader_ids = nil)
-    groupings = groupings_with_assoc(@assignment, grouping_ids: grouping_ids)
-    # Also update the various counts in graders and criteria table.
-    graders = grader_ids ? Ta.where(id: grader_ids) : Ta.all
-    criteria = criteria_with_assoc(@assignment)
-    construct_all_rows(groupings, graders, criteria)
-    render :modify_groupings, formats: [:js]
   end
 
   # Renders the grader, grouping and criterion table in response to

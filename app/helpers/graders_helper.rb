@@ -1,4 +1,31 @@
 module GradersHelper
+  def get_graders_table_info_no_criteria(assignment)
+    graders = Ta.all
+    graders_table_info = graders.map do |grader|
+      g = grader.attributes
+      g[:full_name] = "#{grader.first_name} #{grader.last_name}"
+      g[:groups] = grader.get_membership_count_by_assignment(assignment)
+      g[:criteria] = I18n.t('all')
+      g
+    end
+  end
+
+  def get_groups_table_info_no_criteria(assignment)
+    groupings = groupings_with_assoc(assignment)
+    groups_table_info = groupings.map do |grouping|
+      g = grouping.attributes
+      g[:name] = grouping.group.group_name
+      g[:students] = grouping.students
+      g[:section] = grouping.section
+      g[:graders] = grouping.ta_memberships.map do |membership|
+        m = {}
+        m[:user_name] = membership.user.user_name
+        m[:membership_id] = membership.id
+        m
+      end
+      g
+    end
+  end
 
   # Given a list of criteria and an assignment, constructs an array of
   # table rows to be insterted into the criteria FilterTable in the graders view.

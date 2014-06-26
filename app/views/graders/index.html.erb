@@ -1,14 +1,7 @@
-<% content_for :head do %>
-  <%= javascript_include_tag 'manage_graders.js',
-                             'FilterTable/FilterTable.js',
-                             'Graders/tabs_boot.js',
-                             'Graders/index',
-                             'help_system' %>
+<%= javascript_include_tag 'Graders/index',
+                           'help_system' %>
 
-  <%= render partial: 'boot',
-             formats: [:js],
-             handlers: [:erb] %>
-<% end %>
+<%= render partial: 'graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 
 <div class='title_bar'>
   <h1>
@@ -50,6 +43,7 @@
   <%= render 'shared/flash_message' %>
 </div>
 
+<<<<<<< HEAD
 <%= form_tag global_actions_assignment_graders_path(@assignment),
              id: 'global_action_form',
              remote: true do %>
@@ -178,6 +172,9 @@
     </div>
   </div>
 <% end %>
+=======
+<div id='gradersManager'></div>
+>>>>>>> Replace non-criteria tables in React
 
 <!-- Modal Windows -->
 
