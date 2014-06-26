@@ -221,7 +221,7 @@ li.annotation_category {
     #codeviewer,
     #annotations_summary {
       @include border-radius-bottom(5px);
-      // overflow: auto;
+      overflow: auto;
     }
 
     #codeviewer,
@@ -230,7 +230,12 @@ li.annotation_category {
     #submission_rule_viewer,
     #annotations_summary,
     #remark_request_tab {
-      // height: 650px;
+      height: 650px;
+    }
+
+    // Adjusted height for users that also see the annotation menu
+    #annotation_menu + .clear + #codeviewer {
+      height: 600px;
     }
 
     #annotations_summary_head {
