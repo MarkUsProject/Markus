@@ -22,7 +22,7 @@ ImageEventHandler.prototype.init_listeners = function(enable_annotations) {
     sel_box.style.cursor = 'crosshair';
 
     // Disable FireFox's default click and drag behaviour for images
-    image_preview.ondragstart  = function(e) { e.preventDefault() ; }
+    image_preview.ondragstart = function(e) { e.preventDefault(); }
   }
 
   for (var i = 0; i < annot_grid.length; i++) {
@@ -30,13 +30,12 @@ ImageEventHandler.prototype.init_listeners = function(enable_annotations) {
     grid_element.onmousemove = this.check_for_annotations.bind(this);
 
     if (enable_annotations) {
-      grid_element.style.cursor = 'crosshair';
       grid_element.onmousedown  = this.start_select_box.bind(this);
     } else {
       grid_element.style.cursor = 'auto';
     }
   }
-},
+}
 
 ImageEventHandler.prototype.set_annotation_grid = function(annot_grid) {
   this.annotation_grid = annot_grid;
