@@ -6,6 +6,7 @@ Table = React.createClass({displayName: 'Table',
     search_placeholder: React.PropTypes.string,
     columns: React.PropTypes.array,
     filters: React.PropTypes.array, // Optional: pass null
+    filter_type: React.PropTypes.bool // True for select filter, falsy for simple
   },
   getInitialState: function() {
     var first_sortable_column = this.props.columns.filter(function(col) {
@@ -52,7 +53,8 @@ Table = React.createClass({displayName: 'Table',
         TableFilter( {filters:this.props.filters,
           current_filter:this.state.filter, 
           onFilterChange:this.synchronizeFilter,
-          data:this.props.data}
+          data:this.props.data,
+          filter_type:this.props.filter_type}
         ),
         TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
           placeholder:this.props.search_placeholder} ),
@@ -90,47 +92,90 @@ TableSearch = React.createClass({displayName: 'TableSearch',
 
 TableFilter = React.createClass({displayName: 'TableFilter',
   propTypes: {
+      filters: React.PropTypes.array,
+      current_filter: React.PropTypes.string,
+      data: React.PropTypes.array,
+      onFilterChange: React.PropTypes.func,
+      filter_type: React.PropTypes.bool
+   },
+   render: function() {
+     if (this.props.filters) {
+       if (this.props.filter_type) {
+         return (SelectTableFilter( {filters:this.props.filters,
+           current_filter:this.props.current_filter,
+           onFilterChange:this.props.onFilterChange} ));
+       } else {
+         return (SimpleTableFilter( {filters:this.props.filters,
+           current_filter:this.props.current_filter,
+           data:this.props.data,
+           onFilterChange:this.props.onFilterChange}));
+       }
+     } else {
+       return (React.DOM.div(null));
+     }
+   }
+});
+
+SimpleTableFilter = React.createClass({displayName: 'SimpleTableFilter',
+  propTypes: {
     filters: React.PropTypes.array,
     current_filter: React.PropTypes.string,
-    data: React.PropTypes.array
+    data: React.PropTypes.array,
+    onFilterChange: React.PropTypes.func
   },
   // Tells parent that filter changed and to adjust accordingly.
   filterClicked: function(event) {
     this.props.onFilterChange(event.currentTarget.id);
   },
   render: function() {
-    if (this.props.filters) {
-      var filters_dom = [];
+    var filters_dom = [];
 
-      for (var i = 0; i < this.props.filters.length; i++) {
-        // Get number of elements that pass filter
-        var number = this.props.data.filter(this.props.filters[i].func).length;
-        var fltr = 
-          (this.props.current_filter == this.props.filters[i].name ?
-           React.DOM.span( {key:this.props.filters[i].name}, 
-             this.props.filters[i].text, " (",number,")"
-             ) :
-            React.DOM.a( {key:this.props.filters[i].name,
-              id:this.props.filters[i].name,
-              onClick:this.filterClicked}, 
-              this.props.filters[i].text, " (",number,")"
-            ));
-        filters_dom.push(fltr);
-        filters_dom.push(' ');
-      }
-      return (
-        React.DOM.div(null, 
-          filters_dom
-        )
-      );
-    } else {
-      return (
-        React.DOM.div(null)
-      );
+    for (var i = 0; i < this.props.filters.length; i++) {
+      // Get number of elements that pass filter
+      var number = this.props.data.filter(this.props.filters[i].func).length;
+      var fltr = 
+        (this.props.current_filter == this.props.filters[i].name ?
+         React.DOM.span( {key:this.props.filters[i].name}, 
+           this.props.filters[i].text, " (",number,")"
+           ) :
+          React.DOM.a( {key:this.props.filters[i].name,
+            id:this.props.filters[i].name,
+            onClick:this.filterClicked}, 
+            this.props.filters[i].text, " (",number,")"
+          ));
+      filters_dom.push(fltr);
+      filters_dom.push(' ');
     }
+    return (
+      React.DOM.div(null, 
+        filters_dom
+      )
+    );
   }
 });
 
+SelectTableFilter = React.createClass({displayName: 'SelectTableFilter',
+  propTypes: {
+    filters: React.PropTypes.array,
+    current_filter: React.PropTypes.string,
+    onFilterChange: React.PropTypes.func
+  },
+  // Tells parent that filter changed and to adjust accordingly.
+  filterChanged: function(event) {
+    this.props.onFilterChange(event.currentTarget.value);
+  },
+  render: function() {
+    var filters_dom = [];
+    for (var i = 0; i < this.props.filters.length; i++) {
+      var filter = React.DOM.option( {value:this.props.filters[i].name}, this.props.filters[i].text)
+      filters_dom.push(filter);
+    }
+    return (
+      React.DOM.select( {value:this.current_filter,
+      onChange:this.filterChanged}, filters_dom)
+    );
+  }
+});
 
 TableHeader = React.createClass({displayName: 'TableHeader',
   propTypes: {
