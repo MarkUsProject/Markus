@@ -1,15 +1,10 @@
-<%= stylesheet_link_tag("livepipe/tabs") %>
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'livepipe/livepipe.js',
-                           'livepipe/window.js',
-                           'livepipe/tabs.js',
-                           'effects.js',
-                           'dragdrop.js',
-                           'FlexibleCriteria/index' %>
+<%= render partial: 'boot',
+           formats: [:js],
+           handlers: [:erb] %>
 
 <% if @assignment.past_due_date?%>
   <div class='notice'>
-    <%=t('past_due_date_warning')%>
+    <%= t('past_due_date_warning') %>
   </div>
 <% end %>
 
@@ -17,8 +12,8 @@
   <h1><%= I18n.t('rubric_criteria.criteria_management',
                  identifier: @assignment.short_identifier) %>
   </h1>
-  <div class="heading_buttons">
-        <%= link_to_function t("add_criterion"),
+  <div class='heading_buttons'>
+        <%= link_to_function t('add_criterion'),
             %| if($('new_rubric_criterion') != null) {
               $('rubric_criterion_rubric_criterion_name').select();
               $('rubric_criterion_rubric_criterion_name').focus();
@@ -27,9 +22,9 @@
                                 method: 'get'}
             }|%>
   <span class='menu_bar'></span>
-  <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
+  <%= button_to_function t('download'), 'modal_download.open();' %>
   <span class='menu_bar'></span>
-  <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
+  <%= button_to_function t('upload'), 'modal_upload.open();' %>
   </div>
 </div><!-- Title bar-->
 

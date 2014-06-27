@@ -1145,36 +1145,12 @@ div.align_text_right {
 #flexible_criteria_pane,
 #annotation_category_pane {
   display: inline-block;
-  padding: 0 2%;
-  width: 24%;
+  vertical-align: top;
+  width: 25%;
 }
 
-#rubric_criteria_pane .criteria_fieldset,
-#flexible_criteria_pane .criteria_fieldset,
-#annotation_category_pane .annotation_categories_fieldset {
-  @include border-radius(10px);
-  border: 1px solid #ccc;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-#rubric_criteria_pane ul,
-#flexible_criteria_pane ul{
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-#annotation_category_pane ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-#rubric_levels_pane_list,
-#annotation_category_pane_list {
-  padding-left: 10px;
+#rubric_criteria_pane_list {
+  width: 22%;
 }
 
 .weight_bump_button {
@@ -1213,7 +1189,7 @@ div.align_text_right {
 }
 
 #rubrics_help,
-#annotations_help{
+#annotations_help {
   font-style: italic;
   line-height: 1.6em;
 }
@@ -1225,17 +1201,8 @@ div.align_text_right {
   }
 }
 
-.criterion_holder_selected{
+.criterion_holder_selected {
   background: #ccc;
-}
-
-#rubric_criteria_pane li,
-#flexible_criteria_pane li,
-#annotation_category_pane_list li {
-  border-top: 1px solid #ccc;
-  min-height: 40px;
-  padding: 2px 0;
-  width: 100%;
 }
 
 .mark_tools form,
@@ -1261,7 +1228,6 @@ input.button_to_delete_deduction {
 .annotation_title_div,
 .criterion_title_div,
 .annotation_category_title {
-  // float: left;
   padding: 2px 2px 0 10px;
 }
 

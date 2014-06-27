@@ -1,4 +1,5 @@
-<%= javascript_include_tag "effects.js", "jquery-ui.min.js" %>
+<%= javascript_include_tag "effects.js", "jquery-ui.js" %>
+
 <div id="remark_request_edit">
     <%= form_for submission,
           url: { controller: 'results',
@@ -16,7 +17,7 @@
                    disabled: true, id: "remark_request_save",
                    :'data-disable-with' => I18n.t('working') %>
       <%= f.submit t(:submit_request),
-      			   :'data-disable-with' => I18n.t('working'),
+               :'data-disable-with' => I18n.t('working'),
                    id: "remark_request_submit",
                    confirm: t(:confirm_remark_submit) %>
     </div>
