@@ -29,9 +29,9 @@ function ap_select_none() {
 function ap_thinking_start(table_name) {
   ap_select_none();
   $(table_name).update('');
-  document.getElemenyById('working').style.display = '';
+  document.getElementById('working').style.display = '';
 }
 
 function ap_thinking_stop() {
-  document.getElemenyById('working').style.display = 'none';
+  document.getElementById('working').style.display = 'none';
 }
