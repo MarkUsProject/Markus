@@ -68,8 +68,7 @@ class Grouping < ActiveRecord::Base
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(grouping_ids, ta_ids, assignment)
-    assign_tas(grouping_ids, ta_ids, assignment) do
-      |grouping_ids, ta_ids|
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
       # Assign TAs in a round-robin fashion to a list of random groupings.
       grouping_ids.shuffle.zip(ta_ids.cycle)
     end
@@ -79,8 +78,7 @@ class Grouping < ActiveRecord::Base
   # a list of groupings specified by +grouping_ids+. The groupings must belong
   # to the given assignment +assignment+.
   def self.assign_all_tas(grouping_ids, ta_ids, assignment)
-    assign_tas(grouping_ids, ta_ids, assignment) do
-      |grouping_ids, ta_ids|
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
       # Get the Cartesian product of group IDs and TA IDs.
       grouping_ids.product(ta_ids)
     end
