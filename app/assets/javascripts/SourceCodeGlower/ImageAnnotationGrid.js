@@ -105,12 +105,7 @@ ImageAnnotationGrid.prototype.add_to_grid = function(extracted_coords) {
 
   var new_holder = document.createElement('div');
   new_holder.id = 'annotation_holder_' + extracted_coords.id;
-  new_holder.style.position   = 'absolute';
-  new_holder.style.opacity    = '0.2';
-  new_holder.style.filter     = 'alpha(opacity=20)';
-  new_holder.style.cursor     = 'crosshair';
-  new_holder.style.background = 'orange';
-  new_holder.style.border     = '1px solid #000';
+  new_holder.classList.add('annotation_holder');
   new_holder.onmousemove = this.getImageEventHandler().check_for_annotations.bind(this.getImageEventHandler());
   new_holder.onmousedown = this.getImageEventHandler().start_select_box.bind(this.getImageEventHandler());
 

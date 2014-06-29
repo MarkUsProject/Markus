@@ -9,8 +9,15 @@
   Annotations highlight; two colours, one for single comment
   one for overlapping comment
  ****************************************************/
-.annotations1 { background-color: #fffcc4; }
-.annotations2 { background-color: #ff9; }
+#annotation_summary_list {
+  li:nth-child(odd) {
+    background-color: #fffcc4;
+  }
+
+  li:nth-child(even) {
+    background-color: #ff9;
+  }
+}
 
 /****************************************************
   Link to line number in Annotations Summary
@@ -28,9 +35,13 @@
 *****************************************************/
 .annotationContent,
 .manageAnnotations {
-  font: italic 0.85em $font-stack;
+  font: 0.85em/0.9em $font-stack;
   margin: 0 0 10px 0;
   padding: 0 0 0 10px;
+}
+
+.annotationContent p {
+  white-space: pre-wrap;
 }
 
 #student_selector {
@@ -77,10 +88,6 @@
     background-color: #dd5;
     color: blue;
   }
-
-  ol {
-    height: 590px;
-  }
 }
 
 .annotation_text_display {
@@ -90,7 +97,9 @@
   max-width: 400px;
   padding: 0.25em 1em;
   position: absolute;
+  white-space: pre-wrap;
   width: auto;
+  z-index: 100000;
 }
 
 #annotation_menu {
@@ -132,11 +141,12 @@ li.annotation_category {
   display: inline-block;
   font-weight: 600;
   padding: 3px 5px;
-}
 
-.annotation_category:hover {
-  color: #000;
-  cursor: pointer;
+
+  &:hover {
+    color: #000;
+    cursor: pointer;
+  }
 }
 
 .annotation_text_list {
@@ -144,9 +154,7 @@ li.annotation_category {
   background: $light-grey;
   border: 1px solid #aaa;
   height: auto;
-  left: -0.5em;
   margin: 0;
-  min-height: 1.5em;
   overflow: auto;
   padding: 0;
   position: absolute;
@@ -177,27 +185,6 @@ li.annotation_category {
 
 /* =================================================================================
   GENERAL LAYOUT STYLES
-  #pane_holder
-     #code_pane
-        tabs => see livepipe/tabs.css
-        #code_holder
-            #annotations_menu
-            #codeviewer
-        #annotations_summary
-            #annotation_summary_list
-                #annotations1, #annotations2
-     #pane_divider
-     #mark_pane
-        tabs => see livelipe/tabs.css
-        #rubric_viewer
-            #rubric_tools
-            #rubric_criteria_pane
-                #rubric_criteria_pane_list
-        #summary_viewer .marks_summary_viewer
-            #summary_criteria_pane
-                #summary_citeria_pane_list
-            #extra_marks_pane
-        #annotations_holder
 ===================================================================================*/
 
 #pane_holders {
@@ -223,7 +210,7 @@ li.annotation_category {
     @include border-radius(5px);
     background: #ececec;
     border: 1px solid #ddd;
-    height: 700px;
+    height: 100%;
     margin: 0 0 10px 0;
     padding: 10px;
   }
@@ -244,6 +231,11 @@ li.annotation_category {
     #annotations_summary,
     #remark_request_tab {
       height: 650px;
+    }
+
+    // Adjusted height for users that also see the annotation menu
+    #annotation_menu + .clear + #codeviewer {
+      height: 600px;
     }
 
     #annotations_summary_head {
@@ -288,11 +280,6 @@ li.annotation_category {
 .image_container {
   overflow: auto;
   width: auto;
-}
-
-#create_annotation_dialog textarea {
-  height: 50px;
-  width: 300px;
 }
 
 #mark_criteria_pane_list {

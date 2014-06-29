@@ -19,7 +19,7 @@
             <%= render partial: 'annotations/annotation_categories',
                        locals: { annotation_categories: annotation_categories } %>
 
-             <div class='clear'></div>
+            <div class='clear'></div>
           </div> <!-- End of annotation_menu -->
 
           <div class='clear'></div>
@@ -133,7 +133,7 @@
             <% end %>
           </select>
           </p>
-          <p style='margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;'>
+          <p id='annotation_submit'>
             <button onclick="submit_new_annotation(
                               jQuery('#new_annotation_content').val(),
                               jQuery('#new_annotation_category').val(),
@@ -151,5 +151,5 @@
   </div>
 </div>
 
-<!-- For image/PDF annotations -->
+<%# For image/PDF annotations %>
 <div id='sel_box'></div>
