@@ -1,0 +1,216 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  // The master component that manages graders/groups and
+  // the add/remove actions
+  var GradersManagerNoCriteria = React.createClass({
+    propTypes: {
+      graders: React.PropTypes.array,
+      groups: React.PropTypes.array,
+      sections: React.PropTypes.array
+    },
+    getInitialState: function() {
+      return {
+        selected_graders: [],
+        selected_groups: [],
+        selected_graders_in_groups: [],
+        error: null
+      };
+    },
+    //componentWillMount: function() {
+    //this.props.refresh();
+    //},
+    updateSelectedGraders: function(graders) {
+      this.setState({selected_graders: graders});
+    },
+    updateSelectedGroups: function(groups) {
+      this.setState({selected_groups: groups});
+    },
+    updateSelectedGradersInGroups: function(graders) {
+      this.setState({selected_graders_in_groups: graders});
+    },
+    // Sends a request to the server to perform some action
+    // such as assigning or removing a member to/from a group
+    // should probably be moved to actionsbox
+    performAction: function(action) {
+      var dataLoad = {
+        submit_type: 'global_action',
+        current_table: 'groups_table',
+        global_actions: action,
+        graders: this.state.selected_graders,
+        students: this.state.selected_students,
+        groupings: this.state.selected_groups,
+        grader_memberships: this.state.selected_graders_in_groups
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'graders/global_actions',
+        data: dataLoad,
+        success: function(data) {
+          this.refresh();
+          this.setState({
+            selected_graders: [],
+            selected_groups: [],
+            selected_graders_in_groups: [],
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this)
+      });
+    },
+    render: function() {
+      return (
+        <div>
+          <Error error={this.state.error} />
+          <GradersTable graders={this.props.graders}
+            selected_graders={this.state.selected_graders}
+            onSelectedGradersChange={this.updateSelectedGraders}/>
+          <GradersActionsColumn refresh={this.props.refresh} performAction={this.performAction} />
+          <GradersGroupsTable groups={this.props.groups} 
+            selected_groups={this.state.selected_groups}
+            onSelectedGroupsChange={this.updateSelectedGroups}
+            selected_graders_in_groups={this.state.selected_graders_in_groups}
+            onSelectedGradersInGroupsChange={this.updateSelectedGradersInGroups}
+            sections={this.props.sections}
+            refresh={this.props.refresh} />
+          </div>
+      );
+    }
+  });
+
+  // The table of groups on the right.
+  GradersGroupsTable = React.createClass({
+    groupCheckboxAllClicked: function(event) {
+      var value = event.currentTarget.checked;
+      if (value) {
+        var new_selected_groups = this.props.groups.map(function(x) { return x.id; }).slice();
+        this.props.onSelectedGroupsChange(new_selected_groups);
+      } else {
+        this.props.onSelectedGroupsChange([]);
+      }
+    },
+    graderCheckboxAllClicked: function(event) {
+      var value = event.currentTarget.checked;
+      if (value) {
+        var new_selected_graders_in_groups = [];
+        for (var i = 0; i < this.props.groups.length; i++) {
+          for (var j = 0; j < this.props.groups[i].graders.length; j++) {
+            new_selected_graders_in_groups.push(this.props.groups[i].graders[j].membership_id);
+          }
+        }
+        this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
+      } else {
+        this.props.onSelectedGradersInGroupsChange([]);
+      }
+    },
+    groupCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var group_id = parseInt(event.currentTarget.getAttribute('id'));
+      var new_selected_groups = this.props.selected_groups.slice();
+      if (value == true) {
+        new_selected_groups.push(group_id);
+      } else {
+        new_selected_groups.splice(new_selected_groups.indexOf(group_id), 1);
+      }
+      this.props.onSelectedGroupsChange(new_selected_groups);
+    },
+    graderCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var group_grader_id = parseInt(event.currentTarget.getAttribute('id'));
+      var new_selected_graders_in_groups = this.props.selected_graders_in_groups.slice();
+      if (value == true) {
+        new_selected_graders_in_groups.push(group_grader_id);
+      } else {
+        new_selected_graders_in_groups.splice(new_selected_graders_in_groups.indexOf(group_grader_id), 1);
+      }
+      this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
+    },
+    refresh: function() {
+      this.props.refresh();
+    },
+    render: function() {
+      var columns = [
+      {
+        id: 'checkbox',
+        content: <div>
+          <input type='checkbox'
+            onChange={this.groupCheckboxAllClicked} />
+          </div>,
+        sortable: false,
+        searchable: false
+      },
+      {
+        id: 'name',
+        content: '<%= j raw I18n.t('groups.groupe_name') %>',
+        sortable: true,
+        searchable: true
+      },
+      {
+        id: 'section',
+        content: 'Section',
+        sortable: true,
+        searchable: true
+      },
+      {
+        id: 'graders',
+        content:<input type='checkbox'
+            onChange={this.graderCheckboxAllClicked}>Graders</input>,
+        sortable: true,
+        searchable: false
+      },
+      ];
+
+      // need to filter for each section
+      var filters = [];
+      filters.push({name: '-', text: '-', func: function(g) { return g; } });
+
+      for (var i = 0; i < this.props.sections.length; i++) {
+        var filter = {
+          name: this.props.sections[i].name,
+          text: this.props.sections[i].name,
+          func: function(group) {
+            return (group.section == this.name);
+          }.bind(this.props.sections[i])
+        }
+        filters.push(filter);
+      }
+
+      // Massage the data so it will fit into the table.
+      var groups_data = this.props.groups.map(function(group) {
+        var g = {};
+        g['id'] = group.id;
+        g['checkbox'] = <input id={group.id} type='checkbox'
+          checked={this.props.selected_groups.indexOf(group.id) !== -1 ? true : false}
+          onChange={this.groupCheckboxClicked} />
+        g['name'] = group.name;
+        g['section'] = group.section;
+        var graders = [];
+        for (var i = 0; i < group.graders.length; i++) {
+          graders.push(<div key={group.graders[i].membership_id}>
+            <input id={group.graders[i].membership_id}
+              type='checkbox'
+              checked={this.props.selected_graders_in_groups.indexOf(group.graders[i].membership_id) !== -1 ? true : false}
+              onChange={this.graderCheckboxClicked} />{group.graders[i].user_name}</div>);
+        }
+        
+        g['graders'] = graders;
+        return g;
+      }.bind(this));
+
+      return (
+        <div className={'colRightGroups'}>
+          <div className={'wrapRightGroups'}>
+            <Table data={groups_data} columns={columns}
+              filters={filters} filter_type={true}
+              search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
+          </div>
+        </div>
+      );
+    }
+  });
+</script>

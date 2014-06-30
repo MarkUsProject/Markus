@@ -2,7 +2,7 @@
   /** @jsx React.DOM */
 
   // The buttons for random_assign, assigning and unsassigning
-  GradersActionsColumn = React.createClass({
+  var GradersActionsColumn = React.createClass({
     performAction: function(event) {
       var action = event.currentTarget.getAttribute('id');
       this.props.performAction(action);

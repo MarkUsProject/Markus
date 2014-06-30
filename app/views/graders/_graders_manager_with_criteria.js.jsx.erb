@@ -1,0 +1,124 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  // The master component that manages graders/groups and
+  // the add/remove actions
+  var GradersManagerWithCriteria = React.createClass({
+    /*
+    propTypes: {
+      sections: React.PropTypes.array,
+      groups: React.PropTypes.array,
+      graders: React.PropTypes.array
+    },
+    */
+    getInitialState: function() {
+      return {
+        error: null,
+        selected_graders: [],
+        selected_groups: [],
+        selected_graders_in_groups: []
+      }
+    },
+    //componentWillMount: function() {
+    //}
+    updateSelectedGroups: function(groups) {
+      this.setState({selected_groups: groups});
+    },
+    updateSelectedGraders: function(graders) {
+      this.setState({selected_graders: graders});
+    },
+    updateSelectedGradersInGroups: function(graders) {
+      this.setState({selected_graders_in_groups: graders});
+    },
+    performAction: function(action) {
+      var dataLoad = {
+        submit_type: 'global_action',
+        current_table: 'groups_table',
+        global_actions: action,
+        graders: this.state.selected_graders,
+        students: this.state.selected_students,
+        groupings: this.state.selected_groups,
+        grader_memberships: this.state.selected_graders_in_groups
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'graders/global_actions',
+        data: dataLoad,
+        success: function(data) {
+          this.refresh();
+          this.setState({
+            selected_graders: [],
+            selected_groups: [],
+            selected_graders_in_groups: [],
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this)
+      });
+    },
+    render: function() {
+      
+      return (<div>
+        <Error error={this.state.error} />
+        <GradersTable graders={this.props.graders}
+        selected_graders={this.state.selected_graders}
+        onSelectedGradersChange={this.updateSelectedGraders} />
+          <GradersActionsColumn refresh={this.props.refresh}
+          performAction={this.performAction} />
+        <GradersGroupsTableWithCriteria groups={this.props.groups}
+          selected_groups={this.state.selected_groups}
+          onSelectedGroupsChange={this.updateSelectedGroups}
+          selected_graders_in_groups={this.state.selected_graders_in_groups}
+          onSelectedGradersInGroupsChange={this.updateSelectedGradersInGroups}
+          sections={this.props.sections}
+          refresh={this.props.refresh} />
+      </div>);
+    }
+  });
+
+  // The master component that manages graders/groups and
+  // the add/remove actions
+  var GradersGroupsTableWithCriteria = React.createClass({
+    //propTypes: {},
+    componentDidMount: function() {
+      jQuery('#groups-tab').tabs();
+    },
+    render: function() {
+      return (
+         <div id='groups-tab' className={'tab-pane colRightGroups'}>
+           <div className={'wrapRightGroups'}>
+             <ul>
+              <li><a href='#groups-tab'><span>Groups</span></a></li>
+              <li><a href='#criteria-tab'><span>Criteria</span></a></li>
+             </ul>
+             <div id='groups-tab'>
+               <GradersGroupsTable />
+             </div>
+             <div id='criteria-tab'>
+               <GradersCriteriaTable />
+             </div>
+           </div>
+        </div>
+        );
+     }
+  });
+
+  // Tab 1 table on the right - for groups
+  var GradersGroupsTable = React.createClass({
+    render: function() {
+
+    }
+  });
+
+  // Tab 2 table on the right - for criteria
+  var GradersCriteriaTable = React.createClass({
+    render: function() {
+
+    }
+  });
+</script>

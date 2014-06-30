@@ -2,8 +2,11 @@
                            'help_system' %>
 
 <%= render partial: 'graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
+<%= render partial: 'graders_manager_no_criteria', formats: [:'js.jsx'], handlers: [:erb] %>
+<%= render partial: 'graders_manager_with_criteria', formats: [:'js.jsx'], handlers: [:erb] %>
 <%= render partial: 'graders_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <%= render partial: 'graders_action_column', formats: [:'js.jsx'], handlers: [:erb] %>
+
 <script type='text/jsx'>
   /** @jsx React.DOM */
 

@@ -69,6 +69,7 @@ class GradersController < ApplicationController
       @assignment.assign_graders_to_criteria = false
     end
     @assignment.save
+    head :ok
   end
 
   def index
@@ -77,10 +78,17 @@ class GradersController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        graders_table_info = get_graders_table_info_no_criteria(@assignment)
-        groups_table_info = get_groups_table_info_no_criteria(@assignment)
+        assign_to_criteria = @assignment.assign_graders_to_criteria
         sections = Section.all
-        render json: [graders_table_info, groups_table_info, sections]
+        if assign_to_criteria
+          graders_table_info = get_graders_table_info_with_criteria(@assignment)
+          groups_table_info = get_groups_table_info_with_criteria(@assignment)
+        else
+          graders_table_info = get_graders_table_info_no_criteria(@assignment)
+          groups_table_info = get_groups_table_info_no_criteria(@assignment)
+        end
+        # better to use a hash?
+        render json: [assign_to_criteria, sections, graders_table_info, groups_table_info]
       end
     end
   end
