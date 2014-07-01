@@ -1,17 +1,10 @@
 <%= javascript_include_tag 'Graders/index',
                            'help_system' %>
 
-<%= render partial: 'graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
-<%= render partial: 'graders_manager_no_criteria', formats: [:'js.jsx'], handlers: [:erb] %>
-<%= render partial: 'graders_manager_with_criteria', formats: [:'js.jsx'], handlers: [:erb] %>
-<%= render partial: 'graders_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <%= render partial: 'graders_action_column', formats: [:'js.jsx'], handlers: [:erb] %>
-
-<script type='text/jsx'>
-  /** @jsx React.DOM */
-
-  React.renderComponent(<GradersManager/>, document.getElementById('gradersManager'));
-</script>
+<%= render partial: 'graders_table', formats: [:'js.jsx'], handlers: [:erb] %>
+<%#= render partial: 'groups_table_manager', formats: [:'js.jsx'], handlers: [:erb] %>
+<%= render partial: 'graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 
 <div class='title_bar'>
   <h1>

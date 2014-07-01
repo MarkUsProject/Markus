@@ -2,7 +2,12 @@
   /** @jsx React.DOM */
 
   // Table of students, on the left.
-  GradersTable = React.createClass({
+  var GradersTable = React.createClass({
+    propTypes: {
+      graders: React.PropTypes.array,
+      selected_graders: React.PropTypes.array,
+      onSelectedGradersChange: React.PropTypes.func
+    },
     checkboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var grader_id = parseInt(event.currentTarget.getAttribute('id'));
@@ -69,12 +74,12 @@
         g['user_name'] = grader.user_name;
         g['full_name'] = grader.full_name;
         g['groups'] = grader.groups;
-        g['criteria'] = grader.criteria;
+        g['criteria'] = <span dangerouslySetInnerHTML={{__html: grader.criteria}} />
         return g;
       }.bind(this));
 
       return (
-        <div className={'colLeftGroups'} >
+        <div className={'colLeftGraders'} >
           <div className={'wrapLeftGroups'}>
             <Table data={graders_data}
             columns={columns}
