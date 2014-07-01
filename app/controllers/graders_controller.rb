@@ -204,8 +204,13 @@ class GradersController < ApplicationController
           when 'unassign'
             # change this to not requred rgouping ids
             # check that there are grader_memberships
-            unassign_graders(params[:grader_memberships])
-            head :ok
+            if params[:grader_memberships].nil? or params[:grader_memberships].size ==  0
+              render text: I18n.t('assignment.group.select_a_grader'),
+                     status: 400 and return
+            else
+              unassign_graders(params[:grader_memberships])
+              head :ok
+            end
             return
           when 'random_assign'
             if params[:graders].nil? or params[:graders].size ==  0

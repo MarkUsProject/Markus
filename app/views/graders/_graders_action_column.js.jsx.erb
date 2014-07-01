@@ -3,9 +3,40 @@
 
   // The buttons for random_assign, assigning and unsassigning
   var GradersActionsColumn = React.createClass({
+    propTypes: {
+      selected_graders: React.PropTypes.array,
+      selected_groups: React.PropTypes.array,
+      selected_graders_in_groups: React.PropTypes.array
+    },
+    // Sends a request to the server to perform some action
+    // such as assigning or removing a member to/from a group
+    // should probably be moved to actionsbox
     performAction: function(event) {
       var action = event.currentTarget.getAttribute('id');
-      this.props.performAction(action);
+      var dataLoad = {
+        submit_type: 'global_action',
+        current_table: 'groups_table',
+        global_actions: action,
+        graders: this.props.selected_graders,
+        groupings: this.props.selected_groups,
+        grader_memberships: this.props.selected_graders_in_groups
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'graders/global_actions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.updateSelectedGraders([]);
+          this.props.updateSelectedGroups([]);
+          this.props.updateSelectedGradersInGroups([]);
+          this.props.setError(null);
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.setError(error);
+        }.bind(this)
+      });
     },
     render: function() {
       return (

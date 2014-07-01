@@ -1,0 +1,39 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  var GroupsTableManager = React.createClass({
+    //propTypes: {
+    //assign_to_criteria: React.PropTypes.bool
+    //},
+    render: function() {
+      console.log(this.props.assign_to_criteria);
+      if (this.props.assign_to_criteria) {
+        return (
+        <div className={'colRightGroups'}>
+          <div className={'wrapRightGroups'}>
+            <p>sdgsd</p>
+          </div>
+        </div>
+        );
+      } else {
+        return (
+          <div className={'colRightGroups'}>
+            <div className={'wrapRightGroups'}>
+              <div id='groups-tab' className={'tab-pane'}>
+                <ul>
+                  <li><a href='#groups-tab'><span>Groups</span></a></li>
+                  <li><a href='#criteria-tab'><span>Criteria</span></a></li>
+                </ul>
+               <div id='groups-tab'>
+                 <p>hey</p>
+               </div>
+               <div id='criteria-tab'>
+                 <p>yo</p>
+               </div>
+              </div>
+            </div>
+          </div>);
+      }
+    }
+  });
+<script>
