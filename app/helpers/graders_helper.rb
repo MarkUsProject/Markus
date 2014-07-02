@@ -59,6 +59,29 @@ module GradersHelper
         m[:membership_id] = membership.id
         m
       end
+
+      assigned_count = grouping.criteria_coverage_count
+      total_criteria_count = assignment.criteria_count
+      g[:coverage] = "#{assigned_count} / #{total_criteria_count}"
+      if assigned_count == total_criteria_count
+        g[:coverage] += ActionController::Base.helpers.link_to(
+        ActionController::Base.helpers.image_tag('icons/tick.png',
+                                                 alt: I18n.t('graders.covered'),
+                                                 title: I18n.t('graders.covered')),
+
+        groups_coverage_dialog_assignment_graders_path(id: assignment.id, 
+                                                       grouping: grouping.id),
+        remote: true)
+      else
+        g[:coverage] += ActionController::Base.helpers.link_to(
+        ActionController::Base.helpers.image_tag('icons/cross.png',
+                                                 alt: I18n.t('graders.not_covered'),
+                                                 title: I18n.t('graders.not_covered')),
+
+        groups_coverage_dialog_assignment_graders_path(id: assignment.id, 
+                                                       grouping: grouping.id),
+        remote: true)
+      end
       g
     end
 
@@ -71,9 +94,9 @@ module GradersHelper
         c[:name] = criterion.flexible_criterion_name
       end
       c[:graders] = criterion.criterion_ta_associations.map do |association|
-        m = {}
+        m = association.attributes
         m[:user_name] = association.ta.user_name
-        m[:criterion_association] = association.ta_id
+        m[:criterion_association] = association.id
         m
       end
 

@@ -6,6 +6,7 @@
       return {
         assign_to_criteria: false,
         error: null,
+        current_table: 'groups_table',
         groups_and_criteria: {groups: [], criteria: []},
         graders: [],
         sections: [],
@@ -15,6 +16,9 @@
         selected_graders_in_groups: [],
         selected_graders_in_criteria: []
       }
+    },
+    updateCurrentTable: function(table) {
+      this.setState({current_table: table});
     },
     updateSelectedGraders: function(graders) {
       this.setState({selected_graders: graders});
@@ -59,6 +63,11 @@
         dataType: 'json',
         success: function(data) {
           console.log(data);
+          // if not assigning graders to criteria,
+          // make current_table groups_table (always)
+          if (!data[0]) {
+            this.setState({current_table: 'groups_table'});
+          }
           this.setState({
             assign_to_criteria: data[0],
             sections: data[1],
@@ -79,12 +88,17 @@
         onSelectedGradersChange={this.updateSelectedGraders} />);
         to_render.push(<GradersActionsColumn
           refresh={this.refresh}
+          current_table={this.state.current_table}
           selected_graders={this.state.selected_graders}
           selected_groups={this.state.selected_groups}
+          selected_criteria={this.state.selected_criteria}
           selected_graders_in_groups={this.state.selected_graders_in_groups}
+          selected_graders_in_criteria={this.state.selected_graders_in_criteria}
           updateSelectedGraders={this.updateSelectedGraders}
           updateSelectedGroups={this.updateSelectedGroups}
+          updateSelectedCriteria={this.updateSelectedCriteria}
           updateSelectedGradersInGroups={this.updateSelectedGradersInGroups}
+          updateSelectedGradersInCriteria={this.updateSelectedGradersInCriteria}
           setError={this.setError}
          />);
       to_render.push(<GroupsTableManager 
@@ -100,6 +114,8 @@
         onSelectedGradersInCriteriaChange={this.updateSelectedGradersInCriteria}
         sections={this.state.sections}
         refresh={this.refresh}
+        current_table={this.state.current_table}
+        onTableChange={this.updateCurrentTable}
       />);
       return (<div>{to_render}</div>);
     }
@@ -118,7 +134,9 @@
       selected_graders_in_criteria: React.PropTypes.array,
       onSelectedGradersInCriteriaChange: React.PropTypes.func,
       sections: React.PropTypes.array,
-      refresh: React.PropTypes.func
+      refresh: React.PropTypes.func,
+      current_table: React.PropTypes.string,
+      onTableChange: React.PropTypes.func
     },
      render: function() {
       if (this.props.assign_to_criteria) {
@@ -135,6 +153,7 @@
           onSelectedGradersInCriteriaChange={this.props.onSelectedGradersInCriteriaChange}
           sections={this.props.sections}
           refresh={this.props.refresh}
+          onTableChange={this.props.onTableChange}
         />
       } else {
         return <GroupsTableNoCriteria 
@@ -165,6 +184,10 @@
     },
     componentDidMount: function() {
       jQuery('#group-tabs').tabs();
+    },
+    tableChanged: function(event) {
+      var table = event.currentTarget.getAttribute('id');
+      this.props.onTableChange(table);
     },
     groupCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
@@ -212,7 +235,6 @@
         this.props.onSelectedGradersInCriteriaChange([]);
       }
     },
-
     groupCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_id = parseInt(event.currentTarget.getAttribute('id'));
@@ -317,10 +339,9 @@
               onChange={this.graderCheckboxClicked} />{group.graders[i].user_name}</div>);
         }
         g['graders'] = graders;
-        g['coverage'] = 'ggg';
+        g['coverage'] = <span dangerouslySetInnerHTML={{__html: group.coverage}} />;
         return g;
       }.bind(this));
-
 
       var criteria_columns = [
        {
@@ -379,8 +400,8 @@
           <div className={'wrapRightGroups'}>
             <div id='group-tabs' className='tab-pane'>
               <ul>
-                <li><a href='#groups-tab'><span>Groups</span></a></li>
-                <li><a href='#criteria-tab'><span>Criteria</span></a></li>
+                <li><a id='groups_table' onClick={this.tableChanged} href='#groups-tab'><span>Groups</span></a></li>
+                <li><a id='criteria_table' onClick={this.tableChanged} href='#criteria-tab'><span>Criteria</span></a></li>
               </ul>
              <div id='groups-tab'>
                <Table data={groups_data} columns={group_columns}
