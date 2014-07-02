@@ -213,6 +213,7 @@ Markus::Application.routes.draw do
         end
 
         collection do
+          post 'update_positions'
           get 'add_annotation_category'
           post 'csv_upload'
           get 'delete_annotation_category'

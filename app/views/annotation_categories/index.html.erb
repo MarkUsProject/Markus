@@ -5,8 +5,11 @@
 <% # UI LIBRARIES %>
 <%= javascript_include_tag 'livepipe/livepipe',
                            'livepipe/window',
-                           'livepipe/tabs',
-                           'AnnotationCategories/index' %>
+                           'livepipe/tabs' %>
+
+<%= render partial: 'boot',
+           formats: [:js],
+           handlers: [:erb] %>
 
 <div id="title_bar">
   <h1>

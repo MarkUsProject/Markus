@@ -1165,14 +1165,6 @@ div.align_text_right {
   width: 90%;
 }
 
-#rubric_criteria_list_title_bar,
-#flexible_criteria_list_title_bar,
-.annotation_categories_list_bar {
-  margin-bottom: 5px;
-  min-height: 15px;
-  padding-bottom: 5px;
-}
-
 #rubric_levels_pane,
 #flexible_edition_pane,
 #annotations_pane {
@@ -1214,12 +1206,6 @@ input.button_to_delete_deduction {
   margin: 1px;
   min-width: 0;
   padding: 2px;
-}
-
-.criterion_handle {
-  cursor: move;
-  float: left;
-  padding-left: 3px;
 }
 
 .annotation_title_div,
@@ -1300,8 +1286,6 @@ input.criterion_input_name{
 /* Annotation category*/
 
 #annotation_list_holder {
-  // padding: 0 1em;
-
   h2 {
     margin: 0;
   }
