@@ -33,10 +33,16 @@ GEM
     arel (3.0.3)
     auto_complete (0.0.1)
       rails (>= 3.1)
+    better_errors (1.1.0)
+      coderay (>= 1.0.0)
+      erubis (>= 2.6.6)
+    binding_of_caller (0.7.2)
+      debug_inspector (>= 0.0.1)
     builder (3.0.4)
     byebug (3.1.2)
       columnize (~> 0.8)
       debugger-linecache (~> 1.2)
+    coderay (1.1.0)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -46,6 +52,7 @@ GEM
     coffee-script-source (1.7.0)
     columnize (0.8.9)
     daemons (1.1.9)
+    debug_inspector (0.0.2)
     debugger (1.6.8)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
@@ -192,6 +199,8 @@ PLATFORMS
 DEPENDENCIES
   activerecord-import
   auto_complete
+  better_errors
+  binding_of_caller
   byebug
   coffee-rails (~> 3.2.1)
   coffee-script
