@@ -8,8 +8,6 @@
 
 #mobile_menu,
 #content {
-  @include transform(translate(0px, 0px));
-  @include transition(all, $time-quick);
   width: 100%;
   z-index: 100;
 }
@@ -22,7 +20,7 @@
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 500;
+  z-index: 100000;
 
   @include breakpoint(mobile) {
     display: block;
@@ -61,14 +59,15 @@
 
 #menus {
   @include breakpoint(mobile) {
-    @include transition(all, $time-medium);
+    @include transform(translateX(-100%));
+    @include transition(all, $time-quick);
     background: #000;
     height: 100%;
-    opacity: 0;
     overflow: hidden;
+    padding-top: 3.5em;
     position: fixed;
     top: 0;
-    width: 100%;
+    width: 75%;
     z-index: 0;
   }
 
@@ -91,7 +90,6 @@
     border-right: 1px solid $grey;
     height: 100%;
     overflow: auto;
-    width: 75%;
   }
 }
 
@@ -99,7 +97,8 @@
   overflow: hidden;
 
   #menus {
-    opacity: 1;
+    @include transform(translateX(0%));
+    z-index: 10000;
   }
 
   #mobile_menu #menu_icon {
@@ -115,11 +114,6 @@
       border-top: 0;
       width: 1.8em;
     }
-  }
-
-  #mobile_menu,
-  #content {
-    @include transform(translate(75%, 0px));
   }
 
   #content {
