@@ -25,6 +25,72 @@ module GradersHelper
       end
       g
     end
+    return {groups: groups_table_info, criteria: []}
+  end
+
+  def get_graders_table_info_with_criteria(assignment)
+    graders = Ta.all
+    graders_table_info = graders.map do |grader|
+      g = grader.attributes
+      g[:full_name] = "#{grader.first_name} #{grader.last_name}"
+      g[:groups] = grader.get_membership_count_by_assignment(assignment)
+      g[:criteria] = grader.get_criterion_associations_count_by_assignment(@assignment).to_s
+      g[:criteria] += ActionController::Base.helpers.link_to(
+        ActionController::Base.helpers.image_tag('icons/comment.png',
+                                                 alt: I18n.t('criteria'),
+                                                 title: I18n.t('criteria')),
+        grader_criteria_dialog_assignment_graders_path(
+          id: @assignment.id, grader: grader.id),
+        remote: true)
+      g
+    end
+  end
+
+  def get_groups_table_info_with_criteria(assignment)
+    groupings = groupings_with_assoc(assignment)
+    groups_table_info = groupings.map do |grouping|
+      g = grouping.attributes
+      g[:name] = grouping.group.group_name
+      g[:students] = grouping.students
+      g[:section] = grouping.section
+      g[:graders] = grouping.ta_memberships.map do |membership|
+        m = {}
+        m[:user_name] = membership.user.user_name
+        m[:membership_id] = membership.id
+        m
+      end
+      g
+    end
+
+    criteria = criteria_with_assoc(assignment)
+    criteria_table_info = criteria.map do |criterion|
+      c = criterion.attributes
+      if assignment.marking_scheme_type == "rubric"
+        c[:name] = criterion.rubric_criterion_name
+      else
+        c[:name] = criterion.flexible_criterion_name
+      end
+      c[:graders] = criterion.criterion_ta_associations.map do |association|
+        m = {}
+        m[:user_name] = association.ta.user_name
+        m[:criterion_association] = association.ta_id
+        m
+      end
+
+      assigned_length = criterion.assigned_groups_count
+      c[:coverage] = "#{assigned_length} / #{assignment.groupings.size}"
+      if assigned_length == assignment.groupings.size
+        c[:coverage] += ActionController::Base.helpers.image_tag('icons/tick.png',
+          alt: I18n.t('graders.covered'),
+          title: I18n.t('graders.covered'))
+      else
+        c[:coverage] += ActionController::Base.helpers.image_tag('icons/cross.png',
+          alt: I18n.t('graders.not_covered'),
+          title: I18n.t('graders.not_covered'))
+      end
+      c
+    end
+    return {groups: groups_table_info, criteria: criteria_table_info}
   end
 
   # Given a list of criteria and an assignment, constructs an array of
