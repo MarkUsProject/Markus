@@ -1145,12 +1145,9 @@ div.align_text_right {
 #flexible_criteria_pane,
 #annotation_category_pane {
   display: inline-block;
+  margin-right: 5%;
   vertical-align: top;
   width: 25%;
-}
-
-#rubric_criteria_pane_list {
-  width: 22%;
 }
 
 .weight_bump_button {

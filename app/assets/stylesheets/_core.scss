@@ -274,7 +274,6 @@ legend {
   @include border-radius(5px);
   background: #fff;
   border: 1px solid $grey;
-  position: absolute;
   width: 100%;
 
   header {
@@ -292,6 +291,7 @@ legend {
   ul {
     margin: 0;
     padding: 0;
+    position: relative;
 
     li {
       @include transition(all, $time-quick);

@@ -32,9 +32,23 @@ function add_annotation_category(path) {
   }
 }
 
-jQuery(document).ready(function () {
-
-  window.modal_upload = new ModalMarkus('#upload_dialog');
+jQuery(document).ready(function() {
+  window.modal_upload   = new ModalMarkus('#upload_dialog');
   window.modal_download = new ModalMarkus('#download_dialog');
 
+
+  jQuery('.sortable ul').sortable({
+    axis:   'y',
+    cursor: 'move',
+    update: function() {
+      console.log(jQuery('.sortable ul').sortable('serialize'));
+
+      // jQuery.ajax({
+      //   url: '<%= update_positions_assignment_rubrics_path(@assignment) %>',
+      //   type: 'POST',
+      //   data: jQuery('.sortable ul').sortable('serialize'),
+      //   dataType: 'script'
+      // });
+    }
+  });
 });
