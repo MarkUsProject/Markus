@@ -305,11 +305,19 @@ function search_data(data, searchables, search_text) {
   if (search_text) {
     return data.filter(function(datum) {
       for (var i = 0; i < searchables.length; i++) {
-        if (datum[searchables[i]].toLowerCase().indexOf(search_text) != -1) {
-          return true;
+        if (datum[searchables[i]].hasOwnProperty('props')) {
+          // is a React Component- need to get innerHTML
+          if (datum[searchables[i]].props.dangerouslySetInnerHTML.__html.toLowerCase().indexOf(search_text) != -1) {
+            return true;
+          } 
+          return false;
+        } else {
+          if (datum[searchables[i]].toLowerCase().indexOf(search_text) != -1) {
+            return true;
+          }
         }
+        return false;
       }
-      return false;
     });
   } else {
     return data;
