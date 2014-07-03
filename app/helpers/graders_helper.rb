@@ -36,11 +36,13 @@ module GradersHelper
       g[:groups] = grader.get_membership_count_by_assignment(assignment)
       g[:criteria] = grader.get_criterion_associations_count_by_assignment(@assignment).to_s
       g[:criteria] += ActionController::Base.helpers.link_to(
-        ActionController::Base.helpers.image_tag('icons/comment.png',
-                                                 alt: I18n.t('criteria'),
-                                                 title: I18n.t('criteria')),
+        ActionController::Base.helpers.image_tag(
+          'icons/comment.png',
+          alt: I18n.t('criteria'),
+          title: I18n.t('criteria')),
         grader_criteria_dialog_assignment_graders_path(
-          id: @assignment.id, grader: grader.id),
+          id: @assignment.id,
+          grader: grader.id),
         remote: true)
       g
     end
@@ -65,21 +67,23 @@ module GradersHelper
       g[:coverage] = "#{assigned_count} / #{total_criteria_count}"
       if assigned_count == total_criteria_count
         g[:coverage] += ActionController::Base.helpers.link_to(
-        ActionController::Base.helpers.image_tag('icons/tick.png',
-                                                 alt: I18n.t('graders.covered'),
-                                                 title: I18n.t('graders.covered')),
-
-        groups_coverage_dialog_assignment_graders_path(id: assignment.id, 
-                                                       grouping: grouping.id),
+        ActionController::Base.helpers.image_tag(
+          'icons/tick.png',
+          alt: I18n.t('graders.covered'),
+          title: I18n.t('graders.covered')),
+        groups_coverage_dialog_assignment_graders_path(
+          id: assignment.id, 
+          grouping: grouping.id),
         remote: true)
       else
         g[:coverage] += ActionController::Base.helpers.link_to(
-        ActionController::Base.helpers.image_tag('icons/cross.png',
-                                                 alt: I18n.t('graders.not_covered'),
-                                                 title: I18n.t('graders.not_covered')),
-
-        groups_coverage_dialog_assignment_graders_path(id: assignment.id, 
-                                                       grouping: grouping.id),
+        ActionController::Base.helpers.image_tag(
+          'icons/cross.png',
+          alt: I18n.t('graders.not_covered'),
+          title: I18n.t('graders.not_covered')),
+        groups_coverage_dialog_assignment_graders_path(
+          id: assignment.id,
+          grouping: grouping.id),
         remote: true)
       end
       g
@@ -103,11 +107,13 @@ module GradersHelper
       assigned_length = criterion.assigned_groups_count
       c[:coverage] = "#{assigned_length} / #{assignment.groupings.size}"
       if assigned_length == assignment.groupings.size
-        c[:coverage] += ActionController::Base.helpers.image_tag('icons/tick.png',
+        c[:coverage] += ActionController::Base.helpers.image_tag(
+          'icons/tick.png',
           alt: I18n.t('graders.covered'),
           title: I18n.t('graders.covered'))
       else
-        c[:coverage] += ActionController::Base.helpers.image_tag('icons/cross.png',
+        c[:coverage] += ActionController::Base.helpers.image_tag(
+          'icons/cross.png',
           alt: I18n.t('graders.not_covered'),
           title: I18n.t('graders.not_covered'))
       end
