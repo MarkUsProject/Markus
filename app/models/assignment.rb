@@ -282,7 +282,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # calculates summary statistics of released results for this assignment
-  def set_results_statistics
+  def update_results_stats
     marks = Result.student_marks_by_assignment(id)
     # No marks released for this assignment.
     return false if marks.empty?

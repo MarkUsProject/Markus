@@ -358,7 +358,7 @@ class AssignmentTest < ActiveSupport::TestCase
       end
 
       should 'return the correct results average mark' do
-        assert @assignment.set_results_statistics
+        assert @assignment.update_results_stats
         assert_equal(0, @assignment.results_average)
         assert_equal(0, @assignment.results_median)
       end
@@ -386,7 +386,7 @@ class AssignmentTest < ActiveSupport::TestCase
         @result.marking_state = Result::MARKING_STATES[:complete]
         @result.released_to_students = true
         @result.save
-        assert @assignment.set_results_statistics
+        assert @assignment.update_results_stats
         assert_equal(100, @assignment.results_average)
       end
 
@@ -419,7 +419,7 @@ class AssignmentTest < ActiveSupport::TestCase
           create_marked_submission(2, criteria)
         end
 
-        @assignment.set_results_statistics
+        @assignment.update_results_stats
       end
 
       should 'return the correct average mark' do
@@ -448,12 +448,12 @@ class AssignmentTest < ActiveSupport::TestCase
       end
 
       should 'return the correct average mark' do
-        assert @assignment.set_results_statistics
+        assert @assignment.update_results_stats
         assert_equal(75, @assignment.results_average)
       end
 
       should 'return the correct median mark' do
-        assert @assignment.set_results_statistics
+        assert @assignment.update_results_stats
         assert_equal(75, @assignment.results_median)
       end
     end
@@ -473,12 +473,12 @@ class AssignmentTest < ActiveSupport::TestCase
       end
 
       should 'return the correct average mark' do
-        assert @assignment.set_results_statistics
+        assert @assignment.update_results_stats
         assert_equal(50, @assignment.results_average)
       end
 
       should 'return the correct median mark' do
-        assert @assignment.set_results_statistics
+        assert @assignment.update_results_stats
         assert_equal(50, @assignment.results_median)
       end
     end
