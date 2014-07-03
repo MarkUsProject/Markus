@@ -98,6 +98,9 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
 }
 
 ImageAnnotationGrid.prototype.add_to_grid = function(extracted_coords) {
+  // extracted_coords.x_range = { start: extracted_coords.x_range.start, end: extracted_coords.x_range.end };
+  // extracted_coords.y_range = { start: extracted_coords.y_range.start, end: extracted_coords.y_range.end };
+
   this.annotation_grid.push(extracted_coords);
   this.share_grid_with_event_handler();
 
@@ -107,9 +110,10 @@ ImageAnnotationGrid.prototype.add_to_grid = function(extracted_coords) {
   new_holder.onmousemove = this.getImageEventHandler().check_for_annotations.bind(this.getImageEventHandler());
   new_holder.onmousedown = this.getImageEventHandler().start_select_box.bind(this.getImageEventHandler());
 
-  // var image_preview = document.getElementById('image_preview');
-  // image_preview.parentNode.insertBefore(new_holder, image_preview);
-  document.getElementById('codeviewer').appendChild(new_holder);
+  var image_preview = document.getElementById('image_preview');
+  image_preview.parentNode.insertBefore(new_holder, image_preview);
+
+  this.draw_holders();
 }
 
 ImageAnnotationGrid.prototype.remove_annotation = function(unused_param1, unused_param2, annotation_text_id) {
