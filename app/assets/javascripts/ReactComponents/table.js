@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-Table = React.createClass({displayName: 'Table',
+var Table = React.createClass({displayName: 'Table',
   propTypes: {
     data: React.PropTypes.array,
     search_placeholder: React.PropTypes.string,

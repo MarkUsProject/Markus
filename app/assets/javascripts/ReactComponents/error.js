@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-Error = React.createClass({displayName: 'Error',
+ var ErrorDiv = React.createClass({displayName: 'ErrorDiv',
   propTypes: {
     error: React.PropTypes.string
   },
