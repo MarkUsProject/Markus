@@ -1,4 +1,10 @@
-<h3><%= I18n.t(:api_key) %></h3>
+<%= javascript_include_tag 'help_system' %>
+
+<h3 style="height: 30px;"><%= I18n.t(:api_key) %><span class="help api_key_help"></span></h3>
+
+<p class="help-message-title api_key_help"><%= t("api_key_help")%></p>
+<div class="help-break api_key_help"></div>
+
 <div id="api_key_box">
   <% if !user.api_key.nil? %>
     <%= form_tag reset_api_key_main_index_path,

@@ -1,5 +1,6 @@
 <%= javascript_include_tag 'FilterTable/FilterTable' %>
 <%= javascript_include_tag 'users_manager' %>
+<%= javascript_include_tag 'help_system' %>
 
 <script type="text/javascript">
   <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
@@ -7,6 +8,8 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("admins.manage_admins") %></h1>
+  <p class="help-message-title users_admins_help"><%= t("admins.help.manage_admins")%></p>
+  <div class="help-break users_admins_help"></div></br>
   <div class="heading_buttons">
     <%= link_to I18n.t(:add_new), new_admin_path() %>
   </div>

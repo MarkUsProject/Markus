@@ -1,7 +1,7 @@
 <%= javascript_include_tag 'FilterTable/FilterTable',
                            'users_manager',
                            'Graders/index' %>
-
+<%= javascript_include_tag 'help_system' %>
 <%= render partial: 'boot',
            formats: [:js],
            handlers: [:erb] %>
@@ -19,6 +19,10 @@
                          'modal_download.open()' %>
   </div>
 </div>
+<p class='help-message-title users_graders_help'>
+  <%= t('students.help.manage_graders')%>
+</p>
+<div class='help-break users_graders_help'></div>
 
 <div class='colsLeftHeavy'>
   <div class='wrapLeft'>

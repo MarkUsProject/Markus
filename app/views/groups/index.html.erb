@@ -85,6 +85,8 @@
   </script>
 <% end %>
 
+<%= javascript_include_tag "help_system" %>
+
 <% if @assignment.past_due_date? %>
   <div class="notice">
     <%= t('groups.editing_past_due_date_warning') %>
@@ -106,6 +108,8 @@
     <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
   </div> <!-- rightjustify-->
 </div> <!-- title_bar-->
+<p class="help-message-title assignment_groups_help" ><%= t("assignment.help.groups")%></p>
+<div class="help-break assignment_groups_help" ></div>
 
 <div id="notice">
   <div class="success" id="add_success" style="display: none;"></div>

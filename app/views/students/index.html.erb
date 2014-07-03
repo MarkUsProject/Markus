@@ -2,7 +2,8 @@
   <%= javascript_include_tag 'users_manager',
                              'FilterTable/FilterTable',
                              'effects.js',
-                             'Students/index' %>
+                             'Students/index',
+                             'help_system' %>
 
   <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
   <%= render partial: 'boot',
@@ -32,6 +33,10 @@
                 '#',
                 onclick: 'modal_download.open(); return false;' %>
   </div>
+  <p class='help-message-title manage_students_help'>
+    <%= t('students.help.manage_students')%>
+  </p>
+  <div class='help-break manage_students_help'></div>
 </div>
 
 <div class="wrapLeft">
