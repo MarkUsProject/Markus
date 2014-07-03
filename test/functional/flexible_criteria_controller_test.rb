@@ -67,13 +67,6 @@ require 'mocha/setup'
         should respond_with :redirect
       end
 
-      context 'on :move_criterion' do
-        setup do
-          get :move_criterion, :assignment_id => 1, :id => 1
-        end
-        should respond_with :redirect
-      end
-
     end # An unauthenticated and unauthorized user doing a GET
 
     context 'An unauthenticated and unauthorized user doing a POST' do
@@ -130,13 +123,6 @@ require 'mocha/setup'
     context 'on :update_positions' do
       setup do
         post :update_positions, :assignment_id => 1
-      end
-      should respond_with :redirect
-    end
-
-    context 'on :move_criterion' do
-      setup do
-        post :move_criterion, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
@@ -270,30 +256,6 @@ require 'mocha/setup'
       assert_equal 1, c1.position
       c2 = FlexibleCriterion.find(@criterion2.id)
       assert_equal 2, c2.position
-    end
-
-    should 'be able to move_criterion up' do
-      get_as @admin,
-             :move_criterion,
-             :assignment_id => @assignment.id,
-             :id => @criterion2.id,
-             :direction => :up
-      assert render_template ''
-      assert_response :success
-      @criterion.reload
-      @criterion2.reload
-      assert_equal 2, @criterion.position
-      assert_equal 1, @criterion2.position
-    end
-
-    should 'be able to move_criterion down' do
-      get_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => :down
-      assert render_template ''
-      assert_response :success
-      @criterion.reload
-      @criterion2.reload
-      assert_equal 2, @criterion.position
-      assert_equal 1, @criterion2.position
     end
 
   end # An authenticated and authorized admin doing a GET
@@ -462,104 +424,6 @@ require 'mocha/setup'
       assert_equal 2, c1.position
       c2 = FlexibleCriterion.find(@criterion2.id)
       assert_equal 1, c2.position
-    end
-
-    context 'on :move_criterion up with 2 criteria' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'up'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-      end
-    end
-
-    context 'on :move_criterion up with 3 criteria from bottom' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion3.id, :direction => 'up'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 3, c2.position
-        c3 = FlexibleCriterion.find(@criterion3.id)
-        assert_equal 2, c3.position
-      end
-    end
-
-    context 'on :move_criterion up with 3 criteria from middle' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'up'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-        c3 = FlexibleCriterion.find(@criterion3.id)
-        assert_equal 3, c3.position
-      end
-    end
-
-    context 'on :move_criterion down with 2 criteria' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => 'down'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-      end
-    end
-
-    context 'on :move_criterion down with 3 criteria from top' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => 'down'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-        c3 = FlexibleCriterion.find(@criterion3.id)
-        assert_equal 3, c3.position
-      end
-    end
-
-    context 'on :move_criterion down with 3 criteria from middle' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'down'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 3, c2.position
-        c3 = FlexibleCriterion.find(@criterion3.id)
-        assert_equal 2, c3.position
-      end
     end
 
   end # An authenticated and authorized admin doing a POST

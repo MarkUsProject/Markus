@@ -175,33 +175,4 @@ class RubricsController < ApplicationController
     end
   end
 
-  def move_criterion
-    position = params[:position].to_i
-    if params[:direction] == 'up'
-      offset = -1
-    elsif  params[:direction] == 'down'
-      offset = 1
-    else
-      render nothing: true
-      return
-    end
-    @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.rubric_criteria
-    criterion = @criteria.find(params[:id])
-    index = @criteria.index(criterion)
-    other_criterion = @criteria[index + offset]
-    if other_criterion.nil?
-      render nothing: true
-      return
-    end
-    position = criterion.position
-    criterion.position = index + offset
-    other_criterion.position = index
-    unless criterion.save and other_criterion.save
-      flash[:error] = I18n.t('rubrics.move_criterion.error')
-    end
-    @criteria.reload
-    render 'move_criterion', formats: [:js]
-  end
-
 end

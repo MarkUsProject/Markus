@@ -1,1 +1,0 @@
-page.replace_html "flexible_criteria_pane", partial: "flexible_criteria/flexible_criteria_pane"

@@ -2,7 +2,8 @@
   <header>
     <span><%= t('criteria') %></span>
     <span class='right'>
-      <%= t('weight') %> (<%= @assignment.total_criteria_weight %>)
+      <%= t('weight') %>
+      (<span id='rubric_total_weight'><%= @assignment.total_criteria_weight %></span>)
     </span>
   </header>
   <ul id='rubric_criteria_pane_list'>
