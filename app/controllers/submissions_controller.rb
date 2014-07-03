@@ -552,6 +552,11 @@ class SubmissionsController < ApplicationController
     @filter = params[:filter]
     @sort_by = cookies[@c_sort_by]
   end
+  
+  def populate
+    assignment = Assignment.find(params[:assignment_id])
+    render json: get_submissions_table_info(assignment)
+  end
 
   def index
     @assignments = Assignment.all(order: :id)

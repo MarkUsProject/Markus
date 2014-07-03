@@ -2,6 +2,8 @@
 <%= javascript_include_tag "ajax_paginate" %>
 <%= javascript_include_tag "help_system" %>
 
+<%= render partial: 'submissions_table', formats: [:'js.jsx'], handlers: [:erb] %>
+
 <div class="notice">
   <% if Time.zone.now >= @assignment.submission_rule.calculate_collection_time %>
      <%= t("browse_submissions.grading_can_begin") %>
@@ -104,8 +106,6 @@
     </div>
   <% end %>
 
-  <div class="clear"></div>
-
   <%= form_tag update_submissions_assignment_submissions_path(@assignment) %>
     <div class="ap_nav_box">
       <% if @current_user.admin? %>
@@ -142,108 +142,6 @@
         </div>
       <% end %>
 
-      <div class="ap_filters" id="ap_filters_1">
-        <%= render  partial: 'submissions_table_filters',
-                    locals: { filter: @filter,
-                              page: @current_page,
-                              desc: @desc,
-                              sort_by: @sort_by,
-                              assignment: @assignment,
-                              filters: @filters,
-                              per_page: @per_page,
-                              per_pages: @per_pages } %>
-      </div>
-      <div class="clear"></div>
-      <div class="ap_page_links" id="ap_page_links_1">
-        <%= render  partial: 'ajax_paginate/initial_paginate_links',
-                    locals: { per_page: @per_page,
-                              current_page: @current_page,
-                              page_items: @groupings.size,
-                              total_items: @groupings_total,
-                              assignment: @assignment,
-                              filter: @filter,
-                              sort_by: @sort_by,
-                              desc: @desc } %>
-      </div>
-      <div id="ap_selector">
-        <%= render partial: 'ajax_paginate/selector' %>
-      </div>
-      <div class="clear"></div>
-    </div>
-
-    <div id='ap_selects'>
-      <%= render partial: 'ajax_paginate/selects',
-                 locals: { page_items: @groupings.size,
-                           total_items: @groupings_total } %>
-    </div>
-
-    <div class='table'>
-      <table>
-        <thead id='submissions_table_head'>
-          <%= render partial: 'submissions_table_sorting_links',
-                     locals: { assignment: @assignment,
-                               filter: 'none',
-                               page: @current_page,
-                               per_page: @per_page,
-                               sort_by: @sort_by,
-                               desc: @desc } %>
-        </thead>
-
-        <%= render partial: 'submissions_table_body',
-                   locals: { groupings: @groupings,
-                             assignment: @assignment } %>
-
-        <tfoot id='submissions_table_foot'>
-          <%= render partial: 'submissions_table_sorting_links',
-                     locals: { assignment: @assignment,
-                               filter: 'none',
-                               page: @current_page,
-                               per_page: @per_page,
-                               sort_by: @sort_by,
-                               desc: @desc } %>
-        </tfoot>
-      </table>
-    </div>
-
-    <div class='ap_nav_box'>
-      <div class='ap_page_links' id='ap_page_links_2'>
-        <%= render  partial: 'ajax_paginate/initial_paginate_links',
-                    locals: { per_page: @per_page,
-                              current_page: @current_page,
-                              page_items: @groupings.size,
-                              total_items: @groupings_total,
-                              assignment: @assignment,
-                              filter: @filter,
-                              sort_by: @sort_by,
-                              desc: @desc } %>
-      </div>
-      <div id='ap_selector'>
-        <%= render partial: 'ajax_paginate/selector' %>
-      </div>
-
-      <div class="clear"></div>
-
-      <div class="floatLeft">
-        <% if @current_user.admin? %>
-          <%= submit_tag t("browse_submissions.release_marks"),
-                                name: "release_results" %>
-          <%= submit_tag t("browse_submissions.unrelease_marks"),
-                                name: "unrelease_results" %>
-        <% end %>
-      </div>
-
-      <div class="ap_filters" id="ap_filters_2">
-        <%= render  partial: 'submissions_table_filters',
-                    locals: { filter: @filter,
-                              page: @current_page,
-                              desc: @desc,
-                              sort_by: @sort_by,
-                              assignment: @assignment,
-                              filters: @filters,
-                              per_page: @per_page,
-                              per_pages: @per_pages } %>
-      </div>
-      <div class="clear"></div>
-    </div>
+    <div id='submissions_table'></div>
   </form>
 </div>

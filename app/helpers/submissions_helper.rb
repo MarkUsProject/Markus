@@ -32,6 +32,133 @@ module SubmissionsHelper
     changed
   end
 
+  def get_submissions_table_info(assignment)
+    groupings = assignment.groupings
+    #(.include:
+                                #[:assignment, :group, :grace_period_deductions,
+                                  #{current_submission_used: :results},
+                                  #{accepted_student_memberships: :user}])
+    submissions_table_info = groupings.map do |grouping|
+      g = grouping.attributes
+
+      g[:group_name] = get_grouping_group_name(assignment, grouping)
+      g[:repository] = get_grouping_repository(assignment, grouping)
+      g[:commit_date] = get_grouping_commit_date(assignment, grouping)
+      g[:marking_state] = get_grouping_marking_state(assignment, grouping)
+      g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
+      g[:final_grade] = get_grouping_final_grades(grouping)
+      g[:can_begin_grading] = 'asdfghjkll'
+      
+      g
+    end
+
+    return submissions_table_info
+  end
+
+  def get_grouping_group_name(assignment, grouping)
+    group_name = ''
+      if !grouping.has_submission?
+        if assignment.submission_rule.can_collect_grouping_now?(grouping)
+          group_name = ActionController::Base.helpers.link_to(grouping.group.group_name,
+            collect_and_begin_grading_assignment_submission_path(
+              assignment.id, grouping.id))
+        else
+          group_name = grouping.group.group_name
+        end
+      elsif !grouping.is_collected
+        group_name = ActionController::Base.helpers.link_to(grouping.group.group_name,
+          collect_and_begin_grading_assignment_submission_path(
+            assignment.id, grouping.id))
+      else
+        group_name = ActionController::Base.helpers.link_to(grouping.group.group_name,
+          edit_assignment_submission_result_path(
+            assignment.id, grouping.current_submission_used.id,
+            grouping.current_submission_used.get_latest_result))
+      end
+
+      group_name += ' ('
+      group_name += grouping.accepted_students.collect{ |student| student.user_name}.join(', ')
+      group_name += ')'
+      return group_name
+  end
+
+  def get_grouping_repository(assignment, grouping)
+    ActionController::Base.helpers.link_to(grouping.group.repository_name,
+      repo_browser_assignment_submission_path(assignment, grouping))
+  end
+
+  def get_grouping_commit_date(assignment, grouping)
+    if !grouping.has_submission?
+      return '-'
+    else
+      repo = ''
+      if grouping.past_due_date?
+        repo += ActionController::Base.helpers.image_tag('icons/error.png',
+            title: t(:past_due_date_edit_result_warning,
+            href: t(:last_commit)))
+      end
+      repo += I18n.l(grouping.current_submission_used.revision_timestamp, format: :long_date)
+      return repo
+    end
+  end
+
+  def get_grouping_marking_state(assignment, grouping)
+    if !grouping.has_submission?
+      if assignment.submission_rule.can_collect_now?
+        return ActionController::Base.helpers.image_tag('icons/shape_square.png',
+          alt: I18n.t('marking_state.not_collected'),
+          title: I18n.t('marking_state.not_collected'))
+      else
+        return '-'
+      end
+    else
+      if !grouping.current_submission_used.has_result?
+        return ActionController::Base.helpers.image_tag('icons/pencil.png',
+          alt: I18n.t('marking_state.in_progress'),
+          title: I18n.t('marking_state.in_progress'))
+      else
+        if remark_in_progress(grouping.current_submission_used)
+          return ActionController::Base.helpers.image_tag('icons/double_exclamation.png',
+            alt: I18n.t('marking_state.remark_requested'),
+            title: I18n.t('marking_state.remark_requested'))
+        elsif grouping.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete]
+          if !grouping.current_submission_used.get_latest_result.released_to_students
+            return ActionController::Base.helpers.image_tag('icons/accept.png',
+              alt: I18n.t('marking_state.completed'),
+              title: I18n.t('marking_state.completed'))
+          else
+            return ActionController::Base.helpers.image_tag('icons/email_go.png',
+              alt: I18n.t('marking_state.released'),
+              title: I18n.t('marking_state.released'))
+          end
+        else
+          return ActionController::Base.helpers.image_tag('icons/pencil.png',
+            alt: I18n.t('marking_state.in_progress'),
+            title: I18n.t('marking_state.in_progress'))
+        end
+      end
+    end
+  end
+
+  def get_grouping_grace_credits_used(grouping)
+    grouping.grace_period_deduction_single
+  end
+
+  def get_grouping_final_grades(grouping)
+    if !grouping.has_submission?
+      return '-'
+    else
+      if !grouping.current_submission_used.has_result?
+        return '-'
+      else
+        return grouping.current_submission_used.get_latest_result.total_mark
+      end
+    end
+  end
+
+  def get_grouping_can_begin_grading(assignment, grouping)
+    return
+  end
 
   # Collects submissions for all the groupings of the given section and assignment
   # Return the number of actually collected submissions
