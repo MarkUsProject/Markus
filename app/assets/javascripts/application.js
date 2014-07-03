@@ -8,9 +8,11 @@
 //= require jquery
 //= require jquery-ui
 //= require jquery_ujs
+//= require common/jquery.easyModal
 
 var ModalMarkus = function (elem) {
   this.elem = elem;
+  // this.modal_dialog = jQuery(this.elem).easyModal();
   this.modal_dialog = jQuery(this.elem).dialog({
     autoOpen: false,
     resizable: false,
@@ -23,8 +25,10 @@ var ModalMarkus = function (elem) {
 ModalMarkus.prototype = {
   open: function () {
     this.modal_dialog.dialog('open');
+    // this.elem.trigger('openModal');
   },
   close: function () {
     this.modal_dialog.dialog('close');
+    // this.elem.trigger('closeModal');
   }
 };

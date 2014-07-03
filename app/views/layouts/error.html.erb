@@ -3,7 +3,8 @@
 <head>
   <%= render partial: 'layouts/head' %>
   <title>Oh no!</title>
-  <%= stylesheet_link_tag 'main.css', media: 'all' %>
+  <%= stylesheet_link_tag 'application.css', media: 'all' %>
+  <%= stylesheet_link_tag params[:controller] %>
   <%= yield :head %>
 </head>
 <body>

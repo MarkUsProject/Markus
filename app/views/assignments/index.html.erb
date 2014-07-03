@@ -2,7 +2,19 @@
   <%= javascript_include_tag 'Assignments/index' %>
 <% end %>
 
-<div id="title_bar"><h1><%= I18n.t(:manage_course_work) %></h1></div>
+<div class='title_bar'>
+  <h1><%= t(:manage_course_work) %></h1>
+
+  <div class='heading_buttons'>
+    <%= link_to t(:upload),
+                '#',
+                onclick: 'modal_upload.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to t(:download),
+                '#',
+                onclick: 'modal_download.open()' %>
+  </div>
+</div>
 
 <div class="wrapLeft">
   <%= render 'shared/flash_message' %>
@@ -15,13 +27,6 @@
               { controller: 'grade_entry_forms',
                 action: 'new' },
               class: 'button' %>
-
-  <div id="title_bar" class="heading_buttons">
-    <%= link_to I18n.t(:upload), '#',
-                onclick: 'modal_upload.open()' %> |
-    <%= link_to I18n.t(:download), '#',
-                onclick: 'modal_download.open()' %>
-  </div>
 
   <!-- Modal Windows -->
   <div id="download_dialog">
