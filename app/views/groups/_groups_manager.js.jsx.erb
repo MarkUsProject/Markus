@@ -3,7 +3,7 @@
 
   // The master component that manages both tables and
   // the add/remove actions
-  GroupsManager = React.createClass({
+  var GroupsManager = React.createClass({
     getInitialState: function() {
       return {
         students: [],
@@ -98,7 +98,7 @@
   });
 
   // Table of students, on the left.
-  GroupsStudentsTable = React.createClass({
+  var GroupsStudentsTable = React.createClass({
     checkboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var student_id = parseInt(event.currentTarget.getAttribute('id'));
@@ -197,7 +197,7 @@
   });
 
   // The table of groups on the right.
-  GroupsTable = React.createClass({
+  var GroupsTable = React.createClass({
     groupCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_id = parseInt(event.currentTarget.getAttribute('id'));
@@ -346,7 +346,7 @@
     }
   });
 
-  GroupsActionsColumn = React.createClass({
+  var GroupsActionsColumn = React.createClass({
     performAction: function(event) {
       var action = event.currentTarget.getAttribute('id');
       this.props.performAction(action);
