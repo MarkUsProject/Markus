@@ -7,7 +7,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = @assignment.annotation_categories
+    @annotation_categories = @assignment.annotation_categories(order: 'position')
   end
 
   def get_annotations
@@ -19,9 +19,16 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     if request.post?
       # Attempt to add Annotation Category
+      @annotation_categories = @assignment.annotation_categories
+      if @annotation_categories.length > 0
+        new_position = @annotation_categories.last.position + 1
+      else
+        new_position = 1
+      end
       @annotation_category = AnnotationCategory.new
       @annotation_category.update_attributes(params[:annotation_category])
       @annotation_category.assignment = @assignment
+      @annotation_category.position = new_position
       unless @annotation_category.save
         render :new_annotation_category_error
         return
@@ -86,7 +93,7 @@ class AnnotationCategoriesController < ApplicationController
     end
 
     @assignment = Assignment.find(params[:assignment_id])
-    @annotations = @assignment.annotation_categories
+    @annotation_categories = @assignment.annotation_categories
     position = 0
 
     params[:annotation_category].each do |id|

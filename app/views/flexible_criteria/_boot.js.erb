@@ -9,13 +9,13 @@
       cursor: 'move',
       update: function() {
         jQuery.ajax({
-          url:  '<%= update_positions_assignment_rubrics_path(@assignment) %>',
+          url:  '<%= update_positions_assignment_flexible_criteria_path(@assignment) %>',
           type: 'POST',
           data: jQuery('.sortable ul').sortable('serialize'),
           dataType: 'script'
         });
       },
-      cancel: '#new_rubric_criterion'
+      cancel: '#new_flexible_criterion'
     });
   });
 //]]>

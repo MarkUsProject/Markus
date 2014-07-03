@@ -100,11 +100,15 @@ class FlexibleCriteriaController < ApplicationController
       render nothing: true
       return
     end
+
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.flexible_criteria
-    params[:flexible_criteria_pane_list].each_with_index do |id, position|
-      unless id == ''
-        FlexibleCriterion.update(id, position: position + 1)
+    position = 0
+
+    params[:criterion].each do |id|
+      if id != ''
+        position += 1
+        FlexibleCriterion.update(id, position: position)
       end
     end
   end

@@ -309,6 +309,16 @@ legend {
       &:last-child {
         @include border-radius-bottom(5px);
       }
+
+      &#new_rubric_criterion,
+      &#new_flexible_criterion,
+      &#add_annotation_category {
+        background-image: none;
+
+        &:hover {
+          background-color: #fff;
+        }
+      }
     }
   }
 }

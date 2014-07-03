@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(:version => 20140513140924) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "assignment_id",            :null => false
+    t.integer  "position"
   end
 
   add_index "annotation_categories", ["assignment_id"], :name => "index_annotation_categories_on_assignment_id"
