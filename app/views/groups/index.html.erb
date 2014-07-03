@@ -62,42 +62,10 @@
                             + '&authenticity_token=' + AUTH_TOKEN
                         })
     }
-
-<<<<<<< HEAD
     jQuery(document).ready(function() {
-      // set up event handlers to show the loading spinner while
-      // an ajax call us working
-      $("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
-        thinking();
-      });
-
-      $("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
-        done_thinking();
-      });
-=======
-    document.observe("dom:loaded", function() {
-      modalCreate = new Control.Modal($('create_group_dialog'),
-      {
-        overlayOpacity: 0.75,
-        className: 'modalCreate',
-        fade:false
-      });
-
-      modalNotesGroup = new Control.Modal($('notes_dialog'),
-      {
-        overlayOpacity: 0.75,
-        className: 'modalNotesGroup',
-        fade:false
-      });
-
-      modalAssignmentGroupReUse = new Control.Modal($('assignment_group_use_dialog'),
-      {
-        overlayOpacity: 0.75,
-        className: 'modalAssignmentGroupReUse',
-        fade:false
-      });
-
->>>>>>> Replace groups manager in React
+      modalCreate = new ModalMarkus('#create_group_dialog');
+      modalNotesGroup = new ModalMarkus('#notes_dialog');
+      modalAssignmentGroupReUse = new ModalMarkus('#assignment_group_use_dialog');
     });
   //]]>
   </script>
@@ -210,6 +178,7 @@
       </div>
     </div>
 
+<<<<<<< HEAD
     <div class='col-center'>
       <div id='icons'>
         <%= image_submit_tag 'add_arrow.png',
@@ -301,9 +270,7 @@
   </div>
 <% end %>
 
-=======
-<div id='groupsManager'><//div>
->>>>>>> Replace groups manager in React
+<div id='groupsManager'></div>
 
 <!-- Modal Windows -->
 
