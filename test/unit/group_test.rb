@@ -12,7 +12,7 @@ class GroupTest < ActiveSupport::TestCase
   should have_many(:submissions).through(:groupings)
   should have_many(:assignments).through(:groupings)
   should validate_presence_of :group_name
-  should_not allow_value('group_long_name_12319302910102912010210219002').for(:group_name).with_message('is too long')
+  should_not allow_value('group_long_name_12319302910102912010210219002').for(:group_name)
   should allow_value('This group n. is short enough!').for(:group_name) # exactly 30 char limit
 
 
