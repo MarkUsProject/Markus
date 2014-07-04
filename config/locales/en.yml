@@ -52,7 +52,7 @@ en:
     api_key:            "Your API Key"
     api_key_unavailable:        "Unavailable"
     reset_api_key:        "Reset my API key"
-    api_key_help: "Examine she brother prudent add day ham. Far stairs now coming bed oppose hunted become his. You zealously departure had procuring suspicion. Books whose front would purse if be do decay. Quitting you way formerly disposed perceive ladyship are. Common turned boy direct and yet."
+    api_key_help: "The API key is used for the REST interface for authentication. See <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTfulApiDocumentation\">MarkUs Wiki</a> for information on how to use the REST API."
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Dashboard"
@@ -176,16 +176,16 @@ en:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         help:
             assignment_form:
-                properties: "Ever man are put down his very. And marry may table him avoid. Hard sell it were into it upon. He forbade affixed parties of assured to me windows. Happiness him nor she disposing provision. Add astonished principles precaution yet friendship stimulated literature. State thing might stand one his plate. Offending or extremity therefore so difficult he on provision. Tended depart turned not are. "
-                marking_scheme: "Help placeholder for Assignment: Marking Scheme."
-                required_files: "Help placeholder for Assignment: Required Files."
-                assignment_type: "Help placeholder for Assignment: Assignment Type."
-                submission_rules: "Help placeholder for Assignment: Submission Rules."
-                remark_request_rules: "Help placeholder for Assignment: Remark Request Rules."
-            submissions_admins : "Dashwood contempt on mr unlocked resolved provided of of. Stanhill wondered it it welcomed oh. Hundred no prudent he however smiling at an offence. If earnestly extremity he he propriety something admitting convinced ye. Pleasant in to although as if differed horrible. Mirth his quick its set front enjoy hoped had there. Who connection imprudence middletons too but increasing celebrated principles joy. Herself too improve gay winding ask expense are compact. New all paid few hard pure she."
-            submissions_graders: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction. Unpleasing up announcing unpleasant themselves oh do on. Way advantage age led listening belonging supposing. "
-            groups: "In no impression assistance contrasted. Manners she wishing justice hastily new anxious. At discovery discourse departure objection we. Few extensive add delighted tolerably sincerity her. Law ought him least enjoy decay one quick court. Expect warmly its tended garden him esteem had remove off. Effects dearest staying now sixteen nor improve."
-            graders: "Mr oh winding it enjoyed by between. The servants securing material goodness her. Saw principles themselves ten are possession. So endeavor to continue cheerful doubtful we to. Turned advice the set vanity why mutual. Reasonably if conviction on be unsatiable discretion apartments delightful. Are melancholy appearance stimulated occasional entreaties end. Shy ham had esteem happen active county. Winding morning am shyness evident to. Garrets because elderly new manners however one village she."
+                properties: "Short Identifier: This is the title that will be used in menus, and default repository folder name. Because it is used for a directory name, it shouldn't contain spaces.<br />Assignment Name: Longer descriptive name, used as assignment title.<br />Message: Additional text displayed to students: additional information or instructions can go here.<br />Separate Section Due Dates: if checked, each sections can have a different due date.<br />Due Date: visible to students when they view assignment. Used to determine which version of a student's submission to grade. Can be changed later (e.g., for extensions). Changing the due date after assignments have been collected will not affect collected assignments.<br />Repository Folder: usually the Short Identifier.<br />Allow Web Submits: if unchecked, students must use a version control system to submit files and will not see the web submission view.<br />"
+                marking_scheme: "Two marking schemes are available. In both you, you create a list of criteria (see Marking Scheme tab once assignment has been created). In the Flexible scheme, you write a description of each criteria and the grader enters a numeric value for each one, up to the total you specify. In the Rubric scheme, you each criteria is defined by four levels of achievement. Like the traditional rubric model, you provide a description for each level. In this scheme, criteria can be given different weights. Note that in each marking scheme, it is possible to add separate bonuses and deductions."
+                required_files: "Students will see a warning message if they have not submitted files with the exact names of the required files. However, they will be permitted to submit files that do not match the required file names."
+                assignment_type: "Persist Groups/Properties from ___: use the same groups and repositories from previous assignment. If selected, assignment folders will be created for every group immediately, rather than when a student clicks on the assignment for the first time.<br />If students can form their own groups, group names are always autogenerated. You can also create groups manually or by uploading a file."
+                submission_rules: "Several different late submission policies are available. If Accept no late submissions is selected then students will be warned that their submission will not be graded if they attempt to submit after the deadline.  You may choose to give students some number of Grace credits in the Users view, and you can choose the grace period times here.  The Penalty Decay formula allows you to deduct X marks for every Y time period.  The Penalty Formula allows you to specify both the value of the penalty and the time period. If students are working in a group, grace credits will be deducted from every group member."
+                remark_request_rules: "If remark requests are allowed, students will see a form they can fill in to request a remark after the marks have been released. Submitted remark requests are visible in the Submissions view. When responding to a remark request, you will see the original marks and your modifications. You will be able to add new annotations and comments. When you release the remark results, the students will see the updated marks and comments."
+            submissions_admins: "Check the status of the student submissions. Before grading can begin, the student assignments must be collected. This associates each group with the version of their files that should be graded. This means that when the grader adds annotations and marks, they belong to this particular submission. There are three different ways of collecting submissions: Collect All Submissions, which automatically collects all submissions, based on the due date and late penalties; clicking on an individual group name triggers automatic collection for that group; clicking on the Repository name takes you the Repository view, where you can manually choose a revision to collect.<br>Rows in green have been collected and are ready to begin marking. Clicking on the group name takes you to the Grader view. When a grader sets the Marking State to Complete and you are ready to allow students to view the results, select the students and press \"Release Marks\".<br>CSV Report and Detailed CSV Report are two different ways of downloading the marks in csv format. Subversion Repo List downloads a text file that maps group name to repository path. Subversion Export File downloads a text file where each line is an svn export command for the collected version of each student submission. Download all submissions downloads a zip file containing repositories for all of the students."
+            submissions_graders: "Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them. Warning: collection will delete any previous annoations or marks."
+            groups: "Manage student groups. You can create new groups and manually add and remove students to groups."
+            graders: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."
         allow_web_submits: "Allow Web Submits?"
         is_hidden: "Hide assignment from students?"
         display_grader_names_to_students: "Display grader names to students?"
@@ -608,11 +608,9 @@ en:
         success: "Successfully updated student %{user_name}."
         error: "Failed to update student."
       help:
-        manage_students: "Ever man are put down his very. And marry may table him avoid. Hard sell it were into it upon. He forbade affixed parties of assured to me windows. Happiness him nor she disposing provision. Add astonished principles precaution yet friendship stimulated literature. State thing might stand one his plate. Offending or extremity therefore so difficult he on provision. Tended depart turned not are."
-        edit_students:
-          grace_credit_left: "Placeholder for Grace Credit Left."
-          grace_period_deduction: "Ever man are put down his very. And marry may table him avoid. Hard sell it were into it upon. He forbade affixed parties of assured to me windows. Happiness him nor she disposing provision. Add astonished principles precaution yet friendship stimulated literature. State thing might stand one his plate. Offending or extremity therefore so difficult he on provision. Tended depart turned not are."
-        manage_graders: "Ever man are put down his very. And marry may table him avoid. Hard sell it were into it upon. He forbade affixed parties of assured to me windows. Happiness him nor she disposing provision. Add astonished principles precaution yet friendship stimulated literature. State thing might stand one his plate. Offending or extremity therefore so difficult he on provision. Tended depart turned not are."
+        help:
+        manage_students: "Mark students as active or inactive, give them grace credits."
+        manage_graders: "Create graders."
 
 
     hide_students:      "Mark as inactive"
@@ -771,7 +769,7 @@ en:
         success: "Successfully updated admin %{user_name}."
         error:   "Failed to update admin."
       help:
-        manage_admins: "Sentiments two occasional affronting solicitude travelling and one contrasted. Fortune day out married parties. Happiness remainder joy but earnestly for off. Took sold add play may none him few. If as increasing contrasted entreaties be. Now summer who day looked our behind moment coming. Pain son rose more park way that. An stairs as be lovers uneasy."
+        manage_admins: "Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks."
 
     rubrics:
       move_criterion:
@@ -1093,7 +1091,7 @@ en:
             title: "Edit Note"
         update:
             success: "Note was successfully updated."
-        help: "Be at miss or each good play home they. It leave taste mr in it fancy. She son lose does fond bred gave lady get. Sir her company conduct expense bed any. Sister depend change off piqued one. Contented continued any happiness instantly objection yet her allowance. Use correct day new brought tedious. By come this been in. Kept easy or sons my it done. "
+        help: "Notes can be created for students, groups, or assignments. They are visible to admins and graders, but not students."
 
     add_criterion:                "Add Criterion"
     criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
@@ -1145,7 +1143,7 @@ en:
         error_permissions: "You do not have sufficient permissions to delete this section."
         not_empty: "You cannot delete this section because it has students in it."
       help:
-        manage_users: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction. Unpleasing up announcing unpleasant themselves oh do on. Way advantage age led listening belonging supposing."
+        manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
 
     date:
       formats:

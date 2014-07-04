@@ -7,7 +7,10 @@
            handlers: [:erb] %>
 
 <div id='title_bar'>
-  <h1><%= I18n.t('graders.manage_graders') %></h1>
+  <h1>
+    <%= I18n.t('graders.manage_graders') %>
+    <span class="title-help users_graders_help"></span>
+  </h1>
   <div class='heading_buttons'>
     <%= link_to I18n.t(:add_new),
                 new_ta_path() %>

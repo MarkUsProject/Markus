@@ -4,7 +4,7 @@
   <%= javascript_include_tag 'PeriodDeltaChain/PeriodDeltaChain' %>
   <%= javascript_include_tag 'moment-with-langs.min', 'localize_date' %>
 <% end %>
-<%= javascript_include_tag "help_system" %>
+<%= javascript_include_tag 'help_system' %>
 
 <%= render partial: 'boot',
            formats: [:js],
@@ -214,7 +214,7 @@
     <legend><%= t('assignment.type') %></legend>
     <div class='help assignment_assignment_type_help'> </div>
     <p class='help-message-box assignment_assignment_type_help'>
-      <%= t('assignment.help.assignment_form.assignment_type") %>
+      <%= t('assignment.help.assignment_form.assignment_type') %>
     </p>
     <p id='persist_groups_assignment_style'
        style='<%= 'display: none' unless @assignments.size > 0 && @assignment.id.nil? %>'>
