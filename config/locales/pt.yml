@@ -62,6 +62,10 @@ pt:
     home:               "Home"
     settings:           "Configurações"
 
+    # app/views/shared/_assignments_dropdown.html.erb
+    quick_links:  "Links rápidos"
+    spreadsheets: "Notas nas planilhas"
+
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "apenas letras, números, '.', '-' ou '_'"

@@ -646,11 +646,12 @@ nav {
     display: none;
     left: -1px;
     margin: 0;
+    min-width: 200px;
     padding: 0;
-    top: 2em;
+    top: 1.95em;
     position: absolute;
     text-align: left;
-    width: 250px;
+    z-index: 100000;
 
     li {
       display: block;

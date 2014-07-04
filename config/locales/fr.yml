@@ -62,6 +62,10 @@ fr:
     home:               "Accueil"
     settings:           "Paramètres"
 
+    # app/views/shared/_assignments_dropdown.html.erb
+    quick_links:  "Liens rapides"
+    spreadsheets: "Feuilles de notes"
+
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - » ou « _ » uniquement."
