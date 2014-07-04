@@ -897,7 +897,7 @@ class SubmissionsController < ApplicationController
 
 
     unless groupings.empty?
-      assignment.set_results_statistics
+      assignment.update_results_stats
     end
 
     if changed && changed > 0
