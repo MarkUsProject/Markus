@@ -142,6 +142,12 @@ a {
   border: 1px solid $green;
 }
 
+.information {
+  @extend .alert;
+  background: $light-grey;
+  border: 1px solid $grey;
+}
+
 
 /** Text field inputs */
 
@@ -154,7 +160,7 @@ textarea {
   color: $dark-grey;
   font: 400 1em $fonts;
   outline: none;
-  padding: 0.5em 0.75em;
+  padding: 0.25em 0.75em;
   width: 100%;
 
   &:hover {
@@ -260,20 +266,15 @@ fieldset {
   @include border-radius($radius);
   @include box-shadow(0 3px 0 $grey);
   background: $white;
-  border: 1px solid $grey;
-  padding: 2.5em 1.5em 1.5em;
+  padding: 1.5em;
   position: relative;
 
   legend {
     border: none;
-    width: 100%;
 
     span {
       @extend h3;
-      display: block;
-      padding-top: 0.5em;
-      position: relative;
-      top: 1.5em;
+      padding: 0 0.25em;
     }
   }
 
@@ -281,11 +282,20 @@ fieldset {
   fieldset {
     @include border-radius(0);
     @include box-shadow(none);
+    border: none;
     border-top: 1px solid $grey;
     padding: 3.5em 0 0;
 
-    legend span {
-      border-top: 1px solid $grey;
+    legend {
+      width: 100%;
+
+      span {
+        border-top: 1px solid $grey;
+        display: block;
+        padding-top: 0.5em;
+        position: relative;
+        top: 1.5em;
+      }
     }
   }
 }

@@ -179,9 +179,9 @@ en:
             flexible: "Flexible"
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
-        allow_web_submits: "Allow Web Submits?"
-        is_hidden: "Hide assignment from students?"
-        display_grader_names_to_students: "Display grader names to students?"
+        allow_web_submits: "Allow Web Submits"
+        is_hidden: "Hide assignment from students"
+        display_grader_names_to_students: "Display grader names to students"
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
@@ -1106,7 +1106,7 @@ en:
       Select a criterion on the left to edit it.  Criteria names, descriptions and
       maximum values can be modified."
     past_due_date_warning: "Due date for this assignment is in the past."
-    past_due_date_notice: "Due date for this assignment is in the past for : "
+    past_due_date_notice: "Due date for this assignment is in the past for: "
 
     section:
       name: "Name"

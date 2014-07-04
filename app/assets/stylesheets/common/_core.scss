@@ -3,6 +3,16 @@
 @import 'navigation';
 
 
+.ui-datepicker-current {
+  display: none !important;
+}
+
+input,
+textarea {
+  display: inline-block;
+  width: auto;
+}
+
 .required_field {
   color: $red;
 }

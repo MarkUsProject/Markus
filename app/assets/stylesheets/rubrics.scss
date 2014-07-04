@@ -1,152 +1,155 @@
-@import 'mixins';
+@import 'common/core';
 
-#rubric_status_pane {
-  float: right;
-  text-align: right;
-}
 
-#rubric_criteria_pane,
-#flexible_criteria_pane,
-#rubric_levels_pane {
-  @include border-radius(10px);
-  border-bottom: 0;
-  border: 2px solid #dadada;
-  float: left;
-  margin: 10px 0 20px 30px;
-  width: 45%;
-}
+// @import 'mixins';
 
-#rubric_criteria_pane_menu,
-#flexible_criteria_pane_menu,
-#rubric_levels_pane_menu,
-#flexible_edition_pane_menu {
-  background: #ccc;
+// #rubric_status_pane {
+//   float: right;
+//   text-align: right;
+// }
 
-  h2 {
-    border-bottom: 2px solid #dadada;
-    color: #000;
-    margin: 0;
-    padding: 10px;
-  }
-}
+// #rubric_criteria_pane,
+// #flexible_criteria_pane,
+// #rubric_levels_pane {
+//   @include border-radius(10px);
+//   border-bottom: 0;
+//   border: 2px solid #dadada;
+//   float: left;
+//   margin: 10px 0 20px 30px;
+//   width: 45%;
+// }
 
-#rubric_criteria_pane_menu{
-  h2#rubricCriteria {
-    float: left;
-    width: 70%;
-  }
+// #rubric_criteria_pane_menu,
+// #flexible_criteria_pane_menu,
+// #rubric_levels_pane_menu,
+// #flexible_edition_pane_menu {
+//   background: #ccc;
 
-  span#addCriterion {
-    display: block;
-    float: right;
-    padding: 10px;
-    text-align: right;
+//   h2 {
+//     border-bottom: 2px solid #dadada;
+//     color: #000;
+//     margin: 0;
+//     padding: 10px;
+//   }
+// }
 
-    a {
-      @include border-radius(5px);
-      background: #fff;
-      border: 2px solid #464646;
-      font-weight: bold;
-      padding: 3px 10px;
-    }
-  }
-}
+// #rubric_criteria_pane_menu{
+//   h2#rubricCriteria {
+//     float: left;
+//     width: 70%;
+//   }
 
-ul#rubric_criteria_pane_list,
-ul#flexible_criteria_pane_list,
-ul#rubric_levels_pane_list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
+//   span#addCriterion {
+//     display: block;
+//     float: right;
+//     padding: 10px;
+//     text-align: right;
 
-  #rubric_levels_pane_list {
-    li {
-      &:nth-child(even) {
-        background: #fffcc4;
-      }
+//     a {
+//       @include border-radius(5px);
+//       background: #fff;
+//       border: 2px solid #464646;
+//       font-weight: bold;
+//       padding: 3px 10px;
+//     }
+//   }
+// }
 
-      &:nth-child(odd) {
-        background: #fffbb6;
-      }
-    }
-  }
+// ul#rubric_criteria_pane_list,
+// ul#flexible_criteria_pane_list,
+// ul#rubric_levels_pane_list {
+//   list-style: none;
+//   margin: 0;
+//   padding: 0;
+//   width: 100%;
+// }
 
-/* ================ CRITERIONS ============== */
+//   #rubric_levels_pane_list {
+//     li {
+//       &:nth-child(even) {
+//         background: #fffcc4;
+//       }
 
-.criterion_holder {
-  border-bottom: 1px solid #dadada;
-  padding: 10px;
-}
+//       &:nth-child(odd) {
+//         background: #fffbb6;
+//       }
+//     }
+//   }
 
-.criterion_title_div {
-  cursor: pointer;
-}
+// /* ================ CRITERIONS ============== */
 
-.criterion_holder_selected {
-  background: #fffaa8;
-}
+// .criterion_holder {
+//   border-bottom: 1px solid #dadada;
+//   padding: 10px;
+// }
 
-/* ============= CRITERIONS EDITING ========== */
+// .criterion_title_div {
+//   cursor: pointer;
+// }
 
-.criterion_input_name,
-.level_input_name,
-.criterion_input_weight {
-  background: #fff;
-}
+// .criterion_holder_selected {
+//   background: #fffaa8;
+// }
 
-.editing {
-  background: #f9ffb1;
-  border: 1px dashed #d6de78;
-}
+// /* ============= CRITERIONS EDITING ========== */
 
-.criterion_delete {
-  float: right;
-}
+// .criterion_input_name,
+// .level_input_name,
+// .criterion_input_weight {
+//   background: #fff;
+// }
 
-.criterion_input_name {
-  float: left;
-  width: 300px;
-}
+// .editing {
+//   background: #f9ffb1;
+//   border: 1px dashed #d6de78;
+// }
 
-.criterion_input_weight {
-  display: inline;
-  text-align: center;
-  width: 50px;
-}
+// .criterion_delete {
+//   float: right;
+// }
 
-.criterion_textarea_description,
-.level_textarea_description {
-  background: #fff;
-  padding: 10px;
-  width: 400px;
-}
+// .criterion_input_name {
+//   float: left;
+//   width: 300px;
+// }
 
-/* ================= LEVELS ================= */
+// .criterion_input_weight {
+//   display: inline;
+//   text-align: center;
+//   width: 50px;
+// }
 
-.rubric_level {
-  border-bottom: 1px solid #dadada;
-  padding: 10px;
-  padding: 5px;
-}
+// .criterion_textarea_description,
+// .level_textarea_description {
+//   background: #fff;
+//   padding: 10px;
+//   width: 400px;
+// }
 
-#rubric_criteria_pane_instructions {
-  background: #ddf;
-  border: 1px solid #77f;
-  font-weight: bold;
-  padding: 10px;
-}
+// /* ================= LEVELS ================= */
 
-#rubric_status {
-  font-weight: bold;
-  padding: 0 10px;
-}
+// .rubric_level {
+//   border-bottom: 1px solid #dadada;
+//   padding: 10px;
+//   padding: 5px;
+// }
 
-#selected_criterion_name {
-  font-weight: bold;
-}
+// #rubric_criteria_pane_instructions {
+//   background: #ddf;
+//   border: 1px solid #77f;
+//   font-weight: bold;
+//   padding: 10px;
+// }
 
-.error {
-  width: 350px;
-}
+// #rubric_status {
+//   font-weight: bold;
+//   padding: 0 10px;
+// }
+
+// #selected_criterion_name {
+//   font-weight: bold;
+// }
+
+// .error {
+//   width: 350px;
+// }
