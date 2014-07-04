@@ -9,6 +9,7 @@ pt:
     none:               "Nenhum"
     search:             "Pesquisar:"
     issues:             "GitHub lista de problemas"
+    actions:            "Ações"
 
     # app/views/main/login.html.erb
     welcome_to:         "Bem-vindo ao MarkUs!"
@@ -1017,7 +1018,6 @@ pt:
         note_on: "%{user_name} em <b>%{display_for}</b>"
         add_new: "Inserir nova observação"
         existing: "Notas existentes"
-        actions: "Ações"
         comment: "Seu comentário"
         save: "Salvar observação"
         success: "Nota salva com sucesso"

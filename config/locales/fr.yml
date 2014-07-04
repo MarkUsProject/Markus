@@ -9,6 +9,7 @@ fr:
     none:               "Aucun"
     search:             "Recherche:"
     issues:             "GitHub liste des problèmes"
+    actions:            "Actes"
 
     # app/views/main/login.html.erb
     welcome_to:         "Bienvenue sur MarkUs !"
@@ -1017,7 +1018,6 @@ fr:
         note_on: "%{user_name} sur <b>%{display_for}</b>"
         add_new: "Nouvelle remarque"
         existing: "Remarques existantes"
-        actions: "Actes"
         comment: "Votre commentaire"
         save: "Enregistrer la remarque"
         success: "Note sauvegardée"

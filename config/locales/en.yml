@@ -9,6 +9,7 @@ en:
     none:               "None"
     search:             "Search:"
     issues:             "GitHub issues list"
+    actions:            "Actions"
 
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
@@ -1038,7 +1039,6 @@ en:
         note_on: "%{user_name} on <strong>%{display_for}</strong>"
         add_new: "Add a new note"
         existing: "Existing Notes"
-        actions: "Actions"
         comment: "Your comment"
         save: "Save Note"
         success: "Note saved succesfully"
