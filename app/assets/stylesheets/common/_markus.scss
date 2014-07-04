@@ -553,6 +553,71 @@ ul.tags {
 }
 
 
+/** Menus */
+
+nav {
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      @include border-radius-top($radius);
+      display: inline-block;
+      text-align: center;
+      vertical-align: bottom;
+
+      a {
+        @include border-radius-top($radius);
+        display: block;
+        height: 3em;
+        line-height: 3em;
+        min-width: 11em;
+        padding: 0 1em;
+      }
+    }
+  }
+
+  ul.main,
+  ul.sub_sub {
+    border-bottom: 2px solid $blue;
+
+    li:hover,
+    .active {
+      background-color: $blue;
+      color: $white;
+
+      a {
+        color: $white;
+      }
+    }
+  }
+
+  ul.sub {
+    background-color: $blue;
+    border-bottom: 2px solid $white;
+    min-height: 3em;
+
+    li:hover,
+    .active {
+      background-color: $white;
+      color: $dark-blue;
+
+      a {
+        color: $dark-blue;
+      }
+    }
+
+    a {
+      color: $white;
+    }
+  }
+
+  ul.sub_sub {
+    background-color: $white;
+  }
+}
+
+
 /** Dropdown menu */
 
 .dropdown {
@@ -626,66 +691,6 @@ ul.tags {
       font-size: 0.9em;
       font-weight: 600;
       text-transform: uppercase;
-    }
-  }
-}
-
-
-/** Menus */
-
-nav {
-  ul {
-    margin: 0;
-    padding: 0;
-
-    li {
-      @include border-radius-top($radius);
-      display: inline-block;
-      text-align: center;
-      vertical-align: bottom;
-
-      a {
-        @include border-radius-top($radius);
-        display: block;
-        height: 3em;
-        line-height: 3em;
-        min-width: 10em;
-        padding: 0 1em;
-      }
-    }
-  }
-
-  ul.main,
-  ul.sub_sub {
-    border-bottom: 2px solid $blue;
-
-    li:hover,
-    .active {
-      background-color: $blue;
-      color: $white;
-
-      a {
-        color: $white;
-      }
-    }
-  }
-
-  ul.sub {
-    background-color: $blue;
-    border-bottom: 2px solid $white;
-
-    li:hover,
-    .active {
-      background-color: $white;
-      color: $dark-blue;
-
-      a {
-        color: $dark-blue;
-      }
-    }
-
-    a {
-      color: $white;
     }
   }
 }

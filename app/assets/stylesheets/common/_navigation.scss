@@ -1,5 +1,5 @@
 /**
- * Header, main menu, sub menu, sub-sub menu, and footer.
+ * Header, main menu, sub menu, sub_sub menu, and footer.
  */
 
 
@@ -53,8 +53,8 @@ nav {
   }
 
   .sub,
-  .sub-sub {
-    padding: 0.25em $dimen-horizontal 0 $dimen-horizontal;
+  .sub_sub {
+    padding: 0 $dimen-horizontal;
   }
 
   footer {
