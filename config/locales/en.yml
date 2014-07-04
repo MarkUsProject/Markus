@@ -255,7 +255,7 @@ en:
       overall_comments: "Overall Comments"
       current_annotations: "Current Annotations"
       across_all_submission_files: "Current annotations across all submission files. Click on the line number to jump to the location in the file."
-      annot_summary: "Annot. Summary"
+      annot_summary: "Annotations"
       source_code: "Source Code"
       remark_request: "Remark Request"
       remark_submitted_on: "Remark Request Submitted On"
@@ -319,7 +319,8 @@ en:
       test_results: "Test Results:"
       no_file_in_repository: "[No files in repository]"
       cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
-      image_downloading: "Pdf page downloading. Please wait."
+      image_downloading: "PDF page downloading. Please wait."
+      highlighting: "Standby - Highlighting..."
       test_code: "Test Code"
       criterion_incomplete_error: "Unable to change marking status to complete, marks missing. Check the marking rubric and make sure that each criterion has been given a mark."
 
