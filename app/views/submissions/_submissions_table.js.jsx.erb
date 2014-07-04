@@ -133,6 +133,7 @@
       // possibly move this to getdefaultprops.
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
+        s['class_name'] = submission.class_name;
         s['id'] = submission.id;
         s['checkbox'] = <input type='checkbox'
           onChange={this.checkboxChanged}

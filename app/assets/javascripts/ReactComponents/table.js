@@ -286,7 +286,8 @@ TableRow = React.createClass({displayName: 'TableRow',
       );
     }
     return (
-      React.DOM.tr( {id:this.props.row_object.id}, 
+      React.DOM.tr( {id:this.props.row_object.id,
+                     className: this.props.row_object.class_name}, 
         cells
       )
     );

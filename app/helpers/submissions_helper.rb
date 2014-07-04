@@ -41,6 +41,7 @@ module SubmissionsHelper
     submissions_table_info = groupings.map do |grouping|
       g = grouping.attributes
 
+      g[:class_name] = get_any_tr_attributes(grouping)
       g[:group_name] = get_grouping_group_name(assignment, grouping)
       g[:repository] = get_grouping_repository(assignment, grouping)
       g[:commit_date] = get_grouping_commit_date(assignment, grouping)
@@ -53,6 +54,20 @@ module SubmissionsHelper
     end
 
     return submissions_table_info
+  end
+
+  # If the grouping is collected or has an error, 
+  # style the table row green or red respectively.
+  # Classname will be applied to the table row
+  # and actually styled in CSS.
+  def get_any_tr_attributes(grouping)
+    if grouping.is_collected?
+      return 'submission_collected'
+    elsif grouping.error_collecting
+      return 'submission_error'
+    else
+      return nil
+    end
   end
 
   def get_grouping_group_name(assignment, grouping)
