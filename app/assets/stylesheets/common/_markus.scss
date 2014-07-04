@@ -626,10 +626,10 @@ nav {
   border: 1px solid $dark-blue;
   cursor: pointer;
   display: inline-block;
+  min-width: 200px;
   padding: 0.25em;
   position: relative;
   text-align: center;
-  width: 250px;
 
   &:hover {
     @include border-radius-bottom(0);
@@ -653,7 +653,9 @@ nav {
     width: 250px;
 
     li {
+      display: block;
       list-style: none;
+      text-align: left;
 
       &:last-child {
         @include border-radius-bottom($radius);

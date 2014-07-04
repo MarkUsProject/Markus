@@ -72,8 +72,9 @@ en:
     cannot_login_as_another_admin: "You cannot log in as another admin."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:      "Current assignments:"
-    due:                       "due :"
+    current_assignments:       "Current assignments"
+    assignment_item:           "Assignment"
+    due:                       "Due date"
     no_assignments:            "There are currently no assignments."
     class_average:             "Class Average: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissions collected"
@@ -480,7 +481,9 @@ en:
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "There are currently no marks spreadsheets."
-    current_grade_entry_forms_title: "Current marks spreadsheets:"
+    current_grade_entry_forms_title: "Current marks spreadsheets"
+    spreadsheet_item: "Marks spreadsheet"
+    spreadsheet_date: "Date"
     mark_message: "Your mark:"
 
     student_interface_assignments: "Your Assignments"

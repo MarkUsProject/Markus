@@ -75,8 +75,9 @@ fr:
     assignment_link:           "%{short_id} : %{description}"
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:      "Projets existants"
-    due:                       "à rendre pour le :"
+    current_assignments:       "Projets existants"
+    assignment_item:           "Projet"
+    due:                       "Date de retour"
     no_assignments:            "Aucun devoir pour le moment."
     class_average:             "Moyenne : %{results_average}"
     submissions_collected:     "%{count}/%{size} Envois récupérés"
@@ -482,7 +483,9 @@ fr:
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "Il n'y a pas de feuille de notes pour le moment."
-    current_grade_entry_forms_title: "Feuilles de notes existantes : "
+    current_grade_entry_forms_title: "Feuilles de notes existantes"
+    spreadsheet_item: "Feuille de notes"
+    spreadsheet_date: "Date"
     mark_message: "Votre note : "
 
     student_interface_assignments: "Vos projets"

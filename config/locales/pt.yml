@@ -72,8 +72,9 @@ pt:
     cannot_login_as_another_admin: "Você não pode conectar como outro administrador."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:      "Projetos atuais:"
-    due:                       "Entrega :"
+    current_assignments:       "Projetos atuais"
+    assignment_item:           "Projetos"
+    due:                       "Prazo de entrega"
     no_assignments:            "Não existem projetos atualmente."
     class_average:             "Média da classe: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissões coletadas"
@@ -466,7 +467,9 @@ pt:
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "Atualmente não há notas nas planilhas."
-    current_grade_entry_forms_title: "Planilha atual de notas:"
+    current_grade_entry_forms_title: "Planilha atual de notas"
+    spreadsheet_item: "Notas nas planilhas"
+    spreadsheet_date: "Data"
     mark_message: "Sua nota:"
 
     student_interface_assignments: "Seus projetos"
