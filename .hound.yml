@@ -5,4 +5,8 @@ DotPosition:
 # Prefer single-quoted strings when you don't need string interpolation or
 # special symbols.
 StringLiterals:
-    EnforcedStyle: single_quotes
+  EnforcedStyle: single_quotes
+
+# Disable the cop that enforces the use of &&/|| over and/or.
+AndOr:
+  Enabled: false
