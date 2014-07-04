@@ -1017,6 +1017,7 @@ pt:
         note_on: "%{user_name} em <b>%{display_for}</b>"
         add_new: "Inserir nova observação"
         existing: "Notas existentes"
+        actions: "Ações"
         comment: "Seu comentário"
         save: "Salvar observação"
         success: "Nota salva com sucesso"

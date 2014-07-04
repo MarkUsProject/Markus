@@ -119,7 +119,8 @@ a {
 .alert {
   @include border-radius($radius);
   display: block;
-  padding: 0.25em;
+  margin-bottom: 1em;
+  padding: 0.25em 0.5em;
   width: 100%;
 }
 
@@ -190,6 +191,7 @@ select {
   @include border-radius($radius);
   background: none;
   border: 1px solid $light-blue;
+  font-family: $fonts;
   margin: 5px;
   padding-left: 5px;
 }
@@ -208,10 +210,12 @@ button,
   @include transition(all, $time-quick);
   border: 1px solid $blue;
   color: $dark-grey;
+  display: inline-block;
   font: 400 1em $fonts;
   min-width: 175px;
   outline: none;
   padding: 0.5em 1.5em;
+  text-align: center;
   text-shadow: 0 1px 0 $white;
 
   &:hover {
@@ -256,7 +260,7 @@ fieldset {
   @include border-radius($radius);
   @include box-shadow(0 3px 0 $grey);
   background: $white;
-  border: none;
+  border: 1px solid $grey;
   padding: 2.5em 1.5em 1.5em;
   position: relative;
 

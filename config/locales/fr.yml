@@ -1017,6 +1017,7 @@ fr:
         note_on: "%{user_name} sur <b>%{display_for}</b>"
         add_new: "Nouvelle remarque"
         existing: "Remarques existantes"
+        actions: "Actes"
         comment: "Votre commentaire"
         save: "Enregistrer la remarque"
         success: "Note sauvegardée"

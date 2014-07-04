@@ -1035,9 +1035,10 @@ en:
       weight: "Weight"
 
     notes:
-        note_on: "%{user_name} on <b>%{display_for}</b>"
+        note_on: "%{user_name} on <strong>%{display_for}</strong>"
         add_new: "Add a new note"
         existing: "Existing Notes"
+        actions: "Actions"
         comment: "Your comment"
         save: "Save Note"
         success: "Note saved succesfully"
