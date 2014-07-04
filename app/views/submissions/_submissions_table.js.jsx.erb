@@ -143,7 +143,7 @@
         s['marking_state'] = <span dangerouslySetInnerHTML={{__html: submission.marking_state}} />;
         s['grace_credits_used'] = submission.grace_credits_used;
         s['final_grade'] = submission.final_grade;
-        s['can_begin_grading'] = submission.can_begin_grading;
+        s['can_begin_grading'] = <span dangerouslySetInnerHTML={{__html: submission.can_begin_grading}} />;
         return s;
       }.bind(this));
       

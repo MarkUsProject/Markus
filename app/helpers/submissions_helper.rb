@@ -47,7 +47,7 @@ module SubmissionsHelper
       g[:marking_state] = get_grouping_marking_state(assignment, grouping)
       g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
       g[:final_grade] = get_grouping_final_grades(grouping)
-      g[:can_begin_grading] = 'asdfghjkll'
+      g[:can_begin_grading] = get_grouping_can_begin_grading(assignment, grouping)
       
       g
     end
@@ -157,7 +157,11 @@ module SubmissionsHelper
   end
 
   def get_grouping_can_begin_grading(assignment, grouping)
-    return
+    if assignment.submission_rule.can_collect_grouping_now?(grouping)
+      return ActionController::Base.helpers.image_tag('icons/tick.png')
+    else
+      return ActionController::Base.helpers.image_tag('icons/cross.png')
+    end
   end
 
   # Collects submissions for all the groupings of the given section and assignment
