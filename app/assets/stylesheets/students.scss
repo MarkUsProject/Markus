@@ -1,0 +1,20 @@
+@import 'common/core';
+
+
+input {
+  display: inline-block;
+  width: auto;
+}
+
+// Grace Period Deductions header
+h3 {
+  margin-top: $dimen-vertical;
+  margin-bottom: 0.25em;
+}
+
+table {
+  td {
+    padding-bottom: 1em;
+    padding-right: 1em;
+  }
+}

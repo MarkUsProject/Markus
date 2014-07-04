@@ -13,7 +13,7 @@
         controller.controller_name == 'grade_entry_forms' or
         controller.controller_name == 'automated_tests'
   %>
-    <ul id="sub_menu">
+    <ul class='sub'>
       <li id="dropdown">
         <% # Display an appropriate message in the dropdown menu %>
         <% if @assignment.nil? and @grade_entry_form.nil?
@@ -60,21 +60,21 @@
                 controller.controller_name == 'marks_graders')
         %>
           <li <% if controller.action_name == 'edit' %>
-                id="sub_menu_active"
+                class='active'
               <% end %>
           >
             <%= link_to I18n.t(:properties),
                         edit_grade_entry_form_path(@grade_entry_form) %>
           </li>
           <li <% if controller.action_name == 'grades' %>
-                id="sub_menu_active"
+                class='active'
               <% end %>
           >
             <%= link_to I18n.t(:grades),
                         grades_grade_entry_form_path(@grade_entry_form) %>
           </li>
           <li <% if controller.controller_name == 'marks_graders' %>
-                id="sub_menu_active"
+                class='active'
               <% end %>
           >
             <%= link_to I18n.t("graders.graders"),
@@ -94,7 +94,7 @@
                      'flexible_criteria',
                      'annotation_categories',
                      'automated_tests'].include?(controller.controller_name) %>
-                id="sub_menu_active"
+                class='active'
               <% end %>
           >
             <%= link_to I18n.t("settings"),
@@ -103,14 +103,14 @@
                         id: @assignment.id %>
           </li>
           <li <% if controller.controller_name == 'groups' %>
-                id="sub_menu_active"
+                class='active'
               <% end %>
           >
             <%= link_to I18n.t("groups.groups"),
                         assignment_groups_path(@assignment) %>
           </li>
           <li <% if controller.controller_name == 'graders' %>
-                id="sub_menu_active"
+                class='active'
               <% end %>
           >
             <%= link_to I18n.t("graders.graders"),
@@ -118,14 +118,14 @@
           </li>
           <li <% if controller.controller_name == 'submissions' or
                     controller.controller_name == 'results' %>
-                id="sub_menu_active"
+                class='active'
               <% end %>
           >
              <%= link_to I18n.t(:submissions),
                          browse_assignment_submissions_path(@assignment) %>
           </li>
           <li <% if controller.controller_name == 'summaries' %>
-                id="sub_menu_active"
+                class='active'
               <% end %>
           >
             <%= link_to I18n.t(:summaries),
@@ -138,21 +138,21 @@
            controller.controller_name == 'students' or
            controller.controller_name == 'tas'
   %>
-    <ul id="sub_menu">
+    <ul class='sub'>
       <li <% if controller.controller_name == 'students' %>
-            id="sub_menu_active"
+            class='active'
           <% end %>
       >
         <%= link_to I18n.t("students.students"), controller: 'students' %>
       </li>
       <li <% if controller.controller_name == 'tas' %>
-            id="sub_menu_active"
+            class='active'
           <% end %>
       >
         <%= link_to I18n.t("graders.graders"), controller: 'tas' %>
       </li>
       <li <% if controller.controller_name == 'admins' %>
-            id="sub_menu_active"
+            class='active'
           <% end %>
       >
         <%= link_to I18n.t("admins.admins"), controller: 'admins' %>
@@ -162,7 +162,7 @@
 <% elsif @current_user.ta? and (controller.controller_name == 'assignments' ||
                                 controller.controller_name == 'submissions' ||
                                 controller.controller_name == 'results') %>
-  <ul id="sub_menu">
+  <ul class='sub'>
     <li id="dropdown">
       <% if @assignment.nil? and @grade_entry_form.nil? %>
         <span id="choose_an_assignment">
@@ -182,7 +182,7 @@
     %>
       <li <% if controller.controller_name == 'submissions' or
                 controller.controller_name == 'results' %>
-            id="sub_menu_active"
+            class='active'
           <% end %>
       >
         <%= link_to I18n.t(:submissions),
@@ -194,7 +194,7 @@
   </ul>
 <% elsif @current_user.student? %>
   <% if controller.controller_name != 'main' %>
-    <ul id="sub_menu">
+    <ul class='sub'>
       <li id="dropdown">
         <% if @assignment.nil? and @grade_entry_form.nil? %>
           <span id="choose_an_assignment">
@@ -218,7 +218,7 @@
 
       <% if !@grade_entry_form.nil? %>
         <li <% if controller.controller_name == 'grade_entry_forms' %>
-              id="sub_menu_active"
+              class='active'
             <%end%>
         >
           <%= link_to t(:grades),
@@ -232,7 +232,7 @@
             @current_user.has_accepted_grouping_for?(@assignment)
       %>
         <li <% if controller.controller_name == 'assignments' %>
-              id="sub_menu_active"
+              class='active'
             <%end%>
         >
           <%= link_to I18n.t("assignments"),
@@ -241,14 +241,14 @@
                       id: @assignment.id %>
         </li>
         <li <% if controller.controller_name == 'submissions' %>
-              id="sub_menu_active"
+              class='active'
             <%end%>
         >
           <%= link_to I18n.t("submissions"),
                       file_manager_assignment_submissions_path(@assignment) %>
         </li>
         <li <% if controller.controller_name == 'results' %>
-              id="sub_menu_active"
+              class='active'
             <% end %>
         >
             <% # FIXME should add the real submission %>

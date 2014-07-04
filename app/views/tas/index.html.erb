@@ -6,48 +6,48 @@
            formats: [:js],
            handlers: [:erb] %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1><%= I18n.t('graders.manage_graders') %></h1>
   <div class='heading_buttons'>
     <%= link_to I18n.t(:add_new),
                 new_ta_path() %>
-    <span class='menu_bar'><span>
+    <span class='menu_bar'></span>
     <%= link_to_function I18n.t(:upload),
                          'modal_upload.open()' %>
-    <span class='menu_bar'><span>
+    <span class='menu_bar'></span>
     <%= link_to_function I18n.t(:download),
                          'modal_download.open()' %>
   </div>
 </div>
 
-<div class='colsLeftHeavy'>
-  <div class='wrapLeft'>
-    <div id='list'>
+<div class='wrapper'>
+  <div id='list'>
 
-      <%= render 'shared/flash_message' %>
+    <%= render 'shared/flash_message' %>
 
-      <% # Display lines in csv file that has not been successfully processed %>
-      <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
-        <div class='errorExplanation' id='errorExplanation'>
-          <p><%= I18n.t('graders.not_added') %></p>
-          <ul>
-            <% for line in flash[:invalid_lines] -%>
-              <li><%= line %></li>
-            <% end -%>
-          </ul>
-          <p><%= I18n.t('graders.make_sure') %></p>
-          <ul>
-            <li><%= I18n.t('graders.ta_names') %></li>
-            <li><%= I18n.t('graders.each_field') %></li>
-            <li><%= I18n.t('graders.each_line') %></li>
-          </ul>
-        </div>
-      <% end -%>
+    <% # Display lines in csv file that has not been successfully processed %>
+    <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
+      <div class='errorExplanation' id='errorExplanation'>
+        <p><%= I18n.t('graders.not_added') %></p>
+        <ul>
+          <% for line in flash[:invalid_lines] -%>
+            <li><%= line %></li>
+          <% end -%>
+        </ul>
+        <p><%= I18n.t('graders.make_sure') %></p>
+        <ul>
+          <li><%= I18n.t('graders.ta_names') %></li>
+          <li><%= I18n.t('graders.each_field') %></li>
+          <li><%= I18n.t('graders.each_line') %></li>
+        </ul>
+      </div>
+    <% end -%>
 
+    <div class='table'>
       <table id='tas'></table>
     </div>
   </div>
-</div> <!-- colsLeftHeavy -->
+</div>
 
 <!-- Modal Windows -->
 <div id='upload_dialog'>

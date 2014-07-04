@@ -18,7 +18,7 @@
   </script>
 <% end %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1><%= t('students.manage_students') %></h1>
   <div class='heading_buttons'>
     <%= link_to t(:add_new),
@@ -34,7 +34,7 @@
   </div>
 </div>
 
-<div class="wrapLeft">
+<div class="wrapper">
   <%= form_tag bulk_modify_students_path(), remote: true do %>
 
     <div id='ajax_error' class='error' style='display:none;'></div>
@@ -115,7 +115,7 @@
                            placeholder: t('students.search_students') %>
       </div>
 
-      <div style='overflow:auto;'>
+      <div class='table'>
         <table id='students'></table>
       </div>
     </div>

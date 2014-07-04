@@ -212,7 +212,7 @@ button,
   color: $dark-grey;
   display: inline-block;
   font: 400 1em $fonts;
-  min-width: 175px;
+  min-width: 150px;
   outline: none;
   padding: 0.5em 1.5em;
   text-align: center;
@@ -248,7 +248,7 @@ button,
   }
 
   &.inline-button {
-    min-width: 125px;
+    min-width: 100px;
     padding: 0.25em 1em;
   }
 }
@@ -303,9 +303,9 @@ fieldset {
     border-top: 1px solid $grey;
     width: 100%;
 
-    thead {
+    thead,
+    tfoot {
       background-color: $light-grey;
-      border-bottom: 2px solid $grey;
       font-weight: 600;
       text-align: left;
       text-transform: uppercase;
@@ -327,6 +327,14 @@ fieldset {
       .des::after {
         content: "▼";
       }
+    }
+
+    thead {
+      border-bottom: 2px solid $grey;
+    }
+
+    tfoot {
+      border-top: 2px solid $grey;
     }
 
     tr {
