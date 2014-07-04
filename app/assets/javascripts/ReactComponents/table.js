@@ -329,6 +329,9 @@ function sort_by_column(data, column, direction) {
   {
     if (typeof a == 'string') {
       return a.toLowerCase().replace(' ', '');
+    } else if (a.hasOwnProperty('props')) {
+      // Is a react component, get innerHTML
+      return a.props.dangerouslySetInnerHTML.__html.toLowerCase();
     } else {
       return a;
     }
