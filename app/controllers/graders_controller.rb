@@ -231,15 +231,16 @@ class GradersController < ApplicationController
               # don't do anything if no graders
               render nothing: true
               return
+            else
+              assign_all_graders_to_criteria(criterion_ids, grader_ids)
+              head :ok
             end
-            assign_all_graders_to_criteria(criterion_ids, grader_ids)
-            head :ok
           when 'unassign'
             criterion_grader_ids = params[:criterion_graders]
             unassign_graders_from_criteria(criterion_grader_ids, criterion_ids)
             head :ok
           when 'random_assign'
-            if params[:graders].blank
+            if params[:graders].blank?
               #don't do anything if no graders
               render nothing: true
               return
