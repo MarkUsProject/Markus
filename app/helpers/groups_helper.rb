@@ -2,10 +2,11 @@ module GroupsHelper
   def get_students_table_info
     # get students
     students = Student.all
-    student_memberships = StudentMembership.all(conditions:
-                                                { grouping_id: @assignment.groupings,
-                                                  user_id: students },
-                                                  include: :user)
+    student_memberships = StudentMembership.all(
+      conditions:
+        { grouping_id: @assignment.groupings,
+          user_id: students },
+      include: :user)
     students_in_assignment = student_memberships.map do |membership|
       membership.user
     end

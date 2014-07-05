@@ -244,7 +244,7 @@ class GroupsController < ApplicationController
 
     unless params[:global_actions] == 'unassign'
       if !groupings
-        render text: I18n.t('assignment.group.select_a_group'), 
+        render text: I18n.t('assignment.group.select_a_group'),
                status: 400 and return
       end
     end
@@ -338,8 +338,8 @@ class GroupsController < ApplicationController
     group_name = grouping.group.group_name
     if assignment.student_form_groups
       if students_in_group > assignment.group_max
-        return render text: I18n.t('assignment.group.assign_over_limit',
-                                   group: group_name), status: 400
+        return render text: I18n.t('assignment.group.assign_over_limit', group: group_name),
+                      status: 400
       end
     end
   end
