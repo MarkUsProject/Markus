@@ -20,9 +20,9 @@ module Api
       fields = fields_to_render(@@default_fields)
 
       respond_to do |format|
-        format.xml{render :xml => test_results.to_xml(:only => fields, :root =>
-          'test_results', :skip_types => 'true')}
-        format.json{render :json => test_results.to_json(:only => fields)}
+        format.xml{render xml: test_results.to_xml(only: fields, root:
+          'test_results', skip_types: 'true')}
+        format.json{render json: test_results.to_json(only: fields)}
       end
     end
 
@@ -37,14 +37,14 @@ module Api
 
       # Render error if the TestResult does not exist
       if test_result.nil?
-        render 'shared/http_status', :locals => { :code => '404', :message =>
-          'Test result was not found'}, :status => 404
+        render 'shared/http_status', locals: { code: '404', message:
+          'Test result was not found'}, status: 404
         return
       end
 
       # Everything went fine; send file_content
-      send_data test_result.file_content, :disposition => 'inline',
-                                          :filename => test_result.filename
+      send_data test_result.file_content, disposition: 'inline',
+                                          filename: test_result.filename
     end
 
     # Creates a new test result for a group's latest assignment submission
@@ -56,8 +56,8 @@ module Api
     def create
       if has_missing_params?([:filename, :file_content])
         # incomplete/invalid HTTP params
-        render 'shared/http_status', :locals => {:code => '422', :message =>
-          HttpStatusHelper::ERROR_CODE['message']['422']}, :status => 422
+        render 'shared/http_status', locals: {code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
         return
       end
 
@@ -68,22 +68,22 @@ module Api
       # Render error if there's an existing test result with that filename
       test_result = submission.test_results.find_by_filename(params[:filename])
       unless test_result.nil?
-        render 'shared/http_status', :locals => {:code => '409', :message =>
-          'A TestResult with that filename already exists'}, :status => 409
+        render 'shared/http_status', locals: {code: '409', message:
+          'A TestResult with that filename already exists'}, status: 409
         return
       end
 
       # Try creating the TestResult
-      if TestResult.create(:filename => params[:filename],
-         :file_content => params[:file_content],
-         :submission_id => submission.id)
+      if TestResult.create(filename: params[:filename],
+         file_content: params[:file_content],
+         submission_id: submission.id)
         # It worked, render success
-        render 'shared/http_status', :locals => {:code => '201', :message =>
-          HttpStatusHelper::ERROR_CODE['message']['201']}, :status => 201
+        render 'shared/http_status', locals: {code: '201', message:
+          HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       else
         # Some other error occurred
-        render 'shared/http_status', :locals => { :code => '500', :message =>
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500
+        render 'shared/http_status', locals: { code: '500', message:
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
       end
     end
 
@@ -98,19 +98,19 @@ module Api
 
       # Render error if the TestResult does not exist
       if test_result.nil?
-        render 'shared/http_status', :locals => { :code => '404', :message =>
-          'Test result was not found'}, :status => 404
+        render 'shared/http_status', locals: { code: '404', message:
+          'Test result was not found'}, status: 404
         return
       end
 
       if test_result.destroy
         # Successfully deleted the TestResult; render success
-        render 'shared/http_status', :locals => { :code => '200', :message =>
-          HttpStatusHelper::ERROR_CODE['message']['200']}, :status => 200
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
       else
         # Some other error occurred
-        render 'shared/http_status', :locals => { :code => '500', :message =>
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500
+        render 'shared/http_status', locals: { code: '500', message:
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
       end
     end
 
@@ -128,16 +128,16 @@ module Api
 
       # Render error if the TestResult does not exist
       if test_result.nil?
-        render 'shared/http_status', :locals => { :code => '404', :message =>
-          'Test result was not found'}, :status => 404
+        render 'shared/http_status', locals: { code: '404', message:
+          'Test result was not found'}, status: 404
         return
       end
 
       # Render error if the filename is used by another TestResult for that submission
       existing_file = submission.test_results.find_by_filename(params[:filename])
       if !existing_file.nil? && existing_file.id != params[:id]
-        render 'shared/http_status', :locals => {:code => '409', :message =>
-          'A TestResult with that filename already exists'}, :status => 409
+        render 'shared/http_status', locals: {code: '409', message:
+          'A TestResult with that filename already exists'}, status: 409
         return
       end
 
@@ -146,12 +146,12 @@ module Api
 
       if test_result.save && test_result.update_file_content(params[:file_content])
         # Everything went fine; report success
-        render 'shared/http_status', :locals => { :code => '200', :message =>
-          HttpStatusHelper::ERROR_CODE['message']['200']}, :status => 200
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
       else
         # Some other error occurred
-        render 'shared/http_status', :locals => { :code => '500', :message =>
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500
+        render 'shared/http_status', locals: { code: '500', message:
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
       end
     end
 
@@ -161,16 +161,16 @@ module Api
       assignment = Assignment.find_by_id(assignment_id)
       if assignment.nil?
         # No assignment with that id
-        render 'shared/http_status', :locals => {:code => '404', :message =>
-          'No assignment exists with that id'}, :status => 404
+        render 'shared/http_status', locals: {code: '404', message:
+          'No assignment exists with that id'}, status: 404
         return nil
       end
 
       group = Group.find_by_id(group_id)
       if group.nil?
         # No group exists with that id
-        render 'shared/http_status', :locals => {:code => '404', :message =>
-          'No group exists with that id'}, :status => 404
+        render 'shared/http_status', locals: {code: '404', message:
+          'No group exists with that id'}, status: 404
         return nil
       end
 
@@ -178,8 +178,8 @@ module Api
         group[:group_name], assignment[:short_identifier])
       if submission.nil?
         # No assignment submission by that group
-        render 'shared/http_status', :locals => {:code => '404', :message =>
-          'Submission was not found'}, :status => 404
+        render 'shared/http_status', locals: {code: '404', message:
+          'Submission was not found'}, status: 404
       end
 
       submission

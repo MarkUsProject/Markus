@@ -1,7 +1,21 @@
-require "rugged"
-require "gitolite"
-require "digest/md5"
+require 'rugged'
+require 'gitolite'
+require 'digest/md5'
+require 'rubygems'
+require 'byebug'
+
 require File.join(File.dirname(__FILE__),'repository') # load repository module
+
+def commit_options(repo, system_message)
+  {
+    author:  { email: "markus@markus.com", name: "Markus", time: Time.now },
+    committer: { email: "markus@markus.com", name: "Markus", time: Time.now },
+    message: system_message,
+    tree: repo.index.write_tree(repo),
+    parents: repo.empty? ? [] : [repo.head.target].compact,
+    update_ref: "HEAD"
+  }
+end
 
 module Repository
 
@@ -45,26 +59,13 @@ module Repository
         raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists already")
       end
 
-      #Create it
-      repo = Rugged::Repository.init_at(connect_string, :bare)
-      #Do an initial commit to get master. 
-      #TODO. find a better way.
-      index = Rugged::Index.new
-      options = {}
-      options[:tree] = index.write_tree(repo)
-      options[:author] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
-      options[:committer] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
-      options[:message] ||= "Making a commit via Rugged!"
-      options[:parents] = repo.empty? ? [] : [ repo.head.target ].compact
-      options[:update_ref] = 'HEAD'
+      #Create it (we're not going to use a bare repository)
+      repo = Rugged::Repository.init_at(connect_string)
 
-      Rugged::Commit.create(repo, options)
-
-      #TODO checks.
-      # .new does not exist for Rugged::Repository
-      #repo = Rugged::Repository.new(connect_string)
-      repo = Rugged::Repository.discover(connect_string)
-
+      #Do an initial commit to create index.
+      oid = repo.write("Initial commit.", :blob)
+      repo.index.add(:path => "README.md", :oid => oid, :mode => 0100644)
+      Rugged::Commit.create(repo, commit_options(repo, "Creation of initial file"))
       return true
     end
 
@@ -81,32 +82,76 @@ module Repository
     end
 
     # static method that deletes the git repo
+    # rm everything? or only .git?
     def self.delete(repo_path)
-      #does not acutally delete repo, just removes reference to master. This prevents any other git operations.
-      ref = Rugged::Reference.lookup(repo, "refs/heads/master")
-      ref.delete!
+      #repo = Rugged::Repository.new(repo_path)
+      #ref = Rugged::Reference.lookup(repo, "refs/heads/master")
+      #ref.delete!
+      FileUtils.rm_rf(repo_path)
     end
 
-    def export(repo_dest_dir, filepath=nil, revision_number=nil)
-      # exports git repo to a new folder
+    # Exports git repo to a new folder (clone repository)
+    # If a filepath is given, the repo_dest_dir needs to point to a file, and
+    # all the repository on that path need to exist, or the export will fail.
+    # Exports git repo to a new folder (clone repository)
+    # If a filepath is given, the repo_dest_dir needs to point to a file, and
+    # all the repository on that path need to exist, or the export will fail.
+    # if export means exporting repo as zip/tgz git-ruby library should be used
+    def export(repo_dest_dir, filepath=nil)
 
-      # If a filepath is given, the repo_dest_dir needs to point to a file, and
-      # all the repository on that path need to exist, or the export will fail.
+      # Case 1: clone all the repo to repo_dest_dir
+      if(filepath.nil?)
+        # Raise an error if the destination repository already exists
+        if (File.exists?(repo_dest_dir))
+          raise(ExportRepositoryAlreadyExists,
+                "Exported repository already exists")
+        end
 
-      # refer to Subversion_repository for implementation.
+        repo = Rugged::Repository.clone_at(@repos_path, repo_dest_dir)
+      else
+        # Case 2: clone a file to a folder
+        # Raise an error if the destination file already exists
+        if (File.exists?(repo_dest_dir))
+          raise(ExportRepositoryAlreadyExists,
+                "Exported file already exists")
+        end
+        FileUtils.cp(get_repos_workdir + filepath, repo_dest_dir)
+        return true
+      end
+
     end
 
     def self.closable?
-      # return if the git library supports close, 
+      # return if the git library supports close,
       # probably going to need to be a dumby method
     end
 
     def close
       # closes the git repo
+      @repos.close
+      @closed = true
     end
 
-    def self.closed?
+    def closed?
       # checks if the repo is closed
+      return @closed
+    end
+
+    def get_repos
+      # Get rugged repository from GitRepository
+      return @repos
+    end
+
+    def get_repos_workdir
+      # Get work directory from GitRepository
+      # workdir = path/to/my/repository/
+      return @repos.workdir
+    end
+
+    def get_repos_path
+      # Get Rugged repository from GitRepository
+      # workdir = path/to/my/repository/.git
+      return @repos.path
     end
 
     # Static method: Reports if a Git repository exists.
@@ -114,9 +159,9 @@ module Repository
     # TODO - find a better way to do this.
     def self.repository_exists?(repos_path)
       repos_meta_files_exist = false
-      if File.exist?(File.join(repos_path, "config"))
-        if File.exist?(File.join(repos_path, "description"))
-          if File.exist?(File.join(repos_path, "HEAD"))
+      if File.exist?(File.join(repos_path, ".git/config"))
+        if File.exist?(File.join(repos_path, ".git/description"))
+          if File.exist?(File.join(repos_path, ".git/HEAD"))
             repos_meta_files_exist = true
           end
         end
@@ -124,10 +169,14 @@ module Repository
       return repos_meta_files_exist
     end
 
+
+    # TODO: verify how markus use it
     def stringify_files(files)
       # Given a single object, or an array of objects of type
       # RevisionFile, try to find the file in question, and
       # return it as a string
+      blob = @repos.lookup(files[:oid])
+      return blob.content
     end
     alias download_as_string stringify_files # create alias
 
@@ -145,8 +194,15 @@ module Repository
     end
 
     def get_revision_by_timestamp(target_timestamp, path = nil)
-      # returns a Git instance representing the revision at the 
+      # returns a Git instance representing the revision at the
       # current timestamp, should be a ruby time stamp instance
+      walker = Rugged::Walker.new(self.get_repos)
+      walker.push(self.get_repos.head.target)
+      walker.each do |c|
+        if c.time <= target_timestamp
+          return get_revision(c)
+        end
+      end
     end
 
     # Returns a Repository::TransAction object, to work with. Do operations,
@@ -159,22 +215,15 @@ module Repository
     end
 
     def commit(transaction)
-      # carries out the actions on a git repo stored in a 
-      # transaction. Conflicts should are added to the transaction obejct
-
       # Carries out actions on a Git repository stored in
       # 'transaction'. In case of certain conflicts corresponding
       # Repositor::Conflict(s) are added to the transaction object
-
-      debugger
       jobs = transaction.jobs
-      txn = @repos.fs.transaction # transaction date is set implicitly
-      txn.set_prop(Repository::SVN_CONSTANTS[:author], transaction.user_id)
       jobs.each do |job|
         case job[:action]
         when :add_path
           begin
-            txn = make_directory(txn, job[:path])
+            make_directory(job[:path])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -202,29 +251,197 @@ module Repository
       if transaction.conflicts?
         return false
       end
-      txn.commit
       return true
     end
 
+    # Adds a user with given permissions to the repository
     def add_user(user_id, permissions)
-      # Adds a user with given permissions to the repository      
+
+      if @repos_admin # Are we admin?
+        if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE] + "/conf/gitolite.conf")
+          Gitolite::GitoliteAdmin.bootstrap(Repository.conf[:REPOSITORY_PERMISSION_FILE]) # create files if not existent
+        end
+
+        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        repo_name = self.get_repos.workdir.split('/').last
+        repo = ga_repo.config.get_repo(repo_name)
+
+        if repo.nil?
+          repo = Gitolite::Config::Repo.new(repo_name)
+          ga_repo.config.add_repo(repo)
+        else
+          repo.permissions[0].each do |perm|
+            if(repo.permissions[0][perm[0]][""].include? user_id)
+              raise UserAlreadyExistent.new(user_id + " already existent")
+            end
+          end
+        end
+
+        git_permission = self.class.__translate_to_git_perms(permissions)
+        repo.add_permission(git_permission,"",user_id)
+        ga_repo.save_and_apply
+      else
+        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+      end
+
     end
-    
+
     def get_users(permissions)
       # Gets a list of users with AT LEAST the provided permissions.
       # Returns nil if there aren't any.
+
+      # Permissions provided
+      # http://gitolite.com/gitolite/write-types.html
+
+      result_list = []
+
+      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+      repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
+
+      if !repo.nil?
+        repo.permissions[0].each do |perm|
+          if self.class.__translate_perms_from_file(perm[0]) >= permissions
+            repo.permissions[0][perm[0]][""].each do |user|
+              result_list.push(user)
+            end
+          end
+        end
+      end
+
+      if !result_list.empty?
+        return result_list
+      else
+        return nil
+      end
     end
 
     def get_permissions(user_id)
+
+      #if @repos_admin # Are we admin?
+      # Adds a user with given permissions to the repository
+
+      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+      repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
+
       # Gets permissions of a particular user
+      repo.permissions[0].each do |perm|
+        if(repo.permissions[0][perm[0]][""].include? user_id)
+          return self.class.__translate_perms_from_file(perm[0])
+        end
+      end
+
+      raise UserNotFound.new(user_id + " not found")
+
+      #else
+      #  raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+      #end
     end
 
     def set_permissions(user_id, permissions)
       # Set permissions for a single given user
+      if @repos_admin # Are we admin?
+
+        #TODO: remove permissions should be done before reseting it
+        # in case he already has a permission
+        remove_user(user_id)
+
+        # Adds a user with given permissions to the repository
+        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        repo_name = self.get_repos.workdir.split('/').last
+        repo = ga_repo.config.get_repo(repo_name)
+
+        if repo.nil?
+          repo = Gitolite::Config::Repo.new(repo_name)
+        end
+
+        git_permission = self.class.__translate_to_git_perms(permissions)
+        repo.add_permission(git_permission, "", user_id)
+        ga_repo.config.add_repo(repo)
+        ga_repo.save_and_apply
+      else
+        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+      end
     end
 
     def remove_user(user_id)
       # Delete user from access list
+      # There is no user remove support from gitolite ruby library
+      # Work-around:
+      # - copy permissions from repo
+      # - remove repo from config and save and apply
+      # - add again permissions not removed
+
+      if @repos_admin # Are we admin?
+        # Adds a user with given permissions to the repository
+        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        repo_name = self.get_repos.workdir.split('/').last
+
+        repo = ga_repo.config.get_repo(repo_name)
+        rw_list = []
+        r_list  = []
+        found = false
+        if !repo.nil?
+          repo.permissions[0]["RW+"][""].each do |user|
+            if(user != user_id)
+              rw_list.push(user)
+            else
+              found = true
+            end
+          end
+
+          repo.permissions[0]["R"][""].each do |user|
+            if(user != user_id)
+              r_list.push(user)
+            else
+              found = true
+            end
+          end
+
+          if found==true
+            ga_repo.config.rm_repo(repo)
+            ga_repo.save_and_apply
+            rw_list.each do |user|
+              add_user(user,Repository::Permission::READ_WRITE)
+            end
+
+            r_list.each do |user|
+              add_user(user,Repository::Permission::READ)
+            end
+          else
+            raise UserNotFound.new(user_id + " not found")
+          end
+        else
+          raise UserNotFound.new(user_id + " not found")
+        end
+      else
+        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+      end
+    end
+
+    def self.add_user(user_id, permissions,repo_name)
+
+      # Adds a user with given permissions to the repository
+      if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "w").close() # create file if not existent
+      end
+
+      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+      repo = ga_repo.config.get_repo(repo_name)
+
+      if repo.nil?
+        repo = Gitolite::Config::Repo.new(repo_name)
+        ga_repo.config.add_repo(repo)
+      else
+        repo.permissions[0].each do |perm|
+          if(repo.permissions[0][perm[0]][""].include? user_id)
+            raise UserAlreadyExistent.new(user_id + " already existent")
+          end
+        end
+      end
+
+      git_permission = GitRepository.__translate_to_git_perms(permissions)
+      repo.add_permission(git_permission,"",user_id)
+      ga_repo.save_and_apply
     end
 
     # Sets permissions over several repositories. Use set_permissions to set
@@ -241,14 +458,21 @@ module Repository
 
       #check if gitolite admin repo exists
       #TODO paths should be in config file
+      if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE] + "conf/gitolite.conf")
+        Gitolite::GitoliteAdmin.bootstrap(Repository.conf[:REPOSITORY_PERMISSION_FILE]) # create files if not existent
+      end
 
       #gitolite admin repo
-      ga_repo = Gitolite::GitoliteAdmin.new("#{::Rails.root.to_s}/data/dev/repos/git_auth")
+      #ga_repo = Gitolite::GitoliteAdmin.new("#{::Rails.root.to_s}/data/dev/repos/git_auth")
+      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
       conf = ga_repo.config
 
       repo_names.each do |repo_name|
         repo_name = File.basename(repo_name)
-        repo = Gitolite::Config::Repo.new(repo_name)
+        repo = ga_repo.config.get_repo(repo_name)
+        if repo.nil?
+          repo = Gitolite::Config::Repo.new(repo_name)
+        end
         user_id_permissions_map.each do |user_id, permissions|
           perm_string = __translate_to_git_perms(permissions)
           repo.add_permission(perm_string, "", user_id)
@@ -256,43 +480,74 @@ module Repository
         conf.add_repo(repo)
       end
 
-      #update gitolite 
-      ga_repo.save_and_apply  
+      #update gitolite
+      ga_repo.save_and_apply
     end
 
     def self.delete_bulk_permissions(repo_names, user_ids)
       # Deletes permissions over several repositories. Use remove_user to remove
       # permissions of a single repository.
+      # There is no user remove support from gitolite ruby library
+      # Work-around:
+      # - copy permissions from repo
+      # - remove repo from config and save and apply
+      # - add again permissions not removed
+
+      #if @repos_admin # Are we admin?
+      # Adds a user with given permissions to the repository
+      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+
+      repo_names.each do |repo_name|
+        repo_name = File.basename(repo_name)
+        repo = ga_repo.config.get_repo(repo_name)
+        rw_list = []
+        r_list  = []
+        found = false
+        if !repo.nil?
+
+          repo.permissions[0]["RW+"][""].each do |user|
+            if(!user_ids.include? user)
+              rw_list.push(user)
+            else
+              found = true
+            end
+          end
+
+          repo.permissions[0]["R"][""].each do |user|
+            if(!user_ids.include? user)
+              r_list.push(user)
+            else
+              found = true
+            end
+          end
+          if found==true
+            ga_repo.reload!
+            ga_repo.config.rm_repo(repo)
+            ga_repo.save_and_apply
+            rw_list.each do |user|
+              add_user(user,Repository::Permission::READ_WRITE,repo_name)
+            end
+
+            r_list.each do |user|
+              add_user(user,Repository::Permission::READ,repo_name)
+            end
+          else
+            raise UserNotFound.new(user_id + " not found")
+          end
+        else
+          raise UserNotFound.new(user_id + " not found")
+        end
+      end
+
+      #else
+      #  raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+      #end
+
     end
-    
+
     def expand_path(file_name, dir_string = "/")
       # Converts a pathname to an absolute pathname and then return the path
-    end
-
-    ####################################################################
-    ##  Semi-private class methods (one should not use them from outside
-    ##  this class).
-    ####################################################################
-
-    def self.__read_in_authz_file()
-      # Semi-private class method: Reads in Repository.conf[:REPOSITORY_PERMISSION_FILE]
-      # refer to Subversion_repository for implementation.
-    end
-    
-    def self.__write_out_authz_file(authz_file_contents)
-      # Semi-private class method: Writes out Repository.conf[:REPOSITORY_PERMISSION_FILE]
-      # refer to Subversion_repository for implementation.
-    end
-
-    def self.__parse_authz_file(authz_string)
-      # Semi-private class method: Parses a subversion authz file passed in as a string
-      # refer to Subversion_repository for implementation.
-    end
-
-    def self.__prepare_authz_string(permissions)
-      # Semi-private class method: Transforms passed in permissions into
-      # subversion authz file syntax
-      # refer to Subversion_repository for implementation.
+      return File.expand_path(file_name, dir_string)
     end
 
     ####################################################################
@@ -328,7 +583,7 @@ module Repository
       # of Subversion repository file
     end
 
-    def __get_node_last_modified_date(path, revision_number)
+    def __get_node_last_modified_date(path, commit)
       # Not (!) part of the AbstractRepository API:
       # Returns
       #    The last modified date
@@ -363,6 +618,8 @@ module Repository
         return Repository::Permission::READ
       when "RW"
         return Repository::Permission::READ_WRITE
+      when "RW+"
+        return Repository::Permission::READ_WRITE
       else raise "Unknown permissions"
       end # end case
     end
@@ -384,12 +641,7 @@ module Repository
     # This will only work for paths that have not been deleted from the repository.
     # GIT NOTE: This will just return the latest hash for now
     def latest_revision_number(path = nil, revision_number = nil)
-      debugger
-      
-      #TODO This was using FS, specific to SVN. Need to look for git.
-
-      @repos.head;
-
+      return @repos.head
     end
 
     def get_revision_number_by_timestamp(target_timestamp, path = nil)
@@ -411,21 +663,13 @@ module Repository
 
     # removes a file from a transaction and eventually from repository
     def remove_file(txn, path, expected_revision_number=0)
-      if latest_revision_number(path).to_i != expected_revision_number.to_i
-        raise Repository::FileOutOfSyncConflict.new(path)
-      end
-      if !__path_exists?(path)
-        raise Repository::FileDoesNotExistConflict.new(path)
-      end
-      txn.root.delete(path)
+      @repos.index.remove(path);
+      Rugged::Commit.create(@repos,commit_options(@repos,"Removing file"))
       return txn
     end
 
     # replaces file at provided path with file_data
     def replace_file(txn, path, file_data=nil, mime_type=nil, expected_revision_number=0)
-      if latest_revision_number(path).to_i != expected_revision_number.to_i
-        raise Repository::FileOutOfSyncConflict.new(path)
-      end
       txn = write_file(txn, path, file_data, mime_type)
       return txn
     end
@@ -433,52 +677,42 @@ module Repository
     def write_file(txn, path, file_data=nil, mime_type=nil)
       # writes to file using transaction, path, data, and mime
       # refer to Subversion_repo for implementation
+      if (!__path_exists?(path))
+        pieces = path.split("/").delete_if {|x| x == ""}
+        dir_path = ""
+
+        (0..pieces.length - 2).each do |index|
+          dir_path += "/" + pieces[index]
+          make_directory(txn, dir_path)
+        end
+        make_file(txn, path,file_data)
+      end
     end
 
     # Make a file if it's not already present.
-    def make_file(txn, path)
-      if (txn.root.check_path(path) == 0)
-        txn.root.make_file(path)
-      end
-      return txn
+    def make_file(txn, path,file_data)
+      repo = @repos
+      oid = repo.write(file_data, :blob)
+      repo.index.add(path: path, oid: oid, mode: 0100644)
+      Rugged::Commit.create(repo, commit_options(repo,"Adding file"))
     end
 
     # Make a directory if it's not already present.
-    def make_directory(txn, path)
+    def make_directory(path)
+
       # turn "path" into absolute path
       path = expand_path(path, "/")
-      # do nothiing if "path" is the root
-      return txn if path == "/"
+      # do nothing if "path" is the root
+      return if path == "/"
 
       # get the path of parent folder
       parent_path = File.dirname(path)
       # and create parent folder before the current folder (recursively)
-      txn = make_directory(txn, parent_path)
+      make_directory(parent_path)
 
       # now that the parent folder has been created,
       # create the current folder
-      if (txn.root.check_path(path) == 0)
-        txn.root.make_dir(path)
-      end
-
-      return txn
-    end
-
-    # Parses repository permissions from provided auth_file
-    def get_repo_permissions_from_file_string(auth_string)
-      u_perm_mapping = {}
-      repo_name = File.basename(@repos_path)
-      if /\[#{repo_name}:\/\]([^\[]+)/.match(auth_string)
-        perm_string = $1
-        perm_string.strip().split("\n").each do |line|
-          if /\s*(\w+)\s*=\s*(\w+)\s*/.match(line)
-            u_perm_mapping[$1.to_s] = $2.to_s
-          end
-        end
-        return u_perm_mapping
-      else
-        return {} # repo name not found
-      end
+      FileUtils.mkdir_p(path)
     end
 
     # Helper method to check file permissions of git auth file
@@ -493,56 +727,6 @@ module Repository
       end
       return true
     end
-
-    # Helper method to inject new permissions. Expects a hash representing
-    # users <=> git permissions mapping and the current file contents of
-    # the git authz file as a string
-    def inject_permissions(users_permissions, auth_string)
-      repo_name = File.basename(@repos_path)
-      auth_string = auth_string.strip()
-      map_string = perm_mapping_to_git_authz_string(users_permissions)
-      if /\[#{repo_name}:\/\][^\[]+/.match(auth_string)
-        auth_string = auth_string.sub(/\[#{repo_name}:\/\][^\[]+/, map_string)
-      else
-        # repo name not found so append at the end
-        auth_string += "\n"+map_string
-      end
-
-      # format file_string a little
-      auth_string = auth_string.strip() # get rid of leading/trailing white-space
-      lines = auth_string.split("\n")
-      tmp_filestring = ""
-      is_extraneous_empty_line = false
-      lines.each do |line|
-        if (line == "")
-          if (!is_extraneous_empty_line)
-            tmp_filestring += "\n"
-          end
-          is_extraneous_empty_line = true
-        else
-          tmp_filestring += line+"\n"
-          is_extraneous_empty_line = false
-        end
-      end
-      auth_string = tmp_filestring
-
-      return auth_string
-    end
-
-    # Translates a user <=> permissions mapping to a string corresponding
-    # to Subversions authz file format
-    def perm_mapping_to_git_authz_string(users_perms)
-      if users_perms.empty?
-        return ""
-      end
-      repo_name = File.basename(@repos_path)
-      result_string = "\n[#{repo_name}:/]\n"
-      users_perms.each do |user, permstr|
-        result_string += "#{user} = #{permstr}\n"
-      end
-      return result_string
-    end
-
   end
 
   # Convenience class, so that we can work on Revisions rather
@@ -552,10 +736,16 @@ module Repository
     # Constructor; Check if revision is actually present in
     # repository
     def initialize(revision_number, repo)
-      @repo = repo
+      # Get rugged repository
+      @repo = repo.get_repos
       begin
-        @commit = repo.lookup(revision_number);
-        @timestamp = commit.time
+        # Get object using target of the reference (Object ID)
+        if revision_number.type == :direct
+          @commit = @repo.lookup(revision_number.target);
+        else
+          @commit = revision_number;
+        end
+        @timestamp = @commit.time
         if @timestamp.instance_of?(String)
           @timestamp = Time.parse(@timestamp).localtime
         elsif @timestamp.instance_of?(Time)
@@ -563,39 +753,41 @@ module Repository
         end
       rescue Exception
         raise RevisionDoesNotExist
-      end 
-      super(revision_number)
+      end
+      super(@commit)
     end
 
     # Return all of the files in this repository at the root directory
-    # *** Not sure if using path is best here, maybe use repo instead?
-    #
-    # method not thoroughly tested!!
-    #
-    # returns a index object, consult rugged docs for available methods
-    def files_at_path(path)
-      begin 
-        return Rugged::Index.new(path)
+    def files_at_path(commit)
+      begin
+        files = Hash.new(nil)
+
+        @commit.tree.each do |c|
+          files[c[:name]] = c
+        end
+        
         #exception should be cast if file is not found
       rescue Exception
         raise Repository::FileDoesNotExistConflict
+        return nil
       end
+
+      return files
     end
 
     # returns true if the file at the given path exists for the
     # class's revision_number (commit name)
-    #
-    # method not thoroughly tested!!
-    #
     # erros with this function can occur with files are incorrectly
     # added and the git config file is not updated
     def path_exists?(path)
-      begin 
-        file = Rugged::Index.new(path)
+      begin
+        # if path exists in the git repository
+        # discover should not give an error
+        Rugged::Repository.discover(path)
         return true
-        #exception should be cast if file is not found
+        #exception should be cast if path is not found
       rescue Exception
-        # raise Repository::FileDoesNotExistConflict # I don't think raise an exception is needed
+        raise Repository::FileDoesNotExistConflict # I don't think raise an exception is needed
         return false
       end
     end
@@ -608,13 +800,13 @@ module Repository
           last_modified_revision = @repo.__get_history(File.join(path, file_name)).last
           last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_number)
           new_directory = Repository::RevisionDirectory.new(@revision_number, {
-            :name => file_name,
-            :path => path,
-            :last_modified_revision => last_modified_revision,
-            :last_modified_date => last_modified_date,
-            :changed => (last_modified_revision == @revision_number),
-            :user_id => @repo.__get_property(:author, last_modified_revision)
-          })
+                                                              :name => file_name,
+                                                              :path => path,
+                                                              :last_modified_revision => last_modified_revision,
+                                                              :last_modified_date => last_modified_date,
+                                                              :changed => (last_modified_revision == @revision_number),
+                                                              :user_id => @repo.__get_property(:author, last_modified_revision)
+                                                            })
           result[file_name] = new_directory
         end
       end
@@ -624,6 +816,10 @@ module Repository
     # Return changed files at 'path' (recursively)
     def changed_files_at_path(path)
       return files_at_path_helper(path, true)
+    end
+
+    def last_modified_date()
+      return self.timestamp
     end
 
     private
@@ -641,14 +837,14 @@ module Repository
 
           if(!only_changed || (last_modified_revision == @revision_number))
             new_file = Repository::RevisionFile.new(@revision_number, {
-              :name => file_name,
-              :path => path,
-              :last_modified_revision => last_modified_revision,
-              :changed => (last_modified_revision == @revision_number),
-              :user_id => @repo.__get_property(:author, last_modified_revision),
-              :mime_type => @repo.__get_file_property(:mime_type, File.join(path, file_name), last_modified_revision),
-              :last_modified_date => last_modified_date
-            })
+                                                      :name => file_name,
+                                                      :path => path,
+                                                      :last_modified_revision => last_modified_revision,
+                                                      :changed => (last_modified_revision == @revision_number),
+                                                      :user_id => @repo.__get_property(:author, last_modified_revision),
+                                                      :mime_type => @repo.__get_file_property(:mime_type, File.join(path, file_name), last_modified_revision),
+                                                      :last_modified_date => last_modified_date
+                                                    })
             result[file_name] = new_file
           end
         end
@@ -657,5 +853,4 @@ module Repository
     end
 
   end
-
 end

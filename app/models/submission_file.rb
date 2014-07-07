@@ -15,7 +15,7 @@ class SubmissionFile < ActiveRecord::Base
   validates_presence_of :filename
   validates_presence_of :path
 
-  validates_inclusion_of :is_converted, :in => [true, false]
+  validates_inclusion_of :is_converted, in: [true, false]
 
   def get_file_type
     # This is where you can add more languages that SubmissionFile will
@@ -124,18 +124,21 @@ class SubmissionFile < ActiveRecord::Base
 
     # Convert a pdf file into a an array of jpg files (one jpg file = one page
     # of the pdf file)
-    file = RGhost::Convert.new(File.join(storage_path,
-                                  self.filename))
-    results = file.to :jpeg,
-                      :filename => file_path,
-                      :multipage => true,
-                      :resolution => 150
-    if file.error
-      m_logger.log('rghost: Image conversion error')
+    begin
+      file = RGhost::Convert.new(File.join(storage_path, self.filename))
+      results = file.to :jpeg,
+                        filename: file_path,
+                        multipage: true,
+                        resolution: 150
+
+    rescue RGhost::RenderException
+      self.is_converted = false
+      self.error_converting = true
+    else
+      self.is_converted = true
     end
 
     FileUtils.remove_file(File.join(storage_path, self.filename), true)
-    self.is_converted = true
     self.save
   end
 
@@ -148,8 +151,8 @@ class SubmissionFile < ActiveRecord::Base
     revision = repo.get_revision(revision_number)
     if revision.files_at_path(path)[filename].nil?
       raise I18n.t('results.could_not_find_file',
-                   :filename => filename,
-                   :repository_name => student_group.repository_name)
+                   filename: filename,
+                   repository_name: student_group.repository_name)
     end
     retrieved_file = repo.download_as_string(revision.files_at_path(path)[filename])
     repo.close
@@ -199,15 +202,15 @@ class SubmissionFile < ActiveRecord::Base
         if index == annot.line_start.to_i - 1
            text = AnnotationText.find(annot.annotation_text_id).content
            result = result.concat(I18n.t('graders.download.begin_annotation',
-               :id => annot.annotation_number.to_s,
-               :text => text,
-               :comment_start => comment_syntax[0],
-               :comment_end => comment_syntax[1]) + "\n")
+               id: annot.annotation_number.to_s,
+               text: text,
+               comment_start: comment_syntax[0],
+               comment_end: comment_syntax[1]) + "\n")
         elsif index == annot.line_end.to_i
            result = result.concat(I18n.t('graders.download.end_annotation',
-               :id => annot.annotation_number.to_s,
-               :comment_start => comment_syntax[0],
-               :comment_end => comment_syntax[1]) + "\n")
+               id: annot.annotation_number.to_s,
+               comment_start: comment_syntax[0],
+               comment_end: comment_syntax[1]) + "\n")
         end
       end
     result = result.concat(contents + "\n")

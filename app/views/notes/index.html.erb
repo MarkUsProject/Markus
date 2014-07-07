@@ -8,7 +8,7 @@
   #if there are no noteables,we can't add notes, so do not show Add New link.
   %>
   <% if @noteables_available %>
-  <%= link_to I18n.t('notes.add_new'), { :action => 'new' }, :class => 'button' %>
+  <%= link_to I18n.t('notes.add_new'), { action: 'new' }, class: 'button' %>
   <% else %>
   <p><%= I18n.t('notes.new.no_noteables') %></p>
   <% end %>
@@ -18,8 +18,8 @@
 	<tr>
 		<td class="note">
 			<%= raw(I18n.t("notes.note_on",
-				   :user_name => note.user.user_name,
-				   :display_for => note.noteable.display_for_note )) %></b><br />
+				   user_name: note.user.user_name,
+				   display_for: note.noteable.display_for_note )) %></b><br>
 			<small><%=note.format_date%></small>
 		</td>
 		<td class="note"><%=note.notes_message%></td>
@@ -27,18 +27,18 @@
 			<% if note.user_can_modify?(@current_user) -%>
 				<%= button_to I18n.t('edit'),
 	              edit_note_path(note.id),
-	              :method => 'get',
-	              :html => {:class => 'edit'},
-	              :class => 'thin-button' %>
+	              method: 'get',
+	              html: {class: 'edit'},
+	              class: 'thin-button' %>
 				<%= button_to I18n.t('delete'),
-		          { :action => 'destroy', :id => note.id },
-		          :html =>
-		          { :class => 'delete',
-		            :title => I18n.t('notes.delete.link_title') },
-		          :confirm => I18n.t('notes.delete.link_confirm'),
-		          :method => 'delete',
-		          :remote => true,
-		          :class => 'thin-button' %>
+		          { action: 'destroy', id: note.id },
+		          html:
+		          { class: 'delete',
+		            title: I18n.t('notes.delete.link_title') },
+		          confirm: I18n.t('notes.delete.link_confirm'),
+		          method: 'delete',
+		          remote: true,
+		          class: 'thin-button' %>
 			<% else -%>
 				&nbsp;
 			<% end -%>

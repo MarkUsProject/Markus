@@ -2,6 +2,7 @@
  * page specific event handlers for grader/index.html.erb
  */
 document.observe("dom:loaded", function() {
+// jQuery(document).ready(function () {
 
   new Form.Element.EventObserver('assign_criteria', function(element, value) {
 
@@ -155,11 +156,15 @@ function clear_all() {
   }
 }
 
-function check_all (prefix, check) {
+function check_all(containerOrPrefix, check) {
+  if (typeof containerOrPrefix === 'object') {
+    jQuery(containerOrPrefix).find('.inline_checkbox').prop('checked', check);
+    return;
+  }
   cbox=document.getElementsByTagName('INPUT');
   for (i = 0; i < cbox.length; i++){
     if (cbox[i].type == 'checkbox'){
-      if (cbox[i].name.split('_')[0] == prefix) {
+      if (cbox[i].name.split('_')[0] == containerOrPrefix) {
         if (check == true) {
           cbox[i].checked = true;
         } else {

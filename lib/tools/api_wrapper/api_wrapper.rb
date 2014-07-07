@@ -14,7 +14,7 @@ class MarkusRESTfulAPI
   # Makes a GET request to the provided URL while supplying the authorization
   # header, and raising an exception on failure
   def MarkusRESTfulAPI.get(url)
-    response = HTTParty.get(@@api_url + url, :headers =>
+    response = HTTParty.get(@@api_url + url, headers:
       { 'Authorization' => "MarkUsAuth #{@@auth_key}", 'Accept' => 'application/json' })
     raise "#{response['code']}: #{response['description']}" unless response.success?
 
@@ -24,8 +24,8 @@ class MarkusRESTfulAPI
   # Makes a POST request to the provided URL, along with the supplied POST data.
   # Also uses the authorization header, and raises an exception on failure
   def MarkusRESTfulAPI.post(url, query)
-    options = { :headers => { 'Authorization' => "MarkUsAuth #{@@auth_key}",
-                'Accept' => 'application/json' }, :body => query }
+    options = { headers: { 'Authorization' => "MarkUsAuth #{@@auth_key}",
+                'Accept' => 'application/json' }, body: query }
     response = HTTParty.post(@@api_url + url, options)
     raise "#{response['code']}: #{response['description']}" unless response.success?
 
@@ -35,8 +35,8 @@ class MarkusRESTfulAPI
   # Makes a PUT request to the provided URL, along with the supplied data.
   # Also uses the authorization header, and raises an exception on failure
   def MarkusRESTfulAPI.put(url, query)
-    options = { :headers => { 'Authorization' => "MarkUsAuth #{@@auth_key}",
-                'Accept' => 'application/json' }, :body => query }
+    options = { headers: { 'Authorization' => "MarkUsAuth #{@@auth_key}",
+                'Accept' => 'application/json' }, body: query }
     response = HTTParty.put(@@api_url + url, options)
     raise "#{response['code']}: #{response['description']}" unless response.success?
 
@@ -46,7 +46,7 @@ class MarkusRESTfulAPI
   # Makes a DELETE request to the provided URL while supplying the authorization
   # header, and raising an exception on failure
   def MarkusRESTfulAPI.delete(url)
-    response = HTTParty.delete(@@api_url + url, :headers =>
+    response = HTTParty.delete(@@api_url + url, headers:
       { 'Authorization' => "MarkUsAuth #{@@auth_key}", 'Accept' => 'application/json' })
     puts response
     raise "#{response['code']}: #{response['description']}" unless response.success?

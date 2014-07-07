@@ -86,22 +86,22 @@ module Repository
 
     #Static method: Yields an existing Repository and closes it afterwards
     def self.access(connect_string)
-      raise NotImplementedError, "Repository::create Not yet implemented"
+      raise NotImplementedError, "Repository::access Not yet implemented"
     end
 
     #Static method: Deletes an existing Subversion repository
     def self.delete(connect_string)
-      raise NotImplementedError, "Repository::create Not yet implemented"
+      raise NotImplementedError, "Repository::delete Not yet implemented"
     end
 
     #Closes the repository
     def close
-      raise NotImplementedError, "Repository::create Not yet implemented"
+      raise NotImplementedError, "Repository::close Not yet implemented"
     end
 
     #Tests if the repository is closed
     def closed?
-      raise NotImplementedError, "Repository::create Not yet implemented"
+      raise NotImplementedError, "Repository::closed Not yet implemented"
     end
 
     # Given either an array of, or a single object of class RevisionFile,
@@ -290,19 +290,19 @@ module Repository
     end
 
     def add_path(path)
-      @jobs.push(:action => :add_path, :path => path)
+      @jobs.push(action: :add_path, path: path)
     end
 
     def add(path, file_data=nil, mime_type=nil)
-      @jobs.push(:action => :add, :path => path, :file_data => file_data, :mime_type => mime_type)
+      @jobs.push(action: :add, path: path, file_data: file_data, mime_type: mime_type)
     end
 
     def remove(path, expected_revision_number)
-      @jobs.push(:action => :remove, :path => path, :expected_revision_number => expected_revision_number)
+      @jobs.push(action: :remove, path: path, expected_revision_number: expected_revision_number)
     end
 
     def replace(path, file_data, mime_type, expected_revision_number)
-      @jobs.push(:action => :replace, :path => path, :file_data => file_data, :mime_type => mime_type, :expected_revision_number => expected_revision_number)
+      @jobs.push(action: :replace, path: path, file_data: file_data, mime_type: mime_type, expected_revision_number: expected_revision_number)
     end
 
     def add_conflict(conflict)

@@ -1,0 +1,3 @@
+# Multi-line method chaining should be done with leading dots.
+DotPosition:
+  EnforcedStyle: leading

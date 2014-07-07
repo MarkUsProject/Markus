@@ -3,6 +3,8 @@
 <tr
 <% if grouping.is_collected? %>
   style="background-color: #90EE90"
+<% elsif grouping.error_collecting %>
+  style="background-color: #FA2A00"
 <% end %>>
 
 <td>
@@ -35,7 +37,9 @@
                    grouping.current_submission_used.get_latest_result) %>
   <% end %>
     (<%= grouping.accepted_students.collect{ |student| student.user_name}.join(',') %>)
-  <%='<span class="invalid">' + t(:invalid_grouping) + '</span>' if !grouping.is_valid? %>
+    <% if !grouping.is_valid? %>
+      <span class="invalid"><%= t(:invalid_grouping) %></span>
+    <% end %>
   </td>
   <% if !@details.nil? %>
     <% assignment.rubric_criteria.each do |criterion| %>
@@ -63,9 +67,9 @@
     -
     <% else %>
       <%= image_tag 'icons/error.png',
-                    :title => t(:past_due_date_edit_result_warning,
-                                :href => t(:last_commit)) if grouping.past_due_date? %>
-      <%= I18n.l(grouping.current_submission_used.revision_timestamp, :format => :long_date) %>
+                    title: t(:past_due_date_edit_result_warning,
+                             href: t(:last_commit)) if grouping.past_due_date? %>
+      <%= I18n.l(grouping.current_submission_used.revision_timestamp, format: :long_date) %>
     <% end %>
     </td>
   <% end %>
@@ -73,35 +77,35 @@
     <% if !grouping.has_submission? %>
 	<% if assignment.submission_rule.can_collect_now? %>
 	  <%= image_tag('icons/shape_square.png',
-            :alt => I18n.t('marking_state.not_collected'),
-            :title => I18n.t('marking_state.not_collected')) %>
+            alt: I18n.t('marking_state.not_collected'),
+            title: I18n.t('marking_state.not_collected')) %>
 	<% else %>
        	  -
 	<% end %>
     <% else %>
 	<% if !grouping.current_submission_used.has_result? %>
 	    <%= image_tag('icons/pencil.png',
-            :alt => I18n.t('marking_state.in_progress'),
-            :title => I18n.t('marking_state.in_progress')) %>
+            alt: I18n.t('marking_state.in_progress'),
+            title: I18n.t('marking_state.in_progress')) %>
 	<% else %>
       <% if remark_in_progress(grouping.current_submission_used) %>
           <%= image_tag('icons/double_exclamation.png',
-              :alt => I18n.t('marking_state.remark_requested'),
-              :title => I18n.t('marking_state.remark_requested')) %>
+              alt: I18n.t('marking_state.remark_requested'),
+              title: I18n.t('marking_state.remark_requested')) %>
       <% elsif grouping.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete] %>
           <% if !grouping.current_submission_used.get_latest_result.released_to_students %>
 		        <%= image_tag('icons/accept.png',
-                :alt => I18n.t('marking_state.completed'),
-                :title => I18n.t('marking_state.completed')) %>
+                alt: I18n.t('marking_state.completed'),
+                title: I18n.t('marking_state.completed')) %>
 		      <% else %>
 		        <%= image_tag('icons/email_go.png',
-                :alt => I18n.t('marking_state.released'),
-                :title => I18n.t('marking_state.released')) %>
+                alt: I18n.t('marking_state.released'),
+                title: I18n.t('marking_state.released')) %>
           <% end %>
       <% else %>
 		     <%= image_tag('icons/pencil.png',
-            :alt => I18n.t('marking_state.in_progress'),
-            :title => I18n.t('marking_state.in_progress')) %>
+            alt: I18n.t('marking_state.in_progress'),
+            title: I18n.t('marking_state.in_progress')) %>
 	    <% end %>
     <% end %>
     <% end %>

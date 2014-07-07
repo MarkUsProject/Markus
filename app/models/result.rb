@@ -1,9 +1,9 @@
 class Result < ActiveRecord::Base
 
   MARKING_STATES = {
-    :complete => 'complete',
-    :partial => 'partial',
-    :unmarked => 'unmarked'
+    complete: 'complete',
+    partial: 'partial',
+    unmarked: 'unmarked'
   }
 
   belongs_to :submission
@@ -12,10 +12,10 @@ class Result < ActiveRecord::Base
 
   validates_presence_of :marking_state
   validates_inclusion_of :marking_state,
-                         :in => [Result::MARKING_STATES[:complete],
+                         in: [Result::MARKING_STATES[:complete],
                                  Result::MARKING_STATES[:partial],
                                  Result::MARKING_STATES[:unmarked]]
-  validates_numericality_of :total_mark, :greater_than_or_equal_to => 0
+  validates_numericality_of :total_mark, greater_than_or_equal_to: 0
   before_update :unrelease_partial_results
   before_save :check_for_nil_marks
 
@@ -32,7 +32,7 @@ class Result < ActiveRecord::Base
   #returns the sum of the marks not including bonuses/deductions
   def get_subtotal
     total = 0.0
-    self.marks.all(:include => [:markable]).each do |m|
+    self.marks.all(include: [:markable]).each do |m|
       total = total + m.get_mark
     end
     total
@@ -96,7 +96,7 @@ class Result < ActiveRecord::Base
     # Check that the marking state is not no mark is nil or
     if self.marks.find_by_mark(nil) &&
           self.marking_state == Result::MARKING_STATES[:complete]
-      errors.add_to_base(I18n.t('common.criterion_incomplete_error'))
+      errors.add(:base, I18n.t('common.criterion_incomplete_error'))
       return false
     end
     true

@@ -2,7 +2,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
 
+require_relative 'criterion_test'
+
 class FlexibleCriterionTest < ActiveSupport::TestCase
+  include CriterionTest
+
   # Class methods
 
   CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\ncriterion3,1.6,description3!\n"
@@ -43,21 +47,21 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
   context 'With an unexisting criteria' do
 
     should 'raise en error message on an empty row' do
-      e = assert_raise Csv::MalformedCSVError do
+      e = assert_raise CSV::MalformedCSVError do
         FlexibleCriterion.new_from_csv_row([], Assignment.new)
       end
       assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
     end
 
     should 'raise an error message on a 1 element row' do
-      e = assert_raise Csv::MalformedCSVError do
+      e = assert_raise CSV::MalformedCSVError do
         FlexibleCriterion.new_from_csv_row(%w(name), Assignment.new)
       end
       assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
     end
 
     should 'raise an error message on a invalid maximum value' do
-      e = assert_raise Csv::MalformedCSVError do
+      e = assert_raise CSV::MalformedCSVError do
         FlexibleCriterion.new_from_csv_row(%w(name max_value), Assignment.new)
       end
       assert_equal I18n.t('criteria_csv_error.max_zero'), e.message
@@ -65,11 +69,11 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
 
     should 'raise exceptions in case of an unpredicted error' do
       # Capture exception in variable 'e'
-      e = assert_raise Csv::MalformedCSVError do
+      e = assert_raise CSV::MalformedCSVError do
         # That should fail because the assignment doesn't yet exists (in the DB)
         FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
       end
-      assert_instance_of Csv::MalformedCSVError, e
+      assert_instance_of CSV::MalformedCSVError, e
       if RUBY_VERSION > '1.9'
         assert_not_nil(e.message =~ /ActiveModel::Errors/)
       else
@@ -174,7 +178,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       end
 
       should 'fail with corresponding error message if the name is already in use' do
-        e = assert_raise Csv::MalformedCSVError do
+        e = assert_raise CSV::MalformedCSVError do
           FlexibleCriterion.new_from_csv_row(
             ['criterion1', 1.0, 'any description would do'],
             @assignment)

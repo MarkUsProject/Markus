@@ -1,5 +1,5 @@
 en:
-    choose_language:    "Choose Language:"
+    choose_language:    "Language:"
     answer_yes:         "Yes"
     answer_no:          "No"
     markus:             "MarkUs"
@@ -8,13 +8,14 @@ en:
     all:                "All"
     none:               "None"
     search:             "Search:"
+    issues:             "GitHub issues list"
 
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
-    welcome_to_markus:     "%{user_name}, welcome to MarkUs, the online marking tool."
+    welcome_to_markus:     "Welcome to MarkUs, the online marking tool, %{user_name}."
     log_in:             "Log in"
     logging_in:         "Logging in..."
-    login:              "Login"
+    login:              "Username"
     login_failed:       "Login failed"
     cookies_off:        "Please configure your browser to accept cookies."
     password_not_blank: "Your password must not be blank."
@@ -26,7 +27,7 @@ en:
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
     clear_role_switch_session_link: "Cancel role switch"
-    working:            "Working..."
+    working:            "Working…"
     login_as:           "Login as"
 
     # app/views/main/_about_content.html.erb
@@ -43,9 +44,9 @@ en:
     markus_copyright:   "Copyright (c) 2008-2011 by the authors."
     markus_credits:     "Credits"
     markus_credits_thanks:      "Thanks to everyone who contributed to and made MarkUs possible. In particular to:"
-    supervisors:        "Supervisors:"
+    supervisors:        "Supervisors: "
     contact_us:         "Contact Us"
-    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br/>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information.<br/>To submit a bug or issue please visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
+    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information.<br>To submit a bug or issue please visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
     # app/views/api/_key_display.html.erb
     api_key:            "Your API Key"
@@ -56,6 +57,7 @@ en:
     dashboard:          "Dashboard"
     assignments:        "Assignments"
     users:              "Users"
+    sections:           "Sections"
     home:               "Home"
     settings:           "Settings"
 
@@ -107,6 +109,7 @@ en:
     collect_submissions:
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
+      disable_collect: "Collection disabled, more than one TA marking displayed submissions."
       could_not_collect: "Could not collect submissions for assignment %{assignment_identifier} - the collection date has not been reached"
       collection_job_started: "Submission collection for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
       priority_given: "The submission has been given collection priority. It will be ready soon."
@@ -119,6 +122,7 @@ en:
       successfully_collected: "Successfully collected %{collected} submissions."
       marking_incomplete_warning: "Note: Not all of the assignments have been marked.\n\nAre you sure you want to proceed?"
     assignment:
+        hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
         required_fields: "Required Fields<span class='required_field'>*</span>"
         name:           "Assignment Name<span class='required_field'>*</span>"
@@ -132,8 +136,8 @@ en:
         edit:           "Edit Assignment:"
         properties:     "Assignment Properties"
         required_files:  "Required files"
-        submission_rules:  "Submission Rules<span class='required_field'>*</span>"
-        required_files_read:  "Files required for this assignment"
+        submission_rules:  "Submission Rules"
+        required_files_read:  "Required files"
         no_required_files_read:  "There are no required files for this assignment."
         required_files_by_student:  "Add filename(s) that students would be required to submit:"
         add_required_file:  "Add a Required File"
@@ -164,13 +168,14 @@ en:
             due_date:  "Remark Due Date"
             message:   "Remark Message"
         marking_scheme:
-            title: "Marking Scheme<span class='required_field'>*</span>"
+            title: "Marking Scheme"
             rubric: "Rubric"
             flexible: "Flexible"
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
-        allow_web_submits: "Allow Web Submits?<span class='required_field'>*</span>"
-        display_grader_names_to_students: "Display grader names to students?<span class='required_field'>*</span>"
+        allow_web_submits: "Allow Web Submits?"
+        is_hidden: "Hide assignment from students?"
+        display_grader_names_to_students: "Display grader names to students?"
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
@@ -179,6 +184,7 @@ en:
     add_members:        "Add Members"
     remove_members:     "Remove Members"
     graders:            "Graders"
+    search_graders:     "Search Graders"
     add_graders:        "Add Graders"
     remove_graders:     "Remove Graders"
     admins:             "Admins"
@@ -207,6 +213,7 @@ en:
     properties:         "Properties"
     grades:             "Grades"
     submissions:        "Submissions"
+    summaries:          "Summaries"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
@@ -304,6 +311,7 @@ en:
         change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
         select_some_text: "You must select some source code text"
         select_an_area: "You should select an area on the image to annotate"
+        provide_text:   "You must provide some annotation text"
 
     #app/views/results/common
     common:
@@ -336,10 +344,10 @@ en:
       invalid_csv: "The format of the CSV file was not recognized"
 
     pagination:
-      first: "<< First"
+      first: "≪ First"
       prev: "< Prev"
       next: "Next >"
-      last: "Last >>"
+      last: "Last ≫"
       per_page: "per page"
       jump_to: "Jump to:"
       show: "Show"
@@ -386,7 +394,7 @@ en:
       subversion_repo_list: "Subversion Repo List"
       subversion_export_file: "Subversion Export File"
       errors:               "Errors"
-      filter:               "Filter :"
+      filter:               "Filter:"
       show:                 "Show"
       per_page:             "per page"
       filename:             "Filename"
@@ -395,11 +403,26 @@ en:
       replace:              "Replace"
       delete:               "Delete"
       can_begin_grading:    "Can begin grading"
+      error_collecting:     "There were problems collecting some files."
       section:              "Section"
       collect_work_for_section: "Collect work for section:"
       download_groupings_files: "Download all submissions"
       sections:             "Section:"
       revision_history:     "%{num}: "
+
+    summaries_index:
+      group_name:           "Group Name"
+      repository_name:      "Repository: %{repository}"
+      repository:           "Repository"
+      commit_date:          "Commit Date"
+      marking_state:        "Marking State"
+      grace_credits_used:   "Grace Credits Used"
+      final_grade:          "Final Grade"
+      criterion:             "criterion"
+      per_page:             "per page"
+      filename:             "Filename"
+      section:              "Section"
+      sections:             "Section:"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -452,8 +475,8 @@ en:
                              <ul><li>two lines at the top which specify the question names and totals;</li>
                              <li>one line for each student record;</li>
                              <li>each line should be terminated by a carriage-return line-feed.</li></ul>
-                             <code>\"\",q1_name,q2_name,q3_name</code><br/>
-                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br/>
+                             <code>\"\",q1_name,q2_name,q3_name</code><br>
+                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "There are currently no marks spreadsheets."
@@ -466,12 +489,14 @@ en:
     converting_pdfs: "Now converting pdf files...%{converted}/%{total}"
 
     groups:
-      groups: "Groups"
-      add_new: "Add new group"
-      manage_groups: "Manage Groups"
-      all_students: "All students(<span id=\"all_students_count\"></span>)"
+      groups:           "Groups"
+      search_groups:    "Search Groups"
+      add_new:          "Add new group"
+      manage_groups:    "Manage Groups"
+      all_students:     "All students(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Unassigned(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigned(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inactive(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Use another assignment's groups"
       graders: "Graders (%{graders})"
       all_grouping_counts: "All Groups(<span id=\"all_groupings_count\"></span>)"
@@ -503,15 +528,12 @@ en:
       upload:
         upload: "Upload"
         upload_groups_file: "Upload Groups File"
-        description: "CSV file format:<br />
-            <code>group_name,repository_name,user_name,<br />user_name ... </code><br />"
+        description: "CSV file format:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"
         upload_grader_map: "Upload Group / Grader Map"
         upload_grader_criteria_map: "Upload Criteria / Grader Map"
-        description_grader_map: "CSV file format:<br />
-            <code>group_name,grader_user_name,grader_user_name,... </code><br />"
-        description_grader_criteria_map: "CSV file format:<br />
-            <code>criterion_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "CSV file format:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
+        description_grader_criteria_map: "CSV file format:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
         download: "Download"
         download_groups_file: "Download Groups File"
@@ -554,9 +576,10 @@ en:
       processing: "Processing..."
       manage_students: "Manage Students"
       edit_student:    "Edit a Student"
-      edit_success: "%{user_name} has been updated."
-      create_new:      "Create a new Student"
-      students: "Students"
+      edit_success:     "%{user_name} has been updated."
+      create_new:       "Create a new Student"
+      students:         "Students"
+      search_students:  "Search Students"
       no_students_selected: "No students were selected, so no changes were made."
       upload:
         upload_a_class_list: "Upload a class list"
@@ -599,10 +622,10 @@ en:
       group_information: "Group Information"
       group_not_valid: "Your group is not valid. You can't submit anything."
       overview: "Overview"
-      last_revision_date: "Last Revision Date:<br /><span class=\"info_date\">%{last_modified_date}</span>"
+      last_revision_date: "Last Revision Date:<br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "files"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> missing required files</span>"
-      no_submission_yet: "You don't have any submission yet"
+      no_submission_yet: "You have not made any submissions yet"
       no_group_yet: "You don't have a group yet"
       grace_date_passed: "and the grace period for this assignment has passed"
       not_allowed_to_form_group: "You are not allowed to form groups yourself for this assignment.
@@ -683,6 +706,7 @@ en:
       not_covered:        "Not Covered"
       covered:            "Covered"
       coverage: "Coverage"
+      search_criteria:    "Search Criteria"
       assign_to_criteria: "Assign Graders to Criteria"
       lines_not_processed: "The following lines could not be processed:"
       upload:
@@ -706,8 +730,8 @@ en:
         download_grader_students_csv: "Student / Grader map CSV format"
       upload:
         upload_grader_map: "Upload Student / Grader Map"
-        description_grader_map: "CSV file format:<br />
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "CSV file format:<br>
+            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     #Admins' View
     admins:
@@ -788,7 +812,7 @@ en:
 
     annotations:
       annotation_category: "Annotation Category"
-      no_annotation_categories: "There are no annotation categories, yet."
+      no_annotation_categories: "There are no annotation categories yet."
       title: "Annotations: %{assignment_short_identifier}"
       name: "Category name"
       help_message: "Click on an annotation category to add annotations."
@@ -809,13 +833,13 @@ en:
         upload_annotations: "Upload Annotations"
         upload_message_csv: "
         <p>
-            Select a CSV file of the following form:<br />
-            <code>category_name,annotation_text,annotation_text ... </code><br />
+            Select a CSV file of the following form:<br>
+            <code>category_name,annotation_text,annotation_text ... </code><br>
           </p>"
         upload_message_yml: "
         <p>
-            Select a YAML file of the following form:<br />
-            <code>category_name: <br />- category_text<br />- category_text</code><br />
+            Select a YAML file of the following form:<br>
+            <code>category_name: <br>- category_text<br>- category_text</code><br>
 
           </p>"
         success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
@@ -920,8 +944,8 @@ en:
       weight_not_number: "weight is not a number."
 
     csv_special_characters_html: "
-    <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").<br />
-    If you wish to use double quotes in a CSV field, you should surround the field with double quotes and<br />
+    <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").<br>
+    If you wish to use double quotes in a CSV field, you should surround the field with double quotes and<br>
     double each one of your double quotes (\"\").</p>
     <p>Here's an example of a CSV field containing commas and double quotes:</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
@@ -976,17 +1000,17 @@ en:
         <p>The file should have the following format:</p>
         <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br />
+        <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br>
         and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
         by commas)."
         format_yml_html: "
-          <p>The file should have the following format:<br />
-              <code>criterion_name:<br />
-                    &nbsp;&nbsp;weight: weight<br />
-                    &nbsp;&nbsp;level_0:<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br />
-                    &nbsp;&nbsp;level_1:<br />
+          <p>The file should have the following format:<br>
+              <code>criterion_name:<br>
+                    &nbsp;&nbsp;weight: weight<br>
+                    &nbsp;&nbsp;level_0:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+                    &nbsp;&nbsp;level_1:<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]
           </p>"
         error: "Some rubric criteria were invalid:"
@@ -1110,6 +1134,9 @@ en:
         long_date: "%B %d, %Y: %I:%M%p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
+        locale_date:      "DD, MM d, yy,"
+        locale_date_only: "DD, MM d, yy"
+        locale_repo_date: "MM d, yy"
 
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
@@ -1119,6 +1146,9 @@ en:
         - year
         - month
         - day
+      months:       ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      weekdays:     ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+      weekdays_min: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 
     time:
       formats:
@@ -1134,8 +1164,17 @@ en:
         short_date: "%B %d, %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
         ant_date: "%B-%d-%Y_%I:%M"
+        locale_time: "h:mm TT"
+        locale_repo_time: "hh:mm TT"
       am: 'am'
       pm: 'pm'
+      hour:   "Hour"
+      minute: "Minute"
+      time:   "Time"
+      next:   "Next"
+      prev:   "Previous"
+      close:  "Close"
+      now:    "Now"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"
@@ -1182,7 +1221,7 @@ en:
       due_date_is_passed: "You can not run test as the due date for this assignment is passed"
       information: "Information"
       run_tests: "Run tests"
-      need_one_file: "You need at least one file submitted in order to run tests.<br />
+      need_one_file: "You need at least one file submitted in order to run tests.<br>
                       If you already submitted one file and you want to run tests on it, use the \"Collect and Prepare Test\" button below."
       collect_and_test: "Collect and Prepare Test"
       build_xml: "build.xml"

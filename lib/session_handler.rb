@@ -59,9 +59,9 @@ module SessionHandler
         # Redirect users back to referer, or else
         # they might be redirected to an rjs page.
         session[:redirect_uri] = request.referer
-        render :nothing => true, :status => :forbidden  # 403 http code
+        render nothing: true, status: :forbidden  # 403 http code
       else
-        redirect_to :controller => 'main', :action => 'login'
+        redirect_to controller: 'main', action: 'login'
       end
     end
   end
@@ -70,31 +70,31 @@ module SessionHandler
   # specific role.
   def authorize_only_for_admin
     unless authorized?(Admin)
-      render 'shared/http_status', :formats => [:html], :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+      render 'shared/http_status', formats: [:html], locals: { code: "404", message: HttpStatusHelper::ERROR_CODE["message"]["404"] }, status: 404, layout: false
     end
   end
 
   def authorize_for_ta_and_admin
     unless authorized?(Admin) || authorized?(Ta)
-      render 'shared/http_status', :formats => [:html], :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+      render 'shared/http_status', formats: [:html], locals: { code: "404", message: HttpStatusHelper::ERROR_CODE["message"]["404"] }, status: 404, layout: false
     end
   end
 
   def authorize_for_student
     unless authorized?(Student)
-      render 'shared/http_status', :formats => [:html], :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+      render 'shared/http_status', formats: [:html], locals: { code: "404", message: HttpStatusHelper::ERROR_CODE["message"]["404"] }, status: 404, layout: false
     end
   end
 
   def authorize_for_student_and_ta
     unless authorized?(Ta) || authorized?(Student)
-      render 'shared/http_status', :formats => [:html], :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+      render 'shared/http_status', formats: [:html], locals: { code: "404", message: HttpStatusHelper::ERROR_CODE["message"]["404"] }, status: 404, layout: false
     end
   end
 
   def authorize_for_user
     unless authorized?(User)
-      render 'shared/http_status', :formats => [:html], :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+      render 'shared/http_status', formats: [:html], locals: { code: "404", message: HttpStatusHelper::ERROR_CODE["message"]["404"] }, status: 404, layout: false
     end
   end
 

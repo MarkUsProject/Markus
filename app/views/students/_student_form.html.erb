@@ -1,31 +1,31 @@
 <div id="add_new_section_dialog">
 </div>
 <div class="section">
-  <%= form_for @user, :as => :user do |f| %>
+  <%= form_for @user, as: :user do |f| %>
 
     <%= render 'shared/flash_message' %>
 
     <%= raw(f.label(:user_name, I18n.t("user.user_name"))) %>
-    <%= raw(f.text_field :user_name) %><br />
+    <%= raw(f.text_field :user_name) %><br>
 
     <%= raw(f.label(:last_name, I18n.t("user.last_name"))) %>
-    <%= raw(f.text_field :last_name) %><br />
+    <%= raw(f.text_field :last_name) %><br>
 
     <%= raw(f.label(:first_name, I18n.t("user.first_name"))) %>
-    <%= raw(f.text_field :first_name) %><br />
+    <%= raw(f.text_field :first_name) %><br>
 
     <%= raw(f.label(:grace_credits, I18n.t("user.grace_credits"))) %>
-    <%= raw(f.text_field :grace_credits) %> <br />
+    <%= raw(f.text_field :grace_credits) %> <br>
 
     <div id='select_sections'>
-      <%= render :partial => 'sections/select_sections',
-                 :locals => { :user => @user, :new_student => true } %>
+      <%= render partial: 'sections/select_sections',
+                 locals: { user: @user, new_student: true } %>
     </div>
 
     <%= f.hidden_field :id %>
-    <%= f.submit t(:submit), :name => 'submit', :disable_with => I18n.t('working'),
-      :class => 'button' %>
-    <%= link_to t(:cancel), students_path(), :class => "button" %>
+    <%= f.submit t(:submit), name: 'submit', :'data-disable-with' => I18n.t('working'),
+      class: 'button' %>
+    <%= link_to t(:cancel), students_path(), class: "button" %>
 
   <% end %>
 
