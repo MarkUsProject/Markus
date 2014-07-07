@@ -17,20 +17,14 @@
     componentWillMount: function() {
       this.refresh();
     },
-    updateSelectedStudents: function(students) {
-      this.setState({
-        selected_students: students
-      });
+    updateSelectedStudentsz: function(students) {
+      this.setState({selected_students: students});
     },
     updateSelectedGroups: function(groups) {
-      this.setState({
-        selected_groups: groups
-      });
+      this.setState({selected_groups: groups});
     },
     updateSelectedStudentsInGroups: function(students) {
-      this.setState({
-        selected_students_in_groups: students
-      });
+      this.setState({selected_students_in_groups: students});
     },
     // Sends a request to the server to perform some action
     // such as assigning or removing a member to/from a group
@@ -84,7 +78,7 @@
           <Error error={this.state.error} />
           <GroupsStudentsTable students={this.state.students}
             selected_students={this.state.selected_students}
-            onSelectedStudentsChange={this.updateSelectedStudents}/>
+            onSelectedStudentsChange={this.updateSelectedStudentsz}/>
           <GroupsActionsColumn refresh={this.refresh} performAction={this.performAction} />
           <GroupsTable groups={this.state.groups} 
             selected_groups={this.state.selected_groups}
@@ -99,25 +93,11 @@
 
   // Table of students, on the left.
   var GroupsStudentsTable = React.createClass({
-    checkboxClicked: function(event) {
-      var value = event.currentTarget.checked;
-      var student_id = parseInt(event.currentTarget.getAttribute('id'));
-      var new_selected_students = this.props.selected_students.slice();
-      if (value == true) {
-        new_selected_students.push(student_id);
-      } else {
-        new_selected_students.splice(new_selected_students.indexOf(student_id), 1);
-      }
-      this.props.onSelectedStudentsChange(new_selected_students);
+    updateSelectedStudents: function(students) {
+      this.props.onSelectedStudentsChange(students)
     },
     render: function() {
       var columns = [
-      {
-        id: 'checkbox',
-        content: <div></div>,
-        sortable: false,
-        searchable: false
-      },
       {
         id: 'user_name',
         content: '<%= j raw I18n.t('user.user_name') %>',
@@ -172,9 +152,6 @@
       var students_data = this.props.students.map(function(student) {
         var s = {};
         s['id'] = student.id;
-        s['checkbox'] = <input id={student.id} type='checkbox'
-          checked={this.props.selected_students.indexOf(student.id) !== -1 ? true : false}
-         onChange={this.checkboxClicked} />
         s['user_name'] = student.user_name;
         s['last_name'] = student.last_name;
         s['first_name'] = student.first_name;
@@ -189,6 +166,8 @@
             <Table data={students_data}
             columns={columns}
             filters={filters}
+            selectable={true}
+            onSelectedRowsChange={this.updateSelectedStudents}
             search_placeholder={'<%= j raw I18n.t('students.search_students') %>'} />
           </div>
         </div>
