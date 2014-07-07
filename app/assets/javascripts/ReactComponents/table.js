@@ -1,12 +1,20 @@
 /** @jsx React.DOM */
 
+/**
+ *
+ *
+ *
+ *
+ */
 var Table = React.createClass({displayName: 'Table',
   propTypes: {
     data: React.PropTypes.array,
     search_placeholder: React.PropTypes.string,
     columns: React.PropTypes.array,
     filters: React.PropTypes.array, // Optional: pass null
-    filter_type: React.PropTypes.bool // True for select filter, falsy for simple
+    filter_type: React.PropTypes.bool, // True for select filter, falsy for simple
+    selectable: React.PropTypes.bool, // True if you want checkboxed elements
+    onSelectedRowsChange: React.PropTypes.func // function to call when selected rows change
   },
   getInitialState: function() {
     var first_sortable_column = this.props.columns.filter(function(col) {
@@ -15,29 +23,36 @@ var Table = React.createClass({displayName: 'Table',
 
     var first_filter_name = this.props.filters ? this.props.filters[0].name : null;
     var first_filter_func = this.props.filters ? this.props.filters[0].func : null;
-
     return {
+      visible_rows: [],
+      selected_rows: [],
       filter: first_filter_name,
       filter_func: first_filter_func,
       sort_column: first_sortable_column,
       sort_direction: 'asc'
     }
   },
+  componentDidMount: function() {
+    this.setState({visible_rows: this.updateVisibleRows({})});
+  },
   // A filter was clicked. Adjust state accordingly.
   synchronizeFilter: function(filter) {
     var filter_func = this.props.filters.filter(function(fltr) {
         return fltr.name == filter;
       })[0].func;
-
+    var visible_rows = this.updateVisibleRows({filter_func: filter_func});
     this.setState({
       filter: filter,
-      filter_func: filter_func
+      filter_func: filter_func,
+      visible_rows: visible_rows
     });
   },
   // Search input changed. Adjust state accordingly.
   synchronizeSearchInput: function(search_text) {
+    var visible_rows = this.updateVisibleRows({search_text: search_text});
     this.setState({
-      search_text: search_text.toLowerCase()
+      search_text: search_text.toLowerCase(),
+      visible_rows: visible_rows
     });
   },
   // Header col was clicked. Adjust state accordingly.
@@ -47,7 +62,60 @@ var Table = React.createClass({displayName: 'Table',
       sort_direction: sort_direction
     });
   },
+  headerCheckboxClicked: function(event) {
+    var value = event.currentTarget.checked;
+    var new_selected_rows = null 
+    if (value) {
+      new_selected_rows = this.state.visible_rows.map(function(x){return x.id});
+    } else {
+      new_selected_rows = [];
+    }
+    this.setState({selected_rows: new_selected_rows});
+    this.props.onSelectedRowsChange(new_selected_rows);
+  },
+  rowCheckboxClicked: function(event) {
+    var value = event.currentTarget.checked;
+    var row_id = parseInt(event.currentTarget.parentNode.parentNode.getAttribute('id'));
+
+    var new_selected_rows = this.state.selected_rows.slice();
+    if (value == true) {
+      new_selected_rows.push(row_id);
+    } else {
+      new_selected_rows.splice(new_selected_rows.indexOf(row_id), 1);
+    }
+    this.setState({selected_rows:new_selected_rows});
+    this.props.onSelectedRowsChange(new_selected_rows);
+  },
+  // If search input or filter changed, pass the changed item into an object changed inhere
+  // and it'll return the new visible rows so you can update the state with it.
+  updateVisibleRows: function(changed) {
+    var searchables = this.props.columns.filter(function(col) {
+      return col.searchable == true;
+    }).map(function(col) {
+      return col.id;
+    });
+
+    var filter_function = changed.hasOwnProperty('filter_func') ? changed.filter_func : this.state.filter_func;
+    var search_text = changed.hasOwnProperty('search_text') ? changed.search_text: this.state.search_text;
+
+    var filtered_data = filter_data(this.props.data,
+                                    filter_function);
+    var searched_data = search_data(filtered_data,
+                                    searchables, 
+                                    search_text);
+    var visible_data = searched_data;
+    return visible_data;
+  },
   render: function() {
+    var columns = null;
+    if (this.props.selectable) {
+      columns = [{id:'checkbox', content:
+        React.DOM.input({type:'checkbox', onChange:this.headerCheckboxClicked})}]
+        .concat(this.props.columns);
+    } else {
+      columns = this.props.columns;
+    }
+
     return (
       React.DOM.div(null, 
         TableFilter( {filters:this.props.filters,
@@ -59,12 +127,15 @@ var Table = React.createClass({displayName: 'Table',
         TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
           placeholder:this.props.search_placeholder} ),
         React.DOM.table( {className:"table"}, 
-          TableHeader( {columns:this.props.columns,
+          TableHeader( {columns:columns,
             sort_column:this.state.sort_column,
             sort_direction:this.state.sort_direction,
             onHeaderColumnChange:this.synchronizeHeaderColumn} ),
-          TableRows( {columns:this.props.columns,
-                     data:this.props.data,
+          TableRows( {columns:columns,
+                     rowCheckboxClicked:this.rowCheckboxClicked,
+                     selectable:this.props.selectable,
+                     //data:this.props.data,
+                     getVisibleRows:this.updateVisibleRows,
                      state:this.state} )
         )
       )
@@ -179,6 +250,7 @@ SelectTableFilter = React.createClass({displayName: 'SelectTableFilter',
 
 TableHeader = React.createClass({displayName: 'TableHeader',
   propTypes: {
+    selectable: React.PropTypes.bool,
     onHeaderColumnChange: React.PropTypes.func
   },
   headerColumnClicked: function(event) {
@@ -225,35 +297,39 @@ TableHeader = React.createClass({displayName: 'TableHeader',
 TableRows = React.createClass({displayName: 'TableRows',
   propTypes: {
     columns: React.PropTypes.array,
-    data: React.PropTypes.array,
-    state: React.PropTypes.object
+    selectable: React.PropTypes.bool,
+    rowCheckboxClicked: React.PropTypes.func,
+    //data: React.PropTypes.array,
+    getVisibleRows: React.PropTypes.func,
+    state: React.PropTypes.object,
   },
 
   render: function() {
-    var searchables = this.props.columns.filter(function(col) {
-      return col.searchable == true;
-    }).map(function(col) {
-      return col.id;
-    });
-
-    var filtered_data = filter_data(this.props.data,
-                                    this.props.state.filter_func);
-
-    var searched_data = search_data(filtered_data,
-                                    searchables, 
-                                    this.props.state.search_text);
-    
-    var sorted_data = sort_by_column(searched_data,
+    var visible_data = this.props.getVisibleRows({});
+    var sorted_data = sort_by_column(visible_data,
                                      this.props.state.sort_column,
                                      this.props.state.sort_direction);
 
+    var final_data = null;
+    if (this.props.selectable) {
+      final_data = sorted_data.map(function(row) {
+        var checked = this.props.state.selected_rows.indexOf(row.id) !== -1 ? true : false;
+        row['checkbox'] = React.DOM.input( {type:'checkbox',
+          onChange:this.props.rowCheckboxClicked,
+          checked:checked});
+        return row;
+      }.bind(this));
+    } else {
+      final_data = sorted_data;
+    }
+    
     // create rows
     // consider instead of recreating array each time, just hiding the rows.
     var rows = [];
-    for (var i = 0; i < sorted_data.length; i++) {
+    for (var i = 0; i < final_data.length; i++) {
       rows.push(
-        TableRow( {key:sorted_data[i].id,
-          row_object:sorted_data[i],
+        TableRow( {key:final_data[i].id,
+          row_object:final_data[i],
           columns:this.props.columns})
       );
     }
@@ -263,7 +339,6 @@ TableRows = React.createClass({displayName: 'TableRows',
         rows
       )
     );
-
   }
 });
 
