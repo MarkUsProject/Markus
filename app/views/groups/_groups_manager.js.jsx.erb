@@ -17,7 +17,7 @@
     componentWillMount: function() {
       this.refresh();
     },
-    updateSelectedStudentsz: function(students) {
+    updateSelectedStudents: function(students) {
       this.setState({selected_students: students});
     },
     updateSelectedGroups: function(groups) {
@@ -51,7 +51,6 @@
           });
         }.bind(this),
         error: function(xhr, status, text) {
-          console.log("got error");
           var error = text + ': ' + xhr.responseText;
           this.setState({
             error: error
@@ -79,7 +78,7 @@
           <ErrorDiv error={this.state.error} />
           <GroupsStudentsTable students={this.state.students}
             selected_students={this.state.selected_students}
-            onSelectedStudentsChange={this.updateSelectedStudentsz}/>
+            onSelectedStudentsChange={this.updateSelectedStudents}/>
           <GroupsActionsColumn refresh={this.refresh} performAction={this.performAction} />
           <GroupsTable groups={this.state.groups} 
             selected_groups={this.state.selected_groups}
@@ -94,9 +93,11 @@
 
   // Table of students, on the left.
   var GroupsStudentsTable = React.createClass({
+    /*
     updateSelectedStudents: function(students) {
       this.props.onSelectedStudentsChange(students)
     },
+    */
     render: function() {
       var columns = [
       {
@@ -168,7 +169,7 @@
             columns={columns}
             filters={filters}
             selectable={true}
-            onSelectedRowsChange={this.updateSelectedStudents}
+            onSelectedRowsChange={this.props.onSelectedStudentsChange}
             search_placeholder={'<%= j raw I18n.t('students.search_students') %>'} />
           </div>
         </div>
@@ -178,17 +179,6 @@
 
   // The table of groups on the right.
   var GroupsTable = React.createClass({
-    groupCheckboxClicked: function(event) {
-      var value = event.currentTarget.checked;
-      var group_id = parseInt(event.currentTarget.getAttribute('id'));
-      var new_selected_groups = this.props.selected_groups.slice();
-      if (value == true) {
-        new_selected_groups.push(group_id);
-      } else {
-        new_selected_groups.splice(new_selected_groups.indexOf(group_id), 1);
-      }
-      this.props.onSelectedGroupsChange(new_selected_groups);
-    },
     studentCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_student_id = parseInt(event.currentTarget.getAttribute('id'));
@@ -205,12 +195,6 @@
     },
     render: function() {
       var columns = [
-      {
-        id: 'checkbox',
-        content: <div></div>,
-        sortable: false,
-        searchable: false
-      },
       {
         id: 'name',
         content: '<%= j raw I18n.t('groups.groupe_name') %>',
@@ -260,9 +244,6 @@
       var groups_data = this.props.groups.map(function(group) {
         var g = {};
         g['id'] = group.id;
-        g['checkbox'] = <input id={group.id} type='checkbox'
-          checked={this.props.selected_groups.indexOf(group.id) !== -1 ? true : false}
-          onChange={this.groupCheckboxClicked} />
         g['name'] = group.name;
         var links = [];
         if (group.valid) {
@@ -294,6 +275,8 @@
           <AddGroupButton refresh={this.props.refresh} />
           <div className={'wrapRightGroups'}>
             <Table data={groups_data} columns={columns} filters={filters} 
+              selectable={true}
+              onSelectedRowsChange={this.props.onSelectedGroupsChange}
               search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
           </div>
         </div>
