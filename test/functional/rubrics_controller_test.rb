@@ -393,6 +393,7 @@ END
           c2 = RubricCriterion.find(@criterion2.id)
           assert_equal 2, c2.position
         end
+      end
 
     end
   end # An admin, with an assignment, and a rubric criterion
