@@ -1,0 +1,33 @@
+.columns {
+  display: table;
+  height: 100%;
+  width: 100%;
+}
+
+.col-left,
+.col-center,
+.col-right {
+  display: table-cell;
+  vertical-align: top;
+}
+
+.col-left,
+.col-right {
+  width: 45%;
+}
+
+.col-center {
+  width: 10%;
+
+  #icons {
+    left: 50%;
+    margin-left: -25px;
+    position: fixed;
+    top: 50%;
+  }
+
+  .image_input {
+    display: block;
+    margin: 0.5em auto;
+  }
+}
