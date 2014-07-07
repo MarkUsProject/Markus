@@ -2,6 +2,20 @@
 
 @import 'navigation';
 
+#about_dialog {
+  width: 50%;
+  max-height: 75%;
+
+  #about_text {
+    max-height: 200px;
+    overflow: auto;
+  }
+}
+
+.image_input {
+  background: none;
+  border: none;
+}
 
 .ui-datepicker-current {
   display: none !important;

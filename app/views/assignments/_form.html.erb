@@ -63,6 +63,7 @@
       <%= raw(f.label :message ) %>
       <%= raw(f.text_area :message,
                           cols: 65,
+                          rows: 5,
                           onchange: 'set_onbeforeunload(true);') %>
     </div>
 
@@ -443,6 +444,7 @@
                         class: 'textbox_label')) %>
         <%= raw(f.text_area :remark_message,
                             cols: 65,
+                            rows: 5,
                             onchange: 'set_onbeforeunload(true);') %>
       </div>
     </div>

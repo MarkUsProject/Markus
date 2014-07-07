@@ -39,3 +39,13 @@ label {
 input[type='number'] {
   width: 5em;
 }
+
+.PeriodDeltaChain {
+  font-weight: 300;
+
+  .PeriodDeltaChain_FromTime,
+  .PeriodDeltaChain_ToTime {
+    font-style: italic;
+    font-weight: 400;
+  }
+}

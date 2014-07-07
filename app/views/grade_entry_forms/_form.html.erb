@@ -7,7 +7,7 @@
 %>
 
 <% content_for :head do %>
-  <%= javascript_include_tag 'jquery', 'jquery-ui' %>
+  <%= javascript_include_tag 'jquery-ui' %>
   <%= stylesheet_link_tag 'jquery-ui' %>
   <%= javascript_include_tag 'moment-with-langs.min', 'localize_date' %>
 <% end %>
@@ -16,7 +16,7 @@
            formats: [:js],
            handlers: [:erb] %>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <%= render 'shared/flash_message' %>
 
   <%= form_for @grade_entry_form, as: :grade_entry_form do |f| %>
@@ -32,7 +32,9 @@
                          disabled: true) %>
 
     <fieldset>
-      <legend><%= t('grade_entry_forms.properties') %></legend>
+      <legend>
+        <span><%= t('grade_entry_forms.properties') %></span>
+      </legend>
 
         <% # Basic grade entry form properties %>
 
@@ -89,14 +91,13 @@
           <% end %>
         </div>
 
-       <% # Allow the user to add a new column to the form
-        %>
+        <% # Allow the user to add a new column to the form %>
         <p id='grade_entry_item_add_link'>
           <%= add_grade_entry_item_link t('grade_entry_forms.add_column'), f %>
         </p>
 
     </fieldset>
 
-    <%= f.submit data: { disable_with: I18n.t('working') } %>
+    <%= f.submit data: { disable_with: t('working') } %>
   <% end %>
 </div>

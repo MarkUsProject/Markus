@@ -267,13 +267,13 @@ fieldset {
   @include border-radius($radius);
   @include box-shadow(0 3px 0 $grey);
   background: $white;
-  padding: 1.5em;
+  padding: 0.25em 1.5em 1.5em;
   position: relative;
 
   legend {
     border: none;
 
-    span {
+    & > span {
       @extend h3;
       padding: 0 0.25em;
     }
@@ -290,7 +290,7 @@ fieldset {
     legend {
       width: 100%;
 
-      span {
+      & > span {
         border-top: 1px solid $grey;
         display: block;
         padding-top: 0.5em;

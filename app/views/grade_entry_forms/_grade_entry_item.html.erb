@@ -3,32 +3,35 @@
    # #{out_of} - The total number of marks
 %>
 <fieldset class="grade_entry_item">
-<legend><%= t('grade_entry_forms.column').html_safe %></legend>
-<%= form.fields_for :grade_entry_items, grade_entry_item do |f| %>
-  <p>
-    <%= raw(f.label :name,
-                    t('grade_entry_forms.column_name'),
-                    class: "inline_label") %>
-    <%= raw(f.text_field :name,
-                         size: 20) %>
+  <legend>
+    <span><%= t('grade_entry_forms.column').html_safe %></span>
+  </legend>
 
-    <%= raw(f.label :out_of,
-                    t('grade_entry_forms.column_out_of'),
-                    class: "inline_label") %>
-    <%= raw(f.text_field :out_of,
-                         size: 5,
-                         maxlength: 3) %>
+  <%= form.fields_for :grade_entry_items, grade_entry_item do |f| %>
+    <p>
+      <%= raw(f.label :name,
+                      t('grade_entry_forms.column_name'),
+                      class: "inline_label") %>
+      <%= raw(f.text_field :name,
+                           size: 20) %>
 
-    <%= f.hidden_field :position, value: new_position %>
-    <% if !f.object.nil? && !f.object.new_record? %>
-      <span>
-      <br> <%= f.label :_destroy,
-                         t('grade_entry_forms.remove_column'),
-                         class: "inline_label" %> <%= f.check_box :_destroy %>
-      </span>
-    <% else %>
-      <%= link_to_function I18n.t("delete"), "$(this).up(\".grade_entry_item\").remove()" %>
-    <% end %>
-  </p>
-<% end %>
+      <%= raw(f.label :out_of,
+                      t('grade_entry_forms.column_out_of'),
+                      class: "inline_label") %>
+      <%= raw(f.text_field :out_of,
+                           size: 5,
+                           maxlength: 3) %>
+
+      <%= f.hidden_field :position, value: new_position %>
+      <% if !f.object.nil? && !f.object.new_record? %>
+        <span>
+        <br> <%= f.label :_destroy,
+                           t('grade_entry_forms.remove_column'),
+                           class: "inline_label" %> <%= f.check_box :_destroy %>
+        </span>
+      <% else %>
+        <%= link_to_function I18n.t("delete"), "$(this).up(\".grade_entry_item\").remove()" %>
+      <% end %>
+    </p>
+  <% end %>
 </fieldset>
