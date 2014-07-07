@@ -35,6 +35,9 @@ var Table = React.createClass({displayName: 'Table',
   componentDidMount: function() {
     this.setState({visible_rows: this.updateVisibleRows({})});
   },
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({visible_rows: this.updateVisibleRows({data:nextProps.data})});
+  },
   // A filter was clicked. Adjust state accordingly.
   synchronizeFilter: function(filter) {
     var filter_func = this.props.filters.filter(function(fltr) {
@@ -64,7 +67,7 @@ var Table = React.createClass({displayName: 'Table',
   },
   headerCheckboxClicked: function(event) {
     var value = event.currentTarget.checked;
-    var new_selected_rows = null 
+    var new_selected_rows = null;
     if (value) {
       new_selected_rows = this.state.visible_rows.map(function(x){return x.id});
     } else {
@@ -95,10 +98,11 @@ var Table = React.createClass({displayName: 'Table',
       return col.id;
     });
 
+    var new_data = changed.hasOwnProperty('data') ? changed.data : this.props.data;
     var filter_function = changed.hasOwnProperty('filter_func') ? changed.filter_func : this.state.filter_func;
     var search_text = changed.hasOwnProperty('search_text') ? changed.search_text: this.state.search_text;
 
-    var filtered_data = filter_data(this.props.data,
+    var filtered_data = filter_data(new_data,
                                     filter_function);
     var searched_data = search_data(filtered_data,
                                     searchables, 
@@ -134,7 +138,6 @@ var Table = React.createClass({displayName: 'Table',
           TableRows( {columns:columns,
                      rowCheckboxClicked:this.rowCheckboxClicked,
                      selectable:this.props.selectable,
-                     //data:this.props.data,
                      getVisibleRows:this.updateVisibleRows,
                      state:this.state} )
         )
@@ -299,7 +302,6 @@ TableRows = React.createClass({displayName: 'TableRows',
     columns: React.PropTypes.array,
     selectable: React.PropTypes.bool,
     rowCheckboxClicked: React.PropTypes.func,
-    //data: React.PropTypes.array,
     getVisibleRows: React.PropTypes.func,
     state: React.PropTypes.object,
   },
