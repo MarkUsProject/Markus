@@ -185,12 +185,12 @@ textarea {
 }
 
 textarea {
-  height: 2.5em;
+  // height: 2.5em;
   resize: none;
 
-  &:focus {
-    height: 7.5rem;
-  }
+  // &:focus {
+  //   height: 7.5rem;
+  // }
 }
 
 select {
@@ -216,6 +216,7 @@ button,
   @include transition(all, $time-quick);
   border: 1px solid $blue;
   color: $dark-grey;
+  cursor: pointer;
   display: inline-block;
   font: 400 1em $fonts;
   min-width: 150px;
@@ -558,6 +559,11 @@ ul.tags {
 
     button {
       margin: 0.5em;
+    }
+
+    div,
+    input {
+      display: inline-block;
     }
   }
 }

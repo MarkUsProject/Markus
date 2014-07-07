@@ -5,7 +5,7 @@
 
 <%= render partial: "boot", formats: [:js], handlers: [:erb] %>
 
-<div id="title_bar">
+<div class="title_bar">
   <h1><%= I18n.t("graders.manage_graders") %></h1>
   <div class="heading_buttons">
     <%= button_to_function I18n.t('download'), 'modal_download.open();' %>

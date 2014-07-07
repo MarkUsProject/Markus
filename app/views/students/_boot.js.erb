@@ -58,10 +58,9 @@
     document.getElementById('working').style.display = '';
 
     jQuery.ajax({
-      url: "<%= populate_students_path() %>",
-      data: 'authenticity_token=' + AUTH_TOKEN,
-      type: "POST",
-      async: true,
+      url:      '<%= populate_students_path %>',
+      data:     'authenticity_token=' + AUTH_TOKEN,
+      type:     'POST',
       dataType: 'json'
     }).done(function (data) {
       document.getElementById('working').style.display = 'none';
