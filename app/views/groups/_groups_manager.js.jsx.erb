@@ -51,6 +51,7 @@
           });
         }.bind(this),
         error: function(xhr, status, text) {
+          console.log("got error");
           var error = text + ': ' + xhr.responseText;
           this.setState({
             error: error
@@ -75,7 +76,7 @@
     render: function() {
       return (
         <div>
-          <Error error={this.state.error} />
+          <ErrorDiv error={this.state.error} />
           <GroupsStudentsTable students={this.state.students}
             selected_students={this.state.selected_students}
             onSelectedStudentsChange={this.updateSelectedStudentsz}/>
