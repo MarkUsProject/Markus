@@ -157,7 +157,8 @@
       } else {
         return (
           <div>
-            <Error error={this.state.error} />
+            <ErrorDiv error={this.state.error} />
+            // move actions text to action box
             <StudentsActionBox actions_text={this.props.actions_text} 
               selected_students={this.state.selected_students}
               sections={this.props.sections}
@@ -170,26 +171,6 @@
               columns={this.props.columns}
               filters={this.props.filters} />
           </div>
-        );
-      }
-    }
-  });
-
-  // Error div in case refreshing or sending action
-  // causes server error
-  Error = React.createClass({
-    propTypes: {
-      error: React.PropTypes.string
-    },
-    render: function() {
-      if (this.props.error) {
-        return (
-          <div className={'error'}>{this.props.error}</div>
-        );
-      }
-      else {
-        return (
-          <div></div>
         );
       }
     }
