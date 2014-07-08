@@ -63,11 +63,11 @@
 <%= render partial: 'results/student/enable_remark_request_buttons',
            formats: [:js] %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>Results for <%= sanitize(@assignment.short_identifier) %></h1>
 </div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <%= render partial: 'results/common/errors' %>
 
   <%= render partial: 'results/common/file_selector',

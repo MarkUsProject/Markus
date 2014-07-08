@@ -1,5 +1,4 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('livepipe/tabs') %>
   <%= stylesheet_link_tag('SyntaxHighlighter') %>
   <%= stylesheet_link_tag('grader') %>
   <%= javascript_include_tag 'panes.js' %>
@@ -10,7 +9,7 @@
                            'dragdrop.js',
                            'controls.js',
                            'DropDownMenu/DropDownMenu.js',
-                           'jquery-ui.min.js' %>
+                           'jquery-ui.js' %>
 
 <% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
 <%= javascript_include_tag 'SourceCodeGlower/AnnotationText.js',
@@ -95,12 +94,11 @@
            formats: [:js] %>
 
 <%= render partial: 'results/marker/boot',
-           formats: [:js],
-           locals: { first_file: @first_file } %>
+           formats: [:js] %>
 
-<div id='notes_dialog'></div>
+<aside class='dialog' id='notes_dialog'></aside>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
   <%= t('results.title',
         { assignment_name: @assignment.short_identifier,
@@ -109,13 +107,13 @@
   </h1>
 </div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <% if flash[:fail_notice] %>
     <p class='error'><%= flash[:fail_notice] %></p>
   <% end %>
 
   <% if @result.released_to_students %>
-    <p class='notice'><%= t(:marks_released_notice) %></p>
+    <p class='information'><%= t(:marks_released_notice) %></p>
   <% end %>
 
   <% if @grouping.past_due_date? %>
