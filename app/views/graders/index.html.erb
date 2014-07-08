@@ -6,16 +6,17 @@
 <%= render partial: "boot", formats: [:js], handlers: [:erb] %>
 
 <div class="title_bar">
-  <h1><%= I18n.t("graders.manage_graders") %></h1>
+  <h1><%= t("graders.manage_graders") %></h1>
   <div class="heading_buttons">
-    <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
+    <%= link_to t('download'),
+                '#',
+                onclick: 'modal_download.open();' %>
     <span class="menu_bar"></span>
-    <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
-  </div> <!-- rightjustify-->
-</div> <!-- title_bar-->
-
-<div class="wrapLeft"></div>
-<div class="clear"></div>
+    <%= link_to t('upload'),
+                '#',
+                onclick: 'modal_upload.open();' %>
+  </div>
+</div>
 
 <div id="notice">
   <div class="success" id="add_success" style="display: none;"></div>
@@ -40,126 +41,134 @@
              id: "global_action_form",
              remote: true do %>
 
-<script type='text/javascript'>
-  $("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
-    thinking();
-  });
+  <script type='text/javascript'>
+    $("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
+      thinking();
+    });
 
-  $("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
-    done_thinking();
-  });
-</script>
+    $("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
+      done_thinking();
+    });
+  </script>
 
-<%= hidden_field_tag 'submit_type', 'global_action', id: 'submit_type' %>
-<%= hidden_field_tag 'current_table', 'groups_table', id: 'current_table' %>
-<%= hidden_field_tag 'global_actions'%>
+  <%= hidden_field_tag 'submit_type', 'global_action', id: 'submit_type' %>
+  <%= hidden_field_tag 'current_table', 'groups_table', id: 'current_table' %>
+  <%= hidden_field_tag 'global_actions'%>
 
-<div class="colLeftGraders">
-  <% # order of processing students is important. we go through each member
-     # one by one and delete them above from the list of students
-     # if they are already in a group
-     # See manage/_group.html.erb
-  %>
-  <div class="wrapLeftGroups">
-    <div class="pane">
-      <ul id="graders_tabs" class="subsection_tabs">
-        <li class="tab">
-          <a href="#graders_none" id="filter_link_graders_none" class="filter_selected">
-            <%= I18n.t("graders.graders") %>
-          </a>
-        </li>
-      </ul>
+  <div class='columns'>
 
-      <div id="graders_none"></div>
-      <div id="unassigned"></div>
-      <div id="assigned"></div>
+    <div class="col-left">
+      <% # order of processing students is important. we go through each member
+         # one by one and delete them above from the list of students
+         # if they are already in a group
+         # See manage/_group.html.erb
+      %>
+      <div class="tab-pane" id='graders-tabs'>
+        <ul>
+          <li>
+            <a href="#graders_none" id="filter_link_graders_none" class="filter_selected">
+              <%= I18n.t("graders.graders") %>
+            </a>
+          </li>
+        </ul>
 
-      <div class="tabbedArea">
-        <div class="search_box">
-          <%= text_field_tag 'search_graders', nil,
-              onkeyup: "graders_table.add_filter('search'); graders_table.render();",
-              onkeypress: "stop_submit(event);",
-              placeholder: I18n.t("search_graders") %>
+        <div id="graders_none"></div>
+        <div id="unassigned"></div>
+        <div id="assigned"></div>
+
+        <div class="tabbedArea">
+          <div class="search_box">
+            <%= text_field_tag 'search_graders', nil,
+                onkeyup: "graders_table.add_filter('search'); graders_table.render();",
+                onkeypress: "stop_submit(event);",
+                placeholder: I18n.t("search_graders") %>
+          </div>
+
+          <div class='table'>
+            <table class="graders" id="graders"></table>
+          </div>
         </div>
-        <table class="graders" id="graders"></table>
       </div>
     </div>
-  </div>
-</div> <!-- colLeftGroups -->
 
-<div class="centreColumn">
-  <div id="icons">
-    <%= image_submit_tag "random_arrow.png",
-      onclick: "$('global_actions').setValue('random_assign');",
-      alt: I18n.t('groups.randomly_assign_graders'),
-      title: I18n.t('groups.randomly_assign_graders'),
-      class:'image_input' %>
-    <%= image_submit_tag "add_arrow.png",
-      onclick: "$('global_actions').setValue('assign');",
-      alt: I18n.t('add_graders'),
-      class:'image_input',
-      title: I18n.t('add_graders') %>
-    <%= image_submit_tag "remove_arrow.png",
-      onclick: "$('global_actions').setValue('unassign');",
-      alt: I18n.t('remove_graders'),
-      title: I18n.t('remove_graders'),
-      class:'image_input' %>
-  </div>
-</div>
-
-<div class="colRightGraders">
-  <div class="wrapRightGroups">
-    <div class="pane">
-      <ul id="groups_tabs"class="subsection_tabs">
-        <li class="tab">
-          <a href="#groups_table" id="filter_link_none" class="filter_selected">
-            <%= I18n.t("groups.groups") %>
-          </a>
-        </li>
-        <li class="tab">
-          <a href="#criteria_table" id="filter_link_criteria_none" class="filter_selected">
-            <%= I18n.t("criteria") %>
-          </a>
-        </li>
-      </ul>
-
-      <div id="criteria_table">
-        <div id="criteria_container" class="tabbedArea">
-          <%= text_field_tag 'search_criteria', nil,
-              onkeyup: "criteria_table.add_filter('search'); criteria_table.render();",
-              onkeypress: "stop_submit(event);",
-              placeholder: I18n.t("graders.search_criteria") %>
-          <%= check_box_tag 'assign_criteria', true,
-              @assignment.assign_graders_to_criteria,
-              class: 'inline_checkbox', 'data-action' => url_for(action: :set_assign_criteria,
-                                                                 id: @assignment.id) %>
-          <%= label_tag 'assign_criteria', I18n.t('graders.assign_to_criteria'),
-              class: 'bold_inline_label'%>
-          <table class="criteria" id="criteria"></table>
-        </div><!-- group container -->
-      </div>
-
-      <div id="groups_table">
-        <div id="groups_container" class="tabbedArea">
-          <%= text_field_tag 'search_groupings', nil,
-              onkeyup: "groupings_table.add_filter('search'); groupings_table.render();",
-              onkeypress: "stop_submit(event);",
-              placeholder: I18n.t("groups.search_groups") %>
-
-          <label class="bold_inline_label"><%= t('browse_submissions.sections') %></label>
-          <%= select('selection_groupings', 'sections',
-                     Section.order('name ASC').all.collect { |s| [s.name] },
-                     { include_blank: ' - ' },
-                     { onchange: 'groupings_table.add_filter("selection");
-                     return groupings_table.render();',
-                       onfocus: 'stop_submit(event);' }) %>
-
-          <table class="groups" id="groups"></table>
-        </div><!-- group container -->
+    <div class="col-center">
+      <div id="icons">
+        <%= image_submit_tag "random_arrow.png",
+          onclick: "$('global_actions').setValue('random_assign');",
+          alt: I18n.t('groups.randomly_assign_graders'),
+          title: I18n.t('groups.randomly_assign_graders'),
+          class:'image_input' %>
+        <%= image_submit_tag "add_arrow.png",
+          onclick: "$('global_actions').setValue('assign');",
+          alt: I18n.t('add_graders'),
+          class:'image_input',
+          title: I18n.t('add_graders') %>
+        <%= image_submit_tag "remove_arrow.png",
+          onclick: "$('global_actions').setValue('unassign');",
+          alt: I18n.t('remove_graders'),
+          title: I18n.t('remove_graders'),
+          class:'image_input' %>
       </div>
     </div>
+
+    <div class="col-right">
+      <div class="tab-pane" id='groups-tabs'>
+        <ul>
+          <li>
+            <a href="#groups_table" id="filter_link_none" class="filter_selected">
+              <%= I18n.t("groups.groups") %>
+            </a>
+          </li>
+          <li>
+            <a href="#criteria_table" id="filter_link_criteria_none" class="filter_selected">
+              <%= I18n.t("criteria") %>
+            </a>
+          </li>
+        </ul>
+
+        <div id="criteria_table">
+          <div id="criteria_container" class="tabbedArea">
+            <%= text_field_tag 'search_criteria', nil,
+                onkeyup: "criteria_table.add_filter('search'); criteria_table.render();",
+                onkeypress: "stop_submit(event);",
+                placeholder: I18n.t("graders.search_criteria") %>
+            <%= check_box_tag 'assign_criteria', true,
+                @assignment.assign_graders_to_criteria,
+                class: 'inline_checkbox', 'data-action' => url_for(action: :set_assign_criteria,
+                                                                   id: @assignment.id) %>
+            <%= label_tag 'assign_criteria', I18n.t('graders.assign_to_criteria'),
+                class: 'bold_inline_label'%>
+
+            <div class='table'>
+              <table class="criteria" id="criteria"></table>
+            </div>
+          </div><!-- group container -->
+        </div>
+
+        <div id="groups_table">
+          <div id="groups_container" class="tabbedArea">
+            <%= text_field_tag 'search_groupings', nil,
+                onkeyup: "groupings_table.add_filter('search'); groupings_table.render();",
+                onkeypress: "stop_submit(event);",
+                placeholder: I18n.t("groups.search_groups") %>
+
+            <label class="bold_inline_label"><%= t('browse_submissions.sections') %></label>
+            <%= select('selection_groupings', 'sections',
+                       Section.order('name ASC').all.collect { |s| [s.name] },
+                       { include_blank: ' - ' },
+                       { onchange: 'groupings_table.add_filter("selection");
+                       return groupings_table.render();',
+                         onfocus: 'stop_submit(event);' }) %>
+
+            <div class='table'>
+              <table class="groups" id="groups"></table>
+            </div>
+          </div><!-- group container -->
+        </div>
+      </div>
+    </div>
+
   </div>
-</div> <!-- colRightGroups -->
 <% end %> <!-- remote form tag -->
 
 <!-- Modal Windows -->

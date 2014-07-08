@@ -1,0 +1,21 @@
+@import 'common/core';
+
+#repo_browser_controls {
+  display: table;
+  width: 100%;
+
+  fieldset {
+    @include box-shadow(none);
+    display: table-row;
+  }
+
+  form {
+    display: table-cell;
+    width: 50%;
+    // text-align: right;
+  }
+}
+
+.global_actions {
+  margin-top: 1.5em;
+}

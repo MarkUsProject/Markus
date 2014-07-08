@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'jquery', 'jquery-ui', 'jquery-ui-timepicker-addon' %>
+  <%= javascript_include_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
   <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'FilterTable/FilterTable.js' %>
   <%= javascript_include_tag 'repo_browser.js' %>
@@ -15,7 +15,7 @@
   </div>
 <% end %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
     <%= I18n.t('browse_submissions.repository_name',
                repository: @repository_name) %>
@@ -23,10 +23,12 @@
   </h1>
 </div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <div id='repo_browser_controls'>
     <fieldset>
-      <legend><%= I18n.t('browse_submissions.find_different_revision') %></legend>
+      <legend>
+        <span><%= t('browse_submissions.find_different_revision') %></span>
+      </legend>
 
       <div id='find_revision_error' class='error' style='display:none;'></div>
 
