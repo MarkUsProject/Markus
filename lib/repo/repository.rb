@@ -321,7 +321,7 @@ module Repository
 
   # A repository factory
   require File.join(File.dirname(__FILE__),'memory_repository')
-  #require File.join(File.dirname(__FILE__),'subversion_repository')
+  require File.join(File.dirname(__FILE__),'subversion_repository')
   require File.join(File.dirname(__FILE__),'git_repository')
   # Returns a repository class of the requested type,
   # which implements AbstractRepository
@@ -339,7 +339,7 @@ module Repository
     end
     # configure Repository module first; as of now, we require the following constants
     # to be defined
-    config_keys = ['REPOSITORY_PERMISSION_FILE', 'IS_REPOSITORY_ADMIN']
+    config_keys = ['REPOSITORY_PERMISSION_FILE', 'REPOSITORY_STORAGE', 'IS_REPOSITORY_ADMIN']
     @CONF = Hash.new # important(!) reset config
     conf_hash.each do |k,v|
       if config_keys.include?(k)

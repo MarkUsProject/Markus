@@ -2,7 +2,7 @@ require 'rugged'
 require 'gitolite'
 require 'digest/md5'
 require 'rubygems'
-require 'byebug'
+#require 'byebug'
 
 require File.join(File.dirname(__FILE__),'repository') # load repository module
 
@@ -32,6 +32,9 @@ module Repository
       # Check if configuration is in order
       if Repository.conf[:IS_REPOSITORY_ADMIN].nil?
         raise ConfigurationError.new("Required config 'IS_REPOSITORY_ADMIN' not set")
+      end
+      if Repository.conf[:REPOSITORY_STORAGE].nil?
+        raise ConfigurationError.new("Required config 'REPOSITORY_STORAGE' not set")
       end
       if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
         raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
@@ -258,9 +261,10 @@ module Repository
     def add_user(user_id, permissions)
 
       if @repos_admin # Are we admin?
-        if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE] + "/conf/gitolite.conf")
-          Gitolite::GitoliteAdmin.bootstrap(Repository.conf[:REPOSITORY_PERMISSION_FILE]) # create files if not existent
+        if !Gitolite::GitoliteAdmin.is_gitolite_admin_repo?(Repository.conf[:REPOSITORY_STORAGE])
+          Gitolite::GitoliteAdmin.bootstrap(Repository.conf[:REPOSITORY_STORAGE])
         end
+
 
         ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
         repo_name = self.get_repos.workdir.split('/').last
@@ -456,15 +460,14 @@ module Repository
         raise NotAuthorityError.new("Unable to set bulk permissions:  Not in authoritative mode!");
       end
 
-      #check if gitolite admin repo exists
-      #TODO paths should be in config file
-      if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE] + "conf/gitolite.conf")
-        Gitolite::GitoliteAdmin.bootstrap(Repository.conf[:REPOSITORY_PERMISSION_FILE]) # create files if not existent
+      # Check if gitolite admin repo exists, create it if not
+      if !Gitolite::GitoliteAdmin.is_gitolite_admin_repo?(Repository.conf[:REPOSITORY_STORAGE])
+        Gitolite::GitoliteAdmin.bootstrap(Repository.conf[:REPOSITORY_STORAGE])
       end
 
       #gitolite admin repo
       #ga_repo = Gitolite::GitoliteAdmin.new("#{::Rails.root.to_s}/data/dev/repos/git_auth")
-      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE])
       conf = ga_repo.config
 
       repo_names.each do |repo_name|

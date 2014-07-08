@@ -210,6 +210,7 @@ class User < ActiveRecord::Base
     # create config
     conf = Hash.new
     conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
+    conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
     conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
     return conf
   end
