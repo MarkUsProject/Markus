@@ -282,63 +282,38 @@ class Assignment < ActiveRecord::Base
   end
 
   # calculates summary statistics of released results for this assignment
-  def set_results_statistics
-    groupings = Grouping.find_all_by_assignment_id(self.id)
-    results = Array.new
-    results_count = 0
-    results_sum = 0
-    results_fails = 0
-    results_zeros = 0
-    students_count = 0
-    groupings.each do |grouping|
-      submission = grouping.current_submission_used
-      unless submission.nil?
-        result = submission.get_latest_result
-        if result.marking_state == Result::MARKING_STATES[:complete]
-          results.push result.total_mark
-          results_sum += result.total_mark * grouping.student_membership_number
-          results_count += 1
-          students_count += grouping.student_membership_number
-          if result.total_mark < (self.total_mark / 2)
-            results_fails += 1
-          end
-          if result.total_mark == 0
-            results_zeros += 1
-          end
-        end
+  def update_results_stats
+    marks = Result.student_marks_by_assignment(id)
+    # No marks released for this assignment.
+    return false if marks.empty?
+
+    self.results_fails = marks.count { |mark| mark < total_mark / 2.0 }
+    self.results_zeros = marks.count(&:zero?)
+
+    # Avoid division by 0.
+    self.results_average, self.results_median =
+      if total_mark.zero?
+        [0, 0]
+      else
+        # Calculates average and median in percentage.
+        [average(marks), median(marks)].map { |stat| stat * 100 / total_mark }
       end
-    end
-    if results_count == 0
-      return false # No marks released for this assignment
-    end
-    self.results_fails = results_fails
-    self.results_zeros = results_zeros
-    results_sorted = results.sort
-    median_quantity = calculate_median(results_sorted, results_count)
-    # Avoiding division by 0
-    if self.total_mark == 0
-      self.results_average = 0
-      self.results_median = 0
-      return self.save
-    end
-    self.results_median = (median_quantity * 100 / self.total_mark)
-    if students_count == 0
-      avg_quantity = 0
-    else
-      avg_quantity = results_sum / students_count
-    end
-    # compute average in percent
-    self.results_average = (avg_quantity * 100 / self.total_mark)
     self.save
   end
 
-  def calculate_median(results, count)
-    if (count % 2) == 0
-      median_quantity = (results[count/2 - 1] + results[count/2]).to_f / 2
+  def average(marks)
+    marks.empty? ? 0 : marks.reduce(:+) / marks.size.to_f
+  end
+
+  def median(marks)
+    count = marks.size
+    return 0 if count.zero?
+
+    if count.even?
+      average([marks[count/2 - 1], marks[count/2]])
     else
-      median_quantity = results[count/2]
+      marks[count/2]
     end
-    median_quantity
   end
 
   def update_remark_request_count

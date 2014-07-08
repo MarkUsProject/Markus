@@ -1,22 +1,24 @@
 class ResultsController < ApplicationController
   before_filter :authorize_only_for_admin,
-                except: [:codeviewer,
-                            :edit,
-                            :update_mark,
-                            :view_marks,
-                            :create,
-                            :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
-                        :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
-                        :download, :download_zip, :note_message,
-                        :update_overall_remark_comment, :update_remark_request, :cancel_remark_request]
-  before_filter      :authorize_for_ta_and_admin, only: [:edit, :update_mark, :create, :add_extra_mark,
-                        :next_grouping, :update_overall_comment, :expand_criteria,
-                        :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
-                        :update_marking_state, :note_message, :update_overall_remark_comment]
-  before_filter      :authorize_for_user, only: [:codeviewer, :download, :download_zip]
-  before_filter      :authorize_for_student, only: [:view_marks, :update_remark_request, :cancel_remark_request]
-  after_filter       :update_remark_request_count, only:
-   [:update_remark_request, :cancel_remark_request, :set_released_to_students]
+                except: [:codeviewer, :edit, :update_mark, :view_marks,
+                         :create, :add_extra_mark, :next_grouping,
+                         :update_overall_comment, :remove_extra_mark,
+                         :update_marking_state, :download, :download_zip,
+                         :note_message, :update_overall_remark_comment,
+                         :update_remark_request, :cancel_remark_request]
+  before_filter :authorize_for_ta_and_admin,
+                only: [:edit, :update_mark, :create, :add_extra_mark,
+                       :next_grouping, :update_overall_comment,
+                       :remove_extra_mark, :update_marking_state, :note_message,
+                       :update_overall_remark_comment]
+  before_filter :authorize_for_user,
+                only: [:codeviewer, :download, :download_zip]
+  before_filter :authorize_for_student,
+                only: [:view_marks, :update_remark_request,
+                       :cancel_remark_request]
+  after_filter  :update_remark_request_count,
+                only: [:update_remark_request, :cancel_remark_request,
+                       :set_released_to_students]
 
   def note_message
     @result = Result.find(params[:id])
@@ -156,7 +158,7 @@ class ResultsController < ApplicationController
       # If marking_state is complete, update the cached distribution
       if params[:value] == Result::MARKING_STATES[:complete]
         @result.submission.assignment.assignment_stat.refresh_grade_distribution
-        @result.submission.assignment.set_results_statistics
+        @result.submission.assignment.update_results_stats
       end
       render template: 'results/update_marking_state'
     else # Failed to pass validations
@@ -446,14 +448,14 @@ class ResultsController < ApplicationController
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
-		render 'update_overall_comment', formats: [:js]
+    render 'update_overall_comment', formats: [:js]
   end
 
   def update_overall_remark_comment
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
-		render 'update_overall_remark_comment', formats: [:js]
+    render 'update_overall_remark_comment', formats: [:js]
   end
 
   def update_remark_request
@@ -475,7 +477,7 @@ class ResultsController < ApplicationController
         @old_result.save
       end
     end
-		render 'update_remark_request', formats: [:js]
+    render 'update_remark_request', formats: [:js]
   end
 
   def cancel_remark_request
@@ -496,28 +498,6 @@ class ResultsController < ApplicationController
     redirect_to controller: 'results',
                 action: 'view_marks',
                 id: params[:id]
-  end
-
-  def expand_criteria
-    @assignment = Assignment.find(params[:assignment_id])
-    @mark_criteria = @assignment.get_criteria
-    render partial: 'results/marker/expand_criteria',
-           locals: {mark_criteria: @mark_criteria}
-  end
-
-  def collapse_criteria
-    @assignment = Assignment.find(params[:assignment_id])
-    @mark_criteria = @assignment.get_criteria
-    render partial: 'results/marker/collapse_criteria', locals: {mark_criteria: @mark_criteria}
-  end
-
-  def expand_unmarked_criteria
-    @assignment = Assignment.find(params[:assignment_id])
-    @result = Result.find(params[:id])
-    # nil_marks are the marks that have a "nil" value for Mark.mark - so they're
-    # unmarked.
-    @nil_marks = @result.marks.all(conditions: {mark: nil})
-    render partial: 'results/marker/expand_unmarked_criteria', locals: {nil_marks: @nil_marks}
   end
 
   def delete_grace_period_deduction

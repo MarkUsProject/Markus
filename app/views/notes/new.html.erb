@@ -14,9 +14,6 @@
            options_for_select(
               Note::NOTEABLES.map {|item| [I18n.t('notes.noteables.' + item),
                  item]}) %>
-        <span id="loading_selector" style="display:none">
-          <%= image_tag('spinner.gif') %> <%= I18n.t('notes.new.loading_selector') %>
-        </span>
       </p>
 
       <div id="noteable_selector">
@@ -30,8 +27,9 @@
       </p>
     </fieldset>
 
-    <%= f.submit I18n.t('save'), onclick: "set_onbeforeunload(false);",
-    							:'data-disable-with' => I18n.t('working') %>
-    <%= link_to I18n.t('cancel'), notes_path(), class: "button" %>
+    <%= f.submit I18n.t('save'),
+                 onclick: 'set_onbeforeunload(false);',
+                 data: { disable_with: I18n.t('working') } %>
+    <%= link_to I18n.t('cancel'), notes_path(), class: 'button' %>
   <% end %>
 </div>

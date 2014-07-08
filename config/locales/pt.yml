@@ -27,7 +27,7 @@ pt:
     # app/views/layouts/_header.html.erb
     log_out:            "Sair"
     clear_role_switch_session_link: "Cancelar troca de papel"
-    working:            "Trabalhando…"
+    working:            "Carregando"
     login_as:           "Fazer login como "
 
     # app/views/main/_about_content.html.erb
@@ -131,7 +131,7 @@ pt:
         update_success:        "Projeto atualizado com sucesso"
         create_success:        "Projeto criado com sucesso"
         error: "Não foi possível atribuir a regra de submissão: #%{message}"
-        not_valid_submission_rule: "%{type} não é uma regra de submissão valida"
+        not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
         edit:           "Editar projeto:"
         properties:     "Propriedades do projeto"
@@ -213,6 +213,7 @@ pt:
     properties:         "Propriedades"
     grades:             "Notas"
     submissions:        "Submissões"
+    summaries:          "Resumos"
     rubrics:            "Rúbricas"
     marking_scheme:     "Esquema de avalição"
     join:               "Juntar"
@@ -314,12 +315,12 @@ pt:
 
     #app/views/results/common
     common:
-      loading_code: "Carregando código..."
       submission_file: "Arquivo enviado:"
       test_results: "Resultado dos testes:"
       no_file_in_repository: "[Nenhum arquivo no respositório]"
       cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
       image_downloading: "Baixando pdf, por favor espere."
+      highlighting: "Destacando..."
       test_code: "Testar código"
       criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
 
@@ -490,7 +491,6 @@ pt:
       problem: "Houve um problema..."
       warning: "Alerta"
       lines_not_processed: "As seguintes linhas não puderam ser processadas:"
-      loading_list: "Carregando a lista..."
       editing_past_due_date_warning: "O prazo deste projeto já expirou. Além de designar avaliadores para grupos, não é recomendado que nenhuma outra configuração seja alterada dessa vez."
       validate: "Valide o grupo:"
       validate_confirm: "Isso permitirá que o grupo envie sem o número exigido de alunos. Você tem certeza disso?"
@@ -1103,24 +1103,26 @@ pt:
         long_ordinal: "%e %B %Y"
         only_day: "%e"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%B %d, %Y: %I:%M%p"
+        long_date: "%A, %d de %B de %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
+        short_date: "%d de %B de %Y"
         short_date: "%B %d, %Y"
         locale_date:      "DD, d 'de' MM 'de' yy"
         locale_date_only: "DD, d 'de' MM 'de' yy"
-        locale_repo_date: "d 'de' MM, yy:"
+        js_date_time:     "dddd, D [de] MMMM [de] YYYY HH:mm"
+        js_date:          "dddd, D [de] MMMM [de] YYYY"
 
-      day_names: [Domingo, Segunda-feira, Terça-feira, Quarta-feira, Quinta-feira, Sexta-feira, Sábado]
-      abbr_day_names: [Dom, Seg, Ter, Qua, Qui, Sex, Sab]
-      month_names: [~, Janeiro, Fevereiro, Março, Abril, Maio, Junho, Julho, Agosto, Setembro, Outubro, Novembro, Dezembro]
-      abbr_month_names: [~, Jan, Feb, Mar, Apr, Mai, Jun, Jul, Aug, Sep, Out, Nov, Dez]
+      day_names: [domingo, segunda-feira, terça-feira, quarta-feira, quinta-feira, sexta-feira, sábado]
+      abbr_day_names: [dom, seg, ter, qua, qui, sex, sab]
+      month_names: [~, janeiro, fevereiro, março, abril, maio, junho, julho, agosto, setembro, outubro, novembro, dezembro]
+      abbr_month_names: [~, jan, feb, mar, apr, mai, jun, jul, aug, sep, out, nov, dez]
       order:
         - day
         - month
         - year
-      months:       ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+      months:       ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
       weekdays:     ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado']
-      weekdays_min: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab']
+      weekdays_min: ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab']
 
     time:
       formats:
@@ -1131,13 +1133,12 @@ pt:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d de %B, %Y: %I:%M%p"
+        long_date: "%A, %d de %B de %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date: "%d de %B, %Y"
+        short_date: "%d de %B de %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
         ant_date: "%d-%B-%Y_%I:%M"
         locale_time: "HH:mm"
-        locale_repo_time: "hh:mmTT"
       am: 'am'
       pm: 'pm'
       hour:   "Hora"
@@ -1167,7 +1168,7 @@ pt:
     assignments_graded:        "Projetos avalidos:"
     assignments_failed:        "Número de falhas:"
     assignments_zeros:         "Número de zeros:"
-    refresh_graph:             "Atulizar grafo"
+    refresh_graph:             "Atualizar gráfico"
     outstanding_remark_request: "%{request_count} pedidos de avaliação"
     outstanding_remark_requests: "%{request_count} pedidos de avaliação"
 
@@ -1180,7 +1181,7 @@ pt:
 
     #lib/validators/
     date_validator:
-      invalid_date: "Não é uma data valida"
+      invalid_date: "Não é uma data válida"
 
     #Test Framework
     automated_tests:

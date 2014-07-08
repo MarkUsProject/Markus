@@ -491,11 +491,13 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all
   end
 
-  # Refreshes the grade distribution graphs and reloads the page
+  # Refreshes the grade distribution graph
   def refresh_graph
-    assignment = Assignment.find(params[:id])
-    assignment.assignment_stat.refresh_grade_distribution
-    redirect_to controller: 'main'
+    @assignment = Assignment.find(params[:id])
+    @assignment.assignment_stat.refresh_grade_distribution
+    respond_to do |format|
+      format.js
+    end
   end
 
   def download_assignment_list

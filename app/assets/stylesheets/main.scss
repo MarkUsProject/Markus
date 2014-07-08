@@ -209,11 +209,11 @@ thead {
 
 th,
 tfoot tr td {
-  height: 18px;
+  border: none;
   color: $grey;
   font-weight: 600;
-  border: none;
-  padding: 0.5em 3px;
+  height: 18px;
+  padding: 0.75em 0.5em;
 }
 
 th.center {
@@ -222,8 +222,7 @@ th.center {
 
 td {
   border: none;
-  padding: 0.5em 3px;
-  margin-left: 2px;
+  padding: 0.75em 0.5em;
 
   &.center {
     text-align: center;
@@ -623,13 +622,6 @@ input#extra_mark_description {
 .fail-no-img {
   font-size: 80%;
   width: 250px;
-}
-
-
-
-#mark_pane,
-#annotation_pane {
-  float: left;
 }
 
 .float_left {
@@ -1070,18 +1062,61 @@ td.grade_entry_form_result {
 
 #working {
   @include border-radius(5px);
-  @include box-shadow(0 0 5px 0 #aaa);
+  @include box-shadow(0 0 5px 0 $light-blue);
   background: $light-blue;
+  border: 1px solid $blue;
   color: $primary-color;
+  font-size: 1.25em;
   font-weight: 600;
   left: 50%;
   margin-left: -7.5em;
   padding: 0.5em;
-  position: absolute;
+  position: fixed;
   text-align: center;
-  top: 1em;
+  top: 1.5em;
   width: 15em;
+  z-index: 99999;
+
+  #ellipsis {
+    display: inline-block;
+    text-align: left;
+    width: 1em;
+
+    &::after {
+      -webkit-animation: ellipsis 2s infinite;
+      -moz-animation: ellipsis 2s infinite;
+      -ms-animation: ellipsis 2s infinite;
+      -o-animation: ellipsis 2s infinite;
+      animation: ellipsis 2s infinite;
+      content: "\2026";
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+    }
+  }
 }
+
+@-webkit-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@-moz-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@-ms-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@-o-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+
 
 a.icon_remove {
   background: url('icons/cancel.png') no-repeat;

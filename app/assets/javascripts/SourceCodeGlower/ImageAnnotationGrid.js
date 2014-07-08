@@ -24,7 +24,7 @@ function ImageAnnotationGrid(image_event_handler, annotation_text_manager, annot
   this.draw_holders();
 
   image_event_handler.init_listeners(document.getElementById('enable_annotations?').value);
-  document.getElementById('code_pane').onmousemove = this.draw_holders.bind(this);
+  document.getElementById('image_preview').onmousemove = this.draw_holders.bind(this);
 }
 
 ImageAnnotationGrid.prototype.getAnnotationTextManager = function() {
@@ -98,23 +98,22 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
 }
 
 ImageAnnotationGrid.prototype.add_to_grid = function(extracted_coords) {
-  extracted_coords.x_range = { start: extracted_coords.x_range.start, end: extracted_coords.x_range.end };
-  extracted_coords.y_range = { start: extracted_coords.y_range.start, end: extracted_coords.y_range.end };
+  // extracted_coords.x_range = { start: extracted_coords.x_range.start, end: extracted_coords.x_range.end };
+  // extracted_coords.y_range = { start: extracted_coords.y_range.start, end: extracted_coords.y_range.end };
+
   this.annotation_grid.push(extracted_coords);
   this.share_grid_with_event_handler();
 
   var new_holder = document.createElement('div');
   new_holder.id = 'annotation_holder_' + extracted_coords.id;
-  new_holder.style.position   = 'absolute';
-  new_holder.style.opacity    = '0.2';
-  new_holder.style.filter     = 'alpha(opacity=20)';
-  new_holder.style.cursor     = 'crosshair';
-  new_holder.style.background = 'orange';
-  new_holder.style.border     = '1px solid #000';
+  new_holder.classList.add('annotation_holder');
   new_holder.onmousemove = this.getImageEventHandler().check_for_annotations.bind(this.getImageEventHandler());
   new_holder.onmousedown = this.getImageEventHandler().start_select_box.bind(this.getImageEventHandler());
 
-  document.getElementById('codeviewer').appendChild(new_holder);
+  var image_preview = document.getElementById('image_preview');
+  image_preview.parentNode.insertBefore(new_holder, image_preview);
+
+  this.draw_holders();
 }
 
 ImageAnnotationGrid.prototype.remove_annotation = function(unused_param1, unused_param2, annotation_text_id) {

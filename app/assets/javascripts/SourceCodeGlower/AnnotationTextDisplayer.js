@@ -14,13 +14,13 @@ var TEXT_DISPLAY_X_OFFSET = 5;
 var TEXT_DISPLAY_Y_OFFSET = 5;
 
 
-function AnnotationTextDisplayer(parent_node) {
+function AnnotationTextDisplayer() {
   // Create the div that we will display in
   this.display_node = document.createElement('div');
   this.display_node.className = 'annotation_text_display';
   this.display_node.onmousemove = hide_image_annotations;
 
-  parent_node.appendChild(this.display_node);
+  document.body.appendChild(this.display_node);
   this.hide();
 }
 

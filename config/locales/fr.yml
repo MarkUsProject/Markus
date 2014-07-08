@@ -27,7 +27,7 @@ fr:
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
     clear_role_switch_session_link: "Annuler le changement d'utilisateur."
-    working:            "Chargement…"
+    working:            "Chargement"
     login_as:           "Connexion en tant que"
 
     # app/views/main/_about_content.html.erb
@@ -318,12 +318,12 @@ fr:
 
     #app/views/results/common
     common:
-      loading_code: "Chargement du code source…"
       submission_file: "Fichier envoyé : "
       test_results: "Résultat des tests : "
       no_file_in_repository: "[Pas de fichiers dans le dépôt]"
       cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, vérifiez que l'option permettant d'afficher les PDF est activée. Vous pouvez télécharger manuellement le fichier."
       image_downloading: "Page pdf en cours de téléchargement. Veuillez patienter."
+      highlighting: "Soulignant..."
       test_code: "Code pour les tests"
       criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé"
 
@@ -507,7 +507,6 @@ fr:
       problem: "Il y a un problème…"
       warning: "Attention"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
-      loading_list: "Chargement de la liste…"
       editing_past_due_date_warning: " La date de retour de ce projet est passée. En conséquence, à part ajouter des correcteurs aux groupes, il n'est pas recommandé d'effectuer d'autres modifications."
       validate: "Valider ce groupe : "
       validate_confirm: "Ceci autorisera ce groupe à poster sans avoir le nombre requis d'étudiants. Est-ce correct ?"
@@ -1110,12 +1109,13 @@ fr:
         long_ordinal: "%e %B %Y"
         only_day: "%e"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d %B %Y à %H:%M"
+        long_date: "%A %d %B %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
         locale_date:      "DD d MM yy"
         locale_date_only: "DD d MM yy"
-        locale_repo_date: "d MM yy à"
+        js_date_time:     "dddd D MMMM YYYY HH:mm"
+        js_date:          "dddd D MMMM YYYY"
 
       day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
       abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
@@ -1127,7 +1127,7 @@ fr:
         - year
       months:       ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
       weekdays:     ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
-      weekdays_min: ['di', 'lu', 'ma', 'me', 'je', 've', 'sa']
+      weekdays_min: ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam']
 
     time:
       formats:
@@ -1138,13 +1138,12 @@ fr:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d %B %Y à %H:%M"
+        long_date: "%A %d %B %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
         ant_date: "%d-%B-%Y_%H:%M"
-        locale_time:      "HH:mm"
-        locale_repo_time: "HH:mm"
+        locale_time: "HH:mm"
       am: 'am'
       pm: 'pm'
       hour:   "Heure"
@@ -1153,7 +1152,6 @@ fr:
       next:   "Suivante"
       prev:   "Précédente"
       close:  "Fermer"
-      now:    "Maintenant"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."

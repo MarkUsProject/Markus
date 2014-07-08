@@ -148,9 +148,6 @@ Markus::Application.routes.draw do
         resources :results do
           collection do
             post 'update_mark'
-            get 'expand_criteria'
-            get 'collapse_criteria'
-            get 'expand_unmarked_criteria'
             get 'edit'
             get 'download'
           end
@@ -164,13 +161,10 @@ Markus::Application.routes.draw do
             get 'cancel_remark_request'
             get 'codeviewer'
             post 'codeviewer'
-            get 'expand_criteria'
-            get 'collapse_criteria'
             post 'add_extra_mark'
             post 'delete_grace_period_deduction'
             get 'next_grouping'
             post 'remove_extra_mark'
-            get 'expand_unmarked_criteria'
             post 'set_released_to_students'
             put 'update_overall_comment'
             post 'update_overall_remark_comment'

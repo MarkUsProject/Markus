@@ -19,14 +19,12 @@ jQuery(document).ready(function() {
   });
 
   jQuery.ajax({
-    url:      "<%= populate_admins_path() %>",
+    url:      '<%= populate_admins_path %>',
     data:     'authenticity_token=' + AUTH_TOKEN,
-    type:     "POST",
-    async:    true,
+    type:     'POST',
     dataType: 'json'
-  }).done(function (data) {
-            jQuery('#loading_list').hide();
-            populate(JSON.stringify(data));
-          });
-
+  }).done(function(data) {
+    document.getElementById('working').style.display = 'none';
+    populate(JSON.stringify(data));
+  });
 });

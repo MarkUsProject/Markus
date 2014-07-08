@@ -20,20 +20,22 @@ ImageEventHandler.prototype.init_listeners = function(enable_annotations) {
     image_preview.style.cursor = 'crosshair';
     image_preview.onmousedown  = this.start_select_box.bind(this);
     sel_box.style.cursor = 'crosshair';
+
+    // Disable FireFox's default click and drag behaviour for images
+    image_preview.ondragstart = function(e) { e.preventDefault(); }
   }
 
   for (var i = 0; i < annot_grid.length; i++) {
     var grid_element = document.getElementById('annotation_holder_' + annot_grid[i].id);
-    grid_element.onmousemove  = this.check_for_annotations.bind(this);
+    grid_element.onmousemove = this.check_for_annotations.bind(this);
 
     if (enable_annotations) {
-      grid_element.style.cursor = 'crosshair';
       grid_element.onmousedown  = this.start_select_box.bind(this);
     } else {
       grid_element.style.cursor = 'auto';
     }
   }
-},
+}
 
 ImageEventHandler.prototype.set_annotation_grid = function(annot_grid) {
   this.annotation_grid = annot_grid;
@@ -67,9 +69,6 @@ ImageEventHandler.prototype.get_absolute_cursor_pos = function(e) {
 
 // Start tracking the mouse to create an annotation.
 ImageEventHandler.prototype.start_select_box = function(e) {
-  // Disable FireFox's default click and drag behaviour for images
-  if (e.preventDefault) { e.preventDefault(); }
-
   hide_image_annotations();
   var xy_coords  = this.get_absolute_cursor_pos(e);
   var annot_grid = this.get_annotation_grid();

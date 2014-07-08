@@ -27,7 +27,7 @@
     var line_factory = new SourceCodeLineFactory();
     var line_manager = new SourceCodeLineManager(syntax_highlighter_adapter, line_factory, collection);
     var annotation_text_manager   = new AnnotationTextManager();
-    var annotation_text_displayer = new AnnotationTextDisplayer(document.getElementById('annotation_holder'));
+    var annotation_text_displayer = new AnnotationTextDisplayer();
 
     annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
 
@@ -40,7 +40,7 @@
 
     var image_event_handler       = new ImageEventHandler();
     var annotation_text_manager   = new AnnotationTextManager();
-    var annotation_text_displayer = new AnnotationTextDisplayer(document.getElementById('annotation_holder'));
+    var annotation_text_displayer = new AnnotationTextDisplayer();
 
     annotation_manager = new ImageAnnotationGrid(image_event_handler,
                                                  annotation_text_manager,
@@ -230,7 +230,7 @@
       this.remove();
     });
 
-    document.getElementById('loading_code').style.display = '';
+    document.getElementById('working').style.display = '';
     document.getElementById('select_file_id').disabled = true;
 
     positions = null;
@@ -242,8 +242,8 @@
       data: 'submission_file_id=' + submission_file_id +
             '&focus_line=' + focus_line +
             '&authenticity_token=' + AUTH_TOKEN
-    }).done(function() {
-      document.getElementById('loading_code').style.display = 'none';
+    }).always(function() {
+      document.getElementById('working').style.display = 'none';
     });
   }
 
@@ -311,11 +311,6 @@
     if (line != null) {
       line.getLineNode().scrollIntoView();
     }
-  }
-
-  function setup_divider(widen_target, dragger) {
-    var divider = new ResizePane(widen_target, dragger);
-    return;
   }
 
   function hide_all_annotation_content_editors() {

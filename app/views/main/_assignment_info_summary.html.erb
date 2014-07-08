@@ -1,7 +1,7 @@
 <p class="due_date">
-  <%= I18n.t(:due_date) %>
+  <%= I18n.t(:due_date) %>:
   <span class="<%= due_date_color(assignment) %>">
-    <%= I18n.l(assignment.due_date, format: :long_date ) %>:
+    <%= I18n.l(assignment.due_date, format: :long_date ) %>
   </span>
 </p>
 
@@ -22,9 +22,9 @@
   </tr>
 
   <tr>
-  	<td><%= I18n.t(:assignment_median) %></td>
+    <td><%= I18n.t(:assignment_median) %></td>
     <td>
-    	<%= I18n.t(:percentage, percentage: number_with_precision(assignment.results_median, precision: 1) || '0') %>
+      <%= I18n.t(:percentage, percentage: number_with_precision(assignment.results_median, precision: 1) || '0') %>
     </td>
   </tr>
 
