@@ -783,16 +783,9 @@ module Repository
     # erros with this function can occur with files are incorrectly
     # added and the git config file is not updated
     def path_exists?(path)
-      begin
-        # if path exists in the git repository
-        # discover should not give an error
-        Rugged::Repository.discover(path)
-        return true
-        #exception should be cast if path is not found
-      rescue Exception
-        raise Repository::FileDoesNotExistConflict # I don't think raise an exception is needed
-        return false
-      end
+      @revision_number.tree.any? {|e|
+        e[:name] == path
+      }
     end
 
     def directories_at_path(path='/')
