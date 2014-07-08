@@ -772,15 +772,16 @@ class GroupingTest < ActiveSupport::TestCase
     end
 
     should 'update criteria coverage counts after randomly bulk assign TAs' do
-      Grouping.expects(:update_criteria_coverage_counts).with do |grouping_ids|
-        grouping_ids.to_set == @grouping_ids.to_set
-      end
+      Grouping.expects(:update_criteria_coverage_counts)
+        .with do |assignment, grouping_ids|
+          assignment == @assignment &&
+            grouping_ids.to_set == @grouping_ids.to_set
+        end
       Grouping.randomly_assign_tas(@grouping_ids, @ta_ids, @assignment)
     end
 
     should 'update assigned groups counts after randomly bulk assign TAs' do
-      RubricCriterion.expects(:update_assigned_groups_counts)
-        .with(@assignment.id)
+      Criterion.expects(:update_assigned_groups_counts).with(@assignment)
       Grouping.randomly_assign_tas(@grouping_ids, @ta_ids, @assignment)
     end
     should 'be OK to bulk assign no TAs to no groupings' do
@@ -822,15 +823,16 @@ class GroupingTest < ActiveSupport::TestCase
     end
 
     should 'update criteria coverage counts after bulk assign all TAs' do
-      Grouping.expects(:update_criteria_coverage_counts).with do |grouping_ids|
-        grouping_ids.to_set == @grouping_ids.to_set
-      end
+      Grouping.expects(:update_criteria_coverage_counts)
+        .with do |assignment, grouping_ids|
+          assignment == @assignment &&
+            grouping_ids.to_set == @grouping_ids.to_set
+        end
       Grouping.assign_all_tas(@grouping_ids, @ta_ids, @assignment)
     end
 
     should 'update assigned groups counts after bulk assign all TAs' do
-      RubricCriterion.expects(:update_assigned_groups_counts)
-        .with(@assignment.id)
+      Criterion.expects(:update_assigned_groups_counts).with(@assignment)
       Grouping.assign_all_tas(@grouping_ids, @ta_ids, @assignment)
     end
 
@@ -852,13 +854,13 @@ class GroupingTest < ActiveSupport::TestCase
     end
 
     should 'update criteria coverage counts after bulk unassign TAs' do
-      Grouping.expects(:update_criteria_coverage_counts).with(@grouping_ids)
+      Grouping.expects(:update_criteria_coverage_counts)
+        .with(@assignment, @grouping_ids)
       Grouping.unassign_tas([], @grouping_ids, @assignment)
     end
 
     should 'update assigned groups counts after bulk unassign TAs' do
-      RubricCriterion.expects(:update_assigned_groups_counts)
-        .with(@assignment.id)
+      Criterion.expects(:update_assigned_groups_counts).with(@assignment)
       Grouping.unassign_tas([], @grouping_ids, @assignment)
     end
   end
