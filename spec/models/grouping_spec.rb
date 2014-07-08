@@ -1,6 +1,149 @@
 require 'spec_helper'
 
 describe Grouping do
+  describe 'assigning and unassigning TAs' do
+    let(:assignment) { create(:assignment) }
+    let(:groupings) do
+      Array.new(2) { create(:grouping, assignment: assignment) }
+    end
+    let(:tas) { Array.new(2) { create(:ta) } }
+    let(:grouping_ids) { groupings.map(&:id) }
+    let(:ta_ids) { tas.map(&:id) }
+
+    describe '.randomly_assign_tas' do
+      it 'can randomly bulk assign no TAs to no groupings' do
+        Grouping.randomly_assign_tas([], [], assignment)
+      end
+
+      it 'can randomly bulk assign TAs to no groupings' do
+        Grouping.randomly_assign_tas([], ta_ids, assignment)
+      end
+
+      it 'can randomly bulk assign no TAs to all groupings' do
+        Grouping.randomly_assign_tas(grouping_ids, [], assignment)
+      end
+
+      it 'can randomly bulk assign TAs to all groupings' do
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+
+        groupings.each do |grouping|
+          grouping.reload
+          expect(grouping.tas.size).to eq 1
+          expect(tas).to include grouping.tas.first
+        end
+      end
+
+      it 'can randomly bulk assign duplicated TAs to groupings' do
+        # The probability of assigning no duplicated TAs after (tas.size + 1)
+        # trials is 0.
+        (tas.size + 1).times do
+          Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+        end
+
+        ta_set = tas.to_set
+        groupings.each do |grouping|
+          grouping.reload
+          expect(grouping.tas.size).to be_between(1, 2).inclusive
+          expect(grouping.tas.to_set).to be_subset(ta_set)
+        end
+      end
+
+      it 'updates criteria coverage counts after randomly bulk assign TAs' do
+        expect(Grouping).to receive(:update_criteria_coverage_counts)
+          .with(assignment, grouping_ids)
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+      end
+
+      it 'updates assigned groups counts after randomly bulk assign TAs' do
+        expect(Criterion).to receive(:update_assigned_groups_counts)
+          .with(assignment)
+        Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+      end
+    end
+
+    describe '.assign_all_tas' do
+      it 'can bulk assign no TAs to no groupings' do
+        Grouping.assign_all_tas([], [], assignment)
+      end
+
+      it 'can bulk assign all TAs to no groupings' do
+        Grouping.assign_all_tas([], ta_ids, assignment)
+      end
+
+      it 'can bulk assign no TAs to all groupings' do
+        Grouping.assign_all_tas(grouping_ids, [], assignment)
+      end
+
+      it 'can bulk assign all TAs to all groupings' do
+        Grouping.assign_all_tas(grouping_ids, ta_ids, assignment)
+
+        groupings.each do |grouping|
+          grouping.reload
+          expect(grouping.tas).to match_array(tas)
+        end
+      end
+
+      it 'can bulk assign duplicated TAs to groupings' do
+        Grouping.assign_all_tas(grouping_ids.first, ta_ids, assignment)
+        Grouping.assign_all_tas(grouping_ids, ta_ids.first, assignment)
+
+        # First grouping gets all the TAs.
+        grouping = groupings.shift
+        grouping.reload
+        expect(grouping.tas).to match_array(tas)
+
+        # The rest of the groupings gets only the first TA.
+        groupings.each do |grouping|
+          grouping.reload
+          expect(grouping.tas).to eq [tas.first]
+        end
+      end
+
+      it 'updates criteria coverage counts after bulk assign all TAs' do
+        expect(Grouping).to receive(:update_criteria_coverage_counts)
+          .with(assignment, grouping_ids)
+        Grouping.assign_all_tas(grouping_ids, ta_ids, assignment)
+      end
+
+      it 'updates assigned groups counts after bulk assign all TAs' do
+        expect(Criterion).to receive(:update_assigned_groups_counts)
+          .with(assignment)
+        Grouping.assign_all_tas(grouping_ids, ta_ids, assignment)
+      end
+    end
+
+    describe '.unassign_tas' do
+      it 'can bulk unassign no TAs' do
+        Grouping.unassign_tas([], [], assignment)
+      end
+
+      it 'can bulk unassign TAs' do
+        Grouping.assign_all_tas(grouping_ids, ta_ids, assignment)
+        ta_membership_ids = groupings
+          .map { |grouping| grouping.memberships.pluck(:id) }
+          .reduce(:+)
+        Grouping.unassign_tas(ta_membership_ids, grouping_ids, assignment)
+
+        groupings.each do |grouping|
+          grouping.reload
+          expect(grouping.tas).to be_empty
+        end
+      end
+
+      it 'updates criteria coverage counts after bulk unassign TAs' do
+        expect(Grouping).to receive(:update_criteria_coverage_counts)
+          .with(assignment, grouping_ids)
+        Grouping.unassign_tas([], grouping_ids, assignment)
+      end
+
+      it 'updates assigned groups counts after bulk unassign TAs' do
+        expect(Criterion).to receive(:update_assigned_groups_counts)
+          .with(assignment)
+        Grouping.unassign_tas([], grouping_ids, assignment)
+      end
+    end
+  end
+
   describe '.update_criteria_coverage_counts' do
     let(:grouping) { create(:grouping) }
     let(:assignment) { grouping.assignment }
