@@ -222,77 +222,69 @@
 
 // #code_pane,
 // #mark_pane {
-//   @include border-radius(5px);
-//   background: #ececec;
-//   border: 1px solid #ddd;
-//   height: 100%;
-//   margin: 0 0 10px 0;
-//   padding: 10px;
+  // @include border-radius(5px);
+  // background: #ececec;
+  // border: 1px solid #ddd;
+  // height: 100%;
+  // margin: 0 0 10px 0;
+  // padding: 10px;
 // }
 
-//   #mark_viewer,
-//   #summary_viewer,
-//   #submission_rule_viewer,
-//   #codeviewer,
-//   #annotations_summary {
-//     @include border-radius-bottom(5px);
-//     overflow: auto;
-//   }
+/* Panes content (for controlling the heights) */
 
-//   #codeviewer,
-//   #mark_viewer,
-//   #summary_viewer,
-//   #submission_rule_viewer,
-//   #annotations_summary,
-//   #remark_request_tab {
-//     height: 650px;
-//   }
+#mark_viewer,
+#summary_viewer,
+#submission_rule_viewer,
+#codeviewer,
+#annotations_summary {
+  @include border-radius-bottom(5px);
+  overflow: auto;
+}
 
-//   // Adjusted height for users that also see the annotation menu
-//   #annotation_menu + #codeviewer {
-//     height: 600px;
-//   }
+#codeviewer,
+#mark_viewer,
+#summary_viewer,
+#submission_rule_viewer,
+#annotations_summary,
+#remark_request_tab {
+  height: 650px;
+}
 
-//   #annotations_summary_head {
-//     padding: 0 1em;
-//   }
 
-//   #remark_request {
-//     padding: 1em;
-//   }
+/* Source code pane */
 
-    #sel_box {
-      border: 1px dashed #f00;
-      display: none;
-      position: absolute;
-    }
+// Adjusted height for users that also see the annotation menu
+#annotation_menu + #codeviewer {
+  height: 600px;
+}
 
-//     #image_preview {
-//       display: block;
-//     }
+#sel_box {
+  border: 1px dashed #f00;
+  display: none;
+  position: absolute;
+}
 
-    .annotation_holder {
-      background: orange;
-      border: 1px solid #000;
-      cursor: crosshair;
-      filter: alpha(opacity=20);
-      opacity: 0.2;
-      position: absolute;
-    }
-
+.annotation_holder {
+  background: orange;
+  border: 1px solid #000;
+  cursor: crosshair;
+  filter: alpha(opacity=20);
+  opacity: 0.2;
+  position: absolute;
+}
 
 // #toolbar {
 //   @include border-radius(5px);
-//   background: #ededed;
+//   background: $grey;
 //   margin: 0 0 20px 0;
 //   padding: 5px;
 // }
 
-// .code_scroller {
-//   margin: 0;
-//   overflow: auto;
-//   padding: 0 0 0 50px !important;
-// }
+.code_scroller {
+  margin: 0;
+  overflow: auto;
+  padding-left: 50px !important;
+}
 
 // .image_container {
 //   overflow: auto;
@@ -304,23 +296,42 @@
 //   overflow: auto;
 // }
 
-// /* Annotation summary list styles */
 
-// #annotation_summary_list {
-//   border-top: 1px solid #ddd;
-//   list-style: none;
-//   margin: 0 0 20px 0;
-//   padding: 0;
+/* Annotations pane */
 
-//   li {
-//     border-bottom: 1px solid #dadada;
-//     padding: 5px 10px;
-//   }
+#annotations_summary_head {
+  padding: 0.5em 0;
 
-//   a {
-//     color: blue;
-//   }
-// }
+  textarea#overall_comment_text_area {
+    margin: 1em 0;
+    width: 100%;
+  }
+
+  input#overall_comment_submit {
+    margin-bottom: 2em;
+  }
+}
+
+#annotation_summary_list {
+  border-top: 1px solid $grey;
+  list-style: none;
+  margin: 0 0 20px 0;
+  padding: 0;
+
+  li {
+    border-bottom: 1px solid $grey;
+    padding: 0.25em 0.5em;
+    width: 100%;
+  }
+
+  a {
+    color: $dark-blue;
+  }
+
+  input, form.button_to {
+    display: inline-block;
+  }
+}
 
 // /* Grading view */
 // /* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
@@ -333,6 +344,14 @@
 //   background-color: #fdfebc;
 // }
 
+
+/* Remark request pane */
+
+#remark_request {
+  padding: 1em;
+}
+
+
 /* Marks pane */
 
 #mark_criteria_pane_list {
@@ -343,6 +362,7 @@
   width: 100%;
 
   li {
+    @include border-radius(0);
     border-bottom: 1px solid #dadada;
     padding: 5px;
     width: 100%;
@@ -357,6 +377,8 @@
 
     .mark_criterion_expand {
       float: left;
+      font-size: 1.2em;
+      width: 1em;
     }
 
     .mark_description {
@@ -451,45 +473,66 @@
 }
 
 
-// /* Extra Mark holder */
+/* Extra Mark holder */
 
-// .extra_mark_holder,
-// .link {
-//   background: #fbfbfb;
-//   border-bottom: 1px solid #dadada;
-//   min-width: 5px;
-//   padding: 5px;
-// }
+.extra_mark_holder,
+.link {
+  background: #fbfbfb;
+  border-bottom: 1px solid #dadada;
+  min-width: 5px;
+  padding: 5px;
+}
 
-//   .extra_mark_title_div {
-//     cursor: pointer;
-//   }
+  .extra_mark_title_div {
+    cursor: pointer;
+  }
 
-//   .extra_mark_holder_selected {
-//     background: #ccf;
-//   }
+  .extra_mark_holder_selected {
+    background: #ccf;
+  }
 
-//   .extra_mark_delete {
-//     float: right;
-//   }
+  .extra_mark_delete {
+    float: right;
+  }
 
-//   .extra_marks_pane {
-//     border: 1px solid #dadada;
-//     margin-top: 1em;
-//   }
+  .extra_marks_pane {
+    border: 1px solid #dadada;
+    margin-top: 1em;
+  }
 
-//   .extra_marks_pane_list {
-//     border-bottom: 1px solid #dadada;
-//     margin: 0;
-//     padding: 0;
-//   }
+  .extra_marks_pane_list {
+    tbody + tbody {
+      tr {
+        background: $white !important;
+      }
+    }
 
-//   #extra_marks_bonus,
-//   #extra_marks_deducted {
-//     text-align: right;
-//   }
+    #add_extra_mark_prompt {
+      div {
+        margin-bottom: 0.5em;
+      }
 
-// /* Criterion summary holder */
+      label {
+        display: inline-block;
+        min-width: 25%;
+      }
+    }
+  }
+
+  #extra_marks_bonus,
+  #extra_marks_deducted {
+    text-align: right;
+  }
+
+/* Summary pane */
+
+.summary_block {
+  border: 1px solid $light-grey;
+  text-align: right;
+  line-height: 1.6em;
+  margin: 0.25em 0.25em 1.5em;
+  padding: 5px;
+}
 
 // .mark_summary_holder {
 //   background: #fbfbfb;
@@ -497,38 +540,52 @@
 //   padding: 5px;
 // }
 
-// .marks_summary_pane_list {
-//   margin: 0;
-//   padding: 0;
+.extra_marks_pane_list,
+.extra_percentage_pane_list,
+.marks_summary_pane_list {
+  margin: 0;
+  padding: 0;
+  width: 100%;
 
-//   th {
-//     background-color: #b7d3ec;
-//     padding: 5px;
-//   }
+  th {
+    background-color: $light-blue;
+    padding: 0.25em;
+    text-align: left;
+  }
 
-//   tr {
-//     padding-left: 5px;
+  tr {
+    &:nth-child(odd) {
+      background: #EDEDED;
+    }
 
-//     &:nth-child(odd) {
-//       background: #EDEDED;
-//     }
+    &:nth-child(even) {
+      background: #fff;
+    }
 
-//     &:nth-child(even) {
-//       background: #fff;
-//     }
-//   }
-// }
+    td {
+      padding: 0.25em;
+    }
+  }
+}
 
-// .mark_subtotal {
-//   font-weight: bold;
-//   padding: 10px 20px;
-// }
+.mark_subtotal {
+  font-weight: 600;
+  padding: 10px 20px;
+}
 
-// .mark_total {
-//   font-weight: 600;
-//   margin: 1em 0;
-//   padding: 10px;
-// }
+.mark_total {
+  @include border-radius($radius);
+  background: $light-grey;
+  border: 1px solid $grey;
+  font-weight: 600;
+  margin: 1em 0;
+  padding: 10px;
+
+  .final_mark {
+    float: right;
+    font-size: 1.5em;
+  }
+}
 
 
 /* New annotation dialog */

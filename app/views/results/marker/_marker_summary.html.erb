@@ -23,8 +23,6 @@
       <span> /<%= assignment.total_mark %></span>
     </div>
 
-    <div class="clear"></div><br>
-
     <div id="extra_marks_pane" class="extra_marks_pane">
       <div class="bonus_deduction">
         <strong><%= I18n.t("marker.marks.bonus_deductions") %></strong>
@@ -33,8 +31,6 @@
                  locals: { extra_marks_points: extra_marks_points,
                            result_id: result.id } %>
     </div>
-
-    <div class="clear"></div>
 
     <div class="summary_block">
       <strong class="total_extra_points_label">
@@ -45,15 +41,11 @@
       </span>
     </div>
 
-    <div class="clear"></div>
-
     <div id="extra_percentage_pane" class="extra_percentage_pane">
       <%= render partial: 'results/marker/extra_percentage_table',
                  locals: { extra_marks_percentage: extra_marks_percentage,
                            result_id: result.id } %>
     </div>
-
-    <div class="clear"></div>
 
     <div class="summary_block">
       <strong><%= I18n.t("marker.marks.total_extra_percentages").html_safe %></strong>
@@ -76,8 +68,6 @@
       <span> /<%= assignment.total_mark %></span>
     </div>
 
-    <div class="clear"></div><br/>
-
     <div id="extra_marks_pane" class="extra_marks_pane">
       <div class="bonus_deduction"><strong><%= I18n.t("marker.marks.bonus_deductions") %></strong></div>
       <%= render partial: 'results/student/extra_marks_table',
@@ -85,24 +75,17 @@
                            result_id: old_result.id } %>
     </div>
 
-    <div class="clear"></div>
-
     <div class="summary_block">
       <strong class="total_extra_points_label">
         <%= I18n.t("marker.marks.total_extra_marks").html_safe %>
       </strong>
       <span id="total_extra_points"><%= old_result.get_total_extra_points %></span>
     </div>
-
-    <div class="clear"></div>
-
     <div id="extra_percentage_pane" class="extra_percentage_pane">
       <%= render partial: 'results/student/extra_percentage_table',
                  locals: { extra_marks_percentage: old_result.extra_marks.percentage,
                            result_id: old_result.id } %>
     </div>
-
-    <div class="clear"></div>
 
     <div class="summary_block">
       <strong><%= I18n.t("marker.marks.total_extra_percentages").html_safe %></strong>
@@ -112,8 +95,6 @@
     </div>
   </div>
 <% end %>
-
-<div class="clear"></div>
 
 <% if old_result %>
 <div class="mark_total">
