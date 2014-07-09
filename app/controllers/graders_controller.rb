@@ -228,9 +228,8 @@ class GradersController < ApplicationController
         case params[:global_actions]
           when 'assign'
             if params[:graders].blank?
-              # don't do anything if no graders
-              render nothing: true
-              return
+              render text: I18n.t('assignment.group.select_a_grader'),
+                     status: 400
             else
               assign_all_graders_to_criteria(criterion_ids, grader_ids)
               head :ok

@@ -282,9 +282,7 @@ class GroupsController < ApplicationController
   # Check that there is at least one grouping selected
   def check_for_groupings(groupings)
     if !groupings
-      return render text: I18n.t('assignment.group.select_a_group'), status: 400
-    else
-      return nil
+      render text: I18n.t('assignment.group.select_a_group'), status: 400
     end
   end
 

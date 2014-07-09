@@ -7,12 +7,14 @@ module StudentsHelper
     # section name, links to edit, notes, etc.
     students_table_info = students.map do |student|
       s = student.attributes
-      s[:edit_link] = url_for(controller: 'students',
+      s[:edit_link] = url_for(
+        controller: 'students',
         action: 'edit',
         id: student.id)
       s[:grace_credits_remaining] = student.remaining_grace_credits
       s[:section_name] = student.has_section? ? student.section.name : nil
-      s[:notes_link] = url_for(controller: 'notes',
+      s[:notes_link] = url_for(
+        controller: 'notes',
         action: 'notes_dialog',
         id: student.id,
         noteable_id: student.id,

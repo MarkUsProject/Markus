@@ -1,6 +1,6 @@
 class AdminsController < ApplicationController
-  before_filter  :authorize_only_for_admin
   include AdminsHelper
+  before_filter  :authorize_only_for_admin
   def index
     respond_to do |format|
       format.html
