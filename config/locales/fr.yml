@@ -992,16 +992,30 @@ fr:
         link_csv: "Télécharger le barème (rubrique) au format CSV"
         link_yml: "Télécharger le barème (rubrique) au format YAML"
       upload:
+        csv:       "Envoyer CSV"
+        csv_title: "Envoyer un fichier de barème (rubrique) CSV"
+        yml:       "Envoyer YML"
+        yml_title: "Envoyer un fichier de barème (rubrique) YML"
+        csv_prompt: "Choisissez un fichier CSV à envoyer"
+        yml_prompt: "Choisissez un fichier YML à envoyer"
         success: "Le fichier contenant le barème (rubrique) a bien été envoyé : %{nb_updates} mise(s) à jour."
-        title: "Envoyer un fichier de barème (rubrique)"
-        prompt: "Choisissez un fichier CSV à envoyer"
-        format_html: "
+        format_csv_html: "
         <p>Le fichier devra être au format suivant : </p>
         <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
         <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br>
         et <em>level_descriptions</em> doi contenir la description de chaque niveau (optionnel,
         séparé aussi par les virgules)."
+        format_yml_html: "
+          <p>Le fichier devra être au format suivant : br>
+              <code>criterion_name:<br>
+                    &nbsp;&nbsp;weight: weight<br>
+                    &nbsp;&nbsp;level_0:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+                    &nbsp;&nbsp;level_1:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
+          </p>"
       error_total: "total weight must be positive"
       defaults:
         level_0: "Très insuffisant"

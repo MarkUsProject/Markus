@@ -999,7 +999,9 @@ en:
         link_yml: "Download rubric in YAML Format"
       upload:
         success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
+        csv:       "Upload CSV"
         csv_title: "Upload CSV File"
+        yml:       "Upload YML"
         yml_title: "Upload YML File"
         csv_prompt: "Select a CSV file to upload"
         yml_prompt: "Select a YML file to upload"
@@ -1018,7 +1020,7 @@ en:
                     &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
                     &nbsp;&nbsp;level_1:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;[...]
+                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
           </p>"
         error: "Some rubric criteria were invalid:"
         syntax_error: "There is an error in the file you uploaded : %{error}"

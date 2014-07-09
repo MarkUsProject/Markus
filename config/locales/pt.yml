@@ -979,7 +979,9 @@ pt:
         link_yml: "Baixar rúbrica em formato YAML"
       upload:
         success: "Critério de rúbrica carregado com sucesso: %{nb_updates} atualizada(s)."
+        csv:       "Carregar CSV"
         csv_title: "Carregar arquivo CSV"
+        yml:       "Carregar YML"
         yml_title: "Carregar arquivo YML File"
         csv_prompt: "Selecionar um arquivo CSV para carregar"
         yml_prompt: "Selecionar um arquivo YML para carregar"
