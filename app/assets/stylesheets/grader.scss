@@ -1,40 +1,8 @@
 @import 'common/core';
 
-// @import 'constants';
-// @import 'mixins';
 
-// /* ==============================================================
-//    ANNOTATION SUMMARY RELATED STYLES
-//    ============================================================== */
+/* Annotations */
 
-// /****************************************************
-//   Annotations highlight; two colours, one for single comment
-//   one for overlapping comment
-//  ****************************************************/
-#annotation_summary_list {
-  li:nth-child(odd) {
-    background-color: #fffcc4;
-  }
-
-  li:nth-child(even) {
-    background-color: #ff9;
-  }
-}
-
-// /****************************************************
-//   Link to line number in Annotations Summary
-//  ****************************************************/
-// .lineNumber {
-//   margin: 0 0 10px 0;
-
-//   a {
-//     padding: 0 20px 0 0;
-//   }
-// }
-
-// /****************************************************
-//   Style for the actual annotations content
-// *****************************************************/
 .annotationContent,
 .manageAnnotations {
   font: 0.85em/0.9em $fonts;
@@ -45,6 +13,21 @@
 .annotationContent p {
   white-space: pre-wrap;
 }
+
+.annotation_text_display {
+  @include border-radius(5px);
+  background: #f6f6f6;
+  border: 1px solid $grey;
+  max-width: 400px;
+  padding: 0.25em 1em;
+  position: absolute;
+  white-space: pre-wrap;
+  width: auto;
+  z-index: 100000;
+}
+
+
+/* Top toolbars: student selector/file selector/download buttons */
 
 #student_selector {
   @include border-radius(5px);
@@ -77,113 +60,6 @@
   }
 }
 
-// .dp-highlighter {
-//   .annotation_highlighted_text {
-//     background-color: #f99;
-//     color: #000;
-//   }
-
-//   .annotation_highlighted_text_overlap {
-//     background-color: #dd5;
-//     color: blue;
-//   }
-// }
-
-.annotation_text_display {
-  @include border-radius(5px);
-  background: #f6f6f6;
-  border: 1px solid $grey;
-  max-width: 400px;
-  padding: 0.25em 1em;
-  position: absolute;
-  white-space: pre-wrap;
-  width: auto;
-  z-index: 100000;
-}
-
-#annotation_menu {
-  @include border-radius-top(5px);
-  background: #b7d3ec;
-  padding: 5px;
-  margin: 0 0 10px 0;
-}
-
-// #annotation_categories {
-//   list-style: none;
-//   margin: 0;
-//   padding: 0;
-//   width: 100%;
-// }
-
-#new_annotation_button {
-  // float: left;
-  font-weight: 300;
-  margin: 0 5px 0 0;
-}
-
-// .edit_remove_annotation_button {
-//   @include border-radius(10px);
-//   background: #fff;
-//   border: 2px solid #ccc;
-//   color: #464646;
-//   font: bold 0.85em $font-stack;
-//   margin: 5px;
-//   min-width: 0;
-//   padding: 3px 10px 3px 10px;
-// }
-
-// li.annotation_category {
-//   @include border-radius(5px);
-//   background: #fff;
-//   border: 1px solid #ccc;
-//   color: $grey;
-//   display: inline-block;
-//   font-weight: 600;
-//   padding: 3px 5px;
-
-
-//   &:hover {
-//     color: #000;
-//     cursor: pointer;
-//   }
-// }
-
-// .annotation_text_list {
-//   @include border-radius(5px);
-//   background: $light-grey;
-//   border: 1px solid #aaa;
-//   height: auto;
-//   margin: 0;
-//   overflow: auto;
-//   padding: 0;
-//   position: absolute;
-//   width: 300px;
-
-//   li {
-//     background: #fff;
-//     border-bottom: 1px solid #aaa;
-//     color: #464646;
-//     padding: 5px;
-
-//     &:hover {
-//       background: $light-grey;
-//       color: #000;
-//       cursor: pointer;
-//     }
-
-//     &:first-child {
-//       @include border-radius-top(5px);
-//     }
-
-//     &:last-child {
-//       @include border-radius-bottom(5px);
-//       border: 0;
-//     }
-//   }
-// }
-
-
-/* File selector/download buttons */
 .file_selector,
 .download_file {
   @include border-radius(5px);
@@ -220,15 +96,6 @@
   }
 }
 
-// #code_pane,
-// #mark_pane {
-  // @include border-radius(5px);
-  // background: #ececec;
-  // border: 1px solid #ddd;
-  // height: 100%;
-  // margin: 0 0 10px 0;
-  // padding: 10px;
-// }
 
 /* Panes content (for controlling the heights) */
 
@@ -258,6 +125,11 @@
   height: 600px;
 }
 
+.image_container {
+  overflow: auto;
+  width: auto;
+}
+
 #sel_box {
   border: 1px dashed #f00;
   display: none;
@@ -273,28 +145,96 @@
   position: absolute;
 }
 
-// #toolbar {
-//   @include border-radius(5px);
-//   background: $grey;
-//   margin: 0 0 20px 0;
-//   padding: 5px;
-// }
-
 .code_scroller {
   margin: 0;
   overflow: auto;
   padding-left: 50px !important;
 }
 
-// .image_container {
-//   overflow: auto;
-//   width: auto;
-// }
+.dp-highlighter {
+  .annotation_highlighted_text {
+    background-color: #f99;
+    color: $dark-grey;
+  }
 
-// #mark_criteria_pane_list {
-//   height: 100%;
-//   overflow: auto;
-// }
+  .annotation_highlighted_text_overlap {
+    background-color: #dd5;
+    color: $dark-blue;
+  }
+}
+
+
+/* New annotation dialog */
+
+#create_annotation_dialog {
+  padding-top: 1.5em;
+
+  textarea#new_annotation_content {
+    height: 175px;
+    margin-top: 1em;
+    width: 100%;
+  }
+}
+
+
+/* Annotations menus */
+
+#annotation_menu {
+  @include border-radius-top(5px);
+  background: #b7d3ec;
+  display: table;
+  margin: 0 0 1em 0;
+  padding: 0.5em;
+  width: 100%;
+}
+
+#new_annotation_button {
+  display: table-cell;
+  font-weight: 300;
+  margin: 0 0.25em 0 0;
+  vertical-align: top;
+}
+
+#annotation_categories {
+  display: table-cell;
+  vertical-align: top;
+}
+
+li.annotation_category {
+  margin-bottom: 0.25em;
+}
+
+ul.annotation_text_list {
+  @include border-radius-bottom(5px);
+  background: $white !important;
+  border: 1px solid #aaa;
+  height: auto;
+  margin: 0;
+  overflow: auto;
+  padding: 0;
+  position: absolute;
+  left: -0.65em !important;
+  top: 0 !important;
+  width: 300px;
+
+  li {
+    @include border-radius-top(0 !important);
+    background: $white !important;
+    padding: 0.5em 0.25em;
+    width: 100%;
+
+    &:hover {
+      background: $blue !important;
+      color: $white;
+      cursor: pointer;
+    }
+
+    &:last-child {
+      @include border-radius-bottom(5px);
+      border: 0;
+    }
+  }
+}
 
 
 /* Annotations pane */
@@ -322,27 +262,29 @@
     border-bottom: 1px solid $grey;
     padding: 0.25em 0.5em;
     width: 100%;
+
+    &:nth-child(odd) {
+      background-color: #fffcc4;
+    }
+
+    &:nth-child(even) {
+      background-color: #ff9;
+    }
   }
 
   a {
     color: $dark-blue;
   }
 
-  input, form.button_to {
+  input,
+  form.button_to {
     display: inline-block;
   }
 }
 
-// /* Grading view */
-// /* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
-// .padding_left {
-//   padding-left: 30px;
-// }
-
-// .padding_left_old {
-//   padding-left: 30px;
-//   background-color: #fdfebc;
-// }
+.edit_remove_annotation_button {
+  font-size: 0.85em !important;
+}
 
 
 /* Remark request pane */
@@ -483,17 +425,17 @@
   padding: 5px;
 }
 
-  .extra_mark_title_div {
-    cursor: pointer;
-  }
+  // .extra_mark_title_div {
+  //   cursor: pointer;
+  // }
 
-  .extra_mark_holder_selected {
-    background: #ccf;
-  }
+  // .extra_mark_holder_selected {
+  //   background: #ccf;
+  // }
 
-  .extra_mark_delete {
-    float: right;
-  }
+  // .extra_mark_delete {
+  //   float: right;
+  // }
 
   .extra_marks_pane {
     border: 1px solid #dadada;
@@ -524,6 +466,7 @@
     text-align: right;
   }
 
+
 /* Summary pane */
 
 .summary_block {
@@ -533,12 +476,6 @@
   margin: 0.25em 0.25em 1.5em;
   padding: 5px;
 }
-
-// .mark_summary_holder {
-//   background: #fbfbfb;
-//   border-bottom: 1px solid #dadada;
-//   padding: 5px;
-// }
 
 .extra_marks_pane_list,
 .extra_percentage_pane_list,
@@ -584,20 +521,26 @@
   .final_mark {
     float: right;
     font-size: 1.5em;
+    font-style: italic;
   }
 }
 
-
-/* New annotation dialog */
-#create_annotation_dialog {
-  padding-top: 1.5em;
-
-  textarea#new_annotation_content {
-    height: 175px;
-    margin-top: 1em;
-    width: 100%;
-  }
+.padding_left {
+  padding-left: 30px;
 }
+
+.padding_left_old {
+  padding-left: 30px;
+  background-color: #fdfebc;
+}
+
+
+/* Submission rule pane */
+
+#submission_rule_viewer h3 {
+  margin-bottom: 1em;
+}
+
 
 /* Resizable column panes */
 

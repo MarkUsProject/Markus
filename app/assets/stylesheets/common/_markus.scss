@@ -455,7 +455,7 @@ fieldset {
         @include border-radius-top($radius);
         display: inline-block;
         outline: none;
-        padding: 0.15em 1.5em;
+        padding: 0.25em 1.5em;
       }
 
       &.ui-tabs-active {
