@@ -548,11 +548,6 @@ module Repository
 
     end
 
-    def expand_path(file_name, dir_string = "/")
-      # Converts a pathname to an absolute pathname and then return the path
-      return File.expand_path(file_name, dir_string)
-    end
-
     ####################################################################
     ##  The following stuff is semi-private. As a general rule don't use
     ##  it directly. The only reason it's public, is that
@@ -702,24 +697,23 @@ module Repository
 
     # Make a directory if it's not already present.
     def make_directory(path)
+      # Turn "path" into absolute path for repo
+      path = File.expand_path(path, @repos_path)
 
-      # turn "path" into absolute path
-      path = expand_path(path, "/")
-      # do nothing if "path" is the root
-      return if path == "/"
+      # Do nothing if folder already exists
+      return if File.exist?(path)
 
-      # get the path of parent folder
+      # Recursively create parent folders (if doesn't exist)
       parent_path = File.dirname(path)
-      # and create parent folder before the current folder (recursively)
       make_directory(parent_path)
 
-      # now that the parent folder has been created,
+      # Now that the parent folder has been created,
       # create the current folder
       FileUtils.mkdir_p(path)
     end
 
     # Helper method to check file permissions of git auth file
-    def git_auth_file_checks()
+    def git_auth_file_checks
       if !@repos_admin # if we are not admin, check if files exist
         if !File.file?(@repos_auth_file)
           raise FileDoesNotExist.new("'#{@repos_auth_file}' not a file or not existent")

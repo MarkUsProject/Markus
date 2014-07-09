@@ -623,12 +623,11 @@ class Grouping < ActiveRecord::Base
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-
     # create folder only if we are repo admin
     if self.group.repository_admin?
       self.group.access_repo do |repo|
         revision = repo.get_latest_revision
-        assignment_folder = File.join('/', assignment.repository_folder)
+        assignment_folder = assignment.repository_folder
 
         if revision.path_exists?(assignment_folder)
           return true
