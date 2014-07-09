@@ -999,7 +999,7 @@ pt:
                     &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
                     &nbsp;&nbsp;level_1:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;[...]
+                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
           </p>"
         error: "Alguns critérios de rúbrica eram inválidos:"
         syntax_error: "Existe um erro no arquivo carregado : %{error}"
