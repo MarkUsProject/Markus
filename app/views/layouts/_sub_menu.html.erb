@@ -119,18 +119,16 @@
                                 controller.controller_name == 'results') %>
   <ul class='sub'>
     <li id="dropdown">
-      <% if @assignment.nil? and @grade_entry_form.nil? %>
-        <span id="choose_an_assignment">
+      <span class='dropdown'>
+        <% if @assignment.nil? and @grade_entry_form.nil? %>
           <%= t(:choose_assignment) %>
-        </span>
-      <% else %>
-        <span id="choose_an_assignment">
+        <% else %>
           <%= @assignment.short_identifier %>
-        </span>
-      <% end %>
-      <ul class="dropdown">
-         <%= render partial: 'shared/assignments_dropdown_menu' %>
-      </ul>
+        <% end %>
+        <ul>
+           <%= render partial: 'shared/assignments_dropdown_menu' %>
+        </ul>
+      </span>
     </li>
     <% if controller.controller_name == 'submissions' or
           controller.controller_name == 'results'
@@ -151,24 +149,20 @@
   <% if controller.controller_name != 'main' %>
     <ul class='sub'>
       <li id="dropdown">
-        <% if @assignment.nil? and @grade_entry_form.nil? %>
-          <span id="choose_an_assignment">
+        <span class='dropdown'>
+          <% if @assignment.nil? and @grade_entry_form.nil? %>
             <%= t(:choose_assignment) %>
-          </span>
-        <% elsif !@assignment.nil? %>
-          <% # Display the assignment's short identifier %>
-          <span id="choose_an_assignment">
+          <% elsif !@assignment.nil? %>
+            <% # Display the assignment's short identifier %>
             <%= @assignment.short_identifier %>
-          </span>
-        <% elsif !@grade_entry_form.nil? %>
-          <% # Display the grade entry form's short identifier %>
-          <span id="choose_an_assignment">
-            <%= (@grade_entry_form.short_identifier) %>
-          </span>
-        <% end %>
-        <ul class="dropdown">
-           <%= render partial: 'shared/assignments_dropdown_menu'%>
-        </ul>
+          <% elsif !@grade_entry_form.nil? %>
+            <% # Display the grade entry form's short identifier %>
+            <%= @grade_entry_form.short_identifier %>
+          <% end %>
+          <ul>
+            <%= render partial: 'shared/assignments_dropdown_menu'%>
+          </ul>
+        </span>
       </li>
 
       <% if !@grade_entry_form.nil? %>

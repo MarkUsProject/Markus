@@ -2,6 +2,7 @@
 
 @import 'navigation';
 
+
 #about_dialog {
   width: 50%;
   max-height: 75%;
@@ -51,6 +52,11 @@ textarea {
   background: $white;
   border-bottom: 1px solid $blue;
   padding: $dimen-vertical $dimen-horizontal;
+
+  @include breakpoint(mobile) {
+    margin-top: 3.5em;
+    padding: $dimen-vertical $dimen-hor-mobile;
+  }
 }
 
 #dropdown {
@@ -124,26 +130,3 @@ textarea {
     }
   }
 }
-
-// #second_title {
-//   margin-top: 2.5em;
-// }
-
-// #title_bar input,
-// #title_bar a,
-// .sub_title a {
-//   @include box-shadow(none);
-//   background: none;
-//   border: none;
-//   color: $blue;
-//   cursor: pointer;
-//   font-size: 12px;
-//   font-weight: 600;
-//   margin: 0;
-//   min-width: 5px;
-//   padding: 0 4px;
-// }
-
-// .sub_title a {
-//   font-size: 0.7em;
-// }

@@ -603,6 +603,7 @@ nav {
 
     li:hover,
     .active {
+      @include transition(background-color, $time-quick);
       background-color: $blue;
       color: $white;
 
@@ -619,6 +620,7 @@ nav {
 
     li:hover,
     .active {
+      @include transition(background-color, $time-quick);
       background-color: $white;
       color: $dark-blue;
 

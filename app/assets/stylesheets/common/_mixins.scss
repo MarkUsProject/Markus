@@ -64,6 +64,22 @@
           transform: $value;
 }
 
+@mixin transform-origin($value) {
+  -webkit-transform-origin: $value;
+     -moz-transform-origin: $value;
+      -ms-transform-origin: $value;
+       -o-transform-origin: $value;
+          transform-origin: $value;
+}
+
+@mixin animation($value...) {
+  -webkit-animation: $value;
+     -moz-animation: $value;
+      -ms-animation: $value;
+       -o-animation: $value;
+          animation: $value;
+}
+
 /** For easier size breakpoints. */
 $breakpoints: (
   'tiny':   ( max-width:  360px ),
