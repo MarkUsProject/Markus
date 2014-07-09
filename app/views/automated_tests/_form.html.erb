@@ -1,20 +1,23 @@
 <%= render partial: 'boot', formats: [:js] %>
 
-<div class="wrapLeft">
-<% if flash[:success] %>
-<div class="success">
-  <span><%=flash[:success]%></span>
-</div>
+<div class="wrapper">
+  <% if flash[:success] %>
+
+  <div class="success">
+    <span><%=flash[:success]%></span>
+  </div>
 <% end %>
 
 <%= form_for @assignment,
-	     as: :assignment,
+       as: :assignment,
        url: manage_assignment_automated_tests_path(),
-	     html: {multipart: true} do |f| %>
-<%= f.error_messages%>
+       html: {multipart: true} do |f| %>
+  <%= f.error_messages %>
 
 <fieldset>
-  <legend><%= I18n.t("automated_tests.automated_tests") %></legend>
+  <legend>
+    <span><%= I18n.t("automated_tests.automated_tests") %></span>
+  </legend>
 
   <p id="testing_framework_style">
     <%= f.check_box :enable_test, id: "is_testing_framework_enabled", onchange: "toggle_automated_tests($F('is_testing_framework_enabled'))" %>
@@ -29,8 +32,9 @@
   </div>
 
   <fieldset>
-    <div class="wrapLeft">
-    <legend><%= I18n.t("automated_tests.required_files_ant") %></legend>
+    <legend>
+      <span><%= I18n.t("automated_tests.required_files_ant") %></span>
+    </legend>
 
     <div id="test_properties" class="disabled" >
       <%= f.fields_for :test_files do |tf| %>
@@ -96,7 +100,6 @@
         <%= add_parser_file_link t("automated_tests.add_parser_file_link"), f %>
       </p>
 
-    </div>
     </div>
   </fieldset>
 </fieldset>

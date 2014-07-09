@@ -142,53 +142,44 @@ input[type='number'] {
       min-width: 0;
     }
   }
+
+  .clear {
+    display: block;
+  }
 }
 
+.block_line {
+  border-top: 1px solid #ccc;
+  display: block;
+  margin: 5px;
 
-// .block_line {
-//   border-top: 1px solid #ccc;
-//   display: block;
-//   margin: 5px;
-// }
+  span.box {
+    display: inline-block;
+  }
+}
 
-//   span.box {
-//     display: inline-block;
-//   }
-// }
+#member_inviter {
+  font-weight: 600;
+}
 
-// #member_inviter {
-//   font-weight: 600;
-// }
+.membership_status_pending {
+  font-style: italic;
+}
 
-// .membership_status_pending {
-//   font-style: italic;
-// }
+.membership_status_rejected {
+  color: $grey;
+  font-style: italic;
+}
 
-// .membership_status_rejected {
-//   color: $grey;
-//   font-style: italic;
-// }
+span.info_number  {
+  font: 1.5em/1.5em $fonts;
+  margin-right: 5px;
+}
 
-
-// span.info_number  {
-//   font: 1.5em/1.5em $font-stack;
-//   margin-right: 5px;
-// }
-
-// span.info_date{
-//   font: 300 1.2em/1.5em $font-stack;
-//   margin-right: 5px;
-// }
-
-// .section {
-//   .info_date {
-//     margin-left: 10px;
-//   }
-
-//   li {
-//     padding: 0.5em 0;
-//   }
-// }
+span.info_date {
+  font: 300 1.2em/1.5em $fonts;
+  margin-right: 5px;
+}
 
 // a.assignment_list {
 //   display: inline-block;
