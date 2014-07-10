@@ -1,5 +1,10 @@
 @import 'common/core';
 
+
+#disable {
+  color: $grey !important;
+}
+
 #repo_browser_controls {
   fieldset {
     @include box-shadow(none);
