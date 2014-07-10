@@ -1,6 +1,68 @@
 @import 'common/core';
 
 
+.wrapper {
+  display: table;
+  width: 100%;
+}
+
+#rubric_criteria_pane,
+#rubric_levels_pane {
+  display: table-cell;
+  vertical-align: top;
+}
+
+#rubric_criteria_pane {
+  width: 25%;
+
+  li {
+    list-style: none;
+  }
+}
+
+#rubric_levels_pane {
+  @include border-radius($radius);
+  display: table;
+  width: 100%;
+  border: 1px solid $grey;
+  padding: 1em;
+
+  h2 {
+    margin-bottom: 0.5em;
+  }
+
+  label.bold_inline_label {
+    display: inline-block;
+    font-weight: 600;
+    min-width: 8em;
+  }
+
+  .main_rubric_criteria_edit {
+    display: table-cell;
+    padding-right: 1em;
+    width: 250px;
+
+    span {
+      display: block;
+      margin-bottom: 0.25em;
+    }
+  }
+
+  .rubric_criteria_levels {
+    border-left: 1px solid $grey;
+    display: table-cell;
+    padding-left: 1em;
+
+    input {
+      margin-bottom: 0.5em;
+    }
+
+    textarea {
+      height: 150px;
+      width: 100%;
+    }
+  }
+}
 
 // #rubric_status_pane {
 //   float: right;
