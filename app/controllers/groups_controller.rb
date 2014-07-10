@@ -28,11 +28,10 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     begin
       new_grouping_data = @assignment.add_group(params[:new_group_name])
+      head :ok
     rescue Exception => e
-      render text: e.message,
-             status: 400 and return
+      render text: e.message, status: 400
     end
-    head :ok
   end
 
   def remove_group
@@ -86,7 +85,7 @@ class GroupsController < ApplicationController
     end
 
     unless existing
-      #We update the group_name
+      # We update the group_name
       @group.group_name = params[:new_groupname]
       @group.save
     else
@@ -225,31 +224,38 @@ class GroupsController < ApplicationController
     @target_assignment.clone_groupings_from(source_assignment.id)
   end
 
-  #These actions act on all currently selected students & groups
+  # These actions act on all currently selected students & groups
   def global_actions
-    @assignment = Assignment.find(params[:assignment_id],
+    assignment = Assignment.find(params[:assignment_id],
                                   include: [{
                                       groupings: [{
                                           student_memberships: :user,
                                           ta_memberships: :user},
                                         :group]}])
-    @tas = Ta.all
+    action = params[:global_actions]
     grouping_ids = params[:groupings]
     student_ids = params[:students]
     students_to_remove = params[:students_to_remove]
 
-    @grouping_data = {}
-    @groupings = []
-    groupings = Grouping.find_by_id(grouping_ids)
-
-    unless params[:global_actions] == 'unassign'
-      if !groupings
-        render text: I18n.t('assignment.group.select_a_group'),
-               status: 400 and return
+    # Start exception catching. If an exception is raised,
+    # return http response code of 400 (bad request) along
+    # the error string. The front-end should get it and display
+    # the message in an error div.
+    begin
+      # Every action should have a grouping associated with it.
+      # (except for unassign)
+      # check_for_groupings makes sure there is at least one and
+      # raises an error if there isn't.
+      groupings = Grouping.where(id: grouping_ids)
+      unless action == 'unassign'
+        check_for_groupings(groupings)
       end
-    end
 
-    case params[:global_actions]
+      # Students are only needed for assign/unassign so don't
+      # need to check.
+      students = Student.where(id: student_ids)
+
+      case params[:global_actions]
       when 'delete'
         delete_groupings(groupings)
       when 'invalid'
@@ -257,32 +263,23 @@ class GroupsController < ApplicationController
       when 'valid'
         validate_groupings(groupings)
       when 'assign'
-        if grouping_ids.length != 1
-          render text: I18n.t('assignment.group.select_only_one_group'),
-                 status: 400 and return
-        elsif student_ids
-          if error = add_members(student_ids, grouping_ids[0], @assignment)
-            error and return
-          end
-        else
-          render text: I18n.t('assignment.group.select_a_student'),
-                 status: 400 and return
-        end
+        add_members(students, groupings, assignment)
       when 'unassign'
-        if error = remove_members(students_to_remove)
-          error and return
-        end
+        remove_members(students_to_remove, assignment)
+      end
+      head :ok
+    rescue => e
+      render text: e.message, status: 400
     end
-    head :ok
   end
 
   private
-  #These methods are called through global actions
-
+  # These methods are called through global actions.
+  
   # Check that there is at least one grouping selected
   def check_for_groupings(groupings)
-    if !groupings
-      render text: I18n.t('assignment.group.select_a_group'), status: 400
+    if groupings.blank?
+      raise I18n.t('assignment.group.select_a_group')
     end
   end
 
@@ -302,32 +299,35 @@ class GroupsController < ApplicationController
 
   # Deletes the given list of groupings if possible. Removes each member first.
   def delete_groupings(groupings)
-      @removed_groupings = []
-      @errors = []
+    # If any groupings have a submission raise an error.
+    if groupings.any?(&:has_submission?)
+      raise I18n.t('groups.could_not_delete') # should add names of grouping we could not delete
+    else
+      # Remove each student from every group.
       students_to_remove = []
       groupings.each do |grouping|
         students_to_remove = students_to_remove.concat(grouping.students.all)
         grouping.student_memberships.all.each do |mem|
           grouping.remove_member(mem.id)
         end
-        if grouping.has_submission?
-          @errors.push(grouping.group.group_name)
-        else
-          grouping.delete_grouping
-          @removed_groupings.push(grouping)
-        end
+        grouping.delete_grouping
       end
+    end
   end
 
   # Adds the students given in student_ids to the grouping given in grouping_id
-  def add_members(student_ids, grouping_id, assignment)
-    students = Student.find(student_ids)
-    grouping = Grouping.find(grouping_id)
+  def add_members(students, groupings, assignment)
+    if groupings.size != 1
+      raise I18n.t('assignment.group.select_only_one_group')
+    end
+    if students.blank?
+      raise I18n.t('assignment.group.select_a_student')
+    end
+
+    grouping = groupings.first
+
     students.each do |student|
-      # Try adding every time. If an error occurs percolate upwards.
-      if possible_error = add_member(student, grouping, assignment)
-        return possible_error
-      end
+      add_member(student, grouping, assignment)
     end
 
     # Generate warning if the number of people assigned to a group exceeds
@@ -336,8 +336,7 @@ class GroupsController < ApplicationController
     group_name = grouping.group.group_name
     if assignment.student_form_groups
       if students_in_group > assignment.group_max
-        return render text: I18n.t('assignment.group.assign_over_limit', group: group_name),
-                      status: 400
+        raise I18n.t('assignment.group.assign_over_limit', group: group_name)
       end
     end
   end
@@ -350,43 +349,38 @@ class GroupsController < ApplicationController
     @messages = []
     @bad_user_names = []
 
-    begin
-      if student.hidden
-        raise I18n.t('add_student.fail.hidden', user_name: student.user_name)
-      end
-      if student.has_accepted_grouping_for?(@assignment.id)
-        raise I18n.t('add_student.fail.already_grouped',
-          user_name: student.user_name)
-      end
-      membership_count = grouping.student_memberships.length
-      grouping.invite(student.user_name, set_membership_status, true)
-      grouping.reload
+    if student.hidden
+      raise I18n.t('add_student.fail.hidden', user_name: student.user_name)
+    end
+    if student.has_accepted_grouping_for?(assignment.id)
+      raise I18n.t('add_student.fail.already_grouped',
+        user_name: student.user_name)
+    end
+    membership_count = grouping.student_memberships.length
+    grouping.invite(student.user_name, set_membership_status, true)
+    grouping.reload
 
-      # report success only if # of memberships increased
-      if membership_count < grouping.student_memberships.length
-        @messages.push(I18n.t('add_student.success',
-            user_name: student.user_name))
-      else # something clearly went wrong
-        raise I18n.t('add_student.fail.general',
-          user_name: student.user_name)
-      end
+    # report success only if # of memberships increased
+    if membership_count < grouping.student_memberships.length
+      @messages.push(I18n.t('add_student.success',
+          user_name: student.user_name))
+    else # something clearly went wrong
+      raise I18n.t('add_student.fail.general',
+        user_name: student.user_name)
+    end
 
-      # only the first student should be the "inviter"
-      # (and only update this if it succeeded)
-      set_membership_status = StudentMembership::STATUSES[:accepted]
+    # only the first student should be the "inviter"
+    # (and only update this if it succeeded)
+    set_membership_status = StudentMembership::STATUSES[:accepted]
 
-      # generate a warning if a member is added to a group and they
-      # have less grace days credits than already used by that group
-      if student.remaining_grace_credits < grouping.grace_period_deduction_single
-        @warning_grace_day = I18n.t('assignment.group.grace_day_over_limit',
-          group: grouping.group.group_name)
-      end
-    rescue Exception => e
-      return render text: e.message, status: 400
+    # generate a warning if a member is added to a group and they
+    # have less grace days credits than already used by that group
+    if student.remaining_grace_credits < grouping.grace_period_deduction_single
+      @warning_grace_day = I18n.t('assignment.group.grace_day_over_limit',
+        group: grouping.group.group_name)
     end
 
     grouping.reload
-    return nil
   end
 
   # Removes the students contained in params from the groupings given
@@ -395,12 +389,12 @@ class GroupsController < ApplicationController
   # each student to delete it will have a parameter
   # of the form "groupid_studentid"
   # This code is possibly not safe. (should add error checking)
-  def remove_members(member_ids_to_remove)
+  def remove_members(member_ids_to_remove, assignment)
     members_to_remove = Student.where(id: member_ids_to_remove)
     members_to_remove.each do |member|
-      grouping = member.accepted_grouping_for(@assignment.id)
+      grouping = member.accepted_grouping_for(assignment.id)
       membership = grouping.student_memberships.find_by_user_id(member.id)
-      remove_member(membership, grouping, @assignment)
+      remove_member(membership, grouping, assignment)
     end
   end
 
@@ -408,6 +402,5 @@ class GroupsController < ApplicationController
   def remove_member(membership, grouping, assignment)
     grouping.remove_member(membership.id)
     grouping.reload
-    return nil
   end
 end

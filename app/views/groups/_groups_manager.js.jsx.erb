@@ -28,6 +28,7 @@
     },
     // Sends a request to the server to perform some action
     // such as assigning or removing a member to/from a group
+    // todo: function should be moved to actions column (separation of concerns)
     performAction: function(action) {
       var dataLoad = {
         submit_type: 'global_action',
@@ -44,8 +45,6 @@
         success: function(data) {
           this.refresh();
           this.setState({
-            selected_students: [],
-            selected_groups: [],
             selected_students_in_groups: [],
             error: null
           });
@@ -93,11 +92,6 @@
 
   // Table of students, on the left.
   var GroupsStudentsTable = React.createClass({
-    /*
-    updateSelectedStudents: function(students) {
-      this.props.onSelectedStudentsChange(students)
-    },
-    */
     render: function() {
       var columns = [
       {
