@@ -2,11 +2,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
 
-require_relative 'criterion_test'
-
 class FlexibleCriterionTest < ActiveSupport::TestCase
-  include CriterionTest
-
   # Class methods
 
   CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\ncriterion3,1.6,description3!\n"
