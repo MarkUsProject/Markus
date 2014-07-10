@@ -161,6 +161,10 @@
     background-color: #dd5;
     color: $dark-blue;
   }
+
+  ol {
+    overflow-y: hidden;
+  }
 }
 
 
@@ -291,6 +295,15 @@ ul.annotation_text_list {
 
 #remark_request {
   padding: 1em;
+
+  h3 + h3 {
+    margin: 1em 0 0.5em;
+  }
+
+  textarea {
+    margin-bottom: 1em;
+    width: 100%;
+  }
 }
 
 
@@ -326,6 +339,10 @@ ul.annotation_text_list {
     .mark_description {
       margin-left: 2.5em;
     }
+  }
+
+  table tr {
+    cursor: pointer;
   }
 }
 
