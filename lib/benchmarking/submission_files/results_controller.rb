@@ -1,10 +1,14 @@
 class ResultsController < ApplicationController
-  before_filter      :authorize_only_for_admin, except: [:codeviewer,
-  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark]
-  before_filter      :authorize_for_ta_and_admin, only: [:edit,
-  :update_mark, :create, :add_extra_mark, :download, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark]
-  before_filter      :authorize_for_user, only: [:codeviewer]
-  before_filter      :authorize_for_student, only: [:view_marks]
+  before_filter :authorize_only_for_admin,
+                except: [:codeviewer, :edit, :update_mark, :view_marks, :create,
+                         :add_extra_mark, :next_grouping,
+                         :update_overall_comment, :remove_extra_mark]
+  before_filter :authorize_for_ta_and_admin,
+                only: [:edit, :update_mark, :create, :add_extra_mark, :download,
+                       :next_grouping, :update_overall_comment,
+                       :remove_extra_mark]
+  before_filter :authorize_for_user, only: [:codeviewer]
+  before_filter :authorize_for_student, only: [:view_marks]
 
   def create
     # Create new Result for this Submission
@@ -267,28 +271,6 @@ class ResultsController < ApplicationController
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
-  end
-
-  def expand_criteria
-    @assignment = Assignment.find(params[:aid])
-    @rubric_criteria = @assignment.rubric_criteria
-    render partial: 'results/marker/expand_criteria', locals: {rubric_criteria: @rubric_criteria}
-  end
-
-  def collapse_criteria
-    @assignment = Assignment.find(params[:aid])
-    @rubric_criteria = @assignment.rubric_criteria
-    render partial: 'results/marker/collapse_criteria', locals: {rubric_criteria: @rubric_criteria}
-  end
-
-  def expand_unmarked_criteria
-    @assignment = Assignment.find(params[:aid])
-    @rubric_criteria = @assignment.rubric_criteria
-    @result = Result.find(params[:rid])
-    # nil_marks are the marks that have a "nil" value for Mark.mark - so they're
-    # unmarked.
-    @nil_marks = @result.marks.all(conditions: {mark: nil})
-    render partial: 'results/marker/expand_unmarked_criteria', locals: {nil_marks: @nil_marks}
   end
 
   private

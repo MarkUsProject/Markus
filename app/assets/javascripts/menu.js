@@ -18,7 +18,14 @@ function initMenu() {
   }, false);
 
   /* Close menu if content clicked, or if window resized and no longer "mobile" */
-  document.getElementById('content').addEventListener('click', hideMenu, false);
+  document.getElementById('content').addEventListener('click', function(event) {
+    // Prevent accidental clicks on links or something; just close the menu
+    if (document.body.classList.contains('show_menu')) {
+      event.preventDefault();
+    }
+
+    hideMenu();
+  }, false);
 
   window.onresize = function() {
     if (window.innerWidth > 500) { hideMenu(); }

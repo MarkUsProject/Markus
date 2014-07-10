@@ -9,8 +9,15 @@
   Annotations highlight; two colours, one for single comment
   one for overlapping comment
  ****************************************************/
-.annotations1 { background-color: #fffcc4; }
-.annotations2 { background-color: #ff9; }
+#annotation_summary_list {
+  li:nth-child(odd) {
+    background-color: #fffcc4;
+  }
+
+  li:nth-child(even) {
+    background-color: #ff9;
+  }
+}
 
 /****************************************************
   Link to line number in Annotations Summary
@@ -28,9 +35,13 @@
 *****************************************************/
 .annotationContent,
 .manageAnnotations {
-  font: italic 0.85em $font-stack;
+  font: 0.85em/0.9em $font-stack;
   margin: 0 0 10px 0;
   padding: 0 0 0 10px;
+}
+
+.annotationContent p {
+  white-space: pre-wrap;
 }
 
 #student_selector {
@@ -67,10 +78,6 @@
   }
 }
 
-#file_selector {
-  margin: 20px 0 10px 0;
-}
-
 .dp-highlighter {
   .annotation_highlighted_text {
     background-color: #f99;
@@ -81,10 +88,6 @@
     background-color: #dd5;
     color: blue;
   }
-
-  ol {
-    height: 590px;
-  }
 }
 
 .annotation_text_display {
@@ -94,7 +97,9 @@
   max-width: 400px;
   padding: 0.25em 1em;
   position: absolute;
+  white-space: pre-wrap;
   width: auto;
+  z-index: 100000;
 }
 
 #annotation_menu {
@@ -136,11 +141,12 @@ li.annotation_category {
   display: inline-block;
   font-weight: 600;
   padding: 3px 5px;
-}
 
-.annotation_category:hover {
-  color: #000;
-  cursor: pointer;
+
+  &:hover {
+    color: #000;
+    cursor: pointer;
+  }
 }
 
 .annotation_text_list {
@@ -148,9 +154,7 @@ li.annotation_category {
   background: $light-grey;
   border: 1px solid #aaa;
   height: auto;
-  left: -0.5em;
   margin: 0;
-  min-height: 1.5em;
   overflow: auto;
   padding: 0;
   position: absolute;
@@ -181,100 +185,90 @@ li.annotation_category {
 
 /* =================================================================================
   GENERAL LAYOUT STYLES
-  #pane_holder
-     #code_pane
-        tabs => see livepipe/tabs.css
-        #code_holder
-            #annotations_menu
-            #codeviewer
-        #annotations_summary
-            #annotation_summary_list
-                #annotations1, #annotations2
-     #pane_divider
-     #mark_pane
-        tabs => see livelipe/tabs.css
-        #rubric_viewer
-            #rubric_tools
-            #rubric_criteria_pane
-                #rubric_criteria_pane_list
-        #summary_viewer .marks_summary_viewer
-            #summary_criteria_pane
-                #summary_citeria_pane_list
-            #extra_marks_pane
-        #annotations_holder
 ===================================================================================*/
 
-#pane_holders {
-  overflow: hidden;
+/* File selector/download buttons */
+.file_selector,
+.download_file {
+  @include border-radius(5px);
+  background: $light-grey;
+  border: 1px solid #ddd;
+  display: inline-block;
+  padding: 0.5em;
 }
 
-  #pane_divider {
-    background-color: #ddd;
-    background: #eee url(handle.png) no-repeat 50%;
-    cursor: col-resize;
-    float: left;
-    height: 722px;
-    margin: 0 2px 10px 2px;
-    width: 4px;
+.file_selector {
+  margin-right: 1em;
 
-    @include breakpoint(small) {
+  @include breakpoint(mobile) {
+    margin-bottom: 1em;
+  }
+
+  #next_button,
+  #back_button {
+    min-width: 0;
+  }
+}
+
+#code_pane,
+#mark_pane {
+  @include border-radius(5px);
+  background: #ececec;
+  border: 1px solid #ddd;
+  height: 100%;
+  margin: 0 0 10px 0;
+  padding: 10px;
+}
+
+  #mark_viewer,
+  #summary_viewer,
+  #submission_rule_viewer,
+  #codeviewer,
+  #annotations_summary {
+    @include border-radius-bottom(5px);
+    overflow: auto;
+  }
+
+  #codeviewer,
+  #mark_viewer,
+  #summary_viewer,
+  #submission_rule_viewer,
+  #annotations_summary,
+  #remark_request_tab {
+    height: 650px;
+  }
+
+  // Adjusted height for users that also see the annotation menu
+  #annotation_menu + #codeviewer {
+    height: 600px;
+  }
+
+  #annotations_summary_head {
+    padding: 0 1em;
+  }
+
+  #remark_request {
+    padding: 1em;
+  }
+
+    #sel_box {
+      border: 1px dashed #f00;
       display: none;
-    }
-  }
-
-  #code_pane,
-  #mark_pane {
-    @include border-radius(5px);
-    background: #ececec;
-    border: 1px solid #ddd;
-    height: 700px;
-    margin: 0 0 10px 0;
-    padding: 10px;
-  }
-
-    #mark_viewer,
-    #summary_viewer,
-    #submission_rule_viewer,
-    #codeviewer,
-    #annotations_summary {
-      @include border-radius-bottom(5px);
-      overflow: auto;
+      position: absolute;
     }
 
-    #codeviewer,
-    #mark_viewer,
-    #summary_viewer,
-    #submission_rule_viewer,
-    #annotations_summary,
-    #remark_request_tab {
-      height: 650px;
+    #image_preview {
+      display: block;
     }
 
-    #annotations_summary_head {
-      padding: 0 1em;
+    .annotation_holder {
+      background: orange;
+      border: 1px solid #000;
+      cursor: crosshair;
+      filter: alpha(opacity=20);
+      opacity: 0.2;
+      position: absolute;
     }
-
-    #remark_request {
-      padding: 1em;
-    }
-
-      #sel_box {
-        border: thin dashed #f00;
-        display: none;
-        position: absolute;
-      }
-
-      #image_preview {
-        display: block;
-      }
-
-      .annotation_holder {
-        background: orange;
-        border: 1px solid #000;
-        filter: alpha(opacity=20);
-        opacity: 0.2;
-        position: absolute;
-      }
 
 #toolbar {
   @include border-radius(5px);
@@ -294,20 +288,9 @@ li.annotation_category {
   width: auto;
 }
 
-#create_annotation_dialog textarea {
-  height: 50px;
-  width: 300px;
-}
-
 #mark_criteria_pane_list {
   height: 100%;
   overflow: auto;
-}
-
-
-#next_button,
-#back_button {
-  min-width: 0;
 }
 
 /* Annotation summary list styles */
@@ -534,6 +517,7 @@ li.annotation_category {
 
 #panes-content {
   height: 100%;
+  margin-top: 1em;
   width: 100%;
 
   #panes {

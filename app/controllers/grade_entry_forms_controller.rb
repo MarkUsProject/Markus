@@ -101,14 +101,20 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form = GradeEntryForm.find(params[:id])
     @filter = 'none'
 
-    # Pagination options
+    @current_page = 1
+
+    # The cookies are handled here
+    c_per_page = cookie_per_page_name
     if params[:per_page].present?
-      @per_page = params[:per_page]
+      cookies[c_per_page] = params[:per_page]
+    elsif cookies[c_per_page].present?
+      params[:per_page] = cookies[c_per_page]
     else
-      @per_page = 15
+      # Set params to default and make the cookie!
+      params[:per_page] = 15
+      cookies[c_per_page] = params[:per_page]
     end
 
-    @current_page = 1
     c_sort_by = current_user.id.to_s + '_' +
         @grade_entry_form.id.to_s + '_sort_by_grades'
     if params[:sort_by].present?
@@ -119,6 +125,7 @@ class GradeEntryFormsController < ApplicationController
     @sort_by = params[:sort_by]
     @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
+    @per_page = params[:per_page]
     @per_pages = G_TABLE_PARAMS[:per_pages]
 
     all_students = get_filtered_items(G_TABLE_PARAMS,
@@ -136,6 +143,7 @@ class GradeEntryFormsController < ApplicationController
     @sort_by = cookies[c_sort_by]
   end
 
+  
   # Handle pagination for grades table
   # (The algorithm used to compute the alphabetical categories
   # (alpha_paginate()) is
@@ -146,7 +154,13 @@ class GradeEntryFormsController < ApplicationController
         G_TABLE_PARAMS,
         {grade_entry_form: @grade_entry_form},
         params)
-
+    # It is important to set the :per_page cookie during Ajax Request as well
+    c_per_page = cookie_per_page_name
+    if params[:per_page].present?
+      cookies[c_per_page] = params[:per_page]
+    elsif cookies[c_per_page].present?
+      params[:per_page] = cookies[c_per_page]
+    end
     @current_page = params[:page]
     @per_page = params[:per_page]
     @filters = get_filters(G_TABLE_PARAMS)
@@ -179,6 +193,11 @@ class GradeEntryFormsController < ApplicationController
     end
   end
 
+  # Cookie name
+  def cookie_per_page_name
+    "#{current_user.id}_#{@grade_entry_form.id}_per_page_sp"
+  end
+  
   # Update a grade in the table
   def update_grade
     grade_entry_form = GradeEntryForm.find_by_id(params[:id])

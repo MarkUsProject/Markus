@@ -2,6 +2,7 @@
 
 .ui-widget {
   font-family: $font-stack !important;
+  max-width: 100% !important;
 
   input,
   select,
@@ -92,7 +93,6 @@
     height: 350px;
     overflow: scroll;
     padding: 10px;
-    width: 550px;
 
     h1 {
       font-size: 2em;
@@ -125,4 +125,17 @@
 // Datepicker "Now" button
 .ui-datepicker-current {
   display: none;
+}
+
+#create_annotation_dialog {
+  textarea {
+    height: 150px;
+    width: 350px;
+  }
+
+  #annotation_submit {
+    border-top: 1px solid $grey;
+    margin-top: 5px;
+    padding-top: 10px;
+  }
 }
