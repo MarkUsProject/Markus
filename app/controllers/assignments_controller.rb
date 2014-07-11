@@ -1,26 +1,26 @@
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin,
                      except: [:deletegroup,
-                                 :delete_rejected,
-                                 :disinvite_member,
-                                 :invite_member,
-                                 :creategroup,
-                                 :join_group,
-                                 :decline_invitation,
-                                 :index,
-                                 :student_interface,
-                                 :update_collected_submissions,
-                                 :render_test_result]
-
-  before_filter      :authorize_for_student,
-                     only: [:student_interface,
-                              :deletegroup,
                               :delete_rejected,
                               :disinvite_member,
                               :invite_member,
                               :creategroup,
                               :join_group,
-                              :decline_invitation]
+                              :decline_invitation,
+                              :index,
+                              :student_interface,
+                              :update_collected_submissions,
+                              :render_test_result]
+
+  before_filter      :authorize_for_student,
+                     only: [:student_interface,
+                            :deletegroup,
+                            :delete_rejected,
+                            :disinvite_member,
+                            :invite_member,
+                            :creategroup,
+                            :join_group,
+                            :decline_invitation]
 
   before_filter      :authorize_for_user,
                      only: [:index, :render_test_result]
@@ -51,7 +51,8 @@ class AssignmentsController < ApplicationController
         (@test_result.submission.grouping.membership_status(current_user).nil? ||
         @test_result.submission.get_latest_result.released_to_students == false)
       render partial: 'shared/handle_error',
-       locals: {error: I18n.t('test_result.error.no_access', test_result_id: @test_result.id)}
+             locals: { error: I18n.t('test_result.error.no_access',
+                                     test_result_id: @test_result.id) }
       return
     end
 
