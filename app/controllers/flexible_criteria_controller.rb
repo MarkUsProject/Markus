@@ -105,15 +105,14 @@ class FlexibleCriteriaController < ApplicationController
     @criteria = @assignment.flexible_criteria
     position = 0
 
-    # Rails::logger.debug "Params:"
-    # Rails::logger.debug params
-
-    params[:criterion].each do |id|
-      if id != ''
-        position += 1
-        FlexibleCriterion.update(id, position: position)
+    # if params[:criterion]
+      params[:criterion].each do |id|
+        if id != ''
+          position += 1
+          FlexibleCriterion.update(id, position: position)
+        end
       end
-    end
+    # end
   end
 
 end

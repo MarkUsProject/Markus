@@ -246,9 +246,9 @@ require 'mocha/setup'
     should 'be able to update_positions' do
       get_as @admin,
              :update_positions,
-             :flexible_criteria_pane_list => [@criterion2.id,
-                                              @criterion.id],
-             :assignment_id => @assignment.id
+             criterion: [@criterion2.id,
+                         @criterion.id],
+             assignment_id: @assignment.id
       assert render_template ''
       assert_response :success
 
@@ -263,23 +263,24 @@ require 'mocha/setup'
   context 'An authenticated and authorized admin doing a POST' do
 
     setup do
-      @admin = Admin.make(:user_name => 'olm_admin')
+      @admin = Admin.make(user_name: 'olm_admin')
       @assignment = Assignment.make
       @criterion = FlexibleCriterion.make(
-          :assignment => @assignment,
-          :flexible_criterion_name => 'criterion1',
-          :description => 'description1, for criterion 1')
+          assignment: @assignment,
+          position: 1,
+          flexible_criterion_name: 'criterion1',
+          description: 'description1, for criterion 1')
       @criterion2 = FlexibleCriterion.make(
-          :assignment => @assignment,
-          :position => 2,
-          :flexible_criterion_name => 'criterion2',
-          :description => 'description2, "with quotes"')
+          assignment: @assignment,
+          position: 2,
+          flexible_criterion_name: 'criterion2',
+          description: 'description2, "with quotes"')
       @criterion3 = FlexibleCriterion.make(
-          :assignment => @assignment,
-          :position => 3,
-          :flexible_criterion_name => 'criterion3',
-          :description => 'description3!',
-          :max => 1.6)
+          assignment: @assignment,
+          position: 3,
+          flexible_criterion_name: 'criterion3',
+          description: 'description3!',
+          max: 1.6)
     end
 
     context 'on :index' do
@@ -414,8 +415,8 @@ require 'mocha/setup'
     should 'be able to update_positions' do
       post_as @admin,
               :update_positions,
-              flexible_criteria_pane_list: [@criterion2.id,
-                                            @criterion.id],
+              criterion: [@criterion2.id,
+                          @criterion.id],
               assignment_id: @assignment.id
       assert render_template ''
       assert_response :success
