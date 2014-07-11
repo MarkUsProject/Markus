@@ -20,15 +20,9 @@ class AnnotationCategoriesController < ApplicationController
     if request.post?
       # Attempt to add Annotation Category
       @annotation_categories = @assignment.annotation_categories
-      if @annotation_categories.length > 0
-        new_position = @annotation_categories.last.position + 1
-      else
-        new_position = 1
-      end
       @annotation_category = AnnotationCategory.new
       @annotation_category.update_attributes(params[:annotation_category])
       @annotation_category.assignment = @assignment
-      @annotation_category.position = new_position
       unless @annotation_category.save
         render :new_annotation_category_error
         return

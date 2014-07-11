@@ -382,9 +382,9 @@ END
         should 'be able to update_positions' do
           get_as @admin,
                 :update_positions,
-                :rubric_criteria_pane_list => [@criterion2.id,
-                                              @criterion.id],
-                :assignment_id => @assignment.id
+                rubric_criteria_pane_list: [@criterion2.id,
+                                            @criterion.id],
+                assignment_id: @assignment.id
           assert render_template ''
           assert_response :success
 

@@ -414,9 +414,9 @@ require 'mocha/setup'
     should 'be able to update_positions' do
       post_as @admin,
               :update_positions,
-              :flexible_criteria_pane_list => [@criterion2.id,
-                                               @criterion.id],
-              :assignment_id => @assignment.id
+              flexible_criteria_pane_list: [@criterion2.id,
+                                            @criterion.id],
+              assignment_id: @assignment.id
       assert render_template ''
       assert_response :success
 

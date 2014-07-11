@@ -8,7 +8,7 @@
   </header>
 
   <ul id='flexible_criteria_pane_list'>
-    <% @criteria.each do |criterion| -%>
+    <% @criteria.each do |criterion| %>
       <%= render partial: 'flexible_criteria/flexible_criterion',
                  locals: { criterion: criterion } %>
     <% end %>
