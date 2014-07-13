@@ -8,15 +8,6 @@
       // column is the first sortable column in the array.
       var columns = [
         {
-          id: 'checkbox',
-          content: <div>
-            <input type='checkbox' 
-              onChange={this.checkboxAllClicked.bind(this)} />
-            </div>,
-          sortable: false,
-          searchable: false
-        },
-        {
           id: 'group_name',
           content: 'Group Name',
           sortable: true,
@@ -65,11 +56,14 @@
         loading: true,
         error: null,
         submissions: [],
-        selected_submissions: []
+        selected_submissions: [],
       };
     },
     componentWillMount: function() {
       this.refresh();
+    },
+    updateSelectedSubmissions: function(submissions) {
+      this.setState({selected_submissions: submissions});
     },
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
@@ -93,40 +87,8 @@
         }.bind(this)
       });
     },
-    // Checkbox clicked (this must be in the parent since we're passing the box down from here)
-    checkboxAllClicked: function(event) {
-      var value = event.currentTarget.checked;
-      if (value) {
-        var new_selected_submissions = this.state.submissions.map(function(x) { return x.id; }).slice();
-        this.setState({
-          selected_submissions: new_selected_submissions
-        });
-      } else {
-        this.setState({
-          selected_submissions: []
-        });
-      }
-    },
-    // The checkbox on one of the table rows was clicked.
-    checkboxChanged: function(event) {
-      var value = event.currentTarget.checked;
-      var submission_id = parseInt(event.currentTarget.parentNode.parentNode.getAttribute('id'));
-
-      // Figure out new selected_submissions state...
-      var new_selected_submissions = this.state.selected_submissions.slice();
-      if (value == true) {
-        new_selected_submissions.push(submission_id);
-      } else {
-        new_selected_submissions.splice(new_selected_submissions.indexOf(submission_id), 1);
-      }
-      this.setState({
-        selected_submissions: new_selected_submissions
-      });
-    },
     onError: function(error) {
-      this.setState({
-        error: error
-      });
+      this.setState({error: error});
     },
     render: function() {
       // Do student-specific table stuff here.
@@ -135,9 +97,6 @@
         var s = {};
         s['class_name'] = submission.class_name;
         s['id'] = submission.id;
-        s['checkbox'] = <input type='checkbox'
-          onChange={this.checkboxChanged}
-          checked={this.state.selected_submissions.indexOf(submission.id) !== -1 ? true : false} />;
         s['group_name'] = <span dangerouslySetInnerHTML={{__html: submission.group_name}} />;
         s['repository'] = <span dangerouslySetInnerHTML={{__html: submission.repository}} />;
         s['commit_date'] = <span dangerouslySetInnerHTML={{__html: submission.commit_date}} />;
@@ -155,11 +114,72 @@
       } else {
         return (
           <div>
+            <ErrorDiv error={this.state.error} />
+            <SubmissionsActionBox
+              selected_submissions={this.state.selected_submissions}
+              onError={this.onError}
+              refresh={this.refresh}
+            />
             <Table data={submissions_data}
-              columns={this.props.columns} />
+              columns={this.props.columns}
+              selectable={true}
+              onSelectedRowsChange={this.updateSelectedSubmissions}
+            />
           </div>
         );
       }
+    }
+  });
+
+  SubmissionsActionBox = React.createClass({
+    propTypes: {
+      selected_submissions: React.PropTypes.array
+    },
+    releaseMarks: function() {
+      var dataLoad = {
+        release_results: true,
+        filter: 'none',
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_submissions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    unreleaseMarks: function() {
+      var dataLoad = {
+        unrelease_results: false,
+        filter: 'none',
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_submissions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    render: function() {
+      return (
+        <div>
+          <button onClick={this.releaseMarks}>Release Marks</button>
+          <button onClick={this.unreleaseMarks}>Unrelease Marks</button>
+        </div>
+      );
     }
   });
 

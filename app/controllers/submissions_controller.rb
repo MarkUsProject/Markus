@@ -858,70 +858,53 @@ class SubmissionsController < ApplicationController
   end
 
   def update_submissions
-
     return unless request.post?
-    assignment = Assignment.find(params[:assignment_id])
-    errors = []
-    groupings = []
-    if params[:ap_select_full] == 'true'
-      # We should have been passed a filter
-      if params[:filter].blank?
-        raise I18n.t('student.submission.expect_filter')
-      end
+    begin
+      assignment = Assignment.find(params[:assignment_id])
+      groupings = []
 
-      # Get all Groupings for this filter
-      if current_user.ta?
-        groupings = TA_TABLE_PARAMS[:filters][params[:filter]][:proc].call({assignment: assignment, user_id: current_user.id}, {})
-      else
-        groupings = ADMIN_TABLE_PARAMS[:filters][params[:filter]][:proc].call({assignment: assignment, user_id: current_user.id}, {})
-      end
-
-    else
-      # User selected particular Grouping IDs
       if params[:groupings].nil?
-        errors.push(I18n.t('results.must_select_a_group')) unless !params[:collect_section].nil?
+        # make rescue instead
+        #errors.push(I18n.t('results.must_select_a_group')) unless !params[:collect_section].nil?
+        raise I18n.t('results.must_select_a_group') unless params[:collect_section]
       else
         groupings = assignment.groupings.find(params[:groupings])
       end
-    end
 
-    log_message = ''
-    if params[:release_results]
-      changed = set_release_on_results(groupings, true, errors)
-      log_message = "Marks released for assignment '#{assignment.short_identifier}', ID: '" +
-                    "#{assignment.id}' (for #{changed} groups)."
-    elsif params[:unrelease_results]
-      changed = set_release_on_results(groupings, false, errors)
-      log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
-                    "#{assignment.id}' (for #{changed} groups)."
-    elsif params[:collect_section]
-      if params[:section_to_collect] == ''
-        errors.push(I18n.t('collect_submissions.must_select_a_section'))
-      else
-        collected = collect_submissions_for_section(params[:section_to_collect], assignment, errors)
-        if collected > 0
-          flash[:success] = I18n.t('collect_submissions.successfully_collected', collected: collected)
+      log_message = ''
+      if params[:release_results]
+        changed = set_release_on_results(groupings, true)
+        log_message = "Marks released for assignment '#{assignment.short_identifier}', ID: '" +
+                      "#{assignment.id}' (for #{changed} groups)."
+      elsif params[:unrelease_results]
+        changed = set_release_on_results(groupings, false)
+        log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
+                      "#{assignment.id}' (for #{changed} groups)."
+      elsif params[:collect_section]
+        if params[:section_to_collect] == ''
+          raise I18n.t('collect_submissions.must_select_a_section')
+        else
+          collected = collect_submissions_for_section(params[:section_to_collect], assignment)
+          if collected > 0
+            flash[:success] = I18n.t('collect_submissions.successfully_collected', collected: collected)
+          end
         end
       end
-    end
-
 
     unless groupings.empty?
       assignment.update_results_stats
     end
 
-    if changed && changed > 0
-      flash[:success] = I18n.t('results.successfully_changed', {changed: changed})
-      m_logger = MarkusLogger.instance
-      m_logger.log(log_message)
+      if changed && changed > 0
+        # These flashes don't get rendered. Find another way to display?
+        flash[:success] = I18n.t('results.successfully_changed', {changed: changed})
+        m_logger = MarkusLogger.instance
+        m_logger.log(log_message)
+      end
+      head :ok
+    rescue => e
+      render text: e.message, status: 400
     end
-    flash[:errors] = errors
-
-    redirect_to action: 'browse',
-                id: params[:id],
-                per_page: params[:per_page],
-                filter:   params[:filter],
-                sort_by:  params[:sort_by]
   end
 
   def unrelease
