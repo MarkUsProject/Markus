@@ -33,11 +33,11 @@ module SubmissionsHelper
   end
 
   def get_submissions_table_info(assignment)
-    groupings = assignment.groupings
-    #(.include:
-                                #[:assignment, :group, :grace_period_deductions,
-                                  #{current_submission_used: :results},
-                                  #{accepted_student_memberships: :user}])
+    groupings = assignment.groupings.includes(:assignment,
+                                              :group,
+                                              :grace_period_deductions,
+                                              {current_submission_used: :results},
+                                              {accepted_student_memberships: :user})
     submissions_table_info = groupings.map do |grouping|
       g = grouping.attributes
 
