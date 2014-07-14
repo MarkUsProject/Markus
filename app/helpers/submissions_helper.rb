@@ -37,6 +37,7 @@ module SubmissionsHelper
     submissions_table_info = groupings.map do |grouping|
       g = grouping.attributes
 
+      # Also add section
       g[:class_name] = get_any_tr_attributes(grouping)
       g[:group_name] = get_grouping_group_name(assignment, grouping)
       g[:repository] = get_grouping_repository(assignment, grouping)
@@ -103,6 +104,10 @@ module SubmissionsHelper
       group_name += grouping.accepted_students.collect{ |student| student.user_name}.join(', ')
       group_name += ')'
       return group_name
+  end
+
+  def get_grouping_section(grouping)
+    return 'placeholder'
   end
 
   def get_grouping_repository(assignment, grouping)

@@ -1,0 +1,112 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  SummariesTable = React.createClass({
+      getInitialState: function() {
+        return {
+          loading: true,
+          summaries: []
+        };
+      },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      jQuery.ajax({
+        method: 'GET',
+        url: 'summaries',
+        dataType: 'json',
+        success: function(data) {
+          console.log(data);
+          this.setState({
+            summaries: data,
+            loading: false,
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this)
+      });
+    },
+    render: function() {
+      var columns = [
+        {
+          id: 'group_name',
+          content: 'Group Name',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'repository',
+          content: 'Repository',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'commit_date',
+          content: 'Commit date',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'marking_state',
+          content: 'Marking State',
+          sortable: true,
+          searchable: false
+        },
+        {
+          id: 'final_grade',
+          content: 'Final Grade',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'section',
+          content: 'Section',
+          sortable: true,
+          searchable: true
+        }
+      ];
+      <% for criterion in @criteria %>
+        columns.push({
+          id: 'criterion_' + <%= criterion.id %>,
+          content: 'Criterion ' + <%= criterion.id %>,
+          sortable: true,
+          searchable: false
+        });
+      <% end %>
+      
+      var filters = [
+      ];
+
+      var summaries_data = this.state.summaries.map(function(summary) {
+        var s = {};
+        s['id'] = summary.id;
+        s['class_name'] = summary.class_name;
+        s['group_name'] = <span dangerouslySetInnerHTML={{__html: summary.group_name}} />;
+        s['repository'] = <span dangerouslySetInnerHTML={{__html: summary.repository}} />;
+        s['commit_date'] = <span dangerouslySetInnerHTML={{__html: summary.commit_date}} />;
+        s['marking_state'] = <span dangerouslySetInnerHTML={{__html: summary.marking_state}} />;
+        s['final_grade'] = summary.final_grade;
+        <% for criterion in @criteria %>
+          var key = 'criterion_' + '<%= criterion.id %>';
+          s[key] = summary.criteria[key];
+        <% end %>
+        return s;
+      });
+
+      return (
+        <div>
+          <Table data={summaries_data}
+            columns={columns} />
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<SummariesTable />, document.getElementById('summaries_table'));
+</script>
