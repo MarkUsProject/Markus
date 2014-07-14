@@ -47,8 +47,60 @@
           sortable: true
         }
       ];
+
+      var filters = [
+        {
+          name: 'all',
+          text: 'All',
+          func: function(submission) {
+            return true;
+          }
+        },
+        {
+          name: 'unmarked',
+          text: 'Unmarked',
+          func: function(submission) {
+            return submission.state == 'unmarked';
+          }
+        },
+        {
+          name: 'partial',
+          text: 'Partial',
+          func: function(submission) {
+            return submission.state == 'partial';
+          }
+        },
+        {
+          name: 'complete',
+          text: 'Complete',
+          func: function(submission) {
+            return submission.state == 'complete';
+          }
+        },
+        {
+          name: 'released',
+          text: 'Released',
+          func: function(submission) {
+            if (submission.id == 5) {
+              console.log(submission);
+              console.log(submission.state);
+            }
+            return submission.state == 'released';
+          }
+        }
+        /*
+        {
+          name: 'assigned_to_me',
+          text: 'Assigned to me',
+          func: function(submission) {
+            return true;
+          }
+        },
+        */
+      ];
       return {
         columns: columns,
+        filters: filters
       };
     },
     getInitialState: function() {
@@ -103,6 +155,7 @@
         s['marking_state'] = <span dangerouslySetInnerHTML={{__html: submission.marking_state}} />;
         s['grace_credits_used'] = submission.grace_credits_used;
         s['final_grade'] = submission.final_grade;
+        s['state'] = submission.state;
         s['can_begin_grading'] = <span dangerouslySetInnerHTML={{__html: submission.can_begin_grading}} />;
         return s;
       }.bind(this));
@@ -123,6 +176,8 @@
             <Table data={submissions_data}
               columns={this.props.columns}
               selectable={true}
+              filters={this.props.filters}
+              filter_type={true}
               onSelectedRowsChange={this.updateSelectedSubmissions}
             />
           </div>

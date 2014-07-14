@@ -45,7 +45,19 @@ module SubmissionsHelper
       g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
       g[:final_grade] = get_grouping_final_grades(grouping)
       g[:can_begin_grading] = get_grouping_can_begin_grading(assignment, grouping)
-      
+      state = nil
+      if !grouping.has_submission? || !grouping.current_submission_used.has_result?
+        state = 'unmarked'
+      elsif grouping.current_submission_used.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
+        state = 'partial'
+      else
+        if grouping.current_submission_used.get_latest_result.released_to_students
+          state = 'released'
+        else
+          state = 'complete'
+        end
+      end
+      g[:state] =  state
       g
     end
 
