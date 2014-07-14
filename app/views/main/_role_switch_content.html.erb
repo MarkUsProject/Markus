@@ -1,18 +1,24 @@
-<div id="role_switch_text">
-  <%= form_tag login_as_main_index_path(), {method: 'post', remote: true} do %>
-    <div id="role_switch_error"><span>&nbsp;</span></div>
-    <h2>
-      <%= I18n.t(:switch_role)%>
-    </h2>
-    <%= label_tag 'effective_user_login', I18n.t(:login_as) -%>
-    <%= text_field_tag 'effective_user_login', nil, tabindex: 10 %><br>
+<div id='role_switch_text'>
+  <%= form_tag login_as_main_index_path(),
+               { method: 'post', remote: true } do %>
+    <div id='role_switch_error'><span>&nbsp;</span></div>
+
+    <h2><%= t(:switch_role)%></h2>
+
+    <div class='role_switch_block'>
+      <%= label_tag 'effective_user_login', t(:login_as) -%>
+      <%= text_field_tag 'effective_user_login', nil, tabindex: 10 %>
+    </div>
+
     <%
       # For REMOTE_USER we have no way to check a password, so don't
       # provide UI for entering it.
     %>
     <% if !MarkusConfigurator.markus_config_remote_user_auth %>
-      <%= label_tag 'admin_password', I18n.t(:admin_password) %>
-      <%= password_field_tag 'admin_password', nil, tabindex: 20 %>
+      <div class='role_switch_block'>
+        <%= label_tag 'admin_password', t(:admin_password) %>
+        <%= password_field_tag 'admin_password', nil, tabindex: 20 %>
+      </div>
     <% end %>
 
     <section class='dialog-actions'>
