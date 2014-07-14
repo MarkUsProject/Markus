@@ -334,7 +334,6 @@ class SubmissionsController < ApplicationController
       respond_to do |format|
         format.js
       end
-
     end
   end
 
@@ -467,97 +466,13 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-
-    if params[:filter].blank?
-      params[:filter] = 'none'
-    end
-
     @assignment = Assignment.find(params[:assignment_id])
-
-    @c_per_page = current_user.id.to_s + '_' + @assignment.id.to_s + '_per_page'
-    if params[:per_page].present?
-       cookies[@c_per_page] = params[:per_page]
-    elsif cookies[@c_per_page].present?
-       params[:per_page] = cookies[@c_per_page]
+    respond_to do |format|
+      format.html
+      format.json { render :json => get_submissions_table_info(@assignment)}
     end
-
-    @c_sort_by = current_user.id.to_s + '_' + @assignment.id.to_s + '_sort_by'
-    if params[:sort_by].present?
-       cookies[@c_sort_by] = params[:sort_by]
-    elsif cookies[@c_sort_by].present?
-       params[:sort_by] = cookies[@c_sort_by]
-    else
-       params[:sort_by] = 'group_name'
-    end
-
-    # the data structure to handle filtering and sorting
-    # the assignment to filter by
-    # the submissions accessible by the current user
-    # additional parameters that affect things like sorting
-    if current_user.ta?
-        @groupings, @groupings_total = handle_paginate_event(
-      TA_TABLE_PARAMS,
-        { assignment: @assignment,
-          user_id: current_user.id},
-      params)
-    else
-      @groupings, @groupings_total = handle_paginate_event(
-        ADMIN_TABLE_PARAMS,
-          { assignment: @assignment,
-            user_id: current_user.id},
-        params)
-    end
-
-    #Eager load all data only for those groupings that will be displayed
-    sorted_groupings = @groupings
-    @groupings = Grouping.all(conditions: {id: sorted_groupings},
-                              include:
-                                  [:assignment, :group, :grace_period_deductions,
-                                   {current_submission_used: :results},
-                                   {accepted_student_memberships: :user}])
-
-    #re-sort @groupings by the previous order, because eager loading query
-    #messed up the grouping order
-    @groupings = sorted_groupings.map do |sorted_grouping|
-      @groupings.detect do |unsorted_grouping|
-        unsorted_grouping == sorted_grouping
-      end
-    end
-
-    # Check if any groupings have an error and log it
-    if @groupings.any? {|group| group.error_collecting}
-      flash[:error] = I18n.t('browse_submissions.error_collecting')
-    end
-
-    if cookies[@c_per_page].blank?
-       cookies[@c_per_page] = params[:per_page]
-    end
-
-    if cookies[@c_sort_by].blank?
-       cookies[@c_sort_by] = params[:sort_by]
-    end
-
-    @current_page = params[:page].to_i()
-    @per_page = cookies[@c_per_page]
-
-    if current_user.ta?
-      @filters = get_filters(TA_TABLE_PARAMS)
-      @per_pages = TA_TABLE_PARAMS[:per_pages]
-    else
-      @filters = get_filters(ADMIN_TABLE_PARAMS)
-      @per_pages = ADMIN_TABLE_PARAMS[:per_pages]
-    end
-
-    @desc = params[:desc]
-    @filter = params[:filter]
-    @sort_by = cookies[@c_sort_by]
   end
   
-  def populate
-    assignment = Assignment.find(params[:assignment_id])
-    render json: get_submissions_table_info(assignment)
-  end
-
   def index
     @assignments = Assignment.all(order: :id)
     render :index, layout: 'sidebar'
