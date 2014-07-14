@@ -69,19 +69,9 @@
         }
       ];
 
-      // Internationalized text for ActionBox.
-      var actions_text = {
-          give_grace_credits: '<%= j raw I18n.t(:'give_grace_credits') %>',
-          add_section: '<%= j raw I18n.t(:'add_section') %>',
-          hide_students: '<%= j raw I18n.t(:'hide_students') %>',
-          unhide_students: '<%= j raw I18n.t(:'unhide_students') %>',
-          no_sections: '<%= j raw I18n.t(:'section.no_sections') %>'
-      };
-
       return {
         columns: columns,
-        filters: filters,
-        actions_text: actions_text
+        filters: filters
       };
     },
     getInitialState: function() {
@@ -158,9 +148,7 @@
         return (
           <div>
             <ErrorDiv error={this.state.error} />
-            // move actions text to action box
-            <StudentsActionBox actions_text={this.props.actions_text} 
-              selected_students={this.state.selected_students}
+            <StudentsActionBox selected_students={this.state.selected_students}
               sections={this.props.sections}
               refresh={this.refresh}
               errorThrown={this.onError} />
@@ -180,7 +168,6 @@
   // change sections, or mark as active or inactive.
   StudentsActionBox = React.createClass({
     propTypes: {
-      actions_text: React.PropTypes.object,
       selected_students: React.PropTypes.array,
       sections: React.PropTypes.array,
       refresh: React.PropTypes.func
@@ -214,19 +201,20 @@
         } else {
           optionalInputBox =
             <span>
-              {this.props.actions_text.no_sections}
+              <%= j raw I18n.t(:'section.no_sections') %>
             </span>
         }
       }
+
       // If more than one student is selected render the div. Otherwise nothing.
       if (this.props.selected_students.length > 0) {
         return (
           <div>
             <select value={this.state.select_value} onChange={this.actionSelectChanged}>
-              <option value='give_grace_credits'>{this.props.actions_text.give_grace_credits}</option>
-              <option value='update_section'>{this.props.actions_text.add_section}</option>
-              <option value='hide'>{this.props.actions_text.hide_students}</option>
-              <option value='unhide'>{this.props.actions_text.unhide_students}</option>
+              <option value='give_grace_credits'><%= j raw I18n.t(:'give_grace_credits') %></option>
+              <option value='update_section'><%= j raw I18n.t(:'add_section') %></option>
+              <option value='hide'><%= j raw I18n.t(:'hide_students') %></option>
+              <option value='unhide'><%= j raw I18n.t(:'section.no_sections') %></option>
             </select>
             {optionalInputBox}
             {applyButton}
