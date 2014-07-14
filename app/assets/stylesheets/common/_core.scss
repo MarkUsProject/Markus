@@ -28,6 +28,11 @@ textarea {
   width: auto;
 }
 
+input[type='radio'] {
+  min-width: 30px;
+  max-width: 30px;
+}
+
 .required_field {
   color: $red;
 }

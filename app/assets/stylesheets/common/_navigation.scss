@@ -320,8 +320,6 @@ footer {
 /* Header */
 
 #header {
-  font-size: 0.9em;
-
   @include breakpoint(mobile) {
     border: 0;
     text-align: left !important;

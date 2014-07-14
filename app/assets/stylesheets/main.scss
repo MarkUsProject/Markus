@@ -6,7 +6,7 @@
 /* Dashboard */
 
 #assignment_summaries {
-  // text-align: center;
+  text-align: center;
 }
 
 .assignment_summary {
@@ -89,6 +89,18 @@
     display: inline-block;
     width: auto;
   }
+}
+
+
+/* Error status page (e.g. 404) */
+
+#error {
+  height: 4em;
+  margin-top: -2em;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  width: 100%;
 }
 
 
@@ -1032,16 +1044,4 @@
 //   margin: 2px;
 //   min-width: 0;
 //   padding: 2px;
-// }
-
-
-// /* Error status page */
-
-// #error {
-//   height: 4em;
-//   margin-top: -2em;
-//   position: absolute;
-//   text-align: center;
-//   top: 50%;
-//   width: 100%;
 // }

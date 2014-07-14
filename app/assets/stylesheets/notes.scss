@@ -7,6 +7,10 @@
 
 .button_to {
   display: inline-block;
+
+  & + .button_to {
+    margin-left: 0.75em;
+  }
 }
 
 fieldset {
@@ -18,4 +22,13 @@ table {
     padding-bottom: 1em;
     padding-right: 1em;
   }
+}
+
+small {
+  font-size: 0.9em;
+}
+
+label + textarea {
+  display: block;
+  margin-top: 0.5em;
 }
