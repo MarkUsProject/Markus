@@ -83,10 +83,6 @@
           name: 'released',
           text: '<%= j raw I18n.t(:'browse_submissions.show_released') %>',
           func: function(submission) {
-            if (submission.id == 5) {
-              console.log(submission);
-              console.log(submission.state);
-            }
             return submission.state == 'released';
           }
         }
