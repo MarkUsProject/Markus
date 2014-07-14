@@ -9,41 +9,43 @@
       var columns = [
         {
           id: 'group_name',
-          content: 'Group Name',
+          content: '<%= j raw I18n.t(:'browse_submissions.group_name') %>',
           sortable: true,
           searchable: true
         },
         {
           id: 'repository',
-          content: 'Repository',
+          content: '<%= j raw I18n.t(:'browse_submissions.repository') %>',
           sortable: true,
           searchable: true
         },
         {
           id: 'commit_date',
-          content: 'Commit Date',
+          content: '<%= j raw I18n.t(:'browse_submissions.commit_date') %>',
           sortable: true,
           searchable: false
         },
         {
           id: 'marking_state',
-          content: 'Marking state',
+          content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
           sortable: true,
           searchable: false
         },
         {
           id: 'grace_credits_used',
-          content: 'Grace Credits Used',
-          sortable: true
+          content: '<%= j raw I18n.t(:'browse_submissions.grace_credits_used') %>',
+          sortable: true,
+          searchable: false
         },
         {
           id: 'final_grade',
-          content: 'Final Grades',
-          sortable: false
+          content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
+          sortable: true,
+          searchable: false 
         },
         {
           id: 'can_begin_grading',
-          content: 'Can Begin Grading',
+          content: '<%= j raw I18n.t(:'browse_submissions.can_begin_grading') %>',
           sortable: true
         }
       ];
@@ -51,35 +53,35 @@
       var filters = [
         {
           name: 'all',
-          text: 'All',
+          text: '<%= j raw I18n.t(:'browse_submissions.show_all') %>',
           func: function(submission) {
             return true;
           }
         },
         {
           name: 'unmarked',
-          text: 'Unmarked',
+          text: '<%= j raw I18n.t(:'browse_submissions.show_unmarked') %>',
           func: function(submission) {
             return submission.state == 'unmarked';
           }
         },
         {
           name: 'partial',
-          text: 'Partial',
+          text: '<%= j raw I18n.t(:'browse_submissions.show_partial') %>',
           func: function(submission) {
             return submission.state == 'partial';
           }
         },
         {
           name: 'complete',
-          text: 'Complete',
+          text: '<%= j raw I18n.t(:'browse_submissions.show_complete') %>',
           func: function(submission) {
             return submission.state == 'complete';
           }
         },
         {
           name: 'released',
-          text: 'Released',
+          text: '<%= j raw I18n.t(:'browse_submissions.show_released') %>',
           func: function(submission) {
             if (submission.id == 5) {
               console.log(submission);
@@ -231,8 +233,12 @@
     render: function() {
       return (
         <div>
-          <button onClick={this.releaseMarks}>Release Marks</button>
-          <button onClick={this.unreleaseMarks}>Unrelease Marks</button>
+          <button onClick={this.releaseMarks}>
+            <%= j raw I18n.t('browse_submissions.release_marks') %>
+          </button>
+          <button onClick={this.unreleaseMarks}>
+            <%= j raw I18n.t('browse_submissions.unrelease_marks') %>
+          </button>
         </div>
       );
     }
