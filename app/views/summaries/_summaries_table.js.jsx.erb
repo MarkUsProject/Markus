@@ -79,8 +79,43 @@
           searchable: false
         });
       <% end %>
-      
+
       var filters = [
+        {
+          name: 'all',
+          text: '<%= j raw I18n.t(:'browse_submissions.show_all') %>',
+          func: function(submission) {
+            return true;
+          }
+        },
+        {
+          name: 'unmarked',
+          text: '<%= j raw I18n.t(:'browse_submissions.show_unmarked') %>',
+          func: function(submission) {
+            return submission.state == 'unmarked';
+          }
+        },
+        {
+          name: 'partial',
+          text: '<%= j raw I18n.t(:'browse_submissions.show_partial') %>',
+          func: function(submission) {
+            return submission.state == 'partial';
+          }
+        },
+        {
+          name: 'complete',
+          text: '<%= j raw I18n.t(:'browse_submissions.show_complete') %>',
+          func: function(submission) {
+            return submission.state == 'complete';
+          }
+        },
+        {
+          name: 'released',
+          text: '<%= j raw I18n.t(:'browse_submissions.show_released') %>',
+          func: function(submission) {
+            return submission.state == 'released';
+          }
+        }
       ];
 
       var summaries_data = this.state.summaries.map(function(summary) {
@@ -92,6 +127,7 @@
         s['commit_date'] = <span dangerouslySetInnerHTML={{__html: summary.commit_date}} />;
         s['marking_state'] = <span dangerouslySetInnerHTML={{__html: summary.marking_state}} />;
         s['final_grade'] = summary.final_grade;
+        s['state'] = summary.state;
         <% for criterion in @criteria %>
           var key = 'criterion_' + '<%= criterion.id %>';
           s[key] = summary.criteria[key];
@@ -102,7 +138,9 @@
       return (
         <div>
           <Table data={summaries_data}
-            columns={columns} />
+            columns={columns}
+            filters={filters}
+            filter_type={true} />
         </div>
       );
     }

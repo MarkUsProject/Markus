@@ -17,6 +17,7 @@ module SummariesHelper
       g[:final_grade] = get_grouping_final_grades(grouping)
       g[:section] = get_grouping_section(grouping)
       g[:criteria] = get_grouping_criteria(assignment, grouping)
+      g[:state] = get_grouping_state(grouping)
       g
     end
   end
