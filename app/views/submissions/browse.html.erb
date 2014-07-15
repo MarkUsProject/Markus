@@ -16,6 +16,7 @@
   <h1>
     <%= I18n.t("browse_submissions.workspace",
                short_identifier: sanitize(@assignment.short_identifier)) %>
+    <div class="help submissions_help"></div>
   </h1>
   <div class="heading_buttons">
     <% if @current_user.admin? %>
