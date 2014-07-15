@@ -9,6 +9,10 @@
                              'FlexibleCriteria/index' %>
 <% end %>
 
+<%= render partial: 'boot',
+           formats: [:js],
+           handlers: [:erb] %>
+
 <% if @assignment.past_due_date? %>
   <div class='warning'>
     <%= t('past_due_date_warning') %>
@@ -56,8 +60,8 @@
   <div id='rubric_levels_pane'>
     <div id='rubric_levels_pane_menu'>
       <%= render partial: 'rubric_manager_help' %>
-      <div id='rubric_levels_pane_list'></div>
-    </div><!--rubric level pane -->
+      <div id='rubric_criteria_pane_list'></div>
+    </div>
   </div>
 </div>
 

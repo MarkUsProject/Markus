@@ -8,6 +8,10 @@
                              'AnnotationCategories/index' %>
 <% end %>
 
+<%= render partial: 'boot',
+           formats: [:js],
+           handlers: [:erb] %>
+
 <div class='title_bar'>
   <h1>
     <%= t('annotations.title',
@@ -43,13 +47,10 @@
   <p id='criterion_error' class='warning' style='display: none;'></p>
 
   <div id='annotation_category_pane'>
-    <div class='annotation_categories_fieldset'>
-      <div class='annotation_categories_list_bar'>
-        <span class='annotation_category_title'>
-          <strong><%= t('annotations.annotation_category') %></strong>
-        </span>
-      </div>
-      <span class='clear'></span>
+    <div class='sortable'>
+      <header>
+        <span><%= t('annotations.annotation_category') %></span>
+      </header>
       <ul id='annotation_category_pane_list'>
         <% if @annotation_categories.length > 0 %>
             <% @annotation_categories.each do |annotation_category| %>
@@ -61,7 +62,7 @@
             <%= t('annotations.no_annotation_categories') %>
           </div>
         <% end %>
-      </ul>  <!-- Rubric Criteria Pane -->
+      </ul>
     </div>
   </div>
 

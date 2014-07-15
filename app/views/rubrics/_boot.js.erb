@@ -1,0 +1,30 @@
+<script>
+//<![CDATA[
+  jQuery(document).ready(function() {
+    window.modal_upload   = new ModalMarkus('#upload_dialog');
+    window.modal_download = new ModalMarkus('#download_dialog');
+
+    jQuery('.sortable ul').sortable({
+      axis:   'y',
+      cursor: 'move',
+      update: function() {
+        // Cancel any previous requests
+        if (ajaxRequest) {
+          ajaxRequest.abort();
+        }
+
+        ajaxRequest = jQuery.ajax({
+          url:  '<%= update_positions_assignment_rubrics_path(@assignment) %>',
+          type: 'POST',
+          data: jQuery('.sortable ul').sortable('serialize'),
+          dataType: 'script',
+          success: function(response) {
+            ajaxRequest = null;
+          }
+        });
+      },
+      cancel: '#new_rubric_criterion'
+    });
+  });
+//]]>
+</script>

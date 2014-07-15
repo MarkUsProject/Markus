@@ -98,7 +98,7 @@ class AnnotationsController < ApplicationController
     @annotations = @submission.annotations
   end
 
-  #Updates the overall comment from the annotations tab
+  # Updates the overall comment from the annotations tab
   def update_comment
     return unless request.post?
     result = Result.find(params[:result_id])
@@ -107,5 +107,4 @@ class AnnotationsController < ApplicationController
     render :update do |page|
     end
   end
-
 end

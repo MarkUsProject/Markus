@@ -225,15 +225,21 @@ class RubricsController < ApplicationController
 
   #This method handles the drag/drop RubricCriteria sorting
   def update_positions
-    params[:rubric_criteria_pane_list].each_with_index do |id, position|
+    unless request.post?
+      render nothing: true
+      return
+    end
+
+    @assignment = Assignment.find(params[:assignment_id])
+    @criteria = @assignment.rubric_criteria
+    position = 0
+
+    params[:criterion].each do |id|
       if id != ''
-        RubricCriterion.update(id, position: position+1)
+        position += 1
+        RubricCriterion.update(id, position: position)
       end
     end
-    render nothing: true
   end
 
 end
-
-
-

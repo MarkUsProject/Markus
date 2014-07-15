@@ -59,9 +59,14 @@ nav {
 
   footer {
     display: none;
+    text-align: left;
 
     @include breakpoint(mobile) {
       display: block;
+    }
+
+    span {
+      margin-left: 0 !important;
     }
   }
 }
@@ -361,6 +366,12 @@ li#logo {
   }
 }
 
+li#dropdown {
+  @include breakpoint(mobile) {
+    margin: 0 !important;
+  }
+}
+
 .dropdown {
   @include breakpoint(mobile) {
     @include border-radius(0);
@@ -389,6 +400,35 @@ li#logo {
         &:hover {
           color: $white !important;
         }
+      }
+    }
+  }
+}
+
+.main,
+.sub,
+.sub_sub {
+  @include breakpoint(mobile) {
+    background: $light-grey !important;
+    border-bottom: 1px solid $blue !important;
+
+    a {
+      color: $dark-blue !important;
+    }
+
+    li:hover {
+      background: $blue !important;
+
+      a {
+        color: $white !important;
+      }
+    }
+
+    li.active {
+      background: $blue !important;
+
+      a {
+        color: $white !important;
       }
     }
   }

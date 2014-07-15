@@ -395,6 +395,13 @@ fieldset {
   background: $white;
   border: 1px solid $grey;
 
+  // Prevent text selection
+  -webkit-user-select: none;
+    apple-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+
   header {
     @include border-radius-top($radius);
     font-weight: 600;

@@ -1,33 +1,15 @@
-<div class="criteria_fieldset">
-  <div id="rubric_criteria_list_title_bar">
-    <span class="criterion_title_div">
-      <strong><%= I18n.t("criteria") %></strong>
+<div class='sortable'>
+  <header>
+    <span><%= t('criteria') %></span>
+    <span class='right'>
+      <%= t('weight') %>
+      (<span id='rubric_total_weight'><%= @assignment.total_criteria_weight %></span>)
     </span>
-    <span class="criterion_weight">
-      <strong><%= I18n.t("weight") %></strong> (
-              <span id="rubric_total_weight"><%= @assignment.total_criteria_weight %></span>
-            )
-    </span>
-  </div>
-  <div class="clear"></div>
-  <ul id="rubric_criteria_pane_list">
+  </header>
+  <ul id='rubric_criteria_pane_list'>
     <% @criteria.each do |criterion| -%>
-      <% if @criteria.length == 1 %>
-        <%= render partial: "rubrics/rubric_criterion",
-                   locals: {criterion: criterion, location: :single} %>
-      <% elsif criterion == @criteria.first %>
-        <%= render partial: "rubrics/rubric_criterion",
-                   locals: {criterion: criterion, location: :first} %>
-      <% elsif criterion == @criteria.last %>
-        <%= render partial: "rubrics/rubric_criterion",
-                   locals: {criterion: criterion, location: :last} %>
-      <% else %>
-        <%= render partial: "rubrics/rubric_criterion",
-                   locals: {criterion: criterion, location: :middle} %>
-     <% end %>
+      <%= render partial: 'rubrics/rubric_criterion',
+                 locals: { criterion: criterion } %>
     <% end %>
   </ul>
 </div>
-<%= sortable_element("rubric_criteria_pane_list",
-		     url: update_positions_assignment_rubrics_path(
-				  @assignment)) %>
