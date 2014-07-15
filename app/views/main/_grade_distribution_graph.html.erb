@@ -1,4 +1,4 @@
-<canvas id='assignment_<%= assignment.id %>' width='425' height='350'></canvas>
+<canvas id='assignment_<%= assignment.id %>' width='400' height='350'></canvas>
 
 <script>
 //<![CDATA[
@@ -18,9 +18,8 @@
   var options = {
     scaleLineWidth:  2,
     barStrokeWidth:  1,
-    barValueSpacing: 2,
-    animationSteps:  50
-  }
+    barValueSpacing: 2
+  };
 
   // Draw it
   new Chart(ctx).Bar(data, options);

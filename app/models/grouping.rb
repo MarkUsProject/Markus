@@ -68,8 +68,7 @@ class Grouping < ActiveRecord::Base
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(grouping_ids, ta_ids, assignment)
-    assign_tas(grouping_ids, ta_ids, assignment) do
-      |grouping_ids, ta_ids|
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
       # Assign TAs in a round-robin fashion to a list of random groupings.
       grouping_ids.shuffle.zip(ta_ids.cycle)
     end
@@ -79,8 +78,7 @@ class Grouping < ActiveRecord::Base
   # a list of groupings specified by +grouping_ids+. The groupings must belong
   # to the given assignment +assignment+.
   def self.assign_all_tas(grouping_ids, ta_ids, assignment)
-    assign_tas(grouping_ids, ta_ids, assignment) do
-      |grouping_ids, ta_ids|
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
       # Get the Cartesian product of group IDs and TA IDs.
       grouping_ids.product(ta_ids)
     end
@@ -117,8 +115,8 @@ class Grouping < ActiveRecord::Base
     # driver supports bulk create, then remove the activerecord-import gem.
     TaMembership.import(columns, values, validate: false)
 
-    update_criteria_coverage_counts(grouping_ids)
-    assignment.criterion_class.update_assigned_groups_counts(assignment.id)
+    update_criteria_coverage_counts(assignment, grouping_ids)
+    Criterion.update_assigned_groups_counts(assignment)
   end
 
   # Unassigns TAs from groupings. +ta_membership_ids+ is a list of TA
@@ -128,16 +126,13 @@ class Grouping < ActiveRecord::Base
   def self.unassign_tas(ta_membership_ids, grouping_ids, assignment)
     TaMembership.delete_all(id: ta_membership_ids)
 
-    update_criteria_coverage_counts(grouping_ids)
-    assignment.criterion_class.update_assigned_groups_counts(assignment.id)
+    update_criteria_coverage_counts(assignment, grouping_ids)
+    Criterion.update_assigned_groups_counts(assignment)
   end
 
   # Updates the +criteria_coverage_count+ field of all groupings specified
   # by +grouping_ids+.
-  def self.update_criteria_coverage_counts(grouping_ids)
-    grouping_ids = Array(grouping_ids)
-    return if grouping_ids.empty?
-
+  def self.update_criteria_coverage_counts(assignment, grouping_ids = nil)
     # Sanitize the IDs in the input.
     grouping_ids_str = Array(grouping_ids)
       .map { |grouping_id| connection.quote(grouping_id) }
@@ -150,7 +145,8 @@ class Grouping < ActiveRecord::Base
           INNER JOIN criterion_ta_associations AS c ON m.user_id = c.ta_id
           WHERE m.grouping_id = g.id AND m.type = 'TaMembership'
             AND c.assignment_id = g.assignment_id)
-        WHERE id IN (#{grouping_ids_str})
+        WHERE assignment_id = #{assignment.id}
+          #{"AND id IN (#{grouping_ids_str})" unless grouping_ids_str.empty?}
     UPDATE_SQL
   end
 
@@ -694,7 +690,7 @@ class Grouping < ActiveRecord::Base
   ##
   def past_due_date?
 
-    timestamp = group.repo.get_latest_revision.timestamp
+    timestamp = assignment_folder_last_modified_date
     due_dates = assignment.section_due_dates
     section = unless inviter.blank?
                 inviter.section

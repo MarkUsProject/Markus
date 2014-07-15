@@ -42,6 +42,8 @@ jQuery(document).ready(function() {
     toggle_group_assignment(jQuery(this).is(':checked'));
   });
 
+  toggle_group_assignment(jQuery('#is_group_assignment').is(':checked'));
+
   jQuery('#student_form_groups').change(function() {
     toggle_student_form_groups(jQuery(this).is(':checked'));
   });
@@ -50,10 +52,31 @@ jQuery(document).ready(function() {
     toggle_remark_requests(jQuery(this).is(':checked'));
   });
 
-  toggle_group_assignment(jQuery('#is_group_assignment').is(':checked'));
-
   change_submission_rule();  // Opens the correct rule
+
+  // Min group size must be <= max group size
+  // If the min value is larger than the max, make the max this new value
+  jQuery('#assignment_group_min').change(function() {
+    if (!check_group_size()) {
+      document.getElementById('assignment_group_max').value = this.value;
+    }
+  });
+
+  // If the max value is smaller than the min, make the min this new value
+  jQuery('#assignment_group_max').change(function() {
+    if (!check_group_size()) {
+      document.getElementById('assignment_group_min').value = this.value;
+    }
+  });
 });
+
+
+function check_group_size() {
+  var min = document.getElementById('assignment_group_min').value;
+  var max = document.getElementById('assignment_group_max').value;
+
+  return min <= max;
+}
 
 function toggle_persist_groups(persist_groups) {
   jQuery('#persist_groups_assignment').prop('disabled', !persist_groups);
@@ -71,8 +94,11 @@ function toggle_group_assignment(is_group_assignment) {
   jQuery('.group_properties').toggle(is_group_assignment)
                              .prop('disabled', !is_group_assignment)
                              .toggleClass('disable', !is_group_assignment);
-  jQuery('#assignment_group_min').prop('disabled', !is_group_assignment);
-  jQuery('#assignment_group_max').prop('disabled', !is_group_assignment);
+
+  // Toggle the min/max fields depending on if students form their own groups
+  var student_form_groups = document.getElementById('student_form_groups').checked;
+  document.getElementById('assignment_group_min').disabled = !student_form_groups;
+  document.getElementById('assignment_group_max').disabled = !student_form_groups;
 
   jQuery('#persist_groups').prop('disabled', is_group_assignment);
   jQuery('#persist_groups_assignment_style').toggleClass('disable', is_group_assignment);

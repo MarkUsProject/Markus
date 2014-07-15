@@ -347,23 +347,6 @@ class AssignmentTest < ActiveSupport::TestCase
       end
     end # end noteable context
 
-    context 'without marks but with annotations' do
-      setup do
-        @membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
-        sub = Submission.make(:grouping => @membership.grouping)
-        @result = sub.get_latest_result
-        @result.marking_state = Result::MARKING_STATES[:complete]
-        @result.released_to_students = true
-        @result.save
-      end
-
-      should 'return the correct results average mark' do
-        assert @assignment.set_results_statistics
-        assert_equal(0, @assignment.results_average)
-        assert_equal(0, @assignment.results_median)
-      end
-    end # end without marks context
-
     context 'with a student in a group with a marked submission' do
       setup do
         @membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
@@ -382,14 +365,6 @@ class AssignmentTest < ActiveSupport::TestCase
         assert @assignment.submission_by(@membership.user)
       end
 
-      should 'return the correct results average mark' do
-        @result.marking_state = Result::MARKING_STATES[:complete]
-        @result.released_to_students = true
-        @result.save
-        assert @assignment.set_results_statistics
-        assert_equal(100, @assignment.results_average)
-      end
-
       should 'return the correct total mark for rubric criteria' do
         assert_equal(@total, @assignment.total_mark)
       end
@@ -401,85 +376,6 @@ class AssignmentTest < ActiveSupport::TestCase
       # Test if assignments can fetch the group for a user
       should 'return the correct group for a given student' do
         assert_equal @membership.grouping.group, @assignment.group_by(@membership.user).group
-      end
-    end
-
-    context 'with odd number of submissions graded' do
-      setup do
-        criteria = []
-        [2,2,2,2].each do |weight|
-          criteria.push RubricCriterion.make({:assignment => @assignment,:weight => weight})
-        end
-
-        4.times do
-          create_marked_submission(4, criteria)
-        end
-
-        5.times do
-          create_marked_submission(2, criteria)
-        end
-
-        @assignment.set_results_statistics
-      end
-
-      should 'return the correct average mark' do
-        assert_equal(72, @assignment.results_average.to_int)
-      end
-
-      should 'return the correct median mark' do
-        assert_equal(50, @assignment.results_median)
-      end
-    end
-
-    context 'with even number of submissions graded' do
-      setup do
-        criteria = []
-        [2,2,2,2].each do |weight|
-          criteria.push RubricCriterion.make({:assignment => @assignment,:weight => weight})
-        end
-
-        5.times do
-          create_marked_submission(4, criteria)
-        end
-
-        5.times do
-          create_marked_submission(2, criteria)
-        end
-      end
-
-      should 'return the correct average mark' do
-        assert @assignment.set_results_statistics
-        assert_equal(75, @assignment.results_average)
-      end
-
-      should 'return the correct median mark' do
-        assert @assignment.set_results_statistics
-        assert_equal(75, @assignment.results_median)
-      end
-    end
-
-    context 'with varied grades for marked submissions' do
-      setup do
-        criteria = []
-        [2,2,2,2].each do |weight|
-          criteria.push RubricCriterion.make({:assignment => @assignment,:weight => weight})
-        end
-
-        (0..4).each do |mark|
-          2.times do
-            create_marked_submission(mark, criteria)
-          end
-        end
-      end
-
-      should 'return the correct average mark' do
-        assert @assignment.set_results_statistics
-        assert_equal(50, @assignment.results_average)
-      end
-
-      should 'return the correct median mark' do
-        assert @assignment.set_results_statistics
-        assert_equal(50, @assignment.results_median)
       end
     end
 
