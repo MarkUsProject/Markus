@@ -276,6 +276,12 @@ legend {
   border: 1px solid $grey;
   width: 100%;
 
+  // Prevent text selection
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+
   header {
     @include border-radius-top(5px);
     font-weight: 600;
