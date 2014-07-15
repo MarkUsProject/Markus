@@ -29,14 +29,19 @@ module SubmissionsHelper
   end
 
   def get_submissions_table_info(assignment)
-    groupings = assignment.groupings.includes(:assignment,
+    if current_user.ta?
+      groupings = assignment.ta_memberships.find_all_by_user_id(current_user).collect{|m|
+        m.grouping
+      }
+    else
+      groupings = assignment.groupings.includes(:assignment,
                                               :group,
                                               :grace_period_deductions,
                                               {current_submission_used: :results},
                                               {accepted_student_memberships: :user})
+    end
     submissions_table_info = groupings.map do |grouping|
       g = grouping.attributes
-
       # Also add section
       g[:class_name] = get_any_tr_attributes(grouping)
       g[:group_name] = get_grouping_group_name(assignment, grouping)
@@ -47,6 +52,7 @@ module SubmissionsHelper
       g[:final_grade] = get_grouping_final_grades(grouping)
       g[:can_begin_grading] = get_grouping_can_begin_grading(assignment, grouping)
       g[:state] = get_grouping_state(grouping)
+      g[:section] = get_grouping_section(grouping)
       g
     end
 
