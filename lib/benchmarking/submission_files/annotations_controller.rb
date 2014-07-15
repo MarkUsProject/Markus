@@ -2,7 +2,7 @@ class AnnotationsController < ApplicationController
 
   before_filter      :authorize_for_ta_and_admin
 
-  # TODO: Is the assignment closed?  If so, begin generating
+  # TODO: Is the assignment closed? If so, begin generating
   # Submissions and SubmissionFiles
 
   def add_existing_annotation

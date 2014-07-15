@@ -1,2 +1,3 @@
-jQuery('#add_annotation_category').replaceWith("<%= escape_javascript(render partial: 'annotation_category', locals: { annotation_category: @annotation_category }).html_safe %>");
+jQuery('#add_annotation_category').remove();
+jQuery('#annotation_category_pane_list').append("<%= escape_javascript(render partial: 'annotation_category', locals: { annotation_category: @annotation_category }).html_safe %>");
 jQuery('#annotation_list_holder').replaceWith("<%= escape_javascript(render partial: 'annotation_list', locals: { annotation_category: @annotation_category }).html_safe %>");

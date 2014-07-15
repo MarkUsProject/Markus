@@ -7,7 +7,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = @assignment.annotation_categories
+    @annotation_categories = @assignment.annotation_categories(order: 'position')
   end
 
   def get_annotations
@@ -19,6 +19,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     if request.post?
       # Attempt to add Annotation Category
+      @annotation_categories = @assignment.annotation_categories
       @annotation_category = AnnotationCategory.new
       @annotation_category.update_attributes(params[:annotation_category])
       @annotation_category.assignment = @assignment
@@ -76,6 +77,25 @@ class AnnotationCategoriesController < ApplicationController
   def delete_annotation_category
     @annotation_category = AnnotationCategory.find(params[:id])
     @annotation_category.destroy
+  end
+
+  # This method handles the drag/drop Annotations sorting
+  def update_positions
+    unless request.post?
+      render nothing: true
+      return
+    end
+
+    @assignment = Assignment.find(params[:assignment_id])
+    @annotation_categories = @assignment.annotation_categories
+    position = 0
+
+    params[:annotation_category].each do |id|
+      if id != ''
+        position += 1
+        AnnotationCategory.update(id, position: position)
+      end
+    end
   end
 
   def download

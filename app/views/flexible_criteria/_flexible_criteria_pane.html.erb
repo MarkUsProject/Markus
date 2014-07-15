@@ -1,26 +1,16 @@
-<div class="criteria_fieldset">
-  <div id="flexible_criteria_list_title_bar">
-    <span class="criterion_title_div"><b><%= I18n.t("criteria") %></b></span>
-    <span class="criterion_weight"><b><%= I18n.t("total_mark") %></b>
-      (<span id="criteria_total_mark"><%=(@assignment.total_mark) %></span>)
+<div class='sortable'>
+  <header>
+    <span><%= t('criteria') %></span>
+    <span class='right'>
+      <%= t('total_mark') %>
+      (<span id='criteria_total_mark'><%= @assignment.total_mark %></span>)
     </span>
-  </div>
-  <div class="clear"></div>
+  </header>
 
-  <ul id="flexible_criteria_pane_list">
-    <% @criteria.each do |criterion| -%>
-      <% if @criteria.length == 1 %>
-      <%= render partial: "flexible_criteria/flexible_criterion", locals: {criterion: criterion, location: :single} %>
-      <% elsif criterion == @criteria.first %>
-      <%= render partial: "flexible_criteria/flexible_criterion", locals: {criterion: criterion, location: :first} %>
-      <% elsif criterion == @criteria.last %>
-      <%= render partial: "flexible_criteria/flexible_criterion", locals: {criterion: criterion, location: :last} %>
-      <% else %>
-      <%= render partial: "flexible_criteria/flexible_criterion", locals: {criterion: criterion, location: :middle} %>
-     <% end %>
+  <ul id='flexible_criteria_pane_list'>
+    <% @criteria.each do |criterion| %>
+      <%= render partial: 'flexible_criteria/flexible_criterion',
+                 locals: { criterion: criterion } %>
     <% end %>
   </ul>
 </div>
-<%= sortable_element("flexible_criteria_pane_list",
-                     url: update_positions_assignment_flexible_criteria_path(
-                      @assignment)) %>

@@ -1,15 +1,10 @@
-<%= stylesheet_link_tag("livepipe/tabs") %>
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'livepipe/livepipe.js',
-                           'livepipe/window.js',
-                           'livepipe/tabs.js',
-                           'effects.js',
-                           'dragdrop.js',
-                           'FlexibleCriteria/index' %>
+<%= render partial: 'boot',
+           formats: [:js],
+           handlers: [:erb] %>
 
 <% if @assignment.past_due_date?%>
   <div class='notice'>
-    <%=t('past_due_date_warning')%>
+    <%= t('past_due_date_warning') %>
   </div>
 <% end %>
 
@@ -17,8 +12,8 @@
   <h1><%= I18n.t('rubric_criteria.criteria_management',
                  identifier: @assignment.short_identifier) %>
   </h1>
-  <div class="heading_buttons">
-        <%= link_to_function t("add_criterion"),
+  <div class='heading_buttons'>
+        <%= link_to_function t('add_criterion'),
             %| if($('new_rubric_criterion') != null) {
               $('rubric_criterion_rubric_criterion_name').select();
               $('rubric_criterion_rubric_criterion_name').focus();
@@ -27,9 +22,9 @@
                                 method: 'get'}
             }|%>
   <span class='menu_bar'></span>
-  <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
+  <%= button_to_function t('download'), 'modal_download.open();' %>
   <span class='menu_bar'></span>
-  <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
+  <%= button_to_function t('upload'), 'modal_upload.open();' %>
   </div>
 </div><!-- Title bar-->
 
@@ -45,8 +40,8 @@
   <div id='rubric_levels_pane'>
     <div id='rubric_levels_pane_menu'>
       <%= render partial: 'rubric_manager_help' %>
-      <div id='rubric_levels_pane_list'></div>
-    </div><!--rubric level pane -->
+      <div id='rubric_criteria_pane_list'></div>
+    </div>
   </div>
 </div>
 
@@ -58,15 +53,17 @@
                       action: 'csv_upload',
                       id: @assignment.id},
                       html: { multipart: true, size: 1 } do |f| %>
-    <p><%= f.file_field :rubric %></p>
-    <%= t('rubric_criteria.upload.format_csv_html') %>
-    <%= t('csv_special_characters_html') %>
-    <br>
-    <br>
-    <%= I18n.t('encoding') %>
-    <%= select_tag(:encoding, options_for_select(@encodings)) %>
-    <br>
-    <br>
+    <div>
+      <p><%= f.file_field :rubric %></p>
+      <%= t('rubric_criteria.upload.format_csv_html') %>
+      <%= t('csv_special_characters_html') %>
+    </div>
+
+    <div>
+      <%= I18n.t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </div>
+
     <p>
       <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
       <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'>
@@ -78,14 +75,16 @@
   <%= form_for :yml_upload,
                url: yml_upload_assignment_rubrics_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
-    <p><%= f.file_field :rubric %></p>
-    <%= t('rubric_criteria.upload.format_yml_html') %>
-    <br>
-    <br>
-    <%= I18n.t('encoding') %>
-    <%= select_tag(:encoding, options_for_select(@encodings)) %>
-    <br>
-    <br>
+    <div>
+      <p><%= f.file_field :rubric %></p>
+      <%= t('rubric_criteria.upload.format_yml_html') %>
+    </div>
+
+    <div>
+      <%= I18n.t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </div>
+
     <p>
       <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
       <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'>
