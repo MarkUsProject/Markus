@@ -1,11 +1,48 @@
 /** @jsx React.DOM */
 
-/**
+/* This is the component that implements a filterable,
+ * sortable, and searchable table.
  *
+ * Props:
+ *   data - an array of javascript objects. Each object's attributes
+ *          will be used to populate the table. You define the attributes
+ *          (and columns, later) yourself. Each object must have a unique 'id'
+ *          attribute. These attributes must be strings or React DOM objects.
+ *          N.B. the array can be empty, this is usually useful in the initial
+ *          state while you're waiting on an AJAX call to return stuff.
  *
+ *   search_placeholder - a string for the placeholder text in the search
+ *                        bar. This is optional. Try to make it i18n.
  *
+ *   columns - an array of javascript objects with these attributes:
+ *                  - id: the key Table uses to access each object. Must be a string.
+ *                  - content: the stuff that gets placed in the table header.
+ *                             Must be a string or React DOM object.
+ *                             Remember to make this I18n.
+ *                  - sortable: boolean that determines whether a column is sortable.
+ *                  - searchable: boolean that determines whether the stuff in a column
+ *                                can be searched.
+ *             columns is used to create the table header.
  *
+ *  filters - an array of javascript objects with these attributes:
+ *                  - name: a name for the filter. This doesn't really serve any purpose actually.
+ *                  - text: the text used for the filter, like 'All', 'Completed', etc. Remember
+ *                          to make this I18n.
+ *                  - func: the filter function that gets applied over every data object when
+ *                          a filter is activated. An object belonging to the filter should return
+ *                          true to this method (and the contrapositive of this statement).
+ *
+ *  filter_type - a boolean that determines how the filter is styled. Pass true if you want a select dropdown
+ *                or false for a flat listing. Usually you want the dropdown if there are 3+ filters.
+ *
+ *  selectable - a boolean for whether the elements in the data can be selected. This adds a checkbox to the header
+ *               and to each row. Also see below.
+ *
+ *  onSelectedRowsChange - a function that is called every time a row is selected or unselected. The implementation
+ *                         defines one argument, which is an array of the selected data objects. Please see the
+ *                         StudentsTable for a usage example.
  */
+
 var Table = React.createClass({displayName: 'Table',
   propTypes: {
     data: React.PropTypes.array,
@@ -344,7 +381,7 @@ TableRows = React.createClass({displayName: 'TableRows',
   }
 });
 
-//single row.
+// a single row.
 TableRow = React.createClass({displayName: 'TableRow',
   propTypes: {
     row_object: React.PropTypes.object,
