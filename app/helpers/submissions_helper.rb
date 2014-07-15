@@ -42,7 +42,6 @@ module SubmissionsHelper
     end
     submissions_table_info = groupings.map do |grouping|
       g = grouping.attributes
-      # Also add section
       g[:class_name] = get_any_tr_attributes(grouping)
       g[:group_name] = get_grouping_group_name(assignment, grouping)
       g[:repository] = get_grouping_repository(assignment, grouping)
@@ -101,7 +100,7 @@ module SubmissionsHelper
   end
 
   def get_grouping_section(grouping)
-    return 'placeholder'
+    return grouping.section
   end
 
   def get_grouping_repository(assignment, grouping)
