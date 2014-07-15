@@ -23,6 +23,7 @@
   <h2><%= raw(I18n.t(:contact_us)) %></h2>
   <p><%= raw(I18n.t(:email_more_info)) %></p>
 </div>
-<div id="about_close">
+
+<section class='dialog-actions'>
   <%= button_to_function I18n.t(:close), 'dialog_modal.close();' %>
-</div>
+</section>

@@ -9,6 +9,7 @@ fr:
     none:               "Aucun"
     search:             "Recherche:"
     issues:             "GitHub liste des problèmes"
+    actions:            "Actes"
 
     # app/views/main/login.html.erb
     welcome_to:         "Bienvenue sur MarkUs !"
@@ -61,6 +62,10 @@ fr:
     home:               "Accueil"
     settings:           "Paramètres"
 
+    # app/views/shared/_assignments_dropdown.html.erb
+    quick_links:  "Liens rapides"
+    spreadsheets: "Feuilles de notes"
+
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - » ou « _ » uniquement."
@@ -74,8 +79,9 @@ fr:
     assignment_link:           "%{short_id} : %{description}"
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:      "Projets existants"
-    due:                       "à rendre pour le :"
+    current_assignments:       "Projets existants"
+    assignment_item:           "Projet"
+    due:                       "Date de retour"
     no_assignments:            "Aucun devoir pour le moment."
     class_average:             "Moyenne : %{results_average}"
     submissions_collected:     "%{count}/%{size} Envois récupérés"
@@ -176,9 +182,9 @@ fr:
             flexible: "Flexible (barème à définir par le correcteur)"
         notice:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
-        allow_web_submits: "Envois via l'interface web?"
-        is_hidden: "Cacher le projet aux étudiants ?"
-        display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
+        allow_web_submits: "Envois via l'interface web"
+        is_hidden: "Cacher le projet aux étudiants"
+        display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants"
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
         section_due_dates_info:  "<b>Important</b> La date de retour « globale » doit être indiquée. Si une section n'a pas de date de retour spécifique, la date « globale » sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date « globale » qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
     your_mark:  "Votre note : "
@@ -482,7 +488,9 @@ fr:
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "Il n'y a pas de feuille de notes pour le moment."
-    current_grade_entry_forms_title: "Feuilles de notes existantes : "
+    current_grade_entry_forms_title: "Feuilles de notes existantes"
+    spreadsheet_item: "Feuille de notes"
+    spreadsheet_date: "Date"
     mark_message: "Votre note : "
 
     student_interface_assignments: "Vos projets"
@@ -984,16 +992,30 @@ fr:
         link_csv: "Télécharger le barème (rubrique) au format CSV"
         link_yml: "Télécharger le barème (rubrique) au format YAML"
       upload:
+        csv:       "Envoyer CSV"
+        csv_title: "Envoyer un fichier de barème (rubrique) CSV"
+        yml:       "Envoyer YML"
+        yml_title: "Envoyer un fichier de barème (rubrique) YML"
+        csv_prompt: "Choisissez un fichier CSV à envoyer"
+        yml_prompt: "Choisissez un fichier YML à envoyer"
         success: "Le fichier contenant le barème (rubrique) a bien été envoyé : %{nb_updates} mise(s) à jour."
-        title: "Envoyer un fichier de barème (rubrique)"
-        prompt: "Choisissez un fichier CSV à envoyer"
-        format_html: "
+        format_csv_html: "
         <p>Le fichier devra être au format suivant : </p>
         <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
         <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br>
         et <em>level_descriptions</em> doi contenir la description de chaque niveau (optionnel,
         séparé aussi par les virgules)."
+        format_yml_html: "
+          <p>Le fichier devra être au format suivant : br>
+              <code>criterion_name:<br>
+                    &nbsp;&nbsp;weight: weight<br>
+                    &nbsp;&nbsp;level_0:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+                    &nbsp;&nbsp;level_1:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
+          </p>"
       error_total: "total weight must be positive"
       defaults:
         level_0: "Très insuffisant"

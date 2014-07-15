@@ -9,6 +9,7 @@ en:
     none:               "None"
     search:             "Search:"
     issues:             "GitHub issues list"
+    actions:            "Actions"
 
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
@@ -61,6 +62,10 @@ en:
     home:               "Home"
     settings:           "Settings"
 
+    # app/views/shared/_assignments_dropdown.html.erb
+    quick_links:  "Quick links"
+    spreadsheets: "Marks spreadsheets"
+
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "must be alphanumeric, '.', '-' or '_' only"
@@ -71,8 +76,9 @@ en:
     cannot_login_as_another_admin: "You cannot log in as another admin."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:      "Current assignments:"
-    due:                       "due :"
+    current_assignments:       "Current assignments"
+    assignment_item:           "Assignment"
+    due:                       "Due date"
     no_assignments:            "There are currently no assignments."
     class_average:             "Class Average: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissions collected"
@@ -173,9 +179,9 @@ en:
             flexible: "Flexible"
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
-        allow_web_submits: "Allow Web Submits?"
-        is_hidden: "Hide assignment from students?"
-        display_grader_names_to_students: "Display grader names to students?"
+        allow_web_submits: "Allow Web Submits"
+        is_hidden: "Hide assignment from students"
+        display_grader_names_to_students: "Display grader names to students"
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
@@ -480,7 +486,9 @@ en:
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "There are currently no marks spreadsheets."
-    current_grade_entry_forms_title: "Current marks spreadsheets:"
+    current_grade_entry_forms_title: "Current marks spreadsheets"
+    spreadsheet_item: "Marks spreadsheet"
+    spreadsheet_date: "Date"
     mark_message: "Your mark:"
 
     student_interface_assignments: "Your Assignments"
@@ -991,7 +999,9 @@ en:
         link_yml: "Download rubric in YAML Format"
       upload:
         success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
+        csv:       "Upload CSV"
         csv_title: "Upload CSV File"
+        yml:       "Upload YML"
         yml_title: "Upload YML File"
         csv_prompt: "Select a CSV file to upload"
         yml_prompt: "Select a YML file to upload"
@@ -1036,7 +1046,7 @@ en:
       weight: "Weight"
 
     notes:
-        note_on: "%{user_name} on <b>%{display_for}</b>"
+        note_on: "%{user_name} on <strong>%{display_for}</strong>"
         add_new: "Add a new note"
         existing: "Existing Notes"
         comment: "Your comment"
@@ -1099,7 +1109,7 @@ en:
       Select a criterion on the left to edit it.  Criteria names, descriptions and
       maximum values can be modified."
     past_due_date_warning: "Due date for this assignment is in the past."
-    past_due_date_notice: "Due date for this assignment is in the past for : "
+    past_due_date_notice: "Due date for this assignment is in the past for: "
 
     section:
       name: "Name"

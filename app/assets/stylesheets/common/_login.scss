@@ -1,11 +1,11 @@
 /**
-  * Login screen styling (uses its own layout).
-  */
+ * Login screen
+ */
 
 .login {
-  @include border-radius(5px);
-  @include box-shadow(0 3px 0 0 #a4adac);
-  background: $primary-color;
+  @include border-radius($radius);
+  @include box-shadow(0 3px 0 0 $grey);
+  background: $white;
   height: auto;
   left: 50%;
   margin-left: -180px;

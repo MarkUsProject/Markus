@@ -1,6 +1,6 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'jquery', 'jquery-ui', 'jquery-ui-timepicker-addon' %>
-  <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
+  <%= javascript_include_tag 'jquery-ui-timepicker-addon' %>
+  <%= stylesheet_link_tag 'common/jquery-ui', 'common/jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'PeriodDeltaChain/PeriodDeltaChain' %>
   <%= javascript_include_tag 'moment-with-langs.min', 'localize_date' %>
 <% end %>
@@ -29,7 +29,9 @@
 
   <!-- Assignment properties -->
   <fieldset>
-    <legend><%= t('assignment.properties') %></legend>
+    <legend>
+      <span><%= t('assignment.properties') %></span>
+    </legend>
 
     <div>
       <%= raw(f.label :short_identifier,
@@ -60,8 +62,8 @@
     <div>
       <%= raw(f.label :message ) %>
       <%= raw(f.text_area :message,
-                          rows: 8,
                           cols: 65,
+                          rows: 5,
                           onchange: 'set_onbeforeunload(true);') %>
     </div>
 
@@ -95,21 +97,19 @@
           <% @index = 1 %>
           <%= f.fields_for :section_due_dates,
                            @section_due_dates do |due_date_f| %>
-            <p>
-              <%= label 'section', t('section.legend') %> <%= Section.find(due_date_f.object.section_id).name %>
-              <br>
-              <%= due_date_f.text_field :section_id, class: 'hidden' %>
-              <br>
-              <%= due_date_f.label :due_date, t('due_date') %>
-              <%= raw(due_date_f.text_field :due_date,
-                                            id: "actual_section_due_date_#{@index}",
-                                            class: 'hidden actual_section_due_date') %>
-              <%= text_field_tag "section_due_date_#{@index}",
-                                 nil,
-                                 { onchange: 'set_onbeforeunload(true);',
-                                   size: 30,
-                                   class: 'section_due_date' } %>
-            </p>
+            <%= label 'section', t('section.legend') %> <%= Section.find(due_date_f.object.section_id).name %>
+            <br>
+            <%= due_date_f.text_field :section_id, class: 'hidden' %>
+            <br>
+            <%= due_date_f.label :due_date, t('due_date') %>
+            <%= raw(due_date_f.text_field :due_date,
+                                          id: "actual_section_due_date_#{@index}",
+                                          class: 'hidden actual_section_due_date') %>
+            <%= text_field_tag "section_due_date_#{@index}",
+                               nil,
+                               { onchange: 'set_onbeforeunload(true);',
+                                 size: 30,
+                                 class: 'section_due_date' } %>
             <% @index += 1 %>
           <% end %>
         </div>
@@ -130,36 +130,38 @@
     </div>
 
     <div>
-      <%= raw(f.label :allow_web_submits,
-                      t('assignment.allow_web_submits')) %>
       <%= raw(f.check_box :allow_web_submits,
                           checked: @assignment.allow_web_submits,
                           onclick: 'set_onbeforeunload(true);') %>
+      <%= raw(f.label :allow_web_submits,
+                      t('assignment.allow_web_submits')) %>
     </div>
 
     <div>
-      <%= raw(f.label :display_grader_names_to_students,
-                      t('assignment.display_grader_names_to_students')) %>
       <%= raw(f.check_box :display_grader_names_to_students,
                           checked: @assignment.display_grader_names_to_students,
                           onclick: 'set_onbeforeunload(true);') %>
+      <%= raw(f.label :display_grader_names_to_students,
+                      t('assignment.display_grader_names_to_students')) %>
     </div>
 
     <div>
-      <%= f.label :is_hidden, t('assignment.is_hidden') %>
       <%= raw(f.check_box :is_hidden,
                           checked: @assignment.is_hidden,
                           onclick: 'set_onbeforeunload(true);') %>
+      <%= f.label :is_hidden, t('assignment.is_hidden') %>
     </div>
   </fieldset>
 
   <!-- Marking scheme -->
-  <div id='marking_scheme_notice' class='warning' style='display:none'>
-    <%= t('assignment.notice.change_marking_scheme_type')%>
-  </div>
-
   <fieldset>
-    <legend><%= t('assignment.marking_scheme.title') %></legend>
+    <legend>
+      <span><%= t('assignment.marking_scheme.title') %></span>
+    </legend>
+
+    <div id='marking_scheme_notice' class='warning' style='display:none'>
+      <%= t('assignment.notice.change_marking_scheme_type')%>
+    </div>
 
     <% Assignment::MARKING_SCHEME_TYPE.each do |key, value| %>
       <p>
@@ -180,7 +182,10 @@
 
   <!-- Required files -->
   <fieldset>
-    <legend><%= t('assignment.required_files') %></legend>
+    <legend>
+      <span><%= t('assignment.required_files') %></span>
+    </legend>
+
     <h4><%= t('assignment.required_files_by_student') %></h4>
     <div id='assignment_files'>
       <%= f.fields_for :assignment_files do |assignment_file_form| %>
@@ -196,7 +201,10 @@
 
   <!-- Assignment types -->
   <fieldset>
-    <legend><%= t('assignment.type') %></legend>
+    <legend>
+      <span><%= t('assignment.type') %></span>
+    </legend>
+
     <p id='persist_groups_assignment_style'
        style='<%= 'display: none' unless @assignments.size > 0 && @assignment.id.nil? %>'>
       <%= check_box_tag 'persist_groups',
@@ -229,7 +237,9 @@
                         class: 'checkbox_label') %>
     </p>
     <fieldset class='group_properties disable' style='display: none' disabled>
-      <legend><%= t('assignment.group.properties') %></legend>
+      <legend>
+        <span><%= t('assignment.group.properties') %></span>
+      </legend>
 
       <div id='group_properties'>
         <p id='student_form_groups_style'>
@@ -278,7 +288,9 @@
 
   <!-- Submission rules -->
   <fieldset>
-    <legend><%= t('assignment.submission_rules') %></legend>
+    <legend>
+      <span><%= t('assignment.submission_rules') %></span>
+    </legend>
 
     <%= f.fields_for :submission_rule do |rule| %>
       <h5><%= t('assignment.submission.penalty_rules').html_safe %></h5>
@@ -394,7 +406,10 @@
 
   <!-- Remark request rules -->
   <fieldset>
-    <legend><%= t('assignment.remark.rules')%></legend>
+    <legend>
+      <span><%= t('assignment.remark.rules')%></span>
+    </legend>
+
     <p id='allow_remark_requests'>
       <%= raw(f.check_box(:allow_remarks,
                           id: 'allow_remarks',
@@ -426,14 +441,14 @@
                         t('assignment.remark.message'),
                         class: 'textbox_label')) %>
         <%= raw(f.text_area :remark_message,
-                            rows: 8,
                             cols: 65,
+                            rows: 5,
                             onchange: 'set_onbeforeunload(true);') %>
       </div>
     </div>
   </fieldset>
 
   <%= f.submit t(:submit),
-               'data-disable-with' => I18n.t('working'),
+               data: { disable_with: t('working') },
                onclick: 'set_onbeforeunload(false);' %>
 <% end %>

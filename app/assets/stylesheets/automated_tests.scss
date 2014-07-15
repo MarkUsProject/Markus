@@ -1,0 +1,12 @@
+@import 'common/core';
+
+
+fieldset {
+  @include box-shadow(none);
+  margin-top: 2em;
+
+  // Save button in assignment form
+  & + input[type='submit'] {
+    margin-top: 1.5em;
+  }
+}

@@ -1,4 +1,6 @@
-<%= javascript_include_tag "effects.js", "jquery-ui.js" %>
+<% content_for :head do %>
+  <%= javascript_include_tag "effects.js" %>
+<% end %>
 
 <div id="remark_request_edit">
     <%= form_for submission,

@@ -3,22 +3,14 @@
                              'FilterTable/FilterTable',
                              'effects.js',
                              'Students/index' %>
-
-  <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
-  <%= render partial: 'boot',
-             formats: [:js],
-             handlers: [:erb] %>
-
-  <script>
-    var modalNotesGroup = null;
-
-    jQuery(document).ready(function() {
-      modalNotesGroup = new ModalMarkus('#notes_dialog');
-    });
-  </script>
 <% end %>
 
-<div id='title_bar'>
+<!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
+<%= render partial: 'boot',
+           formats: [:js],
+           handlers: [:erb] %>
+
+<div class='title_bar'>
   <h1><%= t('students.manage_students') %></h1>
   <div class='heading_buttons'>
     <%= link_to t(:add_new),
@@ -34,7 +26,7 @@
   </div>
 </div>
 
-<div class="wrapLeft">
+<div class='wrapper'>
   <%= form_tag bulk_modify_students_path(), remote: true do %>
 
     <div id='ajax_error' class='error' style='display:none;'></div>
@@ -93,7 +85,7 @@
         </span>
 
         <span id='section_input' style='display: none;'>
-          <select name='section' id='section'>
+          <select name='section' class='section'>
             <option> - </option>
             <% @sections.each do |section| %>
               <option value='<%= section.id %>'><%= section.name %></option>
@@ -104,7 +96,7 @@
                        id: 'apply_bulk_action',
                        data: { disable_with: t('working') },
                        name: 'commit',
-                       class: 'thin-button' %>
+                       class: 'inline-button' %>
       </div>
 
       <div class='search_box'>
@@ -115,7 +107,7 @@
                            placeholder: t('students.search_students') %>
       </div>
 
-      <div style='overflow:auto;'>
+      <div class='table'>
         <table id='students'></table>
       </div>
     </div>
@@ -123,7 +115,7 @@
 </div>
 
 <!-- Modal Windows -->
-<div id='upload_dialog'>
+<aside class='dialog' id='upload_dialog'>
   <h2><%= t('students.upload.upload_a_class_list') %></h2>
   <p><%= t('students.upload.select_csv_file').html_safe %></p>
   <p><%= t('students.upload.student_same_number') %></p>
@@ -140,14 +132,14 @@
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </div>
 
-    <div>
+    <section class='dialog-actions'>
       <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
       <%= button_to t(:close), '#', onclick: 'modal_upload.close(); return false;' %>
-    </div>
+    </section>
   </form>
-</div>
+</aside>
 
-<div id='download_dialog'>
+<aside class='dialog' id='download_dialog'>
   <h2><%= t('download') %></h2>
   <p>
     <%= link_to t('students.download.download_csv_format'),
@@ -162,7 +154,10 @@
                   format: 'xml' },
                 onclick: 'modal_download.close();' %>
   </p>
-  <%= button_to t(:close), '#' , onclick: 'modal_download.close(); return false;' %>
-</div>
 
-<div id='notes_dialog'></div>
+  <section class='dialog-actions'>
+    <%= button_to t(:close), '#' , onclick: 'modal_download.close(); return false;' %>
+  </section>
+</aside>
+
+<aside class='dialog' id='notes_dialog'></aside>

@@ -1,12 +1,13 @@
 <h3><%= I18n.t(:api_key) %></h3>
-<div id="api_key_box">
-  <% if !user.api_key.nil? %>
+<div id='api_key_box'>
+  <% if user.api_key %>
     <%= form_tag reset_api_key_main_index_path,
-          remote: true do %>
-      <%= submit_tag I18n.t(:reset_api_key) %>
+                 remote: true do %>
+      <%= submit_tag t(:reset_api_key) %>
     <% end %>
-    <div id="api_key"><%= user.api_key %></div>
+
+    <div id='api_key'><%= user.api_key %></div>
   <% else %>
-    <%= I18n.t(:api_key_unavailable) %>
+    <%= t(:api_key_unavailable) %>
   <% end %>
 </div>

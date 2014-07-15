@@ -1,35 +1,77 @@
-<%= javascript_include_tag "notes" %>
-<%= render partial: "shared/navigation_warning",
-  formats: [:js], handlers: [:erb] %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'notes' %>
+<% end %>
 
-<div id="title_bar"><h1><%= I18n.t('notes.new.title') %></h1></div>
+<%= render partial: 'shared/navigation_warning',
+           formats: [:js],
+           handlers: [:erb] %>
 
-<div class="wrapLeft">
+<div class='title_bar'>
+  <h1><%= t('notes.new.title') %></h1>
+</div>
+
+<div class='wrapper'>
   <%= form_for @note, as: :note, url: notes_path() do |f| %>
-    <%= render partial: "shared/error_explanation", locals: { model: @note } %>
-    <fieldset>
-      <p>
-        <%= label_tag "noteable_type", I18n.t('notes.noteable') %>
-        <%= select_tag "noteable_type",
-           options_for_select(
-              Note::NOTEABLES.map {|item| [I18n.t('notes.noteables.' + item),
-                 item]}) %>
-      </p>
+    <%= render partial: 'shared/error_explanation',
+               locals: { model: @note } %>
 
-      <div id="noteable_selector">
-        <%= render  partial: 'grouping' %>
-      </div>
+    <table>
+      <tr>
+        <td>
+          <%= label_tag 'noteable_type',
+                        t('notes.noteable') %>:
+        </td>
+        <td>
+          <%= select_tag 'noteable_type',
+                         options_for_select(
+                            Note::NOTEABLES.map { |item| [t('notes.noteables.' + item), item] }) %>
+        </td>
+      </tr>
 
-      <p>
-        <%= raw(f.label :notes_message, I18n.t("notes.note")) %>
-        <%= raw(f.text_area :notes_message, rows: 10,
-                            onchange: "set_onbeforeunload(true);") %>
-      </p>
-    </fieldset>
+      <tr>
+        <td>
+          <%= label_tag 'assignment_id',
+                        t('notes.noteables.Assignment') %>:
+        </td>
+        <td>
+          <%= select_tag 'assignment_id',
+                         options_from_collection_for_select(@assignments,
+                                                            :id,
+                                                            :short_identifier),
+                         onchange: "document.getElementById('working').style.display = '';
+                                    jQuery.ajax({
+                                      url: '" + new_update_groupings_notes_path() + "',
+                                      type: 'POST',
+                                      data: jQuery(this).serialize() + '&authenticity_token=' + AUTH_TOKEN
+                                    }).done(function() {
+                                      document.getElementById('working').style.display = 'none';
+                                    });" %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <%= f.label :noteable_id,
+                      t('notes.noteables.Grouping') %>:
+        </td>
+        <td>
+          <%= f.select :noteable_id,
+                       @groupings.collect { |p| [p.group_name_with_student_user_names, p.id] } %>
+        </td>
+      </tr>
+    </table>
 
-    <%= f.submit I18n.t('save'),
+    <p>
+      <%= raw(f.label :notes_message,
+                      t('notes.note')) %>:
+      <%= raw(f.text_area :notes_message,
+                          rows: 10,
+                          onchange: 'set_onbeforeunload(true);') %>
+    </p>
+
+    <%= f.submit t('save'),
                  onclick: 'set_onbeforeunload(false);',
-                 data: { disable_with: I18n.t('working') } %>
-    <%= link_to I18n.t('cancel'), notes_path(), class: 'button' %>
+                 data: { disable_with: t('working') } %>
+    <%= link_to t('cancel'), notes_path(), class: 'button' %>
+
   <% end %>
 </div>

@@ -8,9 +8,14 @@
            formats: [:js],
            handlers: [:erb] %>
 
-<div id='title_bar'>
-  <h1><%= I18n.t('student.submission.file_manager', short_identifier: sanitize(@assignment.short_identifier)) %></h1>
-  <div id='current_time'>
+<div class='title_bar'>
+  <h1>
+    <%= t('student.submission.file_manager',
+          short_identifier: sanitize(@assignment.short_identifier)) %>
+  </h1>
+</div>
+
+<div id='current_time'>
   <%= render partial: 'server_time' %>
 
   <script>
@@ -26,11 +31,9 @@
         )
     }, 60);
   </script>
-  </div>
 </div>
 
-
-<div class='wrapLeft'>
+<div class='wrapper'>
   <% if flash[:submit_notice] -%>
     <p class='success'><%= flash[:submit_notice] %></p>
   <% end %>
@@ -139,9 +142,9 @@
       <% end %>
     </div>
 
-    <div class='clear'></div>
-
-    <table class='files' id='files'></table>
+    <div class='table'>
+      <table class='files' id='files'></table>
+    </div>
 
     <% if @grouping.is_valid? %>
       <div class='global_action'>

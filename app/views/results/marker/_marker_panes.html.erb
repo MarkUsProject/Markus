@@ -4,7 +4,7 @@
 <div id='panes-content'>
   <div id='panes'>
     <div id='left-pane'>
-      <div id='code_pane'>
+      <div class='tab-pane' id='code_pane'>
         <ul id='code_and_annotations_tabs' class='subsection_tabs'>
            <li class='tab'><a href='#code_holder'><%= I18n.t('marker.source_code') %></a></li>
            <li class='tab'><a href='#annotations_summary'><%= I18n.t('marker.annot_summary') %></a></li>
@@ -56,27 +56,25 @@
     <div id='drag'></div>
 
     <div id='right-pane'>
-      <div id='mark_pane'>
+      <div class='tab-pane' id='mark_pane'>
         <ul id='mark_tabs' class='subsection_tabs'>
-          <li class='tab'><a href='#mark_viewer'><%= I18n.t('marker.marks.marks') %></a></li>
-          <li class='tab'><a href='#summary_viewer'><%= I18n.t('marker.marks.summary') %></a></li>
-          <li class='tab'><a href='#submission_rule_viewer'><%= I18n.t('marker.marks.submission_rule') %></a></li>
+          <li><a href='#mark_viewer'><%= I18n.t('marker.marks.marks') %></a></li>
+          <li><a href='#summary_viewer'><%= I18n.t('marker.marks.summary') %></a></li>
+          <li><a href='#submission_rule_viewer'><%= I18n.t('marker.marks.submission_rule') %></a></li>
         </ul>
 
-        <div id='mark_viewer' class='tabbedArea'>
+        <div id='mark_viewer'>
           <div class='mark_tools'>
-            <button class='thin-button' id='expand_all'>
+            <button class='inline-button' id='expand_all'>
               <%= t('marker.marks.expand_all') %>
             </button>
-            <button class='thin-button' id='collapse_all'>
+            <button class='inline-button' id='collapse_all'>
               <%= t('marker.marks.collapse_all') %>
             </button>
-            <button class='thin-button' id='expand_unmarked'>
+            <button class='inline-button' id='expand_unmarked'>
               <%= t('marker.marks.expand_unmarked') %>
             </button>
           </div>
-
-          <div class='clear'></div> <!-- Criterion Tools -->
 
           <div id='mark_criteria'>
               <ul id='mark_criteria_pane_list'>
@@ -92,7 +90,7 @@
            </div> <!-- Criterion Pane -->
         </div>  <!-- Criterion Viewer -->
 
-      <div id='summary_viewer' class='marks_summary_pane tabbedArea'>
+      <div id='summary_viewer' class='marks_summary_pane'>
         <%= render partial: 'results/marker/marker_summary',
                    locals: { mark_criteria: mark_criteria,
                              marks_map: marks_map,
@@ -104,7 +102,7 @@
                              extra_marks_percentage: extra_marks_percentage } %>
       </div>
 
-      <div id='submission_rule_viewer' class='tabbedArea'>
+      <div id='submission_rule_viewer'>
         <%= render partial: assignment.submission_rule.grader_tab_partial,
                    locals: { grouping: result.submission.grouping } %>
       </div>
@@ -112,17 +110,16 @@
       <!-- Annotation pane-->
       <div id='annotation_holder'></div>
 
-      <div id='create_annotation_dialog' style='display:none;'>
+      <aside class='dialog' id='create_annotation_dialog'>
         <input type='hidden' id='x1' value=''>
         <input type='hidden' id='x2' value=''>
         <input type='hidden' id='y1' value=''>
         <input type='hidden' id='y2' value=''>
-        <p>
-          <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
-        </p>
-        <p>
-          <textarea id='new_annotation_content'></textarea>
-        </p>
+
+        <h2><%= t('marker.annotation.new_annotation') %></h2>
+
+        <textarea id='new_annotation_content'></textarea>
+
         <p>
           <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
           <select id='new_annotation_category'>
@@ -134,7 +131,7 @@
             <% end %>
           </select>
           </p>
-          <p id='annotation_submit'>
+          <section class='dialog-actions'>
             <button onclick="submit_new_annotation(
                               jQuery('#new_annotation_content').val(),
                               jQuery('#new_annotation_category').val(),
@@ -145,9 +142,9 @@
               <%= I18n.t('marker.annotation.new_annotation') %>
             </button>
             <button onclick='modal.close();'><%= I18n.t('cancel') %></button>
-          </p>
+          </section>
         </div>
-      </div> <!-- Mark pane -->
+      </aside>
     </div>
   </div>
 </div>
