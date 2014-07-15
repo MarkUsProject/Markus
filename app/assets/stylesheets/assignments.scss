@@ -198,3 +198,23 @@ a.delete {
     padding-top: 1.5em;
   }
 }
+
+
+/* Grader view */
+
+.api_key {
+  margin-top: $dimen-vertical;
+}
+
+#api_key_box {
+  @include border-radius(5px);
+  border: 1px solid #ccc;
+  overflow: auto;
+  padding: 0.75em;
+
+  #api_key,
+  form {
+    display: inline-block;
+    width: auto;
+  }
+}
