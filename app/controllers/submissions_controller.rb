@@ -475,6 +475,7 @@ class SubmissionsController < ApplicationController
     else
       @groupings = @assignment.groupings.all
     end
+
     respond_to do |format|
       format.html
       format.json { render :json => get_submissions_table_info(@assignment)}
