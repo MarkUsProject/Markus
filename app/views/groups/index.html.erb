@@ -111,8 +111,10 @@
     <%= button_to_function t('upload'), 'modal_upload.open();' %>
   </div> <!-- rightjustify-->
 </div> <!-- title_bar-->
-<p class="help-message-title assignment_groups_help" ><%= t("assignment.help.groups")%></p>
-<div class="help-break assignment_groups_help" ></div>
+<p class="help-message-title assignment_groups_help">
+  <%= t("assignment.help.groups") %>
+</p>
+<div class="help-break assignment_groups_help"></div>
 
 <div id="notice">
   <div class="success" id="add_success" style="display: none;"></div>
