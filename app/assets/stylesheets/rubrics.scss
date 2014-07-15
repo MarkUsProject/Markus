@@ -14,10 +14,6 @@
 
 #rubric_criteria_pane {
   width: 25%;
-
-  li {
-    list-style: none;
-  }
 }
 
 #rubric_levels_pane {
@@ -26,6 +22,7 @@
   width: 100%;
   border: 1px solid $grey;
   padding: 1em;
+  margin-left: 2em;
 
   h2 {
     margin-bottom: 0.5em;
@@ -35,6 +32,10 @@
     display: inline-block;
     font-weight: 600;
     min-width: 8em;
+
+    & + input {
+      margin-top: 0.5em;
+    }
   }
 
   .main_rubric_criteria_edit {
@@ -53,12 +54,17 @@
     display: table-cell;
     padding-left: 1em;
 
+    .rubric_level_header {
+      margin-bottom: 0.5em;
+    }
+
     input {
       margin-bottom: 0.5em;
     }
 
     textarea {
       height: 150px;
+      margin-bottom: 1.5em;
       width: 100%;
     }
   }

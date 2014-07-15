@@ -1,1 +1,36 @@
 @import 'common/core';
+
+
+.wrapper {
+  display: table;
+  margin-top: 1em;
+  width: 100%;
+}
+
+#annotations_pane,
+#annotation_category_pane {
+  display: table-cell;
+  vertical-align: top;
+}
+
+#annotation_category {
+  width: 25%;
+}
+
+#annotations_pane {
+  padding-left: 2em;
+
+  #annotation_list_holder {
+    @include border-radius($radius);
+    border: 1px solid $grey;
+    padding: 1em;
+  }
+
+  .float_right {
+    float: right;
+  }
+
+  fieldset {
+    @include box-shadow(none);
+  }
+}

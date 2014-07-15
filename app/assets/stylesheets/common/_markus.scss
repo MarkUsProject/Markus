@@ -404,11 +404,11 @@ fieldset {
 
   header {
     @include border-radius-top($radius);
+    border-bottom: 1px solid $grey;
     font-weight: 600;
     text-align: left;
     text-transform: uppercase;
     padding: 0.5em;
-
   }
 
   .right {
@@ -421,7 +421,7 @@ fieldset {
 
     li {
       @include transition(all, $time-quick);
-      background: url(../img/handle@2x.png) 0.5em center no-repeat;
+      background: url(handle@2x.png) 0.5em center no-repeat;
       background-size: 12px 20px;
       border-top: 1px solid $grey;
       list-style: none;
