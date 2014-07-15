@@ -2,7 +2,12 @@
 
 
 .wrapper .section {
-  // margin-top: 1.5em;
+  margin-top: 1.5em;
+}
+
+.disable {
+  color: $grey;
+  font-style: italic;
 }
 
 fieldset {
