@@ -7,6 +7,16 @@
   width: 100%;
 }
 
+#add_annotation_category {
+  background: none;
+  padding-right: 1em;
+
+  #add_annotation_category_prompt {
+    margin: 1em 0;
+    width: 100%;
+  }
+}
+
 #annotations_pane,
 #annotation_category_pane {
   display: table-cell;

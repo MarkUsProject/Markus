@@ -1,19 +1,21 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag("livepipe/tabs") %>
+
+  <% # UI LIBRARIES %>
+  <%= javascript_include_tag 'livepipe/livepipe.js',
+                             'livepipe/window.js',
+                             'livepipe/tabs.js',
+                             'effects.js',
+                             'dragdrop.js' %>
 <% end %>
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'livepipe/livepipe.js',
-                           'livepipe/window.js',
-                           'livepipe/tabs.js',
-                           'effects.js',
-                           'dragdrop.js' %>
 
 <%= render partial: 'boot',
            formats: [:js],
            handlers: [:erb] %>
 
-<div id="title_bar">
-  <h1><%= I18n.t("flexible_criteria.criteria_management", identifier: @assignment.short_identifier) %>
+<div class="title_bar">
+  <h1>
+    <%= t("flexible_criteria.criteria_management", identifier: @assignment.short_identifier) %>
   </h1>
   <div class="heading_buttons">
     <%= link_to_function t("add_criterion"), %| if($('new_flexible_criterion') != null) {
@@ -23,13 +25,17 @@
         #{remote_function url: {action: "new", id: @assignment.id}, method: 'get'}
         }|%>
     <span class="menu_bar"></span>
-    <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
+    <%= link_to t('upload'),
+                '#',
+                onclick: 'modal_upload.open();' %>
     <span class="menu_bar"></span>
-    <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
+    <%= link_to t('download'),
+                '#',
+                onclick: 'modal_download.open();' %>
   </div>
 </div><!-- Title bar-->
 
-<div class="wrapLeft">
+<div class="wrapper">
   <%= render 'shared/flash_message' %>
 
   <p id="new_criterion_error" class="warning" style="display: none;"></p>
@@ -45,7 +51,7 @@
   </div>
 </div>
 
-<div id="upload_dialog">
+<aside class='dialog' id="upload_dialog">
   <h1><%= t('flexible_criteria.upload.title') %></h1>
   <p><%= t('flexible_criteria.upload.prompt') %></p>
   <%= form_for :upload, url: {controller:"flexible_criteria",
@@ -55,15 +61,15 @@
   <p><%= f.file_field :flexible %></p>
   <%= t('flexible_criteria.upload.format_html') %>
   <%= t('csv_special_characters_html') %>
-  <p>
+
+  <section class='dialog-actions'>
     <%= f.submit t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
     <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
-  </p>
+  </section>
   <% end %>
-</div>
+</aside>
 
-
-<div id="download_dialog">
+<aside class='dialog' id="download_dialog">
   <h2><%= t('flexible_criteria.download.title') %></h2>
   <p><%= t('flexible_criteria.download.prompt') %></p>
 
@@ -72,7 +78,8 @@
     {controller:"flexible_criteria", action:"download", id: @assignment.id}%></li>
   </ul>
 
-  <input type="reset" value="<%= t(:cancel) %>"
-         onclick="modal_download.close();" >
-</div>
-
+  <section class='dialog-actions'>
+    <input type="reset" value="<%= t(:cancel) %>"
+           onclick="modal_download.close();" >
+  </section>
+</aside>
