@@ -396,12 +396,35 @@ li#logo {
 }
 
 li#dropdown {
+  margin: 0.4em 0.5em 0.5em 0;
+
   @include breakpoint(mobile) {
     margin: 0 !important;
   }
 }
 
 .dropdown {
+  ul {
+    li {
+      @include border-radius-top(0);
+
+      a {
+        line-height: inherit;
+        height: auto;
+      }
+
+      &.section {
+        color: $dark-grey;
+        cursor: default;
+        margin-top: 0;
+
+        &:hover {
+          color: $dark-grey;
+        }
+      }
+    }
+  }
+
   @include breakpoint(mobile) {
     @include border-radius(0);
     border: none;

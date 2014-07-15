@@ -70,34 +70,6 @@ input[type='radio'] {
   }
 }
 
-#dropdown {
-  margin: 0.4em 0.5em 0.5em 0;
-}
-
-.dropdown {
-  ul {
-    li {
-      @include border-radius-top(0);
-
-      a {
-        line-height: inherit;
-        height: auto;
-      }
-
-      &.section {
-        color: $dark-grey;
-        cursor: default;
-        margin-top: 0;
-
-        &:hover {
-          color: $dark-grey;
-        }
-      }
-    }
-
-  }
-}
-
 
 /* Title Bar */
 
