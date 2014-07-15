@@ -188,20 +188,13 @@ span.info_date {
   margin-right: 5px;
 }
 
-// a.assignment_list {
-//   display: inline-block;
-//   font-size: 1.2em;
-//   min-width: 15em;
-// }
+a.delete {
+  float: right;
+  font-size: 0.85rem;
+}
 
-// span.title{
-//   border-bottom: 1px solid #ccc;
-//   color: $grey;
-//   display: block;
-//   font-family: $font-stack;
-//   font-size: 0.9em;
-//   font-style: italic;
-//   margin-bottom: 5px;
-//   padding-left: 5px;
-//   width: 100%;
-// }
+#invite_dialog {
+  fieldset {
+    padding-top: 1.5em;
+  }
+}
