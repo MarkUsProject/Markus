@@ -467,6 +467,14 @@ class SubmissionsController < ApplicationController
 
   def browse
     @assignment = Assignment.find(params[:assignment_id])
+
+    if current_user.ta?
+      @groupings = @assignment.ta_memberships.find_all_by_user_id(current_user).collect{|m|
+        m.grouping
+      }
+    else
+      @groupings = @assignment.groupings.all
+    end
     respond_to do |format|
       format.html
       format.json { render :json => get_submissions_table_info(@assignment)}
