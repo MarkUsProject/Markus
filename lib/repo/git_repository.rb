@@ -183,11 +183,26 @@ module Repository
     end
     alias download_as_string stringify_files # create alias
 
+
+    def get_revision_number(hash)
+      # probably should walk down git log and count steps from beginning?
+      walker = Rugged::Walker.new(@repos)
+      walker.sorting(Rugged::SORT_DATE | Rugged::SORT_REVERSE) 
+      walker.push(hash)
+      start = 0
+      walker.each do |commit|
+        start += 1
+        break if commit.oid == hash
+      end
+      return start
+    end
+
+
     # Returns a Repository::SubversionRevision instance
     # holding the latest Subversion repository revision
     # number
     def get_latest_revision
-      return get_revision(latest_revision)
+      return get_revision(latest_revision_number)
     end
 
     # Returns hash wrapped
@@ -196,6 +211,15 @@ module Repository
       return Repository::GitRevision.new(revision_number, self)
     end
 
+    def get_all_revisions
+      youngest_revision = latest_revision_number
+      log = []
+      (1..youngest_revision).each do |num|
+        log.push(Repository::GitRevision.new(num, self))
+      end
+      return log
+    end
+    
     def get_revision_by_timestamp(target_timestamp, path = nil)
       # returns a Git instance representing the revision at the
       # current timestamp, should be a ruby time stamp instance
@@ -466,7 +490,6 @@ module Repository
       end
 
       #gitolite admin repo
-      #ga_repo = Gitolite::GitoliteAdmin.new("#{::Rails.root.to_s}/data/dev/repos/git_auth")
       ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE])
       conf = ga_repo.config
 
@@ -638,8 +661,8 @@ module Repository
     #
     # This will only work for paths that have not been deleted from the repository.
     # GIT NOTE: This will just return the latest hash for now
-    def latest_revision(path = nil, revision_number = nil)
-      return @repos.head
+    def latest_revision_number(path = nil, revision_number = nil)
+      return get_revision_number(@repos.head.target)
     end
 
     def get_revision_number_by_timestamp(target_timestamp, path = nil)
@@ -728,27 +751,28 @@ module Repository
 
     # Constructor; Check if revision is actually present in
     # repository
-    def initialize(revision, repo)
+    def initialize(revision_number, repo)
       # Get rugged repository
       @repo = repo.get_repos
-      begin
-        # Get object using target of the reference (Object ID)
-        if revisionr.type == :direct
-          @commit = @repo.lookup(revision.target);
-        else
-          @commit = revision;
-        end
-        @timestamp = @commit.time
-        if @timestamp.instance_of?(String)
-          @timestamp = Time.parse(@timestamp).localtime
-        elsif @timestamp.instance_of?(Time)
-          @timestamp = @timestamp.localtime
-        end
-      rescue => e
-        raise RevisionDoesNotExist
+      @revision_number = revision_number
+      @hash = get_hash_of_revision(revision_number)
+      @commit = @repo.lookup(@hash)
+
+      @timestamp = @commit.time
+      if @timestamp.instance_of?(String)
+        @timestamp = Time.parse(@timestamp).localtime
+      elsif @timestamp.instance_of?(Time)
+        @timestamp = @timestamp.localtime
       end
-      super(@commit)
     end
+
+    def get_hash_of_revision(revision_number)
+      walker = Rugged::Walker.new(@repo)
+      walker.sorting(Rugged::SORT_DATE| Rugged::SORT_REVERSE) 
+      walker.push(@repo.head.target)
+      return walker.take(revision_number).last.oid
+    end
+
 
     # Return all of the files in this repository at the root directory
     def files_at_path(commit)

@@ -288,21 +288,12 @@ class SubmissionsController < ApplicationController
     end
     # Generate a revisions' history with date and num
     @revisions_history = []
-    rev_number = repo.get_latest_revision.revision_number + 1
-    rev_number.times.each do |rev|
-      begin
-        revision = repo.get_revision(rev)
-        unless revision.path_exists?(
-            File.join(@assignment.repository_folder, @path))
-          raise 'error'
-        end
-      rescue Exception
-        revision = nil
-      end
-      if revision
-        @revisions_history << {num: revision.revision_number,
-                               date: revision.timestamp}
-      end
+
+    # hmm. Let's make rev_number a method and have it return an array.
+    repo.get_all_revisions.each do |revision|
+      puts repo.get_latest_revision.revision_number
+      @revisions_history << {num: revision.revision_number,
+                             date: revision.timestamp}
     end
     repo.close
   end
@@ -311,19 +302,17 @@ class SubmissionsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
     @path = params[:path] || '/'
-    @revision_number = params[:revision_number]
     @previous_path = File.split(@path).first
     @grouping.group.access_repo do |repo|
-      begin
-        @revision = repo.get_revision(params[:revision_number].to_i)
-        @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
-        @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
-      rescue Exception => @find_revision_error
-        respond_to do |format|
-          format.js { render action: 'submissions/repo_browser/find_revision_error' }
-        end
-        return
+      if params[:revision_number]
+        @revision_number = params[:revision_number]
+      else
+        @revision_number = repo.latest_revision_number
       end
+      @revision = repo.get_revision(@revision_number)
+
+      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
+      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
       @table_rows = {}
       @files.sort.each do |file_name, file|
         @table_rows[file.object_id] = construct_repo_browser_table_row(file_name, file)
@@ -334,7 +323,6 @@ class SubmissionsController < ApplicationController
       respond_to do |format|
         format.js
       end
-
     end
   end
 

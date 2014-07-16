@@ -126,6 +126,11 @@ module Repository
       raise NotImplementedError, "Repository.get_latest_revision: Not yet implemented"
     end
 
+    # Returns all revisions
+    def get_all_revisions
+      raise NotImplementedError, "Repository.get_all_revision: Not yet implemented"
+    end
+
     # Return a Repository::AbstractRevision for a given revision_number
     # if it exists
     def get_revision(revision_number)
