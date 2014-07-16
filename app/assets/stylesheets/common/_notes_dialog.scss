@@ -1,0 +1,38 @@
+#notes_dialog {
+  max-height: 75%;
+
+  h3 {
+    margin-top: 0;
+  }
+
+  .notes_existing,
+  .notes_new {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .notes_existing {
+    margin-right: 1em;
+    width: 250px;
+
+    .notes_existing_list {
+      @include border-radius($radius);
+      border: 1px solid $grey;
+      height: 300px;
+      overflow: auto;
+      word-wrap: break-word;
+
+      .note {
+        padding: 0.25em;
+
+        p {
+          margin: 0;
+        }
+
+        & + .note {
+          margin-top: 1em;
+        }
+      }
+    }
+  }
+}
