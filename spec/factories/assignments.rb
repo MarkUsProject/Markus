@@ -17,5 +17,13 @@ FactoryGirl.define do
     display_grader_names_to_students false
     submission_rule NoLateSubmissionRule.new
     assignment_stat AssignmentStat.new
+
+    factory :flexible_assignment do
+      marking_scheme_type Assignment::MARKING_SCHEME_TYPE[:flexible]
+    end
+
+    factory :rubric_assignment do
+      marking_scheme_type Assignment::MARKING_SCHEME_TYPE[:rubric]
+    end
   end
 end
