@@ -59,23 +59,36 @@ group :sqlite do
   gem 'sqlite3'
 end
 
-# Other development related required gems. You don't need them
-# for production.
-group :development, :test do
-  gem 'rdoc'
+# Gems only used for development should be listed here so that they
+# are not loaded in other environments.
+group :development do
   gem 'thin'
+  gem 'quiet_assets'
+end
+
+group :test do
   gem 'simplecov'
   gem 'shoulda'
   gem 'machinist', '< 2'
   gem 'faker'
-  gem 'railroady'
   gem 'time-warp'
-  gem 'debugger', platforms: :mri_19
-  gem 'byebug', platforms: [:mri_20, :mri_21]
   gem 'mocha', require: false
-  gem 'quiet_assets'
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails'
+end
+
+# Gems needed (wanted) for both development and test can be
+# listed here
+group :development, :test do
+  gem 'debugger', :platforms => :mri_19
+  gem 'byebug', :platforms => [:mri_20, :mri_21]
+end
+
+# Gems not needed at runtime should go here so that MarkUs does
+# not waste time/memory loading them during boot
+group :offline do
+  gem 'rdoc'
+  gem 'railroady'
 end
 
 # If you  plan to use unicorn servers for production
