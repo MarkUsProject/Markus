@@ -44,39 +44,38 @@ module GradeEntryFormsHelper
   # Removes items that have empty names (so they don't get updated)
   def update_grade_entry_form_params(attributes)
 
-    @grade_entry_items = attributes[:grade_entry_items_attributes]
+    grade_entry_items =
+      params[:grade_entry_form][:grade_entry_items_attributes]
 
-    if @grade_entry_items == nil
+    if grade_entry_items == nil
       return attributes
     end
 
     # Find the largest position that has been set
     max_position = 0
-    @grade_entry_items.each do |key, value|
-      unless value == nil
-        this_position = value[:position]
-        if this_position && this_position.to_i > max_position
-          max_position = this_position.to_i
-        end
+    grade_entry_items.each do |key, value|
+      next unless value
+      this_position = value[:position]
+      if this_position && this_position.to_i > max_position
+        max_position = this_position.to_i
       end
     end
 
     # Update the attributes hash
     max_position += 1
-    @grade_entry_items.sort.each do |item|
+    grade_entry_items.sort.each do |item|
       # Items not added don't have a name
       # Some items are being deleted so don't update those
-      if item[1][:name] and item[1][:destroy] != 1
-        # If the set position is not valid, update it
-        unless @grade_entry_items[item[0]][:position].to_i > 0
-          @grade_entry_items[item[0]][:position] = max_position
-          max_position += 1
-        end
+      next if item[1][:name] && item[1][:destroy] == 1
+      # If the set position is not valid, update it
+      unless grade_entry_items[item[0]][:position].to_i > 0
+        grade_entry_items[item[0]][:position] = max_position
+        max_position += 1
       end
     end
 
-    attributes[:grade_entry_items_attributes] = @grade_entry_items
-    return attributes
+    attributes[:grade_entry_items_attributes] = grade_entry_items
+    attributes
   end
 
   def sort_items_by_position(items)
