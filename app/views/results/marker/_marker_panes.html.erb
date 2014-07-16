@@ -1,6 +1,3 @@
-<%# For image/PDF annotations %>
-<div id='sel_box'></div>
-
 <div id='panes-content'>
   <div id='panes'>
     <div id='left-pane'>
@@ -14,6 +11,9 @@
         </ul>
 
         <div id='code_holder' class='tabbedArea'>
+          <%# For image/PDF annotations %>
+          <div id='sel_box'></div>
+
           <div id='annotation_menu'>
             <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
               <%= I18n.t('marker.new_annot')%>
