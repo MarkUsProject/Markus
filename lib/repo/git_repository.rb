@@ -187,7 +187,7 @@ module Repository
     # holding the latest Subversion repository revision
     # number
     def get_latest_revision
-      return get_revision(latest_revision_number())
+      return get_revision(latest_revision)
     end
 
     # Returns hash wrapped
@@ -638,7 +638,7 @@ module Repository
     #
     # This will only work for paths that have not been deleted from the repository.
     # GIT NOTE: This will just return the latest hash for now
-    def latest_revision_number(path = nil, revision_number = nil)
+    def latest_revision(path = nil, revision_number = nil)
       return @repos.head
     end
 
@@ -728,15 +728,15 @@ module Repository
 
     # Constructor; Check if revision is actually present in
     # repository
-    def initialize(revision_number, repo)
+    def initialize(revision, repo)
       # Get rugged repository
       @repo = repo.get_repos
       begin
         # Get object using target of the reference (Object ID)
-        if revision_number.type == :direct
-          @commit = @repo.lookup(revision_number.target);
+        if revisionr.type == :direct
+          @commit = @repo.lookup(revision.target);
         else
-          @commit = revision_number;
+          @commit = revision;
         end
         @timestamp = @commit.time
         if @timestamp.instance_of?(String)
@@ -744,7 +744,7 @@ module Repository
         elsif @timestamp.instance_of?(Time)
           @timestamp = @timestamp.localtime
         end
-      rescue Exception
+      rescue => e
         raise RevisionDoesNotExist
       end
       super(@commit)
