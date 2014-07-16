@@ -45,25 +45,25 @@
   </div>
 </div>
 
-<div id="upload_dialog">
+<aside class='dialog' id="upload_dialog">
   <h1><%= t('flexible_criteria.upload.title') %></h1>
   <p><%= t('flexible_criteria.upload.prompt') %></p>
   <%= form_for :upload, url: {controller:"flexible_criteria",
                                 action: 'upload',
                                 id: @assignment.id},
                                 html: {multipart: true, size: 1 } do |f| %>
-  <p><%= f.file_field :flexible %></p>
-  <%= t('flexible_criteria.upload.format_html') %>
-  <%= t('csv_special_characters_html') %>
-  <p>
-    <%= f.submit t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
-    <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
-  </p>
+    <p><%= f.file_field :flexible %></p>
+    <%= t('flexible_criteria.upload.format_html') %>
+    <%= t('csv_special_characters_html') %>
+
+    <section class='dialog-actions'>
+      <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+      <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
+    </section>
   <% end %>
-</div>
+</aside>
 
-
-<div id="download_dialog">
+<aside class='dialog' id="download_dialog">
   <h2><%= t('flexible_criteria.download.title') %></h2>
   <p><%= t('flexible_criteria.download.prompt') %></p>
 
@@ -72,7 +72,8 @@
     {controller:"flexible_criteria", action:"download", id: @assignment.id}%></li>
   </ul>
 
-  <input type="reset" value="<%= t(:cancel) %>"
-         onclick="modal_download.close();" >
-</div>
-
+  <section class='dialog-actions'>
+    <input type="reset" value="<%= t(:cancel) %>"
+           onclick="modal_download.close();" >
+  </section>
+</aside>
