@@ -676,14 +676,10 @@ module Repository
       # writes to file using transaction, path, data, and mime
       # refer to Subversion_repo for implementation
       if (!__path_exists?(path))
-        pieces = path.split("/").delete_if {|x| x == ""}
-        dir_path = ""
-
-        (0..pieces.length - 2).each do |index|
-          dir_path += "/" + pieces[index]
-          make_directory(txn, dir_path)
-        end
-        make_file(txn, path,file_data)
+        # Get directory path of file (one level higher)
+        dir = path.split('/')[0..-1].join('/')
+        make_directory(path)
+        make_file(txn, path, file_data)
       end
     end
 
