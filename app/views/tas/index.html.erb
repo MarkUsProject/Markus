@@ -1,7 +1,7 @@
 <%= javascript_include_tag 'FilterTable/FilterTable',
                            'users_manager',
-                           'Graders/index' %>
-<%= javascript_include_tag 'help_system' %>
+                           'Graders/index',
+                           'help_system' %>
 <%= render partial: 'boot',
            formats: [:js],
            handlers: [:erb] %>
@@ -9,7 +9,7 @@
 <div id='title_bar'>
   <h1>
     <%= I18n.t('graders.manage_graders') %>
-    <span class="title-help users_graders_help"></span>
+    <span class='title-help users_graders_help'></span>
   </h1>
   <div class='heading_buttons'>
     <%= link_to I18n.t(:add_new),
@@ -23,7 +23,7 @@
   </div>
 </div>
 <p class='help-message-title users_graders_help'>
-  <%= t('students.help.manage_graders')%>
+  <%= t('students.help.manage_graders') %>
 </p>
 <div class='help-break users_graders_help'></div>
 

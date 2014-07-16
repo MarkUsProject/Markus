@@ -609,7 +609,6 @@ en:
         success: "Successfully updated student %{user_name}."
         error: "Failed to update student."
       help:
-        help:
         manage_students: "Mark students as active or inactive, give them grace credits."
         manage_graders: "Create graders."
 

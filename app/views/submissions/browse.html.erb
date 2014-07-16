@@ -70,12 +70,12 @@
     <% end %>
   </div>
 </div>
-<p class="help-message-title submissions_help" >
+<p class="help-message-title submissions_help">
   <% if @current_user.ta? %>
-      <%=t("assignment.help.submissions_graders")%>
+    <%= t("assignment.help.submissions_graders") %>
   <% else %>
-      <%= t("assignment.help.submissions_admins")%>
-  <%end%>
+     <%= t("assignment.help.submissions_admins") %>
+  <% end %>
 </p>
 <div class="help-break submissions_help"></div>
 <div class="wrapLeft">
