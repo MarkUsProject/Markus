@@ -166,19 +166,22 @@
 <% end %> <!-- remote form tag -->
 
 <!-- Modal Windows -->
-<div id='download_dialog'>
+<aside class='dialog' id='download_dialog'>
   <h2><%= t('groups.download.download_grader_maps') %></h2>
-  <ul>
-    <li>
-      <%= link_to t("marks_graders.download.download_grader_students_csv"),
-        { controller:"marks_graders", action:"download_grader_students_mapping",
-          id: @grade_entry_form.id}, onclick: "modalDownload.close();" %>
-    </li>
-  </ul>
-  <%= button_to_function I18n.t('cancel'), 'modalDownload.close(); return false;' %>
-</div>
 
-<div id='upload_dialog'>
+  <%= link_to t("marks_graders.download.download_grader_students_csv"),
+              { controller:"marks_graders",
+                action:"download_grader_students_mapping",
+                id: @grade_entry_form.id },
+              onclick: "modalDownload.close();",
+              class: 'button' %>
+
+  <section class='dialog-actions'>
+    <%= button_to_function I18n.t('cancel'), 'modalDownload.close(); return false;' %>
+  </section>
+</aside>
+
+<aside class='dialog' id='upload_dialog'>
   <h2><%= I18n.t('marks_graders.upload.upload_grader_map') %></h2>
   <%= raw(I18n.t('marks_graders.upload.description_grader_map')) %>
   <%= form_tag({ controller: 'marks_graders',
@@ -189,10 +192,12 @@
       <%= I18n.t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
-    <p>
-      <%= file_field_tag :grader_mapping, size: 2 %><br>
-      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
+
+    <%= file_field_tag :grader_mapping, size: 2 %>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
       <%= button_to_function I18n.t('cancel'), 'modalUpload.close(); return false;' %>
-    </p>
+    </section>
   <% end %>
 </div>

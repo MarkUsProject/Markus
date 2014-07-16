@@ -297,7 +297,7 @@
 
 <!-- Modal Windows -->
 
-<div id="assignment_group_use_dialog">
+<aside class='dialog' id="assignment_group_use_dialog">
   <h2><%= I18n.t("groups.reuse_groups") %></h2>
   <fieldset>
     <p><%= I18n.t("groups.assignment_to_use") %></p>
@@ -309,43 +309,46 @@
       <% end %>
     </select>
   </fieldset>
-  <p class="p_modal">
+
+  <section class='dialog-actions'>
     <%= button_to_function t(:submit),
      "if (confirm(\"#{I18n.t('groups.delete_groups_linked')}\")) submit_assignment_group_use(escape($F('clone_groups_assignment_id')))" %>
     <%= button_to_function t(:cancel), 'modalAssignmentGroupReUse.close()'%>
-  </p>
-</div> <!-- Assignement reuse groups modal-->
+  </section>
+</aside>
 
-<div id="create_group_dialog">
+<aside class='dialog' id="create_group_dialog">
   <h2><%= I18n.t("groups.create_new_group") %></h2>
   <fieldset>
     <%= I18n.t("groups.groupe_name") %>
     <input type="text" maxlength="30" id="new_group_name"></input>
   </fieldset>
-  <p class="p_modal">
+
+  <section class='dialog-actions'>
     <%= button_to_function I18n.t("groups.create_new_group"),
       "submit_new_group(escape($F('new_group_name')));" %>
     <%= button_to_function t(:cancel), 'modalCreate.close()'%>
-  </p>
-</div>
+  </section>
+</aside>
 
-<div id="rename_group_dialog"></div>
+<aside class='dialog' id="rename_group_dialog"></aside>
 
-<div id="notes_dialog"></div>
+<aside class='dialog' id="notes_dialog"></aside>
 
-<div id="download_dialog">
+<aside class='dialog' id="download_dialog">
   <h2><%= I18n.t("groups.download.download_groups_file") %></h2>
   <%= link_to t('groups.download.download_csv'),
               { controller: 'groups', action: 'download_grouplist',
                 id: @assignment.id },
                 onclick: 'modal_download.close();' %>
-  <div>
+
+  <section c;ass='dialog-actions'>
     <%= button_to_function I18n.t('cancel'),
                          'modal_download.close(); return false;' %>
-  </div>
-</div>
+  </section>
+</aside>
 
-<div id="upload_dialog">
+<aside class='dialog' id="upload_dialog">
   <h2><%= I18n.t("groups.upload.upload_groups_file") %></h2>
   <p>
     <%= I18n.t("groups.upload.description").html_safe %>
@@ -364,10 +367,11 @@
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
     <%= f.file_field :grouplist, size: 2 %>
-    <div>
-      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
       <%= button_to_function I18n.t('cancel'),
                              'modal_upload.close(); return false;' %>
-    </div>
+    </section>
   <% end %>
-</div>
+</aside>

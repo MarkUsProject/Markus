@@ -5,7 +5,33 @@
 @import 'core';
 @import 'login';
 @import 'navigation';
-@import 'dialogs';
+// @import 'dialogs';
+
+
+/** [TEMP] Dialog modal windows */
+
+.dialog {
+  @include border-radius(5px);
+  @include box-shadow(0 0 10px $grey);
+  background: #fff;
+  max-width: 100%;
+  padding: 2.5em 1.5em;
+  z-index: 10000;
+
+  .dialog-actions {
+    text-align: center;
+    margin-top: 1.5em;
+
+    button {
+      margin: 0.5em;
+    }
+
+    div,
+    input {
+      display: inline-block;
+    }
+  }
+}
 
 
 /* Title Bar */

@@ -131,7 +131,7 @@
 </div>
 
 <!-- Modal Windows -->
-<div id='upload_dialog'>
+<aside class='dialog' id='upload_dialog'>
   <h2><%= t('students.upload.upload_a_class_list') %></h2>
   <p><%= t('students.upload.select_csv_file').html_safe %></p>
   <p><%= t('students.upload.student_same_number') %></p>
@@ -148,14 +148,14 @@
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </div>
 
-    <div>
+    <section class='dialog-actions'>
       <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
       <%= button_to t(:close), '#', onclick: 'modal_upload.close(); return false;' %>
-    </div>
+    </section>
   </form>
-</div>
+</aside>
 
-<div id='download_dialog'>
+<aside class='dialog' id='download_dialog'>
   <h2><%= t('download') %></h2>
   <p>
     <%= link_to t('students.download.download_csv_format'),
@@ -170,7 +170,10 @@
                   format: 'xml' },
                 onclick: 'modal_download.close();' %>
   </p>
-  <%= button_to t(:close), '#' , onclick: 'modal_download.close(); return false;' %>
-</div>
 
-<div id='notes_dialog'></div>
+  <section class='dialog-actions'>
+    <%= button_to t(:close), '#' , onclick: 'modal_download.close(); return false;' %>
+  </section>
+</aside>
+
+<aside class='dialog' id='notes_dialog'></aside>
