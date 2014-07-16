@@ -1,13 +1,16 @@
 <%= javascript_include_tag 'FilterTable/FilterTable',
                            'users_manager',
-                           'Graders/index' %>
-
+                           'Graders/index',
+                           'help_system' %>
 <%= render partial: 'boot',
            formats: [:js],
            handlers: [:erb] %>
 
 <div id='title_bar'>
-  <h1><%= I18n.t('graders.manage_graders') %></h1>
+  <h1>
+    <%= I18n.t('graders.manage_graders') %>
+    <span class='title-help users_graders_help'></span>
+  </h1>
   <div class='heading_buttons'>
     <%= link_to I18n.t(:add_new),
                 new_ta_path() %>
@@ -19,6 +22,10 @@
                          'modal_download.open()' %>
   </div>
 </div>
+<p class='help-message-title users_graders_help'>
+  <%= t('students.help.manage_graders') %>
+</p>
+<div class='help-break users_graders_help'></div>
 
 <div class='colsLeftHeavy'>
   <div class='wrapLeft'>

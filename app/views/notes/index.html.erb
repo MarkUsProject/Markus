@@ -1,4 +1,16 @@
-<div id="title_bar"><h1><%=I18n.t('notes.title')  %></h1></div>
+<%= javascript_include_tag 'help_system' %>
+
+<div id='title_bar'>
+  <h1>
+    <%= I18n.t('notes.title') %>
+    <span class='title-help notes_help'></span>
+  </h1>
+</div>
+
+<p class='help-message-title notes_help'>
+  <%= t('notes.help') %>
+</p>
+<div class='help-break notes_help'></div>
 
 <div class="wrapLeft">
 

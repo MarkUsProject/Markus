@@ -1,19 +1,26 @@
 <%= javascript_include_tag 'manage_graders.js',
                            'FilterTable/FilterTable.js',
                            'Graders/tabs_boot.js',
-                           'Graders/index' %>
+                           'Graders/index',
+                           'help_system' %>
 
 <%= render partial: "boot", formats: [:js], handlers: [:erb] %>
 
 <div id="title_bar">
-  <h1><%= I18n.t("graders.manage_graders") %></h1>
+  <h1>
+    <%= I18n.t("graders.manage_graders") %>
+    <span class="title-help assignment_graders_help"></span>
+  </h1>
   <div class="heading_buttons">
     <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
     <span class="menu_bar"></span>
     <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
   </div> <!-- rightjustify-->
 </div> <!-- title_bar-->
-
+<p class="help-message-title assignment_graders_help">
+  <%= t("assignment.help.graders") %>
+</p>
+<div class="help-break assignment_graders_help"></div>
 <div class="wrapLeft"></div>
 <div class="clear"></div>
 
