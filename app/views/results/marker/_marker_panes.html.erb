@@ -89,52 +89,53 @@
                                      old_mark: @old_marks_map[mark_criterion.id] } %>
                 <% end -%>
               </ul> <!-- Criterion Pane List -->
-           </div> <!-- Criterion Pane -->
-        </div>  <!-- Criterion Viewer -->
+            </div> <!-- Criterion Pane -->
+          </div>  <!-- Criterion Viewer -->
 
-      <div id='summary_viewer' class='marks_summary_pane tabbedArea'>
-        <%= render partial: 'results/marker/marker_summary',
-                   locals: { mark_criteria: mark_criteria,
-                             marks_map: marks_map,
-                             old_marks_map: @old_marks_map,
-                             assignment: assignment,
-                             old_result: @old_result,
-                             result: result,
-                             extra_marks_points: extra_marks_points,
-                             extra_marks_percentage: extra_marks_percentage } %>
-      </div>
+        <div id='summary_viewer' class='marks_summary_pane tabbedArea'>
+          <%= render partial: 'results/marker/marker_summary',
+                     locals: { mark_criteria: mark_criteria,
+                               marks_map: marks_map,
+                               old_marks_map: @old_marks_map,
+                               assignment: assignment,
+                               old_result: @old_result,
+                               result: result,
+                               extra_marks_points: extra_marks_points,
+                               extra_marks_percentage: extra_marks_percentage } %>
+        </div>
 
-      <div id='submission_rule_viewer' class='tabbedArea'>
-        <%= render partial: assignment.submission_rule.grader_tab_partial,
-                   locals: { grouping: result.submission.grouping } %>
-      </div>
+        <div id='submission_rule_viewer' class='tabbedArea'>
+          <%= render partial: assignment.submission_rule.grader_tab_partial,
+                     locals: { grouping: result.submission.grouping } %>
+        </div>
 
-      <!-- Annotation pane-->
-      <div id='annotation_holder'></div>
+        <!-- Annotation pane-->
+        <div id='annotation_holder'></div>
 
-      <div id='create_annotation_dialog' style='display:none;'>
-        <input type='hidden' id='x1' value=''>
-        <input type='hidden' id='x2' value=''>
-        <input type='hidden' id='y1' value=''>
-        <input type='hidden' id='y2' value=''>
-        <p>
-          <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
-        </p>
-        <p>
-          <textarea id='new_annotation_content'></textarea>
-        </p>
-        <p>
-          <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
-          <select id='new_annotation_category'>
-            <option value=''><%= t('annotations.one_time_only') %></option>
-            <% @annotation_categories.each do |annotation_category| %>
-              <option value='<%= annotation_category.id %>'>
-                <%= annotation_category.annotation_category_name %>
-              </option>
-            <% end %>
-          </select>
+        <aside class='dialog' id='create_annotation_dialog'>
+          <input type='hidden' id='x1' value=''>
+          <input type='hidden' id='x2' value=''>
+          <input type='hidden' id='y1' value=''>
+          <input type='hidden' id='y2' value=''>
+          <p>
+            <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
           </p>
-          <p id='annotation_submit'>
+          <p>
+            <textarea id='new_annotation_content'></textarea>
+          </p>
+          <p>
+            <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
+            <select id='new_annotation_category'>
+              <option value=''><%= t('annotations.one_time_only') %></option>
+              <% @annotation_categories.each do |annotation_category| %>
+                <option value='<%= annotation_category.id %>'>
+                  <%= annotation_category.annotation_category_name %>
+                </option>
+              <% end %>
+            </select>
+          </p>
+
+          <section class='dialog-actions'>
             <button onclick="submit_new_annotation(
                               jQuery('#new_annotation_content').val(),
                               jQuery('#new_annotation_category').val(),
@@ -144,9 +145,9 @@
                               jQuery('#y2').val());">
               <%= I18n.t('marker.annotation.new_annotation') %>
             </button>
-            <button onclick='modal.close();'><%= I18n.t('cancel') %></button>
-          </p>
-        </div>
+            <%= button_to_function t('cancel'), 'modal.close();' %>
+          </section>
+        </aside>
       </div> <!-- Mark pane -->
     </div>
   </div>
