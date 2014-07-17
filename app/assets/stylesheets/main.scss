@@ -5,7 +5,88 @@
 @import 'core';
 @import 'login';
 @import 'navigation';
-@import 'dialogs';
+
+
+/** [TEMP] Tab pane */
+
+.columns {
+  display: table;
+  height: 100%;
+  width: 100%;
+}
+
+.col-left,
+.col-center,
+.col-right {
+  display: table-cell;
+  vertical-align: top;
+}
+
+.col-left,
+.col-right {
+  width: 45%;
+}
+
+.col-center {
+  width: 10%;
+
+  #icons {
+    left: 50%;
+    margin-left: -25px;
+    position: fixed;
+    top: 50%;
+  }
+
+  .image_input {
+    display: block;
+    margin: 0.5em auto;
+  }
+}
+
+
+.tab-pane {
+  @include border-radius(5px);
+  background: $light-grey;
+  border: 1px solid $blue;
+  padding: 0.5em;
+
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      @include border-radius-top(5px);
+      background: $light-blue;
+      display: inline-block;
+      list-style: none;
+
+      a {
+        @include border-radius-top(5px);
+        display: inline-block;
+        outline: none;
+        padding: 0.25em 1.5em;
+      }
+
+      &.ui-tabs-active {
+        background: $primary-color;
+
+        a {
+          color: $grey;
+        }
+      }
+    }
+  }
+
+  .ui-tabs-panel {
+    @include border-radius-bottom(5px);
+    background: $primary-color;
+    padding: 0.5em;
+  }
+}
+
+.tabbedArea {
+  background: #fff;
+}
 
 
 /* Title Bar */

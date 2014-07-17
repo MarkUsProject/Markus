@@ -3,17 +3,9 @@
 
 var groupings_table = null;
 
-document.observe("dom:loaded", function() {
+jQuery(document).ready(function() {
   // Hide AJAX errors DIV
   $('errors').hide();
-
-  // Keep the centre action icons in the middle of the screen
-  var icons = document.getElementById('icons');
-  icons.style.top = document.viewport.getScrollOffsets().top + (window.innerHeight / 2) - icons.offsetHeight + 'px';
-
-  window.onscroll = function() {
-    icons.style.top = document.viewport.getScrollOffsets().top + (window.innerHeight / 2) - icons.offsetHeight + 'px';
-  };
 
   //This reuses client-side javascript from assignment graders view for performance reasons, hence "groupings_table" name.
   groupings_table = new FilterTable({
