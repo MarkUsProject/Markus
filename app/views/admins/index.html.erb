@@ -2,24 +2,24 @@
 <%= javascript_include_tag 'users_manager' %>
 <%= javascript_include_tag 'help_system' %>
 
-<script type="text/javascript">
+<script>
   <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
 </script>
 
-<div id="title_bar">
+<div class='title_bar'>
   <h1>
-    <%= I18n.t("admins.manage_admins") %>
-    <span class="title-help users_admins_help"></span>
+    <%= t('admins.manage_admins') %>
+    <span class='title-help users_admins_help'></span>
   </h1>
-  <p class="help-message-title users_admins_help">
-    <%= t("admins.help.manage_admins") %>
-  </p>
-  <div class="help-break users_admins_help"></div>
-  <br>
-  <div class="heading_buttons">
-    <%= link_to I18n.t(:add_new), new_admin_path() %>
+  <div class='heading_buttons'>
+    <%= link_to t(:add_new), new_admin_path %>
   </div>
 </div>
+
+<p class='help-message-title users_admins_help'>
+  <%= t('admins.help.manage_admins') %>
+</p>
+<div class='help-break users_admins_help'></div>
 
 <div class="colsLeftHeavy">
   <div class="wrapLeft">

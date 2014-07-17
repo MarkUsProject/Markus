@@ -73,7 +73,7 @@ en:
 
     # app/views/assignments/_list_manage.html.erb
     current_assignments:      "Current assignments:"
-    due:                       "due :"
+    due:                       "due:"
     no_assignments:            "There are currently no assignments."
     class_average:             "Class Average: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissions collected"
@@ -570,7 +570,7 @@ en:
         could_not_find_target: "Could not find target assignment for cloning groups"
 
     results:
-      title:  "Assignment %{assignment_name} : %{group_name}"
+      title:  "Assignment %{assignment_name}: %{group_name}"
       results_name:  "Results"
       successfully_changed: "Successfully updated %{changed} results"
       must_select_a_group:  "You must select at least one group to update"
@@ -863,7 +863,7 @@ en:
           </p>"
         success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
-        syntax_error: "There is an error in the file you uploaded : %{error}"
+        syntax_error: "There is an error in the file you uploaded: %{error}"
         flash_error: "Could not recognize %{format} format to download with"
       download:
         download_annotations: "Download Annotations"
@@ -1033,7 +1033,7 @@ en:
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
           </p>"
         error: "Some rubric criteria were invalid:"
-        syntax_error: "There is an error in the file you uploaded : %{error}"
+        syntax_error: "There is an error in the file you uploaded: %{error}"
         empty_error: "No criteria were found in the provided file."
       error_total: "total weight must be positive"
       defaults:
@@ -1120,7 +1120,7 @@ en:
       Select a criterion on the left to edit it.  Criteria names, descriptions and
       maximum values can be modified."
     past_due_date_warning: "Due date for this assignment is in the past."
-    past_due_date_notice: "Due date for this assignment is in the past for : "
+    past_due_date_notice: "Due date for this assignment is in the past for: "
 
     section:
       name: "Name"

@@ -1,6 +1,8 @@
-<%= javascript_include_tag 'help_system' %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'help_system' %>
+<% end %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
     <%= t('section.manage_users') %>
     <span class='title-help sections_manage_users_help'></span>

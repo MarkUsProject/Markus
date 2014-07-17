@@ -19,7 +19,7 @@
   </script>
 <% end %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
     <%= t('students.manage_students') %>
     <span class='title-help manage_students_help'></span>
@@ -36,11 +36,12 @@
                 '#',
                 onclick: 'modal_download.open(); return false;' %>
   </div>
-  <p class='help-message-title manage_students_help'>
-    <%= t('students.help.manage_students') %>
-  </p>
-  <div class='help-break manage_students_help'></div>
 </div>
+
+<p class='help-message-title manage_students_help'>
+  <%= t('students.help.manage_students') %>
+</p>
+<div class='help-break manage_students_help'></div>
 
 <div class="wrapLeft">
   <%= form_tag bulk_modify_students_path(), remote: true do %>

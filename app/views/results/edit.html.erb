@@ -100,12 +100,12 @@
 
 <div id='notes_dialog'></div>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
-  <%= t('results.title',
-        { assignment_name: @assignment.short_identifier,
-          group_name: @group.group_name }) %>
-  (<%= @grouping.get_all_students_in_group %>)
+    <%= t('results.title',
+          { assignment_name: @assignment.short_identifier,
+            group_name: @group.group_name }) %>
+    (<%= @grouping.get_all_students_in_group %>)
   </h1>
 </div>
 

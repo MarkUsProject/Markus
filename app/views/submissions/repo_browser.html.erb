@@ -15,9 +15,9 @@
   </div>
 <% end %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
-    <%= I18n.t('browse_submissions.repository_name',
+    <%= t('browse_submissions.repository_name',
                repository: @repository_name) %>
     (<%= @grouping.get_all_students_in_group %>)
   </h1>
