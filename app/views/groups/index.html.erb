@@ -95,7 +95,7 @@
 
 <div id="title_bar">
   <h1>
-    <%= I18n.t("groups.manage_groups") %>
+    <%= t("groups.manage_groups") %>
     <span class="title-help assignment_groups_help"></span>
   </h1>
   <div class="heading_buttons">
@@ -160,22 +160,22 @@
         <ul id="students_tabs" class="subsection_tabs">
           <li class="tab">
             <a href="#students_none" id="filter_link_students_none">
-              <%= raw(I18n.t("groups.all_students")) %>
+              <%= raw(t("groups.all_students")) %>
             </a>
           </li>
           <li class="tab">
             <a href="#unassigned" id="filter_link_students_unassigned" class="filter_selected">
-              <%= raw(I18n.t("groups.unassigned_students")) %>
+              <%= raw(t("groups.unassigned_students")) %>
             </a>
           </li>
           <li class="tab">
             <a href="#assigned" id="filter_link_students_assigned">
-              <%= raw(I18n.t("groups.assigned_students")) %>
+              <%= raw(t("groups.assigned_students")) %>
             </a>
           </li>
           <li class="tab">
             <a href="#inactive" id="filter_link_students_inactive">
-              <%= raw(I18n.t("groups.inactive_students")) %>
+              <%= raw(t("groups.inactive_students")) %>
             </a>
           </li>
         </ul>
@@ -190,7 +190,7 @@
             <%= text_field_tag 'search_students', nil,
                 onkeyup: "students_table.add_filter('search'); students_table.render();",
                 onkeypress: "stop_submit(event);",
-                placeholder: I18n.t("students.search_students") %>
+                placeholder: t("students.search_students") %>
           </div>
           <table class="students" id="students"></table>
         </div>
@@ -202,13 +202,13 @@
     <div id='icons'>
       <%= image_submit_tag 'add_arrow.png',
                            onclick: "$('global_actions').setValue('assign');",
-                           alt: I18n.t('add_members'),
+                           alt: t('add_members'),
                            class:'image_input',
-                           title: I18n.t('add_members') %>
+                           title: t('add_members') %>
       <%= image_submit_tag 'remove_arrow.png',
                            onclick: "$('global_actions').setValue('unassign');",
-                           alt: I18n.t('remove_members'),
-                           title: I18n.t('remove_members'),
+                           alt: t('remove_members'),
+                           title: t('remove_members'),
                            class:'image_input' %>
     </div>
   </div>
@@ -219,17 +219,17 @@
         <ul id="groups_tabs"class="subsection_tabs">
           <li class="tab">
             <a href="#none" id="filter_link_none" class="filter_selected">
-              <%= raw(I18n.t("groups.all_grouping_counts")) %>
+              <%= raw(t("groups.all_grouping_counts")) %>
             </a>
           </li>
           <li class="tab">
             <a href="#validated" id="filter_link_validated">
-              <%= raw(I18n.t("groups.valid_grouping_counts")) %>
+              <%= raw(t("groups.valid_grouping_counts")) %>
             </a>
           </li>
           <li class="tab">
             <a href="#unvalidated" id="filter_link_unvalidated">
-              <%= raw(I18n.t("groups.not_valid_grouping_counts")) %>
+              <%= raw(t("groups.not_valid_grouping_counts")) %>
             </a>
           </li>
           <li class="button_tab"></li>
@@ -246,24 +246,24 @@
             <%= text_field_tag 'search_groupings', nil,
                 onkeyup: "groupings_table.add_filter('search'); groupings_table.render();",
                 onkeypress: "stop_submit(event);",
-                placeholder: I18n.t("groups.search_groups") %>
+                placeholder: t("groups.search_groups") %>
             <%= button_to_function t('groups.add_new'), "make_new_group()", class: 'floatRight' %>
           </div>
 
           <div class="globalActionIconsTop">
             <%= image_submit_tag "icons/tick.png",
               class:'image_input',
-              title: I18n.t("groups.action.validate"),
-              alt: I18n.t("groups.action.validate"),
+              title: t("groups.action.validate"),
+              alt: t("groups.action.validate"),
               onclick: "$('global_actions').setValue('valid');" %>
             <%= image_submit_tag "icons/cross.png",
               class:'image_input',
-              title: I18n.t("groups.action.invalidate"),
-              alt: I18n.t("groups.action.invalidate"),
+              title: t("groups.action.invalidate"),
+              alt: t("groups.action.invalidate"),
               onclick: "$('global_actions').setValue('invalid');" %>
             <%= image_submit_tag "icons/bin_closed.png",
-              class:'image_input', title: I18n.t("groups.action.delete"),
-              alt: I18n.t("groups.action.delete"),
+              class:'image_input', title: t("groups.action.delete"),
+              alt: t("groups.action.delete"),
               onclick: "$('global_actions').setValue('delete');" %>
           </div>
 
@@ -274,18 +274,18 @@
           <div class="globalActionIconsBottom">
             <%= image_submit_tag "icons/tick.png",
               class:'image_input',
-              title: I18n.t("groups.action.validate"),
-              alt: I18n.t("groups.action.validate"),
+              title: t("groups.action.validate"),
+              alt: t("groups.action.validate"),
               onclick: "$('global_actions').setValue('valid');" %>
             <%= image_submit_tag "icons/cross.png",
               class:'image_input',
-              title: I18n.t("groups.action.invalidate"),
-              alt: I18n.t("groups.action.invalidate"),
+              title: t("groups.action.invalidate"),
+              alt: t("groups.action.invalidate"),
               onclick: "$('global_actions').setValue('invalid');" %>
             <%= image_submit_tag "icons/bin_closed.png",
               class:'image_input',
-              title: I18n.t("groups.action.delete"),
-              alt: I18n.t("groups.action.delete"),
+              title: t("groups.action.delete"),
+              alt: t("groups.action.delete"),
               onclick: "$('global_actions').setValue('delete');" %>
           </div>
         </div><!-- group container -->
@@ -298,9 +298,9 @@
 <!-- Modal Windows -->
 
 <aside class='dialog' id="assignment_group_use_dialog">
-  <h2><%= I18n.t("groups.reuse_groups") %></h2>
+  <h2><%= t("groups.reuse_groups") %></h2>
   <fieldset>
-    <p><%= I18n.t("groups.assignment_to_use") %></p>
+    <p><%= t("groups.assignment_to_use") %></p>
     <select id="clone_groups_assignment_id" name="clone_groups_assignment_id">
       <% @all_assignments.each do |an_assignment| %>
         <% if an_assignment != @assignment && an_assignment.allow_web_submits == false %>
@@ -312,65 +312,65 @@
 
   <section class='dialog-actions'>
     <%= button_to_function t(:submit),
-     "if (confirm(\"#{I18n.t('groups.delete_groups_linked')}\")) submit_assignment_group_use(escape($F('clone_groups_assignment_id')))" %>
+     "if (confirm(\"#{t('groups.delete_groups_linked')}\")) submit_assignment_group_use(escape($F('clone_groups_assignment_id')))" %>
     <%= button_to_function t(:cancel), 'modalAssignmentGroupReUse.close()'%>
   </section>
 </aside>
 
 <aside class='dialog' id="create_group_dialog">
-  <h2><%= I18n.t("groups.create_new_group") %></h2>
+  <h2><%= t("groups.create_new_group") %></h2>
   <fieldset>
-    <%= I18n.t("groups.groupe_name") %>
+    <%= t("groups.groupe_name") %>
     <input type="text" maxlength="30" id="new_group_name"></input>
   </fieldset>
 
   <section class='dialog-actions'>
-    <%= button_to_function I18n.t("groups.create_new_group"),
+    <%= button_to_function t("groups.create_new_group"),
       "submit_new_group(escape($F('new_group_name')));" %>
     <%= button_to_function t(:cancel), 'modalCreate.close()'%>
   </section>
 </aside>
 
-<aside class='dialog' id="rename_group_dialog"></aside>
+<aside class='dialog' id='rename_group_dialog'></aside>
 
-<aside class='dialog' id="notes_dialog"></aside>
+<aside class='dialog' id='notes_dialog'></aside>
 
-<aside class='dialog' id="download_dialog">
-  <h2><%= I18n.t("groups.download.download_groups_file") %></h2>
-  <%= link_to t('groups.download.download_csv'),
-              { controller: 'groups', action: 'download_grouplist',
-                id: @assignment.id },
+<aside class='dialog' id='download_dialog'>
+  <h2><%= t('groups.download.download_groups_file') %></h2>
+  <%= button_to t('groups.download.download_csv'),
+                { controller: 'groups', action: 'download_grouplist',
+                  id: @assignment.id },
                 onclick: 'modal_download.close();' %>
 
-  <section c;ass='dialog-actions'>
-    <%= button_to_function I18n.t('cancel'),
+  <section class='dialog-actions'>
+    <%= button_to_function t('cancel'),
                          'modal_download.close(); return false;' %>
   </section>
 </aside>
 
-<aside class='dialog' id="upload_dialog">
-  <h2><%= I18n.t("groups.upload.upload_groups_file") %></h2>
+<aside class='dialog' id='upload_dialog'>
+  <h2><%= t('groups.upload.upload_groups_file') %></h2>
   <p>
-    <%= I18n.t("groups.upload.description").html_safe %>
+    <%= t('groups.upload.description').html_safe %>
     <% if !@assignment.groupings.nil? && @assignment.groupings.length > 0 %>
-      <div class="information">
-        <%= I18n.t("groups.upload.importing") %>
+      <div class='information'>
+        <%= t('groups.upload.importing') %>
       </div>
     <% end %>
   </p>
   <%= form_for :group, html: {multipart: true},
-                       url: { controller:"groups",
+                       url: { controller:'groups',
                               action: 'csv_upload',
                               id: @assignment.id } do |f| %>
     <p>
-      <%= I18n.t("encoding") %>
+      <%= t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
     <%= f.file_field :grouplist, size: 2 %>
 
     <section class='dialog-actions'>
       <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <%= button_to_function I18n.t('cancel'),
+      <%= button_to_function t('cancel'),
                              'modal_upload.close(); return false;' %>
     </section>
   <% end %>

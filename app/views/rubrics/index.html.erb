@@ -68,7 +68,7 @@
 
     <p>
       <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'>
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload_csv.close();'>
     </p>
   <% end %>
 </aside>
@@ -91,7 +91,7 @@
 
     <p>
       <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'>
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload_yml.close();'>
     </p>
   <% end %>
 </aside>

@@ -32,48 +32,52 @@
 <div class="wrapLeft">
   <%= render 'shared/flash_message' %>
 
-  <p id="new_criterion_error" class="warning" style="display: none;"></p>
+  <p id='new_criterion_error' class='warning' style='display: none;'></p>
 
-  <div id="flexible_criteria_pane">
-    <%= render partial: "flexible_criteria/flexible_criteria_pane" %>
+  <div id='flexible_criteria_pane'>
+    <%= render partial: 'flexible_criteria/flexible_criteria_pane' %>
   </div>
 
-  <div id="flexible_edition_pane">
-    <div id="flexible_edition_pane_menu">
+  <div id='flexible_edition_pane'>
+    <div id='flexible_edition_pane_menu'>
       <%= render partial: 'flexible_criteria_manager_help' %>
     </div>
   </div>
 </div>
 
-<aside class='dialog' id="upload_dialog">
+<aside class='dialog' id='upload_dialog'>
   <h1><%= t('flexible_criteria.upload.title') %></h1>
   <p><%= t('flexible_criteria.upload.prompt') %></p>
-  <%= form_for :upload, url: {controller:"flexible_criteria",
-                                action: 'upload',
-                                id: @assignment.id},
-                                html: {multipart: true, size: 1 } do |f| %>
+  <%= form_for :upload,
+               url: { controller:'flexible_criteria',
+                      action: 'upload',
+                      id: @assignment.id },
+               html: { multipart: true, size: 1 } do |f| %>
     <p><%= f.file_field :flexible %></p>
     <%= t('flexible_criteria.upload.format_html') %>
     <%= t('csv_special_characters_html') %>
 
     <section class='dialog-actions'>
       <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
+      <input type='reset'
+             value='<%= t(:cancel) %>'
+             onclick='modal_upload.close();'>
     </section>
   <% end %>
 </aside>
 
-<aside class='dialog' id="download_dialog">
+<aside class='dialog' id='download_dialog'>
   <h2><%= t('flexible_criteria.download.title') %></h2>
   <p><%= t('flexible_criteria.download.prompt') %></p>
 
-  <ul>
-    <li><%= link_to t('flexible_criteria.download.link'),
-    {controller:"flexible_criteria", action:"download", id: @assignment.id}%></li>
-  </ul>
+  <%= button_to t('flexible_criteria.download.link'),
+                { controller:'flexible_criteria',
+                  action:'download',
+                  id: @assignment.id } %>
 
   <section class='dialog-actions'>
-    <input type="reset" value="<%= t(:cancel) %>"
-           onclick="modal_download.close();" >
+    <input type='reset'
+           value='<%= t(:cancel) %>'
+           onclick='modal_download.close();' >
   </section>
 </aside>
