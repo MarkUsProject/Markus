@@ -1,0 +1,728 @@
+@import 'reset';
+@import 'constants';
+@import 'mixins';
+
+/** Main */
+
+body {
+  @include transition(all, $time-quick);
+  background-color: $lighter-blue;
+  color: $dark-grey;
+  font: 400 0.8em/1.2em $fonts;
+
+  @include breakpoint(tiny) {
+    background-color: $white;
+  }
+}
+
+::selection {
+  background-color: $blue;
+}
+
+::-moz-selection {
+  background-color: $blue;
+}
+
+
+/** Code */
+pre,
+.code {
+  font: 14px/20px $mono-fonts;
+}
+
+
+/** Custom scrollbars in WebKit-based browsers */
+
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-button {
+  &:start:decrement,
+  &:end:increment {
+    background-color: $white;
+    display: block;
+    height: 0;
+    width: 0;
+  }
+}
+
+::-webkit-scrollbar-track-piece {
+  border-radius: 8px;
+  background-color: $white;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $grey;
+  border-radius: 8px;
+
+  &:hover {
+    background-color: $blue;
+  }
+
+  &:vertical {
+    height: 50px;
+  }
+
+  &:horizontal {
+    width: 50px;
+  }
+}
+
+
+/** Headings */
+
+h1 {
+  font: 300 2.5em $fonts;
+  margin: 0;
+}
+
+h2 {
+  font: 300 2em $fonts;
+  margin: 0;
+}
+
+h3 {
+  font: 400 1.5em $fonts;
+  margin: 0;
+}
+
+h4 {
+  font: 600 1em $fonts;
+  margin: 0;
+}
+
+
+/** Paragraphs */
+
+p + p {
+  margin-bottom: 1.125em;
+}
+
+
+/** Links */
+
+a {
+  @include transition(all, $time-quick);
+  color: $dark-blue;
+  text-decoration: none;
+
+  &:hover {
+    color: $blue;
+  }
+}
+
+strong a {
+  font-weight: 600;
+}
+
+
+/** Alert messages */
+
+.alert {
+  @include border-radius($radius);
+  display: block;
+  margin-bottom: 1em;
+  padding: 0.25em 0.5em;
+  width: 100%;
+}
+
+.error {
+  @extend .alert;
+  background: $light-red;
+  border: 1px solid $red;
+}
+
+.warning {
+  @extend .alert;
+  background: $light-yellow;
+  border: 1px solid $yellow;
+}
+
+.success {
+  @extend .alert;
+  background: $light-green;
+  border: 1px solid $green;
+}
+
+.information {
+  @extend .alert;
+  background: $light-grey;
+  border: 1px solid $grey;
+}
+
+
+/** Text field inputs */
+
+input,
+textarea {
+  @include border-radius($radius);
+  @include transition(all, $time-quick);
+  background: $light-grey;
+  border: 1px solid $grey;
+  color: $dark-grey;
+  font: 400 1em $fonts;
+  outline: none;
+  padding: 0.25em 0.75em;
+  width: 100%;
+
+  &:hover {
+    background-color: $white;
+    border-color: $dark-blue;
+  }
+
+  &:focus {
+    background-color: $white;
+    border-color: $blue;
+  }
+
+  &[disabled] {
+    background-color: $disabled-grey;
+    border-color: $disabled-dark;
+    color: $disabled-dark;
+  }
+
+  &.large-text {
+    padding: 1em 1.15em;
+  }
+}
+
+textarea {
+  // height: 2.5em;
+  resize: none;
+
+  // &:focus {
+  //   height: 7.5rem;
+  // }
+}
+
+select {
+  @include border-radius($radius);
+  background: none;
+  border: 1px solid $light-blue;
+  font-family: $fonts;
+  margin: 5px;
+  padding-left: 5px;
+}
+
+
+/** Buttons */
+
+input[type='button'],
+input[type='submit'],
+input[type='reset'],
+button,
+.button {
+  @include background-gradient($white, $light-grey);
+  @include border-radius($radius);
+  @include box-shadow(inset 0 -1px 0 $grey);
+  @include transition(all, $time-quick);
+  border: 1px solid $blue;
+  color: $dark-grey;
+  cursor: pointer;
+  display: inline-block;
+  font: 400 1em $fonts;
+  min-width: 150px;
+  outline: none;
+  padding: 0.5em 1.5em;
+  text-align: center;
+  text-shadow: 0 1px 0 $white;
+
+  &:hover {
+    @include box-shadow(inset 0 -1px 0 $grey, 0 1px 0 $light-grey);
+    border-color: $dark-blue;
+    color: $dark-blue;
+    top: 1px;
+  }
+
+  &:focus {
+    @include box-shadow(inset 0 -1px 0 $grey, 0 0 3px $blue);
+  }
+
+  &:active {
+    @include background-gradient($light-grey, $white);
+    @include box-shadow(none);
+    color: $dark-blue;
+  }
+
+  &[disabled] {
+    @include background-gradient($light-grey, $disabled-grey);
+    @include box-shadow(none);
+    border-color: $disabled-dark;
+    color: $disabled-dark;
+  }
+
+  &.large-button {
+    min-width: 200px;
+    padding: 0.75em 2em;
+  }
+
+  &.inline-button {
+    min-width: 100px;
+    padding: 0.25em 1em;
+  }
+}
+
+
+/** Fieldset */
+
+fieldset {
+  @include border-radius($radius);
+  @include box-shadow(0 3px 0 $grey);
+  background: $white;
+  padding: 0.25em 1.5em 1.5em;
+  position: relative;
+
+  legend {
+    border: none;
+
+    & > span {
+      @extend h3;
+      padding: 0 0.25em;
+    }
+  }
+
+  // Fieldsets within fieldsets
+  fieldset {
+    @include border-radius(0);
+    @include box-shadow(none);
+    border: none;
+    border-top: 1px solid $grey;
+    padding: 3.5em 0 0;
+
+    legend {
+      width: 100%;
+
+      & > span {
+        border-top: 1px solid $grey;
+        display: block;
+        padding-top: 0.5em;
+        position: relative;
+        top: 1.5em;
+      }
+    }
+  }
+}
+
+
+/** Tables */
+
+.table {
+  border-left: 1px solid $grey;
+  border-right: 1px solid $grey;
+  overflow-x: auto;
+  width: 100%;
+
+  table {
+    border-top: 1px solid $grey;
+    width: 100%;
+
+    thead,
+    tfoot {
+      background-color: $light-grey;
+      font-weight: 600;
+      text-align: left;
+      text-transform: uppercase;
+
+      .asc,
+      .des {
+        cursor: pointer;
+
+        &::after {
+          font-size: 0.75em;
+          padding-left: 0.5em;
+        }
+      }
+
+      .asc::after, {
+        content: "▲";
+      }
+
+      .des::after {
+        content: "▼";
+      }
+    }
+
+    thead {
+      border-bottom: 2px solid $grey;
+    }
+
+    tfoot {
+      border-top: 2px solid $grey;
+    }
+
+    tr {
+      border-bottom: 1px solid $grey;
+
+      th,
+      td {
+        border-right: 1px solid $grey;
+        padding: 0.5em 1em;
+        vertical-align: middle;
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        @include transition(all, $time-quick);
+
+        &:nth-child(odd) {
+          background-color: $white;
+        }
+
+        &:nth-child(even) {
+          background-color: $light-grey;
+        }
+
+        &:hover {
+          background: $lighter-blue;
+        }
+      }
+    }
+  }
+}
+
+
+/** Sortable lists */
+
+.sortable {
+  @include border-radius($radius);
+  background: $white;
+  border: 1px solid $grey;
+
+  // Prevent text selection
+  -webkit-user-select: none;
+    apple-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+
+  header {
+    @include border-radius-top($radius);
+    border-bottom: 1px solid $grey;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    padding: 0.5em;
+  }
+
+  .right {
+    float: right;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      @include transition(all, $time-quick);
+      background: url(handle@2x.png) 0.5em center no-repeat;
+      background-size: 12px 20px;
+      border-top: 1px solid $grey;
+      list-style: none;
+      min-height: 2.5em;
+      padding: 0.5em 0.5em 0.5em 2em;
+
+      &:hover {
+        background-color: $lighter-blue;
+      }
+
+      &:last-child {
+        @include border-radius-bottom($radius);
+      }
+    }
+  }
+}
+
+
+/** Tab pane */
+
+.tab-pane {
+  @include border-radius($radius);
+  background: $light-grey;
+  border: 1px solid $blue;
+  padding: 0.5em;
+
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      @include border-radius-top($radius);
+      background: $light-blue;
+      display: inline-block;
+      list-style: none;
+
+      a {
+        @include border-radius-top($radius);
+        display: inline-block;
+        outline: none;
+        padding: 0.25em 1.5em;
+      }
+
+      &.ui-tabs-active {
+        background: $white;
+
+        a {
+          color: $dark-grey;
+        }
+      }
+    }
+  }
+
+  .ui-tabs-panel {
+    @include border-radius-bottom($radius);
+    background: $white;
+    padding: 0.5em;
+  }
+}
+
+
+/** Tags */
+
+ul.tags {
+  display: block;
+  height: 2em;
+  margin: 0;
+  padding: 0;
+
+  & > li {
+    @include border-radius($radius);
+    @include transition(all, $time-quick);
+    background: $grey;
+    border: 1px solid $grey;
+    color: $white;
+    cursor: pointer;
+    display: block;
+    font-size: 0.9em;
+    float: left;
+    list-style: none;
+    margin-right: 0.5em;
+    padding: 0 0.6em;
+    position: relative;
+    text-transform: uppercase;
+
+    &:hover {
+      @include border-radius-bottom(0);
+      background: $white;
+      border: 1px solid $blue;
+      color: $dark-blue;
+
+      ul {
+        display: block;
+      }
+    }
+
+    ul {
+      @include border-radius-bottom($radius);
+      background: $white;
+      border: 1px solid $blue;
+      display: none;
+      padding: 0;
+      position: absolute;
+      top: 0.65em;
+      left: -1px;
+      width: 200px;
+      z-index: 9000;
+
+      li {
+        color: $dark-grey;
+        list-style: none;
+        text-transform: none;
+
+        a {
+          color: $dark-grey;
+          display: block;
+          padding: 0.4em 0.5em;
+
+          &:hover {
+            color: $white;
+          }
+        }
+
+        &:hover {
+          background: $blue;
+        }
+      }
+    }
+  }
+}
+
+
+/** Dialog modal windows */
+
+.dialog {
+  @include border-radius($radius);
+  @include box-shadow(0 0 10px $grey);
+  background: $white;
+  max-width: 100%;
+  padding: 2.5em 1.5em;
+  z-index: 10000;
+
+  .dialog-actions {
+    text-align: center;
+    margin-top: 1.5em;
+
+    button {
+      margin: 0.5em;
+    }
+
+    div,
+    input {
+      display: inline-block;
+    }
+  }
+}
+
+
+/** Menus */
+
+nav {
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      @include border-radius-top($radius);
+      display: inline-block;
+      text-align: center;
+      vertical-align: bottom;
+
+      a {
+        @include border-radius-top($radius);
+        display: block;
+        height: 3em;
+        line-height: 3em;
+        min-width: 11em;
+        padding: 0 1em;
+      }
+    }
+  }
+
+  ul.main,
+  ul.sub_sub {
+    border-bottom: 2px solid $blue;
+
+    li:hover,
+    .active {
+      @include transition(background-color, $time-quick);
+      background-color: $blue;
+      color: $white;
+
+      a {
+        color: $white;
+      }
+    }
+  }
+
+  ul.sub {
+    background-color: $blue;
+    border-bottom: 2px solid $white;
+    min-height: 3em;
+
+    li:hover,
+    .active {
+      @include transition(background-color, $time-quick);
+      background-color: $white;
+      color: $dark-blue;
+
+      a {
+        color: $dark-blue;
+      }
+    }
+
+    a {
+      color: $white;
+    }
+  }
+
+  ul.sub_sub {
+    background-color: $white;
+  }
+}
+
+
+/** Dropdown menu */
+
+.dropdown {
+  @include border-radius($radius);
+  background: $white;
+  border: 1px solid $dark-blue;
+  cursor: pointer;
+  display: inline-block;
+  min-width: 200px;
+  padding: 0.5em;
+  position: relative;
+  text-align: center;
+
+  &:hover {
+    @include border-radius-bottom(0);
+
+    ul {
+      display: block;
+    }
+  }
+
+  ul {
+    @include border-radius-bottom($radius);
+    background: $white;
+    border: 1px solid $dark-blue;
+    display: none;
+    left: -1px;
+    margin: 0;
+    min-width: 200px;
+    padding: 0;
+    top: 1.95em;
+    position: absolute;
+    text-align: left;
+    z-index: 100000;
+
+    li {
+      display: block;
+      list-style: none;
+      text-align: left;
+
+      &:last-child {
+        @include border-radius-bottom($radius);
+      }
+    }
+
+    li.section {
+      padding: 0.25em;
+    }
+
+    li:not(.section) {
+      @include transition(all, $time-quick);
+
+      &:hover,
+      &.active {
+        background: $blue;
+        color: $white;
+      }
+
+      &.active {
+        padding: 0.5em 1em;
+      }
+
+      a {
+        display: block;
+        padding: 0.5em 1em;
+
+        &:hover {
+          color: $white;
+        }
+      }
+    }
+
+    .section {
+      font-size: 0.9em;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+}
