@@ -1,0 +1,3 @@
+page.call('modal_rename.close')
+page.call('window.location.reload()')
+
