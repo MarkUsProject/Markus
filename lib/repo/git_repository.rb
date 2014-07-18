@@ -680,8 +680,8 @@ module Repository
         dir_path = ""
 
         (0..pieces.length - 2).each do |index|
-          dir_path += "/" + pieces[index]
-          make_directory(txn, dir_path)
+          dir_path += pieces[index]
+          make_directory(dir_path)
         end
         make_file(txn, path,file_data)
       end
