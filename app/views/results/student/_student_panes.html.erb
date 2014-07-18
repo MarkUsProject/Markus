@@ -1,38 +1,38 @@
 <div id='panes-content'>
   <div id='panes'>
     <div id='left-pane'>
-      <div id='code_pane'>
-        <ul id='code_and_annotations_tabs' class='subsection_tabs'>
-           <li class='tab'><a href='#code_holder'><%= I18n.t('marker.source_code') %></a></li>
-           <li class='tab'><a href='#annotations_summary'><%= I18n.t('marker.annot_summary') %></a></li>
+      <div class='tab-pane' id='code_pane'>
+        <ul>
+           <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
+           <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
            <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
-              <li class='tab'><a href='#remark_request_tab'><%= I18n.t('marker.remark_request') %></a></li>
+              <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
            <% end %>
         </ul>
 
-        <div id='code_holder' class='tabbedArea'>
+        <div id='code_holder'>
           <%# For image/PDF annotations %>
           <div id='sel_box'></div>
 
           <div class='clear'></div>
-          <div id='codeviewer'></div> <!-- codeviewer -->
-        </div> <!-- End of Code holder -->
+          <div id='codeviewer'></div>
+        </div>
 
-        <div id='annotations_summary' class='tabbedArea'>
+        <div id='annotations_summary'>
           <div id='annotations_summary_head'>
-            <h3><%= I18n.t('marker.overall_comments') %></h3>
+            <h3><%= t('marker.overall_comments') %></h3>
 
             <% comment = ( old_result ? old_result.overall_comment : result.overall_comment )%>
             <p><%= simple_format(comment) %></p>
 
-            <h3><%= I18n.t('marker.current_annotations') %></h3>
-            <p><%= I18n.t('marker.across_all_submission_files') %></p>
+            <h3><%= t('marker.current_annotations') %></h3>
+            <p><%= t('marker.across_all_submission_files') %></p>
           </div>
 
           <ul id='annotation_summary_list'></ul>
-        </div> <!-- Annotations Summary -->
+        </div>
 
-        <div id='remark_request_tab' class='tabbedArea' style='display:none;'>
+        <div id='remark_request_tab'>
           <% if @current_user.student? and assignment.allow_remarks%>
             <%= render partial: 'results/student/remark_request',
                        locals: { old_result: old_result,
@@ -45,20 +45,20 @@
                                  submission: submission,
                                  assignment: assignment } %>
           <% end %>
-        </div> <!-- Remark Request -->
-      </div> <!-- Code Pane -->
+        </div>
+      </div>
     </div>
 
     <div id='drag'></div>
 
     <div id='right-pane'>
-      <div id='mark_pane'>
-        <ul id='mark_tabs' class='subsection_tabs'>
-          <li class='tab'><a href='#mark_viewer'><%= I18n.t('marker.marks.marks') %></a></li>
-          <li class='tab'><a href='#summary_viewer'><%= I18n.t('marker.marks.summary') %></a></li>
+      <div class='tab-pane' id='mark_pane'>
+        <ul>
+          <li><a href='#mark_viewer'><%= t('marker.marks.marks') %></a></li>
+          <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
         </ul>
 
-        <div id='mark_viewer' class='tabbedArea'>
+        <div id='mark_viewer'>
           <div id='mark_criteria_pane'>
             <ul id='mark_criteria_pane_list'>
               <%# Also need to render the mark per criteria (if exist) %>
@@ -69,9 +69,9 @@
                                      mark: marks_map[mark_criterion.id],
                                      old_mark: @old_marks_map[mark_criterion.id] } %>
               <% end -%>
-            </ul> <!-- Criteria Pane List -->
-          </div> <!-- Criteria Pane -->
-        </div>  <!-- Criteria Viewer -->
+            </ul>
+          </div>
+        </div>
 
         <div id='summary_viewer' class='marks_summary_pane tabbedArea'>
           <%= render partial: 'results/student/student_summary',
@@ -86,7 +86,7 @@
         </div>
 
         <div id='annotation_holder'></div>
-      </div> <!-- Mark pane -->
+      </div>
     </div>
   </div>
 </div>

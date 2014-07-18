@@ -1,16 +1,9 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
-  <%= stylesheet_link_tag('grader') %>
-  <%= javascript_include_tag 'panes.js' %>
+  <%= stylesheet_link_tag 'common/SyntaxHighlighter',
+                          'grader' %>
+  <%= javascript_include_tag 'panes',
+                             'DropDownMenu/DropDownMenu' %>
 <% end %>
-
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'livepipe/livepipe.js',
-                           'livepipe/window.js',
-                           'livepipe/tabs.js' %>
-
-<%= javascript_include_tag 'controls.js' %>
-<%= javascript_include_tag 'DropDownMenu/DropDownMenu.js'%>
 
 <% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
 <%= javascript_include_tag 'SourceCodeGlower/AnnotationText.js',
