@@ -583,6 +583,77 @@ input#extra_mark_description {
   border: 1px solid #d1d1d1;
 }
 
+.help {
+  padding: 3px 30px;
+  background: url(icons/help_icon.png) no-repeat;
+  display: inline-block;
+  height: 40px;
+  cursor: pointer;
+  float: right;
+}
+
+.title-help {
+  padding: 3px 30px;
+  background: url(icons/help_icon.png) no-repeat;
+  height: 40px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.help-message-tooltip {
+  width: 350px;
+  font-style: normal;
+  display: inline-block;
+  vertical-align: text-top;
+  word-wrap: normal;
+  margin:auto;
+  margin-right: 20px;
+  padding:auto;
+  //margin-bottom:5px;
+  margin-left: 10px;
+  background: #FFFFE0;
+  border:2px solid #E6DB55;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+
+.help-message-title {
+  font-style: normal;
+  display: inline-block;
+  vertical-align: text-top;
+  word-wrap: normal;
+  margin:auto;
+  margin-right: 20px;
+  padding:auto;
+  //margin-bottom:5px;
+  margin-left: 10px;
+  background: #FFFFE0;
+  border:2px solid #E6DB55;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.help-message-box {
+  font-style: normal;
+  width: 350px;
+  word-wrap: normal;
+  vertical-align: center;
+  float: right;
+  margin:auto;
+  padding:auto;
+  //margin-bottom:5px;
+  margin-right: 10px;
+  background: #FFFFE0;
+  border:2px solid #E6DB55;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.help-break {
+  margin-bottom: 15px;
+}
+
 .warning {
   @extend .banner;
   background: #ffffe0 url(icons/error.png) no-repeat 5px center;
@@ -1145,36 +1216,9 @@ div.align_text_right {
 #flexible_criteria_pane,
 #annotation_category_pane {
   display: inline-block;
-  padding: 0 2%;
-  width: 24%;
-}
-
-#rubric_criteria_pane .criteria_fieldset,
-#flexible_criteria_pane .criteria_fieldset,
-#annotation_category_pane .annotation_categories_fieldset {
-  @include border-radius(10px);
-  border: 1px solid #ccc;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-#rubric_criteria_pane ul,
-#flexible_criteria_pane ul{
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-#annotation_category_pane ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-#rubric_levels_pane_list,
-#annotation_category_pane_list {
-  padding-left: 10px;
+  margin-right: 5%;
+  vertical-align: top;
+  width: 25%;
 }
 
 .weight_bump_button {
@@ -1192,14 +1236,6 @@ div.align_text_right {
   width: 90%;
 }
 
-#rubric_criteria_list_title_bar,
-#flexible_criteria_list_title_bar,
-.annotation_categories_list_bar {
-  margin-bottom: 5px;
-  min-height: 15px;
-  padding-bottom: 5px;
-}
-
 #rubric_levels_pane,
 #flexible_edition_pane,
 #annotations_pane {
@@ -1213,7 +1249,7 @@ div.align_text_right {
 }
 
 #rubrics_help,
-#annotations_help{
+#annotations_help {
   font-style: italic;
   line-height: 1.6em;
 }
@@ -1225,17 +1261,8 @@ div.align_text_right {
   }
 }
 
-.criterion_holder_selected{
+.criterion_holder_selected {
   background: #ccc;
-}
-
-#rubric_criteria_pane li,
-#flexible_criteria_pane li,
-#annotation_category_pane_list li {
-  border-top: 1px solid #ccc;
-  min-height: 40px;
-  padding: 2px 0;
-  width: 100%;
 }
 
 .mark_tools form,
@@ -1252,16 +1279,9 @@ input.button_to_delete_deduction {
   padding: 2px;
 }
 
-.criterion_handle {
-  cursor: move;
-  float: left;
-  padding-left: 3px;
-}
-
 .annotation_title_div,
 .criterion_title_div,
 .annotation_category_title {
-  // float: left;
   padding: 2px 2px 0 10px;
 }
 
@@ -1337,8 +1357,6 @@ input.criterion_input_name{
 /* Annotation category*/
 
 #annotation_list_holder {
-  // padding: 0 1em;
-
   h2 {
     margin: 0;
   }

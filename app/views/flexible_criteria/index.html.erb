@@ -6,8 +6,11 @@
                            'livepipe/window.js',
                            'livepipe/tabs.js',
                            'effects.js',
-                           'dragdrop.js',
-                           'FlexibleCriteria/index' %>
+                           'dragdrop.js' %>
+
+<%= render partial: 'boot',
+           formats: [:js],
+           handlers: [:erb] %>
 
 <div id="title_bar">
   <h1><%= I18n.t("flexible_criteria.criteria_management", identifier: @assignment.short_identifier) %>
@@ -20,9 +23,9 @@
         #{remote_function url: {action: "new", id: @assignment.id}, method: 'get'}
         }|%>
     <span class="menu_bar"></span>
-      <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
+    <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
     <span class="menu_bar"></span>
-      <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
+    <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
   </div>
 </div><!-- Title bar-->
 
@@ -32,17 +35,14 @@
   <p id="new_criterion_error" class="warning" style="display: none;"></p>
 
   <div id="flexible_criteria_pane">
-    <%=  render partial: "flexible_criteria/flexible_criteria_pane" %>
+    <%= render partial: "flexible_criteria/flexible_criteria_pane" %>
   </div>
 
   <div id="flexible_edition_pane">
     <div id="flexible_edition_pane_menu">
-
-	  <%= render partial: 'flexible_criteria_manager_help' %>
-
+      <%= render partial: 'flexible_criteria_manager_help' %>
     </div>
   </div>
-
 </div>
 
 <div id="upload_dialog">

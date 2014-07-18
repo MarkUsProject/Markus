@@ -133,6 +133,7 @@ end
   ca = AnnotationCategory.new(
           :id => time,
           :assignment_id => 1,
+          :position => 1,
           :annotation_category_name => Faker::Lorem.words(
                                            rand(3) + 1
                                          ).join(" ")

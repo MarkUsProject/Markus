@@ -267,3 +267,64 @@ legend {
   width: 55%;
   min-width: 235px;
 }
+
+/** Sortable lists */
+
+.sortable {
+  @include border-radius(5px);
+  background: #fff;
+  border: 1px solid $grey;
+  width: 100%;
+
+  // Prevent text selection
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+
+  header {
+    @include border-radius-top(5px);
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    padding: 0.5em;
+  }
+
+  .right {
+    float: right;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    position: relative;
+
+    li {
+      @include transition(all, $time-quick);
+      background: url(handle@2x.png) 0.5em center no-repeat;
+      background-size: 12px 20px;
+      border-top: 1px solid $grey;
+      list-style: none;
+      min-height: 2.5em;
+      padding: 0.55em 0.5em 0.55em 2em;
+
+      &:hover {
+        background-color: $lighter-blue;
+      }
+
+      &:last-child {
+        @include border-radius-bottom(5px);
+      }
+
+      &#new_rubric_criterion,
+      &#new_flexible_criterion,
+      &#add_annotation_category {
+        background-image: none;
+
+        &:hover {
+          background-color: #fff;
+        }
+      }
+    }
+  }
+}
