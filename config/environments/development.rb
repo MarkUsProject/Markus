@@ -106,8 +106,7 @@ Markus::Application.configure do
   ###################################################################
   # Options for Repository_type are 'svn' and 'memory' for now
   # 'memory' is by design not persistent and only used for testing MarkUs
-  #REPOSITORY_TYPE = "svn" # use Subversion as storage backend
-  REPOSITORY_TYPE = "git" # use Git as storage backend
+  REPOSITORY_TYPE = "git" # use Subversion as storage backend
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
@@ -161,7 +160,6 @@ Markus::Application.configure do
   # Second, if MarkUs is configured with REPOSITORY_EXTERNAL_SUBMITS_ONLY
   # set to 'true', you can configure as to where MarkUs should write the
   # Subversion authz file.
-  #REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + "/svn_authz"
   REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + "/conf"
 
   ###################################################################
