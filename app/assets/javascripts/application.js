@@ -8,23 +8,16 @@
 //= require jquery
 //= require jquery-ui
 //= require jquery_ujs
+//= require jquery.easyModal
 
-var ModalMarkus = function (elem) {
-  this.elem = elem;
-  this.modal_dialog = jQuery(this.elem).dialog({
-    autoOpen: false,
-    resizable: false,
-    modal: true,
-    width: 'auto',
-    dialogClass: 'no-close'
-  });
-};
+function ModalMarkus(elem) {
+  this.modal_dialog = jQuery(elem).easyModal();
+}
 
-ModalMarkus.prototype = {
-  open: function () {
-    this.modal_dialog.dialog('open');
-  },
-  close: function () {
-    this.modal_dialog.dialog('close');
-  }
-};
+ModalMarkus.prototype.open = function() {
+  this.modal_dialog.trigger('openModal');
+}
+
+ModalMarkus.prototype.close = function() {
+  this.modal_dialog.trigger('closeModal');
+}
