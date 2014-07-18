@@ -25,20 +25,20 @@
       </td>
 
       <% grade_entry_student = ((@grade_entry_form.grade_entry_students.find_by_user_id(student.id)) \
-                                or (@grade_entry_form.grade_entry_students.build(:user_id => student.id))) %>
+                                or (@grade_entry_form.grade_entry_students.build(user_id: student.id))) %>
 
       <% @grade_entry_form.grade_entry_items.each do |grade_entry_item| %>
         <% grade = ((grade_entry_student.grades.find_by_grade_entry_item_id(grade_entry_item.id)) \
-                    or (grade_entry_student.grades.build(:grade_entry_item_id => grade_entry_item.id))) %>
+                    or (grade_entry_student.grades.build(grade_entry_item_id: grade_entry_item.id))) %>
         <% gid = student.id.to_s + '_' + grade_entry_item.id.to_s %>
 
         <td class="grade"><%= text_field_tag 'grade_' + gid, grade.grade,
-                            :size => 4,
-                            :class => 'grade-input',
+                            size: 4,
+                            class: 'grade-input',
                             'data-grade-entry-item-id' => grade_entry_item.id,
                             'data-student-id' => student.id,
-                            'data-action' => url_for(:action => :update_grade,
-                                              :id => @grade_entry_form.id) %></td>
+                            'data-action' => url_for(action: :update_grade,
+                                              id: @grade_entry_form.id) %></td>
       <% end %>
 
       <% if @grade_entry_form.show_total %>
@@ -46,7 +46,7 @@
           <div class="total_value" style="display:inline-block;">
             <%= text_field_tag 'total_' + student.id.to_s,
                 grade_entry_student.total_grade,
-                :size => 4, :disabled => true %>
+                size: 4, disabled: true %>
           </div>
         </td>
       <% end %>

@@ -16,11 +16,6 @@ module Markus
   # -- all .rb files in that directory are automatically loaded.
   # See Rails::Configuration for more options.
 
-  # Only load the plugins named here, in the order given. By default, all plugins
-  # in vendor/plugins are loaded in alphabetical order.
-  # :all can be used as a placeholder for all plugins not explicitly named
-  config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select ]
-
   # Javascripts files always loaded in views
   config.action_view.javascript_expansions[:defaults] = %w(prototype rails application )
 
@@ -62,6 +57,6 @@ module Markus
   config.assets.version = '1.0'
 
   # Validate passed locales
-  config.i18n.enforce_available_locales = true
+  I18n.enforce_available_locales = true
   end
 end

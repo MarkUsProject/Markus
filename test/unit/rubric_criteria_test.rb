@@ -6,7 +6,6 @@ require 'mocha/setup'
 require 'machinist'
 
 class RubricCriterionTest < ActiveSupport::TestCase
-
   should validate_presence_of :assignment_id
   should validate_numericality_of :assignment_id
   should validate_numericality_of :weight

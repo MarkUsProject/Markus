@@ -1,5 +1,5 @@
 fr:
-    choose_language:    "Langue :"
+    choose_language:    "Langue:"
     answer_yes:         "Oui"
     answer_no:          "Non"
     markus:             "MarkUs"
@@ -7,7 +7,8 @@ fr:
     password:           "Mot de passe"
     all:                "Tous"
     none:               "Aucun"
-    search:             "Recherche :"
+    search:             "Recherche:"
+    issues:             "GitHub liste des problèmes"
 
     # app/views/main/login.html.erb
     welcome_to:         "Bienvenue sur MarkUs !"
@@ -26,7 +27,7 @@ fr:
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
     clear_role_switch_session_link: "Annuler le changement d'utilisateur."
-    working:            "Chargement…"
+    working:            "Chargement"
     login_as:           "Connexion en tant que"
 
     # app/views/main/_about_content.html.erb
@@ -43,19 +44,20 @@ fr:
     markus_copyright:   "Copyright (c) 2008-2011 par les auteurs."
     markus_credits:     "Crédits"
     markus_credits_thanks:      "Merci à tous ceux qui ont contribué à MarkUs. Remerciements particuliers à :"
-    supervisors:        "Chefs de projet :"
+    supervisors:        "Chefs de projet : "
     contact_us:         "Contactez-nous"
-    email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br/>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br/>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
+    email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
     # app/views/api/_key_display.html.erb
-    api_key:            "Votre clé - API"
-    api_key_unavailable:        "Non disponible"
+    api_key:              "Votre clé - API"
+    api_key_unavailable:  "Non disponible"
     reset_api_key:        "Générer une nouvelle clé"
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Tableau de bord"
     assignments:        "Projets"
     users:              "Utilisateurs"
+    sections:           "Sections"
     home:               "Accueil"
     settings:           "Paramètres"
 
@@ -110,6 +112,7 @@ fr:
     collect_submissions:
       collect_all: "Récupérer tous les envois"
       collect_ta: "Récupérer tous les envois qui me sont assignés"
+      disable_collect: "Récupération des envois n'est pas disponible, il y a déjà un correcteur assigné aux envois."
       could_not_collect: "Les envois du projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération n'est pas encore passée."
       collection_job_started: "La récupération des envois pour le projet %{assignment_identifier} a débuté. Cela peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
       priority_given: "Une priorité importante a été donné à cet envoi. Il va bientot être prêt."
@@ -122,10 +125,12 @@ fr:
       successfully_collected: "Récupération de %{collected} envoi(s)."
       marking_incomplete_warning: "Attention: Certains rendus n'ont pas été complètement évalués.\n\nÊtes-vous sûr de vouloir continuer?"
     assignment:
+        hidden: "%{assignment_text} (masqué)"
         assignment: "Projet %{short_identifier}"
         required_fields: "Champs obligatoires <span class='required_field'>*</span>"
         short_identifier:   "Identifiant du projet<span class='required_field'>*</span>"
         name:           "Nom du projet<span class='required_field'>*</span>"
+        due_date:           "Date de retour<span class='required_field'>*</span>"
         update_success: "Projet mis à jour"
         create_success:        "Projet créé"
         error: "La règle d'envoi n'a pas pu être mise en place : #%{message}"
@@ -134,7 +139,7 @@ fr:
         edit:           "Édition du projet :"
         properties:     "Propriétés du projet"
         required_files:  "Fichiers requis"
-        submission_rules:  "Règles d'envoi<span class='required_field'>*</span>"
+        submission_rules:  "Règles d'envoi"
         required_files_read:  "Fichiers requis pour le projet."
         no_required_files_read:  "Aucun fichier n'est requis pour ce projet."
         required_files_by_student:  "Ajouter le(s) fichier(s) que les étudiants devront envoyer :"
@@ -166,13 +171,14 @@ fr:
             due_date:  "Révision de la date de retour"
             message:   "Révision des informations"
         marking_scheme:
-            title: "Barème<span class='required_field'>*</span>"
+            title: "Barème"
             rubric: "Rubrique (barème pré-défini)"
             flexible: "Flexible (barème à définir par le correcteur)"
         notice:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
-        allow_web_submits: "Envois <em>via</em> l'interface web ?<span class='required_field'>*</span>"
-        display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?<span class='required_field'>*</span>"
+        allow_web_submits: "Envois via l'interface web?"
+        is_hidden: "Cacher le projet aux étudiants ?"
+        display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
         section_due_dates_info:  "<b>Important</b> La date de retour « globale » doit être indiquée. Si une section n'a pas de date de retour spécifique, la date « globale » sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date « globale » qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
     your_mark:  "Votre note : "
@@ -181,6 +187,7 @@ fr:
     add_members:        "Ajouter des membres"
     remove_members:     "Enlever des membres"
     graders:            "Correcteurs"
+    search_graders:     "Recherche les correcteurs"
     add_graders:        "Ajouter des correcteurs"
     remove_graders:     "Enlever des correcteurs"
     admins:             "Administrateurs"
@@ -209,6 +216,7 @@ fr:
     properties:         "Propriétés"
     grades:             "Notes"
     submissions:        "Envois"
+    summaries:          "Récapitulatif"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"
     join:               "Rejoindre"
@@ -306,15 +314,16 @@ fr:
         change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"
         select_some_text: "Vous devez sélectionner du texte"
         select_an_area: "Vous devez sélectionner une zone sur l'image pour annoter"
+        provide_text:   "Vous devez fournir une annotation"
 
     #app/views/results/common
     common:
-      loading_code: "Chargement du code source…"
       submission_file: "Fichier envoyé : "
       test_results: "Résultat des tests : "
       no_file_in_repository: "[Pas de fichiers dans le dépôt]"
       cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, vérifiez que l'option permettant d'afficher les PDF est activée. Vous pouvez télécharger manuellement le fichier."
       image_downloading: "Page pdf en cours de téléchargement. Veuillez patienter."
+      highlighting: "Soulignant..."
       test_code: "Code pour les tests"
       criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé"
 
@@ -338,10 +347,10 @@ fr:
       invalid_csv: "Le format du fichier CSV n'a pas été reconnu"
 
     pagination:
-      first: "<< Première"
+      first: "≪ Première"
       prev: "< Précédente"
-      next: "Suivante"
-      last: "Dernière"
+      next: "Suivante >"
+      last: "Dernière ≫"
       per_page: "par page"
       jump_to: "Aller à la page : "
       show: "Afficher"
@@ -397,11 +406,26 @@ fr:
       replace:              "Remplace"
       delete:               "Supprimer"
       can_begin_grading:    "Peut être évaluée"
+      error_collecting:     "Il y avait des erreurs en ramassant les submissions."
       section:              "Section"
       collect_work_for_section: "Récupérer les envois pour la section :"
       download_groupings_files: "Télécharger tous les envois"
       sections:             "Section :"
       revision_history:     "%{num} : "
+
+    summaries_index:
+      group_name:           "Nom du groupe"
+      repository:           "Répertoire"
+      repository_name:      "Répertoire : %{repository}"
+      commit_date:          "Date d'envoi (commit)"
+      marking_state:        "Affichage de la note"
+      grace_credits_used:   "Utilisation des \"grace credits\""
+      final_grade:          "Note finale"
+      criterion:             "critère"
+      per_page:             "par page"
+      filename:             "Fichier"
+      section:              "Section"
+      sections:             "Section :"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -453,8 +477,8 @@ fr:
                              <ul><li>les deux lignes du haut spécifient le nom de la note et le total ;</li>
                              <li>une ligne pour chaque étudiant(e) ;</li>
                              <li>chaque ligne doit être terminée par un retour charriot.</li></ul>
-                             <code>\"\",q1_name,q2_name,q3_name</code><br/>
-                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br/>
+                             <code>\"\",q1_name,q2_name,q3_name</code><br>
+                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "Il n'y a pas de feuille de notes pour le moment."
@@ -468,11 +492,13 @@ fr:
 
     groups:
       groups: "Groupes"
+      search_groups: "Rechercher les groupes"
       add_new: "Nouvelle groupe"
       manage_groups: "Gérer les groupes"
       all_students: "Tous les étudiants(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Non assigné(s)(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigné(s)(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inactif(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Utiliser les groupes d'un autre projet"
       graders: "Correcteurs (%{graders})"
       all_grouping_counts: "Tous (<span id=\"all_groupings_count\"></span>)"
@@ -481,7 +507,6 @@ fr:
       problem: "Il y a un problème…"
       warning: "Attention"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
-      loading_list: "Chargement de la liste…"
       editing_past_due_date_warning: " La date de retour de ce projet est passée. En conséquence, à part ajouter des correcteurs aux groupes, il n'est pas recommandé d'effectuer d'autres modifications."
       validate: "Valider ce groupe : "
       validate_confirm: "Ceci autorisera ce groupe à poster sans avoir le nombre requis d'étudiants. Est-ce correct ?"
@@ -504,15 +529,15 @@ fr:
       upload:
         upload: "Envoi"
         upload_groups_file: "Envoyer un fichier contenant des groupes"
-        description: "Format du fichier CSV : <br />
-            <code>group_name,repository_name,user_name,<br />user_name ... </code><br />"
+        description: "Format du fichier CSV : <br>
+            <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Importer les groupes par un fichier CSV dans MarkUs va detruire tous les groupes existants ! "
         upload_grader_map: "Envoi de groupes / Attribution des correcteurs"
         upload_grader_criteria_map: "Envoyer un fichier de critères / attribution des correcteurs"
-        description_grader_map: "Format du fichier CSV : <br />
-            <code>group_name,grader_user_name,grader_user_name,... </code><br />"
-        description_grader_criteria_map: "Format du fichier CSV : <br />
-                       <code>criterion_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "Format du fichier CSV : <br>
+            <code>group_name,grader_user_name,grader_user_name,... </code><br>"
+        description_grader_criteria_map: "Format du fichier CSV : <br>
+                       <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
         download: "Télécharger la liste des groupes"
         download_groups_file: "Télécharger groupes"
@@ -565,6 +590,7 @@ fr:
         error: "Erreur dans la mise à jour de l'étudiant(e)"
       create_success: "L'étudiant(e) %{user_name} a bien été créé(e)."
       students: "Étudiants"
+      search_students: "Rechercher les étudiants"
       no_students_selected: "Aucun(e) étudiant(e) n'étant sélectionné(e), aucun changement n'a été effectué."
       upload:
         upload_a_class_list: "Envoyer une liste d'étudiants"
@@ -591,7 +617,7 @@ fr:
       group_information: "Informations sur le groupe"
       group_not_valid: "Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment."
       overview: "Vue d'ensemble"
-      last_revision_date: "Dernière révision : <br /><span class=\"info_date\">%{last_modified_date}</span>"
+      last_revision_date: "Dernière révision : <br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "Fichiers"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> fichier(s) requis sont manquants</span>"
       no_submission_yet: "Vous n'avez encore rien envoyé"
@@ -661,17 +687,18 @@ fr:
 
     #Graders' View
     graders:
-      create_new_grader: "Créer un nouveau correcteur"
-      edit_grader:       "Modifier un correcteur"
-      manage_graders: "Gestion des correcteurs"
-      graders:        "Correcteurs"
+      create_new_grader:  "Créer un nouveau correcteur"
+      edit_grader:        "Modifier un correcteur"
+      manage_graders:     "Gestion des correcteurs"
+      graders:            "Correcteurs"
       all_graders:        "Tous les correcteurs"
       assigned_graders:   "Correcteurs assignés"
       possible_graders:   "Correcteurs possibles"
       unassigned_graders: "Correcteurs non assignés"
       not_covered:        "Pas couvert"
       covered:            "Couvert"
-      coverage: "Couverture"
+      coverage:           "Couverture"
+      search_criteria:    "Rechercher les critères"
       assign_to_criteria: "Attribuer les correcteurs aux critères"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
       upload:
@@ -693,10 +720,10 @@ fr:
       #upload:
       download:
         download_grader_students_csv: "Étudiants / attribution des correcteurs CSV"
-      upload: 
+      upload:
         upload_grader_map: "Envoi de étudiants / Attribution des correcteurs"
-        description_grader_map: "Format du fichier CSV : <br />
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "Format du fichier CSV : <br>
+            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     #Admins' View
     admins:
@@ -799,13 +826,13 @@ fr:
         upload_annotations: "Envoi d'annotations"
         upload_message_csv: "
         <p>
-            Sélectionner un fichier CSV formaté comme suit : <br />
-            <code>category_name,annotation_text,annotation_text … </code><br />
+            Sélectionner un fichier CSV formaté comme suit : <br>
+            <code>category_name,annotation_text,annotation_text … </code><br>
           </p>"
         upload_message_yml: "
         <p>
-            Sélectionner un fichier YAML formaté comme suit :<br />
-            <code>category_name: <br />- category_text<br />- category_text</code><br />
+            Sélectionner un fichier YAML formaté comme suit :<br>
+            <code>category_name: <br>- category_text<br>- category_text</code><br>
 
           </p>"
         success:  "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
@@ -910,8 +937,8 @@ fr:
       weight_not_number: "le coefficient n'est pas un nombre."
 
     csv_special_characters_html: "
-    <p>Si vous souhaitez utiliser des virgules (,) dans un champ CSV, il faut placer tout le contenu du champ dans des doubles quotes ou guillemets droits (\").<br />
-    Si vous souhaitez utiliser des double quotes (ou guillemets droits) dans un champ CSV, il faut placer tout le contenu du champ dans des double quotes et<br />
+    <p>Si vous souhaitez utiliser des virgules (,) dans un champ CSV, il faut placer tout le contenu du champ dans des doubles quotes ou guillemets droits (\").<br>
+    Si vous souhaitez utiliser des double quotes (ou guillemets droits) dans un champ CSV, il faut placer tout le contenu du champ dans des double quotes et<br>
     doubler chaque double quotes (\"\").</p>
     <p>Voici un exemple d'un champ CSV contenant des virgules et des doubles quotes :</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
@@ -964,7 +991,7 @@ fr:
         <p>Le fichier devra être au format suivant : </p>
         <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br />
+        <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br>
         et <em>level_descriptions</em> doi contenir la description de chaque niveau (optionnel,
         séparé aussi par les virgules)."
       error_total: "total weight must be positive"
@@ -1082,9 +1109,13 @@ fr:
         long_ordinal: "%e %B %Y"
         only_day: "%e"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d %B %Y à %H:%M"
+        long_date: "%A %d %B %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
+        locale_date:      "DD d MM yy"
+        locale_date_only: "DD d MM yy"
+        js_date_time:     "dddd D MMMM YYYY HH:mm"
+        js_date:          "dddd D MMMM YYYY"
 
       day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
       abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
@@ -1094,6 +1125,9 @@ fr:
         - day
         - month
         - year
+      months:       ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+      weekdays:     ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
+      weekdays_min: ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam']
 
     time:
       formats:
@@ -1104,13 +1138,20 @@ fr:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d %B %Y à %H:%M"
+        long_date: "%A %d %B %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
         ant_date: "%d-%B-%Y_%H:%M"
+        locale_time: "HH:mm"
       am: 'am'
       pm: 'pm'
+      hour:   "Heure"
+      minute: "Minute"
+      time:   "Temps"
+      next:   "Suivante"
+      prev:   "Précédente"
+      close:  "Fermer"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."
@@ -1153,7 +1194,7 @@ fr:
       due_date_is_passed: "Vous ne pouvez pas exécuter de test après la date de retour."
       information: "Information"
       run_tests: "Exécuter les tests."
-      need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test.<br />
+      need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test.<br>
                       Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
       collect_and_test: "Récupérer et préparer test"
       build_xml: "build.xml"

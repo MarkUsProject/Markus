@@ -1,36 +1,37 @@
-<div id="standby_highlighting" >
-  Standby - Highlighting...
+<div id='standby_highlighting'>
+  <%= t('common.highlighting') %>
 </div>
-<pre id="code" name="code" class="<%=(@code_type)%>" cols="80" rows="50">
-<% # The "h" before the filetext allows us to escape HTML/Javascript strings %>
+<pre id='code' name='code' class='<%= @code_type %>' cols='80' rows='50'>
+  <%# This can't be indented, because the indention is preserved and shown in the code %>
 <%= file_contents %>
 </pre>
 
-
-<script type="text/javascript">
+<script>
 //<![CDATA[
-    dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';
-    dp.SyntaxHighlighter.HighlightAll('code');
-    $('standby_highlighting').hide();
-    if ($('annotation_menu') != null){
-      $('annotation_menu').show();
-    }
-    source_code_ready();
+  dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';
+  dp.SyntaxHighlighter.HighlightAll('code');
 
-    <% if (defined? annots) %>
-        <% annots.each do |annot| %>
-            add_annotation_text(<%=annot.annotation_text.id%>,
-            '<%=simple_format(escape_javascript(annot.annotation_text.content.to_s))%>');
-            add_annotation(<%=annot.id%>, $R(<%= annot.line_start %>, <%= annot.line_end %>),
-             '<%=annot.annotation_text.id%>');
+  document.getElementById('standby_highlighting').style.display = 'none';
 
-        <% end %>
+  var annotation_menu = document.getElementById('annotation_menu');
+  if (annotation_menu) {
+    annotation_menu.style.display = 'block';
+  }
+
+  source_code_ready();
+
+  <% if (defined? annots) %>
+    <% annots.each do |annot| %>
+      add_annotation_text(<%= annot.annotation_text.id %>,
+                          '<%= simple_format(escape_javascript(annot.annotation_text.content.to_s)) %>');
+      add_annotation(<%= annot.id %>,
+                     { start: <%= annot.line_start %>, end: <%= annot.line_end %> },
+                     '<%= annot.annotation_text.id %>');
     <% end %>
+  <% end %>
 
-
-    <% if !@focus_line.nil? %>
-      focus_source_code_line(<%=@focus_line%>);
-    <% end %>
+  <% if !@focus_line.nil? %>
+    focus_source_code_line(<%= @focus_line %>);
+  <% end %>
 //]]>
 </script>
-

@@ -9,28 +9,30 @@
 source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem 'rails', '3.2.16'
-gem 'rubyzip', '0.9.9'
+gem 'rails', '3.2.18'
+gem 'rubyzip'
 gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
-gem 'fastercsv', :platforms => :ruby_18
 gem 'dynamic_form'
-# FIXME: The 'exception_notification' gem version 4
-# is not compatible with Rails 3.0.x
-gem 'exception_notification', '<4.0'
-gem 'minitest',"4.7.5", :platforms => :ruby_20
-
+gem 'exception_notification'
+gem 'minitest',"4.7.5", platforms: :ruby_20
+gem 'auto_complete'
 gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
 gem 'prototype-rails' # FIXME: Will be needed with Rails3.1
+gem 'rugged'
+gem 'gitolite'
 
 group :assets do
   gem 'tilt', '~> 1.3.7'
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
   gem 'uglifier',     '>= 1.0.3'
+  gem 'execjs'
+  gem 'libv8'
+  gem 'therubyracer'
 end
 
 
@@ -58,27 +60,38 @@ group :sqlite do
   gem 'sqlite3'
 end
 
-# Other development related required gems. You don't need them
-# for production.
-group :development, :test do
-  gem 'rdoc'
-  gem 'iconv', :platforms => :mri_20
-  gem 'rcov', :platforms => :mri_18
-  gem 'simplecov', :platforms => [:mri_19,:mri_20]
-  # FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
-  # we have to fix before doing an upgrade
-  gem 'shoulda', '<3.4'
-  # FIXME: shoulda-matchers (>= 2) is incompatible with Ruby 1.8
-  # Remove next line once MarkUs will not support Ruby 1.8,
-  # as shoulda-matchers is a dependency of shoulda
-  gem 'shoulda-matchers', '~>1.5'
+# Gems only used for development should be listed here so that they
+# are not loaded in other environments.
+group :development do
+  gem 'quiet_assets'
+  gem 'better_errors'
+  gem 'binding_of_caller'
+end
+
+group :test do
+  gem 'simplecov'
+  gem 'shoulda'
   gem 'machinist', '< 2'
-  gem 'faker'
-  gem 'railroady'
   gem 'time-warp'
-  gem 'ruby-debug', :platforms => :mri_18
-  gem 'debugger', :platforms =>  [:mri_19,:mri_20]
-  gem 'mocha', :require => false
+  gem 'mocha', require: false
+  gem 'rspec-rails', '~> 3.0'
+  gem 'factory_girl_rails'
+end
+
+# Gems needed (wanted) for both development and test can be
+# listed here
+group :development, :test do
+  gem 'faker' # required for database seeding
+  gem 'debugger', :platforms => :mri_19
+  gem 'byebug', :platforms => [:mri_20, :mri_21]
+end
+
+# Gems not needed at runtime should go here so that MarkUs does
+# not waste time/memory loading them during boot
+group :offline do
+  gem 'rdoc'
+  gem 'railroady'
+  gem 'thin'
 end
 
 # If you  plan to use unicorn servers for production
@@ -93,8 +106,5 @@ end
 # installed for rghost to work well. You also need to set
 # the PDF_SUPPORT bool to true in the config file(s).
 group :rghost do
-  gem 'rghost'
+  gem 'rghost', '<=0.9.3'
 end
-
-gem 'rugged'
-gem 'gitolite'

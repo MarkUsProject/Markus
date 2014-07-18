@@ -4,8 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 require 'shoulda'
 require 'machinist'
 require 'mocha/setup'
-
-
+require 'set'
 
 class GroupingTest < ActiveSupport::TestCase
 
@@ -162,7 +161,6 @@ class GroupingTest < ActiveSupport::TestCase
         end
         assert(!@grouping.deletable_by?(non_inviter))
       end
-
     end
 
     context 'with a pending membership' do
@@ -204,11 +202,12 @@ class GroupingTest < ActiveSupport::TestCase
       end
     end
 
-    context 'with a ta assigned to grade' do
+    context 'with TAs assigned' do
+      ta_count = 3
+
       setup do
-        @membership = TaMembership.make(
-          :grouping => @grouping)
-        @ta = @membership.user
+        @tas = Array.new(ta_count) { Ta.make }
+        @grouping.add_tas(@tas)
       end
 
       should 'have a ta for marking' do
@@ -216,22 +215,22 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
       should 'get ta names' do
-        assert_equal @ta.user_name,
+        assert_equal @tas[0].user_name,
                      @grouping.get_ta_names[0]
       end
 
-      should 'not be able to assign same ta twice' do
-        assert_equal 1, @grouping.ta_memberships.count
-        @grouping.add_tas(@ta)
-        assert_equal 1, @grouping.ta_memberships.count
+      should 'not be able to assign same TAs twice' do
+        @grouping.reload
+        assert_equal 3, @grouping.ta_memberships.count
+        @grouping.add_tas(@tas)
+        assert_equal 3, @grouping.ta_memberships.count
       end
 
       should 'be able to remove ta' do
-        @grouping.remove_tas(@ta)
+        @grouping.remove_tas(@tas)
         assert_equal 0, @grouping.ta_memberships.count
 
       end
-
     end
 
 
@@ -638,27 +637,26 @@ class GroupingTest < ActiveSupport::TestCase
     setup do
       @assignment = Assignment.make(:due_date => Time.parse('July 22 2009 5:00PM'))
       @group = Group.make
-      @grouping = Grouping.make(:assignment => @assignment, :group => @group)
+      pretend_now_is(Time.parse('July 21 2009 5:00PM')) do
+        @grouping = Grouping.make(assignment: @assignment, group: @group)
+      end
     end
 
     teardown do
       destroy_repos
     end
 
-    context 'without sections' do
+    context 'without sections before due date' do
 
       should 'before due_date' do
         submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, world!')
         assert !@grouping.past_due_date?
       end
 
-      should 'after due_date' do
-        submit_file_at_time('July 28 2009 5:00PM', 'my_file', 'Hello, World!')
-        assert @grouping.past_due_date?
-      end
+
     end
 
-    context 'with sections' do
+    context 'with sections before due date' do
       setup do
         @assignment.section_due_dates_type = true
         @assignment.save
@@ -681,12 +679,38 @@ class GroupingTest < ActiveSupport::TestCase
         submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
         assert @grouping.past_due_date?
       end
+    end
+
+    context 'without sections after due date' do
+      setup do
+        @assignment = Assignment.make(due_date: Time.parse('July 22 2009 5:00PM'))
+        @group = Group.make
+        pretend_now_is(Time.parse('July 28 2009 5:00PM')) do
+          @grouping = Grouping.make(assignment: @assignment, group: @group)
+        end
+      end
+
+      should 'after due_date' do
+        submit_file_at_time('July 28 2009 5:00PM', 'my_file', 'Hello, World!')
+        assert @grouping.past_due_date?
+      end
+    end
+
+    context 'with sections after due date' do
+      setup do
+        @assignment.section_due_dates_type = true
+        @assignment.save
+        @section = Section.make
+        StudentMembership.make(user: Student.make(section: @section),
+                               grouping: @grouping,
+                               membership_status: StudentMembership::STATUSES[:inviter])
+      end
 
       should 'after due_date and before section due_date' do
         SectionDueDate.make(:section => @section, :assignment => @assignment,
                             :due_date => Time.parse('July 30 2009 5:00PM'))
         submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
-        assert @grouping.past_due_date?
+        assert !@grouping.past_due_date?
       end
 
       should 'after due_date and after section due_date' do
@@ -737,5 +761,4 @@ class GroupingTest < ActiveSupport::TestCase
     txn.add(path, file_contents, '')
     txn
   end
-
 end

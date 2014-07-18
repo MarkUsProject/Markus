@@ -36,7 +36,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     should "be able to open an existing Subversion repository" do
       SubversionRepository.create(TEST_REPO)
       repo = SubversionRepository.open(TEST_REPO)
-      assert_not_nil(repo, "Cannot open supversion repository")
+      assert_not_nil(repo, "Cannot open subversion repository")
       assert_instance_of(Repository::SubversionRepository,
                          repo,
                          "Repository is of wrong type")
@@ -385,7 +385,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       FileUtils.remove_dir(SVN_TEST_REPOS_DIR + "/Testrepo1", true)
       FileUtils.remove_dir(SVN_TEST_REPOS_DIR + "/Repository2", true)
       FileUtils.remove_dir(TEST_REPO, true)
-      FileUtils.rm(SVN_AUTHZ_FILE, :force => true)
+      FileUtils.rm(SVN_AUTHZ_FILE, force: true)
       # have a clean authz file
       FileUtils.cp(SVN_AUTHZ_FILE + '.orig', SVN_AUTHZ_FILE)
       # create repository first
@@ -422,7 +422,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       SubversionRepository.delete(SVN_TEST_REPOS_DIR + "/Testrepo1")
       SubversionRepository.delete(SVN_TEST_REPOS_DIR + "/Repository2")
       SubversionRepository.delete(TEST_REPO)
-      FileUtils.rm(SVN_AUTHZ_FILE, :force => true)
+      FileUtils.rm(SVN_AUTHZ_FILE, force: true)
     end
 
     should "be able to get permissions for a user" do

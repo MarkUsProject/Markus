@@ -1,10 +1,14 @@
 class ResultsController < ApplicationController
-  before_filter      :authorize_only_for_admin, :except => [:codeviewer,
-  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark]
-  before_filter      :authorize_for_ta_and_admin, :only => [:edit,
-  :update_mark, :create, :add_extra_mark, :download, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark]
-  before_filter      :authorize_for_user, :only => [:codeviewer]
-  before_filter      :authorize_for_student, :only => [:view_marks]
+  before_filter :authorize_only_for_admin,
+                except: [:codeviewer, :edit, :update_mark, :view_marks, :create,
+                         :add_extra_mark, :next_grouping,
+                         :update_overall_comment, :remove_extra_mark]
+  before_filter :authorize_for_ta_and_admin,
+                only: [:edit, :update_mark, :create, :add_extra_mark, :download,
+                       :next_grouping, :update_overall_comment,
+                       :remove_extra_mark]
+  before_filter :authorize_for_user, only: [:codeviewer]
+  before_filter :authorize_for_student, only: [:view_marks]
 
   def create
     # Create new Result for this Submission
@@ -24,7 +28,7 @@ class ResultsController < ApplicationController
     new_result.submission = @submission
     new_result.marking_state = Result::MARKING_STATES[:partial]
     new_result.save
-    redirect_to :action => 'edit', :id => new_result.id
+    redirect_to action: 'edit', id: new_result.id
   end
 
   def index
@@ -50,7 +54,7 @@ class ResultsController < ApplicationController
     @marks_map = []
     @rubric_criteria.each do |criterion|
       mark = Mark.find_or_create_by_result_id_and_rubric_criterion_id(@result.id, criterion.id)
-      mark.save(:validate => false)
+      mark.save(validate: false)
       @marks_map[criterion.id] = mark
     end
 
@@ -79,9 +83,9 @@ class ResultsController < ApplicationController
   def next_grouping
     grouping = Grouping.find(params[:id])
     if grouping.has_submission?
-      redirect_to :action => 'edit', :id => grouping.get_submission_used.get_latest_result.id
+      redirect_to action: 'edit', id: grouping.get_submission_used.get_latest_result.id
     else
-      redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
+      redirect_to controller: 'submissions', action: 'collect_and_begin_grading', id: grouping.assignment.id, grouping_id: grouping.id
     end
   end
 
@@ -91,10 +95,10 @@ class ResultsController < ApplicationController
       file_contents = retrieve_file(file)
     rescue Exception => e
       flash[:file_download_error] = e.message
-      redirect_to :action => 'edit', :id => file.submission.get_latest_result.id
+      redirect_to action: 'edit', id: file.submission.get_latest_result.id
       return
     end
-    send_data file_contents, :disposition => 'inline', :filename => file.filename
+    send_data file_contents, disposition: 'inline', filename: file.filename
   end
 
   def codeviewer
@@ -158,7 +162,7 @@ class ResultsController < ApplicationController
     @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
-      redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
+      redirect_to controller: 'assignments', action: 'student_interface', id: params[:id]
       return
     end
 
@@ -198,7 +202,7 @@ class ResultsController < ApplicationController
     @marks_map = []
     @rubric_criteria.each do |criterion|
       mark = Mark.find_or_create_by_result_id_and_rubric_criterion_id(@result.id, criterion.id)
-      mark.save(:validate => false)
+      mark.save(validate: false)
       @marks_map[criterion.id] = mark
     end
   end
@@ -259,7 +263,7 @@ class ResultsController < ApplicationController
       end
     else
       output = {'status' => 'error'}
-      render :json => output.to_json
+      render json: output.to_json
     end
   end
 
@@ -267,28 +271,6 @@ class ResultsController < ApplicationController
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
-  end
-
-  def expand_criteria
-    @assignment = Assignment.find(params[:aid])
-    @rubric_criteria = @assignment.rubric_criteria
-    render :partial => 'results/marker/expand_criteria', :locals => {:rubric_criteria => @rubric_criteria}
-  end
-
-  def collapse_criteria
-    @assignment = Assignment.find(params[:aid])
-    @rubric_criteria = @assignment.rubric_criteria
-    render :partial => 'results/marker/collapse_criteria', :locals => {:rubric_criteria => @rubric_criteria}
-  end
-
-  def expand_unmarked_criteria
-    @assignment = Assignment.find(params[:aid])
-    @rubric_criteria = @assignment.rubric_criteria
-    @result = Result.find(params[:rid])
-    # nil_marks are the marks that have a "nil" value for Mark.mark - so they're
-    # unmarked.
-    @nil_marks = @result.marks.all(:conditions => {:mark => nil})
-    render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks}
   end
 
   private

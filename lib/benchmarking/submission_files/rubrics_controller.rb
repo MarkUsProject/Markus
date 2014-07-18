@@ -9,7 +9,7 @@ class RubricsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:id])
-    @criteria = @assignment.rubric_criteria(:order => 'position')
+    @criteria = @assignment.rubric_criteria(order: 'position')
   end
 
   def edit
@@ -46,7 +46,7 @@ class RubricsController < ApplicationController
     return unless request.delete?
     @criterion = RubricCriterion.find(params[:id])
      #delete all marks associated with this criterion
-    Mark.delete_all(['rubric_criterion_id = :c', {:c => @criterion.id}])
+    Mark.delete_all(['rubric_criterion_id = :c', {c: @criterion.id}])
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
   end
@@ -60,7 +60,7 @@ class RubricsController < ApplicationController
      when 'yml'
        file_out = create_yml_rubric(@assignment)
      end
-     send_data(file_out, :type => 'text/csv', :disposition => 'inline')
+     send_data(file_out, type: 'text/csv', disposition: 'inline')
    end
 
    #given an assignment, return the names of the levels in the assignment's
@@ -148,7 +148,7 @@ class RubricsController < ApplicationController
 
 
 
-    redirect_to :action => 'index', :id => @assignment.id
+    redirect_to action: 'index', id: @assignment.id
    end
 
    def parse_csv_rubric(file, assignment)
@@ -225,15 +225,21 @@ class RubricsController < ApplicationController
 
   #This method handles the drag/drop RubricCriteria sorting
   def update_positions
-    params[:rubric_criteria_pane_list].each_with_index do |id, position|
+    unless request.post?
+      render nothing: true
+      return
+    end
+
+    @assignment = Assignment.find(params[:assignment_id])
+    @criteria = @assignment.rubric_criteria
+    position = 0
+
+    params[:criterion].each do |id|
       if id != ''
-        RubricCriterion.update(id, :position => position+1)
+        position += 1
+        RubricCriterion.update(id, position: position)
       end
     end
-    render :nothing => true
   end
 
 end
-
-
-

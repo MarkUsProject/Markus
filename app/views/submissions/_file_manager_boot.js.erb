@@ -31,10 +31,12 @@ document.observe("dom:loaded", function() {
     }
   });
 
-  new Ajax.Request('<%= populate_file_manager_assignment_submissions_path(:id => @assignment.id,
-                               :path => @path) %>',
+  new Ajax.Request('<%= populate_file_manager_assignment_submissions_path(id: @assignment.id,
+                               path: @path) %>',
                    {asynchronous:true, evalScripts:true,
-                   onComplete:function(request){$('loading_list').hide();},
+                   onComplete:function(request){
+                      document.getElementById('working').style.display = 'none';
+                    },
                    parameters: 'authenticity_token=' + AUTH_TOKEN})
 
 });

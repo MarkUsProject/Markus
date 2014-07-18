@@ -1,7 +1,6 @@
 require File.expand_path(File.join(File.expand_path(File.dirname(__FILE__)), 'authenticated_controller_test'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
-include CsvHelper
 require 'shoulda'
 require 'mocha/setup'
 
@@ -694,7 +693,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert !@response.body.empty?
         end
         should 'return the expected CSV' do
-          assert_equal @match_array, CsvHelper::Csv.parse(@response.body)
+          assert_equal @match_array, CSV.parse(@response.body)
         end
         should 'route properly' do
           assert_recognizes({:controller => 'groups', :assignment_id => '1', :action => 'download_grouplist' },
@@ -720,7 +719,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert !@response.body.empty?
         end
         should 'return the expected CSV, without TAs included' do
-          assert_equal @match_array, CsvHelper::Csv.parse(@response.body)
+          assert_equal @match_array, CSV.parse(@response.body)
         end
         should 'route properly' do
           assert_recognizes({:controller => 'groups', :assignment_id => '1', :action => 'download_grouplist' },

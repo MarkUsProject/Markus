@@ -1,2 +1,2 @@
-page.redirect_to :controller => 'assignments', :action =>
-'student_interface', :id => @assignment.id
+page.redirect_to controller: 'assignments', action:
+'student_interface', id: @assignment.id

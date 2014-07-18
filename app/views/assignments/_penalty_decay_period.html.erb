@@ -13,16 +13,16 @@
     <%= pf.fields_for :periods, penalty_decay_period do |f| %>
 			<p>
         <%= f.label :deduction, t("submission_rules.penalty_decay_period_submission_rule.deduct") + ":" %>
-        <%= f.text_field :deduction, :size => 1 %>%
+        <%= f.text_field :deduction, size: 1 %>%
       </p>
 			<p>
         <%= f.label :interval, t("submission_rules.penalty_decay_period_submission_rule.every") %>
-        <%= f.text_field :interval, :size => 1 %>
+        <%= f.text_field :interval, size: 1 %>
         <%= t("submission_rules.penalty_decay_period_submission_rule.hours") %>
       </p>
       <p>
         <%= f.label :hours, t("submission_rules.penalty_decay_period_submission_rule.for") %>
-        <%= f.text_field :hours, :size => 1, :class => "PeriodDeltaChain_Hours", :onchange => "if(penalty_decay_periods) { penalty_decay_periods.refresh(); }" %>
+        <%= f.text_field :hours, size: 1, class: "PeriodDeltaChain_Hours", onchange: "if(penalty_decay_periods) { penalty_decay_periods.refresh(); }" %>
         <%= t("submission_rules.penalty_decay_period_submission_rule.hours") %>
       </p>
       <div>

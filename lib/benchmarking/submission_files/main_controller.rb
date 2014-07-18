@@ -5,7 +5,7 @@ class MainController < ApplicationController
 
   include MainHelper
   # check for authorization
-  before_filter      :authorize_for_user,      :except => [:login]
+  before_filter      :authorize_for_user,      except: [:login]
 
   #########################################################################
   # Authentication
@@ -20,10 +20,10 @@ class MainController < ApplicationController
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
       if @current_user.student?
-        redirect_to :controller => 'assignments', :action => 'index'
+        redirect_to controller: 'assignments', action: 'index'
         return
       else
-        redirect_to :action => 'index'
+        redirect_to action: 'index'
         return
       end
     end
@@ -34,7 +34,7 @@ class MainController < ApplicationController
     blank_login = params[:user_login].blank?
     blank_pwd = params[:user_password].blank?
     flash[:login_notice] = get_blank_message(blank_login, blank_pwd)
-    redirect_to(:action => 'login') && return if blank_login || blank_pwd
+    redirect_to(action: 'login') && return if blank_login || blank_pwd
 
     # authenticate user
     if User.authenticated?(params[:user_login], params[:user_password])
@@ -55,7 +55,7 @@ class MainController < ApplicationController
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
       flash[:login_notice] = 'This account has been disabled'
-      redirect_to(:action => 'login') && return
+      redirect_to(action: 'login') && return
     end
 
     self.current_user = found_user
@@ -65,7 +65,7 @@ class MainController < ApplicationController
       session[:redirect_uri] = nil
       refresh_timeout
       # redirect to last visited page or to main page
-      redirect_to( uri || { :action => 'index' } )
+      redirect_to( uri || { action: 'index' } )
     else
       flash[:login_notice] = 'Login failed.'
     end
@@ -76,16 +76,16 @@ class MainController < ApplicationController
     clear_session
     cookies.delete :auth_token
     reset_session
-    redirect_to :action => 'login'
+    redirect_to action: 'login'
   end
 
   def index
     @current_user = current_user
     if @current_user.student? or  @current_user.ta?
-      redirect_to :controller => 'assignments', :action => 'index'
+      redirect_to controller: 'assignments', action: 'index'
       return
     end
-    render :index, :layout => 'content'
+    render :index, layout: 'content'
   end
 
 end

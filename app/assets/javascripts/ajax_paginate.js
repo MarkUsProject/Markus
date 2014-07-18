@@ -26,12 +26,12 @@ function ap_select_none() {
   $('ap_select_full').setValue('false');
 }
 
-function ap_thinking_start(table_name) { 
+function ap_thinking_start(table_name) {
   ap_select_none();
   $(table_name).update('');
-  $('ap_thinking').show();
+  document.getElementById('working').style.display = '';
 }
 
 function ap_thinking_stop() {
-  $('ap_thinking').hide();
+  document.getElementById('working').style.display = 'none';
 }

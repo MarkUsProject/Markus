@@ -18,12 +18,12 @@
 # process communication bypassing the need for pipes or signals.
 class SubmissionCollector < ActiveRecord::Base
 
-  has_many :grouping_queues, :dependent => :destroy
+  has_many :grouping_queues, dependent: :destroy
 
-  validates_numericality_of :child_pid, :only_integer => true,
-    :allow_nil => true
+  validates_numericality_of :child_pid, only_integer: true,
+    allow_nil: true
 
-  validates_inclusion_of :stop_child, :in => [true, false]
+  validates_inclusion_of :stop_child, in: [true, false]
 
   #Always use the instance method to get an object of this class, never call
   #new or create directly
@@ -38,8 +38,8 @@ class SubmissionCollector < ActiveRecord::Base
   #Get two fresh grouping_queues
   def init_queues
     self.grouping_queues.clear
-    self.grouping_queues.create(:priority_queue => false)
-    self.grouping_queues.create(:priority_queue => true)
+    self.grouping_queues.create(priority_queue: false)
+    self.grouping_queues.create(priority_queue: true)
   end
 
   #Add all the groupings belonging to assignment to the grouping queue
@@ -174,11 +174,18 @@ class SubmissionCollector < ActiveRecord::Base
     # Apply the SubmissionRule
     new_submission = assignment.submission_rule.apply_submission_rule(
       new_submission)
-    #convert any pdf submission files to jpgs
+    #convert any pdf submission files to jpgs, catching any errors
     new_submission.submission_files.each do |subm_file|
       subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
+      if subm_file.error_converting
+        grouping.error_collecting = true
+      end
     end
-    grouping.is_collected = true
+    
+    unless grouping.error_collecting
+      grouping.is_collected = true
+    end
+
     remove_grouping_from_queue(grouping)
     grouping.save
   end

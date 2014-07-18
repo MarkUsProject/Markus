@@ -5,48 +5,48 @@ class GradeEntryFormsController < ApplicationController
   include GradeEntryFormsHelper
 
   before_filter :authorize_only_for_admin,
-                :except => [:student_interface,
+                except: [:student_interface,
                             :grades,
                             :g_table_paginate,
                             :csv_download,
                             :csv_upload,
                             :update_grade]
   before_filter :authorize_for_ta_and_admin,
-                :only => [:grades,
+                only: [:grades,
                           :g_table_paginate,
                           :csv_download,
                           :csv_upload,
                           :update_grade]
   before_filter :authorize_for_student,
-                :only => [:student_interface]
+                only: [:student_interface]
 
   # Filters will be added as the student UI is implemented (eg. Show Released,
   # Show All,...)
-  G_TABLE_PARAMS = {:model => GradeEntryStudent,
-                    :per_pages => [15, 30, 50, 100, 150],
-                    :filters => {
+  G_TABLE_PARAMS = {model: GradeEntryStudent,
+                    per_pages: [15, 30, 50, 100, 150, 500, 1000],
+                    filters: {
                         'none' => {
-                            :display => 'Show All',
-                            :proc => lambda { |sort_by, order, user|
+                            display: 'Show All',
+                            proc: lambda { |sort_by, order, user|
                               if user.instance_of? Admin
-                                conditions = {:hidden => false}
+                                conditions = {hidden: false}
                               else
                                 #Display only students to which the TA has been assigned
-                                conditions = {:hidden => false, :id =>
-                                    Ta.find(user.id).grade_entry_students.all(:select => :user_id).collect(&:user_id)}
+                                conditions = {hidden: false, id:
+                                    Ta.find(user.id).grade_entry_students.all(select: :user_id).collect(&:user_id)}
                               end
 
                               if sort_by.present?
                                 if sort_by == 'section'
-                                  Student.includes(:section).all(:conditions => conditions,
-                                                              :order => 'sections.name ' + order)
+                                  Student.includes(:section).all(conditions: conditions,
+                                                              order: 'sections.name ' + order)
                                 else
-                                  Student.all(:conditions => conditions,
-                                              :order => sort_by + ' ' + order)
+                                  Student.all(conditions: conditions,
+                                              order: sort_by + ' ' + order)
                                 end
                               else
-                                Student.all(:conditions => conditions,
-                                            :order => 'user_name ' + order)
+                                Student.all(conditions: conditions,
+                                            order: 'user_name ' + order)
                               end
                             }}}
   }
@@ -66,7 +66,7 @@ class GradeEntryFormsController < ApplicationController
       if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.create.success')
-        redirect_to :action => 'edit', :id => @grade_entry_form.id
+        redirect_to action: 'edit', id: @grade_entry_form.id
       else
         render 'new'
       end
@@ -89,9 +89,9 @@ class GradeEntryFormsController < ApplicationController
       if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.edit.success')
-        redirect_to :action => 'edit', :id => @grade_entry_form.id
+        redirect_to action: 'edit', id: @grade_entry_form.id
       else
-        render 'edit', :id => @grade_entry_form.id
+        render 'edit', id: @grade_entry_form.id
       end
     end
   end
@@ -101,14 +101,20 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form = GradeEntryForm.find(params[:id])
     @filter = 'none'
 
-    # Pagination options
+    @current_page = 1
+
+    # The cookies are handled here
+    c_per_page = cookie_per_page_name
     if params[:per_page].present?
-      @per_page = params[:per_page]
+      cookies[c_per_page] = params[:per_page]
+    elsif cookies[c_per_page].present?
+      params[:per_page] = cookies[c_per_page]
     else
-      @per_page = 15
+      # Set params to default and make the cookie!
+      params[:per_page] = 15
+      cookies[c_per_page] = params[:per_page]
     end
 
-    @current_page = 1
     c_sort_by = current_user.id.to_s + '_' +
         @grade_entry_form.id.to_s + '_sort_by_grades'
     if params[:sort_by].present?
@@ -119,14 +125,15 @@ class GradeEntryFormsController < ApplicationController
     @sort_by = params[:sort_by]
     @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
+    @per_page = params[:per_page]
     @per_pages = G_TABLE_PARAMS[:per_pages]
 
     all_students = get_filtered_items(G_TABLE_PARAMS,
                                       @filter,
                                       @sort_by,
                                       @desc)
-    @students = all_students.paginate(:per_page => @per_page,
-                                      :page => @current_page)
+    @students = all_students.paginate(per_page: @per_page,
+                                      page: @current_page)
     @students_total = all_students.size
     @alpha_pagination_options = @grade_entry_form.alpha_paginate(all_students,
                                                                  @per_page,
@@ -136,6 +143,7 @@ class GradeEntryFormsController < ApplicationController
     @sort_by = cookies[c_sort_by]
   end
 
+  
   # Handle pagination for grades table
   # (The algorithm used to compute the alphabetical categories
   # (alpha_paginate()) is
@@ -144,9 +152,15 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form = GradeEntryForm.find(params[:id])
     @students, @students_total = handle_paginate_event(
         G_TABLE_PARAMS,
-        {:grade_entry_form => @grade_entry_form},
+        {grade_entry_form: @grade_entry_form},
         params)
-
+    # It is important to set the :per_page cookie during Ajax Request as well
+    c_per_page = cookie_per_page_name
+    if params[:per_page].present?
+      cookies[c_per_page] = params[:per_page]
+    elsif cookies[c_per_page].present?
+      params[:per_page] = cookies[c_per_page]
+    end
     @current_page = params[:page]
     @per_page = params[:per_page]
     @filters = get_filters(G_TABLE_PARAMS)
@@ -179,6 +193,11 @@ class GradeEntryFormsController < ApplicationController
     end
   end
 
+  # Cookie name
+  def cookie_per_page_name
+    "#{current_user.id}_#{@grade_entry_form.id}_per_page_sp"
+  end
+  
   # Update a grade in the table
   def update_grade
     grade_entry_form = GradeEntryForm.find_by_id(params[:id])
@@ -256,22 +275,22 @@ class GradeEntryFormsController < ApplicationController
     # Display success message
     if numGradeEntryStudentsChanged > 0
       flash[:success] = I18n.t('grade_entry_forms.grades.successfully_changed',
-                               {:numGradeEntryStudentsChanged => numGradeEntryStudentsChanged})
+                               {numGradeEntryStudentsChanged: numGradeEntryStudentsChanged})
       m_logger = MarkusLogger.instance
       m_logger.log(log_message)
     end
     flash[:error] = errors
 
-    redirect_to :action => 'grades', :id => params[:id]
+    redirect_to action: 'grades', id: params[:id]
   end
 
   # Download the grades for this grade entry form as a CSV file
   def csv_download
     grade_entry_form = GradeEntryForm.find(params[:id])
     send_data grade_entry_form.get_csv_grades_report,
-              :disposition => 'attachment',
-              :type => 'application/vnd.ms-excel',
-              :filename => "#{grade_entry_form.short_identifier}_grades_report.csv"
+              disposition: 'attachment',
+              type: 'application/vnd.ms-excel',
+              filename: "#{grade_entry_form.short_identifier}_grades_report.csv"
   end
 
   # Upload the grades for this grade entry form using a CSV file
@@ -313,12 +332,12 @@ class GradeEntryFormsController < ApplicationController
           end
           if num_updates > 0
             flash[:notice] = I18n.t('grade_entry_forms.csv.upload_success',
-                                    :num_updates => num_updates)
+                                    num_updates: num_updates)
           end
         end
       end
     end
-  redirect_to :action => 'grades', :id => @grade_entry_form.id
+  redirect_to action: 'grades', id: @grade_entry_form.id
   end
 
 end

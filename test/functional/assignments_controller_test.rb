@@ -2,7 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_contro
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
-include CsvHelper
 require 'shoulda'
 require 'machinist'
 require 'mocha/setup'
@@ -401,7 +400,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'be able to get a csv grade report' do
         student = Student.make
         response_csv = get_as(@admin, :download_csv_grades_report).body
-        csv_rows = CsvHelper::Csv.parse(response_csv)
+        csv_rows = CSV.parse(response_csv)
         assert_equal Student.all.size, csv_rows.size
         assignments = Assignment.all(:order => 'id')
         csv_rows.each do |csv_row|
@@ -533,6 +532,17 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
     end  # -- with an assignment
 
+    context 'with a hidden assignment' do
+      setup do
+        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+      end
+
+      should 'be able to view it' do
+        get_as @admin, :index
+        assert @response.body.include?(@assignment.short_identifier)
+      end
+    end # -- with a hidden assignment
+
     context ', on :download_assignment_list,' do
 
       should 'be able to download a csv file' do
@@ -655,6 +665,17 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
     end  # -- with an Assignment
+
+    context 'with a hidden assignment' do
+      setup do
+        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+      end
+
+      should 'be able to view it' do
+        get_as @grader, :index
+        assert @response.body.include?(@assignment.short_identifier)
+      end
+    end # -- with a hidden assignment
   end  # -- with a Grader
 
   context 'A student' do
@@ -1227,7 +1248,17 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         end
       end
+    end # -- with an assignmt, with past due date but collection in future'
+
+    context 'with a hidden assignment' do
+      setup do
+        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+      end
+
+      should 'not be able to view it' do
+        get_as @student, :index
+        assert !@response.body.include?(@assignment.short_identifier)
+      end
     end
   end  # -- A student
-
 end

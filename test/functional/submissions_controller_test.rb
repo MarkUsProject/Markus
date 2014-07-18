@@ -2,7 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_contro
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
-include CsvHelper
 require 'shoulda'
 require 'mocha/setup'
 
@@ -32,7 +31,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     end
 
     should 'and I should be able to populate file' do
-      get_as @student, :populate_file_manager, :assignment_id => @assignment.id
+      get_as @student, :populate_file_manager, :assignment_id => @assignment.id, :format => 'js'
       assert_response :success
     end
 
@@ -283,7 +282,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                :populate_repo_browser,
                :assignment_id => @assignment.id,
                :id => Grouping.last.id,
-               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number
+               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number,
+               :format => 'js'
         assert_response :success
       end
 
@@ -397,7 +397,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @admin,
                :populate_repo_browser,
                :assignment_id => 1,
-               :id => Grouping.first.id
+               :id => Grouping.first.id,
+               :format => 'js'
         assert_response :success
       end
 
@@ -551,7 +552,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@grouping.group.group_name}_r#{@grouping.group.repo.
                   get_latest_revision.revision_number}.zip"
-          Zip::ZipFile.open(zip_path) do |zip_file|
+          Zip::File.open(zip_path) do |zip_file|
             file1_path = File.join("#{@assignment.repository_folder}-" +
                                        "#{@grouping.group.repo_name}",
                                    @file1_name)
@@ -624,7 +625,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :success
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@admin.user_name}.zip"
-          Zip::ZipFile.open(zip_path) do |zip_file|
+          Zip::File.open(zip_path) do |zip_file|
             (1..3).to_a.each do |i|
               instance_variable_set(:"@file#{i}_path", File.join(
                   "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
@@ -645,7 +646,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :success
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@ta.user_name}.zip"
-          Zip::ZipFile.open(zip_path) do |zip_file|
+          Zip::File.open(zip_path) do |zip_file|
             (1..3).to_a.each do |i|
               instance_variable_set(:"@file#{i}_path", File.join(
                   "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",

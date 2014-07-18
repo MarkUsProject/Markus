@@ -48,12 +48,6 @@ class RubricsControllerTest < AuthenticatedControllerTest
         assert_response :redirect
       end
 
-      should 'be redirected on :move_criterion' do
-        get :move_criterion, :assignment_id => @assignment.id, :id => 1
-        # FIXME
-        assert_response :redirect
-      end
-
       context 'and a submission' do
         setup do
           @submission = Submission.make(:grouping => @grouping)
@@ -388,9 +382,9 @@ END
         should 'be able to update_positions' do
           get_as @admin,
                 :update_positions,
-                :rubric_criteria_pane_list => [@criterion2.id,
-                                              @criterion.id],
-                :assignment_id => @assignment.id
+                criterion: [@criterion2.id,
+                            @criterion.id],
+                assignment_id: @assignment.id
           assert render_template ''
           assert_response :success
 
@@ -399,78 +393,8 @@ END
           c2 = RubricCriterion.find(@criterion2.id)
           assert_equal 2, c2.position
         end
+      end
 
-        should 'be able to move_criterion up' do
-          get_as @admin,
-                :move_criterion,
-                :assignment_id => @assignment.id,
-                :id => @criterion2.id,
-                :position => @criterion2.position,
-                :direction => :up
-          assert render_template ''
-          assert_response :success
-
-          c1 = RubricCriterion.find(@criterion.id)
-          assert_equal 1, c1.position
-          c2 = RubricCriterion.find(@criterion2.id)
-          assert_equal 0, c2.position
-        end
-
-        should 'be able to move_criterion down' do
-          get_as @admin,
-                :move_criterion,
-                :assignment_id => @assignment.id,
-                :id => @criterion.id,
-                :position => @criterion.position,
-                :direction => :down
-          assert render_template ''
-          assert_response :success
-
-          c1 = RubricCriterion.find(@criterion.id)
-          c2 = RubricCriterion.find(@criterion2.id)
-          assert_equal 1, c1.position
-          assert_equal 0, c2.position
-
-        end
-
-        context 'And yet another' do
-          setup do
-            criterion = RubricCriterion.make(:assignment => @assignment,
-                                            :position => 3)
-            @criteria = @assignment.rubric_criteria
-          end
-
-          should 'be able to move up top criteria' do
-            criterion = @criteria[0]
-            post_as @admin,
-                    :move_criterion,
-                    :assignment_id => @assignment,
-                    :id => criterion,
-                    :position => criterion.position,
-                    :direction => 'up'
-            @criteria.reload
-            assert_equal 1, criterion.position
-            assert render_template ''
-            assert_response :success
-          end
-
-          should 'be able to move down top criteria' do
-            criterion = @criteria.last
-            position = criterion.position
-            post_as @admin,
-                    :move_criterion,
-                    :assignment_id => @assignment,
-                    :id => criterion,
-                    :position => criterion.position,
-                    :direction => 'down'
-            @criteria.reload
-            assert_equal position, criterion.position
-            assert render_template ''
-            assert_response :success
-          end
-
-        end
-      end # with another submission
     end
   end # An admin, with an assignment, and a rubric criterion
 end

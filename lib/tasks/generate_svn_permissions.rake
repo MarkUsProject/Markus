@@ -1,11 +1,11 @@
 namespace :markus do
   desc "Generates a Subversion permission file (svn_authz)"
-  task(:generate_svn_authz => [:environment]) do
+  task(generate_svn_authz: [:environment]) do
     valid_groupings_and_members = {}
     # Start collecting data
     #
     # Get all assignments with no web submissions allowed
-    assignments = Assignment.all(:conditions => {:allow_web_submits => false})
+    assignments = Assignment.all(conditions: {allow_web_submits: false})
     assignments.each do |assignment|
       # Get valid/admin approved groupings
       valid_groupings = assignment.valid_groupings

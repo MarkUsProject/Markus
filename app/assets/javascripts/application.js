@@ -21,13 +21,10 @@ var ModalMarkus = function (elem) {
 };
 
 ModalMarkus.prototype = {
-
   open: function () {
     this.modal_dialog.dialog('open');
   },
-
   close: function () {
     this.modal_dialog.dialog('close');
   }
-
 };

@@ -1,16 +1,16 @@
 Markus::Application.routes.draw do
   # Install the default routes as the lowest priority.
-  root :controller => "main", :action => "login"
+  root controller: "main", action: "login"
 
   # optional path scope (denoted by the parentheses)
-  scope "(:locale)", :locale => /en|fr|pt/  do
+  scope "(:locale)", locale: /en|fr|pt/  do
     # API routes
     namespace :api do
-      resources :users, :except => [:new, :edit]
-      resources :assignments, :except => [:new, :edit] do
-        resources :groups, :except => [:new, :edit] do
-          resources :submission_downloads, :except => [:new, :edit]
-          resources :test_results, :except => [:new, :edit]
+      resources :users, except: [:new, :edit]
+      resources :assignments, except: [:new, :edit] do
+        resources :groups, except: [:new, :edit] do
+          resources :submission_downloads, except: [:new, :edit]
+          resources :test_results, except: [:new, :edit]
         end
       end
       resources :main_api
@@ -49,7 +49,6 @@ Markus::Application.routes.draw do
       resources :rubrics do
         member do
           delete 'destroy'
-          get 'move_criterion'
         end
 
         collection do
@@ -64,7 +63,6 @@ Markus::Application.routes.draw do
       resources :flexible_criteria do
         member do
           delete 'destroy'
-          get 'move_criterion'
         end
 
         collection do
@@ -82,7 +80,6 @@ Markus::Application.routes.draw do
           get 'update_positions'
           post 'upload'
           get 'download'
-          get 'move_criterion'
         end
       end
 
@@ -148,9 +145,6 @@ Markus::Application.routes.draw do
         resources :results do
           collection do
             post 'update_mark'
-            get 'expand_criteria'
-            get 'collapse_criteria'
-            get 'expand_unmarked_criteria'
             get 'edit'
             get 'download'
           end
@@ -164,13 +158,10 @@ Markus::Application.routes.draw do
             get 'cancel_remark_request'
             get 'codeviewer'
             post 'codeviewer'
-            get 'expand_criteria'
-            get 'collapse_criteria'
             post 'add_extra_mark'
             post 'delete_grace_period_deduction'
             get 'next_grouping'
             post 'remove_extra_mark'
-            get 'expand_unmarked_criteria'
             post 'set_released_to_students'
             put 'update_overall_comment'
             post 'update_overall_remark_comment'
@@ -182,6 +173,8 @@ Markus::Application.routes.draw do
           end
         end
       end
+
+      resources :summaries
 
       resources :graders do
         collection do
@@ -217,6 +210,7 @@ Markus::Application.routes.draw do
         end
 
         collection do
+          post 'update_positions'
           get 'add_annotation_category'
           post 'csv_upload'
           get 'delete_annotation_category'
@@ -335,10 +329,10 @@ Markus::Application.routes.draw do
     end
   end
 
-  match 'main', :controller => 'main', :action => 'index'
-  match 'main/about', :controller => 'main', :action => 'about'
-  match 'main/logout', :controller => 'main', :action => 'logout'
+  match 'main', controller: 'main', action: 'index'
+  match 'main/about', controller: 'main', action: 'about'
+  match 'main/logout', controller: 'main', action: 'logout'
 
   # Return a 404 when no route is match
-  match '*path', :controller => 'main', :action => 'page_not_found'
+  match '*path', controller: 'main', action: 'page_not_found'
 end

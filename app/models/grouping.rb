@@ -1,3 +1,5 @@
+require 'encoding'
+
 # we need repository permission constants
 require File.join(File.dirname(__FILE__),'..', '..', 'lib', 'repo', 'repository')
 
@@ -6,55 +8,147 @@ class Grouping < ActiveRecord::Base
 
   before_create :create_grouping_repository_folder
   before_destroy :revoke_repository_permissions_for_students
-  belongs_to :assignment, :counter_cache => true
+  belongs_to :assignment, counter_cache: true
   belongs_to :group
   belongs_to :grouping_queue
   has_many :memberships
-  has_many :student_memberships, :order => 'id'
+  has_many :student_memberships, order: 'id'
   has_many :non_rejected_student_memberships,
-           :class_name => 'StudentMembership',
-           :conditions => ['memberships.membership_status != ?',
+           class_name: 'StudentMembership',
+           conditions: ['memberships.membership_status != ?',
                            StudentMembership::STATUSES[:rejected]]
   has_many :accepted_student_memberships,
-           :class_name => 'StudentMembership',
-           :conditions => {
+           class_name: 'StudentMembership',
+           conditions: {
               'memberships.membership_status' => [
                     StudentMembership::STATUSES[:accepted],
                     StudentMembership::STATUSES[:inviter]]}
-  has_many :notes, :as => :noteable, :dependent => :destroy
-  has_many :ta_memberships, :class_name => 'TaMembership'
-  has_many :tas, :through => :ta_memberships, :source => :user
-  has_many :students, :through => :student_memberships, :source => :user
+  has_many :notes, as: :noteable, dependent: :destroy
+  has_many :ta_memberships, class_name: 'TaMembership'
+  has_many :tas, through: :ta_memberships, source: :user
+  has_many :students, through: :student_memberships, source: :user
   has_many :pending_students,
-           :class_name => 'Student',
-           :through => :student_memberships,
-           :conditions => {
+           class_name: 'Student',
+           through: :student_memberships,
+           conditions: {
             'memberships.membership_status' => StudentMembership::STATUSES[:pending]},
-           :source => :user
+           source: :user
 
   has_many :submissions
   #The first submission found that satisfies submission_version_used == true.
   #If there are multiple such submissions, one is chosen randomly.
   has_one :current_submission_used,
-          :class_name => 'Submission',
-          :conditions => {:submission_version_used => true}
+          class_name: 'Submission',
+          conditions: {submission_version_used: true}
   has_many :grace_period_deductions,
-           :through => :non_rejected_student_memberships
+           through: :non_rejected_student_memberships
 
   has_one :token
+  has_one :inviter_membership,
+          class_name: 'StudentMembership',
+          conditions: {
+            membership_status: StudentMembership::STATUSES[:inviter]
+          }
+  has_one :inviter, source: :user, through: :inviter_membership
 
-  scope :approved_groupings, :conditions => {:admin_approved => true}
+  scope :approved_groupings, conditions: {admin_approved: true}
 
-  validates_numericality_of :criteria_coverage_count, :greater_than_or_equal_to => 0
+  validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
   # user association/validation
   validates_presence_of :assignment_id
-  validates_associated :assignment, :on => :create, :message => 'associated assignment need to be valid'
+  validates_associated :assignment, on: :create, message: 'associated assignment need to be valid'
 
   validates_presence_of :group_id
-  validates_associated :group, :message => 'associated group need to be valid'
+  validates_associated :group, message: 'associated group need to be valid'
 
-  validates_inclusion_of :is_collected, :in => [true, false]
+  validates_inclusion_of :is_collected, in: [true, false]
+
+  # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
+  # grouping in a list of groupings specified by +grouping_ids+. The groupings
+  # must belong to the given assignment +assignment+.
+  def self.randomly_assign_tas(grouping_ids, ta_ids, assignment)
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
+      # Assign TAs in a round-robin fashion to a list of random groupings.
+      grouping_ids.shuffle.zip(ta_ids.cycle)
+    end
+  end
+
+  # Assigns all TAs in a list of TAs specified by +ta_ids+ to each grouping in
+  # a list of groupings specified by +grouping_ids+. The groupings must belong
+  # to the given assignment +assignment+.
+  def self.assign_all_tas(grouping_ids, ta_ids, assignment)
+    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
+      # Get the Cartesian product of group IDs and TA IDs.
+      grouping_ids.product(ta_ids)
+    end
+  end
+
+  # Assigns TAs to groupings using a caller-specified block. The block is given
+  # a list of grouping IDs and a list of TA IDs and must return a list of
+  # grouping-ID-TA-ID pair that represents the TA assignment.
+  #
+  #   # Assign the TA with ID 3 to the grouping with ID 1 and the TA
+  #   # with ID 4 to the grouping with ID 2.
+  #   assign_tas([1, 2], [3, 4], a) do |grouping_ids, ta_ids|
+  #     grouping_ids.zip(ta_ids)  # => [[1, 3], [2, 4]]
+  #   end
+  #
+  # The groupings must belong to the given assignment +assignment+.
+  def self.assign_tas(grouping_ids, ta_ids, assignment)
+    grouping_ids, ta_ids = Array(grouping_ids), Array(ta_ids)
+
+    # Only use IDs that identify existing model instances.
+    ta_ids = Ta.where(id: ta_ids).pluck(:id)
+    grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)
+
+    columns = [:grouping_id, :user_id]
+    # Get all existing memberships to avoid violating the unique constraint.
+    # TODO replace this with Membership.pluck when migrated to Rails 4.
+    existing_values = TaMembership.select(columns)
+      .where(grouping_id: grouping_ids, user_id: ta_ids)
+      .map { |membership| [membership.grouping_id, membership.user_id] }
+    # Delegate the assign function to the caller-specified block and remove
+    # values that already exist in the database.
+    values = yield(grouping_ids, ta_ids) - existing_values
+    # TODO replace TaMembership.import with TaMembership.create when the PG
+    # driver supports bulk create, then remove the activerecord-import gem.
+    TaMembership.import(columns, values, validate: false)
+
+    update_criteria_coverage_counts(assignment, grouping_ids)
+    Criterion.update_assigned_groups_counts(assignment)
+  end
+
+  # Unassigns TAs from groupings. +ta_membership_ids+ is a list of TA
+  # membership IDs that specifies the unassignment to be done. +grouping_ids+
+  # is a list of grouping IDs involved in the unassignment. The memberships
+  # and groupings must belong to the given assignment +assignment+.
+  def self.unassign_tas(ta_membership_ids, grouping_ids, assignment)
+    TaMembership.delete_all(id: ta_membership_ids)
+
+    update_criteria_coverage_counts(assignment, grouping_ids)
+    Criterion.update_assigned_groups_counts(assignment)
+  end
+
+  # Updates the +criteria_coverage_count+ field of all groupings specified
+  # by +grouping_ids+.
+  def self.update_criteria_coverage_counts(assignment, grouping_ids = nil)
+    # Sanitize the IDs in the input.
+    grouping_ids_str = Array(grouping_ids)
+      .map { |grouping_id| connection.quote(grouping_id) }
+      .join(',')
+    # TODO replace this raw SQL with dynamic SET clause with Active Record
+    # language when the latter supports subquery in the SET clause.
+    connection.execute(<<-UPDATE_SQL)
+      UPDATE groupings AS g SET criteria_coverage_count =
+        (SELECT count(DISTINCT c.criterion_id) FROM memberships AS m
+          INNER JOIN criterion_ta_associations AS c ON m.user_id = c.ta_id
+          WHERE m.grouping_id = g.id AND m.type = 'TaMembership'
+            AND c.assignment_id = g.assignment_id)
+        WHERE assignment_id = #{assignment.id}
+          #{"AND id IN (#{grouping_ids_str})" unless grouping_ids_str.empty?}
+    UPDATE_SQL
+  end
 
   def accepted_students
     self.accepted_student_memberships.collect do |memb|
@@ -99,16 +193,6 @@ class Grouping < ActiveRecord::Base
     end
   end
 
-  # Returns the member with 'inviter' status for this group
-  def inviter
-   member = student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
-    if member.nil?
-      return nil
-    end
-    Student.find(member.user_id)
-  end
-
-
   # Returns true if this user has a pending status for this group;
   # false otherwise, or if user is not in this group.
   def pending?(user)
@@ -141,14 +225,14 @@ class Grouping < ActiveRecord::Base
             m_logger.log("Student invited '#{user.user_name}'.")
           else
             errors.add(:base, I18n.t('invite_student.fail.error',
-                                     :user_name => user.user_name))
+                                     user_name: user.user_name))
             m_logger.log("Student failed to invite '#{user.user_name}'",
                          MarkusLogger::ERROR)
           end
         end
       else
         errors.add(:base, I18n.t('invite_student.fail.dne',
-                                 :user_name => m))
+                                 user_name: m))
       end
     end
   end
@@ -158,8 +242,8 @@ class Grouping < ActiveRecord::Base
     if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
       nil
     else
-      member = StudentMembership.new(:user => user, :membership_status =>
-      set_membership_status, :grouping => self)
+      member = StudentMembership.new(user: user, membership_status:
+      set_membership_status, grouping: self)
       member.save
       # adjust repo permissions
       update_repository_permissions
@@ -183,7 +267,7 @@ class Grouping < ActiveRecord::Base
     if user && user.student?
       if user.hidden
         errors.add(:base, I18n.t('invite_student.fail.hidden',
-                                  :user_name => user.user_name))
+                                  user_name: user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}' (account has been " +
                      'disabled).', MarkusLogger::ERROR)
 
@@ -191,7 +275,7 @@ class Grouping < ActiveRecord::Base
       end
       if self.inviter == user
         errors.add(:base, I18n.t('invite_student.fail.inviting_self',
-                                  :user_name => user.user_name))
+                                  user_name: user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Tried to invite " +
                      'himself.', MarkusLogger::ERROR)
 
@@ -199,7 +283,7 @@ class Grouping < ActiveRecord::Base
       end
       if self.assignment.past_collection_date?
         errors.add(:base, I18n.t('invite_student.fail.due_date_passed',
-                                  :user_name => user.user_name))
+                                  user_name: user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Current time past " +
                      'collection date.', MarkusLogger::ERROR)
 
@@ -207,7 +291,7 @@ class Grouping < ActiveRecord::Base
       end
       if self.student_membership_number >= self.assignment.group_max
         errors.add(:base, I18n.t('invite_student.fail.group_max_reached',
-                                  :user_name => user.user_name))
+                                  user_name: user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Group maximum" +
                      ' reached.', MarkusLogger::ERROR)
         return false
@@ -215,7 +299,7 @@ class Grouping < ActiveRecord::Base
       if self.assignment.section_groups_only &&
         user.section != self.inviter.section
         errors.add(:base, I18n.t('invite_student.fail.not_same_section',
-                                  :user_name => user.user_name))
+                                  user_name: user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Students not in" +
                      ' same section.', MarkusLogger::ERROR)
 
@@ -223,21 +307,21 @@ class Grouping < ActiveRecord::Base
       end
       if user.has_accepted_grouping_for?(self.assignment.id)
         errors.add(:base, I18n.t('invite_student.fail.already_grouped',
-                                  :user_name => user.user_name))
+                                  user_name: user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Invitee already part" +
                      ' of another group.', MarkusLogger::ERROR)
         return false
       end
       if self.pending?(user)
         errors.add(:base, I18n.t('invite_student.fail.already_pending',
-                                  :user_name => user.user_name))
+                                  user_name: user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Invitee is already " +
                      ' pending member of this group.', MarkusLogger::ERROR)
         return false
       end
     else
       errors.add(:base, I18n.t('invite_student.fail.dne',
-                                :user_name => user.user_name))
+                                user_name: user.user_name))
       m_logger.log("Student failed to invite '#{user.user_name}'. Invitee does not " +
                    ' exist.', MarkusLogger::ERROR)
       return false
@@ -281,7 +365,7 @@ class Grouping < ActiveRecord::Base
 
   # Token Credit Query
   def give_tokens
-    Token.create(:grouping_id => self.id, :tokens => self.assignment.tokens_per_day) if self.assignment.enable_test
+    Token.create(grouping_id: self.id, tokens: self.assignment.tokens_per_day) if self.assignment.enable_test
   end
 
   # Grace Credit Query
@@ -349,7 +433,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def delete_grouping
-    self.student_memberships.all(:include => :user).each do |member|
+    self.student_memberships.all(include: :user).each do |member|
       member.destroy
     end
     # adjust repository permissions
@@ -444,12 +528,12 @@ class Grouping < ActiveRecord::Base
         #graders_controller
         if ta == tas.first
           #perform validation first time.
-          ta_memberships.create(:user => ta)
+          ta_memberships.create(user: ta)
         else
           #skip validation to increase performance (all aspects of validation
           #have already been performed elsewhere)
-          member = ta_memberships.build(:user => ta)
-          member.save(:validate => false)
+          member = ta_memberships.build(user: ta)
+          member.save(validate: false)
         end
         grouping_tas += [ta]
       end
@@ -462,14 +546,14 @@ class Grouping < ActiveRecord::Base
       #attribute that gets changed between the validation above and the save
       #below. This is done to improve performance, as any validations of the
       #grouping result in 5 extra database queries
-      self.save(:validate => false)
+      self.save(validate: false)
     end
   end
 
   def remove_tas(ta_id_array)
     #if no tas to remove, return.
     return if ta_id_array == []
-    ta_memberships_to_remove = ta_memberships.find_all_by_user_id(ta_id_array, :include => :user)
+    ta_memberships_to_remove = ta_memberships.find_all_by_user_id(ta_id_array, include: :user)
     ta_memberships_to_remove.each do |ta_membership|
       ta_membership.destroy
       ta_memberships.delete(ta_membership)
@@ -485,7 +569,7 @@ class Grouping < ActiveRecord::Base
       ta = Ta.find_by_user_name(ta_user_name)
       unless ta.nil?
         if ta_memberships.find_by_user_id(ta.id).nil?
-          ta_memberships.create(:user => ta)
+          ta_memberships.create(user: ta)
         end
       end
       grouping_tas += Array(ta)
@@ -497,10 +581,8 @@ class Grouping < ActiveRecord::Base
   # Returns an array containing the group names that didn't exist
   def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
     failures = []
-    if encoding != nil
-      csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents).join)
-    end
-    CsvHelper::Csv.parse(csv_file_contents) do |row|
+    csv_file_contents = csv_file_contents.utf8_encode(encoding)
+    CSV.parse(csv_file_contents) do |row|
       group_name = row.shift # Knocks the first item from array
       group = Group.find_by_group_name(group_name)
       if group.nil?
@@ -537,13 +619,11 @@ class Grouping < ActiveRecord::Base
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-
     # create folder only if we are repo admin
     if self.group.repository_admin?
       self.group.access_repo do |repo|
-        
         revision = repo.get_latest_revision
-        assignment_folder = File.join('/', assignment.repository_folder)
+        assignment_folder = assignment.repository_folder
 
         if revision.path_exists?(assignment_folder)
           return true
@@ -609,7 +689,7 @@ class Grouping < ActiveRecord::Base
   ##
   def past_due_date?
 
-    timestamp = group.repo.get_latest_revision.timestamp
+    timestamp = assignment_folder_last_modified_date
     due_dates = assignment.section_due_dates
     section = unless inviter.blank?
                 inviter.section

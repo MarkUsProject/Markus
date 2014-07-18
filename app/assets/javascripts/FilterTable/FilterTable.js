@@ -380,21 +380,18 @@ var FilterTable = Class.create({
       tfoot_tr.insert({bottom: th_element_footer});
     });
 
-    if(this.can_select) {
+    if (this.can_select) {
       var th_element_head = new Element('th');
       var th_element_foot = new Element('th');
       thead_tr.insert({top: th_element_head});
       tfoot_tr.insert({top: th_element_foot});
     }
 
-    if(this.can_select && this.can_select_all) {
+    if (this.can_select && this.can_select_all) {
 
       var select_all_top_div = new Element('div');
       var select_all_top = new Element('input', {type: 'checkbox', id: this.select_all_top_id, "class": 'FilterTable_selectable'});
-      var label_select_all_top = new Element ('label', {"for": select_all_top.id, "class": 'bold_inline_label'});
-      label_select_all_top.insert(this.select_all_header);
       select_all_top_div.insert(select_all_top);
-      select_all_top_div.insert(label_select_all_top);
 
       var select_all_function = function(event) {
         me.select_all($F(Event.element(event)));
@@ -406,36 +403,29 @@ var FilterTable = Class.create({
 
       var select_all_bottom_div = new Element('div');
       var select_all_bottom = new Element('input', {type: 'checkbox', id: this.select_all_bottom_id, "class": 'FilterTable_selectable'});
-      var label_select_all_bottom = new Element ('label', { "for": select_all_bottom.id,  "class": 'bold_inline_label'});
-      label_select_all_bottom.insert(this.select_all_header)
       select_all_bottom_div.insert  (select_all_bottom);
-      select_all_bottom_div.insert(label_select_all_bottom);
-        th_element_foot.insert({bottom: select_all_bottom_div});
+      th_element_foot.insert({bottom: select_all_bottom_div});
 
       select_all_bottom.observe('click', select_all_function);
-
     }
 
     this.table_id.insert({top: thead_element});
 
-    if(this.footer) {
+    if (this.footer) {
       this.table_id.insert({bottom: tfoot_element});
     } else {
       delete tfoot_element;
     }
 
     this.above_tbodys.each(function(tbody_id) {
-        me.table_id.insert({bottom: new Element('tbody', {id: tbody_id})});
+      me.table_id.insert({bottom: new Element('tbody', {id: tbody_id})});
     });
 
     this.table_id.insert({bottom: this.table_body});
 
     this.below_tbodys.each(function(tbody_id) {
-        me.table_id.insert({bottom: new Element('tbody', {id: tbody_id})});
+      me.table_id.insert({bottom: new Element('tbody', {id: tbody_id})});
     });
-
-
-
   },
   // Function to select all rows if selectable.
   select_all: function(is_selected) {
@@ -495,7 +485,7 @@ var FilterTable = Class.create({
   set_or_default: function(value, default_value) {
     if (typeof value == 'undefined') {
       return default_value;
-    } 
+    }
     return value;
   }
 });

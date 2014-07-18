@@ -229,7 +229,7 @@ class StudentTest < ActiveSupport::TestCase
       mock_repo.expects(:remove_user).with(any_of(@student1.user_name, @student2.user_name)).at_least(2)
       Group.any_instance.stubs(:repo).returns(mock_repo)
 
-      assert Student.hide_students(@student_id_list)
+      Student.hide_students(@student_id_list)
     end
 
     should 'not error when user is not found on hide and remove' do
@@ -243,7 +243,7 @@ class StudentTest < ActiveSupport::TestCase
       mock_repo.stubs(:remove_user).raises(Repository::UserNotFound)
       Group.any_instance.stubs(:repo).returns(mock_repo)
 
-      assert Student.hide_students(@student_id_list)
+      Student.hide_students(@student_id_list)
     end
 
     [{:type => 'negative', :grace_credits => '-10', :expected => 0 },
@@ -274,7 +274,7 @@ class StudentTest < ActiveSupport::TestCase
 
     should 'unhide without error' do
       #TODO test the repo with mocks
-      assert Student.unhide_students(@student_id_list)
+      Student.unhide_students(@student_id_list)
 
       students = Student.find(@student_id_list)
       assert_equal(false, students[0].hidden)
@@ -292,7 +292,7 @@ class StudentTest < ActiveSupport::TestCase
       mock_repo.stubs(:add_user).raises(Repository::UserAlreadyExistent)
       Group.any_instance.stubs(:repo).returns(mock_repo)
 
-      assert Student.unhide_students(@student_id_list)
+      Student.unhide_students(@student_id_list)
     end
   end
 

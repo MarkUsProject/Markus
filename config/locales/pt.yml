@@ -8,6 +8,7 @@ pt:
     all:                "Todos"
     none:               "Nenhum"
     search:             "Pesquisar:"
+    issues:             "GitHub lista de problemas"
 
     # app/views/main/login.html.erb
     welcome_to:         "Bem-vindo ao MarkUs!"
@@ -26,7 +27,7 @@ pt:
     # app/views/layouts/_header.html.erb
     log_out:            "Sair"
     clear_role_switch_session_link: "Cancelar troca de papel"
-    working:            "Trabalhando..."
+    working:            "Carregando"
     login_as:           "Fazer login como "
 
     # app/views/main/_about_content.html.erb
@@ -43,9 +44,9 @@ pt:
     markus_copyright:   "Copyright (c) 2008-2011 pelos autores."
     markus_credits:     "Créditos"
     markus_credits_thanks:      "Obrigado a todos que contribuiram para tornar MarkUs possível. Em particular para:"
-    supervisors:        "Supervisores:"
+    supervisors:        "Supervisores: "
     contact_us:         "Contate-nos"
-    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br/>Por favor visite: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> para mais informações.<br/>Para enviar um problema ou por favor visite visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
+    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br>Por favor visite: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> para mais informações.<br>Para enviar um problema ou por favor visite visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
     # app/views/api/_key_display.html.erb
     api_key:            "Chave da API"
@@ -56,6 +57,7 @@ pt:
     dashboard:          "Painel"
     assignments:        "Projetos"
     users:              "Usuários"
+    sections:           "Sessões"
     home:               "Home"
     settings:           "Configurações"
 
@@ -107,6 +109,7 @@ pt:
     collect_submissions:
       collect_all: "Coletar todas as submissões"
       collect_ta: "Coletar todas as submissões atribuidos à você"
+      disable_collect: "Coleta de submissões desabilitada, já existe um monitor avaliando as submissões exibidas."
       could_not_collect: "Não foi possível coletar todas as submissões para o projeto %{assignment_identifier} - a data da coleta não foi atingida"
       collection_job_started: "Coleta das submissões para o projeto %{assignment_identifier} começou. O processo pode demorar, você poderá acessar as submissões assim que elas tornarem-se disponíveis."
       priority_given: "A submissão foi dada prioridade de coleta. Ela estará pronta em breve."
@@ -119,6 +122,7 @@ pt:
       successfully_collected: " %{collected} submissões coletadas com sucesso."
       marking_incomplete_warning: "Nota: Nem todas os projetos foram avaliados.\n\nTem certeza que deseja continuar?"
     assignment:
+        hidden: "%{assignment_text} (oculto)"
         assignment: "Projetos %{short_identifier}"
         required_fields: "Campos exigidos<span class='required_field'>*</span>"
         name:           "Nome do projeto<span class='required_field'>*</span>"
@@ -127,12 +131,12 @@ pt:
         update_success:        "Projeto atualizado com sucesso"
         create_success:        "Projeto criado com sucesso"
         error: "Não foi possível atribuir a regra de submissão: #%{message}"
-        not_valid_submission_rule: "%{type} não é uma regra de submissão valida"
+        not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
         edit:           "Editar projeto:"
         properties:     "Propriedades do projeto"
         required_files:  "Arquivos exigidos"
-        submission_rules:  "Regras de envio<span class='required_field'>*</span>"
+        submission_rules:  "Regras de envio"
         required_files_read:  "Arquivos exigidos para esse projeto"
         no_required_files_read:  "Não há arquivos exigidos para esse projeto."
         required_files_by_student:  "Inserir nome dos arquivos(s) exigidos para submissão:"
@@ -164,13 +168,14 @@ pt:
             due_date:  "Prazo de entrega da revisão"
             message:   "Mensagem da revisão"
         marking_scheme:
-            title: "Escala de avalição<span class='required_field'>*</span>"
+            title: "Escala de avalição"
             rubric: "Rúbrica (pré-definido)"
             flexible: "Flexível (à definir pelo avaliador)"
         notice:
             change_marking_scheme_type: "Alterar a escala de avaliação ira apagar avalições e critérios."
-        allow_web_submits: "Permitir submissões online? <span class='required_field'>*</span>"
-        display_grader_names_to_students: "Mostrar nome de avaliador para alunos?<span class='required_field'>*</span>"
+        allow_web_submits: "Permitir envio pelo web?"
+        is_hidden: "Ocultar este projeto dos alunos?"
+        display_grader_names_to_students: "Mostrar nome de avaliador para alunos?"
         section_due_date_option:  "Se a opção de prazo de entrega por sessão foi selecionada, alunos só podem formar grupos dentro da sua sessão."
         section_due_dates_info:  "<b>Importante</b>: o prazo de entrega final deve ser preenchido. Se a sessão não possui uma data específica, o prazo global será usado no lugar. Alunos que não foram atribuídos a uma sessão só poderão formar grupos com alunos que também não estão atribuídos."
     your_mark:  "Sua nota:"
@@ -179,6 +184,7 @@ pt:
     add_members:        "Adicionar membros"
     remove_members:     "Remover membros"
     graders:            "Avaliadores"
+    search_graders:     "Pesquisar avaliadores"
     add_graders:        "Adicionar avaliadores"
     remove_graders:     "Remover avaliadores"
     admins:             "Administradores"
@@ -207,6 +213,7 @@ pt:
     properties:         "Propriedades"
     grades:             "Notas"
     submissions:        "Submissões"
+    summaries:          "Resumos"
     rubrics:            "Rúbricas"
     marking_scheme:     "Esquema de avalição"
     join:               "Juntar"
@@ -304,15 +311,16 @@ pt:
         change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"
         select_some_text: "Você deve selecionar algum texto do código fonte"
         select_an_area: "Você deve selecionar uma área da imagem para anotar"
+        provide_text:   "Você deve fornecer alguma anotação"
 
     #app/views/results/common
     common:
-      loading_code: "Carregando código..."
       submission_file: "Arquivo enviado:"
       test_results: "Resultado dos testes:"
       no_file_in_repository: "[Nenhum arquivo no respositório]"
       cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
       image_downloading: "Baixando pdf, por favor espere."
+      highlighting: "Destacando..."
       test_code: "Testar código"
       criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
 
@@ -336,10 +344,10 @@ pt:
       invalid_csv: "O formato do arquivo CSV não foi reconhecido"
 
     pagination:
-      first: "<< Primeiro"
+      first: "≪ Primeiro"
       prev: "< Anterior"
       next: "Próximo >"
-      last: "Último >>"
+      last: "Último ≫"
       per_page: "Por página"
       jump_to: "Ir para:"
       show: "mostrar"
@@ -395,6 +403,7 @@ pt:
       replace:              "Substituir"
       delete:               "Apagar"
       can_begin_grading:    "Pode começar a ser avaliado"
+      error_collecting:     "Houve problemas em obter os arquivos."
       section:              "Sessão"
       collect_work_for_section: "Coletar submissões para a sessão:"
       download_groupings_files: "Baixar todas as submissões"
@@ -452,8 +461,8 @@ pt:
                              <ul><li>duas linhas no topo que devem especificar o nome da questão e o total;</li>
                              <li>uma linha para cada aluno;</li>
                              <li>cada linha deve ser terminada por um carriage-return line-feed.</li></ul>
-                             <code>\"\",q1_name,q2_name,q3_name</code><br/>
-                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br/>
+                             <code>\"\",q1_name,q2_name,q3_name</code><br>
+                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "Atualmente não há notas nas planilhas."
@@ -467,11 +476,13 @@ pt:
 
     groups:
       groups: "Grupos"
+      search_groups: "Pesquisar os grupos"
       add_new: "Adicionar um novo grupo"
       manage_groups: "Gerenciar grupos"
       all_students: "Todos os alunos(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Não-atribuídos(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Atribuídos(<span id=\"assigned_students_count\"></span>)"
+      inactive_students: "Inativo(<span id=\"inactive_students_count\"></span>)"
       another_assignment_group: "Use grupos de outro projeto"
       graders: "Avaliadores (%{graders})"
       all_grouping_counts: "Todos os grupos(<span id=\"all_groupings_count\"></span>)"
@@ -480,7 +491,6 @@ pt:
       problem: "Houve um problema..."
       warning: "Alerta"
       lines_not_processed: "As seguintes linhas não puderam ser processadas:"
-      loading_list: "Carregando a lista..."
       editing_past_due_date_warning: "O prazo deste projeto já expirou. Além de designar avaliadores para grupos, não é recomendado que nenhuma outra configuração seja alterada dessa vez."
       validate: "Valide o grupo:"
       validate_confirm: "Isso permitirá que o grupo envie sem o número exigido de alunos. Você tem certeza disso?"
@@ -503,12 +513,12 @@ pt:
       upload:
         upload: "Carregar"
         upload_groups_file: "Carregar arquivo de grupos"
-        description: "Formato do arquivo CSV:<br /> <code>group_name,repository_name,user_name,<br />user_name ... </code><br />"
+        description: "Formato do arquivo CSV:<br> <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Ao importar groupos via carregamento CSV no MarkUs você irá apagar os grupos existentes!"
         upload_grader_map: "Carregar grupo / Mapa avaliador"
         upload_grader_criteria_map: "Carregar critério / Mapa avaliador"
-        description_grader_map: "Formato do arquivo CSV:<br /> <code>group_name,grader_user_name,grader_user_name,... </code><br />"
-        description_grader_criteria_map: "Formato do arquivo CSV:<br /> <code>criterion_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "Formato do arquivo CSV:<br> <code>group_name,grader_user_name,grader_user_name,... </code><br>"
+        description_grader_criteria_map: "Formato do arquivo CSV:<br> <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
         download: "Baixar"
         download_groups_file: "Baixar arquivo de grupos"
@@ -554,6 +564,7 @@ pt:
       edit_success: "%{user_name} foi atualizado."
       create_new:      "Criar um novo aluno"
       students: "Alunos"
+      search_students:      "Pesquisar os alunos"
       no_students_selected: "Nenhum aluno foi selecionado, portanto nenhuma mudança foi salva."
       upload:
         upload_a_class_list: "Carregar lista de alunos"
@@ -574,7 +585,7 @@ pt:
     unhide_students:    "Marcar como ativo"
     students_not_successfully_added_message_1: "Os seguintes alunos não foram adicionados com êxito:"
     students_not_successfully_added_message_2: "Tenha certeza que:"
-    students_not_successfully_added_message_3: "Nome dos alunos são 
+    students_not_successfully_added_message_3: "Nome dos alunos são
     alfa-numéricos."
     students_not_successfully_added_message_4: "Cada campo é separado por uma vírgula (sem espaços)."
     students_not_successfully_added_message_5: "Cada linha tem os campos necesários especificados junto ao formulário de carregamento."
@@ -594,7 +605,7 @@ pt:
       group_information: "Informação do Grupo"
       group_not_valid: "Seu grupo não é válido. Você não pode enviar nada."
       overview: "Visão global"
-      last_revision_date: "Última data de revisão:<br /><span class=\"info_date\">%{last_modified_date}</span>"
+      last_revision_date: "Última data de revisão:<br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "arquivos"
       missing_required_files: "Faltando <span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> arquivos exigidos</span>"
       no_submission_yet: "Você não tem nenhum envio ainda."
@@ -675,6 +686,7 @@ pt:
       not_covered:        "Não coberto"
       covered:            "Coberto"
       coverage: "Cobertura"
+      search_criteria:    "Pesquisar os critérios"
       assign_to_criteria: "Atribuir avaliador aos critérios"
       lines_not_processed: "As linhas a seguir não puderam ser processadas:"
       upload:
@@ -698,8 +710,8 @@ pt:
         download_grader_students_csv: "Alunos / Atribuição de corretores CSV "
       upload:
         upload_grader_map: "Carregar alunos / Atribuição de corretores"
-        description_grader_map: "Formato arquivo CSV:<br />
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_map: "Formato arquivo CSV:<br>
+            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     #Admins' View
     admins:
@@ -801,13 +813,13 @@ pt:
         upload_annotations: "Carregar anotações"
         upload_message_csv: "
         <p>
-            Selecione um arquivo CSV no seguinte formato: <br />
-            <code>category_name,annotation_text,annotation_text ... </code><br />
+            Selecione um arquivo CSV no seguinte formato: <br>
+            <code>category_name,annotation_text,annotation_text ... </code><br>
           </p>"
         upload_message_yml: "
         <p>
-            Selecione um arquivo YAML no seguinte formato: <br />
-            <code>category_name: <br />- category_text<br />- category_text</code><br />
+            Selecione um arquivo YAML no seguinte formato: <br>
+            <code>category_name: <br>- category_text<br>- category_text</code><br>
 
           </p>"
         success:  "Carregado com sucesso %{annotation_category_number} categorias de anotações"
@@ -912,8 +924,8 @@ pt:
       weight_not_number: "peso não é um número."
 
     csv_special_characters_html: "
-    <p>Se você quer user uma vírgula (,) no campo do arquivo CSV , você deve cercar o campo com aspas duplas (\").<br />
-    Se você quiser usar aspas duplas em um campo do aruivo field, você deve cerca-lo com aspas duplas e<br />
+    <p>Se você quer user uma vírgula (,) no campo do arquivo CSV , você deve cercar o campo com aspas duplas (\").<br>
+    Se você quiser usar aspas duplas em um campo do aruivo field, você deve cerca-lo com aspas duplas e<br>
     duplique cada uma de suas aspas duplas(\"\").</p>
     <p>Segue um exemplo de um campo contendo vírgulas e aspas duplas:</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
@@ -967,16 +979,16 @@ pt:
         <p>O arquivo deve possuir o seguinte formato:</p>
         <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>onde <em>level_names</em> deve conter o nome de cada nível (separado por vírgulas)<br />
+        <p>onde <em>level_names</em> deve conter o nome de cada nível (separado por vírgulas)<br>
         e <em>level_descriptions</em> deve conter a descrição de cada nível (opcional, também separado por vírgulas)."
         format_yml_html: "
-          <p>O aruivo deve possuir o seguinte formato:<br />
-              <code>criterion_name:<br />
-                    &nbsp;&nbsp;weight: weight<br />
-                    &nbsp;&nbsp;level_0:<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br />
-                    &nbsp;&nbsp;level_1:<br />
+          <p>O aruivo deve possuir o seguinte formato:<br>
+              <code>criterion_name:<br>
+                    &nbsp;&nbsp;weight: weight<br>
+                    &nbsp;&nbsp;level_0:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+                    &nbsp;&nbsp;level_1:<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]
           </p>"
         error: "Alguns critérios de rúbrica eram inválidos:"
@@ -1091,18 +1103,26 @@ pt:
         long_ordinal: "%e %B %Y"
         only_day: "%e"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%B %d, %Y: %I:%M%p"
+        long_date: "%A, %d de %B de %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
+        short_date: "%d de %B de %Y"
         short_date: "%B %d, %Y"
+        locale_date:      "DD, d 'de' MM 'de' yy"
+        locale_date_only: "DD, d 'de' MM 'de' yy"
+        js_date_time:     "dddd, D [de] MMMM [de] YYYY HH:mm"
+        js_date:          "dddd, D [de] MMMM [de] YYYY"
 
-      day_names: [Domingo, Segunda-feira, Terça-feira, Quarta-feira, Quinta-feira, Sexta-feira, Sábado]
-      abbr_day_names: [Dom, Seg, Ter, Qua, Qui, Sex, Sab]
-      month_names: [~, Janeiro, Fevereiro, Março, Abril, Maio, Junho, Julho, Agosto, Setembro, Outubro, Novembro, Dezembro]
-      abbr_month_names: [~, Jan, Feb, Mar, Apr, Mai, Jun, Jul, Aug, Sep, Out, Nov, Dez]
+      day_names: [domingo, segunda-feira, terça-feira, quarta-feira, quinta-feira, sexta-feira, sábado]
+      abbr_day_names: [dom, seg, ter, qua, qui, sex, sab]
+      month_names: [~, janeiro, fevereiro, março, abril, maio, junho, julho, agosto, setembro, outubro, novembro, dezembro]
+      abbr_month_names: [~, jan, feb, mar, apr, mai, jun, jul, aug, sep, out, nov, dez]
       order:
         - day
         - month
         - year
+      months:       ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
+      weekdays:     ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado']
+      weekdays_min: ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab']
 
     time:
       formats:
@@ -1113,13 +1133,21 @@ pt:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%d de %B, %Y: %I:%M%p"
+        long_date: "%A, %d de %B de %Y %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date: "%d de %B, %Y"
+        short_date: "%d de %B de %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
         ant_date: "%d-%B-%Y_%I:%M"
+        locale_time: "HH:mm"
       am: 'am'
       pm: 'pm'
+      hour:   "Hora"
+      minute: "Minuto"
+      time:   "Tempo"
+      next:   "Seguinte"
+      prev:   "Anterior"
+      close:  "Fechar"
+      now:    "Atualmente"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
@@ -1140,7 +1168,7 @@ pt:
     assignments_graded:        "Projetos avalidos:"
     assignments_failed:        "Número de falhas:"
     assignments_zeros:         "Número de zeros:"
-    refresh_graph:             "Atulizar grafo"
+    refresh_graph:             "Atualizar gráfico"
     outstanding_remark_request: "%{request_count} pedidos de avaliação"
     outstanding_remark_requests: "%{request_count} pedidos de avaliação"
 
@@ -1153,7 +1181,7 @@ pt:
 
     #lib/validators/
     date_validator:
-      invalid_date: "Não é uma data valida"
+      invalid_date: "Não é uma data válida"
 
     #Test Framework
     automated_tests:
@@ -1166,7 +1194,7 @@ pt:
       due_date_is_passed: "Você não pode executar o teste pois a sua entrega está fora do prazo "
       information: "Informação"
       run_tests: "Executar testes"
-      need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br />
+      need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br>
                       Se você já enviou um arquivo e que executar os testes nele, use o botao \"Coletar e preparar testes\" abaixo."
       collect_and_test: "Colete e prepare os testes"
       build_xml: "build.xml"

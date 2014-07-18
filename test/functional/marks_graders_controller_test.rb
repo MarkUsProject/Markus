@@ -2,8 +2,6 @@ require File.expand_path(File.join(File.expand_path(File.dirname(__FILE__)), 'au
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
-include CsvHelper
-
 require 'shoulda'
 require 'mocha/setup'
 
@@ -113,7 +111,7 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
       get_as @admin, :download_grader_students_mapping,
         :grade_entry_form_id => @grade_entry_form.id
       assert_response :success
-      assert_equal csv, @response.body
+      assert_equal CSV.parse(csv).to_set, CSV.parse(@response.body).to_set
     end
 
     should 'be able to assign a grader to a student on POST :global_actions' do

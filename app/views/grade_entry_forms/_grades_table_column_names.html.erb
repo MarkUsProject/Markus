@@ -16,19 +16,19 @@
                     <%="ap_sorting_by_desc" if (sort_by == 'user_name' && !desc.blank?)%>">
           <% if desc.blank? %>
             <%= link_to I18n.t("user.user_name"),
-              :desc => (sort_by == 'user_name' && desc.blank?),
-              :sort_by => 'user_name',
-              :per_page => per_page,
-              :filter =>filter,
-              :controller =>controller,
-              :action => action%>
+              desc: (sort_by == 'user_name' && desc.blank?),
+              sort_by: 'user_name',
+              per_page: per_page,
+              filter:filter,
+              controller:controller,
+              action: action%>
           <% else %>
             <%= link_to I18n.t("user.user_name"),
-              :sort_by => 'user_name',
-              :per_page => per_page,
-              :filter =>filter,
-              :controller =>controller,
-              :action => action%>
+              sort_by: 'user_name',
+              per_page: per_page,
+              filter:filter,
+              controller:controller,
+              action: action%>
           <% end %>
       <% else %>
           ><%= t('user.user_name') %>
@@ -40,19 +40,19 @@
                     <%="ap_sorting_by_desc" if (sort_by == 'last_name' && !desc.blank?)%>">
           <% if desc.blank? %>
             <%= link_to I18n.t("user.last_name"),
-              :desc => (sort_by == 'last_name' && desc.blank?),
-              :sort_by => 'last_name',
-              :per_page => per_page,
-              :filter =>filter,
-              :controller =>controller,
-              :action => action%>
+              desc: (sort_by == 'last_name' && desc.blank?),
+              sort_by: 'last_name',
+              per_page: per_page,
+              filter:filter,
+              controller:controller,
+              action: action%>
           <% else %>
              <%= link_to I18n.t("user.last_name"),
-              :sort_by => 'last_name',
-              :per_page => per_page,
-              :filter =>filter,
-              :controller =>controller,
-              :action => action%>
+              sort_by: 'last_name',
+              per_page: per_page,
+              filter:filter,
+              controller:controller,
+              action: action%>
           <% end %>
        <% else %>
           ><%= t('user.last_name') %>
@@ -64,19 +64,19 @@
                     <%="ap_sorting_by_desc" if (sort_by == 'first_name' && !desc.blank?)%>">
           <% if desc.blank? %>
             <%= link_to I18n.t("user.first_name"),
-              :desc => (sort_by == 'first_name' && desc.blank?),
-              :sort_by => 'first_name',
-              :per_page => per_page,
-              :filter =>filter,
-              :controller =>controller,
-              :action => action%>
+              desc: (sort_by == 'first_name' && desc.blank?),
+              sort_by: 'first_name',
+              per_page: per_page,
+              filter:filter,
+              controller:controller,
+              action: action%>
           <% else %>
             <%= link_to I18n.t("user.first_name"),
-              :sort_by => 'first_name',
-              :per_page => per_page,
-              :filter =>filter,
-              :controller =>controller,
-              :action => action%>
+              sort_by: 'first_name',
+              per_page: per_page,
+              filter:filter,
+              controller:controller,
+              action: action%>
           <% end %>
       <% else %>
          ><%= t('user.first_name') %>
@@ -87,19 +87,19 @@
                       <%="ap_sorting_by_desc" if (sort_by == 'section' && !desc.blank?)%>">
     <% if desc.blank? %>
         <%= link_to I18n.t("user.section"),
-                    :desc => (sort_by == 'section' && desc.blank?),
-                    :sort_by => 'section',
-                    :per_page => per_page,
-                    :filter =>filter,
-                    :controller =>controller,
-                    :action => action%>
+                    desc: (sort_by == 'section' && desc.blank?),
+                    sort_by: 'section',
+                    per_page: per_page,
+                    filter:filter,
+                    controller:controller,
+                    action: action%>
     <% else %>
         <%= link_to I18n.t("user.section"),
-                    :sort_by => 'section',
-                    :per_page => per_page,
-                    :filter =>filter,
-                    :controller =>controller,
-                    :action => action%>
+                    sort_by: 'section',
+                    per_page: per_page,
+                    filter:filter,
+                    controller:controller,
+                    action: action%>
     <% end %>
   </th>
   <% end %>
@@ -109,7 +109,7 @@
   <% @grade_entry_form.grade_entry_items.each do |grade_entry_item| %>
     <th class="out_of">
       <%= grade_entry_item.name %>
-      <br />
+      <br>
       <%= "(" + grade_entry_item.out_of.to_s + ")" %>
     </th>
   <% end %>
@@ -121,7 +121,7 @@
 		<th class="student_total" >
 		<%= t('grade_entry_forms.grades.total') + " " + @grade_entry_form.out_of_total.to_s %>
 		<% if @current_user.admin? or @current_user.ta? %>
-			<br /> <a href="#" onclick="toggleTotalColVisibility()"> <%= t('grade_entry_forms.toggle_column') %> </a>
+			<br> <a href="#" onclick="toggleTotalColVisibility()"> <%= t('grade_entry_forms.toggle_column') %> </a>
 		<% end %>
 		</th>
   <% end %>
