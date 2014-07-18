@@ -111,7 +111,10 @@
                                onkeypress: "stop_submit(event);",
                                placeholder: I18n.t("search_graders") %>
           </div>
-          <table class='graders' id='graders'></table>
+
+          <div class='table'>
+            <table class='graders' id='graders'></table>
+          </div>
         </div>
 
       </div>
@@ -152,11 +155,15 @@
         <div id='groups_table'>
           <div class='clear'></div>
           <div id='students_container' class='tabbedArea'>
-            <%= text_field_tag 'search_students', nil,
-                :onkeyup => 'groupings_table.add_filter("search"); groupings_table.render();',
-                :onkeypress => 'stop_submit(event);',
-                :placeholder => I18n.t('students.search_students') %>
-            <table class='groups' id='groups'></table>
+            <%= text_field_tag 'search_students',
+                               nil,
+                               onkeyup: 'groupings_table.add_filter("search"); groupings_table.render();',
+                               onkeypress: 'stop_submit(event);',
+                               placeholder: I18n.t('students.search_students') %>
+
+            <div class='table'>
+              <table class='groups' id='groups'></table>
+            </div>
           </div><!-- group container -->
         </div>
       </div>

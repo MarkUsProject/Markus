@@ -1,73 +1,75 @@
-<div class="section">
+<div class='section'>
   <% if @assignments.empty? %>
     <p><%= I18n.t(:no_assignments) %></p>
   <% else %>
-    <table><!-- listing assignments -->
-      <thead>
-        <tr>
-          <th><%= t(:name) %></th>
-          <th><%= t(:due_date) %></th>
-          <th><%= t('results.results_name') %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% for assignment in @assignments %>
+    <div class='table'>
+      <table><!-- listing assignments -->
+        <thead>
           <tr>
-            <td>
-              <%=
-                # assignment name
-                link_to sanitize(assignment.short_identifier) + ': ' + assignment.description,
-                controller: controller,
-                action: action,
-                id: assignment.id %>
-            </td>
-            <td>
-              <% if !assignment.section_due_dates_type %>
-                <% if assignment.due_date < Time.zone.now %>
-                  <strong><%= I18n.l(assignment.due_date, format: :long_date) %></strong>
-                <% else %>
-                  <strong><%= I18n.l(assignment.due_date, format: :long_date) %></strong>
-                  <p>
-                    <%= I18n.t(:days_and_hours_left,
-                               days: ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
-                               hours: ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
-                  </p>
-                <% end %>
-              <% else %>
-                <% if assignment.section_due_date(@section) < Time.zone.now %>
-                <% else %>
-                  <strong><%= I18n.l(assignment.section_due_date(@section), format: :long_date) %></strong>
-                  <p>
-                    <%= I18n.t(:days_and_hours_left,
-                               days: ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
-                               hours: ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
-                  </p>
-                <% end %>
-              <% end %>
-            </td>
-            <td style="width: 40%;">
-              <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>
-                <strong><%= I18n.t(:your_mark) %></strong>
-                <%= # show results
-                    ("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.total_mark)).to_s + "% (Class Average: " + ("%.2f" % (assignment.results_average)).to_s + "%)" %>
-                <p>
-                  <strong><%= I18n.t("assignment.overall_comment") %></strong>
-                </p>
-                <p>
-                  <%= simple_format(sanitize(@a_id_results[assignment.id].overall_comment)) %>
-                </p>
-                <%= link_to I18n.t('results.results_name'),
-                            view_marks_assignment_submission_result_path(
-                              assignment_id: assignment.id,
-                              submission_id: @a_id_results[assignment.id].submission_id,
-                              id: @a_id_results[assignment.id].id) %>
-              <% elsif assignment.due_date < Time.zone.now %>
-                <%= I18n.t(:no_result) %>
-              <% end %>
-            </td>
+            <th><%= t(:name) %></th>
+            <th><%= t(:due_date) %></th>
+            <th><%= t('results.results_name') %></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% for assignment in @assignments %>
+            <tr>
+              <td>
+                <%=
+                  # assignment name
+                  link_to sanitize(assignment.short_identifier) + ': ' + assignment.description,
+                  controller: controller,
+                  action: action,
+                  id: assignment.id %>
+              </td>
+              <td>
+                <% if !assignment.section_due_dates_type %>
+                  <% if assignment.due_date < Time.zone.now %>
+                    <strong><%= I18n.l(assignment.due_date, format: :long_date) %></strong>
+                  <% else %>
+                    <strong><%= I18n.l(assignment.due_date, format: :long_date) %></strong>
+                    <p>
+                      <%= I18n.t(:days_and_hours_left,
+                                 days: ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
+                                 hours: ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
+                    </p>
+                  <% end %>
+                <% else %>
+                  <% if assignment.section_due_date(@section) < Time.zone.now %>
+                  <% else %>
+                    <strong><%= I18n.l(assignment.section_due_date(@section), format: :long_date) %></strong>
+                    <p>
+                      <%= I18n.t(:days_and_hours_left,
+                                 days: ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
+                                 hours: ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
+                    </p>
+                  <% end %>
+                <% end %>
+              </td>
+              <td style="width: 40%;">
+                <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>
+                  <strong><%= I18n.t(:your_mark) %></strong>
+                  <%= # show results
+                      ("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.total_mark)).to_s + "% (Class Average: " + ("%.2f" % (assignment.results_average)).to_s + "%)" %>
+                  <p>
+                    <strong><%= I18n.t("assignment.overall_comment") %></strong>
+                  </p>
+                  <p>
+                    <%= simple_format(sanitize(@a_id_results[assignment.id].overall_comment)) %>
+                  </p>
+                  <%= link_to I18n.t('results.results_name'),
+                              view_marks_assignment_submission_result_path(
+                                assignment_id: assignment.id,
+                                submission_id: @a_id_results[assignment.id].submission_id,
+                                id: @a_id_results[assignment.id].id) %>
+                <% elsif assignment.due_date < Time.zone.now %>
+                  <%= I18n.t(:no_result) %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   <% end %>
 </div>

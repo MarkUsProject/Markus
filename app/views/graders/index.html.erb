@@ -88,7 +88,10 @@
               onkeypress: "stop_submit(event);",
               placeholder: I18n.t("search_graders") %>
         </div>
-        <table class="graders" id="graders"></table>
+
+        <div class='table'>
+          <table class='graders' id='graders'></table>
+        </div>
       </div>
     </div>
   </div>
@@ -142,7 +145,10 @@
                                                                  id: @assignment.id) %>
           <%= label_tag 'assign_criteria', I18n.t('graders.assign_to_criteria'),
               class: 'bold_inline_label'%>
-          <table class="criteria" id="criteria"></table>
+
+          <div class='table'>
+            <table class="criteria" id="criteria"></table>
+          </div>
         </div><!-- group container -->
       </div>
 
@@ -161,7 +167,9 @@
                      return groupings_table.render();',
                        onfocus: 'stop_submit(event);' }) %>
 
-          <table class="groups" id="groups"></table>
+          <div class='table'>
+            <table class="groups" id="groups"></table>
+          </div>
         </div><!-- group container -->
       </div>
     </div>

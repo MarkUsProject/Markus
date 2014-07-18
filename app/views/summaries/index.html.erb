@@ -34,29 +34,31 @@
     <div class='clear'></div>
   </div>
 
-  <table>
-    <thead id='summaries_table_head'>
-      <%= render partial: 'summaries_table_sorting_links',
-                 locals: { assignment: @assignment,
-                           filter: 'none',
-                           page: @current_page,
-                           per_page: @per_page,
-                           sort_by: @sort_by,
-                           cid: @cid,
-                           desc: @desc } %>
-    </thead>
-    <%= render partial: 'summaries_table_body',
-               locals: { groupings: @groupings,
-                         assignment: @assignment } %>
-    <tfoot id='summaries_table_foot'>
-      <%= render partial: 'summaries_table_sorting_links',
-                 locals: { assignment: @assignment,
-                           filter: 'none',
-                           page: @current_page,
-                           per_page: @per_page,
-                           sort_by: @sort_by,
-                           cid: @cid,
-                           desc: @desc } %>
-    </tfoot>
-  </table>
+  <div class='table'>
+    <table>
+      <thead id='summaries_table_head'>
+        <%= render partial: 'summaries_table_sorting_links',
+                   locals: { assignment: @assignment,
+                             filter: 'none',
+                             page: @current_page,
+                             per_page: @per_page,
+                             sort_by: @sort_by,
+                             cid: @cid,
+                             desc: @desc } %>
+      </thead>
+      <%= render partial: 'summaries_table_body',
+                 locals: { groupings: @groupings,
+                           assignment: @assignment } %>
+      <tfoot id='summaries_table_foot'>
+        <%= render partial: 'summaries_table_sorting_links',
+                   locals: { assignment: @assignment,
+                             filter: 'none',
+                             page: @current_page,
+                             per_page: @per_page,
+                             sort_by: @sort_by,
+                             cid: @cid,
+                             desc: @desc } %>
+      </tfoot>
+    </table>
+  </div>
 </div>

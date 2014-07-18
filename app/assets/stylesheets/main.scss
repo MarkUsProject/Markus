@@ -199,6 +199,89 @@ ul#annotation_list {
 }
 
 
+
+/** [TEMP] Tables */
+
+.table {
+  border-left: 1px solid $grey;
+  border-right: 1px solid $grey;
+  overflow-x: auto;
+  width: 100%;
+
+  table {
+    border-top: 1px solid $grey;
+    width: 100%;
+
+    thead,
+    tfoot {
+      background-color: $light-grey;
+      font-weight: 600;
+      text-align: left;
+      text-transform: uppercase;
+
+      .asc,
+      .des {
+        cursor: pointer;
+
+        &::after {
+          font-size: 0.75em;
+          padding-left: 0.5em;
+        }
+      }
+
+      .asc::after, {
+        content: "▲";
+      }
+
+      .des::after {
+        content: "▼";
+      }
+    }
+
+    thead {
+      border-bottom: 2px solid $grey;
+    }
+
+    tfoot {
+      border-top: 2px solid $grey;
+    }
+
+    tr {
+      border-bottom: 1px solid $grey;
+
+      th,
+      td {
+        border-right: 1px solid $grey;
+        padding: 0.5em 1em;
+        vertical-align: middle;
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        @include transition(all, $time-quick);
+
+        &:nth-child(odd) {
+          background-color: #ff;
+        }
+
+        &:nth-child(even) {
+          background-color: $light-grey;
+        }
+
+        &:hover {
+          background: $light-blue;
+        }
+      }
+    }
+  }
+}
+
+
 /* Title Bar */
 
 #title_bar {
@@ -372,7 +455,6 @@ ul#annotation_list {
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 4px 0;
 
   tr td.loading,
   tr td:hover.loading {

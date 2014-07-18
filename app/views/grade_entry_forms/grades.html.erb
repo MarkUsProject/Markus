@@ -66,30 +66,32 @@
       <div id="ap_selects">
         <%= render partial: 'ajax_paginate/selects', locals: {page_items: @students.size, total_items: @students_total} %>
       </div>
-      <table>
-        <thead id="grades_table_head">
-        <%= render partial: 'grades_table_column_names',locals: {per_page: @per_page,
-                                                                 filter: @filter,
-                                                                 sort_by: @sort_by,
-                                                                 desc: @desc,
-                                                                 controller: 'grade_entry_forms',
-                                                                 action: 'grades'
-        }%>
-        </thead>
-        <tbody>
-        </tbody>
-        <%= render partial: 'grades_table' %>
-        <tfoot id="grades_table_footer">
-        <%= render partial: 'grades_table_column_names', locals: {per_page: @per_page,
-                                                                  filter: @filter,
-                                                                  sort_by: @sort_by,
-                                                                  desc: @desc,
-                                                                  controller: 'grade_entry_forms',
-                                                                  action: 'grades'
-        }%>
 
-        </tfoot>
-      </table>
+      <div class='table'>
+        <table>
+          <thead id='grades_table_head'>
+            <%= render partial: 'grades_table_column_names',
+                       locals: { per_page: @per_page,
+                                 filter: @filter,
+                                 sort_by: @sort_by,
+                                 desc: @desc,
+                                 controller: 'grade_entry_forms',
+                                 action: 'grades' } %>
+          </thead>
+          <tbody>
+          </tbody>
+          <%= render partial: 'grades_table' %>
+          <tfoot id='grades_table_footer'>
+            <%= render partial: 'grades_table_column_names',
+                       locals: { per_page: @per_page,
+                                 filter: @filter,
+                                 sort_by: @sort_by,
+                                 desc: @desc,
+                                 controller: 'grade_entry_forms',
+                                 action: 'grades' } %>
+          </tfoot>
+        </table>
+      </div>
 
       <div class="ap_nav_box">
         <div class="ap_page_links" id="ap_page_links_2">

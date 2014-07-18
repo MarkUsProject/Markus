@@ -192,7 +192,10 @@
                 onkeypress: "stop_submit(event);",
                 placeholder: t("students.search_students") %>
           </div>
-          <table class="students" id="students"></table>
+
+          <div class='table'>
+            <table class="students" id="students"></table>
+          </div>
         </div>
       </div>
     </div>
@@ -267,7 +270,9 @@
               onclick: "$('global_actions').setValue('delete');" %>
           </div>
 
-          <table class="groups" id="groups"></table>
+          <div class='table'>
+            <table class="groups" id="groups"></table>
+          </div>
 
           <%= hidden_field_tag 'submit_type', 'global_action', id: 'submit_type' %>
           <%= hidden_field_tag 'global_actions'%>
