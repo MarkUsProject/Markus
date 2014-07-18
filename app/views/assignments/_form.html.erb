@@ -50,11 +50,12 @@
       <% end %>
     </div>
 
-    <div class='help assignment_properties_help'></div>
-    <p class='help-message-box assignment_properties_help'>
-      <%= t('assignment.help.assignment_form.properties') %>
-    </p>
-    <br />
+    <div class='help assignment_properties_help'>
+      <p class='help-message-box assignment_properties_help'>
+        <%= t('assignment.help.assignment_form.properties').html_safe %>
+      </p>
+    </div>
+
     <div>
       <%= raw(f.label :description,
                       t('assignment.name').html_safe ) %>
@@ -166,11 +167,11 @@
 
   <fieldset>
     <legend><%= t('assignment.marking_scheme.title') %></legend>
-    <div class='help assignment_marking_scheme_help'></div>
-    <p class='help-message-box assignment_marking_scheme_help'>
-      <%= t('assignment.help.assignment_form.marking_scheme') %>
-    </p>
-    <br />
+    <div class='help assignment_marking_scheme_help'>
+      <p class='help-message-box assignment_marking_scheme_help'>
+        <%= t('assignment.help.assignment_form.marking_scheme') %>
+      </p>
+    </div>
 
     <% Assignment::MARKING_SCHEME_TYPE.each do |key, value| %>
       <p>
@@ -191,10 +192,12 @@
 
   <!-- Required files -->
   <fieldset>
-    <div class='help assignment_required_files_help'></div>
-    <p class='help-message-box assignment_required_files_help'>
-      <%= t('assignment.help.assignment_form.required_files') %>
-    </p>
+    <div class='help assignment_required_files_help'>
+      <p class='help-message-box assignment_required_files_help'>
+        <%= t('assignment.help.assignment_form.required_files') %>
+      </p>
+    </div>
+
     <legend><%= t('assignment.required_files') %></legend>
     <h4><%= t('assignment.required_files_by_student') %></h4>
     <div id='assignment_files'>
@@ -212,10 +215,12 @@
   <!-- Assignment types -->
   <fieldset>
     <legend><%= t('assignment.type') %></legend>
-    <div class='help assignment_assignment_type_help'></div>
-    <p class='help-message-box assignment_assignment_type_help'>
-      <%= t('assignment.help.assignment_form.assignment_type') %>
-    </p>
+    <div class='help assignment_assignment_type_help'>
+      <p class='help-message-box assignment_assignment_type_help'>
+        <%= t('assignment.help.assignment_form.assignment_type').html_safe %>
+      </p>
+    </div>
+
     <p id='persist_groups_assignment_style'
        style='<%= 'display: none' unless @assignments.size > 0 && @assignment.id.nil? %>'>
       <%= check_box_tag 'persist_groups',
@@ -298,10 +303,11 @@
   <!-- Submission rules -->
   <fieldset>
     <legend><%= t('assignment.submission_rules') %></legend>
-    <div class='help assignment_submission_rules_help'></div>
-    <p class='help-message-box assignment_submission_rules_help'>
-      <%= t('assignment.help.assignment_form.submission_rules') %>
-    </p>
+    <div class='help assignment_submission_rules_help'>
+      <p class='help-message-box assignment_submission_rules_help'>
+        <%= t('assignment.help.assignment_form.submission_rules') %>
+      </p>
+    </div>
 
     <%= f.fields_for :submission_rule do |rule| %>
       <h5><%= t('assignment.submission.penalty_rules').html_safe %></h5>
@@ -418,10 +424,12 @@
   <!-- Remark request rules -->
   <fieldset>
     <legend><%= t('assignment.remark.rules')%></legend>
-    <div class='help assignment_remark_request_rules_help'></div>
-    <p class='help-message-box assignment_remark_request_rules_help'>
-      <%= t('assignment.help.assignment_form.remark_request_rules') %>
-    </p>
+    <div class='help assignment_remark_request_rules_help'>
+      <p class='help-message-box assignment_remark_request_rules_help'>
+        <%= t('assignment.help.assignment_form.remark_request_rules') %>
+      </p>
+    </div>
+
     <p id='allow_remark_requests'>
       <%= raw(f.check_box(:allow_remarks,
                           id: 'allow_remarks',
