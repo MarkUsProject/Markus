@@ -1,17 +1,9 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('livepipe/tabs') %>
-  <%= stylesheet_link_tag('SyntaxHighlighter') %>
-  <%= stylesheet_link_tag('grader') %>
-  <%= javascript_include_tag 'panes.js' %>
+  <%= stylesheet_link_tag 'common/SyntaxHighlighter',
+                          'grader' %>
+  <%= javascript_include_tag 'panes',
+                             'DropDownMenu/DropDownMenu' %>
 <% end %>
-
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'livepipe/livepipe.js',
-                           'livepipe/window.js',
-                           'livepipe/tabs.js' %>
-
-<%= javascript_include_tag 'controls.js' %>
-<%= javascript_include_tag 'DropDownMenu/DropDownMenu.js'%>
 
 <% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
 <%= javascript_include_tag 'SourceCodeGlower/AnnotationText.js',
@@ -63,7 +55,7 @@
 <%= render partial: 'results/student/enable_remark_request_buttons',
            formats: [:js] %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>Results for <%= sanitize(@assignment.short_identifier) %></h1>
 </div>
 

@@ -1,7 +1,7 @@
-<% # Grades page for students
-%>
-<div id="title_bar">
-  <h1><%= t('grade_entry_forms.grades.student_title') + " " + @grade_entry_form.short_identifier %></h1>
+<%# Grades page for students %>
+
+<div class='title_bar'>
+  <h1><%= t('grade_entry_forms.grades.student_title') + ' ' + @grade_entry_form.short_identifier %></h1>
 </div>
 
 <div class="wrapLeft">
@@ -34,16 +34,16 @@
                 <% end %>
               </td>
           <% end %>
-	  <% if @grade_entry_form.show_total %>
-		  <td class=grade>
-		    <% total = grade_entry_student.total_grade %>
-		    <% if !total.nil? %>
-		      <%= total %>
-		    <% else %>
-		      <%= t('grade_entry_forms.grades.no_mark') %>
-		    <% end %>
-		 </td>
-	  <% end %>
+    <% if @grade_entry_form.show_total %>
+      <td class=grade>
+        <% total = grade_entry_student.total_grade %>
+        <% if !total.nil? %>
+          <%= total %>
+        <% else %>
+          <%= t('grade_entry_forms.grades.no_mark') %>
+        <% end %>
+     </td>
+    <% end %>
         </tr>
      </table>
    <% end %>

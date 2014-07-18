@@ -1,7 +1,330 @@
+
+/* [TEMP] Menus */
+
+nav {
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      @include border-radius-top(5px);
+      display: inline-block;
+      text-align: center;
+      vertical-align: bottom;
+
+      a {
+        @include border-radius-top(5px);
+        display: block;
+        height: 3em;
+        line-height: 3em;
+        min-width: 11em;
+        padding: 0 1em;
+      }
+    }
+  }
+
+  ul.main,
+  ul.sub_sub {
+    border-bottom: 2px solid $light-blue;
+
+    li:hover,
+    .active {
+      @include transition(background-color, $time-quick);
+      background-color: $light-blue;
+      color: $primary-color;
+
+      a {
+        color: $primary-color;
+      }
+    }
+  }
+
+  ul.sub {
+    background-color: $light-blue;
+    border-bottom: 2px solid $primary-color;
+    min-height: 3em;
+
+    li:hover,
+    .active {
+      @include transition(background-color, $time-quick);
+      background-color: $primary-color;
+      color: $blue;
+
+      a {
+        color: $blue;
+      }
+    }
+
+    a {
+      color: $primary-color;
+    }
+  }
+
+  ul.sub_sub {
+    background-color: $primary-color;
+  }
+}
+
+
+/** Dropdown menu */
+
+.dropdown {
+  @include border-radius(5px);
+  background: $primary-color;
+  border: 1px solid $blue;
+  cursor: pointer;
+  display: inline-block;
+  min-width: 200px;
+  padding: 0.5em;
+  position: relative;
+  text-align: center;
+
+  &:hover {
+    @include border-radius-bottom(0);
+
+    ul {
+      display: block;
+    }
+  }
+
+  ul {
+    @include border-radius-bottom(5px);
+    background: $primary-color;
+    border: 1px solid $blue;
+    display: none;
+    left: -1px;
+    margin: 0;
+    min-width: 200px;
+    padding: 0;
+    top: 1.95em;
+    position: absolute;
+    text-align: left;
+    z-index: 100000;
+
+    li {
+      display: block;
+      list-style: none;
+      text-align: left;
+
+      &:last-child {
+        @include border-radius-bottom(5px);
+      }
+    }
+
+    li.section {
+      padding: 0.25em;
+    }
+
+    li:not(.section) {
+      @include transition(all, $time-quick);
+
+      &:hover,
+      &.active {
+        background: $blue;
+        color: $primary-color;
+      }
+
+      &.active {
+        padding: 0.5em 1em;
+      }
+
+      a {
+        display: block;
+        padding: 0.5em 1em;
+
+        &:hover {
+          color: $primary-color;
+        }
+      }
+    }
+
+    .section {
+      font-size: 0.9em;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+}
+
+
 /**
- * This contains the styles for the header, menu, sub-menu,
- * sub-sub-menu, and the footer.
+ * Header, main menu, sub menu, sub_sub menu, and footer.
  */
+
+
+/* Header */
+
+header#header {
+  border-bottom: 1px solid $light-blue;
+  display: table;
+  padding: 0.25em 2.5em;
+  width: 100%;
+
+  #course,
+  #user_info {
+    display: table-cell;
+
+    @include breakpoint(mobile) {
+      display: block;
+    }
+  }
+
+  #user-info {
+    text-align: right;
+
+    @include breakpoint(mobile) {
+      text-align: left;
+    }
+  }
+}
+
+
+/* Menus */
+
+nav {
+  .main {
+    padding: 0 2.5em;
+
+    li,
+    li a {
+      @include border-radius-top(0);
+    }
+
+    #logo {
+      img {
+        vertical-align: middle;
+      }
+
+      &:hover {
+        background: none;
+      }
+    }
+  }
+
+  .sub,
+  .sub_sub {
+    padding: 0 2.5em;
+  }
+
+  footer {
+    display: none;
+    text-align: left;
+
+    @include breakpoint(mobile) {
+      display: block;
+    }
+
+    span {
+      margin-left: 0 !important;
+    }
+  }
+}
+
+
+/* Footer */
+
+footer {
+  color: $grey;
+  font-size: 0.95em;
+  padding: 2em 2.5em;
+  text-align: center;
+
+  @include breakpoint(mobile) {
+    display: none;
+  }
+
+  a {
+    color: $grey;
+
+    &:hover {
+      color: $light-grey;
+    }
+  }
+
+  #lang_chooser {
+    margin: 0 0 0 1em;
+
+    select {
+      border: none;
+      color: $grey;
+      font-family: $font-stack;
+      margin: 0;
+    }
+  }
+
+  #issues {
+    margin: 0 1em;
+  }
+
+  #lang_chooser,
+  #issues {
+    border-left: 1px solid $light-grey;
+    padding-left: 1em;
+
+    @include breakpoint(mobile) {
+      border: none;
+      display: block;
+      margin: 1em 1em 0 1em;
+      padding: 0;
+    }
+  }
+}
+
+
+/* Working indicator */
+
+#working {
+  @include border-radius(5px);
+  @include box-shadow(0 0 5px 0 $light-blue);
+  background: $light-blue;
+  border: 1px solid $blue;
+  color: $primary-color;
+  font-size: 1.25em;
+  font-weight: 600;
+  left: 50%;
+  margin-left: -7.5em;
+  padding: 0.5em;
+  position: fixed;
+  text-align: center;
+  top: 1.5em;
+  width: 15em;
+  z-index: 99999;
+
+  #ellipsis {
+    display: inline-block;
+    text-align: left;
+    width: 1em;
+
+    &::after {
+      @include animation(ellipsis $time-quick infinite);
+      content: "\2026";
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+    }
+  }
+}
+
+@-webkit-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@-moz-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@-ms-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@-o-keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
+@keyframes ellipsis {
+  from { width: 2px; }
+  to   { width: 1em; }
+}
 
 
 /* Mobile friendly menu */
@@ -13,8 +336,8 @@
 }
 
 #mobile_menu {
-  background: $bg-color url(markus_logo_small.png) no-repeat center center;
-  border-bottom: 1px solid $lighter-blue;
+  background: $light-blue url(markus_logo_small.png) no-repeat center center;
+  border-bottom: 1px solid $blue;
   display: none;
   height: 3.5em;
   position: fixed;
@@ -73,8 +396,8 @@
 
   footer {
     background: $light-grey !important;
-    border-bottom: 1px solid $lighter-blue !important;
-    border-top: 1px solid $lighter-blue !important;
+    border-bottom: 1px solid $light-blue !important;
+    border-top: 1px solid $light-blue !important;
     display: none;
     padding: 1em;
 
@@ -86,8 +409,8 @@
 
 #menus_child {
   @include breakpoint(mobile) {
-    background: $bg-color;
-    border-right: 1px solid $grey;
+    background: $lighter-blue;
+    border-right: 1px solid $light-blue;
     height: 100%;
     overflow: auto;
   }
@@ -117,7 +440,6 @@
   }
 
   #content {
-    background: $primary-color;
     display: block;
     opacity: 0.5;
     position: fixed;
@@ -126,17 +448,54 @@
 }
 
 #header,
-#menu,
-#sub_menu,
-#sub_sub_menu {
+.main,
+.sub,
+.sub_sub {
+  @include breakpoint(mobile) {
+    background: $light-grey;
+    border-bottom: 1px solid $light-blue;
+    border-top: 1px solid $light-blue;
+    display: block;
+    margin: 0 0 1em 0;
+    padding: 0 !important;
+    width: 100%;
+  }
+
+  li {
+    @include breakpoint(mobile) {
+      @include border-radius(0);
+      text-align: left;
+      width: 100%;
+    }
+  }
+}
+
+.main,
+.sub,
+.sub_sub {
   @include breakpoint(mobile) {
     background: $light-grey !important;
-    border-bottom: 1px solid $lighter-blue !important;
-    border-top: 1px solid $lighter-blue !important;
-    display: block !important;
-    margin: 0 0 1em 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
+    border-bottom: 1px solid $light-blue !important;
+
+    a {
+      color: $blue !important;
+    }
+
+    li:hover {
+      background: $light-blue !important;
+
+      a {
+        color: $primary-color !important;
+      }
+    }
+
+    li.active {
+      background: $light-blue !important;
+
+      a {
+        color: $primary-color !important;
+      }
+    }
   }
 }
 
@@ -144,10 +503,6 @@
 /* Header */
 
 #header {
-  border-bottom: 1px solid $light-blue;
-  padding: 0.5em 3.5em;
-  text-align: right;
-
   @include breakpoint(mobile) {
     border: 0;
     text-align: left !important;
@@ -155,8 +510,6 @@
 
   #course,
   #user_info {
-    display: inline;
-
     @include breakpoint(mobile) {
       display: block;
       float: none !important;
@@ -165,19 +518,18 @@
   }
 
   #course {
-    float: left;
-    text-align: left;
-
     @include breakpoint(mobile) {
-      border-bottom: 1px solid $lighter-blue;
+      border-bottom: 1px solid $light-blue;
     }
   }
 
-  #user_info {
-    width: auto;
+  #user-info {
+    @include breakpoint(mobile) {
+      padding: 1em;
+    }
   }
 
-  #user_id {
+  #user-id {
     font-weight: 300;
 
     @include breakpoint(mobile) {
@@ -186,360 +538,86 @@
   }
 }
 
-#logo {
-  font-size: 0.875em;
-  margin: 5px 10px 10px 3.5em;
-
+li#logo {
   @include breakpoint(mobile) {
     display: none;
   }
+}
 
-  a {
-    padding: 5px;
-    font-size: 0.875em;
-    font-family: Lucida;
+li#dropdown {
+  margin: 0.4em 0.5em 0.5em 0;
+
+  @include breakpoint(mobile) {
+    margin: 0 !important;
   }
 }
 
-#switch_role_icon {
-  margin-top: -1em;
-  padding: 0 0.5em;
-  position: relative;
-  top: 0.3em;
-}
-
-
-/* Menus */
-
-#menu,
-#sub_menu,
-#sub_sub_menu {
-  li {
-    @include transition(all, $time-quick);
-    display: inline-block;
-    font-size: 1em;
-
-    @include breakpoint(mobile) {
-      display: block;
-      width: 100%;
-    }
-
-    a {
-      display: block;
-      height: 41px;
-      margin: 0;
-      padding: 0.9em;
-      text-align: center;
-      width: 12em;
-
-      @include breakpoint(mobile) {
-        text-align: left;
-        width: 100%;
-      }
-    }
-  }
-}
-
-#menu {
-  border-bottom: 2px solid $light-blue;
-  display: block;
-  height: auto;
-  list-style: none;
-  margin: -48px 0 0 0;
-  min-height: 42px;
-  padding: 0 0 0 160px;
-  width: 100%;
-
-  li a {
-    color: #003366;
-  }
-}
-
-#menu li:hover,
-#menu_active {
-  background: $light-blue !important;
-
-  a {
-    color: #fff !important;
-    font-weight: 600;
-  }
-}
-
-#dropdown {
-  list-style: none;
-  margin-right: 2.5em;
-  width: 15em;
-
-  &:hover {
-    background: none !important;
-
-    ul.dropdown {
-      display: block;
-      opacity: 1;
-      visibility: visible;
+.dropdown {
+  ul {
+    li {
+      @include border-radius-top(0);
 
       a {
-        color: $grey !important;
+        line-height: inherit;
+        height: auto;
       }
-    }
 
-    #choose_an_assignment {
-      @include border-radius-bottom(0);
-      @include border-radius-top(10px);
-    }
+      &.section {
+        color: $grey;
+        cursor: default;
+        margin-top: 0;
 
-    a {
-      font-weight: 400 !important;
+        &:hover {
+          color: $grey;
+        }
+      }
     }
   }
 
-  ul.dropdown {
-    @include border-radius-bottom(10px);
-    background: $primary-color;
-    border: 1px solid $blue;
-    display: none;
-    left: 3.5em;
-    opacity: 0;
+  @include breakpoint(mobile) {
+    @include border-radius(0);
+    border: none;
+    display: block;
+    min-width: 0;
+    text-indent: -3000em;
     padding: 0;
-    position: absolute;
-    top: 107px;
-    visibility: hidden;
-    width: 15em;
-    z-index: 500;
+    width: 100%;
 
-    @include breakpoint(mobile) {
+    &:hover li a {
+      color: $blue !important;
+    }
+
+    ul {
       @include border-radius(0);
       background: $light-grey;
-      border: 0;
-      border-bottom: 1px solid $lighter-blue;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      color: $blue;
       display: block;
-      opacity: 1;
-      visibility: visible;
-      position: relative;
-      top: 0;
       left: 0;
+      margin-top: -1.2em;
+      min-width: 0;
+      position: static;
+      text-indent: 0;
+      top: 0;
       width: 100%;
-    }
 
-    li {
-      @include border-radius(0);
+      a {
+        color: $blue !important;
 
-      &:hover {
-        background: $light-blue;
-
-        a {
-          color: #fff !important;
+        &:hover {
+          color: $primary-color !important;
         }
       }
 
-      &:last-child,
-      &:last-child #drop_down_current_assignment {
-        @include border-radius-bottom(10px);
+      li:last-child {
+        @include border-radius(0);
+      }
 
-        @include breakpoint(mobile) {
-          @include border-radius(0);
-        }
+      li.section:hover {
+        background: none !important;
       }
     }
-
-    a,
-    #drop_down_current_assignment {
-      color: $grey;
-      display: block;
-      height: auto;
-      margin: 0;
-      padding: 0.6em 0.75em;
-      text-align: left;
-      width: 190px;
-
-      @include breakpoint(mobile) {
-        font-size: 1em !important;
-        height: auto !important;
-        padding: 0.6em 0.75em !important;
-        width: 100%;
-      }
-    }
-
-    #drop_down_current_assignment {
-      background: $light-blue;
-      color: $primary-color;
-      font-weight: 600;
-    }
-
-    .separator {
-      border-bottom: 1px solid $grey;
-      margin: 0.5em 0;
-      width: 190px;
-
-      @include breakpoint(mobile) {
-        border-color: $lighter-blue;
-        width: 100%;
-      }
-    }
-  }
-}
-
-span#choose_an_assignment {
-  @include border-radius(10px);
-  background: $primary-color;
-  border: 1px solid $blue;
-  cursor: pointer;
-  display: inline-block;
-  font-weight: 400;
-  height: 2.5em;
-  margin-top: 4px;
-  padding: 0.55em 1em;
-  text-align: center;
-  width: 15em;
-
-  @include breakpoint(mobile) {
-    display: none;
-  }
-}
-
-#sub_menu,
-#sub_sub_menu {
-  display: block;
-  height: auto;
-  margin: 0;
-  padding-left: 3.5em;
-
-  a {
-    color: $grey;
-
-    @include breakpoint(mobile) {
-      font-size: 0.95em !important;
-      height: 36px !important;
-      padding: 0.8em 0.75em 0.8em 2em !important;
-    }
-  }
-
-  ul {
-    display: block;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  li {
-    @include border-radius-top(10px);
-
-    @include breakpoint(mobile) {
-      @include border-radius(0);
-    }
-  }
-}
-
-#sub_menu {
-  background: $light-blue;
-  min-height: 41px;
-
-  a {
-    color: $primary-color;
-
-    @include breakpoint(mobile) {
-      color: $grey;
-    }
-  }
-
-  li:hover,
-  #sub_menu_active {
-    background: $primary-color;
-
-    @include breakpoint(mobile) {
-      background: $light-blue;
-    }
-
-    a {
-      color: $grey !important;
-      font-weight: 600;
-
-      @include breakpoint(mobile) {
-        color: $primary-color !important;
-      }
-    }
-  }
-}
-
-#sub_sub_menu {
-  background: $primary-color;
-  border-bottom: 2px solid $light-blue;
-
-  ul {
-    padding-top: 5px;
-
-    @include breakpoint(mobile) {
-      padding: 0;
-    }
-  }
-
-  li:hover,
-  #sub_sub_menu_active {
-    @include border-radius-top(10px);
-    background: $light-blue;
-
-    @include breakpoint(mobile) {
-      @include border-radius(0);
-    }
-
-    a {
-      color: $primary-color;
-      font-weight: 600;
-
-      @include breakpoint(mobile) {
-        color: #fff;
-      }
-    }
-  }
-}
-
-
-/* Footer */
-
-footer {
-  background: $bg-color;
-  color: #777;
-  font-size: 0.95em;
-  padding: 2em;
-  text-align: center;
-
-  @include breakpoint(mobile) {
-    display: none;
-  }
-
-  a {
-    color: #777;
-  }
-}
-
-#lang_chooser {
-  border-left: 1px solid #aaa;
-  margin: 0 0 0 1em;
-  padding-left: 1em;
-
-  @include breakpoint(tiny) {
-    border: none;
-    display: block;
-    margin: 1em 1em 0 1em;
-    padding: 0;
-  }
-
-  select {
-    border: none;
-    color: #777;
-    margin: 0;
-  }
-}
-
-#issues {
-  border-left: 1px solid #aaa;
-  margin: 0 1em;
-  padding-left: 1em;
-
-  @include breakpoint(tiny) {
-    border: none;
-    display: block;
-    margin: 1em 1em 0 1em;
-    padding: 0;
   }
 }

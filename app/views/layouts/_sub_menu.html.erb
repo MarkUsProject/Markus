@@ -1,191 +1,140 @@
 <% if @current_user.admin? %>
-  <% if controller.controller_name == 'assignments' or
-        controller.controller_name == 'rubrics' or
-        controller.controller_name == 'flexible_criteria' or
-        controller.controller_name == 'submissions' or
-        controller.controller_name == 'summaries' or
-        controller.controller_name == 'groups' or
-        controller.controller_name == 'graders' or
-        controller.controller_name == 'marks_graders' or
-        controller.controller_name == 'results' or
-        controller.controller_name == 'ta_assignments' or
-        controller.controller_name == 'annotation_categories' or
-        controller.controller_name == 'grade_entry_forms' or
-        controller.controller_name == 'automated_tests'
-  %>
-    <ul id="sub_menu">
-      <li id="dropdown">
-        <% # Display an appropriate message in the dropdown menu %>
-        <% if @assignment.nil? and @grade_entry_form.nil?
-        %>
-          <span id="choose_an_assignment">
-            <%= I18n.t(:choose_assignment) %>
-          </span>
-        <% elsif controller.controller_name == 'assignments' and
-                (controller.action_name == 'new' or
-                 controller.action_name == 'create')
-        %>
-          <span id="choose_an_assignment">
-            <%= I18n.t(:create_new_assignment) %>
-          </span>
-        <% elsif controller.controller_name == 'grade_entry_forms' and
-                (controller.action_name == 'new' or
-                 controller.action_name == 'create')
-        %>
-          <span id="choose_an_assignment">
-            <%= I18n.t(:create_new_grade_entry_form) %>
-          </span>
-        <% elsif !@assignment.nil?
-        %>
-          <% # Display the assignment's short identifier %>
-          <span id="choose_an_assignment">
+  <% if controller.controller_name == 'assignments' ||
+        controller.controller_name == 'rubrics' ||
+        controller.controller_name == 'flexible_criteria' ||
+        controller.controller_name == 'submissions' ||
+        controller.controller_name == 'summaries' ||
+        controller.controller_name == 'groups' ||
+        controller.controller_name == 'graders' ||
+        controller.controller_name == 'marks_graders' ||
+        controller.controller_name == 'results' ||
+        controller.controller_name == 'ta_assignments' ||
+        controller.controller_name == 'annotation_categories' ||
+        controller.controller_name == 'grade_entry_forms' ||
+        controller.controller_name == 'automated_tests' %>
+    <ul class='sub'>
+      <li id='dropdown'>
+        <span class='dropdown'>
+          <%# Display an appropriate message in the dropdown menu %>
+          <% if @assignment.nil? && @grade_entry_form.nil? %>
+            <%= t(:choose_assignment) %>
+          <% elsif controller.controller_name == 'assignments' &&
+                   (controller.action_name == 'new' ||
+                    controller.action_name == 'create') %>
+            <%= t(:create_new_assignment) %>
+          <% elsif controller.controller_name == 'grade_entry_forms' &&
+                   (controller.action_name == 'new' ||
+                    controller.action_name == 'create') %>
+            <%= t(:create_new_grade_entry_form) %>
+          <% elsif !@assignment.nil? %>
+            <%# Display the assignment's short identifier %>
             <%= @assignment.short_identifier %>
-          </span>
-        <% elsif !@grade_entry_form.nil?
-        %>
-          <% # Display the grade entry form's short identifier %>
-          <span id="choose_an_assignment">
+          <% elsif !@grade_entry_form.nil? %>
+            <%# Display the grade entry form's short identifier %>
             <%= @grade_entry_form.short_identifier %>
-          </span>
-        <% end %>
-        <ul class="dropdown">
-          <%= render partial: 'shared/assignments_dropdown_menu' %>
-        </ul>
+          <% end %>
+          <ul>
+            <%= render partial: 'shared/assignments_dropdown_menu' %>
+          </ul>
+        </span>
       </li>
 
-      <% if !@grade_entry_form.nil? and !@grade_entry_form.id.nil?
-      %>
-        <% if ((controller.controller_name == 'grade_entry_forms' and
-                controller.action_name != 'new') or
-                controller.controller_name == 'marks_graders')
-        %>
-          <li <% if controller.action_name == 'edit' %>
-                id="sub_menu_active"
-              <% end %>
-          >
-            <%= link_to I18n.t(:properties),
+      <% if !@grade_entry_form.nil? && !@grade_entry_form.id.nil? %>
+        <% if ((controller.controller_name == 'grade_entry_forms' &&
+                controller.action_name != 'new') ||
+               controller.controller_name == 'marks_graders') %>
+          <li class='<%= "active" if controller.action_name == 'edit' %>'>
+            <%= link_to t(:properties),
                         edit_grade_entry_form_path(@grade_entry_form) %>
           </li>
-          <li <% if controller.action_name == 'grades' %>
-                id="sub_menu_active"
-              <% end %>
-          >
-            <%= link_to I18n.t(:grades),
+          <li class='<%= "active" if controller.action_name == 'grades' %>'>
+            <%= link_to t(:grades),
                         grades_grade_entry_form_path(@grade_entry_form) %>
           </li>
-          <li <% if controller.controller_name == 'marks_graders' %>
-                id="sub_menu_active"
-              <% end %>
-          >
-            <%= link_to I18n.t("graders.graders"),
-                        grade_entry_form_marks_graders_path(@grade_entry_form)
-            %>
+          <li class='<%= "active" if controller.controller_name == 'marks_graders' %>'>
+            <%= link_to t('graders.graders'),
+                        grade_entry_form_marks_graders_path(@grade_entry_form) %>
           </li>
         <% end %>
       <% end %>
 
       <% if !@assignment.nil? %>
-        <% if controller.controller_name != 'assignments' or
-             (controller.controller_name == 'assignments' and
-              controller.action_name != 'new' and
-              controller.action_name != 'create') %>
+        <% if controller.controller_name != 'assignments' ||
+              (controller.controller_name == 'assignments' &&
+               controller.action_name != 'new' &&
+               controller.action_name != 'create') %>
           <li <% if ['assignments',
                      'rubrics',
                      'flexible_criteria',
                      'annotation_categories',
                      'automated_tests'].include?(controller.controller_name) %>
-                id="sub_menu_active"
-              <% end %>
-          >
-            <%= link_to I18n.t("settings"),
+                class='active'
+              <% end %>>
+            <%= link_to t('settings'),
                         controller: 'assignments',
                         action: 'edit',
                         id: @assignment.id %>
           </li>
-          <li <% if controller.controller_name == 'groups' %>
-                id="sub_menu_active"
-              <% end %>
-          >
-            <%= link_to I18n.t("groups.groups"),
+          <li class='<%= "active" if controller.controller_name == 'groups' %>'>
+            <%= link_to t('groups.groups'),
                         assignment_groups_path(@assignment) %>
           </li>
-          <li <% if controller.controller_name == 'graders' %>
-                id="sub_menu_active"
-              <% end %>
-          >
-            <%= link_to I18n.t("graders.graders"),
+          <li class='<%= "active" if controller.controller_name == 'graders' %>'>
+            <%= link_to t('graders.graders'),
                         assignment_graders_path(@assignment) %>
           </li>
-          <li <% if controller.controller_name == 'submissions' or
+          <li <% if controller.controller_name == 'submissions' ||
                     controller.controller_name == 'results' %>
-                id="sub_menu_active"
-              <% end %>
-          >
-             <%= link_to I18n.t(:submissions),
+                class='active'
+              <% end %>>
+             <%= link_to t(:submissions),
                          browse_assignment_submissions_path(@assignment) %>
           </li>
-          <li <% if controller.controller_name == 'summaries' %>
-                id="sub_menu_active"
-              <% end %>
-          >
-            <%= link_to I18n.t(:summaries),
+          <li class='<%= "active" if controller.controller_name == 'summaries' %>'>
+            <%= link_to t(:summaries),
                         assignment_summaries_path(@assignment) %>
           </li>
         <% end %>
       <% end %>
     </ul>
-  <% elsif controller.controller_name == 'admins' or
-           controller.controller_name == 'students' or
-           controller.controller_name == 'tas'
-  %>
-    <ul id="sub_menu">
-      <li <% if controller.controller_name == 'students' %>
-            id="sub_menu_active"
-          <% end %>
-      >
-        <%= link_to I18n.t("students.students"), controller: 'students' %>
+  <% elsif controller.controller_name == 'admins' ||
+           controller.controller_name == 'students' ||
+           controller.controller_name == 'tas' %>
+    <ul class='sub'>
+      <li class='<%= "active" if controller.controller_name == 'students' %>'>
+        <%= link_to t('students.students'), controller: 'students' %>
       </li>
-      <li <% if controller.controller_name == 'tas' %>
-            id="sub_menu_active"
-          <% end %>
-      >
-        <%= link_to I18n.t("graders.graders"), controller: 'tas' %>
+      <li class='<%= "active" if controller.controller_name == 'tas' %>'>
+        <%= link_to t('graders.graders'), controller: 'tas' %>
       </li>
-      <li <% if controller.controller_name == 'admins' %>
-            id="sub_menu_active"
-          <% end %>
-      >
-        <%= link_to I18n.t("admins.admins"), controller: 'admins' %>
+      <li class='<%= "active" if controller.controller_name == 'admins' %>'>
+        <%= link_to t('admins.admins'), controller: 'admins' %>
       </li>
     </ul>
   <% end %>
-<% elsif @current_user.ta? and (controller.controller_name == 'assignments' ||
+<% elsif @current_user.ta? && (controller.controller_name == 'assignments' ||
                                 controller.controller_name == 'submissions' ||
                                 controller.controller_name == 'results') %>
-  <ul id="sub_menu">
-    <li id="dropdown">
-      <% if @assignment.nil? and @grade_entry_form.nil? %>
-        <span id="choose_an_assignment">
-          <%= I18n.t(:choose_assignment) %>
-        </span>
-      <% else %>
-        <span id="choose_an_assignment">
+  <ul class='sub'>
+    <li id='dropdown'>
+      <span class='dropdown'>
+        <% if @assignment.nil? && @grade_entry_form.nil? %>
+          <%= t(:choose_assignment) %>
+        <% else %>
           <%= @assignment.short_identifier %>
-        </span>
-      <% end %>
-      <ul class="dropdown">
-         <%= render partial: 'shared/assignments_dropdown_menu' %>
-      </ul>
+        <% end %>
+        <ul>
+           <%= render partial: 'shared/assignments_dropdown_menu' %>
+        </ul>
+      </span>
     </li>
-    <% if controller.controller_name == 'submissions' or
-          controller.controller_name == 'results'
-    %>
-      <li <% if controller.controller_name == 'submissions' or
+    <% if controller.controller_name == 'submissions' ||
+          controller.controller_name == 'results' %>
+      <li <% if controller.controller_name == 'submissions' ||
                 controller.controller_name == 'results' %>
-            id="sub_menu_active"
-          <% end %>
-      >
-        <%= link_to I18n.t(:submissions),
+            class='active'
+          <% end %>>
+        <%= link_to t(:submissions),
                     controller: 'submissions',
                     action: 'browse',
                     id: @assignment.id %>
@@ -194,33 +143,26 @@
   </ul>
 <% elsif @current_user.student? %>
   <% if controller.controller_name != 'main' %>
-    <ul id="sub_menu">
-      <li id="dropdown">
-        <% if @assignment.nil? and @grade_entry_form.nil? %>
-          <span id="choose_an_assignment">
+    <ul class='sub'>
+      <li id='dropdown'>
+        <span class='dropdown'>
+          <% if @assignment.nil? && @grade_entry_form.nil? %>
             <%= t(:choose_assignment) %>
-          </span>
-        <% elsif !@assignment.nil? %>
-          <% # Display the assignment's short identifier %>
-          <span id="choose_an_assignment">
+          <% elsif !@assignment.nil? %>
+            <% # Display the assignment's short identifier %>
             <%= @assignment.short_identifier %>
-          </span>
-        <% elsif !@grade_entry_form.nil? %>
-          <% # Display the grade entry form's short identifier %>
-          <span id="choose_an_assignment">
-            <%= (@grade_entry_form.short_identifier) %>
-          </span>
-        <% end %>
-        <ul class="dropdown">
-           <%= render partial: 'shared/assignments_dropdown_menu'%>
-        </ul>
+          <% elsif !@grade_entry_form.nil? %>
+            <% # Display the grade entry form's short identifier %>
+            <%= @grade_entry_form.short_identifier %>
+          <% end %>
+          <ul>
+            <%= render partial: 'shared/assignments_dropdown_menu'%>
+          </ul>
+        </span>
       </li>
 
       <% if !@grade_entry_form.nil? %>
-        <li <% if controller.controller_name == 'grade_entry_forms' %>
-              id="sub_menu_active"
-            <%end%>
-        >
+        <li class='<%= "active" if controller.controller_name == 'grade_entry_forms' %>'>
           <%= link_to t(:grades),
                       controller: 'grade_entry_forms',
                       action: 'student_interface',
@@ -228,31 +170,21 @@
         </li>
       <% end %>
 
-      <% if !@assignment.nil? and
-            @current_user.has_accepted_grouping_for?(@assignment)
-      %>
-        <li <% if controller.controller_name == 'assignments' %>
-              id="sub_menu_active"
-            <%end%>
-        >
-          <%= link_to I18n.t("assignments"),
+      <% if !@assignment.nil? &&
+            @current_user.has_accepted_grouping_for?(@assignment) %>
+        <li class='<%= "active" if controller.controller_name == 'assignments' %>'>
+          <%= link_to t('assignments'),
                       controller: 'assignments',
                       action: 'student_interface',
                       id: @assignment.id %>
         </li>
-        <li <% if controller.controller_name == 'submissions' %>
-              id="sub_menu_active"
-            <%end%>
-        >
-          <%= link_to I18n.t("submissions"),
+        <li class='<%= "active" if controller.controller_name == 'submissions' %>'>
+          <%= link_to t('submissions'),
                       file_manager_assignment_submissions_path(@assignment) %>
         </li>
-        <li <% if controller.controller_name == 'results' %>
-              id="sub_menu_active"
-            <% end %>
-        >
-            <% # FIXME should add the real submission %>
-          <%= link_to I18n.t("results.results_name"),
+        <li class='<%= "active" if controller.controller_name == 'results' %>'>
+          <%# FIXME should add the real submission %>
+          <%= link_to t('results.results_name'),
                       view_marks_assignment_submission_result_path(@assignment,
                                                                    1,
                                                                    1) %>
