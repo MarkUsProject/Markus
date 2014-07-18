@@ -8,6 +8,161 @@
 @import 'dialogs';
 
 
+/* [TEMP] flexible criteria */
+
+.wrapper {
+  display: table;
+  width: 100%;
+}
+
+#new_flexible_criterion {
+  background: none;
+  padding-right: 1em;
+
+  #new_flexible_criterion_prompt {
+    margin: 1em 0;
+    width: 100%;
+  }
+}
+
+#flexible_criteria_pane,
+#flexible_edition_pane {
+  display: table-cell;
+  vertical-align: top;
+}
+
+#flexible_criteria_pane {
+  width: 25%;
+}
+
+#flexible_edition_pane {
+  @include border-radius(5px);
+  display: table;
+  width: 100%;
+  border: 1px solid $grey;
+  padding: 1em;
+  margin-left: 2em;
+
+  h2 {
+    margin-bottom: 0.5em;
+  }
+
+  .float_right {
+    float: right;
+  }
+
+  label {
+    display: inline-block;
+    font-weight: 600;
+    min-width: 8em;
+
+    & + input {
+      margin-top: 0.5em;
+    }
+  }
+
+  .criterion_description_edit {
+    display: block;
+    margin: 0.5em 0 1em;
+  }
+
+  input[type='submit'] {
+    margin-top: 1em;
+  }
+}
+
+
+/* [TEMP] annotation categories */
+
+
+#add_annotation_category {
+  background: none;
+  padding-right: 1em;
+
+  #add_annotation_category_prompt {
+    margin: 1em 0;
+    width: 100%;
+  }
+}
+
+#annotations_pane,
+#annotation_category_pane {
+  display: table-cell;
+  vertical-align: top;
+}
+
+#annotation_category {
+  width: 25%;
+}
+
+#annotations_pane {
+  padding-left: 2em;
+  width: 75%;
+
+  #annotation_list_holder {
+    @include border-radius(5px);
+    border: 1px solid $grey;
+    padding: 1em;
+  }
+
+  .float_right {
+    float: right;
+  }
+
+  fieldset {
+    @include box-shadow(none);
+    margin: 1em 0 2em;
+    padding-top: 1.5em;
+
+    input[type='text'] {
+      margin: 0 1em;
+    }
+  }
+
+  h2 a {
+    font-size: 1rem;
+  }
+}
+
+ul#annotation_list {
+  padding-left: 0;
+
+  li {
+    border-bottom: 1px solid $grey;
+    list-style: none;
+
+    &:first-child {
+      border-top: 1px solid $grey;
+    }
+
+    &#add_annotation_text,
+    .edit_annotation_text {
+      padding: 1em 0;
+
+      textarea {
+        margin-bottom: 1em;
+      }
+    }
+  }
+
+  textarea {
+    width: 100%;
+  }
+}
+
+.annotation_text_details {
+  display: inline-block;
+  font-style: italic;
+  margin-left: 5px;
+  min-width: 200px;
+
+  .button_to {
+    display: inline-block;
+    margin-left: 0.25em;
+  }
+}
+
+
 /* Title Bar */
 
 #title_bar {
@@ -1201,158 +1356,6 @@ a.icon_remove {
 }
 
 
-/* Rubric Criteria view*/
-
-div.align_text_right {
-  text-align: right;
-  width: 100%;
-}
-
-.rubric_level_header {
-  margin-bottom: -3em;
-}
-
-#rubric_criteria_pane,
-#flexible_criteria_pane,
-#annotation_category_pane {
-  display: inline-block;
-  margin-right: 5%;
-  vertical-align: top;
-  width: 25%;
-}
-
-.weight_bump_button {
-  min-width: 10px;
-  padding: 0 9px;
-  width: 10px;
-}
-
-.criterion_input_weight {
-  padding: 2px 9px;
-  width: 18px;
-}
-
-.level_textarea_description {
-  width: 90%;
-}
-
-#rubric_levels_pane,
-#flexible_edition_pane,
-#annotations_pane {
-  @include border-radius(10px);
-  border: 1px solid #ccc;
-  display: inline-block;
-  margin-right: 2em;
-  padding: 10px 15px;
-  vertical-align: top;
-  width: 66%;
-}
-
-#rubrics_help,
-#annotations_help {
-  font-style: italic;
-  line-height: 1.6em;
-}
-
-#rubrics_help {
-  h2,
-  h3 {
-    color: $grey;
-  }
-}
-
-.criterion_holder_selected {
-  background: #ccc;
-}
-
-.mark_tools form,
-form.button_to div {
-  display: inline;
-}
-
-input.button_to_criteria_expansion,
-input.button_to_delete_deduction {
-  font-size: 0.8em;
-  margin-bottom: 4px;
-  margin: 1px;
-  min-width: 0;
-  padding: 2px;
-}
-
-.annotation_title_div,
-.criterion_title_div,
-.annotation_category_title {
-  padding: 2px 2px 0 10px;
-}
-
-.criterion_arrow {
-  float: right;
-  padding-left: 3px;
-}
-
-.criterion_weight,
-.criterion_max {
-  float: right;
-  padding: 2px 4px 0 2px;
-}
-
-.main_rubric_criteria_edit,
-.main_flexible_criteria_edit,
-#flexible_criteria_preview {
-  @include border-radius(10px);
-  background: #f8f8f8;
-  border: 1px solid #ccc;
-  margin: 10px;
-  padding: 10px;
-}
-
-.main_rubric_criteria_edit {
-  margin-bottom: -16em;
-  width: 280px;
-}
-
-.rubric_criteria_levels {
-  margin-left: 340px;
-  margin-right: 1em;
-}
-
-#flexible_criteria_preview {
-  h3 {
-    margin: 0 0 10px 0;
-  }
-
-  ul li {
-    list-style: disc outside none;
-    padding: 0;
-  }
-
-  ol li {
-    list-style: decimal outside none;
-    padding: 0;
-  }
-}
-
-.criterion_description_preview {
-  background-color: $primary-color;
-  border: solid 2px #ccc;
-  padding: 10px;
-}
-
-input.criterion_input_name{
-  background: $primary-color;
-  text-align: left;
-  width: 25em;
-}
-
-.criteria_edit_total_mark {
-  font-style: italic;
-}
-
-#rubric_levels_pane_menu li,
-#flexible_edition_pane_menu li {
-  list-style: none;
-  padding-bottom: 1em;
-}
 
 /* Annotation category*/
 

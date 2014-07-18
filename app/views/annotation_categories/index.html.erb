@@ -1,15 +1,8 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('livepipe/tabs') %>
+  <%= render partial: 'boot',
+             formats: [:js],
+             handlers: [:erb] %>
 <% end %>
-
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'livepipe/livepipe',
-                           'livepipe/window',
-                           'livepipe/tabs' %>
-
-<%= render partial: 'boot',
-           formats: [:js],
-           handlers: [:erb] %>
 
 <div id="title_bar">
   <h1>
@@ -29,15 +22,7 @@
   </div>
 </div>
 
-<div class='wrapLeft'>
-  <%= render 'shared/flash_message' %>
-  <% if @assignment.past_due_date? %>
-    <div class='notice'>
-      <%= t('past_due_date_warning') %>
-    </div>
-  <% end %>
-  <p id='criterion_error' class='warning' style='display: none;'></p>
-
+<div class='wrapper'>
   <div id='annotation_category_pane'>
     <div class='sortable'>
       <header>
@@ -61,13 +46,11 @@
   <div id='annotations_pane'>
     <div id='annotation_list_holder'>
       <div id='annotations_help'>
-        <h1><%= t(:help) %></h1>
+        <h2><%= t(:help) %></h2>
         <p><%= t('annotations.help_message') %></p>
       </div>
     </div>
-
-    <div class='clear'></div>
-  </div> <!-- Edit Canvas -->
+  </div>
 </div>
 
 <div id='upload_dialog' >
