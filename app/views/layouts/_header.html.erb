@@ -1,32 +1,28 @@
-<% content_for :head do %>
-  <%= stylesheet_link_tag('livepipe/tabs') %>
-<% end %>
-
 <header id='header'>
   <div id='course'>
     <strong><%= MarkusConfigurator.markus_config_course_name %></strong>
   </div>
-  <div id='user_info'>
+  <div id='user-info'>
     <span id='logout_area'>
       <span id='admin_logged_in_as'>
         <% if !session[:real_uid].nil? %>
           <strong><%= User.find_by_id(session[:real_uid]).first_name %></strong>
         <% end %>
       </span>
-      <span id='user_id'>
-          <%= @current_user.first_name %> <%= @current_user.last_name %>
-          ( <strong><%= @current_user.user_name %></strong> )
+      <span id='user-id'>
+        <%= @current_user.first_name %> <%= @current_user.last_name %>
+        ( <strong><%= @current_user.user_name %></strong> )
       </span>
       <% if @current_user.admin? %>
-        <%= link_to(image_tag('icons/group_go.png',
-                              alt: I18n.t(:switch_role),
-                              title: I18n.t(:switch_role),
+        <%= link_to image_tag('icons/group_go.png',
+                              alt: t(:switch_role),
+                              title: t(:switch_role),
                               id: 'switch_role_icon'),
-                    role_switch_main_index_path(),
-                    remote: true) %>
+                    role_switch_main_index_path,
+                    remote: true %>
       <% end %>
 
-      <%= link_to(I18n.t(:log_out),
+      <%= link_to(t(:log_out),
                   id: 'logout_link',
                   controller: 'main',
                   action: 'logout') unless
@@ -34,17 +30,15 @@
 
       <% if MarkusConfigurator.markus_config_remote_user_auth &&
             !session[:real_uid].nil? %>
-        <%= link_to(I18n.t(:clear_role_switch_session_link),
+        <%= link_to t(:clear_role_switch_session_link),
                     controller: 'main',
-                    action: 'clear_role_switch_session') %>
+                    action: 'clear_role_switch_session' %>
       <% end %>
     </span>
   </div>
+
   <div id='working' style='display:none;'>
-    <span><%= I18n.t(:working) %></span>
+    <span><%= t(:working) %></span>
     <span id='ellipsis'></span>
   </div>
 </header>
-<div id='logo'>
-  <%= render partial: 'layouts/breadcrumb'%>
-</div>

@@ -1,25 +1,32 @@
 <% if @current_user.admin? %>
+  <li class='section'><%= t('quick_links') %></li>
   <li>
-    <%= link_to I18n.t(:create_new_assignment),
+    <%= link_to t(:create_new_assignment),
                 controller: 'assignments',
                 action: 'new' %>
   </li>
   <li>
-    <%= link_to I18n.t(:create_new_grade_entry_form),
+    <%= link_to t(:create_new_grade_entry_form),
                 controller: 'grade_entry_forms',
                 action: 'new' %>
   </li>
-  <div class='separator'></div>
 <% end %>
 
-<% Assignment.all(order: 'short_identifier ASC').each do |assignment|
-  if assignment != @assignment
+
+<% @assignments = Assignment.all(order: 'short_identifier ASC') %>
+
+<% @assignments.each do |assignment| %>
+  <% if assignment == @assignments.first %>
+    <li class='section'><%= t('assignments') %></li>
+  <% end %>
+
+  <% if assignment != @assignment
     if (controller.controller_name == 'assignments' &&
         (controller.action_name == 'index' ||
          controller.action_name == 'new') ||
-         controller.controller_name == 'results' ||
-         controller.controller_name == 'grade_entry_forms' ||
-         controller.controller_name == 'marks_graders')
+       controller.controller_name == 'results' ||
+       controller.controller_name == 'grade_entry_forms' ||
+       controller.controller_name == 'marks_graders')
       if @current_user.student? %>
         <li>
           <% # Don't show hidden assignments to students
@@ -110,8 +117,8 @@
       </li>
     <% end %>
   <% else %>
-    <li>
-      <span id='drop_down_current_assignment' title='<%= assignment.description %>'>
+    <li class='active'>
+      <span title='<%= assignment.description %>'>
         <%= assignment.short_identifier %>
       </span>
     </li>
@@ -120,11 +127,13 @@
 
 
 <% # Display grade entry forms in the dropdown menu %>
-<% unless GradeEntryForm.all.blank? %>
-  <div class='separator'></div>
-<% end %>
+<% @grade_entry_forms = GradeEntryForm.all(order: 'short_identifier ASC') %>
 
-<% GradeEntryForm.all(order: 'short_identifier ASC').each do |grade_entry_form| %>
+<% @grade_entry_forms.each do |grade_entry_form| %>
+  <% if grade_entry_form == @grade_entry_forms.first %>
+    <li class='section'><%= t('spreadsheets') %></li>
+  <% end %>
+
   <% if grade_entry_form != @grade_entry_form %>
     <% if @current_user.admin? %>
       <li>
@@ -146,8 +155,8 @@
       </li>
     <% end %>
   <% else %>
-    <li>
-      <span id='drop_down_current_assignment' title='<%= grade_entry_form.description %>'>
+    <li class='active'>
+      <span title='<%= grade_entry_form.description %>'>
         <%= grade_entry_form.short_identifier %>
       </span>
     </li>

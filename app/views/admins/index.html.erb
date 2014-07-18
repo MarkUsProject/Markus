@@ -1,10 +1,12 @@
-<%= javascript_include_tag 'FilterTable/FilterTable' %>
-<%= javascript_include_tag 'users_manager' %>
-<%= javascript_include_tag 'help_system' %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'FilterTable/FilterTable',
+                             'users_manager',
+                             'help_system' %>
 
-<script type="text/javascript">
-  <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
-</script>
+  <%= render partial: 'boot',
+             formats: [:js],
+             handlers: [:erb] %>
+<% end %>
 
 <div id="title_bar">
   <h1>
