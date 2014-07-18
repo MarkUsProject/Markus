@@ -2,7 +2,17 @@
   <%= javascript_include_tag 'Assignments/index' %>
 <% end %>
 
-<div id="title_bar"><h1><%= I18n.t(:manage_course_work) %></h1></div>
+<div class='title_bar'>
+  <h1><%= t(:manage_course_work) %></h1>
+  <div class='heading_buttons'>
+    <%= link_to t(:download_csv_grade_report),
+                download_csv_grades_report_assignments_path if @current_user.admin? %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t(:upload), 'modal_upload.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t(:download), 'modal_download.open()' %>
+  </div>
+</div>
 
 <div class="wrapLeft">
   <%= render 'shared/flash_message' %>
@@ -16,28 +26,13 @@
                 action: 'new' },
               class: 'button' %>
 
-  <div id="title_bar" class="heading_buttons">
-    <%= link_to I18n.t(:upload), '#',
-                onclick: 'modal_upload.open()' %> |
-    <%= link_to I18n.t(:download), '#',
-                onclick: 'modal_download.open()' %>
-  </div>
-
   <%= render partial: 'assignments/list_manage',
              locals: { controller: 'assignments', action: 'edit' } -%>
 </div>
 
-
-<div class="wrapLeft">
-  <%= link_to I18n.t(:download_csv_grade_report),
-            download_csv_grades_report_assignments_path() if @current_user.admin? %>
-</div>
-
-<% # For now, only allow instructors to manage grade entry forms
-%>
+<%# For now, only allow instructors to manage grade entry forms %>
 <% if @current_user.admin? %>
   <div class="wrapLeft">
-    <br>
     <%= render partial: "grade_entry_forms/list_manage",
                locals: { action: 'edit' } -%>
   </div>

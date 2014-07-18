@@ -6,22 +6,20 @@
            formats: [:js],
            handlers: [:erb] %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
-    <%= I18n.t('graders.manage_graders') %>
+    <%= t('graders.manage_graders') %>
     <span class='title-help users_graders_help'></span>
   </h1>
   <div class='heading_buttons'>
-    <%= link_to I18n.t(:add_new),
-                new_ta_path() %>
-    <span class='menu_bar'><span>
-    <%= link_to_function I18n.t(:upload),
-                         'modal_upload.open()' %>
-    <span class='menu_bar'><span>
-    <%= link_to_function I18n.t(:download),
-                         'modal_download.open()' %>
+    <%= link_to t(:add_new), new_ta_path %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t(:upload), 'modal_upload.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t(:download), 'modal_download.open()' %>
   </div>
 </div>
+
 <p class='help-message-title users_graders_help'>
   <%= t('students.help.manage_graders') %>
 </p>

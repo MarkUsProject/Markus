@@ -1,7 +1,9 @@
-<%= javascript_include_tag 'Students/edit' %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'Students/edit' %>
+<% end %>
 
-<div id='title_bar'>
-  <h1><%= I18n.t('students.edit_student') %></h1>
+<div class='title_bar'>
+  <h1><%= t('students.edit_student') %></h1>
 </div>
 
 <div class='wrapLeft'>

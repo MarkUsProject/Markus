@@ -8,10 +8,15 @@
            formats: [:js],
            handlers: [:erb] %>
 
-<div id='title_bar'>
-  <h1><%= I18n.t('student.submission.file_manager', short_identifier: sanitize(@assignment.short_identifier)) %></h1>
-  <div id='current_time'>
-  <%= render partial: 'server_time' %>
+<div class='title_bar'>
+  <h1>
+    <%= t('student.submission.file_manager',
+          short_identifier: sanitize(@assignment.short_identifier)) %>
+  </h1>
+</div>
+
+<div id='current_time'>
+<%= render partial: 'server_time' %>
 
   <script>
     new PeriodicalExecuter(
@@ -26,9 +31,7 @@
         )
     }, 60);
   </script>
-  </div>
 </div>
-
 
 <div class='wrapLeft'>
   <% if flash[:submit_notice] -%>

@@ -1,14 +1,16 @@
 <%# Manage grades page %>
-<%= javascript_include_tag "ajax_paginate",
-                           "GradeEntryForms/grades.js" %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'ajax_paginate',
+                             'GradeEntryForms/grades' %>
+<% end %>
 
-<div id="title_bar">
+<div class='title_bar'>
   <h1>
-    <%= t('grade_entry_forms.grades.title') + " " + @grade_entry_form.short_identifier %>
+    <%= t('grade_entry_forms.grades.title') + ' ' + @grade_entry_form.short_identifier %>
   </h1>
-  <div class="heading_buttons">
-    <%= button_to_function t(:upload), 'modal_upload.open();'%>
-    <span class="menu_bar"></span>
+  <div class='heading_buttons'>
+    <%= link_to_function t(:upload), 'modal_upload.open();'%>
+    <span class='menu_bar'></span>
     <%= link_to t(:download),
                 csv_download_grade_entry_form_path(@grade_entry_form) %>
   </div>

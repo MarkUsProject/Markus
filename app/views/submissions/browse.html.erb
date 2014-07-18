@@ -1,43 +1,44 @@
-<%= javascript_include_tag "submissions_manager" %>
-<%= javascript_include_tag "ajax_paginate" %>
-<%= javascript_include_tag "help_system" %>
+<% content_for :head do %>
+<%= javascript_include_tag 'submissions_manager',
+                           'ajax_paginate',
+                           'help_system' %>
+<% end %>
 
 <div class="notice">
   <% if Time.zone.now >= @assignment.submission_rule.calculate_collection_time %>
-     <%= I18n.t("browse_submissions.grading_can_begin") %>
+     <%= t("browse_submissions.grading_can_begin") %>
   <% else %>
-     <%= I18n.t("browse_submissions.grading_can_begin_after",
+     <%= t("browse_submissions.grading_can_begin_after",
                 time: I18n.l(@assignment.submission_rule.calculate_collection_time,
                 format: :long_date)) %>
   <% end %>
 </div>
 
-<div id="title_bar">
+<div class='title_bar'>
   <h1>
-    <%= I18n.t("browse_submissions.workspace",
+    <%= t('browse_submissions.workspace',
                short_identifier: sanitize(@assignment.short_identifier)) %>
-    <div class="help submissions_help"></div>
   </h1>
-  <div class="heading_buttons">
+  <div class='heading_buttons'>
     <% if @current_user.admin? %>
-      <%= link_to I18n.t("collect_submissions.collect_all"),
+      <%= link_to t('collect_submissions.collect_all'),
                          collect_all_submissions_assignment_submissions_path(
                            @assignment.id),
-                         confirm: I18n.t("collect_submissions.results_loss_warning") %>
-      <span class="menu_bar"></span>
-      <%= link_to I18n.t("browse_submissions.csv_report"),
+                         confirm: t('collect_submissions.results_loss_warning') %>
+      <span class='menu_bar'></span>
+      <%= link_to t('browse_submissions.csv_report'),
                          download_simple_csv_report_assignment_submissions_path(
                            @assignment) %>
-      <span class="menu_bar"></span>
-      <%= link_to I18n.t("browse_submissions.detailled_csv_report"),
+      <span class='menu_bar'></span>
+      <%= link_to t('browse_submissions.detailled_csv_report'),
                          download_detailed_csv_report_assignment_submissions_path(
                            @assignment) %>
-      <span class="menu_bar"></span>
-      <%= link_to I18n.t("browse_submissions.subversion_repo_list"),
+      <span class='menu_bar'></span>
+      <%= link_to t('browse_submissions.subversion_repo_list'),
                          download_svn_repo_list_assignment_submissions_path(
                            @assignment) %>
-      <span class="menu_bar"></span>
-      <%= link_to I18n.t("browse_submissions.subversion_export_file"),
+      <span class='menu_bar'></span>
+      <%= link_to t('browse_submissions.subversion_export_file'),
                          download_svn_export_commands_assignment_submissions_path(
                            @assignment) %>
     <% end %>
@@ -46,17 +47,17 @@
     <% if @current_user.ta? and @assignment.past_collection_date? and
           @groupings.all?{|grouping| grouping.get_ta_names.size == 1} %>
 
-      <%= link_to I18n.t("collect_submissions.collect_ta"),
+      <%= link_to t('collect_submissions.collect_ta'),
                          collect_ta_submissions_assignment_submissions_path(
                            @assignment),
-                         confirm: I18n.t("collect_submissions.results_loss_warning") %>
+                         confirm: t('collect_submissions.results_loss_warning') %>
+      <span class='menu_bar'></span>
     <% elsif @current_user.ta? and @assignment.past_collection_date? %>
-      <a id="disable" title="<%= I18n.t("collect_submissions.disable_collect") %>">
-        <%= I18n.t("collect_submissions.collect_ta") %>
+      <a id='disable' title='<%= t('collect_submissions.disable_collect') %>'>
+        <%= t('collect_submissions.collect_ta') %>
       </a>
+      <span class='menu_bar'></span>
     <% end %>
-
-    <span class="menu_bar"></span>
 
     <% if all_assignments_marked? %>
       <%= link_to t('browse_submissions.download_groupings_files'),
@@ -66,18 +67,20 @@
       <%= link_to t('browse_submissions.download_groupings_files'),
                     download_groupings_files_assignment_submissions_path(
                       groupings: @groupings),
-                    confirm: I18n.t("collect_submissions.marking_incomplete_warning") %>
+                    confirm: t('collect_submissions.marking_incomplete_warning') %>
     <% end %>
   </div>
 </div>
-<p class="help-message-title submissions_help">
+
+<p class='help-message-title submissions_help'>
   <% if @current_user.ta? %>
-    <%= t("assignment.help.submissions_graders") %>
+    <%= t('assignment.help.submissions_graders') %>
   <% else %>
-     <%= t("assignment.help.submissions_admins") %>
+    <%= t('assignment.help.submissions_admins') %>
   <% end %>
 </p>
-<div class="help-break submissions_help"></div>
+<div class='help-break submissions_help'></div>
+
 <div class="wrapLeft">
   <% if flash[:error] %>
     <div class="error">
@@ -93,7 +96,7 @@
 
   <% if !flash[:errors].nil? && !flash[:errors].empty? %>
     <div class="error">
-      <h1><%= I18n.t("browse_submissions.errors") %></h1>
+      <h1><%= t("browse_submissions.errors") %></h1>
       <ul>
         <% flash[:errors].each do |error_message| %>
           <li><%= error_message %></li>
@@ -108,12 +111,12 @@
     <div class="ap_nav_box">
       <% if @current_user.admin? %>
         <div class="floatLeft">
-          <%= submit_tag I18n.t("browse_submissions.release_marks"),
+          <%= submit_tag t("browse_submissions.release_marks"),
                                 name: "release_results" %>
-          <%= submit_tag I18n.t("browse_submissions.unrelease_marks"),
+          <%= submit_tag t("browse_submissions.unrelease_marks"),
                                 name: "unrelease_results" %>
           <% if !@assignment.results_average.nil? %>
-            <%= I18n.t("browse_submissions.class_average",
+            <%= t("browse_submissions.class_average",
                        results_average: @assignment.results_average) %>
           <% end %>
         </div>
@@ -122,7 +125,8 @@
       <% # Collect submissions for a given section %>
       <% if @assignment.section_groups_only %>
         <div class="floatLeft">
-          <%= I18n.t("browse_submissions.collect_work_for_section") %>
+          <%= t("browse_submissions.collect_work_for_section") %>
+
           <select id="section_input" name="section_to_collect">
             <option value=""> - </option>
             <% @assignment.section_due_dates.each do |section_due_date| %>
@@ -223,9 +227,9 @@
 
       <div class="floatLeft">
         <% if @current_user.admin? %>
-          <%= submit_tag I18n.t("browse_submissions.release_marks"),
+          <%= submit_tag t("browse_submissions.release_marks"),
                                 name: "release_results" %>
-          <%= submit_tag I18n.t("browse_submissions.unrelease_marks"),
+          <%= submit_tag t("browse_submissions.unrelease_marks"),
                                 name: "unrelease_results" %>
         <% end %>
       </div>
