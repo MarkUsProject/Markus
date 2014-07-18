@@ -305,7 +305,7 @@ class SubmissionsController < ApplicationController
     @previous_path = File.split(@path).first
     @grouping.group.access_repo do |repo|
       if params[:revision_number]
-        @revision_number = params[:revision_number]
+        @revision_number = params[:revision_number].to_i
       else
         @revision_number = repo.latest_revision_number
       end

@@ -583,11 +583,12 @@ module Repository
       # the provided revision
     end
 
-    def __get_files(path="/", revision_number=nil)
+    def __get_files(path, revision_number)
       # Not (!) part of the AbstractRepository API:
       # Returns a hash of files/directories part of the requested
       # revision; Don't use it directly, use SubversionRevision's
       # 'files_at_path' instead
+      return "TEST"
     end
 
     def __get_property(prop, rev=nil)
@@ -773,22 +774,27 @@ module Repository
       return walker.take(revision_number).last.oid
     end
 
-
     # Return all of the files in this repository at the root directory
-    def files_at_path(commit)
+    def files_at_path(path)
       begin
-        files = Hash.new(nil)
-
-        @commit.tree.each do |c|
-          files[c[:name]] = c
+        files = Hash.new
+        @commit.tree.each_blob do |blob|
+          file = Repository::RevisionFile.new(@revision_number, {
+            name: blob[:name],
+            path: path,
+            last_modified_revision: @revision_number,
+            last_modified_date: Time.now,
+            changed: true,
+            user_id: 5,
+            mime_type: 'text'
+          })
+          files[c[:name]] = file
         end
-        
         #exception should be cast if file is not found
       rescue Exception
         raise Repository::FileDoesNotExistConflict
         return nil
       end
-
       return files
     end
 
@@ -797,29 +803,28 @@ module Repository
     # erros with this function can occur with files are incorrectly
     # added and the git config file is not updated
     def path_exists?(path)
-      @revision_number.tree.any? {|e|
+      @commit.tree.any? {|e|
         e[:name] == path
       }
     end
 
-    def directories_at_path(path='/')
-      result = Hash.new(nil)
-      raw_contents = @repo.__get_files(path, @revision_number)
-      raw_contents.each do |file_name, type|
-        if type == :directory
-          last_modified_revision = @repo.__get_history(File.join(path, file_name)).last
-          last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_number)
-          new_directory = Repository::RevisionDirectory.new(@revision_number, {
-                                                              :name => file_name,
-                                                              :path => path,
-                                                              :last_modified_revision => last_modified_revision,
-                                                              :last_modified_date => last_modified_date,
-                                                              :changed => (last_modified_revision == @revision_number),
-                                                              :user_id => @repo.__get_property(:author, last_modified_revision)
-                                                            })
-          result[file_name] = new_directory
-        end
-      end
+    def directories_at_path(path)
+      result = {}
+      @commit.tree.each_tree {|subdir|
+        dir_name = subdir[:name]
+        last_modified_revision = @revision_number
+        last_modified_date = Time.now
+        new_directory = Repository::RevisionDirectory.new(@revision_number, {
+          name: dir_name,
+          path: path,
+          last_modified_revision: last_modified_revision,
+          last_modified_date: last_modified_date,
+          changed: (last_modified_revision == @revision_number),
+          user_id: 5
+          #user_id: @repo.__get_property(:author, last_modified_revision)
+        })
+        result[dir_name] = new_directory
+      }
       return result
     end
 
@@ -839,7 +844,7 @@ module Repository
         path = '/'
       end
       result = Hash.new(nil)
-      raw_contents = @repo.__get_files(path, @revision_number)
+      raw_contents = self.__get_files(path, @revision_number)
       raw_contents.each do |file_name, type|
         if type == :file
           last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_number)
