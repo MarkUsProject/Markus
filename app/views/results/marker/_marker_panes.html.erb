@@ -40,7 +40,7 @@
           <ul id='annotation_summary_list'></ul>
         </div>
 
-        <div id='remark_request_tab'>
+        <div id='remark_request_tab' style='display:none;'>
           <% if @submission.has_remark? %>
             <%= render partial: 'results/marker/remark_request',
                        locals: { result: result,
