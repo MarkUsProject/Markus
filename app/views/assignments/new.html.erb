@@ -1,13 +1,16 @@
-<%= javascript_include_tag 'create_assignment' %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'create_assignment' %>
+<% end %>
 
 <%= render partial: 'boot',
            formats: [:js],
            handlers: [:erb] %>
 
-<div id='title_bar'>
-  <h1><%= I18n.t(:create_new_assignment) %></h1>
-  <p><%= t('assignment.required_fields').html_safe %></p>
+<div class='title_bar'>
+  <h1><%= t(:create_new_assignment) %></h1>
 </div>
+
+<p><%= t('assignment.required_fields').html_safe %></p>
 
 <%= render partial: 'form',
            formats: [:html],

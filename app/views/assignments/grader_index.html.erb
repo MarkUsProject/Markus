@@ -1,10 +1,15 @@
-<div id="title_bar"><h1><%= I18n.t("grade_assignments") %></h1></div>
-<div class="wrapLeft">
-  <%= render partial: "assignments/list_manage",
-    locals: { controller: 'submissions', action: 'browse' } -%>
-  <%= render partial: "grade_entry_forms/list_manage",
+<div class='title_bar'>
+  <h1><%= t('grade_assignments') %></h1>
+</div>
+
+<div class='wrapLeft'>
+  <%= render partial: 'assignments/list_manage',
+             locals: { controller: 'submissions',
+                       action: 'browse' } %>
+  <%= render partial: 'grade_entry_forms/list_manage',
              locals: { action: 'grades' } %>
-  <div id="section">
-    <%= render partial: "api/key_display", locals: { user: @current_user } %>
+
+  <div id='section'>
+    <%= render partial: 'api/key_display', locals: { user: @current_user } %>
   </div>
 </div>

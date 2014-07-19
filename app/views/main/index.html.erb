@@ -2,11 +2,12 @@
   <%= javascript_include_tag 'Chart' %>
 <% end %>
 
-<div id='title_bar'>
-   <h1><%= I18n.t(:dashboard) %></h1>
+<div class='title_bar'>
+  <h1><%= t(:dashboard) %></h1>
 </div>
+
 <div class='wrapLeft'>
-  <p><%= I18n.t(:welcome_to_markus, {user_name: @current_user.first_name}) %></p>
+  <p><%= t(:welcome_to_markus, {user_name: @current_user.first_name}) %></p>
 
   <div id='assignment_summaries'>
     <% @assignments.each do |a| %>

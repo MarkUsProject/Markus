@@ -206,13 +206,16 @@
 }
 
 
-/* Title Bar */
+/* [TEMP] Title Bar */
 
-#title_bar {
+.title_bar {
+  display: table;
+  margin-bottom: 1.5em;
+  width: 100%;
+
   span.menu_bar {
     background: none;
     border: none;
-    color: $grey;
     font-size: 1rem;
     font-weight: normal;
 
@@ -225,40 +228,27 @@
   a:hover {
     background: none;
     border: none;
-    color: $hover;
+  }
+
+  h1,
+  .heading_buttons {
+    display: table-cell;
+
+    @include breakpoint(mobile) {
+      display: block;
+    }
+  }
+
+  .heading_buttons {
+    text-align: right;
+    vertical-align: middle;
+
+    @include breakpoint(mobile) {
+      text-align: left;
+    }
   }
 }
 
-#title_bar h1,
-.title_bar h1 {
-  color: $grey;
-  display: inline-block;
-  font-size: 2.5em;
-  font-weight: 300;
-}
-
-#second_title {
-  margin-top: 2.5em;
-}
-
-#title_bar input,
-#title_bar a,
-.sub_title a {
-  @include box-shadow(none);
-  background: none;
-  border: none;
-  color: $blue;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  margin: 0;
-  min-width: 5px;
-  padding: 0 4px;
-}
-
-.sub_title a {
-  font-size: 0.7em;
-}
 
 #new_files input {
   width: 300px;
