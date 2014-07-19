@@ -22,26 +22,33 @@
   <% if @sections.empty? %>
     <p><%= t('section.no_sections') %></p>
   <% else %>
-    <table>
-      <% @sections.each do |section| %>
-        <tr>
-          <td>
-            <%= link_to section.name, edit_section_path(section) %>
-            <span class='info'>(<%= section.students.count %>)</span>
-          </td>
-          <td>
-            <%= button_to t('delete'),
-                          { action: 'destroy',
-                            id: section.id },
-                          class: 'delete',
-                          confirm: t('section.delete.link_confirm'),
-                          method: 'delete',
-                          disabled: !section.students.empty?,
-                          class: 'thin-button' %>
-          </td>
-        </tr>
-      <% end %>
-    </table>
+    <div class='table'>
+      <table>
+        <thead>
+          <tr>
+            <th><%= t('section.legend') %></th>
+            <th><%= t('actions') %></th>
+          </tr>
+        </thead>
+        <% @sections.each do |section| %>
+          <tr>
+            <td>
+              <%= link_to section.name, edit_section_path(section) %>
+              <span class='info'>(<%= section.students.count %>)</span>
+            </td>
+            <td>
+              <%= button_to t('delete'),
+                            { action: 'destroy',
+                              id: section.id },
+                            confirm: t('section.delete.link_confirm'),
+                            method: 'delete',
+                            disabled: !section.students.empty?,
+                            class: 'inline-button' %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
   <% end %>
 </div>
 
