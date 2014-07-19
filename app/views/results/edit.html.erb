@@ -1,51 +1,27 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('livepipe/tabs') %>
-  <%= stylesheet_link_tag('SyntaxHighlighter') %>
+  <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
   <%= stylesheet_link_tag('grader') %>
-  <%= javascript_include_tag 'panes.js' %>
+  <%= javascript_include_tag 'panes' %>
 <% end %>
 
 <% # UI LIBRARIES %>
-<%= javascript_include_tag 'effects.js',
-                           'dragdrop.js',
-                           'controls.js',
-                           'DropDownMenu/DropDownMenu.js' %>
-
-<% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
-<%= javascript_include_tag 'SourceCodeGlower/AnnotationText.js',
-                           'SourceCodeGlower/AnnotationTextDisplayer.js',
-                           'SourceCodeGlower/AnnotationTextManager.js',
-                           'SourceCodeGlower/SourceCodeLine.js',
-                           'SourceCodeGlower/SourceCodeLineAnnotations.js',
-                           'SourceCodeGlower/SourceCodeLineCollection.js',
-                           'SourceCodeGlower/SourceCodeLineArray.js',
-                           'SourceCodeGlower/SyntaxHighlighter1p5Line.js',
-                           'SourceCodeGlower/SourceCodeLineManager.js',
-                           'SourceCodeGlower/SourceCodeLineFactory.js',
-                           'SourceCodeGlower/SourceCodeAdapter.js',
-                           'SourceCodeGlower/SyntaxHighlighter1p5Adapter.js',
-                           'SourceCodeGlower/ImageAnnotationGrid.js',
-                           'SourceCodeGlower/ImageEventHandler.js' %>
-
-<% # SYNTAX HIGHLIGHTER %>
-<%= javascript_include_tag 'syntaxhighlighter/shCore.js',
-                           'syntaxhighlighter/shBrushJava.js',
-                           'syntaxhighlighter/shBrushXml.js',
-                           'syntaxhighlighter/shBrushRuby.js',
-                           'syntaxhighlighter/shBrushPython.js',
-                           'syntaxhighlighter/shBrushJScript.js',
-                           'syntaxhighlighter/shBrushCpp.js',
-                           'syntaxhighlighter/shBrushScheme.js',
-                           'syntaxhighlighter/shBrushScilab.js',
-                           'syntaxhighlighter/shBrushUnknown.js' %>
+<%= javascript_include_tag 'effects',
+                           'dragdrop',
+                           'controls',
+                           'DropDownMenu/DropDownMenu' %>
 
 <% # EDITING MARKS FUNCTIONS AND BOOT SCRIPTS%>
-<%= javascript_include_tag 'Grader/file_selector.js',
-                           'Grader/marking.js',
-                           'Grader/mouse_selections.js' %>
+<%= javascript_include_tag 'Grader/file_selector',
+                           'Grader/marking',
+                           'Grader/mouse_selections' %>
 
 <% # This file can't be cached %>
-<%= javascript_include_tag 'Grader/tabs_boot.js'%>
+<%= javascript_include_tag 'Grader/tabs_boot'%>
+
+<% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
+<%= render partial: 'results/common/syntax_highlighter_brushes',
+           formats: [:html],
+           handlers: [:erb] %>
 
 <script>
 //<![CDATA[
@@ -97,14 +73,14 @@
            formats: [:js],
            locals: { first_file: @first_file } %>
 
-<div id='notes_dialog'></div>
+<aside class='dialog' id='notes_dialog'></aside>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
-  <%= t('results.title',
-        { assignment_name: @assignment.short_identifier,
-          group_name: @group.group_name }) %>
-  (<%= @grouping.get_all_students_in_group %>)
+    <%= t('results.title',
+          { assignment_name: @assignment.short_identifier,
+            group_name: @group.group_name }) %>
+    (<%= @grouping.get_all_students_in_group %>)
   </h1>
 </div>
 

@@ -2,7 +2,17 @@
   <%= javascript_include_tag 'Assignments/index' %>
 <% end %>
 
-<div id="title_bar"><h1><%= I18n.t(:manage_course_work) %></h1></div>
+<div class='title_bar'>
+  <h1><%= t(:manage_course_work) %></h1>
+  <div class='heading_buttons'>
+    <%= link_to t(:download_csv_grade_report),
+                download_csv_grades_report_assignments_path if @current_user.admin? %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t(:upload), 'modal_upload.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t(:download), 'modal_download.open()' %>
+  </div>
+</div>
 
 <div class="wrapLeft">
   <%= render 'shared/flash_message' %>
@@ -16,70 +26,8 @@
                 action: 'new' },
               class: 'button' %>
 
-  <div id="title_bar" class="heading_buttons">
-    <%= link_to I18n.t(:upload), '#',
-                onclick: 'modal_upload.open()' %> |
-    <%= link_to I18n.t(:download), '#',
-                onclick: 'modal_download.open()' %>
-  </div>
-
-  <!-- Modal Windows -->
-  <div id="download_dialog">
-    <h2><%= I18n.t('download') %></h2>
-    <p>
-      <%= link_to t(:assignment_format, file: 'csv'),
-                    download_assignment_list_assignments_path(
-                            file_format: 'csv'),
-                    class: 'button' if @current_user.admin? %>
-      <br>
-      <br>
-      <%= link_to t(:assignment_format, file: 'yml'),
-                    download_assignment_list_assignments_path(
-                            file_format: 'yml'),
-                    class: 'button' if @current_user.admin? %>
-    </p>
-    <%= button_to I18n.t(:close), '#', onclick: 'modal_download.close();return false;' %>
-  </div>
-  <div id="upload_dialog">
-    <h2><%= t('upload') %></h2>
-    <p>
-      <p>
-        <%= t(:select_csv_file,
-              code: @default_fields[0..3].join(', ')).html_safe %>
-      </p>
-      <p>
-        <%= t(:all_csv_file) %>
-        <%= link_to '[...]', '#', onclick: "return toggleElem('hide')" %>
-        <span id="hide" style="display: none;">
-          <%= "<code>#{@default_fields.join(', ')}</code>".html_safe %>
-        </span>
-      </p>
-      <%= form_tag upload_assignment_list_assignments_path(),
-                   {multipart: true} do %>
-        <p>
-          <%= t('encoding') %>
-          <%= select_tag(:encoding, options_for_select(@encodings)) %>
-        </p>
-        <input type="file" name="assignment_list" id="assignment_list" />
-        <%= hidden_field_tag :file_format, '', id: 'file_format' %>
-        <% if @current_user.admin? %>
-          <%= submit_tag t(:upload_assignment_format, file: 'yml'),
-                         onclick: 'choose_upload("yml")' %>
-          <%= submit_tag t(:upload_assignment_format, file: 'csv'),
-                         onclick: 'choose_upload("csv")' %>
-        <% end %>
-      <% end %>
-    </p>
-  </div>
-
   <%= render partial: 'assignments/list_manage',
              locals: { controller: 'assignments', action: 'edit' } -%>
-</div>
-
-
-<div class="wrapLeft">
-  <%= link_to I18n.t(:download_csv_grade_report),
-            download_csv_grades_report_assignments_path() if @current_user.admin? %>
 </div>
 
 <% # For now, only allow instructors to manage grade entry forms
@@ -91,3 +39,61 @@
                locals: { action: 'edit' } -%>
   </div>
 <% end %>
+
+
+<!-- Modal Windows -->
+<aside class='dialog' id="download_dialog">
+  <h2><%= I18n.t('download') %></h2>
+  <p>
+    <%= link_to t(:assignment_format, file: 'csv'),
+                  download_assignment_list_assignments_path(
+                          file_format: 'csv'),
+                  class: 'button' if @current_user.admin? %>
+    <br>
+    <br>
+    <%= link_to t(:assignment_format, file: 'yml'),
+                  download_assignment_list_assignments_path(
+                          file_format: 'yml'),
+                  class: 'button' if @current_user.admin? %>
+  </p>
+
+  <section class='dialog-actions'>
+    <%= button_to I18n.t(:close), '#', onclick: 'modal_download.close();return false;' %>
+  </section>
+</aside>
+
+<aside class='dialog' id="upload_dialog">
+  <h2><%= t('upload') %></h2>
+  <p>
+    <p>
+      <%= t(:select_csv_file,
+            code: @default_fields[0..3].join(', ')).html_safe %>
+    </p>
+    <p>
+      <%= t(:all_csv_file) %>
+      <%= link_to '[...]', '#', onclick: "return toggleElem('hide')" %>
+      <span id="hide" style="display: none;">
+        <%= "<code>#{@default_fields.join(', ')}</code>".html_safe %>
+      </span>
+    </p>
+    <%= form_tag upload_assignment_list_assignments_path(),
+                 {multipart: true} do %>
+      <p>
+        <%= t('encoding') %>
+        <%= select_tag(:encoding, options_for_select(@encodings)) %>
+      </p>
+
+      <input type="file" name="assignment_list" id="assignment_list" />
+
+      <section class='dialog-actions'>
+        <%= hidden_field_tag :file_format, '', id: 'file_format' %>
+        <% if @current_user.admin? %>
+          <%= submit_tag t(:upload_assignment_format, file: 'yml'),
+                         onclick: 'choose_upload("yml")' %>
+          <%= submit_tag t(:upload_assignment_format, file: 'csv'),
+                         onclick: 'choose_upload("csv")' %>
+        <% end %>
+      </section>
+    <% end %>
+  </p>
+</aside>

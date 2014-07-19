@@ -2,11 +2,11 @@
 <%= javascript_include_tag 'users_manager' %>
 <%= javascript_include_tag 'help_system' %>
 
-<script type="text/javascript">
+<script>
   <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
 </script>
 
-<div id="title_bar">
+<div class='title_bar'>
   <h1>
     <%= I18n.t("admins.manage_admins") %>
     <span class='title-help users_admins_help'>
@@ -47,8 +47,9 @@
     </div>
     <% end %>
 
-    <table id="admins">
-    </table>
+    <div class='table'>
+      <table id='admins'></table>
+    </div>
 
     </div>
   </div>

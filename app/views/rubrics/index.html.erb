@@ -1,16 +1,21 @@
-<%= render partial: 'boot',
-           formats: [:js],
-           handlers: [:erb] %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'Rubrics/index' %>
 
-<% if @assignment.past_due_date?%>
-  <div class='notice'>
+  <%= render partial: 'boot',
+             formats: [:js],
+             handlers: [:erb] %>
+<% end %>
+
+<% if @assignment.past_due_date? %>
+  <div class='warning'>
     <%= t('past_due_date_warning') %>
   </div>
 <% end %>
 
-<div id='title_bar'>
-  <h1><%= I18n.t('rubric_criteria.criteria_management',
-                 identifier: @assignment.short_identifier) %>
+<div class='title_bar'>
+  <h1>
+    <%= t('rubric_criteria.criteria_management',
+          identifier: @assignment.short_identifier) %>
   </h1>
   <div class='heading_buttons'>
         <%= link_to_function t('add_criterion'),
@@ -20,15 +25,23 @@
             } else {
               #{remote_function url: new_assignment_rubric_path(@assignment),
                                 method: 'get'}
-            }|%>
+            }| %>
   <span class='menu_bar'></span>
-  <%= button_to_function t('download'), 'modal_download.open();' %>
+  <%= link_to t(:download),
+              '#',
+              onclick: 'modal_download.open()' %>
   <span class='menu_bar'></span>
-  <%= button_to_function t('upload'), 'modal_upload.open();' %>
+  <%= link_to t('rubric_criteria.upload.csv'),
+              '#',
+              onclick: 'modal_upload_csv.open()' %>
+  <span class='menu_bar'></span>
+  <%= link_to t('rubric_criteria.upload.yml'),
+              '#',
+              onclick: 'modal_upload_yml.open()' %>
   </div>
-</div><!-- Title bar-->
+</div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <%= render 'shared/flash_message' %>
 
   <p id='new_criterion_error' class='warning' style='display: none;'></p>
@@ -45,7 +58,7 @@
   </div>
 </div>
 
-<div id='upload_dialog'>
+<aside class='dialog' id='upload_csv_dialog'>
   <h1><%= t('rubric_criteria.upload.csv_title') %></h1>
   <p><%= t('rubric_criteria.upload.csv_prompt') %></p>
   <%= form_for :csv_upload,
@@ -60,16 +73,21 @@
     </div>
 
     <div>
-      <%= I18n.t('encoding') %>
+      <%= t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </div>
 
-    <p>
-      <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'>
-    </p>
+    <section class='dialog-actions'>
+      <%= f.submit t(:upload),
+                   data: { disable_with: t(:uploading_please_wait) } %>
+      <input type='reset'
+             value='<%= t(:cancel) %>'
+             onclick='modal_upload_csv.close();'>
+    </section>
   <% end %>
+</aside>
 
+<aside class='dialog' id='upload_yml_dialog'>
   <h1><%= t('rubric_criteria.upload.yml_title') %></h1>
   <p><%= t('rubric_criteria.upload.yml_prompt') %></p>
   <%= form_for :yml_upload,
@@ -81,19 +99,21 @@
     </div>
 
     <div>
-      <%= I18n.t('encoding') %>
+      <%= t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </div>
 
-    <p>
-      <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'>
-    </p>
+    <section class='dialog-actions'>
+      <%= f.submit t(:upload),
+                   data: { disable_with: t(:uploading_please_wait) } %>
+      <input type='reset'
+             value='<%= t(:cancel) %>'
+             onclick='modal_upload_yml.close();'>
+    </section>
   <% end %>
+</aside>
 
-</div>
-
-<div id='download_dialog'>
+<aside class='dialog' id='download_dialog'>
   <h2><%= t('rubric_criteria.download.title') %></h2>
   <p><%= t('rubric_criteria.download.prompt') %></p>
 
@@ -109,7 +129,10 @@
                   onclick: 'modal_download.close();' %>
     </li>
   </ul>
-  <input type='reset'
-         value='<%= t('cancel') %>'
-         onclick='modal_download.close();'>
-</div>
+
+  <section class='dialog-actions'>
+    <input type='reset'
+           value='<%= t('cancel') %>'
+           onclick='modal_download.close();'>
+  </section>
+</aside>
