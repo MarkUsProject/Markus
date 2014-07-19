@@ -1,3 +1,13 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag("livepipe/tabs") %>
+<% end %>
+<% # UI LIBRARIES %>
+<%= javascript_include_tag 'livepipe/livepipe.js',
+                           'livepipe/window.js',
+                           'livepipe/tabs.js',
+                           'effects.js',
+                           'dragdrop.js' %>
+
 <%= render partial: 'boot',
            formats: [:js],
            handlers: [:erb] %>
@@ -20,7 +30,7 @@
   </div>
 </div>
 
-<div class="wrapLeft">
+<div class='wrapper'>
   <%= render 'shared/flash_message' %>
 
   <p id='new_criterion_error' class='warning' style='display: none;'></p>
