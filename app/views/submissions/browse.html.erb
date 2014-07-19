@@ -4,9 +4,9 @@
 
 <div class="notice">
   <% if Time.zone.now >= @assignment.submission_rule.calculate_collection_time %>
-     <%= I18n.t("browse_submissions.grading_can_begin") %>
+     <%= t("browse_submissions.grading_can_begin") %>
   <% else %>
-     <%= I18n.t("browse_submissions.grading_can_begin_after",
+     <%= t("browse_submissions.grading_can_begin_after",
                 time: I18n.l(@assignment.submission_rule.calculate_collection_time,
                 format: :long_date)) %>
   <% end %>
@@ -14,45 +14,45 @@
 
 <div id="title_bar">
   <h1>
-    <%= I18n.t("browse_submissions.workspace",
+    <%= t('browse_submissions.workspace',
                short_identifier: sanitize(@assignment.short_identifier)) %>
     <div class="help submissions_help"></div>
   </h1>
   <div class="heading_buttons">
     <% if @current_user.admin? %>
-      <%= link_to I18n.t("collect_submissions.collect_all"),
+      <%= link_to t('collect_submissions.collect_all'),
                          collect_all_submissions_assignment_submissions_path(
                            @assignment.id),
-                         confirm: I18n.t("collect_submissions.results_loss_warning") %>
-      <span class="menu_bar"></span>
-      <%= link_to I18n.t("browse_submissions.csv_report"),
+                         confirm: t('collect_submissions.results_loss_warning') %>
+      <span class='menu_bar'></span>
+      <%= link_to t('browse_submissions.csv_report'),
                          download_simple_csv_report_assignment_submissions_path(
                            @assignment) %>
-      <span class="menu_bar"></span>
-      <%= link_to I18n.t("browse_submissions.detailled_csv_report"),
+      <span class='menu_bar'></span>
+      <%= link_to t('browse_submissions.detailled_csv_report'),
                          download_detailed_csv_report_assignment_submissions_path(
                            @assignment) %>
-      <span class="menu_bar"></span>
-      <%= link_to I18n.t("browse_submissions.subversion_repo_list"),
+      <span class='menu_bar'></span>
+      <%= link_to t('browse_submissions.subversion_repo_list'),
                          download_svn_repo_list_assignment_submissions_path(
                            @assignment) %>
-      <span class="menu_bar"></span>
-      <%= link_to I18n.t("browse_submissions.subversion_export_file"),
+      <span class='menu_bar'></span>
+      <%= link_to t('browse_submissions.subversion_export_file'),
                          download_svn_export_commands_assignment_submissions_path(
                            @assignment) %>
     <% end %>
 
     <% # Allow submission collection only if all the submissions are assigned to exactly one TA. %>
-    <% if @current_user.ta? and @assignment.past_collection_date? and 
+    <% if @current_user.ta? and @assignment.past_collection_date? and
           @groupings.all?{|grouping| grouping.get_ta_names.size == 1} %>
 
-      <%= link_to I18n.t("collect_submissions.collect_ta"),
+      <%= link_to t('collect_submissions.collect_ta'),
                          collect_ta_submissions_assignment_submissions_path(
                            @assignment),
-                         confirm: I18n.t("collect_submissions.results_loss_warning") %>
+                         confirm: t('collect_submissions.results_loss_warning') %>
     <% elsif @current_user.ta? and @assignment.past_collection_date? %>
-      <a id="disable" title="<%= I18n.t("collect_submissions.disable_collect") %>">
-        <%= I18n.t("collect_submissions.collect_ta") %>
+      <a id='disable' title='<%= t('collect_submissions.disable_collect') %>'>
+        <%= t('collect_submissions.collect_ta') %>
       </a>
     <% end %>
 
@@ -66,18 +66,20 @@
       <%= link_to t('browse_submissions.download_groupings_files'),
                     download_groupings_files_assignment_submissions_path(
                       groupings: @groupings),
-                    confirm: I18n.t("collect_submissions.marking_incomplete_warning") %>
+                    confirm: t('collect_submissions.marking_incomplete_warning') %>
     <% end %>
   </div>
 </div>
-<p class="help-message-title submissions_help">
+
+<p class='help-message-title submissions_help'>
   <% if @current_user.ta? %>
-    <%= t("assignment.help.submissions_graders") %>
+    <%= t('assignment.help.submissions_graders') %>
   <% else %>
-     <%= t("assignment.help.submissions_admins") %>
+    <%= t('assignment.help.submissions_admins') %>
   <% end %>
 </p>
-<div class="help-break submissions_help"></div>
+<div class='help-break submissions_help'></div>
+
 <div class="wrapLeft">
   <% if flash[:error] %>
     <div class="error">
@@ -93,10 +95,10 @@
 
   <% if !flash[:errors].nil? && !flash[:errors].empty? %>
     <div class="error">
-      <h1><%= I18n.t("browse_submissions.errors") %></h1>
+      <h1><%= t("browse_submissions.errors") %></h1>
       <ul>
         <% flash[:errors].each do |error_message| %>
-	        <li><%= error_message %></li>
+          <li><%= error_message %></li>
         <% end %>
       </ul>
     </div>
@@ -108,12 +110,12 @@
     <div class="ap_nav_box">
       <% if @current_user.admin? %>
         <div class="floatLeft">
-          <%= submit_tag I18n.t("browse_submissions.release_marks"),
+          <%= submit_tag t("browse_submissions.release_marks"),
                                 name: "release_results" %>
-          <%= submit_tag I18n.t("browse_submissions.unrelease_marks"),
+          <%= submit_tag t("browse_submissions.unrelease_marks"),
                                 name: "unrelease_results" %>
           <% if !@assignment.results_average.nil? %>
-            <%= I18n.t("browse_submissions.class_average",
+            <%= t("browse_submissions.class_average",
                        results_average: @assignment.results_average) %>
           <% end %>
         </div>
@@ -121,23 +123,23 @@
 
       <% # Collect submissions for a given section %>
       <% if @assignment.section_groups_only %>
-      	<div class="floatLeft">
-      		<%= I18n.t("browse_submissions.collect_work_for_section") %>
-      		<select id="section_input" name="section_to_collect">
-      			<option value=""> - </option>
-      			<% @assignment.section_due_dates.each do |section_due_date| %>
-      				<% if Time.zone.now >=
-      					SectionDueDate.due_date_for(section_due_date.section, @assignment) %>
-	      				<option value="<%= section_due_date.section.id %>">
-	      					<%= section_due_date.section.name %>
-	      				</option>
-      				<% end %>
-      			<% end %>
-      		</select>
-      		<%= submit_tag t(:apply), id: 'apply_collect_section',
-      			                        name: 'collect_section',
+        <div class="floatLeft">
+          <%= t("browse_submissions.collect_work_for_section") %>
+          <select id="section_input" name="section_to_collect">
+            <option value=""> - </option>
+            <% @assignment.section_due_dates.each do |section_due_date| %>
+              <% if Time.zone.now >=
+                SectionDueDate.due_date_for(section_due_date.section, @assignment) %>
+                <option value="<%= section_due_date.section.id %>">
+                  <%= section_due_date.section.name %>
+                </option>
+              <% end %>
+            <% end %>
+          </select>
+          <%= submit_tag t(:apply), id: 'apply_collect_section',
+                                    name: 'collect_section',
                                     class: 'thin-button' %>
-      	</div>
+        </div>
       <% end %>
 
       <div class="ap_filters" id="ap_filters_1">
@@ -169,41 +171,42 @@
       <div class="clear"></div>
     </div>
 
-    <div id="ap_selects">
+    <div id='ap_selects'>
       <%= render partial: 'ajax_paginate/selects',
-        locals: { page_items: @groupings.size,
-                    total_items: @groupings_total } %>
+                 locals: { page_items: @groupings.size,
+                           total_items: @groupings_total } %>
     </div>
 
-    <table>
-      <thead id="submissions_table_head">
-        <%= render  partial: 'submissions_table_sorting_links',
-                    locals: { assignment: @assignment,
-                              filter: 'none',
-                              page: @current_page,
-                              per_page: @per_page,
-                              sort_by: @sort_by,
-                              desc: @desc } %>
-      </thead>
+    <div class='table'>
+      <table>
+        <thead id='submissions_table_head'>
+          <%= render partial: 'submissions_table_sorting_links',
+                     locals: { assignment: @assignment,
+                               filter: 'none',
+                               page: @current_page,
+                               per_page: @per_page,
+                               sort_by: @sort_by,
+                               desc: @desc } %>
+        </thead>
 
-      <%= render  partial: 'submissions_table_body',
-                  locals: { groupings: @groupings,
-                            assignment: @assignment } %>
+        <%= render partial: 'submissions_table_body',
+                   locals: { groupings: @groupings,
+                             assignment: @assignment } %>
 
-      <tfoot id="submissions_table_foot">
-        <%= render  partial: 'submissions_table_sorting_links',
-                    locals: { assignment: @assignment,
-                              filter: 'none',
-                              page: @current_page,
-                              per_page: @per_page,
-                              sort_by: @sort_by,
-                              desc: @desc } %>
-      </tfoot>
-    </table>
+        <tfoot id='submissions_table_foot'>
+          <%= render partial: 'submissions_table_sorting_links',
+                     locals: { assignment: @assignment,
+                               filter: 'none',
+                               page: @current_page,
+                               per_page: @per_page,
+                               sort_by: @sort_by,
+                               desc: @desc } %>
+        </tfoot>
+      </table>
+    </div>
 
-
-    <div class="ap_nav_box">
-      <div class="ap_page_links" id="ap_page_links_2">
+    <div class='ap_nav_box'>
+      <div class='ap_page_links' id='ap_page_links_2'>
         <%= render  partial: 'ajax_paginate/initial_paginate_links',
                     locals: { per_page: @per_page,
                               current_page: @current_page,
@@ -214,7 +217,7 @@
                               sort_by: @sort_by,
                               desc: @desc } %>
       </div>
-      <div id="ap_selector">
+      <div id='ap_selector'>
         <%= render partial: 'ajax_paginate/selector' %>
       </div>
 
@@ -222,9 +225,9 @@
 
       <div class="floatLeft">
         <% if @current_user.admin? %>
-          <%= submit_tag I18n.t("browse_submissions.release_marks"),
+          <%= submit_tag t("browse_submissions.release_marks"),
                                 name: "release_results" %>
-          <%= submit_tag I18n.t("browse_submissions.unrelease_marks"),
+          <%= submit_tag t("browse_submissions.unrelease_marks"),
                                 name: "unrelease_results" %>
         <% end %>
       </div>

@@ -11,33 +11,25 @@
            formats: [:js],
            handlers: [:erb] %>
 
-<div id="title_bar">
+<div class='title_bar'>
   <h1>
-    <%= I18n.t("annotations.title",
-               assignment_short_identifier: @assignment.short_identifier) %>
+    <%= t('annotations.title',
+          assignment_short_identifier: @assignment.short_identifier) %>
   </h1>
-  <div class="heading_buttons">
+  <div class='heading_buttons'>
     <% path = add_annotation_category_assignment_annotation_categories_path(
                 id: @assignment.id) %>
 
     <%= link_to_function t('annotations.add_annotation_category'),
                          onclick: "add_annotation_category('#{path}')" %>
-    <span class="menu_bar"></span>
-    <%= button_to_function t('download'), 'modal_download.open();' %>
-    <span class="menu_bar"></span>
-    <%= button_to_function t('upload'), 'modal_upload.open();' %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t('download'), 'modal_download.open();' %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t('upload'), 'modal_upload.open();' %>
   </div>
 </div>
 
-<div class='wrapLeft'>
-  <%= render 'shared/flash_message' %>
-  <% if @assignment.past_due_date? %>
-    <div class='notice'>
-      <%= t('past_due_date_warning') %>
-    </div>
-  <% end %>
-  <p id='criterion_error' class='warning' style='display: none;'></p>
-
+<div class='wrapper'>
   <div id='annotation_category_pane'>
     <div class='sortable'>
       <header>
@@ -61,46 +53,49 @@
   <div id='annotations_pane'>
     <div id='annotation_list_holder'>
       <div id='annotations_help'>
-        <h1><%= t(:help) %></h1>
+        <h2><%= t(:help) %></h2>
         <p><%= t('annotations.help_message') %></p>
       </div>
     </div>
-
-    <div class='clear'></div>
-  </div> <!-- Edit Canvas -->
+  </div>
 </div>
 
-<div id='upload_dialog' >
+<aside class='dialog' id='upload_dialog' >
   <h1><%= t('annotations.upload.upload_annotations') %></h1>
   <%= t('annotations.upload.upload_message_csv').html_safe %>
   <%= form_tag({ action: 'csv_upload',
                  id: @assignment.id },
-                {multipart: true }) do %>
+               { multipart: true }) do %>
     <p><%= file_field_tag :annotation_category_list_csv, size: 0 %></p>
-    <p>
+    <div>
       <%= I18n.t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
-      <br>
-      <br>
-      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();' />
-    </p>
-  <% end %>
-  <%= t('annotations.upload.upload_message_yml').html_safe %>
-  <%= form_tag({action: 'yml_upload', id: @assignment.id}, {multipart: true}) do %>
-    <p><%= file_field_tag :annotation_category_list_yml, size: 0 %></p>
-    <p>
-      <%= I18n.t('encoding') %>
-      <%= select_tag(:encoding, options_for_select(@encodings)) %>
-      <br>
-      <br>
-      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();' />
-    </p>
-  <% end %>
-</div>
+    </div>
 
-<div id='download_dialog'>
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();' />
+    </section>
+  <% end %>
+
+  <%= t('annotations.upload.upload_message_yml').html_safe %>
+  <%= form_tag({ action: 'yml_upload',
+                 id: @assignment.id },
+               { multipart: true }) do %>
+    <p><%= file_field_tag :annotation_category_list_yml, size: 0 %></p>
+    <div>
+      <%= I18n.t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </div>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();' />
+    </section>
+  <% end %>
+</aside>
+
+<aside class='dialog' id='download_dialog'>
   <h1><%= t('annotations.download.download_annotations') %></h1>
   <ul>
     <li>
@@ -118,5 +113,8 @@
                   onclick: 'modal_download.close();' %>
     </li>
   </ul>
-  <input type='reset' value='<%= t(:cancel) %>' onclick='modal_download.close();'>
-</div>
+
+  <section class='dialog-actions'>
+    <input type='reset' value='<%= t(:cancel) %>' onclick='modal_download.close();'>
+  </section>
+</aside>

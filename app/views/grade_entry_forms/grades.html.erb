@@ -1,17 +1,14 @@
-<% # Manage grades page
-%>
+<%# Manage grades page %>
 <%= javascript_include_tag "ajax_paginate",
-                           "livepipe/livepipe.js",
-                           "livepipe/window.js",
-                           "effects.js",
                            "GradeEntryForms/grades.js" %>
-<div id="title_bar">
+
+<div class='title_bar'>
   <h1>
-    <%= t('grade_entry_forms.grades.title') + " " + @grade_entry_form.short_identifier %>
+    <%= t('grade_entry_forms.grades.title') + ' ' + @grade_entry_form.short_identifier %>
   </h1>
-  <div class="heading_buttons">
-    <%= button_to_function t(:upload), 'modal_upload.open();'%>
-    <span class="menu_bar"></span>
+  <div class='heading_buttons'>
+    <%= link_to_function t(:upload), 'modal_upload.open();'%>
+    <span class='menu_bar'></span>
     <%= link_to t(:download),
                 csv_download_grade_entry_form_path(@grade_entry_form) %>
   </div>
@@ -66,30 +63,32 @@
       <div id="ap_selects">
         <%= render partial: 'ajax_paginate/selects', locals: {page_items: @students.size, total_items: @students_total} %>
       </div>
-      <table>
-        <thead id="grades_table_head">
-        <%= render partial: 'grades_table_column_names',locals: {per_page: @per_page,
-                                                                 filter: @filter,
-                                                                 sort_by: @sort_by,
-                                                                 desc: @desc,
-                                                                 controller: 'grade_entry_forms',
-                                                                 action: 'grades'
-        }%>
-        </thead>
-        <tbody>
-        </tbody>
-        <%= render partial: 'grades_table' %>
-        <tfoot id="grades_table_footer">
-        <%= render partial: 'grades_table_column_names', locals: {per_page: @per_page,
-                                                                  filter: @filter,
-                                                                  sort_by: @sort_by,
-                                                                  desc: @desc,
-                                                                  controller: 'grade_entry_forms',
-                                                                  action: 'grades'
-        }%>
 
-        </tfoot>
-      </table>
+      <div class='table'>
+        <table>
+          <thead id='grades_table_head'>
+            <%= render partial: 'grades_table_column_names',
+                       locals: { per_page: @per_page,
+                                 filter: @filter,
+                                 sort_by: @sort_by,
+                                 desc: @desc,
+                                 controller: 'grade_entry_forms',
+                                 action: 'grades' } %>
+          </thead>
+          <tbody>
+          </tbody>
+          <%= render partial: 'grades_table' %>
+          <tfoot id='grades_table_footer'>
+            <%= render partial: 'grades_table_column_names',
+                       locals: { per_page: @per_page,
+                                 filter: @filter,
+                                 sort_by: @sort_by,
+                                 desc: @desc,
+                                 controller: 'grade_entry_forms',
+                                 action: 'grades' } %>
+          </tfoot>
+        </table>
+      </div>
 
       <div class="ap_nav_box">
         <div class="ap_page_links" id="ap_page_links_2">
@@ -133,22 +132,24 @@
   </form>
 </div>
 
-<div id="upload_dialog">
+<aside class='dialog' id="upload_dialog">
   <h1><%= t('grade_entry_forms.csv.upload_title') %></h1>
   <p><%= t('grade_entry_forms.csv.upload_prompt') %></p>
-  <%= form_for :upload, url: {controller:"grade_entry_forms",
-                              action: 'csv_upload',
-                              id: @grade_entry_form.id},
-               html: {multipart: true, size: 1 } do |f| %>
-      <p><%= f.file_field :grades_file %></p>
-      <%= t('grade_entry_forms.csv.upload_format_html') %>
-      <p>
-        <%= I18n.t("encoding") %>
-        <%= select_tag(:encoding, options_for_select(@encodings)) %>
-        <br>
-        <br>
-        <%= f.submit t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
-        <%= button_to I18n.t(:close), '#', onclick: 'modal_upload.close(); return false;' %>
-      </p>
+  <%= form_for :upload,
+               url: { controller:"grade_entry_forms",
+                      action: 'csv_upload',
+                      id: @grade_entry_form.id },
+               html: { multipart: true, size: 1 } do |f| %>
+    <p><%= f.file_field :grades_file %></p>
+    <%= t('grade_entry_forms.csv.upload_format_html') %>
+    <div>
+      <%= I18n.t("encoding") %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </div>
+
+    <section class='dialog-actions'>
+      <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+      <%= button_to I18n.t(:close), '#', onclick: 'modal_upload.close(); return false;' %>
+    </section>
   <% end %>
-</div>
+</aside>

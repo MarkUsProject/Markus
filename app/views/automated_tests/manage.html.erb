@@ -1,5 +1,9 @@
-<%= javascript_include_tag "create_assignment" %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'create_assignment' %>
+<% end %>
 
-<div id="title_bar"><h1><%= I18n.t("automated_tests.automated_tests") %></h1>
+<div class='title_bar'>
+  <h1><%= t('automated_tests.automated_tests') %></h1>
 </div>
+
 <%= render partial: 'form' %>

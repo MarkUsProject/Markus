@@ -9,6 +9,7 @@ en:
     none:               "None"
     search:             "Search:"
     issues:             "GitHub issues list"
+    actions:            "Actions"
 
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
@@ -62,6 +63,10 @@ en:
     home:               "Home"
     settings:           "Settings"
 
+    # app/views/shared/_assignments_dropdown.html.erb
+    quick_links:  "Quick links"
+    spreadsheets: "Marks spreadsheets"
+
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "must be alphanumeric, '.', '-' or '_' only"
@@ -72,8 +77,9 @@ en:
     cannot_login_as_another_admin: "You cannot log in as another admin."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:      "Current assignments:"
-    due:                       "due :"
+    current_assignments:       "Current assignments"
+    assignment_item:           "Assignment"
+    due:                       "Due date"
     no_assignments:            "There are currently no assignments."
     class_average:             "Class Average: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissions collected"
@@ -386,7 +392,7 @@ en:
       release_marks:        "Release Marks"
       unrelease_marks:      "Unrelease Marks"
       group_name:           "Group Name"
-      repository_name:      "Repository: %{repository}"
+      repository_name:      "Repository: %{repository}"
       repository:           "Repository"
       commit_date:          "Commit Date"
       marking_state:        "Marking State"
@@ -425,7 +431,7 @@ en:
 
     summaries_index:
       group_name:           "Group Name"
-      repository_name:      "Repository: %{repository}"
+      repository_name:      "Repository: %{repository}"
       repository:           "Repository"
       commit_date:          "Commit Date"
       marking_state:        "Marking State"
@@ -493,7 +499,9 @@ en:
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "There are currently no marks spreadsheets."
-    current_grade_entry_forms_title: "Current marks spreadsheets:"
+    current_grade_entry_forms_title: "Current marks spreadsheets"
+    spreadsheet_item: "Marks spreadsheet"
+    spreadsheet_date: "Date"
     mark_message: "Your mark:"
 
     student_interface_assignments: "Your Assignments"
@@ -863,7 +871,7 @@ en:
           </p>"
         success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
-        syntax_error: "There is an error in the file you uploaded : %{error}"
+        syntax_error: "There is an error in the file you uploaded: %{error}"
         flash_error: "Could not recognize %{format} format to download with"
       download:
         download_annotations: "Download Annotations"
@@ -1011,7 +1019,9 @@ en:
         link_yml: "Download rubric in YAML Format"
       upload:
         success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
+        csv:       "Upload CSV"
         csv_title: "Upload CSV File"
+        yml:       "Upload YML"
         yml_title: "Upload YML File"
         csv_prompt: "Select a CSV file to upload"
         yml_prompt: "Select a YML file to upload"
@@ -1033,7 +1043,7 @@ en:
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
           </p>"
         error: "Some rubric criteria were invalid:"
-        syntax_error: "There is an error in the file you uploaded : %{error}"
+        syntax_error: "There is an error in the file you uploaded: %{error}"
         empty_error: "No criteria were found in the provided file."
       error_total: "total weight must be positive"
       defaults:
@@ -1056,7 +1066,7 @@ en:
       weight: "Weight"
 
     notes:
-        note_on: "%{user_name} on <b>%{display_for}</b>"
+        note_on: "%{user_name} on <strong>%{display_for}</strong>"
         add_new: "Add a new note"
         existing: "Existing Notes"
         comment: "Your comment"
@@ -1120,7 +1130,7 @@ en:
       Select a criterion on the left to edit it.  Criteria names, descriptions and
       maximum values can be modified."
     past_due_date_warning: "Due date for this assignment is in the past."
-    past_due_date_notice: "Due date for this assignment is in the past for : "
+    past_due_date_notice: "Due date for this assignment is in the past for: "
 
     section:
       name: "Name"
