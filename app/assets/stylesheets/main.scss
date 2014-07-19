@@ -627,6 +627,10 @@ input#extra_mark_description {
   right: 35px;
 }
 
+.api_key_help a {
+  font-size: 0.8rem;
+}
+
 .warning {
   @extend .banner;
   background: #ffffe0 url(icons/error.png) no-repeat 5px center;

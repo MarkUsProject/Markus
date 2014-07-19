@@ -2,13 +2,12 @@
 
 <h3>
   <%= I18n.t(:api_key) %>
-  <span class='help api_key_help'></span>
+  <span class='help api_key_help'>
+    <p class='help-message-box api_key_help'>
+      <%= t('api_key_help').html_safe %>
+    </p>
+  </span>
 </h3>
-
-<p class='help-message-title api_key_help'>
-  <%= t('api_key_help') %>
-</p>
-<div class='help-break api_key_help'></div>
 
 <div id='api_key_box'>
   <% if !user.api_key.nil? %>
