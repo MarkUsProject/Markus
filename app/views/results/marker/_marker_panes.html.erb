@@ -105,45 +105,46 @@
                      locals: { grouping: result.submission.grouping } %>
         </div>
 
-        <%# Annotation pane%>
+        <!-- Annotation pane-->
         <div id='annotation_holder'></div>
-      </div>
+
+        <aside class='dialog' id='create_annotation_dialog'>
+          <input type='hidden' id='x1' value=''>
+          <input type='hidden' id='x2' value=''>
+          <input type='hidden' id='y1' value=''>
+          <input type='hidden' id='y2' value=''>
+          <p>
+            <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
+          </p>
+          <p>
+            <textarea id='new_annotation_content'></textarea>
+          </p>
+          <p>
+            <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
+            <select id='new_annotation_category'>
+              <option value=''><%= t('annotations.one_time_only') %></option>
+              <% @annotation_categories.each do |annotation_category| %>
+                <option value='<%= annotation_category.id %>'>
+                  <%= annotation_category.annotation_category_name %>
+                </option>
+              <% end %>
+            </select>
+          </p>
+
+          <section class='dialog-actions'>
+            <button onclick="submit_new_annotation(
+                              jQuery('#new_annotation_content').val(),
+                              jQuery('#new_annotation_category').val(),
+                              jQuery('#x1').val(),
+                              jQuery('#x2').val(),
+                              jQuery('#y1').val(),
+                              jQuery('#y2').val());">
+              <%= I18n.t('marker.annotation.new_annotation') %>
+            </button>
+            <%= button_to_function t('cancel'), 'modal.close();' %>
+          </section>
+        </aside>
+      </div> <!-- Mark pane -->
     </div>
   </div>
 </div>
-
-<aside class='dialog' id='create_annotation_dialog'>
-  <input type='hidden' id='x1' value=''>
-  <input type='hidden' id='x2' value=''>
-  <input type='hidden' id='y1' value=''>
-  <input type='hidden' id='y2' value=''>
-
-  <h2><%= t('marker.annotation.new_annotation') %></h2>
-
-  <textarea id='new_annotation_content'></textarea>
-
-  <p>
-    <h3><%= t('marker.annotation.annotation_category') %></h3>
-    <select id='new_annotation_category'>
-      <option value=''><%= t('annotations.one_time_only') %></option>
-      <% @annotation_categories.each do |annotation_category| %>
-        <option value='<%= annotation_category.id %>'>
-          <%= annotation_category.annotation_category_name %>
-        </option>
-      <% end %>
-    </select>
-  </p>
-
-  <section class='dialog-actions'>
-    <button onclick="submit_new_annotation(
-                      jQuery('#new_annotation_content').val(),
-                      jQuery('#new_annotation_category').val(),
-                      jQuery('#x1').val(),
-                      jQuery('#x2').val(),
-                      jQuery('#y1').val(),
-                      jQuery('#y2').val());">
-      <%= t('marker.annotation.new_annotation') %>
-    </button>
-    <button onclick='modal.close();'><%= t('cancel') %></button>
-  </section>
-</aside>

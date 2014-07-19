@@ -9,6 +9,7 @@ pt:
     none:               "Nenhum"
     search:             "Pesquisar:"
     issues:             "GitHub lista de problemas"
+    actions:            "Ações"
 
     # app/views/main/login.html.erb
     welcome_to:         "Bem-vindo ao MarkUs!"
@@ -61,6 +62,10 @@ pt:
     home:               "Home"
     settings:           "Configurações"
 
+    # app/views/shared/_assignments_dropdown.html.erb
+    quick_links:  "Links rápidos"
+    spreadsheets: "Notas nas planilhas"
+
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "apenas letras, números, '.', '-' ou '_'"
@@ -71,8 +76,9 @@ pt:
     cannot_login_as_another_admin: "Você não pode conectar como outro administrador."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:      "Projetos atuais:"
-    due:                       "Entrega :"
+    current_assignments:       "Projetos atuais"
+    assignment_item:           "Projetos"
+    due:                       "Prazo de entrega"
     no_assignments:            "Não existem projetos atualmente."
     class_average:             "Média da classe: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissões coletadas"
@@ -173,9 +179,9 @@ pt:
             flexible: "Flexível (à definir pelo avaliador)"
         notice:
             change_marking_scheme_type: "Alterar a escala de avaliação ira apagar avalições e critérios."
-        allow_web_submits: "Permitir envio pelo web?"
-        is_hidden: "Ocultar este projeto dos alunos?"
-        display_grader_names_to_students: "Mostrar nome de avaliador para alunos?"
+        allow_web_submits: "Permitir envio pelo web"
+        is_hidden: "Ocultar este projeto dos alunos"
+        display_grader_names_to_students: "Mostrar nome de avaliador para alunos"
         section_due_date_option:  "Se a opção de prazo de entrega por sessão foi selecionada, alunos só podem formar grupos dentro da sua sessão."
         section_due_dates_info:  "<b>Importante</b>: o prazo de entrega final deve ser preenchido. Se a sessão não possui uma data específica, o prazo global será usado no lugar. Alunos que não foram atribuídos a uma sessão só poderão formar grupos com alunos que também não estão atribuídos."
     your_mark:  "Sua nota:"
@@ -466,7 +472,9 @@ pt:
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "Atualmente não há notas nas planilhas."
-    current_grade_entry_forms_title: "Planilha atual de notas:"
+    current_grade_entry_forms_title: "Planilha atual de notas"
+    spreadsheet_item: "Notas nas planilhas"
+    spreadsheet_date: "Data"
     mark_message: "Sua nota:"
 
     student_interface_assignments: "Seus projetos"
@@ -971,7 +979,9 @@ pt:
         link_yml: "Baixar rúbrica em formato YAML"
       upload:
         success: "Critério de rúbrica carregado com sucesso: %{nb_updates} atualizada(s)."
+        csv:       "Carregar CSV"
         csv_title: "Carregar arquivo CSV"
+        yml:       "Carregar YML"
         yml_title: "Carregar arquivo YML File"
         csv_prompt: "Selecionar um arquivo CSV para carregar"
         yml_prompt: "Selecionar um arquivo YML para carregar"
@@ -989,7 +999,7 @@ pt:
                     &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
                     &nbsp;&nbsp;level_1:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;[...]
+                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
           </p>"
         error: "Alguns critérios de rúbrica eram inválidos:"
         syntax_error: "Existe um erro no arquivo carregado : %{error}"

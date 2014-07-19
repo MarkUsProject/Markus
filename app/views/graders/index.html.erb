@@ -9,15 +9,24 @@
              handlers: [:erb] %>
 <% end %>
 
+<div id="title_bar">
+  <h1>
+    <%= I18n.t("graders.manage_graders") %>
+    <span class="title-help assignment_graders_help"></span>
+  </h1>
+  <div class="heading_buttons">
+    <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
+    <span class="menu_bar"></span>
+    <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
+  </div> <!-- rightjustify-->
+</div> <!-- title_bar-->
+<p class="help-message-title assignment_graders_help">
+  <%= t("assignment.help.graders") %>
+</p>
+<div class="help-break assignment_graders_help"></div>
+<div class="wrapLeft"></div>
+<div class="clear"></div>
 
-<div class='title_bar'>
-  <h1><%= t('graders.manage_graders') %></h1>
-  <div class='heading_buttons'>
-    <%= link_to_function t('download'), 'modal_download.open();' %>
-    <span class='menu_bar'></span>
-    <%= link_to_function t('upload'), 'modal_upload.open();' %>
-  </div>
-</div>
 
 <div id='notice'>
   <div class='success' id='add_success' style='display: none;'></div>
@@ -164,9 +173,9 @@
   </div>
 <% end %>
 
-
 <!-- Modal Windows -->
-<div id="download_dialog">
+
+<aside class='dialog' id="download_dialog">
   <h2><%= t('groups.download.download_grader_maps') %></h2>
   <ul>
     <li>
@@ -180,12 +189,15 @@
                   onclick: 'modal_download.close();' %>
       </li>
   </ul>
-  <%= button_to_function t('cancel'), 'modal_download.close();' %>
-</div>
 
-<div id="upload_dialog">
-  <h2><%= t("groups.upload.upload_grader_map") %></h2>
-  <%= raw(t("groups.upload.description_grader_map")) %>
+  <section class='dialog-actions'>
+    <%= button_to_function I18n.t('cancel'), 'modal_download.close();' %>
+  </section>
+</aside>
+
+<aside class='dialog' id="upload_dialog">
+  <h2><%= I18n.t("groups.upload.upload_grader_map") %></h2>
+  <%= raw(I18n.t("groups.upload.description_grader_map")) %>
   <%= form_tag({controller:"graders",
     action: 'csv_upload_grader_groups_mapping',id: @assignment.id},
     {multipart: true}) do %>
@@ -194,10 +206,11 @@
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
     <%= file_field_tag :grader_mapping, size: 2 %>
-    <div>
-      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
-      <%= button_to_function t('cancel'), 'modal_upload.close();' %>
-    </div>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+      <%= button_to_function I18n.t('cancel'), 'modal_upload.close();' %>
+    </section>
   <% end %>
 
   <% if @assignment.assign_graders_to_criteria %>
@@ -211,13 +224,14 @@
         <%= select_tag(:encoding, options_for_select(@encodings)) %>
       </p>
       <%= file_field_tag :grader_criteria_mapping, size: 2 %>
-      <div>
-        <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
-        <%= button_to_function t('cancel'), 'modal_upload.close();' %>
-      </div>
+
+      <section class='dialog-actions'>
+        <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+        <%= button_to_function I18n.t('cancel'), 'modal_upload.close();' %>
+      </section>
     <% end %>
   <% end %>
-</div>
+</aside>
 
-<div id="groups_coverage_dialog"></div>
-<div id="grader_criteria_dialog"></div>
+<aside class='dialog' id="groups_coverage_dialog"></aside>
+<aside class='dialog' id="grader_criteria_dialog"></aside>
