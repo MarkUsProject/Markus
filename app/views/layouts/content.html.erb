@@ -14,11 +14,11 @@
   <%= yield :head %>
 </head>
 <body>
-  <div id="<%= controller.action_name == 'login' ? "loggedOut" : "loggedIn" %>">
+  <div id='<%= controller.action_name == "login" ? "loggedOut" : "loggedIn" %>'>
     <div id='mobile_menu'>
       <a id='menu_icon'></a>
     </div>
-    <div id='menus'>
+    <nav id='menus'>
       <div id='menus_child'>
         <%= render partial: 'layouts/header' %>
         <%= render partial: 'layouts/menu' %>
@@ -26,14 +26,17 @@
         <%= render partial: 'layouts/sub_sub_menu' %>
         <%= render partial: 'layouts/footer' %>
       </div>
-    </div>
+    </nav>
+
     <%= render partial: 'layouts/about' %>
     <%= render partial: 'layouts/role_switch' %>
     <%= render partial: 'layouts/redirect' %>
+
     <section id='content'>
       <%= render partial: 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
     </section>
+
     <%= render partial: 'layouts/footer' %>
   </div>
 

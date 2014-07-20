@@ -1,53 +1,44 @@
 <% if @current_user.admin? %>
-<% if (controller.controller_name == 'assignments' and
-        (controller.action_name != 'index' and
-         controller.action_name != 'new') ) or
-  controller.controller_name == 'rubrics' or
-  controller.controller_name == 'flexible_criteria' or
-  controller.controller_name == 'annotation_categories' or
-  controller.controller_name == 'automated_tests'
-%>
+  <% if (controller.controller_name == 'assignments' &&
+         (controller.action_name != 'index' &&
+          controller.action_name != 'new')) ||
+        controller.controller_name == 'rubrics' ||
+        controller.controller_name == 'flexible_criteria' ||
+        controller.controller_name == 'annotation_categories' ||
+        controller.controller_name == 'automated_tests' %>
 
-<div id="sub_sub_menu">
-  <ul id="root" class="level1 horizontal">
-    <% if !@assignment.nil? && !@assignment.id.nil? %>
-    <% if controller.controller_name != 'assignments' or
-    (controller.controller_name == 'assignments' and
-     controller.action_name != 'new' ) %>
-          <li <% if controller.controller_name == 'assignments' %>
-         id="sub_sub_menu_active"
-         <%end%>>
-        <%= link_to I18n.t(:properties), edit_assignment_path(@assignment) %>
-       </li>
-       <li <% if controller.controller_name == 'rubrics' or
-                 controller.controller_name == 'flexible_criteria'%>
-        id="sub_sub_menu_active"
-      <% end %>>
-	  <% if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric] %>
-         <%= link_to I18n.t(:marking_scheme),
-                    assignment_rubrics_path(@assignment) %>
-	  <% else %>
-     <%= link_to I18n.t(:marking_scheme),
-                 assignment_flexible_criteria_path(@assignment) %>
-	  <% end %>
+    <ul class='sub_sub'>
+      <% if !@assignment.nil? && !@assignment.id.nil? %>
+        <% if controller.controller_name != 'assignments' ||
+              (controller.controller_name == 'assignments' &&
+               controller.action_name != 'new' ) %>
+          <li class='<%= "active" if controller.controller_name == 'assignments' %>'>
+            <%= link_to t(:properties), edit_assignment_path(@assignment) %>
+          </li>
 
-      </li>
-      <li <% if controller.controller_name == 'annotation_categories'%>
-        id="sub_sub_menu_active"
-      <% end %>>
-        <%= link_to I18n.t('annotations.annotations'),
-		    assignment_annotation_categories_path(
-			@assignment)%>
-      </li>
-       <li <% if controller.controller_name == 'automated_tests'%>
-         id="sub_sub_menu_active"
-	  <% end %>>
-	  <%= link_to I18n.t("automated_tests.automated_tests"),
-                manage_assignment_automated_tests_path(@assignment) %>
-      </li>
+          <li <% if controller.controller_name == 'rubrics' ||
+                    controller.controller_name == 'flexible_criteria'%>
+                class='active'
+              <% end %>>
+            <% if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric] %>
+              <%= link_to t(:marking_scheme),
+                        assignment_rubrics_path(@assignment) %>
+            <% else %>
+              <%= link_to t(:marking_scheme),
+                     assignment_flexible_criteria_path(@assignment) %>
+            <% end %>
+          </li>
+
+          <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
+            <%= link_to t('annotations.annotations'),
+                        assignment_annotation_categories_path(@assignment) %>
+          </li>
+          <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
+            <%= link_to t('automated_tests.automated_tests'),
+                        manage_assignment_automated_tests_path(@assignment) %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
   <% end %>
-<% end %>
-   </ul>
-</div>
-<% end %>
 <% end %>
