@@ -1023,17 +1023,18 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and all graders from one criterion are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
+            criterion_tas = [
+              CriterionTaAssociation.make(ta: @ta1, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta2, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion1)
+            ]
             CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-              :global_actions => 'unassign',
-              :criteria => [@criterion1],
-              "#{@criterion1.id}_#{@ta1.user_name}" => true,
-              "#{@criterion1.id}_#{@ta2.user_name}" => true,
-              "#{@criterion1.id}_#{@ta3.user_name}" => true,
-              :current_table => 'criteria_table'}
+            post_as @admin, :global_actions,
+                    assignment_id: @assignment.id,
+                    global_actions: 'unassign',
+                    criteria: [@criterion1],
+                    criterion_graders: criterion_tas,
+                    current_table: 'criteria_table'
             assert_response :success
             @criterion1.reload
             assert @criterion1.tas == []
@@ -1046,16 +1047,17 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and all criteria from one grader are selected' do
             CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
             CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-              :global_actions => 'unassign',
-              :criteria => [@criterion1, @criterion2, @criterion3],
-              "#{@criterion1.id}_#{@ta3.user_name}" => true,
-              "#{@criterion2.id}_#{@ta3.user_name}" => true,
-              "#{@criterion3.id}_#{@ta3.user_name}" => true,
-              :current_table => 'criteria_table'}
+            criterion_tas = [
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion2),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion3)
+            ]
+            post_as @admin, :global_actions,
+                    assignment_id: @assignment.id,
+                    global_actions: 'unassign',
+                    criteria: [@criterion1, @criterion2, @criterion3],
+                    criterion_graders: criterion_tas,
+                    current_table: 'criteria_table'
             assert_response :success
             @criterion1.reload
             @criterion2.reload
@@ -1072,17 +1074,19 @@ class GradersControllerTest < AuthenticatedControllerTest
             CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
             CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
             CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
+            criterion_ta =
+              CriterionTaAssociation.make(ta: @ta1, criterion: @criterion2)
             CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
             CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
             CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
             CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
             CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-              :global_actions => 'unassign',
-              :criteria => [@criterion2],
-              "#{@criterion2.id}_#{@ta1.user_name}" => true,
-              :current_table => 'criteria_table'}
+            post_as @admin, :global_actions,
+                    assignment_id: @assignment.id,
+                    global_actions: 'unassign',
+                    criteria: [@criterion2],
+                    criterion_graders: criterion_ta,
+                    current_table: 'criteria_table'
             assert_response :success
             assert !@criterion2.tas.include?(@ta1)
             @criterion1.reload
@@ -1099,28 +1103,23 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and multiple graders and multiple criteria are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-              :global_actions => 'unassign',
-              :criteria => [@criterion1, @criterion2, @criterion3],
-              "#{@criterion1.id}_#{@ta1.user_name}" => true,
-              "#{@criterion1.id}_#{@ta2.user_name}" => true,
-              "#{@criterion1.id}_#{@ta3.user_name}" => true,
-              "#{@criterion2.id}_#{@ta1.user_name}" => true,
-              "#{@criterion2.id}_#{@ta2.user_name}" => true,
-              "#{@criterion2.id}_#{@ta3.user_name}" => true,
-              "#{@criterion3.id}_#{@ta1.user_name}" => true,
-              "#{@criterion3.id}_#{@ta2.user_name}" => true,
-              "#{@criterion3.id}_#{@ta3.user_name}" => true,
-              :current_table => 'criteria_table'}
+            criterion_tas = [
+              CriterionTaAssociation.make(ta: @ta1, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta2, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta1, criterion: @criterion2),
+              CriterionTaAssociation.make(ta: @ta2, criterion: @criterion2),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion2),
+              CriterionTaAssociation.make(ta: @ta1, criterion: @criterion3),
+              CriterionTaAssociation.make(ta: @ta2, criterion: @criterion3),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion3)
+            ]
+            post_as @admin, :global_actions,
+                    assignment_id: @assignment.id,
+                    global_actions: 'unassign',
+                    criteria: [@criterion1, @criterion2, @criterion3],
+                    criterion_graders: criterion_tas,
+                    current_table: 'criteria_table'
             assert_response :success
             assert @criterion1.tas == []
             assert @criterion2.tas == []
@@ -1387,17 +1386,18 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and all graders from one criterion are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
+            criterion_tas = [
+              CriterionTaAssociation.make(ta: @ta1, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta2, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion1)
+            ]
             CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-              :global_actions => 'unassign',
-              :criteria => [@criterion1],
-              "#{@criterion1.id}_#{@ta1.user_name}" => true,
-              "#{@criterion1.id}_#{@ta2.user_name}" => true,
-              "#{@criterion1.id}_#{@ta3.user_name}" => true,
-              :current_table => 'criteria_table'}
+            post_as @admin, :global_actions,
+                    assignment_id: @assignment.id,
+                    global_actions: 'unassign',
+                    criteria: [@criterion1],
+                    criterion_graders: criterion_tas,
+                    current_table: 'criteria_table'
             assert_response :success
             @criterion1.reload
             assert @criterion1.tas == []
@@ -1410,16 +1410,17 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and all criteria from one grader are selected' do
             CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
             CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-              :global_actions => 'unassign',
-              :criteria => [@criterion1, @criterion2, @criterion3],
-              "#{@criterion1.id}_#{@ta3.user_name}" => true,
-              "#{@criterion2.id}_#{@ta3.user_name}" => true,
-              "#{@criterion3.id}_#{@ta3.user_name}" => true,
-              :current_table => 'criteria_table'}
+            criterion_tas = [
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion2),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion3)
+            ]
+            post_as @admin, :global_actions,
+                    assignment_id: @assignment.id,
+                    global_actions: 'unassign',
+                    criteria: [@criterion1, @criterion2, @criterion3],
+                    criterion_graders: criterion_tas,
+                    current_table: 'criteria_table'
             assert_response :success
             @criterion1.reload
             @criterion2.reload
@@ -1436,17 +1437,19 @@ class GradersControllerTest < AuthenticatedControllerTest
             CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
             CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
             CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
+            criterion_ta =
+              CriterionTaAssociation.make(ta: @ta1, criterion: @criterion2)
             CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
             CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
             CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
             CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
             CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-              :global_actions => 'unassign',
-              :criteria => [@criterion2],
-              "#{@criterion2.id}_#{@ta1.user_name}" => true,
-              :current_table => 'criteria_table'}
+            post_as @admin, :global_actions,
+                    assignment_id: @assignment.id,
+                    global_actions: 'unassign',
+                    criteria: [@criterion2],
+                    criterion_graders: criterion_ta,
+                    current_table: 'criteria_table'
             assert_response :success
             @criterion2.reload
             assert !@criterion2.tas.include?(@ta1)
@@ -1464,28 +1467,23 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and multiple graders and multiple criteria are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-              :global_actions => 'unassign',
-              :criteria => [@criterion1, @criterion2, @criterion3],
-              "#{@criterion1.id}_#{@ta1.user_name}" => true,
-              "#{@criterion1.id}_#{@ta2.user_name}" => true,
-              "#{@criterion1.id}_#{@ta3.user_name}" => true,
-              "#{@criterion2.id}_#{@ta1.user_name}" => true,
-              "#{@criterion2.id}_#{@ta2.user_name}" => true,
-              "#{@criterion2.id}_#{@ta3.user_name}" => true,
-              "#{@criterion3.id}_#{@ta1.user_name}" => true,
-              "#{@criterion3.id}_#{@ta2.user_name}" => true,
-              "#{@criterion3.id}_#{@ta3.user_name}" => true,
-              :current_table => 'criteria_table'}
+            criterion_tas = [
+              CriterionTaAssociation.make(ta: @ta1, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta2, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion1),
+              CriterionTaAssociation.make(ta: @ta1, criterion: @criterion2),
+              CriterionTaAssociation.make(ta: @ta2, criterion: @criterion2),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion2),
+              CriterionTaAssociation.make(ta: @ta1, criterion: @criterion3),
+              CriterionTaAssociation.make(ta: @ta2, criterion: @criterion3),
+              CriterionTaAssociation.make(ta: @ta3, criterion: @criterion3)
+            ]
+            post_as @admin, :global_actions,
+                    assignment_id: @assignment.id,
+                    global_actions: 'unassign',
+                    criteria: [@criterion1, @criterion2, @criterion3],
+                    criterion_graders: criterion_tas,
+                    current_table: 'criteria_table'
             assert_response :success
             assert @criterion1.tas == []
             assert @criterion2.tas == []
