@@ -924,75 +924,52 @@ input#extra_mark_description {
   border: 1px solid #d1d1d1;
 }
 
-.help {
-  padding: 3px 30px;
+.help-icon {
   background: url(icons/help_icon.png) no-repeat;
+  cursor: help;
   display: inline-block;
-  height: 40px;
-  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1rem;
+  height: 28px;
+  width: 28px;
+}
+
+.help {
+  @extend .help-icon;
   float: right;
 }
 
 .title-help {
-  padding: 3px 30px;
-  background: url(icons/help_icon.png) no-repeat;
-  height: 40px;
-  cursor: pointer;
+  @extend .help-icon;
   margin-left: 10px;
 }
 
-.help-message-tooltip {
-  width: 350px;
-  font-style: normal;
+.help-message {
+  @include border-radius(5px);
+  background: #ffffe0;
+  border: 1px solid #e6db55;
   display: inline-block;
-  vertical-align: text-top;
-  word-wrap: normal;
-  margin:auto;
-  margin-right: 20px;
-  padding:auto;
-  //margin-bottom:5px;
-  margin-left: 10px;
-  background: #FFFFE0;
-  border:2px solid #E6DB55;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding: 10px;
+  position: relative;
+  top: -15px;
+  width: 350px;
 }
-
 
 .help-message-title {
-  font-style: normal;
-  display: inline-block;
-  vertical-align: text-top;
-  word-wrap: normal;
-  margin:auto;
-  margin-right: 20px;
-  padding:auto;
-  //margin-bottom:5px;
-  margin-left: 10px;
-  background: #FFFFE0;
-  border:2px solid #E6DB55;
-  padding-left: 5px;
-  padding-right: 5px;
+  @extend .help-message;
+  float: left;
+  left: 35px;
 }
 
 .help-message-box {
-  font-style: normal;
-  width: 350px;
-  word-wrap: normal;
-  vertical-align: center;
+  @extend .help-message;
   float: right;
-  margin:auto;
-  padding:auto;
-  //margin-bottom:5px;
-  margin-right: 10px;
-  background: #FFFFE0;
-  border:2px solid #E6DB55;
-  padding-left: 5px;
-  padding-right: 5px;
+  right: 35px;
 }
 
-.help-break {
-  margin-bottom: 15px;
+.api_key_help a {
+  font-size: 0.8rem;
 }
 
 .warning {

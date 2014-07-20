@@ -9,17 +9,17 @@
 <div class='title_bar'>
   <h1>
     <%= t('admins.manage_admins') %>
-    <span class='title-help users_admins_help'></span>
+    <span class='title-help users_admins_help'>
+      <p class='help-message-title users_admins_help'>
+        <%= t('admins.help.manage_admins') %>
+      </p>
+    </span>
   </h1>
+
   <div class='heading_buttons'>
     <%= link_to t(:add_new), new_admin_path %>
   </div>
 </div>
-
-<p class='help-message-title users_admins_help'>
-  <%= t('admins.help.manage_admins') %>
-</p>
-<div class='help-break users_admins_help'></div>
 
 <div class="colsLeftHeavy">
   <div class="wrapLeft">

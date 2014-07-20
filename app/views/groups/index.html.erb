@@ -93,12 +93,17 @@
 <div class='title_bar'>
   <h1>
     <%= t('groups.manage_groups') %>
-    <span class='title-help assignment_groups_help'></span>
+    <span class='title-help assignment_groups_help'>
+      <p class='help-message-title assignment_groups_help'>
+        <%= t('assignment.help.groups') %>
+      </p>
+    </span>
   </h1>
+
   <div class='heading_buttons'>
-    <%  # Allow cloning groups forward only if its web submits are disallowed
-        # for this assignment.
-        if !@assignment.allow_web_submits %>
+    <% # Allow cloning groups forward only if its web submits are disallowed
+       # for this assignment.
+       if !@assignment.allow_web_submits %>
       <%= link_to_function t('groups.another_assignment_group'),
                              'assignment_group_use(); return false;' %>
       <span class='menu_bar'></span>
@@ -108,11 +113,6 @@
     <%= link_to_function t('upload'), 'modal_upload.open();' %>
   </div>
 </div>
-
-<p class='help-message-title assignment_groups_help'>
-  <%= t('assignment.help.groups') %>
-</p>
-<div class='help-break assignment_groups_help'></div>
 
 <div id="notice">
   <div class="success" id="add_success" style="display: none;"></div>

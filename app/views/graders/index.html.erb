@@ -13,19 +13,19 @@
 <div class='title_bar'>
   <h1>
     <%= t('graders.manage_graders') %>
-    <span class='title-help assignment_graders_help'></span>
+    <span class='title-help assignment_graders_help'>
+      <p class='help-message-title assignment_graders_help'>
+        <%= t('assignment.help.graders') %>
+      </p>
+    </span>
   </h1>
+
   <div class='heading_buttons'>
     <%= link_to_function t('download'), 'modal_download.open();' %>
     <span class='menu_bar'></span>
     <%= link_to_function t('upload'), 'modal_upload.open();' %>
   </div>
 </div>
-
-<p class='help-message-title assignment_graders_help'>
-  <%= t('assignment.help.graders') %>
-</p>
-<div class='help-break assignment_graders_help'></div>
 
 <div class="wrapLeft"></div>
 <div class="clear"></div>

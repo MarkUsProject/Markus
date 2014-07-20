@@ -5,14 +5,14 @@
 <div class='title_bar'>
   <h1>
     <%= t('section.manage_users') %>
-    <span class='title-help sections_manage_users_help'></span>
+    <span class='title-help sections_manage_users_help'>
+      <p class='help-message-title sections_manage_users_help'>
+        <%= t('section.help.manage_users') %>
+      </p>
+    </span>
   </h1>
 </div>
 
-<p class='help-message-title sections_manage_users_help'>
-  <%= t('section.help.manage_users') %>
-</p>
-<div class='help-break sections_manage_users_help'></div>
 
 <div class='wrapLeft'>
   <%= render 'shared/flash_message' %>
