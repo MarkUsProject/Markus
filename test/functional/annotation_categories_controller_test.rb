@@ -300,8 +300,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         AnnotationCategory.any_instance.stubs(:save).returns(false)
         post_as @admin,
                 :add_annotation_category,
-                :assignment_id => @assignment.id,
-                :format => :js
+                assignment_id: @assignment.id,
+                format: :js
         assert_response :success
         assert_not_nil assigns :assignment
         assert_not_nil assigns :annotation_category

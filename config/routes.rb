@@ -49,7 +49,6 @@ Markus::Application.routes.draw do
       resources :rubrics do
         member do
           delete 'destroy'
-          get 'move_criterion'
         end
 
         collection do
@@ -64,7 +63,6 @@ Markus::Application.routes.draw do
       resources :flexible_criteria do
         member do
           delete 'destroy'
-          get 'move_criterion'
         end
 
         collection do
@@ -82,7 +80,6 @@ Markus::Application.routes.draw do
           get 'update_positions'
           post 'upload'
           get 'download'
-          get 'move_criterion'
         end
       end
 
@@ -213,6 +210,7 @@ Markus::Application.routes.draw do
         end
 
         collection do
+          post 'update_positions'
           get 'add_annotation_category'
           post 'csv_upload'
           get 'delete_annotation_category'

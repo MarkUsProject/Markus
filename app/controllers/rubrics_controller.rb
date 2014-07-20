@@ -105,9 +105,7 @@ class RubricsController < ApplicationController
     unless file.blank?
       begin
         rubrics = YAML::load(file.utf8_encode(encoding))
-      # ArgumentError is thrown by Syck in Ruby 1.* whereas Psych::SyntaxError
-      # is thrown by Psych in Ruby 2.*.
-      rescue ArgumentError, Psych::SyntaxError => e
+      rescue Psych::SyntaxError => e
         flash[:error] = I18n.t('rubric_criteria.upload.error') + '  ' +
            I18n.t('rubric_criteria.upload.syntax_error', error: "#{e}")
         redirect_to action: 'index', id: assignment.id
@@ -156,49 +154,23 @@ class RubricsController < ApplicationController
     redirect_to action: 'index', assignment_id: assignment.id
   end
 
-
-  #This method handles the drag/drop RubricCriteria sorting
+  # This method handles the drag/drop RubricCriteria sorting
   def update_positions
     unless request.post?
       render nothing: true
       return
     end
+
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.rubric_criteria
-    params[:rubric_criteria_pane_list].each_with_index do |id, position|
+    position = 0
+
+    params[:criterion].each do |id|
       if id != ''
-        RubricCriterion.update(id, position: position + 1)
+        position += 1
+        RubricCriterion.update(id, position: position)
       end
     end
-  end
-
-  def move_criterion
-    position = params[:position].to_i
-    if params[:direction] == 'up'
-      offset = -1
-    elsif  params[:direction] == 'down'
-      offset = 1
-    else
-      render nothing: true
-      return
-    end
-    @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.rubric_criteria
-    criterion = @criteria.find(params[:id])
-    index = @criteria.index(criterion)
-    other_criterion = @criteria[index + offset]
-    if other_criterion.nil?
-      render nothing: true
-      return
-    end
-    position = criterion.position
-    criterion.position = index + offset
-    other_criterion.position = index
-    unless criterion.save and other_criterion.save
-      flash[:error] = I18n.t('rubrics.move_criterion.error')
-    end
-    @criteria.reload
-    render 'move_criterion', formats: [:js]
   end
 
 end

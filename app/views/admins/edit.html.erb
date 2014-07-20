@@ -1,7 +1,10 @@
-<div id="title_bar"><h1><%= I18n.t("admins.manage_admins") %></h1>
+<div class='title_bar'>
+  <h1><%= t('admins.manage_admins') %></h1>
 </div>
-<div class="wrapLeft">
-<h2><%= I18n.t("admins.edit_admin") %></h2>
-<%= render partial: "layouts/userform",
-    locals: { controller: 'admins', action: 'edit'} %>
+
+<div class='wrapLeft'>
+  <h2><%= t('admins.edit_admin') %></h2>
+  <%= render partial: 'layouts/userform',
+             locals: { controller: 'admins',
+                       action: 'edit'} %>
 </div>

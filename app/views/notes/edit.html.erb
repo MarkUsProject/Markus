@@ -1,7 +1,9 @@
 <%= render partial: "shared/navigation_warning",
   formats: [:js], handlers: [:erb] %>
 
-<div id="title_bar"><h1><%=I18n.t('notes.edit.title')%></h1></div>
+<div class='title_bar'>
+  <h1><%= t('notes.edit.title') %></h1>
+</div>
 
 <div class="wrapLeft">
   <%= form_for @note, as: :note, url: {action: 'update', id: @note.id} do |f| %>

@@ -5,11 +5,7 @@ require 'shoulda'
 require 'mocha/setup'
 require 'machinist'
 
-require_relative 'criterion_test'
-
 class RubricCriterionTest < ActiveSupport::TestCase
-  include CriterionTest
-
   should validate_presence_of :assignment_id
   should validate_numericality_of :assignment_id
   should validate_numericality_of :weight

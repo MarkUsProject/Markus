@@ -29,7 +29,7 @@ jQuery(document).ready(function() {
       type: 'POST',
       data: params
     }).done(function() {
-      onbeforeunload.window = null;
+      window.onbeforeunload = null;
     });
   });
 
