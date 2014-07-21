@@ -176,16 +176,16 @@ class GradersController < ApplicationController
         if params[:groupings].nil? or params[:groupings].size ==  0
          #if there is a global action than there should be a group selected
           if params[:global_actions]
-              @global_action_warning = I18n.t('assignment.group.select_a_group')
-              render partial: 'shared/global_action_warning', handlers: [:rjs]
-              return
+            @global_action_warning = t('assignment.group.select_a_group')
+            render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
+            return
           end
         end
         case params[:global_actions]
           when 'assign'
             if params[:graders].nil? or params[:graders].size ==  0
-              @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render partial: 'shared/global_action_warning', handlers: [:rjs]
+              @global_action_warning = t('assignment.group.select_a_grader')
+              render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
               return
             end
             assign_all_graders(grouping_ids, grader_ids)
@@ -195,8 +195,8 @@ class GradersController < ApplicationController
             return
           when 'random_assign'
             if params[:graders].nil? or params[:graders].size ==  0
-              @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render partial: 'shared/global_action_warning', handlers: [:rjs]
+              @global_action_warning = t('assignment.group.select_a_grader')
+              render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
               return
             end
             randomly_assign_graders(grouping_ids, grader_ids)

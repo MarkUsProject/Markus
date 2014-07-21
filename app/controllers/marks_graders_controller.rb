@@ -71,9 +71,9 @@ class MarksGradersController < ApplicationController
         if params[:students].nil? or params[:students].size ==  0
          # If there is a global action than there should be a student selected
           if params[:global_actions]
-              @global_action_warning = I18n.t('assignment.group.select_a_student')
-              render partial: 'shared/global_action_warning', handlers: [:rjs]
-              return
+            @global_action_warning = t('assignment.group.select_a_student')
+            render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
+            return
           end
         end
         students = Student.where(id: student_ids)
@@ -81,8 +81,8 @@ class MarksGradersController < ApplicationController
         case params[:global_actions]
           when "assign"
             if params[:graders].nil? or params[:graders].size ==  0
-              @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render partial: 'shared/global_action_warning', handlers: [:rjs]
+              @global_action_warning = t('assignment.group.select_a_grader')
+              render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
               return
             end
             add_graders(students, grader_ids)
@@ -92,8 +92,8 @@ class MarksGradersController < ApplicationController
             return
           when "random_assign"
             if params[:graders].nil? or params[:graders].size ==  0
-              @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render partial: 'shared/global_action_warning', handlers: [:rjs]
+              @global_action_warning = t('assignment.group.select_a_grader')
+              render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
               return
             end
             randomly_assign_graders(students, grader_ids)
