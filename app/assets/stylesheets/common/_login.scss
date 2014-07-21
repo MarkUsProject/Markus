@@ -66,8 +66,11 @@
     }
   }
 
-  .error {
-    margin: 1.5em 1em 0;
-    text-align: center;
+  .login-error {
+    padding: 2em 1em 0;
+
+    .error {
+      text-align: center;
+    }
   }
 }

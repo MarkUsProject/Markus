@@ -7,25 +7,28 @@
 
   <p class='login-course'><%= MarkusConfigurator.markus_config_course_name %></p>
 
-  <%= render 'shared/flash_message' %>
+  <div class='login-error'>
+    <%= render 'shared/flash_message' %>
+  </div>
+
   <div class='login-form'>
     <%= form_tag({ action: 'login',
                    id: nil },
                  { # Quotes for onsubmit must be like this to show string properly
                    onsubmit: "jQuery('#submit').prop('disabled', true);
-                              jQuery('#submit').val('#{ I18n.t(:logging_in) }');",
+                              jQuery('#submit').val('#{ t(:logging_in) }');",
                    id: 'login_form' }) do %>
       <%= text_field_tag 'user_login',
                          nil,
                          tabindex: 10,
-                         placeholder: I18n.t(:login),
+                         placeholder: t(:login),
                          autocorrect: 'off' %>
       <%= password_field_tag 'user_password',
                              nil,
                              tabindex: 20,
-                             placeholder: I18n.t(:password) %>
+                             placeholder: t(:password) %>
       <div class='submit'>
-        <%= submit_tag I18n.t(:log_in),
+        <%= submit_tag t(:log_in),
                        tabindex: 100,
                        id: 'submit' %>
       </div>
