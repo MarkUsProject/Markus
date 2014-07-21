@@ -50,7 +50,7 @@ describe Grouping do
 
       it 'updates criteria coverage counts after randomly bulk assign TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
-          .with(assignment, grouping_ids)
+          .with(assignment, match_array(grouping_ids))
         Grouping.randomly_assign_tas(grouping_ids, ta_ids, assignment)
       end
 
@@ -101,7 +101,7 @@ describe Grouping do
 
       it 'updates criteria coverage counts after bulk assign all TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
-          .with(assignment, grouping_ids)
+          .with(assignment, match_array(grouping_ids))
         Grouping.assign_all_tas(grouping_ids, ta_ids, assignment)
       end
 
@@ -132,7 +132,7 @@ describe Grouping do
 
       it 'updates criteria coverage counts after bulk unassign TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
-          .with(assignment, grouping_ids)
+          .with(assignment, match_array(grouping_ids))
         Grouping.unassign_tas([], grouping_ids, assignment)
       end
 
