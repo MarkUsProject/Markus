@@ -281,7 +281,7 @@ class ResultsController < ApplicationController
       if @file.submission.grouping.membership_status(current_user).nil?
         render partial: 'shared/handle_error',
                formats:[:js],
-               handlers: [:erb]
+               handlers: [:erb],
                locals: { error: t('submission_file.error.no_access',
                          submission_file_id: @submission_file_id) }
         return
@@ -296,7 +296,7 @@ class ResultsController < ApplicationController
     rescue Exception => e
       render partial: 'shared/handle_error',
              formats:[:js],
-             handlers: [:erb]
+             handlers: [:erb],
              locals: { error: e.message }
       return
     end
@@ -339,7 +339,7 @@ class ResultsController < ApplicationController
                      MarkusLogger::ERROR)
         render partial: 'shared/handle_error',
                formats:[:js],
-               handlers: [:erb]
+               handlers: [:erb],
                locals: { error: t('mark.error.save') + result_mark.errors.full_messages.join }
       else
         m_logger.log("User '#{current_user.user_name}' updated mark for submission (id: " +
