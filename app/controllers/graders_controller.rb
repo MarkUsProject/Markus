@@ -266,12 +266,10 @@ class GradersController < ApplicationController
 
   def assign_all_graders_to_criteria(criterion_ids, grader_ids)
     Criterion.assign_all_tas(criterion_ids, grader_ids, @assignment)
-    render_criterion_modifications(criterion_ids, grader_ids)
   end
 
   def unassign_graders_from_criteria(criterion_grader_ids, criterion_ids)
     Criterion.unassign_tas(criterion_grader_ids, criterion_ids, @assignment)
-    render_criterion_modifications(criterion_ids)
   end
 
   def unassign_graders(grader_membership_ids)
