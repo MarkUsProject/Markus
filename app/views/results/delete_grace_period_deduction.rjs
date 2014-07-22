@@ -1,2 +1,0 @@
-page.replace_html 'submission_rule_viewer', partial: @grouping.assignment.submission_rule.grader_tab_partial, locals: {grouping: @grouping}
-
