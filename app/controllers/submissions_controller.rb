@@ -788,8 +788,6 @@ class SubmissionsController < ApplicationController
       groupings = []
 
       if params[:groupings].nil?
-        # make rescue instead
-        #errors.push(I18n.t('results.must_select_a_group')) unless !params[:collect_section].nil?
         raise I18n.t('results.must_select_a_group') unless params[:collect_section]
       else
         groupings = assignment.groupings.find(params[:groupings])

@@ -35,6 +35,7 @@ class GroupsController < ApplicationController
   end
 
   def remove_group
+    # When a success div exists we can return successfully removed groups
     return unless request.delete?
     grouping = Grouping.find(params[:grouping_id])
     @assignment = grouping.assignment
@@ -51,6 +52,7 @@ class GroupsController < ApplicationController
       grouping.delete_grouping
       @removed_groupings.push(grouping)
     end
+    head :ok
   end
 
   def upload_dialog
@@ -77,7 +79,6 @@ class GroupsController < ApplicationController
     @group = @grouping.group
 
     # Checking if a group with this name already exists
-
     if (@groups = Group.first(conditions: {group_name:
     [params[:new_groupname]]}))
        existing = true
@@ -108,15 +109,17 @@ class GroupsController < ApplicationController
   end
 
   def valid_grouping
-    @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id])
-    @grouping.validate_grouping
+    assignment = Assignment.find(params[:assignment_id])
+    grouping = Grouping.find(params[:grouping_id])
+    grouping.validate_grouping
+    head :ok
   end
 
   def invalid_grouping
-    @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id])
-    @grouping.invalidate_grouping
+    assignment = Assignment.find(params[:assignment_id])
+    grouping = Grouping.find(params[:grouping_id])
+    grouping.invalidate_grouping
+    head :ok
   end
 
   def index
