@@ -1,6 +1,7 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'Students/index'
-                             'help_system' %>
+<%= javascript_include_tag 'effects.js',
+                           'Students/index',
+                           'help_system' %>
 
 <script type="text/javascript">
   jQuery(document).ready(function() {
