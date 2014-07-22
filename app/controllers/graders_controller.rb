@@ -40,27 +40,6 @@ class GradersController < ApplicationController
            handlers: [:rjs]
   end
 
-
-  def populate
-    @assignment = Assignment.find(params[:assignment_id])
-    groupings = groupings_with_assoc(@assignment)
-    @table_rows = construct_table_rows(groupings, @assignment)
-    render :populate, formats: [:js]
-  end
-
-  def populate_graders
-    @assignment = Assignment.find(params[:assignment_id])
-    graders = Ta.all
-    @table_rows = construct_grader_table_rows(graders, @assignment)
-  end
-
-  def populate_criteria
-    @assignment = Assignment.find(params[:assignment_id])
-    criteria = criteria_with_assoc(@assignment)
-    @table_rows = construct_criterion_table_rows(criteria, @assignment)
-    render :populate_criteria, formats: [:js]
-  end
-
   def set_assign_criteria
     @assignment = Assignment.find(params[:assignment_id])
     if params[:value] == 'true'
@@ -171,14 +150,11 @@ class GradersController < ApplicationController
                                 include: [:students, :tas, :group])
     grader = Ta.find(params[:grader_id])
     @grouping.add_tas(grader)
-    @groupings_data = construct_table_rows([@grouping.reload],@assignment)
-    @graders_data = construct_grader_table_rows([grader], @assignment)
     criteria = grader.get_criterion_associations_by_assignment(@assignment).map{|c| c.criterion}
     criteria.each do |criterion|
       criterion.save
     end
-    @criteria_data = construct_criterion_table_rows(criteria, @assignment)
-    render :add_grader_to_grouping, formats: [:js]
+    head :ok
   end
 
   #These actions act on all currently selected graders & groups
@@ -305,5 +281,4 @@ class GradersController < ApplicationController
     end
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
   end
-
 end
