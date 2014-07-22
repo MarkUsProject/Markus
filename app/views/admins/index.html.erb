@@ -1,7 +1,4 @@
-<% content_for :head do %>
-  <%= javascript_include_tag 'users_manager',
-                             'help_system' %>
-<% end %>
+<%= javascript_include_tag 'help_system' %>
 <%= render partial: 'admins_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
 <div class='title_bar'>
@@ -22,7 +19,6 @@
 <div class="colsLeftHeavy">
   <div class="wrapLeft">
     <div id="list">
-<<<<<<< HEAD
       <%# TODO: there is no csv functionality on this page, why is this here? %>
 
       <%# Display lines in csv file that has not been successfully processed %>
@@ -44,11 +40,5 @@
       <% end %>
       <%= render 'shared/flash_message' %>
     <div id='adminsTable' class='table'></div>
-=======
-      <%= render 'shared/flash_message' %>
-      <div id='adminsTable' class='table'>
-      </div>
-    </div>
->>>>>>> Merge unmerged lines in admins/index
   </div>
 </div>
