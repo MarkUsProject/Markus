@@ -10,8 +10,6 @@ jQuery(document).ready(function() {
       'authenticity_token': AUTH_TOKEN
     }
 
-    alert('hi!');
-
     jQuery.ajax({
       url:      '/en/notes/noteable_object_selector',
       data:     params,
