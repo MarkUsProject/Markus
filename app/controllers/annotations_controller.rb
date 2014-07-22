@@ -82,7 +82,6 @@ class AnnotationsController < ApplicationController
         annot.save
       end
     end
-
   end
 
   def update_annotation
