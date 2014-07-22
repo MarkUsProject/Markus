@@ -16,11 +16,7 @@ Markus::Application.routes.draw do
       resources :main_api
     end
 
-    resources :admins do
-      collection do
-        post 'populate'
-      end
-    end
+    resources :admins
 
     resources :assignments do
 
@@ -91,8 +87,6 @@ Markus::Application.routes.draw do
         end
 
         collection do
-          post 'populate'
-          post 'populate_students'
           get 'add_group'
           get 'use_another_assignment_groups'
           get 'manage'
@@ -114,7 +108,6 @@ Markus::Application.routes.draw do
         collection do
           get 'file_manager'
           get 'browse'
-          get 'populate'
           post 'populate_file_manager'
           get 'collect_all_submissions'
           get 'download_simple_csv_report'
@@ -189,9 +182,6 @@ Markus::Application.routes.draw do
           get 'grader_criteria_dialog'
           get 'global_actions'
           get 'groups_coverage_dialog'
-          post 'populate_graders'
-          post 'populate'
-          post 'populate_criteria'
           post 'set_assign_criteria'
           get 'random_assign'
           get 'upload_dialog'
@@ -254,9 +244,6 @@ Markus::Application.routes.draw do
           get 'grader_criteria_dialog'
           get 'global_actions'
           get 'groups_coverage_dialog'
-          post 'populate_graders'
-          post 'populate'
-          post 'populate_criteria'
           post 'set_assign_criteria'
           get 'random_assign'
           get 'upload_dialog'
@@ -310,7 +297,6 @@ Markus::Application.routes.draw do
 
     resources :tas  do
       collection do
-        post 'populate'
         post 'upload_ta_list'
         get 'download_ta_list'
       end
