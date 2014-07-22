@@ -166,7 +166,6 @@ class GradersController < ApplicationController
 
     case params[:current_table]
       when 'groups_table'
-        @assignment = Assignment.find(params[:assignment_id])
         case params[:global_actions]
           when 'assign'
             if params[:graders].blank?
@@ -177,8 +176,7 @@ class GradersController < ApplicationController
               head :ok
             end
           when 'unassign'
-            # change this to not requred rgouping ids
-            # check that there are grader_memberships
+            # check that there are grader_memberships to unassign
             if params[:grader_memberships].blank?
               render text: I18n.t('assignment.group.select_a_grader'),
                      status: 400
@@ -196,11 +194,6 @@ class GradersController < ApplicationController
             end
         end
       when 'criteria_table'
-        @assignment = Assignment.find(params[:assignment_id],
-          include: [{groupings: [:students,
-                {tas: :criterion_ta_associations}, :group]}])
-        criteria = criteria_with_assoc(@assignment,
-                                       criterion_ids: criterion_ids)
         case params[:global_actions]
           when 'assign'
             if params[:graders].blank?
@@ -211,17 +204,29 @@ class GradersController < ApplicationController
               head :ok
             end
           when 'unassign'
-            criterion_grader_ids = params[:criterion_graders]
-            unassign_graders_from_criteria(criterion_grader_ids, criterion_ids)
-            head :ok
+            if params[:criterion_associations].blank?
+              render text: I18n.t('assignment.group.select_a_grader'),
+                     status: 400
+            else
+              # Gets criterion associations from params then
+              # gets their criterion ids so we can update the
+              # group counts.
+              criterion_associations = params[:criterion_associations]
+              criterion_ids = criterion_grader_ids.map {|criterion_assoc|
+                criterion_assoc.criterion
+              }.uniq
+              unassign_graders_from_criteria(criterion_associations, criterion_ids)
+              head :ok
+            end
+            # here is where we need to get stuff
           when 'random_assign'
             if params[:graders].blank?
-              #don't do anything if no graders
-              render nothing: true
-              return
+              render text: I18n.t('assignment.group.select_a_grader'),
+                     status: 400
+            else
+              randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
+              head :ok
             end
-            randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
-            head :ok
         end
     end
   end
