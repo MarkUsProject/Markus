@@ -280,8 +280,10 @@ class ResultsController < ApplicationController
       # The Student does not have access to this file. Display an error.
       if @file.submission.grouping.membership_status(current_user).nil?
         render partial: 'shared/handle_error',
-               locals: {error: I18n.t('submission_file.error.no_access',
-                 submission_file_id: @submission_file_id)}
+               formats:[:js],
+               handlers: [:erb],
+               locals: { error: t('submission_file.error.no_access',
+                         submission_file_id: @submission_file_id) }
         return
       end
     end
@@ -293,7 +295,9 @@ class ResultsController < ApplicationController
       @file_contents = @file.retrieve_file
     rescue Exception => e
       render partial: 'shared/handle_error',
-             locals: {error: e.message}
+             formats:[:js],
+             handlers: [:erb],
+             locals: { error: e.message }
       return
     end
     @code_type = @file.get_file_type
@@ -334,7 +338,9 @@ class ResultsController < ApplicationController
                          " Assignment: '#{assignment.short_identifier}', Group: '#{group.group_name}'.",
                      MarkusLogger::ERROR)
         render partial: 'shared/handle_error',
-               locals: {error: I18n.t('mark.error.save') + result_mark.errors.full_messages.join}
+               formats:[:js],
+               handlers: [:erb],
+               locals: { error: t('mark.error.save') + result_mark.errors.full_messages.join }
       else
         m_logger.log("User '#{current_user.user_name}' updated mark for submission (id: " +
                          "#{submission.id}) of assignment '#{assignment.short_identifier}' for group" +

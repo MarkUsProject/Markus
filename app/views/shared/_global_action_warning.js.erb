@@ -1,0 +1,7 @@
+<% if @global_action_warning %>
+  document.getElementById('global_action_warning_msg').innerHTML =
+    '<%= @global_action_warning %>';
+  document.getElementById('global_action_warning').style.display = '';
+<% else %>
+  document.getElementById('global_action_warning').style.display = 'none';
+<% end %>
