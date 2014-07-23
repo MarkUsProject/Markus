@@ -1,15 +1,10 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('livepipe/tabs') %>
+  <%= javascript_include_tag 'AnnotationCategories/index' %>
+
+  <%= render partial: 'boot',
+             formats: [:js],
+             handlers: [:erb] %>
 <% end %>
-
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'livepipe/livepipe',
-                           'livepipe/window',
-                           'livepipe/tabs' %>
-
-<%= render partial: 'boot',
-           formats: [:js],
-           handlers: [:erb] %>
 
 <div class='title_bar'>
   <h1>
@@ -28,6 +23,16 @@
     <%= link_to_function t('upload'), 'modal_upload.open();' %>
   </div>
 </div>
+
+<%= render 'shared/flash_message' %>
+
+<% if @assignment.past_due_date? %>
+  <div class='notice'>
+    <%= t('past_due_date_warning') %>
+  </div>
+<% end %>
+
+<p id='criterion_error' class='warning' style='display: none;'></p>
 
 <div class='wrapper'>
   <div id='annotation_category_pane'>
@@ -68,7 +73,7 @@
                { multipart: true }) do %>
     <p><%= file_field_tag :annotation_category_list_csv, size: 0 %></p>
     <div>
-      <%= I18n.t('encoding') %>
+      <%= t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </div>
 
@@ -84,7 +89,7 @@
                { multipart: true }) do %>
     <p><%= file_field_tag :annotation_category_list_yml, size: 0 %></p>
     <div>
-      <%= I18n.t('encoding') %>
+      <%= t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </div>
 
@@ -100,9 +105,9 @@
   <ul>
     <li>
       <%= link_to t('annotations.download.download_csv'),
-                  { ction: 'download',
-                    d: @assignment.id,
-                    ormat: 'csv' },
+                  { action: 'download',
+                    id: @assignment.id,
+                    format: 'csv' },
                   onclick: 'modal_download.close();' %>
     </li>
     <li>
