@@ -10,6 +10,9 @@
 //= require jquery_ujs
 //= require jquery.easyModal
 
+
+/** Modal windows, powered by jQuery.easyModal. */
+
 function ModalMarkus(elem) {
   this.modal_dialog = jQuery(elem).easyModal();
 }
@@ -20,4 +23,22 @@ ModalMarkus.prototype.open = function() {
 
 ModalMarkus.prototype.close = function() {
   this.modal_dialog.trigger('closeModal');
+}
+
+
+/** Helper functions for adding/removing classes to DOM elements
+    via pure JavaScript. */
+
+Element.prototype.addClass = function(className) {
+  if (this.classList)
+    this.classList.add(className);
+  else
+    this.className += ' ' + className;
+}
+
+Element.prototype.removeClass = function(className) {
+  if (this.classList)
+    this.classList.remove(className);
+  else
+    this.className = this.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
 }

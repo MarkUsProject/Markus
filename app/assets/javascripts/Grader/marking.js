@@ -115,13 +115,13 @@ function hide_criterion(id) {
   document.getElementById('mark_criterion_inputs_' + id).style.display = 'none';
   document.getElementById('mark_criterion_title_' + id).style.display = '';
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
-  document.getElementById('mark_criterion_title_' + id + '_expand').classList.remove('expanded');
+  document.getElementById('mark_criterion_title_' + id + '_expand').removeClass('expanded');
 }
 
 function show_criterion(id) {
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
   document.getElementById('mark_criterion_inputs_' + id).style.display = '';
-  document.getElementById('mark_criterion_title_' + id + '_expand').classList.add('expanded');
+  document.getElementById('mark_criterion_title_' + id + '_expand').addClass('expanded');
 }
 
 function select_mark(mark_id, mark) {
@@ -132,7 +132,7 @@ function select_mark(mark_id, mark) {
   }
 
   if (mark !== null) {
-    document.getElementById('mark_' + mark_id + '_' + mark).classList.add('rubric_criterion_level_selected');
+    document.getElementById('mark_' + mark_id + '_' + mark).addClass('rubric_criterion_level_selected');
   }
 }
 
