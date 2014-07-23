@@ -38,7 +38,7 @@
                  desc: desc %>
 </span>
 
-<%= link_to_if current_page_high < total_items
+<%= link_to_if current_page_high < total_items,
                t('pagination.last'),
                id: assignment.id,
                filter: filter,
