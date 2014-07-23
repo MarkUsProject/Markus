@@ -14,7 +14,7 @@ class RubricsController < ApplicationController
 
   def update
     @criterion = RubricCriterion.find(params[:id])
-    unless @criterion.update_attributes(params[:rubric_criterion])
+    unless @criterion.update_attributes(rubric_criterion_params)
       render :errors
       return
     end
@@ -40,7 +40,7 @@ class RubricsController < ApplicationController
     @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
     @criterion.set_default_levels
     @criterion.position = new_position
-    unless @criterion.update_attributes(params[:rubric_criterion])
+    unless @criterion.update_attributes(rubric_criterion_params)
       @errors = @criterion.errors
       render 'add_criterion_error', formats: [:js]
       return
@@ -173,4 +173,22 @@ class RubricsController < ApplicationController
     end
   end
 
+  private
+
+  def rubric_criterion_params
+    params.require(:rubric_criterion).permit(:rubric_criterion_name,
+                                             :assignment,
+                                             :position,
+                                             :level_0_name,
+                                             :level_0_description,
+                                             :level_1_name,
+                                             :level_1_description,
+                                             :level_2_name,
+                                             :level_2_description,
+                                             :level_3_name,
+                                             :level_3_description,
+                                             :level_4_name,
+                                             :level_4_description,
+                                             :weight)
+  end
 end

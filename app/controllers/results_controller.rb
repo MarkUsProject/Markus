@@ -421,7 +421,7 @@ class ResultsController < ApplicationController
       @extra_mark = ExtraMark.new
       @extra_mark.result = @result
       @extra_mark.unit = ExtraMark::UNITS[:points]
-      if @extra_mark.update_attributes(params[:extra_mark])
+      if @extra_mark.update_attributes(extra_mark_params)
         # need to re-calculate total mark
         @result.update_total_mark
         render template: 'results/marker/insert_extra_mark'
@@ -534,5 +534,13 @@ class ResultsController < ApplicationController
 
   def update_remark_request_count
     Assignment.find(params[:assignment_id]).update_remark_request_count
+  end
+
+  private
+
+  def extra_mark_params
+    params.require(:extra_mark).permit(:result,
+                                       :description,
+                                       :extra_mark)
   end
 end
