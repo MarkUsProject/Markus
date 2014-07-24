@@ -1,0 +1,11 @@
+<%# Hide error message (if any) %>
+document.getElementById('criterion_incomplete_error').style.display = 'none';
+
+<% if @current_user.admin? %>
+  <% if @result.marking_state == Result::MARKING_STATES[:complete] %>
+    <%# Activate the checkbox to release/unrelease %>
+    document.getElementById('released').disabled = false;
+  <% else %>
+    document.getElementById('released').disabled = true;
+  <% end %>
+<% end %>

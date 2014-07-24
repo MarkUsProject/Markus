@@ -21,7 +21,7 @@ else
 end
 
 
-page << render(partial: 'shared/global_action_warning')
+page << render(partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb])
 
 page.call 'modify_students', @students_data.to_json
 page.call "modify_groupings", @groupings_data.to_json

@@ -6,7 +6,7 @@ if !@errors.empty?
   page.show 'errors'
 end
 
-page << render(partial: 'shared/global_action_warning')
+page << render(partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb])
 
 ids = []
 @removed_groupings.each do |grouping|

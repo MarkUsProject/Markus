@@ -54,7 +54,7 @@ shared_examples 'a criterion' do
 
       it 'updates assigned groups counts after randomly bulk assign TAs' do
         expect(Criterion).to receive(:update_assigned_groups_counts)
-          .with(assignment, criterion_ids)
+          .with(assignment, match_array(criterion_ids))
         Criterion.randomly_assign_tas(criterion_ids, ta_ids, assignment)
       end
     end
@@ -105,7 +105,7 @@ shared_examples 'a criterion' do
 
       it 'updates assigned groups counts after bulk assign all TAs' do
         expect(Criterion).to receive(:update_assigned_groups_counts)
-          .with(assignment, criterion_ids)
+          .with(assignment, match_array(criterion_ids))
         Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
       end
     end
@@ -136,7 +136,7 @@ shared_examples 'a criterion' do
 
       it 'updates assigned groups counts after bulk unassign TAs' do
         expect(Criterion).to receive(:update_assigned_groups_counts)
-          .with(assignment, criterion_ids)
+          .with(assignment, match_array(criterion_ids))
         Criterion.unassign_tas([], criterion_ids, assignment)
       end
     end
