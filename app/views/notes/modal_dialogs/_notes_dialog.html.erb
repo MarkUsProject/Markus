@@ -3,24 +3,23 @@
     <p id='notes_error_message'><%= t('notes.error') %></p>
     <div id='notes_error_list'></div>
   </div>
-  <div class='notes_wrapper_row'>
-    <div class='float_left'>
-      <h3><%= I18n.t('notes.existing') %></h3>
-    </div>
-    <div class='float_right'>
-      <h3><%= I18n.t('notes.comment') %></h3>
-    </div>
-  </div>
-  <div class='notes_wrapper_row'>
-    <div class='notes_existing'>
+
+  <div class='notes_existing'>
+    <h3><%= t('notes.existing') %></h3>
+    <div class='notes_existing_list'>
       <% @notes.each do |note| %>
-        <p><strong><%= note.user.user_name %>: </strong></p>
-        <p><small><%=note.format_date%></small></p>
-        <p><%= note.notes_message %></p>
+        <div class='note'>
+          <p><strong><%= note.user.user_name %>: </strong></p>
+          <p><small><%=note.format_date%></small></p>
+          <p><%= note.notes_message %></p>
+        </div>
       <% end %>
     </div>
-    <div class='float_right'>
-      <%= form_tag(
+  </div>
+
+  <div class='notes_new'>
+    <h3><%= t('notes.comment') %></h3>
+    <%= form_tag(
         add_note_notes_path(id: @return_id,
                             noteable_id: @noteable,
                             noteable_type: @cls,
@@ -30,15 +29,14 @@
                             highlight_field: @highlight_field,
                             number_of_notes_field: @number_of_notes_field ),
                             remote: true) do %>
-        <%= text_area_tag(:new_notes, nil, rows: 15, cols: 32) %>
-        <p class='p_margin'>
-          <%= submit_tag I18n.t('notes.save'),
-                         data: { disable_with: I18n.t('working') },
-                         id: 'notes_submit',
-                         onclick: 'modalNotesGroup.close();' %>
-          <a class='button' onclick='modalNotesGroup.close();'><%= t(:cancel) %></a>
-        </p>
-      <% end %>
-    </div>
+      <%= text_area_tag(:new_notes, nil, rows: 12, cols: 32) %>
+      <p class='p_margin'>
+        <%= submit_tag t('notes.save'),
+                       data: { disable_with: t('working') },
+                       id: 'notes_submit',
+                       onclick: 'modalNotesGroup.close();' %>
+        <a class='button' onclick='modalNotesGroup.close();'><%= t(:cancel) %></a>
+      </p>
+    <% end %>
   </div>
 </div>

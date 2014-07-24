@@ -1,26 +1,32 @@
-<div class="section">
+<div class='section'>
   <%= form_for @user, as: :user do |f| %>
 
-  <%= render partial: "shared/error_explanation",
-      locals: { model: @user } %>
+    <%= render partial: 'shared/error_explanation',
+               locals: { model: @user } %>
 
-    <%= raw(f.label(:user_name, I18n.t("user.user_name"))) %>
-    <%= raw(f.text_field :user_name) %><br>
+    <table>
+      <tr>
+        <td><%= raw(f.label(:user_name, I18n.t('user.user_name'))) %>:</td>
+        <td><%= raw(f.text_field :user_name) %></td>
+      </tr>
 
-    <%= raw(f.label(:user_name, I18n.t("user.last_name"))) %>
-    <%= raw(f.text_field :last_name) %><br>
+      <tr>
+        <td><%= raw(f.label(:user_name, I18n.t('user.last_name'))) %>:</td>
+        <td><%= raw(f.text_field :last_name) %></td>
+      </tr>
 
-    <%= raw(f.label(:user_name, I18n.t("user.first_name"))) %>
-    <%= raw(f.text_field :first_name) %><br>
+      <tr>
+        <td><%= raw(f.label(:user_name, I18n.t('user.first_name'))) %>:</td>
+        <td><%= raw(f.text_field :first_name) %></td>
+      </tr>
+    </table>
 
     <%= f.hidden_field :id %>
     <%= f.submit t(:submit),
-		 name: 'submit',
-		 class: 'button indent_button',
-                 :'data-disable-with' => I18n.t('working')%>
+                 name: 'submit',
+                 data: { disable_with: t('working') } %>
     <%= link_to t(:cancel),
-        {controller: controller},
-        class: "button indent_button" %>
+                { controller: controller },
+                class: 'button' %>
   <% end %>
-
 </div>
