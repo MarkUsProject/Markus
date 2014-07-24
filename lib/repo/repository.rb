@@ -325,9 +325,9 @@ module Repository
   end
 
   # A repository factory
-  require File.join(File.dirname(__FILE__),'memory_repository')
-  require File.join(File.dirname(__FILE__),'subversion_repository')
-  require File.join(File.dirname(__FILE__),'git_repository')
+  require_dependency File.join(File.dirname(__FILE__), 'memory_repository')
+  require_dependency File.join(File.dirname(__FILE__), 'subversion_repository')
+  require_dependency File.join(File.dirname(__FILE__), 'git_repository')
   # Returns a repository class of the requested type,
   # which implements AbstractRepository
 
