@@ -1,1 +1,5 @@
-<%= link_to_function I18n.t("marker.annotation.from_line_to", file_path: File.join(annot.submission_file.path, annot.submission_file.filename), line_start: annot.line_start, line_end: annot.line_end), "load_submitted_file_and_focus(#{annot.submission_file.id}, #{annot.line_start})" %>
+<%= link_to_function t('marker.annotation.from_line_to',
+                       file_path: File.join(annot.submission_file.path, annot.submission_file.filename),
+                       line_start: annot.line_start,
+                       line_end: annot.line_end),
+                     "load_submitted_file_and_focus(#{annot.submission_file.id}, #{annot.line_start})" %>
