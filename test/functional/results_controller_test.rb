@@ -720,11 +720,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
           s = Submission.make(:grouping => g)
           @result = s.get_latest_result
           get_as @admin,
-                  :set_released_to_students,
-                  :assignment_id => @assignment,
-                  :submission_id => 1,
-                  :id => @result.id,
-                  :value => 'true'
+                 :set_released_to_students,
+                 format: :js,
+                 assignment_id: @assignment,
+                 submission_id: 1,
+                 id: @result.id,
+                 value: 'true'
           assert_response :success
           assert_not_nil assigns :result
         end
@@ -762,9 +763,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             get_as @admin,
                    :update_marking_state,
-                   {:assignment_id => @assignment.id,
-                    :submission_id => 1,
-                    :id => @result.id, :value => 'complete'}
+                   format: :js,
+                   assignment_id: @assignment.id,
+                   submission_id: 1,
+                   id: @result.id,
+                   value: 'complete'
           end
 
           should 'refresh the cached grade distribution data when the marking state is set to complete' do
@@ -773,6 +776,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_equal actual_distribution, @grade_distribution
             assert_not_nil assigns :result
           end
+
           should respond_with :success
         end
 
