@@ -1,5 +1,3 @@
-require 'fastercsv'
-
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
 
@@ -339,7 +337,7 @@ class SubmissionsController < ApplicationController
   def download_simple_csv_report
     assignment = Assignment.find(params[:id])
     students = Student.all
-    csv_string = FasterCSV.generate do |csv|
+    csv_string = CSV.generate do |csv|
        students.each do |student|
          final_result = []
          final_result.push(student.user_name)
@@ -361,7 +359,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:id])
     students = Student.all
     rubric_criteria = assignment.rubric_criteria
-    csv_string = FasterCSV.generate do |csv|
+    csv_string = CSV.generate do |csv|
        students.each do |student|
          final_result = []
          final_result.push(student.user_name)

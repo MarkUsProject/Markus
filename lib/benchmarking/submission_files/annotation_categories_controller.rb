@@ -1,5 +1,3 @@
-require 'fastercsv'
-
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
   def index
@@ -89,8 +87,8 @@ class AnnotationCategoriesController < ApplicationController
     end
     annotation_category_list = params[:annotation_category_list]
     annotation_category_number = 0
-    FasterCSV.parse(annotation_category_list) do |row|
-      next if FasterCSV.generate_line(row).strip.empty?
+    CSV.parse(annotation_category_list) do |row|
+      next if CSV.generate_line(row).strip.empty?
       if AnnotationCategory.add_by_row(row, @assignment)
         annotation_category_number += 1
       else
