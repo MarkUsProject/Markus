@@ -1,6 +1,6 @@
 <% # Allow the user to jump to a page containing certain students
 %>
-<% if sort_by == 'last_name' %>
+<% if ['last_name', 'first_name', 'user_name', 'section'].include?(sort_by) #== 'last_name' %>
 <%= label_tag "alpha_category", t('pagination.jump_to'), class: "inline_label" %>
 <%= select_tag "alpha_category",
                 options_for_select(alpha_pagination_options, alpha_category),

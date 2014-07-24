@@ -130,6 +130,19 @@ class GradeEntryFormsController < ApplicationController
     @filters = get_filters(G_TABLE_PARAMS)
     @per_page = params[:per_page]
     @per_pages = G_TABLE_PARAMS[:per_pages]
+    @loc = params
+
+    # Create cookie to remember the direction of the sort
+    c_order = current_user.id.to_s + '_' +
+        @grade_entry_form.id.to_s + '_order_sp'
+    if !cookies[c_order].blank? && !params[:loc].present?
+      @desc = cookies[c_order]
+    end
+    if @desc.blank?
+      cookies[c_order] = ''
+    else
+      cookies[c_order] = @desc
+    end
 
     all_students = get_filtered_items(G_TABLE_PARAMS,
                                       @filter,
