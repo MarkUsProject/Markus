@@ -1,7 +1,9 @@
-<%= javascript_include_tag 'help_system' %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'help_system' %>
+<% end %>
 
 <h3>
-  <%= I18n.t(:api_key) %>
+  <%= t(:api_key) %>
   <span class='help api_key_help'>
     <p class='help-message-box api_key_help'>
       <%= t('api_key_help').html_safe %>
@@ -12,11 +14,12 @@
 <div id='api_key_box'>
   <% if !user.api_key.nil? %>
     <%= form_tag reset_api_key_main_index_path,
-          remote: true do %>
-      <%= submit_tag I18n.t(:reset_api_key) %>
+                 remote: true do %>
+      <%= submit_tag t(:reset_api_key) %>
     <% end %>
-    <div id="api_key"><%= user.api_key %></div>
+
+    <div id='api_key'><%= user.api_key %></div>
   <% else %>
-    <%= I18n.t(:api_key_unavailable) %>
+    <%= t(:api_key_unavailable) %>
   <% end %>
 </div>

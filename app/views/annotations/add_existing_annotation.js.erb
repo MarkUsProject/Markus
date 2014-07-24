@@ -1,0 +1,19 @@
+add_annotation_text('<%= @text.id %>', '<%= @text.content %>');
+
+<% if @annotation.is_a?(TextAnnotation) %>
+  add_annotation('<%= @annotation.id %>',
+                 { start: '<%= @annotation.line_start %>',
+                   end: '<%= @annotation.line_end %>' },
+                 '<%= @text.id %>');
+<% elsif @annotation.is_a?(ImageAnnotation) %>
+  add_annotation_text('<%= @text.id %>', '<%= simple_format(@text.content) %>');
+
+  add_to_annotation_grid('<%= @annotation.extract_coords.to_json().html_safe %>');
+<% end %>
+
+document.getElementById('annotation_summary_list').innerHTML =
+  '<%= escape_javascript(render partial: "results/marker/annotation_summary",
+                                locals: { annots: @annotations,
+                                          submission_file_id: @submission_file_id }) %>';
+
+hide_all_annotation_content_editors();
