@@ -28,13 +28,13 @@
 
   <%# TODO: there is no csv functionality on this page, why is this here? %>
 
-  <% # display lines in csv file that has not been successfully processed %>
+  <%# Display lines in csv file that has not been successfully processed %>
   <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? %>
     <div class='errorExplanation' id='errorExplanation'>
       <p><%= t('admins.not_added') %></p>
       <ul>
         <% for line in flash[:invalid_lines] %>
-        <li><%= line %></li>
+          <li><%= line %></li>
         <% end %>
       </ul>
       <p><%= t('graders.make_sure') %></p>

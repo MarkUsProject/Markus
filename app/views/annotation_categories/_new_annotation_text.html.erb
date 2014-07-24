@@ -1,11 +1,12 @@
-<li id="add_annotation_text">
-<%= form_for :annotation_text,
-	     url: {action: 'add_annotation_text',
-		      id: annotation_category_id},
-	     remote: true do |f| %>
-  <%= f.text_area(:content, rows: '2') %>
-  <div class="error" style="display:none;" id="new_annotation_text_error">
-  </div>
-  <%= f.submit t(:save) , :'data-disable-with' => I18n.t('working')%>
-<% end %>
+<li id='add_annotation_text'>
+  <%= form_for :annotation_text,
+               url: { action: 'add_annotation_text',
+                      id: annotation_category_id },
+               remote: true do |f| %>
+    <%= f.text_area(:content, rows: '2') %>
+
+    <div class='error' style='display:none;' id='new_annotation_text_error'></div>
+
+    <%= f.submit t(:save), data: { disable_with: t('working') } %>
+  <% end %>
 </li>

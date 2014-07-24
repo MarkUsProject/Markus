@@ -41,6 +41,7 @@
                  remote: true do |f| %>
       <%= f.text_area(:content, cols: 50, rows: 5) %>
       <%= f.submit t(:save) , data: { disable_with: t('working') } %>
+
       <input type='reset'
              value='<%= t(:cancel) %>'
              onclick="jQuery('#annotation_text_' + <%= annotation_text.id %> + '_edit').hide();

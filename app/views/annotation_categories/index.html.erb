@@ -16,7 +16,7 @@
                 id: @assignment.id) %>
 
     <%= link_to_function t('annotations.add_annotation_category'),
-                         onclick: "add_annotation_category('#{path}')" %>
+                         "add_annotation_category('#{path}')" %>
     <span class='menu_bar'></span>
     <%= link_to_function t('download'), 'modal_download.open();' %>
     <span class='menu_bar'></span>
@@ -42,10 +42,10 @@
       </header>
       <ul id='annotation_category_pane_list'>
         <% if @annotation_categories.length > 0 %>
-            <% @annotation_categories.each do |annotation_category| %>
-              <%= render partial: 'annotation_category',
-                         locals: { annotation_category: annotation_category } %>
-            <% end %>
+          <% @annotation_categories.each do |annotation_category| %>
+            <%= render partial: 'annotation_category',
+                       locals: { annotation_category: annotation_category } %>
+          <% end %>
         <% else %>
           <div id='no_annotation_categories_info' class='information'>
             <%= t('annotations.no_annotation_categories') %>
