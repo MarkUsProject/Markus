@@ -571,56 +571,7 @@ module Repository
 
     end
 
-    ####################################################################
-    ##  The following stuff is semi-private. As a general rule don't use
-    ##  it directly. The only reason it's public, is that
-    ##  SubversionRevision needs to have access.
-    ####################################################################
-
-    def __path_exists?(path, revision=nil)
-      # Not (!) part of the AbstractRepository API:
-      # Check if given file or path exists in repository beeing member of
-      # the provided revision
-    end
-
-    def __get_files(path, revision_number)
-      # Not (!) part of the AbstractRepository API:
-      # Returns a hash of files/directories part of the requested
-      # revision; Don't use it directly, use SubversionRevision's
-      # 'files_at_path' instead
-      return "TEST"
-    end
-
-    def __get_property(prop, rev=nil)
-      # Not (!) part of the AbstractRepository API:
-      # Returns
-      #    prop
-      # of Subversion repository
-    end
-
-    def __get_file_property(prop, path, revision_number)
-      # Not (!) part of the AbstractRepository API:
-      # Returns
-      #    prop
-      # of Subversion repository file
-    end
-
-    def __get_node_last_modified_date(path, commit)
-      # Not (!) part of the AbstractRepository API:
-      # Returns
-      #    The last modified date
-      # of a Subversion repository file or directory
-    end
-
-    def __get_history(paths, starting_revision=nil, ending_revision=nil)
-      # Not (!) part of the AbstractRepository API:
-      # This function is very similar to @repos.fs.history(); however, it's been altered a little
-      # to return only an array of revision numbers. This function, in contrast to the original,
-      # takes multiple paths and returns one large history for all paths given.
-      # refer to Subversion_repository for implementation.
-    end
-
-    # Helper method to translate internal permissions to Subversion
+    # Helper method to translate internal permissions to git
     # permissions
     def self.__translate_to_git_perms(permissions)
       case (permissions)
@@ -632,7 +583,7 @@ module Repository
       end # end case
     end
 
-    # Helper method to translate Subversion permissions to internal
+    # Helper method to translate git permissions to internal
     # permissions
     def self.__translate_perms_from_file(perm_string)
       case (perm_string)
@@ -651,10 +602,6 @@ module Repository
     ####################################################################
 
     private
-
-    def setup_auth_baton(auth_baton)
-      # Function necessary for exporting the git repository, may not be needed
-    end
 
     # Returns the most recent revision of the repository. If a path is specified,
     # the youngest revision is returned for that path; if a revision is also specified,
@@ -774,42 +721,100 @@ module Repository
       return walker.take(revision_number).last.oid
     end
 
-    # Return all of the files in this repository at the root directory
-    def files_at_path(path)
-      begin
-        files = Hash.new
-        @commit.tree.each_blob do |blob|
-          file = Repository::RevisionFile.new(@revision_number, {
-            name: blob[:name],
+    # Returns all files (incl. folders) in this repository at path `path`.
+    def objects_at_path(path)
+      # Get directory names for path in a nice array
+      # like ['A1', 'src', 'core'] for '/A1/src/core'
+      directory_path = path.split('/').select do |dirname|
+        # Make sure dirname is not empty string (happens when path
+        # is prepended with '/')
+        !dirname.blank?
+      end
+
+      # current_tree is the current directory object we are going through
+      # Look at rugged documentation for more info on tree objects
+      current_tree = @commit.tree
+      # While there are still directories to go through to get to path,
+      # find the dirname
+      while !directory_path.empty?
+        current_tree.each do |obj|
+          # Look for directory at current tree
+          next unless obj[:type] == :tree && obj[:name] == directory_path.first
+            current_tree = obj
+          end
+        end
+        # Delete found dirname so we can proceed to the next.
+        directory_path.delete_at(0)
+      end
+
+      current_tree = @repo.lookup(current_tree[:oid])
+      # current_tree is now at the path we were looking for
+      objects = []
+      current_tree.each do |obj|
+        if obj[:type] == :blob
+          file = Repository::RevisionFile.new(
+            @revision_number,
+            name: obj[:name],
+            # Is the path with or without filename?
+            path: path + '/' + obj[:name],
+            # The following is placeholder information.
+            last_modified_revision: @revision_number,
+            last_modified_date: Time.now,
+            changed: true,
+            user_id: 8,
+            mime_type: 'text'
+          )
+          objects << file
+        elsif obj[:type] == :tree
+          directory = Repository::RevisionDirectory.new(
+            @revision_number,
+            name: obj[:name],
+            # Same comments as above in RevisionFile
             path: path,
             last_modified_revision: @revision_number,
             last_modified_date: Time.now,
             changed: true,
-            user_id: 5,
-            mime_type: 'text'
-          })
-          files[c[:name]] = file
+            user_id: 5
+          )
+          objects << directory
+        else
+          # raise unrecognized object
         end
-        #exception should be cast if file is not found
-      rescue Exception
-        raise Repository::FileDoesNotExistConflict
-        return nil
+        return objects
       end
-      return files
+      # TODO: make a rescue to controller, when repo_browser moves to React
+      # we can return a 400 with a message so react knows how to handle
     end
 
-    # returns true if the file at the given path exists for the
-    # class's revision_number (commit name)
-    # erros with this function can occur with files are incorrectly
-    # added and the git config file is not updated
-    def path_exists?(path)
-      @commit.tree.any? {|e|
-        e[:name] == path
-      }
+    # Return all of the files in this repository in a hash where
+    # key: filename and value: RevisionFile object
+    def files_at_path(path)
+      file_array = objects_at_path(path).select do |obj|
+        obj.instance_of?(Repository::RevisionFile)
+      end
+      files = Hash.new
+      file_array.each do |file|
+        files[file.name] = file
+      end
+      # exception should be cast if file is not found
+      files
     end
 
     def directories_at_path(path)
-      result = {}
+      dir_array = objects_at_path(path).select do |obj|
+        obj.instance_of?(Repository::RevisionDirectory)
+      end
+      directories = Hash.new
+      dir_array.each do |dir|
+        directories[dir.name] = dir
+      end
+      directories
+    end
+
+    def directories_at_root
+      directories = {}
+      # must be recursive, get trees and put in result hash
+      # and then use path to navigate
       @commit.tree.each_tree {|subdir|
         dir_name = subdir[:name]
         last_modified_revision = @revision_number
@@ -826,6 +831,14 @@ module Repository
         result[dir_name] = new_directory
       }
       return result
+    end
+
+    # returns true if the file at the given path exists for the
+    # class's revision_number (commit name)
+    # erros with this function can occur with files are incorrectly
+    # added and the git config file is not updated
+    def path_exists?(path)
+      @commit.tree.any? { |e| e[:name] == path }
     end
 
     # Return changed files at 'path' (recursively)
