@@ -308,11 +308,10 @@ TableHeader = React.createClass({displayName: 'TableHeader',
         var arrow_indicator = '';
         var clss = 'sortable';
         if (this.props.sort_column == column.id) {
+          // Add classes for css to style with indicators.
           if (this.props.sort_direction == 'asc') {
-            arrow_indicator = ' ▲';
             clss += ' asc';
           } else {
-            arrow_indicator = ' ▼';
             clss += ' desc';
           }
         }

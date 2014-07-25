@@ -4,16 +4,13 @@
                            'help_system' %>
 
 <script type="text/javascript">
-  jQuery(document).ready(function() {
+  var modalNotesGroup = null;
 
-    modalNotesGroup = new Control.Modal($('notes_dialog'), //jQuery('#notes_dialog').dialog(
-    {
-      overlayOpacity: 0.75,
-      className: 'modalNotesGroup',
-      fade:false
-    });
+  jQuery(document).ready(function() {
+    modalNotesGroup = new ModalMarkus('#notes_dialog');
   });
 </script>
+
 <%= render partial: 'students_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
