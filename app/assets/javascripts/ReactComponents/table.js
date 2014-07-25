@@ -424,13 +424,11 @@ function search_data(data, searchables, search_text) {
           if (datum[searchables[i]].props.dangerouslySetInnerHTML.__html.toLowerCase().indexOf(search_text) != -1) {
             return true;
           } 
-          return false;
         } else {
           if (datum[searchables[i]].toLowerCase().indexOf(search_text) != -1) {
             return true;
           }
         }
-        return false;
       }
     });
   } else {
