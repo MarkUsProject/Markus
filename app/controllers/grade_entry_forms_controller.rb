@@ -137,8 +137,7 @@ class GradeEntryFormsController < ApplicationController
         @grade_entry_form.id.to_s + '_order_sp'
     if !cookies[c_order].blank? && !params[:loc].present?
       @desc = cookies[c_order]
-    end
-    if @desc.blank?
+    elsif @desc.blank?
       cookies[c_order] = ''
     else
       cookies[c_order] = @desc
