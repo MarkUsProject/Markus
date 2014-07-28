@@ -1,0 +1,6 @@
+document.getElementById('criterion_title_<%= @criterion.id %>').innerHTML = "<%= @criterion.flexible_criterion_name %>";
+document.getElementById('criterion_max_<%= @criterion.id %>').innerHTML = "<%= @criterion.max %>";
+document.getElementById('criteria_total_mark').innerHTML = "<%= @criterion.assignment.total_mark %>";
+document.getElementById('flexible_edition_pane_menu').innerHTML =
+  "<%= escape_javascript(render partial: 'criterion_editor',
+                                locals: { criterion: @criterion }) %>";
