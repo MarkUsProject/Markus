@@ -1,23 +1,19 @@
 /** Page specific event handlers for grader/index.html.erb */
 
-jQuery(document).ready(function () {
+jQuery(document).ready(function() {
 
-  new Form.Element.EventObserver('assign_criteria', function(element, value) {
-
-    var value = value || false;
-    var url = element.readAttribute('data-action');
-
+  jQuery('#assign_criteria').change(function() {
     var params = {
-      'value': value,
+      'value': this.value || false,
       'authenticity_token': AUTH_TOKEN
-    }
+    };
 
-    new Ajax.Request(url, {
-      asynchronous: true,
-      evalScripts: true,
-      parameters: params
-    })
-  })
+    jQuery.ajax({
+      url:  element.readAttribute('data-action'),
+      type: 'POST',
+      data: params
+    });
+  });
 
 });
 
