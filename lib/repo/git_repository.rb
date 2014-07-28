@@ -256,7 +256,7 @@ module Repository
           end
         when :add
           begin
-            txn = add_file(txn, job[:path], job[:file_data], job[:mime_type])
+            add_file(job[:path], job[:file_data], job[:mime_type])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -621,13 +621,16 @@ module Repository
       # May not need this function
     end
 
+    def path_exists_for_latest_revision?(path)
+      get_latest_revision.path_exists?(path)
+    end
+
     # adds a file to a transaction and eventually to repository
-    def add_file(txn, path, file_data=nil, mime_type=nil)
-      if __path_exists?(path)
+    def add_file(path, file_data=nil, mime_type=nil)
+      if path_exists_for_latest_revision?(path)
         raise Repository::FileExistsConflict.new(path)
       end
-      txn = write_file(txn, path, file_data, mime_type)
-      return txn
+      write_file(path, file_data, mime_type)
     end
 
     # removes a file from a transaction and eventually from repository
@@ -643,23 +646,30 @@ module Repository
       return txn
     end
 
-    def write_file(txn, path, file_data=nil, mime_type=nil)
+    def write_file(path, file_data=nil, mime_type=nil)
       # writes to file using transaction, path, data, and mime
       # refer to Subversion_repo for implementation
-      if (!__path_exists?(path))
-        # Get directory path of file (one level higher)
-        dir = path.split('/')[0..-1].join('/')
-        make_directory(path)
-        make_file(txn, path, file_data)
-      end
+      # Get directory path of file (one level higher)
+      dir = path.split('/')[0..-2].join('/')
+      # make_directory to path, if it already exists make_directory
+      # won't do anything so no harm no foul.
+      make_directory(dir)
+      make_file(path, file_data)
     end
 
     # Make a file if it's not already present.
-    def make_file(txn, path,file_data)
+    def make_file(path, file_data)
       repo = @repos
-      oid = repo.write(file_data, :blob)
-      repo.index.add(path: path, oid: oid, mode: 0100644)
-      Rugged::Commit.create(repo, commit_options(repo,"Adding file"))
+      # Get the file path to write to using the ruby File module.
+      file_path = File.join(repo.path.split('/')[0..-2].join('/'), path)
+      # Actually create the file.
+      File.open(file_path, 'w+') { |file| file.write("file_data") }
+      # Get the hash of the file we just created and added
+      oid = Rugged::Blob.from_workdir(repo, path)
+      index = repo.index
+      index.add(path: path, oid: oid, mode: 0100644)
+      index.write()
+      Rugged::Commit.create(repo, commit_options(repo, "Adding file"))
     end
 
     # Make a directory if it's not already present.
@@ -739,7 +749,7 @@ module Repository
       while !directory_path.empty?
         current_tree.each do |obj|
           # Look for directory at current tree
-          next unless obj[:type] == :tree && obj[:name] == directory_path.first
+          if obj[:type] == :tree && obj[:name] == directory_path.first
             current_tree = obj
           end
         end
@@ -780,8 +790,8 @@ module Repository
         else
           # raise unrecognized object
         end
-        return objects
       end
+      objects
       # TODO: make a rescue to controller, when repo_browser moves to React
       # we can return a 400 with a message so react knows how to handle
     end
