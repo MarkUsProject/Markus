@@ -1,5 +1,0 @@
-page << @annotation.remove_annotation_js_string
-
-page.replace_html 'annotation_summary_list', partial: 'results/marker/annotation_summary', locals: {annots: @annotations, submission_file_id: @submission_file_id}
-
-page.call :hide_all_annotation_content_editors

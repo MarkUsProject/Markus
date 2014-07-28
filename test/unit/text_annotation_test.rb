@@ -26,19 +26,6 @@ class TextAnnotationTest < ActiveSupport::TestCase
       @textannotation = TextAnnotation.make
     end
 
-    should 'render add_annotation_js_string' do
-      assert @textannotation.add_annotation_js_string,
-        "add_annotation(#{@textannotation.id},$R(#{@textannotation.line_start},
-          #{@textannotation.line_end}), #{@textannotation.annotation_text_id})"
-    end
-
-    should 'render remove_annotation_js_string' do
-      assert @textannotation.remove_annotation_js_string,
-        "remove_annotation(#{@textannotation.id},
-          $R(#{@textannotation.line_start}, #{@textannotation.line_end}),
-          #{@textannotation.annotation_text_id});"
-    end
-
     should 'render annotation_list_link_partial' do
       assert @textannotation.annotation_list_link_partial,
              '/annotations/text_annotation_list_link'

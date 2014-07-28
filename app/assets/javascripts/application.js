@@ -14,7 +14,9 @@
 /** Modal windows, powered by jQuery.easyModal. */
 
 function ModalMarkus(elem) {
-  this.modal_dialog = jQuery(elem).easyModal();
+  this.modal_dialog = jQuery(elem).easyModal({
+    updateZIndexOnOpen: false
+  });
 }
 
 ModalMarkus.prototype.open = function() {

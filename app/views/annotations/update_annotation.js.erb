@@ -1,0 +1,13 @@
+document.getElementById('annotation_summary_list').innerHTML =
+  '<%= escape_javascript(render partial: "results/marker/annotation_summary",
+                                locals: { annots: @annotations,
+                                          submission_file_id: @submission_file_id }) %>';
+
+<% if @annotation_text.annotation_category_id != nil %>
+  document.getElementById('annotation_text_list_<%= @annotation_text.annotation_category_id %>').innerHTML =
+    '<%= escape_javascript(render partial: "annotation_list",
+                                  locals: { annotation_category: @annotation_text.annotation_category }) %>';
+<% end %>
+
+update_annotation_text('<%= @annotation_text.id %>', '<%= @annotation_text.content %>');
+hide_all_annotation_content_editors();

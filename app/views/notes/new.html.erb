@@ -19,7 +19,8 @@
       <%= label_tag 'noteable_type', t('notes.noteable') %>
       <%= select_tag 'noteable_type',
                      options_for_select(
-                       Note::NOTEABLES.map {|item| [t('notes.noteables.' + item), item]}) %>
+                        Note::NOTEABLES.map { |item| [t('notes.noteables.' + item),
+                                                      item ]}) %>
     </p>
 
     <div id='noteable_selector'>
@@ -27,8 +28,7 @@
     </div>
 
     <p>
-      <%= raw(f.label :notes_message,
-                      t('notes.note')) %>:
+      <%= raw(f.label :notes_message, t('notes.note')) %>
       <%= raw(f.text_area :notes_message,
                           rows: 10,
                           onchange: 'set_onbeforeunload(true);') %>

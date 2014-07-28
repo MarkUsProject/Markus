@@ -84,10 +84,11 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end
 
     should 'on :add_existing_annotation' do
-      post_as @user, :add_existing_annotation, {
-        :annotation_text_id => @annotation_text.id,
-        :submission_file_id => @submission_file.id,
-        :line_start => 1, :line_end => 1}
+      post_as @user, :add_existing_annotation,
+              { format: :js,
+                annotation_text_id: @annotation_text.id,
+                submission_file_id: @submission_file.id,
+                line_start: 1, line_end: 1 }
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -96,10 +97,13 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :add_existing_annotation
 
     should 'on :create to make a text annotation' do
-      post_as @user, :create, {:content => @annotation_text.content,
-        :category_id => @category.id,
-        :submission_file_id => @submission_file.id,
-        :line_start => 1, :line_end => 1, :annotation_type => 'text'}
+      post_as @user, :create,
+              { format: :js,
+                content: @annotation_text.content,
+                category_id: @category.id,
+                submission_file_id: @submission_file.id,
+                line_start: 1, line_end: 1,
+                annotation_type: 'text' }
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -107,11 +111,13 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :create text
 
     should 'on :create to make an image annotation' do
-      post_as @user, :create, {:content => @annotation_text.content,
-        :category_id => @category.id,
-        :submission_file_id => @submission_file.id,
-        :x1 => 0, :x2 => 1, :y1 => 0, :y2 => 1,
-        :annotation_type => 'image'}
+      post_as @user, :create,
+              { format: :js,
+                content: @annotation_text.content,
+                category_id: @category.id,
+                submission_file_id: @submission_file.id,
+                x1: 0, x2: 1, y1: 0, y2: 1,
+                annotation_type: 'image' }
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -124,8 +130,10 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id,
         :annotation_number => 1})
-      post_as @user, :destroy, {:id => anno.id,
-        :submission_file_id => @submission_file.id}
+      post_as @user, :destroy,
+              { format: :js,
+                id: anno.id,
+                submission_file_id: @submission_file.id }
       assert_response :success
       assert render_template 'destroy'
     end # End context :destroy
@@ -135,9 +143,11 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
-      put_as @user, :update_annotation, :annotation_text => {
-        :id => @annotation_text.id, :content => @annotation_text.content,
-        :submission_file_id =>@submission_file.id}
+      put_as @user, :update_annotation,
+             format: :js,
+             annotation_text: { id: @annotation_text.id,
+                                content: @annotation_text.content,
+                                submission_file_id: @submission_file.id }
       assert_response :success
       assert render_template 'update_annotation'
     end # End context :update_annotation
@@ -161,10 +171,11 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
      end
 
     should 'on :add_existing_annotation' do
-      post_as @user, :add_existing_annotation, {
-        :annotation_text_id => @annotation_text.id,
-        :submission_file_id => @submission_file.id,
-        :line_start => 1, :line_end => 1}
+      post_as @user, :add_existing_annotation,
+              { format: :js,
+                annotation_text_id: @annotation_text.id,
+                submission_file_id: @submission_file.id,
+                line_start: 1, line_end: 1 }
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -172,10 +183,13 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :add_existing_annotation
 
     should 'on :create to make a text annotation' do
-      post_as @user, :create, {:content => @annotation_text.content,
-        :category_id => @category.id,
-        :submission_file_id => @submission_file.id,
-        :line_start => 1, :line_end => 1, :annotation_type => 'text'}
+      post_as @user, :create,
+              { format: :js,
+                content: @annotation_text.content,
+                category_id: @category.id,
+                submission_file_id: @submission_file.id,
+                line_start: 1, line_end: 1,
+                annotation_type: 'text' }
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -183,11 +197,13 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :create text
 
     should 'create an image annotation' do
-      post_as @user, :create, {:content => @annotation_text.content,
-        :category_id => @category.id,
-        :submission_file_id => @submission_file.id,
-        :x1 => 0, :x2 => 1, :y1 => 0, :y2 => 1,
-        :annotation_type => 'image'}
+      post_as @user, :create,
+              { format: :js,
+                content: @annotation_text.content,
+                category_id: @category.id,
+                submission_file_id: @submission_file.id,
+                x1: 0, x2: 1, y1: 0, y2: 1,
+                annotation_type: 'image' }
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -200,8 +216,10 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id,
         :annotation_number => 1})
-      post_as @user, :destroy, {:id => anno.id,
-        :submission_file_id => @submission_file.id}
+      post_as @user, :destroy,
+              { format: :js,
+                id: anno.id,
+                submission_file_id: @submission_file.id }
       assert_response :success
       assert render_template 'destroy'
     end # End context :destroy
@@ -211,9 +229,11 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
-      put_as @user, :update_annotation, :annotation_text => {
-        :id => @annotation_text.id, :content => @annotation_text.content,
-          :submission_file_id =>@submission_file.id}
+      put_as @user, :update_annotation,
+             format: :js,
+             annotation_text: { id: @annotation_text.id,
+                                content: @annotation_text.content,
+                                submission_file_id: @submission_file.id }
       assert_response :success
       assert render_template 'update_annotation'
     end # End context :update_annotation
