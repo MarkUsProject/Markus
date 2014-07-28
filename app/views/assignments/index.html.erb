@@ -41,24 +41,23 @@
 <% end %>
 
 
-<!-- Modal Windows -->
 <aside class='dialog' id="download_dialog">
-  <h2><%= I18n.t('download') %></h2>
+  <h2><%= t('download') %></h2>
   <p>
-    <%= link_to t(:assignment_format, file: 'csv'),
+    <%= link_to t(:assignment_format, file: 'CSV'),
                   download_assignment_list_assignments_path(
                           file_format: 'csv'),
                   class: 'button' if @current_user.admin? %>
     <br>
     <br>
-    <%= link_to t(:assignment_format, file: 'yml'),
+    <%= link_to t(:assignment_format, file: 'YML'),
                   download_assignment_list_assignments_path(
                           file_format: 'yml'),
                   class: 'button' if @current_user.admin? %>
   </p>
 
   <section class='dialog-actions'>
-    <%= button_to I18n.t(:close), '#', onclick: 'modal_download.close();return false;' %>
+    <%= button_to_function t(:close), 'modal_download.close();' %>
   </section>
 </aside>
 
