@@ -323,7 +323,8 @@ require 'mocha/setup'
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,
-                  flexible_criterion: { flexible_criterion_name: 'first', max: 10 }
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
@@ -340,7 +341,8 @@ require 'mocha/setup'
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,
-                  flexible_criterion: { flexible_criterion_name: 'first', max: 10 }
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
@@ -355,7 +357,8 @@ require 'mocha/setup'
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,
-                  flexible_criterion: { flexible_criterion_name: 'first', max: 10 }
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
