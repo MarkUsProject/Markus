@@ -1,8 +1,6 @@
-/**
- * page specific event handlers for grader/index.html.erb
- */
-document.observe("dom:loaded", function() {
-// jQuery(document).ready(function () {
+/** Page specific event handlers for grader/index.html.erb */
+
+jQuery(document).ready(function () {
 
   new Form.Element.EventObserver('assign_criteria', function(element, value) {
 
