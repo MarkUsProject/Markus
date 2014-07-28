@@ -266,12 +266,12 @@ END
         RubricCriterion.any_instance.expects(:save).once.returns(false)
         RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
         get_as @admin,
-              :update,
-              format: :js,
-              :assignment_id => @assignment.id,
-              :id => @criterion.id,
-              :rubric_criterion => {:rubric_criterion_name => 'one',
-                                    :weight => 10}
+               :update,
+               format: :js,
+               assignment_id: @assignment.id,
+               id: @criterion.id,
+               rubric_criterion: { rubric_criterion_name: 'one',
+                                   weight: 10 }
         assert assigns :criterion
         assert render_template 'errors'
         assert_response :success
@@ -279,12 +279,12 @@ END
 
       should 'be able to save without errors' do
         get_as @admin,
-              :update,
-              format: :js,
-              :assignment_id => @assignment.id,
-              :id => @criterion.id,
-              :rubric_criterion => {:rubric_criterion_name => 'one',
-                                    :weight => 10}
+               :update,
+               format: :js,
+               assignment_id: @assignment.id,
+               id: @criterion.id,
+               rubric_criterion: { rubric_criterion_name: 'one',
+                                   weight: 10 }
         assert assigns :criterion
         assert_equal I18n.t('criterion_saved_success'), flash[:success]
         assert render_template :update
