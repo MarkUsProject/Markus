@@ -1,22 +1,26 @@
-<% # The students' grades
-%>
+<% # The students' grades %>
 
-<%= javascript_include_tag 'grades_table' %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'grades_table' %>
+<% end %>
 
-<tbody id="grades">
-  <% # The table rows
-  %>
+<tbody id='grades'>
+  <% # The table rows %>
   <% @students.each do |student| %>
     <tr>
       <% if @current_user.admin? %>
-        <td class="grades_table_checkbox">
-          <input type="checkbox" name="students[]" class="ap_selectable" id="student_<%=student.id%>" value="<%=student.id%>" />
+        <td class='grades_table_checkbox'>
+          <input type='checkbox'
+                 name='students[]'
+                 class='ap_selectable'
+                 id='student_<%= student.id %>'
+                 value='<%= student.id %>'>
         </td>
       <% end %>
-      <td class="grades_table_cell"><%= student.user_name %></td>
-      <td class="grades_table_cell"><%= student.last_name %></td>
-      <td class="grades_table_cell"><%= student.first_name %></td>
-      <td class="grades_table_cell">
+      <td class='grades_table_cell'><%= student.user_name %></td>
+      <td class='grades_table_cell'><%= student.last_name %></td>
+      <td class='grades_table_cell'><%= student.first_name %></td>
+      <td class='grades_table_cell'>
         <% if student.has_section? %>
           <%= student.section.name %>
         <% else %>
@@ -32,32 +36,34 @@
                     or (grade_entry_student.grades.build(grade_entry_item_id: grade_entry_item.id))) %>
         <% gid = student.id.to_s + '_' + grade_entry_item.id.to_s %>
 
-        <td class="grade"><%= text_field_tag 'grade_' + gid, grade.grade,
-                            size: 4,
-                            class: 'grade-input',
-                            'data-grade-entry-item-id' => grade_entry_item.id,
-                            'data-student-id' => student.id,
-                            'data-action' => url_for(action: :update_grade,
-                                              id: @grade_entry_form.id) %></td>
+        <td class='grade'>
+          <%= text_field_tag 'grade_' + gid,
+                             grade.grade,
+                             size: 4,
+                             class: 'grade-input',
+                             'data-grade-entry-item-id' => grade_entry_item.id,
+                             'data-student-id' => student.id,
+                             'data-action' => url_for(action: :update_grade,
+                                                      id: @grade_entry_form.id) %>
+        </td>
       <% end %>
 
       <% if @grade_entry_form.show_total %>
-        <td class="student_total">
-          <div class="total_value" style="display:inline-block;">
+        <td class='student_total'>
+          <div class='total_value'>
             <%= text_field_tag 'total_' + student.id.to_s,
-                grade_entry_student.total_grade,
-                size: 4, disabled: true %>
+                               grade_entry_student.total_grade,
+                               size: 4,
+                               disabled: true %>
           </div>
         </td>
       <% end %>
 
       <td>
         <% if grade_entry_student.released_to_student %>
-          <%= image_tag('icons/email_go.png')%>
+          <%= image_tag('icons/email_go.png') %>
         <% end %>
       </td>
     </tr>
   <% end %>
 </tbody>
-
-

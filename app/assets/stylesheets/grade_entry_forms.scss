@@ -38,3 +38,8 @@ label {
 input + label {
   min-width: 0;
 }
+
+// For Hide/Show toggle in the grades view for the Total column
+.hideTotal .total_value {
+  display: none;
+}
