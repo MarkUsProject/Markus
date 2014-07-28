@@ -229,7 +229,7 @@ function change_submission_rule() {
   jQuery('#sub_rule_link a').hide();
   jQuery('.period input').prop('disabled', true);
 
-  if (jQuery('#grace_period_submission_rule').is(':checked') === true) {
+  if (jQuery('#grace_period_submission_rule').is(':checked')) {
     jQuery('#grace_periods .period').show();
     jQuery('#grace_period_link').show();
     if (jQuery('#grace_periods .period').length === 0) {
@@ -238,7 +238,7 @@ function change_submission_rule() {
     jQuery('#grace_periods .period input').prop('disabled', false);
   }
 
-  if (jQuery('#penalty_decay_period_submission_rule').is(':checked') === true) {
+  if (jQuery('#penalty_decay_period_submission_rule').is(':checked')) {
     jQuery('#penalty_decay_periods .period').show();
     jQuery('#penalty_decay_period_link').show();
     if (jQuery('#penalty_decay_periods .period').length === 0) {
@@ -247,7 +247,7 @@ function change_submission_rule() {
     jQuery('#penalty_decay_periods .period input').prop('disabled', false);
   }
 
-  if (jQuery('#penalty_period_submission_rule').is(':checked') === true) {
+  if (jQuery('#penalty_period_submission_rule').is(':checked')) {
     jQuery('#penalty_periods .period').show();
     jQuery('#penalty_period_link').show();
     if (jQuery('#penalty_periods .period').length === 0) {
