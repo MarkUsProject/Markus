@@ -19,9 +19,9 @@
     });
 
     jQuery.ajax({
-      url: "<%= populate_tas_path() %>",
-      data: 'authenticity_token=' + AUTH_TOKEN,
-      type: "POST",
+      url:      '<%= populate_tas_path %>',
+      data:     'authenticity_token=' + AUTH_TOKEN,
+      type:     'POST',
       dataType: 'json'
     }).done(function(data) {
       document.getElementById('working').style.display = 'none';
