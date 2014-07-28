@@ -267,6 +267,7 @@ END
         RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
         get_as @admin,
               :update,
+              format: :js,
               :assignment_id => @assignment.id,
               :id => @criterion.id,
               :rubric_criterion => {:rubric_criterion_name => 'one',
@@ -276,9 +277,10 @@ END
         assert_response :success
       end
 
-      should 'be able to  save without errors' do
+      should 'be able to save without errors' do
         get_as @admin,
               :update,
+              format: :js,
               :assignment_id => @assignment.id,
               :id => @criterion.id,
               :rubric_criterion => {:rubric_criterion_name => 'one',
@@ -314,6 +316,7 @@ END
         # XXX move elsewhere -> does not need this context
         post_as @admin,
                 :create,
+                format: :js,
                 :assignment_id => assignment.id,
                 :rubric_criterion => {:rubric_criterion_name => 'first',
                                       :weight => 10}
@@ -326,6 +329,7 @@ END
       should 'save without errors' do
         post_as @admin,
                 :create,
+                format: :js,
                 :assignment_id => @assignment.id,
                 :rubric_criterion => {:rubric_criterion_name => 'first',
                                       :weight => 10}
