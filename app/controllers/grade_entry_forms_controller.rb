@@ -119,14 +119,29 @@ class GradeEntryFormsController < ApplicationController
         @grade_entry_form.id.to_s + '_sort_by_grades'
     if params[:sort_by].present?
       cookies[c_sort_by] = params[:sort_by]
+    elsif cookies[c_sort_by].present?
+      params[:sort_by] = cookies[c_sort_by]
     else
       params[:sort_by] = 'last_name'
+      cookies[c_sort_by] = params[:sort_by]
     end
     @sort_by = params[:sort_by]
     @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
     @per_page = params[:per_page]
     @per_pages = G_TABLE_PARAMS[:per_pages]
+    @loc = params
+
+    # Create cookie to remember the direction of the sort
+    c_order = current_user.id.to_s + '_' +
+        @grade_entry_form.id.to_s + '_order_sp'
+    if !cookies[c_order].blank? && !params[:loc].present?
+      @desc = cookies[c_order]
+    elsif @desc.blank?
+      cookies[c_order] = ''
+    else
+      cookies[c_order] = @desc
+    end
 
     all_students = get_filtered_items(G_TABLE_PARAMS,
                                       @filter,
@@ -140,7 +155,6 @@ class GradeEntryFormsController < ApplicationController
                                                                  @students.total_pages)
     session[:alpha_pagination_options] = @alpha_pagination_options
     @alpha_category = @alpha_pagination_options.first
-    @sort_by = cookies[c_sort_by]
   end
 
   
@@ -167,11 +181,15 @@ class GradeEntryFormsController < ApplicationController
     @per_pages = G_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
     @filter = params[:filter]
+    c_sort_by = current_user.id.to_s + '_' +
+        @grade_entry_form.id.to_s + '_sort_by_grades'
     if params[:sort_by].present?
       @sort_by = params[:sort_by]
-    else
-      @sort_by = 'last_name'
+    elsif cookies[c_sort_by].present?
+      params[:sort_by] = cookies[c_sort_by]
     end
+
+    @sort_by = params[:sort_by]
 
     # Only re-compute the alpha_pagination_options for the drop-down menu
     # if the number of items per page has changed
