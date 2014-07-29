@@ -44,3 +44,10 @@ Element.prototype.removeClass = function(className) {
   else
     this.className = this.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
 }
+
+Element.prototype.hasClass = function(className) {
+  if (this.classList)
+    return this.classList.contains(className);
+  else
+    return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
+}
