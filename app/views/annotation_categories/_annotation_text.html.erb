@@ -33,6 +33,7 @@
       </p>
     </div>
   </div>
+
   <div id='annotation_text_<%= annotation_text.id %>_edit' style='display:none;'>
     <%= form_for annotation_text,
                  url: update_annotation_assignment_annotation_category_path(id: annotation_text.id),
@@ -40,7 +41,9 @@
                  remote: true do |f| %>
       <%= f.text_area(:content, cols: 50, rows: 5) %>
       <%= f.submit t(:save) , data: { disable_with: t('working') } %>
-      <input type='reset' value='<%= t(:cancel) %>'
+
+      <input type='reset'
+             value='<%= t(:cancel) %>'
              onclick="jQuery('#annotation_text_' + <%= annotation_text.id %> + '_edit').hide();
                       jQuery('#annotation_text_' + <%= annotation_text.id %> + '_control').show();">
     <% end %>

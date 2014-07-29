@@ -1,10 +1,10 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'create_assignment' %>
-<% end %>
 
-<%= render partial: 'boot',
-           formats: [:js],
-           handlers: [:erb] %>
+  <%= render partial: 'boot',
+             formats: [:js],
+             handlers: [:erb] %>
+<% end %>
 
 <div class='title_bar'>
   <h1><%= t(:create_new_assignment) %></h1>
