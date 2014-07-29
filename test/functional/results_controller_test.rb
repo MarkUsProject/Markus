@@ -197,6 +197,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         should 'GET on :update_marking_state' do
           get_as @student,
                   :update_marking_state,
+                  format: :js,
                   :assignment_id => 1,
                   :submission_id => 1,
                   :id => @result.id,
@@ -378,6 +379,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @no_access_submission_file = SubmissionFile.make
             get_as @student,
                     :codeviewer,
+                    format: :js,
                     :assignment_id => @assignment.id,
                     :submission_id => 1,
                     :id => 1,
@@ -407,6 +409,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               :retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
             get_as @student,
                   :codeviewer,
+                  format: :js,
                   :assignment_id => @assignment.id,
                   :submission_id => 1,
                   :submission_file_id => @submission_file.id,
@@ -434,6 +437,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               :retrieve_file).once.returns('file content')
             get_as @student,
                   :codeviewer,
+                  format: :js,
                   :assignment_id => @assignment.id,
                   :submission_id => 1,
                   :submission_file_id => @submission_file.id,
@@ -941,6 +945,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
             get_as @admin,
                     :codeviewer,
+                    format: :js,
                     :assignment_id => @assignment.id,
                     :submission_id => 1,
                     :id => 1,
@@ -965,6 +970,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
             get_as @admin,
                    :codeviewer,
+                   format: :js,
                    :assignment_id => @assignment.id,
                    :submission_id => 1,
                    :id => 1,
@@ -1002,6 +1008,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             get_as @admin,
                     :update_mark,
+                    format: :js,
                     :assignment_id => 1,
                     :submission_id => 1,
                     :id => 1,
@@ -1035,6 +1042,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should 'without save error' do
             get_as @admin,
                    :update_mark,
+                   format: :js,
                    :assignment_id => 1,
                    :submission_id => 1,
                    :id => 1,
@@ -1057,6 +1065,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should 'GET on :add_extra_mark' do
             get_as @admin,
                    :add_extra_mark,
+                   format: :js,
                    :assignment_id => 1,
                    :submission_id => @submission.id,
                    :id => @submission.get_latest_result.id
@@ -1072,6 +1081,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               extra_mark.expects(:save).once.returns(false)
               post_as @admin,
                       :add_extra_mark,
+                      format: :js,
                       :assignment_id => 1,
                       :submission_id => @submission.id,
                       :id => @submission.get_latest_result.id,
@@ -1087,6 +1097,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @old_total_mark = @submission.get_latest_result.total_mark
               post_as @admin,
                       :add_extra_mark,
+                      format: :js,
                       :assignment_id => 1,
                       :submission_id => @submission.id,
                       :id => @submission.get_latest_result.id,
@@ -1115,6 +1126,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @old_total_mark = @result.total_mark
           get_as @admin,
                  :remove_extra_mark,
+                 format: :js,
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => @extra_mark.id
@@ -1223,6 +1235,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           result = Result.make
           get_as @ta,
                   :update_marking_state,
+                  format: :js,
                   :assignment_id => 1,
                   :submission_id => 1,
                   :id => result.id,
@@ -1305,6 +1318,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                       ).once.raises(Exception.new(SAMPLE_ERR_MSG))
             get_as @ta,
                     :codeviewer,
+                    format: :js,
                     :assignment_id => @assignment.id,
                     :submission_id => 1,
                     :submission_file_id => @submission_file.id,
@@ -1332,6 +1346,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             SubmissionFile.stubs(:find).returns(@submission_file)
             get_as @ta,
                     :codeviewer,
+                    format: :js,
                     :assignment_id => @assignment.id,
                     :submission_id => 1,
                     :submission_file_id => @submission_file.id,
@@ -1359,6 +1374,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
             get_as @ta,
                     :update_mark,
+                    format: :js,
                     :assignment_id => 1,
                     :submission_id => 1,
                     :id => 1,
@@ -1373,6 +1389,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should 'without save error' do
             get_as @ta,
                    :update_mark,
+                   format: :js,
                    :assignment_id => 1,
                    :submission_id => 1,
                    :mark_id => @mark.id,
@@ -1396,6 +1413,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           unmarked_result = Result.make
           get_as @ta,
                  :add_extra_mark,
+                 format: :js,
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => unmarked_result.id
@@ -1415,6 +1433,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             extra_mark.expects(:save).once.returns(false)
             post_as @ta,
                     :add_extra_mark,
+                    format: :js,
                     :assignment_id => 1,
                     :submission_id => 1,
                     :id => @unmarked_result.id,
@@ -1430,6 +1449,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @old_total_mark = @unmarked_result.total_mark
             post_as @ta,
                     :add_extra_mark,
+                    format: :js,
                     :assignment_id => 1,
                     :submission_id => 1,
                     :id => @unmarked_result.id,
@@ -1458,6 +1478,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @old_total_mark = @result.total_mark
           get_as @ta,
                  :remove_extra_mark,
+                 format: :js,
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => @extra_mark.id
