@@ -244,6 +244,7 @@
             '&authenticity_token=' + AUTH_TOKEN
     }).always(function() {
       document.getElementById('working').style.display = 'none';
+      document.getElementById('select_file_id').disabled = false;
     });
   }
 
