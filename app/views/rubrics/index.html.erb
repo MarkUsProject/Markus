@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'Rubrics/index' %>
+  <%= javascript_include_tag 'FlexibleCriteria/index' %>
 
   <%= render partial: 'boot',
              formats: [:js],
@@ -18,26 +18,20 @@
           identifier: @assignment.short_identifier) %>
   </h1>
   <div class='heading_buttons'>
-        <%= link_to_function t('add_criterion'),
-            %| if($('new_rubric_criterion') != null) {
-              $('rubric_criterion_rubric_criterion_name').select();
-              $('rubric_criterion_rubric_criterion_name').focus();
-            } else {
-              #{remote_function url: new_assignment_rubric_path(@assignment),
-                                method: 'get'}
-            }| %>
+  <%= link_to_function t('add_criterion'),
+      %| if($('new_rubric_criterion') != null) {
+        $('rubric_criterion_rubric_criterion_name').select();
+        $('rubric_criterion_rubric_criterion_name').focus();
+      } else {
+        #{remote_function url: new_assignment_rubric_path(@assignment),
+                          method: 'get'}
+      }|%>
   <span class='menu_bar'></span>
-  <%= link_to t(:download),
-              '#',
-              onclick: 'modal_download.open()' %>
+  <%= link_to_function t(:download), 'modal_download.open()' %>
   <span class='menu_bar'></span>
-  <%= link_to t('rubric_criteria.upload.csv'),
-              '#',
-              onclick: 'modal_upload_csv.open()' %>
+  <%= link_to_function t('rubric_criteria.upload.csv'), 'modal_upload_csv.open()' %>
   <span class='menu_bar'></span>
-  <%= link_to t('rubric_criteria.upload.yml'),
-              '#',
-              onclick: 'modal_upload_yml.open()' %>
+  <%= link_to_function t('rubric_criteria.upload.yml'), 'modal_upload_yml.open()' %>
   </div>
 </div>
 
@@ -71,7 +65,6 @@
       <%= t('rubric_criteria.upload.format_csv_html') %>
       <%= t('csv_special_characters_html') %>
     </div>
-
     <div>
       <%= t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
@@ -97,7 +90,6 @@
       <p><%= f.file_field :rubric %></p>
       <%= t('rubric_criteria.upload.format_yml_html') %>
     </div>
-
     <div>
       <%= t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
