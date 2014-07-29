@@ -65,10 +65,14 @@ module Repository
       #Create it (we're not going to use a bare repository)
       repo = Rugged::Repository.init_at(connect_string)
 
-      #Do an initial commit to create index.
-      oid = repo.write("Initial commit.", :blob)
-      repo.index.add(:path => "README.md", :oid => oid, :mode => 0100644)
-      Rugged::Commit.create(repo, commit_options(repo, "Creation of initial file"))
+      # Do an initial commit with a README to create index.
+      file_path_for_readme = File.join(repo.path.split('/')[0..-2].join('/'), "README.md")
+      File.open(file_path_for_readme, 'w+') { |readme| readme.write("Initial commit.") }
+      oid = Rugged::Blob.from_workdir(repo, "README.md")
+      index = repo.index
+      index.add(path: "README.md", oid: oid, mode: 0100644)
+      index.write()
+      Rugged::Commit.create(repo, commit_options(repo, "Initial commit and add readme."))
       return true
     end
 
