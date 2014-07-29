@@ -6,9 +6,10 @@
   <h1><%= t('students.edit_student') %></h1>
 </div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <%= render partial: 'student_form',
-             locals: { action: 'update' } -%>
+             locals: { action: 'update' } %>
+
   <h3><%= t('submission_rules.grace_period_submission_rule.deductions') %></h3>
   <div id='grace_period_deductions'>
     <%= render partial: 'grace_period_deductions',
