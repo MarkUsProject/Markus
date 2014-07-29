@@ -7,30 +7,36 @@
    #  with a common value
 %>
 
-<fieldset class="period">
-  <legend><%= t("submission_rules.penalty_decay_period_submission_rule.short_name") %></legend>
+<fieldset class='period'>
+  <legend>
+    <span><%= t('submission_rules.penalty_decay_period_submission_rule.short_name') %></span>
+  </legend>
+
   <p>
     <%= pf.fields_for :periods, penalty_decay_period do |f| %>
-			<p>
-        <%= f.label :deduction, t("submission_rules.penalty_decay_period_submission_rule.deduct") + ":" %>
+      <p>
+        <%= f.label :deduction, t('submission_rules.penalty_decay_period_submission_rule.deduct') + ':' %>
         <%= f.text_field :deduction, size: 1 %>%
       </p>
-			<p>
-        <%= f.label :interval, t("submission_rules.penalty_decay_period_submission_rule.every") %>
+      <p>
+        <%= f.label :interval, t('submission_rules.penalty_decay_period_submission_rule.every') %>
         <%= f.text_field :interval, size: 1 %>
-        <%= t("submission_rules.penalty_decay_period_submission_rule.hours") %>
+        <%= t('submission_rules.penalty_decay_period_submission_rule.hours') %>
       </p>
       <p>
-        <%= f.label :hours, t("submission_rules.penalty_decay_period_submission_rule.for") %>
-        <%= f.text_field :hours, size: 1, class: "PeriodDeltaChain_Hours", onchange: "if(penalty_decay_periods) { penalty_decay_periods.refresh(); }" %>
-        <%= t("submission_rules.penalty_decay_period_submission_rule.hours") %>
+        <%= f.label :hours, t('submission_rules.penalty_decay_period_submission_rule.for') %>
+        <%= f.text_field :hours,
+                         size: 1,
+                         class: 'PeriodDeltaChain_Hours',
+                         onchange: 'if (penalty_decay_periods) { penalty_decay_periods.refresh(); }' %>
+        <%= t('submission_rules.penalty_decay_period_submission_rule.hours') %>
       </p>
       <div>
-        <span class="PeriodDeltaChain">
-          <%= t("submission_rules.penalty_decay_period_submission_rule.from") %>
-          <span class="PeriodDeltaChain_FromTime"></span>
-          <%= t("submission_rules.penalty_decay_period_submission_rule.to") %>
-          <span class="PeriodDeltaChain_ToTime"></span>
+        <span class='PeriodDeltaChain'>
+          <%= t('submission_rules.penalty_decay_period_submission_rule.from') %>
+          <span class='PeriodDeltaChain_FromTime'></span>
+          <%= t('submission_rules.penalty_decay_period_submission_rule.to') %>
+          <span class='PeriodDeltaChain_ToTime'></span>
         </span>
       </div>
       <% if !f.object.nil? && !f.object.new_record? %>
