@@ -1,11 +1,12 @@
 <% content_for :head do %>
-  <%= render partial: 'boot', formats: [:js] %>
+  <%= render partial: 'boot',
+             formats: [:js] %>
 <% end %>
 
 <div class='wrapper'>
   <% if flash[:success] %>
     <div class='success'>
-      <span><%=flash[:success]%></span>
+      <span><%= flash[:success] %></span>
     </div>
   <% end %>
 
@@ -13,6 +14,7 @@
                as: :assignment,
                url: manage_assignment_automated_tests_path,
                html: { multipart: true } do |f| %>
+
     <%= f.error_messages %>
 
     <fieldset>
@@ -44,7 +46,7 @@
       <fieldset>
         <div class='wrapper'>
         <legend>
-          <span><%= I18n.t('automated_tests.required_files_ant') %></span>
+          <span><%= t('automated_tests.required_files_ant') %></span>
         </legend>
 
         <div id='test_properties' class='disabled' >
@@ -53,75 +55,92 @@
               <% if tf.object.filetype.to_s == 'build.xml' %>
                 <%= label_tag 'antbuildxmlfile',
                               t('automated_tests.build_xml'),
-                              class:'accordian_label' %>
+                              class: 'accordian_label' %>
 
-                <% if tf.object.filename.to_s != "" && tf.object.filetype == tf.object.filename %>
+                <% if tf.object.filename.to_s != '' && tf.object.filetype == tf.object.filename %>
                   <%= text_field_tag 'test_file_' + tf.id.to_s,
                                      tf.object.filename,
-                                     id: "antxmlfilename",
-                                     readonly: "true" %>
-                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <%= label_tag "replacebuildxmlfile",
-                                I18n.t("automated_tests.replace"),
-                                class: "inline_label" %>
+                                     id:'antxmlfilename',
+                                     readonly: 'true' %>
+                  <%= label_tag 'replacebuildxmlfile',
+                                t('automated_tests.replace'),
+                                class: 'inline_label' %>
                 <% end %>
 
                 <%= tf.file_field :filename,
-                                  id: "antbuildxmlfile",
+                                  id: 'antbuildxmlfile',
                                   size: 30 %>
               <% end %>
             </p>
-            <p id="antbuildprop_style">
-              <% if tf.object.filetype.to_s == "build.properties" %>
-                <%= label_tag "antbuildpropfile", I18n.t("automated_tests.build_prop"), class:"accordian_label" %>
 
-                <% if tf.object.filename.to_s != "" && tf.object.filetype == tf.object.filename %>
-                  <%= text_field_tag 'test_file_' + tf.id.to_s, tf.object.filename, id:"antpropfilename", readonly: "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <%= label_tag "replacebuildpropfile", I18n.t("automated_tests.replace"), class: "inline_label" %>
+            <p id='antbuildprop_style'>
+              <% if tf.object.filetype.to_s == 'build.properties' %>
+                <%= label_tag 'antbuildpropfile',
+                              t('automated_tests.build_prop'),
+                              class: 'accordian_label' %>
+
+                <% if tf.object.filename.to_s != '' && tf.object.filetype == tf.object.filename %>
+                  <%= text_field_tag 'test_file_' + tf.id.to_s,
+                                     tf.object.filename,
+                                     id: 'antpropfilename',
+                                     readonly: 'true' %>
+                  <%= label_tag 'replacebuildpropfile',
+                                t('automated_tests.replace'),
+                                class: 'inline_label' %>
                 <% end %>
 
-                <%= tf.file_field :filename, id:"antbuildpropfile", size:"30" %>
+                <%= tf.file_field :filename,
+                                  id: 'antbuildpropfile',
+                                  size: 30 %>
               <% end %>
             </p>
           <% end %>
 
-          <h4><%= t("automated_tests.assignment_test_files") %></h4>
-          <div id="test_files">
+          <h4><%= t('automated_tests.assignment_test_files') %></h4>
+          <div id='test_files'>
             <%= f.fields_for :test_files do |tf| %>
-              <% if tf.object.filetype.to_s == "test" %>
-                <%= render partial: 'test_file', locals: {test_file: tf.object, form: f, file_type: "test"} %>
+              <% if tf.object.filetype.to_s == 'test' %>
+                <%= render partial: 'test_file',
+                           locals: { test_file: tf.object,
+                                     form: f,
+                                     file_type: 'test' } %>
               <% end %>
             <% end %>
           </div>
-          <p id="test_file_add_link">
-            <%= add_test_file_link t("automated_tests.add_test_file_link"), f %>
+          <p id='test_file_add_link'>
+            <%= add_test_file_link t('automated_tests.add_test_file_link'), f %>
           </p>
 
-          <h4><%= t("automated_tests.assignment_lib_files") %></h4>
-          <div id="lib_files">
+          <h4><%= t('automated_tests.assignment_lib_files') %></h4>
+          <div id='lib_files'>
             <%= f.fields_for :test_files do |tf| %>
-              <% if tf.object.filetype.to_s == "lib" %>
-                <%= render partial: 'test_file', locals: {test_file: tf.object, form: f, file_type: "lib"} %>
+              <% if tf.object.filetype.to_s == 'lib' %>
+                <%= render partial: 'test_file',
+                           locals: { test_file: tf.object,
+                                     form: f,
+                                     file_type: 'lib' } %>
               <% end %>
             <% end %>
           </div>
-          <p id="lib_file_add_link">
-            <%= add_lib_file_link t("automated_tests.add_lib_file_link"), f %>
+          <p id='lib_file_add_link'>
+            <%= add_lib_file_link t('automated_tests.add_lib_file_link'), f %>
           </p>
 
-          <h4><%= t("automated_tests.assignment_parser_files") %></h4>
-          <div id="parser_files">
+          <h4><%= t('automated_tests.assignment_parser_files') %></h4>
+          <div id='parser_files'>
             <%= f.fields_for :test_files do |tf| %>
-              <% if tf.object.filetype.to_s == "parse" %>
-                <%= render partial: 'test_file', locals: {test_file: tf.object, form: f, file_type: "parse"} %>
+              <% if tf.object.filetype.to_s == 'parse' %>
+                <%= render partial: 'test_file',
+                           locals: { test_file: tf.object,
+                                     form: f,
+                                     file_type: 'parse' } %>
               <% end %>
             <% end %>
           </div>
-          <p id="parser_file_add_link">
-            <%= add_parser_file_link t("automated_tests.add_parser_file_link"), f %>
+          <p id='parser_file_add_link'>
+            <%= add_parser_file_link t('automated_tests.add_parser_file_link'), f %>
           </p>
 
-        </div>
         </div>
       </fieldset>
     </fieldset>
