@@ -24,8 +24,16 @@ fieldset {
     padding: 1em;
 
     legend {
-      padding: 0 0.25em;
       width: auto;
+
+      span {
+        position: static;
+        padding-top: 0;
+      }
+    }
+
+    & + fieldset.period {
+      margin-top: 1em;
     }
   }
 

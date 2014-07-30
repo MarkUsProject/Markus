@@ -5,32 +5,41 @@
    #  differentiate it on submission, and connects the hours and deduction inputs
    #  with a common value
 %>
-<fieldset class="period">
-<legend><%= t("submission_rules.penalty_period_submission_rule.short_name") %></legend>
-<%= pf.fields_for :periods, penalty_period do |f| %>
-  <p>
-    <%= f.label :hours, t("submission_rules.penalty_period_submission_rule.after") %>
-    <%= f.text_field :hours, size: 1, class: "PeriodDeltaChain_Hours", onchange: "if(penalty_periods) { penalty_periods.refresh(); }" %>
-    <%= t("submission_rules.grace_period_submission_rule.hours") %>
-  </p>
-  <div>
-    <span class="PeriodDeltaChain">
-      <%= t("submission_rules.penalty_period_submission_rule.from") %> <span class="PeriodDeltaChain_FromTime"></span>
-      <%= t("submission_rules.penalty_period_submission_rule.to") %>
-           <span class="PeriodDeltaChain_ToTime"></span>
-    </span>
-  </div>
- <p>
-    <%= f.label :deduction, t("submission_rules.penalty_period_submission_rule.deduction") %>
-    <%= f.text_field :deduction, size: 1 %>%
-  </p>
-  <p>
-   <% if !f.object.nil? && !f.object.new_record? %>
-    <%= f.label :_destroy, t(:remove) %>
-    <%= f.check_box :_destroy %>
-  <% else %>
-    <%= link_to_function t(:remove), "jQuery(this).parents(\".period\").remove(); if(penalty_periods) { penalty_periods.refresh(); }" %>
+<fieldset class='period'>
+  <legend>
+    <span><%= t('submission_rules.penalty_period_submission_rule.short_name') %></span>
+  </legend>
+
+  <%= pf.fields_for :periods, penalty_period do |f| %>
+    <p>
+      <%= f.label :hours, t('submission_rules.penalty_period_submission_rule.after') %>
+      <%= f.text_field :hours,
+                       size: 1,
+                       class: 'PeriodDeltaChain_Hours',
+                       onchange: 'if (penalty_periods) { penalty_periods.refresh(); }' %>
+      <%= t('submission_rules.grace_period_submission_rule.hours') %>
+    </p>
+    <div>
+      <span class='PeriodDeltaChain'>
+        <%= t('submission_rules.penalty_period_submission_rule.from') %>
+        <span class='PeriodDeltaChain_FromTime'></span>
+        <%= t('submission_rules.penalty_period_submission_rule.to') %>
+        <span class='PeriodDeltaChain_ToTime'></span>
+      </span>
+    </div>
+    <p>
+      <%= f.label :deduction, t('submission_rules.penalty_period_submission_rule.deduction') %>
+      <%= f.text_field :deduction, size: 1 %>%
+    </p>
+    <p>
+      <% if !f.object.nil? && !f.object.new_record? %>
+        <%= f.label :_destroy, t(:remove) %>
+        <%= f.check_box :_destroy %>
+      <% else %>
+        <%= link_to_function t(:remove),
+                             "jQuery(this).parents(\".period\").remove();
+                              if (penalty_periods) { penalty_periods.refresh(); }" %>
+      <% end %>
+    </p>
   <% end %>
-  </p>
-<% end %>
 </fieldset>

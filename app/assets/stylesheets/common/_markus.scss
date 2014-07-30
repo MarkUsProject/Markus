@@ -296,17 +296,16 @@ fieldset {
     @include box-shadow(none);
     border: none;
     border-top: 1px solid $grey;
-    padding: 3.5em 0 0;
+    padding: 0;
 
     legend {
       width: 100%;
 
       & > span {
-        border-top: 1px solid $grey;
         display: block;
         padding-top: 0.5em;
         position: relative;
-        top: 1.5em;
+        top: 1em;
       }
     }
   }
