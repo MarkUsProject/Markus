@@ -291,7 +291,6 @@ class SubmissionsController < ApplicationController
 
     # hmm. Let's make rev_number a method and have it return an array.
     repo.get_all_revisions.each do |revision|
-      puts repo.get_latest_revision.revision_number
       @revisions_history << {num: revision.revision_number,
                              date: revision.timestamp}
     end

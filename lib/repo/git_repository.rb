@@ -66,7 +66,7 @@ module Repository
       repo = Rugged::Repository.init_at(connect_string)
 
       # Do an initial commit with a README to create index.
-      file_path_for_readme = File.join(repo.path.split('/')[0..-2].join('/'), "README.md")
+      file_path_for_readme = File.join(repo.workdir, "README.md")
       File.open(file_path_for_readme, 'w+') { |readme| readme.write("Initial commit.") }
       oid = Rugged::Blob.from_workdir(repo, "README.md")
       index = repo.index
@@ -176,20 +176,21 @@ module Repository
       return repos_meta_files_exist
     end
 
-
-    # TODO: verify how markus use it
-    def stringify_files(files)
+    def stringify(file)
       # Given a single object, or an array of objects of type
       # RevisionFile, try to find the file in question, and
       # return it as a string
-      blob = @repos.lookup(files[:oid])
+      repo = @repos
+      revision = get_revision(file.from_revision)
+      blob = revision.find_object_at_path(file.path)
+
       return blob.content
     end
-    alias download_as_string stringify_files # create alias
-
+    alias download_as_string stringify # create alias
 
     def get_revision_number(hash)
-      # probably should walk down git log and count steps from beginning?
+      # This functions walks down git log and counts the steps from beginning
+      # to get the revision number.
       walker = Rugged::Walker.new(@repos)
       walker.sorting(Rugged::SORT_DATE | Rugged::SORT_REVERSE) 
       walker.push(hash)
@@ -200,7 +201,6 @@ module Repository
       end
       return start
     end
-
 
     # Returns a Repository::SubversionRevision instance
     # holding the latest Subversion repository revision
@@ -665,9 +665,9 @@ module Repository
     def make_file(path, file_data)
       repo = @repos
       # Get the file path to write to using the ruby File module.
-      file_path = File.join(repo.path.split('/')[0..-2].join('/'), path)
+      file_path = File.join(repo.workdir, path)
       # Actually create the file.
-      File.open(file_path, 'w+') { |file| file.write("file_data") }
+      File.open(file_path, 'w+') { |file| file.write(file_data) }
       # Get the hash of the file we just created and added
       oid = Rugged::Blob.from_workdir(repo, path)
       index = repo.index
@@ -735,33 +735,10 @@ module Repository
       return walker.take(revision_number).last.oid
     end
 
-    # Returns all files (incl. folders) in this repository at path `path`.
+    # Returns all files (incl. folders) in this repository
+    # at path `path` for the current revision file.
     def objects_at_path(path)
-      # Get directory names for path in a nice array
-      # like ['A1', 'src', 'core'] for '/A1/src/core'
-      directory_path = path.split('/').select do |dirname|
-        # Make sure dirname is not empty string (happens when path
-        # is prepended with '/')
-        !dirname.blank?
-      end
-
-      # current_tree is the current directory object we are going through
-      # Look at rugged documentation for more info on tree objects
-      current_tree = @commit.tree
-      # While there are still directories to go through to get to path,
-      # find the dirname
-      while !directory_path.empty?
-        current_tree.each do |obj|
-          # Look for directory at current tree
-          if obj[:type] == :tree && obj[:name] == directory_path.first
-            current_tree = obj
-          end
-        end
-        # Delete found dirname so we can proceed to the next.
-        directory_path.delete_at(0)
-      end
-
-      current_tree = @repo.lookup(current_tree[:oid])
+      current_tree = find_object_at_path(path)
       # current_tree is now at the path we were looking for
       objects = []
       current_tree.each do |obj|
@@ -770,7 +747,7 @@ module Repository
             @revision_number,
             name: obj[:name],
             # Is the path with or without filename?
-            path: path + '/' + obj[:name],
+            path: path + obj[:name],
             # The following is placeholder information.
             last_modified_revision: @revision_number,
             last_modified_date: Time.now,
@@ -800,6 +777,32 @@ module Repository
       # we can return a 400 with a message so react knows how to handle
     end
 
+    # Takes in a path (that should be a dir) and returns the Rugged tree object
+    # at that path.
+    def find_object_at_path(path)
+      # Get directory names for path in a nice array
+      # like ['A1', 'src', 'core'] for '/A1/src/core'
+      path = path.split('/')
+
+      # current_tree is the current directory object we are going through
+      # Look at rugged documentation for more info on tree objects
+      current_object = @commit.tree
+      # While there are still directories to go through to get to path,
+      # find the dirname
+      path.each do |level|
+        # This loop finds the object we're currently looking
+        # for in `level` and then looks it up to return
+        # a Rugged object (either a tree or a blob)
+        current_object = @repo.lookup(
+          current_object.find { |obj|
+            obj[:name] == level
+          }[:oid])
+      end
+
+      # This returns the actual object.
+      current_object
+    end
+
     # Return all of the files in this repository in a hash where
     # key: filename and value: RevisionFile object
     def files_at_path(path)
@@ -823,28 +826,6 @@ module Repository
         directories[dir.name] = dir
       end
       directories
-    end
-
-    def directories_at_root
-      directories = {}
-      # must be recursive, get trees and put in result hash
-      # and then use path to navigate
-      @commit.tree.each_tree {|subdir|
-        dir_name = subdir[:name]
-        last_modified_revision = @revision_number
-        last_modified_date = Time.now
-        new_directory = Repository::RevisionDirectory.new(@revision_number, {
-          name: dir_name,
-          path: path,
-          last_modified_revision: last_modified_revision,
-          last_modified_date: last_modified_date,
-          changed: (last_modified_revision == @revision_number),
-          user_id: 5
-          #user_id: @repo.__get_property(:author, last_modified_revision)
-        })
-        result[dir_name] = new_directory
-      }
-      return result
     end
 
     # returns true if the file at the given path exists for the
