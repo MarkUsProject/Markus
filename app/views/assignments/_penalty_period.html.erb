@@ -16,7 +16,7 @@
       <%= f.text_field :hours,
                        size: 1,
                        class: 'PeriodDeltaChain_Hours',
-                        onchange: 'if (penalty_periods) { penalty_periods.refresh(); }' %>
+                       onchange: 'if (penalty_periods) { penalty_periods.refresh(); }' %>
       <%= t('submission_rules.grace_period_submission_rule.hours') %>
     </p>
     <div>
@@ -37,7 +37,8 @@
         <%= f.check_box :_destroy %>
       <% else %>
         <%= link_to_function t(:remove),
-                             "jQuery(this).parents(\".period\").remove(); if(penalty_periods) { penalty_periods.refresh(); }" %>
+                             "jQuery(this).parents(\".period\").remove();
+                              if (penalty_periods) { penalty_periods.refresh(); }" %>
       <% end %>
     </p>
   <% end %>
