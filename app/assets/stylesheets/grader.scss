@@ -40,6 +40,14 @@
   margin: 0 0 10px 0;
   width: 100%;
 
+  #criterion_incomplete_error {
+    display: table-row;
+  }
+
+  #student_selector_controls {
+    display: table-row;
+  }
+
   .left,
   .middle,
   .right {

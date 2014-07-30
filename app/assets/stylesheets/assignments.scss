@@ -19,16 +19,21 @@ fieldset {
   }
 
   &.period {
-    @include border-radius($radius);
-    border: 1px solid $grey;
+    // @include border-radius($radius);
+    // border: 1px solid $grey;
+    border-bottom: 1px solid $grey;
     padding: 1em;
 
     legend {
-      width: auto;
+      // width: auto;
 
       span {
         border-top: 1px solid $grey;
       }
+    }
+
+    & + fieldset.period {
+      margin-top: 1em;
     }
   }
 
