@@ -165,7 +165,10 @@ require 'mocha/setup'
 
     context 'on :edit' do
       setup do
-        get_as @admin, :edit, :assignment_id => 1, :id => @criterion.id
+        get_as @admin, :edit,
+               format: :js,
+               assignment_id: 1,
+               id: @criterion.id
       end
       should 'respond with appropriate content' do
         assert_not_nil assigns :criterion
@@ -180,11 +183,11 @@ require 'mocha/setup'
         setup do
           FlexibleCriterion.any_instance.expects(:save).once.returns(false)
           FlexibleCriterion.any_instance.expects(:errors).once.returns('error msg')
-          get_as @admin,
-                 :update,
-                 :assignment_id => 1,
-                 :id => @criterion.id,
-                 :flexible_criterion => {:flexible_criterion_name => 'one', :max => 10}
+          get_as @admin, :update,
+                 format: :js,
+                 assignment_id: 1,
+                 id: @criterion.id,
+                 flexible_criterion: { flexible_criterion_name: 'one', max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
@@ -196,10 +199,10 @@ require 'mocha/setup'
       should 'be able to save' do
         get_as @admin,
                :update,
-               :assignment_id => 1,
-               :id => @criterion.id,
-               :flexible_criterion => {:flexible_criterion_name => 'one',
-                                       :max => 10}
+               format: :js,
+               assignment_id: 1,
+               id: @criterion.id,
+               flexible_criterion: { flexible_criterion_name: 'one', max: 10 }
         assert flash[:success], I18n.t('criterion_saved_success')
         assert_not_nil assigns :criterion
         assert render_template :update
@@ -208,7 +211,9 @@ require 'mocha/setup'
 
     context 'on :new' do
       setup do
-        get_as @admin, :new, :assignment_id => @assignment.id
+        get_as @admin, :new,
+               format: :js,
+               assignment_id: @assignment.id
       end
       should 'respond with appropriate content' do
         assert_not_nil assigns :assignment
@@ -246,6 +251,7 @@ require 'mocha/setup'
     should 'be able to update_positions' do
       get_as @admin,
              :update_positions,
+             format: :js,
              criterion: [@criterion2.id,
                          @criterion.id],
              assignment_id: @assignment.id
@@ -297,7 +303,10 @@ require 'mocha/setup'
 
     context 'on :edit' do
       setup do
-        post_as @admin, :edit, :assignment_id => 1, :id => @criterion.id
+        post_as @admin, :edit,
+                format: :js,
+                assignment_id: 1,
+                id: @criterion.id
       end
       should 'respond with appropriate content' do
         assert_not_nil assigns :criterion
@@ -311,7 +320,11 @@ require 'mocha/setup'
         setup do
           FlexibleCriterion.any_instance.expects(:save).once.returns(false)
           FlexibleCriterion.any_instance.expects(:errors).once.returns('error msg')
-          post_as @admin, :create, :assignment_id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
+          post_as @admin, :create,
+                  format: :js,
+                  assignment_id: @assignment.id,
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
@@ -325,7 +338,11 @@ require 'mocha/setup'
       context 'without error on an assignment as the first criterion' do
         setup do
           assignment = Assignment.make
-          post_as @admin, :create, :assignment_id => assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
+          post_as @admin, :create,
+                  format: :js,
+                  assignment_id: @assignment.id,
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
@@ -337,7 +354,11 @@ require 'mocha/setup'
 
       context 'without error on an assignment that already has criteria' do
         setup do
-          post_as @admin, :create, :assignment_id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
+          post_as @admin, :create,
+                  format: :js,
+                  assignment_id: @assignment.id,
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
@@ -415,6 +436,7 @@ require 'mocha/setup'
     should 'be able to update_positions' do
       post_as @admin,
               :update_positions,
+              format: :js,
               criterion: [@criterion2.id,
                           @criterion.id],
               assignment_id: @assignment.id
@@ -439,7 +461,10 @@ require 'mocha/setup'
 
 
     should 'be able to delete the criterion' do
-      delete_as @admin, :destroy, :assignment_id => 1, :id => @criterion.id
+      delete_as @admin, :destroy,
+                format: :js,
+                assignment_id: 1,
+                id: @criterion.id
       assert_not_nil assigns :criterion
       assert I18n.t('criterion_deleted_success'), flash[:success]
       assert_response :success
