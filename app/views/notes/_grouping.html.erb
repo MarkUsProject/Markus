@@ -1,13 +1,13 @@
 <%= fields_for :note do |f| %>
   <p>
-    <%= label_tag 'assignment_id', I18n.t('notes.noteables.Assignment') %>
+    <%= label_tag 'assignment_id', t('notes.noteables.Assignment') %>
     <%= select_tag 'assignment_id',
                    options_from_collection_for_select(@assignments,
                                                       :id,
                                                       :short_identifier),
                    onchange: "document.getElementById('working').style.display = '';
                               jQuery.ajax({
-                                url: '" + new_update_groupings_notes_path() + "',
+                                url: '" + new_update_groupings_notes_path + "',
                                 type: 'POST',
                                 data: jQuery(this).serialize() + '&authenticity_token=' + AUTH_TOKEN
                               }).done(function() {
@@ -15,7 +15,7 @@
                               });" %>
   </p>
   <p>
-    <%= f.label :noteable_id, I18n.t('notes.noteables.Grouping') %>
+    <%= f.label :noteable_id, t('notes.noteables.Grouping') %>
     <%= f.select :noteable_id, @groupings.collect { |p| [p.group_name_with_student_user_names,p.id] } %>
   </p>
 <% end %>

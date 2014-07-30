@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('livepipe/tabs') %>
+  <%= javascript_include_tag 'AnnotationCategories/index' %>
 
   <%= render partial: 'boot',
              formats: [:js],
@@ -23,6 +23,16 @@
     <%= link_to_function t('upload'), 'modal_upload.open();' %>
   </div>
 </div>
+
+<%= render 'shared/flash_message' %>
+
+<% if @assignment.past_due_date? %>
+  <div class='notice'>
+    <%= t('past_due_date_warning') %>
+  </div>
+<% end %>
+
+<p id='criterion_error' class='warning' style='display: none;'></p>
 
 <div class='wrapper'>
   <div id='annotation_category_pane'>

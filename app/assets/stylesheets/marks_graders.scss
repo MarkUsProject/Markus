@@ -1,0 +1,16 @@
+@import 'common/core';
+
+@import 'common/columns';
+
+
+.col-left {
+  width: 40%;
+}
+
+.col-right {
+  width: 50%;
+}
+
+.col-center #icons {
+  left: 45%;
+}

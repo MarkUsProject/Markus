@@ -1,7 +1,5 @@
-@import 'constants';
-@import 'mixins';
+@import 'common/core';
 
-/* [TEMP] Rubrics styling */
 
 .wrapper {
   display: table;
@@ -29,7 +27,7 @@
 }
 
 #rubric_levels_pane {
-  @include border-radius(5px);
+  @include border-radius($radius);
   display: table;
   width: 100%;
   border: 1px solid $grey;

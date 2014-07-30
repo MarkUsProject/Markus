@@ -244,12 +244,13 @@
             '&authenticity_token=' + AUTH_TOKEN
     }).always(function() {
       document.getElementById('working').style.display = 'none';
+      document.getElementById('select_file_id').disabled = false;
     });
   }
 
   function load_submitted_file_and_focus(submission_file_id, focus_line) {
     // First, switch to the source code viewer tab
-    code_tab_menu.setActiveTab('code_holder');
+    jQuery('#code_pane').tabs({ active: 0 });
 
     if (document.getElementById('select_file_id').value == submission_file_id) {
       focus_source_code_line(focus_line);

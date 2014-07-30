@@ -1,0 +1,19 @@
+@import 'common/core';
+
+
+input {
+  display: inline-block;
+  width: auto;
+}
+
+table {
+  td {
+    padding-bottom: 1em;
+    padding-right: 1em;
+  }
+}
+
+// Edit an Admin
+h2 {
+  margin-bottom: 0.5em;
+}

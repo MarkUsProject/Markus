@@ -1,39 +1,41 @@
-<div id='add_new_section_dialog'></div>
+<aside class='dialog' id='add_new_section_dialog'></aside>
 
 <div class='section'>
   <%= form_for @user, as: :user do |f| %>
 
     <%= render 'shared/flash_message' %>
 
-    <div>
-      <%= raw(f.label(:user_name, I18n.t('user.user_name'))) %>
-      <%= raw(f.text_field :user_name) %>
-    </div>
+    <table>
+      <tr>
+        <td><%= raw(f.label(:user_name, t('user.user_name'))) %>:</td>
+        <td><%= raw(f.text_field :user_name) %></td>
+      </tr>
 
-    <div>
-      <%= raw(f.label(:last_name, I18n.t('user.last_name'))) %>
-      <%= raw(f.text_field :last_name) %>
-    </div>
+      <tr>
+        <td><%= raw(f.label(:last_name, t('user.last_name'))) %>:</td>
+        <td><%= raw(f.text_field :last_name) %></td>
+      </tr>
 
-    <div>
-      <%= raw(f.label(:first_name, I18n.t('user.first_name'))) %>
-      <%= raw(f.text_field :first_name) %>
-    </div>
+      <tr>
+        <td><%= raw(f.label(:first_name, t('user.first_name'))) %>:</td>
+        <td><%= raw(f.text_field :first_name) %></td>
+      </tr>
 
-    <div>
-      <%= raw(f.label(:grace_credits, I18n.t('user.grace_credits'))) %>
-      <%= raw(f.text_field :grace_credits) %>
-    </div>
+      <tr>
+        <td><%= raw(f.label(:grace_credits, t('user.grace_credits'))) %>:</td>
+        <td><%= raw(f.text_field :grace_credits) %></td>
+      </tr>
 
-    <div id='select_sections'>
-      <%= render partial: 'sections/select_sections',
-                 locals: { user: @user, new_student: true } %>
-    </div>
+      <tr id='select_sections'>
+        <%= render partial: 'sections/select_sections',
+                   locals: { user: @user, new_student: true } %>
+      </tr>
+    </table>
 
     <%= f.hidden_field :id %>
     <%= f.submit t(:submit),
                  name: 'submit',
-                 data: { disable_with: I18n.t('working') },
+                 data: { disable_with: t('working') },
                  class: 'button' %>
     <%= link_to t(:cancel), students_path(), class: 'button' %>
 

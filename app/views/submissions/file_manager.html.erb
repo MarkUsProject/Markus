@@ -1,12 +1,15 @@
-<%= javascript_include_tag 'file_manager' %>
-<%= javascript_include_tag 'FilterTable/FilterTable.js' %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'file_manager' %>
+  <%= javascript_include_tag 'FilterTable/FilterTable.js' %>
 
-<%= render partial: 'shared/navigation_warning',
-           formats: [:js],
-           handlers: [:erb] %>
-<%= render partial: 'file_manager_boot',
-           formats: [:js],
-           handlers: [:erb] %>
+  <%= render partial: 'shared/navigation_warning',
+             formats: [:js],
+             handlers: [:erb] %>
+
+  <%= render partial: 'file_manager_boot',
+             formats: [:js],
+             handlers: [:erb] %>
+<% end %>
 
 <div class='title_bar'>
   <h1>
@@ -16,7 +19,7 @@
 </div>
 
 <div id='current_time'>
-<%= render partial: 'server_time' %>
+  <%= render partial: 'server_time' %>
 
   <script>
     new PeriodicalExecuter(
@@ -33,7 +36,7 @@
   </script>
 </div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <% if flash[:submit_notice] -%>
     <p class='success'><%= flash[:submit_notice] %></p>
   <% end %>
@@ -142,9 +145,9 @@
       <% end %>
     </div>
 
-    <div class='clear'></div>
-
-    <table class='files' id='files'></table>
+    <div class='table'>
+      <table class='files' id='files'></table>
+    </div>
 
     <% if @grouping.is_valid? %>
       <div class='global_action'>

@@ -1,35 +1,55 @@
-<%= render partial: "shared/navigation_warning",
-  formats: [:js], handlers: [:erb] %>
+<%= render partial: 'shared/navigation_warning',
+           formats: [:js],
+           handlers: [:erb] %>
 
 <div class='title_bar'>
-  <h1><%= t('notes.edit.title') %></h1>
+  <h1><%= t('notes.edit.title')%></h1>
 </div>
 
-<div class="wrapLeft">
-  <%= form_for @note, as: :note, url: {action: 'update', id: @note.id} do |f| %>
-    <%= render partial: "shared/error_explanation", locals: { model: @note } %>
+<div class='wrapper'>
+  <%= form_for @note, as: :note, url: { action: 'update', id: @note.id } do |f| %>
+    <%= render partial: 'shared/error_explanation',
+               locals: { model: @note } %>
+
+    <table>
+      <tr>
+        <td>
+          <strong><%= t('notes.author')%>:</strong>
+        </td>
+        <td>
+          <%= @note.user.user_name %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <strong><%= t("notes.noteables.#{@note.noteable_type}") %>:</strong>
+        </td>
+        <td>
+          <%= @note.noteable.display_for_note %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <strong><%=t('notes.creation_time')%>:</strong>
+        </td>
+        <td>
+          <%= @note.format_date %>
+        </td>
+      </tr>
+    </table>
 
     <p>
-      <b><%=I18n.t('notes.author')%>:</b> <%= @note.user.user_name %>
+      <%= raw(f.label :notes_message,
+                      t('notes.note')) %>:
+      <%= raw(f.text_area :notes_message,
+                          rows: 10,
+                          onchange: 'set_onbeforeunload(true);') %>
     </p>
 
-    <p>
-      <b><%= I18n.t("notes.noteables.#{@note.noteable_type}") %>:</b> <%= @note.noteable.display_for_note %>
-    </p>
+    <%= f.submit t('save'),
+                 data: { disable_with: t('working') },
+                 onclick: 'set_onbeforeunload(false);' %>
+    <%= link_to t('cancel'), notes_path(), class: 'button' %>
 
-    <p>
-      <b><%=I18n.t('notes.creation_time')%>:</b> <%= @note.format_date %>
-    </p>
-
-    <p>
-      <b><%= I18n.t('notes.note') %>:</b>
-    </p>
-
-    <%= raw(f.text_area :notes_message, rows: 8, cols: 50,
-                        onchange: "set_onbeforeunload(true);") %>
-
-    <p>
-      <%= f.submit I18n.t('save'), :'data-disable-with' => I18n.t('working'), onclick: "set_onbeforeunload(false);" %>
-    </p>
   <% end %>
 </div>
