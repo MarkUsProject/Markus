@@ -28,8 +28,7 @@ ModalMarkus.prototype.close = function() {
 }
 
 
-/** Helper functions for adding/removing classes to DOM elements
-    via pure JavaScript. */
+/** Helper functions for managing DOM elements' classes via pure JavaScript. */
 
 Element.prototype.addClass = function(className) {
   if (this.classList)
