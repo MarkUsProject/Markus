@@ -15,8 +15,14 @@
   }
 }
 
-.global_actions {
+.global_action {
   margin-top: 2.5em;
+
+  input[type='button'],
+  input[type='submit'],
+  .button {
+    min-width: 8em;
+  }
 }
 
 #directory_selector {

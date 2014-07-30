@@ -598,6 +598,7 @@ ul.annotation_text_list {
     padding-right: 0.5em;
 
     @include breakpoint(small) {
+      margin-bottom: 1em;
       padding-right: 0;
     }
   }
