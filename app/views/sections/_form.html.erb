@@ -3,39 +3,41 @@
            locals: { model: @section } %>
 
 <%= form_for @section, as: :section do |f| %>
-  <fieldset>
-    <legend><%= t('section.legend') %></legend>
-    <%= raw(f.label :name, t('section.name')) %>
+  <p>
+    <%= raw(f.label :name, t('section.name')) %>:
     <%= raw(f.text_field :name) %>
-    <br>
-    <%= f.submit t(:save) , data: { disable_with: t('working') } %>
+  </p>
 
-    <% if controller.action_name == 'edit' %>
-      <% unless @students.empty? %>
+  <%= f.submit t(:save) , data: { disable_with: t('working') } %>
+
+  <% if controller.action_name == 'edit' %>
+    <% unless @students.empty? %>
+      <div class='table'>
         <table id='section_students'>
           <thead>
-          <tr>
-            <th><%= t('user.user_name') %></th>
-            <th><%= t('user.first_name') %></th>
-            <th><%= t('user.last_name') %></th>
-            <th></th>
-          </tr>
+            <tr>
+              <th><%= t('user.user_name') %></th>
+              <th><%= t('user.first_name') %></th>
+              <th><%= t('user.last_name') %></th>
+              <th><%= t('actions') %></th>
+            </tr>
           </thead>
           <% @students.each do |student| %>
             <tr>
-              <td><%= student.user_name%></td>
-              <td><%= student.last_name%></td>
-              <td><%= student.first_name%></td>
+              <td><%= student.user_name %></td>
+              <td><%= student.last_name %></td>
+              <td><%= student.first_name %></td>
               <td>
                 <%= link_to t(:edit),
-                            controller: 'students',
+                            {controller: 'students',
                             action: 'edit',
-                            id: student %>
+                            id: student},
+                            class: 'button inline-button' %>
               </td>
             </tr>
           <% end %>
         </table>
-      <% end %>
+      </div>
     <% end %>
-  </fieldset>
+  <% end %>
 <% end %>

@@ -4,10 +4,13 @@
 
 <div class='title_bar'>
   <h1><%= t(:manage_course_work) %></h1>
+
   <div class='heading_buttons'>
-    <%= link_to t(:download_csv_grade_report),
-                download_csv_grades_report_assignments_path if @current_user.admin? %>
-    <span class='menu_bar'></span>
+    <% if @current_user.admin? %>
+      <%= link_to t(:download_csv_grade_report),
+                  download_csv_grades_report_assignments_path%>
+      <span class='menu_bar'></span>
+    <% end %>
     <%= link_to_function t(:upload), 'modal_upload.open()' %>
     <span class='menu_bar'></span>
     <%= link_to_function t(:download), 'modal_download.open()' %>
@@ -35,7 +38,7 @@
 <% if @current_user.admin? %>
   <div class='wrapper'>
     <%= render partial: 'grade_entry_forms/list_manage',
-               locals: { action: 'edit' } -%>
+               locals: { action: 'edit' } %>
   </div>
 <% end %>
 
@@ -74,6 +77,7 @@
         <%= "<code>#{@default_fields.join(', ')}</code>".html_safe %>
       </span>
     </p>
+
     <%= form_tag upload_assignment_list_assignments_path,
                  { multipart: true } do %>
       <p>

@@ -17,6 +17,10 @@ fieldset {
   padding-top: 0;
 }
 
+small {
+  font-size: 0.9em;
+}
+
 table {
   td {
     padding-bottom: 1em;
@@ -24,8 +28,10 @@ table {
   }
 }
 
-small {
-  font-size: 0.9em;
+#noteable_type label,
+#noteable_selector label {
+  display: inline-block;
+  min-width: 10em;
 }
 
 label + textarea {

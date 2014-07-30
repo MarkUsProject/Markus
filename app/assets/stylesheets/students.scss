@@ -1,0 +1,24 @@
+@import 'common/core';
+
+@import 'common/notes_dialog';
+
+
+// Grace Period Deductions header
+h3 {
+  margin-top: $dimen-vertical;
+  margin-bottom: 0.25em;
+}
+
+table {
+  td {
+    padding-bottom: 1em;
+    padding-right: 1em;
+  }
+}
+
+#add_new_section_dialog {
+  h2 {
+    margin-bottom: 1em;
+    margin-top: 0;
+  }
+}

@@ -1,56 +1,56 @@
 <%= render 'shared/flash_message' %>
 
-<%= form_for criterion,
-	     as: :flexible_criterion,
-	     url: {action: 'update', id: criterion.id},
-		   html: {remote: true} do |f| %>
+<div class='float_right'>
+  <%= button_to t(:delete),
+      assignment_flexible_criterium_path(id: criterion.id),
+      confirm: t(:remove_criteria_message),
+      method: :delete,
+      class: 'delete',
+      title: t(:remove_criteria_title),
+      remote: true %>
+</div>
 
 <h2>
-  <span id="selected_criterion_name">
+  <span id='selected_criterion_name'>
     <%= criterion.flexible_criterion_name %>
   </span>
 </h2>
 
-<div class="error" id="criterion_<%=criterion.id%>_error" style="display:none;"></div>
+<%= form_for criterion,
+             as: :flexible_criterion,
+             url: { action: 'update', id: criterion.id },
+             html: { remote: true } do |f| %>
 
-<div class="main_flexible_criteria_edit">
+  <div class='error' id='criterion_<%= criterion.id %>_error' style='display:none;'></div>
 
-  <span id="<%="criterion_inputs_#{criterion.id}"%>">
-    <%= f.label :flexible_criterion_name, I18n.t(:criterion)%>
-    <%= f.text_field :flexible_criterion_name %>
-  </span>
-  <br>
-  <span id="criterion_max_edit_<%= criterion.id%>" class="criterion_max_edit">
-    <%= f.label :max, I18n.t('flexible_criteria.max')%>
-    <%= f.text_field :max %>
-  </span>
-  <br>
-  <span id="criterion_description_edit_<%= criterion.id %>" class="criterion_description_edit">
-  	<%= f.label :description, I18n.t('flexible_criteria.description') %>
-	<%= f.text_area :description, size: "50x6" %>
-  </span>
-  <br>
-  <span><%= t('flexible_criteria.description_hint') %></span>
-</div>
+  <div class='main_flexible_criteria_edit'>
 
-<%= f.submit t("flexible_criteria.save"), :'data-disable-with' => I18n.t('working')%>
+    <span id="<%= "criterion_inputs_#{criterion.id}" %>">
+      <%= f.label :flexible_criterion_name, t(:criterion)%>
+      <%= f.text_field :flexible_criterion_name %>
+    </span>
+    <br>
+    <span id='criterion_max_edit_<%= criterion.id %>' class='criterion_max_edit'>
+      <%= f.label :max, t('flexible_criteria.max')%>
+      <%= f.text_field :max %>
+    </span>
+    <br>
+    <span id='criterion_description_edit_<%= criterion.id %>' class='criterion_description_edit'>
+      <%= f.label :description, t('flexible_criteria.description') %>
+      <%= f.text_area :description, size: '50x6' %>
+    </span>
+    <br>
+    <span><%= t('flexible_criteria.description_hint') %></span>
+  </div>
+
+  <%= f.submit t('flexible_criteria.save'), data: { disable_with: t('working') } %>
 <% end %>
 
 <% if !criterion.description.nil? && !criterion.description.empty? %>
-  <div id="flexible_criteria_preview">
+  <div id='flexible_criteria_preview'>
     <h3><%= t(:preview) %></h3>
-    <div id="criterion_description_preview_<%= criterion.id %>" class="criterion_description_preview">
+    <div id='criterion_description_preview_<%= criterion.id %>' class='criterion_description_preview'>
       <%= sanitize(criterion.description) %>
     </div>
   </div>
 <% end %>
-
-<div class="float_right">
-    <%= button_to I18n.t(:delete),
-        assignment_flexible_criterium_path(id: criterion.id),
-        confirm: I18n.t(:remove_criteria_message),
-        method: :delete,
-        class: 'delete',
-        title: I18n.t(:remove_criteria_title),
-        remote: true %>
-</div>

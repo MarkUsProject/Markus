@@ -1,0 +1,45 @@
+@import 'common/core';
+
+
+fieldset {
+  @include box-shadow(none);
+  margin-top: 2em;
+
+  div {
+    margin: 0.5em 0;
+  }
+
+  // Save button in form
+  & + input[type='submit'] {
+    margin-top: 1.5em;
+  }
+
+  // "Specify column names and totals:"
+  h4 {
+    margin-top: 1.5em;
+  }
+
+  #grade_entry_items {
+    margin-top: 0;
+
+    fieldset.grade_entry_item {
+      margin-top: 0;
+    }
+  }
+}
+
+label {
+  display: inline-block;
+  min-width: 12em;
+  margin-top: 5px;
+}
+
+// Column "Out Of" labels
+input + label {
+  min-width: 0;
+}
+
+// For Hide/Show toggle in the grades view for the Total column
+.hideTotal .total_value {
+  display: none;
+}
