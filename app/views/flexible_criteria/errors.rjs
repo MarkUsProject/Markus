@@ -1,2 +1,0 @@
-page.replace_html "criterion_#{@criterion.id}_error", partial: 'errors_list', locals: {criterion: @criterion}
-page.show "criterion_#{@criterion.id}_error"

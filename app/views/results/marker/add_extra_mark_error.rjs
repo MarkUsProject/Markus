@@ -1,2 +1,0 @@
-page.replace_html 'new_extra_mark_error', partial: 'results/marker/extra_mark_errors_list', locals: {extra_mark: @extra_mark}
-page.show 'new_extra_mark_error'

@@ -58,13 +58,13 @@
              id: "global_action_form", remote: true do %>
 
   <script>
-    // $('global_action_form').observe('ajax:after', function(evt, status, data, xhr) {
-    //   thinking();
-    // });
+    jQuery(document).ajaxStart(function() {
+      thinking();
+    });
 
-    // $('global_action_form').observe('ajax:success', function(evt, status, data, xhr) {
-    //   done_thinking();
-    // });
+    jQuery(document).ajaxSuccess(function() {
+      done_thinking();
+    });
   </script>
 
   <%= hidden_field_tag 'submit_type', 'global_action', id: 'submit_type' %>

@@ -1,37 +1,44 @@
-<div id="remark_request">
+<div id='remark_request'>
   <% if assignment.past_remark_due_date? %>
-     <% if student_can_edit_remark_request(submission) %>
-       <p class='notice'><%= I18n.t("marker.past_remark_due_date") %></p>
-     <% else %>
-      <div id="remark_request_show_results">
+    <% if student_can_edit_remark_request(submission) %>
+      <p class='notice'><%= t('marker.past_remark_due_date') %></p>
+    <% else %>
+      <div id='remark_request_show_results'>
         <%= submission.remark_request %>
-          <div id="overall_comments_show">
-            <h3><%= I18n.t("marker.overall_comments") %></h3>
-              <%= result.overall_comment %>
+          <div id='overall_comments_show'>
+            <h3><%= t('marker.overall_comments') %></h3>
+            <%= result.overall_comment %>
           </div>
       </div>
-     <% end %>
+    <% end %>
   <% else %>
-    <h3><%= I18n.t("marker.remark_instructions") %></h3>
+    <h3><%= t('marker.remark_instructions') %></h3>
     <%= assignment.remark_message %>
-    <h3><%= I18n.t("marker.remark_request") %></h3>
+
+    <h3><%= t('marker.remark_request') %></h3>
     <% if student_can_edit_remark_request(submission) %>
-      <%= I18n.t("marker.remark_due_date") %>:
+      <%= t('marker.remark_due_date') %>:
       <% if assignment.remark_due_date %>
-        <%= I18n.l(assignment.remark_due_date, format: :long_date) %>
+        <%= l(assignment.remark_due_date, format: :long_date) %>
       <% else %>
-        <%= I18n.t("marker.no_remark_due_date") %>
+        <%= t('marker.no_remark_due_date') %>
       <% end %>
-      <%= render partial: 'results/student/remark_request_form', locals: {submission: submission, assignment: assignment} %>
-      <p class='information'><%= I18n.t("marker.about_remark_save") %>
-            <%= I18n.t("marker.about_remark_submission") %>
-            <%= I18n.t("marker.cancel_remark_to_change") %></p>
+
+      <%= render partial: 'results/student/remark_request_form',
+                 locals: { submission: submission,
+                           assignment: assignment } %>
+
+      <p class='information'>
+        <%= t('marker.about_remark_save') %>
+        <%= t('marker.about_remark_submission') %>
+        <%= t('marker.cancel_remark_to_change') %>
+      </p>
     <% else %>
-      <div id="remark_request_show">
+      <div id='remark_request_show'>
         <%= submission.remark_request %>
-          <div id="overall_comments_show">
-            <h3><%= I18n.t("marker.overall_comments") %></h3>
-              <%= result.overall_comment %>
+          <div id='overall_comments_show'>
+            <h3><%= t('marker.overall_comments') %></h3>
+            <%= result.overall_comment %>
           </div>
       </div>
     <% end %>

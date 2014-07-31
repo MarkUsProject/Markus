@@ -23,8 +23,9 @@ class AutomatedTestsController < ApplicationController
       Process.detach(child_pid) unless child_pid.nil?
     end
     render :test_replace,
-           locals: {test_result_files: @test_result_files,
-                       result: @result}
+           format: :js,
+           locals: { test_result_files: @test_result_files,
+                     result: @result }
   end
 
 

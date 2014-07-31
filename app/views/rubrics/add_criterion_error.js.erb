@@ -1,2 +1,5 @@
-jQuery('#new_criterion_error').html("<%= escape_javascript(render partial: 'new_rubric_criterion_errors', locals: {errors: @errors}).html_safe %>");
-jQuery('#new_criterion_error').show();
+document.getElementById('new_criterion_error').innerHTML =
+  "<%= escape_javascript(render partial: 'new_rubric_criterion_errors',
+                                locals: { errors: @errors }).html_safe %>";
+
+document.getElementById('new_criterion_error').style.display = '';

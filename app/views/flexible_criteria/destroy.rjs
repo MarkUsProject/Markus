@@ -1,2 +1,0 @@
-page.replace_html "flexible_criteria_pane", partial: "flexible_criteria/flexible_criteria_pane"
-page.replace_html "flexible_edition_pane_menu", partial: "flexible_criteria_manager_help"

@@ -61,16 +61,15 @@
     text-align: center;
 
     img {
+      image-rendering: crisp-edges;
       height: auto;
       width: 60%;
     }
   }
 
-  .login-error {
-    padding: 2em 1em 0;
-
-    .error {
-      text-align: center;
-    }
+  .login-error .error {
+    margin: 2em auto;
+    text-align: center;
+    width: 90%;
   }
 }

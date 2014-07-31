@@ -3,18 +3,17 @@
     <div id='left-pane'>
       <div class='tab-pane' id='code_pane'>
         <ul>
-           <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
-           <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
-           <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
-              <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
-           <% end %>
+          <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
+          <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
+          <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
+            <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
+          <% end %>
         </ul>
 
         <div id='code_holder'>
           <%# For image/PDF annotations %>
           <div id='sel_box'></div>
 
-          <div class='clear'></div>
           <div id='codeviewer'></div>
         </div>
 
