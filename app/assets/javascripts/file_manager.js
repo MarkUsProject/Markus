@@ -43,17 +43,21 @@ function enableDisableSubmit() {
   jQuery('tbody').each(function(i) {
     var oRows = this.getElementsByTagName('tr');
     var iRowCount = oRows.length;
-    if (iRowCount >0) {
+    if (iRowCount > 0) {
       hasRows = true;
     }
   });
   if (hasRows) {
     jQuery('#submit_form input[type=submit]').each(function(i) {
-      jQuery(this).find('input, textarea').each(function(i) { jQuery(this).removeAttr("readonly"); });
+      jQuery(this).find('input, textarea').each(function(i) {
+        jQuery(this).removeAttr("readonly");
+      });
     });
   } else {
     jQuery('#submit_form input[type=submit]').each(function(i) {
-      jQuery(this).find('input, textarea').each(function(i) { jQuery(this).attr("readonly","readonly"); });
+      jQuery(this).find('input, textarea').each(function(i) {
+        jQuery(this).attr("readonly","readonly");
+      });
     });
   }
 }
@@ -82,8 +86,7 @@ function normalize_filename(new_file_name) {
   return new_file_name;
 }
 
-function populate(files_json){
-  // var files = files_json.evalJSON();
+function populate(files_json) {
   files_table.populate(files_json).render();
   enableDisableSubmit();
 }
