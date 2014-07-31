@@ -211,8 +211,8 @@ class GradersController < ApplicationController
               # Gets criterion associations from params then
               # gets their criterion ids so we can update the
               # group counts.
-              criterion_associations = params[:criterion_associations]
-              criterion_ids = criterion_grader_ids.map {|criterion_assoc|
+              criterion_associations = CriterionTaAssociation.find(params[:criterion_associations])
+              criterion_ids = criterion_associations.map {|criterion_assoc|
                 criterion_assoc.criterion
               }.uniq
               unassign_graders_from_criteria(criterion_associations, criterion_ids)

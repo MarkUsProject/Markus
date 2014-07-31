@@ -137,7 +137,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @new_name = 'NeW'
         post_as @admin,
                 :rename_group, {:assignment_id => @assignment.id,
-          :id => @grouping.id, :new_groupname => @new_name}
+          :id => @grouping.id, :new_groupname => @new_name, :format => 'js'}
         assert_not_nil assigns :assignment
         assert_not_nil assigns :grouping
         assert_not_nil assigns :group
@@ -148,7 +148,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'with existing name' do
         @new_name = Grouping.make.group.group_name
         post_as @admin, :rename_group, {:assignment_id => @assignment.id,
-          :id => @grouping.id, :new_groupname => @new_name}
+          :id => @grouping.id, :new_groupname => @new_name, :format => 'js'}
         assert_response :success
         assert_equal @grouping.group.group_name, assigns(:group).group_name
       end
@@ -157,14 +157,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
     should 'POST on :valid_grouping' do
       post_as @admin, :valid_grouping, {:assignment_id => @assignment.id,
         :grouping_id => @grouping.id}
-      assert_not_nil assigns :assignment
       assert_response :success
     end
 
     should 'POST on :invalid_grouping' do
       post_as @admin, :invalid_grouping, {:assignment_id => @assignment.id,
         :grouping_id => @grouping.id}
-      assert_not_nil assigns :assignment
       assert_response :success
     end
 
