@@ -3,10 +3,18 @@
 
 fieldset {
   @include box-shadow(none);
-  margin-top: 2em;
 
   // Save button in assignment form
   & + input[type='submit'] {
     margin-top: 1.5em;
   }
+
+  fieldset legend span {
+    padding-top: 0;
+    top: 0.5em;
+  }
+}
+
+#test_properties {
+  margin-top: 2em;
 }
