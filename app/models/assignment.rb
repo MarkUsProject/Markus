@@ -45,7 +45,8 @@ class Assignment < ActiveRecord::Base
   validates_associated :assignment_files
 
   validates_presence_of :repository_folder
-  validates_presence_of :short_identifier, :group_min
+  validates_presence_of :short_identifier
+  validates_presence_of :group_min
   validates_uniqueness_of :short_identifier, case_sensitive: true
 
   validates_numericality_of :group_min,
@@ -64,9 +65,9 @@ class Assignment < ActiveRecord::Base
 
   # For those, please refer to issue #1126
   # Because of app/views/assignments/_list_manage.html.erb line:13
-  validates :description, presence: true
+  validates_presence_of :description
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
-  validates :assignment_stat, presence: true
+  validates_presence_of :assignment_stat
 
   # since allow_web_submits is a boolean, validates_presence_of does not work:
   # see the Rails API documentation for validates_presence_of (Model
@@ -82,7 +83,7 @@ class Assignment < ActiveRecord::Base
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
-  validates :due_date, date: true
+  validate :due_date, date: true
   after_save :update_assigned_tokens
 
   # Set the default order of assignments: in ascending order of due_date

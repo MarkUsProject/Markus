@@ -230,7 +230,8 @@ class AssignmentsController < ApplicationController
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, I18n.t('assignment.error',
                                               message: e.message))
-        render :edit, id: @assignment.id
+        redirect_to action: 'edit', id: params[:id]
+        # render :edit, id: params[:id]
       return
     end
 
@@ -238,7 +239,9 @@ class AssignmentsController < ApplicationController
       flash[:success] = I18n.t('assignment.update_success')
       redirect_to action: 'edit', id: params[:id]
     else
-      render :edit, id: @assignment.id
+      flash[:error] = @assignment.errors.full_messages.to_sentence
+      redirect_to action: 'edit', id: params[:id]
+      # render :edit, id: params[:id]
     end
   end
 
@@ -264,6 +267,7 @@ class AssignmentsController < ApplicationController
   def create
     @assignment = Assignment.new
     @assignment.build_assignment_stat
+
     @assignment.transaction do
       begin
         @assignment = process_assignment_form(@assignment, params)
@@ -273,7 +277,9 @@ class AssignmentsController < ApplicationController
       unless @assignment.save
         @assignments = Assignment.all
         @sections = Section.all
-        render :new
+        flash[:error] = @assignment.errors.full_messages.to_sentence
+        redirect_to action: :new
+        # render :new
         return
       end
       if params[:persist_groups_assignment]

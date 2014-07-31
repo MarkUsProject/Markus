@@ -37,25 +37,6 @@
     }
   }
 
-  function check_fields(elems) {
-    var empty = false;
-    jQuery(elems).each(function() {
-      if (this.value === '') {
-        empty = true;
-      }
-    });
-
-    jQuery('input[type="submit"]').prop('disabled', empty);
-  }
-
-  function check_required_fields() {
-    check_fields('input[required');
-  }
-
-  function check_rule_periods() {
-    check_fields('.period input');
-  }
-
   jQuery(document).ready(function() {
     // Set locale for language localisation with Moment.js
     moment.lang(document.getElementById('locale').value);
@@ -90,25 +71,6 @@
                         document.getElementById('section_due_date_' + (i+1)),
                         format);
     });
-
-    // Handle required fields
-    check_required_fields();
-    jQuery('input[required]').change(check_required_fields)
-                             .keyup(check_required_fields);
-
-    jQuery('.period input')
-
-    if (jQuery('#grace_period_submission_rule').is(':checked')) {
-      jQuery('#grace_periods .period input').prop('disabled', false);
-    }
-
-    if (jQuery('#penalty_decay_period_submission_rule').is(':checked')) {
-      jQuery('#penalty_decay_periods .period input').prop('disabled', false);
-    }
-
-    if (jQuery('#penalty_period_submission_rule').is(':checked')) {
-      jQuery('#penalty_periods .period input').prop('disabled', false);
-    }
 
     // Handle date/time pickers
     jQuery('.section_due_date').each(function(i) {

@@ -18,9 +18,6 @@
 
 <%= form_for @assignment do |f| %>
 
-  <%= render partial: 'shared/error_explanation',
-             locals: { model: @assignment } %>
-
   <%# The locale format string used for localising the date/time %>
   <%= raw(f.text_field nil,
                        id: 'format',
