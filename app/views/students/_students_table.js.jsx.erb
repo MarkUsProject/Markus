@@ -184,7 +184,7 @@
         optionalInputBox =
           <input type='text' value={this.state.grace_credits_input} onChange={this.graceCreditsChanged} />
       } else if (this.state.select_value == 'update_section') {
-        if (this.props.sections) {
+        if (this.props.sections.length > 0) {
           var section_options = [];
           for (var i = 0; i < this.props.sections.length; i++) {
             var section = this.props.sections[i];
@@ -214,7 +214,7 @@
               <option value='give_grace_credits'><%= j raw I18n.t(:'give_grace_credits') %></option>
               <option value='update_section'><%= j raw I18n.t(:'add_section') %></option>
               <option value='hide'><%= j raw I18n.t(:'hide_students') %></option>
-              <option value='unhide'><%= j raw I18n.t(:'section.no_sections') %></option>
+              <option value='unhide'><%= j raw I18n.t(:'unhide_students') %></option>
             </select>
             {optionalInputBox}
             {applyButton}
@@ -245,7 +245,7 @@
           section_id: ''
         });
       } else if (event.target.value == 'update_section') {
-        if (this.props.sections) {
+        if (this.props.sections.length > 0) {
           var initial_section = this.props.sections[0].id;
           this.setState({
             grace_credits_input: '0',
