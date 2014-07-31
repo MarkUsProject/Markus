@@ -20,10 +20,25 @@ fieldset {
   }
 
   #grade_entry_items {
-    margin-top: 0;
+    border-top: 1px solid $grey !important;
+    margin-top: 1em;
 
     fieldset.grade_entry_item {
+      border-bottom: 1px solid $grey !important;
       margin-top: 0;
+
+      legend span {
+        top: 0;
+      }
+
+      p {
+        margin-left: 0.5em;
+      }
+
+      // Delete link
+      a {
+        display: block;
+      }
     }
   }
 }
