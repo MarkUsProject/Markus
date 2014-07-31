@@ -79,12 +79,10 @@
       }.bind(this));
 
       return (
-        <div className={'colLeftGraders'} >
-          <div className={'wrapLeftGroups'}>
+        <div className={'col-left'} >
             <Table data={graders_data}
             columns={columns}
             search_placeholder={'<%= j raw I18n.t('search_graders') %>'} />
-          </div>
         </div>
       );
     }

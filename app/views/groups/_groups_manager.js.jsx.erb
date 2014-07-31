@@ -73,7 +73,7 @@
     },
     render: function() {
       return (
-        <div>
+        <div className='columns'>
           <ErrorDiv error={this.state.error} />
           <GroupsStudentsTable students={this.state.students}
             selected_students={this.state.selected_students}
@@ -157,15 +157,13 @@
       }.bind(this));
 
       return (
-        <div className={'colLeftGroups'} >
-          <div className={'wrapLeftGroups'}>
-            <Table data={students_data}
-            columns={columns}
-            filters={filters}
-            selectable={true}
-            onSelectedRowsChange={this.props.onSelectedStudentsChange}
-            search_placeholder={'<%= j raw I18n.t('students.search_students') %>'} />
-          </div>
+        <div className={'col-left'} >
+          <Table data={students_data}
+                 columns={columns}
+                 filters={filters}
+                 selectable={true}
+                 onSelectedRowsChange={this.props.onSelectedStudentsChange}
+                 search_placeholder={'<%= j raw I18n.t('students.search_students') %>'} />
         </div>
       );
     }
@@ -197,7 +195,7 @@
       },
       {
         id: 'links',
-        content: <div></div>,
+        content: '<%= j raw I18n.t('actions') %>',
         sortable: false,
         searchable: false
       },
@@ -265,14 +263,12 @@
       }.bind(this));
 
       return (
-        <div className={'colRightGroups'}>
+        <div className={'col-right'}>
           <AddGroupButton refresh={this.props.refresh} />
-          <div className={'wrapRightGroups'}>
             <Table data={groups_data} columns={columns} filters={filters} 
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
               search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
-          </div>
         </div>
       );
     }
@@ -310,7 +306,7 @@
     },
     render: function() {
       return (
-        <div className={'centreColumn'}>
+        <div className={'col-center'}>
           <div id='icons'>
             <img id='assign'
               src='/assets/add_arrow.png'

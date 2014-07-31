@@ -158,7 +158,7 @@ var Table = React.createClass({displayName: 'Table',
     }
 
     return (
-      React.DOM.div(null, 
+      React.DOM.div( {className: 'table' },
         TableFilter( {filters:this.props.filters,
           current_filter:this.state.filter, 
           onFilterChange:this.synchronizeFilter,

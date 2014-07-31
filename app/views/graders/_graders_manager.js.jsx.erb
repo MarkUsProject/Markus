@@ -396,8 +396,7 @@
       }.bind(this));
 
       return (
-        <div className={'colRightGroups'}>
-          <div className={'wrapRightGroups'}>
+        <div className={'col-right'}>
             <div id='group-tabs' className='tab-pane'>
               <ul>
                 <li><a id='groups_table' onClick={this.tableChanged} href='#groups-tab'><span>Groups</span></a></li>
@@ -413,7 +412,6 @@
                  filters={null} filter_type={false}
                  search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
             </div>
-          </div>
           </div>
         </div>);
     }
@@ -547,12 +545,10 @@
       }.bind(this));
 
       return (
-       <div className={'colRightGroups'}>
-        <div className={'wrapRightGroups'}>
-            <Table data={groups_data} columns={columns}
-              filters={filters} filter_type={true}
-              search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
-          </div>
+       <div className={'col-right'}>
+        <Table data={groups_data} columns={columns}
+               filters={filters} filter_type={true}
+               search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
         </div>
       );
     }
