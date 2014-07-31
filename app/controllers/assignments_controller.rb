@@ -217,7 +217,7 @@ class AssignmentsController < ApplicationController
       @oldcriteria = @assignment.marking_scheme_type
       @newcriteria = params[:assignment][:marking_scheme_type]
       if @oldcriteria != @newcriteria and !@assignment.get_criteria.nil?
-        #TODO use @assignment.criteria.destroy_all when the refactor of
+        # TODO use @assignment.criteria.destroy_all when the refactor of
         # criteria structure finished
         @assignment.get_criteria.each do |criterion|
           criterion.destroy
@@ -231,7 +231,7 @@ class AssignmentsController < ApplicationController
         @assignment.errors.add(:base, I18n.t('assignment.error',
                                               message: e.message))
         redirect_to action: 'edit', id: params[:id]
-        # render :edit, id: params[:id]
+        # render :edit, id: @assignment.id
       return
     end
 
@@ -241,7 +241,7 @@ class AssignmentsController < ApplicationController
     else
       flash[:error] = @assignment.errors.full_messages.to_sentence
       redirect_to action: 'edit', id: params[:id]
-      # render :edit, id: params[:id]
+      # render :edit, id: @assignment.id
     end
   end
 
