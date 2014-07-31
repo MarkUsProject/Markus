@@ -2,7 +2,6 @@ require 'rugged'
 require 'gitolite'
 require 'digest/md5'
 require 'rubygems'
-#require 'byebug'
 
 require File.join(File.dirname(__FILE__),'repository') # load repository module
 
@@ -66,13 +65,17 @@ module Repository
       repo = Rugged::Repository.init_at(connect_string)
 
       # Do an initial commit with a README to create index.
-      file_path_for_readme = File.join(repo.workdir, "README.md")
-      File.open(file_path_for_readme, 'w+') { |readme| readme.write("Initial commit.") }
-      oid = Rugged::Blob.from_workdir(repo, "README.md")
+      file_path_for_readme = File.join(repo.workdir, 'README.md')
+      File.open(file_path_for_readme, 'w+') do |readme|
+        readme.write('Initial commit.')
+      end
+      oid = Rugged::Blob.from_workdir(repo, 'README.md')
       index = repo.index
-      index.add(path: "README.md", oid: oid, mode: 0100644)
-      index.write()
-      Rugged::Commit.create(repo, commit_options(repo, "Initial commit and add readme."))
+      index.add(path: 'README.md', oid: oid, mode: 0100644)
+      index.write
+      Rugged::Commit.create(repo,
+                            commit_options(repo,
+                                           'Initial commit and add readme.'))
       return true
     end
 
@@ -180,7 +183,6 @@ module Repository
       # Given a single object, or an array of objects of type
       # RevisionFile, try to find the file in question, and
       # return it as a string
-      repo = @repos
       revision = get_revision(file.from_revision)
       blob = revision.find_object_at_path(file.path)
 
@@ -568,15 +570,12 @@ module Repository
           raise UserNotFound.new(user_id + " not found")
         end
       end
-
-      #else
-      #  raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
-      #end
-
     end
 
     # Helper method to translate internal permissions to git
     # permissions
+    # If we want the directory creation to have its own commit,
+    # we have to add a dummy file in that directory to do it.
     def self.__translate_to_git_perms(permissions)
       case (permissions)
       when Repository::Permission::READ
@@ -606,13 +605,6 @@ module Repository
     ####################################################################
 
     private
-
-    # Returns the most recent revision of the repository. If a path is specified,
-    # the youngest revision is returned for that path; if a revision is also specified,
-    # the function will return the youngest revision that is equal to or older than the one passed.
-    #
-    # This will only work for paths that have not been deleted from the repository.
-    # GIT NOTE: This will just return the latest hash for now
     def latest_revision_number(path = nil, revision_number = nil)
       return get_revision_number(@repos.head.target)
     end
@@ -672,11 +664,13 @@ module Repository
       oid = Rugged::Blob.from_workdir(repo, path)
       index = repo.index
       index.add(path: path, oid: oid, mode: 0100644)
-      index.write()
-      Rugged::Commit.create(repo, commit_options(repo, "Adding file"))
+      index.write
+      Rugged::Commit.create(repo, commit_options(repo, 'Adding file'))
     end
 
     # Make a directory if it's not already present.
+    # If we want the directory creation to have its own commit,
+    # we have to add a dummy file in that directory to do it.
     def make_directory(path)
       # Turn "path" into absolute path for repo
       path = File.expand_path(path, @repos_path)
@@ -794,9 +788,9 @@ module Repository
         # for in `level` and then looks it up to return
         # a Rugged object (either a tree or a blob)
         current_object = @repo.lookup(
-          current_object.find { |obj|
+          current_object.detect do |obj|
             obj[:name] == level
-          }[:oid])
+          end[:oid])
       end
 
       # This returns the actual object.

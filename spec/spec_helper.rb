@@ -1,7 +1,13 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
+require 'factory_girl'
+Rails.env = 'test'
+# Loads lib repo stuff.
+require 'repo/repository'
+require 'repo/git_repository'
+require 'repo/subversion_repository'
+
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -43,4 +49,10 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = 'random'
+
+  # Clean up any created file folders
+  config.after(:all) do
+    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/test_repo"])
+  end
+
 end
