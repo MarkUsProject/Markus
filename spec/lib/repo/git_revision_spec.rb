@@ -1,6 +1,7 @@
 require 'spec_helper'
+
 describe Repository::GitRevision do
-  context 'with a repo' do
+  context 'with a git repo' do
     # Set up git creation config...
     config = {}
     config['REPOSITORY_STORAGE'] = '#{::Rails.root}/data/test/repos/test_repo'
@@ -18,21 +19,21 @@ describe Repository::GitRevision do
       transaction.add('test', 'testdata')
       repo.commit(transaction)
 
-      it 'should retrieve an object with the same name from the repo' do
+      it 'retrieves an object with the same name from the repo' do
         # Get latest revision's file in the working directory
         revision = repo.get_latest_revision
         files = revision.files_at_path('')
 
-        expect(files).to include('test')
+        expect(files).to include 'test'
       end
 
-      it 'should retrieve an object of type Repository::RevisionFile' do
+      it 'retrieves an object of type Repository::RevisionFile' do
         revision = repo.get_latest_revision
         files = revision.files_at_path('')
         test_file = files['test']
 
         # It should be the right type
-        expect(test_file).to be_a(Repository::RevisionFile)
+        expect(test_file).to be_a Repository::RevisionFile
       end
     end
 
@@ -42,29 +43,28 @@ describe Repository::GitRevision do
       transaction.add('testdir/test2', 'testdata')
       repo.commit(transaction)
 
-      it 'should retrieve an object with the same name from the repo' do
+      it 'retrieves an object with the same name from the repo' do
         revision = repo.get_latest_revision
         directories = revision.directories_at_path('')
-        expect(directories).to include('testdir')
+        expect(directories).to include 'testdir'
       end
 
-      it 'should retrieve an object of type Repository::RevisionDirectory' do
+      it 'retrieves an object of type Repository::RevisionDirectory' do
         revision = repo.get_latest_revision
         directories = revision.directories_at_path('')
         test_dir = directories['testdir']
 
-        expect(test_dir).to be_a(Repository::RevisionDirectory)
+        expect(test_dir).to be_a Repository::RevisionDirectory
       end
     end
 
     describe '#stringify' do
-      it 'should get the correct file data' do
+      it 'gets the correct file data' do
         revision = repo.get_latest_revision
         files = revision.files_at_path('')
         test_file = files['test']
 
-        expect(repo.stringify(test_file)).to eq('testdata')
-
+        expect(repo.stringify(test_file)).to eq 'testdata'
       end
     end
   end
