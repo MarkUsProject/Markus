@@ -175,7 +175,7 @@
       var value = event.currentTarget.checked;
       var group_student_id = parseInt(event.currentTarget.getAttribute('id'));
       var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
-      if (value == true) {
+      if (value) {
         new_selected_students_in_groups.push(group_student_id);
       } else {
         new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
@@ -253,7 +253,7 @@
           members.push(<div key={group.members[i].id}>
             <input id={group.members[i].id}
               type='checkbox'
-              checked={this.props.selected_students_in_groups.indexOf(group.members[i].id) !== -1 ? true : false}
+              checked={this.props.selected_students_in_groups.indexOf(group.members[i].id) !== -1}
               onChange={this.studentCheckboxClicked} />{group.members[i].user_name}</div>);
         }
         g['members'] = members;

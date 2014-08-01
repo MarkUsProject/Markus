@@ -1,7 +1,7 @@
 module GradersHelper
   def get_graders_table_info_no_criteria(assignment)
     graders = Ta.all
-    graders_table_info = graders.map do |grader|
+    graders.map do |grader|
       g = grader.attributes
       g[:full_name] = "#{grader.first_name} #{grader.last_name}"
       g[:groups] = grader.get_membership_count_by_assignment(assignment)
@@ -30,7 +30,7 @@ module GradersHelper
 
   def get_graders_table_info_with_criteria(assignment)
     graders = Ta.all
-    graders_table_info = graders.map do |grader|
+    graders.map do |grader|
       g = grader.attributes
       g[:full_name] = "#{grader.first_name} #{grader.last_name}"
       g[:groups] = grader.get_membership_count_by_assignment(assignment)
@@ -48,6 +48,7 @@ module GradersHelper
     end
   end
 
+  # TODO: Refactor this method (split it up)
   def get_groups_table_info_with_criteria(assignment)
     groupings = groupings_with_assoc(assignment)
     groups_table_info = groupings.map do |grouping|

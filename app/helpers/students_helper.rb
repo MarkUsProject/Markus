@@ -5,7 +5,7 @@ module StudentsHelper
                       .all(order: 'user_name')
     # Gets extra info needed for table, such as grace credits remaining,
     # section name, links to edit, notes, etc.
-    students_table_info = students.map do |student|
+    students.map do |student|
       s = student.attributes
       s[:edit_link] = url_for(
         controller: 'students',

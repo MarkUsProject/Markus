@@ -6,7 +6,7 @@ module SummariesHelper
                                               :grace_period_deductions,
                                               {current_submission_used: :results},
                                               {accepted_student_memberships: :user})
-    summaries_table_info = groupings.map do |grouping|
+    groupings.map do |grouping|
       g = grouping.attributes
       g[:class_name] = get_any_tr_attributes(grouping)
       g[:group_name] = get_grouping_group_name(assignment, grouping)

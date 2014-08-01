@@ -39,7 +39,7 @@
       this.setState({error: error_msg});
     },
     criteriaCheckboxClicked: function(event) {
-      var dataLoad = { value: event.currentTarget.checked};
+      var dataLoad = {value: event.currentTarget.checked};
       jQuery.ajax({
         method: 'POST',
         url: 'graders/set_assign_criteria',
@@ -53,18 +53,20 @@
       this.refresh();
     },
     refresh: function() {
-      //must collect data for both tables
-      //1st element: true false (use criteria?_)
-      //2nd elemnet: info for graders table
-      //3rd element: info for groups table + criteria(if)
+      // Collects data as an array from the server to populate the tables
+      // 1st element: Boolean that is true when grading with criteria
+      //              and false when not
+      // 2nd element: Sections info
+      // 3nd element: Info for the graders table
+      // 4rd element: Info for groups table + criteria (if we are using crit.)
+      //              this is actually a hash.
       jQuery.ajax({
         method: 'GET',
         url: 'graders',
         dataType: 'json',
         success: function(data) {
-          console.log(data);
-          // if not assigning graders to criteria,
-          // make current_table groups_table (always)
+          // If not assigning graders to criteria,
+          // make current_table groups_table
           if (!data[0]) {
             this.setState({current_table: 'groups_table'});
           }
@@ -80,27 +82,27 @@
     render: function() {
       var to_render = [];
       to_render.push(<input type='checkbox'
-            checked={this.state.assign_to_criteria}
-            onChange={this.criteriaCheckboxClicked}>Assign graders to criteria</input>);
+        checked={this.state.assign_to_criteria}
+        onChange={this.criteriaCheckboxClicked}>Assign graders to criteria</input>);
       to_render.push(<ErrorDiv error={this.state.error} />);
       to_render.push(<GradersTable graders={this.state.graders}
         selected_graders={this.state.selected_graders}
         onSelectedGradersChange={this.updateSelectedGraders} />);
-        to_render.push(<GradersActionsColumn
-          refresh={this.refresh}
-          current_table={this.state.current_table}
-          selected_graders={this.state.selected_graders}
-          selected_groups={this.state.selected_groups}
-          selected_criteria={this.state.selected_criteria}
-          selected_graders_in_groups={this.state.selected_graders_in_groups}
-          selected_graders_in_criteria={this.state.selected_graders_in_criteria}
-          updateSelectedGraders={this.updateSelectedGraders}
-          updateSelectedGroups={this.updateSelectedGroups}
-          updateSelectedCriteria={this.updateSelectedCriteria}
-          updateSelectedGradersInGroups={this.updateSelectedGradersInGroups}
-          updateSelectedGradersInCriteria={this.updateSelectedGradersInCriteria}
-          setError={this.setError}
-         />);
+      to_render.push(<GradersActionsColumn
+        refresh={this.refresh}
+        current_table={this.state.current_table}
+        selected_graders={this.state.selected_graders}
+        selected_groups={this.state.selected_groups}
+        selected_criteria={this.state.selected_criteria}
+        selected_graders_in_groups={this.state.selected_graders_in_groups}
+        selected_graders_in_criteria={this.state.selected_graders_in_criteria}
+        updateSelectedGraders={this.updateSelectedGraders}
+        updateSelectedGroups={this.updateSelectedGroups}
+        updateSelectedCriteria={this.updateSelectedCriteria}
+        updateSelectedGradersInGroups={this.updateSelectedGradersInGroups}
+        updateSelectedGradersInCriteria={this.updateSelectedGradersInCriteria}
+        setError={this.setError}
+      />);
       to_render.push(<GroupsTableManager 
         assign_to_criteria={this.state.assign_to_criteria} 
         groups_and_criteria={this.state.groups_and_criteria}
@@ -239,7 +241,7 @@
       var value = event.currentTarget.checked;
       var group_id = parseInt(event.currentTarget.getAttribute('id'));
       var new_selected_groups = this.props.selected_groups.slice();
-      if (value == true) {
+      if (value) {
         new_selected_groups.push(group_id);
       } else {
         new_selected_groups.splice(new_selected_groups.indexOf(group_id), 1);
@@ -250,7 +252,7 @@
       var value = event.currentTarget.checked;
       var criteria_id = parseInt(event.currentTarget.getAttribute('id'));
       var new_selected_criteria = this.props.selected_criteria.slice();
-      if (value == true) {
+      if (value) {
         new_selected_criteria.push(criteria_id);
       } else {
         new_selected_criteria.splice(new_selected_criteria.indexOf(criteria_id), 1);
@@ -261,7 +263,7 @@
       var value = event.currentTarget.checked;
       var group_grader_id = parseInt(event.currentTarget.getAttribute('id'));
       var new_selected_graders_in_groups = this.props.selected_graders_in_groups.slice();
-      if (value == true) {
+      if (value) {
         new_selected_graders_in_groups.push(group_grader_id);
       } else {
         new_selected_graders_in_groups.splice(new_selected_graders_in_groups.indexOf(group_grader_id), 1);
@@ -281,26 +283,28 @@
       },
       {
         id: 'name',
-        content: '<%= j raw I18n.t('groups.groupe_name') %>',
+        content: '<%= j raw I18n.t('groups.group_name') %>',
         sortable: true,
         searchable: true
       },
       {
         id: 'section',
-        content: 'Section',
+        content: '<%= j raw I18n.t('graders.section') %>',
         sortable: true,
         searchable: true
       },
       {
         id: 'graders',
         content:<input type='checkbox'
-            onChange={this.gradersInGroupsCheckboxAllClicked}>Graders</input>,
+          onChange={this.gradersInGroupsCheckboxAllClicked}>
+          <%= j raw I18n.t('graders.graders') %>
+        </input>,
         sortable: true,
         searchable: false
       },
       {
         id: 'coverage',
-        content: 'Coverage',
+        content: '<%= j raw I18n.t('graders.coverage') %>',
         sortable: true,
         searchable: false
       }
@@ -326,7 +330,7 @@
         var g = {};
         g['id'] = group.id;
         g['checkbox'] = <input id={group.id} type='checkbox'
-          checked={this.props.selected_groups.indexOf(group.id) !== -1 ? true : false}
+          checked={this.props.selected_groups.indexOf(group.id) !== -1}
           onChange={this.groupCheckboxClicked} />
         g['name'] = group.name;
         g['section'] = group.section;
@@ -335,7 +339,7 @@
           graders.push(<div key={group.graders[i].membership_id}>
             <input id={group.graders[i].membership_id}
               type='checkbox'
-              checked={this.props.selected_graders_in_groups.indexOf(group.graders[i].membership_id) !== -1 ? true : false}
+              checked={this.props.selected_graders_in_groups.indexOf(group.graders[i].membership_id) !== -1}
               onChange={this.graderCheckboxClicked} />{group.graders[i].user_name}</div>);
         }
         g['graders'] = graders;
@@ -355,20 +359,20 @@
       },
        {
         id: 'name',
-        content: 'Criterion name',
+        content: '<%= j raw I18n.t('criterion_name') %>',
         sortable: true,
         searchable: true
       },
       {
         id: 'graders',
         content:<input type='checkbox'
-            onChange={this.gradersInCriteriaCheckboxAllClicked}>Graders</input>,
+          onChange={this.gradersInCriteriaCheckboxAllClicked}><%= j raw I18n.t('graders') %></input>,
         sortable: true,
         searchable: false
       },
       {
         id: 'coverage',
-        content: 'Coverage',
+        content: '<%= j raw I18n.t('graders.coverage') %>',
         sortable: true,
         searchable: false
       }
@@ -379,7 +383,7 @@
         var c = {};
         c['id'] = criterion.id;
         c['checkbox'] = <input id={criterion.id} type='checkbox'
-          checked={this.props.selected_criteria.indexOf(criterion.id) !== -1 ? true : false}
+          checked={this.props.selected_criteria.indexOf(criterion.id) !== -1}
           onChange={this.criteriaCheckboxClicked} />
         c['name'] = criterion.name;
         var graders = [];
@@ -387,7 +391,7 @@
           graders.push(<div key={criterion.graders[i].criterion_association}>
             <input id={criterion.graders[i].criterion_association}
               type='checkbox'
-              checked={this.props.selected_graders_in_criteria.indexOf(criterion.graders[i].criterion_association) !== -1 ? true : false}
+              checked={this.props.selected_graders_in_criteria.indexOf(criterion.graders[i].criterion_association) !== -1}
               onChange={this.criteriaCheckboxClicked} />{criterion.graders[i].user_name}</div>);
         }
         c['graders'] = graders;
@@ -410,7 +414,7 @@
              <div id='criteria-tab'>
                <Table data={criteria_data} columns={criteria_columns}
                  filters={null} filter_type={false}
-                 search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
+                 search_placeholder={'<%= j raw I18n.t('graders.search_criteria') %>'} />
             </div>
           </div>
         </div>);

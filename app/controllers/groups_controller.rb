@@ -41,7 +41,7 @@ class GroupsController < ApplicationController
     @assignment = grouping.assignment
     @errors = []
     @removed_groupings = []
-		students_to_remove = grouping.students.all
+    students_to_remove = grouping.students.all
 		grouping.student_memberships.all.each do |member|
 			grouping.remove_member(member.id)
 		end
@@ -318,7 +318,9 @@ class GroupsController < ApplicationController
     end
   end
 
-  # Adds the students given in student_ids to the grouping given in grouping_id
+  # Adds students to grouping. `groupings` should be an array with
+  # only one element, which is the grouping that is supposed to be
+  # added to.
   def add_members(students, groupings, assignment)
     if groupings.size != 1
       raise I18n.t('assignment.group.select_only_one_group')
@@ -363,7 +365,7 @@ class GroupsController < ApplicationController
     grouping.invite(student.user_name, set_membership_status, true)
     grouping.reload
 
-    # report success only if # of memberships increased
+    # Report success only if # of memberships increased
     if membership_count < grouping.student_memberships.length
       @messages.push(I18n.t('add_student.success',
           user_name: student.user_name))
@@ -372,12 +374,12 @@ class GroupsController < ApplicationController
         user_name: student.user_name)
     end
 
-    # only the first student should be the "inviter"
+    # Only the first student should be the "inviter"
     # (and only update this if it succeeded)
     set_membership_status = StudentMembership::STATUSES[:accepted]
 
-    # generate a warning if a member is added to a group and they
-    # have less grace days credits than already used by that group
+    # Generate a warning if a member is added to a group and they
+    # have fewer grace days credits than already used by that group
     if student.remaining_grace_credits < grouping.grace_period_deduction_single
       @warning_grace_day = I18n.t('assignment.group.grace_day_over_limit',
         group: grouping.group.group_name)

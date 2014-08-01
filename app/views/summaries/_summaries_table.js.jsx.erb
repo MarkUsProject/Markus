@@ -18,7 +18,6 @@
         url: 'summaries',
         dataType: 'json',
         success: function(data) {
-          console.log(data);
           this.setState({
             summaries: data,
             loading: false,
@@ -36,37 +35,37 @@
       var columns = [
         {
           id: 'group_name',
-          content: 'Group Name',
+          content: '<%= j raw I18n.t('summaries_index.group_name') %>',
           sortable: true,
           searchable: true
         },
         {
           id: 'repository',
-          content: 'Repository',
+          content: '<%= j raw I18n.t('summaries_index.repository') %>',
           sortable: true,
           searchable: true
         },
         {
           id: 'commit_date',
-          content: 'Commit date',
+          content: '<%= j raw I18n.t('summaries_index.commit_date') %>,
           sortable: true,
           searchable: true
         },
         {
           id: 'marking_state',
-          content: 'Marking State',
+          content: '<%= j raw I18n.t('summaries_index.marking_state') %>',
           sortable: true,
           searchable: false
         },
         {
           id: 'final_grade',
-          content: 'Final Grade',
+          content: '<%= j raw I18n.t('summaries_index.final_grade') %>',
           sortable: true,
           searchable: true
         },
         {
           id: 'section',
-          content: 'Section',
+          content: '<%= j raw I18n.t('summaries_index.section') %>',
           sortable: true,
           searchable: true
         }
@@ -74,7 +73,8 @@
       <% for criterion in @criteria %>
         columns.push({
           id: 'criterion_' + <%= criterion.id %>,
-          content: 'Criterion ' + <%= criterion.id %>,
+          content: '<%= j raw I18n.t('summaries_index.criterion') %> '
+                    + <%= criterion.id %>,
           sortable: true,
           searchable: false
         });

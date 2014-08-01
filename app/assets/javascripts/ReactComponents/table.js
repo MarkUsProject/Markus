@@ -118,7 +118,7 @@ var Table = React.createClass({displayName: 'Table',
     var row_id = parseInt(event.currentTarget.parentNode.parentNode.getAttribute('id'));
 
     var new_selected_rows = this.state.selected_rows.slice();
-    if (value == true) {
+    if (value) {
       new_selected_rows.push(row_id);
     } else {
       new_selected_rows.splice(new_selected_rows.indexOf(row_id), 1);
@@ -130,7 +130,7 @@ var Table = React.createClass({displayName: 'Table',
   // and it'll return the new visible rows so you can update the state with it.
   updateVisibleRows: function(changed) {
     var searchables = this.props.columns.filter(function(col) {
-      return col.searchable == true;
+      return col.searchable;
     }).map(function(col) {
       return col.id;
     });
@@ -158,7 +158,7 @@ var Table = React.createClass({displayName: 'Table',
     }
 
     return (
-      React.DOM.div( {className: 'table' },
+      React.DOM.div( {className: 'table'},
         TableFilter( {filters:this.props.filters,
           current_filter:this.state.filter, 
           onFilterChange:this.synchronizeFilter,
@@ -282,8 +282,13 @@ SelectTableFilter = React.createClass({displayName: 'SelectTableFilter',
       filters_dom.push(filter);
     }
     return (
-      React.DOM.select( {value:this.current_filter,
-      onChange:this.filterChanged}, filters_dom)
+      React.DOM.select(
+        {
+          value:this.current_filter,
+          onChange:this.filterChanged
+        },
+        filters_dom
+      )
     );
   }
 });
@@ -302,22 +307,18 @@ TableHeader = React.createClass({displayName: 'TableHeader',
     }
   },
   render: function() {
-    // Create the header columns, in proper <th>'s and stuff.
+    // Create the header columns, in proper <th>'s.
     var header_columns = this.props.columns.map(function(column) {
       if (column.sortable == true) {
-        var arrow_indicator = '';
         var clss = 'sortable';
         if (this.props.sort_column == column.id) {
           // Add classes for css to style with indicators.
-          if (this.props.sort_direction == 'asc') {
-            clss += ' asc';
-          } else {
-            clss += ' desc';
-          }
+          // This class is only applied to the currently sorted column.
+          clss += (this.props.sort_direction == 'asc' ? ' asc' : 'desc');
         }
         return React.DOM.th( {key:column.id, id:column.id, className:clss,
           onClick:this.headerColumnClicked}, React.DOM.span(null,
-          [column.content, arrow_indicator]))
+          [column.content]))
       }
       return React.DOM.th( {key:column.id, id:column.id}, column.content)
     }.bind(this));
@@ -351,7 +352,7 @@ TableRows = React.createClass({displayName: 'TableRows',
     var final_data = null;
     if (this.props.selectable) {
       final_data = sorted_data.map(function(row) {
-        var checked = this.props.state.selected_rows.indexOf(row.id) !== -1 ? true : false;
+        var checked = this.props.state.selected_rows.indexOf(row.id) !== -1;
         row['checkbox'] = React.DOM.input( {type:'checkbox',
           onChange:this.props.rowCheckboxClicked,
           checked:checked});

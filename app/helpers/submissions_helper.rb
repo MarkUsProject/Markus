@@ -11,9 +11,11 @@ module SubmissionsHelper
   def set_release_on_results(groupings, release)
     changed = 0
     groupings.each do |grouping|
-      raise I18n.t('marking_state.no_submission', group_name: grouping.group.group_name) if !grouping.has_submission?
+      raise I18n.t('marking_state.no_submission',
+                   group_name: grouping.group.group_name) unless grouping.has_submission?
       submission = grouping.current_submission_used
-      raise I18n.t('marking_state.no_result', group_name: grouping.group.group_name) if !submission.has_result?
+      raise I18n.t('marking_state.no_result',
+                   group_name: grouping.group.group_name) unless submission.has_result?
       raise I18n.t('marking_state.not_complete', group_name: grouping.group.group_name) if
         submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete] && release
       raise I18n.t('marking_state.not_complete_unrelease', group_name: grouping.group.group_name) if
@@ -30,17 +32,17 @@ module SubmissionsHelper
 
   def get_submissions_table_info(assignment)
     if current_user.ta?
-      groupings = assignment.ta_memberships.find_all_by_user_id(current_user).collect{|m|
-        m.grouping
-      }
+      groupings = assignment.ta_memberships.find_all_by_user_id(current_user)
+                            .collect{|m| m.grouping}
     else
-      groupings = assignment.groupings.includes(:assignment,
-                                              :group,
-                                              :grace_period_deductions,
-                                              {current_submission_used: :results},
-                                              {accepted_student_memberships: :user})
+      groupings = assignment.groupings
+                            .includes(:assignment,
+                                      :group,
+                                      :grace_period_deductions,
+                                      current_submission_used: :results,
+                                      accepted_student_memberships: :user)
     end
-    submissions_table_info = groupings.map do |grouping|
+    groupings.map do |grouping|
       g = grouping.attributes
       g[:class_name] = get_any_tr_attributes(grouping)
       g[:group_name] = get_grouping_group_name(assignment, grouping)
@@ -54,8 +56,6 @@ module SubmissionsHelper
       g[:section] = get_grouping_section(grouping)
       g
     end
-
-    return submissions_table_info
   end
 
   # If the grouping is collected or has an error, 
@@ -166,12 +166,10 @@ module SubmissionsHelper
       'unmarked'
     elsif grouping.current_submission_used.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
       'partial'
+    elsif grouping.current_submission_used.get_latest_result.released_to_students
+      'released'
     else
-      if grouping.current_submission_used.get_latest_result.released_to_students
-        'released'
-      else
-        'complete'
-      end
+      'complete'
     end
   end
 
@@ -180,14 +178,15 @@ module SubmissionsHelper
   end
 
   def get_grouping_final_grades(grouping)
-    if !grouping.has_submission?
-      return '-'
-    else
-      if !grouping.current_submission_used.has_result?
-        return '-'
-      else
-        return grouping.current_submission_used.get_latest_result.total_mark
-      end
+    case get_grouping_state(grouping)
+    when 'unmarked'
+      '-'
+    when 'partial'
+      '-'
+    when 'complete'
+      grouping.current_submission_used.get_latest_result.total_mark
+    when 'released'
+      grouping.current_submission_used.get_latest_result.total_mark
     end
   end
 

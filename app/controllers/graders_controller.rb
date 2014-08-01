@@ -58,7 +58,6 @@ class GradersController < ApplicationController
       format.html
       format.json do
         assign_to_criteria = @assignment.assign_graders_to_criteria
-        sections = Section.all
         if assign_to_criteria
           graders_table_info = get_graders_table_info_with_criteria(@assignment)
           groups_table_info = get_groups_table_info_with_criteria(@assignment)
@@ -67,7 +66,8 @@ class GradersController < ApplicationController
           groups_table_info = get_groups_table_info_no_criteria(@assignment)
         end
         # better to use a hash?
-        render json: [assign_to_criteria, sections, graders_table_info, groups_table_info]
+        render json: [assign_to_criteria, @sections,
+                      graders_table_info, groups_table_info]
       end
     end
   end
@@ -176,7 +176,6 @@ class GradersController < ApplicationController
               head :ok
             end
           when 'unassign'
-            # check that there are grader_memberships to unassign
             if params[:grader_memberships].blank?
               render text: I18n.t('assignment.group.select_a_grader'),
                      status: 400
@@ -211,14 +210,15 @@ class GradersController < ApplicationController
               # Gets criterion associations from params then
               # gets their criterion ids so we can update the
               # group counts.
-              criterion_associations = CriterionTaAssociation.find(params[:criterion_associations])
-              criterion_ids = criterion_associations.map {|criterion_assoc|
+              criterion_associations = CriterionTaAssociation.find(
+                params[:criterion_associations]
+              )
+              criterion_ids = criterion_associations.map do |criterion_assoc|
                 criterion_assoc.criterion
-              }.uniq
+              end.uniq
               unassign_graders_from_criteria(criterion_associations, criterion_ids)
               head :ok
             end
-            # here is where we need to get stuff
           when 'random_assign'
             if params[:graders].blank?
               render text: I18n.t('assignment.group.select_a_grader'),

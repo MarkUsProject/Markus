@@ -12,7 +12,7 @@
       var value = event.currentTarget.checked;
       var grader_id = parseInt(event.currentTarget.getAttribute('id'));
       var new_selected_graders = this.props.selected_graders.slice();
-      if (value == true) {
+      if (value) {
         new_selected_graders.push(grader_id);
       } else {
         new_selected_graders.splice(new_selected_graders.indexOf(grader_id), 1);
@@ -69,7 +69,7 @@
         var g = {};
         g['id'] = grader.id;
         g['checkbox'] = <input id={grader.id} type='checkbox'
-          checked={this.props.selected_graders.indexOf(grader.id) !== -1 ? true : false}
+          checked={this.props.selected_graders.indexOf(grader.id) !== -1}
           onChange={this.checkboxClicked} />
         g['user_name'] = grader.user_name;
         g['full_name'] = grader.full_name;

@@ -12,7 +12,7 @@ module GroupsHelper
     students_in_assignment = student_memberships.map do |membership|
       membership.user
     end
-    students_table_info = students.map do |student|
+    students.map do |student|
       s = student.attributes
       s['assigned'] = students_in_assignment.include?(student)
       s
@@ -23,8 +23,8 @@ module GroupsHelper
   # on the front-end. Attributes include URLs for actions
   # such as validation, renaming, showing notes, etc.
   def get_groupings_table_info
-    @groupings = @assignment.groupings
-    @groupings_table_info = @groupings.map do |grouping|
+    groupings = @assignment.groupings
+    groupings.map do |grouping|
       g = grouping.attributes
       g[:name] = grouping.group.group_name
       g[:members] = grouping.students

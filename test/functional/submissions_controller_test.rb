@@ -254,8 +254,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     context 'and I have a grader. My grade should be able to' do
       setup do
-	      @grouping1 = Grouping.make(:assignment => @assignment)
-	      @grouping1.group.access_repo do |repo|
+        @grouping1 = Grouping.make(:assignment => @assignment)
+        @grouping1.group.access_repo do |repo|
           txn = repo.get_transaction('test')
           path = File.join(@assignment.repository_folder, 'file1_name')
           txn.add(path, 'file1 content', '')
