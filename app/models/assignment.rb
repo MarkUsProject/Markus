@@ -44,9 +44,9 @@ class Assignment < ActiveRecord::Base
 
   validates_associated :assignment_files
 
-  validates_presence_of :repository_folder
-  validates_presence_of :short_identifier
-  validates_presence_of :group_min
+  validates :repository_folder, presence: true
+  validates :short_identifier, presence: true
+  validates :group_min, presence: true
   validates_uniqueness_of :short_identifier, case_sensitive: true
 
   validates_numericality_of :group_min,
@@ -59,15 +59,15 @@ class Assignment < ActiveRecord::Base
 
   validates_associated :submission_rule
   validates_associated :assignment_stat
-  validates_presence_of :submission_rule
+  validates :submission_rule, presence: true
 
-  validates_presence_of :marking_scheme_type
+  validates :marking_scheme_type, presence: true
 
   # For those, please refer to issue #1126
   # Because of app/views/assignments/_list_manage.html.erb line:13
-  validates_presence_of :description
+  validates :description, presence: true
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
-  validates_presence_of :assignment_stat
+  validates :assignment_stat, presence: true
 
   # since allow_web_submits is a boolean, validates_presence_of does not work:
   # see the Rails API documentation for validates_presence_of (Model
