@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
     };
 
     jQuery.ajax({
-      url:  element.readAttribute('data-action'),
+      url:  this.getAttribute('data-action'),
       type: 'POST',
       data: params
     });
