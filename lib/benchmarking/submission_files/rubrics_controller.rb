@@ -1,5 +1,3 @@
-require 'fastercsv'
-
 class RubricsController < ApplicationController
 
   before_filter      :authorize_only_for_admin
@@ -76,7 +74,7 @@ class RubricsController < ApplicationController
    end
 
    def create_csv_rubric(assignment)
-     FasterCSV.generate do |csv|
+     CSV.generate do |csv|
        #first line is level names
        levels_array = get_level_names(assignment)
        csv << levels_array
@@ -158,8 +156,8 @@ class RubricsController < ApplicationController
     # flag
     first_line = true
     levels = nil
-    FasterCSV.parse(file.read) do |row|
-     next if FasterCSV.generate_line(row).strip.empty?
+    CSV.parse(file.read) do |row|
+     next if CSV.generate_line(row).strip.empty?
      begin
        if first_line #get the row of levels
          levels = row
