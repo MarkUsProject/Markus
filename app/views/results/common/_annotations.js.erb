@@ -138,14 +138,14 @@
 
   function get_selection_box() {
     var box = document.getElementById('sel_box');
-    var x1 = parseInt(box.style.left) -
+    var x1 = parseInt(box.style.left, 10) -
                document.getElementById('image_preview').offsetLeft +
                document.getElementById('image_container').scrollLeft;
-    var y1 = parseInt(box.style.top) -
+    var y1 = parseInt(box.style.top, 10) -
                document.getElementById('image_preview').offsetTop +
                document.getElementById('image_container').scrollTop;
-    var x2 = x1 + parseInt(box.style.width);
-    var y2 = y1 + parseInt(box.style.height);
+    var x2 = x1 + parseInt(box.style.width, 10);
+    var y2 = y1 + parseInt(box.style.height, 10);
 
     if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
       alert("<%= I18n.t('marker.annotation.select_an_area') %>");

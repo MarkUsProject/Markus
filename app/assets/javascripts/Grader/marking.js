@@ -82,22 +82,22 @@ jQuery(document).ready(function() {
   // Handle the expand/collapse buttons
   jQuery('#expand_all').click(function() {
     jQuery('.mark_description').each(function() {
-      show_criterion(parseInt(this.dataset.id));
+      show_criterion(parseInt(this.getAttribute('data-id'), 10));
     });
   });
 
   jQuery('#collapse_all').click(function() {
     jQuery('.mark_description').each(function() {
-      hide_criterion(parseInt(this.dataset.id));
+      hide_criterion(parseInt(this.getAttribute('data-id'), 10));
     });
   });
 
   jQuery('#expand_unmarked').click(function() {
     jQuery('.mark_description').each(function() {
       if (this.innerHTML.trim()) {
-        hide_criterion(parseInt(this.dataset.id));
+        hide_criterion(parseInt(this.getAttribute('data-id'), 10));
       } else {
-        show_criterion(parseInt(this.dataset.id));
+        show_criterion(parseInt(this.getAttribute('data-id'), 10));
       }
     });
   });
