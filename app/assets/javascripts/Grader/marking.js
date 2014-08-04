@@ -11,7 +11,7 @@ jQuery(document).ready(function() {
     }
 
     jQuery.ajax({
-      url:  element.readAttribute('data-action'),
+      url:  element.getAttribute('data-action'),
       type: 'POST',
       data: params
     });
@@ -25,7 +25,7 @@ jQuery(document).ready(function() {
     }
 
     jQuery.ajax({
-      url:  this.readAttribute('data-action'),
+      url:  this.getAttribute('data-action'),
       type: 'POST',
       data: params
     }).done(function() {
@@ -49,7 +49,7 @@ jQuery(document).ready(function() {
       }
 
       jQuery.ajax({
-        url:  this.readAttribute('data-action'),
+        url:  this.getAttribute('data-action'),
         type: 'POST',
         data: params
       });
