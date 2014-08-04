@@ -189,7 +189,7 @@ shared_examples 'a criterion' do
           end
 
           context 'when only one is assigned a TA' do
-            before(:each) { groupings[0].add_tas(tas[0]) }
+            before(:each) { create_ta_memberships(groupings[0], tas[0]) }
 
             it 'updates assigned groups count to 1' do
               expect_updated_assigned_groups_count_to_eq 1
@@ -197,7 +197,7 @@ shared_examples 'a criterion' do
           end
 
           context 'when only one is assigned multiple TAs' do
-            before(:each) { groupings[0].add_tas(tas) }
+            before(:each) { create_ta_memberships(groupings[0], tas) }
 
             it 'updates assigned groups count to 1' do
               expect_updated_assigned_groups_count_to_eq 1
@@ -206,7 +206,7 @@ shared_examples 'a criterion' do
 
           context 'when `tas.size` are assigned unique TAs' do
             before :each do
-              tas.size.times { |i| groupings[i].add_tas(tas[i]) }
+              tas.size.times { |i| create_ta_memberships(groupings[i], tas[i]) }
             end
 
             it 'updates assigned groups count to `tas.size`' do
@@ -215,7 +215,9 @@ shared_examples 'a criterion' do
           end
 
           context 'when `tas.size` are assigned non-unique TAs' do
-            before(:each) { tas.size.times { |i| groupings[i].add_tas(tas) } }
+            before(:each) do
+              tas.size.times { |i| create_ta_memberships(groupings[i], tas) }
+            end
 
             it 'updates assigned groups count to `tas.size`' do
               expect_updated_assigned_groups_count_to_eq tas.size
@@ -228,7 +230,7 @@ shared_examples 'a criterion' do
                 criterion = create(criterion_factory_name)
                 grouping = create(:grouping, assignment: criterion.assignment)
                 criterion.add_tas(tas)
-                grouping.add_tas(tas)
+                create_ta_memberships(grouping, tas)
               end
 
               it 'updates assigned groups count to `tas.size`' do
@@ -251,8 +253,7 @@ shared_examples 'a criterion' do
       before :each do
         criterion.add_tas(ta)
         another_criterion.add_tas(ta)
-        grouping.add_tas(ta)
-        another_grouping.add_tas(ta)
+        create_ta_memberships([grouping, another_grouping], ta)
         # Update only `criterion` not `another_criterion`.
         Criterion.update_assigned_groups_counts(assignment, criterion.id)
       end

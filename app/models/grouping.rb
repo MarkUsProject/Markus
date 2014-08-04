@@ -514,40 +514,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def add_tas(tas)
-    #this check was previously done every time a ta_membership was created,
-    #however since the assignment is the same, validating it once for every new
-    #membership is a huge waste, so validate once and only proceed if true.
-    return unless self.assignment.valid?
-    grouping_tas = self.tas
-    tas = Array(tas)
-    tas.each do |ta|
-      unless grouping_tas.include? ta
-        #due to the membership's validates_associated :grouping attribute, only
-        #call its validation for the first grader as the grouping is constant
-        #and all the tas are ensured to be valid in the add_graders action in
-        #graders_controller
-        if ta == tas.first
-          #perform validation first time.
-          ta_memberships.create(user: ta)
-        else
-          #skip validation to increase performance (all aspects of validation
-          #have already been performed elsewhere)
-          member = ta_memberships.build(user: ta)
-          member.save(validate: false)
-        end
-        grouping_tas += [ta]
-      end
-    end
-    criteria = self.all_assigned_criteria(grouping_tas | tas)
-    self.criteria_coverage_count = criteria.length
-    if self.criteria_coverage_count >= 0
-      #skip validation on save. grouping already gets validated on creation of
-      #ta_membership. Ensure criteria_coverage_count >= 0 as this is the only
-      #attribute that gets changed between the validation above and the save
-      #below. This is done to improve performance, as any validations of the
-      #grouping result in 5 extra database queries
-      self.save(validate: false)
-    end
+    Grouping.assign_all_tas(id, Array(tas).map(&:id), assignment)
   end
 
   def remove_tas(ta_id_array)

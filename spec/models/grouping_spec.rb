@@ -167,7 +167,7 @@ describe Grouping do
         let!(:tas) { Array.new(2) { create(:ta) } }
 
         before :each do
-          grouping.add_tas(tas)
+          create_ta_memberships(grouping, tas)
         end
 
         context 'with no assigned criteria' do
@@ -231,7 +231,7 @@ describe Grouping do
                 criterion = create(:rubric_criterion,
                                    assignment: grouping.assignment)
                 criterion.add_tas(tas)
-                grouping.add_tas(tas)
+                create_ta_memberships(grouping, tas)
               end
 
               it 'updates criteria coverage count to `tas.size`' do
@@ -252,8 +252,7 @@ describe Grouping do
       end
 
       before :each do
-        grouping.add_tas(ta)
-        another_grouping.add_tas(ta)
+        create_ta_memberships([grouping, another_grouping], ta)
         criterion.add_tas(ta)
         another_criterion.add_tas(ta)
         # Update only `grouping` not `another_grouping`.
