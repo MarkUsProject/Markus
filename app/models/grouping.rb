@@ -566,7 +566,7 @@ class Grouping < ActiveRecord::Base
 
   # Should we write repository permissions for this grouping?
   def write_repo_permissions?
-    MarkusConfigurator.markus_config_repository_admin? &&
+    MarkusConfigurator.get_config_value('is_repository_admin') &&
         self.repository_external_commits_only?
   end
 

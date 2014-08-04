@@ -811,7 +811,7 @@ class Assignment < ActiveRecord::Base
     #  - group_max = 1
     #  - there's only one student member in this row of the csv and
     #  - the group name is equal to the only group member
-    if MarkusConfigurator.markus_config_repository_admin? &&
+    if MarkusConfigurator.get_config_value('is_repository_admin') &&
        self.allow_web_submits == false &&
        row.length == 3 && self.group_max == 1 &&
        !row[2].blank? && row[0] == row[2]

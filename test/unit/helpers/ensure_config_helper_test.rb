@@ -33,7 +33,7 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
 
       MarkusConfigurator.stubs(:markus_config_logging_logfile).returns(@log_info_file)
       MarkusConfigurator.stubs(:markus_config_logging_errorlogfile).returns(@log_error_file)
-      MarkusConfigurator.stubs(:markus_config_repository_storage).returns(@source_repo_dir)
+      MarkusConfigurator.stubs(:get_config_value).with('repository_storage').returns(@source_repo_dir)
       MarkusConfigurator.stubs(:markus_config_validate_file).returns(@validate_script)
       FileUtils.mkdir( @temp_dir )
     end
