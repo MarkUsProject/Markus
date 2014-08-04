@@ -26,7 +26,7 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
       MarkusConfigurator.stubs(:markus_config_repository_type).returns('svn')
       # Write repositories to tmp
       @repository_storage = File.join(::Rails.root.to_s, 'tmp', 'groups_controller_repos')
-      MarkusConfigurator.stubs(get_config_value('repository_storage')).returns(@repository_storage)
+      MarkusConfigurator.stubs(:get_config_value.with('repository_storage').returns(@repository_storage)
       MarkusConfigurator.stubs(:markus_config_repository_permission_file).returns(
             File.join( @repository_storage, 'svn_authz') )
     end

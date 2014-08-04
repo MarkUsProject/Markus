@@ -83,7 +83,7 @@ class TATest < ActiveSupport::TestCase
       conf['IS_REPOSITORY_ADMIN'] = true
       conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
-      MarkusConfigurator.stubs(:get_config_value('is_repository_admin')).returns(true)
+      MarkusConfigurator.stubs(:get_config_value).with('is_repository_admin').returns(true)
     end
 
     should 'grant repository_permissions when TA is added' do
@@ -116,7 +116,7 @@ class TATest < ActiveSupport::TestCase
       conf['IS_REPOSITORY_ADMIN'] = false
       conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
-      MarkusConfigurator.stubs(:get_config_value('is_repository_admin')).returns(false)
+      MarkusConfigurator.stubs(:get_config_value).with('is_repository_admin').returns(false)
     end
 
     teardown do
