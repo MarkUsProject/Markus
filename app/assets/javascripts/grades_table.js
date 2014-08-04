@@ -78,14 +78,14 @@ function bindEventToGradeEntry() {
   jQuery('.grade-input').each(function() {
     jQuery(this).change(function() {
       var params = {
-        'updated_grade': this.value,
-        'student_id': this.dataset.studentid,
-        'grade_entry_item_id': this.dataset.gradeentryitemid,
-        'authenticity_token': AUTH_TOKEN
+        'updated_grade':       this.value,
+        'student_id':          this.getAttribute('data-student-id'),
+        'grade_entry_item_id': this.getAttribute('data-grade-entry-item-id'),
+        'authenticity_token':  AUTH_TOKEN
       };
 
       jQuery.ajax({
-        url:  this.dataset.action,
+        url:  this.getAttribute('data-action'),
         data: params,
         type: 'POST'
       });

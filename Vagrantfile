@@ -3,6 +3,10 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "markusproject/debian"
+  
+  # Allow instance to see project folder
+  config.vm.synced_folder "../Markus", "/Markus"
+
   # Access the server running on port 3000 on the host on port 42069.
   config.vm.network "forwarded_port", guest: 3000, host: 42069
 

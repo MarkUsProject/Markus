@@ -47,3 +47,6 @@ lib/repo/test/svn_repos/svn_authz
 
 # RubyMine generated project folder
 .idea
+
+#Ignore files for Vagrant instance
+.vagrant
