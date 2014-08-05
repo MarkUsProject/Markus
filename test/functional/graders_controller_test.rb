@@ -408,8 +408,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         should 'and no graders selected' do
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'random_assign', :current_table => 'groups_table'}
-          # bad request: select a grader
-          assert_response 400
+          assert_response 400, 'select a grader'
           @assignment.groupings do |grouping|
             assert grouping.tas == []
           end
@@ -427,8 +426,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         should 'and no graders are selected, at least one grouping' do
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'random_assign', :groupings => [@grouping1], :current_table => 'groups_table'}
-          # bad request: select a grader
-          assert_response 400
+          assert_response 400, 'select a grader'
           @assignment.groupings do |grouping|
             assert grouping.tas == []
           end
@@ -508,8 +506,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         should 'and no graders selected' do
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'assign', :current_table => 'groups_table'}
-          # bad request: select a grader
-          assert_response 400
+          assert_response 400, 'select a grader'
           @assignment.groupings do |grouping|
             assert grouping.tas == []
           end
@@ -527,8 +524,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         should 'and no graders are selected, at least one grouping' do
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'assign', :groupings => [@grouping1], :current_table => 'groups_table'}
-          # bad request: select a grader
-          assert_response 400
+          assert_response 400, 'select a grader'
           @assignment.groupings do |grouping|
             assert grouping.tas == []
           end
@@ -639,7 +635,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'unassign',
             :current_table => 'groups_table'}
-          assert_response 400 # should throw error: select a grader
+          assert_response 400, 'select a grader'
           assert @grouping1.tas == [@ta1]
           assert @grouping2.tas == [@ta2]
           assert @grouping3.tas == []
@@ -755,8 +751,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no graders selected' do
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'random_assign', :current_table => 'criteria_table'}
-            # Bad request: select a grader
-            assert_response 400
+            assert_response 400, 'select a grader'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
@@ -774,8 +769,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no graders are selected, at least one criterion' do
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'random_assign', :criteria => [@criterion1], :current_table => 'criteria_table'}
-            # Bad request: select a grader
-            assert_response 400
+            assert_response 400, 'select a grader'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
@@ -855,8 +849,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no graders selected' do
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'assign', :current_table => 'criteria_table'}
-            # Bad request: select a grader
-            assert_response 400
+            assert_response 400, 'select a grader'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
@@ -874,8 +867,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no graders are selected, at least one criterion' do
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'assign', :criteria => [@criterion1], :current_table => 'criteria_table'}
-            # Bad request: select a grader
-            assert_response 400
+            assert_response 400, 'select a grader'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
@@ -990,7 +982,7 @@ class GradersControllerTest < AuthenticatedControllerTest
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :current_table => 'criteria_table'}
-            assert_response 400 # should throw error: select a grader
+            assert_response 400, 'select a grader'
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
@@ -1120,8 +1112,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no graders selected' do
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'random_assign', :current_table => 'criteria_table'}
-            # error should be No grader selected
-            assert_response 400
+            assert_response 400, 'select a grader'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
@@ -1139,8 +1130,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no graders are selected, at least one criterion' do
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'random_assign', :criteria => [@criterion1], :current_table => 'criteria_table'}
-            # should fail with bad request: select a grader
-            assert_response 400
+            assert_response 400, 'select a grader'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
@@ -1220,8 +1210,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no graders selected' do
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'assign', :current_table => 'criteria_table'}
-            # should give bad response: select a grader
-            assert_response 400
+            assert_response 400, 'select a grader'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
@@ -1239,8 +1228,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no graders are selected, at least one criterion' do
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'assign', :criteria => [@criterion1], :current_table => 'criteria_table'}
-            assert_response 400
-            # should give bad request: select a grader
+            assert_response 400, 'select a grader'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
@@ -1353,7 +1341,7 @@ class GradersControllerTest < AuthenticatedControllerTest
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :current_table => 'criteria_table'}
-            assert_response 400 # should return error that says 'select a grader'
+            assert_response 400, 'select a grader'
             @criterion1.reload
             @criterion2.reload
             @criterion3.reload
