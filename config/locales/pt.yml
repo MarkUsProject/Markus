@@ -538,7 +538,7 @@ pt:
       assignment_to_use: "Quais atribuições de grupos você gostaria de usar?"
       delete_groups_linked: "Isto irá deletar todos os grupos ligados ao projeto. Continuar?"
       create_new_group: "Criar novo grupo"
-      groupe_name: "Nome do Grupo"
+      group_name: "Nome do Grupo"
       action:
         choose: "Escolher ação"
         validate: "Validar"

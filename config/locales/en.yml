@@ -565,7 +565,7 @@ en:
       assignment_to_use: "Which assignments groups would you like to use?"
       delete_groups_linked: "This will delete all the groups linked to this assignment. Continue?"
       create_new_group: "Create new group"
-      groupe_name: "Group Name"
+      group_name: "Group Name"
       action:
         choose: "Choose an action"
         validate: "Validate"
