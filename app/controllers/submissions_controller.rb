@@ -469,9 +469,8 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
 
     if current_user.ta?
-      @groupings = @assignment.ta_memberships.find_all_by_user_id(current_user).collect{|m|
-        m.grouping
-      }
+      @groupings = @assignment.ta_memberships.find_all_by_user_id(current_user)
+                              .map { |m| m.grouping }
     else
       @groupings = @assignment.groupings.all
     end

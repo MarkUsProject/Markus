@@ -366,7 +366,7 @@
       {
         id: 'graders',
         content:<input type='checkbox'
-          onChange={this.gradersInCriteriaCheckboxAllClicked}><%= j raw I18n.t('graders') %></input>,
+          onChange={this.gradersInCriteriaCheckboxAllClicked}><%= j raw I18n.t('graders.graders') %></input>,
         sortable: true,
         searchable: false
       },
@@ -403,8 +403,8 @@
         <div className={'col-right'}>
             <div id='group-tabs' className='tab-pane'>
               <ul>
-                <li><a id='groups_table' onClick={this.tableChanged} href='#groups-tab'><span>Groups</span></a></li>
-                <li><a id='criteria_table' onClick={this.tableChanged} href='#criteria-tab'><span>Criteria</span></a></li>
+              <li><a id='groups_table' onClick={this.tableChanged} href='#groups-tab'><span><%= j raw I18n.t('groups.groups') %></span></a></li>
+              <li><a id='criteria_table' onClick={this.tableChanged} href='#criteria-tab'><span><%= j raw I18n.t('criteria') %></span></a></li>
               </ul>
              <div id='groups-tab'>
                <Table data={groups_data} columns={group_columns}
@@ -492,20 +492,20 @@
       },
       {
         id: 'name',
-        content: '<%= j raw I18n.t('groups.groupe_name') %>',
+        content: '<%= j raw I18n.t('groups.group_name') %>',
         sortable: true,
         searchable: true
       },
       {
         id: 'section',
-        content: 'Section',
+        content: '<%= j raw I18n.t('groups.section') %>',
         sortable: true,
         searchable: true
       },
       {
         id: 'graders',
         content:<input type='checkbox'
-            onChange={this.graderCheckboxAllClicked}>Graders</input>,
+        onChange={this.graderCheckboxAllClicked}><%= j raw I18n.t('groups.graders') %></input>,
         sortable: true,
         searchable: false
       },

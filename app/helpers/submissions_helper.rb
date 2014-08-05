@@ -33,7 +33,7 @@ module SubmissionsHelper
   def get_submissions_table_info(assignment)
     if current_user.ta?
       groupings = assignment.ta_memberships.find_all_by_user_id(current_user)
-                            .collect{|m| m.grouping}
+                            .map { |m| m.grouping }
     else
       groupings = assignment.groupings
                             .includes(:assignment,
