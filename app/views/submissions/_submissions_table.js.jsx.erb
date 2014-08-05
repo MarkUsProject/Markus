@@ -114,12 +114,12 @@
     },
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
+      document.getElementById('working').style.display = '';
       jQuery.ajax({
         method: 'GET',
         url: 'browse',
         dataType: 'json',
         success: function(data) {
-          console.log(data);
           this.setState({
             submissions: data,
             loading: false,
@@ -131,7 +131,10 @@
           this.setState({
             error: error
           });
-        }.bind(this)
+        }.bind(this),
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
       });
     },
     onError: function(error) {

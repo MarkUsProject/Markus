@@ -53,6 +53,7 @@
       this.refresh();
     },
     refresh: function() {
+      document.getElementById('working').style.display = '';
       // Collects data as an array from the server to populate the tables
       // 1st element: Boolean that is true when grading with criteria
       //              and false when not
@@ -65,6 +66,7 @@
         url: 'graders',
         dataType: 'json',
         success: function(data) {
+          document.getElementById('working').style.display = 'none';
           // If not assigning graders to criteria,
           // make current_table groups_table
           if (!data[0]) {

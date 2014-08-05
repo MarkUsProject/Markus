@@ -76,7 +76,6 @@
     },
     getInitialState: function() {
       return {
-        loading: true,
         error: null,
         students: [],
         selected_students: []
@@ -90,6 +89,8 @@
     },
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
+      document.getElementById('working').style.display = '';
+
       jQuery.ajax({
         method: 'GET',
         url: '/students',
@@ -97,7 +98,6 @@
         success: function(data) {
           this.setState({
             students: data,
-            loading: false,
             error: null
           });
         }.bind(this),
@@ -106,7 +106,11 @@
           this.setState({
             error: error
           });
+        },
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
         }
+
       });
     },
     onError: function(error) {
@@ -140,27 +144,21 @@
         return s;
       }.bind(this));
       
-      if (this.state.loading) {
-        return (
-          <div><%= j raw I18n.t(:'working') %></div>
-        );
-      } else {
-        return (
-          <div>
-            <ErrorDiv error={this.state.error} />
-            <StudentsActionBox selected_students={this.state.selected_students}
-              sections={this.props.sections}
-              refresh={this.refresh}
-              errorThrown={this.onError} />
-            <Table data={students_data}
-              search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
-              selectable={true}
-              onSelectedRowsChange={this.updateSelectedStudents}
-              columns={this.props.columns}
-              filters={this.props.filters} />
-          </div>
-        );
-      }
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <StudentsActionBox selected_students={this.state.selected_students}
+            sections={this.props.sections}
+            refresh={this.refresh}
+            errorThrown={this.onError} />
+          <Table data={students_data}
+            search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
+            selectable={true}
+            onSelectedRowsChange={this.updateSelectedStudents}
+            columns={this.props.columns}
+            filters={this.props.filters} />
+        </div>
+      );
     }
   });
 

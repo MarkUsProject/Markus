@@ -43,11 +43,15 @@
     },
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
+      // Show the loading indicator
+      document.getElementById('working').style.display = '';
+
       jQuery.ajax({
         method: 'GET',
         url: '/admins',
         dataType: 'json',
         success: function(data) {
+          document.getElementById('working').style.display = 'none';
           this.setState({
             admins: data
           });

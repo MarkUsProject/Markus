@@ -4,7 +4,6 @@
   SummariesTable = React.createClass({
       getInitialState: function() {
         return {
-          loading: true,
           summaries: []
         };
       },
@@ -13,6 +12,7 @@
     },
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
+      document.getElementById('working').style.display = '';
       jQuery.ajax({
         method: 'GET',
         url: 'summaries',
@@ -20,7 +20,6 @@
         success: function(data) {
           this.setState({
             summaries: data,
-            loading: false,
           });
         }.bind(this),
         error: function(xhr, status, text) {
@@ -28,7 +27,11 @@
           this.setState({
             error: error
           });
-        }.bind(this)
+        }.bind(this),
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+
       });
     },
     render: function() {

@@ -43,11 +43,14 @@
     },
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
+      document.getElementById('working').style.display = '';
+
       jQuery.ajax({
         method: 'GET',
         url: '/tas',
         dataType: 'json',
         success: function(data) {
+          document.getElementById('working').style.display = 'none';
           this.setState({
             tas: data
           });

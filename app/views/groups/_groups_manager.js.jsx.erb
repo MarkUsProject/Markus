@@ -59,11 +59,14 @@
     },
     // Asks for new info from backend and sets state accordingly.
     refresh: function() {
+      document.getElementById('working').style.display = '';
+
       jQuery.ajax({
         method: 'GET',
         url: 'groups',
         dataType: 'json',
         success: function(data) {
+          document.getElementById('working').style.display = 'none';
           this.setState({
             students: data[0],
             groups: data[1]
