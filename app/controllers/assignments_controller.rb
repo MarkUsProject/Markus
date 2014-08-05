@@ -629,7 +629,10 @@ class AssignmentsController < ApplicationController
       end
     end
 
-    # Some protective measures here to make sure we haven't been duped...
+    # Due to some funkiness, we need to handle submission rules separately
+    # from the main attribute update
+
+    # First, figure out what kind of rule has been requested
     rule_attributes = params[:assignment][:submission_rule_attributes]
     rule_name       = rule_attributes[:type]
     potential_rule  = if SubmissionRule.const_defined?(rule_name)
@@ -640,28 +643,41 @@ class AssignmentsController < ApplicationController
       raise SubmissionRule::InvalidRuleType, rule_name
     end
 
-    # Was the SubmissionRule changed?  If so, switch the type of the
-    # SubmissionRule. This little conditional has to do some hack-y
-    # workarounds, since accepts_nested_attributes_for is a little...dumb.
-    if assignment.submission_rule.attributes['type'] != rule_attributes[:type]
+    # If the submission rule was changed, we need to do a more complicated
+    # dance with the database in order to get things updated.
+    if assignment.submission_rule.class != potential_rule
 
-      # delete all the previously created periods for the given submission_rule
-      # note that we should not delete this if the current submission rule
-      # cannot be saved ( not valid )
-      # otherwise we would end up with no periods!
-      if assignment.submission_rule.valid?
-        assignment.submission_rule
-                  .periods.where('id != ?', assignment.submission_rule.id)
-                  .delete_all
+      # In this case, the easiest thing to do is nuke the old rule along
+      # with all the periods and a new submission rule...this may cause
+      # issues with foreign keys in the future, but not with the current
+      # schema
+      assignment.submission_rule.delete
+      assignment.submission_rule = potential_rule.new
+
+      # this part of the update is particularly hacky, because the incoming
+      # data will include some mix of the old periods and new periods; in
+      # the case of purely new periods the input is only an array, but in
+      # the case of a mixture the input is a hash, and if there are no
+      # periods at all then the periods_attributes will be nil
+      periods = submission_rule_params[:periods_attributes]
+      periods = case periods
+                when Hash
+                  # in this case, we do not care about the keys, because
+                  # the new periods will have nonsense values for the key
+                  # and the old periods are being discarded
+                  periods.map { |_, p| p }.reject { |p| p.has_key?(:id) }
+                when Array
+                  periods
+                else
+                  []
+                end
+      # now that we know what periods we want to keep, we can create them
+      periods.each do |p|
+        assignment.submission_rule.periods << Period.new(p)
       end
 
-      assignment.submission_rule.type = rule_attributes[:type]
+    else # in this case Rails does what we want, so we'll take the easy route
       assignment.submission_rule.update_attributes(submission_rule_params)
-
-      # add the submission type for validate in the model
-      assignment.submission_rule.periods.each do |period|
-        period.submission_rule_type = assignment.submission_rule.type
-      end
     end
 
     if params[:is_group_assignment] == 'true'
