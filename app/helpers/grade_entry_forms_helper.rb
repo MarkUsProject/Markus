@@ -53,7 +53,7 @@ module GradeEntryFormsHelper
 
     # Find the largest position that has been set
     max_position = 0
-    grade_entry_items.each do |key, value|
+    grade_entry_items.each do |_, value|
       next unless value
       this_position = value[:position]
       next unless this_position && this_position.to_i > max_position
