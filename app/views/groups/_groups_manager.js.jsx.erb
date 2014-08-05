@@ -173,7 +173,7 @@
   var GroupsTable = React.createClass({
     studentCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
-      var group_student_id = parseInt(event.currentTarget.getAttribute('id'));
+      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
       var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
       if (value) {
         new_selected_students_in_groups.push(group_student_id);

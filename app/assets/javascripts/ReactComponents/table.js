@@ -115,7 +115,7 @@ var Table = React.createClass({displayName: 'Table',
   },
   rowCheckboxClicked: function(event) {
     var value = event.currentTarget.checked;
-    var row_id = parseInt(event.currentTarget.parentNode.parentNode.getAttribute('id'));
+    var row_id = parseInt(event.currentTarget.parentNode.parentNode.getAttribute('id'), 10);
 
     var new_selected_rows = this.state.selected_rows.slice();
     if (value) {

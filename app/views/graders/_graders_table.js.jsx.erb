@@ -10,7 +10,7 @@
     },
     checkboxClicked: function(event) {
       var value = event.currentTarget.checked;
-      var grader_id = parseInt(event.currentTarget.getAttribute('id'));
+      var grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
       var new_selected_graders = this.props.selected_graders.slice();
       if (value) {
         new_selected_graders.push(grader_id);

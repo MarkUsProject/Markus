@@ -239,7 +239,7 @@
     },
     groupCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
-      var group_id = parseInt(event.currentTarget.getAttribute('id'));
+      var group_id = parseInt(event.currentTarget.getAttribute('id'), 10);
       var new_selected_groups = this.props.selected_groups.slice();
       if (value) {
         new_selected_groups.push(group_id);
@@ -250,7 +250,7 @@
     },
     criteriaCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
-      var criteria_id = parseInt(event.currentTarget.getAttribute('id'));
+      var criteria_id = parseInt(event.currentTarget.getAttribute('id'), 10);
       var new_selected_criteria = this.props.selected_criteria.slice();
       if (value) {
         new_selected_criteria.push(criteria_id);
@@ -261,7 +261,7 @@
     },
     graderCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
-      var group_grader_id = parseInt(event.currentTarget.getAttribute('id'));
+      var group_grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
       var new_selected_graders_in_groups = this.props.selected_graders_in_groups.slice();
       if (value) {
         new_selected_graders_in_groups.push(group_grader_id);
@@ -456,7 +456,7 @@
     },
     groupCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
-      var group_id = parseInt(event.currentTarget.getAttribute('id'));
+      var group_id = parseInt(event.currentTarget.getAttribute('id'), 10);
       var new_selected_groups = this.props.selected_groups.slice();
       if (value == true) {
         new_selected_groups.push(group_id);
@@ -467,7 +467,7 @@
     },
     graderCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
-      var group_grader_id = parseInt(event.currentTarget.getAttribute('id'));
+      var group_grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
       var new_selected_graders_in_groups = this.props.selected_graders_in_groups.slice();
       if (value == true) {
         new_selected_graders_in_groups.push(group_grader_id);
