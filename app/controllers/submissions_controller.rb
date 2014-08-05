@@ -472,12 +472,22 @@ class SubmissionsController < ApplicationController
       @groupings = @assignment.ta_memberships.find_all_by_user_id(current_user)
                               .map { |m| m.grouping }
     else
-      @groupings = @assignment.groupings.all
+      @groupings = @assignment.groupings
+                            .includes(:assignment,
+                                      :group,
+                                      :grace_period_deductions,
+                                      current_submission_used: :results,
+                                      accepted_student_memberships: :user)
+                            .select do |g|
+                              g.non_rejected_student_memberships.size > 0
+                            end
     end
 
     respond_to do |format|
       format.html
-      format.json { render :json => get_submissions_table_info(@assignment)}
+      format.json do
+        render json: get_submissions_table_info(@assignment, @groupings)
+      end
     end
   end
   

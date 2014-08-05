@@ -30,18 +30,7 @@ module SubmissionsHelper
     changed
   end
 
-  def get_submissions_table_info(assignment)
-    if current_user.ta?
-      groupings = assignment.ta_memberships.find_all_by_user_id(current_user)
-                            .map { |m| m.grouping }
-    else
-      groupings = assignment.groupings
-                            .includes(:assignment,
-                                      :group,
-                                      :grace_period_deductions,
-                                      current_submission_used: :results,
-                                      accepted_student_memberships: :user)
-    end
+  def get_submissions_table_info(assignment, groupings)
     groupings.map do |grouping|
       g = grouping.attributes
       g[:class_name] = get_any_tr_attributes(grouping)
