@@ -6,6 +6,9 @@ module SummariesHelper
                                               :grace_period_deductions,
                                               {current_submission_used: :results},
                                               {accepted_student_memberships: :user})
+                                    .select do |g|
+                                      g.non_rejected_student_memberships.size > 0
+                                    end
     groupings.map do |grouping|
       g = grouping.attributes
       g[:class_name] = get_any_tr_attributes(grouping)
