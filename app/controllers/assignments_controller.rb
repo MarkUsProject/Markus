@@ -614,19 +614,12 @@ class AssignmentsController < ApplicationController
 
     # if there are no section due dates, destroy the objects that were created
     if params[:assignment][:section_due_dates_type] == '0'
-      assignment.section_due_dates.each { |s| s.destroy }
+      assignment.section_due_dates.delete_all
       assignment.section_due_dates_type = false
       assignment.section_groups_only = false
     else
       assignment.section_due_dates_type = true
       assignment.section_groups_only = true
-      due_dates = params[:assignment][:section_due_dates_attributes]
-      if due_dates
-        due_dates.each_pair do |section, attributes|
-          assignment.section_due_dates[section.to_i] =
-            SectionDueDate.new(attributes)
-        end
-      end
     end
 
     # Due to some funkiness, we need to handle submission rules separately
@@ -762,7 +755,13 @@ class AssignmentsController < ApplicationController
         :group_name_displayed,
         :invalid_override,
         :section_groups_only,
-        assignment_files_attributes: [:_destroy, :id, :filename]
+        section_due_dates_attributes: [:_destroy,
+                                       :id,
+                                       :section_id,
+                                       :due_date],
+        assignment_files_attributes:  [:_destroy,
+                                       :id,
+                                       :filename]
     )
   end
 
