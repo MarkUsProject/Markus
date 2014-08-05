@@ -1,8 +1,10 @@
-<%= javascript_include_tag 'users_manager',
-                           'Graders/index',
-                           'help_system' %>
+<%= content_for :head do %>
+  <%= javascript_include_tag 'users_manager',
+                             'Graders/index',
+                             'help_system' %>
 
-<%= render partial: 'tas_table', formats: [:'js.jsx'], handlers: [:erb] %>
+  <%= render partial: 'tas_table', formats: [:'js.jsx'], handlers: [:erb] %>
+<% end %>
 
 <div class='title_bar'>
   <h1>

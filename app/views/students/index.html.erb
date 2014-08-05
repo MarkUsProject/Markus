@@ -1,17 +1,16 @@
 <% content_for :head do %>
-<%= javascript_include_tag 'effects.js',
-                           'Students/index',
-                           'help_system' %>
+  <%= javascript_include_tag 'effects.js',
+                             'Students/index',
+                             'help_system' %>
+  <%= render partial: 'students_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
-<script type="text/javascript">
-  var modalNotesGroup = null;
+  <script type="text/javascript">
+    var modalNotesGroup = null;
 
-  jQuery(document).ready(function() {
-    modalNotesGroup = new ModalMarkus('#notes_dialog');
-  });
-</script>
-
-<%= render partial: 'students_table', formats: [:'js.jsx'], handlers: [:erb] %>
+    jQuery(document).ready(function() {
+      modalNotesGroup = new ModalMarkus('#notes_dialog');
+    });
+  </script>
 <% end %>
 
 <div class='title_bar'>
