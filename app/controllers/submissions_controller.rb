@@ -473,14 +473,12 @@ class SubmissionsController < ApplicationController
                               .map { |m| m.grouping }
     else
       @groupings = @assignment.groupings
-                            .includes(:assignment,
-                                      :group,
-                                      :grace_period_deductions,
-                                      current_submission_used: :results,
-                                      accepted_student_memberships: :user)
-                            .select do |g|
-                              g.non_rejected_student_memberships.size > 0
-                            end
+        .includes(:assignment,
+                  :group,
+                  :grace_period_deductions,
+                  current_submission_used: :results,
+                  accepted_student_memberships: :user)
+        .select { |g| g.non_rejected_student_memberships.size > 0 }
     end
 
     respond_to do |format|
