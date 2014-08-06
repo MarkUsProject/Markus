@@ -33,6 +33,7 @@ GEM
     arel (3.0.3)
     auto_complete (0.0.1)
       rails (>= 3.1)
+    awesome_print (1.2.0)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
@@ -204,6 +205,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-import
   auto_complete
+  awesome_print
   better_errors
   binding_of_caller
   byebug
