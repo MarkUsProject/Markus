@@ -196,7 +196,7 @@ en:
         is_hidden: "Hide assignment from students"
         display_grader_names_to_students: "Display grader names to students"
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
-        section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
+        section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
     your_mark:  "Your mark:"
 
     members:            "Members"
