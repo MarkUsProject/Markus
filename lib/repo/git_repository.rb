@@ -7,12 +7,12 @@ require File.join(File.dirname(__FILE__),'repository') # load repository module
 
 def commit_options(repo, system_message)
   {
-    author:  { email: "markus@markus.com", name: "Markus", time: Time.now },
-    committer: { email: "markus@markus.com", name: "Markus", time: Time.now },
+    author:  { email: 'markus@markus.com', name: 'Markus', time: Time.now },
+    committer: { email: 'markus@markus.com', name: 'Markus', time: Time.now },
     message: system_message,
     tree: repo.index.write_tree(repo),
     parents: repo.empty? ? [] : [repo.head.target].compact,
-    update_ref: "HEAD"
+    update_ref: 'HEAD'
   }
 end
 
@@ -58,7 +58,8 @@ module Repository
         raise RepositoryCollision.new("There is already a repository at #{connect_string}")
       end
       if File.exists?(connect_string)
-        raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists already")
+        raise IOError.new("Could not create a repository at #{connect_string}:
+                          some directory with same name exists already")
       end
 
       #Create it (we're not going to use a bare repository)
@@ -107,14 +108,14 @@ module Repository
     # If a filepath is given, the repo_dest_dir needs to point to a file, and
     # all the repository on that path need to exist, or the export will fail.
     # if export means exporting repo as zip/tgz git-ruby library should be used
-    def export(repo_dest_dir, filepath=nil)
+    def export(repo_dest_dir, filepath = nil)
 
       # Case 1: clone all the repo to repo_dest_dir
       if(filepath.nil?)
         # Raise an error if the destination repository already exists
         if (File.exists?(repo_dest_dir))
           raise(ExportRepositoryAlreadyExists,
-                "Exported repository already exists")
+                'Exported repository already exists')
         end
 
         repo = Rugged::Repository.clone_at(@repos_path, repo_dest_dir)
@@ -123,7 +124,7 @@ module Repository
         # Raise an error if the destination file already exists
         if (File.exists?(repo_dest_dir))
           raise(ExportRepositoryAlreadyExists,
-                "Exported file already exists")
+                'Exported file already exists')
         end
         FileUtils.cp(get_repos_workdir + filepath, repo_dest_dir)
         return true
@@ -169,9 +170,9 @@ module Repository
     # TODO - find a better way to do this.
     def self.repository_exists?(repos_path)
       repos_meta_files_exist = false
-      if File.exist?(File.join(repos_path, ".git/config"))
-        if File.exist?(File.join(repos_path, ".git/description"))
-          if File.exist?(File.join(repos_path, ".git/HEAD"))
+      if File.exist?(File.join(repos_path, '.git/config'))
+        if File.exist?(File.join(repos_path, '.git/description'))
+          if File.exist?(File.join(repos_path, '.git/HEAD'))
             repos_meta_files_exist = true
           end
         end
@@ -240,9 +241,9 @@ module Repository
 
     # Returns a Repository::TransAction object, to work with. Do operations,
     # like 'add', 'remove', etc. on the transaction instead of the repository
-    def get_transaction(user_id, comment="")
+    def get_transaction(user_id, comment = '')
       if user_id.nil?
-        raise "Expected a user_id (Repository.get_transaction(user_id))"
+        raise 'Expected a user_id (Repository.get_transaction(user_id))'
       end
       return Repository::Transaction.new(user_id, comment)
     end
@@ -306,16 +307,17 @@ module Repository
         else
           repo.permissions[0].each do |perm|
             if(repo.permissions[0][perm[0]][""].include? user_id)
-              raise UserAlreadyExistent.new(user_id + " already existent")
+              raise UserAlreadyExistent.new(user_id + ' already existent')
             end
           end
         end
 
         git_permission = self.class.__translate_to_git_perms(permissions)
-        repo.add_permission(git_permission,"",user_id)
+        repo.add_permission(git_permission, '', user_id)
         ga_repo.save_and_apply
       else
-        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+        raise NotAuthorityError.new('Unable to modify permissions:
+                                     Not in authoritative mode!')
       end
 
     end
@@ -452,7 +454,7 @@ module Repository
       end
     end
 
-    def self.add_user(user_id, permissions,repo_name)
+    def self.add_user(user_id, permissions, repo_name)
 
       # Adds a user with given permissions to the repository
       if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
@@ -622,7 +624,7 @@ module Repository
     end
 
     # adds a file to a transaction and eventually to repository
-    def add_file(path, file_data=nil, mime_type=nil)
+    def add_file(path, file_data = nil, mime_type = nil)
       if path_exists_for_latest_revision?(path)
         raise Repository::FileExistsConflict.new(path)
       end
@@ -630,19 +632,20 @@ module Repository
     end
 
     # removes a file from a transaction and eventually from repository
-    def remove_file(txn, path, expected_revision_number=0)
+    def remove_file(txn, path, _expected_revision_number = 0)
       @repos.index.remove(path);
       Rugged::Commit.create(@repos,commit_options(@repos,"Removing file"))
       return txn
     end
 
     # replaces file at provided path with file_data
-    def replace_file(txn, path, file_data=nil, mime_type=nil, expected_revision_number=0)
+    def replace_file(txn, path, file_data = nil,
+                     mime_type = nil, _expected_revision_number = 0)
       txn = write_file(txn, path, file_data, mime_type)
       return txn
     end
 
-    def write_file(path, file_data=nil, mime_type=nil)
+    def write_file(path, file_data = nil, _mime_type = nil)
       # writes to file using transaction, path, data, and mime
       # refer to Subversion_repo for implementation
       # Get directory path of file (one level higher)
@@ -841,7 +844,7 @@ module Repository
 
     private
 
-    def files_at_path_helper(path='/', only_changed=false)
+    def files_at_path_helper(path = '/', only_changed = false)
       if path.nil?
         path = '/'
       end
