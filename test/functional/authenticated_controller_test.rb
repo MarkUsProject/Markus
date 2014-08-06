@@ -4,6 +4,13 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 # overrides common request types with authentication
 class AuthenticatedControllerTest < ActionController::TestCase
 
+  def user_params(attrs = {})
+    args = { user_name:  'test',
+             first_name: 'Mark',
+             last_name:  'Us' }.merge(attrs)
+    ActionController::Parameters.new(user: args)
+  end
+
   # Performs GET request as the supplied user for authentication
   def get_as(user, action, params=nil, flash=nil)
     session_vars = { 'uid' => user.id, 'timeout' => 3.days.from_now }

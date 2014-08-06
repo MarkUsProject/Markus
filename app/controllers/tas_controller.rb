@@ -25,9 +25,8 @@ class TasController < ApplicationController
 
   def update
     @user = Ta.find_by_id(params[:user][:id])
-    attrs = params[:user]
     # update_attributes supplied by ActiveRecords
-    if @user.update_attributes(attrs)
+    if @user.update_attributes(user_params)
       flash[:success] = I18n.t('tas.update.success',
                                user_name: @user.user_name)
 
@@ -42,7 +41,7 @@ class TasController < ApplicationController
     # Default attributes: role = TA or role = STUDENT
     # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
-    @user = Ta.new(params[:user])
+    @user = Ta.new(user_params)
     # Return unless the save is successful; save inherted from
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
@@ -89,5 +88,11 @@ class TasController < ApplicationController
       flash[:notice] = result[:upload_notice]
     end
     redirect_to action: 'index'
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:user_name, :last_name, :first_name)
   end
 end

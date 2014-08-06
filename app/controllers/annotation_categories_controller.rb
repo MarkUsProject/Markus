@@ -21,7 +21,7 @@ class AnnotationCategoriesController < ApplicationController
       # Attempt to add Annotation Category
       @annotation_categories = @assignment.annotation_categories
       @annotation_category = AnnotationCategory.new
-      @annotation_category.update_attributes(params[:annotation_category])
+      @annotation_category.update_attributes(annotation_category_params)
       @annotation_category.assignment = @assignment
       unless @annotation_category.save
         render :new_annotation_category_error
@@ -35,7 +35,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_category = AnnotationCategory.find(params[:id])
 
-    @annotation_category.update_attributes(params[:annotation_category])
+    @annotation_category.update_attributes(annotation_category_params)
     if @annotation_category.save
       flash.now[:success] = I18n.t('annotations.update.annotation_category_success')
     else
@@ -45,7 +45,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def update_annotation
     @annotation_text = AnnotationText.find(params[:id])
-    @annotation_text.update_attributes(params[:annotation_text])
+    @annotation_text.update_attributes(annotation_text_params)
     @annotation_text.last_editor_id = current_user.id
     @annotation_text.save
   end
@@ -55,7 +55,7 @@ class AnnotationCategoriesController < ApplicationController
     if request.post?
       # Attempt to add Annotation Text
       @annotation_text = AnnotationText.new
-      @annotation_text.update_attributes(params[:annotation_text])
+      @annotation_text.update_attributes(annotation_text_params)
       @annotation_text.annotation_category = @annotation_category
       @annotation_text.creator_id = current_user.id
       @annotation_text.last_editor_id = current_user.id
@@ -186,5 +186,17 @@ class AnnotationCategoriesController < ApplicationController
      end
     end
     redirect_to action: 'index', assignment_id: @assignment.id
+  end
+
+  private
+
+  def annotation_category_params
+    # we do not want to allow :position to be given directly
+    params.require(:annotation_category)
+          .permit(:annotation_category_name, :assignment_id)
+  end
+
+  def annotation_text_params
+    params.require(:annotation_text).permit(:content)
   end
 end
