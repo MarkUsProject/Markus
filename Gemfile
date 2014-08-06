@@ -6,7 +6,7 @@
 #   bundle install --without development test postgresql sqlite
 #
 # Make sure to decleare at least one 'source'
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'rails', '3.2.18'
