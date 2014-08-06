@@ -2,22 +2,16 @@ require 'spec_helper'
 
 describe Repository::GitRevision do
   context 'with a git repo' do
-    # Set up git creation config...
-    config = {}
-    config['REPOSITORY_STORAGE'] = '#{::Rails.root}/data/test/repos/test_repo'
-    config['REPOSITORY_PERMISSION_FILE'] = REPOSITORY_STORAGE + '/conf'
-    config['IS_REPOSITORY_ADMIN'] = true
 
-    # Actually create the repo...
-    repo = Repository.get_class('git', config)
-    repo.create(config['REPOSITORY_STORAGE'])
-    repo = repo.new(config['REPOSITORY_STORAGE'])
+    let!(:repo) { build(:git_repository) }
 
     describe '#files_at_path' do
-      # Commit a file name test in the workdir
-      transaction = repo.get_transaction(0) # dummy user_id
-      transaction.add('test', 'testdata')
-      repo.commit(transaction)
+      # Commit a file named test in the workdir
+      before(:each) do
+        transaction = repo.get_transaction(0) # dummy user_id
+        transaction.add('test', 'testdata')
+        repo.commit(transaction)
+      end
 
       it 'retrieves an object with the same name from the repo' do
         # Get latest revision's file in the working directory
@@ -35,13 +29,17 @@ describe Repository::GitRevision do
         # It should be the right type
         expect(test_file).to be_a Repository::RevisionFile
       end
+
+      # retrieves objects not in the workdir
     end
 
     describe '#directories_at_path' do
-      # Commit a file named test2 in a folder called testdir
-      transaction = repo.get_transaction(0) # dummy user_id
-      transaction.add('testdir/test2', 'testdata')
-      repo.commit(transaction)
+      before(:each) do
+        # Commit a file named test2 in a folder called testdir
+        transaction = repo.get_transaction(0) # dummy user_id
+        transaction.add('testdir/test', 'testdata')
+        repo.commit(transaction)
+      end
 
       it 'retrieves an object with the same name from the repo' do
         revision = repo.get_latest_revision
@@ -59,6 +57,12 @@ describe Repository::GitRevision do
     end
 
     describe '#stringify' do
+      before(:each) do
+        transaction = repo.get_transaction(0) # dummy user_id
+        transaction.add('test', 'testdata')
+        repo.commit(transaction)
+      end
+
       it 'gets the correct file data' do
         revision = repo.get_latest_revision
         files = revision.files_at_path('')
