@@ -142,9 +142,8 @@ end
 
   (rand(10) + 3).times do |t|
     a = AnnotationText.new(
-            :id => t,
-            :annotation_category_id => time,
-            :content => Faker::Lorem.sentences(rand(3) + 1).join(" ")
+            annotation_category_id: time,
+            content: Faker::Lorem.sentences(rand(3) + 1).join(" ")
           )
     a.save
   end
