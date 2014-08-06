@@ -1117,7 +1117,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result = Result.make
           (3..4).each do |extra_mark_value|
             @extra_mark = ExtraMark.new
-            @extra_mark.unit = ExtraMark::UNITS[:points]
+            @extra_mark.unit = ExtraMark::POINTS
             @extra_mark.result = @result
             @extra_mark.extra_mark = extra_mark_value
             assert @extra_mark.save
@@ -1469,7 +1469,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result = Result.make
           (3..4).each do |extra_mark_value|
             @extra_mark = ExtraMark.new
-            @extra_mark.unit = ExtraMark::UNITS[:points]
+            @extra_mark.unit = ExtraMark::POINTS
             @extra_mark.result = @result
             @extra_mark.extra_mark = extra_mark_value
             assert @extra_mark.save
