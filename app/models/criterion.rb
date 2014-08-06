@@ -35,9 +35,10 @@ class Criterion < ActiveRecord::Base
   #
   # The criteria must belong to the given assignment +assignment+.
   def self.assign_tas(criterion_ids, ta_ids, assignment)
-    criterion_ids, ta_ids = Array(criterion_ids), Array(ta_ids)
+    criterion_ids   = Array(criterion_ids)
+    ta_ids          = Array(ta_ids)
     criterion_class = assignment.criterion_class
-    criterion_type = criterion_class.name
+    criterion_type  = criterion_class.name
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
@@ -48,7 +49,8 @@ class Criterion < ActiveRecord::Base
     # constraint.
     # TODO replace this with Membership.pluck when migrated to Rails 4.
     existing_values = CriterionTaAssociation.select(columns)
-      .where(criterion_id: criterion_ids, ta_id: ta_ids,
+      .where(criterion_id: criterion_ids, 
+             ta_id: ta_ids,
              criterion_type: criterion_type)
       .map { |criterion_ta| [criterion_ta.criterion_id, criterion_ta.ta_id] }
     # Delegate the assign function to the caller-specified block and remove
