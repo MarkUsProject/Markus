@@ -1,6 +1,6 @@
 Markus::Application.routes.draw do
   # Install the default routes as the lowest priority.
-  root controller: "main", action: "login", via: [:post, :get]
+  root controller: 'main', action: 'login', via: [:post, :get]
 
   # optional path scope (denoted by the parentheses)
   scope "(:locale)", locale: /en|fr|pt/  do
