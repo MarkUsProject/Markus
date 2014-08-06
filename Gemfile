@@ -5,7 +5,7 @@
 # For production mode MySQL option :
 #   bundle install --without development test postgresql sqlite
 #
-# Make sure to decleare at least one 'source'
+# Make sure to declare at least one 'source'
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
