@@ -5,11 +5,11 @@ require 'rubygems'
 
 require File.join(File.dirname(__FILE__),'repository') # load repository module
 
-def commit_options(repo, system_message)
+def commit_options(repo, author, message)
   {
-    author:  { email: 'markus@markus.com', name: 'Markus', time: Time.now },
-    committer: { email: 'markus@markus.com', name: 'Markus', time: Time.now },
-    message: system_message,
+    author:  { email: 'markus@markus.com', name: author, time: Time.now },
+    committer: { email: 'markus@markus.com', name: author, time: Time.now },
+    message: message,
     tree: repo.index.write_tree(repo),
     parents: repo.empty? ? [] : [repo.head.target].compact,
     update_ref: 'HEAD'
@@ -75,7 +75,7 @@ module Repository
       index.add(path: 'README.md', oid: oid, mode: 0100644)
       index.write
       Rugged::Commit.create(repo,
-                            commit_options(repo,
+                            commit_options(repo, 'Markus',
                                            'Initial commit and add readme.'))
       return true
     end
@@ -263,7 +263,7 @@ module Repository
           end
         when :add
           begin
-            add_file(job[:path], job[:file_data], job[:mime_type])
+            add_file(job[:path], job[:file_data], transaction.user_id)
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -624,11 +624,11 @@ module Repository
     end
 
     # adds a file to a transaction and eventually to repository
-    def add_file(path, file_data = nil, mime_type = nil)
+    def add_file(path, file_data = nil, author)
       if path_exists_for_latest_revision?(path)
         raise Repository::FileExistsConflict.new(path)
       end
-      write_file(path, file_data, mime_type)
+      write_file(path, file_data, author)
     end
 
     # removes a file from a transaction and eventually from repository
@@ -641,11 +641,11 @@ module Repository
     # replaces file at provided path with file_data
     def replace_file(txn, path, file_data = nil,
                      mime_type = nil, _expected_revision_number = 0)
-      txn = write_file(txn, path, file_data, mime_type)
+      txn = write_file(path, file_data, mime_type)
       return txn
     end
 
-    def write_file(path, file_data = nil, _mime_type = nil)
+    def write_file(path, file_data = nil, author)
       # writes to file using transaction, path, data, and mime
       # refer to Subversion_repo for implementation
       # Get directory path of file (one level higher)
@@ -653,11 +653,11 @@ module Repository
       # make_directory to path, if it already exists make_directory
       # won't do anything so no harm no foul.
       make_directory(dir)
-      make_file(path, file_data)
+      make_file(path, file_data, author)
     end
 
     # Make a file if it's not already present.
-    def make_file(path, file_data)
+    def make_file(path, file_data, author)
       repo = @repos
       # Get the file path to write to using the ruby File module.
       file_path = File.join(repo.workdir, path)
@@ -668,7 +668,7 @@ module Repository
       index = repo.index
       index.add(path: path, oid: oid, mode: 0100644)
       index.write
-      Rugged::Commit.create(repo, commit_options(repo, 'Adding file'))
+      Rugged::Commit.create(repo, commit_options(repo, author, 'Add file'))
     end
 
     # Make a directory if it's not already present.
@@ -716,7 +716,9 @@ module Repository
       @revision_number = revision_number
       @hash = get_hash_of_revision(revision_number)
       @commit = @repo.lookup(@hash)
+      @author = @commit.author[:name]
 
+      # TODO: get correct version of time
       @timestamp = @commit.time
       if @timestamp.instance_of?(String)
         @timestamp = Time.parse(@timestamp).localtime
@@ -749,7 +751,7 @@ module Repository
             last_modified_revision: @revision_number,
             last_modified_date: Time.now,
             changed: true,
-            user_id: 8,
+            user_id: @author,
             mime_type: 'text'
           )
           objects << file
@@ -762,7 +764,7 @@ module Repository
             last_modified_revision: @revision_number,
             last_modified_date: Time.now,
             changed: true,
-            user_id: 5
+            user_id: @author
           )
           objects << directory
         else
