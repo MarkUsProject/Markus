@@ -1,0 +1,19 @@
+// cell = "total_#{@student_id}"
+// if @updated_student_total.nil?
+//   value = ''
+//   page.call('update_cell', cell, value)
+// else
+//   value = @updated_student_total.round(2)
+//   page.call('update_cell', cell, value)
+//   page.call('alert', 'hello')
+// end
+
+cell = "total_" + <%= @student_id %>;
+if (<%= @updated_student_total.nil? %>) {
+	value = '';
+	update_cell(cell, value);
+}
+else {
+	value = <%= @updated_student_total.round(2) %>;
+	update_cell(cell, value);
+}
