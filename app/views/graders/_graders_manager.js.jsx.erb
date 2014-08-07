@@ -85,7 +85,7 @@
       var to_render = [];
       to_render.push(<input type='checkbox'
         checked={this.state.assign_to_criteria}
-        onChange={this.criteriaCheckboxClicked}>Assign graders to criteria</input>);
+        onChange={this.criteriaCheckboxClicked}><%= j raw I18n.t('graders.assign_to_criteria') %></input>);
       to_render.push(<ErrorDiv error={this.state.error} />);
       to_render.push(<GradersTable graders={this.state.graders}
         selected_graders={this.state.selected_graders}
