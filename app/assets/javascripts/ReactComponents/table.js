@@ -158,7 +158,7 @@ var Table = React.createClass({displayName: 'Table',
     }
 
     return (
-      React.DOM.div( {className: 'table'},
+      React.DOM.div(null,
         TableFilter( {filters:this.props.filters,
           current_filter:this.state.filter, 
           onFilterChange:this.synchronizeFilter,
@@ -167,16 +167,18 @@ var Table = React.createClass({displayName: 'Table',
         ),
         TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
           placeholder:this.props.search_placeholder} ),
-        React.DOM.table( {className:"table"}, 
-          TableHeader( {columns:columns,
-            sort_column:this.state.sort_column,
-            sort_direction:this.state.sort_direction,
-            onHeaderColumnChange:this.synchronizeHeaderColumn} ),
-          TableRows( {columns:columns,
-                     rowCheckboxClicked:this.rowCheckboxClicked,
-                     selectable:this.props.selectable,
-                     getVisibleRows:this.updateVisibleRows,
-                     state:this.state} )
+        React.DOM.div( {className:"table"},
+          React.DOM.table( {className:"table"},
+            TableHeader( {columns:columns,
+              sort_column:this.state.sort_column,
+              sort_direction:this.state.sort_direction,
+              onHeaderColumnChange:this.synchronizeHeaderColumn} ),
+            TableRows( {columns:columns,
+                       rowCheckboxClicked:this.rowCheckboxClicked,
+                       selectable:this.props.selectable,
+                       getVisibleRows:this.updateVisibleRows,
+                       state:this.state} )
+          )
         )
       )
     );
