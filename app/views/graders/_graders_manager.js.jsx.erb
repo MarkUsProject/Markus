@@ -144,31 +144,39 @@
     },
      render: function() {
       if (this.props.assign_to_criteria) {
-        return <GroupsTableWithCriteria
-          groups={this.props.groups_and_criteria.groups}
-          selected_groups={this.props.selected_groups}
-          onSelectedGroupsChange={this.props.onSelectedGroupsChange}
-          selected_graders_in_groups={this.props.selected_graders_in_groups}
-          onSelectedGradersInGroupsChange={this.props.onSelectedGradersInGroupsChange}
-          criteria={this.props.groups_and_criteria.criteria}
-          selected_criteria={this.props.selected_criteria}
-          onSelectedCriteriaChange={this.props.onSelectedCriteriaChange}
-          selected_graders_in_criteria={this.props.selected_graders_in_criteria}
-          onSelectedGradersInCriteriaChange={this.props.onSelectedGradersInCriteriaChange}
-          sections={this.props.sections}
-          refresh={this.props.refresh}
-          onTableChange={this.props.onTableChange}
-        />
+        return (
+          <div className={'col-right'}>
+            <GroupsTableWithCriteria
+              groups={this.props.groups_and_criteria.groups}
+              selected_groups={this.props.selected_groups}
+              onSelectedGroupsChange={this.props.onSelectedGroupsChange}
+              selected_graders_in_groups={this.props.selected_graders_in_groups}
+              onSelectedGradersInGroupsChange={this.props.onSelectedGradersInGroupsChange}
+              criteria={this.props.groups_and_criteria.criteria}
+              selected_criteria={this.props.selected_criteria}
+              onSelectedCriteriaChange={this.props.onSelectedCriteriaChange}
+              selected_graders_in_criteria={this.props.selected_graders_in_criteria}
+              onSelectedGradersInCriteriaChange={this.props.onSelectedGradersInCriteriaChange}
+              sections={this.props.sections}
+              refresh={this.props.refresh}
+              onTableChange={this.props.onTableChange}
+            />
+          </div>
+        );
       } else {
-        return <GroupsTableNoCriteria 
-          groups={this.props.groups_and_criteria.groups}
-          selected_groups={this.props.selected_groups}
-          onSelectedGroupsChange={this.props.onSelectedGroupsChange}
-          selected_graders_in_groups={this.props.selected_graders_in_groups}
-          onSelectedGradersInGroupsChange={this.props.onSelectedGradersInGroupsChange}
-          sections={this.props.sections}
-          refresh={this.props.refresh}
-        />
+        return (
+          <div className={'col-right'}>
+            <GroupsTableNoCriteria 
+              groups={this.props.groups_and_criteria.groups}
+              selected_groups={this.props.selected_groups}
+              onSelectedGroupsChange={this.props.onSelectedGroupsChange}
+              selected_graders_in_groups={this.props.selected_graders_in_groups}
+              onSelectedGradersInGroupsChange={this.props.onSelectedGradersInGroupsChange}
+              sections={this.props.sections}
+              refresh={this.props.refresh}
+            />
+          </div>
+        );
       }
     }
   });
