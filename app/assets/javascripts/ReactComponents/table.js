@@ -174,10 +174,13 @@ var Table = React.createClass({displayName: 'Table',
               sort_direction:this.state.sort_direction,
               onHeaderColumnChange:this.synchronizeHeaderColumn} ),
             TableRows( {columns:columns,
-                       rowCheckboxClicked:this.rowCheckboxClicked,
-                       selectable:this.props.selectable,
-                       getVisibleRows:this.updateVisibleRows,
-                       state:this.state} )
+              rowCheckboxClicked:this.rowCheckboxClicked,
+              selectable:this.props.selectable,
+              getVisibleRows:this.updateVisibleRows,
+              state:this.state} ),
+            TableFooter( {columns:columns,
+              sort_column:this.state.sort_column,
+              sort_direction:this.state.sort_direction } )
           )
         )
       )
@@ -297,6 +300,9 @@ SelectTableFilter = React.createClass({displayName: 'SelectTableFilter',
 
 TableHeader = React.createClass({displayName: 'TableHeader',
   propTypes: {
+    columns: React.PropTypes.array,
+    sort_column: React.PropTypes.string,
+    sort_direction: React.PropTypes.string,
     selectable: React.PropTypes.bool,
     onHeaderColumnChange: React.PropTypes.func
   },
@@ -329,6 +335,38 @@ TableHeader = React.createClass({displayName: 'TableHeader',
       React.DOM.thead(null, 
         React.DOM.tr(null, 
           header_columns
+        )
+      )
+    );
+  }
+});
+
+TableFooter = React.createClass({displayName: 'TableFooter',
+  propTypes: {
+    sort_column: React.PropTypes.string,
+    sort_direction: React.PropTypes.string,
+    columns: React.PropTypes.array,
+  },
+  render: function() {
+    // Create the footer columns
+    var footer_columns = this.props.columns.map(function(column) {
+      if (column.sortable == true) {
+        var clss = 'sortable';
+        if (this.props.sort_column == column.id) {
+          // Add classes for css to style with indicators.
+          // This class is only applied to the currently sorted column.
+          clss += (this.props.sort_direction == 'asc' ? ' asc' : 'desc');
+        }
+        return React.DOM.td( {className:clss}, React.DOM.span(null,
+          [column.content]))
+      }
+      return React.DOM.td( null, column.content)
+    }.bind(this));
+
+    return (
+      React.DOM.tfoot(null, 
+        React.DOM.tr(null, 
+          footer_columns
         )
       )
     );
