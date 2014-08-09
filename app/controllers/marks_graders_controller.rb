@@ -6,7 +6,7 @@ class MarksGradersController < ApplicationController
 
   def populate
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    @students = Student.all
+    @students = students_with_assoc
     @table_rows = construct_table_rows(@students, @grade_entry_form)
   end
 
@@ -41,13 +41,15 @@ class MarksGradersController < ApplicationController
   #Download grader/student mappings in CSV format.
   def download_grader_students_mapping
     grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    students = Student.all
+    students = students_with_assoc
 
     file_out = CSV.generate do |csv|
       students.each do |student|
         # csv format is student_name, ta1_name, ta2_name, ... etc
         student_array = [student.user_name]
-        grade_entry_student = grade_entry_form.grade_entry_students.find_by_user_id(student.id)
+        grade_entry_student = student.grade_entry_students.find do |entry|
+          entry.grade_entry_form_id == grade_entry_form.id
+        end
         unless grade_entry_student.nil?
           grade_entry_student.tas.each { |ta| student_array.push(ta.user_name) }
         end
@@ -102,7 +104,10 @@ class MarksGradersController < ApplicationController
   end
 
   private
-  # These methods are called through global actions
+
+  def students_with_assoc
+    Student.includes(:section, grade_entry_students: :tas)
+  end
 
   def randomly_assign_graders(students, grader_ids)
     graders = Ta.where(id: grader_ids)

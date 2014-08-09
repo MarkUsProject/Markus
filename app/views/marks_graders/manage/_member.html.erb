@@ -1,4 +1,4 @@
-<% grade_entry_form.grade_entry_students.find_by_user_id(student.id).tas.each do |ta| %>
+<% grade_entry_student.tas.each do |ta| %>
 	<span id="<%= "mbr_#{ta.id}" %>">
 	  <%= check_box_tag "#{student.id}_#{ta.user_name}", true, false,
         class: 'inline_checkbox', onclick:
