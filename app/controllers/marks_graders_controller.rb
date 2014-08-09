@@ -63,7 +63,6 @@ class MarksGradersController < ApplicationController
   def global_actions
     student_ids = params[:students]
     grader_ids = params[:graders]
-    criteria_ids = params[:criteria]
 
     case params[:current_table]
       when 'groups_table'
