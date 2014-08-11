@@ -750,13 +750,18 @@ class SubmissionsController < ApplicationController
       return
     end
 
-    groupings = Grouping.find(grouping_ids)
+    groupings = Grouping.where(id: grouping_ids)
+      .includes(:group,
+                current_submission_used: {
+                  submission_files: {
+                    submission: { grouping: :group }
+                  }
+                })
 
     ## build the zip file
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
 
-      groupings.map do |grouping|
-
+      groupings.each do |grouping|
         ## retrieve the submitted files
         submission = grouping.current_submission_used
         next unless submission

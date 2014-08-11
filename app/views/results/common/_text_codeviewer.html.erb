@@ -29,12 +29,6 @@
                        { start: <%= annot.line_start %>, end: <%= annot.line_end %> },
                        '<%= annot.annotation_text.id %>');
       <% end %>
-    <% else %>
-      add_annotation_text(<%= annots.annotation_text.id %>,
-                          '<%= simple_format(escape_javascript(annots.annotation_text.content.to_s)) %>');
-      add_annotation(<%= annots.id %>,
-                     { start: <%= annots.line_start %>, end: <%= annots.line_end %> },
-                     '<%= annots.annotation_text.id %>');
     <% end %>
   <% end %>
 

@@ -40,7 +40,7 @@
     // Hide the criterion that AREN'T empty (i.e. are marked)
     jQuery('.mark_description').each(function() {
       if (this.innerHTML.trim()) {
-        hide_criterion(parseInt(this.dataset.id));
+        hide_criterion(parseInt(this.getAttribute('data-id'), 10));
       }
     });
   });

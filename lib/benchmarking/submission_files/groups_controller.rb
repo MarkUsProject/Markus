@@ -1,4 +1,3 @@
-require 'fastercsv'
 require 'auto_complete'
 
 # Manages actions relating to editing and modifying
@@ -193,7 +192,7 @@ class GroupsController < ApplicationController
           # Loop over each row, which lists the members to be added to the group.
           line_nr = 1
           flash[:users_not_found] = [] # contains a list of user_name(s) not found in DB
-          FasterCSV.parse(params[:group][:grouplist]) do |row|
+          CSV.parse(params[:group][:grouplist]) do |row|
             retval = @assignment.add_csv_group(row)
             if retval == nil || retval.instance_of?(Array)
               if retval
@@ -225,7 +224,7 @@ class GroupsController < ApplicationController
     #get all the groups
     groupings = assignment.groupings #FIXME: optimize with eager loading
 
-    file_out = FasterCSV.generate do |csv|
+    file_out = CSV.generate do |csv|
        groupings.each do |grouping|
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc

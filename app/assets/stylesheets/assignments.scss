@@ -18,7 +18,8 @@ fieldset {
     margin: 0.5em 0;
   }
 
-  &.period {
+  &.period,
+  &.group_properties {
     @include border-radius($radius);
     border: 1px solid $grey;
     padding: 1em;
@@ -35,6 +36,11 @@ fieldset {
     & + fieldset.period {
       margin-top: 1em;
     }
+  }
+
+  &.period,
+  #sub_rule_link {
+    margin-left: 2.5em;
   }
 
   // Save button in assignment form
@@ -61,6 +67,10 @@ input[type='number'] {
     font-style: italic;
     font-weight: 400;
   }
+}
+
+.section_due_date_form {
+  margin-left: 2.5em;
 }
 
 
