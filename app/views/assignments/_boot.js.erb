@@ -8,7 +8,7 @@
 
 
   function create_grace_periods() {
-    if(!grace_periods) {
+    if (!grace_periods) {
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
         date_format: document.getElementById('format').value,
@@ -18,7 +18,7 @@
   }
 
   function create_penalty_decay_periods() {
-    if(!penalty_decay_periods) {
+    if (!penalty_decay_periods) {
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
         date_format: document.getElementById('format').value,
@@ -28,23 +28,13 @@
   }
 
   function create_penalty_periods() {
-    if(!penalty_periods) {
+    if (!penalty_periods) {
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
         date_format: document.getElementById('format').value,
         due_date: jQuery('#actual_assignment_due_date').val()
       });
     }
-  }
-
-  function check_required_fields() {
-    var empty = false;
-    jQuery('input[required]').each(function() {
-      if (this.value === '') {
-        empty = true;
-      }
-    });
-    jQuery('input[type="submit"]').prop('disabled', empty);
   }
 
   jQuery(document).ready(function() {
@@ -82,11 +72,6 @@
                         format);
     });
 
-    // Handle required fields
-    check_required_fields();
-    jQuery('input[required]').change(check_required_fields)
-                             .keyup(check_required_fields);
-
     // Handle date/time pickers
     jQuery('.section_due_date').each(function(i) {
       jQuery('#section_due_date_' + (i+1)).datetimepicker({
@@ -100,17 +85,17 @@
         numberOfMonths:   2,
         secondMax:        0,
         onClose:          function() { check_due_date(jQuery('#actual_section_due_date').val()); },
-        dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
-        timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
-        monthNames:       <%= raw I18n.t('date.months') %>,
-        dayNames:         <%= raw I18n.t('date.weekdays') %>,
-        dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
-        hourText:         "<%= I18n.t('time.hour') %>",
-        minuteText:       "<%= I18n.t('time.minute') %>",
-        timeText:         "<%= I18n.t('time.time') %>",
-        prevText:         "<%= I18n.t('time.prev') %>",
-        nextText:         "<%= I18n.t('time.next') %>",
-        closeText:        "<%= I18n.t('time.close') %>",
+        dateFormat:       "<%= raw t('date.formats.locale_date') %>",
+        timeFormat:       "<%= t('time.formats.locale_time') %>",
+        monthNames:       <%= raw t('date.months') %>,
+        dayNames:         <%= raw t('date.weekdays') %>,
+        dayNamesMin:      <%= raw t('date.weekdays_min') %>,
+        hourText:         "<%= t('time.hour') %>",
+        minuteText:       "<%= t('time.minute') %>",
+        timeText:         "<%= t('time.time') %>",
+        prevText:         "<%= t('time.prev') %>",
+        nextText:         "<%= t('time.next') %>",
+        closeText:        "<%= t('time.close') %>",
       });
     });
 
@@ -126,17 +111,17 @@
       secondMax:        0,
       onClose:          function() { jQuery('#assignment_due_date').change();
                                      check_due_date(jQuery('#actual_assignment_due_date').val()); },
-      dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
-      timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
-      monthNames:       <%= raw I18n.t('date.months') %>,
-      dayNames:         <%= raw I18n.t('date.weekdays') %>,
-      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
-      hourText:         "<%= I18n.t('time.hour') %>",
-      minuteText:       "<%= I18n.t('time.minute') %>",
-      timeText:         "<%= I18n.t('time.time') %>",
-      prevText:         "<%= I18n.t('time.prev') %>",
-      nextText:         "<%= I18n.t('time.next') %>",
-      closeText:        "<%= I18n.t('time.close') %>",
+      dateFormat:       "<%= raw t('date.formats.locale_date') %>",
+      timeFormat:       "<%= t('time.formats.locale_time') %>",
+      monthNames:       <%= raw t('date.months') %>,
+      dayNames:         <%= raw t('date.weekdays') %>,
+      dayNamesMin:      <%= raw t('date.weekdays_min') %>,
+      hourText:         "<%= t('time.hour') %>",
+      minuteText:       "<%= t('time.minute') %>",
+      timeText:         "<%= t('time.time') %>",
+      prevText:         "<%= t('time.prev') %>",
+      nextText:         "<%= t('time.next') %>",
+      closeText:        "<%= t('time.close') %>",
     });
 
     jQuery('#remark_due_date').datetimepicker({
@@ -150,17 +135,17 @@
       numberOfMonths:   2,
       secondMax:        0,
       onClose:          function() { check_due_date(jQuery('#actual_remark_due_date').val()); },
-      dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
-      timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
-      monthNames:       <%= raw I18n.t('date.months') %>,
-      dayNames:         <%= raw I18n.t('date.weekdays') %>,
-      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
-      hourText:         "<%= I18n.t('time.hour') %>",
-      minuteText:       "<%= I18n.t('time.minute') %>",
-      timeText:         "<%= I18n.t('time.time') %>",
-      prevText:         "<%= I18n.t('time.prev') %>",
-      nextText:         "<%= I18n.t('time.next') %>",
-      closeText:        "<%= I18n.t('time.close') %>",
+      dateFormat:       "<%= raw t('date.formats.locale_date') %>",
+      timeFormat:       "<%= t('time.formats.locale_time') %>",
+      monthNames:       <%= raw t('date.months') %>,
+      dayNames:         <%= raw t('date.weekdays') %>,
+      dayNamesMin:      <%= raw t('date.weekdays_min') %>,
+      hourText:         "<%= t('time.hour') %>",
+      minuteText:       "<%= t('time.minute') %>",
+      timeText:         "<%= t('time.time') %>",
+      prevText:         "<%= t('time.prev') %>",
+      nextText:         "<%= t('time.next') %>",
+      closeText:        "<%= t('time.close') %>",
     });
   });
 //]]>

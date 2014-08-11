@@ -44,8 +44,9 @@ class Assignment < ActiveRecord::Base
 
   validates_associated :assignment_files
 
-  validates_presence_of :repository_folder
-  validates_presence_of :short_identifier, :group_min
+  validates :repository_folder, presence: true
+  validates :short_identifier, presence: true
+  validates :group_min, presence: true
   validates_uniqueness_of :short_identifier, case_sensitive: true
 
   validates_numericality_of :group_min,
@@ -58,9 +59,9 @@ class Assignment < ActiveRecord::Base
 
   validates_associated :submission_rule
   validates_associated :assignment_stat
-  validates_presence_of :submission_rule
+  validates :submission_rule, presence: true
 
-  validates_presence_of :marking_scheme_type
+  validates :marking_scheme_type, presence: true
 
   # For those, please refer to issue #1126
   # Because of app/views/assignments/_list_manage.html.erb line:13
@@ -82,7 +83,7 @@ class Assignment < ActiveRecord::Base
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
-  validates :due_date, date: true
+  validate :due_date, date: true
   after_save :update_assigned_tokens
 
   # Set the default order of assignments: in ascending order of due_date

@@ -224,7 +224,7 @@ class AssignmentsController < ApplicationController
       @oldcriteria = @assignment.marking_scheme_type
       @newcriteria = params[:assignment][:marking_scheme_type]
       if @oldcriteria != @newcriteria and !@assignment.get_criteria.nil?
-        #TODO use @assignment.criteria.destroy_all when the refactor of
+        # TODO use @assignment.criteria.destroy_all when the refactor of
         # criteria structure finished
         @assignment.get_criteria.each do |criterion|
           criterion.destroy
@@ -233,13 +233,12 @@ class AssignmentsController < ApplicationController
     end
 
     begin
-      @assignment.transaction do
-        @assignment = process_assignment_form(@assignment)
-      end
-    rescue SubmissionRule::InvalidRuleType => e
-      @assignment.errors.add(:base, I18n.t('assignment.error',
-                                           message: e.message))
-      render :edit, id: @assignment.id
+      @assignment = process_assignment_form(@assignment, params)
+      rescue Exception, RuntimeError => e
+        @assignment.errors.add(:base, I18n.t('assignment.error',
+                                              message: e.message))
+        redirect_to action: 'edit', id: params[:id]
+        # render :edit, id: @assignment.id
       return
     end
 
@@ -247,7 +246,9 @@ class AssignmentsController < ApplicationController
       flash[:success] = I18n.t('assignment.update_success')
       redirect_to action: 'edit', id: params[:id]
     else
-      render :edit, id: @assignment.id
+      flash[:error] = @assignment.errors.full_messages.to_sentence
+      redirect_to action: 'edit', id: params[:id]
+      # render :edit, id: @assignment.id
     end
   end
 
@@ -283,7 +284,9 @@ class AssignmentsController < ApplicationController
       unless @assignment.save
         @assignments = Assignment.all
         @sections = Section.all
-        render :new
+        flash[:error] = @assignment.errors.full_messages.to_sentence
+        redirect_to action: :new
+        # render :new
         return
       end
       if params[:persist_groups_assignment]
