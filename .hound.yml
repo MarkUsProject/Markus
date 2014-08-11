@@ -6,3 +6,15 @@ DotPosition:
 # special symbols.
 StringLiterals:
     EnforcedStyle: single_quotes
+
+# Prefer specific method aliases over others
+Style/CollectionMethods:
+  # Mapping from undesired method to desired_method
+  # e.g. to use `detect` over `find`:
+  #
+  # CollectionMethods:
+  #   PreferredMethods:
+  #     find: detect
+  PreferredMethods:
+    find:
+    detect: 'find'
