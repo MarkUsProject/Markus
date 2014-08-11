@@ -70,7 +70,7 @@
           id: 'section',
           content: '<%= j raw I18n.t('summaries_index.section') %>',
           sortable: true,
-          searchable: true
+          searchable: false
         }
       ];
       <% for criterion in @criteria %>
@@ -137,6 +137,7 @@
         <% end %>
         return s;
       });
+      console.log(summaries_data);
 
       return (
         <div>
