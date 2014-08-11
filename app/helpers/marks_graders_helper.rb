@@ -27,15 +27,19 @@ module MarksGradersHelper
   end
 
   def construct_table_row(student, grade_entry_form)
-      grade_entry_student = GradeEntryStudent.find_by_user_id(student.id)
+    grade_entry_student = student.grade_entry_students.find do |entry|
+      entry.grade_entry_form_id == grade_entry_form.id
+    end
 
       table_row = {}
 
       table_row[:id] = student.id
       table_row[:filter_table_row_contents] =
-        render_to_string partial: 'marks_graders/table_row/filter_table_row',
-        formats: [:html], handlers: [:erb],
-        locals: { student: student, grade_entry_form: grade_entry_form }
+        render_to_string(
+          partial: 'marks_graders/table_row/filter_table_row',
+          formats: [:html], handlers: [:erb],
+          locals: { student: student, grade_entry_student: grade_entry_student }
+        )
 
       #These are used for sorting
       table_row[:user_name] = student.user_name
