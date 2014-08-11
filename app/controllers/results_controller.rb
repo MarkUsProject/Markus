@@ -426,7 +426,7 @@ class ResultsController < ApplicationController
     if request.post?
       @extra_mark = ExtraMark.new
       @extra_mark.result = @result
-      @extra_mark.unit = ExtraMark::UNITS[:points]
+      @extra_mark.unit = ExtraMark::POINTS
       if @extra_mark.update_attributes(extra_mark_params)
         # need to re-calculate total mark
         @result.update_total_mark

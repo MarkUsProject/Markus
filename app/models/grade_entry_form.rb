@@ -8,8 +8,10 @@ class GradeEntryForm < ActiveRecord::Base
   has_many                  :grade_entry_items,
                             dependent: :destroy,
                             order: :position
+
   has_many                  :grade_entry_students,
                             dependent: :destroy
+
   has_many                  :grades, through: :grade_entry_items
 
   # Call custom validator in order to validate the date attribute
@@ -55,10 +57,12 @@ class GradeEntryForm < ActiveRecord::Base
     totalMarks = 0
     numReleased = 0
 
-    grade_entry_students = self.grade_entry_students.all(conditions: { released_to_student: true })
+    grade_entry_students = self.grade_entry_students
+                               .where(released_to_student: true)
     grade_entry_students.each do |grade_entry_student|
       # If there is no saved total grade, update it
-      totalMark = grade_entry_student.total_grade || grade_entry_student.update_total_grade
+      totalMark = grade_entry_student.total_grade ||
+                  grade_entry_student.update_total_grade
       unless totalMark.nil?
         totalMarks += totalMark
         numReleased += 1
@@ -66,9 +70,7 @@ class GradeEntryForm < ActiveRecord::Base
     end
 
     # Watch out for division by 0
-    if numReleased == 0
-      return 0
-    end
+    return 0 if numReleased == 0
     ((totalMarks / numReleased) / self.out_of_total) * 100
   end
 
@@ -180,7 +182,9 @@ class GradeEntryForm < ActiveRecord::Base
       students.each do |student|
         final_result = []
         final_result.push(student.user_name)
-        grade_entry_student = self.grade_entry_students.find_by_user_id(student.id)
+        grade_entry_student = self.grade_entry_students
+                                  .where(user_id: student.id)
+                                  .first
 
         # Check whether or not we have grades recorded for this student
         if grade_entry_student.nil?
@@ -192,7 +196,10 @@ class GradeEntryForm < ActiveRecord::Base
           final_result.push(BLANK_MARK)
         else
           self.grade_entry_items.each do |grade_entry_item|
-            grade = grade_entry_student.grades.find_by_grade_entry_item_id(grade_entry_item.id)
+            grade = grade_entry_student
+                      .grades
+                      .where(grade_entry_item_id: grade_entry_item.id)
+                      .first
             if grade.nil?
               final_result.push(BLANK_MARK)
             else
