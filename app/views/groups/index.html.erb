@@ -39,7 +39,10 @@
                           evalScripts:true,
                           method:'get',
                           parameters:'&new_group_name=' + new_group_name +
-                          '&authenticity_token=' + AUTH_TOKEN
+                          '&authenticity_token=' + AUTH_TOKEN,
+                          onComplete: function() {
+                            window.location.reload();
+                          }
                         })
     }
 
