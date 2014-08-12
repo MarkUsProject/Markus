@@ -79,7 +79,7 @@ class Grouping < ActiveRecord::Base
   # to the given assignment +assignment+.
   def self.assign_all_tas(grouping_ids, ta_ids, assignment)
     assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
-      # Get the Cartesian product of group IDs and TA IDs.
+      # Get the Cartesian product of grouping IDs and TA IDs.
       grouping_ids.product(ta_ids)
     end
   end
