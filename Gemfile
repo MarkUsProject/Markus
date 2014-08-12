@@ -93,6 +93,7 @@ group :offline do
   gem 'rdoc'
   gem 'railroady'
   gem 'thin'
+  gem 'rubocop'
 end
 
 # If you  plan to use unicorn servers for production
