@@ -159,14 +159,17 @@ var Table = React.createClass({displayName: 'Table',
 
     return (
       React.DOM.div(null,
-        TableFilter( {filters:this.props.filters,
-          current_filter:this.state.filter, 
-          onFilterChange:this.synchronizeFilter,
-          data:this.props.data,
-          filter_type:this.props.filter_type}
+        React.DOM.div( {className:"table-filters"},
+          TableFilter( {filters:this.props.filters,
+            current_filter:this.state.filter,
+            onFilterChange:this.synchronizeFilter,
+            data:this.props.data,
+            filter_type:this.props.filter_type} )
         ),
-        TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
-          placeholder:this.props.search_placeholder} ),
+        React.DOM.div( {className:"table-search"},
+          TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
+            placeholder:this.props.search_placeholder} )
+        ),
         React.DOM.div( {className:"table"},
           React.DOM.table( {className:"table"},
             TableHeader( {columns:columns,
