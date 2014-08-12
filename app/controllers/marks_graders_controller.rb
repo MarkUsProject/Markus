@@ -86,7 +86,7 @@ class MarksGradersController < ApplicationController
               render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
               return
             end
-            add_graders(students, grader_ids)
+            assign_all_graders(student_ids, grader_ids, @grade_entry_form)
             return
           when "unassign"
             remove_graders(students, params)
@@ -97,7 +97,7 @@ class MarksGradersController < ApplicationController
               render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
               return
             end
-            randomly_assign_graders(students, grader_ids)
+            randomly_assign_graders(student_ids, grader_ids, @grade_entry_form)
             return
         end
     end
@@ -109,33 +109,14 @@ class MarksGradersController < ApplicationController
     Student.includes(:section, grade_entry_students: :tas)
   end
 
-  def randomly_assign_graders(students, grader_ids)
-    graders = Ta.where(id: grader_ids)
-    # Shuffle the students
-    students = students.sort_by{rand}
-    # Now, deal them out like cards...
-    students.each_with_index do |student, index|
-      # Choose the next grader to deal out to...
-      grader = graders[index % graders.size]
-      grade_entry_student = @grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id)
-      grade_entry_student.add_tas(grader)
-    end
-
-    construct_all_rows(students, graders)
-    render :modify_groupings
+  def randomly_assign_graders(student_ids, grader_ids, form)
+    GradeEntryStudent.randomly_assign_tas(student_ids, grader_ids, form)
+    render nothing: true
   end
 
-  def add_graders(students, grader_ids)
-    graders = Ta.where(id: grader_ids)
-    # Only want valid graders
-    graders = graders.collect { |grader| grader if grader.valid? }
-    students.each do |student|
-      grade_entry_student = @grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id)
-      grade_entry_student.add_tas(graders)
-    end
-
-    construct_all_rows(students, graders)
-    render :modify_groupings
+  def assign_all_graders(student_ids, grader_ids, form)
+    GradeEntryStudent.assign_all_tas(student_ids, grader_ids, form)
+    render nothing: true
   end
 
   # Removes the graders contained in params from the students given in students.
