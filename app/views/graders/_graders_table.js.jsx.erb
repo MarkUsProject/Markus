@@ -80,9 +80,11 @@
 
       return (
         <div className={'col-left'} >
+          <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
             <Table data={graders_data}
             columns={columns}
             search_placeholder={'<%= j raw I18n.t('search_graders') %>'} />
+          </div>
         </div>
       );
     }

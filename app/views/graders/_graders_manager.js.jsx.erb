@@ -83,9 +83,6 @@
     },
     render: function() {
       var to_render = [];
-      to_render.push(<input type='checkbox'
-        checked={this.state.assign_to_criteria}
-        onChange={this.criteriaCheckboxClicked}><%= j raw I18n.t('graders.assign_to_criteria') %></input>);
       to_render.push(<ErrorDiv error={this.state.error} />);
       to_render.push(<GradersTable graders={this.state.graders}
         selected_graders={this.state.selected_graders}
@@ -105,6 +102,9 @@
         updateSelectedGradersInCriteria={this.updateSelectedGradersInCriteria}
         setError={this.setError}
       />);
+      to_render.push(<input type='checkbox'
+        checked={this.state.assign_to_criteria}
+        onChange={this.criteriaCheckboxClicked}><%= j raw I18n.t('graders.assign_to_criteria') %></input>);
       to_render.push(<GroupsTableManager 
         assign_to_criteria={this.state.assign_to_criteria} 
         groups_and_criteria={this.state.groups_and_criteria}
@@ -121,7 +121,7 @@
         current_table={this.state.current_table}
         onTableChange={this.updateCurrentTable}
       />);
-      return (<div>{to_render}</div>);
+      return (<div className='columns'>{to_render}</div>);
     }
   });
 
@@ -305,9 +305,9 @@
       },
       {
         id: 'graders',
-        content:<input type='checkbox'
-          onChange={this.gradersInGroupsCheckboxAllClicked}>
-          <%= j raw I18n.t('graders.graders') %>
+        content:
+          <input type='checkbox'
+          onChange={this.gradersInGroupsCheckboxAllClicked}> <%= j raw I18n.t('graders.graders') %>
         </input>,
         sortable: true,
         searchable: false
@@ -376,7 +376,7 @@
       {
         id: 'graders',
         content:<input type='checkbox'
-          onChange={this.gradersInCriteriaCheckboxAllClicked}><%= j raw I18n.t('graders.graders') %></input>,
+          onChange={this.gradersInCriteriaCheckboxAllClicked}> <%= j raw I18n.t('graders.graders') %></input>,
         sortable: true,
         searchable: false
       },
@@ -410,7 +410,7 @@
       }.bind(this));
 
       return (
-        <div className={'col-right'}>
+        <div>
             <div id='group-tabs' className='tab-pane'>
               <ul>
               <li><a id='groups_table' onClick={this.tableChanged} href='#groups-tab'><span><%= j raw I18n.t('groups.groups') %></span></a></li>
@@ -515,7 +515,7 @@
       {
         id: 'graders',
         content:<input type='checkbox'
-        onChange={this.graderCheckboxAllClicked}><%= j raw I18n.t('graders.graders') %></input>,
+        onChange={this.graderCheckboxAllClicked}> <%= j raw I18n.t('graders.graders') %></input>,
         sortable: true,
         searchable: false
       },
@@ -559,7 +559,7 @@
       }.bind(this));
 
       return (
-       <div className={'col-right'}>
+       <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
         <Table data={groups_data} columns={columns}
                filters={filters} filter_type={true}
                search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
