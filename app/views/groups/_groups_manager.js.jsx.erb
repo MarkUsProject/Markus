@@ -76,18 +76,20 @@
     },
     render: function() {
       return (
-        <div className='columns'>
+        <div>
           <ErrorDiv error={this.state.error} />
-          <GroupsStudentsTable students={this.state.students}
-            selected_students={this.state.selected_students}
-            onSelectedStudentsChange={this.updateSelectedStudents}/>
-          <GroupsActionsColumn refresh={this.refresh} performAction={this.performAction} />
-          <GroupsTable groups={this.state.groups} 
-            selected_groups={this.state.selected_groups}
-            onSelectedGroupsChange={this.updateSelectedGroups}
-            selected_students_in_groups={this.state.selected_students_in_groups}
-            onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
-            refresh={this.refresh} />
+          <div className='columns'>
+            <GroupsStudentsTable students={this.state.students}
+              selected_students={this.state.selected_students}
+              onSelectedStudentsChange={this.updateSelectedStudents}/>
+            <GroupsActionsColumn refresh={this.refresh} performAction={this.performAction} />
+            <GroupsTable groups={this.state.groups} 
+              selected_groups={this.state.selected_groups}
+              onSelectedGroupsChange={this.updateSelectedGroups}
+              selected_students_in_groups={this.state.selected_students_in_groups}
+              onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
+              refresh={this.refresh} />
+          </div>
         </div>
       );
     }
