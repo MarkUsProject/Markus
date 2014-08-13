@@ -4,11 +4,11 @@
   <%= javascript_include_tag 'PeriodDeltaChain/PeriodDeltaChain' %>
   <%= javascript_include_tag 'moment-with-langs.min', 'localize_date' %>
   <%= javascript_include_tag 'help_system' %>
-<% end %>
 
-<%= render partial: 'boot',
-           formats: [:js],
-           handlers: [:erb] %>
+  <%= render partial: 'boot',
+             formats: [:js],
+             handlers: [:erb] %>
+<% end %>
 
 <%= render 'shared/flash_message' %>
 
@@ -21,16 +21,24 @@
   <%= render partial: 'shared/error_explanation',
              locals: { model: @assignment } %>
 
-  <!-- The locale format string used for localising the date/time -->
+  <%# The locale format string used for localising the date/time %>
   <%= raw(f.text_field nil,
                        id: 'format',
                        class: 'hidden',
                        value: t('date.formats.js_date_time'),
                        disabled: true) %>
 
-  <!-- Assignment properties -->
+  <%# Assignment properties %>
   <fieldset>
-    <legend><%= t('assignment.properties') %></legend>
+    <legend>
+      <span><%= t('assignment.properties') %></span>
+    </legend>
+
+    <div class='help assignment_properties_help'>
+      <p class='help-message-box assignment_properties_help'>
+        <%= t('assignment.help.assignment_form.properties').html_safe %>
+      </p>
+    </div>
 
     <div>
       <%= raw(f.label :short_identifier,
@@ -50,12 +58,6 @@
       <% end %>
     </div>
 
-    <div class='help assignment_properties_help'>
-      <p class='help-message-box assignment_properties_help'>
-        <%= t('assignment.help.assignment_form.properties').html_safe %>
-      </p>
-    </div>
-
     <div>
       <%= raw(f.label :description,
                       t('assignment.name').html_safe ) %>
@@ -67,8 +69,8 @@
     <div>
       <%= raw(f.label :message ) %>
       <%= raw(f.text_area :message,
-                          rows: 8,
                           cols: 65,
+                          rows: 8,
                           onchange: 'set_onbeforeunload(true);') %>
     </div>
 
@@ -137,36 +139,39 @@
     </div>
 
     <div>
-      <%= raw(f.label :allow_web_submits,
-                      t('assignment.allow_web_submits')) %>
       <%= raw(f.check_box :allow_web_submits,
                           checked: @assignment.allow_web_submits,
                           onclick: 'set_onbeforeunload(true);') %>
+      <%= raw(f.label :allow_web_submits,
+                      t('assignment.allow_web_submits')) %>
     </div>
 
     <div>
-      <%= raw(f.label :display_grader_names_to_students,
-                      t('assignment.display_grader_names_to_students')) %>
       <%= raw(f.check_box :display_grader_names_to_students,
                           checked: @assignment.display_grader_names_to_students,
                           onclick: 'set_onbeforeunload(true);') %>
+      <%= raw(f.label :display_grader_names_to_students,
+                      t('assignment.display_grader_names_to_students')) %>
     </div>
 
     <div>
-      <%= f.label :is_hidden, t('assignment.is_hidden') %>
       <%= raw(f.check_box :is_hidden,
                           checked: @assignment.is_hidden,
                           onclick: 'set_onbeforeunload(true);') %>
+      <%= f.label :is_hidden, t('assignment.is_hidden') %>
     </div>
   </fieldset>
 
-  <!-- Marking scheme -->
-  <div id='marking_scheme_notice' class='warning' style='display:none'>
-    <%= t('assignment.notice.change_marking_scheme_type')%>
-  </div>
-
+  <%# Marking scheme %>
   <fieldset>
-    <legend><%= t('assignment.marking_scheme.title') %></legend>
+    <legend>
+      <span><%= t('assignment.marking_scheme.title') %></span>
+    </legend>
+
+    <div id='marking_scheme_notice' class='warning' style='display:none'>
+      <%= t('assignment.notice.change_marking_scheme_type')%>
+    </div>
+
     <div class='help assignment_marking_scheme_help'>
       <p class='help-message-box assignment_marking_scheme_help'>
         <%= t('assignment.help.assignment_form.marking_scheme') %>
@@ -184,21 +189,24 @@
                                                '#{@assignment.marking_scheme_type}')") %>
 
         <%= raw(f.label('marking_scheme_type_' + Assignment::MARKING_SCHEME_TYPE[key],
-                        I18n.t("assignment.marking_scheme.#{value}"),
+                        t("assignment.marking_scheme.#{value}"),
                         class: 'radio_label')) %>
       </p>
     <% end %>
   </fieldset>
 
-  <!-- Required files -->
+  <%# Required files %>
   <fieldset>
+    <legend>
+      <span><%= t('assignment.required_files') %></span>
+    </legend>
+
     <div class='help assignment_required_files_help'>
       <p class='help-message-box assignment_required_files_help'>
         <%= t('assignment.help.assignment_form.required_files') %>
       </p>
     </div>
 
-    <legend><%= t('assignment.required_files') %></legend>
     <h4><%= t('assignment.required_files_by_student') %></h4>
     <div id='assignment_files'>
       <%= f.fields_for :assignment_files do |assignment_file_form| %>
@@ -207,14 +215,18 @@
                              form: f } %>
       <% end %>
     </div>
+
      <p id='assignment_file_add_link'>
         <%= add_assignment_file_link t('assignment.add_required_file'), f %>
      </p>
   </fieldset>
 
-  <!-- Assignment types -->
+  <%# Assignment types %>
   <fieldset>
-    <legend><%= t('assignment.type') %></legend>
+    <legend>
+      <span><%= t('assignment.type') %></span>
+    </legend>
+
     <div class='help assignment_assignment_type_help'>
       <p class='help-message-box assignment_assignment_type_help'>
         <%= t('assignment.help.assignment_form.assignment_type').html_safe %>
@@ -253,7 +265,9 @@
                         class: 'checkbox_label') %>
     </p>
     <fieldset class='group_properties disable' style='display: none' disabled>
-      <legend><%= t('assignment.group.properties') %></legend>
+      <legend>
+        <span><%= t('assignment.group.properties') %></span>
+      </legend>
 
       <div id='group_properties'>
         <p id='student_form_groups_style'>
@@ -300,9 +314,12 @@
     </fieldset>
   </fieldset>
 
-  <!-- Submission rules -->
+  <%# Submission rules %>
   <fieldset>
-    <legend><%= t('assignment.submission_rules') %></legend>
+    <legend>
+      <span><%= t('assignment.submission_rules') %></span>
+    </legend>
+
     <div class='help assignment_submission_rules_help'>
       <p class='help-message-box assignment_submission_rules_help'>
         <%= t('assignment.help.assignment_form.submission_rules') %>
@@ -374,7 +391,7 @@
               if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
               <%= render partial: 'penalty_decay_period',
                          locals: { penalty_decay_period: period_form.object,
-                                      pf: rule } %>
+                                   pf: rule } %>
             <% end %>
           <% end %>
         <% end %>
@@ -421,9 +438,12 @@
     <%- end -%>
   </fieldset>
 
-  <!-- Remark request rules -->
+  <%# Remark request rules %>
   <fieldset>
-    <legend><%= t('assignment.remark.rules')%></legend>
+    <legend>
+      <span><%= t('assignment.remark.rules')%></span>
+    </legend>
+
     <div class='help assignment_remark_request_rules_help'>
       <p class='help-message-box assignment_remark_request_rules_help'>
         <%= t('assignment.help.assignment_form.remark_request_rules') %>
@@ -469,6 +489,6 @@
   </fieldset>
 
   <%= f.submit t(:submit),
-               'data-disable-with' => I18n.t('working'),
+               data: { disable_with: t('working') },
                onclick: 'set_onbeforeunload(false);' %>
 <% end %>

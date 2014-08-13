@@ -557,7 +557,7 @@ fr:
       assignment_to_use: "Les groupes de quel projet souhaitez-vous réutiliser ?"
       delete_groups_linked: "Cela va supprimer tous les groupes liés à ce projet. Voulez-vous continuer ?"
       create_new_group: "Créer un nouveau groupe"
-      groupe_name: "Nom du groupe"
+      group_name: "Nom du groupe"
       action:
         choose: "Choisissez une action"
         validate: "Valider"

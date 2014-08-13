@@ -99,4 +99,3 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
 
   ordered_list_of_code.addClassName('code_scroller');
 }
-

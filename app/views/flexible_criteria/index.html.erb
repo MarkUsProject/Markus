@@ -1,16 +1,8 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag("livepipe/tabs") %>
+  <%= render partial: 'boot',
+             formats: [:js],
+             handlers: [:erb] %>
 <% end %>
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'livepipe/livepipe.js',
-                           'livepipe/window.js',
-                           'livepipe/tabs.js',
-                           'effects.js',
-                           'dragdrop.js' %>
-
-<%= render partial: 'boot',
-           formats: [:js],
-           handlers: [:erb] %>
 
 <div class='title_bar'>
   <h1>
@@ -34,7 +26,9 @@
   <%= render 'shared/flash_message' %>
 
   <p id='new_criterion_error' class='warning' style='display: none;'></p>
+</div>
 
+<div class='pane_wrapper'>
   <div id='flexible_criteria_pane'>
     <%= render partial: 'flexible_criteria/flexible_criteria_pane' %>
   </div>

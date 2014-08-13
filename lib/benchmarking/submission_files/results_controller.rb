@@ -213,7 +213,7 @@ class ResultsController < ApplicationController
       @extra_mark = ExtraMark.new
       @extra_mark.result = @result
       @extra_mark.update_attributes(params[:extra_mark])
-      @extra_mark.unit = ExtraMark::UNITS[:points]
+      @extra_mark.unit = ExtraMark::POINTS
       if @extra_mark.save
         render :'results/marker/insert_extra_mark'
       else

@@ -4,8 +4,8 @@
   <%= render partial: 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
   <%= javascript_include_tag 'application', 'prototype' %>
-  <%= stylesheet_link_tag 'application', media: 'all' %>
   <%= stylesheet_link_tag params[:controller], media: 'all' %>
+  <%= favicon_link_tag 'favicon.ico' %>
   <% # UI LIBRARIES %>
   <%= javascript_include_tag 'menu',
                              'layouts',

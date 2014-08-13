@@ -28,8 +28,7 @@ ModalMarkus.prototype.close = function() {
 }
 
 
-/** Helper functions for adding/removing classes to DOM elements
-    via pure JavaScript. */
+/** Helper functions for managing DOM elements' classes via pure JavaScript. */
 
 Element.prototype.addClass = function(className) {
   if (this.classList)
@@ -43,4 +42,11 @@ Element.prototype.removeClass = function(className) {
     this.classList.remove(className);
   else
     this.className = this.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+}
+
+Element.prototype.hasClass = function(className) {
+  if (this.classList)
+    return this.classList.contains(className);
+  else
+    return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
 }

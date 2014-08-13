@@ -25,21 +25,21 @@ jQuery(document).ready(function() {
   var target = document.getElementById('content');
 
   // create an observer instance
-  var observer = new MutationObserver(function (mutations) {
-      // For any mutation observed, call bindEventToGradeEntry();
-      mutations.forEach(function (mutation) {
+  var observer = new MutationObserver(function(mutations, observer) {
+    // For any mutation observed, call bindEventToGradeEntry();
+    mutations.forEach(function (mutation) {
 
-          // We only want bindEventToGradeEntry() to be called only when it hasn't been
-          // called on a set of grade boxes already. To accomplish this, check if an
-          // attribute exists in the table. If it exists, we called bindEventToGradeEntry()
-          // already. If not, call bindEventToGradeEntry(), then add the attribute.
-          var attr = $('grades').attributes["bound"];
-          if (attr == undefined) {
-              $('grades').attributes['bound'] = 'true';
-              bindEventToGradeEntry();
-          }
-      });
-  });
+      // We only want bindEventToGradeEntry() to be called only when it hasn't been
+      // called on a set of grade boxes already. To accomplish this, check if an
+      // attribute exists in the table. If it exists, we called bindEventToGradeEntry()
+      // already. If not, call bindEventToGradeEntry(), then add the attribute.
+      var attr = document.getElementById('grades').attributes['bound'];
+      if (attr == undefined) {
+        document.getElementById('grades').attributes['bound'] = 'true';
+        bindEventToGradeEntry();
+      }
+    });
+});
 
   // configuration of the observer: we want to detect changes to the subtree (when the
   // grade elements are replaced)
@@ -75,33 +75,30 @@ function update_cell(cell, value) {
   * the grade when it is changed
   */
 function bindEventToGradeEntry() {
-  $$('.grade-input').each(function (item) {
-    new Form.Element.EventObserver(item, function (element, value) {
-
-      var url = element.readAttribute('data-action');
+  jQuery('.grade-input').each(function() {
+    jQuery(this).change(function() {
       var params = {
-          'updated_grade': value,
-          'student_id': element.readAttribute('data-student-id'),
-          'grade_entry_item_id': element.readAttribute('data-grade-entry-item-id'),
-          'authenticity_token': AUTH_TOKEN
-      }
+        'updated_grade':       this.value,
+        'student_id':          this.getAttribute('data-student-id'),
+        'grade_entry_item_id': this.getAttribute('data-grade-entry-item-id'),
+        'authenticity_token':  AUTH_TOKEN
+      };
 
-      new Ajax.Request(url, {
-          asynchronous: true,
-          evalScripts: true,
-          parameters: params
+      jQuery.ajax({
+        url:  this.getAttribute('data-action'),
+        data: params,
+        type: 'POST'
       });
     });
   });
 }
 
 function toggleTotalColVisibility() {
-  var allElements = document.getElementsByClassName('total_value');
+  var grades_table = document.getElementById('grades_table');
 
-  for (var i = 0; i < allElements.length; i++) {
-    if (allElements[i].style.display == 'inline-block')
-      allElements[i].style.display = 'none';
-    else
-      allElements[i].style.display = 'inline-block';
+  if (grades_table.hasClass('hideTotal')) {
+    grades_table.removeClass('hideTotal');
+  } else {
+    grades_table.addClass('hideTotal');
   }
 }

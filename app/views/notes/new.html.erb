@@ -1,4 +1,4 @@
-<%= content_for :head do %>
+<% content_for :head do %>
   <%= javascript_include_tag 'notes' %>
 <% end %>
 
@@ -15,30 +15,29 @@
     <%= render partial: 'shared/error_explanation',
                locals: { model: @note } %>
 
-    <fieldset>
-      <p>
-        <%= label_tag 'noteable_type', t('notes.noteable') %>
-        <%= select_tag 'noteable_type',
-                       options_for_select(
-                          Note::NOTEABLES.map { |item| [t('notes.noteables.' + item),
-                                                        item ]}) %>
-      </p>
+    <p id='noteable_type'>
+      <%= label_tag 'noteable_type', t('notes.noteable') %>
+      <%= select_tag 'noteable_type',
+                     options_for_select(
+                        Note::NOTEABLES.map { |item| [t('notes.noteables.' + item),
+                                                      item ]}) %>
+    </p>
 
-      <div id='noteable_selector'>
-        <%= render partial: 'grouping' %>
-      </div>
+    <div id='noteable_selector'>
+      <%= render partial: 'grouping' %>
+    </div>
 
-      <p>
-        <%= raw(f.label :notes_message, t('notes.note')) %>
-        <%= raw(f.text_area :notes_message,
-                            rows: 10,
-                            onchange: 'set_onbeforeunload(true);') %>
-      </p>
-    </fieldset>
+    <p>
+      <%= raw(f.label :notes_message, t('notes.note')) %>
+      <%= raw(f.text_area :notes_message,
+                          rows: 10,
+                          onchange: 'set_onbeforeunload(true);') %>
+    </p>
 
     <%= f.submit t('save'),
                  onclick: 'set_onbeforeunload(false);',
                  data: { disable_with: t('working') } %>
     <%= link_to t('cancel'), notes_path, class: 'button' %>
+
   <% end %>
 </div>

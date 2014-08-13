@@ -1,0 +1,45 @@
+@import 'common/core';
+
+
+#disable {
+  color: $grey !important;
+}
+
+#repo_browser_controls {
+  fieldset {
+    @include box-shadow(none);
+  }
+
+  form {
+    display: inline-block;
+  }
+}
+
+.global_action {
+  margin-top: 2.5em;
+
+  input[type='button'],
+  input[type='submit'],
+  .button {
+    min-width: 8em;
+  }
+}
+
+#directory_selector {
+  font-style: italic;
+}
+
+#files_table {
+  margin-top: 1.5em;
+}
+
+
+/* Student view */
+
+#current_time {
+  margin-bottom: 1em;
+}
+
+.global_action {
+  margin: 1em 0;
+}

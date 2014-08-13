@@ -1,0 +1,4 @@
+jQuery('#flexible_criteria_pane_list').prepend("<%= escape_javascript(render partial: 'new_flexible_criterion',
+                                                                             locals: { assignment: @assignment }) %>");
+
+document.getElementById('new_flexible_criterion_prompt').focus();

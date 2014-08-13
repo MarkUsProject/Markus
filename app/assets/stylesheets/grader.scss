@@ -1,65 +1,57 @@
-@import 'constants';
-@import 'mixins';
+@import 'common/core';
 
-/* ==============================================================
-   ANNOTATION SUMMARY RELATED STYLES
-   ============================================================== */
+@import 'common/notes_dialog';
 
-/****************************************************
-  Annotations highlight; two colours, one for single comment
-  one for overlapping comment
- ****************************************************/
-#annotation_summary_list {
-  li:nth-child(odd) {
-    background-color: #fffcc4;
-  }
 
-  li:nth-child(even) {
-    background-color: #ff9;
-  }
-}
+/* Annotations */
 
-/****************************************************
-  Link to line number in Annotations Summary
- ****************************************************/
-.lineNumber {
-  margin: 0 0 10px 0;
-
-  a {
-    padding: 0 20px 0 0;
-  }
-}
-
-/****************************************************
-  Style for the actual annotations content
-*****************************************************/
 .annotationContent,
 .manageAnnotations {
-  font: 0.85em/0.9em $font-stack;
-  margin: 0 0 10px 0;
-  padding: 0 0 0 10px;
+  font: 0.85em/0.9em $fonts;
+  margin-bottom: 10px;
+  padding-left: 10px;
 }
 
 .annotationContent p {
   white-space: pre-wrap;
 }
 
+.annotation_text_display {
+  @include border-radius(5px);
+  background: #f6f6f6;
+  border: 1px solid $grey;
+  max-width: 400px;
+  padding: 0.25em 1em;
+  position: absolute;
+  white-space: pre-wrap;
+  width: auto;
+  z-index: 100000;
+}
+
+
+/* Top toolbars: student selector/file selector/download buttons */
+
 #student_selector {
   @include border-radius(5px);
   background: #ececec;
   border: 1px solid #ddd;
+  display: table;
   padding: 2px 10px;
   margin: 0 0 10px 0;
+  width: 100%;
+
+  #criterion_incomplete_error {
+    display: table-row;
+  }
+
+  #student_selector_controls {
+    display: table-row;
+  }
 
   .left,
   .middle,
   .right {
-    float: left;
-  }
-
-  .left,
-  .right {
-    margin-top: 6px;
+    display: table-cell;
   }
 
   .left {
@@ -78,116 +70,6 @@
   }
 }
 
-.dp-highlighter {
-  .annotation_highlighted_text {
-    background-color: #f99;
-    color: #000;
-  }
-
-  .annotation_highlighted_text_overlap {
-    background-color: #dd5;
-    color: blue;
-  }
-}
-
-.annotation_text_display {
-  @include border-radius(5px);
-  background: #f6f6f6;
-  border: 1px solid $grey;
-  max-width: 400px;
-  padding: 0.25em 1em;
-  position: absolute;
-  white-space: pre-wrap;
-  width: auto;
-  z-index: 100000;
-}
-
-#annotation_menu {
-  @include border-radius-top(5px);
-  background: #b7d3ec;
-  padding: 5px;
-  margin: 0 0 10px 0;
-}
-
-#annotation_categories {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-
-#new_annotation_button {
-  float: left;
-  font-weight: 300;
-  margin: 0 5px 0 0;
-}
-
-.edit_remove_annotation_button {
-  @include border-radius(10px);
-  background: #fff;
-  border: 2px solid #ccc;
-  color: #464646;
-  font: bold 0.85em $font-stack;
-  margin: 5px;
-  min-width: 0;
-  padding: 3px 10px 3px 10px;
-}
-
-li.annotation_category {
-  @include border-radius(5px);
-  background: #fff;
-  border: 1px solid #ccc;
-  color: $grey;
-  display: inline-block;
-  font-weight: 600;
-  padding: 3px 5px;
-
-
-  &:hover {
-    color: #000;
-    cursor: pointer;
-  }
-}
-
-.annotation_text_list {
-  @include border-radius(5px);
-  background: $light-grey;
-  border: 1px solid #aaa;
-  height: auto;
-  margin: 0;
-  overflow: auto;
-  padding: 0;
-  position: absolute;
-  width: 300px;
-
-  li {
-    background: #fff;
-    border-bottom: 1px solid #aaa;
-    color: #464646;
-    padding: 5px;
-
-    &:hover {
-      background: $light-grey;
-      color: #000;
-      cursor: pointer;
-    }
-
-    &:first-child {
-      @include border-radius-top(5px);
-    }
-
-    &:last-child {
-      @include border-radius-bottom(5px);
-      border: 0;
-    }
-  }
-}
-
-/* =================================================================================
-  GENERAL LAYOUT STYLES
-===================================================================================*/
-
-/* File selector/download buttons */
 .file_selector,
 .download_file {
   @include border-radius(5px);
@@ -204,83 +86,53 @@ li.annotation_category {
     margin-bottom: 1em;
   }
 
+  select {
+    background: $white;
+  }
+
   #next_button,
   #back_button {
     min-width: 0;
   }
 }
 
-#code_pane,
-#mark_pane {
-  @include border-radius(5px);
-  background: #ececec;
-  border: 1px solid #ddd;
-  height: 100%;
-  margin: 0 0 10px 0;
-  padding: 10px;
+.download_file {
+  .inline_label {
+    margin-left: 0.5em;
+  }
+
+  #include_annotations {
+    margin-right: 0.5em;
+  }
 }
 
-  #mark_viewer,
-  #summary_viewer,
-  #submission_rule_viewer,
-  #codeviewer,
-  #annotations_summary {
-    @include border-radius-bottom(5px);
-    overflow: auto;
-  }
 
-  #codeviewer,
-  #mark_viewer,
-  #summary_viewer,
-  #submission_rule_viewer,
-  #annotations_summary,
-  #remark_request_tab {
-    height: 650px;
-  }
+/* Panes content (for controlling the heights) */
 
-  // Adjusted height for users that also see the annotation menu
-  #annotation_menu + #codeviewer {
-    height: 600px;
-  }
-
-  #annotations_summary_head {
-    padding: 0 1em;
-  }
-
-  #remark_request {
-    padding: 1em;
-  }
-
-    #sel_box {
-      border: 1px dashed #f00;
-      display: none;
-      position: absolute;
-    }
-
-    #image_preview {
-      display: block;
-    }
-
-    .annotation_holder {
-      background: orange;
-      border: 1px solid #000;
-      cursor: crosshair;
-      filter: alpha(opacity=20);
-      opacity: 0.2;
-      position: absolute;
-    }
-
-#toolbar {
-  @include border-radius(5px);
-  background: #ededed;
-  margin: 0 0 20px 0;
-  padding: 5px;
-}
-
-.code_scroller {
-  margin: 0;
+#mark_viewer,
+#summary_viewer,
+#submission_rule_viewer,
+#codeviewer,
+#annotations_summary {
+  @include border-radius-bottom(5px);
   overflow: auto;
-  padding: 0 0 0 50px !important;
+}
+
+#codeviewer,
+#mark_viewer,
+#summary_viewer,
+#submission_rule_viewer,
+#annotations_summary,
+#remark_request_tab {
+  height: 650px;
+}
+
+
+/* Source code pane */
+
+// Adjusted height for users that also see the annotation menu
+#annotation_menu + #codeviewer {
+  height: 600px;
 }
 
 .image_container {
@@ -288,39 +140,185 @@ li.annotation_category {
   width: auto;
 }
 
-#mark_criteria_pane_list {
-  height: 100%;
-  overflow: auto;
+#sel_box {
+  border: 1px dashed #f00;
+  display: none;
+  position: absolute;
 }
 
-/* Annotation summary list styles */
+.annotation_holder {
+  background: orange;
+  border: 1px solid #000;
+  cursor: crosshair;
+  filter: alpha(opacity=20);
+  opacity: 0.2;
+  position: absolute;
+}
+
+.code_scroller {
+  margin: 0;
+  overflow: auto;
+  padding-left: 50px !important;
+}
+
+.dp-highlighter {
+  .annotation_highlighted_text {
+    background-color: #f99;
+    color: $dark-grey;
+  }
+
+  .annotation_highlighted_text_overlap {
+    background-color: #dd5;
+    color: $dark-blue;
+  }
+
+  ol {
+    overflow-y: hidden;
+  }
+}
+
+
+/* New annotation dialog */
+
+#create_annotation_dialog {
+  padding-top: 1.5em;
+
+  textarea#new_annotation_content {
+    height: 175px;
+    margin-top: 1em;
+    width: 100%;
+  }
+}
+
+
+/* Annotations menus */
+
+#annotation_menu {
+  @include border-radius-top(5px);
+  background: #b7d3ec;
+  display: table;
+  margin: 0 0 1em 0;
+  padding: 0.5em;
+  width: 100%;
+}
+
+#new_annotation_button {
+  display: table-cell;
+  font-weight: 300;
+  margin: 0 0.25em 0 0;
+  min-width: 0;
+  vertical-align: top;
+}
+
+#annotation_categories {
+  display: table-cell;
+  vertical-align: top;
+}
+
+li.annotation_category {
+  margin-bottom: 0.25em;
+}
+
+ul.annotation_text_list {
+  @include border-radius-bottom(5px);
+  background: $white !important;
+  border: 1px solid #aaa;
+  height: auto;
+  margin: 0;
+  overflow: auto;
+  padding: 0;
+  position: absolute;
+  left: -0.65em !important;
+  top: 0 !important;
+  width: 300px;
+
+  li {
+    @include border-radius-top(0 !important);
+    background: $white !important;
+    padding: 0.5em 0.25em;
+    width: 100%;
+
+    &:hover {
+      background: $blue !important;
+      color: $white;
+      cursor: pointer;
+    }
+
+    &:last-child {
+      @include border-radius-bottom(5px);
+      border: 0;
+    }
+  }
+}
+
+
+/* Annotations pane */
+
+#annotations_summary_head {
+  padding: 0.5em 0;
+
+  textarea#overall_comment_text_area {
+    margin: 1em 0;
+    width: 100%;
+  }
+
+  input#overall_comment_submit {
+    margin-bottom: 2em;
+  }
+}
 
 #annotation_summary_list {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid $grey;
   list-style: none;
   margin: 0 0 20px 0;
   padding: 0;
 
   li {
-    border-bottom: 1px solid #dadada;
-    padding: 5px 10px;
+    border-bottom: 1px solid $grey;
+    padding: 0.25em 0.5em;
+    width: 100%;
+
+    &:nth-child(odd) {
+      background-color: #fffcc4;
+    }
+
+    &:nth-child(even) {
+      background-color: #ff9;
+    }
   }
 
   a {
-    color: blue;
+    color: $dark-blue;
+  }
+
+  input,
+  form.button_to {
+    display: inline-block;
   }
 }
 
-/* Grading view */
-/* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
-.padding_left {
-  padding-left: 30px;
+.edit_remove_annotation_button {
+  font-size: 0.85em !important;
 }
 
-.padding_left_old {
-  padding-left: 30px;
-  background-color: #fdfebc;
+
+/* Remark request pane */
+
+#remark_request {
+  padding: 1em;
+
+  h3 + h3 {
+    margin: 1em 0 0.5em;
+  }
+
+  textarea {
+    margin-bottom: 1em;
+    width: 100%;
+  }
 }
+
+
+/* Marks pane */
 
 #mark_criteria_pane_list {
   font-size: 10px;
@@ -330,8 +328,10 @@ li.annotation_category {
   width: 100%;
 
   li {
+    @include border-radius(0);
     border-bottom: 1px solid #dadada;
     padding: 5px;
+    width: 100%;
 
     &:nth-child(odd) {
       background: #ededed;
@@ -340,6 +340,20 @@ li.annotation_category {
     &:nth-child(even) {
       background: #fff;
     }
+
+    .mark_criterion_expand {
+      float: left;
+      font-size: 1.2em;
+      width: 1em;
+    }
+
+    .mark_description {
+      margin-left: 2.5em;
+    }
+  }
+
+  table tr {
+    cursor: pointer;
   }
 }
 
@@ -348,29 +362,29 @@ li.annotation_category {
   text-align: center;
 }
 
-/* ================ CRITERION STYLES ============== */
-#old_summary_criteria_pane {
-  display: none;
-}
+// /* ================ CRITERION STYLES ============== */
+// #old_summary_criteria_pane {
+//   display: none;
+// }
 
-.assigned {
-  border: 4px solid #b7d3ec;
-}
+// .assigned {
+//   border: 4px solid #b7d3ec;
+// }
 
-  .mark_criterion_title {
-    cursor: pointer;
-  }
+//   .mark_criterion_title {
+//     cursor: pointer;
+//   }
 
-  .mark_criterion_holder_selected,
-  .mark_level {
-    background: #ccf;
-  }
+//   .mark_criterion_holder_selected,
+//   .mark_level {
+//     background: #ccf;
+//   }
 
-.mark_criterion_level {
-  background: none;
-  color: #000;
-  font-size: 0.625em;
-}
+// .mark_criterion_level {
+//   background: none;
+//   color: #000;
+//   font-size: 0.625em;
+// }
 
 .mark_reset {
   background: none;
@@ -380,9 +394,9 @@ li.annotation_category {
   font-size: 0.625em;
 }
 
-.mark_criterion_level_selected {
-  background-color: #ffc;
-  font-size: 0.625em;
+.mark_criterion_level_selected,
+.rubric_criterion_level_selected {
+  background-color: $light-green;
 }
 
 .mark_criterion_level_container {
@@ -406,10 +420,6 @@ li.annotation_category {
 
 .rubric_criterion_level {
   background: #fff;
-}
-
-.rubric_criterion_level_selected {
-  background: #77fa52;
 }
 
 .rubric_criterion_level_old_mark {
@@ -443,17 +453,17 @@ li.annotation_category {
   padding: 5px;
 }
 
-  .extra_mark_title_div {
-    cursor: pointer;
-  }
+  // .extra_mark_title_div {
+  //   cursor: pointer;
+  // }
 
-  .extra_mark_holder_selected {
-    background: #ccf;
-  }
+  // .extra_mark_holder_selected {
+  //   background: #ccf;
+  // }
 
-  .extra_mark_delete {
-    float: right;
-  }
+  // .extra_mark_delete {
+  //   float: right;
+  // }
 
   .extra_marks_pane {
     border: 1px solid #dadada;
@@ -461,9 +471,22 @@ li.annotation_category {
   }
 
   .extra_marks_pane_list {
-    border-bottom: 1px solid #dadada;
-    margin: 0;
-    padding: 0;
+    tbody + tbody {
+      tr {
+        background: $white !important;
+      }
+    }
+
+    #add_extra_mark_prompt {
+      div {
+        margin-bottom: 0.5em;
+      }
+
+      label {
+        display: inline-block;
+        min-width: 25%;
+      }
+    }
   }
 
   #extra_marks_bonus,
@@ -471,26 +494,31 @@ li.annotation_category {
     text-align: right;
   }
 
-/* Criterion summary holder */
 
-.mark_summary_holder {
-  background: #fbfbfb;
-  border-bottom: 1px solid #dadada;
+/* Summary pane */
+
+.summary_block {
+  border: 1px solid $light-grey;
+  text-align: right;
+  line-height: 1.6em;
+  margin: 0.25em 0.25em 1.5em;
   padding: 5px;
 }
 
+.extra_marks_pane_list,
+.extra_percentage_pane_list,
 .marks_summary_pane_list {
   margin: 0;
   padding: 0;
+  width: 100%;
 
   th {
-    background-color: #b7d3ec;
-    padding: 5px;
+    background-color: $light-blue;
+    padding: 0.25em;
+    text-align: left;
   }
 
   tr {
-    padding-left: 5px;
-
     &:nth-child(odd) {
       background: #EDEDED;
     }
@@ -498,18 +526,47 @@ li.annotation_category {
     &:nth-child(even) {
       background: #fff;
     }
+
+    td {
+      padding: 0.25em;
+    }
   }
 }
 
 .mark_subtotal {
-  font-weight: bold;
+  font-weight: 600;
   padding: 10px 20px;
 }
 
 .mark_total {
+  @include border-radius($radius);
+  background: $light-grey;
+  border: 1px solid $grey;
   font-weight: 600;
   margin: 1em 0;
   padding: 10px;
+
+  .final_mark {
+    float: right;
+    font-size: 1.5em;
+    font-style: italic;
+  }
+}
+
+.padding_left {
+  padding-left: 30px;
+}
+
+.padding_left_old {
+  padding-left: 30px;
+  background-color: #fdfebc;
+}
+
+
+/* Submission rule pane */
+
+#submission_rule_viewer h3 {
+  margin-bottom: 1em;
 }
 
 
@@ -550,6 +607,7 @@ li.annotation_category {
     padding-right: 0.5em;
 
     @include breakpoint(small) {
+      margin-bottom: 1em;
       padding-right: 0;
     }
   }

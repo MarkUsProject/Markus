@@ -1,15 +1,17 @@
 class AnnotationCategory < ActiveRecord::Base
-  validates_presence_of :annotation_category_name
   has_many :annotation_texts, dependent: :destroy
-  belongs_to :assignment
 
+  validates_presence_of :annotation_category_name
   # Unique index for this validation is not require and can cause trouble
   # (ref. issue #191)
-  validates_uniqueness_of :annotation_category_name, scope: :assignment_id,
+  validates_uniqueness_of :annotation_category_name,
+                          scope:   :assignment_id,
                           message: 'is already taken'
 
+  belongs_to :assignment
   validates_presence_of :assignment_id
-  validates_associated :assignment, message: 'not strongly associated with assignment'
+  validates_associated :assignment,
+                       message: 'not strongly associated with assignment'
 
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
@@ -19,7 +21,9 @@ class AnnotationCategory < ActiveRecord::Base
     result[:annotation_upload_invalid_lines] = []
     # The first column is the annotation category name...
     annotation_category_name = row.shift
-    annotation_category = assignment.annotation_categories.find_by_annotation_category_name(annotation_category_name)
+    annotation_category =
+      annotation_category_with_name(annotation_category_name, assignment)
+
     if annotation_category.nil?
       # Create a new annotation category
       annotation_category = AnnotationCategory.new
@@ -57,7 +61,10 @@ class AnnotationCategory < ActiveRecord::Base
   def self.add_by_array(annotation_category_name, annotation_texts_content, assignment, current_user)
     result = {}
     result[:annotation_upload_invalid_lines] = []
-    annotation_category = assignment.annotation_categories.find_by_annotation_category_name(annotation_category_name)
+
+    annotation_category =
+      annotation_category_with_name(annotation_category_name, assignment)
+
     if annotation_category.nil?
       # Create a new annotation category
       annotation_category = AnnotationCategory.new
@@ -80,5 +87,13 @@ class AnnotationCategory < ActiveRecord::Base
       end
     end
     return result
+  end
+
+  private
+
+  def self.annotation_category_with_name(annotation_category_name, assignment)
+    assignment.annotation_categories
+              .where(annotation_category_name: annotation_category_name)
+              .first
   end
 end

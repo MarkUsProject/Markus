@@ -72,12 +72,12 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
     holder = document.getElementById('annotation_holder_' + annot_text_id);
 
     // Left offset of the holder
-    holder_left = image_preview.offsetLeft + parseInt(horiz_range.start);
+    holder_left = image_preview.offsetLeft + parseInt(horiz_range.start, 10);
     // Top offset of the holder
-    holder_top  = image_preview.offsetTop + parseInt(vert_range.start);
+    holder_top  = image_preview.offsetTop + parseInt(vert_range.start, 10);
 
-    holder_width  = parseInt(horiz_range.end) - parseInt(horiz_range.start);
-    holder_height = parseInt(vert_range.end) - parseInt(vert_range.start);
+    holder_width  = parseInt(horiz_range.end, 10) - parseInt(horiz_range.start, 10);
+    holder_height = parseInt(vert_range.end, 10) - parseInt(vert_range.start, 10);
 
     holder.style.left = Math.max(0, holder_left - left_edge) + image_preview.offsetLeft + 'px';
     holder.style.top  = Math.max(0, holder_top - top_edge) + image_preview.offsetTop + 'px';

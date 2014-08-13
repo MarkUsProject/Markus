@@ -1,6 +1,6 @@
 <ul class='annotation_text_list'>
   <% if annotation_category.annotation_texts.empty? %>
-    <%= t('marker.annotation.no_annotation_in_this_category') %>
+    <li><%= t('marker.annotation.no_annotation_in_this_category') %></li>
   <% end %>
 
   <% annotation_category.annotation_texts.each do |annotation_text| %>

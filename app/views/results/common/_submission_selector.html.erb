@@ -1,54 +1,66 @@
-<div id="student_selector">
+<div id='criterion_incomplete_error' class='error' style='display:none'></div>
 
-  <div id="criterion_incomplete_error" class="error" style="display:none">
-  </div>
-
-<span class="left">
-  <% if !previous_grouping.nil?%>
-    <%= link_to I18n.t("marker.previous_submission"), action: 'next_grouping', id: previous_grouping.id %>
-  <% else %>
-     <span class="disable"><%= I18n.t("marker.previous_submission") %></span>
-  <% end %>
-</span>
-  <span class="middle">
-    <%= link_to raw(I18n.t("marker.notes",
-		notes: @grouping.notes.size)),
-       notes_dialog_note_path(id: @grouping.assignment_id,
-					noteable_id: @grouping.id,
-					noteable_type: 'Grouping',
-					action_to: 'note_message',
-					controller_to: 'results',
-					highlight_field: 'notes_dialog_link',
-					number_of_notes_field: 'number_of_notes'),
-     id: 'notes_dialog_link',
-     remote: true %>
-  |
-    (<%=label_tag "marking_state", I18n.t("marker.marking_status"), class: "inline_label" %>
-     <% old_result_id = nil %>
-     <% if @old_result %>
-        <% old_result_id = @old_result.id %>
-        <% possible_states = [[I18n.t("partial"), Result::MARKING_STATES[:partial]], [I18n.t("complete"), Result::MARKING_STATES[:complete]]] %>
-     <% else %>
-        <% possible_states = [[I18n.t("unmarked"), Result::MARKING_STATES[:unmarked]], [I18n.t("partial"), Result::MARKING_STATES[:partial]], [I18n.t("complete"), Result::MARKING_STATES[:complete]]] %>
-     <% end %>
-     <%=  select_tag "marking_state", options_for_select(possible_states,[result.marking_state]), disabled: @result.released_to_students, 'data-action' => url_for(action: 'update_marking_state', id: @result.id) %>
-
-    <em><%= I18n.t("marker.marks.total_mark") %></em>
-    <span id="current_mark_div"><%= result.total_mark %></span> /
-    <span id="total_mark_div"><%= assignment.total_mark %></span>)
-   <% if @current_user.admin? %>
-     | <%= label_tag "released", I18n.t("marker.marks.released"), class: "inline_label" %>
-        <%= check_box_tag "released", true, result.released_to_students, disabled: result.marking_state != Result::MARKING_STATES[:complete], class: 'inline_checkbox', 'data-action' => url_for(action: 'set_released_to_students', id: @result.id) %>
+<div id='student_selector'>
+  <span class='left'>
+    <% if !previous_grouping.nil?%>
+      <%= link_to t('marker.previous_submission'), action: 'next_grouping', id: previous_grouping.id %>
+    <% else %>
+      <span class='disable'><%= t('marker.previous_submission') %></span>
     <% end %>
   </span>
 
-  <span class="right">
+  <span class='middle'>
+    <%= link_to raw(t('marker.notes',
+                      notes: @grouping.notes.size)),
+                    notes_dialog_note_path(id: @grouping.assignment_id,
+                                           noteable_id: @grouping.id,
+                                           noteable_type: 'Grouping',
+                                           action_to: 'note_message',
+                                           controller_to: 'results',
+                                           highlight_field: 'notes_dialog_link',
+                                           number_of_notes_field: 'number_of_notes'),
+                    id: 'notes_dialog_link',
+                    remote: true %>
+    |
+    (<%= label_tag 'marking_state',
+                   t('marker.marking_status'),
+                   class: 'inline_label' %>
+    <% old_result_id = nil %>
+    <% if @old_result %>
+      <% old_result_id = @old_result.id %>
+      <% possible_states = [[t('partial'), Result::MARKING_STATES[:partial]], [t('complete'), Result::MARKING_STATES[:complete]]] %>
+    <% else %>
+      <% possible_states = [[t('unmarked'), Result::MARKING_STATES[:unmarked]], [t('partial'), Result::MARKING_STATES[:partial]], [t('complete'), Result::MARKING_STATES[:complete]]] %>
+    <% end %>
+    <%= select_tag 'marking_state',
+                   options_for_select(possible_states,[result.marking_state]),
+                   disabled: @result.released_to_students,
+                   'data-action' => url_for(action: 'update_marking_state',
+                                            id: @result.id) %>
 
-<% if !next_grouping.nil? %>
-   <%= link_to I18n.t("marker.next_submission"), action: 'next_grouping', id: @next_grouping.id%>
-<% else %>
-   <span class="disable"><%= I18n.t("marker.next_submission") %></span>
-<% end %>
-</span>
-  <div class="clear"></div>
+    <em><%= t('marker.marks.total_mark') %></em>
+    <span id='current_mark_div'><%= result.total_mark %></span> /
+    <span id='total_mark_div'><%= assignment.total_mark %></span>)
+
+    <% if @current_user.admin? %>
+      | <%= label_tag 'released',
+                      t('marker.marks.released'),
+                      class: 'inline_label' %>
+        <%= check_box_tag 'released',
+                          true,
+                          result.released_to_students,
+                          disabled: result.marking_state != Result::MARKING_STATES[:complete],
+                          class: 'inline_checkbox',
+                          'data-action' => url_for(action: 'set_released_to_students',
+                                                   id: @result.id) %>
+    <% end %>
+  </span>
+
+  <span class='right'>
+    <% if !next_grouping.nil? %>
+      <%= link_to t('marker.next_submission'), action: 'next_grouping', id: @next_grouping.id%>
+    <% else %>
+      <span class='disable'><%= t('marker.next_submission') %></span>
+    <% end %>
+  </span>
 </div>

@@ -14,8 +14,11 @@
 }
 
 #role_switch_dialog {
-  .role_switch_block {
-    margin-bottom: 1em;
+  input[type='text'],
+  input[type='password'] {
+    margin-top: 1em;
+    padding: 0.5em 0.75em;
+    width: 100%;
   }
 }
 
@@ -112,4 +115,55 @@ input[type='radio'] {
       text-align: left;
     }
   }
+}
+
+
+/* Help messages */
+
+.help-icon {
+  background: url(icons/help_icon.png) no-repeat;
+  cursor: help;
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1rem;
+  height: 28px;
+  width: 28px;
+
+  a {
+    font-size: 1em;
+  }
+}
+
+.help {
+  @extend .help-icon;
+  float: right;
+}
+
+.title-help {
+  @extend .help-icon;
+  margin-left: 10px;
+}
+
+.help-message {
+  @include border-radius(5px);
+  background: #ffffe0;
+  border: 1px solid #e6db55;
+  display: inline-block;
+  padding: 10px;
+  position: relative;
+  top: -15px;
+  width: 350px;
+}
+
+.help-message-title {
+  @extend .help-message;
+  float: left;
+  left: 35px;
+}
+
+.help-message-box {
+  @extend .help-message;
+  float: right;
+  right: 35px;
 }

@@ -1,1 +1,0 @@
-page.replace_html "rubric_criteria_pane", partial: "rubrics/rubric_criteria_pane"

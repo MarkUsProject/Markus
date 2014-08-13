@@ -124,32 +124,39 @@ strong a {
   @include border-radius($radius);
   display: block;
   margin-bottom: 1em;
-  padding: 0.25em 0.5em;
+  padding: 0.25em 0.5em 0.25em 2em;
   width: 100%;
 }
 
 .error {
   @extend .alert;
-  background: $light-red;
+  background: $light-red url('icons/exclamation.png') no-repeat 5px center;
   border: 1px solid $red;
 }
 
 .warning {
   @extend .alert;
-  background: $light-yellow;
+  background: $light-yellow url(icons/error.png) no-repeat 5px center;
   border: 1px solid $yellow;
 }
 
 .success {
   @extend .alert;
-  background: $light-green;
+  background: $light-green url(icons/accept.png) no-repeat 5px center;
   border: 1px solid $green;
 }
 
 .information {
   @extend .alert;
+  background: $light-grey url(icons/information.png) no-repeat 5px center;
+  border: 1px solid $grey;
+}
+
+.notice {
+  @extend .alert;
   background: $light-grey;
   border: 1px solid $grey;
+  padding: 0.25em 0.5em;
 }
 
 
@@ -289,17 +296,16 @@ fieldset {
     @include box-shadow(none);
     border: none;
     border-top: 1px solid $grey;
-    padding: 3.5em 0 0;
+    padding: 0;
 
     legend {
       width: 100%;
 
       & > span {
-        border-top: 1px solid $grey;
         display: block;
         padding-top: 0.5em;
         position: relative;
-        top: 1.5em;
+        top: 1em;
       }
     }
   }

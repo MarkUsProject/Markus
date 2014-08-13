@@ -57,7 +57,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         post_as @admin, :create, @attributes
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
         assert_not_nil new_assignment
-        assert redirect_to(:action => 'edit', :id => new_assignment)
+        assert redirect_to(action: 'edit', id: new_assignment)
       end
 
       should 'have an assignment stat object associated' do
@@ -71,7 +71,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should "set the flash's success message" do
         post_as @admin, :create, @attributes
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
-        assert_equal flash[:success], 'Successfully created the assignment'
+        assert_equal 'Successfully created the assignment', flash[:success]
       end
 
       context 'with section due dates' do
@@ -81,46 +81,60 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should 'be able to create assignment with section due dates' do
-          @attributes['section_due_dates_type'] = '1'
+          @attributes['assignment']['section_due_dates_type'] = '1'
           due_date_attributes = {
-              0 => { 'section_id' => "#{@section1.id}",
+            '0' => { 'section_id' => "#{@section1.id}",
                      'due_date'   => '2011-10-27 00:00' },
-              1 => { 'section_id' => "#{@section2.id}",
+            '1' => { 'section_id' => "#{@section2.id}",
                      'due_date'   => '2011-10-29 00:00' }
           }
-          @attributes['assignment']['section_due_dates_attributes'] = due_date_attributes
+          @attributes['assignment']['section_due_dates_attributes'] =
+            due_date_attributes
 
           post_as @admin, :create, @attributes
-          new_assignment = Assignment.find_by_short_identifier(@short_identifier)
+          new_assignment =
+            Assignment.where(short_identifier: @short_identifier).first
+
           assert_not_nil new_assignment
           assert_equal true, new_assignment.section_due_dates_type
           due_date_attributes.each do |key, value|
-            assert new_assignment.section_due_dates[key].
-                       due_date.to_s.include?(value['due_date'])
+            date     = Time.parse(value['due_date'])
+            due_date =
+              new_assignment.section_due_dates
+                            .find { |d| d.due_date == date }
+            refute_nil due_date, "Due date not added for section #{key}"
+            assert_equal value['section_id'].to_i, due_date.section_id
           end
-          assert redirect_to(:action => 'edit', :id => new_assignment)
+          assert redirect_to(action: 'edit', id: new_assignment)
         end
 
         should 'be able to create assignment due date with some section due dates set' do
           # A section due date can be nil
           # That section then uses the main due_date
-          @attributes['section_due_dates_type'] = '1'
+          @attributes['assignment']['section_due_dates_type'] = '1'
           due_date_attributes = {
-              0 => { 'section_id' => "#{@section1.id}",
+            '0' => { 'section_id' => "#{@section1.id}",
                      'due_date'   => nil },
-              1 => { 'section_id' => "#{@section2.id}",
+            '1' => { 'section_id' => "#{@section2.id}",
                      'due_date'   => '2011-10-29 00:00' }
           }
-          @attributes['assignment']['section_due_dates_attributes'] = due_date_attributes
+          @attributes['assignment']['section_due_dates_attributes'] =
+            due_date_attributes
 
           post_as @admin, :create, @attributes
-          new_assignment = Assignment.find_by_short_identifier(@short_identifier)
+
+          new_assignment =
+            Assignment.where(short_identifier: @short_identifier).first
+
           assert_not_nil new_assignment
           assert_equal true, new_assignment.section_due_dates_type
           assert_nil new_assignment.section_due_dates[0].due_date
-          assert new_assignment.section_due_dates[1].
-                     due_date.to_s.include? due_date_attributes[1]['due_date']
-          assert redirect_to(:action => 'edit', :id => new_assignment)
+
+          expected_date = new_assignment.section_due_dates[1].due_date
+          actual_date   = Time.parse(due_date_attributes['1']['due_date'])
+          assert_equal expected_date, actual_date
+
+          assert redirect_to(action: 'edit', id: new_assignment)
         end
       end  # With some sections
     end #creating new assignment
@@ -249,7 +263,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_equal @assignment.submission_rule.type.to_s,
                      a.submission_rule.type.to_s
         assert_not_nil assigns(:assignment)
-        assert !assigns(:assignment).errors.empty?
+        refute_empty assigns(:assignment).errors
       end
 
       should 'be able to add periods to submission rule class' do
@@ -317,15 +331,18 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert @assignment.submission_rule.is_a?(GracePeriodSubmissionRule)
 
         put_as @admin,
-                :update,
-                {:id => @assignment.id,
-                 :assignment => {
-                   :submission_rule_attributes => {
-                     :type => 'NoLateSubmissionRule',
-                     :periods_attributes => {
-                        '1' => { :id => period.id } },
-                     :id => @assignment.submission_rule.id,
-                     }}}
+               :update,
+               id: @assignment.id,
+               assignment: {
+                 submission_rule_attributes: {
+                   type: 'NoLateSubmissionRule',
+                   periods_attributes: {
+                     '1' => { id: period.id, hours: 1 }
+                   },
+                   id: @assignment.submission_rule.id,
+                 }
+               }
+
         assert_response :redirect
         # no errors should have been produced
         assert_equal [], assigns(:assignment).errors[:base]
@@ -527,8 +544,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         @assignment.reload
         assert_equal false, @assignment.section_due_dates_type
-        assert_equal 0, @assignment.section_due_dates.size
-        assert_equal 0, SectionDueDate.all.size
+        assert_empty @assignment.section_due_dates
+        assert_empty SectionDueDate.all
       end
     end  # -- with an assignment
 

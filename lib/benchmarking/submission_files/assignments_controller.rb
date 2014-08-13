@@ -1,4 +1,3 @@
-require 'fastercsv'
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin, except: [:deletegroup, :delete_rejected, :disinvite_member, :invite_member,
   :creategroup, :join_group, :decline_invitation, :index, :student_interface]
@@ -186,7 +185,7 @@ class AssignmentsController < ApplicationController
   def download_csv_grades_report
     assignments = Assignment.all
     students = Student.all
-    csv_string = FasterCSV.generate do |csv|
+    csv_string = CSV.generate do |csv|
       students.each do |student|
         row = []
         row.push(student.user_name)

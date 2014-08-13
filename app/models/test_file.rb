@@ -1,9 +1,6 @@
 class TestFile < ActiveRecord::Base
   belongs_to :assignment
 
-  # Restrict updates to filename, filetype and is_private columns
-  attr_accessible :filename, :filetype, :is_private
-
   # Run sanitize_filename before saving to the database
   before_save :sanitize_filename
 

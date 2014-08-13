@@ -1,12 +1,14 @@
 class AnnotationText < ActiveRecord::Base
 
-  belongs_to :annotation_category
   belongs_to :user, foreign_key: :creator_id
+
   # An AnnotationText has many Annotations that are destroyed when an
   # AnnotationText is destroyed.
   has_many :annotations, dependent: :destroy
-  validates_associated   :annotation_category,
-                         message: 'annotation_category associations failed'
+
+  belongs_to :annotation_category
+  validates_associated :annotation_category,
+                       message: 'annotation_category associations failed'
   
   #Find creator, return nil if not found
   def get_creator
@@ -17,4 +19,5 @@ class AnnotationText < ActiveRecord::Base
   def get_last_editor
     User.find_by_id(last_editor_id)
   end
+
 end
