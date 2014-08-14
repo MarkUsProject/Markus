@@ -167,3 +167,15 @@ input[type='radio'] {
   float: right;
   right: 35px;
 }
+
+/* Tables */
+
+.react-table > div {
+  padding-bottom:5px
+}
+
+.table-filters a,
+.table-filters span {
+  padding-right: 10px;
+  font-size: 110%;
+}

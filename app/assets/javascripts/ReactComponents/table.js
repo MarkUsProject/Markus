@@ -158,18 +158,14 @@ var Table = React.createClass({displayName: 'Table',
     }
 
     return (
-      React.DOM.div(null,
-        React.DOM.div( {className:"table-filters"},
-          TableFilter( {filters:this.props.filters,
-            current_filter:this.state.filter,
-            onFilterChange:this.synchronizeFilter,
-            data:this.props.data,
-            filter_type:this.props.filter_type} )
-        ),
-        React.DOM.div( {className:"table-search"},
-          TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
-            placeholder:this.props.search_placeholder} )
-        ),
+      React.DOM.div( {className:"react-table"},
+        TableFilter( {filters:this.props.filters,
+          current_filter:this.state.filter,
+          onFilterChange:this.synchronizeFilter,
+          data:this.props.data,
+          filter_type:this.props.filter_type} ),
+        TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
+          placeholder:this.props.search_placeholder} ),
         React.DOM.div( {className:"table"},
           React.DOM.table( {className:"table"},
             TableHeader( {columns:columns,
@@ -199,12 +195,14 @@ TableSearch = React.createClass({displayName: 'TableSearch',
   },
   render: function() {
     return (
-      React.DOM.input( 
-        {type:"text",
-        placeholder:this.props.placeholder,
-        value:this.props.search_text,
-        ref:"searchText",
-        onChange:this.searchInputChanged} )
+      React.DOM.div( {className:"table-search"},
+        React.DOM.input(
+          {type:"text",
+          placeholder:this.props.placeholder,
+          value:this.props.search_text,
+          ref:"searchText",
+          onChange:this.searchInputChanged} )
+      )
     );
   }
 });
@@ -255,18 +253,17 @@ SimpleTableFilter = React.createClass({displayName: 'SimpleTableFilter',
       var fltr = 
         (this.props.current_filter == this.props.filters[i].name ?
          React.DOM.span( {key:this.props.filters[i].name}, 
-           this.props.filters[i].text, " (",number,")"
+           this.props.filters[i].text + " (" + number + ")"
            ) :
           React.DOM.a( {key:this.props.filters[i].name,
             id:this.props.filters[i].name,
             onClick:this.filterClicked}, 
-            this.props.filters[i].text, " (",number,")"
+            this.props.filters[i].text + " (" + number + ")"
           ));
       filters_dom.push(fltr);
-      filters_dom.push(' ');
     }
     return (
-      React.DOM.div(null, 
+      React.DOM.div({className:"table-filters"},
         filters_dom
       )
     );
