@@ -83,7 +83,6 @@
     },
     render: function() {
       var to_render = [];
-      to_render.push(<ErrorDiv error={this.state.error} />);
       to_render.push(<GradersTable graders={this.state.graders}
         selected_graders={this.state.selected_graders}
         onSelectedGradersChange={this.updateSelectedGraders} />);
@@ -121,7 +120,14 @@
         current_table={this.state.current_table}
         onTableChange={this.updateCurrentTable}
       />);
-      return (<div className='columns'>{to_render}</div>);
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <div className='columns'>{to_render}</div>
+        </div>
+        
+        
+      );
     }
   });
 
