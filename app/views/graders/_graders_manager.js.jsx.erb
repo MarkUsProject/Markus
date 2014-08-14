@@ -424,7 +424,7 @@
               </ul>
              <div id='groups-tab'>
                <Table data={groups_data} columns={group_columns}
-                 filters={section_filters} filter_type={true}
+                 filters={section_filters} filter_type={false}
                  search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
              </div>
              <div id='criteria-tab'>
@@ -567,7 +567,7 @@
       return (
        <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
         <Table data={groups_data} columns={columns}
-               filters={filters} filter_type={true}
+               filters={filters} filter_type={false}
                search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
         </div>
       );
