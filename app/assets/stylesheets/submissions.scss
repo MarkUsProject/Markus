@@ -33,6 +33,14 @@
   margin-top: 1.5em;
 }
 
+.submission_collected {
+  background-color: $light-green !important;
+}
+
+.submission_error {
+  background-color: $light-red !important;
+}
+
 
 /* Student view */
 

@@ -40,27 +40,6 @@ class GradersController < ApplicationController
            handlers: [:rjs]
   end
 
-
-  def populate
-    @assignment = Assignment.find(params[:assignment_id])
-    groupings = groupings_with_assoc(@assignment)
-    @table_rows = construct_table_rows(groupings, @assignment)
-    render :populate, formats: [:js]
-  end
-
-  def populate_graders
-    @assignment = Assignment.find(params[:assignment_id])
-    graders = Ta.all
-    @table_rows = construct_grader_table_rows(graders, @assignment)
-  end
-
-  def populate_criteria
-    @assignment = Assignment.find(params[:assignment_id])
-    criteria = criteria_with_assoc(@assignment)
-    @table_rows = construct_criterion_table_rows(criteria, @assignment)
-    render :populate_criteria, formats: [:js]
-  end
-
   def set_assign_criteria
     @assignment = Assignment.find(params[:assignment_id])
     if params[:value] == 'true'
@@ -69,11 +48,28 @@ class GradersController < ApplicationController
       @assignment.assign_graders_to_criteria = false
     end
     @assignment.save
+    head :ok
   end
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @sections = Section.all
+    respond_to do |format|
+      format.html
+      format.json do
+        assign_to_criteria = @assignment.assign_graders_to_criteria
+        if assign_to_criteria
+          graders_table_info = get_graders_table_info_with_criteria(@assignment)
+          groups_table_info = get_groups_table_info_with_criteria(@assignment)
+        else
+          graders_table_info = get_graders_table_info_no_criteria(@assignment)
+          groups_table_info = get_groups_table_info_no_criteria(@assignment)
+        end
+        # better to use a hash?
+        render json: [assign_to_criteria, @sections,
+                      graders_table_info, groups_table_info]
+      end
+    end
   end
 
   # Assign TAs to Groupings via a csv file
@@ -154,14 +150,11 @@ class GradersController < ApplicationController
                                 include: [:students, :tas, :group])
     grader = Ta.find(params[:grader_id])
     @grouping.add_tas(grader)
-    @groupings_data = construct_table_rows([@grouping.reload],@assignment)
-    @graders_data = construct_grader_table_rows([grader], @assignment)
     criteria = grader.get_criterion_associations_by_assignment(@assignment).map{|c| c.criterion}
     criteria.each do |criterion|
       criterion.save
     end
-    @criteria_data = construct_criterion_table_rows(criteria, @assignment)
-    render :add_grader_to_grouping, formats: [:js]
+    head :ok
   end
 
   #These actions act on all currently selected graders & groups
@@ -173,62 +166,67 @@ class GradersController < ApplicationController
 
     case params[:current_table]
       when 'groups_table'
-        if params[:groupings].nil? or params[:groupings].size ==  0
-         #if there is a global action than there should be a group selected
-          if params[:global_actions]
-            @global_action_warning = t('assignment.group.select_a_group')
-            render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
-            return
-          end
-        end
         case params[:global_actions]
           when 'assign'
-            if params[:graders].nil? or params[:graders].size ==  0
-              @global_action_warning = t('assignment.group.select_a_grader')
-              render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
-              return
+            if params[:graders].blank?
+              render text: I18n.t('assignment.group.select_a_grader'),
+                     status: 400
+            else
+              assign_all_graders(grouping_ids, grader_ids)
+              head :ok
             end
-            assign_all_graders(grouping_ids, grader_ids)
-            return
           when 'unassign'
-            unassign_graders(params[:grader_memberships], grouping_ids)
-            return
-          when 'random_assign'
-            if params[:graders].nil? or params[:graders].size ==  0
-              @global_action_warning = t('assignment.group.select_a_grader')
-              render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
-              return
+            if params[:grader_memberships].blank?
+              render text: I18n.t('assignment.group.select_a_grader'),
+                     status: 400
+            else
+              unassign_graders(params[:grader_memberships])
+              head :ok
             end
-            randomly_assign_graders(grouping_ids, grader_ids)
-            return
+          when 'random_assign'
+            if params[:graders].blank?
+              render text: I18n.t('assignment.group.select_a_grader'),
+                     status: 400
+            else
+              randomly_assign_graders(grouping_ids, grader_ids)
+              head :ok
+            end
         end
       when 'criteria_table'
-        if params[:criteria].nil? or params[:criteria].size ==  0
-      #don't do anything if no criteria
-          render nothing: true
-          return
-        end
         case params[:global_actions]
           when 'assign'
-          if params[:graders].nil? or params[:graders].size ==  0
-            #don't do anything if no graders
-            render nothing: true
-            return
-          end
-          assign_all_graders_to_criteria(criterion_ids, grader_ids)
-            return
-          when 'unassign'
-            criterion_grader_ids = params[:criterion_graders]
-            unassign_graders_from_criteria(criterion_grader_ids, criterion_ids)
-            return
-          when 'random_assign'
-            if params[:graders].nil? or params[:graders].size ==  0
-              #don't do anything if no graders
-              render nothing: true
-              return
+            if params[:graders].blank?
+              render text: I18n.t('assignment.group.select_a_grader'),
+                     status: 400
+            else
+              assign_all_graders_to_criteria(criterion_ids, grader_ids)
+              head :ok
             end
-            randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
-            return
+          when 'unassign'
+            if params[:criterion_associations].blank?
+              render text: I18n.t('assignment.group.select_a_grader'),
+                     status: 400
+            else
+              # Gets criterion associations from params then
+              # gets their criterion ids so we can update the
+              # group counts.
+              criterion_associations = CriterionTaAssociation.find(
+                params[:criterion_associations]
+              )
+              criterion_ids = criterion_associations.map do |criterion_assoc|
+                criterion_assoc.criterion
+              end.uniq
+              unassign_graders_from_criteria(criterion_associations, criterion_ids)
+              head :ok
+            end
+          when 'random_assign'
+            if params[:graders].blank?
+              render text: I18n.t('assignment.group.select_a_grader'),
+                     status: 400
+            else
+              randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
+              head :ok
+            end
         end
     end
   end
@@ -261,61 +259,29 @@ class GradersController < ApplicationController
 
   def randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
     Criterion.randomly_assign_tas(criterion_ids, grader_ids, @assignment)
-    render_criterion_modifications(criterion_ids, grader_ids)
   end
 
   def randomly_assign_graders(grouping_ids, grader_ids)
     Grouping.randomly_assign_tas(grouping_ids, grader_ids, @assignment)
-    render_grouping_modifications(grouping_ids, grader_ids)
   end
 
   def assign_all_graders(grouping_ids, grader_ids)
     Grouping.assign_all_tas(grouping_ids, grader_ids, @assignment)
-    render_grouping_modifications(grouping_ids, grader_ids)
   end
 
   def assign_all_graders_to_criteria(criterion_ids, grader_ids)
     Criterion.assign_all_tas(criterion_ids, grader_ids, @assignment)
-    render_criterion_modifications(criterion_ids, grader_ids)
   end
 
   def unassign_graders_from_criteria(criterion_grader_ids, criterion_ids)
     Criterion.unassign_tas(criterion_grader_ids, criterion_ids, @assignment)
-    render_criterion_modifications(criterion_ids)
   end
 
-  def unassign_graders(grader_membership_ids, grouping_ids)
-    Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
-    render_grouping_modifications(grouping_ids)
-  end
-
-  # Renders the grader, grouping and criterion table in response to
-  # modifications to groupings.
-  def render_grouping_modifications(grouping_ids, grader_ids = nil)
-    groupings = groupings_with_assoc(@assignment, grouping_ids: grouping_ids)
-    # Also update the various counts in graders and criteria table.
-    graders = grader_ids ? Ta.where(id: grader_ids) : Ta.all
-    criteria = criteria_with_assoc(@assignment)
-    construct_all_rows(groupings, graders, criteria)
-    render :modify_groupings, formats: [:js]
-  end
-
-  # Renders the grader, grouping and criterion table in response to
-  # modifications to criteria.
-  def render_criterion_modifications(criterion_ids, grader_ids = nil)
-    criteria = criteria_with_assoc(@assignment, criterion_ids: criterion_ids)
-    # Also update the various counts in graders and groupings table.
-    graders = grader_ids ? Ta.where(id: grader_ids) : Ta.all
-    groupings = groupings_with_assoc(@assignment)
-    construct_all_rows(groupings, graders, criteria)
-    render :modify_criteria, formats: [:js]
-  end
-
-  def construct_all_rows(groupings, graders, criteria)
-    @groupings_data = construct_table_rows(groupings, @assignment)
-    @graders_data = construct_grader_table_rows(graders, @assignment)
-    if @assignment.assign_graders_to_criteria
-      @criteria_data = construct_criterion_table_rows(criteria, @assignment)
+  def unassign_graders(grader_membership_ids)
+    grader_memberships = TaMembership.find(grader_membership_ids)
+    grouping_ids = grader_memberships.map do |membership|
+      membership.grouping.id
     end
+    Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
   end
 end

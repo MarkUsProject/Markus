@@ -9,6 +9,7 @@
 //= require jquery-ui
 //= require jquery_ujs
 //= require jquery.easyModal
+//= require_tree ./ReactComponents
 
 
 /** Modal windows, powered by jQuery.easyModal. */

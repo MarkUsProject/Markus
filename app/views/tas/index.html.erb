@@ -1,10 +1,10 @@
-<%= javascript_include_tag 'FilterTable/FilterTable',
-                           'users_manager',
-                           'Graders/index',
-                           'help_system' %>
-<%= render partial: 'boot',
-           formats: [:js],
-           handlers: [:erb] %>
+<%= content_for :head do %>
+  <%= javascript_include_tag 'users_manager',
+                             'Graders/index',
+                             'help_system' %>
+
+  <%= render partial: 'tas_table', formats: [:'js.jsx'], handlers: [:erb] %>
+<% end %>
 
 <div class='title_bar'>
   <h1>
@@ -49,9 +49,8 @@
         </div>
       <% end -%>
 
-      <div class='table'>
-        <table id='tas'></table>
-      </div>
+      <div id='tas_table' class='table'>
+
     </div>
   </div>
 </div> <!-- colsLeftHeavy -->

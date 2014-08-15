@@ -1,3 +1,0 @@
-page << render(partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb])
-
-page.call "modify_groupings", @groupings_data.to_json

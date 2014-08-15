@@ -1,3 +1,0 @@
-page.replace_html 'groupings_table', partial: 'graders/manage/groupings_table', locals: {groupings: @groupings, assignment: @assignment}
-
-

@@ -1,13 +1,10 @@
-<% content_for :head do %>
-  <%= javascript_include_tag 'manage_graders.js',
-                             'FilterTable/FilterTable.js',
-                             'Graders/tabs_boot.js',
-                             'Graders/index',
+<%= content_for :head do %>
+  <%= javascript_include_tag 'Graders/index',
                              'help_system' %>
 
-  <%= render partial: 'boot',
-             formats: [:js],
-             handlers: [:erb] %>
+  <%= render partial: 'graders_action_column', formats: [:'js.jsx'], handlers: [:erb] %>
+  <%= render partial: 'graders_table', formats: [:'js.jsx'], handlers: [:erb] %>
+  <%= render partial: 'graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
 <div class='title_bar'>
@@ -50,134 +47,7 @@
   <%= render 'shared/flash_message' %>
 </div>
 
-<%= form_tag global_actions_assignment_graders_path(@assignment),
-             id: 'global_action_form',
-             remote: true do %>
-
-  <script>
-    $("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
-      thinking();
-    });
-
-    $("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
-      done_thinking();
-    });
-  </script>
-
-  <%= hidden_field_tag 'submit_type', 'global_action', id: 'submit_type' %>
-  <%= hidden_field_tag 'current_table', 'groups_table', id: 'current_table' %>
-  <%= hidden_field_tag 'global_actions'%>
-
-  <div class='columns'>
-    <div class="col-left">
-      <% # order of processing students is important. we go through each member
-         # one by one and delete them above from the list of students
-         # if they are already in a group
-         # See manage/_group.html.erb
-      %>
-      <div class="tab-pane" id='graders-tabs'>
-        <ul>
-          <li>
-            <a href="#graders_none"><%= t("graders.graders") %></a>
-          </li>
-        </ul>
-
-        <div id='graders_none'>
-          <div class='search_box'>
-            <%= text_field_tag 'search_graders', nil,
-                onkeyup: "graders_table.add_filter('search'); graders_table.render();",
-                onkeypress: "stop_submit(event);",
-                placeholder: t("search_graders") %>
-          </div>
-
-          <div class='table'>
-            <table class='graders' id='graders'></table>
-          </div>
-        </div>
-        <div class='table'>
-          <table class='graders' id='graders'></table>
-        </div>
-      </div>
-    </div>
-
-    <div class='col-center'>
-      <div id='icons'>
-        <%= image_submit_tag 'random_arrow.png',
-                             onclick: "$('global_actions').setValue('random_assign');",
-                             alt: t('groups.randomly_assign_graders'),
-                             title: t('groups.randomly_assign_graders'),
-                             class:'image_input' %>
-        <%= image_submit_tag 'add_arrow.png',
-                             onclick: "$('global_actions').setValue('assign');",
-                             alt: t('add_graders'),
-                             class:'image_input',
-                             title: t('add_graders') %>
-        <%= image_submit_tag 'remove_arrow.png',
-                             onclick: "$('global_actions').setValue('unassign');",
-                             alt: t('remove_graders'),
-                             title: t('remove_graders'),
-                             class:'image_input' %>
-      </div>
-    </div>
-
-    <div class='col-right'>
-      <div class='tab-pane' id='groups-tabs'>
-        <ul>
-          <li>
-            <a href='#groups_table'><%= t('groups.groups') %></a>
-          </li>
-          <li>
-            <a href='#criteria_table'><%= t('criteria') %></a>
-          </li>
-        </ul>
-
-        <div id='groups_table'>
-          <div id='groups_container'>
-            <%= text_field_tag 'search_groupings', nil,
-                onkeyup: "groupings_table.add_filter('search'); groupings_table.render();",
-                onkeypress: 'stop_submit(event);',
-                placeholder: t('groups.search_groups') %>
-
-            <label class='bold_inline_label'><%= t('browse_submissions.sections') %></label>
-            <%= select('selection_groupings',
-                       'sections',
-                       Section.order('name ASC').all.collect { |s| [s.name] },
-                       { include_blank: ' - ' },
-                       { onchange: 'groupings_table.add_filter("selection");
-                                    return groupings_table.render();',
-                         onfocus: 'stop_submit(event);' }) %>
-
-            <div class='table'>
-              <table class='groups' id='groups'></table>
-            </div>
-          </div>
-        </div>
-
-        <div id='criteria_table'>
-          <div id='criteria_container'>
-            <%= text_field_tag 'search_criteria', nil,
-                onkeyup: "criteria_table.add_filter('search'); criteria_table.render();",
-                onkeypress: 'stop_submit(event);',
-                placeholder: t('graders.search_criteria') %>
-            <%= check_box_tag 'assign_criteria',
-                              true,
-                              @assignment.assign_graders_to_criteria,
-                              class: 'inline_checkbox',
-                              data: { action: url_for(action: :set_assign_criteria,
-                                                      id: @assignment.id) } %>
-            <%= label_tag 'assign_criteria',
-                          t('graders.assign_to_criteria'),
-                          class: 'bold_inline_label' %>
-
-            <div class='table'>
-              <table class='criteria' id='criteria'></table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-<% end %>
+<div id='graders_manager'></div>
 
 <!-- Modal Windows -->
 

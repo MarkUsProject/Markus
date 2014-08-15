@@ -1,6 +1,7 @@
-<%= javascript_include_tag "submissions_manager" %>
-<%= javascript_include_tag "ajax_paginate" %>
-<%= javascript_include_tag "help_system" %>
+<%= javascript_include_tag 'submissions_manager',
+                           'help_system' %>
+
+<%= render partial: 'submissions_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
 <div class="notice">
   <% if Time.zone.now >= @assignment.submission_rule.calculate_collection_time %>
@@ -52,8 +53,8 @@
     <% end %>
 
     <% # Allow submission collection only if all the submissions are assigned to exactly one TA. %>
-    <% if @current_user.ta? and @assignment.past_collection_date? and
-          @groupings.all?{|grouping| grouping.get_ta_names.size == 1} %>
+    <% if @current_user.ta? and @assignment.past_collection_date? and 
+          @groupings.all? {|grouping| grouping.get_ta_names.size == 1} %>
 
       <%= link_to t('collect_submissions.collect_ta'),
                          collect_ta_submissions_assignment_submissions_path(
@@ -81,6 +82,7 @@
 </div>
 
 <div class="wrapLeft">
+  <!-- Fairly sure the 'error' and 'success' divs are unneeded but only if the other actions don't depend on it (csv etc) -->
   <% if flash[:error] %>
     <div class="error">
       <%= flash[:error] %>
@@ -104,146 +106,6 @@
     </div>
   <% end %>
 
-  <div class="clear"></div>
-
-  <%= form_tag update_submissions_assignment_submissions_path(@assignment) %>
-    <div class="ap_nav_box">
-      <% if @current_user.admin? %>
-        <div class="floatLeft">
-          <%= submit_tag t("browse_submissions.release_marks"),
-                                name: "release_results" %>
-          <%= submit_tag t("browse_submissions.unrelease_marks"),
-                                name: "unrelease_results" %>
-          <% if !@assignment.results_average.nil? %>
-            <%= t("browse_submissions.class_average",
-                       results_average: @assignment.results_average) %>
-          <% end %>
-        </div>
-      <% end %>
-
-      <% # Collect submissions for a given section %>
-      <% if @assignment.section_groups_only %>
-        <div class="floatLeft">
-          <%= t("browse_submissions.collect_work_for_section") %>
-          <select id="section_input" name="section_to_collect">
-            <option value=""> - </option>
-            <% @assignment.section_due_dates.each do |section_due_date| %>
-              <% if Time.zone.now >=
-                SectionDueDate.due_date_for(section_due_date.section, @assignment) %>
-                <option value="<%= section_due_date.section.id %>">
-                  <%= section_due_date.section.name %>
-                </option>
-              <% end %>
-            <% end %>
-          </select>
-          <%= submit_tag t(:apply), id: 'apply_collect_section',
-                                    name: 'collect_section',
-                                    class: 'thin-button' %>
-        </div>
-      <% end %>
-
-      <div class="ap_filters" id="ap_filters_1">
-        <%= render  partial: 'submissions_table_filters',
-                    locals: { filter: @filter,
-                              page: @current_page,
-                              desc: @desc,
-                              sort_by: @sort_by,
-                              assignment: @assignment,
-                              filters: @filters,
-                              per_page: @per_page,
-                              per_pages: @per_pages } %>
-      </div>
-      <div class="clear"></div>
-      <div class="ap_page_links" id="ap_page_links_1">
-        <%= render  partial: 'ajax_paginate/initial_paginate_links',
-                    locals: { per_page: @per_page,
-                              current_page: @current_page,
-                              page_items: @groupings.size,
-                              total_items: @groupings_total,
-                              assignment: @assignment,
-                              filter: @filter,
-                              sort_by: @sort_by,
-                              desc: @desc } %>
-      </div>
-      <div id="ap_selector">
-        <%= render partial: 'ajax_paginate/selector' %>
-      </div>
-      <div class="clear"></div>
-    </div>
-
-    <div id='ap_selects'>
-      <%= render partial: 'ajax_paginate/selects',
-                 locals: { page_items: @groupings.size,
-                           total_items: @groupings_total } %>
-    </div>
-
-    <div class='table'>
-      <table>
-        <thead id='submissions_table_head'>
-          <%= render partial: 'submissions_table_sorting_links',
-                     locals: { assignment: @assignment,
-                               filter: 'none',
-                               page: @current_page,
-                               per_page: @per_page,
-                               sort_by: @sort_by,
-                               desc: @desc } %>
-        </thead>
-
-        <%= render partial: 'submissions_table_body',
-                   locals: { groupings: @groupings,
-                             assignment: @assignment } %>
-
-        <tfoot id='submissions_table_foot'>
-          <%= render partial: 'submissions_table_sorting_links',
-                     locals: { assignment: @assignment,
-                               filter: 'none',
-                               page: @current_page,
-                               per_page: @per_page,
-                               sort_by: @sort_by,
-                               desc: @desc } %>
-        </tfoot>
-      </table>
-    </div>
-
-    <div class='ap_nav_box'>
-      <div class='ap_page_links' id='ap_page_links_2'>
-        <%= render  partial: 'ajax_paginate/initial_paginate_links',
-                    locals: { per_page: @per_page,
-                              current_page: @current_page,
-                              page_items: @groupings.size,
-                              total_items: @groupings_total,
-                              assignment: @assignment,
-                              filter: @filter,
-                              sort_by: @sort_by,
-                              desc: @desc } %>
-      </div>
-      <div id='ap_selector'>
-        <%= render partial: 'ajax_paginate/selector' %>
-      </div>
-
-      <div class="clear"></div>
-
-      <div class="floatLeft">
-        <% if @current_user.admin? %>
-          <%= submit_tag t("browse_submissions.release_marks"),
-                                name: "release_results" %>
-          <%= submit_tag t("browse_submissions.unrelease_marks"),
-                                name: "unrelease_results" %>
-        <% end %>
-      </div>
-
-      <div class="ap_filters" id="ap_filters_2">
-        <%= render  partial: 'submissions_table_filters',
-                    locals: { filter: @filter,
-                              page: @current_page,
-                              desc: @desc,
-                              sort_by: @sort_by,
-                              assignment: @assignment,
-                              filters: @filters,
-                              per_page: @per_page,
-                              per_pages: @per_pages } %>
-      </div>
-      <div class="clear"></div>
-    </div>
+      <div id='submissions_table'></div>
   </form>
 </div>

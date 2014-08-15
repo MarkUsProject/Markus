@@ -1,5 +1,6 @@
 class StudentsController < ApplicationController
   include UsersHelper
+  include StudentsHelper
   before_filter    :authorize_only_for_admin
 
   def note_message
@@ -12,23 +13,13 @@ class StudentsController < ApplicationController
   end
 
   def index
-    @students = Student.all(order: 'user_name')
-    @sections = Section.all(order: 'name')
-  end
-
-  def populate
-    # Process:
-    # 1. AJAX call made by jQuery to populate the student table
-    # 2. Find students from the database
-    # 3. Pass in the student data into the helper function (construct_table_rows defined in UsersHelper)
-    @students_data = Student.all(order: 'user_name',
-                                 include: [:section,
-                                              :grace_period_deductions])
-
-    # Function below contained within helpers/users_helper.rb
-    @students = construct_table_rows(@students_data)
     respond_to do |format|
-      format.json { render json: @students }
+      format.html do
+        @sections = Section.all
+      end
+      format.json do
+        render json: get_students_table_info
+      end
     end
   end
 
@@ -58,23 +49,19 @@ class StudentsController < ApplicationController
         raise I18n.t('students.no_students_selected')
       end
       case params[:bulk_action]
-        when 'hide'
-          Student.hide_students(student_ids)
-          @students = construct_table_rows(Student.find(student_ids))
-        when 'unhide'
-          Student.unhide_students(student_ids)
-          @students = construct_table_rows(Student.find(student_ids))
-        when 'give_grace_credits'
-          Student.give_grace_credits(student_ids, params[:number_of_grace_credits])
-          @students = construct_table_rows(Student.find(student_ids))
-        when 'add_section'
-          Student.update_section(student_ids, params[:section])
-          @students = construct_table_rows(Student.find(student_ids))
+      when 'hide'
+        Student.hide_students(student_ids)
+      when 'unhide'
+        Student.unhide_students(student_ids)
+      when 'give_grace_credits'
+        Student.give_grace_credits(student_ids,
+                                   params[:number_of_grace_credits])
+      when 'update_section'
+        Student.update_section(student_ids, params[:section])
       end
-      render :bulk_modify, formats: [:js]
+      head :ok
     rescue RuntimeError => e
-      @error = e.message
-      render :display_error
+      render text: e.message, status: 500
     end
   end
 
