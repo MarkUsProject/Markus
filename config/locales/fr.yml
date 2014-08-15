@@ -699,6 +699,7 @@ fr:
       edit_grader:        "Modifier un correcteur"
       manage_graders:     "Gestion des correcteurs"
       graders:            "Correcteurs"
+      section:            "Section"
       all_graders:        "Tous les correcteurs"
       assigned_graders:   "Correcteurs assignés"
       possible_graders:   "Correcteurs possibles"
