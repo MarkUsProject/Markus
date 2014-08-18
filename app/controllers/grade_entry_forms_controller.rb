@@ -152,7 +152,8 @@ class GradeEntryFormsController < ApplicationController
     @students_total = all_students.size
     @alpha_pagination_options = @grade_entry_form.alpha_paginate(all_students,
                                                                  @per_page,
-                                                                 @students.total_pages)
+                                                                 @students.total_pages,
+                                                                 @sort_by)
     session[:alpha_pagination_options] = @alpha_pagination_options
     @alpha_category = @alpha_pagination_options.first
   end
@@ -202,7 +203,8 @@ class GradeEntryFormsController < ApplicationController
       @alpha_pagination_options = @grade_entry_form.alpha_paginate(
           all_students,
           @per_page,
-          @students.total_pages)
+          @students.total_pages,
+          @sort_by)
       @alpha_category = @alpha_pagination_options.first
       session[:alpha_pagination_options] = @alpha_pagination_options
     else
