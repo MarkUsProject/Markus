@@ -30,7 +30,8 @@ class GroupsController < ApplicationController
       new_grouping_data = @assignment.add_group(params[:new_group_name])
       head :ok
     rescue Exception => e
-      render text: e.message, status: 400
+      flash[:error] = e.message
+      render status: 400
     end
   end
 
