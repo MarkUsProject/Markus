@@ -169,24 +169,21 @@ class GradersController < ApplicationController
       case params[:global_actions]
       when 'assign'
         if params[:graders].blank?
-          render text: I18n.t('assignment.group.select_a_grader'),
-                 status: 400
+          render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           assign_all_graders(grouping_ids, grader_ids)
           head :ok
         end
       when 'unassign'
         if params[:grader_memberships].blank?
-          render text: I18n.t('assignment.group.select_a_grader'),
-                 status: 400
+          render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           unassign_graders(params[:grader_memberships])
           head :ok
         end
       when 'random_assign'
         if params[:graders].blank?
-          render text: I18n.t('assignment.group.select_a_grader'),
-                 status: 400
+          render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           randomly_assign_graders(grouping_ids, grader_ids)
           head :ok
@@ -196,16 +193,14 @@ class GradersController < ApplicationController
       case params[:global_actions]
       when 'assign'
         if params[:graders].blank?
-          render text: I18n.t('assignment.group.select_a_grader'),
-                 status: 400
+          render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           assign_all_graders_to_criteria(criterion_ids, grader_ids)
           head :ok
         end
       when 'unassign'
         if params[:criterion_associations].blank?
-          render text: I18n.t('assignment.group.select_a_grader'),
-                 status: 400
+          render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           # Gets criterion associations from params then
           # gets their criterion ids so we can update the
@@ -221,8 +216,7 @@ class GradersController < ApplicationController
         end
       when 'random_assign'
         if params[:graders].blank?
-          render text: I18n.t('assignment.group.select_a_grader'),
-                 status: 400
+          render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
           head :ok
