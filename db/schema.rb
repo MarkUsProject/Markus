@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140513140924) do
+ActiveRecord::Schema.define(:version => 20140819200608) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -185,7 +185,7 @@ ActiveRecord::Schema.define(:version => 20140513140924) do
 
   add_index "grade_entry_students", ["user_id", "grade_entry_form_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
 
-  create_table "grade_entry_students_tas", :id => false, :force => true do |t|
+  create_table "grade_entry_students_tas", :force => true do |t|
     t.integer "grade_entry_student_id"
     t.integer "ta_id"
   end

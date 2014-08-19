@@ -77,7 +77,6 @@ class MarksGradersController < ApplicationController
             return
           end
         end
-        students = Student.where(id: student_ids)
 
         case params[:global_actions]
           when "assign"
@@ -89,7 +88,7 @@ class MarksGradersController < ApplicationController
             assign_all_graders(student_ids, grader_ids, @grade_entry_form)
             return
           when "unassign"
-            remove_graders(students, params)
+            unassign_graders(params[:gests])
             return
           when "random_assign"
             if params[:graders].nil? or params[:graders].size ==  0
@@ -106,7 +105,9 @@ class MarksGradersController < ApplicationController
   private
 
   def students_with_assoc
-    Student.includes(:section, grade_entry_students: :tas)
+    Student.includes(
+      :section,
+      grade_entry_students: { grade_entry_student_tas: :ta })
   end
 
   def randomly_assign_graders(student_ids, grader_ids, form)
@@ -119,28 +120,8 @@ class MarksGradersController < ApplicationController
     render nothing: true
   end
 
-  # Removes the graders contained in params from the students given in students.
-  # This is meant to be called with the params from global_actions, and for
-  # each grader to delete it will have a parameter
-  # of the form "studentid_graderid"
-  def remove_graders(students, params)
-    students.each do |student|
-      grader_params = params.find_all{|p| p[0].include?("#{student.id}_")}
-      grade_entry_student = @grade_entry_form.grade_entry_students.find_by_user_id(student.id)
-      if grader_params != [] and !grade_entry_student.nil?
-        members = grade_entry_student.tas.delete_if do |grader|
-          !params["#{student.id}_#{grader.user_name}"]
-        end
-        grade_entry_student.remove_tas(members.map{ |member| member.id })
-      end
-    end
-
-    construct_all_rows(students, Ta.all)
-    render :modify_groupings
-  end
-
-  def construct_all_rows(students, graders)
-    @students_data = construct_table_rows(students, @grade_entry_form)
-    @graders_data = construct_grader_table_rows(graders, @grade_entry_form)
+  def unassign_graders(gest_ids)
+    GradeEntryStudent.unassign_tas(gest_ids)
+    render nothing: true
   end
 end
