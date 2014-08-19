@@ -168,7 +168,7 @@ class GradersController < ApplicationController
     when 'groups_table'
       case params[:global_actions]
       when 'assign'
-        if params[:graders].blank?
+        if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           assign_all_graders(grouping_ids, grader_ids)
@@ -182,7 +182,7 @@ class GradersController < ApplicationController
           head :ok
         end
       when 'random_assign'
-        if params[:graders].blank?
+        if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           randomly_assign_graders(grouping_ids, grader_ids)
@@ -192,7 +192,7 @@ class GradersController < ApplicationController
     when 'criteria_table'
       case params[:global_actions]
       when 'assign'
-        if params[:graders].blank?
+        if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           assign_all_graders_to_criteria(criterion_ids, grader_ids)
@@ -215,7 +215,7 @@ class GradersController < ApplicationController
           head :ok
         end
       when 'random_assign'
-        if params[:graders].blank?
+        if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
