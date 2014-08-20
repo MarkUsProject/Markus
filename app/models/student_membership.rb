@@ -17,7 +17,7 @@ class StudentMembership < Membership
         conditions: { membership_status: STATUSES[:rejected] }
   scope :accepted_or_inviter,
         conditions: { membership_status: [STATUSES[:accepted],
-                                         STATUSES[:inviter]] }
+                                          STATUSES[:inviter]] }
 
   validate :must_be_valid_student
 
