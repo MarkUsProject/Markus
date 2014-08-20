@@ -2,11 +2,10 @@ class Mark < ActiveRecord::Base
   # When a mark is created, or updated, we need to make sure that that
   # Result has not been released to students
   before_save :ensure_not_released_to_students
-  validate    :valid_mark
   before_update :ensure_not_released_to_students
+
   after_save :update_grouping_mark
 
-  belongs_to :markable, polymorphic: true
   belongs_to :result
   validates_presence_of :result_id, :markable_id, :markable_type
   validates_numericality_of :result_id,
@@ -17,7 +16,9 @@ class Mark < ActiveRecord::Base
   validates_numericality_of :mark,
                             allow_nil: true,
                             message: 'must be a number'
+  validate :valid_mark
 
+  belongs_to :markable, polymorphic: true
   validates_numericality_of :markable_id,
                             only_integer: true,
                             greater_than: 0,
@@ -50,7 +51,7 @@ class Mark < ActiveRecord::Base
   end
 
   def update_grouping_mark
-    self.result.update_total_mark
+    result.update_total_mark
   end
 end
 
