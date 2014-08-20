@@ -1,30 +1,36 @@
 require 'encoding'
 
 class RubricCriterion < Criterion
-  before_save :round_weight
-  after_save :update_existing_results
   self.table_name = 'rubric_criteria' # set table name correctly
-  belongs_to :assignment, counter_cache: true
+
+  validates_presence_of :weight
+  validates_numericality_of :weight
+  before_save :round_weight
+  validate :validate_total_weight, on: :update
+
+  after_save :update_existing_results
+
   has_many :marks, as: :markable, dependent: :destroy
+
   has_many :criterion_ta_associations,
            as: :criterion,
            dependent: :destroy
+
   has_many :tas, through: :criterion_ta_associations
 
-  validates_associated  :assignment, on: :create
-  validates_uniqueness_of :rubric_criterion_name,
-                          scope: :assignment_id
-  validates_presence_of :rubric_criterion_name
-  validates_presence_of :weight
+  belongs_to :assignment, counter_cache: true
+  validates_associated :assignment, on: :create
   validates_presence_of :assignment_id
-  validates_presence_of :assigned_groups_count
   validates_numericality_of :assignment_id,
                             only_integer: true,
                             greater_than: 0
-  validates_numericality_of :weight
-  validates_numericality_of :assigned_groups_count
-  validate(:validate_total_weight, on: :update)
 
+  validates_presence_of :rubric_criterion_name
+  validates_uniqueness_of :rubric_criterion_name,
+                          scope: :assignment_id
+
+  validates_presence_of :assigned_groups_count
+  validates_numericality_of :assigned_groups_count
   before_validation :update_assigned_groups_count
 
   def update_assigned_groups_count
@@ -56,7 +62,7 @@ class RubricCriterion < Criterion
   ]
 
   def mark_for(result_id)
-    marks.find_by_result_id(result_id)
+    marks.where(result_id: result_id).first
   end
 
   def set_default_levels
@@ -291,12 +297,13 @@ class RubricCriterion < Criterion
     unless ta.ta?
       return false
     end
-    !(criterion_ta_associations.find_by_ta_id(ta.id) == nil)
+    !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
   end
 
   def add_tas_by_user_name_array(ta_user_name_array)
-    result = ta_user_name_array.map{|ta_user_name|
-      Ta.find_by_user_name(ta_user_name)}.compact
+    result = ta_user_name_array.map do |ta_user_name|
+      Ta.where(user_name: ta_user_name).first
+    end.compact
     add_tas(result)
   end
 
@@ -306,7 +313,9 @@ class RubricCriterion < Criterion
     csv_file_contents = csv_file_contents.utf8_encode encoding
     CSV.parse(csv_file_contents) do |row|
       criterion_name = row.shift # Knocks the first item from array
-      criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(assignment_id, criterion_name)
+      criterion = RubricCriterion.where(assignment_id: assignment_id,
+                                        rubric_criterion_name: criterion_name)
+                                 .first
       if criterion.nil?
         failures.push(criterion_name)
       else

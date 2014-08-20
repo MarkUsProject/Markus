@@ -11,12 +11,12 @@ class Result < ActiveRecord::Base
   has_many :extra_marks
 
   validates_presence_of :marking_state
-  validates_inclusion_of :marking_state,
-                         in: [Result::MARKING_STATES[:complete],
-                                 Result::MARKING_STATES[:partial],
-                                 Result::MARKING_STATES[:unmarked]]
+  validates_inclusion_of :marking_state, in: MARKING_STATES.values
+
   validates_numericality_of :total_mark, greater_than_or_equal_to: 0
+
   before_update :unrelease_partial_results
+
   before_save :check_for_nil_marks
 
   # Returns a list of total marks for each student whose submissions are graded
@@ -115,10 +115,10 @@ class Result < ActiveRecord::Base
 
   def check_for_nil_marks
     # Check that the marking state is not no mark is nil or
-    if self.marks.find_by_mark(nil) &&
-          self.marking_state == Result::MARKING_STATES[:complete]
+    if marks.where(mark: nil).first &&
+          marking_state == Result::MARKING_STATES[:complete]
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))
-      return false
+      false
     end
     true
   end

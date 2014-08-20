@@ -7,10 +7,11 @@ require File.join(File.dirname(__FILE__),'..', '..', 'lib', 'repo', 'repository'
 class Grouping < ActiveRecord::Base
 
   before_create :create_grouping_repository_folder
+
   before_destroy :revoke_repository_permissions_for_students
-  belongs_to :assignment, counter_cache: true
-  belongs_to :group
+
   belongs_to :grouping_queue
+
   has_many :memberships
   has_many :student_memberships, order: 'id'
   has_many :non_rejected_student_memberships,
@@ -56,9 +57,11 @@ class Grouping < ActiveRecord::Base
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
   # user association/validation
+  belongs_to :assignment, counter_cache: true
   validates_presence_of :assignment_id
   validates_associated :assignment, on: :create, message: 'associated assignment need to be valid'
 
+  belongs_to :group
   validates_presence_of :group_id
   validates_associated :group, message: 'associated group need to be valid'
 
@@ -216,7 +219,7 @@ class Grouping < ActiveRecord::Base
     members.each do |m|
       next if m.blank? # ignore blank users
       m = m.strip
-      user = User.find_by_user_name(m)
+      user = User.where(user_name: m).first
       m_logger = MarkusLogger.instance
       if user
         if invoked_by_admin || self.can_invite?(user)
@@ -331,7 +334,7 @@ class Grouping < ActiveRecord::Base
 
   # Returns the status of this user, or nil if user is not a member
   def membership_status(user)
-    member = student_memberships.find_by_user_id(user.id)
+    member = student_memberships.where(user_id: user.id).first
     member ? member.membership_status : nil  # return nil if user is not a member
   end
 
@@ -449,11 +452,11 @@ class Grouping < ActiveRecord::Base
   end
 
   def decline_invitation(student)
-     membership = student.memberships.find_by_grouping_id(self.id)
-     membership.membership_status = StudentMembership::STATUSES[:rejected]
-     membership.save
-     # adjust repo permissions
-     update_repository_permissions
+    membership = student.memberships.where(grouping_id: id).first
+    membership.membership_status = StudentMembership::STATUSES[:rejected]
+    membership.save
+    # adjust repo permissions
+    update_repository_permissions
   end
 
   # If a group is invalid OR valid and the user is the inviter of the group and
@@ -533,9 +536,9 @@ class Grouping < ActiveRecord::Base
   def add_tas_by_user_name_array(ta_user_name_array)
     grouping_tas = []
     ta_user_name_array.each do |ta_user_name|
-      ta = Ta.find_by_user_name(ta_user_name)
+      ta = Ta.where(user_name: ta_user_name).first
       unless ta.nil?
-        if ta_memberships.find_by_user_id(ta.id).nil?
+        if ta_memberships.where(user_id: ta.id).first.nil?
           ta_memberships.create(user: ta)
         end
       end
@@ -551,7 +554,7 @@ class Grouping < ActiveRecord::Base
     csv_file_contents = csv_file_contents.utf8_encode(encoding)
     CSV.parse(csv_file_contents) do |row|
       group_name = row.shift # Knocks the first item from array
-      group = Group.find_by_group_name(group_name)
+      group = Group.where(group_name: group_name).first
       if group.nil?
         failures.push(group_name)
       else
@@ -620,15 +623,15 @@ class Grouping < ActiveRecord::Base
   end
 
   def assigned_tas_for_criterion(criterion)
-    result = []
     if assignment.assign_graders_to_criteria
-      tas.each do |ta|
-        if ta.criterion_ta_associations.find_by_criterion_id(criterion.id)
-          result.push(ta)
-        end
+      tas.select do |ta|
+        ta.criterion_ta_associations
+          .where(criterion_id: criterion.id)
+          .first
       end
+    else
+      []
     end
-    result
   end
 
   def all_assigned_criteria(ta_array)
@@ -663,7 +666,7 @@ class Grouping < ActiveRecord::Base
                 inviter.section
               end
     section_due_date = unless section.blank? || due_dates.blank?
-                         due_dates.find_by_section_id(section).due_date
+                         due_dates.where(section_id: section).first.due_date
                        end
 
     # condition to return
