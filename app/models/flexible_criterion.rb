@@ -14,21 +14,21 @@ class FlexibleCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  validates_presence_of   :flexible_criterion_name
+  validates_presence_of :flexible_criterion_name
   validates_uniqueness_of :flexible_criterion_name,
                           scope: :assignment_id,
                           message: 'is already taken'
 
-  belongs_to                :assignment, counter_cache: true
-  validates_presence_of     :assignment_id
-  validates_associated      :assignment,
-                            message: 'association is not strong with an assignment'
+  belongs_to :assignment, counter_cache: true
+  validates_presence_of :assignment_id
+  validates_associated :assignment,
+                       message: 'association is not strong with an assignment'
   validates_numericality_of :assignment_id,
                             only_integer: true,
                             greater_than: 0,
                             message: 'can only be whole number greater than 0'
 
-  validates_presence_of     :max
+  validates_presence_of :max
   validates_numericality_of :max,
                             message: 'must be a number greater than 0.0',
                             greater_than: 0.0
@@ -49,7 +49,7 @@ class FlexibleCriterion < Criterion
   #
   # A string. see new_from_csv_row for format reference.
   def self.create_csv(assignment)
-    csv_string = CSV.generate do |csv|
+    CSV.generate do |csv|
       # TODO temporary until Assignment gets its criteria method
       criteria = FlexibleCriterion.where(assignment_id: assignment.id)
                                   .order(:position)
@@ -58,7 +58,6 @@ class FlexibleCriterion < Criterion
         csv << criterion_array
       end
     end
-    return csv_string
   end
 
   # Instantiate a FlexibleCriterion from a CSV row and attach it to the supplied
@@ -205,9 +204,9 @@ class FlexibleCriterion < Criterion
   end
 
   def add_tas_by_user_name_array(ta_user_name_array)
-    result = ta_user_name_array.map { |ta_user_name|
+    result = ta_user_name_array.map do |ta_user_name|
       Ta.where(user_name: ta_user_name).first
-    }.compact
+    end.compact
     add_tas(result)
   end
 

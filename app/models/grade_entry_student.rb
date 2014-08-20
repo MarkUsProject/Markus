@@ -3,22 +3,28 @@ require 'encoding'
 # GradeEntryStudent represents a row (i.e. a student's grades for each question)
 # in a grade entry form.
 class GradeEntryStudent < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :grade_entry_form
-
   attr_accessor :total_grade
 
-  has_many  :grades, dependent: :destroy
-  has_many  :grade_entry_items, through: :grades
+  belongs_to :user
+  validates_associated :user
+
+  belongs_to :grade_entry_form
+  validates_associated :grade_entry_form
+
+  has_many :grades, dependent: :destroy
+
+  has_many :grade_entry_items, through: :grades
 
   has_and_belongs_to_many :tas
 
-  validates_associated :user
-  validates_associated :grade_entry_form
-
-  validates_numericality_of :user_id, only_integer: true, greater_than: 0,
+  validates_numericality_of :user_id,
+                            only_integer: true,
+                            greater_than: 0,
                             message: I18n.t('invalid_id')
-  validates_numericality_of :grade_entry_form_id, only_integer: true, greater_than: 0,
+
+  validates_numericality_of :grade_entry_form_id,
+                            only_integer: true,
+                            greater_than: 0,
                             message: I18n.t('invalid_id')
 
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
@@ -103,7 +109,7 @@ class GradeEntryStudent < ActiveRecord::Base
     user_name = working_row.shift
 
     # Attempt to find the student
-    student = Student.find_by_user_name(user_name)
+    student = Student.where(user_name: user_name).first
     if student.nil?
       raise I18n.t('grade_entry_forms.csv.invalid_user_name')
     end
@@ -114,11 +120,14 @@ class GradeEntryStudent < ActiveRecord::Base
     # Create or update the student's grade for each question
     names.each do |grade_entry_name|
       grade_for_grade_entry_item = working_row.shift
-      grade_entry_item = grade_entry_items.find_by_name(grade_entry_name)
+      grade_entry_item = grade_entry_items.where(name: grade_entry_name).first
 
       # Don't add empty grades and remove grades that did exist but are now empty
       if !grade_for_grade_entry_item || grade_for_grade_entry_item.empty?
-        grade = grade_entry_student.grades.find_by_grade_entry_item_id(grade_entry_item.id)
+        grade =
+          grade_entry_student.grades
+                             .where(grade_entry_item_id: grade_entry_item.id)
+                             .first
         unless grade.nil?
           grade.destroy
         end
@@ -142,7 +151,7 @@ class GradeEntryStudent < ActiveRecord::Base
     failures = []
     CSV.parse(csv_file_contents) do |row|
       student_name = row.shift # Knocks the first item from array
-      student = Student.find_by_user_name(student_name)
+      student = Student.where(user_name: student_name).first
       if student.nil?
         failures.push(student_name)
       else
@@ -160,7 +169,7 @@ class GradeEntryStudent < ActiveRecord::Base
   def add_tas_by_user_name_array(ta_user_name_array)
     grade_entry_tas = []
     ta_user_name_array.each do |ta_user_name|
-      ta = Ta.find_by_user_name(ta_user_name)
+      ta = Ta.where(user_name: ta_user_name).first
       if !ta.nil?
         if !self.tas.include?(ta)
           self.tas << ta
@@ -190,7 +199,7 @@ class GradeEntryStudent < ActiveRecord::Base
     return if ta_id_array == []
     grade_entry_student_tas = self.tas
 
-    tas_to_remove = grade_entry_student_tas.find_all_by_id(ta_id_array)
+    tas_to_remove = grade_entry_student_tas.where(id: ta_id_array)
     tas_to_remove.each do |ta_to_remove|
       self.tas.delete(ta_to_remove)
     end

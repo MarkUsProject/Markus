@@ -54,24 +54,24 @@ class GradeEntryForm < ActiveRecord::Base
   # Determine the average of all of the students' marks that have been
   # released so far (return a percentage).
   def calculate_released_average
-    totalMarks = 0
-    numReleased = 0
+    total_marks  = 0
+    num_released = 0
 
     grade_entry_students = self.grade_entry_students
                                .where(released_to_student: true)
     grade_entry_students.each do |grade_entry_student|
       # If there is no saved total grade, update it
-      totalMark = grade_entry_student.total_grade ||
-                  grade_entry_student.update_total_grade
-      unless totalMark.nil?
-        totalMarks += totalMark
-        numReleased += 1
+      total_mark = grade_entry_student.total_grade ||
+                   grade_entry_student.update_total_grade
+      unless total_mark.nil?
+        total_marks += total_mark
+        num_released += 1
       end
     end
 
     # Watch out for division by 0
-    return 0 if numReleased == 0
-    ((totalMarks / numReleased) / self.out_of_total) * 100
+    return 0 if num_released.zero?
+    ((total_marks / num_released) / out_of_total) * 100
   end
 
   # Given two last names, construct an alphabetical category for pagination.
