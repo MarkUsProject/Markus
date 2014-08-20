@@ -52,7 +52,7 @@ describe GroupsController do
             get :new, assignment_id: assignment, new_group_name: group_name
           end
 
-          it 'assigns the error message to @error' do
+          it 'assigns the error message to flash[:error]' do
             expect(flash[:error]).to eq('Group #{group_name} already exists')
           end
         end
