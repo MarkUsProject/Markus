@@ -12,7 +12,8 @@ class Ta < User
 
   has_many :criterion_ta_associations, dependent: :delete_all
 
-  has_and_belongs_to_many :grade_entry_students
+  has_many :grade_entry_student_tas
+  has_many :grade_entry_students, through: :grade_entry_student_tas
 
   def memberships_for_assignment(assignment)
     assignment.ta_memberships.find_all_by_user_id(id, include: {grouping: :group})

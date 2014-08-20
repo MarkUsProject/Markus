@@ -2,6 +2,9 @@
 class GradeEntryStudentTa < ActiveRecord::Base
   self.table_name = 'grade_entry_students_tas'
 
+  belongs_to :grade_entry_student
+  belongs_to :ta
+
   # Merges records of GradeEntryStudentTa that do not exist yet using a caller-
   # specified block. The block is given the passed-in grade entry student IDs
   # and TA IDs and must return a list of (grade entry student ID, TA ID) pair

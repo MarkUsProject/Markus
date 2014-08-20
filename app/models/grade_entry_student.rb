@@ -15,7 +15,8 @@ class GradeEntryStudent < ActiveRecord::Base
 
   has_many :grade_entry_items, through: :grades
 
-  has_and_belongs_to_many :tas
+  has_many :grade_entry_student_tas
+  has_many :tas, through: :grade_entry_student_tas
 
   validates_numericality_of :user_id,
                             only_integer: true,
@@ -98,6 +99,12 @@ class GradeEntryStudent < ActiveRecord::Base
     # Create non-existing grade entry student TA associations.
     ges_ids = joins(:user).where(users: { id: student_ids }).pluck(:id)
     GradeEntryStudentTa.merge_non_existing(ges_ids, ta_ids, &block)
+  end
+
+  # Unassigns TAs from grade entry students. +gest_ids+ is a list of IDs to the
+  # join model GradeEntryStudentTa that specifies the unassignment to be done.
+  def self.unassign_tas(gest_ids)
+    GradeEntryStudentTa.delete_all(id: gest_ids)
   end
 
   # Given a row from a CSV file in the format
