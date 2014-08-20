@@ -53,7 +53,7 @@ describe GroupsController do
           end
 
           it 'assigns the error message to @error' do
-            expect(assigns(:error)).to eq('Group #{group_name} already exists')
+            expect(flash[:error]).to eq('Group #{group_name} already exists')
           end
         end
       end
