@@ -27,10 +27,11 @@ class GroupsController < ApplicationController
   def new
     @assignment = Assignment.find(params[:assignment_id])
     begin
-      new_grouping_data = @assignment.add_group(params[:new_group_name])
-      head :ok
+      @assignment.add_group(params[:new_group_name])
     rescue Exception => e
-      render text: e.message, status: 400
+      flash[:error] = e.message
+    ensure
+      head :ok
     end
   end
 
