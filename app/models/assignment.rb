@@ -10,24 +10,32 @@ class Assignment < ActiveRecord::Base
   has_many :rubric_criteria,
            class_name: 'RubricCriterion',
            order: :position
+
   has_many :flexible_criteria,
            class_name: 'FlexibleCriterion',
            order: :position
-  has_many :assignment_files
-  has_many :test_files
+
   has_many :criterion_ta_associations
-  has_one :submission_rule
-  has_one :assignment_stat
-  accepts_nested_attributes_for :submission_rule, allow_destroy: true
+
+  has_many :assignment_files
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
+  validates_associated :assignment_files
+
+  has_many :test_files
   accepts_nested_attributes_for :test_files, allow_destroy: true
+
+  has_one :assignment_stat
   accepts_nested_attributes_for :assignment_stat, allow_destroy: true
+  validates_associated :assignment_stat
+  # Because of app/views/main/_grade_distribution_graph.html.erb:25
+  validates_presence_of :assignment_stat
 
   has_many :annotation_categories,
            class_name: 'AnnotationCategory',
            order: :position
 
   has_many :groupings
+
   has_many :ta_memberships,
            class_name: 'TaMembership',
            through: :groupings
@@ -42,8 +50,6 @@ class Assignment < ActiveRecord::Base
   has_many :section_due_dates
   accepts_nested_attributes_for :section_due_dates
 
-  validates_associated :assignment_files
-
   validates_presence_of :repository_folder
   validates_presence_of :short_identifier, :group_min
   validates_uniqueness_of :short_identifier, case_sensitive: true
@@ -56,17 +62,16 @@ class Assignment < ActiveRecord::Base
                             only_integer: true,
                             greater_than_or_equal_to: 0
 
+  has_one :submission_rule
+  accepts_nested_attributes_for :submission_rule, allow_destroy: true
   validates_associated :submission_rule
-  validates_associated :assignment_stat
   validates_presence_of :submission_rule
 
   validates_presence_of :marking_scheme_type
 
   # For those, please refer to issue #1126
   # Because of app/views/assignments/_list_manage.html.erb line:13
-  validates :description, presence: true
-  # Because of app/views/main/_grade_distribution_graph.html.erb:25
-  validates :assignment_stat, presence: true
+  validates_presence_of :description
 
   # since allow_web_submits is a boolean, validates_presence_of does not work:
   # see the Rails API documentation for validates_presence_of (Model
@@ -115,7 +120,7 @@ class Assignment < ActiveRecord::Base
         'name' =>  criterion['level_4_name'] ,
         'description' => criterion['level_4_description']
       }
-      criteria_yml = {"#{criterion['rubric_criterion_name']}" => inner}
+      criteria_yml = { "#{criterion['rubric_criterion_name']}" => inner }
       final = final.merge(criteria_yml)
     end
     final.to_yaml
@@ -213,7 +218,7 @@ class Assignment < ActiveRecord::Base
 
     # submission owner is either an individual (user) or a group
     owner = self.group_assignment? ? self.group_by(user.id) : user
-    return nil unless owner
+    return unless owner
 
     # create a new submission for the owner
     # linked to this assignment, if it doesn't exist yet
@@ -222,13 +227,11 @@ class Assignment < ActiveRecord::Base
     # submission.save if submission.new_record?
     # return submission
 
-    assignment_groupings = user.active_groupings.delete_if {|grouping|
-      grouping.assignment.id != self.id
-    }
+    assignment_groupings = user.active_groupings.delete_if do |grouping|
+      grouping.assignment.id != id
+    end
 
-    if assignment_groupings.empty?
-      nil
-    else
+    unless assignment_groupings.empty?
       assignment_groupings.first.submissions.first
     end
   end
@@ -243,7 +246,7 @@ class Assignment < ActiveRecord::Base
   # Returns nil if user does not have a group for this assignment, or if it is
   # not a group assignment
   def group_by(uid, pending=false)
-    return nil unless group_assignment?
+    return unless group_assignment?
 
     # condition = "memberships.user_id = ?"
     # condition += " and memberships.status != 'rejected'"
@@ -252,19 +255,14 @@ class Assignment < ActiveRecord::Base
     # groupings.first(include: :memberships, conditions: [condition, uid]) #FIXME: needs schema update
 
     #FIXME: needs to be rewritten using a proper query...
-    User.find(uid).accepted_grouping_for(self.id)
+    User.find(uid).accepted_grouping_for(id)
   end
 
   # Make a list of students without any groupings
   def no_grouping_students_list
-   @students = Student.all(order: :last_name, conditions: {hidden: false})
-   @students_list = []
-   @students.each do |s|
-     unless s.has_accepted_grouping_for?(self.id)
-       @students_list.push(s)
-      end
-   end
-   @students_list
+    Student.where(hidden: false)
+           .order(:last_name)
+           .reject { |s| s.has_accepted_grouping_for?(id) }
   end
 
   def display_for_note
@@ -339,16 +337,16 @@ class Assignment < ActiveRecord::Base
   end
 
   def add_group(new_group_name=nil)
-    if self.group_name_autogenerated
+    if group_name_autogenerated
       group = Group.new
       group.save(validate: false)
       group.group_name = group.get_autogenerated_group_name
       group.save
     else
-      return nil if new_group_name.nil?
-      if Group.first(conditions: {group_name: new_group_name})
-        group = Group.first(conditions: {group_name: new_group_name})
-        unless self.groupings.find_by_group_id(group.id).nil?
+      return if new_group_name.nil?
+      if Group.where(group_name: new_group_name).first
+        group = Group.where(group_name: new_group_name).first
+        unless groupings.where(group_id: group.id).first.nil?
           raise "Group #{new_group_name} already exists"
         end
       else
@@ -426,12 +424,12 @@ class Assignment < ActiveRecord::Base
   # Any member names that do not exist in the database will simply be ignored
   # (This makes it possible to have empty groups created from a bad csv row)
   def add_csv_group(row)
-    return if row.length == 0
+    return if row.length.zero?
 
     # Note: We cannot use find_or_create_by here, because it has its own
     # save semantics. We need to set and save attributes in a very particular
     # order, so that everything works the way we want it to.
-    group = Group.find_by_group_name(row[0])
+    group = Group.where(group_name: row.first).first
     if group.nil?
       group = Group.new
       group.group_name = row[0]
@@ -444,7 +442,7 @@ class Assignment < ActiveRecord::Base
     # similar semantics.
     if is_candidate_for_setting_custom_repo_name?(row)
       # Do this only if user_name exists and is a student.
-      if Student.find_by_user_name(row[2])
+      if Student.where(user_name: row[2]).first
         group.repo_name = row[0]
       else
         # Student name does not exist, use provided repo_name
@@ -479,7 +477,8 @@ class Assignment < ActiveRecord::Base
     # Form groups
     start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
     (start_index_group_members..(row.length - 1)).each do |i|
-      student = Student.find_by_user_name(row[i].strip) # remove whitespace
+      student = Student.where(user_name: row[i].strip) # remove whitespace
+                       .first
       if student
         if grouping.student_membership_number == 0
           # Add first valid member as inviter to group.
@@ -508,25 +507,18 @@ class Assignment < ActiveRecord::Base
   end
 
   def grouped_students
-    result_students = []
-    student_memberships.each do |student_membership|
-      result_students.push(student_membership.user)
-    end
-    result_students
+    student_memberships.map(&:user)
   end
 
   def ungrouped_students
-    Student.all(conditions: {hidden: false}) - grouped_students
+    Student.where(hidden: false) - grouped_students
   end
 
   def valid_groupings
-    result = []
-    groupings.all(include: [{student_memberships: :user}]).each do |grouping|
-      if grouping.admin_approved || grouping.student_memberships.count >= group_min
-        result.push(grouping)
-      end
+    groupings.includes(student_memberships: :user).select do |grouping|
+      grouping.admin_approved ||
+      grouping.student_memberships.count >= group_min
     end
-    result
   end
 
   def invalid_groupings
@@ -534,7 +526,7 @@ class Assignment < ActiveRecord::Base
   end
 
   def assigned_groupings
-    groupings.all(joins: :ta_memberships, include: [{ta_memberships: :user}]).uniq
+    groupings.joins(:ta_memberships).includes(ta_memberships: :user).uniq
   end
 
   def unassigned_groupings
@@ -626,7 +618,11 @@ class Assignment < ActiveRecord::Base
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
           rubric_criteria.each do |rubric_criterion|
-            mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, 'RubricCriterion')
+            mark = submission.get_latest_result
+                             .marks
+                             .where(markable_id: rubric_criterion.id,
+                                    markable_type: 'RubricCriterion')
+                             .first
             if mark.nil?
               final_result.push('')
             else
@@ -676,7 +672,11 @@ class Assignment < ActiveRecord::Base
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
           flexible_criteria.each do |criterion|
-            mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(criterion.id, 'FlexibleCriterion')
+            mark = submission.get_latest_result
+                             .marks
+                             .where(markable_id: criterion.id,
+                                    markable_type: 'FlexibleCriterion')
+                             .first
             if mark.nil?
               final_result.push('')
             else
@@ -776,8 +776,7 @@ class Assignment < ActiveRecord::Base
 
   # Returns all the TAs associated with the assignment
   def tas
-    ids = self.ta_memberships.map { |m| m.user_id }
-    Ta.find(ids)
+    Ta.find(ta_memberships.map(&:user_id))
   end
 
   # Returns all the submissions that have been graded (completed)
@@ -793,7 +792,7 @@ class Assignment < ActiveRecord::Base
   end
 
   def groups_submitted
-    self.groupings.select { |grouping| grouping.has_submission?}
+    groupings.select(&:has_submission?)
   end
 
   private
@@ -822,7 +821,7 @@ class Assignment < ActiveRecord::Base
 
   def update_assigned_tokens
     self.tokens.each do |t|
-      t.update_tokens(self.tokens_per_day_was, self.tokens_per_day)
+      t.update_tokens(tokens_per_day_was, tokens_per_day)
     end
   end
 end
