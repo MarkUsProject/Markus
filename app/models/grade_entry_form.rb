@@ -108,7 +108,8 @@ class GradeEntryForm < ActiveRecord::Base
   end
 
   # An algorithm for determining the category names for alphabetical pagination
-  def alpha_paginate(all_grade_entry_students, per_page, total_pages, selected_column)
+  def alpha_paginate(all_grade_entry_students, per_page, total_pages, 
+                      selected_column)
     alpha_categories = Array.new(2 * total_pages){[]}
     alpha_pagination = []
 
@@ -127,9 +128,9 @@ class GradeEntryForm < ActiveRecord::Base
       # names are "Alwyn, Anderson, and Antheil", the category for this page would be:
       # "Al-And".
 
-      # Enhanced feature: Allow category names by Last Name, First Name, and User Name
-      # According to the currently selected column in the spreadsheet
-      # Default is Last Name
+      # Enhanced feature: Allow category names by Last Name, First Name, 
+      # and User Name According to the currently selected column in the 
+      # spreadsheet. Default is Last Name
       first_student = grade_entry_students1.first.last_name
       last_student = grade_entry_students1.last.last_name
       next_student = grade_entry_students2.first.last_name
