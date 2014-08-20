@@ -260,17 +260,17 @@ class GradeEntryFormTest < ActiveSupport::TestCase
       end
 
       should 'be able to handle the case where there are 0 pages without errors' do
-        alpha_pagination_students = @grade_entry_form.alpha_paginate(@students, 12, 0)
+        alpha_pagination_students = @grade_entry_form.alpha_paginate(@students, 12, 0, 'last_name')
         assert_equal(alpha_pagination_students, [])
       end
 
       should 'construct the appropriate categories for alphabetical pagination when there is 1 page' do
-        alpha_pagination_students = @grade_entry_form.alpha_paginate(@students, 12, 1)
+        alpha_pagination_students = @grade_entry_form.alpha_paginate(@students, 12, 1, 'last_name')
         assert_equal('A-F', alpha_pagination_students[0])
       end
 
       should 'construct the appropriate categories for alphabetical pagination when there are multiple pages' do
-        alpha_pagination_students = @grade_entry_form.alpha_paginate(@students, 3, 4)
+        alpha_pagination_students = @grade_entry_form.alpha_paginate(@students, 3, 4, 'last_name')
         assert_equal('Al-Au', alpha_pagination_students[0])
         assert_equal('Be-Brid', alpha_pagination_students[1])
         assert_equal('Brit-Duk', alpha_pagination_students[2])
@@ -282,7 +282,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
         student.save
         @students << student
 
-        alpha_pagination_students = @grade_entry_form.alpha_paginate(@students, 4, 4)
+        alpha_pagination_students = @grade_entry_form.alpha_paginate(@students, 4, 4, 'last_name')
         assert_equal('A-Be', alpha_pagination_students[0])
         assert_equal('Bl-C', alpha_pagination_students[1])
         assert_equal('D-F', alpha_pagination_students[2])
