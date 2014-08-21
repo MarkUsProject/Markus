@@ -1,40 +1,8 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
-  SummariesTable = React.createClass({
-      getInitialState: function() {
-        return {
-          summaries: []
-        };
-      },
-    componentWillMount: function() {
-      this.refresh();
-    },
-    // Asks for new info from backend and sets props accordingly.
-    refresh: function() {
-      document.getElementById('working').style.display = '';
-      jQuery.ajax({
-        method: 'GET',
-        url: 'summaries',
-        dataType: 'json',
-        success: function(data) {
-          this.setState({
-            summaries: data,
-          });
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        }.bind(this),
-        complete: function() {
-          document.getElementById('working').style.display = 'none';
-        }
-
-      });
-    },
-    render: function() {
+  var SummariesTable = React.createClass({
+    getDefaultProps: function() {
       var columns = [
         {
           id: 'group_name',
@@ -120,7 +88,41 @@
           }
         }
       ];
-
+      return {columns: columns, filters: filters};
+    },
+    getInitialState: function() {
+      return {
+        summaries: []
+      };
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+      jQuery.ajax({
+        method: 'GET',
+        url: 'summaries',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            summaries: data,
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this),
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+    render: function() {
+      
       var summaries_data = this.state.summaries.map(function(summary) {
         var s = {};
         s['id'] = summary.id;
@@ -137,13 +139,12 @@
         <% end %>
         return s;
       });
-      console.log(summaries_data);
 
       return (
         <div>
           <Table data={summaries_data}
-            columns={columns}
-            filters={filters}
+            columns={this.props.columns}
+            filters={this.props.filters}
             filter_type={true} />
         </div>
       );
