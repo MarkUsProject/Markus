@@ -1,17 +1,21 @@
 class Token < ActiveRecord::Base
 
-  belongs_to :grouping
   validate   :last_used_date
 
+  belongs_to :grouping
   validates_presence_of :grouping_id, :tokens
-  validates_numericality_of :tokens, only_integer: true,  greater_than_or_equal_to: 0
+
+  validates_numericality_of :tokens,
+                            only_integer: true,
+                            greater_than_or_equal_to: 0
 
   def last_used_date
     if self.last_token_used_date
       if Time.zone.parse(self.last_token_used_date.to_s).nil?
         errors.add :last_token_used_date, 'is not a valid date'
-        return false
-      else return true
+        false
+      else
+        true
       end
     end
   end
