@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
   # Returns user object representing the user with the given login.
   def self.authorize(login)
     # fetch login in database to see if it is registered.
-    find_by_user_name(login)
+    where(user_name: login).first
   end
 
   # Authenticates login against its password
@@ -93,8 +93,8 @@ class User < ActiveRecord::Base
   #TODO: make these proper associations. They work fine for now but
   # they'll be slow in production
   def active_groupings
-    self.groupings.all(conditions: ['memberships.membership_status != :u',
-                                       { u: StudentMembership::STATUSES[:rejected]}])
+    self.groupings.where('memberships.membership_status != ?',
+                         StudentMembership::STATUSES[:rejected])
   end
 
   # Helper methods -----------------------------------------------------
@@ -115,9 +115,7 @@ class User < ActiveRecord::Base
 
   def submission_for(aid)
     grouping = grouping_for(aid)
-    if grouping.nil?
-      return nil
-    end
+    return if grouping.nil?
     grouping.current_submission_used
   end
 
@@ -198,21 +196,19 @@ class User < ActiveRecord::Base
     current_user = user_class.find_or_create_by_user_name(user_attributes[:user_name])
     current_user.attributes = user_attributes
 
-    unless current_user.save
-      return nil
-    end
-
+    return unless current_user.save
     current_user
   end
 
   # Convenience method which returns a configuration Hash for the
   # repository lib
   def self.repo_config
-    # create config
-    conf = Hash.new
-    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
-    conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
-    return conf
+    {
+      'IS_REPOSITORY_ADMIN' =>
+        MarkusConfigurator.markus_config_repository_admin?,
+      'REPOSITORY_PERMISSION_FILE' =>
+        MarkusConfigurator.markus_config_repository_permission_file
+    }
   end
 
   # Set API key for user model. The key is a
@@ -252,7 +248,7 @@ class User < ActiveRecord::Base
   # Create some random, hard to guess SHA2 512 bit long
   # digest.
   def generate_api_key
-    digest = Digest::SHA2.new(bitlen=512)
+    digest = Digest::SHA2.new(512)
     # generate a unique token
     unique_seed = SecureRandom.hex(20)
     digest.update("#{unique_seed} SECRET! #{Time.zone.now.to_f}").to_s
