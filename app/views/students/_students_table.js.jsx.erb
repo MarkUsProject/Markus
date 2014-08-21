@@ -1,78 +1,75 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
-  StudentsTable = React.createClass({
+  var StudentsTable = React.createClass({
     getDefaultProps: function() {
       // Defines the columns used for the table and whether they
       // are sortable searchable. The default initially sorted
       // column is the first sortable column in the array.
-      var columns = [
-        {
-          id: 'user_name',
-          content: '<%= j raw I18n.t(:'user.user_name') %>',
-          sortable: true,
-          searchable: true
-        },
-        {
-          id: 'last_name',
-          content: '<%= j raw I18n.t(:'user.last_name') %>',
-          sortable: true,
-          searchable: true
-        },
-        {
-          id: 'first_name',
-          content: '<%= j raw I18n.t(:'user.first_name') %>',
-          sortable: true,
-          searchable: true
-        },
-        {
-          id: 'section',
-          content: '<%= j raw I18n.t(:'user.section') %>',
-          sortable: true
-        },
-        {
-          id: 'grace_credits',
-          content: '<%= j raw I18n.t(:'user.grace_credits') %>',
-          sortable: true
-        },
-        {
-          id: 'notes',
-          content: '<%= j raw I18n.t(:'user.notes_count') %>',
-          sortable: false
-        }
-      ];
-
-      // Defines the filters used for the table filters. func
-      // must implement the filter method that valid objects
-      // should return true for, and invalid ones should return false.
-      var filters = [
-        {
-          name: 'all',
-          text: '<%= j raw I18n.t(:'all') %>',
-          func: function(student) {
-            return true;
-          }
-        },
-        {
-          name: 'active',
-          text: '<%= j raw I18n.t(:'active') %>',
-          func: function(student) {
-            return !student.hidden;
-          }
-        },
-        {
-          name: 'not_active',
-          text: '<%= j raw I18n.t(:'not_active') %>',
-          func: function(student) {
-            return student.hidden;
-          }
-        }
-      ];
 
       return {
-        columns: columns,
-        filters: filters
-      };
+        columns: [
+          {
+            id: 'user_name',
+            content: '<%= j raw I18n.t(:'user.user_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'last_name',
+            content: '<%= j raw I18n.t(:'user.last_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'first_name',
+            content: '<%= j raw I18n.t(:'user.first_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'section',
+            content: '<%= j raw I18n.t(:'user.section') %>',
+            sortable: true
+          },
+          {
+            id: 'grace_credits',
+            content: '<%= j raw I18n.t(:'user.grace_credits') %>',
+            sortable: true
+          },
+          {
+            id: 'notes',
+            content: '<%= j raw I18n.t(:'user.notes_count') %>',
+            sortable: false
+          }
+        ],
+        // Defines the filters used for the table filters. func
+        // must implement the filter method that valid objects
+        // should return true for, and invalid ones should return false.
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw I18n.t(:'all') %>',
+            func: function(student) {
+              return true;
+            }
+          },
+          {
+            name: 'active',
+            text: '<%= j raw I18n.t(:'active') %>',
+            func: function(student) {
+              return !student.hidden;
+            }
+          },
+          {
+            name: 'not_active',
+            text: '<%= j raw I18n.t(:'not_active') %>',
+            func: function(student) {
+              return student.hidden;
+            }
+          }
+        ]
+      }
     },
     getInitialState: function() {
       return {
@@ -120,7 +117,6 @@
     },
     render: function() {
       // Do student-specific table stuff here.
-      // possibly move this to getdefaultprops.
       var students_data = this.state.students.map(function(student) {
         var s = {};
 
@@ -164,7 +160,7 @@
 
   // The bulk action box where you can give grace credits,
   // change sections, or mark as active or inactive.
-  StudentsActionBox = React.createClass({
+  var StudentsActionBox = React.createClass({
     propTypes: {
       selected_students: React.PropTypes.array,
       sections: React.PropTypes.array,
