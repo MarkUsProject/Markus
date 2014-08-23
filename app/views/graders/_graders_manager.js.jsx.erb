@@ -223,7 +223,7 @@
     criteriaCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
-        var new_selected_criteria = this.props.groups.map(function(x) { return x.id; }).slice();
+        var new_selected_criteria = this.props.criteria.map(function(x) { return x.id; }).slice();
         this.props.onSelectedCriteriaChange(new_selected_criteria);
       } else {
         this.props.onSelectedCriteriaChange([]);
