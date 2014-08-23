@@ -16,7 +16,7 @@ class Ta < User
   has_many :grade_entry_students, through: :grade_entry_student_tas
 
   def memberships_for_assignment(assignment)
-    assignment.ta_memberships.where(user_id: id, include: {grouping: :group})
+    assignment.ta_memberships.where(user_id: id, include: { grouping: :group })
   end
 
   def is_assigned_to_grouping?(grouping_id)
