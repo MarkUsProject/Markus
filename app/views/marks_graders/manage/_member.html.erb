@@ -1,9 +1,13 @@
-<% grade_entry_student.tas.each do |ta| %>
-	<span id="<%= "mbr_#{ta.id}" %>">
-	  <%= check_box_tag "#{student.id}_#{ta.user_name}", true, false,
-        class: 'inline_checkbox', onclick:
-        "$('student_select_' + #{student.id}).checked = true;"%>
-	  <%= label_tag "#{student.id}_#{ta.user_name}", ta.user_name,
-        class: 'inline_label' %>
-	</span>
+<% grade_entry_student.grade_entry_student_tas.each do |gest| %>
+  <span id='<%= "mbr_#{gest.id}" %>'>
+    <% id = "gest_#{gest.id}" %>
+    <%=
+      check_box_tag(
+        'gests[]', gest.id, false,
+        id: id, class: 'inline_checkbox',
+        onclick: "$('student_select_' + #{student.id}).checked = true;"
+      )
+    %>
+    <%= label_tag id, gest.ta.user_name, class: 'inline_label' %>
+  </span>
 <% end %>

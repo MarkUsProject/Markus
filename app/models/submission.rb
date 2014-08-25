@@ -5,7 +5,7 @@ require 'fileutils' # FileUtils used here
 # Use Assignment.submission_by(user) to retrieve the correct submission.
 class Submission < ActiveRecord::Base
   after_create :create_result
-  before_validation(:bump_old_submissions, on: :create)
+  before_validation :bump_old_submissions, on: :create
 
   validates_numericality_of :submission_version, only_integer: true
   belongs_to :grouping
@@ -23,7 +23,7 @@ class Submission < ActiveRecord::Base
      revision = repo.get_revision_by_timestamp(timestamp, path)
      submission = self.generate_new_submission(grouping, revision)
      repo.close
-     return submission
+     submission
   end
 
   def self.create_by_revision_number(grouping, revision_number)
@@ -31,41 +31,40 @@ class Submission < ActiveRecord::Base
     revision = repo.get_revision(revision_number)
     submission = self.generate_new_submission(grouping, revision)
     repo.close
-    return submission
+    submission
   end
 
   def self.generate_new_submission(grouping, revision)
-     new_submission = Submission.new
-     new_submission.grouping = grouping
-     new_submission.submission_version = 1
-     new_submission.submission_version_used = true
-     new_submission.revision_timestamp = revision.timestamp
-     new_submission.revision_number = revision.revision_number
+    new_submission = Submission.new
+    new_submission.grouping = grouping
+    new_submission.submission_version = 1
+    new_submission.submission_version_used = true
+    new_submission.revision_timestamp = revision.timestamp
+    new_submission.revision_number = revision.revision_number
 
-     new_submission.transaction do
-       begin
-         new_submission.populate_with_submission_files(revision)
-       rescue Repository::FileDoesNotExist
-         #populate the submission with no files instead of raising an exception
-       end
-       new_submission.save
-     end
-     return new_submission
+    new_submission.transaction do
+      begin
+        new_submission.populate_with_submission_files(revision)
+      rescue Repository::FileDoesNotExist
+        # populate the submission with no files instead of raising an exception
+      end
+      new_submission.save
+    end
+    new_submission
   end
 
   # returns the original result
   def get_original_result
-    if self.remark_result_id.nil?
-      Result.first(conditions: ['submission_id = ?', self.id])
+    if remark_result_id.nil?
+      Result.where(submission_id: id).first
     else
-      Result.first(conditions: ['submission_id = ? AND id != ?',
-                                   self.id, self.remark_result_id])
+      Result.where(submission_id: id, id: remark_result_id).first
     end
   end
 
   # returns the remark result if exists, returns nil if does not exist
   def get_remark_result
-    Result.first(conditions: ['id = ?', self.remark_result_id])
+    Result.where(id: remark_result_id).first
   end
 
   # returns the latest result - remark result if exists and submitted, else original result
@@ -118,7 +117,7 @@ class Submission < ActiveRecord::Base
   # (for now, called "BACKUP")
   def remove_file(filename)
     # get all submissions for this filename
-    files = submission_files.all(conditions: ['filename = ?', filename])
+    files = submission_files.where(filename: filename)
     return unless files && !files.empty?
     files.each { |f| f.destroy }  # destroy all records first
 
@@ -186,13 +185,12 @@ class Submission < ActiveRecord::Base
   #=== Returns
   # nil if no such submission exists.
   def self.get_submission_by_group_and_assignment(group_n, ass_si)
-    assignment = Assignment.find_by_short_identifier(ass_si)
-    group = Group.find_by_group_name(group_n)
+    assignment = Assignment.where(short_identifier: ass_si).first
+    group = Group.where(group_name: group_n).first
     if !assignment.nil? && !group.nil?
       grouping = group.grouping_for_assignment(assignment.id)
-      return grouping.current_submission_used if !grouping.nil?
+      grouping.current_submission_used if !grouping.nil?
     end
-    return nil
   end
 
   def create_remark_result

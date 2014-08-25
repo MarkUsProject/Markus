@@ -1,10 +1,10 @@
 class Period < ActiveRecord::Base
-  belongs_to :submission_rule, polymorphic: true
-
   attr_accessor :submission_rule_type
-  validates_associated      :submission_rule
 
-  validates_presence_of     :hours
+  belongs_to :submission_rule, polymorphic: true
+  validates_associated :submission_rule
+
+  validates_presence_of :hours
   validates_numericality_of :hours, greater_than_or_equal_to: 0
 
   with_options if: :is_penalty_decay_period? do |period|

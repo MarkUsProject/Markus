@@ -1,1 +1,0 @@
-page.call "populate_criteria", @table_rows.to_json

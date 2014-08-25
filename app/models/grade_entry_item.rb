@@ -1,21 +1,25 @@
 # GradeEntryItem represents column names (i.e. question names and totals)
 # in a grade entry form.
 class GradeEntryItem < ActiveRecord::Base
-  belongs_to  :grade_entry_form
 
-  has_many   :grades, dependent: :destroy
-  has_many   :grade_entry_students, through: :grades
+  belongs_to :grade_entry_form
+  validates_associated :grade_entry_form
 
-  validates_presence_of   :name
-  validates_presence_of   :out_of
-  validates_presence_of   :position
+  has_many :grades, dependent: :destroy
 
-  validates_associated    :grade_entry_form
+  has_many :grade_entry_students, through: :grades
 
-  validates_uniqueness_of   :name, scope: :grade_entry_form_id,
-                            message: I18n.t('grade_entry_forms.invalid_name')
-  validates_numericality_of :out_of, greater_than_or_equal_to: 0,
+  validates_presence_of :name
+  validates_uniqueness_of :name,
+                          scope: :grade_entry_form_id,
+                          message: I18n.t('grade_entry_forms.invalid_name')
+
+  validates_presence_of :out_of
+  validates_numericality_of :out_of,
+                            greater_than_or_equal_to: 0,
                             message: I18n.t('grade_entry_forms.invalid_column_out_of')
+
+  validates_presence_of :position
   validates_numericality_of :position, greater_than_or_equal_to: 0
 
   # Create new grade entry items (or update them if they already exist) using
@@ -38,7 +42,7 @@ class GradeEntryItem < ActiveRecord::Base
     end
 
     # Make sure the first elements in names and totals are ""
-    unless names.shift == '' and totals.shift == ''
+    unless names.shift == '' && totals.shift == ''
       raise I18n.t('grade_entry_forms.csv.incomplete_header')
     end
 
@@ -54,10 +58,8 @@ class GradeEntryItem < ActiveRecord::Base
 
     # Delete old questions
     grade_entry_form.grade_entry_items.each do |item|
-      unless names.include?(item.name)
-        item.destroy
-      end
+      next if names.include?(item.name)
+      item.destroy
     end
-
   end
 end

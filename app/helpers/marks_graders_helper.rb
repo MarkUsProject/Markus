@@ -46,8 +46,14 @@ module MarksGradersHelper
       table_row[:first_name] = student.first_name
       table_row[:last_name] = student.last_name
       table_row[:section] = student.section.nil? ? '' : student.section.name
-      table_row[:members] = grade_entry_student.nil? ? '' : grade_entry_student.tas.collect{ |grader| grader.user_name}.join(',')
-
+      table_row[:members] =
+        if grade_entry_student
+          grade_entry_student.grade_entry_student_tas.map do |gest|
+            gest.ta.user_name
+          end.join(',')
+        else
+          ''
+        end
       #These are are used for searching
       table_row[:graders] = table_row[:members]
 

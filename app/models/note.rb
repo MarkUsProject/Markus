@@ -1,8 +1,9 @@
 class Note < ActiveRecord::Base
-  belongs_to :user, foreign_key: :creator_id, counter_cache: true
   belongs_to :noteable, polymorphic: true, counter_cache: true
 
   validates_presence_of :notes_message, :creator_id, :noteable
+
+  belongs_to :user, foreign_key: :creator_id, counter_cache: true
   validates_associated :user
 
   NOTEABLES = %w(Grouping Student Assignment)
@@ -21,6 +22,6 @@ class Note < ActiveRecord::Base
         return true
       end
     end
-    return false
+    false
   end
 end

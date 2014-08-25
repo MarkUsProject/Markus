@@ -1,0 +1,237 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  var SubmissionsTable = React.createClass({
+    getDefaultProps: function() {
+      // Defines the columns used for the table and whether they
+      // are sortable searchable. The default initially sorted
+      // column is the first sortable column in the array.
+      return {
+        columns: [
+          {
+            id: 'group_name',
+            content: '<%= j raw I18n.t(:'browse_submissions.group_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'repository',
+            content: '<%= j raw I18n.t(:'browse_submissions.repository') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'section',
+            content: '<%= j raw I18n.t(:'browse_submissions.section') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'commit_date',
+            content: '<%= j raw I18n.t(:'browse_submissions.commit_date') %>',
+            sortable: true,
+            searchable: false
+          },
+          {
+            id: 'marking_state',
+            content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
+            sortable: true,
+            searchable: false
+          },
+          {
+            id: 'grace_credits_used',
+            content: '<%= j raw I18n.t(:'browse_submissions.grace_credits_used') %>',
+            sortable: true,
+            searchable: false
+          },
+          {
+            id: 'final_grade',
+            content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
+            sortable: true,
+            searchable: false 
+          },
+          {
+            id: 'can_begin_grading',
+            content: '<%= j raw I18n.t(:'browse_submissions.can_begin_grading') %>',
+            sortable: true
+          }
+        ],
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw I18n.t(:'browse_submissions.show_all') %>',
+            func: function(submission) {
+              return true;
+            }
+          },
+          {
+            name: 'unmarked',
+            text: '<%= j raw I18n.t(:'browse_submissions.show_unmarked') %>',
+            func: function(submission) {
+              return submission.state == 'unmarked';
+            }
+          },
+          {
+            name: 'partial',
+            text: '<%= j raw I18n.t(:'browse_submissions.show_partial') %>',
+            func: function(submission) {
+              return submission.state == 'partial';
+            }
+          },
+          {
+            name: 'complete',
+            text: '<%= j raw I18n.t(:'browse_submissions.show_complete') %>',
+            func: function(submission) {
+              return submission.state == 'complete';
+            }
+          },
+          {
+            name: 'released',
+            text: '<%= j raw I18n.t(:'browse_submissions.show_released') %>',
+            func: function(submission) {
+              return submission.state == 'released';
+            }
+          }
+        ]
+      };
+    },
+    getInitialState: function() {
+      return {
+        error: null,
+        submissions: [],
+        selected_submissions: [],
+      };
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    updateSelectedSubmissions: function(submissions) {
+      this.setState({selected_submissions: submissions});
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      // Show working indicator.
+      document.getElementById('working').style.display = '';
+
+      jQuery.ajax({
+        method: 'GET',
+        url: 'browse',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            submissions: data,
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this),
+        // Close working indicator.
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+    onError: function(error) {
+      this.setState({error: error});
+    },
+    render: function() {
+      // Do student-specific table stuff here.
+      // possibly move this to getdefaultprops.
+      var submissions_data = this.state.submissions.map(function(submission) {
+        var s = {};
+        s['class_name'] = submission.class_name;
+        s['id'] = submission.id;
+        s['group_name'] = <span dangerouslySetInnerHTML={{__html: submission.group_name}} />;
+        s['repository'] = <span dangerouslySetInnerHTML={{__html: submission.repository}} />;
+        s['commit_date'] = <span dangerouslySetInnerHTML={{__html: submission.commit_date}} />;
+        s['marking_state'] = <span dangerouslySetInnerHTML={{__html: submission.marking_state}} />;
+        s['grace_credits_used'] = submission.grace_credits_used;
+        s['final_grade'] = submission.final_grade;
+        s['state'] = submission.state;
+        s['section'] = submission.section;
+        s['can_begin_grading'] = <span dangerouslySetInnerHTML={{__html: submission.can_begin_grading}} />;
+        return s;
+      }.bind(this));
+      
+        return (
+          <div>
+            <ErrorDiv error={this.state.error} />
+            <SubmissionsActionBox
+              selected_submissions={this.state.selected_submissions}
+              onError={this.onError}
+              refresh={this.refresh}
+            />
+            <Table data={submissions_data}
+              columns={this.props.columns}
+              selectable={true}
+              filters={this.props.filters}
+              filter_type={true}
+              onSelectedRowsChange={this.updateSelectedSubmissions}
+            />
+          </div>
+        );
+    }
+  });
+
+  var SubmissionsActionBox = React.createClass({
+    propTypes: {
+      selected_submissions: React.PropTypes.array
+    },
+    releaseMarks: function() {
+      var dataLoad = {
+        release_results: true,
+        filter: 'none',
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_submissions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    unreleaseMarks: function() {
+      var dataLoad = {
+        unrelease_results: false,
+        filter: 'none',
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_submissions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    render: function() {
+      return (
+        <div>
+          <button onClick={this.releaseMarks}>
+            <%= j raw I18n.t('browse_submissions.release_marks') %>
+          </button>
+          <button onClick={this.unreleaseMarks}>
+            <%= j raw I18n.t('browse_submissions.unrelease_marks') %>
+          </button>
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<SubmissionsTable />, document.getElementById('submissions_table'));
+</script>

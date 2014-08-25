@@ -54,24 +54,24 @@ class GradeEntryForm < ActiveRecord::Base
   # Determine the average of all of the students' marks that have been
   # released so far (return a percentage).
   def calculate_released_average
-    totalMarks = 0
-    numReleased = 0
+    total_marks  = 0
+    num_released = 0
 
     grade_entry_students = self.grade_entry_students
                                .where(released_to_student: true)
     grade_entry_students.each do |grade_entry_student|
       # If there is no saved total grade, update it
-      totalMark = grade_entry_student.total_grade ||
-                  grade_entry_student.update_total_grade
-      unless totalMark.nil?
-        totalMarks += totalMark
-        numReleased += 1
+      total_mark = grade_entry_student.total_grade ||
+                   grade_entry_student.update_total_grade
+      unless total_mark.nil?
+        total_marks += total_mark
+        num_released += 1
       end
     end
 
     # Watch out for division by 0
-    return 0 if numReleased == 0
-    ((totalMarks / numReleased) / self.out_of_total) * 100
+    return 0 if num_released.zero?
+    ((total_marks / num_released) / out_of_total) * 100
   end
 
   # Given two last names, construct an alphabetical category for pagination.
@@ -108,7 +108,8 @@ class GradeEntryForm < ActiveRecord::Base
   end
 
   # An algorithm for determining the category names for alphabetical pagination
-  def alpha_paginate(all_grade_entry_students, per_page, total_pages)
+  def alpha_paginate(all_grade_entry_students, per_page, total_pages,
+                      selected_column)
     alpha_categories = Array.new(2 * total_pages){[]}
     alpha_pagination = []
 
@@ -126,9 +127,21 @@ class GradeEntryForm < ActiveRecord::Base
       # on a particular page and the first student on the next page. For example, if these
       # names are "Alwyn, Anderson, and Antheil", the category for this page would be:
       # "Al-And".
+      # Enhanced feature: Allow category names by Last Name, First Name,
+      # and User Name According to the currently selected column in the
+      # spreadsheet. Default is Last Name
       first_student = grade_entry_students1.first.last_name
       last_student = grade_entry_students1.last.last_name
       next_student = grade_entry_students2.first.last_name
+      if selected_column == 'first_name'
+        first_student = grade_entry_students1.first.first_name
+        last_student = grade_entry_students1.last.first_name
+        next_student = grade_entry_students2.first.first_name
+      elsif selected_column == 'user_name'
+        first_student = grade_entry_students1.first.user_name
+        last_student = grade_entry_students1.last.user_name
+        next_student = grade_entry_students2.first.user_name
+      end
 
       # Update the possible categories
       alpha_categories = self.construct_alpha_category(first_student, last_student,
@@ -142,8 +155,16 @@ class GradeEntryForm < ActiveRecord::Base
     # Handle the last page
     page = total_pages
     grade_entry_students = all_grade_entry_students.paginate(per_page: per_page, page: page)
+    # Default is Last Name
     first_student = grade_entry_students.first.last_name
     last_student = grade_entry_students.last.last_name
+    if selected_column == 'first_name'
+      first_student = grade_entry_students.first.first_name
+      last_student = grade_entry_students.last.first_name
+    elsif selected_column == 'user_name'
+      first_student = grade_entry_students.first.user_name
+      last_student = grade_entry_students.last.user_name
+    end
 
     alpha_categories = self.construct_alpha_category(first_student, last_student, alpha_categories, i)
 
