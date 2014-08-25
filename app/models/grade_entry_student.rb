@@ -6,8 +6,6 @@ class GradeEntryStudent < ActiveRecord::Base
   belongs_to :user
   belongs_to :grade_entry_form
 
-  attr_accessor :total_grade
-
   has_many  :grades, dependent: :destroy
   has_many  :grade_entry_items, through: :grades
 

@@ -187,7 +187,7 @@ textarea {
   &[disabled] {
     background-color: $disabled-grey;
     border-color: $disabled-dark;
-    color: $disabled-dark;
+    color: #464646;
   }
 
   &.large-text {
