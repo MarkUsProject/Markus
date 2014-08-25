@@ -3,7 +3,7 @@ require 'encoding'
 # GradeEntryStudent represents a row (i.e. a student's grades for each question)
 # in a grade entry form.
 class GradeEntryStudent < ActiveRecord::Base
-  attr_accessor :total_grade
+  
 
   belongs_to :user
   validates_associated :user
