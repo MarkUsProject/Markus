@@ -4,8 +4,8 @@
   <%= render partial: 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
   <%# React stuff (compressed version + JSX transformer) %>
-  <%= javascript_include_tag 'http://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
-                             'http://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/JSXTransformer.js' %>
+  <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
+                             'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/JSXTransformer.js' %>
   <%= javascript_include_tag 'application', 'prototype' %>
   <%= stylesheet_link_tag params[:controller], media: 'all' %>
   <%= favicon_link_tag 'favicon.ico' %>
