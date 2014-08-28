@@ -90,7 +90,6 @@
 
       jQuery.ajax({
         method: 'GET',
-        url: '/students',
         dataType: 'json',
         success: function(data) {
           this.setState({
@@ -286,7 +285,7 @@
 
       jQuery.ajax({
         method: 'POST',
-        url: '/students/bulk_modify',
+        url: 'students/bulk_modify',
         data: dataLoad,
         success: function(data) {
           this.props.errorThrown(null);

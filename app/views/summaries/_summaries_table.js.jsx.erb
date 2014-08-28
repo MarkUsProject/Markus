@@ -103,7 +103,6 @@
       document.getElementById('working').style.display = '';
       jQuery.ajax({
         method: 'GET',
-        url: 'summaries',
         dataType: 'json',
         success: function(data) {
           this.setState({
