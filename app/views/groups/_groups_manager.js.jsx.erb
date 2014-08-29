@@ -97,59 +97,61 @@
 
   // Table of students, on the left.
   var GroupsStudentsTable = React.createClass({
+    getDefaultProps: function() {
+      return {
+        columns: [
+          {
+            id: 'user_name',
+            content: '<%= j raw I18n.t('user.user_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'last_name',
+            content: '<%= j raw I18n.t('user.last_name') %>',
+            sortable: true,
+            searchable: true,
+          },
+          {
+            id: 'first_name',
+            content: '<%= j raw I18n.t('user.first_name') %>',
+            sortable: true,
+            searchable: true
+          }
+        ],
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw I18n.t('groups.all_students') %>',
+            func: function(student) {
+              return student;
+            }
+          },
+          {
+            name: 'unassigned',
+            text: '<%= j raw I18n.t('groups.unassigned_students') %>',
+            func: function(student) {
+              return !student.assigned;
+            }
+          },
+          {
+            name: 'assigned',
+            text: '<%= j raw I18n.t('groups.assigned_students') %>',
+            func: function(student) {
+              return student.assigned;
+            }
+          },
+          {
+            name: 'inactive',
+            text: '<%= j raw I18n.t('groups.inactive_students') %>',
+            func: function(student) {
+              return student.hidden;
+            }
+          }
+        ]
+      };
+    },
     render: function() {
-      var columns = [
-      {
-        id: 'user_name',
-        content: '<%= j raw I18n.t('user.user_name') %>',
-        sortable: true,
-        searchable: true
-      },
-      {
-        id: 'last_name',
-        content: '<%= j raw I18n.t('user.last_name') %>',
-        sortable: true,
-        searchable: true,
-      },
-      {
-        id: 'first_name',
-        content: '<%= j raw I18n.t('user.first_name') %>',
-        sortable: true,
-        searchable: true
-      }
-      ];
-
-      var filters = [
-        {
-          name: 'all',
-          text: '<%= j raw I18n.t('groups.all_students') %>',
-          func: function(student) {
-            return student;
-          }
-        },
-        {
-          name: 'unassigned',
-          text: '<%= j raw I18n.t('groups.unassigned_students') %>',
-          func: function(student) {
-            return !student.assigned;
-          }
-        },
-        {
-          name: 'assigned',
-          text: '<%= j raw I18n.t('groups.assigned_students') %>',
-          func: function(student) {
-            return student.assigned;
-          }
-        },
-        {
-          name: 'inactive',
-          text: '<%= j raw I18n.t('groups.inactive_students') %>',
-          func: function(student) {
-            return student.hidden;
-          }
-        }
-      ];
-
       var students_data = this.props.students.map(function(student) {
         var s = {};
         s['id'] = student.id;
@@ -165,8 +167,8 @@
         <div className={'col-left'} >
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='students-tabs'>
             <Table data={students_data}
-                   columns={columns}
-                   filters={filters}
+                   columns={this.props.columns}
+                   filters={this.props.filters}
                    selectable={true}
                    onSelectedRowsChange={this.props.onSelectedStudentsChange}
                    search_placeholder={'<%= j raw I18n.t('students.search_students') %>'} />
@@ -178,6 +180,53 @@
 
   // The table of groups on the right.
   var GroupsTable = React.createClass({
+    getDefaultProps: function() {
+      return {
+        columns: [
+          {
+            id: 'name',
+            content: '<%= j raw I18n.t('groups.group_name') %>',
+            sortable: true,
+            searchable: true
+           },
+           {
+             id: 'links',
+             content: '<%= j raw I18n.t('actions') %>',
+             sortable: false,
+             searchable: false
+           },
+           {
+             id: 'members',
+             content: '<%= j raw I18n.t('members') %>',
+             sortable: false,
+             searchable: false
+           },
+        ],
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
+            func: function(group) {
+              return true;
+            }
+          },
+          {
+            name: 'valid',
+            text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
+            func: function(group) {
+              return group.valid;
+            }
+          },
+          {
+            name: 'not_valid',
+            text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
+            func: function(group) {
+            return !group.valid;
+            }
+          },
+        ]
+      };
+    },
     studentCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
@@ -189,32 +238,7 @@
       }
       this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
     },
-    refresh: function() {
-      this.props.refresh();
-    },
     render: function() {
-      var columns = [
-      {
-        id: 'name',
-        content: '<%= j raw I18n.t('groups.group_name') %>',
-        sortable: true,
-        searchable: true
-      },
-      {
-        id: 'links',
-        content: '<%= j raw I18n.t('actions') %>',
-        sortable: false,
-        searchable: false
-      },
-
-      {
-        id: 'members',
-        content: '<%= j raw I18n.t('members') %>',
-        sortable: false,
-        searchable: false
-      },
-      ];
-
       var filters = [
       {
         name: 'all',
@@ -253,7 +277,7 @@
         links.push(group.rename_link);
         links.push(group.note_link);
         links.push(group.delete_link);
-        g['links'] = <span onClick={this.refresh} dangerouslySetInnerHTML={{__html: links.join(' ')}} ></span>
+        g['links'] = <span onClick={this.props.refresh} dangerouslySetInnerHTML={{__html: links.join(' ')}} ></span>
 
         var members = [];
         for (var i = 0; i < group.members.length; i++) {
@@ -273,7 +297,9 @@
         <div className={'col-right'}>
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
             <AddGroupButton refresh={this.props.refresh} />
-            <Table data={groups_data} columns={columns} filters={filters} 
+            <Table data={groups_data}
+              columns={this.props.columns}
+              filters={this.props.filters} 
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
               search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
@@ -283,7 +309,7 @@
     }
   });
 
-  AddGroupButton = React.createClass({
+  var AddGroupButton = React.createClass({
     <% if @assignment.group_name_autogenerated %>
       createGroup: function() {
         jQuery.ajax({

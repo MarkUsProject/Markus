@@ -1,5 +1,9 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
+  // This file contains the main GradersManager component
+  // as well as the manager and tables for the groups + criteria
+  // tables, which is on the right.
+
 
   var GradersManager = React.createClass({
     getInitialState: function() {
@@ -219,7 +223,7 @@
     criteriaCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
-        var new_selected_criteria = this.props.groups.map(function(x) { return x.id; }).slice();
+        var new_selected_criteria = this.props.criteria.map(function(x) { return x.id; }).slice();
         this.props.onSelectedCriteriaChange(new_selected_criteria);
       } else {
         this.props.onSelectedCriteriaChange([]);
@@ -275,7 +279,7 @@
       }
       this.props.onSelectedCriteriaChange(new_selected_criteria);
     },
-    graderCheckboxClicked: function(event) {
+    graderInGroupCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
       var new_selected_graders_in_groups = this.props.selected_graders_in_groups.slice();
@@ -285,6 +289,17 @@
         new_selected_graders_in_groups.splice(new_selected_graders_in_groups.indexOf(group_grader_id), 1);
       }
       this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
+    },
+    graderInCriteriaCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var criterion_grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_graders_in_criteria = this.props.selected_graders_in_criteria.slice();
+      if (value) {
+        new_selected_graders_in_criteria.push(criterion_grader_id);
+      } else {
+        new_selected_graders_in_criteria.splice(new_selected_graders_in_criteria.indexOf(criterion_grader_id), 1);
+      }
+      this.props.onSelectedGradersInCriteriaChange(new_selected_graders_in_criteria);
     },
     render: function() {
       var group_columns = [
@@ -356,7 +371,7 @@
             <input id={group.graders[i].membership_id}
               type='checkbox'
               checked={this.props.selected_graders_in_groups.indexOf(group.graders[i].membership_id) !== -1}
-              onChange={this.graderCheckboxClicked} />{group.graders[i].user_name}</div>);
+              onChange={this.graderInGroupCheckboxClicked} />{group.graders[i].user_name}</div>);
         }
         g['graders'] = graders;
         g['coverage'] = <span dangerouslySetInnerHTML={{__html: group.coverage}} />;
@@ -408,7 +423,7 @@
             <input id={criterion.graders[i].criterion_association}
               type='checkbox'
               checked={this.props.selected_graders_in_criteria.indexOf(criterion.graders[i].criterion_association) !== -1}
-              onChange={this.criteriaCheckboxClicked} />{criterion.graders[i].user_name}</div>);
+              onChange={this.graderInCriteriaCheckboxClicked} />{criterion.graders[i].user_name}</div>);
         }
         c['graders'] = graders;
         c['coverage'] = <span dangerouslySetInnerHTML={{__html: criterion.coverage}} />;
@@ -557,7 +572,7 @@
             <input id={group.graders[i].membership_id}
               type='checkbox'
               checked={this.props.selected_graders_in_groups.indexOf(group.graders[i].membership_id) !== -1 ? true : false}
-              onChange={this.graderCheckboxClicked} />{group.graders[i].user_name}</div>);
+              onChange={this.graderInGroupCheckboxClicked} />{group.graders[i].user_name}</div>);
         }
         
         g['graders'] = graders;

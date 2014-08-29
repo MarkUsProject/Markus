@@ -1,106 +1,102 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
-  SubmissionsTable = React.createClass({
+  var SubmissionsTable = React.createClass({
     getDefaultProps: function() {
       // Defines the columns used for the table and whether they
       // are sortable searchable. The default initially sorted
       // column is the first sortable column in the array.
-      var columns = [
-        {
-          id: 'group_name',
-          content: '<%= j raw I18n.t(:'browse_submissions.group_name') %>',
-          sortable: true,
-          searchable: true
-        },
-        {
-          id: 'repository',
-          content: '<%= j raw I18n.t(:'browse_submissions.repository') %>',
-          sortable: true,
-          searchable: true
-        },
-        {
-          id: 'section',
-          content: '<%= j raw I18n.t(:'browse_submissions.section') %>',
-          sortable: true,
-          searchable: true
-        },
-        {
-          id: 'commit_date',
-          content: '<%= j raw I18n.t(:'browse_submissions.commit_date') %>',
-          sortable: true,
-          searchable: false
-        },
-        {
-          id: 'marking_state',
-          content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
-          sortable: true,
-          searchable: false
-        },
-        {
-          id: 'grace_credits_used',
-          content: '<%= j raw I18n.t(:'browse_submissions.grace_credits_used') %>',
-          sortable: true,
-          searchable: false
-        },
-        {
-          id: 'final_grade',
-          content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
-          sortable: true,
-          searchable: false 
-        },
-        {
-          id: 'can_begin_grading',
-          content: '<%= j raw I18n.t(:'browse_submissions.can_begin_grading') %>',
-          sortable: true
-        }
-      ];
-
-      var filters = [
-        {
-          name: 'all',
-          text: '<%= j raw I18n.t(:'browse_submissions.show_all') %>',
-          func: function(submission) {
-            return true;
-          }
-        },
-        {
-          name: 'unmarked',
-          text: '<%= j raw I18n.t(:'browse_submissions.show_unmarked') %>',
-          func: function(submission) {
-            return submission.state == 'unmarked';
-          }
-        },
-        {
-          name: 'partial',
-          text: '<%= j raw I18n.t(:'browse_submissions.show_partial') %>',
-          func: function(submission) {
-            return submission.state == 'partial';
-          }
-        },
-        {
-          name: 'complete',
-          text: '<%= j raw I18n.t(:'browse_submissions.show_complete') %>',
-          func: function(submission) {
-            return submission.state == 'complete';
-          }
-        },
-        {
-          name: 'released',
-          text: '<%= j raw I18n.t(:'browse_submissions.show_released') %>',
-          func: function(submission) {
-            return submission.state == 'released';
-          }
-        }
-      ];
       return {
-        columns: columns,
-        filters: filters
+        columns: [
+          {
+            id: 'group_name',
+            content: '<%= j raw I18n.t(:'browse_submissions.group_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'repository',
+            content: '<%= j raw I18n.t(:'browse_submissions.repository') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'section',
+            content: '<%= j raw I18n.t(:'browse_submissions.section') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'commit_date',
+            content: '<%= j raw I18n.t(:'browse_submissions.commit_date') %>',
+            sortable: true,
+            searchable: false
+          },
+          {
+            id: 'marking_state',
+            content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
+            sortable: true,
+            searchable: false
+          },
+          {
+            id: 'grace_credits_used',
+            content: '<%= j raw I18n.t(:'browse_submissions.grace_credits_used') %>',
+            sortable: true,
+            searchable: false
+          },
+          {
+            id: 'final_grade',
+            content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
+            sortable: true,
+            searchable: false 
+          },
+          {
+            id: 'can_begin_grading',
+            content: '<%= j raw I18n.t(:'browse_submissions.can_begin_grading') %>',
+            sortable: true
+          }
+        ],
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw I18n.t(:'browse_submissions.show_all') %>',
+            func: function(submission) {
+              return true;
+            }
+          },
+          {
+            name: 'unmarked',
+            text: '<%= j raw I18n.t(:'browse_submissions.show_unmarked') %>',
+            func: function(submission) {
+              return submission.state == 'unmarked';
+            }
+          },
+          {
+            name: 'partial',
+            text: '<%= j raw I18n.t(:'browse_submissions.show_partial') %>',
+            func: function(submission) {
+              return submission.state == 'partial';
+            }
+          },
+          {
+            name: 'complete',
+            text: '<%= j raw I18n.t(:'browse_submissions.show_complete') %>',
+            func: function(submission) {
+              return submission.state == 'complete';
+            }
+          },
+          {
+            name: 'released',
+            text: '<%= j raw I18n.t(:'browse_submissions.show_released') %>',
+            func: function(submission) {
+              return submission.state == 'released';
+            }
+          }
+        ]
       };
     },
     getInitialState: function() {
       return {
-        loading: true,
         error: null,
         submissions: [],
         selected_submissions: [],
@@ -114,7 +110,9 @@
     },
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
+      // Show working indicator.
       document.getElementById('working').style.display = '';
+
       jQuery.ajax({
         method: 'GET',
         url: 'browse',
@@ -122,7 +120,6 @@
         success: function(data) {
           this.setState({
             submissions: data,
-            loading: false,
             error: null
           });
         }.bind(this),
@@ -132,6 +129,7 @@
             error: error
           });
         }.bind(this),
+        // Close working indicator.
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }
@@ -159,11 +157,6 @@
         return s;
       }.bind(this));
       
-      if (this.state.loading) {
-        return (
-          <div><%= j raw I18n.t(:'working') %></div>
-        );
-      } else {
         return (
           <div>
             <ErrorDiv error={this.state.error} />
@@ -181,11 +174,10 @@
             />
           </div>
         );
-      }
     }
   });
 
-  SubmissionsActionBox = React.createClass({
+  var SubmissionsActionBox = React.createClass({
     propTypes: {
       selected_submissions: React.PropTypes.array
     },
