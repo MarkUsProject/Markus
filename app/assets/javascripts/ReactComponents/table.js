@@ -322,7 +322,7 @@ TableHeader = React.createClass({displayName: 'TableHeader',
         if (this.props.sort_column == column.id) {
           // Add classes for css to style with indicators.
           // This class is only applied to the currently sorted column.
-          clss += (this.props.sort_direction == 'asc' ? ' asc' : 'desc');
+          clss += (this.props.sort_direction == 'asc' ? ' asc' : ' desc');
         }
         return React.DOM.th( {key:column.id, id:column.id, className:clss,
           onClick:this.headerColumnClicked}, React.DOM.span(null,
