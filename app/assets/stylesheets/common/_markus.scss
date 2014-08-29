@@ -332,7 +332,7 @@ fieldset {
       text-transform: uppercase;
 
       .asc,
-      .des {
+      .desc {
         cursor: pointer;
 
         &::after {
@@ -352,7 +352,7 @@ fieldset {
         background-image: url(asc@2x.png);
       }
 
-      .des::after {
+      .desc::after {
         background-image: url(des@2x.png);
       }
     }
