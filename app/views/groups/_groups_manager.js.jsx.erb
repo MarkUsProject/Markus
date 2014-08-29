@@ -346,14 +346,14 @@
           <div id='icons'>
             <input id='assign'
               className='image_input'
-              src='/assets/add_arrow.png'
+              src='<%= image_path('add_arrow.png') %>'
               alt='<%= j raw I18n.t('add_members') %>'
               onClick={this.performAction}
               type='image'
             />
             <input id='unassign'
               className='image_input'
-              src='/assets/remove_arrow.png'
+              src='<%= image_path('remove_arrow.png') %>'
               alt='<%= j raw I18n.t('remove_members') %>'
               onClick={this.performAction}
               type='image'
