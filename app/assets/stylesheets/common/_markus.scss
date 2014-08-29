@@ -336,17 +336,24 @@ fieldset {
         cursor: pointer;
 
         &::after {
-          font-size: 0.75em;
-          padding-left: 0.5em;
+          background-position: center center;
+          background-repeat: no-repeat;
+          background-size: 0.85em 0.85em;
+          content: "";
+          display: inline-block;
+          height: 0.85em;
+          margin-left: 0.25em;
+          vertical-align: middle;
+          width: 0.85em;
         }
       }
 
-      .asc::after, {
-        content: "▲";
+      .asc::after {
+        background-image: url(asc@2x.png);
       }
 
       .des::after {
-        content: "▼";
+        background-image: url(des@2x.png);
       }
     }
 
