@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 @import 'reset';
 @import 'constants';
 @import 'mixins';
@@ -166,7 +168,7 @@ input,
 textarea {
   @include border-radius($radius);
   @include transition(all, $time-quick);
-  background: $light-grey;
+  background: lighten($light-grey, 10%);
   border: 1px solid $grey;
   color: $dark-grey;
   font: 400 1em $fonts;
