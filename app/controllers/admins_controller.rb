@@ -15,7 +15,7 @@ class AdminsController < ApplicationController
   end
 
   def new
-    @user = Admin.new(user_params)
+    @user = Admin.new()
   end
 
   def update

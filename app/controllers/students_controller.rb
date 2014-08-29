@@ -66,7 +66,7 @@ class StudentsController < ApplicationController
   end
 
   def new
-    @user = Student.new(user_params)
+    @user = Student.new()
     @sections = Section.all(order: 'name')
   end
 
