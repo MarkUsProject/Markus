@@ -16,10 +16,10 @@
     </script>
 
   <select id="select_test_result_id" onchange="if ($(this).getValue() != '') { load_test_result($(this).getValue()); }">
-    <% if test_result_files.find_all_by_user_id(@current_user.id).empty? %>
+    <% if test_result_files.where(submission_id: submission_id).empty? %>
       <option value=""><%= I18n.t("test_result.no_files_available")%></option>
     <% else %>
-      <% test_result_files.find_all_by_user_id(@current_user.id, order: "created_at DESC").each do |file| %>
+      <% test_result_files.where(submission_id: submission_id).each do |file| %>
         <option value="<%= file.id %>">
           <%= file.filename %>
         </option>

@@ -116,7 +116,8 @@
       <div id='test_results_controls'>
         <%= render partial: 'results/common/test_selector',
                    locals: { test_result_files: @test_result_files,
-                             result: @result } %>
+                             result: @result,
+                             submission_id: @submission.id } %>
       </div>
     <% end %>
   </div>
