@@ -284,7 +284,9 @@
     </div>
 
     <%# HTML for Student Testing Interface %>
-    <% if @assignment.enable_test %>
+    <%# Disabled until we get autotesting up and running. %>
+    <%# if @assignment.enable_test %>
+    <% if false %>
     <div class='block'>
       <h2><%= t('automated_tests.test') %></h2>
       <% if @grouping.nil? %>
