@@ -177,9 +177,10 @@
 
 <aside class='dialog' id='download_dialog'>
   <h2><%= t('groups.download.download_groups_file') %></h2>
-  <%= button_to t('groups.download.download_csv'),
+  <%= link_to t('groups.download.download_csv'),
                 { controller: 'groups', action: 'download_grouplist',
                   id: @assignment.id },
+                class: 'button',
                 onclick: 'modal_download.close();' %>
 
   <section class='dialog-actions'>
