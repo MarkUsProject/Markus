@@ -29,8 +29,8 @@ module GroupsHelper
       g[:name] = grouping.group.group_name
       g[:members] = grouping.students
       g[:valid] = grouping.is_valid?
-      g[:validate_link] = ActionController::Base.helpers.link_to(
-        ActionController::Base.helpers.image_tag(
+      g[:validate_link] = view_context.link_to(
+        view_context.image_tag(
           'icons/cross.png',
           alt: I18n.t('groups.is_not_valid'),
           title: I18n.t('groups.is_not_valid')),
@@ -39,8 +39,8 @@ module GroupsHelper
           confirm:  I18n.t('groups.validate_confirm'),
         remote: true)
 
-      g[:invalidate_link] = ActionController::Base.helpers.link_to(
-        ActionController::Base.helpers.image_tag(
+      g[:invalidate_link] = view_context.link_to(
+        view_context.image_tag(
           'icons/tick.png',
           alt: I18n.t('groups.is_valid'),
           title: I18n.t('groups.is_valid')),
@@ -49,16 +49,16 @@ module GroupsHelper
           confirm:  I18n.t('groups.invalidate_confirm'),
         remote: true)
 
-      g[:rename_link] = ActionController::Base.helpers.link_to(
-        ActionController::Base.helpers.image_tag(
+      g[:rename_link] = view_context.link_to(
+        view_context.image_tag(
           'icons/pencil.png',
           alt: I18n.t('groups.rename_group.link'),
           title: I18n.t('groups.rename_group.link')),
         rename_group_dialog_assignment_group_path(@assignment, grouping),
         remote: true)
 
-      g[:note_link] = ActionController::Base.helpers.link_to(
-        ActionController::Base.helpers.image_tag(
+      g[:note_link] = view_context.link_to(
+        view_context.image_tag(
           'icons/note.png',
           alt: I18n.t('notes.title'),
           title: I18n.t('notes.title')),
@@ -70,8 +70,8 @@ module GroupsHelper
           controller_to: 'groups'),
         remote: true)
 
-      g[:delete_link] = ActionController::Base.helpers.link_to(
-        ActionController::Base.helpers.image_tag(
+      g[:delete_link] = view_context.link_to(
+        view_context.image_tag(
           'icons/bin_closed.png',
           alt: I18n.t('groups.delete')),
         remove_group_assignment_groups_path(
