@@ -200,10 +200,10 @@ class MainController < ApplicationController
     validation_result = nil
     if MarkusConfigurator.markus_config_remote_user_auth
       validation_result = validate_user_without_login(params[:effective_user_login],
-                                        params[:user_login])
+	  									User.find_by_id(session[:uid]).user_name)
     else
       validation_result = validate_user(params[:effective_user_login],
-                                        params[:user_login],
+	  									User.find_by_id(session[:uid]).user_name,
                                         params[:admin_password])
     end
     unless validation_result[:error].nil?
