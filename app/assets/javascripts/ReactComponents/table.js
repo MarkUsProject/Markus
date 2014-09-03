@@ -318,7 +318,7 @@ TableHeader = React.createClass({displayName: 'TableHeader',
     // Create the header columns, in proper <th>'s.
     var header_columns = this.props.columns.map(function(column) {
       if (column.sortable == true) {
-        var clss = 'sortable';
+        var clss = 'sortable-col';
         if (this.props.sort_column == column.id) {
           // Add classes for css to style with indicators.
           // This class is only applied to the currently sorted column.
@@ -351,7 +351,7 @@ TableFooter = React.createClass({displayName: 'TableFooter',
     // Create the footer columns
     var footer_columns = this.props.columns.map(function(column) {
       if (column.sortable == true) {
-        var clss = 'sortable';
+        var clss = 'sortable-col';
         if (this.props.sort_column == column.id) {
           // Add classes for css to style with indicators.
           // This class is only applied to the currently sorted column.
