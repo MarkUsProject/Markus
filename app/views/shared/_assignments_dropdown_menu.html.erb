@@ -94,8 +94,8 @@
           <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
                           assignment_text: h(assignment.short_identifier)),
-                        { controller: target_controller,
-                          action: controller.action_name,
+                        { controller: 'assignments',
+                          action: 'edit',
                           id: assignment.id },
                         title: assignment.description %>
           <% else %>
@@ -118,9 +118,15 @@
     <% end %>
   <% else %>
     <li class='active'>
-      <span title='<%= assignment.description %>'>
-        <%= assignment.short_identifier %>
-      </span>
+	<% if assignment.is_hidden %>
+          <span title='<%= assignment.description %>'>
+            <%= assignment.short_identifier + ' (hidden)' %>
+      	  </span>
+	<% else %>
+          <span title='<%= assignment.description %>'>
+            <%= assignment.short_identifier %>
+      	  </span>
+	<% end %>
     </li>
   <% end %>
 <% end %>
