@@ -4,7 +4,7 @@ module AssignmentsHelper
     link_to_function name do |page|
       assignment_file = render(partial: 'assignment_file', locals: {form: form, assignment_file: AssignmentFile.new})
       page << %{
-        var new_assignment_file_id = "new_" + new Date().getTime();
+        var new_assignment_file_id = new Date().getTime();
         $('assignment_files').insert({bottom: "#{ escape_javascript assignment_file }".replace(/(attributes_\\d+|\[\\d+\])/g, new_assignment_file_id) });
         $('assignment_assignment_files_' + new_assignment_file_id + '_filename').focus();
       }
