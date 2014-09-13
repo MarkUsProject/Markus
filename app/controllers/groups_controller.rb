@@ -144,7 +144,6 @@ class GroupsController < ApplicationController
   # repository name. If MarkUs is not repository admin, the repository name as
   # specified by the second field will be used instead.
   def csv_upload
-    flash[:error] = nil # reset from previous errors
     file = params[:group][:grouplist]
     @assignment = Assignment.find(params[:assignment_id])
     encoding = params[:encoding]
