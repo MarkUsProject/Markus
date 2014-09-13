@@ -627,7 +627,7 @@ fr:
       overview: "Vue d'ensemble"
       last_revision_date: "Dernière révision : <br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "Fichiers"
-      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> fichier(s) requis sont manquants</span>"
+      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> fichier(s) requis sont manquants</span>"
       no_submission_yet: "Vous n'avez encore rien envoyé"
       no_group_yet: "Vous ne faites pas encore partie d'un groupe"
       grace_date_passed: "et la période de grâce pour ce projet est terminée"

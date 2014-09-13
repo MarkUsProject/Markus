@@ -45,7 +45,8 @@
           <span class='info'><%= t('student.files') %></span>
           <br>
           <%= raw(t('student.missing_required_files',
-                     missing_files: @num_missing_assignment_files.to_s)) %>
+                     missing_files: @num_missing_assignment_files.to_s,
+                     style_class: ('red' unless @num_missing_assignment_files == 0))) %>
           <br>
         <% else %>
           <p class='notice'><%= t('student.no_submission_yet') %></p>
