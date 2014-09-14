@@ -55,7 +55,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       @grade_entry_form_with_grade_entry_items.show_total = true
       @grade_entry_form_with_grade_entry_items.save
       @grade_entry_student.released_to_student = true
-      @grade_entry_student.update_total_grade
       @grade_entry_student.save
       total = @grade_entry_form_with_grade_entry_items.out_of_total.to_i.to_s
 
