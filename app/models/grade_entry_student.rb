@@ -214,8 +214,7 @@ class GradeEntryStudent < ActiveRecord::Base
     self.save
   end
 
-  # Calculate the total grade and return it.
-  # Update it in the database if need be.
+  # Return the total of all the grades.
   def total_grade
     # TODO: This should be a calculated column
     # Why are we managing it by hand?
