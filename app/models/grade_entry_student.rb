@@ -219,11 +219,16 @@ class GradeEntryStudent < ActiveRecord::Base
       total = nil
     end
 
-    if self.total_grade != total
-      self.total_grade = total
+    if read_attribute(:total_grade) != total
+      write_attribute(:total_grade, total)
       self.save
     end
     total
+  end
+
+  def total_grade
+    update_total_grade
+    read_attribute(:total_grade)
   end
 
   # Return whether or not the given student's grades are all blank
