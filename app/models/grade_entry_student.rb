@@ -248,9 +248,7 @@ class GradeEntryStudent < ActiveRecord::Base
       total = nil
     end
 
-    if read_attribute(:total_grade) != total 
-      write_attribute(:total_grade, total)
-    end
+    write_attribute(:total_grade, total)
    
     total
   end
