@@ -218,7 +218,7 @@ class GradeEntryStudent < ActiveRecord::Base
   def total_grade
     # TODO: This should be a calculated column
     # Why are we managing it by hand?
-    refresh_total_grade 
+    refresh_total_grade
   end
 
   def save
@@ -238,7 +238,7 @@ class GradeEntryStudent < ActiveRecord::Base
     grades_without_nils.blank?
   end
 
-  private 
+  private
 
   # Calculate and set the total grade
   def refresh_total_grade
