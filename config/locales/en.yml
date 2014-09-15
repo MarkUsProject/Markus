@@ -649,7 +649,7 @@ en:
       overview: "Overview"
       last_revision_date: "Last Revision Date:<br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "files"
-      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> missing required files</span>"
+      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> missing required file(s)</span>"
       no_submission_yet: "You have not made any submissions yet"
       no_group_yet: "You don't have a group yet"
       grace_date_passed: "and the grace period for this assignment has passed"
