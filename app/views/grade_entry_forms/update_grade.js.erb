@@ -1,6 +1,7 @@
 <% if @grade_saved %>
   <%# Highlight the cell on update %>
   jQuery('<%= "#grade_#{@student_id}_#{@grade_entry_item_id}" %>').parent()
+      .css({ "background-color": "#FFFFFF" })
       .effect('highlight', { color: '#99CCFF' }, 1000);
 
   <%
