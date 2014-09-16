@@ -94,9 +94,8 @@
           <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
                           assignment_text: h(assignment.short_identifier)),
-                        { controller: 'assignments',
-                          action: 'edit',
-                          id: assignment.id },
+                        polymorphic_url([assignment, target_controller],
+                                        action: target_action),
                         title: assignment.description %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
@@ -118,9 +117,11 @@
     <% end %>
   <% else %>
     <li class='active'>
-	<% if assignment.is_hidden %>
+	<% # Appends 'hidden' to the currently selected assignment (if it's hidden)
+       if assignment.is_hidden %>
           <span title='<%= assignment.description %>'>
-            <%= assignment.short_identifier + ' (hidden)' %>
+            <%= t('assignment.hidden',
+                  assignment_text: h(assignment.short_identifier)) %>
       	  </span>
 	<% else %>
           <span title='<%= assignment.description %>'>

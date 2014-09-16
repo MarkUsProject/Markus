@@ -28,7 +28,12 @@
             <%= t(:create_new_grade_entry_form) %>
           <% elsif !@assignment.nil? %>
             <%# Display the assignment's short identifier %>
-            <%= @assignment.short_identifier %>
+            <%# Check to see if the assignment is hidden %>
+            <% if @assignment.is_hidden %>
+                  <%= @assignment.short_identifier + " (hidden)" %>
+            <% else %>
+                  <%= @assignment.short_identifier %>
+            <% end %>
           <% elsif !@grade_entry_form.nil? %>
             <%# Display the grade entry form's short identifier %>
             <%= @grade_entry_form.short_identifier %>
