@@ -133,13 +133,13 @@ class Student < User
       if !Group.where(group_name: user_name).first.nil?
         @group = Group.where(group_name: user_name).first
       else
-        @group = Group.new(group_name: self.user_name)
+        @group = Group.new(group_name: user_name)
         # We want to have the user_name as repository name,
         # so we have to set the repo_name before we save the group.
-        @group.repo_name = self.user_name
+        @group.repo_name = user_name
         unless @group.save
           m_logger = MarkusLogger.instance
-          m_logger.log("Could not create a group for Student '#{self.user_name}'. The group was #{@group.inspect} - errors: #{@group.errors.inspect}", MarkusLogger::ERROR)
+          m_logger.log("Could not create a group for Student '#{user_name}'. The group was #{@group.inspect} - errors: #{@group.errors.inspect}", MarkusLogger::ERROR)
           raise 'Sorry!  For some reason, your group could not be created.  Please wait a few seconds, then hit refresh to try again.  If you come back to this page, you should inform the course instructor.'
         end
       end
@@ -148,7 +148,7 @@ class Student < User
       begin
         unless @grouping.save
           m_logger = MarkusLogger.instance
-          m_logger.log("Could not create a grouping for Student '#{self.user_name}'. The grouping was:  #{@grouping.inspect} - errors: #{@grouping.errors.inspect}", MarkusLogger::ERROR)
+          m_logger.log("Could not create a grouping for Student '#{user_name}'. The grouping was:  #{@grouping.inspect} - errors: #{@grouping.errors.inspect}", MarkusLogger::ERROR)
           raise 'Sorry!  For some reason, your grouping could not be created.  Please wait a few seconds, and hit refresh to try again.  If you come back to this page, you should inform the course instructor.'
         end
       # This exception will only be thrown when we try to save to a grouping that already exists
