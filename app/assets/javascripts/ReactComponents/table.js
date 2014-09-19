@@ -49,8 +49,8 @@ var Table = React.createClass({displayName: 'Table',
     search_placeholder: React.PropTypes.string,
     columns: React.PropTypes.array,
     filters: React.PropTypes.array, // Optional: pass null
-    filter_type: React.PropTypes.bool, // True for select filter, falsy for simple
-    selectable: React.PropTypes.bool, // True if you want checkboxed elements
+    filter_type: React.PropTypes.bool, // True for select filter, false for simple
+    selectable: React.PropTypes.bool, // True if you want checkbox elements
     onSelectedRowsChange: React.PropTypes.func // function to call when selected rows change
   },
   getInitialState: function() {
@@ -355,7 +355,7 @@ TableFooter = React.createClass({displayName: 'TableFooter',
         if (this.props.sort_column == column.id) {
           // Add classes for css to style with indicators.
           // This class is only applied to the currently sorted column.
-          clss += (this.props.sort_direction == 'asc' ? ' asc' : 'desc');
+          clss += (this.props.sort_direction == 'asc' ? ' asc' : ' desc');
         }
         return React.DOM.td( {className:clss}, React.DOM.span(null,
           [column.content]))
