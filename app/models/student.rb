@@ -128,17 +128,15 @@ class Student < User
       @assignment = Assignment.find(aid)
       @grouping = Grouping.new
       @grouping.assignment_id = @assignment.id
+      # If an individual repo has already been created for this user
+      # then just use that one.
       if !Group.where(group_name: user_name).first.nil?
         @group = Group.where(group_name: user_name).first
       else
         @group = Group.new(group_name: self.user_name)
         # We want to have the user_name as repository name,
         # so we have to set the repo_name before we save the group.
-        # We do that only if the assignment is set up to be a
-        # non-web-submit assignment.
-        unless @assignment.allow_web_submits
-          @group.repo_name = self.user_name
-        end
+        @group.repo_name = self.user_name
         unless @group.save
           m_logger = MarkusLogger.instance
           m_logger.log("Could not create a group for Student '#{self.user_name}'. The group was #{@group.inspect} - errors: #{@group.errors.inspect}", MarkusLogger::ERROR)
