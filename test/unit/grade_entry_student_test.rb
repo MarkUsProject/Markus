@@ -6,8 +6,7 @@ class GradeEntryStudentTest < ActiveSupport::TestCase
   should belong_to :grade_entry_form
   should belong_to :user
 
-  # Not yet
-  #should have_many :grades
+  should have_many :grades
 
   should validate_numericality_of(:grade_entry_form_id).with_message(I18n.t('invalid_id'))
   should validate_numericality_of(:user_id).with_message(I18n.t('invalid_id'))
