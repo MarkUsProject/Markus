@@ -23,7 +23,7 @@ class GradeEntryFormsController < ApplicationController
   # Filters will be added as the student UI is implemented (eg. Show Released,
   # Show All,...)
   G_TABLE_PARAMS = {model: GradeEntryStudent,
-                    per_pages: [15, 30, 50, 100, 150, 500, 1000],
+                    per_pages: [100, 150, 500, 1000],
                     filters: {
                         'none' => {
                             display: 'Show All',
@@ -111,7 +111,7 @@ class GradeEntryFormsController < ApplicationController
       params[:per_page] = cookies[c_per_page]
     else
       # Set params to default and make the cookie!
-      params[:per_page] = 15
+      params[:per_page] = 100
       cookies[c_per_page] = params[:per_page]
     end
 
