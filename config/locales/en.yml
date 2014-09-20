@@ -407,7 +407,6 @@ en:
       show_assigned_to_me:  "Show Assigned to Me"
       grading_can_begin:    "Grading can begin"
       grading_can_begin_after: "Grading can begin after %{time}"
-      workspace:            "Workspace: %{short_identifier}"
       submissions:	    "Submissions: %{short_identifier}"
       csv_report:           "CSV Report"
       detailled_csv_report: "Detailed CSV Report"
