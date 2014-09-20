@@ -17,6 +17,7 @@ if @grade_saved
   else
     value = @updated_student_total.round(2)
     page.call('update_cell', cell, value)
+    page.call('alert', 'hello')
   end
 
 else

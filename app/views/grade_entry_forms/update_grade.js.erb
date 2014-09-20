@@ -1,0 +1,19 @@
+if (<%= @grade_saved %>) {
+  /* 
+  This code calls the javascript function 'update_cell(cell, value)' in
+  app/assets/javascripts/grades_table.js. The reason this function is
+  called instead of updating the cell directly here is that one cannot check
+  for the existence of the cell "total_#{@student_id}" from this context
+  (aka the controller). So we call a javascript function to update the cell
+  instead, if it exists.
+  */
+
+  cell = "total_" + <%= @student_id %>;
+  <% if @updated_student_total.nil? %>
+    value = '';
+    update_cell(cell, value);
+  <% else %>
+    value = <%= @updated_student_total.round(2) %>;
+    update_cell(cell, value);
+  <% end %>
+}
