@@ -49,8 +49,8 @@ var Table = React.createClass({displayName: 'Table',
     search_placeholder: React.PropTypes.string,
     columns: React.PropTypes.array,
     filters: React.PropTypes.array, // Optional: pass null
-    filter_type: React.PropTypes.bool, // True for select filter, false for simple
-    selectable: React.PropTypes.bool, // True if you want checkbox elements
+    filter_type: React.PropTypes.bool, // True for select filter, falsy for simple
+    selectable: React.PropTypes.bool, // True if you want checkboxed elements
     onSelectedRowsChange: React.PropTypes.func // function to call when selected rows change
   },
   getInitialState: function() {
