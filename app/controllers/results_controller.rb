@@ -168,6 +168,8 @@ class ResultsController < ApplicationController
   end
 
   def download
+    puts "download called at #{Kernel.caller.inspect}"
+    puts "GOT HERE DOWNLOAD"
     #Ensure student doesn't download a file not submitted by his own grouping
     unless authorized_to_download?(file_id: params[:select_file_id])
       render 'shared/http_status', formats: [:html],
@@ -210,6 +212,7 @@ class ResultsController < ApplicationController
 
   def download_zip
 
+    puts "GOT HERE DOWNLOAD_ZIP"
     #Ensure student doesn't download files not submitted by his own grouping
     unless authorized_to_download?(submission_id: params[:submission_id])
       render 'shared/http_status', formats: [:html],
