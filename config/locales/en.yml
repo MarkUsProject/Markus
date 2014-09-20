@@ -492,6 +492,7 @@ en:
         upload_prompt: "Select a CSV file to upload"
         upload_format_html: "<p>The file should have the following format:</p>
                              <ul><li>two lines at the top which specify the question names and totals;</li>
+                             <li>the first item for the first two lines is ignored;</li>
                              <li>one line for each student record;</li>
                              <li>each line should be terminated by a carriage-return line-feed.</li></ul>
                              <code>\"\",q1_name,q2_name,q3_name</code><br>

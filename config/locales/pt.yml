@@ -465,6 +465,7 @@ pt:
         upload_prompt: "Selecione um arquivo CSV para carregar"
         upload_format_html: "<p>O arquivo deve conter o seguinte formato:</p>
                              <ul><li>duas linhas no topo que devem especificar o nome da questão e o total;</li>
+                             <li>o primeiro objeto para as duas primeiras linhas é ignorado;</li>
                              <li>uma linha para cada aluno;</li>
                              <li>cada linha deve ser terminada por um carriage-return line-feed.</li></ul>
                              <code>\"\",q1_name,q2_name,q3_name</code><br>
