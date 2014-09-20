@@ -161,7 +161,10 @@ class GradeEntryForm < ActiveRecord::Base
       last_student = grade_entry_students.last.user_name
     end
 
-    alpha_categories = self.construct_alpha_category(first_student, last_student, alpha_categories, i)
+    alpha_categories = construct_alpha_category(first_student,
+                                                last_student,
+                                                alpha_categories,
+                                                i)
 
     # We can now form the category names
     j=0

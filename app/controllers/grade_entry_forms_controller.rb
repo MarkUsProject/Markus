@@ -225,7 +225,7 @@ class GradeEntryFormsController < ApplicationController
     @student_id = params[:student_id]
     @grade_entry_item_id = params[:grade_entry_item_id]
     updated_grade = params[:updated_grade]
-    
+
     grade_entry_student =
       grade_entry_form.grade_entry_students.find_or_create_by_user_id(
             @student_id)
