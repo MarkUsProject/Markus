@@ -61,5 +61,6 @@ module Markus
 
   # Validate passed locales
   I18n.enforce_available_locales = true
+  I18n.available_locales = [:en, :fr, :pt]
   end
 end

@@ -397,7 +397,7 @@ fr:
       show_assigned_to_me:  "Montrer les groupes qui me sont assignés"
       grading_can_begin:    "L'évaluation peut commencer"
       grading_can_begin_after: "L'évaluation commencera à partir du %{time}"
-      workspace:            "Projet : %{short_identifier}"
+      submissions:	    "Soumissions: %{short_identifier}"
       csv_report:           "Rapport CSV"
       detailled_csv_report: "Rappost CSV détaillé"
       subversion_repo_list: "Liste des dépôts Subversion"
