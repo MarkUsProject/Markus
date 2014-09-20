@@ -1,15 +1,20 @@
 function ap_flip_switches_to(flip_to) {
-  var inputs = document.getElementsByClassName('.ap_selectable');
+  var inputs = document.getElementsByClassName('ap_selectable');
+
   for (var i = 0; i < inputs.length; i++) {
-    inputs[i].value = flip_to;
+    if (flip_to) {
+      inputs[i].setAttribute('checked', 'true');
+    } else {
+      inputs[i].removeAttribute('checked');
+    }
   }
 }
 
 function ap_select_all() {
   document.getElementById('ap_select_full_div').style.display = 'none';
+  document.getElementById('ap_select_all_div').style.display = '';
   document.getElementById('ap_select_full').value = 'false';
   ap_flip_switches_to(true);
-  document.getElementById('ap_select_all_div').style.display = '';
 }
 
 function ap_select_full() {
