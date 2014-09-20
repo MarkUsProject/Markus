@@ -35,12 +35,8 @@ class GradeEntryForm < ActiveRecord::Base
   def calculate_total_percent(grade_entry_student)
     unless grade_entry_student.nil?
       total = grade_entry_student.total_grade
-
-      # If there is no saved total grade, update it
-      if total.nil?
-        total = grade_entry_student.update_total_grade
-      end
     end
+
     percent = BLANK_MARK
     out_of = self.out_of_total
 
@@ -60,9 +56,8 @@ class GradeEntryForm < ActiveRecord::Base
     grade_entry_students = self.grade_entry_students
                                .where(released_to_student: true)
     grade_entry_students.each do |grade_entry_student|
-      # If there is no saved total grade, update it
-      total_mark = grade_entry_student.total_grade ||
-                   grade_entry_student.update_total_grade
+      total_mark = grade_entry_student.total_grade
+
       unless total_mark.nil?
         total_marks += total_mark
         num_released += 1
@@ -166,7 +161,10 @@ class GradeEntryForm < ActiveRecord::Base
       last_student = grade_entry_students.last.user_name
     end
 
-    alpha_categories = self.construct_alpha_category(first_student, last_student, alpha_categories, i)
+    alpha_categories = construct_alpha_category(first_student,
+                                                last_student,
+                                                alpha_categories,
+                                                i)
 
     # We can now form the category names
     j=0

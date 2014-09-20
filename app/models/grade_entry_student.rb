@@ -141,13 +141,14 @@ class GradeEntryStudent < ActiveRecord::Base
       else
         grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(grade_entry_item.id)
         grade.grade = grade_for_grade_entry_item
+
         unless grade.save
-          grade_entry_student.update_total_grade
           raise RuntimeError.new(grade.errors)
         end
       end
     end
-    grade_entry_student.update_total_grade
+
+    grade_entry_student.total_grade
   end
 
   # Returns an array containing the student names that didn't exist
@@ -213,17 +214,16 @@ class GradeEntryStudent < ActiveRecord::Base
     self.save
   end
 
-  def update_total_grade
-    total = self.grades.sum('grade').round(2)
-    if total == 0 && self.all_blank_grades?
-      total = nil
-    end
+  # Return the total of all the grades.
+  def total_grade
+    # TODO: This should be a calculated column
+    # Why are we managing it by hand?
+    refresh_total_grade
+  end
 
-    if self.total_grade != total
-      self.total_grade = total
-      self.save
-    end
-    total
+  def save
+    refresh_total_grade # make sure the latest total grade is always saved
+    super
   end
 
   # Return whether or not the given student's grades are all blank
@@ -236,5 +236,20 @@ class GradeEntryStudent < ActiveRecord::Base
       !grade.grade.nil?
     end
     grades_without_nils.blank?
+  end
+
+  private
+
+  # Calculate and set the total grade
+  def refresh_total_grade
+    total = grades.sum(:grade).round(2)
+
+    if total == 0 && self.all_blank_grades?
+      total = nil
+    end
+
+    write_attribute(:total_grade, total)
+
+    total
   end
 end
