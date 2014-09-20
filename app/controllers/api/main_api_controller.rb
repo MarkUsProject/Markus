@@ -45,7 +45,7 @@ module Api
       # pretend resource not found if missing or authentication is invalid
       if auth_token.nil?
         render 'shared/http_status', locals: { code: '403', message:
-          HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
+          HttpStatusHelper::ERROR_CODE['message']['403'] }, status: 403
         return
       end
 
