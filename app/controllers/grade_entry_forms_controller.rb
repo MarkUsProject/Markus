@@ -225,15 +225,19 @@ class GradeEntryFormsController < ApplicationController
     @student_id = params[:student_id]
     @grade_entry_item_id = params[:grade_entry_item_id]
     updated_grade = params[:updated_grade]
+    
     grade_entry_student =
-        grade_entry_form.grade_entry_students.find_or_create_by_user_id(
+      grade_entry_form.grade_entry_students.find_or_create_by_user_id(
             @student_id)
-    @grade =
-        grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
-            @grade_entry_item_id)
+
+    @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
+                  @grade_entry_item_id)
+
     @grade.grade = updated_grade
     @grade_saved = @grade.save
-    @updated_student_total = grade_entry_student.update_total_grade
+    @updated_student_total = grade_entry_student.total_grade
+
+    grade_entry_student.save # Save updated grade
   end
 
   # For students

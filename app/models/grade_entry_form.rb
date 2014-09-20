@@ -5,14 +5,14 @@ require 'encoding'
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
 # marks on each question (i.e. GradeEntryStudents).
 class GradeEntryForm < ActiveRecord::Base
-  has_many                  :grade_entry_items,
-                            dependent: :destroy,
-                            order: :position
+  has_many :grade_entry_items,
+           dependent: :destroy,
+           order: :position
 
-  has_many                  :grade_entry_students,
-                            dependent: :destroy
+  has_many :grade_entry_students,
+           dependent: :destroy
 
-  has_many                  :grades, through: :grade_entry_items
+  has_many :grades, through: :grade_entry_items
 
   # Call custom validator in order to validate the date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
@@ -35,12 +35,8 @@ class GradeEntryForm < ActiveRecord::Base
   def calculate_total_percent(grade_entry_student)
     unless grade_entry_student.nil?
       total = grade_entry_student.total_grade
-
-      # If there is no saved total grade, update it
-      if total.nil?
-        total = grade_entry_student.update_total_grade
-      end
     end
+
     percent = BLANK_MARK
     out_of = self.out_of_total
 
@@ -57,12 +53,11 @@ class GradeEntryForm < ActiveRecord::Base
     total_marks  = 0
     num_released = 0
 
-    grade_entry_students = self.grade_entry_students
+    grade_entry_students = grade_entry_students
                                .where(released_to_student: true)
     grade_entry_students.each do |grade_entry_student|
-      # If there is no saved total grade, update it
-      total_mark = grade_entry_student.total_grade ||
-                   grade_entry_student.update_total_grade
+      total_mark = grade_entry_student.total_grade
+
       unless total_mark.nil?
         total_marks += total_mark
         num_released += 1
@@ -91,11 +86,11 @@ class GradeEntryForm < ActiveRecord::Base
     end
 
     # Form the category name
-    if sameSoFar and (index < last_name1.length)
+    if sameSoFar && (index < last_name1.length)
       # There is at least one character remaining in the first name
       alpha_categories[i] << last_name1[0,index+1]
       alpha_categories[i+1] << last_name2[0, index]
-    elsif sameSoFar and (index < last_name2.length)
+    elsif sameSoFar && (index < last_name2.length)
       # There is at least one character remaining in the second name
       alpha_categories[i] << last_name1[0,index]
       alpha_categories[i+1] << last_name2[0, index+1]
@@ -120,8 +115,11 @@ class GradeEntryForm < ActiveRecord::Base
 
     i = 0
     (1..(total_pages - 1)).each do |page|
-      grade_entry_students1 = all_grade_entry_students.paginate(per_page: per_page, page: page)
-      grade_entry_students2 = all_grade_entry_students.paginate(per_page: per_page, page: page+1)
+      grade_entry_students1 = all_grade_entry_students
+                                  .paginate(per_page: per_page, page: page)
+
+      grade_entry_students2 = all_grade_entry_students
+                                  .paginate(per_page: per_page, page: page + 1)
 
       # To figure out the category names, we need to keep track of the first and last students
       # on a particular page and the first student on the next page. For example, if these
@@ -144,9 +142,9 @@ class GradeEntryForm < ActiveRecord::Base
       end
 
       # Update the possible categories
-      alpha_categories = self.construct_alpha_category(first_student, last_student,
+      alpha_categories = construct_alpha_category(first_student, last_student,
                                                        alpha_categories, i)
-      alpha_categories = self.construct_alpha_category(last_student, next_student,
+      alpha_categories = construct_alpha_category(last_student, next_student,
                                                        alpha_categories, i+1)
 
       i += 2
@@ -166,7 +164,7 @@ class GradeEntryForm < ActiveRecord::Base
       last_student = grade_entry_students.last.user_name
     end
 
-    alpha_categories = self.construct_alpha_category(first_student, last_student, alpha_categories, i)
+    alpha_categories = construct_alpha_category(first_student, last_student, alpha_categories, i)
 
     # We can now form the category names
     j=0
@@ -203,7 +201,7 @@ class GradeEntryForm < ActiveRecord::Base
       students.each do |student|
         final_result = []
         final_result.push(student.user_name)
-        grade_entry_student = self.grade_entry_students
+        grade_entry_student = grade_entry_students
                                   .where(user_id: student.id)
                                   .first
 
@@ -216,7 +214,7 @@ class GradeEntryForm < ActiveRecord::Base
           # Blank total percent
           final_result.push(BLANK_MARK)
         else
-          self.grade_entry_items.each do |grade_entry_item|
+          grade_entry_items.each do |grade_entry_item|
             grade = grade_entry_student
                       .grades
                       .where(grade_entry_item_id: grade_entry_item.id)
@@ -227,7 +225,7 @@ class GradeEntryForm < ActiveRecord::Base
               final_result.push(grade.grade || BLANK_MARK)
             end
           end
-          total_percent = self.calculate_total_percent(grade_entry_student)
+          total_percent = calculate_total_percent(grade_entry_student)
           final_result.push(total_percent)
         end
         csv << final_result
@@ -289,7 +287,7 @@ class GradeEntryForm < ActiveRecord::Base
         invalid_lines << row.join(',') + ': ' + error unless invalid_lines.nil?
       end
     end
-    return num_updates
+    num_updates
   end
 
 end

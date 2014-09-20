@@ -79,7 +79,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
 
     should 'verify the correct value is returned when the student has grades for none of the questions' do
       grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.make
-      assert_equal(nil, grade_entry_student_with_no_grades.update_total_grade)
+      assert_equal(nil, grade_entry_student_with_no_grades.total_grade)
     end
 
     should 'verify the correct value is returned when the student has zero for all of the questions' do
@@ -88,17 +88,17 @@ class GradeEntryFormTest < ActiveSupport::TestCase
         grade_entry_student_with_all_zeros.grades.make(:grade_entry_item => grade_entry_item)
       end
 
-      assert_equal(0.0, grade_entry_student_with_all_zeros.update_total_grade)
+      assert_equal(0.0, grade_entry_student_with_all_zeros.total_grade)
     end
 
     should 'verify the correct value is returned when the student has grades for some of the questions' do
-      assert_equal(0.7, @grade_entry_student_with_some_grades.update_total_grade)
+      assert_equal(0.7, @grade_entry_student_with_some_grades.total_grade)
     end
 
     should 'when the student has grades for all of the questions' do
       @grade_entry_student_with_some_grades.grades.make(:grade_entry_item => @grade_entry_items[2],
                                                         :grade => 60.5)
-      assert_equal(61.2, @grade_entry_student_with_some_grades.update_total_grade)
+      assert_equal(61.2, @grade_entry_student_with_some_grades.total_grade)
     end
   end
 

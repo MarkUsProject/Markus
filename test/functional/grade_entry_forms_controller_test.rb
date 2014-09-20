@@ -55,7 +55,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       @grade_entry_form_with_grade_entry_items.show_total = true
       @grade_entry_form_with_grade_entry_items.save
       @grade_entry_student.released_to_student = true
-      @grade_entry_student.update_total_grade
       @grade_entry_student.save
       total = @grade_entry_form_with_grade_entry_items.out_of_total.to_i.to_s
 
@@ -635,7 +634,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
       should 'change the existing value to a valid value' do
         @new_grade = 4
-        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+        post_as @admin, :update_grade, {:format => :js, 
+                                        :grade_entry_item_id => @grade_entry_items[0].id,
                                         :student_id => @grade_entry_student_with_some_grades.user_id,
                                         :updated_grade => @new_grade,
                                         :id => @grade_entry_form_with_grade_entry_items.id}
@@ -651,7 +651,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @new_grade = 'abc'
         @original_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
                                                                                         @grade_entry_items[0].id).grade
-        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+        post_as @admin, :update_grade, {:format => :js, 
+                                        :grade_entry_item_id => @grade_entry_items[0].id,
                                         :student_id => @grade_entry_student_with_some_grades.user_id,
                                         :updated_grade => @new_grade,
                                         :id => @grade_entry_form_with_grade_entry_items.id}
@@ -667,7 +668,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @new_grade = -5
         @original_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
                                                                                         @grade_entry_items[0].id).grade
-        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+        post_as @admin, :update_grade, {:format => :js,
+                                        :grade_entry_item_id => @grade_entry_items[0].id,
                                         :student_id => @grade_entry_student_with_some_grades.user_id,
                                         :updated_grade => @new_grade,
                                         :id => @grade_entry_form_with_grade_entry_items.id}
@@ -688,7 +690,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
       should 'set an empty grade to a valid value' do
         @new_grade = 2.5
-        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+        post_as @admin, :update_grade, {:format => :js,
+                                        :grade_entry_item_id => @grade_entry_items[0].id,
                                         :student_id => @grade_entry_student.user_id,
                                         :updated_grade => @new_grade,
                                         :id => @grade_entry_form_with_grade_entry_items.id}
@@ -702,7 +705,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
       should 'attempt to set an empty grade to a string' do
         @new_grade = 'abc'
-        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+        post_as @admin, :update_grade, {:format => :js,
+                                        :grade_entry_item_id => @grade_entry_items[0].id,
                                         :student_id => @grade_entry_student.user_id,
                                         :updated_grade => @new_grade,
                                         :id => @grade_entry_form_with_grade_entry_items.id}
@@ -716,7 +720,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
       should 'attempt to set an empty grade to a negative number' do
         @new_grade = -7
-        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+        post_as @admin, :update_grade, {:format => :js,
+                                        :grade_entry_item_id => @grade_entry_items[0].id,
                                         :student_id => @grade_entry_student.user_id,
                                         :updated_grade => @new_grade,
                                         :id => @grade_entry_form_with_grade_entry_items.id}
@@ -737,7 +742,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
       should 'set an empty grade to a valid value' do
         @new_grade = 2.5
-        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+        post_as @admin, :update_grade, {:format => :js,
+                                        :grade_entry_item_id => @grade_entry_items[0].id,
                                         :student_id => @student.id,
                                         :updated_grade => @new_grade,
                                         :id => @grade_entry_form_with_grade_entry_items.id}
@@ -753,7 +759,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
       should 'attempt to set an empty grade to a string' do
         @new_grade = 'abc'
-        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+        post_as @admin, :update_grade, {:format => :js,
+                                        :grade_entry_item_id => @grade_entry_items[0].id,
                                         :student_id => @student.id,
                                         :updated_grade => @new_grade,
                                         :id => @grade_entry_form_with_grade_entry_items.id}
@@ -767,7 +774,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
       should 'attempt to set an empty grade to a negative number' do
         @new_grade = -7
-        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+        post_as @admin, :update_grade, {:format => :js,
+                                        :grade_entry_item_id => @grade_entry_items[0].id,
                                         :student_id => @student.id,
                                         :updated_grade => @new_grade,
                                         :id => @grade_entry_form_with_grade_entry_items.id}
