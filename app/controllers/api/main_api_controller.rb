@@ -44,7 +44,7 @@ module Api
       auth_token = parse_auth_token(request.headers['HTTP_AUTHORIZATION'])
       # pretend resource not found if missing or authentication is invalid
       if auth_token.nil?
-        render 'shared/http_status', locals: {code: '403', message:
+        render 'shared/http_status', locals: { code: '403', message:
           HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
         return
       end
