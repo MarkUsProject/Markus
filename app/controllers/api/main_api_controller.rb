@@ -1,5 +1,3 @@
-require 'base64'
-
 # Scripting API handlers for MarkUs
 module Api
 
