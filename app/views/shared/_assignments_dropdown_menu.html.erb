@@ -117,15 +117,15 @@
     <% end %>
   <% else %>
     <li class='active'>
-        <span title='<%= assignment.description %>'>
-            <% # Appends hidden to the active link, if hidden.
-               if assignment.is_hidden %>
-                <%= t('assignment.hidden',
-                      assignment_text: h(assignment.short_identifier)) %>
-            <% else %>
-                <%= assignment.short_identifier %>
-            <% end %>
-        </span>
+      <span title='<%= assignment.description %>'>
+        <% # Appends hidden to the active link, if hidden.
+           if assignment.is_hidden %>
+          <%= t('assignment.hidden',
+                assignment_text: h(assignment.short_identifier)) %>
+        <% else %>
+          <%= assignment.short_identifier %>
+        <% end %>
+      </span>
     </li>
   <% end %>
 <% end %>
