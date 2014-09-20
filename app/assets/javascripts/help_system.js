@@ -3,7 +3,7 @@ jQuery(document).ready(function() {
   jQuery('.help-message-title').hide();
   jQuery('.help-break').hide();
 
-  jQuery('#section').on('click','.help, .title-help',function(){
+  jQuery('.help, .title-help').click(function(){
     var help_section = jQuery(this).attr('class').split(' ')[1];
     jQuery('.help-message-box').filter('.' + help_section).toggle();
     jQuery('.help-message-title').filter('.' + help_section).toggle();
