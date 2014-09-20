@@ -57,7 +57,7 @@ class GradeEntryForm < ActiveRecord::Base
                                .where(released_to_student: true)
     grade_entry_students.each do |grade_entry_student|
       total_mark = grade_entry_student.total_grade
-      
+
       unless total_mark.nil?
         total_marks += total_mark
         num_released += 1

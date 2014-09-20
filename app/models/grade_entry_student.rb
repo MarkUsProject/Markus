@@ -141,7 +141,7 @@ class GradeEntryStudent < ActiveRecord::Base
       else
         grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(grade_entry_item.id)
         grade.grade = grade_for_grade_entry_item
-        
+
         unless grade.save
           raise RuntimeError.new(grade.errors)
         end
@@ -243,13 +243,13 @@ class GradeEntryStudent < ActiveRecord::Base
   # Calculate and set the total grade
   def refresh_total_grade
     total = grades.sum(:grade).round(2)
-    
+
     if total == 0 && self.all_blank_grades?
       total = nil
     end
 
     write_attribute(:total_grade, total)
-   
+
     total
   end
 end
