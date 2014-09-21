@@ -481,6 +481,7 @@ fr:
         upload_prompt: "Sélectionner un fichier CSV à envoyer"
         upload_format_html: "<p>Le fichier devra être au format suivant : </p>
                              <ul><li>les deux lignes du haut spécifient le nom de la note et le total ;</li>
+                             <li>le premier objet pour les deux premières lignes est ignoré ;</li>
                              <li>une ligne pour chaque étudiant(e) ;</li>
                              <li>chaque ligne doit être terminée par un retour charriot.</li></ul>
                              <code>\"\",q1_name,q2_name,q3_name</code><br>
