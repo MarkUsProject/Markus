@@ -16,3 +16,4 @@ class AssignmentFileTest < ActiveSupport::TestCase
     should_not allow_value('"éàç_(*8').for(:filename)
   end
 end
+
