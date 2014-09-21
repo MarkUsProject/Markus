@@ -29,5 +29,4 @@ describe Grade do
   it { should_not allow_value(-1).for(:grade_entry_student_id) }
   it { should_not allow_value(-100).for(:grade_entry_student_id) }
 
-  #method_examples
 end
