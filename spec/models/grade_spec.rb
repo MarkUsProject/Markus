@@ -2,9 +2,12 @@ require 'spec_helper'
 
 describe Grade do
 
-  it { is_expected.to validate_numericality_of(:grade).with_message(I18n.t('grade_entry_forms.invalid_grade')) }
-  it { is_expected.to validate_numericality_of(:grade_entry_item_id).with_message(I18n.t('invalid_id')) }
-  it { is_expected.to validate_numericality_of(:grade_entry_student_id).with_message(I18n.t('invalid_id')) }
+  it { is_expected.to validate_numericality_of(:grade).
+    with_message(I18n.t('grade_entry_forms.invalid_grade')) }
+  it { is_expected.to validate_numericality_of(:grade_entry_item_id).
+    with_message(I18n.t('invalid_id')) }
+  it { is_expected.to validate_numericality_of(:grade_entry_student_id).
+    with_message(I18n.t('invalid_id')) }
   it { should belong_to(:grade_entry_item) }
   it { should belong_to(:grade_entry_student) }
 
