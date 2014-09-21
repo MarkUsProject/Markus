@@ -29,7 +29,7 @@ module SessionHandler
     return user.is_a?(type)
   end
 
-  # Checks user satsifies the following conditions:
+  # Checks user satisfies the following conditions:
   # => User has an active session and is not expired
   # => User has privilege to view the page/perform action
   # If not, then user is redirected to login page for authentication.
@@ -70,6 +70,13 @@ module SessionHandler
   # specific role.
   def authorize_only_for_admin
     unless authorized?(Admin)
+      render 'shared/http_status', formats: [:html], locals: { code: "404", message: HttpStatusHelper::ERROR_CODE["message"]["404"] }, status: 404, layout: false
+    end
+  end
+
+  def authorize_for_admin_and_admin_logged_in_as
+    real_user = (session[:real_uid] && User.find_by_id(session[:real_uid])) || nil
+    unless authorized?(Admin) || (real_user && real_user.is_a?(Admin))
       render 'shared/http_status', formats: [:html], locals: { code: "404", message: HttpStatusHelper::ERROR_CODE["message"]["404"] }, status: 404, layout: false
     end
   end
