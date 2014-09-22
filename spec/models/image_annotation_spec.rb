@@ -6,10 +6,10 @@ describe ImageAnnotation do
   it { is_expected.to validate_presence_of(:y1) }
   it { is_expected.to validate_presence_of(:x2) }
   it { is_expected.to validate_presence_of(:y2) }
-  it { is_expected.to validate_numericality_of(:x1)}
-  it { is_expected.to validate_numericality_of(:y1)}
-  it { is_expected.to validate_numericality_of(:x2)}
-  it { is_expected.to validate_numericality_of(:y2)}
+  it { is_expected.to validate_numericality_of(:x1) }
+  it { is_expected.to validate_numericality_of(:y1) }
+  it { is_expected.to validate_numericality_of(:x2) }
+  it { is_expected.to validate_numericality_of(:y2) }
 
   describe '#extract_coords' do
     context 'testing extract coords' do
@@ -26,19 +26,22 @@ describe ImageAnnotation do
 
 
       it 'creates coords specified above for basic annot' do
-        expect (basic_annot.extract_coords == {:id => basic_annot.annotation_text_id,
-                                                :x_range => {:start => 0, :end => 10},
-                                                :y_range => {:start => 0, :end => 10}})
+        expect (basic_annot.extract_coords ==
+            { id: basic_annot.annotation_text_id,
+              x_range: { start: 0, end: 10 },
+              y_range: { start: 0, end: 10 } })
       end
       it 'creates negative coords as specified above' do
-        expect (negative_annot.extract_coords == {:id => negative_annot.annotation_text_id,
-                                                  :x_range => {:start => -1, :end => 3},
-                                                  :y_range => {:start => -2, :end => 5}})
+        expect (negative_annot.extract_coords ==
+            { id: negative_annot.annotation_text_id,
+              x_range: { start: -1, end: 3 },
+              y_range: { start: -2, end: 5 } })
       end
       it 'creates coords as specified above for spaces_annot' do
-        expect (spaces_annot.extract_coords == {:id => spaces_annot.annotation_text_id,
-                                                :x_range => {:start => -1, :end => 3},
-                                                :y_range => {:start => 5, :end => 123}})
+        expect (spaces_annot.extract_coords ==
+            { id: spaces_annot.annotation_text_id,
+              x_range: { start: -1, end: 3 },
+              y_range: { start: 5, end: 123 } })
       end
 
     end
@@ -51,8 +54,10 @@ describe ImageAnnotation do
       end
 
       it 'renders partial' do
-        expect (annotation.annotation_list_link_partial == '/annotations/image_annotation_list_link')
+        expect (annotation.annotation_list_link_partial ==
+            '/annotations/image_annotation_list_link')
       end
     end
   end
 end
+
