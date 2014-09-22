@@ -444,10 +444,15 @@ class StudentTest < ActiveSupport::TestCase
         context 'working alone' do
           setup do
             assert @student.create_group_for_working_alone_student(@assignment.id)
+            @group = Group.where(group_name: @student.user_name).first
           end
 
           should 'create the group' do
             assert Group.first(:conditions => {:group_name => @student.user_name}), 'the group has not been created'
+          end
+
+          should 'have their repo name equal their user name' do
+            assert_equal(@group.repo_name, @student.user_name)
           end
 
           should 'not have any pending memberships' do
