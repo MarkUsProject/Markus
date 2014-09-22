@@ -24,7 +24,6 @@ describe ImageAnnotation do
         build_stubbed(:image_annotation, x1: -1, x2: 3, y1: 123, y2: 5)
       end
 
-
       it 'creates coords specified above for basic annot' do
         expect (basic_annot.extract_coords ==
             { id: basic_annot.annotation_text_id,
@@ -60,4 +59,3 @@ describe ImageAnnotation do
     end
   end
 end
-
