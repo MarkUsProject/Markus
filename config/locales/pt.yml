@@ -394,7 +394,7 @@ pt:
       show_assigned_to_me:  "Mostrar atribuidos à você"
       grading_can_begin:    "Avaliação pode começar"
       grading_can_begin_after: "Avaliação pode começar depois %{time}"
-      workspace:            "Área de trabalho: %{short_identifier}"
+      submissions: 	    "Submissões: %{short_identifier}"
       csv_report:           "Relatório CSV"
       detailled_csv_report: "Relatório detalhado CSV"
       subversion_repo_list: "Lista de repositórios subversion"
@@ -465,6 +465,7 @@ pt:
         upload_prompt: "Selecione um arquivo CSV para carregar"
         upload_format_html: "<p>O arquivo deve conter o seguinte formato:</p>
                              <ul><li>duas linhas no topo que devem especificar o nome da questão e o total;</li>
+                             <li>o primeiro objeto para as duas primeiras linhas é ignorado;</li>
                              <li>uma linha para cada aluno;</li>
                              <li>cada linha deve ser terminada por um carriage-return line-feed.</li></ul>
                              <code>\"\",q1_name,q2_name,q3_name</code><br>
@@ -615,7 +616,7 @@ pt:
       overview: "Visão global"
       last_revision_date: "Última data de revisão:<br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "arquivos"
-      missing_required_files: "Faltando <span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> arquivos exigidos</span>"
+      missing_required_files: "Faltando <span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> arquivos exigidos</span>"
       no_submission_yet: "Você não tem nenhum envio ainda."
       no_group_yet: "Você ainda não está em um grupo"
       grace_date_passed: "e o período de tolerância para este projeto já passou"

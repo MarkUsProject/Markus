@@ -1,5 +1,4 @@
-<%= javascript_include_tag 'submissions_manager',
-                           'help_system' %>
+<%= javascript_include_tag 'help_system' %>
 
 <%= render partial: 'submissions_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
@@ -15,7 +14,7 @@
 
 <div class='title_bar'>
   <h1>
-    <%= t('browse_submissions.workspace',
+    <%= t('browse_submissions.submissions',
                short_identifier: sanitize(@assignment.short_identifier)) %>
     <div class='help submissions_help'>
       <p class='help-message-title submissions_help'>
@@ -50,6 +49,7 @@
       <%= link_to t('browse_submissions.subversion_export_file'),
                          download_svn_export_commands_assignment_submissions_path(
                            @assignment) %>
+      <span class='menu_bar'></span>
     <% end %>
 
     <% # Allow submission collection only if all the submissions are assigned to exactly one TA. %>

@@ -35,8 +35,8 @@ module GradersHelper
       g[:full_name] = "#{grader.first_name} #{grader.last_name}"
       g[:groups] = grader.get_membership_count_by_assignment(assignment)
       g[:criteria] = grader.get_criterion_associations_count_by_assignment(@assignment).to_s
-      g[:criteria] += ActionController::Base.helpers.link_to(
-        ActionController::Base.helpers.image_tag(
+      g[:criteria] += view_context.link_to(
+        view_context.image_tag(
           'icons/comment.png',
           alt: I18n.t('criteria'),
           title: I18n.t('criteria')),
@@ -67,8 +67,8 @@ module GradersHelper
       total_criteria_count = assignment.criteria_count
       g[:coverage] = "#{assigned_count} / #{total_criteria_count}"
       if assigned_count == total_criteria_count
-        g[:coverage] += ActionController::Base.helpers.link_to(
-          ActionController::Base.helpers.image_tag(
+        g[:coverage] += view_context.link_to(
+          view_context.image_tag(
             'icons/tick.png',
             alt: I18n.t('graders.covered'),
             title: I18n.t('graders.covered')),
@@ -77,8 +77,8 @@ module GradersHelper
             grouping: grouping.id),
           remote: true)
       else
-        g[:coverage] += ActionController::Base.helpers.link_to(
-          ActionController::Base.helpers.image_tag(
+        g[:coverage] += view_context.link_to(
+          view_context.image_tag(
             'icons/cross.png',
             alt: I18n.t('graders.not_covered'),
             title: I18n.t('graders.not_covered')),
@@ -108,12 +108,12 @@ module GradersHelper
       assigned_length = criterion.assigned_groups_count
       c[:coverage] = "#{assigned_length} / #{assignment.groupings.size}"
       if assigned_length == assignment.groupings.size
-        c[:coverage] += ActionController::Base.helpers.image_tag(
+        c[:coverage] += view_context.image_tag(
           'icons/tick.png',
           alt: I18n.t('graders.covered'),
           title: I18n.t('graders.covered'))
       else
-        c[:coverage] += ActionController::Base.helpers.image_tag(
+        c[:coverage] += view_context.image_tag(
           'icons/cross.png',
           alt: I18n.t('graders.not_covered'),
           title: I18n.t('graders.not_covered'))

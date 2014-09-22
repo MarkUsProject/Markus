@@ -65,18 +65,18 @@ module SubmissionsHelper
     group_name = ''
       if !grouping.has_submission?
         if assignment.submission_rule.can_collect_grouping_now?(grouping)
-          group_name = ActionController::Base.helpers.link_to(grouping.group.group_name,
+          group_name = view_context.link_to(grouping.group.group_name,
             collect_and_begin_grading_assignment_submission_path(
               assignment.id, grouping.id))
         else
           group_name = grouping.group.group_name
         end
       elsif !grouping.is_collected
-        group_name = ActionController::Base.helpers.link_to(grouping.group.group_name,
+        group_name = view_context.link_to(grouping.group.group_name,
           collect_and_begin_grading_assignment_submission_path(
             assignment.id, grouping.id))
       else
-        group_name = ActionController::Base.helpers.link_to(grouping.group.group_name,
+        group_name = view_context.link_to(grouping.group.group_name,
           edit_assignment_submission_result_path(
             assignment.id, grouping.current_submission_used.id,
             grouping.current_submission_used.get_latest_result))
@@ -93,7 +93,7 @@ module SubmissionsHelper
   end
 
   def get_grouping_repository(assignment, grouping)
-    ActionController::Base.helpers.link_to(grouping.group.repository_name,
+    view_context.link_to(grouping.group.repository_name,
       repo_browser_assignment_submission_path(assignment, grouping))
   end
 
@@ -103,7 +103,7 @@ module SubmissionsHelper
     else
       repo = ''
       if grouping.past_due_date?
-        repo += ActionController::Base.helpers.image_tag('icons/error.png',
+        repo += view_context.image_tag('icons/error.png',
             title: t(:past_due_date_edit_result_warning,
             href: t(:last_commit)))
       end
@@ -115,7 +115,7 @@ module SubmissionsHelper
   def get_grouping_marking_state(assignment, grouping)
     if !grouping.has_submission?
       if assignment.submission_rule.can_collect_now?
-        return ActionController::Base.helpers.image_tag('icons/shape_square.png',
+        return view_context.image_tag('icons/shape_square.png',
           alt: I18n.t('marking_state.not_collected'),
           title: I18n.t('marking_state.not_collected'))
       else
@@ -123,26 +123,26 @@ module SubmissionsHelper
       end
     else
       if !grouping.current_submission_used.has_result?
-        return ActionController::Base.helpers.image_tag('icons/pencil.png',
+        return view_context.image_tag('icons/pencil.png',
           alt: I18n.t('marking_state.in_progress'),
           title: I18n.t('marking_state.in_progress'))
       else
         if remark_in_progress(grouping.current_submission_used)
-          return ActionController::Base.helpers.image_tag('icons/double_exclamation.png',
+          return view_context.image_tag('icons/double_exclamation.png',
             alt: I18n.t('marking_state.remark_requested'),
             title: I18n.t('marking_state.remark_requested'))
         elsif grouping.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete]
           if !grouping.current_submission_used.get_latest_result.released_to_students
-            return ActionController::Base.helpers.image_tag('icons/accept.png',
+            return view_context.image_tag('icons/accept.png',
               alt: I18n.t('marking_state.completed'),
               title: I18n.t('marking_state.completed'))
           else
-            return ActionController::Base.helpers.image_tag('icons/email_go.png',
+            return view_context.image_tag('icons/email_go.png',
               alt: I18n.t('marking_state.released'),
               title: I18n.t('marking_state.released'))
           end
         else
-          return ActionController::Base.helpers.image_tag('icons/pencil.png',
+          return view_context.image_tag('icons/pencil.png',
             alt: I18n.t('marking_state.in_progress'),
             title: I18n.t('marking_state.in_progress'))
         end
@@ -181,9 +181,9 @@ module SubmissionsHelper
 
   def get_grouping_can_begin_grading(assignment, grouping)
     if assignment.submission_rule.can_collect_grouping_now?(grouping)
-      return ActionController::Base.helpers.image_tag('icons/tick.png')
+      return view_context.image_tag('icons/tick.png')
     else
-      return ActionController::Base.helpers.image_tag('icons/cross.png')
+      return view_context.image_tag('icons/cross.png')
     end
   end
 
