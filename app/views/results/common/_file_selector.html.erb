@@ -29,11 +29,8 @@
            id='next_button'>
   </div>
 
-
   <div class='download_file'>
-
     <%= submit_tag t(:download) if can_download && !files.empty? %>
-
     <%= label_tag('include_annotations',
                   t('marker.include_annotations'),
                   class: 'inline_label') if can_download && !files.empty? %>
