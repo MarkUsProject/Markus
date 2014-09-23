@@ -29,4 +29,3 @@ describe Annotation do
   end
 end
 
-
