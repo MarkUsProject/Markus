@@ -13,7 +13,7 @@ describe AnnotationCategory do
     it { is_expected.to belong_to(:assignment) }
 
     it do
-      should validate_uniqueness_of(:annotation_category_name)
+      is_expected.to validate_uniqueness_of(:annotation_category_name)
                           .scoped_to(:assignment_id)
                           .with_message('is already taken')
     end
