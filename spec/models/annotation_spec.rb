@@ -28,3 +28,5 @@ describe Annotation do
     it { should_not allow_value('OtherAnnotation').for(:type) }
   end
 end
+
+
