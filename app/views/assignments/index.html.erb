@@ -64,6 +64,25 @@
 </aside>
 
 <aside class='dialog' id="upload_dialog">
+  <script>
+      jQuery(document).ready(function(){
+          jQuery(".accordion").accordion();
+
+          // Checks to see if the file upload id changed.
+          jQuery("input#assignment_list").change(function () {
+              var filePath = jQuery(this).val();
+
+              // Either disables or enables upload buttons.
+              if (filePath === ""){
+                  document.getElementById("yml_upload").disabled = true;
+                  document.getElementById("csv_upload").disabled = true;
+              } else {
+                  document.getElementById("yml_upload").disabled = false;
+                  document.getElementById("csv_upload").disabled = false;
+              }
+          });
+      });
+  </script>
   <h2><%= t('upload') %></h2>
   <p>
     <p>
@@ -90,9 +109,9 @@
       <section class='dialog-actions'>
         <%= hidden_field_tag :file_format, '', id: 'file_format' %>
         <% if @current_user.admin? %>
-          <%= submit_tag t(:upload_assignment_format, file: 'YML'),
+          <%= submit_tag t(:upload_assignment_format, file: 'YML'), disabled: true, id: 'yml_upload',
                          onclick: 'choose_upload("yml")' %>
-          <%= submit_tag t(:upload_assignment_format, file: 'CSV'),
+          <%= submit_tag t(:upload_assignment_format, file: 'CSV'), disabled: true, id: 'csv_upload',
                          onclick: 'choose_upload("csv")' %>
         <% end %>
       </section>
