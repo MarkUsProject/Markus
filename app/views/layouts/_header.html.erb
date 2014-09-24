@@ -13,7 +13,8 @@
         <%= @current_user.first_name %> <%= @current_user.last_name %>
         ( <strong><%= @current_user.user_name %></strong> )
       </span>
-      <% if @current_user.admin? || (session[:real_uid] && User.find_by_id(session[:real_uid]).admin?) %>
+      <% if @current_user.admin? || (session[:real_uid] &&
+              User.find_by_id(session[:real_uid]).admin?) %>
         <%= link_to image_tag('icons/group_go.png',
                               alt: t(:switch_role),
                               title: t(:switch_role),

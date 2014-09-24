@@ -198,7 +198,8 @@ class MainController < ApplicationController
   #   role_switch
   def login_as
     validation_result = nil
-    real_user = (session[:real_uid] && User.find_by_id(session[:real_uid])) || current_user
+    real_user = (session[:real_uid] && User.find_by_id(session[:real_uid])) ||
+        current_user
     if MarkusConfigurator.markus_config_remote_user_auth
       validation_result = validate_user_without_login(
                              params[:effective_user_login],
@@ -225,10 +226,11 @@ class MainController < ApplicationController
 
     # Check if an admin trying to login as the current user
     if found_user == current_user
-      #error
+      # error
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
-             locals: { error: I18n.t(:login_failed) } #TODO: put better error message
+             # TODO: put better error message
+             locals: { error: I18n.t(:login_failed) }
       return
 
     end
@@ -249,15 +251,17 @@ class MainController < ApplicationController
     m_logger = MarkusLogger.instance
     if current_user != real_user
       # Log that the admin dropped role of another user
-      m_logger.log("Admin '#{real_user.user_name}' logged out from '#{current_user.user_name}'.")
+      m_logger.log("Admin '#{real_user.user_name}' logged out from " +
+                       "'#{current_user.user_name}'.")
     end
 
     if found_user != real_user
       # Log that the admin assumed role of another user
-      m_logger.log("Admin '#{real_user.user_name}' logged in as '#{found_user.user_name}'.")
+      m_logger.log("Admin '#{real_user.user_name}' logged in as " +
+                       "'#{found_user.user_name}'.")
     else
       # Reset real user id because admin resumed their real role
-      session[:real_uid] = nil;
+      session[:real_uid] = nil
     end
 
     # Change the uid of the current user
