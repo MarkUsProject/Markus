@@ -71,8 +71,9 @@ module SessionHandler
   def authorize_only_for_admin
     unless authorized?(Admin)
       render 'shared/http_status', formats: [:html],
-             locals: { code: '404',
-                     message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             locals: {
+                 code: '404',
+                 message: HttpStatusHelper::ERROR_CODE['message']['404'] },
              status: 404, layout: false
     end
   end
@@ -82,8 +83,9 @@ module SessionHandler
         nil
     unless authorized?(Admin) || (real_user && real_user.is_a?(Admin))
       render 'shared/http_status', formats: [:html],
-             locals: { code: '404',
-                     message: HttpStatusHelper::ERROR_CODE["message"]['404'] },
+             locals: {
+                 code: '404',
+                 message: HttpStatusHelper::ERROR_CODE['message']['404'] },
              status: 404, layout: false
     end
   end
@@ -91,8 +93,9 @@ module SessionHandler
   def authorize_for_ta_and_admin
     unless authorized?(Admin) || authorized?(Ta)
       render 'shared/http_status', formats: [:html],
-             locals: { code: '404',
-                     message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             locals: {
+                 code: '404',
+                 message: HttpStatusHelper::ERROR_CODE['message']['404'] },
              status: 404, layout: false
     end
   end
@@ -100,8 +103,9 @@ module SessionHandler
   def authorize_for_student
     unless authorized?(Student)
       render 'shared/http_status', formats: [:html],
-             locals: { code: '404',
-                     message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             locals: {
+                 code: '404',
+                 message: HttpStatusHelper::ERROR_CODE['message']['404'] },
              status: 404, layout: false
     end
   end
@@ -109,8 +113,9 @@ module SessionHandler
   def authorize_for_student_and_ta
     unless authorized?(Ta) || authorized?(Student)
       render 'shared/http_status', formats: [:html],
-             locals: { code: '404',
-                     message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             locals: {
+                 code: '404',
+                 message: HttpStatusHelper::ERROR_CODE['message']['404'] },
              status: 404, layout: false
     end
   end
@@ -118,8 +123,9 @@ module SessionHandler
   def authorize_for_user
     unless authorized?(User)
       render 'shared/http_status', formats: [:html],
-             locals: { code: '404',
-                     message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             locals: {
+                 code: '404',
+                 message: HttpStatusHelper::ERROR_CODE['message']['404'] },
              status: 404, layout: false
     end
   end
