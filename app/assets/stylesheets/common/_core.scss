@@ -154,6 +154,7 @@ input[type='radio'] {
   position: relative;
   top: -15px;
   width: 350px;
+  z-index: 10000;
 }
 
 .help-message-title {
