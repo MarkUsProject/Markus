@@ -42,12 +42,11 @@ describe AnnotationCategory do
         @row.push('annotation text 2 2')
 
         @initial_size = AnnotationCategory.all.size
-
-        AnnotationCategory.add_by_row(@row, assignment, admin)
       end
 
       # an annotation category has been created.
       it 'creates an annotation' do
+        AnnotationCategory.add_by_row(@row, assignment, admin)
         expect(@initial_size + 1).to eq(AnnotationCategory.all.size)
       end
     end
@@ -58,12 +57,13 @@ describe AnnotationCategory do
         @row.push('annotation category name 3')
         @row.push('annotation text 3 1')
         @row.push('annotation text 3 2')
+
         @initial_size = AnnotationText.all.size
       end
 
       it 'updates the numeber of annotation texts' do
         AnnotationCategory.add_by_row(@row, assignment, admin)
-        expect(@initial_size).not_to eq(AnnotationText.all.size)
+        expect(@initial_size + 2).to eq(AnnotationText.all.size)
       end
     end
   end
