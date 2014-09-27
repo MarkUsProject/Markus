@@ -31,6 +31,8 @@
 
   <div class='download_file'>
     <%= submit_tag t(:download) if can_download && !files.empty? %>
+<% end %>
+    
     <%= label_tag('include_annotations',
                   t('marker.include_annotations'),
                   class: 'inline_label') if can_download && !files.empty? %>
@@ -44,7 +46,8 @@
                    assignment_id: @assignment.id,
                    submission_id: @submission.id,
                    id: params[:id]),
-                 method: :get) do %>
+                 method: :get,
+                 :class => 'download_all_form') do %>
       <%= hidden_field_tag :include_annotations,
                            true,
                            id: 'download_zip' %>
@@ -52,4 +55,3 @@
                      onclick: 'with_annotations();' unless files.empty? %>
     <% end %>
   </div>
-<% end %>
