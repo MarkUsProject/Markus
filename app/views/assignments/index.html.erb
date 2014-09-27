@@ -64,25 +64,10 @@
 </aside>
 
 <aside class='dialog' id="upload_dialog">
-  <script>
-      jQuery(document).ready(function(){
-          jQuery(".accordion").accordion();
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js', :id => "upload_script", :upload_id => 'assignment_list',
+                             :button_id => 'yml_upload csv_upload' %>
 
-          // Checks to see if the file upload id changed.
-          jQuery("input#assignment_list").change(function () {
-              var filePath = jQuery(this).val();
-
-              // Either disables or enables upload buttons.
-              if (filePath === ""){
-                  document.getElementById("yml_upload").disabled = true;
-                  document.getElementById("csv_upload").disabled = true;
-              } else {
-                  document.getElementById("yml_upload").disabled = false;
-                  document.getElementById("csv_upload").disabled = false;
-              }
-          });
-      });
-  </script>
   <h2><%= t('upload') %></h2>
   <p>
     <p>
