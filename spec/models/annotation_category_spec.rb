@@ -53,7 +53,7 @@ describe AnnotationCategory do
       end
     end
 
-    context 'when the text of the annotation categorie already exists' do
+    context 'when the text of the annotation category already exists' do
       before do
         @row = []
         @row.push('annotation category name 3')
