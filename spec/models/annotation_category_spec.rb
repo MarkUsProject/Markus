@@ -47,9 +47,8 @@ describe AnnotationCategory do
       end
 
       # an annotation category has been created.
-      # the number of annotation category should be different
       it 'creates an annotation' do
-        expect(@initial_size).not_to eq(AnnotationCategory.all.size)
+        expect(@initial_size + 1).to eq(AnnotationCategory.all.size)
       end
     end
 
