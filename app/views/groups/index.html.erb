@@ -191,8 +191,10 @@
 
 <aside class='dialog' id='upload_dialog'>
   <!-- Script for disabling upload buttons. -->
-  <%= javascript_include_tag 'upload_button_control.js', :id => "upload_script", :upload_id => 'group_grouplist',
-                             :button_id => 'upload' %>
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: "upload_script",
+                             upload_id: 'group_grouplist',
+                             button_id: 'upload' %>
 
   <h2><%= t('groups.upload.upload_groups_file') %></h2>
   <p>

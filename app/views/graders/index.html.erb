@@ -73,8 +73,10 @@
 
 <aside class='dialog' id="upload_dialog">
   <!-- Script for disabling upload buttons. -->
-  <%= javascript_include_tag 'upload_button_control.js', :id => "upload_script", :upload_id => 'grader_mapping' ,
-                             :button_id => 'upload' %>
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: "upload_script",
+                             upload_id: 'grader_mapping',
+                             button_id: 'upload' %>
 
   <h2><%= I18n.t("groups.upload.upload_grader_map") %></h2>
   <%= raw(I18n.t("groups.upload.description_grader_map")) %>

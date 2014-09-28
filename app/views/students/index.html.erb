@@ -60,8 +60,10 @@
 <!-- Modal Windows -->
 <aside class='dialog' id='upload_dialog'>
   <!-- Script for disabling upload buttons. -->
-  <%= javascript_include_tag 'upload_button_control.js', :id => "upload_script", :upload_id => 'userlist',
-      :button_id => 'upload' %>
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: "upload_script",
+                             upload_id: 'userlist',
+                             button_id: 'upload' %>
 
   <h2><%= t('students.upload.upload_a_class_list') %></h2>
   <p><%= t('students.upload.select_csv_file').html_safe %></p>

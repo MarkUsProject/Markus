@@ -65,8 +65,10 @@
 
 <aside class='dialog' id="upload_dialog">
   <!-- Script for disabling upload buttons. -->
-  <%= javascript_include_tag 'upload_button_control.js', :id => "upload_script", :upload_id => 'assignment_list',
-                             :button_id => 'yml_upload csv_upload' %>
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: "upload_script",
+                             upload_id: 'assignment_list',
+                             button_id: 'yml_upload csv_upload' %>
 
   <h2><%= t('upload') %></h2>
   <p>
