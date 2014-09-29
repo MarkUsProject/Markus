@@ -68,12 +68,56 @@ describe Group do
         expect(group.repository_admin?).to be_truthy
       end
     end
-
-    context 'without administrator rights'
   end
 
-  describe '#repository_config'
-  describe '#build_repository'
-  describe '#repo'
-  describe '#access_repo'
+  describe '#repository_config' do
+    let(:group) { create(:group) }
+
+    it 'returns repository configuration' do
+      conf = group.repository_config
+      expect(conf['IS_REPOSITORY_ADMIN']).to eq(MarkusConfigurator.markus_config_repository_admin?)
+      expect(conf['REPOSITORY_PERMISSION_FILE']).to eq(MarkusConfigurator.markus_config_repository_permission_file)
+      expect(conf['REPOSITORY_STORAGE']).to eq(MarkusConfigurator.markus_config_repository_storage)
+    end
+  end
+
+  describe '#build_repository' do
+    let(:group) { create(:group) }
+
+    it 'returns true' do
+      expect(group.build_repository).to be_truthy
+    end
+  end
+
+  describe '#repo' do
+    let(:group) { create(:group) }
+
+    it 'returns a repository object' do
+      expect(group.repo).to be_truthy
+    end
+  end
+
+  describe '#access_repo' do
+    context 'when repository exists' do
+      let(:group) { create(:group) }
+
+      it 'allows access to its repository' do
+        group.access_repo do |repo|
+          expect(repo).to be_truthy
+          expect(repo.closed?).to be_falsey
+        end
+      end
+    end
+
+    context 'when repository is closed' do
+      let(:group) { create(:group) }
+
+      it 'raises an error' do
+        group.repo do |repo|
+          repo.close
+          expect(group.access_repo).to raise_error
+        end
+      end
+    end
+  end
 end
