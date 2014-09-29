@@ -168,7 +168,6 @@ class ResultsController < ApplicationController
   end
 
   def download
-    puts params.inspect
     if params[:download_zip_button]
       download_zip
       return
