@@ -59,7 +59,7 @@
 <aside class='dialog' id='upload_dialog'>
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
-                             id: "upload_script",
+                             id: 'upload_script',
                              upload_id: 'userlist',
                              button_id: 'upload' %>
 
@@ -78,7 +78,10 @@
     </div>
 
     <section class='dialog-actions'>
-      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) }, id: 'upload', disabled: true %>
+      <%= submit_tag t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) },
+                     id: 'upload',
+                     disabled: true %>
       <%= button_to_function I18n.t(:close), 'modal_upload.close()' %>
     </section>
   </form>

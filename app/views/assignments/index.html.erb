@@ -66,7 +66,7 @@
 <aside class='dialog' id="upload_dialog">
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
-                             id: "upload_script",
+                             id: 'upload_script',
                              upload_id: 'assignment_list',
                              button_id: 'yml_upload csv_upload' %>
 
@@ -96,9 +96,13 @@
       <section class='dialog-actions'>
         <%= hidden_field_tag :file_format, '', id: 'file_format' %>
         <% if @current_user.admin? %>
-          <%= submit_tag t(:upload_assignment_format, file: 'YML'), disabled: true, id: 'yml_upload',
+          <%= submit_tag t(:upload_assignment_format, file: 'YML'),
+                         disabled: true,
+                         id: 'yml_upload',
                          onclick: 'choose_upload("yml")' %>
-          <%= submit_tag t(:upload_assignment_format, file: 'CSV'), disabled: true, id: 'csv_upload',
+          <%= submit_tag t(:upload_assignment_format, file: 'CSV'),
+                         disabled: true,
+                         id: 'csv_upload',
                          onclick: 'choose_upload("csv")' %>
         <% end %>
       </section>

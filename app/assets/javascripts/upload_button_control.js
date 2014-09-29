@@ -11,8 +11,11 @@ jQuery(document).ready(function(){
   var upload_id = _get('upload_id');
   var button_id = _get('button_id');
 
+  // Ensures only one upload field was entered.
+  if (upload_id.size() != 1) return;
+
   // Checks to see if the file upload id changed.
-  jQuery("input#" + upload_id).change(function () {
+  jQuery("input#" + upload_id[0]).change(function () {
     var filePath = jQuery(this).val();
 
     var i;
