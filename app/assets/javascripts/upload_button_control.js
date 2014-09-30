@@ -16,7 +16,7 @@ jQuery(document).ready(function(){
 
   // Checks to see if the file upload id changed.
   jQuery("input#" + upload_id[0]).change(function () {
-    var filePath = jQuery(this).val();
+    var filePath = this.value;
 
     var i;
     // Enables/Disables all buttons.
