@@ -200,7 +200,7 @@ class FlexibleCriterion < Criterion
 
   def has_associated_ta?(ta)
     return false unless ta.ta?
-    !(criterion_ta_associations.where(ta_id: ta.id).take == nil)
+    !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
   end
 
   def add_tas_by_user_name_array(ta_user_name_array)
