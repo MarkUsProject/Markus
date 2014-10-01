@@ -80,7 +80,7 @@ describe Group do
 
       conf = group.repository_config
       expect(conf['IS_REPOSITORY_ADMIN']).to eq(is_repo_admin)
-      expect(conf['REPOSITORY_PERMISSION_FILE']).to eq(repo_perm_file)
+      expect(conf['REPOSITORY_PERMISSION_FILE']).to eq(repo_perm)
       expect(conf['REPOSITORY_STORAGE']).to eq(repo_storage)
     end
   end
