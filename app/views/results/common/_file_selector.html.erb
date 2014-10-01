@@ -5,9 +5,9 @@
 <%= form_tag(download_assignment_submission_result_path(
                      @assignment.id, @grouping.current_submission_used.id,
                      @grouping.current_submission_used.get_latest_result.id)) do %>
-    <%= hidden_field_tag :include_annotations,
-                         true,
-                         id: 'download_include_annotations' %>
+  <%= hidden_field_tag :include_annotations,
+                       true,
+                       id: 'download_include_annotations' %>
   <div class='file_selector'>
     <input type='button'
            onclick='bump_select("select_file_id", -1, "back_button", "next_button"); return false;'
@@ -45,7 +45,8 @@
                       id: 'include_annotations',
                       class: 'inline_checkbox') if can_download && !files.empty? %>
 
-     <%= submit_tag t('browse_submissions.download_all_files'), name: 'download_zip_button',
-                       onclick: 'with_annotations();' unless files.empty? %>
+    <%= submit_tag t('browse_submissions.download_all_files'),
+                   name: 'download_zip_button',
+                   onclick: 'with_annotations();' unless files.empty? %>
   </div>
 <% end %>
