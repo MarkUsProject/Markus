@@ -74,10 +74,14 @@ describe Group do
     let(:group) { create(:group) }
 
     it 'returns repository configuration' do
+      is_repo_admin = MarkusConfigurator.markus_config_repository_admin?
+      repo_perm_file = MarkusConfigurator.markus_config_repository_permission_file
+      repo_storage = MarkusConfigurator.markus_config_repository_storage
+
       conf = group.repository_config
-      expect(conf['IS_REPOSITORY_ADMIN']).to eq(MarkusConfigurator.markus_config_repository_admin?)
-      expect(conf['REPOSITORY_PERMISSION_FILE']).to eq(MarkusConfigurator.markus_config_repository_permission_file)
-      expect(conf['REPOSITORY_STORAGE']).to eq(MarkusConfigurator.markus_config_repository_storage)
+      expect(conf['IS_REPOSITORY_ADMIN']).to eq(is_repo_admin)
+      expect(conf['REPOSITORY_PERMISSION_FILE']).to eq(repo_perm_file)
+      expect(conf['REPOSITORY_STORAGE']).to eq(repo_storage)
     end
   end
 
