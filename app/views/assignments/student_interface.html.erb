@@ -249,7 +249,7 @@
              if @grouping.repository_external_commits_only? %>
             <h3><%= t('student.url_group_repository') %></h3>
             <div class='sub_block'>
-              <p><%= @grouping.group.repository_external_access_url %></p>
+              <a href='<%= @grouping.group.repository_external_access_url %>'><%= @grouping.group.repository_external_access_url %></a>
             </div>
           <% end %>
         <% end %>
