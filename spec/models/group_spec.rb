@@ -75,7 +75,7 @@ describe Group do
 
     it 'returns repository configuration' do
       is_repo_admin = MarkusConfigurator.markus_config_repository_admin?
-      repo_perm_file = MarkusConfigurator.markus_config_repository_permission_file
+      repo_perm = MarkusConfigurator.markus_config_repository_permission_file
       repo_storage = MarkusConfigurator.markus_config_repository_storage
 
       conf = group.repository_config
