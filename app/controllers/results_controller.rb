@@ -168,6 +168,10 @@ class ResultsController < ApplicationController
   end
 
   def download
+    if params[:download_zip_button]
+      download_zip
+      return
+    end
     #Ensure student doesn't download a file not submitted by his own grouping
     unless authorized_to_download?(file_id: params[:select_file_id])
       render 'shared/http_status', formats: [:html],
