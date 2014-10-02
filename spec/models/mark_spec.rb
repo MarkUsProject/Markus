@@ -31,29 +31,35 @@ describe Mark do
   describe '#valid_mark' do
 
     context 'when markable type is rubric' do
-      let(:rubric_mark) { create(:rubric_mark, mark: 4, markable_type: 'RubricCriterion') }
-      it "is valid to have rubric briterion mark smaller or equals to four" do
+      let(:rubric_mark) do
+        create(:rubric_mark, mark: 4, markable_type: 'RubricCriterion') }
+      end
+      it 'is valid to have rubric briterion mark smaller or equals to four' do
         expect(rubric_mark.valid_mark).to be_truthy
       end
     end
 
     context 'when markable type is flexible' do
-      let(:flexible_mark) { create(:flexible_mark, mark: 0, markable_type: 'FlexibleCriterion') }
-      it "is valid to have rubric briterion mark equals zero" do
+      let(:flexible_mark) do
+        create(:flexible_mark, mark: 0, markable_type: 'FlexibleCriterion') }
+      end
+      it 'is valid to have rubric briterion mark equals zero' do
         expect(flexible_mark.valid_mark).to be_truthy
       end
     end
   end
 
   describe '#get_mark' do
-    let(:rubric_mark) { create(:rubric_mark, mark: 4, markable_type: 'RubricCriterion') }
-    it "equals to mark times weight" do
+    let(:rubric_mark) do
+      create(:rubric_mark, mark: 4, markable_type: 'RubricCriterion') }
+    end
+    it 'equals to mark times weight' do
       markable = RubricCriterion.find(rubric_mark.markable_id)
       expect(rubric_mark.get_mark).to equal(rubric_mark.mark * markable.weight)
     end
   end
 
-  #private methods
+  # private methods
   describe '#ensure_not_released_to_students'
   describe '#update_grouping_mark'
 end
