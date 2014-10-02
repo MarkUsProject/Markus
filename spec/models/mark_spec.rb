@@ -32,7 +32,7 @@ describe Mark do
 
     context 'when markable type is rubric' do
       let(:rubric_mark) do
-        create(:rubric_mark, mark: 4, markable_type: 'RubricCriterion') }
+        create(:rubric_mark, mark: 4, markable_type: 'RubricCriterion')
       end
       it 'is valid to have rubric briterion mark smaller or equals to four' do
         expect(rubric_mark.valid_mark).to be_truthy
@@ -41,7 +41,7 @@ describe Mark do
 
     context 'when markable type is flexible' do
       let(:flexible_mark) do
-        create(:flexible_mark, mark: 0, markable_type: 'FlexibleCriterion') }
+        create(:flexible_mark, mark: 0, markable_type: 'FlexibleCriterion')
       end
       it 'is valid to have rubric briterion mark equals zero' do
         expect(flexible_mark.valid_mark).to be_truthy
@@ -51,7 +51,7 @@ describe Mark do
 
   describe '#get_mark' do
     let(:rubric_mark) do
-      create(:rubric_mark, mark: 4, markable_type: 'RubricCriterion') }
+      create(:rubric_mark, mark: 4, markable_type: 'RubricCriterion')
     end
     it 'equals to mark times weight' do
       markable = RubricCriterion.find(rubric_mark.markable_id)
