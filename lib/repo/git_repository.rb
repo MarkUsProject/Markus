@@ -2,18 +2,17 @@ require 'rugged'
 require 'gitolite'
 require 'digest/md5'
 require 'rubygems'
-#require 'byebug'
 
 require File.join(File.dirname(__FILE__),'repository') # load repository module
 
-def commit_options(repo, system_message)
+def commit_options(repo, author, message)
   {
-    author:  { email: "markus@markus.com", name: "Markus", time: Time.now },
-    committer: { email: "markus@markus.com", name: "Markus", time: Time.now },
-    message: system_message,
+    author:  { email: 'markus@markus.com', name: author, time: Time.now },
+    committer: { email: 'markus@markus.com', name: author, time: Time.now },
+    message: message,
     tree: repo.index.write_tree(repo),
     parents: repo.empty? ? [] : [repo.head.target].compact,
-    update_ref: "HEAD"
+    update_ref: 'HEAD'
   }
 end
 
@@ -59,16 +58,25 @@ module Repository
         raise RepositoryCollision.new("There is already a repository at #{connect_string}")
       end
       if File.exists?(connect_string)
-        raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists already")
+        raise IOError.new("Could not create a repository at #{connect_string}:
+                          some directory with same name exists already")
       end
 
       #Create it (we're not going to use a bare repository)
       repo = Rugged::Repository.init_at(connect_string)
 
-      #Do an initial commit to create index.
-      oid = repo.write("Initial commit.", :blob)
-      repo.index.add(:path => "README.md", :oid => oid, :mode => 0100644)
-      Rugged::Commit.create(repo, commit_options(repo, "Creation of initial file"))
+      # Do an initial commit with a README to create index.
+      file_path_for_readme = File.join(repo.workdir, 'README.md')
+      File.open(file_path_for_readme, 'w+') do |readme|
+        readme.write('Initial commit.')
+      end
+      oid = Rugged::Blob.from_workdir(repo, 'README.md')
+      index = repo.index
+      index.add(path: 'README.md', oid: oid, mode: 0100644)
+      index.write
+      Rugged::Commit.create(repo,
+                            commit_options(repo, 'Markus',
+                                           'Initial commit and add readme.'))
       return true
     end
 
@@ -100,14 +108,14 @@ module Repository
     # If a filepath is given, the repo_dest_dir needs to point to a file, and
     # all the repository on that path need to exist, or the export will fail.
     # if export means exporting repo as zip/tgz git-ruby library should be used
-    def export(repo_dest_dir, filepath=nil)
+    def export(repo_dest_dir, filepath = nil)
 
       # Case 1: clone all the repo to repo_dest_dir
       if(filepath.nil?)
         # Raise an error if the destination repository already exists
         if (File.exists?(repo_dest_dir))
           raise(ExportRepositoryAlreadyExists,
-                "Exported repository already exists")
+                'Exported repository already exists')
         end
 
         repo = Rugged::Repository.clone_at(@repos_path, repo_dest_dir)
@@ -116,7 +124,7 @@ module Repository
         # Raise an error if the destination file already exists
         if (File.exists?(repo_dest_dir))
           raise(ExportRepositoryAlreadyExists,
-                "Exported file already exists")
+                'Exported file already exists')
         end
         FileUtils.cp(get_repos_workdir + filepath, repo_dest_dir)
         return true
@@ -162,9 +170,9 @@ module Repository
     # TODO - find a better way to do this.
     def self.repository_exists?(repos_path)
       repos_meta_files_exist = false
-      if File.exist?(File.join(repos_path, ".git/config"))
-        if File.exist?(File.join(repos_path, ".git/description"))
-          if File.exist?(File.join(repos_path, ".git/HEAD"))
+      if File.exist?(File.join(repos_path, '.git/config'))
+        if File.exist?(File.join(repos_path, '.git/description'))
+          if File.exist?(File.join(repos_path, '.git/HEAD'))
             repos_meta_files_exist = true
           end
         end
@@ -172,20 +180,20 @@ module Repository
       return repos_meta_files_exist
     end
 
-
-    # TODO: verify how markus use it
-    def stringify_files(files)
+    def stringify(file)
       # Given a single object, or an array of objects of type
       # RevisionFile, try to find the file in question, and
       # return it as a string
-      blob = @repos.lookup(files[:oid])
+      revision = get_revision(file.from_revision)
+      blob = revision.find_object_at_path(file.path)
+
       return blob.content
     end
-    alias download_as_string stringify_files # create alias
-
+    alias download_as_string stringify # create alias
 
     def get_revision_number(hash)
-      # probably should walk down git log and count steps from beginning?
+      # This functions walks down git log and counts the steps from beginning
+      # to get the revision number.
       walker = Rugged::Walker.new(@repos)
       walker.sorting(Rugged::SORT_DATE | Rugged::SORT_REVERSE) 
       walker.push(hash)
@@ -196,7 +204,6 @@ module Repository
       end
       return start
     end
-
 
     # Returns a Repository::SubversionRevision instance
     # holding the latest Subversion repository revision
@@ -234,9 +241,9 @@ module Repository
 
     # Returns a Repository::TransAction object, to work with. Do operations,
     # like 'add', 'remove', etc. on the transaction instead of the repository
-    def get_transaction(user_id, comment="")
+    def get_transaction(user_id, comment = '')
       if user_id.nil?
-        raise "Expected a user_id (Repository.get_transaction(user_id))"
+        raise 'Expected a user_id (Repository.get_transaction(user_id))'
       end
       return Repository::Transaction.new(user_id, comment)
     end
@@ -256,7 +263,7 @@ module Repository
           end
         when :add
           begin
-            txn = add_file(txn, job[:path], job[:file_data], job[:mime_type])
+            add_file(job[:path], job[:file_data], transaction.user_id)
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -300,16 +307,17 @@ module Repository
         else
           repo.permissions[0].each do |perm|
             if(repo.permissions[0][perm[0]][""].include? user_id)
-              raise UserAlreadyExistent.new(user_id + " already existent")
+              raise UserAlreadyExistent.new(user_id + ' already existent')
             end
           end
         end
 
         git_permission = self.class.__translate_to_git_perms(permissions)
-        repo.add_permission(git_permission,"",user_id)
+        repo.add_permission(git_permission, '', user_id)
         ga_repo.save_and_apply
       else
-        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+        raise NotAuthorityError.new('Unable to modify permissions:
+                                     Not in authoritative mode!')
       end
 
     end
@@ -446,7 +454,7 @@ module Repository
       end
     end
 
-    def self.add_user(user_id, permissions,repo_name)
+    def self.add_user(user_id, permissions, repo_name)
 
       # Adds a user with given permissions to the repository
       if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
@@ -564,64 +572,12 @@ module Repository
           raise UserNotFound.new(user_id + " not found")
         end
       end
-
-      #else
-      #  raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
-      #end
-
     end
 
-    ####################################################################
-    ##  The following stuff is semi-private. As a general rule don't use
-    ##  it directly. The only reason it's public, is that
-    ##  SubversionRevision needs to have access.
-    ####################################################################
-
-    def __path_exists?(path, revision=nil)
-      # Not (!) part of the AbstractRepository API:
-      # Check if given file or path exists in repository beeing member of
-      # the provided revision
-    end
-
-    def __get_files(path, revision_number)
-      # Not (!) part of the AbstractRepository API:
-      # Returns a hash of files/directories part of the requested
-      # revision; Don't use it directly, use SubversionRevision's
-      # 'files_at_path' instead
-      return "TEST"
-    end
-
-    def __get_property(prop, rev=nil)
-      # Not (!) part of the AbstractRepository API:
-      # Returns
-      #    prop
-      # of Subversion repository
-    end
-
-    def __get_file_property(prop, path, revision_number)
-      # Not (!) part of the AbstractRepository API:
-      # Returns
-      #    prop
-      # of Subversion repository file
-    end
-
-    def __get_node_last_modified_date(path, commit)
-      # Not (!) part of the AbstractRepository API:
-      # Returns
-      #    The last modified date
-      # of a Subversion repository file or directory
-    end
-
-    def __get_history(paths, starting_revision=nil, ending_revision=nil)
-      # Not (!) part of the AbstractRepository API:
-      # This function is very similar to @repos.fs.history(); however, it's been altered a little
-      # to return only an array of revision numbers. This function, in contrast to the original,
-      # takes multiple paths and returns one large history for all paths given.
-      # refer to Subversion_repository for implementation.
-    end
-
-    # Helper method to translate internal permissions to Subversion
+    # Helper method to translate internal permissions to git
     # permissions
+    # If we want the directory creation to have its own commit,
+    # we have to add a dummy file in that directory to do it.
     def self.__translate_to_git_perms(permissions)
       case (permissions)
       when Repository::Permission::READ
@@ -632,7 +588,7 @@ module Repository
       end # end case
     end
 
-    # Helper method to translate Subversion permissions to internal
+    # Helper method to translate git permissions to internal
     # permissions
     def self.__translate_perms_from_file(perm_string)
       case (perm_string)
@@ -651,17 +607,6 @@ module Repository
     ####################################################################
 
     private
-
-    def setup_auth_baton(auth_baton)
-      # Function necessary for exporting the git repository, may not be needed
-    end
-
-    # Returns the most recent revision of the repository. If a path is specified,
-    # the youngest revision is returned for that path; if a revision is also specified,
-    # the function will return the youngest revision that is equal to or older than the one passed.
-    #
-    # This will only work for paths that have not been deleted from the repository.
-    # GIT NOTE: This will just return the latest hash for now
     def latest_revision_number(path = nil, revision_number = nil)
       return get_revision_number(@repos.head.target)
     end
@@ -674,48 +619,61 @@ module Repository
       # May not need this function
     end
 
+    def path_exists_for_latest_revision?(path)
+      get_latest_revision.path_exists?(path)
+    end
+
     # adds a file to a transaction and eventually to repository
-    def add_file(txn, path, file_data=nil, mime_type=nil)
-      if __path_exists?(path)
+    def add_file(path, file_data = nil, author)
+      if path_exists_for_latest_revision?(path)
         raise Repository::FileExistsConflict.new(path)
       end
-      txn = write_file(txn, path, file_data, mime_type)
-      return txn
+      write_file(path, file_data, author)
     end
 
     # removes a file from a transaction and eventually from repository
-    def remove_file(txn, path, expected_revision_number=0)
+    def remove_file(txn, path, _expected_revision_number = 0)
       @repos.index.remove(path);
       Rugged::Commit.create(@repos,commit_options(@repos,"Removing file"))
       return txn
     end
 
     # replaces file at provided path with file_data
-    def replace_file(txn, path, file_data=nil, mime_type=nil, expected_revision_number=0)
-      txn = write_file(txn, path, file_data, mime_type)
+    def replace_file(txn, path, file_data = nil,
+                     mime_type = nil, _expected_revision_number = 0)
+      txn = write_file(path, file_data, mime_type)
       return txn
     end
 
-    def write_file(txn, path, file_data=nil, mime_type=nil)
+    def write_file(path, file_data = nil, author)
       # writes to file using transaction, path, data, and mime
       # refer to Subversion_repo for implementation
-      if (!__path_exists?(path))
-        # Get directory path of file (one level higher)
-        dir = path.split('/')[0..-1].join('/')
-        make_directory(path)
-        make_file(txn, path, file_data)
-      end
+      # Get directory path of file (one level higher)
+      dir = path.split('/')[0..-2].join('/')
+      # make_directory to path, if it already exists make_directory
+      # won't do anything so no harm no foul.
+      make_directory(dir)
+      make_file(path, file_data, author)
     end
 
     # Make a file if it's not already present.
-    def make_file(txn, path,file_data)
+    def make_file(path, file_data, author)
       repo = @repos
-      oid = repo.write(file_data, :blob)
-      repo.index.add(path: path, oid: oid, mode: 0100644)
-      Rugged::Commit.create(repo, commit_options(repo,"Adding file"))
+      # Get the file path to write to using the ruby File module.
+      file_path = File.join(repo.workdir, path)
+      # Actually create the file.
+      File.open(file_path, 'w+') { |file| file.write(file_data) }
+      # Get the hash of the file we just created and added
+      oid = Rugged::Blob.from_workdir(repo, path)
+      index = repo.index
+      index.add(path: path, oid: oid, mode: 0100644)
+      index.write
+      Rugged::Commit.create(repo, commit_options(repo, author, 'Add file'))
     end
 
     # Make a directory if it's not already present.
+    # If we want the directory creation to have its own commit,
+    # we have to add a dummy file in that directory to do it.
     def make_directory(path)
       # Turn "path" into absolute path for repo
       path = File.expand_path(path, @repos_path)
@@ -758,7 +716,9 @@ module Repository
       @revision_number = revision_number
       @hash = get_hash_of_revision(revision_number)
       @commit = @repo.lookup(@hash)
+      @author = @commit.author[:name]
 
+      # TODO: get correct version of time
       @timestamp = @commit.time
       if @timestamp.instance_of?(String)
         @timestamp = Time.parse(@timestamp).localtime
@@ -774,28 +734,97 @@ module Repository
       return walker.take(revision_number).last.oid
     end
 
-    # Return all of the files in this repository at the root directory
-    def files_at_path(path)
-      begin
-        files = Hash.new
-        @commit.tree.each_blob do |blob|
-          file = Repository::RevisionFile.new(@revision_number, {
-            name: blob[:name],
+    # Returns all files (incl. folders) in this repository
+    # at path `path` for the current revision file.
+    def objects_at_path(path)
+      current_tree = find_object_at_path(path)
+      # current_tree is now at the path we were looking for
+      objects = []
+      current_tree.each do |obj|
+        if obj[:type] == :blob
+          file = Repository::RevisionFile.new(
+            @revision_number,
+            name: obj[:name],
+            # Is the path with or without filename?
+            path: path + obj[:name],
+            # The following is placeholder information.
+            last_modified_revision: @revision_number,
+            last_modified_date: Time.now,
+            changed: true,
+            user_id: @author,
+            mime_type: 'text'
+          )
+          objects << file
+        elsif obj[:type] == :tree
+          directory = Repository::RevisionDirectory.new(
+            @revision_number,
+            name: obj[:name],
+            # Same comments as above in RevisionFile
             path: path,
             last_modified_revision: @revision_number,
             last_modified_date: Time.now,
             changed: true,
-            user_id: 5,
-            mime_type: 'text'
-          })
-          files[c[:name]] = file
+            user_id: @author
+          )
+          objects << directory
+        else
+          # raise unrecognized object
         end
-        #exception should be cast if file is not found
-      rescue Exception
-        raise Repository::FileDoesNotExistConflict
-        return nil
       end
-      return files
+      objects
+      # TODO: make a rescue to controller, when repo_browser moves to React
+      # we can return a 400 with a message so react knows how to handle
+    end
+
+    # Takes in a path (that should be a dir) and returns the Rugged tree object
+    # at that path.
+    def find_object_at_path(path)
+      # Get directory names for path in a nice array
+      # like ['A1', 'src', 'core'] for '/A1/src/core'
+      path = path.split('/')
+
+      # current_tree is the current directory object we are going through
+      # Look at rugged documentation for more info on tree objects
+      current_object = @commit.tree
+      # While there are still directories to go through to get to path,
+      # find the dirname
+      path.each do |level|
+        # This loop finds the object we're currently looking
+        # for in `level` and then looks it up to return
+        # a Rugged object (either a tree or a blob)
+        current_object = @repo.lookup(
+          current_object.detect do |obj|
+            obj[:name] == level
+          end[:oid])
+      end
+
+      # This returns the actual object.
+      current_object
+    end
+
+    # Return all of the files in this repository in a hash where
+    # key: filename and value: RevisionFile object
+    def files_at_path(path)
+      file_array = objects_at_path(path).select do |obj|
+        obj.instance_of?(Repository::RevisionFile)
+      end
+      files = Hash.new
+      file_array.each do |file|
+        files[file.name] = file
+      end
+      # exception should be cast if file is not found
+      files
+    end
+
+    def directories_at_path(path)
+      dir_array = objects_at_path(path).select do |obj|
+        obj.instance_of?(Repository::RevisionDirectory)
+      end
+      directories = Hash.new
+      dir_array.each do |dir|
+        directories[dir.name] = dir
+      end
+      directories
     end
 
     # returns true if the file at the given path exists for the
@@ -803,29 +832,7 @@ module Repository
     # erros with this function can occur with files are incorrectly
     # added and the git config file is not updated
     def path_exists?(path)
-      @commit.tree.any? {|e|
-        e[:name] == path
-      }
-    end
-
-    def directories_at_path(path)
-      result = {}
-      @commit.tree.each_tree {|subdir|
-        dir_name = subdir[:name]
-        last_modified_revision = @revision_number
-        last_modified_date = Time.now
-        new_directory = Repository::RevisionDirectory.new(@revision_number, {
-          name: dir_name,
-          path: path,
-          last_modified_revision: last_modified_revision,
-          last_modified_date: last_modified_date,
-          changed: (last_modified_revision == @revision_number),
-          user_id: 5
-          #user_id: @repo.__get_property(:author, last_modified_revision)
-        })
-        result[dir_name] = new_directory
-      }
-      return result
+      @commit.tree.any? { |e| e[:name] == path }
     end
 
     # Return changed files at 'path' (recursively)
@@ -839,7 +846,7 @@ module Repository
 
     private
 
-    def files_at_path_helper(path='/', only_changed=false)
+    def files_at_path_helper(path = '/', only_changed = false)
       if path.nil?
         path = '/'
       end
