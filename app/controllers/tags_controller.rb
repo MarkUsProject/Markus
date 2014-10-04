@@ -1,4 +1,11 @@
 class TagsController < ApplicationController
+
+  before_filter :authorize_only_for_admin
+
+  def index
+    @assignment = Assignment.find(params[:assignment_id])
+  end
+
   # Creates a new instance of the tag.
   def create
     @text = Tag.create({

@@ -838,6 +838,15 @@ en:
     hide_students: "Mark as inactive"
     unhide_students: "Mark as active"
 
+    tags:
+      create_new: "Create New Tag"
+      tags: "Tags"
+      title: "Assignment Tags: %{assignment_short_identifier}"
+      upload_csv: "Upload"
+      upload_csv_title: "Upload CSV"
+      download_csv: "Download"
+      download_csv_title: "Download CSV"
+
     annotations:
       annotation_category: "Annotation Category"
       no_annotation_categories: "There are no annotation categories yet."
