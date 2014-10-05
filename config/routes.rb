@@ -46,6 +46,11 @@ Markus::Application.routes.draw do
         member do
           delete 'destroy'
         end
+
+        collection do
+          post 'csv_upload'
+          get 'download_csv'
+        end
       end
 
       resources :rubrics do

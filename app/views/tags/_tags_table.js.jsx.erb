@@ -1,0 +1,109 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  var TagsTable = React.createClass({
+    getDefaultProps: function() {
+      // Creates a new table with the columns defined below.
+      // The first column will be the column initially sorted.
+
+      return {
+        columns: [
+          {
+            id: 'tags_name',
+            content: '<%= j raw I18n.t(:'tags.table.name') %>',
+            sortable: true
+          },
+          {
+            id: 'creator_name',
+            content: '<%= j raw I18n.t(:'tags.table.creator') %>',
+            sortable: true
+          },
+          {
+            id: 'tags_description',
+            content: '<%= j raw I18n.t(:'tags.table.description') %>',
+            sortable: true
+          },
+          {
+            id: 'tags_use',
+            content: '<%= j raw I18n.t(:'tags.table.use') %>',
+          },
+          {
+            id: 'tags_actions',
+            content: '<%= j raw I18n.t(:'tags.table.actions') %>',
+          }
+        ],
+        // Creates filters for the tags table. This allows
+        // users to filter tags based on whether or not the
+        // tag is in use.
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw I18n.t(:'tags.table.all') %>',
+            func: function(tag) {
+              return true;
+            }
+          },
+          {
+            name: 'in_use',
+            text: '<%= j raw I18n.t(:'tags.table.in_use') %>',
+            func: function(tag) {
+              return !tag.hidden;
+            }
+          },
+          {
+            name: 'not_in_use',
+            text: '<%= j raw I18n.t(:'tags.table.not_in_use') %>',
+            func: function(tag) {
+              return tag.hidden;
+            }
+          }
+        ]
+      }
+    },
+    getInitialState: function() {
+      return {
+        error: null,
+        tags: [],
+        selected_tags: []
+      };
+    },
+    updateSelectedTags: function(tags) {
+      this.setState({selected_tags:tags});
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+
+      // TODO: Enter retrieval code for tags.
+
+      document.getElementById('working').style.display = 'none';
+    },
+    onError: function(error) {
+      this.setState({
+        error: error
+      });
+    },
+    render: function() {
+      // Do student-specific table stuff here.
+      var tags_data = this.state.tags.map(function(tag) {
+        // TODO: Add tag specific operations here.
+      }.bind(this));
+
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <Table data={tags_data}
+            selectable={true}
+            onSelectedRowsChange={this.updateSelectedTags}
+            columns={this.props.columns}
+            filters={this.props.filters} />
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<TagsTable sections={<%= raw @sections.to_json %>} />, document.getElementById('tags_table'));
+</script>
