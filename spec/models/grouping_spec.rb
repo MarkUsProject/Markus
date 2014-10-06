@@ -274,7 +274,7 @@ describe Grouping do
   describe '#repository_external_commits_only?' do
     context 'linked to an assignment allowing web commits' do
       let(:assignment) { create(:assignment, allow_web_submits: true) }
-      let(:grouping) { create(:grouping, assignment_id: assignment.id)}
+      let(:grouping) { create(:grouping, assignment_id: assignment.id) }
 
       it 'returns false for external accessible repository' do
         expect(grouping.repository_external_commits_only?).to be_falsey
@@ -283,7 +283,7 @@ describe Grouping do
 
     context 'linked to an assignment not allowing web commits' do
       let(:assignment) { create(:assignment, allow_web_submits: false) }
-      let(:grouping) { create(:grouping, assignment_id: assignment.id)}
+      let(:grouping) { create(:grouping, assignment_id: assignment.id) }
 
       it 'returns true for external accessible repository' do
         expect(grouping.repository_external_commits_only?).to be_truthy
