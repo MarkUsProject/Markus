@@ -571,7 +571,7 @@
             <input id={group.graders[i].membership_id}
               type='checkbox'
               checked={this.props.selected_graders_in_groups.indexOf(group.graders[i].membership_id) !== -1 ? true : false}
-              onChange={this.graderInGroupCheckboxClicked} />{group.graders[i].user_name}</div>);
+              onChange={this.graderCheckboxClicked} />{group.graders[i].user_name}</div>);
         }
         
         g['graders'] = graders;
