@@ -7,8 +7,7 @@ Markus::Application.configure do
   # and recreated between test runs.  Don't rely on the data there!
   config.cache_classes = true
 
-  # Log error messages when you accidentally call methods on nil.
-  config.whiny_nils = true
+  config.eager_load = false
 
   # Show full error reports and disable caching
   config.consider_all_requests_local = true
@@ -27,10 +26,6 @@ Markus::Application.configure do
 
   # Show Deprecated Warnings (to :log or to :stderr)
   config.active_support.deprecation = :stderr
-
-  # Log the query plan for queries taking more than this (works
-  # with SQLite, MySQL, and PostgreSQL)
-  config.active_record.auto_explain_threshold_in_seconds = 1.0
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
