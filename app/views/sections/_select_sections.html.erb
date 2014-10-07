@@ -1,12 +1,15 @@
-<%= fields_for :user, @user do |f| %>
-  <% selected ||= @user.has_section? ? @user.section.id : %w(−) %>
-  <%= f.select :section_id,
-               options_for_select(%w(−) + @sections.map {|s| [s.name, s.id] },
-                                  selected: selected) %>
-  <%= f.label :section_id, t('section.legend') %>
-<% end %>
-
-<%= link_to t('section.add_section'),
-            add_new_section_students_path(),
-            remote: true,
-            class: 'button' %>
+<td>
+  <%= fields_for :user, @user do |f| %>
+    <%= f.label :section_id, t('section.legend') %>:
+    <% selected ||= @user.has_section? ? @user.section.id : %w(−) %>
+    <%= f.select :section_id,
+                 options_for_select(%w(−) + @sections.map {|s| [s.name, s.id] },
+                                    selected: selected) %>
+  <% end %>
+</td>
+<td>
+  <%= link_to t('section.add_section'),
+              add_new_section_students_path,
+              remote: true,
+              class: 'button inline-button' %>
+</td>

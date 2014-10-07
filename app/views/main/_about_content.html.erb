@@ -1,28 +1,29 @@
-<div id="about_text">
-  <h1><%= I18n.t(:about_markus) %></h1>
-  <h2><%= I18n.t(:version) %></h2>
+<div id='about_text'>
+  <h1><%= t(:about_markus) %></h1>
+  <h2><%= t(:version) %></h2>
 
-  <p><%= I18n.t(:using_markus_version) %><strong><%= @markus_version %></strong></p>
+  <p><%= t(:using_markus_version) %><strong><%= @markus_version %></strong></p>
   <% if @current_user.admin? %>
-    <p><%= I18n.t(:using_ruby_version) %><strong><%= RUBY_VERSION %></strong> </p>
-    <p><%= I18n.t(:using_rails_version) %><strong><%= Rails::VERSION::STRING %></strong> </p>
+    <p><%= t(:using_ruby_version) %><strong><%= RUBY_VERSION %></strong> </p>
+    <p><%= t(:using_rails_version) %><strong><%= Rails::VERSION::STRING %></strong> </p>
   <% end %>
 
-  <h2><%= raw(I18n.t(:license)) %></h2>
-  <p><%= raw(I18n.t(:markus_license_OSI)) %></p>
-  <p><%= raw(I18n.t(:markus_license_permission)) %></p>
-  <p><%= raw(I18n.t(:markus_copyright_intro)) %></p>
-  <p><%= raw(I18n.t(:markus_no_warranty)) %></p>
-  <p><%= raw(I18n.t(:markus_copyright)) %></p>
+  <h2><%= raw(t(:license)) %></h2>
+  <p><%= raw(t(:markus_license_OSI)) %></p>
+  <p><%= raw(t(:markus_license_permission)) %></p>
+  <p><%= raw(t(:markus_copyright_intro)) %></p>
+  <p><%= raw(t(:markus_no_warranty)) %></p>
+  <p><%= raw(t(:markus_copyright)) %></p>
 
-  <h2><%= I18n.t(:markus_credits) %></h2>
-  <p><%= I18n.t(:markus_credits_thanks) %></p>
-  <p><%= render partial: "markus_contributors" %></p>
-  <p><%= I18n.t(:supervisors) %>Karen Reid, Morgan Magnin</p>
+  <h2><%= t(:markus_credits) %></h2>
+  <p><%= t(:markus_credits_thanks) %></p>
+  <p><%= render partial: 'markus_contributors' %></p>
+  <p><%= t(:supervisors) %>Karen Reid, Morgan Magnin</p>
 
-  <h2><%= raw(I18n.t(:contact_us)) %></h2>
-  <p><%= raw(I18n.t(:email_more_info)) %></p>
+  <h2><%= raw(t(:contact_us)) %></h2>
+  <p><%= raw(t(:email_more_info)) %></p>
 </div>
-<div id="about_close">
-  <%= button_to_function I18n.t(:close), 'dialog_modal.close();' %>
-</div>
+
+<section class='dialog-actions'>
+  <%= button_to_function t(:close), 'about_modal.close();' %>
+</section>

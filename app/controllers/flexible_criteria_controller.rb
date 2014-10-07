@@ -19,7 +19,7 @@ class FlexibleCriteriaController < ApplicationController
 
   def update
     @criterion = FlexibleCriterion.find(params[:id])
-    unless @criterion.update_attributes(params[:flexible_criterion])
+    unless @criterion.update_attributes(flexible_criterion_params)
       render :errors
       return
     end
@@ -43,7 +43,7 @@ class FlexibleCriteriaController < ApplicationController
     @criterion.assignment = @assignment
     @criterion.max = FlexibleCriterion::DEFAULT_MAX
     @criterion.position = new_position
-    unless @criterion.update_attributes(params[:flexible_criterion])
+    unless @criterion.update_attributes(flexible_criterion_params)
       @errors = @criterion.errors
       render :add_criterion_error
       return
@@ -115,4 +115,12 @@ class FlexibleCriteriaController < ApplicationController
     # end
   end
 
+  private
+
+  def flexible_criterion_params
+    params.require(:flexible_criterion).permit(:flexible_criterion_name,
+                                               :description,
+                                               :position,
+                                               :max)
+  end
 end

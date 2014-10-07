@@ -1,23 +1,34 @@
-<% # Display a list of the current grade entry forms.
-%>
+<%# Display a list of the current grade entry forms %>
 
-<div class="section">
+<div class='section'>
   <% if @grade_entry_forms.empty? %>
     <p><%= t(:no_grade_entry_forms_message) %></p>
   <% else %>
-
     <h3><%= t(:current_grade_entry_forms_title) %></h3>
-    <ul>
 
-    <% @grade_entry_forms.each do |grade_entry_form| %>
-      <li>
-        <%= link_to grade_entry_form.short_identifier+": "+grade_entry_form.description,
-                    {controller: 'grade_entry_forms', action: action, id: grade_entry_form},
-                    class: "assignment_list"%>
-        <span class="info_due_date"> date: <span class="info_date">  <%= I18n.l(grade_entry_form.date, format: :short_date) %></span></span>
-      </li>
-    <% end %>
-
-    </ul>
+    <div class='table'>
+      <table>
+        <thead>
+          <tr>
+            <th><%= t(:spreadsheet_item) %></th>
+            <th><%= t(:spreadsheet_date) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @grade_entry_forms.each do |grade_entry_form| %>
+            <tr>
+              <td>
+                <%= link_to grade_entry_form.short_identifier+": "+grade_entry_form.description,
+                            {controller: 'grade_entry_forms', action: action, id: grade_entry_form},
+                            class: "assignment_list"%>
+              </td>
+              <td>
+                <%= l(grade_entry_form.date, format: :short_date) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   <% end %>
 </div>

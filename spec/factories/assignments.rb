@@ -2,7 +2,7 @@ require 'faker'
 
 FactoryGirl.define do
   factory :assignment do
-    short_identifier { Faker::Lorem.word }
+    sequence(:short_identifier) { |i| "A#{i}" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }
     group_min 1
@@ -15,7 +15,15 @@ FactoryGirl.define do
     marking_scheme_type Assignment::MARKING_SCHEME_TYPE[:rubric]
     allow_web_submits true
     display_grader_names_to_students false
-    submission_rule NoLateSubmissionRule.new
-    assignment_stat AssignmentStat.new
+    submission_rule { NoLateSubmissionRule.new }
+    assignment_stat { AssignmentStat.new }
+
+    factory :flexible_assignment do
+      marking_scheme_type Assignment::MARKING_SCHEME_TYPE[:flexible]
+    end
+
+    factory :rubric_assignment do
+      marking_scheme_type Assignment::MARKING_SCHEME_TYPE[:rubric]
+    end
   end
 end

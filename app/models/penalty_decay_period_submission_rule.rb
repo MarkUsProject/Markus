@@ -32,7 +32,7 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
       penalty = ExtraMark.new
       penalty.result = result
       penalty.extra_mark = -penalty_amount
-      penalty.unit = ExtraMark::UNITS[:percentage]
+      penalty.unit = ExtraMark::PERCENTAGE
 
       penalty.description = I18n.t 'submission_rules.penalty_decay_period_submission_rule.extramark_description', overtime_hours: overtime_hours, penalty_amount: penalty_amount
       penalty.save

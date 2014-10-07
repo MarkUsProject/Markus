@@ -1,0 +1,5 @@
+document.getElementById('new_extra_mark_error').innerHTML =
+  "<%= escape_javascript(render partial: 'results/marker/extra_mark_errors_list',
+                                locals: { extra_mark: @extra_mark }) %>";
+
+document.getElementById('new_extra_mark_error').style.display = '';

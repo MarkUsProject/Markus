@@ -11,7 +11,7 @@ jQuery(document).ready(function() {
     }
 
     jQuery.ajax({
-      url:  element.readAttribute('data-action'),
+      url:  element.getAttribute('data-action'),
       type: 'POST',
       data: params
     });
@@ -25,7 +25,7 @@ jQuery(document).ready(function() {
     }
 
     jQuery.ajax({
-      url:  this.readAttribute('data-action'),
+      url:  this.getAttribute('data-action'),
       type: 'POST',
       data: params
     }).done(function() {
@@ -49,7 +49,7 @@ jQuery(document).ready(function() {
       }
 
       jQuery.ajax({
-        url:  this.readAttribute('data-action'),
+        url:  this.getAttribute('data-action'),
         type: 'POST',
         data: params
       });
@@ -82,22 +82,22 @@ jQuery(document).ready(function() {
   // Handle the expand/collapse buttons
   jQuery('#expand_all').click(function() {
     jQuery('.mark_description').each(function() {
-      show_criterion(parseInt(this.dataset.id));
+      show_criterion(parseInt(this.getAttribute('data-id'), 10));
     });
   });
 
   jQuery('#collapse_all').click(function() {
     jQuery('.mark_description').each(function() {
-      hide_criterion(parseInt(this.dataset.id));
+      hide_criterion(parseInt(this.getAttribute('data-id'), 10));
     });
   });
 
   jQuery('#expand_unmarked').click(function() {
     jQuery('.mark_description').each(function() {
       if (this.innerHTML.trim()) {
-        hide_criterion(parseInt(this.dataset.id));
+        hide_criterion(parseInt(this.getAttribute('data-id'), 10));
       } else {
-        show_criterion(parseInt(this.dataset.id));
+        show_criterion(parseInt(this.getAttribute('data-id'), 10));
       }
     });
   });
@@ -115,13 +115,13 @@ function hide_criterion(id) {
   document.getElementById('mark_criterion_inputs_' + id).style.display = 'none';
   document.getElementById('mark_criterion_title_' + id).style.display = '';
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
-  document.getElementById('mark_criterion_title_' + id + '_expand').classList.remove('expanded');
+  document.getElementById('mark_criterion_title_' + id + '_expand').removeClass('expanded');
 }
 
 function show_criterion(id) {
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
   document.getElementById('mark_criterion_inputs_' + id).style.display = '';
-  document.getElementById('mark_criterion_title_' + id + '_expand').classList.add('expanded');
+  document.getElementById('mark_criterion_title_' + id + '_expand').addClass('expanded');
 }
 
 function select_mark(mark_id, mark) {
@@ -132,7 +132,7 @@ function select_mark(mark_id, mark) {
   }
 
   if (mark !== null) {
-    document.getElementById('mark_' + mark_id + '_' + mark).classList.add('rubric_criterion_level_selected');
+    document.getElementById('mark_' + mark_id + '_' + mark).addClass('rubric_criterion_level_selected');
   }
 }
 

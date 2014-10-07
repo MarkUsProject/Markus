@@ -1,48 +1,51 @@
 <%= render 'shared/flash_message' %>
 
-<%= form_for criterion,
-	     as: :rubric_criterion,
-	     url: {action: 'update', id: criterion.id},
-		   html: {remote: true} do |f| %>
+<div class='float_right'>
+  <%= button_to t(:delete),
+       assignment_rubric_path(id: criterion.id),
+       confirm: t(:remove_criteria_message),
+       method: :delete,
+       class: 'delete',
+       title: t(:remove_criteria_title),
+       remote: true %>
+</div>
+
 <h2>
-  <span id="selected_criterion_name">
+  <span id='selected_criterion_name'>
     <%= criterion.rubric_criterion_name %>
   </span>
 </h2>
 
+<%= form_for criterion,
+             as: :rubric_criterion,
+             url: { action: 'update', id: criterion.id },
+             html: {  remote: true} do |f| %>
 
-<div class="error" id="criterion_<%=criterion.id%>_error" style="display:none;">
-</div>
+  <div class='error' id='criterion_<%= criterion.id %>_error' style='display:none;'></div>
 
-<div class="main_rubric_criteria_edit">
-  <span id="<%="criterion_inputs_#{criterion.id}"%>">
-   <%= f.label :rubric_criterion_name, I18n.t(:criterion), class: "bold_inline_label" %>
-   <%= f.text_field :rubric_criterion_name, class: "fit_to_space" %>
-  </span> <br>
-  <span id="criterion_weight_edit_<%= criterion.id%>" class="criterion_weight_edit">
-   <%= f.label :weight, I18n.t(:weight), class: "bold_inline_label" %>
-   <%= f.text_field :weight, class: "fit_to_space" %>
-  </span> <br>
-  <span class="criteria_edit_total_mark">
-   <%= I18n.t("criteria_edit_total_mark", criterion_total_mark: criterion.weight*4)%>
-  </span>
-  <br>
-  <br>
-  <%= f.submit t("rubric_criteria.save"), :'data-disable-with' => I18n.t('working')%>
-</div>
+  <div class='main_rubric_criteria_edit'>
+    <span id="<%= "criterion_inputs_#{criterion.id}" %>">
+     <%= f.label :rubric_criterion_name, t(:criterion), class: 'bold_inline_label' %>
+     <%= f.text_field :rubric_criterion_name %>
+    </span>
+    <br>
+    <span id='criterion_weight_edit_<%= criterion.id %>' class='criterion_weight_edit'>
+     <%= f.label :weight, t(:weight), class: 'bold_inline_label' %>
+     <%= f.text_field :weight %>
+    </span>
+    <br>
+    <span class='criteria_edit_total_mark'>
+     <%= t('criteria_edit_total_mark', criterion_total_mark: criterion.weight*4) %>
+    </span>
+    <br>
+    <br>
+    <%= f.submit t('rubric_criteria.save'), data: { disable_with: t('working') } %>
+  </div>
 
-<div class="rubric_criteria_levels">
-  <%= render partial: 'rubric_criterion_levels', locals: {criterion: criterion, f: f} %>
-</div>
+  <div class='rubric_criteria_levels'>
+    <%= render partial: 'rubric_criterion_levels',
+               locals: { criterion: criterion,
+                         f: f } %>
+  </div>
 
 <% end %>
-
-<div class="float_right">
-  <%= button_to I18n.t(:delete),
-       assignment_rubric_path(id: criterion.id),
-       confirm: I18n.t(:remove_criteria_message),
-       method: :delete,
-       class: 'delete',
-       title: I18n.t(:remove_criteria_title),
-       remote: true %>
-</div>

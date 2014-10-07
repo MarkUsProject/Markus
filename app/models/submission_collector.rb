@@ -20,8 +20,9 @@ class SubmissionCollector < ActiveRecord::Base
 
   has_many :grouping_queues, dependent: :destroy
 
-  validates_numericality_of :child_pid, only_integer: true,
-    allow_nil: true
+  validates_numericality_of :child_pid,
+                            only_integer: true,
+                            allow_nil: true
 
   validates_inclusion_of :stop_child, in: [true, false]
 
@@ -42,29 +43,34 @@ class SubmissionCollector < ActiveRecord::Base
     self.grouping_queues.create(priority_queue: true)
   end
 
+  def priority_queue
+    grouping_queues.where(priority_queue: true).first.groupings
+  end
+
+  def regular_queue
+    grouping_queues.where(priority_queue: false).first.groupings
+  end
+
   #Add all the groupings belonging to assignment to the grouping queue
   def push_groupings_to_queue(groupings)
-    priority_queue = grouping_queues.find_by_priority_queue(true).groupings
-    regular_queue = grouping_queues.find_by_priority_queue(false).groupings
-
+    priority_q = priority_queue
+    regular_q  = regular_queue
     groupings.each do |grouping|
-      unless regular_queue.include?(grouping) ||
-          priority_queue.include?(grouping)
-        grouping.is_collected = false
-        regular_queue.push(grouping)
-      end
+      next if regular_q.include?(grouping) || priority_q.include?(grouping)
+      grouping.is_collected = false
+      regular_q.push(grouping)
     end
     start_collection_process
   end
 
   def push_grouping_to_priority_queue(grouping)
-    priority_queue = grouping_queues.find_by_priority_queue(true).groupings
-    regular_queue = grouping_queues.find_by_priority_queue(false).groupings
+    priority_q = priority_queue
+    regular_q  = regular_queue
 
-    regular_queue.delete(grouping) if regular_queue.include?(grouping)
-    unless priority_queue.include?(grouping)
+    regular_q.delete(grouping) if regular_q.include?(grouping)
+    unless priority_q.include?(grouping)
       grouping.is_collected = false
-      priority_queue.push(grouping)
+      priority_q.push(grouping)
     end
     start_collection_process
   end
@@ -75,17 +81,13 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.grouping_queue.groupings.delete(grouping)
     grouping.grouping_queue = nil
     grouping.save
-    return grouping
+    grouping
   end
 
   #Get the next grouping for which to collect the submission, or return nil
   #if there are no more groupings.
   def get_next_grouping_for_collection
-    priority_queue = grouping_queues.find_by_priority_queue(true).groupings
-    regular_queue = grouping_queues.find_by_priority_queue(false).groupings
-
-    current_grouping = priority_queue.first || regular_queue.first
-    return current_grouping
+    priority_queue.first || regular_queue.first
   end
 
   #Fork-off a new process resposible for collecting all submissions

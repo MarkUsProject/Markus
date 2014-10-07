@@ -160,12 +160,16 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
       entry_students = @grade_entry_form.grade_entry_students
       grade_entry_student = entry_students.find_or_create_by_user_id(@students[0].id)
       grade_entry_student.add_tas(@graders[0])
+      gest_ids = grade_entry_student.grade_entry_student_tas.pluck(:id)
 
       remove = "#{@students[0].id}_#{@graders[0].user_name}".to_sym
-      post_as @admin, :global_actions, { :grade_entry_form_id => @grade_entry_form.id,
-        :global_actions => 'unassign', :students => [@students[0]],
-        remove => true, :submit_type => 'global_action',
-        :current_table => 'groups_table' }
+      post_as @admin, :global_actions,
+              grade_entry_form_id: @grade_entry_form.id,
+              global_actions: 'unassign',
+              students: [@students[0]],
+              submit_type: 'global_action',
+              current_table: 'groups_table',
+              gests: gest_ids
 
       assert_nil flash[:error]
       assert_equal 0, @graders[0].get_membership_count_by_grade_entry_form(@grade_entry_form)

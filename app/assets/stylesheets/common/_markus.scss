@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 @import 'reset';
 @import 'constants';
 @import 'mixins';
@@ -124,32 +126,39 @@ strong a {
   @include border-radius($radius);
   display: block;
   margin-bottom: 1em;
-  padding: 0.25em 0.5em;
+  padding: 0.25em 0.5em 0.25em 2em;
   width: 100%;
 }
 
 .error {
   @extend .alert;
-  background: $light-red;
+  background: $light-red url('icons/exclamation.png') no-repeat 5px center;
   border: 1px solid $red;
 }
 
 .warning {
   @extend .alert;
-  background: $light-yellow;
+  background: $light-yellow url(icons/error.png) no-repeat 5px center;
   border: 1px solid $yellow;
 }
 
 .success {
   @extend .alert;
-  background: $light-green;
+  background: $light-green url(icons/accept.png) no-repeat 5px center;
   border: 1px solid $green;
 }
 
 .information {
   @extend .alert;
+  background: $light-grey url(icons/information.png) no-repeat 5px center;
+  border: 1px solid $grey;
+}
+
+.notice {
+  @extend .alert;
   background: $light-grey;
   border: 1px solid $grey;
+  padding: 0.25em 0.5em;
 }
 
 
@@ -159,7 +168,7 @@ input,
 textarea {
   @include border-radius($radius);
   @include transition(all, $time-quick);
-  background: $light-grey;
+  background: lighten($light-grey, 10%);
   border: 1px solid $grey;
   color: $dark-grey;
   font: 400 1em $fonts;
@@ -289,17 +298,16 @@ fieldset {
     @include box-shadow(none);
     border: none;
     border-top: 1px solid $grey;
-    padding: 3.5em 0 0;
+    padding: 0;
 
     legend {
       width: 100%;
 
       & > span {
-        border-top: 1px solid $grey;
         display: block;
         padding-top: 0.5em;
         position: relative;
-        top: 1.5em;
+        top: 1em;
       }
     }
   }
@@ -326,21 +334,28 @@ fieldset {
       text-transform: uppercase;
 
       .asc,
-      .des {
+      .desc {
         cursor: pointer;
 
         &::after {
-          font-size: 0.75em;
-          padding-left: 0.5em;
+          background-position: center center;
+          background-repeat: no-repeat;
+          background-size: 0.85em 0.85em;
+          content: "";
+          display: inline-block;
+          height: 0.85em;
+          margin-left: 0.25em;
+          vertical-align: middle;
+          width: 0.85em;
         }
       }
 
-      .asc::after, {
-        content: "▲";
+      .asc::after {
+        background-image: url(asc@2x.png);
       }
 
-      .des::after {
-        content: "▼";
+      .desc::after {
+        background-image: url(des@2x.png);
       }
     }
 

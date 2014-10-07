@@ -1,4 +1,0 @@
-page.replace_html 'test_results_controls',
-                  partial: 'results/common/test_selector',
-                  locals: {test_result_files: @test_result_files,
-                           result: @result}

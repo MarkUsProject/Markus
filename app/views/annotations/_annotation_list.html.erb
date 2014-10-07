@@ -1,11 +1,14 @@
-<ul class="annotation_text_list" >
-  <% if annotation_category.annotation_texts.size == 0 %>
-    <%= I18n.t("marker.annotation.no_annotation_in_this_category") %>
+<ul class='annotation_text_list'>
+  <% if annotation_category.annotation_texts.empty? %>
+    <li><%= t('marker.annotation.no_annotation_in_this_category') %></li>
   <% end %>
 
   <% annotation_category.annotation_texts.each do |annotation_text| %>
-  <li id="annotation_text_<%=(annotation_text.id)%>" onclick="add_existing_annotation(<%=(annotation_text.id)%>); return false;" onMouseDown="return false;" title="<%=(annotation_text.content)%>">
-  <%=(truncate(annotation_text.content, length: 40))%>
-  </li>
+    <li id='annotation_text_<%= annotation_text.id %>'
+        onclick='add_existing_annotation(<%= annotation_text.id %>); return false;'
+        onMouseDown='return false;'
+        title='<%= annotation_text.content %>'>
+      <%= truncate(annotation_text.content, length: 40) %>
+    </li>
   <% end %>
 </ul>

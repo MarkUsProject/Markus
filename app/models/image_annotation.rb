@@ -19,14 +19,6 @@ class ImageAnnotation < Annotation
     { id: annotation_text_id, x_range: horiz_range, y_range: vert_range }
   end
 
-  def add_annotation_js_string
-    "add_to_annotation_grid('#{self.extract_coords.to_json()}')"
-  end
-
-  def remove_annotation_js_string
-    "remove_annotation(null, null, #{self.annotation_text.id});"
-  end
-
   def annotation_list_link_partial
     '/annotations/image_annotation_list_link'
   end

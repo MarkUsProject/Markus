@@ -1,8 +1,7 @@
 FactoryGirl.define do
   factory :rubric_criterion do
     sequence(:rubric_criterion_name) { |n| "Rubric criterion #{n}" }
-    association :assignment,
-                marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:rubric]
+    association :assignment, factory: :rubric_assignment
     weight 1.0
   end
 end

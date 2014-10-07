@@ -1,13 +1,13 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'jquery-ui-timepicker-addon' %>
   <%= stylesheet_link_tag 'common/jquery-ui', 'common/jquery-ui-timepicker-addon' %>
-  <%= javascript_include_tag 'FilterTable/FilterTable.js' %>
-  <%= javascript_include_tag 'repo_browser.js' %>
-<% end %>
+  <%= javascript_include_tag 'FilterTable/FilterTable' %>
+  <%= javascript_include_tag 'repo_browser' %>
 
-<%= render partial: 'repo_browser_boot',
-           formats: [:js],
-           handlers: [:erb] %>
+  <%= render partial: 'repo_browser_boot',
+             formats: [:js],
+             handlers: [:erb] %>
+<% end %>
 
 <% if flash[:error] -%>
   <div class='error'>
@@ -15,18 +15,20 @@
   </div>
 <% end %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
-    <%= I18n.t('browse_submissions.repository_name',
+    <%= t('browse_submissions.repository_name',
                repository: @repository_name) %>
     (<%= @grouping.get_all_students_in_group %>)
   </h1>
 </div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <div id='repo_browser_controls'>
     <fieldset>
-      <legend><%= I18n.t('browse_submissions.find_different_revision') %></legend>
+      <legend>
+        <span><%= t('browse_submissions.find_different_revision') %></span>
+      </legend>
 
       <div id='find_revision_error' class='error' style='display:none;'></div>
 
@@ -41,7 +43,7 @@
                            l(@revision_timestamp, format: :long_date),
                            { class: 'datetimepicker',
                              size: 30 } %>
-        <%= submit_tag I18n.t('browse_submissions.find_by_revision_timestamp') %>
+        <%= submit_tag t('browse_submissions.find_by_revision_timestamp') %>
       <% end %>
 
       <%= form_tag repo_browser_assignment_submission_path(
@@ -55,21 +57,21 @@
                            l(s[:date], format: :long_date),
                            s[:num]] },
                        @revision_number)) %>
-        <%= submit_tag I18n.t('browse_submissions.find_by_revision_number') %>
+        <%= submit_tag t('browse_submissions.find_by_revision_number') %>
       <% end %>
     </fieldset>
   </div>
 
   <div class='global_actions'>
-    <h2><%= raw(I18n.t('browse_submissions.viewing_revision', revision_number: @revision_number)) %>
+    <h2><%= raw(t('browse_submissions.viewing_revision', revision_number: @revision_number)) %>
         (<span id='current_revision_timestamp_display'>
-           <%= I18n.l(@revision_timestamp, format: :long_date) %>
+           <%= l(@revision_timestamp, format: :long_date) %>
         </span>)
     </h2>
 
     <div id='directory_selector'>
       <p>
-        <%= I18n.t('browse_submissions.current_path') %>
+        <%= t('browse_submissions.current_path') %>
         <% path_memory = '/'
            links = []
            @path.split('/').each do |folder|
@@ -95,9 +97,9 @@
                  remote: true do %>
       <%= hidden_field_tag 'current_revision_number', @revision_number %>
       <input type='submit'
-             value='<%= I18n.t('browse_submissions.collect_and_grab') %>'
+             value='<%= t('browse_submissions.collect_and_grab') %>'
              onclick="if (!confirm('<%=t(:collect_and_grade_overwrite_warning)%>')) return false;
-                      $('progress_text').update('<%=I18n.t('stopping_collection_process')%>');
+                      $('progress_text').update('<%=t('stopping_collection_process')%>');
                       return true;"
              name='commit'>
       <%= link_to t('browse_submissions.download_all_files'),
@@ -109,10 +111,10 @@
       <div id='progress_text'></div>
     <% end %>
   </div>
-</div>
 
-<div class='wrapLeft'>
-  <table class='files' id='files'></table>
+  <div class='table' id='files_table'>
+    <table class='files' id='files'></table>
+  </div>
 </div>
 
 <script>

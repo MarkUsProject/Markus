@@ -24,7 +24,7 @@ function ImageAnnotationGrid(image_event_handler, annotation_text_manager, annot
   this.draw_holders();
 
   image_event_handler.init_listeners(document.getElementById('enable_annotations?').value);
-  document.getElementById('image_preview').onmousemove = this.draw_holders.bind(this);
+  document.getElementById('codeviewer').onmousemove = this.draw_holders.bind(this);
 }
 
 ImageAnnotationGrid.prototype.getAnnotationTextManager = function() {
@@ -58,10 +58,10 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
   var image_container = document.getElementById('image_container');
   var codeviewer      = document.getElementById('codeviewer');
 
-  var top_edge    = image_preview.offsetTop + image_container.scrollTop;
+  var top_edge    = image_preview.offsetTop + codeviewer.scrollTop;
   var left_edge   = image_preview.offsetLeft + image_container.scrollLeft;
   var right_edge  = image_preview.offsetLeft + image_container.scrollLeft + codeviewer.offsetWidth;
-  var bottom_edge = image_preview.offsetTop + image_container.scrollTop + codeviewer.offsetHeight;
+  var bottom_edge = image_preview.offsetTop + codeviewer.scrollTop + codeviewer.offsetHeight;
 
   for (var i = 0; i < annot_grid.length; i++) {
     var grid_element = annot_grid[i];
@@ -72,12 +72,12 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
     holder = document.getElementById('annotation_holder_' + annot_text_id);
 
     // Left offset of the holder
-    holder_left = image_preview.offsetLeft + parseInt(horiz_range.start);
+    holder_left = image_preview.offsetLeft + parseInt(horiz_range.start, 10);
     // Top offset of the holder
-    holder_top  = image_preview.offsetTop + parseInt(vert_range.start);
+    holder_top  = image_preview.offsetTop + parseInt(vert_range.start, 10);
 
-    holder_width  = parseInt(horiz_range.end) - parseInt(horiz_range.start);
-    holder_height = parseInt(vert_range.end) - parseInt(vert_range.start);
+    holder_width  = parseInt(horiz_range.end, 10) - parseInt(horiz_range.start, 10);
+    holder_height = parseInt(vert_range.end, 10) - parseInt(vert_range.start, 10);
 
     holder.style.left = Math.max(0, holder_left - left_edge) + image_preview.offsetLeft + 'px';
     holder.style.top  = Math.max(0, holder_top - top_edge) + image_preview.offsetTop + 'px';
@@ -106,7 +106,7 @@ ImageAnnotationGrid.prototype.add_to_grid = function(extracted_coords) {
 
   var new_holder = document.createElement('div');
   new_holder.id = 'annotation_holder_' + extracted_coords.id;
-  new_holder.classList.add('annotation_holder');
+  new_holder.addClass('annotation_holder');
   new_holder.onmousemove = this.getImageEventHandler().check_for_annotations.bind(this.getImageEventHandler());
   new_holder.onmousedown = this.getImageEventHandler().start_select_box.bind(this.getImageEventHandler());
 

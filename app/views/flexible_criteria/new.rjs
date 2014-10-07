@@ -1,2 +1,0 @@
-page.insert_html :top, 'flexible_criteria_pane_list', partial: 'new_flexible_criterion', locals: {assignment: @assignment}
-page['new_flexible_criterion_prompt'].focus

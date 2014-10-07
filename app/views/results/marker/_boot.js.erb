@@ -13,7 +13,7 @@
   window.onload = function() {
     <% @mark_criteria.each do |criterion| %>
       <% if criterion.has_associated_ta?(@current_user) %>
-        document.getElementById('#mark_criterion_' + <%= criterion.id %>).classList.add('assigned');
+        document.getElementById('#mark_criterion_' + <%= criterion.id %>).addClass('assigned');
       <% elsif @current_user.type == "Ta" %>
         hide_criterion(<%= criterion.id %>);
       <% end %>

@@ -454,92 +454,29 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-
-    if params[:filter].blank?
-      params[:filter] = 'none'
-    end
-
     @assignment = Assignment.find(params[:assignment_id])
 
-    @c_per_page = current_user.id.to_s + '_' + @assignment.id.to_s + '_per_page'
-    if params[:per_page].present?
-       cookies[@c_per_page] = params[:per_page]
-    elsif cookies[@c_per_page].present?
-       params[:per_page] = cookies[@c_per_page]
-    end
-
-    @c_sort_by = current_user.id.to_s + '_' + @assignment.id.to_s + '_sort_by'
-    if params[:sort_by].present?
-       cookies[@c_sort_by] = params[:sort_by]
-    elsif cookies[@c_sort_by].present?
-       params[:sort_by] = cookies[@c_sort_by]
-    else
-       params[:sort_by] = 'group_name'
-    end
-
-    # the data structure to handle filtering and sorting
-    # the assignment to filter by
-    # the submissions accessible by the current user
-    # additional parameters that affect things like sorting
     if current_user.ta?
-        @groupings, @groupings_total = handle_paginate_event(
-      TA_TABLE_PARAMS,
-        { assignment: @assignment,
-          user_id: current_user.id},
-      params)
+      @groupings = @assignment.ta_memberships.find_all_by_user_id(current_user)
+                              .map { |m| m.grouping }
     else
-      @groupings, @groupings_total = handle_paginate_event(
-        ADMIN_TABLE_PARAMS,
-          { assignment: @assignment,
-            user_id: current_user.id},
-        params)
+      @groupings = @assignment.groupings
+        .includes(:assignment,
+                  :group,
+                  :grace_period_deductions,
+                  current_submission_used: :results,
+                  accepted_student_memberships: :user)
+        .select { |g| g.non_rejected_student_memberships.size > 0 }
     end
 
-    #Eager load all data only for those groupings that will be displayed
-    sorted_groupings = @groupings
-    @groupings = Grouping.all(conditions: {id: sorted_groupings},
-                              include:
-                                  [:assignment, :group, :grace_period_deductions,
-                                   {current_submission_used: :results},
-                                   {accepted_student_memberships: :user}])
-
-    #re-sort @groupings by the previous order, because eager loading query
-    #messed up the grouping order
-    @groupings = sorted_groupings.map do |sorted_grouping|
-      @groupings.detect do |unsorted_grouping|
-        unsorted_grouping == sorted_grouping
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: get_submissions_table_info(@assignment, @groupings)
       end
     end
-
-    # Check if any groupings have an error and log it
-    if @groupings.any? {|group| group.error_collecting}
-      flash[:error] = I18n.t('browse_submissions.error_collecting')
-    end
-
-    if cookies[@c_per_page].blank?
-       cookies[@c_per_page] = params[:per_page]
-    end
-
-    if cookies[@c_sort_by].blank?
-       cookies[@c_sort_by] = params[:sort_by]
-    end
-
-    @current_page = params[:page].to_i()
-    @per_page = cookies[@c_per_page]
-
-    if current_user.ta?
-      @filters = get_filters(TA_TABLE_PARAMS)
-      @per_pages = TA_TABLE_PARAMS[:per_pages]
-    else
-      @filters = get_filters(ADMIN_TABLE_PARAMS)
-      @per_pages = ADMIN_TABLE_PARAMS[:per_pages]
-    end
-
-    @desc = params[:desc]
-    @filter = params[:filter]
-    @sort_by = cookies[@c_sort_by]
   end
-
+  
   def index
     @assignments = Assignment.all(order: :id)
     render :index, layout: 'sidebar'
@@ -737,13 +674,18 @@ class SubmissionsController < ApplicationController
       return
     end
 
-    groupings = Grouping.find(grouping_ids)
+    groupings = Grouping.where(id: grouping_ids)
+      .includes(:group,
+                current_submission_used: {
+                  submission_files: {
+                    submission: { grouping: :group }
+                  }
+                })
 
     ## build the zip file
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
 
-      groupings.map do |grouping|
-
+      groupings.each do |grouping|
         ## retrieve the submitted files
         submission = grouping.current_submission_used
         next unless submission
@@ -835,70 +777,51 @@ class SubmissionsController < ApplicationController
   end
 
   def update_submissions
-
     return unless request.post?
-    assignment = Assignment.find(params[:assignment_id])
-    errors = []
-    groupings = []
-    if params[:ap_select_full] == 'true'
-      # We should have been passed a filter
-      if params[:filter].blank?
-        raise I18n.t('student.submission.expect_filter')
-      end
+    begin
+      assignment = Assignment.find(params[:assignment_id])
+      groupings = []
 
-      # Get all Groupings for this filter
-      if current_user.ta?
-        groupings = TA_TABLE_PARAMS[:filters][params[:filter]][:proc].call({assignment: assignment, user_id: current_user.id}, {})
-      else
-        groupings = ADMIN_TABLE_PARAMS[:filters][params[:filter]][:proc].call({assignment: assignment, user_id: current_user.id}, {})
-      end
-
-    else
-      # User selected particular Grouping IDs
       if params[:groupings].nil?
-        errors.push(I18n.t('results.must_select_a_group')) unless !params[:collect_section].nil?
+        raise I18n.t('results.must_select_a_group') unless params[:collect_section]
       else
         groupings = assignment.groupings.find(params[:groupings])
       end
-    end
 
-    log_message = ''
-    if params[:release_results]
-      changed = set_release_on_results(groupings, true, errors)
-      log_message = "Marks released for assignment '#{assignment.short_identifier}', ID: '" +
-                    "#{assignment.id}' (for #{changed} groups)."
-    elsif params[:unrelease_results]
-      changed = set_release_on_results(groupings, false, errors)
-      log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
-                    "#{assignment.id}' (for #{changed} groups)."
-    elsif params[:collect_section]
-      if params[:section_to_collect] == ''
-        errors.push(I18n.t('collect_submissions.must_select_a_section'))
-      else
-        collected = collect_submissions_for_section(params[:section_to_collect], assignment, errors)
-        if collected > 0
-          flash[:success] = I18n.t('collect_submissions.successfully_collected', collected: collected)
+      log_message = ''
+      if params[:release_results]
+        changed = set_release_on_results(groupings, true)
+        log_message = "Marks released for assignment '#{assignment.short_identifier}', ID: '" +
+                      "#{assignment.id}' (for #{changed} groups)."
+      elsif params[:unrelease_results]
+        changed = set_release_on_results(groupings, false)
+        log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
+                      "#{assignment.id}' (for #{changed} groups)."
+      elsif params[:collect_section]
+        if params[:section_to_collect] == ''
+          raise I18n.t('collect_submissions.must_select_a_section')
+        else
+          collected = collect_submissions_for_section(params[:section_to_collect], assignment)
+          if collected > 0
+            flash[:success] = I18n.t('collect_submissions.successfully_collected', collected: collected)
+          end
         end
       end
-    end
-
 
     unless groupings.empty?
       assignment.update_results_stats
     end
 
-    if changed && changed > 0
-      flash[:success] = I18n.t('results.successfully_changed', {changed: changed})
-      m_logger = MarkusLogger.instance
-      m_logger.log(log_message)
+      if changed && changed > 0
+        # These flashes don't get rendered. Find another way to display?
+        flash[:success] = I18n.t('results.successfully_changed', {changed: changed})
+        m_logger = MarkusLogger.instance
+        m_logger.log(log_message)
+      end
+      head :ok
+    rescue => e
+      render text: e.message, status: 400
     end
-    flash[:errors] = errors
-
-    redirect_to action: 'browse',
-                id: params[:id],
-                per_page: params[:per_page],
-                filter:   params[:filter],
-                sort_by:  params[:sort_by]
   end
 
   def unrelease

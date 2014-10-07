@@ -52,11 +52,11 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_
   // the annotations
   var me = this;
 
-  line.getLineNode().addEventListener("mouseover", function(event) {
-    me.displayTextsForLine(line_num, Event.pointerX(event), Event.pointerY(event));
+  line.getLineNode().addEventListener('mouseover', function(event) {
+    me.displayTextsForLine(line_num, event.pageX, event.pageY);
   });
 
-  line.getLineNode().addEventListener("mouseout", function(event) {
+  line.getLineNode().addEventListener('mouseout', function(event) {
     me.hideText();
   });
 }
@@ -127,9 +127,9 @@ SourceCodeLineAnnotations.prototype.relationshipExists = function(annotation_id,
 
 SourceCodeLineAnnotations.prototype.removeRelationship = function(annotation_id, line_num, annotation_text_id) {
   var relationship = this.relationshipExists(annotation_id, line_num, annotation_text_id);
-  if (relationship == null) {
-    return;  // No relationship existed, so just return
-  }
+
+  // Just return if no relationship existed
+  if (relationship == null) { return;   }
 
   // Remove the found relationship from the relationships array
   this.setRelationships(this.getRelationships().without(relationship));

@@ -14,7 +14,7 @@ class AnnotationsController < ApplicationController
       @annotation.update_attributes({
         x1: Integer(params[:x1]), x2: Integer(params[:x2]),
         y1: Integer(params[:y1]), y2: Integer(params[:y2]),
-        submission_file_id: params[:submission_file_id],
+        submission_file_id: @submission_file_id,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
       })
@@ -23,7 +23,7 @@ class AnnotationsController < ApplicationController
       @annotation.update_attributes({
         line_start: params[:line_start],
         line_end: params[:line_end],
-        submission_file_id: params[:submission_file_id],
+        submission_file_id: @submission_file_id,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
       })
@@ -51,14 +51,14 @@ class AnnotationsController < ApplicationController
           line_start: params[:line_start],
           line_end: params[:line_end],
           annotation_text_id: @text.id,
-          submission_file_id: params[:submission_file_id],
+          submission_file_id: @submission_file_id,
           is_remark: is_remark,
           annotation_number: submission.annotations.count + 1
         })
       when 'image'
         @annotation = ImageAnnotation.create({
           annotation_text_id: @text.id,
-          submission_file_id: params[:submission_file_id],
+          submission_file_id: @submission_file_id,
           x1: Integer(params[:x1]), x2: Integer(params[:x2]),
           y1: Integer(params[:y1]), y2: Integer(params[:y2]),
           is_remark: is_remark,
@@ -82,7 +82,6 @@ class AnnotationsController < ApplicationController
         annot.save
       end
     end
-
   end
 
   def update_annotation

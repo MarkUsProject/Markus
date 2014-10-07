@@ -1,8 +1,7 @@
-<% # Grade entry form creation page
-%>
-
-<div id="title_bar">
+<div class='title_bar'>
   <h1><%= t('grade_entry_forms.create.title') %></h1>
-  <p><%= t("grade_entry_forms.required_fields").html_safe %></p>
 </div>
+
+<p><%= t('grade_entry_forms.required_fields').html_safe %></p>
+
 <%= render partial: 'form' %>

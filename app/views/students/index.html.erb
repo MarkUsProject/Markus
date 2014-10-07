@@ -1,16 +1,10 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'users_manager',
-                             'FilterTable/FilterTable',
-                             'effects.js',
+  <%= javascript_include_tag 'effects.js',
                              'Students/index',
                              'help_system' %>
+  <%= render partial: 'students_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
-  <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
-  <%= render partial: 'boot',
-             formats: [:js],
-             handlers: [:erb] %>
-
-  <script>
+  <script type="text/javascript">
     var modalNotesGroup = null;
 
     jQuery(document).ready(function() {
@@ -19,10 +13,14 @@
   </script>
 <% end %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
     <%= t('students.manage_students') %>
-    <span class='title-help manage_students_help'></span>
+    <span class='title-help manage_students_help'>
+      <p class='help-message-title manage_students_help'>
+        <%= t('students.help.manage_students') %>
+      </p>
+    </span>
   </h1>
   <div class='heading_buttons'>
     <%= link_to t(:add_new),
@@ -36,102 +34,37 @@
                 '#',
                 onclick: 'modal_download.open(); return false;' %>
   </div>
-  <p class='help-message-title manage_students_help'>
-    <%= t('students.help.manage_students') %>
-  </p>
-  <div class='help-break manage_students_help'></div>
 </div>
 
 <div class="wrapLeft">
-  <%= form_tag bulk_modify_students_path(), remote: true do %>
+  <div id="list">
+    <%= render 'shared/flash_message' %>
 
-    <div id='ajax_error' class='error' style='display:none;'></div>
-
-    <div id='list'>
-      <%= render 'shared/flash_message' %>
-
-      <% # Display lines in CSV file that has not been successfully processed %>
-      <% if flash[:error] && flash[:error].is_a?(Array) -%>
-        <div class='errorExplanation' id='errorExplanation'>
-          <p><%= t(:students_not_successfully_added_message_1)%></p>
-          <p><%= t(:students_not_successfully_added_message_2) %></p>
-          <ul>
-            <li><%= t(:students_not_successfully_added_message_3) %></li>
-            <li><%= t(:students_not_successfully_added_message_4) %></li>
-            <li><%= t(:students_not_successfully_added_message_5) %></li>
-          </ul>
-        </div>
-      <% end -%>
-
-      <div id='toggle_actions'>
-        <%= t(:filters) %>:
-        <%= link_to raw(t(:all) + " (<span id=\"all_students_count\"></span>)"),
-                    '#',
-                    onclick: "filter('none');",
-                    id: "filter_link_none",
-                    class: "filter_selected" %>
-        |
-        <%= link_to raw(t(:active) + " (<span id=\"active_students_count\"></span>)"),
-                    '#',
-                    onclick: "filter('active');",
-                    id: "filter_link_active" %>
-        |
-        <%= link_to raw(t(:not_active) + " (<span id=\"inactive_students_count\"></span>)"),
-                    '#',
-                    onclick: "filter('inactive');",
-                    id: "filter_link_inactive"%>
-      </div>
-
-      <div class="global_action">
-        <select name="bulk_action"
-                id="bulk_action"
-                onchange="detect_bulk_action_change();">
-          <option><%= t(:bulk_action)%></option>
-          <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
-          <option value="add_section"><%= t(:add_section)%></option>
-          <option value="hide"><%= t(:hide_students)%></option>
-          <option value="unhide"><%= t(:unhide_students)%></option>
-        </select>
-
-        <span id='grace_credit_input' style='display:none;'>
-          <%= text_field_tag :number_of_grace_credits,
-                             nil,
-                             size: 1,
-                             id: 'number_of_grace_credits' %>
-        </span>
-
-        <span id='section_input' style='display: none;'>
-          <select name='section' id='section'>
-            <option> - </option>
-            <% @sections.each do |section| %>
-              <option value='<%= section.id %>'><%= section.name %></option>
-            <% end %>
-          </select>
-        </span>
-        <%= submit_tag t(:apply),
-                       id: 'apply_bulk_action',
-                       data: { disable_with: t('working') },
-                       name: 'commit',
-                       class: 'thin-button' %>
-      </div>
-
-      <div class='search_box'>
-        <%= text_field_tag 'search_students',
-                           nil,
-                           onkeyup: "users_table.add_filter('search'); users_table.render();",
-                           onkeypress: 'stop_submit(event);',
-                           placeholder: t('students.search_students') %>
-      </div>
-
-      <div style='overflow:auto;'>
-        <table id='students'></table>
-      </div>
+    <% # display lines in csv file that has not been successfully processed %>
+    <% if flash[:error] && flash[:error].is_a?(Array) -%>
+    <div class="errorExplanation" id="errorExplanation">
+      <p><%= I18n.t(:students_not_successfully_added_message_1)%></p>
+      <p><%= I18n.t(:students_not_successfully_added_message_2) %></p>
+      <ul>
+        <li><%= I18n.t(:students_not_successfully_added_message_3) %></li>
+        <li><%= I18n.t(:students_not_successfully_added_message_4) %></li>
+        <li><%= I18n.t(:students_not_successfully_added_message_5) %></li>
+      </ul>
     </div>
-  <% end %> <!-- remote form tag -->
+    <% end %>
+
+    <div id='students_table'></div>
+  </div>
 </div>
 
 <!-- Modal Windows -->
-<div id='upload_dialog'>
+<aside class='dialog' id='upload_dialog'>
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: 'upload_script',
+                             upload_id: 'userlist',
+                             button_id: 'upload' %>
+
   <h2><%= t('students.upload.upload_a_class_list') %></h2>
   <p><%= t('students.upload.select_csv_file').html_safe %></p>
   <p><%= t('students.upload.student_same_number') %></p>
@@ -148,14 +81,17 @@
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </div>
 
-    <div>
-      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) },
+                     id: 'upload',
+                     disabled: true %>
       <%= button_to t(:close), '#', onclick: 'modal_upload.close(); return false;' %>
-    </div>
+    </section>
   </form>
-</div>
+</aside>
 
-<div id='download_dialog'>
+<aside class='dialog' id='download_dialog'>
   <h2><%= t('download') %></h2>
   <p>
     <%= link_to t('students.download.download_csv_format'),
@@ -170,7 +106,10 @@
                   format: 'xml' },
                 onclick: 'modal_download.close();' %>
   </p>
-  <%= button_to t(:close), '#' , onclick: 'modal_download.close(); return false;' %>
-</div>
 
-<div id='notes_dialog'></div>
+  <section class='dialog-actions'>
+    <%= button_to t(:close), '#' , onclick: 'modal_download.close(); return false;' %>
+  </section>
+</aside>
+
+<aside class='dialog' id='notes_dialog'></aside>

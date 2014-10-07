@@ -1,6 +1,6 @@
 Markus::Application.routes.draw do
   # Install the default routes as the lowest priority.
-  root controller: "main", action: "login"
+  root controller: 'main', action: 'login', via: [:post, :get]
 
   # optional path scope (denoted by the parentheses)
   scope "(:locale)", locale: /en|fr|pt/  do
@@ -16,11 +16,7 @@ Markus::Application.routes.draw do
       resources :main_api
     end
 
-    resources :admins do
-      collection do
-        post 'populate'
-      end
-    end
+    resources :admins
 
     resources :assignments do
 
@@ -91,8 +87,6 @@ Markus::Application.routes.draw do
         end
 
         collection do
-          post 'populate'
-          post 'populate_students'
           get 'add_group'
           get 'use_another_assignment_groups'
           get 'manage'
@@ -188,9 +182,6 @@ Markus::Application.routes.draw do
           get 'grader_criteria_dialog'
           get 'global_actions'
           get 'groups_coverage_dialog'
-          post 'populate_graders'
-          post 'populate'
-          post 'populate_criteria'
           post 'set_assign_criteria'
           get 'random_assign'
           get 'upload_dialog'
@@ -296,7 +287,6 @@ Markus::Application.routes.draw do
     resources :students do
       collection do
         post 'bulk_modify'
-        post 'populate'
         get 'manage'
         get 'add_new_section'
         get 'download_student_list'
@@ -310,7 +300,6 @@ Markus::Application.routes.draw do
 
     resources :tas  do
       collection do
-        post 'populate'
         post 'upload_ta_list'
         get 'download_ta_list'
       end
@@ -329,10 +318,11 @@ Markus::Application.routes.draw do
     end
   end
 
-  match 'main', controller: 'main', action: 'index'
-  match 'main/about', controller: 'main', action: 'about'
-  match 'main/logout', controller: 'main', action: 'logout'
+  match 'main', controller: 'main', action: 'index', via: :post
+  match 'main/about', controller: 'main', action: 'about', via: :post
+  match 'main/logout', controller: 'main', action: 'logout', via: :post
 
+  # TODO: this should be via: :all, but does not seem to work with Rails 3
   # Return a 404 when no route is match
-  match '*path', controller: 'main', action: 'page_not_found'
+  match '*path', controller: 'main', action: 'page_not_found', via: :get
 end

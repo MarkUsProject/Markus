@@ -1,4 +1,0 @@
-page.replace_html  "criterion_title_#{@criterion.id}", @criterion.rubric_criterion_name
-page.replace_html "criterion_weight_#{@criterion.id}", @criterion.weight
-page.replace_html "rubric_total_weight", @criterion.assignment.total_criteria_weight
-page.replace_html "rubric_levels_pane_menu", partial: 'criterion_editor', locals: {criterion: @criterion}

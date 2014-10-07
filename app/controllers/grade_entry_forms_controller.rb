@@ -23,7 +23,7 @@ class GradeEntryFormsController < ApplicationController
   # Filters will be added as the student UI is implemented (eg. Show Released,
   # Show All,...)
   G_TABLE_PARAMS = {model: GradeEntryStudent,
-                    per_pages: [15, 30, 50, 100, 150, 500, 1000],
+                    per_pages: [100, 150, 500, 1000],
                     filters: {
                         'none' => {
                             display: 'Show All',
@@ -62,7 +62,7 @@ class GradeEntryFormsController < ApplicationController
     # Process input properties
     @grade_entry_form.transaction do
       # Edit params before updating model
-      new_params = update_grade_entry_form_params params[:grade_entry_form]
+      new_params = update_grade_entry_form_params grade_entry_form_params
       if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.create.success')
@@ -85,7 +85,7 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form.transaction do
 
       # Edit params before updating model
-      new_params = update_grade_entry_form_params params[:grade_entry_form]
+      new_params = update_grade_entry_form_params grade_entry_form_params
       if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.edit.success')
@@ -111,7 +111,7 @@ class GradeEntryFormsController < ApplicationController
       params[:per_page] = cookies[c_per_page]
     else
       # Set params to default and make the cookie!
-      params[:per_page] = 15
+      params[:per_page] = 100
       cookies[c_per_page] = params[:per_page]
     end
 
@@ -119,14 +119,29 @@ class GradeEntryFormsController < ApplicationController
         @grade_entry_form.id.to_s + '_sort_by_grades'
     if params[:sort_by].present?
       cookies[c_sort_by] = params[:sort_by]
+    elsif cookies[c_sort_by].present?
+      params[:sort_by] = cookies[c_sort_by]
     else
       params[:sort_by] = 'last_name'
+      cookies[c_sort_by] = params[:sort_by]
     end
     @sort_by = params[:sort_by]
     @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
     @per_page = params[:per_page]
     @per_pages = G_TABLE_PARAMS[:per_pages]
+    @loc = params
+
+    # Create cookie to remember the direction of the sort
+    c_order = current_user.id.to_s + '_' +
+        @grade_entry_form.id.to_s + '_order_sp'
+    if !cookies[c_order].blank? && !params[:loc].present?
+      @desc = cookies[c_order]
+    elsif @desc.blank?
+      cookies[c_order] = ''
+    else
+      cookies[c_order] = @desc
+    end
 
     all_students = get_filtered_items(G_TABLE_PARAMS,
                                       @filter,
@@ -135,12 +150,13 @@ class GradeEntryFormsController < ApplicationController
     @students = all_students.paginate(per_page: @per_page,
                                       page: @current_page)
     @students_total = all_students.size
-    @alpha_pagination_options = @grade_entry_form.alpha_paginate(all_students,
-                                                                 @per_page,
-                                                                 @students.total_pages)
+    @alpha_pagination_options =
+                      @grade_entry_form.alpha_paginate(all_students,
+                                                       @per_page,
+                                                       @students.total_pages,
+                                                       @sort_by)
     session[:alpha_pagination_options] = @alpha_pagination_options
     @alpha_category = @alpha_pagination_options.first
-    @sort_by = cookies[c_sort_by]
   end
 
   
@@ -167,11 +183,15 @@ class GradeEntryFormsController < ApplicationController
     @per_pages = G_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
     @filter = params[:filter]
+    c_sort_by = current_user.id.to_s + '_' +
+        @grade_entry_form.id.to_s + '_sort_by_grades'
     if params[:sort_by].present?
       @sort_by = params[:sort_by]
-    else
-      @sort_by = 'last_name'
+    elsif cookies[c_sort_by].present?
+      params[:sort_by] = cookies[c_sort_by]
     end
+
+    @sort_by = params[:sort_by]
 
     # Only re-compute the alpha_pagination_options for the drop-down menu
     # if the number of items per page has changed
@@ -184,7 +204,8 @@ class GradeEntryFormsController < ApplicationController
       @alpha_pagination_options = @grade_entry_form.alpha_paginate(
           all_students,
           @per_page,
-          @students.total_pages)
+          @students.total_pages,
+          @sort_by)
       @alpha_category = @alpha_pagination_options.first
       session[:alpha_pagination_options] = @alpha_pagination_options
     else
@@ -204,15 +225,19 @@ class GradeEntryFormsController < ApplicationController
     @student_id = params[:student_id]
     @grade_entry_item_id = params[:grade_entry_item_id]
     updated_grade = params[:updated_grade]
+
     grade_entry_student =
-        grade_entry_form.grade_entry_students.find_or_create_by_user_id(
+      grade_entry_form.grade_entry_students.find_or_create_by_user_id(
             @student_id)
-    @grade =
-        grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
-            @grade_entry_item_id)
+
+    @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
+                  @grade_entry_item_id)
+
     @grade.grade = updated_grade
     @grade_saved = @grade.save
-    @updated_student_total = grade_entry_student.update_total_grade
+    @updated_student_total = grade_entry_student.total_grade
+
+    grade_entry_student.save # Save updated grade
   end
 
   # For students
@@ -337,7 +362,16 @@ class GradeEntryFormsController < ApplicationController
         end
       end
     end
-  redirect_to action: 'grades', id: @grade_entry_form.id
+    redirect_to action: 'grades', id: @grade_entry_form.id
   end
 
+  private
+
+  def grade_entry_form_params
+    params.require(:grade_entry_form).permit(:description,
+                                             :message,
+                                             :date,
+                                             :show_total,
+                                             :short_identifier)
+  end
 end

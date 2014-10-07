@@ -1,25 +1,24 @@
 <% if old_result %>
   <p>
     <a href='#' onclick='return false;' onmouseover='show_old_marks();' onmouseout='hide_old_marks();'>
-      <%= I18n.t("marker.marks.show_old_marks") %>
+      <%= t('marker.marks.show_old_marks') %>
     </a>
   </p>
-  <div id="old_summary_criteria_pane">
+
+  <div id='old_summary_criteria_pane'>
 
     <%= render partial: "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
-               locals: {mark_criteria: mark_criteria, marks_map: old_marks_map} %>
+               locals: { mark_criteria: mark_criteria,
+                         marks_map: old_marks_map } %>
 
-    <div class="mark_subtotal">
-      <div class="float_left"><%= I18n.t("marker.marks.old_subtotal") %> </div>
-      <div class="float_right"> / <%= assignment.total_mark %></div>
-      <div class="float_right" id="old_subtotal_div"><%= old_result.get_subtotal %></div>
+    <div class='summary_block'>
+      <strong><%= t('marker.marks.old_subtotal') %></strong>
+      <span><%= old_result.get_subtotal %> / <%= assignment.total_mark %></span>
     </div>
 
-    <div class="clear"></div>
-    s
-    <div id="extra_marks_pane" class="extra_marks_pane">
-      <div class="bonus_deduction">
-        <strong><%= I18n.t("marker.marks.bonus_deductions") %></strong>
+    <div id='extra_marks_pane' class='extra_marks_pane'>
+      <div class='bonus_deduction'>
+        <strong><%= t('marker.marks.bonus_deductions') %></strong>
       </div>
 
       <%= render partial: 'results/student/extra_marks_table',
@@ -29,58 +28,53 @@
       <table>
         <tr>
           <td>
-            <strong><%= I18n.t("marker.marks.bonus_marks").html_safe %></strong>
+            <strong><%= t('marker.marks.bonus_marks').html_safe %></strong>
           </td>
-          <td id="extra_marks_bonus">
+          <td id='extra_marks_bonus'>
             <%= old_result.get_positive_extra_points %>
           </td>
         </tr>
         <tr>
           <td>
-            <strong><%= I18n.t("marker.marks.deducted_marks").html_safe %></strong>
+            <strong><%= t('marker.marks.deducted_marks').html_safe %></strong>
           </td>
-          <td id="extra_marks_deducted">
+          <td id='extra_marks_deducted'>
             <%= @old_result.get_negative_extra_points %>
           </td>
         </tr>
       </table>
     </div>
 
-    <div id="extra_percentage_pane" class="extra_percentage_pane">
+    <div id='extra_percentage_pane' class='extra_percentage_pane'>
       <%= render partial: 'results/student/extra_percentage_table',
                  locals: { extra_marks_percentage: old_result.extra_marks.percentage,
                            result_id: old_result.id } %>
     </div>
 
-    <div class="clear"></div>
-
-    <div class="summary_block">
-      <strong><%= I18n.t("marker.marks.total_extra_percentages").html_safe %></strong>
-      <span id="total_extra_percentage"><%= old_result.get_total_extra_percentage %></span><br>
-      <strong><%= I18n.t("marker.marks.translated_to_points") %></strong>
-      <span id="total_extra_percentage_as_points"><%= old_result.get_total_extra_percentage_as_points %></span><br>
+    <div class='summary_block'>
+      <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
+      <span id='total_extra_percentage'><%= old_result.get_total_extra_percentage %></span><br>
+      <strong><%= t('marker.marks.translated_to_points') %></strong>
+      <span id='total_extra_percentage_as_points'><%= old_result.get_total_extra_percentage_as_points %></span><br>
     </div>
   </div>
 <% end %>
 
-<div id="summary_criteria_pane">
+<div id='summary_criteria_pane'>
   <%= render partial: "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
              locals: { mark_criteria: mark_criteria,
                        marks_map: marks_map } %>
 
   <!-- Summary Criteria Pane -->
 
-  <div class="mark_subtotal">
-    <div class="float_left"><%= I18n.t("marker.marks.subtotal") %> </div>
-    <div class="float_right"> / <%= assignment.total_mark %></div>
-    <div class="float_right" id="current_subtotal_div"><%= result.get_subtotal %></div>
+  <div class='summary_block'>
+      <strong><%= t('marker.marks.subtotal') %></strong>
+      <span><%= result.get_subtotal %> / <%= assignment.total_mark %></span>
   </div>
 
-  <div class="clear"></div>
-
-  <div id="extra_marks_pane" class="extra_marks_pane">
-    <div class="bonus_deduction">
-      <strong><%= I18n.t("marker.marks.bonus_deductions") %></strong>
+  <div id='extra_marks_pane' class='extra_marks_pane'>
+    <div class='bonus_deduction'>
+      <strong><%= t('marker.marks.bonus_deductions') %></strong>
     </div>
 
     <%= render partial: 'results/student/extra_marks_table',
@@ -90,74 +84,64 @@
     <table>
       <tr>
         <td>
-          <strong><%= I18n.t("marker.marks.bonus_marks").html_safe %></strong>
+          <strong><%= t('marker.marks.bonus_marks').html_safe %></strong>
         </td>
-        <td id="extra_marks_bonus">
+        <td id='extra_marks_bonus'>
           <%= result.get_positive_extra_points %>
         </td>
       </tr>
       <tr>
         <td>
-          <strong><%= I18n.t("marker.marks.deducted_marks").html_safe %></strong>
+          <strong><%= t('marker.marks.deducted_marks').html_safe %></strong>
         </td>
-        <td id="extra_marks_deducted">
+        <td id='extra_marks_deducted'>
           <%= @result.get_negative_extra_points %>
         </td>
       </tr>
     </table>
   </div>
 
-  <div class="clear"></div>
-
-  <div id="extra_percentage_pane" class="extra_percentage_pane">
+  <div id='extra_percentage_pane' class='extra_percentage_pane'>
     <%= render partial: 'results/student/extra_percentage_table',
                locals: { extra_marks_percentage: extra_marks_percentage,
                          result_id: result.id } %>
   </div>
 
-  <div class="clear"></div>
-
-  <div class="summary_block">
-    <strong><%= I18n.t("marker.marks.total_extra_percentages").html_safe %></strong>
-    <span id="total_extra_percentage"><%= result.get_total_extra_percentage %></span><br>
-    <strong><%= I18n.t("marker.marks.translated_to_points") %></strong>
-    <span id="total_extra_percentage_as_points"><%= result.get_total_extra_percentage_as_points %></span><br>
+  <div class='summary_block'>
+    <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
+    <span id='total_extra_percentage'><%= result.get_total_extra_percentage %></span><br>
+    <strong><%= t('marker.marks.translated_to_points') %></strong>
+    <span id='total_extra_percentage_as_points'><%= result.get_total_extra_percentage_as_points %></span><br>
   </div>
 </div>
 
-<div class="clear"></div>
-
-<div id="extra_percentage_pane" class="extra_percentage_pane">
+<div id='extra_percentage_pane' class='extra_percentage_pane'>
   <%= render partial: 'results/student/extra_percentage_table',
              locals: { extra_marks_percentage: extra_marks_percentage,
                        result_id: result.id } %>
 </div>
 
-<div class="clear"></div>
-
-<div class="summary_block">
-  <strong><%= I18n.t("marker.marks.total_extra_percentages").html_safe %></strong>
-  <span id="total_extra_percentage"><%= result.get_total_extra_percentage %></span><br>
-  <strong><%= I18n.t("marker.marks.translated_to_points") %></strong>
-  <span id="total_extra_percentage_as_points"><%= result.get_total_extra_percentage_as_points %></span><br>
+<div class='summary_block'>
+  <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
+  <span id='total_extra_percentage'><%= result.get_total_extra_percentage %></span><br>
+  <strong><%= t('marker.marks.translated_to_points') %></strong>
+  <span id='total_extra_percentage_as_points'><%= result.get_total_extra_percentage_as_points %></span><br>
 </div>
 
-<div class="clear"></div>
-
 <% if old_result %>
-  <div class="mark_total">
-    <span class="final_mark">
-      <span id="old_total_mark_div"><%= old_result.total_mark %> </span>
+  <div class='mark_total'>
+    <span class='final_mark'>
+      <span id='old_total_mark_div'><%= old_result.total_mark %> </span>
       <span> / <%= assignment.total_mark %></span>
     </span>
-    <span><%= I18n.t("marker.marks.previous_mark").html_safe %></span>
+    <span><%= t('marker.marks.previous_mark').html_safe %></span>
   </div>
 <% end %>
 
-<div class="mark_total">
-  <span class="final_mark">
-    <span id="current_total_mark_div"><%= result.total_mark %> </span>
+<div class='mark_total'>
+  <span class='final_mark'>
+    <span id='current_total_mark_div'><%= result.total_mark %> </span>
     <span> / <%= assignment.total_mark %></span>
   </span>
-  <span><%= I18n.t("marker.marks.final_mark").html_safe %></span>
+  <span><%= t('marker.marks.final_mark').html_safe %></span>
 </div>

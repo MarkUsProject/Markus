@@ -8,30 +8,184 @@ module SubmissionsHelper
     end
   end
 
-  def set_release_on_results(groupings, release, errors)
+  def set_release_on_results(groupings, release)
     changed = 0
     groupings.each do |grouping|
-      begin
-        raise I18n.t('marking_state.no_submission', group_name: grouping.group.group_name) if !grouping.has_submission?
-        submission = grouping.current_submission_used
-        raise I18n.t('marking_state.no_result', group_name: grouping.group.group_name) if !submission.has_result?
-        raise I18n.t('marking_state.not_complete', group_name: grouping.group.group_name) if
-          submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete] && release
-        raise I18n.t('marking_state.not_complete_unrelease', group_name: grouping.group.group_name) if
-          submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
-        @result = submission.get_latest_result
-        @result.released_to_students = release
-        unless @result.save
-          raise I18n.t('marking_state.result_not_saved', group_name: grouping.group.group_name)
-        end
-        changed += 1
-      rescue Exception => e
-        errors.push(e.message)
+      raise I18n.t('marking_state.no_submission',
+                   group_name: grouping.group.group_name) unless grouping.has_submission?
+      submission = grouping.current_submission_used
+      raise I18n.t('marking_state.no_result',
+                   group_name: grouping.group.group_name) unless submission.has_result?
+      raise I18n.t('marking_state.not_complete', group_name: grouping.group.group_name) if
+        submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete] && release
+      raise I18n.t('marking_state.not_complete_unrelease', group_name: grouping.group.group_name) if
+        submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
+      result = submission.get_latest_result
+      result.released_to_students = release
+      unless result.save
+        raise I18n.t('marking_state.result_not_saved', group_name: grouping.group.group_name)
       end
+      changed += 1
     end
     changed
   end
 
+  def get_submissions_table_info(assignment, groupings)
+    groupings.map do |grouping|
+      g = grouping.attributes
+      g[:class_name] = get_any_tr_attributes(grouping)
+      g[:group_name] = get_grouping_group_name(assignment, grouping)
+      g[:repository] = get_grouping_repository(assignment, grouping)
+      g[:commit_date] = get_grouping_commit_date(assignment, grouping)
+      g[:marking_state] = get_grouping_marking_state(assignment, grouping)
+      g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
+      g[:final_grade] = get_grouping_final_grades(grouping)
+      g[:can_begin_grading] = get_grouping_can_begin_grading(assignment, grouping)
+      g[:state] = get_grouping_state(grouping)
+      g[:section] = get_grouping_section(grouping)
+      g
+    end
+  end
+
+  # If the grouping is collected or has an error, 
+  # style the table row green or red respectively.
+  # Classname will be applied to the table row
+  # and actually styled in CSS.
+  def get_any_tr_attributes(grouping)
+    if grouping.is_collected?
+      return 'submission_collected'
+    elsif grouping.error_collecting
+      return 'submission_error'
+    else
+      return nil
+    end
+  end
+
+  def get_grouping_group_name(assignment, grouping)
+    group_name = ''
+      if !grouping.has_submission?
+        if assignment.submission_rule.can_collect_grouping_now?(grouping)
+          group_name = view_context.link_to(grouping.group.group_name,
+            collect_and_begin_grading_assignment_submission_path(
+              assignment.id, grouping.id))
+        else
+          group_name = grouping.group.group_name
+        end
+      elsif !grouping.is_collected
+        group_name = view_context.link_to(grouping.group.group_name,
+          collect_and_begin_grading_assignment_submission_path(
+            assignment.id, grouping.id))
+      else
+        group_name = view_context.link_to(grouping.group.group_name,
+          edit_assignment_submission_result_path(
+            assignment.id, grouping.current_submission_used.id,
+            grouping.current_submission_used.get_latest_result))
+      end
+
+      group_name += ' ('
+      group_name += grouping.accepted_students.collect{ |student| student.user_name}.join(', ')
+      group_name += ')'
+      return group_name
+  end
+
+  def get_grouping_section(grouping)
+    return grouping.section
+  end
+
+  def get_grouping_repository(assignment, grouping)
+    view_context.link_to(grouping.group.repository_name,
+      repo_browser_assignment_submission_path(assignment, grouping))
+  end
+
+  def get_grouping_commit_date(assignment, grouping)
+    if !grouping.has_submission?
+      return '-'
+    else
+      repo = ''
+      if grouping.past_due_date?
+        repo += view_context.image_tag('icons/error.png',
+            title: t(:past_due_date_edit_result_warning,
+            href: t(:last_commit)))
+      end
+      repo += I18n.l(grouping.current_submission_used.revision_timestamp, format: :long_date)
+      return repo
+    end
+  end
+
+  def get_grouping_marking_state(assignment, grouping)
+    if !grouping.has_submission?
+      if assignment.submission_rule.can_collect_now?
+        return view_context.image_tag('icons/shape_square.png',
+          alt: I18n.t('marking_state.not_collected'),
+          title: I18n.t('marking_state.not_collected'))
+      else
+        return '-'
+      end
+    else
+      if !grouping.current_submission_used.has_result?
+        return view_context.image_tag('icons/pencil.png',
+          alt: I18n.t('marking_state.in_progress'),
+          title: I18n.t('marking_state.in_progress'))
+      else
+        if remark_in_progress(grouping.current_submission_used)
+          return view_context.image_tag('icons/double_exclamation.png',
+            alt: I18n.t('marking_state.remark_requested'),
+            title: I18n.t('marking_state.remark_requested'))
+        elsif grouping.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete]
+          if !grouping.current_submission_used.get_latest_result.released_to_students
+            return view_context.image_tag('icons/accept.png',
+              alt: I18n.t('marking_state.completed'),
+              title: I18n.t('marking_state.completed'))
+          else
+            return view_context.image_tag('icons/email_go.png',
+              alt: I18n.t('marking_state.released'),
+              title: I18n.t('marking_state.released'))
+          end
+        else
+          return view_context.image_tag('icons/pencil.png',
+            alt: I18n.t('marking_state.in_progress'),
+            title: I18n.t('marking_state.in_progress'))
+        end
+      end
+    end
+  end
+
+  def get_grouping_state(grouping)
+    if !grouping.has_submission? || !grouping.current_submission_used.has_result?
+      'unmarked'
+    elsif grouping.current_submission_used.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
+      'partial'
+    elsif grouping.current_submission_used.get_latest_result.released_to_students
+      'released'
+    else
+      'complete'
+    end
+  end
+
+  def get_grouping_grace_credits_used(grouping)
+    grouping.grace_period_deduction_single
+  end
+
+  def get_grouping_final_grades(grouping)
+    case get_grouping_state(grouping)
+    when 'unmarked'
+      '-'
+    when 'partial'
+      '-'
+    when 'complete'
+      grouping.current_submission_used.get_latest_result.total_mark
+    when 'released'
+      grouping.current_submission_used.get_latest_result.total_mark
+    end
+  end
+
+  def get_grouping_can_begin_grading(assignment, grouping)
+    if assignment.submission_rule.can_collect_grouping_now?(grouping)
+      return view_context.image_tag('icons/tick.png')
+    else
+      return view_context.image_tag('icons/cross.png')
+    end
+  end
 
   # Collects submissions for all the groupings of the given section and assignment
   # Return the number of actually collected submissions

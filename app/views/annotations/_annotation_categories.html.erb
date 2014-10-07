@@ -1,15 +1,18 @@
-<ul id="annotation_categories">
-  <!-- First, output the list of annotation categories -->
+<ul class='tags' id='annotation_categories'>
+  <%# First, output the list of annotation categories %>
   <% @annotation_categories.each do |annotation_category| %>
-  <li class="annotation_category" id="annotation_category_<%=annotation_category.id%>" onclick="return false;" onMouseDown="return false;">
+    <li class='annotation_category'
+        id='annotation_category_<%= annotation_category.id %>'
+        onclick='return false;'
+        onmousedown='return false;'>
+      <%= truncate(annotation_category.annotation_category_name, length: 40) %>
 
-  <%=(truncate(annotation_category.annotation_category_name, length: 40)) %>
-
-  <div id="annotation_text_list_<%=annotation_category.id%>" onclick="return false;" onMouseDown="return false;">
-      <%= render partial: "annotations/annotation_list", locals: {annotation_category: annotation_category} %>
-  </div>
-
-  </li>
+      <div id='annotation_text_list_<%= annotation_category.id %>'
+           onclick='return false;'
+           onmousedown='return false;'>
+          <%= render partial: 'annotations/annotation_list',
+                     locals: { annotation_category: annotation_category } %>
+      </div>
+    </li>
   <% end %>
 </ul>
-

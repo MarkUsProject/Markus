@@ -1,8 +1,0 @@
-page.insert_html :bottom,
-                 'rubric_criteria_pane_list',
-                 partial: 'rubric_criterion',
-                 locals: { criterion: @criterion }
-
-page.remove 'new_rubric_criterion'
-page.replace_html 'rubric_levels_pane', partial: 'criterion_editor', locals: {criterion: @criterion}
-page.replace_html 'rubric_total_weight', @criterion.assignment.total_criteria_weight
