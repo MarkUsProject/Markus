@@ -1,77 +1,81 @@
 require File.expand_path(File.join(File.dirname(__FILE__),
-                                   '..', 'subversion_repository'))
+                                   '..', 'git_repository'))
 require 'test/unit' # load Test::Unit
 require 'rubygems'
 require 'fileutils'
 require 'shoulda'   # load Thoughtbot Shoulda (used as testing framework)
 require 'time'
+require 'rugged'
 
-# bring Repository::SubversionRepository into current namespace
+# bring Repository::GitRepository into current namespace
 include Repository
 
 # Test suite for testing proper functioning of
-# SubversionRepository, an implementation of AbstractRepository
-class SubversionRepositoryTest < Test::Unit::TestCase
+# GitRepository, an implementation of AbstractRepository
+class GitRepositoryTest < Test::Unit::TestCase
 
-  SVN_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/svn_repos"))
-  TEST_REPO = SVN_TEST_REPOS_DIR + "/repo1"
-  TEST_EXPORT_REPO = SVN_TEST_REPOS_DIR + "/exported_repo1"
-  TEST_EXPORT_REPO_2 = SVN_TEST_REPOS_DIR + "/exported_repo2"
+  # NOTE: PATHS PROVIDED MUST BE "/" TERMINATED
+  # AS COMPARED TO SUBVERSION REPOSITORIES
+  GIT_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/git_repos"))
+  TEST_REPO = GIT_TEST_REPOS_DIR + "/repo1/"
+  TEST_EXPORT_REPO = GIT_TEST_REPOS_DIR + "/exported_repo1"
+  TEST_EXPORT_REPO_2 = GIT_TEST_REPOS_DIR + "/exported_repo2"
   RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/input_files"))
   TEST_USER = "testuser"
 
-  context "SubversionRepository class" do
+  context "GitRepository class" do
 
     teardown do
       FileUtils.remove_dir(TEST_REPO, true)
     end
 
-    should "be able to create a new Subversion repository" do
-       SubversionRepository.create(TEST_REPO)
-      assert_equal(File.exists?(TEST_REPO),
-                   true,
-                   "Unable to creat a Subversion repository")
+    should "be able to create a new Git repository" do
+      GitRepository.create(TEST_REPO)
+      assert_not_nil(Rugged::Repository.discover(TEST_REPO),
+                     "Unable to creat a Git repository")
     end
 
-    should "be able to open an existing Subversion repository" do
-      SubversionRepository.create(TEST_REPO)
-      repo = SubversionRepository.open(TEST_REPO)
-      assert_not_nil(repo, "Cannot open subversion repository")
-      assert_instance_of(Repository::SubversionRepository,
+    should "be able to open an existing Git repository" do
+      GitRepository.create(TEST_REPO)
+      repo = GitRepository.open(TEST_REPO)
+      assert_not_nil(repo, "Cannot open git repository")
+      assert_instance_of(Repository::GitRepository,
                          repo,
                          "Repository is of wrong type")
       repo.close()
     end
 
-    should "be able to access an existing Subversion repository" do
-      SubversionRepository.create(TEST_REPO)
-      SubversionRepository.access(TEST_REPO) do |repo|
-        assert_not_nil(repo, "Cannot access supversion repository")
-        assert_instance_of(Repository::SubversionRepository,
+    should "be able to access an existing Git repository" do
+      GitRepository.create(TEST_REPO)
+      GitRepository.access(TEST_REPO) do |repo|
+        assert_not_nil(repo, "Cannot access git repository")
+        assert_instance_of(Repository::GitRepository,
                            repo,
                            "Repository is of wrong type")
       end
     end
 
-    should "know if a Subversion repository exists at some place" do
-      SubversionRepository.create(TEST_REPO)
-      assert_equal(SubversionRepository.repository_exists?(TEST_REPO),
+    should "know if a Git repository exists at some place" do
+      GitRepository.create(TEST_REPO)
+      assert_equal(GitRepository.repository_exists?(TEST_REPO),
                    true,
-                   "A SVN repository should exist at: '" + TEST_REPO + "'")
+                   "A Git repository should exist at: '" + TEST_REPO + "'")
     end
 
-    should "be able to delete a Subversion repository" do
-      SubversionRepository.create(TEST_REPO)
-      SubversionRepository.delete(TEST_REPO)
-      assert(!File.exists?(TEST_REPO), "Did not properly delete the repository")
+    should "be able to delete a Git repository" do
+      GitRepository.create(TEST_REPO)
+      GitRepository.delete(TEST_REPO)
+      assert_equal(GitRepository.repository_exists?(TEST_REPO),
+                   false,
+                   'Did not properly delete the repository')
     end
   end
 
-  context "A SubversionRepository instance" do
+  context "A GitRepository instance" do
 
     # setup and teardown for the current context
 
-    # creates a new SVN repository at TEST_REPO
+    # creates a new Git repository at TEST_REPO
     setup do
       #make sure there is not a leftover directory here from a previous run
       FileUtils.remove_dir(TEST_REPO, true)
@@ -79,14 +83,16 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       # configure and create repositories
       conf_admin = Hash.new
       conf_admin["IS_REPOSITORY_ADMIN"] = true
-      conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+      conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/git_auth/"
+
       # create repository first
-      Repository.get_class("svn", conf_admin).create(TEST_REPO)
+      Repository.get_class("git", conf_admin).create(TEST_REPO)
       # open the repository
-      @repo = Repository.get_class("svn", conf_admin).open(TEST_REPO)
+      @repo = Repository.get_class("git", conf_admin).open(TEST_REPO)
+
     end
 
-    # removes the SVN repository at TEST_REPO
+    # removes the Git repository at TEST_REPO
     teardown do
       if !@repo.nil? and !@repo.closed?
         @repo.close()
@@ -98,22 +104,24 @@ class SubversionRepositoryTest < Test::Unit::TestCase
 
     # beginning of tests
 
-    should "have exported the Subversion repository" do
+    should "have exported the Git repository" do
       assert_not_nil(@repo.export(TEST_EXPORT_REPO),
-                     "Did not properly export svn repository")
+                     "Did not properly export git repository")
+
       assert(File.exists?(TEST_EXPORT_REPO),
-             "Did not properly export svn repository")
+             "Did not properly export git repository")
       @repo.close()
     end
 
-    should "export one file of the Subversion repository into a file" do
+    should "export one file of the Git repository into a file" do
       file = "not-on-the-shelves-2009.pdf"
 
-      # Let's start by adding the file to the svn repository
+      # Let's start by adding the file to the git repository
       add_file_helper(@repo, file)
-      assert_not_nil(@repo.export("myfile.pdf",
-                                  file),
-                     "Did not properly export the file from the svn repo")
+
+      assert_not_nil(@repo.export("myfile.pdf",file),
+                     "Did not properly export the file from the git repo")
+
       assert(File.exists?("myfile.pdf"),
              "The file does not exist in the destination repository")
 
@@ -121,16 +129,19 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       @repo.close()
     end
 
-    should "export one file of the Subversion repository into a repository" do
+    should "export one file of the Git repository into a repository" do
       file = "not-on-the-shelves-2009.pdf"
       repo_to_export_to = File.join(TEST_EXPORT_REPO_2, file)
-      # Let's start by adding the file to the svn repository
+
+      # Let's start by adding the file to the git repository
       add_file_helper(@repo, file)
-      assert_not_nil(@repo.export(repo_to_export_to,
-                                  file),
-                     "Did not properly export the file from the svn repo")
+
+      assert_not_nil(@repo.export(repo_to_export_to,file),
+                     "Did not properly export the file from the git repo")
+
       assert(File.exists?(repo_to_export_to),
              "The file does not exist in the destination repository")
+
       @repo.close()
     end
 
@@ -142,7 +153,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       end
     end
 
-    should "have been instanciated and a Subversion repository in the filesystem created" do
+    should "have been instanciated and a Git repository in the filesystem created" do
       assert_not_nil(@repo, "Could not create/open Repository: look into the tests' setup")
       @repo.close()
     end
@@ -150,15 +161,21 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     should "provide a transaction" do
       transaction = @repo.get_transaction(TEST_USER)
       assert_not_nil(transaction, "Could not retrieve transaction")
-      assert_instance_of(Repository::Transaction, transaction, "Transaction is not of correct type!")
+      assert_instance_of(Repository::Transaction, transaction,
+                         "Transaction is not of correct type!")
       @repo.close()
     end
 
     should "give the latest revision" do
       revision = @repo.get_latest_revision()
       assert_not_nil(revision, "Could not retrieve latest revision")
-      assert_instance_of(Repository::SubversionRevision, revision, "Revision is of wrong type!")
-      assert_equal(revision.revision_number, 0, "Wrong revision number")
+      assert_instance_of(Repository::GitRevision, revision, "Revision is of wrong type!")
+      # Assuming that our head is our last revision,
+      # as the sha number is not constant,
+      # we are going to use the name
+      assert_equal( @repo.get_repos.lookup(@repo.get_repos.head.target).tree.oid,
+                    revision.revision_number.tree.oid,
+                    "Wrong revision number")
       @repo.close()
     end
 
@@ -167,15 +184,19 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       assert_not_nil(r, "Could not retrieve latest revision")
       rev_int = r.revision_number
       new_revision = @repo.get_revision(rev_int)
-      assert_instance_of(Repository::SubversionRevision, new_revision, "Revision not of class SubversionRevision")
-      assert_equal(new_revision.revision_number, rev_int, "Revision numbers (int values) should be equal")
+      assert_instance_of(Repository::GitRevision, new_revision,
+                         "Revision not of class SubversionRevision")
+      assert_equal(new_revision.revision_number, rev_int,
+                   "Revision numbers (int values) should be equal")
       @repo.close()
     end
 
     should "raise a RevisionDoesNotExist exception" do
       r = @repo.get_latest_revision()
       assert_not_nil(r, "Could not retrieve latest revision")
-      revision_non_existent = r.revision_number + 3
+      # creates a random 40 characters string
+      some_commit_sha = (0...40).map { (65 + rand(26)).chr }.join
+      revision_non_existent = Rugged::Reference.create(@repo.get_repos,"refs/heads/unit_test",some_commit_sha)
       assert_raise(RevisionDoesNotExist) do
         @repo.get_revision(revision_non_existent) # raises exception
       end
@@ -194,10 +215,11 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     end
 
     should "be able to create a directory in repository" do
-      dir_single_level = "/folder1"
-      dir_multi_level = "/folder2/subfolder1"
-
+      dir_single_level = TEST_REPO + "/folder1"
+      dir_multi_level =  TEST_REPO  + "/folder2/subfolder1"
       txn = @repo.get_transaction(TEST_USER)
+
+      # observation: git dont add empty folders to staging area
       txn.add_path(dir_single_level)
       txn.add_path(dir_multi_level)
       @repo.commit(txn)
@@ -216,15 +238,21 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       file_contents = File.read(RESOURCE_DIR + "/" + filename)
       txn.add(filename, file_contents)
       latest_revision = @repo.get_latest_revision().revision_number
-      assert_equal(rev_num, latest_revision, "Revision # should be the same!")
-      @repo.commit(txn) # svn commit
+      assert_equal(rev_num.tree.oid, latest_revision.tree.oid, "Revision # should be the same!")
+      @repo.commit(txn) # git commit
       latest_revision = @repo.get_latest_revision().revision_number
 
       assert_not_equal(rev_num, latest_revision, "Revision # has not changed!")
 
+      txn = @repo.get_transaction(TEST_USER)
+      filename = 'MyInterface.java'
+      file_contents = File.read(RESOURCE_DIR + "/" + filename)
+      txn.add(filename, file_contents)
+      @repo.commit(txn) # git commit
+
       # look if new file is available
-      svn_rev = @repo.get_latest_revision()
-      files = svn_rev.files_at_path("/")
+      git_rev = @repo.get_latest_revision()
+      files = git_rev.files_at_path(git_rev)
       assert_not_nil(files[filename], "Could not find file '" + filename + "'")
       # test download_as_string
       assert_equal(@repo.download_as_string(files[filename]),
@@ -243,8 +271,9 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       @repo.commit(txn)
 
       # filename should not be available in repo now
-      svn_rev = @repo.get_latest_revision()
-      files = svn_rev.files_at_path("/")
+      git_rev = @repo.get_latest_revision()
+      files = git_rev.files_at_path(git_rev)
+      #files = svn_rev.files_at_path("/")
       assert_nil(files[filename], "File '" + filename + "' should have been removed!")
       @repo.close()
     end
@@ -254,11 +283,11 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       old_revision = @repo.get_latest_revision()
       add_some_files_helper(@repo, files_to_add)
       new_revision = @repo.get_latest_revision()
-      assert_instance_of(Repository::SubversionRevision, old_revision, "Should be of type SubversionRevision")
-      assert_instance_of(Repository::SubversionRevision, new_revision, "Should be of type SubversionRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should increase by 1")
+      assert_instance_of(Repository::GitRevision, old_revision, "Should be of type GitRevision")
+      assert_instance_of(Repository::GitRevision, new_revision, "Should be of type GitRevision")
+      #assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should increase by 1")
       # repository should know of the added files, now
-      files = new_revision.files_at_path("/")
+      files = new_revision.files_at_path(new_revision)
       files_to_add.each do |file|
         assert_not_nil(files[file], "File '" + file + "' not found in repository")
         content = File.read(RESOURCE_DIR + "/" + file)
@@ -282,11 +311,11 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       @repo.commit(txn)
 
       new_revision = @repo.get_latest_revision()
-      assert_instance_of(Repository::SubversionRevision, old_revision, "Should be of type SubversionRevision")
-      assert_instance_of(Repository::SubversionRevision, new_revision, "Should be of type SubversionRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      assert_instance_of(Repository::GitRevision, old_revision, "Should be of type GitRevision")
+      assert_instance_of(Repository::GitRevision, new_revision, "Should be of type GitRevision")
+      #assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
       # test repository on its correct content
-      files = new_revision.files_at_path("/")
+      files = new_revision.files_at_path(new_revision)
       files_to_add << filename # push filename to files_to_add
       files_to_add.each do |file|
         if file != "test.xml"
@@ -312,16 +341,20 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       # collect a timestamp for later use
       repo_timestamp = Time.now
 
+      # delay last commit for our test
+      @repo.commit(txn)
+      sleep(2)
+
       # remove a file
       txn.remove("test.xml", @repo.get_latest_revision().revision_number) # remove a file previously existent in current rev.
       @repo.commit(txn)
 
       new_revision = @repo.get_latest_revision()
-      assert_instance_of(Repository::SubversionRevision, old_revision, "Should be of type SubversionRevision")
-      assert_instance_of(Repository::SubversionRevision, new_revision, "Should be of type SubversionRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      assert_instance_of(Repository::GitRevision, old_revision, "Should be of type GitRevision")
+      assert_instance_of(Repository::GitRevision, new_revision, "Should be of type GitRevision")
+      #assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
       # test repository on its correct content
-      files = new_revision.files_at_path("/")
+      files = new_revision.files_at_path(new_revision)
       files_to_add << filename # push filename to files_to_add
       files_to_add.each do |file|
         if file != "test.xml"
@@ -335,14 +368,14 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       # test the timestamp-revision stuff
       rev_num_by_timestamp = @repo.get_revision_by_timestamp(Time.now)
       latest_rev = @repo.get_latest_revision()
-      assert_instance_of(Repository::SubversionRevision, rev_num_by_timestamp, "Revision number is of wrong type")
-      assert_instance_of(Repository::SubversionRevision, latest_rev, "Revision number is of wrong type")
+      assert_instance_of(Repository::GitRevision, rev_num_by_timestamp, "Revision number is of wrong type")
+      assert_instance_of(Repository::GitRevision, latest_rev, "Revision number is of wrong type")
       assert_equal(rev_num_by_timestamp.revision_number, latest_rev.revision_number, "Revision number (int values) do not match")
 
       # test.xml should be in the repository for the timestamp "repo_timestamp"
       rev_num_by_timestamp = @repo.get_revision_by_timestamp(repo_timestamp)
-      assert_instance_of(Repository::SubversionRevision, rev_num_by_timestamp, "Revision number is of wrong type")
-      files = rev_num_by_timestamp.files_at_path("/")
+      assert_instance_of(Repository::GitRevision, rev_num_by_timestamp, "Revision number is of wrong type")
+      files = rev_num_by_timestamp.files_at_path(rev_num_by_timestamp)
       files_to_add.each do |file|
         if file == "test.xml"
           assert_not_nil(files[file], "File '" + file + "' not found in repository")
@@ -360,17 +393,19 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       revision = @repo.get_latest_revision
 
       files_to_add.each do |file_name|
-        assert_not_nil revision.files_at_path('/')[file_name].last_modified_date
-        assert (revision.files_at_path('/')[file_name].last_modified_date - Time.now) < 1
+        assert_not_nil revision.last_modified_date()
+        assert (revision.last_modified_date - Time.now) < 1
       end
 
+      # giving times for diferent commits
+      sleep(2)
       txn = @repo.get_transaction(TEST_USER)
       txn.replace('MyClass.java', 'new data', 'text', 1)
       @repo.commit(txn)
 
       new_revision = @repo.get_latest_revision
-      assert_not_nil new_revision.files_at_path('/')['MyClass.java'].last_modified_date
-      assert_not_equal new_revision.files_at_path('/')['MyClass.java'].last_modified_date, revision.files_at_path('/')['MyClass.java'].last_modified_date
+      assert_not_nil new_revision.last_modified_date()
+      assert_not_equal new_revision.last_modified_date, revision.last_modified_date
       @repo.close()
     end
 
@@ -378,33 +413,37 @@ class SubversionRepositoryTest < Test::Unit::TestCase
 
   context "A repository with an authorization file specified" do
 
-    SVN_AUTHZ_FILE = SVN_TEST_REPOS_DIR + "/svn_authz"
+    GIT_AUTH_FOLDER = GIT_TEST_REPOS_DIR + "/git_auth"
+    GIT_AUTH_FILE = GIT_AUTH_FOLDER + "/conf/gitolite.conf"
 
     setup do
       #cleanup any files that may be left over
-      FileUtils.remove_dir(SVN_TEST_REPOS_DIR + "/Testrepo1", true)
-      FileUtils.remove_dir(SVN_TEST_REPOS_DIR + "/Repository2", true)
+      FileUtils.remove_dir(GIT_TEST_REPOS_DIR + "/Testrepo1", true)
+      FileUtils.remove_dir(GIT_TEST_REPOS_DIR + "/Repository2", true)
       FileUtils.remove_dir(TEST_REPO, true)
-      FileUtils.rm(SVN_AUTHZ_FILE, force: true)
-      # have a clean authz file
-      FileUtils.cp(SVN_AUTHZ_FILE + '.orig', SVN_AUTHZ_FILE)
+      FileUtils.rm(GIT_AUTH_FILE, :force => true)
+
+      ga_repo =  Gitolite::GitoliteAdmin.bootstrap(GIT_AUTH_FOLDER)
+      # have a clean auth file
+      FileUtils.cp(GIT_AUTH_FILE + '.orig', GIT_AUTH_FILE)
       # create repository first
-      repo1 = SVN_TEST_REPOS_DIR + "/Testrepo1"
-      repo2 = SVN_TEST_REPOS_DIR + "/Repository2"
+      repo1 = GIT_TEST_REPOS_DIR + "/Testrepo1"
+      repo2 = GIT_TEST_REPOS_DIR + "/Repository2"
       conf_admin = Hash.new
       conf_admin["IS_REPOSITORY_ADMIN"] = true
-      conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
-      Repository.get_class("svn", conf_admin).create(repo1)
-      Repository.get_class("svn", conf_admin).create(repo2)
-      Repository.get_class("svn", conf_admin).create(TEST_REPO)
+      conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
+
+      Repository.get_class("git", conf_admin).create(repo1)
+      Repository.get_class("git", conf_admin).create(repo2)
+      Repository.get_class("git", conf_admin).create(TEST_REPO)
       # open the repository
       conf_non_admin = Hash.new
       conf_non_admin["IS_REPOSITORY_ADMIN"] = false
-      conf_non_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+      conf_non_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
 
-      @repo1 = Repository.get_class("svn", conf_non_admin).open(repo1) # non-admin repository
-      @repo2 = Repository.get_class("svn", conf_non_admin).open(repo2) # again, a non-admin repo
-      @repo = Repository.get_class("svn", conf_admin).open(TEST_REPO)     # repo with admin-privs
+      @repo1 = Repository.get_class("git", conf_non_admin).open(repo1) # non-admin repository
+      @repo2 = Repository.get_class("git", conf_non_admin).open(repo2) # again, a non-admin repo
+      @repo = Repository.get_class("git", conf_admin).open(TEST_REPO)     # repo with admin-privs
 
       # add some files
       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
@@ -412,17 +451,17 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       add_some_files_helper(@repo2, files_to_add)
     end
 
-    # removes Subversion repositories
+    # removes Git repositories
     teardown do
       if !@repo.nil? and !@repo.closed?
         @repo.close()
         @repo1.close()
         @repo2.close()
       end
-      SubversionRepository.delete(SVN_TEST_REPOS_DIR + "/Testrepo1")
-      SubversionRepository.delete(SVN_TEST_REPOS_DIR + "/Repository2")
-      SubversionRepository.delete(TEST_REPO)
-      FileUtils.rm(SVN_AUTHZ_FILE, force: true)
+      GitRepository.delete(GIT_TEST_REPOS_DIR + "/Testrepo1")
+      GitRepository.delete(GIT_TEST_REPOS_DIR + "/Repository2")
+      GitRepository.delete(TEST_REPO)
+      FileUtils.rm(GIT_AUTH_FILE, :force => true)
     end
 
     should "be able to get permissions for a user" do
@@ -596,16 +635,21 @@ class SubversionRepositoryTest < Test::Unit::TestCase
 
     should "add a user per each repository" do
       # use a different svn_authz file for this test
-      old_svn_authz = SVN_AUTHZ_FILE
-      new_svn_authz = SVN_TEST_REPOS_DIR + "/svn_authz_bulk_stuff"
+      old_git_auth = GIT_AUTH_FILE
+      new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff"
+      new_git_auth_file = new_git_auth + "/conf/gitolite.conf"
 
-      # remove authz file if it exists
-      if File.exist?(new_svn_authz)
-        FileUtils.rm(new_svn_authz)
+      if !File.directory?(new_git_auth)
+        FileUtils.mkdir_p(new_git_auth)
+      end
+
+      # remove auth file if it exists
+      if File.exist?(new_git_auth_file)
+        FileUtils.rm(new_git_auth_file)
       end
 
       # create some repositories, add some users
-      repo_base_name = SVN_TEST_REPOS_DIR + "/Group_"
+      repo_base_name = GIT_TEST_REPOS_DIR + "/Group_"
       repository_names = []
       (1..5).each do |counter|
         repository_names.push(repo_base_name + counter.to_s.rjust(3, "0"))
@@ -613,18 +657,19 @@ class SubversionRepositoryTest < Test::Unit::TestCase
 
       # remove repositories, if they exist
       repository_names.each do |repo_name|
-        if SubversionRepository.repository_exists?(repo_name)
-          SubversionRepository.delete(repo_name)
+        if GitRepository.repository_exists?(repo_name)
+          GitRepository.delete(repo_name)
         end
       end
 
       repositories = []
       conf_admin = Hash.new
       conf_admin["IS_REPOSITORY_ADMIN"] = true
-      conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+      conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth
+
       repository_names.each do |repo_name|
-        Repository.get_class("svn", conf_admin).create(repo_name)
-        repo = Repository.get_class("svn", conf_admin).open(repo_name)
+        Repository.get_class("git", conf_admin).create(repo_name)
+        repo = Repository.get_class("git", conf_admin).open(repo_name)
         repo.add_user("some_user", Repository::Permission::READ_WRITE)
         repo.add_user("another_user", Repository::Permission::READ_WRITE)
         repositories.push(repo)
@@ -646,18 +691,18 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       end
       # remove repositories repositories created
       repository_names.each do |repo_name|
-        SubversionRepository.delete(repo_name)
+        GitRepository.delete(repo_name)
       end
 
     end
   end # end context
 
-  context "SubversionRepository" do
+  context "GitRepository" do
     should "raise an exception if not properly configured" do
       conf = Hash.new
       conf["REPOSITORY_PERMISSION_FILE"] = 'something'
       assert_raise(ConfigurationError) do
-        Repository.get_class("svn", conf) # missing a required constant
+        Repository.get_class("git", conf) # missing a required constant
       end
     end
   end # end context
@@ -665,11 +710,15 @@ class SubversionRepositoryTest < Test::Unit::TestCase
   context "Setting and deleting bulk permissions" do
     setup do
       # use a different svn_authz file for this test
-      new_svn_authz = SVN_TEST_REPOS_DIR + "/svn_authz_bulk_stuff2"
+      new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2"
+
+      if !File.directory?(new_git_auth)
+        FileUtils.mkdir_p(new_git_auth)
+      end
+
       @conf_admin = Hash.new
       @conf_admin["IS_REPOSITORY_ADMIN"] = true
-      @conf_admin["REPOSITORY_PERMISSION_FILE"] = new_svn_authz
-
+      @conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth
       # create some repositories, add some users
       repo_base_name = "Group_"
       @repository_names = []
@@ -679,23 +728,30 @@ class SubversionRepositoryTest < Test::Unit::TestCase
 
       @repositories = []
       @repository_names.each do |repo_name|
-        Repository.get_class("svn", @conf_admin).create(SVN_TEST_REPOS_DIR + "/" + repo_name)
-        repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        Repository.get_class("git", @conf_admin).create(GIT_TEST_REPOS_DIR + "/" + repo_name)
+        repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
         @repositories.push(repo)
       end
     end
 
     teardown do
-      new_svn_authz = SVN_TEST_REPOS_DIR + "/svn_authz_bulk_stuff2"
-      # remove authz file if it exists
-      if File.exist?(new_svn_authz)
-        FileUtils.rm(new_svn_authz)
+      new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2"
+      new_git_auth_file = new_git_auth + "/conf/gitolite.conf"
+
+      # remove auth file if it exists
+      if File.directory?(new_git_auth)
+        FileUtils.rm_rf(GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2/")
+      end
+
+      # remove auth file if it exists
+      if File.exist?(new_git_auth_file)
+        FileUtils.rm(new_git_auth_file)
       end
 
       # remove repositories, if they exist
       @repository_names.each do |repo_name|
-        if SubversionRepository.repository_exists?(SVN_TEST_REPOS_DIR + "/" + repo_name)
-          SubversionRepository.delete(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        if GitRepository.repository_exists?(GIT_TEST_REPOS_DIR + "/" + repo_name)
+          GitRepository.delete(GIT_TEST_REPOS_DIR + "/" + repo_name)
         end
       end
     end
@@ -703,23 +759,22 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     should "Add a user and set permissions to every Group repository" do
 
       # Ok, now lets try to add a few bulk users
-      assert SubversionRepository.set_bulk_permissions(@repository_names, {"test_user" => Repository::Permission::READ})
-      assert SubversionRepository.set_bulk_permissions(@repository_names, {"test_user2" => Repository::Permission::READ_WRITE})
+      assert GitRepository.set_bulk_permissions(@repository_names, {"test_user" => Repository::Permission::READ})
+      assert GitRepository.set_bulk_permissions(@repository_names, {"test_user2" => Repository::Permission::READ_WRITE})
 
       # Test to make sure they got attached to each repository
       @repository_names.each do |repo_name|
-        repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
         assert_equal(Repository::Permission::READ, repo.get_permissions("test_user"))
         assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))
         repo.close()
       end
 
       # Ok, now let's try to remove them
-      assert SubversionRepository.delete_bulk_permissions(@repository_names, ['test_user'])
-
+      assert GitRepository.delete_bulk_permissions(@repository_names, ['test_user'])
       # Test to make sure they got attached to each repository
       @repository_names.each do |repo_name|
-        repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
         assert_raises Repository::UserNotFound do
           repo.get_permissions("test_user")
         end
@@ -732,13 +787,27 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     end
   end#end context
 
-  private # private helper methods for this class
+  # private # private helper methods for this class
 
   def add_file_helper(repo, file)
-    txn = repo.get_transaction(TEST_USER)
-    file_contents = File.read(RESOURCE_DIR + "/" + file)
-    txn.add(file, file_contents)
-    repo.commit(txn)
+
+    # copy example file to repository folder
+    # workdir = path/to/my/repository/
+    # path =  path/to/my/repository/.git
+    FileUtils.cp(RESOURCE_DIR + "/" + file,repo.get_repos_workdir)
+    # Get index for commit copied file
+    repo.get_repos.index.add file
+
+    #committing file
+    options = {}
+    options[:tree] = repo.get_repos.index.write_tree(repo.get_repos)
+
+    options[:author] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
+    options[:committer] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
+    options[:message] ||= "Adding File with add_file_helper"
+    options[:parents] = repo.get_repos.empty? ? [] : [ repo.get_repos.head.target ].compact
+    options[:update_ref] = 'HEAD'
+    Rugged::Commit.create(repo.get_repos, options)
   end
 
   def add_some_files_helper(repo, files)
@@ -749,7 +818,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     repo.commit(txn)
   end
 
-end # end class SubversionRepositoryTest
+end # end class GitRepositoryTest
 
 # Test suite for testing proper functioning of
 # SubversionRevision, an implementation of AbstractRevision

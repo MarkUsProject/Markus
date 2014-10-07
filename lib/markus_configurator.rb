@@ -51,7 +51,7 @@ module MarkusConfigurator
     if defined? REPOSITORY_TYPE
       return REPOSITORY_TYPE
     else
-      return "svn"
+      return "git"
     end
   end
 
@@ -59,7 +59,7 @@ module MarkusConfigurator
     if defined? REPOSITORY_EXTERNAL_BASE_URL
       return REPOSITORY_EXTERNAL_BASE_URL
     else
-      return "http://www.example.com/svn"
+      return "http://www.example.com/git"
     end
   end
 
@@ -81,7 +81,7 @@ module MarkusConfigurator
     if defined? REPOSITORY_PERMISSION_FILE
       return REPOSITORY_PERMISSION_FILE
     else
-      return File.join(markus_config_repository_storage, "svn_authz")
+      return File.join(markus_config_repository_storage, "git_auth")
     end
   end
 

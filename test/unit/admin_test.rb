@@ -11,6 +11,7 @@ class AdminTest < ActiveSupport::TestCase
     setup do
       conf = Hash.new
       conf['IS_REPOSITORY_ADMIN'] = true
+      conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
       conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
       MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
@@ -46,6 +47,7 @@ class AdminTest < ActiveSupport::TestCase
       # set repository_admin false
       conf = Hash.new
       conf['IS_REPOSITORY_ADMIN'] = false
+      conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
       conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
       MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(false)
