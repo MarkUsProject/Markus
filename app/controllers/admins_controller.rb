@@ -1,16 +1,12 @@
 class AdminsController < ApplicationController
-  include UsersHelper
+  include AdminsHelper
   before_filter  :authorize_only_for_admin
-
   def index
-  end
-
-  def populate
-    admins_data = Admin.all(order: 'user_name')
-    # construct_table_rows defined in UsersHelper
-    @admins = construct_table_rows(admins_data)
     respond_to do |format|
-      format.json { render json: @admins }
+      format.html
+      format.json do
+        render json: get_admins_table_info
+      end
     end
   end
 
@@ -19,14 +15,13 @@ class AdminsController < ApplicationController
   end
 
   def new
-    @user = Admin.new(params[:user])
+    @user = Admin.new
   end
 
   def update
     @user = Admin.find(params[:id])
-    attrs = params[:user]
     # update_attributes supplied by ActiveRecords
-    if @user.update_attributes(attrs).nil?
+    if @user.update_attributes(user_params).nil?
       flash[:error] = I18n.t('admins.update.error')
       render :edit
     else
@@ -41,7 +36,7 @@ class AdminsController < ApplicationController
     # Default attributes: role = TA or role = STUDENT
     # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
-    @user = Admin.new(params[:user])
+    @user = Admin.new(user_params)
     # Return unless the save is successful; save inherted from
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
@@ -54,5 +49,11 @@ class AdminsController < ApplicationController
       flash[:error] = I18n.t('admins.create.error')
       render 'new'
     end
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:user_name, :first_name, :last_name)
   end
 end

@@ -1,4 +1,9 @@
 if (<%= flash.now[:error].blank? %>) {
-  jQuery('#annotation_category_' + <%= @annotation_category.id %>).replaceWith("<%= escape_javascript(render partial: 'annotation_category', locals: { annotation_category: @annotation_category }).html_safe %>");
+  jQuery('#annotation_category_' + <%= @annotation_category.id %>).replaceWith(
+    "<%= escape_javascript(render partial: 'annotation_category',
+                                  locals: { annotation_category: @annotation_category }).html_safe %>");
 }
-jQuery('#current_annotation_category').html("<%= escape_javascript(render partial: 'annotation_category_edit', locals: { annotation_category: @annotation_category }).html_safe %>");
+
+document.getElementById('current_annotation_category').innerHTML =
+  "<%= escape_javascript(render partial: 'annotation_category_edit',
+                                locals: { annotation_category: @annotation_category }).html_safe %>";

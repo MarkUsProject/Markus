@@ -1,51 +1,21 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('livepipe/tabs') %>
-  <%= stylesheet_link_tag('SyntaxHighlighter') %>
+  <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
   <%= stylesheet_link_tag('grader') %>
   <%= javascript_include_tag 'panes.js' %>
 <% end %>
 
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'livepipe/livepipe.js',
-                           'livepipe/window.js',
-                           'livepipe/tabs.js' %>
-
-<%= javascript_include_tag 'controls.js' %>
 <%= javascript_include_tag 'DropDownMenu/DropDownMenu.js'%>
-
-<% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
-<%= javascript_include_tag 'SourceCodeGlower/AnnotationText.js',
-                           'SourceCodeGlower/AnnotationTextDisplayer.js',
-                           'SourceCodeGlower/AnnotationTextManager.js',
-                           'SourceCodeGlower/SourceCodeLine.js',
-                           'SourceCodeGlower/SourceCodeLineAnnotations.js',
-                           'SourceCodeGlower/SourceCodeLineCollection.js',
-                           'SourceCodeGlower/SourceCodeLineArray.js',
-                           'SourceCodeGlower/SyntaxHighlighter1p5Line.js',
-                           'SourceCodeGlower/SourceCodeLineManager.js',
-                           'SourceCodeGlower/SourceCodeLineFactory.js',
-                           'SourceCodeGlower/SourceCodeAdapter.js',
-                           'SourceCodeGlower/SyntaxHighlighter1p5Adapter.js',
-                           'SourceCodeGlower/ImageAnnotationGrid.js',
-                           'SourceCodeGlower/ImageEventHandler.js' %>
-
-<% # SYNTAX HIGHLIGHTER %>
-<%= javascript_include_tag 'syntaxhighlighter/shCore.js',
-                           'syntaxhighlighter/shBrushJava.js',
-                           'syntaxhighlighter/shBrushXml.js',
-                           'syntaxhighlighter/shBrushRuby.js',
-                           'syntaxhighlighter/shBrushPython.js',
-                           'syntaxhighlighter/shBrushJScript.js',
-                           'syntaxhighlighter/shBrushCpp.js',
-                           'syntaxhighlighter/shBrushScheme.js',
-                           'syntaxhighlighter/shBrushScilab.js',
-                           'syntaxhighlighter/shBrushUnknown.js' %>
 
 <% # VIEWING MARKS FUNCTIONS %>
 <%= javascript_include_tag 'Grader/file_selector.js' %>
 
 <% # BOOT SCRIPTS %>
 <%= javascript_include_tag 'Grader/tabs_boot.js' %>
+
+<% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
+<%= render partial: 'results/common/syntax_highlighter_brushes',
+           formats: [:html],
+           handlers: [:erb] %>
 
 <% # Javascript for showing/hiding old marks %>
 <%= render partial: 'results/common/old_marks_view_functions',
@@ -63,7 +33,7 @@
 <%= render partial: 'results/student/enable_remark_request_buttons',
            formats: [:js] %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>Results for <%= sanitize(@assignment.short_identifier) %></h1>
 </div>
 

@@ -1,13 +1,14 @@
-<table class="extra_percentage_pane_list">
+<table class='extra_percentage_pane_list'>
   <thead>
-    <th><%= I18n.t("marker.marks.comment") %></th>
-    <th><%= I18n.t("marker.marks.percentage") %></th>
+    <th><%= t('marker.marks.comment') %></th>
+    <th><%= t('marker.marks.percentage') %></th>
     <th></th>
   </thead>
-  <tbody id="extra_percentage_list" >
-     <% extra_marks_percentage.each do |extra_percentage| -%>
-       <%= render partial: "results/student/extra_percentage", locals: {extra_percentage: extra_percentage, result_id:result_id} %>
-     <% end -%>
+  <tbody id='extra_percentage_list' >
+    <% extra_marks_percentage.each do |extra_percentage| %>
+      <%= render partial: 'results/student/extra_percentage',
+                 locals: { extra_percentage: extra_percentage,
+                           result_id: result_id } %>
+    <% end %>
    </tbody>
 </table>
-

@@ -1,4 +1,0 @@
-page.replace_html "criterion_title_#{@criterion.id}", @criterion.flexible_criterion_name
-page.replace_html "criterion_max_#{@criterion.id}", @criterion.max
-page.replace_html "criteria_total_mark", @criterion.assignment.total_mark
-page.replace_html "flexible_edition_pane_menu", partial: 'criterion_editor', locals: {criterion: @criterion}

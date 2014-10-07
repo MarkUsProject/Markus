@@ -7,11 +7,12 @@ require File.join(File.dirname(__FILE__),'..', '..', 'lib', 'repo', 'repository'
 class Grouping < ActiveRecord::Base
 
   before_create :create_grouping_repository_folder
+
   before_destroy :revoke_repository_permissions_for_students
-  belongs_to :assignment, counter_cache: true
-  belongs_to :group
+
   belongs_to :grouping_queue
-  has_many :memberships
+
+  has_many :memberships, dependent: :destroy
   has_many :student_memberships, order: 'id'
   has_many :non_rejected_student_memberships,
            class_name: 'StudentMembership',
@@ -56,9 +57,11 @@ class Grouping < ActiveRecord::Base
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
   # user association/validation
+  belongs_to :assignment, counter_cache: true
   validates_presence_of :assignment_id
   validates_associated :assignment, on: :create, message: 'associated assignment need to be valid'
 
+  belongs_to :group
   validates_presence_of :group_id
   validates_associated :group, message: 'associated group need to be valid'
 
@@ -79,7 +82,7 @@ class Grouping < ActiveRecord::Base
   # to the given assignment +assignment+.
   def self.assign_all_tas(grouping_ids, ta_ids, assignment)
     assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
-      # Get the Cartesian product of group IDs and TA IDs.
+      # Get the Cartesian product of grouping IDs and TA IDs.
       grouping_ids.product(ta_ids)
     end
   end
@@ -216,7 +219,7 @@ class Grouping < ActiveRecord::Base
     members.each do |m|
       next if m.blank? # ignore blank users
       m = m.strip
-      user = User.find_by_user_name(m)
+      user = User.where(user_name: m).first
       m_logger = MarkusLogger.instance
       if user
         if invoked_by_admin || self.can_invite?(user)
@@ -331,7 +334,7 @@ class Grouping < ActiveRecord::Base
 
   # Returns the status of this user, or nil if user is not a member
   def membership_status(user)
-    member = student_memberships.find_by_user_id(user.id)
+    member = student_memberships.where(user_id: user.id).first
     member ? member.membership_status : nil  # return nil if user is not a member
   end
 
@@ -449,11 +452,11 @@ class Grouping < ActiveRecord::Base
   end
 
   def decline_invitation(student)
-     membership = student.memberships.find_by_grouping_id(self.id)
-     membership.membership_status = StudentMembership::STATUSES[:rejected]
-     membership.save
-     # adjust repo permissions
-     update_repository_permissions
+    membership = student.memberships.where(grouping_id: id).first
+    membership.membership_status = StudentMembership::STATUSES[:rejected]
+    membership.save
+    # adjust repo permissions
+    update_repository_permissions
   end
 
   # If a group is invalid OR valid and the user is the inviter of the group and
@@ -514,40 +517,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def add_tas(tas)
-    #this check was previously done every time a ta_membership was created,
-    #however since the assignment is the same, validating it once for every new
-    #membership is a huge waste, so validate once and only proceed if true.
-    return unless self.assignment.valid?
-    grouping_tas = self.tas
-    tas = Array(tas)
-    tas.each do |ta|
-      unless grouping_tas.include? ta
-        #due to the membership's validates_associated :grouping attribute, only
-        #call its validation for the first grader as the grouping is constant
-        #and all the tas are ensured to be valid in the add_graders action in
-        #graders_controller
-        if ta == tas.first
-          #perform validation first time.
-          ta_memberships.create(user: ta)
-        else
-          #skip validation to increase performance (all aspects of validation
-          #have already been performed elsewhere)
-          member = ta_memberships.build(user: ta)
-          member.save(validate: false)
-        end
-        grouping_tas += [ta]
-      end
-    end
-    criteria = self.all_assigned_criteria(grouping_tas | tas)
-    self.criteria_coverage_count = criteria.length
-    if self.criteria_coverage_count >= 0
-      #skip validation on save. grouping already gets validated on creation of
-      #ta_membership. Ensure criteria_coverage_count >= 0 as this is the only
-      #attribute that gets changed between the validation above and the save
-      #below. This is done to improve performance, as any validations of the
-      #grouping result in 5 extra database queries
-      self.save(validate: false)
-    end
+    Grouping.assign_all_tas(id, Array(tas).map(&:id), assignment)
   end
 
   def remove_tas(ta_id_array)
@@ -566,9 +536,9 @@ class Grouping < ActiveRecord::Base
   def add_tas_by_user_name_array(ta_user_name_array)
     grouping_tas = []
     ta_user_name_array.each do |ta_user_name|
-      ta = Ta.find_by_user_name(ta_user_name)
+      ta = Ta.where(user_name: ta_user_name).first
       unless ta.nil?
-        if ta_memberships.find_by_user_id(ta.id).nil?
+        if ta_memberships.where(user_id: ta.id).first.nil?
           ta_memberships.create(user: ta)
         end
       end
@@ -584,7 +554,7 @@ class Grouping < ActiveRecord::Base
     csv_file_contents = csv_file_contents.utf8_encode(encoding)
     CSV.parse(csv_file_contents) do |row|
       group_name = row.shift # Knocks the first item from array
-      group = Group.find_by_group_name(group_name)
+      group = Group.where(group_name: group_name).first
       if group.nil?
         failures.push(group_name)
       else
@@ -652,15 +622,15 @@ class Grouping < ActiveRecord::Base
   end
 
   def assigned_tas_for_criterion(criterion)
-    result = []
     if assignment.assign_graders_to_criteria
-      tas.each do |ta|
-        if ta.criterion_ta_associations.find_by_criterion_id(criterion.id)
-          result.push(ta)
-        end
+      tas.select do |ta|
+        ta.criterion_ta_associations
+          .where(criterion_id: criterion.id)
+          .first
       end
+    else
+      []
     end
-    result
   end
 
   def all_assigned_criteria(ta_array)
@@ -695,7 +665,7 @@ class Grouping < ActiveRecord::Base
                 inviter.section
               end
     section_due_date = unless section.blank? || due_dates.blank?
-                         due_dates.find_by_section_id(section).due_date
+                         due_dates.where(section_id: section).first.due_date
                        end
 
     # condition to return

@@ -1,1 +1,2 @@
-<%=  link_to_function File.join(annot.submission_file.path, annot.submission_file.filename), "load_submitted_file_and_focus(#{annot.submission_file.id})" %>
+<%= link_to_function File.join(annot.submission_file.path, annot.submission_file.filename),
+                     "load_submitted_file_and_focus(#{annot.submission_file.id})" %>

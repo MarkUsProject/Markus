@@ -1,0 +1,7 @@
+jQuery('#add_extra_mark_prompt').replaceWith(
+  "<%= escape_javascript(render partial: 'results/marker/extra_mark',
+                                locals: { extra_mark: @extra_mark }) %>");
+
+document.getElementById('total_extra_points').innerHTML = "<%= @result.get_total_extra_points %>";
+
+update_total_mark("<%= @result.total_mark %>");

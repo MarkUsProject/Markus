@@ -15,18 +15,20 @@
 
   var annotation_menu = document.getElementById('annotation_menu');
   if (annotation_menu) {
-    annotation_menu.style.display = 'block';
+    annotation_menu.style.display = 'table';
   }
 
   source_code_ready();
 
   <% if (defined? annots) %>
-    <% annots.each do |annot| %>
-      add_annotation_text(<%= annot.annotation_text.id %>,
-                          '<%= simple_format(escape_javascript(annot.annotation_text.content.to_s)) %>');
-      add_annotation(<%= annot.id %>,
-                     { start: <%= annot.line_start %>, end: <%= annot.line_end %> },
-                     '<%= annot.annotation_text.id %>');
+    <% if annots.respond_to?('each') %>
+      <% annots.each do |annot| %>
+        add_annotation_text(<%= annot.annotation_text.id %>,
+                            '<%= simple_format(escape_javascript(annot.annotation_text.content.to_s)) %>');
+        add_annotation(<%= annot.id %>,
+                       { start: <%= annot.line_start %>, end: <%= annot.line_end %> },
+                       '<%= annot.annotation_text.id %>');
+      <% end %>
     <% end %>
   <% end %>
 

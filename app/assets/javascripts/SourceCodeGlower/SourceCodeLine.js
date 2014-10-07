@@ -28,14 +28,14 @@ SourceCodeLine.prototype.glow = function() {
   this.incGlowDepth(1);
 
   // Add the appropriate glow class
-  this.getLineNode().classList.add('source_code_glowing_' + this.getGlowDepth());
+  this.getLineNode().addClass('source_code_glowing_' + this.getGlowDepth());
 }
 
 // Decrease a Source Code Line's glow depth
 SourceCodeLine.prototype.unGlow = function() {
   // Is this line glowing?
   if (this.isGlowing()) {
-    this.getLineNode().classList.remove('source_code_glowing_' + this.getGlowDepth());
+    this.getLineNode().removeClass('source_code_glowing_' + this.getGlowDepth());
   }
 
   // Decrease the glow depth

@@ -5,8 +5,8 @@
 # For production mode MySQL option :
 #   bundle install --without development test postgresql sqlite
 #
-# Make sure to decleare at least one 'source'
-source 'http://rubygems.org'
+# Make sure to declare at least one 'source'
+source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'rails', '3.2.18'
@@ -24,6 +24,8 @@ gem 'jquery-rails'
 gem 'prototype-rails' # FIXME: Will be needed with Rails3.1
 gem 'rugged'
 gem 'gitolite'
+gem 'activerecord-import'
+gem 'strong_parameters' # NOTE: this goes away when upgrading to Rails4
 
 group :assets do
   gem 'tilt', '~> 1.3.7'
@@ -66,6 +68,7 @@ group :development do
   gem 'quiet_assets'
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'awesome_print'
 end
 
 group :test do
@@ -92,6 +95,7 @@ group :offline do
   gem 'rdoc'
   gem 'railroady'
   gem 'thin'
+  gem 'rubocop'
 end
 
 # If you  plan to use unicorn servers for production

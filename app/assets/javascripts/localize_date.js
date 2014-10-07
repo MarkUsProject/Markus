@@ -19,5 +19,7 @@ function localize_datetime(actual_date_div, date_div, format) {
   if (actual_date_div.value.indexOf(' ') > -1) {
     var date = convert_date_time(actual_date_div.value);
     date_div.value = date.format(format);
+    // The actual_date_div needs to be updated too, for some reason.
+    actual_date_div.value = date.format('YYYY-MM-DD HH:mm:ss');
   }
 }

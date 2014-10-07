@@ -8,16 +8,17 @@ class StudentMembership < Membership
   }
 
   scope :accepted,
-              conditions: {membership_status: STATUSES[:accepted]}
+        conditions: { membership_status: STATUSES[:accepted] }
   scope :inviter,
-              conditions: {membership_status: STATUSES[:inviter]}
+        conditions: { membership_status: STATUSES[:inviter] }
   scope :pending,
-              conditions: {membership_status: STATUSES[:pending]}
+        conditions: { membership_status: STATUSES[:pending] }
   scope :rejected,
-              conditions: {membership_status: STATUSES[:rejected]}
+        conditions: { membership_status: STATUSES[:rejected] }
   scope :accepted_or_inviter,
-              conditions: {membership_status: [STATUSES[:accepted],
-                                                     STATUSES[:inviter]]}
+        conditions: { membership_status: [STATUSES[:accepted],
+                                          STATUSES[:inviter]] }
+
   validate :must_be_valid_student
 
   validates_presence_of :membership_status

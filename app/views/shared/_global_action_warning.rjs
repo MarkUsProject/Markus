@@ -1,6 +1,0 @@
-if @global_action_warning
-  page.replace_html 'global_action_warning_msg', @global_action_warning
-  page.show('global_action_warning')
-else
-  page.hide('global_action_warning')
-end

@@ -1,18 +1,19 @@
-<%= javascript_include_tag 'help_system' %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'help_system' %>
+<% end %>
 
-<div id='title_bar'>
+<div class='title_bar'>
   <h1>
     <%= t('section.manage_users') %>
-    <span class='title-help sections_manage_users_help'></span>
+    <span class='title-help sections_manage_users_help'>
+      <p class='help-message-title sections_manage_users_help'>
+        <%= t('section.help.manage_users') %>
+      </p>
+    </span>
   </h1>
 </div>
 
-<p class='help-message-title sections_manage_users_help'>
-  <%= t('section.help.manage_users') %>
-</p>
-<div class='help-break sections_manage_users_help'></div>
-
-<div class='wrapLeft'>
+<div class='wrapper'>
   <%= render 'shared/flash_message' %>
 
   <%= link_to t('section.add_section'),
@@ -22,27 +23,32 @@
   <% if @sections.empty? %>
     <p><%= t('section.no_sections') %></p>
   <% else %>
-    <table>
-      <% @sections.each do |section| %>
-        <tr>
-          <td>
-            <%= link_to section.name, edit_section_path(section) %>
-            <span class='info'>(<%= section.students.count %>)</span>
-          </td>
-          <td>
-            <%= button_to t('delete'),
-                          { action: 'destroy',
-                            id: section.id },
-                          class: 'delete',
-                          confirm: t('section.delete.link_confirm'),
-                          method: 'delete',
-                          disabled: !section.students.empty?,
-                          class: 'thin-button' %>
-          </td>
-        </tr>
-      <% end %>
-    </table>
+    <div class='table'>
+      <table>
+        <thead>
+          <tr>
+            <th><%= t('section.legend') %></th>
+            <th><%= t('actions') %></th>
+          </tr>
+        </thead>
+        <% @sections.each do |section| %>
+          <tr>
+            <td>
+              <%= link_to section.name, edit_section_path(section) %>
+              <span class='info'>(<%= section.students.count %>)</span>
+            </td>
+            <td>
+              <%= button_to t('delete'),
+                            { action: 'destroy',
+                              id: section.id },
+                            confirm: t('section.delete.link_confirm'),
+                            method: 'delete',
+                            disabled: !section.students.empty?,
+                            class: 'inline-button' %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
   <% end %>
 </div>
-
-<div class='wrapLeft'></div>

@@ -1,4 +1,5 @@
 require 'rghost'
+
 class SubmissionFile < ActiveRecord::Base
 
   # Only allow alphanumeric characters, '.', '-', and '_' as
@@ -9,10 +10,13 @@ class SubmissionFile < ActiveRecord::Base
   SUBSTITUTION_CHAR = '_'
 
   belongs_to  :submission
-  has_many :annotations
   validates_associated :submission
   validates_presence_of :submission
+
+  has_many :annotations
+
   validates_presence_of :filename
+
   validates_presence_of :path
 
   validates_inclusion_of :is_converted, in: [true, false]
@@ -23,23 +27,21 @@ class SubmissionFile < ActiveRecord::Base
     # SyntaxHighlighter can work with.
     case File.extname(filename)
     when '.sci'
-      return 'scilab'
+      'scilab'
     when '.java'
-      return 'java'
+      'java'
     when '.rb'
-      return 'ruby'
+      'ruby'
     when '.py'
-      return 'python'
+      'python'
     when '.js'
-      return 'javascript'
+      'javascript'
     when '.c'
-      return 'c'
-    when '.scm'
-      return 'scheme'
-    when '.ss'
-      return 'scheme'
+      'c'
+    when '.scm', '.ss'
+      'scheme'
     else
-      return 'unknown'
+      'unknown'
     end
   end
 
@@ -51,15 +53,15 @@ class SubmissionFile < ActiveRecord::Base
     #the language's multiple line comment format.
     case File.extname(filename)
     when '.java', '.js', '.c'
-      return %w(/* */)
+      %w(/* */)
     when '.rb'
-      return ["=begin\n", "\n=end"]
+      ["=begin\n", "\n=end"]
     when '.py'
-      return %w(""" """)
+      %w(""" """)
     when '.scm', '.ss'
-      return %w(#| |#)
+      %w(#| |#)
     else
-      return %w(## ##)
+      %w(## ##)
     end
   end
 

@@ -16,7 +16,7 @@ class SectionsController < ApplicationController
 
   # Creates a new section
   def create
-    @section = Section.new(params[:section])
+    @section = Section.new(section_params)
     if @section.save
       @sections = Section.all
       flash[:success] = I18n.t('section.create.success', name: @section.name)
@@ -43,7 +43,7 @@ class SectionsController < ApplicationController
 
   def update
     @section = Section.find(params[:id])
-    if @section.update_attributes(params[:section])
+    if @section.update_attributes(section_params)
       flash[:success] = I18n.t('section.update.success', name: @section.name)
       redirect_to action: 'index'
     else
@@ -67,5 +67,11 @@ class SectionsController < ApplicationController
       flash[:error] = I18n.t('section.delete.error_permissions')
     end
     redirect_to action: :index
+  end
+
+  private
+
+  def section_params
+    params.require(:section).permit(:name)
   end
 end

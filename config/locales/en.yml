@@ -9,6 +9,7 @@ en:
     none:               "None"
     search:             "Search:"
     issues:             "GitHub issues list"
+    actions:            "Actions"
 
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
@@ -62,6 +63,10 @@ en:
     home:               "Home"
     settings:           "Settings"
 
+    # app/views/shared/_assignments_dropdown.html.erb
+    quick_links:  "Quick links"
+    spreadsheets: "Marks spreadsheets"
+
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "must be alphanumeric, '.', '-' or '_' only"
@@ -72,8 +77,9 @@ en:
     cannot_login_as_another_admin: "You cannot log in as another admin."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:      "Current assignments:"
-    due:                       "due :"
+    current_assignments:       "Current assignments"
+    assignment_item:           "Assignment"
+    due:                       "Due date"
     no_assignments:            "There are currently no assignments."
     class_average:             "Class Average: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissions collected"
@@ -186,11 +192,11 @@ en:
             submissions_graders: "Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks."
             groups: "Manage student groups. You can create new groups and manually add and remove students to groups."
             graders: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."
-        allow_web_submits: "Allow Web Submits?"
-        is_hidden: "Hide assignment from students?"
-        display_grader_names_to_students: "Display grader names to students?"
+        allow_web_submits: "Allow Web Submits"
+        is_hidden: "Hide assignment from students"
+        display_grader_names_to_students: "Display grader names to students"
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
-        section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
+        section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
     your_mark:  "Your mark:"
 
     members:            "Members"
@@ -386,7 +392,7 @@ en:
       release_marks:        "Release Marks"
       unrelease_marks:      "Unrelease Marks"
       group_name:           "Group Name"
-      repository_name:      "Repository: %{repository}"
+      repository_name:      "Repository: %{repository}"
       repository:           "Repository"
       commit_date:          "Commit Date"
       marking_state:        "Marking State"
@@ -401,7 +407,7 @@ en:
       show_assigned_to_me:  "Show Assigned to Me"
       grading_can_begin:    "Grading can begin"
       grading_can_begin_after: "Grading can begin after %{time}"
-      workspace:            "Workspace: %{short_identifier}"
+      submissions:	    "Submissions: %{short_identifier}"
       csv_report:           "CSV Report"
       detailled_csv_report: "Detailed CSV Report"
       subversion_repo_list: "Subversion Repo List"
@@ -425,7 +431,7 @@ en:
 
     summaries_index:
       group_name:           "Group Name"
-      repository_name:      "Repository: %{repository}"
+      repository_name:      "Repository: %{repository}"
       repository:           "Repository"
       commit_date:          "Commit Date"
       marking_state:        "Marking State"
@@ -486,6 +492,7 @@ en:
         upload_prompt: "Select a CSV file to upload"
         upload_format_html: "<p>The file should have the following format:</p>
                              <ul><li>two lines at the top which specify the question names and totals;</li>
+                             <li>the first item for the first two lines is ignored;</li>
                              <li>one line for each student record;</li>
                              <li>each line should be terminated by a carriage-return line-feed.</li></ul>
                              <code>\"\",q1_name,q2_name,q3_name</code><br>
@@ -493,7 +500,9 @@ en:
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "There are currently no marks spreadsheets."
-    current_grade_entry_forms_title: "Current marks spreadsheets:"
+    current_grade_entry_forms_title: "Current marks spreadsheets"
+    spreadsheet_item: "Marks spreadsheet"
+    spreadsheet_date: "Date"
     mark_message: "Your mark:"
 
     student_interface_assignments: "Your Assignments"
@@ -506,15 +515,15 @@ en:
       search_groups:    "Search Groups"
       add_new:          "Add new group"
       manage_groups:    "Manage Groups"
-      all_students:     "All students(<span id=\"all_students_count\"></span>)"
-      unassigned_students: "Unassigned(<span id=\"unassigned_students_count\"></span>)"
-      assigned_students: "Assigned(<span id=\"assigned_students_count\"></span>)"
-      inactive_students: "Inactive(<span id=\"inactive_students_count\"></span>)"
+      all_students:     "All students"
+      unassigned_students: "Unassigned"
+      assigned_students: "Assigned"
+      inactive_students: "Inactive"
       another_assignment_group: "Use another assignment's groups"
       graders: "Graders (%{graders})"
-      all_grouping_counts: "All Groups(<span id=\"all_groupings_count\"></span>)"
-      valid_grouping_counts: "Valid (<span id=\"valid_groupings_count\"></span>)"
-      not_valid_grouping_counts: "Not Valid (<span id=\"invalid_groupings_count\"></span>)"
+      all_grouping_counts: "All Groups"
+      valid_grouping_counts: "Valid"
+      not_valid_grouping_counts: "Not Valid"
       problem: "There was a problem..."
       warning: "Warning"
       lines_not_processed: "The following lines could not be processed:"
@@ -557,7 +566,7 @@ en:
       assignment_to_use: "Which assignments groups would you like to use?"
       delete_groups_linked: "This will delete all the groups linked to this assignment. Continue?"
       create_new_group: "Create new group"
-      groupe_name: "Group Name"
+      group_name: "Group Name"
       action:
         choose: "Choose an action"
         validate: "Validate"
@@ -641,7 +650,7 @@ en:
       overview: "Overview"
       last_revision_date: "Last Revision Date:<br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "files"
-      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> missing required files</span>"
+      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> missing required file(s)</span>"
       no_submission_yet: "You have not made any submissions yet"
       no_group_yet: "You don't have a group yet"
       grace_date_passed: "and the grace period for this assignment has passed"
@@ -863,7 +872,7 @@ en:
           </p>"
         success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
-        syntax_error: "There is an error in the file you uploaded : %{error}"
+        syntax_error: "There is an error in the file you uploaded: %{error}"
         flash_error: "Could not recognize %{format} format to download with"
       download:
         download_annotations: "Download Annotations"
@@ -1011,7 +1020,9 @@ en:
         link_yml: "Download rubric in YAML Format"
       upload:
         success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
+        csv:       "Upload CSV"
         csv_title: "Upload CSV File"
+        yml:       "Upload YML"
         yml_title: "Upload YML File"
         csv_prompt: "Select a CSV file to upload"
         yml_prompt: "Select a YML file to upload"
@@ -1033,7 +1044,7 @@ en:
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
           </p>"
         error: "Some rubric criteria were invalid:"
-        syntax_error: "There is an error in the file you uploaded : %{error}"
+        syntax_error: "There is an error in the file you uploaded: %{error}"
         empty_error: "No criteria were found in the provided file."
       error_total: "total weight must be positive"
       defaults:
@@ -1056,7 +1067,7 @@ en:
       weight: "Weight"
 
     notes:
-        note_on: "%{user_name} on <b>%{display_for}</b>"
+        note_on: "%{user_name} on <strong>%{display_for}</strong>"
         add_new: "Add a new note"
         existing: "Existing Notes"
         comment: "Your comment"
@@ -1120,7 +1131,7 @@ en:
       Select a criterion on the left to edit it.  Criteria names, descriptions and
       maximum values can be modified."
     past_due_date_warning: "Due date for this assignment is in the past."
-    past_due_date_notice: "Due date for this assignment is in the past for : "
+    past_due_date_notice: "Due date for this assignment is in the past for: "
 
     section:
       name: "Name"

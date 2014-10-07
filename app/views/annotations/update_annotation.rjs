@@ -1,8 +1,0 @@
-page.replace_html 'annotation_summary_list', partial: 'results/marker/annotation_summary', locals: {annots: @annotations, submission_file_id: @submission_file_id}
-
-if(@annotation_text.annotation_category_id != nil)
-  page.replace_html "annotation_text_list_#{@annotation_text.annotation_category_id}", partial: 'annotation_list', locals: {annotation_category: @annotation_text.annotation_category}
-end
-
-page.call(:update_annotation_text, @id, @content)
-page.call(:hide_all_annotation_content_editors)

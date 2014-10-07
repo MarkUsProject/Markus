@@ -1,52 +1,42 @@
-<%= javascript_include_tag 'manage_graders.js' %>
-<%= javascript_include_tag 'FilterTable/FilterTable.js' %>
-<%= javascript_include_tag 'Graders/tabs_boot.js' %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'manage_graders' %>
+  <%= javascript_include_tag 'FilterTable/FilterTable' %>
+  <%= javascript_include_tag 'Graders/tabs_boot' %>
 
-<%= render partial: 'boot',
-           formats: [:js],
-           handlers: [:erb] %>
+  <%= render partial: 'boot',
+             formats: [:js],
+             handlers: [:erb] %>
 
-<script>
-//<![CDATA[
-  var modalCreate = null;
-  var modalAssignmentGroupReUse = null;
-  var modalRenameGroup = null;
-  var modalAddMember = null;
-  var modalNotesGroup = null;
-  var modalUpload = null;
-  var modalDownload = null;
+  <script>
+  //<![CDATA[
+    var modalCreate = null;
+    var modalAssignmentGroupReUse = null;
+    var modalRenameGroup = null;
+    var modalAddMember = null;
+    var modalNotesGroup = null;
+    var modalUpload = null;
+    var modalDownload = null;
 
-  function upload_groups(){
-    modalUpload.open();
-    return false;
-  }
+    jQuery(document).ready(function() {
+      modalUpload   = new ModalMarkus('#upload_dialog');
+      modalDownload = new ModalMarkus('#download_dialog');
+    });
+  //]]>
+  </script>
+<% end %>
 
-  function download_groups(){
-    modalDownload.open();
-    return false;
-  }
-
-  jQuery(document).ready(function() {
-    modalUpload   = new ModalMarkus('#upload_dialog');
-    modalDownload = new ModalMarkus('#download_dialog');
-  });
-//]]>
-</script>
-
-<div id='title_bar'>
-  <h1><%= I18n.t('graders.manage_graders') %></h1>
+<div class='title_bar'>
+  <h1><%= t('graders.manage_graders') %></h1>
   <div class='heading_buttons'>
-    <%= button_to_function I18n.t('download'), 'download_groups();' %>
+    <%= link_to_function t('download'), 'modalDownload.open();' %>
     <span class='menu_bar'></span>
-    <%= button_to_function I18n.t('upload'), 'upload_groups();' %>
+    <%= link_to_function t('upload'), 'modalUpload.open();' %>
   </div>
 </div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <%= render 'shared/flash_message' %>
 </div>
-
-<div class='clear'></div>
 
 <div id='notice'>
   <div class='success' id='add_success' style='display: none;'></div>
@@ -62,17 +52,17 @@
     <h3><%= t('groups.warning') %></h3>
     <div id='global_action_warning_msg'></div>
   </div>
-</div><!-- Notice -->
+</div>
 
 <%= form_tag global_actions_grade_entry_form_marks_graders_path(@grade_entry_form),
              id: "global_action_form", remote: true do %>
 
   <script>
-    $('global_action_form').observe('ajax:after', function(evt, status, data, xhr) {
+    jQuery(document).ajaxStart(function() {
       thinking();
     });
 
-    $('global_action_form').observe('ajax:success', function(evt, status, data, xhr) {
+    jQuery(document).ajaxSuccess(function() {
       done_thinking();
     });
   </script>
@@ -81,29 +71,24 @@
   <%= hidden_field_tag 'current_table', 'groups_table', id: 'current_table' %>
   <%= hidden_field_tag 'global_actions'%>
 
-  <div class='clear'></div>
+  <div class='columns'>
 
-  <div class='colLeftGraders'>
-    <% # order of processing students is important. we go through each member
-       # one by one and delete them above from the list of students
-       # if they are already in a group
-       # See manage/_group.html.erb
-    %>
-    <div class='wrapLeftGroups'>
-      <div class='pane'>
-        <ul id='graders_tabs' class='subsection_tabs'>
-          <li class='tab'>
-            <a href='#graders_none' id='filter_link_graders_none'  class='filter_selected'>
-              <%= I18n.t('graders.graders') %>
+    <div class='col-left'>
+      <% # order of processing students is important. we go through each member
+         # one by one and delete them above from the list of students
+         # if they are already in a group
+         # See manage/_group.html.erb
+      %>
+      <div class='tab-pane' id='graders-tabs'>
+        <ul>
+          <li>
+            <a href='#graders_none' id='filter_link_graders_none' class='filter_selected'>
+              <span><%= t('graders.graders') %></span>
             </a>
           </li>
         </ul>
 
-        <div id='graders_none'></div>
-        <div id='unassigned'></div>
-        <div id='assigned'></div>
-
-        <div class='tabbedArea'>
+        <div id='graders_none'>
           <div class='search_box'>
             <%= text_field_tag 'search_graders',
                                nil,
@@ -111,88 +96,99 @@
                                onkeypress: "stop_submit(event);",
                                placeholder: I18n.t("search_graders") %>
           </div>
-          <table class='graders' id='graders'></table>
-        </div>
 
+          <div class='table'>
+            <table class='graders' id='graders'></table>
+          </div>
+        </div>
       </div>
     </div>
-  </div> <!-- colLeftGroups -->
 
-  <div class='centreColumn'>
-    <div id='icons'>
-      <%= image_submit_tag 'random_arrow.png',
-                           onclick: '$("global_actions").setValue("random_assign");',
-                           alt: I18n.t('groups.randomly_assign_graders'),
-                           title: I18n.t('groups.randomly_assign_graders'),
-                           class:'image_input' %>
-      <%= image_submit_tag 'add_arrow.png',
-                           onclick: '$("global_actions").setValue("assign");',
-                           alt: I18n.t('add_graders'),
-                           class:'image_input',
-                           title: I18n.t('add_graders') %>
-      <%= image_submit_tag 'remove_arrow.png',
-                           onclick: '$("global_actions").setValue("unassign");',
-                           alt: I18n.t('remove_graders'),
-                           title: I18n.t('remove_graders'),
-                           class:'image_input' %>
+    <div class='col-center'>
+      <div id='icons'>
+        <%= image_submit_tag 'random_arrow.png',
+                             onclick: '$("global_actions").setValue("random_assign");',
+                             alt: I18n.t('groups.randomly_assign_graders'),
+                             title: I18n.t('groups.randomly_assign_graders'),
+                             class:'image_input' %>
+        <%= image_submit_tag 'add_arrow.png',
+                             onclick: '$("global_actions").setValue("assign");',
+                             alt: I18n.t('add_graders'),
+                             class:'image_input',
+                             title: I18n.t('add_graders') %>
+        <%= image_submit_tag 'remove_arrow.png',
+                             onclick: '$("global_actions").setValue("unassign");',
+                             alt: I18n.t('remove_graders'),
+                             title: I18n.t('remove_graders'),
+                             class:'image_input' %>
+      </div>
     </div>
-  </div>
 
-  <div class='colRightGraders'>
-    <div class='wrapRightGroups'>
-      <div class='pane'>
-        <ul id='groups_tabs'class='subsection_tabs'>
-          <li class='tab'>
+    <div class='col-right'>
+      <div class='tab-pane' id='groups-tabs'>
+        <ul>
+          <li>
             <a href='#groups_table' id='filter_link_none' class='filter_selected'>
-              <%= I18n.t('students.students') %>
+              <%= t('students.students') %>
             </a>
           </li>
         </ul>
 
         <div id='groups_table'>
-          <div class='clear'></div>
-          <div id='students_container' class='tabbedArea'>
+          <div id='students_container'>
             <%= text_field_tag 'search_students', nil,
-                :onkeyup => 'groupings_table.add_filter("search"); groupings_table.render();',
-                :onkeypress => 'stop_submit(event);',
-                :placeholder => I18n.t('students.search_students') %>
-            <table class='groups' id='groups'></table>
+                onkeyup: 'groupings_table.add_filter("search"); groupings_table.render();',
+                onkeypress: 'stop_submit(event);',
+                placeholder: t('students.search_students') %>
+
+            <div class='table'>
+              <table class='groups' id='groups'></table>
+            </div>
           </div><!-- group container -->
         </div>
       </div>
     </div>
-  </div> <!-- colRightGroups -->
 
+  </div>
 <% end %> <!-- remote form tag -->
 
 <!-- Modal Windows -->
-<div id='download_dialog'>
+<aside class='dialog' id='download_dialog'>
   <h2><%= t('groups.download.download_grader_maps') %></h2>
-  <ul>
-    <li>
-      <%= link_to t("marks_graders.download.download_grader_students_csv"),
-        { controller:"marks_graders", action:"download_grader_students_mapping",
-          id: @grade_entry_form.id}, onclick: "modalDownload.close();" %>
-    </li>
-  </ul>
-  <%= button_to_function I18n.t('cancel'), 'modalDownload.close(); return false;' %>
-</div>
 
-<div id='upload_dialog'>
-  <h2><%= I18n.t('marks_graders.upload.upload_grader_map') %></h2>
-  <%= raw(I18n.t('marks_graders.upload.description_grader_map')) %>
+  <%= button_to t('marks_graders.download.download_grader_students_csv'),
+                { controller: 'marks_graders',
+                  action: 'download_grader_students_mapping',
+                  id: @grade_entry_form.id },
+                method: :get,
+                onclick: 'modalDownload.close();' %>
+
+  <section class='dialog-actions'>
+    <%= button_to_function t('cancel'), 'modalDownload.close();' %>
+  </section>
+</aside>
+
+<aside class='dialog' id='upload_dialog'>
+  <h2><%= t('marks_graders.upload.upload_grader_map') %></h2>
+  <%= raw(t('marks_graders.upload.description_grader_map')) %>
+
   <%= form_tag({ controller: 'marks_graders',
                  action: 'csv_upload_grader_groups_mapping',
                  id: @grade_entry_form.id },
                { multipart: true }) do %>
     <p>
-      <%= I18n.t('encoding') %>
+      <%= t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
+
     <p>
-      <%= file_field_tag :grader_mapping, size: 2 %><br>
-      <%= submit_tag t(:upload), :'data-disable-with' => t(:uploading_please_wait) %>
-      <%= button_to_function I18n.t('cancel'), 'modalUpload.close(); return false;' %>
+      <%= file_field_tag :grader_mapping, size: 2 %>
     </p>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) } %>
+      <%= button_to_function t('cancel'), 'modalUpload.close();' %>
+    </section>
   <% end %>
-</div>
+</aside>

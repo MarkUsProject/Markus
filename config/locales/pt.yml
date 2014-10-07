@@ -9,6 +9,7 @@ pt:
     none:               "Nenhum"
     search:             "Pesquisar:"
     issues:             "GitHub lista de problemas"
+    actions:            "Ações"
 
     # app/views/main/login.html.erb
     welcome_to:         "Bem-vindo ao MarkUs!"
@@ -61,6 +62,10 @@ pt:
     home:               "Home"
     settings:           "Configurações"
 
+    # app/views/shared/_assignments_dropdown.html.erb
+    quick_links:  "Links rápidos"
+    spreadsheets: "Notas nas planilhas"
+
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "apenas letras, números, '.', '-' ou '_'"
@@ -71,8 +76,9 @@ pt:
     cannot_login_as_another_admin: "Você não pode conectar como outro administrador."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:      "Projetos atuais:"
-    due:                       "Entrega :"
+    current_assignments:       "Projetos atuais"
+    assignment_item:           "Projetos"
+    due:                       "Prazo de entrega"
     no_assignments:            "Não existem projetos atualmente."
     class_average:             "Média da classe: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissões coletadas"
@@ -173,9 +179,9 @@ pt:
             flexible: "Flexível (à definir pelo avaliador)"
         notice:
             change_marking_scheme_type: "Alterar a escala de avaliação ira apagar avalições e critérios."
-        allow_web_submits: "Permitir envio pelo web?"
-        is_hidden: "Ocultar este projeto dos alunos?"
-        display_grader_names_to_students: "Mostrar nome de avaliador para alunos?"
+        allow_web_submits: "Permitir envio pelo web"
+        is_hidden: "Ocultar este projeto dos alunos"
+        display_grader_names_to_students: "Mostrar nome de avaliador para alunos"
         section_due_date_option:  "Se a opção de prazo de entrega por sessão foi selecionada, alunos só podem formar grupos dentro da sua sessão."
         section_due_dates_info:  "<b>Importante</b>: o prazo de entrega final deve ser preenchido. Se a sessão não possui uma data específica, o prazo global será usado no lugar. Alunos que não foram atribuídos a uma sessão só poderão formar grupos com alunos que também não estão atribuídos."
     your_mark:  "Sua nota:"
@@ -388,7 +394,7 @@ pt:
       show_assigned_to_me:  "Mostrar atribuidos à você"
       grading_can_begin:    "Avaliação pode começar"
       grading_can_begin_after: "Avaliação pode começar depois %{time}"
-      workspace:            "Área de trabalho: %{short_identifier}"
+      submissions: 	    "Submissões: %{short_identifier}"
       csv_report:           "Relatório CSV"
       detailled_csv_report: "Relatório detalhado CSV"
       subversion_repo_list: "Lista de repositórios subversion"
@@ -459,6 +465,7 @@ pt:
         upload_prompt: "Selecione um arquivo CSV para carregar"
         upload_format_html: "<p>O arquivo deve conter o seguinte formato:</p>
                              <ul><li>duas linhas no topo que devem especificar o nome da questão e o total;</li>
+                             <li>o primeiro objeto para as duas primeiras linhas é ignorado;</li>
                              <li>uma linha para cada aluno;</li>
                              <li>cada linha deve ser terminada por um carriage-return line-feed.</li></ul>
                              <code>\"\",q1_name,q2_name,q3_name</code><br>
@@ -466,7 +473,9 @@ pt:
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message: "Atualmente não há notas nas planilhas."
-    current_grade_entry_forms_title: "Planilha atual de notas:"
+    current_grade_entry_forms_title: "Planilha atual de notas"
+    spreadsheet_item: "Notas nas planilhas"
+    spreadsheet_date: "Data"
     mark_message: "Sua nota:"
 
     student_interface_assignments: "Seus projetos"
@@ -479,15 +488,15 @@ pt:
       search_groups: "Pesquisar os grupos"
       add_new: "Adicionar um novo grupo"
       manage_groups: "Gerenciar grupos"
-      all_students: "Todos os alunos(<span id=\"all_students_count\"></span>)"
-      unassigned_students: "Não-atribuídos(<span id=\"unassigned_students_count\"></span>)"
-      assigned_students: "Atribuídos(<span id=\"assigned_students_count\"></span>)"
-      inactive_students: "Inativo(<span id=\"inactive_students_count\"></span>)"
+      all_students: "Todos os alunos"
+      unassigned_students: "Não-atribuíd"
+      assigned_students: "Atribuíds"
+      inactive_students: "Inativo"
       another_assignment_group: "Use grupos de outro projeto"
       graders: "Avaliadores (%{graders})"
-      all_grouping_counts: "Todos os grupos(<span id=\"all_groupings_count\"></span>)"
-      valid_grouping_counts: "Válidos (<span id=\"valid_groupings_count\"></span>)"
-      not_valid_grouping_counts: "Não-válidos (<span id=\"invalid_groupings_count\"></span>)"
+      all_grouping_counts: "Todos os grupos"
+      valid_grouping_counts: "Válido"
+      not_valid_grouping_counts: "Não-válid"
       problem: "Houve um problema..."
       warning: "Alerta"
       lines_not_processed: "As seguintes linhas não puderam ser processadas:"
@@ -530,7 +539,7 @@ pt:
       assignment_to_use: "Quais atribuições de grupos você gostaria de usar?"
       delete_groups_linked: "Isto irá deletar todos os grupos ligados ao projeto. Continuar?"
       create_new_group: "Criar novo grupo"
-      groupe_name: "Nome do Grupo"
+      group_name: "Nome do Grupo"
       action:
         choose: "Escolher ação"
         validate: "Validar"
@@ -607,7 +616,7 @@ pt:
       overview: "Visão global"
       last_revision_date: "Última data de revisão:<br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "arquivos"
-      missing_required_files: "Faltando <span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> arquivos exigidos</span>"
+      missing_required_files: "Faltando <span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> arquivos exigidos</span>"
       no_submission_yet: "Você não tem nenhum envio ainda."
       no_group_yet: "Você ainda não está em um grupo"
       grace_date_passed: "e o período de tolerância para este projeto já passou"
@@ -971,7 +980,9 @@ pt:
         link_yml: "Baixar rúbrica em formato YAML"
       upload:
         success: "Critério de rúbrica carregado com sucesso: %{nb_updates} atualizada(s)."
+        csv:       "Carregar CSV"
         csv_title: "Carregar arquivo CSV"
+        yml:       "Carregar YML"
         yml_title: "Carregar arquivo YML File"
         csv_prompt: "Selecionar um arquivo CSV para carregar"
         yml_prompt: "Selecionar um arquivo YML para carregar"
@@ -989,7 +1000,7 @@ pt:
                     &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
                     &nbsp;&nbsp;level_1:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;[...]
+                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
           </p>"
         error: "Alguns critérios de rúbrica eram inválidos:"
         syntax_error: "Existe um erro no arquivo carregado : %{error}"

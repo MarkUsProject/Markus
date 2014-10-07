@@ -1,6 +1,13 @@
-<div class="title_bar"><h1><%= t('student_interface_assignments') %></h1></div>
-<%= render partial: "assignments/list",
-  locals: { controller: 'assignments', action: 'student_interface' } -%>
+<div class='title_bar'>
+  <h1><%= t('student_interface_assignments') %></h1>
+</div>
 
-<div class="title_bar" id="second_title"><h1><%= t('grade_entry_forms.students.title') %></h1></div>
-<%= render partial: "grade_entry_forms/list" %>
+<%= render partial: 'assignments/list',
+           locals: { controller: 'assignments',
+                     action: 'student_interface' } %>
+
+<div class='title_bar'>
+  <h1><%= t('grade_entry_forms.students.title') %></h1>
+</div>
+
+<%= render partial: 'grade_entry_forms/list' %>

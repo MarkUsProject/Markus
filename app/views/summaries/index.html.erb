@@ -1,62 +1,7 @@
-<%= javascript_include_tag 'submissions_manager' %>
-<%= javascript_include_tag 'ajax_paginate' %>
+<%= content_for :head do %>
+  <%= render partial: 'summaries_table', formats: [:'js.jsx'], handlers: [:erb] %>
+<% end %>
 
 <div class='wrapLeft'>
-  <div class='clear'></div>
-
-  <div class='ap_nav_box'>
-    <div class='ap_filters' id='ap_filters_1'>
-      <%= render partial: 'summaries_table_filters',
-                 locals: { filter: @filter,
-                           page: @current_page,
-                           desc: @desc,
-                           sort_by: @sort_by,
-                           assignment: @assignment,
-                           filters: @filters,
-                           per_page: @per_page,
-                           per_pages: @per_pages } %>
-    </div>
-    <div class='clear'></div>
-    <div class='ap_page_links' id='ap_page_links_1'>
-      <%= render partial: 'ajax_paginate/initial_paginate_links',
-                 locals: { per_page: @per_page,
-                           current_page: @current_page,
-                           page_items: @groupings.size,
-                           total_items: @groupings_total,
-                           assignment: @assignment,
-                           filter: @filter,
-                           sort_by: @sort_by,
-                           desc: @desc } %>
-    </div>
-    <div id='ap_selector'>
-      <%= render partial: 'ajax_paginate/selector' %>
-    </div>
-    <div class='clear'></div>
-  </div>
-
-  <table>
-    <thead id='summaries_table_head'>
-      <%= render partial: 'summaries_table_sorting_links',
-                 locals: { assignment: @assignment,
-                           filter: 'none',
-                           page: @current_page,
-                           per_page: @per_page,
-                           sort_by: @sort_by,
-                           cid: @cid,
-                           desc: @desc } %>
-    </thead>
-    <%= render partial: 'summaries_table_body',
-               locals: { groupings: @groupings,
-                         assignment: @assignment } %>
-    <tfoot id='summaries_table_foot'>
-      <%= render partial: 'summaries_table_sorting_links',
-                 locals: { assignment: @assignment,
-                           filter: 'none',
-                           page: @current_page,
-                           per_page: @per_page,
-                           sort_by: @sort_by,
-                           cid: @cid,
-                           desc: @desc } %>
-    </tfoot>
-  </table>
+    <div id='summaries_table'></div>
 </div>

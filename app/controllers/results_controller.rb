@@ -168,6 +168,10 @@ class ResultsController < ApplicationController
   end
 
   def download
+    if params[:download_zip_button]
+      download_zip
+      return
+    end
     #Ensure student doesn't download a file not submitted by his own grouping
     unless authorized_to_download?(file_id: params[:select_file_id])
       render 'shared/http_status', formats: [:html],
@@ -280,8 +284,10 @@ class ResultsController < ApplicationController
       # The Student does not have access to this file. Display an error.
       if @file.submission.grouping.membership_status(current_user).nil?
         render partial: 'shared/handle_error',
-               locals: {error: I18n.t('submission_file.error.no_access',
-                 submission_file_id: @submission_file_id)}
+               formats:[:js],
+               handlers: [:erb],
+               locals: { error: t('submission_file.error.no_access',
+                         submission_file_id: @submission_file_id) }
         return
       end
     end
@@ -293,7 +299,9 @@ class ResultsController < ApplicationController
       @file_contents = @file.retrieve_file
     rescue Exception => e
       render partial: 'shared/handle_error',
-             locals: {error: e.message}
+             formats:[:js],
+             handlers: [:erb],
+             locals: { error: e.message }
       return
     end
     @code_type = @file.get_file_type
@@ -334,7 +342,9 @@ class ResultsController < ApplicationController
                          " Assignment: '#{assignment.short_identifier}', Group: '#{group.group_name}'.",
                      MarkusLogger::ERROR)
         render partial: 'shared/handle_error',
-               locals: {error: I18n.t('mark.error.save') + result_mark.errors.full_messages.join}
+               formats:[:js],
+               handlers: [:erb],
+               locals: { error: t('mark.error.save') + result_mark.errors.full_messages.join }
       else
         m_logger.log("User '#{current_user.user_name}' updated mark for submission (id: " +
                          "#{submission.id}) of assignment '#{assignment.short_identifier}' for group" +
@@ -420,8 +430,8 @@ class ResultsController < ApplicationController
     if request.post?
       @extra_mark = ExtraMark.new
       @extra_mark.result = @result
-      @extra_mark.unit = ExtraMark::UNITS[:points]
-      if @extra_mark.update_attributes(params[:extra_mark])
+      @extra_mark.unit = ExtraMark::POINTS
+      if @extra_mark.update_attributes(extra_mark_params)
         # need to re-calculate total mark
         @result.update_total_mark
         render template: 'results/marker/insert_extra_mark'
@@ -534,5 +544,13 @@ class ResultsController < ApplicationController
 
   def update_remark_request_count
     Assignment.find(params[:assignment_id]).update_remark_request_count
+  end
+
+  private
+
+  def extra_mark_params
+    params.require(:extra_mark).permit(:result,
+                                       :description,
+                                       :extra_mark)
   end
 end

@@ -1,63 +1,65 @@
-<% # Display this student's grade entry forms %>
+<%# Display this student's grade entry forms %>
 
-<div class="section">
+<div class='section'>
   <% if @grade_entry_forms.empty? %>
     <p><%= t(:no_grade_entry_forms_message) %></p>
   <% else %>
-    <% # Table listing grade entry forms %>
-    <table>
-      <thead>
-        <tr>
-          <th><%= t(:description) %></th>
-          <th><%= t(:shortened_date).html_safe %></th>
-          <% # Note: this hides the results column within the student view %>
-          <th><%= t('results.results_name') %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @grade_entry_forms.each do |grade_entry_form| %>
+    <%# Table listing grade entry forms %>
+    <div class='table'>
+      <table>
+        <thead>
           <tr>
-            <td class="grade_entry_form_results_name">
-              <%=
-                # Grade entry form name
-                link_to grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
-                controller: 'grade_entry_forms',
-                action: 'student_interface',
-                id: grade_entry_form.id %>
-            </td>
-            <td>
-              <strong><%= l(grade_entry_form.date, format: :short_date) %></strong>
-              <% if grade_entry_form.date > Time.zone.now.to_date %>
-                <p>
-                  <%= t(:days_left,
-                        days: (grade_entry_form.date - Time.zone.now.to_date).to_i)
-                  %>
-                </p>
-              <% end %>
-            </td>
-            <td class="grade_entry_form_result">
-              <% if !@g_id_entries.empty? && !@g_id_entries[grade_entry_form.id].nil? %>
-                <% if grade_entry_form.show_total %>
-                  <strong><%= t('mark_message') %></strong>
-                  <% if @g_id_entries[grade_entry_form.id].all_blank_grades? %>
-                    <%= t('grade_entry_forms.grades.no_mark') %>
-                  <% else %>
-                    <%= # show results
-                      ('%.2f' % (grade_entry_form.calculate_total_percent(
-                        @g_id_entries[grade_entry_form.id]).to_s) + '%') %>
-                  <% end %>
-                  <%= '(' + t(:class_average, results_average:
-                      ('%.2f' % (grade_entry_form.calculate_released_average)).to_s) + '%)' %>
-                <% else %>
-                  <strong> <%= t('grade_entry_forms.students.detailed_marks_message') %> </strong>
-                <% end %>
-              <% elsif grade_entry_form.date < Time.zone.now.to_date %>
-                <%= t('grade_entry_forms.students.no_results') %>
-              <% end %>
-            </td>
+            <th><%= t(:description) %></th>
+            <th><%= t(:shortened_date).html_safe %></th>
+            <%# Note: this hides the results column within the student view %>
+            <th><%= t('results.results_name') %></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @grade_entry_forms.each do |grade_entry_form| %>
+            <tr>
+              <td class="grade_entry_form_results_name">
+                <%=
+                  # Grade entry form name
+                  link_to grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
+                  controller: 'grade_entry_forms',
+                  action: 'student_interface',
+                  id: grade_entry_form.id %>
+              </td>
+              <td>
+                <strong><%= l(grade_entry_form.date, format: :short_date) %></strong>
+                <% if grade_entry_form.date > Time.zone.now.to_date %>
+                  <p>
+                    <%= t(:days_left,
+                          days: (grade_entry_form.date - Time.zone.now.to_date).to_i)
+                    %>
+                  </p>
+                <% end %>
+              </td>
+              <td class="grade_entry_form_result">
+                <% if !@g_id_entries.empty? && !@g_id_entries[grade_entry_form.id].nil? %>
+                  <% if grade_entry_form.show_total %>
+                    <strong><%= t('mark_message') %></strong>
+                    <% if @g_id_entries[grade_entry_form.id].all_blank_grades? %>
+                      <%= t('grade_entry_forms.grades.no_mark') %>
+                    <% else %>
+                      <%= # show results
+                        ('%.2f' % (grade_entry_form.calculate_total_percent(
+                          @g_id_entries[grade_entry_form.id]).to_s) + '%') %>
+                    <% end %>
+                    <%= '(' + t(:class_average, results_average:
+                        ('%.2f' % (grade_entry_form.calculate_released_average)).to_s) + '%)' %>
+                  <% else %>
+                    <strong> <%= t('grade_entry_forms.students.detailed_marks_message') %> </strong>
+                  <% end %>
+                <% elsif grade_entry_form.date < Time.zone.now.to_date %>
+                  <%= t('grade_entry_forms.students.no_results') %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   <% end %>
 </div>

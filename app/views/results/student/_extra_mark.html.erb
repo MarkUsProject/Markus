@@ -1,12 +1,9 @@
-<%#
-# Erb template for inserting a new extra mark into an assignment grade
-%>
-
+<%# Erb template for inserting a new extra mark into an assignment grade %>
 <tr>
- <td>
-   <%=(extra_mark.description)%>
- </td>
- <td>
-   <%=(extra_mark.extra_mark)%>
- </td>
+  <td>
+    <%= extra_mark.description %>
+  </td>
+  <td>
+    <%= extra_mark.extra_mark %>
+  </td>
 </tr>

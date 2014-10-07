@@ -1,9 +1,6 @@
 class TestFile < ActiveRecord::Base
   belongs_to :assignment
 
-  # Restrict updates to filename, filetype and is_private columns
-  attr_accessible :filename, :filetype, :is_private
-
   # Run sanitize_filename before saving to the database
   before_save :sanitize_filename
 
@@ -50,7 +47,7 @@ class TestFile < ActiveRecord::Base
     # Case 3: validates_uniqueness_of filename for this assignment
     # (overriden since we need to extract the actual filename using .original_filename)
     if f_name && a_id
-      dup_file = TestFile.find_by_assignment_id_and_filename(a_id, f_name)
+      dup_file = TestFile.where(assignment_id: a_id, filename: f_name).first
       if dup_file && dup_file.id != t_id
         record.errors.add attr, ' ' + f_name + ' ' + I18n.t('automated_tests.filename_exists')
       end
@@ -60,17 +57,17 @@ class TestFile < ActiveRecord::Base
   # Save the full test file path and sanitize the filename for the database
   def sanitize_filename
     # Execute only when full file path exists (indicating a new File object)
-    if self.filename.respond_to?(:original_filename)
-      @file_path = self.filename
-      self.filename = self.filename.original_filename
+    if filename.respond_to?(:original_filename)
+      @file_path = filename
+      filename = filename.original_filename
 
       # Sanitize filename:
-      self.filename.strip!
-      self.filename.gsub(/^(..)+/, '.')
+      filename.strip!
+      filename.gsub!(/^(..)+/, '.')
       # replace spaces with
-      self.filename.gsub(/[^\s]/, '')
+      filename.gsub!(/[^\s]/, '')
       # replace all non alphanumeric, underscore or periods with underscore
-      self.filename.gsub(/^[\W]+$/, '_')
+      filename.gsub!(/^[\W]+$/, '_')
     end
   end
 
@@ -82,7 +79,7 @@ class TestFile < ActiveRecord::Base
       # If the filenames are different, delete the old file
       if self.filename != self.filename_was
         # Search for old file
-        @testfile = TestFile.find_by_id(self.id)
+        @testfile = TestFile.where(id: id).first
         # Delete old file
         @testfile.delete_file
       end
