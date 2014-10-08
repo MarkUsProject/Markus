@@ -1,6 +1,45 @@
 require 'spec_helper'
 
 describe Assignment do
+
+  it { is_expected.to have_many(:rubric_criteria).dependent(:destroy).order(:position) }
+  it { is_expected.to have_many(:flexible_criteria).dependent(:destroy).order(:position) }
+  it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
+  it { is_expected.to accept_nested_attributes_for(:assignment_files).allow_destroy(true) }
+  it { is_expected.to have_many(:test_files).dependent(:destroy) }
+  it { is_expected.to accept_nested_attributes_for(:test_files).allow_destroy(true) }
+  it { is_expected.to have_many(:criterion_ta_associations).dependent(:destroy) }
+  it { is_expected.to have_one(:submission_rule).dependent(:destroy) }
+  it { is_expected.to accept_nested_attributes_for(:submission_rule).allow_destroy(true) }
+  it { is_expected.to validate_presence_of(:submission_rule) }
+  it { is_expected.to have_many(:annotation_categories).dependent(:destroy) }
+  it { is_expected.to have_many(:groupings) }
+  it { is_expected.to have_many(:ta_memberships).through(:groupings) }
+  it { is_expected.to have_many(:student_memberships).through(:groupings) }
+  it { is_expected.to have_many(:tokens).through(:groupings) }
+  it { is_expected.to have_many(:submissions).through(:groupings) }
+  it { is_expected.to have_many(:groups).through(:groupings) }
+  it { is_expected.to have_many(:notes).dependent(:destroy) }
+  it { is_expected.to have_many(:section_due_dates) }
+  it { is_expected.to accept_nested_attributes_for(:section_due_dates) }
+  it { is_expected.to have_one(:assignment_stat).dependent(:destroy) }
+  it { is_expected.to accept_nested_attributes_for(:assignment_stat).allow_destroy(true) }
+
+  it { is_expected.to validate_presence_of(:short_identifier) }
+  it { is_expected.to validate_presence_of(:description) }
+  it { is_expected.to validate_presence_of(:repository_folder) }
+  it { is_expected.to validate_presence_of(:due_date) }
+  it { is_expected.to validate_presence_of(:marking_scheme_type) }
+  it { is_expected.to validate_presence_of(:group_min) }
+  it { is_expected.to validate_presence_of(:group_max) }
+  it { is_expected.to validate_presence_of(:notes_count) }
+
+  it { is_expected.to validate_numericality_of(:group_min).is_greater_than(0) }
+  it { is_expected.to validate_numericality_of(:group_max).is_greater_than(0) }
+  it { is_expected.to validate_numericality_of(:tokens_per_day).is_greater_than_or_equal_to(0) }
+  it { is_expected.to validate_uniqueness_of(:short_identifier) }
+
+
   let(:assignment) do
     build_stubbed(:assignment).tap do |assignment|
       allow(assignment).to receive(:save)
