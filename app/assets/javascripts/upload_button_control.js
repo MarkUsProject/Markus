@@ -13,7 +13,7 @@ var Function_List = {
 
     // Checks to see if the file upload id changed.
     jQuery('body').on('change','#' + u_id, function(){
-      if (document.getElementById(b_id[0]) == null) return;
+      if (document.getElementById(b_id[0]) === null) return;
 
       var filePath = this.value;
       var i;
