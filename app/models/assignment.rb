@@ -40,7 +40,7 @@ class Assignment < ActiveRecord::Base
   has_many :section_due_dates
   accepts_nested_attributes_for :section_due_dates
 
-  
+
   validates_uniqueness_of :short_identifier, case_sensitive: true
   validates_numericality_of :group_min, only_integer: true, greater_than: 0
   validates_numericality_of :group_max, only_integer: true, greater_than: 0
@@ -62,15 +62,14 @@ class Assignment < ActiveRecord::Base
   # "validates_presence_of" for boolean values.
   validates_inclusion_of :allow_web_submits, in: [true, false]
   validates_inclusion_of :display_grader_names_to_students, in: [true, false]
-  validates_inclusion_of :is_hidden, in: [true, false]  
+  validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :enable_test, in: [true, false]
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
 
   validate :minimum_number_of_groups
 
-
   before_save :reset_collection_time
-  
+
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
