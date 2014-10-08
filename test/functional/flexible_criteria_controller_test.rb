@@ -319,7 +319,7 @@ require 'mocha/setup'
       context 'with save error' do
         setup do
           FlexibleCriterion.any_instance.expects(:save).once.returns(false)
-          FlexibleCriterion.any_instance.expects(:errors).once.returns('error msg')
+          FlexibleCriterion.any_instance.expects(:errors).once.returns(['error msg'])
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,

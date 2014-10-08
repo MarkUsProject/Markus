@@ -397,7 +397,7 @@ fr:
       show_assigned_to_me:  "Montrer les groupes qui me sont assignés"
       grading_can_begin:    "L'évaluation peut commencer"
       grading_can_begin_after: "L'évaluation commencera à partir du %{time}"
-      workspace:            "Projet : %{short_identifier}"
+      submissions:	    "Soumissions: %{short_identifier}"
       csv_report:           "Rapport CSV"
       detailled_csv_report: "Rappost CSV détaillé"
       subversion_repo_list: "Liste des dépôts Subversion"
@@ -481,6 +481,7 @@ fr:
         upload_prompt: "Sélectionner un fichier CSV à envoyer"
         upload_format_html: "<p>Le fichier devra être au format suivant : </p>
                              <ul><li>les deux lignes du haut spécifient le nom de la note et le total ;</li>
+                             <li>le premier objet pour les deux premières lignes est ignoré ;</li>
                              <li>une ligne pour chaque étudiant(e) ;</li>
                              <li>chaque ligne doit être terminée par un retour charriot.</li></ul>
                              <code>\"\",q1_name,q2_name,q3_name</code><br>

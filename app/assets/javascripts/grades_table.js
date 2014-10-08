@@ -87,7 +87,8 @@ function bindEventToGradeEntry() {
       jQuery.ajax({
         url:  this.getAttribute('data-action'),
         data: params,
-        type: 'POST'
+        type: 'POST',
+        dataType: 'script',
       });
     });
   });

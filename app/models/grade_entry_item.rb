@@ -41,10 +41,9 @@ class GradeEntryItem < ActiveRecord::Base
       raise I18n.t('grade_entry_forms.csv.incomplete_header')
     end
 
-    # Make sure the first elements in names and totals are ""
-    unless names.shift == '' && totals.shift == ''
-      raise I18n.t('grade_entry_forms.csv.incomplete_header')
-    end
+    # We ignore the first column.
+    names.shift
+    totals.shift
 
     # Process the question names and totals
     (0..(names.size - 1)).each do |i|
