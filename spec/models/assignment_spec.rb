@@ -33,11 +33,11 @@ describe Assignment do
   it { is_expected.to validate_presence_of(:group_min) }
   it { is_expected.to validate_presence_of(:group_max) }
   it { is_expected.to validate_presence_of(:notes_count) }
+
   it { is_expected.to validate_numericality_of(:group_min).is_greater_than(0) }
   it { is_expected.to validate_numericality_of(:group_max).is_greater_than(0) }
   it { is_expected.to validate_numericality_of(:tokens_per_day).is_greater_than_or_equal_to(0) }
   it { is_expected.to validate_uniqueness_of(:short_identifier) }
-
 
   let(:assignment) do
     build_stubbed(:assignment).tap do |assignment|
