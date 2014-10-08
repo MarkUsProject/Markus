@@ -42,6 +42,17 @@ Markus::Application.routes.draw do
         get 'render_test_result'
       end
 
+      resources :tags do
+        member do
+          delete 'destroy'
+        end
+
+        collection do
+          post 'csv_upload'
+          get 'download_csv'
+        end
+      end
+
       resources :rubrics do
         member do
           delete 'destroy'
