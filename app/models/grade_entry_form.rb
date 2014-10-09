@@ -6,8 +6,8 @@ require 'encoding'
 # marks on each question (i.e. GradeEntryStudents).
 class GradeEntryForm < ActiveRecord::Base
   has_many                  :grade_entry_items,
-                            dependent: :destroy,
-                            order: :position
+                            -> { order(:position) },
+                            dependent: :destroy
 
   has_many                  :grade_entry_students,
                             dependent: :destroy
