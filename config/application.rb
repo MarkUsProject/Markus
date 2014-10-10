@@ -16,12 +16,6 @@ module Markus
   # -- all .rb files in that directory are automatically loaded.
   # See Rails::Configuration for more options.
 
-  # Javascripts files always loaded in views
-  config.action_view.javascript_expansions[:defaults] = %w(prototype rails application )
-
-  # NOTE: this should be removed when upgrading to Rails 4
-  config.active_record.whitelist_attributes = false
-
   # Set this if MarkUs is not hosted under / of your Web-host.
   # E.g. if MarkUs should be accessible by http://yourhost.com/markus/instance0
   # then set the below directive to "/markus/instance0".
