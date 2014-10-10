@@ -183,7 +183,7 @@ class ResultsController < ApplicationController
     end
     file = SubmissionFile.find(params[:select_file_id])
     begin
-      if params[:include_annotations] == 'true' #&& !file.is_supported_image?
+      if params[:include_annotations] == 'true' && !file.is_supported_image?
         file_contents = file.retrieve_file(true)
       else
         file_contents = file.retrieve_file
@@ -205,7 +205,8 @@ class ResultsController < ApplicationController
       send_data file_contents, type: 'image', disposition: 'inline',
         filename: filename
     elsif file.is_pdf? && !params[:show_in_browser].nil?
-      send_data file_contents, type: 'pdf', filename: filename
+      # send_data file_contents, type: 'pdf', filename: filename
+      # TODO: Will be used by PDF.JS
     else
       send_data file_contents, filename: filename
     end
