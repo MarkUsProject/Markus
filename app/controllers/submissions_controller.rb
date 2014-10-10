@@ -376,7 +376,7 @@ class SubmissionsController < ApplicationController
       @files.sort.each do |file_name, file|
         @table_rows[file.object_id] = construct_file_manager_table_row(file_name, file)
       end
-        
+
       if @grouping.repository_external_commits_only?
         @directories.sort.each do |directory_name, directory|
           @table_rows[directory.object_id] = construct_file_manager_dir_table_row(directory_name, directory)
@@ -488,7 +488,7 @@ class SubmissionsController < ApplicationController
       end
     end
   end
-  
+
   def index
     @assignments = Assignment.all(order: :id)
     render :index, layout: 'sidebar'

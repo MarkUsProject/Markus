@@ -183,7 +183,7 @@ class ResultsController < ApplicationController
     end
     file = SubmissionFile.find(params[:select_file_id])
     begin
-      if params[:include_annotations] == 'true' && !file.is_supported_image?
+      if params[:include_annotations] == 'true' #&& !file.is_supported_image?
         file_contents = file.retrieve_file(true)
       else
         file_contents = file.retrieve_file
@@ -196,17 +196,16 @@ class ResultsController < ApplicationController
                   id: file.submission.get_latest_result.id
       return
     end
+
     filename = file.filename
-    #Display the file in the page if it is an image/pdf, and download button
-    #was not explicitly pressed
+
+    # Display the file in the page if it is an image/pdf, and download button
+    # was not explicitly pressed
     if file.is_supported_image? && !params[:show_in_browser].nil?
       send_data file_contents, type: 'image', disposition: 'inline',
         filename: filename
     elsif file.is_pdf? && !params[:show_in_browser].nil?
-      send_file File.join(MarkusConfigurator.markus_config_pdf_storage,
-        file.submission.grouping.group.repository_name, file.path,
-        filename.split('.')[0] + '_' + sprintf('%04d' % params[:file_index].to_s()) + '.jpg'),
-        type: 'image', disposition: 'inline', filename: filename
+      send_data file_contents, type: 'pdf', filename: filename
     else
       send_data file_contents, filename: filename
     end

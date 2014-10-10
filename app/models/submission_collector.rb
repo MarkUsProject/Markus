@@ -176,14 +176,7 @@ class SubmissionCollector < ActiveRecord::Base
     # Apply the SubmissionRule
     new_submission = assignment.submission_rule.apply_submission_rule(
       new_submission)
-    #convert any pdf submission files to jpgs, catching any errors
-    new_submission.submission_files.each do |subm_file|
-      subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
-      if subm_file.error_converting
-        grouping.error_collecting = true
-      end
-    end
-    
+
     unless grouping.error_collecting
       grouping.is_collected = true
     end
@@ -192,59 +185,51 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.save
   end
 
-  #Use the database to communicate to the child to stop, and restart itself
-  #and manually collect the submission
+  # Use the database to communicate to the child to stop, and restart itself
+  # and manually collect the submission
   def manually_collect_submission(grouping, rev_num)
-
-    #Since windows doesn't support fork, the main process will have to collect
-    #the submissions.
+    # Since windows doesn't support fork, the main process will have to collect
+    # the submissions.
     if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
       grouping.is_collected = false
       remove_grouping_from_queue(grouping)
       grouping.save
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
-      new_submission.submission_files.each do |subm_file|
-        subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
-      end
       grouping.is_collected = true
       grouping.save
       return
     end
 
-    #Make the child process exit safely, to avoid both parent and child process
-    #from calling the Magick::Image.from_blob function, this breaks future calls
-    #of the method by the child.
+    # Make the child process exit safely, to avoid both parent and child process
+    # from calling the Magick::Image.from_blob function, this breaks future
+    # calls of the method by the child.
     safely_stop_child
 
-    #remove the grouping from the grouping_queue so it isnt collected again
+    # remove the grouping from the grouping_queue so it isnt collected again
     grouping.is_collected = false
     remove_grouping_from_queue(grouping)
     grouping.save
 
     new_submission = Submission.create_by_revision_number(grouping, rev_num)
 
-    #This is to help determine the progress of the method.
-    self.safely_stop_child_exited = true
-    self.save
+    # This is to help determine the progress of the method.
+    safely_stop_child_exited = true
+    save
 
-    #Let the child process handle conversion, as things go wrong when both
-    #parent and child do this.
+    # Let the child process handle conversion, as things go wrong when both
+    # parent and child do this.
     start_collection_process do
       if MarkusConfigurator.markus_config_pdf_support
-        new_submission.submission_files.each do |subm_file|
-          subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
-        end
         grouping.is_collected = true
         grouping.save
       end
     end
-    #setting is_collected here will prevent an sqlite lockout error when pdfs
-    #aren't supported
+    # setting is_collected here will prevent an sqlite lockout error when pdfs
+    # aren't supported
     unless MarkusConfigurator.markus_config_pdf_support
       grouping.is_collected = true
       grouping.save
     end
-
   end
 
   def safely_stop_child
