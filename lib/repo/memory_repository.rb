@@ -567,7 +567,7 @@ module Repository
       @files.each do |object|
         alt_path = ""
         if object.path != '/'
-          alt_path = object.path + '/'
+          alt_path = '/' + object.path
         end
         if object.instance_of?(type) && (object.path == path || alt_path == path)
           if (!only_changed)

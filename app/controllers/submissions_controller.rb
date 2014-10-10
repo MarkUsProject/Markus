@@ -306,7 +306,7 @@ class SubmissionsController < ApplicationController
       if params[:revision_number]
         @revision_number = params[:revision_number].to_i
       else
-        @revision_number = repo.latest_revision_number
+        @revision_number = repo.get_latest_revision.revision_number
       end
       @revision = repo.get_revision(@revision_number)
 
