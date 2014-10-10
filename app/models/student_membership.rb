@@ -16,8 +16,7 @@ class StudentMembership < Membership
   scope :rejected,
         -> { where(membership_status: STATUSES[:rejected]) }
   scope :accepted_or_inviter,
-        -> { where(membership_status: [STATUSES[:accepted],
-                                          STATUSES[:inviter]]) }
+        -> { where(membership_status: [STATUSES[:accepted], STATUSES[:inviter]]) }
 
   validate :must_be_valid_student
 
