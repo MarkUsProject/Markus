@@ -19,9 +19,7 @@ class Grouping < ActiveRecord::Base
            class_name: 'StudentMembership'
 
   has_many :accepted_student_memberships,
-           -> { where('memberships.membership_status' =>
-                [StudentMembership::STATUSES[:accepted],
-                 StudentMembership::STATUSES[:inviter]]) },
+           -> { where('memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]) },
            class_name: 'StudentMembership'
 
   has_many :notes, as: :noteable, dependent: :destroy

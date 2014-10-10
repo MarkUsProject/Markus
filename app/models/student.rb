@@ -1,9 +1,7 @@
 class Student < User
 
   has_many :accepted_groupings,
-           -> { where('memberships.membership_status' =>
-                [StudentMembership::STATUSES[:accepted],
-                 StudentMembership::STATUSES[:inviter]]) },
+           -> { where('memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]) },
            class_name: 'Grouping',
            through: :memberships,
            source: :grouping
