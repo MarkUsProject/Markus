@@ -1,7 +1,7 @@
 # Join model representing a member in a grouping
 class Membership < ActiveRecord::Base
 
-  has_many :grace_period_deductions
+  has_many :grace_period_deductions, dependent: :destroy
 
   belongs_to :user
   validates_associated :user,

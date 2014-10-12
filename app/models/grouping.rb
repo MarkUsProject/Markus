@@ -12,7 +12,7 @@ class Grouping < ActiveRecord::Base
 
   belongs_to :grouping_queue
 
-  has_many :memberships
+  has_many :memberships, dependent: :destroy
   has_many :student_memberships, order: 'id'
   has_many :non_rejected_student_memberships,
            class_name: 'StudentMembership',

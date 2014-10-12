@@ -355,7 +355,7 @@ TableFooter = React.createClass({displayName: 'TableFooter',
         if (this.props.sort_column == column.id) {
           // Add classes for css to style with indicators.
           // This class is only applied to the currently sorted column.
-          clss += (this.props.sort_direction == 'asc' ? ' asc' : 'desc');
+          clss += (this.props.sort_direction == 'asc' ? ' asc' : ' desc');
         }
         return React.DOM.td( {className:clss}, React.DOM.span(null,
           [column.content]))
