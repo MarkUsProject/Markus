@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Assignment do
 
+  # Associations
   it { is_expected.to have_many(:rubric_criteria).dependent(:destroy).order(:position) }
   it { is_expected.to have_many(:flexible_criteria).dependent(:destroy).order(:position) }
   it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
@@ -25,6 +26,7 @@ describe Assignment do
   it { is_expected.to have_one(:assignment_stat).dependent(:destroy) }
   it { is_expected.to accept_nested_attributes_for(:assignment_stat).allow_destroy(true) }
 
+  # Attributes
   it { is_expected.to validate_presence_of(:short_identifier) }
   it { is_expected.to validate_presence_of(:description) }
   it { is_expected.to validate_presence_of(:repository_folder) }
@@ -37,7 +39,11 @@ describe Assignment do
   it { is_expected.to validate_numericality_of(:group_min).is_greater_than(0) }
   it { is_expected.to validate_numericality_of(:group_max).is_greater_than(0) }
   it { is_expected.to validate_numericality_of(:tokens_per_day).is_greater_than_or_equal_to(0) }
-  it { is_expected.to validate_uniqueness_of(:short_identifier) }
+
+  describe 'validations' do
+    subject { create(:assignment) }
+    it { is_expected.to validate_uniqueness_of(:short_identifier) }
+  end
 
   let(:assignment) do
     build_stubbed(:assignment).tap do |assignment|
