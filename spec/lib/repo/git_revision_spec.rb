@@ -8,7 +8,7 @@ describe Repository::GitRevision do
     describe '#files_at_path' do
       # Commit a file named test in the workdir
       before(:each) do
-        transaction = repo.get_transaction(0) # dummy user_id
+        transaction = repo.get_transaction("dummy") # dummy user_id
         transaction.add('test', 'testdata')
         repo.commit(transaction)
       end
@@ -36,7 +36,7 @@ describe Repository::GitRevision do
     describe '#directories_at_path' do
       before(:each) do
         # Commit a file named test2 in a folder called testdir
-        transaction = repo.get_transaction(0) # dummy user_id
+        transaction = repo.get_transaction("dummy") # dummy user_id
         transaction.add('testdir/test', 'testdata')
         repo.commit(transaction)
       end
@@ -58,7 +58,7 @@ describe Repository::GitRevision do
 
     describe '#stringify' do
       before(:each) do
-        transaction = repo.get_transaction(0) # dummy user_id
+        transaction = repo.get_transaction("dummy") # dummy user_id
         transaction.add('test', 'testdata')
         repo.commit(transaction)
       end
