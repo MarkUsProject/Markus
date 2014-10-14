@@ -42,8 +42,8 @@ class GroupsController < ApplicationController
     @assignment = grouping.assignment
     @errors = []
     @removed_groupings = []
-    students_to_remove = grouping.students.all
-		grouping.student_memberships.all.each do |member|
+    students_to_remove = grouping.students.to_a
+		grouping.student_memberships.to_a.each do |member|
 			grouping.remove_member(member.id)
 		end
     # TODO: return errors through request
