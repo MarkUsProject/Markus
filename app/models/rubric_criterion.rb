@@ -262,7 +262,7 @@ class RubricCriterion < Criterion
 
   def add_tas(ta_array)
     ta_array = Array(ta_array)
-    associations = criterion_ta_associations.all(conditions: {ta_id: ta_array})
+    associations = criterion_ta_associations.where(ta_id: ta_array).to_a
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
       if (ta.criterion_ta_associations & associations).size < 1

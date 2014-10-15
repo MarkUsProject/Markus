@@ -15,11 +15,11 @@ class Grouping < ActiveRecord::Base
   has_many :memberships, dependent: :destroy
   has_many :student_memberships, -> { order('id') }
   has_many :non_rejected_student_memberships,
-           -> { where(['memberships.membership_status != ?', StudentMembership::STATUSES[:rejected]]) },
+           -> { where ['memberships.membership_status != ?', StudentMembership::STATUSES[:rejected]] },
            class_name: 'StudentMembership'
 
   has_many :accepted_student_memberships,
-           -> { where('memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]) },
+           -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'StudentMembership'
 
   has_many :notes, as: :noteable, dependent: :destroy
@@ -27,7 +27,7 @@ class Grouping < ActiveRecord::Base
   has_many :tas, through: :ta_memberships, source: :user
   has_many :students, through: :student_memberships, source: :user
   has_many :pending_students,
-           -> { where('memberships.membership_status' => StudentMembership::STATUSES[:pending]) },
+           -> { where 'memberships.membership_status' => StudentMembership::STATUSES[:pending] },
            class_name: 'Student',
            through: :student_memberships,
            source: :user
@@ -36,7 +36,7 @@ class Grouping < ActiveRecord::Base
   #The first submission found that satisfies submission_version_used == true.
   #If there are multiple such submissions, one is chosen randomly.
   has_one :current_submission_used,
-          -> { where(submission_version_used: true) },
+          -> { where submission_version_used: true },
           class_name: 'Submission'
 
   has_many :grace_period_deductions,
@@ -44,12 +44,12 @@ class Grouping < ActiveRecord::Base
 
   has_one :token
   has_one :inviter_membership,
-          -> { where(membership_status: StudentMembership::STATUSES[:inviter]) },
+          -> { where membership_status: StudentMembership::STATUSES[:inviter] },
           class_name: 'StudentMembership'
 
   has_one :inviter, source: :user, through: :inviter_membership
 
-  scope :approved_groupings, -> { where(admin_approved: true) }
+  scope :approved_groupings, -> { where admin_approved: true }
 
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
@@ -520,7 +520,7 @@ class Grouping < ActiveRecord::Base
   def remove_tas(ta_id_array)
     #if no tas to remove, return.
     return if ta_id_array == []
-    ta_memberships_to_remove = ta_memberships.find_all_by_user_id(ta_id_array, include: :user)
+    ta_memberships_to_remove = ta_memberships.includes(:user).references(:user).where(user_id: ta_id_array)
     ta_memberships_to_remove.each do |ta_membership|
       ta_membership.destroy
       ta_memberships.delete(ta_membership)
