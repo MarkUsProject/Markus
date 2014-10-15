@@ -7,38 +7,28 @@ class Assignment < ActiveRecord::Base
     rubric: 'rubric'
   }
 
-  has_many :rubric_criteria,
-           class_name: 'RubricCriterion',
-           order: :position
+  has_many :rubric_criteria, class_name: 'RubricCriterion', dependent: :destroy, order: :position
+  has_many :flexible_criteria, class_name: 'FlexibleCriterion', dependent: :destroy, order: :position
+  has_many :criterion_ta_associations, dependent: :destroy
 
-  has_many :flexible_criteria,
-           class_name: 'FlexibleCriterion',
-           order: :position
-
-  has_many :criterion_ta_associations
-
-  has_many :assignment_files
+  has_many :assignment_files, dependent: :destroy
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
-  has_many :test_files
+  has_many :test_files, dependent: :destroy
   accepts_nested_attributes_for :test_files, allow_destroy: true
 
-  has_one :assignment_stat
+  has_one :assignment_stat, dependent: :destroy
   accepts_nested_attributes_for :assignment_stat, allow_destroy: true
   validates_associated :assignment_stat
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
 
-  has_many :annotation_categories,
-           class_name: 'AnnotationCategory',
-           order: :position
+  has_many :annotation_categories, order: :position, dependent: :destroy
 
   has_many :groupings
 
-  has_many :ta_memberships,
-           class_name: 'TaMembership',
-           through: :groupings
+  has_many :ta_memberships, through: :groupings
   has_many :student_memberships, through: :groupings
   has_many :tokens, through: :groupings
 
@@ -50,40 +40,36 @@ class Assignment < ActiveRecord::Base
   has_many :section_due_dates
   accepts_nested_attributes_for :section_due_dates
 
-  validates_presence_of :repository_folder
-  validates_presence_of :short_identifier, :group_min
+
   validates_uniqueness_of :short_identifier, case_sensitive: true
+  validates_numericality_of :group_min, only_integer: true, greater_than: 0
+  validates_numericality_of :group_max, only_integer: true, greater_than: 0
+  validates_numericality_of :tokens_per_day, only_integer: true, greater_than_or_equal_to: 0
 
-  validates_numericality_of :group_min,
-                            only_integer: true,
-                            greater_than: 0
-  validates_numericality_of :group_max, only_integer: true
-  validates_numericality_of :tokens_per_day,
-                            only_integer: true,
-                            greater_than_or_equal_to: 0
-
-  has_one :submission_rule
+  has_one :submission_rule, dependent: :destroy
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
   validates_associated :submission_rule
   validates_presence_of :submission_rule
 
-  validates_presence_of :marking_scheme_type
-
-  # For those, please refer to issue #1126
-  # Because of app/views/assignments/_list_manage.html.erb line:13
+  validates_presence_of :short_identifier
   validates_presence_of :description
-
-  # since allow_web_submits is a boolean, validates_presence_of does not work:
-  # see the Rails API documentation for validates_presence_of (Model
-  # validations)
+  validates_presence_of :repository_folder
+  validates_presence_of :due_date
+  validates_presence_of :marking_scheme_type
+  validates_presence_of :group_min
+  validates_presence_of :group_max
+  validates_presence_of :notes_count
+  # "validates_presence_of" for boolean values.
   validates_inclusion_of :allow_web_submits, in: [true, false]
-  validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :display_grader_names_to_students, in: [true, false]
+  validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :enable_test, in: [true, false]
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
 
-  before_save :reset_collection_time
   validate :minimum_number_of_groups
+
+  before_save :reset_collection_time
+
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
