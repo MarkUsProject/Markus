@@ -1,5 +1,3 @@
-require 'rghost'
-
 class SubmissionFile < ActiveRecord::Base
 
   # Only allow alphanumeric characters, '.', '-', and '_' as
