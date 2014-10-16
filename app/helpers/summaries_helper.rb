@@ -1,13 +1,25 @@
 module SummariesHelper
   include SubmissionsHelper
   def get_summaries_table_info(assignment)
-    groupings = assignment.groupings
-      .includes(:assignment,
-                :group,
-                :grace_period_deductions,
-                current_submission_used: :results,
-                accepted_student_memberships: :user)
-      .select { |g| g.non_rejected_student_memberships.size > 0 }
+    if grader_id.nil?
+      groupings = assignment.groupings
+        .includes(:assignment,
+                  :group,
+                  :grace_period_deductions,
+                  current_submission_used: :results,
+                  accepted_student_memberships: :user)
+        .select { |g| g.non_rejected_student_memberships.size > 0 }
+    else
+      groupings = assignment.groupings
+        .includes(:assignment,
+                  :group,
+                  :grace_period_deductions,
+                  current_submission_used: :results,
+                  accepted_student_memberships: :user)
+        .joins(:tas)
+        .select { |g| g.non_rejected_student_memberships.size > 0 }
+    end
+
     groupings.map do |grouping|
       g = grouping.attributes
       g[:class_name] = get_any_tr_attributes(grouping)
