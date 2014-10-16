@@ -1,6 +1,6 @@
 module SummariesHelper
   include SubmissionsHelper
-  def get_summaries_table_info(assignment)
+  def get_summaries_table_info(assignment, grader_id=nil)
     if grader_id.nil?
       groupings = assignment.groupings
         .includes(:assignment,

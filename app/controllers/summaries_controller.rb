@@ -11,8 +11,10 @@ class SummariesController < ApplicationController
     respond_to do |format|
       format.html
       if @current_user.ta?
-        format.json { render json: get_summaries_table_info(@assignment,
-                                                            @current_user.id) }
+        format.json do
+          render json: get_summaries_table_info(@assignment,
+                                                @current_user.id)
+        end
       else
         format.json { render json: get_summaries_table_info(@assignment) }
       end
