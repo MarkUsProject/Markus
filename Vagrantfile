@@ -4,8 +4,9 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "markusproject/ubuntu"
   
-  # Allow instance to see project folder
-  # Warning: this may cause errors with your Vagrant box!
+  # Allow instance to see project folder.
+  # Warning: This may cause problems with your Vagrant box!
+  #          Enable at your own risk.
   # config.vm.synced_folder ".", "/home/vagrant/Markus"
 
   # Access the server running on port 3000 on the host on port 42069.
