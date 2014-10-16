@@ -44,8 +44,9 @@
       <% for criterion in @criteria %>
         columns.push({
           id: 'criterion_' + <%= criterion.id %>,
-          content: '<%= j raw I18n.t('summaries_index.criterion') %> '
-                    + <%= criterion.id %>,
+          content: '<%= criterion.has_attribute?('flexible_criterion_name') ?
+                       criterion.flexible_criterion_name :
+                       criterion.rubric_criterion_name %>',
           sortable: true,
           searchable: false
         });
