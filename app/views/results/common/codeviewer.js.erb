@@ -24,16 +24,7 @@ document.getElementById('code_pane').onmousemove = null;
                                             annots: @annots,
                                             code_type: @code_type,
                                             submission_file_id: @submission_file_id }) %>");
-<%# PDF files %>
-<% elsif @file.is_pdf? %>
-  jQuery('#codeviewer').html(
-    "<%= escape_javascript(render partial: 'results/common/pdf_codeviewer',
-                                  locals: { uid: params[:uid],
-                                            file_contents: @file_contents,
-                                            annots: @annots,
-                                            code_type: @code_type,
-                                            nb_files: @nb_pdf_files_to_download,
-                                            submission_file_id: @submission_file_id }) %>");
+
 <% else %>
   jQuery('#codeviewer').html(
     "<%= escape_javascript(render partial: 'results/common/text_codeviewer',
