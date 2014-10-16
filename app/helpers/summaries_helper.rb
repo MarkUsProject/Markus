@@ -17,7 +17,6 @@ module SummariesHelper
                   :grace_period_deductions,
                   current_submission_used: :results,
                   accepted_student_memberships: :user)
-        .joins(:tas)
         .select do |g|
           g.non_rejected_student_memberships.size > 0 and
           ta.is_assigned_to_grouping?(g.id)
