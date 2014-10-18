@@ -40,9 +40,20 @@ describe Assignment do
   it { is_expected.to validate_numericality_of(:group_max).is_greater_than(0) }
   it { is_expected.to validate_numericality_of(:tokens_per_day).is_greater_than_or_equal_to(0) }
 
-  describe 'validations' do
+  describe 'validation' do
     subject { create(:assignment) }
+
     it { is_expected.to validate_uniqueness_of(:short_identifier) }
+
+    it 'fails when group_max less than group_min' do
+      assignment = build(:assignment, :group_max => 1, :group_min => 2)
+      expect(assignment).not_to be_valid
+    end
+
+    it 'fails when due_date is invalid' do
+      assignment = build(:assignment, :due_date => '2000/01/40')
+      expect(assignment).not_to be_valid
+    end
   end
 
   let(:assignment) do
@@ -50,6 +61,115 @@ describe Assignment do
       allow(assignment).to receive(:save)
     end
   end
+
+  describe '#criterion_class' do
+
+    context 'when the marking_scheme_type is rubric' do
+      before :each do
+        @assignment = build(:assignment, :marking_scheme_type => Assignment::MARKING_SCHEME_TYPE[:rubric])
+      end
+
+      it 'returns RubricCriterion' do
+        expect(@assignment.criterion_class).to equal(RubricCriterion)
+      end
+    end
+
+    context 'when the marking_scheme_type is flexible' do
+      before :each do
+        @assignment = build(:assignment, :marking_scheme_type => Assignment::MARKING_SCHEME_TYPE[:flexible])
+      end
+
+      it 'returns FlexibleCriterion' do
+        expect(@assignment.criterion_class).to equal(FlexibleCriterion)
+      end
+    end
+
+    context 'when the marking_scheme_type is nil' do
+      before :each do
+        @assignment = build(:assignment, :marking_scheme_type => nil)
+      end
+
+      it 'returns nil' do
+        expect(@assignment.criterion_class).to be_nil
+      end
+    end
+
+  end
+
+  context 'when past due with no late submission rule' do
+    context 'without sections' do
+      before :each do
+        @assignment = create(:assignment, :due_date => 2.days.ago)
+      end
+
+      it 'returns only one due date' do
+        expect(@assignment.what_past_due_date).to eq(['Due Date'])
+      end
+
+      it 'returns true for past_due_date?' do
+        expect(@assignment.past_due_date?).to be
+      end
+
+      it 'returns true for past_collection_date?' do
+        expect(@assignment.past_collection_date?).to be
+      end
+
+      it 'returns the latest_due_date' do
+        expect(@assignment.latest_due_date.day).to eq(2.days.ago.day)
+      end
+    end
+
+    context 'with sections' do
+      before :each do
+        @assignment = create(:assignment, :due_date => 2.days.ago, :section_due_dates_type => true)
+
+        @section = Section.create(:name => 'section_name')
+        SectionDueDate.create(:section => @section,
+                              :assignment => @assignment,
+                              :due_date => 1.day.ago)
+
+        student = create(:student, :section => @section)
+        @grouping = create(:grouping, :assignment => @assignment)
+        create(:student_membership, :grouping => @grouping,
+                                    :user => student,
+                                    :membership_status => StudentMembership::STATUSES[:inviter])
+      end
+
+      describe 'one section' do
+        it 'returns the due date for the section' do
+          expect(@assignment.section_due_date(@section).day).to eq(1.days.ago.day)
+        end
+
+        it 'returns true for section_past_due_date?' do
+          expect(@assignment.section_past_due_date?(@grouping)).to be
+        end
+
+        it 'returns an array with the past section name' do
+          expect(@assignment.what_past_due_date).to eq(%w(section_name))
+        end
+      end
+
+      describe 'multiple sections' do
+        before :each do
+          @section2 = Section.create(:name => 'section_name2')
+          SectionDueDate.create(:section => @section2,
+                                :assignment => @assignment,
+                                :due_date => 1.day.ago)
+          student2 = create(:student, :section => @section2)
+          @grouping2 = create(:grouping, :assignment => @assignment)
+          create(:student_membership, :grouping => @grouping2,
+                                      :user => student2,
+                                      :membership_status => StudentMembership::STATUSES[:inviter])
+        end
+
+        it 'return an array with the pas section names' do
+          expect(@assignment.what_past_due_date).to eq(%w(section_name section_name2))
+        end
+      end
+    end
+
+  end
+
 
   describe '#update_results_stats' do
     before :each do
