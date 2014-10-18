@@ -170,7 +170,6 @@ describe Assignment do
 
   end
 
-
   describe '#update_results_stats' do
     before :each do
       allow(assignment).to receive(:total_mark).and_return(10)
