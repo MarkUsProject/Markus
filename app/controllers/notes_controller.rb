@@ -39,7 +39,7 @@ class NotesController < ApplicationController
   end
 
   def index
-    @notes = Note.all(order: "created_at DESC", include: [:user, :noteable])
+    @notes = Note.includes(:user, :noteable).order(created_at: :desc)
     @current_user = current_user
     # Notes are attached to noteables, if there are no noteables, we can't make notes.
     @noteables_available = Note.noteables_exist?
