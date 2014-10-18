@@ -46,12 +46,12 @@ describe Assignment do
     it { is_expected.to validate_uniqueness_of(:short_identifier) }
 
     it 'fails when group_max less than group_min' do
-      assignment = build(:assignment, :group_max => 1, :group_min => 2)
+      assignment = build(:assignment, group_max: 1, group_min: 2)
       expect(assignment).not_to be_valid
     end
 
     it 'fails when due_date is invalid' do
-      assignment = build(:assignment, :due_date => '2000/01/40')
+      assignment = build(:assignment, due_date: '2000/01/40')
       expect(assignment).not_to be_valid
     end
   end
@@ -66,7 +66,7 @@ describe Assignment do
 
     context 'when the marking_scheme_type is rubric' do
       before :each do
-        @assignment = build(:assignment, :marking_scheme_type => Assignment::MARKING_SCHEME_TYPE[:rubric])
+        @assignment = build(:assignment, marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:rubric])
       end
 
       it 'returns RubricCriterion' do
@@ -76,7 +76,7 @@ describe Assignment do
 
     context 'when the marking_scheme_type is flexible' do
       before :each do
-        @assignment = build(:assignment, :marking_scheme_type => Assignment::MARKING_SCHEME_TYPE[:flexible])
+        @assignment = build(:assignment, marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:flexible])
       end
 
       it 'returns FlexibleCriterion' do
@@ -86,7 +86,7 @@ describe Assignment do
 
     context 'when the marking_scheme_type is nil' do
       before :each do
-        @assignment = build(:assignment, :marking_scheme_type => nil)
+        @assignment = build(:assignment, marking_scheme_type: nil)
       end
 
       it 'returns nil' do
@@ -99,7 +99,7 @@ describe Assignment do
   context 'when past due with no late submission rule' do
     context 'without sections' do
       before :each do
-        @assignment = create(:assignment, :due_date => 2.days.ago)
+        @assignment = create(:assignment, due_date: 2.days.ago)
       end
 
       it 'returns only one due date' do
@@ -121,18 +121,18 @@ describe Assignment do
 
     context 'with sections' do
       before :each do
-        @assignment = create(:assignment, :due_date => 2.days.ago, :section_due_dates_type => true)
+        @assignment = create(:assignment, due_date: 2.days.ago, section_due_dates_type: true)
 
-        @section = Section.create(:name => 'section_name')
-        SectionDueDate.create(:section => @section,
-                              :assignment => @assignment,
-                              :due_date => 1.day.ago)
+        @section = Section.create(name: 'section_name')
+        SectionDueDate.create(section: @section,
+                              assignment: @assignment,
+                              due_date: 1.day.ago)
 
-        student = create(:student, :section => @section)
-        @grouping = create(:grouping, :assignment => @assignment)
-        create(:student_membership, :grouping => @grouping,
-                                    :user => student,
-                                    :membership_status => StudentMembership::STATUSES[:inviter])
+        student = create(:student, section: @section)
+        @grouping = create(:grouping, assignment: @assignment)
+        create(:student_membership, grouping: @grouping,
+                                    user: student,
+                                    membership_status: StudentMembership::STATUSES[:inviter])
       end
 
       describe 'one section' do
@@ -151,15 +151,15 @@ describe Assignment do
 
       describe 'multiple sections' do
         before :each do
-          @section2 = Section.create(:name => 'section_name2')
-          SectionDueDate.create(:section => @section2,
-                                :assignment => @assignment,
-                                :due_date => 1.day.ago)
-          student2 = create(:student, :section => @section2)
-          @grouping2 = create(:grouping, :assignment => @assignment)
-          create(:student_membership, :grouping => @grouping2,
-                                      :user => student2,
-                                      :membership_status => StudentMembership::STATUSES[:inviter])
+          @section2 = Section.create(name: 'section_name2')
+          SectionDueDate.create(section: @section2,
+                                assignment: @assignment,
+                                due_date: 1.day.ago)
+          student2 = create(:student, section: @section2)
+          @grouping2 = create(:grouping, assignment: @assignment)
+          create(:student_membership, grouping: @grouping2,
+                                      user: student2,
+                                      membership_status: StudentMembership::STATUSES[:inviter])
         end
 
         it 'return an array with the pas section names' do
