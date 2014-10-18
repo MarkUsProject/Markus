@@ -55,6 +55,12 @@
 </div>
 
 <aside class='dialog' id='upload_csv_dialog'>
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: 'upload_script_csv',
+                             upload_id: 'csv_upload_rubric',
+                             button_id: 'upload_csv' %>
+
   <h1><%= t('rubric_criteria.upload.csv_title') %></h1>
   <p><%= t('rubric_criteria.upload.csv_prompt') %></p>
   <%= form_for :csv_upload,
@@ -74,7 +80,9 @@
 
     <section class='dialog-actions'>
       <%= f.submit t(:upload),
-                   data: { disable_with: t(:uploading_please_wait) } %>
+                   data: { disable_with: t(:uploading_please_wait) },
+                   id: 'upload_csv',
+                   disabled: true %>
       <input type='reset'
              value='<%= t(:cancel) %>'
              onclick='modal_upload_csv.close();'>
@@ -83,6 +91,12 @@
 </aside>
 
 <aside class='dialog' id='upload_yml_dialog'>
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: 'upload_script_yml',
+                             upload_id: 'yml_upload_rubric',
+                             button_id: 'upload_yml' %>
+
   <h1><%= t('rubric_criteria.upload.yml_title') %></h1>
   <p><%= t('rubric_criteria.upload.yml_prompt') %></p>
   <%= form_for :yml_upload,
@@ -99,7 +113,9 @@
 
     <section class='dialog-actions'>
       <%= f.submit t(:upload),
-                   data: { disable_with: t(:uploading_please_wait) } %>
+                   data: { disable_with: t(:uploading_please_wait) },
+                   id: 'upload_yml',
+                   disabled: true %>
       <input type='reset'
              value='<%= t(:cancel) %>'
              onclick='modal_upload_yml.close();'>

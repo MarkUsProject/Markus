@@ -38,7 +38,7 @@ class SubmissionFile < ActiveRecord::Base
       'javascript'
     when '.c'
       'c'
-    when '.scm', '.ss'
+    when '.scm', '.ss', '.rkt'
       'scheme'
     else
       'unknown'
@@ -58,7 +58,7 @@ class SubmissionFile < ActiveRecord::Base
       ["=begin\n", "\n=end"]
     when '.py'
       %w(""" """)
-    when '.scm', '.ss'
+    when '.scm', '.ss', '.rkt'
       %w(#| |#)
     else
       %w(## ##)
