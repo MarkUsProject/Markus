@@ -272,7 +272,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should 'with permissions to download the file' do
               @file.expects(:filename).once.returns('filename')
               @file.expects(:is_supported_image?).once.returns(false)
-              @file.expects(:is_pdf?).once.returns(false)
               @file.expects(:retrieve_file).returns('file content')
               ResultsController.any_instance.stubs(
                     :authorized_to_download?).once.returns(true)
@@ -350,7 +349,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should 'with annotations included' do
             @file.expects(:filename).once.returns('filename')
             @file.expects(:is_supported_image?).once.returns(false)
-            @file.expects(:is_pdf?).once.returns(false)
             @file.expects(:retrieve_file).returns('file content')
             ResultsController.any_instance.stubs(:authorized_to_download?).once.returns(true)
             SubmissionFile.stubs(:find).once.returns(@file)
@@ -793,7 +791,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @file.expects(:filename).once.returns('filename')
             @file.expects(:retrieve_file).returns('file content')
             @file.expects(:is_supported_image?).once.returns(false)
-            @file.expects(:is_pdf?).once.returns(false)
             SubmissionFile.stubs(:find).returns(@file)
 
             get_as @admin,
@@ -1252,7 +1249,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should 'without file error' do
             @file.expects(:filename).once.returns('filename')
             @file.expects(:is_supported_image?).once.returns(false)
-            @file.expects(:is_pdf?).once.returns(false)
             @file.expects(:retrieve_file).once.returns('file content')
             SubmissionFile.stubs(:find).returns(@file)
 

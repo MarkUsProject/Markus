@@ -202,11 +202,6 @@ class ResultsController < ApplicationController
     if file.is_supported_image? && !params[:show_in_browser].nil?
       send_data file_contents, type: 'image', disposition: 'inline',
         filename: filename
-    elsif file.is_pdf? && !params[:show_in_browser].nil?
-      send_file File.join(MarkusConfigurator.markus_config_pdf_storage,
-        file.submission.grouping.group.repository_name, file.path,
-        filename.split('.')[0] + '_' + sprintf('%04d' % params[:file_index].to_s()) + '.jpg'),
-        type: 'image', disposition: 'inline', filename: filename
     else
       send_data file_contents, filename: filename
     end
