@@ -44,6 +44,14 @@
              locals: { files: @files,
                        can_download: true,
                        test_result_files: @test_result_files } %>
+    <% if @assignment.enable_test %>
+      <div id='test_results_controls'>
+        <%= render partial: 'results/common/test_selector',
+                   locals: { test_result_files: @test_result_files,
+                             result: @result,
+                             submission_id: @submission.id } %>
+      </div>
+    <% end %>
 
   <%= render partial: 'results/student/student_panes',
              locals: { extra_marks_points: @extra_marks_points,
