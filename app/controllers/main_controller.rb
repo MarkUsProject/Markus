@@ -151,10 +151,10 @@ class MainController < ApplicationController
       return
     end
     @assignments = Assignment.unscoped.includes([
-      :assignment_stat, :ta_memberships,
+      :assignment_stat, :groupings, :ta_memberships,
       groupings: :current_submission_used,
       submission_rule: :assignment
-    ]).all(order: 'due_date DESC')
+    ]).order('due_date DESC')
 
     render :index, layout: 'content'
   end

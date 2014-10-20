@@ -2,7 +2,7 @@ module StudentsHelper
   def get_students_table_info
     sections = Section.all
     students = Student.includes(:grace_period_deductions, :section)
-                      .all(order: 'user_name')
+                      .order('user_name')
     # Gets extra info needed for table, such as grace credits remaining,
     # section name, links to edit, notes, etc.
     students.map do |student|

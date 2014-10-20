@@ -55,7 +55,7 @@
                               id: note.id },
                             html: { class: 'delete',
                                     title: t('notes.delete.link_title') },
-                            confirm: t('notes.delete.link_confirm'),
+                            data: { confirm: t('notes.delete.link_confirm') },
                             method: 'delete',
                             remote: true,
                             class: 'inline-button' %>
