@@ -159,10 +159,10 @@ describe Assignment do
           @grouping2 = create(:grouping, assignment: @assignment)
           create(:student_membership, grouping: @grouping2,
                                       user: student2,
-                                      membership_status: StudentMembership::STATUSES[:inviter])
+                                      membership_status: Student Membership::STATUSES[:inviter])
         end
 
-        it 'return an array with the pas section names' do
+        it 'returns an array with the past section names' do
           expect(@assignment.what_past_due_date).to eq(%w(section_name section_name2))
         end
       end
