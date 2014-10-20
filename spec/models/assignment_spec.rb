@@ -126,7 +126,7 @@ describe Assignment do
         @section = Section.create(name: 'section_name')
         SectionDueDate.create(section: @section,
                               assignment: @assignment,
-                              due_date: 1.day.ago)
+                              due_date: 1.days.ago)
 
         student = create(:student, section: @section)
         @grouping = create(:grouping, assignment: @assignment)
