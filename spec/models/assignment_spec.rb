@@ -159,7 +159,7 @@ describe Assignment do
           @grouping2 = create(:grouping, assignment: @assignment)
           create(:student_membership, grouping: @grouping2,
                                       user: student2,
-                                      membership_status: Student Membership::STATUSES[:inviter])
+                                      membership_status: StudentMembership::STATUSES[:inviter])
         end
 
         it 'returns an array with the past section names' do
