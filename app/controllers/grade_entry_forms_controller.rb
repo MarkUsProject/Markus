@@ -227,10 +227,10 @@ class GradeEntryFormsController < ApplicationController
     updated_grade = params[:updated_grade]
 
     grade_entry_student =
-      grade_entry_form.grade_entry_students.find_or_create_by_user_id(
+      grade_entry_form.grade_entry_students.find_or_create_by(user_id:
             @student_id)
 
-    @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
+    @grade = grade_entry_student.grades.find_or_create_by(grade_entry_item_id:
                   @grade_entry_item_id)
 
     @grade.grade = updated_grade
@@ -272,7 +272,7 @@ class GradeEntryFormsController < ApplicationController
         errors.push(I18n.t('grade_entry_forms.grades.must_select_a_student'))
       else
         params[:students].each do |student_id|
-          grade_entry_students.push(grade_entry_form.grade_entry_students.find_or_create_by_user_id(student_id))
+          grade_entry_students.push(grade_entry_form.grade_entry_students.find_or_create_by(user_id: student_id))
         end
       end
     end

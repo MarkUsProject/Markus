@@ -149,12 +149,10 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
-    @grade_entry_forms = GradeEntryForm.all(order: :id)
+    @grade_entry_forms = GradeEntryForm.order(:id)
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
-      @assignments = Assignment.find(:all, conditions:
-                                             { is_hidden: false },
-                                            order: :id)
+      @assignments = Assignment.where(is_hidden: false).order(:id)
       #get the section of current user
       @section = current_user.section
       # get results for assignments for the current user
@@ -186,10 +184,10 @@ class AssignmentsController < ApplicationController
 
       render :student_assignment_list
     elsif current_user.ta?
-      @assignments = Assignment.all(order: :id)
+      @assignments = Assignment.order(:id)
       render :grader_index
     else
-      @assignments = Assignment.all(order: :id)
+      @assignments = Assignment.order(:id)
       render :index
     end
   end
@@ -302,7 +300,7 @@ class AssignmentsController < ApplicationController
   end
 
   def download_csv_grades_report
-    assignments = Assignment.all(order: 'id')
+    assignments = Assignment.order(:id)
     students = Student.all
     csv_string = CSV.generate do |csv|
       students.each do |student|
@@ -599,7 +597,7 @@ class AssignmentsController < ApplicationController
 
     def update_assignment!(map)
       assignment = Assignment.
-          find_or_create_by_short_identifier(map[:short_identifier])
+          find_or_create_by(short_identifier: map[:short_identifier])
       unless assignment.id
         assignment.submission_rule = NoLateSubmissionRule.new
         assignment.assignment_stat = AssignmentStat.new

@@ -5,7 +5,7 @@ require 'mocha/setup'
 
 include MarkusConfigurator
 
-class MarkusLoggerTest < Test::Unit::TestCase
+class MarkusLoggerTest < MiniTest::Unit::TestCase
   context 'A MarkusLogger instance' do
     setup do
       pid = Process.pid
