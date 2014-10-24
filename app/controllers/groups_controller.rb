@@ -98,13 +98,13 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.where("assignment_id = :assignment_id and group_id = :groupexist_id")
+      if Grouping.where('assignment_id = :assignment_id and group_id = :groupexist_id')
                  .where(groupexist_id: groupexist_id)
                  .where(assignment_id: @assignment.id).to_a
 
         # TODO yusi
-        #all(conditions: ["assignment_id = :assignment_id and group_id = :groupexist_id", {groupexist_id:
-        #groupexist_id, assignment_id: @assignment.id}])
+        # all(conditions: ["assignment_id = :assignment_id and group_id = :groupexist_id", {groupexist_id:
+        # groupexist_id, assignment_id: @assignment.id}])
          flash[:error] = I18n.t('groups.rename_group.already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
