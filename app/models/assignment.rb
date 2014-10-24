@@ -703,8 +703,10 @@ class Assignment < ActiveRecord::Base
   def criterion_class
     if marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
       FlexibleCriterion
-    else
+    elsif marking_scheme_type == MARKING_SCHEME_TYPE[:rubric]
       RubricCriterion
+    else
+      nil
     end
   end
 
