@@ -80,8 +80,7 @@ class GroupsController < ApplicationController
     @group = @grouping.group
 
     # Checking if a group with this name already exists
-    if (@groups = Group.first(conditions: {group_name:
-    [params[:new_groupname]]}))
+    if (@groups = Group.where(group_name: params[:new_groupname]).first)
        existing = true
        groupexist_id = @groups.id
     end
@@ -99,9 +98,13 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.all(conditions: ["assignment_id =
-      :assignment_id and group_id = :groupexist_id", {groupexist_id:
-      groupexist_id, assignment_id: @assignment.id}])
+      if Grouping.where("assignment_id = :assignment_id and group_id = :groupexist_id")
+                 .where(groupexist_id: groupexist_id)
+                 .where(assignment_id: @assignment.id).to_a
+
+        # TODO yusi
+        #all(conditions: ["assignment_id = :assignment_id and group_id = :groupexist_id", {groupexist_id:
+        #groupexist_id, assignment_id: @assignment.id}])
          flash[:error] = I18n.t('groups.rename_group.already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
@@ -127,7 +130,7 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     respond_to do |format|
       format.html do
-        @all_assignments = Assignment.all(order: :id)
+        @all_assignments = Assignment.order(:id)
         render 'index'
       end
       format.json do
@@ -202,7 +205,7 @@ class GroupsController < ApplicationController
        groupings.each do |grouping|
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc
-         grouping.student_memberships.all(include: :user).each do |member|
+         grouping.student_memberships.includes(:user).each do |member|
             group_array.push(member.user.user_name)
          end
          csv << group_array
@@ -229,12 +232,12 @@ class GroupsController < ApplicationController
 
   # These actions act on all currently selected students & groups
   def global_actions
-    assignment = Assignment.find(params[:assignment_id],
-                                  include: [{
+    assignment = Assignment.includes([{
                                       groupings: [{
                                           student_memberships: :user,
                                           ta_memberships: :user},
                                         :group]}])
+                            .find(params[:assignment_id])
     action = params[:global_actions]
     grouping_ids = params[:groupings]
     student_ids = params[:students]
@@ -309,8 +312,8 @@ class GroupsController < ApplicationController
       # Remove each student from every group.
       students_to_remove = []
       groupings.each do |grouping|
-        students_to_remove = students_to_remove.concat(grouping.students.all)
-        grouping.student_memberships.all.each do |mem|
+        students_to_remove = students_to_remove.concat(grouping.students.to_a)
+        grouping.student_memberships.each do |mem|
           grouping.remove_member(mem.id)
         end
         grouping.delete_grouping

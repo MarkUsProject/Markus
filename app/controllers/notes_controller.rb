@@ -12,8 +12,8 @@ class NotesController < ApplicationController
     @highlight_field = params[:highlight_field]
     @number_of_notes_field = params[:number_of_notes_field]
 
-    @notes = Note.all(conditions: {noteable_id: @noteable.id,
-                                      noteable_type: @noteable.class.name})
+    @notes = Note.where(noteable_id: @noteable.id, noteable_type: @noteable.class.name)
+
     render partial: 'notes/modal_dialogs/notes_dialog_script',
       formats: [:js], handlers: [:erb]
   end
@@ -77,7 +77,7 @@ class NotesController < ApplicationController
   def noteable_object_selector
     case params[:noteable_type]
       when 'Student'
-        @students = Student.all(order: 'user_name')
+        @students = Student.order(:user_name)
       when 'Assignment'
         @assignments = Assignment.all
       when 'Grouping'
@@ -122,8 +122,7 @@ class NotesController < ApplicationController
         @groupings = Array.new
         return
       end
-      @groupings = Grouping.find_all_by_assignment_id(assignment.id,
-        include: [:group, {student_memberships: :user}])
+      @groupings = Grouping.includes(:group, student_memberships: :user).where(assignment_id: assignment.id)
     end
 
     def new_retrieve

@@ -433,7 +433,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def delete_grouping
-    self.student_memberships.all(include: :user).each do |member|
+    self.student_memberships.includes(:user).each do |member|
       member.destroy
     end
     # adjust repository permissions

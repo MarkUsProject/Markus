@@ -419,7 +419,7 @@ class AssignmentsController < ApplicationController
       if @grouping.has_submission?
         raise I18n.t('groups.cant_delete_already_submitted')
       end
-      @grouping.student_memberships.all(include: :user).each do |member|
+      @grouping.student_memberships.includes(:user).each do |member|
         member.destroy
       end
       # update repository permissions

@@ -37,8 +37,7 @@ class ResultsController < ApplicationController
 
     @old_result = nil
     if @submission.remark_submitted?
-      @old_result = Result.all(conditions: ['submission_id = ?', @submission.id],
-                               order: ['id ASC'])[0]
+      @old_result = Result.where('submission_id = ?', @submission.id).order(id: :asc)[0]
     end
 
     @annotation_categories = @assignment.annotation_categories
@@ -70,15 +69,13 @@ class ResultsController < ApplicationController
     # FIXME right now, the groupings are ordered by grouping's id. Having a
     # more natural grouping order would be nice.
     if current_user.ta?
-       groupings = @assignment.ta_memberships.find_all_by_user_id(
-                      current_user.id,
-                      include: [grouping: :group],
-                      order: 'id ASC').collect do |m|
-         m.grouping
-       end
+      groupings = @assignment.ta_memberships.includes(grouping: :group)
+                                            .where(user_id: current_user.id)
+                                            .order(id: :asc).collect do |m|
+        m.grouping
+      end
     elsif current_user.admin?
-      groupings = @assignment.groupings.all(include: :group,
-                                            order: 'id ASC')
+      groupings = @assignment.groupings.includes(:group).order(id: :asc)
     end
 
     # If a grouping's submission's marking_status is complete, we're not going
@@ -410,7 +407,7 @@ class ResultsController < ApplicationController
     @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
-      mark = criterion.marks.find_or_create_by_result_id(@result.id)
+      mark = criterion.marks.find_or_create_by(result_id: @result.id)
       mark.save(validate: false)
       @marks_map[criterion.id] = mark
 

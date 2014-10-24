@@ -591,7 +591,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   @result.save
                 end
               end
-              @groupings = @assignment.groupings.all(:order => 'id ASC')
+              @groupings = @assignment.groupings.order(id: :asc)
             end
 
             should 'have two separate edit forms with correct actions for' +

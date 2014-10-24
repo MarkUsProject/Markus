@@ -163,7 +163,7 @@ class GradeEntryStudent < ActiveRecord::Base
       if student.nil?
         failures.push(student_name)
       else
-        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id)
+        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(user_id: student.id)
         if grade_entry_student.nil?
           failures.push(student_name)
         else
