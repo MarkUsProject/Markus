@@ -428,6 +428,9 @@ en:
       download_groupings_files: "Download all submissions"
       sections:             "Section:"
       revision_history:     "%{num}: "
+      tags_used:            "Tags Used"
+      tags_search:          "Search for Tags:"
+      tags_list:            "Filter by Tag:"
 
     summaries_index:
       group_name:           "Group Name"
