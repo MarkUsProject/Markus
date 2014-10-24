@@ -29,32 +29,21 @@ class GradeEntryFormsController < ApplicationController
                             display: 'Show All',
                             proc: lambda { |sort_by, order, user|
                               if user.instance_of? Admin
-                                # todo yusi
-                                #conditions = {hidden: false}
-                                conditions = "where(hidden: false)"
+                                conditions = {hidden: false}
                               else
                                 #Display only students to which the TA has been assigned
-                                #conditions = {hidden: false, id:
-                                #    Ta.find(user.id).grade_entry_students.all(select: :user_id).collect(&:user_id)}
-                                id = Ta.find(user.id).grade_entry_students.all(select: :user_id).collect(&:user_id)}
-                                conditions = "where(hidden: false).where(id: #{id}"
+                                conditions = {hidden: false, id:
+                                    Ta.find(user.id).grade_entry_students.all(select: :user_id).collect(&:user_id)}
                               end
 
                               if sort_by.present?
                                 if sort_by == 'section'
-                                  #Student.includes(:section).all(conditions: conditions,
-                                  #                            order: 'sections.name ' + order)
-                                  Student.includes(:section).send(conditions).order('sections.name ' + order)
+                                  Student.includes(:section).where(conditions).order('sections.name ' + order)
                                 else
-                                  #Student.all(conditions: conditions,
-                                   #           order: sort_by + ' ' + order)
-                                  Student.send(conditions).order(order: sort_by + ' ' + order)
-
+                                  Student.where(conditions).order(order: sort_by + ' ' + order)
                                 end
                               else
-                                #Student.all(conditions: conditions,
-                                #            order: 'user_name ' + order)
-                                Student.send(conditions).order('user_name ' + order)
+                                Student.where(conditions).order('user_name ' + order)
                               end
                             }}}
   }
