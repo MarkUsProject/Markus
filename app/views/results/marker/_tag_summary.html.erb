@@ -1,0 +1,18 @@
+<div id='used_tags_pane'>
+  <div class='tag_collector_pane'>
+    <span><%= t('marker.marks.current_tags').html_safe %></span>
+    <div class='tag_list'>
+      <!-- TODO: Replace with actual data for tags -->
+      <span class='tag_element'>Great Assignment</span>
+    </div>
+  </div>
+</div>
+
+<!-- Displays tags that can be assigned to the assignment -->
+<% if !old_result %>
+  <div id='available_tags_pane'>
+    <div class='tag_collector_pane'>
+      <span><%= t('marker.marks.available_tags').html_safe %></span>
+    </div>
+  </div>
+<% end %>

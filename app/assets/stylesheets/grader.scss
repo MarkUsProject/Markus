@@ -1,5 +1,5 @@
 @import 'common/core';
-
+@import 'common/tags';
 @import 'common/notes_dialog';
 
 
@@ -550,6 +550,20 @@ ul.annotation_text_list {
     float: right;
     font-size: 1.5em;
     font-style: italic;
+  }
+}
+
+.tag_collector_pane {
+  @include border-radius($radius);
+  background: $light-grey;
+  border: 1px solid $grey;
+  font-weight: 600;
+  margin: 1em 0;
+  padding: 10px;
+
+  .tag_list {
+    font-weight: default !important;
+
   }
 }
 

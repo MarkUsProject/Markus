@@ -1,5 +1,5 @@
 @import 'common/core';
-
+@import 'common/tags';
 
 #disable {
   color: $grey !important;
@@ -42,31 +42,6 @@
 }
 
 /* Tag CSS Elements */
-
-div.tag_element {
-  border: 1px solid $blue;
-  border-radius: 15px;
-  padding-left: 5px;
-  padding-right: 5px;
-
-  background-color: $light-blue;
-
-  text-align: center;
-  color: $dark-blue;
-
-  cursor: pointer;
-
-  -webkit-transition: all 0.2s;
-  -moz-transition: all 0.2s;
-  -ms-transition: all 0.2s;
-  -o-transition: all 0.2s;
-  transition: all 0.2s;
-}
-
-div.tag_element:hover {
-  background-color: $dark-blue;
-  color: $white;
-}
 
 ul.tag_list {
   text-align: left;
@@ -131,6 +106,7 @@ ul li:hover ul {
 li.tag_list_search:hover, li.tag_list_title:hover {
   /* Removes CSS formatting for titles and search bars. */
   background-color: $light-grey !important;
+  cursor: default !important;
 }
 
 /* Student view */

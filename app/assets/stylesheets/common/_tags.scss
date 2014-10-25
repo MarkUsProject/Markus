@@ -1,0 +1,25 @@
+// Tag Elements
+div.tag_element {
+  border: 1px solid $blue;
+  border-radius: 15px;
+  padding-left: 5px;
+  padding-right: 5px;
+
+  background-color: $light-blue;
+
+  text-align: center;
+  color: $dark-blue;
+
+  cursor: pointer;
+
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+div.tag_element:hover {
+  background-color: $dark-blue;
+  color: $white;
+}
