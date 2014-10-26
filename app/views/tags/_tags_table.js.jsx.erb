@@ -1,5 +1,6 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
+  var i = -1;
 
   var TagsTable = React.createClass({
     getDefaultProps: function() {
@@ -47,23 +48,34 @@
             name: 'in_use',
             text: '<%= j raw I18n.t(:'tags.table.in_use') %>',
             func: function(tag) {
-              return !tag.hidden;
+              // TODO: Remove this code and properly implement.
+              if (tag.tags_use.charAt(0) == '0'){
+                return false;
+              }
+
+              return true;
             }
           },
           {
             name: 'not_in_use',
             text: '<%= j raw I18n.t(:'tags.table.not_in_use') %>',
             func: function(tag) {
-              return tag.hidden;
+              // TODO: Remove this code and properly implement.
+              if (tag.tags_use.charAt(0) == '0'){
+                return true;
+              }
+
+              return false;
             }
           }
         ]
       }
     },
     getInitialState: function() {
+      // TODO: Change to tags: [] and remove dummy data once tags model and controller are created.
       return {
         error: null,
-        tags: [],
+        tags: [[],[],[],[],[]],
         selected_tags: []
       };
     },
@@ -87,16 +99,32 @@
       });
     },
     render: function() {
-      // Do student-specific table stuff here.
+      // Do tags specific operations here.
       var tags_data = this.state.tags.map(function(tag) {
-        // TODO: Add tag specific operations here.
-      }.bind(this));
+        var tag = {};
 
+        // TODO: Remove this code and replace with actual object manipulation.
+        tag['id'] = i++;
+        tag['tags_name'] = 'Tag #' + i;
+        tag['creator_name'] = 'Bryan J Muscedere';
+        tag['tags_description'] = 'This is a test tag. At present, these tags do not represent actual data.';
+        tag['tags_use'] = i + '/15 assignments have this tag.';
+        tag['tags_actions'] = <span>
+          <a key={tag.edit}
+            href={tag.edit}><%= j raw I18n.t(:'edit') %></a>
+          |
+          <a key={tag.delete}
+             href={tag.delete}><%= j raw I18n.t(:'delete') %></a>
+          </span>;
+
+        return tag;
+      }.bind(this));
       return (
         <div>
           <ErrorDiv error={this.state.error} />
           <Table data={tags_data}
-            selectable={true}
+            search_placeholder={'<%= j raw I18n.t(:'tags.search_tags') %>'}
+            selectable={false}
             onSelectedRowsChange={this.updateSelectedTags}
             columns={this.props.columns}
             filters={this.props.filters} />

@@ -16,11 +16,13 @@
 
   <!--The buttons for creating tags, uploading and downloading-->
   <div class='heading_buttons'>
-    <%= link_to_function t('tags.create_new'), 'modal_create_new.open()' %>
+    <%= link_to_function t('tags.create.create_new'), 'modal_create_new.open()' %>
     <span class='menu_bar'></span>
-    <%= link_to_function t('tags.download.download_csv'), 'modal_download.open()' %>
+    <%= link_to_function t('tags.download.download'), 'modal_download.open()' %>
     <span class='menu_bar'></span>
     <%= link_to_function  t('tags.upload.upload_csv'), 'modal_upload_csv.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t('tags.upload.upload_yml'), 'modal_upload_yml.open()' %>
   </div>
 </div>
 
@@ -32,22 +34,16 @@
 
 <!--Modal dialogs for creating, uploading and downloading tags-->
 <aside class='dialog' id='create_new_dialog'>
-  <h1><%= t('tags.create_new') %></h1>
-  <p><%= t('rubric_criteria.upload.yml_prompt') %></p>
+  <h1><%= t('tags.create.create_new') %></h1>
+  <p><%= t('tags.create.tag_prompt') %></p>
   <%= form_for :create_new,
                url: assignment_tags_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
       <div>
         <p><%= f.text_field :name %></p>
-        <%= t('rubric_criteria.upload.format_yml_html') %>
       </div>
-      <div>
-        <%= t('encoding') %>
-        <%= select_tag(:encoding, options_for_select(@encodings)) %>
-      </div>
-
       <section class='dialog-actions'>
-        <%= f.submit t(:create) %>
+        <%= f.submit t('tags.create.button_text') %>
         <input type='reset'
                value='<%= t(:cancel) %>'
                onclick='modal_create_new.close();'>
@@ -55,6 +51,9 @@
   <% end %>
 </aside>
 <aside class='dialog' id='upload_csv_dialog'>
+  <!-- Script for disabling upload control. -->
+  <!-- TODO: INSERT SCRIPT ONCE MERGE IS COMPLETE -->
+
   <h1><%= t('tags.upload.upload_csv_title') %></h1>
   <p><%= t('tags.upload.upload_csv_prompt') %></p>
   <%= form_for :upload_csv,
@@ -79,19 +78,50 @@
     </section>
    <% end %>
 </aside>
+<aside class='dialog' id='upload_yml_dialog'>
+  <!-- Script for disabling upload control. -->
+  <!-- TODO: INSERT SCRIPT ONCE MERGE IS COMPLETE -->
+
+  <h1><%= t('tags.upload.upload_yml_title') %></h1>
+  <p><%= t('tags.upload.upload_yml_prompt') %></p>
+  <%= form_for :upload_csv,
+               url: assignment_tags_path(@assignment),
+               html: { multipart: true, size: 1 } do |f| %>
+      <div class='content'>
+        <p><%= f.file_field :tags %></p>
+        <%= t('tags.upload.upload_yml_html') %>
+      </div>
+
+      <div class='encoding_type'>
+        <%= t('encoding') %>
+        <%= select_tag(:encoding, options_for_select(@encodings)) %>
+      </div>
+
+      <section class='dialog-actions'>
+        <%= f.submit t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) } %>
+        <input type='reset'
+               value='<%= t(:cancel) %>'
+               onclick='modal_upload_yml.close();'>
+      </section>
+  <% end %>
+</aside>
 <aside class='dialog' id='download_dialog'>
-  <h1><%= t('tags.download_csv_title') %></h1>
-  <p><!--TODO: ADD DESCRIPTION--></p>
-  <ul>
-    <li>
-      <%= link_to t('rubric_criteria.download.link_csv'),
-                  download_csv_assignment_rubrics_path(@assignment),
-                  onclick: 'modal_download.close();' %>
-    </li>
-    <li>
-      <%= link_to t('rubric_criteria.download.link_yml'),
-                  download_yml_assignment_rubrics_path(@assignment),
-                  onclick: 'modal_download.close();' %>
-    </li>
-  </ul>
+  <h1><%= t('tags.download.download_title') %></h1>
+  <%= t('tags.download.download_html',
+           assignment_short_identifier: @assignment.short_identifier) %>
+  <section class ='dialog-actions'>
+    <%= link_to t('tags.download.button_message', file_format: 'CSV'),
+                download_assignment_list_assignments_path(
+                        file_format: 'csv'),
+                class: 'button' if @current_user.admin? %>
+    <%= link_to t('tags.download.button_message', file_format: 'YML'),
+                download_assignment_list_assignments_path(
+                        file_format: 'yml'),
+                class: 'button' if @current_user.admin? %>
+    <br><br>
+    <input type='reset'
+           value='<%= t(:cancel) %>'
+           onclick='modal_download.close();'>
+  </section>
 </aside>
