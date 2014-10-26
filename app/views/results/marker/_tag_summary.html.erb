@@ -4,6 +4,8 @@
     <div class='tag_list'>
       <!-- TODO: Replace with actual data for tags -->
       <span class='tag_element'>Great Assignment</span>
+      <span class='tag_element'>Extension</span>
+      <span class='tag_element'>Good Syntax</span>
     </div>
   </div>
 </div>
@@ -13,6 +15,38 @@
   <div id='available_tags_pane'>
     <div class='tag_collector_pane'>
       <span><%= t('marker.marks.available_tags').html_safe %></span>
+      <div class='tag_list'>
+        <!-- TODO: Replace with actual data for tags -->
+        <span class='tag_element'>Improper Syntax</span>
+        <span class='tag_element'>Code Not Working</span>
+        <span class='tag_element'>Bad Assignment</span>
+        <span class='tag_element'>Needs Further Attention</span>
+      </div>
     </div>
+  </div>
+<% end %>
+
+<!-- Provides quick tag summary -->
+<hr>
+<div class='tag_summary'>
+  <span><%= t('marker.marks.tag_summary').html_safe %></span>
+  <div class='top_tag_list'>
+    <!-- TODO: Replace with actual data for tags -->
+    <div class='tag_line'><span class='tag_element'>Improper Syntax</span> x 10</div>
+    <div class='tag_line'><span class='tag_element'>Great Assignment</span> x 7</div>
+    <div class='tag_line'><span class='tag_element'>Extension</span> x 4</div>
+    <div class='tag_line'><span class='tag_element'>Bad Assignment</span> x 2</div>
+    <div class='tag_line'><span class='tag_element'>Needs Further Attention</span> x 1</div>
+  </div>
+</div>
+
+<!-- Allows admins to add tags. -->
+<% if @current_user.admin? %>
+  <hr>
+  <div class='tag_admin'>
+    <%= button_tag t('marker.marks.new_tag'),
+                   onclick: 'modal_create_new.open()' %>
+    <%= button_tag t('marker.marks.delete_tag'),
+                   onclick: 'modal_delete_tags.open()' %>
   </div>
 <% end %>

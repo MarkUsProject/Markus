@@ -70,7 +70,34 @@
            formats: [:js],
            locals: { first_file: @first_file } %>
 
+<!-- Dialogs -->
 <aside class='dialog' id='notes_dialog'></aside>
+<% if @current_user.admin? %>
+  <aside class='dialog' id='create_new_tag'>
+    <h1><%= t('marker.marks.create_new_tag') %></h1>
+    <p><%= t('tags.create.tag_prompt') %></p>
+    <%= form_for :create_new,
+                 url: assignment_tags_path(@assignment),
+                 html: { multipart: true, size: 1 } do |f| %>
+        <div>
+          <p><%= f.text_field :name %></p>
+        </div>
+        <section class='dialog-actions'>
+          <%= f.submit t('tags.create.button_text') %>
+          <input type='reset'
+                 value='<%= t(:cancel) %>'
+                 onclick='modal_create_new.close();'>
+        </section>
+    <% end %>
+  </aside>
+  <aside class='dialog' id='delete_tags'>
+    <h1><%= t('marker.marks.delete_tags') %></h1>
+
+    <input type='reset'
+           value='<%= t(:cancel) %>'
+           onclick='modal_delete_tags.close();'>
+  </aside>
+<% end %>
 
 <div class='title_bar'>
   <h1>

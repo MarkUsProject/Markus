@@ -1,9 +1,10 @@
 // Tag Elements
-div.tag_element {
+.tag_element {
   border: 1px solid $blue;
   border-radius: 15px;
   padding-left: 5px;
   padding-right: 5px;
+  white-space: nowrap;
 
   background-color: $light-blue;
 
@@ -19,7 +20,7 @@ div.tag_element {
   transition: all 0.2s;
 }
 
-div.tag_element:hover {
+.tag_element:hover {
   background-color: $dark-blue;
   color: $white;
 }
