@@ -91,19 +91,18 @@
 
   React.renderComponent(<FilesTable />, document.getElementById('files_table'));
 
-    // idk what to do with the stuff below
-    jQuery.ajax({
-      url:    '<%= populate_repo_browser_assignment_submissions_path(
-                                                                                                                                                                                                                                                                                   @assignment,
-                                                                                                                                                                                                                                                                                   id: @grouping.id,
-                                                                                                                                                                                                                                                                                   path: @path,
-                                                                                                                                                                                                                                                                                   revision_number: @revision_number) %>',
-      async:  true,
-      type:   'POST',
-      data:   'authenticity_token=' + AUTH_TOKEN
-    }).always(function() {
-      document.getElementById('working').style.display = 'none';
-    });
+  jQuery.ajax({
+    url:    '<%= populate_repo_browser_assignment_submissions_path(
+      @assignment,
+      id: @grouping.id,
+      path: @path,
+      revision_number: @revision_number) %>',
+    async:  true,
+    type:   'POST',
+    data:   'authenticity_token=' + AUTH_TOKEN
+  }).always(function() {
+    document.getElementById('working').style.display = 'none';
+  });
 
 
   jQuery('.datetimepicker').datetimepicker({
@@ -128,5 +127,4 @@
       nextText:         "<%= I18n.t('time.next') %>",
       closeText:        "<%= I18n.t('time.close') %>",
     });
-
 </script>
