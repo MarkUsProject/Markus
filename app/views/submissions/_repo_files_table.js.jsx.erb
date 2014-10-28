@@ -90,4 +90,43 @@
   });
 
   React.renderComponent(<FilesTable />, document.getElementById('files_table'));
+
+    // idk what to do with the stuff below
+    jQuery.ajax({
+      url:    '<%= populate_repo_browser_assignment_submissions_path(
+                                                                                                                                                                                                                                                                                   @assignment,
+                                                                                                                                                                                                                                                                                   id: @grouping.id,
+                                                                                                                                                                                                                                                                                   path: @path,
+                                                                                                                                                                                                                                                                                   revision_number: @revision_number) %>',
+      async:  true,
+      type:   'POST',
+      data:   'authenticity_token=' + AUTH_TOKEN
+    }).always(function() {
+      document.getElementById('working').style.display = 'none';
+    });
+
+
+  jQuery('.datetimepicker').datetimepicker({
+      altField:         '#actual_revision_timestamp',
+      altFieldTimeOnly: false,
+      altFormat:        'yy-mm-dd',
+      altTimeFormat:    'HH:mm',
+      altSeparator:     'T',
+      controlType:      'select',
+      showTime:         false,
+      numberOfMonths:   2,
+      secondMax:        0,
+      dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
+      timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+      monthNames:       <%= raw I18n.t('date.months') %>,
+      dayNames:         <%= raw I18n.t('date.weekdays') %>,
+      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+      hourText:         "<%= I18n.t('time.hour') %>",
+      minuteText:       "<%= I18n.t('time.minute') %>",
+      timeText:         "<%= I18n.t('time.time') %>",
+      prevText:         "<%= I18n.t('time.prev') %>",
+      nextText:         "<%= I18n.t('time.next') %>",
+      closeText:        "<%= I18n.t('time.close') %>",
+    });
+
 </script>
