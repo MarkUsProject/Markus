@@ -36,6 +36,7 @@ class Grouping < ActiveRecord::Base
            source: :user
 
   has_many :submissions
+  has_and_belongs_to_many :tags
   #The first submission found that satisfies submission_version_used == true.
   #If there are multiple such submissions, one is chosen randomly.
   has_one :current_submission_used,
