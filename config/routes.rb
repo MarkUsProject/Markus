@@ -306,6 +306,10 @@ Markus::Application.routes.draw do
     end
 
     resources :main do
+      member do
+        get 'view_summary'
+      end
+
       collection do
         get 'logout'
         get 'about'

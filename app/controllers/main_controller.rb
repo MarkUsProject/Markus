@@ -433,4 +433,9 @@ private
     validation_result
   end
 
+  def view_summary
+    @assignment = Assignment.find(params[:id])
+    render 'view_summary', formats: [:js]
+  end
+
 end
