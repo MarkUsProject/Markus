@@ -59,6 +59,7 @@
           <li><a href='#mark_viewer'><%= t('marker.marks.marks') %></a></li>
           <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
           <li><a href='#submission_rule_viewer'><%= t('marker.marks.submission_rule') %></a></li>
+          <li><a href='#tag_viewer'><%= t('marker.marks.tags') %></a></li>
         </ul>
 
         <div id='mark_viewer'>
@@ -103,6 +104,14 @@
         <div id='submission_rule_viewer'>
           <%= render partial: assignment.submission_rule.grader_tab_partial,
                      locals: { grouping: result.submission.grouping } %>
+        </div>
+
+        <!-- Tag insertion pane. -->
+        <div id='tag_viewer'>
+          <%= render partial: 'results/marker/tag_summary',
+                     locals: { assignment: assignment,
+                               old_result: @old_result,
+                               result: result } %>
         </div>
 
         <!-- Annotation pane-->
