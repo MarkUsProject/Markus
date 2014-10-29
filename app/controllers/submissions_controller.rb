@@ -304,7 +304,17 @@ class SubmissionsController < ApplicationController
                                date: revision.timestamp}
       end
     end
+
+    @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: get_repo_files_table_info(@files)
+      end
+    end
+
     repo.close
+
   end
 
   def populate_repo_browser

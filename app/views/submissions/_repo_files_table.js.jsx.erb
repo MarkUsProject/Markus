@@ -15,13 +15,13 @@
             searchable: true
           },
           {
-            id: 'last_revised',
+            id: 'last_revised_date',
             content: '<%= j raw I18n.t(:'browse_submissions.last_revised') %>',
             sortable: true,
             searchable: true
           },
           {
-            id: 'revised_by',
+            id: 'revision_by',
             content: '<%= j raw I18n.t(:'browse_submissions.revised_by') %>',
             sortable: true,
             searchable: true
@@ -73,8 +73,8 @@
         var f = {};
         f['id'] = file.id;
         f['filename'] = <span dangerouslySetInnerHTML={{__html: file.filename}} />;
-        f['last_revised'] = <span dangerouslySetInnerHTML={{__html: file.last_revised}} />;
-        f['revised_by'] = <span dangerouslySetInnerHTML={{__html: file.revised_by}} />;
+        f['last_revised_date'] = <span dangerouslySetInnerHTML={{__html: file.last_revised_date}} />;
+        f['revision_by'] = <span dangerouslySetInnerHTML={{__html: file.revision_by}} />;
         return f;
       }.bind(this));
 
@@ -90,20 +90,6 @@
   });
 
   React.renderComponent(<FilesTable />, document.getElementById('files_table'));
-
-  jQuery.ajax({
-    url:    '<%= populate_repo_browser_assignment_submissions_path(
-      @assignment,
-      id: @grouping.id,
-      path: @path,
-      revision_number: @revision_number) %>',
-    async:  true,
-    type:   'POST',
-    data:   'authenticity_token=' + AUTH_TOKEN
-  }).always(function() {
-    document.getElementById('working').style.display = 'none';
-  });
-
 
   jQuery('.datetimepicker').datetimepicker({
       altField:         '#actual_revision_timestamp',

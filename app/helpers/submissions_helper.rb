@@ -47,6 +47,18 @@ module SubmissionsHelper
     end
   end
 
+  def get_repo_files_table_info(files)
+    files.map do |file_name, file|
+      f = {}
+      f[:id] = file.object_id
+      f[:filename] = file_name
+      f[:last_revised_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
+      f[:last_revised_date_unconverted] = file.last_modified_date.strftime('%b %d, %Y %H:%M')
+      f[:revision_by] = file.user_id
+      f
+    end
+  end
+
   # If the grouping is collected or has an error, 
   # style the table row green or red respectively.
   # Classname will be applied to the table row
