@@ -437,5 +437,4 @@ private
     @assignment = Assignment.find(params[:id])
     render 'view_summary', formats: [:js]
   end
-
 end
