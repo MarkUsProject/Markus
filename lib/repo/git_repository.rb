@@ -243,9 +243,12 @@ module Repository
       walker.push(self.get_repos.head.target)
       walker.each do |c|
         if c.time <= target_timestamp
-          return get_revision(c)
+          @revision_number = get_revision_number(c)
+          return get_revision(@revision_number)
         end
       end
+      # If no revision number was found, display the latest revision with an error message
+      raise 'No revision found before supplied timestamp.'
     end
 
     # Returns a Repository::TransAction object, to work with. Do operations,

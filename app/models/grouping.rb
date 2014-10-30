@@ -487,16 +487,8 @@ class Grouping < ActiveRecord::Base
   def assignment_folder_last_modified_date
     repo = self.group.repo
     rev = repo.get_latest_revision
-    # get the full path of repository folder
-    path = self.assignment.repository_folder
+    last_date = rev.timestamp
 
-    # split "repo_folder_path" into two parts
-    parent_path = File.dirname(path)
-    folder_name = File.basename(path)
-
-    # turn "parent_path" into absolute path
-    parent_path = repo.expand_path(parent_path, '/')
-    last_date = rev.directories_at_path(parent_path)[folder_name].last_modified_date
     repo.close()
     last_date
   end

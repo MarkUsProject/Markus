@@ -302,7 +302,7 @@ class SubmissionsController < ApplicationController
   def populate_repo_browser
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
-    @path = params[:path] || '/'
+    @path = params[:path] != '/' ? params[:path] + '/' : '/'
     @previous_path = File.split(@path).first
     @grouping.group.access_repo do |repo|
       if params[:revision_number]
