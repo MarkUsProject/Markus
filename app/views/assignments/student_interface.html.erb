@@ -113,7 +113,7 @@
                               id: @assignment.id,
                               grouping_id: grouping.id },
                             { class: 'button',
-                              confirm: t('student.decline_invitation') } %>
+                              data: { confirm: t('student.decline_invitation') } } %>
                 </div>
                 <div class='block_line'></div>
             <% end %>
@@ -145,7 +145,7 @@
                             { action: 'creategroup',
                               id: @assignment.id },
                             { class: 'button',
-                              confirm: t('student.decline_invitation2') } %>
+                              data: { confirm: t('student.decline_invitation2') } }%>
               <% else %>
                 <%= link_to t(:create),
                             { action: 'creategroup',

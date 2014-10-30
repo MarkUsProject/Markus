@@ -419,7 +419,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         response_csv = get_as(@admin, :download_csv_grades_report).body
         csv_rows = CSV.parse(response_csv)
         assert_equal Student.all.size, csv_rows.size
-        assignments = Assignment.all(:order => 'id')
+        assignments = Assignment.order(:id)
         csv_rows.each do |csv_row|
           student_name = csv_row.shift
           student = Student.find_by_user_name(student_name)

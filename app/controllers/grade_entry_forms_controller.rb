@@ -38,15 +38,12 @@ class GradeEntryFormsController < ApplicationController
 
                               if sort_by.present?
                                 if sort_by == 'section'
-                                  Student.includes(:section).all(conditions: conditions,
-                                                              order: 'sections.name ' + order)
+                                  Student.includes(:section).where(conditions).order('sections.name ' + order)
                                 else
-                                  Student.all(conditions: conditions,
-                                              order: sort_by + ' ' + order)
+                                  Student.where(conditions).order(order: sort_by + ' ' + order)
                                 end
                               else
-                                Student.all(conditions: conditions,
-                                            order: 'user_name ' + order)
+                                Student.where(conditions).order('user_name ' + order)
                               end
                             }}}
   }
@@ -227,10 +224,10 @@ class GradeEntryFormsController < ApplicationController
     updated_grade = params[:updated_grade]
 
     grade_entry_student =
-      grade_entry_form.grade_entry_students.find_or_create_by_user_id(
+      grade_entry_form.grade_entry_students.find_or_create_by(user_id:
             @student_id)
 
-    @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
+    @grade = grade_entry_student.grades.find_or_create_by(grade_entry_item_id:
                   @grade_entry_item_id)
 
     @grade.grade = updated_grade
@@ -272,7 +269,7 @@ class GradeEntryFormsController < ApplicationController
         errors.push(I18n.t('grade_entry_forms.grades.must_select_a_student'))
       else
         params[:students].each do |student_id|
-          grade_entry_students.push(grade_entry_form.grade_entry_students.find_or_create_by_user_id(student_id))
+          grade_entry_students.push(grade_entry_form.grade_entry_students.find_or_create_by(user_id: student_id))
         end
       end
     end

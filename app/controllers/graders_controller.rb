@@ -146,8 +146,7 @@ class GradersController < ApplicationController
 
   def add_grader_to_grouping
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id],
-                                include: [:students, :tas, :group])
+    @grouping = Grouping.includes([:students, :tas, :group]).find(params[:grouping_id])
     grader = Ta.find(params[:grader_id])
     @grouping.add_tas(grader)
     criteria = grader.get_criterion_associations_by_assignment(@assignment).map{|c| c.criterion}

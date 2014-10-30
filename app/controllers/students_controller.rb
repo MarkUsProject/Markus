@@ -25,7 +25,7 @@ class StudentsController < ApplicationController
 
   def edit
     @user = Student.find_by_id(params[:id])
-    @sections = Section.all(order: 'name')
+    @sections = Section.order(:name)
   end
 
   def update
@@ -67,7 +67,7 @@ class StudentsController < ApplicationController
 
   def new
     @user = Student.new
-    @sections = Section.all(order: 'name')
+    @sections = Section.order(:name)
   end
 
   def create
@@ -80,7 +80,7 @@ class StudentsController < ApplicationController
                                user_name: @user.user_name)
       redirect_to action: 'index' # Redirect
     else
-      @sections = Section.all(order: 'name')
+      @sections = Section.order(:name)
       flash[:error] = I18n.t('students.create.error')
       render :new
     end

@@ -122,7 +122,7 @@ class GradeEntryStudent < ActiveRecord::Base
     end
 
     # Create the GradeEntryStudent if it doesn't already exist
-    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id)
+    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(user_id: student.id)
 
     # Create or update the student's grade for each question
     names.each do |grade_entry_name|
@@ -139,7 +139,7 @@ class GradeEntryStudent < ActiveRecord::Base
           grade.destroy
         end
       else
-        grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(grade_entry_item.id)
+        grade = grade_entry_student.grades.find_or_create_by(grade_entry_item_id: grade_entry_item.id)
         grade.grade = grade_for_grade_entry_item
 
         unless grade.save
@@ -163,7 +163,7 @@ class GradeEntryStudent < ActiveRecord::Base
       if student.nil?
         failures.push(student_name)
       else
-        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id)
+        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(user_id: student.id)
         if grade_entry_student.nil?
           failures.push(student_name)
         else
