@@ -62,8 +62,44 @@ describe Assignment do
     end
   end
 
-  describe '#criterion_class' do
+  describe '#tas' do
+    before :each do
+      @assignment = create(:assignment)
+    end
 
+    context 'when no TAs have been assigned' do
+      it 'returns nil' do
+        expect(@assignment.tas).to eq([])
+      end
+    end
+
+    context 'when TA(s) have been assigned to an assignment' do
+      before :each do
+        @grouping = create(:grouping, assignment: @assignment)
+        @ta = create(:ta)
+        @ta_membership = create(:ta_membership, user: @ta, grouping: @grouping)
+      end
+
+      describe 'one TA' do
+        it 'returns the TA' do
+          expect(@assignment.tas).to eq([@ta])
+        end
+      end
+
+      describe 'more than one TA' do
+        before :each do
+          @other_ta = create(:ta)
+          @ta_membership = create(:ta_membership, user: @other_ta, grouping: @grouping)
+        end
+
+        it 'returns all TAs' do
+          expect(@assignment.tas).to eq([@ta, @other_ta])
+        end
+      end
+    end
+  end
+
+  describe '#criterion_class' do
     context 'when the marking_scheme_type is rubric' do
       before :each do
         @assignment = build(:assignment, marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:rubric])
@@ -92,6 +128,70 @@ describe Assignment do
       it 'returns nil' do
         expect(@assignment.criterion_class).to be_nil
       end
+    end
+  end
+
+  describe '#group_assignment?' do
+    context 'when invalid_override is allowed' do
+      let(:assignment) { build(:assignment, invalid_override: true) }
+
+      it 'returns true' do
+        expect(assignment.group_assignment?).to be
+      end
+    end
+
+    context 'when invalid_override is not allowed ' do
+      context 'and group_max is greater than 1' do
+        let(:assignment) { build(:assignment, invalid_override: false, group_max: 2) }
+
+        it 'returns true' do
+          expect(assignment.group_assignment?).to be
+        end
+      end
+
+      context 'and group_max is 1' do
+        let(:assignment) { build(:assignment, invalid_override: false, group_max: 1) }
+
+        it 'returns false' do
+          expect(assignment.group_assignment?).not_to be
+        end
+      end
+    end
+  end
+
+  describe '#past_remark_due_date?' do
+    context 'before the remark due date' do
+      let(:assignment) { build(:assignment, remark_due_date: 1.days.from_now) }
+
+      it 'returns false' do
+        expect(assignment.past_remark_due_date?).not_to be
+      end
+    end
+
+    context 'after the remark due date' do
+      let(:assignment) { build(:assignment, remark_due_date: 1.days.ago) }
+
+      it 'returns true' do
+        expect(assignment.past_remark_due_date?).to be
+      end
+    end
+  end
+
+  context 'when before due with no submission rule' do
+    before :each do
+      @assignment = create(:assignment, due_date: 2.days.from_now)
+    end
+
+    it 'returns false for #past_due_date?' do
+      expect(@assignment.past_due_date?).not_to be
+    end
+
+    it 'returns false for #past_collection_date?' do
+      expect(@assignment.past_collection_date?).not_to be
+    end
+
+    it 'returns empty array #what_past_due_date' do
+      expect(@assignment.what_past_due_date).to eq([])
     end
 
   end

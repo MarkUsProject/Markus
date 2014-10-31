@@ -224,7 +224,7 @@ class Assignment < ActiveRecord::Base
 
   # Return true if this is a group assignment; false otherwise
   def group_assignment?
-    invalid_override || group_min != 1 || group_max > 1
+    invalid_override || group_max > 1
   end
 
   # Returns the group by the user for this assignment. If pending=true,
