@@ -2,7 +2,6 @@ require 'fileutils' # FileUtils used here
 
 # Handle for getting student submissions.  Actual instance depend
 # on whether an assignment is a group or individual assignment.
-# Use Assignment.submission_by(user) to retrieve the correct submission.
 class Submission < ActiveRecord::Base
   after_create :create_result
   before_validation :bump_old_submissions, on: :create
