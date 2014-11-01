@@ -305,11 +305,19 @@ class SubmissionsController < ApplicationController
       end
     end
 
-    @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
+    @files = @revision.files_at_path(
+        File.join(@assignment.repository_folder, @path))
+    @directories = @revision.directories_at_path(
+        File.join(@assignment.repository_folder, @path))
     respond_to do |format|
       format.html
       format.json do
-        render json: get_repo_files_table_info(@files)
+        render json: {files: get_repo_files_table_info(@files),
+                      directories: get_repo_files_table_info(@directories),
+                      id: @assignment.id,
+                      revision_number: @revision_number,
+                      path: @path,
+                      grouping_id: @grouping.id}
       end
     end
 

@@ -33,6 +33,7 @@
       return {
         error: null,
         files: [],
+        directories: []
       };
     },
     componentWillMount: function() {
@@ -48,8 +49,9 @@
         dataType: 'json',
         success: function(data) {
           this.setState({
-            files: data,
-            error: null
+            error: null,
+            files: data['files'].concat(data['directories']),
+            directories: data['directories']
           });
         }.bind(this),
         error: function(xhr, status, text) {
