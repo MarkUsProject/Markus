@@ -8,16 +8,83 @@ class TagsController < ApplicationController
 
   # Creates a new instance of the tag.
   def create
-    @text = Tag.create({
-      content: params[:content],
-      creator_id: current_user.id,
-      luser_id: current_user.id
+    @new_tag = Tag.new({
+      name: params[:create_new][:name],
+      description: "TEST STRING", #TODO
+      user: @current_user,
       })
+
+    if @new_tag.save
+      flash[:success] = I18n.t('tag created successfully')
+      redirect_to :back
+    else
+      flash[:error] = I18n.t('error creating tag')
+      redirect_to :back
+    end
+
+  end
+
+  def get_all_tags
+    return Tag.all
   end
 
   # Destroys a particular tag.
   def destroy
-    @tag = Tags.find(params[:id])
+    @tag = Tag.find(params[:id])
     @tag.destroy
   end
+
+  ###  Update methods  ###
+
+  def update_name
+    Tag.update(params[:id], name: params[:name])
+  end
+
+  def update_description
+    Tag.update(params[:id], description: params[:description])
+  end
+
+  ###  Grouping Methods ###
+
+  def create_grouping_tag_association(grouping_id, tag_id)
+    tag = Tag.find(tag_id)
+    if !tag.groupings.exists?(grouping_id)
+      grouping = Grouping.find(grouping_id)
+      tag.groupings<<(grouping)
+    end
+  end
+
+  def get_tags_for_grouping(grouping_id)
+    grouping = Grouping.find(grouping_id)
+    return grouping.tags
+  end
+
+  def delete_grouping_tag_association(grouping_id, tag_id)
+    tag = Tag.find(tag_id)
+    tag.groupings.delete(grouping_id)
+  end
+
+
+  ###  Assignment methods  ###
+
+  #get tags associated to an assignment
+  def get_tags_for_assignment
+    assignment = Assignment.find(params[:assignment_id])
+    return assignment.tags
+  end
+
+  def create_assignment_tag_association(assignment_id, tag_id)
+    tag = Tag.find(tag_id)
+    if !tag.assignment.exists?(assignment_id)
+      assign = Assignment.find(assignment_id)
+      tag.assignments<<(assign)
+    end
+  end
+
+  def delete_assignment_tag_association(assignment_id, tag_id)
+    tag = Tag.find(tag_id)
+    tag.assignments.delete(assignment_id)
+  end
+
+
 end

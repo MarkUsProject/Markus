@@ -1,8 +1,9 @@
 class CreateTags < ActiveRecord::Migration
   def up
     create_table :tags do |t|
-      t.string :content,           null: false
-      t.belongs_to :assignment,    null: false
+      t.string :name,     null: false
+      t.string :description
+      t.belongs_to :user,	   null: false
     end
   end
 
