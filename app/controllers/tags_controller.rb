@@ -64,7 +64,7 @@ class TagsController < ApplicationController
 
   ###  Assignment methods  ###
 
-  #get tags associated to an assignment
+  # get tags associated to an assignment
   def get_tags_for_assignment
     assignment = Assignment.find(params[:assignment_id])
     assignment.tags
