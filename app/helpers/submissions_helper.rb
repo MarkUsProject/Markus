@@ -63,7 +63,7 @@ module SubmissionsHelper
   end
 
   def get_grouping_tags(grouping)
-    return grouping.tags
+    grouping.tags
   end
 
   def get_grouping_group_name(assignment, grouping)
