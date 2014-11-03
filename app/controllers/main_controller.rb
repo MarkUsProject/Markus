@@ -435,6 +435,8 @@ private
 
   def view_summary
     @assignment = Assignment.find(params[:id])
-    render partial: 'view_summary', formats: [:js], handlers: [:erb], locals: { assignment: @assignment }
+    render partial: 'view_summary',
+           formats: [:js], handlers: [:erb],
+           locals: { assignment: @assignment }
   end
 end
