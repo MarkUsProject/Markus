@@ -314,6 +314,6 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
   should 'recognize action to destroy' do
     assert_recognizes({ action: 'destroy', controller: 'annotations', id: '1' },
-                       { path: 'annotations/1', method: 'delete' })
+                      { path: 'annotations/1', method: 'delete' })
   end
 end
