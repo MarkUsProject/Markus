@@ -8,14 +8,14 @@ class TagsController < ApplicationController
 
   # Creates a new instance of the tag.
   def create
-
     new_tag = Tag.new(
       name: params[:create_new][:name],
-      description: "TEST STRING", #TODO
+      description: 'TEST STRING', #TODO
       user: @current_user,)
 
     if new_tag.save
-      create_assignment_tag_association_from_tag(params[:assignment_id], new_tag)
+      create_assignment_tag_association_from_tag(params[:assignment_id],
+                                                 new_tag)
       flash[:success] = I18n.t('tag created successfully')
       redirect_to :back
     else
