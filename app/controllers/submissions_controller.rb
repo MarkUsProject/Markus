@@ -114,7 +114,8 @@ class SubmissionsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: get_repo_browser_table_info(@revision, @assignment, @revision_number, @path, @grouping.id)
+        render json: get_repo_browser_table_info(@assignment, @revision, @revision_number, @path, @previous_path,
+                                                 @grouping.id)
       end
     end
 

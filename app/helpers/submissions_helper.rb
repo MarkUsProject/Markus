@@ -266,21 +266,20 @@ module SubmissionsHelper
   end
 
 
-  def get_repo_browser_table_info(revision, assignment, revision_number, path, grouping_id)
+  def get_repo_browser_table_info(assignment, revision, revision_number, path, previous_path, grouping_id)
 
-    exit_directory = get_exit_directory(path, grouping_id, revision_number)
+    exit_directory = get_exit_directory(previous_path, grouping_id, revision_number)
 
     files = revision.files_at_path(File.join(assignment.repository_folder, path))
     files_info = get_files_info(files, assignment.id, revision_number, path, grouping_id)
 
     directories = revision.directories_at_path(File.join(assignment.repository_folder,@path))
-    directories_info = get_directories_info(directories, assignment.id, path)
+    directories_info = get_directories_info(directories, revision_number, path, grouping_id)
 
     exit_directory + files_info + directories_info
   end
 
-  def get_exit_directory(path, grouping_id, revision_number)
-    previous_path = File.split(path).first
+  def get_exit_directory(previous_path, grouping_id, revision_number)
     e = {}
     e[:id] = nil
     e[:filename] = view_context.link_to '../', action: 'repo_browser', id: grouping_id, path: previous_path,
@@ -304,12 +303,14 @@ module SubmissionsHelper
     end
   end
 
-  def get_directories_info(directories, assignment_id, path)
+  def get_directories_info(directories, revision_number, path, grouping_id)
     directories.map do |directory_name, directory|
       d = {}
       d[:id] = directory.object_id
       d[:filename] = view_context.image_tag('icons/folder.png') +
-          view_context.link_to(" #{directory_name}/", action: 'file_manager', id: assignment_id, path: path)
+          #TODO: should the call below use id => assignment_id and grouping_id => grouping_id like the files info?
+          view_context.link_to(" #{directory_name}/", action: 'repo_browser', id: grouping_id,
+                               revision_number: revision_number, path: File.join(path, directory_name))
       d[:last_revised_date] = I18n.l(directory.last_modified_date, format: :long_date)
       d[:revision_by] = directory.user_id
       d
