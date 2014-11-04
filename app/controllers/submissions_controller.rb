@@ -123,36 +123,6 @@ class SubmissionsController < ApplicationController
 
   end
 
-  def populate_repo_browser
-    @grouping = Grouping.find(params[:id])
-    @assignment = @grouping.assignment
-    @path = params[:path] || '/'
-    @revision_number = params[:revision_number]
-    @previous_path = File.split(@path).first
-    @grouping.group.access_repo do |repo|
-      begin
-        @revision = repo.get_revision(params[:revision_number].to_i)
-        @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
-        @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
-      rescue Exception => @find_revision_error
-        respond_to do |format|
-          format.js { render action: 'submissions/repo_browser/find_revision_error' }
-        end
-        return
-      end
-      @table_rows = {}
-      @files.sort.each do |file_name, file|
-        @table_rows[file.object_id] = construct_repo_browser_table_row(file_name, file)
-      end
-      @directories.sort.each do |directory_name, directory|
-        @table_rows[directory.object_id] = construct_repo_browser_directory_table_row(directory_name, directory)
-      end
-      respond_to do |format|
-        format.js
-      end
-    end
-  end
-
   def file_manager
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
