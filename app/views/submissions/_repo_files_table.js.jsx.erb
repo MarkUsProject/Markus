@@ -44,7 +44,12 @@
       document.getElementById('working').style.display = '';
 
       jQuery.ajax({
-        method: 'GET',
+        url: '<%= repo_browser_assignment_submission_path(
+          @assignment,
+          id: @grouping.id,
+          path: @path,
+          revision_number: @revision_number) %>',
+        method: 'POST',
         dataType: 'json',
         success: function(data) {
           this.setState({
