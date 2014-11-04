@@ -858,7 +858,10 @@ en:
       create:
         create_new: "Add Tag"
         tag_prompt: "Tag name:"
+        tag_description: "Tag description:"
         button_text: "Save Changes"
+        name_prompt: "Enter tag name..."
+        descript_prompt: "Enter tag description..."
 
       upload:
         upload_csv: "Upload CSV"
