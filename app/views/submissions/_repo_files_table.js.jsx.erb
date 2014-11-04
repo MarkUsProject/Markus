@@ -73,8 +73,8 @@
         var f = {};
         f['id'] = file.id;
         f['filename'] = <span dangerouslySetInnerHTML={{__html: file.filename}} />;
-        f['last_revised_date'] = <span dangerouslySetInnerHTML={{__html: file.last_revised_date}} />;
-        f['revision_by'] = <span dangerouslySetInnerHTML={{__html: file.revision_by}} />;
+        f['last_revised_date'] = file.last_revised_date;
+        f['revision_by'] = file.revision_by;
         return f;
       }.bind(this));
 
