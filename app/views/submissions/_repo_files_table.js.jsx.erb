@@ -32,8 +32,7 @@
     getInitialState: function() {
       return {
         error: null,
-        files: [],
-        directories: []
+        files: []
       };
     },
     componentWillMount: function() {
@@ -50,8 +49,7 @@
         success: function(data) {
           this.setState({
             error: null,
-            files: data['files'].concat(data['directories']),
-            directories: data['directories']
+            files: data
           });
         }.bind(this),
         error: function(xhr, status, text) {

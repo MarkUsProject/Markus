@@ -47,18 +47,6 @@ module SubmissionsHelper
     end
   end
 
-  def get_repo_files_table_info(files)
-    files.map do |file_name, file|
-      f = {}
-      f[:id] = file.object_id
-      f[:filename] = file_name
-      f[:last_revised_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
-      f[:last_revised_date_unconverted] = file.last_modified_date.strftime('%b %d, %Y %H:%M')
-      f[:revision_by] = file.user_id
-      f
-    end
-  end
-
   # If the grouping is collected or has an error, 
   # style the table row green or red respectively.
   # Classname will be applied to the table row
@@ -275,6 +263,57 @@ module SubmissionsHelper
       result[file.object_id] = construct_file_manager_table_row(file_name, file)
     end
     result
+  end
+
+
+  def get_repo_browser_table_info(revision, assignment, revision_number, path, grouping_id)
+
+    exit_directory = get_exit_directory(path, grouping_id, revision_number)
+
+    files = revision.files_at_path(File.join(assignment.repository_folder, path))
+    files_info = get_files_info(files, assignment.id, revision_number, path, grouping_id)
+
+    directories = revision.directories_at_path(File.join(assignment.repository_folder,@path))
+    directories_info = get_directories_info(directories, assignment.id, path)
+
+    exit_directory + files_info + directories_info
+  end
+
+  def get_exit_directory(path, grouping_id, revision_number)
+    previous_path = File.split(path).first
+    e = {}
+    e[:id] = nil
+    e[:filename] = view_context.link_to '../', action: 'repo_browser', id: grouping_id, path: previous_path,
+                                        revision_number: revision_number
+    e[:last_revised_date] = nil
+    e[:revision_by] = nil
+    [e]
+  end
+
+  def get_files_info(files, assignment_id, revision_number, path, grouping_id)
+    files.map do |file_name, file|
+      f = {}
+      f[:id] = file.object_id
+      f[:filename] = view_context.image_tag('icons/page_white_text.png') +
+          view_context.link_to(" #{file_name}", action: 'download', id: assignment_id,
+                               revision_number: revision_number, file_name: file_name,
+                               path: path, grouping_id: grouping_id)
+      f[:last_revised_date] = I18n.l(file.last_modified_date, format: :long_date)
+      f[:revision_by] = file.user_id
+      f
+    end
+  end
+
+  def get_directories_info(directories, assignment_id, path)
+    directories.map do |directory_name, directory|
+      d = {}
+      d[:id] = directory.object_id
+      d[:filename] = view_context.image_tag('icons/folder.png') +
+          view_context.link_to(" #{directory_name}/", action: 'file_manager', id: assignment_id, path: path)
+      d[:last_revised_date] = I18n.l(directory.last_modified_date, format: :long_date)
+      d[:revision_by] = directory.user_id
+      d
+    end
   end
 
   def construct_repo_browser_table_row(file_name, file)
