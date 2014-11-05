@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141102191855) do
+ActiveRecord::Schema.define(:version => 20141017202829) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -104,13 +104,6 @@ ActiveRecord::Schema.define(:version => 20141102191855) do
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
-
-  create_table "assignments_tags", :id => false, :force => true do |t|
-    t.integer "tag_id",        :null => false
-    t.integer "assignment_id", :null => false
-  end
-
-  add_index "assignments_tags", ["tag_id", "assignment_id"], :name => "index_assignments_tags_on_tag_id_and_assignment_id", :unique => true
 
   create_table "criterion_ta_associations", :force => true do |t|
     t.integer  "ta_id"
@@ -382,9 +375,8 @@ ActiveRecord::Schema.define(:version => 20141102191855) do
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
   create_table "tags", :force => true do |t|
-    t.string  "name",        :null => false
-    t.string  "description"
-    t.integer "user_id",     :null => false
+    t.string "name",        :null => false
+    t.string "description"
   end
 
   create_table "test_files", :force => true do |t|
