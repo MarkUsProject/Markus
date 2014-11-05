@@ -14,8 +14,6 @@ class TagsController < ApplicationController
       user: @current_user,)
 
     if new_tag.save
-      create_assignment_tag_association_from_tag(params[:assignment_id],
-                                                 new_tag)
       flash[:success] = I18n.t('tag created successfully')
       redirect_to :back
     else
@@ -46,8 +44,12 @@ class TagsController < ApplicationController
 
   ###  Grouping Methods ###
 
-  def create_grouping_tag_association(grouping_id, tag_id)
-    tag = Tag.find(tag_id)
+  def create_grouping_tag_association_from_existing_tag
+      tag = Tag.find(params[:tag_id])
+      create_grouping_tag_association(params[:grouping_id], tag)
+  end
+
+  def create_grouping_tag_association(grouping_id, tag)
     if !tag.groupings.exists?(grouping_id)
       grouping = Grouping.find(grouping_id)
       tag.groupings << (grouping)
@@ -62,30 +64,5 @@ class TagsController < ApplicationController
   def delete_grouping_tag_association(grouping_id, tag_id)
     tag = Tag.find(tag_id)
     tag.groupings.delete(grouping_id)
-  end
-
-  ###  Assignment methods  ###
-
-  # get tags associated to an assignment
-  def get_tags_for_assignment
-    assignment = Assignment.find(params[:assignment_id])
-    assignment.tags
-  end
-
-  def create_assignment_tag_association_from_tag_id(assignment_id, tag_id)
-    tag = Tag.find(tag_id)
-    create_assignment_tag_association_from_tag(assignment_id, tag)
-  end
-
-  def create_assignment_tag_association_from_tag(assignment_id, t)
-    if !t.assignments.exists?(assignment_id)
-      assign = Assignment.find(assignment_id)
-      t.assignments << (assign)
-    end
-  end
-
-  def delete_assignment_tag_association(assignment_id, tag_id)
-    tag = Tag.find(tag_id)
-    tag.assignments.delete(assignment_id)
   end
 end
