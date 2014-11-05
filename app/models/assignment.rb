@@ -198,33 +198,9 @@ class Assignment < ActiveRecord::Base
     !remark_due_date.nil? && Time.zone.now > remark_due_date
   end
 
-  # Returns a Submission instance for this user depending on whether this
-  # assignment is a group or individual assignment
-  def submission_by(user) #FIXME: needs schema updates
-
-    # submission owner is either an individual (user) or a group
-    owner = self.group_assignment? ? self.group_by(user.id) : user
-    return unless owner
-
-    # create a new submission for the owner
-    # linked to this assignment, if it doesn't exist yet
-
-    # submission = owner.submissions.find_or_initialize_by_assignment_id(id)
-    # submission.save if submission.new_record?
-    # return submission
-
-    assignment_groupings = user.active_groupings.delete_if do |grouping|
-      grouping.assignment.id != id
-    end
-
-    unless assignment_groupings.empty?
-      assignment_groupings.first.submissions.first
-    end
-  end
-
   # Return true if this is a group assignment; false otherwise
   def group_assignment?
-    invalid_override || group_min != 1 || group_max > 1
+    invalid_override || group_max > 1
   end
 
   # Returns the group by the user for this assignment. If pending=true,
