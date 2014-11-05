@@ -809,7 +809,6 @@ module Repository
             obj[:name] == level
           end[:oid])
       end
-
       # This returns the actual object.
       current_object
     end
@@ -817,9 +816,17 @@ module Repository
     # Return all of the files in this repository in a hash where
     # key: filename and value: RevisionFile object
     def files_at_path(path)
-      file_array = objects_at_path(path).select do |obj|
-        obj.instance_of?(Repository::RevisionFile)
+
+      # In order to deal with the empty assignment folder case we must check
+      # to see if the lookup fails as the directory tree is traversed to the very top
+      begin
+        file_array = objects_at_path(path).select do |obj|
+          obj.instance_of?(Repository::RevisionFile)
+        end
+      rescue
+        file_array = {}
       end
+
       files = Hash.new
       file_array.each do |file|
         files[file.name] = file
@@ -829,9 +836,17 @@ module Repository
     end
 
     def directories_at_path(path)
-      dir_array = objects_at_path(path).select do |obj|
-        obj.instance_of?(Repository::RevisionDirectory)
+
+      # In order to deal with the empty assignment folder case we must check
+      # to see if the lookup fails as the directory tree is traversed to the very top
+      begin
+        dir_array = objects_at_path(path).select do |obj|
+          obj.instance_of?(Repository::RevisionDirectory)
+        end
+      rescue
+        dir_array = {}
       end
+
       directories = Hash.new
       dir_array.each do |dir|
         directories[dir.name] = dir
