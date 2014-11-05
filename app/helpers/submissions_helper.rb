@@ -265,7 +265,6 @@ module SubmissionsHelper
     result
   end
 
-
   def get_repo_browser_table_info(assignment, revision, revision_number, path,
                                   previous_path, grouping_id)
     exit_directory = get_exit_directory(previous_path, grouping_id,
@@ -318,9 +317,11 @@ module SubmissionsHelper
       d = {}
       d[:id] = directory.object_id
       d[:filename] = view_context.image_tag('icons/folder.png') +
-          # TODO: should the call below use id => assignment_id and grouping_id
-          # => grouping_id like the files info?
-          view_context.link_to(" #{directory_name}/", action: 'repo_browser',
+          # TODO: should the call below use
+          # id: assignment_id and grouping_id: grouping_id
+          # like the files info?
+          view_context.link_to(" #{directory_name}/",
+                               action: 'repo_browser',
                                id: grouping_id,
                                revision_number: revision_number,
                                path: File.join(path, directory_name))
