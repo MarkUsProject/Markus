@@ -114,13 +114,14 @@ class SubmissionsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: get_repo_browser_table_info(@assignment, @revision, @revision_number, @path, @previous_path,
+        render json: get_repo_browser_table_info(@assignment, @revision,
+                                                 @revision_number, @path,
+                                                 @previous_path,
                                                  @grouping.id)
       end
     end
 
     repo.close
-
   end
 
   def file_manager
