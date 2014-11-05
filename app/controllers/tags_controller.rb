@@ -45,8 +45,8 @@ class TagsController < ApplicationController
   ###  Grouping Methods ###
 
   def create_grouping_tag_association_from_existing_tag
-      tag = Tag.find(params[:tag_id])
-      create_grouping_tag_association(params[:grouping_id], tag)
+    tag = Tag.find(params[:tag_id])
+    create_grouping_tag_association(params[:grouping_id], tag)
   end
 
   def create_grouping_tag_association(grouping_id, tag)
