@@ -266,15 +266,22 @@ module SubmissionsHelper
   end
 
 
-  def get_repo_browser_table_info(assignment, revision, revision_number, path, previous_path, grouping_id)
+  def get_repo_browser_table_info(assignment, revision, revision_number, path,
+                                  previous_path, grouping_id)
 
-    exit_directory = get_exit_directory(previous_path, grouping_id, revision_number)
+    exit_directory = get_exit_directory(previous_path, grouping_id,
+                                        revision_number)
 
-    files = revision.files_at_path(File.join(assignment.repository_folder, path))
-    files_info = get_files_info(files, assignment.id, revision_number, path, grouping_id)
+    files = revision.files_at_path(File.join(assignment.repository_folder,
+                                             path))
+    files_info = get_files_info(files, assignment.id, revision_number, path,
+                                grouping_id)
 
-    directories = revision.directories_at_path(File.join(assignment.repository_folder,@path))
-    directories_info = get_directories_info(directories, revision_number, path, grouping_id)
+    directories = revision.directories_at_path(File.join(
+                                                   assignment.repository_folder,
+                                                   @path))
+    directories_info = get_directories_info(directories, revision_number, path,
+                                            grouping_id)
 
     exit_directory + files_info + directories_info
   end
@@ -282,7 +289,8 @@ module SubmissionsHelper
   def get_exit_directory(previous_path, grouping_id, revision_number)
     e = {}
     e[:id] = nil
-    e[:filename] = view_context.link_to '../', action: 'repo_browser', id: grouping_id, path: previous_path,
+    e[:filename] = view_context.link_to '../', action: 'repo_browser',
+                                        id: grouping_id, path: previous_path,
                                         revision_number: revision_number
     e[:last_revised_date] = ''
     e[:revision_by] = ''
@@ -294,10 +302,13 @@ module SubmissionsHelper
       f = {}
       f[:id] = file.object_id
       f[:filename] = view_context.image_tag('icons/page_white_text.png') +
-          view_context.link_to(" #{file_name}", action: 'download', id: assignment_id,
-                               revision_number: revision_number, file_name: file_name,
+          view_context.link_to(" #{file_name}", action: 'download',
+                               id: assignment_id,
+                               revision_number: revision_number,
+                               file_name: file_name,
                                path: path, grouping_id: grouping_id)
-      f[:last_revised_date] = I18n.l(file.last_modified_date, format: :long_date)
+      f[:last_revised_date] = I18n.l(file.last_modified_date,
+                                     format: :long_date)
       f[:revision_by] = file.user_id
       f
     end
@@ -308,10 +319,14 @@ module SubmissionsHelper
       d = {}
       d[:id] = directory.object_id
       d[:filename] = view_context.image_tag('icons/folder.png') +
-          #TODO: should the call below use id => assignment_id and grouping_id => grouping_id like the files info?
-          view_context.link_to(" #{directory_name}/", action: 'repo_browser', id: grouping_id,
-                               revision_number: revision_number, path: File.join(path, directory_name))
-      d[:last_revised_date] = I18n.l(directory.last_modified_date, format: :long_date)
+          #TODO: should the call below use id => assignment_id and grouping_id
+          # => grouping_id like the files info?
+          view_context.link_to(" #{directory_name}/", action: 'repo_browser',
+                               id: grouping_id,
+                               revision_number: revision_number,
+                               path: File.join(path, directory_name))
+      d[:last_revised_date] = I18n.l(directory.last_modified_date,
+                                     format: :long_date)
       d[:revision_by] = directory.user_id
       d
     end
