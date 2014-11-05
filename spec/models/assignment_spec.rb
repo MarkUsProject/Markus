@@ -68,7 +68,7 @@ describe Assignment do
     end
 
     context 'when no TAs have been assigned' do
-      it 'returns nil' do
+      it 'returns an empty array' do
         expect(@assignment.tas).to eq([])
       end
     end
