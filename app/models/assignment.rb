@@ -48,7 +48,6 @@ class Assignment < ActiveRecord::Base
   has_many :notes, as: :noteable, dependent: :destroy
 
   has_many :section_due_dates
-  has_and_belongs_to_many :tags
   accepts_nested_attributes_for :section_due_dates
 
   validates_presence_of :repository_folder
