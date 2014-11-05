@@ -89,7 +89,8 @@ describe Assignment do
       describe 'more than one TA' do
         before :each do
           @other_ta = create(:ta)
-          @ta_membership = create(:ta_membership, user: @other_ta, grouping: @grouping)
+          @ta_membership =
+            create(:ta_membership, user: @other_ta, grouping: @grouping)
         end
 
         it 'returns all TAs' do
@@ -142,7 +143,9 @@ describe Assignment do
 
     context 'when invalid_override is not allowed ' do
       context 'and group_max is greater than 1' do
-        let(:assignment) { build(:assignment, invalid_override: false, group_max: 2) }
+        let(:assignment) do
+          build(:assignment, invalid_override: false, group_max: 2)
+        end
 
         it 'returns true' do
           expect(assignment.group_assignment?).to be
@@ -150,7 +153,9 @@ describe Assignment do
       end
 
       context 'and group_max is 1' do
-        let(:assignment) { build(:assignment, invalid_override: false, group_max: 1) }
+        let(:assignment) do
+          build(:assignment, invalid_override: false, group_max: 1)
+        end
 
         it 'returns false' do
           expect(assignment.group_assignment?).not_to be
