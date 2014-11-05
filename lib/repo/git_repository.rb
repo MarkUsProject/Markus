@@ -753,7 +753,9 @@ module Repository
       # current_tree is now at the path we were looking for
       objects = []
       current_tree.each do |obj|
+        file_path = path + obj[:name]
         if obj[:type] == :blob
+          # This object is a file
           file = Repository::RevisionFile.new(
             @revision_number,
             name: obj[:name],
@@ -761,20 +763,23 @@ module Repository
             path: path + obj[:name],
             # The following is placeholder information.
             last_modified_revision: @revision_number,
-            last_modified_date: Time.now,
+            # Last modified date fix here
+            last_modified_date: find_last_modified_date(file_path),
+
             changed: true,
             user_id: @author,
             mime_type: 'text'
           )
           objects << file
         elsif obj[:type] == :tree
+          # This object is a directory
           directory = Repository::RevisionDirectory.new(
             @revision_number,
             name: obj[:name],
             # Same comments as above in RevisionFile
             path: path,
             last_modified_revision: @revision_number,
-            last_modified_date: Time.now,
+            last_modified_date: find_last_modified_date(file_path),
             changed: true,
             user_id: @author
           )
@@ -901,5 +906,19 @@ module Repository
       return result
     end
 
+    # Given a repo and a relative path to file return the last modified date of the file.
+    def find_last_modified_date(relative_path_to_file)
+      walker = Rugged::Walker.new(@repo)
+      walker.sorting(Rugged::SORT_DATE)
+      walker.push(@repo.head.target)
+      commit = walker.find do |commit|
+        commit.parents.size == 1 && commit.diff(paths: [relative_path_to_file]).size > 0
+      end
+      #sha = commit.oid
+
+      # Return the time of the last commit that effected this file
+      commit.time
+    end
   end
 end
+
