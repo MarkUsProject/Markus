@@ -20,7 +20,6 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
 
   def setup_collector
     @submission_collector = SubmissionCollector.instance
-    @submission_collector.init_queues
     @priority_queue = @submission_collector.grouping_queues.find_by_priority_queue(true).groupings
     @regular_queue = @submission_collector.grouping_queues.find_by_priority_queue(false).groupings
     @groupings = []

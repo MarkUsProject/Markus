@@ -680,9 +680,6 @@ class Grouping < ActiveRecord::Base
   # precondition: grouping is valid, self.reload has been called
   def grant_repository_permissions
     memberships = self.accepted_student_memberships
-    unless memberships.instance_of?(Array)
-      memberships = [memberships]
-    end
     memberships.each do |member|
       # Add repository read and write permissions for user,
       # if we are required to do so
@@ -755,9 +752,6 @@ class Grouping < ActiveRecord::Base
     self.reload # avoid a stale object
 
     memberships = self.student_memberships # get any student memberships
-    unless memberships.instance_of?(Array)
-      memberships = [memberships]
-    end
     memberships.each do |member|
       # Revoke permissions for students
       self.group.access_repo do |repo|
