@@ -71,7 +71,9 @@
            links = []
            absolute_path = @assignment.repository_folder + @path
            absolute_path.split('/').each do |folder|
-             path_memory = File.join(path_memory, folder)
+             if(folder != @assignment.repository_folder)
+               path_memory = File.join(path_memory, folder)
+             end
              links.push(link_to "/#{folder}",
                      action: 'repo_browser',
                      path: path_memory,
