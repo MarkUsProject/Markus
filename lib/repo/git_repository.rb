@@ -754,6 +754,7 @@ module Repository
       objects = []
       current_tree.each do |obj|
         file_path = path + obj[:name]
+        @last_modified_date_author = find_last_modified_date_author(file_path)
         if obj[:type] == :blob
           # This object is a file
           file = Repository::RevisionFile.new(
@@ -764,10 +765,10 @@ module Repository
             # The following is placeholder information.
             last_modified_revision: @revision_number,
             # Last modified date fix here
-            last_modified_date: find_last_modified_date(file_path),
+            last_modified_date: @last_modified_date_author[0],
 
             changed: true,
-            user_id: @author,
+            user_id: @last_modified_date_author[1][:name],
             mime_type: 'text'
           )
           objects << file
@@ -779,9 +780,9 @@ module Repository
             # Same comments as above in RevisionFile
             path: path,
             last_modified_revision: @revision_number,
-            last_modified_date: find_last_modified_date(file_path),
+            last_modified_date: @last_modified_date_author[0],
             changed: true,
-            user_id: @author
+            user_id: @last_modified_date_author[1][:name]
           )
           objects << directory
         else
@@ -906,18 +907,20 @@ module Repository
       return result
     end
 
-    # Given a repo and a relative path to file return the last modified date of the file.
-    def find_last_modified_date(relative_path_to_file)
+    # Returns the last modified date and author in an array given
+    # the relative path to file as a string
+    def find_last_modified_date_author(relative_path_to_file)
+      # Create a walker to start looking the commit tree.
       walker = Rugged::Walker.new(@repo)
+      # Since we are concerned with finding the last modified time, need to sort by date
       walker.sorting(Rugged::SORT_DATE)
       walker.push(@repo.head.target)
       commit = walker.find do |commit|
         commit.parents.size == 1 && commit.diff(paths: [relative_path_to_file]).size > 0
       end
-      #sha = commit.oid
 
-      # Return the time of the last commit that effected this file
-      commit.time
+      # Return the date of the last commit that effected this file with the author details
+      return commit.time, commit.author
     end
   end
 end
