@@ -822,9 +822,9 @@ module Repository
     # Return all of the files in this repository in a hash where
     # key: filename and value: RevisionFile object
     def files_at_path(path)
-
       # In order to deal with the empty assignment folder case we must check
-      # to see if the lookup fails as the directory tree is traversed to the very top
+      # to see if the lookup fails as the directory tree is traversed to the
+      # very top
       begin
         file_array = objects_at_path(path).select do |obj|
           obj.instance_of?(Repository::RevisionFile)
@@ -842,9 +842,9 @@ module Repository
     end
 
     def directories_at_path(path)
-
       # In order to deal with the empty assignment folder case we must check
-      # to see if the lookup fails as the directory tree is traversed to the very top
+      # to see if the lookup fails as the directory tree is traversed to the
+      # very top
       begin
         dir_array = objects_at_path(path).select do |obj|
           obj.instance_of?(Repository::RevisionDirectory)
@@ -912,21 +912,23 @@ module Repository
     def find_last_modified_date_author(relative_path_to_file)
       # Create a walker to start looking the commit tree.
       walker = Rugged::Walker.new(@repo)
-      # Since we are concerned with finding the last modified time, need to sort by date
+      # Since we are concerned with finding the last modified time,
+      # need to sort by date
       walker.sorting(Rugged::SORT_DATE)
       walker.push(@repo.head.target)
-      commit = walker.find do |commit|
-        commit.parents.size == 1 && commit.diff(paths: [relative_path_to_file]).size > 0
+      commit = walker.find do |current_commit|
+        current_commit.parents.size == 1 && current_commit.diff(paths:
+            [relative_path_to_file]).size > 0
       end
 
-      # Return the date of the last commit that effected this file with the author details
+      # Return the date of the last commit that effected this file
+      # with the author details
       if commit.nil?
         # To let rspec tests pass - Placeholder code
-        return Time.now, {:name => nil}
+        return Time.now, { :name => nil }
       else
         return commit.time, commit.author
       end
     end
   end
 end
-
