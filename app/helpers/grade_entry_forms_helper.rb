@@ -48,7 +48,7 @@ module GradeEntryFormsHelper
       params[:grade_entry_form][:grade_entry_items_attributes]
 
     if grade_entry_items == nil
-      return attributes
+      return grade_entry_form_params(attributes)
     end
 
     # Find the largest position that has been set
@@ -73,10 +73,21 @@ module GradeEntryFormsHelper
     end
 
     attributes[:grade_entry_items_attributes] = grade_entry_items
-    attributes
+    return grade_entry_form_params(attributes)
   end
 
   def sort_items_by_position(items)
     sorted = items.sort_by { |hsh| hsh[:position] }
+  end
+
+  private
+
+  def grade_entry_form_params(attributes)
+    attributes.require(:grade_entry_form).permit(:description,
+                                             :message,
+                                             :date,
+                                             :show_total,
+                                             :short_identifier,
+                                             grade_entry_items_attributes: [:name, :out_of, :position])
   end
 end
