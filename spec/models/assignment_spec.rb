@@ -164,6 +164,73 @@ describe Assignment do
     end
   end
 
+  describe '#valid_groupings and #invalid_groupings' do
+    before :each do
+      @assignment = create(:assignment)
+      @groupings = (1..2).map { create(:grouping, assignment: @assignment) }
+    end
+
+    context 'when no groups are valid' do
+      it '#valid_groupings returns an empty array' do
+        expect(@assignment.valid_groupings).to eq([])
+      end
+
+      it '#invalid_groupings returns all groupings' do
+        expect(@assignment.invalid_groupings).to eq(@groupings)
+      end
+    end
+
+    context 'when one group is valid' do
+      context 'due to admin_approval' do
+        before :each do
+          @groupings.first.update_attribute(:admin_approved, true)
+        end
+
+        it '#valid_groupings returns the valid group' do
+          expect(@assignment.valid_groupings).to eq([@groupings.first])
+        end
+
+        it '#invalid_groupings returns other, invalid groups' do
+          expect(@assignment.invalid_groupings).to eq(@groupings.drop(1))
+        end
+      end
+
+      context 'due to meeting min size requirement' do
+        before :each do
+          create(:accepted_student_membership,
+                grouping: @groupings.first,
+                user: create(:student))
+        end
+
+        it '#valid_groupings returns the valid group' do
+          expect(@assignment.valid_groupings).to eq([@groupings.first])
+        end
+
+        it '#invalid_groupings returns other, invalid groups' do
+          expect(@assignment.invalid_groupings).to eq(@groupings.drop(1))
+        end
+      end
+    end
+
+    context 'when all groups are valid' do
+      before :each do
+        @groupings.each do |grouping|
+          create(:accepted_student_membership,
+                grouping: grouping,
+                user: create(:student))
+        end
+      end
+
+      it '#valid_groupings returns all groupings' do
+        expect(@assignment.valid_groupings).to eq(@groupings)
+      end
+
+      it '#invalid_groupings returns an empty array' do
+        expect(@assignment.invalid_groupings).to eq([])
+      end
+    end
+  end
+
   describe '#grouped_students' do
     before :each do
       @assignment = create(:assignment)
@@ -205,7 +272,7 @@ describe Assignment do
     before :each do
       @assignment = create(:assignment)
       @grouping = create(:grouping, assignment: @assignment)
-      @students = (0..1).map { create(:student) }
+      @students = (1..2).map { create(:student) }
     end
 
     context 'when all students are ungrouped' do
@@ -305,7 +372,6 @@ describe Assignment do
     it 'returns empty array #what_past_due_date' do
       expect(@assignment.what_past_due_date).to eq([])
     end
-
   end
 
   context 'when past due with no late submission rule' do

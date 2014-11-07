@@ -107,34 +107,6 @@ class AssignmentTest < ActiveSupport::TestCase
       assert_equal(2, @assignment.no_grouping_students_list.size)
     end
 
-    should 'know how many valid and invalid groupings exist' do
-      assert_equal(0, @assignment.valid_groupings.size)
-      assert_equal(0, @assignment.invalid_groupings.size)
-      groupings = []
-      (1..3).each do
-        groupings.push Grouping.make(:assignment => @assignment)
-      end
-      @assignment.reload
-      assert_equal(0, @assignment.valid_groupings.size)
-      assert_equal(3, @assignment.invalid_groupings.size)
-      (0..2).each do |index|
-        StudentMembership.make(:grouping => groupings[index])
-      end
-      @assignment.reload
-      assert_equal(0, @assignment.valid_groupings.size) # invalid since group_min = 2
-      assert_equal(3, @assignment.invalid_groupings.size)
-      groupings[0].admin_approved = true
-      groupings[0].save
-      assert_equal(1, @assignment.valid_groupings.size)
-      assert_equal(2, @assignment.invalid_groupings.size)
-      (1..2).each do |index|
-        StudentMembership.make(:grouping => groupings[index])
-      end
-      @assignment.reload
-      assert_equal(3, @assignment.valid_groupings.size)
-      assert_equal(0, @assignment.invalid_groupings.size)
-    end
-
     should 'know how many groupings have TAs assigned' do
       assert_equal(0, @assignment.assigned_groupings.size)
       assert_equal(0, @assignment.unassigned_groupings.size)
