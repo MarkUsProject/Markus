@@ -83,7 +83,6 @@ end
 # listed here
 group :development, :test do
   gem 'faker' # required for database seeding
-  gem 'debugger', :platforms => :mri_19
   gem 'byebug', :platforms => [:mri_20, :mri_21]
 end
 
