@@ -1,3 +1,4 @@
+require 'zip'
 class ResultsController < ApplicationController
   before_filter :authorize_only_for_admin,
                 except: [:codeviewer, :edit, :update_mark, :view_marks,
@@ -242,7 +243,6 @@ class ResultsController < ApplicationController
                end
 
     files = submission.submission_files
-
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       files.each do |file|
         begin
