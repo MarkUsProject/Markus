@@ -16,11 +16,10 @@
  */
 /* globals PDFJS, PDFBug, FirefoxCom, Stats, Cache, ProgressBar,
            DownloadManager, getFileName, scrollIntoView, getPDFFileNameFromURL,
-           PDFHistory, Preferences, SidebarView, ViewHistory, PageView,
-           ThumbnailView, URL, noContextMenuHandler, SecondaryToolbar,
-           PasswordPrompt, PresentationMode, HandTool, Promise,
-           DocumentProperties, DocumentOutlineView, DocumentAttachmentsView,
-           OverlayManager, PDFFindController, PDFFindBar */
+           Preferences, SidebarView, ViewHistory, PageView,
+           ThumbnailView, URL, noContextMenuHandler,
+           PasswordPrompt, HandTool, Promise,
+           DocumentProperties, DocumentOutlineView, DocumentAttachmentsView */
 
 'use strict';
 
@@ -40,6 +39,8 @@ var SCALE_SELECT_PADDING = 22;
 var THUMBNAIL_SCROLL_MARGIN = -19;
 var CLEANUP_TIMEOUT = 30000;
 var IGNORE_CURRENT_POSITION_ON_ZOOM = false;
+
+var PresentationMode = {active: false};
 
 var RenderingStates = {
   INITIAL: 0,
@@ -650,9 +651,6 @@ var PDFView = {
         }
         var currentPage = self.pages[pageNumber - 1];
         currentPage.scrollIntoView(dest);
-
-        // Update the browsing history.
-        PDFHistory.push({ dest: dest, hash: destString, page: pageNumber });
       } else {
         self.pdfDocument.getPageIndex(destRef).then(function (pageIndex) {
           var pageNum = pageIndex + 1;
@@ -895,9 +893,6 @@ var PDFView = {
       });
 
       PDFView.loadingBar.setWidth(container);
-
-      // Initialize the browsing history.
-      PDFHistory.initialize(self.documentFingerprint);
     });
 
     // Fetch the necessary preference values.
@@ -1022,12 +1017,8 @@ var PDFView = {
     // to prevent displaying the wrong position in the document.
     this.currentPosition = null;
 
-    if (PDFHistory.initialDestination) {
-      this.navigateTo(PDFHistory.initialDestination);
-      PDFHistory.initialDestination = null;
-    } else if (this.initialBookmark) {
+    if (this.initialBookmark) {
       this.setHash(this.initialBookmark);
-      PDFHistory.push({ hash: this.initialBookmark }, !!this.initialBookmark);
       this.initialBookmark = null;
     } else if (storedHash) {
       this.setHash(storedHash);
@@ -1157,7 +1148,6 @@ var PDFView = {
       var params = PDFView.parseQueryString(hash);
       // borrowing syntax from "Parameters for Opening PDF Files"
       if ('nameddest' in params) {
-        PDFHistory.updateNextHashParam(params.nameddest);
         PDFView.navigateTo(params.nameddest);
         return;
       }
@@ -1193,7 +1183,6 @@ var PDFView = {
     } else if (/^\d+$/.test(hash)) { // page number
       this.page = hash;
     } else { // named destination
-      PDFHistory.updateNextHashParam(unescape(hash));
       PDFView.navigateTo(unescape(hash));
     }
   },
@@ -1643,9 +1632,6 @@ function updateViewarea() {
       // unable to write to storage
     });
   });
-
-  // Update the current bookmark in the browsing history.
-  PDFHistory.updateCurrentBookmark(pdfOpenParams, pageNumber);
 }
 
 window.addEventListener('resize', function webViewerResize(evt) {
@@ -1656,15 +1642,6 @@ window.addEventListener('resize', function webViewerResize(evt) {
     PDFView.setScale(document.getElementById('scaleSelect').value);
   }
   updateViewarea();
-
-  // Set the 'max-height' CSS property of the secondary toolbar.
-  SecondaryToolbar.setMaxHeight(PDFView.container);
-});
-
-window.addEventListener('hashchange', function webViewerHashchange(evt) {
-  if (PDFHistory.isHashChangeUnlocked) {
-    PDFView.setHash(document.location.hash.substring(1));
-  }
 });
 
 window.addEventListener('change', function webViewerChange(evt) {
@@ -1710,9 +1687,6 @@ window.addEventListener('localized', function localized(evt) {
   PDFView.animationStartedPromise.then(function() {
     var container = document.getElementById('scaleSelectContainer');
     container.setAttribute('style', 'position: relative; top: -10px;');
-
-    // Set the 'max-height' CSS property of the secondary toolbar.
-    SecondaryToolbar.setMaxHeight(PDFView.container);
   });
 }, true);
 
@@ -1766,18 +1740,6 @@ function handleMouseWheel(evt) {
 
 window.addEventListener('DOMMouseScroll', handleMouseWheel);
 window.addEventListener('mousewheel', handleMouseWheel);
-
-window.addEventListener('click', function click(evt) {
-  if (!PresentationMode.active) {
-    if (SecondaryToolbar.opened && PDFView.container.contains(evt.target)) {
-      SecondaryToolbar.close();
-    }
-  } else if (evt.button === 0) {
-    // Necessary since preventDefault() in 'mousedown' won't stop
-    // the event propagation in all circumstances in presentation mode.
-    evt.preventDefault();
-  }
-}, false);
 
 window.addEventListener('keydown', function keydown(evt) {
   if (OverlayManager.active) {
@@ -1845,7 +1807,6 @@ window.addEventListener('keydown', function keydown(evt) {
   if (cmd === 3 || cmd === 10) {
     switch (evt.keyCode) {
       case 80: // p
-        SecondaryToolbar.presentationModeClick();
         handled = true;
         break;
       case 71: // g
@@ -1897,10 +1858,6 @@ window.addEventListener('keydown', function keydown(evt) {
         handled = true;
         break;
       case 27: // esc key
-        if (SecondaryToolbar.opened) {
-          SecondaryToolbar.close();
-          handled = true;
-        }
         if (!PDFView.supportsIntegratedFind && PDFView.findBar.opened) {
           PDFView.findBar.close();
           handled = true;
@@ -1990,13 +1947,11 @@ window.addEventListener('keydown', function keydown(evt) {
     switch (evt.keyCode) {
       case 37: // left arrow
         if (PresentationMode.active) {
-          PDFHistory.back();
           handled = true;
         }
         break;
       case 39: // right arrow
         if (PresentationMode.active) {
-          PDFHistory.forward();
           handled = true;
         }
         break;
