@@ -164,6 +164,71 @@ describe Assignment do
     end
   end
 
+  describe '#grouped_students' do
+    before :each do
+      @assignment = create(:assignment)
+      @grouping = create(:grouping, assignment: @assignment)
+    end
+
+    context 'when no students are grouped' do
+      it 'returns an empty array' do
+        expect(@assignment.grouped_students).to eq([])
+      end
+    end
+
+    context 'when students are grouped' do
+      before :each do
+        @student = create(:student)
+        @membership = create(:accepted_student_membership, user: @student, grouping: @grouping)
+      end
+
+      describe 'one student' do
+        it 'returns the student' do
+          expect(@assignment.grouped_students).to eq([@student])
+        end
+      end
+
+      describe 'more than one student' do
+        before :each do
+          @other_student = create(:student)
+          @other_membership = create(:accepted_student_membership, user: @other_student, grouping: @grouping)
+        end
+
+        it 'returns the students' do
+          expect(@assignment.grouped_students).to eq ([@student, @other_student])
+        end
+      end
+    end
+  end
+
+  describe '#ungrouped_students' do
+    before :each do
+      @assignment = create(:assignment)
+      @grouping = create(:grouping, assignment: @assignment)
+      @students = (0..1).map { create(:student) }
+    end
+
+    context 'when all students are ungrouped' do
+      it 'returns all of the students' do
+        expect(@assignment.ungrouped_students).to eq(@students)
+      end
+    end
+
+    context 'when no students are ungrouped' do
+      before :each do
+        @students.each do |student|
+          student_membership = create(:accepted_student_membership,
+                                      user: student,
+                                      grouping: @grouping)
+        end
+      end
+
+      it 'returns an empty array' do
+        expect(@assignment.ungrouped_students).to eq([])
+      end
+    end
+  end
+
   describe '#past_remark_due_date?' do
     context 'before the remark due date' do
       let(:assignment) { build(:assignment, remark_due_date: 1.days.from_now) }
@@ -178,6 +243,48 @@ describe Assignment do
 
       it 'returns true' do
         expect(assignment.past_remark_due_date?).to be
+      end
+    end
+  end
+
+  describe '#graded_submissions' do
+    before :each do
+      @assignment = create(:assignment)
+      @grouping = create(:grouping, assignment: @assignment)
+      @submission = create(:version_used_submission, grouping: @grouping)
+      @other_grouping = create(:grouping, assignment: @assignment)
+      @other_submission = create(:version_used_submission, grouping: @other_grouping)
+    end
+
+    context 'when no submissions have been graded' do
+      it 'returns an empty array' do
+        expect(@assignment.graded_submissions.size).to eq(0)
+      end
+    end
+
+    context 'when submission(s) have been graded' do
+      before :each do
+        @result = @submission.get_latest_result
+        @result.marking_state = Result::MARKING_STATES[:complete]
+        @result.save
+      end
+
+      describe 'one submission' do
+        it 'returns the result' do
+          expect(@assignment.graded_submissions).to eq([@result])
+        end
+      end
+
+      describe 'all submissions' do
+        before :each do
+          @other_result = @other_submission.get_latest_result
+          @other_result.marking_state = Result::MARKING_STATES[:complete]
+          @other_result.save
+        end
+
+        it 'returns all of the results' do
+          expect(@assignment.graded_submissions).to eq([@result, @other_result])
+        end
       end
     end
   end
