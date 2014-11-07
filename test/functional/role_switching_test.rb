@@ -70,7 +70,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
           :user_login => @admin.user_name, :admin_password => 'adfadsf'
       end
 
-      should render_template 'role_switch_handler'
+      should render_template '_role_switch_handler'
 
       should 'be able to switch to a role with lesser privileges' do
         # redirect is done by JS, so match that we get a response
@@ -188,7 +188,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
           :user_login => @admin.user_name
       end
 
-      should render_template 'role_switch_handler'
+      should render_template '_role_switch_handler'
 
       should 'be able to switch to a role with lesser privileges' do
         # redirect is done by JS, so match that we get a response
