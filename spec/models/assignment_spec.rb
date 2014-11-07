@@ -164,6 +164,142 @@ describe Assignment do
     end
   end
 
+  describe '#valid_groupings and #invalid_groupings' do
+    before :each do
+      @assignment = create(:assignment)
+      @groupings = (1..2).map { create(:grouping, assignment: @assignment) }
+    end
+
+    context 'when no groups are valid' do
+      it '#valid_groupings returns an empty array' do
+        expect(@assignment.valid_groupings).to eq([])
+      end
+
+      it '#invalid_groupings returns all groupings' do
+        expect(@assignment.invalid_groupings).to eq(@groupings)
+      end
+    end
+
+    context 'when one group is valid' do
+      context 'due to admin_approval' do
+        before :each do
+          @groupings.first.update_attribute(:admin_approved, true)
+        end
+
+        it '#valid_groupings returns the valid group' do
+          expect(@assignment.valid_groupings).to eq([@groupings.first])
+        end
+
+        it '#invalid_groupings returns other, invalid groups' do
+          expect(@assignment.invalid_groupings).to eq(@groupings.drop(1))
+        end
+      end
+
+      context 'due to meeting min size requirement' do
+        before :each do
+          create(:accepted_student_membership,
+                 grouping: @groupings.first,
+                 user: create(:student))
+        end
+
+        it '#valid_groupings returns the valid group' do
+          expect(@assignment.valid_groupings).to eq([@groupings.first])
+        end
+
+        it '#invalid_groupings returns other, invalid groups' do
+          expect(@assignment.invalid_groupings).to eq(@groupings.drop(1))
+        end
+      end
+    end
+
+    context 'when all groups are valid' do
+      before :each do
+        @groupings.each do |grouping|
+          create(:accepted_student_membership,
+                 grouping: grouping,
+                 user: create(:student))
+        end
+      end
+
+      it '#valid_groupings returns all groupings' do
+        expect(@assignment.valid_groupings).to eq(@groupings)
+      end
+
+      it '#invalid_groupings returns an empty array' do
+        expect(@assignment.invalid_groupings).to eq([])
+      end
+    end
+  end
+
+  describe '#grouped_students' do
+    before :each do
+      @assignment = create(:assignment)
+      @grouping = create(:grouping, assignment: @assignment)
+    end
+
+    context 'when no students are grouped' do
+      it 'returns an empty array' do
+        expect(@assignment.grouped_students).to eq([])
+      end
+    end
+
+    context 'when students are grouped' do
+      before :each do
+        @student = create(:student)
+        @membership = create(:accepted_student_membership,
+                             user: @student,
+                             grouping: @grouping)
+      end
+
+      describe 'one student' do
+        it 'returns the student' do
+          expect(@assignment.grouped_students).to eq([@student])
+        end
+      end
+
+      describe 'more than one student' do
+        before :each do
+          @other_student = create(:student)
+          @other_membership = create(:accepted_student_membership,
+                                     user: @other_student,
+                                     grouping: @grouping)
+        end
+
+        it 'returns the students' do
+          expect(@assignment.grouped_students).to eq([@student, @other_student])
+        end
+      end
+    end
+  end
+
+  describe '#ungrouped_students' do
+    before :each do
+      @assignment = create(:assignment)
+      @grouping = create(:grouping, assignment: @assignment)
+      @students = (1..2).map { create(:student) }
+    end
+
+    context 'when all students are ungrouped' do
+      it 'returns all of the students' do
+        expect(@assignment.ungrouped_students).to eq(@students)
+      end
+    end
+
+    context 'when no students are ungrouped' do
+      before :each do
+        @students.each do |student|
+          create(:accepted_student_membership,
+                 user: student,
+                 grouping: @grouping)
+        end
+      end
+
+      it 'returns an empty array' do
+        expect(@assignment.ungrouped_students).to eq([])
+      end
+    end
+  end
+
   describe '#past_remark_due_date?' do
     context 'before the remark due date' do
       let(:assignment) { build(:assignment, remark_due_date: 1.days.from_now) }
@@ -178,6 +314,49 @@ describe Assignment do
 
       it 'returns true' do
         expect(assignment.past_remark_due_date?).to be
+      end
+    end
+  end
+
+  describe '#graded_submissions' do
+    before :each do
+      @assignment = create(:assignment)
+      @grouping = create(:grouping, assignment: @assignment)
+      @submission = create(:version_used_submission, grouping: @grouping)
+      @other_grouping = create(:grouping, assignment: @assignment)
+      @other_submission =
+        create(:version_used_submission, grouping: @other_grouping)
+    end
+
+    context 'when no submissions have been graded' do
+      it 'returns an empty array' do
+        expect(@assignment.graded_submissions.size).to eq(0)
+      end
+    end
+
+    context 'when submission(s) have been graded' do
+      before :each do
+        @result = @submission.get_latest_result
+        @result.marking_state = Result::MARKING_STATES[:complete]
+        @result.save
+      end
+
+      describe 'one submission' do
+        it 'returns the result' do
+          expect(@assignment.graded_submissions).to eq([@result])
+        end
+      end
+
+      describe 'all submissions' do
+        before :each do
+          @other_result = @other_submission.get_latest_result
+          @other_result.marking_state = Result::MARKING_STATES[:complete]
+          @other_result.save
+        end
+
+        it 'returns all of the results' do
+          expect(@assignment.graded_submissions).to eq([@result, @other_result])
+        end
       end
     end
   end
@@ -198,7 +377,6 @@ describe Assignment do
     it 'returns empty array #what_past_due_date' do
       expect(@assignment.what_past_due_date).to eq([])
     end
-
   end
 
   context 'when past due with no late submission rule' do
