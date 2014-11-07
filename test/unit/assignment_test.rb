@@ -99,14 +99,6 @@ class AssignmentTest < ActiveSupport::TestCase
       end
     end
 
-    should 'know how many ungrouped students are left' do
-      assert_equal(0, @assignment.no_grouping_students_list.size)
-      (1..2).each do
-        Student.make
-      end
-      assert_equal(2, @assignment.no_grouping_students_list.size)
-    end
-
     should 'know how many groupings have TAs assigned' do
       assert_equal(0, @assignment.assigned_groupings.size)
       assert_equal(0, @assignment.unassigned_groupings.size)
