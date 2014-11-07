@@ -1,0 +1,17 @@
+language: ruby
+rvm:
+  - 1.9.3
+
+bundler_args: --path=~/.bundle --without development production console
+
+before_script:
+  - cp config/database.yml.ci config/database.yml
+  - psql -c 'create database markus_test;' -U postgres
+  - bundle exec rake db:migrate
+  - bundle exec rake db:test:prepare
+  - sudo apt-get install ruby-svn
+
+env:
+  global:
+    - RAILS_ENV=test
+
