@@ -40,6 +40,7 @@ Markus::Application.routes.draw do
         get 'decline_invitation'
         post 'disinvite_member'
         get 'render_test_result'
+        get 'view_summary'
       end
 
       resources :rubrics do
@@ -306,10 +307,6 @@ Markus::Application.routes.draw do
     end
 
     resources :main do
-      member do
-        get 'view_summary'
-      end
-
       collection do
         get 'logout'
         get 'about'

@@ -15,7 +15,7 @@
     </div>
     <div id='assignment_summaries'>
       <% @assignments.each do |a| %>
-        <%= render partial: 'assignment_summary', locals: { assignment: a } %>
+        <%= render partial: 'assignments/assignment_summary', locals: { assignment: a } %>
       <% end %>
     </div>
   </div>
