@@ -73,7 +73,7 @@ module GradeEntryFormsHelper
     end
 
     attributes[:grade_entry_items_attributes] = grade_entry_items
-    return grade_entry_form_params(attributes)
+    grade_entry_form_params(attributes)
   end
 
   def sort_items_by_position(items)
@@ -84,10 +84,10 @@ module GradeEntryFormsHelper
 
   def grade_entry_form_params(attributes)
     attributes.require(:grade_entry_form).permit(:description,
-                                             :message,
-                                             :date,
-                                             :show_total,
-                                             :short_identifier,
-                                             grade_entry_items_attributes: [:name, :out_of, :position])
+                                                 :message,
+                                                 :date,
+                                                 :show_total,
+                                                 :short_identifier,
+                                                 grade_entry_items_attributes: [:name, :out_of, :position])
   end
 end

@@ -99,7 +99,7 @@ class GroupsController < ApplicationController
       params[:assignment_id] = @assignment.id
 
       if Grouping.where('assignment_id = :assignment_id and group_id = :groupexist_id',
-         {groupexist_id: groupexist_id, assignment_id: @assignment.id}).to_a
+                        groupexist_id: groupexist_id, assignment_id: @assignment.id).to_a
 
          flash[:error] = I18n.t('groups.rename_group.already_in_use')
       else
