@@ -707,9 +707,6 @@ class Grouping < ActiveRecord::Base
   # precondition: grouping is invalid, self.reload has been called
   def revoke_repository_permissions
     memberships = self.accepted_student_memberships
-    unless memberships.instance_of?(Array)
-      memberships = [memberships]
-    end
     memberships.each do |member|
       # Revoke permissions for students
       if self.write_repo_permissions?
