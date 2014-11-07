@@ -5,7 +5,22 @@
 
 /* Dashboard */
 
+#assignment_list {
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+  float: left;
+  width: 35%;
+}
+
 #assignment_summaries {
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+  float: left;
+  width: 65%;
   text-align: center;
 }
 

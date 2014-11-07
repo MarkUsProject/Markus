@@ -432,5 +432,4 @@ private
     validation_result[:user] = found_user
     validation_result
   end
-
 end
