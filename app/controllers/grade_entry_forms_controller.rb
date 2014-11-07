@@ -40,7 +40,8 @@ class GradeEntryFormsController < ApplicationController
                                 if sort_by == 'section'
                                   Student.includes(:section).where(conditions).order('sections.name ' + order)
                                 else
-                                  Student.where(conditions).order(sort_by + ' ' + order)
+                                  Student.where(conditions)
+                                         .order(sort_by + ' ' + order)
                                 end
                               else
                                 Student.where(conditions).order('user_name ' + order)
