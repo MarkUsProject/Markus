@@ -198,8 +198,8 @@ describe Assignment do
       context 'due to meeting min size requirement' do
         before :each do
           create(:accepted_student_membership,
-                grouping: @groupings.first,
-                user: create(:student))
+                 grouping: @groupings.first,
+                 user: create(:student))
         end
 
         it '#valid_groupings returns the valid group' do
@@ -216,8 +216,8 @@ describe Assignment do
       before :each do
         @groupings.each do |grouping|
           create(:accepted_student_membership,
-                grouping: grouping,
-                user: create(:student))
+                 grouping: grouping,
+                 user: create(:student))
         end
       end
 
@@ -246,7 +246,9 @@ describe Assignment do
     context 'when students are grouped' do
       before :each do
         @student = create(:student)
-        @membership = create(:accepted_student_membership, user: @student, grouping: @grouping)
+        @membership = create(:accepted_student_membership,
+                             user: @student,
+                             grouping: @grouping)
       end
 
       describe 'one student' do
@@ -258,11 +260,13 @@ describe Assignment do
       describe 'more than one student' do
         before :each do
           @other_student = create(:student)
-          @other_membership = create(:accepted_student_membership, user: @other_student, grouping: @grouping)
+          @other_membership = create(:accepted_student_membership,
+                                     user: @other_student,
+                                     grouping: @grouping)
         end
 
         it 'returns the students' do
-          expect(@assignment.grouped_students).to eq ([@student, @other_student])
+          expect(@assignment.grouped_students).to eq([@student, @other_student])
         end
       end
     end
@@ -284,9 +288,9 @@ describe Assignment do
     context 'when no students are ungrouped' do
       before :each do
         @students.each do |student|
-          student_membership = create(:accepted_student_membership,
-                                      user: student,
-                                      grouping: @grouping)
+          create(:accepted_student_membership,
+                 user: student,
+                 grouping: @grouping)
         end
       end
 
@@ -320,7 +324,8 @@ describe Assignment do
       @grouping = create(:grouping, assignment: @assignment)
       @submission = create(:version_used_submission, grouping: @grouping)
       @other_grouping = create(:grouping, assignment: @assignment)
-      @other_submission = create(:version_used_submission, grouping: @other_grouping)
+      @other_submission =
+        create(:version_used_submission, grouping: @other_grouping)
     end
 
     context 'when no submissions have been graded' do
