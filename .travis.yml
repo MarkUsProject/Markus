@@ -1,0 +1,37 @@
+language: ruby
+rvm:
+  - 2.1.2
+
+before_install:
+  - sudo apt-get update -qq
+
+install:
+  - bundle install --path=~/.bundle --without development production console
+  - sudo apt-get install -y libaprutil1-dev swig
+  - wget http://mirror.its.dal.ca/apache/subversion/subversion-1.8.10.tar.gz
+  - tar xzf subversion-1.8.10.tar.gz
+  - wget http://www.sqlite.org/sqlite-amalgamation-3071501.zip
+  - unzip sqlite-amalgamation-3071501.zip
+  - mv sqlite-amalgamation-3071501 subversion-1.8.10/sqlite-amalgamation
+  - cd subversion-1.8.10
+  - LDFLAGS="-L/home/travis/.rvm/rubies/ruby-2.1.2/lib/" ./configure --prefix=/home/travis/.rvm/rubies/ruby-2.1.2/
+  - make
+  - make swig-rb
+  - make install
+  - make install-swig-rb
+  - cd ..
+
+before_script:
+  - sudo rm -f /etc/localtime
+  - sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
+  - cp config/database.yml.ci config/database.yml
+  - psql -c 'create database markus_test;' -U postgres
+  - bundle exec rake db:migrate
+  - bundle exec rake db:test:prepare
+
+script:
+  - bundle exec rake test
+  - bundle exec rspec
+
+notifications:
+  email: false

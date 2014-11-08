@@ -67,6 +67,7 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'awesome_print'
+  gem 'debugger', :platforms => :mri_19
 end
 
 group :test do
@@ -83,7 +84,6 @@ end
 # listed here
 group :development, :test do
   gem 'faker' # required for database seeding
-  gem 'debugger', :platforms => :mri_19
   gem 'byebug', :platforms => [:mri_20, :mri_21]
 end
 
