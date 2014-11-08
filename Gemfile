@@ -67,6 +67,7 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'awesome_print'
+  gem 'debugger', :platforms => :mri_19
 end
 
 group :test do
