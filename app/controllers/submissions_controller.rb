@@ -69,200 +69,6 @@ class SubmissionsController < ApplicationController
              .find_by_markable_id(cid).mark
   end
 
-  # TABLE FOR TAs
-  TA_TABLE_PARAMS = {
-    model: Grouping,
-    per_pages: [15, 30, 50, 100, 150, 500, 1000],
-    filters: {
-      'none' => {
-        display: I18n.t('browse_submissions.show_all'),
-        proc: lambda { |params, to_include|
-          params[:assignment].ta_memberships.find_all_by_user_id(
-              params[:user_id], include: [grouping: to_include]).
-              collect { |m| m.grouping }
-        }
-      },
-      'unmarked' => {
-        display: I18n.t('browse_submissions.show_unmarked'),
-        proc: lambda { |params, to_include|
-           (params[:assignment].ta_memberships.find_all_by_user_id(
-               params[:user_id], include: [grouping: to_include]).
-               collect{|m| m.grouping}
-           ).select { |g| !g.has_submission? || (g.has_submission? &&
-                   g.current_submission_used.get_latest_result.marking_state ==
-                       Result::MARKING_STATES[:unmarked]) }}
-      },
-
-      'partial' => {
-        display: I18n.t('browse_submissions.show_partial'),
-        proc: lambda { |params, to_include|
-           (params[:assignment].ta_memberships.find_all_by_user_id(
-                    params[:user_id], include: [grouping: to_include]).
-               collect{|m| m.grouping}
-           ).select{ |g| g.has_submission? &&
-               g.current_submission_used.get_latest_result.marking_state ==
-                   Result::MARKING_STATES[:partial]} }
-      },
-
-      'complete' => {
-        display: I18n.t('browse_submissions.show_complete'),
-        proc: lambda{ |params, to_include|
-          (params[:assignment].ta_memberships.find_all_by_user_id(
-              params[:user_id], include: [grouping: to_include]).
-              collect{|m| m.grouping}
-          ).select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.marking_state ==
-                  Result::MARKING_STATES[:complete]} }
-      },
-
-      'released' => {
-        display: I18n.t('browse_submissions.show_released'),
-        proc: lambda{ |params, to_include|
-          (params[:assignment].ta_memberships.find_all_by_user_id(
-              params[:user_id], include: [grouping: to_include]).
-              collect{|m| m.grouping}
-          ).select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.released_to_students}}
-      },
-
-      'assigned' => {
-        display: I18n.t('browse_submissions.show_assigned_to_me'),
-        proc: lambda { |params, to_include|
-          params[:assignment].ta_memberships.find_all_by_user_id(
-              params[:user_id], include: [grouping: to_include]).
-              collect{|m| m.grouping} }}
-    },
-
-    sorts: {
-      'group_name' => lambda { |a,b| a.group.group_name.downcase <=>
-        b.group.group_name.downcase},
-      'repo_name' => lambda { |a,b| a.group.repo_name.downcase <=>
-          b.group.repo_name.downcase },
-      'revision_timestamp' => lambda { |a,b|
-        ret = -1 if !a.has_submission?
-        ret ||= 1 if !b.has_submission?
-        ret ||= a.current_submission_used.revision_timestamp <=>
-            b.current_submission_used.revision_timestamp
-      },
-      'marking_state' => lambda { |a,b|
-        ret = -1 if !a.has_submission?
-        ret ||= 1 if !b.has_submission?
-        ret ||= a.current_submission_used.get_latest_result.marking_state <=>
-            b.current_submission_used.get_latest_result.marking_state
-      },
-      'total_mark' => lambda { |a,b|
-        ret = -1 if !a.has_submission?
-        ret ||= 1 if !b.has_submission?
-        ret ||= a.current_submission_used.get_latest_result.total_mark <=>
-            b.current_submission_used.get_latest_result.total_mark
-      },
-      'grace_credits_used' => lambda { |a,b|
-        a.grace_period_deduction_single <=> b.grace_period_deduction_single
-      },
-      'section' => lambda { |a,b|
-        ret = -1 if !a.section
-        ret ||= 1 if !b.section
-        ret ||= a.section <=> b.section
-      }
-    }
-  }
-
-  # TABLE FOR Admin
-  ADMIN_TABLE_PARAMS = {
-    model: Grouping,
-    per_pages: [15, 30, 50, 100, 150, 500, 1000],
-    filters: {
-      'none' => {
-        display: I18n.t('browse_submissions.show_all'),
-        proc: lambda { |params, to_include|
-          params[:assignment].groupings.all(include: to_include)}},
-      'unmarked' => {
-        display: I18n.t('browse_submissions.show_unmarked'),
-        proc: lambda { |params, to_include|
-          params[:assignment].groupings.all(include: [to_include]).
-              select{|g| !g.has_submission? || (g.has_submission? &&
-              g.current_submission_used.get_latest_result.marking_state ==
-                  Result::MARKING_STATES[:unmarked]) } }},
-      'partial' => {
-        display: I18n.t('browse_submissions.show_partial'),
-        proc: lambda { |params, to_include|
-          params[:assignment].groupings.all(include: [to_include]).
-              select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.marking_state ==
-                  Result::MARKING_STATES[:partial] } }},
-      'complete' => {
-        display: I18n.t('browse_submissions.show_complete'),
-        proc: lambda { |params, to_include|
-          params[:assignment].groupings.all(include: [to_include]).
-              select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.marking_state ==
-                  Result::MARKING_STATES[:complete] } }},
-      'released' => {
-        display: I18n.t('browse_submissions.show_released'),
-        proc: lambda { |params, to_include|
-          params[:assignment].groupings.all(include: [to_include]).
-              select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.released_to_students}}},
-      'assigned' => {
-        display: I18n.t('browse_submissions.show_assigned_to_me'),
-        proc: lambda { |params, to_include|
-          params[:assignment].ta_memberships.find_all_by_user_id(
-              params[:user_id], include: [grouping: to_include]).
-              collect{|m| m.grouping} }}
-    },
-    sorts: {
-      'group_name' => lambda { |a,b|
-        a.group.group_name.downcase <=> b.group.group_name.downcase},
-      'repo_name' => lambda { |a,b|
-        a.group.repo_name.downcase <=> b.group.repo_name.downcase },
-      'revision_timestamp' => lambda { |a,b|
-        ret = -1 if !a.has_submission?
-        ret ||= 1 if !b.has_submission?
-        ret ||= a.current_submission_used.revision_timestamp <=>
-            b.current_submission_used.revision_timestamp
-      },
-      # Ordering for marking state:
-      #   Released (icon: "sent mail") - complete & released_to_student
-      #   Complete (icon: green circle check mark) - complete
-      #   Remark Requested (icon: speech bubble exclamation mark) - partial & remark_submitted
-      #   Partial (icon: pencil) - partial
-      #   Unmarked (icon : pencil) - unmarked
-      'marking_state' => lambda { |a,b|
-        if !a.has_submission? || a.current_submission_used.
-            get_latest_result.released_to_students
-          -1
-        elsif !b.has_submission? || b.current_submission_used.
-            get_latest_result.released_to_students
-          1
-        elsif a.current_submission_used.get_latest_result.marking_state ==
-            Result::MARKING_STATES[:partial] && b.current_submission_used.
-            get_latest_result.marking_state == Result::MARKING_STATES[:partial]
-          ret ||= -1 if a.current_submission_used.remark_submitted?
-          ret ||= 1 if b.current_submission_used.remark_submitted?
-          ret ||= 0
-        else
-          a.current_submission_used.get_latest_result.marking_state <=>
-              b.current_submission_used.get_latest_result.marking_state
-        end
-      },
-      'total_mark' => lambda { |a,b|
-        ret = -1 if !a.has_submission?
-        ret ||= 1 if !b.has_submission?
-        ret ||= a.current_submission_used.get_latest_result.total_mark <=>
-          b.current_submission_used.get_latest_result.total_mark
-      },
-      'criterion' => criterion_mark_compare,
-      'grace_credits_used' => lambda { |a,b|
-        a.grace_period_deduction_single <=> b.grace_period_deduction_single
-      },
-      'section' => lambda { |a,b|
-        ret = -1 if !a.section
-        ret ||= 1 if !b.section
-        ret ||= a.section <=> b.section
-      }
-    }
-  }
-
   def repo_browser
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:id])
@@ -304,37 +110,18 @@ class SubmissionsController < ApplicationController
                                date: revision.timestamp}
       end
     end
-    repo.close
-  end
 
-  def populate_repo_browser
-    @grouping = Grouping.find(params[:id])
-    @assignment = @grouping.assignment
-    @path = params[:path] || '/'
-    @revision_number = params[:revision_number]
-    @previous_path = File.split(@path).first
-    @grouping.group.access_repo do |repo|
-      begin
-        @revision = repo.get_revision(params[:revision_number].to_i)
-        @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
-        @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
-      rescue Exception => @find_revision_error
-        respond_to do |format|
-          format.js { render action: 'submissions/repo_browser/find_revision_error' }
-        end
-        return
-      end
-      @table_rows = {}
-      @files.sort.each do |file_name, file|
-        @table_rows[file.object_id] = construct_repo_browser_table_row(file_name, file)
-      end
-      @directories.sort.each do |directory_name, directory|
-        @table_rows[directory.object_id] = construct_repo_browser_directory_table_row(directory_name, directory)
-      end
-      respond_to do |format|
-        format.js
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: get_repo_browser_table_info(@assignment, @revision,
+                                                 @revision_number, @path,
+                                                 @previous_path,
+                                                 @grouping.id)
       end
     end
+
+    repo.close
   end
 
   def file_manager
