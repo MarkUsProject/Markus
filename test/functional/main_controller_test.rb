@@ -3,13 +3,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 require 'shoulda'
 require 'machinist'
 
-# re-raise errors caught by controller
-class MainController
-  def rescue_action(e)
-    raise e
-  end
-end
-
 class MainControllerTest < AuthenticatedControllerTest
 
   # TODO need to change username and password for valid logins when

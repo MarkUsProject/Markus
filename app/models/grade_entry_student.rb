@@ -221,7 +221,7 @@ class GradeEntryStudent < ActiveRecord::Base
     refresh_total_grade
   end
 
-  def save
+  def save(*)
     refresh_total_grade # make sure the latest total grade is always saved
     super
   end
