@@ -433,7 +433,9 @@ class SubmissionsController < ApplicationController
   def collect_ta_submissions
     assignment = Assignment.find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
-      groupings = assignment.groupings.includes(:tas).where('users.id = ?', current_user.id)
+      groupings = assignment.groupings
+                            .includes(:tas)
+                            .where('users.id = ?', current_user.id)
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(groupings)
       flash[:success] = I18n.t('collect_submissions.collection_job_started',
