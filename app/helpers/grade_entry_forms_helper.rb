@@ -83,11 +83,12 @@ module GradeEntryFormsHelper
   private
 
   def grade_entry_form_params(attributes)
-    attributes.require(:grade_entry_form).permit(:description,
-                                                 :message,
-                                                 :date,
-                                                 :show_total,
-                                                 :short_identifier,
-                                                 grade_entry_items_attributes: [:name, :out_of, :position])
+    attributes.require(:grade_entry_form)
+              .permit(:description,
+                      :message,
+                      :date,
+                      :show_total,
+                      :short_identifier,
+                      grade_entry_items_attributes: [:name, :out_of, :position])
   end
 end
