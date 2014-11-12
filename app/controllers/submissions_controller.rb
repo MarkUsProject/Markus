@@ -81,9 +81,13 @@ class SubmissionsController < ApplicationController
       if params[:revision_number]
         @revision_number = params[:revision_number].to_i
       elsif params[:revision_timestamp]
-        @revision_number = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
+        @revision_number = repo.get_revision_by_timestamp(
+            Time.parse(params[:revision_timestamp])).revision_number
       else
         @revision_number = repo.get_latest_revision.revision_number
+      end
+      if @revision_number == 0
+        @revision_number = 1
       end
       @revision = repo.get_revision(@revision_number)
       @revision_timestamp = @revision.timestamp

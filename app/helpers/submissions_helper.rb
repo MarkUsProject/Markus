@@ -270,18 +270,19 @@ module SubmissionsHelper
     exit_directory = get_exit_directory(previous_path, grouping_id,
                                         revision_number)
 
-    files = revision.files_at_path(File.join(assignment.repository_folder,
-                                             path))
-    files_info = get_files_info(files, assignment.id, revision_number, path,
-                                grouping_id)
+    full_path = File.join(assignment.repository_folder, path)
+    if revision.path_exists?(full_path)
+      files = revision.files_at_path(full_path)
+      files_info = get_files_info(files, assignment.id, revision_number, path,
+                                  grouping_id)
 
-    directories = revision.directories_at_path(File.join(
-                                                   assignment.repository_folder,
-                                                   @path))
-    directories_info = get_directories_info(directories, revision_number, path,
-                                            grouping_id)
-
-    exit_directory + files_info + directories_info
+      directories = revision.directories_at_path(full_path)
+      directories_info = get_directories_info(directories, revision_number,
+                                              path, grouping_id)
+      return exit_directory + files_info + directories_info
+    else
+      return exit_directory
+    end
   end
 
   def get_exit_directory(previous_path, grouping_id, revision_number)
