@@ -277,8 +277,8 @@ module SubmissionsHelper
                                   grouping_id)
 
       directories = revision.directories_at_path(full_path)
-      directories_info = get_directories_info(directories, revision_number, path,
-                                              grouping_id)
+      directories_info = get_directories_info(directories, revision_number,
+                                              path, grouping_id)
       return exit_directory + files_info + directories_info
     else
       return exit_directory
