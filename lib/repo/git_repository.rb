@@ -921,7 +921,7 @@ module Repository
             [relative_path_to_file]).size > 0
       end
 
-      # Return the date of the last commit that effected this file
+      # Return the date of the last commit that affected this file
       # with the author details
       if commit.nil?
         # To let rspec tests pass - Placeholder code
