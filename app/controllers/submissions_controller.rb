@@ -779,15 +779,14 @@ class SubmissionsController < ApplicationController
           begin
             # Recursively fill this sub-directory
             # Creates the sub-directory inside of the zip_file
-            zip_file.mkdir(zip_name + "/" + subdirectory[0]) unless
-                zip_file.find_entry(zip_name + "/" + subdirectory[0])
-            downloads_subdirectories(subdirectory[0] + "/",
-                                     directories[subdirectory[0]].path + subdirectory[0] + "/",
+            zip_file.mkdir(zip_name + '/' + subdirectory[0]) unless
+                zip_file.find_entry(zip_name + '/' + subdirectory[0])
+            downloads_subdirectories(subdirectory[0] + '/',
+                                     directories[subdirectory[0]].path +
+                                         subdirectory[0] + '/',
                                      zip_file, zip_name, repo)
           end
         end
-
-
       end
 
       # Send the Zip file
@@ -803,44 +802,46 @@ class SubmissionsController < ApplicationController
   #
   # PRECONDITION: The subdirectory should already exist in the zip_file.
   # Helper method for downloads.
-  def downloads_subdirectories(subdirectory, subdirectory_path, zip_file, zip_name, repo)
+  def downloads_subdirectories(subdirectory, subdirectory_path, zip_file,
+                               zip_name, repo)
+    files = @revision.files_at_path(subdirectory_path)
+    # In order to recursively download all files, find the sub-directories
+    directories = @revision.directories_at_path(subdirectory_path)
 
-      files = @revision.files_at_path(subdirectory_path)
-      # In order to recursively download all files, find the sub-directories
-      directories = @revision.directories_at_path(subdirectory_path)
+    if files.count == 0
+      # No files in subdirectory
+      return
+    end
 
-      if files.count == 0
-        # No files in subdirectory
+    files.each do |file|
+      begin
+        file_contents = repo.download_as_string(file.last)
+      rescue
         return
       end
 
-      files.each do |file|
-        begin
-          file_contents = repo.download_as_string(file.last)
-        rescue Exception => e
-          return
-        end
-
-        zip_file.get_output_stream(File.join(zip_name, subdirectory + file.first)) do |f|
-          f.puts file_contents
-        end
-
+      zip_file.get_output_stream(File.join(zip_name, subdirectory +
+          file.first)) do |f|
+        f.puts file_contents
       end
 
-      # Now recursively call this function on all sub directories.
-      directories.each do |new_subdirectory|
-        begin
-          # Recursively fill this sub-directory
-          zip_file.mkdir(zip_name + "/" + subdirectory + new_subdirectory[0]) unless
-              zip_file.find_entry(zip_name + "/" + subdirectory + new_subdirectory[0])
-          downloads_subdirectories(subdirectory + new_subdirectory[0] + "/",
-                                   directories[new_subdirectory[0]].path + new_subdirectory[0] + "/",
-                                   zip_file, zip_name, repo)
-        end
+    end
+
+    # Now recursively call this function on all sub directories.
+    directories.each do |new_subdirectory|
+      begin
+        # Recursively fill this sub-directory
+        zip_file.mkdir(zip_name + '/' + subdirectory +
+                           new_subdirectory[0]) unless
+            zip_file.find_entry(zip_name + '/' + subdirectory +
+                                    new_subdirectory[0])
+        downloads_subdirectories(subdirectory + new_subdirectory[0] +
+                                     '/',
+                                 directories[new_subdirectory[0]].path +
+                                     new_subdirectory[0] + '/',
+                                 zip_file, zip_name, repo)
       end
-
-
-
+    end
   end
 
   def update_submissions
