@@ -429,7 +429,7 @@ describe Assignment do
       before :each do
         @students = (1..2).map { create(:student) }
         user_names = @students.map { |student| student.user_name }
-        @row = [ 'group_name', 'repo_name', user_names[0], user_names[1] ]
+        @row = ['group_name', 'repo_name'] + user_names
       end
 
       context 'and the group does not exist' do
