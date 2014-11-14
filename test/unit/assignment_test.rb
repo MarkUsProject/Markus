@@ -288,34 +288,6 @@ class AssignmentTest < ActiveSupport::TestCase
       end
     end
 
-    should 'not add csv group with empty row' do
-      assert !@assignment.add_csv_group([])
-    end
-
-    context 'with existing students' do
-      setup do
-        @student1 = Student.make
-        @student2 = Student.make
-      end
-
-      should 'be able to add a group by CSV row' do
-        group = ['groupname', 'CaptainSparrow' ,@student1.user_name, @student2.user_name]
-        old_groupings_count = @assignment.groupings.length
-        assert_nil @assignment.add_csv_group(group)
-        @assignment.reload
-        assert_equal old_groupings_count + 1, @assignment.groupings.length
-      end
-
-      should 'be able to add a group by CSV row with existing group name' do
-        Group.make(:group_name => 'groupname')
-        group = ['groupname', 'CaptainSparrow' , @student1.user_name, @student2.user_name]
-        old_group_count = Group.all.length
-        assert_nil @assignment.add_csv_group(group)
-        assert_equal old_group_count, Group.all.length
-      end
-
-    end
-
     context 'with a students in groupings setup with marking complete (rubric marking)' do
       setup do
         # create the required files for the assignment
