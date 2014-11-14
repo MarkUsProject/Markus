@@ -318,6 +318,58 @@ describe Assignment do
     end
   end
 
+  describe '#groups_submitted' do
+    before :each do
+      @assignment = create(:assignment)
+    end
+
+    context 'when no groups have made a submission' do
+      it 'returns an empty array' do
+        expect(@assignment.groups_submitted).to eq([])
+      end
+    end
+
+    context 'when one group has submitted' do
+      before :each do
+        @grouping = create(:grouping, assignment: @assignment)
+      end
+
+      describe 'once' do
+        before :each do
+          create(:version_used_submission, grouping: @grouping)
+        end
+
+        it 'returns the group' do
+          expect(@assignment.groups_submitted).to eq([@grouping])
+        end
+      end
+
+      describe 'more than once' do
+        before :each do
+          create(:version_used_submission, grouping: @grouping)
+          create(:version_used_submission, grouping: @grouping)
+        end
+
+        it 'returns one instance of the group' do
+          expect(@assignment.groups_submitted).to eq([@grouping])
+        end
+      end
+    end
+
+    context 'when multiple groups have submitted' do
+      before :each do
+        @groupings = (1..2).map { create(:grouping, assignment: @assignment) }
+        @groupings.each do |group|
+          create(:version_used_submission, grouping: group)
+        end
+      end
+
+      it 'returns those groups' do
+        expect(@assignment.groups_submitted).to eq(@groupings)
+      end
+    end
+  end
+
   describe '#graded_submissions' do
     before :each do
       @assignment = create(:assignment)
@@ -450,7 +502,6 @@ describe Assignment do
         end
       end
     end
-
   end
 
   describe '#update_results_stats' do
