@@ -355,7 +355,8 @@ describe Assignment do
         end
 
         it 'returns all of the results' do
-          expect(@assignment.graded_submission_results).to eq([@result, @other_result])
+          expect(@assignment.graded_submission_results)
+            .to eq([@result, @other_result])
         end
       end
     end
