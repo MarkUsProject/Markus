@@ -69,6 +69,10 @@ class AutomatedTestsController < ApplicationController
   private
 
   def assignment_params
-    params.require(:assignment).permit(:enable_test, :assignment_id, test_files_attributes: [:id, :filename, :filetype, :is_private, :_destroy])
+    params.require(:assignment)
+          .permit(:enable_test,
+                  :assignment_id,
+                  test_files_attributes:
+                  [:id, :filename, :filetype, :is_private, :_destroy])
   end
 end
