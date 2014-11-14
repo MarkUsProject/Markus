@@ -744,7 +744,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns all the submissions that have been graded (completed)
-  def graded_submissions
+  def graded_submission_results
     results = []
     groupings.each do |grouping|
       if grouping.marking_completed?
