@@ -318,7 +318,7 @@ describe Assignment do
     end
   end
 
-  describe '#graded_submissions' do
+  describe '#graded_submission_results' do
     before :each do
       @assignment = create(:assignment)
       @grouping = create(:grouping, assignment: @assignment)
@@ -330,7 +330,7 @@ describe Assignment do
 
     context 'when no submissions have been graded' do
       it 'returns an empty array' do
-        expect(@assignment.graded_submissions.size).to eq(0)
+        expect(@assignment.graded_submission_results.size).to eq(0)
       end
     end
 
@@ -343,7 +343,7 @@ describe Assignment do
 
       describe 'one submission' do
         it 'returns the result' do
-          expect(@assignment.graded_submissions).to eq([@result])
+          expect(@assignment.graded_submission_results).to eq([@result])
         end
       end
 
@@ -355,7 +355,8 @@ describe Assignment do
         end
 
         it 'returns all of the results' do
-          expect(@assignment.graded_submissions).to eq([@result, @other_result])
+          expect(@assignment.graded_submission_results)
+            .to eq([@result, @other_result])
         end
       end
     end
