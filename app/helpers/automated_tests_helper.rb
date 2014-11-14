@@ -88,7 +88,7 @@ module AutomatedTestsHelper
     updated_files = {}
 
     # Retrieve all test file entries
-    testfiles = params[:assignment][:test_files_attributes]
+    testfiles = params[:test_files_attributes]
 
     # First check for duplicate filenames:
     filename_array = []
@@ -139,8 +139,8 @@ module AutomatedTestsHelper
     assignment.test_files_attributes = updated_files
 
     # Update assignment enable_test and tokens_per_day attributes
-    assignment.enable_test = params[:assignment][:enable_test]
-    num_tokens = params[:assignment][:tokens_per_day]
+    assignment.enable_test = params[:enable_test]
+    num_tokens = params[:tokens_per_day]
     if num_tokens
       assignment.tokens_per_day = num_tokens
     end

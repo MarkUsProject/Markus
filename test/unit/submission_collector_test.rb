@@ -137,7 +137,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
 
         should 'move it from regular to priority queue' do
           assert_equal [@groupings.first], @priority_queue
-          assert @regular_queue.empty?
+          assert_equal @regular_queue.count, 0
           assert !@groupings.first.is_collected?
         end
       end
