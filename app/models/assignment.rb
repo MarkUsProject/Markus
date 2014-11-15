@@ -220,13 +220,6 @@ class Assignment < ActiveRecord::Base
     User.find(uid).accepted_grouping_for(id)
   end
 
-  # Make a list of students without any groupings
-  def no_grouping_students_list
-    Student.where(hidden: false)
-           .order(:last_name)
-           .reject { |s| s.has_accepted_grouping_for?(id) }
-  end
-
   def display_for_note
     short_identifier
   end
@@ -746,7 +739,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns all the submissions that have been graded (completed)
-  def graded_submissions
+  def graded_submission_results
     results = []
     groupings.each do |grouping|
       if grouping.marking_completed?

@@ -29,7 +29,7 @@ dp.sh.Brushes.Haskell = function()
  
         this.regexList = [
                 { regex: new RegExp('--.*$', 'gm'), css: 'comment' },                      			// one line comments
-                { regex: new RegExp('\{-[^]*-}', 'gm'), css: 'comment' },                      	        // multiline comments
+                { regex: new RegExp('\{-[^]*?-}', 'gm'), css: 'comment' },                      	        // multiline comments
                 { regex: dp.sh.RegexLib.DoubleQuotedString,  css: 'string' },   		// double quoted strings
                 { regex: dp.sh.RegexLib.SingleQuotedString,  css: 'string' },   		// single quoted strings
                 { regex: new RegExp(this.GetKeywords(keywords), 'g'), css: 'keyword' },     	// keyword
