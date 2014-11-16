@@ -758,45 +758,10 @@ class SubmissionsController < ApplicationController
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
 
-        files = @revision.files_at_path(full_path)
+        downloads_subdirectories('',
+                                 full_path,
+                                 zip_file, zip_name, repo)
 
-        # In order to recursively download all files, find the sub-directories
-        directories = @revision.directories_at_path(full_path)
-
-        if files.count == 0
-          render text: t('student.submission.no_files_available')
-          return
-        end
-
-        files.each do |file|
-          begin
-            file_contents = repo.download_as_string(file.last)
-          rescue Exception => e
-            render text: t('student.submission.missing_file',
-                              file_name: file.first, message: e.message)
-            return
-          end
-
-          # Create the folder in the Zip file if it doesn't exist
-          zip_file.mkdir(zip_name) unless zip_file.find_entry(zip_name)
-
-          zip_file.get_output_stream(File.join(zip_name, file.first)) do |f|
-            f.puts file_contents
-          end
-        end
-
-        directories.each do |subdirectory|
-          begin
-            # Recursively fill this sub-directory
-            # Creates the sub-directory inside of the zip_file
-            zip_file.mkdir(zip_name + '/' + subdirectory[0]) unless
-                zip_file.find_entry(zip_name + '/' + subdirectory[0])
-            downloads_subdirectories(subdirectory[0] + '/',
-                                     directories[subdirectory[0]].path +
-                                         subdirectory[0] + '/',
-                                     zip_file, zip_name, repo)
-          end
-        end
       end
 
       # Send the Zip file
@@ -809,8 +774,6 @@ class SubmissionsController < ApplicationController
   # fill the subdirectory within the zip_file with all of its files.
   # Recursively fills the subdirectory with files and folders within
   # it.
-  #
-  # PRECONDITION: The subdirectory should already exist in the zip_file.
   # Helper method for downloads.
   def downloads_subdirectories(subdirectory, subdirectory_path, zip_file,
                                zip_name, repo)
