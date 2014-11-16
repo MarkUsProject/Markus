@@ -801,6 +801,9 @@ module Repository
       # like ['A1', 'src', 'core'] for '/A1/src/core'
       path = path.split('/')
 
+      # Account for the files in the root directory with an extra '/' on end
+      path.reject!(&:empty?)
+
       # current_tree is the current directory object we are going through
       # Look at rugged documentation for more info on tree objects
       current_object = @commit.tree

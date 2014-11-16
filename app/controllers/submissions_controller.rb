@@ -608,7 +608,6 @@ class SubmissionsController < ApplicationController
   def download
     @assignment = Assignment.find(params[:id])
     # find_appropriate_grouping can be found in SubmissionsHelper
-
     @grouping = find_appropriate_grouping(@assignment.id, params)
 
     revision_number = params[:revision_number]
