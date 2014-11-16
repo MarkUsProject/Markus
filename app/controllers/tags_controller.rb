@@ -15,6 +15,9 @@ class TagsController < ApplicationController
 
     if new_tag.save
       flash[:success] = I18n.t('tag created successfully')
+      if params[:grouping_id]
+        create_grouping_tag_association(params[:grouping_id], new_tag)
+      end
       redirect_to :back
     else
       flash[:error] = I18n.t('error creating tag')
@@ -56,13 +59,25 @@ class TagsController < ApplicationController
     end
   end
 
-  def get_tags_for_grouping(grouping_id)
-    grouping = Grouping.find(grouping_id)
+  def get_tags_for_grouping
+    grouping = Grouping.find(params[:grouping_id])
     grouping.tags
   end
 
-  def delete_grouping_tag_association(grouping_id, tag_id)
-    tag = Tag.find(tag_id)
-    tag.groupings.delete(grouping_id)
+  def get_tags_not_associated_with_grouping
+    grouping = Grouping.find(:params[grouping_id])
+    grouping_tags = grouping.tags
+
+    all_tags = get_all_tags
+    all_tags.delete_if do |t|
+      grouping_tags.include?(t)
+    end
+
+    all_tags
+  end
+
+  def delete_grouping_tag_association
+    tag = Tag.find(params[:tagging_id])
+    tag.groupings.delete(params[:grouping_id])
   end
 end
