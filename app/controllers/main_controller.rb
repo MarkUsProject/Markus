@@ -156,6 +156,8 @@ class MainController < ApplicationController
       submission_rule: :assignment
     ]).all(order: 'due_date DESC')
 
+    @current_assignment = Assignment.get_dashboard_assignment
+
     render :index, layout: 'content'
   end
 

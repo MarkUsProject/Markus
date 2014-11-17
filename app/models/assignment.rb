@@ -316,6 +316,17 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  def self.get_dashboard_assignment
+    current_assignment = Assignment.where('due_date >= ?', Date.today-2)
+                                   .order('due_date ASC').first
+
+    if current_assignment.nil?
+      current_assignment = Assignment.reorder('due_date DESC').first
+    end
+
+    return current_assignment
+  end
+
   def update_remark_request_count
     outstanding_count = 0
     groupings.each do |grouping|
