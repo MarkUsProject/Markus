@@ -375,8 +375,8 @@ ActiveRecord::Schema.define(:version => 20141017202829) do
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
   create_table "tags", :force => true do |t|
-    t.string  "content",       :null => false
-    t.integer "assignment_id", :null => false
+    t.string "name",        :null => false
+    t.string "description"
   end
 
   create_table "test_files", :force => true do |t|
