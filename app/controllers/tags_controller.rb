@@ -1,17 +1,25 @@
 class TagsController < ApplicationController
+  include TagsHelper
 
   before_filter :authorize_only_for_admin
 
   def index
-    @assignment = Assignment.find(params[:assignment_id])
+    respond_to do |format|
+      format.html do
+        @assignment = Assignment.find(params[:assignment_id])
+      end
+      format.json do
+        render json: get_tags_table_info
+      end
+    end
   end
 
   # Creates a new instance of the tag.
   def create
     new_tag = Tag.new(
       name: params[:create_new][:name],
-      description: 'TEST STRING', #TODO
-      user: @current_user,)
+      description: params[:create_new][:description]) #TODO
+      #user: @current_user,)
 
     if new_tag.save
       flash[:success] = I18n.t('tag created successfully')

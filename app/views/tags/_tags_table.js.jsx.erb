@@ -1,6 +1,5 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
-  var i = -1;
 
   var TagsTable = React.createClass({
     getDefaultProps: function() {
@@ -72,10 +71,9 @@
       }
     },
     getInitialState: function() {
-      // TODO: Change to tags: [] and remove dummy data once tags model and controller are created.
       return {
         error: null,
-        tags: [[],[],[],[],[]],
+        tags: [],
         selected_tags: []
       };
     },
@@ -89,9 +87,25 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
 
-      // TODO: Enter retrieval code for tags.
-
-      document.getElementById('working').style.display = 'none';
+      jQuery.ajax({
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            tags: data,
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        },
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
     },
     onError: function(error) {
       this.setState({
@@ -101,15 +115,15 @@
     render: function() {
       // Do tags specific operations here.
       var tags_data = this.state.tags.map(function(tag) {
-        var tag = {};
+        var t = {};
 
         // TODO: Remove this code and replace with actual object manipulation.
-        tag['id'] = i++;
-        tag['tags_name'] = 'Tag #' + i;
-        tag['creator_name'] = 'Bryan J Muscedere';
-        tag['tags_description'] = 'This is a test tag. At present, these tags do not represent actual data.';
-        tag['tags_use'] = i + '/15 assignments have this tag.';
-        tag['tags_actions'] = <span>
+        t['id'] = tag.id;
+        t['tags_name'] = tag.name;
+        t['creator_name'] = 'Bryan';
+        t['tags_description'] = tag.description;
+        t['tags_use'] = '15 assignments have this tag.';
+        t['tags_actions'] = <span>
           <a key={tag.edit}
             href={tag.edit}><%= j raw I18n.t(:'edit') %></a>
           |
@@ -117,7 +131,7 @@
              href={tag.delete}><%= j raw I18n.t(:'delete') %></a>
           </span>;
 
-        return tag;
+        return t;
       }.bind(this));
       return (
         <div>
