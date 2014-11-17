@@ -98,7 +98,7 @@ var Table = React.createClass({displayName: 'Table',
   // Header col was clicked. Adjust state accordingly.
   synchronizeHeaderColumn: function(sort_column, sort_direction) {
     this.setState({
-      sort_column: sort_column, 
+      sort_column: sort_column,
       sort_direction: sort_direction
     });
   },
@@ -142,7 +142,7 @@ var Table = React.createClass({displayName: 'Table',
     var filtered_data = filter_data(new_data,
                                     filter_function);
     var searched_data = search_data(filtered_data,
-                                    searchables, 
+                                    searchables,
                                     search_text);
     var visible_data = searched_data;
     return visible_data;
@@ -167,7 +167,7 @@ var Table = React.createClass({displayName: 'Table',
         TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
           placeholder:this.props.search_placeholder} ),
         React.DOM.div( {className:"table"},
-          React.DOM.table( {className:"table"},
+          React.DOM.table( {},
             TableHeader( {columns:columns,
               sort_column:this.state.sort_column,
               sort_direction:this.state.sort_direction,
@@ -250,14 +250,14 @@ SimpleTableFilter = React.createClass({displayName: 'SimpleTableFilter',
     for (var i = 0; i < this.props.filters.length; i++) {
       // Get number of elements that pass filter
       var number = this.props.data.filter(this.props.filters[i].func).length;
-      var fltr = 
+      var fltr =
         (this.props.current_filter == this.props.filters[i].name ?
-         React.DOM.span( {key:this.props.filters[i].name}, 
+         React.DOM.span( {key:this.props.filters[i].name},
            this.props.filters[i].text + " (" + number + ")"
            ) :
           React.DOM.a( {key:this.props.filters[i].name,
             id:this.props.filters[i].name,
-            onClick:this.filterClicked}, 
+            onClick:this.filterClicked},
             this.props.filters[i].text + " (" + number + ")"
           ));
       filters_dom.push(fltr);
@@ -332,8 +332,8 @@ TableHeader = React.createClass({displayName: 'TableHeader',
     }.bind(this));
 
     return (
-      React.DOM.thead(null, 
-        React.DOM.tr(null, 
+      React.DOM.thead(null,
+        React.DOM.tr(null,
           header_columns
         )
       )
@@ -364,8 +364,8 @@ TableFooter = React.createClass({displayName: 'TableFooter',
     }.bind(this));
 
     return (
-      React.DOM.tfoot(null, 
-        React.DOM.tr(null, 
+      React.DOM.tfoot(null,
+        React.DOM.tr(null,
           footer_columns
         )
       )
@@ -401,7 +401,7 @@ TableRows = React.createClass({displayName: 'TableRows',
     } else {
       final_data = sorted_data;
     }
-    
+
     // create rows
     // consider instead of recreating array each time, just hiding the rows.
     var rows = [];
@@ -414,7 +414,7 @@ TableRows = React.createClass({displayName: 'TableRows',
     }
 
     return (
-      React.DOM.tbody(null, 
+      React.DOM.tbody(null,
         rows
       )
     );
@@ -434,14 +434,14 @@ TableRow = React.createClass({displayName: 'TableRow',
     for (var i = 0; i < this.props.columns.length; i++) {
       var key = this.props.columns[i].id;
       cells.push(
-        React.DOM.td( {key:key}, 
+        React.DOM.td( {key:key},
           this.props.row_object[key]
         )
       );
     }
     return (
       React.DOM.tr( {id:this.props.row_object.id,
-                     className: this.props.row_object.class_name}, 
+                     className: this.props.row_object.class_name},
         cells
       )
     );

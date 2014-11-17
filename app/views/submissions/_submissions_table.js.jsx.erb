@@ -48,7 +48,7 @@
             id: 'final_grade',
             content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
             sortable: true,
-            searchable: false 
+            searchable: false
           },
           {
             id: 'can_begin_grading',
@@ -155,7 +155,7 @@
         s['can_begin_grading'] = <span dangerouslySetInnerHTML={{__html: submission.can_begin_grading}} />;
         return s;
       }.bind(this));
-      
+
         return (
           <div>
             <ErrorDiv error={this.state.error} />
@@ -220,7 +220,7 @@
     },
     render: function() {
       return (
-        <div>
+        <div className='react-release-marks'>
           <button onClick={this.releaseMarks}>
             <%= j raw I18n.t('browse_submissions.release_marks') %>
           </button>
