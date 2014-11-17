@@ -198,33 +198,9 @@ class Assignment < ActiveRecord::Base
     !remark_due_date.nil? && Time.zone.now > remark_due_date
   end
 
-  # Returns a Submission instance for this user depending on whether this
-  # assignment is a group or individual assignment
-  def submission_by(user) #FIXME: needs schema updates
-
-    # submission owner is either an individual (user) or a group
-    owner = self.group_assignment? ? self.group_by(user.id) : user
-    return unless owner
-
-    # create a new submission for the owner
-    # linked to this assignment, if it doesn't exist yet
-
-    # submission = owner.submissions.find_or_initialize_by_assignment_id(id)
-    # submission.save if submission.new_record?
-    # return submission
-
-    assignment_groupings = user.active_groupings.delete_if do |grouping|
-      grouping.assignment.id != id
-    end
-
-    unless assignment_groupings.empty?
-      assignment_groupings.first.submissions.first
-    end
-  end
-
   # Return true if this is a group assignment; false otherwise
   def group_assignment?
-    invalid_override || group_min != 1 || group_max > 1
+    invalid_override || group_max > 1
   end
 
   # Returns the group by the user for this assignment. If pending=true,
@@ -242,13 +218,6 @@ class Assignment < ActiveRecord::Base
 
     #FIXME: needs to be rewritten using a proper query...
     User.find(uid).accepted_grouping_for(id)
-  end
-
-  # Make a list of students without any groupings
-  def no_grouping_students_list
-    Student.where(hidden: false)
-           .order(:last_name)
-           .reject { |s| s.has_accepted_grouping_for?(id) }
   end
 
   def display_for_note
@@ -300,6 +269,17 @@ class Assignment < ActiveRecord::Base
     else
       marks[count/2]
     end
+  end
+
+  def self.get_dashboard_assignment
+    current_assignment = Assignment.where('due_date <= ?', Date.today + 3)
+                                   .reorder('due_date DESC').first
+
+    if current_assignment.nil?
+      current_assignment = Assignment.reorder('due_date ASC').first
+    end
+
+    current_assignment
   end
 
   def update_remark_request_count
@@ -703,8 +683,10 @@ class Assignment < ActiveRecord::Base
   def criterion_class
     if marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
       FlexibleCriterion
-    else
+    elsif marking_scheme_type == MARKING_SCHEME_TYPE[:rubric]
       RubricCriterion
+    else
+      nil
     end
   end
 
@@ -766,7 +748,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns all the submissions that have been graded (completed)
-  def graded_submissions
+  def graded_submission_results
     results = []
     groupings.each do |grouping|
       if grouping.marking_completed?
