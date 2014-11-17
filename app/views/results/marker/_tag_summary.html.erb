@@ -1,11 +1,13 @@
 <div id='used_tags_pane'>
+  <%= javascript_include_tag 'Results/tag_operations.js' %>
+
   <div class='tag_collector_pane'>
     <span><%= t('marker.marks.current_tags').html_safe %></span>
-    <div class='tag_list'>
+    <div id='active_tags' class='tag_list'>
       <!-- TODO: Replace with actual data for tags -->
-      <span class='tag_element'>Great Assignment</span>
-      <span class='tag_element'>Extension</span>
-      <span class='tag_element'>Good Syntax</span>
+      <span id='1' onclick='remove_tag(1)' class='tag_element'>Great Assignment</span>
+      <span id='2' onclick='remove_tag(2)' class='tag_element'>Extension</span>
+      <span id='3' onclick='remove_tag(3)' class='tag_element'>Good Syntax</span>
     </div>
   </div>
 </div>

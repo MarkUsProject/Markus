@@ -863,6 +863,10 @@ en:
         name_prompt: "Enter tag name..."
         descript_prompt: "Enter tag description..."
 
+      delete:
+        delete_tags: "Delete Tags"
+        tag_prompt: "Please select tags below to delete them:"
+
       upload:
         upload_csv: "Upload CSV"
         upload_csv_title: "Upload CSV File"
