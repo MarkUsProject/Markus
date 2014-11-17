@@ -279,7 +279,7 @@ class Assignment < ActiveRecord::Base
       current_assignment = Assignment.reorder('due_date ASC').first
     end
 
-    return current_assignment
+    current_assignment
   end
 
   def update_remark_request_count
