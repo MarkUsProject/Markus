@@ -755,18 +755,24 @@ class SubmissionsController < ApplicationController
         render text: t('student.submission.no_revision_available')
         return
       end
+      
+      no_files = false;
+
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
 
-        downloads_subdirectories('',
-                                 full_path,
-                                 zip_file, zip_name, repo)
+        no_files = downloads_subdirectories('',
+                                            full_path,
+                                            zip_file, zip_name, repo)
 
       end
 
-      # Send the Zip file
-      send_file zip_path, disposition: 'inline',
-                filename: zip_name + '.zip'
+      if no_files != true
+        # Send the Zip file
+        send_file zip_path, disposition: 'inline',
+                  filename: zip_name + '.zip'
+      end
+
     end
   end
 
@@ -782,6 +788,10 @@ class SubmissionsController < ApplicationController
     directories = @revision.directories_at_path(subdirectory_path)
 
     if files.count == 0
+      if subdirectory == ''
+        render text: t('student.submission.no_files_available')
+        return true
+      end
       # No files in subdirectory
       return
     end
