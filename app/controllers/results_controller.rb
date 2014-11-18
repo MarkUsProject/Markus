@@ -86,7 +86,7 @@ class ResultsController < ApplicationController
     # we *DO* want to include them in the list.
     collection_time = @assignment.submission_rule.calculate_collection_time.localtime
 
-    groupings.delete_if do |grouping|
+    groupings.to_a.delete_if do |grouping|
       grouping != @grouping && ((!grouping.has_submission? && (Time.zone.now < collection_time)))
     end
 
