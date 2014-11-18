@@ -41,32 +41,6 @@ class SubmissionsController < ApplicationController
                           :update_files]
   before_filter :authorize_for_user, only: [:download, :downloads]
 
-  # Proc for sorting by criteria
-  criterion_mark_compare = Proc.new do |a, b, cid|
-    ret = -1 if !a.has_submission? ||
-                 a.current_submission_used
-                  .get_latest_result.marks
-                  .find_by_markable_id(cid).nil? ||
-                 a.current_submission_used
-                  .get_latest_result.marks
-                  .find_by_markable_id(cid).mark.nil?
-
-    ret ||= 1 if !b.has_submission? ||
-                  b.current_submission_used
-                   .get_latest_result.marks
-                   .find_by_markable_id(cid).nil? ||
-                  b.current_submission_used
-                   .get_latest_result.marks
-                   .find_by_markable_id(cid).mark.nil?
-
-    ret ||= a.current_submission_used
-             .get_latest_result.marks
-             .find_by_markable_id(cid).mark <=>
-            b.current_submission_used
-             .get_latest_result.marks
-             .find_by_markable_id(cid).mark
-  end
-
   def repo_browser
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:id])
@@ -108,8 +82,8 @@ class SubmissionsController < ApplicationController
         revision = nil
       end
       if revision
-        @revisions_history << {num: revision.revision_number,
-                               date: revision.timestamp}
+        @revisions_history << { num: revision.revision_number,
+                                date: revision.timestamp }
       end
     end
 
@@ -165,7 +139,7 @@ class SubmissionsController < ApplicationController
       @files.sort.each do |file_name, file|
         @table_rows[file.object_id] = construct_file_manager_table_row(file_name, file)
       end
-        
+
       if @grouping.repository_external_commits_only?
         @directories.sort.each do |directory_name, directory|
           @table_rows[directory.object_id] = construct_file_manager_dir_table_row(directory_name, directory)
@@ -240,7 +214,7 @@ class SubmissionsController < ApplicationController
   def update_converted_pdfs
     @grouping = Grouping.find(params[:grouping_id])
     @submission = @grouping.current_submission_used
-    @pdf_count= 0
+    @pdf_count = 0
     @converted_count = 0
     unless @submission.nil?
       @submission.submission_files.each do |file|
@@ -277,7 +251,7 @@ class SubmissionsController < ApplicationController
       end
     end
   end
-  
+
   def index
     @assignments = Assignment.all(order: :id)
     render :index, layout: 'sidebar'
@@ -319,7 +293,9 @@ class SubmissionsController < ApplicationController
       # to the transaction to ensure that we don't overwrite a file that's
       # been revised since the user last saw it.
       file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
-      file_revisions.merge!(file_revisions) { |key, v1, v2| v1.to_i rescue v1 }
+      file_revisions.merge!(file_revisions) {
+          |_key, v1, _v2| v1.to_i rescue v1
+      }
 
       # The files that will be replaced - just give an empty array
       # if params[:replace_files] is nil
@@ -441,11 +417,11 @@ class SubmissionsController < ApplicationController
   # returns true if all assignments are marked completely
   ##
   def all_assignments_marked?
-    marked = Assignment.joins(groupings: [{current_submission_used:
-      :results}]).where('assignments.id' => params[:assignment_id],
+    marked = Assignment.joins(groupings: [{ current_submission_used:
+      :results }]).where('assignments.id' => params[:assignment_id],
       'results.marking_state' => Result::MARKING_STATES[:complete])
     total_assignments = Assignment.joins(groupings:
-      [{current_submission_used: :results}]).where('assignments.id' =>
+      [{ current_submission_used: :results }]).where('assignments.id' =>
       params[:assignment_id])
     return marked.size == total_assignments.size
   end
