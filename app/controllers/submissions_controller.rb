@@ -755,8 +755,8 @@ class SubmissionsController < ApplicationController
         render text: t('student.submission.no_revision_available')
         return
       end
-      
-      no_files = false;
+
+      no_files = false
 
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
