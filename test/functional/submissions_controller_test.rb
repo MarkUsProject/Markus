@@ -219,14 +219,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       assert_response :missing
     end
 
-    should 'and I cannot use the populate repository browser.' do
-      get_as @student,
-             :populate_repo_browser,
-             :assignment_id => 1,
-             :id => Grouping.first.id
-      assert_response :missing
-    end
-
     # Stopping a curious student
     should 'and I cannot access a simple csv report' do
       get_as @student, :download_simple_csv_report, :assignment_id => 1
@@ -252,7 +244,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       assert_response :missing
     end
 
-    context 'and I have a grader. My grade should be able to' do
+    context 'and I have a grader. My grader should be able to' do
       setup do
         @grouping1 = Grouping.make(:assignment => @assignment)
         @grouping1.group.access_repo do |repo|
@@ -262,10 +254,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           repo.commit(txn)
 
           # Generate submission
-          Submission.generate_new_submission(Grouping.last, repo.get_latest_revision)
+          Submission.generate_new_submission(Grouping.last,
+                                             repo.get_latest_revision)
         end
 
-        @ta_membership = TaMembership.make(:membership_status => :accepted, :grouping => @grouping)
+        @ta_membership = TaMembership.make(:membership_status => :accepted,
+                                           :grouping => @grouping)
         @grader = @ta_membership.user
       end
 
@@ -274,16 +268,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                :repo_browser,
                :assignment_id => @assignment.id,
                :id => Grouping.last.id
-        assert_response :success
-      end
-
-      should 'access the populate repository browser.' do
-        get_as @grader,
-               :populate_repo_browser,
-               :assignment_id => @assignment.id,
-               :id => Grouping.last.id,
-               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number,
-               :format => 'js'
         assert_response :success
       end
 
@@ -346,7 +330,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     end
 
-    context 'and I have an instructor.' do
+    context 'and I have an instructor. My instructor should be able to ' do
       # TODO:
 
       # Test whether or not an Instructor can release/unrelease results correctly
@@ -360,7 +344,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           repo.commit(txn)
 
           # Generate submission
-          submission = Submission.generate_new_submission(@grouping, repo.get_latest_revision)
+          submission =
+              Submission.generate_new_submission(@grouping,
+                                                 repo.get_latest_revision)
           result = submission.get_latest_result
           result.marking_state = Result::MARKING_STATES[:complete]
           result.save
@@ -368,37 +354,36 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
       end
 
-      should 'My instructor should be able to access the populate repository browser.' do
+      should 'access the repository browser.' do
         get_as @admin,
-               :populate_repo_browser,
-               :assignment_id => 1,
-               :id => Grouping.first.id,
-               :format => 'js'
+               :repo_browser,
+               :assignment_id => @assignment.id,
+               :id => Grouping.last.id
         assert_response :success
       end
 
-      should 'My instructor should be able to download the simple csv report.' do
+      should 'download the simple csv report.' do
         get_as @admin,
                :download_simple_csv_report,
                :assignment_id => @assignment.id
         assert_response :success
       end
 
-      should 'My instructor should be able to download the detailed csv report.' do
+      should 'download the detailed csv report.' do
         get_as @admin,
                :download_detailed_csv_report,
                :assignment_id => @assignment.id
         assert_response :success
       end
 
-      should 'My instructor should be able to download the svn export commands.' do
+      should 'download the svn export commands.' do
         get_as @admin,
                :download_svn_export_commands,
                :assignment_id => @assignment.id
         assert_response :success
       end
 
-      should 'My instructor should be able to download the svn repository list.' do
+      should 'download the svn repository list.' do
         get_as @admin,
                :download_svn_repo_list,
                :assignment_id => @assignment.id

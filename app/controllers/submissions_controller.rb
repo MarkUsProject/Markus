@@ -22,7 +22,6 @@ class SubmissionsController < ApplicationController
                             :manually_collect_and_begin_grading,
                             :collect_ta_submissions,
                             :repo_browser,
-                            :populate_repo_browser,
                             :update_converted_pdfs,
                             :update_submissions]
   before_filter :authorize_for_ta_and_admin,
@@ -34,7 +33,6 @@ class SubmissionsController < ApplicationController
                           :collect_ta_submissions,
                           :repo_browser,
                           :download_groupings_files,
-                          :populate_repo_browser,
                           :update_converted_pdfs,
                           :update_submissions]
   before_filter :authorize_for_student,
