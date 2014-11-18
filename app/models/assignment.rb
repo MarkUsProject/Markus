@@ -220,13 +220,6 @@ class Assignment < ActiveRecord::Base
     User.find(uid).accepted_grouping_for(id)
   end
 
-  # Make a list of students without any groupings
-  def no_grouping_students_list
-    Student.where(hidden: false)
-           .order(:last_name)
-           .reject { |s| s.has_accepted_grouping_for?(id) }
-  end
-
   def display_for_note
     short_identifier
   end
@@ -388,6 +381,8 @@ class Assignment < ActiveRecord::Base
   def add_csv_group(row)
     return if row.length.zero?
 
+    row.map! { |item| item.strip }
+
     # Note: We cannot use find_or_create_by here, because it has its own
     # save semantics. We need to set and save attributes in a very particular
     # order, so that everything works the way we want it to.
@@ -408,14 +403,14 @@ class Assignment < ActiveRecord::Base
         group.repo_name = row[0]
       else
         # Student name does not exist, use provided repo_name
-        group.repo_name = row[1].strip # remove whitespace
+        group.repo_name = row[1]
       end
     end
 
     # If we are not repository admin, set the repository name as provided
     # in the csv upload file
     unless group.repository_admin?
-      group.repo_name = row[1].strip # remove whitespace
+      group.repo_name = row[1]
     end
     # Note: after_create hook build_repository might raise
     # Repository::RepositoryCollision. If it does, it adds the colliding
@@ -439,7 +434,7 @@ class Assignment < ActiveRecord::Base
     # Form groups
     start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
     (start_index_group_members..(row.length - 1)).each do |i|
-      student = Student.where(user_name: row[i].strip) # remove whitespace
+      student = Student.where(user_name: row[i])
                        .first
       if student
         if grouping.student_membership_number == 0
@@ -744,7 +739,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns all the submissions that have been graded (completed)
-  def graded_submissions
+  def graded_submission_results
     results = []
     groupings.each do |grouping|
       if grouping.marking_completed?
