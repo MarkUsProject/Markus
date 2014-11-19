@@ -9,36 +9,36 @@ class SubmissionsController < ApplicationController
 
   before_filter :authorize_only_for_admin,
                 except: [:server_time,
-                            :populate_file_manager,
-                            :browse,
-                            :index,
-                            :file_manager,
-                            :update_files,
-                            :download,
-                            :downloads,
-                            :s_table_paginate,
-                            :collect_and_begin_grading,
-                            :download_groupings_files,
-                            :manually_collect_and_begin_grading,
-                            :collect_ta_submissions,
-                            :repo_browser,
-                            :update_converted_pdfs,
-                            :update_submissions]
+                         :populate_file_manager,
+                         :browse,
+                         :index,
+                         :file_manager,
+                         :update_files,
+                         :download,
+                         :downloads,
+                         :s_table_paginate,
+                         :collect_and_begin_grading,
+                         :download_groupings_files,
+                         :manually_collect_and_begin_grading,
+                         :collect_ta_submissions,
+                         :repo_browser,
+                         :update_converted_pdfs,
+                         :update_submissions]
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
-                          :index,
-                          :s_table_paginate,
-                          :collect_and_begin_grading,
-                          :manually_collect_and_begin_grading,
-                          :collect_ta_submissions,
-                          :repo_browser,
-                          :download_groupings_files,
-                          :update_converted_pdfs,
-                          :update_submissions]
+                       :index,
+                       :s_table_paginate,
+                       :collect_and_begin_grading,
+                       :manually_collect_and_begin_grading,
+                       :collect_ta_submissions,
+                       :repo_browser,
+                       :download_groupings_files,
+                       :update_converted_pdfs,
+                       :update_submissions]
   before_filter :authorize_for_student,
                 only: [:file_manager,
-                          :populate_file_manager,
-                          :update_files]
+                       :populate_file_manager,
+                       :update_files]
   before_filter :authorize_for_user, only: [:download, :downloads]
 
   def repo_browser
@@ -162,17 +162,16 @@ class SubmissionsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
     SubmissionCollector.instance.manually_collect_submission(@grouping,
-      @revision_number)
+                                                             @revision_number)
     redirect_to action: 'update_converted_pdfs', id: @grouping.id
   end
 
   def collect_and_begin_grading
-
     assignment = Assignment.find(params[:assignment_id])
     grouping = Grouping.find(params[:id])
 
     if assignment.submission_rule.can_collect_grouping_now?(grouping)
-      #Push grouping to the priority queue
+      # Push grouping to the priority queue
       SubmissionCollector.instance.push_grouping_to_priority_queue(grouping)
       flash[:success] = I18n.t('collect_submissions.priority_given')
     else
@@ -204,7 +203,7 @@ class SubmissionsController < ApplicationController
     if assignment.submission_rule.can_collect_now?
       groupings = assignment.groupings.all(include: :tas,
                                            conditions: ['users.id = ?',
-                                                           current_user.id])
+                                                        current_user.id])
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(groupings)
       flash[:success] =
@@ -258,7 +257,7 @@ class SubmissionsController < ApplicationController
       end
     end
   end
-  
+
   def index
     @assignments = Assignment.all(order: :id)
     render :index, layout: 'sidebar'
@@ -458,7 +457,6 @@ class SubmissionsController < ApplicationController
   # Download all files from all groupings in a .zip file.
   ##
   def download_groupings_files
-
     assignment = Assignment.find(params[:assignment_id])
 
     ## create the zip name with the user name to have less chance to delete
@@ -563,7 +561,7 @@ class SubmissionsController < ApplicationController
             file_contents = repo.download_as_string(file.last)
           rescue Exception => e
             render text: t('student.submission.missing_file',
-                              file_name: file.first, message: e.message)
+                           file_name: file.first, message: e.message)
             return
           end
 
@@ -577,8 +575,7 @@ class SubmissionsController < ApplicationController
       end
 
       # Send the Zip file
-      send_file zip_path, disposition: 'inline',
-                filename: zip_name + '.zip'
+      send_file zip_path, disposition: 'inline', filename: zip_name + '.zip'
     end
   end
 
@@ -622,9 +619,9 @@ class SubmissionsController < ApplicationController
         end
       end
 
-    unless groupings.empty?
-      assignment.update_results_stats
-    end
+      unless groupings.empty?
+        assignment.update_results_stats
+      end
 
       if changed && changed > 0
         # These flashes don't get rendered. Find another way to display?
