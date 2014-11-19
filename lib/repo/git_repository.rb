@@ -281,7 +281,7 @@ module Repository
           end
         when :remove
           begin
-            txn = remove_file(txn, job[:path], job[:expected_revision_number])
+            txn = remove_file(txn, job[:path], transaction.user_id, job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -644,9 +644,14 @@ module Repository
     end
 
     # removes a file from a transaction and eventually from repository
-    def remove_file(txn, path, _expected_revision_number = 0)
+    def remove_file(txn, path, author,_expected_revision_number = 0)
+      repo = @repos
       @repos.index.remove(path);
-      Rugged::Commit.create(@repos,commit_options(@repos,"Removing file"))
+      File.unlink File.join(repo.workdir, path)
+      @repos.index.write_tree repo
+      @repos.index.write
+      Rugged::Commit.create(@repos,commit_options(@repos, author, "Removing file"))
+
       return txn
     end
 
