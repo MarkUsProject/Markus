@@ -258,7 +258,7 @@ class SubmissionsController < ApplicationController
       end
     end
   end
-
+  
   def index
     @assignments = Assignment.all(order: :id)
     render :index, layout: 'sidebar'
@@ -451,7 +451,7 @@ class SubmissionsController < ApplicationController
     total_assignments = Assignment.joins(groupings:
       [{ current_submission_used: :results }]).where('assignments.id' =>
                                                          params[:assignment_id])
-    return marked.size == total_assignments.size
+    marked.size == total_assignments.size
   end
 
   ##

@@ -491,8 +491,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
             @submission = Submission.
                 generate_new_submission(@grouping, repo.get_latest_revision)
           end
-          get_as @admin, :downloads, assignment_id: @assignment.id,
-                 id: @submission.id,
+          get_as @admin, :downloads,
+                 assignment_id: @assignment.id, id: @submission.id,
                  grouping_id: @grouping.id
 
           assert_equal response.body, I18n.t('student.submission.no_files_available')
