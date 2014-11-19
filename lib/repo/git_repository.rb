@@ -679,7 +679,10 @@ module Repository
       # Get the file path to write to using the ruby File module.
       file_path = File.join(repo.workdir, path)
       # Actually create the file.
-      File.open(file_path, 'w+') { |file| file.write(file_data) }
+      File.open(file_path, 'w+') do |file|
+        file.write file_data.force_encoding('UTF-8')
+      end
+
       # Get the hash of the file we just created and added
       oid = Rugged::Blob.from_workdir(repo, path)
       index = repo.index
