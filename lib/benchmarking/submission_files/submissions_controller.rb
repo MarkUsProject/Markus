@@ -446,10 +446,11 @@ class SubmissionsController < ApplicationController
   def all_assignments_marked?
     marked = Assignment.joins(groupings: [{ current_submission_used:
       :results }]).where('assignments.id' => params[:assignment_id],
-      'results.marking_state' => Result::MARKING_STATES[:complete])
+                         'results.marking_state' =>
+                             Result::MARKING_STATES[:complete])
     total_assignments = Assignment.joins(groupings:
       [{ current_submission_used: :results }]).where('assignments.id' =>
-      params[:assignment_id])
+                                                         params[:assignment_id])
     return marked.size == total_assignments.size
   end
 
@@ -710,7 +711,7 @@ class SubmissionsController < ApplicationController
       @missing_assignment_files = []
       assignment.assignment_files.each do |assignment_file|
         unless @revision.path_exists?(File.join(assignment.repository_folder,
-                                             assignment_file.filename))
+                                                assignment_file.filename))
           @missing_assignment_files.push(assignment_file)
         end
       end
