@@ -428,7 +428,8 @@ class SubmissionsController < ApplicationController
 
       if SubmissionFile.is_binary?(file_contents)
         # If the file appears to be binary, send it as a download
-        send_data file_contents, disposition: 'attachment',
+        send_data file_contents,
+                  disposition: 'attachment',
                   filename: params[:file_name]
       else
         # Otherwise, sanitize it for HTML and blast it out to the screen
@@ -597,12 +598,12 @@ class SubmissionsController < ApplicationController
       log_message = ''
       if params[:release_results]
         changed = set_release_on_results(groupings, true)
-        log_message = "Marks released for assignment" +
+        log_message = 'Marks released for assignment' +
             " '#{assignment.short_identifier}', ID: '" +
             "#{assignment.id}' (for #{changed} groups)."
       elsif params[:unrelease_results]
         changed = set_release_on_results(groupings, false)
-        log_message = "Marks unreleased for assignment " +
+        log_message = 'Marks unreleased for assignment ' +
             "'#{assignment.short_identifier}', ID: '" +
             "#{assignment.id}' (for #{changed} groups)."
       elsif params[:collect_section]
@@ -627,7 +628,7 @@ class SubmissionsController < ApplicationController
       if changed && changed > 0
         # These flashes don't get rendered. Find another way to display?
         flash[:success] = I18n.t('results.successfully_changed',
-                                 { changed: changed })
+                                 changed: changed)
         m_logger = MarkusLogger.instance
         m_logger.log(log_message)
       end

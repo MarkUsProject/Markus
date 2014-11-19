@@ -258,16 +258,16 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                                              repo.get_latest_revision)
         end
 
-        @ta_membership = TaMembership.make(:membership_status => :accepted,
-                                           :grouping => @grouping)
+        @ta_membership = TaMembership.make(membership_status: :accepted,
+                                           grouping: @grouping)
         @grader = @ta_membership.user
       end
 
       should 'access the repository browser.' do
         get_as @grader,
                :repo_browser,
-               :assignment_id => @assignment.id,
-               :id => Grouping.last.id
+               assignment_id: @assignment.id,
+               id: Grouping.last.id
         assert_response :success
       end
 
