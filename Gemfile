@@ -23,7 +23,6 @@ gem 'jquery-rails'
 gem 'prototype-rails', '~> 4.0.0'
 gem 'activerecord-import'
 gem 'sprockets', '~> 2.12.0'
-gem 'rails4_upgrade'
 
 gem 'tilt', '~> 1.3.7'
 gem 'sass-rails',   '5.0.0.beta1'
@@ -40,8 +39,6 @@ gem 'actionview-encoded_mail_to', '~>1.0.4'
 gem 'activerecord-session_store', '~>0.1.0'
 gem 'rails-observers', '~>0.1.1'
 gem 'rails-perftest', '~>0.0.2'
-
-gem 'spring', group: :development
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
@@ -74,6 +71,7 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'awesome_print'
+  gem 'spring'
 end
 
 group :test do
