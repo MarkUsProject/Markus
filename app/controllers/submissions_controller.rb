@@ -275,7 +275,8 @@ class SubmissionsController < ApplicationController
     repo = @grouping.group.repo
     begin
       if params[:revision_timestamp]
-        @revision_number = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
+        @revision_number = repo.get_revision_by_timestamp(
+            Time.parse(params[:revision_timestamp])).revision_number
       elsif params[:revision_number]
         @revision_number = params[:revision_number].to_i
       else
@@ -302,24 +303,32 @@ class SubmissionsController < ApplicationController
   def populate_repo_browser
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
-    @path = params[:path] != '/' ? params[:path] + '/' : '/'
+    @path = params[:path] || '/'
+    @revision_number = params[:revision_number]
     @previous_path = File.split(@path).first
     @grouping.group.access_repo do |repo|
-      if params[:revision_number]
-        @revision_number = params[:revision_number].to_i
-      else
-        @revision_number = repo.get_latest_revision.revision_number
+      begin
+        @revision = repo.get_revision(params[:revision_number].to_i)
+        @directories = @revision.directories_at_path(
+            File.join(@assignment.repository_folder, @path))
+        @files = @revision.files_at_path(
+            File.join(@assignment.repository_folder, @path))
+      rescue Exception => @find_revision_error
+        respond_to do |format|
+          error_link = 'submissions/repo_browser/find_revision_error'
+          format.js { render action: error_link }
+        end
+        return
       end
-      @revision = repo.get_revision(@revision_number)
-
-      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
-      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
       @table_rows = {}
       @files.sort.each do |file_name, file|
-        @table_rows[file.object_id] = construct_repo_browser_table_row(file_name, file)
+        @table_rows[file.object_id] =
+            construct_repo_browser_table_row(file_name, file)
       end
       @directories.sort.each do |directory_name, directory|
-        @table_rows[directory.object_id] = construct_repo_browser_directory_table_row(directory_name, directory)
+        @table_rows[directory.object_id] =
+            construct_repo_browser_directory_table_row(directory_name,
+                                                       directory)
       end
       respond_to do |format|
         format.js
@@ -360,16 +369,20 @@ class SubmissionsController < ApplicationController
       else
         @revision = repo.get_revision(revision_number.to_i)
       end
-      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
-      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
+      @directories = @revision.directories_at_path(
+          File.join(@assignment.repository_folder, @path))
+      @files = @revision.files_at_path(
+          File.join(@assignment.repository_folder, @path))
       @table_rows = {}
       @files.sort.each do |file_name, file|
-        @table_rows[file.object_id] = construct_file_manager_table_row(file_name, file)
+        @table_rows[file.object_id] =
+            construct_file_manager_table_row(file_name, file)
       end
         
       if @grouping.repository_external_commits_only?
         @directories.sort.each do |directory_name, directory|
-          @table_rows[directory.object_id] = construct_file_manager_dir_table_row(directory_name, directory)
+          @table_rows[directory.object_id] =
+              construct_file_manager_dir_table_row(directory_name, directory)
         end
       end
 
@@ -606,11 +619,11 @@ class SubmissionsController < ApplicationController
   def download
     @assignment = Assignment.find(params[:id])
     # find_appropriate_grouping can be found in SubmissionsHelper
-
     @grouping = find_appropriate_grouping(@assignment.id, params)
 
     revision_number = params[:revision_number]
     path = params[:path] || '/'
+
     @grouping.group.access_repo do |repo|
       if revision_number.nil?
         @revision = repo.get_latest_revision
@@ -692,13 +705,11 @@ class SubmissionsController < ApplicationController
         submission = grouping.current_submission_used
         next unless submission
         files = submission.submission_files
-
         ## create the grouping directory
         sub_folder = grouping.group.repo_name
         zip_file.mkdir(sub_folder) unless zip_file.find_entry(sub_folder)
 
         files.each do |file|
-
           ## retrieve the file and print an error on redirect back if there is
           begin
             file_content = file.retrieve_file
@@ -709,9 +720,6 @@ class SubmissionsController < ApplicationController
           end
 
           ## create the file inside the sub folder
-          zip_file.get_output_stream(File.join(sub_folder, file.filename)) do |f|
-            f.puts file_content
-          end
 
         end
       end
@@ -745,53 +753,23 @@ class SubmissionsController < ApplicationController
         render text: t('student.submission.no_revision_available')
         return
       end
+
+      no_files = false
+
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
 
-        files = @revision.files_at_path(full_path)
+        no_files = downloads_subdirectories('',
+                                            full_path,
+                                            zip_file, zip_name, repo)
 
-        # In order to recursively download all files, find the sub-directories
-        directories = @revision.directories_at_path(full_path)
-
-        if files.count == 0
-          render text: t('student.submission.no_files_available')
-          return
-        end
-
-        files.each do |file|
-          begin
-            file_contents = repo.download_as_string(file.last)
-          rescue Exception => e
-            render text: t('student.submission.missing_file',
-                              file_name: file.first, message: e.message)
-            return
-          end
-
-          # Create the folder in the Zip file if it doesn't exist
-          zip_file.mkdir(zip_name) unless zip_file.find_entry(zip_name)
-
-          zip_file.get_output_stream(File.join(zip_name, file.first)) do |f|
-            f.puts file_contents
-          end
-        end
-
-        directories.each do |subdirectory|
-          begin
-            # Recursively fill this sub-directory
-            # Creates the sub-directory inside of the zip_file
-            zip_file.mkdir(zip_name + '/' + subdirectory[0]) unless
-                zip_file.find_entry(zip_name + '/' + subdirectory[0])
-            downloads_subdirectories(subdirectory[0] + '/',
-                                     directories[subdirectory[0]].path +
-                                         subdirectory[0] + '/',
-                                     zip_file, zip_name, repo)
-          end
-        end
       end
 
-      # Send the Zip file
-      send_file zip_path, disposition: 'inline',
-                filename: zip_name + '.zip'
+      if no_files != true
+        # Send the Zip file
+        send_file zip_path, disposition: 'inline', filename: zip_name + '.zip'
+      end
+
     end
   end
 
@@ -799,8 +777,6 @@ class SubmissionsController < ApplicationController
   # fill the subdirectory within the zip_file with all of its files.
   # Recursively fills the subdirectory with files and folders within
   # it.
-  #
-  # PRECONDITION: The subdirectory should already exist in the zip_file.
   # Helper method for downloads.
   def downloads_subdirectories(subdirectory, subdirectory_path, zip_file,
                                zip_name, repo)
@@ -809,6 +785,10 @@ class SubmissionsController < ApplicationController
     directories = @revision.directories_at_path(subdirectory_path)
 
     if files.count == 0
+      if subdirectory == ''
+        render text: t('student.submission.no_files_available')
+        return true
+      end
       # No files in subdirectory
       return
     end

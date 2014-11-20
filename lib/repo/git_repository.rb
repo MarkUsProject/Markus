@@ -281,13 +281,18 @@ module Repository
           end
         when :remove
           begin
-            txn = remove_file(txn, job[:path], job[:expected_revision_number])
+            txn =
+                remove_file(txn,
+                            job[:path], transaction.user_id,
+                            job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :replace
           begin
-            txn = replace_file(txn, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_number])
+            txn = replace_file(txn,
+                               job[:path], job[:file_data], job[:mime_type],
+                               job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -644,9 +649,15 @@ module Repository
     end
 
     # removes a file from a transaction and eventually from repository
-    def remove_file(txn, path, _expected_revision_number = 0)
+    def remove_file(txn, path, author, _expected_revision_number = 0)
+      repo = @repos
       @repos.index.remove(path);
-      Rugged::Commit.create(@repos,commit_options(@repos,"Removing file"))
+      File.unlink File.join(repo.workdir, path)
+      @repos.index.write_tree repo
+      @repos.index.write
+      Rugged::Commit.create(@repos, commit_options(@repos, author,
+                                                   'Removing file'))
+
       return txn
     end
 
@@ -674,7 +685,10 @@ module Repository
       # Get the file path to write to using the ruby File module.
       file_path = File.join(repo.workdir, path)
       # Actually create the file.
-      File.open(file_path, 'w+') { |file| file.write(file_data) }
+      File.open(file_path, 'w+') do |file|
+        file.write file_data.force_encoding('UTF-8')
+      end
+
       # Get the hash of the file we just created and added
       oid = Rugged::Blob.from_workdir(repo, path)
       index = repo.index
@@ -801,6 +815,9 @@ module Repository
       # like ['A1', 'src', 'core'] for '/A1/src/core'
       path = path.split('/')
 
+      # Account for the files in the root directory with an extra '/' on end
+      path.reject!(&:empty?)
+
       # current_tree is the current directory object we are going through
       # Look at rugged documentation for more info on tree objects
       current_object = @commit.tree
@@ -825,6 +842,11 @@ module Repository
       # In order to deal with the empty assignment folder case we must check
       # to see if the lookup fails as the directory tree is traversed to the
       # very top
+
+      if path
+        path = path + '/'
+      end
+
       begin
         file_array = objects_at_path(path).select do |obj|
           obj.instance_of?(Repository::RevisionFile)
