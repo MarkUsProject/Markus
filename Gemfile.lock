@@ -110,7 +110,7 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.10.1)
     mysql2 (0.3.17)
-    parser (2.2.0.pre.7)
+    parser (2.2.0.pre.8)
       ast (>= 1.1, < 3.0)
       slop (~> 3.4, >= 3.4.5)
     pg (0.17.1)

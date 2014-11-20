@@ -101,8 +101,7 @@ class Grouping < ActiveRecord::Base
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
     grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)
-
-    columns = [:grouping_id, :user_id]
+    columns = [:grouping_id, :user_id, :type]
     # Get all existing memberships to avoid violating the unique constraint.
     # TODO replace this with Membership.pluck when migrated to Rails 4.
     existing_values = TaMembership.select(columns)
@@ -113,7 +112,10 @@ class Grouping < ActiveRecord::Base
     values = yield(grouping_ids, ta_ids) - existing_values
     # TODO replace TaMembership.import with TaMembership.create when the PG
     # driver supports bulk create, then remove the activerecord-import gem.
-    TaMembership.import(columns, values, validate: false)
+    values.map! do |value|
+      value.push('TaMembership')
+    end
+    Membership.import(columns, values, validate: false)
 
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)
