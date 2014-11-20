@@ -281,14 +281,17 @@ module Repository
           end
         when :remove
           begin
-            txn = remove_file(txn, job[:path],
-                              transaction.user_id, job[:expected_revision_number])
+            txn =
+                remove_file(txn,
+                            job[:path], transaction.user_id,
+                            job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :replace
           begin
-            txn = replace_file(txn, job[:path], job[:file_data], job[:mime_type],
+            txn =
+                replace_file(txn, job[:path], job[:file_data], job[:mime_type],
                                job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
@@ -646,7 +649,7 @@ module Repository
     end
 
     # removes a file from a transaction and eventually from repository
-    def remove_file(txn, path, author,_expected_revision_number = 0)
+    def remove_file(txn, path, author, _expected_revision_number = 0)
       repo = @repos
       @repos.index.remove(path);
       File.unlink File.join(repo.workdir, path)

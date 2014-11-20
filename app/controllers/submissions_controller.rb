@@ -316,8 +316,7 @@ class SubmissionsController < ApplicationController
       rescue Exception => @find_revision_error
         respond_to do |format|
           format.js {
-            render action: 'submissions/repo_browser/find_revision_error'
-          }
+            render action: 'submissions/repo_browser/find_revision_error' }
         end
         return
       end
@@ -721,10 +720,6 @@ class SubmissionsController < ApplicationController
           end
 
           ## create the file inside the sub folder
-          zip_file.get_output_stream(
-              File.join(sub_folder, file.path, file.filename)) do |f|
-            f.puts file_content
-          end
 
         end
       end
