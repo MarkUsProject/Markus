@@ -41,7 +41,7 @@ module SubmissionsHelper
       rescue NoMethodError
         g[:commit_date] = 'Uh oh! Assignment folder missing.'
       rescue RuntimeError
-        g[:commit_date] = 'Uh oh! No repo found for this group.'  
+        g[:commit_date] = 'Uh oh! No repo found for this group.'
       end
       g[:marking_state] = get_grouping_marking_state(assignment, grouping)
       g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
