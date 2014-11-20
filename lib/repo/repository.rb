@@ -135,7 +135,7 @@ module Repository
     # Return a Repository::AbstractRevision for a given revision_number
     # if it exists
     def get_revision(revision_number)
-      raise NotImplementedError,  "Repository.get_revision: Not yet implemented"
+      raise NotImplementedError,  'Repository.get_revision: Not yet implemented'
     end
 
     # Return a RepositoryRevision for a given timestamp

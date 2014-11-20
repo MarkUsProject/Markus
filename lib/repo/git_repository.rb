@@ -281,13 +281,15 @@ module Repository
           end
         when :remove
           begin
-            txn = remove_file(txn, job[:path], transaction.user_id, job[:expected_revision_number])
+            txn = remove_file(txn, job[:path],
+                              transaction.user_id, job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :replace
           begin
-            txn = replace_file(txn, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_number])
+            txn = replace_file(txn, job[:path], job[:file_data], job[:mime_type],
+                               job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -651,7 +653,7 @@ module Repository
       @repos.index.write_tree repo
       @repos.index.write
       Rugged::Commit.create(@repos, commit_options(@repos, author,
-                                                   "Removing file"))
+                                                   'Removing file'))
 
       return txn
     end
