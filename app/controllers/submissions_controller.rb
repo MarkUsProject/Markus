@@ -315,8 +315,7 @@ class SubmissionsController < ApplicationController
             File.join(@assignment.repository_folder, @path))
       rescue Exception => @find_revision_error
         respond_to do |format|
-          format.js {
-            render action: 'submissions/repo_browser/find_revision_error' }
+          format.js { render action: 'submissions/repo_browser/find_revision_error' }
         end
         return
       end

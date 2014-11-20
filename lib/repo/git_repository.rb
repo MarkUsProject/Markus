@@ -290,8 +290,8 @@ module Repository
           end
         when :replace
           begin
-            txn =
-                replace_file(txn, job[:path], job[:file_data], job[:mime_type],
+            txn = replace_file(txn,
+                               job[:path], job[:file_data], job[:mime_type],
                                job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
