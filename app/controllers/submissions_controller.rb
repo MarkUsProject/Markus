@@ -275,7 +275,8 @@ class SubmissionsController < ApplicationController
     repo = @grouping.group.repo
     begin
       if params[:revision_timestamp]
-        @revision_number = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
+        @revision_number = repo.get_revision_by_timestamp(
+            Time.parse(params[:revision_timestamp])).revision_number
       elsif params[:revision_number]
         @revision_number = params[:revision_number].to_i
       else
@@ -308,20 +309,26 @@ class SubmissionsController < ApplicationController
     @grouping.group.access_repo do |repo|
       begin
         @revision = repo.get_revision(params[:revision_number].to_i)
-        @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
-        @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
+        @directories = @revision.directories_at_path(
+            File.join(@assignment.repository_folder, @path))
+        @files = @revision.files_at_path(
+            File.join(@assignment.repository_folder, @path))
       rescue Exception => @find_revision_error
         respond_to do |format|
-          format.js { render action: 'submissions/repo_browser/find_revision_error' }
+          format.js {
+            render action: 'submissions/repo_browser/find_revision_error' }
         end
         return
       end
       @table_rows = {}
       @files.sort.each do |file_name, file|
-        @table_rows[file.object_id] = construct_repo_browser_table_row(file_name, file)
+        @table_rows[file.object_id] =
+            construct_repo_browser_table_row(file_name, file)
       end
       @directories.sort.each do |directory_name, directory|
-        @table_rows[directory.object_id] = construct_repo_browser_directory_table_row(directory_name, directory)
+        @table_rows[directory.object_id] =
+            construct_repo_browser_directory_table_row(directory_name,
+                                                       directory)
       end
       respond_to do |format|
         format.js
@@ -362,16 +369,20 @@ class SubmissionsController < ApplicationController
       else
         @revision = repo.get_revision(revision_number.to_i)
       end
-      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
-      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
+      @directories = @revision.directories_at_path(
+          File.join(@assignment.repository_folder, @path))
+      @files = @revision.files_at_path(
+          File.join(@assignment.repository_folder, @path))
       @table_rows = {}
       @files.sort.each do |file_name, file|
-        @table_rows[file.object_id] = construct_file_manager_table_row(file_name, file)
+        @table_rows[file.object_id] =
+            construct_file_manager_table_row(file_name, file)
       end
         
       if @grouping.repository_external_commits_only?
         @directories.sort.each do |directory_name, directory|
-          @table_rows[directory.object_id] = construct_file_manager_dir_table_row(directory_name, directory)
+          @table_rows[directory.object_id] =
+              construct_file_manager_dir_table_row(directory_name, directory)
         end
       end
 

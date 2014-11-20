@@ -128,7 +128,8 @@ module Repository
 
     # Returns all revisions
     def get_all_revisions
-      raise NotImplementedError, "Repository.get_all_revisions: Not yet implemented"
+      raise NotImplementedError,
+            "Repository.get_all_revisions: Not yet implemented"
     end
 
     # Return a Repository::AbstractRevision for a given revision_number

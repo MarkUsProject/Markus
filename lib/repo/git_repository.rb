@@ -650,7 +650,8 @@ module Repository
       File.unlink File.join(repo.workdir, path)
       @repos.index.write_tree repo
       @repos.index.write
-      Rugged::Commit.create(@repos,commit_options(@repos, author, "Removing file"))
+      Rugged::Commit.create(@repos, commit_options(@repos, author,
+                                                   "Removing file"))
 
       return txn
     end
