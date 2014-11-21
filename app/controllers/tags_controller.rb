@@ -78,7 +78,6 @@ class TagsController < ApplicationController
     grouping.tags
   end
 
-<<<<<<< HEAD
   def get_num_groupings_for_tag(tag_id)
     tag = Tag.find(tag_id)
     count = 0;
@@ -92,10 +91,6 @@ class TagsController < ApplicationController
     count
   end
 
-  def delete_grouping_tag_association(grouping_id, tag_id)
-    tag = Tag.find(tag_id)
-    tag.groupings.delete(grouping_id)
-=======
   def get_tags_not_associated_with_grouping
     grouping = Grouping.find(:params[grouping_id])
     grouping_tags = grouping.tags
@@ -111,6 +106,5 @@ class TagsController < ApplicationController
   def delete_grouping_tag_association
     tag = Tag.find(params[:tagging_id])
     tag.groupings.delete(params[:grouping_id])
->>>>>>> c12bf52769d3d323a101e0c78dfc1a1f507d7cf4
   end
 end
