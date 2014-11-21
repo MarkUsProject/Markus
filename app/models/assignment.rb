@@ -308,7 +308,7 @@ class Assignment < ActiveRecord::Base
       end
     end
 
-    return Grouping.create(group: group, assignment: self)
+    Grouping.create(group: group, assignment: self)
   end
 
 
