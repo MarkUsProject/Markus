@@ -80,7 +80,7 @@ class TagsController < ApplicationController
 
   def get_num_groupings_for_tag(tag_id)
     tag = Tag.find(tag_id)
-    count = 0;
+    count = 0
 
     Grouping.all.each do |group|
       if tag.groupings.exists?(group.id)
