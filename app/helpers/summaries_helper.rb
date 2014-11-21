@@ -42,7 +42,7 @@ module SummariesHelper
   def get_grouping_criteria(assignment, grouping)
     # put all criteria in a hash for retrieval
     criteria_hash = Hash.new
-    if (assignment.marking_scheme_type == 
+    if (assignment.marking_scheme_type ==
         Assignment::MARKING_SCHEME_TYPE[:flexible])
       criteria = assignment.flexible_criteria
     else
