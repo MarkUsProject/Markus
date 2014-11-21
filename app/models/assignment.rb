@@ -316,7 +316,7 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  def self.get_dashboard_assignment
+  def self.get_current_assignment
     current_assignment = Assignment.where('due_date <= ?', Date.today + 3)
                                    .reorder('due_date DESC').first
 
