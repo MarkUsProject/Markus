@@ -67,51 +67,6 @@ class AssignmentTest < ActiveSupport::TestCase
       end
     end
 
-    should 'know how many groupings have TAs assigned' do
-      assert_equal(0, @assignment.assigned_groupings.size)
-      assert_equal(0, @assignment.unassigned_groupings.size)
-      groupings = []
-      (1..3).each do
-        groupings.push Grouping.make(:assignment => @assignment)
-      end
-      @assignment.reload
-      (0..2).each do |index|
-        assert_equal(index, @assignment.assigned_groupings.size)
-        assert_equal(3 - index, @assignment.unassigned_groupings.size)
-        TaMembership.make(:grouping => groupings[index])
-      end
-      assert_equal(3, @assignment.assigned_groupings.size)
-      assert_equal(0, @assignment.unassigned_groupings.size)
-    end
-
-    should 'be able to add a new group when there are none already' do
-      @assignment.add_group('new_group_name')
-      assert_equal 1, @assignment.groupings.count
-    end
-
-    should 'be able to add a group with already existing name in another assignment' do
-      a = Assignment.make
-      old_grouping = Grouping.make(:assignment => a)
-      old_group_count = Group.all.size
-
-      @assignment.add_group(old_grouping.group.group_name)
-
-      assert_equal 1,
-                   @assignment.groupings.count,
-                   'should have added one more grouping'
-
-      assert_equal old_group_count,
-                   Group.all.size,
-                   'should NOT have added a new group'
-    end
-
-    should 'raise when adding a group with an existing name in this assignment' do
-      @assignment.add_group('Titanic')
-      assert_raise RuntimeError do
-        @assignment.add_group('Titanic')
-      end
-    end
-
     should 'be able to create groupings when students work alone' do
       (1..5).each do
         Student.make
@@ -131,11 +86,6 @@ class AssignmentTest < ActiveSupport::TestCase
           end
           TaMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
         end
-      end
-
-      should 'be able to add a new group when there are some already' do
-        @assignment.add_group('new_group_name')
-        assert_equal(6, @assignment.groupings.count)
       end
 
       should "be able to have it's groupings cloned correctly" do

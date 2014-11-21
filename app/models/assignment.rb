@@ -299,22 +299,16 @@ class Assignment < ActiveRecord::Base
       group.save
     else
       return if new_group_name.nil?
-      if Group.where(group_name: new_group_name).first
-        group = Group.where(group_name: new_group_name).first
+      if group = Group.where(group_name: new_group_name).first
         unless groupings.where(group_id: group.id).first.nil?
           raise "Group #{new_group_name} already exists"
         end
       else
-        group = Group.new
-        group.group_name = new_group_name
-        group.save
+        group = Group.create(group_name: new_group_name)
       end
     end
-    grouping = Grouping.new
-    grouping.group = group
-    grouping.assignment = self
-    grouping.save
-    grouping
+
+    Grouping.create(group: group, assignment: self)
   end
 
 
