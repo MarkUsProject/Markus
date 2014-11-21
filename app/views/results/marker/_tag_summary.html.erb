@@ -4,10 +4,11 @@
   <div class='tag_collector_pane'>
     <span><%= t('marker.marks.current_tags').html_safe %></span>
     <div id='active_tags' class='tag_list'>
-      <!-- TODO: Replace with actual data for tags -->
-      <span id='1' onclick='remove_tag(1)' class='tag_element'>Great Assignment</span>
-      <span id='2' onclick='remove_tag(2)' class='tag_element'>Extension</span>
-      <span id='3' onclick='remove_tag(3)' class='tag_element'>Good Syntax</span>
+      <% @all_tags.each do |tag| %>
+        <%= tag('span', id: tag.id, class: 'tag_element') %>
+          <%= tag.name %>
+        </span>
+      <% end %>
     </div>
   </div>
 </div>
@@ -18,11 +19,11 @@
     <div class='tag_collector_pane'>
       <span><%= t('marker.marks.available_tags').html_safe %></span>
       <div class='tag_list'>
-        <!-- TODO: Replace with actual data for tags -->
-        <span class='tag_element'>Improper Syntax</span>
-        <span class='tag_element'>Code Not Working</span>
-        <span class='tag_element'>Bad Assignment</span>
-        <span class='tag_element'>Needs Further Attention</span>
+        <% Tag.all.each do |tag| %>
+          <%= tag('span', id: tag.id, class: 'tag_element') %>
+            <%= tag.name %>
+          </span>
+        <% end %>
       </div>
     </div>
   </div>

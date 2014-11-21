@@ -47,7 +47,6 @@
             name: 'in_use',
             text: '<%= j raw I18n.t(:'tags.table.in_use') %>',
             func: function(tag) {
-              // TODO: Remove this code and properly implement.
               if (tag.tags_use.charAt(0) == '0'){
                 return false;
               }
@@ -59,7 +58,6 @@
             name: 'not_in_use',
             text: '<%= j raw I18n.t(:'tags.table.not_in_use') %>',
             func: function(tag) {
-              // TODO: Remove this code and properly implement.
               if (tag.tags_use.charAt(0) == '0'){
                 return true;
               }
@@ -117,18 +115,18 @@
       var tags_data = this.state.tags.map(function(tag) {
         var t = {};
 
-        // TODO: Remove this code and replace with actual object manipulation.
         t['id'] = tag.id;
         t['tags_name'] = tag.name;
-        t['creator_name'] = 'Bryan';
+        t['creator_name'] = tag.user_name;
         t['tags_description'] = tag.description;
-        t['tags_use'] = '15 assignments have this tag.';
+        t['tags_use'] = tag.use + ' assignment(s) have this tag.'
         t['tags_actions'] = <span>
-          <a key={tag.edit}
-            href={tag.edit}><%= j raw I18n.t(:'edit') %></a>
+          <a key={tag.edit_link}
+            href={tag.edit_link}><%= j raw I18n.t(:'edit') %></a>
           |
-          <a key={tag.delete}
-             href={tag.delete}><%= j raw I18n.t(:'delete') %></a>
+          <a key={tag.delete_link}
+             href={tag.delete_link} data-confirm="Are you sure you want to delete this tag?">
+             <%= j raw I18n.t(:'delete') %></a>
           </span>;
 
         return t;

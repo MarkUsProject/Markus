@@ -18,8 +18,8 @@ class TagsController < ApplicationController
   def create
     new_tag = Tag.new(
       name: params[:create_new][:name],
-      description: params[:create_new][:description]) #TODO
-      #user: @current_user,)
+      description: params[:create_new][:description],
+      user: @current_user)
 
     if new_tag.save
       flash[:success] = I18n.t('tag created successfully')
@@ -38,6 +38,12 @@ class TagsController < ApplicationController
   def destroy
     @tag = Tag.find(params[:id])
     @tag.destroy
+
+    respond_to do |format|
+      format.html do
+        redirect_to :back
+      end
+    end
   end
 
   ###  Update methods  ###
@@ -67,6 +73,19 @@ class TagsController < ApplicationController
   def get_tags_for_grouping(grouping_id)
     grouping = Grouping.find(grouping_id)
     grouping.tags
+  end
+
+  def get_num_groupings_for_tag(tag_id)
+    tag = Tag.find(tag_id)
+    count = 0;
+
+    Grouping.all.each do |group|
+      if tag.groupings.exists?(group.id)
+        count += 1
+      end
+    end
+
+    count
   end
 
   def delete_grouping_tag_association(grouping_id, tag_id)
