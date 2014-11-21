@@ -235,7 +235,7 @@ describe Assignment do
       end
 
       it '#invalid_groupings returns all groupings' do
-        expect(@assignment.invalid_groupings).to eq(@groupings)
+        expect(@assignment.invalid_groupings).to match_array(@groupings)
       end
     end
 
@@ -250,7 +250,8 @@ describe Assignment do
         end
 
         it '#invalid_groupings returns other, invalid groups' do
-          expect(@assignment.invalid_groupings).to eq(@groupings.drop(1))
+          expect(@assignment.invalid_groupings)
+            .to match_array(@groupings.drop(1))
         end
       end
 
@@ -266,7 +267,8 @@ describe Assignment do
         end
 
         it '#invalid_groupings returns other, invalid groups' do
-          expect(@assignment.invalid_groupings).to eq(@groupings.drop(1))
+          expect(@assignment.invalid_groupings)
+            .to match_array(@groupings.drop(1))
         end
       end
     end
@@ -281,7 +283,7 @@ describe Assignment do
       end
 
       it '#valid_groupings returns all groupings' do
-        expect(@assignment.valid_groupings).to eq(@groupings)
+        expect(@assignment.valid_groupings).to match_array(@groupings)
       end
 
       it '#invalid_groupings returns an empty array' do
@@ -340,7 +342,7 @@ describe Assignment do
 
     context 'when all students are ungrouped' do
       it 'returns all of the students' do
-        expect(@assignment.ungrouped_students).to eq(@students)
+        expect(@assignment.ungrouped_students).to match_array(@students)
       end
     end
 
@@ -382,7 +384,7 @@ describe Assignment do
         end
 
         it '#unassigned_groupings returns all groupings' do
-          expect(@assignment.unassigned_groupings).to eq(@groupings)
+          expect(@assignment.unassigned_groupings).to match_array(@groupings)
         end
       end
 
@@ -398,7 +400,8 @@ describe Assignment do
         end
 
         it '#unassigned_groupings returns the other groupings' do
-          expect(@assignment.unassigned_groupings).to eq(@groupings.drop(1))
+          expect(@assignment.unassigned_groupings)
+            .to match_array(@groupings.drop(1))
         end
       end
 
@@ -410,7 +413,7 @@ describe Assignment do
         end
 
         it '#assigned_groupings returns all groupings' do
-          expect(@assignment.assigned_groupings).to eq(@groupings)
+          expect(@assignment.assigned_groupings).to match_array(@groupings)
         end
 
         it '#unassigned_groupings returns no groupings' do
@@ -485,7 +488,7 @@ describe Assignment do
       end
 
       it 'returns those groups' do
-        expect(@assignment.groups_submitted).to eq(@groupings)
+        expect(@assignment.groups_submitted).to match_array(@groupings)
       end
     end
   end
