@@ -9,25 +9,23 @@
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem 'rails', '~> 4.0.0'
+gem 'rails', '~> 4.1.7'
 gem 'rubyzip'
 gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
 gem 'dynamic_form'
 gem 'exception_notification'
-gem "minitest-rails", "~> 1.0"
 gem 'auto_complete'
 gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
 gem 'prototype-rails', '~> 4.0.0'
 gem 'activerecord-import'
-gem 'sprockets', '2.11.0'
-gem 'rails4_upgrade'
+gem 'sprockets', '~> 2.12.0'
 
 gem 'tilt', '~> 1.3.7'
-gem 'sass-rails',   '4.0.1'
+gem 'sass-rails',   '5.0.0.beta1'
 gem 'coffee-rails', '~> 4.0.0'
 gem 'uglifier',     '>= 1.3.0'
 gem 'execjs'
@@ -38,8 +36,7 @@ gem 'actionpack-action_caching', '~>1.0.0'
 gem 'actionpack-page_caching', '~>1.0.0'
 gem 'actionpack-xml_parser', '~>1.0.0'
 gem 'actionview-encoded_mail_to', '~>1.0.4'
-gem 'activerecord-session_store', '~>0.0.1'
-gem 'activeresource', '~>4.0.0.beta1'
+gem 'activerecord-session_store', '~>0.1.0'
 gem 'rails-observers', '~>0.1.1'
 gem 'rails-perftest', '~>0.0.2'
 
@@ -74,6 +71,7 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'awesome_print'
+  gem 'spring'
 end
 
 group :test do

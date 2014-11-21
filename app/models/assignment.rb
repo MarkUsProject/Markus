@@ -227,7 +227,7 @@ class Assignment < ActiveRecord::Base
     # submission.save if submission.new_record?
     # return submission
 
-    assignment_groupings = user.active_groupings.delete_if do |grouping|
+    assignment_groupings = user.active_groupings.to_a.delete_if do |grouping|
       grouping.assignment.id != id
     end
 
