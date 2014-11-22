@@ -120,14 +120,12 @@
         t['creator_name'] = tag.user_name;
         t['tags_description'] = tag.description;
         t['tags_use'] = tag.use + ' assignment(s) have this tag.'
-        t['tags_actions'] = <span>
-          <a key={tag.edit_link}
-            href={tag.edit_link}><%= j raw I18n.t(:'edit') %></a>
-          |
-          <a key={tag.delete_link}
-             href={tag.delete_link} data-confirm="Are you sure you want to delete this tag?">
-             <%= j raw I18n.t(:'delete') %></a>
-          </span>;
+
+        var action_links = [];
+        action_links.push(tag.edit_link);
+        action_links.push(tag.delete_link);
+        t['tags_actions'] = <span onClick={this.props.refresh}
+          dangerouslySetInnerHTML={{ __html: action_links.join(' | ') }}></span>;
 
         return t;
       }.bind(this));

@@ -44,7 +44,9 @@ Markus::Application.routes.draw do
 
       resources :tags do
         member do
-          delete 'destroy'
+          post 'update_tag'
+          get 'edit_tag_dialog'
+          get 'destroy'
         end
 
         collection do

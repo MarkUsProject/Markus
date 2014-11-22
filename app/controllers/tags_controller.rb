@@ -4,14 +4,20 @@ class TagsController < ApplicationController
   before_filter :authorize_only_for_admin
 
   def index
+    @assignment = Assignment.find(params[:assignment_id])
+
     respond_to do |format|
-      format.html do
-        @assignment = Assignment.find(params[:assignment_id])
-      end
+      format.html
       format.json do
+        @assignment = Assignment.find(params[:assignment_id])
         render json: get_tags_table_info
       end
     end
+  end
+
+  def edit
+    @tag = Tag.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
   end
 
   # Creates a new instance of the tag.
@@ -49,7 +55,27 @@ class TagsController < ApplicationController
     end
   end
 
+  # Dialog to edit a tag.
+  def edit_tag_dialog
+    @assignment = Assignment.find(params[:assignment_id])
+    @tag = Tag.find(params[:id])
+
+    render partial: 'tags/edit_dialog', handlers: [:rjs]
+  end
+
   ###  Update methods  ###
+
+  def update_tag
+    # Updates both the name and ID.
+    Tag.update(params[:id], name: params[:update_tag][:name])
+    Tag.update(params[:id], description: params[:update_tag][:description])
+
+    respond_to do |format|
+      format.html do
+        redirect_to :back
+      end
+    end
+  end
 
   def update_name
     Tag.update(params[:id], name: params[:name])

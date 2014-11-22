@@ -855,6 +855,8 @@ en:
       delete: "Delete Tag"
       search_tags: "Search for tags..."
       edit_tag: "Edit Tag..."
+      edit_update: "Update"
+      updating: "Updating..."
 
       create:
         create_new: "Add Tag"

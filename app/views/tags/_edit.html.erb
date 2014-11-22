@@ -1,13 +1,34 @@
-<h2><%= I18n.t('groups.rename_group.title') %></h2>
-<%= form_tag(
-            rename_group_assignment_group_path(@assignment.id, @grouping_id),
-            remote: true ) do -%>
-    <fieldset>
-      <%= label_tag "new_groupname", I18n.t('groups.rename_group.group_name') %>
-      <input type="text" maxlength="30" id="new_groupname" name="new_groupname">
-    </fieldset>
-    <p class="p_margin">
-      <%= submit_tag I18n.t('groups.rename_group.title') %>
-      <%= button_to_function I18n.t('cancel'), 'modal_rename.close()' %>
-    </p>
-<% end %>
+<div id="edit">
+  <h2><%= I18n.t("tags.edit_tag") %></h2>
+
+  <%= form_for :update_tag,
+               url: update_tag_assignment_tag_path(@assignment, @tag),
+               html: { multipart: true, size: 1 } do |f| %>
+    <div>
+      <p><%= t('tags.create.tag_prompt') %></p>
+      <p><%= f.text_field :name,
+                          id: 'name',
+                          value: @tag[:name] %></p>
+    </div>
+    <div>
+      <p class="alignleft"><%= t('tags.create.tag_description') %></p>
+      <p id='descript_amount' class='alignright'>0/120</p>
+      <p style="clear: both;"><%= f.text_area :description,
+                                      id: 'description',
+                                      cols: 30,
+                                      rows: 3,
+                                      maxlength: 120,
+                                      onKeyDown: 'updateCharCount()',
+                                      value: @tag[:description] %></p>
+    </div>
+    <section class='dialog-actions'>
+      <%= f.submit t('tags.edit_update'),
+                   name: 'submit',
+                   data: { disable_with: t('tags.updating') },
+                   class: 'button' %>
+      <input type='reset'
+             value='<%= t(:cancel) %>'
+             onclick='modal_edit.close();'>
+    </section>
+  <% end %>
+</div>
