@@ -303,23 +303,18 @@ class SubmissionsController < ApplicationController
   def populate_repo_browser
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
-    @path = params[:path] || '/'
-    @revision_number = params[:revision_number]
+    @path = params[:path] != '/' ? params[:path] + '/' : '/'
     @previous_path = File.split(@path).first
     @grouping.group.access_repo do |repo|
-      begin
-        @revision = repo.get_revision(params[:revision_number].to_i)
-        @directories = @revision.directories_at_path(
-            File.join(@assignment.repository_folder, @path))
-        @files = @revision.files_at_path(
-            File.join(@assignment.repository_folder, @path))
-      rescue Exception => @find_revision_error
-        respond_to do |format|
-          error_link = 'submissions/repo_browser/find_revision_error'
-          format.js { render action: error_link }
-        end
-        return
+      if params[:revision_number]
+        @revision_number = params[:revision_number].to_i
+      else
+        @revision_number = repo.get_latest_revision.revision_number
       end
+      @revision = repo.get_revision(@revision_number)
+
+      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
+      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
       @table_rows = {}
       @files.sort.each do |file_name, file|
         @table_rows[file.object_id] =
@@ -623,7 +618,6 @@ class SubmissionsController < ApplicationController
 
     revision_number = params[:revision_number]
     path = params[:path] || '/'
-
     @grouping.group.access_repo do |repo|
       if revision_number.nil?
         @revision = repo.get_latest_revision

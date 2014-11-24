@@ -842,11 +842,6 @@ module Repository
       # In order to deal with the empty assignment folder case we must check
       # to see if the lookup fails as the directory tree is traversed to the
       # very top
-
-      if path
-        path = path + '/'
-      end
-
       begin
         file_array = objects_at_path(path).select do |obj|
           obj.instance_of?(Repository::RevisionFile)
