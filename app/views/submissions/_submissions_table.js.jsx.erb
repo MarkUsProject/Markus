@@ -12,12 +12,14 @@
             id: 'group_name',
             content: '<%= j raw I18n.t(:'browse_submissions.group_name') %>',
             sortable: true,
+            compare: compare_group_names,
             searchable: true
           },
           {
             id: 'repository',
             content: '<%= j raw I18n.t(:'browse_submissions.repository') %>',
             sortable: true,
+            compare: compare_repo_names,
             searchable: true
           },
           {
