@@ -36,10 +36,7 @@ module SubmissionsHelper
       g[:class_name] = get_any_tr_attributes(grouping)
       g[:group_name] = get_grouping_group_name(assignment, grouping)
       g[:repository] = get_grouping_repository(assignment, grouping)
-      g[:commit_date_unconverted] =
-          get_grouping_commit_date_unconverted(grouping)
-      g[:commit_date] = get_grouping_commit_date(grouping,
-                                                 g[:commit_date_unconverted])
+      g[:commit_date] = get_grouping_commit_date(grouping)
       g[:marking_state] = get_grouping_marking_state(assignment, grouping)
       g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
       g[:final_grade] = get_grouping_final_grades(grouping)
@@ -100,27 +97,20 @@ module SubmissionsHelper
     view_context.link_to(grouping.group.repository_name,
       repo_browser_assignment_submission_path(assignment, grouping))
   end
-  
-  def get_grouping_commit_date_unconverted(grouping)
-    if grouping.has_submission?
-      return grouping.current_submission_used.revision_timestamp
-    else
-      return nil
-    end
-  end
 
-  def get_grouping_commit_date(grouping, commit_date)
+  def get_grouping_commit_date(grouping)
     if !grouping.has_submission?
       return '-'
     else
-      repo = ''
+      commit_date = ''
       if grouping.past_due_date?
-        repo += view_context.image_tag('icons/error.png',
+        commit_date += view_context.image_tag('icons/error.png',
             title: t(:past_due_date_edit_result_warning,
             href: t(:last_commit)))
       end
-      repo += I18n.l(commit_date, format: :long_date)
-      return repo
+      commit_date += I18n.l(grouping.current_submission_used.revision_timestamp,
+                     format: :long_date)
+      return commit_date
     end
   end
 

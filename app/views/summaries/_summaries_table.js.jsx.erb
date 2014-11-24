@@ -20,6 +20,7 @@
           id: 'commit_date',
           content: '<%= j raw I18n.t('summaries_index.commit_date') %>',
           sortable: true,
+          compare: compare_commit_dates,
           searchable: true
         },
         {
