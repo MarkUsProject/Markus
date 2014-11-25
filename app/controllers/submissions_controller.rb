@@ -470,6 +470,7 @@ class SubmissionsController < ApplicationController
 
     if current_user.ta?
       @groupings = @assignment.ta_memberships.find_all_by_user_id(current_user)
+                              .select { |m| m.grouping.is_valid? }
                               .map { |m| m.grouping }
     else
       @groupings = @assignment.groupings
