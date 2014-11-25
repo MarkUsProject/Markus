@@ -103,10 +103,9 @@ class Grouping < ActiveRecord::Base
     grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)
     columns = [:grouping_id, :user_id, :type]
     # Get all existing memberships to avoid violating the unique constraint.
-    # TODO replace this with Membership.pluck when migrated to Rails 4.
-    existing_values = TaMembership.select(columns)
-      .where(grouping_id: grouping_ids, user_id: ta_ids)
-      .map { |membership| [membership.grouping_id, membership.user_id] }
+    existing_values = TaMembership
+                      .where(grouping_id: grouping_ids, user_id: ta_ids)
+                      .pluck(:grouping_id, :user_id)
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
     values = yield(grouping_ids, ta_ids) - existing_values
