@@ -144,56 +144,56 @@ describe Assignment do
     context 'when more than one assignment is found' do
       context 'when there is an assignment due in 3 days' do
         before :each do
-          @assignment1 = FactoryGirl.create(:assignment, due_date: Date.today - 5)
-          @assignment2 = FactoryGirl.create(:assignment, due_date: Date.today + 3)
+          @a1 = FactoryGirl.create(:assignment, due_date: Date.today - 5)
+          @a2 = FactoryGirl.create(:assignment, due_date: Date.today + 3)
         end
 
         it 'returns the assignment due in 3 days' do
           result = Assignment.get_current_assignment
           # should return assignment 2
-          expect(result).to eq(@assignment2)
+          expect(result).to eq(@a2)
         end
       end
 
       context 'when the next assignment is due in more than 3 days' do
         before :each do
-          @assignment1 = FactoryGirl.create(:assignment, due_date: Date.today - 5)
-          @assignment2 = FactoryGirl.create(:assignment, due_date: Date.today - 1)
-          @assignment3 = FactoryGirl.create(:assignment, due_date: Date.today + 8)
+          @a1 = FactoryGirl.create(:assignment, due_date: Date.today - 5)
+          @a2 = FactoryGirl.create(:assignment, due_date: Date.today - 1)
+          @a3 = FactoryGirl.create(:assignment, due_date: Date.today + 8)
         end
 
         it 'returns the assignment that was most recently due' do
           result = Assignment.get_current_assignment
           # should return assignment 2
-          expect(result).to eq(@assignment2)
+          expect(result).to eq(@a2)
         end
       end
 
       context 'when all assignments are due in more than 3 days' do
         before :each do
-          @assignment1 = FactoryGirl.create(:assignment, due_date: Date.today + 5)
-          @assignment2 = FactoryGirl.create(:assignment, due_date: Date.today + 12)
-          @assignment3 = FactoryGirl.create(:assignment, due_date: Date.today + 19)
+          @a1 = FactoryGirl.create(:assignment, due_date: Date.today + 5)
+          @a2 = FactoryGirl.create(:assignment, due_date: Date.today + 12)
+          @a3 = FactoryGirl.create(:assignment, due_date: Date.today + 19)
         end
 
         it 'returns the assignment that is due first' do
           result = Assignment.get_current_assignment
           # should return assignment 1
-          expect(result).to eq(@assignment1)
+          expect(result).to eq(@a1)
         end
       end
 
       context 'when all assignments are past the due date' do
         before :each do
-          @assignment1 = FactoryGirl.create(:assignment, due_date: Date.today - 5)
-          @assignment2 = FactoryGirl.create(:assignment, due_date: Date.today - 12)
-          @assignment3 = FactoryGirl.create(:assignment, due_date: Date.today - 19)
+          @a1 = FactoryGirl.create(:assignment, due_date: Date.today - 5)
+          @a2 = FactoryGirl.create(:assignment, due_date: Date.today - 12)
+          @a3 = FactoryGirl.create(:assignment, due_date: Date.today - 19)
         end
 
         it 'returns the assignment that was due most recently' do
           result = Assignment.get_current_assignment
           # should return assignment 1
-          expect(result).to eq(@assignment1)
+          expect(result).to eq(@a1)
         end
       end
     end
