@@ -22,14 +22,15 @@ class Tag < ActiveRecord::Base
         Tag.create_or_update_from_csv_row(row, assignment)
         nb_updates += 1
       rescue RuntimeError => error
-        invalid_lines << row.join(',') + ': ' + error.message unless invalid_lines.nil?
+        invalid_lines << row.join(',') +
+                         ': ' +
+                         error.message unless invalid_lines.nil?
       end
     end
 
     nb_updates
   end
 
-  def self.create_or_update_from_csv_row(row, assignment)
-
+  def self.create_or_update_from_csv_row(_row, _assignment)
   end
 end

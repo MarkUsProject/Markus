@@ -85,7 +85,7 @@ class TagsController < ApplicationController
     Tag.update(params[:id], description: params[:description])
   end
 
-  ###  Upload/Download Methods ###
+  ###  Upload/Download Methods  ###
 
   def download_tag_list
     # Gets all the tags
@@ -93,21 +93,24 @@ class TagsController < ApplicationController
 
     #Gets what type of format.
     case params[:format]
-      when 'csv'
-        output = Tag.generate_csv_list(tags)
-        format = 'text/csv'
-      when 'xml'
-        output = tags.to_xml
-        format = 'text/xml'
-      else
-        # If there is no 'recognized' format,
-        # print to xml.
-        output = tags.to_xml
-        format = 'text/xml'
+    when 'csv'
+      output = Tag.generate_csv_list(tags)
+      format = 'text/csv'
+    when 'xml'
+      output = tags.to_xml
+      format = 'text/xml'
+    else
+      # If there is no 'recognized' format,
+      # print to xml.
+      output = tags.to_xml
+      format = 'text/xml'
     end
 
     # Now we download the data.
-    send_data(output, type: format, filename: "tag_list.#{params[:format]}", disposition: 'inline')
+    send_data(output,
+              type: format,
+              filename: "tag_list.#{params[:format]}",
+              disposition: 'inline')
   end
 
   def csv_upload
@@ -118,9 +121,13 @@ class TagsController < ApplicationController
       begin
         RubricCriterion.transaction do
           invalid_lines = []
-          nb_updates = RubricCriterion.parse_csv(file, @assignment, invalid_lines, encoding)
+          nb_updates = RubricCriterion.parse_csv(file,
+                                                 @assignment,
+                                                 invalid_lines,
+                                                 encoding)
           unless invalid_lines.empty?
-            flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+            flash[:error] = I18n.t('csv_invalid_lines') +
+                            invalid_lines.join(', ')
           end
           if nb_updates > 0
             flash[:notice] = I18n.t('rubric_criteria.upload.success',
@@ -133,7 +140,6 @@ class TagsController < ApplicationController
   end
 
   def yml_upload
-
   end
 
   ###  Grouping Methods ###
