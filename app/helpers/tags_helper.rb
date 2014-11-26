@@ -1,5 +1,4 @@
 module TagsHelper
-
   def get_tags_not_associated_with_grouping(g_id)
     grouping = Grouping.find(g_id)
     grouping_tags = grouping.tags
