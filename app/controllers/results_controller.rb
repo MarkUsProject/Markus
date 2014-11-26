@@ -1,4 +1,5 @@
 class ResultsController < ApplicationController
+  include TagsHelper
   before_filter :authorize_only_for_admin,
                 except: [:codeviewer, :edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
@@ -43,6 +44,7 @@ class ResultsController < ApplicationController
 
     @annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
+    @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
     @group = @grouping.group
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
