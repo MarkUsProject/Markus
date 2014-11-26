@@ -1,2 +1,0 @@
-page.replace_html 'edit_tags_dialog', partial: 'tags/edit'
-page.call('modal_edit.open')

@@ -50,8 +50,9 @@ Markus::Application.routes.draw do
         end
 
         collection do
+          get 'download_tag_list'
           post 'csv_upload'
-          get 'download_csv'
+          post 'yml_upload'
         end
       end
 
