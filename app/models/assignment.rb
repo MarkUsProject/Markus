@@ -303,7 +303,9 @@ class Assignment < ActiveRecord::Base
   end
 
   def self.get_current_assignment
-    current_assignment = Assignment.where('due_date <= ?', Date.today + 3)
+    # start showing (or "featuring") the assignment 3 days before it's due
+    # query uses Date.today + 4 because results from db seems to be off by 1
+    current_assignment = Assignment.where('due_date <= ?', Date.today + 4)
                                    .reorder('due_date DESC').first
 
     if current_assignment.nil?
