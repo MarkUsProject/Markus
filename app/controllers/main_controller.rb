@@ -154,7 +154,9 @@ class MainController < ApplicationController
       :assignment_stat, :ta_memberships,
       groupings: :current_submission_used,
       submission_rule: :assignment
-    ]).all(order: 'due_date DESC')
+    ]).all(order: 'due_date ASC')
+
+    @current_assignment = Assignment.get_current_assignment
 
     render :index, layout: 'content'
   end
