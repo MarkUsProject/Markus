@@ -61,7 +61,7 @@ class ResultsController < ApplicationController
     # Get the previous and the next submission
     if current_user.ta?
        groupings = []
-       @assignment.ta_memberships.find_all_by_user_id(current_user.id).each do |membership|
+       @assignment.ta_memberships.where(user_id: current_user.id).each do |membership|
          groupings.push(membership.grouping)
        end
     end
