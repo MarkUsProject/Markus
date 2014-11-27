@@ -52,13 +52,15 @@
       <div>
         <p class="alignleft"><%= t('tags.create.tag_description') %></p>
         <p id='descript_amount' class='alignright'>0/120</p>
-        <p class="clear-alignment"><%= f.text_area :description,
-                                                id: 'description',
-                                                cols: 30,
-                                                rows: 3,
-                                                maxlength: 120,
-                                                onKeyDown: 'updateCharCount()',
-                                                placeholder: t('tags.create.descript_prompt') %></p>
+        <p class="clear-alignment">
+          <%= f.text_area :description,
+                          id: 'description',
+                          cols: 30,
+                          rows: 3,
+                          maxlength: 120,
+                          onKeyDown: 'updateCharCount()',
+                          placeholder: t('tags.create.descript_prompt') %>
+        </p>
       </div>
       <section class='dialog-actions'>
         <%= f.submit t('tags.create.button_text'),
