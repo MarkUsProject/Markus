@@ -53,7 +53,7 @@ class ResultsController < ApplicationController
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = []
     @rubric_criteria.each do |criterion|
-      mark = Mark.find_or_create_by_result_id_and_rubric_criterion_id(@result.id, criterion.id)
+      mark = Mark.find_or_create_by(result_id: @result.id, rubric_criterion_id: criterion.id)
       mark.save(validate: false)
       @marks_map[criterion.id] = mark
     end
@@ -201,7 +201,7 @@ class ResultsController < ApplicationController
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = []
     @rubric_criteria.each do |criterion|
-      mark = Mark.find_or_create_by_result_id_and_rubric_criterion_id(@result.id, criterion.id)
+      mark = Mark.find_or_create_by(result_id: @result.id, rubric_criterion_id: criterion.id)
       mark.save(validate: false)
       @marks_map[criterion.id] = mark
     end

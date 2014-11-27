@@ -262,7 +262,7 @@ class GradeEntryFormsController < ApplicationController
 
       students = G_TABLE_PARAMS[:filters][params[:filter]][:proc].call("", "", current_user)
       students.each do |student|
-        grade_entry_students.push(grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id))
+        grade_entry_students.push(grade_entry_form.grade_entry_students.find_or_create_by(user_id: student.id))
       end
     else
       # Particular students in the table were selected
