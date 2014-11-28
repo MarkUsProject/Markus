@@ -671,6 +671,58 @@ describe Assignment do
     end
   end
 
+  describe '#latest_due_date' do
+    context 'when SectionDueDates are disabled' do
+      before :each do
+        @assignment = create(:assignment,
+                             section_due_dates_type: false,
+                             due_date: Time.now)
+      end
+
+      it 'returns the due date of the assignment' do
+        expect(@assignment.latest_due_date).to eq @assignment.due_date
+      end
+    end
+
+    context 'when SectionDueDates are enabled' do
+      before :each do
+        @assignment = create(:assignment,
+                             section_due_dates_type: true,
+                             due_date: Time.now)
+      end
+
+      context 'and there are no SectionDueDates' do
+        it 'returns the due date of the assignment' do
+          expect(@assignment.latest_due_date).to eq @assignment.due_date
+        end
+      end
+
+      context 'and a SectionDueDate has the latest due date' do
+        before :each do
+          @section_due_date = SectionDueDate.create(section: create(:section),
+                                                    assignment: @assignment,
+                                                    due_date: 1.days.from_now)
+        end
+
+        it 'returns the due date of that SectionDueDate' do
+          expect(@assignment.latest_due_date).to eq @section_due_date.due_date
+        end
+      end
+
+      context 'and the assignment has the latest due date' do
+        before :each do
+          @section_due_date = SectionDueDate.create(section: create(:section),
+                                                    assignment: @assignment,
+                                                    due_date: 1.days.ago)
+        end
+
+        it 'returns the due date of the assignment' do
+          expect(@assignment.latest_due_date).to eq @assignment.due_date
+        end
+      end
+    end
+  end
+
   describe '#past_due_date?' do
     context 'when the assignment is not past due' do
       before :each do
@@ -732,53 +784,79 @@ describe Assignment do
     end
   end
 
-  describe '#latest_due_date' do
-    context 'when SectionDueDates are disabled' do
+  describe '#section_past_due_date?' do
+    context 'with SectionDueDates disabled' do
       before :each do
-        @assignment = create(:assignment,
-                             section_due_dates_type: false,
-                             due_date: Time.now)
+        @due_assignment = create(:assignment,
+                                 section_due_dates_type: false,
+                                 due_date: 1.days.ago)
+        @not_due_assignment = create(:assignment,
+                                     section_due_dates_type: false,
+                                     due_date: 1.days.from_now)
       end
 
-      it 'returns the due date of the assignment' do
-        expect(@assignment.latest_due_date).to eq @assignment.due_date
+      context 'when no grouping is specified' do
+        it 'returns based on due date of the assignment' do
+          expect(@due_assignment.section_past_due_date?(nil)).to be
+          expect(@not_due_assignment.section_past_due_date?(nil)).not_to be
+        end
+      end
+
+      context 'when a grouping is specified' do
+        it 'returns based on due date of the assignment' do
+          grouping = create(:grouping)
+          expect(@due_assignment.section_past_due_date?(grouping)).to be
+          expect(@not_due_assignment.section_past_due_date?(grouping)).not_to be
+        end
       end
     end
 
-    context 'when SectionDueDates are enabled' do
+    context 'with SectionDueDates enabled' do
       before :each do
-        @assignment = create(:assignment,
-                             section_due_dates_type: true,
-                             due_date: Time.now)
+        @assignment = create(:assignment, section_due_dates_type: true)
       end
 
-      context 'and there are no SectionDueDates' do
-        it 'returns the due date of the assignment' do
-          expect(@assignment.latest_due_date).to eq @assignment.due_date
+      context 'when no grouping is specified' do
+        it 'returns based on due date of the assignment' do
+          pending 'waiting on resolution for pending past_due_date example'
+          @assignment.update_attributes(due_date: 1.days.ago)
+          expect(@assignment.section_past_due_date?(nil)).to be true
+          @assignment.update_attributes(due_date: 1.days.from_now)
+          expect(@assignment.section_past_due_date?(nil)).to be false
         end
       end
 
-      context 'and a SectionDueDate has the latest due date' do
+      context 'when a grouping is specified' do
         before :each do
-          @section_due_date = SectionDueDate.create(section: create(:section),
-                                                    assignment: @assignment,
-                                                    due_date: 1.days.from_now)
+          @grouping = create(:grouping, assignment: @assignment)
+          @section = create(:section)
+          student = create(:student, section: @section)
+          create(:inviter_student_membership, user: student, grouping: @grouping)
         end
 
-        it 'returns the due date of that SectionDueDate' do
-          expect(@assignment.latest_due_date).to eq @section_due_date.due_date
-        end
-      end
-
-      context 'and the assignment has the latest due date' do
-        before :each do
-          @section_due_date = SectionDueDate.create(section: create(:section),
-                                                    assignment: @assignment,
-                                                    due_date: 1.days.ago)
+        context 'that does not have an associated SectionDueDate' do
+          it 'returns based on due date of the assignment' do
+            @assignment.update_attributes(due_date: 1.days.ago)
+            expect(@assignment.section_past_due_date?(@grouping)).to be true
+            @assignment.update_attributes(due_date: 1.days.from_now)
+            expect(@assignment.section_past_due_date?(@grouping)).to be false
+          end
         end
 
-        it 'returns the due date of the assignment' do
-          expect(@assignment.latest_due_date).to eq @assignment.due_date
+        context 'that has an associated SectionDueDate' do
+          before :each do
+            @section_due_date = SectionDueDate.create(section: @section,
+                                                      assignment: @assignment)
+          end
+          it 'returns based on the SectionDueDate of the grouping' do
+            @section_due_date.update_attributes(due_date: 1.days.from_now)
+            @assignment.update_attributes(due_date: 1.days.ago)
+            expect(@assignment.section_past_due_date?(@grouping)).to be false
+
+            @section_due_date.update_attributes(due_date: 1.days.ago)
+            @assignment.update_attributes(due_date: 1.days.from_now)
+            expect(@assignment.section_past_due_date?(@grouping)).to be true
+          end
         end
       end
     end
@@ -830,10 +908,6 @@ describe Assignment do
       end
 
       describe 'one section' do
-        it 'returns true for section_past_due_date?' do
-          expect(@assignment.section_past_due_date?(@grouping)).to be
-        end
-
         it 'returns an array with the past section name' do
           expect(@assignment.what_past_due_date).to eq %w(section_name)
         end
