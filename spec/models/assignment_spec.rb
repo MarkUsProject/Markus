@@ -726,7 +726,7 @@ describe Assignment do
   describe '#past_due_date?' do
     context 'when the assignment is not past due' do
       before :each do
-        @assignment = create(:assignment, due_date: 1.days.from_now);
+        @assignment = create(:assignment, due_date: 1.days.from_now)
       end
 
       context 'and SectionDueDates are disabled' do
@@ -748,7 +748,7 @@ describe Assignment do
         end
 
         it 'returns false' do
-          pending "pending discussion on intended functionality"
+          pending 'pending discussion on intended functionality'
           expect(@assignment.past_due_date?).to be false
         end
       end
@@ -832,7 +832,9 @@ describe Assignment do
           @grouping = create(:grouping, assignment: @assignment)
           @section = create(:section)
           student = create(:student, section: @section)
-          create(:inviter_student_membership, user: student, grouping: @grouping)
+          create(:inviter_student_membership,
+                 user: student,
+                 grouping: @grouping)
         end
 
         context 'that does not have an associated SectionDueDate' do
@@ -917,11 +919,11 @@ describe Assignment do
 
       describe 'two SectionDueDates' do
         before :each do
-          @sections = (1..2).map{ create(:section) }
+          @sections = (1..2).map { create(:section) }
           @section_due_dates = @sections.map do |section|
             SectionDueDate.create(section: section, assignment: @assignment)
           end
-          @section_names = @sections.map{ |section| section.name }
+          @section_names = @sections.map { |section| section.name }
         end
 
         context 'where both are past due' do
