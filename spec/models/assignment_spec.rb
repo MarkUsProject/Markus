@@ -653,7 +653,7 @@ describe Assignment do
         @assignment = create(:assignment, due_date: 1.days.from_now);
       end
 
-      context 'and there are no sections' do
+      context 'and SectionDueDates are disabled' do
         before :each do
           @assignment.update_attributes(section_due_dates_type: false)
         end
@@ -663,7 +663,7 @@ describe Assignment do
         end
       end
 
-      context 'and there are sections past due' do
+      context 'and there are SectionDueDates past due' do
         before :each do
           @assignment.update_attributes(section_due_dates_type: true)
           SectionDueDate.create(section: create(:section),
@@ -683,13 +683,17 @@ describe Assignment do
         @assignment = create(:assignment, due_date: 1.days.ago)
       end
 
-      context 'and there are no sections' do
+      context 'and SectionDueDates are disabled' do
+        before :each do
+          @assignment.update_attributes(section_due_dates_type: false)
+        end
+
         it 'returns true' do
           expect(@assignment.past_due_date?).to be
         end
       end
 
-      context 'and there is a section not past due' do
+      context 'and there is a SectionDueDate not past due' do
         before :each do
           @assignment.update_attributes(section_due_dates_type: true)
           SectionDueDate.create(section: create(:section),
@@ -699,6 +703,58 @@ describe Assignment do
 
         it 'returns false' do
           expect(@assignment.past_due_date?).not_to be
+        end
+      end
+    end
+  end
+
+  describe '#latest_due_date' do
+    context 'when SectionDueDates are disabled' do
+      before :each do
+        @assignment = create(:assignment,
+                             section_due_dates_type: false,
+                             due_date: Time.now)
+      end
+
+      it 'returns the due date of the assignment' do
+        expect(@assignment.latest_due_date).to eq @assignment.due_date
+      end
+    end
+
+    context 'when SectionDueDates are enabled' do
+      before :each do
+        @assignment = create(:assignment,
+                             section_due_dates_type: true,
+                             due_date: Time.now)
+      end
+
+      context 'and there are no SectionDueDates' do
+        it 'returns the due date of the assignment' do
+          expect(@assignment.latest_due_date).to eq @assignment.due_date
+        end
+      end
+
+      context 'and a SectionDueDate has the latest due date' do
+        before :each do
+          @section_due_date = SectionDueDate.create(section: create(:section),
+                                                    assignment: @assignment,
+                                                    due_date: 1.days.from_now)
+        end
+
+        it 'returns the due date of that SectionDueDate' do
+          expect(@assignment.latest_due_date).to eq @section_due_date.due_date
+        end
+      end
+
+      context 'and the assignment has the latest due date' do
+        before :each do
+          @section_due_date = SectionDueDate.create(section: create(:section),
+                                                    assignment: @assignment,
+                                                    due_date: 1.days.ago)
+        end
+
+        it 'returns the due date of the assignment' do
+          expect(@assignment.latest_due_date).to eq @assignment.due_date
         end
       end
     end
@@ -730,10 +786,6 @@ describe Assignment do
 
       it 'returns true for past_collection_date?' do
         expect(@assignment.past_collection_date?).to be
-      end
-
-      it 'returns the latest_due_date' do
-        expect(@assignment.latest_due_date.day).to eq 2.days.ago.day
       end
     end
 
