@@ -66,13 +66,6 @@
     </menu>
     <div id="viewerContainer" tabindex="0">
       <div id="viewer"></div>
-
-      <!-- Annotations -->
-      <div id="pdf_annotations_container">
-        <div style="position: absolute; top: 100px; left: 50px; background-color: red;">
-          This is a test
-        </div>
-      </div>
     </div>
     <div id="errorWrapper" hidden='true'>
       <div id="errorMessageLeft">
@@ -158,14 +151,11 @@
 </div>
 
 <script>
-var manager = null;
 (function() {
   PDFView.onLoadComplete = function() {
-    manager = new PdfAnnotationManager('new_annotation_button',
-                                         'create_annotation_dialog',
-                                         'new_annotation_modal_button',
-                                         'new_annotation_content',
-                                         'viewer');
+    var manager = new PdfAnnotationManager('viewer');
+
+    window.source_code_ready_for_pdf(manager);
   };
 
   webViewerLoad("<%= download_assignment_submission_results_path(select_file_id: submission_file_id,

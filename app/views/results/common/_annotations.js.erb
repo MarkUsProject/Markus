@@ -57,8 +57,15 @@
     annotation_type = ANNOTATION_TYPES.IMAGE;
   }
 
-  function source_code_ready_for_pdf() {
+  /**
+   * Prepare annotation for pdf annotations.
+   *
+   * @param  {PdfAnnotationManager} manager
+   */
+  function source_code_ready_for_pdf(manager) {
     annotation_type = ANNOTATION_TYPES.PDF;
+
+    annotation_manager = manager;
   }
 
   function add_annotation_text(annotation_text_id, content) {
@@ -136,13 +143,14 @@
     return { line_start: line_start, line_end: line_end };
   }
 
-  function set_dialog_values(content, category, x1, x2, y1, y2) {
+  function set_dialog_values(content, category, x1, x2, y1, y2, page) {
     document.getElementById('new_annotation_content').value = content;
     document.getElementById('new_annotation_category').value = category;
     document.getElementById('x1').value = x1;
     document.getElementById('x2').value = x2;
     document.getElementById('y1').value = y1;
     document.getElementById('y2').value = y2;
+    document.getElementById('annot_dialog_page').value = page;
     document.getElementById('new_annotation_content').focus();
   }
 
@@ -189,15 +197,17 @@
     return false;
   }
 
+
   function make_new_pdf_annotation () {
-    var box = get_selection_box();
+    var box = annotation_manager.selectionRectangle();
+
     if (!box) { return; }
 
     // Open the modal dialog to ask for new Annotation details
     modal.open();
 
     // Manually reset the modal dialog values
-    set_dialog_values('', '', box.x1, box.x2, box.y1, box.y2);
+    set_dialog_values('', '', box.x1, box.x2, box.y1, box.y2, box.page);
   }
 
   function make_new_image_annotation() {
@@ -283,7 +293,19 @@
     }
   }
 
-  function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
+  /**
+   * Called when the create button is clicked in the annotation dialog.
+   *
+   * @param  {[type]} content     [description]
+   * @param  {[type]} category_id [description]
+   * @param  {[type]} x1          [description]
+   * @param  {[type]} x2          [description]
+   * @param  {[type]} y1          [description]
+   * @param  {[type]} y2          [description]
+   * @param  {[type]} page        [description]
+   * @return {[type]}             [description]
+   */
+  function submit_new_annotation(content, category_id, x1, x2, y1, y2, page) {
     // Was any annotation text content provided?
     if (content == '') {
       alert("<%= I18n.t('marker.annotation.provide_text') %>");
@@ -307,7 +329,7 @@
               '&category_id=' + category_id +
               '&authenticity_token=' + AUTH_TOKEN
       });
-    } else {
+    } else if(annotation_type === ANNOTATION_TYPES.IMAGE) {
       // Image annotation
       jQuery.ajax({
         url:  '<%= annotations_path %>',
@@ -320,6 +342,22 @@
               '&x2=' + x2 +
               '&y1=' + y1 +
               '&y2=' + y2 +
+              '&authenticity_token=' + AUTH_TOKEN
+      });
+    } else if(annotation_type === ANNOTATION_TYPES.PDF) {
+      // PDF Annotation
+      jQuery.ajax({
+        url:  '<%= annotations_path %>',
+        type: 'POST',
+        data: 'annotation_type=pdf' +
+              '&submission_file_id=' + document.getElementById('select_file_id').value +
+              '&content=' + encodeURIComponent(content) +
+              '&category_id=' + category_id +
+              '&x1=' + x1 +
+              '&x2=' + x2 +
+              '&y1=' + y1 +
+              '&y2=' + y2 +
+              '&page=' + page +
               '&authenticity_token=' + AUTH_TOKEN
       });
     }

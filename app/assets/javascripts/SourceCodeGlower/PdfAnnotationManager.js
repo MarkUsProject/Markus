@@ -17,21 +17,16 @@
    *
    * @class
    *
-   * @param {string} newAnnotationBtnId       The ID of the button used for creating new annotations.
-   * @param {string} newAnnotationDialogId    The ID of the dialog for new annotations.
-   * @param {string} newAnnotationDialogBtnId The ID of the create button in the dialog.
    * @param {string} pageParentId             The ID of the parent container of the pages.
    */
-  function PdfAnnotationManager(newAnnotationBtnId, newAnnotationDialogId,
-                                newAnnotationDialogBtnId, newAnnotationTextAreaId,
-                                pageParentId) {
+  function PdfAnnotationManager(pageParentId) {
     var self = this;
 
     // Constants
-    this.HIDE_BOX_THRESHOLD = 5; // Threashold for not displaying selection box in pixels
+    this.HIDE_BOX_THRESHOLD = 5;   // Threashold for not displaying selection box in pixels
+    this.COORDINATE_PRECISION = 5; // Keep 5 decimal places (used when converting back from ints)
 
     // Members
-    this.annotationDialog = new ModalMarkus("#" + newAnnotationDialogId);
     this.pageParentId = pageParentId;
 
     /** @type {{page: int, $control: jQuery}} */
@@ -46,23 +41,6 @@
         "position": "absolute",
         "border": "dashed 1px red"
     };
-
-    // Local
-    var annotationUi = {
-      newAnnotBtn: document.getElementById(newAnnotationBtnId),
-      dialog: document.getElementById(newAnnotationDialogId),
-      createBtn: document.getElementById(newAnnotationDialogBtnId),
-      textarea: document.getElementById(newAnnotationTextAreaId)
-    };
-
-    // Setup Events
-    annotationUi.newAnnotBtn.onclick = function() {
-      self.annotationDialog.open();
-    }
-
-    annotationUi.createBtn.onclick = function() {
-      self.annotationDialog.close();
-    }
 
     this.bindPageEvents();
   }
@@ -144,6 +122,25 @@
       } else {
         $selectionBox.hide();
       }
+    }
+  };
+
+  /**
+   * Return the current selection bounding rectangle if there is one.
+   *
+   * @return {{x1, y1, x2, y2}} Bounding box (points are in percentages)
+   */
+  PdfAnnotationManager.prototype.selectionRectangle = function() {
+    if(!this.currentSelection.visible) {
+      return null;
+    }
+
+    return {
+      x1: this.currentSelection.x,
+      y1: this.currentSelection.y,
+      x2: this.currentSelection.x + this.currentSelection.width,
+      y2: this.currentSelection.y + this.currentSelection.height,
+      page: this.selectionBox.page
     }
   };
 
