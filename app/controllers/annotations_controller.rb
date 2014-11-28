@@ -19,8 +19,6 @@ class AnnotationsController < ApplicationController
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
       })
-    elsif params[:annotation_type] == 'pdf'
-      byebug # TODO
     else
       @annotation = TextAnnotation.new
       @annotation.update_attributes({
@@ -49,36 +47,36 @@ class AnnotationsController < ApplicationController
     submission= @submission_file.submission
     is_remark = submission.has_remark?
     case params[:annotation_type]
-      when 'text'
-        @annotation = TextAnnotation.create({
-          line_start: params[:line_start],
-          line_end: params[:line_end],
-          annotation_text_id: @text.id,
-          submission_file_id: @submission_file_id,
-          is_remark: is_remark,
-          annotation_number: submission.annotations.count + 1
-        })
-      when 'image'
-        @annotation = ImageAnnotation.create({
-          annotation_text_id: @text.id,
-          submission_file_id: @submission_file_id,
-          x1: Integer(params[:x1]), x2: Integer(params[:x2]),
-          y1: Integer(params[:y1]), y2: Integer(params[:y2]),
-          is_remark: is_remark,
-          annotation_number: submission.annotations.count + 1
-        })
-      when 'pdf'
-        @annotation = PdfAnnotation.create(
-          annotation_text_id: @text.id,
-          submission_file_id: @submission_file_id,
-          x1: Integer(params[:x1]),
-          x2: Integer(params[:x2]),
-          y1: Integer(params[:y1]),
-          y2: Integer(params[:y2]),
-          page: Integer(params[:page]),
-          is_remark: is_remark,
-          annotation_number: submission.annotations.count + 1
-        )
+    when 'text'
+      @annotation = TextAnnotation.create(
+        line_start: params[:line_start],
+        line_end: params[:line_end],
+        annotation_text_id: @text.id,
+        submission_file_id: @submission_file_id,
+        is_remark: is_remark,
+        annotation_number: submission.annotations.count + 1
+      )
+    when 'image'
+      @annotation = ImageAnnotation.create(
+        annotation_text_id: @text.id,
+        submission_file_id: @submission_file_id,
+        x1: Integer(params[:x1]), x2: Integer(params[:x2]),
+        y1: Integer(params[:y1]), y2: Integer(params[:y2]),
+        is_remark: is_remark,
+        annotation_number: submission.annotations.count + 1
+      )
+    when 'pdf'
+      @annotation = PdfAnnotation.create(
+        annotation_text_id: @text.id,
+        submission_file_id: @submission_file_id,
+        x1: Integer(params[:x1]),
+        x2: Integer(params[:x2]),
+        y1: Integer(params[:y1]),
+        y2: Integer(params[:y2]),
+        page: Integer(params[:page]),
+        is_remark: is_remark,
+        annotation_number: submission.annotations.count + 1
+      )
     end
 
     @submission = @submission_file.submission
