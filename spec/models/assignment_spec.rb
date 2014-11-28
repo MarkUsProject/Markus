@@ -862,6 +862,99 @@ describe Assignment do
     end
   end
 
+  describe '#what_past_due_date' do
+    context 'with SectionDueDates disabled' do
+      before :each do
+        @assignment = create(:assignment, section_due_dates_type: false)
+      end
+
+      context 'when the assignment is past due' do
+        it 'returns one name for the assignment' do
+          @assignment.update_attributes(due_date: 1.days.ago)
+
+          expect(@assignment.what_past_due_date).to eq ['Due Date']
+        end
+      end
+
+      context 'when the assignment is not past due' do
+        it 'returns an empty array' do
+          @assignment.update_attributes(due_date: 1.days.from_now)
+
+          expect(@assignment.what_past_due_date).to eq []
+        end
+      end
+    end
+
+    context 'with SectionDueDates enabled' do
+      before :each do
+        @assignment = create(:assignment, section_due_dates_type: true)
+      end
+
+      describe 'one SectionDueDate' do
+        before :each do
+          @section = create(:section)
+          @section_due_date =
+            SectionDueDate.create(section: @section, assignment: @assignment)
+        end
+
+        context 'that is past due' do
+          it 'returns an array with the name of the section' do
+            @section_due_date.update_attributes(due_date: 1.days.ago)
+
+            expect(@assignment.what_past_due_date).to eq [@section.name]
+          end
+        end
+
+        context 'that is not past due' do
+          it 'returns an empty array' do
+            @section_due_date.update_attributes(due_date: 1.days.from_now)
+
+            expect(@assignment.what_past_due_date).to eq []
+          end
+        end
+      end
+
+      describe 'two SectionDueDates' do
+        before :each do
+          @sections = (1..2).map{ create(:section) }
+          @section_due_dates = @sections.map do |section|
+            SectionDueDate.create(section: section, assignment: @assignment)
+          end
+          @section_names = @sections.map{ |section| section.name }
+        end
+
+        context 'where both are past due' do
+          it 'returns an array with both sections' do
+            @section_due_dates.each do |section_due_date|
+              section_due_date.update_attributes(due_date: 1.days.ago)
+            end
+
+            expect(@assignment.what_past_due_date).to match_array @section_names
+          end
+        end
+
+        context 'where one is past due' do
+          it 'returns an array with the name of that section' do
+            @section_due_dates.first.update_attributes(due_date: 1.days.ago)
+            @section_due_dates.last.update_attributes(due_date: 1.days.from_now)
+
+            expect(@assignment.what_past_due_date).to eq [@section_names.first]
+          end
+        end
+
+        context 'where neither is past due' do
+          it 'returns an empty array' do
+            @section_due_dates.each do |section_due_date|
+              section_due_date.update_attributes(due_date: 1.days.from_now)
+            end
+
+            expect(@assignment.what_past_due_date).to eq []
+          end
+        end
+      end
+    end
+  end
+
   context 'when before due with no submission rule' do
     before :each do
       @assignment = create(:assignment, due_date: 2.days.from_now)
@@ -869,10 +962,6 @@ describe Assignment do
 
     it 'returns false for #past_collection_date?' do
       expect(@assignment.past_collection_date?).not_to be
-    end
-
-    it 'returns empty array #what_past_due_date' do
-      expect(@assignment.what_past_due_date).to eq []
     end
   end
 
@@ -882,53 +971,8 @@ describe Assignment do
         @assignment = create(:assignment, due_date: 2.days.ago)
       end
 
-      it 'returns only one due date' do
-        expect(@assignment.what_past_due_date).to eq ['Due Date']
-      end
-
       it 'returns true for past_collection_date?' do
         expect(@assignment.past_collection_date?).to be
-      end
-    end
-
-    context 'with sections' do
-      before :each do
-        @assignment = create(:assignment, due_date: 2.days.ago, section_due_dates_type: true)
-
-        @section = Section.create(name: 'section_name')
-        SectionDueDate.create(section: @section,
-                              assignment: @assignment,
-                              due_date: 1.days.ago)
-
-        student = create(:student, section: @section)
-        @grouping = create(:grouping, assignment: @assignment)
-        create(:student_membership, grouping: @grouping,
-                                    user: student,
-                                    membership_status: StudentMembership::STATUSES[:inviter])
-      end
-
-      describe 'one section' do
-        it 'returns an array with the past section name' do
-          expect(@assignment.what_past_due_date).to eq %w(section_name)
-        end
-      end
-
-      describe 'multiple sections' do
-        before :each do
-          @section2 = Section.create(name: 'section_name2')
-          SectionDueDate.create(section: @section2,
-                                assignment: @assignment,
-                                due_date: 1.day.ago)
-          student2 = create(:student, section: @section2)
-          @grouping2 = create(:grouping, assignment: @assignment)
-          create(:student_membership, grouping: @grouping2,
-                                      user: student2,
-                                      membership_status: StudentMembership::STATUSES[:inviter])
-        end
-
-        it 'returns an array with the past section names' do
-          expect(@assignment.what_past_due_date).to eq %w(section_name section_name2)
-        end
       end
     end
   end
