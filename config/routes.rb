@@ -322,7 +322,6 @@ Markus::Application.routes.draw do
   match 'main/about', controller: 'main', action: 'about', via: :post
   match 'main/logout', controller: 'main', action: 'logout', via: :post
 
-  # TODO: this should be via: :all, but does not seem to work with Rails 3
   # Return a 404 when no route is match
-  match '*path', controller: 'main', action: 'page_not_found', via: :get
+  match '*path', controller: 'main', action: 'page_not_found', via: :all
 end
