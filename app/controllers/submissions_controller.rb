@@ -130,8 +130,9 @@ class SubmissionsController < ApplicationController
         proc: lambda { |params, to_include|
           params[:assignment].ta_memberships.where(user_id: params[:user_id])
                              .includes(grouping: to_include)
-                             .map { |m| m.grouping } }
-                    }
+                             .map { |m| m.grouping }
+        }
+      }
     },
 
     sorts: {
@@ -209,8 +210,9 @@ class SubmissionsController < ApplicationController
         proc: lambda { |params, to_include|
           params[:assignment].ta_memberships.where(user_id: params[:user_id])
                              .includes(grouping: to_include)
-                             .map { |m| m.grouping } }
-                    }
+                             .map { |m| m.grouping }
+        }
+      }
     },
     sorts: {
       'group_name' => lambda { |a,b|
