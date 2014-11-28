@@ -71,7 +71,7 @@ describe Assignment do
 
     context 'when no TAs have been assigned' do
       it 'returns an empty array' do
-        expect(@assignment.tas).to eq([])
+        expect(@assignment.tas).to eq []
       end
     end
 
@@ -84,7 +84,7 @@ describe Assignment do
 
       describe 'one TA' do
         it 'returns the TA' do
-          expect(@assignment.tas).to eq([@ta])
+          expect(@assignment.tas).to eq [@ta]
         end
       end
 
@@ -96,7 +96,7 @@ describe Assignment do
         end
 
         it 'returns all TAs' do
-          expect(@assignment.tas).to eq([@ta, @other_ta])
+          expect(@assignment.tas).to eq [@ta, @other_ta]
         end
       end
     end
@@ -233,7 +233,7 @@ describe Assignment do
 
     context 'when no groups are valid' do
       it '#valid_groupings returns an empty array' do
-        expect(@assignment.valid_groupings).to eq([])
+        expect(@assignment.valid_groupings).to eq []
       end
 
       it '#invalid_groupings returns all groupings' do
@@ -248,7 +248,7 @@ describe Assignment do
         end
 
         it '#valid_groupings returns the valid group' do
-          expect(@assignment.valid_groupings).to eq([@groupings.first])
+          expect(@assignment.valid_groupings).to eq [@groupings.first]
         end
 
         it '#invalid_groupings returns other, invalid groups' do
@@ -265,7 +265,7 @@ describe Assignment do
         end
 
         it '#valid_groupings returns the valid group' do
-          expect(@assignment.valid_groupings).to eq([@groupings.first])
+          expect(@assignment.valid_groupings).to eq [@groupings.first]
         end
 
         it '#invalid_groupings returns other, invalid groups' do
@@ -289,7 +289,7 @@ describe Assignment do
       end
 
       it '#invalid_groupings returns an empty array' do
-        expect(@assignment.invalid_groupings).to eq([])
+        expect(@assignment.invalid_groupings).to eq []
       end
     end
   end
@@ -302,7 +302,7 @@ describe Assignment do
 
     context 'when no students are grouped' do
       it 'returns an empty array' do
-        expect(@assignment.grouped_students).to eq([])
+        expect(@assignment.grouped_students).to eq []
       end
     end
 
@@ -316,7 +316,7 @@ describe Assignment do
 
       describe 'one student' do
         it 'returns the student' do
-          expect(@assignment.grouped_students).to eq([@student])
+          expect(@assignment.grouped_students).to eq [@student]
         end
       end
 
@@ -329,7 +329,7 @@ describe Assignment do
         end
 
         it 'returns the students' do
-          expect(@assignment.grouped_students).to eq([@student, @other_student])
+          expect(@assignment.grouped_students).to eq [@student, @other_student]
         end
       end
     end
@@ -358,7 +358,7 @@ describe Assignment do
       end
 
       it 'returns an empty array' do
-        expect(@assignment.ungrouped_students).to eq([])
+        expect(@assignment.ungrouped_students).to eq []
       end
     end
   end
@@ -370,8 +370,8 @@ describe Assignment do
 
     context 'when there are no groupings' do
       it '#assigned_groupings and #unassigned_groupings returns no groupings' do
-        expect(@assignment.assigned_groupings).to eq([])
-        expect(@assignment.unassigned_groupings).to eq([])
+        expect(@assignment.assigned_groupings).to eq []
+        expect(@assignment.unassigned_groupings).to eq []
       end
     end
 
@@ -382,7 +382,7 @@ describe Assignment do
 
       context 'and no TAs have been assigned' do
         it '#assigned_groupings returns no groupings' do
-          expect(@assignment.assigned_groupings).to eq([])
+          expect(@assignment.assigned_groupings).to eq []
         end
 
         it '#unassigned_groupings returns all groupings' do
@@ -398,7 +398,7 @@ describe Assignment do
         end
 
         it '#assigned_groupings returns that grouping' do
-          expect(@assignment.assigned_groupings).to eq([@groupings.first])
+          expect(@assignment.assigned_groupings).to eq [@groupings.first]
         end
 
         it '#unassigned_groupings returns the other groupings' do
@@ -419,7 +419,7 @@ describe Assignment do
         end
 
         it '#unassigned_groupings returns no groupings' do
-          expect(@assignment.unassigned_groupings).to eq([])
+          expect(@assignment.unassigned_groupings).to eq []
         end
       end
     end
@@ -450,7 +450,7 @@ describe Assignment do
 
     context 'when no groups have made a submission' do
       it 'returns an empty array' do
-        expect(@assignment.groups_submitted).to eq([])
+        expect(@assignment.groups_submitted).to eq []
       end
     end
 
@@ -465,7 +465,7 @@ describe Assignment do
         end
 
         it 'returns the group' do
-          expect(@assignment.groups_submitted).to eq([@grouping])
+          expect(@assignment.groups_submitted).to eq [@grouping]
         end
       end
 
@@ -476,7 +476,7 @@ describe Assignment do
         end
 
         it 'returns one instance of the group' do
-          expect(@assignment.groups_submitted).to eq([@grouping])
+          expect(@assignment.groups_submitted).to eq [@grouping]
         end
       end
     end
@@ -507,7 +507,7 @@ describe Assignment do
 
     context 'when no submissions have been graded' do
       it 'returns an empty array' do
-        expect(@assignment.graded_submission_results.size).to eq(0)
+        expect(@assignment.graded_submission_results.size).to eq 0
       end
     end
 
@@ -520,7 +520,7 @@ describe Assignment do
 
       describe 'one submission' do
         it 'returns the result' do
-          expect(@assignment.graded_submission_results).to eq([@result])
+          expect(@assignment.graded_submission_results).to eq [@result]
         end
       end
 
@@ -533,7 +533,7 @@ describe Assignment do
 
         it 'returns all of the results' do
           expect(@assignment.graded_submission_results)
-            .to eq([@result, @other_result])
+            .to eq [@result, @other_result]
         end
       end
     end
@@ -546,8 +546,8 @@ describe Assignment do
 
     context 'when the row is empty' do
       it 'does not add a Group or Grouping' do
-        expect(Group.all).to eq([])
-        expect(Grouping.all).to eq([])
+        expect(Group.all).to eq []
+        expect(Grouping.all).to eq []
       end
     end
 
@@ -588,7 +588,7 @@ describe Assignment do
 
         it 'adds a Grouping to the existing Group' do
           @assignment.add_csv_group(@row)
-          expect(Grouping.first.group).to eq(@existing_group)
+          expect(Grouping.first.group).to eq @existing_group
         end
       end
     end
@@ -714,7 +714,7 @@ describe Assignment do
     end
 
     it 'returns empty array #what_past_due_date' do
-      expect(@assignment.what_past_due_date).to eq([])
+      expect(@assignment.what_past_due_date).to eq []
     end
   end
 
@@ -725,7 +725,7 @@ describe Assignment do
       end
 
       it 'returns only one due date' do
-        expect(@assignment.what_past_due_date).to eq(['Due Date'])
+        expect(@assignment.what_past_due_date).to eq ['Due Date']
       end
 
       it 'returns true for past_collection_date?' do
@@ -733,7 +733,7 @@ describe Assignment do
       end
 
       it 'returns the latest_due_date' do
-        expect(@assignment.latest_due_date.day).to eq(2.days.ago.day)
+        expect(@assignment.latest_due_date.day).to eq 2.days.ago.day
       end
     end
 
@@ -759,7 +759,7 @@ describe Assignment do
         end
 
         it 'returns an array with the past section name' do
-          expect(@assignment.what_past_due_date).to eq(%w(section_name))
+          expect(@assignment.what_past_due_date).to eq %w(section_name)
         end
       end
 
@@ -777,7 +777,7 @@ describe Assignment do
         end
 
         it 'returns an array with the past section names' do
-          expect(@assignment.what_past_due_date).to eq(%w(section_name section_name2))
+          expect(@assignment.what_past_due_date).to eq %w(section_name section_name2)
         end
       end
     end
