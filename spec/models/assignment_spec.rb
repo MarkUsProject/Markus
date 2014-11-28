@@ -647,13 +647,66 @@ describe Assignment do
     end
   end
 
+  describe '#past_due_date?' do
+    context 'when the assignment is not past due' do
+      before :each do
+        @assignment = create(:assignment, due_date: 1.days.from_now);
+      end
+
+      context 'and there are no sections' do
+        before :each do
+          @assignment.update_attributes(section_due_dates_type: false)
+        end
+
+        it 'returns false' do
+          expect(@assignment.past_due_date?).not_to be
+        end
+      end
+
+      context 'and there are sections past due' do
+        before :each do
+          @assignment.update_attributes(section_due_dates_type: true)
+          SectionDueDate.create(section: create(:section),
+                                assignment: @assignment,
+                                due_date: 1.days.ago)
+        end
+
+        it 'returns false' do
+          pending "pending discussion on intended functionality"
+          expect(@assignment.past_due_date?).not_to be
+        end
+      end
+    end
+
+    context 'when the assignment is past due' do
+      before :each do
+        @assignment = create(:assignment, due_date: 1.days.ago)
+      end
+
+      context 'and there are no sections' do
+        it 'returns true' do
+          expect(@assignment.past_due_date?).to be
+        end
+      end
+
+      context 'and there is a section not past due' do
+        before :each do
+          @assignment.update_attributes(section_due_dates_type: true)
+          SectionDueDate.create(section: create(:section),
+                                assignment: @assignment,
+                                due_date: 1.days.from_now)
+        end
+
+        it 'returns false' do
+          expect(@assignment.past_due_date?).not_to be
+        end
+      end
+    end
+  end
+
   context 'when before due with no submission rule' do
     before :each do
       @assignment = create(:assignment, due_date: 2.days.from_now)
-    end
-
-    it 'returns false for #past_due_date?' do
-      expect(@assignment.past_due_date?).not_to be
     end
 
     it 'returns false for #past_collection_date?' do
@@ -673,10 +726,6 @@ describe Assignment do
 
       it 'returns only one due date' do
         expect(@assignment.what_past_due_date).to eq(['Due Date'])
-      end
-
-      it 'returns true for past_due_date?' do
-        expect(@assignment.past_due_date?).to be
       end
 
       it 'returns true for past_collection_date?' do
