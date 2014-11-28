@@ -27,6 +27,9 @@
                                 pageParentId) {
     var self = this;
 
+    // Constants
+    this.HIDE_BOX_THRESHOLD = 5; // Threashold for not displaying selection box in pixels
+
     // Members
     this.annotationDialog = new ModalMarkus("#" + newAnnotationDialogId);
     this.pageParentId = pageParentId;
@@ -144,6 +147,18 @@
     }
   };
 
+  /**
+   * Get the selection box size in pixels. If there is no selection box
+   * return {width: 0, height: 0}.
+   *
+   * @return {{width: {int}, height: {int}}} The selection box size in pixels
+   */
+  PdfAnnotationManager.prototype.selectionBoxSize = function() {
+    var $box = this.selectionBox.$control;
+
+    return ($box ? {width: $box.width(), height: $box.height()} : {width: 0, height: 0});
+  }
+
   PdfAnnotationManager.prototype.bindPageEvents = function() {
     var self = this;
     var $pages = this.getPages();
@@ -218,9 +233,14 @@
 
     // Hide the selection box
     $pages.mouseup(function(ev) {
-      self.setSelectionBox($(ev.delegateTarget), {
-        visible: false
-      });
+      var size = self.selectionBoxSize();
+
+      // If the box is REALLY small then hide it
+      if(size.width < self.HIDE_BOX_THRESHOLD && size.height < self.HIDE_BOX_THRESHOLD) {
+        self.setSelectionBox($(ev.delegateTarget), {
+          visible: false
+        });
+      }
 
       selectionBoxActive = false;
     })
