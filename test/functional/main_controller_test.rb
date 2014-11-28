@@ -109,9 +109,9 @@ class MainControllerTest < AuthenticatedControllerTest
     context 'signed' do
       setup do
         @assignments = []
-        @assignments[1] = Assignment.make(:due_date => 1.day.ago)
-        @assignments[0] = Assignment.make(:due_date => 2.day.ago)
-        @assignments[2] = Assignment.make(:due_date => 1.day.from_now)
+        @assignments[1] = Assignment.make(due_date: 1.day.ago)
+        @assignments[0] = Assignment.make(due_date: 2.day.ago)
+        @assignments[2] = Assignment.make(due_date: 1.day.from_now)
       end
 
       should 'see assignments dashboard ordered by due_date asc' do
