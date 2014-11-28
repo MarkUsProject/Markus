@@ -495,10 +495,6 @@ class AssignmentTest < ActiveSupport::TestCase
         @submission = Submission.make(:grouping => @grouping)
       end
 
-      should 'be in the past' do
-        assert @assignment.section_past_due_date?(@grouping)
-      end
-
       should 'be able to generate a simple CSV report of marks' do
         expected_string = ''
         Student.all.each do |student|
