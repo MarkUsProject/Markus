@@ -156,10 +156,12 @@ class Assignment < ActiveRecord::Base
 
   # Whether or not this grouping is past its due date for this assignment.
   def section_past_due_date?(grouping)
-    if self.section_due_dates_type && grouping && grouping.inviter.section.present?
-        section_due_date =
-          SectionDueDate.due_date_for(grouping.inviter.section, self)
-        !section_due_date.nil? && Time.zone.now > section_due_date
+    if self.section_due_dates_type && grouping &&
+      grouping.inviter.section.present?
+
+      section_due_date =
+        SectionDueDate.due_date_for(grouping.inviter.section, self)
+      !section_due_date.nil? && Time.zone.now > section_due_date
     else
       self.past_due_date?
     end
