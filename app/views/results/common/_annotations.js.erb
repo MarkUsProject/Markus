@@ -65,14 +65,31 @@
     annotation_manager = new PdfAnnotationManager(pdfViewerId);
   }
 
+  /**
+   * Called when annotations are being added to the view.
+   *
+   * @param {string} annotation_text_id ID of the annotation text
+   * @param {string} content            Text for the annotation
+   */
   function add_annotation_text(annotation_text_id, content) {
-    var annotation_text = new AnnotationText(annotation_text_id, 0, content);
-    annotation_manager.registerAnnotationText(annotation_text);
+    if(annotation_type === ANNOTATION_TYPES.PDF) {
+      add_pdf_annotation(annotation_text_id, content,
+        annotation_manager.selectionRectangleAsInts());
+    } else {
+      var annotation_text = new AnnotationText(annotation_text_id, 0, content);
+      annotation_manager.registerAnnotationText(annotation_text);
+    }
   }
 
   // Register an image_annotation with the image annotation_grid
   function add_to_annotation_grid(extracted_coords) {
     annotation_manager.add_to_grid(JSON.parse(extracted_coords));
+  }
+
+  function add_pdf_annotation(annotation_text_id, content, extracted_coords) {
+    var coords = (typeof extracted_coords === 'string' ? JSON.parse(extracted_coords) : extracted_coords);
+
+    annotation_manager.addAnnotation(annotation_text_id, content, coords);
   }
 
   function add_annotation(annotation_id, range, annotation_text_id) {
@@ -85,9 +102,15 @@
     }
   }
 
+  /**
+   * Update the text in an annotation.
+   */
   function update_annotation_text(annotation_text_id, new_content) {
     if (annotation_manager.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
-      annotation_manager.getAnnotationTextManager().getAnnotationText(annotation_text_id).setContent(new_content);
+      annotation_manager
+        .getAnnotationTextManager()
+        .getAnnotationText(annotation_text_id)
+        .setContent(new_content);
     }
   }
 
@@ -194,9 +217,8 @@
     return false;
   }
 
-
   function make_new_pdf_annotation () {
-    var box = annotation_manager.selectionRectangle();
+    var box = annotation_manager.selectionRectangleAsInts();
 
     if (!box) { return; }
 
@@ -235,6 +257,23 @@
               '&x2=' + box.x2 +
               '&y1=' + box.y1 +
               '&y2=' + box.y2 +
+              '&authenticity_token=' + AUTH_TOKEN
+      });
+    } else if(annotation_type === ANNOTATION_TYPES.PDF) {
+      var box = annotation_manager.selectionRectangleAsInts();
+      if (!box) { return; }
+
+      jQuery.ajax({
+        url:  '<%= add_existing_annotation_annotations_path %>',
+        type: 'POST',
+        data: 'annotation_type=pdf' +
+              '&submission_file_id=' + document.getElementById('select_file_id').value +
+              '&annotation_text_id=' + annotation_text_id +
+              '&x1=' + box.x1 +
+              '&x2=' + box.x2 +
+              '&y1=' + box.y1 +
+              '&y2=' + box.y2 +
+              '&page=' + bpx.page +
               '&authenticity_token=' + AUTH_TOKEN
       });
     } else {

@@ -9,6 +9,7 @@ class AnnotationsController < ApplicationController
     @submission_file = SubmissionFile.find(@submission_file_id)
     submission= @submission_file.submission
     is_remark = submission.has_remark?
+
     if params[:annotation_type] == 'image'
       @annotation = ImageAnnotation.new
       @annotation.update_attributes({
@@ -18,6 +19,8 @@ class AnnotationsController < ApplicationController
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
       })
+    elsif params[:annotation_type] == 'pdf'
+      byebug # TODO
     else
       @annotation = TextAnnotation.new
       @annotation.update_attributes({
@@ -77,8 +80,6 @@ class AnnotationsController < ApplicationController
           annotation_number: submission.annotations.count + 1
         )
     end
-
-    byebug
 
     @submission = @submission_file.submission
     @annotations = @submission.annotations

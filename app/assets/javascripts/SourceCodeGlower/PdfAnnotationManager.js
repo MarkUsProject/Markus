@@ -24,6 +24,9 @@
     this.annotationTextManager = new AnnotationTextManager();
     this.pageParentId = pageParentId;
 
+    /** @type {[id]: {text: AnnotationText, $control: jQuery}} */
+    this.annotations = {};
+
     /** @type {{page: int, $control: jQuery}} */
     this.selectionBox = {};
 
@@ -47,15 +50,15 @@
    * @param  {Event} ev               The event that occurred.
    * @return {{x: number, y:number}}  The relative point in the element the event occurred in.
    */
-  function getRelativePointForMouseEvent(ev) {
-    var $elem = $(ev.delegateTarget);
+  function getRelativePointForMouseEvent(ev, relativeTo, mouseOffset) {
+    var $elem = (relativeTo ? $(relativeTo) : $(ev.delegateTarget));
     var offset = $elem.offset();
 
     var width = $elem.width();
     var height = $elem.height();
 
-    var x = ev.pageX - offset.left - MOUSE_OFFSET;
-    var y = ev.pageY - offset.top - MOUSE_OFFSET;
+    var x = ev.pageX - offset.left - (mouseOffset || MOUSE_OFFSET);
+    var y = ev.pageY - offset.top - (mouseOffset || MOUSE_OFFSET);
 
     return {
       x: 1 - Math.abs((x - width)/width),
@@ -127,10 +130,10 @@
     }
 
     return {
-      x1: this.currentSelection.x * COORDINATE_MULTIPLIER,
-      y1: this.currentSelection.y * COORDINATE_MULTIPLIER,
-      x2: (this.currentSelection.x + this.currentSelection.width) * COORDINATE_MULTIPLIER,
-      y2: (this.currentSelection.y + this.currentSelection.height) * COORDINATE_MULTIPLIER,
+      x1: parseInt(this.currentSelection.x * COORDINATE_MULTIPLIER),
+      y1: parseInt(this.currentSelection.y * COORDINATE_MULTIPLIER),
+      x2: parseInt((this.currentSelection.x + this.currentSelection.width) * COORDINATE_MULTIPLIER),
+      y2: parseInt((this.currentSelection.y + this.currentSelection.height) * COORDINATE_MULTIPLIER),
       page: this.selectionBox.page
     }
   };
@@ -225,13 +228,17 @@
 
       // If the box is REALLY small then hide it
       if(size.width < HIDE_BOX_THRESHOLD && size.height < HIDE_BOX_THRESHOLD) {
-        self.setSelectionBox($(ev.delegateTarget), {
-          visible: false
-        });
+        self.hideSelectionBox();
       }
 
       selectionBoxActive = false;
     })
+  }
+
+  PdfAnnotationManager.prototype.hideSelectionBox = function() {
+    if(this.selectionBox.$control) {
+      this.selectionBox.$control.hide();
+    }
   }
 
   /**
@@ -250,6 +257,82 @@
    */
   PdfAnnotationManager.prototype.getAnnotationTextManager = function() {
     return this.annotationTextManager;
+  }
+
+  PdfAnnotationManager.prototype.getPageContainer = function(pageNum) {
+    return $("#" + this.pageParentId + " #pageContainer" + pageNum);
+  }
+
+  /**
+   * Add an annotation to the PDF.
+   *
+   * @param {string} annotation_text_id [description]
+   * @param {string} content            [description]
+   * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
+   */
+  PdfAnnotationManager.prototype.addAnnotation = function(annotation_text_id, content, coords) {
+    var annotation_text = new AnnotationText(annotation_text_id, 0, content);
+
+    if (this.getAnnotationTextManager().annotationTextExists(annotation_text.getId())) {
+      return;
+    }
+
+    this.getAnnotationTextManager().addAnnotationText(annotation_text);
+
+    var $control = $("<div />").addClass("annotation_holder").css({
+      top: ((coords.y1 / COORDINATE_MULTIPLIER) * 100) + "%",
+      left: ((coords.x1 / COORDINATE_MULTIPLIER) * 100) + "%",
+      width: (((coords.x2 - coords.x1) / COORDINATE_MULTIPLIER) * 100) + "%",
+      height: (((coords.y2 - coords.y1) / COORDINATE_MULTIPLIER) * 100) + "%"
+    });
+
+    var $page = this.getPageContainer(coords.page);
+
+    // Show annotation on mouse over
+    var $textSpan = null;
+
+    function createTextNode() {
+      var text = annotation_text.getContent();
+
+      return $("<div />")
+                    .addClass("annotation_text_display")
+                    .text(text);
+    }
+
+    $control.mousemove(function(ev) {
+      if($textSpan == null) {
+        $textSpan = createTextNode();
+        $page.append($textSpan);
+      }
+
+      var point = getRelativePointForMouseEvent(ev, $page, -1);
+
+      $textSpan.css({
+        position: "absolute",
+        left: (point.x * 100) + "%",
+        top: (point.y * 100) + "%"
+      });
+    });
+
+    $control.mouseleave(function(ev) {
+      if($textSpan != null) {
+        $textSpan.remove();
+        $textSpan = null;
+      }
+    });
+
+    $page.append($control);
+
+    this.annotations[annotation_text.getId()] = {
+      text: annotation_text,
+      $control: $control
+    };
+
+    this.hideSelectionBox();
+  }
+
+  PdfAnnotationManager.prototype.remove_annotation = function(annotation_id, range, annotation_text_id) {
+    // debugger;
   }
 
   // Exports
