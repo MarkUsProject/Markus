@@ -139,7 +139,7 @@ describe Assignment do
       let(:assignment) { build(:assignment, invalid_override: true) }
 
       it 'returns true' do
-        expect(assignment.group_assignment?).to be
+        expect(assignment.group_assignment?).to be true
       end
     end
 
@@ -150,7 +150,7 @@ describe Assignment do
         end
 
         it 'returns true' do
-          expect(assignment.group_assignment?).to be
+          expect(assignment.group_assignment?).to be true
         end
       end
 
@@ -160,7 +160,7 @@ describe Assignment do
         end
 
         it 'returns false' do
-          expect(assignment.group_assignment?).not_to be
+          expect(assignment.group_assignment?).to be false
         end
       end
     end
@@ -430,7 +430,7 @@ describe Assignment do
       let(:assignment) { build(:assignment, remark_due_date: 1.days.from_now) }
 
       it 'returns false' do
-        expect(assignment.past_remark_due_date?).not_to be
+        expect(assignment.past_remark_due_date?).to be false
       end
     end
 
@@ -438,7 +438,7 @@ describe Assignment do
       let(:assignment) { build(:assignment, remark_due_date: 1.days.ago) }
 
       it 'returns true' do
-        expect(assignment.past_remark_due_date?).to be
+        expect(assignment.past_remark_due_date?).to be true
       end
     end
   end
@@ -735,7 +735,7 @@ describe Assignment do
         end
 
         it 'returns false' do
-          expect(@assignment.past_due_date?).not_to be
+          expect(@assignment.past_due_date?).to be false
         end
       end
 
@@ -749,7 +749,7 @@ describe Assignment do
 
         it 'returns false' do
           pending "pending discussion on intended functionality"
-          expect(@assignment.past_due_date?).not_to be
+          expect(@assignment.past_due_date?).to be false
         end
       end
     end
@@ -765,7 +765,7 @@ describe Assignment do
         end
 
         it 'returns true' do
-          expect(@assignment.past_due_date?).to be
+          expect(@assignment.past_due_date?).to be true
         end
       end
 
@@ -778,7 +778,7 @@ describe Assignment do
         end
 
         it 'returns false' do
-          expect(@assignment.past_due_date?).not_to be
+          expect(@assignment.past_due_date?).to be false
         end
       end
     end
@@ -797,16 +797,17 @@ describe Assignment do
 
       context 'when no grouping is specified' do
         it 'returns based on due date of the assignment' do
-          expect(@due_assignment.section_past_due_date?(nil)).to be
-          expect(@not_due_assignment.section_past_due_date?(nil)).not_to be
+          expect(@due_assignment.section_past_due_date?(nil)).to be true
+          expect(@not_due_assignment.section_past_due_date?(nil)).to be false
         end
       end
 
       context 'when a grouping is specified' do
         it 'returns based on due date of the assignment' do
           grouping = create(:grouping)
-          expect(@due_assignment.section_past_due_date?(grouping)).to be
-          expect(@not_due_assignment.section_past_due_date?(grouping)).not_to be
+          expect(@due_assignment.section_past_due_date?(grouping)).to be true
+          expect(@not_due_assignment.section_past_due_date?(grouping))
+            .to be false
         end
       end
     end
@@ -924,7 +925,7 @@ describe Assignment do
         end
 
         context 'where both are past due' do
-          it 'returns an array with both sections' do
+          it 'returns an array with both section names' do
             @section_due_dates.each do |section_due_date|
               section_due_date.update_attributes(due_date: 1.days.ago)
             end
