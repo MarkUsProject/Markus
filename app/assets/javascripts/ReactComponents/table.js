@@ -20,9 +20,10 @@
  *                             Must be a string or React DOM object.
  *                             Remember to make this I18n.
  *                  - sortable: boolean that determines whether a column is sortable.
- *                  - compare: optional function defining custom sort behaviour
- *                             default sort behaviour is by inner HTML or as
- *                             lowercase string
+ *                  - compare: a function defining custom sort behaviour. Leave
+ *                             it undefined to use the default sort behaviour.
+ *                             The default behaviour is to sort as a lowercase
+ *                             string, using inner HTML for React components.
  *                  - searchable: boolean that determines whether the stuff in a column
  *                                can be searched.
  *             columns is used to create the table header.

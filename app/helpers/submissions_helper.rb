@@ -109,7 +109,7 @@ module SubmissionsHelper
             href: t(:last_commit)))
       end
       commit_date += I18n.l(grouping.current_submission_used.revision_timestamp,
-                     format: :long_date)
+                            format: :long_date)
       return commit_date
     end
   end

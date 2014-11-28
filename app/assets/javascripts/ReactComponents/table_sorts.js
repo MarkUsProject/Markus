@@ -3,8 +3,9 @@ function compare_commit_dates(a, b) {
     var d_str =
         d['commit_date'].props.dangerouslySetInnerHTML.__html.toString();
     var close_tag_end = d_str.lastIndexOf('>');
-    if(close_tag_end != -1)
+    if(close_tag_end !== -1) {
       d_str = d_str.substring(close_tag_end + 1);
+    }
     return Date.parse(d_str);
   }
   var a_parsed = parse_date(a);
@@ -19,8 +20,9 @@ function compare_commit_dates(a, b) {
 
 function parse_anchor(a) {
   var open_tag_end = a.indexOf('>', a.indexOf('<a'));
-  var close_tag_start = a.indexOf('<', open_tag_end + 1);
-  return a.substring(open_tag_end + 1, close_tag_start);
+  var close_tag_start = a.indexOf('</a', open_tag_end + 1);
+  return (open_tag_end !== -1 && close_tag_start !== -1) ?
+      a.substring(open_tag_end + 1, close_tag_start) : a;
 }
 function compare_group_names(a, b) {
   var a_parsed = parse_anchor(
