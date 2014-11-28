@@ -65,18 +65,13 @@ class AnnotationsController < ApplicationController
           annotation_number: submission.annotations.count + 1
         })
       when 'pdf'
-        # x,y coordinates for annotations are stored as integers so we
-        # must convert them from their percentage floats to their
-        # integer representation
-        coordinate_precision = 10**5 # Keep five decimal places
-
         @annotation = PdfAnnotation.create(
           annotation_text_id: @text.id,
           submission_file_id: @submission_file_id,
-          x1: Float(params[:x1]) * coordinate_precision,
-          x2: Float(params[:x2]) * coordinate_precision,
-          y1: Float(params[:y1]) * coordinate_precision,
-          y2: Float(params[:y2]) * coordinate_precision,
+          x1: Integer(params[:x1]),
+          x2: Integer(params[:x2]),
+          y1: Integer(params[:y1]),
+          y2: Integer(params[:y2]),
           page: Integer(params[:page]),
           is_remark: is_remark,
           annotation_number: submission.annotations.count + 1

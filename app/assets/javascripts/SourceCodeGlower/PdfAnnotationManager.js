@@ -2,31 +2,26 @@
 (function(window) {
   'use strict';
 
-  function assert(exp, msg) {
-    if(!exp) {
-      console.error(msg);
-    }
-  }
-
-
-  var $ = jQuery;
+  var $ = jQuery;         // Rebind
   var MOUSE_OFFSET = 10;  // The offset from the moust cursor point
+
+  // CONSTANTS
+  var HIDE_BOX_THRESHOLD = 5;   // Threashold for not displaying selection box in pixels
+  var COORDINATE_PRECISION = 5; // Keep 5 decimal places (used when converting back from ints)
+  var COORDINATE_MULTIPLIER = Math.pow(10, COORDINATE_PRECISION);
 
   /**
    * Manager to load and display pdf annotations.
    *
    * @class
    *
-   * @param {string} pageParentId             The ID of the parent container of the pages.
+   * @param {string} pageParentId The ID of the parent container of the pages.
    */
   function PdfAnnotationManager(pageParentId) {
     var self = this;
 
-    // Constants
-    this.HIDE_BOX_THRESHOLD = 5;   // Threashold for not displaying selection box in pixels
-    this.COORDINATE_PRECISION = 5; // Keep 5 decimal places (used when converting back from ints)
-
     // Members
+    this.annotationTextManager = new AnnotationTextManager();
     this.pageParentId = pageParentId;
 
     /** @type {{page: int, $control: jQuery}} */
@@ -103,11 +98,6 @@
     if(params) {
       $.extend(this.currentSelection, params);
 
-      assert(this.currentSelection.x >= 0, "x < 0");
-      assert(this.currentSelection.y >= 0, "y < 0");
-      assert(this.currentSelection.width >= 0, "width < 0");
-      assert(this.currentSelection.height >= 0, "height < 0");
-
       var $selectionBox = this.getSelectionBox($page).$control;
 
       $selectionBox.css({
@@ -126,20 +116,21 @@
   };
 
   /**
-   * Return the current selection bounding rectangle if there is one.
+   * Return the current selection bounding rectangle if there is one, and
+   * converts the floating point percentages to integers.
    *
    * @return {{x1, y1, x2, y2}} Bounding box (points are in percentages)
    */
-  PdfAnnotationManager.prototype.selectionRectangle = function() {
+  PdfAnnotationManager.prototype.selectionRectangleAsInts = function() {
     if(!this.currentSelection.visible) {
       return null;
     }
 
     return {
-      x1: this.currentSelection.x,
-      y1: this.currentSelection.y,
-      x2: this.currentSelection.x + this.currentSelection.width,
-      y2: this.currentSelection.y + this.currentSelection.height,
+      x1: this.currentSelection.x * COORDINATE_MULTIPLIER,
+      y1: this.currentSelection.y * COORDINATE_MULTIPLIER,
+      x2: (this.currentSelection.x + this.currentSelection.width) * COORDINATE_MULTIPLIER,
+      y2: (this.currentSelection.y + this.currentSelection.height) * COORDINATE_MULTIPLIER,
       page: this.selectionBox.page
     }
   };
@@ -233,7 +224,7 @@
       var size = self.selectionBoxSize();
 
       // If the box is REALLY small then hide it
-      if(size.width < self.HIDE_BOX_THRESHOLD && size.height < self.HIDE_BOX_THRESHOLD) {
+      if(size.width < HIDE_BOX_THRESHOLD && size.height < HIDE_BOX_THRESHOLD) {
         self.setSelectionBox($(ev.delegateTarget), {
           visible: false
         });
@@ -253,16 +244,13 @@
   }
 
   /**
-   * Load annotations from the database for a specific file.
+   * Returns the annotation text manager.
    *
-   * @param  {number} fileId The ID of the file to load annotations for.
-   * @return {type[]}         The loaded annotations.
+   * @return {AnnotationTextManager} Return the annotation text manager.
    */
-  PdfAnnotationManager.prototype.load = function(fileId) {
-    // TODO: Call to server
-
-    return [];
-  };
+  PdfAnnotationManager.prototype.getAnnotationTextManager = function() {
+    return this.annotationTextManager;
+  }
 
   // Exports
   window.PdfAnnotationManager = PdfAnnotationManager;

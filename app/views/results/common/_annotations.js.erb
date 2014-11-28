@@ -16,11 +16,12 @@
     PDF: 2
   };
 
-  // Boolean to tell the code if an image or code is being shown
+  // Boolean to tell the code if an image, code, or pdf is being shown
   var annotation_type;
 
   function source_code_ready() {
-    annotation_manager = null;
+    annotation_type = ANNOTATION_TYPES.CODE;
+
     document.getElementById('select_file_id').disabled = false;
 
     syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
@@ -36,13 +37,11 @@
     var annotation_text_displayer = new AnnotationTextDisplayer();
 
     annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
-
-    annotation_type = ANNOTATION_TYPES.CODE;
   }
 
   // A version of source_code_ready for image files.
   function source_code_ready_for_image() {
-    annotation_manager = null;
+    annotation_type = ANNOTATION_TYPES.IMAGE;
 
     var image_event_handler       = new ImageEventHandler();
     var annotation_text_manager   = new AnnotationTextManager();
@@ -53,19 +52,17 @@
                                                  annotation_text_displayer);
 
     document.getElementById('select_file_id').disabled = false;
-
-    annotation_type = ANNOTATION_TYPES.IMAGE;
   }
 
   /**
    * Prepare annotation for pdf annotations.
    *
-   * @param  {PdfAnnotationManager} manager
+   * @param  {pdfViewerId} The ID of the PDF viewer.
    */
-  function source_code_ready_for_pdf(manager) {
+  function source_code_ready_for_pdf(pdfViewerId) {
     annotation_type = ANNOTATION_TYPES.PDF;
 
-    annotation_manager = manager;
+    annotation_manager = new PdfAnnotationManager(pdfViewerId);
   }
 
   function add_annotation_text(annotation_text_id, content) {
