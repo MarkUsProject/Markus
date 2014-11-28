@@ -254,7 +254,9 @@ module AutomatedTestsHelper
         repo_assignment_test_dir = File.join(repo_assignment_dir, 'test')
         FileUtils.mkdir(repo_assignment_test_dir)
         # Copy all non-private tests over
-        assignment.test_files.where(filetype: 'test', is_private: 'false').each do |file|
+        assignment.test_files
+                  .where(filetype: 'test', is_private: 'false')
+                  .each do |file|
           FileUtils.cp(File.join(assignment_test_dir, file.filename), repo_assignment_test_dir)
         end
       else

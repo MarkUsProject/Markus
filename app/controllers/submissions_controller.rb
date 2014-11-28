@@ -79,7 +79,7 @@ class SubmissionsController < ApplicationController
         proc: lambda { |params, to_include|
           params[:assignment].ta_memberships.where(user_id: params[:user_id])
                              .includes(grouping: to_include)
-                             .collect { |m| m.grouping }
+                             .map { |m| m.grouping }
         }
       },
       'unmarked' => {
@@ -87,7 +87,7 @@ class SubmissionsController < ApplicationController
         proc: lambda { |params, to_include|
            (params[:assignment].ta_memberships.where(user_id: params[:user_id])
                                .includes(grouping: to_include)
-                               .collect { |m| m.grouping }
+                               .map { |m| m.grouping }
            ).select { |g| !g.has_submission? || (g.has_submission? &&
                    g.current_submission_used.get_latest_result.marking_state ==
                        Result::MARKING_STATES[:unmarked]) }}
@@ -98,7 +98,7 @@ class SubmissionsController < ApplicationController
         proc: lambda { |params, to_include|
            (params[:assignment].ta_memberships.where(user_id: params[:user_id])
                                .includes(grouping: to_include)
-                               .collect{ |m| m.grouping }
+                               .map { |m| m.grouping }
            ).select{ |g| g.has_submission? &&
                g.current_submission_used.get_latest_result.marking_state ==
                    Result::MARKING_STATES[:partial]} }
@@ -109,7 +109,7 @@ class SubmissionsController < ApplicationController
         proc: lambda{ |params, to_include|
           (params[:assignment].ta_memberships.where(user_id: params[:user_id])
                               .includes(grouping: to_include)
-                              .collect{ |m| m.grouping }
+                              .map { |m| m.grouping }
           ).select{|g| g.has_submission? &&
               g.current_submission_used.get_latest_result.marking_state ==
                   Result::MARKING_STATES[:complete]} }
@@ -120,7 +120,7 @@ class SubmissionsController < ApplicationController
         proc: lambda{ |params, to_include|
           (params[:assignment].ta_memberships.where(user_id: params[:user_id])
                               .includes(grouping: to_include)
-                              .collect{ |m| m.grouping }
+                              .map { |m| m.grouping }
           ).select{|g| g.has_submission? &&
               g.current_submission_used.get_latest_result.released_to_students}}
       },
@@ -130,7 +130,8 @@ class SubmissionsController < ApplicationController
         proc: lambda { |params, to_include|
           params[:assignment].ta_memberships.where(user_id: params[:user_id])
                              .includes(grouping: to_include)
-                             .collect{ |m| m.grouping } }}
+                             .map { |m| m.grouping } }
+                    }
     },
 
     sorts: {
@@ -208,7 +209,8 @@ class SubmissionsController < ApplicationController
         proc: lambda { |params, to_include|
           params[:assignment].ta_memberships.where(user_id: params[:user_id])
                              .includes(grouping: to_include)
-                             .collect{ |m| m.grouping } }}
+                             .map { |m| m.grouping } }
+                    }
     },
     sorts: {
       'group_name' => lambda { |a,b|
