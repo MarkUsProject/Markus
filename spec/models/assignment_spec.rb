@@ -595,53 +595,77 @@ describe Assignment do
   end
 
   describe '#section_due_date' do
-    before :each do
-      @assignment = create(:assignment,
-                           due_date: 1.days.ago,
-                           section_due_dates_type: true)
-    end
-
-    context 'with no specified section' do
-      it 'returns the due date of the assignment' do
-        expect(@assignment.section_due_date(nil).day).to eq 1.days.ago.day
-      end
-    end
-
-    context 'with a specified section' do
+    context 'with SectionDueDates disabled' do
       before :each do
-        @section = create(:section)
+        @assignment = create(:assignment,
+                             due_date: Time.now,
+                             section_due_dates_type: false)
       end
 
-      context 'that does not have a SectionDueDate' do
+      context 'when no section is specified' do
         it 'returns the due date of the assignment' do
-          section_due_date = @assignment.section_due_date(@section)
-          expect(section_due_date.day).to eq 1.days.ago.day
+          expect(@assignment.section_due_date(nil)).to eq @assignment.due_date
         end
       end
 
-      context 'that has a SectionDueDate for another assignment' do
-        before :each do
-          SectionDueDate.create(section: @section,
-                                assignment: create(:assignment),
-                                due_date: 2.days.ago)
-        end
-
+      context 'when a section is specified' do
         it 'returns the due date of the assignment' do
-          section_due_date = @assignment.section_due_date(@section)
-          expect(section_due_date.day).to eq 1.days.ago.day
+          section = create(:section)
+          expect(@assignment.section_due_date(section))
+            .to eq @assignment.due_date
+        end
+      end
+    end
+
+    context 'with SectionDueDates enabled' do
+      before :each do
+        @assignment = create(:assignment,
+                             due_date: 1.days.ago,
+                             section_due_dates_type: true)
+      end
+
+      context 'when no section is specified' do
+        it 'returns the due date of the assignment' do
+          expect(@assignment.section_due_date(nil).day).to eq 1.days.ago.day
         end
       end
 
-      context 'that has a SectionDueDate for this assignment' do
+      context 'when a section is specified' do
         before :each do
-          SectionDueDate.create(section: @section,
-                                assignment: @assignment,
-                                due_date: 2.days.ago)
+          @section = create(:section)
         end
 
-        it 'returns the due date of the section' do
-          section_due_date = @assignment.section_due_date(@section)
-          expect(section_due_date.day).to eq 2.days.ago.day
+        context 'that does not have a SectionDueDate' do
+          it 'returns the due date of the assignment' do
+            section_due_date = @assignment.section_due_date(@section)
+            expect(section_due_date.day).to eq 1.days.ago.day
+          end
+        end
+
+        context 'that has a SectionDueDate for another assignment' do
+          before :each do
+            SectionDueDate.create(section: @section,
+                                  assignment: create(:assignment),
+                                  due_date: 2.days.ago)
+          end
+
+          it 'returns the due date of the assignment' do
+            section_due_date = @assignment.section_due_date(@section)
+            expect(section_due_date.day).to eq 1.days.ago.day
+          end
+        end
+
+        context 'that has a SectionDueDate for this assignment' do
+          before :each do
+            SectionDueDate.create(section: @section,
+                                  assignment: @assignment,
+                                  due_date: 2.days.ago)
+          end
+
+          it 'returns the due date of the section' do
+            section_due_date = @assignment.section_due_date(@section)
+            expect(section_due_date.day).to eq 2.days.ago.day
+          end
         end
       end
     end
