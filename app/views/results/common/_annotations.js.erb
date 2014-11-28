@@ -10,8 +10,14 @@
   var annotation_manager = null;
   var syntax_highlighter_adapter = null;
 
+  var ANNOTATION_TYPES = {
+    CODE: 0,
+    IMAGE: 1,
+    PDF: 2
+  };
+
   // Boolean to tell the code if an image or code is being shown
-  var is_image;
+  var annotation_type;
 
   function source_code_ready() {
     annotation_manager = null;
@@ -31,7 +37,7 @@
 
     annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
 
-    is_image = false;
+    annotation_type = ANNOTATION_TYPES.CODE;
   }
 
   // A version of source_code_ready for image files.
@@ -48,7 +54,11 @@
 
     document.getElementById('select_file_id').disabled = false;
 
-    is_image = true;
+    annotation_type = ANNOTATION_TYPES.IMAGE;
+  }
+
+  function source_code_ready_for_pdf() {
+    annotation_type = ANNOTATION_TYPES.PDF;
   }
 
   function add_annotation_text(annotation_text_id, content) {
@@ -158,8 +168,10 @@
   function make_new_annotation() {
     // Check if image is shown, and call the appropriate function if so
     // Set global variable 'positions' to current mouse positions
-    if (!is_image) {
+    if (annotation_type === ANNOTATION_TYPES.CODE) {
       positions = get_mouse_positions();
+    } else if(annotation_type === ANNOTATION_TYPES.PDF) {
+      return make_new_pdf_annotation();
     } else {
       return make_new_image_annotation();
     }
@@ -177,6 +189,17 @@
     return false;
   }
 
+  function make_new_pdf_annotation () {
+    var box = get_selection_box();
+    if (!box) { return; }
+
+    // Open the modal dialog to ask for new Annotation details
+    modal.open();
+
+    // Manually reset the modal dialog values
+    set_dialog_values('', '', box.x1, box.x2, box.y1, box.y2);
+  }
+
   function make_new_image_annotation() {
     var box = get_selection_box();
     if (!box) { return; }
@@ -191,7 +214,7 @@
   // Takes the ID of an existing annotation (from the database), adds the new
   // annotation link to the currently selected text, then highlights the lines.
   function add_existing_annotation(annotation_text_id) {
-    if (is_image) {
+    if (annotation_type === ANNOTATION_TYPES.IMAGE) {
       var box = get_selection_box();
       if (!box) { return; }
 

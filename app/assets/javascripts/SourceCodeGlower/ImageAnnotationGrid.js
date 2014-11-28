@@ -50,7 +50,7 @@ ImageAnnotationGrid.prototype.process_grid = function() {
 
 ImageAnnotationGrid.prototype.draw_holders = function() {
   var annot_grid = this.get_annotation_grid();
-  var holder, annot_text_id, horiz_range, vert_range, holder_width,
+  var holder, annot_text_id, horiz_range, vert_range, hlder_width,
       holder_height, holder_left, holder_top;
 
   // Edges of the image
@@ -149,6 +149,7 @@ ImageAnnotationGrid.prototype.share_grid_with_event_handler = function() {
 // annots_to_display is an array of annotation text ids, and x and y are the
 // coordinates relative to the page where the display box should pop up.
 ImageAnnotationGrid.prototype.display_image_annotation = function(annots_to_display, x, y) {
+  debugger;
   var collection = [];
   for (var i = 0; i < annots_to_display.length; i++) {
     collection.push(this.getAnnotationTextManager().getAnnotationText(annots_to_display[i]));
