@@ -165,14 +165,12 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  # return the due date for a section
   def section_due_date(section)
-    if self.section_due_dates_type
-      unless section.nil?
-        return SectionDueDate.due_date_for(section, self)
-      end
+    unless self.section_due_dates_type && section
+      return self.due_date
     end
-    self.due_date
+
+    SectionDueDate.due_date_for(section, self)
   end
 
   # Calculate the latest due date. Used to calculate the collection time
