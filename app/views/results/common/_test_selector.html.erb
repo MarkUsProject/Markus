@@ -31,11 +31,11 @@
   <span id="tests_complete" style="display:none;">
     <% if test_result_files.where(user_id: @current_user.id).last %>
       <% if test_result_files.find_last_by_user_id(@current_user.id).status == 'success' %>
-        <%= I18n.t("test_result.build_successful", {logfile: test_result_files.find_last_by_user_id(@current_user.id).filename}) %>
+        <%= I18n.t("test_result.build_successful", {logfile: test_result_files.where(user_id: @current_user.id).last.filename}) %>
       <% elsif test_result_files.find_last_by_user_id(@current_user.id).status == 'failed' %>
-        <%= I18n.t("test_result.build_failed", {logfile: test_result_files.find_last_by_user_id(@current_user.id).filename}) %>
+        <%= I18n.t("test_result.build_failed", {logfile: test_result_files.where(user_id: @current_user.id).last.filename}) %>
       <% else %>
-        <%= I18n.t("test_result.build_error", {logfile: test_result_files.find_last_by_user_id(@current_user.id).filename}) %>
+        <%= I18n.t("test_result.build_error", {logfile: test_result_files.where(user_id: @current_user.id).last.filename}) %>
       <% end %>
     <% end %>
   </span>

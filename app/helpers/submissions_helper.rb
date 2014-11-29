@@ -206,7 +206,7 @@ module SubmissionsHelper
       end
 
       # Collect and count submissions for all groupings of this section
-      groupings = Grouping.find_all_by_assignment_id(assignment.id)
+      groupings = Grouping.where(assignment_id: assignment.id)
       submission_collector = SubmissionCollector.instance
       groupings.each do |grouping|
         if grouping.section == section.name
