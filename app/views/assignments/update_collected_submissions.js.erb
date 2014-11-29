@@ -5,8 +5,8 @@
                               count: assignment.groupings
                                                .where(is_collected: true).size,
                               size: assignment.groupings.size),
-                              controller: :submissions,
-                              action: :browse,
-                              assignment_id: assignment.id) %>")
+                           controller: :submissions,
+                           action: :browse,
+                           assignment_id: assignment.id) %>")
   <% end %>
 <% end %>
