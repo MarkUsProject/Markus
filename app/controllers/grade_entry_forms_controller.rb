@@ -33,7 +33,7 @@ class GradeEntryFormsController < ApplicationController
                               else
                                 #Display only students to which the TA has been assigned
                                 conditions = {hidden: false, id:
-                                    Ta.find(user.id).grade_entry_students.all(select: :user_id).collect(&:user_id)}
+                                    Ta.find(user.id).grade_entry_students.select(:user_id).collect(&:user_id)}
                               end
 
                               if sort_by.present?

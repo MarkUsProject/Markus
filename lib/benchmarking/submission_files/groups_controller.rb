@@ -120,9 +120,8 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-        if Grouping.all(conditions: ["assignment_id =
-        :assignment_id and group_id = :groupexist_id", {groupexist_id:
-        groupexist_id, assignment_id: @assignment.id}])
+        if Grouping.where(assignment_id: @assignment.id,
+                          group_id: groupexist_id)
            flash[:fail_notice] = 'This name is already used for this
            assignement'
         else
@@ -150,7 +149,7 @@ class GroupsController < ApplicationController
   end
 
   def manage
-    @all_assignments = Assignment.all(order: :id)
+    @all_assignments = Assignment.order(:id)
     @assignment = Assignment.find(params[:id], include: [{groupings: [{student_memberships: :user, ta_memberships: :user}, :group]}])
     @groupings = @assignment.groupings
     # Returns a hash where s.id is the key, and student record is the value
@@ -228,7 +227,7 @@ class GroupsController < ApplicationController
        groupings.each do |grouping|
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc
-         grouping.memberships.all(include: :user).each do |member|
+         grouping.memberships.includes(:user).each do |member|
             group_array.push(member.user.user_name);
          end
          csv << group_array
