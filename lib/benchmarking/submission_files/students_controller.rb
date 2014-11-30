@@ -58,9 +58,9 @@ class StudentsController < ApplicationController
   def filter
   case params[:filter]
     when 'hidden'
-       @students = Student.where(hidden: true).order(:user_name)
+      @students = Student.where(hidden: true).order(:user_name)
     when 'visible'
-       @students = Student.where(hidden: false).order(:user_name)
+      @students = Student.where(hidden: false).order(:user_name)
     else
       @students = Student.order(:user_name)
     end

@@ -120,15 +120,15 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-        if Grouping.where(assignment_id: @assignment.id,
-                          group_id: groupexist_id)
-           flash[:fail_notice] = 'This name is already used for this
-           assignement'
-        else
-          @grouping.update_attribute(:group_id, groupexist_id)
-          flash[:edit_notice] = 'Group name has been changed'
-        end
-     end
+      if Grouping.where(assignment_id: @assignment.id,
+                        group_id: groupexist_id)
+         flash[:fail_notice] = 'This name is already used for this
+         assignement'
+      else
+        @grouping.update_attribute(:group_id, groupexist_id)
+        flash[:edit_notice] = 'Group name has been changed'
+      end
+    end
   end
 
   def valid_grouping

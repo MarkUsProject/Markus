@@ -177,34 +177,40 @@ class SubmissionsController < ApplicationController
       'none' => {
         display: I18n.t('browse_submissions.show_all'),
         proc: lambda { |params, to_include|
-          params[:assignment].groupings.includes(to_include)}},
+          params[:assignment].groupings.includes(to_include) }
+      },
       'unmarked' => {
         display: I18n.t('browse_submissions.show_unmarked'),
         proc: lambda { |params, to_include|
-          params[:assignment].groupings.includes([to_include]).
-              select{|g| !g.has_submission? || (g.has_submission? &&
-              g.current_submission_used.get_latest_result.marking_state ==
-                  Result::MARKING_STATES[:unmarked]) } }},
+          params[:assignment].groupings.includes([to_include])
+                             .select{|g| !g.has_submission? ||
+                                     (g.has_submission? &&
+                                      g.current_submission_used
+                                      .get_latest_result.marking_state ==
+                                      Result::MARKING_STATES[:unmarked]) } }},
       'partial' => {
         display: I18n.t('browse_submissions.show_partial'),
         proc: lambda { |params, to_include|
-          params[:assignment].groupings.includes([to_include]).
-              select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.marking_state ==
-                  Result::MARKING_STATES[:partial] } }},
+          params[:assignment].groupings.includes([to_include])
+                             .select{|g| g.has_submission? &&
+                                     g.current_submission_used
+                                     .get_latest_result.marking_state ==
+                                     Result::MARKING_STATES[:partial] } }},
       'complete' => {
         display: I18n.t('browse_submissions.show_complete'),
         proc: lambda { |params, to_include|
-          params[:assignment].groupings.includes([to_include]).
-              select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.marking_state ==
-                  Result::MARKING_STATES[:complete] } }},
+          params[:assignment].groupings.includes([to_include])
+                             .select{|g| g.has_submission? &&
+                                     g.current_submission_used
+                                     .get_latest_result.marking_state ==
+                                     Result::MARKING_STATES[:complete] } }},
       'released' => {
         display: I18n.t('browse_submissions.show_released'),
         proc: lambda { |params, to_include|
-          params[:assignment].groupings.includes([to_include]).
-              select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.released_to_students}}},
+          params[:assignment].groupings.includes([to_include])
+                             .select{|g| g.has_submission? &&
+                             g.current_submission_used
+                              .get_latest_result.released_to_students}}},
       'assigned' => {
         display: I18n.t('browse_submissions.show_assigned_to_me'),
         proc: lambda { |params, to_include|
