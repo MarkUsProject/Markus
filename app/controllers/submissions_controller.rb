@@ -189,7 +189,7 @@ class SubmissionsController < ApplicationController
                                        g.current_submission_used
                                        .get_latest_result.marking_state ==
                                        Result::MARKING_STATES[:unmarked])
-                              }
+                             }
         }
       },
       'partial' => {
@@ -200,7 +200,7 @@ class SubmissionsController < ApplicationController
                                       g.current_submission_used
                                       .get_latest_result.marking_state ==
                                       Result::MARKING_STATES[:partial]
-                              }
+                             }
         }
       },
       'complete' => {
@@ -211,7 +211,7 @@ class SubmissionsController < ApplicationController
                                       g.current_submission_used
                                       .get_latest_result.marking_state ==
                                       Result::MARKING_STATES[:complete]
-                              }
+                             }
         }
       },
       'released' => {
@@ -221,7 +221,7 @@ class SubmissionsController < ApplicationController
                              .select{ |g| g.has_submission? &&
                                       g.current_submission_used
                                       .get_latest_result.released_to_students
-                              }
+                             }
         }
       },
       'assigned' => {
