@@ -189,7 +189,7 @@ class SubmissionsController < ApplicationController
                                              g.current_submission_used
                                              .get_latest_result.marking_state ==
                                              Result::MARKING_STATES[:unmarked])
-                                    end
+                                   end
               end
       },
       'partial' => {
@@ -200,7 +200,7 @@ class SubmissionsController < ApplicationController
                                             g.current_submission_used
                                             .get_latest_result.marking_state ==
                                             Result::MARKING_STATES[:partial]
-                                    end
+                                   end
               end
       },
       'complete' => {
@@ -211,7 +211,7 @@ class SubmissionsController < ApplicationController
                                             g.current_submission_used
                                             .get_latest_result.marking_state ==
                                             Result::MARKING_STATES[:complete]
-                                    end
+                                   end
               end
       },
       'released' => {
@@ -220,8 +220,9 @@ class SubmissionsController < ApplicationController
                 params[:assignment].groupings.includes([to_include])
                                    .select do |g| g.has_submission? &&
                                             g.current_submission_used
-                                            .get_latest_result.released_to_students
-                                    end
+                                            .get_latest_result
+                                            .released_to_students
+                                   end
               end
       },
       'assigned' => {
