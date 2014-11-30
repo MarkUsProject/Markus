@@ -122,8 +122,7 @@ class GroupsController < ApplicationController
 
       if Grouping.where(assignment_id: @assignment.id,
                         group_id: groupexist_id)
-         flash[:fail_notice] = 'This name is already used for this
-         assignement'
+        flash[:fail_notice] = 'This name is already used for this assignement'
       else
         @grouping.update_attribute(:group_id, groupexist_id)
         flash[:edit_notice] = 'Group name has been changed'
