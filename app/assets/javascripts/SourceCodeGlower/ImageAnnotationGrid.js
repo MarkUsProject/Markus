@@ -50,7 +50,7 @@ ImageAnnotationGrid.prototype.process_grid = function() {
 
 ImageAnnotationGrid.prototype.draw_holders = function() {
   var annot_grid = this.get_annotation_grid();
-  var holder, annot_text_id, horiz_range, vert_range, hlder_width,
+  var holder, annot_text_id, horiz_range, vert_range, holder_width,
       holder_height, holder_left, holder_top;
 
   // Edges of the image
