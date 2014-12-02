@@ -271,6 +271,19 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  def self.get_current_assignment
+    # start showing (or "featuring") the assignment 3 days before it's due
+    # query uses Date.today + 4 because results from db seems to be off by 1
+    current_assignment = Assignment.where('due_date <= ?', Date.today + 4)
+                                   .reorder('due_date DESC').first
+
+    if current_assignment.nil?
+      current_assignment = Assignment.reorder('due_date ASC').first
+    end
+
+    current_assignment
+  end
+
   def update_remark_request_count
     outstanding_count = 0
     groupings.each do |grouping|
