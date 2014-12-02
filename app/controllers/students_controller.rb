@@ -37,7 +37,7 @@ class StudentsController < ApplicationController
       redirect_to action: 'index'
     else
       flash[:error] = I18n.t('students.update.error')
-      @sections = Section.all(order: 'name')
+      @sections = Section.order(:name)
       render :edit
     end
   end
@@ -96,7 +96,7 @@ class StudentsController < ApplicationController
   #downloads users with the given role as a csv list
   def download_student_list
     #find all the users
-    students = Student.all(order: 'user_name')
+    students = Student.order(:user_name)
     case params[:format]
     when 'csv'
       output = User.generate_csv_list(students)

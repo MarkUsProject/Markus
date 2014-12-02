@@ -168,7 +168,7 @@ class SubmissionsController < ApplicationController
   end
 
   def index
-    @assignments = Assignment.all(order: :id)
+    @assignments = Assignment.order(:id)
     render :index, layout: 'sidebar'
   end
 

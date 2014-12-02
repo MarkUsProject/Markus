@@ -5,7 +5,7 @@ namespace :markus do
     # Start collecting data
     #
     # Get all assignments with no web submissions allowed
-    assignments = Assignment.all(conditions: {allow_web_submits: false})
+    assignments = Assignment.where(allow_web_submits: false)
     assignments.each do |assignment|
       # Get valid/admin approved groupings
       valid_groupings = assignment.valid_groupings
