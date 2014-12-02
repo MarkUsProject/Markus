@@ -154,25 +154,25 @@ class Assignment < ActiveRecord::Base
     sections_past
   end
 
-  # Are we past the due date for this assignment, for this grouping ?
+  # Whether or not this grouping is past its due date for this assignment.
   def section_past_due_date?(grouping)
-    if self.section_due_dates_type and !grouping.inviter.section.nil?
-        section_due_date =
-    SectionDueDate.due_date_for(grouping.inviter.section, self)
-        !section_due_date.nil? && Time.zone.now > section_due_date
+    if section_due_dates_type && grouping &&
+      grouping.inviter.section.present?
+
+      section_due_date =
+        SectionDueDate.due_date_for(grouping.inviter.section, self)
+      !section_due_date.nil? && Time.zone.now > section_due_date
     else
-      self.past_due_date?
+      past_due_date?
     end
   end
 
-  # return the due date for a section
   def section_due_date(section)
-    if self.section_due_dates_type
-      unless section.nil?
-        return SectionDueDate.due_date_for(section, self)
-      end
+    unless section_due_dates_type && section
+      return due_date
     end
-    self.due_date
+
+    SectionDueDate.due_date_for(section, self)
   end
 
   # Calculate the latest due date. Used to calculate the collection time
@@ -198,33 +198,9 @@ class Assignment < ActiveRecord::Base
     !remark_due_date.nil? && Time.zone.now > remark_due_date
   end
 
-  # Returns a Submission instance for this user depending on whether this
-  # assignment is a group or individual assignment
-  def submission_by(user) #FIXME: needs schema updates
-
-    # submission owner is either an individual (user) or a group
-    owner = self.group_assignment? ? self.group_by(user.id) : user
-    return unless owner
-
-    # create a new submission for the owner
-    # linked to this assignment, if it doesn't exist yet
-
-    # submission = owner.submissions.find_or_initialize_by_assignment_id(id)
-    # submission.save if submission.new_record?
-    # return submission
-
-    assignment_groupings = user.active_groupings.delete_if do |grouping|
-      grouping.assignment.id != id
-    end
-
-    unless assignment_groupings.empty?
-      assignment_groupings.first.submissions.first
-    end
-  end
-
   # Return true if this is a group assignment; false otherwise
   def group_assignment?
-    invalid_override || group_min != 1 || group_max > 1
+    invalid_override || group_max > 1
   end
 
   # Returns the group by the user for this assignment. If pending=true,
@@ -242,13 +218,6 @@ class Assignment < ActiveRecord::Base
 
     #FIXME: needs to be rewritten using a proper query...
     User.find(uid).accepted_grouping_for(id)
-  end
-
-  # Make a list of students without any groupings
-  def no_grouping_students_list
-    Student.where(hidden: false)
-           .order(:last_name)
-           .reject { |s| s.has_accepted_grouping_for?(id) }
   end
 
   def display_for_note
@@ -343,22 +312,16 @@ class Assignment < ActiveRecord::Base
       group.save
     else
       return if new_group_name.nil?
-      if Group.where(group_name: new_group_name).first
-        group = Group.where(group_name: new_group_name).first
+      if group = Group.where(group_name: new_group_name).first
         unless groupings.where(group_id: group.id).first.nil?
           raise "Group #{new_group_name} already exists"
         end
       else
-        group = Group.new
-        group.group_name = new_group_name
-        group.save
+        group = Group.create(group_name: new_group_name)
       end
     end
-    grouping = Grouping.new
-    grouping.group = group
-    grouping.assignment = self
-    grouping.save
-    grouping
+
+    Grouping.create(group: group, assignment: self)
   end
 
 
@@ -425,6 +388,8 @@ class Assignment < ActiveRecord::Base
   def add_csv_group(row)
     return if row.length.zero?
 
+    row.map! { |item| item.strip }
+
     # Note: We cannot use find_or_create_by here, because it has its own
     # save semantics. We need to set and save attributes in a very particular
     # order, so that everything works the way we want it to.
@@ -445,14 +410,14 @@ class Assignment < ActiveRecord::Base
         group.repo_name = row[0]
       else
         # Student name does not exist, use provided repo_name
-        group.repo_name = row[1].strip # remove whitespace
+        group.repo_name = row[1]
       end
     end
 
     # If we are not repository admin, set the repository name as provided
     # in the csv upload file
     unless group.repository_admin?
-      group.repo_name = row[1].strip # remove whitespace
+      group.repo_name = row[1]
     end
     # Note: after_create hook build_repository might raise
     # Repository::RepositoryCollision. If it does, it adds the colliding
@@ -476,7 +441,7 @@ class Assignment < ActiveRecord::Base
     # Form groups
     start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
     (start_index_group_members..(row.length - 1)).each do |i|
-      student = Student.where(user_name: row[i].strip) # remove whitespace
+      student = Student.where(user_name: row[i])
                        .first
       if student
         if grouping.student_membership_number == 0
@@ -716,8 +681,10 @@ class Assignment < ActiveRecord::Base
   def criterion_class
     if marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
       FlexibleCriterion
-    else
+    elsif marking_scheme_type == MARKING_SCHEME_TYPE[:rubric]
       RubricCriterion
+    else
+      nil
     end
   end
 
@@ -779,7 +746,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns all the submissions that have been graded (completed)
-  def graded_submissions
+  def graded_submission_results
     results = []
     groupings.each do |grouping|
       if grouping.marking_completed?
