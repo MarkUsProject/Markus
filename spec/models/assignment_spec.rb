@@ -2,49 +2,78 @@ require 'spec_helper'
 
 describe Assignment do
 
-  # Associations
-  it { is_expected.to have_many(:rubric_criteria).dependent(:destroy).order(:position) }
-  it { is_expected.to have_many(:flexible_criteria).dependent(:destroy).order(:position) }
-  it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
-  it { is_expected.to accept_nested_attributes_for(:assignment_files).allow_destroy(true) }
-  it { is_expected.to have_many(:test_files).dependent(:destroy) }
-  it { is_expected.to accept_nested_attributes_for(:test_files).allow_destroy(true) }
-  it { is_expected.to have_many(:criterion_ta_associations).dependent(:destroy) }
-  it { is_expected.to have_one(:submission_rule).dependent(:destroy) }
-  it { is_expected.to accept_nested_attributes_for(:submission_rule).allow_destroy(true) }
-  it { is_expected.to validate_presence_of(:submission_rule) }
-  it { is_expected.to have_many(:annotation_categories).dependent(:destroy) }
-  it { is_expected.to have_many(:groupings) }
-  it { is_expected.to have_many(:ta_memberships).through(:groupings) }
-  it { is_expected.to have_many(:student_memberships).through(:groupings) }
-  it { is_expected.to have_many(:tokens).through(:groupings) }
-  it { is_expected.to have_many(:submissions).through(:groupings) }
-  it { is_expected.to have_many(:groups).through(:groupings) }
-  it { is_expected.to have_many(:notes).dependent(:destroy) }
-  it { is_expected.to have_many(:section_due_dates) }
-  it { is_expected.to accept_nested_attributes_for(:section_due_dates) }
-  it { is_expected.to have_one(:assignment_stat).dependent(:destroy) }
-  it { is_expected.to accept_nested_attributes_for(:assignment_stat).allow_destroy(true) }
+  describe 'ActiveRecord associations' do
+    it { is_expected.to have_one(:submission_rule).dependent(:destroy) }
+    it { is_expected.to validate_presence_of(:submission_rule) }
+    it { is_expected.to have_many(:annotation_categories).dependent(:destroy) }
+    it { is_expected.to have_many(:groupings) }
+    it { is_expected.to have_many(:ta_memberships).through(:groupings) }
+    it { is_expected.to have_many(:student_memberships).through(:groupings) }
+    it { is_expected.to have_many(:tokens).through(:groupings) }
+    it { is_expected.to have_many(:submissions).through(:groupings) }
+    it { is_expected.to have_many(:groups).through(:groupings) }
+    it { is_expected.to have_many(:notes).dependent(:destroy) }
+    it { is_expected.to have_many(:section_due_dates) }
+    it { is_expected.to accept_nested_attributes_for(:section_due_dates) }
+    it { is_expected.to have_one(:assignment_stat).dependent(:destroy) }
+    it do
+      is_expected.to have_many(:rubric_criteria).dependent(:destroy)
+        .order(:position)
+    end
+    it do
+      is_expected.to have_many(:flexible_criteria).dependent(:destroy)
+        .order(:position)
+    end
+    it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
+    it do
+      is_expected.to accept_nested_attributes_for(:assignment_files)
+        .allow_destroy(true)
+    end
+    it { is_expected.to have_many(:test_files).dependent(:destroy) }
+    it do
+      is_expected.to accept_nested_attributes_for(:test_files)
+        .allow_destroy(true)
+    end
+    it do
+      is_expected.to have_many(:criterion_ta_associations).dependent(:destroy)
+    end
+    it do
+      is_expected.to accept_nested_attributes_for(:submission_rule)
+        .allow_destroy(true)
+    end
+    it do
+      is_expected.to accept_nested_attributes_for(:assignment_stat)
+        .allow_destroy(true)
+    end
+  end
 
-  # Attributes
-  it { is_expected.to validate_presence_of(:short_identifier) }
-  it { is_expected.to validate_presence_of(:description) }
-  it { is_expected.to validate_presence_of(:repository_folder) }
-  it { is_expected.to validate_presence_of(:due_date) }
-  it { is_expected.to validate_presence_of(:marking_scheme_type) }
-  it { is_expected.to validate_presence_of(:group_min) }
-  it { is_expected.to validate_presence_of(:group_max) }
-  it { is_expected.to validate_presence_of(:notes_count) }
+  describe 'ActiveModel validations' do
+    it { is_expected.to validate_presence_of(:short_identifier) }
+    it { is_expected.to validate_presence_of(:description) }
+    it { is_expected.to validate_presence_of(:repository_folder) }
+    it { is_expected.to validate_presence_of(:due_date) }
+    it { is_expected.to validate_presence_of(:marking_scheme_type) }
+    it { is_expected.to validate_presence_of(:group_min) }
+    it { is_expected.to validate_presence_of(:group_max) }
+    it { is_expected.to validate_presence_of(:notes_count) }
+    it do
+      is_expected.to validate_numericality_of(:group_min).is_greater_than(0)
+    end
+    it do
+      is_expected.to validate_numericality_of(:group_max).is_greater_than(0)
+    end
+    it do
+      is_expected.to validate_numericality_of(:tokens_per_day)
+        .is_greater_than_or_equal_to(0)
+    end
 
-  it { is_expected.to validate_numericality_of(:group_min).is_greater_than(0) }
-  it { is_expected.to validate_numericality_of(:group_max).is_greater_than(0) }
-  it { is_expected.to validate_numericality_of(:tokens_per_day).is_greater_than_or_equal_to(0) }
+    it 'should require case sensitive unique value for short_identifier' do
+      assignment = create(:assignment)
+      expect(assignment).to validate_uniqueness_of(:short_identifier)
+    end
+  end
 
-  describe 'validation' do
-    subject { create(:assignment) }
-
-    it { is_expected.to validate_uniqueness_of(:short_identifier) }
-
+  describe 'custom validations' do
     it 'fails when group_max less than group_min' do
       assignment = build(:assignment, group_max: 1, group_min: 2)
       expect(assignment).not_to be_valid
@@ -69,7 +98,7 @@ describe Assignment do
 
     context 'when no TAs have been assigned' do
       it 'returns an empty array' do
-        expect(@assignment.tas).to eq([])
+        expect(@assignment.tas).to eq []
       end
     end
 
@@ -82,7 +111,7 @@ describe Assignment do
 
       describe 'one TA' do
         it 'returns the TA' do
-          expect(@assignment.tas).to eq([@ta])
+          expect(@assignment.tas).to eq [@ta]
         end
       end
 
@@ -94,7 +123,7 @@ describe Assignment do
         end
 
         it 'returns all TAs' do
-          expect(@assignment.tas).to eq([@ta, @other_ta])
+          expect(@assignment.tas).to eq [@ta, @other_ta]
         end
       end
     end
@@ -137,7 +166,7 @@ describe Assignment do
       let(:assignment) { build(:assignment, invalid_override: true) }
 
       it 'returns true' do
-        expect(assignment.group_assignment?).to be
+        expect(assignment.group_assignment?).to be true
       end
     end
 
@@ -148,7 +177,7 @@ describe Assignment do
         end
 
         it 'returns true' do
-          expect(assignment.group_assignment?).to be
+          expect(assignment.group_assignment?).to be true
         end
       end
 
@@ -158,7 +187,7 @@ describe Assignment do
         end
 
         it 'returns false' do
-          expect(assignment.group_assignment?).not_to be
+          expect(assignment.group_assignment?).to be false
         end
       end
     end
@@ -231,7 +260,7 @@ describe Assignment do
 
     context 'when no groups are valid' do
       it '#valid_groupings returns an empty array' do
-        expect(@assignment.valid_groupings).to eq([])
+        expect(@assignment.valid_groupings).to eq []
       end
 
       it '#invalid_groupings returns all groupings' do
@@ -246,7 +275,7 @@ describe Assignment do
         end
 
         it '#valid_groupings returns the valid group' do
-          expect(@assignment.valid_groupings).to eq([@groupings.first])
+          expect(@assignment.valid_groupings).to eq [@groupings.first]
         end
 
         it '#invalid_groupings returns other, invalid groups' do
@@ -263,7 +292,7 @@ describe Assignment do
         end
 
         it '#valid_groupings returns the valid group' do
-          expect(@assignment.valid_groupings).to eq([@groupings.first])
+          expect(@assignment.valid_groupings).to eq [@groupings.first]
         end
 
         it '#invalid_groupings returns other, invalid groups' do
@@ -287,7 +316,7 @@ describe Assignment do
       end
 
       it '#invalid_groupings returns an empty array' do
-        expect(@assignment.invalid_groupings).to eq([])
+        expect(@assignment.invalid_groupings).to eq []
       end
     end
   end
@@ -300,7 +329,7 @@ describe Assignment do
 
     context 'when no students are grouped' do
       it 'returns an empty array' do
-        expect(@assignment.grouped_students).to eq([])
+        expect(@assignment.grouped_students).to eq []
       end
     end
 
@@ -314,7 +343,7 @@ describe Assignment do
 
       describe 'one student' do
         it 'returns the student' do
-          expect(@assignment.grouped_students).to eq([@student])
+          expect(@assignment.grouped_students).to eq [@student]
         end
       end
 
@@ -327,7 +356,7 @@ describe Assignment do
         end
 
         it 'returns the students' do
-          expect(@assignment.grouped_students).to eq([@student, @other_student])
+          expect(@assignment.grouped_students).to eq [@student, @other_student]
         end
       end
     end
@@ -356,7 +385,7 @@ describe Assignment do
       end
 
       it 'returns an empty array' do
-        expect(@assignment.ungrouped_students).to eq([])
+        expect(@assignment.ungrouped_students).to eq []
       end
     end
   end
@@ -368,8 +397,8 @@ describe Assignment do
 
     context 'when there are no groupings' do
       it '#assigned_groupings and #unassigned_groupings returns no groupings' do
-        expect(@assignment.assigned_groupings).to eq([])
-        expect(@assignment.unassigned_groupings).to eq([])
+        expect(@assignment.assigned_groupings).to eq []
+        expect(@assignment.unassigned_groupings).to eq []
       end
     end
 
@@ -380,7 +409,7 @@ describe Assignment do
 
       context 'and no TAs have been assigned' do
         it '#assigned_groupings returns no groupings' do
-          expect(@assignment.assigned_groupings).to eq([])
+          expect(@assignment.assigned_groupings).to eq []
         end
 
         it '#unassigned_groupings returns all groupings' do
@@ -396,7 +425,7 @@ describe Assignment do
         end
 
         it '#assigned_groupings returns that grouping' do
-          expect(@assignment.assigned_groupings).to eq([@groupings.first])
+          expect(@assignment.assigned_groupings).to eq [@groupings.first]
         end
 
         it '#unassigned_groupings returns the other groupings' do
@@ -417,7 +446,7 @@ describe Assignment do
         end
 
         it '#unassigned_groupings returns no groupings' do
-          expect(@assignment.unassigned_groupings).to eq([])
+          expect(@assignment.unassigned_groupings).to eq []
         end
       end
     end
@@ -428,7 +457,7 @@ describe Assignment do
       let(:assignment) { build(:assignment, remark_due_date: 1.days.from_now) }
 
       it 'returns false' do
-        expect(assignment.past_remark_due_date?).not_to be
+        expect(assignment.past_remark_due_date?).to be false
       end
     end
 
@@ -436,7 +465,7 @@ describe Assignment do
       let(:assignment) { build(:assignment, remark_due_date: 1.days.ago) }
 
       it 'returns true' do
-        expect(assignment.past_remark_due_date?).to be
+        expect(assignment.past_remark_due_date?).to be true
       end
     end
   end
@@ -448,7 +477,7 @@ describe Assignment do
 
     context 'when no groups have made a submission' do
       it 'returns an empty array' do
-        expect(@assignment.groups_submitted).to eq([])
+        expect(@assignment.groups_submitted).to eq []
       end
     end
 
@@ -463,7 +492,7 @@ describe Assignment do
         end
 
         it 'returns the group' do
-          expect(@assignment.groups_submitted).to eq([@grouping])
+          expect(@assignment.groups_submitted).to eq [@grouping]
         end
       end
 
@@ -474,7 +503,7 @@ describe Assignment do
         end
 
         it 'returns one instance of the group' do
-          expect(@assignment.groups_submitted).to eq([@grouping])
+          expect(@assignment.groups_submitted).to eq [@grouping]
         end
       end
     end
@@ -505,7 +534,7 @@ describe Assignment do
 
     context 'when no submissions have been graded' do
       it 'returns an empty array' do
-        expect(@assignment.graded_submission_results.size).to eq(0)
+        expect(@assignment.graded_submission_results.size).to eq 0
       end
     end
 
@@ -518,7 +547,7 @@ describe Assignment do
 
       describe 'one submission' do
         it 'returns the result' do
-          expect(@assignment.graded_submission_results).to eq([@result])
+          expect(@assignment.graded_submission_results).to eq [@result]
         end
       end
 
@@ -531,7 +560,7 @@ describe Assignment do
 
         it 'returns all of the results' do
           expect(@assignment.graded_submission_results)
-            .to eq([@result, @other_result])
+            .to eq [@result, @other_result]
         end
       end
     end
@@ -544,8 +573,8 @@ describe Assignment do
 
     context 'when the row is empty' do
       it 'does not add a Group or Grouping' do
-        expect(Group.all).to eq([])
-        expect(Grouping.all).to eq([])
+        expect(Group.all).to eq []
+        expect(Grouping.all).to eq []
       end
     end
 
@@ -586,7 +615,371 @@ describe Assignment do
 
         it 'adds a Grouping to the existing Group' do
           @assignment.add_csv_group(@row)
-          expect(Grouping.first.group).to eq(@existing_group)
+          expect(Grouping.first.group).to eq @existing_group
+        end
+      end
+    end
+  end
+
+  describe '#section_due_date' do
+    context 'with SectionDueDates disabled' do
+      before :each do
+        @assignment = create(:assignment,
+                             due_date: Time.now,
+                             section_due_dates_type: false)
+      end
+
+      context 'when no section is specified' do
+        it 'returns the due date of the assignment' do
+          expect(@assignment.section_due_date(nil)).to eq @assignment.due_date
+        end
+      end
+
+      context 'when a section is specified' do
+        it 'returns the due date of the assignment' do
+          section = create(:section)
+          expect(@assignment.section_due_date(section))
+            .to eq @assignment.due_date
+        end
+      end
+    end
+
+    context 'with SectionDueDates enabled' do
+      before :each do
+        @assignment = create(:assignment,
+                             due_date: 1.days.ago,
+                             section_due_dates_type: true)
+      end
+
+      context 'when no section is specified' do
+        it 'returns the due date of the assignment' do
+          expect(@assignment.section_due_date(nil).day).to eq 1.days.ago.day
+        end
+      end
+
+      context 'when a section is specified' do
+        before :each do
+          @section = create(:section)
+        end
+
+        context 'that does not have a SectionDueDate' do
+          it 'returns the due date of the assignment' do
+            section_due_date = @assignment.section_due_date(@section)
+            expect(section_due_date.day).to eq 1.days.ago.day
+          end
+        end
+
+        context 'that has a SectionDueDate for another assignment' do
+          before :each do
+            SectionDueDate.create(section: @section,
+                                  assignment: create(:assignment),
+                                  due_date: 2.days.ago)
+          end
+
+          it 'returns the due date of the assignment' do
+            section_due_date = @assignment.section_due_date(@section)
+            expect(section_due_date.day).to eq 1.days.ago.day
+          end
+        end
+
+        context 'that has a SectionDueDate for this assignment' do
+          before :each do
+            SectionDueDate.create(section: @section,
+                                  assignment: @assignment,
+                                  due_date: 2.days.ago)
+          end
+
+          it 'returns the due date of the section' do
+            section_due_date = @assignment.section_due_date(@section)
+            expect(section_due_date.day).to eq 2.days.ago.day
+          end
+        end
+      end
+    end
+  end
+
+  describe '#latest_due_date' do
+    context 'when SectionDueDates are disabled' do
+      before :each do
+        @assignment = create(:assignment,
+                             section_due_dates_type: false,
+                             due_date: Time.now)
+      end
+
+      it 'returns the due date of the assignment' do
+        expect(@assignment.latest_due_date).to eq @assignment.due_date
+      end
+    end
+
+    context 'when SectionDueDates are enabled' do
+      before :each do
+        @assignment = create(:assignment,
+                             section_due_dates_type: true,
+                             due_date: Time.now)
+      end
+
+      context 'and there are no SectionDueDates' do
+        it 'returns the due date of the assignment' do
+          expect(@assignment.latest_due_date).to eq @assignment.due_date
+        end
+      end
+
+      context 'and a SectionDueDate has the latest due date' do
+        before :each do
+          @section_due_date = SectionDueDate.create(section: create(:section),
+                                                    assignment: @assignment,
+                                                    due_date: 1.days.from_now)
+        end
+
+        it 'returns the due date of that SectionDueDate' do
+          expect(@assignment.latest_due_date).to eq @section_due_date.due_date
+        end
+      end
+
+      context 'and the assignment has the latest due date' do
+        before :each do
+          @section_due_date = SectionDueDate.create(section: create(:section),
+                                                    assignment: @assignment,
+                                                    due_date: 1.days.ago)
+        end
+
+        it 'returns the due date of the assignment' do
+          expect(@assignment.latest_due_date).to eq @assignment.due_date
+        end
+      end
+    end
+  end
+
+  describe '#past_due_date?' do
+    context 'when the assignment is not past due' do
+      before :each do
+        @assignment = create(:assignment, due_date: 1.days.from_now)
+      end
+
+      context 'and SectionDueDates are disabled' do
+        before :each do
+          @assignment.update_attributes(section_due_dates_type: false)
+        end
+
+        it 'returns false' do
+          expect(@assignment.past_due_date?).to be false
+        end
+      end
+
+      context 'and there are SectionDueDates past due' do
+        before :each do
+          @assignment.update_attributes(section_due_dates_type: true)
+          SectionDueDate.create(section: create(:section),
+                                assignment: @assignment,
+                                due_date: 1.days.ago)
+        end
+
+        it 'returns false' do
+          pending 'pending discussion on intended functionality'
+          expect(@assignment.past_due_date?).to be false
+        end
+      end
+    end
+
+    context 'when the assignment is past due' do
+      before :each do
+        @assignment = create(:assignment, due_date: 1.days.ago)
+      end
+
+      context 'and SectionDueDates are disabled' do
+        before :each do
+          @assignment.update_attributes(section_due_dates_type: false)
+        end
+
+        it 'returns true' do
+          expect(@assignment.past_due_date?).to be true
+        end
+      end
+
+      context 'and there is a SectionDueDate not past due' do
+        before :each do
+          @assignment.update_attributes(section_due_dates_type: true)
+          SectionDueDate.create(section: create(:section),
+                                assignment: @assignment,
+                                due_date: 1.days.from_now)
+        end
+
+        it 'returns false' do
+          expect(@assignment.past_due_date?).to be false
+        end
+      end
+    end
+  end
+
+  describe '#section_past_due_date?' do
+    context 'with SectionDueDates disabled' do
+      before :each do
+        @due_assignment = create(:assignment,
+                                 section_due_dates_type: false,
+                                 due_date: 1.days.ago)
+        @not_due_assignment = create(:assignment,
+                                     section_due_dates_type: false,
+                                     due_date: 1.days.from_now)
+      end
+
+      context 'when no grouping is specified' do
+        it 'returns based on due date of the assignment' do
+          expect(@due_assignment.section_past_due_date?(nil)).to be true
+          expect(@not_due_assignment.section_past_due_date?(nil)).to be false
+        end
+      end
+
+      context 'when a grouping is specified' do
+        it 'returns based on due date of the assignment' do
+          grouping = create(:grouping)
+          expect(@due_assignment.section_past_due_date?(grouping)).to be true
+          expect(@not_due_assignment.section_past_due_date?(grouping))
+            .to be false
+        end
+      end
+    end
+
+    context 'with SectionDueDates enabled' do
+      before :each do
+        @assignment = create(:assignment, section_due_dates_type: true)
+      end
+
+      context 'when no grouping is specified' do
+        it 'returns based on due date of the assignment' do
+          pending 'waiting on resolution for pending past_due_date example'
+          @assignment.update_attributes(due_date: 1.days.ago)
+          expect(@assignment.section_past_due_date?(nil)).to be true
+          @assignment.update_attributes(due_date: 1.days.from_now)
+          expect(@assignment.section_past_due_date?(nil)).to be false
+        end
+      end
+
+      context 'when a grouping is specified' do
+        before :each do
+          @grouping = create(:grouping, assignment: @assignment)
+          @section = create(:section)
+          student = create(:student, section: @section)
+          create(:inviter_student_membership,
+                 user: student,
+                 grouping: @grouping)
+        end
+
+        context 'that does not have an associated SectionDueDate' do
+          it 'returns based on due date of the assignment' do
+            @assignment.update_attributes(due_date: 1.days.ago)
+            expect(@assignment.section_past_due_date?(@grouping)).to be true
+            @assignment.update_attributes(due_date: 1.days.from_now)
+            expect(@assignment.section_past_due_date?(@grouping)).to be false
+          end
+        end
+
+        context 'that has an associated SectionDueDate' do
+          before :each do
+            @section_due_date = SectionDueDate.create(section: @section,
+                                                      assignment: @assignment)
+          end
+          it 'returns based on the SectionDueDate of the grouping' do
+            @section_due_date.update_attributes(due_date: 1.days.from_now)
+            @assignment.update_attributes(due_date: 1.days.ago)
+            expect(@assignment.section_past_due_date?(@grouping)).to be false
+
+            @section_due_date.update_attributes(due_date: 1.days.ago)
+            @assignment.update_attributes(due_date: 1.days.from_now)
+            expect(@assignment.section_past_due_date?(@grouping)).to be true
+          end
+        end
+      end
+    end
+  end
+
+  describe '#what_past_due_date' do
+    context 'with SectionDueDates disabled' do
+      before :each do
+        @assignment = create(:assignment, section_due_dates_type: false)
+      end
+
+      context 'when the assignment is past due' do
+        it 'returns one name for the assignment' do
+          @assignment.update_attributes(due_date: 1.days.ago)
+
+          expect(@assignment.what_past_due_date).to eq ['Due Date']
+        end
+      end
+
+      context 'when the assignment is not past due' do
+        it 'returns an empty array' do
+          @assignment.update_attributes(due_date: 1.days.from_now)
+
+          expect(@assignment.what_past_due_date).to eq []
+        end
+      end
+    end
+
+    context 'with SectionDueDates enabled' do
+      before :each do
+        @assignment = create(:assignment, section_due_dates_type: true)
+      end
+
+      describe 'one SectionDueDate' do
+        before :each do
+          @section = create(:section)
+          @section_due_date =
+            SectionDueDate.create(section: @section, assignment: @assignment)
+        end
+
+        context 'that is past due' do
+          it 'returns an array with the name of the section' do
+            @section_due_date.update_attributes(due_date: 1.days.ago)
+
+            expect(@assignment.what_past_due_date).to eq [@section.name]
+          end
+        end
+
+        context 'that is not past due' do
+          it 'returns an empty array' do
+            @section_due_date.update_attributes(due_date: 1.days.from_now)
+
+            expect(@assignment.what_past_due_date).to eq []
+          end
+        end
+      end
+
+      describe 'two SectionDueDates' do
+        before :each do
+          @sections = (1..2).map { create(:section) }
+          @section_due_dates = @sections.map do |section|
+            SectionDueDate.create(section: section, assignment: @assignment)
+          end
+          @section_names = @sections.map { |section| section.name }
+        end
+
+        context 'where both are past due' do
+          it 'returns an array with both section names' do
+            @section_due_dates.each do |section_due_date|
+              section_due_date.update_attributes(due_date: 1.days.ago)
+            end
+
+            expect(@assignment.what_past_due_date).to match_array @section_names
+          end
+        end
+
+        context 'where one is past due' do
+          it 'returns an array with the name of that section' do
+            @section_due_dates.first.update_attributes(due_date: 1.days.ago)
+            @section_due_dates.last.update_attributes(due_date: 1.days.from_now)
+
+            expect(@assignment.what_past_due_date).to eq [@section_names.first]
+          end
+        end
+
+        context 'where neither is past due' do
+          it 'returns an empty array' do
+            @section_due_dates.each do |section_due_date|
+              section_due_date.update_attributes(due_date: 1.days.from_now)
+            end
+
+            expect(@assignment.what_past_due_date).to eq []
+          end
         end
       end
     end
@@ -597,16 +990,8 @@ describe Assignment do
       @assignment = create(:assignment, due_date: 2.days.from_now)
     end
 
-    it 'returns false for #past_due_date?' do
-      expect(@assignment.past_due_date?).not_to be
-    end
-
     it 'returns false for #past_collection_date?' do
       expect(@assignment.past_collection_date?).not_to be
-    end
-
-    it 'returns empty array #what_past_due_date' do
-      expect(@assignment.what_past_due_date).to eq([])
     end
   end
 
@@ -616,69 +1001,8 @@ describe Assignment do
         @assignment = create(:assignment, due_date: 2.days.ago)
       end
 
-      it 'returns only one due date' do
-        expect(@assignment.what_past_due_date).to eq(['Due Date'])
-      end
-
-      it 'returns true for past_due_date?' do
-        expect(@assignment.past_due_date?).to be
-      end
-
       it 'returns true for past_collection_date?' do
         expect(@assignment.past_collection_date?).to be
-      end
-
-      it 'returns the latest_due_date' do
-        expect(@assignment.latest_due_date.day).to eq(2.days.ago.day)
-      end
-    end
-
-    context 'with sections' do
-      before :each do
-        @assignment = create(:assignment, due_date: 2.days.ago, section_due_dates_type: true)
-
-        @section = Section.create(name: 'section_name')
-        SectionDueDate.create(section: @section,
-                              assignment: @assignment,
-                              due_date: 1.days.ago)
-
-        student = create(:student, section: @section)
-        @grouping = create(:grouping, assignment: @assignment)
-        create(:student_membership, grouping: @grouping,
-                                    user: student,
-                                    membership_status: StudentMembership::STATUSES[:inviter])
-      end
-
-      describe 'one section' do
-        it 'returns the due date for the section' do
-          expect(@assignment.section_due_date(@section).day).to eq(1.days.ago.day)
-        end
-
-        it 'returns true for section_past_due_date?' do
-          expect(@assignment.section_past_due_date?(@grouping)).to be
-        end
-
-        it 'returns an array with the past section name' do
-          expect(@assignment.what_past_due_date).to eq(%w(section_name))
-        end
-      end
-
-      describe 'multiple sections' do
-        before :each do
-          @section2 = Section.create(name: 'section_name2')
-          SectionDueDate.create(section: @section2,
-                                assignment: @assignment,
-                                due_date: 1.day.ago)
-          student2 = create(:student, section: @section2)
-          @grouping2 = create(:grouping, assignment: @assignment)
-          create(:student_membership, grouping: @grouping2,
-                                      user: student2,
-                                      membership_status: StudentMembership::STATUSES[:inviter])
-        end
-
-        it 'returns an array with the past section names' do
-          expect(@assignment.what_past_due_date).to eq(%w(section_name section_name2))
-        end
       end
     end
   end
