@@ -634,7 +634,7 @@ var PDFView = {
   },
 
   fallback: function pdfViewFallback(featureId) {
-    // debugger;
+    // Handle any unsupported PDF View features as needed.
   },
 
   navigateTo: function pdfViewNavigateTo(dest) {
