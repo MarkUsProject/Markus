@@ -5,7 +5,22 @@
 
 /* Dashboard */
 
+#dashboard_lists {
+  float: left;
+  width: 30%;
+}
+
+#spreadsheet_list {
+  padding-top: 15px;
+}
+
 #assignment_summaries {
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+  float: left;
+  width: 70%;
   text-align: center;
 }
 
@@ -39,17 +54,7 @@
     padding: 0;
   }
 
-  .due_date {
-    font-weight: 600;
 
-    .after {
-      color: $red;
-    }
-
-    .before {
-      color: $green;
-    }
-  }
 
   table {
     width:100%;
@@ -72,6 +77,18 @@
 
   .grader_distribution {
     margin-bottom: 0;
+  }
+}
+
+.due_date {
+  font-weight: 600;
+
+  .after {
+    color: $red;
+  }
+
+  .before {
+    color: $green;
   }
 }
 

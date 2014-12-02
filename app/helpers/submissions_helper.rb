@@ -36,7 +36,13 @@ module SubmissionsHelper
       g[:class_name] = get_any_tr_attributes(grouping)
       g[:group_name] = get_grouping_group_name(assignment, grouping)
       g[:repository] = get_grouping_repository(assignment, grouping)
-      g[:commit_date] = get_grouping_commit_date(assignment, grouping)
+      begin
+        g[:commit_date] = get_grouping_commit_date(assignment, grouping)
+      rescue NoMethodError
+        g[:commit_date] = 'Uh oh! Assignment folder missing.'
+      rescue RuntimeError
+        g[:commit_date] = 'Uh oh! No repo found for this group.'
+      end
       g[:marking_state] = get_grouping_marking_state(assignment, grouping)
       g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
       g[:final_grade] = get_grouping_final_grades(grouping)
@@ -265,36 +271,73 @@ module SubmissionsHelper
     result
   end
 
-  def construct_repo_browser_table_row(file_name, file)
-    table_row = {}
-    table_row[:id] = file.object_id
-    table_row[:filter_table_row_contents] = render_to_string partial: 'submissions/repo_browser/filter_table_row', locals: {file_name: file_name, file: file}
-    table_row[:filename] = file_name
-    table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
-    table_row[:last_modified_date_unconverted] = file.last_modified_date.strftime('%b %d, %Y %H:%M')
-    table_row[:revision_by] = file.user_id
-    table_row
-  end
+  def get_repo_browser_table_info(assignment, revision, revision_number, path,
+                                  previous_path, grouping_id)
+    exit_directory = get_exit_directory(previous_path, grouping_id,
+                                        revision_number)
 
-  def construct_repo_browser_directory_table_row(directory_name, directory)
-    table_row = {}
-    table_row[:id] = directory.object_id
-    table_row[:filter_table_row_contents] = render_to_string partial: 'submissions/repo_browser/directory_row', locals: {directory_name: directory_name, directory: directory}
-    table_row[:filename] = directory_name
-    table_row[:last_modified_date] = directory.last_modified_date.strftime('%d %B, %l:%M%p')
-    table_row[:last_modified_date_unconverted] = directory.last_modified_date.strftime('%b %d, %Y %H:%M')
-    table_row[:revision_by] = directory.user_id
-    table_row
-  end
+    full_path = File.join(assignment.repository_folder, path)
+    if revision.path_exists?(full_path)
+      files = revision.files_at_path(full_path)
+      files_info = get_files_info(files, assignment.id, revision_number, path,
+                                  grouping_id)
 
-  def construct_repo_browser_table_rows(files)
-    result = {}
-    files.each do |file_name, file|
-      result[file.object_id] = construct_repo_browser_row(file_name, file)
+      directories = revision.directories_at_path(full_path)
+      directories_info = get_directories_info(directories, revision_number,
+                                              path, grouping_id)
+      return exit_directory + files_info + directories_info
+    else
+      return exit_directory
     end
-    result
   end
 
+  def get_exit_directory(previous_path, grouping_id, revision_number)
+    e = {}
+    e[:id] = nil
+    e[:filename] = view_context.link_to '../', action: 'repo_browser',
+                                        id: grouping_id, path: previous_path,
+                                        revision_number: revision_number
+    e[:last_revised_date] = ''
+    e[:revision_by] = ''
+    [e]
+  end
+
+  def get_files_info(files, assignment_id, revision_number, path, grouping_id)
+    files.map do |file_name, file|
+      f = {}
+      f[:id] = file.object_id
+      f[:filename] = view_context.image_tag('icons/page_white_text.png') +
+          view_context.link_to(" #{file_name}", action: 'download',
+                               id: assignment_id,
+                               revision_number: revision_number,
+                               file_name: file_name,
+                               path: path, grouping_id: grouping_id)
+      f[:last_revised_date] = I18n.l(file.last_modified_date,
+                                     format: :long_date)
+      f[:revision_by] = file.user_id
+      f
+    end
+  end
+
+  def get_directories_info(directories, revision_number, path, grouping_id)
+    directories.map do |directory_name, directory|
+      d = {}
+      d[:id] = directory.object_id
+      d[:filename] = view_context.image_tag('icons/folder.png') +
+          # TODO: should the call below use
+          # id: assignment_id and grouping_id: grouping_id
+          # like the files info?
+          view_context.link_to(" #{directory_name}/",
+                               action: 'repo_browser',
+                               id: grouping_id,
+                               revision_number: revision_number,
+                               path: File.join(path, directory_name))
+      d[:last_revised_date] = I18n.l(directory.last_modified_date,
+                                     format: :long_date)
+      d[:revision_by] = directory.user_id
+      d
+    end
+  end
 
   def sanitize_file_name(file_name)
     # If file_name is blank, return the empty string
