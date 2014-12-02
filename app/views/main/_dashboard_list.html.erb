@@ -27,8 +27,10 @@
               <% end %>
             </td>
 
-            <td>
-              <%= l(assignment.due_date, format: :short_date ) %>
+            <td class="due_date">
+              <span class="<%= due_date_color(assignment) %>">
+                <%= l(assignment.due_date, format: :short_date ) %>
+              </span>
             </td>
 
 

@@ -5,13 +5,13 @@
 
 /* Dashboard */
 
-#assignment_list {
-  position: relative;
-  min-height: 1px;
-  padding-right: 15px;
-  padding-left: 15px;
+#dashboard_lists {
   float: left;
-  width: 35%;
+  width: 30%;
+}
+
+#spreadsheet_list {
+  padding-top: 15px;
 }
 
 #assignment_summaries {
@@ -20,7 +20,7 @@
   padding-right: 15px;
   padding-left: 15px;
   float: left;
-  width: 65%;
+  width: 70%;
   text-align: center;
 }
 
@@ -54,17 +54,7 @@
     padding: 0;
   }
 
-  .due_date {
-    font-weight: 600;
 
-    .after {
-      color: $red;
-    }
-
-    .before {
-      color: $green;
-    }
-  }
 
   table {
     width:100%;
@@ -87,6 +77,18 @@
 
   .grader_distribution {
     margin-bottom: 0;
+  }
+}
+
+.due_date {
+  font-weight: 600;
+
+  .after {
+    color: $red;
+  }
+
+  .before {
+    color: $green;
   }
 }
 
