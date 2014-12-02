@@ -120,7 +120,6 @@ class ResultsController < ApplicationController
     # Creates a variable for all the tags not used
     # and all the tags that are used by the assignment.
     @all_tags = Tag.all
-    @used_tags = Tag.get_tags_for_grouping(1)
   end
 
   def next_grouping
