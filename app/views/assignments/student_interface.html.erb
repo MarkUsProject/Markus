@@ -45,7 +45,8 @@
           <span class='info'><%= t('student.files') %></span>
           <br>
           <%= raw(t('student.missing_required_files',
-                     missing_files: @num_missing_assignment_files.to_s)) %>
+                     missing_files: @num_missing_assignment_files.to_s,
+                     style_class: ('red' unless @num_missing_assignment_files == 0))) %>
           <br>
         <% else %>
           <p class='notice'><%= t('student.no_submission_yet') %></p>
@@ -248,7 +249,7 @@
              if @grouping.repository_external_commits_only? %>
             <h3><%= t('student.url_group_repository') %></h3>
             <div class='sub_block'>
-              <p><%= @grouping.group.repository_external_access_url %></p>
+              <a href='<%= @grouping.group.repository_external_access_url %>'><%= @grouping.group.repository_external_access_url %></a>
             </div>
           <% end %>
         <% end %>

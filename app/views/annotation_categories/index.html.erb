@@ -71,6 +71,11 @@
   <%= form_tag({ action: 'csv_upload',
                  id: @assignment.id },
                { multipart: true }) do %>
+    <!-- Script for disabling upload buttons. -->
+    <%= javascript_include_tag 'upload_button_control.js',
+                               id: 'upload_csv_script',
+                               upload_id: 'annotation_category_list_csv',
+                               button_id: 'upload_csv' %>
     <p><%= file_field_tag :annotation_category_list_csv, size: 0 %></p>
     <div>
       <%= t('encoding') %>
@@ -78,7 +83,10 @@
     </div>
 
     <section class='dialog-actions'>
-      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+      <%= submit_tag t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) },
+                     id: 'upload_csv',
+                     disabled: true %>
       <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();' />
     </section>
   <% end %>
@@ -87,6 +95,12 @@
   <%= form_tag({ action: 'yml_upload',
                  id: @assignment.id },
                { multipart: true }) do %>
+
+    <!-- Script for disabling upload buttons. -->
+    <%= javascript_include_tag 'upload_button_control.js',
+                               id: 'upload_yml_script',
+                               upload_id: 'annotation_category_list_yml',
+                               button_id: 'upload_yml' %>
     <p><%= file_field_tag :annotation_category_list_yml, size: 0 %></p>
     <div>
       <%= t('encoding') %>
@@ -94,7 +108,10 @@
     </div>
 
     <section class='dialog-actions'>
-      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+      <%= submit_tag t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) },
+                     id: 'upload_yml',
+                     disabled: true %>
       <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();' />
     </section>
   <% end %>

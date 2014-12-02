@@ -5,7 +5,7 @@
   <div id='user-info'>
     <span id='logout_area'>
       <span id='admin_logged_in_as'>
-        <% if !session[:real_uid].nil? %>
+        <% if session[:real_uid] %>
           <strong><%= User.find_by_id(session[:real_uid]).first_name %></strong>
         <% end %>
       </span>
@@ -13,7 +13,8 @@
         <%= @current_user.first_name %> <%= @current_user.last_name %>
         ( <strong><%= @current_user.user_name %></strong> )
       </span>
-      <% if @current_user.admin? %>
+      <% if @current_user.admin? || (session[:real_uid] &&
+              User.find_by_id(session[:real_uid]).admin?) %>
         <%= link_to image_tag('icons/group_go.png',
                               alt: t(:switch_role),
                               title: t(:switch_role),
