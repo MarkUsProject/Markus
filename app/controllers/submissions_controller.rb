@@ -177,41 +177,62 @@ class SubmissionsController < ApplicationController
       'none' => {
         display: I18n.t('browse_submissions.show_all'),
         proc: lambda { |params, to_include|
-          params[:assignment].groupings.all(include: to_include)}},
+          params[:assignment].groupings.includes(to_include)
+        }
+      },
       'unmarked' => {
         display: I18n.t('browse_submissions.show_unmarked'),
-        proc: lambda { |params, to_include|
-          params[:assignment].groupings.all(include: [to_include]).
-              select{|g| !g.has_submission? || (g.has_submission? &&
-              g.current_submission_used.get_latest_result.marking_state ==
-                  Result::MARKING_STATES[:unmarked]) } }},
+        proc: lambda do |params, to_include|
+                params[:assignment].groupings.includes([to_include])
+                                   .select do |g| !g.has_submission? ||
+                                            (g.has_submission? &&
+                                             g.current_submission_used
+                                             .get_latest_result.marking_state ==
+                                             Result::MARKING_STATES[:unmarked])
+                                   end
+              end
+      },
       'partial' => {
         display: I18n.t('browse_submissions.show_partial'),
-        proc: lambda { |params, to_include|
-          params[:assignment].groupings.all(include: [to_include]).
-              select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.marking_state ==
-                  Result::MARKING_STATES[:partial] } }},
+        proc: lambda do |params, to_include|
+                params[:assignment].groupings.includes([to_include])
+                                   .select do |g| g.has_submission? &&
+                                            g.current_submission_used
+                                            .get_latest_result.marking_state ==
+                                            Result::MARKING_STATES[:partial]
+                                   end
+              end
+      },
       'complete' => {
         display: I18n.t('browse_submissions.show_complete'),
-        proc: lambda { |params, to_include|
-          params[:assignment].groupings.all(include: [to_include]).
-              select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.marking_state ==
-                  Result::MARKING_STATES[:complete] } }},
+        proc: lambda do |params, to_include|
+                params[:assignment].groupings.includes([to_include])
+                                   .select do |g| g.has_submission? &&
+                                            g.current_submission_used
+                                            .get_latest_result.marking_state ==
+                                            Result::MARKING_STATES[:complete]
+                                   end
+              end
+      },
       'released' => {
         display: I18n.t('browse_submissions.show_released'),
-        proc: lambda { |params, to_include|
-          params[:assignment].groupings.all(include: [to_include]).
-              select{|g| g.has_submission? &&
-              g.current_submission_used.get_latest_result.released_to_students}}},
+        proc: lambda do |params, to_include|
+                params[:assignment].groupings.includes([to_include])
+                                   .select do |g| g.has_submission? &&
+                                            g.current_submission_used
+                                            .get_latest_result
+                                            .released_to_students
+                                   end
+              end
+      },
       'assigned' => {
         display: I18n.t('browse_submissions.show_assigned_to_me'),
-        proc: lambda { |params, to_include|
-          params[:assignment].ta_memberships.where(user_id: params[:user_id])
-                             .includes(grouping: to_include)
-                             .map { |m| m.grouping }
-        }
+        proc: lambda do |params, to_include|
+                params[:assignment].ta_memberships
+                                   .where(user_id: params[:user_id])
+                                   .includes(grouping: to_include)
+                                   .map { |m| m.grouping }
+              end
       }
     },
     sorts: {
@@ -438,8 +459,8 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
       groupings = assignment.groupings
-                            .includes(:tas)
-                            .where('users.id = ?', current_user.id)
+                            .joins(:tas)
+                            .where(users: { id: current_user.id })
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(groupings)
       flash[:success] = I18n.t('collect_submissions.collection_job_started',
@@ -494,7 +515,7 @@ class SubmissionsController < ApplicationController
   end
   
   def index
-    @assignments = Assignment.all(order: :id)
+    @assignments = Assignment.order(:id)
     render :index, layout: 'sidebar'
   end
 

@@ -178,7 +178,7 @@ class GradeEntryForm < ActiveRecord::Base
 
   # Get a CSV report of the grades for this grade entry form
   def get_csv_grades_report
-    students = Student.all(conditions: {hidden: false}, order: 'user_name')
+    students = Student.where(hidden: false).order(:user_name)
     CSV.generate do |csv|
 
       # The first row in the CSV file will contain the question names
