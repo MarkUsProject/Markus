@@ -116,6 +116,10 @@ class ResultsController < ApplicationController
                  "of assignment '#{@assignment.short_identifier}' for group '" +
                  "#{@group.group_name}'")
 
+    # Sets up the tags for the tag pane.
+    # Creates a variable for all the tags not used
+    # and all the tags that are used by the assignment.
+    @all_tags = Tag.all
   end
 
   def next_grouping

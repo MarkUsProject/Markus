@@ -176,7 +176,8 @@
         s['commit_date'] = <span dangerouslySetInnerHTML={{__html: submission.commit_date}} />;
         s['marking_state'] = <span dangerouslySetInnerHTML={{__html: submission.marking_state}} />;
         s['grace_credits_used'] = submission.grace_credits_used;
-        s['tags'] = <div className='tag_element'>Test Tag</div>;
+        s['tags'] = (submission.tags.length == 0) ? '-' :
+                        submission.tags;
         s['final_grade'] = submission.final_grade;
         s['state'] = submission.state;
         s['section'] = submission.section;
