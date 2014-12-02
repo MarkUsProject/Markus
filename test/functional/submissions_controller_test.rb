@@ -219,14 +219,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       assert_response :missing
     end
 
-    should 'and I cannot use the populate repository browser.' do
-      get_as @student,
-             :populate_repo_browser,
-             :assignment_id => 1,
-             :id => Grouping.first.id
-      assert_response :missing
-    end
-
     # Stopping a curious student
     should 'and I cannot access a simple csv report' do
       get_as @student, :download_simple_csv_report, :assignment_id => 1
@@ -252,7 +244,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       assert_response :missing
     end
 
-    context 'and I have a grader. My grade should be able to' do
+    context 'and I have a grader. My grader should be able to' do
       setup do
         @grouping1 = Grouping.make(:assignment => @assignment)
         @grouping1.group.access_repo do |repo|
@@ -262,28 +254,20 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           repo.commit(txn)
 
           # Generate submission
-          Submission.generate_new_submission(Grouping.last, repo.get_latest_revision)
+          Submission.generate_new_submission(Grouping.last,
+                                             repo.get_latest_revision)
         end
 
-        @ta_membership = TaMembership.make(:membership_status => :accepted, :grouping => @grouping)
+        @ta_membership = TaMembership.make(membership_status: :accepted,
+                                           grouping: @grouping)
         @grader = @ta_membership.user
       end
 
       should 'access the repository browser.' do
         get_as @grader,
                :repo_browser,
-               :assignment_id => @assignment.id,
-               :id => Grouping.last.id
-        assert_response :success
-      end
-
-      should 'access the populate repository browser.' do
-        get_as @grader,
-               :populate_repo_browser,
-               :assignment_id => @assignment.id,
-               :id => Grouping.last.id,
-               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number,
-               :format => 'js'
+               assignment_id: @assignment.id,
+               id: Grouping.last.id
         assert_response :success
       end
 
@@ -346,7 +330,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     end
 
-    context 'and I have an instructor.' do
+    context 'and I have an instructor. My instructor should be able to ' do
       # TODO:
 
       # Test whether or not an Instructor can release/unrelease results correctly
@@ -360,7 +344,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           repo.commit(txn)
 
           # Generate submission
-          submission = Submission.generate_new_submission(@grouping, repo.get_latest_revision)
+          submission =
+              Submission.generate_new_submission(@grouping,
+                                                 repo.get_latest_revision)
           result = submission.get_latest_result
           result.marking_state = Result::MARKING_STATES[:complete]
           result.save
@@ -368,40 +354,39 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
       end
 
-      should 'My instructor should be able to access the populate repository browser.' do
+      should 'access the repository browser.' do
         get_as @admin,
-               :populate_repo_browser,
-               :assignment_id => 1,
-               :id => Grouping.first.id,
-               :format => 'js'
+               :repo_browser,
+               assignment_id: @assignment.id,
+               id: Grouping.last.id
         assert_response :success
       end
 
-      should 'My instructor should be able to download the simple csv report.' do
+      should 'download the simple csv report.' do
         get_as @admin,
                :download_simple_csv_report,
-               :assignment_id => @assignment.id
+               assignment_id: @assignment.id
         assert_response :success
       end
 
-      should 'My instructor should be able to download the detailed csv report.' do
+      should 'download the detailed csv report.' do
         get_as @admin,
                :download_detailed_csv_report,
-               :assignment_id => @assignment.id
+               assignment_id: @assignment.id
         assert_response :success
       end
 
-      should 'My instructor should be able to download the svn export commands.' do
+      should 'download the svn export commands.' do
         get_as @admin,
                :download_svn_export_commands,
-               :assignment_id => @assignment.id
+               assignment_id: @assignment.id
         assert_response :success
       end
 
-      should 'My instructor should be able to download the svn repository list.' do
+      should 'download the svn repository list.' do
         get_as @admin,
                :download_svn_repo_list,
-               :assignment_id => @assignment.id
+               assignment_id: @assignment.id
         assert_response :success
       end
 
@@ -413,9 +398,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
           get_as @admin,
                  :collect_all_submissions,
-                 :assignment_id => 1
-          assert_equal flash[:error], I18n.t('collect_submissions.could_not_collect',
-              :assignment_identifier => 'a1')
+                 assignment_id: 1
+          assert_equal flash[:error],
+                       I18n.t('collect_submissions.could_not_collect',
+                              assignment_identifier: 'a1')
           assert_response :redirect
         end
 
@@ -426,9 +412,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
           @submission_collector.expects(:push_groupings_to_queue).once
-          get_as @admin, :collect_all_submissions, :assignment_id => 1, :id => 1
+          get_as @admin, :collect_all_submissions, assignment_id: 1, id: 1
           assert_equal flash[:success], I18n.t('collect_submissions.collection_job_started',
-              :assignment_identifier => 'a1')
+                                               assignment_identifier: 'a1')
           assert_response :redirect
         end
       end
@@ -437,9 +423,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         Assignment.stubs(:find).returns(@assignment)
         post_as @admin,
                 :update_submissions,
-                :assignment_id => 1,
-                :groupings => ([] << @assignment.groupings).flatten,
-                :release_results => 'true'
+                assignment_id: 1,
+                groupings: ([] << @assignment.groupings).flatten,
+                release_results: 'true'
         assert_response :success
       end
 
@@ -447,11 +433,11 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         setup do
           @group = Group.make
           @student = Student.make
-          @grouping = Grouping.make(:group => @group,
-                                    :assignment => @assignment)
-          @membership = StudentMembership.make(:user => @student,
-                                               :membership_status => 'inviter',
-                                               :grouping => @grouping)
+          @grouping = Grouping.make(group: @group,
+                                    assignment: @assignment)
+          @membership = StudentMembership.make(user: @student,
+                                               membership_status: 'inviter',
+                                               grouping: @grouping)
           @student = @membership.user
         end
 
@@ -505,9 +491,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
             @submission = Submission.
                 generate_new_submission(@grouping, repo.get_latest_revision)
           end
-          get_as @admin, :downloads, :assignment_id => @assignment.id,
-                 :id => @submission.id,
-                 :grouping_id => @grouping.id
+          get_as @admin, :downloads,
+                 assignment_id: @assignment.id, id: @submission.id,
+                 grouping_id: @grouping.id
 
           assert_equal response.body, I18n.t('student.submission.no_files_available')
         end
@@ -522,9 +508,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
             # Generate submission
             @submission = Submission.generate_new_submission(@grouping, repo.get_latest_revision)
           end
-          get_as @admin, :downloads, :assignment_id => @assignment.id,
-                 :id => @submission.id,
-                 :grouping_id => @grouping.id, :revision_number => '0'
+          get_as @admin, :downloads, assignment_id: @assignment.id,
+                 id: @submission.id,
+                 grouping_id: @grouping.id, revision_number: '0'
 
           assert_equal response.body, I18n.t('student.submission.no_revision_available')
           assert_response :success
@@ -540,9 +526,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
             instance_variable_set(:"@grouping#{i}",
                                   Grouping.make(:assignment => @assignment))
             StudentMembership.make(
-                :user => instance_variable_get(:"@student#{i}"),
-                :membership_status => 'inviter',
-                :grouping => instance_variable_get(:"@grouping#{i}"))
+                user: instance_variable_get(:"@student#{i}"),
+                membership_status: 'inviter',
+                grouping: instance_variable_get(:"@grouping#{i}"))
             submit_file(@assignment, instance_variable_get(:"@grouping#{i}"),
                         "file#{i}", "file#{i}'s content\n")
           end
@@ -550,8 +536,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
         should 'be able to download all submissions from all groups' do
           get_as @admin, :download_groupings_files,
-                 :assignment_id => @assignment.id,
-                 :groupings => [@grouping1.id, @grouping2.id, @grouping3.id]
+                 assignment_id: @assignment.id,
+                 groupings: [@grouping1.id, @grouping2.id, @grouping3.id]
           assert_response :success
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@admin.user_name}.zip"
@@ -571,8 +557,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         should '- as Ta - be able to download all submissions from all groups' do
           @ta = Ta.make
           get_as @ta, :download_groupings_files,
-                 :assignment_id => @assignment.id,
-                 :groupings => [@grouping1.id, @grouping2.id, @grouping3.id]
+                 assignment_id: @assignment.id,
+                 groupings: [@grouping1.id, @grouping2.id, @grouping3.id]
           assert_response :success
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@ta.user_name}.zip"
@@ -597,22 +583,22 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
   context 'I am an unauthenticated or unauthorized user' do
     should 'trying to download a simple csv report' do
-      get :download_simple_csv_report, :assignment_id => 1
+      get :download_simple_csv_report, assignment_id: 1
       assert_response :redirect
     end
 
     should 'trying to download a detailed csv report' do
-      get :download_detailed_csv_report, :assignment_id => 1
+      get :download_detailed_csv_report, assignment_id: 1
       assert_response :redirect
     end
 
     should 'trying to download the svn export commands' do
-      get :download_svn_export_commands, :assignment_id => 1
+      get :download_svn_export_commands, assignment_id: 1
       assert_response :redirect
     end
 
     should 'trying to download the svn repository list' do
-      get :download_svn_repo_list, :assignment_id => 1
+      get :download_svn_repo_list, assignment_id: 1
       assert_response :redirect
     end
   end
