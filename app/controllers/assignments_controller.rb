@@ -511,6 +511,10 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  def view_summary
+    @assignment = Assignment.find(params[:id])
+  end
+
   def download_assignment_list
     assignments = Assignment.all
 
