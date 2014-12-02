@@ -6,9 +6,13 @@ add_annotation_text('<%= @text.id %>', '<%= @text.content %>');
                    end: '<%= @annotation.line_end %>' },
                  '<%= @text.id %>');
 <% elsif @annotation.is_a?(ImageAnnotation) %>
+  console.log("IMAGE EX");
   add_annotation_text('<%= @text.id %>', '<%= simple_format(@text.content) %>');
-
   add_to_annotation_grid('<%= @annotation.extract_coords.to_json().html_safe %>');
+ <% elsif @annotation.is_a?(PdfAnnotation) %>
+  add_pdf_annotation('<%= @text.id %>',
+                     '<%= simple_format(@text.content) %>',
+                     '<%= @annotation.extract_coords.to_json().html_safe %>');
 <% end %>
 
 document.getElementById('annotation_summary_list').innerHTML =

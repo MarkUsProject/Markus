@@ -1297,6 +1297,16 @@ canvas {
   transform-origin: 0% 0%;
 }
 
+// Disable selection
+.textLayer {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .textLayer .highlight {
   margin: -1px;
   padding: 1px;
