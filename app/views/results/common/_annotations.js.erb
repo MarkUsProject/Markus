@@ -16,7 +16,8 @@
     PDF: 2
   };
 
-  // Boolean to tell the code if an image, code, or pdf is being shown
+  // Enum to tell the code if an image, code, or pdf is being shown
+  // in the codeviewer
   var annotation_type;
 
   function source_code_ready() {
@@ -72,7 +73,7 @@
    * @param {string} content            Text for the annotation
    */
   function add_annotation_text(annotation_text_id, content) {
-    if(annotation_type === ANNOTATION_TYPES.PDF) {
+    if (annotation_type === ANNOTATION_TYPES.PDF) {
       add_pdf_annotation(annotation_text_id, content,
         annotation_manager.selectionRectangleAsInts());
     } else {
@@ -198,7 +199,7 @@
     // Set global variable 'positions' to current mouse positions
     if (annotation_type === ANNOTATION_TYPES.CODE) {
       positions = get_mouse_positions();
-    } else if(annotation_type === ANNOTATION_TYPES.PDF) {
+    } else if (annotation_type === ANNOTATION_TYPES.PDF) {
       return make_new_pdf_annotation();
     } else {
       return make_new_image_annotation();
@@ -259,7 +260,7 @@
               '&y2=' + box.y2 +
               '&authenticity_token=' + AUTH_TOKEN
       });
-    } else if(annotation_type === ANNOTATION_TYPES.PDF) {
+    } else if (annotation_type === ANNOTATION_TYPES.PDF) {
       var box = annotation_manager.selectionRectangleAsInts();
       if (!box) { return; }
 
@@ -273,7 +274,7 @@
               '&x2=' + box.x2 +
               '&y1=' + box.y1 +
               '&y2=' + box.y2 +
-              '&page=' + bpx.page +
+              '&page=' + box.page +
               '&authenticity_token=' + AUTH_TOKEN
       });
     } else {
@@ -365,7 +366,7 @@
               '&category_id=' + category_id +
               '&authenticity_token=' + AUTH_TOKEN
       });
-    } else if(annotation_type === ANNOTATION_TYPES.IMAGE) {
+    } else if (annotation_type === ANNOTATION_TYPES.IMAGE) {
       // Image annotation
       jQuery.ajax({
         url:  '<%= annotations_path %>',
@@ -380,7 +381,7 @@
               '&y2=' + y2 +
               '&authenticity_token=' + AUTH_TOKEN
       });
-    } else if(annotation_type === ANNOTATION_TYPES.PDF) {
+    } else if (annotation_type === ANNOTATION_TYPES.PDF) {
       // PDF Annotation
       jQuery.ajax({
         url:  '<%= annotations_path %>',

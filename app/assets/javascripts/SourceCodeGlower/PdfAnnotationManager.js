@@ -3,10 +3,10 @@
   'use strict';
 
   var $ = jQuery;         // Rebind
-  var MOUSE_OFFSET = 10;  // The offset from the moust cursor point
+  var MOUSE_OFFSET = 10;  // The offset from the mouse cursor point
 
   // CONSTANTS
-  var HIDE_BOX_THRESHOLD = 5;   // Threashold for not displaying selection box in pixels
+  var HIDE_BOX_THRESHOLD = 5;   // Threshold for not displaying selection box in pixels
   var COORDINATE_PRECISION = 5; // Keep 5 decimal places (used when converting back from ints)
   var COORDINATE_MULTIPLIER = Math.pow(10, COORDINATE_PRECISION);
 
@@ -30,15 +30,10 @@
     /** @type {{page: int, $control: jQuery}} */
     this.selectionBox = {};
 
+    // The current selection area. The x, y are stored as percentages
+    // for device independent resolution
     /** @type {{x: number, y: number, width: number, height: number}} */
-    this.currentSelection = {}; // The current selection area. The x, y are stored as percentages for device independent resolution
-
-    // Css for the selection box
-    this.selectionBoxCss = {
-        "display": "inline-block",
-        "position": "absolute",
-        "border": "dashed 1px red"
-    };
+    this.currentSelection = {};
 
     this.bindPageEvents();
   }
@@ -47,7 +42,9 @@
    * Returns the selection point in percentage units for an event on
    * a element.
    *
-   * @param  {Event} ev               The event that occurred.
+   * @param {Event}                 ev          The event that occurred.
+   * @param {String|DOMNode|jQuery} relativeTo  The element to calculate the offset for.
+   * @param {number}                mouseOffset Custom mouse offset value.
    * @return {{x: number, y:number}}  The relative point in the element the event occurred in.
    */
   function getRelativePointForMouseEvent(ev, relativeTo, mouseOffset) {
@@ -61,8 +58,8 @@
     var y = ev.pageY - offset.top - (mouseOffset || MOUSE_OFFSET);
 
     return {
-      x: 1 - Math.abs((x - width)/width),
-      y: 1 - Math.abs((y - height)/height)
+      x: 1 - ((width - x)/width),
+      y: 1 - ((height - y)/height)
     };
   }
 
@@ -71,7 +68,7 @@
    * @return {{page: {int}, $control: {jQuery}}}
    */
   PdfAnnotationManager.prototype.getSelectionBox = function($page) {
-    var pageNumber = parseInt($page.attr("id").replace("pageContainer", ""));
+    var pageNumber = parseInt($page.attr("id").replace("pageContainer", ""), 10);
 
     if(this.selectionBox.page === pageNumber) {
       return this.selectionBox;
@@ -79,7 +76,7 @@
       this.selectionBox.$control.remove(); // Remove old control
     }
 
-    var $control = $("<div />").css(this.selectionBoxCss);
+    var $control = $("<div />").attr("id", "sel_box");
 
     $page.append($control);
 
@@ -104,17 +101,13 @@
       var $selectionBox = this.getSelectionBox($page).$control;
 
       $selectionBox.css({
-        top:  (this.currentSelection.y * 100) + "%",
+        top: (this.currentSelection.y * 100) + "%",
         left: (this.currentSelection.x * 100) + "%",
         width: (this.currentSelection.width * 100) + "%",
         height: (this.currentSelection.height * 100) + "%"
       });
 
-      if(this.currentSelection.visible) {
-        $selectionBox.show();
-      } else {
-        $selectionBox.hide();
-      }
+      $selectionBox.toggle(this.currentSelection.visible);
     }
   };
 
@@ -130,10 +123,10 @@
     }
 
     return {
-      x1: parseInt(this.currentSelection.x * COORDINATE_MULTIPLIER),
-      y1: parseInt(this.currentSelection.y * COORDINATE_MULTIPLIER),
-      x2: parseInt((this.currentSelection.x + this.currentSelection.width) * COORDINATE_MULTIPLIER),
-      y2: parseInt((this.currentSelection.y + this.currentSelection.height) * COORDINATE_MULTIPLIER),
+      x1: parseInt(this.currentSelection.x * COORDINATE_MULTIPLIER, 10),
+      y1: parseInt(this.currentSelection.y * COORDINATE_MULTIPLIER, 10),
+      x2: parseInt((this.currentSelection.x + this.currentSelection.width) * COORDINATE_MULTIPLIER, 10),
+      y2: parseInt((this.currentSelection.y + this.currentSelection.height) * COORDINATE_MULTIPLIER, 10),
       page: this.selectionBox.page
     }
   };
@@ -294,9 +287,7 @@
     function createTextNode() {
       var text = annotation_text.getContent();
 
-      return $("<div />")
-                    .addClass("annotation_text_display")
-                    .text(text);
+      return $("<div />").addClass("annotation_text_display").text(text);
     }
 
     $control.mousemove(function(ev) {
