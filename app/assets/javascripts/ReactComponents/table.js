@@ -20,10 +20,9 @@
  *                             Must be a string or React DOM object.
  *                             Remember to make this I18n.
  *                  - sortable: boolean that determines whether a column is sortable.
- *                  - compare: a function defining custom sort behaviour. Leave
- *                             it undefined to use the default sort behaviour.
- *                             The default behaviour is to sort as a lowercase
- *                             string, using inner HTML for React components.
+ *                  - compare: a function defining custom comparison behaviour
+ *                             for sorting by column. Leave undefined to use the
+ *                             default comparison operators.
  *                  - searchable: boolean that determines whether the stuff in a column
  *                                can be searched.
  *             columns is used to create the table header.
@@ -503,17 +502,12 @@ function sort_by_column(data, column, direction, compare) {
       return a;
     }
   }
-  compare = compare || function(a, b) {
-    if (makeComparable(a[column]) > makeComparable(b[column])) {
-        return 1;
-    } else if (makeComparable(a[column]) < makeComparable(b[column])) {
-        return -1;
-    }
-    return 0;
-  }
+  compare = compare || compare_values;
 
   // sort row by column id
-  var sorted = data.sort(compare);
+  var sorted = data.sort(function(a, b) {
+    return compare(makeComparable(a[column]), makeComparable(b[column]));
+  });
 
   // flip order if direction descending
   if (direction == 'desc') {
@@ -522,3 +516,4 @@ function sort_by_column(data, column, direction, compare) {
 
   return sorted;
 }
+
