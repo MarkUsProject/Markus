@@ -1,0 +1,43 @@
+<div class='section'>
+  <% if @assignments.empty? %>
+    <p><%= t(:no_assignments) %></p>
+  <% else %>
+    <div class="table">
+      <table>
+        <thead>
+        <tr>
+          <th><%= t(:name) %></th>
+          <th><%= t(:due) %></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @assignments.each do |assignment| -%>
+          <tr>
+            <td>
+              <% if assignment.is_hidden %>
+                <%= link_to truncate('assignment.hidden',
+                                     assignment_text:
+                                       "#{h(assignment.short_identifier)}: #{h(assignment.description)}" ),
+                            view_summary_main_index_path(assignment_id: assignment.id),
+                            remote: true %>
+              <% else %>
+                <%= link_to assignment.short_identifier + ': ' + assignment.description,
+                            view_summary_assignment_path(assignment.id),
+                            remote: true %>
+              <% end %>
+            </td>
+
+            <td class="due_date">
+              <span class="<%= due_date_color(assignment) %>">
+                <%= l(assignment.due_date, format: :short_date ) %>
+              </span>
+            </td>
+
+
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

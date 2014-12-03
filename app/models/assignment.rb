@@ -154,25 +154,25 @@ class Assignment < ActiveRecord::Base
     sections_past
   end
 
-  # Are we past the due date for this assignment, for this grouping ?
+  # Whether or not this grouping is past its due date for this assignment.
   def section_past_due_date?(grouping)
-    if self.section_due_dates_type and !grouping.inviter.section.nil?
-        section_due_date =
-    SectionDueDate.due_date_for(grouping.inviter.section, self)
-        !section_due_date.nil? && Time.zone.now > section_due_date
+    if section_due_dates_type && grouping &&
+      grouping.inviter.section.present?
+
+      section_due_date =
+        SectionDueDate.due_date_for(grouping.inviter.section, self)
+      !section_due_date.nil? && Time.zone.now > section_due_date
     else
-      self.past_due_date?
+      past_due_date?
     end
   end
 
-  # return the due date for a section
   def section_due_date(section)
-    if self.section_due_dates_type
-      unless section.nil?
-        return SectionDueDate.due_date_for(section, self)
-      end
+    unless section_due_dates_type && section
+      return due_date
     end
-    self.due_date
+
+    SectionDueDate.due_date_for(section, self)
   end
 
   # Calculate the latest due date. Used to calculate the collection time
@@ -271,6 +271,19 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  def self.get_current_assignment
+    # start showing (or "featuring") the assignment 3 days before it's due
+    # query uses Date.today + 4 because results from db seems to be off by 1
+    current_assignment = Assignment.where('due_date <= ?', Date.today + 4)
+                                   .reorder('due_date DESC').first
+
+    if current_assignment.nil?
+      current_assignment = Assignment.reorder('due_date ASC').first
+    end
+
+    current_assignment
+  end
+
   def update_remark_request_count
     outstanding_count = 0
     groupings.each do |grouping|
@@ -299,22 +312,16 @@ class Assignment < ActiveRecord::Base
       group.save
     else
       return if new_group_name.nil?
-      if Group.where(group_name: new_group_name).first
-        group = Group.where(group_name: new_group_name).first
+      if group = Group.where(group_name: new_group_name).first
         unless groupings.where(group_id: group.id).first.nil?
           raise "Group #{new_group_name} already exists"
         end
       else
-        group = Group.new
-        group.group_name = new_group_name
-        group.save
+        group = Group.create(group_name: new_group_name)
       end
     end
-    grouping = Grouping.new
-    grouping.group = group
-    grouping.assignment = self
-    grouping.save
-    grouping
+
+    Grouping.create(group: group, assignment: self)
   end
 
 
@@ -381,6 +388,8 @@ class Assignment < ActiveRecord::Base
   def add_csv_group(row)
     return if row.length.zero?
 
+    row.map! { |item| item.strip }
+
     # Note: We cannot use find_or_create_by here, because it has its own
     # save semantics. We need to set and save attributes in a very particular
     # order, so that everything works the way we want it to.
@@ -401,14 +410,14 @@ class Assignment < ActiveRecord::Base
         group.repo_name = row[0]
       else
         # Student name does not exist, use provided repo_name
-        group.repo_name = row[1].strip # remove whitespace
+        group.repo_name = row[1]
       end
     end
 
     # If we are not repository admin, set the repository name as provided
     # in the csv upload file
     unless group.repository_admin?
-      group.repo_name = row[1].strip # remove whitespace
+      group.repo_name = row[1]
     end
     # Note: after_create hook build_repository might raise
     # Repository::RepositoryCollision. If it does, it adds the colliding
@@ -432,7 +441,7 @@ class Assignment < ActiveRecord::Base
     # Form groups
     start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
     (start_index_group_members..(row.length - 1)).each do |i|
-      student = Student.where(user_name: row[i].strip) # remove whitespace
+      student = Student.where(user_name: row[i])
                        .first
       if student
         if grouping.student_membership_number == 0
