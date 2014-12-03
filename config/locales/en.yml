@@ -858,6 +858,11 @@ en:
       edit_update: "Update"
       updating: "Updating..."
 
+      messages:
+        no_assigned: "--No Tags Assigned--"
+        no_left: "--No More Tags to Assign--"
+        no_tags: "--No Tags to Show--"
+
       create:
         create_new: "Add Tag"
         tag_prompt: "Tag name:"

@@ -178,6 +178,8 @@ Markus::Application.routes.draw do
             get 'update_positions'
             post 'update_mark'
             get 'view_marks'
+            post 'add_tag'
+            post 'remove_tag'
           end
         end
       end

@@ -21,7 +21,27 @@ module TagsHelper
     end
   end
 
-  ###  Update methods  ###
+  ###  Global Tag Methods  ###
+
+  def get_top_tags
+    # Sorts all the tags by number of groupings.
+    sorted_tag = Tag.all.sort_by do |tag|
+      get_num_groupings_for_tag(tag.id)
+    end
+
+    # Loops until the top 5 tags are found
+    i = 0
+    top ||= []
+    while i < 5 && sorted_tag.length > i do
+      top << sorted_tag.at(i)
+      i += 1
+    end
+
+    # Returns
+    top
+  end
+
+  ###  Update methods   ###
 
   def update_name
     Tag.update(params[:id], name: params[:name])
@@ -31,7 +51,7 @@ module TagsHelper
     Tag.update(params[:id], description: params[:description])
   end
 
-  ###  Grouping Methods ###
+  ###  Grouping Methods  ###
 
   def create_grouping_tag_association_from_existing_tag(grouping_id, tag_id)
     tag = Tag.find(tag_id)
