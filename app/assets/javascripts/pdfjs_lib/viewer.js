@@ -26,7 +26,7 @@
 var DEFAULT_SCALE = 'auto';
 var DEFAULT_SCALE_DELTA = 1.1;
 var UNKNOWN_SCALE = 0;
-var DEFAULT_CACHE_SIZE = 10;
+var DEFAULT_CACHE_SIZE = 1000;
 var CSS_UNITS = 96.0 / 72.0;
 var SCROLLBAR_PADDING = 40;
 var VERTICAL_PADDING = 5;
@@ -86,6 +86,7 @@ var PDFView = {
   idleTimeout: null,
   currentPosition: null,
   url: '',
+  onLoadComplete: function() {},
 
   // called once when the document is loaded
   initialize: function pdfViewInitialize() {
@@ -276,8 +277,7 @@ var PDFView = {
       newScale = Math.ceil(newScale * 10) / 10;
       newScale = Math.min(MAX_SCALE, newScale);
     } while (--ticks && newScale < MAX_SCALE);
-    console.log(newScale);
-    console.log(ticks);
+
     this.setScale(newScale, true);
   },
 
@@ -567,6 +567,7 @@ var PDFView = {
         self.load(pdfDocument, scale);
         self.loading = false;
       },
+
       function getDocumentError(exception) {
         var message = exception && exception.message;
         var loadingErrorMessage = mozL10n.get('loading_error', null,
@@ -632,7 +633,7 @@ var PDFView = {
   },
 
   fallback: function pdfViewFallback(featureId) {
-    debugger;
+    // Handle any unsupported PDF View features as needed.
   },
 
   navigateTo: function pdfViewNavigateTo(dest) {
@@ -890,6 +891,7 @@ var PDFView = {
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent('documentload', true, true, {});
         window.dispatchEvent(event);
+        self.onLoadComplete();
       });
 
       PDFView.loadingBar.setWidth(container);
@@ -928,9 +930,6 @@ var PDFView = {
       // unless the viewer is embedded in a web page.
       if (!self.isViewerEmbedded) {
         self.container.focus();
-//#if (FIREFOX || MOZCENTRAL)
-//      self.container.blur();
-//#endif
       }
     }, function rejected(reason) {
       console.error(reason);
@@ -940,30 +939,7 @@ var PDFView = {
       });
     });
 
-    pagesPromise.then(function() {
-      if (PDFView.supportsPrinting) {
-        pdfDocument.getJavaScript().then(function(javaScript) {
-          if (javaScript.length) {
-            console.warn('Warning: JavaScript is not supported');
-            PDFView.fallback(PDFJS.UNSUPPORTED_FEATURES.javaScript);
-          }
-          // Hack to support auto printing.
-          var regex = /\bprint\s*\(/g;
-          for (var i = 0, ii = javaScript.length; i < ii; i++) {
-            var js = javaScript[i];
-            if (js && regex.test(js)) {
-              setTimeout(function() {
-                window.print();
-              });
-              return;
-            }
-          }
-        });
-      }
-    });
-
-    var destinationsPromise =
-      this.destinationsPromise = pdfDocument.getDestinations();
+    var destinationsPromise = this.destinationsPromise = pdfDocument.getDestinations();
     destinationsPromise.then(function(destinations) {
       self.destinations = destinations;
     });
@@ -978,11 +954,13 @@ var PDFView = {
       self.metadata = metadata;
 
       // Provides some basic debug information
+      /*
       console.log('PDF ' + pdfDocument.fingerprint + ' [' +
                   info.PDFFormatVersion + ' ' + (info.Producer || '-').trim() +
                   ' / ' + (info.Creator || '-').trim() + ']' +
                   ' (PDF.js: ' + (PDFJS.version || '-') +
                   (!PDFJS.disableWebGL ? ' [WebGL]' : '') + ')');
+      */
 
       var pdfTitle;
       if (metadata && metadata.has('dc:title')) {
@@ -1045,6 +1023,9 @@ var PDFView = {
     var visiblePages = currentlyVisiblePages || this.getVisiblePages();
     var pageView = this.getHighestPriority(visiblePages, this.pages,
                                            this.pageViewScroll.down);
+
+    // TODO: Get Page
+
     if (pageView) {
       this.renderView(pageView, 'page');
       return;
@@ -1567,12 +1548,13 @@ function webViewerInitialized(file) {
 //document.addEventListener('DOMContentLoaded', webViewerLoad, true);
 
 function updateViewarea() {
-
   if (!PDFView.initialized) {
     return;
   }
+
   var visible = PDFView.getVisiblePages();
   var visiblePages = visible.views;
+
   if (visiblePages.length === 0) {
     return;
   }

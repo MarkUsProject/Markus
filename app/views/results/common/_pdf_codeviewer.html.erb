@@ -1,4 +1,4 @@
-<div id="outerContainer" class="loadingInProgress" style="width: 100%; height: 100%;">
+<div id="outerContainer" class="loadingInProgress">
   <div id="mainContainer">
     <div class="toolbar">
       <div id="toolbarContainer">
@@ -151,6 +151,14 @@
 </div>
 
 <script>
+(function() {
+  document.getElementById('codeviewer').onmousemove = null;
+
+  PDFView.onLoadComplete = function() {
+    window.source_code_ready_for_pdf('viewer');
+  };
+
   webViewerLoad("<%= download_assignment_submission_results_path(select_file_id: submission_file_id,
                                                             show_in_browser: true ) %>"); // PDF
+})();
 </script>
