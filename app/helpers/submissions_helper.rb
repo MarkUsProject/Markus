@@ -37,7 +37,7 @@ module SubmissionsHelper
       g[:group_name] = get_grouping_group_name(assignment, grouping)
       g[:repository] = get_grouping_repository(assignment, grouping)
       begin
-        g[:commit_date] = get_grouping_commit_date(assignment, grouping)
+        g[:commit_date] = get_grouping_commit_date(grouping)
       rescue NoMethodError
         g[:commit_date] = 'Uh oh! Assignment folder missing.'
       rescue RuntimeError
@@ -46,7 +46,8 @@ module SubmissionsHelper
       g[:marking_state] = get_grouping_marking_state(assignment, grouping)
       g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
       g[:final_grade] = get_grouping_final_grades(grouping)
-      g[:can_begin_grading] = get_grouping_can_begin_grading(assignment, grouping)
+      g[:can_begin_grading] =
+          get_grouping_can_begin_grading(assignment, grouping)
       g[:state] = get_grouping_state(grouping)
       g[:section] = get_grouping_section(grouping)
       g
@@ -103,18 +104,19 @@ module SubmissionsHelper
       repo_browser_assignment_submission_path(assignment, grouping))
   end
 
-  def get_grouping_commit_date(assignment, grouping)
+  def get_grouping_commit_date(grouping)
     if !grouping.has_submission?
       return '-'
     else
-      repo = ''
+      commit_date = ''
       if grouping.past_due_date?
-        repo += view_context.image_tag('icons/error.png',
+        commit_date += view_context.image_tag('icons/error.png',
             title: t(:past_due_date_edit_result_warning,
             href: t(:last_commit)))
       end
-      repo += I18n.l(grouping.current_submission_used.revision_timestamp, format: :long_date)
-      return repo
+      commit_date += I18n.l(grouping.current_submission_used.revision_timestamp,
+                            format: :long_date)
+      return commit_date
     end
   end
 
