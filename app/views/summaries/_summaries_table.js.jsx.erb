@@ -8,18 +8,21 @@
           id: 'group_name',
           content: '<%= j raw I18n.t('summaries_index.group_name') %>',
           sortable: true,
+          compare: compare_anchor_text,
           searchable: true
         },
         {
           id: 'repository',
           content: '<%= j raw I18n.t('summaries_index.repository') %>',
           sortable: true,
+          compare: compare_anchor_text,
           searchable: true
         },
         {
           id: 'commit_date',
           content: '<%= j raw I18n.t('summaries_index.commit_date') %>',
           sortable: true,
+          compare: compare_dates,
           searchable: true
         },
         {
@@ -32,6 +35,7 @@
           id: 'final_grade',
           content: '<%= j raw I18n.t('summaries_index.final_grade') %>',
           sortable: true,
+          compare: compare_numeric_values,
           searchable: true
         },
         {
@@ -48,6 +52,7 @@
                        criterion.flexible_criterion_name :
                        criterion.rubric_criterion_name %>',
           sortable: true,
+          compare: compare_numeric_values,
           searchable: false
         });
       <% end %>

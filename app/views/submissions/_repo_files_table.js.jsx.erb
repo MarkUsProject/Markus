@@ -18,6 +18,7 @@
             id: 'last_revised_date',
             content: '<%= j raw I18n.t(:'browse_submissions.last_revised') %>',
             sortable: true,
+            compare: compare_dates,
             searchable: true
           },
           {

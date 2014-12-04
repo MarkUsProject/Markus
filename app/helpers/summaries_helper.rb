@@ -28,7 +28,7 @@ module SummariesHelper
       g[:class_name] = get_any_tr_attributes(grouping)
       g[:group_name] = get_grouping_group_name(assignment, grouping)
       g[:repository] = get_grouping_repository(assignment, grouping)
-      g[:commit_date] = get_grouping_commit_date(assignment, grouping)
+      g[:commit_date] = get_grouping_commit_date(grouping)
       g[:marking_state] = get_grouping_marking_state(assignment, grouping)
       g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
       g[:final_grade] = get_grouping_final_grades(grouping)
