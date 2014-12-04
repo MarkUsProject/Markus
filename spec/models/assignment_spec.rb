@@ -931,7 +931,8 @@ describe Assignment do
           it 'returns an array with the name of the section' do
             @section_due_date.update_attributes(due_date: 1.days.ago)
 
-            expect(@assignment.section_names_past_due_date).to eq [@section.name]
+            expect(@assignment.section_names_past_due_date)
+              .to eq [@section.name]
           end
         end
 
@@ -959,7 +960,8 @@ describe Assignment do
               section_due_date.update_attributes(due_date: 1.days.ago)
             end
 
-            expect(@assignment.section_names_past_due_date).to match_array @section_names
+            expect(@assignment.section_names_past_due_date)
+              .to match_array @section_names
           end
         end
 
@@ -968,7 +970,8 @@ describe Assignment do
             @section_due_dates.first.update_attributes(due_date: 1.days.ago)
             @section_due_dates.last.update_attributes(due_date: 1.days.from_now)
 
-            expect(@assignment.section_names_past_due_date).to eq [@section_names.first]
+            expect(@assignment.section_names_past_due_date)
+              .to eq [@section_names.first]
           end
         end
 
