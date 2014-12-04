@@ -284,9 +284,8 @@ document.webL10n = (function(window, document, undefined) {
         console.log('using the embedded JSON directory, early way out');
         gL10nData = dict.locales[lang] || dict.locales[dict.default_locale];
         callback();
-      } else {
-        console.log('no resource to load, early way out');
       }
+
       // early way out
       fireL10nReadyEvent(lang);
       gReadyState = 'complete';
@@ -791,7 +790,6 @@ document.webL10n = (function(window, document, undefined) {
   function getL10nData(key, args, fallback) {
     var data = gL10nData[key];
     if (!data) {
-      console.warn('#' + key + ' is undefined.');
       if (!fallback) {
         return null;
       }

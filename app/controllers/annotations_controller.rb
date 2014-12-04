@@ -60,8 +60,10 @@ class AnnotationsController < ApplicationController
       @annotation = ImageAnnotation.create(
         annotation_text_id: @text.id,
         submission_file_id: @submission_file_id,
-        x1: Integer(params[:x1]), x2: Integer(params[:x2]),
-        y1: Integer(params[:y1]), y2: Integer(params[:y2]),
+        x1: Integer(params[:x1]),
+        x2: Integer(params[:x2]),
+        y1: Integer(params[:y1]),
+        y2: Integer(params[:y2]),
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
       )

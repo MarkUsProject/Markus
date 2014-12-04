@@ -277,8 +277,7 @@ var PDFView = {
       newScale = Math.ceil(newScale * 10) / 10;
       newScale = Math.min(MAX_SCALE, newScale);
     } while (--ticks && newScale < MAX_SCALE);
-    console.log(newScale);
-    console.log(ticks);
+
     this.setScale(newScale, true);
   },
 
@@ -955,11 +954,13 @@ var PDFView = {
       self.metadata = metadata;
 
       // Provides some basic debug information
+      /*
       console.log('PDF ' + pdfDocument.fingerprint + ' [' +
                   info.PDFFormatVersion + ' ' + (info.Producer || '-').trim() +
                   ' / ' + (info.Creator || '-').trim() + ']' +
                   ' (PDF.js: ' + (PDFJS.version || '-') +
                   (!PDFJS.disableWebGL ? ' [WebGL]' : '') + ')');
+      */
 
       var pdfTitle;
       if (metadata && metadata.has('dc:title')) {

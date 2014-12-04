@@ -16,16 +16,13 @@
 #outerContainer {
   padding: 0;
   margin: 0;
-}
-
-#outerContainer {
+  width: 100%;
   height: 100%;
+  cursor: crosshair;
+
   /* Font size is needed to make the activity bar the correct size. */
   font-size: 10px;
-}
 
-#outerContainer {
-  height: 100%;
   background-color: #404040;
   background-image: url(/assets/pdfjs/texture.png);
 }
