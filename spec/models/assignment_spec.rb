@@ -750,7 +750,7 @@ describe Assignment do
     end
   end
 
-  describe '#past_due_date?' do
+  describe '#past_all_due_dates?' do
     context 'when the assignment is not past due' do
       before :each do
         @assignment = create(:assignment, due_date: 1.days.from_now)
@@ -762,7 +762,7 @@ describe Assignment do
         end
 
         it 'returns false' do
-          expect(@assignment.past_due_date?).to be false
+          expect(@assignment.past_all_due_dates?).to be false
         end
       end
 
@@ -776,7 +776,7 @@ describe Assignment do
 
         it 'returns false' do
           pending 'pending discussion on intended functionality'
-          expect(@assignment.past_due_date?).to be false
+          expect(@assignment.past_all_due_dates?).to be false
         end
       end
     end
@@ -792,7 +792,7 @@ describe Assignment do
         end
 
         it 'returns true' do
-          expect(@assignment.past_due_date?).to be true
+          expect(@assignment.past_all_due_dates?).to be true
         end
       end
 
@@ -805,7 +805,7 @@ describe Assignment do
         end
 
         it 'returns false' do
-          expect(@assignment.past_due_date?).to be false
+          expect(@assignment.past_all_due_dates?).to be false
         end
       end
     end
