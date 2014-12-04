@@ -155,7 +155,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Whether or not this grouping is past its due date for this assignment.
-  def section_past_due_date?(grouping)
+  def grouping_past_due_date?(grouping)
     if section_due_dates_type && grouping &&
       grouping.inviter.section.present?
 

@@ -811,7 +811,7 @@ describe Assignment do
     end
   end
 
-  describe '#section_past_due_date?' do
+  describe '#grouping_past_due_date?' do
     context 'with SectionDueDates disabled' do
       before :each do
         @due_assignment = create(:assignment,
@@ -824,16 +824,16 @@ describe Assignment do
 
       context 'when no grouping is specified' do
         it 'returns based on due date of the assignment' do
-          expect(@due_assignment.section_past_due_date?(nil)).to be true
-          expect(@not_due_assignment.section_past_due_date?(nil)).to be false
+          expect(@due_assignment.grouping_past_due_date?(nil)).to be true
+          expect(@not_due_assignment.grouping_past_due_date?(nil)).to be false
         end
       end
 
       context 'when a grouping is specified' do
         it 'returns based on due date of the assignment' do
           grouping = create(:grouping)
-          expect(@due_assignment.section_past_due_date?(grouping)).to be true
-          expect(@not_due_assignment.section_past_due_date?(grouping))
+          expect(@due_assignment.grouping_past_due_date?(grouping)).to be true
+          expect(@not_due_assignment.grouping_past_due_date?(grouping))
             .to be false
         end
       end
@@ -848,9 +848,9 @@ describe Assignment do
         it 'returns based on due date of the assignment' do
           pending 'waiting on resolution for pending past_due_date example'
           @assignment.update_attributes(due_date: 1.days.ago)
-          expect(@assignment.section_past_due_date?(nil)).to be true
+          expect(@assignment.grouping_past_due_date?(nil)).to be true
           @assignment.update_attributes(due_date: 1.days.from_now)
-          expect(@assignment.section_past_due_date?(nil)).to be false
+          expect(@assignment.grouping_past_due_date?(nil)).to be false
         end
       end
 
@@ -867,9 +867,9 @@ describe Assignment do
         context 'that does not have an associated SectionDueDate' do
           it 'returns based on due date of the assignment' do
             @assignment.update_attributes(due_date: 1.days.ago)
-            expect(@assignment.section_past_due_date?(@grouping)).to be true
+            expect(@assignment.grouping_past_due_date?(@grouping)).to be true
             @assignment.update_attributes(due_date: 1.days.from_now)
-            expect(@assignment.section_past_due_date?(@grouping)).to be false
+            expect(@assignment.grouping_past_due_date?(@grouping)).to be false
           end
         end
 
@@ -881,11 +881,11 @@ describe Assignment do
           it 'returns based on the SectionDueDate of the grouping' do
             @section_due_date.update_attributes(due_date: 1.days.from_now)
             @assignment.update_attributes(due_date: 1.days.ago)
-            expect(@assignment.section_past_due_date?(@grouping)).to be false
+            expect(@assignment.grouping_past_due_date?(@grouping)).to be false
 
             @section_due_date.update_attributes(due_date: 1.days.ago)
             @assignment.update_attributes(due_date: 1.days.from_now)
-            expect(@assignment.section_past_due_date?(@grouping)).to be true
+            expect(@assignment.grouping_past_due_date?(@grouping)).to be true
           end
         end
       end
