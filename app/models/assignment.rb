@@ -136,7 +136,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Return an array with names of sections past
-  def what_past_due_date
+  def section_names_past_due_date
     sections_past = []
 
     unless self.section_due_dates_type

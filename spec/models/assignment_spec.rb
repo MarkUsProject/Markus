@@ -892,7 +892,7 @@ describe Assignment do
     end
   end
 
-  describe '#what_past_due_date' do
+  describe '#section_names_past_due_date' do
     context 'with SectionDueDates disabled' do
       before :each do
         @assignment = create(:assignment, section_due_dates_type: false)
@@ -902,7 +902,7 @@ describe Assignment do
         it 'returns one name for the assignment' do
           @assignment.update_attributes(due_date: 1.days.ago)
 
-          expect(@assignment.what_past_due_date).to eq ['Due Date']
+          expect(@assignment.section_names_past_due_date).to eq ['Due Date']
         end
       end
 
@@ -910,7 +910,7 @@ describe Assignment do
         it 'returns an empty array' do
           @assignment.update_attributes(due_date: 1.days.from_now)
 
-          expect(@assignment.what_past_due_date).to eq []
+          expect(@assignment.section_names_past_due_date).to eq []
         end
       end
     end
@@ -931,7 +931,7 @@ describe Assignment do
           it 'returns an array with the name of the section' do
             @section_due_date.update_attributes(due_date: 1.days.ago)
 
-            expect(@assignment.what_past_due_date).to eq [@section.name]
+            expect(@assignment.section_names_past_due_date).to eq [@section.name]
           end
         end
 
@@ -939,7 +939,7 @@ describe Assignment do
           it 'returns an empty array' do
             @section_due_date.update_attributes(due_date: 1.days.from_now)
 
-            expect(@assignment.what_past_due_date).to eq []
+            expect(@assignment.section_names_past_due_date).to eq []
           end
         end
       end
@@ -959,7 +959,7 @@ describe Assignment do
               section_due_date.update_attributes(due_date: 1.days.ago)
             end
 
-            expect(@assignment.what_past_due_date).to match_array @section_names
+            expect(@assignment.section_names_past_due_date).to match_array @section_names
           end
         end
 
@@ -968,7 +968,7 @@ describe Assignment do
             @section_due_dates.first.update_attributes(due_date: 1.days.ago)
             @section_due_dates.last.update_attributes(due_date: 1.days.from_now)
 
-            expect(@assignment.what_past_due_date).to eq [@section_names.first]
+            expect(@assignment.section_names_past_due_date).to eq [@section_names.first]
           end
         end
 
@@ -978,7 +978,7 @@ describe Assignment do
               section_due_date.update_attributes(due_date: 1.days.from_now)
             end
 
-            expect(@assignment.what_past_due_date).to eq []
+            expect(@assignment.section_names_past_due_date).to eq []
           end
         end
       end
