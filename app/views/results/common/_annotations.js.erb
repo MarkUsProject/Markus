@@ -58,12 +58,13 @@
   /**
    * Prepare annotation for pdf annotations.
    *
-   * @param  {pdfViewerId} The ID of the PDF viewer.
+   * @param {PDFView} pdfView     PDF Viewer
+   * @param {String}  pdfViewerId The ID of the PDF viewer.
    */
-  function source_code_ready_for_pdf(pdfViewerId) {
+  function source_code_ready_for_pdf(pdfView, pdfViewerId) {
     annotation_type = ANNOTATION_TYPES.PDF;
 
-    annotation_manager = new PdfAnnotationManager(pdfViewerId);
+    annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId);
   }
 
   /**

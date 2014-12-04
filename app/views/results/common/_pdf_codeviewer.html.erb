@@ -155,7 +155,15 @@
   document.getElementById('codeviewer').onmousemove = null;
 
   PDFView.onLoadComplete = function() {
-    window.source_code_ready_for_pdf('viewer');
+    window.source_code_ready_for_pdf(PDFView, 'viewer');
+
+    <% if (defined? annots) %>
+      <% annots.each do |annot| %>
+        add_pdf_annotation('<%= annot.annotation_text.id %>',
+                           '<%= annot.annotation_text.content %>',
+                           '<%= annot.extract_coords.to_json().html_safe %>');
+      <% end %>
+    <% end %>
   };
 
   webViewerLoad("<%= download_assignment_submission_results_path(select_file_id: submission_file_id,

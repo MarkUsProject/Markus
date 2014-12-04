@@ -15,17 +15,20 @@
    *
    * @class
    *
-   * @param {string} pageParentId The ID of the parent container of the pages.
+   * @param {PDFView} pdfView       PDF Viewer
+   * @param {String}  pageParentId The ID of the parent container of the pages.
    */
-  function PdfAnnotationManager(pageParentId) {
+  function PdfAnnotationManager(pdfView, pageParentId) {
     var self = this;
 
     // Members
+    this.pdfView = pdfView;
     this.annotationTextManager = new AnnotationTextManager();
     this.pageParentId = pageParentId;
 
-    /** @type {[id]: {text: AnnotationText, $control: jQuery}} */
+    /** @type {<page> : {[id]: {annotation: AnnotationText, coords: Object}} */
     this.annotations = {};
+    this.annotationControls = {};
 
     /** @type {{page: int, $control: jQuery}} */
     this.selectionBox = {};
@@ -35,6 +38,8 @@
     /** @type {{x: number, y: number, width: number, height: number}} */
     this.currentSelection = {};
 
+    // Event Handlers
+    this.pdfView.onPageRendered = this.onPageRendered.bind(this);
     this.bindPageEvents();
   }
 
@@ -62,6 +67,40 @@
       y: 1 - ((height - y)/height)
     };
   }
+
+  /**
+   * Get all the annotations for a specific page.
+   * @param  {number} pageNumber The page number to get the annotations for
+   * @return {{annotation: AnnotationText, coords: Object}[]} Annotation data.
+   */
+  PdfAnnotationManager.prototype.getPageAnnotations = function(pageNumber) {
+    var pageData = this.annotations[pageNumber];
+
+    if(!pageData) { return []; } // No annotations on page
+
+    var annotationArray = [];
+    for(var key in pageData) {
+      annotationArray.push(pageData[key]);
+    }
+
+    return annotationArray
+  };
+
+  /**
+   * Called whenever a page is rendered on the PDF view.
+   *
+   * @param  {PDFView Page} page       The page being rendered.
+   * @param  {number}       pageNumber The page number being rendered.
+   */
+  PdfAnnotationManager.prototype.onPageRendered = function(page, pageNumber) {
+    var annotations = this.getPageAnnotations(pageNumber);
+
+    // Redraw annotations
+    for(var i = 0; i < annotations.length; i++) {
+      var item = annotations[i];
+      this.renderAnnotation(item.annotation, item.coords);
+    }
+  };
 
   /**
    * Get a selection for a specific page.
@@ -257,20 +296,15 @@
   }
 
   /**
-   * Add an annotation to the PDF.
+   * Draw the annotation on the screen.
    *
-   * @param {string} annotation_text_id [description]
-   * @param {string} content            [description]
+   * @param {AnnotationText} annotation
    * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
    */
-  PdfAnnotationManager.prototype.addAnnotation = function(annotation_text_id, content, coords) {
-    var annotation_text = new AnnotationText(annotation_text_id, 0, content);
-
-    if (this.getAnnotationTextManager().annotationTextExists(annotation_text.getId())) {
-      return;
+  PdfAnnotationManager.prototype.renderAnnotation = function(annotation, coords) {
+    if(this.annotationControls[annotation.getId()]) {
+      this.annotationControls[annotation.getId()].remove(); // Remove old controls
     }
-
-    this.getAnnotationTextManager().addAnnotationText(annotation_text);
 
     var $control = $("<div />").addClass("annotation_holder").css({
       top: ((coords.y1 / COORDINATE_MULTIPLIER) * 100) + "%",
@@ -285,7 +319,7 @@
     var $textSpan = null;
 
     function createTextNode() {
-      var text = annotation_text.getContent();
+      var text = annotation.getContent();
 
       return $("<div />").addClass("annotation_text_display").text(text);
     }
@@ -312,12 +346,35 @@
       }
     });
 
-    $page.append($control);
+    this.annotationControls[annotation.getId()] = $control;
 
-    this.annotations[annotation_text.getId()] = {
-      text: annotation_text,
-      $control: $control
-    };
+    $page.append($control);
+  }
+
+  /**
+   * Add an annotation to the PDF.
+   *
+   * @param {string} annotation_text_id [description]
+   * @param {string} content            [description]
+   * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
+   */
+  PdfAnnotationManager.prototype.addAnnotation = function(annotation_text_id, content, coords) {
+    var annotation_text = new AnnotationText(annotation_text_id, 0, content);
+
+    if (this.getAnnotationTextManager().annotationTextExists(annotation_text.getId())) {
+      return;
+    }
+
+    this.getAnnotationTextManager().addAnnotationText(annotation_text);
+
+    this.renderAnnotation(annotation_text, coords);
+
+    // Save annotation location information
+    this.annotations[coords.page] = this.annotations[coords.page] || {};
+    this.annotations[coords.page][annotation_text.getId()] = {
+      annotation: annotation_text,
+      coords: coords
+    }
 
     this.hideSelectionBox();
   }

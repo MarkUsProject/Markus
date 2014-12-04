@@ -22,7 +22,7 @@ add_annotation_text('<%= @text.id %>', '<%= @text.content %>');
 
 <% elsif @annotation.is_a?(PdfAnnotation) %>
   add_pdf_annotation('<%= @text.id %>',
-                     '<%= simple_format(@text.content) %>',
+                     '<%= @text.content %>',
                      '<%= @annotation.extract_coords.to_json().html_safe %>');
 <% end %>
 

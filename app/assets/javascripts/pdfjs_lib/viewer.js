@@ -87,6 +87,7 @@ var PDFView = {
   currentPosition: null,
   url: '',
   onLoadComplete: function() {},
+  onPageRendered: function(page, pageNum) {},
 
   // called once when the document is loaded
   initialize: function pdfViewInitialize() {
@@ -162,7 +163,11 @@ var PDFView = {
   },
 
   getPage: function pdfViewGetPage(n) {
-    return this.pdfDocument.getPage(n);
+    var page = this.pdfDocument.getPage(n);
+
+    this.onPageRendered(page, n);
+
+    return page;
   },
 
   // Helper function to keep track whether a div was scrolled up or down and
