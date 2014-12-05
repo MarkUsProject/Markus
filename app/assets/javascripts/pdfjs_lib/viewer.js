@@ -1487,12 +1487,24 @@ function webViewerInitialized(file) {
 
   document.getElementById('previous').addEventListener('click',
     function() {
-      PDFView.page--;
+      var pageNum = parseInt(document.getElementById('pageNumber').value, 10);
+
+      if(!isNaN(pageNum)) {
+        PDFView.page = pageNum - 1
+      } else {
+        PDFView.page--;
+      }
     });
 
   document.getElementById('next').addEventListener('click',
     function() {
-      PDFView.page++;
+      var pageNum = parseInt(document.getElementById('pageNumber').value, 10);
+
+      if(!isNaN(pageNum)) {
+        PDFView.page = pageNum + 1
+      } else {
+        PDFView.page++;
+      }
     });
 
   document.getElementById('zoomIn').addEventListener('click',
@@ -1580,6 +1592,7 @@ function updateViewarea() {
     if (page.percent < 100) {
       break;
     }
+
     if (page.id === PDFView.page) {
       stillFullyVisible = true;
       break;
@@ -1606,6 +1619,7 @@ function updateViewarea() {
   var intTop = Math.round(topLeft[1]);
   pdfOpenParams += ',' + intLeft + ',' + intTop;
 
+  document.getElementById('pageNumber').value = pageNumber;
   PDFView.currentPosition = { page: pageNumber, left: intLeft, top: intTop };
 
   PDFView.store.initializedPromise.then(function() {
