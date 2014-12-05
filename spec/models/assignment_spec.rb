@@ -255,7 +255,7 @@ describe Assignment do
   describe '#valid_groupings and #invalid_groupings' do
     before :each do
       @assignment = create(:assignment)
-      @groupings = (1..2).map { create(:grouping, assignment: @assignment) }
+      @groupings = Array.new(2) { create(:grouping, assignment: @assignment) }
     end
 
     context 'when no groups are valid' do
@@ -366,7 +366,7 @@ describe Assignment do
     before :each do
       @assignment = create(:assignment)
       @grouping = create(:grouping, assignment: @assignment)
-      @students = (1..2).map { create(:student) }
+      @students = Array.new(2) { create(:student) }
     end
 
     context 'when all students are ungrouped' do
@@ -404,7 +404,7 @@ describe Assignment do
 
     context 'when there are multiple groupings' do
       before :each do
-        @groupings = (1..2).map { create(:grouping, assignment: @assignment) }
+        @groupings = Array.new(2) { create(:grouping, assignment: @assignment) }
       end
 
       context 'and no TAs have been assigned' do
@@ -510,7 +510,7 @@ describe Assignment do
 
     context 'when multiple groups have submitted' do
       before :each do
-        @groupings = (1..2).map { create(:grouping, assignment: @assignment) }
+        @groupings = Array.new(2) { create(:grouping, assignment: @assignment) }
         @groupings.each do |group|
           create(:version_used_submission, grouping: group)
         end
@@ -580,7 +580,7 @@ describe Assignment do
 
     context 'when the row is not empty' do
       before :each do
-        @students = (1..2).map { create(:student) }
+        @students = Array.new(2) { create(:student) }
         user_names = @students.map { |student| student.user_name }
         @row = ['group_name', 'repo_name'] + user_names
       end
@@ -946,7 +946,7 @@ describe Assignment do
 
       describe 'two SectionDueDates' do
         before :each do
-          @sections = (1..2).map { create(:section) }
+          @sections = Array.new(2) { create(:section) }
           @section_due_dates = @sections.map do |section|
             SectionDueDate.create(section: section, assignment: @assignment)
           end
