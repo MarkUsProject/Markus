@@ -20,8 +20,8 @@ class AnnotationText < ActiveRecord::Base
     User.find_by_id(last_editor_id)
   end
 
-  # Conver the content string into HTML
+  # Convert the content string into HTML
   def html_content
-    content.gsub(/\n/, '<br/>').html_safe
+   content.gsub(/\n/, '<br/>').html_safe
   end
 end
