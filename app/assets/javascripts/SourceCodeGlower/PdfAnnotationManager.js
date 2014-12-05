@@ -27,8 +27,9 @@
     this.pageParentId = pageParentId;
 
     /** @type {<page> : {[id]: {annotation: AnnotationText, coords: Object}} */
-    this.annotations = {};
-    this.annotationControls = {};
+    this.annotations = {};        // Lookup of annotations by page number
+    this.annotationsById = {};    // Lookup of annotations by annotation id
+    this.annotationControls = {}; // DOM elements added for annotations.
 
     /** @type {{page: int, $control: jQuery}} */
     this.selectionBox = {};
@@ -370,17 +371,38 @@
     this.renderAnnotation(annotation_text, coords);
 
     // Save annotation location information
-    this.annotations[coords.page] = this.annotations[coords.page] || {};
-    this.annotations[coords.page][annotation_text.getId()] = {
+    var annotationData = {
       annotation: annotation_text,
       coords: coords
-    }
+    };
+
+    // Stored using multiple lookups so that there is fast rendering
+    // and fast deletion.
+    this.annotations[coords.page] = this.annotations[coords.page] || {};
+    this.annotations[coords.page][annotation_text.getId()] = annotationData;
+    this.annotationsById[annotation_text.getId()] = annotationData;
 
     this.hideSelectionBox();
   }
 
+  /**
+   * Remove an annotation
+   * @param  {string} annotation_id      Ignored
+   * @param  {Object} range              Ignored
+   * @param  {string} annotation_text_id Annotation text id.
+   */
   PdfAnnotationManager.prototype.remove_annotation = function(annotation_id, range, annotation_text_id) {
-    // debugger;
+    var annotationData = this.annotationsById[annotation_text_id];
+
+    // Remove from rendering lookups
+    delete this.annotations[annotationData.coords.page][annotation_text_id];
+    delete this.annotationsById[annotation_text_id];
+
+    this.annotationControls[annotation_text_id].remove(); // Delete DOM node
+
+    if (this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
+      this.getAnnotationTextManager().removeAnnotationText(annotation_text_id);
+    }
   }
 
   // Exports
