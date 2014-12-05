@@ -9,9 +9,8 @@ document.getElementById('annotation_summary_list').innerHTML =
                                   locals: { annotation_category: @text.annotation_category }) %>';
 <% end %>
 
-add_annotation_text('<%= @text.id %>', '<%= @text.content %>');
-
 <% if @annotation.is_a?(TextAnnotation) %>
+  add_annotation_text('<%= @text.id %>', '<%= simple_format(@text.content) %>');
   add_annotation('<%= @annotation.id %>',
                  { start: '<%= @annotation.line_start %>',
                    end: '<%= @annotation.line_end %>' },
@@ -22,7 +21,7 @@ add_annotation_text('<%= @text.id %>', '<%= @text.content %>');
 
 <% elsif @annotation.is_a?(PdfAnnotation) %>
   add_pdf_annotation('<%= @text.id %>',
-                     '<%= @text.content %>',
+                     '<%= @text.html_content %>',
                      '<%= @annotation.extract_coords.to_json().html_safe %>');
 <% end %>
 

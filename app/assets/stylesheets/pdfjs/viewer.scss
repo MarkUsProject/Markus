@@ -572,21 +572,6 @@ html[dir='ltr'] .splitToolbarButton > .toolbarButton {
 
 }
 
-/*
-.splitToolbarButton > .toolbarButton:hover,
-.splitToolbarButton > .toolbarButton:focus,
-.dropdownToolbarButton:hover,
-.overlayButton:hover,
-.toolbarButton.textButton:hover,
-.toolbarButton.textButton:focus {
-  background-color: hsla(0,0%,0%,.2);
-  box-shadow: 0 1px 0 hsla(0,0%,100%,.05) inset,
-              0 0 1px hsla(0,0%,100%,.15) inset,
-              0 0 1px hsla(0,0%,0%,.05);
-  z-index: 199;
-}
-*/
-*
 .splitToolbarButton > .toolbarButton {
   position: relative;
 }

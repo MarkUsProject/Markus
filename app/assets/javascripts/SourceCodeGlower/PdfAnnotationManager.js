@@ -15,7 +15,7 @@
    *
    * @class
    *
-   * @param {PDFView} pdfView       PDF Viewer
+   * @param {PDFView} pdfView      PDF Viewer
    * @param {String}  pageParentId The ID of the parent container of the pages.
    */
   function PdfAnnotationManager(pdfView, pageParentId) {
@@ -29,7 +29,7 @@
     /** @type {<page> : {[id]: {annotation: AnnotationText, coords: Object}} */
     this.annotations = {};        // Lookup of annotations by page number
     this.annotationsById = {};    // Lookup of annotations by annotation id
-    this.annotationControls = {}; // DOM elements added for annotations.
+    this.annotationControls = {}; // DOM elements added for annotations
 
     /** @type {{page: int, $control: jQuery}} */
     this.selectionBox = {};
@@ -322,7 +322,9 @@
     function createTextNode() {
       var text = annotation.getContent();
 
-      return $("<div />").addClass("annotation_text_display").text(text);
+      return $("<div />").addClass("annotation_text_display")
+                         .append("<p />")
+                         .html(text);
     }
 
     $control.mousemove(function(ev) {
