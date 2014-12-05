@@ -1684,11 +1684,6 @@ function selectScaleOption(value) {
 
 window.addEventListener('localized', function localized(evt) {
   document.getElementsByTagName('html')[0].dir = mozL10n.getDirection();
-
-  PDFView.animationStartedPromise.then(function() {
-    var container = document.getElementById('scaleSelectContainer');
-    container.setAttribute('style', 'position: relative; top: -10px;');
-  });
 }, true);
 
 window.addEventListener('scalechange', function scalechange(evt) {

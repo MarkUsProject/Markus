@@ -27,6 +27,11 @@
   background-image: url(/assets/pdfjs/texture.png);
 }
 
+#scaleSelectContainer {
+  position: relative;
+  top: -12px;
+}
+
 #outerContainer,
 #outerContainer input,
 #outerContainer button,
@@ -546,9 +551,9 @@ html[dir='ltr'] .splitToolbarButton > .toolbarButton {
   margin: 0;
 }
 
-.splitToolbarButton:hover > .toolbarButton,
-.splitToolbarButton:focus > .toolbarButton,
-.splitToolbarButton.toggled > .toolbarButton,
+.splitToolbarButton > .toolbarButton,
+.splitToolbarButton > .toolbarButton,
+.splitToolbarButton > .toolbarButton,
 .toolbarButton.textButton {
   background-color: hsla(0,0%,0%,.12);
   background-image: linear-gradient(hsla(0,0%,100%,.05), hsla(0,0%,100%,0));
@@ -566,6 +571,8 @@ html[dir='ltr'] .splitToolbarButton > .toolbarButton {
   transition-timing-function: ease;
 
 }
+
+/*
 .splitToolbarButton > .toolbarButton:hover,
 .splitToolbarButton > .toolbarButton:focus,
 .dropdownToolbarButton:hover,
@@ -578,6 +585,8 @@ html[dir='ltr'] .splitToolbarButton > .toolbarButton {
               0 0 1px hsla(0,0%,0%,.05);
   z-index: 199;
 }
+*/
+*
 .splitToolbarButton > .toolbarButton {
   position: relative;
 }
