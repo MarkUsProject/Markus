@@ -222,7 +222,10 @@
   function make_new_pdf_annotation () {
     var box = annotation_manager.selectionRectangleAsInts();
 
-    if (!box) { return; }
+    if (!box) {
+      alert("<%= I18n.t('marker.annotation.select_an_area_pdf') %>");
+      return;
+    }
 
     // Open the modal dialog to ask for new Annotation details
     modal.open();
