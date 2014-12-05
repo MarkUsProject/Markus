@@ -22,6 +22,6 @@ class AnnotationText < ActiveRecord::Base
 
   # Convert the content string into HTML
   def html_content
-   content.gsub(/\n/, '<br/>').html_safe
+    content.gsub(/\n/, '<br/>').html_safe
   end
 end
