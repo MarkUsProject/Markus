@@ -286,9 +286,7 @@ describe Assignment do
 
       context 'due to meeting min size requirement' do
         before :each do
-          create(:accepted_student_membership,
-                 grouping: @groupings.first,
-                 user: create(:student))
+          create(:accepted_student_membership, grouping: @groupings.first)
         end
 
         it '#valid_groupings returns the valid group' do
@@ -305,9 +303,7 @@ describe Assignment do
     context 'when all groups are valid' do
       before :each do
         @groupings.each do |grouping|
-          create(:accepted_student_membership,
-                 grouping: grouping,
-                 user: create(:student))
+          create(:accepted_student_membership, grouping: grouping)
         end
       end
 
