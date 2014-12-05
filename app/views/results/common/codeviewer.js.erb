@@ -1,6 +1,7 @@
 <%# Render the source code for syntax highlighting... %>
 
 document.getElementById('code_pane').onmousemove = null;
+document.getElementById('codeviewer').onmousemove = null;
 
 <%# Non-binary files %>
 <% if !SubmissionFile.is_binary?(@file_contents) %>
