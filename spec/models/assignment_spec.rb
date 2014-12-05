@@ -1039,6 +1039,130 @@ describe Assignment do
     end
   end
 
+  describe '#get_detailed_csv_report' do
+    context 'when rubric marking was used' do
+      before :each do
+        @assignment = create(:rubric_assignment)
+        2.times { create(:assignment_file, assignment: @assignment) }
+        criteria =
+          Array.new(4) { create(:rubric_criterion, assignment: @assignment) }
+
+        4.times do
+          grouping = create(:grouping, assignment: @assignment)
+          3.times { create(:accepted_student_membership, grouping: grouping) }
+          submission = create(:version_used_submission, grouping: grouping)
+          r = submission.get_latest_result
+          criteria.each do |criterion|
+            create(:mark, result: r, markable: criterion)
+          end
+          r.reload
+          r.update_attributes(marking_state: Result::MARKING_STATES[:complete])
+        end
+      end
+
+      it 'generates a CSV report of rubric-based marks and criteria' do
+        expected_string = ''
+        Student.all.each do |student|
+          fields = []
+          fields.push(student.user_name)
+
+          grouping = student.accepted_grouping_for(@assignment.id)
+          if grouping && grouping.has_submission?
+            result = grouping.current_submission_used.get_latest_result
+            fields.push(result.total_mark / @assignment.total_mark * 100)
+            @assignment.rubric_criteria.each do |criterion|
+              mark = result.marks
+                .find_by_markable_id_and_markable_type(criterion.id,
+                                                       'RubricCriterion')
+              if mark && mark.mark
+                fields.push(mark.mark)
+              else
+                fields.push('')
+              end
+              fields.push(criterion.weight)
+            end
+            fields.push(result.get_total_extra_points)
+            fields.push(result.get_total_extra_percentage)
+          else
+            fields.push('')
+            @assignment.rubric_criteria.each do |criterion|
+              fields.push('', criterion.weight)
+            end
+            fields.push('', '')
+          end
+          grace_credits_data = student.remaining_grace_credits.to_s + '/' +
+                               student.grace_credits.to_s
+          fields.push(grace_credits_data)
+
+          expected_string += fields.to_csv
+        end
+
+        expect(@assignment.get_detailed_csv_report).to eq expected_string
+      end
+    end
+
+    context 'when flexible marking was used' do
+      before :each do
+        @assignment = create(:flexible_assignment)
+        2.times { create(:assignment_file, assignment: @assignment) }
+        criteria =
+          Array.new(4) { create(:flexible_criterion, assignment: @assignment) }
+
+        4.times do
+          grouping = create(:grouping, assignment: @assignment)
+          3.times { create(:accepted_student_membership, grouping: grouping) }
+          submission = create(:version_used_submission, grouping: grouping)
+          r = submission.get_latest_result
+          criteria.each do |criterion|
+            create(:mark, result: r, markable: criterion)
+          end
+          r.reload
+          r.update_attributes(marking_state: Result::MARKING_STATES[:complete])
+        end
+      end
+
+      it 'generates a CSV report of flexible-based marks and criteria' do
+        expected_string = ''
+        Student.all.each do |student|
+          fields = []
+          fields.push(student.user_name)
+
+          grouping = student.accepted_grouping_for(@assignment.id)
+          if grouping && grouping.has_submission?
+            result = grouping.current_submission_used.get_latest_result
+            fields.push(result.total_mark / @assignment.total_mark * 100)
+            @assignment.flexible_criteria.each do |criterion|
+              mark = result.marks
+                .find_by_markable_id_and_markable_type(criterion.id,
+                                                       'FlexibleCriterion')
+              if mark && mark.mark
+                fields.push(mark.mark)
+              else
+                fields.push('')
+              end
+              fields.push(criterion.max)
+            end
+            fields.push(result.get_total_extra_points)
+            fields.push(result.get_total_extra_percentage)
+          else
+            fields.push('')
+            @assignment.flexible_criteria.each do |criterion|
+              fields.push('', criterion.max)
+            end
+            fields.push('', '')
+          end
+          grace_credits_data = student.remaining_grace_credits.to_s + '/' +
+                               student.grace_credits.to_s
+          fields.push(grace_credits_data)
+
+          expected_string += fields.to_csv
+        end
+
+        expect(@assignment.get_detailed_csv_report).to eq expected_string
+      end
+    end
+  end
+
   context 'when before due with no submission rule' do
     before :each do
       @assignment = create(:assignment, due_date: 2.days.from_now)
