@@ -985,6 +985,60 @@ describe Assignment do
     end
   end
 
+  describe '#grade_distribution_as_percentage' do
+    before :each do
+      @assignment = create(:assignment)
+      5.times { create(:rubric_criterion, assignment: @assignment) }
+    end
+
+    context 'when there are no submitted marks' do
+      it 'returns the correct distribution' do
+        expect(@assignment.grade_distribution_as_percentage)
+          .to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
+        expect(@assignment.grade_distribution_as_percentage(10))
+          .to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      end
+    end
+
+    context 'when there are submitted marks' do
+      before :each do
+        total_marks = [1, 9.6, 10, 9, 18.1, 21] # Max mark is 20.
+
+        total_marks.each do |total_mark|
+          g = create(:grouping, assignment: @assignment)
+          s = create(:version_used_submission, grouping: g)
+
+          result = s.get_latest_result
+          result.total_mark = total_mark
+          result.marking_state = Result::MARKING_STATES[:complete]
+          result.save
+        end
+      end
+
+      context 'without an interval provided' do
+        it 'returns distribution with default 20 intervals' do
+          expect(@assignment.grade_distribution_as_percentage.size).to eq 20
+        end
+
+        it 'returns the correct distribution' do
+          expect(@assignment.grade_distribution_as_percentage)
+            .to eq [1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+        end
+      end
+
+      context 'with an interval provided' do
+        it 'returns distribution in the provided interval' do
+          expect(@assignment.grade_distribution_as_percentage(10).size).to eq 10
+        end
+
+        it 'returns the correct distribution' do
+          expect(@assignment.grade_distribution_as_percentage(10))
+            .to eq [1, 0, 0, 0, 3, 0, 0, 0, 0, 2]
+        end
+      end
+    end
+  end
+
   context 'when before due with no submission rule' do
     before :each do
       @assignment = create(:assignment, due_date: 2.days.from_now)
