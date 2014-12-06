@@ -941,7 +941,6 @@ module Repository
       return result
     end
 
-
     # Returns the last modified date and author in an array given
     # the relative path to file as a string
     def find_last_modified_date_author(relative_path_to_file)
