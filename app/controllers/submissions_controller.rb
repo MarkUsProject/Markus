@@ -312,8 +312,11 @@ class SubmissionsController < ApplicationController
       end
       @revision = repo.get_revision(@revision_number)
 
-      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
-      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
+      @directories =
+          @revision.directories_at_path(File.join(@assignment.repository_folder,
+                                                  @path))
+      @files = @revision.files_at_path(File.join(@assignment.repository_folder,
+                                                 @path))
       @table_rows = {}
       @files.sort.each do |file_name, file|
         @table_rows[file.object_id] =

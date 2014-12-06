@@ -105,7 +105,7 @@ module Repository
     # object of the file itself.
     def get_blob(oid)
       blob = @repos.lookup(oid)
-      return blob
+      blob
     end
 
     # Exports git repo to a new folder (clone repository)
@@ -851,8 +851,6 @@ module Repository
       # This returns the actual object.
       current_object
     end
-
-
 
     # Return all of the files in this repository in a hash where
     # key: filename and value: RevisionFile object
