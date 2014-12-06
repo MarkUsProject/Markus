@@ -74,20 +74,18 @@
         <%= t('browse_submissions.current_path') %>
         <% path_memory = '/'
            links = []
-           @path.split('/').each do |folder|
-             path_memory = File.join(path_memory, folder)
-             links.push(link_to folder,
+           absolute_path = @assignment.repository_folder + @path
+           absolute_path.split('/').each do |folder|
+             if(folder != @assignment.repository_folder)
+               path_memory = File.join(path_memory, folder)
+             end
+             links.push(link_to "/#{folder}",
                                 action: 'repo_browser',
                      path: path_memory,
                      id: @grouping.id,
                      revision_number: @revision_number)
            end %>
-        <%= link_to "/#{@assignment.repository_folder}",
-                    action: 'repo_browser',
-            id: @grouping.id,
-                path: '/',
-            revision_number: @revision_number %>
-        <%= links.join('/')%>
+        <%= links.join().html_safe %>
       </p>
     </div>
 

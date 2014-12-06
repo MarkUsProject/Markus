@@ -104,8 +104,7 @@ module Repository
     # Given a OID of a file from a Rugged::Repository lookup, return the blob
     # object of the file itself.
     def get_blob(oid)
-      blob = @repos.lookup(oid)
-      blob
+      @repos.lookup(oid)
     end
 
     # Exports git repo to a new folder (clone repository)
