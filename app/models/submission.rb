@@ -161,7 +161,7 @@ class Submission < ActiveRecord::Base
     # Remember that assignments have folders within repositories - these
     # will be "spoofed" as root...
     if path == '/'
-      path = assignment.repository_folder + '/'
+      path = assignment.repository_folder
     end
 
     # First, go through directories...
@@ -174,7 +174,7 @@ class Submission < ActiveRecord::Base
       new_file = SubmissionFile.new
       new_file.submission = self
       new_file.filename = file.name
-      new_file.path = path
+      new_file.path = file.path
       new_file.save
     end
   end
