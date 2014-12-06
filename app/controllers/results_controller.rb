@@ -273,6 +273,7 @@ class ResultsController < ApplicationController
   end
 
   def codeviewer
+
     @assignment = Assignment.find(params[:assignment_id])
     @submission_file_id = params[:submission_file_id]
     @focus_line = params[:focus_line]

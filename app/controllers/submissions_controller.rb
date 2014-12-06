@@ -270,9 +270,8 @@ class SubmissionsController < ApplicationController
     @path = params[:path] || '/'
     @previous_path = File.split(@path).first
     @repository_name = @grouping.group.repository_name
-    @current_path = @assignment.repository_folder + @path
-
     repo = @grouping.group.repo
+
     begin
       if params[:revision_timestamp]
         @revision_number = repo.get_revision_by_timestamp(
