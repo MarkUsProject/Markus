@@ -120,7 +120,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Are we past all the due dates for this assignment?
-  def past_due_date?
+  def past_all_due_dates?
     # If no section due dates /!\ do not check empty? it could be wrong
     unless self.section_due_dates_type
       return !due_date.nil? && Time.zone.now > due_date
@@ -136,7 +136,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Return an array with names of sections past
-  def what_past_due_date
+  def section_names_past_due_date
     sections_past = []
 
     unless self.section_due_dates_type
@@ -155,7 +155,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Whether or not this grouping is past its due date for this assignment.
-  def section_past_due_date?(grouping)
+  def grouping_past_due_date?(grouping)
     if section_due_dates_type && grouping &&
       grouping.inviter.section.present?
 
@@ -163,7 +163,7 @@ class Assignment < ActiveRecord::Base
         SectionDueDate.due_date_for(grouping.inviter.section, self)
       !section_due_date.nil? && Time.zone.now > section_due_date
     else
-      past_due_date?
+      past_all_due_dates?
     end
   end
 
