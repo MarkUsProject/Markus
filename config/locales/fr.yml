@@ -320,6 +320,7 @@ fr:
         change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"
         select_some_text: "Vous devez sélectionner du texte"
         select_an_area: "Vous devez sélectionner une zone sur l'image pour annoter"
+        select_an_area_pdf: "Vous devez sélectionner une zone sur le PDF pour annoter"
         provide_text:   "Vous devez fournir une annotation"
 
     #app/views/results/common

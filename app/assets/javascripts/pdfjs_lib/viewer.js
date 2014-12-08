@@ -26,7 +26,7 @@
 var DEFAULT_SCALE = 'auto';
 var DEFAULT_SCALE_DELTA = 1.1;
 var UNKNOWN_SCALE = 0;
-var DEFAULT_CACHE_SIZE = 1000;
+var DEFAULT_CACHE_SIZE = 10;
 var CSS_UNITS = 96.0 / 72.0;
 var SCROLLBAR_PADDING = 40;
 var VERTICAL_PADDING = 5;
@@ -87,6 +87,7 @@ var PDFView = {
   currentPosition: null,
   url: '',
   onLoadComplete: function() {},
+  onPageRendered: function(page, pageNum) {},
 
   // called once when the document is loaded
   initialize: function pdfViewInitialize() {
@@ -162,7 +163,11 @@ var PDFView = {
   },
 
   getPage: function pdfViewGetPage(n) {
-    return this.pdfDocument.getPage(n);
+    var page = this.pdfDocument.getPage(n);
+
+    this.onPageRendered(page, n);
+
+    return page;
   },
 
   // Helper function to keep track whether a div was scrolled up or down and
@@ -1482,12 +1487,24 @@ function webViewerInitialized(file) {
 
   document.getElementById('previous').addEventListener('click',
     function() {
-      PDFView.page--;
+      var pageNum = parseInt(document.getElementById('pageNumber').value, 10);
+
+      if(!isNaN(pageNum)) {
+        PDFView.page = pageNum - 1
+      } else {
+        PDFView.page--;
+      }
     });
 
   document.getElementById('next').addEventListener('click',
     function() {
-      PDFView.page++;
+      var pageNum = parseInt(document.getElementById('pageNumber').value, 10);
+
+      if(!isNaN(pageNum)) {
+        PDFView.page = pageNum + 1
+      } else {
+        PDFView.page++;
+      }
     });
 
   document.getElementById('zoomIn').addEventListener('click',
@@ -1575,6 +1592,7 @@ function updateViewarea() {
     if (page.percent < 100) {
       break;
     }
+
     if (page.id === PDFView.page) {
       stillFullyVisible = true;
       break;
@@ -1601,6 +1619,7 @@ function updateViewarea() {
   var intTop = Math.round(topLeft[1]);
   pdfOpenParams += ',' + intLeft + ',' + intTop;
 
+  document.getElementById('pageNumber').value = pageNumber;
   PDFView.currentPosition = { page: pageNumber, left: intLeft, top: intTop };
 
   PDFView.store.initializedPromise.then(function() {
@@ -1665,11 +1684,6 @@ function selectScaleOption(value) {
 
 window.addEventListener('localized', function localized(evt) {
   document.getElementsByTagName('html')[0].dir = mozL10n.getDirection();
-
-  PDFView.animationStartedPromise.then(function() {
-    var container = document.getElementById('scaleSelectContainer');
-    container.setAttribute('style', 'position: relative; top: -10px;');
-  });
 }, true);
 
 window.addEventListener('scalechange', function scalechange(evt) {

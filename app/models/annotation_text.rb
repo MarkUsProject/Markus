@@ -9,7 +9,7 @@ class AnnotationText < ActiveRecord::Base
   belongs_to :annotation_category
   validates_associated :annotation_category,
                        message: 'annotation_category associations failed'
-  
+
   #Find creator, return nil if not found
   def get_creator
     User.find_by_id(creator_id)
@@ -20,4 +20,8 @@ class AnnotationText < ActiveRecord::Base
     User.find_by_id(last_editor_id)
   end
 
+  # Convert the content string into HTML
+  def html_content
+    content.gsub(/\n/, '<br/>').html_safe
+  end
 end

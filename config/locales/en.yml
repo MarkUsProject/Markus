@@ -330,6 +330,7 @@ en:
         change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
         select_some_text: "You must select some source code text"
         select_an_area: "You should select an area on the image to annotate"
+        select_an_area_pdf: "You should select an area on the PDF to annotate"
         provide_text:   "You must provide some annotation text"
 
     #app/views/results/common
