@@ -77,17 +77,17 @@
   PdfAnnotationManager.prototype.getPageAnnotations = function(pageNumber) {
     var pageData = this.annotations[pageNumber];
 
-    if(!pageData) { return []; } // No annotations on page
-
-    var annotationArray = [];
-    for(var key in pageData) {
-      annotationArray.push(pageData[key]);
+    if (!pageData) {
+      return []; // No annotations on page
+    } else {
+      return $.map(pageData, function(value, key) {
+        return value;
+      });
     }
-
-    return annotationArray
   };
 
   /**
+   * Redraw the annotations on the page.
    * Called whenever a page is rendered on the PDF view.
    *
    * @param  {PDFView Page} page       The page being rendered.
@@ -96,7 +96,6 @@
   PdfAnnotationManager.prototype.onPageRendered = function(page, pageNumber) {
     var annotations = this.getPageAnnotations(pageNumber);
 
-    // Redraw annotations
     for(var i = 0; i < annotations.length; i++) {
       var item = annotations[i];
       this.renderAnnotation(item.annotation, item.coords);
@@ -322,9 +321,8 @@
     function createTextNode() {
       var text = annotation.getContent();
 
-      return $("<div />").addClass("annotation_text_display")
-                         .append("<p />")
-                         .html(text);
+      return $('<div />').addClass('annotation_text_display')
+                         .append($('<p />', {html: text}));
     }
 
     $control.mousemove(function(ev) {

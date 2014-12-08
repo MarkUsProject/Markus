@@ -221,8 +221,9 @@
 
   function make_new_pdf_annotation () {
     var box = annotation_manager.selectionRectangleAsInts();
-
-    if (!box) {
+    var boxSize = annotation_manager.selectionBoxSize();
+    
+    if (!box || boxSize.width < 5 || boxSize.height < 5) {
       alert("<%= I18n.t('marker.annotation.select_an_area_pdf') %>");
       return;
     }
