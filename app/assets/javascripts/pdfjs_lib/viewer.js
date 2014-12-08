@@ -1489,8 +1489,8 @@ function webViewerInitialized(file) {
     function() {
       var pageNum = parseInt(document.getElementById('pageNumber').value, 10);
 
-      if(!isNaN(pageNum)) {
-        PDFView.page = pageNum - 1
+      if (!isNaN(pageNum)) {
+        PDFView.page = pageNum - 1;
       } else {
         PDFView.page--;
       }
@@ -1500,8 +1500,8 @@ function webViewerInitialized(file) {
     function() {
       var pageNum = parseInt(document.getElementById('pageNumber').value, 10);
 
-      if(!isNaN(pageNum)) {
-        PDFView.page = pageNum + 1
+      if (!isNaN(pageNum)) {
+        PDFView.page = pageNum + 1;
       } else {
         PDFView.page++;
       }

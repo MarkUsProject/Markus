@@ -96,7 +96,7 @@
   PdfAnnotationManager.prototype.onPageRendered = function(page, pageNumber) {
     var annotations = this.getPageAnnotations(pageNumber);
 
-    for(var i = 0; i < annotations.length; i++) {
+    for (var i = 0; i < annotations.length; i++) {
       var item = annotations[i];
       this.renderAnnotation(item.annotation, item.coords);
     }
@@ -302,7 +302,7 @@
    * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
    */
   PdfAnnotationManager.prototype.renderAnnotation = function(annotation, coords) {
-    if(this.annotationControls[annotation.getId()]) {
+    if (this.annotationControls[annotation.getId()]) {
       this.annotationControls[annotation.getId()].remove(); // Remove old controls
     }
 
