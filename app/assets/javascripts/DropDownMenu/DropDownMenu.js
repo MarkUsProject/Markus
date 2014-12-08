@@ -39,7 +39,7 @@ DropDownMenu.prototype.refreshPositions = function() {
     "position" : "absolute",
     "left" : "offset_left + 'px'",
     "top" : "(offset_top + offset_height) + 'px'",
-    "zIndex": "1"
+    "zIndex": "10000"
   });
 }
 

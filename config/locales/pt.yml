@@ -317,6 +317,7 @@ pt:
         change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"
         select_some_text: "Você deve selecionar algum texto do código fonte"
         select_an_area: "Você deve selecionar uma área da imagem para anotar"
+        select_an_area_pdf: "Você deve selecionar uma área do PDF para anotar"
         provide_text:   "Você deve fornecer alguma anotação"
 
     #app/views/results/common

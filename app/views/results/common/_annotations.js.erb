@@ -58,12 +58,13 @@
   /**
    * Prepare annotation for pdf annotations.
    *
-   * @param  {pdfViewerId} The ID of the PDF viewer.
+   * @param {PDFView} pdfView     PDF Viewer
+   * @param {String}  pdfViewerId The ID of the PDF viewer.
    */
-  function source_code_ready_for_pdf(pdfViewerId) {
+  function source_code_ready_for_pdf(pdfView, pdfViewerId) {
     annotation_type = ANNOTATION_TYPES.PDF;
 
-    annotation_manager = new PdfAnnotationManager(pdfViewerId);
+    annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId);
   }
 
   /**
@@ -220,8 +221,12 @@
 
   function make_new_pdf_annotation () {
     var box = annotation_manager.selectionRectangleAsInts();
-
-    if (!box) { return; }
+    var boxSize = annotation_manager.selectionBoxSize();
+    
+    if (!box || boxSize.width < 5 || boxSize.height < 5) {
+      alert("<%= I18n.t('marker.annotation.select_an_area_pdf') %>");
+      return;
+    }
 
     // Open the modal dialog to ask for new Annotation details
     modal.open();

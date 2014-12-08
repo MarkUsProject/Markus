@@ -19,6 +19,18 @@ class AnnotationsController < ApplicationController
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
       })
+    elsif params[:annotation_type] == 'pdf'
+      @annotation = PdfAnnotation.new
+      @annotation.update_attributes(x1: Integer(params[:x1]),
+                                    x2: Integer(params[:x2]),
+                                    y1: Integer(params[:y1]),
+                                    y2: Integer(params[:y2]),
+                                    page: Integer(params[:page]),
+                                    submission_file_id: @submission_file_id,
+                                    is_remark: is_remark,
+                                    annotation_number: submission.annotations
+                                                                 .count + 1
+                                   )
     else
       @annotation = TextAnnotation.new
       @annotation.update_attributes({
