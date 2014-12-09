@@ -109,9 +109,9 @@
   PdfAnnotationManager.prototype.getSelectionBox = function($page) {
     var pageNumber = parseInt($page.attr("id").replace("pageContainer", ""), 10);
 
-    if(this.selectionBox.page === pageNumber) {
+    if (this.selectionBox.page === pageNumber) {
       return this.selectionBox;
-    } else if(this.selectionBox.$control != null) {
+    } else if (this.selectionBox.$control != null) {
       this.selectionBox.$control.remove(); // Remove old control
     }
 
@@ -134,7 +134,7 @@
    * @param {{x, y, width, height, visible}} params  Values to update
    */
   PdfAnnotationManager.prototype.setSelectionBox = function($page, params) {
-    if(params) {
+    if (params) {
       $.extend(this.currentSelection, params);
 
       var $selectionBox = this.getSelectionBox($page).$control;
@@ -157,7 +157,7 @@
    * @return {{x1, y1, x2, y2}} Bounding box (points are in percentages)
    */
   PdfAnnotationManager.prototype.selectionRectangleAsInts = function() {
-    if(!this.currentSelection.visible) {
+    if (!this.currentSelection.visible) {
       return null;
     }
 

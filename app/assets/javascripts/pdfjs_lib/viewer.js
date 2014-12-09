@@ -273,6 +273,7 @@ var PDFView = {
 
       selectScaleOption(value);
     }
+    window.annotation_manager.selectionBox = {};
   },
 
   zoomIn: function pdfViewZoomIn(ticks) {
