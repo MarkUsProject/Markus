@@ -40,6 +40,7 @@ Markus::Application.routes.draw do
         get 'decline_invitation'
         post 'disinvite_member'
         get 'render_test_result'
+        get 'view_summary'
       end
 
       resources :rubrics do
@@ -117,7 +118,6 @@ Markus::Application.routes.draw do
           get 'download_svn_repo_list'
           get 'collect_ta_submissions'
           post 'update_submissions'
-          post 'populate_repo_browser'
           post 'update_converted_pdfs'
           get 'updated_files'
           get 'replace_files'

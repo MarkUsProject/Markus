@@ -36,6 +36,7 @@ class Mark < ActiveRecord::Base
       errors.add(:mark, I18n.t('mark.error.validate_flexible'))
       false
     end
+    true
   end
   #return the current mark for this criterion
   def get_mark
