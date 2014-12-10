@@ -24,3 +24,16 @@
   background-color: $dark-blue;
   color: $white;
 }
+
+.tag_element_disabled {
+  border: 1px solid $black;
+  border-radius: 15px;
+  padding-left: 5px;
+  padding-right: 5px;
+  white-space: nowrap;
+
+  background-color: $black;
+
+  text-align: center;
+  color: $white;
+}

@@ -28,9 +28,9 @@
       <span><%= t('marker.marks.available_tags').html_safe %></span>
       <div id='available_tags' class='tag_list'>
         <% if @not_grouping_tags.length == 0 %>
-          <span id='available-none' class='no_tags'><%= t('tags.messages.no_available') %></span>
+          <span id='available-none' class='no_tags'><%= t('tags.messages.no_left') %></span>
         <% else %>
-          <span id='available-none' class='no_tags_hidden'><%= t('tags.messages.no_available') %></span>
+          <span id='available-none' class='no_tags_hidden'><%= t('tags.messages.no_left') %></span>
         <% end %>
         <% @not_grouping_tags.each do |tag| %>
           <%= tag('span', id: tag.id, class: 'tag_element') %>
