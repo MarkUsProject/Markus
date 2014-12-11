@@ -1,6 +1,7 @@
 function formatTag(type, tag_id, grouping_id) {
     //Gets the tag element
     var tag = jQuery('span#' + tag_id);
+
     // Notifies that the system is working.
     document.getElementById('working').style.display = '';
 
@@ -51,17 +52,8 @@ function addTagToCurrent(tag_id) {
   jQuery("#active_tags").append(
       '<span id="' + tag_id + '" class="tag_element">' + spanElement + '</span>');
 
-  // Checks and sees if there are no tags in the available tags.
-  if (jQuery('#available_tags span').length == 1) {
-    jQuery('span#available-none').removeClass('no_tags_hidden');
-    jQuery('span#available-none').addClass('no_tags');
-  }
-
-  // Checks and sees if there are no tags in the active tags.
-  if (jQuery('#active_tags span').length == 1) {
-      jQuery('span#active-none').removeClass('no_tags');
-      jQuery('span#active-none').addClass('no_tags_hidden');
-  }
+  // Hides or displays messages
+  toggleMessages();
 }
 
 function addTagToAvailable(tag_id) {
@@ -78,15 +70,22 @@ function addTagToAvailable(tag_id) {
   jQuery("#available_tags").append(
           '<span id="' + tag_id + '" class="tag_element">' + spanElement + '</span>');
 
-  // Checks and sees if there are no tags in the active tags.
-  if (jQuery('#active_tags span').length == 1) {
-      jQuery('span#active-none').removeClass('no_tags_hidden');
-      jQuery('span#active-none').addClass('no_tags');
-  }
+  // Hides or displays messages.
+  toggleMessages();
+}
 
+function toggleMessages() {
   // Checks and sees if there are no tags in the available tags.
   if (jQuery('#available_tags span').length == 1) {
-      jQuery('span#available-none').removeClass('no_tags');
-      jQuery('span#available-none').addClass('no_tags_hidden');
+      document.getElementById('available-none').style.display = 'inline';
+  } else {
+      document.getElementById('available-none').style.display = 'none';
+  }
+
+  // Checks and sees if there are no tags in the active tags.
+  if (jQuery('#active_tags span').length == 1) {
+      document.getElementById('active-none').style.display = 'inline';
+  } else {
+      document.getElementById('active-none').style.display = 'none';
   }
 }
