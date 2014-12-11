@@ -30,11 +30,11 @@ module TagsHelper
     end
 
     # Loops until the top 5 tags are found
-    i = 0
+    i = sorted_tag.length - 1
     top ||= []
-    while i < 5 && sorted_tag.length > i do
+    while i >= sorted_tag.length - 5 && i >= 0 do
       top << sorted_tag.at(i)
-      i += 1
+      i -= 1
     end
 
     # Returns

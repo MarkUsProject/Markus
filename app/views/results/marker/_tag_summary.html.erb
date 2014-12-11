@@ -16,6 +16,7 @@
                         onClick: "formatTag(\"remove\",#{tag.id},#{@grouping.id})",
                         class: 'remove_tag_url'%>
         </span>
+        <%= tag('span', id: "#{tag.id}-space") %>&nbsp;</span>
       <% end %>
     </div>
   </div>
@@ -39,7 +40,8 @@
                           onClick: "formatTag(\"add\",#{tag.id},#{@grouping.id})",
                           class: 'add_tag_url'%>
           </span>
-          <% end %>
+          <%= tag('span', id: "#{tag.id}-space") %>&nbsp;</span>
+        <% end %>
       </div>
     </div>
   </div>
@@ -55,7 +57,7 @@
         <%= tag('span', id: tag.id, class: 'tag_element') %>
           <%= tag.name %>
         </span>
-        x <%= @top_tags_num[tag.id] %>
+        &nbsp;x <%= @top_tags_num[tag.id] %>
       </div>
     <% end %>
   </div>

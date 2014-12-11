@@ -1,13 +1,14 @@
 function formatTag(type, tag_id, grouping_id) {
     //Gets the tag element
-    var tag = jQuery('span#' + tag_id);
+    var tag = document.getElementById(tag_id);
+    var t_space = document.getElementById(tag_id + '-space');
 
     // Notifies that the system is working.
     document.getElementById('working').style.display = '';
 
     // Disables hyperlink.
-    tag.removeClass('tag_element');
-    tag.addClass('tag_element_disabled');
+    tag.style.display = 'none';
+    t_space.style.display = 'none';
 
     // Performs an AJAX call to add the tag.
     jQuery.ajax({
@@ -26,8 +27,8 @@ function formatTag(type, tag_id, grouping_id) {
         document.getElementById('working').style.display = 'none';
 
         // Re-enable the tag.
-        tag.removeClass('tag_element_disabled');
-        tag.addClass('tag_element');
+        tag.style.display = 'inline';
+        t_space.style.display = 'inline';
 
         // Handle tag movement.
         if (type === "add")
@@ -44,13 +45,16 @@ function addTagToCurrent(tag_id) {
 
   // Finally, deletes the current element.
   jQuery('span#' + tag_id).remove();
+  jQuery('span#' + tag_id + '-space').remove();
 
   // Replace 'add' with 'remove'
   spanElement = spanElement.replace(/add/g, 'remove');
 
   // Now goes to insert it.
   jQuery("#active_tags").append(
-      '<span id="' + tag_id + '" class="tag_element">' + spanElement + '</span>');
+         '<span id="' + tag_id + '" class="tag_element">' + spanElement + '</span>');
+  jQuery("#active_tags").append(
+         '<span id="' + tag_id + '-space">&nbsp;</span>');
 
   // Hides or displays messages
   toggleMessages();
@@ -62,6 +66,7 @@ function addTagToAvailable(tag_id) {
 
   // Finally, deletes the current element.
   jQuery('span#' + tag_id).remove();
+  jQuery('span#' + tag_id + '-space').remove();
 
    // Replace 'add' with 'remove'
   spanElement = spanElement.replace(/remove/g, 'add');
@@ -69,6 +74,8 @@ function addTagToAvailable(tag_id) {
   // Now goes to insert it.
   jQuery("#available_tags").append(
           '<span id="' + tag_id + '" class="tag_element">' + spanElement + '</span>');
+  jQuery("#available_tags").append(
+          '<span id="' + tag_id + '-space">&nbsp;</span>');
 
   // Hides or displays messages.
   toggleMessages();
