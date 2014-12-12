@@ -101,6 +101,12 @@ module Repository
       FileUtils.rm_rf(repo_path)
     end
 
+    # Given a OID of a file from a Rugged::Repository lookup, return the blob
+    # object of the file itself.
+    def get_blob(oid)
+      @repos.lookup(oid)
+    end
+
     # Exports git repo to a new folder (clone repository)
     # If a filepath is given, the repo_dest_dir needs to point to a file, and
     # all the repository on that path need to exist, or the export will fail.
@@ -174,6 +180,23 @@ module Repository
       return @repos.path
     end
 
+    # Given a File object, perform a lookup for the Rugged::Tree
+    # object which contains the directory information for the
+    # folder where this file resides, then return the specific
+    # file contents that we are interested in.
+    def stringify(file)
+      revision = get_revision(file.from_revision)
+      blob = revision.find_object_at_path(file.path)
+
+      # From the returned Tree blob, find the file in the collection
+      blob.entries.each do |file_entry|
+        if file_entry[:name] == file.name
+          return get_blob(file_entry[:oid]).content
+        end
+      end
+    end
+    alias download_as_string stringify # create alias
+
     # Static method: Reports if a Git repository exists.
     # Done in a similarly hacky method as the git side.
     # TODO - find a better way to do this.
@@ -188,17 +211,6 @@ module Repository
       end
       return repos_meta_files_exist
     end
-
-    def stringify(file)
-      # Given a single object, or an array of objects of type
-      # RevisionFile, try to find the file in question, and
-      # return it as a string
-      revision = get_revision(file.from_revision)
-      blob = revision.find_object_at_path(file.path)
-
-      return blob.content
-    end
-    alias download_as_string stringify # create alias
 
     def get_revision_number(hash)
       # This functions walks down git log and counts the steps from beginning
@@ -775,7 +787,9 @@ module Repository
             @revision_number,
             name: obj[:name],
             # Is the path with or without filename?
-            path: path + obj[:name],
+            # -- Answer: The path is WITHOUT the filename to be consistent
+            # with SVN implementation
+            path: path,
             # The following is placeholder information.
             last_modified_revision: @revision_number,
             # Last modified date fix here
@@ -803,6 +817,7 @@ module Repository
           # raise unrecognized object
         end
       end
+
       objects
       # TODO: make a rescue to controller, when repo_browser moves to React
       # we can return a 400 with a message so react knows how to handle
@@ -842,11 +857,6 @@ module Repository
       # In order to deal with the empty assignment folder case we must check
       # to see if the lookup fails as the directory tree is traversed to the
       # very top
-
-      if path
-        path = path + '/'
-      end
-
       begin
         file_array = objects_at_path(path).select do |obj|
           obj.instance_of?(Repository::RevisionFile)
@@ -879,6 +889,7 @@ module Repository
       dir_array.each do |dir|
         directories[dir.name] = dir
       end
+
       directories
     end
 
