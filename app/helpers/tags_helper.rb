@@ -41,7 +41,7 @@ module TagsHelper
     top
   end
 
-  ###  Update methods   ###
+  ###  Update methods  ###
 
   def update_name
     Tag.update(params[:id], name: params[:name])

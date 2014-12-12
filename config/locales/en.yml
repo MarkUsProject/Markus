@@ -870,6 +870,7 @@ en:
         button_text: "Save Changes"
         name_prompt: "Enter tag name..."
         descript_prompt: "Enter tag description..."
+        successful: "Tag created successfully!"
 
       delete:
         delete_tags: "Delete Tags"
@@ -879,6 +880,8 @@ en:
         upload_csv: "Upload CSV"
         upload_csv_title: "Upload CSV File"
         upload_csv_prompt: "Select a CSV file to upload:"
+        upload_success: "%{nb_updates} tag(s) have been successfully added!"
+        invalid_line: "Line is in improper format."
         upload_csv_html: "
           <p>
             The file should have the following format:<br>

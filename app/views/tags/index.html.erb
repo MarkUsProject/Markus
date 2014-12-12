@@ -27,9 +27,10 @@
 </div>
 
 <div class="wrapLeft">
-    <!--The table that contains all the tags.-->
-    <div id='tags_table'></div>
-  </div>
+  <%= render 'shared/flash_message' %>
+
+  <!--The table that contains all the tags.-->
+  <div id='tags_table'></div>
 </div>
 
 <!--Modal dialogs for creating, uploading and downloading tags-->
@@ -83,7 +84,7 @@
                url: csv_upload_assignment_tags_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
     <div class='content'>
-      <p><%= f.file_field :tags %></p>
+      <p><input type='file' name='csv_tags' id='csv_tags'></p>
       <%= t('tags.upload.upload_csv_html') %>
       <%= t('csv_special_characters_html') %>
     </div>
@@ -139,14 +140,16 @@
                   { controller: 'tags',
                     action: 'download_tag_list',
                     format: 'csv' },
-                  onclick: 'modal_download.close();' %>
+                  onclick: 'modal_download.close();',
+                  target: '_blank' %>
     </p>
     <p>
       <%= link_to t('tags.download.button_message', file_format: 'YML'),
                   { controller: 'tags',
                     action: 'download_tag_list',
                     format: 'yml' },
-                  onclick: 'modal_download.close();' %>
+                  onclick: 'modal_download.close();',
+                  target: '_blank' %>
     </p>
     <input type='reset'
            value='<%= t(:cancel) %>'
