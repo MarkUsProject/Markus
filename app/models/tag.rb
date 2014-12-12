@@ -50,6 +50,10 @@ class Tag < ActiveRecord::Base
     Tag.create(name: tag_name, description: tag_description, user: _user)
   end
 
+  def self.create_or_update_from_yml_key(key)
+    puts(tag_name = key[0])
+  end
+
   def self.generate_csv_list(tags)
     # Start generating the CSV file.
     file_output = CSV.generate do |csv|

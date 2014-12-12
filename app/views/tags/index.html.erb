@@ -112,7 +112,7 @@
                url: yml_upload_assignment_tags_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
       <div class='content'>
-        <p><%= f.file_field :tags %></p>
+        <p><input type='file' name='yml_tags' id='yml_tags'></p>
         <%= t('tags.upload.upload_yml_html') %>
       </div>
 

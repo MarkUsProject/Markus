@@ -887,7 +887,8 @@ en:
             The file should have the following format:<br>
             <ul>
               <li>Only one record per line.
-              <li>Each line should be terminated by a carriage-return line-feed.
+              <li>Each line should be terminated by a carriage-return line-feed.</li>
+              <li>The tag name and description are only used. Any other data per line is ignored.</li>
             </ul>
             <code>tag_name,tag_description</code><br><br>
             <i>tag_name</i> represents the name of the tag to be added.<br>
@@ -907,6 +908,9 @@ en:
             <i>tag_name</i> represents the name of the tag to be added.<br>
             <i>tag_description</i> represents the description for that record.<br>
           </p>"
+        error: "There was an error uploading tags: "
+        empty_error: " The YML file was empty."
+        syntax_error: " The syntax is incorrect. (%{error})"
 
       download:
         download: "Download"
