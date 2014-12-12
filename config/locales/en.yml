@@ -854,11 +854,21 @@ en:
       title: "Assignment Tags: %{assignment_short_identifier}"
       delete: "Delete Tag"
       search_tags: "Search for tags..."
+      edit_tag: "Edit Tag..."
+      edit_update: "Update"
+      updating: "Updating..."
 
       create:
         create_new: "Add Tag"
         tag_prompt: "Tag name:"
+        tag_description: "Tag description:"
         button_text: "Save Changes"
+        name_prompt: "Enter tag name..."
+        descript_prompt: "Enter tag description..."
+
+      delete:
+        delete_tags: "Delete Tags"
+        tag_prompt: "Please select tags below to delete them:"
 
       upload:
         upload_csv: "Upload CSV"
@@ -899,6 +909,7 @@ en:
             They can be downloaded either in CSV or YML format.
           </p>"
         button_message: "Download in %{file_format} format"
+
       table:
         name: "Name"
         creator: "Creator"
