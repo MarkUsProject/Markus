@@ -858,6 +858,11 @@ en:
       edit_update: "Update"
       updating: "Updating..."
 
+      messages:
+        no_assigned: "--No Tags Assigned--"
+        no_left: "--No More Tags to Assign--"
+        no_tags: "--No Tags to Show--"
+
       create:
         create_new: "Add Tag"
         tag_prompt: "Tag name:"
@@ -865,6 +870,7 @@ en:
         button_text: "Save Changes"
         name_prompt: "Enter tag name..."
         descript_prompt: "Enter tag description..."
+        successful: "Tag created successfully!"
 
       delete:
         delete_tags: "Delete Tags"
@@ -874,6 +880,8 @@ en:
         upload_csv: "Upload CSV"
         upload_csv_title: "Upload CSV File"
         upload_csv_prompt: "Select a CSV file to upload:"
+        upload_success: "%{nb_updates} tag(s) have been successfully added!"
+        invalid_line: "Line is in improper format."
         upload_csv_html: "
           <p>
             The file should have the following format:<br>

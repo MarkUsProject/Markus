@@ -28,7 +28,7 @@ class TagsController < ApplicationController
       user: @current_user)
 
     if new_tag.save
-      flash[:success] = I18n.t('tag created successfully')
+      flash[:success] = I18n.t('tags.create.successful')
       if params[:grouping_id]
         create_grouping_tag_association(params[:grouping_id], new_tag)
       end
@@ -92,24 +92,25 @@ class TagsController < ApplicationController
   end
 
   def csv_upload
-    file = params[:csv_upload][:rubric]
-    @assignment = Assignment.find(params[:assignment_id])
+    # Gets parameters for the upload
+    file = params[:csv_tags]
     encoding = params[:encoding]
+
     if request.post? && !file.blank?
       begin
-        RubricCriterion.transaction do
+        Tag.transaction do
           invalid_lines = []
-          nb_updates = RubricCriterion.parse_csv(file,
-                                                 @assignment,
-                                                 invalid_lines,
-                                                 encoding)
+          nb_updates = Tag.parse_csv(file,
+                                     @current_user,
+                                     invalid_lines,
+                                     encoding)
           unless invalid_lines.empty?
             flash[:error] = I18n.t('csv_invalid_lines') +
                             invalid_lines.join(', ')
           end
           if nb_updates > 0
-            flash[:notice] = I18n.t('rubric_criteria.upload.success',
-                                    nb_updates: nb_updates)
+            flash[:success] = I18n.t('tags.upload.upload_success',
+                                     nb_updates: nb_updates)
           end
         end
       end
@@ -118,5 +119,6 @@ class TagsController < ApplicationController
   end
 
   def yml_upload
+
   end
 end

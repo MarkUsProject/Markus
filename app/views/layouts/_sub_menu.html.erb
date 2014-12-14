@@ -90,6 +90,10 @@
             <%= link_to t('graders.graders'),
                         assignment_graders_path(@assignment) %>
           </li>
+          <li class='<%= "active" if controller.controller_name == 'tags' %>'>
+            <%= link_to t('tags.tags'),
+                        assignment_tags_path(@assignment) %>
+          </li>
           <li <% if controller.controller_name == 'submissions' ||
                     controller.controller_name == 'results' %>
                 class='active'

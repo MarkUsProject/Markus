@@ -43,16 +43,16 @@ Markus::Application.routes.draw do
       end
 
       resources :tags do
-        member do
-          post 'update_tag'
-          get 'edit_tag_dialog'
-          get 'destroy'
-        end
-
         collection do
           get 'download_tag_list'
           post 'csv_upload'
           post 'yml_upload'
+        end
+
+        member do
+          post 'update_tag'
+          get 'edit_tag_dialog'
+          get 'destroy'
         end
       end
 
@@ -178,6 +178,8 @@ Markus::Application.routes.draw do
             get 'update_positions'
             post 'update_mark'
             get 'view_marks'
+            post 'add_tag'
+            post 'remove_tag'
           end
         end
       end
