@@ -19,12 +19,14 @@
             id: 'group_name',
             content: '<%= j raw I18n.t(:'browse_submissions.group_name') %>',
             sortable: true,
+            compare: compare_anchor_text,
             searchable: true
           },
           {
             id: 'repository',
             content: '<%= j raw I18n.t(:'browse_submissions.repository') %>',
             sortable: true,
+            compare: compare_anchor_text,
             searchable: true
           },
           {
@@ -37,6 +39,7 @@
             id: 'commit_date',
             content: '<%= j raw I18n.t(:'browse_submissions.commit_date') %>',
             sortable: true,
+            compare: compare_dates,
             searchable: false
           },
           {
@@ -49,6 +52,7 @@
             id: 'grace_credits_used',
             content: '<%= j raw I18n.t(:'browse_submissions.grace_credits_used') %>',
             sortable: true,
+            compare: compare_numeric_values,
             searchable: false
           },
           {
@@ -75,7 +79,8 @@
             id: 'final_grade',
             content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
             sortable: true,
-            searchable: false 
+            compare: compare_numeric_values,
+            searchable: false
           },
           {
             id: 'can_begin_grading',
@@ -190,7 +195,7 @@
         s['can_begin_grading'] = <span dangerouslySetInnerHTML={{__html: submission.can_begin_grading}} />;
         return s;
       }.bind(this));
-      
+
         return (
           <div>
             <ErrorDiv error={this.state.error} />
@@ -255,7 +260,7 @@
     },
     render: function() {
       return (
-        <div>
+        <div className='react-release-marks'>
           <button onClick={this.releaseMarks}>
             <%= j raw I18n.t('browse_submissions.release_marks') %>
           </button>

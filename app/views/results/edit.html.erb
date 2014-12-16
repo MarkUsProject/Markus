@@ -1,7 +1,10 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
   <%= stylesheet_link_tag('grader') %>
+  <%= stylesheet_link_tag('pdfjs/viewer') %>
+
   <%= javascript_include_tag 'panes' %>
+  <%= javascript_include_tag 'pdfjs' %>
 <% end %>
 
 <% # UI LIBRARIES %>

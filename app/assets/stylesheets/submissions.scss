@@ -41,6 +41,14 @@
   background-color: $light-red !important;
 }
 
+.react-release-marks {
+  float: right;
+
+  button {
+    margin-left: 1em;
+  }
+}
+
 /* Tag CSS Elements */
 
 ul.tag_list {
@@ -108,6 +116,7 @@ li.tag_list_search:hover, li.tag_list_title:hover {
   background-color: $light-grey !important;
   cursor: default !important;
 }
+
 
 /* Student view */
 
