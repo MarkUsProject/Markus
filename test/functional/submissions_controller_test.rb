@@ -274,7 +274,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                :populate_repo_browser,
                assignment_id: @assignment.id,
                id: Grouping.last.id,
-               revision_number: Grouping.last.group.repo.get_latest_revision.revision_number,
+               revision_number:
+            Grouping.last.group.repo.get_latest_revision.revision_number,
                format: 'js',
                path: '/'
         assert_response :success
