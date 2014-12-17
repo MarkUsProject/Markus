@@ -198,7 +198,7 @@ class AssignmentsController < ApplicationController
   def edit
     @assignment = Assignment.find_by_id(params[:id])
 
-    @past_date = @assignment.what_past_due_date
+    @past_date = @assignment.section_names_past_due_date
     @assignments = Assignment.all
     @sections = Section.all
 
@@ -509,6 +509,10 @@ class AssignmentsController < ApplicationController
     respond_to do |format|
       format.js
     end
+  end
+
+  def view_summary
+    @assignment = Assignment.find(params[:id])
   end
 
   def download_assignment_list

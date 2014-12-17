@@ -333,29 +333,21 @@ fieldset {
       text-align: left;
       text-transform: uppercase;
 
+      .sortable-col {
+        background: url(sort_both.png) no-repeat center right;
+      }
+
       .asc,
       .desc {
         cursor: pointer;
-
-        &::after {
-          background-position: center center;
-          background-repeat: no-repeat;
-          background-size: 0.85em 0.85em;
-          content: "";
-          display: inline-block;
-          height: 0.85em;
-          margin-left: 0.25em;
-          vertical-align: middle;
-          width: 0.85em;
-        }
       }
 
-      .asc::after {
-        background-image: url(asc@2x.png);
+      .asc {
+        background: url(sort_asc.png) no-repeat center right;
       }
 
-      .desc::after {
-        background-image: url(des@2x.png);
+      .desc {
+        background: url(sort_desc.png) no-repeat center right;
       }
     }
 
@@ -373,7 +365,7 @@ fieldset {
       th,
       td {
         border-right: 1px solid $grey;
-        padding: 0.5em 1em;
+        padding: 0.5em 1.5em 0.5em 1em;
         vertical-align: middle;
 
         &:last-child {
@@ -401,7 +393,6 @@ fieldset {
     }
   }
 }
-
 
 /** Sortable lists */
 

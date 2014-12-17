@@ -74,7 +74,7 @@
   </script>
 <% end %>
 
-<% if @assignment.past_due_date? %>
+<% if @assignment.past_all_due_dates? %>
   <div class="notice">
     <%= t('groups.editing_past_due_date_warning') %>
   </div>

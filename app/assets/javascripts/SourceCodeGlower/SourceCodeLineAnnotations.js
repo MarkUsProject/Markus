@@ -63,7 +63,7 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_
 
 // Annotate a Range of Source Code Lines
 SourceCodeLineAnnotations.prototype.annotateRange = function(annotation_id, range, annotation_text_id) {
-  for (var line_num = range.start; line_num <= range.end; line_num++) {
+  for (var line_num = parseInt(range.start, 10); line_num <= parseInt(range.end, 10); line_num++) {
     this.annotateLine(annotation_id, line_num, annotation_text_id);
   }
 }
@@ -81,7 +81,7 @@ SourceCodeLineAnnotations.prototype.removeAnnotationFromLine = function(annotati
 }
 
 SourceCodeLineAnnotations.prototype.remove_annotation = function(annotation_id, range, annotation_text_id) {
-  for (var line_num = range.start; line_num <= range.end; line_num++) {
+  for (var line_num = parseInt(range.start, 10); line_num <= parseInt(range.end, 10); line_num++) {
     this.removeAnnotationFromLine(annotation_id, line_num, annotation_text_id);
   }
 }

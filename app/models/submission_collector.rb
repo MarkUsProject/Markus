@@ -176,14 +176,7 @@ class SubmissionCollector < ActiveRecord::Base
     # Apply the SubmissionRule
     new_submission = assignment.submission_rule.apply_submission_rule(
       new_submission)
-    #convert any pdf submission files to jpgs, catching any errors
-    new_submission.submission_files.each do |subm_file|
-      subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
-      if subm_file.error_converting
-        grouping.error_collecting = true
-      end
-    end
-    
+
     unless grouping.error_collecting
       grouping.is_collected = true
     end
@@ -203,9 +196,6 @@ class SubmissionCollector < ActiveRecord::Base
       remove_grouping_from_queue(grouping)
       grouping.save
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
-      new_submission.submission_files.each do |subm_file|
-        subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
-      end
       grouping.is_collected = true
       grouping.save
       return
@@ -231,9 +221,6 @@ class SubmissionCollector < ActiveRecord::Base
     #parent and child do this.
     start_collection_process do
       if MarkusConfigurator.markus_config_pdf_support
-        new_submission.submission_files.each do |subm_file|
-          subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
-        end
         grouping.is_collected = true
         grouping.save
       end

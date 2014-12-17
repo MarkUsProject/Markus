@@ -1,6 +1,7 @@
 <%# Render the source code for syntax highlighting... %>
 
 document.getElementById('code_pane').onmousemove = null;
+document.getElementById('codeviewer').onmousemove = null;
 
 <%# Non-binary files %>
 <% if !SubmissionFile.is_binary?(@file_contents) %>
@@ -29,10 +30,7 @@ document.getElementById('code_pane').onmousemove = null;
   jQuery('#codeviewer').html(
     "<%= escape_javascript(render partial: 'results/common/pdf_codeviewer',
                                   locals: { uid: params[:uid],
-                                            file_contents: @file_contents,
                                             annots: @annots,
-                                            code_type: @code_type,
-                                            nb_files: @nb_pdf_files_to_download,
                                             submission_file_id: @submission_file_id }) %>");
 <% else %>
   jQuery('#codeviewer').html(

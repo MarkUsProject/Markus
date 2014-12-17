@@ -42,7 +42,6 @@ Please see the INSTALL file for installation instructions.
 - Blog: http://blog.markusproject.org/
 - Sandbox: http://www.markusproject.org/admin-demo
 - Source Code: http://github.com/MarkUsProject/Markus
-- Review Board: http://review.markusproject.org/r/
 - MarkUs RDoc: http://www.markusproject.org/dev/app_doc/
 - Test Coverage: http://www.markusproject.org/dev/test_coverage/
 - Units Test Report: http://www.markusproject.org/dev/unit_tests_report.html

@@ -154,7 +154,12 @@ class MainController < ApplicationController
       :assignment_stat, :ta_memberships,
       groupings: :current_submission_used,
       submission_rule: :assignment
-    ]).all(order: 'due_date DESC')
+    ]).all(order: 'due_date ASC')
+    @grade_entry_forms = GradeEntryForm.unscoped.includes([
+      :grade_entry_items
+    ]).all(order: 'date ASC')
+
+    @current_assignment = Assignment.get_current_assignment
 
     render :index, layout: 'content'
   end
@@ -432,5 +437,4 @@ private
     validation_result[:user] = found_user
     validation_result
   end
-
 end

@@ -7,14 +7,23 @@
 </div>
 
 <div class='wrapper'>
-  <p><%= t(:welcome_to_markus, {user_name: @current_user.first_name}) %></p>
-
-  <div id='assignment_summaries'>
-    <% @assignments.each do |a| %>
-      <%= render partial: 'assignment_summary', locals: { assignment: a } %>
-    <% end %>
+  <div id='section'>
+    <div id='dashboard_lists'>
+      <div id='assignment_list'>
+        <h3 class='title'><%= t(:assignments) %></h3>
+        <%= render partial: 'dashboard_list',
+                   locals: { controller: 'main' } %>
+      </div>
+      <div id='spreadsheet_list'>
+        <h3 class='title'><%= t(:spreadsheets) %></h3>
+        <%= render partial: 'spreadsheet_list',
+                   locals: { controller: 'main' } %>
+      </div>
+    </div>
+    <div id='assignment_summaries'>
+      <%= render partial: 'assignments/assignment_summary', locals: { assignment: @current_assignment } %>
+    </div>
   </div>
-
   <div id='section'>
     <%= render partial: 'api/key_display', locals: { user: @current_user } %>
   </div>
