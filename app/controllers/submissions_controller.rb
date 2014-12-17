@@ -664,7 +664,6 @@ class SubmissionsController < ApplicationController
   # Download all files from all groupings in a .zip file.
   ##
   def download_groupings_files
-
     assignment = Assignment.find(params[:assignment_id])
 
     ## create the zip name with the user name to have less chance to delete
@@ -686,12 +685,12 @@ class SubmissionsController < ApplicationController
     end
 
     groupings = Grouping.where(id: grouping_ids)
-      .includes(:group,
-                current_submission_used: {
-                  submission_files: {
-                    submission: { grouping: :group }
-                  }
-                })
+    .includes(:group,
+              current_submission_used: {
+        submission_files: {
+        submission: { grouping: :group }
+    }
+    })
 
     ## build the zip file
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
@@ -701,11 +700,13 @@ class SubmissionsController < ApplicationController
         submission = grouping.current_submission_used
         next unless submission
         files = submission.submission_files
+
         ## create the grouping directory
         sub_folder = grouping.group.repo_name
         zip_file.mkdir(sub_folder) unless zip_file.find_entry(sub_folder)
 
         files.each do |file|
+
           ## retrieve the file and print an error on redirect back if there is
           begin
             file_content = file.retrieve_file
@@ -716,6 +717,10 @@ class SubmissionsController < ApplicationController
           end
 
           ## create the file inside the sub folder
+          zip_file.get_output_stream(File.join(sub_folder,
+                                               file.filename)) do |f|
+            f.puts file_content
+          end
 
         end
       end
