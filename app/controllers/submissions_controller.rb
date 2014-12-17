@@ -51,11 +51,11 @@ class SubmissionsController < ApplicationController
     repo = @grouping.group.repo
 
     begin
-      if params[:revision_timestamp]
+      if params[:revision_number]
+        @revision_number = params[:revision_number].to_i
+      elsif params[:revision_timestamp]
         @revision_number = repo.get_revision_by_timestamp(
             Time.parse(params[:revision_timestamp])).revision_number
-      elsif params[:revision_number]
-        @revision_number = params[:revision_number].to_i
       else
         @revision_number = repo.get_latest_revision.revision_number
       end
