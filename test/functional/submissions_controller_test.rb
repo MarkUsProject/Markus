@@ -269,21 +269,15 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         @grader = @ta_membership.user
       end
 
-      should 'access the repository browser.' do
-        get_as @grader,
-               :repo_browser,
-               :assignment_id => @assignment.id,
-               :id => Grouping.last.id
-        assert_response :success
-      end
-
       should 'access the populate repository browser.' do
         get_as @grader,
                :populate_repo_browser,
-               :assignment_id => @assignment.id,
-               :id => Grouping.last.id,
-               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number,
-               :format => 'js'
+               assignment_id: @assignment.id,
+               id: Grouping.last.id,
+               revision_number:
+            Grouping.last.group.repo.get_latest_revision.revision_number,
+               format: 'js',
+               path: '/'
         assert_response :success
       end
 
@@ -371,9 +365,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       should 'My instructor should be able to access the populate repository browser.' do
         get_as @admin,
                :populate_repo_browser,
-               :assignment_id => 1,
-               :id => Grouping.first.id,
-               :format => 'js'
+               assignment_id: 1,
+               id: Grouping.first.id,
+               format: 'js',
+               path: '/'
         assert_response :success
       end
 

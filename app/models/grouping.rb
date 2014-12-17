@@ -660,10 +660,11 @@ class Grouping < ActiveRecord::Base
                          due_dates.where(section_id: section).first.due_date
                        end
 
-    # condition to return
-    (!due_dates.blank? && !section.blank? &&
-        !section_due_date.blank? && timestamp > section_due_date) ||
-        timestamp > assignment.due_date
+    if !section_due_date.blank?
+      timestamp > section_due_date
+    else
+      timestamp > assignment.due_date
+    end
   end
 
   private
