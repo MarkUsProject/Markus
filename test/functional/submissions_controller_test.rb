@@ -364,10 +364,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       should 'My instructor should be able to access the populate repository browser.' do
         get_as @admin,
                :populate_repo_browser,
-               :assignment_id => 1,
-               :id => Grouping.first.id,
-               :format => 'js',
-               :path => '/'
+               assignment_id: 1,
+               id: Grouping.first.id,
+               format: 'js',
+               path: '/'
         assert_response :success
       end
 
