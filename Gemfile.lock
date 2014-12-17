@@ -151,7 +151,6 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     ref (1.0.5)
-    rghost (0.9.3)
     rspec-core (3.0.1)
       rspec-support (~> 3.0.0)
     rspec-expectations (3.0.1)
@@ -262,7 +261,6 @@ DEPENDENCIES
   railroady
   rails (= 3.2.18)
   rdoc
-  rghost (<= 0.9.3)
   rspec-rails (~> 3.0)
   rubocop
   rubyzip

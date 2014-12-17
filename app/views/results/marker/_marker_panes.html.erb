@@ -113,6 +113,7 @@
           <input type='hidden' id='x2' value=''>
           <input type='hidden' id='y1' value=''>
           <input type='hidden' id='y2' value=''>
+          <input type='hidden' id='annot_dialog_page' value=''> <%# For use in PDF's %>
           <p>
             <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
           </p>
@@ -132,13 +133,14 @@
           </p>
 
           <section class='dialog-actions'>
-            <button onclick="submit_new_annotation(
+            <button id='new_annotation_modal_button' onclick="submit_new_annotation(
                               jQuery('#new_annotation_content').val(),
                               jQuery('#new_annotation_category').val(),
                               jQuery('#x1').val(),
                               jQuery('#x2').val(),
                               jQuery('#y1').val(),
-                              jQuery('#y2').val());">
+                              jQuery('#y2').val(),
+                              jQuery('#annot_dialog_page').val());">
               <%= I18n.t('marker.annotation.new_annotation') %>
             </button>
             <%= button_to_function t('cancel'), 'modal.close();' %>

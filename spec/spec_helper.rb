@@ -55,4 +55,8 @@ RSpec.configure do |config|
   config.after(:each) do
     FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/test_repo"])
   end
+
+  config.before(:suite) do
+    ActiveRecord::Base.connection.tables.each { |table| ActiveRecord::Base.connection.execute("TRUNCATE #{table}") }
+  end
 end

@@ -1,3 +1,3 @@
 jQuery('#assignment_<%= @assignment.id %>_graph').html(
-  "<%= escape_javascript(render partial: 'main/grade_distribution_graph',
+  "<%= escape_javascript(render partial: 'grade_distribution_graph',
                                 locals: { assignment: @assignment }) %>");

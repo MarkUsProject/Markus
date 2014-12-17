@@ -1,7 +1,10 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
   <%= stylesheet_link_tag('grader') %>
+  <%= stylesheet_link_tag('pdfjs/viewer') %>
+
   <%= javascript_include_tag 'panes.js' %>
+  <%= javascript_include_tag 'pdfjs' %>
 <% end %>
 
 <%= javascript_include_tag 'DropDownMenu/DropDownMenu.js'%>
@@ -44,6 +47,14 @@
              locals: { files: @files,
                        can_download: true,
                        test_result_files: @test_result_files } %>
+    <% if @assignment.enable_test %>
+      <div id='test_results_controls'>
+        <%= render partial: 'results/common/test_selector',
+                   locals: { test_result_files: @test_result_files,
+                             result: @result,
+                             submission_id: @submission.id } %>
+      </div>
+    <% end %>
 
   <%= render partial: 'results/student/student_panes',
              locals: { extra_marks_points: @extra_marks_points,
