@@ -272,11 +272,11 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       should 'access the populate repository browser.' do
         get_as @grader,
                :populate_repo_browser,
-               :assignment_id => @assignment.id,
-               :id => Grouping.last.id,
-               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number,
-               :format => 'js',
-               :path => '/'
+               assignment_id: @assignment.id,
+               id: Grouping.last.id,
+               revision_number: Grouping.last.group.repo.get_latest_revision.revision_number,
+               format: 'js',
+               path: '/'
         assert_response :success
       end
 

@@ -570,8 +570,8 @@ module Repository
           alt_path = '/' + object.path
         end
         git_path = object.path + '/'
-        if object.instance_of?(type) && (object.path == path || alt_path == path ||
-            git_path == path)
+        if object.instance_of?(type) && (object.path == path ||
+            alt_path == path || git_path == path)
           if (!only_changed)
             object.from_revision = @revision_number # set revision number
             result[object.name] = object
