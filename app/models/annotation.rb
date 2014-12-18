@@ -21,6 +21,6 @@ class Annotation < ActiveRecord::Base
                             only_integer: true,
                             greater_than: 0
 
-  validates_format_of       :type, with: /ImageAnnotation|TextAnnotation/
-
+  validates_format_of :type,
+                      with: /ImageAnnotation|TextAnnotation|PdfAnnotation/
 end

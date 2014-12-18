@@ -7,38 +7,28 @@ class Assignment < ActiveRecord::Base
     rubric: 'rubric'
   }
 
-  has_many :rubric_criteria,
-           class_name: 'RubricCriterion',
-           order: :position
+  has_many :rubric_criteria, class_name: 'RubricCriterion', dependent: :destroy, order: :position
+  has_many :flexible_criteria, class_name: 'FlexibleCriterion', dependent: :destroy, order: :position
+  has_many :criterion_ta_associations, dependent: :destroy
 
-  has_many :flexible_criteria,
-           class_name: 'FlexibleCriterion',
-           order: :position
-
-  has_many :criterion_ta_associations
-
-  has_many :assignment_files
+  has_many :assignment_files, dependent: :destroy
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
-  has_many :test_files
+  has_many :test_files, dependent: :destroy
   accepts_nested_attributes_for :test_files, allow_destroy: true
 
-  has_one :assignment_stat
+  has_one :assignment_stat, dependent: :destroy
   accepts_nested_attributes_for :assignment_stat, allow_destroy: true
   validates_associated :assignment_stat
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
 
-  has_many :annotation_categories,
-           class_name: 'AnnotationCategory',
-           order: :position
+  has_many :annotation_categories, order: :position, dependent: :destroy
 
   has_many :groupings
 
-  has_many :ta_memberships,
-           class_name: 'TaMembership',
-           through: :groupings
+  has_many :ta_memberships, through: :groupings
   has_many :student_memberships, through: :groupings
   has_many :tokens, through: :groupings
 
@@ -50,40 +40,36 @@ class Assignment < ActiveRecord::Base
   has_many :section_due_dates
   accepts_nested_attributes_for :section_due_dates
 
-  validates_presence_of :repository_folder
-  validates_presence_of :short_identifier, :group_min
+
   validates_uniqueness_of :short_identifier, case_sensitive: true
+  validates_numericality_of :group_min, only_integer: true, greater_than: 0
+  validates_numericality_of :group_max, only_integer: true, greater_than: 0
+  validates_numericality_of :tokens_per_day, only_integer: true, greater_than_or_equal_to: 0
 
-  validates_numericality_of :group_min,
-                            only_integer: true,
-                            greater_than: 0
-  validates_numericality_of :group_max, only_integer: true
-  validates_numericality_of :tokens_per_day,
-                            only_integer: true,
-                            greater_than_or_equal_to: 0
-
-  has_one :submission_rule
+  has_one :submission_rule, dependent: :destroy
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
   validates_associated :submission_rule
   validates_presence_of :submission_rule
 
-  validates_presence_of :marking_scheme_type
-
-  # For those, please refer to issue #1126
-  # Because of app/views/assignments/_list_manage.html.erb line:13
+  validates_presence_of :short_identifier
   validates_presence_of :description
-
-  # since allow_web_submits is a boolean, validates_presence_of does not work:
-  # see the Rails API documentation for validates_presence_of (Model
-  # validations)
+  validates_presence_of :repository_folder
+  validates_presence_of :due_date
+  validates_presence_of :marking_scheme_type
+  validates_presence_of :group_min
+  validates_presence_of :group_max
+  validates_presence_of :notes_count
+  # "validates_presence_of" for boolean values.
   validates_inclusion_of :allow_web_submits, in: [true, false]
-  validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :display_grader_names_to_students, in: [true, false]
+  validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :enable_test, in: [true, false]
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
 
-  before_save :reset_collection_time
   validate :minimum_number_of_groups
+
+  before_save :reset_collection_time
+
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
@@ -134,7 +120,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Are we past all the due dates for this assignment?
-  def past_due_date?
+  def past_all_due_dates?
     # If no section due dates /!\ do not check empty? it could be wrong
     unless self.section_due_dates_type
       return !due_date.nil? && Time.zone.now > due_date
@@ -150,7 +136,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Return an array with names of sections past
-  def what_past_due_date
+  def section_names_past_due_date
     sections_past = []
 
     unless self.section_due_dates_type
@@ -168,25 +154,25 @@ class Assignment < ActiveRecord::Base
     sections_past
   end
 
-  # Are we past the due date for this assignment, for this grouping ?
-  def section_past_due_date?(grouping)
-    if self.section_due_dates_type and !grouping.inviter.section.nil?
-        section_due_date =
-    SectionDueDate.due_date_for(grouping.inviter.section, self)
-        !section_due_date.nil? && Time.zone.now > section_due_date
+  # Whether or not this grouping is past its due date for this assignment.
+  def grouping_past_due_date?(grouping)
+    if section_due_dates_type && grouping &&
+      grouping.inviter.section.present?
+
+      section_due_date =
+        SectionDueDate.due_date_for(grouping.inviter.section, self)
+      !section_due_date.nil? && Time.zone.now > section_due_date
     else
-      self.past_due_date?
+      past_all_due_dates?
     end
   end
 
-  # return the due date for a section
   def section_due_date(section)
-    if self.section_due_dates_type
-      unless section.nil?
-        return SectionDueDate.due_date_for(section, self)
-      end
+    unless section_due_dates_type && section
+      return due_date
     end
-    self.due_date
+
+    SectionDueDate.due_date_for(section, self)
   end
 
   # Calculate the latest due date. Used to calculate the collection time
@@ -212,33 +198,9 @@ class Assignment < ActiveRecord::Base
     !remark_due_date.nil? && Time.zone.now > remark_due_date
   end
 
-  # Returns a Submission instance for this user depending on whether this
-  # assignment is a group or individual assignment
-  def submission_by(user) #FIXME: needs schema updates
-
-    # submission owner is either an individual (user) or a group
-    owner = self.group_assignment? ? self.group_by(user.id) : user
-    return unless owner
-
-    # create a new submission for the owner
-    # linked to this assignment, if it doesn't exist yet
-
-    # submission = owner.submissions.find_or_initialize_by_assignment_id(id)
-    # submission.save if submission.new_record?
-    # return submission
-
-    assignment_groupings = user.active_groupings.delete_if do |grouping|
-      grouping.assignment.id != id
-    end
-
-    unless assignment_groupings.empty?
-      assignment_groupings.first.submissions.first
-    end
-  end
-
   # Return true if this is a group assignment; false otherwise
   def group_assignment?
-    invalid_override || group_min != 1 || group_max > 1
+    invalid_override || group_max > 1
   end
 
   # Returns the group by the user for this assignment. If pending=true,
@@ -256,13 +218,6 @@ class Assignment < ActiveRecord::Base
 
     #FIXME: needs to be rewritten using a proper query...
     User.find(uid).accepted_grouping_for(id)
-  end
-
-  # Make a list of students without any groupings
-  def no_grouping_students_list
-    Student.where(hidden: false)
-           .order(:last_name)
-           .reject { |s| s.has_accepted_grouping_for?(id) }
   end
 
   def display_for_note
@@ -316,6 +271,19 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  def self.get_current_assignment
+    # start showing (or "featuring") the assignment 3 days before it's due
+    # query uses Date.today + 4 because results from db seems to be off by 1
+    current_assignment = Assignment.where('due_date <= ?', Date.today + 4)
+                                   .reorder('due_date DESC').first
+
+    if current_assignment.nil?
+      current_assignment = Assignment.reorder('due_date ASC').first
+    end
+
+    current_assignment
+  end
+
   def update_remark_request_count
     outstanding_count = 0
     groupings.each do |grouping|
@@ -344,22 +312,16 @@ class Assignment < ActiveRecord::Base
       group.save
     else
       return if new_group_name.nil?
-      if Group.where(group_name: new_group_name).first
-        group = Group.where(group_name: new_group_name).first
+      if group = Group.where(group_name: new_group_name).first
         unless groupings.where(group_id: group.id).first.nil?
           raise "Group #{new_group_name} already exists"
         end
       else
-        group = Group.new
-        group.group_name = new_group_name
-        group.save
+        group = Group.create(group_name: new_group_name)
       end
     end
-    grouping = Grouping.new
-    grouping.group = group
-    grouping.assignment = self
-    grouping.save
-    grouping
+
+    Grouping.create(group: group, assignment: self)
   end
 
 
@@ -426,6 +388,8 @@ class Assignment < ActiveRecord::Base
   def add_csv_group(row)
     return if row.length.zero?
 
+    row.map! { |item| item.strip }
+
     # Note: We cannot use find_or_create_by here, because it has its own
     # save semantics. We need to set and save attributes in a very particular
     # order, so that everything works the way we want it to.
@@ -446,14 +410,14 @@ class Assignment < ActiveRecord::Base
         group.repo_name = row[0]
       else
         # Student name does not exist, use provided repo_name
-        group.repo_name = row[1].strip # remove whitespace
+        group.repo_name = row[1]
       end
     end
 
     # If we are not repository admin, set the repository name as provided
     # in the csv upload file
     unless group.repository_admin?
-      group.repo_name = row[1].strip # remove whitespace
+      group.repo_name = row[1]
     end
     # Note: after_create hook build_repository might raise
     # Repository::RepositoryCollision. If it does, it adds the colliding
@@ -477,7 +441,7 @@ class Assignment < ActiveRecord::Base
     # Form groups
     start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
     (start_index_group_members..(row.length - 1)).each do |i|
-      student = Student.where(user_name: row[i].strip) # remove whitespace
+      student = Student.where(user_name: row[i])
                        .first
       if student
         if grouping.student_membership_number == 0
@@ -717,8 +681,10 @@ class Assignment < ActiveRecord::Base
   def criterion_class
     if marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
       FlexibleCriterion
-    else
+    elsif marking_scheme_type == MARKING_SCHEME_TYPE[:rubric]
       RubricCriterion
+    else
+      nil
     end
   end
 
@@ -780,7 +746,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns all the submissions that have been graded (completed)
-  def graded_submissions
+  def graded_submission_results
     results = []
     groupings.each do |grouping|
       if grouping.marking_completed?

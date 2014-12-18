@@ -12,11 +12,12 @@
 
     <div>
       <%= hidden_field_tag 'real_commit', 'Submit' %>
-      <%= f.submit t(:save_changes),
-                   onclick: "jQuery('#real_commit').val('Save');",
-                   disabled: true,
-                   id: 'remark_request_save',
-                   data: { disable_with: t('working') } %>
+      <%=# f.submit t(:save_changes),
+         #          onclick: "jQuery('#real_commit').val('Save');",
+         #          disabled: true,
+         #          id: 'remark_request_save',
+         #          data: { disable_with: t('working') } 
+      %>
       <%= f.submit t(:submit_request),
                    data: { disable_with: t('working') },
                    id: 'remark_request_submit',
