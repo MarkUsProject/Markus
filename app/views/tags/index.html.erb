@@ -36,10 +36,7 @@
 <!--Modal dialogs for creating, uploading and downloading tags-->
 <aside class='dialog' id='create_new_dialog'>
   <%= javascript_include_tag 'Tags/text_updater.js',
-                             id: 'create_script',
-                             text_id: 'description',
-                             info_id: 'descript_amount',
-                             num_char: '120' %>
+                             id: 'text_script' %>
 
   <h1><%= t('tags.create.create_new') %></h1>
   <p><%= t('tags.create.tag_prompt') %></p>
@@ -48,7 +45,8 @@
                html: { multipart: true, size: 1 } do |f| %>
       <div>
         <p><%= f.text_field :name,
-                            placeholder: t('tags.create.name_prompt') %></p>
+                            placeholder: t('tags.create.name_prompt'),
+                            maxlength: 30 %></p>
       </div>
       <div>
         <p class="alignleft"><%= t('tags.create.tag_description') %></p>
@@ -59,7 +57,6 @@
                           cols: 30,
                           rows: 3,
                           maxlength: 120,
-                          onKeyDown: 'updateCharCount()',
                           placeholder: t('tags.create.descript_prompt') %>
         </p>
       </div>

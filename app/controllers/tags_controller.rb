@@ -157,6 +157,7 @@ class TagsController < ApplicationController
     if request.post? && !file.blank?
       begin
         tags = YAML::load(file.utf8_encode(encoding))
+
       # Handles errors associated with loads.
       rescue Psych::SyntaxError => e
         flash[:error] = I18n.t('tags.upload.error') + '  ' +
@@ -164,6 +165,7 @@ class TagsController < ApplicationController
         redirect_to :back
         return
       end
+
       unless tags
         flash[:error] = I18n.t('tags.upload.error') +
             '  ' + I18n.t('tags.upload.empty_error')
@@ -198,7 +200,7 @@ class TagsController < ApplicationController
         end
       end
 
-      if successes < rubrics.length
+      if successes < tags.length
         flash[:error] = I18n.t('tags.upload.error') + bad_names
       end
 
