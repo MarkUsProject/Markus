@@ -32,11 +32,11 @@ class TagsController < ApplicationController
       if params[:grouping_id]
         create_grouping_tag_association(params[:grouping_id], new_tag)
       end
-      redirect_to :back
     else
-      flash[:error] = I18n.t('error creating tag')
-      redirect_to :back
+      flash[:error] = I18n.t('tags.create.error')
     end
+
+    redirect_to :back
   end
 
   def get_all_tags
@@ -63,7 +63,7 @@ class TagsController < ApplicationController
     render partial: 'tags/edit_dialog', handlers: [:erb]
   end
 
-  ###  Upload/Download Methods  ###
+  ###   Upload/Download Methods   ###
 
   def download_tag_list
     # Gets all the tags

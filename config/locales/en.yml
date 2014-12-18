@@ -871,6 +871,7 @@ en:
         name_prompt: "Enter tag name..."
         descript_prompt: "Enter tag description..."
         successful: "Tag created successfully!"
+        error: "Tag could not be created."
 
       delete:
         delete_tags: "Delete Tags"

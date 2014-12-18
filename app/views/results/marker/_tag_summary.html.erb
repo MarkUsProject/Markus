@@ -23,7 +23,7 @@
 </div>
 
 <!-- Displays tags that can be assigned to the assignment -->
-<% if !old_result %>
+<% unless old_result %>
   <div id='available_tags_pane'>
     <div class='tag_collector_pane'>
       <span><%= t('marker.marks.available_tags').html_safe %></span>

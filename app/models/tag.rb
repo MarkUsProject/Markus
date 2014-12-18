@@ -1,5 +1,4 @@
 class Tag < ActiveRecord::Base
-
   has_and_belongs_to_many :groupings
 
   # Constants
@@ -93,5 +92,7 @@ class Tag < ActiveRecord::Base
         csv << tag_column
       end
     end
+
+    file_output
   end
 end
