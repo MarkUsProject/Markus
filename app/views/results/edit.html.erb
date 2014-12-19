@@ -5,6 +5,12 @@
 
   <%= javascript_include_tag 'panes' %>
   <%= javascript_include_tag 'pdfjs' %>
+  <script>
+    (function () {
+       console.log("<%= @host %>");
+       PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js"
+    })();
+  </script>
 <% end %>
 
 <% # UI LIBRARIES %>
