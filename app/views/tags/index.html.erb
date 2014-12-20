@@ -36,42 +36,41 @@
 <!--Modal dialogs for creating, uploading and downloading tags-->
 <aside class='dialog' id='create_new_dialog'>
   <%= javascript_include_tag 'Tags/text_updater.js',
-                             id: 'create_script',
-                             text_id: 'description',
-                             info_id: 'descript_amount',
-                             num_char: '120' %>
+                             id: 'text_script' %>
 
   <h1><%= t('tags.create.create_new') %></h1>
   <p><%= t('tags.create.tag_prompt') %></p>
   <%= form_for :create_new,
                url: assignment_tags_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
-      <div>
-        <p><%= f.text_field :name,
-                            placeholder: t('tags.create.name_prompt') %></p>
-      </div>
-      <div>
-        <p class="alignleft"><%= t('tags.create.tag_description') %></p>
-        <p id='descript_amount' class='alignright'>0/120</p>
-        <p class="clear-alignment">
+    <div>
+      <p>
+        <%= f.text_field :name,
+                         placeholder: t('tags.create.name_prompt'),
+                         maxlength: 30 %>
+      </p>
+    </div>
+    <div>
+      <p class="alignleft"><%= t('tags.create.tag_description') %></p>
+      <p id='descript_amount' class='alignright'>0/120</p>
+      <p class="clear-alignment">
           <%= f.text_area :description,
                           id: 'description',
                           cols: 30,
                           rows: 3,
                           maxlength: 120,
-                          onKeyDown: 'updateCharCount()',
                           placeholder: t('tags.create.descript_prompt') %>
-        </p>
-      </div>
-      <section class='dialog-actions'>
-        <%= f.submit t('tags.create.button_text'),
-                     name: 'submit',
-                     data: { disable_with: t('working') },
-                     class: 'button' %>
-        <input type='reset'
-               value='<%= t(:cancel) %>'
-               onclick='modal_create_new.close();'>
-      </section>
+      </p>
+    </div>
+    <section class='dialog-actions'>
+      <%= f.submit t('tags.create.button_text'),
+                   name: 'submit',
+                   data: { disable_with: t('working') },
+                   class: 'button' %>
+      <input type='reset'
+             value='<%= t(:cancel) %>'
+             onclick='modal_create_new.close();'>
+    </section>
   <% end %>
 </aside>
 <aside class='dialog' id='upload_csv_dialog'>
@@ -112,7 +111,7 @@
                url: yml_upload_assignment_tags_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
       <div class='content'>
-        <p><%= f.file_field :tags %></p>
+        <p><input type='file' name='yml_tags' id='yml_tags'></p>
         <%= t('tags.upload.upload_yml_html') %>
       </div>
 
@@ -144,10 +143,10 @@
                   target: '_blank' %>
     </p>
     <p>
-      <%= link_to t('tags.download.button_message', file_format: 'YML'),
+      <%= link_to t('tags.download.button_message', file_format: 'YAML'),
                   { controller: 'tags',
                     action: 'download_tag_list',
-                    format: 'yml' },
+                    format: 'yaml' },
                   onclick: 'modal_download.close();',
                   target: '_blank' %>
     </p>
@@ -156,6 +155,5 @@
            onclick='modal_download.close();'>
   </section>
 </aside>
-
 
 <aside class='dialog' id='edit_tags_dialog'></aside>

@@ -31,7 +31,7 @@ function formatTag(type, tag_id, grouping_id) {
         t_space.style.display = 'inline';
 
         // Handle tag movement.
-        if (type === "add")
+        if (type === 'add')
           addTagToCurrent(tag_id);
         else
           addTagToAvailable(tag_id);
@@ -83,14 +83,14 @@ function addTagToAvailable(tag_id) {
 
 function toggleMessages() {
   // Checks and sees if there are no tags in the available tags.
-  if (jQuery('#available_tags span').length == 1) {
+  if (jQuery('#available_tags span').length === 1) {
       document.getElementById('available-none').style.display = 'inline';
   } else {
       document.getElementById('available-none').style.display = 'none';
   }
 
   // Checks and sees if there are no tags in the active tags.
-  if (jQuery('#active_tags span').length == 1) {
+  if (jQuery('#active_tags span').length === 1) {
       document.getElementById('active-none').style.display = 'inline';
   } else {
       document.getElementById('active-none').style.display = 'none';

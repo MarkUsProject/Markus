@@ -137,9 +137,10 @@ class ResultsController < ApplicationController
         @request_type = params[:type]
 
         # Checks the operation requested.
-        if (@request_type.eql? 'add')
-          create_grouping_tag_association_from_existing_tag(params[:grouping_id],
-                                                            params[:tag_id])
+        if @request_type.eql? 'add'
+          create_grouping_tag_association_from_existing_tag(
+              params[:grouping_id],
+              params[:tag_id])
         else
           delete_grouping_tag_association(params[:tag_id],
                                           Grouping.find(params[:grouping_id]))
