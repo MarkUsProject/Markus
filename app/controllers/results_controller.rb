@@ -1,4 +1,5 @@
 class ResultsController < ApplicationController
+  include TagsHelper
   before_filter :authorize_only_for_admin,
                 except: [:codeviewer, :edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
@@ -43,6 +44,7 @@ class ResultsController < ApplicationController
 
     @annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
+    @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
     @group = @grouping.group
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
@@ -114,6 +116,62 @@ class ResultsController < ApplicationController
                  "of assignment '#{@assignment.short_identifier}' for group '" +
                  "#{@group.group_name}'")
 
+    # Sets up the tags for the tag pane.
+    # Creates a variable for all the tags not used
+    # and all the tags that are used by the assignment.
+    @all_tags = Tag.all
+    @grouping_tags = get_tags_for_grouping(@grouping.id)
+    @not_grouping_tags = get_tags_not_associated_with_grouping(@grouping.id)
+
+    # Gets the top tags and their usage.
+    @top_tags = get_top_tags
+    @top_tags_num = Hash.new
+    @top_tags.each do |current|
+      @top_tags_num[current.id] = get_num_groupings_for_tag(current.id)
+    end
+
+    # Respond to AJAX request.
+    respond_to do |format|
+      format.html
+      format.json do
+        @request_type = params[:type]
+
+        # Checks the operation requested.
+        if @request_type.eql? 'add'
+          create_grouping_tag_association_from_existing_tag(
+              params[:grouping_id],
+              params[:tag_id])
+        else
+          delete_grouping_tag_association(params[:tag_id],
+                                          Grouping.find(params[:grouping_id]))
+        end
+
+        # Renders nothing.
+        render nothing: true
+      end
+    end
+  end
+
+  ##  Tag Methods  ##
+
+  def add_tag
+    create_grouping_tag_association_from_existing_tag(params[:grouping_id],
+                                                      params[:tag_id])
+    respond_to do |format|
+      format.html do
+        redirect_to :back
+      end
+    end
+  end
+
+  def remove_tag
+    delete_grouping_tag_association(params[:tag_id],
+                                    Grouping.find(params[:grouping_id]))
+    respond_to do |format|
+      format.html do
+        redirect_to :back
+      end
+    end
   end
 
   def next_grouping

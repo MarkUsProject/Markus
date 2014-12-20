@@ -1,0 +1,75 @@
+<div id='used_tags_pane'>
+  <%= javascript_include_tag 'Results/tag_operations.js' %>
+
+  <div class='tag_collector_pane'>
+    <span><%= t('marker.marks.current_tags').html_safe %></span>
+    <div id='active_tags' class='tag_list'>
+      <% if @grouping_tags.length == 0 %>
+        <span id='active-none' class='no_tags'><%= t('tags.messages.no_assigned') %></span>
+      <% else %>
+        <span id='active-none' class='no_tags_hidden'><%= t('tags.messages.no_assigned') %></span>
+      <% end %>
+      <% @grouping_tags.each do |tag| %>
+        <%= tag('span', id: tag.id, class: 'tag_element') %>
+            <%= link_to tag.name,
+                        '#',
+                        onClick: "formatTag(\"remove\",#{tag.id},#{@grouping.id})",
+                        class: 'remove_tag_url'%>
+        </span>
+        <%= tag('span', id: "#{tag.id}-space") %>&nbsp;</span>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Displays tags that can be assigned to the assignment -->
+<% unless old_result %>
+  <div id='available_tags_pane'>
+    <div class='tag_collector_pane'>
+      <span><%= t('marker.marks.available_tags').html_safe %></span>
+      <div id='available_tags' class='tag_list'>
+        <% if @not_grouping_tags.length == 0 %>
+          <span id='available-none' class='no_tags'><%= t('tags.messages.no_left') %></span>
+        <% else %>
+          <span id='available-none' class='no_tags_hidden'><%= t('tags.messages.no_left') %></span>
+        <% end %>
+        <% @not_grouping_tags.each do |tag| %>
+          <%= tag('span', id: tag.id, class: 'tag_element') %>
+              <%= link_to tag.name,
+                          '#',
+                          onClick: "formatTag(\"add\",#{tag.id},#{@grouping.id})",
+                          class: 'add_tag_url'%>
+          </span>
+          <%= tag('span', id: "#{tag.id}-space") %>&nbsp;</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Provides quick tag summary -->
+<hr>
+<div class='tag_summary'>
+  <span><%= t('marker.marks.tag_summary').html_safe %></span>
+  <div class='top_tag_list'>
+    <% @top_tags.each do |tag| %>
+      <div class='tag_line'>
+        <%= tag('span', id: tag.id, class: 'tag_element') %>
+          <%= tag.name %>
+        </span>
+        &nbsp;x <%= @top_tags_num[tag.id] %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Allows admins to add tags. -->
+<% if @current_user.admin? %>
+  <hr>
+  <div class='tag_admin'>
+    <%= button_tag t('marker.marks.new_tag'),
+                   onclick: 'modal_create_new.open()' %>
+    <%= button_tag t('marker.marks.delete_tag'),
+                   onclick: 'modal_delete_tags.open()' %>
+  </div>
+<% end %>

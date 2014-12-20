@@ -1,5 +1,5 @@
 @import 'common/core';
-
+@import 'common/tags';
 @import 'common/notes_dialog';
 
 
@@ -569,6 +569,46 @@ ul.annotation_text_list {
   margin-bottom: 1em;
 }
 
+/* Tag pane */
+
+#tag_viewer {
+ margin-bottom: 1em;
+}
+
+.tag_collector_pane {
+  @include border-radius($radius);
+  background: $light-grey;
+  border: 1px solid $grey;
+  font-weight: 600;
+  margin: 1em 0;
+  padding: 10px;
+
+  .tag_list {
+    padding-top: 5px;
+    line-height: 200%;
+    text-align: center;
+    font-weight: default !important;
+  }
+}
+
+.tag_summary {
+  font-weight: 600;
+  padding-bottom: 10px;
+
+  .top_tag_list {
+    padding-top: 5px;
+    line-height: 200%;
+    text-align: center;
+
+    .tag_line:nth-child(odd) {
+      background-color: $light-grey;
+    }
+  }
+}
+
+.tag_admin {
+  text-align: center;
+}
 
 /* Resizable column panes */
 
