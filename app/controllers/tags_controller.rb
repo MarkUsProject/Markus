@@ -63,24 +63,24 @@ class TagsController < ApplicationController
     render partial: 'tags/edit_dialog', handlers: [:erb]
   end
 
-  ###   Upload/Download Methods   ###
+  ###  Upload/Download Methods  ###
 
   def download_tag_list
     # Gets all the tags
     tags = Tag.all(order: 'name')
 
-    #Gets what type of format.
+    # Gets what type of format.
     case params[:format]
     when 'csv'
       output = Tag.generate_csv_list(tags)
       format = 'text/csv'
-    when 'xml'
-      output = export_tags_yml
+    when 'yaml'
+      output = export_tags_yaml
       format = 'text/plain'
     else
       # If there is no 'recognized' format,
-      # print to xml.
-      output = export_tags_yml
+      # print to yaml.
+      output = export_tags_yaml
       format = 'text/plain'
     end
 
@@ -92,7 +92,7 @@ class TagsController < ApplicationController
   end
 
   # Export a YAML formatted string.
-  def export_tags_yml
+  def export_tags_yaml
     tags = Tag.all(order: 'name')
 
     # The final list of all tags.
@@ -111,7 +111,6 @@ class TagsController < ApplicationController
         'name' => "#{current_user['first_name']} #{current_user['last_name']}"
       }
 
-      puts(current)
       tag_yml = { "tag_#{tag['id']}" => current }
       final = final.merge(tag_yml)
     end

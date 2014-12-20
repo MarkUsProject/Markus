@@ -79,7 +79,7 @@ class Tag < ActiveRecord::Base
 
   def self.generate_csv_list(tags)
     # Start generating the CSV file.
-    file_output = CSV.generate do |csv|
+    CSV.generate do |csv|
       # Go through each of the tags.
       tags.each do |tag|
         user = User.find(tag.user)
@@ -92,7 +92,5 @@ class Tag < ActiveRecord::Base
         csv << tag_column
       end
     end
-
-    file_output
   end
 end

@@ -896,9 +896,9 @@ en:
             <i>tag_name</i> represents the name of the tag to be added.<br>
             <i>tag_description</i> represents the description for that record.<br>
           </p>"
-        upload_yml: "Upload YML"
-        upload_yml_title: "Upload YML File"
-        upload_yml_prompt: "Select a YML file to upload:"
+        upload_yml: "Upload YAML"
+        upload_yml_title: "Upload YAML File"
+        upload_yml_prompt: "Select a YAML file to upload:"
         upload_yml_html: "
           <p>
             The file should have the following format:<br>
@@ -918,7 +918,7 @@ en:
             <i>id</i> represents the user id associated with that tag.<br>
           </p>"
         error: "There was an error uploading tags: "
-        empty_error: " The YML file was empty."
+        empty_error: " The YAML file was empty."
         syntax_error: " The syntax is incorrect. (%{error})"
 
       download:
