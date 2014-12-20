@@ -893,12 +893,40 @@ module Repository
       directories
     end
 
-    # returns true if the file at the given path exists for the
-    # class's revision_number (commit name)
-    # erros with this function can occur with files are incorrectly
-    # added and the git config file is not updated
+    # Returns true if the path given to this function reflects an
+    # actual file in the repository, false otherwise
     def path_exists?(path)
-      @commit.tree.any? { |e| e[:name] == path }
+
+      # Chop the forward-slash off the end
+      if path[-1,1] == '/'
+        path = path[0..-2]
+      end
+
+      # Split the path into parts
+      parts = path.split('/')
+
+      tree_ptr = @commit.tree
+
+      # Follow the 'tree-path' and return false if we cannot find
+      # each part along the way
+      parts.each {
+          |path_part|
+        found = false
+        current_tree = nil
+        tree_ptr.each { |current_tree|
+          # For each object in this tree check for our part
+          if current_tree[:name] == path_part
+            # Move to next part of path (next tree / subdirectory)
+            found = true
+            break
+          end
+        }
+        if !found
+          found
+        end
+      }
+      # If we made it this far, the path was traversed successfully
+      true
     end
 
     # Return changed files at 'path' (recursively)
