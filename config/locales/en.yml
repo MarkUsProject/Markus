@@ -301,6 +301,14 @@ en:
         mark: "Mark"
         marks: "Marks"
         summary: "Summary"
+        tags: "Tags"
+        current_tags: "Current Tags:"
+        available_tags: "Available Tags:"
+        tag_summary: "Top Tags Used:"
+        new_tag: "Add New Tag..."
+        delete_tag: "Delete Tags..."
+        create_new_tag: "Create New Tag:"
+        delete_tags: "Delete Tags:"
         submission_rule: "Submission Rule"
         expand_all: "Expand All"
         collapse_all: "Collapse All"
@@ -429,6 +437,9 @@ en:
       download_groupings_files: "Download all submissions"
       sections:             "Section:"
       revision_history:     "%{num}: "
+      tags_used:            "Tags Used"
+      tags_search:          "Search for Tags:"
+      tags_list:            "Filter by Tag:"
 
     summaries_index:
       group_name:           "Group Name"
@@ -838,6 +849,97 @@ en:
 
     hide_students: "Mark as inactive"
     unhide_students: "Mark as active"
+
+    tags:
+      tags: "Tags"
+      title: "Assignment Tags: %{assignment_short_identifier}"
+      delete: "Delete Tag"
+      search_tags: "Search for tags..."
+      edit_tag: "Edit Tag..."
+      edit_update: "Update"
+      updating: "Updating..."
+
+      messages:
+        no_assigned: "--No Tags Assigned--"
+        no_left: "--No More Tags to Assign--"
+        no_tags: "--No Tags to Show--"
+
+      create:
+        create_new: "Add Tag"
+        tag_prompt: "Tag name:"
+        tag_description: "Tag description:"
+        button_text: "Save Changes"
+        name_prompt: "Enter tag name..."
+        descript_prompt: "Enter tag description..."
+        successful: "Tag created successfully!"
+        error: "Tag could not be created."
+
+      delete:
+        delete_tags: "Delete Tags"
+        tag_prompt: "Please select tags below to delete them:"
+
+      upload:
+        upload_csv: "Upload CSV"
+        upload_csv_title: "Upload CSV File"
+        upload_csv_prompt: "Select a CSV file to upload:"
+        upload_success: "%{nb_updates} tag(s) have been successfully added!"
+        invalid_line: "Line is in improper format."
+        upload_csv_html: "
+          <p>
+            The file should have the following format:<br>
+            <ul>
+              <li>Only one record per line.
+              <li>Each line should be terminated by a carriage-return line-feed.</li>
+              <li>The tag name and description are only used. Any other data per line is ignored.</li>
+            </ul>
+            <code>tag_name,tag_description, ...</code><br><br>
+            <i>tag_name</i> represents the name of the tag to be added.<br>
+            <i>tag_description</i> represents the description for that record.<br>
+          </p>"
+        upload_yml: "Upload YAML"
+        upload_yml_title: "Upload YAML File"
+        upload_yml_prompt: "Select a YAML file to upload:"
+        upload_yml_html: "
+          <p>
+            The file should have the following format:<br>
+            <ul>
+              <li>Only one record per line.
+              <li>Each line should be terminated by a carriage-return line-feed.
+              <li>All other fields in the file not specified below are ignored.
+            </ul>
+            <code>tag_id:<br>
+              &nbsp;&nbsp;name: name<br>
+              &nbsp;&nbsp;description: description<br>
+              &nbsp;&nbsp;user:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;id: id<br>
+              [...]</code><br><br>
+            <i>tag_name</i> represents the name of the tag to be added.<br>
+            <i>tag_description</i> represents the description for that record.<br>
+            <i>id</i> represents the user id associated with that tag.<br>
+          </p>"
+        error: "There was an error uploading tags: "
+        empty_error: " The YAML file was empty."
+        syntax_error: " The syntax is incorrect. (%{error})"
+
+      download:
+        download: "Download"
+        download_title: "Download Tags"
+        download_html: "
+          <p>
+            This allows you to download the list of tags used for assignment <b>%{assignment_short_identifier}</b>.<br>
+            They can be downloaded either in CSV or YML format.
+          </p>"
+        button_message: "Download in %{file_format} format"
+
+      table:
+        name: "Name"
+        creator: "Creator"
+        description: "Description"
+        use: "Use"
+        actions: "Actions"
+        all: "All Tags"
+        in_use: "Tags in Use"
+        not_in_use: "Tags Not in Use"
 
     annotations:
       annotation_category: "Annotation Category"
