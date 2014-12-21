@@ -922,7 +922,7 @@ module Repository
           end
         }
         if !found
-          found
+          return found
         end
       }
       # If we made it this far, the path was traversed successfully
