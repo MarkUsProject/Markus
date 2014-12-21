@@ -10,11 +10,19 @@
   var annotation_manager = null;
   var syntax_highlighter_adapter = null;
 
-  // Boolean to tell the code if an image or code is being shown
-  var is_image;
+  var ANNOTATION_TYPES = {
+    CODE: 0,
+    IMAGE: 1,
+    PDF: 2
+  };
+
+  // Enum to tell the code if an image, code, or pdf is being shown
+  // in the codeviewer
+  var annotation_type;
 
   function source_code_ready() {
-    annotation_manager = null;
+    annotation_type = ANNOTATION_TYPES.CODE;
+
     document.getElementById('select_file_id').disabled = false;
 
     syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
@@ -30,13 +38,11 @@
     var annotation_text_displayer = new AnnotationTextDisplayer();
 
     annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
-
-    is_image = false;
   }
 
   // A version of source_code_ready for image files.
   function source_code_ready_for_image() {
-    annotation_manager = null;
+    annotation_type = ANNOTATION_TYPES.IMAGE;
 
     var image_event_handler       = new ImageEventHandler();
     var annotation_text_manager   = new AnnotationTextManager();
@@ -47,18 +53,45 @@
                                                  annotation_text_displayer);
 
     document.getElementById('select_file_id').disabled = false;
-
-    is_image = true;
   }
 
+  /**
+   * Prepare annotation for pdf annotations.
+   *
+   * @param {PDFView} pdfView     PDF Viewer
+   * @param {String}  pdfViewerId The ID of the PDF viewer.
+   */
+  function source_code_ready_for_pdf(pdfView, pdfViewerId) {
+    annotation_type = ANNOTATION_TYPES.PDF;
+
+    annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId);
+  }
+
+  /**
+   * Called when annotations are being added to the view.
+   *
+   * @param {string} annotation_text_id ID of the annotation text
+   * @param {string} content            Text for the annotation
+   */
   function add_annotation_text(annotation_text_id, content) {
-    var annotation_text = new AnnotationText(annotation_text_id, 0, content);
-    annotation_manager.registerAnnotationText(annotation_text);
+    if (annotation_type === ANNOTATION_TYPES.PDF) {
+      add_pdf_annotation(annotation_text_id, content,
+        annotation_manager.selectionRectangleAsInts());
+    } else {
+      var annotation_text = new AnnotationText(annotation_text_id, 0, content);
+      annotation_manager.registerAnnotationText(annotation_text);
+    }
   }
 
   // Register an image_annotation with the image annotation_grid
   function add_to_annotation_grid(extracted_coords) {
     annotation_manager.add_to_grid(JSON.parse(extracted_coords));
+  }
+
+  function add_pdf_annotation(annotation_text_id, content, extracted_coords) {
+    var coords = (typeof extracted_coords === 'string' ? JSON.parse(extracted_coords) : extracted_coords);
+
+    annotation_manager.addAnnotation(annotation_text_id, content, coords);
   }
 
   function add_annotation(annotation_id, range, annotation_text_id) {
@@ -71,9 +104,15 @@
     }
   }
 
+  /**
+   * Update the text in an annotation.
+   */
   function update_annotation_text(annotation_text_id, new_content) {
     if (annotation_manager.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
-      annotation_manager.getAnnotationTextManager().getAnnotationText(annotation_text_id).setContent(new_content);
+      annotation_manager
+        .getAnnotationTextManager()
+        .getAnnotationText(annotation_text_id)
+        .setContent(new_content);
     }
   }
 
@@ -126,13 +165,14 @@
     return { line_start: line_start, line_end: line_end };
   }
 
-  function set_dialog_values(content, category, x1, x2, y1, y2) {
+  function set_dialog_values(content, category, x1, x2, y1, y2, page) {
     document.getElementById('new_annotation_content').value = content;
     document.getElementById('new_annotation_category').value = category;
     document.getElementById('x1').value = x1;
     document.getElementById('x2').value = x2;
     document.getElementById('y1').value = y1;
     document.getElementById('y2').value = y2;
+    document.getElementById('annot_dialog_page').value = page;
     document.getElementById('new_annotation_content').focus();
   }
 
@@ -158,8 +198,10 @@
   function make_new_annotation() {
     // Check if image is shown, and call the appropriate function if so
     // Set global variable 'positions' to current mouse positions
-    if (!is_image) {
+    if (annotation_type === ANNOTATION_TYPES.CODE) {
       positions = get_mouse_positions();
+    } else if (annotation_type === ANNOTATION_TYPES.PDF) {
+      return make_new_pdf_annotation();
     } else {
       return make_new_image_annotation();
     }
@@ -177,6 +219,22 @@
     return false;
   }
 
+  function make_new_pdf_annotation () {
+    var box = annotation_manager.selectionRectangleAsInts();
+    var boxSize = annotation_manager.selectionBoxSize();
+    
+    if (!box || boxSize.width < 5 || boxSize.height < 5) {
+      alert("<%= I18n.t('marker.annotation.select_an_area_pdf') %>");
+      return;
+    }
+
+    // Open the modal dialog to ask for new Annotation details
+    modal.open();
+
+    // Manually reset the modal dialog values
+    set_dialog_values('', '', box.x1, box.x2, box.y1, box.y2, box.page);
+  }
+
   function make_new_image_annotation() {
     var box = get_selection_box();
     if (!box) { return; }
@@ -191,7 +249,7 @@
   // Takes the ID of an existing annotation (from the database), adds the new
   // annotation link to the currently selected text, then highlights the lines.
   function add_existing_annotation(annotation_text_id) {
-    if (is_image) {
+    if (annotation_type === ANNOTATION_TYPES.IMAGE) {
       var box = get_selection_box();
       if (!box) { return; }
 
@@ -205,6 +263,23 @@
               '&x2=' + box.x2 +
               '&y1=' + box.y1 +
               '&y2=' + box.y2 +
+              '&authenticity_token=' + AUTH_TOKEN
+      });
+    } else if (annotation_type === ANNOTATION_TYPES.PDF) {
+      var box = annotation_manager.selectionRectangleAsInts();
+      if (!box) { return; }
+
+      jQuery.ajax({
+        url:  '<%= add_existing_annotation_annotations_path %>',
+        type: 'POST',
+        data: 'annotation_type=pdf' +
+              '&submission_file_id=' + document.getElementById('select_file_id').value +
+              '&annotation_text_id=' + annotation_text_id +
+              '&x1=' + box.x1 +
+              '&x2=' + box.x2 +
+              '&y1=' + box.y1 +
+              '&y2=' + box.y2 +
+              '&page=' + box.page +
               '&authenticity_token=' + AUTH_TOKEN
       });
     } else {
@@ -260,7 +335,19 @@
     }
   }
 
-  function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
+  /**
+   * Called when the create button is clicked in the annotation dialog.
+   *
+   * @param  {[type]} content     [description]
+   * @param  {[type]} category_id [description]
+   * @param  {[type]} x1          [description]
+   * @param  {[type]} x2          [description]
+   * @param  {[type]} y1          [description]
+   * @param  {[type]} y2          [description]
+   * @param  {[type]} page        [description]
+   * @return {[type]}             [description]
+   */
+  function submit_new_annotation(content, category_id, x1, x2, y1, y2, page) {
     // Was any annotation text content provided?
     if (content == '') {
       alert("<%= I18n.t('marker.annotation.provide_text') %>");
@@ -284,7 +371,7 @@
               '&category_id=' + category_id +
               '&authenticity_token=' + AUTH_TOKEN
       });
-    } else {
+    } else if (annotation_type === ANNOTATION_TYPES.IMAGE) {
       // Image annotation
       jQuery.ajax({
         url:  '<%= annotations_path %>',
@@ -297,6 +384,22 @@
               '&x2=' + x2 +
               '&y1=' + y1 +
               '&y2=' + y2 +
+              '&authenticity_token=' + AUTH_TOKEN
+      });
+    } else if (annotation_type === ANNOTATION_TYPES.PDF) {
+      // PDF Annotation
+      jQuery.ajax({
+        url:  '<%= annotations_path %>',
+        type: 'POST',
+        data: 'annotation_type=pdf' +
+              '&submission_file_id=' + document.getElementById('select_file_id').value +
+              '&content=' + encodeURIComponent(content) +
+              '&category_id=' + category_id +
+              '&x1=' + x1 +
+              '&x2=' + x2 +
+              '&y1=' + y1 +
+              '&y2=' + y2 +
+              '&page=' + page +
               '&authenticity_token=' + AUTH_TOKEN
       });
     }

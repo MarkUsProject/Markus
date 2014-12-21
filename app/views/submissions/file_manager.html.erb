@@ -69,7 +69,7 @@
       <%= @assignment.submission_rule.after_collection_message %>
     </div>
   <% else %>
-    <% if @assignment.section_past_due_date?(@grouping) %>
+    <% if @assignment.grouping_past_due_date?(@grouping) %>
       <div class='warning'>
         <%= @assignment.submission_rule.overtime_message(@grouping) %>
       </div>

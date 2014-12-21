@@ -120,7 +120,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Are we past all the due dates for this assignment?
-  def past_due_date?
+  def past_all_due_dates?
     # If no section due dates /!\ do not check empty? it could be wrong
     unless self.section_due_dates_type
       return !due_date.nil? && Time.zone.now > due_date
@@ -136,7 +136,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Return an array with names of sections past
-  def what_past_due_date
+  def section_names_past_due_date
     sections_past = []
 
     unless self.section_due_dates_type
@@ -154,25 +154,25 @@ class Assignment < ActiveRecord::Base
     sections_past
   end
 
-  # Are we past the due date for this assignment, for this grouping ?
-  def section_past_due_date?(grouping)
-    if self.section_due_dates_type and !grouping.inviter.section.nil?
-        section_due_date =
-    SectionDueDate.due_date_for(grouping.inviter.section, self)
-        !section_due_date.nil? && Time.zone.now > section_due_date
+  # Whether or not this grouping is past its due date for this assignment.
+  def grouping_past_due_date?(grouping)
+    if section_due_dates_type && grouping &&
+      grouping.inviter.section.present?
+
+      section_due_date =
+        SectionDueDate.due_date_for(grouping.inviter.section, self)
+      !section_due_date.nil? && Time.zone.now > section_due_date
     else
-      self.past_due_date?
+      past_all_due_dates?
     end
   end
 
-  # return the due date for a section
   def section_due_date(section)
-    if self.section_due_dates_type
-      unless section.nil?
-        return SectionDueDate.due_date_for(section, self)
-      end
+    unless section_due_dates_type && section
+      return due_date
     end
-    self.due_date
+
+    SectionDueDate.due_date_for(section, self)
   end
 
   # Calculate the latest due date. Used to calculate the collection time
@@ -271,6 +271,19 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  def self.get_current_assignment
+    # start showing (or "featuring") the assignment 3 days before it's due
+    # query uses Date.today + 4 because results from db seems to be off by 1
+    current_assignment = Assignment.where('due_date <= ?', Date.today + 4)
+                                   .reorder('due_date DESC').first
+
+    if current_assignment.nil?
+      current_assignment = Assignment.reorder('due_date ASC').first
+    end
+
+    current_assignment
+  end
+
   def update_remark_request_count
     outstanding_count = 0
     groupings.each do |grouping|
@@ -299,22 +312,16 @@ class Assignment < ActiveRecord::Base
       group.save
     else
       return if new_group_name.nil?
-      if Group.where(group_name: new_group_name).first
-        group = Group.where(group_name: new_group_name).first
+      if group = Group.where(group_name: new_group_name).first
         unless groupings.where(group_id: group.id).first.nil?
           raise "Group #{new_group_name} already exists"
         end
       else
-        group = Group.new
-        group.group_name = new_group_name
-        group.save
+        group = Group.create(group_name: new_group_name)
       end
     end
-    grouping = Grouping.new
-    grouping.group = group
-    grouping.assignment = self
-    grouping.save
-    grouping
+
+    Grouping.create(group: group, assignment: self)
   end
 
 

@@ -26,7 +26,7 @@
 
 <%= render 'shared/flash_message' %>
 
-<% if @assignment.past_due_date? %>
+<% if @assignment.past_all_due_dates? %>
   <div class='notice'>
     <%= t('past_due_date_warning') %>
   </div>

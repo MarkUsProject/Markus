@@ -40,6 +40,21 @@ Markus::Application.routes.draw do
         get 'decline_invitation'
         post 'disinvite_member'
         get 'render_test_result'
+        get 'view_summary'
+      end
+
+      resources :tags do
+        collection do
+          get 'download_tag_list'
+          post 'csv_upload'
+          post 'yml_upload'
+        end
+
+        member do
+          post 'update_tag'
+          get 'edit_tag_dialog'
+          get 'destroy'
+        end
       end
 
       resources :rubrics do
@@ -117,7 +132,6 @@ Markus::Application.routes.draw do
           get 'download_svn_repo_list'
           get 'collect_ta_submissions'
           post 'update_submissions'
-          post 'populate_repo_browser'
           post 'update_converted_pdfs'
           get 'updated_files'
           get 'replace_files'
@@ -164,6 +178,8 @@ Markus::Application.routes.draw do
             get 'update_positions'
             post 'update_mark'
             get 'view_marks'
+            post 'add_tag'
+            post 'remove_tag'
           end
         end
       end

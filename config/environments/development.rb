@@ -1,6 +1,10 @@
 # encoding: utf-8
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
+
+  # Other Precompiled Assets
+  config.assets.precompile += %w(pdfjs.js)
+
   # In the development environment your application's code is reloaded on
   # every request.  This slows down response time but is perfect for development
   # since you don't have to restart the webserver when you make code changes.
@@ -124,8 +128,6 @@ Markus::Application.configure do
   ###################################################################
   # Set this to true or false if you want to be able to display and annotate
   # PDF documents within the browser.
-  # When collecting pdfs files, it converts them to jpg format via RGhost.
-  # RGhost is ghostscript dependent. Be sure ghostscript is installed.
   PDF_SUPPORT = false
 
   ###################################################################

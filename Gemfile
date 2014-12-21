@@ -102,11 +102,3 @@ end
 group :unicorn do
   gem 'unicorn'
 end
-
-# If you want to be able to view and annotate PDF files,
-# make sure that this group is included. GhostScript has to be
-# installed for rghost to work well. You also need to set
-# the PDF_SUPPORT bool to true in the config file(s).
-group :rghost do
-  gem 'rghost', '<=0.9.3'
-end

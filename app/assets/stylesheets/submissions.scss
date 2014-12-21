@@ -1,5 +1,5 @@
 @import 'common/core';
-
+@import 'common/tags';
 
 #disable {
   color: $grey !important;
@@ -47,6 +47,74 @@
   button {
     margin-left: 1em;
   }
+}
+
+/* Tag CSS Elements */
+
+ul.tag_list {
+  text-align: left;
+  list-style: none;
+  margin: 0px;
+  cursor: pointer;
+}
+
+ul.tag_list li {
+  margin-left: -40px;
+  position: left;
+
+  /* Transitional Elements. Browser compatibility provided */
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+ul.tag_list li:hover {
+  color: $dark-blue;
+}
+
+ul.tag_list li ul {
+  text-align: left;
+  list-style: none;
+  margin: 0px;
+  cursor: pointer;
+
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+
+  background-color: $light-grey;
+
+  /* The transition from hidden to opaque */
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+ul.tag_list li ul li{
+  text-align: left;
+  padding: 2px;
+  color: $dark-blue !important;
+}
+
+ul.tag_list li ul li:hover{
+  background-color: $dark-grey;
+}
+
+ul li:hover ul {
+  /* When hover is activated on li, shows the menu */
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+li.tag_list_search:hover, li.tag_list_title:hover {
+  /* Removes CSS formatting for titles and search bars. */
+  background-color: $light-grey !important;
+  cursor: default !important;
 }
 
 
