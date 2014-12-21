@@ -3,6 +3,6 @@ require 'faker'
 FactoryGirl.define do
   factory :assignment_file do
     association :assignment
-    filename { Faker::Hacker::noun }
+    filename { Faker::Lorem.word }
   end
 end
