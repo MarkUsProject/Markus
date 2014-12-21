@@ -108,6 +108,7 @@ p + p {
 a {
   @include transition(all, $time-quick);
   color: $dark-blue;
+  cursor: pointer;
   text-decoration: none;
 
   &:hover {
