@@ -488,16 +488,8 @@ class Grouping < ActiveRecord::Base
   def assignment_folder_last_modified_date
     repo = self.group.repo
     rev = repo.get_latest_revision
-    # get the full path of repository folder
-    path = self.assignment.repository_folder
+    last_date = rev.timestamp
 
-    # split "repo_folder_path" into two parts
-    parent_path = File.dirname(path)
-    folder_name = File.basename(path)
-
-    # turn "parent_path" into absolute path
-    parent_path = repo.expand_path(parent_path, '/')
-    last_date = rev.directories_at_path(parent_path)[folder_name].last_modified_date
     repo.close()
     last_date
   end
@@ -590,12 +582,11 @@ class Grouping < ActiveRecord::Base
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-
     # create folder only if we are repo admin
     if self.group.repository_admin?
       self.group.access_repo do |repo|
         revision = repo.get_latest_revision
-        assignment_folder = File.join('/', assignment.repository_folder)
+        assignment_folder = assignment.repository_folder
 
         if revision.path_exists?(assignment_folder)
           return true
@@ -670,10 +661,11 @@ class Grouping < ActiveRecord::Base
                          due_dates.where(section_id: section).first.due_date
                        end
 
-    # condition to return
-    (!due_dates.blank? && !section.blank? &&
-        !section_due_date.blank? && timestamp > section_due_date) ||
-        timestamp > assignment.due_date
+    if !section_due_date.blank?
+      timestamp > section_due_date
+    else
+      timestamp > assignment.due_date
+    end
   end
 
   private

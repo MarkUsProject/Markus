@@ -267,7 +267,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @grader,
                :repo_browser,
                assignment_id: @assignment.id,
-               id: Grouping.last.id
+               id: Grouping.last.id,
+               revision_number:
+                 Grouping.last.group.repo.get_latest_revision.revision_number,
+               path: '/'
         assert_response :success
       end
 
@@ -358,7 +361,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @admin,
                :repo_browser,
                assignment_id: @assignment.id,
-               id: Grouping.last.id
+               id: Grouping.last.id,
+               path: '/'
         assert_response :success
       end
 

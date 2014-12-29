@@ -49,6 +49,7 @@ class SubmissionsController < ApplicationController
     @previous_path = File.split(@path).first
     @repository_name = @grouping.group.repository_name
     repo = @grouping.group.repo
+
     begin
       if params[:revision_number]
         @revision_number = params[:revision_number].to_i
@@ -70,6 +71,13 @@ class SubmissionsController < ApplicationController
     end
     # Generate a revisions' history with date and num
     @revisions_history = []
+
+    # Good idea from git branch. But SubversionRepository has
+    # no get_all_revisions method... yet (TODO)
+    # hmm. Let's make rev_number a method and have it return an array.
+    #repo.get_all_revisions.each do |revision|
+    #  @revisions_history << {num: revision.revision_number,
+    #                         date: revision.timestamp}
     rev_number = repo.get_latest_revision.revision_number + 1
     rev_number.times.each do |rev|
       begin
@@ -133,11 +141,10 @@ class SubmissionsController < ApplicationController
       else
         @revision = repo.get_revision(revision_number.to_i)
       end
-      @directories =
-          @revision.directories_at_path(File.join(@assignment.repository_folder,
-                                                  @path))
-      @files = @revision.files_at_path(File.join(@assignment.repository_folder,
-                                                 @path))
+      @directories = @revision.directories_at_path(
+          File.join(@assignment.repository_folder, @path))
+      @files = @revision.files_at_path(
+          File.join(@assignment.repository_folder, @path))
       @table_rows = {}
       @files.sort.each do |file_name, file|
         @table_rows[file.object_id] =
@@ -404,7 +411,6 @@ class SubmissionsController < ApplicationController
   def download
     @assignment = Assignment.find(params[:id])
     # find_appropriate_grouping can be found in SubmissionsHelper
-
     @grouping = find_appropriate_grouping(@assignment.id, params)
 
     revision_number = params[:revision_number]
@@ -598,7 +604,6 @@ class SubmissionsController < ApplicationController
           file.first)) do |f|
         f.puts file_contents
       end
-
     end
 
     # Now recursively call this function on all sub directories.
