@@ -113,8 +113,8 @@ class ResultsController < ApplicationController
     m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
                  "of assignment '#{@assignment.short_identifier}' for group '" +
                  "#{@group.group_name}'")
-    
-    @host = Rails.application.config.action_controller.relative_url_root 
+
+    @host = Rails.application.config.action_controller.relative_url_root
   end
 
   def next_grouping
