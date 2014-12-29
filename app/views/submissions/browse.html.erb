@@ -16,7 +16,7 @@
   <h1>
     <%= t('browse_submissions.submissions',
                short_identifier: sanitize(@assignment.short_identifier)) %>
-    <div class='help submissions_help'>
+    <div class='title-help submissions_help'>
       <p class='help-message-title submissions_help'>
         <% if @current_user.ta? %>
           <%= t('assignment.help.submissions_graders') %>
@@ -53,7 +53,7 @@
     <% end %>
 
     <% # Allow submission collection only if all the submissions are assigned to exactly one TA. %>
-    <% if @current_user.ta? and @assignment.past_collection_date? and 
+    <% if @current_user.ta? and @assignment.past_collection_date? and
           @groupings.all? {|grouping| grouping.get_ta_names.size == 1} %>
 
       <%= link_to t('collect_submissions.collect_ta'),
