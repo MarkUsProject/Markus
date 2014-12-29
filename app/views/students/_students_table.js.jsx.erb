@@ -90,6 +90,7 @@
       document.getElementById('working').style.display = '';
 
       jQuery.ajax({
+        url: 'students/populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -127,7 +128,7 @@
         s['section'] = student.section_name ? student.section_name : '-';
         s['grace_credits'] = student.grace_credits_remaining + ' / ' + student.grace_credits;
         s['notes'] = <span>
-          <a key={student.edit_link} 
+          <a key={student.edit_link}
             href={student.edit_link}><%= j raw I18n.t(:'edit') %></a>
           | 
           <a key={student.notes_link}
