@@ -3,12 +3,10 @@ class TasController < ApplicationController
   before_filter  :authorize_only_for_admin
 
   def index
-    respond_to do |format|
-      format.html
-      format.json do
-        render json: get_tas_table_info
-      end
-    end
+  end
+
+  def populate
+    render json: get_tas_table_info
   end
 
   def new

@@ -243,27 +243,14 @@ class SubmissionsController < ApplicationController
 
   def browse
     @assignment = Assignment.find(params[:assignment_id])
+    @groupings = get_groupings_for_assignment(@assignment, current_user)
+  end
 
-    if current_user.ta?
-      @groupings = @assignment.ta_memberships.find_all_by_user_id(current_user)
-                              .select { |m| m.grouping.is_valid? }
-                              .map { |m| m.grouping }
-    else
-      @groupings = @assignment.groupings
-        .includes(:assignment,
-                  :group,
-                  :grace_period_deductions,
-                  current_submission_used: :results,
-                  accepted_student_memberships: :user)
-        .select { |g| g.non_rejected_student_memberships.size > 0 }
-    end
+  def populate_submissions_table
+    @assignment = Assignment.find(params[:assignment_id])
+    @groupings = get_groupings_for_assignment(@assignment, current_user)
 
-    respond_to do |format|
-      format.html
-      format.json do
-        render json: get_submissions_table_info(@assignment, @groupings)
-      end
-    end
+    render json: get_submissions_table_info(@assignment, @groupings)
   end
 
   def index

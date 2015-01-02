@@ -46,6 +46,7 @@
       document.getElementById('working').style.display = '';
 
       jQuery.ajax({
+        url: 'tas/populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {

@@ -66,6 +66,7 @@
       // 4rd element: Info for groups table + criteria (if we are using crit.)
       //              this is actually a hash.
       jQuery.ajax({
+        url: 'graders/populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
