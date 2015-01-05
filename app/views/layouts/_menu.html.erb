@@ -29,14 +29,11 @@
 
     <li <% if controller.controller_name == 'admins' ||
               controller.controller_name == 'students' ||
-              controller.controller_name == 'tas' %>
+              controller.controller_name == 'tas' ||
+              controller.controller_name == 'sections' %>
           class='active'
         <% end %>>
       <%= link_to t(:users), controller: 'students' %>
-    </li>
-
-    <li class='<%= "active" if controller.controller_name == 'sections' %>'>
-      <%= link_to t(:sections), controller: 'sections' %>
     </li>
   <% else %>
     <li <% if controller.controller_name == 'assignments' ||
