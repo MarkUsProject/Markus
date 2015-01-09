@@ -71,6 +71,15 @@ nav {
   }
 }
 
+#logo-img {
+  background: transparent url(markus_logo_small.png) no-repeat center center / 90px 30px;
+  width: 90px;
+
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    background-image: url(markus_logo_small@2x.png);
+  }
+}
+
 
 /* Footer */
 
