@@ -62,7 +62,7 @@
     height: 115px;
     width: 220px;
 
-    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    @include hidpi {
       background-image: url(markus_logo_big@2x.png);
     }
   }
