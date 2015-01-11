@@ -57,14 +57,13 @@
   }
 
   .login-image {
-    margin-top: 1em;
-    padding: 25px 0;
-    text-align: center;
+    background: transparent url(markus_logo_big.png) no-repeat center center / contain;
+    margin: 1em auto;
+    height: 115px;
+    width: 220px;
 
-    img {
-      image-rendering: crisp-edges;
-      height: auto;
-      width: 60%;
+    @include hidpi {
+      background-image: url(markus_logo_big@2x.png);
     }
   }
 
