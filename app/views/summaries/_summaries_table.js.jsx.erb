@@ -108,6 +108,7 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
       jQuery.ajax({
+        url: 'summaries/populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -127,7 +128,7 @@
       });
     },
     render: function() {
-      
+
       var summaries_data = this.state.summaries.map(function(summary) {
         var s = {};
         s['id'] = summary.id;

@@ -33,46 +33,6 @@ pre,
 }
 
 
-/** Custom scrollbars in WebKit-based browsers */
-
-::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
-}
-
-::-webkit-scrollbar-button {
-  &:start:decrement,
-  &:end:increment {
-    background-color: $white;
-    display: block;
-    height: 0;
-    width: 0;
-  }
-}
-
-::-webkit-scrollbar-track-piece {
-  border-radius: 8px;
-  background-color: $white;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: $grey;
-  border-radius: 8px;
-
-  &:hover {
-    background-color: $blue;
-  }
-
-  &:vertical {
-    height: 50px;
-  }
-
-  &:horizontal {
-    width: 50px;
-  }
-}
-
-
 /** Headings */
 
 h1 {
@@ -108,6 +68,7 @@ p + p {
 a {
   @include transition(all, $time-quick);
   color: $dark-blue;
+  cursor: pointer;
   text-decoration: none;
 
   &:hover {

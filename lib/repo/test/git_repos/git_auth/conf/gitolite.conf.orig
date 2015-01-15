@@ -1,0 +1,6 @@
+repo Testrepo1
+     RW+ = user1 user2 
+     R   = someother_user 
+
+repo Repository2
+     R   = test

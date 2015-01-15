@@ -4,49 +4,50 @@
   <h1><%= t('grade_entry_forms.grades.student_title') + ' ' + @grade_entry_form.short_identifier %></h1>
 </div>
 
-<div class="table">
-
+<div class='wrapper'>
   <% if @grade_entry_form.grade_entry_items.empty? %>
-    <div class="wrapLeft">
-      <p><%= t('grade_entry_forms.students.no_results') %></p>
-    </div>
+    <p><%= t('grade_entry_forms.students.no_results') %></p>
   <% else %>
     <% grade_entry_student = @grade_entry_form.grade_entry_students.find_by_user_id(@student.id) %>
     <% if grade_entry_student.nil?  or !grade_entry_student.released_to_student %>
       <%= t('grade_entry_forms.students.no_results') %>
     <% else %>
-      <table>
-        <thead>
-          <%= render partial: 'grades_table_column_names' %>
-        </thead>
-        <tr>
-          <td class="grades_table_cell"><%= @student.user_name %></td>
-          <td class="grades_table_cell"><%= @student.last_name %></td>
-          <td class="grades_table_cell"><%= @student.first_name %></td>
+      <div class='table'>
+        <table>
+          <thead>
+            <%= render partial: 'grades_table_column_names' %>
+          </thead>
+          <tbody>
+            <tr>
+              <td class='grades_table_cell'><%= @student.user_name %></td>
+              <td class='grades_table_cell'><%= @student.last_name %></td>
+              <td class='grades_table_cell'><%= @student.first_name %></td>
 
-          <% @grade_entry_form.grade_entry_items.each do |grade_entry_item| %>
-            <% grade = grade_entry_student.grades.find_by_grade_entry_item_id(grade_entry_item.id) %>
-              <td class="grade">
-                <% if !grade.nil? && !grade.grade.nil? %>
-                  <%= grade.grade %>
-                <% else %>
-                  <%= t('grade_entry_forms.grades.no_mark') %>
-                <% end %>
-              </td>
-          <% end %>
-    <% if @grade_entry_form.show_total %>
-      <td class=grade>
-        <% total = grade_entry_student.total_grade %>
-        <% if !total.nil? %>
-          <%= total %>
-        <% else %>
-          <%= t('grade_entry_forms.grades.no_mark') %>
-        <% end %>
-     </td>
+              <% @grade_entry_form.grade_entry_items.each do |grade_entry_item| %>
+                <% grade = grade_entry_student.grades.find_by_grade_entry_item_id(grade_entry_item.id) %>
+                  <td class='grade'>
+                    <% if !grade.nil? && !grade.grade.nil? %>
+                      <%= grade.grade %>
+                    <% else %>
+                      <%= t('grade_entry_forms.grades.no_mark') %>
+                    <% end %>
+                  </td>
+              <% end %>
+
+              <% if @grade_entry_form.show_total %>
+                <td class='grade'>
+                  <% total = grade_entry_student.total_grade %>
+                  <% if !total.nil? %>
+                    <%= total %>
+                  <% else %>
+                    <%= t('grade_entry_forms.grades.no_mark') %>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          </tbody>
+       </table>
+      </div>
     <% end %>
-        </tr>
-     </table>
-   <% end %>
   <% end %>
-
 </div>

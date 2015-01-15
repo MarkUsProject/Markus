@@ -21,6 +21,7 @@ class ActiveSupport::TestCase
   def destroy_repos
     conf = Hash.new
     conf['IS_REPOSITORY_ADMIN'] = true
+    conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
     conf['REPOSITORY_PERMISSION_FILE'] = 'dummyfile'
     Repository.get_class(REPOSITORY_TYPE, conf).purge_all
   end

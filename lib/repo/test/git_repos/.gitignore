@@ -1,0 +1,5 @@
+# This folder is used for testing repos
+# Should be empty
+*
+# Except for this file - git won't push empty folders
+!.gitignore
