@@ -118,8 +118,8 @@ class Result < ActiveRecord::Base
     if marks.where(mark: nil).first &&
           marking_state == Result::MARKING_STATES[:complete]
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))
-      false
+      return false
     end
-    true
+    return true
   end
 end
