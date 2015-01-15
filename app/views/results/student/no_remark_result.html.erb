@@ -13,6 +13,7 @@
     <div id="remark_request_text">
       <%= @submission.remark_request %>
     </div>
+  </div>
   <br>
   <div>
     <p class="notice"><%= I18n.t("marker.cancel_remark_to_change") %></p>
@@ -26,4 +27,5 @@
        class: "button",
        onclick: "return confirm('#{I18n.t(:cancel_remark_request)}');") %>
    </p>
+  </div>
 </div>

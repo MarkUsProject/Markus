@@ -50,6 +50,7 @@ module SubmissionsHelper
           get_grouping_can_begin_grading(assignment, grouping)
       g[:state] = get_grouping_state(grouping)
       g[:section] = get_grouping_section(grouping)
+      g[:tags] = get_grouping_tags(grouping)
       g
     end
   end
@@ -66,6 +67,10 @@ module SubmissionsHelper
     else
       return nil
     end
+  end
+
+  def get_grouping_tags(grouping)
+    grouping.tags
   end
 
   def get_grouping_group_name(assignment, grouping)

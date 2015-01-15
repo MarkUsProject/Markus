@@ -1,0 +1,16 @@
+<script>
+//<![CDATA[
+  jQuery(document).ready(function() {
+    window.modal_create_new   = new ModalMarkus('#create_new_dialog');
+    window.modal_download     = new ModalMarkus('#download_dialog');
+    window.modal_upload_csv   = new ModalMarkus('#upload_csv_dialog');
+    window.modal_upload_yml   = new ModalMarkus('#upload_yml_dialog');
+    window.modal_edit         = new ModalMarkus('#edit_tags_dialog');
+
+    jQuery('.sortable ul').sortable({
+      axis:   'y',
+      cursor: 'move'
+    });
+  });
+//]]>
+</script>

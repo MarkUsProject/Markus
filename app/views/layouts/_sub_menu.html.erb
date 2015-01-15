@@ -11,7 +11,9 @@
         controller.controller_name == 'ta_assignments' ||
         controller.controller_name == 'annotation_categories' ||
         controller.controller_name == 'grade_entry_forms' ||
-        controller.controller_name == 'automated_tests' %>
+        controller.controller_name == 'automated_tests' ||
+        controller.controller_name == 'tags' %>
+
     <ul class='sub'>
       <li id='dropdown'>
         <span class='dropdown'>
@@ -87,6 +89,10 @@
           <li class='<%= "active" if controller.controller_name == 'graders' %>'>
             <%= link_to t('graders.graders'),
                         assignment_graders_path(@assignment) %>
+          </li>
+          <li class='<%= "active" if controller.controller_name == 'tags' %>'>
+            <%= link_to t('tags.tags'),
+                        assignment_tags_path(@assignment) %>
           </li>
           <li <% if controller.controller_name == 'submissions' ||
                     controller.controller_name == 'results' %>

@@ -73,7 +73,58 @@
            formats: [:js],
            locals: { first_file: @first_file } %>
 
+<!-- Dialogs -->
 <aside class='dialog' id='notes_dialog'></aside>
+<% if @current_user.admin? %>
+  <aside class='dialog' id='create_new_tag'>
+    <%= javascript_include_tag 'Tags/text_updater.js',
+                               id: 'create_script',
+                               text_id: 'description',
+                               info_id: 'descript_amount',
+                               num_char: '120' %>
+
+    <h1><%= t('tags.create.create_new') %></h1>
+    <p><%= t('tags.create.tag_prompt') %></p>
+    <%= form_for :create_new,
+                 url: assignment_tags_path(@assignment),
+                 html: { multipart: true, size: 1 } do |f| %>
+        <div>
+          <p><%= f.text_field :name,
+                              placeholder: t('tags.create.name_prompt') %></p>
+        </div>
+        <div>
+          <p class='alignleft'><%= t('tags.create.tag_description') %></p>
+          <p id='descript_amount' class='alignright'>0/120</p>
+          <p class="clear-alignment"><%= f.text_area :description,
+                                                  id: 'description',
+                                                  cols: 30,
+                                                  rows: 3,
+                                                  maxlength: 120,
+                                                  onKeyDown: 'updateCharCount()',
+                                                  placeholder: t('tags.create.descript_prompt') %></p>
+        </div>
+        <section class='dialog-actions'>
+          <%= hidden_field_tag 'grouping_id', @grouping.id %>
+          <%= f.submit t('tags.create.button_text') %>
+          <input type='reset'
+                 value='<%= t(:cancel) %>'
+                 onclick='modal_create_new.close();'>
+        </section>
+    <% end %>
+  </aside>
+  <aside class='dialog' id='delete_tags'>
+    <h1><%= t('tags.delete.delete_tags') %></h1>
+    <p><%= t('tags.delete.tag_prompt') %></p>
+    <%= form_for :delete,
+                 url: assignment_tags_path(@assignment),
+                 html: { multipart: true, size: 1 } do |f| %>
+
+    <% end %>
+    <input type='reset'
+           value='<%= t(:cancel) %>'
+           onclick='modal_delete_tags.close();'>
+  </aside>
+<% end %>
 
 <div class='title_bar'>
   <h1>

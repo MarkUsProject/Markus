@@ -1,0 +1,147 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  var TagsTable = React.createClass({
+    getDefaultProps: function() {
+      // Creates a new table with the columns defined below.
+      // The first column will be the column initially sorted.
+
+      return {
+        columns: [
+          {
+            id: 'tags_name',
+            content: '<%= j raw I18n.t(:'tags.table.name') %>',
+            sortable: true
+          },
+          {
+            id: 'creator_name',
+            content: '<%= j raw I18n.t(:'tags.table.creator') %>',
+            sortable: true
+          },
+          {
+            id: 'tags_description',
+            content: '<%= j raw I18n.t(:'tags.table.description') %>',
+            sortable: true
+          },
+          {
+            id: 'tags_use',
+            content: '<%= j raw I18n.t(:'tags.table.use') %>',
+          },
+          {
+            id: 'tags_actions',
+            content: '<%= j raw I18n.t(:'tags.table.actions') %>',
+          }
+        ],
+        // Creates filters for the tags table. This allows
+        // users to filter tags based on whether or not the
+        // tag is in use.
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw I18n.t(:'tags.table.all') %>',
+            func: function(tag) {
+              return true;
+            }
+          },
+          {
+            name: 'in_use',
+            text: '<%= j raw I18n.t(:'tags.table.in_use') %>',
+            func: function(tag) {
+              if (tag.tags_use.charAt(0) == '0'){
+                return false;
+              }
+
+              return true;
+            }
+          },
+          {
+            name: 'not_in_use',
+            text: '<%= j raw I18n.t(:'tags.table.not_in_use') %>',
+            func: function(tag) {
+              if (tag.tags_use.charAt(0) == '0'){
+                return true;
+              }
+
+              return false;
+            }
+          }
+        ]
+      }
+    },
+    getInitialState: function() {
+      return {
+        error: null,
+        tags: [],
+        selected_tags: []
+      };
+    },
+    updateSelectedTags: function(tags) {
+      this.setState({selected_tags:tags});
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+
+      jQuery.ajax({
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            tags: data,
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        },
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+    onError: function(error) {
+      this.setState({
+        error: error
+      });
+    },
+    render: function() {
+      // Do tags specific operations here.
+      var tags_data = this.state.tags.map(function(tag) {
+        var t = {};
+
+        t['id'] = tag.id;
+        t['tags_name'] = tag.name;
+        t['creator_name'] = tag.user_name;
+        t['tags_description'] = tag.description;
+        t['tags_use'] = tag.use + ' assignment(s) have this tag.'
+
+        var action_links = [];
+        action_links.push(tag.edit_link);
+        action_links.push(tag.delete_link);
+        t['tags_actions'] = <span onClick={this.props.refresh}
+          dangerouslySetInnerHTML={{ __html: action_links.join(' | ') }}></span>;
+
+        return t;
+      }.bind(this));
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <Table data={tags_data}
+            search_placeholder={'<%= j raw I18n.t(:'tags.search_tags') %>'}
+            selectable={false}
+            onSelectedRowsChange={this.updateSelectedTags}
+            columns={this.props.columns}
+            filters={this.props.filters} />
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<TagsTable sections={<%= raw @sections.to_json %>} />, document.getElementById('tags_table'));
+</script>
