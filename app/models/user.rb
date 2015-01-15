@@ -205,11 +205,11 @@ class User < ActiveRecord::Base
   def self.repo_config
     {
       'IS_REPOSITORY_ADMIN' =>
-        MarkusConfigurator.markus_config_repository_admin?,
-      'REPOSITORY_STORAGE' => 
-	MarkusConfigurator.markus_config_repository_storage,
+          MarkusConfigurator.markus_config_repository_admin?,
+      'REPOSITORY_STORAGE' =>
+          MarkusConfigurator.markus_config_repository_storage,
       'REPOSITORY_PERMISSION_FILE' =>
-        MarkusConfigurator.markus_config_repository_permission_file
+          MarkusConfigurator.markus_config_repository_permission_file
     }
   end
 
