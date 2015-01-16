@@ -475,9 +475,11 @@ en:
       create:
         success: "Successfully created new marks spreadsheet"
         title: "Add Marks Spreadsheet"
+        submit: "Add Marks Spreadsheet"
       edit:
         title: "Edit Marks Spreadsheet:"
         success: "Successfully updated marks spreadsheet"
+        submit: "Update Marks Spreadsheet"
       grades:
         title: "Manage Marks Spreadsheet:"
         student_title: "Marks:"
