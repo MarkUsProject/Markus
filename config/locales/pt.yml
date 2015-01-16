@@ -140,7 +140,6 @@ pt:
         not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
         edit:           "Editar projeto:"
-        properties:     "Propriedades do projeto"
         required_files:  "Arquivos exigidos"
         submission_rules:  "Regras de envio"
         required_files_read:  "Arquivos exigidos para esse projeto"
