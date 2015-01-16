@@ -437,9 +437,11 @@ pt:
       create:
         success: "Planilha com novas notas criadas com sucesso"
         title: "Adicionar planilha de notas"
+        submit: "Adicionar marcas Spreadsheet"
       edit:
         title: "Editar planilha de notas:"
         success: "Planilha de notas atualizada com sucesso"
+        submit: "Atualização Marcas Spreadsheet"
       grades:
         title: "Gerenciar planilha de notas:"
         student_title: "Notas:"
