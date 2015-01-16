@@ -46,7 +46,7 @@ Markus::Application.configure do
 
   ###################################################################
   # Set the course name here
-  COURSE_NAME         = "CSC108 Fall 2009: Introduction to Computer Programming"
+  COURSE_NAME         = 'CSC108 Fall 2009: Introduction to Computer Programming'
 
   ###################################################################
   # MarkUs relies on external user authentication: An external script
@@ -60,7 +60,7 @@ Markus::Application.configure do
   #
   # That is why MarkUs does not allow usernames/passwords which contain
   # \n or \0. These are the only restrictions.
-  VALIDATE_FILE = "#{::Rails.root.to_s}/config/dummy_validate.sh"
+  VALIDATE_FILE = '#{::Rails.root.to_s}/config/dummy_validate.sh'
 
   ###################################################################
   # Authentication Settings
@@ -100,30 +100,30 @@ Markus::Application.configure do
   # If you are using HTTP's basic authentication, you probably want to use this
   # option.
 
-  LOGOUT_REDIRECT = "DEFAULT"
+  LOGOUT_REDIRECT = 'DEFAULT'
 
   ###################################################################
   # File storage (Repository) settings
   ###################################################################
   # Options for Repository_type are 'svn' and 'memory' for now
   # 'memory' is by design not persistent and only used for testing MarkUs
-  REPOSITORY_TYPE = "git" # use Subversion as storage backend
+  REPOSITORY_TYPE = 'git' # use Subversion as storage backend
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
   # to write to this directory
-  REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/dev/repos"
+  REPOSITORY_STORAGE = '#{::Rails.root.to_s}/data/dev/repos'
 
   ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
   # is allowed to write to this directory
 
-  PDF_STORAGE = "#{::Rails.root.to_s}/data/dev/pdfs"
+  PDF_STORAGE = '#{::Rails.root.to_s}/data/dev/pdfs'
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.
   # make sure markus is allowed to write to this directory
-  AUTOMATED_TESTS_REPOSITORY = "#{::Rails.root.to_s}/data/dev/automated_tests"
+  AUTOMATED_TESTS_REPOSITORY = '#{::Rails.root.to_s}/data/dev/automated_tests'
 
   ###################################################################
   # Set this to true or false if you want to be able to display and annotate
@@ -148,7 +148,7 @@ Markus::Application.configure do
   # http://www.example.com/markus/svn/Repository_Name. Make sure the path
   # after the hostname matches your <Location> directive in your Apache
   # httpd configuration
-  REPOSITORY_EXTERNAL_BASE_URL = "http://www.example.com/markus/svn"
+  REPOSITORY_EXTERNAL_BASE_URL = 'http://www.example.com/markus/svn'
 
   ###################################################################
   # This setting is important for two scenarios:
@@ -207,9 +207,9 @@ Markus::Application.configure do
   MARKUS_LOGGING_ROTATE_INTERVAL = 'daily'
   # Name of the logfile that will carry information, debugging and
   # warning messages
-  MARKUS_LOGGING_LOGFILE = "log/info_#{::Rails.env}.log"
+  MARKUS_LOGGING_LOGFILE = 'log/info_#{::Rails.env}.log'
   # Name of the logfile that will carry error and fatal messages
-  MARKUS_LOGGING_ERRORLOGFILE = "log/error_#{::Rails.env}.log"
+  MARKUS_LOGGING_ERRORLOGFILE = 'log/error_#{::Rails.env}.log'
   # This variable sets the number of old log files that will be kept
   MARKUS_LOGGING_OLDFILES = 10
 
