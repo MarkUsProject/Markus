@@ -453,9 +453,11 @@ fr:
       create:
         success: "Feuille de notes créée"
         title: "Créer une nouvelle feuille de notes"
+        submit: "Ajouter Marks Tableur"
       edit:
         title: "Modification de la feuille de notes : "
         success: "Feuille de notes mise à jour"
+        submit: "Mise à jour marques Tableur"
       grades:
         title: "Édition de la feuille de notes :"
         student_title: "Feuille de notes : "
