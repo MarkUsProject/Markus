@@ -624,6 +624,7 @@ pt:
       invitations: "Convites"
       invited_by: "Você foi convidado por %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Você tem certeza que quer recusar este convite?"
+      confirm_work_alone: "Você tem certeza que quer trabalhar sozinho?"
       form_own_group: "Forme o seu próprio grupo"
       form_group: "Um grupo deve conter de <strong>%{group_min}</strong> a <strong>%{group_max}</strong> pessoas."
       decline_invitation2: "Isso irá recusar outro convite que você tem. Você tem certeza disso?"
