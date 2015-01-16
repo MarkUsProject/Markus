@@ -120,6 +120,6 @@ class Result < ActiveRecord::Base
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))
       return false
     end
-    return true
+    true
   end
 end
