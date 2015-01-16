@@ -60,7 +60,7 @@ Markus::Application.configure do
   #
   # That is why MarkUs does not allow usernames/passwords which contain
   # \n or \0. These are the only restrictions.
-  VALIDATE_FILE = '#{::Rails.root.to_s}/config/dummy_validate.sh'
+  VALIDATE_FILE = "#{::Rails.root.to_s}/config/dummy_validate.sh"
 
   ###################################################################
   # Authentication Settings
@@ -112,18 +112,18 @@ Markus::Application.configure do
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
   # to write to this directory
-  REPOSITORY_STORAGE = '#{::Rails.root.to_s}/data/dev/repos'
+  REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/dev/repos"
 
   ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
   # is allowed to write to this directory
 
-  PDF_STORAGE = '#{::Rails.root.to_s}/data/dev/pdfs'
+  PDF_STORAGE = "#{::Rails.root.to_s}/data/dev/pdfs"
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.
   # make sure markus is allowed to write to this directory
-  AUTOMATED_TESTS_REPOSITORY = '#{::Rails.root.to_s}/data/dev/automated_tests'
+  AUTOMATED_TESTS_REPOSITORY = "#{::Rails.root.to_s}/data/dev/automated_tests"
 
   ###################################################################
   # Set this to true or false if you want to be able to display and annotate
@@ -207,9 +207,9 @@ Markus::Application.configure do
   MARKUS_LOGGING_ROTATE_INTERVAL = 'daily'
   # Name of the logfile that will carry information, debugging and
   # warning messages
-  MARKUS_LOGGING_LOGFILE = 'log/info_#{::Rails.env}.log'
+  MARKUS_LOGGING_LOGFILE = "log/info_#{::Rails.env}.log"
   # Name of the logfile that will carry error and fatal messages
-  MARKUS_LOGGING_ERRORLOGFILE = 'log/error_#{::Rails.env}.log'
+  MARKUS_LOGGING_ERRORLOGFILE = "log/error_#{::Rails.env}.log"
   # This variable sets the number of old log files that will be kept
   MARKUS_LOGGING_OLDFILES = 10
 
