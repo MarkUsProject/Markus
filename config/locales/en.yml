@@ -141,7 +141,6 @@ en:
         not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
         rules:           "Assignment Rules"
         edit:           "Edit Assignment:"
-        properties:     "Assignment Properties"
         required_files:  "Required files"
         submission_rules:  "Submission Rules"
         required_files_read:  "Required files"

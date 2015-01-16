@@ -143,7 +143,6 @@ fr:
         not_valid_submission_rule: "%{type} n'est pas une règle d'envoi valide"
         rules:           "Règles du projet"
         edit:           "Édition du projet :"
-        properties:     "Propriétés du projet"
         required_files:  "Fichiers requis"
         submission_rules:  "Règles d'envoi"
         required_files_read:  "Fichiers requis pour le projet."
