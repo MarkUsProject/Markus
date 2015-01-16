@@ -638,6 +638,7 @@ fr:
       invitations: "Invitations"
       invited_by: "Vous avez été invité par %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Êtes-vous sûr de vouloir refuser cette invitation ?"
+      confirm_work_alone: "Etes-vous sûr que vous voulez travailler individuellement ? Vous ne pouvez pas changer ce choix, sauf si vous contactez votre instructeur."
       form_own_group: "Former votre propre groupe"
       form_group: "Les groupes doivent être composés de <strong>%{group_min}</strong> à <strong>%{group_max}</strong> étudiants."
       decline_invitation2: "Êtes-vous sûr de vouloir décliner l'invitation ?"
