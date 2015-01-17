@@ -325,7 +325,7 @@ en:
         translated_to_points: "Translated to Points:"
         final_mark: "Final Mark&nbsp;"
         previous_mark: "Previous Mark&nbsp;"
-        old: "Old:&nbsp;"
+        old: "Old: "
         show_old_marks: "Show Old Mark Summary"
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"

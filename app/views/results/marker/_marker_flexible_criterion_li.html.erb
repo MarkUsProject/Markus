@@ -16,13 +16,12 @@
   </div>
     <div id="<%="mark_criterion_title_#{mark_criterion.id}_old_mark"%>"
   class="mark_criterion_old_mark float_left">
-  <strong><%= if(!old_mark.nil? && !old_mark.mark.nil?) then "Previous: #{old_mark.mark.to_s}" else "" end %></strong>
+  <strong><%= if(!old_mark.nil? && !old_mark.mark.nil?) then "#{I18n.t('marker.marks.old')}#{old_mark.mark.to_s}" else "" end %></strong>
     </div>
     <div id="mark_flexible_<%=mark.id%>" class="float_right">
       <%= text_field_tag('mark_' + mark.id.to_s, mark.mark,
           size: 4,
           class: 'mark_grade_input',
-          placeholder: if(!old_mark.nil?) then old_mark.mark.to_s else "" end,
           'data-action' => url_for(action: :update_mark,
                             mark_id: mark.id)) %>
   	 /&nbsp; <span id="mark_flexible_max_<%=mark.id%>"><%= mark_criterion.max.to_s%> </span>
