@@ -111,7 +111,6 @@ class SubmissionsController < ApplicationController
   def file_manager
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
-
     if @grouping.nil?
       redirect_to controller: 'assignments',
                   action: 'student_interface',
@@ -284,6 +283,15 @@ class SubmissionsController < ApplicationController
       set_filebrowser_vars(@grouping.group, @assignment)
       render :file_manager, id: assignment_id
       return
+    end
+    if (params[:new_files]!=nil)
+        params[:new_files].each do |f|
+            if f.size > 5000000
+                @file_manager_errors[:size_conflict] = "Error occured while uploading file \"" + f.original_filename + "\": The size of the uploaded file exceeds the maximum of 5MB."
+                render :file_manager
+                return
+            end
+        end
     end
     @grouping.group.access_repo do |repo|
 
