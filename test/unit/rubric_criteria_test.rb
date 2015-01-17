@@ -7,8 +7,7 @@ require 'machinist'
 
 class RubricCriterionTest < ActiveSupport::TestCase
 
-  context "A good rubric criterion model" do
-
+  context 'A good rubric criterion model' do
     setup do
       RubricCriterion.make
     end
@@ -27,7 +26,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
 
   end
 
-#Test that Criteria assigned to non-existant Assignment
+  # Test that Criteria assigned to non-existant Assignment
   #is NOT OK
   def test_assignment_id_dne
     assignment_id_dne = RubricCriterion.make()
