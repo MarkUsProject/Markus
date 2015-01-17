@@ -2,4 +2,4 @@
 document.getElementById('criterion_incomplete_error').innerHTML = '<%= @result.errors[:base].to_sentence %>';
 document.getElementById('criterion_incomplete_error').style.display = '';
 
-document.getElementById('marking_state').value = '<%= Result::MARKING_STATES[:partial] %>';
+document.getElementById('marking_state').value = '<%= @old_marking_state %>';

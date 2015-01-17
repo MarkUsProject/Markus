@@ -141,7 +141,6 @@ en:
         not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
         rules:           "Assignment Rules"
         edit:           "Edit Assignment:"
-        properties:     "Assignment Properties"
         required_files:  "Required files"
         submission_rules:  "Submission Rules"
         required_files_read:  "Required files"
@@ -475,9 +474,11 @@ en:
       create:
         success: "Successfully created new marks spreadsheet"
         title: "Add Marks Spreadsheet"
+        submit: "Add Marks Spreadsheet"
       edit:
         title: "Edit Marks Spreadsheet:"
         success: "Successfully updated marks spreadsheet"
+        submit: "Update Marks Spreadsheet"
       grades:
         title: "Manage Marks Spreadsheet:"
         student_title: "Marks:"
@@ -1341,6 +1342,10 @@ en:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Uh oh! Assignment folder missing."
+    group_repo_missing:         "Uh oh! No repo found for this group."
 
     #lib/validators/
     date_validator:

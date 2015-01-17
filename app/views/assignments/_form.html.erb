@@ -43,19 +43,12 @@
     <div>
       <%= raw(f.label :short_identifier,
                       t('assignment.short_identifier').html_safe ) %>
-      <% if @assignment.id.nil? %>
-        <%= raw(f.text_field :short_identifier,
-                             id: 'short_identifier',
-                             onchange: 'set_onbeforeunload(true);',
-                             maxlength: 30,
-                             required: true) %>
-      <% else %>
-        <%= raw(f.text_field :short_identifier,
-                             id: 'short_identifier',
-                             onchange: 'set_onbeforeunload(true);',
-                             maxlength: 30,
-                             required: true) %>
-      <% end %>
+      <%= raw(f.text_field :short_identifier,
+                           id: 'short_identifier',
+                           onchange: 'set_onbeforeunload(true);',
+                           size: 35,
+                           maxlength: 30,
+                           required: true) %>      
     </div>
 
     <div>
@@ -63,6 +56,7 @@
                       t('assignment.name').html_safe ) %>
       <%= raw(f.text_field :description,
                            onchange: 'set_onbeforeunload(true);',
+                           size: 35,
                            required: true) %>
     </div>
 
@@ -80,6 +74,7 @@
       /
       <%= raw(f.text_field :repository_folder,
                            onchange: 'set_onbeforeunload(true);',
+                           size: 34,
                            required: true) %>
     </div>
 
@@ -134,7 +129,7 @@
       <%= text_field_tag 'assignment_due_date',
                          nil,
                          { onchange: 'set_onbeforeunload(true);',
-                           size: 30,
+                           size: 35,
                            required: true } %>
     </div>
 
@@ -224,7 +219,7 @@
   <%# Assignment types %>
   <fieldset>
     <legend>
-      <span><%= t('assignment.type') %></span>
+      <span><%= t('assignment.group.properties') %></span>
     </legend>
 
     <div class='help assignment_assignment_type_help'>
@@ -473,7 +468,7 @@
         <%= text_field_tag 'remark_due_date',
                            nil,
                            { onchange: 'set_onbeforeunload(true);',
-                             size: 30 } %>
+                             size: 35 } %>
       </div>
 
       <div>

@@ -143,7 +143,6 @@ fr:
         not_valid_submission_rule: "%{type} n'est pas une règle d'envoi valide"
         rules:           "Règles du projet"
         edit:           "Édition du projet :"
-        properties:     "Propriétés du projet"
         required_files:  "Fichiers requis"
         submission_rules:  "Règles d'envoi"
         required_files_read:  "Fichiers requis pour le projet."
@@ -454,9 +453,11 @@ fr:
       create:
         success: "Feuille de notes créée"
         title: "Créer une nouvelle feuille de notes"
+        submit: "Ajouter Marks Tableur"
       edit:
         title: "Modification de la feuille de notes : "
         success: "Feuille de notes mise à jour"
+        submit: "Mise à jour marques Tableur"
       grades:
         title: "Édition de la feuille de notes :"
         student_title: "Feuille de notes : "
@@ -1204,6 +1205,10 @@ fr:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Oh non! Affectation dossier manquant."
+    group_repo_missing:         "Oh non! Aucune référentiel trouvé pour ce groupe."
 
     #lib/validators/
     date_validator:
