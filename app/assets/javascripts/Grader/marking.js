@@ -112,16 +112,10 @@ function focus_mark_criterion(id) {
 }
 
 function hide_criterion(id) {
-  if(document.getElementById('mark_criterion_inputs_' + id) !== null){
-    document.getElementById('mark_criterion_inputs_' + id).style.display = 'none';
-  }
-  if(document.getElementById('mark_criterion_title_' + id) !== null){
-    document.getElementById('mark_criterion_title_' + id).style.display = '';
-  }
-  if(document.getElementById('mark_criterion_title_' + id + '_expand') !== null){
-    document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
-    document.getElementById('mark_criterion_title_' + id + '_expand').removeClass('expanded');
-  }
+  document.getElementById('mark_criterion_inputs_' + id).style.display = 'none';
+  document.getElementById('mark_criterion_title_' + id).style.display = '';
+  document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
+  document.getElementById('mark_criterion_title_' + id + '_expand').removeClass('expanded');
 }
 
 function show_criterion(id) {
