@@ -218,7 +218,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
       should 'return the first grouping of the regular queue' do
         assert_includes @groupings,
                         @submission_collector.get_next_grouping_for_collection
-        assert_equal @groupings.slice(0..2), 
+        assert_equal @groupings.slice(0..2),
                      @regular_queue.sort { |x, y| x.id <=> y.id }
         assert @priority_queue.empty?
       end
