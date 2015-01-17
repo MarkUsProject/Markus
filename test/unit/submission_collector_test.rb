@@ -34,7 +34,6 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     context 'when both priority and regular queues are empty' do
       setup do
         setup_collector
-        puts @groupings.inspect
         @submission_collector.stubs(:start_collection_process)
         @submission_collector.push_groupings_to_queue(@groupings)
       end
@@ -213,14 +212,14 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
         setup_collector
         @submission_collector.stubs(:start_collection_process)
         @submission_collector.push_groupings_to_queue(@groupings.slice(0..2))
-        puts @regular_queue.all.inspect
 
       end
 
       should 'return the first grouping of the regular queue' do
-        assert_includes @groupings[0..2],
-          @submission_collector.get_next_grouping_for_collection
-        assert_equal @groupings.slice(0..2), @regular_queue.sort { |x,y| x.id <=> y.id}
+        assert_includes @groupings,
+                        @submission_collector.get_next_grouping_for_collection
+        assert_equal @groupings.slice(0..2), 
+                     @regular_queue.sort { |x, y| x.id <=> y.id }
         assert @priority_queue.empty?
       end
     end
