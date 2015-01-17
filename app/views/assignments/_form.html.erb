@@ -46,7 +46,7 @@
       <%= raw(f.text_field :short_identifier,
                            id: 'short_identifier',
                            onchange: 'set_onbeforeunload(true);',
-                           size: 32,
+                           size: 35,
                            maxlength: 30,
                            required: true) %>      
     </div>
@@ -56,7 +56,7 @@
                       t('assignment.name').html_safe ) %>
       <%= raw(f.text_field :description,
                            onchange: 'set_onbeforeunload(true);',
-                           size: 32,
+                           size: 35,
                            required: true) %>
     </div>
 
@@ -74,7 +74,7 @@
       /
       <%= raw(f.text_field :repository_folder,
                            onchange: 'set_onbeforeunload(true);',
-                           size: 31,
+                           size: 34,
                            required: true) %>
     </div>
 
@@ -129,7 +129,7 @@
       <%= text_field_tag 'assignment_due_date',
                          nil,
                          { onchange: 'set_onbeforeunload(true);',
-                           size: 32,
+                           size: 35,
                            required: true } %>
     </div>
 
@@ -468,7 +468,7 @@
         <%= text_field_tag 'remark_due_date',
                            nil,
                            { onchange: 'set_onbeforeunload(true);',
-                             size: 32 } %>
+                             size: 35 } %>
       </div>
 
       <div>
