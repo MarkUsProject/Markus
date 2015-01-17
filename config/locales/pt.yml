@@ -1193,6 +1193,10 @@ pt:
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Distribuição de notas"
 
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Oh não! Falta pasta Assignment."
+    group_repo_missing:         "Oh não! Nenhum repositório encontrado para este grupo."
+
     #lib/validators/
     date_validator:
       invalid_date: "Não é uma data válida"

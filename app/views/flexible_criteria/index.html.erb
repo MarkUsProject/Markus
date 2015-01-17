@@ -74,10 +74,10 @@
   <h2><%= t('flexible_criteria.download.title') %></h2>
   <p><%= t('flexible_criteria.download.prompt') %></p>
 
-  <%= button_to t('flexible_criteria.download.link'),
-                { controller:'flexible_criteria',
-                  action:'download',
-                  id: @assignment.id } %>
+  <%= link_to t('flexible_criteria.download.link'),
+              { controller:'flexible_criteria',
+                action:'download',
+                id: @assignment.id } %>
 
   <section class='dialog-actions'>
     <input type='reset'
