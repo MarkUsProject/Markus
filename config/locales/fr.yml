@@ -1204,6 +1204,10 @@ fr:
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
 
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Oh non! Affectation dossier manquant."
+    group_repo_missing:         "Oh non! Aucune référentiel trouvé pour ce groupe."
+
     #lib/validators/
     date_validator:
       invalid_date: "n'est pas une date valide"
