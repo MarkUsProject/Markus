@@ -1109,6 +1109,9 @@ en:
         <p>The description is optional. Note that if it is not present, the second
         comma should not appear.</p>"
         success: "Flexible criteria successfully uploaded: %{nb_updates} update(s)."
+      errors:
+        messages:
+          name_taken: "Criterion name already used."
 
     rubric_criteria:
       criteria_management:         "Rubric Management: %{identifier}"
@@ -1164,6 +1167,9 @@ en:
         description_2: "This criterion was satisfied."
         description_3: "This criterion was satisfied well."
         description_4: "This criterion was satisfied perfectly or nearly perfectly."
+      errors:
+        messages:
+          name_taken: "Criterion name already used."
 
     summary_table:
       title: "Title"

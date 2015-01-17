@@ -1,5 +1,9 @@
 <ul>
-  <%= @errors.each do |error| %>
-    <li><%=error[0]%> <%=error[1]%></li>
+  <%# @errors is an ordered hash where the value is an array of messages
+      ie: { key1: [value1, value2], key2: [value3] }%>
+  <% @errors.each do |error_key| %>
+      <% @errors.messages[error_key].each do |error_message| %>
+          <li><%= error_message %></li>
+      <% end %>
   <% end %>
 </ul>

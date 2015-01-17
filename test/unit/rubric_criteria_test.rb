@@ -6,26 +6,28 @@ require 'mocha/setup'
 require 'machinist'
 
 class RubricCriterionTest < ActiveSupport::TestCase
-  should validate_presence_of :assignment_id
-  should validate_numericality_of :assignment_id
-  should validate_numericality_of :weight
-  should validate_presence_of :weight
 
-  should validate_presence_of :rubric_criterion_name
+  context "A good rubric criterion model" do
 
-# FIXME there should be an easy "default" shoulda way to test the uniqueness
-# on the name on a specific scope
+    setup do
+      RubricCriterion.make
+    end
 
-#  context "a valid Rubric Criterion model" do
-#    setup do
-#      RubricCriterion.make
-#    end
-#
-#    should validate_uniqueness_of(
-#                :rubric_criterion_name).scope(:assignment_d)
-#  end
+    should validate_presence_of :assignment_id
+    should validate_numericality_of :assignment_id
+    should validate_numericality_of :weight
+    should validate_presence_of :weight
 
-  #Test that Criteria assigned to non-existant Assignment
+    should validate_presence_of :rubric_criterion_name
+
+    should validate_uniqueness_of(
+                         :rubric_criterion_name).scoped_to(
+                               :assignment_id).with_message(
+                                     'Criterion name already used.')
+
+  end
+
+#Test that Criteria assigned to non-existant Assignment
   #is NOT OK
   def test_assignment_id_dne
     assignment_id_dne = RubricCriterion.make()
