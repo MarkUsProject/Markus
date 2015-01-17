@@ -24,9 +24,10 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     @priority_queue = @submission_collector.grouping_queues.find_by_priority_queue(true).groupings
     @regular_queue = @submission_collector.grouping_queues.find_by_priority_queue(false).groupings
     @groupings = []
-    (1..3).each do |i|
+    (1..4).each do |i|
       @groupings.push(Grouping.make)
     end
+    puts @groupings.to_s
   end
 
   context 'A submission_collector calling its push_groupings_to_queue' do
