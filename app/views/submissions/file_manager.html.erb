@@ -110,7 +110,7 @@
     <div class='error'>
       <%= t(:invalid_group_warning) %>
     </div>
-  <% elsif @missing_assignment_files != nil && @missing_assignment_files.size > 0 %>
+  <% elsif @missing_assignment_files.nil? && @missing_assignment_files.size > 0 %>
     <div class='warning'>
       <p>
         <%= I18n.t('student.submission.missing_files', file: @missing_assignment_files.size) %>
