@@ -27,7 +27,6 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     (1..4).each do |i|
       @groupings.push(Grouping.make)
     end
-    puts @groupings.to_s
   end
 
   context 'A submission_collector calling its push_groupings_to_queue' do
