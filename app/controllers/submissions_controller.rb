@@ -284,10 +284,11 @@ class SubmissionsController < ApplicationController
       render :file_manager, id: assignment_id
       return
     end
-    unless (params[:new_files].nil)
+    unless params[:new_files].nil
       params[:new_files].each do |f|
         if f.size > 5000000
-          @file_manager_errors[:size_conflict] = "Error occured while uploading file \""
+          @file_manager_errors[:size_conflict] =
+          "Error occured while uploading file \""
           + f.original_filename
           + "\": The size of the uploaded file exceeds the maximum of 5MB."
           render :file_manager
