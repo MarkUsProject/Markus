@@ -82,6 +82,7 @@ fr:
     current_assignments:       "Projets existants"
     assignment_item:           "Projet"
     due:                       "Date de retour"
+    submission_status:         "Statut de la présentation"
     no_assignments:            "Aucun devoir pour le moment."
     class_average:             "Moyenne : %{results_average}"
     submissions_collected:     "%{count}/%{size} Envois récupérés"
