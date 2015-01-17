@@ -57,7 +57,7 @@ If you are interested in MarkUs and would like to try it out, there is a MarkUs 
 
 ## 4. System Requirements
 
-- Rails 3.0/Ruby 1.9.3
+- Rails 3.0/Ruby 1.9.3+ (2.1.2 recommended)
 - Unicorn/Passenger
 - PostgreSQL/MySQL
 - Subversion

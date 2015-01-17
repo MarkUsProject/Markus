@@ -140,7 +140,6 @@ pt:
         not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
         edit:           "Editar projeto:"
-        properties:     "Propriedades do projeto"
         required_files:  "Arquivos exigidos"
         submission_rules:  "Regras de envio"
         required_files_read:  "Arquivos exigidos para esse projeto"
@@ -437,9 +436,11 @@ pt:
       create:
         success: "Planilha com novas notas criadas com sucesso"
         title: "Adicionar planilha de notas"
+        submit: "Adicionar marcas Spreadsheet"
       edit:
         title: "Editar planilha de notas:"
         success: "Planilha de notas atualizada com sucesso"
+        submit: "Atualização Marcas Spreadsheet"
       grades:
         title: "Gerenciar planilha de notas:"
         student_title: "Notas:"
@@ -625,6 +626,7 @@ pt:
       invitations: "Convites"
       invited_by: "Você foi convidado por %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Você tem certeza que quer recusar este convite?"
+      confirm_work_alone: "Você tem certeza que quer trabalhar sozinho? Você não poderá alterar esta escolha a não ser que você entre em contato com seu instrutor "
       form_own_group: "Forme o seu próprio grupo"
       form_group: "Um grupo deve conter de <strong>%{group_min}</strong> a <strong>%{group_max}</strong> pessoas."
       decline_invitation2: "Isso irá recusar outro convite que você tem. Você tem certeza disso?"
@@ -1190,6 +1192,10 @@ pt:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Distribuição de notas"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Oh não! Falta pasta Assignment."
+    group_repo_missing:         "Oh não! Nenhum repositório encontrado para este grupo."
 
     #lib/validators/
     date_validator:

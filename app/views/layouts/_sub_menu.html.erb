@@ -110,10 +110,14 @@
     </ul>
   <% elsif controller.controller_name == 'admins' ||
            controller.controller_name == 'students' ||
-           controller.controller_name == 'tas' %>
+           controller.controller_name == 'tas' ||
+           controller.controller_name == 'sections' %>
     <ul class='sub'>
       <li class='<%= "active" if controller.controller_name == 'students' %>'>
         <%= link_to t('students.students'), controller: 'students' %>
+      </li>
+      <li class='<%= "active" if controller.controller_name == 'sections' %>'>
+        <%= link_to t(:sections), controller: 'sections' %>
       </li>
       <li class='<%= "active" if controller.controller_name == 'tas' %>'>
         <%= link_to t('graders.graders'), controller: 'tas' %>
@@ -124,9 +128,9 @@
     </ul>
   <% end %>
 <% elsif @current_user.ta? && (controller.controller_name == 'assignments' ||
-                                controller.controller_name == 'submissions' ||
-                                controller.controller_name == 'results' ||
-                                controller.controller_name == 'summaries') %>
+                               controller.controller_name == 'submissions' ||
+                               controller.controller_name == 'results' ||
+                               controller.controller_name == 'summaries') %>
   <ul class='sub'>
     <li id='dropdown'>
       <span class='dropdown'>

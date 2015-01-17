@@ -141,7 +141,6 @@ en:
         not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
         rules:           "Assignment Rules"
         edit:           "Edit Assignment:"
-        properties:     "Assignment Properties"
         required_files:  "Required files"
         submission_rules:  "Submission Rules"
         required_files_read:  "Required files"
@@ -475,9 +474,11 @@ en:
       create:
         success: "Successfully created new marks spreadsheet"
         title: "Add Marks Spreadsheet"
+        submit: "Add Marks Spreadsheet"
       edit:
         title: "Edit Marks Spreadsheet:"
         success: "Successfully updated marks spreadsheet"
+        submit: "Update Marks Spreadsheet"
       grades:
         title: "Manage Marks Spreadsheet:"
         student_title: "Marks:"
@@ -671,6 +672,7 @@ en:
       invitations: "Invitations"
       invited_by: "You have been invited by %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Are you sure you want to decline this invitation?"
+      confirm_work_alone: "Are you sure you want to work alone? You cannot change this choice unless you contact your instructor."
       form_own_group: "Form your own group"
       form_group: "The groups must be from <strong>%{group_min}</strong> to <strong>%{group_max}</strong> people."
       decline_invitation2: "This will decline the invitation you have. Are you sure?"
@@ -1340,6 +1342,10 @@ en:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Uh oh! Assignment folder missing."
+    group_repo_missing:         "Uh oh! No repo found for this group."
 
     #lib/validators/
     date_validator:

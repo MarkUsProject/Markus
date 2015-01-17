@@ -143,7 +143,6 @@ fr:
         not_valid_submission_rule: "%{type} n'est pas une règle d'envoi valide"
         rules:           "Règles du projet"
         edit:           "Édition du projet :"
-        properties:     "Propriétés du projet"
         required_files:  "Fichiers requis"
         submission_rules:  "Règles d'envoi"
         required_files_read:  "Fichiers requis pour le projet."
@@ -454,9 +453,11 @@ fr:
       create:
         success: "Feuille de notes créée"
         title: "Créer une nouvelle feuille de notes"
+        submit: "Ajouter Marks Tableur"
       edit:
         title: "Modification de la feuille de notes : "
         success: "Feuille de notes mise à jour"
+        submit: "Mise à jour marques Tableur"
       grades:
         title: "Édition de la feuille de notes :"
         student_title: "Feuille de notes : "
@@ -638,6 +639,7 @@ fr:
       invitations: "Invitations"
       invited_by: "Vous avez été invité par %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Êtes-vous sûr de vouloir refuser cette invitation ?"
+      confirm_work_alone: "Etes-vous sûr que vous voulez travailler individuellement ? Vous ne pouvez pas changer ce choix, sauf si vous contactez votre instructeur."
       form_own_group: "Former votre propre groupe"
       form_group: "Les groupes doivent être composés de <strong>%{group_min}</strong> à <strong>%{group_max}</strong> étudiants."
       decline_invitation2: "Êtes-vous sûr de vouloir décliner l'invitation ?"
@@ -1203,6 +1205,10 @@ fr:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Oh non! Affectation dossier manquant."
+    group_repo_missing:         "Oh non! Aucune référentiel trouvé pour ce groupe."
 
     #lib/validators/
     date_validator:
