@@ -284,7 +284,7 @@ class SubmissionsController < ApplicationController
       render :file_manager, id: assignment_id
       return
     end
-    unless params[:new_files].nil
+    unless params[:new_files].nil?
       params[:new_files].each do |f|
         if f.size > 5000000
           @file_manager_errors[:size_conflict] =
