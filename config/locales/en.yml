@@ -80,6 +80,7 @@ en:
     current_assignments:       "Current assignments"
     assignment_item:           "Assignment"
     due:                       "Due date"
+    submission_status:          "Submission Status"
     no_assignments:            "There are currently no assignments."
     class_average:             "Class Average: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissions collected"
