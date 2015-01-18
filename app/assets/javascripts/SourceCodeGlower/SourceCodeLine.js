@@ -23,12 +23,12 @@ function SourceCodeLine(line_node) {
 }
 
 // Increase a Source Code Line's glow depth
-SourceCodeLine.prototype.glow = function() {
+SourceCodeLine.prototype.glow = function(start_column, end_column) {
   // Increase the depth
   this.incGlowDepth(1);
 
   // Add the appropriate glow class
-  this.getLineNode().addClass('source_code_glowing_' + this.getGlowDepth());
+  this.getLineNode().addClass('source_code_glowing_' + this.getGlowDepth());             
 }
 
 // Decrease a Source Code Line's glow depth
