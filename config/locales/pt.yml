@@ -79,6 +79,7 @@ pt:
     current_assignments:       "Projetos atuais"
     assignment_item:           "Projetos"
     due:                       "Prazo de entrega"
+    submission_status:         "Status"
     no_assignments:            "Não existem projetos atualmente."
     class_average:             "Média da classe: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissões coletadas"
@@ -1192,6 +1193,10 @@ pt:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Distribuição de notas"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Oh não! Falta pasta Assignment."
+    group_repo_missing:         "Oh não! Nenhum repositório encontrado para este grupo."
 
     #lib/validators/
     date_validator:

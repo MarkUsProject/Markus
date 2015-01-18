@@ -80,6 +80,7 @@ en:
     current_assignments:       "Current assignments"
     assignment_item:           "Assignment"
     due:                       "Due date"
+    submission_status:         "Submission Status"
     no_assignments:            "There are currently no assignments."
     class_average:             "Class Average: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissions collected"
@@ -324,7 +325,7 @@ en:
         translated_to_points: "Translated to Points:"
         final_mark: "Final Mark&nbsp;"
         previous_mark: "Previous Mark&nbsp;"
-        old: "Old:&nbsp;"
+        old: "Old: "
         show_old_marks: "Show Old Mark Summary"
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
@@ -1342,6 +1343,10 @@ en:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Uh oh! Assignment folder missing."
+    group_repo_missing:         "Uh oh! No repo found for this group."
 
     #lib/validators/
     date_validator:
