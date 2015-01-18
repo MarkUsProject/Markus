@@ -28,7 +28,23 @@ SourceCodeLine.prototype.glow = function(start_column, end_column) {
   this.incGlowDepth(1);
 
   // Add the appropriate glow class
-  this.getLineNode().addClass('source_code_glowing_' + this.getGlowDepth());             
+  this.getLineNode().addClass('source_code_glowing_' + this.getGlowDepth());
+  /*
+  var text = this.getLineNode().textContent;
+  var section_length = (end_column == -1) ? text.length - start_column : end_column - start_column;  
+  var replace_test = text.substr(start_column, section_length);
+
+  var replacement_text = "<span class=\'source_code_glowing_" + this.getGlowDepth() + "\'>"  
+                         + replace_test
+                         + "</span>";
+
+                      
+  // Make the replacement
+  //var replaced = this.getLineNode().textContent.replace(replace_test, replacement_text);
+  //this.getLineNode().textContent = replaced;   
+  //var testB = "Break";       
+  //test
+  */               
 }
 
 // Decrease a Source Code Line's glow depth
