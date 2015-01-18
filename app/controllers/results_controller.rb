@@ -67,6 +67,8 @@ class ResultsController < ApplicationController
         @old_marks_map[criterion.id] = oldmark
         unless oldmark.nil?
           @marks_map[criterion.id].mark = oldmark.mark
+          mark.mark = oldmark.mark
+          mark.save(validate: false)
         end
       end
     end
@@ -441,10 +443,6 @@ class ResultsController < ApplicationController
     if @submission.remark_submitted?
       @old_result = @result
       @result = @submission.get_remark_result
-      @old_result.marks.each do |mark|
-        @result.marks.find(mark.id).mark = mark.mark
-      end
-      @result.update_total_mark
       # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
       if @result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students
