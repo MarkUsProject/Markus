@@ -1,4 +1,4 @@
-![MarkUs logo](http://markusproject.org/markus_logo_big.png)
+![MarkUs logo] (http://markusproject.org/img/markus_logo_big.png)
 
 Welcome to MarkUs! Online Marking Made Easy
 ===========================================
@@ -74,36 +74,12 @@ Want the latest MarkUs news? It's available several ways:
 * There is a mailing list for MarkUs users. You can also find us on IRC in the #markus channel on FreeNode.
 
 
-## 7. Screencasts
-
-Here are are some screencasts of MarkUs (reverse chronological order):
-
-- Student File Submission: September 2, 2009 http://www.youtube.com/watch?v=ofpyaty20FQ
-
-  This screencast demonstrates how students can upload, replace and delete
-  files using MarkUs' easy to use Web interface. The nice part is that files
-  really end up in a Subversion repository (without students ever noticing).
-
-- Student Group Formation: August 17, 2009 http://www.youtube.com/watch?v=Ed_z_tHCAg8
-
-  MarkUs supports various course models. One possibility of which is that an
-  instructor can allow students to work in teams. If an Assignment is set up
-  this way, students can go and start form groups on their own using MarkUs.
-
-- The Grader View: June 6, 2009 http://www.cs.toronto.edu/~reid/screencasts/OLM-2009-06-03.swf
-
-  The grader view is one of the core functionalities of MarkUs, which allows
-  graders (usually TAs) to mark a student's/group's work for an assignment. He
-  or she can annotate the submitted source code - which is syntax highlighted -
-  and mark according to rubrics defined by the instructor.
-
-
-## 8. Helping Out
+## 7. Helping Out
 
 Found a bug? Want a feature? Please email <info@markusproject.org>.
 
 
-## 9. Credits
+## 8. Credits
 
 MarkUs grew out of OLM, which was build using the TurboGears framework. We are
 grateful to everyone who worked on or funded both projects, and to the creators
