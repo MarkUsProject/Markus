@@ -1,7 +1,12 @@
 <%
    # Required:  :per_page, :current_page, :page_items, :total_items, :assignment, :filter
-   current_page_low = (per_page.to_i * (current_page.to_i - 1)) + 1
-   current_page_high = current_page_low + page_items.to_i - 1
+    if total_items == 0 
+      current_page_low = 0
+      current_page_high = 0
+    else
+      current_page_low = (per_page.to_i * (current_page.to_i - 1)) + 1
+      current_page_high = current_page_low + page_items.to_i - 1
+    end
    last_page = total_items / per_page.to_i + 1
 %>
 
