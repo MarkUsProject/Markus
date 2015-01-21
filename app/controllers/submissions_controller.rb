@@ -287,7 +287,7 @@ class SubmissionsController < ApplicationController
     assignment_id = params[:assignment_id]
     @assignment = Assignment.find(assignment_id)
     required_assignments = AssignmentFile.where
-                           (:assignment_id: @assignment).pluck(:filename)
+                           (assignment_id: @assignment).pluck(:filename)
     students_filename = []
     @path = params[:path] || '/'
     @grouping = current_user.accepted_grouping_for(assignment_id)
@@ -384,7 +384,8 @@ class SubmissionsController < ApplicationController
         end
         #
         unless students_filename.length < 1
-          if required_assignments != students_filename && @assignment.is_required == true
+          if required_assignments != students_filename &&
+             @assignment.is_required == true
             @file_manager_errors[:size_conflict] =
             'The list of uploaded files does not match' +
             'the assignment required files'
