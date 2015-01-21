@@ -183,7 +183,7 @@ class SubmissionsController < ApplicationController
   end
 
   def collect_all_submissions
-    assignment = Assignment.find(params[:assignment_id], include: [:groupings])
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(assignment.groupings)

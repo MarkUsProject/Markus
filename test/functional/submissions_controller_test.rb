@@ -393,7 +393,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       context 'instructor attempts to collect all submissions at once' do
 
         should 'before assignment due date' do
-          Assignment.stubs(:find).returns(@assignment)
+          Assignment.stubs(:includes).returns(stub(find: @assignment))
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
           get_as @admin,
@@ -407,7 +407,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
         should 'after assignment due date' do
           @submission_collector = SubmissionCollector.instance
-          Assignment.stubs(:find).returns(@assignment)
+          Assignment.stubs(:includes).returns(stub(find: @assignment))
           SubmissionCollector.expects(:instance).returns(@submission_collector)
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
