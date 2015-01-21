@@ -890,7 +890,7 @@ fr:
         form_description:  "Déduire automatiquement les crédits de grâce"
         add_grace_period: "Ajouter une période de grâce"
         hours:  "heures…"
-        after:  "Après"
+        after:  "Après<span class='required_field'>*</span>"
         from:  "Du"
         to:  "au"
         alert: "Vous devez activer les temps supplémentaires pour pouvoir ajouter du temps supplémentaire."
@@ -910,9 +910,9 @@ fr:
         to: "au"
         hours: "heure(s)…"
         after: "Après"
-        every: "chaque"
-        deduct: "déduction"
-        for: "pour"
+        every: "chaque<span class='required_field'>*</span>"
+        deduct: "déduction<span class='required_field'>*</span>"
+        for: "pour<span class='required_field'>*</span>"
 
       penalty_period_submission_rule:
         name: "Règle d'envoi lors des périodes de pénalité"
@@ -925,10 +925,10 @@ fr:
         form_description: "Activer les pénalités"
         add_penalty_period: "Ajouter une période de pénalité"
         hours:  "heures…"
-        after:  "Après"
+        after:  "Après<span class='required_field'>*</span>"
         from:  "Du"
         to:  "au"
-        deduction: "Déduction après la période de pénalité :"
+        deduction: "Déduction après la période de pénalité :<span class='required_field'>*</span>"
         alert: "Vous devez activer les pénalités pour pouvoir ajouter une période de pénalité."
 
     submission_file:

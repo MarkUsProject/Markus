@@ -1017,7 +1017,7 @@ en:
         form_description:  "Automatically deduct grace period credits"
         add_grace_period: "Add a Grace Period"
         hours:  "hours..."
-        after:  "After"
+        after:  "After<span class='required_field'>*</span>"
         from:  "From"
         to:  "to"
         alert: "You must select the Grace Period Submission Rule to add a grace period."
@@ -1037,9 +1037,9 @@ en:
         to: "to"
         hours: "hour(s)..."
         after: "After"
-        every: "every"
-        deduct: "Deduct"
-        for: "for"
+        every: "every<span class='required_field'>*</span>"
+        deduct: "Deduct:<span class='required_field'>*</span>"
+        for: "for<span class='required_field'>*</span>"
 
       penalty_period_submission_rule:
         name: "Penalty Period Submission Rule"
@@ -1052,10 +1052,10 @@ en:
         form_description: "Use Penalty Formula"
         add_penalty_period: "Add a Penalty Period"
         hours:  "hours..."
-        after:  "After"
+        after:  "After<span class='required_field'>*</span>"
         from:  "From"
         to:  "to"
-        deduction: "Penalty Period Deduction:"
+        deduction: "Penalty Period Deduction:<span class='required_field'>*</span>"
         alert: "You must select the Penalty Period Submission Rule to add a penalty period."
 
     submission_file:
