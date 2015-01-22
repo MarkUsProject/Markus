@@ -60,14 +60,14 @@ class ResultsController < ApplicationController
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       @marks_map[criterion.id] = mark
 
-      #Loading up previous results for the case of a remark
+      # Loading up previous results for the case of a remark
       if @old_result
         oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
         oldmark.save(validate: false)
         @old_marks_map[criterion.id] = oldmark
 
         unless oldmark.nil?
-          #Updates the current mark to reflect the previous mark
+          # Updates the current mark to reflect the previous mark
           mark.mark = oldmark.mark
         end
       end
