@@ -273,8 +273,8 @@ class SubmissionsController < ApplicationController
     @file_manager_errors = Hash.new
     assignment_id = params[:assignment_id]
     @assignment = Assignment.find(assignment_id)
-    required_assignments = AssignmentFile.where
-                           (assignment_id: @assignment).pluck(:filename)
+    required_assignments = AssignmentFile.where(
+                           assignment_id: @assignment).pluck(:filename)
     students_filename = []
     @path = params[:path] || '/'
     @grouping = current_user.accepted_grouping_for(assignment_id)
