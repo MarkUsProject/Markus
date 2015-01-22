@@ -482,6 +482,9 @@ class ResultsController < ApplicationController
         @old_marks_map[criterion.id] = oldmark
       end
     end
+
+    @host = Rails.application.config.action_controller.relative_url_root
+
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
                  "'#{@assignment.short_identifier}'.")
