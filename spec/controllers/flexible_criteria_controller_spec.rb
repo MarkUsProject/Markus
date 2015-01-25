@@ -269,7 +269,9 @@ describe FlexibleCriteriaController do
 
     context '#upload' do
       before(:each) do
-        get_as @admin, :upload, :assignment_id => @assignment.id, :upload => {:flexible => ''}
+        get_as @admin, :upload,
+               :assignment_id => @assignment.id,
+               :upload => { flexible: '' }
       end
 
       it 'should respond with appropriate content' do
@@ -281,8 +283,8 @@ describe FlexibleCriteriaController do
       end
 
       it 'should route properly' do
-        assert_recognizes({:controller => 'flexible_criteria', :assignment_id => '1', :action => 'upload' },
-                          {:path => 'assignments/1/flexible_criteria/upload',  :method => :post})
+        assert_recognizes({ controller: 'flexible_criteria', assignment_id: '1', action: 'upload' },
+                          { path: 'assignments/1/flexible_criteria/upload', method: :post })
       end
     end
 
