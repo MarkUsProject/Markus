@@ -54,11 +54,7 @@ class Submission < ActiveRecord::Base
 
   # returns the original result
   def get_original_result
-    if remark_result_id.nil?
-      Result.where(submission_id: id).first
-    else
-      Result.where(submission_id: id, id: remark_result_id).first
-    end
+    Result.where(submission_id: id).first
   end
 
   # returns the remark result if exists, returns nil if does not exist
