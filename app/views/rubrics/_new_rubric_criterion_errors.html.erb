@@ -1,6 +1,5 @@
 <ul>
-  <!-- @errors is an ordered hash where the value is an array of messages
-      ie: { key1: [value1, value2], key2: [value3] } -->
+  <!-- @errors is of type ActiveModel::Errors} -->
   <% @errors.each do |error_key| %>
       <% @errors.messages[error_key].each do |error_message| %>
           <!-- If there is exactly one error message then don't display the message as a list item -->
