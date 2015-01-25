@@ -116,18 +116,12 @@
     }
   }
 
-  function get_anchor() {
-    return window.getSelection().anchorNode;
-  }
-
-  function get_focus() {
-    return window.getSelection().focusNode;
-  }
-
   function get_mouse_positions() {
+    var mouseSelection = window.getSelection();
+
     // Get the start (anchor) and finish (focus) text nodes for where the mouse has selected
-    var mouse_anchor = get_anchor();
-    var mouse_focus  = get_focus();
+    var mouse_anchor = mouseSelection.anchorNode;
+    var mouse_focus  = mouseSelection.focusNode;
 
     // Use the SourceCodeAdapter to get the nodes that represent source code lines.
     var anchor_node = syntax_highlighter_adapter.getRootFromSelection(mouse_anchor);
@@ -144,25 +138,62 @@
       return false;
     }
 
+    // Add up node lengths to get column offsets
+    var anchor_line_span = mouseSelection.anchorNode.parentNode.parentNode;
+    var column_start = 0;
+    for (var i = 0; i < anchor_line_span.childNodes.length; i++) {
+      if (anchor_line_span.childNodes[i] == mouseSelection.anchorNode.parentNode){
+        // If the actual node add the offset
+        column_start += mouseSelection.anchorOffset;
+        break;
+      }
+      else {
+        // If just a lead up node add the entire length
+        column_start += anchor_line_span.childNodes[i].textContent.length;
+      }
+    }
+
+    // Repeat the same process for the focus node
+    var focus_line_span = mouseSelection.focusNode.parentNode.parentNode;
+    var column_end = 0;
+    for (var i = 0; i < focus_line_span.childNodes.length; i++) {
+      if (focus_line_span.childNodes[i] == mouseSelection.focusNode.parentNode){
+        column_end += mouseSelection.focusOffset;
+        break;
+      }
+      else {
+        column_end += focus_line_span.childNodes[i].textContent.length;
+      }
+    }
+
     // If only one valid source code line was selected, we'll only highlight
     // that one.  This is for the case where you highlight the first line, and
     // then focus some text outside of the source code as well.
     if (line_start == 0 && line_end != 0) {
       line_start = line_end;
     }
-    if (line_start != 0 && line_end == 0) {
+    else if (line_start != 0 && line_end == 0) {
       line_end = line_start;
     }
-
-    // If line_start > line_end, swap
-    if (line_start > line_end) {
-      var temp   = line_start;
+    // If line_start > line_end, swap line and column (consider adding swap function)
+    else if (line_start > line_end) {
+      var temp_line = line_start;
       line_start = line_end;
-      line_end   = temp;
+      line_end = temp_line;
+
+      var temp_column = column_start;
+      column_start = column_end;
+      column_end = temp_column;
+    }
+
+    if (line_start == line_end && column_start > column_end) {
+      var temp_column = column_start;
+      column_start = column_end;
+      column_end = temp_column;
     }
 
     // Return positions as an object
-    return { line_start: line_start, line_end: line_end };
+    return { line_start: line_start, line_end: line_end, column_start: column_start, column_end: column_end };
   }
 
   function set_dialog_values(content, category, x1, x2, y1, y2, page) {
@@ -292,6 +323,8 @@
         data: 'submission_file_id=' + document.getElementById('select_file_id').value +
               '&line_start=' + positions.line_start +
               '&line_end=' + positions.line_end +
+              '&column_start=' + positions.column_start +
+              '&column_end=' + positions.column_end +
               '&annotation_text_id=' + annotation_text_id +
               '&authenticity_token=' + AUTH_TOKEN
       });
@@ -367,6 +400,8 @@
               '&submission_file_id=' + document.getElementById('select_file_id').value +
               '&line_start=' + positions.line_start +
               '&line_end=' + positions.line_end +
+              '&column_start=' + positions.column_start +
+              '&column_end=' + positions.column_end +
               '&content=' + encodeURIComponent(content) +
               '&category_id=' + category_id +
               '&authenticity_token=' + AUTH_TOKEN

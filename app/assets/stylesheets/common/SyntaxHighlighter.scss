@@ -148,36 +148,44 @@
   }
 
   /* Language specific styles */
-  .comment,
-  .comments {
-    background-color: inherit;
-    color: #008200;
-  }
+  ol li,
+  ol li span {
+    .comment,
+    .comments,
+    .comment span,
+    .comments span {
+      background-color: inherit;
+      color: #008200;
+    }
 
-  .string {
-    background-color: inherit;
-    color: blue;
-  }
+    .string,
+    .string span {
+      background-color: inherit;
+      color: blue;
+    }
 
-  .keyword {
-    background-color: inherit;
-    color: #069;
-    font-weight: bold;
-  }
+    .keyword,
+    .keyword span {
+      background-color: inherit;
+      color: #069;
+      font-weight: bold;
+    }
 
-  .preprocessor {
-    background-color: inherit;
-    color: gray;
-  }
+    .preprocessor
+    .preprocessor span {
+      background-color: inherit;
+      color: gray;
+    }
 
-  .source_code_glowing_1 {
-    background-color: #fffcc4 !important;
-    color: #000 !important;
-  }
+    .source_code_glowing_1 {
+      background-color: #fffcc4 !important;
+      color: #000 !important;
+    }
 
-  .source_code_glowing_2 {
-    background-color: #ff9 !important;
-    color: #00f !important;
+    .source_code_glowing_2 {
+      background-color: #ff9 !important;
+      color: #00f !important;
+    }
   }
 }
 
