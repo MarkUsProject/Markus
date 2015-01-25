@@ -33,7 +33,8 @@ SourceCodeLineAnnotations.prototype.getAnnotationTextDisplayer = function() {
 }
 
 // Annotate a single Source Code Line
-SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_num, annotation_text_id) {
+SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_num,
+                                                            column_start, column_end, annotation_text_id) {
   if (!this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
     throw("Attempting to annotate using an id that doesn't exist: " + annotation_text_id);
   }
@@ -46,7 +47,7 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_
 
   // Glow the Source Code Line
   var line = this.getLineManager().getLine(line_num);
-  line.glow();
+  line.glow(column_start, column_end);
 
   // Add events so that when we mouse over this Source Code Line, we display
   // the annotations
@@ -63,8 +64,19 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_
 
 // Annotate a Range of Source Code Lines
 SourceCodeLineAnnotations.prototype.annotateRange = function(annotation_id, range, annotation_text_id) {
-  for (var line_num = parseInt(range.start, 10); line_num <= parseInt(range.end, 10); line_num++) {
-    this.annotateLine(annotation_id, line_num, annotation_text_id);
+  var line_start = parseInt(range.start, 10);
+  var line_end = parseInt(range.end, 10);
+  var column_start = parseInt(range.column_start, 10);
+  var column_end = parseInt(range.column_end, 10);
+
+  // If the highlight continues to the next line sent -1 to indicate the rest of the line should glow
+  for (var line_num = line_start; line_num <= line_end; line_num++) {
+    this.annotateLine(annotation_id,
+      line_num,
+      line_num == line_start ? column_start : 0,
+      line_num == line_end ? column_end : -1,
+      annotation_text_id);
+
   }
 }
 

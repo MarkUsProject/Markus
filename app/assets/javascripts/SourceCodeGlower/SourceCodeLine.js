@@ -23,35 +23,107 @@ function SourceCodeLine(line_node) {
 }
 
 // Increase a Source Code Line's glow depth
+// The base of the new glow functionality was found here:
+// http://stackoverflow.com/questions/6240139/highlight-text-range-using-javascript
 SourceCodeLine.prototype.glow = function(start_column, end_column) {
-  // Increase the depth
+  // Increase the depth and turn on design mode for highlighting
   this.incGlowDepth(1);
+  document.designMode = "on";
 
-  // Add the appropriate glow class
-  this.getLineNode().addClass('source_code_glowing_' + this.getGlowDepth());
-  /*
-  var text = this.getLineNode().textContent;
-  var section_length = (end_column == -1) ? text.length - start_column : end_column - start_column;  
-  var replace_test = text.substr(start_column, section_length);
+  // Set the selection for the highlight command, save so we can unselect after
+  var sel = this.selectGlowRange(this.getLineNode(),
+    start_column,
+    (end_column == -1) ? this.getLineNode().textContent.length : end_column);
 
-  var replacement_text = "<span class=\'source_code_glowing_" + this.getGlowDepth() + "\'>"  
-                         + replace_test
-                         + "</span>";
+  // If hilitecolor doesnt work try backcolor
+  if (!document.execCommand("HiliteColor", false, this.getGlowDepth() == 1 ? '#fffcc4' : '#ff9')) {
+    document.execCommand("BackColor", false, this.getGlowDepth() == 1 ? '#fffcc4' : '#ff9');
+  }
 
-                      
-  // Make the replacement
-  //var replaced = this.getLineNode().textContent.replace(replace_test, replacement_text);
-  //this.getLineNode().textContent = replaced;   
-  //var testB = "Break";       
-  //test
-  */               
+  // Turn off design mode and remove fake mouse selection
+  document.designMode = "off";
+  sel.removeAllRanges();
+}
+
+// Creates a fake mouse selection of text range within node param
+SourceCodeLine.prototype.selectGlowRange = function(node, start, end) {
+  var range = document.createRange(node); // Used to track start/end nodes and their offsets
+  var textNodes = this.getAllTextNodes(node); // All text nodes contained in node
+
+  var foundStart = false;
+  var currentCharCount = 0; // The amount of characters we've passed
+
+  // Iterate over text nodes, add length of passed nodes, save start and break at end
+  for (var i = 0; i < textNodes.length; i++) {
+    var endCharCount = currentCharCount + textNodes[i].length;
+
+    // If the start is between the current count and the end of the current node, save it
+    if (!foundStart && start >= currentCharCount && (start < endCharCount || (start == endCharCount && i < textNodes.length))) {
+      range.setStart(textNodes[i], start - currentCharCount); // Set start as offset in current text node
+      foundStart = true;
+    }
+    // Some code to start replacing the highlight call, adds a class to the nodes between the start and stop
+    //else if (foundStart){
+    //  textNodes[i].parentNode.addClass('source_code_glowing_' + this.getGlowDepth());
+    //}
+
+    // If we have the start and the current node contains the end, save it
+    if (foundStart && end <= endCharCount) {
+      range.setEnd(textNodes[i], end - currentCharCount);
+      break;
+    }
+    currentCharCount = endCharCount;
+  }
+
+  // Grab the window selection, clear old range, and set custom range
+  var sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  return sel;
+}
+
+// Recursive method returns an array of all text nodes contained in node param
+SourceCodeLine.prototype.getAllTextNodes = function(node) {
+  var textNodes = [];
+  if (node.nodeType === 3) { // Push if text node
+    textNodes.push(node);
+  }
+  else if(node.nodeType === 1){ // Recursively return all contained text nodes
+    for (var i = 0; i < node.childNodes.length; i++) {
+      textNodes.push.apply(textNodes, this.getAllTextNodes(node.childNodes[i]));
+    }
+  }
+  return textNodes;
+}
+
+// Get the actual elements so we can
+SourceCodeLine.prototype.getAllSpanElements = function(node){
+  var textNodes = [];
+  if (node.nodeName === "SPAN") { // Push if text node
+    textNodes.push(node);
+  }
+
+  // Recursively return all contained text nodes
+  for (var i = 0; i < node.children.length; i++) {
+    textNodes.push.apply(textNodes, this.getAllSpanElements(node.children[i]));
+  }
+
+  return textNodes;
 }
 
 // Decrease a Source Code Line's glow depth
 SourceCodeLine.prototype.unGlow = function() {
   // Is this line glowing?
   if (this.isGlowing()) {
-    this.getLineNode().removeClass('source_code_glowing_' + this.getGlowDepth());
+    var textElements = this.getAllSpanElements(this.getLineNode());
+
+    // Create an array of glow nodes (spans)
+    for (var i = 0; i < textElements.length; i++){
+      if (textElements[i].style.backgroundColor != ""){
+        textElements[i].removeAttribute("style");
+      }
+    }
   }
 
   // Decrease the glow depth

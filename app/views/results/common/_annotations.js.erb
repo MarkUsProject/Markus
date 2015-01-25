@@ -116,26 +116,12 @@
     }
   }
 
-  function get_anchor() {
-    return window.getSelection().anchorNode;
-  }
-    
-  function get_anchor_offset() {
-    return window.getSelection().anchorOffset;
-  }
-
-  function get_focus() {
-    return window.getSelection().focusNode;
-  }
-
-  function get_focus_offset() {
-    return window.getSelection().focusOffset;
-  }
-
   function get_mouse_positions() {
+    var mouseSelection = window.getSelection();
+
     // Get the start (anchor) and finish (focus) text nodes for where the mouse has selected
-    var mouse_anchor = get_anchor();
-    var mouse_focus  = get_focus();
+    var mouse_anchor = mouseSelection.anchorNode;
+    var mouse_focus  = mouseSelection.focusNode;
 
     // Use the SourceCodeAdapter to get the nodes that represent source code lines.
     var anchor_node = syntax_highlighter_adapter.getRootFromSelection(mouse_anchor);
@@ -145,15 +131,39 @@
     var line_manager = annotation_manager.getLineManager();
     var line_start   = line_manager.getLineNumber(anchor_node);
     var line_end     = line_manager.getLineNumber(focus_node);
-    
-    // Get the column offsets
-    var column_start = get_anchor_offset();
-    var column_end   = get_focus_offset();
 
     // If no source code lines were selected, bail out
     if (line_start == 0 && line_end == 0) {
       alert("<%= I18n.t('marker.annotation.select_some_text') %>");
       return false;
+    }
+
+    // Add up node lengths to get column offsets
+    var anchor_line_span = mouseSelection.anchorNode.parentNode.parentNode;
+    var column_start = 0;
+    for (var i = 0; i < anchor_line_span.childNodes.length; i++) {
+      if (anchor_line_span.childNodes[i] == mouseSelection.anchorNode.parentNode){
+        // If the actual node add the offset
+        column_start += mouseSelection.anchorOffset;
+        break;
+      }
+      else {
+        // If just a lead up node add the entire length
+        column_start += anchor_line_span.childNodes[i].textContent.length;
+      }
+    }
+
+    // Repeat the same process for the focus node
+    var focus_line_span = mouseSelection.focusNode.parentNode.parentNode;
+    var column_end = 0;
+    for (var i = 0; i < focus_line_span.childNodes.length; i++) {
+      if (focus_line_span.childNodes[i] == mouseSelection.focusNode.parentNode){
+        column_end += mouseSelection.focusOffset;
+        break;
+      }
+      else {
+        column_end += focus_line_span.childNodes[i].textContent.length;
+      }
     }
 
     // If only one valid source code line was selected, we'll only highlight
@@ -162,25 +172,24 @@
     if (line_start == 0 && line_end != 0) {
       line_start = line_end;
     }
-    if (line_start != 0 && line_end == 0) {
+    else if (line_start != 0 && line_end == 0) {
       line_end = line_start;
     }
-      
-    // If line_start > line_end, swap line and column
-    if (line_start > line_end) {
+    // If line_start > line_end, swap line and column (consider adding swap function)
+    else if (line_start > line_end) {
       var temp_line = line_start;
       line_start = line_end;
       line_end = temp_line;
-        
+
       var temp_column = column_start;
       column_start = column_end;
       column_end = temp_column;
     }
-    // If on the same line ensure the columns are correct
-    else if (line_start == line_end && column_start > column_end) {   
+
+    if (line_start == line_end && column_start > column_end) {
       var temp_column = column_start;
       column_start = column_end;
-      column_end = temp_column;     	
+      column_end = temp_column;
     }
 
     // Return positions as an object
