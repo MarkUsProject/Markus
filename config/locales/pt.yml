@@ -970,6 +970,9 @@ pt:
         <code>criteria_name,max_value,description</code>
         <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
         success: "Critério flexível carregado com sucesso: %{nb_updates} atualizado(s)."
+      errors:
+        messages:
+          name_taken: "Nome de critério já utilizado."
 
     rubric_criteria:
       criteria_management:         "Gerenciamento de rúbrica : %{identifier}"
@@ -1024,6 +1027,9 @@ pt:
         description_2: "Esse critério foi satisfeito."
         description_3: "Esse critério foi bem satisfeito."
         description_4: "Esse critério foi quase perfeitamente ou perfeitamente satisfeito."
+      errors:
+        messages:
+          name_taken: "Nome de critério já utilizado."
 
     summary_table:
       title: "Título"

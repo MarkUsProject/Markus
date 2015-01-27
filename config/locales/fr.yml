@@ -985,6 +985,9 @@ fr:
         <p>La description est facultative. NB : Si aucune description n'est présente, la seconde virgule ne doit
         pas apparaître.</p>"
         success: "Le fichier contenant le barème (flexible) a bien été envoyé : %{nb_updates} mise(s) à jour."
+      errors:
+        messages:
+          name_taken: "Nom du critère déjà utilisé."
 
     rubric_criteria:
       criteria_management: "Édition du barème pour le projet %{identifier}"
@@ -1037,6 +1040,10 @@ fr:
         description_2: "Ce critère a été partiellement compris."
         description_3: "Ce critère a été compris."
         description_4: "Ce critère a été parfaitement compris."
+      errors:
+        messages:
+          name_taken: "Nom du critère déjà utilisé."
+
 
     summary_table:
       title: "Titre"

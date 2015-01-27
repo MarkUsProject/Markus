@@ -17,7 +17,7 @@ class FlexibleCriterion < Criterion
   validates_presence_of :flexible_criterion_name
   validates_uniqueness_of :flexible_criterion_name,
                           scope: :assignment_id,
-                          message: 'is already taken'
+                          message: I18n.t('flexible_criteria.errors.messages.name_taken')
 
   belongs_to :assignment, counter_cache: true
   validates_presence_of :assignment_id
