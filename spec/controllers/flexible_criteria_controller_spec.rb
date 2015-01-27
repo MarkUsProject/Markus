@@ -188,8 +188,7 @@ describe FlexibleCriteriaController do
       context 'with save errors' do
         before(:each) do
           expect_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
-          # The following expectation never gets fulfilled even though it does in the old test...not sure why
-          # expect_any_instance_of(FlexibleCriterion).to receive(:errors).and_return('error msg')
+          expect_any_instance_of(FlexibleCriterion).to receive(:errors).and_return('')
           get_as @admin, :update,
                  format: :js,
                  assignment_id: 1,
