@@ -12,42 +12,136 @@
     <% if grade_entry_student.nil?  or !grade_entry_student.released_to_student %>
       <%= t('grade_entry_forms.students.no_results') %>
     <% else %>
-      <div class='table'>
-        <table>
-          <thead>
-            <%= render partial: 'grades_table_column_names' %>
-          </thead>
-          <tbody>
-            <tr>
-              <td class='grades_table_cell'><%= @student.user_name %></td>
-              <td class='grades_table_cell'><%= @student.last_name %></td>
-              <td class='grades_table_cell'><%= @student.first_name %></td>
+      <div id='marks_table'></div>
 
-              <% @grade_entry_form.grade_entry_items.each do |grade_entry_item| %>
-                <% grade = grade_entry_student.grades.find_by_grade_entry_item_id(grade_entry_item.id) %>
-                  <td class='grade'>
-                    <% if !grade.nil? && !grade.grade.nil? %>
-                      <%= grade.grade %>
-                    <% else %>
-                      <%= t('grade_entry_forms.grades.no_mark') %>
-                    <% end %>
-                  </td>
-              <% end %>
+      <script type='text/jsx'>
+        /** @jsx React.DOM */
+        var MarksTable = React.createClass({
+          getDefaultProps: function() {
+            // Defines the columns used for the table and whether they
+            // are sortable searchable. The default initially sorted
+            // column is the first sortable column in the array.
+            return {
+              columns: [
+              {
+                id: 'user_name',
+                content: '<%= j raw I18n.t(:'user.user_name') %>',
+                sortable: true,
+                searchable: false
+              },
+              {
+                id: 'last_name',
+                content: '<%= j raw I18n.t(:'user.last_name') %>',
+                sortable: true,
+                searchable: false
+              },
+              {
+                id: 'first_name',
+                content: '<%= j raw I18n.t(:'user.first_name') %>',
+                sortable: true,
+                searchable: false
+              }],
+            };
+          },
+          getInitialState: function() {
+            return {
+              error: null,
+              row_data: [],
+              grade_columns: [],
+            }
+          },
+          componentWillMount: function() {
+            this.refresh();
+          },
+          refresh: function() {
+            document.getElementById('working').style.display = '';
 
-              <% if @grade_entry_form.show_total %>
-                <td class='grade'>
-                  <% total = grade_entry_student.total_grade %>
-                  <% if !total.nil? %>
-                    <%= total %>
-                  <% else %>
-                    <%= t('grade_entry_forms.grades.no_mark') %>
-                  <% end %>
-                </td>
-              <% end %>
-            </tr>
-          </tbody>
-       </table>
-      </div>
+            // Getting additional grade entry item columns
+            jQuery.ajax({
+              url: 'get_mark_columns',
+              method: 'GET',
+              dataType: 'json',
+              success: function(data) {
+                this.setState({
+                  grade_columns: data,
+                  error: null
+                });
+              }.bind(this),
+              error: function(xhr, status, text) {
+                var error = text + ': ' + xhr.responseText;
+                this.setState({
+                  error: error
+                });
+              }.bind(this),
+              // Close working indicator.
+              complete: function () {
+                document.getElementById('working').style.display = 'none';
+              }
+            });
+            // Getting row data
+            jQuery.ajax({
+              url: 'populate_term_marks_table',
+              method: 'GET',
+              dataType: 'json',
+              success: function(data) {
+                this.setState({
+                  row_data: data,
+                  error: null
+                });
+              }.bind(this),
+              error: function(xhr, status, text) {
+                var error = text + ': ' + xhr.responseText;
+                this.setState({
+                  error: error
+                });
+              }.bind(this),
+              // Close working indicator.
+              complete: function () {
+                document.getElementById('working').style.display = 'none';
+              }
+            });
+          },
+            
+          render: function() {
+
+            // Add grade columns to array of table columns
+            var all_columns = this.props.columns.concat(this.state.grade_columns);
+
+            // Set React Table data from JSON data
+            var row = this.state.row_data;
+            var s = [];
+            s['user_name'] = <span dangerouslySetInnerHTML={{__html: row.user_name}} />;
+            s['first_name'] = <span dangerouslySetInnerHTML={{__html: row.first_name}} />;
+            s['last_name'] = <span dangerouslySetInnerHTML={{__html: row.last_name}} />;
+            
+            // Populate the marks for the custom columns
+            this.state.grade_columns.map(function (grade_column){
+              s[grade_column.id] = <span dangerouslySetInnerHTML={{__html: row[grade_column.id]}} />
+            });
+
+            // Set 's' as the only row in the data array passed to the React Table 
+            var data_array = [s];
+
+            return (
+              <div>
+                <ErrorDiv error={this.state.error} />
+                <Table data={data_array}
+                  columns={all_columns}
+                  filters={null} // Optional: pass null
+                  filter_type={false} // True for select filter, falsy for simple
+                  selectable={false} // True if you want checkboxed elements
+                />
+              </div>
+              );
+            }
+        });
+        React.renderComponent(<MarksTable />, document.getElementById('marks_table'));
+
+        // Hide search box
+        document.getElementsByClassName('table-search')[0].style.display = 'none';
+      </script>
+
     <% end %>
   <% end %>
 </div>
+

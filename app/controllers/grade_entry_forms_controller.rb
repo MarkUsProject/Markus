@@ -6,6 +6,8 @@ class GradeEntryFormsController < ApplicationController
 
   before_filter :authorize_only_for_admin,
                 except: [:student_interface,
+                            :populate_term_marks_table,
+                            :get_mark_columns,
                             :grades,
                             :g_table_paginate,
                             :csv_download,
@@ -18,7 +20,9 @@ class GradeEntryFormsController < ApplicationController
                           :csv_upload,
                           :update_grade]
   before_filter :authorize_for_student,
-                only: [:student_interface]
+                only: [:student_interface,
+                          :populate_term_marks_table,
+                          :get_mark_columns]
 
   # Filters will be added as the student UI is implemented (eg. Show Released,
   # Show All,...)
@@ -244,6 +248,63 @@ class GradeEntryFormsController < ApplicationController
   def student_interface
     @grade_entry_form = GradeEntryForm.find(params[:id])
     @student = current_user
+  end
+
+  def get_mark_columns
+    grade_entry_form = GradeEntryForm.find(params[:id])
+    grade_entry_items_columns = grade_entry_form.grade_entry_items
+
+    c = grade_entry_items_columns.map do |column|
+      { 
+        :id => column.name,
+        :content => column.name + " (" + column.out_of.to_s + ")",
+        :sortable => true,
+        :searcheable => true
+      }
+    end
+    if grade_entry_form.show_total
+      c << 
+      {
+        :id => 'total_marks',
+        :content => t('grade_entry_forms.grades.total') + " " + grade_entry_form.out_of_total.to_s,
+      }
+    end
+
+    render json: c
+  end  
+
+  def populate_term_marks_table
+    grade_entry_form = GradeEntryForm.find(params[:id])
+    student = current_user
+    student_grade_entry = grade_entry_form.grade_entry_students.find_by_user_id(student.id)
+
+    # Getting the student's information for the row
+    row = {}
+    row[:user_name] = student.user_name
+    row[:first_name] = student.first_name
+    row[:last_name] = student.last_name
+
+    # Getting the student's marks for each grade entry item
+    grade_entry_form.grade_entry_items.each do |grade_entry_item|
+      mark = student_grade_entry.grades.find_by_grade_entry_item_id(grade_entry_item.id)
+      if !mark.nil? && !mark.grade.nil?
+        row[grade_entry_item.name] = mark.grade
+      else
+        row[grade_entry_item.name] = t('grade_entry_forms.grades.no_mark')
+      end
+    end
+
+    # Get data for the total marks column
+    if grade_entry_form.show_total
+      total = student_grade_entry.total_grade
+      if !total.nil?
+        row[:total_marks] = total
+      else
+        row[:total_marks] = t('grade_entry_forms.grades.no_mark')
+      end
+    end
+
+    render json: row
   end
 
   # Release/unrelease the marks for all the students or for a subset of students
