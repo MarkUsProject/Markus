@@ -277,8 +277,8 @@ class GradeEntryFormsController < ApplicationController
   def populate_term_marks_table
     grade_entry_form = GradeEntryForm.find(params[:id])
     student = current_user
-    student_grade_entry = grade_entry_form.grade_entry_students.
-                          find_by_user_id(student.id)
+    student_grade_entry = grade_entry_form.grade_entry_students
+                          .find_by_user_id(student.id)
 
     # Getting the student's information for the row
     row = {}
@@ -288,8 +288,8 @@ class GradeEntryFormsController < ApplicationController
 
     # Getting the student's marks for each grade entry item
     grade_entry_form.grade_entry_items.each do |grade_entry_item|
-      mark = student_grade_entry.grades.
-             find_by_grade_entry_item_id(grade_entry_item.id)
+      mark = student_grade_entry.grades
+             .find_by_grade_entry_item_id(grade_entry_item.id)
       if !mark.nil? && !mark.grade.nil?
         row[grade_entry_item.name] = mark.grade
       else
