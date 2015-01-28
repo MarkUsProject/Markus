@@ -1175,6 +1175,9 @@ en:
       x_mark: "x Mark"
       weight: "Weight"
 
+    course_summaries:
+        title: "Summary"
+
     notes:
         note_on: "%{user_name} on <strong>%{display_for}</strong>"
         add_new: "Add a new note"
