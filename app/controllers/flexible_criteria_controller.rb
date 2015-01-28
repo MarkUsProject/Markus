@@ -20,6 +20,7 @@ class FlexibleCriteriaController < ApplicationController
   def update
     @criterion = FlexibleCriterion.find(params[:id])
     unless @criterion.update_attributes(flexible_criterion_params)
+      @errors = @criterion.errors
       render :errors
       return
     end

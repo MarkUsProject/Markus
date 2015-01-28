@@ -58,14 +58,22 @@ class ResultsController < ApplicationController
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
-      mark.save(validate: false)
       @marks_map[criterion.id] = mark
 
+      # Loading up previous results for the case of a remark
       if @old_result
         oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
         oldmark.save(validate: false)
         @old_marks_map[criterion.id] = oldmark
+
+        unless oldmark.nil?
+          # Updates the current mark to reflect the previous mark
+          mark.mark = oldmark.mark
+        end
       end
+
+      mark.save(validate: false)
+      @result.update_total_mark
     end
 
     # Get the previous and the next submission
@@ -474,6 +482,9 @@ class ResultsController < ApplicationController
         @old_marks_map[criterion.id] = oldmark
       end
     end
+
+    @host = Rails.application.config.action_controller.relative_url_root
+
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
                  "'#{@assignment.short_identifier}'.")
