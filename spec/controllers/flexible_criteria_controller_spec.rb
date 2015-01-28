@@ -6,56 +6,56 @@ describe FlexibleCriteriaController do
   describe 'An unauthenticated and unauthorized user doing a GET' do
     context '#index' do
       it 'should respond with redirect' do
-        get :index, :assignment_id => 1
+        get :index, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#edit' do
       it 'should respond with redirect' do
-        get :edit, :assignment_id => 1, :id => 1
+        get :edit, assignment_id: 1, id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#update' do
       it 'should respond with redirect' do
-        put :update, :assignment_id => 1, :id => 1
+        put :update, assignment_id: 1, id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#new' do
       it 'should respond with redirect' do
-        get :new, :assignment_id => 1
+        get :new, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#destroy' do
       it 'should respond with redirect' do
-        delete :destroy, :assignment_id => 1, :id => 1
+        delete :destroy, assignment_id: 1, id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#download' do
       it 'should respond with redirect' do
-        get :download, :assignment_id => 1
+        get :download, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#upload' do
       it 'should respond with redirect' do
-        get :upload, :assignment_id => 1
+        get :upload, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#update_positions' do
       it 'should respond with redirect' do
-        get :update_positions, :assignment_id => 1
+        get :update_positions, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
@@ -64,87 +64,86 @@ describe FlexibleCriteriaController do
   describe 'An unauthenticated and unauthorized user doing a POST' do
     context '#index' do
       it 'should respond with redirect' do
-        post :index, :assignment_id => 1
+        post :index, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#edit' do
       it 'should respond with redirect' do
-        post :edit, :assignment_id => 1, :id => 1
+        post :edit, assignment_id: 1, id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#update' do
       it 'should respond with redirect' do
-        put :update, :assignment_id => 1, :id => 1
+        put :update, assignment_id: 1, id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#new' do
       it 'should respond with redirect' do
-        post :new, :assignment_id => 1
+        post :new, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#destroy' do
       it 'should respond with redirect' do
-        delete :destroy, :assignment_id => 1, :id => 1
+        delete :destroy, assignment_id: 1, id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#download' do
       it 'should respond with redirect' do
-        post :download, :assignment_id => 1
+        post :download, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#upload' do
       it 'should respond with redirect' do
-        post :upload, :assignment_id => 1
+        post :upload, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
 
     context '#update_positions' do
       it 'should respond with redirect' do
-        post :update_positions, :assignment_id => 1
+        post :update_positions, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
   end
 
   describe 'An authenticated and authorized admin doing a GET' do
-
     before(:all) do
       @admin = create(:admin)
       @assignment = create(:assignment)
       @criterion = create(:flexible_criterion,
-                          :assignment => @assignment,
-                          :position => 1,
-                          :flexible_criterion_name => 'criterion1',
-                          :description => 'description1, for criterion 1')
+                          assignment: @assignment,
+                          position: 1,
+                          flexible_criterion_name: 'criterion1',
+                          description: 'description1, for criterion 1')
       @criterion2 = create(:flexible_criterion,
-                           :assignment => @assignment,
-                           :position => 2,
-                           :flexible_criterion_name => 'criterion2',
-                           :description => 'description2, "with quotes"')
+                           assignment: @assignment,
+                           position: 2,
+                           flexible_criterion_name: 'criterion2',
+                           description: 'description2, "with quotes"')
       @criterion3 = create(:flexible_criterion,
-                           :assignment => @assignment,
-                           :position => 3,
-                           :flexible_criterion_name => 'criterion3',
-                           :description => 'description3!',
-                           :max => 1.6)
+                           assignment: @assignment,
+                           position: 3,
+                           flexible_criterion_name: 'criterion3',
+                           description: 'description3!',
+                           max: 1.6)
     end
 
     context '#index' do
       before(:each) do
-        get_as @admin, :index, :assignment_id => @assignment.id
+        get_as @admin, :index, assignment_id: @assignment.id
       end
       it 'should respond assign assignment and criteria' do
         expect(assigns(:assignment)).to be_truthy
@@ -158,11 +157,9 @@ describe FlexibleCriteriaController do
       it 'should respond with success' do
         is_expected.to respond_with(:success)
       end
-
     end
 
     context '#edit' do
-
       before(:each) do
         get_as @admin, :edit,
                format: :js,
@@ -184,19 +181,18 @@ describe FlexibleCriteriaController do
     end
 
     context '#update' do
-
       context 'with save errors' do
         before(:each) do
           expect_any_instance_of(FlexibleCriterion)
-              .to receive(:save).and_return(false)
+            .to receive(:save).and_return(false)
           expect_any_instance_of(FlexibleCriterion)
-              .to receive(:errors).and_return('')
+            .to receive(:errors).and_return('')
 
           get_as @admin, :update,
                  format: :js,
                  assignment_id: 1,
                  id: @criterion.id,
-                 flexible_criterion: {flexible_criterion_name: 'one', max: 10}
+                 flexible_criterion: { flexible_criterion_name: 'one', max: 10 }
         end
 
         it 'should respond with appropriate content' do
@@ -219,7 +215,7 @@ describe FlexibleCriteriaController do
                  format: :js,
                  assignment_id: 1,
                  id: @criterion.id,
-                 flexible_criterion: {flexible_criterion_name: 'one', max: 10}
+                 flexible_criterion: { flexible_criterion_name: 'one', max: 10 }
           assert flash[:success], I18n.t('criterion_saved_success')
         end
 
@@ -255,7 +251,7 @@ describe FlexibleCriteriaController do
 
     context '#download' do
       before(:each) do
-        get_as @admin, :download, :assignment_id => @assignment.id
+        get_as @admin, :download, assignment_id: @assignment.id
       end
 
       it 'should respond with appropriate content' do
@@ -272,8 +268,8 @@ describe FlexibleCriteriaController do
     context '#upload' do
       before(:each) do
         get_as @admin, :upload,
-               :assignment_id => @assignment.id,
-               :upload => { flexible: '' }
+               assignment_id: @assignment.id,
+               upload: { flexible: '' }
       end
 
       it 'should respond with appropriate content' do
@@ -295,7 +291,6 @@ describe FlexibleCriteriaController do
   end
 
   describe 'An authenticated and authorized admin doing a POST' do
-
     before(:each) do
       @admin = create(:admin, user_name: 'olm_admin')
       @assignment = create(:assignment)
@@ -319,7 +314,7 @@ describe FlexibleCriteriaController do
 
     context '#index' do
       before(:each) do
-        post_as @admin, :index, :assignment_id => @assignment.id
+        post_as @admin, :index, assignment_id: @assignment.id
       end
       it 'should respond with appropriate content' do
         expect(assigns(:assignment)).to be_truthy
@@ -362,14 +357,14 @@ describe FlexibleCriteriaController do
           @errors = ActiveModel::Errors.new(self)
           @errors['message'] = 'error message'
           expect_any_instance_of(FlexibleCriterion)
-              .to receive(:save).and_return(false)
+            .to receive(:save).and_return(false)
           expect_any_instance_of(FlexibleCriterion)
-              .to receive(:errors).and_return(@errors)
+            .to receive(:errors).and_return(@errors)
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,
-                  flexible_criterion: {flexible_criterion_name: 'first',
-                                       max: 10}
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy
@@ -379,7 +374,7 @@ describe FlexibleCriteriaController do
 
         it 'should render the add_criterion_error template' do
           is_expected
-              .to render_template(:'flexible_criteria/add_criterion_error')
+            .to render_template(:'flexible_criteria/add_criterion_error')
         end
 
         it 'should respond with success' do
@@ -392,8 +387,8 @@ describe FlexibleCriteriaController do
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,
-                  flexible_criterion: {flexible_criterion_name: 'first',
-                                       max: 10}
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy
@@ -413,8 +408,8 @@ describe FlexibleCriteriaController do
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,
-                  flexible_criterion: {flexible_criterion_name: 'first',
-                                       max: 10}
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy
@@ -432,7 +427,7 @@ describe FlexibleCriteriaController do
 
     context '#download' do
       before(:each) do
-        post_as @admin, :download, :assignment_id => @assignment.id
+        post_as @admin, :download, assignment_id: @assignment.id
       end
 
       it 'should respond with success' do
@@ -466,7 +461,6 @@ describe FlexibleCriteriaController do
         it 'should respond with redirect' do
           is_expected.to respond_with(:redirect)
         end
-
       end
 
       context 'with file containing partial records' do
@@ -474,8 +468,8 @@ describe FlexibleCriteriaController do
           tempfile = fixture_file_upload('/files/flexible_partial.csv')
           post_as @admin,
                   :upload,
-                  :assignment_id => @assignment.id,
-                  :upload => {:flexible => tempfile}
+                  assignment_id: @assignment.id,
+                  upload: { flexible: tempfile }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
@@ -516,13 +510,12 @@ describe FlexibleCriteriaController do
         end
         it 'should keep ordering of uploaded criteria' do
           expect(@flexible_criteria[0].flexible_criterion_name)
-              .to eql('criterion3')
+            .to eql('criterion3')
           expect(@flexible_criteria[1].flexible_criterion_name)
-              .to eql('criterion4')
+            .to eql('criterion4')
 
           expect(@flexible_criteria[0].position).to eql(1)
           expect(@flexible_criteria[1].position).to eql(2)
-
         end
       end
     end
@@ -545,14 +538,12 @@ describe FlexibleCriteriaController do
   end # An authenticated and authorized admin doing a POST
 
   describe 'An authenticated and authorized admin doing a DELETE' do
-
     before(:each) do
       @admin = create(:admin)
       @assignment = create(:assignment)
       @criterion = create(:flexible_criterion,
-                          :assignment => @assignment)
+                          assignment: @assignment)
     end
-
 
     it ' should be able to delete the criterion' do
       delete_as @admin, :destroy,
@@ -564,7 +555,7 @@ describe FlexibleCriteriaController do
       is_expected.to respond_with(:success)
 
       expect { FlexibleCriterion.find(@criterion.id) }
-          .to raise_error(ActiveRecord::RecordNotFound)
+        .to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end
