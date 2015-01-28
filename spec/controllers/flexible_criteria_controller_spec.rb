@@ -450,8 +450,10 @@ describe FlexibleCriteriaController do
       context 'with file containing incomplete records' do
         before(:each) do
           tempfile = fixture_file_upload('/files/flexible_incomplete.csv')
-          post_as @admin, :upload, :assignment_id => @assignment.id,
-                  :upload => {:flexible => tempfile}
+          post_as @admin,
+                  :upload,
+                  assignment_id: @assignment.id,
+                  upload: { flexible: tempfile }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
@@ -491,8 +493,10 @@ describe FlexibleCriteriaController do
         before(:each) do
           FlexibleCriterion.destroy_all
           tempfile = fixture_file_upload('/files/flexible_upload.csv')
-          post_as @admin, :upload, :assignment_id => @assignment.id,
-                  :upload => {:flexible => tempfile}
+          post_as @admin,
+                  :upload,
+                  assignment_id: @assignment.id,
+                  upload: { flexible: tempfile }
           @assignment.reload
           @flexible_criteria = @assignment.flexible_criteria
         end
