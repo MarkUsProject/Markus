@@ -187,10 +187,10 @@ describe FlexibleCriteriaController do
 
       context 'with save errors' do
         before(:each) do
-          expect_any_instance_of(FlexibleCriterion).to.
-              receive(:save).and_return(false)
-          expect_any_instance_of(FlexibleCriterion).to.
-              receive(:errors).and_return('')
+          expect_any_instance_of(FlexibleCriterion).to
+              .receive(:save).and_return(false)
+          expect_any_instance_of(FlexibleCriterion).to
+              .receive(:errors).and_return('')
 
           get_as @admin, :update,
                  format: :js,
@@ -361,10 +361,10 @@ describe FlexibleCriteriaController do
         before(:each) do
           @errors = ActiveModel::Errors.new(self)
           @errors['message'] = 'error message'
-          expect_any_instance_of(FlexibleCriterion).to.
-              receive(:save).and_return(false)
-          expect_any_instance_of(FlexibleCriterion).to.
-              receive(:errors).and_return(@errors)
+          expect_any_instance_of(FlexibleCriterion).to
+              .receive(:save).and_return(false)
+          expect_any_instance_of(FlexibleCriterion).to
+              .receive(:errors).and_return(@errors)
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,
@@ -378,8 +378,8 @@ describe FlexibleCriteriaController do
         end
 
         it 'should render the add_criterion_error template' do
-          is_expected.to.
-              render_template(:'flexible_criteria/add_criterion_error')
+          is_expected.to
+              .render_template(:'flexible_criteria/add_criterion_error')
         end
 
         it 'should respond with success' do
@@ -515,10 +515,10 @@ describe FlexibleCriteriaController do
           expect(@assignment.flexible_criteria.size).to eql(2)
         end
         it 'should keep ordering of uploaded criteria' do
-          expect(@flexible_criteria[0].flexible_criterion_name).to.
-              eql('criterion3')
-          expect(@flexible_criteria[1].flexible_criterion_name).to.
-              eql('criterion4')
+          expect(@flexible_criteria[0].flexible_criterion_name).to
+              .eql('criterion3')
+          expect(@flexible_criteria[1].flexible_criterion_name).to
+              .eql('criterion4')
           expect(@flexible_criteria[0].position).to eql(1)
           expect(@flexible_criteria[1].position).to eql(2)
 
@@ -562,8 +562,10 @@ describe FlexibleCriteriaController do
       expect(I18n.t('criterion_deleted_success')).to eql(flash[:success])
       is_expected.to respond_with(:success)
 
-      expect { FlexibleCriterion.find(@criterion.id) }.to.
-          raise_error(ActiveRecord::RecordNotFound)
+=begin
+      expect { FlexibleCriterion.find(@criterion.id) }.to
+=end
+          .raise_error(ActiveRecord::RecordNotFound)
     end
 
   end

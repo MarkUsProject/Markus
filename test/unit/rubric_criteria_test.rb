@@ -6,7 +6,6 @@ require 'mocha/setup'
 require 'machinist'
 
 class RubricCriterionTest < ActiveSupport::TestCase
-
   context 'A good rubric criterion model' do
     setup do
       RubricCriterion.make
