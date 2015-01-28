@@ -6,23 +6,23 @@ class GradeEntryFormsController < ApplicationController
 
   before_filter :authorize_only_for_admin,
                 except: [:student_interface,
-                            :populate_term_marks_table,
-                            :get_mark_columns,
-                            :grades,
-                            :g_table_paginate,
-                            :csv_download,
-                            :csv_upload,
-                            :update_grade]
+                         :populate_term_marks_table,
+                         :get_mark_columns,
+                         :grades,
+                         :g_table_paginate,
+                         :csv_download,
+                         :csv_upload,
+                         :update_grade]
   before_filter :authorize_for_ta_and_admin,
                 only: [:grades,
-                          :g_table_paginate,
-                          :csv_download,
-                          :csv_upload,
-                          :update_grade]
+                       :g_table_paginate,
+                       :csv_download,
+                       :csv_upload,
+                       :update_grade]
   before_filter :authorize_for_student,
                 only: [:student_interface,
-                          :populate_term_marks_table,
-                          :get_mark_columns]
+                       :populate_term_marks_table,
+                       :get_mark_columns]
 
   # Filters will be added as the student UI is implemented (eg. Show Released,
   # Show All,...)
@@ -256,17 +256,17 @@ class GradeEntryFormsController < ApplicationController
 
     c = grade_entry_items_columns.map do |column|
       { 
-        :id => column.name,
-        :content => column.name + " (" + column.out_of.to_s + ")",
-        :sortable => true,
-        :searcheable => true
+        id: column.name,
+        content: column.name + ' (' + column.out_of.to_s + ')',
+        sortable: true,
+        searcheable: true
       }
     end
     if grade_entry_form.show_total
       c << 
       {
-        :id => 'total_marks',
-        :content => t('grade_entry_forms.grades.total') + " " + grade_entry_form.out_of_total.to_s,
+        id: 'total_marks',
+        content: t('grade_entry_forms.grades.total') + ' ' + grade_entry_form.out_of_total.to_s,
       }
     end
 
