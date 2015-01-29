@@ -66,7 +66,7 @@ class ResultsController < ApplicationController
         oldmark.save(validate: false)
         @old_marks_map[criterion.id] = oldmark
 
-        unless oldmark.nil?
+        unless oldmark.nil? or @result.released_to_students
           # Updates the current mark to reflect the previous mark
           mark.mark = oldmark.mark
         end
