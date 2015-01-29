@@ -212,22 +212,21 @@
       <%= f.fields_for :assignment_files do |assignment_file_form| %>
         <%= render partial: 'assignment_file',
                    locals: { assignment_file: assignment_file_form.object,
-                             form: f } %> 
+                             form: f } %>
       <% end %>
     </div>
      <p id='assignment_file_add_link'>
         <%= add_assignment_file_link t('assignment.add_required_file'), f %>
      </p>
-     </ br>
+     <br>
      <%= f.check_box :is_required,
-       checked: @assignment.is_required,
-       onclick: 'set_onbeforeunload(true);' 
+                      checked: @assignment.is_required,
+                      onclick: 'set_onbeforeunload(true);' 
      %>
      <%= @filename %>
      <%= f.label :is_required,
-       "Accept no other files besides the listed required files. 
-       This would also restrics the file extensions.",
-       {id: "assignment_is_required_label"}
+                 t('required_file_warning'),
+                 { id: "assignment_is_required_label" }
      %>
   </fieldset>
 

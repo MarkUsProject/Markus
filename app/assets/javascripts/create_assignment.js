@@ -69,7 +69,7 @@ jQuery(document).ready(function() {
     }
   });
   
-  //hide the checkbox for "Required Files" by default
+  // Hide the checkbox for "Required Files" by default
   jQuery('#assignment_is_required').hide();
   jQuery('#assignment_is_required_label').hide();
 });
