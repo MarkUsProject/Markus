@@ -371,7 +371,7 @@ class SubmissionsController < ApplicationController
         end
         #
         unless students_filename.length < 1
-          unless (students_filename - required_files).empty?
+          if !(students_filename - required_files).empty?
             @file_manager_errors[:size_conflict] =
             I18n.t('assignment.upload_file_requirement')
             render :file_manager
