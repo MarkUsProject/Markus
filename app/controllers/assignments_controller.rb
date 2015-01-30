@@ -757,7 +757,7 @@ class AssignmentsController < ApplicationController
         :group_name_displayed,
         :invalid_override,
         :section_groups_only,
-        :is_required,
+        :only_required_files,
         section_due_dates_attributes: [:_destroy,
                                        :id,
                                        :section_id,

@@ -11,6 +11,9 @@ pt:
     issues:             "GitHub lista de problemas"
     actions:            "Ações"
 
+    # app/views/assignments/_form.html.erb
+    required_file_warning: "Não aceite nenhuma outros arquivos, além dos arquivos necessários listados. Isso também restrics as extensões de arquivo."
+
     # app/views/main/login.html.erb
     welcome_to:         "Bem-vindo ao MarkUs!"
     welcome_to_markus:     "%{user_name}, bem-vindo ao MarkUs, uma ferramenta de avaliação online."
@@ -149,6 +152,7 @@ pt:
         add_required_file:  "Inserir arquivo exigido"
         type:  "Tipo de projeto"
         overall_comment: "Comentários gerais"
+        upload_file_requirement: "A lista de arquivos carregados não coincide com os arquivos de atribuição necessária"
         group:
             empty: "Grupo vazio"
             assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
