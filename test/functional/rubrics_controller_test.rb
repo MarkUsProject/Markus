@@ -263,8 +263,9 @@ END
       end
 
       should 'be able to save with errors' do
+        @errors = ActiveModel::Errors.new(self)
         RubricCriterion.any_instance.expects(:save).once.returns(false)
-        RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
+        RubricCriterion.any_instance.expects(:errors).once.returns(@errors)
         get_as @admin,
                :update,
                format: :js,
