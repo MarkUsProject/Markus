@@ -286,8 +286,6 @@ class SubmissionsController < ApplicationController
     @file_manager_errors = Hash.new
     assignment_id = params[:assignment_id]
     @assignment = Assignment.find(assignment_id)
-    required_files_flag = Assignment.where(
-                           id: @assignment).pluck(:only_required_files)
     required_files = AssignmentFile.where(
                            assignment_id: @assignment).pluck(:filename)
     students_filename = []
@@ -387,7 +385,7 @@ class SubmissionsController < ApplicationController
         # check if only required files are allowed for a submission
         unless students_filename.length < 1 ||
                required_files.length == 0 ||
-               required_files_flag[0] == false
+               @assignment.only_required_files == false
           if !(students_filename - required_files).empty?
             @file_manager_errors[:size_conflict] =
             I18n.t('assignment.upload_file_requirement')
