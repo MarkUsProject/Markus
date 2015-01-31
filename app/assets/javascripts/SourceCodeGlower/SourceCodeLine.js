@@ -25,128 +25,144 @@ function SourceCodeLine(line_node) {
 // Increase a Source Code Line's glow depth
 // The base of the new glow functionality was found here:
 // http://stackoverflow.com/questions/6240139/highlight-text-range-using-javascript
-SourceCodeLine.prototype.glow = function(start_column, end_column) {
+SourceCodeLine.prototype.glow = function(annotation_id, start_column, end_column) {
   // Increase the depth and turn on design mode for highlighting
   this.incGlowDepth(1);
-  document.designMode = "on";
 
   // Set the selection for the highlight command, save so we can unselect after
-  var sel = this.selectGlowRange(this.getLineNode(),
-    start_column,
+  this.glowRangeSpans(annotation_id, this.getLineNode(), start_column,
     (end_column == -1) ? this.getLineNode().textContent.length : end_column);
-
-  // If hilitecolor doesnt work try backcolor
-  //if (!document.execCommand("HiliteColor", false, this.getGlowDepth() == 1 ? '#fffcc4' : '#ff9')) {
-  //  document.execCommand("BackColor", false, this.getGlowDepth() == 1 ? '#fffcc4' : '#ff9');
-  //}
-
-  // Turn off design mode and remove fake mouse selection
-  document.designMode = "off";
-  sel.removeAllRanges();
 }
 
 // Creates a fake mouse selection of text range within node param
-SourceCodeLine.prototype.selectGlowRange = function(node, start, end) {
-  var range = document.createRange(node); // Used to track start/end nodes and their offsets
+SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start, end) {
   var textNodes = this.getAllTextNodes(node); // All text nodes contained in node
+  var annotation_nodes = new Array();
+
+  // Iterate over text nodes, add length of passed nodes, save start and break at end
+  var start_node = null;
+  var start_node_offset = 0;
+  var end_node = null;
+  var end_node_offset = 0;
 
   var foundStart = false;
   var currentCharCount = 0; // The amount of characters we've passed
-
-  //init swaps outside of loop
-  var start_span_plain = null;
-  var start_span_glow = null;
-  var end_span_plain = null;
-  var end_span_glow = null;
-
-  // Iterate over text nodes, add length of passed nodes, save start and break at end
-
-  // TODO:
-  // Case 1: highlight one entire node
-  // Case 2: highlight a section of one node
-  // Case 3: highlight two separate nodes + everything in between
-
-  // IDEA: use for loop to find start and end nodes + save offset.
-  // Then after loop check for the case and handle there ie (start_node == end_node)
   for (var i = 0; i < textNodes.length; i++) {
     var endCharCount = currentCharCount + textNodes[i].length;
-
     // If the start is between the current count and the end of the current node, save it
-    if (!foundStart && start >= currentCharCount && (start < endCharCount || (start == endCharCount && i < textNodes.length))) {
-      range.setStart(textNodes[i], start - currentCharCount); // Set start as offset in current text node
+    if (!foundStart && start >= currentCharCount && start <= endCharCount) {
       foundStart = true;
 
       // Split the node if the glow starts inside of it
       if (start != endCharCount) {
-        // Save reference to span
-        var start_node = textNodes[i].parentNode;
-
-        // Create two separate spans, one with the highlight the other without
-        // Save and replace after loop to avoid changing indexes/offsets
-        start_span_plain = document.createElement("span");
-        start_span_glow = document.createElement("span");
-        start_span_plain.innerHTML = start_node.textContent.substr(0, start - currentCharCount);
-        start_span_glow.innerHTML = start_node.textContent.substr(start - currentCharCount);
-        if(start_node.classList.length > 0) {
-          start_span_plain.classList.add(start_node.classList);
-          start_span_glow.classList.add(start_node.classList);
+        // Save reference to span node
+        if ( textNodes[i].parentNode.parentNode == node){
+          start_node = document.createElement("span");
+          start_node.innerHTML = textNodes[i].textContent;
+          textNodes[i].parentNode.insertBefore(start_node, textNodes[i].nextSibling);
+          textNodes[i].parentNode.removeChild(textNodes[i]);
+          textNodes[i] = start_node.childNodes[0];
         }
-        start_span_glow.addClass('source_code_glowing_' + this.getGlowDepth());
-
-
-        // TODO check if end is in the same node and handle that special case, then break! BRAH
+        else {
+          start_node = textNodes[i].parentNode;
+        }
+        start_node_offset = start - currentCharCount;
       }
     }
     // Adds a class to the nodes between the start and stop
     else if (foundStart && end >= endCharCount){
-      textNodes[i].parentNode.addClass('source_code_glowing_' + this.getGlowDepth());
+      textNodes[i].parentNode.addClass('source_code_glowing_1');
+      annotation_nodes.push(textNodes[i].parentNode);
     }
-    // If we have the start and the current node contains the end, save it
-    else if (foundStart && end < endCharCount) {
-      //range.setEnd(textNodes[i], end - currentCharCount);
 
+    // If foundStart and the current node contains the end, save it (can be the same as start_node)
+    if (foundStart && end < endCharCount && currentCharCount != end) {
       // Save reference to span
-      var end_node = textNodes[i].parentNode;
+      if ( textNodes[i].parentNode.parentNode == node){
+        end_node = document.createElement("span");
+        end_node.innerHTML = textNodes[i].textContent;
+        textNodes[i].parentNode.insertBefore(end_node, textNodes[i].nextSibling);
+        textNodes[i].parentNode.removeChild(textNodes[i]);
+      }
+      else {
+        end_node = textNodes[i].parentNode;
+      }
+      end_node_offset = end - currentCharCount;
+      break;
+    }
+    currentCharCount = endCharCount;
+  }
 
-      // Create two separate spans, one with the highlight the other without
-      // Save and replace after loop to avoid changing indexes/offsets
+  if (start_node != null && end_node != null && start_node == end_node){
+    // Split the node into 3 spans
+    var start_span_plain = document.createElement("span");
+    var middle_span_glow = document.createElement("span");
+    var end_node_plain = document.createElement("span");
+    start_span_plain.innerHTML = start_node.textContent.substr(0, start_node_offset);
+    middle_span_glow.innerHTML = start_node.textContent.substr(start_node_offset, end_node_offset - start_node_offset);
+    end_node_plain.innerHTML = start_node.textContent.substr(end_node_offset);
+
+    // Keep the source code classes
+    if(start_node.classList.length > 0) {
+      start_span_plain.classList.add(start_node.classList);
+      middle_span_glow.classList.add(start_node.classList);
+      end_node_plain.classList.add(start_node.classList);
+    }
+    middle_span_glow.addClass('source_code_glowing_1');
+
+    // Insert the new spans, remove the old one
+    annotation_nodes.push(end_node_plain, middle_span_glow, start_span_plain);
+    start_node.parentNode.insertBefore(end_node_plain, start_node.nextSibling);
+    start_node.parentNode.insertBefore(middle_span_glow, start_node.nextSibling);
+    start_node.parentNode.insertBefore(start_span_plain, start_node.nextSibling);
+    start_node.parentNode.removeChild(start_node);
+  }
+  else {
+    if( start_node != null){
+      var start_span_plain = document.createElement("span");
+      var start_span_glow = document.createElement("span");
+      start_span_plain.innerHTML = start_node.textContent.substr(0, start_node_offset);
+      start_span_glow.innerHTML = start_node.textContent.substr(start_node_offset);
+      if(start_node.classList.length > 0) {
+        start_span_plain.classList.add(start_node.classList);
+        start_span_glow.classList.add(start_node.classList);
+      }
+      start_span_glow.addClass('source_code_glowing_1');
+
+      annotation_nodes.push(start_span_plain, start_span_glow);
+      start_node.parentNode.insertBefore(start_span_plain, start_node.nextSibling);
+      start_span_plain.parentNode.insertBefore(start_span_glow, start_span_plain.nextSibling);
+      start_node.parentNode.removeChild(start_node);
+    }
+    if (end_node != null){
       var end_span_plain = document.createElement("span");
       var end_span_glow = document.createElement("span");
-      end_span_plain.innerHTML = end_node.textContent.substr(end - currentCharCount);
-      end_span_glow.innerHTML = end_node.textContent.substr(0, end - currentCharCount);
+      end_span_plain.innerHTML = end_node.textContent.substr(end_node_offset);
+      end_span_glow.innerHTML = end_node.textContent.substr(0, end_node_offset);
       if ( end_node.classList.length > 0) {
         end_span_plain.classList.add(end_node.classList);
         end_span_glow.classList.add(end_node.classList);
       }
-      end_span_glow.addClass('source_code_glowing_' + this.getGlowDepth());
-      break;
+      end_span_glow.addClass('source_code_glowing_1');
+
+      annotation_nodes.push(end_span_plain, end_span_glow);
+      end_node.parentNode.insertBefore(end_span_glow, end_node.nextSibling);
+      end_span_glow.parentNode.insertBefore(end_span_plain, end_span_glow.nextSibling);
+      end_node.parentNode.removeChild(end_node);
     }
-
-    currentCharCount = endCharCount;
   }
 
-  // Insert the start nodes and remove the old one
-  if( start_span_glow != null && start_span_plain != null)
-  {
-    start_node.parentNode.insertBefore(start_span_plain, start_node.nextSibling);
-    start_span_plain.parentNode.insertBefore(start_span_glow, start_span_plain.nextSibling);
-    start_node.parentNode.removeChild(start_node);
+  // Add data attributes for use in unglow
+  for (var i = 0; i < annotation_nodes.length; i++){
+    annotation_nodes[i].setAttribute(
+      "data-annotationID" + annotation_id.toString(),
+      annotation_id.toString());
+
+    var glow_depth = annotation_nodes[i].getAttribute("data-annotationDepth");
+    annotation_nodes[i].setAttribute(
+      "data-annotationDepth",
+      glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
   }
-
-  // Insert the end nodes and remove the old one
-  if( end_span_glow != null && end_span_plain != null)
-  {
-    end_node.parentNode.insertBefore(end_span_glow, end_node.nextSibling);
-    end_span_glow.parentNode.insertBefore(end_span_plain, end_span_glow.nextSibling);
-    end_node.parentNode.removeChild(end_node);
-  }
-
-  // Grab the window selection, clear old range, and set custom range
-  var sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-
-  return sel;
 }
 
 // Recursive method returns an array of all text nodes contained in node param
@@ -163,31 +179,26 @@ SourceCodeLine.prototype.getAllTextNodes = function(node) {
   return textNodes;
 }
 
-// Get the actual elements so we can
-SourceCodeLine.prototype.getAllSpanElements = function(node){
-  var textNodes = [];
-  if (node.nodeName === "SPAN") { // Push if text node
-    textNodes.push(node);
-  }
-
-  // Recursively return all contained text nodes
-  for (var i = 0; i < node.children.length; i++) {
-    textNodes.push.apply(textNodes, this.getAllSpanElements(node.children[i]));
-  }
-
-  return textNodes;
-}
 
 // Decrease a Source Code Line's glow depth
-SourceCodeLine.prototype.unGlow = function() {
+SourceCodeLine.prototype.unGlow = function(annotation_id) {
   // Is this line glowing?
   if (this.isGlowing()) {
-    var textElements = this.getAllSpanElements(this.getLineNode());
+    var textNodes = this.getAllTextNodes(this.getLineNode());
 
     // Create an array of glow nodes (spans)
-    for (var i = 0; i < textElements.length; i++){
-      if (textElements[i].style.backgroundColor != ""){
-        textElements[i].removeAttribute("style");
+    for (var i = 0; i < textNodes.length; i++){
+      if (textNodes[i].parentNode.getAttribute(
+          "data-annotationID" + annotation_id.toString()) == annotation_id.toString()){
+        // Check and update the glow depth to handle nested annotations
+        var glow_depth = textNodes[i].parentNode.getAttribute("data-annotationDepth");
+        textNodes[i].parentNode.setAttribute(
+          "data-annotationDepth",
+          (parseInt(glow_depth) - 1).toString());
+
+        if ( glow_depth == "1") {
+          textNodes[i].parentNode.removeClass("source_code_glowing_1");
+        }
       }
     }
   }

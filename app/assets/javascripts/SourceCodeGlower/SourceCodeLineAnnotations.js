@@ -47,7 +47,7 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_
 
   // Glow the Source Code Line
   var line = this.getLineManager().getLine(line_num);
-  line.glow(column_start, column_end);
+  line.glow(annotation_id, column_start, column_end);
 
   // Add events so that when we mouse over this Source Code Line, we display
   // the annotations
@@ -83,7 +83,7 @@ SourceCodeLineAnnotations.prototype.annotateRange = function(annotation_id, rang
 SourceCodeLineAnnotations.prototype.removeAnnotationFromLine = function(annotation_id, line_num, annotation_text_id) {
   this.removeRelationship(annotation_id, line_num, annotation_text_id);
   var line = this.getLineManager().getLine(line_num);
-  line.unGlow();
+  line.unGlow(annotation_id);
 
   // If there are no more annotations on this line, stop observing mouseovers
   // and mousedowns
