@@ -47,19 +47,25 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_
 
   // Glow the Source Code Line
   var line = this.getLineManager().getLine(line_num);
-  line.glow(annotation_id, column_start, column_end);
+  line.glow(annotation_id, column_start, column_end, function(event) {
+      me.displayTextsForLine(line_num, annotation_id, event.pageX, event.pageY);
+    },
+    function(event) {
+      me.hideText();
+    }
+  );
 
   // Add events so that when we mouse over this Source Code Line, we display
   // the annotations
   var me = this;
 
-  line.getLineNode().addEventListener('mouseover', function(event) {
-    me.displayTextsForLine(line_num, event.pageX, event.pageY);
-  });
-
-  line.getLineNode().addEventListener('mouseout', function(event) {
-    me.hideText();
-  });
+  //line.getLineNode().addEventListener('mouseover', function(event) {
+  //  me.displayTextsForLine(line_num, event.pageX, event.pageY);
+  //});
+  //
+  //line.getLineNode().addEventListener('mouseout', function(event) {
+  //  me.hideText();
+  //});
 }
 
 // Annotate a Range of Source Code Lines
@@ -147,13 +153,13 @@ SourceCodeLineAnnotations.prototype.removeRelationship = function(annotation_id,
   this.setRelationships(this.getRelationships().without(relationship));
 }
 
-SourceCodeLineAnnotations.prototype.getAnnotationTextsForLineNum = function(line_num) {
+SourceCodeLineAnnotations.prototype.getAnnotationTextsForLineNum = function(line_num, annotation_id) {
   var result = [];
 
   var relationships = this.getRelationships();
   for (var i = 0; i < relationships.length; i++) {
     var relationship = relationships[i];
-    if (relationship['line_num'] == line_num) {
+    if (relationship['line_num'] == line_num && relationship['annotation_id'] == annotation_id) {
       result.push(this.getAnnotationTextManager().getAnnotationText(relationship['annotation_text_id']));
     }
   }
@@ -178,7 +184,7 @@ SourceCodeLineAnnotations.prototype.hideText = function() {
   this.getAnnotationTextDisplayer().hide();
 }
 
-SourceCodeLineAnnotations.prototype.displayTextsForLine = function(line_num, x, y) {
-  var texts = this.getAnnotationTextsForLineNum(line_num);
+SourceCodeLineAnnotations.prototype.displayTextsForLine = function(line_num, annotation_id, x, y) {
+  var texts = this.getAnnotationTextsForLineNum(line_num, annotation_id);
   this.getAnnotationTextDisplayer().displayCollection(texts, x, y);
 }

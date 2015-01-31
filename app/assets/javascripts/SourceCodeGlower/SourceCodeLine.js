@@ -25,17 +25,20 @@ function SourceCodeLine(line_node) {
 // Increase a Source Code Line's glow depth
 // The base of the new glow functionality was found here:
 // http://stackoverflow.com/questions/6240139/highlight-text-range-using-javascript
-SourceCodeLine.prototype.glow = function(annotation_id, start_column, end_column) {
+SourceCodeLine.prototype.glow = function(annotation_id, start_column, end_column,
+  hover_on_function, hover_off_function) {
   // Increase the depth and turn on design mode for highlighting
   this.incGlowDepth(1);
 
   // Set the selection for the highlight command, save so we can unselect after
   this.glowRangeSpans(annotation_id, this.getLineNode(), start_column,
-    (end_column == -1) ? this.getLineNode().textContent.length : end_column);
+    (end_column == -1) ? this.getLineNode().textContent.length : end_column,
+    hover_on_function, hover_off_function);
 }
 
 // Creates a fake mouse selection of text range within node param
-SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start, end) {
+SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start,
+  end, hover_on_function, hover_off_function) {
   var textNodes = this.getAllTextNodes(node); // All text nodes contained in node
   var annotation_nodes = new Array();
 
@@ -80,6 +83,9 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start, e
 
       textNodes[i].parentNode.addClass('source_code_glowing_' +
         (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
+
+      textNodes[i].parentNode.addEventListener("mouseover", hover_on_function);
+      textNodes[i].parentNode.addEventListener("mouseout", hover_off_function);
     }
 
     // If foundStart and the current node contains the end, save it (can be the same as start_node)
@@ -124,7 +130,10 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start, e
       glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
 
     middle_span_glow.addClass('source_code_glowing_' +
-    (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
+      (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
+
+    middle_span_glow.addEventListener("mouseover", hover_on_function);
+    middle_span_glow.addEventListener("mouseout", hover_off_function);
 
     // Insert the new spans, remove the old one
     start_node.parentNode.insertBefore(end_node_plain, start_node.nextSibling);
@@ -147,7 +156,10 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start, e
         glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
 
       start_span_glow.addClass('source_code_glowing_' +
-      (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
+        (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
+
+      start_span_glow.addEventListener("mouseover", hover_on_function);
+      start_span_glow.addEventListener("mouseout", hover_off_function);
 
       start_node.parentNode.insertBefore(start_span_plain, start_node.nextSibling);
       start_span_plain.parentNode.insertBefore(start_span_glow, start_span_plain.nextSibling);
@@ -169,6 +181,10 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start, e
 
       end_span_glow.addClass('source_code_glowing_' +
         (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
+
+      end_span_glow.addEventListener("mouseover", hover_on_function);
+      end_span_glow.addEventListener("mouseout", hover_off_function);
+
       end_node.parentNode.insertBefore(end_span_glow, end_node.nextSibling);
       end_span_glow.parentNode.insertBefore(end_span_plain, end_span_glow.nextSibling);
       end_node.parentNode.removeChild(end_node);
