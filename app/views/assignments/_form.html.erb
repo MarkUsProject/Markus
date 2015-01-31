@@ -219,14 +219,14 @@
         <%= add_assignment_file_link t('assignment.add_required_file'), f %>
      </p>
      <br>
-     <%= f.check_box :is_required,
-                      checked: @assignment.is_required,
+     <%= f.check_box :only_required_files,
+                      checked: @assignment.only_required_files,
                       onclick: 'set_onbeforeunload(true);' 
      %>
      <%= @filename %>
-     <%= f.label :is_required,
+     <%= f.label :only_required_files,
                  t('required_file_warning'),
-                 { id: "assignment_is_required_label" }
+                 { id: "assignment_only_required_files_label" }
      %>
   </fieldset>
 
