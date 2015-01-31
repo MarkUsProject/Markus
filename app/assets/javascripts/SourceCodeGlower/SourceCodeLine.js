@@ -71,8 +71,15 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start, e
     }
     // Adds a class to the nodes between the start and stop
     else if (foundStart && end >= endCharCount){
-      textNodes[i].parentNode.addClass('source_code_glowing_1');
-      annotation_nodes.push(textNodes[i].parentNode);
+      textNodes[i].parentNode.setAttribute(
+        "data-annotationID" + annotation_id.toString(), annotation_id.toString());
+
+      var glow_depth = textNodes[i].parentNode.getAttribute("data-annotationDepth");
+      textNodes[i].parentNode.setAttribute("data-annotationDepth",
+        glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
+
+      textNodes[i].parentNode.addClass('source_code_glowing_' +
+        (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
     }
 
     // If foundStart and the current node contains the end, save it (can be the same as start_node)
@@ -93,6 +100,7 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start, e
     currentCharCount = endCharCount;
   }
 
+  // Create and swap in new spans, first case if the start and end nodes match
   if (start_node != null && end_node != null && start_node == end_node){
     // Split the node into 3 spans
     var start_span_plain = document.createElement("span");
@@ -108,10 +116,17 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start, e
       middle_span_glow.classList.add(start_node.classList);
       end_node_plain.classList.add(start_node.classList);
     }
-    middle_span_glow.addClass('source_code_glowing_1');
+    middle_span_glow.setAttribute(
+      "data-annotationID" + annotation_id.toString(), annotation_id.toString());
+
+    var glow_depth = middle_span_glow.getAttribute("data-annotationDepth");
+    middle_span_glow.setAttribute("data-annotationDepth",
+      glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
+
+    middle_span_glow.addClass('source_code_glowing_' +
+    (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
 
     // Insert the new spans, remove the old one
-    annotation_nodes.push(end_node_plain, middle_span_glow, start_span_plain);
     start_node.parentNode.insertBefore(end_node_plain, start_node.nextSibling);
     start_node.parentNode.insertBefore(middle_span_glow, start_node.nextSibling);
     start_node.parentNode.insertBefore(start_span_plain, start_node.nextSibling);
@@ -119,50 +134,58 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start, e
   }
   else {
     if( start_node != null){
-      var start_span_plain = document.createElement("span");
-      var start_span_glow = document.createElement("span");
+      var start_span_plain = start_node.clone(false);
+      var start_span_glow = start_node.clone(false);
       start_span_plain.innerHTML = start_node.textContent.substr(0, start_node_offset);
       start_span_glow.innerHTML = start_node.textContent.substr(start_node_offset);
-      if(start_node.classList.length > 0) {
-        start_span_plain.classList.add(start_node.classList);
-        start_span_glow.classList.add(start_node.classList);
-      }
-      start_span_glow.addClass('source_code_glowing_1');
 
-      annotation_nodes.push(start_span_plain, start_span_glow);
+      start_span_glow.setAttribute(
+        "data-annotationID" + annotation_id.toString(), annotation_id.toString());
+
+      var glow_depth = start_span_glow.getAttribute("data-annotationDepth");
+      start_span_glow.setAttribute("data-annotationDepth",
+        glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
+
+      start_span_glow.addClass('source_code_glowing_' +
+      (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
+
       start_node.parentNode.insertBefore(start_span_plain, start_node.nextSibling);
       start_span_plain.parentNode.insertBefore(start_span_glow, start_span_plain.nextSibling);
       start_node.parentNode.removeChild(start_node);
     }
+
     if (end_node != null){
-      var end_span_plain = document.createElement("span");
-      var end_span_glow = document.createElement("span");
+      var end_span_plain = end_node.clone(false);
+      var end_span_glow = end_node.clone(false);
       end_span_plain.innerHTML = end_node.textContent.substr(end_node_offset);
       end_span_glow.innerHTML = end_node.textContent.substr(0, end_node_offset);
-      if ( end_node.classList.length > 0) {
-        end_span_plain.classList.add(end_node.classList);
-        end_span_glow.classList.add(end_node.classList);
-      }
-      end_span_glow.addClass('source_code_glowing_1');
 
-      annotation_nodes.push(end_span_plain, end_span_glow);
+      end_span_glow.setAttribute(
+        "data-annotationID" + annotation_id.toString(), annotation_id.toString());
+
+      var glow_depth = end_span_glow.getAttribute("data-annotationDepth");
+      end_span_glow.setAttribute("data-annotationDepth",
+        glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
+
+      end_span_glow.addClass('source_code_glowing_' +
+        (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
       end_node.parentNode.insertBefore(end_span_glow, end_node.nextSibling);
       end_span_glow.parentNode.insertBefore(end_span_plain, end_span_glow.nextSibling);
       end_node.parentNode.removeChild(end_node);
     }
   }
 
-  // Add data attributes for use in unglow
-  for (var i = 0; i < annotation_nodes.length; i++){
-    annotation_nodes[i].setAttribute(
-      "data-annotationID" + annotation_id.toString(),
-      annotation_id.toString());
-
-    var glow_depth = annotation_nodes[i].getAttribute("data-annotationDepth");
-    annotation_nodes[i].setAttribute(
-      "data-annotationDepth",
-      glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
-  }
+  //// Add data attributes for use in unglow
+  //for (var i = 0; i < annotation_nodes.length; i++){
+  //  annotation_nodes[i].setAttribute(
+  //    "data-annotationID" + annotation_id.toString(),
+  //    annotation_id.toString());
+  //
+  //  var glow_depth = annotation_nodes[i].getAttribute("data-annotationDepth");
+  //  annotation_nodes[i].setAttribute(
+  //    "data-annotationDepth",
+  //    glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
+  //}
 }
 
 // Recursive method returns an array of all text nodes contained in node param
@@ -196,9 +219,7 @@ SourceCodeLine.prototype.unGlow = function(annotation_id) {
           "data-annotationDepth",
           (parseInt(glow_depth) - 1).toString());
 
-        if ( glow_depth == "1") {
-          textNodes[i].parentNode.removeClass("source_code_glowing_1");
-        }
+        textNodes[i].parentNode.removeClass("source_code_glowing_" + glow_depth);
       }
     }
   }
