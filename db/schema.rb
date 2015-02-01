@@ -37,8 +37,6 @@ ActiveRecord::Schema.define(:version => 20141128075905) do
   create_table "annotations", :force => true do |t|
     t.integer "line_start"
     t.integer "line_end"
-    t.integer "column_start"
-    t.integer "column_end"
     t.integer "annotation_text_id"
     t.integer "submission_file_id"
     t.integer "x1"
