@@ -5,10 +5,12 @@
     for the particular source code highlighting library being used
 
     Rules:
-    - When a line is "glowing", it has a class of "source_code_glowing_" and then
+    - When a span is "glowing", it has a class of "source_code_glowing_" and then
       a number indicating the "depth" of its glow.  This allows for annotation overlapping.
       For example, 5 lines of source could be "glowed", and then three lines within that
       original 5 could be glowed again - their glow depth will increase.
+    - Each span will have data attributes added to allow for depth tracking and
+      to enable unglowing with overlapping annotations
     - This is an abstract class that needs to be implemented for the particular source
       code highlighting library being used
 */
@@ -22,48 +24,41 @@ function SourceCodeLine(line_node) {
   this.is_observing      = false;
 }
 
-// Increase a Source Code Line's glow depth
-// The base of the new glow functionality was found here:
-// http://stackoverflow.com/questions/6240139/highlight-text-range-using-javascript
-SourceCodeLine.prototype.glow = function(annotation_id, start_column, end_column,
+// Increase a Source Code Line's glow depth, add listeners
+// Splits nodes at start and end offsets if needed
+SourceCodeLine.prototype.glow = function(annotation_id, start, end,
   hover_on_function, hover_off_function) {
   // Increase the depth and turn on design mode for highlighting
   this.incGlowDepth(1);
 
-  // Set the selection for the highlight command, save so we can unselect after
-  this.glowRangeSpans(annotation_id, this.getLineNode(), start_column,
-    (end_column == -1) ? this.getLineNode().textContent.length : end_column,
-    hover_on_function, hover_off_function);
-}
+  // Save line node and get all text nodes in the line
+  var node = this.getLineNode();
+  var textNodes = this.getAllTextNodes(node);
 
-// Creates a fake mouse selection of text range within node param
-SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start,
-  end, hover_on_function, hover_off_function) {
-  var textNodes = this.getAllTextNodes(node); // All text nodes contained in node
-  var annotation_nodes = new Array();
-
-  // Iterate over text nodes, add length of passed nodes, save start and break at end
+  // Loop prep, for tracking nodes and character counts
   var start_node = null;
   var start_node_offset = 0;
   var end_node = null;
   var end_node_offset = 0;
-
   var foundStart = false;
-  var currentCharCount = 0; // The amount of characters we've passed
+  var currentCharCount = 0;
+
+  // Loop over nodes, add length of passed nodes, save start and end then break
   for (var i = 0; i < textNodes.length; i++) {
+    // End char offset of the current text node
     var endCharCount = currentCharCount + textNodes[i].length;
-    // If the start is between the current count and the end of the current node, save it
+
+    // If start is between current count and end of the current node, save it
     if (!foundStart && start >= currentCharCount && start <= endCharCount) {
       foundStart = true;
 
-      // Split the node if the glow starts inside of it
+      // Will need to split the node if the glow starts inside of it
       if (start != endCharCount) {
-        // Save reference to span node
+        // Save reference to span node, create span wrapper if blank space
         if ( textNodes[i].parentNode.parentNode == node){
           start_node = document.createElement("span");
           start_node.innerHTML = textNodes[i].textContent;
-          textNodes[i].parentNode.insertBefore(start_node, textNodes[i].nextSibling);
-          textNodes[i].parentNode.removeChild(textNodes[i]);
+          textNodes[i].parentNode.replaceChild(start_node, textNodes[i]);
           textNodes[i] = start_node.childNodes[0];
         }
         else {
@@ -72,14 +67,13 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start,
         start_node_offset = start - currentCharCount;
       }
     }
-    // Adds a class to the nodes between the start and stop
+    // Adds class/data/events to the nodes between the start and end
     else if (foundStart && end >= endCharCount){
-      textNodes[i].parentNode.setAttribute(
-        "data-annotationID" + annotation_id.toString(), annotation_id.toString());
-
       var glow_depth = textNodes[i].parentNode.getAttribute("data-annotationDepth");
       textNodes[i].parentNode.setAttribute("data-annotationDepth",
         glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
+      textNodes[i].parentNode.setAttribute( "data-annotationID" +
+        annotation_id.toString(), annotation_id.toString());
 
       textNodes[i].parentNode.addClass('source_code_glowing_' +
         (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
@@ -88,14 +82,13 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start,
       textNodes[i].parentNode.addEventListener("mouseout", hover_off_function);
     }
 
-    // If foundStart and the current node contains the end, save it (can be the same as start_node)
+    // If foundStart & current node contains end, save (can be the start_node)
     if (foundStart && end < endCharCount && currentCharCount != end) {
-      // Save reference to span
+      // Save reference to span node, create span wrapper if blank space
       if ( textNodes[i].parentNode.parentNode == node){
         end_node = document.createElement("span");
         end_node.innerHTML = textNodes[i].textContent;
-        textNodes[i].parentNode.insertBefore(end_node, textNodes[i].nextSibling);
-        textNodes[i].parentNode.removeChild(textNodes[i]);
+        textNodes[i].parentNode.replaceChild(end_node, textNodes[i]);
       }
       else {
         end_node = textNodes[i].parentNode;
@@ -106,54 +99,48 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start,
     currentCharCount = endCharCount;
   }
 
-  // Create and swap in new spans, first case if the start and end nodes match
+  // If only a single node, change text and insert two new spans before it
   if (start_node != null && end_node != null && start_node == end_node){
     // Split the node into 3 spans
-    var start_span_plain = document.createElement("span");
-    var middle_span_glow = document.createElement("span");
-    var end_node_plain = document.createElement("span");
+    var start_span_plain = start_node.clone(false);
+    var middle_span_glow = start_node.clone(false);
     start_span_plain.innerHTML = start_node.textContent.substr(0, start_node_offset);
     middle_span_glow.innerHTML = start_node.textContent.substr(start_node_offset, end_node_offset - start_node_offset);
-    end_node_plain.innerHTML = start_node.textContent.substr(end_node_offset);
+    start_node.innerHTML = start_node.textContent.substr(end_node_offset);
 
-    // Keep the source code classes
-    if(start_node.classList.length > 0) {
-      start_span_plain.classList.add(start_node.classList);
-      middle_span_glow.classList.add(start_node.classList);
-      end_node_plain.classList.add(start_node.classList);
-    }
-    middle_span_glow.setAttribute(
-      "data-annotationID" + annotation_id.toString(), annotation_id.toString());
-
+    // Set class, data, and events
     var glow_depth = middle_span_glow.getAttribute("data-annotationDepth");
     middle_span_glow.setAttribute("data-annotationDepth",
       glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
+    middle_span_glow.setAttribute(
+      "data-annotationID" + annotation_id.toString(), annotation_id.toString());
 
     middle_span_glow.addClass('source_code_glowing_' +
       (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
 
     middle_span_glow.addEventListener("mouseover", hover_on_function);
     middle_span_glow.addEventListener("mouseout", hover_off_function);
+    if (start_node.hasClass("source_code_glowing_1")){
+      start_span_plain.addEventListener("mouseover", hover_on_function);
+      start_span_plain.addEventListener("mouseout", hover_off_function);
+    }
 
-    // Insert the new spans, remove the old one
-    start_node.parentNode.insertBefore(end_node_plain, start_node.nextSibling);
-    start_node.parentNode.insertBefore(middle_span_glow, start_node.nextSibling);
-    start_node.parentNode.insertBefore(start_span_plain, start_node.nextSibling);
-    start_node.parentNode.removeChild(start_node);
+    // Insert the new spans
+    start_node.parentNode.insertBefore(start_span_plain, start_node);
+    start_node.parentNode.insertBefore(middle_span_glow, start_node);
   }
   else {
     if( start_node != null){
-      var start_span_plain = start_node.clone(false);
+      // Split the start node and set class/data/events
       var start_span_glow = start_node.clone(false);
-      start_span_plain.innerHTML = start_node.textContent.substr(0, start_node_offset);
       start_span_glow.innerHTML = start_node.textContent.substr(start_node_offset);
-
-      start_span_glow.setAttribute(
-        "data-annotationID" + annotation_id.toString(), annotation_id.toString());
+      start_node.innerHTML = start_node.textContent.substr(0, start_node_offset);
 
       var glow_depth = start_span_glow.getAttribute("data-annotationDepth");
       start_span_glow.setAttribute("data-annotationDepth",
         glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
+      start_span_glow.setAttribute(
+        "data-annotationID" + annotation_id.toString(), annotation_id.toString());
 
       start_span_glow.addClass('source_code_glowing_' +
         (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
@@ -161,23 +148,21 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start,
       start_span_glow.addEventListener("mouseover", hover_on_function);
       start_span_glow.addEventListener("mouseout", hover_off_function);
 
-      start_node.parentNode.insertBefore(start_span_plain, start_node.nextSibling);
-      start_span_plain.parentNode.insertBefore(start_span_glow, start_span_plain.nextSibling);
-      start_node.parentNode.removeChild(start_node);
+      start_node.parentNode.insertBefore(start_span_glow, start_node.nextSibling)
     }
 
     if (end_node != null){
-      var end_span_plain = end_node.clone(false);
+      // Split the end node and set class/data/events
+      //var end_span_plain = end_node.clone(false);
       var end_span_glow = end_node.clone(false);
-      end_span_plain.innerHTML = end_node.textContent.substr(end_node_offset);
       end_span_glow.innerHTML = end_node.textContent.substr(0, end_node_offset);
-
-      end_span_glow.setAttribute(
-        "data-annotationID" + annotation_id.toString(), annotation_id.toString());
+      end_node.innerHTML = end_node.textContent.substr(end_node_offset);
 
       var glow_depth = end_span_glow.getAttribute("data-annotationDepth");
       end_span_glow.setAttribute("data-annotationDepth",
         glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
+      end_span_glow.setAttribute(
+        "data-annotationID" + annotation_id.toString(), annotation_id.toString());
 
       end_span_glow.addClass('source_code_glowing_' +
         (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
@@ -185,39 +170,10 @@ SourceCodeLine.prototype.glowRangeSpans = function(annotation_id, node, start,
       end_span_glow.addEventListener("mouseover", hover_on_function);
       end_span_glow.addEventListener("mouseout", hover_off_function);
 
-      end_node.parentNode.insertBefore(end_span_glow, end_node.nextSibling);
-      end_span_glow.parentNode.insertBefore(end_span_plain, end_span_glow.nextSibling);
-      end_node.parentNode.removeChild(end_node);
+      end_node.parentNode.insertBefore(end_span_glow, end_node);
     }
   }
-
-  //// Add data attributes for use in unglow
-  //for (var i = 0; i < annotation_nodes.length; i++){
-  //  annotation_nodes[i].setAttribute(
-  //    "data-annotationID" + annotation_id.toString(),
-  //    annotation_id.toString());
-  //
-  //  var glow_depth = annotation_nodes[i].getAttribute("data-annotationDepth");
-  //  annotation_nodes[i].setAttribute(
-  //    "data-annotationDepth",
-  //    glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
-  //}
 }
-
-// Recursive method returns an array of all text nodes contained in node param
-SourceCodeLine.prototype.getAllTextNodes = function(node) {
-  var textNodes = [];
-  if (node.nodeType === 3) { // Push if text node
-    textNodes.push(node);
-  }
-  else if(node.nodeType === 1){ // Recursively return all contained text nodes
-    for (var i = 0; i < node.childNodes.length; i++) {
-      textNodes.push.apply(textNodes, this.getAllTextNodes(node.childNodes[i]));
-    }
-  }
-  return textNodes;
-}
-
 
 // Decrease a Source Code Line's glow depth
 SourceCodeLine.prototype.unGlow = function(annotation_id) {
@@ -236,12 +192,31 @@ SourceCodeLine.prototype.unGlow = function(annotation_id) {
           (parseInt(glow_depth) - 1).toString());
 
         textNodes[i].parentNode.removeClass("source_code_glowing_" + glow_depth);
+
+        // Remove mouse listeners if no longer glowing
+        if(parseInt(glow_depth)  == 1){
+          textNodes[i].parentNode.replaceChild(textNodes[i].clone(true), textNodes[i]);
+        }
       }
     }
   }
 
   // Decrease the glow depth
   this.decGlowDepth(1);
+}
+
+// Recursive method returns an array of all text nodes contained in node param
+SourceCodeLine.prototype.getAllTextNodes = function(node) {
+  var textNodes = [];
+  if (node.nodeType === 3) { // Push if text node
+    textNodes.push(node);
+  }
+  else if(node.nodeType === 1){ // Recursively return all contained text nodes
+    for (var i = 0; i < node.childNodes.length; i++) {
+      textNodes.push.apply(textNodes, this.getAllTextNodes(node.childNodes[i]));
+    }
+  }
+  return textNodes;
 }
 
 SourceCodeLine.prototype.incGlowDepth = function(amount) {
@@ -268,6 +243,7 @@ SourceCodeLine.prototype.isGlowing = function() {
   return this.getGlowDepth() > 0;
 }
 
+// ** I DONT THINK THIS IS BEING USED
 // Handle all observations, and store references in the functions so that
 // we can remove observations easily
 SourceCodeLine.prototype.observe = function(over_func, out_func) {

@@ -31,10 +31,9 @@ SourceCodeLineAnnotations.prototype.getAnnotationTextManager = function() {
 SourceCodeLineAnnotations.prototype.getAnnotationTextDisplayer = function() {
   return this.annotation_text_displayer;
 }
-
 // Annotate a single Source Code Line
-SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_num,
-                                                            column_start, column_end, annotation_text_id) {
+SourceCodeLineAnnotations.prototype.annotateLine = function(
+    annotation_id, line_num, column_start, column_end, annotation_text_id) {
   if (!this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
     throw("Attempting to annotate using an id that doesn't exist: " + annotation_text_id);
   }
@@ -47,25 +46,15 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(annotation_id, line_
 
   // Glow the Source Code Line
   var line = this.getLineManager().getLine(line_num);
-  line.glow(annotation_id, column_start, column_end, function(event) {
-      me.displayTextsForLine(line_num, annotation_id, event.pageX, event.pageY);
+  var this_ref = this;
+  line.glow(annotation_id, column_start, column_end,
+    function(event) {
+      this_ref.displayTextsForLine(line_num, event, event.pageX, event.pageY);
     },
     function(event) {
-      me.hideText();
+      this_ref.hideText();
     }
   );
-
-  // Add events so that when we mouse over this Source Code Line, we display
-  // the annotations
-  var me = this;
-
-  //line.getLineNode().addEventListener('mouseover', function(event) {
-  //  me.displayTextsForLine(line_num, event.pageX, event.pageY);
-  //});
-  //
-  //line.getLineNode().addEventListener('mouseout', function(event) {
-  //  me.hideText();
-  //});
 }
 
 // Annotate a Range of Source Code Lines
@@ -153,13 +142,14 @@ SourceCodeLineAnnotations.prototype.removeRelationship = function(annotation_id,
   this.setRelationships(this.getRelationships().without(relationship));
 }
 
-SourceCodeLineAnnotations.prototype.getAnnotationTextsForLineNum = function(line_num, annotation_id) {
+SourceCodeLineAnnotations.prototype.getAnnotationTextsForLineNum = function(line_num, annotation_ids) {
   var result = [];
 
   var relationships = this.getRelationships();
   for (var i = 0; i < relationships.length; i++) {
     var relationship = relationships[i];
-    if (relationship['line_num'] == line_num && relationship['annotation_id'] == annotation_id) {
+    if (relationship['line_num'] == line_num && annotation_ids.indexOf(
+        relationship['annotation_id'].toString()) >= 0) {
       result.push(this.getAnnotationTextManager().getAnnotationText(relationship['annotation_text_id']));
     }
   }
@@ -184,7 +174,14 @@ SourceCodeLineAnnotations.prototype.hideText = function() {
   this.getAnnotationTextDisplayer().hide();
 }
 
-SourceCodeLineAnnotations.prototype.displayTextsForLine = function(line_num, annotation_id, x, y) {
-  var texts = this.getAnnotationTextsForLineNum(line_num, annotation_id);
+SourceCodeLineAnnotations.prototype.displayTextsForLine = function(line_num, event, x, y) {
+  var annotationIDs = new Array();
+  for (var i = 0; i < event.srcElement.attributes.length; i++) {
+    var attribute = event.srcElement.attributes[i];
+    if (attribute.name.indexOf("data-annotationid") >= 0){
+      annotationIDs.push(attribute.value)
+    }
+  }
+  var texts = this.getAnnotationTextsForLineNum(line_num, annotationIDs);
   this.getAnnotationTextDisplayer().displayCollection(texts, x, y);
 }
