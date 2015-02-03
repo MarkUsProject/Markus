@@ -249,6 +249,8 @@ Markus::Application.routes.draw do
       end
 
       member do
+        get 'populate_term_marks_table'
+        get 'get_mark_columns'
         get 'grades'
         get 'g_table_paginate'
         post 'g_table_paginate'
