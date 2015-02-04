@@ -26,6 +26,17 @@
 					searchable: true
 				}
 			];
+			
+			<% for assignment in @assignments %>
+				columns.push({
+					id: 'assignment_' + <%= assignment.id %>,
+					content: '<%= assignment.short_identifier %>',
+					sortable: true,
+					compare: compare_anchor_text,
+					searchable: true
+				});
+			<% end %>
+
 			return {columns: columns};
 		},
 		getInitialState: function() {
@@ -67,7 +78,7 @@
 				cs['student_first_name'] = courseSummary.first_name;
 				cs['student_last_name'] = courseSummary.last_name;
 				return cs;
-			}.bind(this));
+			});
 
 			return (
 				<div>

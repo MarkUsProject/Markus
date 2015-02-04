@@ -4,14 +4,23 @@ module CourseSummariesHelper
 		all_students = Student.where(type: 'Student');
 		all_assignments = Assignment.all();
 
-		all_students.map do |student|
-			s = {}
-			s[:id] = student.id
-			s[:user_name] = student.user_name
-			s[:first_name] = student.first_name
-			s[:last_name] = student.last_name
-			s
+		studentList = all_students.map do |student|
+			{
+				:id => student.id,
+				:user_name => student.user_name,
+				:first_name => student.first_name,
+				:last_name => student.last_name
+			}
 		end
+
+		assignmentList = all_assignments.map do |assignment|
+			{
+				:id => assignment.id
+			}
+		end
+
+		json = { :students => studentList, :assignments => assignmentList }.to_json
+		studentList.to_json
 
 	end
 

@@ -3,6 +3,8 @@ class CourseSummariesController < ApplicationController
 
   def index
 
+    @assignments = Assignment.all();
+
     # get_data()
 
     # stu = Student.where(user_name: "g8butter").first;
