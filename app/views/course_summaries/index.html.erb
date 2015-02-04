@@ -1,0 +1,7 @@
+<%= content_for :head do %>
+  <%= render partial: 'course_summaries_table', formats: [:'js.jsx'], handlers: [:erb] %>
+<% end %>
+
+<div class='wrapLeft'>
+    <div id='course_summaries_table'></div>
+</div>

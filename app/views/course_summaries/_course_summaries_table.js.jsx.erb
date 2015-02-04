@@ -1,0 +1,84 @@
+<script type="text/jsx">
+	/** @jsx React.DOM */
+
+	var CourseSummariesTable = React.createClass({
+		getDefaultProps: function() {
+			var columns = [
+				{
+					id: 'student_user_name',
+					content: 'User Name',
+					sortable: true,
+					compare: compare_anchor_text,
+					searchable: true
+				},
+				{
+					id: 'student_first_name',
+					content: 'First Name',
+					sortable: true,
+					compare: compare_anchor_text,
+					searchable: true
+				},
+				{
+					id: 'student_last_name',
+					content: 'Last Name',
+					sortable: true,
+					compare: compare_anchor_text,
+					searchable: true
+				}
+			];
+			return {columns: columns};
+		},
+		getInitialState: function() {
+			return {
+				courseSummaries: []
+			};
+		},
+		componentWillMount: function() {
+			this.refresh();
+		},
+		// get info
+		refresh: function() {
+			document.getElementById('working').style.display = '';
+			jQuery.ajax({
+				url: 'course_summaries/populate',
+				method: 'GET',
+				dataType: 'json',
+				success: function(data) {
+					this.setState({
+						courseSummaries: data,
+					});
+				}.bind(this),
+				error: function(xhr, status, text) {
+					var error = text + ": " + xhr.responseText;
+					this.setState({
+						error: error
+					});
+				}.bind(this),
+				complete: function() {
+					document.getElementById('working').style.display = 'none';
+				}
+			});
+		},
+		render: function() {
+			var course_summaries_data = this.state.courseSummaries.map(function(courseSummary) {
+				var cs = {};
+				cs['id'] = courseSummary.id;
+				cs['student_user_name'] = courseSummary.user_name;
+				cs['student_first_name'] = courseSummary.first_name;
+				cs['student_last_name'] = courseSummary.last_name;
+				return cs;
+			}.bind(this));
+
+			return (
+				<div>
+					<Table data={course_summaries_data}
+						columns={this.props.columns}
+					/>
+				</div>
+			);
+		}
+	});
+
+	React.renderComponent(<CourseSummariesTable />, document.getElementById('course_summaries_table'));
+
+</script>
