@@ -77,6 +77,11 @@
 				cs['student_user_name'] = courseSummary.user_name;
 				cs['student_first_name'] = courseSummary.first_name;
 				cs['student_last_name'] = courseSummary.last_name;
+				<% for assignment in @assignments %>
+					var id = <%= assignment.id %>;
+					var key = "assignment_" + id;
+					cs[key] = courseSummary.marks[id-1];
+				<% end %>
 				return cs;
 			});
 
