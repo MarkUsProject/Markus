@@ -154,12 +154,13 @@ class GroupsController < ApplicationController
         if !@assignment.groupings.nil? && @assignment.groupings.length > 0
           @assignment.groupings.destroy_all
         end
+      end
         begin
           # Loop over each row, which lists the members to be added to the group.
           CSV.parse(file).each_with_index do |row, line_nr|
             begin
               # Potentially raises CSVInvalidLineError
-              collision_error = @assignment.add_csv_group(row)
+              collision_error = @assignment.add_csv_groups(file)
               unless collision_error.nil?
                 flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
                   { line_number: line_nr + 1 }) + " #{collision_error}")
