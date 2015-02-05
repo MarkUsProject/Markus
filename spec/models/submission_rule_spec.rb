@@ -7,14 +7,14 @@ describe SubmissionRule do
     let(:assignment) { create(:assignment) }
 
     it 'returns something other than nil' do
-      expect(assignment.submission_rule.calculate_collection_time).
-            to_not be_nil
+      expect(assignment.submission_rule.calculate_collection_time)
+            .to_not be_nil
     end
     
     it 'returns date value' do
       expect(assignment.submission_rule.
-             calculate_collection_time.to_date).
-             to be_kind_of(Date)
+             calculate_collection_time.to_date)
+             .to be_kind_of(Date)
     end
   end
   
@@ -23,18 +23,18 @@ describe SubmissionRule do
     let(:grouping) { create(:grouping) }
       
     it 'returns something other than nil' do
-      expect(assignment.submission_rule.
-             calculate_grouping_collection_time(grouping)).
-             to_not be_nil
+      expect(assignment.submission_rule
+             .calculate_grouping_collection_time(grouping))
+             .to_not be_nil
     end
       
     it 'returns date value' do
-      expect(assignment.submission_rule.
-             calculate_grouping_collection_time(grouping).
-             to_date).to be_kind_of(Date)
+      expect(assignment.submission_rule
+             .calculate_grouping_collection_time(grouping)
+             .to_date).to be_kind_of(Date)
     end
       
-      # create a new test that is triggered when grouping exists
+    # create a new test that is triggered when grouping exists
   end
   
 end
