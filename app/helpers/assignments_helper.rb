@@ -2,7 +2,7 @@ module AssignmentsHelper
 
   def add_assignment_file_link(name, form)
     link_to_function name do |page|
-        assignment_file = render(partial: 'assignment_file',
+      assignment_file = render(partial: 'assignment_file',
                                  locals: { form: form,
                                            assignment_file: AssignmentFile.new
                                  })
