@@ -13,7 +13,6 @@ module AssignmentsHelper
         if ($('assignment_only_required_files')){
           $('assignment_only_required_files').show();
           $('assignment_only_required_files_label').show();
-          
         }
       }
     end
