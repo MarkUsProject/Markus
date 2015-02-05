@@ -72,6 +72,12 @@ jQuery(document).ready(function() {
   // Hide the checkbox for "Required Files" by default
   jQuery('#assignment_only_required_files').hide();
   jQuery('#assignment_only_required_files_label').hide();
+  
+  
+  jQuery('#assignment_only_required_files_edit').show();
+  jQuery('#assignment_only_required_files_edit_label').show();
+  
+  
 });
 
 
