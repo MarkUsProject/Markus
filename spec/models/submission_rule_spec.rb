@@ -6,7 +6,7 @@ describe SubmissionRule do
   context '#calculate_collection_time' do
       let(:assignment) { create(:assignment) }
 
-      
+
     it 'returns something other than nil' do
       expect(assignment.submission_rule.calculate_collection_time).to_not be_nil
     end
@@ -29,7 +29,7 @@ describe SubmissionRule do
           expect(assignment.submission_rule.calculate_grouping_collection_time(grouping).to_date).to be_kind_of(Date)
       end
       
-      #create a new test that is triggered when grouping exists
+      # create a new test that is triggered when grouping exists
   end
   
 end
