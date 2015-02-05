@@ -4,8 +4,7 @@ describe SubmissionRule do
   it { is_expected.to belong_to(:assignment) }
   
   context '#calculate_collection_time' do
-      let(:assignment) { create(:assignment) }
-
+    let(:assignment) { create(:assignment) }
 
     it 'returns something other than nil' do
       expect(assignment.submission_rule.calculate_collection_time).to_not be_nil
