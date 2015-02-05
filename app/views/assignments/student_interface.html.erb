@@ -64,7 +64,8 @@
       <h2><%= t('student.group_information') %></h2>
 
       <div class='block_content'>
-        <% if @grouping.nil? %>
+        <% # If student has no group, inform them 
+        if @grouping.nil? %>
           <p class='notice'>
             <%= t('student.no_group_yet') %>
             <% if @assignment.past_collection_date? %>
@@ -115,7 +116,7 @@
                             { class: 'button',
                               confirm: t('student.decline_invitation') } %>
                 </div>
-                <div class='block_line'></div>
+                <!-- <div class='block_line'></div> not sure if this -->
             <% end %>
           <% end %>
 
@@ -157,24 +158,12 @@
           <% end %>
         <% else %>
           <%# Since the student has a group already, we display information about the group only %>
-
           <%# Check if groupname should be displayed %>
           <h3>
             <% if @assignment.group_name_displayed %>
               <%= @group.group_name %>
             <% else %>
               <%= t("student.your_group") %>
-            <% end %>
-            <% # If a group is valid, the current user is the inviter of the group and
-               # they are the _only_ member of this group, they should be possible to delete
-               # their group, provided there haven't been any files submitted.
-               if !@grouping.nil? && @grouping.deletable_by?(@current_user) %>
-              <%= link_to t(:delete),
-                          { action: 'deletegroup',
-                            id: @assignment.id },
-                          { confirm: t('student.confirm_delete_group'),
-                            title: t('student.delete_your_group'),
-                            class: 'delete' } %>
             <% end %>
           </h3>
           <% # Display group properties are read only warning
@@ -231,27 +220,54 @@
             <% end %>
           </ul>
 
-          <% if @grouping.inviter == @current_user &&
-                @assignment.student_form_groups &&
-                !@assignment.past_collection_date? %>
-            <%# Student not reached the group max and is not working alone %>
-            <% if @grouping.student_membership_number < @assignment.group_max &&
-                  @group.group_name != @current_user.user_name %>
-              <%= button_to_function t(:invite), 'invite(); return false;' %>
-            <%# Student has reached the group max and is not working alone %>
-            <% elsif @grouping.student_membership_number ==
-                     @assignment.group_max &&
-                     @group.group_name != @current_user.user_name %>
-              <%= button_to_function t(:invite), disabled: true %>
-            <% end %>
-          <% end %>
-
           <% # Display the URL of this group's repository if applicable
              if @grouping.repository_external_commits_only? %>
             <h3><%= t('student.url_group_repository') %></h3>
             <div class='sub_block'>
               <a href='<%= @grouping.group.repository_external_access_url %>'><%= @grouping.group.repository_external_access_url %></a>
             </div>
+          <% end %>
+        <% end %>
+
+
+        <% if !@group.nil? %>
+        <h3> Group Options </h3>
+
+          <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? %> <%# check if there could be a named repo but more than 1 person assigned to it %>
+            <p class='information'>
+              You have asked to work alone on this assignment. If you change your mind and want to form or join a group, first delete your group.
+            </p>
+          <% end %>
+
+            <% if @grouping.inviter == @current_user &&
+                @assignment.student_form_groups &&
+                !@assignment.past_collection_date? %>
+              <%# Student not reached the group max and is not working alone %>
+              <% if @grouping.student_membership_number < @assignment.group_max &&
+                  @group.group_name != @current_user.user_name %>
+                <%= button_to_function t(:invite), 'invite(); return false;' %>
+              <%# Student has reached the group max and is not working alone %>
+              <% elsif @grouping.student_membership_number ==
+                      @assignment.group_max &&
+                      @group.group_name != @current_user.user_name %>
+                <%# button_to_function t(:invite), disabled: true %>
+                <p class='information'> You may not add more people to your group at this time. </p>
+              <% end %>
+            <% else %>
+                <p class='information'> You may not modify your group at this time. </p>
+            <% end %>
+
+          <% # If a group is valid, the current user is the inviter of the group and
+           # they are the _only_ member of this group, they should be possible to delete
+           # their group, provided there haven't been any files submitted.
+           if !@grouping.nil? && @grouping.deletable_by?(@current_user) %>
+          <%= button_to t(:delete),
+                      { action: 'deletegroup',
+                        id: @assignment.id },
+                      { confirm: t('student.confirm_delete_group'),
+                        title: t('student.delete_your_group'),
+                        class: 'delete',
+                        method: :get } %>
           <% end %>
         <% end %>
 
@@ -274,12 +290,6 @@
             <li><%= t('student.invalid_override') %></li>
           <% else %>
             <li><%= t('student.student_work_alone') %></li>
-          <% end %>
-          <% if !@grouping.nil? %>
-            <li>
-              <%= raw(t('student.group_credits',
-                        available_grace_credits: @grouping.available_grace_credits)) %>
-            </li>
           <% end %>
         </ul>
       </div>

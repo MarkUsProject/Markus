@@ -11,12 +11,47 @@
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('message') %>:</span>
-    <span class='box clear'><%= @assignment.message %></span>
+    <%= @assignment.message %>
+    <!-- <span class='box clear'><%= @assignment.message %></span> -->
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('due_date') %>:</span>
     <%= I18n.l(@due_date, format: :long_date ) %>
   </div>
+    
+  
+  <div class='sub_block'>
+    <span class='prop_label'>Lateness Penalty:</span>
+    <% if @penalty.type == "GracePeriodSubmissionRule" %>
+      Grace Period
+    <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
+      Penalty Decay
+    <% elsif @penalty.type == "PenaltyPeriodSubmissionRule" %>
+      Penalty Period 
+    <% else @penalty.type == "NoLateSubmissionRule" %>
+      Late submissions are <b>not</b> allowed
+    <% end %>
+  </div>
+
+
+  <div class='sub_block'>
+    <span class='prop_label'>Penalty:</span>
+    <% if @penalty.type == "GracePeriodSubmissionRule" %>
+      <% if !@grouping.nil? %>
+          <%= raw(t('student.group_credits',
+                      available_grace_credits: @grouping.available_grace_credits)) %>
+      <% end %>
+    <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
+      Penalty Decay
+    <% elsif @penalty.type == "PenaltyPeriodSubmissionRule" %>
+      <ul>
+      <% @enum_penalty.each do |p| %> 
+        <li> After <%= p.hours < 1 ? (p.hours * 60).round : p.hours.round %> <%= p.hours < 1 ? "minutes" : (p.hours == 1 ? "hour" : "hours") %>, <%= p.deduction %>% will be deducted. </li>
+      <% end %>
+      </ul>
+    <% end %>
+  </div>
+
 
   <% if @assignment.display_grader_names_to_students %>
     <div class='sub_block'>
@@ -36,7 +71,7 @@
 
   <h3><%= t('assignment.required_files_read') %></h3>
   <% if @assignment.assignment_files.length == 0 %>
-    <%= t('assignment.no_required_files_read') %>
+    <p class='notice'> <%= t('assignment.no_required_files_read') %> </p>
   <% else %>
     <ul>
       <% @assignment.assignment_files.each do |assignment_file| %>
