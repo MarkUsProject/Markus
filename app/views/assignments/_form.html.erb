@@ -215,10 +215,10 @@
         <%= add_assignment_file_link t('assignment.add_required_file'), f %>
      </p>
      <br>
-     <% if @show_checkbox_required_files == true %>
+     <% if @show_checkbox_required_files %>
 	   <%= f.check_box :only_required_files,
-	                      checked: @assignment.only_required_files,
-	                      onclick: 'set_onbeforeunload(true);' 
+	                   checked: @assignment.only_required_files,
+	                   onclick: 'set_onbeforeunload(true);' 
 	   %>
 	   <%= f.label :only_required_files,
 	                 t('required_file_warning'),
@@ -226,9 +226,9 @@
 	   %>
 	 <% else %>
 	   <%= f.check_box :only_required_files,
-	                      { checked: @assignment.only_required_files,
-	                      id: "assignment_only_required_files_edit",
-	                      onclick: 'set_onbeforeunload(true);' }
+	                   { checked: @assignment.only_required_files,
+	                     id: "assignment_only_required_files_edit",
+	                     onclick: 'set_onbeforeunload(true);' }
 	   %>
 	   <%= f.label :only_required_files,
 	                 t('required_file_warning'),

@@ -385,7 +385,7 @@ class SubmissionsController < ApplicationController
         # check if only required files are allowed for a submission
         unless students_filename.length < 1 ||
                required_files.length == 0 ||
-               @assignment.only_required_files == false
+               !@assignment.only_required_files
           if !(students_filename - required_files).empty?
             @file_manager_errors[:size_conflict] =
             I18n.t('assignment.upload_file_requirement')
