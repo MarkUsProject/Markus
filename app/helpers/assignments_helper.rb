@@ -10,7 +10,7 @@ module AssignmentsHelper
         var new_assignment_file_id = new Date().getTime();
         $('assignment_files').insert({bottom: "#{ escape_javascript assignment_file }".replace(/(attributes_\\d+|\[\\d+\])/g, new_assignment_file_id) });
         $('assignment_assignment_files_' + new_assignment_file_id + '_filename').focus();
-        if ($('assignment_only_required_files')){
+        if ($('assignment_only_required_files')) {
           $('assignment_only_required_files').show();
           $('assignment_only_required_files_label').show();
         }
