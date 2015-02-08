@@ -304,8 +304,8 @@ TextAnnotation.blueprint do
   is_remark { false }
   annotation_text
     AnnotationText.make(
-      :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
-    )
+      annotation_category: AnnotationCategory.make(
+          assignment: submission_file.submission.grouping.assignment))
   annotation_number { rand(1000) + 1 }
 end
 
