@@ -296,16 +296,16 @@ TestResult.blueprint do
 end
 
 TextAnnotation.blueprint do
-  line_start {0}
-  line_end {1}
-  column_start {2}
-  column_end {3}
+  line_start { 0 }
+  line_end { 1 }
+  column_start { 2 }
+  column_end { 3 }
   submission_file
-  is_remark {false}
-  annotation_text {AnnotationText.make(
+  is_remark { false }
+  annotation_text { AnnotationText.make(
     :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
-    )}
-  annotation_number {rand(1000)+1}
+    ) }
+  annotation_number { rand(1000)+1 }
 end
 
 Token.blueprint do
