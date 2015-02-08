@@ -419,6 +419,10 @@ pt:
       download_groupings_files: "Baixar todas as submissões"
       sections:             "Sessão:"
       revision_history:     "%{num}: "
+      search_submissions:   "Pesquisa Submissões"
+
+    summaries_index:
+      search_summaries:     "Pesquisa Resumos"
 
     grade_entry_forms:
       blank_field: "Não pode ser branco"
