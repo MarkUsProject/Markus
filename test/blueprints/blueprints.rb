@@ -298,6 +298,8 @@ end
 TextAnnotation.blueprint do
   line_start {0}
   line_end {1}
+  column_start {2}
+  column_end {3}
   submission_file
   is_remark {false}
   annotation_text {AnnotationText.make(
