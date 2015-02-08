@@ -55,7 +55,7 @@ SourceCodeLine.prototype.glow = function(annotation_id, start, end,
       // Will need to split the node if the glow starts inside of it
       if (start != endCharCount) {
         // Save reference to span node, create span wrapper if blank space
-        if ( textNodes[i].parentNode.parentNode == node){
+        if (textNodes[i].parentNode.parentNode === node) {
           start_node = document.createElement("span");
           start_node.innerHTML = textNodes[i].textContent;
           textNodes[i].parentNode.replaceChild(start_node, textNodes[i]);
@@ -68,15 +68,15 @@ SourceCodeLine.prototype.glow = function(annotation_id, start, end,
       }
     }
     // Adds class/data/events to the nodes between the start and end
-    else if (foundStart && end >= endCharCount){
+    else if (foundStart && end >= endCharCount) {
       var glow_depth = textNodes[i].parentNode.getAttribute("data-annotationDepth");
       textNodes[i].parentNode.setAttribute("data-annotationDepth",
-        glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
-      textNodes[i].parentNode.setAttribute( "data-annotationID" +
+        glow_depth == null ? "1" : (parseInt(glow_depth, 10) + 1).toString());
+      textNodes[i].parentNode.setAttribute("data-annotationID" +
         annotation_id.toString(), annotation_id.toString());
 
       textNodes[i].parentNode.addClass('source_code_glowing_' +
-        (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
+        (glow_depth == null ? "1" : (parseInt(glow_depth, 10) + 1)));
 
       textNodes[i].parentNode.addEventListener("mouseover", hover_on_function);
       textNodes[i].parentNode.addEventListener("mouseout", hover_off_function);
@@ -85,7 +85,7 @@ SourceCodeLine.prototype.glow = function(annotation_id, start, end,
     // If foundStart & current node contains end, save (can be the start_node)
     if (foundStart && end < endCharCount && currentCharCount != end) {
       // Save reference to span node, create span wrapper if blank space
-      if ( textNodes[i].parentNode.parentNode == node){
+      if (textNodes[i].parentNode.parentNode === node) {
         end_node = document.createElement("span");
         end_node.innerHTML = textNodes[i].textContent;
         textNodes[i].parentNode.replaceChild(end_node, textNodes[i]);
@@ -100,78 +100,69 @@ SourceCodeLine.prototype.glow = function(annotation_id, start, end,
   }
 
   // If only a single node, change text and insert two new spans before it
-  if (start_node != null && end_node != null && start_node == end_node){
-    // Split the node into 3 spans
+  if (start_node != null && end_node != null && start_node === end_node) {
+    // Insert a plan node before where the glow should start
     var start_span_plain = start_node.clone(false);
-    var middle_span_glow = start_node.clone(false);
     start_span_plain.innerHTML = start_node.textContent.substr(0, start_node_offset);
-    middle_span_glow.innerHTML = start_node.textContent.substr(start_node_offset, end_node_offset - start_node_offset);
-    start_node.innerHTML = start_node.textContent.substr(end_node_offset);
+    start_node.innerHTML = start_node.textContent.substr(start_node_offset);
 
-    // Set class, data, and events
-    var glow_depth = middle_span_glow.getAttribute("data-annotationDepth");
-    middle_span_glow.setAttribute("data-annotationDepth",
-      glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
-    middle_span_glow.setAttribute(
-      "data-annotationID" + annotation_id.toString(), annotation_id.toString());
-
-    middle_span_glow.addClass('source_code_glowing_' +
-      (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
-
-    middle_span_glow.addEventListener("mouseover", hover_on_function);
-    middle_span_glow.addEventListener("mouseout", hover_off_function);
-    if (start_node.hasClass("source_code_glowing_1")){
+    // Maintain events
+    if (start_node.hasClass("source_code_glowing_1")) {
       start_span_plain.addEventListener("mouseover", hover_on_function);
       start_span_plain.addEventListener("mouseout", hover_off_function);
     }
 
-    // Insert the new spans
+    // Insert the new plain span
     start_node.parentNode.insertBefore(start_span_plain, start_node);
-    start_node.parentNode.insertBefore(middle_span_glow, start_node);
+
+    // Split and glow the rest
+    this.splitAndGlowSpan(start_node, end_node_offset - start_node_offset, false,
+      annotation_id, hover_on_function, hover_off_function);
   }
   else {
-    if( start_node != null){
+    if(start_node != null) {
       // Split the start node and set class/data/events
-      var start_span_glow = start_node.clone(false);
-      start_span_glow.innerHTML = start_node.textContent.substr(start_node_offset);
-      start_node.innerHTML = start_node.textContent.substr(0, start_node_offset);
-
-      var glow_depth = start_span_glow.getAttribute("data-annotationDepth");
-      start_span_glow.setAttribute("data-annotationDepth",
-        glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
-      start_span_glow.setAttribute(
-        "data-annotationID" + annotation_id.toString(), annotation_id.toString());
-
-      start_span_glow.addClass('source_code_glowing_' +
-        (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
-
-      start_span_glow.addEventListener("mouseover", hover_on_function);
-      start_span_glow.addEventListener("mouseout", hover_off_function);
-
-      start_node.parentNode.insertBefore(start_span_glow, start_node.nextSibling)
+      this.splitAndGlowSpan(start_node, start_node_offset, true,
+        annotation_id, hover_on_function, hover_off_function);
     }
 
-    if (end_node != null){
+    if (end_node != null) {
       // Split the end node and set class/data/events
-      //var end_span_plain = end_node.clone(false);
-      var end_span_glow = end_node.clone(false);
-      end_span_glow.innerHTML = end_node.textContent.substr(0, end_node_offset);
-      end_node.innerHTML = end_node.textContent.substr(end_node_offset);
-
-      var glow_depth = end_span_glow.getAttribute("data-annotationDepth");
-      end_span_glow.setAttribute("data-annotationDepth",
-        glow_depth == null ? "1" : (parseInt(glow_depth) + 1).toString());
-      end_span_glow.setAttribute(
-        "data-annotationID" + annotation_id.toString(), annotation_id.toString());
-
-      end_span_glow.addClass('source_code_glowing_' +
-        (glow_depth == null ? "1" : (parseInt(glow_depth) + 1)));
-
-      end_span_glow.addEventListener("mouseover", hover_on_function);
-      end_span_glow.addEventListener("mouseout", hover_off_function);
-
-      end_node.parentNode.insertBefore(end_span_glow, end_node);
+      this.splitAndGlowSpan(end_node, end_node_offset, false,
+        annotation_id, hover_on_function, hover_off_function);
     }
+  }
+}
+
+// Split span node and apply class/data/events
+// If glow_end is true, the glow will be after the original span
+SourceCodeLine.prototype.splitAndGlowSpan= function(span_node, node_offset,
+  glow_end, annotation_id, hover_on_function, hover_off_function) {
+
+  var span_glow = span_node.clone(false);
+
+  var glow_depth = span_glow.getAttribute("data-annotationDepth");
+  span_glow.setAttribute("data-annotationDepth",
+    glow_depth == null ? "1" : (parseInt(glow_depth, 10) + 1).toString());
+  span_glow.setAttribute(
+    "data-annotationID" + annotation_id.toString(), annotation_id.toString());
+
+  span_glow.addClass('source_code_glowing_' +
+  (glow_depth == null ? "1" : (parseInt(glow_depth, 10) + 1)));
+
+  span_glow.addEventListener("mouseover", hover_on_function);
+  span_glow.addEventListener("mouseout", hover_off_function);
+
+
+  if (glow_end){
+    span_glow.innerHTML = span_node.textContent.substr(node_offset);
+    span_node.innerHTML = span_node.textContent.substr(0, node_offset);
+    span_node.parentNode.insertBefore(span_glow, span_node.nextSibling)
+  }
+  else {
+    span_glow.innerHTML = span_node.textContent.substr(0, node_offset);
+    span_node.innerHTML = span_node.textContent.substr(node_offset);
+    span_node.parentNode.insertBefore(span_glow, span_node);
   }
 }
 
@@ -182,19 +173,19 @@ SourceCodeLine.prototype.unGlow = function(annotation_id) {
     var textNodes = this.getAllTextNodes(this.getLineNode());
 
     // Create an array of glow nodes (spans)
-    for (var i = 0; i < textNodes.length; i++){
+    for (var i = 0; i < textNodes.length; i++) {
       if (textNodes[i].parentNode.getAttribute(
-          "data-annotationID" + annotation_id.toString()) == annotation_id.toString()){
+          "data-annotationID" + annotation_id.toString()) == annotation_id.toString()) {
         // Check and update the glow depth to handle nested annotations
         var glow_depth = textNodes[i].parentNode.getAttribute("data-annotationDepth");
         textNodes[i].parentNode.setAttribute(
           "data-annotationDepth",
-          (parseInt(glow_depth) - 1).toString());
+          (parseInt(glow_depth, 10) - 1).toString());
 
         textNodes[i].parentNode.removeClass("source_code_glowing_" + glow_depth);
 
         // Remove mouse listeners if no longer glowing
-        if(parseInt(glow_depth)  == 1){
+        if(parseInt(glow_depth, 10)  == 1) {
           textNodes[i].parentNode.replaceChild(textNodes[i].clone(true), textNodes[i]);
         }
       }
@@ -211,7 +202,7 @@ SourceCodeLine.prototype.getAllTextNodes = function(node) {
   if (node.nodeType === 3) { // Push if text node
     textNodes.push(node);
   }
-  else if(node.nodeType === 1){ // Recursively return all contained text nodes
+  else if(node.nodeType === 1) { // Recursively return all contained text nodes
     for (var i = 0; i < node.childNodes.length; i++) {
       textNodes.push.apply(textNodes, this.getAllTextNodes(node.childNodes[i]));
     }
