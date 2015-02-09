@@ -438,6 +438,7 @@ fr:
       sections:             "Section :"
 
     course_summaries_index:
+      page_title:     "Sommaire"
       user_name:      "Nom d'utilisateur"
       first_name:     "Prénom"
       last_name:      "Nom De Famille"

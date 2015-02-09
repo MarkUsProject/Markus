@@ -421,6 +421,7 @@ pt:
       revision_history:     "%{num}: "
 
     course_summaries_index:
+      page_title:     "Sumário"
       user_name:      "Nome de Usuário"
       first_name:     "Primeiro Nome"
       last_name:      "Sobrenome"

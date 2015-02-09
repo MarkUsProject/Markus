@@ -459,6 +459,7 @@ en:
       sections:             "Section:"
 
     course_summaries_index:
+        page_title:     "Summary"
         user_name:      "User Name"
         first_name:     "First Name"
         last_name:      "Last Name"
