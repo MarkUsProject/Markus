@@ -1,11 +1,11 @@
 module CourseSummariesHelper
-	###
-	#  Get JSON data for the table in the form of
-	#  { id: student_id, user_name: student.user_name,
-	#    first_name: student.first_name, last_name: student.last_name
-	#    marks: [ // an array of marks for each assignment, null if no grade ] }
-	###
-	def get_table_json_data
+    ###
+    #  Get JSON data for the table in the form of
+    #  { id: student_id, user_name: student.user_name,
+    #    first_name: student.first_name, last_name: student.last_name
+    #    marks: [ // an array of marks for each assignment, null if no grade ] }
+    ###
+    def get_table_json_data
 		all_students = Student.where(type: 'Student');
 		all_assignments = Assignment.all;
 
@@ -20,7 +20,6 @@ module CourseSummariesHelper
 		end
 
 		studentList.to_json
-
 	end
 
 	# Get marks for all assignments for a student 
