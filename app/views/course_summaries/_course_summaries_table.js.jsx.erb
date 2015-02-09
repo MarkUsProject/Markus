@@ -6,21 +6,21 @@
 			var columns = [
 				{
 					id: 'student_user_name',
-					content: 'User Name',
+					content: '<%= j raw I18n.t('course_summaries_index.user_name') %>',
 					sortable: true,
 					compare: compare_anchor_text,
 					searchable: true
 				},
 				{
 					id: 'student_first_name',
-					content: 'First Name',
+					content: '<%= j raw I18n.t('course_summaries_index.first_name') %>',
 					sortable: true,
 					compare: compare_anchor_text,
 					searchable: true
 				},
 				{
 					id: 'student_last_name',
-					content: 'Last Name',
+					content: '<%= j raw I18n.t('course_summaries_index.last_name') %>',
 					sortable: true,
 					compare: compare_anchor_text,
 					searchable: true
@@ -80,7 +80,11 @@
 				<% for assignment in @assignments %>
 					var id = <%= assignment.id %>;
 					var key = "assignment_" + id;
-					cs[key] = courseSummary.marks[id-1];
+					var value = courseSummary.marks[id-1];
+					if (value == null) {
+						value = '<%= j raw I18n.t('course_summaries_index.ngr') %>'
+					}
+					cs[key] = value;
 				<% end %>
 				return cs;
 			});

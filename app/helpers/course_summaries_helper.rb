@@ -1,6 +1,12 @@
 module CourseSummariesHelper
 
-	def get_data()
+	###
+	# Get JSON data for the table in the form of
+	# { id: student_id, user_name: student.user_name,
+	#   first_name: student.first_name, last_name: student.last_name
+	#   marks: [ // an array of marks for each assignment, null if no grade ] }
+	###
+	def get_table_json_data()
 		all_students = Student.where(type: 'Student');
 		all_assignments = Assignment.all();
 
@@ -10,22 +16,16 @@ module CourseSummariesHelper
 				:user_name => student.user_name,
 				:first_name => student.first_name,
 				:last_name => student.last_name,
-				:marks => get_marks_for_student_for_assignment(student, all_assignments)
+				:marks => get_marks_for_all_assignments_for_student(student, all_assignments)
 			}
 		end
 
-		assignmentList = all_assignments.map do |assignment|
-			{
-				:id => assignment.id
-			}
-		end
-
-		json = { :students => studentList, :assignments => assignmentList }.to_json
 		studentList.to_json
 
 	end
 
-	def get_marks_for_student_for_assignment(student, all_assignments)
+	# Get marks for all assignments for a student 
+	def get_marks_for_all_assignments_for_student(student, all_assignments)
 		marks = []
 		all_assignments.each do |assignment|
 			marks[assignment.id-1] = get_mark_for_assignment_and_student(assignment, student)
@@ -33,6 +33,7 @@ module CourseSummariesHelper
 		marks
 	end
 
+	# Get mark for a perticular assignment for a student
 	def get_mark_for_assignment_and_student(assignment, student)
 		grouping = get_grouping_for_user_for_assignment(student, assignment)
 		if (grouping)
@@ -52,11 +53,11 @@ module CourseSummariesHelper
 		if (memberships.count == 0)
 			return nil
 		end
-		grouping = get_grouping_for_assignment(memberships, assignment)
+		grouping = get_grouping_for_assignment_for_memberships(memberships, assignment)
 		return grouping
 	end
 
-	def get_grouping_for_assignment(memberships, assignment)
+	def get_grouping_for_assignment_for_memberships(memberships, assignment)
 		memberships.each do |membership|
 			grouping = Grouping.where(id: membership.grouping_id).first
 			if (grouping.assignment_id == assignment.id)

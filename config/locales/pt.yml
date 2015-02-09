@@ -420,6 +420,12 @@ pt:
       sections:             "Sessão:"
       revision_history:     "%{num}: "
 
+    course_summaries_index:
+      user_name:      "Nome de Usuário"
+      first_name:     "Primeiro Nome"
+      last_name:      "Sobrenome"
+      ngr:            "Sem Grade recebida"
+
     grade_entry_forms:
       blank_field: "Não pode ser branco"
       invalid_name: "já foi utilizado"

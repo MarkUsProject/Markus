@@ -458,6 +458,12 @@ en:
       section:              "Section"
       sections:             "Section:"
 
+    course_summaries_index:
+        user_name:      "User Name"
+        first_name:     "First Name"
+        last_name:      "Last Name"
+        ngr:            "No Grade Received"
+
     grade_entry_forms:
       blank_field: "can't be blank"
       invalid_name: "is already taken"

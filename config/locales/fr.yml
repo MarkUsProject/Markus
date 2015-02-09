@@ -437,6 +437,12 @@ fr:
       section:              "Section"
       sections:             "Section :"
 
+    course_summaries_index:
+      user_name:      "Nom d'utilisateur"
+      first_name:     "Prénom"
+      last_name:      "Nom De Famille"
+      ngr:            "Aucune note reçue"
+
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
       invalid_name: "est déjà utilisé"
