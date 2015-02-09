@@ -23,7 +23,8 @@ class SubmissionsController < ApplicationController
                          :collect_ta_submissions,
                          :repo_browser,
                          :update_converted_pdfs,
-                         :update_submissions]
+                         :update_submissions,
+                         :populate_submissions_table]
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
                        :index,
@@ -34,7 +35,8 @@ class SubmissionsController < ApplicationController
                        :repo_browser,
                        :download_groupings_files,
                        :update_converted_pdfs,
-                       :update_submissions]
+                       :update_submissions,
+                       :populate_submissions_table]
   before_filter :authorize_for_student,
                 only: [:file_manager,
                        :populate_file_manager,
