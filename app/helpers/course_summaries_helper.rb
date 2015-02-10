@@ -1,10 +1,10 @@
 module CourseSummariesHelper
-  ###
+  #
   #  Get JSON data for the table in the form of
   #  { id: student_id, user_name: student.user_name,
   #    first_name: student.first_name, last_name: student.last_name
   #    marks: [ // an array of marks for each assignment, null if no grade ] }
-  ###
+  #
   def get_table_json_data
     all_students = Student.where(type: 'Student');
     all_assignments = Assignment.all;
@@ -15,11 +15,12 @@ module CourseSummariesHelper
         :user_name => student.user_name,
         :first_name => student.first_name,
         :last_name => student.last_name,
-        :marks => get_mark_for_all_assignments_for_student(student, all_assignments)
+        :marks => \
+          get_mark_for_all_assignments_for_student(student, all_assignments)
       }
     end
       studentList.to_json
-    end
+  end
 
   # Get marks for all assignments for a student 
   def get_mark_for_all_assignments_for_student(student, all_assignments)
@@ -34,11 +35,11 @@ module CourseSummariesHelper
   # Get mark for a perticular assignment for a student
   def get_mark_for_assignment_and_student(assignment, student)
     grouping = get_grouping_for_user_for_assignment(student, assignment)
-    if (grouping)
+    if grouping
       submission = Submission.where(grouping_id: grouping.id).first
-      if (submission)
+      if submission
         result = Result.where(submission_id: submission.id).first
-        if (result)
+        if result
           return result.total_mark
         end
       end
