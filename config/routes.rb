@@ -303,8 +303,8 @@ Markus::Application.routes.draw do
 
     resources :course_summaries do
       collection do
-          get 'populate'
-        end
+        get 'populate'
+      end
     end
 
     resources :sections

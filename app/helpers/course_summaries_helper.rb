@@ -22,7 +22,7 @@ module CourseSummariesHelper
       student_list.to_json
   end
 
-  # Get marks for all assignments for a student 
+  # Get marks for all assignments for a student
   def get_mark_for_all_assignments_for_student(student, all_assignments)
     marks = []
     all_assignments.each do |assignment|
