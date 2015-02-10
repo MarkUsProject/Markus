@@ -9,15 +9,17 @@ module CourseSummariesHelper
     all_students = Student.where(type: 'Student')
     all_assignments = Assignment.all
 
-    studentList = all_students.map do |student|
-      { :id => student.id,
-        :user_name => student.user_name,
-        :first_name => student.first_name,
-        :last_name => student.last_name,
-        :marks => \
-          get_mark_for_all_assignments_for_student(student, all_assignments) }
+    student_list = all_students.map do |student|
+      {
+      id: student.id,
+      user_name: student.user_name,
+      first_name: student.first_name,
+      last_name: student.last_name,
+      marks: \
+        get_mark_for_all_assignments_for_student(student, all_assignments)
+      }
     end
-      studentList.to_json
+      student_list.to_json
   end
 
   # Get marks for all assignments for a student 
@@ -49,8 +51,7 @@ module CourseSummariesHelper
     if (memberships.count == 0)
       return nil
     end
-    grouping = \
-      get_grouping_for_assignment_for_membership(memberships, assignment)
+    get_grouping_for_assignment_for_membership(memberships, assignment)
   end
 
   def get_grouping_for_assignment_for_membership(memberships, assignment)
