@@ -11,12 +11,12 @@ module CourseSummariesHelper
 
     studentList = all_students.map do |student|
       {
-        :id => student.id,
-        :user_name => student.user_name,
-        :first_name => student.first_name,
-        :last_name => student.last_name,
-        :marks => \
-          get_mark_for_all_assignments_for_student(student, all_assignments)
+      :id => student.id,
+      :user_name => student.user_name,
+      :first_name => student.first_name,
+      :last_name => student.last_name,
+      :marks => \
+        get_mark_for_all_assignments_for_student(student, all_assignments)
       }
     end
       studentList.to_json
@@ -44,7 +44,6 @@ module CourseSummariesHelper
         end
       end
     end
-    return nil
   end
 
   def get_grouping_for_user_for_assignment(student, assignment)
@@ -54,7 +53,6 @@ module CourseSummariesHelper
     end
     grouping = \
       get_grouping_for_assignment_for_membership(memberships, assignment)
-    return grouping
   end
 
   def get_grouping_for_assignment_for_membership(memberships, assignment)
@@ -64,6 +62,5 @@ module CourseSummariesHelper
         return grouping
       end
     end
-    return nil
   end
 end
