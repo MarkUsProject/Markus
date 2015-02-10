@@ -6,18 +6,16 @@ module CourseSummariesHelper
   #    marks: [ // an array of marks for each assignment, null if no grade ] }
   #
   def get_table_json_data
-    all_students = Student.where(type: 'Student');
-    all_assignments = Assignment.all;
+    all_students = Student.where(type: 'Student')
+    all_assignments = Assignment.all
 
     studentList = all_students.map do |student|
-      {
-      :id => student.id,
-      :user_name => student.user_name,
-      :first_name => student.first_name,
-      :last_name => student.last_name,
-      :marks => \
-        get_mark_for_all_assignments_for_student(student, all_assignments)
-      }
+      { :id => student.id,
+        :user_name => student.user_name,
+        :first_name => student.first_name,
+        :last_name => student.last_name,
+        :marks => \
+          get_mark_for_all_assignments_for_student(student, all_assignments) }
     end
       studentList.to_json
   end
@@ -62,5 +60,6 @@ module CourseSummariesHelper
         return grouping
       end
     end
+    nil
   end
 end
