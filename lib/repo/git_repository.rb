@@ -394,7 +394,7 @@ module Repository
       #if @repos_admin # Are we admin?
       # Adds a user with given permissions to the repository
 
-      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE])
       repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
 
       # Gets permissions of a particular user
@@ -403,7 +403,6 @@ module Repository
           return self.class.__translate_perms_from_file(perm[0])
         end
       end
-
       raise UserNotFound.new(user_id + " not found")
 
       #else
@@ -447,7 +446,7 @@ module Repository
 
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
-        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE])
         repo_name = self.get_repos.workdir.split('/').last
 
         repo = ga_repo.config.get_repo(repo_name)
