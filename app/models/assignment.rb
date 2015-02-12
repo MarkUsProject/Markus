@@ -510,8 +510,8 @@ class Assignment < ActiveRecord::Base
       # Create a new Grouping for this assignment and the newly
       # crafted group
       # Form groups
-      start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
-      student_list << Student.where(user_name: row[start_index_group_members..(row.length - 1)])
+      # first field is the group-name, second the repo name, so start at field 3
+      student_list << Student.where(user_name: row[2..(row.length - 1)])
     end
     Group.import group_list
     groups = Group.where(group_name: group_search)
