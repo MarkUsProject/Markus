@@ -36,13 +36,13 @@ class ResultsController < ApplicationController
     @assignment = @result.submission.assignment
     @submission = @result.submission
 
-    @old_result = nil
     if @submission.remark_submitted?
-      @old_result = Result.all(conditions: ['submission_id = ?', @submission.id],
-                               order: ['id ASC'])[0]
+      @old_result = Result.find_by(submission_id: @submission.id)
+    else
+      @old_result = nil
     end
 
-    @annotation_categories = @assignment.annotation_categories
+    #@annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
     @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
     @group = @grouping.group
