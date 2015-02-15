@@ -244,7 +244,7 @@ class SubmissionsController < ApplicationController
 
   def browse
     @assignment = Assignment.find(params[:assignment_id])
-    @groupings = get_groupings_for_assignment(@assignment, current_user)
+    @groupings = Grouping.get_groupings_for_assignment(@assignment, current_user)
   end
 
   def populate_submissions_table

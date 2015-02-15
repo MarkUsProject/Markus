@@ -77,20 +77,7 @@ class ResultsController < ApplicationController
 
     groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                       current_user)
-
-
-    # If a grouping's submission's marking_status is complete, we're not going
-    # to include them in the next_submission/prev_submission list
-
-    # If a grouping doesn't have a submission, and we are past the collection time,
-    # we *DO* want to include them in the list.
-    collection_time = @assignment.submission_rule.calculate_collection_time.localtime
-
-    groupings.delete_if do |grouping|
-      grouping != @grouping && ((!grouping.has_submission? && (Time.zone.now < collection_time)))
-    end
-
-    # We sort by Group name by default
+    # We sort by group name by default
     groupings = groupings.sort do |a, b|
       a.group.group_name <=> b.group.group_name
     end
@@ -100,13 +87,14 @@ class ResultsController < ApplicationController
       @next_grouping = groupings.first
       @previous_grouping = groupings.last
     else
-      unless groupings[current_grouping_index + 1].nil?
+      if current_grouping_index + 1 < groupings.length
         @next_grouping = groupings[current_grouping_index + 1]
       end
       if (current_grouping_index - 1) >= 0
         @previous_grouping = groupings[current_grouping_index - 1]
       end
     end
+
     m_logger = MarkusLogger.instance
     m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
                  "of assignment '#{@assignment.short_identifier}' for group '" +
