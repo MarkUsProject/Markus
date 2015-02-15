@@ -151,7 +151,8 @@
           <Table data={summaries_data}
             columns={this.props.columns}
             filters={this.props.filters}
-            filter_type={true} />
+            filter_type={true}
+            search_placeholder={'<%= j raw I18n.t('summaries_index.search_summaries') %>'}/>
         </div>
       );
     }

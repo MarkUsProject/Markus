@@ -422,6 +422,7 @@ fr:
       download_groupings_files: "Télécharger tous les envois"
       sections:             "Section :"
       revision_history:     "%{num} : "
+      search_submissions:   "Rechercher Soumissions"
 
     summaries_index:
       group_name:           "Nom du groupe"
@@ -436,6 +437,7 @@ fr:
       filename:             "Fichier"
       section:              "Section"
       sections:             "Section :"
+      search_summaries:     "Rechercher Résumés"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
