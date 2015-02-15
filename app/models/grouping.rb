@@ -668,6 +668,22 @@ class Grouping < ActiveRecord::Base
     end
   end
 
+  def self.get_groupings_for_assignment(assignment, user)
+    if user.ta?
+      assignment.ta_memberships.find_all_by_user_id(current_user)
+                .select { |m| m.grouping.is_valid? }
+                .map { |m| m.grouping }
+    else
+      assignment.groupings
+                .includes(:assignment,
+                          :group,
+                          :grace_period_deductions,
+                          current_submission_used: :results,
+                          accepted_student_memberships: :user)
+                .select { |g| g.non_rejected_student_memberships.size > 0 }
+    end
+  end
+
   private
 
   # Once a grouping is valid, grant (write) repository permissions for students

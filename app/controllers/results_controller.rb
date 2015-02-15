@@ -42,7 +42,6 @@ class ResultsController < ApplicationController
       @old_result = nil
     end
 
-    #@annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
     @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
     @group = @grouping.group
@@ -76,20 +75,9 @@ class ResultsController < ApplicationController
       @result.update_total_mark
     end
 
-    # Get the previous and the next submission
-    # FIXME right now, the groupings are ordered by grouping's id. Having a
-    # more natural grouping order would be nice.
-    if current_user.ta?
-       groupings = @assignment.ta_memberships.find_all_by_user_id(
-                      current_user.id,
-                      include: [grouping: :group],
-                      order: 'id ASC').collect do |m|
-         m.grouping
-       end
-    elsif current_user.admin?
-      groupings = @assignment.groupings.all(include: :group,
-                                            order: 'id ASC')
-    end
+    groupings = Grouping.get_groupings_for_assignment(@assignment,
+                                                      current_user)
+
 
     # If a grouping's submission's marking_status is complete, we're not going
     # to include them in the next_submission/prev_submission list
