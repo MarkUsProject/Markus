@@ -1,4 +1,5 @@
 Markus::Application.routes.draw do
+
   # Install the default routes as the lowest priority.
   root controller: 'main', action: 'login', via: [:post, :get]
 
@@ -299,6 +300,12 @@ Markus::Application.routes.draw do
         get 'student_interface'
         get 'notes_dialog'
         post 'grades'
+      end
+    end
+
+    resources :course_summaries do
+      collection do
+        get 'populate'
       end
     end
 
