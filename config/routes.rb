@@ -307,6 +307,12 @@ Markus::Application.routes.draw do
       end
     end
 
+    resources :marking_schemes do
+      collection do
+        get 'populate'
+      end
+    end
+
     resources :sections
 
     resources :annotations do
