@@ -37,7 +37,7 @@ class ResultsController < ApplicationController
     @submission = @result.submission
 
     if @submission.remark_submitted?
-      @old_result = Result.find_by(submission_id: @submission.id)
+      @old_result = Result.where(submission_id: @submission.id).first
     else
       @old_result = nil
     end
@@ -87,7 +87,7 @@ class ResultsController < ApplicationController
       @next_grouping = groupings.first
       @previous_grouping = groupings.last
     else
-      if current_grouping_index + 1 < groupings.length
+      unless groupings[current_grouping_index + 1].nil?
         @next_grouping = groupings[current_grouping_index + 1]
       end
       if (current_grouping_index - 1) >= 0

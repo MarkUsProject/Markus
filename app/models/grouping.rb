@@ -670,7 +670,7 @@ class Grouping < ActiveRecord::Base
 
   def self.get_groupings_for_assignment(assignment, user)
     if user.ta?
-      assignment.ta_memberships.find_all_by_user_id(current_user)
+      assignment.ta_memberships.find_all_by_user_id(user)
                 .select { |m| m.grouping.is_valid? }
                 .map { |m| m.grouping }
     else
