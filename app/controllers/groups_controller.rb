@@ -154,34 +154,36 @@ class GroupsController < ApplicationController
         if !@assignment.groupings.nil? && @assignment.groupings.length > 0
           @assignment.groupings.destroy_all
         end
-        begin
-          # Loop over each row, which lists the members to be added to the group.
-          CSV.parse(file).each_with_index do |row, line_nr|
-            begin
+      end
+        # begin
+        #   # Loop over each row, which lists the members to be added to the group.
+        #   CSV.parse(file).each_with_index do |row, line_nr|
+            # begin
               # Potentially raises CSVInvalidLineError
-              collision_error = @assignment.add_csv_group(row)
-              unless collision_error.nil?
-                flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
-                  { line_number: line_nr + 1 }) + " #{collision_error}")
-              end
-            rescue CSVInvalidLineError => e
-              flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
-                { line_number: line_nr + 1 }) + " #{e.message}")
-            end
-          end
+              # collision_error = @assignment.add_csv_group(row)
+      @assignment.add_csv_groups(file)
+              # unless collision_error.nil?
+              #   flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
+              #     { line_number: line_nr + 1 }) + " #{collision_error}")
+              # end
+            # rescue CSVInvalidLineError => e
+            #   flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
+            #     { line_number: line_nr + 1 }) + " #{e.message}")
+            # end
+          # end
           @assignment.reload # Need to reload to get newly created groupings
-          number_groupings_added = @assignment.groupings.length
-          if number_groupings_added > 0 && flash[:error].is_a?(Array)
-            invalid_lines_count = flash[:error].length
-            flash[:notice] = I18n.t('csv.groups_added_msg', { number_groups:
-              number_groupings_added, number_lines: invalid_lines_count })
-          end
-        rescue Exception
-          # We should only get here if something *really* bad/unexpected
-          # happened.
-          flash_message(:error, I18n.t('csv.groups_unrecoverable_error'))
-          raise ActiveRecord::Rollback
-        end
+          # number_groupings_added = @assignment.groupings.length
+          # if number_groupings_added > 0 && flash[:error].is_a?(Array)
+          #   invalid_lines_count = flash[:error].length
+          #   flash[:notice] = I18n.t('csv.groups_added_msg', { number_groups:
+          #     number_groupings_added, number_lines: invalid_lines_count })
+          # end
+        # rescue Exception
+        #   # We should only get here if something *really* bad/unexpected
+        #   # happened.
+        #   flash_message(:error, I18n.t('csv.groups_unrecoverable_error'))
+        #   raise ActiveRecord::Rollback
+        # end
       end
       # Need to reestablish repository permissions.
       # This is not handled by the roll back.

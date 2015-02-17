@@ -452,7 +452,13 @@ module Repository
       if !Repository.conf[:IS_REPOSITORY_ADMIN] # Are we admin?
         raise NotAuthorityError.new("Unable to set bulk permissions:  Not in authoritative mode!");
       end
-
+      # Check if configuration is in order
+      if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
+        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
+      end
+      if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "w").close() # create file if not existent
+      end
       # Read in the authz file
       authz_file_contents = self.__read_in_authz_file()
 
@@ -487,7 +493,13 @@ module Repository
       if !Repository.conf[:IS_REPOSITORY_ADMIN] # Are we admin?
         raise NotAuthorityError.new("Unable to delete bulk permissions:  Not in authoritative mode!");
       end
-
+      # Check if configuration is in order
+      if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
+        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
+      end
+      if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "w").close() # create file if not existent
+      end
       # Read in the authz file
       authz_file_contents = self.__read_in_authz_file()
 
@@ -525,13 +537,6 @@ module Repository
 
     # Semi-private class method: Reads in Repository.conf[:REPOSITORY_PERMISSION_FILE]
     def self.__read_in_authz_file
-      # Check if configuration is in order
-      if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
-        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
-      end
-      if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
-        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "w").close() # create file if not existent
-      end
       # Load up the Permissions:
       file_content = ""
       File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "r+") do |auth_file|
@@ -545,20 +550,6 @@ module Repository
     # Semi-private class method: Writes out Repository.conf[:REPOSITORY_PERMISSION_FILE]
     def self.__write_out_authz_file(authz_file_contents)
       # Check if configuration is in order
-      if Repository.conf[:IS_REPOSITORY_ADMIN].nil?
-        raise ConfigurationError.new("Required config 'IS_REPOSITORY_ADMIN' not set")
-      end
-      if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
-        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
-      end
-      # If we're not in authoritative mode, bail out
-      if !Repository.conf[:IS_REPOSITORY_ADMIN] # Are we admin?
-        raise NotAuthorityError.new("Unable to write out repo permissions:  Not in authoritative mode!");
-      end
-
-      if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
-        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "w").close() # create file if not existent
-      end
       result = false
       File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "w+") do |auth_file|
         auth_file.flock(File::LOCK_EX)
