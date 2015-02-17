@@ -84,6 +84,9 @@ GEM
       gratr19 (~> 0.4.4.1)
       grit (~> 2.5.0)
       hashery (~> 1.5.0)
+    gitolite-rugged (1.2.2)
+      gratr19 (~> 0.4.4, >= 0.4.4.1)
+      rugged (~> 0.21, >= 0.21.0)
     gratr19 (0.4.4.1)
     grit (2.5.0)
       diff-lcs (~> 1.1)
@@ -175,7 +178,7 @@ GEM
       ruby-progressbar (~> 1.4)
     ruby-progressbar (1.6.0)
     rubyzip (1.1.4)
-    rugged (0.19.0)
+    rugged (0.21.4)
     sass (3.3.8)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -247,6 +250,7 @@ DEPENDENCIES
   factory_girl_rails
   faker
   gitolite
+  gitolite-rugged
   i18n
   jquery-rails
   json
@@ -264,7 +268,7 @@ DEPENDENCIES
   rspec-rails (~> 3.0)
   rubocop
   rubyzip
-  rugged
+  rugged (~> 0.21.4)
   sass-rails (~> 3.2.3)
   shoulda
   simplecov
