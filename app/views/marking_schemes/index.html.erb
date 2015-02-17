@@ -1,2 +1,16 @@
-<h1>MarkingSchemes#index</h1>
-<p>Find me in app/views/marking_schemes/index.html.erb</p>
+<%= content_for :head do %>
+  <%= render partial: 'marking_schemes_table', formats: [:'js.jsx'], handlers: [:erb] %>
+<% end %>
+
+<div class='title_bar'>
+  <h1>
+    Marking Schemes
+  </h1>
+  <div class='heading_buttons'>
+    <%= link_to t(:add_new_marking_scheme), "new" %>
+  </div>
+</div>
+
+<div class='wrapLeft'>
+    <div id='marking_schemes_table'></div>
+</div>

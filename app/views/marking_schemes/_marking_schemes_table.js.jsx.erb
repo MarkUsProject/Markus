@@ -1,0 +1,87 @@
+<script type="text/jsx">
+  /** @jsx React.DOM */
+
+  var MarkingSchemesTable = React.createClass({
+    getDefaultProps: function() {
+      var columns = [
+        {
+          id: 'marking_scheme_id',
+          content: 'Marking Scheme ID',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: true
+        },
+        {
+          id: 'marking_scheme_name',
+          content: 'Marking Scheme Name',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: true
+        }
+      ];
+      <% for assignment in @assignments %>
+        columns.push({
+          id: 'assignment_' + <%= assignment.id %>,
+          content: '<%= assignment.short_identifier %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: true
+        });
+      <% end %>
+
+      return {columns: columns};
+    },
+    getInitialState: function() {
+      return {
+        markingSchemes: []
+      };
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // get info
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+      jQuery.ajax({
+        url: 'marking_schemes/populate',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            markingSchemes: data,
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ": " + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this),
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+    render: function() {
+      var marking_schemes_data = this.state.markingSchemes.map(function(markingScheme) {
+        var ms = {};
+        ms['marking_scheme_id'] = markingScheme.id;
+        ms['marking_scheme_name'] = markingScheme.name;
+        // <% for assignment in @assignments %>
+        // <% end %>
+        return ms;
+      });
+
+      return (
+        <div>
+          <Table data={marking_schemes_data}
+            columns={this.props.columns}
+          />
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<MarkingSchemesTable />, document.getElementById('marking_schemes_table'));
+
+</script>
