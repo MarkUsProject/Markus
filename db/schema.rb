@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150216001957) do
+ActiveRecord::Schema.define(:version => 20150219044256) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -242,11 +242,11 @@ ActiveRecord::Schema.define(:version => 20150216001957) do
   end
 
   create_table "marking_weights", :force => true do |t|
-    t.integer  "ms_id"
+    t.integer  "marking_scheme_id"
     t.integer  "a_id"
     t.decimal  "weight"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
 
   create_table "marks", :force => true do |t|

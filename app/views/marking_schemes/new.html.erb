@@ -1,2 +1,9 @@
-<h1>MarkingSchemes#new</h1>
-<p>Find me in app/views/marking_schemes/new.html.erb</p>
+<div class='title_bar'>
+  <h1>
+    Add New Marking Scheme
+  </h1>
+</div>
+
+<%= render partial: 'form',
+           formats: [:html],
+           handlers: [:erb] %>
