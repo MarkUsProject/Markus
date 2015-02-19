@@ -65,14 +65,9 @@ class ResultsController < ApplicationController
         oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
         oldmark.save(validate: false)
         @old_marks_map[criterion.id] = oldmark
-
-        unless oldmark.nil? || @result.released_to_students
-          # Updates the current mark to reflect the previous mark
-          mark.mark = oldmark.mark
-        end
       end
 
-      mark.save(validate: false)
+#      mark.save(validate: false)
       @result.update_total_mark
     end
 
