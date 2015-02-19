@@ -149,20 +149,5 @@
       <table class='files' id='files'></table>
     </div>
 
-    <% if @grouping.is_valid? %>
-      <div class='global_action'>
-        <%= submit_tag(I18n.t(:submit),
-                       disabled: !@grouping.is_valid?,
-                       onclick: 'set_onbeforeunload(false);') unless @grouping.repository_external_commits_only? %>
-        <%= link_to(I18n.t(:cancel),
-                    { controller: 'submissions',
-                      action: 'file_manager' },
-                   id: @assignment.id,
-                   disabled: !@grouping.is_valid?,
-                   class: 'button',
-                   onclick: "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
-                   ) unless @grouping.repository_external_commits_only? %>
-      </div>
-    <% end %>
   </form>
 </div>

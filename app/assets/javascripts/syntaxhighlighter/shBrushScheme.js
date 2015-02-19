@@ -11,6 +11,7 @@ dp.sh.Brushes.Scheme=function()
 
 	this.regexList = [
 		{ regex: new RegExp('( |^);.*$', 'gm'),				        css: 'comment' },
+		{ regex: new RegExp('#\\|[\\s\\S]*?\\|#', 'gm'), css: 'comment'},
 		{ regex: dp.sh.RegexLib.DoubleQuotedString,					css: 'string' },
 		{ regex: new RegExp("'.[a-zA-Z0-9_\-]*", 'g'),              css: 'symbol' },
 		{ regex: new RegExp(this.GetKeywords(keywords), 'gm'),		css: 'keyword' },

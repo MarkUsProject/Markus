@@ -207,7 +207,7 @@ en:
     add_graders:        "Add Graders"
     remove_graders:     "Remove Graders"
     admins:             "Admins"
-    add_new:            "Add new"
+    add_new:            "Add New File"
     create_new_grade_entry_form: "Add Marks Spreadsheet"
     edit:               "Edit"
     save:               "Save"
