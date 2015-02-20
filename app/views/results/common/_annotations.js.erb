@@ -132,6 +132,14 @@
     var line_start   = line_manager.getLineNumber(anchor_node);
     var line_end     = line_manager.getLineNumber(focus_node);
 
+    // If we selected an entire line the above returns + 1, a fix follows
+    if (mouseSelection.anchorNode.nodeName === "LI"){
+      line_start--;
+    }
+    if (mouseSelection.focusNode.nodeName === "LI"){
+      line_end--;
+    }
+
     // If no source code lines were selected, bail out
     if (line_start == 0 && line_end == 0) {
       alert("<%= I18n.t('marker.annotation.select_some_text') %>");
@@ -139,10 +147,17 @@
     }
 
     // Add up node lengths to get column offsets
-    var anchor_line_span = mouseSelection.anchorNode.parentNode.parentNode;
+    var anchor_line_span;
+    if(mouseSelection.anchorNode.parentNode.parentNode.nodeName === "SPAN") {
+      anchor_line_span = mouseSelection.anchorNode.parentNode.parentNode;
+    }
+    else {
+      anchor_line_span = mouseSelection.anchorNode.parentNode;
+    }
     var column_start = 0;
     for (var i = 0; i < anchor_line_span.childNodes.length; i++) {
-      if (anchor_line_span.childNodes[i] == mouseSelection.anchorNode.parentNode){
+      if (anchor_line_span.childNodes[i] == mouseSelection.anchorNode.parentNode ||
+        anchor_line_span.childNodes[i] == mouseSelection.anchorNode){
         // If the actual node add the offset
         column_start += mouseSelection.anchorOffset;
         break;
@@ -154,10 +169,17 @@
     }
 
     // Repeat the same process for the focus node
-    var focus_line_span = mouseSelection.focusNode.parentNode.parentNode;
+    var focus_line_span;
+    if(mouseSelection.focusNode.parentNode.parentNode.nodeName === "SPAN") {
+      focus_line_span = mouseSelection.focusNode.parentNode.parentNode;
+    }
+    else {
+      focus_line_span = mouseSelection.focusNode.parentNode;
+    }
     var column_end = 0;
     for (var i = 0; i < focus_line_span.childNodes.length; i++) {
-      if (focus_line_span.childNodes[i] == mouseSelection.focusNode.parentNode){
+      if (focus_line_span.childNodes[i] == mouseSelection.focusNode.parentNode ||
+        focus_line_span.childNodes[i] == mouseSelection.focusNode){
         column_end += mouseSelection.focusOffset;
         break;
       }

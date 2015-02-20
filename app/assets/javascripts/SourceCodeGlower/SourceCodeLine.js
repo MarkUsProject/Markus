@@ -34,6 +34,9 @@ SourceCodeLine.prototype.glow = function(annotation_id, start, end,
   // Save line node and get all text nodes in the line
   var node = this.getLineNode();
   var textNodes = this.getAllTextNodes(node);
+  if (end == -1){
+    end = this.getLineNode().textContent.length;
+  }
 
   // Loop prep, for tracking nodes and character counts
   var start_node = null;
@@ -69,6 +72,13 @@ SourceCodeLine.prototype.glow = function(annotation_id, start, end,
     }
     // Adds class/data/events to the nodes between the start and end
     else if (foundStart && end >= endCharCount) {
+      // Make sure it has its own parent span
+      if (textNodes[i].parentNode.parentNode === node) {
+        var temp_node = document.createElement("span");
+        temp_node.innerHTML = textNodes[i].textContent;
+        textNodes[i].parentNode.replaceChild(temp_node, textNodes[i]);
+        textNodes[i] = temp_node.childNodes[0];
+      }
       var glow_depth = textNodes[i].parentNode.getAttribute("data-annotationDepth");
       textNodes[i].parentNode.setAttribute("data-annotationDepth",
         glow_depth == null ? "1" : (parseInt(glow_depth, 10) + 1).toString());
@@ -186,7 +196,8 @@ SourceCodeLine.prototype.unGlow = function(annotation_id) {
 
         // Remove mouse listeners if no longer glowing
         if(parseInt(glow_depth, 10)  == 1) {
-          textNodes[i].parentNode.replaceChild(textNodes[i].clone(true), textNodes[i]);
+          textNodes[i].parentNode.parentNode.replaceChild(
+            textNodes[i].parentNode.clone(true), textNodes[i].parentNode);
         }
       }
     }
