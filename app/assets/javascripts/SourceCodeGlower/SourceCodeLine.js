@@ -1,8 +1,8 @@
 /** Source Code Line Class
 
-    This class represents a single line of source code, and controls "glowing", and
-    mouseover/mouseout observing.  It's an abstract class that needs to be implemented
-    for the particular source code highlighting library being used
+    This class represents a single line of source code, and controls "glowing",
+    and mouseover/mouseout observing.  It's an abstract class that needs to be
+    implemented for the particular source code highlighting library being used
 
     Rules:
     - When a span is "glowing", it has a class of "source_code_glowing_" and
@@ -12,8 +12,8 @@
       again - their glow depth will increase.
     - Each span will have data attributes added to allow for depth tracking and
       to enable unglowing with overlapping annotations
-    - This is an abstract class that needs to be implemented for the particular source
-      code highlighting library being used
+    - This is an abstract class that needs to be implemented for the particular
+      source code highlighting library being used
 */
 
 function SourceCodeLine(line_node) {
@@ -75,19 +75,20 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
     else if (foundStart && end >= endCharCount) {
       // Make sure it has its own parent span
       if (textNodes[i].parentNode.parentNode === node) {
-        var temp_node = document.createElement("span");
-        temp_node.innerHTML = textNodes[i].textContent;
-        textNodes[i].parentNode.replaceChild(temp_node, textNodes[i]);
-        textNodes[i] = temp_node.childNodes[0];
+        var tempNode = document.createElement("span");
+        tempNode.innerHTML = textNodes[i].textContent;
+        textNodes[i].parentNode.replaceChild(tempNode, textNodes[i]);
+        textNodes[i] = tempNode.childNodes[0];
       }
-      var glow_depth = textNodes[i].parentNode.getAttribute("data-annotationDepth");
+      var glowDepth = textNodes[i].parentNode.getAttribute(
+        "data-annotationDepth");
       textNodes[i].parentNode.setAttribute("data-annotationDepth",
-        glow_depth == null ? "1" : (parseInt(glow_depth, 10) + 1).toString());
+        glowDepth === null ? "1" : (parseInt(glowDepth, 10) + 1).toString());
       textNodes[i].parentNode.setAttribute("data-annotationID" +
         annotationId.toString(), annotationId.toString());
 
-      textNodes[i].parentNode.addClass('source_code_glowing_' +
-        (glow_depth == null ? "1" : (parseInt(glow_depth, 10) + 1)));
+      textNodes[i].parentNode.addClass("source_code_glowing_" +
+        (glowDepth === null ? "1" : (parseInt(glowDepth, 10) + 1)));
 
       textNodes[i].parentNode.addEventListener("mouseover", hoverOnFunction);
       textNodes[i].parentNode.addEventListener("mouseout", hoverOffFunction);
@@ -111,33 +112,33 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
   }
 
   // If only a single node, change text and insert two new spans before it
-  if (startNode != null && endNode != null && startNode === endNode) {
+  if (startNode !== null && endNode !== null && startNode === endNode) {
     // Insert a plan node before where the glow should start
-    var start_span_plain = startNode.clone(false);
-    start_span_plain.innerHTML = startNode.textContent.substr(0, startNodeOffset);
+    var startSpanPlain = startNode.clone(false);
+    startSpanPlain.innerHTML = startNode.textContent.substr(0, startNodeOffset);
     startNode.innerHTML = startNode.textContent.substr(startNodeOffset);
 
     // Maintain events
     if (startNode.hasClass("source_code_glowing_1")) {
-      start_span_plain.addEventListener("mouseover", hoverOnFunction);
-      start_span_plain.addEventListener("mouseout", hoverOffFunction);
+      startSpanPlain.addEventListener("mouseover", hoverOnFunction);
+      startSpanPlain.addEventListener("mouseout", hoverOffFunction);
     }
 
     // Insert the new plain span
-    startNode.parentNode.insertBefore(start_span_plain, startNode);
+    startNode.parentNode.insertBefore(startSpanPlain, startNode);
 
     // Split and glow the rest
     this.splitAndGlowSpan(startNode, endNodeOffset - startNodeOffset, false,
       annotationId, hoverOnFunction, hoverOffFunction);
   }
   else {
-    if(startNode != null) {
+    if(startNode !== null) {
       // Split the start node and set class/data/events
       this.splitAndGlowSpan(startNode, startNodeOffset, true,
         annotationId, hoverOnFunction, hoverOffFunction);
     }
 
-    if (endNode != null) {
+    if (endNode !== null) {
       // Split the end node and set class/data/events
       this.splitAndGlowSpan(endNode, endNodeOffset, false,
         annotationId, hoverOnFunction, hoverOffFunction);
@@ -147,56 +148,57 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
 
 // Split span node and apply class/data/events
 // If glow_end is true, the glow will be after the original span
-SourceCodeLine.prototype.splitAndGlowSpan= function(span_node, node_offset,
-  glow_end, annotation_id, hover_on_function, hover_off_function) {
+SourceCodeLine.prototype.splitAndGlowSpan= function(spanNode, nodeOffset,
+  glowEnd, annotationId, hoverOnFunction, hoverOffFunction) {
 
-  var span_glow = span_node.clone(false);
+  var spanGlow = spanNode.clone(false);
 
-  var glow_depth = span_glow.getAttribute("data-annotationDepth");
-  span_glow.setAttribute("data-annotationDepth",
-    glow_depth == null ? "1" : (parseInt(glow_depth, 10) + 1).toString());
-  span_glow.setAttribute(
-    "data-annotationID" + annotation_id.toString(), annotation_id.toString());
+  var glowDepth = spanGlow.getAttribute("data-annotationDepth");
+  spanGlow.setAttribute("data-annotationDepth",
+    glowDepth === null ? "1" : (parseInt(glowDepth, 10) + 1).toString());
+  spanGlow.setAttribute(
+    "data-annotationID" + annotationId.toString(), annotationId.toString());
 
-  span_glow.addClass('source_code_glowing_' +
-  (glow_depth == null ? "1" : (parseInt(glow_depth, 10) + 1)));
+  spanGlow.addClass("source_code_glowing_" +
+  (glowDepth === null ? "1" : (parseInt(glowDepth, 10) + 1)));
 
-  span_glow.addEventListener("mouseover", hover_on_function);
-  span_glow.addEventListener("mouseout", hover_off_function);
+  spanGlow.addEventListener("mouseover", hoverOnFunction);
+  spanGlow.addEventListener("mouseout", hoverOffFunction);
 
 
-  if (glow_end){
-    span_glow.innerHTML = span_node.textContent.substr(node_offset);
-    span_node.innerHTML = span_node.textContent.substr(0, node_offset);
-    span_node.parentNode.insertBefore(span_glow, span_node.nextSibling)
+  if (glowEnd){
+    spanGlow.innerHTML = spanNode.textContent.substr(nodeOffset);
+    spanNode.innerHTML = spanNode.textContent.substr(0, nodeOffset);
+    spanNode.parentNode.insertBefore(spanGlow, spanNode.nextSibling)
   }
   else {
-    span_glow.innerHTML = span_node.textContent.substr(0, node_offset);
-    span_node.innerHTML = span_node.textContent.substr(node_offset);
-    span_node.parentNode.insertBefore(span_glow, span_node);
+    spanGlow.innerHTML = spanNode.textContent.substr(0, nodeOffset);
+    spanNode.innerHTML = spanNode.textContent.substr(nodeOffset);
+    spanNode.parentNode.insertBefore(spanGlow, spanNode);
   }
 }
 
 // Decrease a Source Code Line's glow depth
-SourceCodeLine.prototype.unGlow = function(annotation_id) {
+SourceCodeLine.prototype.unGlow = function(annotationId) {
   // Is this line glowing?
   if (this.isGlowing()) {
     var textNodes = this.getAllTextNodes(this.getLineNode());
 
     // Create an array of glow nodes (spans)
     for (var i = 0; i < textNodes.length; i++) {
-      if (textNodes[i].parentNode.getAttribute(
-          "data-annotationID" + annotation_id.toString()) == annotation_id.toString()) {
+      if (textNodes[i].parentNode.getAttribute("data-annotationID" +
+        annotationId.toString()) === annotationId.toString()) {
         // Check and update the glow depth to handle nested annotations
-        var glow_depth = textNodes[i].parentNode.getAttribute("data-annotationDepth");
+        var glowDepth = textNodes[i].parentNode.getAttribute(
+          "data-annotationDepth");
         textNodes[i].parentNode.setAttribute(
           "data-annotationDepth",
-          (parseInt(glow_depth, 10) - 1).toString());
+          (parseInt(glowDepth, 10) - 1).toString());
 
-        textNodes[i].parentNode.removeClass("source_code_glowing_" + glow_depth);
+        textNodes[i].parentNode.removeClass("source_code_glowing_" + glowDepth);
 
         // Remove mouse listeners if no longer glowing
-        if(parseInt(glow_depth, 10)  == 1) {
+        if(parseInt(glowDepth, 10) === 1) {
           textNodes[i].parentNode.parentNode.replaceChild(
             textNodes[i].parentNode.clone(true), textNodes[i].parentNode);
         }
