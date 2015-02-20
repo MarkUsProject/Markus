@@ -144,7 +144,7 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
         annotationId, hoverOnFunction, hoverOffFunction);
     }
   }
-}
+};
 
 // Split span node and apply class/data/events
 // If glow_end is true, the glow will be after the original span
@@ -169,7 +169,7 @@ SourceCodeLine.prototype.splitAndGlowSpan= function(spanNode, nodeOffset,
   if (glowEnd){
     spanGlow.innerHTML = spanNode.textContent.substr(nodeOffset);
     spanNode.innerHTML = spanNode.textContent.substr(0, nodeOffset);
-    spanNode.parentNode.insertBefore(spanGlow, spanNode.nextSibling)
+    spanNode.parentNode.insertBefore(spanGlow, spanNode.nextSibling);
   }
   else {
     spanGlow.innerHTML = spanNode.textContent.substr(0, nodeOffset);
@@ -208,7 +208,7 @@ SourceCodeLine.prototype.unGlow = function(annotationId) {
 
   // Decrease the glow depth
   this.decGlowDepth(1);
-}
+};
 
 // Recursive method returns an array of all text nodes contained in node param
 SourceCodeLine.prototype.getAllTextNodes = function(node) {
@@ -222,7 +222,7 @@ SourceCodeLine.prototype.getAllTextNodes = function(node) {
     }
   }
   return textNodes;
-}
+};
 
 SourceCodeLine.prototype.incGlowDepth = function(amount) {
   this.setGlowDepth(this.getGlowDepth() + amount);

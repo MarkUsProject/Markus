@@ -33,56 +33,58 @@ SourceCodeLineAnnotations.prototype.getAnnotationTextDisplayer = function() {
 }
 // Annotate a single Source Code Line
 SourceCodeLineAnnotations.prototype.annotateLine = function(
-    annotation_id, line_num, column_start, column_end, annotation_text_id) {
-  if (!this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
-    throw("Attempting to annotate using an id that doesn't exist: " + annotation_text_id);
+    annotationId, lineNum, columnStart, columnEnd, annotationTextId) {
+  if (!this.getAnnotationTextManager().annotationTextExists(annotationTextId)) {
+    throw("Attempting to annotate using an id that doesn't exist: " + annotationTextId);
   }
-  if (this.relationshipExists(annotation_id, line_num, annotation_text_id)) {
+  if (this.relationshipExists(annotationId, lineNum, annotationTextId)) {
     throw('This Source Code Line has already been annotated with this Annotation Text');
   }
 
-  // Mark the relationship between this line_num, and annotation_id
-  this.addRelationship(annotation_id, line_num, annotation_text_id);
+  // Mark the relationship between this lineNum, and annotationId
+  this.addRelationship(annotationId, lineNum, annotationTextId);
 
   // Glow the Source Code Line
-  var line = this.getLineManager().getLine(line_num);
-  var this_ref = this;
-  line.glow(annotation_id, column_start, column_end,
+  var line = this.getLineManager().getLine(lineNum);
+  var thisReference = this;
+  line.glow(annotationId, columnStart, columnEnd,
     function(event) {
-      this_ref.displayTextsForLine(line_num, event, event.pageX, event.pageY);
+      thisReference.displayTextsForLine(lineNum, event, event.pageX, event.pageY);
     },
     function(event) {
-      this_ref.hideText();
+      thisReference.hideText();
     }
   );
 }
 
 // Annotate a Range of Source Code Lines
-SourceCodeLineAnnotations.prototype.annotateRange = function(annotation_id, range, annotation_text_id) {
-  var line_start = parseInt(range.start, 10);
-  var line_end = parseInt(range.end, 10);
-  var column_start = parseInt(range.column_start, 10);
-  var column_end = parseInt(range.column_end, 10);
+SourceCodeLineAnnotations.prototype.annotateRange = function(
+  annotationId, range, annotationTextId) {
+  var lineStart = parseInt(range.start, 10);
+  var lineEnd = parseInt(range.end, 10);
+  var columnStart = parseInt(range.column_start, 10);
+  var columnEnd = parseInt(range.column_end, 10);
 
   // If the highlight continues to the next line sent -1 to indicate the rest of the line should glow
-  for (var line_num = line_start; line_num <= line_end; line_num++) {
-    this.annotateLine(annotation_id,
-      line_num,
-      line_num == line_start ? column_start : 0,
-      line_num == line_end ? column_end : -1,
-      annotation_text_id);
+  for (var lineNum = lineStart; lineNum <= lineEnd; lineNum++) {
+    this.annotateLine(annotationId,
+      lineNum,
+      lineNum == lineStart ? columnStart : 0,
+      lineNum == lineEnd ? columnEnd : -1,
+      annotationTextId);
 
   }
 }
 
-SourceCodeLineAnnotations.prototype.removeAnnotationFromLine = function(annotation_id, line_num, annotation_text_id) {
-  this.removeRelationship(annotation_id, line_num, annotation_text_id);
-  var line = this.getLineManager().getLine(line_num);
-  line.unGlow(annotation_id);
+SourceCodeLineAnnotations.prototype.removeAnnotationFromLine = function(
+  annotationId, lineNum, annotationTextId) {
+  this.removeRelationship(annotationId, lineNum, annotationTextId);
+  var line = this.getLineManager().getLine(lineNum);
+  line.unGlow(annotationId);
 
   // If there are no more annotations on this line, stop observing mouseovers
   // and mousedowns
-  if (!this.hasAnnotation(line_num)) {
+  if (!this.hasAnnotation(lineNum)) {
     line.stopObserving();
   }
 }
@@ -142,15 +144,17 @@ SourceCodeLineAnnotations.prototype.removeRelationship = function(annotation_id,
   this.setRelationships(this.getRelationships().without(relationship));
 }
 
-SourceCodeLineAnnotations.prototype.getAnnotationTextsForLineNum = function(line_num, annotation_ids) {
+SourceCodeLineAnnotations.prototype.getAnnotationTextsForLineNum = function(
+  lineNum, annotationIds) {
   var result = [];
 
   var relationships = this.getRelationships();
   for (var i = 0; i < relationships.length; i++) {
     var relationship = relationships[i];
-    if (relationship['line_num'] == line_num && annotation_ids.indexOf(
+    if (relationship['line_num'] == lineNum && annotationIds.indexOf(
         relationship['annotation_id'].toString()) >= 0) {
-      result.push(this.getAnnotationTextManager().getAnnotationText(relationship['annotation_text_id']));
+      result.push(this.getAnnotationTextManager().getAnnotationText(
+        relationship['annotation_text_id']));
     }
   }
 
@@ -174,7 +178,8 @@ SourceCodeLineAnnotations.prototype.hideText = function() {
   this.getAnnotationTextDisplayer().hide();
 }
 
-SourceCodeLineAnnotations.prototype.displayTextsForLine = function(line_num, event, x, y) {
+SourceCodeLineAnnotations.prototype.displayTextsForLine = function(
+  lineNum, event, x, y) {
   var annotationIDs = new Array();
   for (var i = 0; i < event.srcElement.attributes.length; i++) {
     var attribute = event.srcElement.attributes[i];
@@ -182,6 +187,6 @@ SourceCodeLineAnnotations.prototype.displayTextsForLine = function(line_num, eve
       annotationIDs.push(attribute.value)
     }
   }
-  var texts = this.getAnnotationTextsForLineNum(line_num, annotationIDs);
+  var texts = this.getAnnotationTextsForLineNum(lineNum, annotationIDs);
   this.getAnnotationTextDisplayer().displayCollection(texts, x, y);
 }
