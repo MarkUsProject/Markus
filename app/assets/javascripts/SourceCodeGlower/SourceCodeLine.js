@@ -5,7 +5,7 @@
     implemented for the particular source code highlighting library being used
 
     Rules:
-    - When a span is "glowing", it has a class of "source_code_glowing_" and
+    - When a span is "glowing", it has a class of "source-code-glowing-" and
       then a number indicating the "depth" of its glow.  This allows for
       annotation overlapping. For example, 5 lines of source could be
       "glowed", and then three lines within that original 5 could be glowed
@@ -87,7 +87,7 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
       textNodes[i].parentNode.setAttribute("data-annotationID" +
         annotationId.toString(), annotationId.toString());
 
-      textNodes[i].parentNode.addClass("source_code_glowing_" +
+      textNodes[i].parentNode.addClass("source-code-glowing-" +
         (glowDepth === null ? "1" : (parseInt(glowDepth, 10) + 1)));
 
       textNodes[i].parentNode.addEventListener("mouseover", hoverOnFunction);
@@ -119,7 +119,7 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
     startNode.innerHTML = startNode.textContent.substr(startNodeOffset);
 
     // Maintain events
-    if (startNode.hasClass("source_code_glowing_1")) {
+    if (startNode.hasClass("source-code-glowing-1")) {
       startSpanPlain.addEventListener("mouseover", hoverOnFunction);
       startSpanPlain.addEventListener("mouseout", hoverOffFunction);
     }
@@ -159,7 +159,7 @@ SourceCodeLine.prototype.splitAndGlowSpan= function(spanNode, nodeOffset,
   spanGlow.setAttribute(
     "data-annotationID" + annotationId.toString(), annotationId.toString());
 
-  spanGlow.addClass("source_code_glowing_" +
+  spanGlow.addClass("source-code-glowing-" +
   (glowDepth === null ? "1" : (parseInt(glowDepth, 10) + 1)));
 
   spanGlow.addEventListener("mouseover", hoverOnFunction);
@@ -195,7 +195,7 @@ SourceCodeLine.prototype.unGlow = function(annotationId) {
           "data-annotationDepth",
           (parseInt(glowDepth, 10) - 1).toString());
 
-        textNodes[i].parentNode.removeClass("source_code_glowing_" + glowDepth);
+        textNodes[i].parentNode.removeClass("source-code-glowing-" + glowDepth);
 
         // Remove mouse listeners if no longer glowing
         if(parseInt(glowDepth, 10) === 1) {

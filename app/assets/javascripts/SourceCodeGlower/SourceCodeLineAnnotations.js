@@ -35,10 +35,12 @@ SourceCodeLineAnnotations.prototype.getAnnotationTextDisplayer = function() {
 SourceCodeLineAnnotations.prototype.annotateLine = function(
     annotationId, lineNum, columnStart, columnEnd, annotationTextId) {
   if (!this.getAnnotationTextManager().annotationTextExists(annotationTextId)) {
-    throw("Attempting to annotate using an id that doesn't exist: " + annotationTextId);
+    throw("Attempting to annotate using an id that doesn't exist: " +
+    annotationTextId);
   }
   if (this.relationshipExists(annotationId, lineNum, annotationTextId)) {
-    throw('This Source Code Line has already been annotated with this Annotation Text');
+    throw('This Source Code Line has already been annotated with this ' +
+    'Annotation Text');
   }
 
   // Mark the relationship between this lineNum, and annotationId
@@ -49,7 +51,8 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(
   var thisReference = this;
   line.glow(annotationId, columnStart, columnEnd,
     function(event) {
-      thisReference.displayTextsForLine(lineNum, event, event.pageX, event.pageY);
+      thisReference.displayTextsForLine(
+        lineNum, event, event.pageX, event.pageY);
     },
     function(event) {
       thisReference.hideText();
@@ -65,7 +68,8 @@ SourceCodeLineAnnotations.prototype.annotateRange = function(
   var columnStart = parseInt(range.column_start, 10);
   var columnEnd = parseInt(range.column_end, 10);
 
-  // If the highlight continues to the next line sent -1 to indicate the rest of the line should glow
+  // If the highlight continues to the next line sent -1 to
+  // indicate the rest of the line should glow
   for (var lineNum = lineStart; lineNum <= lineEnd; lineNum++) {
     this.annotateLine(annotationId,
       lineNum,
