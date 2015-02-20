@@ -39,8 +39,8 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(
     annotationTextId);
   }
   if (this.relationshipExists(annotationId, lineNum, annotationTextId)) {
-    throw('This Source Code Line has already been annotated with this ' +
-    'Annotation Text');
+    throw("This Source Code Line has already been annotated with this " +
+    "Annotation Text");
   }
 
   // Mark the relationship between this lineNum, and annotationId
