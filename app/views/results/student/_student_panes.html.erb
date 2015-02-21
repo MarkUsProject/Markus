@@ -39,7 +39,7 @@
                                    result: result,
                                    submission: submission,
                                    assignment: assignment } %>
-            <% elsif submission.has_remark? and @current_user.student? %>
+            <% elsif submission.has_remark? %>
               <%= render partial: 'results/marker/remark_request',
                          locals: { result: result,
                                    submission: submission,
