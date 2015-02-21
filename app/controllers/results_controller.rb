@@ -67,7 +67,7 @@ class ResultsController < ApplicationController
         @old_marks_map[criterion.id] = oldmark
       end
 
-#      mark.save(validate: false)
+      mark.save(validate: false)
       @result.update_total_mark
     end
 
