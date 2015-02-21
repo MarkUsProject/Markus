@@ -443,6 +443,7 @@ en:
       tags_used:            "Tags Used"
       tags_search:          "Search for Tags:"
       tags_list:            "Filter by Tag:"
+      search_submissions:   "Search Submissions"
 
     summaries_index:
       group_name:           "Group Name"
@@ -457,6 +458,7 @@ en:
       filename:             "Filename"
       section:              "Section"
       sections:             "Section:"
+      search_summaries:     "Search Summaries"
 
     grade_entry_forms:
       blank_field: "can't be blank"
