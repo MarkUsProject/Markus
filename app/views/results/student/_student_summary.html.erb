@@ -21,7 +21,7 @@
         <strong><%= t('marker.marks.bonus_deductions') %></strong>
       </div>
 
-      <%= render partial: 'results/common/extra_marks_table',
+      <%= render partial: 'results/student/extra_marks_table',
                  locals: { extra_marks_points: old_result.extra_marks.points,
                            result_id: old_result.id } %>
 
@@ -46,7 +46,7 @@
     </div>
 
     <div id='extra_percentage_pane' class='extra_percentage_pane'>
-      <%= render partial: 'results/common/extra_percentage_table',
+      <%= render partial: 'results/student/extra_percentage_table',
                  locals: { extra_marks_percentage: old_result.extra_marks.percentage,
                            result_id: old_result.id } %>
     </div>
@@ -77,7 +77,7 @@
       <strong><%= t('marker.marks.bonus_deductions') %></strong>
     </div>
 
-    <%= render partial: 'results/common/extra_marks_table',
+    <%= render partial: 'results/student/extra_marks_table',
                locals: { extra_marks_points: extra_marks_points,
                          result_id: result.id } %>
 
@@ -102,7 +102,7 @@
   </div>
 
   <div id='extra_percentage_pane' class='extra_percentage_pane'>
-    <%= render partial: 'results/common/extra_percentage_table',
+    <%= render partial: 'results/student/extra_percentage_table',
                locals: { extra_marks_percentage: extra_marks_percentage,
                          result_id: result.id } %>
   </div>
@@ -116,7 +116,7 @@
 </div>
 
 <div id='extra_percentage_pane' class='extra_percentage_pane'>
-  <%= render partial: 'results/common/extra_percentage_table',
+  <%= render partial: 'results/student/extra_percentage_table',
              locals: { extra_marks_percentage: extra_marks_percentage,
                        result_id: result.id } %>
 </div>
