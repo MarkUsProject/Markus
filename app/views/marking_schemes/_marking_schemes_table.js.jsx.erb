@@ -5,13 +5,6 @@
     getDefaultProps: function() {
       var columns = [
         {
-          id: 'marking_scheme_id',
-          content: 'Marking Scheme ID',
-          sortable: true,
-          compare: compare_anchor_text,
-          searchable: true
-        },
-        {
           id: 'marking_scheme_name',
           content: 'Marking Scheme Name',
           sortable: true,
@@ -23,9 +16,9 @@
         columns.push({
           id: 'assignment_' + <%= assignment.id %>,
           content: '<%= assignment.short_identifier %>',
-          sortable: true,
+          sortable: false,
           compare: compare_anchor_text,
-          searchable: true
+          searchable: false
         });
       <% end %>
 
@@ -43,7 +36,7 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
       jQuery.ajax({
-        url: 'marking_schemes/populate',
+        url: 'populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -65,10 +58,16 @@
     render: function() {
       var marking_schemes_data = this.state.markingSchemes.map(function(markingScheme) {
         var ms = {};
-        ms['marking_scheme_id'] = markingScheme.id;
         ms['marking_scheme_name'] = markingScheme.name;
-        // <% for assignment in @assignments %>
-        // <% end %>
+        <% for assignment in @assignments %>
+          var id = <%= assignment.id %>;
+          var key = "assignment_" + id;
+          var value = markingScheme.weights[id-1].weight;
+          if (value == null) {
+            value = "NA"
+          }
+          ms[key] = value;
+        <% end %>
         return ms;
       });
 
