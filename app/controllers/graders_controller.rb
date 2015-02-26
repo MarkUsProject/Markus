@@ -53,17 +53,19 @@ class GradersController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
+    @section_column = ''
+    if Section.all.size > 0
+      @section_column = "{
+        id: 'section',
+        content: '" + I18n.t(:'graders.section') + "',
+        sortable: true
+      },"
+    end
   end
 
   def populate
     @assignment = Assignment.find(params[:assignment_id])
     @sections = Section.all
-    @section_column = Section.all.size > 0 ?
-      "{
-          id: 'section',
-          content: '" + I18n.t(:'graders.section') + "',
-          sortable: true
-      }," : ''
 
     assign_to_criteria = @assignment.assign_graders_to_criteria
     if assign_to_criteria
