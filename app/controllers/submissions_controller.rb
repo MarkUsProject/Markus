@@ -248,7 +248,7 @@ class SubmissionsController < ApplicationController
     @section_column = Section.all.size > 0 ?
         "{
           id: 'section',
-          content: '" + I18n.t(:'user.section') + "',
+          content: '" + I18n.t(:'browse_submissions.section') + "',
           sortable: true
       }," : ''
   end
