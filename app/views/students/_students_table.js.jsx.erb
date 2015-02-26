@@ -1,3 +1,4 @@
+
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
@@ -27,11 +28,7 @@
             sortable: true,
             searchable: true
           },
-          {
-            id: 'section',
-            content: '<%= j raw I18n.t(:'user.section') %>',
-            sortable: true
-          },
+          <%= raw @section_column  %>
           {
             id: 'grace_credits',
             content: '<%= j raw I18n.t(:'user.grace_credits') %>',
@@ -118,6 +115,7 @@
     },
     render: function() {
       // Do student-specific table stuff here.
+      var has_sections = false;
       var students_data = this.state.students.map(function(student) {
         var s = {};
 
@@ -125,7 +123,13 @@
         s['user_name'] = student.user_name;
         s['last_name'] = student.last_name;
         s['first_name'] = student.first_name;
-        s['section'] = student.section_name ? student.section_name : '-';
+        if (student.section_name){
+          s['section'] = student.section_name;
+          has_sections = true;
+        }
+        else{
+          s['section'] = '-';
+        }
         s['grace_credits'] = student.grace_credits_remaining + ' / ' + student.grace_credits;
         s['notes'] = <span>
           <a key={student.edit_link}
@@ -140,7 +144,7 @@
     
         return s;
       }.bind(this));
-      
+
       return (
         <div>
           <ErrorDiv error={this.state.error} />
