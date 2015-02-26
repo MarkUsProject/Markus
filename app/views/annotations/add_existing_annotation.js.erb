@@ -3,7 +3,9 @@ add_annotation_text('<%= @text.id %>', '<%= @text.content %>');
 <% if @annotation.is_a?(TextAnnotation) %>
   add_annotation('<%= @annotation.id %>',
                  { start: '<%= @annotation.line_start %>',
-                   end: '<%= @annotation.line_end %>' },
+                   end: '<%= @annotation.line_end %>',
+                   column_start: '<%= @annotation.column_start %>',
+                   column_end: '<%= @annotation.column_end %>'},
                  '<%= @text.id %>');
 <% elsif @annotation.is_a?(ImageAnnotation) %>
   add_annotation_text('<%= @text.id %>', '<%= simple_format(@text.html_content) %>');
