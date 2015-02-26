@@ -115,8 +115,8 @@ Markus::Application.configure do
   REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/dev/repos"
 
   ###################################################################
-  # Directory where authentication keys will be uploaded. Make sure MarkUs is allowed
-  # to write to this directory
+  # Directory where authentication keys will be uploaded. Make sure MarkUs is
+  # allowed to write to this directory
   KEY_STORAGE = "#{::Rails.root.to_s}/data/dev/keys"
 
   ###################################################################
