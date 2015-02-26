@@ -42,7 +42,8 @@
     // If the mark_description div is empty, that means it isn't marked
     // Hide the criterion that AREN'T empty (i.e. are marked)
     // Check if the marks are released, if they are there is nothing to hide
-    if (!document.getElementById('released').checked) {
+    if (document.getElementById('released') === null ||
+        !document.getElementById('released').checked) {
       jQuery('.mark_description').each(function() {
         if (this.innerHTML.trim()) {
           hide_criterion(parseInt(this.getAttribute('data-id'), 10));
@@ -70,7 +71,8 @@
            formats: [:js] %>
 
 <%= render partial: 'results/marker/setup_annotation_categories',
-           formats: [:js] %>
+           formats: [:js],
+           locals: { categories: @assignment.annotation_categories } %>
 
 <%= render partial: 'results/marker/boot',
            formats: [:js],
@@ -183,7 +185,8 @@
     <%= render partial: 'results/marker/marker_panes',
                locals: { extra_marks_points: @extra_marks_points,
                          extra_marks_percentage: @extra_marks_percentage,
-                         annotation_categories: @annotation_categories,
+                         annotation_categories: 
+                           @assignment.annotation_categories,
                          result: @result,
                          assignment: @assignment,
                          marks_map: @marks_map,
