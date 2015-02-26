@@ -245,12 +245,14 @@ class SubmissionsController < ApplicationController
   def browse
     @assignment = Assignment.find(params[:assignment_id])
     @groupings = get_groupings_for_assignment(@assignment, current_user)
-    @section_column = Section.all.size > 0 ?
-        "{
-          id: 'section',
-          content: '" + I18n.t(:'browse_submissions.section') + "',
-          sortable: true
-      }," : ''
+    @section_column = ''
+    if Section.all.size > 0
+      @section_column = "{
+        id: 'section',
+        content: '" + I18n.t(:'browse_submissions.section') + "',
+        sortable: true
+      },"
+    end
   end
 
   def populate_submissions_table

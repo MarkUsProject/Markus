@@ -14,12 +14,14 @@ class StudentsController < ApplicationController
 
   def index
     @sections = Section.all
-    @section_column = Section.all.size > 0 ?
-      "{
-          id: 'section',
-          content: '" + I18n.t(:'user.section') + "',
-          sortable: true
-      }," : ''
+    @section_column = ''
+    if Section.all.size > 0
+      @section_column = "{
+        id: 'section',
+        content: '" + I18n.t(:'user.section') + "',
+        sortable: true
+      },"
+    end
   end
 
   def populate
