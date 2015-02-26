@@ -41,7 +41,7 @@
         </div>
 
         <div id='remark_request_tab' style='display:none;'>
-          <% if @submission.has_remark? %>
+          <% if can_show_remark_request_tab_in_marker_pane(submission) %>
             <%= render partial: 'results/marker/remark_request',
                        locals: { result: result,
                                  submission: submission,

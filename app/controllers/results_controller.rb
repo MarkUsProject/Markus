@@ -65,11 +65,6 @@ class ResultsController < ApplicationController
         oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
         oldmark.save(validate: false)
         @old_marks_map[criterion.id] = oldmark
-
-        unless oldmark.nil? || @result.released_to_students
-          # Updates the current mark to reflect the previous mark
-          mark.mark = oldmark.mark
-        end
       end
 
       mark.save(validate: false)
@@ -540,11 +535,11 @@ class ResultsController < ApplicationController
       @submission.remark_request = params[:submission][:remark_request]
       @submission.remark_request_timestamp = Time.zone.now
       @submission.save
-      @old_result = @submission.get_original_result
-      unless @submission.get_remark_result
-        @submission.create_remark_result
-      end
       if params[:real_commit] == 'Submit'
+        @old_result = @submission.get_original_result
+        unless @submission.get_remark_result
+          @submission.create_remark_result
+        end
         @result = @submission.get_remark_result
         @result.marking_state = Result::MARKING_STATES[:partial]
         @old_result.released_to_students = (params[:value] == 'false')
