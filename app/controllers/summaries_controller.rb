@@ -6,7 +6,7 @@ class SummariesController < ApplicationController
     @section_column = Section.all.size > 0 ?
       "{
         id: 'section',
-        content: '" + I18n.t(:'graders.section') + "',
+        content: '" + I18n.t(:'summaries_index.section') + "',
         sortable: true
       }," : ''
     if @assignment.marking_scheme_type == 'rubric'
