@@ -246,6 +246,13 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                        current_user)
+    @groupings = get_groupings_for_assignment(@assignment, current_user)
+    @section_column = Section.all.size > 0 ?
+        "{
+          id: 'section',
+          content: '" + I18n.t(:'user.section') + "',
+          sortable: true
+      }," : ''
   end
 
   def populate_submissions_table

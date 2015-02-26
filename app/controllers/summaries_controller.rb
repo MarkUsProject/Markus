@@ -3,6 +3,12 @@ class SummariesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
+    @section_column = Section.all.size > 0 ?
+      "{
+        id: 'section',
+        content: '" + I18n.t(:'graders.section') + "',
+        sortable: true
+      }," : ''
     if @assignment.marking_scheme_type == 'rubric'
       @criteria = @assignment.rubric_criteria
     else

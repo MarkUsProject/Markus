@@ -12,7 +12,9 @@
         error: null,
         current_table: 'groups_table',
         groups_and_criteria: {groups: [], criteria: []},
-        graders: [],
+        graders: [],: 'section',
+          content: '" + I18n.t(:'graders.section') + "',
+          sortab
         sections: [],
         selected_groups: [],
         selected_criteria: [],
@@ -318,12 +320,7 @@
         sortable: true,
         searchable: true
       },
-      {
-        id: 'section',
-        content: '<%= j raw I18n.t('graders.section') %>',
-        sortable: true,
-        searchable: true
-      },
+      <%= raw @section_column  %>
       {
         id: 'graders',
         content:
@@ -527,12 +524,7 @@
         sortable: true,
         searchable: true
       },
-      {
-        id: 'section',
-        content: '<%= j raw I18n.t('graders.section') %>',
-        sortable: true,
-        searchable: true
-      },
+      <%= raw @section_column  %>
       {
         id: 'graders',
         content:<input type='checkbox'
