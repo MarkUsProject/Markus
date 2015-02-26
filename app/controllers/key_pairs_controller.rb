@@ -44,13 +44,13 @@ class KeyPairsController < ApplicationController
   # Creates the KEY_STORAGE directory if it does not yet exist
   def upload_key_file(file, user_name)
     Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
-    uploaded_io = key_pair_params[:file]
+    uploaded_io = file
 
     # todo: check current user to see if they have permission to
     # use a different user_name then their current one (admins)
 
-    File.open(Rails.root.join(KEY_STORAGE, user_name + '.pub'), 'wb') do |file|
-      file.write(uploaded_io.read)
+    File.open(Rails.root.join(KEY_STORAGE, user_name + '.pub'), 'wb') do |f|
+      f.write(uploaded_io.read)
     end
 
   end
@@ -68,11 +68,12 @@ class KeyPairsController < ApplicationController
         format.html { redirect_to @key_pair,
                                   notice: 'Key pair was successfully created.'}
         format.json { render json: @key_pair,
-            status: :created, location: @key_pair }
+                      status: :created,
+                      location: @key_pair }
       else
         format.html { render action: "new" }
         format.json { render json: @key_pair.errors,
-            status: :unprocessable_entity }
+                      status: :unprocessable_entity }
       end
     end
   end
@@ -84,11 +85,13 @@ class KeyPairsController < ApplicationController
 
     respond_to do |format|
       if @key_pair.update_attributes(key_pair_params)
-        format.html { redirect_to @key_pair, notice: 'Key pair was successfully updated.' }
+        format.html { redirect_to @key_pair,
+                                  notice: 'Key pair was successfully updated.'}
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
-        format.json { render json: @key_pair.errors, status: :unprocessable_entity }
+        format.json { render json: @key_pair.errors,
+                                   status: :unprocessable_entity}
       end
     end
   end
@@ -101,7 +104,7 @@ class KeyPairsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to key_pairs_url }
-      format.json { head :no_content }
+      format.json { head :no_content }/
     end
   end
 
@@ -109,7 +112,8 @@ class KeyPairsController < ApplicationController
 
     # Use this method to whitelist the permissible parameters. Example:
     # params.require(:person).permit(:name, :age)
-    # Also, you can specialize this method with per-user checking of permissible attributes.
+    # Also, you can specialize this method with per-user checking of
+    # permissible attributes.
     def key_pair_params
       params.require(:key_pair).permit(:file, :user_id, :user_name)
     end
