@@ -1,4 +1,7 @@
 Markus::Application.routes.draw do
+  resources :key_pairs
+
+
   # Install the default routes as the lowest priority.
   root controller: 'main', action: 'login', via: [:post, :get]
 
