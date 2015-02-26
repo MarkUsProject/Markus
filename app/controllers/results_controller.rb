@@ -36,13 +36,12 @@ class ResultsController < ApplicationController
     @assignment = @result.submission.assignment
     @submission = @result.submission
 
-    @old_result = nil
     if @submission.remark_submitted?
-      @old_result = Result.all(conditions: ['submission_id = ?', @submission.id],
-                               order: ['id ASC'])[0]
+      @old_result = Result.where(submission_id: @submission.id).first
+    else
+      @old_result = nil
     end
 
-    @annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
     @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
     @group = @grouping.group
@@ -71,33 +70,9 @@ class ResultsController < ApplicationController
       @result.update_total_mark
     end
 
-    # Get the previous and the next submission
-    # FIXME right now, the groupings are ordered by grouping's id. Having a
-    # more natural grouping order would be nice.
-    if current_user.ta?
-       groupings = @assignment.ta_memberships.find_all_by_user_id(
-                      current_user.id,
-                      include: [grouping: :group],
-                      order: 'id ASC').collect do |m|
-         m.grouping
-       end
-    elsif current_user.admin?
-      groupings = @assignment.groupings.all(include: :group,
-                                            order: 'id ASC')
-    end
-
-    # If a grouping's submission's marking_status is complete, we're not going
-    # to include them in the next_submission/prev_submission list
-
-    # If a grouping doesn't have a submission, and we are past the collection time,
-    # we *DO* want to include them in the list.
-    collection_time = @assignment.submission_rule.calculate_collection_time.localtime
-
-    groupings.delete_if do |grouping|
-      grouping != @grouping && ((!grouping.has_submission? && (Time.zone.now < collection_time)))
-    end
-
-    # We sort by Group name by default
+    groupings = Grouping.get_groupings_for_assignment(@assignment,
+                                                      current_user)
+    # We sort by group name by default
     groupings = groupings.sort do |a, b|
       a.group.group_name <=> b.group.group_name
     end
@@ -114,6 +89,7 @@ class ResultsController < ApplicationController
         @previous_grouping = groupings[current_grouping_index - 1]
       end
     end
+
     m_logger = MarkusLogger.instance
     m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
                  "of assignment '#{@assignment.short_identifier}' for group '" +

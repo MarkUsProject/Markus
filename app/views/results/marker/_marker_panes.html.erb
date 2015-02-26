@@ -133,7 +133,7 @@
             <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
             <select id='new_annotation_category'>
               <option value=''><%= t('annotations.one_time_only') %></option>
-              <% @annotation_categories.each do |annotation_category| %>
+              <% annotation_categories.each do |annotation_category| %>
                 <option value='<%= annotation_category.id %>'>
                   <%= annotation_category.annotation_category_name %>
                 </option>
