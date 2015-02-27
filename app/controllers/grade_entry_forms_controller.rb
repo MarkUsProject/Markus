@@ -15,14 +15,14 @@ class GradeEntryFormsController < ApplicationController
                          :update_grade]
   before_filter :authorize_for_ta_and_admin,
                 only: [:grades,
+                       :populate_grades_spreadsheet_table,
                        :g_table_paginate,
                        :csv_download,
                        :csv_upload,
                        :update_grade]
   before_filter :authorize_for_student,
                 only: [:student_interface,
-                       :populate_term_marks_table,
-                       :get_mark_columns]
+                       :populate_term_marks_table]
 
   # Filters will be added as the student UI is implemented (eg. Show Released,
   # Show All,...)
@@ -230,18 +230,18 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_item_id = params[:grade_entry_item_id]
     updated_grade = params[:updated_grade]
 
-    grade_entry_student =
-      grade_entry_form.grade_entry_students.find_or_create_by_user_id(
+    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by_user_id(
             @student_id)
 
-    @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
-                  @grade_entry_item_id)
+      @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
+                    @grade_entry_item_id)
 
-    @grade.grade = updated_grade
-    @grade_saved = @grade.save
-    @updated_student_total = grade_entry_student.total_grade
+      @grade.grade = updated_grade
+      @grade_saved = @grade.save
+      @updated_student_total = grade_entry_student.total_grade
 
-    grade_entry_student.save # Save updated grade
+      grade_entry_student.save # Save updated grade
+
   end
 
   # For students
@@ -253,13 +253,10 @@ class GradeEntryFormsController < ApplicationController
   def get_mark_columns
     grade_entry_form = GradeEntryForm.find(params[:id])
     grade_entry_items_columns = grade_entry_form.grade_entry_items
-
     c = grade_entry_items_columns.map do |column|
       {
-        id: column.name,
+        id: column.id,
         content: column.name + ' (' + column.out_of.to_s + ')',
-        sortable: true,
-        searcheable: true
       }
     end
     if grade_entry_form.show_total
@@ -270,8 +267,52 @@ class GradeEntryFormsController < ApplicationController
                  + ' ' + grade_entry_form.out_of_total.to_s,
       }
     end
+    if current_user.admin? || current_user.ta?
+      c <<
+      {
+        id: 'marking_state',
+        content: t('grade_entry_forms.grades.marking_state')
+      }
+    end
 
     render json: c
+  end
+
+  def populate_grades_spreadsheet_table
+    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @students = Student.all
+
+    @student_grades = @students.map do |student|
+      s = student.attributes
+      student_grade_entry = @grade_entry_form.grade_entry_students
+                            .find_by_user_id(student.id)
+      if !student_grade_entry.nil?
+        # Populate grades
+        @grade_entry_form.grade_entry_items.each do |grade_entry_item|
+          s[:grade_entry_form] = @grade_entry_form.id
+          @mark = student_grade_entry.grades
+                 .find_by_grade_entry_item_id(grade_entry_item.id)
+          if !@mark.nil? && !@mark.grade.nil?
+            s[grade_entry_item.id] = @mark.grade
+          end
+        end
+        # Populate marking state
+        if student_grade_entry.released_to_student
+          s[:marking_state] = ActionController::Base.helpers.asset_path('icons/email_go.png')
+        end
+        # Populate grade total
+        if @grade_entry_form.show_total
+          total = student_grade_entry.total_grade
+          if !total.nil?
+            s[:total_marks] = total
+          else
+            s[:total_marks] = t('grade_entry_forms.grades.no_mark')
+          end
+        end
+      end
+      s
+    end
+    render json: @student_grades
   end
 
   def populate_term_marks_table
@@ -291,9 +332,9 @@ class GradeEntryFormsController < ApplicationController
       mark = student_grade_entry.grades
              .find_by_grade_entry_item_id(grade_entry_item.id)
       if !mark.nil? && !mark.grade.nil?
-        row[grade_entry_item.name] = mark.grade
+        row[grade_entry_item.id] = mark.grade
       else
-        row[grade_entry_item.name] = t('grade_entry_forms.grades.no_mark')
+        row[grade_entry_item.id] = t('grade_entry_forms.grades.no_mark')
       end
     end
 
@@ -317,27 +358,12 @@ class GradeEntryFormsController < ApplicationController
     errors = []
     grade_entry_students = []
 
-    if params[:ap_select_full] == 'true'
-
-      # Make sure we have a filter
-      if params[:filter].blank?
-        raise I18n.t('grade_entry_forms.grades.expected_filter')
-      end
-
-      # Find the appropriate students using this filter
-
-      students = G_TABLE_PARAMS[:filters][params[:filter]][:proc].call("", "", current_user)
-      students.each do |student|
-        grade_entry_students.push(grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id))
-      end
+    if params[:students].nil?
+      errors.push(I18n.t('grade_entry_forms.grades.must_select_a_student'))
     else
-      # Particular students in the table were selected
-      if params[:students].nil?
-        errors.push(I18n.t('grade_entry_forms.grades.must_select_a_student'))
-      else
-        params[:students].each do |student_id|
-          grade_entry_students.push(grade_entry_form.grade_entry_students.find_or_create_by_user_id(student_id))
-        end
+      params[:students].each do |student_id|
+        grade_entry_students.push(grade_entry_form.grade_entry_students
+          .find_or_create_by_user_id(student_id))
       end
     end
 
