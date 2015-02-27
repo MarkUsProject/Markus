@@ -16,12 +16,15 @@
   </div>
 </div>
 
-<div class='wrapper'>
-  <%= render partial: 'react_grades_table', formats: [:'js.jsx'], handlers: [:erb] %>
-
+<div class='wrapper'>    
   <%= render 'shared/flash_message' %>
-
-<div id="react_grades_table"></div>
+  <% if @grade_entry_form.grade_entry_items.empty? %>
+        <p><%= t('grade_entry_forms.grades.no_grade_entry_items_message') %></p>
+      <% else %>
+    <%= render partial: 'react_grades_table', formats: [:'js.jsx'], handlers: [:erb] %>
+    <div id="react_grades_table"></div>
+  <% end %>
+</div>
 
 <aside class='dialog' id='upload_dialog'>
   <h1><%= t('grade_entry_forms.csv.upload_title') %></h1>

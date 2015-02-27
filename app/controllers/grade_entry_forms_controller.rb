@@ -231,7 +231,7 @@ class GradeEntryFormsController < ApplicationController
     updated_grade = params[:updated_grade]
 
     grade_entry_student = grade_entry_form.grade_entry_students
-      .find_or_create_by_user_id(@student_id)
+                          .find_or_create_by_user_id(@student_id)
 
     @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
                   @grade_entry_item_id)
@@ -241,7 +241,6 @@ class GradeEntryFormsController < ApplicationController
     @updated_student_total = grade_entry_student.total_grade
 
     grade_entry_student.save # Save updated grade
-
   end
 
   # For students
@@ -261,18 +260,18 @@ class GradeEntryFormsController < ApplicationController
     end
     if grade_entry_form.show_total
       c <<
-      {
-        id: 'total_marks',
-        content: t('grade_entry_forms.grades.total') \
-                 + ' ' + grade_entry_form.out_of_total.to_s,
-      }
+        {
+          id: 'total_marks',
+          content: t('grade_entry_forms.grades.total') \
+                   + ' ' + grade_entry_form.out_of_total.to_s,
+        }
     end
     if current_user.admin? || current_user.ta?
       c <<
-      {
-        id: 'marking_state',
-        content: t('grade_entry_forms.grades.marking_state')
-      }
+        {
+          id: 'marking_state',
+          content: t('grade_entry_forms.grades.marking_state')
+        }
     end
 
     render json: c
@@ -291,7 +290,7 @@ class GradeEntryFormsController < ApplicationController
         @grade_entry_form.grade_entry_items.each do |grade_entry_item|
           s[:grade_entry_form] = @grade_entry_form.id
           @mark = student_grade_entry.grades
-                 .find_by_grade_entry_item_id(grade_entry_item.id)
+                  .find_by_grade_entry_item_id(grade_entry_item.id)
           if !@mark.nil? && !@mark.grade.nil?
             s[grade_entry_item.id] = @mark.grade
           end
@@ -299,7 +298,7 @@ class GradeEntryFormsController < ApplicationController
         # Populate marking state
         if student_grade_entry.released_to_student
           s[:marking_state] = ActionController::Base.helpers
-            .asset_path('icons/email_go.png')
+                              .asset_path('icons/email_go.png')
         end
         # Populate grade total
         if @grade_entry_form.show_total
