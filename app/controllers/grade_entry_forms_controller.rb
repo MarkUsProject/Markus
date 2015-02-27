@@ -15,7 +15,7 @@ class GradeEntryFormsController < ApplicationController
                          :update_grade]
   before_filter :authorize_for_ta_and_admin,
                 only: [:grades,
-                       :populate_grades_spreadsheet_table,
+                       :populate_grades_table,
                        :g_table_paginate,
                        :csv_download,
                        :csv_upload,
@@ -230,17 +230,17 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_item_id = params[:grade_entry_item_id]
     updated_grade = params[:updated_grade]
 
-    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by_user_id(
-            @student_id)
+    grade_entry_student = grade_entry_form.grade_entry_students
+      .find_or_create_by_user_id(@student_id)
 
-      @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
-                    @grade_entry_item_id)
+    @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
+                  @grade_entry_item_id)
 
-      @grade.grade = updated_grade
-      @grade_saved = @grade.save
-      @updated_student_total = grade_entry_student.total_grade
+    @grade.grade = updated_grade
+    @grade_saved = @grade.save
+    @updated_student_total = grade_entry_student.total_grade
 
-      grade_entry_student.save # Save updated grade
+    grade_entry_student.save # Save updated grade
 
   end
 
@@ -278,7 +278,7 @@ class GradeEntryFormsController < ApplicationController
     render json: c
   end
 
-  def populate_grades_spreadsheet_table
+  def populate_grades_table
     @grade_entry_form = GradeEntryForm.find(params[:id])
     @students = Student.all
 
@@ -298,7 +298,8 @@ class GradeEntryFormsController < ApplicationController
         end
         # Populate marking state
         if student_grade_entry.released_to_student
-          s[:marking_state] = ActionController::Base.helpers.asset_path('icons/email_go.png')
+          s[:marking_state] = ActionController::Base.helpers
+            .asset_path('icons/email_go.png')
         end
         # Populate grade total
         if @grade_entry_form.show_total

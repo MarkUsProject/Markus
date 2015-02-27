@@ -250,7 +250,7 @@ Markus::Application.routes.draw do
 
       member do
         get 'populate_term_marks_table'
-        get 'populate_grades_spreadsheet_table'
+        get 'populate_grades_table'
         get 'get_mark_columns'
         get 'grades'
         get 'g_table_paginate'
