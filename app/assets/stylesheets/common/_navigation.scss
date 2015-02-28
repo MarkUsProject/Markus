@@ -71,6 +71,15 @@ nav {
   }
 }
 
+#logo-img {
+  background: transparent url(markus_logo_small.png) no-repeat center center / 90px 30px;
+  width: 90px;
+
+  @include hidpi {
+    background-image: url(markus_logo_small@2x.png);
+  }
+}
+
 
 /* Footer */
 
@@ -187,7 +196,7 @@ footer {
 }
 
 #mobile_menu {
-  background: $lighter-blue url(markus_logo_small.png) no-repeat center center;
+  background: $lighter-blue url(markus_logo_small.png) no-repeat center center / 90px 30px;
   border-bottom: 1px solid $blue;
   display: none;
   height: 3.5em;
@@ -198,6 +207,10 @@ footer {
 
   @include breakpoint(mobile) {
     display: block;
+  }
+
+  @include hidpi {
+    background-image: url(markus_logo_small@2x.png);
   }
 
   #menu_icon {

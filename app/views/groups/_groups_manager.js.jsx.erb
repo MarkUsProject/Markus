@@ -37,14 +37,18 @@
         students_to_remove: this.state.selected_students_in_groups,
         groupings: this.state.selected_groups
       };
-      
+
       jQuery.ajax({
         method: 'POST',
         url: 'groups/global_actions',
         data: dataLoad,
         success: function(data) {
           this.refresh();
+          this.refs.groupsStudentsTable.clearCheckboxes();
+          this.refs.groupsTable.clearCheckboxes();
           this.setState({
+            selected_students: [],
+            selected_groups: [],
             selected_students_in_groups: [],
             error: null
           });
@@ -62,6 +66,7 @@
       document.getElementById('working').style.display = '';
 
       jQuery.ajax({
+        url: 'groups/populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -78,11 +83,13 @@
         <div>
           <ErrorDiv error={this.state.error} />
           <div className='columns'>
-            <GroupsStudentsTable students={this.state.students}
+            <GroupsStudentsTable ref="groupsStudentsTable"
+              students={this.state.students}
               selected_students={this.state.selected_students}
-              onSelectedStudentsChange={this.updateSelectedStudents}/>
+              onSelectedStudentsChange={this.updateSelectedStudents} />
             <GroupsActionsColumn refresh={this.refresh} performAction={this.performAction} />
-            <GroupsTable groups={this.state.groups} 
+            <GroupsTable ref="groupsTable"
+              groups={this.state.groups} 
               selected_groups={this.state.selected_groups}
               onSelectedGroupsChange={this.updateSelectedGroups}
               selected_students_in_groups={this.state.selected_students_in_groups}
@@ -150,6 +157,9 @@
         ]
       };
     },
+    clearCheckboxes: function() {
+      this.refs.table.clearCheckboxes();
+    },
     render: function() {
       var students_data = this.props.students.map(function(student) {
         var s = {};
@@ -165,7 +175,8 @@
       return (
         <div className={'col-left'} >
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='students-tabs'>
-            <Table data={students_data}
+            <Table ref="table"
+                   data={students_data}
                    columns={this.props.columns}
                    filters={this.props.filters}
                    selectable={true}
@@ -237,6 +248,9 @@
       }
       this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
     },
+    clearCheckboxes: function() {
+      this.refs.table.clearCheckboxes();
+    },
     render: function() {
       var filters = [
       {
@@ -296,7 +310,8 @@
         <div className={'col-right'}>
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
             <AddGroupButton refresh={this.props.refresh} />
-            <Table data={groups_data}
+            <Table ref="table"
+              data={groups_data}
               columns={this.props.columns}
               filters={this.props.filters} 
               selectable={true}

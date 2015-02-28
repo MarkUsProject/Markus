@@ -23,7 +23,8 @@ class SubmissionsController < ApplicationController
                          :collect_ta_submissions,
                          :repo_browser,
                          :update_converted_pdfs,
-                         :update_submissions]
+                         :update_submissions,
+                         :populate_submissions_table]
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
                        :index,
@@ -34,7 +35,8 @@ class SubmissionsController < ApplicationController
                        :repo_browser,
                        :download_groupings_files,
                        :update_converted_pdfs,
-                       :update_submissions]
+                       :update_submissions,
+                       :populate_submissions_table]
   before_filter :authorize_for_student,
                 only: [:file_manager,
                        :populate_file_manager,
@@ -111,7 +113,6 @@ class SubmissionsController < ApplicationController
   def file_manager
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
-
     if @grouping.nil?
       redirect_to controller: 'assignments',
                   action: 'student_interface',
@@ -243,27 +244,16 @@ class SubmissionsController < ApplicationController
 
   def browse
     @assignment = Assignment.find(params[:assignment_id])
+    @groupings = Grouping.get_groupings_for_assignment(@assignment,
+                                                       current_user)
+  end
 
-    if current_user.ta?
-      @groupings = @assignment.ta_memberships.find_all_by_user_id(current_user)
-                              .select { |m| m.grouping.is_valid? }
-                              .map { |m| m.grouping }
-    else
-      @groupings = @assignment.groupings
-        .includes(:assignment,
-                  :group,
-                  :grace_period_deductions,
-                  current_submission_used: :results,
-                  accepted_student_memberships: :user)
-        .select { |g| g.non_rejected_student_memberships.size > 0 }
-    end
+  def populate_submissions_table
+    @assignment = Assignment.find(params[:assignment_id])
+    @groupings = Grouping.get_groupings_for_assignment(@assignment,
+                                                       current_user)
 
-    respond_to do |format|
-      format.html
-      format.json do
-        render json: get_submissions_table_info(@assignment, @groupings)
-      end
-    end
+    render json: get_submissions_table_info(@assignment, @groupings)
   end
 
   def index
@@ -297,6 +287,18 @@ class SubmissionsController < ApplicationController
       set_filebrowser_vars(@grouping.group, @assignment)
       render :file_manager, id: assignment_id
       return
+    end
+    unless params[:new_files].nil?
+      params[:new_files].each do |f|
+        if f.size > 5000000
+          @file_manager_errors[:size_conflict] =
+            "Error occured while uploading file \"" +
+             f.original_filename +
+             "\": The size of the uploaded file exceeds the maximum of 5MB."
+          render :file_manager
+          return
+        end
+      end
     end
     @grouping.group.access_repo do |repo|
 

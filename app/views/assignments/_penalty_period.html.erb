@@ -12,10 +12,11 @@
 
   <%= pf.fields_for :periods, penalty_period do |f| %>
     <p>
-      <%= f.label :hours, t('submission_rules.penalty_period_submission_rule.after') %>
+      <%= f.label :hours, t('submission_rules.penalty_period_submission_rule.after').html_safe %>
       <%= f.text_field :hours,
                        size: 1,
                        class: 'PeriodDeltaChain_Hours',
+                       required: true,
                        onchange: 'if (penalty_periods) { penalty_periods.refresh(); }' %>
       <%= t('submission_rules.grace_period_submission_rule.hours') %>
     </p>
@@ -28,8 +29,8 @@
       </span>
     </div>
     <p>
-      <%= f.label :deduction, t('submission_rules.penalty_period_submission_rule.deduction') %>
-      <%= f.text_field :deduction, size: 1 %>%
+      <%= f.label :deduction, t('submission_rules.penalty_period_submission_rule.deduction').html_safe %>
+      <%= f.text_field :deduction, required: true, size: 1 %>%
     </p>
     <p>
       <% if !f.object.nil? && !f.object.new_record? %>

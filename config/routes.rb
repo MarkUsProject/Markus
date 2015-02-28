@@ -18,7 +18,11 @@ Markus::Application.routes.draw do
       resources :main_api
     end
 
-    resources :admins
+    resources :admins do
+      collection do
+        get 'populate'
+      end
+    end
 
     resources :assignments do
 
@@ -104,6 +108,7 @@ Markus::Application.routes.draw do
         end
 
         collection do
+          get 'populate'
           get 'add_group'
           get 'use_another_assignment_groups'
           get 'manage'
@@ -123,6 +128,7 @@ Markus::Application.routes.draw do
 
       resources :submissions do
         collection do
+          get 'populate_submissions_table'
           get 'file_manager'
           get 'browse'
           post 'populate_file_manager'
@@ -186,10 +192,15 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :summaries
+      resources :summaries, only: :index do
+        collection do
+          get 'populate'
+        end
+      end
 
       resources :graders do
         collection do
+          get 'populate'
           get 'add_grader_to_grouping'
           post 'csv_upload_grader_groups_mapping'
           post 'csv_upload_grader_criteria_mapping'
@@ -240,6 +251,9 @@ Markus::Application.routes.draw do
       end
 
       member do
+        get 'populate_term_marks_table'
+        get 'populate_grades_table'
+        get 'get_mark_columns'
         get 'grades'
         get 'g_table_paginate'
         post 'g_table_paginate'
@@ -306,6 +320,7 @@ Markus::Application.routes.draw do
 
     resources :students do
       collection do
+        get 'populate'
         post 'bulk_modify'
         get 'manage'
         get 'add_new_section'
@@ -320,6 +335,7 @@ Markus::Application.routes.draw do
 
     resources :tas  do
       collection do
+        get 'populate'
         post 'upload_ta_list'
         get 'download_ta_list'
       end

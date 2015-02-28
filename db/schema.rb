@@ -47,6 +47,8 @@ ActiveRecord::Schema.define(:version => 20150226032509) do
     t.integer "annotation_number"
     t.boolean "is_remark"
     t.integer "page"
+    t.integer "column_start"
+    t.integer "column_end"
   end
 
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
@@ -102,6 +104,8 @@ ActiveRecord::Schema.define(:version => 20150226032509) do
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                        :default => false
+    t.boolean  "is_required",                      :default => false
+    t.boolean  "only_required_files",              :default => false
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true

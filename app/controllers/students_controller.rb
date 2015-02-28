@@ -13,14 +13,11 @@ class StudentsController < ApplicationController
   end
 
   def index
-    respond_to do |format|
-      format.html do
-        @sections = Section.all
-      end
-      format.json do
-        render json: get_students_table_info
-      end
-    end
+    @sections = Section.all
+  end
+
+  def populate
+    render json: get_students_table_info
   end
 
   def edit

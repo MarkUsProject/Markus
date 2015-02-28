@@ -64,7 +64,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert render_template :student_interface
       assert_response :success
       assert_equal true, flash.empty?
-      assert_match Regexp.new(I18n.t('grade_entry_forms.grades.total')), @response.body
       assert_match Regexp.new(total), @response.body
     end
 
@@ -90,7 +89,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert render_template :student_interface
       assert_response :success
       assert_equal true, flash.empty?
-      assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_mark')), @response.body
     end
 
     should 'POST on :new' do

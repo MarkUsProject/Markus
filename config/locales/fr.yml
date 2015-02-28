@@ -82,6 +82,7 @@ fr:
     current_assignments:       "Projets existants"
     assignment_item:           "Projet"
     due:                       "Date de retour"
+    submission_status:         "Statut de la présentation"
     no_assignments:            "Aucun devoir pour le moment."
     class_average:             "Moyenne : %{results_average}"
     submissions_collected:     "%{count}/%{size} Envois récupérés"
@@ -143,7 +144,6 @@ fr:
         not_valid_submission_rule: "%{type} n'est pas une règle d'envoi valide"
         rules:           "Règles du projet"
         edit:           "Édition du projet :"
-        properties:     "Propriétés du projet"
         required_files:  "Fichiers requis"
         submission_rules:  "Règles d'envoi"
         required_files_read:  "Fichiers requis pour le projet."
@@ -198,6 +198,9 @@ fr:
     remove_graders:     "Enlever des correcteurs"
     admins:             "Administrateurs"
     add_new:            "Nouveau"
+    add_new_student:    "Nouveau Étudiant"
+    add_new_grader:     "Nouveau Correcteur"
+    add_new_admin:      "Nouveau Administrateur"
     create_new_grade_entry_form: "Créer une feuille de notes"
     edit:               "Éditer"
     save:               "Sauvegarder"
@@ -422,6 +425,7 @@ fr:
       download_groupings_files: "Télécharger tous les envois"
       sections:             "Section :"
       revision_history:     "%{num} : "
+      search_submissions:   "Rechercher Soumissions"
 
     summaries_index:
       group_name:           "Nom du groupe"
@@ -436,6 +440,7 @@ fr:
       filename:             "Fichier"
       section:              "Section"
       sections:             "Section :"
+      search_summaries:     "Rechercher Résumés"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -457,9 +462,11 @@ fr:
       create:
         success: "Feuille de notes créée"
         title: "Créer une nouvelle feuille de notes"
+        submit: "Ajouter Marks Tableur"
       edit:
         title: "Modification de la feuille de notes : "
         success: "Feuille de notes mise à jour"
+        submit: "Mise à jour marques Tableur"
       grades:
         title: "Édition de la feuille de notes :"
         student_title: "Feuille de notes : "
@@ -641,6 +648,7 @@ fr:
       invitations: "Invitations"
       invited_by: "Vous avez été invité par %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Êtes-vous sûr de vouloir refuser cette invitation ?"
+      confirm_work_alone: "Etes-vous sûr que vous voulez travailler individuellement ? Vous ne pouvez pas changer ce choix, sauf si vous contactez votre instructeur."
       form_own_group: "Former votre propre groupe"
       form_group: "Les groupes doivent être composés de <strong>%{group_min}</strong> à <strong>%{group_max}</strong> étudiants."
       decline_invitation2: "Êtes-vous sûr de vouloir décliner l'invitation ?"
@@ -887,7 +895,7 @@ fr:
         form_description:  "Déduire automatiquement les crédits de grâce"
         add_grace_period: "Ajouter une période de grâce"
         hours:  "heures…"
-        after:  "Après"
+        after:  "Après<span class='required_field'>*</span>"
         from:  "Du"
         to:  "au"
         alert: "Vous devez activer les temps supplémentaires pour pouvoir ajouter du temps supplémentaire."
@@ -907,9 +915,9 @@ fr:
         to: "au"
         hours: "heure(s)…"
         after: "Après"
-        every: "chaque"
-        deduct: "déduction"
-        for: "pour"
+        every: "chaque<span class='required_field'>*</span>"
+        deduct: "déduction<span class='required_field'>*</span>"
+        for: "pour<span class='required_field'>*</span>"
 
       penalty_period_submission_rule:
         name: "Règle d'envoi lors des périodes de pénalité"
@@ -922,10 +930,10 @@ fr:
         form_description: "Activer les pénalités"
         add_penalty_period: "Ajouter une période de pénalité"
         hours:  "heures…"
-        after:  "Après"
+        after:  "Après<span class='required_field'>*</span>"
         from:  "Du"
         to:  "au"
-        deduction: "Déduction après la période de pénalité :"
+        deduction: "Déduction après la période de pénalité :<span class='required_field'>*</span>"
         alert: "Vous devez activer les pénalités pour pouvoir ajouter une période de pénalité."
 
     submission_file:
@@ -982,6 +990,9 @@ fr:
         <p>La description est facultative. NB : Si aucune description n'est présente, la seconde virgule ne doit
         pas apparaître.</p>"
         success: "Le fichier contenant le barème (flexible) a bien été envoyé : %{nb_updates} mise(s) à jour."
+      errors:
+        messages:
+          name_taken: "Nom du critère déjà utilisé."
 
     rubric_criteria:
       criteria_management: "Édition du barème pour le projet %{identifier}"
@@ -1034,6 +1045,10 @@ fr:
         description_2: "Ce critère a été partiellement compris."
         description_3: "Ce critère a été compris."
         description_4: "Ce critère a été parfaitement compris."
+      errors:
+        messages:
+          name_taken: "Nom du critère déjà utilisé."
+
 
     summary_table:
       title: "Titre"
@@ -1206,6 +1221,10 @@ fr:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Oh non! Affectation dossier manquant."
+    group_repo_missing:         "Oh non! Aucune référentiel trouvé pour ce groupe."
 
     #lib/validators/
     date_validator:

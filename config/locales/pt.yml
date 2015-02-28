@@ -79,6 +79,7 @@ pt:
     current_assignments:       "Projetos atuais"
     assignment_item:           "Projetos"
     due:                       "Prazo de entrega"
+    submission_status:         "Status"
     no_assignments:            "Não existem projetos atualmente."
     class_average:             "Média da classe: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissões coletadas"
@@ -140,7 +141,6 @@ pt:
         not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
         edit:           "Editar projeto:"
-        properties:     "Propriedades do projeto"
         required_files:  "Arquivos exigidos"
         submission_rules:  "Regras de envio"
         required_files_read:  "Arquivos exigidos para esse projeto"
@@ -195,6 +195,9 @@ pt:
     remove_graders:     "Remover avaliadores"
     admins:             "Administradores"
     add_new:            "Adicionar novo"
+    add_new_student:    "Adicionar novo Étudiant"
+    add_new_grader:     "Adicionar novo Avaliador"
+    add_new_admin:      "Adicionar novo Administradore"
     create_new_grade_entry_form: "Adicionar planilha de notas"
     edit:               "Editar"
     save:               "Salvar"
@@ -416,6 +419,10 @@ pt:
       download_groupings_files: "Baixar todas as submissões"
       sections:             "Sessão:"
       revision_history:     "%{num}: "
+      search_submissions:   "Pesquisa Submissões"
+
+    summaries_index:
+      search_summaries:     "Pesquisa Resumos"
 
     grade_entry_forms:
       blank_field: "Não pode ser branco"
@@ -437,9 +444,11 @@ pt:
       create:
         success: "Planilha com novas notas criadas com sucesso"
         title: "Adicionar planilha de notas"
+        submit: "Adicionar marcas Spreadsheet"
       edit:
         title: "Editar planilha de notas:"
         success: "Planilha de notas atualizada com sucesso"
+        submit: "Atualização Marcas Spreadsheet"
       grades:
         title: "Gerenciar planilha de notas:"
         student_title: "Notas:"
@@ -625,6 +634,7 @@ pt:
       invitations: "Convites"
       invited_by: "Você foi convidado por %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Você tem certeza que quer recusar este convite?"
+      confirm_work_alone: "Você tem certeza que quer trabalhar sozinho? Você não poderá alterar esta escolha a não ser que você entre em contato com seu instrutor "
       form_own_group: "Forme o seu próprio grupo"
       form_group: "Um grupo deve conter de <strong>%{group_min}</strong> a <strong>%{group_max}</strong> pessoas."
       decline_invitation2: "Isso irá recusar outro convite que você tem. Você tem certeza disso?"
@@ -870,7 +880,7 @@ pt:
         form_description:  "Deduzir automaticamente créditos de período de tolerância"
         add_grace_period: "Adicionar um período de tolerância"
         hours:  "horas..."
-        after:  "Depois"
+        after:  "Depois<span class='required_field'>*</span>"
         from:  "De"
         to:  "para"
         alert: "Você deve selecionar a regra de envio Prazo de tolerância para adicionar um período de tolerância."
@@ -890,9 +900,9 @@ pt:
         to: "para"
         hours: "hora(s)..."
         after: "Depois"
-        every: "todo"
-        deduct: "Deduzir"
-        for: "para"
+        every: "todo<span class='required_field'>*</span>"
+        deduct: "Deduzir<span class='required_field'>*</span>"
+        for: "para<span class='required_field'>*</span>"
 
       penalty_period_submission_rule:
         name: "Regra de submissão no período de penalidade"
@@ -905,10 +915,10 @@ pt:
         form_description: "Usar fórmula de penalidade"
         add_penalty_period: "Adicionar um período de penalidade"
         hours:  "horas..."
-        after:  "Depois"
+        after:  "Depois<span class='required_field'>*</span>"
         from:  "De"
         to:  "para"
-        deduction: "Período de dedução de penalidade:"
+        deduction: "Período de dedução de penalidade:<span class='required_field'>*</span>"
         alert: "Você deve selecionar uma regra de submissão de período de penalidade para adicionar um período de multa."
 
     submission_file:
@@ -964,6 +974,9 @@ pt:
         <code>criteria_name,max_value,description</code>
         <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
         success: "Critério flexível carregado com sucesso: %{nb_updates} atualizado(s)."
+      errors:
+        messages:
+          name_taken: "Nome de critério já utilizado."
 
     rubric_criteria:
       criteria_management:         "Gerenciamento de rúbrica : %{identifier}"
@@ -1018,6 +1031,9 @@ pt:
         description_2: "Esse critério foi satisfeito."
         description_3: "Esse critério foi bem satisfeito."
         description_4: "Esse critério foi quase perfeitamente ou perfeitamente satisfeito."
+      errors:
+        messages:
+          name_taken: "Nome de critério já utilizado."
 
     summary_table:
       title: "Título"
@@ -1193,6 +1209,10 @@ pt:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Distribuição de notas"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Oh não! Falta pasta Assignment."
+    group_repo_missing:         "Oh não! Nenhum repositório encontrado para este grupo."
 
     #lib/validators/
     date_validator:

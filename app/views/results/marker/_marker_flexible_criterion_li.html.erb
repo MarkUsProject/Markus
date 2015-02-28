@@ -14,6 +14,12 @@
       class="mark_criterion_title_div_level float_left">
       <strong><%=(mark_criterion.flexible_criterion_name)%></strong>
     </div>
+    <div id="<%="mark_criterion_title_#{mark_criterion.id}_old_mark"%>"
+      class="mark_criterion_old_mark float_left">
+	  <strong><%= if(!old_mark.nil? && !old_mark.mark.nil?) then 
+        "#{I18n.t('marker.marks.old')}#{old_mark.mark.to_s}"
+        else "" end %></strong>
+    </div>
     <div id="mark_flexible_<%=mark.id%>" class="float_right">
       <%= text_field_tag('mark_' + mark.id.to_s, mark.mark,
           size: 4,

@@ -53,23 +53,23 @@ class GradersController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
+  end
+
+  def populate
+    @assignment = Assignment.find(params[:assignment_id])
     @sections = Section.all
-    respond_to do |format|
-      format.html
-      format.json do
-        assign_to_criteria = @assignment.assign_graders_to_criteria
-        if assign_to_criteria
-          graders_table_info = get_graders_table_info_with_criteria(@assignment)
-          groups_table_info = get_groups_table_info_with_criteria(@assignment)
-        else
-          graders_table_info = get_graders_table_info_no_criteria(@assignment)
-          groups_table_info = get_groups_table_info_no_criteria(@assignment)
-        end
-        # better to use a hash?
-        render json: [assign_to_criteria, @sections,
-                      graders_table_info, groups_table_info]
-      end
+
+    assign_to_criteria = @assignment.assign_graders_to_criteria
+    if assign_to_criteria
+      graders_table_info = get_graders_table_info_with_criteria(@assignment)
+      groups_table_info = get_groups_table_info_with_criteria(@assignment)
+    else
+      graders_table_info = get_graders_table_info_no_criteria(@assignment)
+      groups_table_info = get_groups_table_info_no_criteria(@assignment)
     end
+    # better to use a hash?
+    render json: [assign_to_criteria, @sections,
+                  graders_table_info, groups_table_info]
   end
 
   # Assign TAs to Groupings via a csv file

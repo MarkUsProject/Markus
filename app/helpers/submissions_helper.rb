@@ -1,5 +1,4 @@
 module SubmissionsHelper
-
   def find_appropriate_grouping(assignment_id, params)
     if current_user.admin? || current_user.ta?
       Grouping.find(params[:grouping_id])
@@ -39,9 +38,9 @@ module SubmissionsHelper
       begin
         g[:commit_date] = get_grouping_commit_date(grouping)
       rescue NoMethodError
-        g[:commit_date] = 'Uh oh! Assignment folder missing.'
+        g[:commit_date] = I18n.t('assign_folder_missing')
       rescue RuntimeError
-        g[:commit_date] = 'Uh oh! No repo found for this group.'
+        g[:commit_date] = I18n.t('group_repo_missing')
       end
       g[:marking_state] = get_grouping_marking_state(assignment, grouping)
       g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)

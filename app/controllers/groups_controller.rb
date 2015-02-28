@@ -125,17 +125,15 @@ class GroupsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    respond_to do |format|
-      format.html do
-        @all_assignments = Assignment.all(order: :id)
-        render 'index'
-      end
-      format.json do
-        students_table_info = get_students_table_info
-        groupings_table_info = get_groupings_table_info
-        render json: [students_table_info, groupings_table_info]
-      end
-    end
+    @all_assignments = Assignment.all(order: :id)
+    render 'index'
+  end
+
+  def populate
+    @assignment = Assignment.find(params[:assignment_id])
+    students_table_info = get_students_table_info
+    groupings_table_info = get_groupings_table_info
+    render json: [students_table_info, groupings_table_info]
   end
 
   # Allows the user to upload a csv file listing groups. If group_name is equal

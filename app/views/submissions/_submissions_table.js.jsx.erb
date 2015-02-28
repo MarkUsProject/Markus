@@ -146,6 +146,7 @@
       document.getElementById('working').style.display = '';
 
       jQuery.ajax({
+        url: 'populate_submissions_table',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -210,6 +211,7 @@
               filters={this.props.filters}
               filter_type={true}
               onSelectedRowsChange={this.updateSelectedSubmissions}
+              search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
             />
           </div>
         );
