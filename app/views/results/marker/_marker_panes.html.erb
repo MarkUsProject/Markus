@@ -4,7 +4,7 @@
       <div class='tab-pane' id='code_pane'>
         <ul id='code_and_annotations_tabs' class='subsection_tabs'>
            <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
-           <li onclick="reloadDOM()"><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
+           <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
            <% if can_show_remark_request_tab_in_marker_pane(submission) %>
               <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
            <% end %>
