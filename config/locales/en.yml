@@ -1114,6 +1114,7 @@ en:
         <p>The description is optional. Note that if it is not present, the second
         comma should not appear.</p>"
         success: "Flexible criteria successfully uploaded: %{nb_updates} update(s)."
+        malformed: "The selected file was improperly formed. Please ensure the file meets Markus specifications."
       errors:
         messages:
           name_taken: "Criterion name already used."
@@ -1160,6 +1161,7 @@ en:
         error: "Some rubric criteria were invalid:"
         syntax_error: "There is an error in the file you uploaded: %{error}"
         empty_error: "No criteria were found in the provided file."
+        malformed: "The selected file was improperly formed. Please ensure the file meets Markus specifications."
       error_total: "total weight must be positive"
       defaults:
         level_0: "Very Poor"
