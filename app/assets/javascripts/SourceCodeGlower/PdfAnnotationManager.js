@@ -329,6 +329,7 @@
       if($textSpan == null) {
         $textSpan = createTextNode();
         $page.append($textSpan);
+        reloadDOM();
       }
 
       var point = getRelativePointForMouseEvent(ev, $page, -1);
