@@ -119,6 +119,17 @@ class RubricsControllerTest < AuthenticatedControllerTest
       assert_response :redirect
     end
 
+    should 'deal properly with malformed CSV files' do
+      tempfile = fixture_file_upload('files/malformed.csv')
+      post_as @admin,
+              :csv_upload,
+              assignment_id: @assignment.id,
+              csv_upload: { rubric: tempfile }
+      assert_not_nil assigns :assignment
+      assert_equal(flash[:error], I18n.t('rubric_criteria.upload.malformed'))
+      assert_response :redirect
+    end
+
     should 'have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8' do
       post_as @admin,
               :csv_upload,
