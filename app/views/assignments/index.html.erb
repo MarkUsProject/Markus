@@ -72,40 +72,38 @@
 
   <h2><%= t('upload') %></h2>
   <p>
-    <p>
-      <%= t(:select_csv_file,
-            code: @default_fields[0..3].join(', ')).html_safe %>
-    </p>
-    <p>
-      <%= t(:all_csv_file) %>
-      <%= link_to_function '[...]', "toggleElem('hide')" %>
-      <span id='hide' style='display: none;'>
-        <%= "<code>#{@default_fields.join(', ')}</code>".html_safe %>
-      </span>
-    </p>
-
-    <%= form_tag upload_assignment_list_assignments_path,
-                 { multipart: true } do %>
-      <p>
-        <%= t('encoding') %>
-        <%= select_tag(:encoding, options_for_select(@encodings)) %>
-      </p>
-
-      <input type='file' name='assignment_list' id='assignment_list'>
-
-      <section class='dialog-actions'>
-        <%= hidden_field_tag :file_format, '', id: 'file_format' %>
-        <% if @current_user.admin? %>
-          <%= submit_tag t(:upload_assignment_format, file: 'YML'),
-                         disabled: true,
-                         id: 'yml_upload',
-                         onclick: 'choose_upload("yml")' %>
-          <%= submit_tag t(:upload_assignment_format, file: 'CSV'),
-                         disabled: true,
-                         id: 'csv_upload',
-                         onclick: 'choose_upload("csv")' %>
-        <% end %>
-      </section>
-    <% end %>
+    <%= t(:select_csv_file,
+          code: @default_fields[0..3].join(', ')).html_safe %>
   </p>
+  <p>
+    <%= t(:all_csv_file) %>
+    <%= link_to_function '[...]', "toggleElem('hide')" %>
+    <span id='hide' style='display: none;'>
+      <%= "<code>#{@default_fields.join(', ')}</code>".html_safe %>
+    </span>
+  </p>
+
+  <%= form_tag upload_assignment_list_assignments_path,
+               { multipart: true } do %>
+    <p>
+      <%= t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </p>
+
+    <input type='file' name='assignment_list' id='assignment_list'>
+
+    <section class='dialog-actions'>
+      <%= hidden_field_tag :file_format, '', id: 'file_format' %>
+      <% if @current_user.admin? %>
+        <%= submit_tag t(:upload_assignment_format, file: 'YML'),
+                       disabled: true,
+                       id: 'yml_upload',
+                       onclick: 'choose_upload("yml")' %>
+        <%= submit_tag t(:upload_assignment_format, file: 'CSV'),
+                       disabled: true,
+                       id: 'csv_upload',
+                       onclick: 'choose_upload("csv")' %>
+      <% end %>
+    </section>
+  <% end %>
 </aside>
