@@ -45,8 +45,6 @@ module SubmissionsHelper
       g[:marking_state] = get_grouping_marking_state(assignment, grouping)
       g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
       g[:final_grade] = get_grouping_final_grades(grouping)
-      g[:can_begin_grading] =
-          get_grouping_can_begin_grading(assignment, grouping)
       g[:state] = get_grouping_state(grouping)
       g[:section] = get_grouping_section(grouping)
       g[:tags] = get_grouping_tags(grouping)
@@ -188,14 +186,6 @@ module SubmissionsHelper
       grouping.current_submission_used.get_latest_result.total_mark
     when 'released'
       grouping.current_submission_used.get_latest_result.total_mark
-    end
-  end
-
-  def get_grouping_can_begin_grading(assignment, grouping)
-    if assignment.submission_rule.can_collect_grouping_now?(grouping)
-      return view_context.image_tag('icons/tick.png')
-    else
-      return view_context.image_tag('icons/cross.png')
     end
   end
 
