@@ -3,6 +3,7 @@
 require 'spec_helper'
 
 describe 'Routing to main page', :type => :routing do
+  
   context 'Locale-less root' do
     it 'routes / to login' do
       expect(get: '/').to route_to(
@@ -92,9 +93,11 @@ end
 
 # start Assignment route tests
 describe 'An Assignment' do
+  
   let(:assignment) { create(:assignment) }
   let(:path) { '/en/assignments' }
   let(:ctrl) { 'assignments' }
+  
   # start Assignment collection route tests
   context 'collection' do
     
@@ -216,6 +219,7 @@ describe 'An Assignment' do
   
   # start Assignment's rubrics route tests
   context 's rubrics' do
+    
     let(:rubric_path) { path + '/' + assignment.id.to_s + '/rubrics' }
     let(:rubric_ctrl) { 'rubrics' }
     
@@ -276,9 +280,12 @@ describe 'An Assignment' do
     
   # start assignment flexible criteria route tests
   context 's flexible_criteria' do
+    
     context 'collection' do
+      
       let(:criter_path) { path + '/' + assignment.id.to_s + '/flexible_criteria' }
       let(:criter_ctrl) { 'flexible_criteria' }
+      
         it 'routes POST upload properly' do
           expect(post: criter_path + '/upload').to route_to(
             controller: criter_ctrl,
@@ -318,8 +325,10 @@ describe 'An Assignment' do
     
     # start assignment automated_tests resource route tests
     context 's automated_tests' do
+      
       let(:autom_path) { path + '/' + assignment.id.to_s + '/automated_tests' }
       let(:autom_ctrl) { 'automated_tests' }
+      
       context 'collection' do
         it 'routes GET manage properly' do
           expect(get: autom_path + '/manage').to route_to(
@@ -383,9 +392,11 @@ describe 'An Assignment' do
     
     # start assignment group route tests
     context 'groups' do
+      
       let(:group) { create(:group) }
       let(:group_path) { path + '/' + assignment.id.to_s + '/groups' }
       let(:group_ctrl) { 'groups' }
+      
       context 'resource members' do
         
         it 'routes POST rename_group properly' do
@@ -497,9 +508,99 @@ describe 'An Assignment' do
             locale: 'en')
         end
         
+        it 'routes GET global_actions properly' do
+          expect(get: group_path + '/global_actions').to route_to(
+            controller: group_ctrl,
+            action: 'global_actions',
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
+        end
         
-      end
+        it 'routes GET rename_group properly' do
+          expect(get: group_path + '/rename_group').to route_to(
+            controller: group_ctrl,
+            action: 'rename_group',
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
+        end
+        
+        it 'routes DELETE remove_group properly' do
+          expect(delete: group_path + '/remove_group').to route_to(
+            controller: group_ctrl,
+            action: 'remove_group',
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
+        end
+        
+        it 'routes POST add_group properly' do
+          expect(post: group_path + '/add_group').to route_to(
+            controller: group_ctrl,
+            action: 'add_group',
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
+        end
+        
+        it 'routes POST global_actions properly' do
+          expect(post: group_path + '/global_actions').to route_to(
+            controller: group_ctrl,
+            action: 'global_actions',
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
+       end
     end
+  end
+  # end assignment group route tests
+  
+  # start assignment submissions route tests
+  context 'submission' do
+    
+    let(:submission) { create(:submission) }
+    let(:sub_path) { path + '/' + assignment.id.to_s + '/submissions' }
+    let(:sub_ctrl) { 'submissions' }
+    
+    context 'collection' do
+      it 'routes GET file_manager properly' do
+        expect(get: sub_path + '/file_manager').to route_to(
+          controller: sub_ctrl,
+          action: 'file_manager',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
+      end
+      
+      it 'routes GET browse properly' do
+        expect(get: sub_path + '/browse').to route_to(
+          controller: sub_ctrl,
+          action: 'browse',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
+      end
+      
+      it 'routes POST populate_file_manager properly' do
+        expect(post: sub_path + '/populate_file_manager').to route_to(
+                                                      controller: sub_ctrl,
+                                                      action: 'populate_file_manager',
+                                                      assignment_id: assignment.id.to_s,
+                                                      locale: 'en')
+      end
+      
+      it 'routes GET collect_all_submissions properly' do
+        expect(get: sub_path + '/collect_all_submissions').to route_to(
+                                                                      controller: sub_ctrl,
+                                                                      action: 'collect_all_submissions',
+                                                                      assignment_id: assignment.id.to_s,
+                                                                      locale: 'en')
+      end
+      
+      it 'routes GET download_simple_csv_report properly' do
+        expect(get: sub_path + '/download_simple_csv_report').to route_to(
+                                                                       controller: sub_ctrl,
+                                                                       action: 'download_simple_csv_report',
+                                                                       assignment_id: assignment.id.to_s,
+                                                                       locale: 'en')
+     end
+      
+    end
+  end
   end
   
   
