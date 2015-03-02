@@ -226,7 +226,7 @@ function toggle_sections_due_date(section_due_dates_type) {
 
 function change_submission_rule() {
   jQuery('.period').hide();
-  jQuery('#sub_rule_link a').hide();
+  jQuery('.sub_rule_link a').hide();
   jQuery('.period input').prop('disabled', true);
 
   if (jQuery('#grace_period_submission_rule').is(':checked')) {
