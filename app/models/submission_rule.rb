@@ -33,7 +33,7 @@ class SubmissionRule < ActiveRecord::Base
   end
 
   def calculate_grouping_collection_time(grouping)
-    if grouping.inviter.section
+    if !grouping.inviter.nil?
       SectionDueDate.due_date_for(grouping.inviter.section,
                                          assignment)
     else
