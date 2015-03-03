@@ -274,6 +274,8 @@ Markus::Application.routes.draw do
           get 'global_actions'
           get 'groups_coverage_dialog'
           post 'populate_graders'
+          post 'populate_students_table'
+          post 'populate_graders_table'
           post 'populate'
           post 'populate_criteria'
           post 'set_assign_criteria'

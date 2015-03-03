@@ -1,4 +1,35 @@
 module MarksGradersHelper
+  def get_marks_graders_table_info(grade_entry_form)
+    graders = Ta.all
+
+    graders.map do |grader|
+      s = grader.attributes
+      s[:num_students] = grader.get_membership_count_by_grade_entry_form(grade_entry_form)
+      s
+    end
+  end
+
+  def get_marks_graders_student_table_info(students, grade_entry_form)
+    students.map do |student|
+      s = student.attributes
+
+      # Loop up the currently associated TAs (graders)
+      grade_entry_student = student.grade_entry_students.find do |entry|
+        entry.grade_entry_form_id == grade_entry_form.id
+      end
+
+      # Map their info
+      s[:graders] = grade_entry_student.grade_entry_student_tas.map do |gest|
+        m = {}
+        m[:user_name] = gest.ta.user_name
+        m[:membership_id] = gest.id
+        m
+      end
+
+      s
+    end
+  end
+
 
   # Given a list of graders and a grade entry form, constructs an array of
   # table rows to be inserted into the graders FilterTable in the graders view.
@@ -34,6 +65,7 @@ module MarksGradersHelper
       table_row = {}
 
       table_row[:id] = student.id
+
       table_row[:filter_table_row_contents] =
         render_to_string(
           partial: 'marks_graders/table_row/filter_table_row',

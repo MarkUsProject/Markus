@@ -10,6 +10,18 @@ class MarksGradersController < ApplicationController
     @table_rows = construct_table_rows(@students, @grade_entry_form)
   end
 
+  def populate_students_table
+    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
+    @students = students_with_assoc
+    render json: get_marks_graders_student_table_info(@students,
+                                                      @grade_entry_form)
+  end
+
+  def populate_graders_table
+    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
+    render json: get_marks_graders_table_info(@grade_entry_form)
+  end
+
   def populate_graders
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     @graders = Ta.all
@@ -20,9 +32,12 @@ class MarksGradersController < ApplicationController
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     @section_column = ''
     if Section.all.size > 0
-      @section_column = "section: {display: \"" +
-          I18n.t(:'user.section') +
-          "\", sortable: true},"
+      @section_column = "{
+        id: 'section',
+        content: '" + I18n.t(:'user.section') + "',
+        sortable: true,
+        searchable: true
+      },"
     end
   end
 

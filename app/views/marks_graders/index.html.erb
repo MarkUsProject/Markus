@@ -7,6 +7,9 @@
              formats: [:js],
              handlers: [:erb] %>
 
+  <%= render partial: 'marks_grader_table', formats: [:'js.jsx'], handlers: [:erb] %>
+  <%= render partial: 'marks_graders_student_table', formats: [:'js.jsx'], handlers: [:erb] %>
+
   <script>
   //<![CDATA[
     var modalCreate = null;
@@ -89,6 +92,10 @@
         </ul>
 
         <div id='graders_none'>
+
+          <!-- React table, graders -->
+          <div id='graders_table'></div>
+
           <div class='search_box'>
             <%= text_field_tag 'search_graders',
                                nil,
@@ -135,6 +142,10 @@
         </ul>
 
         <div id='groups_table'>
+
+          <!-- React table, graders -->
+          <div id='students_table'></div>
+
           <div id='students_container'>
             <%= text_field_tag 'search_students', nil,
                 onkeyup: 'groupings_table.add_filter("search"); groupings_table.render();',
