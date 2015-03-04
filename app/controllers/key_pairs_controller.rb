@@ -55,14 +55,14 @@ class KeyPairsController < ApplicationController
 
   # POST /key_pairs
   # POST /key_pairs.json
-  def create
+  def create()
     # Upload the file
     upload_key_file(key_pair_params[:file], @current_user.user_name)
 
     # Save the record
     @key_pair = KeyPair.new(
-        key_pair_params.merge(user_name: @current_user.user_name,
-                              file_name: @current_user.user_name + '.pub'))
+      key_pair_params.merge(user_name: @current_user.user_name,
+                            file_name: @current_user.user_name + '.pub'))
 
     respond_to do |format|
       if @key_pair.save
