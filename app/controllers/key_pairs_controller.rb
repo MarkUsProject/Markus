@@ -25,7 +25,7 @@ class KeyPairsController < ApplicationController
   # GET /key_pairs/new.json
   def new
     @key_pair = KeyPair.new
-
+    
     respond_to do |format|
       format.html # new.html.erb
       format.json { render json: @key_pair }
@@ -58,11 +58,15 @@ class KeyPairsController < ApplicationController
   # POST /key_pairs
   # POST /key_pairs.json
   def create
-    upload_key_file(key_pair_params[:file], key_pair_params[:user_name])
-    @key_pair = KeyPair.new(key_pair_params)
 
-    # Set the file_name to key's new name
-    @key_pair[:file_name] = key_pair_params[:user_name] + '.pub'
+    # Upload the file
+    upload_key_file(key_pair_params[:file], @current_user.user_name)
+
+    # Save the record
+    @key_pair = KeyPair.new(
+        key_pair_params.merge(:user_name => @current_user.user_name,
+                              :file_name => @current_user.user_name + '.pub'))
+
     respond_to do |format|
       if @key_pair.save
         format.html { redirect_to @key_pair,
@@ -104,7 +108,7 @@ class KeyPairsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to key_pairs_url }
-      format.json { head :no_content }/
+      format.json { head :no_content }
     end
   end
 
@@ -115,6 +119,6 @@ class KeyPairsController < ApplicationController
     # Also, you can specialize this method with per-user checking of
     # permissible attributes.
     def key_pair_params
-      params.require(:key_pair).permit(:file, :user_id, :user_name)
+      params.require(:key_pair).permit(:file)
     end
 end

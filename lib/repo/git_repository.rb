@@ -937,6 +937,10 @@ module Repository
       return self.timestamp
     end
 
+    # Adds a specific public key to a specific user.
+    def add_key(username, filename)
+    end
+
     private
 
     def files_at_path_helper(path = '/', only_changed = false)
