@@ -938,7 +938,7 @@ module Repository
     end
 
     # Adds a specific public key to a specific user.
-    def add_key(username, filename)
+    def add_key(_username, _filename)
     end
 
     private
