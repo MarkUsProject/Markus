@@ -25,7 +25,6 @@ class KeyPairsController < ApplicationController
   # GET /key_pairs/new.json
   def new
     @key_pair = KeyPair.new
-    
     respond_to do |format|
       format.html # new.html.erb
       format.json { render json: @key_pair }
@@ -67,17 +66,20 @@ class KeyPairsController < ApplicationController
 
     respond_to do |format|
       if @key_pair.save
-        format.html do redirect_to @key_pair,
-                       notice: 'Key pair was successfully created.'
+        format.html do
+          redirect_to @key_pair,
+          notice: 'Key pair was successfully created.'
         end
-        format.json do render json: @key_pair,
-                              status: :created,
-                              location: @key_pair
+        format.json do
+          render json: @key_pair,
+          status: :created,
+          location: @key_pair
         end
       else
         format.html { render action: "new" }
-        format.json do render json: @key_pair.errors,
-                              status: :unprocessable_entity
+        format.json do
+          render json: @key_pair.errors,
+          status: :unprocessable_entity
         end
       end
     end
@@ -90,14 +92,16 @@ class KeyPairsController < ApplicationController
 
     respond_to do |format|
       if @key_pair.update_attributes(key_pair_params)
-        format.html do redirect_to @key_pair,
-                                   notice: 'Key pair was successfully updated.'
+        format.html do
+          redirect_to @key_pair,
+          notice: 'Key pair was successfully updated.'
         end
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
-        format.json do render json: @key_pair.errors,
-                              status: :unprocessable_entity
+        format.json do
+          render json: @key_pair.errors,
+          status: :unprocessable_entity
         end
       end
     end
