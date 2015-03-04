@@ -55,7 +55,7 @@ class KeyPairsController < ApplicationController
 
   # POST /key_pairs
   # POST /key_pairs.json
-  def create()
+  def create
     # Upload the file
     upload_key_file(key_pair_params[:file], @current_user.user_name)
 
@@ -68,7 +68,7 @@ class KeyPairsController < ApplicationController
       if @key_pair.save
         format.html do
           redirect_to @key_pair,
-          notice: 'Key pair was successfully created.'
+                      notice: 'Key pair was successfully created.'
         end
         format.json do
           render json: @key_pair,
