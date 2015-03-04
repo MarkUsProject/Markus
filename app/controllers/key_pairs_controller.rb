@@ -52,34 +52,32 @@ class KeyPairsController < ApplicationController
     File.open(Rails.root.join(KEY_STORAGE, user_name + '.pub'), 'wb') do |f|
       f.write(uploaded_io.read)
     end
-
   end
 
   # POST /key_pairs
   # POST /key_pairs.json
   def create
-
     # Upload the file
     upload_key_file(key_pair_params[:file], @current_user.user_name)
 
     # Save the record
     @key_pair = KeyPair.new(
-        key_pair_params.merge(:user_name => @current_user.user_name,
-                              :file_name => @current_user.user_name + '.pub'))
+        key_pair_params.merge(user_name: @current_user.user_name,
+                              file_name: @current_user.user_name + '.pub'))
 
     respond_to do |format|
       if @key_pair.save
         format.html do redirect_to @key_pair,
-                      notice: 'Key pair was successfully created.'
+                       notice: 'Key pair was successfully created.'
         end
         format.json do render json: @key_pair,
-                             status: :created,
-                             location: @key_pair
+                              status: :created,
+                              location: @key_pair
         end
       else
         format.html { render action: "new" }
         format.json do render json: @key_pair.errors,
-                             status: :unprocessable_entity
+                              status: :unprocessable_entity
         end
       end
     end
@@ -99,7 +97,7 @@ class KeyPairsController < ApplicationController
       else
         format.html { render action: "edit" }
         format.json do render json: @key_pair.errors,
-                             status: :unprocessable_entity
+                              status: :unprocessable_entity
         end
       end
     end
