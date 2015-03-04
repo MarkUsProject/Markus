@@ -25,7 +25,7 @@
           <br> <%= f.label :bonus,
                            t('grade_entry_forms.bonus_column'),
                            class: "inline_label" %> <%= f.check_box :bonus %>
-      </span>   
+      </span>
 
       <%= f.hidden_field :position, value: new_position %>
       <% if !f.object.nil? && !f.object.new_record? %>
@@ -35,7 +35,7 @@
                          class: "inline_label" %> <%= f.check_box :_destroy %>
         </span>       
       <% else %>
-          <%= link_to_function I18n.t("delete"), "$(this).up(\".grade_entry_item\").remove()" %>
+        <%= link_to_function I18n.t("delete"), "$(this).up(\".grade_entry_item\").remove()" %>
       <% end %>
     </p>
   <% end %>
