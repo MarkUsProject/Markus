@@ -61,8 +61,8 @@ class KeyPairsController < ApplicationController
 
     # Save the record
     @key_pair = KeyPair.new(
-        key_pair_params.merge(user_name: @current_user.user_name,
-                              file_name: @current_user.user_name + '.pub'))
+     key_pair_params.merge(user_name: @current_user.user_name,
+                           file_name: @current_user.user_name + '.pub'))
 
     respond_to do |format|
       if @key_pair.save
@@ -72,14 +72,14 @@ class KeyPairsController < ApplicationController
         end
         format.json do
           render json: @key_pair,
-          status: :created,
-          location: @key_pair
+                 status: :created,
+                 location: @key_pair
         end
       else
         format.html { render action: "new" }
         format.json do
           render json: @key_pair.errors,
-          status: :unprocessable_entity
+                 status: :unprocessable_entity
         end
       end
     end
@@ -101,7 +101,7 @@ class KeyPairsController < ApplicationController
         format.html { render action: "edit" }
         format.json do
           render json: @key_pair.errors,
-          status: :unprocessable_entity
+                 status: :unprocessable_entity
         end
       end
     end
