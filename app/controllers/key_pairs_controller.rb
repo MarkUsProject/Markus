@@ -94,7 +94,7 @@ class KeyPairsController < ApplicationController
       if @key_pair.update_attributes(key_pair_params)
         format.html do
           redirect_to @key_pair,
-          notice: 'Key pair was successfully updated.'
+                      notice: 'Key pair was successfully updated.'
         end
         format.json { head :no_content }
       else
