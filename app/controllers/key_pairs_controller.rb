@@ -61,8 +61,8 @@ class KeyPairsController < ApplicationController
 
     # Save the record
     @key_pair = KeyPair.new(
-     key_pair_params.merge(user_name: @current_user.user_name,
-                           file_name: @current_user.user_name + '.pub'))
+        key_pair_params.merge(user_name: @current_user.user_name,
+                              file_name: @current_user.user_name + '.pub'))
 
     respond_to do |format|
       if @key_pair.save
