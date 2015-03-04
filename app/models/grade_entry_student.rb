@@ -252,6 +252,8 @@ class GradeEntryStudent < ActiveRecord::Base
       end
     end
 
+    total = total.round(2)
+
     if total == 0 && self.all_blank_grades?
       total = nil
     end
