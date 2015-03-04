@@ -21,16 +21,21 @@
       <%= raw(f.text_field :out_of,
                            size: 5,
                            maxlength: 3) %>
+      <span>
+          <br> <%= f.label :bonus,
+                           t('grade_entry_forms.bonus_column'),
+                           class: "inline_label" %> <%= f.check_box :bonus %>
+      </span>   
 
       <%= f.hidden_field :position, value: new_position %>
       <% if !f.object.nil? && !f.object.new_record? %>
         <span>
         <br> <%= f.label :_destroy,
-                           t('grade_entry_forms.remove_column'),
-                           class: "inline_label" %> <%= f.check_box :_destroy %>
-        </span>
+                         t('grade_entry_forms.remove_column'),
+                         class: "inline_label" %> <%= f.check_box :_destroy %>
+        </span>       
       <% else %>
-        <%= link_to_function I18n.t("delete"), "$(this).up(\".grade_entry_item\").remove()" %>
+          <%= link_to_function I18n.t("delete"), "$(this).up(\".grade_entry_item\").remove()" %>
       <% end %>
     </p>
   <% end %>
