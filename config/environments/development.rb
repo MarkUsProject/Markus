@@ -115,9 +115,13 @@ Markus::Application.configure do
   REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/dev/repos"
 
   ###################################################################
+  # Directory where authentication keys will be uploaded. Make sure MarkUs is
+  # allowed to write to this directory
+  KEY_STORAGE = "#{::Rails.root.to_s}/data/dev/keys"
+
+  ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
   # is allowed to write to this directory
-
   PDF_STORAGE = "#{::Rails.root.to_s}/data/dev/pdfs"
 
   ###################################################################

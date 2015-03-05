@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>User name:</b>
+  <%= @key_pair.user_name %>
+</p>
+
+<p>
+  <b>File name:</b>
+  <%= @key_pair.file_name %>
+</p>
+
+
+<%= link_to 'Edit', edit_key_pair_path(@key_pair) %> |
+<%= link_to 'Back', key_pairs_path %>
