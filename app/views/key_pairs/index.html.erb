@@ -2,7 +2,6 @@
 
 <table>
   <tr>
-    <th>User</th>
     <th>User name</th>
     <th>File name</th>
     <th></th>
@@ -12,7 +11,6 @@
 
 <% @key_pairs.each do |key_pair| %>
   <tr>
-    <td><%= key_pair.user_id %></td>
     <td><%= key_pair.user_name %></td>
     <td><%= key_pair.file_name %></td>
     <td><%= link_to 'Show', key_pair %></td>
