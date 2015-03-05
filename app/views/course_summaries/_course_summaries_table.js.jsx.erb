@@ -1,104 +1,182 @@
 <script type="text/jsx">
-	/** @jsx React.DOM */
+  /** @jsx React.DOM */
 
-	var CourseSummariesTable = React.createClass({
-		getDefaultProps: function() {
-			var columns = [
-				{
-					id: 'student_user_name',
-					content: '<%= j raw I18n.t('course_summaries_index.user_name') %>',
-					sortable: true,
-					compare: compare_anchor_text,
-					searchable: true
-				},
-				{
-					id: 'student_first_name',
-					content: '<%= j raw I18n.t('course_summaries_index.first_name') %>',
-					sortable: true,
-					compare: compare_anchor_text,
-					searchable: true
-				},
-				{
-					id: 'student_last_name',
-					content: '<%= j raw I18n.t('course_summaries_index.last_name') %>',
-					sortable: true,
-					compare: compare_anchor_text,
-					searchable: true
-				}
-			];
-			
-			<% for assignment in @assignments %>
-				columns.push({
-					id: 'assignment_' + <%= assignment.id %>,
-					content: '<%= assignment.short_identifier %>',
-					sortable: true,
-					compare: compare_anchor_text,
-					searchable: true
-				});
-			<% end %>
+  var CourseSummariesTable = React.createClass({
+    getDefaultProps: function() {
+      var columns = [
+        {
+          id: 'student_user_name',
+          content: '<%= j raw I18n.t('course_summaries_index.user_name') %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: true
+        },
+        {
+          id: 'student_first_name',
+          content: '<%= j raw I18n.t('course_summaries_index.first_name') %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: false
+        },
+        {
+          id: 'student_last_name',
+          content: '<%= j raw I18n.t('course_summaries_index.last_name') %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: false
+        }
+      ];
+      
+      <% for assignment in @assignments %>
+        columns.push({
+          id: 'assignment_' + <%= assignment.id %>,
+          content: '<%= assignment.short_identifier %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: false
+        });
+      <% end %>
 
-			return {columns: columns};
-		},
-		getInitialState: function() {
-			return {
-				courseSummaries: []
-			};
-		},
-		componentWillMount: function() {
-			this.refresh();
-		},
-		// get info
-		refresh: function() {
-			document.getElementById('working').style.display = '';
-			jQuery.ajax({
-				url: 'course_summaries/populate',
-				method: 'GET',
-				dataType: 'json',
-				success: function(data) {
-					this.setState({
-						courseSummaries: data,
-					});
-				}.bind(this),
-				error: function(xhr, status, text) {
-					var error = text + ": " + xhr.responseText;
-					this.setState({
-						error: error
-					});
-				}.bind(this),
-				complete: function() {
-					document.getElementById('working').style.display = 'none';
-				}
-			});
-		},
-		render: function() {
-			var course_summaries_data = this.state.courseSummaries.map(function(courseSummary) {
-				var cs = {};
-				cs['id'] = courseSummary.id;
-				cs['student_user_name'] = courseSummary.user_name;
-				cs['student_first_name'] = courseSummary.first_name;
-				cs['student_last_name'] = courseSummary.last_name;
-				<% for assignment in @assignments %>
-					var id = <%= assignment.id %>;
-					var key = "assignment_" + id;
-					var value = courseSummary.marks[id-1];
-					if (value == null) {
-						value = '<%= j raw I18n.t('course_summaries_index.ngr') %>'
-					}
-					cs[key] = value;
-				<% end %>
-				return cs;
-			});
+      return {columns: columns};
+    },
+    getInitialState: function() {
+      return {
+        selected_marking_scheme: -1,
+        assignment_weights: {},
+        assignment_max_marks: {},
+        courseSummaries: []
+      };
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    get_assignment_weights: function(ms_id) {
+      jQuery.ajax({
+        url: 'course_summaries/get_weight',
+        method: 'GET',
+        dataType: 'json',
+        data: {
+          ms_id: ms_id
+        },
+        success: function(data) {
+          // reset weights
+          this.state.assignment_weights = {};
+          for (var i = 0; i < data.weights.length; i++) {
+            this.state.assignment_weights[data.weights[i].a_id] = parseFloat(data.weights[i].weight);
+          }
+          this.state.assignment_max_marks = {};
+          for (var i = 0; i < data.max_marks.length; i++) {
+            this.state.assignment_max_marks[data.max_marks[i].a_id] = parseFloat(data.max_marks[i].max_mark);
+          }
+          this.setState({selected_marking_scheme: ms_id});
+        }.bind(this),
+        error: function(xhr, status, text) {
+          console.log("here");
+        }.bind(this)
+      });
+    },
+    // get info
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+      jQuery.ajax({
+        url: 'course_summaries/populate',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            courseSummaries: data,
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ": " + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this),
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+    updateTable: function(data) {
+      	click_target = data.currentTarget.className;
+      	ms_id = click_target.substr(click_target.length -1);
+        this.get_assignment_weights(ms_id);
+    },
+    render: function() {
+      that = this;
+      var course_summaries_data = this.state.courseSummaries.map(function(courseSummary) {
+        var cs = {};
+        cs['id'] = courseSummary.id;
+        cs['student_user_name'] = courseSummary.user_name;
+        cs['student_first_name'] = courseSummary.first_name;
+        cs['student_last_name'] = courseSummary.last_name;
+        <% for assignment in @assignments %>
+          var id = <%= assignment.id %>;
+          var key = "assignment_" + id;
+          var value = courseSummary.marks[id-1];
+          if (value == null) {
+            // value = '<%= j raw I18n.t('course_summaries_index.ngr') %>'
+            value = "NA";
+          } else if (that.state && that.state.selected_marking_scheme != -1) {
+            if (that.state.assignment_weights[id]) {
+              weight = that.state.assignment_weights[id];
+              max_mark = that.state.assignment_max_marks[id];
+              value = ((value/max_mark) * weight).toFixed(2);
+            }
+          }
+          cs[key] = value;
+        <% end %>
+        return cs;
+      });
 
-			return (
-				<div>
-					<Table data={course_summaries_data}
-						columns={this.props.columns}
-					/>
-				</div>
-			);
-		}
-	});
+      return (
+        <div>
+          <% for ms in @marking_schemes %>
+            <button className={"ms_id_"+<%= ms.id %>} onClick={this.updateTable}>
+              Update with <%= ms.name %>
+            </button>
+          <% end %>
+          <Table data={course_summaries_data}
+            columns={this.props.columns}
+          />
+        </div>
+      );
+    }
+  });
 
-	React.renderComponent(<CourseSummariesTable />, document.getElementById('course_summaries_table'));
+  /**
+  <PickMarkingSchemeBox doS={this.update1Table}/>
+  <Table data={course_summaries_data}
+            columns={this.props.columns}
+          />
+  **/
+
+  var PickMarkingSchemeBox = React.createClass({
+    propTypes: {
+      ms_options: React.PropTypes.array,
+      doS: React.PropTypes.func
+    },
+    render: function() {
+      return (
+        <div>
+          <button onClick={this.doS}>
+            Update
+          </button>
+        </div>
+        );
+    }
+    // render: function() {
+    //  return {
+    //    <div className='react-pick-ms'>
+    //      <button onClick={this.updateTable}>
+    //        Update
+    //      </button>
+    //    </div>
+    //  };
+    // }
+  });
+
+  React.renderComponent(<CourseSummariesTable />, document.getElementById('course_summaries_table'));
 
 </script>

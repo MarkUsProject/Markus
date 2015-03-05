@@ -19,7 +19,7 @@ module CourseSummariesHelper
         get_mark_for_all_assignments_for_student(student, all_assignments)
       }
     end
-      student_list.to_json
+    student_list.to_json
   end
 
   # Get marks for all assignments for a student
@@ -63,4 +63,27 @@ module CourseSummariesHelper
     end
     nil
   end
+
+  def get_max_mark_for_assignments
+    max_marks = Assignment.all.map do |a|
+      {
+        a_id: a.id,
+        max_mark: get_max_mark_for_assignment(a.id)
+      }
+    end
+    max_marks
+  end
+
+  def get_max_mark_for_assignment(a_id)
+    rubric_criterias = RubricCriterion.where(assignment_id: a_id)
+    if (rubric_criterias.count == 0)
+      return nil
+    end
+    max_mark = 0
+    rubric_criterias.each do |rc|
+      max_mark += rc.weight * 4
+    end
+    max_mark
+  end
+
 end

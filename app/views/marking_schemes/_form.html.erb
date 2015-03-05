@@ -7,11 +7,11 @@
       <tr>
         <td><%= raw(f.label(:name, t('marking_scheme.name'))) %>:</td>
         <td><%= raw(f.text_field :name) %></td>
-      </tr>
+      <!-- </tr> -->
 
       <% @marking_scheme.marking_weights.each_with_index do |marking_weight, index| %>
         <%= f.fields_for :marking_weights, marking_weight do |builder| %>
-          <tr>
+          <!-- <tr> -->
             <td><%= raw(builder.label("Weight for " + @all_assignments[index].short_identifier)) %>:</td>
             <td><%= raw(builder.text_field :weight) %></td>
           </tr>

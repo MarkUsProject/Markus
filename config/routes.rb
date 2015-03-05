@@ -304,6 +304,7 @@ Markus::Application.routes.draw do
     resources :course_summaries do
       collection do
         get 'populate'
+	get 'get_weight'
       end
     end
 

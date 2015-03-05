@@ -1,4 +1,4 @@
-<script type="text/jsx">
+<script type='text/jsx'>
   /** @jsx React.DOM */
 
   var MarkingSchemesTable = React.createClass({
@@ -55,6 +55,9 @@
         }
       });
     },
+    updateMs: function() {
+      this.refresh()
+    },
     render: function() {
       var marking_schemes_data = this.state.markingSchemes.map(function(markingScheme) {
         var ms = {};
@@ -69,15 +72,15 @@
           ms[key] = value;
         <% end %>
         return ms;
-      });
+      }.bind(this));
 
-      return (
-        <div>
-          <Table data={marking_schemes_data}
-            columns={this.props.columns}
-          />
-        </div>
-      );
+        return (
+          <div>
+            <Table data={marking_schemes_data}
+              columns={this.props.columns}
+            />
+          </div>
+        );
     }
   });
 
