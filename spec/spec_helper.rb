@@ -50,4 +50,11 @@ RSpec.configure do |config|
   config.before(:suite) do
     ActiveRecord::Base.connection.tables.each { |table| ActiveRecord::Base.connection.execute("TRUNCATE #{table}") }
   end
+
+  RSpec::Matchers.define :same_time_within_ms do |e|
+    match do |a|
+      e.to_i == a.to_i
+    end
+  end
+
 end
