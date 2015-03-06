@@ -49,6 +49,11 @@ module Repository
       @closed = false
       @repos_admin = Repository.conf[:IS_REPOSITORY_ADMIN]
       if (GitRepository.repository_exists?(@repos_path))
+
+        # make sure working directory is up-to-date
+        g = Git.open(@repos_path)
+        g.pull
+
         @repos = Rugged::Repository.new(@repos_path)
       else
         raise "Repository does not exist at path \"" + @repos_path + "\""
@@ -75,6 +80,7 @@ module Repository
         #Gitolite::GitoliteAdmin.bootstrap(Repository.conf[:REPOSITORY_STORAGE])
       end
 
+      # todo: should probably make this a static variable - the ga_admin repo
       #gitolite admin repo - these keys are for the repo-admin user - aka git on my machine
       settings = { :public_key => '/home/git/.ssh/id_rsa.pub', :private_key => '/home/git/.ssh/id_rsa' }
       ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin', settings)
@@ -91,7 +97,7 @@ module Repository
         end
 
       # add permissions for git user for now
-      repo.add_permission("RW+", "", "git") #testing
+      repo.add_permission("RW+", "", "git") # todo: testing - change this to current user later
       conf.add_repo(repo)
 
       # update Gitolite repo
@@ -124,7 +130,7 @@ module Repository
       g.push
       # END CLONE REPO CODE ===========================================
 
-      repo = Rugged::Repository.discover("/var/Markus/Markus/data/dev/repos/"+repo_name)
+      repo = Rugged::Repository.discover("/var/Markus/Markus/data/dev/repos/"+repo_name) # todo: hardcoded, change later
 
       $stderr.puts repo
       # Should clone the one created earlier by bulk permissions
@@ -147,6 +153,8 @@ module Repository
                 'Initial readme commit.'
         )
       )
+
+      g.push
       return true
     end
 
@@ -782,6 +790,13 @@ module Repository
       index.add(path: path, oid: oid, mode: 0100644)
       index.write
       Rugged::Commit.create(repo, commit_options(repo, author, 'Add file'))
+
+
+      # todo: quick fix to make gitolite sync on file upload
+      g = Git.open(repo.workdir)
+      g.push
+
+
     end
 
     # Make a directory if it's not already present.
