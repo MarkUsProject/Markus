@@ -415,7 +415,6 @@ fr:
       revised_by:           "Révision par"
       replace:              "Remplace"
       delete:               "Supprimer"
-      can_begin_grading:    "Peut être évaluée"
       error_collecting:     "Il y avait des erreurs en ramassant les submissions."
       section:              "Section"
       collect_work_for_section: "Récupérer les envois pour la section :"
