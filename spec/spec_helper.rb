@@ -56,5 +56,4 @@ RSpec.configure do |config|
       e.to_i == a.to_i
     end
   end
-
 end
