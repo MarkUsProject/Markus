@@ -79,12 +79,6 @@ describe Assignment do
       expect(assignment).not_to be_valid
     end
 
-    it 'fails when due_date is invalid' do
-      assignment = build(:assignment, due_date: '2000/01/40')
-      expect(assignment).not_to be_valid
-    end
-  end
-
   let(:assignment) do
     build_stubbed(:assignment).tap do |assignment|
       allow(assignment).to receive(:save)
@@ -732,7 +726,7 @@ describe Assignment do
         end
 
         it 'returns the due date of that SectionDueDate' do
-          expect(@assignment.latest_due_date).to eq @section_due_date.due_date
+          expect(@assignment.latest_due_date).to same_time_within_ms @section_due_date.due_date
         end
       end
 
