@@ -78,6 +78,7 @@ describe Assignment do
       assignment = build(:assignment, group_max: 1, group_min: 2)
       expect(assignment).not_to be_valid
     end
+  end
 
   let(:assignment) do
     build_stubbed(:assignment).tap do |assignment|
