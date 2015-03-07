@@ -352,6 +352,9 @@ pt:
       group_to_grader: "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
       student_to_grader: "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
       invalid_csv: "O formato do arquivo CSV não foi reconhecido"
+      upload:
+        malformed_csv: "O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus."
+        non_text_file_with_csv_extension: "O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV)."
 
     pagination:
       first: "≪ Primeiro"

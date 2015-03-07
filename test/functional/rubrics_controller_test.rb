@@ -125,8 +125,23 @@ class RubricsControllerTest < AuthenticatedControllerTest
               :csv_upload,
               assignment_id: @assignment.id,
               csv_upload: { rubric: tempfile }
+
       assert_not_nil assigns :assignment
-      assert_equal(flash[:error], I18n.t('rubric_criteria.upload.malformed'))
+      assert_equal(flash[:error], I18n.t('csv.upload.malformed_csv'))
+      assert_response :redirect
+    end
+
+    should 'deal properly with a non csv file with a csv extension' do
+      tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+      post_as @admin,
+              :csv_upload,
+              assignment_id: @assignment.id,
+              csv_upload: { rubric: tempfile },
+              encoding: 'UTF-8'
+
+      assert_not_nil assigns :assignment
+      assert_equal(flash[:error],
+                   I18n.t('csv.upload.non_text_file_with_csv_extension'))
       assert_response :redirect
     end
 
