@@ -30,7 +30,7 @@ describe SubmissionRule do
   context '#calculate_grouping_collection_time' do
     let(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping) }
-    let(:grouping2) { create(:grouping2) }
+    let(:grouping_with_inviter) { create(:grouping_with_inviter) }
 
     it 'returns something other than nil at the end' do
       expect(assignment.submission_rule
@@ -57,7 +57,7 @@ describe SubmissionRule do
     # test that is triggered when grouping.inviter.section exists
     it 'returns date value if grouping.inviter.section is not nil' do
       expect(assignment.submission_rule
-        .calculate_grouping_collection_time(grouping2).to_date)
+        .calculate_grouping_collection_time(grouping_with_inviter).to_date)
         .to be_kind_of(Date)
     end
   end
