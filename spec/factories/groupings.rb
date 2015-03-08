@@ -4,7 +4,7 @@ FactoryGirl.define do
     association :assignment
   end
 
-  factory :grouping2, class: Grouping do
+  factory :grouping_with_inviter, class: Grouping do
     association :group
     association :assignment
     inviter { Student.new(section: Section.new) }
