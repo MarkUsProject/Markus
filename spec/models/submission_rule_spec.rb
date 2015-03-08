@@ -15,7 +15,7 @@ describe SubmissionRule do
         .calculate_collection_time.to_date)
         .to be_kind_of(Date)
     end
-    
+
     # in accuracy range of 10 minutes
     it 'returns a correct time value at the end' do
       time_returned = assignment.submission_rule.calculate_collection_time
@@ -24,7 +24,7 @@ describe SubmissionRule do
       expect(time_difference)
         .to be < 600
     end
-    
+
   end
 
   context '#calculate_grouping_collection_time' do
@@ -47,13 +47,13 @@ describe SubmissionRule do
     # in accuracy range of 10 minutes
     it 'returns a correct time value at the end' do
       time_returned = assignment.submission_rule
-        .calculate_grouping_collection_time(grouping)
+                      .calculate_grouping_collection_time(grouping)
       time_now = Time.now
       time_difference = (time_now - time_returned).abs
       expect(time_difference)
         .to be < 600
     end
-    
+
     # test that is triggered when grouping.inviter.section exists
     it 'returns date value if grouping.inviter.section is not nil' do
       expect(assignment.submission_rule
