@@ -17,14 +17,17 @@ describe GradeEntryFormsController do
 context 'CSV_Uploads' do
 
     before :each do
-      @file_without_extension = fixture_file_upload
-                                ('spec/fixtures/files/grade_entry_upload_empty_file', 'text/xml')
-      @file_wrong_format = fixture_file_upload
-                           ('spec/fixtures/files/grade_entry_upload_wrong_format.xls', 'text/xls')
-      @file_bad_csv = fixture_file_upload
-                      ('spec/fixtures/files/grade_entry_upload_bad_csv.csv', 'text/xls')
-      @file_wrong_columns = fixture_file_upload
-                            ('spec/fixtures/files/grade_entry_upload_wrong_columns.csv', 'text/csv')
+      @file_without_extension =
+        fixture_file_upload('spec/fixtures/files/grade_entry_upload_empty_file', 'text/xml')
+      
+      @file_wrong_format =
+        fixture_file_upload('spec/fixtures/files/grade_entry_upload_wrong_format.xls', 'text/xls')
+      
+      @file_bad_csv =
+        fixture_file_upload('spec/fixtures/files/grade_entry_upload_bad_csv.csv', 'text/xls')
+      
+      @file_wrong_columns =
+        fixture_file_upload('spec/fixtures/files/grade_entry_upload_wrong_columns.csv', 'text/csv')
     end
     
     
