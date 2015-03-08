@@ -651,6 +651,9 @@ fr:
       modification_limited: "Pour le moment, les modifications sur le groupe sont très limitées.
             La date de retour et la période de grâce (s'il y en avait une) sont toutes les deux passées."
       invite_more_students: " Ce groupe n'est pas valide : vous devez inviter plus d'étudiants."
+      working_alone: "Vous avez demandé à travailler seul sur cette mission. Si vous changez d'avis et souhaitez former ou rejoindre un groupe, d'abord supprimer votre groupe."
+      may_not_add_more: "Vous ne pouvez pas ajouter plus de personnes à votre groupe en ce moment."
+      may_not_modify: "Vous ne pouvez pas modifier votre groupe pour le moment."
       url_group_repository: "L'adresse du répertoire de votre groupe"
       group_properties: "Propriétés du groupe"
       students_can_form_groups: "Les étudiants peuvent former des groupes."

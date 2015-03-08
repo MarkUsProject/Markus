@@ -229,33 +229,30 @@
           <% end %>
         <% end %>
 
-
         <% if !@group.nil? %>
-        <h3> Group Options </h3>
-
+          <h3> Group Options </h3>
           <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? %> <%# check if there could be a named repo but more than 1 person assigned to it %>
             <p class='information'>
-              You have asked to work alone on this assignment. If you change your mind and want to form or join a group, first delete your group.
+              <%= t('working_alone') %>
             </p>
           <% end %>
-
-            <% if @grouping.inviter == @current_user &&
-                @assignment.student_form_groups &&
-                !@assignment.past_collection_date? %>
-              <%# Student not reached the group max and is not working alone %>
-              <% if @grouping.student_membership_number < @assignment.group_max &&
+            
+          <% # Student not reached the group max and is not working alone 
+           if @grouping.inviter == @current_user &&
+              @assignment.student_form_groups &&
+              !@assignment.past_collection_date? %>
+              <% # Student has reached the group max and is not working alone 
+               if @grouping.student_membership_number < @assignment.group_max &&
                   @group.group_name != @current_user.user_name %>
                 <%= button_to_function t(:invite), 'invite(); return false;' %>
-              <%# Student has reached the group max and is not working alone %>
               <% elsif @grouping.student_membership_number ==
-                      @assignment.group_max &&
-                      @group.group_name != @current_user.user_name %>
-                <%# button_to_function t(:invite), disabled: true %>
-                <p class='information'> You may not add more people to your group at this time. </p>
+                        @assignment.group_max &&
+                        @group.group_name != @current_user.user_name %>
+                <p class='information'> <%= t('may_not_add_more') %> </p>
               <% end %>
-            <% else %>
-                <p class='information'> You may not modify your group at this time. </p>
-            <% end %>
+          <% else %>
+            <p class='information'> <%= t('may_not_modify') %> </p>
+          <% end %>
 
           <% # If a group is valid, the current user is the inviter of the group and
            # they are the _only_ member of this group, they should be possible to delete

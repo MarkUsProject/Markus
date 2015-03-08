@@ -685,6 +685,9 @@ en:
             The due date and grace period (if any) have both passed."
       invite_more_students: " The group is not valid. You need to
             invite more students."
+      working_alone: "You have asked to work alone on this assignment. If you change your mind and want to form or join a group, first delete your group."
+      may_not_add_more: "You may not add more people to your group at this time."
+      may_not_modify: "You may not modify your group at this time."
       url_group_repository: "URL to your group's repository"
       group_properties: " Group Properties "
       students_can_form_groups: " Students can form groups. "
