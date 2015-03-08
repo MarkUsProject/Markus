@@ -1169,10 +1169,16 @@ pt:
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
-
     locale_not_available: "%{locale} tradução não disponível!"
     external_authentication_not_supported: "Autenticação externa não é suportada pela sua plataforma!"
     account_disabled: "Essa conta foi desativada"
+    lateness_penalty: "Pena de Atraso"
+    grace_period: "Prazo de Carência"
+    penalty_decay: "Pena Decadência"
+    penalty_period: "Período Penalty"
+    penalty_decay_message_first: "A dedução de %{deduction}% será aplicado a cada %{interval} horas, até %{hours} horas após a atribuição é devido."
+    penalty_decay_message_other: "A partir daí, uma dedução de %{deduction}% será aplicado a cada %{interval} horas, até um máximo de %{hours} horas."
+    penalty_period_message: "Após %{hours} horas, a sua nota será reduzida em %{deduction} %"    
 
     #app/views/main/_assignment_summary.html.erb
 

@@ -680,8 +680,7 @@ en:
       form_own_group: "Form your own group"
       form_group: "The groups must be from <strong>%{group_min}</strong> to <strong>%{group_max}</strong> people."
       decline_invitation2: "This will decline the invitation you have. Are you sure?"
-      your_group: "Your group"
-      your_group_header: "Your Group"
+      your_group: "Your Group"
       modification_limited: "At this point modification of your group is very limited.
             The due date and grace period (if any) have both passed."
       invite_more_students: " The group is not valid. You need to
@@ -1320,10 +1319,16 @@ en:
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"
-
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
+    lateness_penalty: "Lateness Penalty"
+    grace_period: "Grace Period"
+    penalty_decay: "Penalty Decay"
+    penalty_period: "Penalty Period"
+    penalty_decay_message_first: "A deduction of %{deduction}% will be applied every %{interval} hours up to %{hours} hours after the assignment is due."
+    penalty_decay_message_other: "Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours."
+    penalty_period_message: "After %{hours} hours, your grade will be reduced by %{deduction}%"    
 
     #app/views/main/_assignment_summary.html.erb
 
