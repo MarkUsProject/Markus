@@ -61,5 +61,4 @@ describe SubmissionRule do
         .to be_kind_of(Date)
     end
   end
-
 end
