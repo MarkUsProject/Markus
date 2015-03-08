@@ -727,8 +727,9 @@ describe Assignment do
         end
 
         it 'returns the due date of that SectionDueDate' do
-          expect(@assignment.latest_due_date).to same_time_within_ms
-          @section_due_date.due_date
+          due_date_1 = @assignment.latest_due_date
+          due_date_2 = @section_due_date.due_date
+          expect(due_date_1).to same_time_within_ms due_date_2
         end
       end
 
