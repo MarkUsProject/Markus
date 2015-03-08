@@ -78,6 +78,7 @@ describe Assignment do
       assignment = build(:assignment, group_max: 1, group_min: 2)
       expect(assignment).not_to be_valid
     end
+  end
 
   let(:assignment) do
     build_stubbed(:assignment).tap do |assignment|
@@ -726,7 +727,8 @@ describe Assignment do
         end
 
         it 'returns the due date of that SectionDueDate' do
-          expect(@assignment.latest_due_date).to same_time_within_ms @section_due_date.due_date
+          expect(@assignment.latest_due_date).to same_time_within_ms
+          @section_due_date.due_date
         end
       end
 
