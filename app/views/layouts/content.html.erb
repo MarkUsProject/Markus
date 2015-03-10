@@ -43,7 +43,7 @@
     <%= render partial: 'layouts/footer' %>
   </div>
 
-  <%= render 'layouts/redirect', formats: [:js], handlers: [:erb] %>
+  <%= render partial: 'layouts/redirect', formats: [:js], handlers: [:erb] %>
 
   <%# Toggle jQuery's noConflict mode so it does not conflict with Prototype %>
   <script>
