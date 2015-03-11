@@ -132,10 +132,7 @@ module Repository
 
       repo = Rugged::Repository.discover("/var/Markus/Markus/data/dev/repos/"+repo_name) # todo: hardcoded, change later
 
-      $stderr.puts repo
       # Should clone the one created earlier by bulk permissions
-      $stderr.puts repo.path
-      $stderr.puts repo.workdir
       # Do an initial commit with a README to create index.
       file_path_for_readme = File.join(repo.workdir, 'README.md')
       File.open(file_path_for_readme, 'w+') do |readme|
@@ -353,10 +350,14 @@ module Repository
     end
 
     def commit(transaction)
+
+
+
       # Carries out actions on a Git repository stored in
       # 'transaction'. In case of certain conflicts corresponding
       # Repositor::Conflict(s) are added to the transaction object
       jobs = transaction.jobs
+
       jobs.each do |job|
         case job[:action]
         when :add_path
@@ -373,7 +374,7 @@ module Repository
           end
         when :remove
           begin
-            remove_file(txn,
+            remove_file(transaction,
                             job[:path], transaction.user_id,
                             job[:expected_revision_number])
           rescue Repository::Conflict => e
@@ -381,7 +382,7 @@ module Repository
           end
         when :replace
           begin
-            replace_file(txn,
+            replace_file(transaction,
                                job[:path], job[:file_data], job[:mime_type],
                                job[:expected_revision_number])
           rescue Repository::Conflict => e
@@ -752,6 +753,10 @@ module Repository
       @repos.index.write
       Rugged::Commit.create(@repos, commit_options(@repos, author,
                                                    'Removing file'))
+
+      # todo: quick fix to make gitolite sync on file upload
+      g = Git.open(repo.workdir)
+      g.push
 
       return txn
     end
