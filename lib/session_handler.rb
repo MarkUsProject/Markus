@@ -183,7 +183,7 @@ module SessionHandler
     if session[:timeout] - Time.now <= 5.minutes
       return true
     end
-    return false
+    false
   end
 
   # Clear this current user's session set by this app
