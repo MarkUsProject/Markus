@@ -18,6 +18,12 @@ class MarksGradersController < ApplicationController
 
   def index
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
+    @section_column = ''
+    if Section.all.size > 0
+      @section_column = "section: {display: \"" +
+          I18n.t(:'user.section') +
+          "\", sortable: true},"
+    end
   end
 
   # Assign TAs to Students via a csv file

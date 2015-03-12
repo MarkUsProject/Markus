@@ -4,3 +4,5 @@ jQuery('#add_annotation_text').replaceWith(
 jQuery('#annotation_category_' + <%= @annotation_category.id %>).replaceWith(
   "<%= escape_javascript(render partial: 'annotation_category',
                                 locals: { annotation_category: @annotation_category }).html_safe %>");
+
+reloadDOM();

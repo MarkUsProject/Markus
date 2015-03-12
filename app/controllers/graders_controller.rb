@@ -53,6 +53,14 @@ class GradersController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
+    @section_column = ''
+    if Section.all.size > 0
+      @section_column = "{
+        id: 'section',
+        content: '" + I18n.t(:'graders.section') + "',
+        sortable: true
+      },"
+    end
   end
 
   def populate

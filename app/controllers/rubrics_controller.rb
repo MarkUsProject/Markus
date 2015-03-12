@@ -88,6 +88,8 @@ class RubricsController < ApplicationController
               nb_updates: nb_updates)
           end
         end
+      rescue CSV::MalformedCSVError
+        flash[:error] = t('rubric_criteria.upload.malformed')
       end
     end
     redirect_to action: 'index', id: @assignment.id
