@@ -100,7 +100,7 @@
           });
         }.bind(this),
         error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
+          var error = text;
           this.setState({
             error: error
           });

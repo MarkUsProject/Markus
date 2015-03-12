@@ -158,7 +158,7 @@ class SubmissionsController < ApplicationController
       end
 
       respond_to do |format|
-        format.js
+        format.json {render :json}
       end
 
     end
