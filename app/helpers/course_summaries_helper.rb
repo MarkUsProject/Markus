@@ -3,7 +3,7 @@ module CourseSummariesHelper
   #  Get JSON data for the table in the form of
   #  { id: student_id, user_name: student.user_name,
   #    first_name: student.first_name, last_name: student.last_name
-  #    marks: [ // an array of marks for each assignment, null if no grade ] }
+  #    marks: { a_id: mark/null } }
   #
   def get_table_json_data
     all_students = Student.where(type: 'Student')
@@ -24,9 +24,9 @@ module CourseSummariesHelper
 
   # Get marks for all assignments for a student
   def get_mark_for_all_assignments_for_student(student, all_assignments)
-    marks = []
+    marks = {}
     all_assignments.each do |assignment|
-      marks[assignment.id - 1] = \
+      marks[assignment.id] = \
       get_mark_for_assignment_and_student(assignment, student)
     end
     marks
@@ -64,16 +64,18 @@ module CourseSummariesHelper
     nil
   end
 
+  # Return an object that contains an key for each assignment
+  # and the value is the max mark or null if no marking scheme
+  # is currently defined
   def get_max_mark_for_assignments
-    max_marks = Assignment.all.map do |a|
-      {
-        a_id: a.id,
-        max_mark: get_max_mark_for_assignment(a.id)
-      }
+    max_marks = {}
+    Assignment.all.each do |a|
+      max_marks[a.id] = get_max_mark_for_assignment(a.id)
     end
-    max_marks
+    max_marks.to_json
   end
 
+  # Get max mark for assignment with id a_id
   def get_max_mark_for_assignment(a_id)
     rubric_criterias = RubricCriterion.where(assignment_id: a_id)
     if (rubric_criterias.count == 0)
@@ -86,4 +88,17 @@ module CourseSummariesHelper
     max_mark
   end
 
+  # Return an object that contains a key for each marking
+  # scheme. And the value is an object with keys as assignment ids
+  # and the value the weight for that assignment
+  def get_marking_weights_for_all_marking_schemes
+    result = {}
+    MarkingScheme.all.each do |ms|
+      result[ms.id] = {}
+      MarkingWeight.where(marking_scheme_id: ms.id).each do |mw|
+        result[ms.id][mw.a_id] = mw.weight
+      end
+    end
+    result.to_json
+  end
 end

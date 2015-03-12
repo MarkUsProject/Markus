@@ -304,7 +304,8 @@ Markus::Application.routes.draw do
     resources :course_summaries do
       collection do
         get 'populate'
-	get 'get_weight'
+	get 'get_max_marks_for_assignments'
+	get 'get_marking_weights_for_marking_schemes'
       end
     end
 

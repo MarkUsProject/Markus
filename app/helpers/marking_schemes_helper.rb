@@ -12,5 +12,4 @@ def get_table_json_data
 
   req_data.to_json
 end
-
 end

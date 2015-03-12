@@ -37,71 +37,76 @@
         });
       <% end %>
 
+      columns.push({
+        id: 'total_mark_raw',
+        content: 'Raw Total Mark',
+        sortable: false,
+        compare: compare_anchor_text,
+        searchable: false
+      });
+
+      <% for marking_scheme in @marking_schemes %>
+        columns.push({
+          id: 'marking_scheme_' + <%= marking_scheme.id %>,
+          content: '<%= marking_scheme.name %>',
+          sortable: false,
+          compare: compare_anchor_text,
+          searchable: false
+        });
+      <% end %>
+
       return {columns: columns};
     },
     getInitialState: function() {
       return {
-        selected_marking_scheme: -1,
-        assignment_weights: {},
         assignment_max_marks: {},
-        courseSummaries: []
+        courseSummaries: [],
+        marking_schemes_and_weights: {}
       };
     },
     componentWillMount: function() {
       this.refresh();
     },
-    get_assignment_weights: function(ms_id) {
-      jQuery.ajax({
-        url: 'course_summaries/get_weight',
-        method: 'GET',
-        dataType: 'json',
-        data: {
-          ms_id: ms_id
-        },
-        success: function(data) {
-          // reset weights
-          this.state.assignment_weights = {};
-          for (var i = 0; i < data.weights.length; i++) {
-            this.state.assignment_weights[data.weights[i].a_id] = parseFloat(data.weights[i].weight);
-          }
-          this.state.assignment_max_marks = {};
-          for (var i = 0; i < data.max_marks.length; i++) {
-            this.state.assignment_max_marks[data.max_marks[i].a_id] = parseFloat(data.max_marks[i].max_mark);
-          }
-          this.setState({selected_marking_scheme: ms_id});
-        }.bind(this),
-        error: function(xhr, status, text) {
-          console.log("here");
-        }.bind(this)
+    // inpired by http://monicalent.com/blog/2013/06/28/quick-tip-use-jquery-\
+    // to-complete-an-arbitrary-number-of-ajax-calls-before-firing-an-event/
+    createRequest: function(data, args) {
+      return jQuery.ajax({
+        url: data.url,
+        method: data.method,
+        dataType: data.dataType,
+        data: (args) ? args : {}
       });
     },
     // get info
     refresh: function() {
       document.getElementById('working').style.display = '';
-      jQuery.ajax({
+      var ajaxCalls = [];
+      // add the populate call
+      ajaxCalls.push(this.createRequest({
         url: 'course_summaries/populate',
         method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-          this.setState({
-            courseSummaries: data,
-          });
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ": " + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        }.bind(this),
-        complete: function() {
-          document.getElementById('working').style.display = 'none';
-        }
+        dataType: 'json'
+      }));
+      // get max marks for assignments
+      ajaxCalls.push(this.createRequest({
+        url: 'course_summaries/get_max_marks_for_assignments',
+        method: 'GET',
+        dataType: 'json'
+      }));
+      ajaxCalls.push(this.createRequest({
+        url: 'course_summaries/get_marking_weights_for_marking_schemes',
+        method: 'GET',
+        dataType: 'json'
+      }));
+      var that = this;
+      jQuery.when.apply(this, ajaxCalls).done(function(students, max_marks, ms_with_mw) {
+        that.setState({
+          courseSummaries: students[0],
+          assignment_max_marks: max_marks[0],
+          marking_schemes_and_weights: ms_with_mw[0]
+        });
+        document.getElementById('working').style.display = 'none';
       });
-    },
-    updateTable: function(data) {
-      	click_target = data.currentTarget.className;
-      	ms_id = click_target.substr(click_target.length -1);
-        this.get_assignment_weights(ms_id);
     },
     render: function() {
       that = this;
@@ -114,67 +119,44 @@
         <% for assignment in @assignments %>
           var id = <%= assignment.id %>;
           var key = "assignment_" + id;
-          var value = courseSummary.marks[id-1];
-          if (value == null) {
-            // value = '<%= j raw I18n.t('course_summaries_index.ngr') %>'
-            value = "NA";
-          } else if (that.state && that.state.selected_marking_scheme != -1) {
-            if (that.state.assignment_weights[id]) {
-              weight = that.state.assignment_weights[id];
-              max_mark = that.state.assignment_max_marks[id];
-              value = ((value/max_mark) * weight).toFixed(2);
-            }
-          }
+          var value = (courseSummary.marks[id]) ? courseSummary.marks[id] : "NA";
           cs[key] = value;
         <% end %>
+        var total_mark_raw = null;
+        var total_weighted_marks = {};
+        <% @assignments.each do |a| %>
+          assignment_mark = courseSummary.marks[<%= a.id %>];
+          if (assignment_mark) {
+            total_mark_raw = (total_mark_raw) ? total_mark_raw + assignment_mark : assignment_mark;
+            <% @marking_schemes.each do |ms| %>
+              assignment_weight = that.state.marking_schemes_and_weights[<%= ms.id %>][<%= a.id %>];
+              assignment_max_mark = that.state.assignment_max_marks[<%= a.id %>];
+              if (assignment_weight && assignment_max_mark) {
+                cur_weighted_total = total_weighted_marks[<%= ms.id %>];
+                weighted_mark = assignment_mark/that.state.assignment_max_marks[<%= a.id %>] * assignment_weight;
+                total_weighted_marks[<%= ms.id %>] = (cur_weighted_total) ? cur_weighted_total + weighted_mark : weighted_mark;
+              }
+            <% end %>
+          }
+        <% end %>
+        cs['total_mark_raw'] = (total_mark_raw) ? total_mark_raw : 'NA';
+        <% for ms in @marking_schemes %>
+          var ms_id = <%= ms.id %>;
+          var ms_col_key = "marking_scheme_" + ms_id;
+          var ms_value = (total_weighted_marks[ms_id]) ? total_weighted_marks[ms_id].toFixed(2) : "NA";
+          cs[ms_col_key] = ms_value;
+        <% end %>
+        
         return cs;
       });
-
       return (
         <div>
-          <% for ms in @marking_schemes %>
-            <button className={"ms_id_"+<%= ms.id %>} onClick={this.updateTable}>
-              Update with <%= ms.name %>
-            </button>
-          <% end %>
           <Table data={course_summaries_data}
             columns={this.props.columns}
           />
         </div>
       );
     }
-  });
-
-  /**
-  <PickMarkingSchemeBox doS={this.update1Table}/>
-  <Table data={course_summaries_data}
-            columns={this.props.columns}
-          />
-  **/
-
-  var PickMarkingSchemeBox = React.createClass({
-    propTypes: {
-      ms_options: React.PropTypes.array,
-      doS: React.PropTypes.func
-    },
-    render: function() {
-      return (
-        <div>
-          <button onClick={this.doS}>
-            Update
-          </button>
-        </div>
-        );
-    }
-    // render: function() {
-    //  return {
-    //    <div className='react-pick-ms'>
-    //      <button onClick={this.updateTable}>
-    //        Update
-    //      </button>
-    //    </div>
-    //  };
-    // }
   });
 
   React.renderComponent(<CourseSummariesTable />, document.getElementById('course_summaries_table'));

@@ -11,12 +11,11 @@ class CourseSummariesController < ApplicationController
     render json: get_table_json_data
   end
 
-  def get_weight
-    ms_id = params["ms_id"]
-    weights = MarkingWeight.where(marking_scheme_id: ms_id)
+  def get_max_marks_for_assignments
+    render json: get_max_mark_for_assignments
+  end
 
-    max_marks = get_max_mark_for_assignments
-
-    render json: { weights: weights, max_marks: max_marks }.to_json
+  def get_marking_weights_for_marking_schemes
+    render json: get_marking_weights_for_all_marking_schemes
   end
 end

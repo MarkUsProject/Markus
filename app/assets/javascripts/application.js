@@ -10,6 +10,7 @@
 //= require jquery_ujs
 //= require jquery.easyModal
 //= require_tree ./ReactComponents
+//= require marking_schemes
 
 
 /** Modal windows, powered by jQuery.easyModal. */
