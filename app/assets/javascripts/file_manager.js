@@ -8,19 +8,20 @@ function injectFileInput() {
 
   new_file_field.change(function() {
     sanitized_filename_check(this);
-    var file_count = 0;
-    var not_terminate = true;
-    while (file_count<this.files.length && not_terminate){
-      if (this.files[file_count].size > 8*1024*1024){
-        if (!confirm('Warning, ' + this.files[file_count].name + 
-            ' is ' + this.files[file_count].size + 
-            ' bytes. Loading it in the web viewer may take a long time. Do you wish to proceed?')){
+    var fileCount = 0;
+    var notTerminate = true;
+    while (fileCount<this.files.length && notTerminate){
+      if (this.files[fileCount].size > 8*1024*1024){
+        if (!confirm('Warning, ' + this.files[fileCount].name + 
+            ' is ' + this.files[fileCount].size + ' bytes.' +
+            ' Loading it in the web viewer may take a long time.' +
+            ' Do you wish to proceed?')){
           // clear recently added file and terminate loop
           jQuery(this).val('');
-          not_terminate = false;
+          notTerminate = false;
         }
       }
-      file_count++
+      fileCount++;
     }
     
     return false;
