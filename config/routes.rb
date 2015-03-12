@@ -346,6 +346,7 @@ Markus::Application.routes.draw do
         get 'redirect'
         get 'clear_role_switch_session'
         post 'reset_api_key'
+        get 'check_timeout'
       end
     end
   end
