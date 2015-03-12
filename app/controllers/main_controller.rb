@@ -10,8 +10,8 @@ class MainController < ApplicationController
   # check for authorization
   before_filter      :authorize_for_user,
                      except: [:login,
-                                 :page_not_found,
-                                 :check_timeout]
+                              :page_not_found,
+                              :check_timeout]
   before_filter :authorize_for_admin_and_admin_logged_in_as, only: [:login_as]
 
   layout 'main'
@@ -317,8 +317,8 @@ class MainController < ApplicationController
   end
 
   def check_timeout
-    if !check_warned and check_imminent_expiry
-      render template: "main/timeout_imminent"
+    if !check_warned && check_imminent_expiry
+      render template: 'main/timeout_imminent'
       set_warned
     else
       render nothing: true
