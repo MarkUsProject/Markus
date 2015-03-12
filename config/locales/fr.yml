@@ -49,6 +49,9 @@ fr:
     contact_us:         "Contactez-nous"
     email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
+    # app/views/main/timeout_imminent.js.erb
+    timeout_imminent:   "Votre session est sur le point d'expirer."
+
     # app/views/api/_key_display.html.erb
     api_key:              "Votre clé - API"
     api_key_unavailable:  "Non disponible"
