@@ -387,13 +387,11 @@ describe 'An Assignment' do
 
   # start assignment group route tests
   context 'groups' do
-
     let(:group) { create(:group) }
     let(:group_path) { path + '/' + assignment.id.to_s + '/groups' }
     let(:group_ctrl) { 'groups' }
 
     context 'resource members' do
-
       it 'routes POST rename_group properly' do
         expect(post: group_path + '/' + group.id.to_s + '/rename_group')
           .to route_to(
@@ -542,7 +540,6 @@ describe 'An Assignment' do
 
   # start assignment submissions route tests
   context 'submission' do
-
     let(:submission) { create(:submission) }
     let(:sub_path) { path + '/' + assignment.id.to_s + '/submissions' }
     let(:sub_ctrl) { 'submissions' }
@@ -1110,9 +1107,9 @@ describe 'An Assignment' do
   # end assignment graders route tests
 
   context 'annotation_categories' do
-
-    let(:annot_path) { path + '/' + assignment.id.to_s +
-                       '/annotation_categories' }
+    let(:annot_path) {
+      path + '/' + assignment.id.to_s + '/annotation_categories'
+    }
     let(:annot_ctrl) { 'annotation_categories' }
 
     context 'members' do
@@ -1407,7 +1404,6 @@ end
 
 # start annotation collection route tests
 context 'annotation collection' do
-
   let(:path) { '/en/annotations' }
   let(:ctrl) { 'annotations' }
 
@@ -1444,7 +1440,6 @@ end
 
 # start student collection route tests
 context 'students collection' do
-
   let(:path) { '/en/students' }
   let(:ctrl) { 'students' }
 
@@ -1494,7 +1489,6 @@ end
 
 # start tas collection route tests
 context 'tas collection' do
-
   let(:path) { '/en/tas' }
   let(:ctrl) { 'tas' }
 
