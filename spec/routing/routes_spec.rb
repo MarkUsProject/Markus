@@ -721,8 +721,8 @@ describe 'An Assignment' do
     context 'member' do
       
       it 'routes GET collect_and_begin_grading properly' do
-        expect(get: sub_path + '/' + submission.id.to_s
-          + '/collect_and_begin_grading').to route_to(
+        expect(get: sub_path + '/' + submission.id.to_s +
+          '/collect_and_begin_grading').to route_to(
           controller: sub_ctrl,
           action: 'collect_and_begin_grading',
           id: submission.id.to_s,
@@ -731,8 +731,8 @@ describe 'An Assignment' do
       end
 
       it 'routes POST manually_collect_and_begin_grading properly' do
-        expect(post: sub_path + '/' + submission.id.to_s
-          + '/manually_collect_and_begin_grading').to route_to(
+        expect(post: sub_path + '/' + submission.id.to_s +
+          '/manually_collect_and_begin_grading').to route_to(
           controller: sub_ctrl,
           action: 'manually_collect_and_begin_grading',
           id: submission.id.to_s,
@@ -1325,8 +1325,8 @@ context 'grade_entry_forms' do
     end
 
     it 'routes POST update_grade_entry_students properly' do
-      expect(post: path + '/' + grade_entry_form.id.to_s
-        + '/update_grade_entry_students').to route_to(
+      expect(post: path + '/' + grade_entry_form.id.to_s +
+        '/update_grade_entry_students').to route_to(
         controller: ctrl,
         action: 'update_grade_entry_students',
         id: grade_entry_form.id.to_s,
