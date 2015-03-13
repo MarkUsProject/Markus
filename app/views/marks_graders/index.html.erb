@@ -1,14 +1,9 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'manage_graders' %>
-  <%= javascript_include_tag 'FilterTable/FilterTable' %>
-  <%= javascript_include_tag 'Graders/tabs_boot' %>
 
-  <%= render partial: 'boot',
-             formats: [:js],
-             handlers: [:erb] %>
-
+  <%= render partial: 'marks_graders_actions', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'marks_grader_table', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'marks_graders_student_table', formats: [:'js.jsx'], handlers: [:erb] %>
+  <%= render partial: 'marks_graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 
   <script>
   //<![CDATA[
@@ -37,14 +32,14 @@
   </div>
 </div>
 
-<div class='wrapper'>
-  <%= render 'shared/flash_message' %>
-</div>
+<div class="wrapLeft"></div>
+<div class="clear"></div>
+
 
 <div id='notice'>
   <div class='success' id='add_success' style='display: none;'></div>
-  <% # This is for error display injected by JavaScript %>
 
+  <%# This is for error display injected by JavaScript %>
   <div class='error' id='errors' style='display: none; '>
     <h3><%= t('graders.problem') %></h3>
     <div id='errors_title'></div>
@@ -55,113 +50,12 @@
     <h3><%= t('groups.warning') %></h3>
     <div id='global_action_warning_msg'></div>
   </div>
+
+  <%# All other flash messages %>
+  <%= render 'shared/flash_message' %>
 </div>
 
-<%= form_tag global_actions_grade_entry_form_marks_graders_path(@grade_entry_form),
-             id: "global_action_form", remote: true do %>
-
-  <script>
-    jQuery(document).ajaxStart(function() {
-      thinking();
-    });
-
-    jQuery(document).ajaxSuccess(function() {
-      done_thinking();
-    });
-  </script>
-
-  <%= hidden_field_tag 'submit_type', 'global_action', id: 'submit_type' %>
-  <%= hidden_field_tag 'current_table', 'groups_table', id: 'current_table' %>
-  <%= hidden_field_tag 'global_actions'%>
-
-  <div class='columns'>
-
-    <div class='col-left'>
-      <% # order of processing students is important. we go through each member
-         # one by one and delete them above from the list of students
-         # if they are already in a group
-         # See manage/_group.html.erb
-      %>
-      <div class='tab-pane' id='graders-tabs'>
-        <ul>
-          <li>
-            <a href='#graders_none' id='filter_link_graders_none' class='filter_selected'>
-              <span><%= t('graders.graders') %></span>
-            </a>
-          </li>
-        </ul>
-
-        <div id='graders_none'>
-
-          <!-- React table, graders -->
-          <div id='graders_table'></div>
-
-          <div class='search_box'>
-            <%= text_field_tag 'search_graders',
-                               nil,
-                               onkeyup: "graders_table.add_filter('search'); graders_table.render();",
-                               onkeypress: "stop_submit(event);",
-                               placeholder: I18n.t("search_graders") %>
-          </div>
-
-          <div class='table'>
-            <table class='graders' id='graders'></table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class='col-center'>
-      <div id='icons'>
-        <%= image_submit_tag 'random_arrow.png',
-                             onclick: '$("global_actions").setValue("random_assign");',
-                             alt: I18n.t('groups.randomly_assign_graders'),
-                             title: I18n.t('groups.randomly_assign_graders'),
-                             class:'image_input' %>
-        <%= image_submit_tag 'add_arrow.png',
-                             onclick: '$("global_actions").setValue("assign");',
-                             alt: I18n.t('add_graders'),
-                             class:'image_input',
-                             title: I18n.t('add_graders') %>
-        <%= image_submit_tag 'remove_arrow.png',
-                             onclick: '$("global_actions").setValue("unassign");',
-                             alt: I18n.t('remove_graders'),
-                             title: I18n.t('remove_graders'),
-                             class:'image_input' %>
-      </div>
-    </div>
-
-    <div class='col-right'>
-      <div class='tab-pane' id='groups-tabs'>
-        <ul>
-          <li>
-            <a href='#groups_table' id='filter_link_none' class='filter_selected'>
-              <%= t('students.students') %>
-            </a>
-          </li>
-        </ul>
-
-        <div id='groups_table'>
-
-          <!-- React table, graders -->
-          <div id='students_table'></div>
-
-          <div id='students_container'>
-            <%= text_field_tag 'search_students', nil,
-                onkeyup: 'groupings_table.add_filter("search"); groupings_table.render();',
-                onkeypress: 'stop_submit(event);',
-                placeholder: t('students.search_students') %>
-
-            <div class='table'>
-              <table class='groups' id='groups'></table>
-            </div>
-          </div><!-- group container -->
-        </div>
-      </div>
-    </div>
-
-  </div>
-<% end %> <!-- remote form tag -->
+<div id='marks_graders_manager'></div>
 
 <!-- Modal Windows -->
 <aside class='dialog' id='download_dialog'>
