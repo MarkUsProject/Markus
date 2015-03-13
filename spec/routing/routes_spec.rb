@@ -2,7 +2,7 @@
 # https://gist.github.com/benjaminvialle/4055208
 require 'spec_helper'
 
-describe 'Routing to main page', :type => :routing do
+describe 'Routing to main page', type: :routing do
   context 'Locale-less root' do
     it 'routes / to login' do
       expect(get: '/').to route_to(
