@@ -3,7 +3,6 @@
 require 'spec_helper'
 
 describe 'Routing to main page', :type => :routing do
-
   context 'Locale-less root' do
     it 'routes / to login' do
       expect(get: '/').to route_to(
@@ -22,11 +21,9 @@ end
 
 # start Admin route tests
 context 'Admin resource' do
-
   let(:admin) { create(:admin) }
   let(:path) { '/en/admins' }
   let(:ctrl) { 'admins' }
-
 
   it 'routes GET index correctly' do
     expect(get: path).to route_to(
@@ -92,14 +89,12 @@ end
 
 # start Assignment route tests
 describe 'An Assignment' do
-
   let(:assignment) { create(:assignment) }
   let(:path) { '/en/assignments' }
   let(:ctrl) { 'assignments' }
 
   # start Assignment collection route tests
   context 'collection' do
-
     it 'routes GET download_csv_grades_report properly' do
       expect(get: path + '/download_csv_grades_report').to route_to(
         controller: ctrl,
@@ -224,7 +219,6 @@ describe 'An Assignment' do
   
   # start Assignment's rubrics route tests
   context 's rubrics' do
-    
     let(:rubric_path) { path + '/' + assignment.id.to_s + '/rubrics' }
     let(:rubric_ctrl) { 'rubrics' }
 
@@ -285,7 +279,6 @@ describe 'An Assignment' do
   # start assignment flexible criteria route tests
   context 's flexible_criteria' do
     context 'collection' do
-
       let(:criter_path) { path + '/' + assignment.id.to_s + '/flexible_criteria' }
       let(:criter_ctrl) { 'flexible_criteria' }
 
@@ -328,7 +321,6 @@ describe 'An Assignment' do
 
   # start assignment automated_tests resource route tests
   context 's automated_tests' do
-
     let(:autom_path) { path + '/' + assignment.id.to_s + '/automated_tests' }
     let(:autom_ctrl) { 'automated_tests' }
 
@@ -1119,7 +1111,8 @@ describe 'An Assignment' do
 
   context 'annotation_categories' do
 
-    let(:annot_path) { path + '/' + assignment.id.to_s + '/annotation_categories' }
+    let(:annot_path) { path + '/' + assignment.id.to_s +
+                       '/annotation_categories' }
     let(:annot_ctrl) { 'annotation_categories' }
 
     context 'members' do
@@ -1281,7 +1274,8 @@ context 'grade_entry_forms' do
   
   context 'member' do
     it 'routes GET grades properly' do
-      expect(get: path + '/' + grade_entry_form.id.to_s + '/grades').to route_to(
+      expect(get: path + '/' + grade_entry_form.id.to_s + '/grades')
+        .to route_to(
         controller: ctrl,
         action: 'grades',
         id: grade_entry_form.id.to_s,
