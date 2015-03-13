@@ -131,19 +131,19 @@ describe 'An Assignment' do
     it 'routs GET refresh_graph properly' do
       expect(get: path + '/' + assignment.id.to_s + '/refresh_graph')
         .to route_to(
-        controller: ctrl,
-        action: 'refresh_graph',
-        id: assignment.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'refresh_graph',
+          id: assignment.id.to_s,
+          locale: 'en')
     end
 
     it 'routes GET student_interface properly' do
       expect(get: path + '/' + assignment.id.to_s + '/student_interface')
         .to route_to(
-        controller: ctrl,
-        action: 'student_interface',
-        id: assignment.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'student_interface',
+          id: assignment.id.to_s,
+          locale: 'en')
     end
 
     it 'routes GET update_group_properties_on_persist properly' do
@@ -158,10 +158,10 @@ describe 'An Assignment' do
     it 'routes POST invite_member properly' do
       expect(post: path + '/' + assignment.id.to_s + '/invite_member')
         .to route_to(
-        controller: ctrl,
-        action: 'invite_member',
-        id: assignment.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'invite_member',
+          id: assignment.id.to_s,
+          locale: 'en')
     end
 
     it 'routes GET creategroup properly' do
@@ -191,28 +191,28 @@ describe 'An Assignment' do
     it 'routes GET decline_invitation properly' do
       expect(get: path + '/' + assignment.id.to_s + '/decline_invitation')
         .to route_to(
-        controller: ctrl,
-        action: 'decline_invitation',
-        id: assignment.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'decline_invitation',
+          id: assignment.id.to_s,
+          locale: 'en')
     end
 
     it 'routes POST disinvite_member properly' do
       expect(post: path + '/' + assignment.id.to_s + '/disinvite_member')
         .to route_to(
-        controller: ctrl,
-        action: 'disinvite_member',
-        id: assignment.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'disinvite_member',
+          id: assignment.id.to_s,
+          locale: 'en')
     end
 
     it 'routes GET render_test_result properly' do
       expect(get: path + '/' + assignment.id.to_s + '/render_test_result')
         .to route_to(
-        controller: ctrl,
-        action: 'render_test_result',
-        id: assignment.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'render_test_result',
+          id: assignment.id.to_s,
+          locale: 'en')
     end
   end
   # end Assignment member route tests
@@ -395,21 +395,21 @@ describe 'An Assignment' do
       it 'routes POST rename_group properly' do
         expect(post: group_path + '/' + group.id.to_s + '/rename_group')
           .to route_to(
-          controller: group_ctrl,
-          action: 'rename_group',
-          id: group.id.to_s,
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
+            controller: group_ctrl,
+            action: 'rename_group',
+            id: group.id.to_s,
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
       end
 
       it 'routes GET rename_group_dialog properly' do
         expect(get: group_path + '/' + group.id.to_s + '/rename_group_dialog')
           .to route_to(
-          controller: group_ctrl,
-          action: 'rename_group_dialog',
-          id: group.id.to_s,
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
+            controller: group_ctrl,
+            action: 'rename_group_dialog',
+            id: group.id.to_s,
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
       end
     end
 
@@ -473,10 +473,10 @@ describe 'An Assignment' do
       it 'route GET create_groups_when_students_work_alone properly' do
         expect(get: group_path + '/create_groups_when_students_work_alone')
           .to route_to(
-          controller: group_ctrl,
-          action: 'create_groups_when_students_work_alone',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
+            controller: group_ctrl,
+            action: 'create_groups_when_students_work_alone',
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
       end
 
       it 'routes GET valid_grouping properly' do
@@ -708,40 +708,38 @@ describe 'An Assignment' do
     end
     
     context 'member' do
-      
       it 'routes GET collect_and_begin_grading properly' do
         expect(get: sub_path + '/' + submission.id.to_s +
           '/collect_and_begin_grading').to route_to(
-          controller: sub_ctrl,
-          action: 'collect_and_begin_grading',
-          id: submission.id.to_s,
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
+            controller: sub_ctrl,
+            action: 'collect_and_begin_grading',
+            id: submission.id.to_s,
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
       end
 
       it 'routes POST manually_collect_and_begin_grading properly' do
         expect(post: sub_path + '/' + submission.id.to_s +
           '/manually_collect_and_begin_grading').to route_to(
-          controller: sub_ctrl,
-          action: 'manually_collect_and_begin_grading',
-          id: submission.id.to_s,
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
+            controller: sub_ctrl,
+            action: 'manually_collect_and_begin_grading',
+            id: submission.id.to_s,
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
       end
 
       it 'routes GET repo_browser properly' do
         expect(get: sub_path + '/' + submission.id.to_s + '/repo_browser')
           .to route_to(
-          controller: sub_ctrl,
-          action: 'repo_browser',
-          id: submission.id.to_s,
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
+            controller: sub_ctrl,
+            action: 'repo_browser',
+            id: submission.id.to_s,
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
       end
     end
     
     context 'results' do
-  
       let(:res_path) { sub_path + '/' + submission.id.to_s + '/results' }
       let(:res_ctrl) { 'results' }
 
@@ -818,12 +816,12 @@ describe 'An Assignment' do
         
         it 'routes GET add_extra_mark properly' do
           expect(get: res_path + '/1/add_extra_mark').to route_to(
-          controller: res_ctrl,
-          action: 'add_extra_mark',
-          id: '1',
-          assignment_id: assignment.id.to_s,
-          submission_id: submission.id.to_s,
-          locale: 'en')
+            controller: res_ctrl,
+            action: 'add_extra_mark',
+            id: '1',
+            assignment_id: assignment.id.to_s,
+            submission_id: submission.id.to_s,
+            locale: 'en')
         end
 
         it 'routes GET download properly' do
@@ -929,12 +927,12 @@ describe 'An Assignment' do
         it 'routes POST update_overall_remark_comment properly' do
           expect(post: res_path + '/1/update_overall_remark_comment')
             .to route_to(
-            controller: res_ctrl,
-            action: 'update_overall_remark_comment',
-            id: '1',
-            assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s,
-            locale: 'en')
+              controller: res_ctrl,
+              action: 'update_overall_remark_comment',
+              id: '1',
+              assignment_id: assignment.id.to_s,
+              submission_id: submission.id.to_s,
+              locale: 'en')
         end
 
         it 'routes POST update_marking_state properly' do
@@ -982,7 +980,6 @@ describe 'An Assignment' do
   # end assignment submissions route tests
     
   context 'grader' do
-      
     let(:grader_path) { path + '/' + assignment.id.to_s + '/graders' }
     let(:grader_ctrl) { 'graders' }
 
@@ -998,37 +995,37 @@ describe 'An Assignment' do
       it 'routes POST csv_upload_grader_groups_mapping properly' do
         expect(post: grader_path + '/csv_upload_grader_groups_mapping')
           .to route_to(
-          controller: grader_ctrl,
-          action: 'csv_upload_grader_groups_mapping',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
+            controller: grader_ctrl,
+            action: 'csv_upload_grader_groups_mapping',
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
       end
 
       it 'routes POST csv_upload_grader_criteria_mapping properly' do
         expect(post: grader_path + '/csv_upload_grader_criteria_mapping')
           .to route_to(
-          controller: grader_ctrl,
-          action: 'csv_upload_grader_criteria_mapping',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
+            controller: grader_ctrl,
+            action: 'csv_upload_grader_criteria_mapping',
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
       end
 
       it 'routes GET download_grader_groupings_mapping properly' do
         expect(get: grader_path + '/download_grader_groupings_mapping')
           .to route_to(
-          controller: grader_ctrl,
-          action: 'download_grader_groupings_mapping',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
+            controller: grader_ctrl,
+            action: 'download_grader_groupings_mapping',
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
       end
 
       it 'routes GET download_grader_criteria_mapping properly' do
         expect(get: grader_path + '/download_grader_criteria_mapping')
           .to route_to(
-          controller: grader_ctrl,
-          action: 'download_grader_criteria_mapping',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
+            controller: grader_ctrl,
+            action: 'download_grader_criteria_mapping',
+            assignment_id: assignment.id.to_s,
+            locale: 'en')
       end
 
       it 'routes GET download_dialog properly' do
@@ -1107,9 +1104,8 @@ describe 'An Assignment' do
   # end assignment graders route tests
 
   context 'annotation_categories' do
-    let(:annot_path) {
-      path + '/' + assignment.id.to_s + '/annotation_categories'
-    }
+    let(:annot_path) { path + '/' + assignment.id.to_s +
+      '/annotation_categories' }
     let(:annot_ctrl) { 'annotation_categories' }
 
     context 'members' do
@@ -1254,7 +1250,6 @@ end
 
 # start grade entry forms route tests
 context 'grade_entry_forms' do
-  
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:path) { '/en/grade_entry_forms' }
   let(:ctrl) { 'grade_entry_forms' }
@@ -1273,64 +1268,64 @@ context 'grade_entry_forms' do
     it 'routes GET grades properly' do
       expect(get: path + '/' + grade_entry_form.id.to_s + '/grades')
         .to route_to(
-        controller: ctrl,
-        action: 'grades',
-        id: grade_entry_form.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'grades',
+          id: grade_entry_form.id.to_s,
+          locale: 'en')
     end
 
     it 'routes GET g_table_paginate properly' do
       expect(get: path + '/' + grade_entry_form.id.to_s + '/g_table_paginate')
         .to route_to(
-        controller: ctrl,
-        action: 'g_table_paginate',
-        id: grade_entry_form.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'g_table_paginate',
+          id: grade_entry_form.id.to_s,
+          locale: 'en')
     end
 
     it 'routes GET csv_download properly' do
       expect(get: path + '/' + grade_entry_form.id.to_s + '/csv_download')
         .to route_to(
-        controller: ctrl,
-        action: 'csv_download',
-        id: grade_entry_form.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'csv_download',
+          id: grade_entry_form.id.to_s,
+          locale: 'en')
     end
 
     it 'routes POST csv_upload properly' do
       expect(post: path + '/' + grade_entry_form.id.to_s + '/csv_upload')
         .to route_to(
-        controller: ctrl,
-        action: 'csv_upload',
-        id: grade_entry_form.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'csv_upload',
+          id: grade_entry_form.id.to_s,
+          locale: 'en')
     end
 
     it 'routes POST update_grade properly' do
       expect(post: path + '/' + grade_entry_form.id.to_s + '/update_grade')
         .to route_to(
-        controller: ctrl,
-        action: 'update_grade',
-        id: grade_entry_form.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'update_grade',
+          id: grade_entry_form.id.to_s,
+          locale: 'en')
     end
 
     it 'routes POST update_grade_entry_students properly' do
       expect(post: path + '/' + grade_entry_form.id.to_s +
         '/update_grade_entry_students').to route_to(
-        controller: ctrl,
-        action: 'update_grade_entry_students',
-        id: grade_entry_form.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'update_grade_entry_students',
+          id: grade_entry_form.id.to_s,
+          locale: 'en')
     end
 
     it 'routes GET student_interface properly' do
       expect(get: path + '/' + grade_entry_form.id.to_s + '/student_interface')
         .to route_to(
-        controller: ctrl,
-        action: 'student_interface',
-        id: grade_entry_form.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'student_interface',
+          id: grade_entry_form.id.to_s,
+          locale: 'en')
     end
   end
 end
@@ -1338,7 +1333,6 @@ end
 
 # start notes route tests
 context 'notes' do
-  
   let(:path) { '/en/notes' }
   let(:ctrl) { 'notes' }
 
@@ -1517,7 +1511,6 @@ end
 
 # start main route tests
 context 'main' do
-
   let(:path) { '/en/main' }
   let(:ctrl) { 'main' }
 
