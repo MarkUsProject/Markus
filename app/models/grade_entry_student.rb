@@ -242,17 +242,7 @@ class GradeEntryStudent < ActiveRecord::Base
 
   # Calculate and set the total grade
   def refresh_total_grade
-    total = 0
-    grades.each do |p|
-      unless p.grade.nil?
-        grade_entry_item = GradeEntryItem.find(p.grade_entry_item_id)
-        unless grade_entry_item.bonus
-          total += p.grade
-        end
-      end
-    end
-
-    total = total.round(2)
+    total = grades.sum(:grade).round(2)
 
     if total == 0 && self.all_blank_grades?
       total = nil

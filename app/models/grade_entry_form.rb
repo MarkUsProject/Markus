@@ -28,7 +28,13 @@ class GradeEntryForm < ActiveRecord::Base
 
   # The total number of marks for this grade entry form
   def out_of_total
-    grade_entry_items.sum('out_of').round(2)
+    total = 0
+    grade_entry_items.each do |grade_entry_item|
+      unless grade_entry_item.bonus
+        total += grade_entry_item.out_of
+      end
+    end
+    total
   end
 
   # Determine the total mark for a particular student, as a percentage
