@@ -63,11 +63,11 @@ context 'Admin resource' do
   end
 
   it 'routes PUT update correctly' do
-   expect(put: path + '/' + admin.id.to_s).to route_to(
-     controller: ctrl,
-     action: 'update',
-     id: admin.id.to_s,
-     locale: 'en')
+    expect(put: path + '/' + admin.id.to_s).to route_to(
+      controller: ctrl,
+      action: 'update',
+      id: admin.id.to_s,
+      locale: 'en')
   end
 
   it 'routes DELETE destroy correctly' do
@@ -149,10 +149,10 @@ describe 'An Assignment' do
     it 'routes GET update_group_properties_on_persist properly' do
       expect(get: path + '/' + assignment.id.to_s +
         '/update_group_properties_on_persist').to route_to(
-        controller: ctrl,
-        action: 'update_group_properties_on_persist',
-        id: assignment.id.to_s,
-        locale: 'en')
+          controller: ctrl,
+          action: 'update_group_properties_on_persist',
+          id: assignment.id.to_s,
+          locale: 'en')
     end
 
     it 'routes POST invite_member properly' do
@@ -216,7 +216,7 @@ describe 'An Assignment' do
     end
   end
   # end Assignment member route tests
-  
+
   # start Assignment's rubrics route tests
   context 's rubrics' do
     let(:rubric_path) { path + '/' + assignment.id.to_s + '/rubrics' }
@@ -234,7 +234,7 @@ describe 'An Assignment' do
       end
     end
     # end assignment rubric member route tests
-    
+
     # start assignment rubric collection route tests
     context 'collection' do
       it 'routes POST update_positions properly' do
@@ -584,7 +584,7 @@ describe 'An Assignment' do
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
-      
+
       it 'routes GET download_detailed_csv_report properly' do
         expect(get: sub_path + '/download_detailed_csv_report').to route_to(
           controller: sub_ctrl,
@@ -1145,12 +1145,12 @@ describe 'An Assignment' do
       end
 
       it 'routes POST add_annotation_text properly' do
-       expect(post: annot_path + '/1/add_annotation_text').to route_to(
-         controller: annot_ctrl,
-         action: 'add_annotation_text',
-         id: '1',
-         assignment_id: assignment.id.to_s,
-         locale: 'en')
+        expect(post: annot_path + '/1/add_annotation_text').to route_to(
+          controller: annot_ctrl,
+          action: 'add_annotation_text',
+          id: '1',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
       end
 
       it 'routes PUT update_annotation properly' do
@@ -1487,10 +1487,10 @@ context 'tas collection' do
   let(:ctrl) { 'tas' }
 
   it 'routes GET populate properly' do
-   expect(get: path + '/populate').to route_to(
-     controller: ctrl,
-     action: 'populate',
-     locale: 'en')
+    expect(get: path + '/populate').to route_to(
+      controller: ctrl,
+      action: 'populate',
+      locale: 'en')
   end
 
   it 'routes POST upload_ta_list properly' do
