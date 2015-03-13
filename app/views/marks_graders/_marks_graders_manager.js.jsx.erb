@@ -90,7 +90,7 @@
         graders={this.state.graders}
         selected_graders={this.state.selected_graders}
         onSelectedGradersChange={this.updateSelectedGraders} />);
-      to_render.push(<MarksGradersActions
+        to_render.push(<MarksGradersActions
         refresh={this.refresh}
         current_table={this.state.current_table}
         selected_graders={this.state.selected_graders}
@@ -103,6 +103,7 @@
 
       to_render.push(<StudentsTableManager
         students={this.state.students}
+        graders_for_students={this.state.graders_for_students}
         selected_students={this.state.selected_students}
         onSelectedStudentsChange={this.updateSelectedStudents}
         selected_graders={this.state.selected_graders}
@@ -125,6 +126,7 @@
   var StudentsTableManager = React.createClass({
     propTypes: {
       studuents: React.PropTypes.array,
+      graders_for_students: React.PropTypes.array,
       selected_students: React.PropTypes.array,
       onSelectedStudentsChange: React.PropTypes.func,
       selected_graders: React.PropTypes.array,

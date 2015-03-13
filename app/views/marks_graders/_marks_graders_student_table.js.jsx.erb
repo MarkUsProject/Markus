@@ -16,7 +16,7 @@
     studentsCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
-        var new_selected_students = this.state.students.map(function(x) {
+        var new_selected_students = this.props.students.map(function(x) {
           return x.id;
         }).slice();
         this.props.onSelectedStudentsChange(new_selected_students);
@@ -38,7 +38,7 @@
     gradersInStudentsCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
-        var new_selected_graders = this.state.graders_for_students.map(function(x) {
+        var new_selected_graders = this.props.graders_for_students.map(function(x) {
           return x.membership_id;
         }).slice();
         this.props.onSelectedGradersForStudentsChange(new_selected_graders);
