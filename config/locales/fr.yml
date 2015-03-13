@@ -11,6 +11,9 @@ fr:
     issues:             "GitHub liste des problèmes"
     actions:            "Actes"
 
+    # app/views/assignments/_form.html.erb
+    required_file_warning: "Accepter pas d'autres fichiers que les fichiers requis énumérés. Ce serait également restrics les extensions de fichier."
+
     # app/views/main/login.html.erb
     welcome_to:         "Bienvenue sur MarkUs !"
     welcome_to_markus:     "%{user_name}, bienvenue sur MarkUs, l'outil d'évaluation en ligne."
@@ -152,6 +155,7 @@ fr:
         add_required_file:  "Ajouter un fichier requis"
         type:  "Type du projet"
         overall_comment: "Commentaire général : "
+        upload_file_requirement: "La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire"
         group:
             empty: "Groupe vide"
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
