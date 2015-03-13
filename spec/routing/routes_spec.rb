@@ -284,36 +284,36 @@ describe 'An Assignment' do
 
       it 'routes POST upload properly' do
         expect(post: criter_path + '/upload').to route_to(
-        controller: criter_ctrl,
-        action: 'upload',
-        assignment_id: assignment.id.to_s,
-        locale: 'en')
+          controller: criter_ctrl,
+          action: 'upload',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
       end
 
       it 'routes GET show id: update_positions' do
         expect(get: criter_path + '/update_positions').to route_to(
-        controller: criter_ctrl,
-        action: 'show',
-        id: 'update_positions',
-        assignment_id: assignment.id.to_s,
-        locale: 'en')
+          controller: criter_ctrl,
+          action: 'show',
+          id: 'update_positions',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
       end
 
       it 'routes GET show id: move_criterion' do
         expect(get: criter_path + '/move_criterion').to route_to(
-        controller: criter_ctrl,
-        action: 'show',
-        id: 'move_criterion',
-        assignment_id: assignment.id.to_s,
-        locale: 'en')
+          controller: criter_ctrl,
+          action: 'show',
+          id: 'move_criterion',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
       end
 
       it 'routes GET download properly' do
         expect(get: criter_path + '/download').to route_to(
-        controller: criter_ctrl,
-        action: 'download',
-        assignment_id: assignment.id.to_s,
-        locale: 'en')
+          controller: criter_ctrl,
+          action: 'download',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
       end
     end
   end
@@ -327,10 +327,10 @@ describe 'An Assignment' do
     context 'collection' do
       it 'routes GET manage properly' do
         expect(get: autom_path + '/manage').to route_to(
-        controller: autom_ctrl,
-        action: 'manage',
-        assignment_id: assignment.id.to_s,
-        locale: 'en')
+          controller: autom_ctrl,
+          action: 'manage',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
       end
 
       it 'routes POST update properly' do
@@ -1144,14 +1144,14 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-     it 'routes POST add_annotation_text properly' do
+      it 'routes POST add_annotation_text properly' do
        expect(post: annot_path + '/1/add_annotation_text').to route_to(
          controller: annot_ctrl,
          action: 'add_annotation_text',
          id: '1',
          assignment_id: assignment.id.to_s,
          locale: 'en')
-     end
+      end
 
       it 'routes PUT update_annotation properly' do
         expect(get: annot_path + '/update_annotation').to route_to(
