@@ -500,12 +500,24 @@ function sort_by_column(data, column, direction, compare) {
     if (typeof a == 'string') {
       return a.toLowerCase().replace(' ', '');
     } else if (a.hasOwnProperty('props')) {
+      // Is a react Grade Box
+      if (a.props.hasOwnProperty('grade_entry_column') || a.props.hasOwnProperty('data-grade-entry-item-id')){
+        return a;
+      // Cotains image
+      } else if (a.props.hasOwnProperty('src')) {
+          return a.props.src;
       // Is a react component, get innerHTML
-      return a.props.dangerouslySetInnerHTML.__html.toLowerCase();
-    } else {
-      return a;
+      } else {
+          return a.props.dangerouslySetInnerHTML.__html.toLowerCase();
+      }
     }
+      return a;
   }
+
+  if (typeof compare == 'string'){
+    compare = window[compare]
+  }
+
   compare = compare || compare_values;
 
   // sort row by column id
@@ -520,4 +532,3 @@ function sort_by_column(data, column, direction, compare) {
 
   return sorted;
 }
-

@@ -7,6 +7,7 @@ class GradeEntryFormsController < ApplicationController
   before_filter :authorize_only_for_admin,
                 except: [:student_interface,
                          :populate_term_marks_table,
+                         :populate_grades_table,
                          :get_mark_columns,
                          :grades,
                          :g_table_paginate,
@@ -256,6 +257,8 @@ class GradeEntryFormsController < ApplicationController
       {
         id: column.id,
         content: column.name + ' (' + column.out_of.to_s + ')',
+        sortable: true,
+        compare: "compare_gradebox"
       }
     end
     if grade_entry_form.show_total
@@ -264,13 +267,16 @@ class GradeEntryFormsController < ApplicationController
           id: 'total_marks',
           content: t('grade_entry_forms.grades.total') \
                    + ' ' + grade_entry_form.out_of_total.to_s,
+          sortable: true,
+          compare: "compare_gradebox"
         }
     end
     if current_user.admin? || current_user.ta?
       c <<
         {
           id: 'marking_state',
-          content: t('grade_entry_forms.grades.marking_state')
+          content: t('grade_entry_forms.grades.marking_state'),
+          sortable: true
         }
     end
 
