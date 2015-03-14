@@ -15,21 +15,18 @@ describe GradeEntryFormsController do
       @file_without_extension =
         fixture_file_upload('spec/fixtures/files/grade_entry_upload_empty_file',
                             'text/xml')
-      
       @file_wrong_format =
         fixture_file_upload(
           'spec/fixtures/files/grade_entry_upload_wrong_format.xls', 'text/xls')
-      
       @file_bad_csv =
         fixture_file_upload(
           'spec/fixtures/files/grade_entry_upload_bad_csv.csv', 'text/xls')
-      
       @file_wrong_columns =
         fixture_file_upload(
           'spec/fixtures/files/grade_entry_upload_wrong_columns.csv',
           'text/csv')
     end
-    
+
     # this test is currently failing.
     # issue #2078 has been opened to resolve this
     # it 'does not accept a csv file with wrong data columns' do
@@ -40,7 +37,7 @@ describe GradeEntryFormsController do
     # expect(response).to redirect_to(
     #   grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     # end
-    
+
     it 'does not accept a file with no extension' do
       post :csv_upload,
            id: grade_entry_form,
@@ -58,7 +55,7 @@ describe GradeEntryFormsController do
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end
-    
+
     # this test is currently failing
     # issue #2075 has been opened to resolve this
     # it 'should gracefully fail on non-csv file with .csv extension' do
@@ -69,7 +66,7 @@ describe GradeEntryFormsController do
     # expect(response).to redirect_to(
     #   grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     # end
-    
+
     it 'should gracefully fail on .xls file' do
       post :csv_upload,
            id: grade_entry_form,
