@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe GradeEntryFormsController do
-
   before :each do
     # Authenticate user is not timed out, and has administrator rights.
     allow(controller).to receive(:session_expired?).and_return(false)
@@ -12,10 +11,7 @@ describe GradeEntryFormsController do
 
   let(:grade_entry_form) { create(:grade_entry_form) }
 
-
-
-context 'CSV_Uploads' do
-
+  context 'CSV_Uploads' do
     before :each do
       @file_without_extension =
         fixture_file_upload('spec/fixtures/files/grade_entry_upload_empty_file',
@@ -35,7 +31,8 @@ context 'CSV_Uploads' do
           'text/csv')
     end
     
-    
+    # this test is currently failing.
+    # issue #2078 has been opened to resolve this
     #it 'does not accept a csv file with wrong data columns' do
     #  post :csv_upload, id: grade_entry_form,
     #      upload: { :grades_file => @file_wrong_columns }
@@ -47,13 +44,12 @@ context 'CSV_Uploads' do
     
     it 'does not accept a file with no extension' do
       post :csv_upload, id: grade_entry_form,
-           upload: { :grades_file => @file_without_extension }
+      upload: { grades_file: @file_without_extension }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end
-
 
     it 'does not accept fileless submission' do
       post :csv_upload, id: grade_entry_form
@@ -62,7 +58,9 @@ context 'CSV_Uploads' do
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end
-
+    
+    # this test is currently failing
+    # issue #2075 has been opened to resolve this
     #it 'should gracefully fail on non-csv file with .csv extension' do
     #  post :csv_upload, id: grade_entry_form,
     #      upload: { grades_file: @file_bad_csv }
@@ -74,25 +72,20 @@ context 'CSV_Uploads' do
     
     it 'should gracefully fail on .xls file' do
       post :csv_upload, id: grade_entry_form,
-           upload: { grades_file: @file_wrong_format}
+        upload: { grades_file: @file_wrong_format }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end
-
-end
-
-
+  end
 
   context 'CSV_Downloads' do
-
     let(:csv_data) { grade_entry_form.get_csv_grades_report }
-    let(:csv_options) { {filename: "#{grade_entry_form.short_identifier}" +
-                         "_grades_report.csv",
-                         disposition: 'attachment',
-                         type: 'application/vnd.ms-excel'} }
-
+    let(:csv_options) { {
+      filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
+      disposition: 'attachment',
+      type: 'application/vnd.ms-excel' } }
 
     it 'tests that action csv_downloads returns OK' do
       get :csv_download, id: grade_entry_form
@@ -103,7 +96,6 @@ end
       expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
         @controller.render nothing: true #to prevent a 'missing template' error
       }
-
       get :csv_download, id: grade_entry_form
     end
 
@@ -123,8 +115,8 @@ end
     #parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
       get :csv_download, id: grade_entry_form
-      filename = response.header['Content-Disposition'].
-        split.last.split('"').second
+      filename = response.header['Content-Disposition']
+        .split.last.split('"').second
       expect(filename).to eq "#{grade_entry_form.short_identifier}" +
         "_grades_report.csv"
     end
