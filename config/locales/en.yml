@@ -478,6 +478,7 @@ en:
       column_name: "Name"
       column_out_of: "Out Of"
       add_column: "Add a column"
+      bonus_column: "Bonus Mark"
       remove_column: "Remove:"
       toggle_column: "hide/show"
       properties: "Marks Spreadsheet Properties"

@@ -457,6 +457,7 @@ fr:
       column_name: "Nom"
       column_out_of: "sur"
       add_column: "Ajouter une colonne"
+      bonus_column: "Note Bonus"
       remove_column: "Supprimer : "
       toggle_column: "cacher/montrer"
       properties: "Propriétés de la feuille de note"

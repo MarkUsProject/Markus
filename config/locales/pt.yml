@@ -442,6 +442,7 @@ pt:
       column_name: "Nome"
       column_out_of: "De"
       add_column: "Inserir coluna"
+      bonus_column: "Nota Bonus"
       remove_column: "Remover:"
       toggle_column: "esconder/mostrar"
       properties: "Propriedade da planilha de notas"

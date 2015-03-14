@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141128075905) do
+ActiveRecord::Schema.define(:version => 20150304033052) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -47,6 +47,8 @@ ActiveRecord::Schema.define(:version => 20141128075905) do
     t.integer "annotation_number"
     t.boolean "is_remark"
     t.integer "page"
+    t.integer "column_start"
+    t.integer "column_end"
   end
 
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
@@ -167,11 +169,12 @@ ActiveRecord::Schema.define(:version => 20141128075905) do
 
   create_table "grade_entry_items", :force => true do |t|
     t.integer  "grade_entry_form_id"
-    t.string   "name",                :null => false
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.string   "name",                                   :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.float    "out_of"
     t.integer  "position"
+    t.boolean  "bonus",               :default => false
   end
 
   add_index "grade_entry_items", ["grade_entry_form_id", "name"], :name => "index_grade_entry_items_on_grade_entry_form_id_and_name", :unique => true
