@@ -42,8 +42,9 @@ describe GradeEntryFormsController do
     # end
     
     it 'does not accept a file with no extension' do
-      post :csv_upload, id: grade_entry_form,
-                    upload: { grades_file: @file_without_extension }
+      post :csv_upload,
+           id: grade_entry_form,
+           upload: { grades_file: @file_without_extension }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
@@ -70,8 +71,9 @@ describe GradeEntryFormsController do
     # end
     
     it 'should gracefully fail on .xls file' do
-      post :csv_upload, id: grade_entry_form,
-                    upload: { grades_file: @file_wrong_format }
+      post :csv_upload,
+           id: grade_entry_form,
+           upload: { grades_file: @file_wrong_format }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
@@ -94,31 +96,32 @@ describe GradeEntryFormsController do
 
     it 'expects a call to send_data' do
       expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
-        @controller.render nothing: true #to prevent a 'missing template' error
+        # to prevent a 'missing template' error
+        @controller.render nothing: true
       }
       get :csv_download, id: grade_entry_form
     end
 
-    #parse header object to check for the right disposition
+    # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
       get :csv_download, id: grade_entry_form
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
 
-    #parse header object to check for the right content type
+    # parse header object to check for the right content type
     it 'returns vnd.ms-excel type' do
       get :csv_download, id: grade_entry_form
       expect(response.content_type).to eq 'application/vnd.ms-excel'
     end
 
-    #parse header object to check for the right file naming convention
+    # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
       get :csv_download, id: grade_entry_form
       filename = response.header['Content-Disposition']
-        .split.last.split('"').second
+                 .split.last.split('"').second
       expect(filename).to eq "#{grade_entry_form.short_identifier}" +
-        "_grades_report.csv"
+        '_grades_report.csv'
     end
   end
 end
