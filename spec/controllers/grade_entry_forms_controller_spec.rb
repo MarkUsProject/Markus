@@ -6,7 +6,6 @@ describe GradeEntryFormsController do
     allow(controller).to receive(:session_expired?).and_return(false)
     allow(controller).to receive(:logged_in?).and_return(true)
     allow(controller).to receive(:current_user).and_return(build(:admin))
-
   end
 
   let(:grade_entry_form) { create(:grade_entry_form) }
@@ -33,18 +32,18 @@ describe GradeEntryFormsController do
     
     # this test is currently failing.
     # issue #2078 has been opened to resolve this
-    #it 'does not accept a csv file with wrong data columns' do
+    # it 'does not accept a csv file with wrong data columns' do
     #  post :csv_upload, id: grade_entry_form,
     #      upload: { :grades_file => @file_wrong_columns }
     # expect(response.status).to eq(302)
     # expect(flash[:error]).to_not be_empty
     # expect(response).to redirect_to(
     #   grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
-    #end
+    # end
     
     it 'does not accept a file with no extension' do
       post :csv_upload, id: grade_entry_form,
-      upload: { grades_file: @file_without_extension }
+                    upload: { grades_file: @file_without_extension }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
@@ -61,18 +60,18 @@ describe GradeEntryFormsController do
     
     # this test is currently failing
     # issue #2075 has been opened to resolve this
-    #it 'should gracefully fail on non-csv file with .csv extension' do
+    # it 'should gracefully fail on non-csv file with .csv extension' do
     #  post :csv_upload, id: grade_entry_form,
     #      upload: { grades_file: @file_bad_csv }
     # expect(response.status).to eq(302)
     # expect(flash[:error]).to_not be_empty
     # expect(response).to redirect_to(
     #   grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
-    #end
+    # end
     
     it 'should gracefully fail on .xls file' do
       post :csv_upload, id: grade_entry_form,
-        upload: { grades_file: @file_wrong_format }
+                    upload: { grades_file: @file_wrong_format }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
@@ -85,7 +84,8 @@ describe GradeEntryFormsController do
     let(:csv_options) { {
       filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
       disposition: 'attachment',
-      type: 'application/vnd.ms-excel' } }
+      type: 'application/vnd.ms-excel'
+    } }
 
     it 'tests that action csv_downloads returns OK' do
       get :csv_download, id: grade_entry_form
@@ -120,7 +120,5 @@ describe GradeEntryFormsController do
       expect(filename).to eq "#{grade_entry_form.short_identifier}" +
         "_grades_report.csv"
     end
-
   end
-
 end
