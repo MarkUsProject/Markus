@@ -50,7 +50,6 @@ describe SubmissionRule do
       expect(time_difference)
         .to be < 600
     end
-
     # test that is triggered when grouping.inviter.section exists
     it 'returns date value if grouping.inviter.section is not nil' do
       expect(assignment.submission_rule
