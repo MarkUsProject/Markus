@@ -1104,8 +1104,10 @@ describe 'An Assignment' do
   # end assignment graders route tests
 
   context 'annotation_categories' do
-    let(:annot_path) { path + '/' + assignment.id.to_s +
-      '/annotation_categories' }
+    let(:annot_path) {
+      path + '/' + assignment.id.to_s +
+      '/annotation_categories'
+    }
     let(:annot_ctrl) { 'annotation_categories' }
 
     context 'members' do
