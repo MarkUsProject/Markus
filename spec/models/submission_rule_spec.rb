@@ -24,7 +24,6 @@ describe SubmissionRule do
       expect(time_difference)
         .to be < 600
     end
-
   end
 
   context '#calculate_grouping_collection_time' do
@@ -43,7 +42,7 @@ describe SubmissionRule do
         .calculate_grouping_collection_time(grouping).to_date)
         .to be_kind_of(Date)
     end
-    
+
     # in accuracy range of 10 minutes
     it 'returns a correct time value at the end' do
       time_returned = assignment.submission_rule
