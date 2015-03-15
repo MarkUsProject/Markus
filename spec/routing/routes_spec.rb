@@ -641,7 +641,7 @@ describe 'An Assignment' do
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
-      
+
       it 'routes POST populate_file_manager' do
         expect(post: sub_path + '/populate_file_manager').to route_to(
           controller: sub_ctrl,
@@ -706,7 +706,7 @@ describe 'An Assignment' do
           locale: 'en')
       end
     end
-    
+
     context 'member' do
       it 'routes GET collect_and_begin_grading properly' do
         expect(get: sub_path + '/' + submission.id.to_s +
@@ -738,7 +738,7 @@ describe 'An Assignment' do
             locale: 'en')
       end
     end
-    
+
     context 'results' do
       let(:res_path) { sub_path + '/' + submission.id.to_s + '/results' }
       let(:res_ctrl) { 'results' }
@@ -813,7 +813,7 @@ describe 'An Assignment' do
             submission_id: submission.id.to_s,
             locale: 'en')
         end
-        
+
         it 'routes GET add_extra_mark properly' do
           expect(get: res_path + '/1/add_extra_mark').to route_to(
             controller: res_ctrl,
@@ -843,7 +843,7 @@ describe 'An Assignment' do
             submission_id: submission.id.to_s,
             locale: 'en')
         end
-        
+
         it 'routes GET cancel_remark_request properly' do
           expect(get: res_path + '/1/cancel_remark_request').to route_to(
             controller: res_ctrl,
@@ -893,7 +893,7 @@ describe 'An Assignment' do
             submission_id: submission.id.to_s,
             locale: 'en')
         end
-        
+
         it 'routes POST remove_extra_mark properly' do
           expect(post: res_path + '/1/remove_extra_mark').to route_to(
             controller: res_ctrl,
@@ -978,7 +978,7 @@ describe 'An Assignment' do
     end
   end
   # end assignment submissions route tests
-    
+
   context 'grader' do
     let(:grader_path) { path + '/' + assignment.id.to_s + '/graders' }
     let(:grader_ctrl) { 'graders' }
@@ -1051,7 +1051,7 @@ describe 'An Assignment' do
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
-      
+
       it 'routes GET global_actions properly' do
         expect(get: grader_path + '/global_actions').to route_to(
           controller: grader_ctrl,
@@ -1075,7 +1075,7 @@ describe 'An Assignment' do
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
-      
+
       it 'routes GET random_assign properly' do
         expect(get: grader_path + '/random_assign').to route_to(
           controller: grader_ctrl,
@@ -1162,7 +1162,7 @@ describe 'An Assignment' do
           locale: 'en')
       end
     end
-    
+
     context 'collection' do
       it 'routes GET add_annotation_category properly' do
         expect(get: annot_path + '/add_annotation_category').to route_to(
@@ -1219,7 +1219,7 @@ describe 'An Assignment' do
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
-      
+
       it 'routes GET add_annotation_text properly' do
         expect(get: annot_path + '/add_annotation_text').to route_to(
           controller: annot_ctrl,
@@ -1227,7 +1227,7 @@ describe 'An Assignment' do
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
-      
+
       it 'routes POST delete_annotation_text properly' do
         expect(post: annot_path + '/delete_annotation_text').to route_to(
           controller: annot_ctrl,
@@ -1263,7 +1263,7 @@ context 'grade_entry_forms' do
     end
   end
   # end grade_entry_forms collection route tests
-  
+
   context 'member' do
     it 'routes GET grades properly' do
       expect(get: path + '/' + grade_entry_form.id.to_s + '/grades')
@@ -1471,7 +1471,7 @@ context 'students collection' do
       action: 'download_student_list',
       locale: 'en')
   end
-  
+
   it 'routes POST upload_student_list properly' do
     expect(post: path + '/upload_student_list').to route_to(
       controller: ctrl,
@@ -1542,7 +1542,7 @@ context 'main' do
         action: 'role_switch',
         locale: 'en')
     end
-    
+
     it 'routes GET clear_role_switch_session properly' do
       expect(get: path + '/clear_role_switch_session').to route_to(
         controller: ctrl,
