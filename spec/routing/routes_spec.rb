@@ -1106,7 +1106,7 @@ describe 'An Assignment' do
   context 'annotation_categories' do
     let(:annot_path) {
       path + '/' + assignment.id.to_s +
-      '/annotation_categories'
+        '/annotation_categories'
     }
     let(:annot_ctrl) { 'annotation_categories' }
 
