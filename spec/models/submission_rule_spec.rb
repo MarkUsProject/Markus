@@ -25,28 +25,26 @@ describe SubmissionRule do
         .to be < 600
     end
   end
-
   context '#calculate_grouping_collection_time' do
     let(:assignment) { create(:assignment) }
-    let(:grouping) { create(:grouping) }
     let(:grouping_with_inviter) { create(:grouping_with_inviter) }
 
     it 'returns something other than nil at the end' do
       expect(assignment.submission_rule
-        .calculate_grouping_collection_time(grouping))
+        .calculate_grouping_collection_time(grouping_with_inviter))
         .to_not be_nil
     end
 
     it 'returns some date value at the end' do
       expect(assignment.submission_rule
-        .calculate_grouping_collection_time(grouping).to_date)
+        .calculate_grouping_collection_time(grouping_with_inviter).to_date)
         .to be_kind_of(Date)
     end
 
     # in accuracy range of 10 minutes
     it 'returns a correct time value at the end' do
       time_returned = assignment.submission_rule
-                      .calculate_grouping_collection_time(grouping)
+                      .calculate_grouping_collection_time(grouping_with_inviter)
       time_now = Time.now
       time_difference = (time_now - time_returned).abs
       expect(time_difference)
