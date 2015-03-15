@@ -80,11 +80,13 @@ describe GradeEntryFormsController do
 
   context 'CSV_Downloads' do
     let(:csv_data) { grade_entry_form.get_csv_grades_report }
-    let(:csv_options) { {
-      filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
-      disposition: 'attachment',
-      type: 'application/vnd.ms-excel'
-    } }
+    let(:csv_options) {
+      {
+        filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
+        disposition: 'attachment',
+        type: 'application/vnd.ms-excel'
+      }
+    }
 
     it 'tests that action csv_downloads returns OK' do
       get :csv_download, id: grade_entry_form
