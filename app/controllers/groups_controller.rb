@@ -145,6 +145,7 @@ class GroupsController < ApplicationController
     file = params[:group][:grouplist]
     @assignment = Assignment.find(params[:assignment_id])
     encoding = params[:encoding]
+    m_logger = MarkusLogger.instance
     if request.post? && !params[:group].blank?
       # Transaction allows us to potentially roll back if something
       # really bad happens.
@@ -163,10 +164,12 @@ class GroupsController < ApplicationController
               unless collision_error.nil?
                 flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
                   { line_number: line_nr + 1 }) + " #{collision_error}")
+                m_logger.log("Collision detected for #{row}")
               end
             rescue CSVInvalidLineError => e
               flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
                 { line_number: line_nr + 1 }) + " #{e.message}")
+              m_logger.log("Invalid Line in CSV: #{e.message}, at #{row}")
             end
           end
           @assignment.reload # Need to reload to get newly created groupings
@@ -181,7 +184,7 @@ class GroupsController < ApplicationController
           # happened.
           flash_message(:error, I18n.t('csv.groups_unrecoverable_error'))
           raise ActiveRecord::Rollback
-        end
+         end
       end
       # Need to reestablish repository permissions.
       # This is not handled by the roll back.
