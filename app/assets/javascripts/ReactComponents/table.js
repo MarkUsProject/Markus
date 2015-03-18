@@ -497,21 +497,22 @@ function sort_by_column(data, column, direction, compare) {
   // determine sort behaviour
   function makeComparable(a)
   {
-    if (typeof a == 'string') {
+    if (typeof a === 'string') {
       return a.toLowerCase().replace(' ', '');
     } else if (a.hasOwnProperty('props')) {
       // Is a react Grade Box
-      if (a.props.hasOwnProperty('grade_entry_column') || a.props.hasOwnProperty('data-grade-entry-item-id')){
+      if (a.props.hasOwnProperty('grade_entry_column') || 
+          a.props.hasOwnProperty('data-grade-entry-item-id')) {
         return a;
       // Cotains image
       } else if (a.props.hasOwnProperty('src')) {
-          return a.props.src;
+        return a.props.src;
       // Is a react component, get innerHTML
       } else {
-          return a.props.dangerouslySetInnerHTML.__html.toLowerCase();
+        return a.props.dangerouslySetInnerHTML.__html.toLowerCase();
       }
     }
-      return a;
+    return a;
   }
 
   if (typeof compare == 'string'){
