@@ -258,7 +258,7 @@ class GradeEntryFormsController < ApplicationController
         id: column.id,
         content: column.name + ' (' + column.out_of.to_s + ')',
         sortable: true,
-        compare: "compare_gradebox"
+        compare: 'compare_gradebox'
       }
     end
     if grade_entry_form.show_total
@@ -268,7 +268,7 @@ class GradeEntryFormsController < ApplicationController
           content: t('grade_entry_forms.grades.total') \
                    + ' ' + grade_entry_form.out_of_total.to_s,
           sortable: true,
-          compare: "compare_gradebox"
+          compare: 'compare_gradebox'
         }
     end
     if current_user.admin? || current_user.ta?

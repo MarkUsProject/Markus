@@ -25,9 +25,9 @@
     if (document.getElementById(cell)) {
       document.getElementById(cell).value = value;
       var e = new MouseEvent('click', {
-       'view': window,
-       'bubbles': true,
-       'cancelable': false
+        'view': window,
+        'bubbles': true,
+        'cancelable': false
       });
       var node = document.getElementById(cell);
       node.dispatchEvent(e);
@@ -36,11 +36,13 @@
 
   var GradeBoxTotal = React.createClass({
     handleChange: function() {
-      this.props.value = parseInt(event.target.value);
+      this.props.value = parseInt(event.target.value, 10);
     },
     render: function() {
       return(
-        <input id={this.props.grade_id} type="text" size="4" className="grade-input" value={this.props.value} onClick={this.handleChange} disabled/>
+        <input id={this.props.grade_id} type="text" size="4" 
+         className="grade-input" value={this.props.value} 
+         onClick={this.handleChange} readonly/>
         );
     }
   });
@@ -51,17 +53,17 @@
     },
     handleChange: function(event) {
       var params = {
-              'updated_grade':       parseInt(event.target.value),
-              'student_id':          this.props.student_id,
-              'grade_entry_item_id': this.props.grade_entry_column,
-              'authenticity_token':  AUTH_TOKEN
-            };
-            jQuery.ajax({
-              url:  this.props.data_action,
-              data: params,
-              type: 'POST',
-              dataType: 'script',
-            });
+        'updated_grade':       parseInt(event.target.value),
+        'student_id':          this.props.student_id,
+        'grade_entry_item_id': this.props.grade_entry_column,
+        'authenticity_token':  AUTH_TOKEN
+      };
+      jQuery.ajax({
+        url:  this.props.data_action,
+        data: params,
+        type: 'POST',
+        dataType: 'script',
+      });
       this.props.value = parseInt(event.target.value);
     },
     render: function() {
@@ -191,10 +193,15 @@
             r[column_id] = <img src={row[column_id]}/>;
           } 
           else if (column_id == 'total_marks'){
-            r[column_id] = <GradeBoxTotal grade_id={'grade_' + row.id + '_' + column.id} grade_entry_column={column.id} student_id={row.id} value={row[column_id]} disabled/>;
+            r[column_id] = <GradeBoxTotal grade_id={'grade_' + row.id + '_' + column.id} 
+                           grade_entry_column={column.id} student_id={row.id} 
+                           value={row[column_id]}/>;
           } 
           else {
-            r[column_id] = <GradeEntryBox grade_id={'grade_' + row.id + '_' + column.id} data_action={'/en/grade_entry_forms/'+ row.grade_entry_form +'/update_grade'} grade_entry_column={column.id} student_id={row.id} default_value={row[column_id]}/>
+            r[column_id] = <GradeEntryBox grade_id={'grade_' + row.id + '_' + column.id}
+                           data_action={'/en/grade_entry_forms/'+ row.grade_entry_form 
+                           + '/update_grade'} grade_entry_column={column.id} 
+                           student_id={row.id} default_value={row[column_id]}/>
           }
         }.bind(this));
         return r;
