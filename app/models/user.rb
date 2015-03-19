@@ -165,8 +165,6 @@ class User < ActiveRecord::Base
           end
         end # end parse
       end
-    rescue
-        return false
     end
     result[:upload_notice] = "#{num_update} user(s) added/updated."
     result

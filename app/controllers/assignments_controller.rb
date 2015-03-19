@@ -574,7 +574,9 @@ class AssignmentsController < ApplicationController
             map.delete(nil)
             update_assignment!(map)
           end
-        rescue ActiveRecord::ActiveRecordError, ArgumentError => e
+        rescue ArgumentError
+          flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+        rescue ActiveRecord::ActiveRecordError => e
           flash[:error] = e.message
           redirect_to action: 'index'
           return
