@@ -70,16 +70,22 @@ class TasController < ApplicationController
 
   def upload_ta_list
     if request.post? && !params[:userlist].blank?
-      result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
-      if !result
-        flash[:notice] = I18n.t('csv.invalid_csv')
-        redirect_to action: 'index'
-        return
+      begin
+        result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
+        if !result
+          flash[:notice] = I18n.t('csv.invalid_csv')
+          redirect_to action: 'index'
+          return
+        end
+        if result[:invalid_lines].length > 0
+          flash[:invalid_lines] = result[:invalid_lines]
+        end
+        flash[:notice] = result[:upload_notice]
+      rescue CSV::MalformedCSVError
+        flash[:error] = t('csv.upload.malformed_csv')
+      rescue ArgumentError
+        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
-      if result[:invalid_lines].length > 0
-        flash[:invalid_lines] = result[:invalid_lines]
-      end
-      flash[:notice] = result[:upload_notice]
     end
     redirect_to action: 'index'
   end
