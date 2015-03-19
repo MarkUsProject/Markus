@@ -461,6 +461,29 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
         assert_nil test_annotation # annotation should not exist, despite being in file
       end
+
+      should 'on :csv_upload gracefully handle a malformed csv file' do
+        tempfile = fixture_file_upload('files/malformed.csv')
+        post_as @admin,
+                :csv_upload,
+                assignment_id: @assignment.id,
+                annotation_category_list_csv: tempfile,
+                encoding: 'UTF-8'
+        assert_response :redirect
+        assert_equal(flash[:error], I18n.t('csv.upload.malformed_csv'))
+      end
+
+      should 'on :csv_upload gracefully handle a non csv file with .csv extension' do
+        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+        post_as @admin,
+                :csv_upload,
+                assignment_id: @assignment.id,
+                annotation_category_list_csv: tempfile,
+                encoding: 'UTF-8'
+        assert_response :redirect
+        assert_equal(flash[:error],
+                     I18n.t('csv.upload.non_text_file_with_csv_extension'))
+      end
     end
   end
 

@@ -8,6 +8,22 @@ function injectFileInput() {
 
   new_file_field.change(function() {
     sanitized_filename_check(this);
+    var fileCount = 0;
+    var notTerminate = true;
+    while (fileCount<this.files.length && notTerminate){
+      if (this.files[fileCount].size > 3*1024*1024){
+        if (!confirm('Warning, ' + this.files[fileCount].name + 
+            ' is ' + this.files[fileCount].size + ' bytes.' +
+            ' Loading it in the web viewer may take a long time.' +
+            ' Do you wish to proceed?')){
+          // clear recently added file and terminate loop
+          jQuery(this).val('');
+          notTerminate = false;
+        }
+      }
+      fileCount++;
+    }
+    
     return false;
   });
 
@@ -90,3 +106,4 @@ function populate(files_json) {
   files_table.populate(files_json).render();
   enableDisableSubmit();
 }
+
