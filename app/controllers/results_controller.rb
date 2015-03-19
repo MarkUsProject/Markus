@@ -530,8 +530,7 @@ class ResultsController < ApplicationController
     @submission = Submission.find(params[:submission_id])
 
     @remark_result = @submission.get_remark_result
-    @remark_result.submission_id = nil
-    @remark_result.save
+    @remark_result.destroy
 
     @submission.remark_result_id = nil
     @submission.remark_request = nil

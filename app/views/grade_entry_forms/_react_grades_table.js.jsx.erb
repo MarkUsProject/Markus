@@ -16,24 +16,68 @@
     });
   }
 
-  /** Updates a cell. Called from Rails controller grade_entry_forms/update_grade to
+  /** Updates total marks cell. Called from Rails controller grade_entry_forms/update_grade to
     * check if a cell exists before updating it, as cell existence can't be efficiently
     * checked from the Ruby controller
     */
   function update_cell(cell, value) {
-    // If the cell exists, change it's value to the one supplied
+    // If the total marks cell exists, change it's value to the one supplied
     if (document.getElementById(cell)) {
       document.getElementById(cell).value = value;
-    }
+      var e = new MouseEvent('click', {
+        'view': window,
+        'bubbles': true,
+        'cancelable': false
+      });
+      var node = document.getElementById(cell);
+      node.dispatchEvent(e);
+      }
   }
+
+  var GradeBoxTotal = React.createClass({
+    handleChange: function() {
+      this.props.value = parseInt(event.target.value, 10);
+    },
+    render: function() {
+      return(
+        <input id={this.props.grade_id} type="text" size="4" 
+         className="grade-input" value={this.props.value} 
+         onClick={this.handleChange} readonly/>
+        );
+    }
+  });
+
+  var GradeEntryBox = React.createClass({
+    componentDidMount: function(){
+        this.props.value = this.props.default_value;
+    },
+    handleChange: function(event) {
+      var params = {
+        'updated_grade':       parseInt(event.target.value),
+        'student_id':          this.props.student_id,
+        'grade_entry_item_id': this.props.grade_entry_column,
+        'authenticity_token':  AUTH_TOKEN
+      };
+      jQuery.ajax({
+        url:  this.props.data_action,
+        data: params,
+        type: 'POST',
+        dataType: 'script',
+      });
+      this.props.value = parseInt(event.target.value);
+    },
+    render: function() {
+      return(
+        <input id={this.props.grade_id} type="text" size="4" className="grade-input" defaultValue={this.props.default_value} onChange={this.handleChange}/>
+        );
+    }
+  });
 
   var GradesTable = React.createClass({
     getDefaultProps: function() {
       // Creates a new table with the columns defined below.
       // The first column will be the column initially sorted.
-
       return {
-
         columns: [
           {
             id: 'user_name',
@@ -82,33 +126,6 @@
     componentWillMount: function() {
       this.refresh();
     },
-    componentDidUpdate: function() {
-      jQuery(document).ready(function() {
-        bindEventToGradeEntry();
-      });
-      /** Get all of the grade input fields, attach an observer that updates
-        * the grade when it is changed
-        */
-      function bindEventToGradeEntry() {
-        jQuery('.grade-input').each(function() {
-          jQuery(this).change(function() {
-            var params = {
-              'updated_grade':       this.value,
-              'student_id':          this.getAttribute('data-student-id'),
-              'grade_entry_item_id': this.getAttribute('data-grade-entry-item-id'),
-              'authenticity_token':  AUTH_TOKEN
-            };
-            jQuery.ajax({
-              url:  this.getAttribute('data-action'),
-              data: params,
-              type: 'POST',
-              dataType: 'script',
-            });      
-          });
-        });
-      }        
-    },
-
     refresh: function() {
      document.getElementById('working').style.display = '';
 
@@ -176,17 +193,19 @@
             r[column_id] = <img src={row[column_id]}/>;
           } 
           else if (column_id == 'total_marks'){
-            r[column_id] = <input id={'grade_' + row.id + '_' + column.id} name={'grade_' + row.id + '_' + column.id} data-grade-entry-item-id={column.id} data-student-id={row.id}  type="text" size="4" value={row[column_id]} className="grade-input" disabled/>;
+            r[column_id] = <GradeBoxTotal grade_id={'grade_' + row.id + '_' + column.id} 
+                           grade_entry_column={column.id} student_id={row.id} 
+                           value={row[column_id]}/>;
           } 
           else {
-            r[column_id] = <input id={'grade_' + row.id + '_' + column.id} name={'grade_' + row.id + '_' + column.id} data-grade-entry-item-id={column.id} data-student-id={row.id} data-action={'/en/grade_entry_forms/'+ row.grade_entry_form +'/update_grade'} type="text" size="4" defaultValue={row[column_id]} className="grade-input"/>;
+            r[column_id] = <GradeEntryBox grade_id={'grade_' + row.id + '_' + column.id}
+                           data_action={'/en/grade_entry_forms/'+ row.grade_entry_form 
+                           + '/update_grade'} grade_entry_column={column.id} 
+                           student_id={row.id} default_value={row[column_id]}/>
           }
         }.bind(this));
-
         return r;
-
       }.bind(this));
-
       return (
         <div>
           <ErrorDiv error={this.state.error} />

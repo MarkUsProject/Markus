@@ -284,21 +284,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_equal @original.date, g.date
     end
 
-    should 'sort_by first_name so set cookies to first_name' do
-      GradeEntryForm.stubs(:find).returns(@grade_entry_form_with_grade_entry_items)
-
-      @c_sort_by = @admin.id.to_s +  '_' + @grade_entry_form_with_grade_entry_items.id.to_s + '_sort_by_grades'
-
-      get_as @admin,
-             :grades,
-             {
-                :id => @grade_entry_form_with_grade_entry_items.id,
-                :sort_by  => 'first_name'
-             }
-      assert_response :success
-      assert_equal 'first_name', cookies[@c_sort_by]
-    end
-
     should 'POST on :edit with invalid basic value' do
       post_as @admin, :update, {:id => @grade_entry_form.id,
                               :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
@@ -802,24 +787,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
         assert_nil grade.grade
       end
-    end
-
-    # Test g_table_paginate
-    should 'POST on :g_table_paginate ' do
-      get_as @admin, :grades, :id => @grade_entry_form.id
-      post_as @admin, :g_table_paginate, {:id => @grade_entry_form.id,
-                                          :alpha_category => 'J-K',
-                                          :filter => 'none',
-                                          :sort_by => 'last_name',
-                                          :page => 1,
-                                          :update_alpha_pagination_options => 'true',
-                                          :per_page => 15,
-                                          :desc => 'false'}
-      assert_not_nil assigns :alpha_pagination_options
-      assert_not_nil assigns :students
-      assert_not_nil assigns :alpha_category
-      assert render_template :g_table_paginate
-      assert_response :success
     end
 
     # Test releasing/unreleasing the marks
