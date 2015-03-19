@@ -11,6 +11,9 @@ fr:
     issues:             "GitHub liste des problèmes"
     actions:            "Actes"
 
+    # app/views/assignments/_form.html.erb
+    required_file_warning: "Accepter pas d'autres fichiers que les fichiers requis énumérés. Ce serait également restrics les extensions de fichier."
+
     # app/views/main/login.html.erb
     welcome_to:         "Bienvenue sur MarkUs !"
     welcome_to_markus:     "%{user_name}, bienvenue sur MarkUs, l'outil d'évaluation en ligne."
@@ -48,6 +51,9 @@ fr:
     supervisors:        "Chefs de projet : "
     contact_us:         "Contactez-nous"
     email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
+
+    # app/views/main/timeout_imminent.js.erb
+    timeout_imminent:   "Votre session est sur le point d'expirer."
 
     # app/views/api/_key_display.html.erb
     api_key:              "Votre clé - API"
@@ -152,6 +158,7 @@ fr:
         add_required_file:  "Ajouter un fichier requis"
         type:  "Type du projet"
         overall_comment: "Commentaire général : "
+        upload_file_requirement: "La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire"
         group:
             empty: "Groupe vide"
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
@@ -355,6 +362,9 @@ fr:
       group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
       student_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
       invalid_csv: "Le format du fichier CSV n'a pas été reconnu"
+      upload:
+        malformed_csv: "Le fichier sélectionné a été mal formé. Se il vous plaît vérifier que le fichier est conforme aux spécifications Markus."
+        non_text_file_with_csv_extension: "Le fichier sélectionné ne est pas un fichier csv (même si elle peut avoir une extension .csv)."
 
     pagination:
       first: "≪ Première"
@@ -450,6 +460,7 @@ fr:
       column_name: "Nom"
       column_out_of: "sur"
       add_column: "Ajouter une colonne"
+      bonus_column: "Note Bonus"
       remove_column: "Supprimer : "
       toggle_column: "cacher/montrer"
       properties: "Propriétés de la feuille de note"

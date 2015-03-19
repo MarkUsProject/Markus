@@ -7,7 +7,6 @@ class CreateAssignmentFiles < ActiveRecord::Migration
     create_table :assignment_files do |t|
       t.column  :assignment_id,   :int
       t.column  :filename,        :string,  :null => false
-
       t.timestamps
     end
 

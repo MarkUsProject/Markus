@@ -88,10 +88,17 @@ class GradersController < ApplicationController
       return
     end
 
-    invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
-                                               params[:assignment_id], params[:encoding])
-    if invalid_lines.size > 0
-      flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+    begin
+      invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
+                                                 params[:assignment_id],
+                                                 params[:encoding])
+      if invalid_lines.size > 0
+        flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+      end
+    rescue CSV::MalformedCSVError
+      flash[:error] = I18n.t('csv.upload.malformed_csv')
+    rescue ArgumentError
+      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
@@ -105,13 +112,19 @@ class GradersController < ApplicationController
       return
     end
 
-    invalid_lines = @assignment.criterion_class.assign_tas_by_csv(
-      params[:grader_criteria_mapping].read,
-      params[:assignment_id],
-      params[:encoding]
-    )
-    if invalid_lines.size > 0
-      flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+    begin
+      invalid_lines = @assignment.criterion_class.assign_tas_by_csv(
+        params[:grader_criteria_mapping].read,
+        params[:assignment_id],
+        params[:encoding]
+      )
+      if invalid_lines.size > 0
+        flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+      end
+    rescue CSV::MalformedCSVError
+      flash[:error] = t('csv.upload.malformed_csv')
+    rescue ArgumentError
+      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end

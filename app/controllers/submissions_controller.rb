@@ -285,6 +285,9 @@ class SubmissionsController < ApplicationController
     @file_manager_errors = Hash.new
     assignment_id = params[:assignment_id]
     @assignment = Assignment.find(assignment_id)
+    required_files = AssignmentFile.where(
+                           assignment_id: @assignment).pluck(:filename)
+    students_filename = []
     @path = params[:path] || '/'
     @grouping = current_user.accepted_grouping_for(assignment_id)
     if @grouping.repository_external_commits_only?
@@ -365,6 +368,7 @@ class SubmissionsController < ApplicationController
           if file_object.original_filename.nil?
             raise I18n.t('student.submission.invalid_file_name')
           end
+          students_filename << file_object.original_filename
           # Sometimes the file pointer of file_object is at the end of the file.
           # In order to avoid empty uploaded files, rewind it to be save.
           file_object.rewind
@@ -377,7 +381,19 @@ class SubmissionsController < ApplicationController
                                 ' for assignment ' +
                                 "'#{@assignment.short_identifier}'.")
         end
-
+        # check if only required files are allowed for a submission
+        unless students_filename.length < 1 ||
+               required_files.length == 0 ||
+               !@assignment.only_required_files
+          if !(students_filename - required_files).empty?
+            @file_manager_errors[:size_conflict] =
+            I18n.t('assignment.upload_file_requirement')
+            render :file_manager
+            return
+          else
+            required_files = required_files - students_filename
+          end
+        end
         # finish transaction
         unless txn.has_jobs?
           flash[:transaction_warning] =

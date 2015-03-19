@@ -11,6 +11,9 @@ pt:
     issues:             "GitHub lista de problemas"
     actions:            "Ações"
 
+    # app/views/assignments/_form.html.erb
+    required_file_warning: "Não aceite nenhuma outros arquivos, além dos arquivos necessários listados. Isso também restrics as extensões de arquivo."
+
     # app/views/main/login.html.erb
     welcome_to:         "Bem-vindo ao MarkUs!"
     welcome_to_markus:     "%{user_name}, bem-vindo ao MarkUs, uma ferramenta de avaliação online."
@@ -48,6 +51,9 @@ pt:
     supervisors:        "Supervisores: "
     contact_us:         "Contate-nos"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br>Por favor visite: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> para mais informações.<br>Para enviar um problema ou por favor visite visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
+
+    # app/views/main/timeout_imminent.js.erb
+    timeout_imminent:   "A sessão está prestes a expirar."
 
     # app/views/api/_key_display.html.erb
     api_key:            "Chave da API"
@@ -149,6 +155,7 @@ pt:
         add_required_file:  "Inserir arquivo exigido"
         type:  "Tipo de projeto"
         overall_comment: "Comentários gerais"
+        upload_file_requirement: "A lista de arquivos carregados não coincide com os arquivos de atribuição necessária"
         group:
             empty: "Grupo vazio"
             assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
@@ -352,6 +359,9 @@ pt:
       group_to_grader: "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
       student_to_grader: "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
       invalid_csv: "O formato do arquivo CSV não foi reconhecido"
+      upload:
+        malformed_csv: "O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus."
+        non_text_file_with_csv_extension: "O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV)."
 
     pagination:
       first: "≪ Primeiro"
@@ -435,6 +445,7 @@ pt:
       column_name: "Nome"
       column_out_of: "De"
       add_column: "Inserir coluna"
+      bonus_column: "Nota Bonus"
       remove_column: "Remover:"
       toggle_column: "esconder/mostrar"
       properties: "Propriedade da planilha de notas"
