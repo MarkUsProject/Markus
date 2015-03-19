@@ -386,9 +386,11 @@ class Assignment < ActiveRecord::Base
   # Any member names that do not exist in the database will simply be ignored
   # (This makes it possible to have empty groups created from a bad csv row)
   def add_csv_group(row)
-    return if row.length.zero?
-
-    row.map! { |item| item.strip }
+    m_logger = MarkusLogger.instance
+    if row.length.zero?
+      return
+    end
+    row.map! { |item| item.to_s.strip }
 
     # Note: We cannot use find_or_create_by here, because it has its own
     # save semantics. We need to set and save attributes in a very particular
@@ -427,9 +429,12 @@ class Assignment < ActiveRecord::Base
     # shouldn't happen anyway, because the lookup earlier should prevent
     # repo collisions e.g. when uploading the same CSV file twice.
     group.save
+    m_logger.log("Created Group with name:'#{group.group_name}' and repo name: '#{group.repo_name}' 
+                  with error:'#{group.errors[:base]}'")
     unless group.errors[:base].blank?
+      m_logger.log("Collision detected of '#{group.errors[:base]}'", MarkusLogger::ERROR)
       collision_error = I18n.t('csv.repo_collision_warning',
-                          { repo_name: group.errors.on_base,
+                          { repo_name: group.errors.get(:base),
                             group_name: row[0] })
     end
 
@@ -437,7 +442,6 @@ class Assignment < ActiveRecord::Base
     # crafted group
     grouping = Grouping.new(assignment: self, group: group)
     grouping.save
-
     # Form groups
     start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
     (start_index_group_members..(row.length - 1)).each do |i|
@@ -453,7 +457,6 @@ class Assignment < ActiveRecord::Base
           grouping.add_member(student)
         end
       end
-
     end
     collision_error
   end
@@ -464,10 +467,26 @@ class Assignment < ActiveRecord::Base
   # reestablish proper repository permissions.
   def update_repository_permissions_forall_groupings
     # IMPORTANT: need to reload from DB
+        # Each admin user will have read and write permissions on each repo
+    m_logger = MarkusLogger.instance
     self.reload
     groupings.each do |grouping|
       grouping.update_repository_permissions
     end
+    m_logger.log("Updated Groupings' Permissions")
+    user_permissions = {}
+    Admin.all.each do |admin|
+      user_permissions[admin.user_name] = Repository::Permission::READ_WRITE
+    end
+    # Each grader will have read and write permissions on each repo
+    Ta.all.each do |ta|
+      user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
+    end
+    self.groups.each do |group|
+      group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, group.repository_config)
+      group_repo.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name)], user_permissions)
+    end
+    m_logger.log("Updated Groups' Permissions")
   end
 
   def grouped_students
