@@ -77,7 +77,7 @@ class GradeEntryFormsController < ApplicationController
 
   # Update a grade in the table
   def update_grade
-    grade_entry_form = GradeEntryForm.find_by_id(params[:id])
+    grade_entry_form = GradeEntryForm.find(params[:id])
     @student_id = params[:student_id]
     @grade_entry_item_id = params[:grade_entry_item_id]
     updated_grade = params[:updated_grade]

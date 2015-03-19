@@ -198,10 +198,14 @@
                            value={row[column_id]}/>;
           } 
           else {
-            r[column_id] = <GradeEntryBox grade_id={'grade_' + row.id + '_' + column.id}
-                           data_action={'/en/grade_entry_forms/'+ row.grade_entry_form 
-                           + '/update_grade'} grade_entry_column={column.id} 
-                           student_id={row.id} default_value={row[column_id]}/>
+            r[column_id] =
+              <GradeEntryBox
+               grade_id={'grade_' + row.id + '_' + column.id}
+               data_action=
+                 "<%= update_grade_grade_entry_form_path(@grade_entry_form) %>"
+               grade_entry_column={column.id}
+               student_id={row.id}
+               default_value={row[column_id]}/>
           }
         }.bind(this));
         return r;
@@ -286,3 +290,4 @@
   React.renderComponent(<GradesTable />, document.getElementById('react_grades_table'));
 
 </script>
+
