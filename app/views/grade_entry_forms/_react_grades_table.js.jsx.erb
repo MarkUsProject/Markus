@@ -67,8 +67,10 @@
       this.props.value = parseInt(event.target.value);
     },
     render: function() {
-      return(
-        <input id={this.props.grade_id} type="text" size="4" className="grade-input" defaultValue={this.props.default_value} onChange={this.handleChange}/>
+      return (
+        <input id={this.props.grade_id} type="text" size="4"
+          className="grade-input" defaultValue={this.props.default_value}
+          onChange={this.handleChange}/>
         );
     }
   });
