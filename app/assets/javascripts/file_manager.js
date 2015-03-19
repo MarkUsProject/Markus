@@ -11,7 +11,7 @@ function injectFileInput() {
     var fileCount = 0;
     var notTerminate = true;
     while (fileCount<this.files.length && notTerminate){
-      if (this.files[fileCount].size > 8*1024*1024){
+      if (this.files[fileCount].size > 3*1024*1024){
         if (!confirm('Warning, ' + this.files[fileCount].name + 
             ' is ' + this.files[fileCount].size + ' bytes.' +
             ' Loading it in the web viewer may take a long time.' +
