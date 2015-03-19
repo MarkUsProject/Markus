@@ -68,16 +68,6 @@ jQuery(document).ready(function() {
       document.getElementById('assignment_group_min').value = this.value;
     }
   });
-  
-  // Hide the checkbox for "Required Files" by default
-  jQuery('#assignment_only_required_files').hide();
-  jQuery('#assignment_only_required_files_label').hide();
-  
-  
-  jQuery('#assignment_only_required_files_edit').show();
-  jQuery('#assignment_only_required_files_edit_label').show();
-  
-  
 });
 
 
@@ -236,7 +226,7 @@ function toggle_sections_due_date(section_due_dates_type) {
 
 function change_submission_rule() {
   jQuery('.period').hide();
-  jQuery('.sub_rule_link a').hide();
+  jQuery('#sub_rule_link a').hide();
   jQuery('.period input').prop('disabled', true);
 
   if (jQuery('#grace_period_submission_rule').is(':checked')) {

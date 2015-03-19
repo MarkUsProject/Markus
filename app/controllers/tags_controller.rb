@@ -141,10 +141,6 @@ class TagsController < ApplicationController
                                      nb_updates: nb_updates)
           end
         end
-      rescue CSV::MalformedCSVError
-        flash[:error] = t('csv.upload.malformed_csv')
-      rescue ArgumentError
-        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
     end
     redirect_to :back

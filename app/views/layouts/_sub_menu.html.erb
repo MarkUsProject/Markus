@@ -16,7 +16,7 @@
 
     <ul class='sub'>
       <li id='dropdown'>
-        <div class='dropdown'>
+        <span class='dropdown'>
           <%# Display an appropriate message in the dropdown menu %>
           <% if @assignment.nil? && @grade_entry_form.nil? %>
             <%= t(:choose_assignment) %>
@@ -43,7 +43,7 @@
           <ul>
             <%= render partial: 'shared/assignments_dropdown_menu' %>
           </ul>
-        </div>
+        </span>
       </li>
 
       <% if !@grade_entry_form.nil? && !@grade_entry_form.id.nil? %>

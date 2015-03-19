@@ -631,19 +631,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         test1 = Assignment.find_by_short_identifier('ATest5')
         assert_nil test1
       end
-
-      should 'gracefully handle a non csv file with a csv extension' do
-        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
-        post_as @admin,
-                :upload_assignment_list,
-                assignment_list: tempfile,
-                file_format: 'csv',
-                encoding: 'UTF-8'
-
-        assert_response :redirect
-        assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
-      end
     end
 
   end  # -- an Admin

@@ -126,10 +126,6 @@ class StudentsController < ApplicationController
             result[:invalid_lines].join(', ')
         end
         flash[:success] = result[:upload_notice]
-      rescue CSV::MalformedCSVError
-        flash[:error] = t('csv.upload.malformed_csv')
-      rescue ArgumentError
-        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       rescue RuntimeError
         flash[:notice] = I18n.t('csv_valid_format')
       end

@@ -942,41 +942,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_not_nil grade
         assert_equal @current_grade, grade.grade
       end
-
-      should 'display an error when uploading a malformed csv file and leave the db unchanged' do
-        tempfile = fixture_file_upload('files/malformed.csv')
-        post_as @admin,
-                :csv_upload,
-                id: @grade_entry_form.id,
-                upload: { grades_file: tempfile },
-                encoding: 'UTF-8'
-
-        assert_response :redirect
-        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
-        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
-          @grade_entry_student.id, @grade_entry_item.id
-        )
-        assert_not_nil grade
-        assert_equal @current_grade, grade.grade
-      end
-
-      should 'display an error when uploading a non csv file with a csv extension and leave the db unchanged' do
-        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
-        post_as @admin,
-                :csv_upload,
-                id: @grade_entry_form.id,
-                upload: { grades_file: tempfile },
-                encoding: 'UTF-8'
-
-        assert_response :redirect
-        assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
-        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
-          @grade_entry_student.id, @grade_entry_item.id
-        )
-        assert_not_nil grade
-        assert_equal @current_grade, grade.grade
-      end
     end
 
     context 'POST on :csv_upload with column already in db ' do
@@ -1030,6 +995,23 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
                 :encoding => 'ISO-8859-1'
         assert_response :redirect
+        test_student = Student.find_by_user_name('c2ÈrÉØrr')
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+            @grade_entry_student.id, @grade_entry_item.id
+        )
+        assert_not_nil grade
+        assert_equal @old_grade, grade.grade
+      end
+
+      should 'have invalid values in database after an upload of an ISO-8859-1 encoded file parsed as UTF-8' do
+        assert_raise ArgumentError, "invalid byte sequence in UTF-8" do
+          post_as @admin,
+                  :csv_upload,
+                  :id => @grade_entry_form_with_grade_entry_items.id,
+                  :upload => {:grades_file => fixture_file_upload('files/test_grades_ISO-8859-1.csv')},
+                  :encoding => 'UTF-8'
+        end
+        assert_response :success
         test_student = Student.find_by_user_name('c2ÈrÉØrr')
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id

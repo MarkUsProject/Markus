@@ -27,7 +27,7 @@ class SubmissionRule < ActiveRecord::Base
     return @get_collection_time if !@get_collection_time.nil?
     @get_collection_time = calculate_collection_time
   end
-  
+
   def calculate_collection_time
     assignment.latest_due_date + hours_sum.hours
   end

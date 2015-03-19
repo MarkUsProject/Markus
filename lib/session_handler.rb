@@ -137,15 +137,6 @@ module SessionHandler
   # This should be done on every page request or refresh that a user does.
   def refresh_timeout
     session[:timeout] = current_user.class::SESSION_TIMEOUT.seconds.from_now
-    session[:has_warned] = false
-  end
-
-  def set_warned
-    session[:has_warned] = true
-  end
-
-  def check_warned
-    session[:has_warned]
   end
 
   # Check if this current user's session has not yet expired.
@@ -177,13 +168,6 @@ module SessionHandler
     end
     # No REMOTE_USER is involed.
     return session[:timeout] < Time.now
-  end
-
-  def check_imminent_expiry
-    if session[:timeout] - Time.now <= 5.minutes
-      return true
-    end
-    false
   end
 
   # Clear this current user's session set by this app

@@ -91,7 +91,7 @@ class FlexibleCriteriaController < ApplicationController
           end
         end
       rescue CSV::MalformedCSVError
-        flash[:error] = I18n.t('csv.upload.malformed_csv')
+        flash[:error] = t('flexible_criteria.upload.malformed')
       end
     end
     redirect_to action: 'index', assignment_id: @assignment.id

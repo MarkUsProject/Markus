@@ -176,28 +176,5 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
       assert_equal 0, entry_students.find_by_user_id(@students[0].id).tas.length
     end
 
-    should 'gracefully handle malformed csv files' do
-      tempfile = fixture_file_upload('files/malformed.csv')
-      post_as @admin,
-              :csv_upload_grader_groups_mapping,
-              grade_entry_form_id: @grade_entry_form.id,
-              grader_mapping: tempfile
-
-      assert_response :redirect
-      assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
-    end
-
-    should 'gracefully handle a non csv file with a csv extension' do
-      tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
-      post_as @admin,
-              :csv_upload_grader_groups_mapping,
-              grade_entry_form_id: @grade_entry_form.id,
-              grader_mapping: tempfile,
-              encoding: 'UTF-8'
-
-      assert_response :redirect
-      assert_equal flash[:error],
-                   I18n.t('csv.upload.non_text_file_with_csv_extension')
-    end
   end # admin context
 end
