@@ -76,6 +76,11 @@
             sortable: true,
             compare: compare_numeric_values,
             searchable: false
+          },
+          {
+            id: 'can_begin_grading',
+            content: '<%= j raw I18n.t(:'browse_submissions.can_begin_grading') %>',
+            sortable: true
           }
         ],
         filters: [
@@ -183,6 +188,7 @@
         s['final_grade'] = submission.final_grade;
         s['state'] = submission.state;
         s['section'] = submission.section;
+        s['can_begin_grading'] = <span dangerouslySetInnerHTML={{__html: submission.can_begin_grading}} />;
         return s;
       }.bind(this));
 

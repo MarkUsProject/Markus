@@ -8,7 +8,6 @@
                            'jQuery(this).closest(".assignment_file").remove();' %>
     <% else %>
       <span>
-        <% @show_checkbox_required_files = false %>
         <b><%= I18n.t(:remove) %> : </b><%= f.check_box :_destroy %>
       </span>
     <% end %>

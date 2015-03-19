@@ -203,30 +203,6 @@ class GradersControllerTest < AuthenticatedControllerTest
         assert @grouping3.tas.count == 1
         assert @grouping3.tas.include? @ta3
       end
-
-      should 'gracefully handle malformed csv files' do
-        tempfile = fixture_file_upload('files/malformed.csv')
-        post_as @admin,
-                :csv_upload_grader_groups_mapping,
-                assignment_id: @assignment.id,
-                grader_mapping: tempfile
-
-        assert_response :redirect
-        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
-      end
-
-      should 'gracefully handle a non csv file with a csv extension' do
-        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
-        post_as @admin,
-                :csv_upload_grader_groups_mapping,
-                assignment_id: @assignment.id,
-                grader_mapping: tempfile,
-                encoding: 'UTF-8'
-
-        assert_response :redirect
-        assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
-      end
     end #groups csv upload
 
     context 'doing a POST on :csv_upload_grader_criteria_mapping' do
@@ -373,31 +349,6 @@ class GradersControllerTest < AuthenticatedControllerTest
           assert @criterion3.tas.include? @ta3
         end
       end # flexible criteria
-
-      should 'gracefully handle malformed csv files' do
-        tempfile = fixture_file_upload('files/malformed.csv')
-        post_as @admin,
-                :csv_upload_grader_criteria_mapping,
-                assignment_id: @assignment.id,
-                grader_criteria_mapping: tempfile,
-                encoding: 'UTF-8'
-
-        assert_response :redirect
-        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
-      end
-
-      should 'gracefully handle a non csv file with a csv extension' do
-        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
-        post_as @admin,
-                :csv_upload_grader_criteria_mapping,
-                assignment_id: @assignment.id,
-                grader_criteria_mapping: tempfile,
-                encoding: 'UTF-8'
-
-        assert_response :redirect
-        assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
-      end
     end # criteria csv upload
 
     context 'doing a GET on :download_grader_groupings_mapping' do

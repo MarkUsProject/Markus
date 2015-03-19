@@ -43,17 +43,11 @@
     <%= render partial: 'layouts/footer' %>
   </div>
 
-  <%= render partial: 'layouts/redirect', formats: [:js], handlers: [:erb] %>
+  <%= render 'layouts/redirect', formats: [:js], handlers: [:erb] %>
 
   <%# Toggle jQuery's noConflict mode so it does not conflict with Prototype %>
   <script>
     jQuery.noConflict();
-    jQuery(document).ready(
-      function($){
-        setInterval(function(){
-          jQuery.get("main/check_timeout");
-        }, 10000);
-      });
   </script>
 </body>
 </html>

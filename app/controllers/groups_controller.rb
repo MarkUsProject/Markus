@@ -179,12 +179,6 @@ class GroupsController < ApplicationController
             flash[:notice] = I18n.t('csv.groups_added_msg', { number_groups:
               number_groupings_added, number_lines: invalid_lines_count })
           end
-        rescue CSV::MalformedCSVError
-          flash[:error] = t('csv.upload.malformed_csv')
-          raise ActiveRecord::Rollback
-        rescue ArgumentError
-          flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
-          raise ActiveRecord::Rollback
         rescue Exception
           # We should only get here if something *really* bad/unexpected
           # happened.
