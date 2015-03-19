@@ -1196,9 +1196,10 @@ fr:
     grace_period: "Délai de Grâce"
     penalty_decay: "Pénalité Pourriture"
     penalty_period: "Période de Pénalitéd"
+    additional_information: "Informations Complémentaires"
     penalty_decay_message_first: "Une déduction de %{deduction}% sera appliqué toutes les %{interval} heures jusqu'à %{hours} heures après la cession est due"
     penalty_decay_message_other: "Par la suite, une retenue de %{deduction}% sera appliquée toutes les %{interval} heures jusqu'à un maximum de %{hours} heures"   
-    penalty_period_message: "Après %{hours} heures, votre note sera réduite de %{deduction}%"
+    penalty_period_message: "Après %{hours} heures après la date d'échéance, votre note sera réduit de %{deduction}%"
 
     #app/views/main/_assignment_info_summary.erb
     percentage:                "%{percentage} %"

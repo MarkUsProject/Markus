@@ -32,7 +32,7 @@
     </div>
 
     <div class='sub_block'>
-      <span class='prop_label'>Penalty:</span>
+      <span class='prop_label'><%= t('additional_information') %>:</span>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
         <% if !@grouping.nil? %>
             <%= raw(t('student.group_credits',
