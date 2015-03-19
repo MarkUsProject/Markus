@@ -305,8 +305,9 @@ class AssignmentsController < ApplicationController
     csv_string = CSV.generate do |csv|
       header = ['Student Username']
       assignments.each do |assignment|
-        header.push(assignment.short_identifier + 'Total Mark %')
+        header.push(assignment.short_identifier)
       end
+      csv << header
       students.each do |student|
         row = []
         row.push(student.user_name)
