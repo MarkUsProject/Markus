@@ -21,6 +21,27 @@
     
   <% unless @penalty.type == "NoLateSubmissionRule" %>
     <div class='sub_block'>
+      <span class='prop_label'>Absolute Deadline:</span>
+      <% acc = @assignment.due_date %> 
+      <% if @penalty.type == "GracePeriodSubmissionRule" %>
+        <% if @grouping.available_grace_credits == 0 %>
+           <%= t('final_deadline') %> <%= I18n.l(@due_date, format: :long_date ) %>
+        <% else %>
+          <% (1..@grouping.available_grace_credits).each do |g| %>
+            <% acc += @enum_penalty[g].hours * 3600 %>
+          <% end %>
+        <% end %>
+      <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
+        <% @enum_penalty.each do |p| acc += p.interval end %>
+      <% else %>
+        <% @enum_penalty.each do |p| acc += p.hours * 3600 end %>
+      <% end %>
+      <% unless @grouping.available_grace_credits == 0 %> 
+        <%= t('final_deadline') %> <%= I18n.l(acc, format: :long_date ) %> 
+      <% end %>
+    </div>
+
+    <div class='sub_block'>
       <span class='prop_label'><%= t('lateness_penalty') %>:</span>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
         <%= t('grace_period') %> 
@@ -35,9 +56,11 @@
       <span class='prop_label'><%= t('additional_information') %>:</span>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
         <% if !@grouping.nil? %>
-            <%= raw(t('student.group_credits',
+            <ul>
+            <li> <%= raw(t('student.group_credits',
                         available_grace_credits: 
-                        @grouping.available_grace_credits)) %>
+                        @grouping.available_grace_credits)) %> </li> 
+            </ul>
         <% end %>
       <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
         <ul>
@@ -56,11 +79,12 @@
         </ul>
       <% elsif @penalty.type == "PenaltyPeriodSubmissionRule" %>
         <ul>
-        <% acc = 0 %> 
+        <% d = h = 0 %> 
         <% @enum_penalty.each do |p| %> 
-          <% acc += p.deduction %> 
-          <li> <%= t('penalty_period_message', hours: p.hours, 
-          deduction: acc) %> </li>
+          <% d += p.hours %>
+          <% h += p.deduction %> 
+          <li> <%= t('penalty_period_message', hours: h, 
+          deduction: d) %> </li>
         <% end %>
         </ul>
       <% end %>
