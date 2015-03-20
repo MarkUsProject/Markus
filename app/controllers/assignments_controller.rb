@@ -78,7 +78,9 @@ class AssignmentsController < ApplicationController
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
     @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
-    @enum_penalty = Period.find_all_by_submission_rule_id(@penalty.id).sort
+    # sort if it's penaltydecay or penalty period
+    @enum_penalty = Period.find_all_by_submission_rule_id(@penalty.id)
+    @enum_penalty.sort_by { |obj| obj.id }
 
     if @student.section &&
        !@student.section.section_due_date_for(@assignment.id).nil?
