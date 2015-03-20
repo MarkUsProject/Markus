@@ -30,13 +30,16 @@ module Repository
     def initialize(connect_string)
       # Check if configuration is in order
       if Repository.conf[:IS_REPOSITORY_ADMIN].nil?
-        raise ConfigurationError.new("Required config 'IS_REPOSITORY_ADMIN' not set")
+        raise ConfigurationError.new(
+                  "Required config 'IS_REPOSITORY_ADMIN' not set")
       end
       if Repository.conf[:REPOSITORY_STORAGE].nil?
-        raise ConfigurationError.new("Required config 'REPOSITORY_STORAGE' not set")
+        raise ConfigurationError.new(
+                  "Required config 'REPOSITORY_STORAGE' not set")
       end
       if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
-        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
+        raise ConfigurationError.new(
+                  "Required config 'REPOSITORY_PERMISSION_FILE' not set")
       end
       begin
         super(connect_string) # dummy call to super
@@ -55,7 +58,8 @@ module Repository
     # location 'connect_string'
     def self.create(connect_string)
       if GitRepository.repository_exists?(connect_string)
-        raise RepositoryCollision.new("There is already a repository at #{connect_string}")
+        raise RepositoryCollision.new(
+                  "There is already a repository at #{connect_string}")
       end
       if File.exists?(connect_string)
         raise IOError.new("Could not create a repository at #{connect_string}:
@@ -74,9 +78,14 @@ module Repository
       index = repo.index
       index.add(path: 'README.md', oid: oid, mode: 0100644)
       index.write
-      Rugged::Commit.create(repo,
-                            commit_options(repo, 'Markus',
-                                           'Initial commit and add readme.'))
+      Rugged::Commit.create(
+        repo,
+        commit_options(
+                repo,
+                'Markus',
+                'Initial readme commit.'
+        )
+      )
       return true
     end
 
@@ -248,7 +257,7 @@ module Repository
       return log
     end
     
-    def get_revision_by_timestamp(target_timestamp, path = nil)
+    def get_revision_by_timestamp(target_timestamp, _path = nil)
       # returns a Git instance representing the revision at the
       # current timestamp, should be a ruby time stamp instance
       walker = Rugged::Walker.new(self.get_repos)
@@ -259,7 +268,8 @@ module Repository
           return get_revision(@revision_number)
         end
       end
-      # If no revision number was found, display the latest revision with an error message
+      # If no revision number was found, display the latest revision
+      # with an error message
       raise 'No revision found before supplied timestamp.'
     end
 
@@ -293,8 +303,7 @@ module Repository
           end
         when :remove
           begin
-            txn =
-                remove_file(txn,
+            remove_file(txn,
                             job[:path], transaction.user_id,
                             job[:expected_revision_number])
           rescue Repository::Conflict => e
@@ -302,7 +311,7 @@ module Repository
           end
         when :replace
           begin
-            txn = replace_file(txn,
+            replace_file(txn,
                                job[:path], job[:file_data], job[:mime_type],
                                job[:expected_revision_number])
           rescue Repository::Conflict => e
@@ -325,8 +334,8 @@ module Repository
           Gitolite::GitoliteAdmin.bootstrap(Repository.conf[:REPOSITORY_STORAGE])
         end
 
-
-        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        ga_repo =
+            Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE])
         repo_name = self.get_repos.workdir.split('/').last
         repo = ga_repo.config.get_repo(repo_name)
 
@@ -636,16 +645,8 @@ module Repository
     ####################################################################
 
     private
-    def latest_revision_number(path = nil, revision_number = nil)
+    def latest_revision_number(_path = nil, _revision_number = nil)
       return get_revision_number(@repos.head.target)
-    end
-
-    def get_revision_number_by_timestamp(target_timestamp, path = nil)
-      # Gets the revision of the repo by time stamp
-      # Assumes timestamp is a Time object (which is part of the Ruby
-      # standard library)
-      #
-      # May not need this function
     end
 
     def path_exists_for_latest_revision?(path)
@@ -911,15 +912,14 @@ module Repository
       # each part along the way
       parts.each { |path_part|
         found = false
-        current_tree = nil
-        tree_ptr.each { |current_tree|
+        tree_ptr.each do |current_tree|
           # For each object in this tree check for our part
           if current_tree[:name] == path_part
             # Move to next part of path (next tree / subdirectory)
             found = true
             break
           end
-        }
+        end
         if !found
           return found
         end

@@ -77,7 +77,7 @@ class SubmissionsController < ApplicationController
     # Good idea from git branch. But SubversionRepository has
     # no get_all_revisions method... yet (TODO)
     # hmm. Let's make rev_number a method and have it return an array.
-    #repo.get_all_revisions.each do |revision|
+    # repo.get_all_revisions.each do |revision|
     #  @revisions_history << {num: revision.revision_number,
     #                         date: revision.timestamp}
     rev_number = repo.get_latest_revision.revision_number + 1
