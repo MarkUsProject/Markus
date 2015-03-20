@@ -48,61 +48,60 @@ describe GradeEntryFormsController do
           'text/csv')
         
     end
-    
+
     it 'accepts valid file' do
       post :csv_upload,
-        id: grade_entry_form_with_data,
-        upload: { grades_file: @file_good }
+           id: grade_entry_form_with_data,
+           upload: { grades_file: @file_good }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
-    
+
     it 'does not accept csv file with an invalid username' do
       post :csv_upload,
-        id: grade_entry_form_with_data,
-        upload: { grades_file: @file_invalid_username }
+           id: grade_entry_form_with_data,
+           upload: { grades_file: @file_invalid_username }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       puts flash[:error]
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
-    
+
     it 'does not accept files with additional columns' do
       post :csv_upload,
-        id: grade_entry_form_with_data,
-        upload: { grades_file: @file_extra_column }
+           id: grade_entry_form_with_data,
+           upload: { grades_file: @file_extra_column }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       puts flash[:error]
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
-    
+
     it 'does not accept files with wrong column name' do
       post :csv_upload,
-        id: grade_entry_form_with_data,
-        upload: { grades_file: @file_wrong_column_name }
+           id: grade_entry_form_with_data,
+           upload: { grades_file: @file_wrong_column_name }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       puts flash[:error]
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
-    
+
     it 'does not accept files with wrong garde total' do
       post :csv_upload,
-        id: grade_entry_form_with_data,
-        upload: { grades_file: @file_wrong_total }
+           id: grade_entry_form_with_data,
+           upload: { grades_file: @file_wrong_total }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       puts flash[:error]
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
-    
 
     # this test is currently failing.
     # issue #2078 has been opened to resolve this
@@ -157,13 +156,13 @@ describe GradeEntryFormsController do
 
   context 'CSV_Downloads' do
     let(:csv_data) { grade_entry_form.get_csv_grades_report }
-    let(:csv_options) {
+    let(:csv_options) do
       {
         filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
         disposition: 'attachment',
         type: 'application/vnd.ms-excel'
       }
-    }
+    end
 
     it 'tests that action csv_downloads returns OK' do
       get :csv_download, id: grade_entry_form
