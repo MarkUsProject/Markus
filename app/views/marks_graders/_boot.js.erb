@@ -14,7 +14,7 @@ jQuery(document).ready(function() {
     headers: {
       user_name: {display: "<%= I18n.t('user.user_name') %>", sortable: true},
       full_name: {display: "<%= I18n.t('user.full_name') %>", sortable: true},
-      section: {display: "<%= I18n.t('user.section') %>", sortable: true},
+      <%= raw @section_column  %>
       members: {display: "<%= I18n.t('graders.graders') %>", sortable: true, sort_with: 'nohtml'}
     },
     can_select: true,

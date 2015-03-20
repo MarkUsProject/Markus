@@ -38,12 +38,7 @@
           compare: compare_numeric_values,
           searchable: true
         },
-        {
-          id: 'section',
-          content: '<%= j raw I18n.t('summaries_index.section') %>',
-          sortable: true,
-          searchable: false
-        }
+        <%= raw @section_column  %>
       ];
       <% for criterion in @criteria %>
         columns.push({

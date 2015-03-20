@@ -518,6 +518,50 @@ describe FlexibleCriteriaController do
           expect(@flexible_criteria[1].position).to eql(2)
         end
       end
+
+      context 'with a malformed file' do
+        before(:each) do
+          tempfile = fixture_file_upload('/files/malformed.csv')
+          post_as @admin,
+                  :upload,
+                  assignment_id: @assignment.id,
+                  upload: { flexible: tempfile }
+        end
+        it 'should respond with appropriate content' do
+          expect(assigns(:assignment)).to be_truthy
+        end
+
+        it 'should set the flash' do
+          expect(flash[:error]).to(
+            eql(I18n.t('csv.upload.malformed_csv')))
+        end
+
+        it 'should respond with redirect' do
+          is_expected.to respond_with(:redirect)
+        end
+      end
+
+      context 'with a non csv file with csv extension' do
+        before(:each) do
+          tempfile = fixture_file_upload('/files/pdf_with_csv_extension.csv')
+          post_as @admin,
+                  :upload,
+                  assignment_id: @assignment.id,
+                  upload: { flexible: tempfile }
+        end
+        it 'should respond with appropriate content' do
+          expect(assigns(:assignment)).to be_truthy
+        end
+
+        it 'should set the flash' do
+          expect(flash[:error]).to(
+            eql(I18n.t('csv.upload.malformed_csv')))
+        end
+
+        it 'should respond with redirect' do
+          is_expected.to respond_with(:redirect)
+        end
+      end
     end
 
     it 'should be able to update_positions' do
