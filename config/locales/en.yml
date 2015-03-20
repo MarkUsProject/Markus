@@ -1332,7 +1332,7 @@ en:
     additional_information: "Additional Information"
     penalty_decay_message_first: "A deduction of %{deduction}% will be applied every %{interval} hours up to %{hours} hours after the assignment is due."
     penalty_decay_message_other: "Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours."
-    penalty_period_message: "After %{hours} hours, your grade will be reduced by %{deduction}%"    
+    penalty_period_message: "After %{hours} hours after the due date, your grade will be reduced by %{deduction}%"    
 
     #app/views/main/_assignment_summary.html.erb
 
