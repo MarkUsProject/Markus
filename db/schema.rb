@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                        :default => false
-    t.boolean  "only_required_files",              :default => false
+    t.boolean  "only_required_files"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -238,6 +238,14 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
   end
 
   add_index "groups", ["group_name"], :name => "groups_name_unique", :unique => true
+
+  create_table "key_pairs", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "user_name"
+    t.string   "file_name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "marks", :force => true do |t|
     t.integer  "result_id"

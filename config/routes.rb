@@ -1,4 +1,6 @@
 Markus::Application.routes.draw do
+  resources :key_pairs
+  
   # Install the default routes as the lowest priority.
   root controller: 'main', action: 'login', via: [:post, :get]
 
@@ -250,6 +252,7 @@ Markus::Application.routes.draw do
 
       member do
         get 'populate_term_marks_table'
+        get 'populate_grades_table'
         get 'get_mark_columns'
         get 'grades'
         get 'g_table_paginate'
@@ -301,6 +304,8 @@ Markus::Application.routes.draw do
         post 'grades'
       end
     end
+
+    resources :key_pairs
 
     resources :sections
 

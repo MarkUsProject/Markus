@@ -1052,6 +1052,9 @@ pt:
       x_mark: "x Mark"
       weight: "Peso"
 
+    key_pairs:
+      title: "Os Pares de Chaves"
+
     notes:
         note_on: "%{user_name} em <b>%{display_for}</b>"
         add_new: "Inserir nova observação"
