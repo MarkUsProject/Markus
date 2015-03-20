@@ -10,7 +10,8 @@ class MainController < ApplicationController
   # check for authorization
   before_filter      :authorize_for_user,
                      except: [:login,
-                                 :page_not_found]
+                              :page_not_found,
+                              :check_timeout]
   before_filter :authorize_for_admin_and_admin_logged_in_as, only: [:login_as]
 
   layout 'main'
@@ -21,7 +22,6 @@ class MainController < ApplicationController
   # Handles login requests; usually redirected here when trying to access
   # the website and has not logged in yet, or session has expired.  User
   # is redirected to main page if session is still active and valid.
-
   def login
 
     # external auth has been done, skip markus authorization
@@ -273,7 +273,6 @@ class MainController < ApplicationController
     self.current_user = found_user
 
     if logged_in?
-      uri = session[:redirect_uri]
       session[:redirect_uri] = nil
       refresh_timeout
       current_user.set_api_key # set api key in DB for user if not yet set
@@ -315,6 +314,15 @@ class MainController < ApplicationController
     cookies.delete :auth_token
     reset_session
     redirect_to action: 'login'
+  end
+
+  def check_timeout
+    if !check_warned && check_imminent_expiry
+      render template: 'main/timeout_imminent'
+      set_warned
+    else
+      render nothing: true
+    end
   end
 
 private

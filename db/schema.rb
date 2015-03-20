@@ -11,7 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20150226032509) do
+=======
+ActiveRecord::Schema.define(:version => 20150304033052) do
+>>>>>>> master
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -104,7 +108,10 @@ ActiveRecord::Schema.define(:version => 20150226032509) do
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                        :default => false
+<<<<<<< HEAD
     t.boolean  "is_required",                      :default => false
+=======
+>>>>>>> master
     t.boolean  "only_required_files",              :default => false
   end
 
@@ -170,11 +177,12 @@ ActiveRecord::Schema.define(:version => 20150226032509) do
 
   create_table "grade_entry_items", :force => true do |t|
     t.integer  "grade_entry_form_id"
-    t.string   "name",                :null => false
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.string   "name",                                   :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.float    "out_of"
     t.integer  "position"
+    t.boolean  "bonus",               :default => false
   end
 
   add_index "grade_entry_items", ["grade_entry_form_id", "name"], :name => "index_grade_entry_items_on_grade_entry_form_id_and_name", :unique => true
