@@ -1,10 +1,12 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'AnnotationCategories/index' %>
-
   <%= render partial: 'boot',
              formats: [:js],
              handlers: [:erb] %>
 <% end %>
+
+<%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
+<%= javascript_include_tag 'MathJax/mathjax_helpers' %>
 
 <div class='title_bar'>
   <h1>

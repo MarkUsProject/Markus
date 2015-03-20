@@ -18,21 +18,37 @@ class MarksGradersController < ApplicationController
 
   def index
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
+    @section_column = ''
+    if Section.all.size > 0
+      @section_column = "section: {display: \"" +
+          I18n.t(:'user.section') +
+          "\", sortable: true},"
+    end
   end
 
   # Assign TAs to Students via a csv file
   def csv_upload_grader_groups_mapping
     if !request.post? || params[:grader_mapping].nil?
       flash[:error] = I18n.t('csv.student_to_grader')
-      redirect_to action: 'index', grade_entry_form_id: params[:grade_entry_form_id]
+      redirect_to action: 'index',
+                  grade_entry_form_id: params[:grade_entry_form_id]
       return
     end
 
-    invalid_lines = GradeEntryStudent.assign_tas_by_csv(params[:grader_mapping].read,
-      params[:grade_entry_form_id], params[:encoding])
+    begin
+      invalid_lines =
+        GradeEntryStudent.assign_tas_by_csv(params[:grader_mapping].read,
+                                            params[:grade_entry_form_id],
+                                            params[:encoding])
 
-    if invalid_lines.size > 0
-      flash[:error] = I18n.t('graders.lines_not_processed') + invalid_lines.join(', ')
+      if invalid_lines.size > 0
+        flash[:error] =
+          I18n.t('graders.lines_not_processed') + invalid_lines.join(', ')
+      end
+    rescue CSV::MalformedCSVError
+      flash[:error] = t('csv.upload.malformed_csv')
+    rescue ArgumentError
+      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
     end
 
     redirect_to action: 'index', grade_entry_form_id: params[:grade_entry_form_id]

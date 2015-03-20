@@ -101,7 +101,7 @@ footer {
     }
   }
 
-  #lang_chooser {
+  .lang_chooser {
     margin: 0 0 0 1em;
 
     select {
@@ -112,12 +112,12 @@ footer {
     }
   }
 
-  #issues {
+  .issues {
     margin: 0 1em;
   }
 
-  #lang_chooser,
-  #issues {
+  .lang_chooser,
+  .issues {
     border-left: 1px solid $grey;
     padding-left: 1em;
 

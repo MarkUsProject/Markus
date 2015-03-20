@@ -72,6 +72,7 @@ AnnotationTextDisplayer.prototype.hide = function() {
 // Show the displayer
 AnnotationTextDisplayer.prototype.show = function() {
   this.display_node.style.display = 'block';
+  reloadDOM();
 }
 
 // Returns whether or not the Displayer is showing

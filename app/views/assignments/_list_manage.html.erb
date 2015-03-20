@@ -81,18 +81,3 @@
     </div>
   <% end %>
 </div>
-
-<script>
-  (function periodic() {
-    jQuery.ajax({
-      url:  '<%= update_collected_submissions_assignments_path %>',
-      data: 'authenticity_token=' + AUTH_TOKEN ,
-      type: 'POST',
-      dataType: "script",
-      complete: function() {
-        // Schedule the next request when the current one's complete
-        var timer = setTimeout(periodic, 4000);
-      }
-    });
-  })();
-</script>
