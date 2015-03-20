@@ -61,8 +61,10 @@ module SessionHandler
         session[:redirect_uri] = request.referer
         render nothing: true, status: :forbidden  # 403 http code
       else
-        # We use this to bypass the "you are being redirected" default page browsers serve on a 401
-        render text: "<script>window.location = '#{root_path}';</script>", status: 401
+        # We use this to bypass the "you are being redirected" default page
+        # browsers serve on a 401
+        render text: "<script>window.location = '#{root_path}';</script>",
+          status: 401
       end
     end
   end
