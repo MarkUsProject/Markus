@@ -51,7 +51,7 @@
     jQuery(document).ready(
       function($){
         setInterval(function(){
-          jQuery.get("main/check_timeout");
+          jQuery.get('<%= check_timeout_main_index_path %>');
         }, 10000);
       });
   </script>
