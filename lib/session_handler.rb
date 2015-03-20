@@ -64,7 +64,7 @@ module SessionHandler
         # We use this to bypass the "you are being redirected" default page
         # browsers serve on a 401
         render text: "<script>window.location = '#{root_path}';</script>",
-          status: 401
+               status: 401
       end
     end
   end
