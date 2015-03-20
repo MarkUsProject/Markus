@@ -46,7 +46,6 @@ describe GradeEntryFormsController do
         fixture_file_upload(
           'spec/fixtures/files/grade_entry_form_good.csv',
           'text/csv')
-        
     end
 
     it 'accepts valid file' do
@@ -92,7 +91,7 @@ describe GradeEntryFormsController do
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
-    it 'does not accept files with wrong garde total' do
+    it 'does not accept files with wrong grade total' do
       post :csv_upload,
            id: grade_entry_form_with_data,
            upload: { grades_file: @file_wrong_total }
@@ -102,6 +101,8 @@ describe GradeEntryFormsController do
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
+
+    # add test that checks for mark entered to be less than or equal to grade total
 
     # this test is currently failing.
     # issue #2078 has been opened to resolve this
