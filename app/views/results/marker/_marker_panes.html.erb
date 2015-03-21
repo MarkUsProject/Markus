@@ -127,8 +127,11 @@
             <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
           </p>
           <p>
-            <textarea id='new_annotation_content'></textarea>
+            <textarea id='new_annotation_content' onkeyup="updateAnnotationPreview()"></textarea>
           </p>
+          <h2 id="annotation_preview_title" style="display: none"> <%= t('marker.annotation.preview_title') %></h2>
+          <p id="annotation_preview" style="display: none;"></p>
+
           <p>
             <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
             <select id='new_annotation_category'>
