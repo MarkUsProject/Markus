@@ -102,7 +102,8 @@ describe GradeEntryFormsController do
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
-    # add test that checks for mark entered to be less than or equal to grade total
+    # add test that checks for mark entered to be
+    # less than or equal to grade total
 
     # this test is currently failing.
     # issue #2078 has been opened to resolve this
