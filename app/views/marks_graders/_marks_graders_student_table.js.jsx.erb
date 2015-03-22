@@ -14,8 +14,7 @@
       this.props.onSelectedStudentsChange(new_selected_students);
     },
     studentsCheckboxAllClicked: function(event) {
-      var value = event.currentTarget.checked;
-      if (value) {
+      if (event.currentTarget.checked) {
         var new_selected_students = this.props.students.map(function(x) {
           return x.id;
         }).slice();
@@ -36,8 +35,7 @@
       this.props.onSelectedGradersForStudentsChange(new_selected_graders);
     },
     gradersInStudentsCheckboxAllClicked: function(event) {
-      var value = event.currentTarget.checked;
-      if (value) {
+      if (event.currentTarget.checked) {
         var new_selected_graders = this.props.graders_for_students.map(function(x) {
           return x.membership_id;
         }).slice();
@@ -63,9 +61,8 @@
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
       document.getElementById('working').style.display = '';
-
       jQuery.ajax({
-        url: '/en/grade_entry_forms/1/marks_graders/populate_students_table',
+        url: '<%= populate_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
         method: 'POST',
         dataType: 'json',
         success: function(data) {

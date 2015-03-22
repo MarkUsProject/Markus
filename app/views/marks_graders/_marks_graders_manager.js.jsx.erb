@@ -39,7 +39,7 @@
       document.getElementById('working').style.display = '';
 
       jQuery.ajax({
-        url: '/en/grade_entry_forms/1/marks_graders/populate_students_table',
+        url: '<%= populate_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
         method: 'POST',
         dataType: 'json',
         success: function(data) {
@@ -64,7 +64,7 @@
 
       document.getElementById('working').style.display = '';
       jQuery.ajax({
-        url: '/en/grade_entry_forms/1/marks_graders/populate_graders_table',
+        url: '<%= populate_graders_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
         method: 'POST',
         dataType: 'json',
         success: function(data) {

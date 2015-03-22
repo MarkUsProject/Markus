@@ -13,17 +13,21 @@ module MarksGradersHelper
     students.map do |student|
       s = student.attributes
 
-      # Loop up the currently associated TAs (graders)
+      # Look up the currently associated TAs (graders)
       grade_entry_student = student.grade_entry_students.find do |entry|
         entry.grade_entry_form_id == grade_entry_form.id
       end
 
       # Map their info
-      s[:graders] = grade_entry_student.grade_entry_student_tas.map do |gest|
-        m = {}
-        m[:user_name] = gest.ta.user_name
-        m[:membership_id] = gest.id
-        m
+      if grade_entry_student != nil
+        s[:graders] = grade_entry_student.grade_entry_student_tas.map do |gest|
+          m = {}
+          m[:user_name] = gest.ta.user_name
+          m[:membership_id] = gest.id
+          m
+        end
+      else
+        s[:graders] = ''
       end
 
       s

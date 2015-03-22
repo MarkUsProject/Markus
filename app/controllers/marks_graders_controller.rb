@@ -7,25 +7,13 @@ class MarksGradersController < ApplicationController
   def populate
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     @students = students_with_assoc
-    @table_rows = construct_table_rows(@students, @grade_entry_form)
-  end
-
-  def populate_students_table
-    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    @students = students_with_assoc
     render json: get_marks_graders_student_table_info(@students,
                                                       @grade_entry_form)
   end
 
-  def populate_graders_table
-    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    render json: get_marks_graders_table_info(@grade_entry_form)
-  end
-
   def populate_graders
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    @graders = Ta.all
-    @table_rows = construct_grader_table_rows(@graders, @grade_entry_form)
+    render json: get_marks_graders_table_info(@grade_entry_form)
   end
 
   def index
@@ -84,12 +72,12 @@ class MarksGradersController < ApplicationController
 
   # These actions act on all currently selected graders & students
   def global_actions
+    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     student_ids = params[:students]
     grader_ids = params[:graders]
 
     case params[:current_table]
       when 'groups_table'
-        @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
         if params[:students].nil? or params[:students].size ==  0
          # If there is a global action than there should be a student selected
           if params[:global_actions]
@@ -100,7 +88,7 @@ class MarksGradersController < ApplicationController
         end
 
         case params[:global_actions]
-          when "assign"
+          when 'assign'
             if params[:graders].nil? or params[:graders].size ==  0
               @global_action_warning = t('assignment.group.select_a_grader')
               render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
@@ -108,10 +96,10 @@ class MarksGradersController < ApplicationController
             end
             assign_all_graders(student_ids, grader_ids, @grade_entry_form)
             return
-          when "unassign"
+          when 'unassign'
             unassign_graders(params[:gests])
             return
-          when "random_assign"
+          when 'random_assign'
             if params[:graders].nil? or params[:graders].size ==  0
               @global_action_warning = t('assignment.group.select_a_grader')
               render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
