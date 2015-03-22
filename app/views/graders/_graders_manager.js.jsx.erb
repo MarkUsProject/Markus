@@ -108,7 +108,7 @@
       to_render.push(<input type='checkbox'
         checked={this.state.assign_to_criteria}
         onChange={this.criteriaCheckboxClicked}><%= j raw I18n.t('graders.assign_to_criteria') %></input>);
-        to_render.push(<GroupsTableManager
+      to_render.push(<GroupsTableManager
         assign_to_criteria={this.state.assign_to_criteria} 
         groups_and_criteria={this.state.groups_and_criteria}
         selected_groups={this.state.selected_groups}

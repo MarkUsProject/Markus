@@ -116,7 +116,7 @@ class MarksGradersController < ApplicationController
   def students_with_assoc
     Student.includes(
       :section,
-      grade_entry_students: { grade_entry_student_tas: :ta })
+      :grade_entry_students => {grade_entry_student_tas: :ta})
   end
 
   def randomly_assign_graders(student_ids, grader_ids, form)
