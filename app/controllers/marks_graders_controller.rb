@@ -78,20 +78,22 @@ class MarksGradersController < ApplicationController
 
     case params[:current_table]
       when 'groups_table'
-        if params[:students].nil? or params[:students].size ==  0
+        if params[:students].nil? || params[:students].size == 0
          # If there is a global action than there should be a student selected
           if params[:global_actions]
             @global_action_warning = t('assignment.group.select_a_student')
-            render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
+            render partial: 'shared/global_action_warning', formats: [:js],
+                   handlers: [:erb]
             return
           end
         end
 
         case params[:global_actions]
         when 'assign'
-          if params[:graders].nil? or params[:graders].size ==  0
+          if params[:graders].nil? || params[:graders].size == 0
             @global_action_warning = t('assignment.group.select_a_grader')
-            render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
+            render partial: 'shared/global_action_warning', formats: [:js],
+                   handlers: [:erb]
             return
           end
           assign_all_graders(student_ids, grader_ids, @grade_entry_form)
@@ -102,7 +104,8 @@ class MarksGradersController < ApplicationController
         when 'random_assign'
           if params[:graders].nil? or params[:graders].size ==  0
             @global_action_warning = t('assignment.group.select_a_grader')
-            render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
+            render partial: 'shared/global_action_warning', formats: [:js],
+                   handlers: [:erb]
             return
           end
           randomly_assign_graders(student_ids, grader_ids, @grade_entry_form)
@@ -116,7 +119,7 @@ class MarksGradersController < ApplicationController
   def students_with_assoc
     Student.includes(
       :section,
-      :grade_entry_students => { grade_entry_student_tas: :ta })
+      grade_entry_students: { grade_entry_student_tas: 'ta' })
   end
 
   def randomly_assign_graders(student_ids, grader_ids, form)
