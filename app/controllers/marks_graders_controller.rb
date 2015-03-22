@@ -88,25 +88,25 @@ class MarksGradersController < ApplicationController
         end
 
         case params[:global_actions]
-          when 'assign'
-            if params[:graders].nil? or params[:graders].size ==  0
-              @global_action_warning = t('assignment.group.select_a_grader')
-              render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
-              return
-            end
-            assign_all_graders(student_ids, grader_ids, @grade_entry_form)
+        when 'assign'
+          if params[:graders].nil? or params[:graders].size ==  0
+            @global_action_warning = t('assignment.group.select_a_grader')
+            render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
             return
-          when 'unassign'
-            unassign_graders(params[:gests])
+          end
+          assign_all_graders(student_ids, grader_ids, @grade_entry_form)
+          return
+        when 'unassign'
+          unassign_graders(params[:gests])
+          return
+        when 'random_assign'
+          if params[:graders].nil? or params[:graders].size ==  0
+            @global_action_warning = t('assignment.group.select_a_grader')
+            render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
             return
-          when 'random_assign'
-            if params[:graders].nil? or params[:graders].size ==  0
-              @global_action_warning = t('assignment.group.select_a_grader')
-              render partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb]
-              return
-            end
-            randomly_assign_graders(student_ids, grader_ids, @grade_entry_form)
-            return
+          end
+          randomly_assign_graders(student_ids, grader_ids, @grade_entry_form)
+          return
         end
     end
   end
@@ -116,7 +116,7 @@ class MarksGradersController < ApplicationController
   def students_with_assoc
     Student.includes(
       :section,
-      :grade_entry_students => {grade_entry_student_tas: :ta})
+      :grade_entry_students => { grade_entry_student_tas: :ta })
   end
 
   def randomly_assign_graders(student_ids, grader_ids, form)
