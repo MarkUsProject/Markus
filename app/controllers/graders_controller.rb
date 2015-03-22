@@ -14,30 +14,18 @@ class GradersController < ApplicationController
   # -
   before_filter      :authorize_only_for_admin
 
-  def upload_dialog
-    @assignment = Assignment.find(params[:assignment_id])
-    render partial: 'graders/modal_dialogs/upload_dialog',
-           handlers: [:rjs]
-  end
-
-  def download_dialog
-    @assignment = Assignment.find(params[:assignment_id])
-    render partial: 'graders/modal_dialogs/download_dialog',
-           handlers: [:rjs]
-  end
-
   def groups_coverage_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping])
     render partial: 'graders/modal_dialogs/groups_coverage_dialog',
-           handlers: [:rjs]
+           handlers: [:erb]
   end
 
   def grader_criteria_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @grader = Ta.find(params[:grader])
-    render partial: 'graders/modal_dialogs/grader_criteria_dialog',
-           handlers: [:rjs]
+    render partial: 'graders/modal_dialogs/graders_criteria_dialog',
+           handlers: [:erb]
   end
 
   def set_assign_criteria
