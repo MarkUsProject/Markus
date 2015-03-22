@@ -178,6 +178,14 @@ class AnnotationCategoriesController < ApplicationController
         redirect_to action: 'index', assignment_id: @assignment.id
         return
       end
+
+      # YAML::load returns a hash if successful
+      unless annotations.is_a? Hash
+        flash[:error] = I18n.t('annotations.upload.unparseable_yaml')
+        redirect_to action: 'index', assignment_id: @assignment.id
+        return
+      end
+
       annotations.each_key do |key|
       result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment, current_user)
       annotation_line += 1
