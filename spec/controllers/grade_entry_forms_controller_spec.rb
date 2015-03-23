@@ -34,13 +34,13 @@ describe GradeEntryFormsController do
         fixture_file_upload(
           'spec/fixtures/files/grade_entry_form_extra_column.csv',
           'text/csv')
-      @file_wrong_column_name =
+      @file_different_column_name =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_form_wrong_column_name.csv',
+          'spec/fixtures/files/grade_entry_form_different_column_name.csv',
           'text/csv')
-      @file_wrong_total =
+      @file_different_total =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_form_wrong_total.csv',
+          'spec/fixtures/files/grade_entry_form_different_total.csv',
           'text/csv')
       @file_good =
         fixture_file_upload(
@@ -69,7 +69,7 @@ describe GradeEntryFormsController do
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
-    it 'does not accept files with additional columns' do
+    it 'accepts files with additional columns' do
       post :csv_upload,
            id: grade_entry_form_with_data,
            upload: { grades_file: @file_extra_column }
@@ -79,20 +79,20 @@ describe GradeEntryFormsController do
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
-    it 'does not accept files with wrong column name' do
+    it 'accepts files with a different column name' do
       post :csv_upload,
            id: grade_entry_form_with_data,
-           upload: { grades_file: @file_wrong_column_name }
+           upload: { grades_file: @file_different_column_name }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
-    it 'does not accept files with wrong grade total' do
+    it 'accepts files with a different grade total' do
       post :csv_upload,
            id: grade_entry_form_with_data,
-           upload: { grades_file: @file_wrong_total }
+           upload: { grades_file: @file_different_total }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
