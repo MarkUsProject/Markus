@@ -80,7 +80,7 @@ describe GradeEntryFormsController do
     # puts flash[:error]
     # expect(response).to redirect_to(
     #   grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
-    #end
+    # end
 
     # this test is currently failing
     # issue #2101 has been opened to resolve this
