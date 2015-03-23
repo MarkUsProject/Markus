@@ -71,12 +71,12 @@ describe GradeEntryFormsController do
 
     it 'does not accept files with additional columns' do
       post :csv_upload,
-          id: grade_entry_form_with_data,
-          upload: { grades_file: @file_extra_column }
-     expect(response.status).to eq(302)
-     expect(flash[:error]).to be_nil
-     expect(response).to redirect_to(
-       grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+           id: grade_entry_form_with_data,
+           upload: { grades_file: @file_extra_column }
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
     it 'does not accept files with wrong column name' do
@@ -91,12 +91,12 @@ describe GradeEntryFormsController do
 
     it 'does not accept files with wrong grade total' do
       post :csv_upload,
-          id: grade_entry_form_with_data,
-          upload: { grades_file: @file_wrong_total }
-     expect(response.status).to eq(302)
-     expect(flash[:error]).to be_nil
-     expect(response).to redirect_to(
-       grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+           id: grade_entry_form_with_data,
+           upload: { grades_file: @file_wrong_total }
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
     # this test is currently failing.
@@ -130,11 +130,11 @@ describe GradeEntryFormsController do
 
     it 'should gracefully fail on non-csv file with .csv extension' do
       post :csv_upload, id: grade_entry_form,
-          upload: { grades_file: @file_bad_csv }
-     expect(response.status).to eq(302)
-     expect(flash[:error]).to_not be_empty
-     expect(response).to redirect_to(
-       grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
+           upload: { grades_file: @file_bad_csv }
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to_not be_empty
+      expect(response).to redirect_to(
+        grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end
 
     it 'should gracefully fail on .xls file' do
