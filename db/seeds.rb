@@ -110,13 +110,13 @@ groups.each do |group|
       file_contents = File.open(File.join(file_dir, filename))
       file_contents.rewind
       group.access_repo do |repo|
-        assignment_id = a1.id
-        if group.grouping_for_assignment(assignment_id).nil?
-          assignment_id = a2.id
+        assignment = a1
+        if group.grouping_for_assignment(assignment.id).nil?
+          assignment = a2
         end
-        txn  = repo.get_transaction(group.grouping_for_assignment(assignment_id)
+        txn  = repo.get_transaction(group.grouping_for_assignment(assignment.id)
                                          .inviter.user_name)
-        path = File.join(a1.repository_folder, filename)
+        path = File.join(assignment.repository_folder, filename)
         txn.add(path, file_contents.read, '')
         repo.commit(txn)
       end
