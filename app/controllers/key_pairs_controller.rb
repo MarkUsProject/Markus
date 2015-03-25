@@ -42,9 +42,9 @@ class KeyPairsController < ApplicationController
   # Admins are able to save keys under different user names then
   # their own.
   # Creates the KEY_STORAGE directory if it does not yet exist
-  def upload_key_file(_file, user_name)
+  def upload_key_file(file, user_name)
     Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
-    uploaded_io = _file
+    uploaded_io = file
 
     # todo: check current user to see if they have permission to
     # use a different user_name then their current one (admins)
