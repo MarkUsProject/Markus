@@ -93,8 +93,8 @@ students = Student.all
   grouping.save
   (0..1).each do |count|
     grouping.invite([students[time + count * 15].user_name],
-                     StudentMembership::STATUSES[:inviter],
-                     invoked_by_admin=true)
+                    StudentMembership::STATUSES[:inviter],
+                    invoked_by_admin = true)
   end
 end
 
@@ -114,7 +114,7 @@ groups.each do |group|
         if group.grouping_for_assignment(assignment.id).nil?
           assignment = a2
         end
-        txn  = repo.get_transaction(group.grouping_for_assignment(assignment.id)
+        txn = repo.get_transaction(group.grouping_for_assignment(assignment.id)
                                          .inviter.user_name)
         path = File.join(assignment.repository_folder, filename)
         txn.add(path, file_contents.read, '')
@@ -160,7 +160,7 @@ end
 
 8.times do |index|
   FlexibleCriterion.create(
-    id:                      index,
+    id: index,
     flexible_criterion_name: random_sentences(1),
     assignment_id:           a2.id,
     description:             random_sentences(5),
