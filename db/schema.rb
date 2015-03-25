@@ -11,11 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20150226032509) do
-=======
 ActiveRecord::Schema.define(:version => 20150304033052) do
->>>>>>> master
+
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -108,10 +105,6 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                        :default => false
-<<<<<<< HEAD
-    t.boolean  "is_required",                      :default => false
-=======
->>>>>>> master
     t.boolean  "only_required_files",              :default => false
   end
 
@@ -246,14 +239,6 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
   end
 
   add_index "groups", ["group_name"], :name => "groups_name_unique", :unique => true
-
-  create_table "key_pairs", :force => true do |t|
-    t.integer  "user_id"
-    t.string   "user_name"
-    t.string   "file_name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
 
   create_table "marks", :force => true do |t|
     t.integer  "result_id"

@@ -61,7 +61,7 @@
     </li>
   <% end %>
 
-  <% if REPOSITORY_TYPE == 'git' %>
+  <% if REPOSITORY_TYPE == 'git' && @current_user.admin? || @current_user.student? %>
       <li <% if controller.controller_name == 'key_pairs' %>
           class='active'
           <% end %>>
