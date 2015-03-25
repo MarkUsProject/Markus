@@ -160,7 +160,7 @@ end
 
 8.times do |index|
   FlexibleCriterion.create(
-    id: index,
+    id:                      index,
     flexible_criterion_name: random_sentences(1),
     assignment_id:           a2.id,
     description:             random_sentences(5),
