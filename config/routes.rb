@@ -1,6 +1,4 @@
 Markus::Application.routes.draw do
-  resources :key_pairs
-  
   # Install the default routes as the lowest priority.
   root controller: 'main', action: 'login', via: [:post, :get]
 
@@ -47,20 +45,6 @@ Markus::Application.routes.draw do
         post 'disinvite_member'
         get 'render_test_result'
         get 'view_summary'
-      end
-
-      resources :tags do
-        collection do
-          get 'download_tag_list'
-          post 'csv_upload'
-          post 'yml_upload'
-        end
-
-        member do
-          post 'update_tag'
-          get 'edit_tag_dialog'
-          get 'destroy'
-        end
       end
 
       resources :rubrics do
@@ -186,8 +170,6 @@ Markus::Application.routes.draw do
             get 'update_positions'
             post 'update_mark'
             get 'view_marks'
-            post 'add_tag'
-            post 'remove_tag'
           end
         end
       end
@@ -304,8 +286,6 @@ Markus::Application.routes.draw do
         post 'grades'
       end
     end
-
-    resources :key_pairs
 
     resources :sections
 

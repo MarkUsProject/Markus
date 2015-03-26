@@ -11,11 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20150226032509) do
-=======
 ActiveRecord::Schema.define(:version => 20150304033052) do
->>>>>>> master
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -108,10 +104,6 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                        :default => false
-<<<<<<< HEAD
-    t.boolean  "is_required",                      :default => false
-=======
->>>>>>> master
     t.boolean  "only_required_files",              :default => false
   end
 
@@ -233,27 +225,12 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
 
   add_index "groupings", ["assignment_id", "group_id"], :name => "groupings_u1", :unique => true
 
-  create_table "groupings_tags", :id => false, :force => true do |t|
-    t.integer "tag_id",      :null => false
-    t.integer "grouping_id", :null => false
-  end
-
-  add_index "groupings_tags", ["tag_id", "grouping_id"], :name => "index_groupings_tags_on_tag_id_and_grouping_id", :unique => true
-
   create_table "groups", :force => true do |t|
     t.string "group_name", :limit => 30
     t.string "repo_name"
   end
 
   add_index "groups", ["group_name"], :name => "groups_name_unique", :unique => true
-
-  create_table "key_pairs", :force => true do |t|
-    t.integer  "user_id"
-    t.string   "user_name"
-    t.string   "file_name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
 
   create_table "marks", :force => true do |t|
     t.integer  "result_id"
@@ -394,12 +371,6 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
   end
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
-
-  create_table "tags", :force => true do |t|
-    t.string "name",        :null => false
-    t.string "description"
-    t.string "user"
-  end
 
   create_table "test_files", :force => true do |t|
     t.string   "filename"

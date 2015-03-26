@@ -46,7 +46,7 @@ Markus::Application.configure do
 
   ###################################################################
   # Set the course name here
-  COURSE_NAME         = 'CSC108 Fall 2009: Introduction to Computer Programming'
+  COURSE_NAME         = "CSC108 Fall 2009: Introduction to Computer Programming"
 
   ###################################################################
   # MarkUs relies on external user authentication: An external script
@@ -100,14 +100,14 @@ Markus::Application.configure do
   # If you are using HTTP's basic authentication, you probably want to use this
   # option.
 
-  LOGOUT_REDIRECT = 'DEFAULT'
+  LOGOUT_REDIRECT = "DEFAULT"
 
   ###################################################################
   # File storage (Repository) settings
   ###################################################################
   # Options for Repository_type are 'svn' and 'memory' for now
   # 'memory' is by design not persistent and only used for testing MarkUs
-  REPOSITORY_TYPE = 'git' # use Subversion as storage backend
+  REPOSITORY_TYPE = "svn" # use Subversion as storage backend
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
@@ -115,13 +115,9 @@ Markus::Application.configure do
   REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/dev/repos"
 
   ###################################################################
-  # Directory where authentication keys will be uploaded. Make sure MarkUs is
-  # allowed to write to this directory
-  KEY_STORAGE = "#{::Rails.root.to_s}/data/dev/keys"
-
-  ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
   # is allowed to write to this directory
+
   PDF_STORAGE = "#{::Rails.root.to_s}/data/dev/pdfs"
 
   ###################################################################
@@ -152,7 +148,7 @@ Markus::Application.configure do
   # http://www.example.com/markus/svn/Repository_Name. Make sure the path
   # after the hostname matches your <Location> directive in your Apache
   # httpd configuration
-  REPOSITORY_EXTERNAL_BASE_URL = 'http://www.example.com/markus/svn'
+  REPOSITORY_EXTERNAL_BASE_URL = "http://www.example.com/markus/svn"
 
   ###################################################################
   # This setting is important for two scenarios:
@@ -163,7 +159,7 @@ Markus::Application.configure do
   # Second, if MarkUs is configured with REPOSITORY_EXTERNAL_SUBMITS_ONLY
   # set to 'true', you can configure as to where MarkUs should write the
   # Subversion authz file.
-  REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + '/conf'
+  REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + "/conf"
 
   ###################################################################
   # This setting configures if MarkUs is reading Subversion

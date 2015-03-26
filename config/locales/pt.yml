@@ -856,6 +856,7 @@ pt:
         error:  "Não foi possível fazer o upload de categoria: erro com %{annotation_category} localizado na linha %{annotation_line}"
         syntax_error: "Existe um erro no  arquivo carregado: %{error}"
         flash_error: "Não foi possível reconhecer o formato %{format}"
+        unparseable_yaml: "Não foi possível analisar o arquivo YAML"
       download:
         download_annotations: "Baixar anotações"
         download_csv: "Baixar em formato CSV"
@@ -1051,9 +1052,6 @@ pt:
       grade: "Nota"
       x_mark: "x Mark"
       weight: "Peso"
-
-    key_pairs:
-      title: "Os Pares de Chaves"
 
     notes:
         note_on: "%{user_name} em <b>%{display_for}</b>"

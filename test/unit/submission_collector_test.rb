@@ -211,15 +211,14 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
-        @submission_collector.push_groupings_to_queue(@groupings.slice(0..2))
-
+        #puts @groupings.slice(0..4).inspect
+        @submission_collector.push_groupings_to_queue(@groupings.slice(0..4))
       end
 
       should 'return the first grouping of the regular queue' do
-        assert_includes @groupings,
-                        @submission_collector.get_next_grouping_for_collection
-        assert_equal @groupings.slice(0..2),
-                     @regular_queue.sort { |x, y| x.id <=> y.id }
+        assert_equal @groupings[0],
+          @submission_collector.get_next_grouping_for_collection
+        assert_equal @groupings.slice(0..4), @regular_queue.sort { |x,y| x.id <=> y.id}
         assert @priority_queue.empty?
       end
     end
