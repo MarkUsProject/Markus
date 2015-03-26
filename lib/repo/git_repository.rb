@@ -334,8 +334,7 @@ module Repository
           Gitolite::GitoliteAdmin.bootstrap(Repository.conf[:REPOSITORY_STORAGE])
         end
 
-        ga_repo =
-            Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE])
+        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE])
         repo_name = self.get_repos.workdir.split('/').last
         repo = ga_repo.config.get_repo(repo_name)
 
