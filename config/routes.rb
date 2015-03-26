@@ -303,8 +303,6 @@ Markus::Application.routes.draw do
       end
     end
 
-    resources :key_pairs
-
     resources :sections
 
     resources :annotations do
