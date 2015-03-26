@@ -899,6 +899,7 @@ en:
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
         syntax_error: "There is an error in the file you uploaded: %{error}"
         flash_error: "Could not recognize %{format} format to download with"
+        unparseable_yaml: "Could not parse YAML file"
       download:
         download_annotations: "Download Annotations"
         download_csv: "Download in CSV Format"
