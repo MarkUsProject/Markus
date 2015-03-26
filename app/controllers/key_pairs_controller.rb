@@ -45,12 +45,55 @@ class KeyPairsController < ApplicationController
     Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
     uploaded_io = _file
 
-    # todo: check current user to see if they have permission to
-    # use a different user_name then their current one (admins)
-
     File.open(Rails.root.join(KEY_STORAGE, user_name + '.pub'), 'wb') do |f|
       f.write(uploaded_io.read)
     end
+
+    # todo: check current user to see if they have permission to
+    # use a different user_name then their current one (admins)
+
+
+    # Perform student key update in isolation from admins
+
+    #$stderr.puts Membership.all(:joins => 'INNER JOIN groupings ON memberships.grouping_id = groupings.group_id AND memberships.user_id = ' + String(@current_user.id))
+    #$stderr.puts Membership.all(:joins => 'INNER JOIN groupings ON memberships.grouping_id = groupings.group_id AND memberships.user_id = ' + String(@current_user.id) + ' INNER JOIN groups ON group_id = groups.id')
+    # todo: get rid of all - optimize
+    #@groups = Membership.where("membership_status != 'pending'").all(:joins => 'INNER JOIN groupings ON memberships.grouping_id = groupings.group_id AND memberships.user_id = ' + String(@current_user.id) + ' INNER JOIN groups ON group_id = groups.id')
+
+    #$stderr.puts @temp.all(:joins => 'INNER JOIN groups ON group_id = groups.id')
+
+    # uniqueness
+    #@groups = @groups.uniq{|x| x.grouping.group.group_name}
+
+    add_key(KEY_STORAGE + '/' + user_name + '.pub')
+
+  end
+
+  # Adds a specific public key to a specific user.
+  def add_key(_path)
+
+    #gitolite admin repo - these keys are for the repo-admin user - aka git on my machine
+    settings = { :public_key => '/home/git/.ssh/id_rsa.pub', :private_key => '/home/git/.ssh/id_rsa' }
+    ga_repo = Gitolite::GitoliteAdmin.new(REPOSITORY_STORAGE + '/gitolite-admin', settings)
+    # The admin repo is loaded into memory
+    conf = ga_repo.config
+
+    # Check to see if an individual repo exists for this user
+    #if conf.has_repo?(_username)
+    key = Gitolite::SSHKey.from_file(_path)
+
+    ga_repo.add_key(key)
+
+    # todo: make a constant for the admin key - readd admin key
+    adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+    ga_repo.add_key(adminKey)
+
+    # update Gitolite repo
+    #ga_repo.save_and_apply
+
+    ga_repo.save
+    ga_repo.apply
+
   end
 
   # POST /key_pairs
@@ -61,7 +104,7 @@ class KeyPairsController < ApplicationController
 
     # Save the record
     @key_pair = KeyPair.new(
-      key_pair_params.merge(user_name: @current_user.user_name,
+      key_pair_params.merge(user_name: @current_user.user_name, user_id: @current_user.id,
                             file_name: @current_user.user_name + '.pub'))
 
     respond_to do |format|

@@ -25,6 +25,7 @@ module Repository
   #   2. Existing repositories are opened by using either ???
   class GitRepository < Repository::AbstractRepository
 
+
     # Constructor: Connects to an existing Git
     # repository, using Ruby bindings; Note: A repository has to be
     # created using GitRespository.create(), it it is not yet existent
@@ -64,6 +65,8 @@ module Repository
     # location 'connect_string'
     def self.create(connect_string)
 
+
+
       if GitRepository.repository_exists?(connect_string)
         raise RepositoryCollision.new(
                   "There is already a repository at #{connect_string}")
@@ -84,6 +87,10 @@ module Repository
       #gitolite admin repo - these keys are for the repo-admin user - aka git on my machine
       settings = { :public_key => '/home/git/.ssh/id_rsa.pub', :private_key => '/home/git/.ssh/id_rsa' }
       ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin', settings)
+
+      ga_repo.reload!
+
+
       # The admin repo is loaded into memory
       conf = ga_repo.config
 
@@ -100,12 +107,18 @@ module Repository
       repo.add_permission("RW+", "", "git") # todo: testing - change this to current user later
       conf.add_repo(repo)
 
+      # todo: make a constant for the admin key - readd admin key
+      adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+      ga_repo.add_key(adminKey)
+
       # update Gitolite repo
-      ga_repo.save_and_apply
+
+      ga_repo.save
+      ga_repo.apply
+
       # end gitolite ==============================================
 
       # REPO IS CREATED BY GITOLITE, NOW CLONE IT IN THE REPOSITORY STORAGE LOCATION
-      $stderr.puts "Gitolite location: ", "/var/Markus/Markus/data/dev/repos/gitoliteRepos/"+repo_name+'.git'
 
       # CLONE THE REPO =============================================
 
@@ -400,13 +413,19 @@ module Repository
     # Adds a user with given permissions to the repository
     def add_user(user_id, permissions)
 
+
+
       if @repos_admin # Are we admin?
         if !Gitolite::GitoliteAdmin.is_gitolite_admin_repo?(Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin')
           Gitolite::GitoliteAdmin.bootstrap(Repository.conf[:REPOSITORY_STORAGE])
         end
 
-        ga_repo =
-            Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin')
+        # gitolite admin repo - these keys are for the repo-admin user - aka git
+        settings = { :public_key => '/home/git/.ssh/id_rsa.pub', :private_key => '/home/git/.ssh/id_rsa' }
+        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin', settings)
+
+        ga_repo.reload!
+
         repo_name = self.get_repos.workdir.split('/').last
         repo = ga_repo.config.get_repo(repo_name)
 
@@ -423,6 +442,12 @@ module Repository
 
         git_permission = self.class.__translate_to_git_perms(permissions)
         repo.add_permission(git_permission, '', user_id)
+
+        # todo: make a constant for the admin key - readd admin key
+        adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+        ga_repo.add_key(adminKey)
+
+        # update Gitolite repo
         ga_repo.save_and_apply
       else
         raise NotAuthorityError.new('Unable to modify permissions:
@@ -441,6 +466,8 @@ module Repository
       result_list = []
 
       ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+
+      ga_repo.update
       repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
 
       if !repo.nil?
@@ -466,6 +493,8 @@ module Repository
       # Adds a user with given permissions to the repository
 
       ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+
+      ga_repo.update
       repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
 
       # Gets permissions of a particular user
@@ -492,6 +521,7 @@ module Repository
 
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        ga_repo.update
         repo_name = self.get_repos.workdir.split('/').last
         repo = ga_repo.config.get_repo(repo_name)
 
@@ -502,6 +532,13 @@ module Repository
         git_permission = self.class.__translate_to_git_perms(permissions)
         repo.add_permission(git_permission, "", user_id)
         ga_repo.config.add_repo(repo)
+
+        # todo: make a constant for the admin key - readd admin key
+        adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+        ga_repo.add_key(adminKey)
+
+        # update Gitolite repo
+
         ga_repo.save_and_apply
       else
         raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
@@ -519,6 +556,8 @@ module Repository
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+
+        ga_repo.update
         repo_name = self.get_repos.workdir.split('/').last
 
         repo = ga_repo.config.get_repo(repo_name)
@@ -541,6 +580,14 @@ module Repository
               found = true
             end
           end
+
+          # todo: make a constant for the admin key - readd admin key
+          adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+          ga_repo.add_key(adminKey)
+
+          # update Gitolite repo
+          ga_repo.save_and_apply
+
 
           if found==true
             ga_repo.config.rm_repo(repo)
@@ -571,6 +618,8 @@ module Repository
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+
+      ga_repo.reload!
       repo = ga_repo.config.get_repo(repo_name)
 
       if repo.nil?
@@ -586,6 +635,12 @@ module Repository
 
       git_permission = GitRepository.__translate_to_git_perms(permissions)
       repo.add_permission(git_permission,"",user_id)
+
+      # todo: make a constant for the admin key - readd admin key
+      adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+      ga_repo.add_key(adminKey)
+
+      # update Gitolite repo
       ga_repo.save_and_apply
     end
 
@@ -610,13 +665,14 @@ module Repository
 
       # gitolite admin repo - these keys are for the repo-admin user - aka git
       settings = { :public_key => '/home/git/.ssh/id_rsa.pub', :private_key => '/home/git/.ssh/id_rsa' }
+      #settings = { :public_key => '/home/git/id_rsa.pub', :private_key => '/home/git/.ssh/id_rsa' }
       ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin', settings)
+
+      ga_repo.update
       # The admin repo is loaded into memory
       conf = ga_repo.config
 
-      puts "good"
       repo_names.each do |repo_name|
-        puts repo_name
         repo_name = File.basename(repo_name)
         repo = ga_repo.config.get_repo(repo_name)
         if repo.nil?
@@ -625,9 +681,7 @@ module Repository
         end
         # Add the permissions for each user
         user_id_permissions_map.each do |user_id, permissions|
-          puts permissions
           perm_string = __translate_to_git_perms(permissions)
-          puts perm_string
           repo.add_permission(perm_string, "", user_id)
           repo.add_permission(perm_string, "", "git") #testing
           repo.add_permission(perm_string, "", "nope") #testing
@@ -635,7 +689,11 @@ module Repository
         conf.add_repo(repo)
       end
 
-      #update gitolite
+      # todo: make a constant for the admin key - readd admin key
+      adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+      ga_repo.add_key(adminKey)
+
+      # update Gitolite repo
       ga_repo.save_and_apply
     end
 
@@ -652,6 +710,7 @@ module Repository
       # Adds a user with given permissions to the repository
       ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
+      ga_repo.update
       repo_names.each do |repo_name|
         repo_name = File.basename(repo_name)
         repo = ga_repo.config.get_repo(repo_name)
@@ -678,7 +737,14 @@ module Repository
           if found==true
             ga_repo.reload!
             ga_repo.config.rm_repo(repo)
+
+            # todo: make a constant for the admin key - readd admin key
+            adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+            ga_repo.add_key(adminKey)
+
+            # update Gitolite repo
             ga_repo.save_and_apply
+
             rw_list.each do |user|
               add_user(user,Repository::Permission::READ_WRITE,repo_name)
             end
@@ -835,6 +901,9 @@ module Repository
       end
       return true
     end
+
+
+
   end
 
   # Convenience class, so that we can work on Revisions rather
@@ -1031,9 +1100,7 @@ module Repository
       return self.timestamp
     end
 
-    # Adds a specific public key to a specific user.
-    def add_key(_username, _filename)
-    end
+
 
     private
 
