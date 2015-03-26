@@ -38,6 +38,7 @@
     <li class='<%= "active" if controller.controller_name == 'sections' %>'>
       <%= link_to t(:sections), controller: 'sections' %>
     </li>
+
   <% else %>
     <li <% if controller.controller_name == 'assignments' ||
               controller.controller_name == 'flexible_criteria' ||
@@ -52,20 +53,18 @@
         <% end %>>
       <%= link_to t(:home), controller: 'assignments' %>
    </li>
-
+      <% if REPOSITORY_TYPE == 'git' %>
+      <li <% if controller.controller_name == 'key_pairs' %>
+          class='active'
+          <% end %>>
+        <%= link_to t('key_pairs.title'), controller: 'key_pairs' %>
+      </li>
+      <% end %>
   <% end %>
 
   <% if @current_user.admin? || @current_user.ta? %>
     <li class='<%= "active" if controller.controller_name == 'notes' %>'>
       <%= link_to t('notes.title'), notes_path %>
     </li>
-  <% end %>
-
-  <% if REPOSITORY_TYPE == 'git' && @current_user.admin? || @current_user.student? %>
-      <li <% if controller.controller_name == 'key_pairs' %>
-          class='active'
-          <% end %>>
-        <%= link_to t('key_pairs.title'), controller: 'key_pairs' %>
-      </li>
   <% end %>
 </ul>
