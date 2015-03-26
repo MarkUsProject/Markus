@@ -53,13 +53,6 @@
         <% end %>>
       <%= link_to t(:home), controller: 'assignments' %>
    </li>
-      <% if REPOSITORY_TYPE == 'git' %>
-      <li <% if controller.controller_name == 'key_pairs' %>
-          class='active'
-          <% end %>>
-        <%= link_to t('key_pairs.title'), controller: 'key_pairs' %>
-      </li>
-      <% end %>
   <% end %>
 
   <% if @current_user.admin? || @current_user.ta? %>
