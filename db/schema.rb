@@ -13,7 +13,6 @@
 
 ActiveRecord::Schema.define(:version => 20150304033052) do
 
-
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
     t.integer  "position"
