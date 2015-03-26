@@ -74,8 +74,8 @@ module Repository
       index = repo.index
       index.add(path: 'README.md', oid: oid, mode: 0100644)
       index.write
-      Rugged::Commit.create(
-          repo, commit_options(repo, 'Markus',
+      Rugged::Commit.create(repo,
+                            commit_options(repo, 'Markus',
                                            'Initial commit and add readme.'))
       return true
     end
