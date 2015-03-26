@@ -28,6 +28,7 @@
                      assignment_flexible_criteria_path(@assignment) %>
             <% end %>
           </li>
+
           <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
             <%= link_to t('annotations.annotations'),
                         assignment_annotation_categories_path(@assignment) %>

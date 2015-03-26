@@ -225,13 +225,6 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
 
   add_index "groupings", ["assignment_id", "group_id"], :name => "groupings_u1", :unique => true
 
-  create_table "groupings_tags", :id => false, :force => true do |t|
-    t.integer "tag_id",      :null => false
-    t.integer "grouping_id", :null => false
-  end
-
-  add_index "groupings_tags", ["tag_id", "grouping_id"], :name => "index_groupings_tags_on_tag_id_and_grouping_id", :unique => true
-
   create_table "groups", :force => true do |t|
     t.string "group_name", :limit => 30
     t.string "repo_name"
@@ -378,12 +371,6 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
   end
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
-
-  create_table "tags", :force => true do |t|
-    t.string "name",        :null => false
-    t.string "description"
-    t.string "user"
-  end
 
   create_table "test_files", :force => true do |t|
     t.string   "filename"

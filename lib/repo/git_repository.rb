@@ -898,7 +898,7 @@ module Repository
     def path_exists?(path)
 
       # Chop the forward-slash off the end
-      if path[-1] == '/'
+      if path[-1,1] == '/'
         path = path[0..-2]
       end
 
@@ -909,7 +909,8 @@ module Repository
 
       # Follow the 'tree-path' and return false if we cannot find
       # each part along the way
-      parts.each { |path_part|
+      parts.each {
+          |path_part|
         found = false
         current_tree = nil
         tree_ptr.each { |current_tree|
