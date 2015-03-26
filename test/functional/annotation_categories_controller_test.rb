@@ -424,6 +424,18 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                      (new_categories_list.length))
       end
 
+      should 'flash error on :yml_upload with unparseable YAML file' do
+        tempfile = fixture_file_upload('files/rubric.csv')
+        post_as @admin,
+                :yml_upload,
+                assignment_id: @assignment.id,
+                annotation_category_list_yml: tempfile
+
+        assert_response :redirect
+        assert_equal(flash[:error],
+                     I18n.t('annotations.upload.unparseable_yaml'))
+      end
+
       should 'on :yml_upload route properly' do
         assert_recognizes({:controller => 'annotation_categories', :assignment_id => '1', :action => 'yml_upload' },
           {:path => 'assignments/1/annotation_categories/yml_upload',  :method => :post})

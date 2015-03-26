@@ -868,6 +868,7 @@ fr:
         error:  "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category} située sur la ligne %{annotation_line}"
         syntax_error: "Il y a une erreur de syntaxe dans le fichier que vous venez d'envoyer : %{error}"
         flash_error: "Le format %{format} que vous voulez télécharger n'a pas été reconnu."
+        unparseable_yaml: "Ne pourrait pas analyzer le fichier YAML"
       download:
         download_annotations: "Télécharger les annotations"
         download_csv: "Télécharger au format CSV"
