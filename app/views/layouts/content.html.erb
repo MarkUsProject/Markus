@@ -2,7 +2,7 @@
 <html>
 <head>
   <%= render partial: 'layouts/head' %>
-  <title><%= t(:markus) %> - <%= controller.action_name %></title>
+  <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
   <%# React stuff (compressed version + JSX transformer) %>
   <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
                              'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/JSXTransformer.js' %>
