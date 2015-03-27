@@ -4,6 +4,7 @@ function reloadDOM() {
     MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
 }
 
+var timeout;
 function updateAnnotationPreview(){
     var updatedAnnotation = document.getElementById("new_annotation_content").value;
 
@@ -18,8 +19,17 @@ function updateAnnotationPreview(){
         previewParagraph.show();
         previewParagraph.innerHTML = updatedAnnotation;
 
+        if(timeout){
+            clearTimeout(timeout)
+            timeout = null
+        }
+
         // typeset the preview
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, previewParagraph]);
+        timeout = setTimeout(function() {
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, previewParagraph]);
+            clearTimeout(timeout)
+        }, 3000);
+
     }else{
         title.hide();
         previewParagraph.hide()
