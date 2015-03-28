@@ -4,34 +4,56 @@ function reloadDOM() {
     MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
 }
 
+function hideAnnotationPreview(){
+    document.getElementById("annotation_preview").hide();
+    document.getElementById("annotation_preview_title").hide();
+
+    // recenter dialog
+    var dialog = jQuery("#create_annotation_dialog");
+    dialog.css("margin-left", -1 * dialog.width() / 2);
+}
+
+function showAnnotationPreview(){
+    document.getElementById("annotation_preview").show();
+    document.getElementById("annotation_preview_title").show();
+
+    // recenter dialog
+    var dialog = jQuery("#create_annotation_dialog");
+    dialog.css("margin-left", -1 * dialog.width() / 2);
+}
+
+function setPreviewMaxWidth(){
+    jQuery("#annotation_preview")
+        .css("max-width", jQuery("#annotation_preview_title").width());
+}
+
 var timeout;
 function updateAnnotationPreview(){
-    var updatedAnnotation = document.getElementById("new_annotation_content").value;
+    var newAnnotation = document.getElementById("new_annotation_content").value;
 
-    var previewParagraph = document.getElementById("annotation_preview");
-    var title = document.getElementById("annotation_preview_title");
+    var preview = document.getElementById("annotation_preview");
 
-    var firstIndex = updatedAnnotation.indexOf("$$");
-    var secondIndex = updatedAnnotation.indexOf("$$", firstIndex + 1);
+    var firstIndex = newAnnotation.indexOf("$$");
+    var secondIndex = newAnnotation.indexOf("$$", firstIndex + 1);
 
     if(firstIndex != -1 && secondIndex != -1 && firstIndex != secondIndex){
-        title.show();
-        previewParagraph.show();
-        previewParagraph.innerHTML = updatedAnnotation;
+        preview.innerHTML = newAnnotation;
+
+        setPreviewMaxWidth();
+        showAnnotationPreview();
 
         if(timeout){
-            clearTimeout(timeout)
-            timeout = null
+            clearTimeout(timeout);
+            timeout = null;
         }
 
         // typeset the preview
         timeout = setTimeout(function() {
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub, previewParagraph]);
-            clearTimeout(timeout)
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, preview]);
+            clearTimeout(timeout);
         }, 3000);
 
     }else{
-        title.hide();
-        previewParagraph.hide()
+        hideAnnotationPreview();
     }
 }
