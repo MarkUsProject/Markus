@@ -11,6 +11,9 @@ en:
     issues:             "GitHub issues list"
     actions:            "Actions"
 
+    # app/views/assignments/_form.html.erb
+    required_file_warning: "Accept no other files besides the listed required files. This also restricts the file extensions."
+
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
     welcome_to_markus:     "Welcome to MarkUs, the online marking tool, %{user_name}."
@@ -48,6 +51,9 @@ en:
     supervisors:        "Supervisors: "
     contact_us:         "Contact Us"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information.<br>To submit a bug or issue please visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
+
+    # app/views/main/timeout_imminent.js.erb
+    timeout_imminent:   "Your session is about to expire."
 
     # app/views/api/_key_display.html.erb
     api_key:            "Your API Key"
@@ -150,6 +156,7 @@ en:
         add_required_file:  "Add a Required File"
         type:  "Assignment type"
         overall_comment: "Overall Comment"
+        upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
         group:
             empty: "Empty Group"
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
@@ -373,6 +380,12 @@ en:
       group_to_grader: "You must supply a CSV file for group to grader mapping"
       student_to_grader: "You must supply a CSV file for student to grader mapping"
       invalid_csv: "The format of the CSV file was not recognized"
+      upload:
+        malformed_csv: "The selected file was improperly formed. Please ensure the file meets Markus specifications."
+        # when a non-text file has a csv extension (ie: user changes extension
+        # from .pdf to .csv on a pdf file)
+        non_text_file_with_csv_extension: "The selected file is not a csv file (even though it may have a csv extension)."
+
 
     pagination:
       first: "≪ First"
@@ -433,7 +446,6 @@ en:
       revised_by:           "Revised By"
       replace:              "Replace"
       delete:               "Delete"
-      can_begin_grading:    "Can begin grading"
       error_collecting:     "There were problems collecting some files."
       section:              "Section"
       collect_work_for_section: "Collect work for section:"
@@ -472,6 +484,7 @@ en:
       column_name: "Name"
       column_out_of: "Out Of"
       add_column: "Add a column"
+      bonus_column: "Bonus Mark"
       remove_column: "Remove:"
       toggle_column: "hide/show"
       properties: "Marks Spreadsheet Properties"
@@ -985,6 +998,7 @@ en:
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
         syntax_error: "There is an error in the file you uploaded: %{error}"
         flash_error: "Could not recognize %{format} format to download with"
+        unparseable_yaml: "Could not parse YAML file"
       download:
         download_annotations: "Download Annotations"
         download_csv: "Download in CSV Format"
@@ -1114,7 +1128,6 @@ en:
         <p>The description is optional. Note that if it is not present, the second
         comma should not appear.</p>"
         success: "Flexible criteria successfully uploaded: %{nb_updates} update(s)."
-        malformed: "The selected file was improperly formed. Please ensure the file meets Markus specifications."
       errors:
         messages:
           name_taken: "Criterion name already used."
@@ -1161,7 +1174,6 @@ en:
         error: "Some rubric criteria were invalid:"
         syntax_error: "There is an error in the file you uploaded: %{error}"
         empty_error: "No criteria were found in the provided file."
-        malformed: "The selected file was improperly formed. Please ensure the file meets Markus specifications."
       error_total: "total weight must be positive"
       defaults:
         level_0: "Very Poor"
