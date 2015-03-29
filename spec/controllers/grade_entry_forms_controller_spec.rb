@@ -22,9 +22,9 @@ describe GradeEntryFormsController do
       @file_bad_csv =
         fixture_file_upload(
           'spec/fixtures/files/grade_entry_upload_bad_csv.csv', 'text/xls')
-      @file_non_empty_first_cell =
+      @file_bad_endofline =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_upload_non_empty_first_cell.csv',
+          'spec/fixtures/files/grade_entry_upload_file_bad_endofline.csv',
           'text/csv')
       @file_invalid_username =
         fixture_file_upload(
@@ -99,16 +99,14 @@ describe GradeEntryFormsController do
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
-    # this test is currently failing.
-    # issue #2078 has been opened to resolve this
-    # it 'does not accept a csv file with wrong data columns' do
-    #  post :csv_upload, id: grade_entry_form,
-    #       upload: { :grades_file => @file_non_empty_first_cell }
-    # expect(response.status).to eq(302)
-    # expect(flash[:error]).to_not be_empty
-    # expect(response).to redirect_to(
-    #   grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
-    # end
+    it 'does not accept a csv file corrupt line endings' do
+      post :csv_upload, id: grade_entry_form,
+           upload: { :grades_file => @file_bad_endofline }
+     expect(response.status).to eq(302)
+     expect(flash[:error]).to_not be_empty
+     expect(response).to redirect_to(
+       grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
+    end
 
     it 'does not accept a file with no extension' do
       post :csv_upload,
