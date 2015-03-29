@@ -57,7 +57,8 @@ class MarksGradersController < ApplicationController
           entry.grade_entry_form_id == grade_entry_form.id
         end
         unless grade_entry_student.nil?
-          grade_entry_student.tas.order(:user_name).each { |ta| student_array.push(ta.user_name) }
+          grade_entry_student.tas.order(:user_name).each {
+              |ta| student_array.push(ta.user_name) }
         end
 
         csv << student_array
