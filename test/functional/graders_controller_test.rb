@@ -13,16 +13,6 @@ class GradersControllerTest < AuthenticatedControllerTest
       @student = Student.make
     end
 
-    should 'GET on :upload_dialog' do
-      get_as @student, :upload_dialog, :assignment_id => 1
-      assert_response :missing
-    end
-
-    should 'GET on :download_dialog' do
-      get_as @student, :download_dialog, :assignment_id => 1
-      assert_response :missing
-    end
-
     should 'GET on :groups_coverage_dialog' do
       get_as @student, :groups_coverage_dialog, :assignment_id => 1
       assert_response :missing
@@ -55,16 +45,6 @@ class GradersControllerTest < AuthenticatedControllerTest
 
     should 'GET on :global_actions' do
       get_as @student, :global_actions, :assignment_id => 1
-      assert_response :missing
-    end
-
-    should 'POST on :upload_dialog' do
-      post_as @student, :upload_dialog, :assignment_id => 1
-      assert_response :missing
-    end
-
-    should 'POST on :download_dialog' do
-      post_as @student, :download_dialog, :assignment_id => 1
       assert_response :missing
     end
 
