@@ -2,7 +2,8 @@ class KeyPairsController < ApplicationController
   # GET /key_pairs
   # GET /key_pairs.json
   def index
-    @key_pairs = KeyPair.where("user_name = ?", @current_user.user_name)
+    # Grab the own user's keys only
+    @key_pairs = KeyPair.where("user_id = ?", @current_user.id)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -41,7 +42,7 @@ class KeyPairsController < ApplicationController
   # If a String is supplied as the first argument then it's content
   # is used to create the public key
   # Creates the KEY_STORAGE directory if it does not yet exist
-  def upload_key_file(_file, user_name)
+  def upload_key_file(_file, user_name, time_stamp)
     Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
 
     public_key_content = ''
@@ -53,7 +54,7 @@ class KeyPairsController < ApplicationController
       public_key_content = _file.read
     end
 
-    File.open(Rails.root.join(KEY_STORAGE, user_name + '.pub'), 'wb') do |f|
+    File.open(Rails.root.join(KEY_STORAGE, user_name + "@" + time_stamp + '.pub'), 'wb') do |f|
       f.write(public_key_content)
     end
 
@@ -73,7 +74,7 @@ class KeyPairsController < ApplicationController
     # uniqueness
     #@groups = @groups.uniq{|x| x.grouping.group.group_name}
 
-    add_key(KEY_STORAGE + '/' + user_name + '.pub')
+    add_key(KEY_STORAGE + '/' + user_name + "@" + time_stamp + '.pub')
 
   end
 
@@ -108,19 +109,22 @@ class KeyPairsController < ApplicationController
   # POST /key_pairs.json
   def create
 
+    # Used to uniquely identify key
+    time_stamp = Time.now.to_i.to_s
+
     # If user uploads the public key as a file then that takes precedence over the key string
     if !key_pair_params[:file]
       # Create a .pub file on the file system
-      upload_key_file(key_pair_params[:key_string], @current_user.user_name)
+      upload_key_file(key_pair_params[:key_string], @current_user.user_name, time_stamp)
     else
       # Upload the file
-      upload_key_file(key_pair_params[:file], @current_user.user_name)
+      upload_key_file(key_pair_params[:file], @current_user.user_name, time_stamp)
     end
 
     # Save the record
     @key_pair = KeyPair.new(
       key_pair_params.merge(user_name: @current_user.user_name, user_id: @current_user.id,
-                            file_name: @current_user.user_name + '.pub'))
+                            file_name: @current_user.user_name + "@" + time_stamp + '.pub'))
 
     respond_to do |format|
       if @key_pair.save
