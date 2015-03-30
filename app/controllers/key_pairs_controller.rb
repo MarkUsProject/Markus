@@ -2,7 +2,7 @@ class KeyPairsController < ApplicationController
   # GET /key_pairs
   # GET /key_pairs.json
   def index
-    @key_pairs = KeyPair.all
+    @key_pairs = KeyPair.where("user_name = ?", @current_user.user_name)
 
     respond_to do |format|
       format.html # index.html.erb
