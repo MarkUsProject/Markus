@@ -38,15 +38,23 @@ class KeyPairsController < ApplicationController
 
   # Given a File object to upload, save it on the file system with
   # association to the user_name given.
-  # Admins are able to save keys under different user names then
-  # their own.
+  # If a String is supplied as the first argument then it's content
+  # is used to create the public key
   # Creates the KEY_STORAGE directory if it does not yet exist
   def upload_key_file(_file, user_name)
     Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
-    uploaded_io = _file
+
+    public_key_content = ''
+
+    if _file.is_a? String
+      # Dump the string into the file
+      public_key_content = _file
+    else
+      public_key_content = _file.read
+    end
 
     File.open(Rails.root.join(KEY_STORAGE, user_name + '.pub'), 'wb') do |f|
-      f.write(uploaded_io.read)
+      f.write(public_key_content)
     end
 
     # todo: check current user to see if they have permission to
@@ -99,8 +107,15 @@ class KeyPairsController < ApplicationController
   # POST /key_pairs
   # POST /key_pairs.json
   def create
-    # Upload the file
-    upload_key_file(key_pair_params[:file], @current_user.user_name)
+
+    # If user uploads the public key as a file then that takes precedence over the key string
+    if !key_pair_params[:file]
+      # Create a .pub file on the file system
+      upload_key_file(key_pair_params[:key_string], @current_user.user_name)
+    else
+      # Upload the file
+      upload_key_file(key_pair_params[:file], @current_user.user_name)
+    end
 
     # Save the record
     @key_pair = KeyPair.new(
@@ -169,6 +184,6 @@ class KeyPairsController < ApplicationController
     # Also, you can specialize this method with per-user checking of
     # permissible attributes.
     def key_pair_params
-      params.require(:key_pair).permit(:file)
+      params.require(:key_pair).permit(:file, :key_string)
     end
 end
