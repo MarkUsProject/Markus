@@ -254,6 +254,17 @@ class SubmissionsController < ApplicationController
         sortable: true
       },"
     end
+
+    @grace_credit_column = ''
+    if @assignment.submission_rule.type == 'GracePeriodSubmissionRule'
+      @grace_credit_column = "{
+        id: 'grace_credits_used',
+        content: '" + I18n.t(:'browse_submissions.grace_credits_used') + "',
+        sortable: true,
+        compare: compare_numeric_values,
+        searchable: false
+      },"
+    end
   end
 
   def populate_submissions_table

@@ -43,13 +43,7 @@
             sortable: true,
             searchable: false
           },
-          {
-            id: 'grace_credits_used',
-            content: '<%= j raw I18n.t(:'browse_submissions.grace_credits_used') %>',
-            sortable: true,
-            compare: compare_numeric_values,
-            searchable: false
-          },
+          <%= raw @grace_credit_column %>
           {
             id: 'tags',
             content: <ul className='tag_list' dangerouslySetInnerHTML={{__html: '<li>' +
