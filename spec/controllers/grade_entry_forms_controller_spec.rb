@@ -75,7 +75,7 @@ describe GradeEntryFormsController do
     it 'does not accept csv file with an invalid username' do
       post :csv_upload,
            id: grade_entry_form_with_data,
-      upload: { grades_file: @file_invalid_username }
+           upload: { grades_file: @file_invalid_username }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       with = (grade_entry_form_with_data.id + 1).to_s
@@ -105,7 +105,7 @@ describe GradeEntryFormsController do
       with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
         csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
-                                            with: with,locale: 'en'))
+                                            with: with, locale: 'en'))
     end
 
     it 'does not accept a csv file corrupt line endings' do
