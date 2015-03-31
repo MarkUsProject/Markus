@@ -50,3 +50,8 @@ lib/repo/test/svn_repos/svn_authz
 
 #Ignore files for Vagrant instance
 .vagrant
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

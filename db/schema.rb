@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                        :default => false
-    t.boolean  "only_required_files",              :default => false
+    t.boolean  "only_required_files"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
