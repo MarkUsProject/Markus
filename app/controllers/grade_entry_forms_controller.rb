@@ -404,6 +404,16 @@ class GradeEntryFormsController < ApplicationController
         abort_upload = true
         flash[:error] = "You did not upload a .csv file."
       end
+      # Replace non-UNIX line endings with standard CR+LF style
+      if (reader = File.read(params[:upload][:grades_file].path.to_s,
+                             mode: 'rb'))
+        replaced_newlines = reader.gsub!(/\r\n?|\n/, "\r\n")
+        unless replaced_newlines == nil
+          File.open(params[:upload][:grades_file].path.to_s, 'wb') do |f|
+            f.write(replaced_newlines + "\r\n")
+          end
+        end
+      end
     end
 
     #If the request is a post type and the abort flag is down (operation can continue)
