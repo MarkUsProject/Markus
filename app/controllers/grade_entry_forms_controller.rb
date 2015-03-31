@@ -107,7 +107,8 @@ class GradeEntryFormsController < ApplicationController
   def destroy
     @grade_entry_form = GradeEntryForm.find(params[:id])
     @grade_entry_form.destroy
-    redirect_to grades_grade_entry_form_path(params[:original], cancel_notice: 'cancel')
+    redirect_to grades_grade_entry_form_path(params[:original],
+                                             cancel_notice: 'cancel')
   end
 
   # View/modify the grades for this grade entry form
@@ -433,25 +434,26 @@ class GradeEntryFormsController < ApplicationController
           grade_entry_items =
             GradeEntryItem.where(grade_entry_form_id: @grade_entry_form.id)
           lines = File.foreach(params[:upload][:grades_file].path.to_s).first(2)
-          uploaded_column_names =  lines[0].split(',').map(&:strip)
+          uploaded_column_names = lines[0].split(',').map(&:strip)
           uploaded_grade_totals = lines[1].split(',').map(&:strip)
           # Starting with index 1 as we wish to skip the first empty csv cell
           count = 1
           grade_entry_items.each do |original|
             unless uploaded_column_names[count] == original.name &&
-              uploaded_grade_totals[count] == original.out_of.to_i.to_s
+                   uploaded_grade_totals[count] == original.out_of.to_i.to_s
               matching_names = false
             end
-            count=count+1
+            count = count + 1
           end
         end
         if !matching_names
           cloned_gef = @grade_entry_form.dup
-          cloned_gef.short_identifier = cloned_gef.short_identifier + '_cloned_' + Time.now.to_s
+          cloned_gef.short_identifier =
+            cloned_gef.short_identifier + '_cloned_' + Time.now.to_s
           cloned_gef.save!
           @grade_entry_form = cloned_gef
         end
-        rescue ArgumentError
+      rescue ArgumentError
         flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
     end
@@ -480,7 +482,9 @@ class GradeEntryFormsController < ApplicationController
       end
     end
     if !matching_names && params[:id].to_s != @grade_entry_form.id.to_s
-      redirect_to csv_overwrite_grade_entry_form_path(params[:id], with: @grade_entry_form.id)
+      redirect_to csv_overwrite_grade_entry_form_path(params[:id],
+                                                      with:
+                                                      @grade_entry_form.id)
     else
       redirect_to action: 'grades', id: @grade_entry_form.id
     end
@@ -490,17 +494,17 @@ class GradeEntryFormsController < ApplicationController
     @original_gef = GradeEntryForm.find(params[:id])
     @replacement_gef = GradeEntryForm.find(params[:with])
     if request.post?
-       @replacement_gef.short_identifier = @original_gef.short_identifier
-       GradeEntryForm.transaction do
-         @original_gef.grade_entry_items.destroy_all
-         @replacement_gef.grade_entry_items.each do |gei|
-           gei.grade_entry_form = @original_gef
-           gei.save
-         end
-         @replacement_gef.reload.destroy
-       end
-       flash[:notice] = t('grade_entry_forms.overwrite.ok')
-       redirect_to action: 'grades', id: @original_gef
+      @replacement_gef.short_identifier = @original_gef.short_identifier
+      GradeEntryForm.transaction do
+        @original_gef.grade_entry_items.destroy_all
+        @replacement_gef.grade_entry_items.each do |gei|
+          gei.grade_entry_form = @original_gef
+          gei.save
+        end
+        @replacement_gef.reload.destroy
+      end
+      flash[:notice] = t('grade_entry_forms.overwrite.ok')
+      redirect_to action: 'grades', id: @original_gef
     end
   end
 
