@@ -1,0 +1,160 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+  // This file contains the main MarksGradersManager component
+
+
+  var MarksGradersManager = React.createClass({
+    getInitialState: function() {
+      return {
+        error: null,
+        current_table: 'groups_table',
+        students: [],
+        graders: [],
+        graders_for_students: [],
+        sections: [],
+        selected_students: [],
+        selected_graders: [],
+        selected_graders_for_students: []
+      }
+    },
+    updateCurrentTable: function(table) {
+      this.setState({current_table: table});
+    },
+    updateSelectedStudents: function(students) {
+      this.setState({selected_students: students});
+    },
+    updateSelectedGraders: function(graders) {
+      this.setState({selected_graders: graders});
+    },
+    updateSelectedGradersForStudents: function(graders) {
+      this.setState({selected_graders_for_students: graders});
+    },
+    setError: function(error_msg) {
+      this.setState({error: error_msg});
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+
+      jQuery.ajax({
+        url: '<%= populate_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
+        method: 'POST',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            students: data,
+            graders_for_students: [].concat.apply([], data.map(function(student){
+              return student.graders;
+            })),
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        },
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+
+      document.getElementById('working').style.display = '';
+      jQuery.ajax({
+        url: '<%= populate_graders_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
+        method: 'POST',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            graders: data,
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        },
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+    render: function() {
+      var to_render = [];
+      to_render.push(<GradersTable
+        graders={this.state.graders}
+        selected_graders={this.state.selected_graders}
+        onSelectedGradersChange={this.updateSelectedGraders} />);
+        to_render.push(<MarksGradersActions
+        refresh={this.refresh}
+        current_table={this.state.current_table}
+        selected_graders={this.state.selected_graders}
+        selected_students={this.state.selected_students}
+        selected_graders_for_students={this.state.selected_graders_for_students}
+        updateSelectedGraders={this.updateSelectedGraders}
+        updateSelectedStudents={this.updateSelectedStudents}
+        updateSelectedGradersForStudents={this.updateSelectedGradersForStudents}
+        setError={this.setError} />);
+
+      to_render.push(<StudentsTableManager
+        students={this.state.students}
+        graders_for_students={this.state.graders_for_students}
+        selected_students={this.state.selected_students}
+        onSelectedStudentsChange={this.updateSelectedStudents}
+        selected_graders={this.state.selected_graders}
+        onSelectedGradersChange={this.updateSelectedgraders}
+        selected_graders_for_students={this.state.selected_graders_for_students}
+        onSelectedGradersForStudentsChange={this.updateSelectedGradersForStudents}
+        sections={this.state.sections}
+        refresh={this.refresh}
+        current_table={this.state.current_table}
+        onTableChange={this.updateCurrentTable} />);
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <div className='columns'>{to_render}</div>
+        </div>
+      );
+    }
+  });
+
+  var StudentsTableManager = React.createClass({
+    propTypes: {
+      studuents: React.PropTypes.array,
+      graders_for_students: React.PropTypes.array,
+      selected_students: React.PropTypes.array,
+      onSelectedStudentsChange: React.PropTypes.func,
+      selected_graders: React.PropTypes.array,
+      onSelectedGradersChange: React.PropTypes.func,
+      selected_graders_for_students: React.PropTypes.array,
+      onSelectedGradersForStudentsChange: React.PropTypes.func,
+      sections: React.PropTypes.array,
+      refresh: React.PropTypes.func,
+      current_table: React.PropTypes.string,
+      onTableChange: React.PropTypes.func
+    },
+    render: function() {
+      return (
+        <div className={'col-right'}>
+          <StudentsTable
+            students={this.props.students}
+            selected_students={this.props.selected_students}
+            onSelectedStudentsChange={this.props.onSelectedStudentsChange}
+            graders_for_students={this.props.graders_for_students}
+            selected_graders_for_students={this.props.selected_graders_for_students}
+            onSelectedGradersForStudentsChange={this.props.onSelectedGradersForStudentsChange}
+            sections={this.props.sections}
+            refresh={this.props.refresh}
+          />
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<MarksGradersManager/>, document.getElementById('marks_graders_manager'));
+</script>
