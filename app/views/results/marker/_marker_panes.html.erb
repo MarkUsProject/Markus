@@ -130,8 +130,9 @@
               <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
               </p>
               <p>
-                <textarea id='new_annotation_content' onkeyup="updateAnnotationPreview()"></textarea>
+                <textarea id='new_annotation_content' onkeyup="hideAnnotationPreview()"></textarea>
               </p>
+              <button onclick="updateAnnotationPreview()"><%= t('marker.annotation.preview') %></button>
 
               <p style="float:left;">
               <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
