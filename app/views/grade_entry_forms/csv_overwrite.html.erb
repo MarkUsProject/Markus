@@ -1,0 +1,8 @@
+<div class='title_bar'>
+  <h1><%= t('grade_entry_forms.overwrite.title') + ' ' + @original_gef.short_identifier %></h1>
+</div>
+<p><%= t('grade_entry_forms.overwrite.overwrite_message')%></p>
+<%= button_to "OK", { action: "csv_overwrite", id: @original_gef.id, with: @replacement_gef.id },
+                                method: :post %> 
+<%= button_to "Cancel", { action: "destroy", id: @replacement_gef.id, original: @original_gef.id },
+                                method: :delete %> 

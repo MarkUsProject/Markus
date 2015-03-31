@@ -498,6 +498,11 @@ en:
         title: "Edit Marks Spreadsheet:"
         success: "Successfully updated marks spreadsheet"
         submit: "Update Marks Spreadsheet"
+      overwrite:
+        title: "Overwrite Marks Spreadsheet:"
+        overwrite_message: "You are about to overwrite the original template with the newly uploaded csv file. This action will result in changing the column names and/or the grade totals. Do you wish to proceed?"
+        ok: "Changes were overwritten with new fields."
+        cancel: "No changes were made."
       grades:
         title: "Manage Marks Spreadsheet:"
         student_title: "Marks:"

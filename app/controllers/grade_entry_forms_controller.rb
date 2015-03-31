@@ -12,12 +12,16 @@ class GradeEntryFormsController < ApplicationController
                          :g_table_paginate,
                          :csv_download,
                          :csv_upload,
+                         :csv_overwrite,
+                         :destroy,
                          :update_grade]
   before_filter :authorize_for_ta_and_admin,
                 only: [:grades,
                        :g_table_paginate,
                        :csv_download,
                        :csv_upload,
+                       :csv_overwrite,
+                       :destroy,
                        :update_grade]
   before_filter :authorize_for_student,
                 only: [:student_interface,
@@ -100,13 +104,22 @@ class GradeEntryFormsController < ApplicationController
     end
   end
 
+  def destroy
+    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @grade_entry_form.destroy
+    redirect_to grades_grade_entry_form_path(params[:original], cancel_notice: 'cancel')
+  end
+
   # View/modify the grades for this grade entry form
   def grades
     @grade_entry_form = GradeEntryForm.find(params[:id])
     @filter = 'none'
 
     @current_page = 1
-
+    # Did the user cancel oerwrite csv operation?
+    if params[:cancel_notice]
+      flash[:notice] = t('grade_entry_forms.overwrite.cancel')
+    end
     # The cookies are handled here
     c_per_page = cookie_per_page_name
     if params[:per_page].present?
@@ -386,13 +399,11 @@ class GradeEntryFormsController < ApplicationController
   def csv_upload
 
     @grade_entry_form = GradeEntryForm.find(params[:id])
-
     encoding = params[:encoding]
     upload = params[:upload]
 
     #flag to check whether upload should continue. True if upload should be aborted
     abort_upload = false
-
     #Did the user upload a file?
     if upload.blank?
       flash[:error] = "No file selected!"
@@ -414,8 +425,36 @@ class GradeEntryFormsController < ApplicationController
           end
         end
       end
+      # Display a warning message if the newly uploaded file
+      #      overrides existing collumn names and/or grade totals
+      matching_names = true
+      begin
+        if !abort_upload
+          grade_entry_items =
+            GradeEntryItem.where(grade_entry_form_id: @grade_entry_form.id)
+          lines = File.foreach(params[:upload][:grades_file].path.to_s).first(2)
+          uploaded_column_names =  lines[0].split(',').map(&:strip)
+          uploaded_grade_totals = lines[1].split(',').map(&:strip)
+          # Starting with index 1 as we wish to skip the first empty csv cell
+          count = 1
+          grade_entry_items.each do |original|
+            unless uploaded_column_names[count] == original.name &&
+              uploaded_grade_totals[count] == original.out_of.to_i.to_s
+              matching_names = false
+            end
+            count=count+1
+          end
+        end
+        if !matching_names
+          cloned_gef = @grade_entry_form.dup
+          cloned_gef.short_identifier = cloned_gef.short_identifier + '_cloned_' + Time.now.to_s
+          cloned_gef.save!
+          @grade_entry_form = cloned_gef
+        end
+        rescue ArgumentError
+        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+      end
     end
-
     #If the request is a post type and the abort flag is down (operation can continue)
     if request.post? && !abort_upload
       grades_file = params[:upload][:grades_file]
@@ -440,7 +479,29 @@ class GradeEntryFormsController < ApplicationController
         flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
     end
-    redirect_to action: 'grades', id: @grade_entry_form.id
+    if !matching_names && params[:id].to_s != @grade_entry_form.id.to_s
+      redirect_to csv_overwrite_grade_entry_form_path(params[:id], with: @grade_entry_form.id)
+    else
+      redirect_to action: 'grades', id: @grade_entry_form.id
+    end
+  end
+
+  def csv_overwrite
+    @original_gef = GradeEntryForm.find(params[:id])
+    @replacement_gef = GradeEntryForm.find(params[:with])
+    if request.post?
+       @replacement_gef.short_identifier = @original_gef.short_identifier
+       GradeEntryForm.transaction do
+         @original_gef.grade_entry_items.destroy_all
+         @replacement_gef.grade_entry_items.each do |gei|
+           gei.grade_entry_form = @original_gef
+           gei.save
+         end
+         @replacement_gef.reload.destroy
+       end
+       flash[:notice] = t('grade_entry_forms.overwrite.ok')
+       redirect_to action: 'grades', id: @original_gef
+    end
   end
 
   private
