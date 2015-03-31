@@ -303,7 +303,7 @@ class AssignmentsController < ApplicationController
     assignments = Assignment.all(order: 'id')
     students = Student.all
     csv_string = CSV.generate do |csv|
-      header = ['Username']
+      header = ['Student Username']
       assignments.each do |assignment|
         header.push(assignment.short_identifier)
       end

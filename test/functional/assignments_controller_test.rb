@@ -420,8 +420,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         csv_rows = CSV.parse(response_csv)
         assert_equal Student.all.size, csv_rows.size
         assignments = Assignment.all(:order => 'id')
-        csv_rows.each_with_index do |csv_row, i|
-          next if i == 0 
+        csv_rows.each do |csv_row|
           student_name = csv_row.shift
           student = Student.find_by_user_name(student_name)
           assert_not_nil student
