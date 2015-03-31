@@ -54,7 +54,7 @@ describe GradeEntryFormsController do
            upload: { grades_file: @file_good }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      with = (grade_entry_form_with_data.id+1).to_s
+      with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
         csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
                                             with: with, locale: 'en'))
@@ -66,19 +66,19 @@ describe GradeEntryFormsController do
            upload: { grades_file: @file_extra_column }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      with = (grade_entry_form_with_data.id+1).to_s
+      with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
         csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
                                             with: with, locale: 'en'))
     end
-    
+
     it 'does not accept csv file with an invalid username' do
       post :csv_upload,
-      id: grade_entry_form_with_data,
+           id: grade_entry_form_with_data,
       upload: { grades_file: @file_invalid_username }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
-      with = (grade_entry_form_with_data.id+1).to_s
+      with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
         csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
                                             with: with, locale: 'en'))
@@ -90,7 +90,7 @@ describe GradeEntryFormsController do
            upload: { grades_file: @file_different_column_name }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      with = (grade_entry_form_with_data.id+1).to_s
+      with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
         csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
                                             with: with, locale: 'en'))
@@ -102,7 +102,7 @@ describe GradeEntryFormsController do
            upload: { grades_file: @file_different_total }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      with = (grade_entry_form_with_data.id+1).to_s
+      with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
         csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
                                             with: with,locale: 'en'))
