@@ -1,22 +1,22 @@
 <h1>Your Key Pairs</h1>
 
+<br>
+
 <table>
   <tr>
-    <th>User name</th>
-    <th>File name</th>
-    <th></th>
-    <th></th>
+    <th>Time of upload</th>
+    <th>Key Content</th>
     <th></th>
   </tr>
 
-<% @key_pairs.each do |key_pair| %>
+
+<% @key_pairs.each do |key_pair, key_string| %>
   <tr>
-    <td><%= key_pair.user_name %></td>
-    <td><%= key_pair.file_name %></td>
-    <td><%= link_to 'Show', key_pair %></td>
-    <td><%= link_to 'Edit', edit_key_pair_path(key_pair) %></td>
-    <td><%= link_to 'Destroy', key_pair, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <td><%= key_pair.created_at %></td>
+    <td><textarea cols="55" rows="10"><%= key_string %></textarea></td>
+    <td><%= link_to 'Remove Key', key_pair, method: :delete, data: { confirm: 'Are you sure?' } %></td>
   </tr>
+
 <% end %>
 </table>
 

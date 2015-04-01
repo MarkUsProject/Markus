@@ -5,11 +5,24 @@ class KeyPairsController < ApplicationController
     # Grab the own user's keys only
     @key_pairs = KeyPair.where("user_id = ?", @current_user.id)
 
+    # todo: Need to make an array with KeyPair -> String values to be displayed in view
+    @key_strings = Array.new
+
+    @key_pairs.each do |keypair|
+      # Read the key
+      key = File.open(KEY_STORAGE + '/' + keypair.file_name)
+      @key_strings.push key.read
+    end
+
+    @key_pairs = @key_pairs.zip @key_strings
+
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @key_pairs }
+      format.json { render json => {:key_pairs => @key_pairs}}
     end
   end
+
+
 
   # GET /key_pairs/1
   # GET /key_pairs/1.json
