@@ -169,7 +169,7 @@ class KeyPairsController < ApplicationController
     respond_to do |format|
       if @key_pair.save
         format.html do
-          redirect_to @key_pair,
+          redirect_to key_pairs_path,
                       notice: 'Key pair was successfully created.'
         end
         format.json do
