@@ -118,6 +118,33 @@ class KeyPairsController < ApplicationController
 
   end
 
+  # Deletes a specific public key from a specific user.
+  def remove_key(_path)
+
+    #gitolite admin repo - these keys are for the repo-admin user - aka git on my machine
+    settings = { :public_key => '/home/git/.ssh/id_rsa.pub', :private_key => '/home/git/.ssh/id_rsa' }
+    ga_repo = Gitolite::GitoliteAdmin.new(REPOSITORY_STORAGE + '/gitolite-admin', settings)
+    # The admin repo is loaded into memory
+    conf = ga_repo.config
+
+    # Check to see if an individual repo exists for this user
+    #if conf.has_repo?(_username)
+    key = Gitolite::SSHKey.from_file(_path)
+
+    ga_repo.rm_key(key)
+
+    # todo: make a constant for the admin key - readd admin key
+    adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+    ga_repo.add_key(adminKey)
+
+    # update Gitolite repo
+    #ga_repo.save_and_apply
+
+    ga_repo.save
+    ga_repo.apply
+
+  end
+
   # POST /key_pairs
   # POST /key_pairs.json
   def create
@@ -185,7 +212,12 @@ class KeyPairsController < ApplicationController
   # DELETE /key_pairs/1
   # DELETE /key_pairs/1.json
   def destroy
+
     @key_pair = KeyPair.find(params[:id])
+
+
+    remove_key(KEY_STORAGE + '/' + @key_pair.file_name)
+
     @key_pair.destroy
 
     respond_to do |format|
