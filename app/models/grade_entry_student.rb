@@ -152,7 +152,7 @@ class GradeEntryStudent < ActiveRecord::Base
         end
 
       else
-        if old_grade.nil? && 
+        if old_grade.nil? &&
            (grade_for_grade_entry_item || !grade_for_grade_entry_item.empty?)
 
           grade = grade_entry_student.grades

@@ -417,7 +417,7 @@ class GradeEntryFormsController < ApplicationController
       end
     end
 
-    # If the request is a post type and the abort flag is down 
+    # If the request is a post type and the abort flag is down
     # (operation can continue)
     if request.post? && !abort_upload
       grades_file = params[:upload][:grades_file]
