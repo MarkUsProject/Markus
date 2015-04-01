@@ -491,6 +491,7 @@ fr:
         no_results: "Il n'y a pas encore de résultats pour cette feuille de notes."
         detailed_marks_message: "Les notes détaillées sont disponibles."
       csv:
+        overwrite: "Remplacer les notes existantes?"
         incomplete_header: "Totaux ou noms manquants."
         incomplete_row: "Ne contient pas assez d'informations."
         invalid_user_name: "Nom d'utilisateur invalide."

@@ -389,6 +389,7 @@ class GradeEntryFormsController < ApplicationController
 
     encoding = params[:encoding]
     upload = params[:upload]
+    overwrite = params[:overwrite]
 
     #flag to check whether upload should continue. True if upload should be aborted
     abort_upload = false
@@ -416,7 +417,7 @@ class GradeEntryFormsController < ApplicationController
       end
     end
 
-    #If the request is a post type and the abort flag is down (operation can continue)
+    # If the request is a post type and the abort flag is down (operation can continue)
     if request.post? && !abort_upload
       grades_file = params[:upload][:grades_file]
       begin
@@ -425,7 +426,7 @@ class GradeEntryFormsController < ApplicationController
           num_updates = GradeEntryForm.parse_csv(grades_file,
                                                  @grade_entry_form,
                                                  invalid_lines,
-                                                 encoding)
+                                                 encoding, overwrite)
           unless invalid_lines.empty?
             flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
           end

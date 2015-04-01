@@ -516,6 +516,7 @@ en:
         no_results: "There are no marks available yet."
         detailed_marks_message: "Detailed marks are available."
       csv:
+        overwrite: "Overwrite existing grades?"
         incomplete_header: "Incomplete grade entry item names or totals."
         incomplete_row: "Contains too little information."
         invalid_user_name: "Invalid user name."
