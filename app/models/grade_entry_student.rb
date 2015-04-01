@@ -111,7 +111,8 @@ class GradeEntryStudent < ActiveRecord::Base
   # username,q1mark,q2mark,...,
   # create or update the GradeEntryStudent and Grade objects that
   # correspond to the student
-  def self.create_or_update_from_csv_row(row, grade_entry_form, grade_entry_items, names, overwrite)
+  def self.create_or_update_from_csv_row(row, grade_entry_form,
+                                         grade_entry_items, names, overwrite)
     working_row = row.clone
     user_name = working_row.shift
 
@@ -130,29 +131,32 @@ class GradeEntryStudent < ActiveRecord::Base
       grade_entry_item = grade_entry_items.where(name: grade_entry_name).first
 
       # Don't add empty grades and remove grades that did exist but are now empty
-      old_grade =
-        grade_entry_student.grades
-                           .where(grade_entry_item_id: grade_entry_item.id)
-                           .first
+      old_grade = grade_entry_student.grades
+                  .where(grade_entry_item_id: grade_entry_item.id)
+                  .first
 
       if overwrite
-          if !grade_for_grade_entry_item || grade_for_grade_entry_item.empty?
-            
-            unless old_grade.nil?
-              old_grade.destroy
-            end
-          else
-            grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(grade_entry_item.id)
-            grade.grade = grade_for_grade_entry_item
+        if !grade_for_grade_entry_item || grade_for_grade_entry_item.empty?
 
-            unless grade.save
-              raise RuntimeError.new(grade.errors)
-            end
+          unless old_grade.nil?
+            old_grade.destroy
           end
-      else
-        if old_grade.nil? && (grade_for_grade_entry_item || !grade_for_grade_entry_item.empty?)
+        else
+          grade = grade_entry_student.grades
+                  .find_or_create_by_grade_entry_item_id(grade_entry_item.id)
+          grade.grade = grade_for_grade_entry_item
 
-          grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(grade_entry_item.id)
+          unless grade.save
+            raise RuntimeError.new(grade.errors)
+          end
+        end
+
+      else
+        if old_grade.nil? && 
+           (grade_for_grade_entry_item || !grade_for_grade_entry_item.empty?)
+
+          grade = grade_entry_student.grades
+                  .find_or_create_by_grade_entry_item_id(grade_entry_item.id)
           grade.grade = grade_for_grade_entry_item
 
           unless grade.save
