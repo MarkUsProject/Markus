@@ -91,9 +91,6 @@ module SubmissionsHelper
             grouping.current_submission_used.get_latest_result))
       end
 
-      group_name += ' ('
-      group_name += grouping.accepted_students.collect{ |student| student.user_name}.join(', ')
-      group_name += ')'
       return group_name
   end
 
