@@ -31,10 +31,9 @@ module SubmissionsHelper
 
   def get_submissions_table_info(assignment, groupings)
     groupings.map do |grouping|
+
       g = grouping.attributes
-      g[:class_name] = get_any_tr_attributes(grouping)
       g[:group_name] = get_grouping_group_name(assignment, grouping)
-      g[:repository] = get_grouping_repository(assignment, grouping)
       begin
         g[:commit_date] = get_grouping_commit_date(grouping)
       rescue NoMethodError
@@ -42,12 +41,20 @@ module SubmissionsHelper
       rescue RuntimeError
         g[:commit_date] = I18n.t('group_repo_missing')
       end
-      g[:marking_state] = get_grouping_marking_state(assignment, grouping)
-      g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
-      g[:final_grade] = get_grouping_final_grades(grouping)
-      g[:state] = get_grouping_state(grouping)
-      g[:section] = get_grouping_section(grouping)
-      g[:tags] = get_grouping_tags(grouping)
+      begin # if any thing raises an error, catch it and log in the object.
+        g[:class_name] = get_any_tr_attributes(grouping)
+        g[:repository] = get_grouping_repository(assignment, grouping)
+        g[:marking_state] = get_grouping_marking_state(assignment, grouping)
+        g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
+        g[:final_grade] = get_grouping_final_grades(grouping)
+        g[:state] = get_grouping_state(grouping)
+        g[:section] = get_grouping_section(grouping)
+        g[:tags] = get_grouping_tags(grouping)
+      rescue
+        g[:error] = true
+      else
+        g[:error] = false
+      end
       g
     end
   end
