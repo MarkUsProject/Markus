@@ -168,7 +168,7 @@ class Grouping < ActiveRecord::Base
 
   def get_group_name
     name = group.group_name
-    if accepted_students.size > 1 then
+    unless accepted_students.size == 1 && name == accepted_students.first.user_name then
       name += ' ('
       name += accepted_students.collect{ |student| student.user_name}.join(', ')
       name += ')'
