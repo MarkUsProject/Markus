@@ -74,26 +74,23 @@ module SubmissionsHelper
     group_name = ''
       if !grouping.has_submission?
         if assignment.submission_rule.can_collect_grouping_now?(grouping)
-          group_name = view_context.link_to(grouping.group.group_name,
+          group_name = view_context.link_to(grouping.get_group_name,
             collect_and_begin_grading_assignment_submission_path(
               assignment.id, grouping.id))
         else
-          group_name = grouping.group.group_name
+          group_name = grouping.get_group_name
         end
       elsif !grouping.is_collected
-        group_name = view_context.link_to(grouping.group.group_name,
+        group_name = view_context.link_to(grouping.get_group_name,
           collect_and_begin_grading_assignment_submission_path(
             assignment.id, grouping.id))
       else
-        group_name = view_context.link_to(grouping.group.group_name,
+        group_name = view_context.link_to(grouping.get_group_name,
           edit_assignment_submission_result_path(
             assignment.id, grouping.current_submission_used.id,
             grouping.current_submission_used.get_latest_result))
       end
 
-      group_name += ' ('
-      group_name += grouping.accepted_students.collect{ |student| student.user_name}.join(', ')
-      group_name += ')'
       return group_name
   end
 
