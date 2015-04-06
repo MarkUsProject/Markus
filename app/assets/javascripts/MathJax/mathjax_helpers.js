@@ -22,18 +22,12 @@ function showAnnotationPreview() {
     dialog.css('margin-left', -1 * dialog.width() / 2);
 }
 
-function setPreviewMaxWidth() {
-    jQuery('#annotation_preview')
-        .css('max-width', jQuery('#annotation_preview_title').width());
-}
-
 function updateAnnotationPreview() {
     var newAnnotation = document.getElementById('new_annotation_content').value;
 
     var preview = document.getElementById('annotation_preview');
     preview.innerHTML = newAnnotation;
 
-    setPreviewMaxWidth();
     showAnnotationPreview();
 
     // typeset the preview
