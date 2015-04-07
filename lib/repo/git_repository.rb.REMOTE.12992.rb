@@ -473,15 +473,9 @@ module Repository
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
-<<<<<<< HEAD
-      ga_repo =
-          Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE])
-      repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
-=======
         # Sync the admin repo
         ga_repo.update
         repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
->>>>>>> gitolite-rebase
 
         # Gets permissions of a particular user
         repo.permissions[0].each do |perm|
@@ -489,13 +483,8 @@ module Repository
             return self.class.__translate_perms_from_file(perm[0])
           end
         end
-<<<<<<< HEAD
-      end
-      raise UserNotFound.new(user_id + " not found")
-=======
 
         raise UserNotFound.new(user_id + " not found")
->>>>>>> gitolite-rebase
 
       else
         raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
@@ -548,12 +537,10 @@ module Repository
 
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
-
         ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
         # Sync gitolite admin repo
         ga_repo.update
-
         repo_name = self.get_repos.workdir.split('/').last
 
         # Grab the repo from gitolite

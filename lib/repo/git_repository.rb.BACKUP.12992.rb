@@ -548,12 +548,15 @@ module Repository
 
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
-
+<<<<<<< HEAD
+        ga_repo =
+            Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE])
+=======
         ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
         # Sync gitolite admin repo
         ga_repo.update
-
+>>>>>>> gitolite-rebase
         repo_name = self.get_repos.workdir.split('/').last
 
         # Grab the repo from gitolite

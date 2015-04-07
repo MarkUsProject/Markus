@@ -22,8 +22,10 @@ gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
 gem 'prototype-rails' # FIXME: Will be needed with Rails3.1
-gem 'rugged'
+gem 'rugged', '~> 0.21.4'
 gem 'gitolite'
+gem 'gitolite-rugged'
+gem 'git'
 gem 'activerecord-import'
 gem 'strong_parameters' # NOTE: this goes away when upgrading to Rails4
 
