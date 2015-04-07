@@ -118,6 +118,11 @@ Markus::Application.configure do
   PDF_STORAGE = "#{::Rails.root.to_s}/data/test/pdfs"
 
   ###################################################################
+  # Location of the public and private key for the git user on the system
+  GITOLITE_SETTINGS = { :public_key => '/home/git/git.pub',
+                        :private_key => '/home/git/.ssh/id_rsa' }
+  
+  ###################################################################
   # Directory where the Automated Testing Repositories will be created.
   # Make sure MarkUs is allowed to write to this directory
   AUTOMATED_TESTS_REPOSITORY = "#{::Rails.root.to_s}/data/test/automated_tests"
