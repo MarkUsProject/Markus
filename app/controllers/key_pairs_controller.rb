@@ -1,11 +1,11 @@
 class KeyPairsController < ApplicationController
+
   # GET /key_pairs
   # GET /key_pairs.json
   def index
     # Grab the own user's keys only
     @key_pairs = KeyPair.where("user_id = ?", @current_user.id)
 
-    # todo: Need to make an array with KeyPair -> String values to be displayed in view
     @key_strings = Array.new
 
     @key_pairs.each do |keypair|
@@ -21,7 +21,6 @@ class KeyPairsController < ApplicationController
       format.json { render json => {:key_pairs => @key_pairs}}
     end
   end
-
 
 
   # GET /key_pairs/1
@@ -71,22 +70,6 @@ class KeyPairsController < ApplicationController
       f.write(public_key_content)
     end
 
-    # todo: check current user to see if they have permission to
-    # use a different user_name then their current one (admins)
-
-
-    # Perform student key update in isolation from admins
-
-    #$stderr.puts Membership.all(:joins => 'INNER JOIN groupings ON memberships.grouping_id = groupings.group_id AND memberships.user_id = ' + String(@current_user.id))
-    #$stderr.puts Membership.all(:joins => 'INNER JOIN groupings ON memberships.grouping_id = groupings.group_id AND memberships.user_id = ' + String(@current_user.id) + ' INNER JOIN groups ON group_id = groups.id')
-    # todo: get rid of all - optimize
-    #@groups = Membership.where("membership_status != 'pending'").all(:joins => 'INNER JOIN groupings ON memberships.grouping_id = groupings.group_id AND memberships.user_id = ' + String(@current_user.id) + ' INNER JOIN groups ON group_id = groups.id')
-
-    #$stderr.puts @temp.all(:joins => 'INNER JOIN groups ON group_id = groups.id')
-
-    # uniqueness
-    #@groups = @groups.uniq{|x| x.grouping.group.group_name}
-
     add_key(KEY_STORAGE + '/' + user_name + "@" + time_stamp + '.pub')
 
   end
@@ -101,20 +84,15 @@ class KeyPairsController < ApplicationController
     conf = ga_repo.config
 
     # Check to see if an individual repo exists for this user
-    #if conf.has_repo?(_username)
     key = Gitolite::SSHKey.from_file(_path)
 
     ga_repo.add_key(key)
 
-    # todo: make a constant for the admin key - readd admin key
-    adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+    adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
     ga_repo.add_key(adminKey)
 
     # update Gitolite repo
-    #ga_repo.save_and_apply
-
-    ga_repo.save
-    ga_repo.apply
+    ga_repo.save_and_apply
 
   end
 
@@ -134,15 +112,11 @@ class KeyPairsController < ApplicationController
     ga_repo.rm_key(key)
 
     # todo: make a constant for the admin key - readd admin key
-    adminKey = Gitolite::SSHKey.from_file("/home/git/git.pub")
+    adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
     ga_repo.add_key(adminKey)
 
     # update Gitolite repo
-    #ga_repo.save_and_apply
-
-    ga_repo.save
-    ga_repo.apply
-
+    ga_repo.save_and_apply
   end
 
   # POST /key_pairs
