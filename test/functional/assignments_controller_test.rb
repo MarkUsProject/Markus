@@ -418,7 +418,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         student = Student.make
         response_csv = get_as(@admin, :download_csv_grades_report).body
         csv_rows = CSV.parse(response_csv)
-        assert_equal Student.all.size + 1, csv_rows.size #for header
+        assert_equal Student.all.size + 1, csv_rows.size # for header
         assignments = Assignment.all(:order => 'id')
         header = ['Username']
         assignments.each do |assignment|
