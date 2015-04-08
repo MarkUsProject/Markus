@@ -87,8 +87,8 @@ module Repository
       # Grab the repo in question, if it does not exist, create it
       repo = ga_repo.config.get_repo(repo_name)
       if repo.nil?
-          # Generate new repo since this repo hasn't been created yet
-          repo = Gitolite::Config::Repo.new(repo_name)
+        # Generate new repo since this repo hasn't been created yet
+        repo = Gitolite::Config::Repo.new(repo_name)
       end
 
       # Add permissions for git user
@@ -597,7 +597,7 @@ module Repository
         end
       else
         raise NotAuthorityError.new(
-                  "Unable to modify permissions: Not in authoritative mode!")
+          "Unable to modify permissions: Not in authoritative mode!")
       end
     end
 
@@ -698,7 +698,8 @@ module Repository
 
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
-        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        ga_repo = Gitolite::GitoliteAdmin.new(
+          Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
         # Sync gitolite admin repo
         ga_repo.update
@@ -707,7 +708,7 @@ module Repository
           repo_name = File.basename(repo_name)
           repo = ga_repo.config.get_repo(repo_name)
           rw_list = []
-          r_list  = []
+          r_list = []
           found = false
           if !repo.nil?
             repo.permissions[0]['RW+'][''].each do |user|
@@ -725,7 +726,7 @@ module Repository
                 found = true
               end
             end
-            if found==true
+            if found == true
               ga_repo.reload!
               ga_repo.config.rm_repo(repo)
 
