@@ -25,7 +25,6 @@ module Repository
   #   2. Existing repositories are opened by using either ???
   class GitRepository < Repository::AbstractRepository
 
-
     # Constructor: Connects to an existing Git
     # repository, using Ruby bindings; Note: A repository has to be
     # created using GitRespository.create(), it it is not yet existent
@@ -100,8 +99,7 @@ module Repository
       conf.add_repo(repo)
 
       # Readd the 'git' public key to the gitolite admin repo after changes
-      adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-      ga_repo.add_key(adminKey)
+      self.class.readd_admin_key
 
       # Stage and push the changes to the gitolite admin repo
       ga_repo.save_and_apply
@@ -159,8 +157,7 @@ module Repository
     def self.open(connect_string)
       repo = GitRepository.new(connect_string)
     end
-
-
+    
     # static method that should yeild to a git repo and then close it
     def self.access(connect_string)
       repo = self.open(connect_string)
@@ -424,8 +421,8 @@ module Repository
         git_permission = self.class.__translate_to_git_perms(permissions)
         repo.add_permission(git_permission, '', user_id)
 
-        adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-        ga_repo.add_key(adminKey)
+        # Readd the 'git' public key to the gitolite admin repo after changes
+        self.class.readd_admin_key
 
         # update Gitolite repo
         ga_repo.save_and_apply
@@ -524,8 +521,8 @@ module Repository
         repo.add_permission(git_permission, "", user_id)
         ga_repo.config.add_repo(repo)
 
-        adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-        ga_repo.add_key(adminKey)
+        # Readd the 'git' public key to the gitolite admin repo after changes
+        self.class.readd_admin_key
 
         # update Gitolite repo
         ga_repo.save_and_apply
@@ -577,13 +574,11 @@ module Repository
             end
           end
 
-          # Re-add the admin key to gitolite after perm. changes
-          adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-          ga_repo.add_key(adminKey)
+          # Readd the 'git' public key to the gitolite admin repo after changes
+          self.class.readd_admin_key
 
           # update Gitolite repo
           ga_repo.save_and_apply
-
 
           if found==true
             ga_repo.config.rm_repo(repo)
@@ -639,13 +634,12 @@ module Repository
       git_permission = GitRepository.__translate_to_git_perms(permissions)
       repo.add_permission(git_permission,'',user_id)
 
-      adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-      ga_repo.add_key(adminKey)
+      # Readd the 'git' public key to the gitolite admin repo after changes
+      self.class.readd_admin_key
 
       # update Gitolite repo
       ga_repo.save_and_apply
     end
-
 
     # Sets permissions over several repositories. Use set_permissions to set
     # permissions on a single repository.
@@ -687,8 +681,8 @@ module Repository
         conf.add_repo(repo)
       end
 
-      adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-      ga_repo.add_key(adminKey)
+      # Readd the 'git' public key to the gitolite admin repo after changes
+      self.class.readd_admin_key
 
       # update Gitolite repo
       ga_repo.save_and_apply
@@ -738,9 +732,8 @@ module Repository
             ga_repo.reload!
             ga_repo.config.rm_repo(repo)
 
-            admin_key = Gitolite::SSHKey.from_file(
-              GITOLITE_SETTINGS[:public_key])
-            ga_repo.add_key(adminKey)
+            # Readd the 'git' public key to the gitolite admin repo after changes
+            self.class.readd_admin_key
 
             # update Gitolite repo
             ga_repo.save_and_apply
@@ -791,6 +784,13 @@ module Repository
         return Repository::Permission::READ_WRITE
       else raise "Unknown permissions"
       end # end case
+    end
+
+    # Helper method to readd the Gitolite admin key after repo perm changes
+    def self.readd_admin_key
+      admin_key = Gitolite::SSHKey.from_file(
+          GITOLITE_SETTINGS[:public_key])
+      ga_repo.add_key(admin_key)
     end
 
     ####################################################################
@@ -900,9 +900,6 @@ module Repository
       end
       return true
     end
-
-
-
   end
 
   # Convenience class, so that we can work on Revisions rather
@@ -1059,7 +1056,6 @@ module Repository
     # Returns true if the path given to this function reflects an
     # actual file in the repository, false otherwise
     def path_exists?(path)
-
       # Chop the forward-slash off the end
       if path[-1] == '/'
         path = path[0..-2]
@@ -1098,8 +1094,6 @@ module Repository
     def last_modified_date()
       return self.timestamp
     end
-
-
 
     private
 
