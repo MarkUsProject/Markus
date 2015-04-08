@@ -63,7 +63,6 @@ module Repository
     # Static method: Creates a new Git repository at
     # location 'connect_string'
     def self.create(connect_string)
-
       if GitRepository.repository_exists?(connect_string)
         raise RepositoryCollision.new(
                   "There is already a repository at #{connect_string}")
@@ -121,7 +120,7 @@ module Repository
         readme.write('Initial commit.')
       end
 
-      cloned_repo.add(:all=>true)
+      cloned_repo.add(all: true)
 
       cloned_repo.commit_all('Initial commit.')
       cloned_repo.push
@@ -529,7 +528,7 @@ module Repository
 
       else
         raise NotAuthorityError.new(
-                  "Unable to modify permissions: Not in authoritative mode!")
+          'Unable to modify permissions: Not in authoritative mode!')
       end
     end
 
@@ -611,7 +610,7 @@ module Repository
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
       # Sync repo
       ga_repo.reload!
@@ -689,8 +688,8 @@ module Repository
     end
 
     def self.delete_bulk_permissions(repo_names, user_ids)
-      # Deletes permissions over several repositories. Use remove_user to
-      # remove permissions of a single repository.
+      # Deletes permissions over several repositories. Use remove_user to remove
+      # permissions of a single repository.
       # There is no user remove support from gitolite ruby library
       # Work-around:
       # - copy permissions from repo
@@ -699,8 +698,7 @@ module Repository
 
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
-        ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
         # Sync gitolite admin repo
         ga_repo.update
@@ -712,45 +710,43 @@ module Repository
           r_list  = []
           found = false
           if !repo.nil?
+            repo.permissions[0]['RW+'][''].each do |user|
+              if(!user_ids.include? user)
+                rw_list.push(user)
+              else
+                found = true
+              end
+            end
 
-          repo.permissions[0]["RW+"][""].each do |user|
-            if(!user_ids.include? user)
-              rw_list.push(user)
+            repo.permissions[0]['R'][''].each do |user|
+              if(!user_ids.include? user)
+                r_list.push(user)
+              else
+                found = true
+              end
+            end
+            if found==true
+              ga_repo.reload!
+              ga_repo.config.rm_repo(repo)
+
+              self.readd_admin_key
+
+              # update Gitolite repo
+              ga_repo.save_and_apply
+
+              rw_list.each do |user|
+                add_user(user,Repository::Permission::READ_WRITE,repo_name)
+              end
+
+              r_list.each do |user|
+                add_user(user,Repository::Permission::READ,repo_name)
+              end
             else
-              found = true
-            end
-          end
-
-          repo.permissions[0]["R"][""].each do |user|
-            if(!user_ids.include? user)
-              r_list.push(user)
-            else
-              found = true
-            end
-          end
-          if found==true
-            ga_repo.reload!
-            ga_repo.config.rm_repo(repo)
-
-            # Readd the 'git' public key to the gitolite admin repo after changes
-            self.class.readd_admin_key
-
-            # update Gitolite repo
-            ga_repo.save_and_apply
-
-            rw_list.each do |user|
-              add_user(user,Repository::Permission::READ_WRITE,repo_name)
-            end
-
-            r_list.each do |user|
-              add_user(user,Repository::Permission::READ,repo_name)
+              raise UserNotFound.new(user_id + ' not found')
             end
           else
-            raise UserNotFound.new(user_id + " not found")
+            raise UserNotFound.new(user_id + ' not found')
           end
-        else
-          raise UserNotFound.new(user_id + " not found")
-        end
         end
       else
         raise NotAuthorityError.new('Unable to modify permissions:
@@ -789,7 +785,7 @@ module Repository
     # Helper method to readd the Gitolite admin key after repo perm changes
     def self.readd_admin_key
       admin_key = Gitolite::SSHKey.from_file(
-          GITOLITE_SETTINGS[:public_key])
+        GITOLITE_SETTINGS[:public_key])
       ga_repo.add_key(admin_key)
     end
 
