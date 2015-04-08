@@ -1,5 +1,4 @@
 class KeyPairsController < ApplicationController
-
   # GET /key_pairs
   # GET /key_pairs.json
   def index
@@ -21,8 +20,7 @@ class KeyPairsController < ApplicationController
       format.json { render json => {:key_pairs => @key_pairs}}
     end
   end
-
-
+  
   # GET /key_pairs/1
   # GET /key_pairs/1.json
   def show
@@ -54,13 +52,12 @@ class KeyPairsController < ApplicationController
   # If a String is supplied as the first argument then it's content
   # is used to create the public key
   # Creates the KEY_STORAGE directory if it does not yet exist
-  def upload_key_file(_file, time_stamp)
+  def upload_key_file(isFile, _file, time_stamp)
     Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
 
     public_key_content = ''
 
-    if _file.is_a? String
-      # Dump the string into the file
+    if !isFile
       public_key_content = _file
     else
       public_key_content = _file.read
@@ -73,14 +70,12 @@ class KeyPairsController < ApplicationController
 
     add_key(KEY_STORAGE + '/' + @current_user.user_name + "@" + time_stamp +
                 '.pub')
-
   end
 
   # Adds a specific public key to a specific user.
   def add_key(_path)
-
-    ga_repo = Gitolite::GitoliteAdmin.new(REPOSITORY_STORAGE +
-                                              '/gitolite-admin', GITOLITE_SETTINGS)
+    ga_repo = Gitolite::GitoliteAdmin.new(
+        REPOSITORY_STORAGE + '/gitolite-admin', GITOLITE_SETTINGS)
 
     # Check to see if an individual repo exists for this user
     key = Gitolite::SSHKey.from_file(_path)
@@ -92,7 +87,6 @@ class KeyPairsController < ApplicationController
 
     # update Gitolite repo
     ga_repo.save_and_apply
-
   end
 
   # Deletes a specific public key from a specific user.
@@ -116,7 +110,6 @@ class KeyPairsController < ApplicationController
   # POST /key_pairs
   # POST /key_pairs.json
   def create
-
     # Used to uniquely identify key
     time_stamp = Time.now.to_i.to_s
 
@@ -124,10 +117,10 @@ class KeyPairsController < ApplicationController
     # the key string
     if !key_pair_params[:file]
       # Create a .pub file on the file system
-      upload_key_file(key_pair_params[:key_string], time_stamp)
+      upload_key_file(false, key_pair_params[:key_string], time_stamp)
     else
       # Upload the file
-      upload_key_file(key_pair_params[:file], time_stamp)
+      upload_key_file(true, key_pair_params[:file], time_stamp)
     end
 
     # Save the record
@@ -183,9 +176,7 @@ class KeyPairsController < ApplicationController
   # DELETE /key_pairs/1
   # DELETE /key_pairs/1.json
   def destroy
-
     @key_pair = KeyPair.find(params[:id])
-
 
     remove_key(KEY_STORAGE + '/' + @key_pair.file_name)
 
