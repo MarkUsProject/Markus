@@ -481,16 +481,16 @@ module Repository
 
         # Gets permissions of a particular user
         repo.permissions[0].each do |perm|
-          if (repo.permissions[0][perm[0]][''].include? user_id)
+          if repo.permissions[0][perm[0]][''].include? user_id
             return self.class.__translate_perms_from_file(perm[0])
           end
         end
 
-        raise UserNotFound.new(user_id + " not found")
+        raise UserNotFound.new(user_id + ' not found')
 
       else
         raise NotAuthorityError.new(
-          "Unable to modify permissions: Not in authoritative mode!")
+          'Unable to modify permissions: Not in authoritative mode!')
       end
     end
 
@@ -597,7 +597,7 @@ module Repository
         end
       else
         raise NotAuthorityError.new(
-          "Unable to modify permissions: Not in authoritative mode!")
+          'Unable to modify permissions: Not in authoritative mode!')
       end
     end
 
@@ -674,8 +674,8 @@ module Repository
         # Add the permissions for each user
         user_id_permissions_map.each do |user_id, permissions|
           perm_string = __translate_to_git_perms(permissions)
-          repo.add_permission(perm_string, "", user_id)
-          repo.add_permission(perm_string, "", "git") # testing
+          repo.add_permission(perm_string, '', user_id)
+          repo.add_permission(perm_string, '', 'git') # testing
         end
         conf.add_repo(repo)
       end
@@ -712,7 +712,7 @@ module Repository
           found = false
           if !repo.nil?
             repo.permissions[0]['RW+'][''].each do |user|
-              if (!user_ids.include? user)
+              if !user_ids.include? user
                 rw_list.push(user)
               else
                 found = true
@@ -720,7 +720,7 @@ module Repository
             end
 
             repo.permissions[0]['R'][''].each do |user|
-              if(!user_ids.include? user)
+              if !user_ids.include? user
                 r_list.push(user)
               else
                 found = true
@@ -924,7 +924,7 @@ module Repository
 
     def get_hash_of_revision(revision_number)
       walker = Rugged::Walker.new(@repo)
-      walker.sorting(Rugged::SORT_DATE| Rugged::SORT_REVERSE)
+      walker.sorting(Rugged::SORT_DATE | Rugged::SORT_REVERSE)
       walker.push(@repo.head.target)
       return walker.take(revision_number).last.oid
     end
