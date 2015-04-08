@@ -54,7 +54,7 @@ class KeyPairsController < ApplicationController
   # If a String is supplied as the first argument then it's content
   # is used to create the public key
   # Creates the KEY_STORAGE directory if it does not yet exist
-  def upload_key_file(_file, user_name, time_stamp)
+  def upload_key_file(_file, time_stamp)
     Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
 
     public_key_content = ''
@@ -66,22 +66,21 @@ class KeyPairsController < ApplicationController
       public_key_content = _file.read
     end
 
-    File.open(Rails.root.join(KEY_STORAGE, user_name + "@" + time_stamp + '.pub'), 'wb') do |f|
+    File.open(Rails.root.join(KEY_STORAGE, @current_user.user_name + "@" +
+                                             time_stamp + '.pub'), 'wb') do |f|
       f.write(public_key_content)
     end
 
-    add_key(KEY_STORAGE + '/' + user_name + "@" + time_stamp + '.pub')
+    add_key(KEY_STORAGE + '/' + @current_user.user_name + "@" + time_stamp +
+                '.pub')
 
   end
 
   # Adds a specific public key to a specific user.
   def add_key(_path)
 
-    #gitolite admin repo - these keys are for the repo-admin user - aka git on my machine
-    settings = { :public_key => '/home/git/.ssh/id_rsa.pub', :private_key => '/home/git/.ssh/id_rsa' }
-    ga_repo = Gitolite::GitoliteAdmin.new(REPOSITORY_STORAGE + '/gitolite-admin', settings)
-    # The admin repo is loaded into memory
-    conf = ga_repo.config
+    ga_repo = Gitolite::GitoliteAdmin.new(REPOSITORY_STORAGE +
+                                              '/gitolite-admin', GITOLITE_SETTINGS)
 
     # Check to see if an individual repo exists for this user
     key = Gitolite::SSHKey.from_file(_path)
@@ -99,19 +98,14 @@ class KeyPairsController < ApplicationController
   # Deletes a specific public key from a specific user.
   def remove_key(_path)
 
-    #gitolite admin repo - these keys are for the repo-admin user - aka git on my machine
-    settings = { :public_key => '/home/git/.ssh/id_rsa.pub', :private_key => '/home/git/.ssh/id_rsa' }
-    ga_repo = Gitolite::GitoliteAdmin.new(REPOSITORY_STORAGE + '/gitolite-admin', settings)
-    # The admin repo is loaded into memory
-    conf = ga_repo.config
+    ga_repo = Gitolite::GitoliteAdmin.new(
+        REPOSITORY_STORAGE + '/gitolite-admin', GITOLITE_SETTINGS)
 
     # Check to see if an individual repo exists for this user
-    #if conf.has_repo?(_username)
     key = Gitolite::SSHKey.from_file(_path)
 
     ga_repo.rm_key(key)
 
-    # todo: make a constant for the admin key - readd admin key
     adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
     ga_repo.add_key(adminKey)
 
@@ -126,19 +120,22 @@ class KeyPairsController < ApplicationController
     # Used to uniquely identify key
     time_stamp = Time.now.to_i.to_s
 
-    # If user uploads the public key as a file then that takes precedence over the key string
+    # If user uploads the public key as a file then that takes precedence over
+    # the key string
     if !key_pair_params[:file]
       # Create a .pub file on the file system
-      upload_key_file(key_pair_params[:key_string], @current_user.user_name, time_stamp)
+      upload_key_file(key_pair_params[:key_string], time_stamp)
     else
       # Upload the file
-      upload_key_file(key_pair_params[:file], @current_user.user_name, time_stamp)
+      upload_key_file(key_pair_params[:file], time_stamp)
     end
 
     # Save the record
     @key_pair = KeyPair.new(
-      key_pair_params.merge(user_name: @current_user.user_name, user_id: @current_user.id,
-                            file_name: @current_user.user_name + "@" + time_stamp + '.pub'))
+      key_pair_params.merge(user_name: @current_user.user_name,
+                            user_id: @current_user.id,
+                            file_name: @current_user.user_name +
+                                "@" + time_stamp + '.pub'))
 
     respond_to do |format|
       if @key_pair.save
