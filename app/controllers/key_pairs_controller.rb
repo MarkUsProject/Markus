@@ -53,7 +53,7 @@ class KeyPairsController < ApplicationController
   # is used to create the public key
   # Creates the KEY_STORAGE directory if it does not yet exist
   def upload_key_file(file_content, time_stamp)
-    create_key_directory()
+    create_key_directory
 
     write_key(file_content, time_stamp)
 

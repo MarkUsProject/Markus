@@ -75,7 +75,8 @@ module Repository
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(
-        Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin', GITOLITE_SETTINGS)
+        Repository.conf[:REPOSITORY_STORAGE] +
+          '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Bring the repo up to date
       ga_repo.reload!
@@ -93,7 +94,7 @@ module Repository
       end
 
       # Add permissions for git user
-      repo.add_permission('RW+', '', 'git') # Give 'git' user access to all repos
+      repo.add_permission('RW+', '', 'git')
 
       # Add the repo to the gitolite admin config
       conf.add_repo(repo)
@@ -396,8 +397,9 @@ module Repository
     def add_user(user_id, permissions)
 
       if @repos_admin # Are we admin?
-        # gitolite admin repo - these keys are for the repo-admin user - aka git
-        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin', GITOLITE_SETTINGS)
+        ga_repo = Gitolite::GitoliteAdmin.new(
+          Repository.conf[:REPOSITORY_STORAGE] +
+            '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync the gitolite admin repo
         ga_repo.reload!
@@ -422,7 +424,6 @@ module Repository
         git_permission = self.class.__translate_to_git_perms(permissions)
         repo.add_permission(git_permission, '', user_id)
 
-        # todo: make a constant for the admin key - readd admin key
         adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
         ga_repo.add_key(adminKey)
 
@@ -445,7 +446,8 @@ module Repository
       result_list = []
 
       # Access the gitolite admin repo
-      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+      ga_repo = Gitolite::GitoliteAdmin.new(
+        Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
       # Sync the repo
       ga_repo.update
@@ -474,7 +476,8 @@ module Repository
 
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
-        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        ga_repo = Gitolite::GitoliteAdmin.new(
+          Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
         # Sync the admin repo
         ga_repo.update
@@ -490,7 +493,8 @@ module Repository
         raise UserNotFound.new(user_id + " not found")
 
       else
-        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+        raise NotAuthorityError.new(
+          "Unable to modify permissions: Not in authoritative mode!")
       end
     end
 
@@ -501,7 +505,8 @@ module Repository
         remove_user(user_id)
 
         # Adds a user with given permissions to the repository
-        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        ga_repo = Gitolite::GitoliteAdmin.new(
+          Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
         # Sync gitolite admin repo
         ga_repo.update
@@ -526,7 +531,8 @@ module Repository
         ga_repo.save_and_apply
 
       else
-        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+        raise NotAuthorityError.new(
+                  "Unable to modify permissions: Not in authoritative mode!")
       end
     end
 
@@ -541,7 +547,8 @@ module Repository
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
 
-        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        ga_repo = Gitolite::GitoliteAdmin.new(
+          Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
         # Sync gitolite admin repo
         ga_repo.update
@@ -595,7 +602,8 @@ module Repository
           raise UserNotFound.new(user_id + " not found")
         end
       else
-        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+        raise NotAuthorityError.new(
+                  "Unable to modify permissions: Not in authoritative mode!")
       end
     end
 
@@ -603,10 +611,12 @@ module Repository
 
       # Adds a user with given permissions to the repository
       if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
-        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "w").close() # create file if not existent
+        # create file if not existent
+        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "w").close()
       end
 
-      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+      ga_repo = Gitolite::GitoliteAdmin.new(
+          Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
       # Sync repo
       ga_repo.reload!
@@ -621,13 +631,13 @@ module Repository
       else
         repo.permissions[0].each do |perm|
           if(repo.permissions[0][perm[0]][""].include? user_id)
-            raise UserAlreadyExistent.new(user_id + " already existent")
+            raise UserAlreadyExistent.new(user_id + ' already existent')
           end
         end
       end
 
       git_permission = GitRepository.__translate_to_git_perms(permissions)
-      repo.add_permission(git_permission,"",user_id)
+      repo.add_permission(git_permission,'',user_id)
 
       adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
       ga_repo.add_key(adminKey)
@@ -642,17 +652,20 @@ module Repository
     def self.set_bulk_permissions(repo_names, user_id_permissions_map)
       # Check if configuration is in order
       if Repository.conf[:IS_REPOSITORY_ADMIN].nil?
-        raise ConfigurationError.new("Required config 'IS_REPOSITORY_ADMIN' not set")
+        raise ConfigurationError.new(
+          "Required config 'IS_REPOSITORY_ADMIN' not set")
       end
       # If we're not in authoritative mode, bail out
       if !Repository.conf[:IS_REPOSITORY_ADMIN] # Are we admin?
-        raise NotAuthorityError.new("Unable to set bulk permissions:  Not in authoritative mode!");
+        raise NotAuthorityError.new(
+          'Unable to set bulk permissions: Not in authoritative mode!')
       end
 
-      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin', GITOLITE_SETTINGS)
+      ga_repo = Gitolite::GitoliteAdmin.new(
+        Repository.conf[:REPOSITORY_STORAGE] +
+          '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Sync admin repo
-
       ga_repo.update
 
       # The admin repo is loaded into memory
@@ -682,8 +695,8 @@ module Repository
     end
 
     def self.delete_bulk_permissions(repo_names, user_ids)
-      # Deletes permissions over several repositories. Use remove_user to remove
-      # permissions of a single repository.
+      # Deletes permissions over several repositories. Use remove_user to
+      # remove permissions of a single repository.
       # There is no user remove support from gitolite ruby library
       # Work-around:
       # - copy permissions from repo
@@ -692,7 +705,8 @@ module Repository
 
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
-        ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+        ga_repo = Gitolite::GitoliteAdmin.new(
+          Repository.conf[:REPOSITORY_PERMISSION_FILE])
 
         # Sync gitolite admin repo
         ga_repo.update
@@ -724,7 +738,8 @@ module Repository
             ga_repo.reload!
             ga_repo.config.rm_repo(repo)
 
-            adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
+            admin_key = Gitolite::SSHKey.from_file(
+              GITOLITE_SETTINGS[:public_key])
             ga_repo.add_key(adminKey)
 
             # update Gitolite repo
