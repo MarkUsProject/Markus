@@ -55,17 +55,21 @@ class KeyPairsController < ApplicationController
   def upload_key_file(file_content, time_stamp)
     create_key_directory()
 
-    File.open(Rails.root.join(KEY_STORAGE, @current_user.user_name + '@' +
-                                             time_stamp + '.pub'), 'wb') do |f|
-      f.write(file_content)
-    end
+    write_key(file_content, time_stamp)
 
     add_key(KEY_STORAGE + '/' + @current_user.user_name + '@' + time_stamp +
                 '.pub')
   end
 
+  def write_key(file_content, time_stamp)
+    File.open(Rails.root.join(KEY_STORAGE, @current_user.user_name + '@' +
+                                             time_stamp + '.pub'), 'wb') do |f|
+      f.write(file_content)
+    end
+  end
+
   # Creates the KEY_STORAGE directory if required
-  def create_key_directory()
+  def create_key_directory
     Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
   end
 

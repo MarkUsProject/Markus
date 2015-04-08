@@ -74,7 +74,8 @@ module Repository
                           some directory with same name exists already")
       end
 
-      ga_repo = Gitolite::GitoliteAdmin.new(Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin', GITOLITE_SETTINGS)
+      ga_repo = Gitolite::GitoliteAdmin.new(
+        Repository.conf[:REPOSITORY_STORAGE] + '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Bring the repo up to date
       ga_repo.reload!
@@ -92,7 +93,7 @@ module Repository
       end
 
       # Add permissions for git user
-      repo.add_permission("RW+", "", "git") # Give 'git' user access to all repos
+      repo.add_permission('RW+', '', 'git') # Give 'git' user access to all repos
 
       # Add the repo to the gitolite admin config
       conf.add_repo(repo)
@@ -104,8 +105,10 @@ module Repository
       # Stage and push the changes to the gitolite admin repo
       ga_repo.save_and_apply
 
-      # Repo is created by gitolite, proceed to clone it in the repository storage location
-      cloned_repo = Git.clone('git@localhost:'+repo_name, REPOSITORY_STORAGE + '/' + repo_name)
+      # Repo is created by gitolite, proceed to clone it in
+      # the repository storage location
+      cloned_repo = Git.clone(
+        'git@localhost:' + repo_name, REPOSITORY_STORAGE + '/' + repo_name)
 
       repo = Rugged::Repository.discover(REPOSITORY_STORAGE + '/' + repo_name)
 
