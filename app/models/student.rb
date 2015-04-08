@@ -98,7 +98,6 @@ class Student < User
                      .select { |m| m.grouping.assignment_id == aid }
   end
 
-
   # invites a student
   def invite(gid)
     unless self.hidden

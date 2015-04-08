@@ -53,7 +53,7 @@ class KeyPairsController < ApplicationController
   # is used to create the public key
   # Creates the KEY_STORAGE directory if it does not yet exist
   def upload_key_file(file_content, time_stamp)
-    Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
+    create_key_directory()
 
     File.open(Rails.root.join(KEY_STORAGE, @current_user.user_name + '@' +
                                              time_stamp + '.pub'), 'wb') do |f|
@@ -62,6 +62,11 @@ class KeyPairsController < ApplicationController
 
     add_key(KEY_STORAGE + '/' + @current_user.user_name + '@' + time_stamp +
                 '.pub')
+  end
+
+  # Creates the KEY_STORAGE directory if required
+  def create_key_directory()
+    Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
   end
 
   # Adds a specific public key to a specific user.
@@ -74,8 +79,8 @@ class KeyPairsController < ApplicationController
 
     ga_repo.add_key(key)
 
-    adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-    ga_repo.add_key(adminKey)
+    admin_key = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
+    ga_repo.add_key(admin_key)
 
     # update Gitolite repo
     ga_repo.save_and_apply
@@ -91,8 +96,8 @@ class KeyPairsController < ApplicationController
 
     ga_repo.rm_key(key)
 
-    adminKey = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-    ga_repo.add_key(adminKey)
+    admin_key = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
+    ga_repo.add_key(admin_key)
 
     # update Gitolite repo
     ga_repo.save_and_apply
