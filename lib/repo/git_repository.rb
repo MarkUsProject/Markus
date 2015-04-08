@@ -156,7 +156,7 @@ module Repository
     def self.open(connect_string)
       repo = GitRepository.new(connect_string)
     end
-    
+
     # static method that should yeild to a git repo and then close it
     def self.access(connect_string)
       repo = self.open(connect_string)
