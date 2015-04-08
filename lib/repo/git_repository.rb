@@ -477,11 +477,11 @@ module Repository
 
         # Sync the admin repo
         ga_repo.update
-        repo = ga_repo.config.get_repo(self.get_repos.workdir.split('/').last)
+        repo = ga_repo.config.get_repo(get_repos.workdir.split('/').last)
 
         # Gets permissions of a particular user
         repo.permissions[0].each do |perm|
-          if(repo.permissions[0][perm[0]][""].include? user_id)
+          if (repo.permissions[0][perm[0]][''].include? user_id)
             return self.class.__translate_perms_from_file(perm[0])
           end
         end
@@ -606,7 +606,7 @@ module Repository
       # Adds a user with given permissions to the repository
       if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
         # create file if not existent
-        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "w").close()
+        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], 'w').close
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(
@@ -631,7 +631,7 @@ module Repository
       end
 
       git_permission = GitRepository.__translate_to_git_perms(permissions)
-      repo.add_permission(git_permission,'',user_id)
+      repo.add_permission(git_permission, '', user_id)
 
       # Readd the 'git' public key to the gitolite admin repo after changes
       self.class.readd_admin_key
@@ -712,7 +712,7 @@ module Repository
           found = false
           if !repo.nil?
             repo.permissions[0]['RW+'][''].each do |user|
-              if(!user_ids.include? user)
+              if (!user_ids.include? user)
                 rw_list.push(user)
               else
                 found = true
@@ -730,17 +730,17 @@ module Repository
               ga_repo.reload!
               ga_repo.config.rm_repo(repo)
 
-              self.readd_admin_key
+              readd_admin_key
 
               # update Gitolite repo
               ga_repo.save_and_apply
 
               rw_list.each do |user|
-                add_user(user,Repository::Permission::READ_WRITE,repo_name)
+                add_user(user, Repository::Permission::READ_WRITE, repo_name)
               end
 
               r_list.each do |user|
-                add_user(user,Repository::Permission::READ,repo_name)
+                add_user(user, Repository::Permission::READ, repo_name)
               end
             else
               raise UserNotFound.new(user_id + ' not found')
