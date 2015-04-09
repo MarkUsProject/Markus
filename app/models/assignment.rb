@@ -429,13 +429,14 @@ class Assignment < ActiveRecord::Base
     # shouldn't happen anyway, because the lookup earlier should prevent
     # repo collisions e.g. when uploading the same CSV file twice.
     group.save
-    m_logger.log("Created Group with name:'#{group.group_name}' and repo name: '#{group.repo_name}' 
+    m_logger.log("Created Group with name:'#{group.group_name}'
+                  and repo name: '#{group.repo_name}' 
                   with error:'#{group.errors[:base]}'")
     unless group.errors[:base].blank?
-      m_logger.log("Collision detected of '#{group.errors[:base]}'", MarkusLogger::ERROR)
+      m_logger.log("Collision detected of '#{group.errors[:base]}'",
+                   MarkusLogger::ERROR)
       collision_error = I18n.t('csv.repo_collision_warning',
-                          { repo_name: group.errors.get(:base),
-                            group_name: row[0] })
+                          { repo_name: group.errors.get(:base), group_name: row[0] })
     end
 
     # Create a new Grouping for this assignment and the newly
@@ -443,7 +444,8 @@ class Assignment < ActiveRecord::Base
     grouping = Grouping.new(assignment: self, group: group)
     grouping.save
     # Form groups
-    start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
+    # first field is the group-name, second the repo name, so start at field 3
+    start_index_group_members = 2
     (start_index_group_members..(row.length - 1)).each do |i|
       student = Student.where(user_name: row[i])
                        .first
@@ -467,7 +469,7 @@ class Assignment < ActiveRecord::Base
   # reestablish proper repository permissions.
   def update_repository_permissions_forall_groupings
     # IMPORTANT: need to reload from DB
-        # Each admin user will have read and write permissions on each repo
+    # Each admin user will have read and write permissions on each repo
     m_logger = MarkusLogger.instance
     self.reload
     groupings.each do |grouping|
@@ -482,9 +484,11 @@ class Assignment < ActiveRecord::Base
     Ta.all.each do |ta|
       user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
     end
-    self.groups.each do |group|
-      group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, group.repository_config)
-      group_repo.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name)], user_permissions)
+    groups.each do |group|
+      group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, 
+                                        group.repository_config)
+      group_repo.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage,
+                                      group.repository_name)], user_permissions)
     end
     m_logger.log("Updated Groups' Permissions")
   end
@@ -523,7 +527,9 @@ class Assignment < ActiveRecord::Base
     self.groupings.each do |grouping|
       submission = grouping.current_submission_used
       if submission
-        svn_commands.push("svn export -r #{submission.revision_number} #{grouping.group.repository_external_access_url}/#{self.repository_folder} \"#{grouping.group.group_name}\"")
+        svn_commands.push("svn export -r #{submission.revision_number} 
+                          #{grouping.group.repository_external_access_url}/#{self.repository_folder} \"
+                          #{grouping.group.group_name}\"")
       end
     end
     svn_commands

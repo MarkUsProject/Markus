@@ -92,18 +92,6 @@ class Group < ActiveRecord::Base
                    "(Repository name was: '#{self.repo_name}'). Error message: '#{e.message}'",
                    MarkusLogger::ERROR)
     end
-
-    # # Each admin user will have read and write permissions on each repo
-    # user_permissions = {}
-    # Admin.all.each do |admin|
-    #   user_permissions[admin.user_name] = Repository::Permission::READ_WRITE
-    # end
-    # # Each grader will have read and write permissions on each repo
-    # Ta.all.each do |ta|
-    #   user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
-    # end
-    # group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config)
-    # group_repo.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)], user_permissions)
     true
   end
 
