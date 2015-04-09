@@ -2,7 +2,7 @@ require 'rugged'
 require 'gitolite'
 require 'digest/md5'
 require 'rubygems'
-require "git"
+require 'git'
 
 require File.join(File.dirname(__FILE__),'repository') # load repository module
 
