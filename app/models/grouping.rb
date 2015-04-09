@@ -166,6 +166,17 @@ class Grouping < ActiveRecord::Base
 	  student_user_names.join(', ')
   end
 
+  def get_group_name
+    name = group.group_name
+    unless accepted_students.size == 1 && name == accepted_students.first.user_name then
+      name += ' ('
+      name += accepted_students.collect{ |student| student.user_name}.join(', ')
+      name += ')'
+    end
+    name
+  end
+
+
   def group_name_with_student_user_names
 		user_names = get_all_students_in_group
     return group.group_name if user_names == I18n.t('assignment.group.empty')
