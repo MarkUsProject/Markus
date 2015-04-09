@@ -447,8 +447,8 @@ module Repository
 
       # Access the gitolite admin repo
       ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_STORAGE] +
-              '/gitolite-admin', GITOLITE_SETTINGS)
+        Repository.conf[:REPOSITORY_STORAGE] +
+          '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Sync the repo
       ga_repo.update
@@ -478,8 +478,8 @@ module Repository
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-            Repository.conf[:REPOSITORY_STORAGE] +
-                '/gitolite-admin', GITOLITE_SETTINGS)
+          Repository.conf[:REPOSITORY_STORAGE] +
+            '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync the admin repo
         ga_repo.update
@@ -508,8 +508,8 @@ module Repository
 
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-            Repository.conf[:REPOSITORY_STORAGE] +
-                '/gitolite-admin', GITOLITE_SETTINGS)
+          Repository.conf[:REPOSITORY_STORAGE] +
+            '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
         ga_repo.update

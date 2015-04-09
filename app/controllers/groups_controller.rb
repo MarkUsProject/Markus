@@ -405,7 +405,6 @@ class GroupsController < ApplicationController
 
   # Removes the given student membership from the given grouping
   def remove_member(membership, grouping, assignment)
-    $stderr.puts "In remove_member"
     grouping.remove_member(membership.id)
     grouping.reload
   end

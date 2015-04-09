@@ -421,7 +421,6 @@ class Grouping < ActiveRecord::Base
   def remove_member(mbr_id)
     member = student_memberships.find(mbr_id)
     if member
-      $stderr.puts "In grouping"
       # Remove repository permissions first
       #   Corner case: members are removed by admins only.
       #   Hence, we do not require to check for validity of the group
@@ -730,7 +729,6 @@ class Grouping < ActiveRecord::Base
 
   # Removes repository permissions for a single StudentMembership object
   def revoke_repository_permissions_for_membership(student_membership)
-    $stderr.puts "In revoke"
     # Revoke permissions for student
     self.group.access_repo do |repo|
       if self.write_repo_permissions?
