@@ -720,7 +720,7 @@ module Repository
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
           Repository.conf[:REPOSITORY_STORAGE] +
-            /gitolite-admin', GITOLITE_SETTINGS)
+            '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
         ga_repo.update
