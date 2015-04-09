@@ -98,7 +98,9 @@ module Repository
       conf.add_repo(repo)
 
       # Readd the 'git' public key to the gitolite admin repo after changes
-      self.class.readd_admin_key
+      admin_key = Gitolite::SSHKey.from_file(
+          GITOLITE_SETTINGS[:public_key])
+      ga_repo.add_key(admin_key)
 
       # Stage and push the changes to the gitolite admin repo
       ga_repo.save_and_apply
@@ -421,7 +423,9 @@ module Repository
         repo.add_permission(git_permission, '', user_id)
 
         # Readd the 'git' public key to the gitolite admin repo after changes
-        self.class.readd_admin_key
+        admin_key = Gitolite::SSHKey.from_file(
+            GITOLITE_SETTINGS[:public_key])
+        ga_repo.add_key(admin_key)
 
         # update Gitolite repo
         ga_repo.save_and_apply
@@ -521,7 +525,9 @@ module Repository
         ga_repo.config.add_repo(repo)
 
         # Readd the 'git' public key to the gitolite admin repo after changes
-        self.class.readd_admin_key
+        admin_key = Gitolite::SSHKey.from_file(
+            GITOLITE_SETTINGS[:public_key])
+        ga_repo.add_key(admin_key)
 
         # update Gitolite repo
         ga_repo.save_and_apply
@@ -574,7 +580,9 @@ module Repository
           end
 
           # Readd the 'git' public key to the gitolite admin repo after changes
-          self.class.readd_admin_key
+          admin_key = Gitolite::SSHKey.from_file(
+              GITOLITE_SETTINGS[:public_key])
+          ga_repo.add_key(admin_key)
 
           # update Gitolite repo
           ga_repo.save_and_apply
@@ -634,7 +642,9 @@ module Repository
       repo.add_permission(git_permission, '', user_id)
 
       # Readd the 'git' public key to the gitolite admin repo after changes
-      self.class.readd_admin_key
+      admin_key = Gitolite::SSHKey.from_file(
+          GITOLITE_SETTINGS[:public_key])
+      ga_repo.add_key(admin_key)
 
       # update Gitolite repo
       ga_repo.save_and_apply
@@ -681,7 +691,9 @@ module Repository
       end
 
       # Readd the 'git' public key to the gitolite admin repo after changes
-      self.class.readd_admin_key
+      admin_key = Gitolite::SSHKey.from_file(
+          GITOLITE_SETTINGS[:public_key])
+      ga_repo.add_key(admin_key)
 
       # update Gitolite repo
       ga_repo.save_and_apply
@@ -730,7 +742,9 @@ module Repository
               ga_repo.reload!
               ga_repo.config.rm_repo(repo)
 
-              readd_admin_key
+              admin_key = Gitolite::SSHKey.from_file(
+                  GITOLITE_SETTINGS[:public_key])
+              ga_repo.add_key(admin_key)
 
               # update Gitolite repo
               ga_repo.save_and_apply
@@ -782,14 +796,7 @@ module Repository
       else raise "Unknown permissions"
       end # end case
     end
-
-    # Helper method to readd the Gitolite admin key after repo perm changes
-    def self.readd_admin_key
-      admin_key = Gitolite::SSHKey.from_file(
-        GITOLITE_SETTINGS[:public_key])
-      ga_repo.add_key(admin_key)
-    end
-
+    
     ####################################################################
     ##  Private method definitions
     ####################################################################
