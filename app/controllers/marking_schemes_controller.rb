@@ -3,6 +3,7 @@ class MarkingSchemesController < ApplicationController
   
   def index
     @assignments = Assignment.all
+    @grade_entry_forms = GradeEntryForm.all
   end
   
   def populate
@@ -10,24 +11,21 @@ class MarkingSchemesController < ApplicationController
   end
 
   def create
-    marking_scheme_name = params["marking_scheme"]
-    assignment_weights = []
-    all_assignments = Assignment.all
-    all_assignments.each_with_index do |assignment, index|
-      assignment_weights << params["marking_scheme"]["marking_weights_attributes"][index.to_s]["weight"]
-    end
-
     ActiveRecord::Base.transaction do
       begin
-        marking_scheme = MarkingScheme.new(marking_scheme_name)
-        if (marking_scheme.save)
-          # TODO: Check for invalid input
-          assignment_weights.each_with_index do |a_weight, index|
-            marking_weight = MarkingWeight.new("a_id"=>all_assignments[index].id, "marking_scheme_id"=>marking_scheme.id, "weight"=>assignment_weights[index])
-            marking_weight.save
-          end
+        # save marking scheme
+        marking_scheme = MarkingScheme.new(name: params["marking_scheme"]["name"])
+        marking_scheme.save!
+
+        # save marking weights
+        params["marking_scheme"]["marking_weights_attributes"].each do |key, obj|
+          is_assignment = (obj["type"] == "Assignment")
+          marking_weight = MarkingWeight.new(gradable_item_id: obj["id"], is_assignment: is_assignment, marking_scheme_id: marking_scheme.id, weight: obj["weight"])
+          marking_weight.save!
         end
-      # TODO: Handle error
+      rescue ActiveRecord::RecordInvalid => invalid
+        # Failed
+        puts "********FAILED*******"
       end
     end
 
@@ -35,11 +33,13 @@ class MarkingSchemesController < ApplicationController
   end
   
   def new
-    @marking_scheme = MarkingScheme.new
-    @all_assignments = Assignment.all
-    @marking_weights = MarkingWeight.all
-    @all_assignments.count.times do
-      marking_weight = @marking_scheme.marking_weights.build
+    @marking_scheme    = MarkingScheme.new
+    @assignments       = Assignment.all
+    @grade_entry_forms = GradeEntryForm.all
+
+    @all_gradable_items = @assignments + @grade_entry_forms
+    @all_gradable_items.count.times do
+      @marking_scheme.marking_weights.build
     end
   end
 

@@ -2,9 +2,10 @@ class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
   def index
-    @assignments = Assignment.all
-    @marking_schemes = MarkingScheme.all
-    @marking_weights = MarkingWeight.all
+    @assignments       = Assignment.all
+    @marking_schemes   = MarkingScheme.all
+    @marking_weights   = MarkingWeight.all
+    @grade_entry_forms = GradeEntryForm.all
   end
 
   def populate
@@ -13,6 +14,10 @@ class CourseSummariesController < ApplicationController
 
   def get_max_marks_for_assignments
     render json: get_max_mark_for_assignments
+  end
+  
+  def get_max_marks_for_grade_entry_forms
+    render json: get_max_mark_for_grade_entry_forms
   end
 
   def get_marking_weights_for_marking_schemes

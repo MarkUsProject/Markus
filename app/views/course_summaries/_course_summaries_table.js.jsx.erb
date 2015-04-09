@@ -37,13 +37,15 @@
         });
       <% end %>
 
-      columns.push({
-        id: 'total_mark_raw',
-        content: 'Raw Total Mark',
-        sortable: false,
-        compare: compare_anchor_text,
-        searchable: false
-      });
+      <% for grade_entry_from in @grade_entry_forms %>
+        columns.push({
+          id: 'gef_' + <%= grade_entry_from.id %>,
+          content: '<%= grade_entry_from.short_identifier %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: false
+        });
+      <% end %>
 
       <% for marking_scheme in @marking_schemes %>
         columns.push({
@@ -59,9 +61,7 @@
     },
     getInitialState: function() {
       return {
-        assignment_max_marks: {},
-        courseSummaries: [],
-        marking_schemes_and_weights: {}
+        courseSummaries: []
       };
     },
     componentWillMount: function() {
@@ -81,29 +81,19 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
       var ajaxCalls = [];
+
       // add the populate call
       ajaxCalls.push(this.createRequest({
         url: 'course_summaries/populate',
         method: 'GET',
         dataType: 'json'
       }));
-      // get max marks for assignments
-      ajaxCalls.push(this.createRequest({
-        url: 'course_summaries/get_max_marks_for_assignments',
-        method: 'GET',
-        dataType: 'json'
-      }));
-      ajaxCalls.push(this.createRequest({
-        url: 'course_summaries/get_marking_weights_for_marking_schemes',
-        method: 'GET',
-        dataType: 'json'
-      }));
+
       var that = this;
-      jQuery.when.apply(this, ajaxCalls).done(function(students, max_marks, ms_with_mw) {
+      jQuery.when.apply(this, ajaxCalls).done(function(students) {
+        debugger;
         that.setState({
-          courseSummaries: students[0],
-          assignment_max_marks: max_marks[0],
-          marking_schemes_and_weights: ms_with_mw[0]
+          courseSummaries: students
         });
         document.getElementById('working').style.display = 'none';
       });
@@ -112,43 +102,36 @@
       that = this;
       var course_summaries_data = this.state.courseSummaries.map(function(courseSummary) {
         var cs = {};
+
         cs['id'] = courseSummary.id;
         cs['student_user_name'] = courseSummary.user_name;
         cs['student_first_name'] = courseSummary.first_name;
         cs['student_last_name'] = courseSummary.last_name;
+
         <% for assignment in @assignments %>
           var id = <%= assignment.id %>;
           var key = "assignment_" + id;
-          var value = (courseSummary.marks[id]) ? courseSummary.marks[id] : "NA";
-          cs[key] = value;
+          var value = courseSummary.assignment_marks[id]
+          cs[key] = value ? value : "NA";
         <% end %>
-        var total_mark_raw = null;
-        var total_weighted_marks = {};
-        <% @assignments.each do |a| %>
-          assignment_mark = courseSummary.marks[<%= a.id %>];
-          if (assignment_mark) {
-            total_mark_raw = (total_mark_raw) ? total_mark_raw + assignment_mark : assignment_mark;
-            <% @marking_schemes.each do |ms| %>
-              assignment_weight = that.state.marking_schemes_and_weights[<%= ms.id %>][<%= a.id %>];
-              assignment_max_mark = that.state.assignment_max_marks[<%= a.id %>];
-              if (assignment_weight && assignment_max_mark) {
-                cur_weighted_total = total_weighted_marks[<%= ms.id %>];
-                weighted_mark = assignment_mark/that.state.assignment_max_marks[<%= a.id %>] * assignment_weight;
-                total_weighted_marks[<%= ms.id %>] = (cur_weighted_total) ? cur_weighted_total + weighted_mark : weighted_mark;
-              }
-            <% end %>
-          }
+
+        <% for grade_entry_from in @grade_entry_forms %>
+          var id = <%= grade_entry_from.id %>;
+          var key = "gef_" + id;
+          var value = courseSummary.grade_entry_form_marks[id];
+          cs[key] = (value) ? value : "NA";
         <% end %>
-        cs['total_mark_raw'] = (total_mark_raw) ? total_mark_raw : 'NA';
-        <% for ms in @marking_schemes %>
-          var ms_id = <%= ms.id %>;
-          var ms_col_key = "marking_scheme_" + ms_id;
-          var ms_value = (total_weighted_marks[ms_id]) ? total_weighted_marks[ms_id].toFixed(2) : "NA";
-          cs[ms_col_key] = ms_value;
+
+        <% for marking_scheme in @marking_schemes %>
+          var id = <%= marking_scheme.id %>;
+          var key = "marking_scheme_" + id;
+          var value = parseFloat(courseSummary.weighted_marks[id]);
+          cs[key] = value ? value : "NA";
         <% end %>
         
         return cs;
       });
+
       return (
         <div>
           <Table data={course_summaries_data}
