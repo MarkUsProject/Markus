@@ -485,10 +485,16 @@ class Assignment < ActiveRecord::Base
       user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
     end
     groups.each do |group|
-      group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, 
-                                        group.repository_config)
-      group_repo.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage,
-                                      group.repository_name)], user_permissions)
+      group_repo = Repository.get_class(
+        MarkusConfigurator.markus_config_repository_type, 
+        group.repository_config
+      )
+      group_repo.set_bulk_permissions(
+        [File.join(
+          MarkusConfigurator.markus_config_repository_storage,
+          group.repository_name)
+        ], user_permissions
+      )
     end
     m_logger.log("Updated Groups' Permissions")
   end
@@ -528,7 +534,8 @@ class Assignment < ActiveRecord::Base
       submission = grouping.current_submission_used
       if submission
         svn_commands.push("svn export -r #{submission.revision_number} 
-                          #{grouping.group.repository_external_access_url}/#{self.repository_folder} \"
+                          #{grouping.group.repository_external_access_url}/
+                          #{self.repository_folder} \"
                           #{grouping.group.group_name}\"")
       end
     end
