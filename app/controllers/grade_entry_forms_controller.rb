@@ -117,7 +117,7 @@ class GradeEntryFormsController < ApplicationController
     @filter = 'none'
 
     @current_page = 1
-    # Did the user cancel oerwrite csv operation?
+    # Did the user cancel overwrite csv operation?
     if params[:cancel_notice]
       flash[:notice] = t('grade_entry_forms.overwrite.cancel')
     end

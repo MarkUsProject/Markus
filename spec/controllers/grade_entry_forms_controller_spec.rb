@@ -8,8 +8,24 @@ describe GradeEntryFormsController do
     allow(controller).to receive(:current_user).and_return(build(:admin))
   end
 
+  let(:new_grade) { 10.0 }
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
+  let(:grade_entry_item) do
+    GradeEntryItem.find_by_grade_entry_form_id(grade_entry_form_with_data)
+  end
+  let(:grade_entry_student) do
+    GradeEntryStudent.find_by_grade_entry_form_id(grade_entry_form_with_data)
+  end
+  let(:grade) do
+    Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+      grade_entry_student, grade_entry_item)
+  end
+  
+  let(:old_grade) do
+    Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+      grade_entry_student, grade_entry_item)
+  end
 
   context 'CSV_Uploads' do
     before :each do
@@ -46,6 +62,15 @@ describe GradeEntryFormsController do
         fixture_file_upload(
           'spec/fixtures/files/grade_entry_form_good.csv',
           'text/csv')
+      @file_good_ISO =
+        fixture_file_upload(
+          'spec/fixtures/files/test_grades_ISO-8859-1.csv',
+          'text/csv')
+      @file_good_UTF =
+        fixture_file_upload(
+          'spec/fixtures/files/test_grades_UTF-8.csv',
+          'text/csv')
+      
     end
 
     it 'accepts valid file' do
@@ -56,8 +81,7 @@ describe GradeEntryFormsController do
       expect(flash[:error]).to be_nil
       with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
-        csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
-                                            with: with, locale: 'en'))
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
     it 'accepts files with additional columns' do
@@ -68,8 +92,7 @@ describe GradeEntryFormsController do
       expect(flash[:error]).to be_nil
       with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
-        csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
-                                            with: with, locale: 'en'))
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
     it 'does not accept csv file with an invalid username' do
@@ -80,8 +103,7 @@ describe GradeEntryFormsController do
       expect(flash[:error]).to_not be_empty
       with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
-        csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
-                                            with: with, locale: 'en'))
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
     it 'accepts files with a different column name' do
@@ -92,8 +114,9 @@ describe GradeEntryFormsController do
       expect(flash[:error]).to be_nil
       with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
-        csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
-                                            with: with, locale: 'en'))
+                                      grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+                                      #csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
+                                      #with: with, locale: 'en'))
     end
 
     it 'accepts files with a different grade total' do
@@ -104,8 +127,7 @@ describe GradeEntryFormsController do
       expect(flash[:error]).to be_nil
       with = (grade_entry_form_with_data.id + 1).to_s
       expect(response).to redirect_to(
-        csv_overwrite_grade_entry_form_path(grade_entry_form_with_data,
-                                            with: with, locale: 'en'))
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
     it 'does not accept a csv file corrupt line endings' do
@@ -153,6 +175,96 @@ describe GradeEntryFormsController do
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end
+    
+    it 'should have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1' do
+      post :csv_upload,
+           id: grade_entry_form_with_data,
+           upload: { grades_file: @file_good_ISO },
+           encoding: 'ISO-8859-1'
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+      expect(grade_entry_item.name).to eq 'something'
+      expect(grade_entry_item.out_of).to eq 10.0
+      expect(grade.grade).to_not be_nil
+      expect(grade.grade).to eq new_grade
+    end
+
+    it 'should have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8' do
+      post :csv_upload,
+           id: grade_entry_form_with_data,
+           upload: { grades_file: @file_good_UTF },
+           encoding: 'UTF-8'
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+      expect(grade.grade).to_not be_nil
+      expect(grade.grade).to eq new_grade
+    end
+
+    it 'should update old grades' do
+      #??????????expect(old_grade).to be_nil
+      post :csv_upload,
+           id: grade_entry_form_with_data,
+           upload: { grades_file: @file_good_UTF },
+           encoding: 'UTF-8'
+      expect(response).to redirect_to(
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+      grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+                grade_entry_student, grade_entry_item)
+      expect(grade.grade).to_not be_nil
+      expect(grade.grade).to eq new_grade
+    # grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+    #                                                                      @grade_entry_student.id, @grade_entry_item.id
+    #                                                                      )
+    #                                                                      assert_not_nil grade
+    #                                                                      assert_equal @old_grade, grade.grade
+    #                                                                      post_as @admin,
+    #                                                                      :csv_upload,
+    #                                                                      :id => @grade_entry_form.id,
+    #                                                                      :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+    #                                                                      :encoding => 'UTF-8'
+    #                                                                      assert_response :redirect
+    #                                                                      grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+    #                                                                            @grade_entry_student.id, @grade_entry_item.id
+    #                                                                                                                           )
+    #                                                                                                                     assert_not_nil grade
+    #                                                                                         assert_equal @new_grade, grade.grade
+    end
+
+#should 'delete unused columns' do
+# post_as @admin,
+# :csv_upload,
+# :id => @grade_entry_form.id,
+# :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+# :encoding => 'UTF-8'
+# assert_response :redirect
+#
+# grade_entry_item = GradeEntryItem.find_by_id(@grade_entry_item.id)
+# assert_nil grade_entry_item
+#end
+
+#should 'delete unused grades' do
+# post_as @admin,
+# :csv_upload,
+# :id => @grade_entry_form.id,
+# :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+# :encoding => 'UTF-8'
+# assert_response :redirect
+# old_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+#                                                                          @grade_entry_student.id, @grade_entry_item.id
+#                                                                          )
+#                                                                          assert_nil old_grade
+#                                                                          new_grade_entry_item = GradeEntryItem.find_by_name('something')
+##                                                                          assert_not_nil new_grade_entry_item
+#                                                                         new_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+#                                                                                                         @grade_entry_student.id, new_grade_entry_item.id
+#                                                                                                                                                    )
+#                                                                                                                         assert_not_nil new_grade
+#end
+
   end
 
   context 'CSV_Downloads' do
