@@ -2,7 +2,7 @@ require 'rugged'
 require 'gitolite'
 require 'digest/md5'
 require 'rubygems'
-require 'git'
+require "git"
 
 require File.join(File.dirname(__FILE__),'repository') # load repository module
 
@@ -99,7 +99,7 @@ module Repository
 
       # Readd the 'git' public key to the gitolite admin repo after changes
       admin_key = Gitolite::SSHKey.from_file(
-          GITOLITE_SETTINGS[:public_key])
+        GITOLITE_SETTINGS[:public_key])
       ga_repo.add_key(admin_key)
 
       # Stage and push the changes to the gitolite admin repo
@@ -424,7 +424,7 @@ module Repository
 
         # Readd the 'git' public key to the gitolite admin repo after changes
         admin_key = Gitolite::SSHKey.from_file(
-            GITOLITE_SETTINGS[:public_key])
+          GITOLITE_SETTINGS[:public_key])
         ga_repo.add_key(admin_key)
 
         # update Gitolite repo
@@ -447,7 +447,8 @@ module Repository
 
       # Access the gitolite admin repo
       ga_repo = Gitolite::GitoliteAdmin.new(
-        Repository.conf[:REPOSITORY_PERMISSION_FILE])
+          Repository.conf[:REPOSITORY_STORAGE] +
+              '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Sync the repo
       ga_repo.update
@@ -473,11 +474,12 @@ module Repository
     end
 
     def get_permissions(user_id)
-
+      $stderr.puts "In get perms"
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_PERMISSION_FILE])
+            Repository.conf[:REPOSITORY_STORAGE] +
+                '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync the admin repo
         ga_repo.update
@@ -506,7 +508,8 @@ module Repository
 
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_PERMISSION_FILE])
+            Repository.conf[:REPOSITORY_STORAGE] +
+                '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
         ga_repo.update
@@ -526,7 +529,7 @@ module Repository
 
         # Readd the 'git' public key to the gitolite admin repo after changes
         admin_key = Gitolite::SSHKey.from_file(
-            GITOLITE_SETTINGS[:public_key])
+          GITOLITE_SETTINGS[:public_key])
         ga_repo.add_key(admin_key)
 
         # update Gitolite repo
@@ -539,6 +542,7 @@ module Repository
     end
 
     def remove_user(user_id)
+      $stderr.puts "In git"
       # Delete user from access list
       # There is no user remove support from gitolite ruby library
       # Work-around:
@@ -548,9 +552,9 @@ module Repository
 
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
-
         ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_PERMISSION_FILE])
+            Repository.conf[:REPOSITORY_STORAGE] +
+                '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
         ga_repo.update
@@ -581,7 +585,10 @@ module Repository
 
           # Readd the 'git' public key to the gitolite admin repo after changes
           admin_key = Gitolite::SSHKey.from_file(
-              GITOLITE_SETTINGS[:public_key])
+            GITOLITE_SETTINGS[:public_key])
+
+          $stderr.puts admin_key
+          $stderr.puts "Key path: ", GITOLITE_SETTINGS[:public_key]
           ga_repo.add_key(admin_key)
 
           # update Gitolite repo
@@ -618,7 +625,8 @@ module Repository
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(
-        Repository.conf[:REPOSITORY_PERMISSION_FILE])
+          Repository.conf[:REPOSITORY_STORAGE] +
+              '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Sync repo
       ga_repo.reload!
@@ -643,7 +651,7 @@ module Repository
 
       # Readd the 'git' public key to the gitolite admin repo after changes
       admin_key = Gitolite::SSHKey.from_file(
-          GITOLITE_SETTINGS[:public_key])
+        GITOLITE_SETTINGS[:public_key])
       ga_repo.add_key(admin_key)
 
       # update Gitolite repo
@@ -692,7 +700,7 @@ module Repository
 
       # Readd the 'git' public key to the gitolite admin repo after changes
       admin_key = Gitolite::SSHKey.from_file(
-          GITOLITE_SETTINGS[:public_key])
+        GITOLITE_SETTINGS[:public_key])
       ga_repo.add_key(admin_key)
 
       # update Gitolite repo
@@ -711,7 +719,8 @@ module Repository
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_PERMISSION_FILE])
+            Repository.conf[:REPOSITORY_STORAGE] +
+                '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
         ga_repo.update
@@ -743,7 +752,7 @@ module Repository
               ga_repo.config.rm_repo(repo)
 
               admin_key = Gitolite::SSHKey.from_file(
-                  GITOLITE_SETTINGS[:public_key])
+                GITOLITE_SETTINGS[:public_key])
               ga_repo.add_key(admin_key)
 
               # update Gitolite repo
@@ -796,7 +805,7 @@ module Repository
       else raise "Unknown permissions"
       end # end case
     end
-    
+
     ####################################################################
     ##  Private method definitions
     ####################################################################
