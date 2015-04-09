@@ -474,7 +474,6 @@ module Repository
     end
 
     def get_permissions(user_id)
-      $stderr.puts "In get perms"
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
@@ -542,7 +541,6 @@ module Repository
     end
 
     def remove_user(user_id)
-      $stderr.puts "In git"
       # Delete user from access list
       # There is no user remove support from gitolite ruby library
       # Work-around:
@@ -587,8 +585,6 @@ module Repository
           admin_key = Gitolite::SSHKey.from_file(
             GITOLITE_SETTINGS[:public_key])
 
-          $stderr.puts admin_key
-          $stderr.puts "Key path: ", GITOLITE_SETTINGS[:public_key]
           ga_repo.add_key(admin_key)
 
           # update Gitolite repo
