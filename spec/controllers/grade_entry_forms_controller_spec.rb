@@ -23,8 +23,8 @@ describe GradeEntryFormsController do
     GradeEntryStudent.find_by_grade_entry_form_id(grade_entry_form_with_data)
   end
   let(:grade) do
-   Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
-     grade_entry_student, grade_entry_item)
+    Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+      grade_entry_student, grade_entry_item)
   end
 
   context 'CSV_Uploads' do
@@ -58,11 +58,11 @@ describe GradeEntryFormsController do
         fixture_file_upload(
           'spec/fixtures/files/grade_entry_form_different_total.csv',
           'text/csv')
-      @file_good_ISO =
+      @file_good_iso =
         fixture_file_upload(
           'spec/fixtures/files/test_grades_ISO-8859-1.csv',
           'text/csv')
-      @file_good_UTF =
+      @file_good_utf =
         fixture_file_upload(
           'spec/fixtures/files/test_grades_UTF-8.csv',
           'text/csv')
@@ -71,7 +71,7 @@ describe GradeEntryFormsController do
     it 'accepts valid file' do
       post :csv_upload,
            id: grade_entry_form_with_data,
-           upload: { grades_file: @file_good_UTF }
+           upload: { grades_file: @file_good_utf }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
@@ -168,7 +168,7 @@ describe GradeEntryFormsController do
       it 'should properly upload ISO-8859-1encoded file parsed as ISO-8859-1' do
         post :csv_upload,
              id: grade_entry_form_with_data,
-             upload: { grades_file: @file_good_ISO },
+             upload: { grades_file: @file_good_iso },
              encoding: 'ISO-8859-1'
         expect(response.status).to eq(302)
         expect(flash[:error]).to be_nil
@@ -187,7 +187,7 @@ describe GradeEntryFormsController do
       it 'should propetly upload a UTF-8 encoded file parsed as UTF-8' do
         post :csv_upload,
              id: grade_entry_form_with_data,
-             upload: { grades_file: @file_good_UTF },
+             upload: { grades_file: @file_good_utf },
              encoding: 'UTF-8'
         expect(response.status).to eq(302)
         expect(flash[:error]).to be_nil
@@ -204,7 +204,7 @@ describe GradeEntryFormsController do
         expect(grade).to be_nil
         post :csv_upload,
              id: grade_entry_form_with_data,
-             upload: { grades_file: @file_good_UTF },
+             upload: { grades_file: @file_good_utf },
              encoding: 'UTF-8'
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
           grade_entry_form_with_data.grade_entry_student_ids[0],
@@ -218,10 +218,11 @@ describe GradeEntryFormsController do
       it 'should delete unused columns' do
         post :csv_upload,
              id: grade_entry_form_with_data,
-             upload: { grades_file: @file_good_UTF },
+             upload: { grades_file: @file_good_utf },
              encoding: 'UTF-8'
         expect(response).to redirect_to(
-          grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+          grades_grade_entry_form_path(grade_entry_form_with_data,
+                                       locale: 'en'))
         grade_entry_item_cleaned = GradeEntryItem.find_by_id(
           another_grade_entry_item)
         expect(grade_entry_item_cleaned).to be_nil
@@ -229,15 +230,15 @@ describe GradeEntryFormsController do
 
       it 'should delete unused grades' do
         post :csv_upload,
-        id: grade_entry_form_with_data,
-        upload: { grades_file: @file_good_UTF },
+             id: grade_entry_form_with_data,
+             upload: { grades_file: @file_good_utf },
         encoding: 'UTF-8'
         expect(response).to redirect_to(
           grades_grade_entry_form_path(grade_entry_form_with_data,
                                        locale: 'en'))
-        oldGrade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+        old_mark = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
           grade_entry_student, another_grade_entry_item)
-        expect(oldGrade).to be_nil
+        expect(old_mark).to be_nil
       end
     end
   end
