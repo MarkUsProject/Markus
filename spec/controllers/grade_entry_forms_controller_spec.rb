@@ -173,7 +173,8 @@ describe GradeEntryFormsController do
         expect(response.status).to eq(302)
         expect(flash[:error]).to be_nil
         expect(response).to redirect_to(
-          grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+          grades_grade_entry_form_path(grade_entry_form_with_data,
+                                       locale: 'en'))
         grade_entry_item = GradeEntryItem.find_by_grade_entry_form_id(
           grade_entry_form_with_data)
         expect(grade_entry_item.name).to eq 'something'
@@ -232,7 +233,7 @@ describe GradeEntryFormsController do
         post :csv_upload,
              id: grade_entry_form_with_data,
              upload: { grades_file: @file_good_utf },
-        encoding: 'UTF-8'
+             encoding: 'UTF-8'
         expect(response).to redirect_to(
           grades_grade_entry_form_path(grade_entry_form_with_data,
                                        locale: 'en'))
