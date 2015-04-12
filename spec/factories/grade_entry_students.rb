@@ -1,7 +1,9 @@
 FactoryGirl.define do
   factory :grade_entry_student do
-    association :user, factory: :user2
-    user_id 1
-    grade_entry_form_id 1
+    association :user, factory: :user_UTF_8
+    after(:create) do |grade_entry_student|
+      create(:grade, grade_entry_student: grade_entry_student)
+      create(:another_grade, grade_entry_student: grade_entry_student)
+    end
   end
 end

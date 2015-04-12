@@ -476,6 +476,11 @@ fr:
         title: "Modification de la feuille de notes : "
         success: "Feuille de notes mise à jour"
         submit: "Mise à jour marques Tableur"
+      overwrite:
+        title: "Ecraser marques Tableur:"
+        overwrite_message: "Vous êtes sur le point d'écraser le modèle d'origine avec le fichier csv nouvellement téléchargé. Cette action se traduira par la modification des noms de colonnes et / ou les totaux de qualité. Voulez-vous procéder?"
+        ok: "Des changements ont été remplacés par de nouveaux champs."
+        cancel: "Pas de changements ont été apportés."
       grades:
         title: "Édition de la feuille de notes :"
         student_title: "Feuille de notes : "

@@ -256,6 +256,8 @@ Markus::Application.routes.draw do
         post 'g_table_paginate'
         get 'csv_download'
         post 'csv_upload'
+        get 'csv_overwrite'
+        post 'csv_overwrite'
         post 'update_grade'
         post 'update_grade_entry_students'
         get 'student_interface'

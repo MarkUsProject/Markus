@@ -461,6 +461,11 @@ pt:
         title: "Editar planilha de notas:"
         success: "Planilha de notas atualizada com sucesso"
         submit: "Atualização Marcas Spreadsheet"
+      overwrite:
+        title: "Substituir marcas Spreadsheet:"
+        overwrite_message: "Você está prestes a substituir o modelo original com o arquivo CSV recém-carregado. Esta ação irá resultar na mudança dos nomes das colunas e / ou totais da classe. Você deseja continuar?"
+        ok: "As mudanças foram substituídos por novos campos."
+        cancel: "Não foram feitas alterações."
       grades:
         title: "Gerenciar planilha de notas:"
         student_title: "Notas:"

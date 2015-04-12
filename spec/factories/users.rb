@@ -5,8 +5,15 @@ FactoryGirl.define do
     last_name { Faker::Name.last_name }
   end
 
-  factory :user2, class: User do
-    user_name 'c8shosta'
+  factory :user_UTF_8, class: User do
+    user_name 'c2ÈrÉØrr'
+    type 'Student'
+    first_name { Faker::Name.first_name }
+    last_name { Faker::Name.last_name }
+  end
+
+  factory :user_ISO_8859, class: User do
+    user_name 'c2»r…ÿrr'
     type 'Student'
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
