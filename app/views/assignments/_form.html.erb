@@ -46,6 +46,7 @@
       <%= raw(f.text_field :short_identifier,
                            id: 'assignment_short_identifier',
                            onchange: 'set_onbeforeunload(true);',
+                           onKeyUp: "document.getElementById('assignment_repository_folder').value=this.value",
                            size: 35,
                            maxlength: 30,
                            required: true) %>      

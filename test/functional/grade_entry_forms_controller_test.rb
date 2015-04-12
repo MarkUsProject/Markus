@@ -962,7 +962,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :csv_upload,
                 :id => @grade_entry_form.id,
                 :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
-                :encoding => 'UTF-8'
+                :encoding => 'UTF-8',
+                :overwrite => true
         assert_response :redirect
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id
@@ -976,7 +977,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :csv_upload,
                 :id => @grade_entry_form.id,
                 :upload => {:grades_file => fixture_file_upload('files/test_grades_ISO-8859-1.csv')},
-                :encoding => 'ISO-8859-1'
+                :encoding => 'ISO-8859-1',
+                :overwrite => true
         assert_response :redirect
         grade_entry_item = GradeEntryItem.find_by_id(@grade_entry_item.id)
         assert_not_nil grade_entry_item
@@ -995,7 +997,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :csv_upload,
                 :id => @grade_entry_form_with_grade_entry_items.id,
                 :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
-                :encoding => 'ISO-8859-1'
+                :encoding => 'ISO-8859-1',
+                :overwrite => true
         assert_response :redirect
         test_student = Student.find_by_user_name('c2ÈrÉØrr')
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
@@ -1030,7 +1033,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :csv_upload,
                 :id => @grade_entry_form.id,
                 :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
-                :encoding => 'UTF-8'
+                :encoding => 'UTF-8',
+                :overwrite => true
         assert_response :redirect
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id

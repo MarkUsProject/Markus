@@ -322,6 +322,8 @@ pt:
         no_annotation_in_this_category: "Existem anotações nessa categoria"
         new_annotation: "Criar nova anotação"
         annotation_category: "Categoria de anotação"
+        preview: "Visualização"
+        preview_title: "Veja como a anotação vai olhar:"
         sure_to_remove: "Tem certeza que quer remover essa anotação?"
         submit_edit: "Enviar mudanças"
         change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"
@@ -477,6 +479,7 @@ pt:
         no_results: "Não há notas disponíveis ainda..."
         detailed_marks_message: "Notas detalhadas estão disponíveis."
       csv:
+        overwrite: "Substituir notas existentes?"
         incomplete_header: "Os totais ou os nomes dos itens estão faltando"
         incomplete_row: "Contém pouca informação."
         invalid_user_name: "Nome de usuário inválido."
@@ -856,6 +859,7 @@ pt:
         error:  "Não foi possível fazer o upload de categoria: erro com %{annotation_category} localizado na linha %{annotation_line}"
         syntax_error: "Existe um erro no  arquivo carregado: %{error}"
         flash_error: "Não foi possível reconhecer o formato %{format}"
+        unparseable_yaml: "Não foi possível analisar o arquivo YAML"
       download:
         download_annotations: "Baixar anotações"
         download_csv: "Baixar em formato CSV"

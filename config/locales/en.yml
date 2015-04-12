@@ -343,6 +343,8 @@ en:
         no_annotation_in_this_category: "There are no annotations in this category"
         new_annotation: "Create new annotation"
         annotation_category: "Annotation Category"
+        preview: "Preview"
+        preview_title: "Here's how the annotation will look:"
         sure_to_remove: "Are you sure you want to remove this annotation?"
         submit_edit: "Submit Edit"
         change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
@@ -516,6 +518,7 @@ en:
         no_results: "There are no marks available yet."
         detailed_marks_message: "Detailed marks are available."
       csv:
+        overwrite: "Overwrite existing grades?"
         incomplete_header: "Incomplete grade entry item names or totals."
         incomplete_row: "Contains too little information."
         invalid_user_name: "Invalid user name."
@@ -998,6 +1001,7 @@ en:
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
         syntax_error: "There is an error in the file you uploaded: %{error}"
         flash_error: "Could not recognize %{format} format to download with"
+        unparseable_yaml: "Could not parse YAML file"
       download:
         download_annotations: "Download Annotations"
         download_csv: "Download in CSV Format"
