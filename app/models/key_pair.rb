@@ -1,3 +1,3 @@
 class KeyPair < ActiveRecord::Base
-  attr_accessible :file_name, :user_id, :user_name
+  attr_accessible :file_name, :user_name
 end
