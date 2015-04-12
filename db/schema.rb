@@ -236,6 +236,7 @@ ActiveRecord::Schema.define(:version => 20150226032509) do
   add_index "groups", ["group_name"], :name => "groups_name_unique", :unique => true
 
   create_table "key_pairs", :force => true do |t|
+    t.integer  "user_id"
     t.string   "user_name"
     t.string   "file_name"
     t.datetime "created_at", :null => false

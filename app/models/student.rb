@@ -93,7 +93,6 @@ class Student < User
   # Returns the Membership for a Grouping for an Assignment with id 'aid' if
   # this Student is a member with either 'accepted' or 'invitier' membership
   # status
-
   def memberships_for(aid)
     StudentMembership.where(user_id: id)
                      .select { |m| m.grouping.assignment_id == aid }
@@ -134,6 +133,7 @@ class Student < User
         @group = Group.where(group_name: user_name).first
       else
         @group = Group.new(group_name: user_name)
+
         # We want to have the user_name as repository name,
         # so we have to set the repo_name before we save the group.
         @group.repo_name = user_name
