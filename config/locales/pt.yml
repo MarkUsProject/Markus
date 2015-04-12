@@ -479,6 +479,7 @@ pt:
         no_results: "Não há notas disponíveis ainda..."
         detailed_marks_message: "Notas detalhadas estão disponíveis."
       csv:
+        overwrite: "Substituir notas existentes?"
         incomplete_header: "Os totais ou os nomes dos itens estão faltando"
         incomplete_row: "Contém pouca informação."
         invalid_user_name: "Nome de usuário inválido."
