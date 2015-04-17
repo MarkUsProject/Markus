@@ -1,4 +1,5 @@
 <%= content_for :head do %>
+  <%= javascript_include_tag 'marking_schemes' %>
   <%= render partial: 'marking_schemes_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
@@ -14,3 +15,10 @@
 <div class='wrapLeft'>
     <div id='marking_schemes_table'></div>
 </div>
+
+<div class="marking_scheme_form">
+  <h2>Add a new Marking Scheme</h2>
+  <%= render partial: 'form',
+             formats: [:html],
+             handlers: [:erb] %>
+</div>           

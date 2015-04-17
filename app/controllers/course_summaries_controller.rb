@@ -23,4 +23,8 @@ class CourseSummariesController < ApplicationController
   def get_marking_weights_for_marking_schemes
     render json: get_marking_weights_for_all_marking_schemes
   end
+
+  def get_marking_scheme_details
+    render json: Class.new.extend(MarkingSchemesHelper).get_table_json_data
+  end
 end

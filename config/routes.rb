@@ -307,6 +307,7 @@ Markus::Application.routes.draw do
 	get 'get_max_marks_for_assignments'
         get 'get_max_marks_for_grade_entry_forms'
 	get 'get_marking_weights_for_marking_schemes'
+	get 'get_marking_scheme_details'
       end
     end
 

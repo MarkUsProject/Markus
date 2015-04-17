@@ -2,8 +2,17 @@ class MarkingSchemesController < ApplicationController
   include MarkingSchemesHelper
   
   def index
-    @assignments = Assignment.all
+    # @assignments = Assignment.all
+    # @grade_entry_forms = GradeEntryForm.all
+
+    @marking_scheme    = MarkingScheme.new
+    @assignments       = Assignment.all
     @grade_entry_forms = GradeEntryForm.all
+
+    @all_gradable_items = @assignments + @grade_entry_forms
+    @all_gradable_items.count.times do
+      @marking_scheme.marking_weights.build
+    end
   end
   
   def populate
@@ -29,7 +38,7 @@ class MarkingSchemesController < ApplicationController
       end
     end
 
-    redirect_to action: 'index'
+    redirect_to marking_schemes_path()
   end
   
   def new

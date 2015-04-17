@@ -33,6 +33,14 @@
         });
       <% end %>
 
+      columns.push({
+        id: "edit_ms",
+        content: "Edit",
+        sortable: false,
+        compare: compare_anchor_text,
+        searchable: false
+      });
+
       return {columns: columns};
     },
     getInitialState: function() {
@@ -47,7 +55,7 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
       jQuery.ajax({
-        url: 'populate',
+        url: '<%= marking_schemes_path() %>' + '/populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -93,6 +101,10 @@
           }
           ms[key] = value;
         <% end %>
+
+        ms['edit_ms'] = <span>
+          <a key={markingScheme.edit_link}
+            href={markingScheme.edit_link}><%= j raw I18n.t(:'edit') %></a> </span>;
 
         return ms;
       }.bind(this));
