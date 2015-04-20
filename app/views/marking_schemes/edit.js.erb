@@ -1,3 +1,16 @@
+// remove HTML from add div and hide it
+jQuery('.new_ms').html('');
+jQuery('.new_ms').hide();
+
+// remove HTML from edit div incase another marking
+// scheme is being edited
+jQuery('.edit_ms').html('');
+
 jQuery('.edit_ms').append("<h2>Edit Marking Scheme</h2>");
 jQuery('.edit_ms').append("<%= j (render 'form') %>");
+
+// show edit div if hidden
+jQuery('.edit_ms').show()
+
+// scroll to div
 jQuery('html, body').animate({scrollTop: jQuery(".edit_ms").offset().top}, 1000);
