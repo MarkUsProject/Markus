@@ -528,7 +528,7 @@ describe Assignment do
       @other_submission =
         create(:version_used_submission, grouping: @other_grouping)
     end
-    
+
     context 'assignment re-collection' do
       it 'does calculate submission results properly' do
         @assignment.due_date = (Time.now - 1.minute)
