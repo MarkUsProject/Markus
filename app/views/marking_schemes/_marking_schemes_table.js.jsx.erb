@@ -101,10 +101,8 @@
           }
           ms[key] = value;
         <% end %>
-
-        ms['edit_ms'] = <span>
-          <a key={markingScheme.edit_link}
-            href={markingScheme.edit_link}><%= j raw I18n.t(:'edit') %></a> </span>;
+        
+        ms['edit_ms'] = <a key={markingScheme.edit_link} href={markingScheme.edit_link} data-remote="true">Edit</a>;
 
         return ms;
       }.bind(this));

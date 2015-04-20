@@ -17,11 +17,19 @@ def get_table_json_data
       name: ms.name,
       id: ms.id,
       assignment_weights: get_marking_weights_for_all_gradable_item(MarkingWeight.where(marking_scheme_id: ms.id, is_assignment: true)),
-      spreadsheet_weights: get_marking_weights_for_all_gradable_item(MarkingWeight.where(marking_scheme_id: ms.id, is_assignment: false))
+      spreadsheet_weights: get_marking_weights_for_all_gradable_item(MarkingWeight.where(marking_scheme_id: ms.id, is_assignment: false)),
+      edit_link: get_edit_link_for_marking_scheme_id(ms.id)
     }
   end
 
   req_data.to_json
+end
+
+def get_edit_link_for_marking_scheme_id(id)
+  url_for(
+        controller: 'marking_schemes',
+        action: 'edit',
+        id: id)
 end
 
 def get_marking_weights_for_all_gradable_item(weights_array)

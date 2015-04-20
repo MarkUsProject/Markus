@@ -8,7 +8,7 @@
     Marking Schemes
   </h1>
   <div class='heading_buttons'>
-    <a class="new_ms_link" href="#">Add New Marking Scheme</a>
+    <%= link_to "Add New Marking Scheme", new_marking_scheme_path, remote: true %>
   </div>
 </div>
 
@@ -16,9 +16,5 @@
     <div id='marking_schemes_table'></div>
 </div>
 
-<div class="marking_scheme_form">
-  <h2>Add a new Marking Scheme</h2>
-  <%= render partial: 'form',
-             formats: [:html],
-             handlers: [:erb] %>
-</div>           
+<div class="edit_ms"></div> 
+<div class="new_ms"></div>

@@ -1,5 +1,7 @@
 class MarkingSchemesController < ApplicationController
   include MarkingSchemesHelper
+
+  respond_to :html, :js
   
   def index
     # @assignments = Assignment.all
@@ -33,8 +35,30 @@ class MarkingSchemesController < ApplicationController
           marking_weight.save!
         end
       rescue ActiveRecord::RecordInvalid => invalid
-        # Failed
-        puts "********FAILED*******"
+        # Rollback
+      end
+    end
+
+    redirect_to marking_schemes_path()
+  end
+
+  def update
+    ActiveRecord::Base.transaction do
+      begin
+        # save marking scheme
+        marking_scheme = MarkingScheme.where(id: params["id"])[0]
+        marking_scheme.name = params["marking_scheme"]["name"]
+        marking_scheme.save!
+
+        # save marking weights
+        params["marking_scheme"]["marking_weights_attributes"].each do |key, obj|
+          is_assignment = (obj["type"] == "Assignment")
+          marking_weight = MarkingWeight.where(gradable_item_id: obj["id"], is_assignment: is_assignment, marking_scheme_id: marking_scheme.id)[0]
+          marking_weight.weight = obj["weight"]
+          marking_weight.save!
+        end
+      rescue ActiveRecord::RecordInvalid => invalid
+        # Rollback
       end
     end
 
@@ -53,5 +77,11 @@ class MarkingSchemesController < ApplicationController
   end
 
   def edit
+    @marking_scheme = MarkingScheme.where(id: params["id"])[0]
+
+    @assignments       = Assignment.all
+    @grade_entry_forms = GradeEntryForm.all
+
+    @all_gradable_items = @assignments + @grade_entry_forms
   end
 end

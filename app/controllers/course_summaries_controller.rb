@@ -25,6 +25,7 @@ class CourseSummariesController < ApplicationController
   end
 
   def get_marking_scheme_details
-    render json: Class.new.extend(MarkingSchemesHelper).get_table_json_data
+    # render json: Class.new.extend(MarkingSchemesHelper).get_table_json_data
+    redirect_to url_for(controller: "marking_schemes", action: "populate")
   end
 end
