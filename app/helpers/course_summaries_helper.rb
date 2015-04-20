@@ -1,10 +1,5 @@
 module CourseSummariesHelper
-  #
-  #  Get JSON data for the table in the form of
-  #  { id: student_id, user_name: student.user_name,
-  #    first_name: student.first_name, last_name: student.last_name
-  #    marks: { a_id: mark/null } }
-  #
+  #  Get JSON data for the table
   def get_table_json_data
     all_students = Student.where(type: 'Student')
     all_assignments = Assignment.all
@@ -31,7 +26,6 @@ module CourseSummariesHelper
     all_assignments.each do |assignment|
       marks[assignment.id] = \
       get_mark_for_assignment_and_student(assignment, student)
-      # marks[assignment.id] = rand(60)
     end
     marks
   end
@@ -90,7 +84,6 @@ module CourseSummariesHelper
       max_mark += rc.weight * 4
     end
     max_mark
-    # 68
   end
 
   def get_mark_for_all_gef_for_student(student, all_grade_entry_forms)

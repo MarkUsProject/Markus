@@ -4,17 +4,8 @@ class MarkingSchemesController < ApplicationController
   respond_to :html, :js
   
   def index
-    # @assignments = Assignment.all
-    # @grade_entry_forms = GradeEntryForm.all
-
-    @marking_scheme    = MarkingScheme.new
-    @assignments       = Assignment.all
+    @assignments = Assignment.all
     @grade_entry_forms = GradeEntryForm.all
-
-    @all_gradable_items = @assignments + @grade_entry_forms
-    @all_gradable_items.count.times do
-      @marking_scheme.marking_weights.build
-    end
   end
   
   def populate
