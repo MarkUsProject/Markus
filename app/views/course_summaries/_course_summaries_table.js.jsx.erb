@@ -31,7 +31,7 @@
         columns.push({
           id: 'assignment_' + <%= assignment.id %>,
           content: '<%= assignment.short_identifier %>',
-          sortable: true,
+          sortable: false,
           compare: compare_anchor_text,
           searchable: false
         });
@@ -41,7 +41,7 @@
         columns.push({
           id: 'gef_' + <%= grade_entry_from.id %>,
           content: '<%= grade_entry_from.short_identifier %>',
-          sortable: true,
+          sortable: false,
           compare: compare_anchor_text,
           searchable: false
         });
@@ -216,21 +216,21 @@
           var id = <%= assignment.id %>;
           var key = "assignment_" + id;
           var value = courseSummary.assignment_marks[id]
-          cs[key] = value ? value : "NA";
+          cs[key] = value ? value : "N/A";
         <% end %>
 
         <% for grade_entry_from in @grade_entry_forms %>
           var id = <%= grade_entry_from.id %>;
           var key = "gef_" + id;
           var value = courseSummary.grade_entry_form_marks[id];
-          cs[key] = (value) ? value : "NA";
+          cs[key] = (value) ? value : "N/A";
         <% end %>
 
         <% for marking_scheme in @marking_schemes %>
           var id = <%= marking_scheme.id %>;
           var key = "marking_scheme_" + id;
           var value = parseFloat(courseSummary.weighted_marks[id]);
-          cs[key] = value ? value : "NA";
+          cs[key] = value ? value : "N/A";
         <% end %>
         
         return cs;
