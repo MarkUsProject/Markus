@@ -53,13 +53,22 @@ class SubmissionCollector < ActiveRecord::Base
 
   #Add all the groupings belonging to assignment to the grouping queue
   def push_groupings_to_queue(groupings)
+    
+    #puts "#{groupings.size} incoming !!!!!!!!!!!!!!!!!!!!!!!!!"
     priority_q = priority_queue
     regular_q  = regular_queue
     groupings.each do |grouping|
-      next if regular_q.include?(grouping) || priority_q.include?(grouping)
+      
+      
+      if regular_q.include?(grouping) || priority_q.include?(grouping)
+        #puts "++++++++ #{grouping.id} already here"
+        next
+      end
       grouping.is_collected = false
+      #puts "^^^^^^^^^^ #{grouping.id} pushed"
       regular_q.push(grouping)
     end
+    #puts "HERE comes the process"
     start_collection_process
   end
 
@@ -87,15 +96,16 @@ class SubmissionCollector < ActiveRecord::Base
   #Get the next grouping for which to collect the submission, or return nil
   #if there are no more groupings.
   def get_next_grouping_for_collection
+    #puts "------------ pri:", priority_queue
+    #puts "------------ reg:", regular_queue
     priority_queue.first || regular_queue.first
   end
 
   #Fork-off a new process resposible for collecting all submissions
   def start_collection_process
-
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
-    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
+    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ || Rails.env.test? # should match for Windows only
       while collect_next_submission
       end
       return
@@ -138,7 +148,6 @@ class SubmissionCollector < ActiveRecord::Base
           yield
           m_logger.log('Submission collection process done evaluating provided code block')
         end
-
         while collect_next_submission
           if SubmissionCollector.first.stop_child
             m_logger.log('Submission collection process now exiting because it was ' +
