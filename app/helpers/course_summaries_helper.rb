@@ -5,18 +5,19 @@ module CourseSummariesHelper
     all_assignments = Assignment.all
     all_grade_entry_forms = GradeEntryForm.all
 
-    student_list = all_students.map do |student| {
-      id: student.id,
-      user_name: student.user_name,
-      first_name: student.first_name,
-      last_name: student.last_name,
-      assignment_marks:
-        get_mark_for_all_assignments_for_student(student, all_assignments),
-      grade_entry_form_marks:
-        get_mark_for_all_gef_for_student(student, all_grade_entry_forms),
-      weighted_marks:
-        get_weighted_total_for_all_marking_schemes_for_student(student)
-    }
+    student_list = all_students.map do |student|
+      {
+        id: student.id,
+        user_name: student.user_name,
+        first_name: student.first_name,
+        last_name: student.last_name,
+        assignment_marks:
+          get_mark_for_all_assignments_for_student(student, all_assignments),
+        grade_entry_form_marks:
+          get_mark_for_all_gef_for_student(student, all_grade_entry_forms),
+        weighted_marks:
+          get_weighted_total_for_all_marking_schemes_for_student(student)
+      }
     end
     student_list.to_json
   end
@@ -95,7 +96,7 @@ module CourseSummariesHelper
     marks
   end
 
-  def get_mark_for_gef_and_student(gef, student)    
+  def get_mark_for_gef_and_student(gef, student)  
     ges = GradeEntryStudent.where(grade_entry_form_id: gef.id,
                                   user_id: student.id)
     if ges != []
