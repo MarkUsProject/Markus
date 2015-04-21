@@ -458,6 +458,13 @@ en:
       section:              "Section"
       sections:             "Section:"
 
+    course_summaries_index:
+        page_title:     "Summary"
+        user_name:      "User Name"
+        first_name:     "First Name"
+        last_name:      "Last Name"
+        ngr:            "No Grade Received"
+
     grade_entry_forms:
       blank_field: "can't be blank"
       invalid_name: "is already taken"
@@ -1180,6 +1187,9 @@ en:
       grade: "Grade"
       x_mark: "x Mark"
       weight: "Weight"
+
+    course_summaries:
+        title: "Summary"
 
     notes:
         note_on: "%{user_name} on <strong>%{display_for}</strong>"

@@ -1,0 +1,251 @@
+<script type="text/jsx">
+  /** @jsx React.DOM */
+
+  var CourseSummariesTable = React.createClass({
+    getDefaultProps: function() {
+      var columns = [
+        {
+          id: 'student_user_name',
+          content: '<%= j raw I18n.t('course_summaries_index.user_name') %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: true
+        },
+        {
+          id: 'student_first_name',
+          content: '<%= j raw I18n.t('course_summaries_index.first_name') %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: false
+        },
+        {
+          id: 'student_last_name',
+          content: '<%= j raw I18n.t('course_summaries_index.last_name') %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: false
+        }
+      ];
+      
+      <% for assignment in @assignments %>
+        columns.push({
+          id: 'assignment_' + <%= assignment.id %>,
+          content: '<%= assignment.short_identifier %>',
+          sortable: false,
+          compare: compare_anchor_text,
+          searchable: false
+        });
+      <% end %>
+
+      <% for grade_entry_from in @grade_entry_forms %>
+        columns.push({
+          id: 'gef_' + <%= grade_entry_from.id %>,
+          content: '<%= grade_entry_from.short_identifier %>',
+          sortable: false,
+          compare: compare_anchor_text,
+          searchable: false
+        });
+      <% end %>
+
+      <% for marking_scheme in @marking_schemes %>
+        columns.push({
+          id: 'marking_scheme_' + <%= marking_scheme.id %>,
+          content: '<%= marking_scheme.name %>',
+          sortable: false,
+          compare: compare_anchor_text,
+          searchable: false
+        });
+      <% end %>
+
+      return {columns: columns};
+    },
+
+    getInitialState: function() {
+      return {
+        columns: this.props.columns,
+        courseSummaries: [],
+        marking_schemes: []
+      };
+    },
+
+    componentWillMount: function() {
+      this.refresh();
+    },
+
+    createOnClickHandlerForColumns: function() {
+      var that = this;
+      // all marking_scheme elements
+      jQuery("th[id^=marking_scheme_]").click(function(e) {
+        
+        if (jQuery(this).hasClass("ms_detail_show")) {
+          that.removeMarkingSchemeDetail(this);
+          jQuery(this).removeClass("ms_detail_show");
+         
+        } else {
+          jQuery(this).addClass("ms_detail_show");
+          that.getMarkingSchemeDetails(this.id.replace("marking_scheme_", ""));
+        }
+      });
+    },
+
+    removeMarkingSchemeDetail: function(ms_element) {
+      ms_column = this.state.columns.filter(function(c) {
+        return c.id == ms_element.id;
+      })[0];
+      var ms_column_index = this.state.columns.indexOf(ms_column);
+
+      // remove everything after the first new line char. Which is the stuff we added
+      var updated_content = ms_column.content.substring(0, ms_column.content.indexOf("\n")).trim();
+
+      this.state.columns[ms_column_index].content = updated_content;
+      this.setState({
+        columns: this.state.columns
+      });
+    },
+
+    getMarkingSchemeDetails: function(ms_id) {
+      // if marking_scheme details are already downloaded
+      if (this.state.marking_schemes.size() > 0) {
+        this.showDetailForMarkingSchemeId(ms_id);
+        return;
+      };
+
+      jQuery.ajax({
+        url: '<%= course_summaries_path() %>' + '/get_marking_scheme_details',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            marking_schemes: data
+          });
+          this.showDetailForMarkingSchemeId(ms_id);
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ": " + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this),
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+
+    showDetailForMarkingSchemeId: function(ms_id) {
+      var ms_detail = this.state.marking_schemes.filter(function(ms) {
+        return ms.id == parseInt(ms_id);
+      })[0];
+      
+      var assignments = this.state.columns.filter(function(a) {
+        return /assignment_/.test(a.id);
+      });
+
+      var spreadsheets = this.state.columns.filter(function(sp) {
+        return /gef_/.test(sp.id);
+      });
+
+      var output = ms_detail.name + "\n\n";
+      for (var i = 0; i < assignments.size(); i++) {
+        var id = parseInt(assignments[i].id.replace("assignment_", ""));
+        var weight = ms_detail.assignment_weights[id];
+        output += " " + assignments[i].content + ": " + weight + "%" + "\n";
+      }
+
+      for (var i = 0; i < spreadsheets.size(); i++) {
+        var id = parseInt(spreadsheets[i].id.replace("gef_", ""));
+        var weight = ms_detail.spreadsheet_weights[id];
+        output += " " + spreadsheets[i].content + ": " + weight + "%" + "\n";
+      }
+
+      var ms_column = this.state.columns.filter(function(c, index) {
+        return c.id == "marking_scheme_" + ms_id;
+      })[0];
+      var ms_column_index = this.state.columns.indexOf(ms_column);
+
+      this.state.columns[ms_column_index].content = output;
+      this.setState({
+        columns: this.state.columns
+      });
+    },
+
+    // inpired by http://monicalent.com/blog/2013/06/28/quick-tip-use-jquery-\
+    // to-complete-an-arbitrary-number-of-ajax-calls-before-firing-an-event/
+    createRequest: function(data, args) {
+      return jQuery.ajax({
+        url: data.url,
+        method: data.method,
+        dataType: data.dataType,
+        data: (args) ? args : {}
+      });
+    },
+
+    // get info
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+      var ajaxCalls = [];
+
+      // add the populate call
+      ajaxCalls.push(this.createRequest({
+        url: '<%= course_summaries_path() %>' + '/populate',
+        method: 'GET',
+        dataType: 'json'
+      }));
+
+      var that = this;
+      jQuery.when.apply(this, ajaxCalls).done(function(students) {
+        that.setState({
+          courseSummaries: students
+        });
+        document.getElementById('working').style.display = 'none';
+        that.createOnClickHandlerForColumns();
+      });
+    },
+
+    render: function() {
+      that = this;
+      var course_summaries_data = this.state.courseSummaries.map(function(courseSummary) {
+        var cs = {};
+
+        cs['id'] = courseSummary.id;
+        cs['student_user_name'] = courseSummary.user_name;
+        cs['student_first_name'] = courseSummary.first_name;
+        cs['student_last_name'] = courseSummary.last_name;
+
+        <% for assignment in @assignments %>
+          var id = <%= assignment.id %>;
+          var key = "assignment_" + id;
+          var value = courseSummary.assignment_marks[id]
+          cs[key] = value ? value : "N/A";
+        <% end %>
+
+        <% for grade_entry_from in @grade_entry_forms %>
+          var id = <%= grade_entry_from.id %>;
+          var key = "gef_" + id;
+          var value = courseSummary.grade_entry_form_marks[id];
+          cs[key] = (value) ? value : "N/A";
+        <% end %>
+
+        <% for marking_scheme in @marking_schemes %>
+          var id = <%= marking_scheme.id %>;
+          var key = "marking_scheme_" + id;
+          var value = parseFloat(courseSummary.weighted_marks[id]);
+          cs[key] = value ? value : "N/A";
+        <% end %>
+        
+        return cs;
+      });
+
+      return (
+        <div>
+          <Table data={course_summaries_data}
+            columns={this.state.columns}
+          />
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<CourseSummariesTable />, document.getElementById('course_summaries_table'));
+
+</script>

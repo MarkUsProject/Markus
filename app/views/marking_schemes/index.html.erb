@@ -1,0 +1,20 @@
+<%= content_for :head do %>
+  <%= javascript_include_tag 'marking_schemes' %>
+  <%= render partial: 'marking_schemes_table', formats: [:'js.jsx'], handlers: [:erb] %>
+<% end %>
+
+<div class='title_bar'>
+  <h1>
+    Marking Schemes
+  </h1>
+  <div class='heading_buttons'>
+    <%= link_to "Add New Marking Scheme", new_marking_scheme_path, remote: true %>
+  </div>
+</div>
+
+<div class='wrapLeft'>
+    <div id='marking_schemes_table'></div>
+</div>
+
+<div class="edit_ms"></div> 
+<div class="new_ms"></div>
