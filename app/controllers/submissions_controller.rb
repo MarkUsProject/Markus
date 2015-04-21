@@ -255,7 +255,6 @@ class SubmissionsController < ApplicationController
       },"
     end
 
-    @grace_credit_column = ''
     if @assignment.submission_rule.type == 'GracePeriodSubmissionRule'
       @grace_credit_column = "{
         id: 'grace_credits_used',
