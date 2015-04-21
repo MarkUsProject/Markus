@@ -33,8 +33,7 @@ module Repository
       @timestamps_revisions = {}
       # push first timestamp-revision mapping
       @timestamps_revisions[Marshal.dump(
-        Marshal.load(
-          Marshal.dump(Time.now)))] = @current_revision
+        Marshal.load(Marshal.dump(Time.now)))] = @current_revision
       @repository_location = location
       @opened = true
 
