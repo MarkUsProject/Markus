@@ -5,19 +5,18 @@ module CourseSummariesHelper
     all_assignments = Assignment.all
     all_grade_entry_forms = GradeEntryForm.all
 
-    student_list = all_students.map do |student|
-      {
+    student_list = all_students.map do |student| {
       id: student.id,
       user_name: student.user_name,
       first_name: student.first_name,
       last_name: student.last_name,
-      assignment_marks: \
+      assignment_marks:
         get_mark_for_all_assignments_for_student(student, all_assignments),
-      grade_entry_form_marks: \
+      grade_entry_form_marks:
         get_mark_for_all_gef_for_student(student, all_grade_entry_forms),
-      weighted_marks: \
+      weighted_marks:
         get_weighted_total_for_all_marking_schemes_for_student(student)
-      }
+    }
     end
     student_list.to_json
   end
@@ -26,8 +25,8 @@ module CourseSummariesHelper
   def get_mark_for_all_assignments_for_student(student, all_assignments)
     marks = {}
     all_assignments.each do |assignment|
-      marks[assignment.id] = \
-      get_mark_for_assignment_and_student(assignment, student)
+      marks[assignment.id] =
+        get_mark_for_assignment_and_student(assignment, student)
     end
     marks
   end
@@ -97,9 +96,9 @@ module CourseSummariesHelper
   end
 
   def get_mark_for_gef_and_student(gef, student)    
-    ges = GradeEntryStudent.where(grade_entry_form_id: gef.id, 
+    ges = GradeEntryStudent.where(grade_entry_form_id: gef.id,
                                   user_id: student.id)
-    if (ges != [])
+    if ges != []
       return ges.first.total_grade
     end
     nil
@@ -137,32 +136,37 @@ module CourseSummariesHelper
 
   def get_weighted_total_for_all_marking_schemes_for_student(student)
     result = {}
-    
-    assignment_marks = \
+
+    assignment_marks =
       get_mark_for_all_assignments_for_student(student, Assignment.all)
     gef_marks = get_mark_for_all_gef_for_student(student, GradeEntryForm.all)
 
     MarkingScheme.all.each do |ms|
-      result[ms.id] = get_weighted_total_for_marking_scheme_and_student(ms.id, \
-        assignment_marks, gef_marks)
+      result[ms.id] = get_weighted_total_for_marking_scheme_and_student(
+        ms.id,
+        assignment_marks,
+        gef_marks)
     end
     result
   end
 
-  def get_weighted_total_for_marking_scheme_and_student(ms_id, \
-      assignment_marks, gef_marks)
+  def get_weighted_total_for_marking_scheme_and_student(
+    ms_id,
+    assignment_marks,
+    gef_marks)
+
     weights_for_current_ms = MarkingWeight.where(marking_scheme_id: ms_id)
 
     weighted_assignment_total = 0
     assignment_marks.each do |a_id, mark|
-      assignment_weight = weights_for_current_ms.where(is_assignment: true, 
-                                                      gradable_item_id: a_id)
-      if (assignment_weight != [] && mark)
+      assignment_weight = weights_for_current_ms.where(is_assignment: true,
+                                                       gradable_item_id: a_id)
+      if assignment_weight != [] && mark
         weight = assignment_weight[0].weight
         # weight might be nil
-        if (weight)
-          weighted_mark = ( (mark/get_max_mark_for_assignment(a_id)) * 100 ) \
-            * ( weight/100 )
+        if weight
+          weighted_mark = ((mark / get_max_mark_for_assignment(a_id)) * 100) *
+                          (weight / 100)
           weighted_assignment_total += weighted_mark
         end
       end
@@ -170,14 +174,14 @@ module CourseSummariesHelper
 
     weighted_gef_total = 0
     gef_marks.each do |gef_id, mark|
-      gef_weight = weights_for_current_ms.where(is_assignment: false, 
+      gef_weight = weights_for_current_ms.where(is_assignment: false,
                                                 gradable_item_id: gef_id)
-      if (gef_weight != 0 && mark)
+      if gef_weight != 0 && mark
         weight = gef_weight[0].weight
         # weight might be nil
-        if (weight)
-          weighted_mark = ( (mark/get_max_mark_for_grade_entry_from(gef_id)) \
-            * 100 ) * ( weight/100 )
+        if weight
+          weighted_mark = ((mark / get_max_mark_for_grade_entry_from(gef_id)) *
+            100) * (weight / 100)
           weighted_gef_total += weighted_mark
         end
       end
@@ -185,5 +189,4 @@ module CourseSummariesHelper
 
     (weighted_assignment_total + weighted_gef_total).round(2)
   end
-
 end
