@@ -556,7 +556,6 @@ describe Assignment do
         end
 
         it 'returns all of the results' do
-          puts @assignment.graded_submission_results.class
           expect(@assignment.graded_submission_results)
             .to eq [@result, @other_result]
         end
