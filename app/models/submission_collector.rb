@@ -56,6 +56,7 @@ class SubmissionCollector < ActiveRecord::Base
     priority_q = priority_queue
     regular_q  = regular_queue
     groupings.each do |grouping|
+      next if regular_q.include?(grouping) || priority_q.include?(grouping)
       grouping.is_collected = false
       regular_q.push(grouping)
     end
