@@ -152,8 +152,11 @@ module CourseSummariesHelper
       assignment_weight = weights_for_current_ms.where(is_assignment: true, gradable_item_id: a_id)
       if (assignment_weight != [] && mark)
         weight = assignment_weight[0].weight
-        weighted_mark = ( (mark/get_max_mark_for_assignment(a_id)) * 100 ) * ( weight/100 )
-        weighted_assignment_total += weighted_mark
+        # weight might be nil
+        if (weight)
+          weighted_mark = ( (mark/get_max_mark_for_assignment(a_id)) * 100 ) * ( weight/100 )
+          weighted_assignment_total += weighted_mark
+        end
       end
     end
 
@@ -162,8 +165,11 @@ module CourseSummariesHelper
       gef_weight = weights_for_current_ms.where(is_assignment: false, gradable_item_id: gef_id)
       if (gef_weight != 0 && mark)
         weight = gef_weight[0].weight
-        weighted_mark = ( (mark / get_max_mark_for_grade_entry_from(gef_id)) * 100 ) * ( weight/100 )
-        weighted_gef_total += weighted_mark
+        # weight might be nil
+        if (weight)
+          weighted_mark = ( (mark/get_max_mark_for_grade_entry_from(gef_id)) * 100 ) * ( weight/100 )
+          weighted_gef_total += weighted_mark
+        end
       end
     end
 
