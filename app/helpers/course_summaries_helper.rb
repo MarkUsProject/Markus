@@ -96,7 +96,7 @@ module CourseSummariesHelper
     marks
   end
 
-  def get_mark_for_gef_and_student(gef, student)  
+  def get_mark_for_gef_and_student(gef, student)
     ges = GradeEntryStudent.where(grade_entry_form_id: gef.id,
                                   user_id: student.id)
     if ges != []
