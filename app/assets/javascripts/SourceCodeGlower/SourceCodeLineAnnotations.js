@@ -185,8 +185,9 @@ SourceCodeLineAnnotations.prototype.hideText = function() {
 SourceCodeLineAnnotations.prototype.displayTextsForLine = function(
   lineNum, event, x, y) {
   var annotationIDs = new Array();
-  for (var i = 0; i < event.srcElement.attributes.length; i++) {
-    var attribute = event.srcElement.attributes[i];
+  var source = (event.currentTarget) ? event.currentTarget : event.srcElement;
+  for (var i = 0; i < source.attributes.length; i++) {
+    var attribute = source.attributes[i];
     if (attribute.name.indexOf("data-annotationid") >= 0){
       annotationIDs.push(attribute.value)
     }
