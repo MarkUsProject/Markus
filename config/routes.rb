@@ -1,5 +1,4 @@
 Markus::Application.routes.draw do
-
   # Install the default routes as the lowest priority.
   root controller: 'main', action: 'login', via: [:post, :get]
 
@@ -304,10 +303,7 @@ Markus::Application.routes.draw do
     resources :course_summaries do
       collection do
         get 'populate'
-	get 'get_max_marks_for_assignments'
-        get 'get_max_marks_for_grade_entry_forms'
-	get 'get_marking_weights_for_marking_schemes'
-	get 'get_marking_scheme_details'
+        get 'get_marking_scheme_details'
       end
     end
 
