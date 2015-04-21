@@ -16,13 +16,14 @@ class MarkingSchemesController < ApplicationController
     ActiveRecord::Base.transaction do
       begin
         # save marking scheme
-        marking_scheme = MarkingScheme.new(name: params["marking_scheme"]["name"])
+        marking_scheme = MarkingScheme.new(name: params['marking_scheme']['name'])
         marking_scheme.save!
 
         # save marking weights
-        params["marking_scheme"]["marking_weights_attributes"].each do |key, obj|
-          is_assignment = (obj["type"] == "Assignment")
-          marking_weight = MarkingWeight.new(gradable_item_id: obj["id"], is_assignment: is_assignment, marking_scheme_id: marking_scheme.id, weight: obj["weight"])
+        params['marking_scheme']['marking_weights_attributes'].each do |_key, obj|
+          is_assignment = (obj['type'] == 'Assignment')
+          marking_weight = MarkingWeight.new(gradable_item_id: obj['id'], is_assignment: \
+            is_assignment, marking_scheme_id: marking_scheme.id, weight: obj['weight'])
           marking_weight.save!
         end
       rescue ActiveRecord::RecordInvalid => invalid
@@ -37,15 +38,16 @@ class MarkingSchemesController < ApplicationController
     ActiveRecord::Base.transaction do
       begin
         # save marking scheme
-        marking_scheme = MarkingScheme.where(id: params["id"])[0]
-        marking_scheme.name = params["marking_scheme"]["name"]
+        marking_scheme = MarkingScheme.where(id: params['id'])[0]
+        marking_scheme.name = params['marking_scheme']['name']
         marking_scheme.save!
 
         # save marking weights
-        params["marking_scheme"]["marking_weights_attributes"].each do |key, obj|
-          is_assignment = (obj["type"] == "Assignment")
-          marking_weight = MarkingWeight.where(gradable_item_id: obj["id"], is_assignment: is_assignment, marking_scheme_id: marking_scheme.id)[0]
-          marking_weight.weight = obj["weight"]
+        params['marking_scheme']['marking_weights_attributes'].each do |_key, obj|
+          is_assignment = (obj['type'] == 'Assignment')
+          marking_weight = MarkingWeight.where(gradable_item_id: obj['id'], is_assignment: \
+            is_assignment, marking_scheme_id: marking_scheme.id)[0]
+          marking_weight.weight = obj['weight']
           marking_weight.save!
         end
       rescue ActiveRecord::RecordInvalid => invalid
