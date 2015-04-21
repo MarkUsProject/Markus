@@ -78,7 +78,7 @@ class MarkingSchemesController < ApplicationController
   end
 
   def edit
-    @marking_scheme = MarkingScheme.where(id: params["id"])[0]
+    @marking_scheme = MarkingScheme.where(id: params['id'])[0]
 
     @all_gradable_items = []
 
