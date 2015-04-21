@@ -65,7 +65,7 @@ class MarkingSchemesController < ApplicationController
 
     redirect_to marking_schemes_path
   end
-  
+
   def new
     @marking_scheme = MarkingScheme.new
     @assignments = Assignment.all
