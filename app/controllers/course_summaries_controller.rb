@@ -2,9 +2,9 @@ class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
   def index
-    @assignments       = Assignment.all
-    @marking_schemes   = MarkingScheme.all
-    @marking_weights   = MarkingWeight.all
+    @assignments = Assignment.all
+    @marking_schemes = MarkingScheme.all
+    @marking_weights = MarkingWeight.all
     @grade_entry_forms = GradeEntryForm.all
   end
 
@@ -13,6 +13,6 @@ class CourseSummariesController < ApplicationController
   end
 
   def get_marking_scheme_details
-    redirect_to url_for(controller: "marking_schemes", action: "populate")
+    redirect_to url_for(controller: 'marking_schemes', action: 'populate')
   end
 end

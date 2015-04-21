@@ -1,19 +1,19 @@
 // remove HTML from edit div and hide it
-jQuery('.edit_ms').html('');
-jQuery('.edit_ms').hide();
+jQuery('.edit-ms').html('');
+jQuery('.edit-ms').hide();
 
 // remove HTML from add div incase another marking
 // scheme is being edited
-jQuery('.new_ms').html('');
+jQuery('.new-ms').html('');
 
-jQuery('.new_ms').append("<h2>Add new Marking Scheme</h2>");
-jQuery('.new_ms').append("<%= j (render 'form') %>");
+jQuery('.new-ms').append("<h2>Add new Marking Scheme</h2>");
+jQuery('.new-ms').append("<%= j (render 'form') %>");
 
 // show add div if hidden
-jQuery('.new_ms').show()
+jQuery('.new-ms').show()
 
 // scroll to div
-jQuery('html, body').animate({scrollTop: jQuery(".new_ms").offset().top}, 1000);
+jQuery('html, body').animate({scrollTop: jQuery(".new-ms").offset().top}, 1000);
 
 // avoid any non-numbers in the weight field
 jQuery("input[id^='marking_scheme_marking_weights_attributes_']").keypress(function(key) {

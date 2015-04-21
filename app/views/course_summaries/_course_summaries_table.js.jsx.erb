@@ -77,12 +77,12 @@
       // all marking_scheme elements
       jQuery("th[id^=marking_scheme_]").click(function(e) {
         
-        if (jQuery(this).hasClass("ms_detail_show")) {
+        if (jQuery(this).hasClass("ms-detail-show")) {
           that.removeMarkingSchemeDetail(this);
-          jQuery(this).removeClass("ms_detail_show");
+          jQuery(this).removeClass("ms-detail-show");
          
         } else {
-          jQuery(this).addClass("ms_detail_show");
+          jQuery(this).addClass("ms-detail-show");
           that.getMarkingSchemeDetails(this.id.replace("marking_scheme_", ""));
         }
       });
