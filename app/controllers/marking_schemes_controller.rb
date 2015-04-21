@@ -2,7 +2,7 @@ class MarkingSchemesController < ApplicationController
   include MarkingSchemesHelper
 
   respond_to :html, :js
-  
+
   def index
     @assignments = Assignment.all
     @grade_entry_forms = GradeEntryForm.all
