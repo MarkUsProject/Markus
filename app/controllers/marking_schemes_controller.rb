@@ -26,8 +26,8 @@ class MarkingSchemesController < ApplicationController
           is_assignment = (obj['type'] == 'Assignment')
           marking_weight = MarkingWeight.new(
                             gradable_item_id: obj['id'],
-                            is_assignment: is_assignment, 
-                            marking_scheme_id: marking_scheme.id, 
+                            is_assignment: is_assignment,
+                            marking_scheme_id: marking_scheme.id,
                             weight: obj['weight'])
           marking_weight.save!
         end
@@ -52,8 +52,8 @@ class MarkingSchemesController < ApplicationController
         do |_key, obj|
           is_assignment = (obj['type'] == 'Assignment')
           marking_weight = MarkingWeight.where(
-                            gradable_item_id: obj['id'], 
-                            is_assignment: is_assignment, 
+                            gradable_item_id: obj['id'],
+                            is_assignment: is_assignment,
                             marking_scheme_id: marking_scheme.id)[0]
           marking_weight.weight = obj['weight']
           marking_weight.save!
@@ -83,7 +83,7 @@ class MarkingSchemesController < ApplicationController
     @all_gradable_items = []
 
     MarkingWeight.where(marking_scheme_id: @marking_scheme.id).each do |mw|
-      if (mw.is_assignment)
+      if mw.is_assignment
         @all_gradable_items << Assignment.where(id: mw.gradable_item_id)[0]
       else
         @all_gradable_items << GradeEntryForm.where(id: mw.gradable_item_id)[0]
