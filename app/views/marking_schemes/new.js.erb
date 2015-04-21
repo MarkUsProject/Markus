@@ -6,7 +6,7 @@ jQuery('.edit-ms').hide();
 // scheme is being edited
 jQuery('.new-ms').html('');
 
-jQuery('.new-ms').append("<h2>Add new Marking Scheme</h2>");
+jQuery('.new-ms').append("<h2><%= t('marking_schemes.add_new') %></h2>");
 jQuery('.new-ms').append("<%= j (render 'form') %>");
 
 // show add div if hidden

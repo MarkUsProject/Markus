@@ -1052,6 +1052,15 @@ fr:
       x_mark: "x Note"
       weight: "Coefficient"
 
+    course_summaries:
+      title: "Sommaire"
+
+    marking_schemes:
+      title: "Marquage Barème"
+      add_new: "Ajouter Nouveau Marquage Barème"
+      edit: "Modifier Barème de Notation"
+      weight_label: "Poids Pour Les " 
+
     notes:
         note_on: "%{user_name} sur <b>%{display_for}</b>"
         add_new: "Nouvelle remarque"

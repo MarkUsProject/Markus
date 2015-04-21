@@ -5,10 +5,10 @@
 
 <div class='title_bar'>
   <h1>
-    Marking Schemes
+    <%= t('marking_schemes.title') %>
   </h1>
   <div class='heading_buttons'>
-    <%= link_to "Add New Marking Scheme", new_marking_scheme_path, remote: true %>
+    <%= link_to t('marking_schemes.add_new'), new_marking_scheme_path, remote: true %>
   </div>
 </div>
 

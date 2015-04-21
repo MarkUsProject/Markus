@@ -14,7 +14,7 @@
           <tr>
             <%= builder.hidden_field :type, value: (@all_gradable_items[index].is_a?(Assignment)) ? "Assignment" : "GEF" %>
             <%= builder.hidden_field :id, value: @all_gradable_items[index].id %>
-            <td><%= raw(builder.label("Weight for " + @all_gradable_items[index].short_identifier)) %>:</td>
+            <td><%= raw(builder.label(t('marking_schemes.weight_label') + @all_gradable_items[index].short_identifier)) %>:</td>
             <td><%= raw(builder.text_field :weight) %></td>
           </tr>
         <% end %>

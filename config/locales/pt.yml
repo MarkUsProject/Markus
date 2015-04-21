@@ -1039,6 +1039,15 @@ pt:
       x_mark: "x Mark"
       weight: "Peso"
 
+    course_summaries:
+      title: "Sumário"
+
+    marking_schemes:
+      title: "Esquema de marcação"
+      add_new: "Adicionar novo Esquema de marcação"
+      edit: "Editar esquema de marcação"
+      weight_label: "Peso para "
+
     notes:
         note_on: "%{user_name} em <b>%{display_for}</b>"
         add_new: "Inserir nova observação"

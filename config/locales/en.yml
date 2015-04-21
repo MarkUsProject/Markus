@@ -1183,7 +1183,13 @@ en:
       weight: "Weight"
 
     course_summaries:
-        title: "Summary"
+      title: "Summary"
+
+    marking_schemes:
+      title: "Marking Schemes"
+      add_new: "Add New Marking Scheme"
+      edit: "Edit Marking Scheme"
+      weight_label: "Weight for " 
 
     notes:
         note_on: "%{user_name} on <strong>%{display_for}</strong>"
