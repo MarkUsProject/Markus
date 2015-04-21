@@ -504,7 +504,7 @@ function sort_by_column(data, column, direction, compare) {
       if (a.props.hasOwnProperty('grade_entry_column') || 
           a.props.hasOwnProperty('data-grade-entry-item-id')) {
         return a;
-      // Cotains image
+      // Contains image
       } else if (a.props.hasOwnProperty('src')) {
         return a.props.src;
       // Is a react component, get innerHTML
@@ -515,7 +515,7 @@ function sort_by_column(data, column, direction, compare) {
     return a;
   }
 
-  if (typeof compare == 'string'){
+  if (typeof compare === 'string') {
     compare = window[compare]
   }
 
@@ -533,3 +533,4 @@ function sort_by_column(data, column, direction, compare) {
 
   return sorted;
 }
+

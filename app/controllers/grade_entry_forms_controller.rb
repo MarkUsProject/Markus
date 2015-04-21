@@ -83,7 +83,7 @@ class GradeEntryFormsController < ApplicationController
     updated_grade = params[:updated_grade]
 
     grade_entry_student = grade_entry_form.grade_entry_students
-                          .find_or_create_by_user_id(@student_id)
+                                          .find_or_create_by_user_id(@student_id)
 
     @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
                   @grade_entry_item_id)
@@ -141,8 +141,8 @@ class GradeEntryFormsController < ApplicationController
     @student_grades = @students.map do |student|
       s = student.attributes
       student_grade_entry = @grade_entry_form.grade_entry_students
-                            .find_by_user_id(student.id)
-      if !student_grade_entry.nil?
+                                             .find_by_user_id(student.id)
+      unless student_grade_entry.nil?
         # Populate grades
         @grade_entry_form.grade_entry_items.each do |grade_entry_item|
           s[:grade_entry_form] = @grade_entry_form.id
@@ -220,7 +220,7 @@ class GradeEntryFormsController < ApplicationController
     else
       params[:students].each do |student_id|
         grade_entry_students.push(grade_entry_form.grade_entry_students
-          .find_or_create_by_user_id(student_id))
+                            .find_or_create_by_user_id(student_id))
       end
     end
 

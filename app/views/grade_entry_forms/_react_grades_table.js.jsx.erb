@@ -10,7 +10,7 @@
     */
   function preventEnterSubmit() {
     jQuery(document).keypress(function(event) {
-      if (event.which == 13) {
+      if (event.which === 13) {
         event.preventDefault();
       }
     });
@@ -31,7 +31,7 @@
       });
       var node = document.getElementById(cell);
       node.dispatchEvent(e);
-      }
+    }
   }
 
   var GradeBoxTotal = React.createClass({
@@ -64,7 +64,7 @@
         type: 'POST',
         dataType: 'script',
       });
-      this.props.value = parseInt(event.target.value);
+      this.props.value = parseInt(event.target.value, 10);
     },
     render: function() {
       return (
@@ -191,10 +191,10 @@
         this.state.grade_columns.map(function(column){
           var column_id = column.id;
 
-          if (column_id == 'marking_state'){
+          if (column_id === 'marking_state'){
             r[column_id] = <img src={row[column_id]}/>;
           } 
-          else if (column_id == 'total_marks'){
+          else if (column_id === 'total_marks'){
             r[column_id] = <GradeBoxTotal grade_id={'grade_' + row.id + '_' + column.id} 
                            grade_entry_column={column.id} student_id={row.id} 
                            value={row[column_id]}/>;
