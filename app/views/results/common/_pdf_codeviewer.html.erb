@@ -158,7 +158,7 @@
     <% if (defined? annots) %>
       <% annots.each do |annot| %>
         add_pdf_annotation('<%= annot.annotation_text.id %>',
-                           '<%= escape_javascript(annot.annotation_text.html_content) %>',
+                           '<%= escape_javascript(simple_format(annot.annotation_text.html_content)) %>',
                            '<%= annot.extract_coords.to_json().html_safe %>');
       <% end %>
     <% end %>

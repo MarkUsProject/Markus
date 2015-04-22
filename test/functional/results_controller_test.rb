@@ -582,12 +582,17 @@ class ResultsControllerTest < AuthenticatedControllerTest
               3.times do |time|
                 g = Grouping.make(:assignment => @assignment)
                 s = Submission.make(:grouping => g)
+                student = Student.make
                 if time == 2
                   @result = s.get_latest_result
                   @result.marking_state = Result::MARKING_STATES[:complete]
                   @result.released_to_students = true
                   @result.save
                 end
+                StudentMembership.make(grouping: g,
+                                       user: student,
+                                       membership_status:
+                                         StudentMembership::STATUSES[:inviter])
               end
               @groupings = @assignment.groupings.all(:order => 'id ASC')
             end
@@ -627,7 +632,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                      :assignment_id => 1,
                      :submission_id => 1,
                      :id => @result.id
-              assert assigns(:next_grouping)
+              assert_not_nil assigns(:next_grouping)
               next_grouping = assigns(:next_grouping)
               assert next_grouping.has_submission?
               next_result = next_grouping.current_submission_used.get_latest_result
@@ -648,8 +653,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                      :submission_id => 1,
                      :id => @result.id
 
-              assert assigns(:next_grouping)
-              assert assigns(:previous_grouping)
+              assert_not_nil assigns(:next_grouping)
+              assert_not_nil assigns(:previous_grouping)
               next_grouping = assigns(:next_grouping)
               previous_grouping = assigns(:previous_grouping)
               assert next_grouping.has_submission?
@@ -678,7 +683,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                      :id => @result.id
 
               assert_nil assigns(:next_grouping)
-              assert assigns(:previous_grouping)
+              assert_not_nil assigns(:previous_grouping)
               previous_grouping = assigns(:previous_grouping)
               assert previous_grouping.has_submission?
               previous_result = previous_grouping.current_submission_used.get_latest_result

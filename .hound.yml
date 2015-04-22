@@ -1,1 +1,9 @@
-.rubocop.yml
+ruby:
+  config_file: .rubocop.yml
+
+java_script:
+  enabled: true
+
+scss:
+  enabled: true
+

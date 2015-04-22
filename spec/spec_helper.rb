@@ -34,6 +34,7 @@ RSpec.configure do |config|
 
   # Include generic helpers.
   config.include Helpers
+  config.include AuthenticationHelper
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -59,4 +60,8 @@ RSpec.configure do |config|
   config.before(:suite) do
     ActiveRecord::Base.connection.tables.each { |table| ActiveRecord::Base.connection.execute("TRUNCATE #{table}") }
   end
+
+  # Get fixture_file_upload to work with RSPEC. See http://bit.ly/1yQfoS5
+  config.include ActionDispatch::TestProcess
+  config.fixture_path = "#{::Rails.root}/spec/fixtures"
 end
