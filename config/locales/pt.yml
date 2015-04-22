@@ -1044,9 +1044,11 @@ pt:
 
     marking_schemes:
       title: "Esquema de marcação"
+      name: "Nome"
       add_new: "Adicionar novo Esquema de marcação"
       edit: "Editar esquema de marcação"
       weight_label: "Peso para "
+      table_modify_column: "Modificar"
 
     notes:
         note_on: "%{user_name} em <b>%{display_for}</b>"

@@ -6,7 +6,7 @@
       var columns = [
         {
           id: 'marking_scheme_name',
-          content: 'Marking Scheme Name',
+          content: '<%= j raw I18n.t('marking_schemes.name') %>',
           sortable: true,
           compare: compare_anchor_text,
           searchable: true
@@ -35,7 +35,7 @@
 
       columns.push({
         id: "edit_ms",
-        content: "Edit",
+        content: '<%= j raw I18n.t('marking_schemes.table_modify_column') %>',
         sortable: false,
         compare: compare_anchor_text,
         searchable: false
@@ -102,7 +102,11 @@
           ms[key] = value;
         <% end %>
         
-        ms['edit_ms'] = <a key={markingScheme.edit_link} href={markingScheme.edit_link} data-remote="true">Edit</a>;
+        ms['edit_ms'] = <span>
+                          <a key={markingScheme.edit_link} href={markingScheme.edit_link} data-remote="true">Edit</a>
+                          &nbsp;|&nbsp;
+                          <a onClick={this.refresh} key={markingScheme.delete_link} href={markingScheme.delete_link} data-remote="true" data-method="delete">Delete</a>
+                        </span>;
 
         return ms;
       }.bind(this));

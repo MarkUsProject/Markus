@@ -1187,9 +1187,11 @@ en:
 
     marking_schemes:
       title: "Marking Schemes"
+      name: "Name"
       add_new: "Add New Marking Scheme"
       edit: "Edit Marking Scheme"
-      weight_label: "Weight for " 
+      weight_label: "Weight for "
+      table_modify_column: "Modify" 
 
     notes:
         note_on: "%{user_name} on <strong>%{display_for}</strong>"

@@ -94,4 +94,8 @@ class MarkingSchemesController < ApplicationController
       end
     end
   end
+
+  def destroy
+    MarkingScheme.find(params['id']).destroy
+  end
 end
