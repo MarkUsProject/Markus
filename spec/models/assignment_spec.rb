@@ -123,7 +123,7 @@ describe Assignment do
         end
 
         it 'returns all TAs' do
-          expect(@assignment.tas).to eq [@ta, @other_ta]
+          expect(@assignment.tas).to match_array [@ta, @other_ta]
         end
       end
     end
@@ -352,7 +352,7 @@ describe Assignment do
         end
 
         it 'returns the students' do
-          expect(@assignment.grouped_students).to eq [@student, @other_student]
+          expect(@assignment.grouped_students).to match_array [@student, @other_student]
         end
       end
     end
