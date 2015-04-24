@@ -352,7 +352,8 @@ describe Assignment do
         end
 
         it 'returns the students' do
-          expect(@assignment.grouped_students).to match_array [@student, @other_student]
+          expect(@assignment.grouped_students)
+            .to match_array [@student, @other_student]
         end
       end
     end
