@@ -85,7 +85,7 @@
 	  f['file_name'] = file[1].name;
 	  f['last_modified_date'] = file[1].last_modified_date;
 	  f['revision_by'] = file[1].user_id;
-        return f;
+          return f;
 	}.bind(this));
 	return (
 	<div>	
@@ -113,27 +113,27 @@
 	data_file: React.PropTypes.array	
 	},
   accessById: function(id){
-     var x = this.props.data_file;
-     var len = x.length;
-     var y;
+     var data_file = this.props.data_file;
+     var len = data_file.length;
+     var data;
      for (var i = 0; i < len; i++){
-     	if(x[i].id == id){
-		y = x[i].file_name;
+     	if(data_file[i].id == id){
+		data = data_file[i].file_name;
 	}
      }
-     return y;
+     return data;
   },
   accessThroughArray: function(){
   	var x = this.props.selected_files.map(function(id){
-	  var f = {};
-	  f['filename'] = this.accessById(id);
-	  return f;
+	   var f = {};
+	   f['filename'] = this.accessById(id);
+	   return f;
       }.bind(this));
 
     return x;
   },
   deleteFiles: function(e){
-        //e.preventDefault();
+       e.preventDefault();
        var delete_file = this.accessThroughArray();
        jQuery.ajax({
 	     url: 'update_files', 
@@ -147,8 +147,6 @@
 		this.props.onError(error);
 	     }.bind(this)
 	     });
-	console.log(delete_file);
-	console.log(this.props.selected_files);
   },
   openModal: function(e) {
   	e.preventDefault();
