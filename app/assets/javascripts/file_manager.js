@@ -2,44 +2,8 @@ jQuery(document).ready(function (){
 	window.modal_addnew = new ModalMarkus('#addnew_dialog');	
 });
 
-// Add new row of input
-function injectFileInput() {
-  var new_file_field = jQuery('<input>', {
-    type: 'file',
-    name: 'new_files[]',
-    multiple: true
-  });
-
-  new_file_field.change(function() {
-    sanitized_filename_check(this);
-    return false;
-  });
-
-
-  var new_file_field_row = jQuery('<tr>');
-
-  var new_file_field_input_column = jQuery('<td>', {colspan: 4});
-
-  var remove_new_file_input = jQuery('<input>', {type: 'checkbox'});
-
-  remove_new_file_input.change(function(node) {
-    jQuery(new_file_field_row).remove();
-    enableDisableSubmit();
-  });
-
-  var remove_new_file_field_column = jQuery('<td>');
-
-  remove_new_file_field_column.append(remove_new_file_input);
-  remove_new_file_field_column.addClass('delete_row');
-
-  new_file_field_input_column.append(new_file_field);
-  new_file_field_row.append(new_file_field_input_column);
-  new_file_field_row.append(remove_new_file_field_column);
-
-  jQuery('#add_file_tbody').prepend(new_file_field_row);
-
-  new_file_field.focus();
-  enableDisableSubmit();
+function submitFile(e) {
+   e.submit();	
 }
 
 function enableDisableSubmit() {

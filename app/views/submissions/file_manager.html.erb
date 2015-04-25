@@ -130,26 +130,21 @@
                { multipart: true,
                  id: 'submit_form' } unless (!@grouping.is_valid? || @grouping.repository_external_commits_only?) %>
 
-    <div class='global_action'>
-      <% if (@grouping.is_valid? && !@grouping.repository_external_commits_only?) %>
-	      <%= button_to_function I18n.t('add_new'), 'modal_addnew.open(); set_onbeforeunload(true);'%>
-      <% end %>
-    </div>
-
     <div id='file_table'/>
     </form>
 </div>
 
 <aside class='dialog' id='addnew_dialog'>
 	 <h2><%= t('add_new') %></h2>
-	 <p> 
-	    <input type= 'file' name='new_file' id='new_file'>	
+	 <br> 
+	 <form id="file_form" action="update_files">
+ 	    <input type= 'file' name='new_file' id='new_file'>
 	    <br>
 	    <br>
   	    <% if @grouping.is_valid? %>
      		 <%= submit_tag(I18n.t(:submit),
                       	 disabled: !@grouping.is_valid?,
-			 onclick: 'set_onbeforeunload(false); enableDisableSubmit()') unless @grouping.repository_external_commits_only? %>
+			 onclick: 'set_onbeforeunload(false); submitFile(event)') unless @grouping.repository_external_commits_only? %>
 		  <%= link_to(I18n.t(:cancel),
                     { controller: 'submissions',
                       action: 'file_manager' },
@@ -158,7 +153,8 @@
                    class: 'button',
                    onclick: "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
                    ) unless @grouping.repository_external_commits_only? %>
-    		<% end %>
+   <% end %>
+	</form>
 	 </p>
 </aside>
 
