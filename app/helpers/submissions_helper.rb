@@ -51,8 +51,9 @@ module SubmissionsHelper
         g[:tags] = get_grouping_tags(grouping)
       rescue
         m_logger = MarkusLogger.instance
-        m_logger.log("Could not display submission on assignment #{assignment.short_identifier} " +
-                     "belonging to grouping with id #{grouping.group_id}", MarkusLogger::ERROR)
+        m_logger.log("Could not display submission on assignment " +
+                     "#{assignment.short_identifier} belonging to grouping " +
+                     "id #{grouping.group_id}", MarkusLogger::ERROR)
         g[:error] = true
       else
         g[:error] = false
@@ -61,7 +62,7 @@ module SubmissionsHelper
     end
   end
 
-  # If the grouping is collected or has an error, 
+  # If the grouping is collected or has an error,
   # style the table row green or red respectively.
   # Classname will be applied to the table row
   # and actually styled in CSS.
