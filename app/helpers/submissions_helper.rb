@@ -31,9 +31,7 @@ module SubmissionsHelper
 
   def get_submissions_table_info(assignment, groupings)
     groupings.map do |grouping|
-
       g = grouping.attributes
-      g[:group_name] = get_grouping_group_name(assignment, grouping)
       begin
         g[:commit_date] = get_grouping_commit_date(grouping)
       rescue NoMethodError
@@ -41,7 +39,8 @@ module SubmissionsHelper
       rescue RuntimeError
         g[:commit_date] = I18n.t('group_repo_missing')
       end
-      begin # if any thing raises an error, catch it and log in the object.
+      begin # if anything raises an error, catch it and log in the object.
+        g[:group_name] = get_grouping_group_name(assignment, grouping)
         g[:class_name] = get_any_tr_attributes(grouping)
         g[:repository] = get_grouping_repository(assignment, grouping)
         g[:marking_state] = get_grouping_marking_state(assignment, grouping)
@@ -51,6 +50,9 @@ module SubmissionsHelper
         g[:section] = get_grouping_section(grouping)
         g[:tags] = get_grouping_tags(grouping)
       rescue
+        m_logger = MarkusLogger.instance
+        m_logger.log("Could not display submission on assignment #{assignment.short_identifier} " +
+                     "belonging to grouping with id #{grouping.group_id}", MarkusLogger::ERROR)
         g[:error] = true
       else
         g[:error] = false
