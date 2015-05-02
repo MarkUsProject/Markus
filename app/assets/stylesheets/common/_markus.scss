@@ -418,6 +418,10 @@ fieldset {
   padding: 0.5em;
   width: 100%;
 
+  @include breakpoint(mobile) {
+    display: block !important;
+  }
+
   ul {
     display: table-row;
     margin: 0;
@@ -459,6 +463,10 @@ fieldset {
     display: table-row;
     height: 100%;
     width: 100%;
+
+    @include breakpoint(mobile) {
+      display: block !important;
+    }
   }
 }
 

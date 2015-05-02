@@ -114,14 +114,34 @@
 
   > div {
     height: 800px;
+
+    @include breakpoint(mobile) {
+      display: block !important;
+      height: 100% !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
   }
 
   > div:first-child {
     padding-right: 0.5em;
+
+    @include breakpoint(mobile) {
+      margin-bottom: 1em;
+    }
   }
 
   > div:last-child {
     padding-left: 0.5em;
+  }
+
+  .jquery-dualpane-dragbar {
+    border: 1px solid $light-grey;
+    border-radius: 3px;
+
+    @include breakpoint(mobile) {
+      display: none !important;
+    }
   }
 }
 
@@ -134,9 +154,8 @@
 
 /* Source code pane */
 
-.image_container {
-  overflow: auto;
-  width: auto;
+#image_container {
+  position: relative;
 }
 
 #sel_box {
@@ -147,7 +166,7 @@
 }
 
 .annotation_holder {
-  background: orange;
+  background: #ffa500;
   border: 1px solid #000;
   cursor: crosshair;
   filter: alpha(opacity=20);
@@ -288,6 +307,7 @@ ul.annotation_text_list {
 
 #annotation_summary_list {
   border-top: 1px solid $grey;
+  display: block;
   list-style: none;
   margin: 0 0 20px 0;
   padding: 0;

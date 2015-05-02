@@ -11,43 +11,43 @@
         <% end %>
       </ul>
 
-      <div id='code_holder'>
-        <%# For image/PDF annotations %>
-        <div id='sel_box'></div>
-
-        <div id='codeviewer'></div>
-      </div>
-
-      <div id='annotations_summary'>
-        <div id='annotations_summary_head'>
-          <h3><%= t('marker.overall_comments') %></h3>
-
-          <% comment = ( old_result ? old_result.overall_comment : result.overall_comment )%>
-          <p><%= simple_format(comment) %></p>
-
-          <h3><%= t('marker.current_annotations') %></h3>
-          <p><%= t('marker.across_all_submission_files') %></p>
+      <div class='tab-pane-contents'>
+        <div id='code_holder'>
+          <div id='sel_box'></div>
+          <div id='codeviewer'></div>
         </div>
 
-        <ul id='annotation_summary_list'></ul>
-      </div>
+        <div id='annotations_summary'>
+          <div id='annotations_summary_head'>
+            <h3><%= t('marker.overall_comments') %></h3>
 
-      <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
-        <div id='remark_request_tab'>
-          <% if @current_user.student? and assignment.allow_remarks%>
-            <%= render partial: 'results/student/remark_request',
-                       locals: { old_result: old_result,
-                                 result: result,
-                                 submission: submission,
-                                 assignment: assignment } %>
-          <% elsif submission.has_remark? %>
-            <%= render partial: 'results/marker/remark_request',
-                       locals: { result: result,
-                                 submission: submission,
-                                 assignment: assignment } %>
-          <% end %>
+            <% comment = ( old_result ? old_result.overall_comment : result.overall_comment )%>
+            <p><%= simple_format(comment) %></p>
+
+            <h3><%= t('marker.current_annotations') %></h3>
+            <p><%= t('marker.across_all_submission_files') %></p>
+          </div>
+
+          <ul id='annotation_summary_list'></ul>
         </div>
-      <% end %>
+
+        <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
+          <div id='remark_request_tab'>
+            <% if @current_user.student? and assignment.allow_remarks%>
+              <%= render partial: 'results/student/remark_request',
+                         locals: { old_result: old_result,
+                                   result: result,
+                                   submission: submission,
+                                   assignment: assignment } %>
+            <% elsif submission.has_remark? %>
+              <%= render partial: 'results/marker/remark_request',
+                         locals: { result: result,
+                                   submission: submission,
+                                   assignment: assignment } %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 
@@ -58,31 +58,33 @@
         <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
       </ul>
 
-      <div id='mark_viewer'>
-        <div id='mark_criteria_pane'>
-          <ul id='mark_criteria_pane_list'>
-            <%# Also need to render the mark per criteria (if exist) %>
-            <% @mark_criteria.each do |mark_criterion| -%>
-              <%= render partial: "results/student/student_#{@assignment.marking_scheme_type}_criterion_li",
-                         locals: { mark_criterion: mark_criterion,
-                                   result: result,
-                                   mark: marks_map[mark_criterion.id],
-                                   old_mark: @old_marks_map[mark_criterion.id] } %>
-            <% end -%>
-          </ul>
+      <div class='tab-pane-contents'>
+        <div id='mark_viewer'>
+          <div id='mark_criteria_pane'>
+            <ul id='mark_criteria_pane_list'>
+              <%# Also need to render the mark per criteria (if exist) %>
+              <% @mark_criteria.each do |mark_criterion| -%>
+                <%= render partial: "results/student/student_#{@assignment.marking_scheme_type}_criterion_li",
+                           locals: { mark_criterion: mark_criterion,
+                                     result: result,
+                                     mark: marks_map[mark_criterion.id],
+                                     old_mark: @old_marks_map[mark_criterion.id] } %>
+              <% end -%>
+            </ul>
+          </div>
         </div>
-      </div>
 
-      <div id='summary_viewer' class='marks_summary_pane tabbedArea'>
-        <%= render partial: 'results/student/student_summary',
-                   locals: { mark_criteria: @mark_criteria,
-                             marks_map: marks_map,
-                             old_marks_map: @old_marks_map,
-                             assignment: assignment,
-                             result: result,
-                             old_result: @old_result,
-                             extra_marks_points: extra_marks_points,
-                             extra_marks_percentage: extra_marks_percentage } %>
+        <div id='summary_viewer' class='marks_summary_pane tabbedArea'>
+          <%= render partial: 'results/student/student_summary',
+                     locals: { mark_criteria: @mark_criteria,
+                               marks_map: marks_map,
+                               old_marks_map: @old_marks_map,
+                               assignment: assignment,
+                               result: result,
+                               old_result: @old_result,
+                               extra_marks_points: extra_marks_points,
+                               extra_marks_percentage: extra_marks_percentage } %>
+        </div>
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
-<div id='image_container' class='image_container'>
-  <% # Create a box for each image annotation %>
+<div id='image_container'>
+  <%# Create a box for each image annotation %>
   <% @annots.each do |annot| %>
     <div id='annotation_holder_<%= annot.annotation_text.id %>' class='annotation_holder'></div>
   <% end %>
@@ -9,7 +9,7 @@
                                                             show_in_browser: true ) -%>'
        alt='<%= I18n.t('common.cant_display_image') %>'>
 
-  <% # Keep track of all annotations associated with file %>
+  <%# Keep track of all annotations associated with file %>
   <input id='annotation_grid'
          type='hidden'
          value='<%= @file.get_annotation_grid.to_json %>'>
