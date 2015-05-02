@@ -19,7 +19,6 @@ ImageEventHandler.prototype.init_listeners = function(enable_annotations) {
   if (enable_annotations) {
     image_preview.style.cursor = 'crosshair';
     image_preview.onmousedown  = this.start_select_box.bind(this);
-    sel_box.style.cursor = 'crosshair';
 
     // Disable FireFox's default click and drag behaviour for images
     image_preview.ondragstart = function(e) { e.preventDefault(); }

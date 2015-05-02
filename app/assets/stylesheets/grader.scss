@@ -107,7 +107,23 @@
 }
 
 
-/* Panes content (for controlling the heights) */
+/* Panes */
+
+#marking-pane {
+  margin-top: 1em;
+
+  > div {
+    height: 800px;
+  }
+
+  > div:first-child {
+    padding-right: 0.5em;
+  }
+
+  > div:last-child {
+    padding-left: 0.5em;
+  }
+}
 
 #mark_viewer,
 #summary_viewer,
@@ -116,6 +132,7 @@
 #annotations_summary {
   @include border-radius-bottom(5px);
   overflow: auto;
+  height: 100%;
 }
 
 #codeviewer,
@@ -124,16 +141,16 @@
 #submission_rule_viewer,
 #annotations_summary,
 #remark_request_tab {
-  height: 650px;
+  // height: 100%;
 }
 
 
 /* Source code pane */
 
 // Adjusted height for users that also see the annotation menu
-#annotation_menu + #codeviewer {
-  height: 600px;
-}
+// #annotation_menu + #codeviewer {
+//   height: 600px;
+// }
 
 .image_container {
   overflow: auto;
@@ -142,6 +159,7 @@
 
 #sel_box {
   border: 1px dashed #f00;
+  cursor: crosshair;
   display: none;
   position: absolute;
 }
@@ -213,11 +231,12 @@
   margin: 0 0.25em 0 0;
   min-width: 0;
   vertical-align: top;
+  width: 120px;
 }
 
 #annotation_categories {
   display: table-cell;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 li.annotation_category {
@@ -277,6 +296,7 @@ ul.annotation_text_list {
   list-style: none;
   margin: 0 0 20px 0;
   padding: 0;
+  width: 100%;
 
   li {
     border-bottom: 1px solid $grey;
@@ -367,30 +387,6 @@ ul.annotation_text_list {
   text-align: center;
 }
 
-// /* ================ CRITERION STYLES ============== */
-// #old_summary_criteria_pane {
-//   display: none;
-// }
-
-// .assigned {
-//   border: 4px solid #b7d3ec;
-// }
-
-//   .mark_criterion_title {
-//     cursor: pointer;
-//   }
-
-//   .mark_criterion_holder_selected,
-//   .mark_level {
-//     background: #ccf;
-//   }
-
-// .mark_criterion_level {
-//   background: none;
-//   color: #000;
-//   font-size: 0.625em;
-// }
-
 .mark_reset {
   background: none;
   color: #000;
@@ -457,18 +453,6 @@ ul.annotation_text_list {
   min-width: 5px;
   padding: 5px;
 }
-
-  // .extra_mark_title_div {
-  //   cursor: pointer;
-  // }
-
-  // .extra_mark_holder_selected {
-  //   background: #ccf;
-  // }
-
-  // .extra_mark_delete {
-  //   float: right;
-  // }
 
   .extra_marks_pane {
     border: 1px solid #dadada;
@@ -613,69 +597,4 @@ ul.annotation_text_list {
 
 .tag_admin {
   text-align: center;
-}
-
-/* Resizable column panes */
-
-#panes-content {
-  height: 100%;
-  margin-top: 1em;
-  width: 100%;
-
-  #panes {
-    height: 100%;
-    width: 100%;
-  }
-
-  #left-pane,
-  #drag,
-  #right-pane {
-    display: inline-block;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    vertical-align: top;
-  }
-
-  #left-pane,
-  #right-pane {
-    overflow: auto;
-
-    @include breakpoint(small) {
-      display: block;
-      float: none;
-      width: 100% !important;
-    }
-  }
-
-  #left-pane {
-    padding-right: 0.5em;
-
-    @include breakpoint(small) {
-      margin-bottom: 1em;
-      padding-right: 0;
-    }
-  }
-
-  #right-pane {
-    padding-left: 0.5em;
-
-    @include breakpoint(small) {
-      padding-left: 0;
-    }
-  }
-
-  #drag {
-    background: #ccc;
-    cursor: col-resize;
-    height: 700px;
-    margin-left: -5px;
-    overflow: hidden;
-    position: absolute;
-    width: 5px;
-
-    @include breakpoint(small) {
-      display: none;
-    }
-  }
 }

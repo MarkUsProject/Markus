@@ -411,19 +411,25 @@ fieldset {
 
 .tab-pane {
   @include border-radius($radius);
-  background: $light-grey;
+  background-color: $light-grey;
   border: 1px solid $blue;
+  display: table;
+  height: 100%;
   padding: 0.5em;
+  width: 100%;
 
   ul {
+    display: table-row;
     margin: 0;
     padding: 0;
+    width: 100%;
 
     li {
       @include border-radius-top($radius);
       background: $light-blue;
       display: inline-block;
       list-style: none;
+      margin-right: 0.25em;
 
       a {
         @include border-radius-top($radius);
@@ -433,7 +439,7 @@ fieldset {
       }
 
       &.ui-tabs-active {
-        background: $white;
+        background-color: $white;
 
         a {
           color: $dark-grey;
@@ -444,8 +450,15 @@ fieldset {
 
   .ui-tabs-panel {
     @include border-radius-bottom($radius);
-    background: $white;
+    background-color: $white;
     padding: 0.5em;
+  }
+
+  .tab-pane-contents {
+    background-color: $white;
+    display: table-row;
+    height: 100%;
+    width: 100%;
   }
 }
 

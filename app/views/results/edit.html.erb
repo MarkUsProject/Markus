@@ -1,9 +1,10 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
+  <%= stylesheet_link_tag('common/jquery.dualpane.min') %>
   <%= stylesheet_link_tag('grader') %>
   <%= stylesheet_link_tag('pdfjs/viewer') %>
 
-  <%= javascript_include_tag 'panes' %>
+  <%= javascript_include_tag 'jquery.dualpane.min' %>
   <%= javascript_include_tag 'pdfjs' %>
 <% end %>
 
@@ -143,7 +144,7 @@
   </h1>
 </div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <% if flash[:fail_notice] %>
     <p class='error'><%= flash[:fail_notice] %></p>
   <% end %>
@@ -188,7 +189,7 @@
     <%= render partial: 'results/marker/marker_panes',
                locals: { extra_marks_points: @extra_marks_points,
                          extra_marks_percentage: @extra_marks_percentage,
-                         annotation_categories: 
+                         annotation_categories:
                            @assignment.annotation_categories,
                          result: @result,
                          assignment: @assignment,
@@ -202,3 +203,9 @@
                handlers: [:erb] %>
   <% end %>
 </div>
+
+<script type='text/javascript'>
+  jQuery('#marking-pane').dualpane({
+    rightColWidth: 425
+  });
+</script>
