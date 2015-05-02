@@ -125,32 +125,14 @@
   }
 }
 
-#mark_viewer,
-#summary_viewer,
-#submission_rule_viewer,
-#codeviewer,
-#annotations_summary {
+.tab-pane-contents > div {
   @include border-radius-bottom(5px);
   overflow: auto;
   height: 100%;
 }
 
-#codeviewer,
-#mark_viewer,
-#summary_viewer,
-#submission_rule_viewer,
-#annotations_summary,
-#remark_request_tab {
-  // height: 100%;
-}
-
 
 /* Source code pane */
-
-// Adjusted height for users that also see the annotation menu
-// #annotation_menu + #codeviewer {
-//   height: 600px;
-// }
 
 .image_container {
   overflow: auto;
@@ -200,18 +182,31 @@
 
 #create_annotation_dialog {
   padding-top: 1.5em;
+}
 
-  textarea#new_annotation_content {
+  #annotation-create-contents {
+    display: block;
+  }
+
+  #new_annotation_content {
     height: 175px;
-    margin-top: 1em;
+    margin: 1em 0;
     width: 100%;
   }
 
-  #annotation_preview {
-    max-width: 175px;
-    margin: 1em auto 0 auto;
+  #annotation-create {
+    display: inline-block;
   }
-}
+
+  #annotation-preview {
+    float: right;
+    margin-left: 2.5em;
+    width: 250px;
+  }
+
+    #annotation-preview-text {
+      word-wrap: break-word;
+    }
 
 
 /* Annotations menus */

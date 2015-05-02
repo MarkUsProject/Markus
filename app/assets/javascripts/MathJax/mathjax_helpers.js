@@ -1,35 +1,32 @@
-// function that reloads the DOM for
+// Function that reloads the DOM for
 // MathJax (http://www.mathjax.org/docs/1.1/typeset.html)
 function reloadDOM() {
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
+  MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
+}
+
+function recenterDialog() {
+  var dialog = jQuery('#create_annotation_dialog');
+  dialog.css('margin-left', -1 * dialog.width() / 2);
 }
 
 function hideAnnotationPreview() {
-    document.getElementById('annotation_preview').hide();
-    document.getElementById('annotation_preview_title').hide();
-
-    // recenter dialog
-    var dialog = jQuery('#create_annotation_dialog');
-    dialog.css('margin-left', -1 * dialog.width() / 2);
+  document.getElementById('annotation-preview').style.display = 'none';
+  recenterDialog();
 }
 
 function showAnnotationPreview() {
-    document.getElementById('annotation_preview').show();
-    document.getElementById('annotation_preview_title').show();
-
-    // recenter dialog
-    var dialog = jQuery('#create_annotation_dialog');
-    dialog.css('margin-left', -1 * dialog.width() / 2);
+  document.getElementById('annotation-preview').style.display = '';
+  recenterDialog();
 }
 
 function updateAnnotationPreview() {
-    var newAnnotation = document.getElementById('new_annotation_content').value;
+  var newAnnotation = document.getElementById('new_annotation_content').value;
 
-    var preview = document.getElementById('annotation_preview');
-    preview.innerHTML = newAnnotation;
+  var preview = document.getElementById('annotation-preview-text');
+  preview.innerHTML = newAnnotation;
 
-    showAnnotationPreview();
+  showAnnotationPreview();
 
-    // typeset the preview
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub, preview]);
+  // Typeset the preview
+  MathJax.Hub.Queue(['Typeset', MathJax.Hub, preview]);
 }

@@ -1,3 +1,5 @@
+<div id='annotation_holder'></div>
+
 <div id='marking-pane'>
   <div>
     <div class='tab-pane' id='code_pane'>
@@ -82,8 +84,12 @@
                              extra_marks_points: extra_marks_points,
                              extra_marks_percentage: extra_marks_percentage } %>
       </div>
-
-      <div id='annotation_holder'></div>
     </div>
   </div>
 </div>
+
+<script type='text/javascript'>
+  jQuery('#marking-pane').dualpane({
+    rightColWidth: 425
+  });
+</script>
