@@ -1,17 +1,14 @@
 /** Image Annotation Grid Class
-
-    This is where most of the action happens:
-    this class tracks/edits which Annotation Texts are connected to areas of the image.
-    It requires a Image Event Handler, an Annotation Text Manager,
-    and an Annotation Text Displayer be provided in the constructor.
-
-    Rules:
-    - A Source Code Line Manager, an Annotation Text Manager, and an
-      Annotation Text Displayer must be provided in the constructor
-*/
-
-var HORIZONTAL_SCROLLBAR_COMPENSATION = 21;
-var VERTICAL_SCROLLBAR_COMPENSATION   = 4;
+ *
+ *  This is where most of the action happens:
+ *  this class tracks/edits which Annotation Texts are connected to areas of the image.
+ *  It requires a Image Event Handler, an Annotation Text Manager,
+ *  and an Annotation Text Displayer be provided in the constructor.
+ *
+ *  Rules:
+ *  - A Source Code Line Manager, an Annotation Text Manager, and an
+ *    Annotation Text Displayer must be provided in the constructor
+ */
 
 
 function ImageAnnotationGrid(image_event_handler, annotation_text_manager, annotation_text_displayer) {
@@ -50,50 +47,27 @@ ImageAnnotationGrid.prototype.process_grid = function() {
 
 ImageAnnotationGrid.prototype.draw_holders = function() {
   var annot_grid = this.get_annotation_grid();
-  var holder, annot_text_id, horiz_range, vert_range, holder_width,
-      holder_height, holder_left, holder_top;
-
-  // Edges of the image
-  var image_preview   = document.getElementById('image_preview');
-  var image_container = document.getElementById('image_container');
-  var codeviewer      = document.getElementById('codeviewer');
-
-  var top_edge    = image_preview.offsetTop + codeviewer.scrollTop;
-  var left_edge   = image_preview.offsetLeft + image_container.scrollLeft;
-  var right_edge  = image_preview.offsetLeft + image_container.scrollLeft + codeviewer.offsetWidth;
-  var bottom_edge = image_preview.offsetTop + codeviewer.scrollTop + codeviewer.offsetHeight;
 
   for (var i = 0; i < annot_grid.length; i++) {
     var grid_element = annot_grid[i];
 
-    annot_text_id = grid_element.id;
-    horiz_range   = grid_element.x_range;
-    vert_range    = grid_element.y_range;
-    holder = document.getElementById('annotation_holder_' + annot_text_id);
+    var annot_text_id = grid_element.id;
+    var horiz_range   = grid_element.x_range;
+    var vert_range    = grid_element.y_range;
 
-    // Left offset of the holder
-    holder_left = image_preview.offsetLeft + parseInt(horiz_range.start, 10);
-    // Top offset of the holder
-    holder_top  = image_preview.offsetTop + parseInt(vert_range.start, 10);
+    var holder_left = parseInt(horiz_range.start, 10);
+    var holder_top  = parseInt(vert_range.start, 10);
 
-    holder_width  = parseInt(horiz_range.end, 10) - parseInt(horiz_range.start, 10);
-    holder_height = parseInt(vert_range.end, 10) - parseInt(vert_range.start, 10);
+    var holder_width  = parseInt(horiz_range.end, 10) - parseInt(horiz_range.start, 10);
+    var holder_height = parseInt(vert_range.end, 10) - parseInt(vert_range.start, 10);
 
-    holder.style.left = Math.max(0, holder_left - left_edge) + image_preview.offsetLeft + 'px';
-    holder.style.top  = Math.max(0, holder_top - top_edge) + image_preview.offsetTop + 'px';
+    var holder = document.getElementById('annotation_holder_' + annot_text_id);
 
-    if (holder_left > right_edge || holder_top > bottom_edge || holder_left + holder_width < left_edge ||
-        holder_top + holder_height < top_edge) {
-      // Draw nothing, as holder is out of bounds of codeviewer
-      holder.style.display = 'none';
-    } else {
-      // Holder within codeviewer, draw as much of it as fits.
-      holder.style.display = 'block';
-      holder.style.width  = Math.min(Math.min(holder_width, (holder_left + holder_width) - left_edge),
-                                     right_edge - holder_left - VERTICAL_SCROLLBAR_COMPENSATION) + 'px';
-      holder.style.height = Math.min(Math.min(holder_height, (holder_top + holder_height) - top_edge),
-                                     bottom_edge - holder_top - HORIZONTAL_SCROLLBAR_COMPENSATION) + 'px';
-    }
+    holder.style.display = 'block';
+    holder.style.left    = Math.max(0, holder_left) + 'px';
+    holder.style.top     = Math.max(0, holder_top) + 'px';
+    holder.style.width   = holder_width + 'px';
+    holder.style.height  = holder_height + 'px';
   }
 }
 
@@ -128,6 +102,7 @@ ImageAnnotationGrid.prototype.remove_annotation = function(unused_param1, unused
       break;
     }
   }
+
   this.share_grid_with_event_handler();
 }
 

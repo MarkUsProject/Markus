@@ -133,10 +133,10 @@
     var line_end     = line_manager.getLineNumber(focus_node);
 
     // If we selected an entire line the above returns + 1, a fix follows
-    if (mouseSelection.anchorNode.nodeName === "LI"){
+    if (mouseSelection.anchorNode.nodeName === "LI") {
       line_start--;
     }
-    if (mouseSelection.focusNode.nodeName === "LI"){
+    if (mouseSelection.focusNode.nodeName === "LI") {
       line_end--;
     }
 
@@ -232,16 +232,14 @@
   function get_selection_box() {
     var box = document.getElementById('sel_box');
     var x1 = parseInt(box.style.left, 10) -
-               document.getElementById('image_preview').offsetLeft +
-               document.getElementById('image_container').scrollLeft;
+               document.getElementById('image_container').offsetLeft;
     var y1 = parseInt(box.style.top, 10) -
-               document.getElementById('image_preview').offsetTop +
-               document.getElementById('codeviewer').scrollTop;
+               document.getElementById('image_container').offsetTop;
     var x2 = x1 + parseInt(box.style.width, 10);
     var y2 = y1 + parseInt(box.style.height, 10);
 
     if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
-      alert("<%= I18n.t('marker.annotation.select_an_area') %>");
+      alert("<%= t('marker.annotation.select_an_area') %>");
       return false;
     }
 
@@ -275,7 +273,7 @@
   function make_new_pdf_annotation () {
     var box = annotation_manager.selectionRectangleAsInts();
     var boxSize = annotation_manager.selectionBoxSize();
-    
+
     if (!box || boxSize.width < 5 || boxSize.height < 5) {
       alert("<%= I18n.t('marker.annotation.select_an_area_pdf') %>");
       return;

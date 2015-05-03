@@ -163,6 +163,7 @@
   cursor: crosshair;
   display: none;
   position: absolute;
+  z-index: 100000;
 }
 
 .annotation_holder {
@@ -193,6 +194,10 @@
 
   ol {
     overflow-y: hidden;
+  }
+
+  li {
+    word-break: break-all;
   }
 }
 
@@ -315,7 +320,7 @@ ul.annotation_text_list {
 
   li {
     border-bottom: 1px solid $grey;
-    padding: 0.25em 0.5em;
+    padding: 0.25em 0.5em 1em;
     width: 100%;
 
     &:nth-child(odd) {
@@ -370,7 +375,7 @@ ul.annotation_text_list {
   li {
     @include border-radius(0);
     border-bottom: 1px solid #dadada;
-    padding: 5px;
+    padding: 0.5em 2em 0.5em 0.5em;
     width: 100%;
 
     &:nth-child(odd) {
@@ -424,6 +429,7 @@ ul.annotation_text_list {
     border-collapse: collapse;
     border: 1px solid #dadada;
     padding: 4px;
+    width: 100%;
   }
 
   td {
