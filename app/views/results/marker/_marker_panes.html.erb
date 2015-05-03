@@ -142,17 +142,18 @@
       </select>
     </div>
 
-    <div id='annotation-preview' style='display: none;'>
+    <div id='annotation-preview'>
       <h2><%= t('marker.annotation.preview_title') %></h2>
+      <button class='inline-button' onclick='updateAnnotationPreview()'><%= t('marker.annotation.preview') %></button>
+
       <p id='annotation-preview-text'></p>
     </div>
   </div>
 
   <section class='dialog-actions'>
-    <button onclick='updateAnnotationPreview()'><%= t('marker.annotation.preview') %></button>
 
-    <button id='new_annotation_modal_button' onclick="hideAnnotationPreview();
-            submit_new_annotation(
+    <button id='new_annotation_modal_button'
+            onclick="submit_new_annotation(
                 jQuery('#new_annotation_content').val(),
                 jQuery('#new_annotation_category').val(),
                 jQuery('#x1').val(),
@@ -163,7 +164,7 @@
       <%= t('marker.annotation.new_annotation') %>
     </button>
 
-    <%= button_to_function t('cancel'), 'modal.close(); hideAnnotationPreview();' %>
+    <%= button_to_function t('cancel'), 'modal.close();' %>
   </section>
 </aside>
 
