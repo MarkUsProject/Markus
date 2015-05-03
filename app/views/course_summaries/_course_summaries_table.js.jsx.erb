@@ -206,7 +206,7 @@
       that = this;
       var course_summaries_data = this.state.courseSummaries.map(function(courseSummary) {
         var cs = {};
-
+        
         cs['id'] = courseSummary.id;
         cs['student_user_name'] = courseSummary.user_name;
         cs['student_first_name'] = courseSummary.first_name;
@@ -216,21 +216,21 @@
           var id = <%= assignment.id %>;
           var key = "assignment_" + id;
           var value = courseSummary.assignment_marks[id]
-          cs[key] = value ? value : "N/A";
+          cs[key] = value ? value : "-";
         <% end %>
 
         <% for grade_entry_from in @grade_entry_forms %>
           var id = <%= grade_entry_from.id %>;
           var key = "gef_" + id;
           var value = courseSummary.grade_entry_form_marks[id];
-          cs[key] = (value) ? value : "N/A";
+          cs[key] = (value) ? value : "-";
         <% end %>
 
         <% for marking_scheme in @marking_schemes %>
           var id = <%= marking_scheme.id %>;
           var key = "marking_scheme_" + id;
           var value = parseFloat(courseSummary.weighted_marks[id]);
-          cs[key] = value ? value : "N/A";
+          cs[key] = value ? value : "-";
         <% end %>
         
         return cs;

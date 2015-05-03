@@ -1,4 +1,5 @@
 module CourseSummariesHelper
+  include SubmissionsHelper
   #  Get JSON data for the table
   def get_table_json_data
     all_students = Student.where(type: 'Student')
@@ -36,13 +37,8 @@ module CourseSummariesHelper
   def get_mark_for_assignment_and_student(assignment, student)
     grouping = get_grouping_for_user_for_assignment(student, assignment)
     if grouping
-      submission = Submission.where(grouping_id: grouping.id).first
-      if submission
-        result = Result.where(submission_id: submission.id).first
-        if result
-          return result.total_mark
-        end
-      end
+      mark = get_grouping_final_grades(grouping)
+      (mark == '-') ? nil : mark
     end
   end
 
