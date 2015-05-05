@@ -5,25 +5,25 @@
     getDefaultProps: function() {
       var columns = [
         {
-          id: 'student_user_name',
+          id: 'user_name',
           content: '<%= j raw I18n.t('course_summaries_index.user_name') %>',
           sortable: true,
           compare: compare_anchor_text,
           searchable: true
         },
         {
-          id: 'student_first_name',
+          id: 'first_name',
           content: '<%= j raw I18n.t('course_summaries_index.first_name') %>',
           sortable: true,
           compare: compare_anchor_text,
-          searchable: false
+          searchable: true
         },
         {
-          id: 'student_last_name',
+          id: 'last_name',
           content: '<%= j raw I18n.t('course_summaries_index.last_name') %>',
           sortable: true,
           compare: compare_anchor_text,
-          searchable: false
+          searchable: true
         }
       ];
       
@@ -31,18 +31,18 @@
         columns.push({
           id: 'assignment_' + <%= assignment.id %>,
           content: '<%= assignment.short_identifier %>',
-          sortable: false,
-          compare: compare_anchor_text,
+          sortable: true,
+          compare: compare_numeric_values,
           searchable: false
         });
       <% end %>
 
-      <% for grade_entry_from in @grade_entry_forms %>
+      <% for grade_entry_form in @grade_entry_forms %>
         columns.push({
-          id: 'gef_' + <%= grade_entry_from.id %>,
-          content: '<%= grade_entry_from.short_identifier %>',
-          sortable: false,
-          compare: compare_anchor_text,
+          id: 'gef_' + <%= grade_entry_form.id %>,
+          content: '<%= grade_entry_form.short_identifier %>',
+          sortable: true,
+          compare: compare_numeric_values,
           searchable: false
         });
       <% end %>
@@ -51,8 +51,8 @@
         columns.push({
           id: 'marking_scheme_' + <%= marking_scheme.id %>,
           content: '<%= marking_scheme.name %>',
-          sortable: false,
-          compare: compare_anchor_text,
+          sortable: true,
+          compare: compare_numeric_values,
           searchable: false
         });
       <% end %>
@@ -208,9 +208,9 @@
         var cs = {};
         
         cs['id'] = courseSummary.id;
-        cs['student_user_name'] = courseSummary.user_name;
-        cs['student_first_name'] = courseSummary.first_name;
-        cs['student_last_name'] = courseSummary.last_name;
+        cs['user_name'] = courseSummary.user_name;
+        cs['first_name'] = courseSummary.first_name;
+        cs['last_name'] = courseSummary.last_name;
 
         <% for assignment in @assignments %>
           var id = <%= assignment.id %>;
