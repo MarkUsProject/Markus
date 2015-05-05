@@ -197,7 +197,6 @@ class AssignmentsController < ApplicationController
   # Called on editing assignments (GET)
   def edit
     @assignment = Assignment.find_by_id(params[:id])
-
     @past_date = @assignment.section_names_past_due_date
     @assignments = Assignment.all
     @sections = Section.all
@@ -293,7 +292,6 @@ class AssignmentsController < ApplicationController
         flash[:success] = I18n.t('assignment.create_success')
       end
     end
-
     redirect_to action: 'edit', id: @assignment.id
   end
 
@@ -305,6 +303,11 @@ class AssignmentsController < ApplicationController
     assignments = Assignment.all(order: 'id')
     students = Student.all
     csv_string = CSV.generate do |csv|
+      header = ['Username']
+      assignments.each do |assignment|
+        header.push(assignment.short_identifier)
+      end
+      csv << header
       students.each do |student|
         row = []
         row.push(student.user_name)
@@ -576,7 +579,9 @@ class AssignmentsController < ApplicationController
             map.delete(nil)
             update_assignment!(map)
           end
-        rescue ActiveRecord::ActiveRecordError, ArgumentError => e
+        rescue ArgumentError
+          flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+        rescue ActiveRecord::ActiveRecordError => e
           flash[:error] = e.message
           redirect_to action: 'index'
           return
@@ -759,6 +764,7 @@ class AssignmentsController < ApplicationController
         :group_name_displayed,
         :invalid_override,
         :section_groups_only,
+        :only_required_files,
         section_due_dates_attributes: [:_destroy,
                                        :id,
                                        :section_id,

@@ -1,22 +1,4 @@
 module SubmissionsHelper
-  # Gets relevant groupings for assignment based on
-  # user type (ta or admin)
-  def get_groupings_for_assignment(assignment, user)
-    if user.ta?
-      assignment.ta_memberships.find_all_by_user_id(current_user)
-        .select { |m| m.grouping.is_valid? }
-        .map { |m| m.grouping }
-    else
-      assignment.groupings
-        .includes(:assignment,
-                  :group,
-                  :grace_period_deductions,
-                  current_submission_used: :results,
-                  accepted_student_memberships: :user)
-        .select { |g| g.non_rejected_student_memberships.size > 0 }
-    end
-  end
-
   def find_appropriate_grouping(assignment_id, params)
     if current_user.admin? || current_user.ta?
       Grouping.find(params[:grouping_id])
@@ -63,8 +45,6 @@ module SubmissionsHelper
       g[:marking_state] = get_grouping_marking_state(assignment, grouping)
       g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
       g[:final_grade] = get_grouping_final_grades(grouping)
-      g[:can_begin_grading] =
-          get_grouping_can_begin_grading(assignment, grouping)
       g[:state] = get_grouping_state(grouping)
       g[:section] = get_grouping_section(grouping)
       g[:tags] = get_grouping_tags(grouping)
@@ -94,26 +74,23 @@ module SubmissionsHelper
     group_name = ''
       if !grouping.has_submission?
         if assignment.submission_rule.can_collect_grouping_now?(grouping)
-          group_name = view_context.link_to(grouping.group.group_name,
+          group_name = view_context.link_to(grouping.get_group_name,
             collect_and_begin_grading_assignment_submission_path(
               assignment.id, grouping.id))
         else
-          group_name = grouping.group.group_name
+          group_name = grouping.get_group_name
         end
       elsif !grouping.is_collected
-        group_name = view_context.link_to(grouping.group.group_name,
+        group_name = view_context.link_to(grouping.get_group_name,
           collect_and_begin_grading_assignment_submission_path(
             assignment.id, grouping.id))
       else
-        group_name = view_context.link_to(grouping.group.group_name,
+        group_name = view_context.link_to(grouping.get_group_name,
           edit_assignment_submission_result_path(
             assignment.id, grouping.current_submission_used.id,
             grouping.current_submission_used.get_latest_result))
       end
 
-      group_name += ' ('
-      group_name += grouping.accepted_students.collect{ |student| student.user_name}.join(', ')
-      group_name += ')'
       return group_name
   end
 
@@ -206,14 +183,6 @@ module SubmissionsHelper
       grouping.current_submission_used.get_latest_result.total_mark
     when 'released'
       grouping.current_submission_used.get_latest_result.total_mark
-    end
-  end
-
-  def get_grouping_can_begin_grading(assignment, grouping)
-    if assignment.submission_rule.can_collect_grouping_now?(grouping)
-      return view_context.image_tag('icons/tick.png')
-    else
-      return view_context.image_tag('icons/cross.png')
     end
   end
 

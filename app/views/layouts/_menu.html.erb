@@ -56,4 +56,11 @@
       <%= link_to t('notes.title'), notes_path %>
     </li>
   <% end %>
+
+  <% if @current_user.admin? || @current_user.ta? %>
+    <li class='<%= "active" if controller.controller_name == 'course_summaries' %>'>
+      <%= link_to t('course_summaries_index.page_title'), course_summaries_path %>
+    </li>
+  <% end %>
+
 </ul>

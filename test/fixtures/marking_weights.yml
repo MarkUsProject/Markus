@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  ms_id: 1
+  a_id: 1
+  weight: 9.99
+
+two:
+  ms_id: 1
+  a_id: 1
+  weight: 9.99

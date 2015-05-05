@@ -1,3 +1,4 @@
+
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
@@ -27,11 +28,7 @@
             sortable: true,
             searchable: true
           },
-          {
-            id: 'section',
-            content: '<%= j raw I18n.t(:'user.section') %>',
-            sortable: true
-          },
+          <%= raw @section_column  %>
           {
             id: 'grace_credits',
             content: '<%= j raw I18n.t(:'user.grace_credits') %>',
@@ -140,7 +137,7 @@
     
         return s;
       }.bind(this));
-      
+
       return (
         <div>
           <ErrorDiv error={this.state.error} />

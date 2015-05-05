@@ -92,10 +92,10 @@ class SubmissionCollector < ActiveRecord::Base
 
   #Fork-off a new process resposible for collecting all submissions
   def start_collection_process
-
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
-    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
+    # Fork is also skipped if in testing mode
+    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ || Rails.env.test?
       while collect_next_submission
       end
       return
@@ -138,7 +138,6 @@ class SubmissionCollector < ActiveRecord::Base
           yield
           m_logger.log('Submission collection process done evaluating provided code block')
         end
-
         while collect_next_submission
           if SubmissionCollector.first.stop_child
             m_logger.log('Submission collection process now exiting because it was ' +

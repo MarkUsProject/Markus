@@ -250,6 +250,7 @@ Markus::Application.routes.draw do
 
       member do
         get 'populate_term_marks_table'
+        get 'populate_grades_table'
         get 'get_mark_columns'
         get 'grades'
         get 'g_table_paginate'
@@ -274,6 +275,8 @@ Markus::Application.routes.draw do
           get 'global_actions'
           get 'groups_coverage_dialog'
           post 'populate_graders'
+          post 'populate_students_table'
+          post 'populate_graders_table'
           post 'populate'
           post 'populate_criteria'
           post 'set_assign_criteria'
@@ -299,6 +302,19 @@ Markus::Application.routes.draw do
         get 'student_interface'
         get 'notes_dialog'
         post 'grades'
+      end
+    end
+
+    resources :course_summaries do
+      collection do
+        get 'populate'
+        get 'get_marking_scheme_details'
+      end
+    end
+
+    resources :marking_schemes do
+      collection do
+        get 'populate'
       end
     end
 
@@ -345,6 +361,7 @@ Markus::Application.routes.draw do
         get 'redirect'
         get 'clear_role_switch_session'
         post 'reset_api_key'
+        get 'check_timeout'
       end
     end
   end
@@ -355,5 +372,8 @@ Markus::Application.routes.draw do
 
   # TODO: this should be via: :all, but does not seem to work with Rails 3
   # Return a 404 when no route is match
-  match '*path', controller: 'main', action: 'page_not_found', via: :get
+
+  unless Rails.env.test?
+    match '*path', controller: 'main', action: 'page_not_found', via: :get
+  end
 end

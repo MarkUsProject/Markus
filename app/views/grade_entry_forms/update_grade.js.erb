@@ -19,7 +19,7 @@
     end
   %>
 
-  update_cell('<%= "total_#{@student_id}" %>', <%= value %>);
+  update_cell('<%= "grade_#{@student_id}_total_marks" %>', <%= value %>);
 <% else %>
   <%# Show Error %>
   jQuery('<%= "#grade_#{@student_id}_#{@grade_entry_item_id}" %>').parent()

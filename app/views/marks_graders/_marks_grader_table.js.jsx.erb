@@ -1,0 +1,126 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  var GradersTable = React.createClass({
+    getInitialState: function() {
+      return {
+        error: null,
+        graders: [],
+        selected_graders: []
+      };
+    },
+    graderCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_graders = this.props.selected_graders.slice();
+      if (value == true) {
+        new_selected_graders.push(grader_id);
+      } else {
+        new_selected_graders.splice(new_selected_graders.indexOf(grader_id), 1);
+      }
+      this.props.onSelectedGradersChange(new_selected_graders);
+    },
+    gradersCheckboxAllClicked: function(event) {
+      if (event.currentTarget.checked) {
+        var new_selected_graders = this.state.graders.map(function(x) {
+          return x.id;
+        }).slice();
+        this.props.onSelectedGradersChange(new_selected_graders);
+      } else {
+        this.props.onSelectedGradersChange([]);
+      }
+    },
+    updateSelectedGraders: function(graders) {
+      this.setState({selected_graders:graders});
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+      jQuery.ajax({
+        url: '<%= populate_graders_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
+        method: 'POST',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            graders: data,
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        },
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+
+      });
+    },
+    onError: function(error) {
+      this.setState({
+        error: error
+      });
+    },
+    render: function() {
+      var columns = [
+          {
+            id: 'checkbox',
+            content: <div>
+              <input type='checkbox'
+                onChange={this.gradersCheckboxAllClicked.bind(this)} />
+            </div>,
+            sortable: false,
+            searchable: false
+          },
+          {
+            id: 'user_name',
+            content: '<%= j raw I18n.t(:'user.user_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'full_name',
+            content: '<%= j raw I18n.t(:'user.full_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'students',
+            content: '<%= j raw I18n.t(:'students.students') %>',
+            sortable: true,
+            searchable: false
+          }
+        ];
+      // Do student-specific table stuff here.
+      var graders_data = this.props.graders.map(function(grader) {
+        var g = {};
+        g['id'] = grader.id;
+        g['checkbox'] = <input id={grader.id} type='checkbox'
+          checked={this.props.selected_graders.indexOf(grader.id) !== -1}
+          onChange={this.graderCheckboxClicked} />
+        g['user_name'] = grader.user_name;
+        g['full_name'] = grader.first_name + " " + grader.last_name;
+        g['students'] = grader.num_students;
+        return g;
+      }.bind(this));
+
+      return (
+        <div className={'col-left'} >
+          <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
+            <Table data={graders_data}
+              search_placeholder={'<%= j raw I18n.t(:'search_graders') %>'}
+              onSelectedRowsChange={this.updateSelectedGraders}
+              columns={columns} />
+          </div>
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<GradersTable sections={<%= raw @sections.to_json %>} />, document.getElementById('graders_table'));
+</script>

@@ -27,6 +27,8 @@ gem 'gitolite'
 gem 'activerecord-import'
 gem 'strong_parameters' # NOTE: this goes away when upgrading to Rails4
 
+gem 'best_in_place'
+
 group :assets do
   gem 'tilt', '~> 1.3.7'
   gem 'sass-rails',   '~> 3.2.3'

@@ -10,6 +10,10 @@
 <% # UI LIBRARIES %>
 <%= javascript_include_tag 'DropDownMenu/DropDownMenu' %>
 
+<!-- MathML -->
+<%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
+<%= javascript_include_tag 'MathJax/mathjax_helpers' %>
+
 <% # EDITING MARKS FUNCTIONS AND BOOT SCRIPTS%>
 <%= javascript_include_tag 'Grader/file_selector',
                            'Grader/marking',
@@ -42,7 +46,8 @@
     // If the mark_description div is empty, that means it isn't marked
     // Hide the criterion that AREN'T empty (i.e. are marked)
     // Check if the marks are released, if they are there is nothing to hide
-    if (!document.getElementById('released').checked) {
+    if (document.getElementById('released') === null ||
+        !document.getElementById('released').checked) {
       jQuery('.mark_description').each(function() {
         if (this.innerHTML.trim()) {
           hide_criterion(parseInt(this.getAttribute('data-id'), 10));
@@ -70,7 +75,8 @@
            formats: [:js] %>
 
 <%= render partial: 'results/marker/setup_annotation_categories',
-           formats: [:js] %>
+           formats: [:js],
+           locals: { categories: @assignment.annotation_categories } %>
 
 <%= render partial: 'results/marker/boot',
            formats: [:js],
@@ -133,8 +139,7 @@
   <h1>
     <%= t('results.title',
           { assignment_name: @assignment.short_identifier,
-            group_name: @group.group_name }) %>
-    (<%= @grouping.get_all_students_in_group %>)
+            group_name: @grouping.get_group_name }) %>
   </h1>
 </div>
 
@@ -183,7 +188,8 @@
     <%= render partial: 'results/marker/marker_panes',
                locals: { extra_marks_points: @extra_marks_points,
                          extra_marks_percentage: @extra_marks_percentage,
-                         annotation_categories: @annotation_categories,
+                         annotation_categories: 
+                           @assignment.annotation_categories,
                          result: @result,
                          assignment: @assignment,
                          marks_map: @marks_map,

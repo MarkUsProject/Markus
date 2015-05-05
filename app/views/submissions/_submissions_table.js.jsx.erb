@@ -29,12 +29,7 @@
             compare: compare_anchor_text,
             searchable: true
           },
-          {
-            id: 'section',
-            content: '<%= j raw I18n.t(:'browse_submissions.section') %>',
-            sortable: true,
-            searchable: true
-          },
+          <%= raw @section_column  %>
           {
             id: 'commit_date',
             content: '<%= j raw I18n.t(:'browse_submissions.commit_date') %>',
@@ -48,13 +43,7 @@
             sortable: true,
             searchable: false
           },
-          {
-            id: 'grace_credits_used',
-            content: '<%= j raw I18n.t(:'browse_submissions.grace_credits_used') %>',
-            sortable: true,
-            compare: compare_numeric_values,
-            searchable: false
-          },
+          <%= raw @grace_credit_column %>
           {
             id: 'tags',
             content: <ul className='tag_list' dangerouslySetInnerHTML={{__html: '<li>' +
@@ -81,11 +70,6 @@
             sortable: true,
             compare: compare_numeric_values,
             searchable: false
-          },
-          {
-            id: 'can_begin_grading',
-            content: '<%= j raw I18n.t(:'browse_submissions.can_begin_grading') %>',
-            sortable: true
           }
         ],
         filters: [
@@ -193,7 +177,6 @@
         s['final_grade'] = submission.final_grade;
         s['state'] = submission.state;
         s['section'] = submission.section;
-        s['can_begin_grading'] = <span dangerouslySetInnerHTML={{__html: submission.can_begin_grading}} />;
         return s;
       }.bind(this));
 
@@ -211,6 +194,7 @@
               filters={this.props.filters}
               filter_type={true}
               onSelectedRowsChange={this.updateSelectedSubmissions}
+              search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
             />
           </div>
         );

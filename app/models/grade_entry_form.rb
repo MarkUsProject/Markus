@@ -28,7 +28,13 @@ class GradeEntryForm < ActiveRecord::Base
 
   # The total number of marks for this grade entry form
   def out_of_total
-    grade_entry_items.sum('out_of').round(2)
+    total = 0
+    grade_entry_items.each do |grade_entry_item|
+      unless grade_entry_item.bonus
+        total += grade_entry_item.out_of
+      end
+    end
+    total
   end
 
   # Determine the total mark for a particular student, as a percentage
@@ -237,7 +243,8 @@ class GradeEntryForm < ActiveRecord::Base
   # grades_file is the CSV file to be parsed
   # grade_entry_form is the grade entry form that is being updated
   # invalid_lines will store all problematic lines from the CSV file
-  def self.parse_csv(grades_file, grade_entry_form, invalid_lines, encoding)
+  def self.parse_csv(grades_file, grade_entry_form, invalid_lines, encoding,
+                     overwrite)
     num_updates = 0
     num_lines_read = 0
     names = []
@@ -278,7 +285,7 @@ class GradeEntryForm < ActiveRecord::Base
           GradeEntryStudent.create_or_update_from_csv_row(row,
                                                           grade_entry_form,
                                                           grade_entry_form.grade_entry_items,
-                                                          names)
+                                                          names, overwrite)
           num_updates += 1
         end
         num_lines_read += 1

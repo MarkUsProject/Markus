@@ -11,6 +11,9 @@ fr:
     issues:             "GitHub liste des problèmes"
     actions:            "Actes"
 
+    # app/views/assignments/_form.html.erb
+    required_file_warning: "Accepter pas d'autres fichiers que les fichiers requis énumérés. Ce serait également restrics les extensions de fichier."
+
     # app/views/main/login.html.erb
     welcome_to:         "Bienvenue sur MarkUs !"
     welcome_to_markus:     "%{user_name}, bienvenue sur MarkUs, l'outil d'évaluation en ligne."
@@ -48,6 +51,9 @@ fr:
     supervisors:        "Chefs de projet : "
     contact_us:         "Contactez-nous"
     email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
+
+    # app/views/main/timeout_imminent.js.erb
+    timeout_imminent:   "Votre session est sur le point d'expirer."
 
     # app/views/api/_key_display.html.erb
     api_key:              "Votre clé - API"
@@ -152,6 +158,7 @@ fr:
         add_required_file:  "Ajouter un fichier requis"
         type:  "Type du projet"
         overall_comment: "Commentaire général : "
+        upload_file_requirement: "La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire"
         group:
             empty: "Groupe vide"
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
@@ -318,6 +325,8 @@ fr:
         no_annotation_in_this_category: "Il n'y a pas d'annotation dans cette catégorie"
         new_annotation: "Nouvelle annotation"
         annotation_category: "Catégorie de l'annotation"
+        preview: "Avant-première"
+        preview_title: "Voici l'apparence de l'annotation:"
         sure_to_remove: "Êtes-vous sûr de vouloir supprimer cette annotation ?"
         submit_edit: "Sauvegarder"
         change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"
@@ -355,6 +364,9 @@ fr:
       group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
       student_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
       invalid_csv: "Le format du fichier CSV n'a pas été reconnu"
+      upload:
+        malformed_csv: "Le fichier sélectionné a été mal formé. Se il vous plaît vérifier que le fichier est conforme aux spécifications Markus."
+        non_text_file_with_csv_extension: "Le fichier sélectionné ne est pas un fichier csv (même si elle peut avoir une extension .csv)."
 
     pagination:
       first: "≪ Première"
@@ -415,13 +427,13 @@ fr:
       revised_by:           "Révision par"
       replace:              "Remplace"
       delete:               "Supprimer"
-      can_begin_grading:    "Peut être évaluée"
       error_collecting:     "Il y avait des erreurs en ramassant les submissions."
       section:              "Section"
       collect_work_for_section: "Récupérer les envois pour la section :"
       download_groupings_files: "Télécharger tous les envois"
       sections:             "Section :"
       revision_history:     "%{num} : "
+      search_submissions:   "Rechercher Soumissions"
 
     summaries_index:
       group_name:           "Nom du groupe"
@@ -436,6 +448,14 @@ fr:
       filename:             "Fichier"
       section:              "Section"
       sections:             "Section :"
+      search_summaries:     "Rechercher Résumés"
+
+    course_summaries_index:
+      page_title:     "Sommaire"
+      user_name:      "Nom d'utilisateur"
+      first_name:     "Prénom"
+      last_name:      "Nom De Famille"
+      ngr:            "Aucune note reçue"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -449,6 +469,7 @@ fr:
       column_name: "Nom"
       column_out_of: "sur"
       add_column: "Ajouter une colonne"
+      bonus_column: "Note Bonus"
       remove_column: "Supprimer : "
       toggle_column: "cacher/montrer"
       properties: "Propriétés de la feuille de note"
@@ -479,6 +500,7 @@ fr:
         no_results: "Il n'y a pas encore de résultats pour cette feuille de notes."
         detailed_marks_message: "Les notes détaillées sont disponibles."
       csv:
+        overwrite: "Remplacer les notes existantes?"
         incomplete_header: "Totaux ou noms manquants."
         incomplete_row: "Ne contient pas assez d'informations."
         invalid_user_name: "Nom d'utilisateur invalide."
@@ -856,6 +878,7 @@ fr:
         error:  "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category} située sur la ligne %{annotation_line}"
         syntax_error: "Il y a une erreur de syntaxe dans le fichier que vous venez d'envoyer : %{error}"
         flash_error: "Le format %{format} que vous voulez télécharger n'a pas été reconnu."
+        unparseable_yaml: "Ne pourrait pas analyzer le fichier YAML"
       download:
         download_annotations: "Télécharger les annotations"
         download_csv: "Télécharger au format CSV"
@@ -1051,6 +1074,17 @@ fr:
       grade: "Note intermédiaire"
       x_mark: "x Note"
       weight: "Coefficient"
+
+    course_summaries:
+      title: "Sommaire"
+
+    marking_schemes:
+      title: "Marquage Barème"
+      name: "Nom"
+      add_new: "Ajouter Nouveau Marquage Barème"
+      edit: "Modifier Barème de Notation"
+      weight_label: "Poids Pour Les " 
+      table_modify_column: "Modifier"
 
     notes:
         note_on: "%{user_name} sur <b>%{display_for}</b>"

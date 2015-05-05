@@ -166,6 +166,17 @@ class Grouping < ActiveRecord::Base
 	  student_user_names.join(', ')
   end
 
+  def get_group_name
+    name = group.group_name
+    unless accepted_students.size == 1 && name == accepted_students.first.user_name then
+      name += ' ('
+      name += accepted_students.collect{ |student| student.user_name}.join(', ')
+      name += ')'
+    end
+    name
+  end
+
+
   def group_name_with_student_user_names
 		user_names = get_all_students_in_group
     return group.group_name if user_names == I18n.t('assignment.group.empty')
@@ -665,6 +676,22 @@ class Grouping < ActiveRecord::Base
       timestamp > section_due_date
     else
       timestamp > assignment.due_date
+    end
+  end
+
+  def self.get_groupings_for_assignment(assignment, user)
+    if user.ta?
+      assignment.ta_memberships.find_all_by_user_id(user)
+                .select { |m| m.grouping.is_valid? }
+                .map { |m| m.grouping }
+    else
+      assignment.groupings
+                .includes(:assignment,
+                          :group,
+                          :grace_period_deductions,
+                          current_submission_used: :results,
+                          accepted_student_memberships: :user)
+                .select { |g| g.non_rejected_student_memberships.size > 0 }
     end
   end
 
