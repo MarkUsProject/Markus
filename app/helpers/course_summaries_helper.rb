@@ -235,13 +235,14 @@ module CourseSummariesHelper
     #    weight = gef_weight[0].weight
         # weight might be nil
       if weight
-        weighted_mark = ((mark / get_max_mark_for_grade_entry_from(gef_id)) *
+        weighted_mark = ((mark / gef_max_marks[gef_id]) *
           100) * (weight / 100)
         weighted_gef_total += weighted_mark
       end
     end
     #end
 
-    (weighted_assignment_total + weighted_gef_total).round(2)
+    #(weighted_assignment_total + weighted_gef_total).round(2)
+    weighted_gef_total
   end
 end
