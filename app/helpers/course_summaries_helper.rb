@@ -1,23 +1,32 @@
 module CourseSummariesHelper
   include SubmissionsHelper
-  #  Get JSON data for the table
+
+  # Get JSON data for the table
   def get_table_json_data
-    all_students = Student.where(type: 'Student')
+    #all_students = Student.where(type: 'Student').limit(100)
+    all_students = Student.includes(:memberships, groupings: :current_submission_used, grade_entry_students: :grades)
     all_assignments = Assignment.all
     all_grade_entry_forms = GradeEntryForm.all
+    all_schemes = MarkingScheme.all
+
+    weights = get_marking_weights_for_all_marking_schemes
+    gef_weights = get_gef_marking_weights_for_all_marking_schemes
+
+    max_marks = get_max_mark_for_assignments
+    gef_max_marks = get_max_mark_for_grade_entry_forms
 
     student_list = all_students.map do |student|
+      marks = get_mark_for_all_assignments_for_student(student, all_assignments)
+      gef_marks = get_mark_for_all_gef_for_student(student, all_grade_entry_forms)
       {
         id: student.id,
         user_name: student.user_name,
         first_name: student.first_name,
         last_name: student.last_name,
-        assignment_marks:
-          get_mark_for_all_assignments_for_student(student, all_assignments),
-        grade_entry_form_marks:
-          get_mark_for_all_gef_for_student(student, all_grade_entry_forms),
+        assignment_marks: marks,
+        grade_entry_form_marks: gef_marks,
         weighted_marks:
-          get_weighted_total_for_all_marking_schemes_for_student(student)
+          get_weighted_total_for_all_marking_schemes_for_student(all_schemes, student, marks, gef_marks, weights, gef_weights, max_marks, gef_max_marks)
       }
     end
     student_list.to_json
@@ -26,20 +35,43 @@ module CourseSummariesHelper
   # Get marks for all assignments for a student
   def get_mark_for_all_assignments_for_student(student, all_assignments)
     marks = {}
+
+    student.groupings.map do |g|
+      sub = g.current_submission_used
+      marks[g.assignment_id] = sub.nil? ? 30 : sub.get_latest_result
+    end
+
+    marks = {}
     all_assignments.each do |assignment|
-      marks[assignment.id] =
-        get_mark_for_assignment_and_student(assignment, student)
+      mark = get_mark_for_assignment_and_student(assignment, student)
+      marks[assignment.id] = mark.nil? ? 0 : mark
+      #get_mark_for_assignment_and_student(assignment, student)
     end
     marks
   end
 
   # Get mark for a perticular assignment for a student
   def get_mark_for_assignment_and_student(assignment, student)
-    grouping = get_grouping_for_user_for_assignment(student, assignment)
-    if grouping
-      mark = get_grouping_final_grades(grouping)
-      (mark == '-') ? nil : mark
+    #grouping = get_grouping_for_user_for_assignment(student, assignment)
+    #grouping = student.groupings.where(assignment_id: assignment.id).first
+    grouping = student.groupings.first
+
+    marks = {}
+    student.groupings.map do |g|
+      marks[g.assignment_id] = 20
     end
+    #if grouping
+    #  mark = get_grouping_final_grades(grouping)
+    #  (mark == '-') ? nil : mark
+    #end
+    #grouping = student.accepted_groupings.where(assignment_id: assignment.id).first
+    #if grouping
+    #   mark = get_grouping_final_grades(grouping)
+    #   (mark == '-') ? nil : mark
+    #else
+    #   nil
+    #end
+    marks.fetch(assignment.id, 10)
   end
 
   def get_grouping_for_user_for_assignment(student, assignment)
@@ -68,7 +100,7 @@ module CourseSummariesHelper
     Assignment.all.each do |a|
       max_marks[a.id] = get_max_mark_for_assignment(a.id)
     end
-    max_marks.to_json
+    max_marks
   end
 
   # Get max mark for assignment with id a_id
@@ -124,65 +156,91 @@ module CourseSummariesHelper
     result = {}
     MarkingScheme.all.each do |ms|
       result[ms.id] = {}
-      MarkingWeight.where(marking_scheme_id: ms.id).each do |mw|
-        result[ms.id][mw.a_id] = mw.weight
+      MarkingWeight.where(marking_scheme_id: ms.id, is_assignment: true).each do |mw|
+        result[ms.id][mw.gradable_item_id] = mw.weight
       end
     end
     result
   end
 
-  def get_weighted_total_for_all_marking_schemes_for_student(student)
+  def get_gef_marking_weights_for_all_marking_schemes
+    result = {}
+    MarkingScheme.all.each do |ms|
+      result[ms.id] = {}
+      MarkingWeight.where(marking_scheme_id: ms.id, is_assignment: false).each do |mw|
+        result[ms.id][mw.gradable_item_id] = mw.weight
+      end
+    end
+    result
+  end
+
+  def get_weighted_total_for_all_marking_schemes_for_student(schemes, student, assignment_marks, gef_marks, weights, gef_weights, max_marks, gef_max_marks)
     result = {}
 
-    assignment_marks =
-      get_mark_for_all_assignments_for_student(student, Assignment.all)
-    gef_marks = get_mark_for_all_gef_for_student(student, GradeEntryForm.all)
+    #assignment_marks =
+    #  get_mark_for_all_assignments_for_student(student, Assignment.all)
+    #gef_marks = get_mark_for_all_gef_for_student(student, GradeEntryForm.all)
 
-    MarkingScheme.all.each do |ms|
+    schemes.each do |ms|
       result[ms.id] = get_weighted_total_for_marking_scheme_and_student(
-        ms.id,
+        weights[ms.id],
+        gef_weights[ms.id],
+        #ms.id,
         assignment_marks,
-        gef_marks)
+        gef_marks,
+        max_marks,
+        gef_max_marks)
     end
     result
   end
 
   def get_weighted_total_for_marking_scheme_and_student(
-    ms_id,
+    weights,
+    gef_weights,
     assignment_marks,
-    gef_marks)
+    gef_marks,
+    max_marks,
+    gef_max_marks)
 
-    weights_for_current_ms = MarkingWeight.where(marking_scheme_id: ms_id)
+    #weights_for_current_ms = MarkingWeight.where(marking_scheme_id: ms_id)
 
     weighted_assignment_total = 0
     assignment_marks.each do |a_id, mark|
-      assignment_weight = weights_for_current_ms.where(is_assignment: true,
-                                                       gradable_item_id: a_id)
-      if assignment_weight != [] && mark
-        weight = assignment_weight[0].weight
-        # weight might be nil
-        if weight
-          weighted_mark = ((mark / get_max_mark_for_assignment(a_id)) * 100) *
+      #assignment_weight = weights_for_current_ms.where(is_assignment: true,
+      #                                                 gradable_item_id: a_id)
+      weight = weights[a_id]
+      #if assignment_weight != [] && mark
+      #  weight = assignment_weight[0].weight
+      #  weight = weights[a_id]
+      # weight might be nil
+      if weight
+        max_mark = max_marks[a_id]
+        #max_mark = 20
+        # max_mark might be nil
+        if max_mark
+          weighted_mark = ((mark / max_mark) * 100) *
                           (weight / 100)
           weighted_assignment_total += weighted_mark
         end
       end
+      #end
     end
 
     weighted_gef_total = 0
     gef_marks.each do |gef_id, mark|
-      gef_weight = weights_for_current_ms.where(is_assignment: false,
-                                                gradable_item_id: gef_id)
-      if gef_weight != 0 && mark
-        weight = gef_weight[0].weight
+      weight = gef_weights[a_id]
+    #  gef_weight = weights_for_current_ms.where(is_assignment: false,
+    #                                            gradable_item_id: gef_id)
+    #  if gef_weight != 0 && mark
+    #    weight = gef_weight[0].weight
         # weight might be nil
-        if weight
-          weighted_mark = ((mark / get_max_mark_for_grade_entry_from(gef_id)) *
-            100) * (weight / 100)
-          weighted_gef_total += weighted_mark
-        end
+      if weight
+        weighted_mark = ((mark / get_max_mark_for_grade_entry_from(gef_id)) *
+          100) * (weight / 100)
+        weighted_gef_total += weighted_mark
       end
     end
+    #end
 
     (weighted_assignment_total + weighted_gef_total).round(2)
   end
