@@ -100,6 +100,7 @@ fr:
     remove:  "Enlever"
     download_csv_grade_report:  "Liste des étudiants et des devoirs au format CSV"
     days_and_hours_left:      "(%{days} jour(s) et %{hours} heure(s))"
+    hours_and_minutes_left:   "(%{hours} heure(s) et %{minutes} minute(s))"
     days_left:          "(%{days} jour(s) restant(s))"
     short_identifier:   "Identifiant du projet<span class='required_field'>*</span>"
     description:        "Description "

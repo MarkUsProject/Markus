@@ -98,6 +98,7 @@ en:
     remove:  "Remove"
     download_csv_grade_report:  "Download CSV Grades Report"
     days_and_hours_left:      "(%{days} day(s) and %{hours} hour(s) left)"
+    hours_and_minutes_left:   "(%{hours} hour(s) and %{minutes} minute(s) left)"
     days_left:          "(%{days} day(s) left)"
     short_identifier:   "Short Identifier<span class='required_field'>*</span>"
     description:        "Description"

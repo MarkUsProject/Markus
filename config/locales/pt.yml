@@ -97,6 +97,7 @@ pt:
     remove:  "Remover"
     download_csv_grade_report:  "Baixar relatório de notas em formato CSV "
     days_and_hours_left:      "(%{days} dias(s) e %{hours} hora(s) restante(s))"
+    hours_and_days_left:      "(%{hours} hora(s) e %{minutes} minuto(s) restante(s)"
     days_left:          "(%{days} dia(s) restante(s))"
     short_identifier:   "Identificador <span class='required_field'>*</span>"
     description:        "Descrição"
