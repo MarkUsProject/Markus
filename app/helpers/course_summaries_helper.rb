@@ -136,7 +136,7 @@ module CourseSummariesHelper
       weight = weights[a_id]
       max_mark = max_marks[a_id]
       # max_mark might be 0
-      if max_mark > 0
+      if weight && max_mark > 0
         weighted_assignment_total += (mark / max_mark) * weight
       end
     end
@@ -145,7 +145,7 @@ module CourseSummariesHelper
     gef_marks.each do |gef_id, mark|
       weight = gef_weights[gef_id]
       max_mark = gef_max_marks[gef_id]
-      if max_mark > 0
+      if weight && max_mark > 0
         weighted_gef_total += (mark / max_mark) * weight
       end
     end
