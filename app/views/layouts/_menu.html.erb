@@ -58,9 +58,11 @@
   <% end %>
 
   <% if @current_user.admin? %>
-    <li class='<%= "active" if controller.controller_name == 'course_summaries' %>'>
+    <li <% if controller.controller_name == 'course_summaries' ||
+              controller.controller_name == 'marking_schemes' %>
+          class='active'
+        <% end %>>
       <%= link_to t('course_summaries_index.page_title'), course_summaries_path %>
     </li>
   <% end %>
-
 </ul>
