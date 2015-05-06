@@ -75,7 +75,7 @@ module CourseSummariesHelper
 
   def get_max_mark_for_grade_entry_form(gef_id)
     total = 0
-    GradeEntryItem.where(grade_entry_form_id: gef_id).each do |gei|
+    GradeEntryItem.where(grade_entry_form_id: gef_id, bonus: false).each do |gei|
       total += gei.out_of
     end
     total
