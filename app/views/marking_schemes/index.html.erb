@@ -4,17 +4,16 @@
 <% end %>
 
 <div class='title_bar'>
-  <h1>
-    <%= t('marking_schemes.title') %>
-  </h1>
+  <h1><%= t('marking_schemes.title') %></h1>
+
   <div class='heading_buttons'>
     <%= link_to t('marking_schemes.add_new'), new_marking_scheme_path, remote: true %>
   </div>
 </div>
 
-<div class='wrapLeft'>
-    <div id='marking_schemes_table'></div>
+<div class='wrapper'>
+  <div id='marking_schemes_table'></div>
 </div>
 
-<div class="edit-ms"></div> 
-<div class="new-ms"></div>
+<div class='edit-ms'></div>
+<div class='new-ms'></div>

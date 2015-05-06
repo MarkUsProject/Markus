@@ -34,7 +34,7 @@
       <% end %>
 
       columns.push({
-        id: "edit_ms",
+        id: 'edit_ms',
         content: '<%= j raw I18n.t('marking_schemes.table_modify_column') %>',
         sortable: false,
         compare: compare_anchor_text,
@@ -43,19 +43,23 @@
 
       return {columns: columns};
     },
+
     getInitialState: function() {
       return {
         markingSchemes: []
       };
     },
+
     componentWillMount: function() {
       this.refresh();
     },
+
     // get info
     refresh: function() {
       document.getElementById('working').style.display = '';
+
       jQuery.ajax({
-        url: '<%= populate_marking_schemes_path() %>',
+        url: '<%= populate_marking_schemes_path %>',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -64,7 +68,7 @@
           });
         }.bind(this),
         error: function(xhr, status, text) {
-          var error = text + ": " + xhr.responseText;
+          var error = text + ': ' + xhr.responseText;
           this.setState({
             error: error
           });
@@ -74,9 +78,11 @@
         }
       });
     },
+
     updateMs: function() {
       this.refresh()
     },
+
     render: function() {
       var marking_schemes_data = this.state.markingSchemes.map(function(markingScheme) {
         var ms = {};
@@ -84,7 +90,7 @@
 
         <% for assignment in @assignments %>
           var id = <%= assignment.id %>;
-          var key = "assignment_" + id;
+          var key = 'assignment_' + id;
           var value = markingScheme.assignment_weights[<%= assignment.id %>];
           if (value === null) {
             value = 'NA'
@@ -101,20 +107,20 @@
           }
           ms[key] = value;
         <% end %>
-        
+
         ms['edit_ms'] =
           <span>
             <a key={markingScheme.edit_link}
                href={markingScheme.edit_link}
-               data-remote="true">
+               data-remote='true'>
                Edit
             </a>
             &nbsp;|&nbsp;
             <a onClick={this.refresh}
                key={markingScheme.delete_link}
                href={markingScheme.delete_link}
-               data-remote="true"
-               data-method="delete">
+               data-remote='true'
+               data-method='delete'>
                Delete
             </a>
           </span>;
@@ -123,11 +129,8 @@
       }.bind(this));
 
         return (
-          <div>
-            <Table data={marking_schemes_data}
-              columns={this.props.columns}
-            />
-          </div>
+          <Table data={marking_schemes_data}
+            columns={this.props.columns} />
         );
     }
   });
