@@ -23,10 +23,6 @@ module MarkingSchemesHelper
       controller: 'marking_schemes',
       action: 'edit',
       id: id)
-    # view_context.link_to(
-    #   'Edit',
-    #   edit_marking_scheme_path(id),
-    #   remote: true)
   end
 
   def get_delete_link_for_marking_scheme_id(id)
@@ -34,13 +30,6 @@ module MarkingSchemesHelper
       controller: 'marking_schemes',
       action: 'destroy',
       id: id)
-    # view_context.link_to(
-    #   'Delete',
-    #   controller: 'marking_schemes',
-    #   action: 'destroy',
-    #   data: { confirm: 'Are you sure you want to delete this tag?' },
-    #   remote
-    #   id: id)
   end
 
   def get_marking_weights_for_all_gradable_item(weights_array)

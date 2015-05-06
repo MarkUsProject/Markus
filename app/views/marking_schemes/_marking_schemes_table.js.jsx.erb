@@ -55,7 +55,7 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
       jQuery.ajax({
-        url: '<%= marking_schemes_path() %>' + '/populate',
+        url: '<%= populate_marking_schemes_path() %>',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -86,27 +86,38 @@
           var id = <%= assignment.id %>;
           var key = "assignment_" + id;
           var value = markingScheme.assignment_weights[<%= assignment.id %>];
-          if (value == null) {
-            value = "NA"
+          if (value === null) {
+            value = 'NA'
           }
           ms[key] = value;
         <% end %>
 
         <% for grade_entry_from in @grade_entry_forms %>
           var id = <%= grade_entry_from.id %>;
-          var key = "gef_" + id;
+          var key = 'gef_' + id;
           var value = markingScheme.spreadsheet_weights[<%= grade_entry_from.id %>];
-          if (value == null) {
-            value = "NA"
+          if (value === null) {
+            value = 'NA'
           }
           ms[key] = value;
         <% end %>
         
-        ms['edit_ms'] = <span>
-                          <a key={markingScheme.edit_link} href={markingScheme.edit_link} data-remote="true">Edit</a>
-                          &nbsp;|&nbsp;
-                          <a onClick={this.refresh} key={markingScheme.delete_link} href={markingScheme.delete_link} data-remote="true" data-method="delete">Delete</a>
-                        </span>;
+        ms['edit_ms'] =
+          <span>
+            <a key={markingScheme.edit_link}
+               href={markingScheme.edit_link}
+               data-remote="true">
+               Edit
+            </a>
+            &nbsp;|&nbsp;
+            <a onClick={this.refresh}
+               key={markingScheme.delete_link}
+               href={markingScheme.delete_link}
+               data-remote="true"
+               data-method="delete">
+               Delete
+            </a>
+          </span>;
 
         return ms;
       }.bind(this));

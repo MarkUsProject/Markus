@@ -45,7 +45,7 @@ class MarkingSchemesController < ApplicationController
     ActiveRecord::Base.transaction do
       begin
         # save marking scheme
-        marking_scheme = MarkingScheme.where(id: params['id'])[0]
+        marking_scheme = MarkingScheme.find(params['id'])
         marking_scheme.name = params['marking_scheme']['name']
         marking_scheme.save!
 
@@ -57,7 +57,7 @@ class MarkingSchemesController < ApplicationController
           marking_weight = MarkingWeight.where(
             gradable_item_id: obj['id'],
             is_assignment: is_assignment,
-            marking_scheme_id: marking_scheme.id)[0]
+            marking_scheme_id: marking_scheme.id).first
 
           marking_weight.weight = obj['weight']
           marking_weight.save!
@@ -82,15 +82,15 @@ class MarkingSchemesController < ApplicationController
   end
 
   def edit
-    @marking_scheme = MarkingScheme.where(id: params['id'])[0]
+    @marking_scheme = MarkingScheme.find(params['id'])
 
     @all_gradable_items = []
 
     MarkingWeight.where(marking_scheme_id: @marking_scheme.id).each do |mw|
       if mw.is_assignment
-        @all_gradable_items << Assignment.where(id: mw.gradable_item_id)[0]
+        @all_gradable_items << Assignment.find(mw.gradable_item_id)
       else
-        @all_gradable_items << GradeEntryForm.where(id: mw.gradable_item_id)[0]
+        @all_gradable_items << GradeEntryForm.find(mw.gradable_item_id)
       end
     end
   end
