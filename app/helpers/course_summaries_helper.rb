@@ -13,12 +13,12 @@ module CourseSummariesHelper
 
     max_marks = Hash[Assignment.all.map do |a|
                   [a.id, get_max_mark_for_assignment(a.id)]
-                end
-                ]
+    end
+    ]
     gef_max_marks = Hash[GradeEntryForm.all.map do |gef|
                       [gef.id, get_max_mark_for_grade_entry_form(gef.id)]
-                    end
-                    ]
+    end
+    ]
 
     student_list = all_students.map do |student|
       marks = get_mark_for_all_assignments_for_student(student, all_assignments)
