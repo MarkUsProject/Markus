@@ -229,8 +229,7 @@
         <% for marking_scheme in @marking_schemes %>
           var id = <%= marking_scheme.id %>;
           var key = "marking_scheme_" + id;
-          var value = parseFloat(courseSummary.weighted_marks[id]);
-          cs[key] = value ? value : "-";
+          cs[key] = parseFloat(courseSummary.weighted_marks[id]);
         <% end %>
         
         return cs;
