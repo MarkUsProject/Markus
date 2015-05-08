@@ -17,3 +17,8 @@ function updateAnnotationPreview() {
   var dialog = jQuery('#create_annotation_dialog');
   dialog.css('margin-left', -1 * dialog.width() / 2);
 }
+
+function clearAnnotationPreview() {
+  var preview = document.getElementById('annotation-preview-text');
+  preview.innerHTML = '';
+}
