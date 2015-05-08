@@ -473,6 +473,13 @@ en:
       sections:             "Section:"
       search_summaries:     "Search Summaries"
 
+    course_summaries_index:
+        page_title:     "Summary"
+        user_name:      "User Name"
+        first_name:     "First Name"
+        last_name:      "Last Name"
+        ngr:            "No Grade Received"
+
     grade_entry_forms:
       blank_field: "can't be blank"
       invalid_name: "is already taken"
@@ -1198,6 +1205,17 @@ en:
       grade: "Grade"
       x_mark: "x Mark"
       weight: "Weight"
+
+    course_summaries:
+      title: "Summary"
+
+    marking_schemes:
+      title: "Marking Schemes"
+      name: "Name"
+      add_new: "Add New Marking Scheme"
+      edit: "Edit Marking Scheme"
+      weight_label: "Weight for "
+      table_modify_column: "Modify" 
 
     notes:
         note_on: "%{user_name} on <strong>%{display_for}</strong>"
