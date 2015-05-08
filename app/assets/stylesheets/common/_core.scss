@@ -146,9 +146,9 @@ input[type='radio'] {
 }
 
 .help-message {
+  background: $light-yellow;
+  border: 1px solid $yellow;
   border-radius: $radius;
-  background: #ffffe0;
-  border: 1px solid #e6db55;
   display: inline-block;
   padding: 10px;
   position: relative;
