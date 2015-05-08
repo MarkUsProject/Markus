@@ -21,10 +21,6 @@ body {
   background-color: $blue;
 }
 
-::-moz-selection {
-  background-color: $blue;
-}
-
 
 /** Code */
 pre,
@@ -159,12 +155,7 @@ textarea {
 }
 
 textarea {
-  // height: 2.5em;
   resize: none;
-
-  // &:focus {
-  //   height: 7.5rem;
-  // }
 }
 
 select {
@@ -364,13 +355,7 @@ fieldset {
   border-radius: $radius;
   background: $white;
   border: 1px solid $grey;
-
-  // Prevent text selection
-  -webkit-user-select: none;
-    apple-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  user-select: none;
 
   header {
     border-radius: $radius $radius 0 0;

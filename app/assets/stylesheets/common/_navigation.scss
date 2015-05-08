@@ -165,22 +165,6 @@ footer {
   }
 }
 
-@-webkit-keyframes ellipsis {
-  from { width: 2px; }
-  to   { width: 1em; }
-}
-@-moz-keyframes ellipsis {
-  from { width: 2px; }
-  to   { width: 1em; }
-}
-@-ms-keyframes ellipsis {
-  from { width: 2px; }
-  to   { width: 1em; }
-}
-@-o-keyframes ellipsis {
-  from { width: 2px; }
-  to   { width: 1em; }
-}
 @keyframes ellipsis {
   from { width: 2px; }
   to   { width: 1em; }
