@@ -190,16 +190,21 @@
 
 #codeviewer {
   display: table-cell;
+  height: 100%;
+  overflow: auto;
+  position: relative;
   width: 100%;
 }
 
 .code_scroller {
   margin: 0;
-  overflow: auto;
   padding-left: 50px !important;
 }
 
 .dp-highlighter {
+  height: 100%;
+  position: absolute;
+
   .annotation_highlighted_text {
     background-color: #f99;
     color: $dark-grey;
@@ -321,6 +326,10 @@ ul.annotation_text_list {
 
 
 /* Annotations pane */
+
+#annotations_summary {
+  padding: 1em;
+}
 
 #annotations_summary_head {
   padding: 0.5em 0;
