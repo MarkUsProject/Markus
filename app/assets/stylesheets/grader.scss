@@ -167,8 +167,8 @@
 }
 
 .annotation_holder {
-  background: #ffa500;
-  border: 1px solid #000;
+  background: $annot-orange;
+  border: 1px solid $dark-grey;
   cursor: crosshair;
   filter: alpha(opacity=20);
   opacity: 0.2;

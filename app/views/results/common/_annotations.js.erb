@@ -133,10 +133,10 @@
     var line_end     = line_manager.getLineNumber(focus_node);
 
     // If we selected an entire line the above returns + 1, a fix follows
-    if (mouseSelection.anchorNode.nodeName === "LI") {
+    if (mouseSelection.anchorNode.nodeName === 'LI') {
       line_start--;
     }
-    if (mouseSelection.focusNode.nodeName === "LI") {
+    if (mouseSelection.focusNode.nodeName === 'LI') {
       line_end--;
     }
 
@@ -238,7 +238,7 @@
     var x2 = x1 + parseInt(box.style.width, 10);
     var y2 = y1 + parseInt(box.style.height, 10);
 
-    if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
+    if (x2 - x1 < 1 || isNaN(x2 - x1)) {
       alert("<%= t('marker.annotation.select_an_area') %>");
       return false;
     }

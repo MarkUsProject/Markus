@@ -326,7 +326,6 @@ fr:
         new_annotation: "Nouvelle annotation"
         annotation_category: "Catégorie de l'annotation"
         preview: "Avant-première"
-        preview_title: "Avant-première:"
         sure_to_remove: "Êtes-vous sûr de vouloir supprimer cette annotation ?"
         submit_edit: "Sauvegarder"
         change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"

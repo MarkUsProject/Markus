@@ -323,7 +323,6 @@ pt:
         new_annotation: "Criar nova anotação"
         annotation_category: "Categoria de anotação"
         preview: "Visualização"
-        preview_title: "Visualização:"
         sure_to_remove: "Tem certeza que quer remover essa anotação?"
         submit_edit: "Enviar mudanças"
         change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"

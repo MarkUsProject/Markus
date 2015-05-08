@@ -344,7 +344,6 @@ en:
         new_annotation: "Create new annotation"
         annotation_category: "Annotation Category"
         preview: "Preview"
-        preview_title: "Preview:"
         sure_to_remove: "Are you sure you want to remove this annotation?"
         submit_edit: "Submit Edit"
         change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
