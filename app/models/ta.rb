@@ -14,6 +14,14 @@ class Ta < User
 
   has_many :grade_entry_student_tas
   has_many :grade_entry_students, through: :grade_entry_student_tas
+  
+  def get_num_assigned(assignment)
+    return assignment.ta_memberships.where(user_id: id).size
+  end
+
+  def get_num_marked(assignment)
+    return (assignment.ta_memberships.where(user_id: id).select {|x| x.grouping.marking_completed?}).size
+  end
 
   def memberships_for_assignment(assignment)
     assignment.ta_memberships.where(user_id: id, include: { grouping: :group })
