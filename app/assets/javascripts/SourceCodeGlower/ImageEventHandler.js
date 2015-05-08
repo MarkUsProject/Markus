@@ -170,8 +170,14 @@ ImageEventHandler.prototype.check_for_annotations = function(e) {
 
   // X/Y coords relative to the image
   var image_container = document.getElementById('image_container');
-  var xy_coords = [abs_xy[0] - image_container.offsetLeft,
-                   abs_xy[1] - image_container.offsetTop];
+  var codeviewer = document.getElementById('codeviewer');
+
+  var xy_coords = [abs_xy[0] -
+                     image_container.offsetLeft - codeviewer.offsetLeft +
+                     image_container.scrollLeft,
+                   abs_xy[1] -
+                     image_container.offsetTop - image_container.offsetHeight +
+                     codeviewer.scrollTop];
   var annot_grid = this.get_annotation_grid();
   var annots_to_display = [];
 

@@ -231,10 +231,15 @@
 
   function get_selection_box() {
     var box = document.getElementById('sel_box');
+    var image_container = document.getElementById('image_container');
+    var codeviewer = document.getElementById('codeviewer');
+
     var x1 = parseInt(box.style.left, 10) -
-               document.getElementById('image_container').offsetLeft;
+               image_container.offsetLeft - codeviewer.offsetLeft +
+               image_container.scrollLeft;
     var y1 = parseInt(box.style.top, 10) -
-               document.getElementById('image_container').offsetTop;
+               image_container.offsetTop - image_container.offsetHeight +
+               codeviewer.scrollTop;
     var x2 = x1 + parseInt(box.style.width, 10);
     var y2 = y1 + parseInt(box.style.height, 10);
 
