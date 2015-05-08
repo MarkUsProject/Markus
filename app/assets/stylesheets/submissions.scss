@@ -52,7 +52,7 @@
 
 /* Tag CSS Elements */
 
-ul.tag_list {
+.tag_list {
   text-align: left;
   list-style: none;
   margin: 0px;
@@ -66,19 +66,12 @@ ul.tag_list {
     &:hover {
       color: $dark-blue;
 
+      // When hover is activated on li, shows the menu
       ul {
-        /* When hover is activated on li, shows the menu */
         display: block;
         opacity: 1;
         visibility: visible;
       }
-    }
-
-    &.tag_list_search:hover,
-    &.tag_list_title:hover {
-      /* Removes CSS formatting for titles and search bars. */
-      background-color: $light-grey !important;
-      cursor: default !important;
     }
 
     ul {
@@ -97,12 +90,19 @@ ul.tag_list {
         padding: 2px;
         text-align: left;
 
-        &:hover{
+        &:hover {
           background-color: $dark-grey;
         }
       }
     }
   }
+}
+
+// Removes CSS formatting for titles and search bars
+.tag_list_search:hover,
+.tag_list_title:hover {
+  background-color: $light-grey !important;
+  cursor: default !important;
 }
 
 
