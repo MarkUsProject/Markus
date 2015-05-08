@@ -27,7 +27,7 @@
 }
 
 #rubric_levels_pane {
-  @include border-radius($radius);
+  border-radius: $radius;
   display: table;
   width: 100%;
   border: 1px solid $grey;

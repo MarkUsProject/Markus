@@ -17,7 +17,7 @@
 }
 
 .annotation_text_display {
-  @include border-radius(5px);
+  border-radius: $radius;
   background: #f6f6f6;
   border: 1px solid $grey;
   max-width: 400px;
@@ -32,7 +32,7 @@
 /* Top toolbars: student selector/file selector/download buttons */
 
 #student_selector {
-  @include border-radius(5px);
+  border-radius: $radius;
   background: #ececec;
   border: 1px solid #ddd;
   display: table;
@@ -72,7 +72,7 @@
 
 .file_selector,
 .download_file {
-  @include border-radius(5px);
+  border-radius: $radius;
   background: $light-grey;
   border: 1px solid #ddd;
   display: inline-block;
@@ -114,7 +114,7 @@
 #submission_rule_viewer,
 #codeviewer,
 #annotations_summary {
-  @include border-radius-bottom(5px);
+  border-radius: 0 0 $radius $radius;
   overflow: auto;
 }
 
@@ -199,7 +199,7 @@
 /* Annotations menus */
 
 #annotation_menu {
-  @include border-radius-top(5px);
+  border-radius: $radius $radius 0 0;
   background: #b7d3ec;
   display: table;
   margin: 0 0 1em 0;
@@ -225,7 +225,7 @@ li.annotation_category {
 }
 
 ul.annotation_text_list {
-  @include border-radius-bottom(5px);
+  border-radius: 0 0 $radius $radius;
   background: $white !important;
   border: 1px solid #aaa;
   height: auto;
@@ -238,7 +238,7 @@ ul.annotation_text_list {
   width: 300px;
 
   li {
-    @include border-radius-top(0 !important);
+    border-radius: 0 !important;
     background: $white !important;
     padding: 0.5em 0.25em;
     width: 100%;
@@ -250,7 +250,7 @@ ul.annotation_text_list {
     }
 
     &:last-child {
-      @include border-radius-bottom(5px);
+      border-radius: 0 0 $radius $radius;
       border: 0;
     }
   }
@@ -333,7 +333,7 @@ ul.annotation_text_list {
   width: 100%;
 
   li {
-    @include border-radius(0);
+    border-radius: 0;
     border-bottom: 1px solid #dadada;
     padding: 5px;
     width: 100%;
@@ -544,7 +544,7 @@ ul.annotation_text_list {
 }
 
 .mark_total {
-  @include border-radius($radius);
+  border-radius: $radius;
   background: $light-grey;
   border: 1px solid $grey;
   font-weight: 600;
@@ -581,7 +581,7 @@ ul.annotation_text_list {
 }
 
 .tag_collector_pane {
-  @include border-radius($radius);
+  border-radius: $radius;
   background: $light-grey;
   border: 1px solid $grey;
   font-weight: 600;

@@ -7,10 +7,10 @@
 /** Main */
 
 body {
-  @include transition(all, $time-quick);
   background-color: $lighter-blue;
   color: $dark-grey;
   font: 400 0.8em/1.2em $fonts;
+  transition: background-color $time-quick;
 
   @include breakpoint(tiny) {
     background-color: $white;
@@ -66,10 +66,10 @@ p + p {
 /** Links */
 
 a {
-  @include transition(all, $time-quick);
   color: $dark-blue;
   cursor: pointer;
   text-decoration: none;
+  transition: color $time-quick;
 
   &:hover {
     color: $blue;
@@ -84,7 +84,7 @@ strong a {
 /** Alert messages */
 
 .alert {
-  @include border-radius($radius);
+  border-radius: $radius;
   display: block;
   margin-bottom: 1em;
   padding: 0.25em 0.5em 0.25em 2em;
@@ -127,14 +127,14 @@ strong a {
 
 input,
 textarea {
-  @include border-radius($radius);
-  @include transition(all, $time-quick);
   background: lighten($light-grey, 10%);
   border: 1px solid $grey;
+  border-radius: $radius;
   color: $dark-grey;
   font: 400 1em $fonts;
   outline: none;
   padding: 0.25em 0.75em;
+  transition: all $time-quick;
   width: 100%;
 
   &:hover {
@@ -168,7 +168,7 @@ textarea {
 }
 
 select {
-  @include border-radius($radius);
+  border-radius: $radius;
   background: none;
   border: 1px solid $light-blue;
   font-family: $fonts;
@@ -184,10 +184,10 @@ input[type='submit'],
 input[type='reset'],
 button,
 .button {
-  @include background-gradient($white, $light-grey);
-  @include border-radius($radius);
-  @include box-shadow(inset 0 -1px 0 $grey);
-  @include transition(all, $time-quick);
+  background: linear-gradient(top, $white, $light-grey);
+  background-color: $white;
+  border-radius: $radius;
+  box-shadow: inset 0 -1px 0 $grey;
   border: 1px solid $blue;
   color: $dark-grey;
   cursor: pointer;
@@ -198,27 +198,30 @@ button,
   padding: 0.5em 1.5em;
   text-align: center;
   text-shadow: 0 1px 0 $white;
+  transition: all $time-quick;
 
   &:hover {
-    @include box-shadow(inset 0 -1px 0 $grey, 0 1px 0 $light-grey);
+    box-shadow: inset 0 -1px 0 $grey, 0 1px 0 $light-grey;
     border-color: $dark-blue;
     color: $dark-blue;
     top: 1px;
   }
 
   &:focus {
-    @include box-shadow(inset 0 -1px 0 $grey, 0 0 3px $blue);
+    box-shadow: inset 0 -1px 0 $grey, 0 0 3px $blue;
   }
 
   &:active {
-    @include background-gradient($light-grey, $white);
-    @include box-shadow(none);
+    background: linear-gradient(top, $light-grey, $white);
+    background-color: $light-grey;
+    box-shadow: none;
     color: $dark-blue;
   }
 
   &[disabled] {
-    @include background-gradient($light-grey, $disabled-grey);
-    @include box-shadow(none);
+    background: linear-gradient(top, $light-grey, $disabled-grey);
+    background-color: $light-grey;
+    box-shadow: none;
     border-color: $disabled-dark;
     color: $disabled-dark;
   }
@@ -238,8 +241,8 @@ button,
 /** Fieldset */
 
 fieldset {
-  @include border-radius($radius);
-  @include box-shadow(0 3px 0 $grey);
+  border-radius: $radius;
+  box-shadow: 0 3px 0 $grey;
   background: $white;
   padding: 0.25em 1.5em 1.5em;
   position: relative;
@@ -255,8 +258,8 @@ fieldset {
 
   // Fieldsets within fieldsets
   fieldset {
-    @include border-radius(0);
-    @include box-shadow(none);
+    border-radius: 0;
+    box-shadow: none;
     border: none;
     border-top: 1px solid $grey;
     padding: 0;
@@ -337,7 +340,7 @@ fieldset {
 
     tbody {
       tr {
-        @include transition(all, $time-quick);
+        transition: background-color $time-quick;
 
         &:nth-child(odd) {
           background-color: $white;
@@ -348,7 +351,7 @@ fieldset {
         }
 
         &:hover {
-          background: $lighter-blue;
+          background-color: $lighter-blue;
         }
       }
     }
@@ -358,7 +361,7 @@ fieldset {
 /** Sortable lists */
 
 .sortable {
-  @include border-radius($radius);
+  border-radius: $radius;
   background: $white;
   border: 1px solid $grey;
 
@@ -370,7 +373,7 @@ fieldset {
           user-select: none;
 
   header {
-    @include border-radius-top($radius);
+    border-radius: $radius $radius 0 0;
     border-bottom: 1px solid $grey;
     font-weight: 600;
     text-align: left;
@@ -387,20 +390,20 @@ fieldset {
     padding: 0;
 
     li {
-      @include transition(all, $time-quick);
       background: url(handle@2x.png) 0.5em center no-repeat;
       background-size: 12px 20px;
       border-top: 1px solid $grey;
       list-style: none;
       min-height: 2.5em;
       padding: 0.5em 0.5em 0.5em 2em;
+      transition: background-color $time-quick;
 
       &:hover {
         background-color: $lighter-blue;
       }
 
       &:last-child {
-        @include border-radius-bottom($radius);
+        border-radius: 0 0 $radius $radius;
       }
     }
   }
@@ -410,7 +413,7 @@ fieldset {
 /** Tab pane */
 
 .tab-pane {
-  @include border-radius($radius);
+  border-radius: $radius;
   background: $light-grey;
   border: 1px solid $blue;
   padding: 0.5em;
@@ -420,13 +423,13 @@ fieldset {
     padding: 0;
 
     li {
-      @include border-radius-top($radius);
+      border-radius: $radius $radius 0 0;
       background: $light-blue;
       display: inline-block;
       list-style: none;
 
       a {
-        @include border-radius-top($radius);
+        border-radius: $radius $radius 0 0;
         display: inline-block;
         outline: none;
         padding: 0.25em 1.5em;
@@ -443,7 +446,7 @@ fieldset {
   }
 
   .ui-tabs-panel {
-    @include border-radius-bottom($radius);
+    border-radius: 0 0 $radius $radius;
     background: $white;
     padding: 0.5em;
   }
@@ -459,8 +462,7 @@ ul.tags {
   padding: 0;
 
   & > li {
-    @include border-radius($radius);
-    @include transition(all, $time-quick);
+    border-radius: $radius;
     background: $grey;
     border: 1px solid $grey;
     color: $white;
@@ -473,9 +475,10 @@ ul.tags {
     padding: 0 0.6em;
     position: relative;
     text-transform: uppercase;
+    transition: all $time-quick;
 
     &:hover {
-      @include border-radius-bottom(0);
+      border-radius: 0;
       background: $white;
       border: 1px solid $blue;
       color: $dark-blue;
@@ -486,7 +489,7 @@ ul.tags {
     }
 
     ul {
-      @include border-radius-bottom($radius);
+      border-radius: 0 0 $radius $radius;
       background: $white;
       border: 1px solid $blue;
       display: none;
@@ -524,8 +527,8 @@ ul.tags {
 /** Dialog modal windows */
 
 .dialog {
-  @include border-radius($radius);
-  @include box-shadow(0 0 10px $grey);
+  border-radius: $radius;
+  box-shadow: 0 0 10px $grey;
   background: $white;
   max-width: 100%;
   padding: 2.5em 1.5em;
@@ -555,13 +558,13 @@ nav {
     padding: 0;
 
     li {
-      @include border-radius-top($radius);
+      border-radius: $radius $radius 0 0;
       display: inline-block;
       text-align: center;
       vertical-align: bottom;
 
       a {
-        @include border-radius-top($radius);
+        border-radius: $radius $radius 0 0;
         display: block;
         height: 3em;
         line-height: 3em;
@@ -577,9 +580,9 @@ nav {
 
     li:hover,
     .active {
-      @include transition(background-color, $time-quick);
       background-color: $blue;
       color: $white;
+      transition: background-color $time-quick;
 
       a {
         color: $white;
@@ -594,9 +597,9 @@ nav {
 
     li:hover,
     .active {
-      @include transition(background-color, $time-quick);
       background-color: $white;
       color: $dark-blue;
+      transition: background-color $time-quick;
 
       a {
         color: $dark-blue;
@@ -617,7 +620,7 @@ nav {
 /** Dropdown menu */
 
 .dropdown {
-  @include border-radius($radius);
+  border-radius: $radius;
   background: $white;
   border: 1px solid $dark-blue;
   cursor: pointer;
@@ -628,7 +631,7 @@ nav {
   text-align: center;
 
   &:hover {
-    @include border-radius-bottom(0);
+    border-radius: 0;
 
     ul {
       display: block;
@@ -636,7 +639,7 @@ nav {
   }
 
   ul {
-    @include border-radius-bottom($radius);
+    border-radius: 0 0 $radius $radius;
     background: $white;
     border: 1px solid $dark-blue;
     display: none;
@@ -655,7 +658,7 @@ nav {
       text-align: left;
 
       &:last-child {
-        @include border-radius-bottom($radius);
+        border-radius: 0 0 $radius $radius;
       }
     }
 
@@ -664,7 +667,7 @@ nav {
     }
 
     li:not(.section) {
-      @include transition(all, $time-quick);
+      transition: all $time-quick;
 
       &:hover,
       &.active {
