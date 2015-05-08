@@ -249,8 +249,8 @@ ul.annotation_text_list {
     }
 
     &:last-child {
-      border-radius: 0 0 $radius $radius;
       border: 0;
+      border-radius: 0 0 $radius $radius;
     }
   }
 }
