@@ -419,7 +419,7 @@ fieldset {
   width: 100%;
 
   @include breakpoint(mobile) {
-    display: block !important;
+    display: block;
   }
 
   ul {
@@ -465,7 +465,7 @@ fieldset {
     width: 100%;
 
     @include breakpoint(mobile) {
-      display: block !important;
+      display: block;
     }
   }
 }
