@@ -14,17 +14,23 @@
       <div class='tab-pane-contents'>
         <div id='code_holder'>
           <div id='annotation_menu'>
-            <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
-              <%= t('marker.new_annot') %>
-            </button>
+            <div id='annotation_menu_contents'>
+              <div id='annotation_menu_left'>
+                <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
+                  <%= t('marker.new_annot') %>
+                </button>
+              </div>
 
-            <%= render partial: 'annotations/annotation_categories',
-                       locals: { annotation_categories: annotation_categories } %>
+              <%= render partial: 'annotations/annotation_categories',
+                         locals: { annotation_categories: annotation_categories } %>
+            </div>
           </div>
 
           <div id='sel_box'></div>
 
-          <div id='codeviewer'></div>
+          <div id='code_holder_contents'>
+            <div id='codeviewer'></div>
+          </div>
         </div>
 
         <div id='annotations_summary'>

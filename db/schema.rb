@@ -47,6 +47,8 @@ ActiveRecord::Schema.define(:version => 20150326163940) do
     t.integer "annotation_number"
     t.boolean "is_remark"
     t.integer "page"
+    t.integer "column_start"
+    t.integer "column_end"
   end
 
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
@@ -102,6 +104,7 @@ ActiveRecord::Schema.define(:version => 20150326163940) do
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                        :default => false
+    t.boolean  "only_required_files"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -166,11 +169,12 @@ ActiveRecord::Schema.define(:version => 20150326163940) do
 
   create_table "grade_entry_items", :force => true do |t|
     t.integer  "grade_entry_form_id"
-    t.string   "name",                :null => false
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.string   "name",                                   :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.float    "out_of"
     t.integer  "position"
+    t.boolean  "bonus",               :default => false
   end
 
   add_index "grade_entry_items", ["grade_entry_form_id", "name"], :name => "index_grade_entry_items_on_grade_entry_form_id_and_name", :unique => true

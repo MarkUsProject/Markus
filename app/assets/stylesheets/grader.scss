@@ -175,6 +175,24 @@
   position: absolute;
 }
 
+#code_holder {
+  display: table;
+  width: 100%;
+}
+
+#code_holder_contents {
+  display: table-row;
+  height: 100%;
+  padding-top: 0.5em;
+  vertical-align: top;
+  width: 100%;
+}
+
+#codeviewer {
+  display: table-cell;
+  width: 100%;
+}
+
 .code_scroller {
   margin: 0;
   overflow: auto;
@@ -238,18 +256,25 @@
 #annotation_menu {
   @include border-radius-top(5px);
   background: #b7d3ec;
-  display: table;
-  margin: 0 0 1em 0;
+  display: table-row;
   padding: 0.5em;
   width: 100%;
 }
 
-#new_annotation_button {
+#annotation_menu_contents {
+  display: table-row-group;
+  height: 1em;
+}
+
+#annotation_menu_left {
   display: table-cell;
-  font-weight: 300;
-  margin: 0 0.25em 0 0;
-  min-width: 0;
+  padding: 0.5em;
   vertical-align: top;
+}
+
+#new_annotation_button {
+  font-weight: 300;
+  min-width: 0;
   width: 120px;
 }
 
