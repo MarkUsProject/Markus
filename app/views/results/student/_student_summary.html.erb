@@ -1,12 +1,10 @@
 <% if old_result %>
-  <p>
-    <a href='#' onclick='return false;' onmouseover='show_old_marks();' onmouseout='hide_old_marks();'>
-      <%= t('marker.marks.show_old_marks') %>
-    </a>
+  <div class='summary_old_toggle'>
+    <button id='summary_toggle' class='inline-button'><%= t('marker.marks.show_old_marks') %></button>
+  </div>
   </p>
 
   <div id='old_summary_criteria_pane'>
-
     <%= render partial: "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
                locals: { mark_criteria: mark_criteria,
                          marks_map: old_marks_map } %>
@@ -65,8 +63,6 @@
              locals: { mark_criteria: mark_criteria,
                        marks_map: marks_map } %>
 
-  <!-- Summary Criteria Pane -->
-
   <div class='summary_block'>
       <strong><%= t('marker.marks.subtotal') %></strong>
       <span><%= result.get_subtotal %> / <%= assignment.total_mark %></span>
@@ -115,19 +111,6 @@
   </div>
 </div>
 
-<div id='extra_percentage_pane' class='extra_percentage_pane'>
-  <%= render partial: 'results/student/extra_percentage_table',
-             locals: { extra_marks_percentage: extra_marks_percentage,
-                       result_id: result.id } %>
-</div>
-
-<div class='summary_block'>
-  <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
-  <span id='total_extra_percentage'><%= result.get_total_extra_percentage %></span><br>
-  <strong><%= t('marker.marks.translated_to_points') %></strong>
-  <span id='total_extra_percentage_as_points'><%= result.get_total_extra_percentage_as_points %></span><br>
-</div>
-
 <% if old_result %>
   <div class='mark_total'>
     <span class='final_mark'>
@@ -145,7 +128,3 @@
   </span>
   <span><%= t('marker.marks.final_mark').html_safe %></span>
 </div>
-
-<script>
-  hide_old_marks();
-</script>

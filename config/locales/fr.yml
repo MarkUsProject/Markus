@@ -318,7 +318,7 @@ fr:
         final_mark: "Note finale : "
         previous_mark: "Note précédente : "
         old: "Précédent : "
-        show_old_marks: "Afficher la note précédente "
+        show_old_marks: "Basculer la note précédente "
       annotation:
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
         remark_flag: "(retour)"
@@ -1082,7 +1082,7 @@ fr:
       name: "Nom"
       add_new: "Ajouter Nouveau Marquage Barème"
       edit: "Modifier Barème de Notation"
-      weight_label: "Poids Pour Les " 
+      weight_label: "Poids Pour Les "
       table_modify_column: "Modifier"
 
     notes:

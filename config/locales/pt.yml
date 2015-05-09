@@ -315,7 +315,7 @@ pt:
         final_mark: "Nota final&nbsp;"
         previous_mark: "Nota antiga&nbsp;"
         old: "Antiga:&nbsp;"
-        show_old_marks: "Mostrar antigo resumo de notas"
+        show_old_marks: "Alternar antigo resumo de notas"
       annotation:
         from_line_to: "%{file_path}: Linha %{line_start} até %{line_end}"
         remark_flag: "(Reavaliado)"
