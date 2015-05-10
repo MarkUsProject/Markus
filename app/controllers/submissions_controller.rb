@@ -154,6 +154,7 @@ class SubmissionsController < ApplicationController
        f[:file_name] = file_name
        f[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
        f[:revision_by] = file.user_id
+       f[:last_modified_revision] = file.last_modified_revision
      end
       # Coverts the hash to an array
       render json: files_array.to_a
@@ -334,7 +335,7 @@ class SubmissionsController < ApplicationController
       replace_files = params[:replace_files].nil? ? {} : params[:replace_files]
 
       # The files that will be deleted
-      delete_files = params[:delete_files].nil? ? {} : params[:delete_files]
+      delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
 
       # The files that will be added
       new_files = params[:new_files].nil? ? {} : params[:new_files]
@@ -344,26 +345,28 @@ class SubmissionsController < ApplicationController
 
       log_messages = []
       begin
-        # delete files marked for deletion
-        delete_files.keys.each do |filename|
-          txn.remove(File.join(assignment_folder, filename),
-                     file_revisions[filename])
-          log_messages.push("Student '#{current_user.user_name}'" +
-                                " deleted file '#{filename}' for assignment" +
-                                " '#{@assignment.short_identifier}'.")
-        end
+        if new_files.empty?
+          # delete files marked for deletion
+          delete_files.each do |filename|
+            txn.remove(File.join(assignment_folder, filename),
+                       file_revisions[filename])
+            log_messages.push("Student '#{current_user.user_name}'" +
+                              " deleted file '#{filename}' for assignment" +
+                              " '#{@assignment.short_identifier}'.")
+          end
 
-        # Replace files
-        replace_files.each do |filename, file_object|
-          # Sometimes the file pointer of file_object is at the end of the file.
-          # In order to avoid empty uploaded files, rewind it to be save.
-          file_object.rewind
-          txn.replace(File.join(assignment_folder, filename), file_object.read,
-                      file_object.content_type, file_revisions[filename])
-          log_messages.push("Student '#{current_user.user_name}'" +
-                                " replaced content of file '#{filename}'" +
-                                ' for assignment' +
-                                " '#{@assignment.short_identifier}'.")
+          # Replace files
+          replace_files.each do |filename, file_object|
+            # Sometimes the file pointer of file_object is at the end of the file.
+            # In order to avoid empty uploaded files, rewind it to be save.
+            file_object.rewind
+            txn.replace(File.join(assignment_folder, filename), file_object.read,
+                        file_object.content_type, file_revisions[filename])
+            log_messages.push("Student '#{current_user.user_name}'" +
+                              " replaced content of file '#{filename}'" +
+                              ' for assignment' +
+                              " '#{@assignment.short_identifier}'.")
+          end
         end
 
         # Add new files
