@@ -137,8 +137,9 @@
 <aside class='dialog' id='addnew_dialog'>
   <h2><%= t('add_new') %></h2>
   <br>
-  <form id="file_form" action="update_files">
-    <input type= 'file' name='new_file' id='new_file'>
+  <%= form_tag update_files_assignment_submissions_path(@assignment.id),
+               { multipart: true, id: 'file_form' } do %>
+    <input type='file' name='new_files[]'>
     <br>
     <br>
     <% unless !@grouping.is_valid? || @grouping.repository_external_commits_only? %>
@@ -147,7 +148,7 @@
                      onclick: 'set_onbeforeunload(false); submitFile(event)') unless @grouping.repository_external_commits_only? %>
       <%= button_to_function t(:close), 'modal_addnew.close();' %>
     <% end %>
-  </form>
+  <% end %>
 </aside>
 
 
