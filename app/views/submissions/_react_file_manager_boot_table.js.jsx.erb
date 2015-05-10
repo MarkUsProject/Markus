@@ -1,0 +1,211 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  var FileTable = React.createClass({
+    propTypes: {
+	//Ensures that components are being used correctly
+	columns:React.PropTypes.array
+    },
+    getDefaultProps: function() {
+      // Defines the columns used for the table and whether they
+      // are sortable searchable. The default initially sorted
+      // column is the first sortable column in the array.
+      return {
+        columns: [
+          {
+            id: 'file_name',
+            content: '<%= j raw I18n.t(:'browse_submissions.filename') %>',
+	    sortable: true,
+	    compare: compare_anchor_text
+          },
+          {
+            id: 'last_modified_date',
+            content: '<%= j raw I18n.t(:'browse_submissions.last_revised') %>',
+            sortable: true
+          },
+          {
+            id: 'revision_by',
+            content: '<%= j raw I18n.t(:'browse_submissions.revised_by') %>',
+            sortable: true
+          },
+        ]
+      };
+    },
+    getInitialState: function() {
+      return {
+        error: null,
+        files: [],
+	selected_files: [],
+	data_files: [],
+      };
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    updateSelectedFiles: function(files){
+    	this.setState({selected_files: files})
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      // Show working indicator.
+      document.getElementById('working').style.display = '';
+
+      jQuery.ajax({
+      	url: 'populate_file_manager_react',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+	this.setState({
+		files: data,
+		errors: null
+	});
+        }.bind(this),
+        error: function(xhr, status, text) {
+           var error = text + ':' + xhr.responseText; 
+           this.setState({
+           	error: error
+           });
+        }.bind(this),
+        // Close working indicator.
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+    onError: function(error) {
+      this.setState({error: error});
+    },
+    render: function() {
+        i = 0;
+        var files_data = this.state.files.map(function(file) {
+     	  var f = {};
+      	  i++;
+
+          f['id'] = i;
+	  f['file_name'] = file[1].name;
+	  f['last_modified_date'] = file[1].last_modified_date;
+	  f['revision_by'] = file[1].user_id;
+          return f;
+	}.bind(this));
+	return (
+	<div>	
+		<FileManagerActionBox
+		selected_files={this.state.selected_files}
+		data_file={files_data}
+		onError={this.onError}
+		refresh={this.refresh}
+       		/>
+		<Table data={files_data}
+		 columns={this.props.columns}
+		 selectable={true} 
+		 onSelectedRowsChange={this.updateSelectedFiles}
+		 />
+		 <ErrorDiv error={this.state.error} />
+
+	 </div>
+	);
+    }
+  });
+
+  var FileManagerActionBox = React.createClass({
+  propTypes: {
+  	selected_files: React.PropTypes.array,
+	data_file: React.PropTypes.array	
+	},
+  accessById: function(id){
+     var data_file = this.props.data_file;
+     var len = data_file.length;
+     var data;
+     for (var i = 0; i < len; i++){
+     	if(data_file[i].id == id){
+		data = data_file[i].file_name;
+	}
+     }
+     return data;
+  },
+  accessThroughArray: function(){
+  	var x = this.props.selected_files.map(function(id){
+	   var f = {};
+	   f['filename'] = this.accessById(id);
+	   return f;
+      }.bind(this));
+
+    return x;
+  },
+  deleteFiles: function(e){
+       e.preventDefault();
+       var delete_file = this.accessThroughArray();
+       jQuery.ajax({
+	     url: 'update_files', 
+	     method: 'POST',
+	     data: {deleted_files: delete_file}, 
+	     success: function(data) {
+	       this.props.refresh();
+	       }.bind(this),
+	     error: function(xhr, status, text){
+                var error = text + ': ' + xhr.responseText;
+		this.props.onError(error);
+	     }.bind(this)
+	     });
+  },
+  openModal: function(e) {
+  	e.preventDefault();
+	<% if (@grouping.is_valid? && !@grouping.repository_external_commits_only?) %>
+	  modal_addnew.open();
+	  set_onbeforeunload(true);
+        <%end%>
+  },
+  render: function(){
+  	return (
+	<div className = 'react_buttons'>
+		<button onClick={this.openModal}>
+			<%= j raw I18n.t('add_new') %>
+		</button>
+		<button onClick={this.deleteFiles}>
+			<%= j raw I18n.t('delete') %>	
+		</button>
+	</div>
+	);}
+  });
+
+
+React.renderComponent(<FileTable/>, document.getElementById('file_table'));
+</script>
+
+<script type = "text/javascript">
+//<![CDATA[
+
+  /*
+ * Do the same as what would be done server side in terms
+ * of filename sanitation. Warn the user what would happen
+ * if submit is pressed.
+ * See also: public/javascripts/file_manager.js
+ */
+function sanitized_filename_check(file_input) {
+  file_name = file_input.value.replace(/^.*[\\\/]/, '');
+  sanitized_filename = file_name.replace(/<%= SubmissionFile::FILENAME_SANITIZATION_REGEXP.source %>/g,
+  "<%= SubmissionFile::SUBSTITUTION_CHAR %>");
+  if (file_name != sanitized_filename) {
+    msg = <%=raw( I18n.t('student.submission.filename_sanitization_js_warning') )%>;
+    if( !confirm(msg) ) {
+      $(file_input).setValue('');
+    };
+  }
+}
+
+/*
+ * Check that new_file_name is the same as file_name. Otherwise
+ * refuse to accept the new filename. Note that this is called
+ * on the replace file upload button.
+ * See also: public/javascripts/file_manager.js
+ */
+function check_change_of_filename(file_name, new_file_name, file_input) {
+  new_file_name = normalize_filename(new_file_name);
+  if(file_name != new_file_name) {
+    alert(<%=raw( I18n.t('student.submission.replace_file_js_error') )%>);
+    $(file_input).setValue('');
+  }
+}  
+ //]]>
+</script>
+
