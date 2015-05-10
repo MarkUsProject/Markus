@@ -10,7 +10,7 @@ class SubmissionsController < ApplicationController
   before_filter :authorize_only_for_admin,
                 except: [:server_time,
                          :populate_file_manager,
-			 :populate_file_manager_react,
+                         :populate_file_manager_react,
                          :browse,
                          :index,
                          :file_manager,
@@ -42,7 +42,7 @@ class SubmissionsController < ApplicationController
                 only: [:file_manager,
                        :populate_file_manager,
                        :update_files,
-  		       :populate_file_manager_react]
+                       :populate_file_manager_react]
   before_filter :authorize_for_user, only: [:download, :downloads]
 
   def repo_browser
@@ -131,7 +131,7 @@ class SubmissionsController < ApplicationController
   end
 
   def populate_file_manager_react
-     @assignment = Assignment.find(params[:assignment_id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
     user_group = @grouping.group
     revision_number= params[:revision_number]
@@ -149,11 +149,11 @@ class SubmissionsController < ApplicationController
       @files = @revision.files_at_path(
           File.join(@assignment.repository_folder, @path))
      files_array = @files.each do |file_name, file|
-	f = Hash.new
-	f[:id] = file.object_id
-	f[:file_name] = file_name
-	f[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
-	f[:revision_by] = file.user_id
+       f = Hash.new
+       f[:id] = file.object_id
+       f[:file_name] = file_name
+       f[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
+       f[:revision_by] = file.user_id
      end
       # Coverts the hash to an array
       render json: files_array.to_a

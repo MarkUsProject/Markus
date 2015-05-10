@@ -3,8 +3,8 @@
 
   var FileTable = React.createClass({
     propTypes: {
-	//Ensures that components are being used correctly
-	columns:React.PropTypes.array
+	// Ensures that components are being used correctly
+	columns: React.PropTypes.array
     },
     getDefaultProps: function() {
       // Defines the columns used for the table and whether they
@@ -15,8 +15,8 @@
           {
             id: 'file_name',
             content: '<%= j raw I18n.t(:'browse_submissions.filename') %>',
-	    sortable: true,
-	    compare: compare_anchor_text
+            sortable: true,
+            compare: compare_anchor_text
           },
           {
             id: 'last_modified_date',
@@ -35,14 +35,14 @@
       return {
         error: null,
         files: [],
-	selected_files: [],
-	data_files: [],
+        selected_files: [],
+        data_files: [],
       };
     },
     componentWillMount: function() {
       this.refresh();
     },
-    updateSelectedFiles: function(files){
+    updateSelectedFiles: function(files) {
     	this.setState({selected_files: files})
     },
     // Asks for new info from backend and sets props accordingly.
@@ -51,20 +51,20 @@
       document.getElementById('working').style.display = '';
 
       jQuery.ajax({
-      	url: 'populate_file_manager_react',
+        url: 'populate_file_manager_react',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
-	this.setState({
-		files: data,
-		errors: null
-	});
+          this.setState({
+            files: data,
+            errors: null
+          });
         }.bind(this),
         error: function(xhr, status, text) {
-           var error = text + ':' + xhr.responseText; 
-           this.setState({
-           	error: error
-           });
+          var error = text + ':' + xhr.responseText;
+          this.setState({
+            error: error
+          });
         }.bind(this),
         // Close working indicator.
         complete: function() {
@@ -76,17 +76,15 @@
       this.setState({error: error});
     },
     render: function() {
-        i = 0;
-        var files_data = this.state.files.map(function(file) {
-     	  var f = {};
-      	  i++;
+      var files_data = this.state.files.map(function(file, i) {
+        var f = {};
 
-          f['id'] = i;
-	  f['file_name'] = file[1].name;
-	  f['last_modified_date'] = file[1].last_modified_date;
-	  f['revision_by'] = file[1].user_id;
-          return f;
-	}.bind(this));
+        f['id'] = i;
+        f['file_name'] = file[1].name;
+        f['last_modified_date'] = file[1].last_modified_date;
+        f['revision_by'] = file[1].user_id;
+        return f;
+      }.bind(this));
 	return (
 	<div>	
 		<FileManagerActionBox
@@ -108,68 +106,69 @@
   });
 
   var FileManagerActionBox = React.createClass({
-  propTypes: {
-  	selected_files: React.PropTypes.array,
-	data_file: React.PropTypes.array	
-	},
-  accessById: function(id){
-     var data_file = this.props.data_file;
-     var len = data_file.length;
-     var data;
-     for (var i = 0; i < len; i++){
-     	if(data_file[i].id == id){
-		data = data_file[i].file_name;
+    propTypes: {
+      selected_files: React.PropTypes.array,
+      data_file: React.PropTypes.array
+    },
+    accessById: function(id) {
+      var data_file = this.props.data_file;
+      var len = data_file.length;
+      var data;
+      for (var i = 0; i < len; i++) {
+        if (data_file[i].id === id) {
+          data = data_file[i].file_name;
 	}
-     }
-     return data;
-  },
-  accessThroughArray: function(){
-  	var x = this.props.selected_files.map(function(id){
-	   var f = {};
-	   f['filename'] = this.accessById(id);
-	   return f;
+      }
+      return data;
+    },
+    accessThroughArray: function() {
+      var x = this.props.selected_files.map(function(id) {
+        var f = {};
+        f['filename'] = this.accessById(id);
+          return f;
       }.bind(this));
 
-    return x;
-  },
-  deleteFiles: function(e){
-       e.preventDefault();
-       var delete_file = this.accessThroughArray();
-       jQuery.ajax({
-	     url: 'update_files', 
-	     method: 'POST',
-	     data: {deleted_files: delete_file}, 
-	     success: function(data) {
-	       this.props.refresh();
-	       }.bind(this),
-	     error: function(xhr, status, text){
-                var error = text + ': ' + xhr.responseText;
-		this.props.onError(error);
-	     }.bind(this)
-	     });
-  },
-  openModal: function(e) {
-  	e.preventDefault();
-	<% if (@grouping.is_valid? && !@grouping.repository_external_commits_only?) %>
-	  modal_addnew.open();
-	  set_onbeforeunload(true);
-        <%end%>
-  },
-  render: function(){
-  	return (
+      return x;
+    },
+    deleteFiles: function(e) {
+      e.preventDefault();
+      var delete_file = this.accessThroughArray();
+      jQuery.ajax({
+        url: 'update_files',
+	method: 'POST',
+	data: {deleted_files: delete_file},
+	success: function(data) {
+	  this.props.refresh();
+	}.bind(this),
+	error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    openModal: function(e) {
+      e.preventDefault();
+      <% if (@grouping.is_valid? && !@grouping.repository_external_commits_only?) %>
+        modal_addnew.open();
+        set_onbeforeunload(true);
+      <% end %>
+    },
+    render: function() {
+      return (
 	<div className = 'react_buttons'>
-		<button onClick={this.openModal}>
-			<%= j raw I18n.t('add_new') %>
-		</button>
-		<button onClick={this.deleteFiles}>
-			<%= j raw I18n.t('delete') %>	
-		</button>
-	</div>
-	);}
+          <button onClick={this.openModal}>
+            <%= j raw I18n.t('add_new') %>
+          </button>
+          <button onClick={this.deleteFiles}>
+            <%= j raw I18n.t('delete') %>
+          </button>
+        </div>
+      );
+    }
   });
 
 
-React.renderComponent(<FileTable/>, document.getElementById('file_table'));
+  React.renderComponent(<FileTable/>, document.getElementById('file_table'));
 </script>
 
 <script type = "text/javascript">

@@ -126,7 +126,7 @@ Markus::Application.routes.draw do
 
       resources :submissions do
         collection do
-	  get 'populate_file_manager_react'
+          get 'populate_file_manager_react'
           get 'populate_submissions_table'
           get 'file_manager'
           get 'browse'

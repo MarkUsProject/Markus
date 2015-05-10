@@ -126,36 +126,35 @@
     </div>
   <% end %>
 
-  <%= form_tag update_files_assignment_submissions_path(@assignment.id),
-               { multipart: true,
-                 id: 'submit_form' } unless (!@grouping.is_valid? || @grouping.repository_external_commits_only?) %>
-
-    <div id='file_table'/>
-    </form>
+  <% unless !@grouping.is_valid? || @grouping.repository_external_commits_only? %>
+    <%= form_tag update_files_assignment_submissions_path(@assignment.id),
+                 { multipart: true, id: 'submit_form' } do %>
+      <div id='file_table'/>
+    <% end %>
+  <% end %>
 </div>
 
 <aside class='dialog' id='addnew_dialog'>
-	 <h2><%= t('add_new') %></h2>
-	 <br> 
-	 <form id="file_form" action="update_files">
- 	    <input type= 'file' name='new_file' id='new_file'>
-	    <br>
-	    <br>
-  	    <% if @grouping.is_valid? %>
-     		 <%= submit_tag(I18n.t(:submit),
-                      	 disabled: !@grouping.is_valid?,
-			 onclick: 'set_onbeforeunload(false); submitFile(event)') unless @grouping.repository_external_commits_only? %>
-		  <%= link_to(I18n.t(:cancel),
-                    { controller: 'submissions',
-                      action: 'file_manager' },
-                   id: @assignment.id,
-                   disabled: !@grouping.is_valid?,
-                   class: 'button',
-                   onclick: "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
-                   ) unless @grouping.repository_external_commits_only? %>
-   <% end %>
-	</form>
-	 </p>
+  <h2><%= t('add_new') %></h2>
+  <br>
+  <form id="file_form" action="update_files">
+    <input type= 'file' name='new_file' id='new_file'>
+    <br>
+    <br>
+    <% unless !@grouping.is_valid? || @grouping.repository_external_commits_only? %>
+      <%= submit_tag(I18n.t(:submit),
+                     disabled: !@grouping.is_valid?,
+                     onclick: 'set_onbeforeunload(false); submitFile(event)') unless @grouping.repository_external_commits_only? %>
+      <%= link_to(I18n.t(:cancel),
+                  { controller: 'submissions',
+                  action: 'file_manager' },
+                  id: @assignment.id,
+                  disabled: !@grouping.is_valid?,
+                  class: 'button',
+                  onclick: "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
+                 ) %>
+    <% end %>
+  </form>
 </aside>
 
 
