@@ -22,7 +22,7 @@ class Ta < User
   def get_num_marked(assignment)
     n = 0
     assignment.ta_memberships.where(user_id: id).each do |x|
-      if (x.grouping.marking_completed?)
+      if x.grouping.marking_completed?
         n += 1
       end
     end
