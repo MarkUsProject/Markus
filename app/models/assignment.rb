@@ -233,7 +233,7 @@ class Assignment < ActiveRecord::Base
     else
       total = flexible_criteria.sum('max')
     end
-    total
+    total.round(2)
   end
 
   # calculates summary statistics of released results for this assignment

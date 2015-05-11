@@ -435,6 +435,13 @@ pt:
     summaries_index:
       search_summaries:     "Pesquisa Resumos"
 
+    course_summaries_index:
+      page_title:     "Sumário"
+      user_name:      "Nome de Usuário"
+      first_name:     "Primeiro Nome"
+      last_name:      "Sobrenome"
+      ngr:            "Sem Grade recebida"
+
     grade_entry_forms:
       blank_field: "Não pode ser branco"
       invalid_name: "já foi utilizado"
@@ -1055,6 +1062,17 @@ pt:
       grade: "Nota"
       x_mark: "x Mark"
       weight: "Peso"
+
+    course_summaries:
+      title: "Sumário"
+
+    marking_schemes:
+      title: "Esquema de marcação"
+      name: "Nome"
+      add_new: "Adicionar novo Esquema de marcação"
+      edit: "Editar esquema de marcação"
+      weight_label: "Peso para "
+      table_modify_column: "Modificar"
 
     notes:
         note_on: "%{user_name} em <b>%{display_for}</b>"

@@ -450,6 +450,13 @@ fr:
       sections:             "Section :"
       search_summaries:     "Rechercher Résumés"
 
+    course_summaries_index:
+      page_title:     "Sommaire"
+      user_name:      "Nom d'utilisateur"
+      first_name:     "Prénom"
+      last_name:      "Nom De Famille"
+      ngr:            "Aucune note reçue"
+
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
       invalid_name: "est déjà utilisé"
@@ -1067,6 +1074,17 @@ fr:
       grade: "Note intermédiaire"
       x_mark: "x Note"
       weight: "Coefficient"
+
+    course_summaries:
+      title: "Sommaire"
+
+    marking_schemes:
+      title: "Marquage Barème"
+      name: "Nom"
+      add_new: "Ajouter Nouveau Marquage Barème"
+      edit: "Modifier Barème de Notation"
+      weight_label: "Poids Pour Les " 
+      table_modify_column: "Modifier"
 
     notes:
         note_on: "%{user_name} sur <b>%{display_for}</b>"
