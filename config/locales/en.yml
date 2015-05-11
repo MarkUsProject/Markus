@@ -681,6 +681,7 @@ en:
       form_group: "The groups must be from <strong>%{group_min}</strong> to <strong>%{group_max}</strong> people."
       decline_invitation2: "This will decline the invitation you have. Are you sure?"
       your_group: "Your Group"
+      group_options: "Group Options"
       modification_limited: "At this point modification of your group is very limited.
             The due date and grace period (if any) have both passed."
       invite_more_students: " The group is not valid. You need to

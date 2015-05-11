@@ -648,6 +648,7 @@ fr:
       form_group: "Les groupes doivent être composés de <strong>%{group_min}</strong> à <strong>%{group_max}</strong> étudiants."
       decline_invitation2: "Êtes-vous sûr de vouloir décliner l'invitation ?"
       your_group: "Votre groupe"
+      group_options: "Options du groupe"
       modification_limited: "Pour le moment, les modifications sur le groupe sont très limitées.
             La date de retour et la période de grâce (s'il y en avait une) sont toutes les deux passées."
       invite_more_students: " Ce groupe n'est pas valide : vous devez inviter plus d'étudiants."

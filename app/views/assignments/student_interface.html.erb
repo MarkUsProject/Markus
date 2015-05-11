@@ -230,8 +230,8 @@
         <% end %>
 
         <% if !@group.nil? %>
-          <h3> Group Options </h3>
-          <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? %> <%# check if there could be a named repo but more than 1 person assigned to it %>
+          <h3><%= t('student.group_options') %></h3>
+          <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? && @assignment.group_max > 1 %> 
             <p class='information'>
               <%= t('student.working_alone') %>
             </p>

@@ -635,6 +635,7 @@ pt:
       form_group: "Um grupo deve conter de <strong>%{group_min}</strong> a <strong>%{group_max}</strong> pessoas."
       decline_invitation2: "Isso irá recusar outro convite que você tem. Você tem certeza disso?"
       your_group: "Seu grupo"
+      group_options: "Opções de grupo"
       modification_limited: "Neste ponto, a modificação do seu grupo é muito limitado. Ambos a data de vencimento e período de tolerância (se houver) já se passaram."
       invite_more_students: " O grupo não é válido. Você precisa convidar mais alunos."
       working_alone: "Você pediu para trabalhar sozinho nesta tarefa. Se você mudar de idéia e quer formar ou participar de um grupo, primeiro exclua o seu grupo."
