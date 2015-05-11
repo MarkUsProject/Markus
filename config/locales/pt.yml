@@ -660,8 +660,12 @@ pt:
       form_group: "Um grupo deve conter de <strong>%{group_min}</strong> a <strong>%{group_max}</strong> pessoas."
       decline_invitation2: "Isso irá recusar outro convite que você tem. Você tem certeza disso?"
       your_group: "Seu grupo"
+      group_options: "Opções de grupo"
       modification_limited: "Neste ponto, a modificação do seu grupo é muito limitado. Ambos a data de vencimento e período de tolerância (se houver) já se passaram."
       invite_more_students: " O grupo não é válido. Você precisa convidar mais alunos."
+      working_alone: "Você pediu para trabalhar sozinho nesta tarefa. Se você mudar de idéia e quer formar ou participar de um grupo, primeiro exclua o seu grupo."
+      may_not_add_more: "Você não pode adicionar mais pessoas para o seu grupo neste momento."
+      may_not_modify: "Você não pode modificar o seu grupo neste momento."
       url_group_repository: "URL para o repositório do seu grupo"
       group_properties: " Propriedades do Grupo "
       students_can_form_groups: " Alunos podem formar grupos. "
@@ -1212,10 +1216,17 @@ pt:
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
-
     locale_not_available: "%{locale} tradução não disponível!"
     external_authentication_not_supported: "Autenticação externa não é suportada pela sua plataforma!"
     account_disabled: "Essa conta foi desativada"
+    lateness_penalty: "Pena de Atraso"
+    grace_period: "Prazo de Carência"
+    penalty_decay: "Pena Decadência"
+    penalty_period: "Período Penalty"
+    additional_information: "Informações Adicionais"
+    penalty_decay_message_first: "A dedução de %{deduction}% será aplicado a cada %{interval} horas, até %{hours} horas após a atribuição é devido."
+    penalty_decay_message_other: "A partir daí, uma dedução de %{deduction}% será aplicado a cada %{interval} horas, até um máximo de %{hours} horas."
+    penalty_period_message: "Depois de %{hours} horas após a data de vencimento, a sua nota será reduzida em %{deduction}%"  
 
     #app/views/main/_assignment_summary.html.erb
 
