@@ -330,10 +330,6 @@ class SubmissionsController < ApplicationController
         v1.to_i rescue v1
       end
 
-      # The files that will be replaced - just give an empty array
-      # if params[:replace_files] is nil
-      replace_files = params[:replace_files].nil? ? {} : params[:replace_files]
-
       # The files that will be deleted
       delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
 
@@ -354,40 +350,46 @@ class SubmissionsController < ApplicationController
                               " deleted file '#{filename}' for assignment" +
                               " '#{@assignment.short_identifier}'.")
           end
+        end
 
-          # Replace files
-          replace_files.each do |filename, file_object|
-            # Sometimes the file pointer of file_object is at the end of the file.
-            # In order to avoid empty uploaded files, rewind it to be save.
+        # Add new files and replace existing files
+        revision = repo.get_latest_revision
+        files = revision.files_at_path(
+          File.join(@assignment.repository_folder, path))
+        filenames = files.keys
+
+        new_files.each do |file_object|
+          filename = file_object.original_filename
+          # sanitize_file_name in SubmissionsHelper
+          if filename.nil?
+            raise I18n.t('student.submission.invalid_file_name')
+          end
+
+          # Branch on whether the file is new or a replacement
+          if filenames.include? filename
             file_object.rewind
             txn.replace(File.join(assignment_folder, filename), file_object.read,
-                        file_object.content_type, file_revisions[filename])
+                        file_object.content_type, files[filename].last_modified_revision)
             log_messages.push("Student '#{current_user.user_name}'" +
                               " replaced content of file '#{filename}'" +
                               ' for assignment' +
                               " '#{@assignment.short_identifier}'.")
+          else
+            students_filename << filename
+            # Sometimes the file pointer of file_object is at the end of the file.
+            # In order to avoid empty uploaded files, rewind it to be save.
+            file_object.rewind
+            txn.add(File.join(assignment_folder,
+                              sanitize_file_name(filename)),
+                    file_object.read, file_object.content_type)
+            log_messages.push("Student '#{current_user.user_name}'" +
+                              ' submitted file' +
+                              " '#{filename}'" +
+                              ' for assignment ' +
+                              "'#{@assignment.short_identifier}'.")
           end
         end
 
-        # Add new files
-        new_files.each do |file_object|
-          # sanitize_file_name in SubmissionsHelper
-          if file_object.original_filename.nil?
-            raise I18n.t('student.submission.invalid_file_name')
-          end
-          students_filename << file_object.original_filename
-          # Sometimes the file pointer of file_object is at the end of the file.
-          # In order to avoid empty uploaded files, rewind it to be save.
-          file_object.rewind
-          txn.add(File.join(assignment_folder,
-                            sanitize_file_name(file_object.original_filename)),
-                  file_object.read, file_object.content_type)
-          log_messages.push("Student '#{current_user.user_name}'" +
-                                ' submitted file' +
-                                " '#{file_object.original_filename}'" +
-                                ' for assignment ' +
-                                "'#{@assignment.short_identifier}'.")
-        end
         # check if only required files are allowed for a submission
         unless students_filename.length < 1 ||
                required_files.length == 0 ||
