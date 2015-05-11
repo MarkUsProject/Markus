@@ -127,10 +127,7 @@
   <% end %>
 
   <% unless !@grouping.is_valid? || @grouping.repository_external_commits_only? %>
-    <%= form_tag update_files_assignment_submissions_path(@assignment.id),
-                 { multipart: true, id: 'submit_form' } do %>
-      <div id='file_table'></div>
-    <% end %>
+    <div id='file_table'></div>
   <% end %>
 </div>
 
@@ -139,7 +136,7 @@
 
   <%= form_tag update_files_assignment_submissions_path(@assignment.id),
                { multipart: true, id: 'file_form' } do %>
-    <input type='file' name='new_files[]'>
+    <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
 
     <% unless !@grouping.is_valid? || @grouping.repository_external_commits_only? %>
       <section class='dialog-actions'>
