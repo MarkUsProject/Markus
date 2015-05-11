@@ -157,10 +157,6 @@
     render: function() {
       // Do student-specific table stuff here.
       // possibly move this to getdefaultprops.
-      num_completed_assignments = this.state.submissions.filter(function(submission) {
-                return (submission['marking_state'].indexOf("Completed") > -1);
-        }).length;
-      num_total_assignments = this.state.submissions.length;
 
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
@@ -190,8 +186,6 @@
             <ErrorDiv error={this.state.error} />
             <SubmissionsActionBox
               selected_submissions={this.state.selected_submissions}
-              num_total_submissions={num_completed_assignments}
-              num_marked_submissions={num_total_assignments}
               onError={this.onError}
               refresh={this.refresh}
             />
@@ -253,7 +247,6 @@
     render: function() {
       return (
         <div className='react-release-marks'>
-          <div> Status: {this.props.num_total_submissions} out of {this.props.num_marked_submissions} have been marked.</div>
           <button onClick={this.releaseMarks}>
             <%= j raw I18n.t('browse_submissions.release_marks') %>
           </button>

@@ -427,13 +427,14 @@ fr:
       revised_by:           "Révision par"
       replace:              "Remplace"
       delete:               "Supprimer"
-      error_collecting:     "Il y avait des erreurs en ramassant les submissions."
+      error_collecting:     "Il y avait des erreurs en ramassant les soumissions."
       section:              "Section"
       collect_work_for_section: "Récupérer les envois pour la section :"
       download_groupings_files: "Télécharger tous les envois"
       sections:             "Section :"
       revision_history:     "%{num} : "
       search_submissions:   "Rechercher Soumissions"
+      how_many_marked:      "%{num_marked}/%{num_assigned} soumissions sont corrigés."
 
     summaries_index:
       group_name:           "Nom du groupe"

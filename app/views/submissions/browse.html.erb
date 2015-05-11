@@ -78,6 +78,11 @@
                       groupings: @groupings),
                     confirm: t('collect_submissions.marking_incomplete_warning') %>
     <% end %>
+    <% if @current_user.ta? %> |
+      <%= t('browse_submissions.how_many_marked',
+              num_marked: @current_user.get_num_marked(@assignment),
+              num_assigned: @current_user.get_num_assigned(@assignment)) %>
+    <% end %>
   </div>
 </div>
 
