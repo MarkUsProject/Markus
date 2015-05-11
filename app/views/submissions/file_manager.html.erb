@@ -1,6 +1,5 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'file_manager' %>
-  <%= javascript_include_tag 'FilterTable/FilterTable.js' %>
 
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
@@ -99,7 +98,7 @@
       <%= @file_manager_errors[:commit_error] %>
     </div>
   <% end %>
-  
+
   <% if !@file_manager_errors.nil? && @file_manager_errors[:size_conflict] %>
     <div class='error'>
       <%= @file_manager_errors[:size_conflict] %>
@@ -118,6 +117,7 @@
           <%= link_to_function I18n.t('student.submission.toggle_file_list'), "$('missing_assignment_files_list').toggle();"%>
         <% end %>
       </p>
+
       <ul id='missing_assignment_files_list' <%='style="display:none;"' if @missing_assignment_files.size > 5 %>>
         <% @missing_assignment_files.each do |assignment_file| %>
           <li><%= assignment_file.filename %></li>
@@ -129,26 +129,25 @@
   <% unless !@grouping.is_valid? || @grouping.repository_external_commits_only? %>
     <%= form_tag update_files_assignment_submissions_path(@assignment.id),
                  { multipart: true, id: 'submit_form' } do %>
-      <div id='file_table'/>
+      <div id='file_table'></div>
     <% end %>
   <% end %>
 </div>
 
 <aside class='dialog' id='addnew_dialog'>
   <h2><%= t('add_new') %></h2>
-  <br>
+
   <%= form_tag update_files_assignment_submissions_path(@assignment.id),
                { multipart: true, id: 'file_form' } do %>
     <input type='file' name='new_files[]'>
-    <br>
-    <br>
+
     <% unless !@grouping.is_valid? || @grouping.repository_external_commits_only? %>
-      <%= submit_tag(I18n.t(:submit),
-                     disabled: !@grouping.is_valid?,
-                     onclick: 'set_onbeforeunload(false); submitFile(event)') unless @grouping.repository_external_commits_only? %>
-      <%= button_to_function t(:close), 'modal_addnew.close();' %>
+      <section class='dialog-actions'>
+        <%= submit_tag(I18n.t(:submit),
+                       disabled: !@grouping.is_valid?,
+                       onclick: 'set_onbeforeunload(false); submitFile(event)') unless @grouping.repository_external_commits_only? %>
+        <%= button_to_function t(:close), 'modal_addnew.close();' %>
+      </section>
     <% end %>
   <% end %>
 </aside>
-
-

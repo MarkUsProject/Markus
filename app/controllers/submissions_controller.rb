@@ -156,7 +156,7 @@ class SubmissionsController < ApplicationController
        f[:revision_by] = file.user_id
        f[:last_modified_revision] = file.last_modified_revision
      end
-      # Coverts the hash to an array
+      # Converts the hash to an array
       render json: files_array.to_a
     end
   end
