@@ -41,7 +41,6 @@
         <% end %>
       <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
         <ul>
-        <% acc = 0 %> 
         <% @enum_penalty.each do |p| %>
           <% if p == @enum_penalty.first %>
             <li><%= t('penalty_decay_message_first', 
@@ -56,11 +55,12 @@
         </ul>
       <% elsif @penalty.type == "PenaltyPeriodSubmissionRule" %>
         <ul>
-        <% acc = 0 %> 
-        <% @enum_penalty.each do |p| %> 
-          <% acc += p.deduction %> 
-          <li> <%= t('penalty_period_message', hours: p.hours, 
-          deduction: acc) %> </li>
+        <% deduction = hours = 0 %>
+        <% @enum_penalty.each do |p| %>
+          <% deduction += p.deduction %> 
+          <% hours += p.hours %>
+          <li> <%= t('penalty_period_message', hours: hours, 
+          deduction: deduction) %> </li>
         <% end %>
         </ul>
       <% end %>
