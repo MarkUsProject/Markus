@@ -1,8 +1,6 @@
 <script>
   jQuery(document).ready(function() {
     if (document.getElementById('summary_toggle')) {
-      document.getElementById('summary_toggle').onclick = toggleSummaryPanes;
-
       function toggleSummaryPanes() {
         var old_visible =
           document.getElementById('old_summary_criteria_pane').style.display !== 'none';
@@ -12,6 +10,8 @@
         document.getElementById('summary_criteria_pane').style.display =
           old_visible ? 'block' : 'none';
       }
+
+      document.getElementById('summary_toggle').onclick = toggleSummaryPanes;
 
       toggleSummaryPanes();
     }
