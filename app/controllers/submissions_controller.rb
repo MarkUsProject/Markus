@@ -355,8 +355,9 @@ class SubmissionsController < ApplicationController
         # Add new files and replace existing files
         revision = repo.get_latest_revision
         files = revision.files_at_path(
-          File.join(@assignment.repository_folder, path))
+          File.join(@assignment.repository_folder, @path))
         filenames = files.keys
+
 
         new_files.each do |file_object|
           filename = file_object.original_filename
@@ -369,7 +370,7 @@ class SubmissionsController < ApplicationController
           if filenames.include? filename
             file_object.rewind
             txn.replace(File.join(assignment_folder, filename), file_object.read,
-                        file_object.content_type, files[filename].last_modified_revision)
+                        file_object.content_type, revision.revision_number)
             log_messages.push("Student '#{current_user.user_name}'" +
                               " replaced content of file '#{filename}'" +
                               ' for assignment' +
