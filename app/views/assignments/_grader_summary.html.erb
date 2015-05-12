@@ -6,7 +6,8 @@
 <% else %>
   <ul>
     <% assignment.tas.each do |ta| %>
-      <li><%= "#{ta.first_name} #{ta.last_name}" %> (<%= "#{ta.get_num_marked(assignment)}\/#{ta.get_num_assigned(assignment)}" %> marked). </li>
+      <li><%= "#{ta.first_name} #{ta.last_name}" %> (<%= "#{ta.get_num_marked(assignment)}" %>/<%= 
+              "#{ta.get_num_assigned(assignment)}" %> <%= t('marking_state.are_marked') %>). </li>
     <% end %>
   </ul>
 <% end %>

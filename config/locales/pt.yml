@@ -113,6 +113,7 @@ pt:
       in_progress: "Em progresso"
       completed: "Completado"
       released: "Liberado"
+      are_marked: "são marcados"
       remark_requested: "Pedido de revisão"
       not_complete: "Não pode liberar resultado para %{group_name}: o estado da avaliação não está completo"
       not_complete_unrelease: "Não é possível esconder o resultado para %{group_name}: a avaliação não está completa"

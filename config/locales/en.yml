@@ -114,6 +114,7 @@ en:
       in_progress: "In Progress"
       completed: "Completed"
       released: "Released"
+      are_marked: "are marked"
       remark_requested: "Remark Requested"
       not_complete: "Can not release result for %{group_name}: the marking state is not complete"
       not_complete_unrelease: "Can not unrelease result for %{group_name}: the marking state is not complete"
