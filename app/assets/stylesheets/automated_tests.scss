@@ -2,7 +2,7 @@
 
 
 fieldset {
-  @include box-shadow(none);
+  box-shadow: none;
 
   // Save button in assignment form
   & + input[type='submit'] {

@@ -32,8 +32,8 @@
   width: 75%;
 
   #annotation_list_holder {
-    @include border-radius($radius);
     border: 1px solid $grey;
+    border-radius: $radius;
     padding: 1em;
   }
 
@@ -42,7 +42,7 @@
   }
 
   fieldset {
-    @include box-shadow(none);
+    box-shadow: none;
     margin: 1em 0 2em;
     padding-top: 1.5em;
 
