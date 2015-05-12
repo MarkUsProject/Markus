@@ -432,7 +432,7 @@ pt:
       sections:             "Sessão:"
       revision_history:     "%{num}: "
       search_submissions:   "Pesquisa Submissões"
-      how_many_marked:      "%{num_marked}/%{num_assigned} submissões são corrigidos."
+      how_many_marked:      "%{num_marked}/%{num_assigned} submissões são corrigidos"
 
     summaries_index:
       search_summaries:     "Pesquisa Resumos"
