@@ -17,8 +17,26 @@
     <span class='prop_label'><%= t('due_date') %>:</span>
     <%= I18n.l(@due_date, format: :long_date ) %>
   </div>
-    
+
   <% unless @penalty.type == "NoLateSubmissionRule" %>
+    <div class ='sub_block'>
+      <% acc = 0 %>
+      <span class='prop_label'><%= t('absolute_due_date') %>:</span>
+      <% if @penalty.type == "GracePeriodSubmissionRule" %>
+        <%# Relative remaining grace credits for the grouping %>
+        <% remaining_credits = @grouping.available_grace_credits %>
+        <% @enum_penalty.each do |p| %>
+          <% unless remaining_credits <= 0 %>
+            <% acc += p.hours %>
+            <% remaining_credits -= 1 %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% @enum_penalty.each { |p| acc += p.hours } %>
+      <% end %>
+      <%= I18n.l(@assignment.due_date + acc.hours, format: :long_date ) %>
+    </div>
+  
     <div class='sub_block'>
       <span class='prop_label'><%= t('lateness_penalty') %>:</span>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
