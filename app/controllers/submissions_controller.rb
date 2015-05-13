@@ -10,6 +10,7 @@ class SubmissionsController < ApplicationController
   before_filter :authorize_only_for_admin,
                 except: [:server_time,
                          :populate_file_manager,
+                         :populate_file_manager_react,
                          :browse,
                          :index,
                          :file_manager,
@@ -40,7 +41,8 @@ class SubmissionsController < ApplicationController
   before_filter :authorize_for_student,
                 only: [:file_manager,
                        :populate_file_manager,
-                       :update_files]
+                       :update_files,
+                       :populate_file_manager_react]
   before_filter :authorize_for_user, only: [:download, :downloads]
 
   def repo_browser
@@ -128,7 +130,7 @@ class SubmissionsController < ApplicationController
     set_filebrowser_vars(user_group, @assignment)
   end
 
-  def populate_file_manager
+  def populate_file_manager_react
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
     user_group = @grouping.group
@@ -146,23 +148,16 @@ class SubmissionsController < ApplicationController
           File.join(@assignment.repository_folder, @path))
       @files = @revision.files_at_path(
           File.join(@assignment.repository_folder, @path))
-      @table_rows = {}
-      @files.sort.each do |file_name, file|
-        @table_rows[file.object_id] =
-            construct_file_manager_table_row(file_name, file)
-      end
-
-      if @grouping.repository_external_commits_only?
-        @directories.sort.each do |directory_name, directory|
-          @table_rows[directory.object_id] =
-              construct_file_manager_dir_table_row(directory_name, directory)
-        end
-      end
-
-      respond_to do |format|
-        format.js
-      end
-
+     files_array = @files.each do |file_name, file|
+       f = Hash.new
+       f[:id] = file.object_id
+       f[:file_name] = file_name
+       f[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
+       f[:revision_by] = file.user_id
+       f[:last_modified_revision] = file.last_modified_revision
+     end
+      # Converts the hash to an array
+      render json: files_array.to_a
     end
   end
 
@@ -335,12 +330,8 @@ class SubmissionsController < ApplicationController
         v1.to_i rescue v1
       end
 
-      # The files that will be replaced - just give an empty array
-      # if params[:replace_files] is nil
-      replace_files = params[:replace_files].nil? ? {} : params[:replace_files]
-
       # The files that will be deleted
-      delete_files = params[:delete_files].nil? ? {} : params[:delete_files]
+      delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
 
       # The files that will be added
       new_files = params[:new_files].nil? ? {} : params[:new_files]
@@ -350,47 +341,56 @@ class SubmissionsController < ApplicationController
 
       log_messages = []
       begin
-        # delete files marked for deletion
-        delete_files.keys.each do |filename|
-          txn.remove(File.join(assignment_folder, filename),
-                     file_revisions[filename])
-          log_messages.push("Student '#{current_user.user_name}'" +
-                                " deleted file '#{filename}' for assignment" +
-                                " '#{@assignment.short_identifier}'.")
+        if new_files.empty?
+          # delete files marked for deletion
+          delete_files.each do |filename|
+            txn.remove(File.join(assignment_folder, filename),
+                       file_revisions[filename])
+            log_messages.push("Student '#{current_user.user_name}'" +
+                              " deleted file '#{filename}' for assignment" +
+                              " '#{@assignment.short_identifier}'.")
+          end
         end
 
-        # Replace files
-        replace_files.each do |filename, file_object|
-          # Sometimes the file pointer of file_object is at the end of the file.
-          # In order to avoid empty uploaded files, rewind it to be save.
-          file_object.rewind
-          txn.replace(File.join(assignment_folder, filename), file_object.read,
-                      file_object.content_type, file_revisions[filename])
-          log_messages.push("Student '#{current_user.user_name}'" +
-                                " replaced content of file '#{filename}'" +
-                                ' for assignment' +
-                                " '#{@assignment.short_identifier}'.")
-        end
+        # Add new files and replace existing files
+        revision = repo.get_latest_revision
+        files = revision.files_at_path(
+          File.join(@assignment.repository_folder, @path))
+        filenames = files.keys
 
-        # Add new files
+
         new_files.each do |file_object|
+          filename = file_object.original_filename
           # sanitize_file_name in SubmissionsHelper
-          if file_object.original_filename.nil?
+          if filename.nil?
             raise I18n.t('student.submission.invalid_file_name')
           end
-          students_filename << file_object.original_filename
-          # Sometimes the file pointer of file_object is at the end of the file.
-          # In order to avoid empty uploaded files, rewind it to be save.
-          file_object.rewind
-          txn.add(File.join(assignment_folder,
-                            sanitize_file_name(file_object.original_filename)),
-                  file_object.read, file_object.content_type)
-          log_messages.push("Student '#{current_user.user_name}'" +
-                                ' submitted file' +
-                                " '#{file_object.original_filename}'" +
-                                ' for assignment ' +
-                                "'#{@assignment.short_identifier}'.")
+
+          # Branch on whether the file is new or a replacement
+          if filenames.include? filename
+            file_object.rewind
+            txn.replace(File.join(assignment_folder, filename), file_object.read,
+                        file_object.content_type, revision.revision_number)
+            log_messages.push("Student '#{current_user.user_name}'" +
+                              " replaced content of file '#{filename}'" +
+                              ' for assignment' +
+                              " '#{@assignment.short_identifier}'.")
+          else
+            students_filename << filename
+            # Sometimes the file pointer of file_object is at the end of the file.
+            # In order to avoid empty uploaded files, rewind it to be save.
+            file_object.rewind
+            txn.add(File.join(assignment_folder,
+                              sanitize_file_name(filename)),
+                    file_object.read, file_object.content_type)
+            log_messages.push("Student '#{current_user.user_name}'" +
+                              ' submitted file' +
+                              " '#{filename}'" +
+                              ' for assignment ' +
+                              "'#{@assignment.short_identifier}'.")
+          end
         end
+
         # check if only required files are allowed for a submission
         unless students_filename.length < 1 ||
                required_files.length == 0 ||

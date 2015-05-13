@@ -774,7 +774,8 @@ module Repository
 
     # replaces file at provided path with file_data
     def replace_file(txn, path, file_data=nil, mime_type=nil, expected_revision_number=0)
-      if latest_revision_number(path).to_i != expected_revision_number.to_i
+      # Note: this check is inconsistent with the MemoryRepository
+      if latest_revision_number(path).to_i > expected_revision_number.to_i
         raise Repository::FileOutOfSyncConflict.new(path)
       end
       txn = write_file(txn, path, file_data, mime_type)

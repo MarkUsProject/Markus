@@ -12,7 +12,7 @@
           </tr>
         </thead>
         <tbody>
-          <% for assignment in @assignments %>
+          <% @assignments.each do |assignment| %>
             <tr>
               <td>
                 <%=
@@ -29,9 +29,15 @@
                   <% else %>
                     <strong><%= l(assignment.due_date, format: :long_date) %></strong>
                     <p>
-                      <%= t(:days_and_hours_left,
-                                 days: ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
-                                 hours: ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
+                      <% if assignment.due_date <= Time.zone.now + 2.days %>
+                        <%= t(:hours_and_minutes_left, 
+                              hours: ((assignment.due_date - Time.zone.now)/(60 * 60) % 48).floor,
+                              minutes: ((assignment.due_date - Time.zone.now)/ 60).floor % 60) %>
+                      <% else %>
+                        <%= t(:days_and_hours_left,
+                              days: ((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor,
+                              hours: ((assignment.due_date - Time.zone.now)/(60 * 60) % 24).floor) %>
+                      <% end %>
                     </p>
                   <% end %>
                 <% else %>
@@ -39,10 +45,16 @@
                   <% else %>
                     <strong><%= l(assignment.section_due_date(@section), format: :long_date) %></strong>
                     <p>
+                    <% if assignment.due_date <= Time.zone.now + 2.days %>
+                      <%= t(:hours_and_minutes_left, 
+                            hours: ((assignment.due_date - Time.zone.now)/(60 * 60) % 48).floor,
+                            minutes: ((assignment.due_date - Time.zone.now)/ 60).floor % 60) %>
+                    <% else %>
                       <%= t(:days_and_hours_left,
-                                 days: ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
-                                 hours: ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
+                            days: ((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor,
+                            hours: ((assignment.due_date - Time.zone.now)/(60 * 60) % 24).floor) %>
                     </p>
+                    <% end %>
                   <% end %>
                 <% end %>
               </td>
