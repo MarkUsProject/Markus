@@ -100,6 +100,7 @@ fr:
     remove:  "Enlever"
     download_csv_grade_report:  "Liste des étudiants et des devoirs au format CSV"
     days_and_hours_left:      "(%{days} jour(s) et %{hours} heure(s))"
+    hours_and_minutes_left:   "(%{hours} heure(s) et %{minutes} minute(s))"
     days_left:          "(%{days} jour(s) restant(s))"
     short_identifier:   "Identifiant du projet<span class='required_field'>*</span>"
     description:        "Description "
@@ -670,9 +671,13 @@ fr:
       form_group: "Les groupes doivent être composés de <strong>%{group_min}</strong> à <strong>%{group_max}</strong> étudiants."
       decline_invitation2: "Êtes-vous sûr de vouloir décliner l'invitation ?"
       your_group: "Votre groupe"
+      group_options: "Options du groupe"
       modification_limited: "Pour le moment, les modifications sur le groupe sont très limitées.
             La date de retour et la période de grâce (s'il y en avait une) sont toutes les deux passées."
       invite_more_students: " Ce groupe n'est pas valide : vous devez inviter plus d'étudiants."
+      working_alone: "Vous avez demandé à travailler seul sur cette mission. Si vous changez d'avis et souhaitez former ou rejoindre un groupe, d'abord supprimer votre groupe."
+      may_not_add_more: "Vous ne pouvez pas ajouter plus de personnes à votre groupe en ce moment."
+      may_not_modify: "Vous ne pouvez pas modifier votre groupe pour le moment."
       url_group_repository: "L'adresse du répertoire de votre groupe"
       group_properties: "Propriétés du groupe"
       students_can_form_groups: "Les étudiants peuvent former des groupes."
@@ -1227,10 +1232,17 @@ fr:
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."
-
     locale_not_available: "La traduction %{locale} n'est pas disponible"
     external_authentication_not_supported: "L'authentification externe n'est pas supportée sur votre plateforme"
     account_disabled: "Ce compte a été désactivé"
+    lateness_penalty: "Pénalité Retard"
+    grace_period: "Délai de Grâce"
+    penalty_decay: "Pénalité Pourriture"
+    penalty_period: "Période de Pénalitéd"
+    additional_information: "Informations Complémentaires"
+    penalty_decay_message_first: "Une déduction de %{deduction}% sera appliqué toutes les %{interval} heures jusqu'à %{hours} heures après la cession est due"
+    penalty_decay_message_other: "Par la suite, une retenue de %{deduction}% sera appliquée toutes les %{interval} heures jusqu'à un maximum de %{hours} heures"   
+    penalty_period_message: "Après %{hours} heures après la date d'échéance, votre note sera réduit de %{deduction}%"
 
     #app/views/main/_assignment_info_summary.erb
     percentage:                "%{percentage} %"

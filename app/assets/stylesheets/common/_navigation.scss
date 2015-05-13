@@ -38,7 +38,7 @@ nav {
 
     li,
     li a {
-      @include border-radius-top(0);
+      border-radius: 0;
     }
 
     #logo {
@@ -134,10 +134,10 @@ footer {
 /* Working indicator */
 
 #working {
-  @include border-radius($radius);
-  @include box-shadow(0 0 5px 0 $light-blue);
   background: $blue;
   border: 1px solid $dark-blue;
+  border-radius: $radius;
+  box-shadow: 0 0 5px 0 $light-blue;
   color: $white;
   font-size: 1.25em;
   font-weight: 600;
@@ -156,7 +156,7 @@ footer {
     width: 1em;
 
     &::after {
-      @include animation(ellipsis $time-quick infinite);
+      animation: ellipsis $time-quick infinite;
       content: "\2026";
       display: inline-block;
       overflow: hidden;
@@ -165,22 +165,6 @@ footer {
   }
 }
 
-@-webkit-keyframes ellipsis {
-  from { width: 2px; }
-  to   { width: 1em; }
-}
-@-moz-keyframes ellipsis {
-  from { width: 2px; }
-  to   { width: 1em; }
-}
-@-ms-keyframes ellipsis {
-  from { width: 2px; }
-  to   { width: 1em; }
-}
-@-o-keyframes ellipsis {
-  from { width: 2px; }
-  to   { width: 1em; }
-}
 @keyframes ellipsis {
   from { width: 2px; }
   to   { width: 1em; }
@@ -217,43 +201,43 @@ footer {
     cursor: pointer;
     display: inline-block;
     height: 2em;
-    width: 2em;
     margin: 0.5em 0 0 0.5em;
+    width: 2em;
 
     &::before,
     &::after {
-      @include transition(all, $time-quick);
       content: "";
-      position: absolute;
       left: 1em;
+      position: absolute;
+      transition: all $time-quick;
       width: 1.5em;
     }
 
     &::before {
-      top: 1em;
-      height: 1.5em;
       border-top: 0.2em solid $dark-blue;
+      height: 1.5em;
+      top: 1em;
     }
 
     &::after {
-      top: 1.65em;
-      height: 0.8em;
-      border-top: 0.2em solid $dark-blue;
       border-bottom: 0.2em solid $dark-blue;
+      border-top: 0.2em solid $dark-blue;
+      height: 0.8em;
+      top: 1.65em;
     }
   }
 }
 
 #menus {
   @include breakpoint(mobile) {
-    @include transform(translateX(-100%));
-    @include transition(all, $time-quick);
     background: #000;
     height: 100%;
     overflow: hidden;
     padding-top: 3.5em;
     position: fixed;
     top: 0;
+    transform: translateX(-100%);
+    transition: all $time-quick;
     width: 75%;
     z-index: 0;
   }
@@ -284,21 +268,21 @@ footer {
   overflow: hidden;
 
   #menus {
-    @include transform(translateX(0%));
+    transform: translateX(0%);
     z-index: 10000;
   }
 
   #mobile_menu #menu_icon {
     &::before {
-      @include transform(rotate(45deg));
-      @include transform-origin(top left);
+      transform: rotate(45deg);
+      transform-origin: top left;
       width: 1.8em;
     }
 
     &::after {
-      @include transform(rotate(-45deg));
-      @include transform-origin(bottom left);
       border-top: 0;
+      transform: rotate(-45deg);
+      transform-origin: bottom left;
       width: 1.8em;
     }
   }
@@ -327,7 +311,7 @@ footer {
 
   li {
     @include breakpoint(mobile) {
-      @include border-radius(0);
+      border-radius: 0;
       text-align: left;
       width: 100%;
     }
@@ -419,7 +403,7 @@ li#dropdown {
 .dropdown {
   ul {
     li {
-      @include border-radius-top(0);
+      border-radius: 0;
 
       a {
         line-height: inherit;
@@ -439,12 +423,12 @@ li#dropdown {
   }
 
   @include breakpoint(mobile) {
-    @include border-radius(0);
     border: none;
+    border-radius: 0;
     display: block;
     min-width: 0;
-    text-indent: -3000em;
     padding: 0;
+    text-indent: -3000em;
     width: 100%;
 
     &:hover li a {
@@ -452,9 +436,9 @@ li#dropdown {
     }
 
     ul {
-      @include border-radius(0);
       background: $light-grey;
       border-left: none;
+      border-radius: 0;
       border-right: none;
       border-top: none;
       color: $dark-blue;
@@ -476,7 +460,7 @@ li#dropdown {
       }
 
       li:last-child {
-        @include border-radius(0);
+        border-radius: 0;
       }
 
       li.section:hover {
