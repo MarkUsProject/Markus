@@ -688,6 +688,7 @@ pt:
       cancel_invitation_title: "Cancelar o convite"
       section_groups_only: "Você só pode convidar alunos da sua sessão"
       submission:
+        search_files: "Arquivos de pesquisa"
         file_manager: "%{short_identifier}: Gerenciador de Arquivos"
         current_path: "Caminho atual:"
         conflicts: "Conflitos"
@@ -1228,7 +1229,7 @@ pt:
     additional_information: "Informações Adicionais"
     penalty_decay_message_first: "A dedução de %{deduction}% será aplicado a cada %{interval} horas, até %{hours} horas após a atribuição é devido."
     penalty_decay_message_other: "A partir daí, uma dedução de %{deduction}% será aplicado a cada %{interval} horas, até um máximo de %{hours} horas."
-    penalty_period_message: "Depois de %{hours} horas após a data de vencimento, a sua nota será reduzida em %{deduction}%"  
+    penalty_period_message: "Depois de %{hours} horas após a data de vencimento, a sua nota será reduzida em %{deduction}%"
 
     #app/views/main/_assignment_summary.html.erb
 

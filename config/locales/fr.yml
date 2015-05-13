@@ -700,6 +700,7 @@ fr:
       cancel_invitation_title: "Annuler l'invitation"
       section_groups_only: "Vous ne pouvez inviter que des étudiants de votre section"
       submission:
+        search_files: "Rechercher les fichiers"
         file_manager: "%{short_identifier} : Gestionnaire de fichiers"
         current_path: "Chemin courant : "
         conflicts: "Conflits"
@@ -1090,7 +1091,7 @@ fr:
       name: "Nom"
       add_new: "Ajouter Nouveau Marquage Barème"
       edit: "Modifier Barème de Notation"
-      weight_label: "Poids Pour Les " 
+      weight_label: "Poids Pour Les "
       table_modify_column: "Modifier"
 
     notes:
@@ -1243,7 +1244,7 @@ fr:
     penalty_period: "Période de Pénalitéd"
     additional_information: "Informations Complémentaires"
     penalty_decay_message_first: "Une déduction de %{deduction}% sera appliqué toutes les %{interval} heures jusqu'à %{hours} heures après la cession est due"
-    penalty_decay_message_other: "Par la suite, une retenue de %{deduction}% sera appliquée toutes les %{interval} heures jusqu'à un maximum de %{hours} heures"   
+    penalty_decay_message_other: "Par la suite, une retenue de %{deduction}% sera appliquée toutes les %{interval} heures jusqu'à un maximum de %{hours} heures"
     penalty_period_message: "Après %{hours} heures après la date d'échéance, votre note sera réduit de %{deduction}%"
 
     #app/views/main/_assignment_info_summary.erb
