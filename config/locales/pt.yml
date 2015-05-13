@@ -317,7 +317,7 @@ pt:
         final_mark: "Nota final&nbsp;"
         previous_mark: "Nota antiga&nbsp;"
         old: "Antiga:&nbsp;"
-        show_old_marks: "Mostrar antigo resumo de notas"
+        show_old_marks: "Alternar antigo resumo de notas"
       annotation:
         from_line_to: "%{file_path}: Linha %{line_start} até %{line_end}"
         remark_flag: "(Reavaliado)"
@@ -325,7 +325,6 @@ pt:
         new_annotation: "Criar nova anotação"
         annotation_category: "Categoria de anotação"
         preview: "Visualização"
-        preview_title: "Veja como a anotação vai olhar:"
         sure_to_remove: "Tem certeza que quer remover essa anotação?"
         submit_edit: "Enviar mudanças"
         change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"

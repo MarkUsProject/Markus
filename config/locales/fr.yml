@@ -320,7 +320,7 @@ fr:
         final_mark: "Note finale : "
         previous_mark: "Note précédente : "
         old: "Précédent : "
-        show_old_marks: "Afficher la note précédente "
+        show_old_marks: "Basculer la note précédente "
       annotation:
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
         remark_flag: "(retour)"
@@ -328,7 +328,6 @@ fr:
         new_annotation: "Nouvelle annotation"
         annotation_category: "Catégorie de l'annotation"
         preview: "Avant-première"
-        preview_title: "Voici l'apparence de l'annotation:"
         sure_to_remove: "Êtes-vous sûr de vouloir supprimer cette annotation ?"
         submit_edit: "Sauvegarder"
         change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"

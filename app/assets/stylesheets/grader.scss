@@ -107,60 +107,103 @@
 }
 
 
-/* Panes content (for controlling the heights) */
+/* Panes */
 
-#mark_viewer,
-#summary_viewer,
-#submission_rule_viewer,
-#codeviewer,
-#annotations_summary {
-  border-radius: 0 0 $radius $radius;
-  overflow: auto;
+#marking-pane {
+  margin-top: 1em;
+
+  > div {
+    height: 800px;
+
+    @include breakpoint(mobile) {
+      display: block !important;
+      height: 100% !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
+  }
+
+  > div:first-child {
+    padding-right: 0.5em;
+
+    @include breakpoint(mobile) {
+      margin-bottom: 1em;
+    }
+  }
+
+  > div:last-child {
+    padding-left: 0.5em;
+  }
+
+  .jquery-dualpane-dragbar {
+    border: 1px solid $light-grey;
+    border-radius: 3px;
+
+    @include breakpoint(mobile) {
+      display: none !important;
+    }
+  }
 }
 
-#codeviewer,
-#mark_viewer,
-#summary_viewer,
-#submission_rule_viewer,
-#annotations_summary,
-#remark_request_tab {
-  height: 650px;
+.tab-pane-contents > div {
+  @include border-radius-bottom(5px);
+  overflow: auto;
+  height: 100%;
 }
 
 
 /* Source code pane */
 
-// Adjusted height for users that also see the annotation menu
-#annotation_menu + #codeviewer {
-  height: 600px;
-}
-
-.image_container {
-  overflow: auto;
-  width: auto;
+#image_container {
+  position: absolute;
 }
 
 #sel_box {
   border: 1px dashed #f00;
+  cursor: crosshair;
   display: none;
   position: absolute;
+  z-index: 100000;
 }
 
 .annotation_holder {
-  background: orange;
-  border: 1px solid #000;
+  background: $annot-orange;
+  border: 1px solid $dark-grey;
   cursor: crosshair;
   opacity: 0.2;
   position: absolute;
 }
 
+#code_holder {
+  display: table;
+  width: 100%;
+}
+
+#code_holder_contents {
+  display: table-row;
+  height: 100%;
+  padding-top: 0.5em;
+  vertical-align: top;
+  width: 100%;
+}
+
+#codeviewer {
+  display: table-cell;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+  width: 100%;
+}
+
 .code_scroller {
   margin: 0;
-  overflow: auto;
   padding-left: 50px !important;
 }
 
 .dp-highlighter {
+  height: 100%;
+  position: absolute;
+
   .annotation_highlighted_text {
     background-color: #f99;
     color: $dark-grey;
@@ -174,6 +217,10 @@
   ol {
     overflow-y: hidden;
   }
+
+  li {
+    word-break: break-all;
+  }
 }
 
 
@@ -181,42 +228,62 @@
 
 #create_annotation_dialog {
   padding-top: 1.5em;
+}
 
-  textarea#new_annotation_content {
+  #annotation-create-contents {
+    display: block;
+  }
+
+  #new_annotation_content {
     height: 175px;
-    margin-top: 1em;
+    margin: 1em 0;
     width: 100%;
   }
 
-  #annotation_preview {
-    max-width: 175px;
-    margin: 1em auto 0 auto;
+  #annotation-create {
+    display: inline-block;
   }
-}
+
+  #annotation-preview {
+    float: right;
+    margin-left: 2.5em;
+    width: 250px;
+  }
+
+    #annotation-preview-text {
+      word-wrap: break-word;
+    }
 
 
 /* Annotations menus */
 
 #annotation_menu {
   background: #b7d3ec;
-  border-radius: $radius $radius 0 0;
-  display: table;
-  margin: 0 0 1em 0;
+  display: table-row;
   padding: 0.5em;
   width: 100%;
 }
 
-#new_annotation_button {
+#annotation_menu_contents {
+  display: table-row-group;
+  height: 1em;
+}
+
+#annotation_menu_left {
   display: table-cell;
-  font-weight: 300;
-  margin: 0 0.25em 0 0;
-  min-width: 0;
+  padding: 0.5em;
   vertical-align: top;
+}
+
+#new_annotation_button {
+  font-weight: 300;
+  min-width: 0;
+  width: 120px;
 }
 
 #annotation_categories {
   display: table-cell;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 li.annotation_category {
@@ -258,6 +325,10 @@ ul.annotation_text_list {
 
 /* Annotations pane */
 
+#annotations_summary {
+  padding: 1em;
+}
+
 #annotations_summary_head {
   padding: 0.5em 0;
 
@@ -273,13 +344,15 @@ ul.annotation_text_list {
 
 #annotation_summary_list {
   border-top: 1px solid $grey;
+  display: block;
   list-style: none;
   margin: 0 0 20px 0;
   padding: 0;
+  width: 100%;
 
   li {
     border-bottom: 1px solid $grey;
-    padding: 0.25em 0.5em;
+    padding: 0.25em 0.5em 1em;
     width: 100%;
 
     &:nth-child(odd) {
@@ -324,6 +397,11 @@ ul.annotation_text_list {
 
 /* Marks pane */
 
+.summary_old_toggle {
+  margin: 1em 0;
+  text-align: center;
+}
+
 #mark_criteria_pane_list {
   font-size: 10px;
   list-style: none;
@@ -333,8 +411,7 @@ ul.annotation_text_list {
 
   li {
     border-bottom: 1px solid #dadada;
-    border-radius: 0;
-    padding: 5px;
+    padding: 0.5em 2em 0.5em 0.5em;
     width: 100%;
 
     &:nth-child(odd) {
@@ -366,30 +443,6 @@ ul.annotation_text_list {
   text-align: center;
 }
 
-// /* ================ CRITERION STYLES ============== */
-// #old_summary_criteria_pane {
-//   display: none;
-// }
-
-// .assigned {
-//   border: 4px solid #b7d3ec;
-// }
-
-//   .mark_criterion_title {
-//     cursor: pointer;
-//   }
-
-//   .mark_criterion_holder_selected,
-//   .mark_level {
-//     background: #ccf;
-//   }
-
-// .mark_criterion_level {
-//   background: none;
-//   color: #000;
-//   font-size: 0.625em;
-// }
-
 .mark_reset {
   background: none;
   color: #000;
@@ -412,6 +465,7 @@ ul.annotation_text_list {
     border: 1px solid #dadada;
     border-collapse: collapse;
     padding: 4px;
+    width: 100%;
   }
 
   td {
@@ -456,18 +510,6 @@ ul.annotation_text_list {
   min-width: 5px;
   padding: 5px;
 }
-
-  // .extra_mark_title_div {
-  //   cursor: pointer;
-  // }
-
-  // .extra_mark_holder_selected {
-  //   background: #ccf;
-  // }
-
-  // .extra_mark_delete {
-  //   float: right;
-  // }
 
   .extra_marks_pane {
     border: 1px solid #dadada;
@@ -612,69 +654,4 @@ ul.annotation_text_list {
 
 .tag_admin {
   text-align: center;
-}
-
-/* Resizable column panes */
-
-#panes-content {
-  height: 100%;
-  margin-top: 1em;
-  width: 100%;
-
-  #panes {
-    height: 100%;
-    width: 100%;
-  }
-
-  #left-pane,
-  #drag,
-  #right-pane {
-    display: inline-block;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    vertical-align: top;
-  }
-
-  #left-pane,
-  #right-pane {
-    overflow: auto;
-
-    @include breakpoint(small) {
-      display: block;
-      float: none;
-      width: 100% !important;
-    }
-  }
-
-  #left-pane {
-    padding-right: 0.5em;
-
-    @include breakpoint(small) {
-      margin-bottom: 1em;
-      padding-right: 0;
-    }
-  }
-
-  #right-pane {
-    padding-left: 0.5em;
-
-    @include breakpoint(small) {
-      padding-left: 0;
-    }
-  }
-
-  #drag {
-    background: #ccc;
-    cursor: col-resize;
-    height: 700px;
-    margin-left: -5px;
-    overflow: hidden;
-    position: absolute;
-    width: 5px;
-
-    @include breakpoint(small) {
-      display: none;
-    }
-  }
 }

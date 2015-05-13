@@ -19,7 +19,6 @@ ImageEventHandler.prototype.init_listeners = function(enable_annotations) {
   if (enable_annotations) {
     image_preview.style.cursor = 'crosshair';
     image_preview.onmousedown  = this.start_select_box.bind(this);
-    sel_box.style.cursor = 'crosshair';
 
     // Disable FireFox's default click and drag behaviour for images
     image_preview.ondragstart = function(e) { e.preventDefault(); }
@@ -170,11 +169,15 @@ ImageEventHandler.prototype.check_for_annotations = function(e) {
   var abs_xy = this.get_absolute_cursor_pos(e);
 
   // X/Y coords relative to the image
-  var image_preview   = document.getElementById('image_preview');
   var image_container = document.getElementById('image_container');
   var codeviewer = document.getElementById('codeviewer');
-  var xy_coords = [abs_xy[0] - image_preview.offsetLeft + image_container.scrollLeft,
-                   abs_xy[1] - image_preview.offsetTop + codeviewer.scrollTop];
+
+  var xy_coords = [abs_xy[0] -
+                     image_container.offsetLeft - codeviewer.offsetLeft +
+                     image_container.scrollLeft,
+                   abs_xy[1] -
+                     image_container.offsetTop - image_container.offsetHeight +
+                     codeviewer.scrollTop];
   var annot_grid = this.get_annotation_grid();
   var annots_to_display = [];
 

@@ -337,7 +337,7 @@ en:
         final_mark: "Final Mark&nbsp;"
         previous_mark: "Previous Mark&nbsp;"
         old: "Old: "
-        show_old_marks: "Show Old Mark Summary"
+        show_old_marks: "Toggle Old Mark Summary"
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
         remark_flag: "(remark)"
@@ -345,7 +345,6 @@ en:
         new_annotation: "Create new annotation"
         annotation_category: "Annotation Category"
         preview: "Preview"
-        preview_title: "Here's how the annotation will look:"
         sure_to_remove: "Are you sure you want to remove this annotation?"
         submit_edit: "Submit Edit"
         change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"

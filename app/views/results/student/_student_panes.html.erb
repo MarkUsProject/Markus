@@ -1,17 +1,18 @@
-<div id='panes-content'>
-  <div id='panes'>
-    <div id='left-pane'>
-      <div class='tab-pane' id='code_pane'>
-        <ul>
-          <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
-          <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
-          <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
-            <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
-          <% end %>
-        </ul>
+<div id='annotation_holder'></div>
 
+<div id='marking-pane'>
+  <div>
+    <div class='tab-pane' id='code_pane'>
+      <ul>
+        <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
+        <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
+        <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
+          <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
+        <% end %>
+      </ul>
+
+      <div class='tab-pane-contents'>
         <div id='code_holder'>
-          <%# For image/PDF annotations %>
           <div id='sel_box'></div>
 
           <div id='codeviewer'></div>
@@ -49,16 +50,16 @@
         <% end %>
       </div>
     </div>
+  </div>
 
-    <div id='drag'></div>
+  <div>
+    <div class='tab-pane' id='mark_pane'>
+      <ul>
+        <li><a href='#mark_viewer'><%= t('marker.marks.marks') %></a></li>
+        <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
+      </ul>
 
-    <div id='right-pane'>
-      <div class='tab-pane' id='mark_pane'>
-        <ul>
-          <li><a href='#mark_viewer'><%= t('marker.marks.marks') %></a></li>
-          <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
-        </ul>
-
+      <div class='tab-pane-contents'>
         <div id='mark_viewer'>
           <div id='mark_criteria_pane'>
             <ul id='mark_criteria_pane_list'>
@@ -85,9 +86,13 @@
                                extra_marks_points: extra_marks_points,
                                extra_marks_percentage: extra_marks_percentage } %>
         </div>
-
-        <div id='annotation_holder'></div>
       </div>
     </div>
   </div>
 </div>
+
+<script type='text/javascript'>
+  jQuery('#marking-pane').dualpane({
+    rightColWidth: 425
+  });
+</script>
