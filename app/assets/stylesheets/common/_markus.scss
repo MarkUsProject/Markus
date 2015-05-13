@@ -175,7 +175,7 @@ input[type='submit'],
 input[type='reset'],
 button,
 .button {
-  background: linear-gradient(top, $white, $light-grey);
+  background: linear-gradient(to bottom, $white, $light-grey);
   border: 1px solid $blue;
   border-radius: $radius;
   box-shadow: inset 0 -1px 0 $grey;
@@ -202,13 +202,13 @@ button,
   }
 
   &:active {
-    background: linear-gradient(top, $light-grey, $white);
+    background: linear-gradient(to bottom, $light-grey, $white);
     box-shadow: none;
     color: $dark-blue;
   }
 
   &[disabled] {
-    background: linear-gradient(top, $light-grey, $disabled-grey);
+    background: linear-gradient(to bottom, $light-grey, $disabled-grey);
     border-color: $disabled-dark;
     box-shadow: none;
     color: $disabled-dark;
