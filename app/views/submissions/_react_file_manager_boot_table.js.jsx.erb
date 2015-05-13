@@ -93,12 +93,14 @@
 
         f.id = i;
         f.file_name = file[1].name;
-        f.last_modified_date = file[1].last_modified_date;
+        f.last_modified_date = new Date(file[1].last_modified_date).toLocaleString();
         f.revision_by = file[1].user_id;
         f.last_modified_revision = file[1].last_modified_revision;
 
         return f;
       }.bind(this));
+
+      var selectable = <%= not @grouping.repository_external_commits_only? %>;
 
       return (
         <div>
@@ -112,9 +114,10 @@
 
           <Table data={files_data}
             columns={this.props.columns}
-            selectable={true}
+            selectable={selectable}
             onSelectedRowsChange={this.updateSelectedFiles}
-            ref="table" />
+            search_placeholder={'<%= raw I18n.t("student.submission.search_files") %>'}
+            ref='table' />
 
           <ErrorDiv error={this.state.error} />
         </div>

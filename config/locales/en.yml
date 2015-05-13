@@ -736,6 +736,7 @@ en:
       cancel_invitation_title: "Cancel invitation"
       section_groups_only: "You can invite only students of your section"
       submission:
+        search_files: "Search files"
         file_manager: "%{short_identifier}: File Manager"
         current_path: "Current Path:"
         conflicts: "Conflicts"
@@ -1222,7 +1223,7 @@ en:
       add_new: "Add New Marking Scheme"
       edit: "Edit Marking Scheme"
       weight_label: "Weight for "
-      table_modify_column: "Modify" 
+      table_modify_column: "Modify"
 
     notes:
         note_on: "%{user_name} on <strong>%{display_for}</strong>"
@@ -1378,7 +1379,7 @@ en:
     additional_information: "Additional Information"
     penalty_decay_message_first: "A deduction of %{deduction}% will be applied every %{interval} hours up to %{hours} hours after the assignment is due."
     penalty_decay_message_other: "Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours."
-    penalty_period_message: "After %{hours} hours after the due date, your grade will be reduced by %{deduction}%"    
+    penalty_period_message: "After %{hours} hours after the due date, your grade will be reduced by %{deduction}%"
 
     #app/views/main/_assignment_summary.html.erb
 
