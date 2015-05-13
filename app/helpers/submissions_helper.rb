@@ -32,9 +32,6 @@ module SubmissionsHelper
   def get_submissions_table_info(assignment, groupings)
     groupings.map do |grouping|
       g = grouping.attributes
-      g[:class_name] = get_any_tr_attributes(grouping)
-      g[:group_name] = get_grouping_group_name(assignment, grouping)
-      g[:repository] = get_grouping_repository(assignment, grouping)
       begin
         g[:commit_date] = get_grouping_commit_date(grouping)
       rescue NoMethodError
@@ -42,17 +39,31 @@ module SubmissionsHelper
       rescue RuntimeError
         g[:commit_date] = I18n.t('group_repo_missing')
       end
-      g[:marking_state] = get_grouping_marking_state(assignment, grouping)
-      g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
-      g[:final_grade] = get_grouping_final_grades(grouping)
-      g[:state] = get_grouping_state(grouping)
-      g[:section] = get_grouping_section(grouping)
-      g[:tags] = get_grouping_tags(grouping)
+      begin # if anything raises an error, catch it and log in the object.
+        g[:group_name] = get_grouping_group_name(assignment, grouping)
+        g[:class_name] = get_any_tr_attributes(grouping)
+        g[:repository] = get_grouping_repository(assignment, grouping)
+        g[:marking_state] = get_grouping_marking_state(assignment, grouping)
+        g[:grace_credits_used] = get_grouping_grace_credits_used(grouping)
+        g[:final_grade] = get_grouping_final_grades(grouping)
+        g[:state] = get_grouping_state(grouping)
+        g[:section] = get_grouping_section(grouping)
+        g[:tags] = get_grouping_tags(grouping)
+      rescue => e
+        m_logger = MarkusLogger.instance
+        m_logger.log("Unexpected exception #{e.message}: could not display submission on assignment " +
+                     "#{assignment.short_identifier} belonging to grouping " +
+                     "id #{grouping.group_id}. Backtrace follows:" + "\n" +
+                     e.backtrace.join("\n"), MarkusLogger::ERROR)
+        g[:error] = true
+      else
+        g[:error] = false
+      end
       g
     end
   end
 
-  # If the grouping is collected or has an error, 
+  # If the grouping is collected or has an error,
   # style the table row green or red respectively.
   # Classname will be applied to the table row
   # and actually styled in CSS.
