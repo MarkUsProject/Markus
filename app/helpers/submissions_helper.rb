@@ -49,11 +49,12 @@ module SubmissionsHelper
         g[:state] = get_grouping_state(grouping)
         g[:section] = get_grouping_section(grouping)
         g[:tags] = get_grouping_tags(grouping)
-      rescue
+      rescue => e
         m_logger = MarkusLogger.instance
-        m_logger.log("Could not display submission on assignment " +
+        m_logger.log("Unexpected exception #{e.message}: could not display submission on assignment " +
                      "#{assignment.short_identifier} belonging to grouping " +
-                     "id #{grouping.group_id}", MarkusLogger::ERROR)
+                     "id #{grouping.group_id}. Backtrace follows:" + "\n" +
+                     e.backtrace.join("\n"), MarkusLogger::ERROR)
         g[:error] = true
       else
         g[:error] = false
