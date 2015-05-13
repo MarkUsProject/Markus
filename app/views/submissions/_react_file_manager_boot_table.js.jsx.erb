@@ -82,6 +82,11 @@
       this.setState({ error: error });
     },
 
+    resetTable: function() {
+      this.refs.table.clearCheckboxes();
+      this.refresh();
+    },
+
     render: function() {
       var files_data = this.state.files.map(function(file, i) {
         var f = {};
@@ -102,13 +107,14 @@
               selected_files={this.state.selected_files}
               data_file={files_data}
               onError={this.onError}
-              parentRefresh={this.refresh.bind(this)} />
+              resetTable={this.resetTable} />
           <% end %>
 
           <Table data={files_data}
             columns={this.props.columns}
             selectable={true}
-            onSelectedRowsChange={this.updateSelectedFiles} />
+            onSelectedRowsChange={this.updateSelectedFiles}
+            ref="table" />
 
           <ErrorDiv error={this.state.error} />
         </div>
@@ -161,7 +167,7 @@
           file_revisions: file_revisions
         },
         success: function(data) {
-          this.props.parentRefresh();
+          this.props.resetTable();
         }.bind(this),
         error: function(xhr, status, text) {
           var error = text + ': ' + xhr.responseText;
