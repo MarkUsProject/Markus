@@ -98,6 +98,7 @@ en:
     remove:  "Remove"
     download_csv_grade_report:  "Download CSV Grades Report"
     days_and_hours_left:      "(%{days} day(s) and %{hours} hour(s) left)"
+    hours_and_minutes_left:   "(%{hours} hour(s) and %{minutes} minute(s) left)"
     days_left:          "(%{days} day(s) left)"
     short_identifier:   "Short Identifier<span class='required_field'>*</span>"
     description:        "Description"
@@ -458,6 +459,7 @@ en:
       tags_search:          "Search for Tags:"
       tags_list:            "Filter by Tag:"
       search_submissions:   "Search Submissions"
+      how_many_marked:      "%{num_marked}/%{num_assigned} assignments have been marked"
 
     summaries_index:
       group_name:           "Group Name"
@@ -473,6 +475,13 @@ en:
       section:              "Section"
       sections:             "Section:"
       search_summaries:     "Search Summaries"
+
+    course_summaries_index:
+        page_title:     "Summary"
+        user_name:      "User Name"
+        first_name:     "First Name"
+        last_name:      "Last Name"
+        ngr:            "No Grade Received"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -698,11 +707,15 @@ en:
       form_own_group: "Form your own group"
       form_group: "The groups must be from <strong>%{group_min}</strong> to <strong>%{group_max}</strong> people."
       decline_invitation2: "This will decline the invitation you have. Are you sure?"
-      your_group: "Your group"
+      your_group: "Your Group"
+      group_options: "Group Options"
       modification_limited: "At this point modification of your group is very limited.
             The due date and grace period (if any) have both passed."
       invite_more_students: " The group is not valid. You need to
             invite more students."
+      working_alone: "You have asked to work alone on this assignment. If you change your mind and want to form or join a group, first delete your group."
+      may_not_add_more: "You may not add more people to your group at this time."
+      may_not_modify: "You may not modify your group at this time."
       url_group_repository: "URL to your group's repository"
       group_properties: " Group Properties "
       students_can_form_groups: " Students can form groups. "
@@ -1200,6 +1213,17 @@ en:
       x_mark: "x Mark"
       weight: "Weight"
 
+    course_summaries:
+      title: "Summary"
+
+    marking_schemes:
+      title: "Marking Schemes"
+      name: "Name"
+      add_new: "Add New Marking Scheme"
+      edit: "Edit Marking Scheme"
+      weight_label: "Weight for "
+      table_modify_column: "Modify" 
+
     notes:
         note_on: "%{user_name} on <strong>%{display_for}</strong>"
         add_new: "Add a new note"
@@ -1344,10 +1368,17 @@ en:
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"
-
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
+    lateness_penalty: "Lateness Penalty"
+    grace_period: "Grace Period"
+    penalty_decay: "Penalty Decay"
+    penalty_period: "Penalty Period"
+    additional_information: "Additional Information"
+    penalty_decay_message_first: "A deduction of %{deduction}% will be applied every %{interval} hours up to %{hours} hours after the assignment is due."
+    penalty_decay_message_other: "Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours."
+    penalty_period_message: "After %{hours} hours after the due date, your grade will be reduced by %{deduction}%"    
 
     #app/views/main/_assignment_summary.html.erb
 

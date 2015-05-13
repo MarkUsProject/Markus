@@ -1,0 +1,135 @@
+<script type="text/jsx">
+  /** @jsx React.DOM */
+
+  var CourseSummariesTable = React.createClass({
+    getDefaultProps: function() {
+      var columns = [
+        {
+          id: 'user_name',
+          content: '<%= j raw I18n.t('course_summaries_index.user_name') %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: true
+        },
+        {
+          id: 'first_name',
+          content: '<%= j raw I18n.t('course_summaries_index.first_name') %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: true
+        },
+        {
+          id: 'last_name',
+          content: '<%= j raw I18n.t('course_summaries_index.last_name') %>',
+          sortable: true,
+          compare: compare_anchor_text,
+          searchable: true
+        }
+      ];
+      
+      <% for assignment in @assignments %>
+        columns.push({
+          id: 'assignment_' + <%= assignment.id %>,
+          content: '<%= assignment.short_identifier %>',
+          sortable: true,
+          compare: compare_numeric_values,
+          searchable: false
+        });
+      <% end %>
+
+      <% for grade_entry_form in @grade_entry_forms %>
+        columns.push({
+          id: 'gef_' + <%= grade_entry_form.id %>,
+          content: '<%= grade_entry_form.short_identifier %>',
+          sortable: true,
+          compare: compare_numeric_values,
+          searchable: false
+        });
+      <% end %>
+
+      <% for marking_scheme in @marking_schemes %>
+        columns.push({
+          id: 'marking_scheme_' + <%= marking_scheme.id %>,
+          content: '<%= marking_scheme.name %>',
+          sortable: true,
+          compare: compare_numeric_values,
+          searchable: false
+        });
+      <% end %>
+
+      return {columns: columns};
+    },
+
+    getInitialState: function() {
+      return {
+        columns: this.props.columns,
+        courseSummaries: [],
+        marking_schemes: []
+      };
+    },
+
+    componentWillMount: function() {
+      this.refresh();
+    },
+
+    // get info
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+
+      var that = this;
+      jQuery.ajax('<%= populate_course_summaries_path %>',
+                  { method: 'GET',
+                    dataType: 'json' })
+            .done(function (data) {
+              that.setState({ courseSummaries: data });
+              document.getElementById('working').style.display = 'none';
+            });
+    },
+
+    render: function() {
+      var that = this;
+      var course_summaries_data = this.state.courseSummaries.map(function(courseSummary) {
+        var cs = {};
+        
+        cs['id'] = courseSummary.id;
+        cs['user_name'] = courseSummary.user_name;
+        cs['first_name'] = courseSummary.first_name;
+        cs['last_name'] = courseSummary.last_name;
+
+        <% for assignment in @assignments %>
+          var id = <%= assignment.id %>;
+          var key = "assignment_" + id;
+          var value = courseSummary.assignment_marks[id]
+          cs[key] = value ? value : "-";
+        <% end %>
+
+        <% for grade_entry_from in @grade_entry_forms %>
+          var id = <%= grade_entry_from.id %>;
+          var key = "gef_" + id;
+          var value = courseSummary.grade_entry_form_marks[id];
+          cs[key] = (value) ? value : "-";
+        <% end %>
+
+        <% for marking_scheme in @marking_schemes %>
+          var id = <%= marking_scheme.id %>;
+          var key = "marking_scheme_" + id;
+          cs[key] = parseFloat(courseSummary.weighted_marks[id]);
+        <% end %>
+        
+        return cs;
+      });
+
+      return (
+        <div>
+          <Table data={course_summaries_data}
+            columns={this.state.columns}
+          />
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<CourseSummariesTable />, document.getElementById('course_summaries_table'));
+
+</script>
+

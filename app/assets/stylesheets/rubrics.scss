@@ -27,12 +27,12 @@
 }
 
 #rubric_levels_pane {
-  @include border-radius($radius);
-  display: table;
-  width: 100%;
   border: 1px solid $grey;
-  padding: 1em;
+  border-radius: $radius;
+  display: table;
   margin-left: 2em;
+  padding: 1em;
+  width: 100%;
 
   h2 {
     margin-bottom: 0.5em;

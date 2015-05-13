@@ -36,7 +36,13 @@ GEM
       parser (>= 2.2.0.pre.3, < 3.0)
     auto_complete (0.0.1)
       rails (>= 3.1)
+    autoprefixer-rails (5.1.11)
+      execjs
+      json
     awesome_print (1.2.0)
+    best_in_place (3.0.3)
+      actionpack (>= 3.2)
+      railties (>= 3.2)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
@@ -234,7 +240,9 @@ PLATFORMS
 DEPENDENCIES
   activerecord-import
   auto_complete
+  autoprefixer-rails
   awesome_print
+  best_in_place
   better_errors
   binding_of_caller
   byebug

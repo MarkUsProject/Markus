@@ -1,26 +1,17 @@
-// Tag Elements
 .tag_element {
-  border: 1px solid $blue;
+  background-color: $light-blue;
   border-radius: 15px;
+  border: 1px solid $blue;
+  color: $dark-blue;
+  cursor: pointer;
   padding-left: 5px;
   padding-right: 5px;
+  text-align: center;
+  transition: all 0.2s;
   white-space: nowrap;
 
-  background-color: $light-blue;
-
-  text-align: center;
-  color: $dark-blue;
-
-  cursor: pointer;
-
-  -webkit-transition: all 0.2s;
-  -moz-transition: all 0.2s;
-  -ms-transition: all 0.2s;
-  -o-transition: all 0.2s;
-  transition: all 0.2s;
-}
-
-.tag_element:hover {
-  background-color: $dark-blue;
-  color: $white;
+  &:hover {
+    background-color: $dark-blue;
+    color: $white;
+  }
 }

@@ -3,9 +3,9 @@
  */
 
 .login {
-  @include border-radius($radius);
-  @include box-shadow(0 3px 0 0 $grey);
   background: $white;
+  border-radius: $radius;
+  box-shadow: 0 3px 0 0 $grey;
   height: auto;
   left: 50%;
   margin-left: -180px;
@@ -16,8 +16,8 @@
 
   /* Mobile friendly! */
   @include breakpoint(tiny) {
-    @include border-radius(0);
-    @include box-shadow(none);
+    border-radius: 0;
+    box-shadow: none;
     left: 0;
     margin-left: 0;
     width: 100%;

@@ -1,0 +1,16 @@
+<%= content_for :head do %>
+  <%= render partial: 'course_summaries_table', formats: [:'js.jsx'], handlers: [:erb] %>
+<% end %>
+
+<div class='title_bar'>
+  <h1>
+    <%= t('course_summaries.title') %>
+  </h1>
+  <div class='heading_buttons'>
+    <%= link_to t('marking_schemes.title'), marking_schemes_path %>
+  </div>
+</div>
+
+<div class='wrapLeft'>
+    <div id='course_summaries_table'></div>
+</div>

@@ -2,6 +2,7 @@
   /** @jsx React.DOM */
 
   var SummariesTable = React.createClass({
+
     getDefaultProps: function() {
       var columns = [
         {
@@ -40,6 +41,7 @@
         },
         <%= raw @section_column  %>
       ];
+
       <% for criterion in @criteria %>
         columns.push({
           id: 'criterion_' + <%= criterion.id %>,
@@ -64,44 +66,48 @@
           name: 'unmarked',
           text: '<%= j raw I18n.t(:'browse_submissions.show_unmarked') %>',
           func: function(submission) {
-            return submission.state == 'unmarked';
+            return submission.state === 'unmarked';
           }
         },
         {
           name: 'partial',
           text: '<%= j raw I18n.t(:'browse_submissions.show_partial') %>',
           func: function(submission) {
-            return submission.state == 'partial';
+            return submission.state === 'partial';
           }
         },
         {
           name: 'complete',
           text: '<%= j raw I18n.t(:'browse_submissions.show_complete') %>',
           func: function(submission) {
-            return submission.state == 'complete';
+            return submission.state === 'complete';
           }
         },
         {
           name: 'released',
           text: '<%= j raw I18n.t(:'browse_submissions.show_released') %>',
           func: function(submission) {
-            return submission.state == 'released';
+            return submission.state === 'released';
           }
         }
       ];
       return {columns: columns, filters: filters};
     },
+
     getInitialState: function() {
       return {
         summaries: []
       };
     },
+
     componentWillMount: function() {
       this.refresh();
     },
+
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
       document.getElementById('working').style.display = '';
+
       jQuery.ajax({
         url: 'summaries/populate',
         method: 'GET',
@@ -122,8 +128,8 @@
         }
       });
     },
-    render: function() {
 
+    render: function() {
       var summaries_data = this.state.summaries.map(function(summary) {
         var s = {};
         s['id'] = summary.id;
@@ -142,13 +148,11 @@
       });
 
       return (
-        <div>
-          <Table data={summaries_data}
-            columns={this.props.columns}
-            filters={this.props.filters}
-            filter_type={true}
-            search_placeholder={'<%= j raw I18n.t('summaries_index.search_summaries') %>'}/>
-        </div>
+        <Table data={summaries_data}
+          columns={this.props.columns}
+          filters={this.props.filters}
+          filter_type={true}
+          search_placeholder={'<%= j raw I18n.t('summaries_index.search_summaries') %>'} />
       );
     }
   });

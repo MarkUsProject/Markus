@@ -11,12 +11,60 @@
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('message') %>:</span>
-    <span class='box clear'><%= @assignment.message %></span>
+    <%= @assignment.message %>
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('due_date') %>:</span>
     <%= I18n.l(@due_date, format: :long_date ) %>
   </div>
+    
+  <% unless @penalty.type == "NoLateSubmissionRule" %>
+    <div class='sub_block'>
+      <span class='prop_label'><%= t('lateness_penalty') %>:</span>
+      <% if @penalty.type == "GracePeriodSubmissionRule" %>
+        <%= t('grace_period') %> 
+      <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
+        <%= t('penalty_decay') %>
+      <% elsif @penalty.type == "PenaltyPeriodSubmissionRule" %>
+        <%= t('penalty_period') %> 
+      <% end %>
+    </div>
+
+    <div class='sub_block'>
+      <span class='prop_label'><%= t('additional_information') %>:</span>
+      <% if @penalty.type == "GracePeriodSubmissionRule" %>
+        <% if !@grouping.nil? %>
+            <%= raw(t('student.group_credits',
+                        available_grace_credits: 
+                        @grouping.available_grace_credits)) %>
+        <% end %>
+      <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
+        <ul>
+        <% @enum_penalty.each do |p| %>
+          <% if p == @enum_penalty.first %>
+            <li><%= t('penalty_decay_message_first', 
+            deduction: p.deduction, interval: p.interval, 
+            hours: p.hours) %> </li>
+          <% else %>
+            <li><%= t('penalty_decay_message_other', 
+            deduction: p.deduction, interval: p.interval, 
+            hours: p.hours) %> </li>
+          <% end %>
+        <% end %>
+        </ul>
+      <% elsif @penalty.type == "PenaltyPeriodSubmissionRule" %>
+        <ul>
+        <% deduction = hours = 0 %>
+        <% @enum_penalty.each do |p| %>
+          <% deduction += p.deduction %> 
+          <% hours += p.hours %>
+          <li> <%= t('penalty_period_message', hours: hours, 
+          deduction: deduction) %> </li>
+        <% end %>
+        </ul>
+      <% end %>
+    </div>
+  <% end %>
 
   <% if @assignment.display_grader_names_to_students %>
     <div class='sub_block'>
@@ -36,7 +84,7 @@
 
   <h3><%= t('assignment.required_files_read') %></h3>
   <% if @assignment.assignment_files.length == 0 %>
-    <%= t('assignment.no_required_files_read') %>
+    <p class='notice'> <%= t('assignment.no_required_files_read') %> </p>
   <% else %>
     <ul>
       <% @assignment.assignment_files.each do |assignment_file| %>

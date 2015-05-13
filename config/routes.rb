@@ -126,6 +126,7 @@ Markus::Application.routes.draw do
 
       resources :submissions do
         collection do
+          get 'populate_file_manager_react'
           get 'populate_submissions_table'
           get 'file_manager'
           get 'browse'
@@ -302,6 +303,19 @@ Markus::Application.routes.draw do
         get 'student_interface'
         get 'notes_dialog'
         post 'grades'
+      end
+    end
+
+    resources :course_summaries do
+      collection do
+        get 'populate'
+        get 'get_marking_scheme_details'
+      end
+    end
+
+    resources :marking_schemes do
+      collection do
+        get 'populate'
       end
     end
 

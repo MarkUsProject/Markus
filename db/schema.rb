@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150304033052) do
+ActiveRecord::Schema.define(:version => 20150326163940) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                        :default => false
-    t.boolean  "only_required_files",              :default => false
+    t.boolean  "only_required_files"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -238,6 +238,21 @@ ActiveRecord::Schema.define(:version => 20150304033052) do
   end
 
   add_index "groups", ["group_name"], :name => "groups_name_unique", :unique => true
+
+  create_table "marking_schemes", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "marking_weights", :force => true do |t|
+    t.integer  "marking_scheme_id"
+    t.integer  "gradable_item_id"
+    t.decimal  "weight"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+    t.boolean  "is_assignment",     :null => false
+  end
 
   create_table "marks", :force => true do |t|
     t.integer  "result_id"
