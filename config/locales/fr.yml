@@ -106,7 +106,7 @@ fr:
     description:        "Description "
     shortened_date:     "Date<span class='required_field'>*</span>"
     due_date:           "Date de retour "
-    absolute_due_date:  "Date Limite"
+    absolute_deadline:  "Date limite absolue"
     iso_date_format_example:    "Format : AAAA-MM-JJ (Exemple : 2009-01-13)"
     iso_due_date_format_example:    "Format : AAAA-MM-JJ HH:MM (Exemple : 2009-01-13 17:44)"
     create_new_assignment:      "Créer un nouveau projet"

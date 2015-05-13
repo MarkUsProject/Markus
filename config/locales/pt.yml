@@ -103,7 +103,7 @@ pt:
     description:        "Descrição"
     shortened_date:     "Data<span class='required_field'>*</span>"
     due_date:           "Prazo de entrega"
-    absolute_due_date:  "Prazo final"
+    absolute_deadline:  "Prazo absoluto"
     iso_date_format_example:    "Formato:  YYYY-MM-DD - Exemplo:  2009-01-13"
     iso_due_date_format_example:    "Formato:  YYYY-MM-DD HH:MM - Exemplo:  2009-01-13 17:44"
     create_new_assignment:      "Inserir projeto"
