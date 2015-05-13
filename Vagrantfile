@@ -16,5 +16,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Uncomment the following line if you want a GUI.
     # vb.gui = true
     vb.name = "markus"
+    vb.memory = 2048
   end
 end
