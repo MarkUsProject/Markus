@@ -666,6 +666,7 @@ pt:
       working_alone: "Você pediu para trabalhar sozinho nesta tarefa. Se você mudar de idéia e quer formar ou participar de um grupo, primeiro exclua o seu grupo."
       may_not_add_more: "Você não pode adicionar mais pessoas para o seu grupo neste momento."
       may_not_modify: "Você não pode modificar o seu grupo neste momento."
+      group_not_deletable: "Você deve entrar em contato com seu instrutor para alterar a associação de grupo ou para remover o grupo."
       url_group_repository: "URL para o repositório do seu grupo"
       group_properties: " Propriedades do Grupo "
       students_can_form_groups: " Alunos podem formar grupos. "

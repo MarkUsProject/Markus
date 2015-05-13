@@ -678,6 +678,7 @@ fr:
       working_alone: "Vous avez demandé à travailler seul sur cette mission. Si vous changez d'avis et souhaitez former ou rejoindre un groupe, d'abord supprimer votre groupe."
       may_not_add_more: "Vous ne pouvez pas ajouter plus de personnes à votre groupe en ce moment."
       may_not_modify: "Vous ne pouvez pas modifier votre groupe pour le moment."
+      group_not_deletable: "Vous devez communiquer avec votre instructeur de modifier la composition du groupe ou pour éliminer le groupe."
       url_group_repository: "L'adresse du répertoire de votre groupe"
       group_properties: "Propriétés du groupe"
       students_can_form_groups: "Les étudiants peuvent former des groupes."
