@@ -1,7 +1,6 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'effects.js',
-                             'Students/index',
-                             'help_system' %>
+                             'Students/index' %>
   <%= render partial: 'students_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
   <script type="text/javascript">
