@@ -437,7 +437,7 @@ en:
       grading_can_begin_after: "Grading can begin after %{time}"
       submissions:	    "Submissions: %{short_identifier}"
       csv_report:           "CSV Report"
-      detailled_csv_report: "Detailed CSV Report"
+      detailed_csv_report: "Detailed CSV Report"
       subversion_repo_list: "Subversion Repo List"
       subversion_export_file: "Subversion Export File"
       errors:               "Errors"

@@ -414,7 +414,7 @@ pt:
       grading_can_begin_after: "Avaliação pode começar depois %{time}"
       submissions: 	    "Submissões: %{short_identifier}"
       csv_report:           "Relatório CSV"
-      detailled_csv_report: "Relatório detalhado CSV"
+      detailed_csv_report: "Relatório detalhado CSV"
       subversion_repo_list: "Lista de repositórios subversion"
       subversion_export_file: "Comando SVN para exportar projetos"
       errors:               "Erros"
