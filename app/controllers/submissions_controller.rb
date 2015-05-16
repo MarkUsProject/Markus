@@ -648,8 +648,8 @@ class SubmissionsController < ApplicationController
 
   # Release or unrelease submissions
   def update_submissions
-    if params[:groupings].nil? || params[:groupings].empty?
-        raise I18n.t('results.must_select_a_group')
+    if !params.has_key?(:groupings) || params[:groupings].empty?
+      render text: t('results.must_select_a_group'), status: 400 and return
     end
     assignment = Assignment.find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
