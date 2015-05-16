@@ -9,14 +9,12 @@ class SubmissionsController < ApplicationController
 
   before_filter :authorize_only_for_admin,
                 except: [:server_time,
-                         :populate_file_manager,
                          :populate_file_manager_react,
                          :browse,
                          :file_manager,
                          :update_files,
                          :download,
                          :downloads,
-                         :s_table_paginate,
                          :collect_and_begin_grading,
                          :download_groupings_files,
                          :manually_collect_and_begin_grading,
@@ -27,7 +25,6 @@ class SubmissionsController < ApplicationController
                          :populate_submissions_table]
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
-                       :s_table_paginate,
                        :collect_and_begin_grading,
                        :manually_collect_and_begin_grading,
                        :collect_ta_submissions,
@@ -38,7 +35,6 @@ class SubmissionsController < ApplicationController
                        :populate_submissions_table]
   before_filter :authorize_for_student,
                 only: [:file_manager,
-                       :populate_file_manager,
                        :update_files,
                        :populate_file_manager_react]
   before_filter :authorize_for_user, only: [:download, :downloads]
