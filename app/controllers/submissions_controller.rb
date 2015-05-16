@@ -646,80 +646,41 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  # Release or unrelease submissions
   def update_submissions
-    return unless request.post?
+    if params[:groupings].nil? || params[:groupings].empty?
+        raise I18n.t('results.must_select_a_group')
+    end
+    assignment = Assignment.find(params[:assignment_id])
+    groupings = assignment.groupings.find(params[:groupings])
+    release = params[:release_results]
+
     begin
-      assignment = Assignment.find(params[:assignment_id])
-      groupings = []
+      changed = set_release_on_results(groupings, release)
 
-      if params[:groupings].nil?
-        unless params[:collect_section]
-          raise I18n.t('results.must_select_a_group')
-        end
-      else
-        groupings = assignment.groupings.find(params[:groupings])
-      end
-
-      log_message = ''
-      if params[:release_results]
-        changed = set_release_on_results(groupings, true)
-        log_message = 'Marks released for assignment' +
-            " '#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' (for #{changed} groups)."
-      elsif params[:unrelease_results]
-        changed = set_release_on_results(groupings, false)
-        log_message = 'Marks unreleased for assignment ' +
-            "'#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' (for #{changed} groups)."
-      elsif params[:collect_section]
-        if params[:section_to_collect] == ''
-          raise I18n.t('collect_submissions.must_select_a_section')
-        else
-          collected =
-              collect_submissions_for_section(params[:section_to_collect],
-                                              assignment)
-          if collected > 0
-            flash[:success] =
-                I18n.t('collect_submissions.successfully_collected',
-                       collected: collected)
-          end
-        end
-      end
-
-      unless groupings.empty?
+      if changed > 0
         assignment.update_results_stats
-      end
 
-      if changed && changed > 0
         # These flashes don't get rendered. Find another way to display?
         flash[:success] = I18n.t('results.successfully_changed',
                                  changed: changed)
-        m_logger = MarkusLogger.instance
-        m_logger.log(log_message)
+        if release
+          MarkusLogger.instance.log(
+            'Marks released for assignment' +
+            " '#{assignment.short_identifier}', ID: '" +
+            "#{assignment.id}' for #{changed} group(s).")
+        else
+          MarkusLogger.instance.log(
+            'Marks unreleased for assignment' +
+            " '#{assignment.short_identifier}', ID: '" +
+            "#{assignment.id}' for #{changed} group(s).")
+        end
       end
+
       head :ok
     rescue => e
       render text: e.message, status: 400
     end
-  end
-
-  def unrelease
-    return unless request.post?
-    if params[:groupings].nil?
-      flash[:release_results] = I18n.t('assignment.group.select_a_group')
-    else
-      params[:groupings].each do |g|
-        g.unrelease_results
-      end
-      m_logger = MarkusLogger.instance
-      assignment = Assignment.find(params[:id])
-      m_logger.log('Marks unreleased for assignment' +
-                       " '#{assignment.short_identifier}', ID: '" +
-                       "#{assignment.id}' (for #{params[:groupings].length}" +
-                       ' groups).')
-    end
-    redirect_to action: 'browse',
-                id: params[:id]
   end
 
   # See Assignment.get_simple_csv_report for details

@@ -7,23 +7,35 @@ module SubmissionsHelper
     end
   end
 
+  # Release or unrelease the submissions of a set of groupings.
+  # TODO: Note that this terminates the first time an error is encountered,
+  # and displays an error message to the user, even though some groupings
+  # *will* have their results released. We should change this to behave
+  # similar to other bulk actions, in which all errors are collected
+  # and reported, but the page does refresh and successes displayed.
   def set_release_on_results(groupings, release)
     changed = 0
     groupings.each do |grouping|
-      raise I18n.t('marking_state.no_submission',
-                   group_name: grouping.group.group_name) unless grouping.has_submission?
-      submission = grouping.current_submission_used
-      raise I18n.t('marking_state.no_result',
-                   group_name: grouping.group.group_name) unless submission.has_result?
-      raise I18n.t('marking_state.not_complete', group_name: grouping.group.group_name) if
-        submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete] && release
-      raise I18n.t('marking_state.not_complete_unrelease', group_name: grouping.group.group_name) if
-        submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
-      result = submission.get_latest_result
+      name = grouping.group.group_name
+
+      unless grouping.has_submission?
+        raise t('marking_state.no_submission', group_name: name)
+      end
+
+      unless grouping.marking_completed?
+        if release
+          raise t('marking_state.not_complete', group_name: name)
+        else
+          raise t('marking_state.not_complete_unrelease', group_name: name)
+        end
+      end
+
+      result = grouping.current_submission_used.get_latest_result
       result.released_to_students = release
       unless result.save
-        raise I18n.t('marking_state.result_not_saved', group_name: grouping.group.group_name)
+        raise t('marking_state.result_not_saved', group_name: name)
       end
+
       changed += 1
     end
     changed
