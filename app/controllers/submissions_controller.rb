@@ -12,7 +12,6 @@ class SubmissionsController < ApplicationController
                          :populate_file_manager,
                          :populate_file_manager_react,
                          :browse,
-                         :index,
                          :file_manager,
                          :update_files,
                          :download,
@@ -28,7 +27,6 @@ class SubmissionsController < ApplicationController
                          :populate_submissions_table]
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
-                       :index,
                        :s_table_paginate,
                        :collect_and_begin_grading,
                        :manually_collect_and_begin_grading,
@@ -267,11 +265,6 @@ class SubmissionsController < ApplicationController
                                                        current_user)
 
     render json: get_submissions_table_info(@assignment, @groupings)
-  end
-
-  def index
-    @assignments = Assignment.all(order: :id)
-    render :index, layout: 'sidebar'
   end
 
   # update_files action handles transactional submission of files.
