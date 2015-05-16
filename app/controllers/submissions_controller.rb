@@ -475,18 +475,12 @@ class SubmissionsController < ApplicationController
   end
 
   ##
-  # Checks if all the assignments for the current submission are marked
-  # returns true if all assignments are marked completely
+  # Checks if all the assignments for the current submission are marked.
   ##
   def all_assignments_marked?
-    marked = Assignment.joins(groupings: [{ current_submission_used:
-      :results }]).where('assignments.id' => params[:assignment_id],
-                         'results.marking_state' =>
-                             Result::MARKING_STATES[:complete])
-    total_assignments = Assignment.joins(groupings:
-      [{ current_submission_used: :results }]).where('assignments.id' =>
-                                                         params[:assignment_id])
-    marked.size == total_assignments.size
+    Assignment.find(params[:assignment_id]).groupings.all? do |grouping|
+      grouping.marking_completed?
+    end
   end
 
   ##
