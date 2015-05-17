@@ -1,7 +1,6 @@
 <%= content_for :head do %>
   <%= javascript_include_tag 'users_manager',
-                             'Graders/index',
-                             'help_system' %>
+                             'Graders/index' %>
 
   <%= render partial: 'tas_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>

@@ -9,15 +9,12 @@ class SubmissionsController < ApplicationController
 
   before_filter :authorize_only_for_admin,
                 except: [:server_time,
-                         :populate_file_manager,
                          :populate_file_manager_react,
                          :browse,
-                         :index,
                          :file_manager,
                          :update_files,
                          :download,
                          :downloads,
-                         :s_table_paginate,
                          :collect_and_begin_grading,
                          :download_groupings_files,
                          :manually_collect_and_begin_grading,
@@ -28,8 +25,6 @@ class SubmissionsController < ApplicationController
                          :populate_submissions_table]
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
-                       :index,
-                       :s_table_paginate,
                        :collect_and_begin_grading,
                        :manually_collect_and_begin_grading,
                        :collect_ta_submissions,
@@ -40,7 +35,6 @@ class SubmissionsController < ApplicationController
                        :populate_submissions_table]
   before_filter :authorize_for_student,
                 only: [:file_manager,
-                       :populate_file_manager,
                        :update_files,
                        :populate_file_manager_react]
   before_filter :authorize_for_user, only: [:download, :downloads]
@@ -237,27 +231,31 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  # The table of submissions for an assignment and related actions and links.
   def browse
     @assignment = Assignment.find(params[:assignment_id])
     @groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                        current_user)
-    @section_column = ''
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
-        content: '" + I18n.t(:'browse_submissions.section') + "',
+        content: '#{t(:'browse_submissions.section')}',
         sortable: true
       },"
+    else
+      @section_column = ''
     end
 
     if @assignment.submission_rule.type == 'GracePeriodSubmissionRule'
       @grace_credit_column = "{
         id: 'grace_credits_used',
-        content: '" + I18n.t(:'browse_submissions.grace_credits_used') + "',
+        content: '#{I18n.t(:'browse_submissions.grace_credits_used')}',
         sortable: true,
         compare: compare_numeric_values,
         searchable: false
       },"
+    else
+      @grace_credit_column = ''
     end
   end
 
@@ -267,11 +265,6 @@ class SubmissionsController < ApplicationController
                                                        current_user)
 
     render json: get_submissions_table_info(@assignment, @groupings)
-  end
-
-  def index
-    @assignments = Assignment.all(order: :id)
-    render :index, layout: 'sidebar'
   end
 
   # update_files action handles transactional submission of files.
@@ -482,18 +475,12 @@ class SubmissionsController < ApplicationController
   end
 
   ##
-  # Checks if all the assignments for the current submission are marked
-  # returns true if all assignments are marked completely
+  # Checks if all the assignments for the current submission are marked.
   ##
   def all_assignments_marked?
-    marked = Assignment.joins(groupings: [{ current_submission_used:
-      :results }]).where('assignments.id' => params[:assignment_id],
-                         'results.marking_state' =>
-                             Result::MARKING_STATES[:complete])
-    total_assignments = Assignment.joins(groupings:
-      [{ current_submission_used: :results }]).where('assignments.id' =>
-                                                         params[:assignment_id])
-    marked.size == total_assignments.size
+    Assignment.find(params[:assignment_id]).groupings.all? do |grouping|
+      grouping.marking_completed?
+    end
   end
 
   ##
@@ -659,80 +646,41 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  # Release or unrelease submissions
   def update_submissions
-    return unless request.post?
+    if !params.has_key?(:groupings) || params[:groupings].empty?
+      render text: t('results.must_select_a_group'), status: 400 and return
+    end
+    assignment = Assignment.find(params[:assignment_id])
+    groupings = assignment.groupings.find(params[:groupings])
+    release = params[:release_results]
+
     begin
-      assignment = Assignment.find(params[:assignment_id])
-      groupings = []
+      changed = set_release_on_results(groupings, release)
 
-      if params[:groupings].nil?
-        unless params[:collect_section]
-          raise I18n.t('results.must_select_a_group')
-        end
-      else
-        groupings = assignment.groupings.find(params[:groupings])
-      end
-
-      log_message = ''
-      if params[:release_results]
-        changed = set_release_on_results(groupings, true)
-        log_message = 'Marks released for assignment' +
-            " '#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' (for #{changed} groups)."
-      elsif params[:unrelease_results]
-        changed = set_release_on_results(groupings, false)
-        log_message = 'Marks unreleased for assignment ' +
-            "'#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' (for #{changed} groups)."
-      elsif params[:collect_section]
-        if params[:section_to_collect] == ''
-          raise I18n.t('collect_submissions.must_select_a_section')
-        else
-          collected =
-              collect_submissions_for_section(params[:section_to_collect],
-                                              assignment)
-          if collected > 0
-            flash[:success] =
-                I18n.t('collect_submissions.successfully_collected',
-                       collected: collected)
-          end
-        end
-      end
-
-      unless groupings.empty?
+      if changed > 0
         assignment.update_results_stats
-      end
 
-      if changed && changed > 0
         # These flashes don't get rendered. Find another way to display?
         flash[:success] = I18n.t('results.successfully_changed',
                                  changed: changed)
-        m_logger = MarkusLogger.instance
-        m_logger.log(log_message)
+        if release
+          MarkusLogger.instance.log(
+            'Marks released for assignment' +
+            " '#{assignment.short_identifier}', ID: '" +
+            "#{assignment.id}' for #{changed} group(s).")
+        else
+          MarkusLogger.instance.log(
+            'Marks unreleased for assignment' +
+            " '#{assignment.short_identifier}', ID: '" +
+            "#{assignment.id}' for #{changed} group(s).")
+        end
       end
+
       head :ok
     rescue => e
       render text: e.message, status: 400
     end
-  end
-
-  def unrelease
-    return unless request.post?
-    if params[:groupings].nil?
-      flash[:release_results] = I18n.t('assignment.group.select_a_group')
-    else
-      params[:groupings].each do |g|
-        g.unrelease_results
-      end
-      m_logger = MarkusLogger.instance
-      assignment = Assignment.find(params[:id])
-      m_logger.log('Marks unreleased for assignment' +
-                       " '#{assignment.short_identifier}', ID: '" +
-                       "#{assignment.id}' (for #{params[:groupings].length}" +
-                       ' groups).')
-    end
-    redirect_to action: 'browse',
-                id: params[:id]
   end
 
   # See Assignment.get_simple_csv_report for details

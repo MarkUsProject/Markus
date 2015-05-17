@@ -7,23 +7,35 @@ module SubmissionsHelper
     end
   end
 
+  # Release or unrelease the submissions of a set of groupings.
+  # TODO: Note that this terminates the first time an error is encountered,
+  # and displays an error message to the user, even though some groupings
+  # *will* have their results released. We should change this to behave
+  # similar to other bulk actions, in which all errors are collected
+  # and reported, but the page does refresh and successes displayed.
   def set_release_on_results(groupings, release)
     changed = 0
     groupings.each do |grouping|
-      raise I18n.t('marking_state.no_submission',
-                   group_name: grouping.group.group_name) unless grouping.has_submission?
-      submission = grouping.current_submission_used
-      raise I18n.t('marking_state.no_result',
-                   group_name: grouping.group.group_name) unless submission.has_result?
-      raise I18n.t('marking_state.not_complete', group_name: grouping.group.group_name) if
-        submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete] && release
-      raise I18n.t('marking_state.not_complete_unrelease', group_name: grouping.group.group_name) if
-        submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
-      result = submission.get_latest_result
+      name = grouping.group.group_name
+
+      unless grouping.has_submission?
+        raise t('marking_state.no_submission', group_name: name)
+      end
+
+      unless grouping.marking_completed?
+        if release
+          raise t('marking_state.not_complete', group_name: name)
+        else
+          raise t('marking_state.not_complete_unrelease', group_name: name)
+        end
+      end
+
+      result = grouping.current_submission_used.get_latest_result
       result.released_to_students = release
       unless result.save
-        raise I18n.t('marking_state.result_not_saved', group_name: grouping.group.group_name)
+        raise t('marking_state.result_not_saved', group_name: name)
       end
+
       changed += 1
     end
     changed
@@ -236,43 +248,6 @@ module SubmissionsHelper
 
     collected
 
-  end
-
-
-  def construct_file_manager_dir_table_row(directory_name, directory)
-    table_row = {}
-    table_row[:id] = directory.object_id
-    table_row[:filter_table_row_contents] = render_to_string partial: 'submissions/table_row/directory_table_row', locals: {directory_name: directory_name, directory: directory}
-    table_row[:filename] = directory_name
-    table_row[:last_modified_date_unconverted] = directory.last_modified_date.strftime('%b %d, %Y %H:%M')
-    table_row[:revision_by] = directory.user_id
-    table_row
-
-  end
-
-  def construct_file_manager_table_row(file_name, file)
-    table_row = {}
-    table_row[:id] = file.object_id
-    table_row[:filter_table_row_contents] = render_to_string partial: 'submissions/table_row/filter_table_row', locals: {file_name: file_name, file: file}
-
-    table_row[:filename] = file_name
-
-    table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
-
-    table_row[:last_modified_date_unconverted] = file.last_modified_date.strftime('%b %d, %Y %H:%M')
-
-    table_row[:revision_by] = file.user_id
-
-    table_row
-  end
-
-
-  def construct_file_manager_table_rows(files)
-    result = {}
-    files.each do |file_name, file|
-      result[file.object_id] = construct_file_manager_table_row(file_name, file)
-    end
-    result
   end
 
   def get_repo_browser_table_info(assignment, revision, revision_number, path,

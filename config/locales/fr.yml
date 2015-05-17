@@ -122,7 +122,6 @@ fr:
       not_complete: "La note du groupe %{group_name} ne peut pas être publiée : l'évalutation n'est pas indiquée comme étant terminée."
       not_complete_unrelease: "La note du groupe %{group_name} ne peut pas être masquée : l'évalutation n'est pas indiquée comme étant terminée."
       no_submission: "%{group_name} n'a pas d'envoi"
-      no_result: "%{group_name} n'a pas de résultat"
       result_not_saved: "Le résultat du groupe %{group_name} n'a pas pu être sauvegardé."
     collect_submissions:
       collect_all: "Récupérer tous les envois"
@@ -417,7 +416,7 @@ fr:
       grading_can_begin_after: "L'évaluation commencera à partir du %{time}"
       submissions:	    "Soumissions: %{short_identifier}"
       csv_report:           "Rapport CSV"
-      detailled_csv_report: "Rappost CSV détaillé"
+      detailed_csv_report: "Rappost CSV détaillé"
       subversion_repo_list: "Liste des dépôts Subversion"
       subversion_export_file: "Commandes SVN pour exporter les projets"
       errors:               "Erreurs"

@@ -119,7 +119,6 @@ pt:
       not_complete: "Não pode liberar resultado para %{group_name}: o estado da avaliação não está completo"
       not_complete_unrelease: "Não é possível esconder o resultado para %{group_name}: a avaliação não está completa"
       no_submission: "%{group_name} não tem submissões"
-      no_result: "%{group_name} não tem resultados"
       result_not_saved: "O resultado da submissão de %{group_name} não pode ser salvo"
     collect_submissions:
       collect_all: "Coletar todas as submissões"
@@ -414,7 +413,7 @@ pt:
       grading_can_begin_after: "Avaliação pode começar depois %{time}"
       submissions: 	    "Submissões: %{short_identifier}"
       csv_report:           "Relatório CSV"
-      detailled_csv_report: "Relatório detalhado CSV"
+      detailed_csv_report: "Relatório detalhado CSV"
       subversion_repo_list: "Lista de repositórios subversion"
       subversion_export_file: "Comando SVN para exportar projetos"
       errors:               "Erros"
