@@ -154,6 +154,32 @@
     onError: function(error) {
       this.setState({error: error});
     },
+    renderMarkingState: function(state) {
+      if (state === 'unmarked') {
+        return (<%= image_tag('icons/shape_square.png',
+                              alt: t('marking_state.not_collected'),
+                              title: t('marking_state.not_collected')) %>);
+      } else if (state === 'partial') {
+        return (<%= image_tag('icons/pencil.png',
+                              alt: t('marking_state.in_progress'),
+                              title: t('marking_state.in_progress')) %>);
+      } else if (state === 'completed') {
+        return (<%= image_tag('icons/accept.png',
+                              alt: t('marking_state.completed'),
+                              title: t('marking_state.completed')) %>);
+      } else if (state === 'released') {
+        return (<%= image_tag('icons/email_go.png',
+                              alt: t('marking_state.released'),
+                              title: t('marking_state.released')) %>);
+      } else if (state === 'remark') {
+        return (<%= image_tag('icons/double_exclamation.png',
+                              alt: t('marking_state.remark_requested'),
+                              title: t('marking_state.remark_requested')) %>);
+      } else {
+        return 'Invalid marking state';
+      }
+    },
+
     render: function() {
       // Do student-specific table stuff here.
       // possibly move this to getdefaultprops.
@@ -161,7 +187,11 @@
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
         s['id'] = submission.id;
-        s['group_name'] = <span dangerouslySetInnerHTML={{__html: submission.group_name}} />;
+        if (submission.name_url === '') {
+          s['group_name'] = <span>{submission.name}</span>;
+        } else {
+          s['group_name'] = <span><a href={submission.name_url}>{submission.name}</a></span>;
+        }
         if (submission.error) {
           s['class_name'] = "submission_error";
         } else {
@@ -172,13 +202,21 @@
           tagHtml += "</div>";
 
           s['class_name'] = submission.class_name;
-          s['repository'] = <span dangerouslySetInnerHTML={{__html: submission.repository}} />;
-          s['commit_date'] = <span dangerouslySetInnerHTML={{__html: submission.commit_date}} />;
-          s['marking_state'] = <span dangerouslySetInnerHTML={{__html: submission.marking_state}} />;
+          s['repository'] = <a href={submission.repo_url}>{submission.name}</a>;
+          if (submission.late_commit) {
+            s['commit_date'] = (<span>
+              <%= image_tag('icons/error.png',
+                            title: t(:past_due_date_edit_result_warning,
+                            href: t(:last_commit))) %>
+              {submission.commit_date}
+            </span>);
+          } else {
+            s['commit_date'] = submission.commit_date;
+          }
+          s['marking_state'] = this.renderMarkingState(submission.state);
           s['grace_credits_used'] = submission.grace_credits_used;
           s['tags'] = <span dangerouslySetInnerHTML={{__html: tagHtml }} />;
           s['final_grade'] = submission.final_grade;
-          s['state'] = submission.state;
           s['section'] = submission.section;
         }
         return s;
