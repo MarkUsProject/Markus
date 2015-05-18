@@ -77,14 +77,14 @@ module SubmissionsHelper
                                                                grouping)
         g[:final_grade] = grouping.final_grade(result)
         g[:state] = grouping.marking_state(result)
-        g[:error] = false
+        g[:error] = ''
       rescue => e
         m_logger = MarkusLogger.instance
         m_logger.log(
           "Unexpected exception #{e.message}: could not display submission " +
           "on assignment id #{grouping.group_id}. Backtrace follows:" + "\n" +
           e.backtrace.join("\n"), MarkusLogger::ERROR)
-        g[:error] = true
+        g[:error] = e.message
       end
       g
     end

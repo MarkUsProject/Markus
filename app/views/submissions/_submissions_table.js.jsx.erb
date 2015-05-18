@@ -113,7 +113,7 @@
     },
     getInitialState: function() {
       return {
-        error: null,
+        error: [],
         submissions: [],
         selected_submissions: [],
       };
@@ -134,9 +134,14 @@
         method: 'GET',
         dataType: 'json',
         success: function(data) {
+          this.setState({error: []});
+          data.each(function (submission) {
+            if (submission.error !== '') {
+              this.setState({error: this.state.error.concat([submission.error])});
+            }
+          }.bind(this));
           this.setState({
             submissions: data,
-            error: null
           });
         }.bind(this),
         error: function(xhr, status, text) {
@@ -192,7 +197,7 @@
         } else {
           s['group_name'] = <span><a href={submission.name_url}>{submission.name}</a></span>;
         }
-        if (submission.error) {
+        if (submission.error !== '') {
           s['class_name'] = "submission_error";
         } else {
           var tagHtml = "<div className='tag_list'>";

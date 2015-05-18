@@ -87,30 +87,6 @@
 </div>
 
 <div class="wrapLeft">
-  <!-- Fairly sure the 'error' and 'success' divs are unneeded but only if the other actions don't depend on it (csv etc) -->
-  <% if flash[:error] %>
-    <div class="error">
-      <%= flash[:error] %>
-    </div>
-  <% end %>
-
-  <% if flash[:success] %>
-    <div class="success">
-      <%= flash[:success] %>
-    </div>
-  <% end %>
-
-  <% if !flash[:errors].nil? && !flash[:errors].empty? %>
-    <div class="error">
-      <h1><%= t("browse_submissions.errors") %></h1>
-      <ul>
-        <% flash[:errors].each do |error_message| %>
-          <li><%= error_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
   <div id='submissions_table'></div>
-  </form>
 </div>
+
