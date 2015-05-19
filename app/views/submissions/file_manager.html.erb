@@ -126,9 +126,7 @@
     </div>
   <% end %>
 
-  <% unless !@grouping.is_valid? || @grouping.repository_external_commits_only? %>
-    <div id='file_table'></div>
-  <% end %>
+  <div id='file_table'></div>
 </div>
 
 <aside class='dialog' id='addnew_dialog'>
