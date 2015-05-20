@@ -682,8 +682,8 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes POST server_time properly' do
-        expect(post: sub_path + '/server_time').to route_to(
+      it 'routes GET server_time properly' do
+        expect(get: sub_path + '/server_time').to route_to(
           controller: sub_ctrl,
           action: 'server_time',
           assignment_id: assignment.id.to_s,

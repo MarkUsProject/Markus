@@ -143,7 +143,7 @@ Markus::Application.routes.draw do
           get 'replace_files'
           get 'delete_files'
           post 'update_files'
-          post 'server_time'
+          get 'server_time'
           get 'download'
           get 'download_groupings_files'
         end

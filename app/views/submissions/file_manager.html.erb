@@ -24,18 +24,16 @@
   </span>
 
   <script>
-    new PeriodicalExecuter(
-      function() {
-        new Ajax.Updater('current_time',
-          '<%= server_time_assignment_submissions_path(@assignment.id) %>',
-          {
-            asynchronous:true,
-            evalScripts:true,
-            parameters:'authenticity_token=' + AUTH_TOKEN
-          }
-        )
-    }, 60);
-  </script>
+    window.setInterval(function () {
+      jQuery.ajax({
+        url: '<%= server_time_assignment_submissions_path(@assignment.id) %>',
+        method: 'GET',
+        success: function(data) {
+          document.getElementById('current_time').innerHTML = data;
+        }
+      });
+    }, 60000);
+    </script>
 </div>
 
 <div class='wrapper'>
