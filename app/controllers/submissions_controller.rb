@@ -1,5 +1,4 @@
 require 'zip'
-require 'cgi'
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
@@ -452,7 +451,7 @@ class SubmissionsController < ApplicationController
                   filename: params[:file_name]
       else
         # Otherwise, sanitize it for HTML and blast it out to the screen
-        sanitized_contents = CGI.escapeHTML(file_contents)
+        sanitized_contents = ERB::Util.html_escape(file_contents)
         render text: sanitized_contents, layout: 'sanitized_html'
       end
     end
