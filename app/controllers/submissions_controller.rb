@@ -244,11 +244,11 @@ class SubmissionsController < ApplicationController
   end
 
   def populate_submissions_table
-    @assignment = Assignment.find(params[:assignment_id])
-    @groupings = Grouping.get_groupings_for_assignment(@assignment,
-                                                       current_user)
+    assignment = Assignment.find(params[:assignment_id])
+    groupings = Grouping.get_groupings_for_assignment(assignment,
+                                                      current_user)
 
-    render json: get_submissions_table_info(@assignment, @groupings)
+    render json: get_submissions_table_info(assignment, groupings)
   end
 
   # update_files action handles transactional submission of files.
@@ -455,15 +455,6 @@ class SubmissionsController < ApplicationController
         sanitized_contents = CGI.escapeHTML(file_contents)
         render text: sanitized_contents, layout: 'sanitized_html'
       end
-    end
-  end
-
-  ##
-  # Checks if all the assignments for the current submission are marked.
-  ##
-  def all_assignments_marked?
-    Assignment.find(params[:assignment_id]).groupings.all? do |grouping|
-      grouping.marking_completed?
     end
   end
 
@@ -706,7 +697,7 @@ class SubmissionsController < ApplicationController
 
   # This action is called periodically from file_manager.
   def server_time
-    render partial: 'server_time'
+    render text: I18n.l(Time.zone.now, format: :long_date)
   end
 
   private

@@ -236,4 +236,11 @@ module SubmissionsHelper
         SubmissionFile::SUBSTITUTION_CHAR)
   end
 
+  # Checks if all the assignments for the current submission are marked.
+  def all_assignments_marked?
+    Assignment.find(params[:assignment_id]).groupings.all? do |grouping|
+      grouping.marking_completed?
+    end
+  end
+
 end

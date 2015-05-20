@@ -17,8 +17,11 @@
   </h1>
 </div>
 
-<div id='current_time'>
-  <%= render partial: 'server_time' %>
+<div>
+  <strong><%= t('server_time') %></strong>
+  <span id='current_time'>
+    <%= I18n.l(Time.zone.now, format: :long_date)%>
+  </span>
 
   <script>
     new PeriodicalExecuter(
