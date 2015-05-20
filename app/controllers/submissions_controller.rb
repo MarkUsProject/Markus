@@ -20,7 +20,6 @@ class SubmissionsController < ApplicationController
                          :manually_collect_and_begin_grading,
                          :collect_ta_submissions,
                          :repo_browser,
-                         :update_converted_pdfs,
                          :update_submissions,
                          :populate_submissions_table]
   before_filter :authorize_for_ta_and_admin,
@@ -30,7 +29,6 @@ class SubmissionsController < ApplicationController
                        :collect_ta_submissions,
                        :repo_browser,
                        :download_groupings_files,
-                       :update_converted_pdfs,
                        :update_submissions,
                        :populate_submissions_table]
   before_filter :authorize_for_student,
@@ -158,9 +156,12 @@ class SubmissionsController < ApplicationController
   def manually_collect_and_begin_grading
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
-    SubmissionCollector.instance.manually_collect_submission(@grouping,
-                                                             @revision_number)
-    redirect_to action: 'update_converted_pdfs', id: @grouping.id
+    submission = SubmissionCollector.instance.manually_collect_submission(
+      @grouping, @revision_number, false)
+    redirect_to edit_assignment_submission_result_path(
+      assignment_id: @grouping.assignment_id,
+      submission_id: submission.id,
+      id: submission.get_latest_result.id)
   end
 
   def collect_and_begin_grading
@@ -212,23 +213,6 @@ class SubmissionsController < ApplicationController
     end
     redirect_to action: 'browse',
                 id: assignment.id
-  end
-
-  def update_converted_pdfs
-    @grouping = Grouping.find(params[:grouping_id])
-    @submission = @grouping.current_submission_used
-    @pdf_count = 0
-    @converted_count = 0
-    unless @submission.nil?
-      @submission.submission_files.each do |file|
-        if file.is_pdf?
-          @pdf_count += 1
-          if file.is_converted
-            @converted_count += 1
-          end
-        end
-      end
-    end
   end
 
   # The table of submissions for an assignment and related actions and links.
