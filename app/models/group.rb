@@ -68,7 +68,7 @@ class Group < ActiveRecord::Base
   end
 
   def build_repository
-    # create repositories and write permissions if and only if we are admin
+    # create repositories and if and only if we are admin
     return true if !MarkusConfigurator.markus_config_repository_admin?
 
     # This might cause repository collision errors, because when the group
@@ -92,7 +92,14 @@ class Group < ActiveRecord::Base
                    "(Repository name was: '#{self.repo_name}'). Error message: '#{e.message}'",
                    MarkusLogger::ERROR)
     end
+    true
+  end
 
+  # Set the default repo permissions.
+  # NOTE: this function should no longer be needed, since
+  # repository permissions are no longer set on creation.
+  def set_repo_permissions
+    #return true if !MarkusConfigurator.markus_config_repository_admin?
     # Each admin user will have read and write permissions on each repo
     user_permissions = {}
     Admin.all.each do |admin|

@@ -201,6 +201,48 @@ module Repository
     end
     alias download_as_string stringify_files # create alias
 
+    # Generate and write the SVN authorization file for the repo.
+    def self.__generate_authz_file
+      return true if !MarkusConfigurator.markus_config_repository_admin?
+      valid_groupings_and_members = {}
+      assignments = Assignment.all
+      assignments.each do |assignment|
+        valid_groupings = assignment.valid_groupings
+        valid_groupings.each do |gr|
+          accepted_students = gr.accepted_students
+          accepted_students = accepted_students.map { |student| student.user_name }
+          valid_groupings_and_members[gr.group.repo_name] = accepted_students
+        end
+      end
+      tas = Ta.all
+      tas = tas.map { |ta| ta.user_name }
+      admins = Admin.all
+      admins = admins.map { |admin| admin.user_name }
+      tas_and_admins = tas + admins
+      invalid_groups = Group.all
+      invalid_groups = invalid_groups.map { |group| group.repository_name }
+      authz_string = ""
+      valid_groupings_and_members.each do |repo_name, students|
+        authz_string += "[#{repo_name}:/]\n"
+        students.each do |user_name|
+          authz_string += "#{user_name} = rw\n"
+        end
+        tas_and_admins.each do |admin_user|
+          authz_string += "#{admin_user} = rw\n"
+        end
+        authz_string += "\n"
+        invalid_groups.delete(repo_name)
+      end
+      invalid_groups.each do |repo_name|
+        authz_string += "[#{repo_name}:/]\n"
+        tas_and_admins.each do |admin_user|
+          authz_string += "#{admin_user} = rw\n"
+        end
+        authz_string += "\n"
+      end
+      return self.__write_out_authz_file(authz_string)
+    end
+
     # Returns a Repository::SubversionRevision instance
     # holding the latest Subversion repository revision
     # number
