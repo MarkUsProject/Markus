@@ -68,7 +68,7 @@ class Group < ActiveRecord::Base
   end
 
   def build_repository
-    # create repositories and if and only if we are admin
+    # create repositories if and only if we are admin
     return true if !MarkusConfigurator.markus_config_repository_admin?
 
     # This might cause repository collision errors, because when the group
