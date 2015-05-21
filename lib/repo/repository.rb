@@ -165,6 +165,7 @@ module Repository
       raise NotImplementedError, "Repository.get_permissions: Not yet implemented"
     end
 
+    # Generate and write the SVN authorization file for the repo.
     def self.__generate_authz_file
       raise NotImplementedError, "Repository.__generate_authz_file: Not yet implemented"
     end

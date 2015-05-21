@@ -99,7 +99,7 @@ class Group < ActiveRecord::Base
   # NOTE: this function should no longer be needed, since
   # repository permissions are no longer set on creation.
   def set_repo_permissions
-    #return true if !MarkusConfigurator.markus_config_repository_admin?
+    return true if !MarkusConfigurator.markus_config_repository_admin?
     # Each admin user will have read and write permissions on each repo
     user_permissions = {}
     Admin.all.each do |admin|
