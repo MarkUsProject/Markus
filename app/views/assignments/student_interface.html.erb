@@ -8,11 +8,6 @@
     document.getElementById('invite_member').focus();
   }
 
-  function may_not_delete(){
-    var text = '<%= t('student.group_not_deletable') %>';
-    alert(text);
-  }
-
   jQuery(document).ready(function() {
     invite_modal = new ModalMarkus('#invite_dialog');
   });
@@ -240,6 +235,10 @@
               <%= t('student.working_alone') %>
             </p>
           <% end %>
+
+          <% if !@grouping.nil? && @assignment.group_max > 1 %>
+            <p class='information'> <%= t('student.group_not_deletable') %> </p> 
+          <% end %>
             
           <% # Student not reached the group max and is not working alone 
            if @grouping.inviter == @current_user &&
@@ -256,14 +255,6 @@
               <% end %>
           <% else %>
             <p class='information'> <%= t('student.may_not_modify') %> </p>
-          <% end %>
-
-          <% # If a group is valid, the current user is the inviter of the group and
-           # they are the _only_ member of this group, they should be possible to delete
-           # their group, provided there haven't been any files submitted.
-           if !@grouping.nil? && @grouping.deletable_by?(@current_user) %>
-          <%= button_to_function t(:delete),
-                                  { onclick: "may_not_delete()" } %>
           <% end %>
         <% end %>
 
