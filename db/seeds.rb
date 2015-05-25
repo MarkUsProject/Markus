@@ -80,7 +80,6 @@ NUMBER_OF_GROUPS.times do |time|
   group = Group.new
   group.group_name = student.user_name
   group.save
-  #group.set_repo_permissions
   grouping = Grouping.new
   grouping.group = group
   grouping.assignment = a1
@@ -92,7 +91,6 @@ NUMBER_OF_GROUPS.times do |time|
   group = Group.new
   group.group_name = "#{student.user_name} a2"
   group.save
-#  group.set_repo_permissions
   grouping = Grouping.new
   grouping.group = group
   grouping.assignment = a2
