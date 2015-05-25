@@ -96,8 +96,6 @@ class Group < ActiveRecord::Base
   end
 
   # Set the default repo permissions.
-  # NOTE: this function should no longer be needed, since
-  # repository permissions are no longer set on creation.
   def set_repo_permissions
     return true if !MarkusConfigurator.markus_config_repository_admin?
     # Each admin user will have read and write permissions on each repo

@@ -621,8 +621,7 @@ class Grouping < ActiveRecord::Base
 
   # Should we write repository permissions for this grouping?
   def write_repo_permissions?
-    MarkusConfigurator.markus_config_repository_admin? &&
-        self.repository_external_commits_only?
+    MarkusConfigurator.markus_config_repository_admin?
   end
 
   def assigned_tas_for_criterion(criterion)
