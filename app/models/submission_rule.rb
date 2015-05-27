@@ -2,16 +2,24 @@ class SubmissionRule < ActiveRecord::Base
 
   class InvalidRuleType < Exception
     def initialize(rule_name)
-      super I18n.t('assignment.not_valid_submission_rule', rule_name)
+      super I18n.t('assignment.not_valid_submission_rule', type: rule_name)
     end
   end
 
   belongs_to :assignment
   has_many :periods, dependent: :destroy, order: 'id'
   accepts_nested_attributes_for :periods, allow_destroy: true
+  attr_accessible :type
 
 #  validates_associated :assignment
 #  validates_presence_of :assignment
+
+  def self.descendants
+    [ NoLateSubmissionRule,
+      PenaltyPeriodSubmissionRule,
+      PenaltyDecayPeriodSubmissionRule,
+      GracePeriodSubmissionRule ]
+  end
 
   def can_collect_now?
     return @can_collect_now if !@can_collect_now.nil?
