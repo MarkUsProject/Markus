@@ -157,7 +157,7 @@ class MainController < ApplicationController
     ]).all(order: 'due_date ASC')
     @grade_entry_forms = GradeEntryForm.unscoped.includes([
       :grade_entry_items
-    ]).all(order: 'date ASC')
+    ]).all(order: 'id ASC')
 
     @current_assignment = Assignment.get_current_assignment
 
