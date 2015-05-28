@@ -14,7 +14,7 @@ end
   Ta.create(user_name: ta[0], first_name: ta[1], last_name: ta[2])
 end
 
-# Change this to 'db/data/longstudents.csv' to test with ~1600 students.
+# Change this to 'db/data/longstudents.csv' to test with ~1800 students.
 STUDENT_CSV = 'db/data/students.csv'
 
 NUMBER_OF_GROUPS = 15
