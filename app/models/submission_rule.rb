@@ -15,10 +15,10 @@ class SubmissionRule < ActiveRecord::Base
 #  validates_presence_of :assignment
 
   def self.descendants
-    [ NoLateSubmissionRule,
-      PenaltyPeriodSubmissionRule,
-      PenaltyDecayPeriodSubmissionRule,
-      GracePeriodSubmissionRule ]
+    [NoLateSubmissionRule,
+     PenaltyPeriodSubmissionRule,
+     PenaltyDecayPeriodSubmissionRule,
+     GracePeriodSubmissionRule]
   end
 
   def can_collect_now?

@@ -235,7 +235,8 @@ class AssignmentsController < ApplicationController
     rescue SubmissionRule::InvalidRuleType => e
       @assignment.errors.add(:base, t('assignment.error', message: e.message))
       flash[:error] = t('assignment.error', message: e.message)
-      render :edit, id: @assignment.id and return
+      render :edit, id: @assignment.id
+      return
     end
 
     if @assignment.save
