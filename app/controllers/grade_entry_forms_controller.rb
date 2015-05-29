@@ -139,7 +139,7 @@ class GradeEntryFormsController < ApplicationController
     if current_user.admin?
       @students = Student.all
     elsif current_user.ta?
-      @students = current_user.grade_entry_students.collect(&:user)
+      @students = current_user.grade_entry_students.map(&:user)
     end
 
     @student_grades = @students.map do |student|
