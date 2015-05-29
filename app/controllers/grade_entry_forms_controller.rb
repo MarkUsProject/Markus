@@ -136,7 +136,11 @@ class GradeEntryFormsController < ApplicationController
 
   def populate_grades_table
     @grade_entry_form = GradeEntryForm.find(params[:id])
-    @students = Student.all
+    if current_user.admin?
+      @students = Student.all
+    elsif current_user.ta?
+      @students = current_user.grade_entry_students.collect(&:user)
+    end
 
     @student_grades = @students.map do |student|
       s = student.attributes
