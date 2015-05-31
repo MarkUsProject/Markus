@@ -597,7 +597,6 @@ pt:
 
     mark:
       error:
-        save: "Não foi possível salvar esta avaliação!: "
         validate_flexible: "deve ser entre 0 e a nota máxima do critério"
         validate_rubric: "deve ser um inteiro entre 0 e 4"
 

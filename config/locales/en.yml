@@ -635,7 +635,6 @@ en:
 
     mark:
       error:
-        save: "Could not save this mark!: "
         validate_flexible: "must be between 0 and the maximum mark of the criterion"
         validate_rubric: "must be an integer between 0 and 4"
 
