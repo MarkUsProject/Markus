@@ -273,6 +273,7 @@ pt:
     marker:
       new_annot: "Nova anotação"
       overall_comments: "Comentários gerais"
+      overall_comments_success: "Comentários gerais atualizado com sucesso."
       current_annotations: "Anotações atuais"
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
       annot_summary: "Resumo de anot."

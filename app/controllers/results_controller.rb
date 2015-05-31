@@ -491,10 +491,9 @@ class ResultsController < ApplicationController
   end
 
   def update_overall_comment
-    @result = Result.find(params[:id])
-    @result.overall_comment = params[:result][:overall_comment]
-    @result.save
-    render 'update_overall_comment', formats: [:js]
+    Result.find(params[:id]).update_attributes(
+      overall_comment: params[:result][:overall_comment])
+    head :ok
   end
 
   def update_overall_remark_comment

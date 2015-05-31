@@ -285,6 +285,7 @@ en:
     marker:
       new_annot: "New Annot."
       overall_comments: "Overall Comments"
+      overall_comments_success: "Overall comments successfully updated."
       current_annotations: "Current Annotations"
       across_all_submission_files: "Current annotations across all submission files. Click on the line number to jump to the location in the file."
       annot_summary: "Annotations"

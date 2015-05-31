@@ -276,6 +276,7 @@ fr:
     marker:
       new_annot: "Nouv. annot."
       overall_comments: "Commentaire général"
+      overall_comments_success: "Commentaires généraux mis à jour avec succès."
       current_annotations: "Annotations en cours"
       across_all_submission_files: "Annnotations en cours sur tous les fichiers envoyés. Cliquer sur le numéro de ligne pour vous rendre directement au bon endroit sur le fichier."
       annot_summary: "Liste annot."
