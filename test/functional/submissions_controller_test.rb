@@ -130,6 +130,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     should 'and I should be able to delete files' do
       assert @student.has_accepted_grouping_for?(@assignment.id)
 
+      #
       @grouping.group.access_repo do |repo|
         txn = repo.get_transaction('markus')
         txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
