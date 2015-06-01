@@ -17,7 +17,7 @@ class GradeEntryForm < ActiveRecord::Base
   # Call custom validator in order to validate the date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
-  #validates                 :date, date: true
+  # validates                 :date, date: true
 
   validates_presence_of     :short_identifier
   validates_uniqueness_of   :short_identifier, case_sensitive: true
