@@ -371,8 +371,9 @@ class ResultsController < ApplicationController
                    "assignment #{assignment.short_identifier} for " +
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
-      render partial: 'results/marker/update_mark',
-             locals: { result_mark: result_mark, mark_value: result_mark.mark}
+      render text: "#{result_mark.mark}," +
+                   "#{result_mark.result.get_subtotal}," +
+                   "#{result_mark.result.total_mark}"
     else
       m_logger.log("Error while trying to update mark of submission. " +
                    "User: #{current_user.user_name}, " +

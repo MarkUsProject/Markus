@@ -53,11 +53,25 @@ jQuery(document).ready(function() {
         url:  this.getAttribute('data-action'),
         type: 'POST',
         data: params,
+        beforeSend: function () {
+          document.getElementById('mark_verify_result_' + mark_id)
+                  .style.display = 'none';
+        },
         error: function(err) {
           var error_div = document.getElementById(
             'mark_verify_result_' + mark_id);
           error_div.style.display = '';
           error_div.innerHTML = err.responseText;
+        },
+        success: function(data) {
+          var items = data.split(',');
+          var mark = items[0];
+          var subtotal = items[1];
+          var total = items[2];
+          update_total_mark(total);
+          document.getElementById('mark_' + mark_id + '_summary_mark')
+                  .innerHTML = mark;
+          document.getElementById('current_subtotal_div').innerHTML = subtotal;
         }
       });
     });

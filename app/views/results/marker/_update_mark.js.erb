@@ -12,10 +12,6 @@
     '<%= result_mark.get_mark %>';
 <% end %>
 
-<% if result_mark.markable_type == 'FlexibleCriterion' %>
-  document.getElementById('mark_verify_result_<%= result_mark.id.to_s %>').style.display = 'none';
-<% end %>
-
 document.getElementById('mark_<%= result_mark.id.to_s %>_summary_mark').innerHTML = '<%= result_mark.mark %>';
 document.getElementById('current_subtotal_div').innerHTML = '<%= result_mark.result.get_subtotal %>';
 
