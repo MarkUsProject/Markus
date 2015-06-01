@@ -235,6 +235,10 @@
               <%= t('student.working_alone') %>
             </p>
           <% end %>
+
+          <% if !@grouping.nil? && @assignment.group_max > 1 %>
+            <p class='information'> <%= t('student.group_not_deletable') %> </p> 
+          <% end %>
             
           <% # Student not reached the group max and is not working alone 
            if @grouping.inviter == @current_user &&
@@ -251,19 +255,6 @@
               <% end %>
           <% else %>
             <p class='information'> <%= t('student.may_not_modify') %> </p>
-          <% end %>
-
-          <% # If a group is valid, the current user is the inviter of the group and
-           # they are the _only_ member of this group, they should be possible to delete
-           # their group, provided there haven't been any files submitted.
-           if !@grouping.nil? && @grouping.deletable_by?(@current_user) %>
-          <%= button_to t(:delete),
-                      { action: 'deletegroup',
-                        id: @assignment.id },
-                      { confirm: t('student.confirm_delete_group'),
-                        title: t('student.delete_your_group'),
-                        class: 'delete',
-                        method: :get } %>
           <% end %>
         <% end %>
 
