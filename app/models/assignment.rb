@@ -313,7 +313,7 @@ class Assignment < ActiveRecord::Base
         group = Group.create(group_name: new_group_name)
       end
     end
-
+    group.set_repo_permissions
     Grouping.create(group: group, assignment: self)
   end
 

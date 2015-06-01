@@ -14,7 +14,11 @@ end
   Ta.create(user_name: ta[0], first_name: ta[1], last_name: ta[2])
 end
 
+# Change this to 'db/data/longstudents.csv' to test with ~1800 students.
 STUDENT_CSV = 'db/data/students.csv'
+
+NUMBER_OF_GROUPS = 15
+
 if File.readable?(STUDENT_CSV)
   csv_students = File.new(STUDENT_CSV)
   User.upload_user_list(Student, csv_students, nil)
@@ -72,8 +76,9 @@ a2.save
 # Let's create groups and groupings !
 students = Student.all
 
-15.times do |time|
+NUMBER_OF_GROUPS.times do |time|
   student = students[time]
+  # Generate the groups for A1
   group = Group.new
   group.group_name = student.user_name
   group.save
@@ -84,6 +89,7 @@ students = Student.all
   grouping.invite([student.user_name],
                   StudentMembership::STATUSES[:inviter],
                   invoked_by_admin=true)
+  # Generate the groups for A2
   group = Group.new
   group.group_name = "#{student.user_name} a2"
   group.save
@@ -92,12 +98,13 @@ students = Student.all
   grouping.assignment = a2
   grouping.save
   (0..1).each do |count|
-    grouping.invite([students[time + count * 15].user_name],
+    grouping.invite([students[time + count * NUMBER_OF_GROUPS].user_name],
                     StudentMembership::STATUSES[:inviter],
                     invoked_by_admin = true)
   end
 end
 
+Repository::SubversionRepository.__generate_authz_file
 
 # Let's populate students repository with nice data
 
