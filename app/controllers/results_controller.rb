@@ -365,9 +365,6 @@ class ResultsController < ApplicationController
     assignment = submission.grouping.assignment # get assignment for logging
     m_logger = MarkusLogger.instance
 
-    # FIXME checking both that result_mark is valid and correctly saved is
-    # useless. The validation is done automatically before saving unless
-    # specified otherwise.
     if result_mark.save
       m_logger.log("User '#{current_user.user_name}' updated mark for " +
                    "submission (id: #{submission.id}) of " +
@@ -383,9 +380,7 @@ class ResultsController < ApplicationController
                    "Assignment: #{assignment.short_identifier}, " +
                    "Group: #{group.group_name}.",
                    MarkusLogger::ERROR)
-      render partial: 'results/marker/mark_verify_result',
-             locals: { mark_id: result_mark.id,
-                       mark_error: result_mark.errors.full_messages.join }
+      render text: result_mark.errors.full_messages.join, status: :bad_request
     end
   end
 

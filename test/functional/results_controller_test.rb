@@ -1017,17 +1017,15 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    mark_id: @mark.id,
                    mark: 'something'
 
-            assert render_template 'mark_verify_result.rjs'
-            assert_response :success
-            # Workaround to assert that the error message made its way to the response
+            assert_response :bad_request
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end
 
           should 'with save error' do
             @mark.expects(:save).once.returns(false)
-
             Mark.stubs(:find).once.returns(@mark)
             ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
+
             get_as @admin,
                    :update_mark,
                    :assignment_id => 1,
@@ -1035,9 +1033,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :id => 1,
                    :mark_id => 1,
                    :mark => 1
-            assert render_template 'shared/_handle_error.js.erb'
-            assert_response :success
-            # Workaround to assert that the error message made its way to the response
+            assert_response :bad_request
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end
 
@@ -1381,9 +1377,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    id: 1,
                    mark_id: @mark.id,
                    mark: 'something'
-            assert render_template 'mark_verify_result.rjs'
-            assert_response :success
-            # Workaround to assert that the error message made its way to the response
+
+            assert_response :bad_request
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end
 

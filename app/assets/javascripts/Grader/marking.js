@@ -34,7 +34,8 @@ jQuery(document).ready(function() {
   });
 
   // Event handlers for the flexible criteria grades
-  jQuery('.mark_grade_input').each(function(index) {
+  jQuery('.mark_grade_input').each(function(index, input) {
+    var mark_id = input.id.substr(5);
 
     // Prevent clicks from hiding the grade
     jQuery(this).click(function(event) {
@@ -51,7 +52,13 @@ jQuery(document).ready(function() {
       jQuery.ajax({
         url:  this.getAttribute('data-action'),
         type: 'POST',
-        data: params
+        data: params,
+        error: function(err) {
+          var error_div = document.getElementById(
+            'mark_verify_result_' + mark_id);
+          error_div.style.display = '';
+          error_div.innerHTML = err.responseText;
+        }
       });
     });
   });
