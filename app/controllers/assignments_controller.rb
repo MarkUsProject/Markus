@@ -1,5 +1,4 @@
 class AssignmentsController < ApplicationController
-  require_dependency 'submission_rule'
 
   before_filter      :authorize_only_for_admin,
                      except: [:deletegroup,
@@ -635,10 +634,6 @@ class AssignmentsController < ApplicationController
     rule_attributes = params[:assignment][:submission_rule_attributes]
     rule_name       = rule_attributes[:type]
 
-    # Force the classes to be loaded so that the following check will
-    # succeed on these inputs.
-    [NoLateSubmissionRule, PenaltyPeriodSubmissionRule,
-     PenaltyDecayPeriodSubmissionRule, GracePeriodSubmissionRule]
     if SubmissionRule.const_defined?(rule_name)
       potential_rule = SubmissionRule.const_get(rule_name)
     else
