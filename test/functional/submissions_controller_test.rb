@@ -8,7 +8,7 @@ require 'mocha/setup'
 class SubmissionsControllerTest < AuthenticatedControllerTest
 
   context 'I am a student trying working alone on an assignment' do
-    setup do # called before each test.
+    setup do
       @group = Group.make
       @assignment = Assignment.make(:allow_web_submits => true, :group_min => 1)
       @grouping = Grouping.make(:group => @group, :assignment => @assignment)
