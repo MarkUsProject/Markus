@@ -153,14 +153,14 @@ describe SubmissionsController do
         old_file_2 = old_files['TestShapes.java']
 
         post_as(
-            @student,
-            :update_files, 
-            assignment_id: @assignment.id,
-              delete_files: ['Shapes.java'],
-              file_revisions: { 'Shapes.java' => 
-                                    old_file_1.from_revision,
-                                'TestShapes.java' =>
-                                    old_file_2.from_revision })
+         @student,
+         :update_files, 
+         assignment_id: @assignment.id,
+         delete_files: ['Shapes.java'],
+         file_revisions: { 'Shapes.java' =>
+                               old_file_1.from_revision,
+                           'TestShapes.java' =>
+                               old_file_2.from_revision })
       end
 
       # must not respond with redirect_to (see comment in
@@ -218,7 +218,7 @@ describe SubmissionsController do
     end
   end
 
-  describe 'A TA'  do
+  describe 'A TA' do
     before(:each) do
       @group = create(:group)
       @assignment = create(:assignment,
@@ -291,14 +291,14 @@ describe SubmissionsController do
         allow(Assignment).to receive(:find) {@assignment}
         @assignment.expects(:short_identifier).once.returns('a1')
         @assignment.submission_rule.expects(
-            :can_collect_now?).once.returns(false)
+         :can_collect_now?).once.returns(false)
         get_as @ta_membership.user,
                :collect_ta_submissions,
                :assignment_id => 1,
                :id => 1
         assert_equal flash[:error], I18n.t(
-            'collect_submissions.could_not_collect',
-            :assignment_identifier => 'a1')
+         'collect_submissions.could_not_collect',
+         :assignment_identifier => 'a1')
         assert_response :redirect
       end
 
@@ -316,8 +316,8 @@ describe SubmissionsController do
                :id => 1
 
         expect(flash[:success]).to eq(I18n.t(
-            'collect_submissions.collection_job_started',
-            :assignment_identifier => 'a1'))
+         'collect_submissions.collection_job_started',
+         :assignment_identifier => 'a1'))
         is_expected.to respond_with(:redirect)
       end
     end
@@ -417,8 +417,8 @@ describe SubmissionsController do
                :collect_all_submissions,
                assignment_id: 1
         expect(flash[:error]).to eq(I18n.t(
-            'collect_submissions.could_not_collect',
-            assignment_identifier: 'a1'))
+         'collect_submissions.could_not_collect',
+         assignment_identifier: 'a1'))
         is_expected.to respond_with(:redirect)
       end
 
@@ -432,8 +432,8 @@ describe SubmissionsController do
         @submission_collector.expects(:push_groupings_to_queue).once
         get_as @admin, :collect_all_submissions, assignment_id: 1, id: 1
         expect(flash[:success]).to eq(I18n.t(
-            'collect_submissions.collection_job_started',
-            assignment_identifier: 'a1'))
+         'collect_submissions.collection_job_started',
+          assignment_identifier: 'a1'))
         is_expected.to respond_with(:redirect)
       end
 
@@ -446,7 +446,7 @@ describe SubmissionsController do
                 release_results: 'true'
         is_expected.to respond_with(:success)
       end
-    end  
+    end
 
     it 'download all files uploaded in a Zip file' do
       @file1_name = 'TestFile.java'
@@ -464,7 +464,8 @@ describe SubmissionsController do
 
         # Generate submission
         @submission = Submission.generate_new_submission(
-                          @grouping, repo.get_latest_revision)
+                       @grouping,
+                       repo.get_latest_revision)
       end
       get_as @admin,
              :downloads,
@@ -530,12 +531,12 @@ describe SubmissionsController do
              revision_number: '0'
 
       expect(response.body).to eq(I18n.t(
-          'student.submission.no_revision_available'))
+       'student.submission.no_revision_available'))
       is_expected.to respond_with(:success)
     end
 
     describe 'attempting to download groupings files' do
-      before(:each)  do
+      before(:each) do
         @assignment = create(:assignment,
                              allow_web_submits: true,
                              group_min: 1)
@@ -567,12 +568,12 @@ describe SubmissionsController do
         Zip::File.open(zip_path) do |zip_file|
           (1..3).to_a.each do |i|
             instance_variable_set(:"@file#{i}_path", File.join(
-                "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
-                "file#{i}"))
+             "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
+             "file#{i}"))
             expect(zip_file.find_entry(instance_variable_get(
-                :"@file#{i}_path"))).to_not be_nil
+             :"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
-                zip_file.read(instance_variable_get(:"@file#{i}_path")))
+             zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
         end
       end
@@ -590,9 +591,9 @@ describe SubmissionsController do
                 "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
                 "file#{i}"))
             expect(zip_file.find_entry(
-                instance_variable_get(:"@file#{i}_path"))).to_not be_nil
+             instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
-                zip_file.read(instance_variable_get(:"@file#{i}_path")))
+             zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
         end
       end
@@ -634,6 +635,6 @@ def submit_file(assignment, grouping, filename = 'file', content = 'content')
 
     # Generate submission
     Submission.generate_new_submission(
-        grouping, repo.get_latest_revision)
+     grouping, repo.get_latest_revision)
   end
 end
