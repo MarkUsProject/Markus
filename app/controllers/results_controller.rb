@@ -371,7 +371,7 @@ class ResultsController < ApplicationController
                    "assignment #{assignment.short_identifier} for " +
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
-      render text: "#{result_mark.mark}," +
+      render text: "#{result_mark.get_mark}," +
                    "#{result_mark.result.get_subtotal}," +
                    "#{result_mark.result.total_mark}"
     else
