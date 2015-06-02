@@ -115,11 +115,6 @@ Markus::Application.configure do
   REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/dev/repos"
 
   ###################################################################
-  # Directory where Repositories will be created. Make sure MarkUs is allowed
-  # to write to this directory
-  REPOSITORY_STORAGE_GITOLITE = "#{::Rails.root.to_s}/data/dev/repos/gitoliteRepos"
-
-  ###################################################################
   # Directory where authentication keys will be uploaded. Make sure MarkUs is
   # allowed to write to this directory
   KEY_STORAGE = "#{::Rails.root.to_s}/data/dev/keys"
@@ -131,8 +126,9 @@ Markus::Application.configure do
 
   ###################################################################
   # Location of the public and private key for the git user on the system
-  GITOLITE_SETTINGS = { public_key: "/home/git/git.pub",
-                        private_key: "/home/git/.ssh/id_rsa" }
+  GITOLITE_SETTINGS = { public_key: '/home/vagrant/git.pub',
+                        private_key: '/home/vagrant/.ssh/id_rsa',
+                        host: 'localhost' }
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.
