@@ -22,10 +22,12 @@ describe SubmissionsController do
     end
 
     it 'should be able to add files' do
-      file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java')
-      file_2 = fixture_file_upload(File.join('/files', 'TestShapes.java'), 'text/java')
+      file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
+                                             'text/java')
+      file_2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
+                                             'text/java')
 
-      expect(@student.has_accepted_grouping_for?(@assignment.id)).to eq(true) # this can be done better!!
+      expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
       post_as @student,
               :update_files,
               :assignment_id => @assignment.id,
@@ -78,13 +80,15 @@ describe SubmissionsController do
     #TODO figure out how to test this test into the one above
     #TODO Figure out how to remove fixture_file_upload
     it 'should be able to replace files' do
-      expect(@student.has_accepted_grouping_for?(@assignment.id)).to eq(true) # fix this
+      expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
       
       @grouping.group.access_repo do |repo|
         txn = repo.get_transaction('markus')
         # overwrite and commit both files
-        txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
-        txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
+        txn.add(File.join(@assignment.repository_folder,'Shapes.java'),
+                'Content of Shapes.java')
+        txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'),
+                'Content of TestShapes.java')
         repo.commit(txn)
         
         # revision 2
@@ -93,8 +97,10 @@ describe SubmissionsController do
         old_file_1 = old_files['Shapes.java']
         old_file_2 = old_files['TestShapes.java']
 
-        @file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java')
-        @file_2 = fixture_file_upload(File.join('/files', 'TestShapes.java'), 'text/java')
+        @file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
+                                      'text/java')
+        @file_2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
+                                      'text/java')
 
         post_as @student,
                 :update_files,
@@ -131,12 +137,14 @@ describe SubmissionsController do
     end
 
     it 'should be able to delete files' do
-      expect(@student.has_accepted_grouping_for?(@assignment.id)).to eq(true) # fix this
+      expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
 
       @grouping.group.access_repo do |repo|
         txn = repo.get_transaction('markus')
-        txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
-        txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
+        txn.add(File.join(@assignment.repository_folder,'Shapes.java'),
+                'Content of Shapes.java')
+        txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'),
+                'Content of TestShapes.java')
         repo.commit(txn)
         revision = repo.get_latest_revision
         old_files = revision.files_at_path(@assignment.repository_folder)
@@ -267,7 +275,9 @@ describe SubmissionsController do
     end
 
     it 'should be able to download the svn repository list' do
-      get_as @ta_membership.user, :download_svn_repo_list, :assignment_id => 1
+      get_as @ta_membership.user,
+             :download_svn_repo_list,
+             :assignment_id => 1
       is_expected.to respond_with(:missing)
     end
 
@@ -493,7 +503,8 @@ describe SubmissionsController do
         repo.commit(txn)
 
         # Generate submission
-        @submission = Submission.generate_new_submission(@grouping, repo.get_latest_revision)
+        @submission = Submission.generate_new_submission(@grouping,
+                                                         repo.get_latest_revision)
       end
       get_as @admin, :downloads, assignment_id: @assignment.id,
              id: @submission.id,
@@ -539,7 +550,8 @@ describe SubmissionsController do
                 "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
                 "file#{i}"))
             expect(zip_file.find_entry(instance_variable_get(:"@file#{i}_path"))).to_not be_nil
-            expect("file#{i}'s content\n").to eq(zip_file.read(instance_variable_get(:"@file#{i}_path")))
+            expect("file#{i}'s content\n").to eq(
+                zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
         end
       end
@@ -557,7 +569,8 @@ describe SubmissionsController do
                 "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
                 "file#{i}"))
             expect(zip_file.find_entry(instance_variable_get(:"@file#{i}_path"))).to_not be_nil
-            expect("file#{i}'s content\n").to eq(zip_file.read(instance_variable_get(:"@file#{i}_path")))
+            expect("file#{i}'s content\n").to eq(
+                zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
         end
       end
