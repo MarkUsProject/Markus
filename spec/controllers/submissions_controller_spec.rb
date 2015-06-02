@@ -107,7 +107,8 @@ describe SubmissionsController do
                 assignment_id: @assignment.id,
                 new_files: [@file_1, @file_2],
                 file_revisions: { 'Shapes.java'     => old_file_1.from_revision,
-                                  'TestShapes.java' => old_file_2.from_revision }
+                                  'TestShapes.java' =>
+                                      old_file_2.from_revision }
       end
       is_expected.to respond_with(:success)
 
@@ -285,12 +286,14 @@ describe SubmissionsController do
       it 'should get an error if it is before assignment due date' do
         allow(Assignment).to receive(:find) {@assignment}
         @assignment.expects(:short_identifier).once.returns('a1')
-        @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
+        @assignment.submission_rule.expects(
+            :can_collect_now?).once.returns(false)
         get_as @ta_membership.user,
                :collect_ta_submissions,
                :assignment_id => 1,
                :id => 1
-        assert_equal flash[:error], I18n.t('collect_submissions.could_not_collect',
+        assert_equal flash[:error], I18n.t(
+            'collect_submissions.could_not_collect',
             :assignment_identifier => 'a1')
         assert_response :redirect
       end
@@ -300,14 +303,16 @@ describe SubmissionsController do
         allow(Assignment).to receive(:find) {@assignment}
         SubmissionCollector.expects(:instance).returns(@submission_collector)
         @assignment.expects(:short_identifier).once.returns('a1')
-        @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
+        @assignment.submission_rule.expects(
+            :can_collect_now?).once.returns(true)
         @submission_collector.expects(:push_groupings_to_queue).once
         get_as @ta_membership.user,
                :collect_ta_submissions,
                :assignment_id => 1,
                :id => 1
 
-        expect(flash[:success]).to eq(I18n.t('collect_submissions.collection_job_started',
+        expect(flash[:success]).to eq(I18n.t(
+            'collect_submissions.collection_job_started',
             :assignment_identifier => 'a1'))
         is_expected.to respond_with(:redirect)
       end
@@ -402,12 +407,14 @@ describe SubmissionsController do
       it 'should get an error if it is before assignment due date' do
         allow(Assignment).to receive(:find) {@assignment}
         @assignment.expects(:short_identifier).once.returns('a1')
-        @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
+        @assignment.submission_rule.expects(
+            :can_collect_now?).once.returns(false)
         get_as @admin,
                :collect_all_submissions,
                assignment_id: 1
-        expect(flash[:error]).to eq(I18n.t('collect_submissions.could_not_collect',
-                                           assignment_identifier: 'a1'))
+        expect(flash[:error]).to eq(I18n.t(
+            'collect_submissions.could_not_collect',
+            assignment_identifier: 'a1'))
         is_expected.to respond_with(:redirect)
       end
 
@@ -416,11 +423,13 @@ describe SubmissionsController do
         allow(Assignment).to receive(:find) {@assignment}
         SubmissionCollector.expects(:instance).returns(@submission_collector)
         @assignment.expects(:short_identifier).once.returns('a1')
-        @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
+        @assignment.submission_rule.expects(
+            :can_collect_now?).once.returns(true)
         @submission_collector.expects(:push_groupings_to_queue).once
         get_as @admin, :collect_all_submissions, assignment_id: 1, id: 1
-        expect(flash[:success]).to eq(I18n.t('collect_submissions.collection_job_started',
-                            assignment_identifier: 'a1'))
+        expect(flash[:success]).to eq(I18n.t(
+            'collect_submissions.collection_job_started',
+            assignment_identifier: 'a1'))
         is_expected.to respond_with(:redirect)
       end
 
@@ -492,7 +501,8 @@ describe SubmissionsController do
              assignment_id: @assignment.id, id: @submission.id,
              grouping_id: @grouping.id
 
-      expect(response.body).to eq(I18n.t('student.submission.no_files_available'))
+      expect(response.body).to eq(I18n.t(
+          'student.submission.no_files_available'))
 
     end
     it 'not be able to download the revision 0' do
@@ -503,14 +513,15 @@ describe SubmissionsController do
         repo.commit(txn)
 
         # Generate submission
-        @submission = Submission.generate_new_submission(@grouping,
-                                                         repo.get_latest_revision)
+        @submission = Submission.generate_new_submission(
+            @grouping, repo.get_latest_revision)
       end
       get_as @admin, :downloads, assignment_id: @assignment.id,
              id: @submission.id,
              grouping_id: @grouping.id, revision_number: '0'
 
-      expect(response.body).to eq(I18n.t('student.submission.no_revision_available'))
+      expect(response.body).to eq(I18n.t(
+          'student.submission.no_revision_available'))
       is_expected.to respond_with(:success)
     end
 
@@ -531,13 +542,14 @@ describe SubmissionsController do
           @membership = create(:student_membership,
                                user: instance_variable_get(:"@student#{i}"),
                                membership_status: 'inviter',
-                               grouping: instance_variable_get(:"@grouping#{i}"))
+                               grouping: instance_variable_get(
+                                   :"@grouping#{i}"))
           submit_file(@assignment, instance_variable_get(:"@grouping#{i}"),
                       "file#{i}", "file#{i}'s content\n")
         end
       end
 
-      it 'should be able to download all submissions from all groups' do
+      it 'should be able to download all groups\' submissions' do
         get_as @admin, :download_groupings_files,
                assignment_id: @assignment.id,
                groupings: [@grouping1.id, @grouping2.id, @grouping3.id]
@@ -549,13 +561,14 @@ describe SubmissionsController do
             instance_variable_set(:"@file#{i}_path", File.join(
                 "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
                 "file#{i}"))
-            expect(zip_file.find_entry(instance_variable_get(:"@file#{i}_path"))).to_not be_nil
+            expect(zip_file.find_entry(instance_variable_get(
+                :"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
                 zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
         end
       end
-      it 'should - as Ta - be able to download all submissions from all groups' do
+      it 'should - as Ta - be able to download all groups\' submissions' do
         @ta = create(:ta)
         get_as @ta, :download_groupings_files,
                assignment_id: @assignment.id,
@@ -568,7 +581,8 @@ describe SubmissionsController do
             instance_variable_set(:"@file#{i}_path", File.join(
                 "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
                 "file#{i}"))
-            expect(zip_file.find_entry(instance_variable_get(:"@file#{i}_path"))).to_not be_nil
+            expect(zip_file.find_entry(
+                instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
                 zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
@@ -616,13 +630,4 @@ def submit_file(assignment, grouping, filename = 'file', content = 'content')
   end
 end
 
-# Is there a better place to put this? We will probably want to use it in
-# other test files.
-def destroy_repos
-  conf = Hash.new
-  conf['IS_REPOSITORY_ADMIN'] = true
-  conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
-  conf['REPOSITORY_PERMISSION_FILE'] = 'dummyfile'
-  Repository.get_class(REPOSITORY_TYPE, conf).purge_all # (Only) sets the repositories to {}.
-end
 
