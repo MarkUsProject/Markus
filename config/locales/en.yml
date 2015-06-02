@@ -147,7 +147,7 @@ en:
         short_identifier:   "Short Identifier<span class='required_field'>*</span>"
         update_success:        "Successfully updated the assignment"
         create_success:        "Successfully created the assignment"
-        error: "Could not assign SubmissionRule: #%{message}"
+        error: "Could not assign SubmissionRule: %{message}"
         not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
         rules:           "Assignment Rules"
         edit:           "Edit Assignment:"

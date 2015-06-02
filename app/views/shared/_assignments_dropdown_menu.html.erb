@@ -87,6 +87,8 @@
            # menu for assignments should go to browse, and not repo_browser
            if target_action == 'repo_browser'
           target_action = 'browse'
+           elsif target_action == 'update'
+             target_action = 'edit'
         end %>
         <% # Don't show hidden assignments in the dropdown menu for students
            # either. Append '(hidden)' for TAs and Admins.

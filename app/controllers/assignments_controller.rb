@@ -1,11 +1,6 @@
-# We need to force loading of all submission rules so that methods
-# like .const_defined? work correctly (rails abuse of autoload was
-# causing issues)
-Dir.glob('app/models/*_submission_rule.rb').each do |rule|
-  require File.expand_path(rule)
-end
-
 class AssignmentsController < ApplicationController
+  require_dependency 'submission_rule'
+
   before_filter      :authorize_only_for_admin,
                      except: [:deletegroup,
                               :delete_rejected,
@@ -238,8 +233,8 @@ class AssignmentsController < ApplicationController
         @assignment = process_assignment_form(@assignment)
       end
     rescue SubmissionRule::InvalidRuleType => e
-      @assignment.errors.add(:base, I18n.t('assignment.error',
-                                           message: e.message))
+      @assignment.errors.add(:base, t('assignment.error', message: e.message))
+      flash[:error] = t('assignment.error', message: e.message)
       render :edit, id: @assignment.id
       return
     end
@@ -639,11 +634,14 @@ class AssignmentsController < ApplicationController
     # First, figure out what kind of rule has been requested
     rule_attributes = params[:assignment][:submission_rule_attributes]
     rule_name       = rule_attributes[:type]
-    potential_rule  = if SubmissionRule.const_defined?(rule_name)
-                        SubmissionRule.const_get(rule_name)
-                      end
 
-    unless potential_rule && potential_rule.ancestors.include?(SubmissionRule)
+    # Force the classes to be loaded so that the following check will
+    # succeed on these inputs.
+    [NoLateSubmissionRule, PenaltyPeriodSubmissionRule,
+     PenaltyDecayPeriodSubmissionRule, GracePeriodSubmissionRule]
+    if SubmissionRule.const_defined?(rule_name)
+      potential_rule = SubmissionRule.const_get(rule_name)
+    else
       raise SubmissionRule::InvalidRuleType, rule_name
     end
 
