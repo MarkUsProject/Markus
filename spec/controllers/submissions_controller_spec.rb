@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe SubmissionsController do
-  
+
   after(:each) do 
     destroy_repos
   end
-    
+
   describe 'A student working alone' do
     before(:each) do
       @group = create(:group)
@@ -36,7 +36,7 @@ describe SubmissionsController do
       # must not respond with redirect_to (see comment in
       # app/controllers/submission_controller.rb#update_files)
       is_expected.to respond_with(:success)
-      
+
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
       expect(assigns :assignment).to_not be_nil
@@ -80,7 +80,7 @@ describe SubmissionsController do
     # TODO Figure out how to remove fixture_file_upload
     it 'should be able to replace files' do
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
-      
+
       @grouping.group.access_repo do |repo|
         txn = repo.get_transaction('markus')
         # overwrite and commit both files
@@ -89,7 +89,7 @@ describe SubmissionsController do
         txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'),
                 'Content of TestShapes.java')
         repo.commit(txn)
-        
+
         # revision 2
         revision = repo.get_latest_revision
         old_files = revision.files_at_path(@assignment.repository_folder)
@@ -209,7 +209,7 @@ describe SubmissionsController do
 
       is_expected.to respond_with(:missing)
     end
-    
+
     it 'should not be able to download the svn repository list' do
       get_as @student, :download_svn_repo_list, assignment_id: 1
 
@@ -409,7 +409,7 @@ describe SubmissionsController do
       end
 
       it 'should get an error if it is before assignment due date' do
-        allow(Assignment).to receive(:find) {@assignment}
+        allow(Assignment).to receive(:find) { @assignment }
         @assignment.expects(:short_identifier).once.returns('a1')
         @assignment.submission_rule.expects(
             :can_collect_now?).once.returns(false)
@@ -424,7 +424,7 @@ describe SubmissionsController do
 
       it 'should succeed if it is after assignment due date' do
         @submission_collector = SubmissionCollector.create
-        allow(Assignment).to receive(:find) {@assignment}
+        allow(Assignment).to receive(:find) { @assignment }
         SubmissionCollector.expects(:instance).returns(@submission_collector)
         @assignment.expects(:short_identifier).once.returns('a1')
         @assignment.submission_rule.expects(
@@ -544,7 +544,7 @@ describe SubmissionsController do
           @grouping = create(:grouping,
                              assignment: @assignment)
           @student = create(:student)
-            
+
           instance_variable_set(:"@student#{i}", @student)
           instance_variable_set(:"@grouping#{i}",
                                 @grouping)
