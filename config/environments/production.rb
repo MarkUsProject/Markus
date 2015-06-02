@@ -154,7 +154,8 @@ Markus::Application.configure do
   ###################################################################
   # Location of the public and private key for the git user on the system
   GITOLITE_SETTINGS = { public_key: "/home/git/git.pub",
-                        private_key: "/home/git/.ssh/id_rsa" }
+                        private_key: "/home/git/.ssh/id_rsa",
+			host: "localhost" }
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.
