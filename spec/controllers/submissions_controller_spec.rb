@@ -160,7 +160,7 @@ describe SubmissionsController do
               file_revisions: { 'Shapes.java' => 
                                     old_file_1.from_revision,
                                 'TestShapes.java' =>
-                                    old_file_2.from_revision } })
+                                    old_file_2.from_revision })
       end
 
       # must not respond with redirect_to (see comment in
