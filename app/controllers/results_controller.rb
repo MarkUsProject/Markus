@@ -498,24 +498,32 @@ class ResultsController < ApplicationController
 
   def update_remark_request
     @assignment = Assignment.find(params[:assignment_id])
-    unless @assignment.past_remark_due_date?
+    if @assignment.past_remark_due_date?
+      head :bad_request
+    else
       @submission = Submission.find(params[:id])
-      @submission.remark_request = params[:submission][:remark_request]
-      @submission.remark_request_timestamp = Time.zone.now
-      @submission.save
+      @submission.update_attributes(
+        remark_request: params[:submission][:remark_request],
+        remark_request_timestamp: Time.zone.now
+      )
+      old_result = @submission.get_original_result
       if params[:real_commit] == 'Submit'
-        @old_result = @submission.get_original_result
         unless @submission.get_remark_result
           @submission.create_remark_result
         end
-        @result = @submission.get_remark_result
-        @result.marking_state = Result::MARKING_STATES[:partial]
-        @old_result.released_to_students = (params[:value] == 'false')
-        @result.save
-        @old_result.save
+        result = @submission.get_remark_result
+        result.update_attributes(
+          marking_state: Result::MARKING_STATES[:partial])
+        old_result.update_attributes(
+          released_to_students: params[:value] == 'false')
+      end
+
+      if old_result.released_to_students?
+        render 'update_remark_request', formats: [:js]
+      else
+        render js: 'location.reload();'
       end
     end
-    render 'update_remark_request', formats: [:js]
   end
 
   def cancel_remark_request
