@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe SubmissionsController do
-
   after(:each) do 
     destroy_repos
   end
@@ -153,7 +152,7 @@ describe SubmissionsController do
 
         post_as(
           @student,
-          :update_files, 
+          :update_files,
           assignment_id: @assignment.id,
           delete_files: ['Shapes.java'],
           file_revisions: { 'Shapes.java' =>
@@ -190,7 +189,7 @@ describe SubmissionsController do
              id: Grouping.last.id
       is_expected.to respond_with(:missing)
     end
- 
+
     # Stopping a curious student
     it 'should not be able to access a simple csv report' do
       get_as @student, :download_simple_csv_report, assignment_id: 1
@@ -412,7 +411,7 @@ describe SubmissionsController do
         allow(Assignment).to receive(:find) { @assignment }
         @assignment.expects(:short_identifier).once.returns('a1')
         @assignment.submission_rule.expects(
-            :can_collect_now?).once.returns(false)
+          :can_collect_now?).once.returns(false)
         get_as @admin,
                :collect_all_submissions,
                assignment_id: 1
@@ -428,7 +427,7 @@ describe SubmissionsController do
         SubmissionCollector.expects(:instance).returns(@submission_collector)
         @assignment.expects(:short_identifier).once.returns('a1')
         @assignment.submission_rule.expects(
-            :can_collect_now?).once.returns(true)
+          :can_collect_now?).once.returns(true)
         @submission_collector.expects(:push_groupings_to_queue).once
         get_as @admin, :collect_all_submissions, assignment_id: 1, id: 1
         expect(flash[:success]).to eq(
@@ -438,7 +437,7 @@ describe SubmissionsController do
       end
 
       it 'should be able to release submissions' do
-        allow(Assignment).to receive(:find) {@assignment}
+        allow(Assignment).to receive(:find) { @assignment }
         post_as @admin,
                 :update_submissions,
                 assignment_id: 1,
