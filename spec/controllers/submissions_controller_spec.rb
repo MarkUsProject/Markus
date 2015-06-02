@@ -295,10 +295,10 @@ describe SubmissionsController do
                :collect_ta_submissions,
                :assignment_id => 1,
                :id => 1
-        assert_equal flash[:error], I18n.t(
-          'collect_submissions.could_not_collect',
-          :assignment_identifier => 'a1')
-        assert_response :redirect
+        expect(flash[:error]).to eq(
+          I18n.t('collect_submissions.could_not_collect',
+                 :assignment_identifier => 'a1'))
+        is_expected.to respond_with(:redirect)
       end
 
       it 'should succeed if it is after assignment due date' do
@@ -519,8 +519,8 @@ describe SubmissionsController do
 
         # Generate submission
         @submission = Submission.generate_new_submission(
-            @grouping,
-            repo.get_latest_revision)
+          @grouping,
+          repo.get_latest_revision)
       end
       get_as @admin,
              :downloads,
@@ -529,8 +529,8 @@ describe SubmissionsController do
              grouping_id: @grouping.id,
              revision_number: '0'
 
-      expect(response.body).to eq(I18n.t(
-       'student.submission.no_revision_available'))
+      expect(response.body).to eq(
+        I18n.t('student.submission.no_revision_available'))
       is_expected.to respond_with(:success)
     end
 
@@ -551,14 +551,15 @@ describe SubmissionsController do
                                user: instance_variable_get(:"@student#{i}"),
                                membership_status: 'inviter',
                                grouping: instance_variable_get(
-                                   :"@grouping#{i}"))
+                                 :"@grouping#{i}"))
           submit_file(@assignment, instance_variable_get(:"@grouping#{i}"),
                       "file#{i}", "file#{i}'s content\n")
         end
       end
 
       it 'should be able to download all groups\' submissions' do
-        get_as @admin, :download_groupings_files,
+        get_as @admin,
+               :download_groupings_files,
                assignment_id: @assignment.id,
                groupings: [@grouping1.id, @grouping2.id, @grouping3.id]
         is_expected.to respond_with(:success)
@@ -566,19 +567,22 @@ describe SubmissionsController do
             "#{@admin.user_name}.zip"
         Zip::File.open(zip_path) do |zip_file|
           (1..3).to_a.each do |i|
-            instance_variable_set(:"@file#{i}_path", File.join(
-             "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
-             "file#{i}"))
-            expect(zip_file.find_entry(instance_variable_get(
-             :"@file#{i}_path"))).to_not be_nil
+            instance_variable_set(
+              :"@file#{i}_path",
+              File.join(
+                "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
+                "file#{i}"))
+            expect(zip_file.find_entry(
+              instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
-             zip_file.read(instance_variable_get(:"@file#{i}_path")))
+              zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
         end
       end
       it 'should - as Ta - be able to download all groups\' submissions' do
         @ta = create(:ta)
-        get_as @ta, :download_groupings_files,
+        get_as @ta,
+               :download_groupings_files,
                assignment_id: @assignment.id,
                groupings: [@grouping1.id, @grouping2.id, @grouping3.id]
         is_expected.to respond_with(:success)
@@ -586,13 +590,15 @@ describe SubmissionsController do
             "#{@ta.user_name}.zip"
         Zip::File.open(zip_path) do |zip_file|
           (1..3).to_a.each do |i|
-            instance_variable_set(:"@file#{i}_path", File.join(
+            instance_variable_set(
+              :"@file#{i}_path",
+              File.join(
                 "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
                 "file#{i}"))
             expect(zip_file.find_entry(
-             instance_variable_get(:"@file#{i}_path"))).to_not be_nil
+              instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
-             zip_file.read(instance_variable_get(:"@file#{i}_path")))
+              zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
         end
       end
