@@ -106,7 +106,8 @@ describe SubmissionsController do
                 :update_files,
                 assignment_id: @assignment.id,
                 new_files: [@file_1, @file_2],
-                file_revisions: { 'Shapes.java'     => old_file_1.from_revision,
+                file_revisions: { 'Shapes.java' =>
+                                      old_file_1.from_revision,
                                   'TestShapes.java' =>
                                       old_file_2.from_revision }
       end
@@ -134,7 +135,6 @@ describe SubmissionsController do
         expect(@file_1.read).to eq(file_1_new_contents)
         expect(@file_2.read).to eq(file_2_new_contents)
       end
-
     end
 
     it 'should be able to delete files' do
@@ -155,7 +155,7 @@ describe SubmissionsController do
         post_as(
             @student,
             :update_files, 
-            { assignment_id: @assignment.id,
+            assignment_id: @assignment.id,
               delete_files: ['Shapes.java'],
               file_revisions: { 'Shapes.java' => 
                                     old_file_1.from_revision,
@@ -231,7 +231,6 @@ describe SubmissionsController do
                            membership_status: 'inviter',
                            grouping: @grouping)
       @student = @membership.user
-
 
       @grouping1 = create(:grouping,
                           assignment: @assignment)
@@ -476,8 +475,8 @@ describe SubmissionsController do
       expect('application/zip').to eq(response.header['Content-Type'])
       is_expected.to respond_with(:success)
       zip_path = "tmp/#{@assignment.short_identifier}_" +
-          "#{@grouping.group.group_name}_r#{@grouping.group.repo.
-              get_latest_revision.revision_number}.zip"
+                 "#{@grouping.group.group_name}_r#{@grouping.group.repo
+                     .get_latest_revision.revision_number}.zip"
       Zip::File.open(zip_path) do |zip_file|
         file1_path = File.join("#{@assignment.repository_folder}-" +
                                    "#{@grouping.group.repo_name}",
@@ -499,8 +498,9 @@ describe SubmissionsController do
         repo.commit(txn)
 
         # Generate submission
-        @submission = Submission.
-            generate_new_submission(@grouping, repo.get_latest_revision)
+        @submission = Submission.generate_new_submission(
+                          @grouping, 
+                          repo.get_latest_revision)
       end
       get_as @admin, :downloads,
              assignment_id: @assignment.id, id: @submission.id,
@@ -508,8 +508,8 @@ describe SubmissionsController do
 
       expect(response.body).to eq(I18n.t(
           'student.submission.no_files_available'))
-
     end
+
     it 'not be able to download the revision 0' do
       @group.access_repo do |repo|
         txn = repo.get_transaction('test')
@@ -533,7 +533,6 @@ describe SubmissionsController do
           'student.submission.no_revision_available'))
       is_expected.to respond_with(:success)
     end
-
 
     describe 'attempting to download groupings files' do
       before(:each)  do
@@ -638,5 +637,3 @@ def submit_file(assignment, grouping, filename = 'file', content = 'content')
         grouping, repo.get_latest_revision)
   end
 end
-
-
