@@ -23,9 +23,9 @@ describe SubmissionsController do
 
     it 'should be able to add files' do
       file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                             'text/java')
+                                   'text/java')
       file_2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
-                                             'text/java')
+                                   'text/java')
 
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
       post_as @student,
@@ -152,10 +152,15 @@ describe SubmissionsController do
         old_file_1 = old_files['Shapes.java']
         old_file_2 = old_files['TestShapes.java']
 
-        post_as(@student, :update_files, {:assignment_id => @assignment.id,
-          :delete_files => ['Shapes.java'],
-          :file_revisions => {'Shapes.java' => old_file_1.from_revision,
-                              'TestShapes.java' => old_file_2.from_revision}})
+        post_as(
+            @student,
+            :update_files, 
+            { assignment_id: @assignment.id,
+              delete_files: ['Shapes.java'],
+              file_revisions: { 'Shapes.java' => 
+                                    old_file_1.from_revision,
+                                'TestShapes.java' =>
+                                    old_file_2.from_revision } })
       end
 
       # must not respond with redirect_to (see comment in
@@ -459,14 +464,14 @@ describe SubmissionsController do
         repo.commit(txn)
 
         # Generate submission
-        @submission = Submission.
-          generate_new_submission(@grouping, repo.get_latest_revision)
+        @submission = Submission.generate_new_submission(
+                          @grouping, repo.get_latest_revision)
       end
       get_as @admin,
-                        :downloads,
-                        :assignment_id => @assignment.id,
-                        :id => @submission.id,
-                        :grouping_id => @grouping.id
+             :downloads,
+             assignment_id: @assignment.id,
+             id: @submission.id,
+             grouping_id: @grouping.id
 
       expect('application/zip').to eq(response.header['Content-Type'])
       is_expected.to respond_with(:success)
@@ -514,11 +519,15 @@ describe SubmissionsController do
 
         # Generate submission
         @submission = Submission.generate_new_submission(
-            @grouping, repo.get_latest_revision)
+            @grouping,
+            repo.get_latest_revision)
       end
-      get_as @admin, :downloads, assignment_id: @assignment.id,
+      get_as @admin,
+             :downloads,
+             assignment_id: @assignment.id,
              id: @submission.id,
-             grouping_id: @grouping.id, revision_number: '0'
+             grouping_id: @grouping.id,
+             revision_number: '0'
 
       expect(response.body).to eq(I18n.t(
           'student.submission.no_revision_available'))
