@@ -152,14 +152,14 @@ describe SubmissionsController do
         old_file_2 = old_files['TestShapes.java']
 
         post_as(
-         @student,
-         :update_files, 
-         assignment_id: @assignment.id,
-         delete_files: ['Shapes.java'],
-         file_revisions: { 'Shapes.java' =>
-                               old_file_1.from_revision,
-                           'TestShapes.java' =>
-                               old_file_2.from_revision })
+          @student,
+          :update_files, 
+          assignment_id: @assignment.id,
+          delete_files: ['Shapes.java'],
+          file_revisions: { 'Shapes.java' =>
+                                old_file_1.from_revision,
+                            'TestShapes.java' =>
+                                old_file_2.from_revision })
       end
 
       # must not respond with redirect_to (see comment in
@@ -296,8 +296,8 @@ describe SubmissionsController do
                :assignment_id => 1,
                :id => 1
         assert_equal flash[:error], I18n.t(
-         'collect_submissions.could_not_collect',
-         :assignment_identifier => 'a1')
+          'collect_submissions.could_not_collect',
+          :assignment_identifier => 'a1')
         assert_response :redirect
       end
 
@@ -315,8 +315,8 @@ describe SubmissionsController do
                :id => 1
 
         expect(flash[:success]).to eq(
-         I18n.t('collect_submissions.collection_job_started',
-                :assignment_identifier => 'a1'))
+          I18n.t('collect_submissions.collection_job_started',
+                 :assignment_identifier => 'a1'))
         is_expected.to respond_with(:redirect)
       end
     end
@@ -416,8 +416,8 @@ describe SubmissionsController do
                :collect_all_submissions,
                assignment_id: 1
         expect(flash[:error]).to eq(
-         I18n.t('collect_submissions.could_not_collect',
-                assignment_identifier: 'a1'))
+          I18n.t('collect_submissions.could_not_collect',
+                 assignment_identifier: 'a1'))
         is_expected.to respond_with(:redirect)
       end
 
@@ -431,8 +431,8 @@ describe SubmissionsController do
         @submission_collector.expects(:push_groupings_to_queue).once
         get_as @admin, :collect_all_submissions, assignment_id: 1, id: 1
         expect(flash[:success]).to eq(
-         I18n.t('collect_submissions.collection_job_started',
-                assignment_identifier: 'a1'))
+          I18n.t('collect_submissions.collection_job_started',
+                 assignment_identifier: 'a1'))
         is_expected.to respond_with(:redirect)
       end
 
@@ -463,8 +463,8 @@ describe SubmissionsController do
 
         # Generate submission
         @submission = Submission.generate_new_submission(
-                       @grouping,
-                       repo.get_latest_revision)
+          @grouping,
+          repo.get_latest_revision)
       end
       get_as @admin,
              :downloads,
@@ -499,15 +499,15 @@ describe SubmissionsController do
 
         # Generate submission
         @submission = Submission.generate_new_submission(
-                          @grouping, 
-                          repo.get_latest_revision)
+          @grouping,
+          repo.get_latest_revision)
       end
       get_as @admin, :downloads,
              assignment_id: @assignment.id, id: @submission.id,
              grouping_id: @grouping.id
 
       expect(response.body).to eq(I18n.t(
-          'student.submission.no_files_available'))
+                                    'student.submission.no_files_available'))
     end
 
     it 'not be able to download the revision 0' do
