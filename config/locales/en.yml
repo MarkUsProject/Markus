@@ -121,7 +121,6 @@ en:
       not_complete: "Can not release result for %{group_name}: the marking state is not complete"
       not_complete_unrelease: "Can not unrelease result for %{group_name}: the marking state is not complete"
       no_submission: "%{group_name} has no submissions"
-      no_result: "%{group_name} has no results"
       result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
       collect_all: "Collect All Submissions"
@@ -439,7 +438,7 @@ en:
       grading_can_begin_after: "Grading can begin after %{time}"
       submissions:	    "Submissions: %{short_identifier}"
       csv_report:           "CSV Report"
-      detailled_csv_report: "Detailed CSV Report"
+      detailed_csv_report: "Detailed CSV Report"
       subversion_repo_list: "Subversion Repo List"
       subversion_export_file: "Subversion Export File"
       errors:               "Errors"

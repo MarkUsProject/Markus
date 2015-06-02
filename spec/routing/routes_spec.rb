@@ -650,14 +650,6 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes POST update_converted_pdfs properly' do
-        expect(post: sub_path + '/update_converted_pdfs').to route_to(
-          controller: sub_ctrl,
-          action: 'update_converted_pdfs',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
       it 'routes GET updated_files properly' do
         expect(get: sub_path + '/updated_files').to route_to(
           controller: sub_ctrl,
@@ -690,8 +682,8 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes POST server_time properly' do
-        expect(post: sub_path + '/server_time').to route_to(
+      it 'routes GET server_time properly' do
+        expect(get: sub_path + '/server_time').to route_to(
           controller: sub_ctrl,
           action: 'server_time',
           assignment_id: assignment.id.to_s,

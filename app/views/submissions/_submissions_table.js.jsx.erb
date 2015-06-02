@@ -2,12 +2,6 @@
   /** @jsx React.DOM */
   var MAX_TAGS = 5;
 
-  // Gets tag data for submissions.
-  var currentTagList = ""
-  for (var i = 0; i < MAX_TAGS; i++){
-    currentTagList += "<li><div class=\"tag_element\">Tag Data " + i + "</div></li>"
-  }
-
   var SubmissionsTable = React.createClass({
     getDefaultProps: function() {
       // Defines the columns used for the table and whether they
@@ -48,7 +42,9 @@
             id: 'tags',
             content: <ul className='tag_list' dangerouslySetInnerHTML={{__html: '<li>' +
                   '<%= j raw I18n.t(:'browse_submissions.tags_used') %>' +
-                  '<ul class="tag_dropdown">' +
+                  /* TODO: Use this code to complete a tag search feature
+                     in the table.
+                    '<ul class="tag_dropdown">' +
                     '<li class="tag_list_title">' +
                       '<%= j raw I18n.t(:'browse_submissions.tags_search') %>' +
                     '</li>' +
@@ -57,9 +53,8 @@
                     '</li>' +
                     '<li class="tag_list_title">' +
                       '<%= j raw I18n.t(:'browse_submissions.tags_list') %>' +
-                    '</li>' +
-                    currentTagList +
-                  '</ul>' +
+                    '</li>'
+                  '</ul>' +*/
                 '</li>'}} />,
             sortable: false,
             searchable: false
@@ -113,7 +108,7 @@
     },
     getInitialState: function() {
       return {
-        error: null,
+        error: [],
         submissions: [],
         selected_submissions: [],
       };
@@ -134,9 +129,14 @@
         method: 'GET',
         dataType: 'json',
         success: function(data) {
+          this.setState({error: []});
+          data.each(function (submission) {
+            if (submission.error !== '') {
+              this.setState({error: this.state.error.concat([submission.error])});
+            }
+          }.bind(this));
           this.setState({
             submissions: data,
-            error: null
           });
         }.bind(this),
         error: function(xhr, status, text) {
@@ -154,6 +154,32 @@
     onError: function(error) {
       this.setState({error: error});
     },
+    renderMarkingState: function(state) {
+      if (state === 'unmarked') {
+        return (<%= image_tag('icons/shape_square.png',
+                              alt: t('marking_state.not_collected'),
+                              title: t('marking_state.not_collected')) %>);
+      } else if (state === 'partial') {
+        return (<%= image_tag('icons/pencil.png',
+                              alt: t('marking_state.in_progress'),
+                              title: t('marking_state.in_progress')) %>);
+      } else if (state === 'completed') {
+        return (<%= image_tag('icons/accept.png',
+                              alt: t('marking_state.completed'),
+                              title: t('marking_state.completed')) %>);
+      } else if (state === 'released') {
+        return (<%= image_tag('icons/email_go.png',
+                              alt: t('marking_state.released'),
+                              title: t('marking_state.released')) %>);
+      } else if (state === 'remark') {
+        return (<%= image_tag('icons/double_exclamation.png',
+                              alt: t('marking_state.remark_requested'),
+                              title: t('marking_state.remark_requested')) %>);
+      } else {
+        return 'Invalid marking state';
+      }
+    },
+
     render: function() {
       // Do student-specific table stuff here.
       // possibly move this to getdefaultprops.
@@ -161,24 +187,35 @@
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
         s['id'] = submission.id;
-        s['group_name'] = <span dangerouslySetInnerHTML={{__html: submission.group_name}} />;
-        if (submission.error) {
+        if (submission.name_url === '') {
+          s['group_name'] = <span>{submission.name}</span>;
+        } else {
+          s['group_name'] = <span><a href={submission.name_url}>{submission.name}</a></span>;
+        }
+        if (submission.error !== '') {
           s['class_name'] = "submission_error";
         } else {
-          var tagHtml = "<div className='tag_list'>";
-          for (var i = 0; i < MAX_TAGS && i < submission.tags.length; i++){
-            tagHtml += "<span class='tag_element'>" + submission.tags[i].name + "</span>";
+          var tag_list = []
+          for (var i = 0; i < MAX_TAGS && i < submission.tags.length; i++) {
+            tag_list.push(<span className='tag_element'>{submission.tags[i].name}</span>);
           }
-          tagHtml += "</div>";
 
           s['class_name'] = submission.class_name;
-          s['repository'] = <span dangerouslySetInnerHTML={{__html: submission.repository}} />;
-          s['commit_date'] = <span dangerouslySetInnerHTML={{__html: submission.commit_date}} />;
-          s['marking_state'] = <span dangerouslySetInnerHTML={{__html: submission.marking_state}} />;
+          s['repository'] = <a href={submission.repo_url}>{submission.name}</a>;
+          if (submission.late_commit) {
+            s['commit_date'] = (<span>
+              <%= image_tag('icons/error.png',
+                            title: t(:past_due_date_edit_result_warning,
+                            href: t(:last_commit))) %>
+              {submission.commit_date}
+            </span>);
+          } else {
+            s['commit_date'] = submission.commit_date;
+          }
+          s['marking_state'] = this.renderMarkingState(submission.state);
           s['grace_credits_used'] = submission.grace_credits_used;
-          s['tags'] = <span dangerouslySetInnerHTML={{__html: tagHtml }} />;
+          s['tags'] = <div className='tag_list'>{tag_list}</div>;
           s['final_grade'] = submission.final_grade;
-          s['state'] = submission.state;
           s['section'] = submission.section;
         }
         return s;
@@ -230,7 +267,7 @@
     },
     unreleaseMarks: function() {
       var dataLoad = {
-        unrelease_results: false,
+        release_results: false,
         filter: 'none',
         groupings: this.props.selected_submissions
       };
