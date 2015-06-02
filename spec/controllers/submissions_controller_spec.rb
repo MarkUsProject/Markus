@@ -63,7 +63,6 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
     end
 
-
     it 'should be able to access file manager page' do
       get_as @student, :file_manager, :assignment_id => @assignment.id
       is_expected.to respond_with(:success)
@@ -290,8 +289,8 @@ describe SubmissionsController do
       it 'should get an error if it is before assignment due date' do
         allow(Assignment).to receive(:find) {@assignment}
         @assignment.expects(:short_identifier).once.returns('a1')
-        @assignment.submission_rule.expects(
-         :can_collect_now?).once.returns(false)
+        @assignment.submission_rule
+          .expects(:can_collect_now?).once.returns(false)
         get_as @ta_membership.user,
                :collect_ta_submissions,
                :assignment_id => 1,
@@ -307,17 +306,17 @@ describe SubmissionsController do
         allow(Assignment).to receive(:find) {@assignment}
         SubmissionCollector.expects(:instance).returns(@submission_collector)
         @assignment.expects(:short_identifier).once.returns('a1')
-        @assignment.submission_rule.expects(
-            :can_collect_now?).once.returns(true)
+        @assignment.submission_rule
+          .expects(:can_collect_now?).once.returns(true)
         @submission_collector.expects(:push_groupings_to_queue).once
         get_as @ta_membership.user,
                :collect_ta_submissions,
                :assignment_id => 1,
                :id => 1
 
-        expect(flash[:success]).to eq(I18n.t(
-         'collect_submissions.collection_job_started',
-         :assignment_identifier => 'a1'))
+        expect(flash[:success]).to eq(
+         I18n.t('collect_submissions.collection_job_started',
+                :assignment_identifier => 'a1'))
         is_expected.to respond_with(:redirect)
       end
     end
@@ -416,9 +415,9 @@ describe SubmissionsController do
         get_as @admin,
                :collect_all_submissions,
                assignment_id: 1
-        expect(flash[:error]).to eq(I18n.t(
-         'collect_submissions.could_not_collect',
-         assignment_identifier: 'a1'))
+        expect(flash[:error]).to eq(
+         I18n.t('collect_submissions.could_not_collect',
+                assignment_identifier: 'a1'))
         is_expected.to respond_with(:redirect)
       end
 
@@ -431,9 +430,9 @@ describe SubmissionsController do
             :can_collect_now?).once.returns(true)
         @submission_collector.expects(:push_groupings_to_queue).once
         get_as @admin, :collect_all_submissions, assignment_id: 1, id: 1
-        expect(flash[:success]).to eq(I18n.t(
-         'collect_submissions.collection_job_started',
-          assignment_identifier: 'a1'))
+        expect(flash[:success]).to eq(
+         I18n.t('collect_submissions.collection_job_started',
+                assignment_identifier: 'a1'))
         is_expected.to respond_with(:redirect)
       end
 
@@ -622,7 +621,6 @@ describe SubmissionsController do
     end
   end
 end
-
 
 private
 
