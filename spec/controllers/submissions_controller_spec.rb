@@ -76,15 +76,15 @@ describe SubmissionsController do
       expect(assigns :missing_assignment_files).to_not be_nil
     end
 
-    #TODO figure out how to test this test into the one above
-    #TODO Figure out how to remove fixture_file_upload
+    # TODO figure out how to test this test into the one above
+    # TODO Figure out how to remove fixture_file_upload
     it 'should be able to replace files' do
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
       
       @grouping.group.access_repo do |repo|
         txn = repo.get_transaction('markus')
         # overwrite and commit both files
-        txn.add(File.join(@assignment.repository_folder,'Shapes.java'),
+        txn.add(File.join(@assignment.repository_folder, 'Shapes.java'),
                 'Content of Shapes.java')
         txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'),
                 'Content of TestShapes.java')
@@ -141,7 +141,7 @@ describe SubmissionsController do
 
       @grouping.group.access_repo do |repo|
         txn = repo.get_transaction('markus')
-        txn.add(File.join(@assignment.repository_folder,'Shapes.java'),
+        txn.add(File.join(@assignment.repository_folder, 'Shapes.java'),
                 'Content of Shapes.java')
         txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'),
                 'Content of TestShapes.java')
@@ -287,7 +287,7 @@ describe SubmissionsController do
 
     describe 'attempting to collect all submissions at once ' do
       it 'should get an error if it is before assignment due date' do
-        allow(Assignment).to receive(:find) {@assignment}
+        allow(Assignment).to receive(:find) { @assignment }
         @assignment.expects(:short_identifier).once.returns('a1')
         @assignment.submission_rule
           .expects(:can_collect_now?).once.returns(false)
@@ -303,11 +303,12 @@ describe SubmissionsController do
 
       it 'should succeed if it is after assignment due date' do
         @submission_collector = SubmissionCollector.create
-        allow(Assignment).to receive(:find) {@assignment}
+        allow(Assignment).to receive(:find) { @assignment }
         SubmissionCollector.expects(:instance).returns(@submission_collector)
         @assignment.expects(:short_identifier).once.returns('a1')
         @assignment.submission_rule
-          .expects(:can_collect_now?).once.returns(true)
+          .expects(
+            :can_collect_now?).once.returns(true)
         @submission_collector.expects(:push_groupings_to_queue).once
         get_as @ta_membership.user,
                :collect_ta_submissions,
@@ -564,7 +565,7 @@ describe SubmissionsController do
                groupings: [@grouping1.id, @grouping2.id, @grouping3.id]
         is_expected.to respond_with(:success)
         zip_path = "tmp/#{@assignment.short_identifier}_" +
-            "#{@admin.user_name}.zip"
+                   "#{@admin.user_name}.zip"
         Zip::File.open(zip_path) do |zip_file|
           (1..3).to_a.each do |i|
             instance_variable_set(
@@ -587,7 +588,7 @@ describe SubmissionsController do
                groupings: [@grouping1.id, @grouping2.id, @grouping3.id]
         is_expected.to respond_with(:success)
         zip_path = "tmp/#{@assignment.short_identifier}_" +
-            "#{@ta.user_name}.zip"
+                   "#{@ta.user_name}.zip"
         Zip::File.open(zip_path) do |zip_file|
           (1..3).to_a.each do |i|
             instance_variable_set(
