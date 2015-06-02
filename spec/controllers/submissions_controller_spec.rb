@@ -30,8 +30,8 @@ describe SubmissionsController do
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
       post_as @student,
               :update_files,
-              :assignment_id => @assignment.id,
-              :new_files => [file_1, file_2]
+              assignment_id: @assignment.id,
+              new_files: [file_1, file_2]
 
       # must not respond with redirect_to (see comment in
       # app/controllers/submission_controller.rb#update_files)
@@ -64,7 +64,7 @@ describe SubmissionsController do
     end
 
     it 'should be able to access file manager page' do
-      get_as @student, :file_manager, :assignment_id => @assignment.id
+      get_as @student, :file_manager, assignment_id: @assignment.id
       is_expected.to respond_with(:success)
       # file_manager action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
@@ -186,32 +186,32 @@ describe SubmissionsController do
     it 'should not be able to use the repository browser' do
       get_as @student,
              :repo_browser,
-             :assignment_id => 1,
-             :id => Grouping.last.id
+             assignment_id: 1,
+             id: Grouping.last.id
       is_expected.to respond_with(:missing)
     end
  
     # Stopping a curious student
     it 'should not be able to access a simple csv report' do
-      get_as @student, :download_simple_csv_report, :assignment_id => 1
+      get_as @student, :download_simple_csv_report, assignment_id: 1
 
       is_expected.to respond_with(:missing)
     end
 
     it 'should not be able to access a detailed csv report.' do
-      get_as @student, :download_detailed_csv_report, :assignment_id => 1
+      get_as @student, :download_detailed_csv_report, assignment_id: 1
 
       is_expected.to respond_with(:missing)
     end
 
     it 'should not be able download svn export commands' do
-      get_as @student, :download_svn_export_commands, :assignment_id => 1
+      get_as @student, :download_svn_export_commands, assignment_id: 1
 
       is_expected.to respond_with(:missing)
     end
     
     it 'should not be able to download the svn repository list' do
-      get_as @student, :download_svn_repo_list, :assignment_id => 1
+      get_as @student, :download_svn_repo_list, assignment_id: 1
 
       is_expected.to respond_with(:missing)
     end
@@ -260,28 +260,28 @@ describe SubmissionsController do
     it 'should be able to download a simple csv report' do
       get_as @ta_membership.user,
              :download_simple_csv_report,
-             :assignment_id => 1
+             assignment_id: 1
       is_expected.to respond_with(:missing)
     end
 
     it 'should be able to download a detailed csv report' do
       get_as @ta_membership.user,
              :download_detailed_csv_report,
-             :assignment_id => 1
+             assignment_id: 1
       is_expected.to respond_with(:missing)
     end
 
     it 'should be able to download the svn export commands' do
       get_as @ta_membership.user,
              :download_svn_export_commands,
-             :assignment_id => 1
+             assignment_id: 1
       is_expected.to respond_with(:missing)
     end
 
     it 'should be able to download the svn repository list' do
       get_as @ta_membership.user,
              :download_svn_repo_list,
-             :assignment_id => 1
+             assignment_id: 1
       is_expected.to respond_with(:missing)
     end
 
@@ -293,11 +293,11 @@ describe SubmissionsController do
           .expects(:can_collect_now?).once.returns(false)
         get_as @ta_membership.user,
                :collect_ta_submissions,
-               :assignment_id => 1,
-               :id => 1
+               assignment_id: 1,
+               id: 1
         expect(flash[:error]).to eq(
           I18n.t('collect_submissions.could_not_collect',
-                 :assignment_identifier => 'a1'))
+                 assignment_identifier: 'a1'))
         is_expected.to respond_with(:redirect)
       end
 
@@ -311,12 +311,12 @@ describe SubmissionsController do
         @submission_collector.expects(:push_groupings_to_queue).once
         get_as @ta_membership.user,
                :collect_ta_submissions,
-               :assignment_id => 1,
-               :id => 1
+               assignment_id: 1,
+               id: 1
 
         expect(flash[:success]).to eq(
           I18n.t('collect_submissions.collection_job_started',
-                 :assignment_identifier => 'a1'))
+                 assignment_identifier: 'a1'))
         is_expected.to respond_with(:redirect)
       end
     end
@@ -573,7 +573,7 @@ describe SubmissionsController do
                 "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
                 "file#{i}"))
             expect(zip_file.find_entry(
-              instance_variable_get(:"@file#{i}_path"))).to_not be_nil
+                     instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
               zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
@@ -596,7 +596,7 @@ describe SubmissionsController do
                 "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
                 "file#{i}"))
             expect(zip_file.find_entry(
-              instance_variable_get(:"@file#{i}_path"))).to_not be_nil
+                     instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
               zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
@@ -639,6 +639,6 @@ def submit_file(assignment, grouping, filename = 'file', content = 'content')
 
     # Generate submission
     Submission.generate_new_submission(
-     grouping, repo.get_latest_revision)
+      grouping, repo.get_latest_revision)
   end
 end
