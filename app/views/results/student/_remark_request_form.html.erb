@@ -5,7 +5,7 @@
                       id: submission.id,
                       assignment_id: assignment.id },
                html: { method: :get },
-               remote: false do |f| %>
+               remote: true do |f| %>
     <%= f.text_area :remark_request, cols: 50, rows: 5,
                     id: 'remark_request_text_area',
                     onkeydown: 'enableRemarkRequestButtons();' %>

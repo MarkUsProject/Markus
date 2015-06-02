@@ -67,15 +67,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
       assert_response :redirect
     end
 
-    should 'not be able to update overall remark comment' do
-      get :update_overall_remark_comment,
-          :assignment_id => 1,
-          :submission_id => 1,
-          :id => 1
-
-      assert_response :redirect
-    end
-
     should 'not be able to update remark request' do
       get :update_remark_request,
           :assignment_id => 1,
@@ -224,34 +215,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @new_comment = 'a changed overall comment!'
           post_as @student,
                   :update_overall_comment,
-                  :assignment_id => 1,
-                  :submission_id => 1,
-                  :id => @result.id,
-                  :result => {:overall_comment => @new_comment}
-          assert_response :missing
-          assert render_template 404
-          @result.reload
-          assert_not_equal @result.overall_comment, @new_comment
-        end
-
-        should 'GET on :update_overall_remark_comment' do
-          @new_comment = 'a changed overall remark comment!'
-          get_as @student,
-                  :update_overall_remark_comment,
-                  :assignment_id => 1,
-                  :submission_id => 1,
-                  :id => @result.id,
-                  :result => {:overall_comment => @new_comment}
-          assert_response :missing
-          assert render_template 404
-          @result.reload
-          assert_not_equal @result.overall_comment, @new_comment
-        end
-
-        should 'POST on :update_overall_remark_comment' do
-          @new_comment = 'a changed overall remark comment!'
-          post_as @student,
-                  :update_overall_remark_comment,
                   :assignment_id => 1,
                   :submission_id => 1,
                   :id => @result.id,
@@ -621,7 +584,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                             '/update_overall_comment]'
               assert_select '#overall_remark_comment_edit form[action=' +
                             "#{path_prefix}/#{remark_result.id}" +
-                            '/update_overall_remark_comment]'
+                            '/update_overall_comment]'
             end
 
             should 'edit third result' do
@@ -1150,21 +1113,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result.reload
           assert_equal @result.overall_comment, @overall_comment
         end
-
-        should 'POST on :update_overall_remark_comment' do
-          @result = Result.make
-          @overall_comment = 'A new overall remark comment!'
-          post_as @admin,
-                  :update_overall_remark_comment,
-                  :assignment_id => 1,
-                  :submission_id => 1,
-                  :id => @result.id,
-                  :result => {:overall_comment => @overall_comment}
-
-          @result.reload
-          assert_equal @result.overall_comment, @overall_comment
-        end
-
       end
     end
   end # An authenticated and authorized admin doing a
@@ -1493,19 +1441,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result = Result.make
           post_as @ta,
                   :update_overall_comment,
-                  :assignment_id => 1,
-                  :submission_id => 1,
-                  :id => @result.id,
-                  :result => {:overall_comment => @overall_comment}
-          @result.reload
-          assert_equal @result.overall_comment, @overall_comment
-        end
-
-        should 'POST on :update_overall_remark_comment' do
-          @result = Result.make
-          @overall_comment = 'A new overall remark comment!'
-          post_as @ta,
-                  :update_overall_remark_comment,
                   :assignment_id => 1,
                   :submission_id => 1,
                   :id => @result.id,

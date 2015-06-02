@@ -5,13 +5,12 @@ class ResultsController < ApplicationController
                          :create, :add_extra_mark, :next_grouping,
                          :update_overall_comment, :remove_extra_mark,
                          :update_marking_state, :download, :download_zip,
-                         :note_message, :update_overall_remark_comment,
+                         :note_message,
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
                 only: [:edit, :update_mark, :create, :add_extra_mark,
                        :next_grouping, :update_overall_comment,
-                       :remove_extra_mark, :update_marking_state, :note_message,
-                       :update_overall_remark_comment]
+                       :remove_extra_mark, :update_marking_state, :note_message]
   before_filter :authorize_for_user,
                 only: [:codeviewer, :download, :download_zip]
   before_filter :authorize_for_student,
@@ -409,7 +408,7 @@ class ResultsController < ApplicationController
     @old_result = nil
     if @submission.remark_submitted?
       @old_result = @result
-      @result = @submission.get_remark_result
+      @result = @submission.remark_result
       # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
       if @result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students
@@ -489,13 +488,6 @@ class ResultsController < ApplicationController
     head :ok
   end
 
-  def update_overall_remark_comment
-    @result = Result.find(params[:id])
-    @result.overall_comment = params[:result][:overall_comment]
-    @result.save
-    render 'update_overall_remark_comment', formats: [:js]
-  end
-
   def update_remark_request
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.past_remark_due_date?
@@ -508,10 +500,10 @@ class ResultsController < ApplicationController
       )
       old_result = @submission.get_original_result
       if params[:real_commit] == 'Submit'
-        unless @submission.get_remark_result
+        unless @submission.remark_result
           @submission.create_remark_result
         end
-        result = @submission.get_remark_result
+        result = @submission.remark_result
         result.update_attributes(
           marking_state: Result::MARKING_STATES[:partial])
         old_result.update_attributes(
@@ -527,18 +519,15 @@ class ResultsController < ApplicationController
   end
 
   def cancel_remark_request
-    @submission = Submission.find(params[:submission_id])
+    submission = Submission.find(params[:submission_id])
 
-    @remark_result = @submission.get_remark_result
-    @remark_result.destroy
+    remark_result = submission.remark_result
+    remark_result.destroy
 
-    @submission.remark_result_id = nil
-    @submission.remark_request = nil
-    @submission.save
+    submission.update_attributes(remark_result_id: nil)
 
-    @result = @submission.get_original_result
-    @result.released_to_students = true
-    @result.save
+    result = submission.get_original_result
+    result.update_attributes(released_to_students: true)
 
     redirect_to controller: 'results',
                 action: 'view_marks',

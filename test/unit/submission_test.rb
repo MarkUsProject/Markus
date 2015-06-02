@@ -18,8 +18,11 @@ class SubmissionTest < ActiveSupport::TestCase
     s = Submission.make
     s.save
     s.create_remark_result
-    assert_not_nil s.get_remark_result, 'Remark result was supposed to be created'
-    assert_equal s.get_remark_result.marking_state, Result::MARKING_STATES[:unmarked], 'Remark result marking_state should have been automatically set to unmarked'
+    assert_not_nil s.remark_result, 'Remark result was supposed to be created'
+    assert_equal s.remark_result.marking_state,
+                 Result::MARKING_STATES[:unmarked],
+                 'Remark result marking_state should have been automatically '
+                 'set to unmarked'
   end
 
   context 'A submission with a remark result submitted' do
@@ -95,8 +98,11 @@ class SubmissionTest < ActiveSupport::TestCase
   should 'create a remark result' do
     s = Submission.make
     s.create_remark_result
-    assert_not_nil s.get_remark_result, 'Remark result was supposed to be created'
-    assert_equal s.get_remark_result.marking_state, Result::MARKING_STATES[:unmarked], 'Remark result marking_state should have been automatically set to unmarked'
+    assert_not_nil s.remark_result, 'Remark result was supposed to be created'
+    assert_equal s.remark_result.marking_state,
+                 Result::MARKING_STATES[:unmarked],
+                 'Remark result marking_state should have been automatically '+
+                 'set to unmarked'
   end
 
 end

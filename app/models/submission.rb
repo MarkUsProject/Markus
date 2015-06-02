@@ -9,6 +9,7 @@ class Submission < ActiveRecord::Base
   validates_numericality_of :submission_version, only_integer: true
   belongs_to :grouping
   has_many   :results, dependent: :destroy
+  belongs_to :remark_result, class_name: 'Result', dependent: :destroy
   has_many   :submission_files, dependent: :destroy
   has_many   :annotations, through: :submission_files
   has_many   :test_results, dependent: :destroy
@@ -57,15 +58,10 @@ class Submission < ActiveRecord::Base
     Result.where(submission_id: id).first
   end
 
-  # returns the remark result if exists, returns nil if does not exist
-  def get_remark_result
-    Result.where(id: remark_result_id).first
-  end
-
   # returns the latest result - remark result if exists and submitted, else original result
   def get_latest_result
     if self.remark_submitted?
-      self.get_remark_result
+      self.remark_result
     else
       self.get_original_result
     end
@@ -73,8 +69,8 @@ class Submission < ActiveRecord::Base
 
   # returns the latest completed result - note: will return nil if there is no completed result
   def get_latest_completed_result
-    if self.remark_submitted? && self.get_remark_result.marking_state == Result::MARKING_STATES[:complete]
-      return self.get_remark_result
+    if self.remark_submitted? && remark_result.marking_state == Result::MARKING_STATES[:complete]
+      return remark_result
     end
     if self.get_original_result.marking_state == Result::MARKING_STATES[:complete]
       return self.get_original_result
@@ -148,7 +144,7 @@ class Submission < ActiveRecord::Base
   # Saved means that the remark request cannot be viewed by instructors or TAs yet and
   #   the student can still make changes to the request details.
   def remark_submitted?
-    self.has_remark? && self.get_remark_result.marking_state != Result::MARKING_STATES[:unmarked]
+    self.has_remark? && remark_result.marking_state != Result::MARKING_STATES[:unmarked]
   end
 
   # Helper methods

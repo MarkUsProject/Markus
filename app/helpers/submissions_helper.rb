@@ -354,11 +354,14 @@ module SubmissionsHelper
 
   # Helper methods to determine remark request status on a submission
   def remark_in_progress(submission)
-    submission.get_remark_result and submission.get_remark_result.marking_state == Result::MARKING_STATES[:partial]
+    submission.remark_result && 
+    submission.remark_result.marking_state == Result::MARKING_STATES[:partial]
   end
 
   def remark_complete_but_unreleased(submission)
-    submission.get_remark_result and submission.get_remark_result.marking_state == Result::MARKING_STATES[:complete] and !submission.get_remark_result.released_to_students
+    submission.remark_result &&
+    submission.remark_result.marking_state == Result::MARKING_STATES[:complete] &&
+    !submission.remark_result.released_to_students
   end
 
 end
