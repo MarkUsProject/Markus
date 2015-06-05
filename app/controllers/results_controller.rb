@@ -30,13 +30,12 @@ class ResultsController < ApplicationController
   end
 
   def edit
-    result_id = params[:id]
-    @result = Result.find(result_id)
+    @result = Result.find(params[:id])
     @assignment = @result.submission.assignment
     @submission = @result.submission
 
     if @submission.remark_submitted?
-      @old_result = Result.where(submission_id: @submission.id).first
+      @old_result = @submission.get_original_result
     else
       @old_result = nil
     end
@@ -501,13 +500,13 @@ class ResultsController < ApplicationController
       old_result = @submission.get_original_result
       if params[:real_commit] == 'Submit'
         unless @submission.remark_result
-          @submission.create_remark_result
+          @submission.make_remark_result
         end
+        debugger
         result = @submission.remark_result
         result.update_attributes(
           marking_state: Result::MARKING_STATES[:partial])
-        old_result.update_attributes(
-          released_to_students: params[:value] == 'false')
+        old_result.update_attributes(released_to_students: false)
       end
 
       if old_result.released_to_students?

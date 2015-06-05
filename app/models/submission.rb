@@ -53,29 +53,30 @@ class Submission < ActiveRecord::Base
     new_submission
   end
 
-  # returns the original result
+  # Returns the original result.
   def get_original_result
-    Result.where(submission_id: id).first
+    Result.where(submission_id: id).order(:created_at).first
   end
 
-  # returns the latest result - remark result if exists and submitted, else original result
+  # Returns the latest result.
   def get_latest_result
-    if self.remark_submitted?
-      self.remark_result
+    if remark_submitted?
+      remark_result
     else
-      self.get_original_result
+      get_original_result
     end
   end
 
-  # returns the latest completed result - note: will return nil if there is no completed result
+  # Returns the latest completed result.
   def get_latest_completed_result
-    if self.remark_submitted? && remark_result.marking_state == Result::MARKING_STATES[:complete]
-      return remark_result
+    if remark_submitted? &&
+       remark_result.marking_state == Result::MARKING_STATES[:complete]
+      remark_result
+    elsif get_original_result.marking_state == Result::MARKING_STATES[:complete]
+      get_original_result
+    else
+      nil
     end
-    if self.get_original_result.marking_state == Result::MARKING_STATES[:complete]
-      return self.get_original_result
-    end
-    nil
   end
 
   # For group submissions, actions here must only be accessible to members
@@ -132,19 +133,15 @@ class Submission < ActiveRecord::Base
     results.any?
   end
 
-  # Does this submission have a remark result?
+  # Returns whether this submission has a remark result.
   def has_remark?
-    !self.remark_result_id.nil?
+    !remark_result.nil?
   end
 
-  # Does this submission have a remark request submitted?
-  # remark_results in 'unmarked' state have not been submitted by the student yet (just saved)
-  # Submitted means that the remark request can be viewed by instructors and TAs and is no
-  #   longer editable by the student.
-  # Saved means that the remark request cannot be viewed by instructors or TAs yet and
-  #   the student can still make changes to the request details.
+  # Returns whether this submission has a remark request that has been
+  # submitted to instructors or TAs.
   def remark_submitted?
-    self.has_remark? && remark_result.marking_state != Result::MARKING_STATES[:unmarked]
+    has_remark? && remark_result.marking_state != Result::MARKING_STATES[:unmarked]
   end
 
   # Helper methods
@@ -184,33 +181,23 @@ class Submission < ActiveRecord::Base
     end
   end
 
-  def create_remark_result
-    remark_result = Result.new
-    results << remark_result
-    remark_result.marking_state = Result::MARKING_STATES[:unmarked]
-    remark_result.submission_id = self.id
-    remark_result.save
-    # link remark result id to submission - must be done after remark result is saved (so it has an id)
-    self.remark_result_id = remark_result.id
+  def make_remark_result
+    remark = self.create_remark_result(
+      marking_state: Result::MARKING_STATES[:unmarked],
+      submission_id: id)
     self.save
 
     # populate remark result with old marks
     original_result = get_original_result
 
-    old_extra_marks = original_result.extra_marks
-    old_extra_marks.each do |old_extra_mark|
-      remark_extra_mark = ExtraMark.new(old_extra_mark.attributes.merge(
-        {result_id: self.remark_result_id, created_at: Time.zone.now}))
-      remark_extra_mark.save(validate: false)
-      remark_result.extra_marks << remark_extra_mark
+    original_result.extra_marks.each do |extra_mark|
+      remark.extra_marks.create(extra_mark.attributes.merge(
+        { result: remark, created_at: Time.zone.now }))
     end
 
-    old_marks = original_result.marks
-    old_marks.each do |old_mark|
-      remark_mark = Mark.new(old_mark.attributes.merge(
-        {result_id: self.remark_result_id, created_at: Time.zone.now}))
-      remark_mark.save(validate: false)
-      remark_result.marks << remark_mark
+    original_result.marks.each do |mark|
+      remark_result.marks.create(mark.attributes.merge(
+        { result: remark, created_at: Time.zone.now }))
     end
   end
 
