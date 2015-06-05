@@ -76,10 +76,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
     end
 
     should 'not be able to cancel remark request' do
-      get :cancel_remark_request,
-          :assignment_id => 1,
-          :submission_id => 1,
-          :id => 1
+      delete :cancel_remark_request,
+             assignment_id: 1,
+             submission_id: 1,
+             id: 1
       assert_response :redirect
     end
 

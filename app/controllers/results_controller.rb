@@ -514,16 +514,14 @@ class ResultsController < ApplicationController
     end
   end
 
+  # Allows student to cancel a remark request.
   def cancel_remark_request
     submission = Submission.find(params[:submission_id])
 
-    remark_result = submission.remark_result
-    remark_result.destroy
-
+    submission.remark_result.destroy
     submission.update_attributes(remark_result_id: nil)
-
-    result = submission.get_original_result
-    result.update_attributes(released_to_students: true)
+    submission.get_original_result.update_attributes(
+      released_to_students: true)
 
     redirect_to controller: 'results',
                 action: 'view_marks',

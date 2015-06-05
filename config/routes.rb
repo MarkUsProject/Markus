@@ -170,7 +170,7 @@ Markus::Application.routes.draw do
             get 'download'
             post 'download'
             get 'download_zip'
-            get 'cancel_remark_request'
+            delete 'cancel_remark_request'
             get 'codeviewer'
             post 'codeviewer'
             post 'add_extra_mark'
