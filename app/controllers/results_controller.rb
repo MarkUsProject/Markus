@@ -497,22 +497,19 @@ class ResultsController < ApplicationController
         remark_request: params[:submission][:remark_request],
         remark_request_timestamp: Time.zone.now
       )
-      old_result = @submission.get_original_result
-      if params[:real_commit] == 'Submit'
+      if params[:save]
+        render 'update_remark_request', formats: [:js]
+      elsif params[:submit]
         unless @submission.remark_result
           @submission.make_remark_result
         end
-        debugger
-        result = @submission.remark_result
-        result.update_attributes(
+        @submission.remark_result.update_attributes(
           marking_state: Result::MARKING_STATES[:partial])
-        old_result.update_attributes(released_to_students: false)
-      end
-
-      if old_result.released_to_students?
-        render 'update_remark_request', formats: [:js]
-      else
+        @submission.get_original_result.update_attributes(
+          released_to_students: false)
         render js: 'location.reload();'
+      else
+        head :bad_request
       end
     end
   end

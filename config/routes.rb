@@ -180,7 +180,7 @@ Markus::Application.routes.draw do
             post 'set_released_to_students'
             put 'update_overall_comment'
             post 'update_marking_state'
-            get 'update_remark_request'
+            put 'update_remark_request'
             get 'update_positions'
             post 'update_mark'
             get 'view_marks'

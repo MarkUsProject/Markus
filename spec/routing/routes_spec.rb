@@ -934,8 +934,8 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes GET update_remark_request properly' do
-          expect(get: res_path + '/1/update_remark_request').to route_to(
+        it 'routes PUT update_remark_request properly' do
+          expect(put: res_path + '/1/update_remark_request').to route_to(
             controller: res_ctrl,
             action: 'update_remark_request',
             id: '1',
