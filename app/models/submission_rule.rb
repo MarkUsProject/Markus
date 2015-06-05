@@ -6,7 +6,7 @@ class SubmissionRule < ActiveRecord::Base
     end
   end
 
-  belongs_to :assignment
+  belongs_to :assignment, inverse_of: :submission_rule
   has_many :periods, dependent: :destroy, order: 'id'
   accepts_nested_attributes_for :periods, allow_destroy: true
   attr_accessible :type

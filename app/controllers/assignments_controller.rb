@@ -182,10 +182,10 @@ class AssignmentsController < ApplicationController
 
       render :student_assignment_list
     elsif current_user.ta?
-      @assignments = Assignment.all(order: :id)
+      @assignments = Assignment.includes(:submission_rule).all(order: :id)
       render :grader_index
     else
-      @assignments = Assignment.all(order: :id)
+      @assignments = Assignment.includes(:submission_rule).all(order: :id)
       render :index
     end
   end
