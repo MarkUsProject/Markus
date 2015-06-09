@@ -1,5 +1,4 @@
 class AssignmentsController < ApplicationController
-
   before_filter      :authorize_only_for_admin,
                      except: [:deletegroup,
                               :delete_rejected,
