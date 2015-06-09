@@ -73,6 +73,7 @@ module SubmissionsHelper
         g[:name_url] = get_grouping_name_url(grouping, final_due_date, result)
         g[:class_name] = get_tr_class(grouping)
         g[:grace_credits_used] = grouping.grace_period_deduction_single
+	g[:repo_name] = grouping.group.repository_name
         g[:repo_url] = repo_browser_assignment_submission_path(assignment,
                                                                grouping)
         g[:final_grade] = grouping.final_grade(result)

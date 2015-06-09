@@ -201,7 +201,7 @@
           }
 
           s['class_name'] = submission.class_name;
-          s['repository'] = <a href={submission.repo_url}>{submission.name}</a>;
+          s['repository'] = <a href={submission.repo_url}>{submission.repo_name}</a>;
           if (submission.late_commit) {
             s['commit_date'] = (<span>
               <%= image_tag('icons/error.png',
