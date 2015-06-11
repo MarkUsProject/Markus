@@ -224,19 +224,5 @@
       };
     }
   }
-
-  /*
-   * Check that new_file_name is the same as file_name. Otherwise
-   * refuse to accept the new filename. Note that this is called
-   * on the replace file upload button.
-   * See also: public/javascripts/file_manager.js
-   */
-  function check_change_of_filename(file_name, new_file_name, file_input) {
-    var new_file_name = normalize_filename(new_file_name);
-    if (file_name !== new_file_name) {
-      alert(<%= raw(I18n.t('student.submission.replace_file_js_error')) %>);
-      file_input.value = '';
-    }
-  }
 //]]>
 </script>

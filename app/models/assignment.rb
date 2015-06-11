@@ -46,7 +46,7 @@ class Assignment < ActiveRecord::Base
   validates_numericality_of :group_max, only_integer: true, greater_than: 0
   validates_numericality_of :tokens_per_day, only_integer: true, greater_than_or_equal_to: 0
 
-  has_one :submission_rule, dependent: :destroy
+  has_one :submission_rule, dependent: :destroy, inverse_of: :assignment
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
   validates_associated :submission_rule
   validates_presence_of :submission_rule

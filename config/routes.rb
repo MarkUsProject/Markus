@@ -139,12 +139,11 @@ Markus::Application.routes.draw do
           get 'download_svn_repo_list'
           get 'collect_ta_submissions'
           post 'update_submissions'
-          post 'update_converted_pdfs'
           get 'updated_files'
           get 'replace_files'
           get 'delete_files'
           post 'update_files'
-          post 'server_time'
+          get 'server_time'
           get 'download'
           get 'download_groupings_files'
         end
