@@ -136,7 +136,7 @@ pt:
       could_not_collect_section: "Coleta de submissões para sessão %{section_name} e projeto %{assignment_identifier} não foi possível - a data de coleta não foi atingida."
       no_submission_for_section: "Não há submissões da sessão %{section_name} para coletar."
       successfully_collected: " %{collected} submissões coletadas com sucesso."
-      marking_incomplete_warning: "Nota: Nem todas os projetos foram avaliados.\n\nTem certeza que deseja continuar?"
+      marking_incomplete_warning: "Nota: Isso só vai baixar os submissões que foram recolhidos.\n\nTem certeza que deseja continuar?"
     assignment:
         hidden: "%{assignment_text} (oculto)"
         assignment: "Projetos %{short_identifier}"
