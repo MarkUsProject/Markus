@@ -50,30 +50,6 @@ function enableDisableSubmit() {
   });
 }
 
-/*
- * Strip off some local file-path garbage potentially passed by the browser.
- * Called from app/views/submissions/_file_manager_boot.js.erb
- */
-function normalize_filename(new_file_name) {
-  /************************************************************************
-   * Note: new_file_name may include device identifiers and may be preceded
-   *       by the full path to the file on the user's local system.
-   * Examples:
-   *     C:\\data\\folder\\file.txt  // '\' is a special char in JS
-   *     D:/data/school/program.py
-   *     /home/user/Documents/Class.java
-   *     core.c
-   ***********************************************************************/
-  // Unify path separator
-  var new_file_name = new_file_name.replace(/\\/g, '/');
-  var slash = new_file_name.lastIndexOf('/');
-  if (slash !== -1) {
-    // Absolute path given, strip off preceding parts
-    new_file_name = new_file_name.substring(slash + 1);
-  }
-  return new_file_name;
-}
-
 function populate(files_json) {
   files_table.populate(files_json).render();
   enableDisableSubmit();
