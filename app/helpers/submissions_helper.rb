@@ -42,14 +42,13 @@ module SubmissionsHelper
   end
 
   def get_submissions_table_info(assignment, groupings)
-
     parts = groupings.partition do |grouping|
       (grouping.has_submission? &&
        grouping.current_submission_used.remark_submitted?)
     end
     results = Result.find(parts[0]) +
-              Result.where(submission_id: parts[1]
-                    .collect(&:current_submission_used))
+              Result.where(submission_id:
+                             parts[1].collect(&:current_submission_used))
 
     groupings.map do |grouping|
       g = Hash.new
@@ -185,7 +184,6 @@ module SubmissionsHelper
   def get_exit_directory(previous_path, grouping_id, revision_number,
                          revision, folder)
     directories = revision.directories_at_path(previous_path)
-    directories[folder]
 
     e = {}
     e[:id] = nil

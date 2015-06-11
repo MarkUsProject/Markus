@@ -231,7 +231,7 @@ class SubmissionsController < ApplicationController
     if @assignment.submission_rule.type == 'GracePeriodSubmissionRule'
       @grace_credit_column = "{
         id: 'grace_credits_used',
-        content: '#{I18n.t(:'browse_submissions.grace_credits_used')}',
+        content: '#{t(:'browse_submissions.grace_credits_used')}',
         sortable: true,
         compare: compare_numeric_values,
         searchable: false
@@ -622,7 +622,8 @@ class SubmissionsController < ApplicationController
   # Release or unrelease submissions
   def update_submissions
     if !params.has_key?(:groupings) || params[:groupings].empty?
-      render text: t('results.must_select_a_group'), status: 400 and return
+      render text: t('results.must_select_a_group'), status: 400
+      return
     end
     assignment = Assignment.find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
