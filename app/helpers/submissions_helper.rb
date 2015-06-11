@@ -164,7 +164,8 @@ module SubmissionsHelper
   def get_repo_browser_table_info(assignment, revision, revision_number, path,
                                   previous_path, grouping_id)
     exit_directory = get_exit_directory(previous_path, grouping_id,
-                                        revision_number, revision, assignment.repository_folder)
+                                        revision_number, revision,
+                                        assignment.repository_folder)
 
     full_path = File.join(assignment.repository_folder, path)
     if revision.path_exists?(full_path)
