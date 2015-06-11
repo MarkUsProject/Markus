@@ -997,7 +997,7 @@ module Repository
             last_modified_revision: last_modified_revision,
             last_modified_date: last_modified_date,
             changed: (last_modified_revision == @revision_number),
-            user_id: @repo.__get_property(:author, last_modified_revision)
+            user_id: @repo.__get_property(:author, @revision_number)
           })
           result[file_name] = new_directory
         end

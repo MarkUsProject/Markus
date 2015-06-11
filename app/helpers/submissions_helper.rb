@@ -164,7 +164,8 @@ module SubmissionsHelper
   def get_repo_browser_table_info(assignment, revision, revision_number, path,
                                   previous_path, grouping_id)
     exit_directory = get_exit_directory(previous_path, grouping_id,
-                                        revision_number)
+                                        revision_number, revision,
+                                        assignment.repository_folder)
 
     full_path = File.join(assignment.repository_folder, path)
     if revision.path_exists?(full_path)
@@ -181,14 +182,18 @@ module SubmissionsHelper
     end
   end
 
-  def get_exit_directory(previous_path, grouping_id, revision_number)
+  def get_exit_directory(previous_path, grouping_id, revision_number,
+                         revision, folder)
+    directories = revision.directories_at_path(previous_path)
+    directories[folder]
+
     e = {}
     e[:id] = nil
     e[:filename] = view_context.link_to '../', action: 'repo_browser',
                                         id: grouping_id, path: previous_path,
                                         revision_number: revision_number
-    e[:last_revised_date] = ''
-    e[:revision_by] = ''
+    e[:last_revised_date] = directories[folder].last_modified_date
+    e[:revision_by] = directories[folder].user_id
     [e]
   end
 

@@ -89,7 +89,6 @@ class SubmissionsController < ApplicationController
                                 date: revision.timestamp }
       end
     end
-
     respond_to do |format|
       format.html
       format.json do
