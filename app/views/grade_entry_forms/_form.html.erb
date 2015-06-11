@@ -55,12 +55,20 @@
         <div>
           <%= raw(f.label :date, t(:shortened_date).html_safe) %>
           <%= raw(f.text_field :date,
-                               id: 'actual_date',
-                               class: 'hidden') %>
+                             id: 'actual_date',
+                             class: 'hidden') %>
           <%= text_field_tag 'date',
                              nil,
                              { class: 'datepicker',
                                size: 30 } %>
+        </div>
+
+        <div>
+          <%= raw(label :date_check, 'Remove Date') %>
+          <%= raw(check_box_tag :date_check, 
+                                true, 
+                                false,
+                                disabled: @grade_entry_form.date.blank?) %>
         </div>
 
         <div>
