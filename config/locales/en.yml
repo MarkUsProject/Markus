@@ -136,7 +136,7 @@ en:
       could_not_collect_section: "Could not collect submissions for section %{section_name} and assignment %{assignment_identifier} - the section collection date has not been reached."
       no_submission_for_section: "There isn't any submission to collect for section %{section_name}."
       successfully_collected: "Successfully collected %{collected} submissions."
-      marking_incomplete_warning: "Note: Not all of the assignments have been marked.\n\nAre you sure you want to proceed?"
+      marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
     assignment:
         hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"

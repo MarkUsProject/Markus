@@ -139,7 +139,7 @@ fr:
       could_not_collect_section: "Les envois de la section %{section_name} pour le projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération pour cette section n'est pas encore passée."
       no_submission_for_section: "Il n'y a ancun envoi à récupérer pour la section %{section_name}."
       successfully_collected: "Récupération de %{collected} envoi(s)."
-      marking_incomplete_warning: "Attention: Certains rendus n'ont pas été complètement évalués.\n\nÊtes-vous sûr de vouloir continuer?"
+      marking_incomplete_warning: "Attention: Cela ne fera que télécharger les envois qui ont été recuillis.\n\nÊtes-vous sûr de vouloir continuer?"
     assignment:
         hidden: "%{assignment_text} (masqué)"
         assignment: "Projet %{short_identifier}"
