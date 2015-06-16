@@ -55,8 +55,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert_response :missing
     end
 
-    should 'GET on :use_another_assignment_groups' do
-      get_as @student,
+    should 'POST on :use_another_assignment_groups' do
+      post_as @student,
              :use_another_assignment_groups,
              :assignment_id => @assignment.id
       assert_response :missing
@@ -170,12 +170,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
       target_assignment = Assignment.make
       post_as @admin,
               :use_another_assignment_groups,
-              {:assignment_id => target_assignment.id,
-               :clone_groups_assignment_id => @assignment.id}
+              { assignment_id: target_assignment.id,
+                clone_assignment_id: @assignment.id }
 
       assert_not_nil assigns :target_assignment
       assert_response :success
-      assert render_template 'use_another_assignment_groups', :handlers => [:rjs]
+      assert render_template 'index', formats: [:'js.jsx'], handlers: [:erb]
     end
 
     should 'should be able to delete without groupings' do

@@ -430,8 +430,8 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET use_another_assignment_groups properly' do
-        expect(get: group_path + '/use_another_assignment_groups').to route_to(
+      it 'routes POST use_another_assignment_groups properly' do
+        expect(post: group_path + '/use_another_assignment_groups').to route_to(
           controller: group_ctrl,
           action: 'use_another_assignment_groups',
           assignment_id: assignment.id.to_s,
