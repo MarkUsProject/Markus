@@ -83,7 +83,9 @@
                              'assignment_group_use(); return false;' %>
       <span class='menu_bar'></span>
     <% end %>
-    <%= link_to_function t('download'), 'modal_download.open();' %>
+    <%= link_to t(:download),
+                { controller: 'groups', action: 'download_grouplist',
+                  id: @assignment.id } %>
     <span class='menu_bar'></span>
     <%= link_to_function t('upload'), 'modal_upload.open();' %>
   </div>
@@ -155,20 +157,6 @@
 <aside class='dialog' id='rename_group_dialog'></aside>
 
 <aside class='dialog' id='notes_dialog'></aside>
-
-<aside class='dialog' id='download_dialog'>
-  <h2><%= t('groups.download.download_groups_file') %></h2>
-  <%= link_to t('groups.download.download_csv'),
-                { controller: 'groups', action: 'download_grouplist',
-                  id: @assignment.id },
-                class: 'button',
-                onclick: 'modal_download.close();' %>
-
-  <section class='dialog-actions'>
-    <%= button_to_function t('cancel'),
-                         'modal_download.close(); return false;' %>
-  </section>
-</aside>
 
 <aside class='dialog' id='upload_dialog'>
   <!-- Script for disabling upload buttons. -->
