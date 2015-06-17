@@ -121,8 +121,6 @@ describe GroupsController do
       end
     end
 
-    describe '#upload_dialog'
-    describe '#download_dialog'
     describe '#rename_group_dialog'
     describe '#rename_group'
     describe '#valid_grouping'
