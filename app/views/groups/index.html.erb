@@ -117,7 +117,17 @@
   <% end %>
 </aside>
 
-<aside class='dialog' id='rename_group_dialog'></aside>
+<aside class='dialog' id='rename_group_dialog'>
+  <h2><%= t('groups.rename_group.title') %></h2>
+  <%= form_tag '', remote: true do %>
+    <%= label_tag :new_groupname, t('groups.rename_group.group_name') %>
+    <%= text_field_tag :new_groupname, '', maxlength: 30 %>
+    <section class='dialog-actions'>
+      <%= submit_tag t('groups.rename_group.title') %>
+      <%= button_to_function t(:cancel), 'modal_rename.close()' %>
+    </section>
+  <% end %>
+</aside>
 
 <aside class='dialog' id='notes_dialog'></aside>
 

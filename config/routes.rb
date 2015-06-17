@@ -102,7 +102,6 @@ Markus::Application.routes.draw do
 
         member do
           post 'rename_group'
-          get 'rename_group_dialog'
         end
 
         collection do

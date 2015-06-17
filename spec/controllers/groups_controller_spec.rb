@@ -121,7 +121,6 @@ describe GroupsController do
       end
     end
 
-    describe '#rename_group_dialog'
     describe '#rename_group'
     describe '#valid_grouping'
     describe '#invalid_grouping'
