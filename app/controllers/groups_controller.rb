@@ -25,9 +25,9 @@ class GroupsController < ApplicationController
   # Verify that all functions below are included in the authorize filter above
 
   def new
-    @assignment = Assignment.find(params[:assignment_id])
+    assignment = Assignment.find(params[:assignment_id])
     begin
-      @assignment.add_group(params[:new_group_name])
+      assignment.add_group(params[:new_group_name])
     rescue Exception => e
       flash[:error] = e.message
     ensure
