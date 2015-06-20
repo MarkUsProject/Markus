@@ -1,19 +1,34 @@
 <div id="overall_comment">
-      <div id="overall_comment_edit">
-        <%= form_for result,
-          remote: true,
-          url: { action: 'update_overall_comment', id: result.id } do |f| %>
-          <%= f.text_area :overall_comment,
-            cols: 50,
-            rows: 5,
-            id: 'overall_comment_text_area',
-            onkeydown: "$('overall_comment_submit').enable();" %>
-       <div>
-         <%= f.submit t(:save_changes),
-           :'data-disable-with' => I18n.t('working'),
-           disabled: true,
-           id: "overall_comment_submit" %>
-       </div>
-      <% end %>
+  <div id="overall_comment_edit">
+    <%= form_for result,
+                 remote: true,
+                 url: { action: 'update_overall_comment',
+                        id: result.id } do |f| %>
+      <%= f.text_area :overall_comment,
+                      cols: 50,
+                      rows: 5,
+                      id: 'overall_comment_text_area' %>
+      <%= f.submit t(:save_changes),
+                   disable_with: t('working'),
+                   id: 'overall_comment_submit' %>
+    <% end %>
   </div>
 </div>
+
+<script>
+  jQuery(document).ready(function () {
+    jQuery('#overall_comment_edit form').on('ajax:success', function (data) {
+      if (jQuery('.success').length > 0) {
+        jQuery('.success').text = '%<= t("marker.overall_comments_success") %>';
+        jQuery('.success').show();
+      } else {
+        jQuery('.wrapLeft').prepend(
+          '<div class="success">' +
+            '<%= t("marker.overall_comments_success") %>' +
+          '</div>');
+      }
+    }).on('ajax:before', function () {
+      jQuery('.success').hide();
+    });
+  });
+</script>

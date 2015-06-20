@@ -34,8 +34,9 @@ describe Mark do
       let(:rubric_mark) do
         create(:rubric_mark, mark: 4, markable_type: 'RubricCriterion')
       end
-      it 'is valid to have rubric briterion mark smaller or equals to four' do
-        expect(rubric_mark.valid_mark).to be_truthy
+      it 'is valid to have rubric criterion mark smaller or equals to four' do
+        rubric_mark.valid_mark
+        expect(rubric_mark.errors).to be_empty
       end
     end
 
@@ -44,7 +45,8 @@ describe Mark do
         create(:flexible_mark, mark: 0, markable_type: 'FlexibleCriterion')
       end
       it 'is valid to have rubric briterion mark equals zero' do
-        expect(flexible_mark.valid_mark).to be_truthy
+        flexible_mark.valid_mark
+        expect(flexible_mark.errors).to be_empty
       end
     end
   end

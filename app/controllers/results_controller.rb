@@ -365,30 +365,23 @@ class ResultsController < ApplicationController
     assignment = submission.grouping.assignment # get assignment for logging
     m_logger = MarkusLogger.instance
 
-    # FIXME checking both that result_mark is valid and correctly saved is
-    # useless. The validation is done automatically before saving unless
-    # specified otherwise.
-    if result_mark.valid?
-      unless result_mark.save
-        m_logger.log("Error while trying to update mark of submission. User: '" +
-                         "#{current_user.user_name}', Submission ID: '#{submission.id}'," +
-                         " Assignment: '#{assignment.short_identifier}', Group: '#{group.group_name}'.",
-                     MarkusLogger::ERROR)
-        render partial: 'shared/handle_error',
-               formats:[:js],
-               handlers: [:erb],
-               locals: { error: t('mark.error.save') + result_mark.errors.full_messages.join }
-      else
-        m_logger.log("User '#{current_user.user_name}' updated mark for submission (id: " +
-                         "#{submission.id}) of assignment '#{assignment.short_identifier}' for group" +
-                         " '#{group.group_name}'.", MarkusLogger::INFO)
-        render partial: 'results/marker/update_mark',
-               locals: { result_mark: result_mark, mark_value: result_mark.mark}
-      end
+    if result_mark.save
+      m_logger.log("User '#{current_user.user_name}' updated mark for " +
+                   "submission (id: #{submission.id}) of " +
+                   "assignment #{assignment.short_identifier} for " +
+                   "group #{group.group_name}.",
+                   MarkusLogger::INFO)
+      render text: "#{result_mark.get_mark}," +
+                   "#{result_mark.result.get_subtotal}," +
+                   "#{result_mark.result.total_mark}"
     else
-      render partial: 'results/marker/mark_verify_result',
-             locals: {mark_id: result_mark.id,
-                         mark_error: result_mark.errors.full_messages.join}
+      m_logger.log("Error while trying to update mark of submission. " +
+                   "User: #{current_user.user_name}, " +
+                   "Submission id: #{submission.id}, " +
+                   "Assignment: #{assignment.short_identifier}, " +
+                   "Group: #{group.group_name}.",
+                   MarkusLogger::ERROR)
+      render text: result_mark.errors.full_messages.join, status: :bad_request
     end
   end
 
@@ -491,10 +484,9 @@ class ResultsController < ApplicationController
   end
 
   def update_overall_comment
-    @result = Result.find(params[:id])
-    @result.overall_comment = params[:result][:overall_comment]
-    @result.save
-    render 'update_overall_comment', formats: [:js]
+    Result.find(params[:id]).update_attributes(
+      overall_comment: params[:result][:overall_comment])
+    head :ok
   end
 
   def update_overall_remark_comment
