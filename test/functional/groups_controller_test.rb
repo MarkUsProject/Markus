@@ -93,14 +93,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
         Assignment.any_instance.stubs(:add_group).returns(Grouping.make)
         get_as @admin, :new, :assignment_id => @assignment.id
         assert_response :success
-        assert_not_nil assigns(:assignment) { @assignment }
       end
 
       should 'be able to create with groupname' do
         get_as @admin, :new,
           { :assignment_id => @assignment.id, :new_group_name => 'test' }
         assert_response :success
-        assert_not_nil assigns(:assignment) { @assignment }
       end
     end #:add_group
 
@@ -168,13 +166,13 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
     should 'be able to clone groups from another assignment' do
       target_assignment = Assignment.make
+      @request.env['HTTP_REFERER'] = "assignments/#{target_assignment.id}/groups"
       post_as @admin,
               :use_another_assignment_groups,
               { assignment_id: target_assignment.id,
                 clone_assignment_id: @assignment.id }
 
-      assert_not_nil assigns :target_assignment
-      assert_response :success
+      assert_response :found
       assert render_template 'index', formats: [:'js.jsx'], handlers: [:erb]
     end
 

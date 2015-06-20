@@ -18,11 +18,6 @@ describe GroupsController do
 
     describe 'GET #new' do
       context 'when no group name is specified' do
-        it 'assigns the requested assignment to @assignment' do
-          get :new, assignment_id: assignment
-          expect(assigns(:assignment)).to eq(assignment)
-        end
-
         it 'adds a new group to assignment' do
           expect(assignment).to receive(:add_group)
             .with(nil)
