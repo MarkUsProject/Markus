@@ -176,6 +176,7 @@ class GroupsController < ApplicationController
             flash[:notice] = I18n.t('csv.groups_added_msg', { number_groups:
               number_groupings_added, number_lines: invalid_lines_count })
           end
+          Repository::SubversionRepository.__generate_authz_file
         rescue CSV::MalformedCSVError
           flash[:error] = t('csv.upload.malformed_csv')
           raise ActiveRecord::Rollback

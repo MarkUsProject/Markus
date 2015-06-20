@@ -1,21 +1,19 @@
-<%= javascript_include_tag 'help_system' %>
-
 <%= render partial: 'submissions_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
-<div class="notice">
-  <% if Time.zone.now >= @assignment.submission_rule.calculate_collection_time %>
-     <%= t("browse_submissions.grading_can_begin") %>
+<div class='notice'>
+  <% if @assignment.past_collection_date? %>
+     <%= t('browse_submissions.grading_can_begin') %>
   <% else %>
-     <%= t("browse_submissions.grading_can_begin_after",
-                time: I18n.l(@assignment.submission_rule.calculate_collection_time,
-                format: :long_date)) %>
+     <%= t('browse_submissions.grading_can_begin_after',
+           time: I18n.l(@assignment.submission_rule.calculate_collection_time,
+           format: :long_date)) %>
   <% end %>
 </div>
 
 <div class='title_bar'>
   <h1>
     <%= t('browse_submissions.submissions',
-               short_identifier: sanitize(@assignment.short_identifier)) %>
+          short_identifier: sanitize(@assignment.short_identifier)) %>
     <div class='title-help submissions_help'>
       <p class='help-message-title submissions_help'>
         <% if @current_user.ta? %>
@@ -30,36 +28,36 @@
   <div class='heading_buttons'>
     <% if @current_user.admin? %>
       <%= link_to t('collect_submissions.collect_all'),
-                         collect_all_submissions_assignment_submissions_path(
-                           @assignment.id),
-                         confirm: t('collect_submissions.results_loss_warning') %>
+                  collect_all_submissions_assignment_submissions_path(
+                    @assignment.id),
+                  confirm: t('collect_submissions.results_loss_warning') %>
       <span class='menu_bar'></span>
       <%= link_to t('browse_submissions.csv_report'),
-                         download_simple_csv_report_assignment_submissions_path(
-                           @assignment) %>
+                  download_simple_csv_report_assignment_submissions_path(
+                    @assignment) %>
       <span class='menu_bar'></span>
-      <%= link_to t('browse_submissions.detailled_csv_report'),
-                         download_detailed_csv_report_assignment_submissions_path(
-                           @assignment) %>
+      <%= link_to t('browse_submissions.detailed_csv_report'),
+                  download_detailed_csv_report_assignment_submissions_path(
+                    @assignment) %>
       <span class='menu_bar'></span>
       <%= link_to t('browse_submissions.subversion_repo_list'),
-                         download_svn_repo_list_assignment_submissions_path(
-                           @assignment) %>
+                  download_svn_repo_list_assignment_submissions_path(
+                    @assignment) %>
       <span class='menu_bar'></span>
       <%= link_to t('browse_submissions.subversion_export_file'),
-                         download_svn_export_commands_assignment_submissions_path(
-                           @assignment) %>
+                  download_svn_export_commands_assignment_submissions_path(
+                    @assignment) %>
       <span class='menu_bar'></span>
     <% end %>
 
-    <% # Allow submission collection only if all the submissions are assigned to exactly one TA. %>
+    <% # Allow TA submission collection only if all the submissions are
+       # assignment to exactly one TA. %>
     <% if @current_user.ta? and @assignment.past_collection_date? and
           @groupings.all? {|grouping| grouping.get_ta_names.size == 1} %>
-
       <%= link_to t('collect_submissions.collect_ta'),
-                         collect_ta_submissions_assignment_submissions_path(
-                           @assignment),
-                         confirm: t('collect_submissions.results_loss_warning') %>
+                  collect_ta_submissions_assignment_submissions_path(
+                    @assignment),
+                  confirm: t('collect_submissions.results_loss_warning') %>
       <span class='menu_bar'></span>
     <% elsif @current_user.ta? and @assignment.past_collection_date? %>
       <a id='disable' title='<%= t('collect_submissions.disable_collect') %>'>
@@ -70,17 +68,17 @@
 
     <% if all_assignments_marked? %>
       <%= link_to t('browse_submissions.download_groupings_files'),
-                    download_groupings_files_assignment_submissions_path(
-                      groupings: @groupings) %>
-      <span class='menu_bar'></span>
+                  download_groupings_files_assignment_submissions_path(
+                    groupings: @groupings) %>
     <% else %>
       <%= link_to t('browse_submissions.download_groupings_files'),
-                    download_groupings_files_assignment_submissions_path(
-                      groupings: @groupings),
-                    confirm: t('collect_submissions.marking_incomplete_warning') %>
-      <span class='menu_bar'></span>
+                  download_groupings_files_assignment_submissions_path(
+                    groupings: @groupings),
+                  confirm: t('collect_submissions.marking_incomplete_warning') %>
     <% end %>
+
     <% if @current_user.ta? %>
+      <span class='menu_bar'></span>
       <%= t('browse_submissions.how_many_marked',
             num_marked: @current_user.get_num_marked(@assignment),
             num_assigned: @current_user.get_num_assigned(@assignment)) %>
@@ -88,31 +86,8 @@
   </div>
 </div>
 
-<div class="wrapLeft">
-  <!-- Fairly sure the 'error' and 'success' divs are unneeded but only if the other actions don't depend on it (csv etc) -->
-  <% if flash[:error] %>
-    <div class="error">
-      <%= flash[:error] %>
-    </div>
-  <% end %>
-
-  <% if flash[:success] %>
-    <div class="success">
-      <%= flash[:success] %>
-    </div>
-  <% end %>
-
-  <% if !flash[:errors].nil? && !flash[:errors].empty? %>
-    <div class="error">
-      <h1><%= t("browse_submissions.errors") %></h1>
-      <ul>
-        <% flash[:errors].each do |error_message| %>
-          <li><%= error_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<div class='wrapLeft'>
+  <%= render partial: 'shared/flash_message' %>
   <div id='submissions_table'></div>
-  </form>
 </div>
+

@@ -621,8 +621,7 @@ class Grouping < ActiveRecord::Base
 
   # Should we write repository permissions for this grouping?
   def write_repo_permissions?
-    MarkusConfigurator.markus_config_repository_admin? &&
-        self.repository_external_commits_only?
+    MarkusConfigurator.markus_config_repository_admin?
   end
 
   def assigned_tas_for_criterion(criterion)
@@ -662,7 +661,6 @@ class Grouping < ActiveRecord::Base
   # the last commit
   ##
   def past_due_date?
-
     timestamp = assignment_folder_last_modified_date
     due_dates = assignment.section_due_dates
     section = unless inviter.blank?
@@ -689,9 +687,53 @@ class Grouping < ActiveRecord::Base
                 .includes(:assignment,
                           :group,
                           :grace_period_deductions,
-                          current_submission_used: :results,
-                          accepted_student_memberships: :user)
+                          { current_submission_used: [:results] },
+                          { accepted_student_memberships: :user },
+                          { inviter: :section },
+                          :tags)
                 .select { |g| g.non_rejected_student_memberships.size > 0 }
+    end
+  end
+
+  # Helper for populate_submissions_table.
+  # Returns a formatted time string for the last commit time for this grouping.
+  def last_commit_date
+    if has_submission?
+      I18n.l(current_submission_used.revision_timestamp,
+             format: :long_date)
+    else
+      '-'
+    end
+  end
+
+  # Helper for populate_submissions_table.
+  # Returns the final grade for this grouping.
+  def final_grade(result)
+    if has_submission? && result.marking_state == Result::MARKING_STATES[:complete]
+      result.total_mark
+    else
+      '-'
+    end
+  end
+
+  # Helper for populate_submissions_table.
+  # Returns the current marking state for the submission.
+  # It would be nice to use Result::MARKING_STATES, but that doesn't have
+  # states for released or remark requested.
+  # result is the current result, if it exists
+  def marking_state(result)
+    if !has_submission?
+      'unmarked'
+    elsif result.marking_state != Result::MARKING_STATES[:complete]
+      if current_submission_used.has_remark?
+        'remark'
+      else
+        'partial'
+      end
+    elsif result.released_to_students
+      'released'
+    else
+      'completed'
     end
   end
 

@@ -186,18 +186,19 @@ class SubmissionCollector < ActiveRecord::Base
 
   #Use the database to communicate to the child to stop, and restart itself
   #and manually collect the submission
-  def manually_collect_submission(grouping, rev_num)
+  #The third parameter enables or disables the forking.
+  def manually_collect_submission(grouping, rev_num, async=true)
 
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
-    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
+    if !async || RUBY_PLATFORM =~ /(:?mswin|mingw)/ # match for Windows
       grouping.is_collected = false
       remove_grouping_from_queue(grouping)
       grouping.save
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
       grouping.is_collected = true
       grouping.save
-      return
+      return new_submission
     end
 
     #Make the child process exit safely, to avoid both parent and child process
