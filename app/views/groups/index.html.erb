@@ -91,7 +91,7 @@
     <%= label_tag :clone_assignment_id, t('groups.assignment_to_use') %>
     <%= select_tag :clone_assignment_id,
                    options_for_select(
-                     @all_assignments.map {|a| [a.short_identifier, a.id]}) %>
+                     @clone_assignments.map {|a| [a.short_identifier, a.id]}) %>
     <section class='dialog-actions'>
       <%= submit_tag t(:submit),
                      data: { disable_with: t(:working),

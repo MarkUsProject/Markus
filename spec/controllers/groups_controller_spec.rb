@@ -133,10 +133,6 @@ describe GroupsController do
         get :index, assignment_id: assignment
       end
 
-      it 'populates @all_assignments with assignments' do
-        expect(assigns(:all_assignments)).to match_array([assignment])
-      end
-
       it 'assigns the requested assignment to @assignment' do
         expect(assigns(:assignment)).to eq(assignment)
       end
