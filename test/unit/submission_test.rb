@@ -30,7 +30,7 @@ class SubmissionTest < ActiveSupport::TestCase
       @submission = Submission.make
       @submission.save
       @submission.make_remark_result
-      @result = @submission.get_remark_result
+      @result = @submission.remark_result
       @result.marking_state = Result::MARKING_STATES[:partial]
       @result.save
     end
