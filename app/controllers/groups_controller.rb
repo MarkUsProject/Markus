@@ -25,9 +25,9 @@ class GroupsController < ApplicationController
   # Verify that all functions below are included in the authorize filter above
 
   def new
-    @assignment = Assignment.find(params[:assignment_id])
+    assignment = Assignment.find(params[:assignment_id])
     begin
-      @assignment.add_group(params[:new_group_name])
+      assignment.add_group(params[:new_group_name])
     rescue Exception => e
       flash[:error] = e.message
     ensure
@@ -54,23 +54,6 @@ class GroupsController < ApplicationController
       @removed_groupings.push(grouping)
     end
     head :ok
-  end
-
-  def upload_dialog
-    @assignment = Assignment.find(params[:id])
-    render partial: 'groups/modal_dialogs/upload_dialog', handlers: [:rjs]
-  end
-
-  def download_dialog
-    @assignment = Assignment.find(params[:id])
-    render partial: 'groups/modal_dialogs/download_dialog', handlers: [:rjs]
-  end
-
-  def rename_group_dialog
-    @assignment = Assignment.find(params[:assignment_id])
-    # id is really the grouping_id, this is due to rails routing
-    @grouping_id = params[:id]
-    render partial: 'groups/modal_dialogs/rename_group_dialog', handlers: [:rjs]
   end
 
   def rename_group
@@ -125,7 +108,10 @@ class GroupsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @all_assignments = Assignment.all(order: :id)
+    @clone_assignments = Assignment.order(:id)
+                                   .where(allow_web_submits: false)
+                                   .where(Assignment.arel_table[:id]
+                                                    .not_eq @assignment.id)
     render 'index'
   end
 
@@ -218,18 +204,19 @@ class GroupsController < ApplicationController
   end
 
   def use_another_assignment_groups
-    @target_assignment = Assignment.find(params[:assignment_id])
-    source_assignment = Assignment.find(params[:clone_groups_assignment_id])
+    target_assignment = Assignment.find(params[:assignment_id])
+    source_assignment = Assignment.find(params[:clone_assignment_id])
 
     if source_assignment.nil?
-      flash[:warning] = I18n.t('groups.csv.could_not_find_source')
-    end
-    if @target_assignment.nil?
-      flash[:warning] = I18n.t('groups.csv.could_not_find_target')
+      flash[:warning] = t('groups.csv.could_not_find_source')
+    elsif target_assignment.nil?
+      flash[:warning] = t('groups.csv.could_not_find_target')
+    else
+      # Clone the groupings
+      target_assignment.clone_groupings_from(source_assignment.id)
     end
 
-    # Clone the groupings
-    @target_assignment.clone_groupings_from(source_assignment.id)
+    redirect_to :back
   end
 
   # These actions act on all currently selected students & groups

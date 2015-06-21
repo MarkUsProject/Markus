@@ -102,13 +102,12 @@ Markus::Application.routes.draw do
 
         member do
           post 'rename_group'
-          get 'rename_group_dialog'
         end
 
         collection do
           get 'populate'
           get 'add_group'
-          get 'use_another_assignment_groups'
+          post 'use_another_assignment_groups'
           get 'manage'
           post 'csv_upload'
           get 'add_csv_group'
