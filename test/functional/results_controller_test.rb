@@ -584,7 +584,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                             '/update_overall_comment]'
               assert_select '#overall_remark_comment_edit form[action=' +
                             "#{path_prefix}/#{remark_result.id}" +
-                            '/update_overall_comment]'
+                              '/update_overall_comment]'
             end
 
             should 'edit third result' do

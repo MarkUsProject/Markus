@@ -141,7 +141,8 @@ class Submission < ActiveRecord::Base
   # Returns whether this submission has a remark request that has been
   # submitted to instructors or TAs.
   def remark_submitted?
-    has_remark? && remark_result.marking_state != Result::MARKING_STATES[:unmarked]
+    has_remark? &&
+      remark_result.marking_state != Result::MARKING_STATES[:unmarked]
   end
 
   # Helper methods
@@ -182,7 +183,7 @@ class Submission < ActiveRecord::Base
   end
 
   def make_remark_result
-    remark = self.create_remark_result(
+    remark = create_remark_result(
       marking_state: Result::MARKING_STATES[:unmarked],
       submission_id: id)
     self.save
@@ -192,12 +193,12 @@ class Submission < ActiveRecord::Base
 
     original_result.extra_marks.each do |extra_mark|
       remark.extra_marks.create(extra_mark.attributes.merge(
-        { result: remark, created_at: Time.zone.now }))
+                                  result: remark, created_at: Time.zone.now))
     end
 
     original_result.marks.each do |mark|
       remark_result.marks.create(mark.attributes.merge(
-        { result: remark, created_at: Time.zone.now }))
+                                   result: remark, created_at: Time.zone.now))
     end
   end
 

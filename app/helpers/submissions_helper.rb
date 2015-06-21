@@ -42,9 +42,9 @@ module SubmissionsHelper
   end
 
   def get_submissions_table_info(assignment, groupings)
-    parts = groupings.select { |g| g.has_submission? }
+    parts = groupings.select &:has_submission?
     results = Result.where(submission_id:
-                             parts.collect(&:current_submission_used))
+                             parts.map(&:current_submission_used))
                     .order(:id)
     groupings.map do |grouping|
       g = Hash.new
@@ -241,16 +241,17 @@ module SubmissionsHelper
 
   # Helper methods to determine remark request status on a submission
   def remark_in_progress(submission)
-    submission.remark_result && 
-    submission.remark_result.marking_state == Result::MARKING_STATES[:partial]
+    submission.remark_result &&
+      submission.remark_result.marking_state == Result::MARKING_STATES[:partial]
   end
 
   def remark_complete_but_unreleased(submission)
     submission.remark_result &&
-    submission.remark_result.marking_state == Result::MARKING_STATES[:complete] &&
-    !submission.remark_result.released_to_students
+      (submission.remark_result.marking_state ==
+         Result::MARKING_STATES[:complete]) &&
+        !submission.remark_result.released_to_students
   end
-  
+
   # Checks if all the assignments for the current submission are marked.
   def all_assignments_marked?
     Assignment.find(params[:assignment_id]).groupings.all? do |grouping|
