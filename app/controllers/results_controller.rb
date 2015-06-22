@@ -5,13 +5,12 @@ class ResultsController < ApplicationController
                          :create, :add_extra_mark, :next_grouping,
                          :update_overall_comment, :remove_extra_mark,
                          :update_marking_state, :download, :download_zip,
-                         :note_message, :update_overall_remark_comment,
+                         :note_message,
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
                 only: [:edit, :update_mark, :create, :add_extra_mark,
                        :next_grouping, :update_overall_comment,
-                       :remove_extra_mark, :update_marking_state, :note_message,
-                       :update_overall_remark_comment]
+                       :remove_extra_mark, :update_marking_state, :note_message]
   before_filter :authorize_for_user,
                 only: [:codeviewer, :download, :download_zip]
   before_filter :authorize_for_student,
@@ -31,13 +30,12 @@ class ResultsController < ApplicationController
   end
 
   def edit
-    result_id = params[:id]
-    @result = Result.find(result_id)
+    @result = Result.find(params[:id])
     @assignment = @result.submission.assignment
     @submission = @result.submission
 
     if @submission.remark_submitted?
-      @old_result = Result.where(submission_id: @submission.id).first
+      @old_result = @submission.get_original_result
     else
       @old_result = nil
     end
@@ -409,7 +407,7 @@ class ResultsController < ApplicationController
     @old_result = nil
     if @submission.remark_submitted?
       @old_result = @result
-      @result = @submission.get_remark_result
+      @result = @submission.remark_result
       # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
       if @result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students
@@ -489,48 +487,41 @@ class ResultsController < ApplicationController
     head :ok
   end
 
-  def update_overall_remark_comment
-    @result = Result.find(params[:id])
-    @result.overall_comment = params[:result][:overall_comment]
-    @result.save
-    render 'update_overall_remark_comment', formats: [:js]
-  end
-
   def update_remark_request
     @assignment = Assignment.find(params[:assignment_id])
-    unless @assignment.past_remark_due_date?
+    if @assignment.past_remark_due_date?
+      head :bad_request
+    else
       @submission = Submission.find(params[:id])
-      @submission.remark_request = params[:submission][:remark_request]
-      @submission.remark_request_timestamp = Time.zone.now
-      @submission.save
-      if params[:real_commit] == 'Submit'
-        @old_result = @submission.get_original_result
-        unless @submission.get_remark_result
-          @submission.create_remark_result
+      @submission.update_attributes(
+        remark_request: params[:submission][:remark_request],
+        remark_request_timestamp: Time.zone.now
+      )
+      if params[:save]
+        render 'update_remark_request', formats: [:js]
+      elsif params[:submit]
+        unless @submission.remark_result
+          @submission.make_remark_result
         end
-        @result = @submission.get_remark_result
-        @result.marking_state = Result::MARKING_STATES[:partial]
-        @old_result.released_to_students = (params[:value] == 'false')
-        @result.save
-        @old_result.save
+        @submission.remark_result.update_attributes(
+          marking_state: Result::MARKING_STATES[:partial])
+        @submission.get_original_result.update_attributes(
+          released_to_students: false)
+        render js: 'location.reload();'
+      else
+        head :bad_request
       end
     end
-    render 'update_remark_request', formats: [:js]
   end
 
+  # Allows student to cancel a remark request.
   def cancel_remark_request
-    @submission = Submission.find(params[:submission_id])
+    submission = Submission.find(params[:submission_id])
 
-    @remark_result = @submission.get_remark_result
-    @remark_result.destroy
-
-    @submission.remark_result_id = nil
-    @submission.remark_request = nil
-    @submission.save
-
-    @result = @submission.get_original_result
-    @result.released_to_students = true
-    @result.save
+    submission.remark_result.destroy
+    submission.update_attributes(remark_result_id: nil)
+    submission.get_original_result.update_attributes(
+      released_to_students: true)
 
     redirect_to controller: 'results',
                 action: 'view_marks',

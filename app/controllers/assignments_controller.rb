@@ -159,8 +159,8 @@ class AssignmentsController < ApplicationController
           grouping = current_user.accepted_grouping_for(a)
           if grouping.has_submission?
             submission = grouping.current_submission_used
-            if submission.has_remark? && submission.get_remark_result.released_to_students
-              @a_id_results[a.id] = submission.get_remark_result
+            if submission.has_remark? && submission.remark_result.released_to_students
+              @a_id_results[a.id] = submission.remark_result
             elsif submission.has_result? && submission.get_original_result.released_to_students
               @a_id_results[a.id] = submission.get_original_result
             end

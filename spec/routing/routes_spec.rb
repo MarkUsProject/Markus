@@ -826,8 +826,8 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes GET cancel_remark_request properly' do
-          expect(get: res_path + '/1/cancel_remark_request').to route_to(
+        it 'routes DELETE cancel_remark_request properly' do
+          expect(delete: res_path + '/1/cancel_remark_request').to route_to(
             controller: res_ctrl,
             action: 'cancel_remark_request',
             id: '1',
@@ -906,17 +906,6 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes POST update_overall_remark_comment properly' do
-          expect(post: res_path + '/1/update_overall_remark_comment')
-            .to route_to(
-              controller: res_ctrl,
-              action: 'update_overall_remark_comment',
-              id: '1',
-              assignment_id: assignment.id.to_s,
-              submission_id: submission.id.to_s,
-              locale: 'en')
-        end
-
         it 'routes POST update_marking_state properly' do
           expect(post: res_path + '/1/update_marking_state').to route_to(
             controller: res_ctrl,
@@ -927,8 +916,8 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes GET update_remark_request properly' do
-          expect(get: res_path + '/1/update_remark_request').to route_to(
+        it 'routes PUT update_remark_request properly' do
+          expect(put: res_path + '/1/update_remark_request').to route_to(
             controller: res_ctrl,
             action: 'update_remark_request',
             id: '1',

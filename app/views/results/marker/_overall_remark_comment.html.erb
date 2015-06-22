@@ -1,7 +1,7 @@
 <div id="overall_remark_comment_edit">
     <%= form_for result,
           url: { controller: 'results',
-            action: 'update_overall_remark_comment',
+            action: 'update_overall_comment',
             id: result.id,
             submission_id: result.submission_id },
           html: { method: :post },
@@ -13,9 +13,9 @@
 		    onkeypress: "$('overall_remark_comment_submit').enable();" %>
     <div>
       <%= f.submit t(:save_changes),
-      	   :'data-disable-with' => I18n.t('working'),
+      	           disable_with: t('working'),
 		   disabled: true,
-		   id: "overall_remark_comment_submit" %>
+		   id: 'overall_remark_comment_submit' %>
     </div>
   <% end -%>
 </div>
