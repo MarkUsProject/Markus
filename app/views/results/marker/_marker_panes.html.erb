@@ -41,7 +41,7 @@
         </div>
 
         <div id='remark_request_tab' style='display:none;'>
-          <% if @submission.has_remark? %>
+          <% if can_show_remark_request_tab_in_marker_pane(submission) %>
             <%= render partial: 'results/marker/remark_request',
                        locals: { result: result,
                                  submission: submission,
@@ -59,6 +59,7 @@
           <li><a href='#mark_viewer'><%= t('marker.marks.marks') %></a></li>
           <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
           <li><a href='#submission_rule_viewer'><%= t('marker.marks.submission_rule') %></a></li>
+          <li><a href='#tag_viewer'><%= t('marker.marks.tags') %></a></li>
         </ul>
 
         <div id='mark_viewer'>
@@ -105,6 +106,14 @@
                      locals: { grouping: result.submission.grouping } %>
         </div>
 
+        <!-- Tag insertion pane. -->
+        <div id='tag_viewer'>
+          <%= render partial: 'results/marker/tag_summary',
+                     locals: { assignment: assignment,
+                               old_result: @old_result,
+                               result: result } %>
+        </div>
+
         <!-- Annotation pane-->
         <div id='annotation_holder'></div>
 
@@ -113,36 +122,48 @@
           <input type='hidden' id='x2' value=''>
           <input type='hidden' id='y1' value=''>
           <input type='hidden' id='y2' value=''>
-          <p>
-            <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
-          </p>
-          <p>
-            <textarea id='new_annotation_content'></textarea>
-          </p>
-          <p>
-            <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
-            <select id='new_annotation_category'>
-              <option value=''><%= t('annotations.one_time_only') %></option>
-              <% @annotation_categories.each do |annotation_category| %>
-                <option value='<%= annotation_category.id %>'>
-                  <%= annotation_category.annotation_category_name %>
-                </option>
-              <% end %>
-            </select>
-          </p>
+          <input type='hidden' id='annot_dialog_page' value=''> <%# For use in PDF's %>
+          <div>
+            <div style="float: left;">
+              <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
+              <p>
+                <textarea id="new_annotation_content"></textarea>
+              </p>
+              <button onclick="updateAnnotationPreview()"><%= t('marker.annotation.preview') %></button>
 
-          <section class='dialog-actions'>
-            <button onclick="submit_new_annotation(
-                              jQuery('#new_annotation_content').val(),
-                              jQuery('#new_annotation_category').val(),
-                              jQuery('#x1').val(),
-                              jQuery('#x2').val(),
-                              jQuery('#y1').val(),
-                              jQuery('#y2').val());">
-              <%= I18n.t('marker.annotation.new_annotation') %>
-            </button>
-            <%= button_to_function t('cancel'), 'modal.close();' %>
-          </section>
+              <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
+              <select id='new_annotation_category'>
+                <option value=''><%= t('annotations.one_time_only') %></option>
+                <% annotation_categories.each do |annotation_category| %>
+                    <option value='<%= annotation_category.id %>'>
+                      <%= annotation_category.annotation_category_name %>
+                    </option>
+                <% end %>
+              </select>
+
+              <section class='dialog-actions'>
+                <button id='new_annotation_modal_button' onclick="hideAnnotationPreview();
+                        submit_new_annotation(
+                            jQuery('#new_annotation_content').val(),
+                            jQuery('#new_annotation_category').val(),
+                            jQuery('#x1').val(),
+                            jQuery('#x2').val(),
+                            jQuery('#y1').val(),
+                            jQuery('#y2').val(),
+                            jQuery('#annot_dialog_page').val());">
+                  <%= I18n.t('marker.annotation.new_annotation') %>
+                </button>
+                <%= button_to_function t('cancel'), 'modal.close(); hideAnnotationPreview();' %>
+              </section>
+            </div>
+            <div style="float: right">
+              <h2 id="annotation_preview_title" style="display: none"> <%= t('marker.annotation.preview_title') %></h2>
+              <p id="annotation_preview" style="display: none; word-wrap: break-word;"></p>
+            </div>
+            <div style="clear:both;"></div>
+          </div>
+
+
         </aside>
       </div> <!-- Mark pane -->
     </div>

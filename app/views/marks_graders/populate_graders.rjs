@@ -1,1 +1,0 @@
-page.call "populate_graders", @table_rows.to_json

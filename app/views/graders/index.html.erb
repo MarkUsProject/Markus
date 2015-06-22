@@ -1,6 +1,5 @@
 <%= content_for :head do %>
-  <%= javascript_include_tag 'Graders/index',
-                             'help_system' %>
+  <%= javascript_include_tag 'Graders/index' %>
 
   <%= render partial: 'graders_action_column', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'graders_table', formats: [:'js.jsx'], handlers: [:erb] %>

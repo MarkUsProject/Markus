@@ -1,2 +1,0 @@
-page.replace_html 'download_dialog', partial: 'groups/modal_dialogs/download'
-page.call('modalDownload.open')

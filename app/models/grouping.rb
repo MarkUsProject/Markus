@@ -33,6 +33,7 @@ class Grouping < ActiveRecord::Base
            source: :user
 
   has_many :submissions
+  has_and_belongs_to_many :tags
   #The first submission found that satisfies submission_version_used == true.
   #If there are multiple such submissions, one is chosen randomly.
   has_one :current_submission_used,
@@ -162,6 +163,17 @@ class Grouping < ActiveRecord::Base
     return I18n.t('assignment.group.empty') if student_user_names.size == 0
 	  student_user_names.join(', ')
   end
+
+  def get_group_name
+    name = group.group_name
+    unless accepted_students.size == 1 && name == accepted_students.first.user_name then
+      name += ' ('
+      name += accepted_students.collect{ |student| student.user_name}.join(', ')
+      name += ')'
+    end
+    name
+  end
+
 
   def group_name_with_student_user_names
 		user_names = get_all_students_in_group
@@ -485,16 +497,8 @@ class Grouping < ActiveRecord::Base
   def assignment_folder_last_modified_date
     repo = self.group.repo
     rev = repo.get_latest_revision
-    # get the full path of repository folder
-    path = self.assignment.repository_folder
+    last_date = rev.timestamp
 
-    # split "repo_folder_path" into two parts
-    parent_path = File.dirname(path)
-    folder_name = File.basename(path)
-
-    # turn "parent_path" into absolute path
-    parent_path = repo.expand_path(parent_path, '/')
-    last_date = rev.directories_at_path(parent_path)[folder_name].last_modified_date
     repo.close()
     last_date
   end
@@ -587,12 +591,11 @@ class Grouping < ActiveRecord::Base
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-
     # create folder only if we are repo admin
     if self.group.repository_admin?
       self.group.access_repo do |repo|
         revision = repo.get_latest_revision
-        assignment_folder = File.join('/', assignment.repository_folder)
+        assignment_folder = assignment.repository_folder
 
         if revision.path_exists?(assignment_folder)
           return true
@@ -616,8 +619,7 @@ class Grouping < ActiveRecord::Base
 
   # Should we write repository permissions for this grouping?
   def write_repo_permissions?
-    MarkusConfigurator.markus_config_repository_admin? &&
-        self.repository_external_commits_only?
+    MarkusConfigurator.markus_config_repository_admin?
   end
 
   def assigned_tas_for_criterion(criterion)
@@ -657,7 +659,6 @@ class Grouping < ActiveRecord::Base
   # the last commit
   ##
   def past_due_date?
-
     timestamp = assignment_folder_last_modified_date
     due_dates = assignment.section_due_dates
     section = unless inviter.blank?
@@ -667,10 +668,71 @@ class Grouping < ActiveRecord::Base
                          due_dates.where(section_id: section).first.due_date
                        end
 
-    # condition to return
-    (!due_dates.blank? && !section.blank? &&
-        !section_due_date.blank? && timestamp > section_due_date) ||
-        timestamp > assignment.due_date
+    if !section_due_date.blank?
+      timestamp > section_due_date
+    else
+      timestamp > assignment.due_date
+    end
+  end
+
+  def self.get_groupings_for_assignment(assignment, user)
+    if user.ta?
+      assignment.ta_memberships.find_all_by_user_id(user)
+                .select { |m| m.grouping.is_valid? }
+                .map { |m| m.grouping }
+    else
+      assignment.groupings
+                .includes(:assignment,
+                          :group,
+                          :grace_period_deductions,
+                          { current_submission_used: [:results] },
+                          { accepted_student_memberships: :user },
+                          { inviter: :section },
+                          :tags)
+                .select { |g| g.non_rejected_student_memberships.size > 0 }
+    end
+  end
+
+  # Helper for populate_submissions_table.
+  # Returns a formatted time string for the last commit time for this grouping.
+  def last_commit_date
+    if has_submission?
+      I18n.l(current_submission_used.revision_timestamp,
+             format: :long_date)
+    else
+      '-'
+    end
+  end
+
+  # Helper for populate_submissions_table.
+  # Returns the final grade for this grouping.
+  def final_grade(result)
+    if has_submission? && result.marking_state == Result::MARKING_STATES[:complete]
+      result.total_mark
+    else
+      '-'
+    end
+  end
+
+  # Helper for populate_submissions_table.
+  # Returns the current marking state for the submission.
+  # It would be nice to use Result::MARKING_STATES, but that doesn't have
+  # states for released or remark requested.
+  # result is the current result, if it exists
+  def marking_state(result)
+    if !has_submission?
+      'unmarked'
+    elsif result.marking_state != Result::MARKING_STATES[:complete]
+      if current_submission_used.has_remark?
+        'remark'
+      else
+        'partial'
+      end
+    elsif result.released_to_students
+      'released'
+    else
+      'completed'
+    end
   end
 
   private

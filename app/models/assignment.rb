@@ -59,7 +59,7 @@ class Assignment < ActiveRecord::Base
   validates_numericality_of :group_max, only_integer: true, greater_than: 0
   validates_numericality_of :tokens_per_day, only_integer: true, greater_than_or_equal_to: 0
 
-  has_one :submission_rule, dependent: :destroy
+  has_one :submission_rule, dependent: :destroy, inverse_of: :assignment
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
   validates_associated :submission_rule
   validates_presence_of :submission_rule
@@ -133,7 +133,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Are we past all the due dates for this assignment?
-  def past_due_date?
+  def past_all_due_dates?
     # If no section due dates /!\ do not check empty? it could be wrong
     unless self.section_due_dates_type
       return !due_date.nil? && Time.zone.now > due_date
@@ -149,7 +149,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Return an array with names of sections past
-  def what_past_due_date
+  def section_names_past_due_date
     sections_past = []
 
     unless self.section_due_dates_type
@@ -168,7 +168,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Whether or not this grouping is past its due date for this assignment.
-  def section_past_due_date?(grouping)
+  def grouping_past_due_date?(grouping)
     if section_due_dates_type && grouping &&
       grouping.inviter.section.present?
 
@@ -176,7 +176,7 @@ class Assignment < ActiveRecord::Base
         SectionDueDate.due_date_for(grouping.inviter.section, self)
       !section_due_date.nil? && Time.zone.now > section_due_date
     else
-      past_due_date?
+      past_all_due_dates?
     end
   end
 
@@ -188,19 +188,12 @@ class Assignment < ActiveRecord::Base
     SectionDueDate.due_date_for(section, self)
   end
 
-  # Calculate the latest due date. Used to calculate the collection time
+  # Calculate the latest due date among all sections for the assignment.
   def latest_due_date
-    if self.section_due_dates_type
-      due_date = self.due_date
-      self.section_due_dates.each do |d|
-        if !d.due_date.nil? && due_date < d.due_date
-          due_date = d.due_date
-        end
-      end
-      due_date
-    else
-      self.due_date
-    end
+    return due_date unless section_due_dates_type
+
+    due_dates = section_due_dates.map(&:due_date) << due_date
+    due_dates.compact.max
   end
 
   def past_collection_date?
@@ -246,7 +239,7 @@ class Assignment < ActiveRecord::Base
     else
       total = flexible_criteria.sum('max')
     end
-    total
+    total.round(2)
   end
 
   # calculates summary statistics of released results for this assignment
@@ -302,7 +295,7 @@ class Assignment < ActiveRecord::Base
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       if !submission.nil? && submission.has_remark?
-        if submission.get_remark_result.marking_state ==
+        if submission.remark_result.marking_state ==
             Result::MARKING_STATES[:partial]
           outstanding_count += 1
         end
@@ -333,7 +326,7 @@ class Assignment < ActiveRecord::Base
         group = Group.create(group_name: new_group_name)
       end
     end
-
+    group.set_repo_permissions
     Grouping.create(group: group, assignment: self)
   end
 

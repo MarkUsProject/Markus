@@ -118,7 +118,7 @@ describe Assignment do
         end
 
         it 'returns all TAs' do
-          expect(@assignment.tas).to eq [@ta, @other_ta]
+          expect(@assignment.tas).to match_array [@ta, @other_ta]
         end
       end
     end
@@ -250,7 +250,7 @@ describe Assignment do
   describe '#valid_groupings and #invalid_groupings' do
     before :each do
       @assignment = create(:assignment)
-      @groupings = (1..2).map { create(:grouping, assignment: @assignment) }
+      @groupings = Array.new(2) { create(:grouping, assignment: @assignment) }
     end
 
     context 'when no groups are valid' do
@@ -281,9 +281,7 @@ describe Assignment do
 
       context 'due to meeting min size requirement' do
         before :each do
-          create(:accepted_student_membership,
-                 grouping: @groupings.first,
-                 user: create(:student))
+          create(:accepted_student_membership, grouping: @groupings.first)
         end
 
         it '#valid_groupings returns the valid group' do
@@ -300,9 +298,7 @@ describe Assignment do
     context 'when all groups are valid' do
       before :each do
         @groupings.each do |grouping|
-          create(:accepted_student_membership,
-                 grouping: grouping,
-                 user: create(:student))
+          create(:accepted_student_membership, grouping: grouping)
         end
       end
 
@@ -351,7 +347,8 @@ describe Assignment do
         end
 
         it 'returns the students' do
-          expect(@assignment.grouped_students).to eq [@student, @other_student]
+          expect(@assignment.grouped_students)
+            .to match_array [@student, @other_student]
         end
       end
     end
@@ -361,7 +358,7 @@ describe Assignment do
     before :each do
       @assignment = create(:assignment)
       @grouping = create(:grouping, assignment: @assignment)
-      @students = (1..2).map { create(:student) }
+      @students = Array.new(2) { create(:student) }
     end
 
     context 'when all students are ungrouped' do
@@ -399,7 +396,7 @@ describe Assignment do
 
     context 'when there are multiple groupings' do
       before :each do
-        @groupings = (1..2).map { create(:grouping, assignment: @assignment) }
+        @groupings = Array.new(2) { create(:grouping, assignment: @assignment) }
       end
 
       context 'and no TAs have been assigned' do
@@ -505,7 +502,7 @@ describe Assignment do
 
     context 'when multiple groups have submitted' do
       before :each do
-        @groupings = (1..2).map { create(:grouping, assignment: @assignment) }
+        @groupings = Array.new(2) { create(:grouping, assignment: @assignment) }
         @groupings.each do |group|
           create(:version_used_submission, grouping: group)
         end
@@ -520,6 +517,7 @@ describe Assignment do
   describe '#graded_submission_results' do
     before :each do
       @assignment = create(:assignment)
+      @submission_collector = SubmissionCollector.instance
       @grouping = create(:grouping, assignment: @assignment)
       @submission = create(:version_used_submission, grouping: @grouping)
       @other_grouping = create(:grouping, assignment: @assignment)
@@ -559,6 +557,23 @@ describe Assignment do
         end
       end
     end
+
+    context 'assignment re-collection' do
+      it 'does calculate submission results properly' do
+        @assignment.due_date = (Time.now - 1.minute)
+        @assignment.save
+        expect(@assignment.submission_rule.can_collect_now?).to eq true
+        @submission_collector.push_groupings_to_queue(@assignment.groupings)
+        expect(@assignment.graded_submission_results.size).to_not be_nil
+        first_result = @submission.assignment.graded_submission_results.size
+        # make call to collect_all_submissions again
+        @submission_collector.push_groupings_to_queue(@assignment.groupings)
+        expect(@assignment.graded_submission_results.size).to_not be_nil
+        second_result = @submission.assignment.graded_submission_results.size
+        # first_result should be equal to second_result
+        expect(first_result).to eq(second_result)
+      end
+    end
   end
 
   describe '#add_csv_group' do
@@ -575,7 +590,7 @@ describe Assignment do
 
     context 'when the row is not empty' do
       before :each do
-        @students = (1..2).map { create(:student) }
+        @students = Array.new(2) { create(:student) }
         user_names = @students.map { |student| student.user_name }
         @row = ['group_name', 'repo_name'] + user_names
       end
@@ -747,7 +762,7 @@ describe Assignment do
     end
   end
 
-  describe '#past_due_date?' do
+  describe '#past_all_due_dates?' do
     context 'when the assignment is not past due' do
       before :each do
         @assignment = create(:assignment, due_date: 1.days.from_now)
@@ -759,7 +774,7 @@ describe Assignment do
         end
 
         it 'returns false' do
-          expect(@assignment.past_due_date?).to be false
+          expect(@assignment.past_all_due_dates?).to be false
         end
       end
 
@@ -773,7 +788,7 @@ describe Assignment do
 
         it 'returns false' do
           pending 'pending discussion on intended functionality'
-          expect(@assignment.past_due_date?).to be false
+          expect(@assignment.past_all_due_dates?).to be false
         end
       end
     end
@@ -789,7 +804,7 @@ describe Assignment do
         end
 
         it 'returns true' do
-          expect(@assignment.past_due_date?).to be true
+          expect(@assignment.past_all_due_dates?).to be true
         end
       end
 
@@ -802,13 +817,13 @@ describe Assignment do
         end
 
         it 'returns false' do
-          expect(@assignment.past_due_date?).to be false
+          expect(@assignment.past_all_due_dates?).to be false
         end
       end
     end
   end
 
-  describe '#section_past_due_date?' do
+  describe '#grouping_past_due_date?' do
     context 'with SectionDueDates disabled' do
       before :each do
         @due_assignment = create(:assignment,
@@ -821,16 +836,16 @@ describe Assignment do
 
       context 'when no grouping is specified' do
         it 'returns based on due date of the assignment' do
-          expect(@due_assignment.section_past_due_date?(nil)).to be true
-          expect(@not_due_assignment.section_past_due_date?(nil)).to be false
+          expect(@due_assignment.grouping_past_due_date?(nil)).to be true
+          expect(@not_due_assignment.grouping_past_due_date?(nil)).to be false
         end
       end
 
       context 'when a grouping is specified' do
         it 'returns based on due date of the assignment' do
           grouping = create(:grouping)
-          expect(@due_assignment.section_past_due_date?(grouping)).to be true
-          expect(@not_due_assignment.section_past_due_date?(grouping))
+          expect(@due_assignment.grouping_past_due_date?(grouping)).to be true
+          expect(@not_due_assignment.grouping_past_due_date?(grouping))
             .to be false
         end
       end
@@ -845,9 +860,9 @@ describe Assignment do
         it 'returns based on due date of the assignment' do
           pending 'waiting on resolution for pending past_due_date example'
           @assignment.update_attributes(due_date: 1.days.ago)
-          expect(@assignment.section_past_due_date?(nil)).to be true
+          expect(@assignment.grouping_past_due_date?(nil)).to be true
           @assignment.update_attributes(due_date: 1.days.from_now)
-          expect(@assignment.section_past_due_date?(nil)).to be false
+          expect(@assignment.grouping_past_due_date?(nil)).to be false
         end
       end
 
@@ -864,9 +879,9 @@ describe Assignment do
         context 'that does not have an associated SectionDueDate' do
           it 'returns based on due date of the assignment' do
             @assignment.update_attributes(due_date: 1.days.ago)
-            expect(@assignment.section_past_due_date?(@grouping)).to be true
+            expect(@assignment.grouping_past_due_date?(@grouping)).to be true
             @assignment.update_attributes(due_date: 1.days.from_now)
-            expect(@assignment.section_past_due_date?(@grouping)).to be false
+            expect(@assignment.grouping_past_due_date?(@grouping)).to be false
           end
         end
 
@@ -878,18 +893,18 @@ describe Assignment do
           it 'returns based on the SectionDueDate of the grouping' do
             @section_due_date.update_attributes(due_date: 1.days.from_now)
             @assignment.update_attributes(due_date: 1.days.ago)
-            expect(@assignment.section_past_due_date?(@grouping)).to be false
+            expect(@assignment.grouping_past_due_date?(@grouping)).to be false
 
             @section_due_date.update_attributes(due_date: 1.days.ago)
             @assignment.update_attributes(due_date: 1.days.from_now)
-            expect(@assignment.section_past_due_date?(@grouping)).to be true
+            expect(@assignment.grouping_past_due_date?(@grouping)).to be true
           end
         end
       end
     end
   end
 
-  describe '#what_past_due_date' do
+  describe '#section_names_past_due_date' do
     context 'with SectionDueDates disabled' do
       before :each do
         @assignment = create(:assignment, section_due_dates_type: false)
@@ -899,7 +914,7 @@ describe Assignment do
         it 'returns one name for the assignment' do
           @assignment.update_attributes(due_date: 1.days.ago)
 
-          expect(@assignment.what_past_due_date).to eq ['Due Date']
+          expect(@assignment.section_names_past_due_date).to eq ['Due Date']
         end
       end
 
@@ -907,7 +922,7 @@ describe Assignment do
         it 'returns an empty array' do
           @assignment.update_attributes(due_date: 1.days.from_now)
 
-          expect(@assignment.what_past_due_date).to eq []
+          expect(@assignment.section_names_past_due_date).to eq []
         end
       end
     end
@@ -928,7 +943,8 @@ describe Assignment do
           it 'returns an array with the name of the section' do
             @section_due_date.update_attributes(due_date: 1.days.ago)
 
-            expect(@assignment.what_past_due_date).to eq [@section.name]
+            expect(@assignment.section_names_past_due_date)
+              .to eq [@section.name]
           end
         end
 
@@ -936,14 +952,14 @@ describe Assignment do
           it 'returns an empty array' do
             @section_due_date.update_attributes(due_date: 1.days.from_now)
 
-            expect(@assignment.what_past_due_date).to eq []
+            expect(@assignment.section_names_past_due_date).to eq []
           end
         end
       end
 
       describe 'two SectionDueDates' do
         before :each do
-          @sections = (1..2).map { create(:section) }
+          @sections = Array.new(2) { create(:section) }
           @section_due_dates = @sections.map do |section|
             SectionDueDate.create(section: section, assignment: @assignment)
           end
@@ -956,7 +972,8 @@ describe Assignment do
               section_due_date.update_attributes(due_date: 1.days.ago)
             end
 
-            expect(@assignment.what_past_due_date).to match_array @section_names
+            expect(@assignment.section_names_past_due_date)
+              .to match_array @section_names
           end
         end
 
@@ -965,7 +982,8 @@ describe Assignment do
             @section_due_dates.first.update_attributes(due_date: 1.days.ago)
             @section_due_dates.last.update_attributes(due_date: 1.days.from_now)
 
-            expect(@assignment.what_past_due_date).to eq [@section_names.first]
+            expect(@assignment.section_names_past_due_date)
+              .to eq [@section_names.first]
           end
         end
 
@@ -975,9 +993,187 @@ describe Assignment do
               section_due_date.update_attributes(due_date: 1.days.from_now)
             end
 
-            expect(@assignment.what_past_due_date).to eq []
+            expect(@assignment.section_names_past_due_date).to eq []
           end
         end
+      end
+    end
+  end
+
+  describe '#grade_distribution_as_percentage' do
+    before :each do
+      @assignment = create(:assignment)
+      5.times { create(:rubric_criterion, assignment: @assignment) }
+    end
+
+    context 'when there are no submitted marks' do
+      it 'returns the correct distribution' do
+        expect(@assignment.grade_distribution_as_percentage)
+          .to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
+        expect(@assignment.grade_distribution_as_percentage(10))
+          .to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      end
+    end
+
+    context 'when there are submitted marks' do
+      before :each do
+        total_marks = [1, 9.6, 10, 9, 18.1, 21] # Max mark is 20.
+
+        total_marks.each do |total_mark|
+          g = create(:grouping, assignment: @assignment)
+          s = create(:version_used_submission, grouping: g)
+
+          result = s.get_latest_result
+          result.total_mark = total_mark
+          result.marking_state = Result::MARKING_STATES[:complete]
+          result.save
+        end
+      end
+
+      context 'without an interval provided' do
+        it 'returns distribution with default 20 intervals' do
+          expect(@assignment.grade_distribution_as_percentage.size).to eq 20
+        end
+
+        it 'returns the correct distribution' do
+          expect(@assignment.grade_distribution_as_percentage)
+            .to eq [1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+        end
+      end
+
+      context 'with an interval provided' do
+        it 'returns distribution in the provided interval' do
+          expect(@assignment.grade_distribution_as_percentage(10).size).to eq 10
+        end
+
+        it 'returns the correct distribution' do
+          expect(@assignment.grade_distribution_as_percentage(10))
+            .to eq [1, 0, 0, 0, 3, 0, 0, 0, 0, 2]
+        end
+      end
+    end
+  end
+
+  describe '#get_detailed_csv_report' do
+    context 'when rubric marking was used' do
+      before :each do
+        @assignment = create(:rubric_assignment)
+        2.times { create(:assignment_file, assignment: @assignment) }
+        criteria =
+          Array.new(4) { create(:rubric_criterion, assignment: @assignment) }
+
+        4.times do
+          grouping = create(:grouping, assignment: @assignment)
+          3.times { create(:accepted_student_membership, grouping: grouping) }
+          submission = create(:version_used_submission, grouping: grouping)
+          r = submission.get_latest_result
+          criteria.each do |criterion|
+            create(:mark, result: r, markable: criterion)
+          end
+          r.reload
+          r.update_attributes(marking_state: Result::MARKING_STATES[:complete])
+        end
+      end
+
+      it 'generates a CSV report of rubric-based marks and criteria' do
+        expected_string = ''
+        Student.all.each do |student|
+          fields = []
+          fields.push(student.user_name)
+
+          grouping = student.accepted_grouping_for(@assignment.id)
+          if grouping && grouping.has_submission?
+            result = grouping.current_submission_used.get_latest_result
+            fields.push(result.total_mark / @assignment.total_mark * 100)
+            @assignment.rubric_criteria.each do |criterion|
+              mark = result.marks
+                .find_by_markable_id_and_markable_type(criterion.id,
+                                                       'RubricCriterion')
+              if mark && mark.mark
+                fields.push(mark.mark)
+              else
+                fields.push('')
+              end
+              fields.push(criterion.weight)
+            end
+            fields.push(result.get_total_extra_points)
+            fields.push(result.get_total_extra_percentage)
+          else
+            fields.push('')
+            @assignment.rubric_criteria.each do |criterion|
+              fields.push('', criterion.weight)
+            end
+            fields.push('', '')
+          end
+          grace_credits_data = student.remaining_grace_credits.to_s + '/' +
+                               student.grace_credits.to_s
+          fields.push(grace_credits_data)
+
+          expected_string += fields.to_csv
+        end
+
+        expect(@assignment.get_detailed_csv_report).to eq expected_string
+      end
+    end
+
+    context 'when flexible marking was used' do
+      before :each do
+        @assignment = create(:flexible_assignment)
+        2.times { create(:assignment_file, assignment: @assignment) }
+        criteria =
+          Array.new(4) { create(:flexible_criterion, assignment: @assignment) }
+
+        4.times do
+          grouping = create(:grouping, assignment: @assignment)
+          3.times { create(:accepted_student_membership, grouping: grouping) }
+          submission = create(:version_used_submission, grouping: grouping)
+          r = submission.get_latest_result
+          criteria.each do |criterion|
+            create(:mark, result: r, markable: criterion)
+          end
+          r.reload
+          r.update_attributes(marking_state: Result::MARKING_STATES[:complete])
+        end
+      end
+
+      it 'generates a CSV report of flexible-based marks and criteria' do
+        expected_string = ''
+        Student.all.each do |student|
+          fields = []
+          fields.push(student.user_name)
+
+          grouping = student.accepted_grouping_for(@assignment.id)
+          if grouping && grouping.has_submission?
+            result = grouping.current_submission_used.get_latest_result
+            fields.push(result.total_mark / @assignment.total_mark * 100)
+            @assignment.flexible_criteria.each do |criterion|
+              mark = result.marks
+                .find_by_markable_id_and_markable_type(criterion.id,
+                                                       'FlexibleCriterion')
+              if mark && mark.mark
+                fields.push(mark.mark)
+              else
+                fields.push('')
+              end
+              fields.push(criterion.max)
+            end
+            fields.push(result.get_total_extra_points)
+            fields.push(result.get_total_extra_percentage)
+          else
+            fields.push('')
+            @assignment.flexible_criteria.each do |criterion|
+              fields.push('', criterion.max)
+            end
+            fields.push('', '')
+          end
+          grace_credits_data = student.remaining_grace_credits.to_s + '/' +
+                               student.grace_credits.to_s
+          fields.push(grace_credits_data)
+
+          expected_string += fields.to_csv
+        end
+
+        expect(@assignment.get_detailed_csv_report).to eq expected_string
       end
     end
   end

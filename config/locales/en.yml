@@ -11,6 +11,9 @@ en:
     issues:             "GitHub issues list"
     actions:            "Actions"
 
+    # app/views/assignments/_form.html.erb
+    required_file_warning: "Accept no other files besides the listed required files. This also restricts the file extensions."
+
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
     welcome_to_markus:     "Welcome to MarkUs, the online marking tool, %{user_name}."
@@ -49,6 +52,9 @@ en:
     contact_us:         "Contact Us"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information.<br>To submit a bug or issue please visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
+    # app/views/main/timeout_imminent.js.erb
+    timeout_imminent:   "Your session is about to expire."
+
     # app/views/api/_key_display.html.erb
     api_key:            "Your API Key"
     api_key_unavailable:        "Unavailable"
@@ -80,6 +86,7 @@ en:
     current_assignments:       "Current assignments"
     assignment_item:           "Assignment"
     due:                       "Due date"
+    submission_status:         "Submission Status"
     no_assignments:            "There are currently no assignments."
     class_average:             "Class Average: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissions collected"
@@ -91,11 +98,14 @@ en:
     remove:  "Remove"
     download_csv_grade_report:  "Download CSV Grades Report"
     days_and_hours_left:      "(%{days} day(s) and %{hours} hour(s) left)"
+    hours_and_minutes_left:   "(%{hours} hour(s) and %{minutes} minute(s) left)"
     days_left:          "(%{days} day(s) left)"
     short_identifier:   "Short Identifier<span class='required_field'>*</span>"
     description:        "Description"
     shortened_date:     "Date<span class='required_field'>*</span>"
     due_date:           "Due Date"
+    deadline_grace_tokens: "Deadline using all <br> remaining grace <br> tokens"
+    deadline_max_penalty: "Deadline including <br> maximum late <br> penalty"
     iso_date_format_example:    "Format:  YYYY-MM-DD - Example:  2009-01-13"
     iso_due_date_format_example:    "Format:  YYYY-MM-DD HH:MM - Example:  2009-01-13 17:44"
     create_new_assignment:      "Add Assignment"
@@ -111,7 +121,6 @@ en:
       not_complete: "Can not release result for %{group_name}: the marking state is not complete"
       not_complete_unrelease: "Can not unrelease result for %{group_name}: the marking state is not complete"
       no_submission: "%{group_name} has no submissions"
-      no_result: "%{group_name} has no results"
       result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
       collect_all: "Collect All Submissions"
@@ -127,7 +136,7 @@ en:
       could_not_collect_section: "Could not collect submissions for section %{section_name} and assignment %{assignment_identifier} - the section collection date has not been reached."
       no_submission_for_section: "There isn't any submission to collect for section %{section_name}."
       successfully_collected: "Successfully collected %{collected} submissions."
-      marking_incomplete_warning: "Note: Not all of the assignments have been marked.\n\nAre you sure you want to proceed?"
+      marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
     assignment:
         hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
@@ -137,11 +146,10 @@ en:
         short_identifier:   "Short Identifier<span class='required_field'>*</span>"
         update_success:        "Successfully updated the assignment"
         create_success:        "Successfully created the assignment"
-        error: "Could not assign SubmissionRule: #%{message}"
+        error: "Could not assign SubmissionRule: %{message}"
         not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
         rules:           "Assignment Rules"
         edit:           "Edit Assignment:"
-        properties:     "Assignment Properties"
         required_files:  "Required files"
         submission_rules:  "Submission Rules"
         required_files_read:  "Required files"
@@ -150,6 +158,7 @@ en:
         add_required_file:  "Add a Required File"
         type:  "Assignment type"
         overall_comment: "Overall Comment"
+        upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
         group:
             empty: "Empty Group"
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
@@ -208,6 +217,9 @@ en:
     remove_graders:     "Remove Graders"
     admins:             "Admins"
     add_new:            "Add New File"
+    add_new_student:	"Add New Student"
+    add_new_grader:     "Add New Grader"
+    add_new_admin:      "Add New Admin"
     create_new_grade_entry_form: "Add Marks Spreadsheet"
     edit:               "Edit"
     save:               "Save"
@@ -272,6 +284,7 @@ en:
     marker:
       new_annot: "New Annot."
       overall_comments: "Overall Comments"
+      overall_comments_success: "Overall comments successfully updated."
       current_annotations: "Current Annotations"
       across_all_submission_files: "Current annotations across all submission files. Click on the line number to jump to the location in the file."
       annot_summary: "Annotations"
@@ -301,6 +314,14 @@ en:
         mark: "Mark"
         marks: "Marks"
         summary: "Summary"
+        tags: "Tags"
+        current_tags: "Current Tags:"
+        available_tags: "Available Tags:"
+        tag_summary: "Top Tags Used:"
+        new_tag: "Add New Tag..."
+        delete_tag: "Delete Tags..."
+        create_new_tag: "Create New Tag:"
+        delete_tags: "Delete Tags:"
         submission_rule: "Submission Rule"
         expand_all: "Expand All"
         collapse_all: "Collapse All"
@@ -317,7 +338,7 @@ en:
         translated_to_points: "Translated to Points:"
         final_mark: "Final Mark&nbsp;"
         previous_mark: "Previous Mark&nbsp;"
-        old: "Old:&nbsp;"
+        old: "Old: "
         show_old_marks: "Show Old Mark Summary"
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
@@ -325,11 +346,14 @@ en:
         no_annotation_in_this_category: "There are no annotations in this category"
         new_annotation: "Create new annotation"
         annotation_category: "Annotation Category"
+        preview: "Preview"
+        preview_title: "Here's how the annotation will look:"
         sure_to_remove: "Are you sure you want to remove this annotation?"
         submit_edit: "Submit Edit"
         change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
         select_some_text: "You must select some source code text"
         select_an_area: "You should select an area on the image to annotate"
+        select_an_area_pdf: "You should select an area on the PDF to annotate"
         provide_text:   "You must provide some annotation text"
 
     #app/views/results/common
@@ -361,6 +385,12 @@ en:
       group_to_grader: "You must supply a CSV file for group to grader mapping"
       student_to_grader: "You must supply a CSV file for student to grader mapping"
       invalid_csv: "The format of the CSV file was not recognized"
+      upload:
+        malformed_csv: "The selected file was improperly formed. Please ensure the file meets Markus specifications."
+        # when a non-text file has a csv extension (ie: user changes extension
+        # from .pdf to .csv on a pdf file)
+        non_text_file_with_csv_extension: "The selected file is not a csv file (even though it may have a csv extension)."
+
 
     pagination:
       first: "≪ First"
@@ -409,7 +439,7 @@ en:
       grading_can_begin_after: "Grading can begin after %{time}"
       submissions:	    "Submissions: %{short_identifier}"
       csv_report:           "CSV Report"
-      detailled_csv_report: "Detailed CSV Report"
+      detailed_csv_report: "Detailed CSV Report"
       subversion_repo_list: "Subversion Repo List"
       subversion_export_file: "Subversion Export File"
       errors:               "Errors"
@@ -421,13 +451,17 @@ en:
       revised_by:           "Revised By"
       replace:              "Replace"
       delete:               "Delete"
-      can_begin_grading:    "Can begin grading"
       error_collecting:     "There were problems collecting some files."
       section:              "Section"
       collect_work_for_section: "Collect work for section:"
       download_groupings_files: "Download all submissions"
       sections:             "Section:"
       revision_history:     "%{num}: "
+      tags_used:            "Tags Used"
+      tags_search:          "Search for Tags:"
+      tags_list:            "Filter by Tag:"
+      search_submissions:   "Search Submissions"
+      how_many_marked:      "%{num_marked}/%{num_assigned} assignments have been marked"
 
     summaries_index:
       group_name:           "Group Name"
@@ -442,6 +476,14 @@ en:
       filename:             "Filename"
       section:              "Section"
       sections:             "Section:"
+      search_summaries:     "Search Summaries"
+
+    course_summaries_index:
+        page_title:     "Summary"
+        user_name:      "User Name"
+        first_name:     "First Name"
+        last_name:      "Last Name"
+        ngr:            "No Grade Received"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -455,6 +497,7 @@ en:
       column_name: "Name"
       column_out_of: "Out Of"
       add_column: "Add a column"
+      bonus_column: "Bonus Mark"
       remove_column: "Remove:"
       toggle_column: "hide/show"
       properties: "Marks Spreadsheet Properties"
@@ -463,9 +506,11 @@ en:
       create:
         success: "Successfully created new marks spreadsheet"
         title: "Add Marks Spreadsheet"
+        submit: "Add Marks Spreadsheet"
       edit:
         title: "Edit Marks Spreadsheet:"
         success: "Successfully updated marks spreadsheet"
+        submit: "Update Marks Spreadsheet"
       grades:
         title: "Manage Marks Spreadsheet:"
         student_title: "Marks:"
@@ -484,6 +529,7 @@ en:
         no_results: "There are no marks available yet."
         detailed_marks_message: "Detailed marks are available."
       csv:
+        overwrite: "Overwrite existing grades?"
         incomplete_header: "Incomplete grade entry item names or totals."
         incomplete_row: "Contains too little information."
         invalid_user_name: "Invalid user name."
@@ -588,7 +634,6 @@ en:
 
     mark:
       error:
-        save: "Could not save this mark!: "
         validate_flexible: "must be between 0 and the maximum mark of the criterion"
         validate_rubric: "must be an integer between 0 and 4"
 
@@ -659,14 +704,20 @@ en:
       invitations: "Invitations"
       invited_by: "You have been invited by %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Are you sure you want to decline this invitation?"
+      confirm_work_alone: "Are you sure you want to work alone? You cannot change this choice unless you contact your instructor."
       form_own_group: "Form your own group"
       form_group: "The groups must be from <strong>%{group_min}</strong> to <strong>%{group_max}</strong> people."
       decline_invitation2: "This will decline the invitation you have. Are you sure?"
-      your_group: "Your group"
+      your_group: "Your Group"
+      group_options: "Group Options"
       modification_limited: "At this point modification of your group is very limited.
             The due date and grace period (if any) have both passed."
       invite_more_students: " The group is not valid. You need to
             invite more students."
+      working_alone: "You have asked to work alone on this assignment. If you change your mind and want to form or join a group, first delete your group."
+      may_not_add_more: "You may not add more people to your group at this time."
+      may_not_modify: "You may not modify your group at this time."
+      group_not_deletable: "You must contact your instructor to remove the group." 
       url_group_repository: "URL to your group's repository"
       group_properties: " Group Properties "
       students_can_form_groups: " Students can form groups. "
@@ -687,6 +738,7 @@ en:
       cancel_invitation_title: "Cancel invitation"
       section_groups_only: "You can invite only students of your section"
       submission:
+        search_files: "Search files"
         file_manager: "%{short_identifier}: File Manager"
         current_path: "Current Path:"
         conflicts: "Conflicts"
@@ -838,6 +890,97 @@ en:
     hide_students: "Mark as inactive"
     unhide_students: "Mark as active"
 
+    tags:
+      tags: "Tags"
+      title: "Assignment Tags: %{assignment_short_identifier}"
+      delete: "Delete Tag"
+      search_tags: "Search for tags..."
+      edit_tag: "Edit Tag..."
+      edit_update: "Update"
+      updating: "Updating..."
+
+      messages:
+        no_assigned: "--No Tags Assigned--"
+        no_left: "--No More Tags to Assign--"
+        no_tags: "--No Tags to Show--"
+
+      create:
+        create_new: "Add Tag"
+        tag_prompt: "Tag name:"
+        tag_description: "Tag description:"
+        button_text: "Save Changes"
+        name_prompt: "Enter tag name..."
+        descript_prompt: "Enter tag description..."
+        successful: "Tag created successfully!"
+        error: "Tag could not be created."
+
+      delete:
+        delete_tags: "Delete Tags"
+        tag_prompt: "Please select tags below to delete them:"
+
+      upload:
+        upload_csv: "Upload CSV"
+        upload_csv_title: "Upload CSV File"
+        upload_csv_prompt: "Select a CSV file to upload:"
+        upload_success: "%{nb_updates} tag(s) have been successfully added!"
+        invalid_line: "Line is in improper format."
+        upload_csv_html: "
+          <p>
+            The file should have the following format:<br>
+            <ul>
+              <li>Only one record per line.
+              <li>Each line should be terminated by a carriage-return line-feed.</li>
+              <li>The tag name and description are only used. Any other data per line is ignored.</li>
+            </ul>
+            <code>tag_name,tag_description, ...</code><br><br>
+            <i>tag_name</i> represents the name of the tag to be added.<br>
+            <i>tag_description</i> represents the description for that record.<br>
+          </p>"
+        upload_yml: "Upload YAML"
+        upload_yml_title: "Upload YAML File"
+        upload_yml_prompt: "Select a YAML file to upload:"
+        upload_yml_html: "
+          <p>
+            The file should have the following format:<br>
+            <ul>
+              <li>Only one record per line.
+              <li>Each line should be terminated by a carriage-return line-feed.
+              <li>All other fields in the file not specified below are ignored.
+            </ul>
+            <code>tag_id:<br>
+              &nbsp;&nbsp;name: name<br>
+              &nbsp;&nbsp;description: description<br>
+              &nbsp;&nbsp;user:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;id: id<br>
+              [...]</code><br><br>
+            <i>tag_name</i> represents the name of the tag to be added.<br>
+            <i>tag_description</i> represents the description for that record.<br>
+            <i>id</i> represents the user id associated with that tag.<br>
+          </p>"
+        error: "There was an error uploading tags: "
+        empty_error: " The YAML file was empty."
+        syntax_error: " The syntax is incorrect. (%{error})"
+
+      download:
+        download: "Download"
+        download_title: "Download Tags"
+        download_html: "
+          <p>
+            This allows you to download the list of tags used for assignment <b>%{assignment_short_identifier}</b>.<br>
+            They can be downloaded either in CSV or YML format.
+          </p>"
+        button_message: "Download in %{file_format} format"
+
+      table:
+        name: "Name"
+        creator: "Creator"
+        description: "Description"
+        use: "Use"
+        actions: "Actions"
+        all: "All Tags"
+        in_use: "Tags in Use"
+        not_in_use: "Tags Not in Use"
+
     annotations:
       annotation_category: "Annotation Category"
       no_annotation_categories: "There are no annotation categories yet."
@@ -874,6 +1017,7 @@ en:
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
         syntax_error: "There is an error in the file you uploaded: %{error}"
         flash_error: "Could not recognize %{format} format to download with"
+        unparseable_yaml: "Could not parse YAML file"
       download:
         download_annotations: "Download Annotations"
         download_csv: "Download in CSV Format"
@@ -908,7 +1052,7 @@ en:
         form_description:  "Automatically deduct grace period credits"
         add_grace_period: "Add a Grace Period"
         hours:  "hours..."
-        after:  "After"
+        after:  "After<span class='required_field'>*</span>"
         from:  "From"
         to:  "to"
         alert: "You must select the Grace Period Submission Rule to add a grace period."
@@ -928,9 +1072,9 @@ en:
         to: "to"
         hours: "hour(s)..."
         after: "After"
-        every: "every"
-        deduct: "Deduct"
-        for: "for"
+        every: "every<span class='required_field'>*</span>"
+        deduct: "Deduct:<span class='required_field'>*</span>"
+        for: "for<span class='required_field'>*</span>"
 
       penalty_period_submission_rule:
         name: "Penalty Period Submission Rule"
@@ -943,10 +1087,10 @@ en:
         form_description: "Use Penalty Formula"
         add_penalty_period: "Add a Penalty Period"
         hours:  "hours..."
-        after:  "After"
+        after:  "After<span class='required_field'>*</span>"
         from:  "From"
         to:  "to"
-        deduction: "Penalty Period Deduction:"
+        deduction: "Penalty Period Deduction:<span class='required_field'>*</span>"
         alert: "You must select the Penalty Period Submission Rule to add a penalty period."
 
     submission_file:
@@ -1003,6 +1147,9 @@ en:
         <p>The description is optional. Note that if it is not present, the second
         comma should not appear.</p>"
         success: "Flexible criteria successfully uploaded: %{nb_updates} update(s)."
+      errors:
+        messages:
+          name_taken: "Criterion name already used."
 
     rubric_criteria:
       criteria_management:         "Rubric Management: %{identifier}"
@@ -1058,6 +1205,9 @@ en:
         description_2: "This criterion was satisfied."
         description_3: "This criterion was satisfied well."
         description_4: "This criterion was satisfied perfectly or nearly perfectly."
+      errors:
+        messages:
+          name_taken: "Criterion name already used."
 
     summary_table:
       title: "Title"
@@ -1065,6 +1215,17 @@ en:
       grade: "Grade"
       x_mark: "x Mark"
       weight: "Weight"
+
+    course_summaries:
+      title: "Summary"
+
+    marking_schemes:
+      title: "Marking Schemes"
+      name: "Name"
+      add_new: "Add New Marking Scheme"
+      edit: "Edit Marking Scheme"
+      weight_label: "Weight for "
+      table_modify_column: "Modify"
 
     notes:
         note_on: "%{user_name} on <strong>%{display_for}</strong>"
@@ -1210,10 +1371,17 @@ en:
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"
-
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
+    lateness_penalty: "Lateness Penalty"
+    grace_period: "Grace Period"
+    penalty_decay: "Penalty Decay"
+    penalty_period: "Penalty Period"
+    additional_information: "Additional Information"
+    penalty_decay_message_first: "A deduction of %{deduction}% will be applied every %{interval} hours up to %{hours} hours after the assignment is due."
+    penalty_decay_message_other: "Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours."
+    penalty_period_message: "After %{hours} hours after the due date, your grade will be reduced by %{deduction}%"
 
     #app/views/main/_assignment_summary.html.erb
 
@@ -1237,6 +1405,10 @@ en:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Uh oh! Assignment folder missing."
+    group_repo_missing:         "Uh oh! No repo found for this group."
 
     #lib/validators/
     date_validator:

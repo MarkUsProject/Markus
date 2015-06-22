@@ -26,7 +26,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
     should validate_uniqueness_of(
                           :flexible_criterion_name).scoped_to(
                                 :assignment_id).with_message(
-                                      'is already taken')
+                                      'Criterion name already used.')
 
     should validate_numericality_of(
                           :max).with_message(

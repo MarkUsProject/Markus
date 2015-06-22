@@ -13,14 +13,19 @@ class StudentsController < ApplicationController
   end
 
   def index
-    respond_to do |format|
-      format.html do
-        @sections = Section.all
-      end
-      format.json do
-        render json: get_students_table_info
-      end
+    @sections = Section.all
+    @section_column = ''
+    if Section.all.size > 0
+      @section_column = "{
+        id: 'section',
+        content: '" + I18n.t(:'user.section') + "',
+        sortable: true
+      },"
     end
+  end
+
+  def populate
+    render json: get_students_table_info
   end
 
   def edit
@@ -121,6 +126,10 @@ class StudentsController < ApplicationController
             result[:invalid_lines].join(', ')
         end
         flash[:success] = result[:upload_notice]
+      rescue CSV::MalformedCSVError
+        flash[:error] = t('csv.upload.malformed_csv')
+      rescue ArgumentError
+        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       rescue RuntimeError
         flash[:notice] = I18n.t('csv_valid_format')
       end

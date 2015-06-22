@@ -2,6 +2,6 @@ require 'faker'
 
 FactoryGirl.define do
   factory :group do
-    group_name { Faker::Internet.user_name }
+    sequence(:group_name) { |n| "group#{n}" }
   end
 end

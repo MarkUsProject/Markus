@@ -4,7 +4,7 @@ class FlexibleCriteriaController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    if @assignment.past_due_date?
+    if @assignment.past_all_due_dates?
       flash[:notice] = t('past_due_date_warning')
     end
     # TODO until Assignment gets its criteria method
@@ -19,6 +19,7 @@ class FlexibleCriteriaController < ApplicationController
   def update
     @criterion = FlexibleCriterion.find(params[:id])
     unless @criterion.update_attributes(flexible_criterion_params)
+      @errors = @criterion.errors
       render :errors
       return
     end
@@ -88,6 +89,8 @@ class FlexibleCriteriaController < ApplicationController
               nb_updates: nb_updates)
           end
         end
+      rescue CSV::MalformedCSVError
+        flash[:error] = I18n.t('csv.upload.malformed_csv')
       end
     end
     redirect_to action: 'index', assignment_id: @assignment.id

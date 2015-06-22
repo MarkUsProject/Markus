@@ -92,10 +92,10 @@ class SubmissionCollector < ActiveRecord::Base
 
   #Fork-off a new process resposible for collecting all submissions
   def start_collection_process
-
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
-    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
+    # Fork is also skipped if in testing mode
+    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ || Rails.env.test?
       while collect_next_submission
       end
       return
@@ -138,7 +138,6 @@ class SubmissionCollector < ActiveRecord::Base
           yield
           m_logger.log('Submission collection process done evaluating provided code block')
         end
-
         while collect_next_submission
           if SubmissionCollector.first.stop_child
             m_logger.log('Submission collection process now exiting because it was ' +
@@ -176,14 +175,7 @@ class SubmissionCollector < ActiveRecord::Base
     # Apply the SubmissionRule
     new_submission = assignment.submission_rule.apply_submission_rule(
       new_submission)
-    #convert any pdf submission files to jpgs, catching any errors
-    new_submission.submission_files.each do |subm_file|
-      subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
-      if subm_file.error_converting
-        grouping.error_collecting = true
-      end
-    end
-    
+
     unless grouping.error_collecting
       grouping.is_collected = true
     end
@@ -194,21 +186,19 @@ class SubmissionCollector < ActiveRecord::Base
 
   #Use the database to communicate to the child to stop, and restart itself
   #and manually collect the submission
-  def manually_collect_submission(grouping, rev_num)
+  #The third parameter enables or disables the forking.
+  def manually_collect_submission(grouping, rev_num, async=true)
 
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
-    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
+    if !async || RUBY_PLATFORM =~ /(:?mswin|mingw)/ # match for Windows
       grouping.is_collected = false
       remove_grouping_from_queue(grouping)
       grouping.save
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
-      new_submission.submission_files.each do |subm_file|
-        subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
-      end
       grouping.is_collected = true
       grouping.save
-      return
+      return new_submission
     end
 
     #Make the child process exit safely, to avoid both parent and child process
@@ -231,9 +221,6 @@ class SubmissionCollector < ActiveRecord::Base
     #parent and child do this.
     start_collection_process do
       if MarkusConfigurator.markus_config_pdf_support
-        new_submission.submission_files.each do |subm_file|
-          subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
-        end
         grouping.is_collected = true
         grouping.save
       end

@@ -1,0 +1,126 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+  var MarksTable = React.createClass({
+    getDefaultProps: function() {
+      // Defines the columns used for the table and whether they
+      // are sortable searchable. The default initially sorted
+      // column is the first sortable column in the array.
+      return {
+        columns: [
+        {
+          id: 'user_name',
+          content: '<%= j raw I18n.t(:'user.user_name') %>',
+          sortable: true,
+          searchable: false
+        },
+        {
+          id: 'last_name',
+          content: '<%= j raw I18n.t(:'user.last_name') %>',
+          sortable: true,
+          searchable: false
+        },
+        {
+          id: 'first_name',
+          content: '<%= j raw I18n.t(:'user.first_name') %>',
+          sortable: true,
+          searchable: false
+        }],
+      };
+    },
+    getInitialState: function() {
+      return {
+        error: null,
+        row_data: [],
+        grade_columns: [],
+      }
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+
+      // Getting additional grade entry item columns
+      jQuery.ajax({
+        url: 'get_mark_columns',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            grade_columns: data,
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this),
+        // Close working indicator.
+        complete: function () {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+      // Getting row data
+      jQuery.ajax({
+        url: 'populate_term_marks_table',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            row_data: data,
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this),
+        // Close working indicator.
+        complete: function () {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+      
+    render: function() {
+
+      // Add grade columns to array of table columns
+      var all_columns = this.props.columns.concat(this.state.grade_columns);
+
+      // Set React Table data from JSON data
+      var row = this.state.row_data;
+      var s = [];
+      s['user_name'] = <span dangerouslySetInnerHTML={{__html: row.user_name}} />;
+      s['first_name'] = <span dangerouslySetInnerHTML={{__html: row.first_name}} />;
+      s['last_name'] = <span dangerouslySetInnerHTML={{__html: row.last_name}} />;
+      
+      // Populate the marks for the custom columns
+      this.state.grade_columns.map(function (grade_column){
+        s[grade_column.id] = <span dangerouslySetInnerHTML={{__html: row[grade_column.id]}} />
+      });
+
+      // Set 's' as the only row in the data array passed to the React Table 
+      var data_array = [s];
+
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <Table data={data_array}
+            columns={all_columns}
+            filters={null} // Optional: pass null
+            filter_type={false} // True for select filter, falsy for simple
+            selectable={false} // True if you want checkboxed elements
+          />
+        </div>
+        );
+      }
+  });
+  React.renderComponent(<MarksTable />, document.getElementById('marks_table'));
+
+  // Hide search box
+  document.getElementsByClassName('table-search')[0].style.display = 'none';
+</script>

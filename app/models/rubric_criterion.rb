@@ -27,7 +27,8 @@ class RubricCriterion < Criterion
 
   validates_presence_of :rubric_criterion_name
   validates_uniqueness_of :rubric_criterion_name,
-                          scope: :assignment_id
+                          scope: :assignment_id,
+                          message: I18n.t('rubric_criteria.errors.messages.name_taken')
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count

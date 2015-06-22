@@ -14,7 +14,11 @@ end
   Ta.create(user_name: ta[0], first_name: ta[1], last_name: ta[2])
 end
 
+# Change this to 'db/data/longstudents.csv' to test with ~1800 students.
 STUDENT_CSV = 'db/data/students.csv'
+
+NUMBER_OF_GROUPS = 15
+
 if File.readable?(STUDENT_CSV)
   csv_students = File.new(STUDENT_CSV)
   User.upload_user_list(Student, csv_students, nil)
@@ -60,7 +64,7 @@ a2 = Assignment.create(
    group_name_displayed: false,
    repository_folder: 'A2',
    due_date: 1.month.from_now,
-   marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:rubric],
+   marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:flexible],
    allow_web_submits: true,
    display_grader_names_to_students: false
 )
@@ -72,8 +76,9 @@ a2.save
 # Let's create groups and groupings !
 students = Student.all
 
-15.times do |time|
+NUMBER_OF_GROUPS.times do |time|
   student = students[time]
+  # Generate the groups for A1
   group = Group.new
   group.group_name = student.user_name
   group.save
@@ -84,8 +89,22 @@ students = Student.all
   grouping.invite([student.user_name],
                   StudentMembership::STATUSES[:inviter],
                   invoked_by_admin=true)
+  # Generate the groups for A2
+  group = Group.new
+  group.group_name = "#{student.user_name} a2"
+  group.save
+  grouping = Grouping.new
+  grouping.group = group
+  grouping.assignment = a2
+  grouping.save
+  (0..1).each do |count|
+    grouping.invite([students[time + count * NUMBER_OF_GROUPS].user_name],
+                    StudentMembership::STATUSES[:inviter],
+                    invoked_by_admin = true)
+  end
 end
 
+Repository::SubversionRepository.__generate_authz_file
 
 # Let's populate students repository with nice data
 
@@ -98,9 +117,13 @@ groups.each do |group|
       file_contents = File.open(File.join(file_dir, filename))
       file_contents.rewind
       group.access_repo do |repo|
-        txn  = repo.get_transaction(group.grouping_for_assignment(a1.id)
+        assignment = a1
+        if group.grouping_for_assignment(assignment.id).nil?
+          assignment = a2
+        end
+        txn = repo.get_transaction(group.grouping_for_assignment(assignment.id)
                                          .inviter.user_name)
-        path = File.join(a1.repository_folder, filename)
+        path = File.join(assignment.repository_folder, filename)
         txn.add(path, file_contents.read, '')
         repo.commit(txn)
       end
@@ -139,6 +162,20 @@ end
     level_3_description:   random_sentences(5),
     level_4_name:          random_words(5),
     level_4_description:   random_sentences(5)
+  ).save
+end
+
+8.times do |index|
+  FlexibleCriterion.create(
+    id:                      index,
+    flexible_criterion_name: random_sentences(1),
+    assignment_id:           a2.id,
+    description:             random_sentences(5),
+    position:                1,
+    max:                     pos_rand(3),
+    created_at:              nil,
+    updated_at:              nil,
+    assigned_groups_count:   nil
   ).save
 end
 

@@ -3,7 +3,6 @@
   <%= stylesheet_link_tag 'common/jquery-ui', 'common/jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'PeriodDeltaChain/PeriodDeltaChain' %>
   <%= javascript_include_tag 'moment-with-langs.min', 'localize_date' %>
-  <%= javascript_include_tag 'help_system' %>
 
   <%= render partial: 'boot',
              formats: [:js],
@@ -43,19 +42,13 @@
     <div>
       <%= raw(f.label :short_identifier,
                       t('assignment.short_identifier').html_safe ) %>
-      <% if @assignment.id.nil? %>
-        <%= raw(f.text_field :short_identifier,
-                             id: 'short_identifier',
-                             onchange: 'set_onbeforeunload(true);',
-                             maxlength: 30,
-                             required: true) %>
-      <% else %>
-        <%= raw(f.text_field :short_identifier,
-                             id: 'short_identifier',
-                             onchange: 'set_onbeforeunload(true);',
-                             maxlength: 30,
-                             required: true) %>
-      <% end %>
+      <%= raw(f.text_field :short_identifier,
+                           id: 'assignment_short_identifier',
+                           onchange: 'set_onbeforeunload(true);',
+                           onKeyUp: "document.getElementById('assignment_repository_folder').value=this.value",
+                           size: 35,
+                           maxlength: 30,
+                           required: true) %>      
     </div>
 
     <div>
@@ -63,6 +56,7 @@
                       t('assignment.name').html_safe ) %>
       <%= raw(f.text_field :description,
                            onchange: 'set_onbeforeunload(true);',
+                           size: 35,
                            required: true) %>
     </div>
 
@@ -80,6 +74,7 @@
       /
       <%= raw(f.text_field :repository_folder,
                            onchange: 'set_onbeforeunload(true);',
+                           size: 34,
                            required: true) %>
     </div>
 
@@ -134,7 +129,7 @@
       <%= text_field_tag 'assignment_due_date',
                          nil,
                          { onchange: 'set_onbeforeunload(true);',
-                           size: 30,
+                           size: 35,
                            required: true } %>
     </div>
 
@@ -208,6 +203,7 @@
     </div>
 
     <h4><%= t('assignment.required_files_by_student') %></h4>
+    <% @show_checkbox_required_files = true %>
     <div id='assignment_files'>
       <%= f.fields_for :assignment_files do |assignment_file_form| %>
         <%= render partial: 'assignment_file',
@@ -215,16 +211,36 @@
                              form: f } %>
       <% end %>
     </div>
-
      <p id='assignment_file_add_link'>
         <%= add_assignment_file_link t('assignment.add_required_file'), f %>
      </p>
+     <br>
+     <% if @show_checkbox_required_files %>
+	   <%= f.check_box :only_required_files,
+	                   checked: @assignment.only_required_files,
+	                   onclick: 'set_onbeforeunload(true);' 
+	   %>
+	   <%= f.label :only_required_files,
+	                 t('required_file_warning'),
+	                 { id: "assignment_only_required_files_label" }
+	   %>
+	 <% else %>
+	   <%= f.check_box :only_required_files,
+	                   { checked: @assignment.only_required_files,
+	                     id: "assignment_only_required_files_edit",
+	                     onclick: 'set_onbeforeunload(true);' }
+	   %>
+	   <%= f.label :only_required_files,
+	                 t('required_file_warning'),
+	                 { id: "assignment_only_required_files_edit_label" }
+	   %>
+	 <% end %>
   </fieldset>
 
   <%# Assignment types %>
   <fieldset>
     <legend>
-      <span><%= t('assignment.type') %></span>
+      <span><%= t('assignment.group.properties') %></span>
     </legend>
 
     <div class='help assignment_assignment_type_help'>
@@ -283,23 +299,19 @@
           <%= raw(f.label :group_min,
                           t('assignment.group.limit_min').html_safe,
                           class: 'inline_label') %>
-          <%= raw(f.text_field :group_min,
-                               size: 5,
-                               maxlength: 3,
-                               onchange: 'set_onbeforeunload(true);',
-                               disabled: true,
-                               type: 'number',
-                               min: '1') %>
+          <%= raw(f.number_field :group_min,
+                                 max: 999,
+                                 onchange: 'set_onbeforeunload(true);',
+                                 disabled: true,
+                                 min: 1) %>
           <%= raw(f.label :group_max,
                           t('assignment.group.limit_max'),
                           class: 'inline_label') %>
-          <%= raw(f.text_field :group_max,
-                               size: 5,
-                               maxlength: 3,
-                               onchange: 'set_onbeforeunload(true);',
-                               disabled: true,
-                               type: 'number',
-                               min: '1') %>
+          <%= raw(f.number_field :group_max,
+                                 max: 999,
+                                 onchange: 'set_onbeforeunload(true);',
+                                 disabled: true,
+                                 min: 1) %>
         </p>
 
         <p id='group_name_autogenerated_style'>
@@ -364,7 +376,7 @@
           <% end %>
         <% end %>
       </div>
-      <div id='sub_rule_link'>
+      <div class='sub_rule_link'>
         <span class='grace_periods_link'>
           <%= add_grace_period_link(t('submission_rules.grace_period_submission_rule.add_grace_period'),
                                     rule,
@@ -396,7 +408,7 @@
           <% end %>
         <% end %>
       </div>
-      <div id='sub_rule_link'>
+      <div class='sub_rule_link'>
         <span class='penalty_decay_period_link'>
           <%= add_penalty_decay_period_link(t('submission_rules.penalty_decay_period_submission_rule.add_penalty_decay'),
                                             rule,
@@ -428,7 +440,7 @@
           <% end %>
         <% end %>
       </div>
-      <div id='sub_rule_link'>
+      <div class='sub_rule_link'>
         <span class='penalty_periods_link'>
           <%= add_penalty_period_link(t('submission_rules.penalty_period_submission_rule.add_penalty_period'),
                                       rule,
@@ -470,10 +482,10 @@
         <%= raw(f.text_field :remark_due_date,
                              id: 'actual_remark_due_date',
                              class: 'hidden') %>
-        <%= text_field_tag 'remark_due_date',
+        <%= text_field_tag 'assignment_remark_due_date',
                            nil,
                            { onchange: 'set_onbeforeunload(true);',
-                             size: 30 } %>
+                             size: 35 } %>
       </div>
 
       <div>

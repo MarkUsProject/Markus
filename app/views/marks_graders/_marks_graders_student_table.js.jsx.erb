@@ -1,0 +1,167 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  var StudentsTable = React.createClass({
+    studentCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_students = this.props.selected_students.slice();
+      if (value == true) {
+        new_selected_students.push(student_id);
+      } else {
+        new_selected_students.splice(new_selected_students.indexOf(student_id), 1);
+      }
+      this.props.onSelectedStudentsChange(new_selected_students);
+    },
+    studentsCheckboxAllClicked: function(event) {
+      if (event.currentTarget.checked) {
+        var new_selected_students = this.props.students.map(function(x) {
+          return x.id;
+        }).slice();
+        this.props.onSelectedStudentsChange(new_selected_students);
+      } else {
+        this.props.onSelectedStudentsChange([]);
+      }
+    },
+    graderCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_graders = this.props.selected_graders_for_students.slice();
+      if (value == true) {
+        new_selected_graders.push(grader_id);
+      } else {
+        new_selected_graders.splice(new_selected_graders.indexOf(grader_id), 1);
+      }
+      this.props.onSelectedGradersForStudentsChange(new_selected_graders);
+    },
+    gradersInStudentsCheckboxAllClicked: function(event) {
+      if (event.currentTarget.checked) {
+        var new_selected_graders = this.props.graders_for_students.map(function(x) {
+          return x.membership_id;
+        }).slice();
+        this.props.onSelectedGradersForStudentsChange(new_selected_graders);
+      } else {
+        this.props.onSelectedGradersForStudentsChange([]);
+      }
+    },
+    getInitialState: function() {
+      return {
+        error: null,
+        students: [],
+        graders_for_students: [],
+        selected_students: []
+      };
+    },
+    updateSelectedStudents: function(students) {
+      this.setState({selected_students:students});
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+      jQuery.ajax({
+        url: '<%= populate_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
+        method: 'POST',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            students: data,
+            graders_for_students: [].concat.apply([], data.map(function(student){
+              return student.graders;
+            })),
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        },
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+
+      });
+    },
+    onError: function(error) {
+      this.setState({
+        error: error
+      });
+    },
+    render: function() {
+      var columns = [
+          {
+            id: 'checkbox',
+            content: <div>
+              <input type='checkbox'
+                onChange={this.studentsCheckboxAllClicked.bind(this)} />
+              </div>,
+            sortable: false,
+            searchable: false
+          },
+          {
+            id: 'user_name',
+            content: '<%= j raw I18n.t(:'user.user_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'full_name',
+            content: '<%= j raw I18n.t(:'user.full_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          <%= raw @section_column  %>
+          {
+            id: 'graders',
+            content:
+              <input type='checkbox'
+              onChange={this.gradersInStudentsCheckboxAllClicked.bind(this)}> <%= j raw I18n.t('graders.graders') %>
+              </input>,
+            sortable: true,
+            searchable: false
+          }
+        ];
+
+      // Do student-specific table stuff here.
+      var students_data = this.props.students.map(function(student) {
+        var g = {};
+        g['id'] = student.id;
+        g['checkbox'] = <input id={student.id} type='checkbox'
+          checked={this.props.selected_students.indexOf(student.id) !== -1}
+          onChange={this.studentCheckboxClicked} />
+        g['user_name'] = student.user_name;
+        g['full_name'] = student.first_name + " " + student.last_name;
+        g['section'] = student.section == "" ? "-" : student.section;
+        var graders = student.graders.length > 0 ? [] : '';
+        for (var i = 0; i < student.graders.length; i++) {
+           graders.push(<div key={student.graders[i].membership_id}>
+             <input id={student.graders[i].membership_id}
+              name='gests[]'
+              value={student.graders[i].membership_id}
+              type='checkbox'
+              checked={this.props.selected_graders_for_students.indexOf(
+                      student.graders[i].membership_id) !== -1 ? true : false}
+              onChange={this.graderCheckboxClicked} />{student.graders[i].user_name}</div>);
+        }
+        g['graders'] = graders;
+
+        return g;
+      }.bind(this));
+
+      return (
+        <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
+          <Table data={students_data}
+            search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
+            onSelectedRowsChange={this.updateSelectedStudents}
+            columns={columns} />
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<StudentsTable sections={<%= raw @sections.to_json %>} />, document.getElementById('students_table'));
+</script>

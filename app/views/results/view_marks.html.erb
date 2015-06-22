@@ -1,10 +1,20 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
   <%= stylesheet_link_tag('grader') %>
+  <%= stylesheet_link_tag('pdfjs/viewer') %>
+
   <%= javascript_include_tag 'panes.js' %>
+  <%= javascript_include_tag 'pdfjs' %>
+  <%= javascript_tag do -%>
+    PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
+  <% end -%>
 <% end %>
 
 <%= javascript_include_tag 'DropDownMenu/DropDownMenu.js'%>
+
+<!-- DISPLAYING MATHML -->
+<%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
+<%= javascript_include_tag 'MathJax/mathjax_helpers' %>
 
 <% # VIEWING MARKS FUNCTIONS %>
 <%= javascript_include_tag 'Grader/file_selector.js' %>

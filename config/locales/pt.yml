@@ -11,6 +11,9 @@ pt:
     issues:             "GitHub lista de problemas"
     actions:            "Ações"
 
+    # app/views/assignments/_form.html.erb
+    required_file_warning: "Não aceite nenhuma outros arquivos, além dos arquivos necessários listados. Isso também restrics as extensões de arquivo."
+
     # app/views/main/login.html.erb
     welcome_to:         "Bem-vindo ao MarkUs!"
     welcome_to_markus:     "%{user_name}, bem-vindo ao MarkUs, uma ferramenta de avaliação online."
@@ -49,6 +52,9 @@ pt:
     contact_us:         "Contate-nos"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br>Por favor visite: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> para mais informações.<br>Para enviar um problema ou por favor visite visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
+    # app/views/main/timeout_imminent.js.erb
+    timeout_imminent:   "A sessão está prestes a expirar."
+
     # app/views/api/_key_display.html.erb
     api_key:            "Chave da API"
     api_key_unavailable:        "Indisponível"
@@ -79,6 +85,7 @@ pt:
     current_assignments:       "Projetos atuais"
     assignment_item:           "Projetos"
     due:                       "Prazo de entrega"
+    submission_status:         "Status"
     no_assignments:            "Não existem projetos atualmente."
     class_average:             "Média da classe: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissões coletadas"
@@ -90,11 +97,14 @@ pt:
     remove:  "Remover"
     download_csv_grade_report:  "Baixar relatório de notas em formato CSV "
     days_and_hours_left:      "(%{days} dias(s) e %{hours} hora(s) restante(s))"
+    hours_and_days_left:      "(%{hours} hora(s) e %{minutes} minuto(s) restante(s)"
     days_left:          "(%{days} dia(s) restante(s))"
     short_identifier:   "Identificador <span class='required_field'>*</span>"
     description:        "Descrição"
     shortened_date:     "Data<span class='required_field'>*</span>"
-    due_date:           "Prazo de entrega"
+    due_date:           "Prazo de entrega" 
+    deadline_grace_tokens: "Prazo usando todos <br> os restantes fichas <br> de carência"    
+    deadline_max_penalty: "Prazo incluindo pena <br> máxima tarde"
     iso_date_format_example:    "Formato:  YYYY-MM-DD - Exemplo:  2009-01-13"
     iso_due_date_format_example:    "Formato:  YYYY-MM-DD HH:MM - Exemplo:  2009-01-13 17:44"
     create_new_assignment:      "Inserir projeto"
@@ -106,11 +116,11 @@ pt:
       in_progress: "Em progresso"
       completed: "Completado"
       released: "Liberado"
+      are_marked: "são marcados"
       remark_requested: "Pedido de revisão"
       not_complete: "Não pode liberar resultado para %{group_name}: o estado da avaliação não está completo"
       not_complete_unrelease: "Não é possível esconder o resultado para %{group_name}: a avaliação não está completa"
       no_submission: "%{group_name} não tem submissões"
-      no_result: "%{group_name} não tem resultados"
       result_not_saved: "O resultado da submissão de %{group_name} não pode ser salvo"
     collect_submissions:
       collect_all: "Coletar todas as submissões"
@@ -126,7 +136,7 @@ pt:
       could_not_collect_section: "Coleta de submissões para sessão %{section_name} e projeto %{assignment_identifier} não foi possível - a data de coleta não foi atingida."
       no_submission_for_section: "Não há submissões da sessão %{section_name} para coletar."
       successfully_collected: " %{collected} submissões coletadas com sucesso."
-      marking_incomplete_warning: "Nota: Nem todas os projetos foram avaliados.\n\nTem certeza que deseja continuar?"
+      marking_incomplete_warning: "Nota: Isso só vai baixar os submissões que foram recolhidos.\n\nTem certeza que deseja continuar?"
     assignment:
         hidden: "%{assignment_text} (oculto)"
         assignment: "Projetos %{short_identifier}"
@@ -140,7 +150,6 @@ pt:
         not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
         edit:           "Editar projeto:"
-        properties:     "Propriedades do projeto"
         required_files:  "Arquivos exigidos"
         submission_rules:  "Regras de envio"
         required_files_read:  "Arquivos exigidos para esse projeto"
@@ -149,6 +158,7 @@ pt:
         add_required_file:  "Inserir arquivo exigido"
         type:  "Tipo de projeto"
         overall_comment: "Comentários gerais"
+        upload_file_requirement: "A lista de arquivos carregados não coincide com os arquivos de atribuição necessária"
         group:
             empty: "Grupo vazio"
             assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
@@ -195,6 +205,9 @@ pt:
     remove_graders:     "Remover avaliadores"
     admins:             "Administradores"
     add_new:            "Adicionar novo"
+    add_new_student:    "Adicionar novo Étudiant"
+    add_new_grader:     "Adicionar novo Avaliador"
+    add_new_admin:      "Adicionar novo Administradore"
     create_new_grade_entry_form: "Adicionar planilha de notas"
     edit:               "Editar"
     save:               "Salvar"
@@ -259,6 +272,7 @@ pt:
     marker:
       new_annot: "Nova anotação"
       overall_comments: "Comentários gerais"
+      overall_comments_success: "Comentários gerais atualizado com sucesso."
       current_annotations: "Anotações atuais"
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
       annot_summary: "Resumo de anot."
@@ -312,11 +326,14 @@ pt:
         no_annotation_in_this_category: "Existem anotações nessa categoria"
         new_annotation: "Criar nova anotação"
         annotation_category: "Categoria de anotação"
+        preview: "Visualização"
+        preview_title: "Veja como a anotação vai olhar:"
         sure_to_remove: "Tem certeza que quer remover essa anotação?"
         submit_edit: "Enviar mudanças"
         change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"
         select_some_text: "Você deve selecionar algum texto do código fonte"
         select_an_area: "Você deve selecionar uma área da imagem para anotar"
+        select_an_area_pdf: "Você deve selecionar uma área do PDF para anotar"
         provide_text:   "Você deve fornecer alguma anotação"
 
     #app/views/results/common
@@ -348,6 +365,9 @@ pt:
       group_to_grader: "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
       student_to_grader: "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
       invalid_csv: "O formato do arquivo CSV não foi reconhecido"
+      upload:
+        malformed_csv: "O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus."
+        non_text_file_with_csv_extension: "O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV)."
 
     pagination:
       first: "≪ Primeiro"
@@ -396,7 +416,7 @@ pt:
       grading_can_begin_after: "Avaliação pode começar depois %{time}"
       submissions: 	    "Submissões: %{short_identifier}"
       csv_report:           "Relatório CSV"
-      detailled_csv_report: "Relatório detalhado CSV"
+      detailed_csv_report: "Relatório detalhado CSV"
       subversion_repo_list: "Lista de repositórios subversion"
       subversion_export_file: "Comando SVN para exportar projetos"
       errors:               "Erros"
@@ -408,13 +428,24 @@ pt:
       revised_by:           "Revisado por"
       replace:              "Substituir"
       delete:               "Apagar"
-      can_begin_grading:    "Pode começar a ser avaliado"
       error_collecting:     "Houve problemas em obter os arquivos."
       section:              "Sessão"
       collect_work_for_section: "Coletar submissões para a sessão:"
       download_groupings_files: "Baixar todas as submissões"
       sections:             "Sessão:"
       revision_history:     "%{num}: "
+      search_submissions:   "Pesquisa Submissões"
+      how_many_marked:      "%{num_marked}/%{num_assigned} submissões são corrigidos"
+
+    summaries_index:
+      search_summaries:     "Pesquisa Resumos"
+
+    course_summaries_index:
+      page_title:     "Sumário"
+      user_name:      "Nome de Usuário"
+      first_name:     "Primeiro Nome"
+      last_name:      "Sobrenome"
+      ngr:            "Sem Grade recebida"
 
     grade_entry_forms:
       blank_field: "Não pode ser branco"
@@ -428,6 +459,7 @@ pt:
       column_name: "Nome"
       column_out_of: "De"
       add_column: "Inserir coluna"
+      bonus_column: "Nota Bonus"
       remove_column: "Remover:"
       toggle_column: "esconder/mostrar"
       properties: "Propriedade da planilha de notas"
@@ -436,9 +468,11 @@ pt:
       create:
         success: "Planilha com novas notas criadas com sucesso"
         title: "Adicionar planilha de notas"
+        submit: "Adicionar marcas Spreadsheet"
       edit:
         title: "Editar planilha de notas:"
         success: "Planilha de notas atualizada com sucesso"
+        submit: "Atualização Marcas Spreadsheet"
       grades:
         title: "Gerenciar planilha de notas:"
         student_title: "Notas:"
@@ -457,6 +491,7 @@ pt:
         no_results: "Não há notas disponíveis ainda..."
         detailed_marks_message: "Notas detalhadas estão disponíveis."
       csv:
+        overwrite: "Substituir notas existentes?"
         incomplete_header: "Os totais ou os nomes dos itens estão faltando"
         incomplete_row: "Contém pouca informação."
         invalid_user_name: "Nome de usuário inválido."
@@ -561,7 +596,6 @@ pt:
 
     mark:
       error:
-        save: "Não foi possível salvar esta avaliação!: "
         validate_flexible: "deve ser entre 0 e a nota máxima do critério"
         validate_rubric: "deve ser um inteiro entre 0 e 4"
 
@@ -624,12 +658,18 @@ pt:
       invitations: "Convites"
       invited_by: "Você foi convidado por %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Você tem certeza que quer recusar este convite?"
+      confirm_work_alone: "Você tem certeza que quer trabalhar sozinho? Você não poderá alterar esta escolha a não ser que você entre em contato com seu instrutor "
       form_own_group: "Forme o seu próprio grupo"
       form_group: "Um grupo deve conter de <strong>%{group_min}</strong> a <strong>%{group_max}</strong> pessoas."
       decline_invitation2: "Isso irá recusar outro convite que você tem. Você tem certeza disso?"
       your_group: "Seu grupo"
+      group_options: "Opções de grupo"
       modification_limited: "Neste ponto, a modificação do seu grupo é muito limitado. Ambos a data de vencimento e período de tolerância (se houver) já se passaram."
       invite_more_students: " O grupo não é válido. Você precisa convidar mais alunos."
+      working_alone: "Você pediu para trabalhar sozinho nesta tarefa. Se você mudar de idéia e quer formar ou participar de um grupo, primeiro exclua o seu grupo."
+      may_not_add_more: "Você não pode adicionar mais pessoas para o seu grupo neste momento."
+      may_not_modify: "Você não pode modificar o seu grupo neste momento."
+      group_not_deletable: "Você deve entrar em contato com seu instrutor para remover o grupo."
       url_group_repository: "URL para o repositório do seu grupo"
       group_properties: " Propriedades do Grupo "
       students_can_form_groups: " Alunos podem formar grupos. "
@@ -650,6 +690,7 @@ pt:
       cancel_invitation_title: "Cancelar o convite"
       section_groups_only: "Você só pode convidar alunos da sua sessão"
       submission:
+        search_files: "Arquivos de pesquisa"
         file_manager: "%{short_identifier}: Gerenciador de Arquivos"
         current_path: "Caminho atual:"
         conflicts: "Conflitos"
@@ -835,6 +876,7 @@ pt:
         error:  "Não foi possível fazer o upload de categoria: erro com %{annotation_category} localizado na linha %{annotation_line}"
         syntax_error: "Existe um erro no  arquivo carregado: %{error}"
         flash_error: "Não foi possível reconhecer o formato %{format}"
+        unparseable_yaml: "Não foi possível analisar o arquivo YAML"
       download:
         download_annotations: "Baixar anotações"
         download_csv: "Baixar em formato CSV"
@@ -869,7 +911,7 @@ pt:
         form_description:  "Deduzir automaticamente créditos de período de tolerância"
         add_grace_period: "Adicionar um período de tolerância"
         hours:  "horas..."
-        after:  "Depois"
+        after:  "Depois<span class='required_field'>*</span>"
         from:  "De"
         to:  "para"
         alert: "Você deve selecionar a regra de envio Prazo de tolerância para adicionar um período de tolerância."
@@ -889,9 +931,9 @@ pt:
         to: "para"
         hours: "hora(s)..."
         after: "Depois"
-        every: "todo"
-        deduct: "Deduzir"
-        for: "para"
+        every: "todo<span class='required_field'>*</span>"
+        deduct: "Deduzir<span class='required_field'>*</span>"
+        for: "para<span class='required_field'>*</span>"
 
       penalty_period_submission_rule:
         name: "Regra de submissão no período de penalidade"
@@ -904,10 +946,10 @@ pt:
         form_description: "Usar fórmula de penalidade"
         add_penalty_period: "Adicionar um período de penalidade"
         hours:  "horas..."
-        after:  "Depois"
+        after:  "Depois<span class='required_field'>*</span>"
         from:  "De"
         to:  "para"
-        deduction: "Período de dedução de penalidade:"
+        deduction: "Período de dedução de penalidade:<span class='required_field'>*</span>"
         alert: "Você deve selecionar uma regra de submissão de período de penalidade para adicionar um período de multa."
 
     submission_file:
@@ -963,6 +1005,9 @@ pt:
         <code>criteria_name,max_value,description</code>
         <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
         success: "Critério flexível carregado com sucesso: %{nb_updates} atualizado(s)."
+      errors:
+        messages:
+          name_taken: "Nome de critério já utilizado."
 
     rubric_criteria:
       criteria_management:         "Gerenciamento de rúbrica : %{identifier}"
@@ -1017,6 +1062,9 @@ pt:
         description_2: "Esse critério foi satisfeito."
         description_3: "Esse critério foi bem satisfeito."
         description_4: "Esse critério foi quase perfeitamente ou perfeitamente satisfeito."
+      errors:
+        messages:
+          name_taken: "Nome de critério já utilizado."
 
     summary_table:
       title: "Título"
@@ -1024,6 +1072,17 @@ pt:
       grade: "Nota"
       x_mark: "x Mark"
       weight: "Peso"
+
+    course_summaries:
+      title: "Sumário"
+
+    marking_schemes:
+      title: "Esquema de marcação"
+      name: "Nome"
+      add_new: "Adicionar novo Esquema de marcação"
+      edit: "Editar esquema de marcação"
+      weight_label: "Peso para "
+      table_modify_column: "Modificar"
 
     notes:
         note_on: "%{user_name} em <b>%{display_for}</b>"
@@ -1162,10 +1221,17 @@ pt:
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
-
     locale_not_available: "%{locale} tradução não disponível!"
     external_authentication_not_supported: "Autenticação externa não é suportada pela sua plataforma!"
     account_disabled: "Essa conta foi desativada"
+    lateness_penalty: "Pena de Atraso"
+    grace_period: "Prazo de Carência"
+    penalty_decay: "Pena Decadência"
+    penalty_period: "Período Penalty"
+    additional_information: "Informações Adicionais"
+    penalty_decay_message_first: "A dedução de %{deduction}% será aplicado a cada %{interval} horas, até %{hours} horas após a atribuição é devido."
+    penalty_decay_message_other: "A partir daí, uma dedução de %{deduction}% será aplicado a cada %{interval} horas, até um máximo de %{hours} horas."
+    penalty_period_message: "Depois de %{hours} horas após a data de vencimento, a sua nota será reduzida em %{deduction}%"
 
     #app/views/main/_assignment_summary.html.erb
 
@@ -1189,6 +1255,10 @@ pt:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Distribuição de notas"
+
+    #app/helpers/submissions_helper.rb
+    assign_folder_missing:      "Oh não! Falta pasta Assignment."
+    group_repo_missing:         "Oh não! Nenhum repositório encontrado para este grupo."
 
     #lib/validators/
     date_validator:

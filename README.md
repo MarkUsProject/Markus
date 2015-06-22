@@ -1,20 +1,15 @@
-![MarkUs logo](http://markusproject.org/markus_logo_big.png)
+![MarkUs logo] (http://markusproject.org/img/markus_logo_big.png)
 
 Welcome to MarkUs! Online Marking Made Easy
 ===========================================
 
 http://markusproject.org/
 
-MarkUs (pronounced "mark us") is an open-source tool which recreates the ease
-and flexibility of grading assignments with pen on paper, within a web
-application. It also allows students and instructors to form groups, and
-collaborate on assignments. Its predecessor OLM (Online Marking) was originally
-written in Python on top of the TurboGears framework.
+MarkUs is a web application for the submission and grading of student programming assignments. The primary purpose of MarkUs is to provide TAs with simple tools that will help them to give high quality feedback to students. MarkUs also provides a straight-forward interface for students to submit their work, form groups, and receive feedback. The administrative interface allows instructors to manage groups, organize the grading, and release grades to students.
 
-The MarkUs project is a re-implementation of the Online Marking system using
-Ruby on Rails. The goal of this project is to take what we learned from OLM and
-our forays into Web-CAT, and build a web-based marking tool that includes an
-early submission and testing system in support of test driven development.
+Since 2008, more than 140 undergraduate students have participated in the development of MarkUs; some as full-time summer interns, but most working part time on MarkUs as a project course. The fact that we have have uncovered so few major bugs, and that MarkUs has been so well-received by instructors is a testament to the high quality work of these students. MarkUs is used in more than a dozen courses at the University of Toronto, in several courses at the University of Waterloo, and at École Centrale Nantes (in French).
+
+MarkUs is written using Ruby on Rails, and uses Subversion (with a Git back-end in progress) to store the student submissions. 
 
 
 ## 1. Features
@@ -42,11 +37,6 @@ Please see the INSTALL file for installation instructions.
 - Blog: http://blog.markusproject.org/
 - Sandbox: http://www.markusproject.org/admin-demo
 - Source Code: http://github.com/MarkUsProject/Markus
-- Review Board: http://review.markusproject.org/r/
-- MarkUs RDoc: http://www.markusproject.org/dev/app_doc/
-- Test Coverage: http://www.markusproject.org/dev/test_coverage/
-- Units Test Report: http://www.markusproject.org/dev/unit_tests_report.html
-- Functional Test Report: http://www.markusproject.org/dev/functional_tests_report.html
 - IRC Channel: irc://irc.freenode.net/#markus ([Logs](http://www.markusproject.org/irc/))
 - Mailing list: <markus-users@cs.toronto.edu>
 
@@ -58,7 +48,7 @@ If you are interested in MarkUs and would like to try it out, there is a MarkUs 
 
 ## 4. System Requirements
 
-- Rails 3.0/Ruby 1.9.3
+- Rails 3.0/Ruby 1.9.3+ (2.1.2 recommended)
 - Unicorn/Passenger
 - PostgreSQL/MySQL
 - Subversion
@@ -84,36 +74,12 @@ Want the latest MarkUs news? It's available several ways:
 * There is a mailing list for MarkUs users. You can also find us on IRC in the #markus channel on FreeNode.
 
 
-## 7. Screencasts
-
-Here are are some screencasts of MarkUs (reverse chronological order):
-
-- Student File Submission: September 2, 2009 http://www.youtube.com/watch?v=ofpyaty20FQ
-
-  This screencast demonstrates how students can upload, replace and delete
-  files using MarkUs' easy to use Web interface. The nice part is that files
-  really end up in a Subversion repository (without students ever noticing).
-
-- Student Group Formation: August 17, 2009 http://www.youtube.com/watch?v=Ed_z_tHCAg8
-
-  MarkUs supports various course models. One possibility of which is that an
-  instructor can allow students to work in teams. If an Assignment is set up
-  this way, students can go and start form groups on their own using MarkUs.
-
-- The Grader View: June 6, 2009 http://www.cs.toronto.edu/~reid/screencasts/OLM-2009-06-03.swf
-
-  The grader view is one of the core functionalities of MarkUs, which allows
-  graders (usually TAs) to mark a student's/group's work for an assignment. He
-  or she can annotate the submitted source code - which is syntax highlighted -
-  and mark according to rubrics defined by the instructor.
-
-
-## 8. Helping Out
+## 7. Helping Out
 
 Found a bug? Want a feature? Please email <info@markusproject.org>.
 
 
-## 9. Credits
+## 8. Credits
 
 MarkUs grew out of OLM, which was build using the TurboGears framework. We are
 grateful to everyone who worked on or funded both projects, and to the creators
@@ -123,6 +89,6 @@ MarkUs' development has been supported by the University of Toronto, École
 Centrale de Nantes, et. al. Kudos to everyone who turned that support into
 working code:
 
-Aaron Lee, Adam Goucher, Aimen Khan, Alexander Kittelberger, Alexandre Lissy, Alex Krassikov, Alysha Kwok, Amanda Manarin, Andrew Hernandez, Andrew Louis, Angelo Maralit, Anthony Le Jallé, Anton Braverman, David Das, Arianne Dee, Benjamin Thorent, Benjamin Vialle, Bertan Guven, Brian Xu, Bryan Shen, Camille Guérin, Catherine Fawcett, Christian Jacques, Christine Yu, Christopher Jonathan, Clément Delafargue, Clément Schiano, Danesh Dadachanji, Daniel St. Jules, Daniyal Liaqat, Daryn Lam, David Liu, Diane Tam, Dina Sabie, Dylan Runkel, Ealona Shmoel, Egor Philippov, Erik Traikov, Eugene Cheung, Evan Browning, Farah Juma, Fernando Garces, Gabriel Roy-Lortie, Gillian Chesnais, Geoffrey Flores, Hanson Wu, Horatiu Halmaghi, Ian Smith, Ibrahim Shahin, Jay Parekh, Jeffrey Ling, Jeremy Merkur, Jeremy Winter, Jérôme Gazel, Jiahui Xu, Jordan Saleh, Joseph Mate, Joseph Maté, Justin Foong, Karel Kahula, Kitiya Srisukvatananan, Kurtis Schmidt, Lawrence Wu, Luke Kysow, Marc Bodmer, Marc Palermo, Mark Rada, Mélanie Gaudet, Michael Lumbroso, Mike Conley, Mike Gunderloy, Mike Stewart, Mike Wu, Misa Sakamoto, Neha Kumar, Nelle Varoquaux, Nicholas Maraston, Nicolas Bouillon, Nick Lee, Nicolas Carougeau, Noé Bedetti, Oloruntobi Ogunbiyi, Ope Akanji, Rafael Padilha, Razvan Vlaicu, Robert Burke, Samuel Gougeon, Sean Budning, Severin Gehwolf, Shenglong Gao, Shion Kashimura, Simon Lavigne-Giroux, Su Zhang, Tara Clark, Tiago Chedraoui Silva, Tianhai Hu, Valentin Roger, Veronica Wong, Victoria Mui, Victor Ivri, Vivien Suen, William Roy, Xiang Yu, Yansong Zang, Zachary Munro-Cape
+Aaron Lee, Adam Goucher, Aimen Khan, Alexander Kittelberger, Alexandre Lissy, Alex Grenier, Alex Krassikov, Alysha Kwok, Amanda Manarin, Andrew Hernandez, Andrew Louis, Angelo Maralit, Anthony Le Jallé, Anton Braverman, David Das, Arianne Dee, Benjamin Thorent, Benjamin Vialle, Bertan Guven, Brian Xu, Bryan Shen, Bryan Muscedere, Camille Guérin, Catherine Fawcett, Chris Kellendonk, Christian Jacques, Christian Millar, Christine Yu, Christopher Jonathan, Clément Delafargue, Clément Schiano, Danesh Dadachanji, Daniel St. Jules, Daniyal Liaqat, Daryn Lam, David Liu, Diane Tam, Dina Sabie, Dylan Runkel, Ealona Shmoel, Egor Philippov, Erik Traikov, Eugene Cheung, Evan Browning, Farah Juma, Fernando Garces, Gabriel Roy-Lortie, Gillian Chesnais, Geoffrey Flores, Hanson Wu, Haohan David Jiang, Horatiu Halmaghi, Ian Smith, Ibrahim Shahin, Ishan Thukral, Irene Fung, Jakub Subczynski, Jay Parekh, Jeffrey Ling, Jeremy Merkur, Jeremy Winter, Jérôme Gazel, Jiahui Xu, Jordan Saleh, Joseph Mate, Joseph Maté, Joshua Dyck, Junghwan Tom Choi, Justin Foong, Karel Kahula, Kitiya Srisukvatananan, Kurtis Schmidt, Lawrence Wu, Luke Kysow, Marc Bodmer, Marc Palermo, Mark Rada, Mark Kazakevich, Maryna Moskalenko, Mélanie Gaudet, Michael Lumbroso, Mike Conley, Mike Gunderloy, Mike Stewart, Mike Wu, Misa Sakamoto, Nathan ChowNeha Kumar, Nelle Varoquaux, Nicholas Maraston, Nicolas Bouillon, Nick Lee, Nicolas Carougeau, Noé Bedetti, Oloruntobi Ogunbiyi, Ope Akanji, Paymahn Moghadasian, Peter Guanjie Zhao, Rafael Padilha, Razvan Vlaicu, Robert Burke, Ryan Spring, Samuel Gougeon, Sean Budning, Severin Gehwolf, Shenglong Gao, Shion Kashimura, Simon Lavigne-Giroux, Stephen Tsimicalis, Su Zhang, Tara Clark, Tiago Chedraoui Silva, Tianhai Hu, Valentin Roger, Veronica Wong, Victoria Mui, Victoria Verlysdonk, Victor Ivri, Vivien Suen, William Roy, Xiang Yu, Yansong Zang, Yusi Fan, Zachary Munro-Cape
 
 **Supervisors:** Karen Reid, Morgan Magnin, Benjamin Vialle, David Liu

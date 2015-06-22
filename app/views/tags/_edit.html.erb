@@ -1,0 +1,34 @@
+<div id="edit">
+  <h2><%= I18n.t("tags.edit_tag") %></h2>
+
+  <%= form_for :update_tag,
+               url: update_tag_assignment_tag_path(@assignment, @tag),
+               html: { multipart: true, size: 1 } do |f| %>
+    <div>
+      <p><%= t('tags.create.tag_prompt') %></p>
+      <p><%= f.text_field :name,
+                          id: 'name',
+                          value: @tag[:name] %></p>
+    </div>
+    <div>
+      <p class="alignleft"><%= t('tags.create.tag_description') %></p>
+      <p id='descript_amount' class='alignright'>0/120</p>
+      <p class="clear-alignment"><%= f.text_area :description,
+                                      id: 'description',
+                                      cols: 30,
+                                      rows: 3,
+                                      maxlength: 120,
+                                      onKeyDown: 'updateCharCount()',
+                                      value: @tag[:description] %></p>
+    </div>
+    <section class='dialog-actions'>
+      <%= f.submit t('tags.edit_update'),
+                   name: 'submit',
+                   data: { disable_with: t('tags.updating') },
+                   class: 'button' %>
+      <input type='reset'
+             value='<%= t(:cancel) %>'
+             onclick='modal_edit.close();'>
+    </section>
+  <% end %>
+</div>

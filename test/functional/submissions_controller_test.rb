@@ -31,7 +31,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     end
 
     should 'and I should be able to populate file' do
-      get_as @student, :populate_file_manager, :assignment_id => @assignment.id, :format => 'js'
+      get_as @student,
+             :populate_file_manager_react,
+             assignment_id: @assignment.id,
+             format: 'js'
       assert_response :success
     end
 
@@ -87,11 +90,11 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         @file_2 = fixture_file_upload(File.join('files', 'TestShapes.java'), 'text/java')
 
         post_as @student,
-          :update_files, :assignment_id => @assignment.id,
-          :replace_files  => { 'Shapes.java'     => @file_1,
-                               'TestShapes.java' => @file_2 },
-          :file_revisions => { 'Shapes.java'     => old_file_1.from_revision,
-                               'TestShapes.java' => old_file_2.from_revision }
+                :update_files,
+                assignment_id: @assignment.id,
+                new_files: [@file_1, @file_2],
+                file_revisions: { 'Shapes.java'     => old_file_1.from_revision,
+                                  'TestShapes.java' => old_file_2.from_revision }
       end
 
       # must not respond with redirect_to (see comment in
@@ -138,7 +141,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         old_file_2 = old_files['TestShapes.java']
 
         post_as(@student, :update_files, {:assignment_id => @assignment.id,
-          :delete_files => {  'Shapes.java' => true},
+          :delete_files => ['Shapes.java'],
           :file_revisions => {'Shapes.java' => old_file_1.from_revision,
                               'TestShapes.java' => old_file_2.from_revision}})
       end
@@ -163,51 +166,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         assert_nil files['Shapes.java']
       end
     end
-
-    should 'and I cannot add a file that exists' do
-      assert @student.has_accepted_grouping_for?(@assignment.id)
-
-      @grouping.group.access_repo do |repo|
-        txn = repo.get_transaction('markus')
-        txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
-        txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
-        repo.commit(txn)
-
-        file_1 = fixture_file_upload(File.join('files', 'Shapes.java'), 'text/java')
-        file_2 = fixture_file_upload(File.join('files', 'TestShapes.java'), 'text/java')
-        assert @student.has_accepted_grouping_for?(@assignment.id)
-        post_as(@student, :update_files, {:assignment_id => @assignment.id, :new_files => [file_1, file_2]})
-      end
-
-      # must not respond with redirect_to (see comment in
-      # app/controllers/submission_controller.rb#update_files)
-      assert_response :success
-
-      # update_files action should assign to various instance variables.
-      # These are crucial for the file_manager view to work properly.
-      assert_not_nil assigns :assignment
-      assert_not_nil assigns :grouping
-      assert_not_nil assigns :path
-      assert_not_nil assigns :revision
-      assert_not_nil assigns :files
-      assert_not_nil assigns :missing_assignment_files
-      assert_not_nil assigns :file_manager_errors
-
-      file_manager_errors = assigns['file_manager_errors']
-      @grouping.group.access_repo do |repo|
-        # Check to see if the file was added
-        assert @grouping.is_valid?
-
-        revision = repo.get_latest_revision
-        files = revision.files_at_path(@assignment.repository_folder)
-        assert_not_nil files['Shapes.java']
-        assert_not_nil files['TestShapes.java']
-        assert_not_nil file_manager_errors[:update_conflicts]
-      end
-    end
-    # TODO:  Test that a student can't replace file if out of sync
-    # TODO:  Test that a student can't replace a file if the new file
-    #         has a different name
 
     # Repository Browser Tests
     # TODO:  TEST REPO BROWSER HERE
@@ -267,7 +225,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @grader,
                :repo_browser,
                assignment_id: @assignment.id,
-               id: Grouping.last.id
+               id: Grouping.last.id,
+               revision_number:
+                 Grouping.last.group.repo.get_latest_revision.revision_number,
+               path: '/'
         assert_response :success
       end
 
@@ -358,7 +319,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @admin,
                :repo_browser,
                assignment_id: @assignment.id,
-               id: Grouping.last.id
+               id: Grouping.last.id,
+               path: '/'
         assert_response :success
       end
 

@@ -51,6 +51,7 @@ class User < ActiveRecord::Base
     # are delimited by \n and C programs use \0 to terminate strings
     not_allowed_regexp = Regexp.new(/[\n\0]+/)
     if not_allowed_regexp.match(login) || not_allowed_regexp.match(password)
+      m_logger = MarkusLogger.instance
       m_logger.log("User '#{login}' failed to log in. Username/password contained " +
                        'illegal characters', MarkusLogger::ERROR)
       AUTHENTICATE_BAD_CHAR
@@ -165,8 +166,6 @@ class User < ActiveRecord::Base
           end
         end # end parse
       end
-    rescue
-        return false
     end
     result[:upload_notice] = "#{num_update} user(s) added/updated."
     result
@@ -207,6 +206,8 @@ class User < ActiveRecord::Base
     {
       'IS_REPOSITORY_ADMIN' =>
         MarkusConfigurator.markus_config_repository_admin?,
+      'REPOSITORY_STORAGE' => 
+	MarkusConfigurator.markus_config_repository_storage,
       'REPOSITORY_PERMISSION_FILE' =>
         MarkusConfigurator.markus_config_repository_permission_file
     }

@@ -11,10 +11,12 @@
         controller.controller_name == 'ta_assignments' ||
         controller.controller_name == 'annotation_categories' ||
         controller.controller_name == 'grade_entry_forms' ||
-        controller.controller_name == 'automated_tests' %>
+        controller.controller_name == 'automated_tests' ||
+        controller.controller_name == 'tags' %>
+
     <ul class='sub'>
       <li id='dropdown'>
-        <span class='dropdown'>
+        <div class='dropdown'>
           <%# Display an appropriate message in the dropdown menu %>
           <% if @assignment.nil? && @grade_entry_form.nil? %>
             <%= t(:choose_assignment) %>
@@ -41,7 +43,7 @@
           <ul>
             <%= render partial: 'shared/assignments_dropdown_menu' %>
           </ul>
-        </span>
+        </div>
       </li>
 
       <% if !@grade_entry_form.nil? && !@grade_entry_form.id.nil? %>
@@ -88,6 +90,10 @@
             <%= link_to t('graders.graders'),
                         assignment_graders_path(@assignment) %>
           </li>
+          <li class='<%= "active" if controller.controller_name == 'tags' %>'>
+            <%= link_to t('tags.tags'),
+                        assignment_tags_path(@assignment) %>
+          </li>
           <li <% if controller.controller_name == 'submissions' ||
                     controller.controller_name == 'results' %>
                 class='active'
@@ -104,10 +110,14 @@
     </ul>
   <% elsif controller.controller_name == 'admins' ||
            controller.controller_name == 'students' ||
-           controller.controller_name == 'tas' %>
+           controller.controller_name == 'tas' ||
+           controller.controller_name == 'sections' %>
     <ul class='sub'>
       <li class='<%= "active" if controller.controller_name == 'students' %>'>
         <%= link_to t('students.students'), controller: 'students' %>
+      </li>
+      <li class='<%= "active" if controller.controller_name == 'sections' %>'>
+        <%= link_to t(:sections), controller: 'sections' %>
       </li>
       <li class='<%= "active" if controller.controller_name == 'tas' %>'>
         <%= link_to t('graders.graders'), controller: 'tas' %>
@@ -118,9 +128,9 @@
     </ul>
   <% end %>
 <% elsif @current_user.ta? && (controller.controller_name == 'assignments' ||
-                                controller.controller_name == 'submissions' ||
-                                controller.controller_name == 'results' ||
-                                controller.controller_name == 'summaries') %>
+                               controller.controller_name == 'submissions' ||
+                               controller.controller_name == 'results' ||
+                               controller.controller_name == 'summaries') %>
   <ul class='sub'>
     <li id='dropdown'>
       <span class='dropdown'>

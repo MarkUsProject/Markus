@@ -75,10 +75,10 @@
                path_memory = File.join(path_memory, folder)
              end
              links.push(link_to "/#{folder}",
-                     action: 'repo_browser',
-                     path: path_memory,
-                     id: @grouping.id,
-                     revision_number: @revision_number)
+                        action: 'repo_browser',
+                        path: path_memory,
+                        id: @grouping.id,
+                        revision_number: @revision_number)
            end %>
         <%= links.join().html_safe %>
       </p>
@@ -86,8 +86,7 @@
 
     <%= form_tag manually_collect_and_begin_grading_assignment_submission_path(
                    id: @grouping.id,
-                   assignment_id: @assignment.id),
-                 remote: true do %>
+                   assignment_id: @assignment.id) do %>
       <%= hidden_field_tag 'current_revision_number', @revision_number %>
       <input type='submit'
              value='<%= t('browse_submissions.collect_and_grab') %>'
@@ -107,15 +106,3 @@
 
   <div id='files_table'></div>
 </div>
-
-<script>
-  new PeriodicalExecuter(function() {
-    new Ajax.Request('<%= update_converted_pdfs_assignment_submissions_path(@assignment, grouping_id: @grouping.id) %>',
-      {
-        asynchronous:true,
-        evalScripts:true,
-        parameters:'authenticity_token=' + AUTH_TOKEN
-      }
-    )
-  }, 3)
-</script>

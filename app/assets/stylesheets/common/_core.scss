@@ -146,9 +146,9 @@ input[type='radio'] {
 }
 
 .help-message {
-  @include border-radius(5px);
-  background: #ffffe0;
-  border: 1px solid #e6db55;
+  background: $light-yellow;
+  border: 1px solid $yellow;
+  border-radius: $radius;
   display: inline-block;
   padding: 10px;
   position: relative;
@@ -184,4 +184,17 @@ input[type='radio'] {
 .table-filters span {
   padding-right: 10px;
   font-size: 110%;
+}
+
+/* Text Alignment */
+.alignleft {
+  float: left;
+}
+
+.alignright {
+  float: right;
+}
+
+.clear-alignment {
+  clear: both;
 }

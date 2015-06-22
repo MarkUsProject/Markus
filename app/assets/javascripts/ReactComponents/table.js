@@ -20,6 +20,9 @@
  *                             Must be a string or React DOM object.
  *                             Remember to make this I18n.
  *                  - sortable: boolean that determines whether a column is sortable.
+ *                  - compare: a function defining custom comparison behaviour
+ *                             for sorting by column. Leave undefined to use the
+ *                             default comparison operators.
  *                  - searchable: boolean that determines whether the stuff in a column
  *                                can be searched.
  *             columns is used to create the table header.
@@ -56,17 +59,20 @@ var Table = React.createClass({displayName: 'Table',
   getInitialState: function() {
     var first_sortable_column = this.props.columns.filter(function(col) {
       return col.sortable == true;
-    })[0].id;
-
-    var first_filter_name = this.props.filters ? this.props.filters[0].name : null;
-    var first_filter_func = this.props.filters ? this.props.filters[0].func : null;
+    })[0];
+    var first_filter_name =
+        this.props.filters ? this.props.filters[0].name : null;
+    var first_filter_func =
+        this.props.filters ? this.props.filters[0].func : null;
     return {
       visible_rows: [],
       selected_rows: [],
       filter: first_filter_name,
       filter_func: first_filter_func,
-      sort_column: first_sortable_column,
-      sort_direction: 'asc'
+      sort_column: first_sortable_column.id,
+      sort_direction: 'asc',
+      sort_compare: first_sortable_column.compare,
+      header_selected: false
     }
   },
   componentDidMount: function() {
@@ -97,9 +103,13 @@ var Table = React.createClass({displayName: 'Table',
   },
   // Header col was clicked. Adjust state accordingly.
   synchronizeHeaderColumn: function(sort_column, sort_direction) {
+    var compare_func = this.props.columns.filter(function(col) {
+        return col.id == sort_column;
+    })[0].compare;
     this.setState({
       sort_column: sort_column,
-      sort_direction: sort_direction
+      sort_direction: sort_direction,
+      sort_compare: compare_func
     });
   },
   headerCheckboxClicked: function(event) {
@@ -110,7 +120,7 @@ var Table = React.createClass({displayName: 'Table',
     } else {
       new_selected_rows = [];
     }
-    this.setState({selected_rows: new_selected_rows});
+    this.setState({selected_rows: new_selected_rows, header_selected: value});
     this.props.onSelectedRowsChange(new_selected_rows);
   },
   rowCheckboxClicked: function(event) {
@@ -125,6 +135,9 @@ var Table = React.createClass({displayName: 'Table',
     }
     this.setState({selected_rows:new_selected_rows});
     this.props.onSelectedRowsChange(new_selected_rows);
+  },
+  clearCheckboxes: function() {
+    this.setState({selected_rows: [], header_selected: false});
   },
   // If search input or filter changed, pass the changed item into an object changed inhere
   // and it'll return the new visible rows so you can update the state with it.
@@ -151,7 +164,7 @@ var Table = React.createClass({displayName: 'Table',
     var columns = null;
     if (this.props.selectable) {
       columns = [{id:'checkbox', content:
-        React.DOM.input({type:'checkbox', onChange:this.headerCheckboxClicked})}]
+        React.DOM.input({type:'checkbox', checked:this.state.header_selected, onChange:this.headerCheckboxClicked})}]
         .concat(this.props.columns);
     } else {
       columns = this.props.columns;
@@ -345,7 +358,7 @@ TableFooter = React.createClass({displayName: 'TableFooter',
   propTypes: {
     sort_column: React.PropTypes.string,
     sort_direction: React.PropTypes.string,
-    columns: React.PropTypes.array,
+    columns: React.PropTypes.array
   },
   render: function() {
     // Create the footer columns
@@ -380,14 +393,15 @@ TableRows = React.createClass({displayName: 'TableRows',
     selectable: React.PropTypes.bool,
     rowCheckboxClicked: React.PropTypes.func,
     getVisibleRows: React.PropTypes.func,
-    state: React.PropTypes.object,
+    state: React.PropTypes.object
   },
 
   render: function() {
     var visible_data = this.props.getVisibleRows({});
     var sorted_data = sort_by_column(visible_data,
                                      this.props.state.sort_column,
-                                     this.props.state.sort_direction);
+                                     this.props.state.sort_direction,
+                                     this.props.state.sort_compare);
 
     var final_data = null;
     if (this.props.selectable) {
@@ -479,29 +493,46 @@ function search_item(search_text, item) {
   }
 }
 
-function sort_by_column(data, column, direction) {
-  function makeSortable(a)
+function sort_by_column(data, column, direction, compare) {
+  // determine sort behaviour
+  function makeComparable(a)
   {
-    if (typeof a == 'string') {
+    if (typeof a === 'string') {
       return a.toLowerCase().replace(' ', '');
     } else if (a.hasOwnProperty('props')) {
+      // Is a react Grade Box
+      if (a.props.hasOwnProperty('grade_entry_column') || 
+          a.props.hasOwnProperty('data-grade-entry-item-id')) {
+        return a;
+      // Contains image
+      } else if (a.props.hasOwnProperty('src')) {
+        return a.props.src;
       // Is a react component, get innerHTML
-      return a.props.dangerouslySetInnerHTML.__html.toLowerCase();
-    } else {
-      return a;
+      } else if (a.props.hasOwnProperty('dangerouslySetInnerHTML')) {
+        return a.props.dangerouslySetInnerHTML.__html.toLowerCase();
+      } else {
+        return React.renderComponentToString(a);
+      }
     }
+    return a;
   }
-  // sorts column id
-  var r = data.sort(function(a, b) {
-    if (makeSortable(a[column]) > makeSortable(b[column])) {
-      return 1;
-    } else if (makeSortable(b[column]) > makeSortable(a[column])) {
-      return -1;
-    }
-    return 0;
-  });
-  // flips order if direction descending.
-  if (direction == 'desc') r.reverse();
 
-  return r;
+  if (typeof compare === 'string') {
+    compare = window[compare]
+  }
+
+  compare = compare || compare_values;
+
+  // sort row by column id
+  var sorted = data.sort(function(a, b) {
+    return compare(makeComparable(a[column]), makeComparable(b[column]));
+  });
+
+  // flip order if direction descending
+  if (direction == 'desc') {
+      sorted.reverse();
+  }
+
+  return sorted;
 }
+

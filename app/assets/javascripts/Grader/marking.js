@@ -34,7 +34,8 @@ jQuery(document).ready(function() {
   });
 
   // Event handlers for the flexible criteria grades
-  jQuery('.mark_grade_input').each(function(index) {
+  jQuery('.mark_grade_input').each(function(index, input) {
+    var mark_id = input.id.substr(5);
 
     // Prevent clicks from hiding the grade
     jQuery(this).click(function(event) {
@@ -51,7 +52,27 @@ jQuery(document).ready(function() {
       jQuery.ajax({
         url:  this.getAttribute('data-action'),
         type: 'POST',
-        data: params
+        data: params,
+        beforeSend: function () {
+          document.getElementById('mark_verify_result_' + mark_id)
+                  .style.display = 'none';
+        },
+        error: function(err) {
+          var error_div = document.getElementById(
+            'mark_verify_result_' + mark_id);
+          error_div.style.display = '';
+          error_div.innerHTML = err.responseText;
+        },
+        success: function(data) {
+          var items = data.split(',');
+          var mark = items[0];
+          var subtotal = items[1];
+          var total = items[2];
+          update_total_mark(total);
+          document.getElementById('mark_' + mark_id + '_summary_mark')
+                  .innerHTML = mark;
+          document.getElementById('current_subtotal_div').innerHTML = subtotal;
+        }
       });
     });
   });
@@ -132,8 +153,34 @@ function select_mark(mark_id, mark) {
   }
 
   if (mark !== null) {
-    document.getElementById('mark_' + mark_id + '_' + mark).addClass('rubric_criterion_level_selected');
+    var rubric_div = document.getElementById('mark_' + mark_id + '_' + mark);
+    rubric_div.addClass('rubric_criterion_level_selected');
+    rubric_div.removeClass('rubric_criterion_level');
   }
+}
+
+// Function for AJAX request for rubric levels
+function update_rubric_mark(elem, mark_id, value) {
+  jQuery.ajax({
+    url:  elem.getAttribute('data-action'),
+    type: 'POST',
+    data: {'authenticity_token': AUTH_TOKEN},
+    success: function(data) {
+      var items = data.split(',');
+      var mark = items[0];
+      var subtotal = items[1];
+      var total = items[2];
+      select_mark(mark_id, value);
+      document.getElementById('mark_criterion_title_' + mark_id + '_mark')
+              .innerHTML = elem.innerHTML;
+      update_total_mark(total);
+      document.getElementById('mark_' + mark_id + '_summary_mark')
+              .innerHTML = value;
+      document.getElementById('mark_' + mark_id + '_summary_mark_after_weight')
+              .innerHTML = mark;
+      document.getElementById('current_subtotal_div').innerHTML = subtotal;
+    }
+  });
 }
 
 function update_total_mark(total_mark) {

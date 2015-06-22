@@ -193,6 +193,7 @@ class Student < User
 
     # write repo permissions if need be
     grouping.update_repository_permissions
+    group.set_repo_permissions
 
     member = StudentMembership.new(grouping_id: grouping.id, membership_status: StudentMembership::STATUSES[:inviter], user_id: self.id)
     member.save

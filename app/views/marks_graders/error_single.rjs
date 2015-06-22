@@ -1,4 +1,0 @@
-if !@error.empty?
-  page.replace_html 'errors_title', @error
-  page.show 'errors'
-end

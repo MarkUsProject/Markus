@@ -16,12 +16,13 @@ gem 'i18n'
 gem 'will_paginate'
 gem 'dynamic_form'
 gem 'exception_notification'
+gem 'activerecord-import'
 gem 'auto_complete'
-gem 'json'
+gem 'best_in_place'
 gem 'coffee-script'
+gem 'gitolite'
 gem 'jquery-rails'
 gem 'prototype-rails', '~> 4.0.0'
-gem 'activerecord-import'
 gem 'sprockets', '~> 2.12.0'
 
 gem 'tilt', '~> 1.3.7'
@@ -31,6 +32,10 @@ gem 'uglifier',     '>= 1.3.0'
 gem 'execjs'
 gem 'libv8'
 gem 'therubyracer'
+gem 'json'
+gem 'minitest', platforms: :ruby_20
+gem 'rugged'
+gem 'autoprefixer-rails'
 
 gem 'actionpack-action_caching', '~>1.0.0'
 gem 'actionpack-page_caching', '~>1.0.0'
@@ -67,38 +72,38 @@ end
 # Gems only used for development should be listed here so that they
 # are not loaded in other environments.
 group :development do
-  gem 'quiet_assets'
+  gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'awesome_print'
   gem 'spring'
   gem 'debugger', :platforms => :mri_19
+  gem 'quiet_assets'
 end
 
 group :test do
-  gem 'simplecov'
-  gem 'shoulda'
+  gem 'factory_girl_rails'
   gem 'machinist', '< 2'
-  gem 'time-warp'
   gem 'mocha', require: false
   gem 'rspec-rails', '~> 3.0'
-  gem 'factory_girl_rails'
+  gem 'shoulda'
+  gem 'simplecov'
+  gem 'time-warp'
 end
 
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
-  gem 'faker' # required for database seeding
   gem 'byebug', :platforms => [:mri_20, :mri_21]
+  gem 'faker' # required for database seeding
 end
 
 # Gems not needed at runtime should go here so that MarkUs does
 # not waste time/memory loading them during boot
 group :offline do
-  gem 'rdoc'
   gem 'railroady'
-  gem 'thin'
+  gem 'rdoc'
   gem 'rubocop'
+  gem 'thin'
 end
 
 # If you  plan to use unicorn servers for production
@@ -106,12 +111,4 @@ end
 # group if you are using Phusion Passenger.
 group :unicorn do
   gem 'unicorn'
-end
-
-# If you want to be able to view and annotate PDF files,
-# make sure that this group is included. GhostScript has to be
-# installed for rghost to work well. You also need to set
-# the PDF_SUPPORT bool to true in the config file(s).
-group :rghost do
-  gem 'rghost', '<=0.9.3'
 end

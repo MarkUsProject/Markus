@@ -18,6 +18,7 @@
             id: 'last_revised_date',
             content: '<%= j raw I18n.t(:'browse_submissions.last_revised') %>',
             sortable: true,
+            compare: compare_dates,
             searchable: true
           },
           {
@@ -29,20 +30,23 @@
         ]
       };
     },
+
     getInitialState: function() {
       return {
         error: null,
         files: []
       };
     },
+
     componentWillMount: function() {
       this.refresh();
     },
+
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
       // Show working indicator.
       document.getElementById('working').style.display = '';
-      
+
       jQuery.ajax({
         url: '<%= repo_browser_assignment_submission_path(
           @assignment,
@@ -70,53 +74,55 @@
         }
       });
     },
+
     onError: function(error) {
-      this.setState({error: error});
+      this.setState({ error: error });
     },
+
     render: function() {
-      // Do file-specific table stuff here.
       var files_data = this.state.files.map(function(file) {
         var f = {};
-        f['id'] = file.id;
-        f['filename'] = <span dangerouslySetInnerHTML={{__html: file.filename}} />;
-        f['last_revised_date'] = file.last_revised_date;
-        f['revision_by'] = file.revision_by;
+        f.id = file.id;
+        f.filename = <span dangerouslySetInnerHTML={{__html: file.filename}} />;
+        f.last_revised_date = new Date(file.last_revised_date).toLocaleString();
+        f.revision_by = file.revision_by;
         return f;
       }.bind(this));
 
-        return (
-          <div>
-            <ErrorDiv error={this.state.error} />
-            <Table data={files_data}
-              columns={this.props.columns}
-            />
-          </div>
-        );
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+
+          <Table data={files_data}
+            columns={this.props.columns}
+          />
+        </div>
+      );
     }
   });
 
   React.renderComponent(<FilesTable />, document.getElementById('files_table'));
 
   jQuery('.datetimepicker').datetimepicker({
-      altField:         '#actual_revision_timestamp',
-      altFieldTimeOnly: false,
-      altFormat:        'yy-mm-dd',
-      altTimeFormat:    'HH:mm',
-      altSeparator:     'T',
-      controlType:      'select',
-      showTime:         false,
-      numberOfMonths:   2,
-      secondMax:        0,
-      dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
-      timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
-      monthNames:       <%= raw I18n.t('date.months') %>,
-      dayNames:         <%= raw I18n.t('date.weekdays') %>,
-      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
-      hourText:         "<%= I18n.t('time.hour') %>",
-      minuteText:       "<%= I18n.t('time.minute') %>",
-      timeText:         "<%= I18n.t('time.time') %>",
-      prevText:         "<%= I18n.t('time.prev') %>",
-      nextText:         "<%= I18n.t('time.next') %>",
-      closeText:        "<%= I18n.t('time.close') %>",
-    });
+    altField:         '#actual_revision_timestamp',
+    altFieldTimeOnly: false,
+    altFormat:        'yy-mm-dd',
+    altTimeFormat:    'HH:mm',
+    altSeparator:     'T',
+    controlType:      'select',
+    showTime:         false,
+    numberOfMonths:   2,
+    secondMax:        0,
+    dateFormat:       "<%= raw I18n.t('date.formats.locale_date') %>",
+    timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+    monthNames:       <%= raw I18n.t('date.months') %>,
+    dayNames:         <%= raw I18n.t('date.weekdays') %>,
+    dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+    hourText:         "<%= I18n.t('time.hour') %>",
+    minuteText:       "<%= I18n.t('time.minute') %>",
+    timeText:         "<%= I18n.t('time.time') %>",
+    prevText:         "<%= I18n.t('time.prev') %>",
+    nextText:         "<%= I18n.t('time.next') %>",
+    closeText:        "<%= I18n.t('time.close') %>",
+  });
 </script>

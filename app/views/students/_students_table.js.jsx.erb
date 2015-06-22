@@ -1,3 +1,4 @@
+
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
@@ -27,15 +28,12 @@
             sortable: true,
             searchable: true
           },
-          {
-            id: 'section',
-            content: '<%= j raw I18n.t(:'user.section') %>',
-            sortable: true
-          },
+          <%= raw @section_column  %>
           {
             id: 'grace_credits',
             content: '<%= j raw I18n.t(:'user.grace_credits') %>',
-            sortable: true
+            sortable: true,
+            compare: compare_fractions
           },
           {
             id: 'notes',
@@ -89,6 +87,7 @@
       document.getElementById('working').style.display = '';
 
       jQuery.ajax({
+        url: 'students/populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -98,7 +97,7 @@
           });
         }.bind(this),
         error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
+          var error = text;
           this.setState({
             error: error
           });
@@ -126,7 +125,7 @@
         s['section'] = student.section_name ? student.section_name : '-';
         s['grace_credits'] = student.grace_credits_remaining + ' / ' + student.grace_credits;
         s['notes'] = <span>
-          <a key={student.edit_link} 
+          <a key={student.edit_link}
             href={student.edit_link}><%= j raw I18n.t(:'edit') %></a>
           | 
           <a key={student.notes_link}
@@ -138,7 +137,7 @@
     
         return s;
       }.bind(this));
-      
+
       return (
         <div>
           <ErrorDiv error={this.state.error} />
