@@ -448,7 +448,8 @@ class StudentTest < ActiveSupport::TestCase
           end
 
           should 'create the group' do
-            assert Group.where(group_name: @student.user_name).first, 'the group has not been created'
+            assert Group.where(group_name: @student.user_name).first,
+                   'the group has not been created'
           end
 
           should 'have their repo name equal their user name' do

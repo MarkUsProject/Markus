@@ -446,9 +446,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def delete_grouping
-    student_memberships.includes(:user).each do |member|
-      member.destroy
-    end
+    student_memberships.includes(:user).each(&:destroy)
     # adjust repository permissions
     update_repository_permissions
     self.destroy
@@ -525,7 +523,9 @@ class Grouping < ActiveRecord::Base
   def remove_tas(ta_id_array)
     #if no tas to remove, return.
     return if ta_id_array == []
-    ta_memberships_to_remove = ta_memberships.includes(:user).references(:user).where(user_id: ta_id_array)
+    ta_memberships_to_remove = ta_memberships.includes(:user)
+                                             .references(:user)
+                                             .where(user_id: ta_id_array)
     ta_memberships_to_remove.each do |ta_membership|
       ta_membership.destroy
       ta_memberships.delete(ta_membership)

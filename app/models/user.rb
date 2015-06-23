@@ -193,7 +193,8 @@ class User < ActiveRecord::Base
     end
 
     # Is there already a Student with this User number?
-    current_user = user_class.find_or_create_by(user_name: user_attributes[:user_name])
+    current_user = user_class.find_or_create_by(
+      user_name: user_attributes[:user_name])
     current_user.attributes = user_attributes
 
     return unless current_user.save

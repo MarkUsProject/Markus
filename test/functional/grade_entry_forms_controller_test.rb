@@ -482,13 +482,13 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                :update,
                id: @grade_entry_form.id,
                grade_entry_form: {
-                                    short_identifier: NEW_SHORT_IDENTIFIER,
-                                    description: NEW_DESCRIPTION,
-                                    message: NEW_MESSAGE,
-                                    date: @grade_entry_form.date,
-                                    grade_entry_items_attributes: {'0' => @q2,
+                                   short_identifier: NEW_SHORT_IDENTIFIER,
+                                   description: NEW_DESCRIPTION,
+                                   message: NEW_MESSAGE,
+                                   date: @grade_entry_form.date,
+                                   grade_entry_items_attributes: { '0' => @q2,
                                                                    '1' => @q1,
-                                                                   '2' => @q3}}
+                                                                   '2' => @q3 }}
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
         assert_response :redirect
