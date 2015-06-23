@@ -105,8 +105,6 @@ pt:
     due_date:           "Prazo de entrega" 
     deadline_grace_tokens: "Prazo usando todos <br> os restantes fichas <br> de carência"    
     deadline_max_penalty: "Prazo incluindo pena <br> máxima tarde"
-    iso_date_format_example:    "Formato:  YYYY-MM-DD - Exemplo:  2009-01-13"
-    iso_due_date_format_example:    "Formato:  YYYY-MM-DD HH:MM - Exemplo:  2009-01-13 17:44"
     create_new_assignment:      "Inserir projeto"
     manage_course_work: "Gerenciar trabalho do curso"
     repository_folder:  "Pasta do repositório <span class='required_field'>*</span>"
@@ -1181,6 +1179,12 @@ pt:
         locale_date_only: "DD, d 'de' MM 'de' yy"
         js_date_time:     "dddd, D [de] MMMM [de] YYYY HH:mm"
         js_date:          "dddd, D [de] MMMM [de] YYYY"
+
+        old_date:             "yy-dd-mm"
+        js_old_date:          "YYYY-DD-MM HH:mm"
+        js_old_date_only:     "YYYY-DD-MM"
+        date_placeholder:     "AAAA-DD-MM"
+        datetime_placeholder: "AAAA-DD-MM HH:MM"
 
       day_names: [domingo, segunda-feira, terça-feira, quarta-feira, quinta-feira, sexta-feira, sábado]
       abbr_day_names: [dom, seg, ter, qua, qui, sex, sab]

@@ -27,7 +27,7 @@
     <%= raw(f.text_field nil,
                          id: 'format',
                          class: 'hidden',
-                         value: t('date.formats.js_date'),
+                         value: t('date.formats.js_old_date_only'),
                          disabled: true) %>
 
     <fieldset>
@@ -60,7 +60,8 @@
           <%= text_field_tag 'date',
                              nil,
                              { class: 'datepicker',
-                               size: 30 } %>
+                               size: 30,
+                               placeholder: t('date.formats.date_placeholder') } %>
         </div>
 
         <div>
