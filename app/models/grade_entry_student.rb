@@ -140,7 +140,7 @@ class GradeEntryStudent < ActiveRecord::Base
           end
         else
           grade = grade_entry_student.grades
-                  .find_or_create_by_grade_entry_item_id(grade_entry_item.id)
+                  .find_or_create_by(grade_entry_item: grade_entry_item)
           grade.grade = grade_for_grade_entry_item
 
           unless grade.save

@@ -282,7 +282,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                :assignment_id => @assignment.id, :format => 'xml'
         assert_response :redirect
         assert set_flash.to(t('annotations.upload.flash_error',
-                              format: 'xml')))
+                              format: 'xml'))
       end
     end
 
@@ -403,7 +403,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert set_flash.to(t('annotations.upload.success',
-                              annotation_category_number: 1)))
+                              annotation_category_number: 1))
         assert_not_nil assigns :assignment
         @assignment.reload
         new_categories_list = @assignment.annotation_categories
