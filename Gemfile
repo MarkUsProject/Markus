@@ -9,7 +9,7 @@
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem 'rails', '~> 4.1.7'
+gem 'rails', '~> 4.2.0'
 gem 'rubyzip'
 gem 'ya2yaml'
 gem 'i18n'
@@ -22,8 +22,10 @@ gem 'best_in_place'
 gem 'coffee-script'
 gem 'gitolite'
 gem 'jquery-rails'
-gem 'prototype-rails', '~> 4.0.0'
+gem 'prototype-rails', github: 'rails/prototype-rails', branch: '4.2'
 gem 'sprockets', '~> 2.12.0'
+gem 'rails-html-sanitizer'
+gem 'rails-deprecated_sanitizer'
 
 gem 'tilt', '~> 1.3.7'
 gem 'sass-rails',   '5.0.0.beta1'
