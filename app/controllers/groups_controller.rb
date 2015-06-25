@@ -106,10 +106,9 @@ class GroupsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @clone_assignments = Assignment.order(:id)
-                                   .where(allow_web_submits: false)
-                                   .where(Assignment.arel_table[:id]
-                                                    .not_eq @assignment.id)
+    @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .where.not(id: @assignment.id)
+                                   .order(:id)
     render 'index'
   end
 

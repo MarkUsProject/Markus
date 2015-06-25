@@ -65,7 +65,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
         assert_not_nil new_assignment.assignment_stat
         assert respond_with :redirect
-        assert set_the_flash
+        assert set_flash
       end
 
       should "set the flash's success message" do
@@ -582,7 +582,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'not be able to download an xml file' do
         get_as @admin, :download_assignment_list, :file_format => 'xml'
         assert_response :redirect
-        assert set_the_flash.to((I18n.t(:incorrect_format)))
+        assert set_flash.to(t(:incorrect_format))
       end
     end
 

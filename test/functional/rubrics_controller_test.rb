@@ -94,7 +94,7 @@ class RubricsControllerTest < AuthenticatedControllerTest
       rubric_criteria = @assignment.rubric_criteria
       assert_not_nil assigns :assignment
       assert_response :redirect
-      assert set_the_flash.to( I18n.t('rubric_criteria.upload.success', :nb_updates => 4))
+      assert set_flash.to( t('rubric_criteria.upload.success', nb_updates: 4))
       assert_response :redirect
       assert_equal 4, @assignment.rubric_criteria.size
 
@@ -206,8 +206,8 @@ END
               :yml_upload => {:rubric => yml_string}
 
       assert_response :redirect
-      assert_not_nil set_the_flash.to((I18n.t('rubric_criteria.upload.success',
-                                      :nb_updates => 2)))
+      assert_not_nil set_flash.to(t('rubric_criteria.upload.success',
+                                    nb_updates: 2))
       @assignment.reload
       cr1 = @assignment.rubric_criteria.find_by_rubric_criterion_name('cr1')
       cr2 = @assignment.rubric_criteria.find_by_rubric_criterion_name('cr2')
@@ -234,8 +234,8 @@ END
                 "cr1:\n  weight: monstrously heavy\n"}
 
       assert_response  :redirect
-      assert_not_nil set_the_flash.to(
-          I18n.t('rubric_criteria.upload.error') + ' ' + 'cr1')
+      assert_not_nil set_flash.to(
+          t('rubric_criteria.upload.error') + ' cr1')
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
       assert_equal [], @assignment.rubric_criteria
@@ -249,7 +249,9 @@ END
              :yml_upload => {:rubric => "cr1:\n  weight: 5\na"}
 
       assert_response :redirect
-      assert_not_nil set_the_flash.to(I18n.t('rubric_criteria.upload.error') + '  ' + I18n.t('rubric_criteria.upload.syntax_error', :error => "syntax error on line 2, col 1: `'"))
+      assert_not_nil set_flash.to(t('rubric_criteria.upload.error') + '  ' +
+                                  t('rubric_criteria.upload.syntax_error',
+                                    error: "syntax error on line 2, col 1: `'"))
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
       assert_equal(@assignment.rubric_criteria.length, 0)
@@ -396,8 +398,8 @@ END
 
 
         assert_response :redirect
-        assert set_the_flash.to((I18n.t('rubric_criteria.upload.success',
-                                        :nb_updates => 2)))
+        assert set_flash.to(t('rubric_criteria.upload.success',
+                              nb_updates: 2))
         @assignment.reload
         assert_equal(@assignment.rubric_criteria.length, 3)
         assert_equal(@assignment.rubric_criteria[0].weight, 1.0)

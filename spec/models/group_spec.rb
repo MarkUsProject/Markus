@@ -4,7 +4,7 @@ describe Group do
 
   it { is_expected.to validate_presence_of(:group_name) }
   it { is_expected.to validate_uniqueness_of(:group_name) }
-  it { is_expected.to ensure_length_of(:group_name).is_at_most(30) }
+  it { is_expected.to validate_length_of(:group_name).is_at_most(30) }
 
   describe '#set_repo_name' do
     # The tests below are checking for a method that is called when
