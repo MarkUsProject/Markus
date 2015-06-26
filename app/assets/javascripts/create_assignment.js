@@ -276,8 +276,3 @@ function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme
   }
 }
 
-function check_due_date(new_due_date) {
-  if (new Date(new_due_date) < new Date()) {
-    alert(past_due_date);
-  }
-}

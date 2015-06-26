@@ -1,7 +1,5 @@
 <script>
 //<![CDATA[
-  var past_due_date = '<%= t(:past_due_date_edit_warning) %>';
-
   var grace_periods = null;
   var penalty_decay_periods = null;
   var penalty_periods = null;
@@ -47,6 +45,13 @@
     jQuery('input[type="submit"]').prop('disabled', empty);
   }
 
+  function check_due_date(new_due_date) {
+    if (moment(new_due_date, '<%= t('date.formats.js_old_date') %>').isBefore(
+         moment())) {
+      alert('<%= t(:past_due_date_edit_warning) %>');
+    }
+  }
+
   jQuery(document).ready(function() {
     // Set locale for language localisation with Moment.js
     moment.lang(document.getElementById('locale').value);
@@ -74,7 +79,7 @@
                       document.getElementById('assignment_due_date'),
                       format);
     localize_datetime(document.getElementById('actual_remark_due_date'),
-                      document.getElementById('remark_due_date'),
+                      document.getElementById('assignment_remark_due_date'),
                       format);
     jQuery('.section_due_date').each(function(i) {
       localize_datetime(document.getElementById('actual_section_due_date_' + (i+1)),
@@ -99,7 +104,7 @@
         showTime:         false,
         numberOfMonths:   2,
         secondMax:        0,
-        onClose:          function() { check_due_date(jQuery('#actual_section_due_date').val()); },
+        onClose:          check_due_date,
         dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
         timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
         showTimezone:     false,
@@ -125,8 +130,7 @@
       showTime:         false,
       numberOfMonths:   2,
       secondMax:        0,
-      onClose:          function() { jQuery('#assignment_due_date').change();
-                                     check_due_date(jQuery('#actual_assignment_due_date').val()); },
+      onClose:          check_due_date,
       dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
       showTimezone:     false,
@@ -151,7 +155,7 @@
       showTime:         false,
       numberOfMonths:   2,
       secondMax:        0,
-      onClose:          function() { check_due_date(jQuery('#actual_remark_due_date').val()); },
+      onClose:          check_due_date,
       dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
       showTimezone:     false,
