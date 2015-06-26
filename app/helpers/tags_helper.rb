@@ -1,6 +1,6 @@
 module TagsHelper
   def get_tags_table_info
-    tags = Tag.all(order: 'name')
+    tags = Tag.order(:name)
 
     tags.map do |tag|
       t = tag.attributes
