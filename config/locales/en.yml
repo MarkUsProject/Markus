@@ -106,8 +106,6 @@ en:
     due_date:           "Due Date"
     deadline_grace_tokens: "Deadline using all <br> remaining grace <br> tokens"
     deadline_max_penalty: "Deadline including <br> maximum late <br> penalty"
-    iso_date_format_example:    "Format:  YYYY-MM-DD - Example:  2009-01-13"
-    iso_due_date_format_example:    "Format:  YYYY-MM-DD HH:MM - Example:  2009-01-13 17:44"
     create_new_assignment:      "Add Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder<span class='required_field'>*</span>"
@@ -1332,6 +1330,12 @@ en:
         locale_date_only: "DD, MM d, yy"
         js_date_time:     "dddd, MMMM D, YYYY, h:mm A"
         js_date:          "dddd, MMMM D, YYYY"
+
+        old_date:             "yy-mm-dd"
+        js_old_date:          "YYYY-MM-DD h:mm A"
+        js_old_date_only:     "YYYY-MM-DD"
+        date_placeholder:     "YYYY-MM-DD"
+        datetime_placeholder: "YYYY-MM-DD H:MM AM/PM"
 
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
