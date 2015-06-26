@@ -631,6 +631,8 @@ class AssignmentsController < ApplicationController
     rule_attributes = params[:assignment][:submission_rule_attributes]
     rule_name       = rule_attributes[:type]
 
+    [NoLateSubmissionRule, GracePeriodSubmissionRule,
+     PenaltyPeriodSubmissionRule, PenaltyDecayPeriodSubmissionRule]
     if SubmissionRule.const_defined?(rule_name)
       potential_rule = SubmissionRule.const_get(rule_name)
     else
