@@ -176,7 +176,7 @@ module SessionHandler
       end
     end
     # No REMOTE_USER is involed.
-    return Time.parse(session[:timeout]) < Time.now
+    Time.parse(session[:timeout]) < Time.now
   end
 
   def check_imminent_expiry

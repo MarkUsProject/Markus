@@ -94,7 +94,7 @@ class RubricsControllerTest < AuthenticatedControllerTest
       rubric_criteria = @assignment.rubric_criteria
       assert_not_nil assigns :assignment
       assert_response :redirect
-      assert set_flash.to( t('rubric_criteria.upload.success', nb_updates: 4))
+      assert set_flash.to(t('rubric_criteria.upload.success', nb_updates: 4))
       assert_response :redirect
       assert_equal 4, @assignment.rubric_criteria.size
 
@@ -235,7 +235,7 @@ END
 
       assert_response  :redirect
       assert_not_nil set_flash.to(
-          t('rubric_criteria.upload.error') + ' cr1')
+        t('rubric_criteria.upload.error') + ' cr1')
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
       assert_equal [], @assignment.rubric_criteria

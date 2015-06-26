@@ -352,7 +352,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
               :annotation_category_list_csv => StringIO.new('name, text')
       assert_response :redirect
       assert set_flash.to(t('annotations.upload.success',
-                          annotation_category_number: 1))
+                            annotation_category_number: 1))
       assert_not_nil assigns :assignment
     end
 
