@@ -2,7 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
 require 'shoulda'
-require 'mocha/setup'
 
 
 #IMPORTANT NOTE to anyone modifying these tests. It is highly recommended

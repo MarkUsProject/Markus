@@ -4,7 +4,6 @@ require File.join(File.dirname(__FILE__), '..', '..', 'blueprints', 'helper')
 require File.join(File.dirname(__FILE__), '..', 'authenticated_controller_test')
 require 'shoulda'
 require 'base64'
-require 'mocha/setup'
 require 'stringio'
 
 class Api::SubmissionDownloadsControllerTest < ActionController::TestCase

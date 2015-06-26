@@ -3,7 +3,6 @@ require File.join(File.dirname(__FILE__), '..', '..', 'blueprints', 'blueprints'
 require File.join(File.dirname(__FILE__), '..', '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'base64'
-require 'mocha/setup'
 
 class Api::TestResultsControllerTest < ActionController::TestCase
 
