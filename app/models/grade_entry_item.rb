@@ -47,7 +47,7 @@ class GradeEntryItem < ActiveRecord::Base
 
     # Process the question names and totals
     (0..(names.size - 1)).each do |i|
-      grade_entry_item = grade_entry_form.grade_entry_items.find_or_create_by_name(names[i])
+      grade_entry_item = grade_entry_form.grade_entry_items.find_or_create_by(name: names[i])
       grade_entry_item.position = i+1
       grade_entry_item.out_of = totals[i]
       unless grade_entry_item.save

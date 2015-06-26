@@ -49,27 +49,27 @@ class Result < ActiveRecord::Base
 
   # The sum of the marks not including bonuses/deductions
   def get_subtotal
-    marks.all(include: [:markable]).sum(&:get_mark)
+    marks.includes(:markable).map(&:get_mark).reduce(0, :+)
   end
 
   # The sum of the bonuses and deductions, other than late penalty
   def get_total_extra_points
-    extra_marks.points.sum(&:extra_mark)
+    extra_marks.points.map(&:extra_mark).reduce(0, :+)
   end
 
   # The sum of all the positive extra marks
   def get_positive_extra_points
-    extra_marks.positive.points.sum(&:extra_mark)
+    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+)
   end
 
   # The sum of all the negative extra marks
   def get_negative_extra_points
-    extra_marks.negative.points.sum(&:extra_mark)
+    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+)
   end
 
   # Percentage deduction for late penalty
   def get_total_extra_percentage
-    extra_marks.percentage.sum(&:extra_mark)
+    extra_marks.percentage.map(&:extra_mark).reduce(0, :+)
   end
 
   # Point deduction for late penalty

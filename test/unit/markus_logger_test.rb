@@ -1,11 +1,10 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require 'markus_logger'
 require 'shoulda'
-require 'mocha/setup'
 
 include MarkusConfigurator
 
-class MarkusLoggerTest < Test::Unit::TestCase
+class MarkusLoggerTest < ActiveSupport::TestCase
   context 'A MarkusLogger instance' do
     setup do
       pid = Process.pid
@@ -83,7 +82,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
     end
 
     should 'raise exception when new is called' do
-      assert_raise NoMethodError do
+      assert_raises NoMethodError do
         logger = MarkusLogger.new
       end
     end
@@ -96,7 +95,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
 
     should 'the valid_file? method be private' do
       logger = MarkusLogger.instance
-      assert_raise NoMethodError do
+      assert_raises NoMethodError do
         logger.valid_file?(@infolog)
       end
     end
@@ -110,7 +109,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
     should 'if MarkusLogger is enabled, raise exception if log level is above the FATAL level' do
       if MarkusConfigurator.markus_config_logging_enabled?
         log_level = MarkusLogger::FATAL + 1
-        assert_raise ArgumentError do
+        assert_raises ArgumentError do
           logger = MarkusLogger.instance
           logger.log('test', log_level)
         end
@@ -120,7 +119,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
     should 'if MarkusLogger is enabled, raise exception if log level is below the DEBUG level' do
       if MarkusConfigurator.markus_config_logging_enabled?
         log_level = MarkusLogger::DEBUG - 1
-        assert_raise ArgumentError do
+        assert_raises ArgumentError do
           logger = MarkusLogger.instance
           logger.log('test', log_level)
         end
@@ -174,7 +173,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       baddir_with_pid = "#{baddir}.#{Process.pid}"
       FileUtils.mkdir_p baddir_with_pid unless File.directory?(baddir_with_pid)
       MarkusConfigurator.stubs(:markus_config_logging_logfile).returns(baddir)
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
         logger = MarkusLogger.instance
       end
     end
@@ -182,7 +181,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
     should 'raise exception if error_logfile is a directory' do
       FileUtils.mkdir_p @baddir_w_pid unless File.directory?(@baddir_w_pid)
       MarkusConfigurator.stubs(:markus_config_logging_errorlogfile).returns(@baddir)
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
         logger = MarkusLogger.instance
       end
     end
@@ -191,7 +190,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       FileUtils.mkdir_p @baddir_w_pid unless File.directory?(@baddir_w_pid)
       FileUtils.chmod 0000, @baddir_w_pid
       MarkusConfigurator.stubs(:markus_config_logging_errorlogfile).returns(@baddir)
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
         logger = MarkusLogger.instance
       end
     end
@@ -201,7 +200,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       file = File.join(@baddir,'file')
       FileUtils.chmod 0000, @baddir
       MarkusConfigurator.stubs(:markus_config_logging_logfile).returns(file)
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
         logger = MarkusLogger.instance
       end
     end
@@ -210,7 +209,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       badfile = File.open( @badfile_w_pid,'w')
       badfile.chmod 0000
       MarkusConfigurator.stubs(:markus_config_logging_logfile).returns(@badfile)
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
         logger = MarkusLogger.instance
       end
     end
@@ -219,35 +218,35 @@ class MarkusLoggerTest < Test::Unit::TestCase
       badfile = File.open( @badfile_w_pid,'w')
       badfile.chmod 0000
       MarkusConfigurator.stubs(:markus_config_logging_errorlogfile).returns(@badfile)
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
         logger = MarkusLogger.instance
       end
     end
 
     should 'raise exception when the threshold size is == 0' do
       MarkusConfigurator.stubs(:markus_config_logging_size_threshold).returns(0)
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
          logger = MarkusLogger.instance
       end
     end
 
     should 'raise exception when the threshold size is < 0' do
       MarkusConfigurator.stubs(:markus_config_logging_size_threshold).returns(-1)
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
          logger = MarkusLogger.instance
       end
     end
 
     should 'raise exception when the number of old logfiles to keep is < 0' do
       MarkusConfigurator.stubs(:markus_config_logging_num_oldfiles).returns(-1)
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
          logger = MarkusLogger.instance
       end
     end
 
     should 'raise exception when the number of old logfiles to keep is == 0' do
       MarkusConfigurator.stubs(:markus_config_logging_num_oldfiles).returns(-1)
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
          logger = MarkusLogger.instance
       end
     end
@@ -255,7 +254,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
     should 'raise exception when the rotation interval is not daily, weekly or monthly' do
       MarkusConfigurator.stubs(:markus_config_logging_rotate_by_interval).returns(true)
       MarkusConfigurator.stubs(:markus_config_logging_rotate_interval).returns('lalala')
-      assert_raise MarkusLoggerConfigurationError do
+      assert_raises MarkusLoggerConfigurationError do
         logger = MarkusLogger.instance
       end
     end

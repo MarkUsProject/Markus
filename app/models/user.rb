@@ -15,8 +15,9 @@ class User < ActiveRecord::Base
   has_many :grade_entry_students
   has_many :groupings, through: :memberships
   has_many :notes, as: :noteable, dependent: :destroy
-  has_many :accepted_memberships, class_name: 'Membership', conditions: {membership_status: [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
-
+  has_many :accepted_memberships,
+           -> { where membership_status: [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
+           class_name: 'Membership'
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
 
@@ -183,7 +184,7 @@ class User < ActiveRecord::Base
       if key == :section_name
         if val
           # check if the section already exist
-          section = Section.find_or_create_by_name(val)
+          section = Section.find_or_create_by(name: val)
           user_attributes['section_id'] = section.id
         end
       else
@@ -192,7 +193,8 @@ class User < ActiveRecord::Base
     end
 
     # Is there already a Student with this User number?
-    current_user = user_class.find_or_create_by_user_name(user_attributes[:user_name])
+    current_user = user_class.find_or_create_by(
+      user_name: user_attributes[:user_name])
     current_user.attributes = user_attributes
 
     return unless current_user.save

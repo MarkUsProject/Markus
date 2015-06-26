@@ -11,7 +11,7 @@ include Repository
 
 # Test suite for testing proper functioning of
 # SubversionRepository, an implementation of AbstractRepository
-class SubversionRepositoryTest < Test::Unit::TestCase
+class SubversionRepositoryTest < ActiveSupport::TestCase
 
   SVN_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/svn_repos"))
   TEST_REPO = SVN_TEST_REPOS_DIR + "/repo1"

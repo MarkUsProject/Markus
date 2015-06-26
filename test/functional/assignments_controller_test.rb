@@ -4,7 +4,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 
 require 'shoulda'
 require 'machinist'
-require 'mocha/setup'
 require 'time-warp'
 
 class AssignmentsControllerTest < AuthenticatedControllerTest
@@ -65,7 +64,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
         assert_not_nil new_assignment.assignment_stat
         assert respond_with :redirect
-        assert set_the_flash
+        assert set_flash
       end
 
       should "set the flash's success message" do
@@ -419,7 +418,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         response_csv = get_as(@admin, :download_csv_grades_report).body
         csv_rows = CSV.parse(response_csv)
         assert_equal Student.all.size + 1, csv_rows.size # for header
-        assignments = Assignment.all(:order => 'id')
+        assignments = Assignment.order(:id)
         header = ['Username']
         assignments.each do |assignment|
           header.push(assignment.short_identifier)
@@ -582,7 +581,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'not be able to download an xml file' do
         get_as @admin, :download_assignment_list, :file_format => 'xml'
         assert_response :redirect
-        assert set_the_flash.to((I18n.t(:incorrect_format)))
+        assert set_flash.to(t(:incorrect_format))
       end
     end
 

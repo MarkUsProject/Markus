@@ -1,3 +1,4 @@
+require 'zip'
 class ResultsController < ApplicationController
   include TagsHelper
   before_filter :authorize_only_for_admin,
@@ -54,12 +55,12 @@ class ResultsController < ApplicationController
     @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
-      mark = criterion.marks.find_or_create_by_result_id(@result.id)
+      mark = criterion.marks.find_or_create_by(result_id: @result.id)
       @marks_map[criterion.id] = mark
 
       # Loading up previous results for the case of a remark
       if @old_result
-        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
         oldmark.save(validate: false)
         @old_marks_map[criterion.id] = oldmark
       end
@@ -276,7 +277,6 @@ class ResultsController < ApplicationController
                end
 
     files = submission.submission_files
-
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       files.each do |file|
         begin
@@ -434,12 +434,12 @@ class ResultsController < ApplicationController
     @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
-      mark = criterion.marks.find_or_create_by_result_id(@result.id)
+      mark = criterion.marks.find_or_create_by(result_id: @result.id)
       mark.save(validate: false)
       @marks_map[criterion.id] = mark
 
       if @old_result
-        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
         oldmark.save(validate: false)
         @old_marks_map[criterion.id] = oldmark
       end

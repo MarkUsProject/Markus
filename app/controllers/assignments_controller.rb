@@ -71,7 +71,7 @@ class AssignmentsController < ApplicationController
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
     @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
-    @enum_penalty = Period.find_all_by_submission_rule_id(@penalty.id).sort
+    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
 
     if @student.section &&
        !@student.section.section_due_date_for(@assignment.id).nil?
@@ -144,12 +144,10 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
-    @grade_entry_forms = GradeEntryForm.all(order: :id)
+    @grade_entry_forms = GradeEntryForm.order(:id)
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
-      @assignments = Assignment.find(:all, conditions:
-                                             { is_hidden: false },
-                                            order: :id)
+      @assignments = Assignment.where(is_hidden: false).order(:id)
       #get the section of current user
       @section = current_user.section
       # get results for assignments for the current user
@@ -181,10 +179,10 @@ class AssignmentsController < ApplicationController
 
       render :student_assignment_list
     elsif current_user.ta?
-      @assignments = Assignment.includes(:submission_rule).all(order: :id)
+      @assignments = Assignment.includes(:submission_rule).order(:id)
       render :grader_index
     else
-      @assignments = Assignment.includes(:submission_rule).all(order: :id)
+      @assignments = Assignment.includes(:submission_rule).order(:id)
       render :index
     end
   end
@@ -295,7 +293,7 @@ class AssignmentsController < ApplicationController
   end
 
   def download_csv_grades_report
-    assignments = Assignment.all(order: 'id')
+    assignments = Assignment.order(:id)
     students = Student.all
     csv_string = CSV.generate do |csv|
       header = ['Username']
@@ -419,7 +417,7 @@ class AssignmentsController < ApplicationController
       if @grouping.has_submission?
         raise I18n.t('groups.cant_delete_already_submitted')
       end
-      @grouping.student_memberships.all(include: :user).each do |member|
+      @grouping.student_memberships.includes(:user).each do |member|
         member.destroy
       end
       # update repository permissions
@@ -603,7 +601,7 @@ class AssignmentsController < ApplicationController
 
     def update_assignment!(map)
       assignment = Assignment.
-          find_or_create_by_short_identifier(map[:short_identifier])
+          find_or_create_by(short_identifier: map[:short_identifier])
       unless assignment.id
         assignment.submission_rule = NoLateSubmissionRule.new
         assignment.assignment_stat = AssignmentStat.new

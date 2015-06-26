@@ -4,11 +4,10 @@ module GroupsHelper
   # an array of hashes.
   def get_students_table_info
     students = Student.all
-    student_memberships = StudentMembership.all(
-      conditions:
-        { grouping_id: @assignment.groupings,
-          user_id: students },
-      include: :user)
+    student_memberships = StudentMembership
+                          .where(grouping_id: @assignment.groupings,
+                                 user_id: students)
+                          .includes(:user)
     students_in_assignment = student_memberships.map do |membership|
       membership.user
     end

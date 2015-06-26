@@ -5,7 +5,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
 require 'shoulda'
-require 'mocha/setup'
 
 class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
@@ -281,8 +280,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                :download,
                :assignment_id => @assignment.id, :format => 'xml'
         assert_response :redirect
-        assert set_the_flash.to((I18n.t('annotations.upload.flash_error',
-                                        :format => 'xml')))
+        assert set_flash.to(t('annotations.upload.flash_error',
+                              format: 'xml'))
       end
     end
 
@@ -351,7 +350,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
               :assignment_id => @assignment.id,
               :annotation_category_list_csv => StringIO.new('name, text')
       assert_response :redirect
-      assert set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
+      assert set_flash.to(t('annotations.upload.success',
+                            annotation_category_number: 1))
       assert_not_nil assigns :assignment
     end
 
@@ -401,7 +401,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         post_as @admin, :yml_upload, :assignment_id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
 
         assert_response :redirect
-        assert set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
+        assert set_flash.to(t('annotations.upload.success',
+                              annotation_category_number: 1))
         assert_not_nil assigns :assignment
         @assignment.reload
         new_categories_list = @assignment.annotation_categories
@@ -416,7 +417,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                 :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
 
         assert_response :redirect
-        assert set_the_flash.to((I18n.t('annotations.upload.syntax_error', :error => "syntax error on line 4, col -1: `'")))
+        assert set_flash.to(t('annotations.upload.syntax_error',
+                              error: "syntax error on line 4, col -1: `'"))
         assert_not_nil assigns :assignment
         @assignment.reload
         new_categories_list = @assignment.annotation_categories

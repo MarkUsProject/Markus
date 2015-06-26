@@ -43,7 +43,7 @@ module Api
           params[:filename], submission.id)]
       else
         # Otherwise we get all the files in the submission
-        files = SubmissionFile.find_all_by_submission_id(submission.id)
+        files = SubmissionFile.where(submission_id: submission.id)
       end
 
       zip_name = "#{assignment[:short_identifier]}_#{group[:group_name]}.zip"

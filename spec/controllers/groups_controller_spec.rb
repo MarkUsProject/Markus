@@ -124,7 +124,6 @@ describe GroupsController do
 
     describe 'GET #index' do
       before :each do
-        allow(Assignment).to receive(:all).and_return([assignment])
         get :index, assignment_id: assignment
       end
 

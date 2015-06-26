@@ -323,7 +323,7 @@ Markus::Application.routes.draw do
         post 'add_existing_annotation'
         put 'update_annotation'
         post 'update_comment'
-        delete 'destroy'
+        delete '/' => 'annotations#destroy'
       end
     end
 
@@ -368,10 +368,8 @@ Markus::Application.routes.draw do
   match 'main/about', controller: 'main', action: 'about', via: :post
   match 'main/logout', controller: 'main', action: 'logout', via: :post
 
-  # TODO: this should be via: :all, but does not seem to work with Rails 3
   # Return a 404 when no route is match
-
   unless Rails.env.test?
-    match '*path', controller: 'main', action: 'page_not_found', via: :get
+    match '*path', controller: 'main', action: 'page_not_found', via: :all
   end
 end

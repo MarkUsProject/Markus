@@ -336,7 +336,7 @@ describe 'An Assignment' do
       it 'routes POST update properly' do
         expect(post: autom_path).to route_to(
           controller: autom_ctrl,
-          action: 'update',
+          action: 'create',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end

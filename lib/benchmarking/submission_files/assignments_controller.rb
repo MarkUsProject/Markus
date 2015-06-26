@@ -51,7 +51,7 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
-    @assignments = Assignment.all(order: :id)
+    @assignments = Assignment.order(:id)
     if current_user.student?
       # get results for assignments for the current user
       @a_id_results = Hash.new()
@@ -268,7 +268,7 @@ class AssignmentsController < ApplicationController
       if @grouping.is_valid?
         raise 'Your group is valid, and can only be deleted by instructors.'
       end
-      @grouping.student_memberships.all(include: :user).each do |member|
+      @grouping.student_memberships.includes(:user).each do |member|
         member.destroy
       end
       # update repository permissions
