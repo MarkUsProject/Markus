@@ -35,4 +35,4 @@ script:
 notifications:
   email: false
 
-bundler_args: --retry 3
+bundler_args: --retry 10
