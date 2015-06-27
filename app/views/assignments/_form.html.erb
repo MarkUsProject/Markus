@@ -40,60 +40,63 @@
     </div>
 
     <div>
-      <%= raw(f.label :short_identifier,
-                      t('assignment.short_identifier').html_safe ) %>
-      <%= raw(f.text_field :short_identifier,
-                           id: 'assignment_short_identifier',
-                           onchange: 'set_onbeforeunload(true);',
-                           onKeyUp: "document.getElementById('assignment_repository_folder').value=this.value",
-                           size: 35,
-                           maxlength: 30,
-                           required: true) %>      
+      <%= f.label :short_identifier,
+                  t('assignment.short_identifier'),
+                  class: 'required' %>
+      <%= f.text_field :short_identifier,
+                       id: 'assignment_short_identifier',
+                       onchange: 'set_onbeforeunload(true);',
+                       onKeyUp: "document.getElementById('assignment_repository_folder').value=this.value",
+                       size: 35,
+                       maxlength: 30,
+                       required: true %>
     </div>
 
     <div>
-      <%= raw(f.label :description,
-                      t('assignment.name').html_safe ) %>
-      <%= raw(f.text_field :description,
-                           onchange: 'set_onbeforeunload(true);',
-                           size: 35,
-                           required: true) %>
+      <%= f.label :description,
+                  t('assignment.name'),
+                  class: 'required' %>
+      <%= f.text_field :description,
+                       onchange: 'set_onbeforeunload(true);',
+                       size: 35,
+                       required: true %>
     </div>
 
     <div>
-      <%= raw(f.label :message ) %>
-      <%= raw(f.text_area :message,
-                          cols: 65,
-                          rows: 8,
-                          onchange: 'set_onbeforeunload(true);') %>
+      <%= f.label :message %>
+      <%= f.text_area :message,
+                      cols: 65,
+                      rows: 8,
+                      onchange: 'set_onbeforeunload(true);' %>
     </div>
 
     <div>
-      <%= raw(f.label :repository_folder,
-                      t(:repository_folder).html_safe) %>
+      <%= f.label :repository_folder,
+                  t(:repository_folder),
+                  class: 'required' %>
       /
-      <%= raw(f.text_field :repository_folder,
-                           onchange: 'set_onbeforeunload(true);',
-                           size: 34,
-                           required: true) %>
+      <%= f.text_field :repository_folder,
+                       onchange: 'set_onbeforeunload(true);',
+                       size: 34,
+                       required: true %>
     </div>
 
-    <% if !@sections.empty? %>
+    <% unless @sections.empty? %>
       <div id='section_due_dates_type_form_right' class='information'>
         <%= t('assignment.section_due_date_option') %>
       </div>
 
       <div id='section_due_dates_type_form'>
-        <%= raw(f.label :section_due_dates_type, t('section.due_dates_type') ) %>
-        <%= raw(f.check_box :section_due_dates_type,
-                            checked: @assignment.section_due_dates_type,
-                            onclick: 'set_onbeforeunload(true);') %>
+        <%= f.label :section_due_dates_type, t('section.due_dates_type') %>
+        <%= f.check_box :section_due_dates_type,
+                        checked: @assignment.section_due_dates_type,
+                        onclick: 'set_onbeforeunload(true);' %>
       </div>
 
       <div id='section_due_dates_information'
            style='<%= 'display: none' unless @assignment.section_due_dates_type %>'>
         <p class='information'>
-          <%= raw t('assignment.section_due_dates_info') %>
+          <%= t('assignment.section_due_dates_info') %>
         </p>
         <div class='section_due_date_form'>
           <% @index = 1 %>
@@ -121,8 +124,9 @@
     <% end %>
 
     <div>
-      <%= raw(f.label :due_date,
-                      t('assignment.due_date').html_safe) %>
+      <%= f.label :due_date,
+                  t('assignment.due_date'),
+                  class: 'required' %>
       <%= raw(f.text_field :due_date,
                            id: 'actual_assignment_due_date',
                            class: 'hidden') %>
@@ -135,25 +139,25 @@
     </div>
 
     <div>
-      <%= raw(f.check_box :allow_web_submits,
-                          checked: @assignment.allow_web_submits,
-                          onclick: 'set_onbeforeunload(true);') %>
-      <%= raw(f.label :allow_web_submits,
-                      t('assignment.allow_web_submits')) %>
+      <%= f.check_box :allow_web_submits,
+                      checked: @assignment.allow_web_submits,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :allow_web_submits,
+                  t('assignment.allow_web_submits') %>
     </div>
 
     <div>
-      <%= raw(f.check_box :display_grader_names_to_students,
-                          checked: @assignment.display_grader_names_to_students,
-                          onclick: 'set_onbeforeunload(true);') %>
-      <%= raw(f.label :display_grader_names_to_students,
-                      t('assignment.display_grader_names_to_students')) %>
+      <%= f.check_box :display_grader_names_to_students,
+                      checked: @assignment.display_grader_names_to_students,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :display_grader_names_to_students,
+                  t('assignment.display_grader_names_to_students') %>
     </div>
 
     <div>
-      <%= raw(f.check_box :is_hidden,
-                          checked: @assignment.is_hidden,
-                          onclick: 'set_onbeforeunload(true);') %>
+      <%= f.check_box :is_hidden,
+                      checked: @assignment.is_hidden,
+                      onclick: 'set_onbeforeunload(true);' %>
       <%= f.label :is_hidden, t('assignment.is_hidden') %>
     </div>
   </fieldset>
@@ -175,19 +179,17 @@
     </div>
 
     <% Assignment::MARKING_SCHEME_TYPE.each do |key, value| %>
-      <p>
-        <%= raw(f.radio_button :marking_scheme_type,
-                               Assignment::MARKING_SCHEME_TYPE[key],
-                               checked: @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[key],
-                               onchange: "set_onbeforeunload(true);
-                                             notice_marking_scheme_changed(#{@assignment.id.nil?},
-                                               '#{Assignment::MARKING_SCHEME_TYPE[key]}',
-                                               '#{@assignment.marking_scheme_type}')") %>
+      <%= f.radio_button :marking_scheme_type,
+                         Assignment::MARKING_SCHEME_TYPE[key],
+                         checked: @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[key],
+                         onchange: "set_onbeforeunload(true);
+                                   notice_marking_scheme_changed(#{@assignment.id.nil?},
+                                   '#{Assignment::MARKING_SCHEME_TYPE[key]}',
+                                   '#{@assignment.marking_scheme_type}')" %>
 
-        <%= raw(f.label('marking_scheme_type_' + Assignment::MARKING_SCHEME_TYPE[key],
-                        t("assignment.marking_scheme.#{value}"),
-                        class: 'radio_label')) %>
-      </p>
+      <%= f.label 'marking_scheme_type_' + Assignment::MARKING_SCHEME_TYPE[key],
+                  t("assignment.marking_scheme.#{value}"),
+                  class: 'radio_label' %>
     <% end %>
   </fieldset>
 
@@ -217,25 +219,21 @@
      </p>
      <br>
      <% if @show_checkbox_required_files %>
-	   <%= f.check_box :only_required_files,
-	                   checked: @assignment.only_required_files,
-	                   onclick: 'set_onbeforeunload(true);' 
-	   %>
-	   <%= f.label :only_required_files,
-	                 t('required_file_warning'),
-	                 { id: "assignment_only_required_files_label" }
-	   %>
-	 <% else %>
-	   <%= f.check_box :only_required_files,
-	                   { checked: @assignment.only_required_files,
-	                     id: "assignment_only_required_files_edit",
-	                     onclick: 'set_onbeforeunload(true);' }
-	   %>
-	   <%= f.label :only_required_files,
-	                 t('required_file_warning'),
-	                 { id: "assignment_only_required_files_edit_label" }
-	   %>
-	 <% end %>
+       <%= f.check_box :only_required_files,
+                       checked: @assignment.only_required_files,
+                       onclick: 'set_onbeforeunload(true);' %>
+       <%= f.label :only_required_files,
+                   t('required_file_warning'),
+                   id: 'assignment_only_required_files_label' %>
+     <% else %>
+       <%= f.check_box :only_required_files,
+                       checked: @assignment.only_required_files,
+                       id: 'assignment_only_required_files_edit',
+                       onclick: 'set_onbeforeunload(true);' %>
+       <%= f.label :only_required_files,
+                   t('required_file_warning'),
+                   id: 'assignment_only_required_files_edit_label' %>
+    <% end %>
   </fieldset>
 
   <%# Assignment types %>
@@ -272,14 +270,14 @@
       </select>
     </p>
     <p id='is_group_assignment_style'>
-      <%= raw(check_box_tag 'is_group_assignment',
-                            true,
-                            false,
-                            id: 'is_group_assignment',
-                            onchange: 'set_onbeforeunload(true);') %>
-      <%= raw(label_tag 'is_group_assignment',
-                        t('assignment.group.work_in_groups'),
-                        class: 'checkbox_label') %>
+      <%= check_box_tag 'is_group_assignment',
+                        true,
+                        false,
+                        id: 'is_group_assignment',
+                        onchange: 'set_onbeforeunload(true);' %>
+      <%= label_tag 'is_group_assignment',
+                    t('assignment.group.work_in_groups'),
+                    class: 'checkbox_label' %>
     </p>
     <fieldset class='group_properties disable' style='display: none' disabled>
       <legend>
@@ -288,39 +286,39 @@
 
       <div id='group_properties'>
         <p id='student_form_groups_style'>
-          <%= raw(f.check_box :student_form_groups,
-                              id: 'student_form_groups',
-                              onchange: 'set_onbeforeunload(true);') %>
-          <%= raw(label_tag 'student_form_groups',
-                             t('assignment.group.students_allowed_form_groups'),
-                             class: 'checkbox_label') %>
+          <%= f.check_box :student_form_groups,
+                          id: 'student_form_groups',
+                          onchange: 'set_onbeforeunload(true);' %>
+          <%= label_tag 'student_form_groups',
+                        t('assignment.group.students_allowed_form_groups'),
+                        class: 'checkbox_label' %>
         </p>
 
         <p id='group_limit_style'>
-          <%= raw(f.label :group_min,
-                          t('assignment.group.limit_min').html_safe,
-                          class: 'inline_label') %>
-          <%= raw(f.number_field :group_min,
-                                 max: 999,
-                                 onchange: 'set_onbeforeunload(true);',
-                                 disabled: true,
-                                 min: 1) %>
-          <%= raw(f.label :group_max,
-                          t('assignment.group.limit_max'),
-                          class: 'inline_label') %>
-          <%= raw(f.number_field :group_max,
-                                 max: 999,
-                                 onchange: 'set_onbeforeunload(true);',
-                                 disabled: true,
-                                 min: 1) %>
+          <%= f.label :group_min,
+                      t('assignment.group.limit_min'),
+                      class: 'inline_label' %>
+          <%= f.number_field :group_min,
+                             max: 999,
+                             onchange: 'set_onbeforeunload(true);',
+                             disabled: true,
+                             min: 1 %>
+          <%= f.label :group_max,
+                      t('assignment.group.limit_max'),
+                      class: 'inline_label' %>
+          <%= f.number_field :group_max,
+                             max: 999,
+                             onchange: 'set_onbeforeunload(true);',
+                             disabled: true,
+                             min: 1 %>
         </p>
 
         <p id='group_name_autogenerated_style'>
-          <%= raw(f.check_box :group_name_autogenerated, {}, 'true', 'false') %>
-          <%= raw(f.label :group_name_autogenerated,
-                          t('assignment.group.name_autogenerated'),
-                          class: 'checkbox_label',
-                          onchange: 'set_onbeforeunload(true);') %>
+          <%= f.check_box :group_name_autogenerated, {}, 'true', 'false' %>
+          <%= f.label :group_name_autogenerated,
+                      t('assignment.group.name_autogenerated'),
+                      class: 'checkbox_label',
+                      onchange: 'set_onbeforeunload(true);' %>
 
         </p>
       </div>
@@ -340,7 +338,7 @@
     </div>
 
     <%= f.fields_for :submission_rule do |rule| %>
-      <h5><%= t('assignment.submission.penalty_rules').html_safe %></h5>
+      <h5><%= t('assignment.submission.penalty_rules') %></h5>
 
       <p>
         <%= rule.radio_button :type,
@@ -464,22 +462,21 @@
     </div>
 
     <p id='allow_remark_requests'>
-      <%= raw(f.check_box(:allow_remarks,
-                          id: 'allow_remarks',
-                          onchange: 'set_onbeforeunload(true);')) %>
-      <%= raw(f.label('allow_remarks',
-                      t('assignment.remark.allow'),
-                      class: 'checkbox_label',
-                      for: 'allow_remarks')) %>
+      <%= f.check_box :allow_remarks,
+                      id: 'allow_remarks',
+                      onchange: 'set_onbeforeunload(true);' %>
+      <%= f.label :allow_remarks,
+                  t('assignment.remark.allow'),
+                  class: 'checkbox_label' %>
     </p>
 
     <div id='remark_properties'
          style="<%= 'display:none' unless @assignment.allow_remarks %>"
          class="<%= 'disable' unless @assignment.allow_remarks %>">
       <div>
-        <%= raw(f.label('remark_due_date',
-                        t('assignment.remark.due_date'),
-                        class: 'inline_label')) %>
+        <%= f.label 'remark_due_date',
+                    t('assignment.remark.due_date'),
+                    class: 'inline_label' %>
         <%= raw(f.text_field :remark_due_date,
                              id: 'actual_remark_due_date',
                              class: 'hidden') %>
@@ -490,13 +487,13 @@
       </div>
 
       <div>
-        <%= raw(f.label('remark_message',
-                        t('assignment.remark.message'),
-                        class: 'textbox_label')) %>
-        <%= raw(f.text_area :remark_message,
-                            rows: 8,
-                            cols: 65,
-                            onchange: 'set_onbeforeunload(true);') %>
+        <%= f.label 'remark_message',
+                    t('assignment.remark.message'),
+                    class: 'textbox_label' %>
+        <%= f.text_area :remark_message,
+                        rows: 8,
+                        cols: 65,
+                        onchange: 'set_onbeforeunload(true);' %>
       </div>
     </div>
   </fieldset>
@@ -505,3 +502,4 @@
                data: { disable_with: t('working') },
                onclick: 'set_onbeforeunload(false);' %>
 <% end %>
+

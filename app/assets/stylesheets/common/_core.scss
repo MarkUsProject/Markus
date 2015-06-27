@@ -46,6 +46,11 @@ input[type='radio'] {
   color: $red;
 }
 
+label.required::after {
+  content: "*";
+  color: $red;
+}
+
 .hidden {
   display: none;
 }

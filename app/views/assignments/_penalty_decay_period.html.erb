@@ -15,16 +15,22 @@
   <p>
     <%= pf.fields_for :periods, penalty_decay_period do |f| %>
       <p>
-        <%= f.label :deduction, t('submission_rules.penalty_decay_period_submission_rule.deduct').html_safe %>
+        <%= f.label :deduction,
+                    t('submission_rules.penalty_decay_period_submission_rule.deduct'),
+                    class: 'required' %>
         <%= f.text_field :deduction, required: true, size: 1 %>%
       </p>
       <p>
-        <%= f.label :interval, t('submission_rules.penalty_decay_period_submission_rule.every').html_safe %>
+        <%= f.label :interval,
+                    t('submission_rules.penalty_decay_period_submission_rule.every'),
+                    class: 'required' %>
         <%= f.text_field :interval, required: true, size: 1 %>
         <%= t('submission_rules.penalty_decay_period_submission_rule.hours') %>
       </p>
       <p>
-        <%= f.label :hours, t('submission_rules.penalty_decay_period_submission_rule.for').html_safe %>
+        <%= f.label :hours,
+                    t('submission_rules.penalty_decay_period_submission_rule.for'),
+                    class: 'required' %>
         <%= f.text_field :hours,
                          size: 1,
                          required: true,
