@@ -679,7 +679,7 @@ class Grouping < ActiveRecord::Base
     if user.ta?
       assignment.ta_memberships.where(user: user)
                 .select { |m| m.grouping.is_valid? }
-                .map { |m| m.grouping }
+                .map &:grouping
     else
       assignment.groupings
                 .includes(:assignment,

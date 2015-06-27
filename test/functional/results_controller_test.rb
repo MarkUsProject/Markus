@@ -2,7 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_contro
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
-require 'mocha/setup'
 
 class ResultsControllerTest < AuthenticatedControllerTest
 
@@ -557,7 +556,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                                        membership_status:
                                          StudentMembership::STATUSES[:inviter])
               end
-              @groupings = @assignment.groupings.order(id: :asc)
+              @groupings = @assignment.groupings.order(:id)
             end
 
             should 'have two separate edit forms with correct actions for' +
@@ -584,7 +583,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                             '/update_overall_comment]'
               assert_select '#overall_remark_comment_edit form[action=' +
                             "#{path_prefix}/#{remark_result.id}" +
-                              '/update_overall_comment]'
+                            '/update_overall_comment]'
             end
 
             should 'edit third result' do
@@ -986,9 +985,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           should 'with save error' do
             @mark.expects(:save).once.returns(false)
+
             Mark.stubs(:find).once.returns(@mark)
             ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
-
             get_as @admin,
                    :update_mark,
                    :assignment_id => 1,
@@ -1009,7 +1008,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :id => 1,
                    :mark_id => @mark.id,
                    :mark => 1
-            assert render_template 'results/marker/_update_mark.rjs'
             assert_response :success
           end
 
@@ -1049,7 +1047,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
                       :extra_mark => { :extra_mark => 1 }
               assert_not_nil assigns :result
               assert_not_nil assigns :extra_mark
-              assert render_template 'results/marker/add_extra_mark_error'
               assert_response :success
             end
 
@@ -1325,7 +1322,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    id: 1,
                    mark_id: @mark.id,
                    mark: 'something'
-
             assert_response :bad_request
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end

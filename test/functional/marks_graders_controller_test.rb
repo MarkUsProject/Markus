@@ -3,7 +3,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
 require 'shoulda'
-require 'mocha/setup'
 
 class MarksGradersControllerTest < AuthenticatedControllerTest
   # Test that graders and students can't access this feature
@@ -99,7 +98,7 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
 
     should 'download a csv on GET :download_grader_students_mapping' do
       entry_students = @grade_entry_form.grade_entry_students
-      entry_student  = entry_students.find_or_create_by(
+      entry_student = entry_students.find_or_create_by(
         user_id: @students[0].id)
       entry_student.add_tas([@graders[0], @graders[1]])
 
