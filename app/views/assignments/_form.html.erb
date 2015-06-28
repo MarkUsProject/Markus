@@ -170,9 +170,11 @@
       <span><%= t('assignment.marking_scheme.title') %></span>
     </legend>
 
-    <div id='marking_scheme_notice' class='warning' style='display:none'>
-      <%= t('assignment.notice.change_marking_scheme_type')%>
-    </div>
+    <% unless @assignment.new_record? %>
+      <div id='marking_scheme_notice' class='warning'>
+        <%= t('assignment.notice.change_marking_scheme_type') %>
+      </div>
+    <% end %>
 
     <div class='help assignment_marking_scheme_help'>
       <p class='help-message-box assignment_marking_scheme_help'>
@@ -181,17 +183,9 @@
     </div>
 
     <% Assignment::MARKING_SCHEME_TYPE.each do |key, value| %>
-      <%= f.radio_button :marking_scheme_type,
-                         Assignment::MARKING_SCHEME_TYPE[key],
-                         checked: @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[key],
-                         onchange: "set_onbeforeunload(true);
-                                   notice_marking_scheme_changed(#{@assignment.id.nil?},
-                                   '#{Assignment::MARKING_SCHEME_TYPE[key]}',
-                                   '#{@assignment.marking_scheme_type}')" %>
-
-      <%= f.label 'marking_scheme_type_' + Assignment::MARKING_SCHEME_TYPE[key],
-                  t("assignment.marking_scheme.#{value}"),
-                  class: 'radio_label' %>
+      <%= f.radio_button :marking_scheme_type, value %>
+      <%= f.label "marking_scheme_type_#{value}",
+                  t("assignment.marking_scheme.#{value}") %>
     <% end %>
   </fieldset>
 
