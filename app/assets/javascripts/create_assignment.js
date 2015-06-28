@@ -1,7 +1,7 @@
 jQuery(document).ready(function() {
   // Change repo folder to be same as short identifier
-  jQuery('#short_identifier').change(function() {
-    jQuery("#assignment_repository_folder").val(jQuery(this).val());
+  jQuery('#assignment_short_identifier').keyup(function() {
+    jQuery('#assignment_repository_folder').val(jQuery(this).val());
   });
 
   jQuery('#assignment_due_date').change(function() {

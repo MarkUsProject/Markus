@@ -44,12 +44,19 @@
                   t('assignment.short_identifier'),
                   class: 'required' %>
       <%= f.text_field :short_identifier,
-                       id: 'assignment_short_identifier',
                        onchange: 'set_onbeforeunload(true);',
-                       onKeyUp: "document.getElementById('assignment_repository_folder').value=this.value",
                        size: 35,
                        maxlength: 30,
                        required: true %>
+
+      <%= f.label :repository_folder,
+                  t(:repository_folder),
+                  class: 'required' %>
+      <%= f.text_field :repository_folder,
+                       onchange: 'set_onbeforeunload(true);',
+                       size: 35,
+                       required: true,
+                       readonly: true %>
     </div>
 
     <div>
@@ -68,17 +75,6 @@
                       cols: 65,
                       rows: 8,
                       onchange: 'set_onbeforeunload(true);' %>
-    </div>
-
-    <div>
-      <%= f.label :repository_folder,
-                  t(:repository_folder),
-                  class: 'required' %>
-      /
-      <%= f.text_field :repository_folder,
-                       onchange: 'set_onbeforeunload(true);',
-                       size: 34,
-                       required: true %>
     </div>
 
     <% unless @sections.empty? %>
