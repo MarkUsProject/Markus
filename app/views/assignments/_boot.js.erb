@@ -47,6 +47,27 @@
     jQuery('input[type="submit"]').prop('disabled', empty);
   }
 
+  function add_assignment_file() {
+    var new_id = new Date().getTime();
+    var input_id = 'assignment_assignment_files_attributes_' + new_id + '_filename';
+    var assignment_file = '<p id="' + input_id + '_holder">' +
+      '<label for="' + input_id + '"><%= t(:filename) %></label>' +
+      '<input type="text" name="assignment[assignment_files_attributes][' +
+      new_id + '][filename]" id="' + input_id + '" class="assignment_file" /> ' +
+      '<a onclick="remove_assignment_file(\'' + input_id + '\'); return false;">' +
+      '<%= t(:remove) %></a></p>';
+    jQuery('#assignment_files').append(jQuery(assignment_file));
+
+    jQuery('#only_required_files_option').removeClass('disable');
+  }
+
+  function remove_assignment_file(input_id) {
+    jQuery("#" + input_id + "_holder").remove();
+    if (jQuery('.assignment_file').length === 0) {
+      jQuery('#only_required_files_option').addClass('disable');
+    }
+  }
+
   jQuery(document).ready(function() {
     // Set locale for language localisation with Moment.js
     moment.lang(document.getElementById('locale').value);

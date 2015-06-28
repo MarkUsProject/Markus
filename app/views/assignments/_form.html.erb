@@ -206,7 +206,6 @@
     </div>
 
     <h4><%= t('assignment.required_files_by_student') %></h4>
-    <% @show_checkbox_required_files = true %>
     <div id='assignment_files'>
       <%= f.fields_for :assignment_files do |assignment_file_form| %>
         <%= render partial: 'assignment_file',
@@ -214,26 +213,20 @@
                              form: f } %>
       <% end %>
     </div>
-     <p id='assignment_file_add_link'>
-        <%= add_assignment_file_link t('assignment.add_required_file'), f %>
-     </p>
-     <br>
-     <% if @show_checkbox_required_files %>
-       <%= f.check_box :only_required_files,
-                       checked: @assignment.only_required_files,
-                       onclick: 'set_onbeforeunload(true);' %>
-       <%= f.label :only_required_files,
-                   t('required_file_warning'),
-                   id: 'assignment_only_required_files_label' %>
-     <% else %>
-       <%= f.check_box :only_required_files,
-                       checked: @assignment.only_required_files,
-                       id: 'assignment_only_required_files_edit',
-                       onclick: 'set_onbeforeunload(true);' %>
-       <%= f.label :only_required_files,
-                   t('required_file_warning'),
-                   id: 'assignment_only_required_files_edit_label' %>
-    <% end %>
+    <p id='assignment_file_add_link'>
+      <%= link_to t('assignment.add_required_file'),
+                  '#',
+                  onclick: 'add_assignment_file(); return false;' %>
+    </p>
+    <p id='only_required_files_option'
+       <% if @assignment.assignment_files.empty? %>
+         class='disable'
+       <% end %>>
+      <%= f.check_box :only_required_files,
+                      checked: @assignment.only_required_files,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :only_required_files, t('required_file_warning') %>
+    </p>
   </fieldset>
 
   <%# Assignment types %>
