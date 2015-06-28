@@ -116,14 +116,8 @@ function toggle_student_form_groups(student_form_groups) {
   }
 }
 
-function toggle_remark_requests(allow_remark_requests) {
-  jQuery('#allow_remarks').prop('checked', allow_remark_requests);
-
-  jQuery('#remark_due_date').prop('disabled', !allow_remark_requests);
-  jQuery('#assignment_remark_message').prop('disabled', !allow_remark_requests);
-
-  jQuery('#remark_properties').toggle(allow_remark_requests)
-                              .toggleClass('disable', !allow_remark_requests);
+function toggle_remark_requests(bool) {
+  jQuery('#remark_properties').toggle(bool);
 }
 
 /* This isn't being used yet... (needs to be converted to jQuery when it is) */
@@ -202,7 +196,6 @@ function update_group_properties(is_group_assignment, student_form_groups, group
 function default_group_fields() {
   toggle_persist_groups(false);
   toggle_group_assignment(false);
-  toggle_remark_requests(true);
 }
 
 function update_due_date(new_due_date) {

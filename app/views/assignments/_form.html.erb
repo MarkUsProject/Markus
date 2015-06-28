@@ -458,18 +458,12 @@
       <%= f.check_box :allow_remarks,
                       id: 'allow_remarks',
                       onchange: 'set_onbeforeunload(true);' %>
-      <%= f.label :allow_remarks,
-                  t('assignment.remark.allow'),
-                  class: 'checkbox_label' %>
+      <%= f.label :allow_remarks, t('assignment.remark.allow') %>
     </p>
 
-    <div id='remark_properties'
-         style="<%= 'display:none' unless @assignment.allow_remarks %>"
-         class="<%= 'disable' unless @assignment.allow_remarks %>">
-      <div>
-        <%= f.label 'remark_due_date',
-                    t('assignment.remark.due_date'),
-                    class: 'inline_label' %>
+    <div id='remark_properties'>
+      <p>
+        <%= f.label :remark_due_date, t('assignment.remark.due_date') %>
         <%= raw(f.text_field :remark_due_date,
                              id: 'actual_remark_due_date',
                              class: 'hidden') %>
@@ -477,17 +471,14 @@
                            nil,
                            { onchange: 'set_onbeforeunload(true);',
                              size: 35 } %>
-      </div>
-
-      <div>
-        <%= f.label 'remark_message',
-                    t('assignment.remark.message'),
-                    class: 'textbox_label' %>
+      </p>
+      <p>
+        <%= f.label :remark_message, t('assignment.remark.message') %>
         <%= f.text_area :remark_message,
                         rows: 8,
                         cols: 65,
                         onchange: 'set_onbeforeunload(true);' %>
-      </div>
+      </p>
     </div>
   </fieldset>
 
