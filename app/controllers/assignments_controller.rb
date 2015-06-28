@@ -192,6 +192,9 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:id])
     @past_date = @assignment.section_names_past_due_date
     @assignments = Assignment.all
+    @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .where.not(id: @assignment.id)
+                                   .order(:id)
     @sections = Section.all
 
     unless @past_date.nil? || @past_date.empty?
@@ -248,6 +251,8 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .order(:id)
     @sections = Section.all
     @assignment.build_submission_rule
     @assignment.build_assignment_stat
