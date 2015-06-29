@@ -10,7 +10,7 @@
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
         date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').attr('value')
+        due_date: jQuery('#assignment_due_date').attr('value')
       });
     }
   }
@@ -20,7 +20,7 @@
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
         date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').attr('value')
+        due_date: jQuery('#assignment_due_date').attr('value')
       });
     }
   }
@@ -30,7 +30,7 @@
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
         date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').attr('value')
+        due_date: jQuery('#assignment_due_date').attr('value')
       });
     }
   }
@@ -57,7 +57,7 @@
     moment.lang(document.getElementById('locale').value);
 
     // Handle periods and hiding/showing things
-    if (jQuery('#actual_assignment_due_date').val()) {
+    if (jQuery('#assignment_due_date').attr('value')) {
       create_grace_periods();
       create_penalty_decay_periods();
       create_penalty_periods();
@@ -75,18 +75,11 @@
 
     // Localize the due dates on load
     var format = document.getElementById('format').value;
-    localize_datetime(document.getElementById('actual_assignment_due_date'),
-                      document.getElementById('assignment_due_date'),
-                      format);
-    localize_datetime(document.getElementById('actual_remark_due_date'),
-                      document.getElementById('assignment_remark_due_date'),
-                      format);
     jQuery('.section_due_date').each(function(i) {
       localize_datetime(document.getElementById('actual_section_due_date_' + (i+1)),
                         document.getElementById('section_due_date_' + (i+1)),
                         format);
     });
-
     // Handle required fields
     check_required_fields();
     jQuery('input[required]').change(check_required_fields)
@@ -121,11 +114,6 @@
     });
 
     jQuery('#assignment_due_date').datetimepicker({
-      altField:         '#actual_assignment_due_date',
-      altFieldTimeOnly: false,
-      altFormat:        'yy-mm-dd',
-      altTimeFormat:    'HH:mm z',
-      altSeparator:     'T',
       controlType:      'select',
       showTime:         false,
       numberOfMonths:   2,
@@ -146,11 +134,6 @@
     });
 
     jQuery('#assignment_remark_due_date').datetimepicker({
-      altField:         '#actual_remark_due_date',
-      altFieldTimeOnly: false,
-      altFormat:        'yy-mm-dd',
-      altTimeFormat:    'HH:mm z',
-      altSeparator:     'T',
       controlType:      'select',
       showTime:         false,
       numberOfMonths:   2,

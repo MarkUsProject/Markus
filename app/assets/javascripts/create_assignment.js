@@ -5,7 +5,7 @@ jQuery(document).ready(function() {
   });
 
   jQuery('#assignment_due_date').change(function() {
-    update_due_date(jQuery('#actual_assignment_due_date').val());
+    update_due_date(jQuery('#assignment_due_date').val());
   });
 
   jQuery('#assignment_section_due_dates_type').change(function() {
@@ -18,8 +18,8 @@ jQuery(document).ready(function() {
      has not been set yet. */
   var first = true;
   jQuery('.section_due_date').change(function() {
-    if (first && (jQuery('#actual_assignment_due_date').val() == '')) {
-      jQuery('#actual_assignment_due_date').val(jQuery(this).siblings('.actual_section_due_date').val());
+    if (first && (jQuery('#assignment_due_date').val() == '')) {
+      jQuery('#assignment_due_date').val(jQuery(this).siblings('.actual_section_due_date').val());
       jQuery('#assignment_due_date').val(jQuery(this).val());
       first = false;
     }

@@ -14,8 +14,8 @@ PeriodDeltaChain.prototype.refresh = function() {
     var from_time_node = this.querySelector('.PeriodDeltaChain_FromTime');
     var to_time_node   = this.querySelector('.PeriodDeltaChain_ToTime');
     var hours_value    = this.querySelector('.PeriodDeltaChain_Hours').value;
-    var from_time = moment(current_time);
-    var to_time   = moment(current_time);
+    var from_time = moment(current_time, 'YYYY-MM-DD hh:mm a');
+    var to_time   = moment(current_time, 'YYYY-MM-DD hh:mm a');
 
     from_time_node.update(from_time.format(format));
     to_time_node.update(to_time.add('hours', hours_value).format(format));
@@ -41,8 +41,7 @@ PeriodDeltaChain.prototype.set_or_default = function(value, default_value) {
 function convert_date(due_date) {
   if (due_date.indexOf(' ') > -1) {
     var arr_date = due_date.split(/[ T]/);
-    due_date = arr_date[0] + 'T' + arr_date[1] + arr_date[2];
+    due_date = arr_date[0] + ' ' + arr_date[1] + ' ' + arr_date[2];
   }
-
   return due_date;
 }

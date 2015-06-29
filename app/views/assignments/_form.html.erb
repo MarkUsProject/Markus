@@ -123,15 +123,13 @@
     <div>
       <%= raw(f.label :due_date,
                       t('assignment.due_date').html_safe) %>
-      <%= raw(f.text_field :due_date,
-                           id: 'actual_assignment_due_date',
-                           class: 'hidden') %>
-      <%= text_field_tag 'assignment_due_date',
-                         nil,
-                         { onchange: 'set_onbeforeunload(true);',
+      <%= f.text_field :due_date,
+                       onchange: 'set_onbeforeunload(true);',
+                       value: @assignment.due_date.nil? ? '' :
+                              @assignment.due_date.strftime("%Y-%m-%d %l:%M %p"),
                            size: 35,
                            required: true,
-                           placeholder: t('date.formats.datetime_placeholder') } %>
+                           placeholder: t('date.formats.datetime_placeholder') %>
     </div>
 
     <div>
@@ -477,16 +475,13 @@
          style="<%= 'display:none' unless @assignment.allow_remarks %>"
          class="<%= 'disable' unless @assignment.allow_remarks %>">
       <div>
-        <%= raw(f.label('remark_due_date',
-                        t('assignment.remark.due_date'),
-                        class: 'inline_label')) %>
-        <%= raw(f.text_field :remark_due_date,
-                             id: 'actual_remark_due_date',
-                             class: 'hidden') %>
-        <%= text_field_tag 'assignment_remark_due_date',
-                           nil,
-                           { onchange: 'set_onbeforeunload(true);',
-                             size: 35 } %>
+        <%= f.label :remark_due_date,
+                    t('assignment.remark.due_date') %>
+        <%= f.text_field :remark_due_date,
+                         onchange: 'set_onbeforeunload(true);',
+                         value: @assignment.remark_due_date.nil? ? '' :
+                                @assignment.remark_due_date.strftime("%Y-%m-%d %l:%M %p"),
+                         size: 35 %>
       </div>
 
       <div>
