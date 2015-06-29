@@ -90,6 +90,23 @@ Markus::Application.configure do
   # \n or \0. These are the only restrictions.
   VALIDATE_FILE = "#{::Rails.root.to_s}/config/dummy_validate.sh"
 
+  # Normally exit status 0 means successful, 1 means no such user,
+  # and 2 means wrong password.
+  # The following allows for one additional custom exit status which also
+  # represents a failure to log in, but says so with a custom string.
+  # It is commented out by default because there is no additional custom
+  # exit status by default.
+  #VALIDATE_CUSTOM_EXIT_STATUS = 38
+  #VALIDATE_CUSTOM_STATUS_DISPLAY = 'You are a squid.  Only vertebrates may use MarkUs.'
+
+  # Custom messages for "user not allowed" and "login incorrect",
+  # overriding the default "login failed" message.  By default,
+  # MarkUs does not distinguish these cases for security reasons.
+  # If these variables are not defined (commented out), it uses the
+  # standard "login failed" message for both situations.
+  #VALIDATE_USER_NOT_ALLOWED_DISPLAY = 'That is your correct University of Foo user name and password, but you have not been added to this particular MarkUs database.  Please contact your instructor or check your course web page.'
+  #VALIDATE_LOGIN_INCORRECT_DISPLAY = 'Login incorrect.  You can check your Foo U user name or reset your password at https://www.foo.example.edu/passwords.'
+
   ###################################################################
   # Authentication Settings
   ###################################################################
