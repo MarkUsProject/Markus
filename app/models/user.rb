@@ -35,6 +35,7 @@ class User < ActiveRecord::Base
   AUTHENTICATE_ERROR =        3   # generic/unknown error
   AUTHENTICATE_BAD_CHAR =     4   # invalid character in username/password
   AUTHENTICATE_BAD_PLATFORM = 5   # external authentication works for *NIX platforms only
+  AUTHENTICATE_CUSTOM_MESSAGE = 6 # custom validate code for custom message
 
   # Verifies if user is allowed to enter MarkUs
   # Returns user object representing the user with the given login.
@@ -74,6 +75,10 @@ class User < ActiveRecord::Base
       pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
       pipe.close
       m_logger = MarkusLogger.instance
+      if (defined? VALIDATE_CUSTOM_EXIT_STATUS) && $?.exitstatus == VALIDATE_CUSTOM_EXIT_STATUS
+        m_logger.log("Login failed. Reason: Custom exit status.", MarkusLogger::ERROR)
+        return AUTHENTICATE_CUSTOM_MESSAGE
+      end
       case $?.exitstatus
         when 0
           m_logger.log("User '#{login}' logged in.", MarkusLogger::INFO)
