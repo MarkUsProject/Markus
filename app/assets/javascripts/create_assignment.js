@@ -5,23 +5,17 @@ jQuery(document).ready(function() {
   });
 
   jQuery('#assignment_due_date').change(function() {
-    update_due_date(jQuery('#actual_assignment_due_date').val());
+    update_due_date(jQuery('#assignment_due_date').val());
   });
 
   jQuery('#assignment_section_due_dates_type').change(function() {
     toggle_sections_due_date(jQuery(this).is(':checked'));
   });
-
   toggle_sections_due_date(jQuery('#assignment_section_due_dates_type').is(':checked'));
 
-  /* Update the global due date with the first section due date added, if the global due date
-     has not been set yet. */
-  var first = true;
-  jQuery('.section_due_date').change(function() {
-    if (first && (jQuery('#actual_assignment_due_date').val() == '')) {
-      jQuery('#actual_assignment_due_date').val(jQuery(this).siblings('.actual_section_due_date').val());
+  jQuery('.section_due_date_input').change(function() {
+    if (jQuery('#assignment_due_date').val() === '') {
       jQuery('#assignment_due_date').val(jQuery(this).val());
-      first = false;
     }
   });
 
@@ -155,8 +149,12 @@ function change_submission_rule() {
   }
 }
 
-function check_due_date(new_due_date) {
-  if (new Date(new_due_date) < new Date()) {
-    alert(past_due_date);
+function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme_type, marking_scheme_type) {
+  if (!is_assignment_new && clicked_marking_scheme_type !== marking_scheme_type) {
+    jQuery('#marking_scheme_notice').removeClass('hidden')
+                                    .show();
+  } else {
+    jQuery('#marking_scheme_notice').hide();
   }
 }
+

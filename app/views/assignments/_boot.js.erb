@@ -1,7 +1,5 @@
 <script>
 //<![CDATA[
-  var past_due_date = '<%= t(:past_due_date_edit_warning) %>';
-
   var grace_periods = null;
   var penalty_decay_periods = null;
   var penalty_periods = null;
@@ -12,7 +10,7 @@
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
         date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').attr('value')
+        due_date: jQuery('#assignment_due_date').attr('value')
       });
     }
   }
@@ -22,7 +20,7 @@
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
         date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').attr('value')
+        due_date: jQuery('#assignment_due_date').attr('value')
       });
     }
   }
@@ -32,7 +30,7 @@
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
         date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').attr('value')
+        due_date: jQuery('#assignment_due_date').attr('value')
       });
     }
   }
@@ -68,12 +66,19 @@
     }
   }
 
+  function check_due_date(new_due_date) {
+    if (moment(new_due_date, '<%= t('date.formats.js_old_date') %>').isBefore(
+         moment())) {
+      alert('<%= t(:past_due_date_edit_warning) %>');
+    }
+  }
+
   jQuery(document).ready(function() {
     // Set locale for language localisation with Moment.js
     moment.lang(document.getElementById('locale').value);
 
     // Handle periods and hiding/showing things
-    if (jQuery('#actual_assignment_due_date').val()) {
+    if (jQuery('#assignment_due_date').attr('value')) {
       create_grace_periods();
       create_penalty_decay_periods();
       create_penalty_periods();
@@ -85,38 +90,19 @@
       toggle_remark_requests(<%= @assignment.allow_remarks? %>);
     }
 
-    // Localize the due dates on load
-    var format = document.getElementById('format').value;
-    localize_datetime(document.getElementById('actual_assignment_due_date'),
-                      document.getElementById('assignment_due_date'),
-                      format);
-    localize_datetime(document.getElementById('actual_remark_due_date'),
-                      document.getElementById('remark_due_date'),
-                      format);
-    jQuery('.section_due_date').each(function(i) {
-      localize_datetime(document.getElementById('actual_section_due_date_' + (i+1)),
-                        document.getElementById('section_due_date_' + (i+1)),
-                        format);
-    });
-
     // Handle required fields
     check_required_fields();
     jQuery('input[required]').change(check_required_fields)
                              .keyup(check_required_fields);
 
     // Handle date/time pickers
-    jQuery('.section_due_date').each(function(i) {
-      jQuery('#section_due_date_' + (i+1)).datetimepicker({
-        altField:         '#actual_section_due_date_' + (i+1),
-        altFieldTimeOnly: false,
-        altFormat:        'yy-mm-dd',
-        altTimeFormat:    'HH:mm z',
-        altSeparator:     'T',
+    jQuery('.section_due_date_input').each(function() {
+      jQuery(this).datetimepicker({
         controlType:      'select',
         showTime:         false,
         numberOfMonths:   2,
         secondMax:        0,
-        onClose:          function() { check_due_date(jQuery('#actual_section_due_date').val()); },
+        onClose:          check_due_date,
         dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
         timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
         showTimezone:     false,
@@ -133,17 +119,11 @@
     });
 
     jQuery('#assignment_due_date').datetimepicker({
-      altField:         '#actual_assignment_due_date',
-      altFieldTimeOnly: false,
-      altFormat:        'yy-mm-dd',
-      altTimeFormat:    'HH:mm z',
-      altSeparator:     'T',
       controlType:      'select',
       showTime:         false,
       numberOfMonths:   2,
       secondMax:        0,
-      onClose:          function() { jQuery('#assignment_due_date').change();
-                                     check_due_date(jQuery('#actual_assignment_due_date').val()); },
+      onClose:          check_due_date,
       dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
       showTimezone:     false,
@@ -159,16 +139,11 @@
     });
 
     jQuery('#assignment_remark_due_date').datetimepicker({
-      altField:         '#actual_remark_due_date',
-      altFieldTimeOnly: false,
-      altFormat:        'yy-mm-dd',
-      altTimeFormat:    'HH:mm z',
-      altSeparator:     'T',
       controlType:      'select',
       showTime:         false,
       numberOfMonths:   2,
       secondMax:        0,
-      onClose:          function() { check_due_date(jQuery('#actual_remark_due_date').val()); },
+      onClose:          check_due_date,
       dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
       showTimezone:     false,
