@@ -11,17 +11,11 @@ jQuery(document).ready(function() {
   jQuery('#assignment_section_due_dates_type').change(function() {
     toggle_sections_due_date(jQuery(this).is(':checked'));
   });
-
   toggle_sections_due_date(jQuery('#assignment_section_due_dates_type').is(':checked'));
 
-  /* Update the global due date with the first section due date added, if the global due date
-     has not been set yet. */
-  var first = true;
-  jQuery('.section_due_date').change(function() {
-    if (first && (jQuery('#assignment_due_date').val() == '')) {
-      jQuery('#assignment_due_date').val(jQuery(this).siblings('.actual_section_due_date').val());
+  jQuery('.section_due_date_input').change(function() {
+    if (jQuery('#assignment_due_date').val() === '') {
       jQuery('#assignment_due_date').val(jQuery(this).val());
-      first = false;
     }
   });
 

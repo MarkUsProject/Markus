@@ -73,26 +73,14 @@
       <% end %>
     }
 
-    // Localize the due dates on load
-    var format = document.getElementById('format').value;
-    jQuery('.section_due_date').each(function(i) {
-      localize_datetime(document.getElementById('actual_section_due_date_' + (i+1)),
-                        document.getElementById('section_due_date_' + (i+1)),
-                        format);
-    });
     // Handle required fields
     check_required_fields();
     jQuery('input[required]').change(check_required_fields)
                              .keyup(check_required_fields);
 
     // Handle date/time pickers
-    jQuery('.section_due_date').each(function(i) {
-      jQuery('#section_due_date_' + (i+1)).datetimepicker({
-        altField:         '#actual_section_due_date_' + (i+1),
-        altFieldTimeOnly: false,
-        altFormat:        'yy-mm-dd',
-        altTimeFormat:    'HH:mm z',
-        altSeparator:     'T',
+    jQuery('.section_due_date_input').each(function() {
+      jQuery(this).datetimepicker({
         controlType:      'select',
         showTime:         false,
         numberOfMonths:   2,

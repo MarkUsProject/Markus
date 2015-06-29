@@ -78,43 +78,38 @@
                            required: true) %>
     </div>
 
-    <% if !@sections.empty? %>
-      <div id='section_due_dates_type_form_right' class='information'>
+    <% unless @sections.empty? %>
+      <div class='information'>
         <%= t('assignment.section_due_date_option') %>
       </div>
 
-      <div id='section_due_dates_type_form'>
-        <%= raw(f.label :section_due_dates_type, t('section.due_dates_type') ) %>
-        <%= raw(f.check_box :section_due_dates_type,
-                            checked: @assignment.section_due_dates_type,
-                            onclick: 'set_onbeforeunload(true);') %>
+      <div>
+        <%= f.label :section_due_dates_type, t('section.due_dates_type') %>
+        <%= f.check_box :section_due_dates_type,
+                        checked: @assignment.section_due_dates_type,
+                        onclick: 'set_onbeforeunload(true);' %>
       </div>
 
       <div id='section_due_dates_information'
            style='<%= 'display: none' unless @assignment.section_due_dates_type %>'>
         <p class='information'>
-          <%= raw t('assignment.section_due_dates_info') %>
+          <%= t('assignment.section_due_dates_info').html_safe %>
         </p>
         <div class='section_due_date_form'>
-          <% @index = 1 %>
           <%= f.fields_for :section_due_dates,
                            @section_due_dates do |due_date_f| %>
+            <% obj = due_date_f.object %>
             <p>
-              <%= label 'section', t('section.legend') %> <%= Section.find(due_date_f.object.section_id).name %>
-              <br>
+              <%= due_date_f.label :section, t('section.legend') %>
+              <%= obj.section.name %>
               <%= due_date_f.text_field :section_id, class: 'hidden' %>
-              <br>
-              <%= due_date_f.label :due_date, t('due_date') %>
-              <%= raw(due_date_f.text_field :due_date,
-                                            id: "actual_section_due_date_#{@index}",
-                                            class: 'hidden actual_section_due_date') %>
-              <%= text_field_tag "section_due_date_#{@index}",
-                                 nil,
-                                 { onchange: 'set_onbeforeunload(true);',
-                                   size: 30,
-                                   class: 'section_due_date' } %>
+              <%= due_date_f.label :due_date, t(:due_date),
+                                   class: 'section_due_date_label' %>
+              <%= due_date_f.text_field :due_date,
+                                        class: 'section_due_date_input',
+                                        value: obj.due_date.nil? ? '' :
+                                               obj.due_date.strftime("%Y-%m-%d %l:%M %p") %>
             </p>
-            <% @index += 1 %>
           <% end %>
         </div>
       </div>
