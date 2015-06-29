@@ -45,7 +45,7 @@ describe Repository::GitRevision do
       # Repo is created by gitolite, proceed to clone it in
       # the repository storage location
       Git.clone('git@localhost:' + "test_repo",
-       "#{::Rails.root}/data/test/workdir")
+                "#{::Rails.root}/data/test/workdir")
     end
 
     let!(:repo) { build(:git_repository) }
