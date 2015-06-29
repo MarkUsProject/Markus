@@ -33,12 +33,12 @@ module SummariesHelper
         result = nil
       elsif !submission.remark_submitted?
         result = (results.select do |r|
-                   r.submission_id == submission.id
-                 end).first
+                    r.submission_id == submission.id
+                  end).first
       else
         result = (results.select do |r|
-                   r.id == submission.remark_result_id
-                 end).first
+                    r.id == submission.remark_result_id
+                  end).first
       end
       g = grouping.attributes
       g[:class_name] = get_tr_class(grouping)
