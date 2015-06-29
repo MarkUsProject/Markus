@@ -2,11 +2,10 @@ require 'spec_helper'
 
 describe Repository::GitRevision do
   context 'with a git repo' do
-
     before(:context) do
-
       # Make sure gitolite-admin repo is cloned in test environment
-      ga_repo = Gitolite::GitoliteAdmin.new("#{::Rails.root.to_s}/data/test/repos/gitolite-admin", GITOLITE_SETTINGS)
+      ga_repo = Gitolite::GitoliteAdmin.new(
+        "#{::Rails.root}/data/test/repos/gitolite-admin", GITOLITE_SETTINGS)
 
       # Bring the repo up to date
       ga_repo.reload!
@@ -15,16 +14,16 @@ describe Repository::GitRevision do
       conf = ga_repo.config
 
       # Remove test repo from Gitolite conf
-      conf.rm_repo("test_repo")
-      
+      conf.rm_repo('test_repo')
+
       # Make sure repo was deleted, then remake it
-      repo = ga_repo.config.get_repo("test_repo")
+      repo = ga_repo.config.get_repo('test_repo')
       if !repo.nil?
-        raise "Gitolite failed to delete the test_repo before test context!"
+        raise 'Gitolite failed to delete the test_repo before test context!'
       end
 
       # Generate new test repo
-      repo = Gitolite::Config::Repo.new("test_repo")
+      repo = Gitolite::Config::Repo.new('test_repo')
 
       # Add permissions for git user
       repo.add_permission('RW+', '', 'git')
@@ -41,12 +40,12 @@ describe Repository::GitRevision do
       ga_repo.save_and_apply
 
       # Remove workdir (cloned version of the test_repo from Gitolite)
-      FileUtils.rm_rf("#{::Rails.root.to_s}/data/test/workdir")
+      FileUtils.rm_rf("#{::Rails.root}/data/test/workdir")
 
       # Repo is created by gitolite, proceed to clone it in
       # the repository storage location
-      cloned_repo = Git.clone('git@localhost:' + "test_repo", "#{::Rails.root.to_s}/data/test/workdir")
-
+      Git.clone('git@localhost:' + "test_repo",
+       "#{::Rails.root}/data/test/workdir")
     end
 
     let!(:repo) { build(:git_repository) }

@@ -105,7 +105,7 @@ Markus::Application.configure do
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
   # to write to this directory
-  REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/test/repos"
+  REPOSITORY_STORAGE = "#{::Rails.root}/data/test/repos"
 
   ###################################################################
   # Location of the public and private key for the git user on the system

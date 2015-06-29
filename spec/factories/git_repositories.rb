@@ -3,15 +3,13 @@ FactoryGirl.define do
     initialize_with do
       repository_config = Hash.new
       repository_config['REPOSITORY_STORAGE'] =
-        "#{::Rails.root.to_s}/data/test/repos"
+        "#{::Rails.root}/data/test/repos"
       repository_config['REPOSITORY_PERMISSION_FILE'] =
         REPOSITORY_STORAGE + '/conf'
       repository_config['IS_REPOSITORY_ADMIN'] = true
-
-    repo = Repository.get_class('git', repository_config)
-
-    # Open the repo that was cloned from Gitolite in git_revision_spec.rb
-    repo.open("#{::Rails.root.to_s}/data/test/workdir")
+      repo = Repository.get_class('git', repository_config)
+      # Open the repo that was cloned from Gitolite in git_revision_spec.rb
+      repo.open("#{::Rails.root}/data/test/workdir")
     end
   end
 end
