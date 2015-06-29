@@ -4,6 +4,19 @@ rvm:
 
 before_install:
   - sudo apt-get update -qq
+  - ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
+  - sudo adduser --disabled-password --gecos "" git
+  - sudo adduser git sudo
+  - sudo cp ~/.ssh/id_rsa.pub /home/git/vagrant.pub
+  - su git
+  - git clone git://github.com/sitaramc/gitolite
+  - mkdir bin
+  - gitolite/install -ln
+  - export PATH="~/bin:$PATH"
+  - gitolite setup -pk vagrant.pub
+  - su travis
+  - sudo apt-get install -y cmake libssh2* libgit2* ruby1.9.1-dev
+  - whoami
 
 install:
   - bundle install --path=~/.bundle --without development production console
