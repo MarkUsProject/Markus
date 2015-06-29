@@ -12,7 +12,7 @@
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
         date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').val()
+        due_date: jQuery('#actual_assignment_due_date').attr('value')
       });
     }
   }
@@ -22,7 +22,7 @@
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
         date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').val()
+        due_date: jQuery('#actual_assignment_due_date').attr('value')
       });
     }
   }
@@ -32,7 +32,7 @@
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
         date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').val()
+        due_date: jQuery('#actual_assignment_due_date').attr('value')
       });
     }
   }
@@ -93,7 +93,7 @@
         altField:         '#actual_section_due_date_' + (i+1),
         altFieldTimeOnly: false,
         altFormat:        'yy-mm-dd',
-        altTimeFormat:    'HH:mm',
+        altTimeFormat:    'HH:mm z',
         altSeparator:     'T',
         controlType:      'select',
         showTime:         false,
@@ -102,6 +102,7 @@
         onClose:          function() { check_due_date(jQuery('#actual_section_due_date').val()); },
         dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
         timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+        showTimezone:     false,
         monthNames:       <%= raw I18n.t('date.months') %>,
         dayNames:         <%= raw I18n.t('date.weekdays') %>,
         dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
@@ -118,7 +119,7 @@
       altField:         '#actual_assignment_due_date',
       altFieldTimeOnly: false,
       altFormat:        'yy-mm-dd',
-      altTimeFormat:    'HH:mm',
+      altTimeFormat:    'HH:mm z',
       altSeparator:     'T',
       controlType:      'select',
       showTime:         false,
@@ -128,6 +129,7 @@
                                      check_due_date(jQuery('#actual_assignment_due_date').val()); },
       dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+      showTimezone:     false,
       monthNames:       <%= raw I18n.t('date.months') %>,
       dayNames:         <%= raw I18n.t('date.weekdays') %>,
       dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
@@ -139,11 +141,11 @@
       closeText:        "<%= I18n.t('time.close') %>",
     });
 
-    jQuery('#remark_due_date').datetimepicker({
+    jQuery('#assignment_remark_due_date').datetimepicker({
       altField:         '#actual_remark_due_date',
       altFieldTimeOnly: false,
       altFormat:        'yy-mm-dd',
-      altTimeFormat:    'HH:mm',
+      altTimeFormat:    'HH:mm z',
       altSeparator:     'T',
       controlType:      'select',
       showTime:         false,
@@ -152,6 +154,7 @@
       onClose:          function() { check_due_date(jQuery('#actual_remark_due_date').val()); },
       dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+      showTimezone:     false,
       monthNames:       <%= raw I18n.t('date.months') %>,
       dayNames:         <%= raw I18n.t('date.weekdays') %>,
       dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,

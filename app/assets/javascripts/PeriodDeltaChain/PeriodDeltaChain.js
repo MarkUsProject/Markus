@@ -39,13 +39,9 @@ PeriodDeltaChain.prototype.set_or_default = function(value, default_value) {
 
 /** Converts date string to an actual Date object. */
 function convert_date(due_date) {
-  // Only convert if not in the right format, i.e "2014-01-01 00:00"
   if (due_date.indexOf(' ') > -1) {
-    // Right format, i.e. "2014-01-01T00:00:00Z"
-    var arr_date = due_date.split(' ');
-    due_date = arr_date[0] + 'T' + arr_date[1] + 'Z';
-  } else if (due_date.indexOf('Z') < 0) {
-    due_date += 'Z';
+    var arr_date = due_date.split(/[ T]/);
+    due_date = arr_date[0] + 'T' + arr_date[1] + arr_date[2];
   }
 
   return due_date;
