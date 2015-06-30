@@ -19,7 +19,7 @@ before_install:
   - sudo -H -u git bash -c '/home/git/bin/gitolite setup -pk /home/git/vagrant.pub'
   - eval $(ssh-agent -s)
   - ssh-add ~/.ssh/id_rsa
-  - ssh git@localhost
+  - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no git@localhost
   - sudo apt-get install -y cmake libssh2* libgit2* ruby1.9.1-dev
 
 install:
