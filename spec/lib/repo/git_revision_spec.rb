@@ -4,11 +4,7 @@ describe Repository::GitRevision do
   context 'with a git repo' do
     before(:context) do
       
-      ###################################################################
-      # Location of the public and private key for the git user on the system
-      GITOLITE_SETTINGS = { public_key: '/home/git/vagrant.pub',
-                            private_key: '/home/git/id_rsa',
-                            host: 'localhost' }
+     
       
       # Make sure gitolite-admin repo is cloned in test environment
       ga_repo = Gitolite::GitoliteAdmin.new(
