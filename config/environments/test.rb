@@ -109,8 +109,8 @@ Markus::Application.configure do
 
   ###################################################################
   # Location of the public and private key for the git user on the system
-  GITOLITE_SETTINGS = { public_key: '/home/travis/git.pub',
-                        private_key: '/home/travis/id_rsa',
+  GITOLITE_SETTINGS = { public_key: '/home/travis/.ssh/id_rsa.pub',
+                        private_key: '/home/travis/.ssh/id_rsa',
                         host: 'localhost' }
 
   ###################################################################
