@@ -9,7 +9,7 @@ before_install:
   - sudo adduser -disabled-password --gecos "" git
   - echo "git:password" | sudo chpasswd
   - sudo adduser git sudo
-  - sudo cp ~/.ssh/id_rsa.pub /home/git/vagrant.pub
+  - sudo cp ~/.ssh/id_rsa.pub /home/git/git.pub
   - sudo mkdir /home/git/.ssh
   - sudo cp /home/travis/.ssh/id_rsa /home/git/.ssh/id_rsa
   - sudo -H -u git bash -c 'echo "I am $USER, with uid $UID"' 
