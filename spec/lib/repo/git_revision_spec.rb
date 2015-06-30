@@ -7,6 +7,8 @@ describe Repository::GitRevision do
       ga_repo = Gitolite::GitoliteAdmin.new(
         "#{::Rails.root}/data/test/repos/gitolite-admin", GITOLITE_SETTINGS)
 
+      puts GITOLITE_SETTINGS
+      
       # Bring the repo up to date
       ga_repo.reload!
 
