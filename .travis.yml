@@ -4,6 +4,25 @@ rvm:
 
 before_install:
   - sudo apt-get update -qq
+  - sudo apt-get install -y sshpass
+  - ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
+  - sudo adduser -disabled-password --gecos "" git
+  - echo "git:password" | sudo chpasswd
+  - sudo adduser git sudo
+  - sudo cp ~/.ssh/id_rsa.pub /home/git/vagrant.pub
+  - sudo cp ~/.ssh/id_rsa /home/git/vagrant
+  - cp ~/.ssh/id_rsa ~/vagrant
+  - cp ~/.ssh/id_rsa.pub ~/vagrant.pub
+  - sudo -H -u git bash -c 'echo "I am $USER, with uid $UID"' 
+  - sudo -H -u git bash -c 'git clone git://github.com/sitaramc/gitolite /home/git/gitolite'
+  - sudo -H -u git bash -c 'mkdir /home/git/bin'
+  - sudo -H -u git bash -c '/home/git/gitolite/install -ln'
+  - sudo -H -u git bash -c 'export PATH="~/bin:$PATH"'
+  - sudo -H -u git bash -c '/home/git/bin/gitolite setup -pk /home/git/vagrant.pub'
+  - eval $(ssh-agent -s)
+  - ssh-add ~/.ssh/id_rsa
+  - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no git@localhost
+  - sudo apt-get install -y cmake libssh2* libgit2* ruby1.9.1-dev
 
 install:
   - bundle install --path=~/.bundle --without development production console
