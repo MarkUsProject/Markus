@@ -291,7 +291,7 @@
   </fieldset>
 
   <%# Submission rules %>
-  <fieldset>
+  <fieldset id='submission_rule_fields'>
     <legend>
       <span><%= t('assignment.submission_rules') %></span>
     </legend>
@@ -309,23 +309,22 @@
         <%= rule.radio_button :type,
                               'NoLateSubmissionRule',
                               checked: true,
-                              onchange: 'change_submission_rule();',
                               id: 'no_late_submission_rule' %>
         <%= label_tag 'no_late_submission_rule',
-                      t('submission_rules.no_late_submission_rule.form_description'),
-                      class: 'radio_label' %>
+                      t('submission_rules.no_late_submission_rule.form_description') %>
       </p>
 
       <p>
         <%= rule.radio_button :type,
                               'GracePeriodSubmissionRule',
-                              onchange: 'change_submission_rule(); ',
                               id: 'grace_period_submission_rule' %>
         <%= label_tag 'grace_period_submission_rule',
-                      t('submission_rules.grace_period_submission_rule.form_description'),
-                      class: 'radio_label' %>
+                      t('submission_rules.grace_period_submission_rule.form_description') %>
       </p>
       <div id='grace_periods'>
+        <%= link_to t('submission_rules.grace_period_submission_rule.add_grace_period'),
+                    '#',
+                    onclick: 'add_period("grace_periods", grace_periods); return false;' %>
         <% if rule.object.type.to_s == 'GracePeriodSubmissionRule' %>
           <%= rule.fields_for :periods do |period_form| %>
             <%
@@ -338,26 +337,23 @@
                                    pf: rule } %>
             <% end %>
           <% end %>
+        <% else %>
+          <%= render partial: 'grace_period',
+                     locals: { pf: rule, grace_period: Period.new } %>
         <% end %>
-      </div>
-      <div class='sub_rule_link'>
-        <span class='grace_periods_link'>
-          <%= add_grace_period_link(t('submission_rules.grace_period_submission_rule.add_grace_period'),
-                                    rule,
-                                    'grace_period_link') %>
-        </span>
       </div>
 
       <p>
         <%= rule.radio_button :type,
                               'PenaltyDecayPeriodSubmissionRule',
-                              onchange: 'change_submission_rule();',
                               id: 'penalty_decay_period_submission_rule' %>
         <%= label_tag 'penalty_decay_period_submission_rule',
-                      t('submission_rules.penalty_decay_period_submission_rule.form_description'),
-                      class: 'radio_label' %>
+                      t('submission_rules.penalty_decay_period_submission_rule.form_description') %>
       </p>
       <div id='penalty_decay_periods'>
+        <%= link_to t('submission_rules.penalty_decay_period_submission_rule.add_penalty_decay_period'),
+                    '#',
+                    onclick: 'add_period("penalty_decay_periods", penalty_decay_periods); return false;' %>
         <% if rule.object.type.to_s == 'PenaltyDecayPeriodSubmissionRule' %>
           <%= rule.fields_for :periods do |period_form| %>
             <%
@@ -370,26 +366,23 @@
                                    pf: rule } %>
             <% end %>
           <% end %>
+        <% else %>
+          <%= render partial: 'penalty_decay_period',
+                     locals: { pf: rule, penalty_decay_period: Period.new } %>
         <% end %>
-      </div>
-      <div class='sub_rule_link'>
-        <span class='penalty_decay_period_link'>
-          <%= add_penalty_decay_period_link(t('submission_rules.penalty_decay_period_submission_rule.add_penalty_decay'),
-                                            rule,
-                                            'penalty_decay_period_link') %>
-        </span>
       </div>
 
       <p>
         <%= rule.radio_button :type,
                               'PenaltyPeriodSubmissionRule',
-                              onchange: 'change_submission_rule();',
                               id: 'penalty_period_submission_rule' %>
         <%= label_tag 'penalty_period_submission_rule',
-                      t('submission_rules.penalty_period_submission_rule.form_description'),
-                      class: 'radio_label' %>
+                      t('submission_rules.penalty_period_submission_rule.form_description') %>
       </p>
       <div id='penalty_periods'>
+        <%= link_to t('submission_rules.penalty_period_submission_rule.add_penalty_period'),
+                    '#',
+                    onclick: 'add_period("penalty_periods", penalty_periods); return false;' %>
         <% if rule.object.type.to_s == 'PenaltyPeriodSubmissionRule' %>
           <%= rule.fields_for :periods do |period_form| %>
             <%
@@ -402,16 +395,12 @@
                                    pf: rule } %>
             <% end %>
           <% end %>
+        <% else %>
+          <%= render partial: 'penalty_period',
+                     locals: { pf: rule, penalty_period: Period.new } %>
         <% end %>
       </div>
-      <div class='sub_rule_link'>
-        <span class='penalty_periods_link'>
-          <%= add_penalty_period_link(t('submission_rules.penalty_period_submission_rule.add_penalty_period'),
-                                      rule,
-                                      'penalty_period_link') %>
-        </span>
-      </div>
-    <%- end -%>
+    <% end %>
   </fieldset>
 
   <%# Remark request rules %>

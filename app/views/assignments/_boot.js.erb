@@ -4,7 +4,6 @@
   var penalty_decay_periods = null;
   var penalty_periods = null;
 
-
   function create_grace_periods() {
     if(!grace_periods) {
       grace_periods = new PeriodDeltaChain({
@@ -66,6 +65,33 @@
     }
   }
 
+  function add_period(id, periods) {
+    var last_period = jQuery('#' + id + ' .period').last();
+    var new_period = last_period.clone();
+    var id_re = new RegExp(/([_\[])[0-9]+([_\]])/);
+    var repl = '$1' + new Date().getTime() + '$2';
+    new_period.find('input').each(function () {
+      jQuery(this).attr('id', jQuery(this).attr('id').replace(id_re, repl));
+      jQuery(this).attr('name', jQuery(this).attr('name').replace(id_re, repl));
+      jQuery(this).val('');
+    });
+    new_period.find('label').each(function () {
+      jQuery(this).attr('for', jQuery(this).attr('for').replace(id_re, repl));
+    });
+    jQuery('#' + id).append(new_period);
+
+    if (periods) {
+      periods.refresh();
+    }
+  }
+
+  function remove_period(elem, periods) {
+    jQuery(elem).parents('.period').remove();
+    if (periods) {
+      periods.refresh();
+    }
+  }
+
   function check_due_date(new_due_date) {
     if (moment(new_due_date, '<%= t('date.formats.js_old_date') %>').isBefore(
          moment())) {
@@ -89,6 +115,9 @@
 
       toggle_remark_requests(<%= @assignment.allow_remarks? %>);
     }
+
+    jQuery('#submission_rule_fields input[type=radio]').change(
+      change_submission_rule);
 
     // Handle required fields
     check_required_fields();

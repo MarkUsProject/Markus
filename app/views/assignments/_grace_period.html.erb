@@ -35,9 +35,9 @@
         <%= f.label :_destroy, t(:remove) %>
         <%= f.check_box :_destroy %>
       <% else %>
-        <%= link_to_function t(:remove),
-                            "jQuery(this).parents(\".period\").remove();
-                             if (grace_periods) { grace_periods.refresh(); }" %>
+        <%= link_to t(:remove),
+                    '#',
+                    onclick: 'remove_period(this, grace_periods); return false;' %>
       <% end %>
     </p>
   <% end %>

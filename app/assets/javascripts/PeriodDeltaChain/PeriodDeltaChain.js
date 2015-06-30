@@ -22,6 +22,12 @@ PeriodDeltaChain.prototype.refresh = function() {
 
     current_time = to_time;
   });
+
+  if (jQuery('#' + this.period_root_id + ' .' + this.period_class).length < 2) {
+    jQuery('#' + this.period_root_id + ' .' + this.period_class + ' a').hide();
+  } else {
+    jQuery('#' + this.period_root_id + ' .' + this.period_class + ' a').show();
+  }
 }
 
 PeriodDeltaChain.prototype.set_due_date = function(new_due_date) {

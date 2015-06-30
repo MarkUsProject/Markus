@@ -41,9 +41,9 @@
         <%= f.label :_destroy, t(:remove) %>
         <%= f.check_box :_destroy %>
       <% else %>
-        <%= link_to_function t(:remove),
-                             "jQuery(this).parents(\".period\").remove();
-                              if (penalty_periods) { penalty_periods.refresh(); }" %>
+        <%= link_to t(:remove),
+                    '#',
+                    onclick: 'remove_period(this, penalty_periods); return false;' %>
       <% end %>
     </p>
   <% end %>
