@@ -8,7 +8,7 @@
     if(!grace_periods) {
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
-        date_format: document.getElementById('format').value,
+        date_format: '<%= t('date.formats.js_old_date') %>',
         due_date: jQuery('#assignment_due_date').attr('value')
       });
     }
@@ -18,7 +18,7 @@
     if(!penalty_decay_periods) {
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
-        date_format: document.getElementById('format').value,
+        date_format: '<%= t('date.formats.js_old_date') %>',
         due_date: jQuery('#assignment_due_date').attr('value')
       });
     }
@@ -28,7 +28,7 @@
     if(!penalty_periods) {
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
-        date_format: document.getElementById('format').value,
+        date_format: '<%= t('date.formats.js_old_date') %>',
         due_date: jQuery('#assignment_due_date').attr('value')
       });
     }
@@ -46,12 +46,13 @@
 
   function add_assignment_file() {
     var new_id = new Date().getTime();
-    var input_id = 'assignment_assignment_files_attributes_' + new_id + '_filename';
+    var input_id = 'assignment_assignment_files_attributes_' + new_id +
+                   '_filename';
     var assignment_file = '<p id="' + input_id + '_holder">' +
       '<label for="' + input_id + '"><%= t(:filename) %></label>' +
       '<input type="text" name="assignment[assignment_files_attributes][' +
-      new_id + '][filename]" id="' + input_id + '" class="assignment_file" /> ' +
-      '<a onclick="remove_assignment_file(\'' + input_id + '\'); return false;">' +
+      new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
+      '<a onclick="remove_assignment_file(\''+input_id+'\'); return false;">' +
       '<%= t(:remove) %></a></p>';
     jQuery('#assignment_files').append(jQuery(assignment_file));
 
@@ -59,7 +60,7 @@
   }
 
   function remove_assignment_file(input_id) {
-    jQuery("#" + input_id + "_holder").remove();
+    jQuery('#' + input_id + '_holder').remove();
     if (jQuery('.assignment_file').length === 0) {
       jQuery('#only_required_files_option').addClass('disable');
     }
@@ -72,7 +73,8 @@
     var repl = '$1' + new Date().getTime() + '$2';
     new_period.find('input').each(function () {
       jQuery(this).attr('id', jQuery(this).attr('id').replace(id_re, repl));
-      jQuery(this).attr('name', jQuery(this).attr('name').replace(id_re, repl));
+      jQuery(this).attr('name',
+                        jQuery(this).attr('name').replace(id_re, repl));
       jQuery(this).val('');
     });
     new_period.find('label').each(function () {
@@ -104,7 +106,7 @@
     moment.lang(document.getElementById('locale').value);
 
     // Handle periods and hiding/showing things
-    if (jQuery('#assignment_due_date').attr('value')) {
+    if (jQuery('#assignment_due_date').val()) {
       create_grace_periods();
       create_penalty_decay_periods();
       create_penalty_periods();

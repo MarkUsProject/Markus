@@ -9,9 +9,10 @@ jQuery(document).ready(function() {
   });
 
   jQuery('#assignment_section_due_dates_type').change(function() {
-    toggle_sections_due_date(jQuery(this).is(':checked'));
+    toggle_sections_due_date(this.checked);
   });
-  toggle_sections_due_date(jQuery('#assignment_section_due_dates_type').is(':checked'));
+  toggle_sections_due_date(
+    jQuery('#assignment_section_due_dates_type').is(':checked'));
 
   jQuery('.section_due_date_input').change(function() {
     if (jQuery('#assignment_due_date').val() === '') {
@@ -20,21 +21,21 @@ jQuery(document).ready(function() {
   });
 
   jQuery('#persist_groups').change(function() {
-    toggle_persist_groups(jQuery(this).is(':checked'));
+    toggle_persist_groups(this.checked);
   });
 
   jQuery('#is_group_assignment').change(function() {
-    toggle_group_assignment(jQuery(this).is(':checked'));
+    toggle_group_assignment(this.checked);
   });
 
   toggle_group_assignment(jQuery('#is_group_assignment').is(':checked'));
 
   jQuery('#assignment_student_form_groups').change(function() {
-    toggle_student_form_groups(jQuery(this).is(':checked'));
+    toggle_student_form_groups(this.checked);
   });
 
-  jQuery('#allow_remarks').change(function() {
-    toggle_remark_requests(jQuery(this).is(':checked'));
+  jQuery('#assignment_allow_remarks').change(function() {
+    toggle_remark_requests(this.checked);
   });
 
   change_submission_rule();  // Opens the correct rule

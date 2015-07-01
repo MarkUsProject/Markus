@@ -12,18 +12,10 @@
 <% end %>
 
 <%= render 'shared/flash_message' %>
+<%= render partial: 'shared/error_explanation',
+           locals: { model: @assignment } %>
 
 <%= form_for @assignment do |f| %>
-
-  <%= render partial: 'shared/error_explanation',
-             locals: { model: @assignment } %>
-
-  <%# The locale format string used for localising the date/time %>
-  <%= raw(f.text_field nil,
-                       id: 'format',
-                       class: 'hidden',
-                       value: t('date.formats.js_old_date'),
-                       disabled: true) %>
 
   <p><%= t('grade_entry_forms.required_fields').html_safe %></p>
 
@@ -107,7 +99,8 @@
               <%= due_date_f.text_field :due_date,
                                         class: 'section_due_date_input',
                                         value: obj.due_date.nil? ? '' :
-                                               obj.due_date.strftime("%Y-%m-%d %l:%M %p") %>
+                                               obj.due_date.strftime(
+                                                 '%Y-%m-%d %l:%M %p') %>
             </p>
           <% end %>
         </div>
@@ -121,10 +114,11 @@
       <%= f.text_field :due_date,
                        onchange: 'set_onbeforeunload(true);',
                        value: @assignment.due_date.nil? ? '' :
-                              @assignment.due_date.strftime("%Y-%m-%d %l:%M %p"),
-                           size: 35,
-                           required: true,
-                           placeholder: t('date.formats.datetime_placeholder') %>
+                              @assignment.due_date.strftime(
+                                '%Y-%m-%d %l:%M %p'),
+                       size: 35,
+                       required: true,
+                       placeholder: t('date.formats.datetime_placeholder') %>
     </div>
 
     <div>
@@ -239,7 +233,9 @@
                     t('assignment.group.persist_group_from') %>
       <%= select_tag :persist_groups_assignment,
                      options_for_select(
-                       @clone_assignments.map { |a| [a.short_identifier, a.id] }),
+                       @clone_assignments.map do |a|
+                         [a.short_identifier, a.id]
+                       end),
                      disabled: true %>
     </p>
     <p id='is_group_assignment_style'>
@@ -311,7 +307,8 @@
                               checked: true,
                               id: 'no_late_submission_rule' %>
         <%= label_tag 'no_late_submission_rule',
-                      t('submission_rules.no_late_submission_rule.form_description') %>
+                      t('submission_rules.no_late_submission_rule' +
+                        '.form_description') %>
       </p>
 
       <p>
@@ -319,12 +316,15 @@
                               'GracePeriodSubmissionRule',
                               id: 'grace_period_submission_rule' %>
         <%= label_tag 'grace_period_submission_rule',
-                      t('submission_rules.grace_period_submission_rule.form_description') %>
+                      t('submission_rules.grace_period_submission_rule' +
+                        '.form_description') %>
       </p>
       <div id='grace_periods'>
-        <%= link_to t('submission_rules.grace_period_submission_rule.add_grace_period'),
+        <%= link_to t('submission_rules.grace_period_submission_rule' +
+                      '.add_grace_period'),
                     '#',
-                    onclick: 'add_period("grace_periods", grace_periods); return false;' %>
+                    onclick: 'add_period("grace_periods", grace_periods);' +
+                             'return false;' %>
         <% if rule.object.type.to_s == 'GracePeriodSubmissionRule' %>
           <%= rule.fields_for :periods do |period_form| %>
             <%
@@ -348,12 +348,15 @@
                               'PenaltyDecayPeriodSubmissionRule',
                               id: 'penalty_decay_period_submission_rule' %>
         <%= label_tag 'penalty_decay_period_submission_rule',
-                      t('submission_rules.penalty_decay_period_submission_rule.form_description') %>
+                      t('submission_rules.penalty_decay_period_submission_rule' +
+                        '.form_description') %>
       </p>
       <div id='penalty_decay_periods'>
-        <%= link_to t('submission_rules.penalty_decay_period_submission_rule.add_penalty_decay_period'),
+        <%= link_to t('submission_rules.penalty_decay_period_submission_rule' +
+                      '.add_penalty_decay_period'),
                     '#',
-                    onclick: 'add_period("penalty_decay_periods", penalty_decay_periods); return false;' %>
+                    onclick: 'add_period("penalty_decay_periods", ' +
+                             'penalty_decay_periods); return false;' %>
         <% if rule.object.type.to_s == 'PenaltyDecayPeriodSubmissionRule' %>
           <%= rule.fields_for :periods do |period_form| %>
             <%
@@ -377,12 +380,15 @@
                               'PenaltyPeriodSubmissionRule',
                               id: 'penalty_period_submission_rule' %>
         <%= label_tag 'penalty_period_submission_rule',
-                      t('submission_rules.penalty_period_submission_rule.form_description') %>
+                      t('submission_rules.penalty_period_submission_rule' +
+                        '.form_description') %>
       </p>
       <div id='penalty_periods'>
-        <%= link_to t('submission_rules.penalty_period_submission_rule.add_penalty_period'),
+        <%= link_to t('submission_rules.penalty_period_submission_rule' +
+                      '.add_penalty_period'),
                     '#',
-                    onclick: 'add_period("penalty_periods", penalty_periods); return false;' %>
+                    onclick: 'add_period("penalty_periods",penalty_periods);' +
+                             ' return false;' %>
         <% if rule.object.type.to_s == 'PenaltyPeriodSubmissionRule' %>
           <%= rule.fields_for :periods do |period_form| %>
             <%
@@ -417,7 +423,6 @@
 
     <p id='allow_remark_requests'>
       <%= f.check_box :allow_remarks,
-                      id: 'allow_remarks',
                       onchange: 'set_onbeforeunload(true);' %>
       <%= f.label :allow_remarks, t('assignment.remark.allow') %>
     </p>
@@ -428,7 +433,8 @@
         <%= f.text_field :remark_due_date,
                          onchange: 'set_onbeforeunload(true);',
                          value: @assignment.remark_due_date.nil? ? '' :
-                                @assignment.remark_due_date.strftime("%Y-%m-%d %l:%M %p"),
+                                @assignment.remark_due_date.strftime(
+                                  '%Y-%m-%d %l:%M %p'),
                          size: 35 %>
       </p>
       <p>
