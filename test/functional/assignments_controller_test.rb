@@ -192,14 +192,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_response :missing
       end
 
-      should 'update group properties on persist' do
-        get_as  @admin,
-                :update_group_properties_on_persist,
-                :assignment_id => @assignment.id
-        assert assigns(:assignment)
-        assert_equal @assignment, assigns(:assignment)
-      end
-
       should 'edit basic paramaters' do
         put_as @admin,
                 :update,
@@ -681,13 +673,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_response :missing
       end
 
-      should 'not be able to get group properties' do
-        get_as @grader,
-               :update_group_properties_on_persist,
-               :assignment_id => @assignment.id
-        assert_response :missing
-      end
-
       should 'gets assignment list on the graders' do
         submission_rule = NoLateSubmissionRule.make
         submission_rule.stubs(:can_collect_now?).returns(false)
@@ -727,13 +712,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert assigns(:a_id_results)
         assert assigns(:assignments)
         assert_response :success
-      end
-
-      should 'not be able to get group properties' do
-        get_as @student,
-               :update_group_properties_on_persist,
-               :assignment_id => @assignment.id
-        assert_response :missing
       end
 
       should 'not be able to access grades report' do
