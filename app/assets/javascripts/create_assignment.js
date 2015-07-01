@@ -119,15 +119,19 @@ function toggle_sections_due_date(section_due_dates_type) {
 
 function change_submission_rule() {
   jQuery('#grace_periods, #penalty_periods, #penalty_decay_periods').hide();
-
+  jQuery('#grace_periods input, #penalty_periods input,' +
+         '#penalty_decay_periods input').prop('disabled', 'disabled');
   if (jQuery('#grace_period_submission_rule').is(':checked')) {
     jQuery('#grace_periods').show();
+    jQuery('#grace_periods input').prop('disabled', '');
   }
   if (jQuery('#penalty_decay_period_submission_rule').is(':checked')) {
     jQuery('#penalty_decay_periods').show();
+    jQuery('#penalty_decay_periods input').prop('disabled', '');
   }
   if (jQuery('#penalty_period_submission_rule').is(':checked')) {
     jQuery('#penalty_periods').show();
+    jQuery('#penalty_periods input').prop('disabled', '');
   }
 }
 
