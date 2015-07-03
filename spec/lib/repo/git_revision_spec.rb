@@ -13,7 +13,7 @@ describe Repository::GitRevision do
       # Make sure repo exists, if not make it
       repo = ga_repo.config.get_repo('test_repo_workdir')
       if repo.nil?
-         Repository::GitRepository.create('test_repo_workdir')
+        Repository::GitRepository.create('test_repo_workdir')
       end
     end
     let!(:repo) { build(:git_repository) }
