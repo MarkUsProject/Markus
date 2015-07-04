@@ -22,7 +22,7 @@ namespace :db do
       8.times do |index|
         if assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
           RubricCriterion.create(
-            id:                    index,
+            id:                    index + assignment.id * 8,
             rubric_criterion_name: random_sentences(1),
             assignment_id:         assignment.id,
             position:              1,
@@ -40,7 +40,7 @@ namespace :db do
           ).save
         elsif assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
           FlexibleCriterion.create(
-            id:                      index,
+            id:                      index + assignment.id * 8,
             flexible_criterion_name: random_sentences(1),
             assignment_id:           assignment.id,
             description:             random_sentences(5),
@@ -53,14 +53,14 @@ namespace :db do
         end
       end
       5.times do |index|
-        AnnotationCategory.create(id: index,
+        AnnotationCategory.create(id: index + assignment.id * 5,
                                   assignment_id: assignment.id,
                                   position: 1,
                                   annotation_category_name: random_words(3))
             .save
 
         (rand(10) + 3).times do
-          AnnotationText.create(annotation_category_id: index,
+          AnnotationText.create(annotation_category_id: index + assignment.id * 5,
                                 content: random_sentences(3))
               .save
         end
