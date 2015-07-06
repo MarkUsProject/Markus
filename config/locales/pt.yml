@@ -103,6 +103,7 @@ pt:
     description:        "Descrição"
     shortened_date:     "Data<span class='required_field'>*</span>"
     due_date:           "Prazo de entrega" 
+    remove_date:        "Remover data"
     deadline_grace_tokens: "Prazo usando todos <br> os restantes fichas <br> de carência"    
     deadline_max_penalty: "Prazo incluindo pena <br> máxima tarde"
     iso_date_format_example:    "Formato:  YYYY-MM-DD - Exemplo:  2009-01-13"
