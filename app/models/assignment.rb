@@ -7,11 +7,21 @@ class Assignment < ActiveRecord::Base
     rubric: 'rubric'
   }
 
-  has_many :rubric_criteria, class_name: 'RubricCriterion', dependent: :destroy, order: :position
-  has_many :flexible_criteria, class_name: 'FlexibleCriterion', dependent: :destroy, order: :position
-  has_many :criterion_ta_associations, dependent: :destroy
+  has_many :rubric_criteria,
+           -> { order(:position) },
+           class_name: 'RubricCriterion', 
+		   dependent: :destroy
 
-  has_many :assignment_files, dependent: :destroy
+  has_many :flexible_criteria,
+           -> { order(:position) },
+           class_name: 'FlexibleCriterion',
+		   dependent: :destroy
+
+  has_many :criterion_ta_associations,
+		   dependent: :destroy
+
+  has_many :assignment_files,
+		   dependent: :destroy
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
@@ -24,7 +34,10 @@ class Assignment < ActiveRecord::Base
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
 
-  has_many :annotation_categories, order: :position, dependent: :destroy
+  has_many :annotation_categories,
+           -> { order(:position) },
+           class_name: 'AnnotationCategory',
+		   dependent: :destroy
 
   has_many :groupings
 
@@ -77,7 +90,7 @@ class Assignment < ActiveRecord::Base
   after_save :update_assigned_tokens
 
   # Set the default order of assignments: in ascending order of due_date
-  default_scope order('due_date ASC')
+  default_scope { order('due_date ASC') }
 
   # Export a YAML formatted string created from the assignment rubric criteria.
   def export_rubric_criteria_yml
@@ -282,7 +295,7 @@ class Assignment < ActiveRecord::Base
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       if !submission.nil? && submission.has_remark?
-        if submission.get_remark_result.marking_state ==
+        if submission.remark_result.marking_state ==
             Result::MARKING_STATES[:partial]
           outstanding_count += 1
         end
@@ -709,7 +722,7 @@ class Assignment < ActiveRecord::Base
     end
 
     steps = 100 / intervals # number of percentage steps in each interval
-    groupings = self.groupings.all(include: [{current_submission_used: :results}])
+    groupings = self.groupings.includes([{current_submission_used: :results}])
 
     groupings.each do |grouping|
       submission = grouping.current_submission_used

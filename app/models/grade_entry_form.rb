@@ -6,8 +6,8 @@ require 'encoding'
 # marks on each question (i.e. GradeEntryStudents).
 class GradeEntryForm < ActiveRecord::Base
   has_many                  :grade_entry_items,
-                            dependent: :destroy,
-                            order: :position
+                            -> { order(:position) },
+                            dependent: :destroy
 
   has_many                  :grade_entry_students,
                             dependent: :destroy
@@ -184,7 +184,7 @@ class GradeEntryForm < ActiveRecord::Base
 
   # Get a CSV report of the grades for this grade entry form
   def get_csv_grades_report
-    students = Student.all(conditions: {hidden: false}, order: 'user_name')
+    students = Student.where(hidden: false).order(:user_name)
     CSV.generate do |csv|
 
       # The first row in the CSV file will contain the question names

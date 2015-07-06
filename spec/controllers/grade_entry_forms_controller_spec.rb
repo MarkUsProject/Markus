@@ -14,37 +14,37 @@ describe GradeEntryFormsController do
   context 'CSV_Uploads' do
     before :each do
       @file_without_extension =
-        fixture_file_upload('spec/fixtures/files/grade_entry_upload_empty_file',
+        fixture_file_upload('files/grade_entry_upload_empty_file',
                             'text/xml')
       @file_wrong_format =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_upload_wrong_format.xls', 'text/xls')
+          'files/grade_entry_upload_wrong_format.xls', 'text/xls')
       @file_bad_csv =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_upload_bad_csv.csv', 'text/xls')
+          'files/grade_entry_upload_bad_csv.csv', 'text/xls')
       @file_bad_endofline =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_upload_file_bad_endofline.csv',
+          'files/grade_entry_upload_file_bad_endofline.csv',
           'text/csv')
       @file_invalid_username =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_form_invalid_username.csv',
+          'files/grade_entry_form_invalid_username.csv',
           'text/csv')
       @file_extra_column =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_form_extra_column.csv',
+          'files/grade_entry_form_extra_column.csv',
           'text/csv')
       @file_different_column_name =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_form_different_column_name.csv',
+          'files/grade_entry_form_different_column_name.csv',
           'text/csv')
       @file_different_total =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_form_different_total.csv',
+          'files/grade_entry_form_different_total.csv',
           'text/csv')
       @file_good =
         fixture_file_upload(
-          'spec/fixtures/files/grade_entry_form_good.csv',
+          'files/grade_entry_form_good.csv',
           'text/csv')
     end
 

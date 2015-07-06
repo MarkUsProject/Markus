@@ -102,13 +102,12 @@ Markus::Application.routes.draw do
 
         member do
           post 'rename_group'
-          get 'rename_group_dialog'
         end
 
         collection do
           get 'populate'
           get 'add_group'
-          get 'use_another_assignment_groups'
+          post 'use_another_assignment_groups'
           get 'manage'
           post 'csv_upload'
           get 'add_csv_group'
@@ -169,7 +168,7 @@ Markus::Application.routes.draw do
             get 'download'
             post 'download'
             get 'download_zip'
-            get 'cancel_remark_request'
+            delete 'cancel_remark_request'
             get 'codeviewer'
             post 'codeviewer'
             post 'add_extra_mark'
@@ -178,9 +177,8 @@ Markus::Application.routes.draw do
             post 'remove_extra_mark'
             post 'set_released_to_students'
             put 'update_overall_comment'
-            post 'update_overall_remark_comment'
             post 'update_marking_state'
-            get 'update_remark_request'
+            put 'update_remark_request'
             get 'update_positions'
             post 'update_mark'
             get 'view_marks'
@@ -325,7 +323,7 @@ Markus::Application.routes.draw do
         post 'add_existing_annotation'
         put 'update_annotation'
         post 'update_comment'
-        delete 'destroy'
+        delete '/' => 'annotations#destroy'
       end
     end
 
@@ -370,10 +368,8 @@ Markus::Application.routes.draw do
   match 'main/about', controller: 'main', action: 'about', via: :post
   match 'main/logout', controller: 'main', action: 'logout', via: :post
 
-  # TODO: this should be via: :all, but does not seem to work with Rails 3
   # Return a 404 when no route is match
-
   unless Rails.env.test?
-    match '*path', controller: 'main', action: 'page_not_found', via: :get
+    match '*path', controller: 'main', action: 'page_not_found', via: :all
   end
 end

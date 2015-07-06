@@ -14,7 +14,7 @@ class AuthenticatedControllerTest < ActionController::TestCase
   # Performs GET request as the supplied user for authentication
   def get_as(user, action, params=nil, flash=nil)
     session_vars = { 'uid' => user.id, 'timeout' => 3.days.from_now }
-    get action, params, session_vars, flash
+    xhr :get, action, params, session_vars, flash
   end
 
   # Performs POST request as the supplied user for authentication

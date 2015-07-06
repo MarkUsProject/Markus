@@ -1,3 +1,4 @@
+require 'zip'
 class ResultsController < ApplicationController
   include TagsHelper
   before_filter :authorize_only_for_admin,
@@ -5,13 +6,12 @@ class ResultsController < ApplicationController
                          :create, :add_extra_mark, :next_grouping,
                          :update_overall_comment, :remove_extra_mark,
                          :update_marking_state, :download, :download_zip,
-                         :note_message, :update_overall_remark_comment,
+                         :note_message,
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
                 only: [:edit, :update_mark, :create, :add_extra_mark,
                        :next_grouping, :update_overall_comment,
-                       :remove_extra_mark, :update_marking_state, :note_message,
-                       :update_overall_remark_comment]
+                       :remove_extra_mark, :update_marking_state, :note_message]
   before_filter :authorize_for_user,
                 only: [:codeviewer, :download, :download_zip]
   before_filter :authorize_for_student,
@@ -31,13 +31,12 @@ class ResultsController < ApplicationController
   end
 
   def edit
-    result_id = params[:id]
-    @result = Result.find(result_id)
+    @result = Result.find(params[:id])
     @assignment = @result.submission.assignment
     @submission = @result.submission
 
     if @submission.remark_submitted?
-      @old_result = Result.where(submission_id: @submission.id).first
+      @old_result = @submission.get_original_result
     else
       @old_result = nil
     end
@@ -56,12 +55,12 @@ class ResultsController < ApplicationController
     @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
-      mark = criterion.marks.find_or_create_by_result_id(@result.id)
+      mark = criterion.marks.find_or_create_by(result_id: @result.id)
       @marks_map[criterion.id] = mark
 
       # Loading up previous results for the case of a remark
       if @old_result
-        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
         oldmark.save(validate: false)
         @old_marks_map[criterion.id] = oldmark
       end
@@ -278,7 +277,6 @@ class ResultsController < ApplicationController
                end
 
     files = submission.submission_files
-
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       files.each do |file|
         begin
@@ -365,30 +363,23 @@ class ResultsController < ApplicationController
     assignment = submission.grouping.assignment # get assignment for logging
     m_logger = MarkusLogger.instance
 
-    # FIXME checking both that result_mark is valid and correctly saved is
-    # useless. The validation is done automatically before saving unless
-    # specified otherwise.
-    if result_mark.valid?
-      unless result_mark.save
-        m_logger.log("Error while trying to update mark of submission. User: '" +
-                         "#{current_user.user_name}', Submission ID: '#{submission.id}'," +
-                         " Assignment: '#{assignment.short_identifier}', Group: '#{group.group_name}'.",
-                     MarkusLogger::ERROR)
-        render partial: 'shared/handle_error',
-               formats:[:js],
-               handlers: [:erb],
-               locals: { error: t('mark.error.save') + result_mark.errors.full_messages.join }
-      else
-        m_logger.log("User '#{current_user.user_name}' updated mark for submission (id: " +
-                         "#{submission.id}) of assignment '#{assignment.short_identifier}' for group" +
-                         " '#{group.group_name}'.", MarkusLogger::INFO)
-        render partial: 'results/marker/update_mark',
-               locals: { result_mark: result_mark, mark_value: result_mark.mark}
-      end
+    if result_mark.save
+      m_logger.log("User '#{current_user.user_name}' updated mark for " +
+                   "submission (id: #{submission.id}) of " +
+                   "assignment #{assignment.short_identifier} for " +
+                   "group #{group.group_name}.",
+                   MarkusLogger::INFO)
+      render text: "#{result_mark.get_mark}," +
+                   "#{result_mark.result.get_subtotal}," +
+                   "#{result_mark.result.total_mark}"
     else
-      render partial: 'results/marker/mark_verify_result',
-             locals: {mark_id: result_mark.id,
-                         mark_error: result_mark.errors.full_messages.join}
+      m_logger.log("Error while trying to update mark of submission. " +
+                   "User: #{current_user.user_name}, " +
+                   "Submission id: #{submission.id}, " +
+                   "Assignment: #{assignment.short_identifier}, " +
+                   "Group: #{group.group_name}.",
+                   MarkusLogger::ERROR)
+      render text: result_mark.errors.full_messages.join, status: :bad_request
     end
   end
 
@@ -416,7 +407,7 @@ class ResultsController < ApplicationController
     @old_result = nil
     if @submission.remark_submitted?
       @old_result = @result
-      @result = @submission.get_remark_result
+      @result = @submission.remark_result
       # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
       if @result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students
@@ -443,12 +434,12 @@ class ResultsController < ApplicationController
     @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
-      mark = criterion.marks.find_or_create_by_result_id(@result.id)
+      mark = criterion.marks.find_or_create_by(result_id: @result.id)
       mark.save(validate: false)
       @marks_map[criterion.id] = mark
 
       if @old_result
-        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
         oldmark.save(validate: false)
         @old_marks_map[criterion.id] = oldmark
       end
@@ -491,54 +482,46 @@ class ResultsController < ApplicationController
   end
 
   def update_overall_comment
-    @result = Result.find(params[:id])
-    @result.overall_comment = params[:result][:overall_comment]
-    @result.save
-    render 'update_overall_comment', formats: [:js]
-  end
-
-  def update_overall_remark_comment
-    @result = Result.find(params[:id])
-    @result.overall_comment = params[:result][:overall_comment]
-    @result.save
-    render 'update_overall_remark_comment', formats: [:js]
+    Result.find(params[:id]).update_attributes(
+      overall_comment: params[:result][:overall_comment])
+    head :ok
   end
 
   def update_remark_request
     @assignment = Assignment.find(params[:assignment_id])
-    unless @assignment.past_remark_due_date?
+    if @assignment.past_remark_due_date?
+      head :bad_request
+    else
       @submission = Submission.find(params[:id])
-      @submission.remark_request = params[:submission][:remark_request]
-      @submission.remark_request_timestamp = Time.zone.now
-      @submission.save
-      if params[:real_commit] == 'Submit'
-        @old_result = @submission.get_original_result
-        unless @submission.get_remark_result
-          @submission.create_remark_result
+      @submission.update_attributes(
+        remark_request: params[:submission][:remark_request],
+        remark_request_timestamp: Time.zone.now
+      )
+      if params[:save]
+        render 'update_remark_request', formats: [:js]
+      elsif params[:submit]
+        unless @submission.remark_result
+          @submission.make_remark_result
         end
-        @result = @submission.get_remark_result
-        @result.marking_state = Result::MARKING_STATES[:partial]
-        @old_result.released_to_students = (params[:value] == 'false')
-        @result.save
-        @old_result.save
+        @submission.remark_result.update_attributes(
+          marking_state: Result::MARKING_STATES[:partial])
+        @submission.get_original_result.update_attributes(
+          released_to_students: false)
+        render js: 'location.reload();'
+      else
+        head :bad_request
       end
     end
-    render 'update_remark_request', formats: [:js]
   end
 
+  # Allows student to cancel a remark request.
   def cancel_remark_request
-    @submission = Submission.find(params[:submission_id])
+    submission = Submission.find(params[:submission_id])
 
-    @remark_result = @submission.get_remark_result
-    @remark_result.destroy
-
-    @submission.remark_result_id = nil
-    @submission.remark_request = nil
-    @submission.save
-
-    @result = @submission.get_original_result
-    @result.released_to_students = true
-    @result.save
+    submission.remark_result.destroy
+    submission.update_attributes(remark_result_id: nil)
+    submission.get_original_result.update_attributes(
+      released_to_students: true)
 
     redirect_to controller: 'results',
                 action: 'view_marks',

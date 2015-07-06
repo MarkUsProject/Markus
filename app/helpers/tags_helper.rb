@@ -1,6 +1,6 @@
 module TagsHelper
   def get_tags_table_info
-    tags = Tag.all(order: 'name')
+    tags = Tag.order(:name)
 
     tags.map do |tag|
       t = tag.attributes
@@ -86,9 +86,8 @@ module TagsHelper
     grouping = Grouping.find(g_id)
     grouping_tags = grouping.tags
 
-    all_tags = Tag.all
-    all_tags.delete_if do |t|
-      grouping_tags.include?(t)
+    all_tags = Tag.all.select do |t|
+      !grouping_tags.include?(t)
     end
 
     all_tags

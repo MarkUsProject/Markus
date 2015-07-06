@@ -151,10 +151,10 @@ class MainController < ApplicationController
       return
     end
     @assignments = Assignment.unscoped.includes([
-      :assignment_stat, :ta_memberships,
+      :assignment_stat, :groupings, :ta_memberships,
       groupings: :current_submission_used,
       submission_rule: :assignment
-    ]).all(order: 'due_date ASC')
+    ]).order('due_date ASC')
     @grade_entry_forms = GradeEntryForm.unscoped.includes([
       :grade_entry_items
     ]).all(order: 'id ASC')
@@ -386,6 +386,13 @@ private
       validation_result[:error] = I18n.t('external_authentication_not_supported')
       return validation_result
     end
+
+    if (defined? VALIDATE_CUSTOM_STATUS_DISPLAY) &&
+       authenticate_response == User::AUTHENTICATE_CUSTOM_MESSAGE
+      validation_result[:error] = VALIDATE_CUSTOM_STATUS_DISPLAY
+      return validation_result
+    end
+
     if authenticate_response == User::AUTHENTICATE_SUCCESS
       # Username/password combination is valid. Check if user is
       # allowed to use MarkUs.
@@ -399,11 +406,19 @@ private
         # not a good idea to report this to the outside world. It makes it
         # easier for attempted break-ins
         # if one can distinguish between existent and non-existent users.
-        validation_result[:error] = I18n.t(:login_failed)
+        if defined? VALIDATE_USER_NOT_ALLOWED_DISPLAY
+          validation_result[:error] = VALIDATE_USER_NOT_ALLOWED_DISPLAY
+        else
+          validation_result[:error] = I18n.t(:login_failed)
+        end
         return validation_result
       end
     else
-      validation_result[:error] = I18n.t(:login_failed)
+      if defined? VALIDATE_LOGIN_INCORRECT_DISPLAY
+        validation_result[:error] = VALIDATE_LOGIN_INCORRECT_DISPLAY
+      else
+        validation_result[:error] = I18n.t(:login_failed)
+      end
       return validation_result
     end
 
@@ -435,7 +450,11 @@ private
       # not a good idea to report this to the outside world. It makes it
       # easier for attempted break-ins
       # if one can distinguish between existent and non-existent users.
-      validation_result[:error] = I18n.t(:login_failed)
+      if defined? VALIDATE_USER_NOT_ALLOWED_DISPLAY
+        validation_result[:error] = VALIDATE_USER_NOT_ALLOWED_DISPLAY
+      else
+        validation_result[:error] = I18n.t(:login_failed)
+      end
       return validation_result
     end
 

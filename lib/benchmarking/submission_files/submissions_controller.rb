@@ -238,8 +238,14 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
 
     if current_user.ta?
-      @groupings = @assignment.ta_memberships.find_all_by_user_id(current_user)
-                              .map { |m| m.grouping }
+      @groupings = []
+      @assignment.ta_memberships
+                .where(user_id: current_user.id)
+                .each do |membership|
+        @groupings.push(membership.grouping)
+      end
+    elsif current_user.admin?
+      @groupings = @assignment.groupings
     else
       @groupings = @assignment.groupings
         .includes(:assignment,
@@ -259,7 +265,7 @@ class SubmissionsController < ApplicationController
   end
 
   def index
-    @assignments = Assignment.all(order: :id)
+    @assignments = Assignment.order(:id)
     render :index, layout: 'sidebar'
   end
 

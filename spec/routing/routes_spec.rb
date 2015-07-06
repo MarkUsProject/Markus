@@ -336,7 +336,7 @@ describe 'An Assignment' do
       it 'routes POST update properly' do
         expect(post: autom_path).to route_to(
           controller: autom_ctrl,
-          action: 'update',
+          action: 'create',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
@@ -401,16 +401,6 @@ describe 'An Assignment' do
             assignment_id: assignment.id.to_s,
             locale: 'en')
       end
-
-      it 'routes GET rename_group_dialog properly' do
-        expect(get: group_path + '/' + group.id.to_s + '/rename_group_dialog')
-          .to route_to(
-            controller: group_ctrl,
-            action: 'rename_group_dialog',
-            id: group.id.to_s,
-            assignment_id: assignment.id.to_s,
-            locale: 'en')
-      end
     end
 
     context 'collection' do
@@ -430,8 +420,8 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET use_another_assignment_groups properly' do
-        expect(get: group_path + '/use_another_assignment_groups').to route_to(
+      it 'routes POST use_another_assignment_groups properly' do
+        expect(post: group_path + '/use_another_assignment_groups').to route_to(
           controller: group_ctrl,
           action: 'use_another_assignment_groups',
           assignment_id: assignment.id.to_s,
@@ -836,8 +826,8 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes GET cancel_remark_request properly' do
-          expect(get: res_path + '/1/cancel_remark_request').to route_to(
+        it 'routes DELETE cancel_remark_request properly' do
+          expect(delete: res_path + '/1/cancel_remark_request').to route_to(
             controller: res_ctrl,
             action: 'cancel_remark_request',
             id: '1',
@@ -916,17 +906,6 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes POST update_overall_remark_comment properly' do
-          expect(post: res_path + '/1/update_overall_remark_comment')
-            .to route_to(
-              controller: res_ctrl,
-              action: 'update_overall_remark_comment',
-              id: '1',
-              assignment_id: assignment.id.to_s,
-              submission_id: submission.id.to_s,
-              locale: 'en')
-        end
-
         it 'routes POST update_marking_state properly' do
           expect(post: res_path + '/1/update_marking_state').to route_to(
             controller: res_ctrl,
@@ -937,8 +916,8 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes GET update_remark_request properly' do
-          expect(get: res_path + '/1/update_remark_request').to route_to(
+        it 'routes PUT update_remark_request properly' do
+          expect(put: res_path + '/1/update_remark_request').to route_to(
             controller: res_ctrl,
             action: 'update_remark_request',
             id: '1',

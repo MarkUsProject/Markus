@@ -33,6 +33,7 @@ namespace :markus do
         $stderr.puts error_message[0] + ' ' + error_message[1]
       end
     else
+      a.set_api_key
       puts "Instructor #{user_name} successfully created"
     end
   end

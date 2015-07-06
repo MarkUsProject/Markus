@@ -13,7 +13,7 @@
 <% end %>
 
 
-<% @assignments = Assignment.all(order: 'short_identifier ASC') %>
+<% @assignments = Assignment.order(short_identifier: :asc) %>
 
 <% @assignments.each do |assignment| %>
   <% if assignment == @assignments.first %>

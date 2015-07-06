@@ -1,2 +1,0 @@
-page.replace_html 'upload_dialog', partial: 'groups/modal_dialogs/upload'
-page.call('modalUpload.open')

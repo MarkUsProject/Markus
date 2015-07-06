@@ -1,4 +1,0 @@
-page.replace_html 'rename_group_dialog', partial: 'groups/modal_dialogs/rename_group'
-
-page.call('modal_rename.open')
-page.call("$('new_groupname').focus")

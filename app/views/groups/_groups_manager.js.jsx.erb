@@ -61,6 +61,15 @@
         }.bind(this)
       });
     },
+    componentDidMount: function () {
+      var me = this;
+      jQuery(document).ready(function () {
+        jQuery('#create_group_dialog form').on('ajax:success', function() {
+          modalCreate.close();
+          me.refresh();
+        });
+      });
+    },
     // Asks for new info from backend and sets state accordingly.
     refresh: function() {
       document.getElementById('working').style.display = '';
@@ -337,14 +346,14 @@
     <% else %>
       createGroup: function() {
         modalCreate.open();
-        $('new_group_name').setValue('');
+        jQuery('#new_group_name').val('');
         return false;
       },
     <% end %>
     render: function() {
       return (
-        <button className={'floatRight'} onClick={this.createGroup} >
-          <%= I18n.t('groups.add_new') %>
+        <button className='floatRight' onClick={this.createGroup} >
+          <%= t('groups.add_new') %>
         </button>
       );
     }

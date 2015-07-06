@@ -2,7 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_contro
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
-require 'mocha/setup'
 
 class ResultsControllerTest < AuthenticatedControllerTest
 
@@ -67,15 +66,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
       assert_response :redirect
     end
 
-    should 'not be able to update overall remark comment' do
-      get :update_overall_remark_comment,
-          :assignment_id => 1,
-          :submission_id => 1,
-          :id => 1
-
-      assert_response :redirect
-    end
-
     should 'not be able to update remark request' do
       get :update_remark_request,
           :assignment_id => 1,
@@ -85,10 +75,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
     end
 
     should 'not be able to cancel remark request' do
-      get :cancel_remark_request,
-          :assignment_id => 1,
-          :submission_id => 1,
-          :id => 1
+      delete :cancel_remark_request,
+             assignment_id: 1,
+             submission_id: 1,
+             id: 1
       assert_response :redirect
     end
 
@@ -224,34 +214,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @new_comment = 'a changed overall comment!'
           post_as @student,
                   :update_overall_comment,
-                  :assignment_id => 1,
-                  :submission_id => 1,
-                  :id => @result.id,
-                  :result => {:overall_comment => @new_comment}
-          assert_response :missing
-          assert render_template 404
-          @result.reload
-          assert_not_equal @result.overall_comment, @new_comment
-        end
-
-        should 'GET on :update_overall_remark_comment' do
-          @new_comment = 'a changed overall remark comment!'
-          get_as @student,
-                  :update_overall_remark_comment,
-                  :assignment_id => 1,
-                  :submission_id => 1,
-                  :id => @result.id,
-                  :result => {:overall_comment => @new_comment}
-          assert_response :missing
-          assert render_template 404
-          @result.reload
-          assert_not_equal @result.overall_comment, @new_comment
-        end
-
-        should 'POST on :update_overall_remark_comment' do
-          @new_comment = 'a changed overall remark comment!'
-          post_as @student,
-                  :update_overall_remark_comment,
                   :assignment_id => 1,
                   :submission_id => 1,
                   :id => @result.id,
@@ -594,7 +556,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                                        membership_status:
                                          StudentMembership::STATUSES[:inviter])
               end
-              @groupings = @assignment.groupings.all(:order => 'id ASC')
+              @groupings = @assignment.groupings.order(:id)
             end
 
             should 'have two separate edit forms with correct actions for' +
@@ -621,7 +583,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                             '/update_overall_comment]'
               assert_select '#overall_remark_comment_edit form[action=' +
                             "#{path_prefix}/#{remark_result.id}" +
-                            '/update_overall_remark_comment]'
+                            '/update_overall_comment]'
             end
 
             should 'edit third result' do
@@ -1017,9 +979,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    mark_id: @mark.id,
                    mark: 'something'
 
-            assert render_template 'mark_verify_result.rjs'
-            assert_response :success
-            # Workaround to assert that the error message made its way to the response
+            assert_response :bad_request
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end
 
@@ -1035,9 +995,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :id => 1,
                    :mark_id => 1,
                    :mark => 1
-            assert render_template 'shared/_handle_error.js.erb'
-            assert_response :success
-            # Workaround to assert that the error message made its way to the response
+            assert_response :bad_request
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end
 
@@ -1050,7 +1008,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :id => 1,
                    :mark_id => @mark.id,
                    :mark => 1
-            assert render_template 'results/marker/_update_mark.rjs'
             assert_response :success
           end
 
@@ -1090,7 +1047,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
                       :extra_mark => { :extra_mark => 1 }
               assert_not_nil assigns :result
               assert_not_nil assigns :extra_mark
-              assert render_template 'results/marker/add_extra_mark_error'
               assert_response :success
             end
 
@@ -1154,21 +1110,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result.reload
           assert_equal @result.overall_comment, @overall_comment
         end
-
-        should 'POST on :update_overall_remark_comment' do
-          @result = Result.make
-          @overall_comment = 'A new overall remark comment!'
-          post_as @admin,
-                  :update_overall_remark_comment,
-                  :assignment_id => 1,
-                  :submission_id => 1,
-                  :id => @result.id,
-                  :result => {:overall_comment => @overall_comment}
-
-          @result.reload
-          assert_equal @result.overall_comment, @overall_comment
-        end
-
       end
     end
   end # An authenticated and authorized admin doing a
@@ -1381,9 +1322,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    id: 1,
                    mark_id: @mark.id,
                    mark: 'something'
-            assert render_template 'mark_verify_result.rjs'
-            assert_response :success
-            # Workaround to assert that the error message made its way to the response
+            assert_response :bad_request
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end
 
@@ -1498,19 +1437,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result = Result.make
           post_as @ta,
                   :update_overall_comment,
-                  :assignment_id => 1,
-                  :submission_id => 1,
-                  :id => @result.id,
-                  :result => {:overall_comment => @overall_comment}
-          @result.reload
-          assert_equal @result.overall_comment, @overall_comment
-        end
-
-        should 'POST on :update_overall_remark_comment' do
-          @result = Result.make
-          @overall_comment = 'A new overall remark comment!'
-          post_as @ta,
-                  :update_overall_remark_comment,
                   :assignment_id => 1,
                   :submission_id => 1,
                   :id => @result.id,

@@ -455,7 +455,7 @@ describe FlexibleCriteriaController do
         end
 
         it 'should set the flash' do
-          is_expected.to set_the_flash
+          is_expected.to set_flash
         end
 
         it 'should respond with redirect' do
@@ -475,7 +475,7 @@ describe FlexibleCriteriaController do
           expect(assigns(:assignment)).to be_truthy
         end
         it 'should set the flash' do
-          is_expected.to set_the_flash
+          is_expected.to set_flash
         end
 
         it 'should respond with redirect' do
@@ -498,7 +498,7 @@ describe FlexibleCriteriaController do
           expect(assigns(:assignment)).to be_truthy
         end
         it 'should set the flash' do
-          is_expected.to set_the_flash
+          is_expected.to set_flash
         end
 
         it 'should respond with redirect' do
@@ -571,7 +571,7 @@ describe FlexibleCriteriaController do
               criterion: [@criterion2.id,
                           @criterion.id],
               assignment_id: @assignment.id
-      is_expected.to render_template('')
+      is_expected.to render_template('flexible_criteria/update_positions')
       is_expected.to respond_with(:success)
 
       c1 = FlexibleCriterion.find(@criterion.id)

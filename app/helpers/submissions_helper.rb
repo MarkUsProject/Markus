@@ -42,27 +42,26 @@ module SubmissionsHelper
   end
 
   def get_submissions_table_info(assignment, groupings)
-    parts = groupings.partition do |grouping|
-      (grouping.has_submission? &&
-       grouping.current_submission_used.remark_submitted?)
-    end
-    results = Result.find(parts[0]) +
-              Result.where(submission_id:
-                             parts[1].collect(&:current_submission_used))
-
+    parts = groupings.select &:has_submission?
+    results = Result.where(submission_id:
+                             parts.map(&:current_submission_used))
+                    .order(:id)
     groupings.map do |grouping|
       g = Hash.new
       begin # if anything raises an error, catch it and log in the object.
         submission = grouping.current_submission_used
         if submission.nil?
           result = nil
-        else
+        elsif !submission.remark_submitted?
           result = (results.select do |r|
             r.submission_id == submission.id
           end).first
+        else
+          result = (results.select do |r|
+            r.id == submission.remark_result_id
+          end).first
         end
         final_due_date = assignment.submission_rule.get_collection_time
-
         g[:name] = grouping.get_group_name
         g[:id] = grouping.id
         g[:section] = grouping.section
@@ -138,7 +137,7 @@ module SubmissionsHelper
       end
 
       # Collect and count submissions for all groupings of this section
-      groupings = Grouping.find_all_by_assignment_id(assignment.id)
+      groupings = Grouping.where(assignment_id: assignment.id)
       submission_collector = SubmissionCollector.instance
       groupings.each do |grouping|
         if grouping.section == section.name
@@ -238,6 +237,19 @@ module SubmissionsHelper
     File.basename(file_name).gsub(
         SubmissionFile::FILENAME_SANITIZATION_REGEXP,
         SubmissionFile::SUBSTITUTION_CHAR)
+  end
+
+  # Helper methods to determine remark request status on a submission
+  def remark_in_progress(submission)
+    submission.remark_result &&
+      submission.remark_result.marking_state == Result::MARKING_STATES[:partial]
+  end
+
+  def remark_complete_but_unreleased(submission)
+    submission.remark_result &&
+      (submission.remark_result.marking_state ==
+         Result::MARKING_STATES[:complete]) &&
+        !submission.remark_result.released_to_students
   end
 
   # Checks if all the assignments for the current submission are marked.
