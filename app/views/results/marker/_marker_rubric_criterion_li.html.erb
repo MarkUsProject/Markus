@@ -7,9 +7,6 @@
     <div id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>"
       class="float_left mark_criterion_expand expanded" >- &nbsp;
     </div>
-    <div id="mark_<%=mark.id%>_nil" class="mark_reset" onclick="new Ajax.Request('<%= update_mark_assignment_submission_results_path(mark_id: mark.id, mark: nil) %>',{asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
-      <%=image_tag "icons/pencil_delete.png", title: "reset mark"%>
-    </div>
     <%= render partial: 'results/common/rubric_criterion',
                locals: {mark_criterion: mark_criterion,
                         mark: mark,
@@ -34,8 +31,11 @@
 
             if level_desc && !level_desc.empty? -%>
               <tr>
-                 <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
-  			     onclick="new Ajax.Request('<%= update_mark_assignment_submission_results_path(mark_id: mark.id, mark: num_levels) %>',{asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
+                <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
+                    data-action="
+                      <%= update_mark_assignment_submission_results_path(
+                            mark_id: mark.id, mark: num_levels) %>"
+                    onclick="update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)">
                    <strong><%=num_levels%>: <%= level_name %></strong>
                    &nbsp;<%=level_desc%>
                  </td>

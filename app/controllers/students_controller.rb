@@ -30,7 +30,7 @@ class StudentsController < ApplicationController
 
   def edit
     @user = Student.find_by_id(params[:id])
-    @sections = Section.all(order: 'name')
+    @sections = Section.order(:name)
   end
 
   def update
@@ -42,7 +42,7 @@ class StudentsController < ApplicationController
       redirect_to action: 'index'
     else
       flash[:error] = I18n.t('students.update.error')
-      @sections = Section.all(order: 'name')
+      @sections = Section.order(:name)
       render :edit
     end
   end
@@ -72,7 +72,7 @@ class StudentsController < ApplicationController
 
   def new
     @user = Student.new
-    @sections = Section.all(order: 'name')
+    @sections = Section.order(:name)
   end
 
   def create
@@ -85,7 +85,7 @@ class StudentsController < ApplicationController
                                user_name: @user.user_name)
       redirect_to action: 'index' # Redirect
     else
-      @sections = Section.all(order: 'name')
+      @sections = Section.order(:name)
       flash[:error] = I18n.t('students.create.error')
       render :new
     end
@@ -101,7 +101,7 @@ class StudentsController < ApplicationController
   #downloads users with the given role as a csv list
   def download_student_list
     #find all the users
-    students = Student.all(order: 'user_name')
+    students = Student.order(:user_name)
     case params[:format]
     when 'csv'
       output = User.generate_csv_list(students)

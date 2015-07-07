@@ -17,17 +17,20 @@ class SubmissionTest < ActiveSupport::TestCase
   should 'create a new remark result' do
     s = Submission.make
     s.save
-    s.create_remark_result
-    assert_not_nil s.get_remark_result, 'Remark result was supposed to be created'
-    assert_equal s.get_remark_result.marking_state, Result::MARKING_STATES[:unmarked], 'Remark result marking_state should have been automatically set to unmarked'
+    s.make_remark_result
+    assert_not_nil s.remark_result, 'Remark result was supposed to be created'
+    assert_equal s.remark_result.marking_state,
+                 Result::MARKING_STATES[:unmarked],
+                 'Remark result marking_state should have been ' +
+                   'automatically set to unmarked'
   end
 
   context 'A submission with a remark result submitted' do
     setup do
       @submission = Submission.make
       @submission.save
-      @submission.create_remark_result
-      @result = @submission.get_remark_result
+      @submission.make_remark_result
+      @result = @submission.remark_result
       @result.marking_state = Result::MARKING_STATES[:partial]
       @result.save
     end
@@ -45,7 +48,7 @@ class SubmissionTest < ActiveSupport::TestCase
     setup do
       @submission = Submission.make
       @submission.save
-      @submission.create_remark_result
+      @submission.make_remark_result
     end
 
     should 'return true on has_remark? call' do
@@ -94,9 +97,12 @@ class SubmissionTest < ActiveSupport::TestCase
 
   should 'create a remark result' do
     s = Submission.make
-    s.create_remark_result
-    assert_not_nil s.get_remark_result, 'Remark result was supposed to be created'
-    assert_equal s.get_remark_result.marking_state, Result::MARKING_STATES[:unmarked], 'Remark result marking_state should have been automatically set to unmarked'
+    s.make_remark_result
+    assert_not_nil s.remark_result, 'Remark result was supposed to be created'
+    assert_equal s.remark_result.marking_state,
+                 Result::MARKING_STATES[:unmarked],
+                 'Remark result marking_state should have been ' +
+                   'automatically set to unmarked'
   end
 
 end

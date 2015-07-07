@@ -108,8 +108,6 @@ fr:
     due_date:           "Date de retour "
     deadline_grace_tokens: "Date limite en <br> utilisant tous les <br> jetons de grâce <br> restants"
     deadline_max_penalty: "Date limite y <br> compris peine <br> maximale fin"
-    iso_date_format_example:    "Format : AAAA-MM-JJ (Exemple : 2009-01-13)"
-    iso_due_date_format_example:    "Format : AAAA-MM-JJ HH:MM (Exemple : 2009-01-13 17:44)"
     create_new_assignment:      "Créer un nouveau projet"
     manage_course_work: "Gestion du cours"
     repository_folder:  "Dossier du projet<span class='required_field'>*</span>"
@@ -124,7 +122,6 @@ fr:
       not_complete: "La note du groupe %{group_name} ne peut pas être publiée : l'évalutation n'est pas indiquée comme étant terminée."
       not_complete_unrelease: "La note du groupe %{group_name} ne peut pas être masquée : l'évalutation n'est pas indiquée comme étant terminée."
       no_submission: "%{group_name} n'a pas d'envoi"
-      no_result: "%{group_name} n'a pas de résultat"
       result_not_saved: "Le résultat du groupe %{group_name} n'a pas pu être sauvegardé."
     collect_submissions:
       collect_all: "Récupérer tous les envois"
@@ -140,7 +137,7 @@ fr:
       could_not_collect_section: "Les envois de la section %{section_name} pour le projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération pour cette section n'est pas encore passée."
       no_submission_for_section: "Il n'y a ancun envoi à récupérer pour la section %{section_name}."
       successfully_collected: "Récupération de %{collected} envoi(s)."
-      marking_incomplete_warning: "Attention: Certains rendus n'ont pas été complètement évalués.\n\nÊtes-vous sûr de vouloir continuer?"
+      marking_incomplete_warning: "Attention: Cela ne fera que télécharger les envois qui ont été recuillis.\n\nÊtes-vous sûr de vouloir continuer?"
     assignment:
         hidden: "%{assignment_text} (masqué)"
         assignment: "Projet %{short_identifier}"
@@ -276,6 +273,7 @@ fr:
     marker:
       new_annot: "Nouv. annot."
       overall_comments: "Commentaire général"
+      overall_comments_success: "Commentaires généraux mis à jour avec succès."
       current_annotations: "Annotations en cours"
       across_all_submission_files: "Annnotations en cours sur tous les fichiers envoyés. Cliquer sur le numéro de ligne pour vous rendre directement au bon endroit sur le fichier."
       annot_summary: "Liste annot."
@@ -419,7 +417,7 @@ fr:
       grading_can_begin_after: "L'évaluation commencera à partir du %{time}"
       submissions:	    "Soumissions: %{short_identifier}"
       csv_report:           "Rapport CSV"
-      detailled_csv_report: "Rappost CSV détaillé"
+      detailed_csv_report: "Rappost CSV détaillé"
       subversion_repo_list: "Liste des dépôts Subversion"
       subversion_export_file: "Commandes SVN pour exporter les projets"
       errors:               "Erreurs"
@@ -613,7 +611,6 @@ fr:
 
     mark:
       error:
-        save: "Erreur dans l'enregistrement de la note : "
         validate_flexible: "La note doit être comprise entre 0 et la note maximale du critère."
         validate_rubric: "La note doit être comprise entre 0 et 4." #TODO: Why 4?
 
@@ -1199,6 +1196,12 @@ fr:
         locale_date_only: "DD d MM yy"
         js_date_time:     "dddd D MMMM YYYY HH:mm"
         js_date:          "dddd D MMMM YYYY"
+
+        old_date:             "yy-dd-mm"
+        js_old_date:          "YYYY-DD-MM HH:mm"
+        js_old_date:          "YYYY-DD-MM"
+        date_placeholder:     "AAAA-JJ-MM"
+        datetime_placeholder: "AAAA-JJ-MM HH:MM"
 
       day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
       abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]

@@ -18,15 +18,9 @@ class GradeEntryStudentTa < ActiveRecord::Base
     # Create non-existing association between grade entry students and TAs.
     columns = [:grade_entry_student_id, :ta_id]
     # Get all existing associations to avoid violating the unique constraint.
-    # TODO replace `select ... map` with pluck when migrated to Rails 4.
-    existing_values = select(columns)
+    existing_values = GradeEntryStudentTa
       .where(grade_entry_student_id: grade_entry_student_ids, ta_id: ta_ids)
-      .map do |grade_entry_student_ta|
-        [
-          grade_entry_student_ta.grade_entry_student_id,
-          grade_entry_student_ta.ta_id
-        ]
-      end
+      .pluck(:grade_entry_student_id, :ta_id)
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(grade_entry_student_ids, ta_ids) - existing_values

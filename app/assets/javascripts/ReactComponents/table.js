@@ -508,8 +508,10 @@ function sort_by_column(data, column, direction, compare) {
       } else if (a.props.hasOwnProperty('src')) {
         return a.props.src;
       // Is a react component, get innerHTML
-      } else {
+      } else if (a.props.hasOwnProperty('dangerouslySetInnerHTML')) {
         return a.props.dangerouslySetInnerHTML.__html.toLowerCase();
+      } else {
+        return React.renderComponentToString(a);
       }
     }
     return a;

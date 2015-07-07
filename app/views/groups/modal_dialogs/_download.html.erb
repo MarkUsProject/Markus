@@ -1,9 +1,0 @@
-<div id="download">
-  <h2><%= I18n.t("groups.download.download_groups_file") %></h2>
-  <%= link_to t("groups.download.download_csv"),
-    {controller:"groups", action:"download_grouplist", id: @assignment.id}, onclick: "modalDownload.close();" %>
-  <br>
-  <br>
-  <button onclick="modalDownload.close(); return false;"><%= I18n.t('cancel') %>
-  </button>
-</div>

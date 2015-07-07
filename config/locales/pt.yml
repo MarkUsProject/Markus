@@ -105,8 +105,6 @@ pt:
     due_date:           "Prazo de entrega" 
     deadline_grace_tokens: "Prazo usando todos <br> os restantes fichas <br> de carência"    
     deadline_max_penalty: "Prazo incluindo pena <br> máxima tarde"
-    iso_date_format_example:    "Formato:  YYYY-MM-DD - Exemplo:  2009-01-13"
-    iso_due_date_format_example:    "Formato:  YYYY-MM-DD HH:MM - Exemplo:  2009-01-13 17:44"
     create_new_assignment:      "Inserir projeto"
     manage_course_work: "Gerenciar trabalho do curso"
     repository_folder:  "Pasta do repositório <span class='required_field'>*</span>"
@@ -121,7 +119,6 @@ pt:
       not_complete: "Não pode liberar resultado para %{group_name}: o estado da avaliação não está completo"
       not_complete_unrelease: "Não é possível esconder o resultado para %{group_name}: a avaliação não está completa"
       no_submission: "%{group_name} não tem submissões"
-      no_result: "%{group_name} não tem resultados"
       result_not_saved: "O resultado da submissão de %{group_name} não pode ser salvo"
     collect_submissions:
       collect_all: "Coletar todas as submissões"
@@ -137,7 +134,7 @@ pt:
       could_not_collect_section: "Coleta de submissões para sessão %{section_name} e projeto %{assignment_identifier} não foi possível - a data de coleta não foi atingida."
       no_submission_for_section: "Não há submissões da sessão %{section_name} para coletar."
       successfully_collected: " %{collected} submissões coletadas com sucesso."
-      marking_incomplete_warning: "Nota: Nem todas os projetos foram avaliados.\n\nTem certeza que deseja continuar?"
+      marking_incomplete_warning: "Nota: Isso só vai baixar os submissões que foram recolhidos.\n\nTem certeza que deseja continuar?"
     assignment:
         hidden: "%{assignment_text} (oculto)"
         assignment: "Projetos %{short_identifier}"
@@ -273,6 +270,7 @@ pt:
     marker:
       new_annot: "Nova anotação"
       overall_comments: "Comentários gerais"
+      overall_comments_success: "Comentários gerais atualizado com sucesso."
       current_annotations: "Anotações atuais"
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
       annot_summary: "Resumo de anot."
@@ -416,7 +414,7 @@ pt:
       grading_can_begin_after: "Avaliação pode começar depois %{time}"
       submissions: 	    "Submissões: %{short_identifier}"
       csv_report:           "Relatório CSV"
-      detailled_csv_report: "Relatório detalhado CSV"
+      detailed_csv_report: "Relatório detalhado CSV"
       subversion_repo_list: "Lista de repositórios subversion"
       subversion_export_file: "Comando SVN para exportar projetos"
       errors:               "Erros"
@@ -596,7 +594,6 @@ pt:
 
     mark:
       error:
-        save: "Não foi possível salvar esta avaliação!: "
         validate_flexible: "deve ser entre 0 e a nota máxima do critério"
         validate_rubric: "deve ser um inteiro entre 0 e 4"
 
@@ -1182,6 +1179,12 @@ pt:
         locale_date_only: "DD, d 'de' MM 'de' yy"
         js_date_time:     "dddd, D [de] MMMM [de] YYYY HH:mm"
         js_date:          "dddd, D [de] MMMM [de] YYYY"
+
+        old_date:             "yy-dd-mm"
+        js_old_date:          "YYYY-DD-MM HH:mm"
+        js_old_date_only:     "YYYY-DD-MM"
+        date_placeholder:     "AAAA-DD-MM"
+        datetime_placeholder: "AAAA-DD-MM HH:MM"
 
       day_names: [domingo, segunda-feira, terça-feira, quarta-feira, quinta-feira, sexta-feira, sábado]
       abbr_day_names: [dom, seg, ter, qua, qui, sex, sab]

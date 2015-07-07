@@ -25,9 +25,9 @@ class GroupsController < ApplicationController
   # Verify that all functions below are included in the authorize filter above
 
   def new
-    @assignment = Assignment.find(params[:assignment_id])
+    assignment = Assignment.find(params[:assignment_id])
     begin
-      @assignment.add_group(params[:new_group_name])
+      assignment.add_group(params[:new_group_name])
     rescue Exception => e
       flash[:error] = e.message
     ensure
@@ -42,10 +42,10 @@ class GroupsController < ApplicationController
     @assignment = grouping.assignment
     @errors = []
     @removed_groupings = []
-    students_to_remove = grouping.students.all
-		grouping.student_memberships.all.each do |member|
-			grouping.remove_member(member.id)
-		end
+    students_to_remove = grouping.students.to_a
+    grouping.student_memberships.each do |member|
+      grouping.remove_member(member.id)
+    end
     # TODO: return errors through request
     if grouping.has_submission?
         @errors.push(grouping.group.group_name)
@@ -56,23 +56,6 @@ class GroupsController < ApplicationController
     head :ok
   end
 
-  def upload_dialog
-    @assignment = Assignment.find(params[:id])
-    render partial: 'groups/modal_dialogs/upload_dialog', handlers: [:rjs]
-  end
-
-  def download_dialog
-    @assignment = Assignment.find(params[:id])
-    render partial: 'groups/modal_dialogs/download_dialog', handlers: [:rjs]
-  end
-
-  def rename_group_dialog
-    @assignment = Assignment.find(params[:assignment_id])
-    # id is really the grouping_id, this is due to rails routing
-    @grouping_id = params[:id]
-    render partial: 'groups/modal_dialogs/rename_group_dialog', handlers: [:rjs]
-  end
-
   def rename_group
     @assignment = Assignment.find(params[:assignment_id])
     # group_id is really the grouping_id, this is due to rails routing
@@ -80,8 +63,7 @@ class GroupsController < ApplicationController
     @group = @grouping.group
 
     # Checking if a group with this name already exists
-    if (@groups = Group.first(conditions: {group_name:
-    [params[:new_groupname]]}))
+    if (@groups = Group.where(group_name: params[:new_groupname]).first)
        existing = true
        groupexist_id = @groups.id
     end
@@ -99,9 +81,8 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.all(conditions: ["assignment_id =
-      :assignment_id and group_id = :groupexist_id", {groupexist_id:
-      groupexist_id, assignment_id: @assignment.id}])
+      if Grouping.where(assignment_id: @assignment.id, group_id: groupexist_id)
+                 .to_a
          flash[:error] = I18n.t('groups.rename_group.already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
@@ -125,7 +106,9 @@ class GroupsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @all_assignments = Assignment.all(order: :id)
+    @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .where.not(id: @assignment.id)
+                                   .order(:id)
     render 'index'
   end
 
@@ -207,7 +190,7 @@ class GroupsController < ApplicationController
        groupings.each do |grouping|
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc
-         grouping.student_memberships.all(include: :user).each do |member|
+         grouping.student_memberships.includes(:user).each do |member|
             group_array.push(member.user.user_name)
          end
          csv << group_array
@@ -218,28 +201,29 @@ class GroupsController < ApplicationController
   end
 
   def use_another_assignment_groups
-    @target_assignment = Assignment.find(params[:assignment_id])
-    source_assignment = Assignment.find(params[:clone_groups_assignment_id])
+    target_assignment = Assignment.find(params[:assignment_id])
+    source_assignment = Assignment.find(params[:clone_assignment_id])
 
     if source_assignment.nil?
-      flash[:warning] = I18n.t('groups.csv.could_not_find_source')
-    end
-    if @target_assignment.nil?
-      flash[:warning] = I18n.t('groups.csv.could_not_find_target')
+      flash[:warning] = t('groups.csv.could_not_find_source')
+    elsif target_assignment.nil?
+      flash[:warning] = t('groups.csv.could_not_find_target')
+    else
+      # Clone the groupings
+      target_assignment.clone_groupings_from(source_assignment.id)
     end
 
-    # Clone the groupings
-    @target_assignment.clone_groupings_from(source_assignment.id)
+    redirect_to :back
   end
 
   # These actions act on all currently selected students & groups
   def global_actions
-    assignment = Assignment.find(params[:assignment_id],
-                                  include: [{
+    assignment = Assignment.includes([{
                                       groupings: [{
                                           student_memberships: :user,
                                           ta_memberships: :user},
                                         :group]}])
+                            .find(params[:assignment_id])
     action = params[:global_actions]
     grouping_ids = params[:groupings]
     student_ids = params[:students]
@@ -314,8 +298,8 @@ class GroupsController < ApplicationController
       # Remove each student from every group.
       students_to_remove = []
       groupings.each do |grouping|
-        students_to_remove = students_to_remove.concat(grouping.students.all)
-        grouping.student_memberships.all.each do |mem|
+        students_to_remove = students_to_remove.concat(grouping.students.to_a)
+        grouping.student_memberships.each do |mem|
           grouping.remove_member(mem.id)
         end
         grouping.delete_grouping

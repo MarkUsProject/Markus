@@ -96,7 +96,7 @@
     <p><%= t('tags.create.tag_prompt') %></p>
     <%= form_for :create_new,
                  url: assignment_tags_path(@assignment),
-                 html: { multipart: true, size: 1 } do |f| %>
+                 html: { multipart: true } do |f| %>
         <div>
           <p><%= f.text_field :name,
                               placeholder: t('tags.create.name_prompt') %></p>
@@ -126,7 +126,7 @@
     <p><%= t('tags.delete.tag_prompt') %></p>
     <%= form_for :delete,
                  url: assignment_tags_path(@assignment),
-                 html: { multipart: true, size: 1 } do |f| %>
+                 html: { multipart: true } do |f| %>
 
     <% end %>
     <input type='reset'

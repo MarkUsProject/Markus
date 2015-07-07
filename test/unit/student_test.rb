@@ -16,7 +16,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
-require 'mocha/setup'
 
 class StudentTest < ActiveSupport::TestCase
 
@@ -448,7 +447,8 @@ class StudentTest < ActiveSupport::TestCase
           end
 
           should 'create the group' do
-            assert Group.first(:conditions => {:group_name => @student.user_name}), 'the group has not been created'
+            assert Group.where(group_name: @student.user_name).first,
+                   'the group has not been created'
           end
 
           should 'have their repo name equal their user name' do

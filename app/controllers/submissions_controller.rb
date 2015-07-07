@@ -1,5 +1,4 @@
 require 'zip'
-require 'cgi'
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
@@ -9,38 +8,30 @@ class SubmissionsController < ApplicationController
 
   before_filter :authorize_only_for_admin,
                 except: [:server_time,
-                         :populate_file_manager,
                          :populate_file_manager_react,
                          :browse,
-                         :index,
                          :file_manager,
                          :update_files,
                          :download,
                          :downloads,
-                         :s_table_paginate,
                          :collect_and_begin_grading,
                          :download_groupings_files,
                          :manually_collect_and_begin_grading,
                          :collect_ta_submissions,
                          :repo_browser,
-                         :update_converted_pdfs,
                          :update_submissions,
                          :populate_submissions_table]
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
-                       :index,
-                       :s_table_paginate,
                        :collect_and_begin_grading,
                        :manually_collect_and_begin_grading,
                        :collect_ta_submissions,
                        :repo_browser,
                        :download_groupings_files,
-                       :update_converted_pdfs,
                        :update_submissions,
                        :populate_submissions_table]
   before_filter :authorize_for_student,
                 only: [:file_manager,
-                       :populate_file_manager,
                        :update_files,
                        :populate_file_manager_react]
   before_filter :authorize_for_user, only: [:download, :downloads]
@@ -98,7 +89,6 @@ class SubmissionsController < ApplicationController
                                 date: revision.timestamp }
       end
     end
-
     respond_to do |format|
       format.html
       format.json do
@@ -164,9 +154,12 @@ class SubmissionsController < ApplicationController
   def manually_collect_and_begin_grading
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
-    SubmissionCollector.instance.manually_collect_submission(@grouping,
-                                                             @revision_number)
-    redirect_to action: 'update_converted_pdfs', id: @grouping.id
+    submission = SubmissionCollector.instance.manually_collect_submission(
+      @grouping, @revision_number, false)
+    redirect_to edit_assignment_submission_result_path(
+      assignment_id: @grouping.assignment_id,
+      submission_id: submission.id,
+      id: submission.get_latest_result.id)
   end
 
   def collect_and_begin_grading
@@ -186,7 +179,7 @@ class SubmissionsController < ApplicationController
   end
 
   def collect_all_submissions
-    assignment = Assignment.find(params[:assignment_id], include: [:groupings])
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(assignment.groupings)
@@ -204,9 +197,9 @@ class SubmissionsController < ApplicationController
   def collect_ta_submissions
     assignment = Assignment.find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
-      groupings = assignment.groupings.all(include: :tas,
-                                           conditions: ['users.id = ?',
-                                                        current_user.id])
+      groupings = assignment.groupings
+                            .joins(:tas)
+                            .where(users: { id: current_user.id })
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(groupings)
       flash[:success] =
@@ -220,58 +213,40 @@ class SubmissionsController < ApplicationController
                 id: assignment.id
   end
 
-  def update_converted_pdfs
-    @grouping = Grouping.find(params[:grouping_id])
-    @submission = @grouping.current_submission_used
-    @pdf_count = 0
-    @converted_count = 0
-    unless @submission.nil?
-      @submission.submission_files.each do |file|
-        if file.is_pdf?
-          @pdf_count += 1
-          if file.is_converted
-            @converted_count += 1
-          end
-        end
-      end
-    end
-  end
-
+  # The table of submissions for an assignment and related actions and links.
   def browse
     @assignment = Assignment.find(params[:assignment_id])
     @groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                        current_user)
-    @section_column = ''
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
-        content: '" + I18n.t(:'browse_submissions.section') + "',
+        content: '#{t(:'browse_submissions.section')}',
         sortable: true
       },"
+    else
+      @section_column = ''
     end
 
     if @assignment.submission_rule.type == 'GracePeriodSubmissionRule'
       @grace_credit_column = "{
         id: 'grace_credits_used',
-        content: '" + I18n.t(:'browse_submissions.grace_credits_used') + "',
+        content: '#{t(:'browse_submissions.grace_credits_used')}',
         sortable: true,
         compare: compare_numeric_values,
         searchable: false
       },"
+    else
+      @grace_credit_column = ''
     end
   end
 
   def populate_submissions_table
-    @assignment = Assignment.find(params[:assignment_id])
-    @groupings = Grouping.get_groupings_for_assignment(@assignment,
-                                                       current_user)
+    assignment = Assignment.find(params[:assignment_id])
+    groupings = Grouping.get_groupings_for_assignment(assignment,
+                                                      current_user)
 
-    render json: get_submissions_table_info(@assignment, @groupings)
-  end
-
-  def index
-    @assignments = Assignment.all(order: :id)
-    render :index, layout: 'sidebar'
+    render json: get_submissions_table_info(assignment, groupings)
   end
 
   # update_files action handles transactional submission of files.
@@ -475,25 +450,10 @@ class SubmissionsController < ApplicationController
                   filename: params[:file_name]
       else
         # Otherwise, sanitize it for HTML and blast it out to the screen
-        sanitized_contents = CGI.escapeHTML(file_contents)
+        sanitized_contents = ERB::Util.html_escape(file_contents)
         render text: sanitized_contents, layout: 'sanitized_html'
       end
     end
-  end
-
-  ##
-  # Checks if all the assignments for the current submission are marked
-  # returns true if all assignments are marked completely
-  ##
-  def all_assignments_marked?
-    marked = Assignment.joins(groupings: [{ current_submission_used:
-      :results }]).where('assignments.id' => params[:assignment_id],
-                         'results.marking_state' =>
-                             Result::MARKING_STATES[:complete])
-    total_assignments = Assignment.joins(groupings:
-      [{ current_submission_used: :results }]).where('assignments.id' =>
-                                                         params[:assignment_id])
-    marked.size == total_assignments.size
   end
 
   ##
@@ -659,80 +619,42 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  # Release or unrelease submissions
   def update_submissions
-    return unless request.post?
+    if !params.has_key?(:groupings) || params[:groupings].empty?
+      render text: t('results.must_select_a_group'), status: 400
+      return
+    end
+    assignment = Assignment.find(params[:assignment_id])
+    groupings = assignment.groupings.find(params[:groupings])
+    release = params[:release_results]
+
     begin
-      assignment = Assignment.find(params[:assignment_id])
-      groupings = []
+      changed = set_release_on_results(groupings, release)
 
-      if params[:groupings].nil?
-        unless params[:collect_section]
-          raise I18n.t('results.must_select_a_group')
-        end
-      else
-        groupings = assignment.groupings.find(params[:groupings])
-      end
-
-      log_message = ''
-      if params[:release_results]
-        changed = set_release_on_results(groupings, true)
-        log_message = 'Marks released for assignment' +
-            " '#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' (for #{changed} groups)."
-      elsif params[:unrelease_results]
-        changed = set_release_on_results(groupings, false)
-        log_message = 'Marks unreleased for assignment ' +
-            "'#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' (for #{changed} groups)."
-      elsif params[:collect_section]
-        if params[:section_to_collect] == ''
-          raise I18n.t('collect_submissions.must_select_a_section')
-        else
-          collected =
-              collect_submissions_for_section(params[:section_to_collect],
-                                              assignment)
-          if collected > 0
-            flash[:success] =
-                I18n.t('collect_submissions.successfully_collected',
-                       collected: collected)
-          end
-        end
-      end
-
-      unless groupings.empty?
+      if changed > 0
         assignment.update_results_stats
-      end
 
-      if changed && changed > 0
         # These flashes don't get rendered. Find another way to display?
         flash[:success] = I18n.t('results.successfully_changed',
                                  changed: changed)
-        m_logger = MarkusLogger.instance
-        m_logger.log(log_message)
+        if release
+          MarkusLogger.instance.log(
+            'Marks released for assignment' +
+            " '#{assignment.short_identifier}', ID: '" +
+            "#{assignment.id}' for #{changed} group(s).")
+        else
+          MarkusLogger.instance.log(
+            'Marks unreleased for assignment' +
+            " '#{assignment.short_identifier}', ID: '" +
+            "#{assignment.id}' for #{changed} group(s).")
+        end
       end
+
       head :ok
     rescue => e
       render text: e.message, status: 400
     end
-  end
-
-  def unrelease
-    return unless request.post?
-    if params[:groupings].nil?
-      flash[:release_results] = I18n.t('assignment.group.select_a_group')
-    else
-      params[:groupings].each do |g|
-        g.unrelease_results
-      end
-      m_logger = MarkusLogger.instance
-      assignment = Assignment.find(params[:id])
-      m_logger.log('Marks unreleased for assignment' +
-                       " '#{assignment.short_identifier}', ID: '" +
-                       "#{assignment.id}' (for #{params[:groupings].length}" +
-                       ' groups).')
-    end
-    redirect_to action: 'browse',
-                id: params[:id]
   end
 
   # See Assignment.get_simple_csv_report for details
@@ -774,7 +696,7 @@ class SubmissionsController < ApplicationController
 
   # This action is called periodically from file_manager.
   def server_time
-    render partial: 'server_time'
+    render text: I18n.l(Time.zone.now, format: :long_date)
   end
 
   private

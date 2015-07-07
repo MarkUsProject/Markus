@@ -9,8 +9,7 @@ class FlexibleCriteriaController < ApplicationController
     end
     # TODO until Assignment gets its criteria method
     @criteria =
-      FlexibleCriterion.find_all_by_assignment_id( @assignment.id,
-                                                   order: :position)
+      FlexibleCriterion.where(assignment_id: @assignment.id).order(:position)
   end
 
   def edit

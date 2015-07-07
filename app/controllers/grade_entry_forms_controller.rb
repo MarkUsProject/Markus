@@ -36,7 +36,7 @@ class GradeEntryFormsController < ApplicationController
     # Process input properties
     @grade_entry_form.transaction do
       # Edit params before updating model
-      new_params = update_grade_entry_form_params grade_entry_form_params
+      new_params = update_grade_entry_form_params(params)
       if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.create.success')
@@ -59,7 +59,7 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form.transaction do
 
       # Edit params before updating model
-      new_params = update_grade_entry_form_params grade_entry_form_params
+      new_params = update_grade_entry_form_params(params)
       if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.edit.success')
@@ -82,10 +82,11 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_item_id = params[:grade_entry_item_id]
     updated_grade = params[:updated_grade]
 
-    grade_entry_student = grade_entry_form.grade_entry_students
-                                          .find_or_create_by_user_id(@student_id)
+    grade_entry_student =
+      grade_entry_form.grade_entry_students.find_or_create_by(user_id:
+            @student_id)
 
-    @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
+    @grade = grade_entry_student.grades.find_or_create_by(grade_entry_item_id:
                   @grade_entry_item_id)
 
     @grade.grade = updated_grade
@@ -223,8 +224,9 @@ class GradeEntryFormsController < ApplicationController
       errors.push(I18n.t('grade_entry_forms.grades.must_select_a_student'))
     else
       params[:students].each do |student_id|
-        grade_entry_students.push(grade_entry_form.grade_entry_students
-                            .find_or_create_by_user_id(student_id))
+        grade_entry_students.push(
+          grade_entry_form.grade_entry_students
+                          .find_or_create_by(user_id: student_id))
       end
     end
 
@@ -330,15 +332,5 @@ class GradeEntryFormsController < ApplicationController
       end
     end
     redirect_to action: 'grades', id: @grade_entry_form.id
-  end
-
-  private
-
-  def grade_entry_form_params
-    params.require(:grade_entry_form).permit(:description,
-                                             :message,
-                                             :date,
-                                             :show_total,
-                                             :short_identifier)
   end
 end

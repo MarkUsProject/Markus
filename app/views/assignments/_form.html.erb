@@ -3,7 +3,6 @@
   <%= stylesheet_link_tag 'common/jquery-ui', 'common/jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'PeriodDeltaChain/PeriodDeltaChain' %>
   <%= javascript_include_tag 'moment-with-langs.min', 'localize_date' %>
-  <%= javascript_include_tag 'help_system' %>
 
   <%= render partial: 'boot',
              formats: [:js],
@@ -25,7 +24,7 @@
   <%= raw(f.text_field nil,
                        id: 'format',
                        class: 'hidden',
-                       value: t('date.formats.js_date_time'),
+                       value: t('date.formats.js_old_date'),
                        disabled: true) %>
 
   <%# Assignment properties %>
@@ -131,7 +130,8 @@
                          nil,
                          { onchange: 'set_onbeforeunload(true);',
                            size: 35,
-                           required: true } %>
+                           required: true,
+                           placeholder: t('date.formats.datetime_placeholder') } %>
     </div>
 
     <div>

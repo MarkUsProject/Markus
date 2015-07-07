@@ -13,26 +13,23 @@ class Grouping < ActiveRecord::Base
   belongs_to :grouping_queue
 
   has_many :memberships, dependent: :destroy
-  has_many :student_memberships, order: 'id'
+  has_many :student_memberships, -> { order('id') }
   has_many :non_rejected_student_memberships,
-           class_name: 'StudentMembership',
-           conditions: ['memberships.membership_status != ?',
-                           StudentMembership::STATUSES[:rejected]]
+           -> { where ['memberships.membership_status != ?', StudentMembership::STATUSES[:rejected]] },
+           class_name: 'StudentMembership'
+
   has_many :accepted_student_memberships,
-           class_name: 'StudentMembership',
-           conditions: {
-              'memberships.membership_status' => [
-                    StudentMembership::STATUSES[:accepted],
-                    StudentMembership::STATUSES[:inviter]]}
+           -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
+           class_name: 'StudentMembership'
+
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :ta_memberships, class_name: 'TaMembership'
   has_many :tas, through: :ta_memberships, source: :user
   has_many :students, through: :student_memberships, source: :user
   has_many :pending_students,
+           -> { where 'memberships.membership_status' => StudentMembership::STATUSES[:pending] },
            class_name: 'Student',
            through: :student_memberships,
-           conditions: {
-            'memberships.membership_status' => StudentMembership::STATUSES[:pending]},
            source: :user
 
   has_many :submissions
@@ -40,20 +37,20 @@ class Grouping < ActiveRecord::Base
   #The first submission found that satisfies submission_version_used == true.
   #If there are multiple such submissions, one is chosen randomly.
   has_one :current_submission_used,
-          class_name: 'Submission',
-          conditions: {submission_version_used: true}
+          -> { where submission_version_used: true },
+          class_name: 'Submission'
+
   has_many :grace_period_deductions,
            through: :non_rejected_student_memberships
 
   has_one :token
   has_one :inviter_membership,
-          class_name: 'StudentMembership',
-          conditions: {
-            membership_status: StudentMembership::STATUSES[:inviter]
-          }
+          -> { where membership_status: StudentMembership::STATUSES[:inviter] },
+          class_name: 'StudentMembership'
+
   has_one :inviter, source: :user, through: :inviter_membership
 
-  scope :approved_groupings, conditions: {admin_approved: true}
+  scope :approved_groupings, -> { where admin_approved: true }
 
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
@@ -105,19 +102,20 @@ class Grouping < ActiveRecord::Base
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
     grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)
-
-    columns = [:grouping_id, :user_id]
+    columns = [:grouping_id, :user_id, :type]
     # Get all existing memberships to avoid violating the unique constraint.
-    # TODO replace this with Membership.pluck when migrated to Rails 4.
-    existing_values = TaMembership.select(columns)
-      .where(grouping_id: grouping_ids, user_id: ta_ids)
-      .map { |membership| [membership.grouping_id, membership.user_id] }
+    existing_values = TaMembership
+                      .where(grouping_id: grouping_ids, user_id: ta_ids)
+                      .pluck(:grouping_id, :user_id)
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
     values = yield(grouping_ids, ta_ids) - existing_values
     # TODO replace TaMembership.import with TaMembership.create when the PG
     # driver supports bulk create, then remove the activerecord-import gem.
-    TaMembership.import(columns, values, validate: false)
+    values.map! do |value|
+      value.push('TaMembership')
+    end
+    Membership.import(columns, values, validate: false)
 
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)
@@ -448,9 +446,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def delete_grouping
-    self.student_memberships.all(include: :user).each do |member|
-      member.destroy
-    end
+    student_memberships.includes(:user).each(&:destroy)
     # adjust repository permissions
     update_repository_permissions
     self.destroy
@@ -527,7 +523,9 @@ class Grouping < ActiveRecord::Base
   def remove_tas(ta_id_array)
     #if no tas to remove, return.
     return if ta_id_array == []
-    ta_memberships_to_remove = ta_memberships.find_all_by_user_id(ta_id_array, include: :user)
+    ta_memberships_to_remove = ta_memberships.includes(:user)
+                                             .references(:user)
+                                             .where(user_id: ta_id_array)
     ta_memberships_to_remove.each do |ta_membership|
       ta_membership.destroy
       ta_memberships.delete(ta_membership)
@@ -661,7 +659,6 @@ class Grouping < ActiveRecord::Base
   # the last commit
   ##
   def past_due_date?
-
     timestamp = assignment_folder_last_modified_date
     due_dates = assignment.section_due_dates
     section = unless inviter.blank?
@@ -680,17 +677,61 @@ class Grouping < ActiveRecord::Base
 
   def self.get_groupings_for_assignment(assignment, user)
     if user.ta?
-      assignment.ta_memberships.find_all_by_user_id(user)
+      assignment.ta_memberships.where(user: user)
                 .select { |m| m.grouping.is_valid? }
-                .map { |m| m.grouping }
+                .map &:grouping
     else
       assignment.groupings
                 .includes(:assignment,
                           :group,
                           :grace_period_deductions,
-                          current_submission_used: :results,
-                          accepted_student_memberships: :user)
+                          { current_submission_used: [:results] },
+                          { accepted_student_memberships: :user },
+                          { inviter: :section },
+                          :tags)
                 .select { |g| g.non_rejected_student_memberships.size > 0 }
+    end
+  end
+
+  # Helper for populate_submissions_table.
+  # Returns a formatted time string for the last commit time for this grouping.
+  def last_commit_date
+    if has_submission?
+      I18n.l(current_submission_used.revision_timestamp,
+             format: :long_date)
+    else
+      '-'
+    end
+  end
+
+  # Helper for populate_submissions_table.
+  # Returns the final grade for this grouping.
+  def final_grade(result)
+    if has_submission? && result.marking_state == Result::MARKING_STATES[:complete]
+      result.total_mark
+    else
+      '-'
+    end
+  end
+
+  # Helper for populate_submissions_table.
+  # Returns the current marking state for the submission.
+  # It would be nice to use Result::MARKING_STATES, but that doesn't have
+  # states for released or remark requested.
+  # result is the current result, if it exists
+  def marking_state(result)
+    if !has_submission?
+      'unmarked'
+    elsif result.marking_state != Result::MARKING_STATES[:complete]
+      if current_submission_used.has_remark?
+        'remark'
+      else
+        'partial'
+      end
+    elsif result.released_to_students
+      'released'
+    else
+      'completed'
     end
   end
 
@@ -702,9 +743,6 @@ class Grouping < ActiveRecord::Base
   # precondition: grouping is valid, self.reload has been called
   def grant_repository_permissions
     memberships = self.accepted_student_memberships
-    unless memberships.instance_of?(Array)
-      memberships = [memberships]
-    end
     memberships.each do |member|
       # Add repository read and write permissions for user,
       # if we are required to do so
@@ -732,9 +770,6 @@ class Grouping < ActiveRecord::Base
   # precondition: grouping is invalid, self.reload has been called
   def revoke_repository_permissions
     memberships = self.accepted_student_memberships
-    unless memberships.instance_of?(Array)
-      memberships = [memberships]
-    end
     memberships.each do |member|
       # Revoke permissions for students
       if self.write_repo_permissions?
@@ -777,9 +812,6 @@ class Grouping < ActiveRecord::Base
     self.reload # avoid a stale object
 
     memberships = self.student_memberships # get any student memberships
-    unless memberships.instance_of?(Array)
-      memberships = [memberships]
-    end
     memberships.each do |member|
       # Revoke permissions for students
       self.group.access_repo do |repo|

@@ -47,12 +47,11 @@ class Criterion < ActiveRecord::Base
     columns = [:criterion_id, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
-    # TODO replace this with Membership.pluck when migrated to Rails 4.
-    existing_values = CriterionTaAssociation.select(columns)
-      .where(criterion_id: criterion_ids,
-             ta_id: ta_ids,
-             criterion_type: criterion_type)
-      .map { |criterion_ta| [criterion_ta.criterion_id, criterion_ta.ta_id] }
+    existing_values = CriterionTaAssociation
+                      .where(criterion_id: criterion_ids,
+                             ta_id: ta_ids,
+                             criterion_type: criterion_type)
+                      .pluck(:criterion_id, :ta_id)
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
     values = yield(criterion_ids, ta_ids) - existing_values

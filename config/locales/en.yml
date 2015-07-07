@@ -106,8 +106,6 @@ en:
     due_date:           "Due Date"
     deadline_grace_tokens: "Deadline using all <br> remaining grace <br> tokens"
     deadline_max_penalty: "Deadline including <br> maximum late <br> penalty"
-    iso_date_format_example:    "Format:  YYYY-MM-DD - Example:  2009-01-13"
-    iso_due_date_format_example:    "Format:  YYYY-MM-DD HH:MM - Example:  2009-01-13 17:44"
     create_new_assignment:      "Add Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder<span class='required_field'>*</span>"
@@ -121,7 +119,6 @@ en:
       not_complete: "Can not release result for %{group_name}: the marking state is not complete"
       not_complete_unrelease: "Can not unrelease result for %{group_name}: the marking state is not complete"
       no_submission: "%{group_name} has no submissions"
-      no_result: "%{group_name} has no results"
       result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
       collect_all: "Collect All Submissions"
@@ -137,7 +134,7 @@ en:
       could_not_collect_section: "Could not collect submissions for section %{section_name} and assignment %{assignment_identifier} - the section collection date has not been reached."
       no_submission_for_section: "There isn't any submission to collect for section %{section_name}."
       successfully_collected: "Successfully collected %{collected} submissions."
-      marking_incomplete_warning: "Note: Not all of the assignments have been marked.\n\nAre you sure you want to proceed?"
+      marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
     assignment:
         hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
@@ -147,7 +144,7 @@ en:
         short_identifier:   "Short Identifier<span class='required_field'>*</span>"
         update_success:        "Successfully updated the assignment"
         create_success:        "Successfully created the assignment"
-        error: "Could not assign SubmissionRule: #%{message}"
+        error: "Could not assign SubmissionRule: %{message}"
         not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
         rules:           "Assignment Rules"
         edit:           "Edit Assignment:"
@@ -285,6 +282,7 @@ en:
     marker:
       new_annot: "New Annot."
       overall_comments: "Overall Comments"
+      overall_comments_success: "Overall comments successfully updated."
       current_annotations: "Current Annotations"
       across_all_submission_files: "Current annotations across all submission files. Click on the line number to jump to the location in the file."
       annot_summary: "Annotations"
@@ -439,7 +437,7 @@ en:
       grading_can_begin_after: "Grading can begin after %{time}"
       submissions:	    "Submissions: %{short_identifier}"
       csv_report:           "CSV Report"
-      detailled_csv_report: "Detailed CSV Report"
+      detailed_csv_report: "Detailed CSV Report"
       subversion_repo_list: "Subversion Repo List"
       subversion_export_file: "Subversion Export File"
       errors:               "Errors"
@@ -634,7 +632,6 @@ en:
 
     mark:
       error:
-        save: "Could not save this mark!: "
         validate_flexible: "must be between 0 and the maximum mark of the criterion"
         validate_rubric: "must be an integer between 0 and 4"
 
@@ -1333,6 +1330,12 @@ en:
         locale_date_only: "DD, MM d, yy"
         js_date_time:     "dddd, MMMM D, YYYY, h:mm A"
         js_date:          "dddd, MMMM D, YYYY"
+
+        old_date:             "yy-mm-dd"
+        js_old_date:          "YYYY-MM-DD h:mm A"
+        js_old_date_only:     "YYYY-MM-DD"
+        date_placeholder:     "YYYY-MM-DD"
+        datetime_placeholder: "YYYY-MM-DD H:MM AM/PM"
 
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
