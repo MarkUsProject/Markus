@@ -406,7 +406,7 @@ describe SubmissionsController do
       end
 
       it 'should get an error if it is before assignment due date' do
-        allow(Assignment).to receive(:find) { @assignment }
+        allow(Assignment).to receive_message_chain(:includes, :find) { @assignment }
         expect(@assignment).to receive(:short_identifier) { 'a1' } 
         expect(@assignment.submission_rule).to receive(:can_collect_now?) { false }
 
@@ -421,7 +421,7 @@ describe SubmissionsController do
 
       it 'should succeed if it is after assignment due date' do
         @submission_collector = SubmissionCollector.instance
-        allow(Assignment).to receive(:find) { @assignment }
+        allow(Assignment).to receive_message_chain(:includes, :find) { @assignment }
         expect(SubmissionCollector).to receive(:instance) { @submission_collector }
         expect(@assignment).to receive(:short_identifier) { 'a1' }
         expect(@assignment.submission_rule).to receive(:can_collect_now?) { true }
