@@ -139,7 +139,7 @@ pt:
     assignment:
         hidden: "%{assignment_text} (oculto)"
         assignment: "Projetos %{short_identifier}"
-        required_fields: "Campos exigidos<span class='required_field'>*</span>"
+        required_fields: "Campos exigidos"
         name:           "Nome do projeto"
         due_date:       "Prazo de entrega"
         short_identifier:   "Identificador abreviado"

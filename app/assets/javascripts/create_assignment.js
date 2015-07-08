@@ -38,6 +38,9 @@ jQuery(document).ready(function() {
     toggle_remark_requests(this.checked);
   });
 
+  jQuery('#submission_rule_fields input[type=radio]').change(
+    change_submission_rule);
+
   change_submission_rule();  // Opens the correct rule
 
   // Min group size must be <= max group size

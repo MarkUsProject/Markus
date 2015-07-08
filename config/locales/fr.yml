@@ -142,7 +142,7 @@ fr:
     assignment:
         hidden: "%{assignment_text} (masqué)"
         assignment: "Projet %{short_identifier}"
-        required_fields: "Champs obligatoires <span class='required_field'>*</span>"
+        required_fields: "Champs obligatoires "
         short_identifier:   "Identifiant du projet"
         name:           "Nom du projet"
         due_date:           "Date de retour"

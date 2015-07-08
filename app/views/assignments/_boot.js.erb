@@ -9,7 +9,7 @@
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
         date_format: '<%= t('date.formats.js_old_date') %>',
-        due_date: jQuery('#assignment_due_date').attr('value')
+        due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
@@ -19,7 +19,7 @@
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
         date_format: '<%= t('date.formats.js_old_date') %>',
-        due_date: jQuery('#assignment_due_date').attr('value')
+        due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
@@ -29,7 +29,7 @@
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
         date_format: '<%= t('date.formats.js_old_date') %>',
-        due_date: jQuery('#assignment_due_date').attr('value')
+        due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
@@ -117,9 +117,6 @@
 
       toggle_remark_requests(<%= @assignment.allow_remarks? %>);
     }
-
-    jQuery('#submission_rule_fields input[type=radio]').change(
-      change_submission_rule);
 
     // Handle required fields
     check_required_fields();

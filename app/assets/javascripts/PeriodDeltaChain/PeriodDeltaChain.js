@@ -10,12 +10,15 @@ function PeriodDeltaChain(params) {
 PeriodDeltaChain.prototype.refresh = function() {
   var current_time = this.due_date;
   var format       = this.date_format;
-  jQuery('#' + this.period_root_id + ' .' + this.period_class).each(function() {
+  var period_selector = '#' + this.period_root_id + ' .' + this.period_class;
+  var me = this;
+
+  jQuery(period_selector).each(function() {
     var from_time_node = this.querySelector('.PeriodDeltaChain_FromTime');
     var to_time_node   = this.querySelector('.PeriodDeltaChain_ToTime');
     var hours_value    = this.querySelector('.PeriodDeltaChain_Hours').value;
-    var from_time = moment(current_time, 'YYYY-MM-DD hh:mm a');
-    var to_time   = moment(current_time, 'YYYY-MM-DD hh:mm a');
+    var from_time = moment(current_time, me.date_format);
+    var to_time   = moment(current_time, me.date_format);
 
     from_time_node.update(from_time.format(format));
     to_time_node.update(to_time.add('hours', hours_value).format(format));
@@ -23,10 +26,10 @@ PeriodDeltaChain.prototype.refresh = function() {
     current_time = to_time;
   });
 
-  if (jQuery('#' + this.period_root_id + ' .' + this.period_class).length < 2) {
-    jQuery('#' + this.period_root_id + ' .' + this.period_class + ' a').hide();
+  if (jQuery(period_selector).length < 2) {
+    jQuery(period_selector + ' a').hide();
   } else {
-    jQuery('#' + this.period_root_id + ' .' + this.period_class + ' a').show();
+    jQuery(period_selector + ' a').show();
   }
 }
 

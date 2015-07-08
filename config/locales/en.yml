@@ -139,7 +139,7 @@ en:
     assignment:
         hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
-        required_fields: "Required Fields<span class='required_field'>*</span>"
+        required_fields: "Required Fields"
         name:           "Assignment Name"
         due_date:       "Due Date"
         short_identifier:   "Short Identifier"

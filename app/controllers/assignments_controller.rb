@@ -215,6 +215,7 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all
     @sections = Section.all
     @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .where.not(id: @assignment.id)
                                    .order(:id)
 
     unless params[:assignment].nil?
