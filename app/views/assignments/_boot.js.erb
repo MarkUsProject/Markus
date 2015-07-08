@@ -1,18 +1,15 @@
 <script>
 //<![CDATA[
-  var past_due_date = '<%= t(:past_due_date_edit_warning) %>';
-
   var grace_periods = null;
   var penalty_decay_periods = null;
   var penalty_periods = null;
-
 
   function create_grace_periods() {
     if(!grace_periods) {
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
-        date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').attr('value')
+        date_format: '<%= t('date.formats.js_old_date') %>',
+        due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
@@ -21,8 +18,8 @@
     if(!penalty_decay_periods) {
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
-        date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').attr('value')
+        date_format: '<%= t('date.formats.js_old_date') %>',
+        due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
@@ -31,15 +28,15 @@
     if(!penalty_periods) {
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
-        date_format: document.getElementById('format').value,
-        due_date: jQuery('#actual_assignment_due_date').attr('value')
+        date_format: '<%= t('date.formats.js_old_date') %>',
+        due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
 
   function check_required_fields() {
     var empty = false;
-    jQuery('input[required]').each(function() {
+    jQuery('input[required]:not([disabled])').each(function() {
       if (this.value === '') {
         empty = true;
       }
@@ -47,12 +44,69 @@
     jQuery('input[type="submit"]').prop('disabled', empty);
   }
 
+  function add_assignment_file() {
+    var new_id = new Date().getTime();
+    var input_id = 'assignment_assignment_files_attributes_' + new_id +
+                   '_filename';
+    var assignment_file = '<p id="' + input_id + '_holder">' +
+      '<label for="' + input_id + '"><%= t(:filename) %></label>' +
+      '<input type="text" name="assignment[assignment_files_attributes][' +
+      new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
+      '<a onclick="remove_assignment_file(\''+input_id+'\'); return false;">' +
+      '<%= t(:remove) %></a></p>';
+    jQuery('#assignment_files').append(jQuery(assignment_file));
+
+    jQuery('#only_required_files_option').removeClass('disable');
+  }
+
+  function remove_assignment_file(input_id) {
+    jQuery('#' + input_id + '_holder').remove();
+    if (jQuery('.assignment_file').length === 0) {
+      jQuery('#only_required_files_option').addClass('disable');
+    }
+  }
+
+  function add_period(id, periods) {
+    var last_period = jQuery('#' + id + ' .period').last();
+    var new_period = last_period.clone();
+    var id_re = new RegExp(/([_\[])[0-9]+([_\]])/);
+    var repl = '$1' + new Date().getTime() + '$2';
+    new_period.find('input').each(function () {
+      jQuery(this).attr('id', jQuery(this).attr('id').replace(id_re, repl));
+      jQuery(this).attr('name',
+                        jQuery(this).attr('name').replace(id_re, repl));
+      jQuery(this).val('');
+    });
+    new_period.find('label').each(function () {
+      jQuery(this).attr('for', jQuery(this).attr('for').replace(id_re, repl));
+    });
+    jQuery('#' + id).append(new_period);
+
+    if (periods) {
+      periods.refresh();
+    }
+  }
+
+  function remove_period(elem, periods) {
+    jQuery(elem).parents('.period').remove();
+    if (periods) {
+      periods.refresh();
+    }
+  }
+
+  function check_due_date(new_due_date) {
+    if (moment(new_due_date, '<%= t('date.formats.js_old_date') %>').isBefore(
+         moment())) {
+      alert('<%= t(:past_due_date_edit_warning) %>');
+    }
+  }
+
   jQuery(document).ready(function() {
     // Set locale for language localisation with Moment.js
     moment.lang(document.getElementById('locale').value);
 
     // Handle periods and hiding/showing things
-    if (jQuery('#actual_assignment_due_date').val()) {
+    if (jQuery('#assignment_due_date').val()) {
       create_grace_periods();
       create_penalty_decay_periods();
       create_penalty_periods();
@@ -61,26 +115,8 @@
       penalty_decay_periods.refresh();
       penalty_periods.refresh();
 
-      default_group_fields();
-      <% if !@assignment.nil? %>
-        toggle_group_assignment(<%= @assignment.group_assignment? %>);
-        toggle_remark_requests(<%= @assignment.allow_remarks? %>);
-      <% end %>
+      toggle_remark_requests(<%= @assignment.allow_remarks? %>);
     }
-
-    // Localize the due dates on load
-    var format = document.getElementById('format').value;
-    localize_datetime(document.getElementById('actual_assignment_due_date'),
-                      document.getElementById('assignment_due_date'),
-                      format);
-    localize_datetime(document.getElementById('actual_remark_due_date'),
-                      document.getElementById('remark_due_date'),
-                      format);
-    jQuery('.section_due_date').each(function(i) {
-      localize_datetime(document.getElementById('actual_section_due_date_' + (i+1)),
-                        document.getElementById('section_due_date_' + (i+1)),
-                        format);
-    });
 
     // Handle required fields
     check_required_fields();
@@ -88,18 +124,13 @@
                              .keyup(check_required_fields);
 
     // Handle date/time pickers
-    jQuery('.section_due_date').each(function(i) {
-      jQuery('#section_due_date_' + (i+1)).datetimepicker({
-        altField:         '#actual_section_due_date_' + (i+1),
-        altFieldTimeOnly: false,
-        altFormat:        'yy-mm-dd',
-        altTimeFormat:    'HH:mm z',
-        altSeparator:     'T',
+    jQuery('.section_due_date_input').each(function() {
+      jQuery(this).datetimepicker({
         controlType:      'select',
         showTime:         false,
         numberOfMonths:   2,
         secondMax:        0,
-        onClose:          function() { check_due_date(jQuery('#actual_section_due_date').val()); },
+        onClose:          check_due_date,
         dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
         timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
         showTimezone:     false,
@@ -116,17 +147,11 @@
     });
 
     jQuery('#assignment_due_date').datetimepicker({
-      altField:         '#actual_assignment_due_date',
-      altFieldTimeOnly: false,
-      altFormat:        'yy-mm-dd',
-      altTimeFormat:    'HH:mm z',
-      altSeparator:     'T',
       controlType:      'select',
       showTime:         false,
       numberOfMonths:   2,
       secondMax:        0,
-      onClose:          function() { jQuery('#assignment_due_date').change();
-                                     check_due_date(jQuery('#actual_assignment_due_date').val()); },
+      onClose:          check_due_date,
       dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
       showTimezone:     false,
@@ -142,16 +167,11 @@
     });
 
     jQuery('#assignment_remark_due_date').datetimepicker({
-      altField:         '#actual_remark_due_date',
-      altFieldTimeOnly: false,
-      altFormat:        'yy-mm-dd',
-      altTimeFormat:    'HH:mm z',
-      altSeparator:     'T',
       controlType:      'select',
       showTime:         false,
       numberOfMonths:   2,
       secondMax:        0,
-      onClose:          function() { check_due_date(jQuery('#actual_remark_due_date').val()); },
+      onClose:          check_due_date,
       dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
       timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
       showTimezone:     false,

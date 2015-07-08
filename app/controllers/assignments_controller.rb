@@ -192,6 +192,9 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:id])
     @past_date = @assignment.section_names_past_due_date
     @assignments = Assignment.all
+    @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .where.not(id: @assignment.id)
+                                   .order(:id)
     @sections = Section.all
 
     unless @past_date.nil? || @past_date.empty?
@@ -211,6 +214,9 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:id])
     @assignments = Assignment.all
     @sections = Section.all
+    @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .where.not(id: @assignment.id)
+                                   .order(:id)
 
     unless params[:assignment].nil?
       @oldcriteria = @assignment.marking_scheme_type
@@ -248,6 +254,8 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .order(:id)
     @sections = Section.all
     @assignment.build_submission_rule
     @assignment.build_assignment_stat
@@ -286,10 +294,6 @@ class AssignmentsController < ApplicationController
       end
     end
     redirect_to action: 'edit', id: @assignment.id
-  end
-
-  def update_group_properties_on_persist
-    @assignment = Assignment.find(params[:assignment_id])
   end
 
   def download_csv_grades_report
