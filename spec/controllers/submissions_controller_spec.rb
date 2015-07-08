@@ -287,9 +287,9 @@ describe SubmissionsController do
     describe 'attempting to collect all submissions at once ' do
       it 'should get an error if it is before assignment due date' do
         allow(Assignment).to receive(:find) { @assignment }
-        @assignment.expects(:short_identifier).once.returns('a1')
-        @assignment.submission_rule
-          .expects(:can_collect_now?).once.returns(false)
+        expect(@assignment).to receive(:short_identifier) { 'a1' }
+        expect(@assignment.submission_rule).to receive(:can_collect_now?) { false }
+
         get_as @ta_membership.user,
                :collect_ta_submissions,
                assignment_id: 1,
@@ -301,19 +301,17 @@ describe SubmissionsController do
       end
 
       it 'should succeed if it is after assignment due date' do
-        @submission_collector = SubmissionCollector.create
+        @submission_collector = SubmissionCollector.instance
         allow(Assignment).to receive(:find) { @assignment }
-        SubmissionCollector.expects(:instance).returns(@submission_collector)
-        @assignment.expects(:short_identifier).once.returns('a1')
-        @assignment.submission_rule
-          .expects(
-            :can_collect_now?).once.returns(true)
-        @submission_collector.expects(:push_groupings_to_queue).once
+        expect(SubmissionCollector).to receive(:instance) { @submission_collector }
+        expect(@assignment).to receive(:short_identifier) { 'a1' }
+        expect(@assignment.submission_rule).to receive(:can_collect_now?) { true }
+        expect(@submission_collector).to receive(:push_groupings_to_queue)
+
         get_as @ta_membership.user,
                :collect_ta_submissions,
                assignment_id: 1,
                id: 1
-
         expect(flash[:success]).to eq(
           I18n.t('collect_submissions.collection_job_started',
                  assignment_identifier: 'a1'))
@@ -409,9 +407,9 @@ describe SubmissionsController do
 
       it 'should get an error if it is before assignment due date' do
         allow(Assignment).to receive(:find) { @assignment }
-        @assignment.expects(:short_identifier).once.returns('a1')
-        @assignment.submission_rule.expects(
-          :can_collect_now?).once.returns(false)
+        expect(@assignment).to receive(:short_identifier) { 'a1' } 
+        expect(@assignment.submission_rule).to receive(:can_collect_now?) { false }
+
         get_as @admin,
                :collect_all_submissions,
                assignment_id: 1
@@ -422,14 +420,17 @@ describe SubmissionsController do
       end
 
       it 'should succeed if it is after assignment due date' do
-        @submission_collector = SubmissionCollector.create
+        @submission_collector = SubmissionCollector.instance
         allow(Assignment).to receive(:find) { @assignment }
-        SubmissionCollector.expects(:instance).returns(@submission_collector)
-        @assignment.expects(:short_identifier).once.returns('a1')
-        @assignment.submission_rule.expects(
-          :can_collect_now?).once.returns(true)
-        @submission_collector.expects(:push_groupings_to_queue).once
-        get_as @admin, :collect_all_submissions, assignment_id: 1, id: 1
+        expect(SubmissionCollector).to receive(:instance) { @submission_collector }
+        expect(@assignment).to receive(:short_identifier) { 'a1' }
+        expect(@assignment.submission_rule).to receive(:can_collect_now?) { true }
+        expect(@submission_collector).to receive(:push_groupings_to_queue)
+
+        get_as @admin,
+               :collect_all_submissions,
+               assignment_id: 1,
+               id: 1
         expect(flash[:success]).to eq(
           I18n.t('collect_submissions.collection_job_started',
                  assignment_identifier: 'a1'))
