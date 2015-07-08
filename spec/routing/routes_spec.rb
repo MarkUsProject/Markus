@@ -102,14 +102,6 @@ describe 'An Assignment' do
         locale: 'en')
     end
 
-    it 'routes GET update_group_properties_on_persist properly' do
-      expect(get: path + '/update_group_properties_on_persist').to route_to(
-        controller: ctrl,
-        action: 'show',
-        id: 'update_group_properties_on_persist',
-        locale: 'en')
-    end
-
     it 'routes GET delete_rejected properly' do
       expect(get: path + '/delete_rejected').to route_to(
         controller: ctrl,
@@ -142,15 +134,6 @@ describe 'An Assignment' do
         .to route_to(
           controller: ctrl,
           action: 'student_interface',
-          id: assignment.id.to_s,
-          locale: 'en')
-    end
-
-    it 'routes GET update_group_properties_on_persist properly' do
-      expect(get: path + '/' + assignment.id.to_s +
-        '/update_group_properties_on_persist').to route_to(
-          controller: ctrl,
-          action: 'update_group_properties_on_persist',
           id: assignment.id.to_s,
           locale: 'en')
     end

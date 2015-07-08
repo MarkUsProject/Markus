@@ -1,17 +1,9 @@
-<div class="assignment_file">
+<div class='assignment_file'>
 <%= form.fields_for :assignment_files, assignment_file do |f| %>
   <p>
-    <%= f.label :filename, t(:filename).html_safe %>
+    <%= f.label :filename, t(:filename), class: 'required' %>
     <%= f.text_field :filename %>
-    <% if f.object.new_record? %>
-      <%= link_to_function t(:remove),
-                           'jQuery(this).closest(".assignment_file").remove();' %>
-    <% else %>
-      <span>
-        <% @show_checkbox_required_files = false %>
-        <b><%= I18n.t(:remove) %> : </b><%= f.check_box :_destroy %>
-      </span>
-    <% end %>
+    (<%= t(:remove) %> <%= f.check_box :_destroy %>)
   </p>
 <% end %>
 </div>
