@@ -6,7 +6,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - bundle install --path=~/.bundle --without development production console
+  - travis_wait bundle install --path=~/.bundle --without development production console
   - sudo apt-get install -y libaprutil1-dev swig
   - wget http://mirror.its.dal.ca/apache/subversion/subversion-1.8.11.tar.gz
   - tar xzf subversion-1.8.11.tar.gz
