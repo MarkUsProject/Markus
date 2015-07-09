@@ -254,7 +254,8 @@ module SubmissionsHelper
 
   # Checks if all the assignments for the current submission are marked.
   def all_assignments_marked?
-    Assignment.find(params[:assignment_id]).groupings.all? do |grouping|
+    Assignment.includes(:groupings => :current_submission_used).find(
+      params[:assignment_id]).groupings.all? do |grouping|
       grouping.marking_completed?
     end
   end
