@@ -49,6 +49,7 @@ class Mark < ActiveRecord::Base
   private
 
   def ensure_not_released_to_students
+    puts "#{result.released_to_students}"
     !result.released_to_students
   end
 
