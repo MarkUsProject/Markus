@@ -13,6 +13,7 @@ namespace :db do
         result.save
         new_submission.save
         grouping.save
+        result.marking_state = "complete"
         result.released_to_students = true
     end
   end
