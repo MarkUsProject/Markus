@@ -1,8 +1,8 @@
 namespace :db do
 
-  desc "Create a single Instructor"
+  desc 'Create a single Instructor'
   task :admin => :environment do
-    puts "Populate database with Admins"
+    puts 'Populate database with Admins'
     [['a',    'admin', 'admin'], # Standard admin
      ['reid', 'Karen', 'Reid']]  # Reid
     .each do |admin|
@@ -10,10 +10,10 @@ namespace :db do
     end
   end
 
-  desc "Add TA users to the database"
+  desc 'Add TA users to the database'
   # this task depends on :environment and :seed
   task(:tas => :environment) do
-        puts "Populate database with TAs"
+        puts 'Populate database with TAs'
     [['c6conley', 'Mike',    'Conley'],
      ['c6gehwol', 'Severin', 'Gehwolf'],
      ['c9varoqu', 'Nelle',   'Varoquaux'],
@@ -23,10 +23,10 @@ namespace :db do
     end
   end
 
-  desc "Add student users to the database"
+  desc 'Add student users to the database'
   # this task depends on :environment and :seed
   task(:users => :environment) do
-    puts "Populate database with students"
+    puts 'Populate database with students'
     STUDENT_CSV = 'db/data/students.csv'
     if File.readable?(STUDENT_CSV)
       csv_students = File.new(STUDENT_CSV)
