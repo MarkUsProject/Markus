@@ -1,8 +1,8 @@
 namespace :db do
 
-  desc "Create groups for assignments"
+  desc 'Create Rubric for assignments'
   task :rubric => :environment do
-    puts "Add Rubric To Assignments"
+    puts 'Add Rubric To Assignments'
     require 'faker'
 
     def pos_rand(range)
@@ -37,7 +37,7 @@ namespace :db do
             level_3_description:   random_sentences(5),
             level_4_name:          random_words(5),
             level_4_description:   random_sentences(5)
-          ).save
+          )
         elsif assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
           FlexibleCriterion.create(
             id:                      index + assignment.id * 8,
@@ -49,7 +49,7 @@ namespace :db do
             created_at:              nil,
             updated_at:              nil,
             assigned_groups_count:   nil
-          ).save
+          )
         end
       end
       5.times do |index|
@@ -57,12 +57,10 @@ namespace :db do
                                   assignment_id: assignment.id,
                                   position: 1,
                                   annotation_category_name: random_words(3))
-            .save
 
         (rand(10) + 3).times do
           AnnotationText.create(annotation_category_id: index + assignment.id * 5,
                                 content: random_sentences(3))
-              .save
         end
       end
     end

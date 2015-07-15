@@ -1,12 +1,12 @@
 namespace :db do
 
-  desc "Create assignments"
+  desc 'Create assignments'
   task :assignments => :environment do
     # Assignments
-    puts "Assignment 1: Single Student Assignment No Marks"
+    puts 'Assignment 1: Single Student Assignment No Marks'
     assignment_stat = AssignmentStat.new
     rule = NoLateSubmissionRule.new
-    a1 = Assignment.create(
+    Assignment.create(
         short_identifier: 'A1',
         description: 'Conditionals and Loops',
         message: 'Learn to use conditional statements, and loops.',
@@ -19,12 +19,10 @@ namespace :db do
         due_date: 1.minute.from_now,
         marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:rubric],
         allow_web_submits: true,
-        display_grader_names_to_students: false
+        display_grader_names_to_students: false,
+        submission_rule: rule,
+        assignment_stat: assignment_stat
     )
-
-    a1.submission_rule = rule
-    a1.assignment_stat = assignment_stat
-    a1.save
 
     rule = NoLateSubmissionRule.new
     assignment_stat = AssignmentStat.new
@@ -32,8 +30,8 @@ namespace :db do
     Basic exercise in Object Oriented Programming.
     Implement Animal, Cat, and Dog, as described in class.
     EOS
-    puts "Assignment 2: Group Assignment No Marks"
-    a2 = Assignment.create(
+    puts 'Assignment 2: Group Assignment No Marks'
+    Assignment.create(
         short_identifier: 'A2',
         description: 'Cats and Dogs',
         message: assignment_msg,
@@ -46,17 +44,15 @@ namespace :db do
         due_date: 1.month.from_now,
         marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:flexible],
         allow_web_submits: true,
-        display_grader_names_to_students: false
+        display_grader_names_to_students: false,
+        submission_rule: rule,
+        assignment_stat: assignment_stat
     )
-
-    a2.submission_rule = rule
-    a2.assignment_stat = assignment_stat
-    a2.save
 
     assignment_stat = AssignmentStat.new
     rule = NoLateSubmissionRule.new
-    puts "Assignment 3: Single Student Sporadic Marks"
-    a3 = Assignment.create(
+    puts 'Assignment 3: Single Student Sporadic Marks'
+    Assignment.create(
         short_identifier: 'A3',
         description: 'Ode to a Python program',
         message: 'Learn to use files, dictionaries, and testing.',
@@ -69,17 +65,15 @@ namespace :db do
         due_date: 2.months.from_now,
         marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:rubric],
         allow_web_submits: true,
-        display_grader_names_to_students: false
+        display_grader_names_to_students: false,
+        submission_rule: rule,
+        assignment_stat: assignment_stat
     )
-
-    a3.submission_rule = rule
-    a3.assignment_stat = assignment_stat
-    a3.save
 
     rule = NoLateSubmissionRule.new
     assignment_stat = AssignmentStat.new
-    puts "Assignment 4: Group Assignment Sporadic Marks"
-    a4 = Assignment.create(
+    puts 'Assignment 4: Group Assignment Sporadic Marks'
+    Assignment.create(
         short_identifier: 'A4',
         description: 'Introduction to Recursion',
         message: 'Implement functions using Recursion',
@@ -92,11 +86,9 @@ namespace :db do
         due_date: 2.months.from_now,
         marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:flexible],
         allow_web_submits: true,
-        display_grader_names_to_students: false
+        display_grader_names_to_students: false,
+        submission_rule: rule,
+        assignment_stat: assignment_stat
     )
-
-    a4.submission_rule = rule
-    a4.assignment_stat = assignment_stat
-    a4.save
   end
 end
