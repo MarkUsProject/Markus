@@ -77,7 +77,10 @@
           <%= raw(f.check_box :show_total) %>
         </div>
 
-        <h4><%= t('grade_entry_forms.specify_columns') %></h4>
+        <% # Allow the user to add a new column to the form %>
+        <%= link_to t('grade_entry_forms.add_column'),
+                    '#',
+                    onclick: 'add_column(); return false;' %>
 
         <% # Display the column names and totals %>
         <div id='grade_entry_items'>
@@ -87,22 +90,16 @@
                        locals: { form: f,
                                  new_position: 0,
                                  grade_entry_item: GradeEntryItem.new } %>
-          <% end %>
-
-          <% sort_items_by_position(@grade_entry_form.grade_entry_items).each_with_index do |item, index| %>
-            <%= f.fields_for :grade_entry_items, item do |entry_item| %>
-              <%= render partial: 'grade_entry_item',
-                         locals: { grade_entry_item: entry_item.object,
-                                   new_position: index + 1,
-                                   form: f } %>
+          <% else %>
+            <% @grade_entry_form.grade_entry_items.each_with_index do |item, index| %>
+              <%= f.fields_for :grade_entry_items, item do |entry_item| %>
+                <%= render partial: 'grade_entry_item',
+                           locals: { grade_entry_item: entry_item.object,
+                                     form: entry_item } %>
+              <% end %>
             <% end %>
           <% end %>
         </div>
-
-        <% # Allow the user to add a new column to the form %>
-        <p id='grade_entry_item_add_link'>
-          <%= add_grade_entry_item_link t('grade_entry_forms.add_column'), f %>
-        </p>
 
     </fieldset>
 
