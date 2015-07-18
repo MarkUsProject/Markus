@@ -38,15 +38,9 @@
 
   jQuery(document).ready(function() {
     // Set locale for language localisation with Moment.js
-    moment.lang(document.getElementById('locale').value);
-
-    localize_date(document.getElementById('actual_date'),
-                  document.getElementById('date'),
-                  document.getElementById('format').value);
+    moment.lang('<%= t('date.formats.js_old_date_only') %>');
 
     jQuery('.datepicker').datepicker({
-      altField:         '#actual_date',
-      altFormat:        'yy-mm-dd',
       numberOfMonths:   2,
       dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
       monthNames:       <%= raw I18n.t('date.months') %>,

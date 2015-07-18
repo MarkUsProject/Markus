@@ -8,7 +8,7 @@
 
 <% content_for :head do %>
   <%= stylesheet_link_tag 'common/jquery-ui' %>
-  <%= javascript_include_tag 'moment-with-langs.min', 'localize_date' %>
+  <%= javascript_include_tag 'moment-with-langs.min' %>
 
   <%= render partial: 'boot',
              formats: [:js],
@@ -24,13 +24,6 @@
 
     <%= render partial: 'shared/error_explanation',
                locals: { model: @grade_entry_form } %>
-
-    <!-- The locale format string used for localising the date -->
-    <%= raw(f.text_field nil,
-                         id: 'format',
-                         class: 'hidden',
-                         value: t('date.formats.js_old_date_only'),
-                         disabled: true) %>
 
     <fieldset>
       <legend><%= t('grade_entry_forms.properties') %></legend>
@@ -52,23 +45,16 @@
       </div>
 
       <div>
-        <%= f.label :date, t(:shortened_date).html_safe %>
+        <%= f.label :date, t(:shortened_date) %>
         <%= f.text_field :date,
-                         id: 'actual_date',
-                         class: 'hidden' %>
-        <%= text_field_tag 'date',
-                           nil,
-                           { class: 'datepicker',
-                             size: 30,
-                             placeholder: t('date.formats.date_placeholder') } %>
-      </div>
-
-      <div>
-        <%= label :date_check, t(:remove_date) %>
+                         class: 'datepicker',
+                         size: 30,
+                         placeholder: t('date.formats.date_placeholder') %>
+        (<%= label :date_check, t(:remove_date) %>
         <%= check_box_tag :date_check,
                           true,
                           false,
-                          disabled: @grade_entry_form.date.blank? %>
+                          disabled: @grade_entry_form.date.blank? %>)
       </div>
 
       <div>
