@@ -16,6 +16,8 @@
 <% end %>
 
 <div class='wrapper'>
+  <p><%= t('grade_entry_forms.required_fields').html_safe %></p>
+
   <%= render 'shared/flash_message' %>
 
   <%= form_for @grade_entry_form, as: :grade_entry_form do |f| %>
@@ -31,75 +33,71 @@
                          disabled: true) %>
 
     <fieldset>
-      <legend>
-        <span><%= t('grade_entry_forms.properties') %></span>
-      </legend>
+      <legend><%= t('grade_entry_forms.properties') %></legend>
 
-        <% # Basic grade entry form properties %>
+      <div>
+        <%= f.label :short_identifier, t(:short_identifier),
+                    class: 'required' %>
+        <%= f.text_field :short_identifier %>
+      </div>
 
-        <div>
-          <%= raw(f.label :short_identifier, t(:short_identifier).html_safe) %>
-          <%= raw(f.text_field :short_identifier) %>
-        </div>
+      <div>
+        <%= f.label :description, t(:description) %>
+        <%= f.text_field :description %>
+      </div>
 
-        <div>
-          <%= raw(f.label :description, t(:description)) %>
-          <%= raw(f.text_field :description) %>
-        </div>
+      <div>
+        <%= f.label :message %>
+        <%= f.text_area :message, rows: 8, cols: 65 %>
+      </div>
 
-        <div>
-          <%= raw(f.label :message) %>
-          <%= raw(f.text_area :message, rows: 8, cols: 65) %>
-        </div>
+      <div>
+        <%= f.label :date, t(:shortened_date).html_safe %>
+        <%= f.text_field :date,
+                         id: 'actual_date',
+                         class: 'hidden' %>
+        <%= text_field_tag 'date',
+                           nil,
+                           { class: 'datepicker',
+                             size: 30,
+                             placeholder: t('date.formats.date_placeholder') } %>
+      </div>
 
-        <div>
-          <%= raw(f.label :date, t(:shortened_date).html_safe) %>
-          <%= raw(f.text_field :date,
-                             id: 'actual_date',
-                             class: 'hidden') %>
-          <%= text_field_tag 'date',
-                             nil,
-                             { class: 'datepicker',
-                               size: 30,
-                               placeholder: t('date.formats.date_placeholder') } %>
-        </div>
+      <div>
+        <%= label :date_check, t(:remove_date) %>
+        <%= check_box_tag :date_check,
+                          true,
+                          false,
+                          disabled: @grade_entry_form.date.blank? %>
+      </div>
 
-        <div>
-          <%= raw(label :date_check, t(:remove_date)) %>
-          <%= raw(check_box_tag :date_check, 
-                                true, 
-                                false,
-                                disabled: @grade_entry_form.date.blank?) %>
-        </div>
+      <div>
+        <%= f.label :show_total, t('grade_entry_forms.show_total') %>
+        <%= f.check_box :show_total %>
+      </div>
 
-        <div>
-          <%= raw(f.label :show_total, t('grade_entry_forms.show_total')) %>
-          <%= raw(f.check_box :show_total) %>
-        </div>
+      <% # Allow the user to add a new column to the form %>
+      <%= link_to t('grade_entry_forms.add_column'),
+                  '#',
+                  onclick: 'add_column(); return false;' %>
 
-        <% # Allow the user to add a new column to the form %>
-        <%= link_to t('grade_entry_forms.add_column'),
-                    '#',
-                    onclick: 'add_column(); return false;' %>
-
-        <% # Display the column names and totals %>
-        <div id='grade_entry_items'>
-          <% # Ensures there is at least one column whenever the form is loaded. %>
-          <% if @grade_entry_form.grade_entry_items.empty? %>
-            <%= render partial: 'grade_entry_item',
-                       locals: { form: f,
-                                 new_position: 0,
-                                 grade_entry_item: GradeEntryItem.new } %>
-          <% else %>
-            <% @grade_entry_form.grade_entry_items.each_with_index do |item, index| %>
-              <%= f.fields_for :grade_entry_items, item do |entry_item| %>
-                <%= render partial: 'grade_entry_item',
-                           locals: { grade_entry_item: entry_item.object,
-                                     form: entry_item } %>
-              <% end %>
+      <% # Display the column names and totals %>
+      <div id='grade_entry_items'>
+        <% # Ensures there is at least one column whenever the form is loaded. %>
+        <% if @grade_entry_form.grade_entry_items.empty? %>
+          <%= render partial: 'grade_entry_item',
+                     locals: { form: f,
+                               grade_entry_item: GradeEntryItem.new } %>
+        <% else %>
+          <% @grade_entry_form.grade_entry_items.each_with_index do |item, index| %>
+            <%= f.fields_for :grade_entry_items, item do |entry_item| %>
+              <%= render partial: 'grade_entry_item',
+                         locals: { grade_entry_item: entry_item.object,
+                                   form: entry_item } %>
             <% end %>
           <% end %>
-        </div>
+        <% end %>
+      </div>
 
     </fieldset>
 
