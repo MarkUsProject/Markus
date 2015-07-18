@@ -2,7 +2,7 @@
   <legend>
     <span><%= t('grade_entry_forms.column') %></span>
   </legend>
-  <p>
+  <div>
     <%= form.label :name,
                    t('grade_entry_forms.column_name'),
                    class: 'required' %>
@@ -12,20 +12,20 @@
                    t('grade_entry_forms.column_out_of'),
                    class: 'required' %>
     <%= form.text_field :out_of, size: 5, maxlength: 3 %>
-    <br>
-
+  </div>
+  <div>
     <%= form.label :bonus, t('grade_entry_forms.bonus_column') %>
     <%= form.check_box :bonus %>
-
-    <br>
+  </div>
+  <div>
     <% if !grade_entry_item.nil? && !grade_entry_item.new_record? %>
       <%= form.label :_destroy,
                      t('grade_entry_forms.remove_column') %>
       <%= form.check_box :_destroy %>
     <% else %>
       <%= link_to t(:delete), '#', onclick:
-        "jQuery(this).parentsUntil('.grade_entry_item').parent().remove();" +
-        "return false;" %>
+        'jQuery(this).parentsUntil(".grade_entry_item").parent().remove();' +
+        'return false;' %>
     <% end %>
-  </p>
+  </div>
 </fieldset>

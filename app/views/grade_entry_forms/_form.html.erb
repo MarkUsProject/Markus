@@ -62,28 +62,28 @@
         <%= f.check_box :show_total %>
       </div>
 
-      <% # Allow the user to add a new column to the form %>
-      <%= link_to t('grade_entry_forms.add_column'),
-                  '#',
-                  onclick: 'add_column(); return false;' %>
-
       <% # Display the column names and totals %>
       <div id='grade_entry_items'>
         <% # Ensures there is at least one column whenever the form is loaded. %>
         <% if @grade_entry_form.grade_entry_items.empty? %>
-          <%= render partial: 'grade_entry_item',
-                     locals: { form: f,
-                               grade_entry_item: GradeEntryItem.new } %>
+          <%= f.fields_for :grade_entry_items, GradeEntryItem.new do |entry_item| %>
+            <%= render partial: 'grade_entry_item',
+                       locals: { grade_entry_item: entry_item.object,
+                                 form: entry_item } %>
+          <% end %>
         <% else %>
-          <% @grade_entry_form.grade_entry_items.each_with_index do |item, index| %>
-            <%= f.fields_for :grade_entry_items, item do |entry_item| %>
-              <%= render partial: 'grade_entry_item',
-                         locals: { grade_entry_item: entry_item.object,
-                                   form: entry_item } %>
-            <% end %>
+          <%= f.fields_for :grade_entry_items do |entry_item| %>
+            <%= render partial: 'grade_entry_item',
+                       locals: { grade_entry_item: entry_item.object,
+                                 form: entry_item } %>
           <% end %>
         <% end %>
       </div>
+
+      <% # Allow the user to add a new column to the form %>
+      <%= link_to t('grade_entry_forms.add_column'),
+                  '#',
+                  onclick: 'add_column(); return false;' %>
 
     </fieldset>
 
