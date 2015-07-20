@@ -502,13 +502,10 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         g.grade_entry_items.each do |item|
           if @q1[:name] == item[:name]
             assert_equal @q1[:out_of], item[:out_of]
-            assert_equal 1, item[:position]
           elsif @q2[:name] == item[:name]
             assert_equal @q2[:out_of], item[:out_of]
-            assert_equal 2, item[:position]
           else
             assert_equal @q3[:out_of], item[:out_of]
-            assert_equal 3, item[:position]
           end
         end
       end
