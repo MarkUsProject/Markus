@@ -1,16 +1,46 @@
 <script>
 //<![CDATA[
+  function add_column() {
+    var last_col = jQuery('.grade_entry_item').last();
+    var new_col = last_col.clone();
+    var id_re = new RegExp(/([_\[])[0-9]+([_\]])/);
+    var repl = '$1' + new Date().getTime() + '$2';
+
+    // Replace "Remove" checkbox
+    var remove_text = new_col.find('[for*="destroy"]').text();
+    new_col.find('[id*="destroy"], [name*="destroy"], [for*="destroy"]')
+           .remove();
+    var a = jQuery('<a>' + remove_text + '</a>');
+    a.click(function() { new_col.remove(); return false; });
+    new_col.find('p').append(a);
+
+    new_col.find('input').each(function () {
+      var d = jQuery(this).attr('id');
+      if (typeof d !== 'undefined') {
+        jQuery(this).attr('id', d.replace(id_re, repl));
+      }
+      d = jQuery(this).attr('name');
+      if (typeof d !== 'undefined') {
+        jQuery(this).attr('name',
+                          jQuery(this).attr('name').replace(id_re, repl));
+      }
+      if (jQuery(this).attr('type') === 'text') {
+        jQuery(this).val('');
+      } else if (jQuery(this).attr('type') === 'checkbox') {
+        jQuery(this).val('0');
+      }
+    });
+    new_col.find('label').each(function () {
+      jQuery(this).attr('for', jQuery(this).attr('for').replace(id_re, repl));
+    });
+    jQuery('#grade_entry_items').append(new_col);
+  }
+
   jQuery(document).ready(function() {
     // Set locale for language localisation with Moment.js
-    moment.lang(document.getElementById('locale').value);
-
-    localize_date(document.getElementById('actual_date'),
-                  document.getElementById('date'),
-                  document.getElementById('format').value);
+    moment.lang('<%= t('date.formats.js_old_date_only') %>');
 
     jQuery('.datepicker').datepicker({
-      altField:         '#actual_date',
-      altFormat:        'yy-mm-dd',
       numberOfMonths:   2,
       dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
       monthNames:       <%= raw I18n.t('date.months') %>,
