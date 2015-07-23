@@ -334,3 +334,6 @@ DEPENDENCIES
   unicorn
   will_paginate
   ya2yaml
+
+BUNDLED WITH
+   1.10.3
