@@ -62,6 +62,9 @@
         (<span id='current_revision_timestamp_display'>
            <%= l(@revision_timestamp, format: :long_date) %>
         </span>)
+        <br>
+        <%= raw(t('browse_submissions.currently_collected')) %> 
+        <%= @grouping.is_collected ? "#" + raw(@grouping.submissions.last.revision_number) + " ( " + l((@revisions_history.select {|rev| rev[:num] == @grouping.submissions.last.revision_number }).first[:date], format: :long_date) + " )" : "none" %>
     </h2>
 
     <div id='directory_selector'>
