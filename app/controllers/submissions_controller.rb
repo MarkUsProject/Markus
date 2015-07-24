@@ -682,7 +682,7 @@ class SubmissionsController < ApplicationController
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
               type: 'application/vnd.ms-excel',
-              filename: "#{assignment.short_identifier}_svn_exports.csv"
+              filename: "#{assignment.short_identifier}_svn_checkouts.csv"
   end
 
   # See Assignment.get_svn_repo_list for details
