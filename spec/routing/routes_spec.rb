@@ -566,18 +566,10 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET download_svn_export_list properly' do
-        expect(get: sub_path + '/download_svn_export_list').to route_to(
+      it 'routes GET download_svn_checkout_commands properly' do
+        expect(get: sub_path + '/download_svn_checkout_commands').to route_to(
           controller: sub_ctrl,
-          action: 'download_svn_export_list',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET download_svn_export_commands properly' do
-        expect(get: sub_path + '/download_svn_export_commands').to route_to(
-          controller: sub_ctrl,
-          action: 'download_svn_export_commands',
+          action: 'download_svn_checkout_commands',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end

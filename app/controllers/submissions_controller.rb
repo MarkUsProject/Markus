@@ -675,10 +675,10 @@ class SubmissionsController < ApplicationController
               filename: "#{assignment.short_identifier}_detailed_report.csv"
   end
 
-  # See Assignment.get_svn_export_commands for details
-  def download_svn_export_commands
+  # See Assignment.get_svn_checkout_commands for details
+  def download_svn_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
-    svn_commands = assignment.get_svn_export_commands
+    svn_commands = assignment.get_svn_checkout_commands
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
               type: 'application/vnd.ms-excel',
