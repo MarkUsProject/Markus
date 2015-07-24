@@ -4,17 +4,18 @@ namespace :db do
   task :marks => :environment do
     puts 'Assign Marks for Assignments'
 
-      #Function used to create marks for both criterias
-      def create_mark(result_id, markable_type, markable)
-        Mark.create(
+    #Function used to create marks for both criterias
+    def create_mark(result_id, markable_type, markable)
+      Mark.create(
         result_id: result_id,
         mark: rand(1..5),
         markable_id: rand(1..5),
         markable_type: markable_type,
         markable: markable)
-      end
+    end
 
-    Grouping.all.each do |grouping|
+    #Right now, only generate marks for two assignments
+    Grouping.where(assignment_id: [1, 2]).each do |grouping|
       time = grouping.assignment.submission_rule.calculate_collection_time.localtime
       new_submission = Submission.create_by_timestamp(grouping, time)
       result = new_submission.results.first
@@ -47,5 +48,6 @@ namespace :db do
       result.save
     end
 
+    Assignment.find([1, 2]).each { |a| a.update_results_stats }
   end
 end
