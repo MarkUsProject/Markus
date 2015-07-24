@@ -189,6 +189,7 @@ pt:
         notice:
             change_marking_scheme_type: "Alterar a escala de avaliação ira apagar avalições e critérios."
         allow_web_submits: "Permitir envio pelo web"
+        vcs_submit: "Permitir que sustenta através de controle de versão"
         is_hidden: "Ocultar este projeto dos alunos"
         display_grader_names_to_students: "Mostrar nome de avaliador para alunos"
         section_due_date_option:  "Se a opção de prazo de entrega por sessão foi selecionada, alunos só podem formar grupos dentro da sua sessão."
