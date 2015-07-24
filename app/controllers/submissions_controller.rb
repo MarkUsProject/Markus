@@ -74,19 +74,23 @@ class SubmissionsController < ApplicationController
     #  @revisions_history << {num: revision.revision_number,
     #                         date: revision.timestamp}
     rev_number = repo.get_latest_revision.revision_number + 1
+    assign_path = File.join(@assignment.repository_folder, @path)
     rev_number.times.each do |rev|
       begin
         revision = repo.get_revision(rev)
-        unless revision.path_exists?(
-            File.join(@assignment.repository_folder, @path))
+        unless revision.path_exists?(assign_path)
           raise 'error'
         end
       rescue Exception
         revision = nil
       end
-      if revision
+      if revision && !revision.changed_files_at_path(assign_path).empty?
         @revisions_history << { num: revision.revision_number,
                                 date: revision.timestamp }
+        unless params[:revision_number] || params[:revision_timestamp]
+          @revision_number = revision.revision_number
+          @revision_timestamp = revision.timestamp
+        end
       end
     end
     respond_to do |format|
