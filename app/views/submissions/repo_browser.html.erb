@@ -64,9 +64,13 @@
         </span>)
         <br>
         <%= t('browse_submissions.currently_collected') %> 
-        <%= @grouping.is_collected ? "#" + raw(@grouping.submissions.last.revision_number) + 
-            " ( " + l((@revisions_history.select {|rev| rev[:num] == @grouping.submissions.last.revision_number }).first[:date], 
-            format: :long_date) + " )" : "none" %>
+        <% if @grouping.is_collected %>
+           <%= "#" + @grouping.submissions.last.revision_number.to_s + " ( " + 
+               l((@revisions_history.select {|rev| rev[:num] == @grouping.submissions.last.revision_number }).first[:date], 
+             format: :long_date) + " )" %>
+        <% else %>
+           <%= "none" %>
+        <% end %>
     </h2>
 
     <div id='directory_selector'>
