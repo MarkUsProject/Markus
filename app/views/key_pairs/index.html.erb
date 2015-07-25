@@ -1,11 +1,11 @@
-<h1>Your Key Pairs</h1>
+<h1><%= t('key_pairs.key_pairs_title') %></h1>
 
 <br>
 
 <table>
   <tr>
-    <th>Time of upload</th>
-    <th>Key Content</th>
+    <th><%= t('key_pairs.time_of_upload') %> |</th>
+    <th><%= t('key_pairs.key_content') %></th>
     <th></th>
   </tr>
 
@@ -14,7 +14,7 @@
   <tr>
     <td><%= key_pair.created_at %></td>
     <td><textarea cols="55" rows="10"><%= key_string %></textarea></td>
-    <td><%= link_to 'Remove Key', key_pair, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <td><%= link_to t('key_pairs.remove_key'), key_pair, method: :delete, data: { confirm: t('key_pairs.are_you_sure') } %></td>
   </tr>
 
 <% end %>
@@ -22,4 +22,4 @@
 
 <br />
 
-<%= link_to 'New Key pair', new_key_pair_path %>
+<%= link_to t('key_pairs.new_key_pair'), new_key_pair_path %>

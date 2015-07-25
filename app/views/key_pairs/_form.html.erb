@@ -12,15 +12,15 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :file %><br />
+    <%= f.label t('key_pairs.file') %><br />
     <%= f.file_field :file %>
-    <p><strong>OR</strong></p>
-    <%= f.label :Copy_and_paste_your_public_key %>
+    <p><strong><%= t('key_pairs.or') %></strong></p>
+    <%= f.label t('key_pairs.copy_paste_key') %>
     <br>
     <textarea cols="55" rows="14" id="key_pair_key_string" name="key_pair[key_string]"></textarea>
   </div>
 
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit(t('key_pairs.create_key_pair')) %>
   </div>
 <% end %>
