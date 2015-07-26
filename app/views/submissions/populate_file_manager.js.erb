@@ -1,5 +1,0 @@
-<% if @grouping.repository_external_commits_only? %>
-    jQuery("#directories_tbody").html("<%= raw escape_javascript(render(partial: 'submissions/table_row/exit_directory')) %>");
-<% end %>
-
-populate('<%= raw escape_javascript(@table_rows.to_json) %>');
