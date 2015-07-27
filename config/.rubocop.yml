@@ -18,3 +18,7 @@ Style/CollectionMethods:
   PreferredMethods:
     find:
     detect: 'find'
+
+# Disable to allow method chaining aligned at the '.'
+Style/MultilineOperationIndentation:
+  Enabled: false
