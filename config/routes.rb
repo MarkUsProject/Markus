@@ -11,8 +11,8 @@ Markus::Application.routes.draw do
         resources :groups, except: [:new, :edit] do
           resources :submission_downloads, except: [:new, :edit]
           resources :test_results, except: [:new, :edit]
-          member do 
-           put 'update_marks'
+          member do
+            put 'update_marks'
           end
         end
       end
