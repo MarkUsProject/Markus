@@ -69,7 +69,7 @@
                l((@revisions_history.select {|rev| rev[:num] == @grouping.submissions.last.revision_number }).first[:date], 
              format: :long_date) + " )" %>
         <% else %>
-           <%= "none" %>
+           <%= t('none') %>
         <% end %>
     </h2>
 
