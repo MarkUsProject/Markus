@@ -24,10 +24,12 @@ class CourseSummariesController < ApplicationController
       assignments.each do |assignment|
         header.push(assignment.short_identifier)
       end
+      header.push("Total marks")
       csv << header
       students.each do |student|
         row = []
         row.push(student.user_name)
+        total_spreadsheet_mark = 0
         assignments.each do |assignment|
           out_of = assignment.total_mark
           grouping = student.accepted_grouping_for(assignment.id)
@@ -43,10 +45,12 @@ class CourseSummariesController < ApplicationController
                 row.push('')
               else
                 row.push(total_mark_percentage)
+                total_spreadsheet_mark += total_mark_percentage
               end
             end
           end
         end
+        row.push(total_spreadsheet_mark)
         csv << row
       end
     end
