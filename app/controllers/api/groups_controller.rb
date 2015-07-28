@@ -82,46 +82,54 @@ module Api
 
     # Update the group's marks for the given assignment.
     def update_marks
-      assignment = Assignment.find_by_id(params[:assignment_id])
+      assignment = Assignment.find(params[:assignment_id])
       if assignment.nil?
         render 'shared/http_status', locals: { code: '404', message:
           'No assignment exists with that id' }, status: 404
         return
       end
 
-      group = Group.find_by_id(params[:id])
+      group = Group.find(params[:id])
       if group.nil?
         render 'shared/http_status', locals: { code: '404', message:
           'No group exists with that id' }, status: 404
         return
-      elsif group.submissions.first.nil?
+      end
+      if group.groupings.first.has_submission?
+        result = group.groupings
+                      .first
+                      .current_submission_used
+                      .get_latest_result
+      else
         render 'shared/http_status', locals: { code: '404', message:
           'No submissions exist for that group' }, status: 404
         return
       end
 
-      all_criteria = assignment.rubric_criteria
-      all_criteria.push(*assignment.flexible_criteria)
-      if all_criteria.empty?
+      matched_criteria = RubricCriterion
+                           .where(rubric_criterion_name: params.keys)
+      matched_criteria.concat(FlexibleCriterion
+                                .where(flexible_criterion_name: params.keys))
+      if matched_criteria.empty?
         render 'shared/http_status', locals: { code: '404', message:
-          'No criteria exist for that assignment' }, status: 404
+          'No criteria were found that match that request.' }, status: 404
         return
       end
 
-      result = group.submissions.first.get_latest_result
-      params.keys.each do |param_key|
-        all_criteria.each do |criteria|
-          if (criteria.rubric_criterion_name ==  param_key)
-            mark_to_change = result.marks
-                                   .where(markable_id: criteria.id)
-                                   .first
-            mark_to_change.mark = params[param_key].to_i
-            unless mark_to_change.save
-              # Some error occurred (including invalid mark)
-              render 'shared/http_status', locals: { code: '500', message:
-                HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
-            end
-          end
+      matched_criteria.each do |crit|
+        mark_to_change = result.marks
+                               .where(markable_id: crit.id)
+                               .first
+        if crit.is_a?(FlexibleCriterion)
+          mark_to_change.mark = params[crit.flexible_criterion_name].to_f
+        else
+          mark_to_change.mark = params[crit.rubric_criterion_name].to_i
+        end
+        unless mark_to_change.save
+          # Some error occurred
+          render 'shared/http_status', locals: { code: '500', message:
+            HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+          return
         end
       end
 
