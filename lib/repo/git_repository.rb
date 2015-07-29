@@ -92,7 +92,7 @@ module Repository
       end
 
       # Add permissions for git user
-      repo.add_permission('RW+', '', 'git')
+      repo.add_permission('RW+', '', 'vagrant')
 
       # Add the repo to the gitolite admin config
       conf.add_repo(repo)
@@ -689,7 +689,7 @@ module Repository
         user_id_permissions_map.each do |user_id, permissions|
           perm_string = __translate_to_git_perms(permissions)
           repo.add_permission(perm_string, '', user_id)
-          repo.add_permission(perm_string, '', 'git') # testing
+          #repo.add_permission(perm_string, '', 'git') # testing
         end
         conf.add_repo(repo)
       end

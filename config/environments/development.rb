@@ -107,7 +107,7 @@ Markus::Application.configure do
   ###################################################################
   # Options for Repository_type are 'svn' and 'memory' for now
   # 'memory' is by design not persistent and only used for testing MarkUs
-  REPOSITORY_TYPE = 'git' # use Subversion as storage backend
+  REPOSITORY_TYPE = 'svn' # use Subversion as storage backend
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
@@ -126,7 +126,7 @@ Markus::Application.configure do
 
   ###################################################################
   # Location of the public and private key for the git user on the system
-  GITOLITE_SETTINGS = { public_key: '/home/vagrant/git.pub',
+  GITOLITE_SETTINGS = { public_key: '/home/vagrant/.ssh/id_rsa.pub',
                         private_key: '/home/vagrant/.ssh/id_rsa',
                         host: 'localhost' }
 
