@@ -95,9 +95,9 @@ module Api
           'No group exists with that id' }, status: 404
         return
       end
-      if group.groupings.first.has_submission?
-        result = group.groupings
-                      .first
+      if group.grouping_for_assignment(params[:assignment_id])
+              .has_submission?
+        result = group.grouping_for_assignment(params[:assignment_id])
                       .current_submission_used
                       .get_latest_result
       else
@@ -120,22 +120,19 @@ module Api
         mark_to_change = result.marks
                                .where(markable_id: crit.id)
                                .first
-        if crit.is_a?(FlexibleCriterion)
-          mark_to_change.mark = params[crit.flexible_criterion_name].to_f
-        else
-          mark_to_change.mark = params[crit.rubric_criterion_name].to_i
-        end
-        unless mark_to_change.save
-          # Some error occurred
-          render 'shared/http_status', locals: { code: '500', message:
-            HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
-          return
-        end
+        set_mark_by_criteria(crit, mark_to_change)
       end
-
-      # Otherwise everything went alright.
       render 'shared/http_status', locals: { code: '200', message:
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+    end
+
+    def set_mark_by_criteria(criteria, mark_to_change)
+      if criteria.is_a?(FlexibleCriterion)
+        mark_to_change.mark = params[criteria.flexible_criterion_name].to_f
+      else
+        mark_to_change.mark = params[criteria.rubric_criterion_name].to_i
+      end
+      mark_to_change.save
     end
   end # end GroupsController
 end
