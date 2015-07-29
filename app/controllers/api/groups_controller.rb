@@ -73,6 +73,15 @@ module Api
       end
     end
 
+
+    def get_group_by_name
+    end
+
+
+
+
+
+
     # Include student_memberships and user info if required
     def include_students(fields)
       if fields.include?(:student_memberships)
@@ -107,9 +116,11 @@ module Api
       end
 
       matched_criteria = RubricCriterion
-                           .where(rubric_criterion_name: params.keys)
+                           .where(rubric_criterion_name: params.keys,
+                                  assignment_id: params[:assignment_id])
       matched_criteria.concat(FlexibleCriterion
-                                .where(flexible_criterion_name: params.keys))
+                                .where(flexible_criterion_name: params.keys,
+                                       assignment_id: params[:assignment_id]))
       if matched_criteria.empty?
         render 'shared/http_status', locals: { code: '404', message:
           'No criteria were found that match that request.' }, status: 404
