@@ -73,15 +73,6 @@ module Api
       end
     end
 
-
-    def get_group_by_name
-    end
-
-
-
-
-
-
     # Include student_memberships and user info if required
     def include_students(fields)
       if fields.include?(:student_memberships)
