@@ -109,8 +109,7 @@ module Api
       # We shouldn't be able to update marks if marking is already complete.
       if result.marking_state == Result::MARKING_STATES[:complete]
         render 'shared/http_status', locals: { code: '404', message:
-          'Marking for that submission has already been completed' },
-          status: 404
+          'Marking for that submission is already completed' }, status: 404
         return
       end
 
