@@ -264,19 +264,20 @@ class SubmissionsController < ApplicationController
   # when the state stored in the cookie exceeds 4k in serialized
   # form. This was happening prior to the fix of Github issue #30.
   def update_files
+    assignment_id = params[:assignment_id]
+    @assignment = Assignment.find(assignment_id)
+    unless @assignment.allow_web_submits
+      raise t('student.submission.external_submit_only')
+    end
+
     # We'll use this hash to carry over some error state to the
     # file_manager view.
     @file_manager_errors = Hash.new
-    assignment_id = params[:assignment_id]
-    @assignment = Assignment.find(assignment_id)
     required_files = AssignmentFile.where(
                            assignment_id: @assignment).pluck(:filename)
     students_filename = []
     @path = params[:path] || '/'
     @grouping = current_user.accepted_grouping_for(assignment_id)
-    if @grouping.repository_external_commits_only?
-      raise I18n.t('student.submission.external_submit_only')
-    end
     unless @grouping.is_valid?
       # can't use redirect_to here. See comment of this action for more details.
       set_filebrowser_vars(@grouping.group, @assignment)

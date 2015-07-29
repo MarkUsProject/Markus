@@ -41,19 +41,21 @@
     <p class='success'><%= flash[:submit_notice] %></p>
   <% end %>
 
-  <div id='directory_selector' <%=raw('style="display:none;"') unless @grouping.repository_external_commits_only? %>>
-    <p>
-      <%= I18n.t('student.submission.current_path') %>
-      <% path_memory = '/'
-         links = []
-         @path.split('/').each do |folder|
-         path_memory = File.join(path_memory, folder)
-         links.push(link_to folder, action: 'file_manager', path: path_memory)
-      end %>
-      <%= link_to '[root]', action: 'file_manager', path: '/' %>
-      <%= links.join('/')%>
-    </p>
-  </div>
+  <% if @assignment.vcs_submit %>
+    <div id='directory_selector'>
+      <p>
+        <%= I18n.t('student.submission.current_path') %>
+        <% path_memory = '/'
+           links = []
+           @path.split('/').each do |folder|
+           path_memory = File.join(path_memory, folder)
+           links.push(link_to folder, action: 'file_manager', path: path_memory)
+        end %>
+        <%= link_to '[root]', action: 'file_manager', path: '/' %>
+        <%= links.join('/')%>
+      </p>
+    </div>
+  <% end %>
 
   <% if flash[:transaction_warning] %>
     <div class='warning'><%= flash[:transaction_warning] %></div>
@@ -133,17 +135,21 @@
 <aside class='dialog' id='addnew_dialog'>
   <h2><%= t('add_new') %></h2>
 
+  <% if @assignment.allow_web_submits && @assignment.vcs_submit %>
+    <div class='notice'>
+      <%= t('student.submission.version_control_warning') %>
+    </div>
+  <% end %>
+
   <%= form_tag update_files_assignment_submissions_path(@assignment.id),
                { multipart: true, id: 'file_form' } do %>
     <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
 
-    <% unless !@grouping.is_valid? || @grouping.repository_external_commits_only? %>
-      <section class='dialog-actions'>
-        <%= submit_tag(I18n.t(:submit),
-                       disabled: !@grouping.is_valid?,
-                       onclick: 'set_onbeforeunload(false); submitFile(event)') unless @grouping.repository_external_commits_only? %>
-        <%= button_to_function t(:close), 'modal_addnew.close();' %>
-      </section>
-    <% end %>
+    <section class='dialog-actions'>
+      <%= submit_tag t(:submit),
+                     disabled: !@grouping.is_valid?,
+                     onclick: 'set_onbeforeunload(false); submitFile(event)' %>
+      <%= button_to_function t(:close), 'modal_addnew.close();' %>
+    </section>
   <% end %>
 </aside>
