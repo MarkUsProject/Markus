@@ -80,5 +80,61 @@ module Api
       end
     end
 
+    # Update the group's marks for the given assignment.
+    def update_marks
+      assignment = Assignment.find(params[:assignment_id])
+      if assignment.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No assignment exists with that id' }, status: 404
+        return
+      end
+
+      group = Group.find(params[:id])
+      if group.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No group exists with that id' }, status: 404
+        return
+      end
+      if group.grouping_for_assignment(params[:assignment_id])
+              .has_submission?
+        result = group.grouping_for_assignment(params[:assignment_id])
+                      .current_submission_used
+                      .get_latest_result
+      else
+        render 'shared/http_status', locals: { code: '404', message:
+          'No submissions exist for that group' }, status: 404
+        return
+      end
+
+      matched_criteria = RubricCriterion
+                           .where(rubric_criterion_name: params.keys,
+                                  assignment_id: params[:assignment_id])
+      matched_criteria.concat(FlexibleCriterion
+                                .where(flexible_criterion_name: params.keys,
+                                       assignment_id: params[:assignment_id]))
+      if matched_criteria.empty?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No criteria were found that match that request.' }, status: 404
+        return
+      end
+
+      matched_criteria.each do |crit|
+        mark_to_change = result.marks
+                               .where(markable_id: crit.id)
+                               .first
+        set_mark_by_criteria(crit, mark_to_change)
+      end
+      render 'shared/http_status', locals: { code: '200', message:
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+    end
+
+    def set_mark_by_criteria(criteria, mark_to_change)
+      if criteria.is_a?(FlexibleCriterion)
+        mark_to_change.mark = params[criteria.flexible_criterion_name].to_f
+      else
+        mark_to_change.mark = params[criteria.rubric_criterion_name].to_i
+      end
+      mark_to_change.save
+    end
   end # end GroupsController
 end
