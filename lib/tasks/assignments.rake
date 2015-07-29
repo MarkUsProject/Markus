@@ -5,6 +5,7 @@ namespace :db do
     # Assignments
     puts 'Assignment 1: Single Student Assignment No Marks'
     assignment_stat = AssignmentStat.new
+    assignment_stat.grade_distribution_percentage = 0.1
     rule = NoLateSubmissionRule.new
     Assignment.create(
         short_identifier: 'A1',
@@ -26,6 +27,7 @@ namespace :db do
 
     rule = NoLateSubmissionRule.new
     assignment_stat = AssignmentStat.new
+    assignment_stat.grade_distribution_percentage = 0.2
     assignment_msg  = <<-EOS
     Basic exercise in Object Oriented Programming.
     Implement Animal, Cat, and Dog, as described in class.
