@@ -22,7 +22,7 @@ class Mark < ActiveRecord::Base
   belongs_to :markable, polymorphic: true
   validates_numericality_of :markable_id,
                             only_integer: true,
-                            greater_than: 0,
+                            greater_than_or_equal_to: 0,
                             message: 'Criterion must be an id that is an integer greater than 0'
 
   validates_uniqueness_of :markable_id,
@@ -31,7 +31,8 @@ class Mark < ActiveRecord::Base
   # Custom validator for checking the upper range of a mark
   def valid_mark
     unless mark.nil?
-      if markable_type == 'RubricCriterion' && mark > 4
+      if markable_type == 'RubricCriterion' &&
+        (mark > 4 || (mark % 1 != 0))
         errors.add(:mark, I18n.t('mark.error.validate_rubric'))
       elsif markable_type == 'FlexibleCriterion' && mark > markable.max
         errors.add(:mark, I18n.t('mark.error.validate_flexible'))

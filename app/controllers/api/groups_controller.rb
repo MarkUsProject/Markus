@@ -106,6 +106,14 @@ module Api
         return
       end
 
+      # We shouldn't be able to update marks if marking is already complete.
+      if result.marking_state == Result::MARKING_STATES[:complete]
+        render 'shared/http_status', locals: { code: '404', message:
+          'Marking for that submission has already been completed' },
+          status: 404
+        return
+      end
+
       matched_criteria = RubricCriterion
                            .where(rubric_criterion_name: params.keys,
                                   assignment_id: params[:assignment_id])
@@ -122,7 +130,12 @@ module Api
         mark_to_change = result.marks
                                .where(markable_id: crit.id)
                                .first
-        set_mark_by_criteria(crit, mark_to_change)
+        unless set_mark_by_criteria(crit, mark_to_change)
+          # Some error occurred (including invalid mark)
+          render 'shared/http_status', locals: { code: '500', message:
+            mark_to_change.errors.full_messages.first }, status: 500
+          return
+        end
       end
       render 'shared/http_status', locals: { code: '200', message:
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
@@ -132,7 +145,7 @@ module Api
       if criteria.is_a?(FlexibleCriterion)
         mark_to_change.mark = params[criteria.flexible_criterion_name].to_f
       else
-        mark_to_change.mark = params[criteria.rubric_criterion_name].to_i
+        mark_to_change.mark = params[criteria.rubric_criterion_name]
       end
       mark_to_change.save
     end
