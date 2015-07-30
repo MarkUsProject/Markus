@@ -3,17 +3,17 @@ class KeyPairsController < ApplicationController
   # GET /key_pairs.json
   def index
     # Grab the own user's keys only
-    @key_pairs = KeyPair.where('user_id = ?', @current_user.id)
+    @key_pairs = KeyPair.where(user_id: @current_user.id)
 
     @key_strings = Array.new
 
     @key_pairs.each do |keypair|
       # Read the key
-      key = File.open(KEY_STORAGE + '/' + keypair.file_name)
-      @key_strings.push key.read
+      key = File.open(File.join(KEY_STORAGE, keypair.file_name))
+      @key_strings.pushkey.read)
     end
 
-    @key_pairs = @key_pairs.zip @key_strings
+    @key_pairs = @key_pairs.zip(@key_strings)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -57,8 +57,8 @@ class KeyPairsController < ApplicationController
 
     write_key(file_content, time_stamp)
 
-    add_key(KEY_STORAGE + '/' + @current_user.user_name + '@' + time_stamp +
-                '.pub')
+    add_key(File.join(KEY_STORAGE, @current_user.user_name +
+                                   "@#{time_stamp}.pub"))
   end
 
   def write_key(file_content, time_stamp)
@@ -76,7 +76,7 @@ class KeyPairsController < ApplicationController
   # Adds a specific public key to a specific user.
   def add_key(_path)
     ga_repo = Gitolite::GitoliteAdmin.new(
-      REPOSITORY_STORAGE + '/gitolite-admin', GITOLITE_SETTINGS)
+      File.join(REPOSITORY_STORAGE, 'gitolite-admin'), GITOLITE_SETTINGS)
 
     # Check to see if an individual repo exists for this user
     key = Gitolite::SSHKey.from_file(_path)
@@ -187,7 +187,7 @@ class KeyPairsController < ApplicationController
   def destroy
     @key_pair = KeyPair.find(params[:id])
 
-    remove_key(KEY_STORAGE + '/' + @key_pair.file_name)
+    remove_key(File.join(KEY_STORAGE, @key_pair.file_name))
 
     @key_pair.destroy
 

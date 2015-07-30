@@ -48,7 +48,7 @@ module Repository
       @repos_path = connect_string
       @closed = false
       @repos_admin = Repository.conf[:IS_REPOSITORY_ADMIN]
-      if (GitRepository.repository_exists?(@repos_path))
+      if GitRepository.repository_exists?(@repos_path)
 
         # make sure working directory is up-to-date
         g = Git.open(@repos_path)
@@ -56,7 +56,7 @@ module Repository
 
         @repos = Rugged::Repository.new(@repos_path)
       else
-        raise "Repository does not exist at path \"" + @repos_path + "\""
+        raise "Repository does not exist at path \"#{@repos_path}\""
       end
     end
 
@@ -689,7 +689,6 @@ module Repository
         user_id_permissions_map.each do |user_id, permissions|
           perm_string = __translate_to_git_perms(permissions)
           repo.add_permission(perm_string, '', user_id)
-          #repo.add_permission(perm_string, '', 'git') # testing
         end
         conf.add_repo(repo)
       end
