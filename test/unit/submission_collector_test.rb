@@ -2,7 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
 require 'shoulda'
-require 'mocha/setup'
 
 
 #IMPORTANT NOTE to anyone modifying these tests. It is highly recommended
@@ -20,7 +19,6 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
 
   def setup_collector
     @submission_collector = SubmissionCollector.instance
-    @submission_collector.init_queues
     @priority_queue = @submission_collector.grouping_queues.find_by_priority_queue(true).groupings
     @regular_queue = @submission_collector.grouping_queues.find_by_priority_queue(false).groupings
     @groupings = []
@@ -138,7 +136,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
 
         should 'move it from regular to priority queue' do
           assert_equal [@groupings.first], @priority_queue
-          assert @regular_queue.empty?
+          assert_equal @regular_queue.count, 0
           assert !@groupings.first.is_collected?
         end
       end

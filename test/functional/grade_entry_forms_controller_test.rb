@@ -64,7 +64,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert render_template :student_interface
       assert_response :success
       assert_equal true, flash.empty?
-      assert_match Regexp.new(I18n.t('grade_entry_forms.grades.total')), @response.body
       assert_match Regexp.new(total), @response.body
     end
 
@@ -90,7 +89,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert render_template :student_interface
       assert_response :success
       assert_equal true, flash.empty?
-      assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_mark')), @response.body
     end
 
     should 'POST on :new' do
@@ -284,21 +282,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_equal @original.description, g.description
       assert_equal @original.message, g.message
       assert_equal @original.date, g.date
-    end
-
-    should 'sort_by first_name so set cookies to first_name' do
-      GradeEntryForm.stubs(:find).returns(@grade_entry_form_with_grade_entry_items)
-
-      @c_sort_by = @admin.id.to_s +  '_' + @grade_entry_form_with_grade_entry_items.id.to_s + '_sort_by_grades'
-
-      get_as @admin,
-             :grades,
-             {
-                :id => @grade_entry_form_with_grade_entry_items.id,
-                :sort_by  => 'first_name'
-             }
-      assert_response :success
-      assert_equal 'first_name', cookies[@c_sort_by]
     end
 
     should 'POST on :edit with invalid basic value' do
@@ -497,15 +480,15 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
         put_as @admin,
                :update,
-               :id => @grade_entry_form.id,
-               :grade_entry_form => {
-                   :short_identifier => NEW_SHORT_IDENTIFIER,
-                   :description => NEW_DESCRIPTION,
-                   :message => NEW_MESSAGE,
-                   :date => @grade_entry_form.date,
-                   :grade_entry_items_attributes => {'new_1' => @q2,
-                                                     '1' => @q1,
-                                                     'new_2' => @q3}}
+               id: @grade_entry_form.id,
+               grade_entry_form: {
+                                   short_identifier: NEW_SHORT_IDENTIFIER,
+                                   description: NEW_DESCRIPTION,
+                                   message: NEW_MESSAGE,
+                                   date: @grade_entry_form.date,
+                                   grade_entry_items_attributes: { '0' => @q2,
+                                                                   '1' => @q1,
+                                                                   '2' => @q3 }}
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
         assert_response :redirect
@@ -519,13 +502,10 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         g.grade_entry_items.each do |item|
           if @q1[:name] == item[:name]
             assert_equal @q1[:out_of], item[:out_of]
-            assert_equal 1, item[:position]
           elsif @q2[:name] == item[:name]
             assert_equal @q2[:out_of], item[:out_of]
-            assert_equal 2, item[:position]
           else
             assert_equal @q3[:out_of], item[:out_of]
-            assert_equal 3, item[:position]
           end
         end
       end
@@ -806,24 +786,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       end
     end
 
-    # Test g_table_paginate
-    should 'POST on :g_table_paginate ' do
-      get_as @admin, :grades, :id => @grade_entry_form.id
-      post_as @admin, :g_table_paginate, {:id => @grade_entry_form.id,
-                                          :alpha_category => 'J-K',
-                                          :filter => 'none',
-                                          :sort_by => 'last_name',
-                                          :page => 1,
-                                          :update_alpha_pagination_options => 'true',
-                                          :per_page => 15,
-                                          :desc => 'false'}
-      assert_not_nil assigns :alpha_pagination_options
-      assert_not_nil assigns :students
-      assert_not_nil assigns :alpha_category
-      assert render_template :g_table_paginate
-      assert_response :success
-    end
-
     # Test releasing/unreleasing the marks
     context 'POST on :update_grade_entry_students: ' do
       setup do
@@ -944,6 +906,41 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_not_nil grade
         assert_equal @current_grade, grade.grade
       end
+
+      should 'display an error when uploading a malformed csv file and leave the db unchanged' do
+        tempfile = fixture_file_upload('files/malformed.csv')
+        post_as @admin,
+                :csv_upload,
+                id: @grade_entry_form.id,
+                upload: { grades_file: tempfile },
+                encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+          @grade_entry_student.id, @grade_entry_item.id
+        )
+        assert_not_nil grade
+        assert_equal @current_grade, grade.grade
+      end
+
+      should 'display an error when uploading a non csv file with a csv extension and leave the db unchanged' do
+        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+        post_as @admin,
+                :csv_upload,
+                id: @grade_entry_form.id,
+                upload: { grades_file: tempfile },
+                encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error],
+                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+          @grade_entry_student.id, @grade_entry_item.id
+        )
+        assert_not_nil grade
+        assert_equal @current_grade, grade.grade
+      end
     end
 
     context 'POST on :csv_upload with column already in db ' do
@@ -962,7 +959,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :csv_upload,
                 :id => @grade_entry_form.id,
                 :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
-                :encoding => 'UTF-8'
+                :encoding => 'UTF-8',
+                :overwrite => true
         assert_response :redirect
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id
@@ -976,7 +974,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :csv_upload,
                 :id => @grade_entry_form.id,
                 :upload => {:grades_file => fixture_file_upload('files/test_grades_ISO-8859-1.csv')},
-                :encoding => 'ISO-8859-1'
+                :encoding => 'ISO-8859-1',
+                :overwrite => true
         assert_response :redirect
         grade_entry_item = GradeEntryItem.find_by_id(@grade_entry_item.id)
         assert_not_nil grade_entry_item
@@ -995,25 +994,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :csv_upload,
                 :id => @grade_entry_form_with_grade_entry_items.id,
                 :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
-                :encoding => 'ISO-8859-1'
+                :encoding => 'ISO-8859-1',
+                :overwrite => true
         assert_response :redirect
-        test_student = Student.find_by_user_name('c2ÈrÉØrr')
-        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
-            @grade_entry_student.id, @grade_entry_item.id
-        )
-        assert_not_nil grade
-        assert_equal @old_grade, grade.grade
-      end
-
-      should 'have invalid values in database after an upload of an ISO-8859-1 encoded file parsed as UTF-8' do
-        assert_raise ArgumentError, "invalid byte sequence in UTF-8" do
-          post_as @admin,
-                  :csv_upload,
-                  :id => @grade_entry_form_with_grade_entry_items.id,
-                  :upload => {:grades_file => fixture_file_upload('files/test_grades_ISO-8859-1.csv')},
-                  :encoding => 'UTF-8'
-        end
-        assert_response :success
         test_student = Student.find_by_user_name('c2ÈrÉØrr')
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id
@@ -1047,7 +1030,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :csv_upload,
                 :id => @grade_entry_form.id,
                 :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
-                :encoding => 'UTF-8'
+                :encoding => 'UTF-8',
+                :overwrite => true
         assert_response :redirect
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id

@@ -4,7 +4,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 
 require 'shoulda'
 require 'machinist'
-require 'mocha/setup'
 require 'time-warp'
 
 class AssignmentsControllerTest < AuthenticatedControllerTest
@@ -65,7 +64,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
         assert_not_nil new_assignment.assignment_stat
         assert respond_with :redirect
-        assert set_the_flash
+        assert set_flash
       end
 
       should "set the flash's success message" do
@@ -191,14 +190,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                :student_interface,
                :id => @assignment.id
         assert_response :missing
-      end
-
-      should 'update group properties on persist' do
-        get_as  @admin,
-                :update_group_properties_on_persist,
-                :assignment_id => @assignment.id
-        assert assigns(:assignment)
-        assert_equal @assignment, assigns(:assignment)
       end
 
       should 'edit basic paramaters' do
@@ -418,8 +409,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         student = Student.make
         response_csv = get_as(@admin, :download_csv_grades_report).body
         csv_rows = CSV.parse(response_csv)
-        assert_equal Student.all.size, csv_rows.size
-        assignments = Assignment.all(:order => 'id')
+        assert_equal Student.all.size + 1, csv_rows.size # for header
+        assignments = Assignment.order(:id)
+        header = ['Username']
+        assignments.each do |assignment|
+          header.push(assignment.short_identifier)
+        end
+        assert_equal csv_rows.shift, header
         csv_rows.each do |csv_row|
           student_name = csv_row.shift
           student = Student.find_by_user_name(student_name)
@@ -577,7 +573,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'not be able to download an xml file' do
         get_as @admin, :download_assignment_list, :file_format => 'xml'
         assert_response :redirect
-        assert set_the_flash.to((I18n.t(:incorrect_format)))
+        assert set_flash.to(t(:incorrect_format))
       end
     end
 
@@ -631,6 +627,19 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         test1 = Assignment.find_by_short_identifier('ATest5')
         assert_nil test1
       end
+
+      should 'gracefully handle a non csv file with a csv extension' do
+        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+        post_as @admin,
+                :upload_assignment_list,
+                assignment_list: tempfile,
+                file_format: 'csv',
+                encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error],
+                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+      end
     end
 
   end  # -- an Admin
@@ -661,13 +670,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         get_as @grader,
                :student_interface,
                :id => @assignment.id
-        assert_response :missing
-      end
-
-      should 'not be able to get group properties' do
-        get_as @grader,
-               :update_group_properties_on_persist,
-               :assignment_id => @assignment.id
         assert_response :missing
       end
 
@@ -710,13 +712,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert assigns(:a_id_results)
         assert assigns(:assignments)
         assert_response :success
-      end
-
-      should 'not be able to get group properties' do
-        get_as @student,
-               :update_group_properties_on_persist,
-               :assignment_id => @assignment.id
-        assert_response :missing
       end
 
       should 'not be able to access grades report' do

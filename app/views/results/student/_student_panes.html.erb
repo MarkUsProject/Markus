@@ -31,20 +31,22 @@
           <ul id='annotation_summary_list'></ul>
         </div>
 
-        <div id='remark_request_tab'>
-          <% if @current_user.student? and assignment.allow_remarks%>
-            <%= render partial: 'results/student/remark_request',
-                       locals: { old_result: old_result,
-                                 result: result,
-                                 submission: submission,
-                                 assignment: assignment } %>
-          <% elsif submission.has_remark? %>
-            <%= render partial: 'results/marker/remark_request',
-                       locals: { result: result,
-                                 submission: submission,
-                                 assignment: assignment } %>
-          <% end %>
-        </div>
+        <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
+          <div id='remark_request_tab'>
+            <% if @current_user.student? and assignment.allow_remarks%>
+              <%= render partial: 'results/student/remark_request',
+                         locals: { old_result: old_result,
+                                   result: result,
+                                   submission: submission,
+                                   assignment: assignment } %>
+            <% elsif submission.has_remark? %>
+              <%= render partial: 'results/marker/remark_request',
+                         locals: { result: result,
+                                   submission: submission,
+                                   assignment: assignment } %>
+            <% end %>
+          </div>
+        <% end %>
       </div>
     </div>
 

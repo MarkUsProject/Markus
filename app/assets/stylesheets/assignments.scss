@@ -11,7 +11,7 @@
 }
 
 fieldset {
-  @include box-shadow(none);
+  box-shadow: none;
   margin-top: 2em;
 
   div {
@@ -20,16 +20,16 @@ fieldset {
 
   &.period,
   &.group_properties {
-    @include border-radius($radius);
     border: 1px solid $grey;
+    border-radius: $radius;
     padding: 1em;
 
     legend {
       width: auto;
 
       span {
-        position: static;
         padding-top: 0;
+        position: static;
       }
     }
 
@@ -39,7 +39,7 @@ fieldset {
   }
 
   &.period,
-  #sub_rule_link {
+  a {
     margin-left: 2.5em;
   }
 
@@ -51,12 +51,26 @@ fieldset {
 
 label {
   display: inline-block;
-  min-width: 12em;
   margin-top: 5px;
+  min-width: 12em;
+}
+
+.section_due_date_label {
+  margin-left: 10em;
 }
 
 input[type='number'] {
   width: 5em;
+}
+
+input#assignment_short_identifier {
+  margin-right: 4em;
+}
+
+input#assignment_repository_folder[readonly] {
+  background-color: $disabled-grey;
+  border-color: $disabled-dark;
+  color: black;
 }
 
 .PeriodDeltaChain {
@@ -106,15 +120,15 @@ input[type='number'] {
 }
 
 .block {
-  @include border-radius(5px);
   border: 1px solid $blue;
+  border-radius: $radius;
   margin: 0 auto 1.5em;
   padding: 0;
 
   h2 {
-    @include border-radius-top(5px);
-    background: $light-grey;
+    background-color: $light-grey;
     border-bottom: 1px solid $grey;
+    border-radius: $radius $radius 0 0;
     color: $dark-grey;
     font-size: 1.5em;
     font-weight: 300;
@@ -206,10 +220,8 @@ span.info_date {
   margin-right: 5px;
 }
 
-#invite_dialog {
-  fieldset {
-    padding-top: 1.5em;
-  }
+#invite_dialog fieldset {
+  padding-top: 1.5em;
 }
 
 
@@ -220,8 +232,8 @@ span.info_date {
 }
 
 #api_key_box {
-  @include border-radius(5px);
-  border: 1px solid #ccc;
+  border: 1px solid $grey;
+  border-radius: $radius;
   overflow: auto;
   padding: 0.75em;
 

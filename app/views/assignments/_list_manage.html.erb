@@ -10,7 +10,7 @@
           <tr>
             <th><%= t(:assignment_item) %></th>
             <th><%= t(:due) %></th>
-            <th></th>
+            <th><%= t(:submission_status) %></th>
           </tr>
         </thead>
         <tbody>
@@ -60,11 +60,13 @@
                 <span id='collected_submissions_<%= assignment.short_identifier %>'>
                   <% if assignment.submission_rule.can_collect_now? %>
                     <%= link_to t('submissions_collected',
-                                  count: assignment.groupings.all(conditions: { is_collected: true }).size,
+                                  count: assignment.groupings
+                                                   .where(is_collected: true)
+                                                   .size,
                                   size: assignment.groupings.size),
-                                controller: :submissions,
-                                action: :browse,
-                                assignment_id: assignment.id %>
+                                  controller: :submissions,
+                                  action: :browse,
+                                  assignment_id: assignment.id %>
                   <% end %>
                 </span>
                 <span id='class_average__<%= assignment.short_identifier %>'>
@@ -81,18 +83,3 @@
     </div>
   <% end %>
 </div>
-
-<script>
-  (function periodic() {
-    jQuery.ajax({
-      url:  '<%= update_collected_submissions_assignments_path %>',
-      data: 'authenticity_token=' + AUTH_TOKEN ,
-      type: 'POST',
-      dataType: "script",
-      complete: function() {
-        // Schedule the next request when the current one's complete
-        var timer = setTimeout(periodic, 4000);
-      }
-    });
-  })();
-</script>

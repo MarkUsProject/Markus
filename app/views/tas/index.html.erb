@@ -1,7 +1,6 @@
 <%= content_for :head do %>
   <%= javascript_include_tag 'users_manager',
-                             'Graders/index',
-                             'help_system' %>
+                             'Graders/index' %>
 
   <%= render partial: 'tas_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
@@ -17,7 +16,7 @@
   </h1>
 
   <div class='heading_buttons'>
-    <%= link_to t(:add_new), new_ta_path %>
+    <%= link_to t(:add_new_grader), new_ta_path %>
     <span class='menu_bar'></span>
     <%= link_to_function t(:upload), 'modal_upload.open()' %>
     <span class='menu_bar'></span>

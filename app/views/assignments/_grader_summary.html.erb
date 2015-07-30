@@ -6,7 +6,11 @@
 <% else %>
   <ul>
     <% assignment.tas.each do |ta| %>
-      <li><%= "#{ta.first_name} #{ta.last_name}" %></li>
+      <li><%= "#{ta.first_name} #{ta.last_name}" %>
+        (<%= t('browse_submissions.how_many_marked',
+               num_marked: ta.get_num_marked(assignment),
+               num_assigned: ta.get_num_assigned(assignment)) %>)
+      </li>
     <% end %>
   </ul>
 <% end %>

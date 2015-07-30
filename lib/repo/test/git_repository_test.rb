@@ -12,7 +12,7 @@ include Repository
 
 # Test suite for testing proper functioning of
 # GitRepository, an implementation of AbstractRepository
-class GitRepositoryTest < Test::Unit::TestCase
+class GitRepositoryTest < ActiveSupport::TestCase
 
   # NOTE: PATHS PROVIDED MUST BE "/" TERMINATED
   # AS COMPARED TO SUBVERSION REPOSITORIES

@@ -1,8 +1,10 @@
 <table id="summary_criteria_pane_list" class="marks_summary_pane_list">
   <thead>
-    <th><%=t("summary_table.title")%></th>
-    <th><%=t("summary_table.max_value")%></th>
-    <th>=&nbsp;<%=t("summary_table.grade")%></th>
+    <tr>
+      <th><%=t("summary_table.title")%></th>
+      <th><%=t("summary_table.max_value")%></th>
+      <th>=&nbsp;<%=t("summary_table.grade")%></th>
+    </tr>
   </thead>
   <% @mark_criteria.each do |criterion| -%>
   <%

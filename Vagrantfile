@@ -9,12 +9,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #          Enable at your own risk.
   # config.vm.synced_folder ".", "/home/vagrant/Markus"
 
-  # Access the server running on port 3000 on the host on port 42069.
-  config.vm.network "forwarded_port", guest: 3000, host: 42069
+  # Access the server running on port 3000 on the host on port 3000.
+  config.vm.network "forwarded_port", guest: 3000, host: 3000
 
   config.vm.provider "virtualbox" do |vb|
     # Uncomment the following line if you want a GUI.
     # vb.gui = true
     vb.name = "markus"
+    vb.memory = 2048
   end
 end

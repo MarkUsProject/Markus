@@ -78,11 +78,6 @@ describe Assignment do
       assignment = build(:assignment, group_max: 1, group_min: 2)
       expect(assignment).not_to be_valid
     end
-
-    it 'fails when due_date is invalid' do
-      assignment = build(:assignment, due_date: '2000/01/40')
-      expect(assignment).not_to be_valid
-    end
   end
 
   let(:assignment) do
@@ -123,7 +118,7 @@ describe Assignment do
         end
 
         it 'returns all TAs' do
-          expect(@assignment.tas).to eq [@ta, @other_ta]
+          expect(@assignment.tas).to match_array [@ta, @other_ta]
         end
       end
     end
@@ -352,7 +347,8 @@ describe Assignment do
         end
 
         it 'returns the students' do
-          expect(@assignment.grouped_students).to eq [@student, @other_student]
+          expect(@assignment.grouped_students)
+            .to match_array [@student, @other_student]
         end
       end
     end
@@ -521,6 +517,7 @@ describe Assignment do
   describe '#graded_submission_results' do
     before :each do
       @assignment = create(:assignment)
+      @submission_collector = SubmissionCollector.instance
       @grouping = create(:grouping, assignment: @assignment)
       @submission = create(:version_used_submission, grouping: @grouping)
       @other_grouping = create(:grouping, assignment: @assignment)
@@ -558,6 +555,23 @@ describe Assignment do
           expect(@assignment.graded_submission_results)
             .to eq [@result, @other_result]
         end
+      end
+    end
+
+    context 'assignment re-collection' do
+      it 'does calculate submission results properly' do
+        @assignment.due_date = (Time.now - 1.minute)
+        @assignment.save
+        expect(@assignment.submission_rule.can_collect_now?).to eq true
+        @submission_collector.push_groupings_to_queue(@assignment.groupings)
+        expect(@assignment.graded_submission_results.size).to_not be_nil
+        first_result = @submission.assignment.graded_submission_results.size
+        # make call to collect_all_submissions again
+        @submission_collector.push_groupings_to_queue(@assignment.groupings)
+        expect(@assignment.graded_submission_results.size).to_not be_nil
+        second_result = @submission.assignment.graded_submission_results.size
+        # first_result should be equal to second_result
+        expect(first_result).to eq(second_result)
       end
     end
   end
@@ -728,7 +742,9 @@ describe Assignment do
         end
 
         it 'returns the due date of that SectionDueDate' do
-          expect(@assignment.latest_due_date).to eq @section_due_date.due_date
+          due_date_1 = @assignment.latest_due_date
+          due_date_2 = @section_due_date.due_date
+          expect(due_date_1).to same_time_within_ms due_date_2
         end
       end
 

@@ -1,10 +1,3 @@
-# We need to force loading of all submission rules so that methods
-# like .const_defined? work correctly (rails abuse of autoload was
-# causing issues)
-Dir.glob('app/models/*_submission_rule.rb').each do |rule|
-  require File.expand_path(rule)
-end
-
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin,
                      except: [:deletegroup,
@@ -77,6 +70,8 @@ class AssignmentsController < ApplicationController
 
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
+    @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
+    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
 
     if @student.section &&
        !@student.section.section_due_date_for(@assignment.id).nil?
@@ -149,12 +144,10 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
-    @grade_entry_forms = GradeEntryForm.all(order: :id)
+    @grade_entry_forms = GradeEntryForm.order(:id)
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
-      @assignments = Assignment.find(:all, conditions:
-                                             { is_hidden: false },
-                                            order: :id)
+      @assignments = Assignment.where(is_hidden: false).order(:id)
       #get the section of current user
       @section = current_user.section
       # get results for assignments for the current user
@@ -164,8 +157,8 @@ class AssignmentsController < ApplicationController
           grouping = current_user.accepted_grouping_for(a)
           if grouping.has_submission?
             submission = grouping.current_submission_used
-            if submission.has_remark? && submission.get_remark_result.released_to_students
-              @a_id_results[a.id] = submission.get_remark_result
+            if submission.has_remark? && submission.remark_result.released_to_students
+              @a_id_results[a.id] = submission.remark_result
             elsif submission.has_result? && submission.get_original_result.released_to_students
               @a_id_results[a.id] = submission.get_original_result
             end
@@ -186,10 +179,10 @@ class AssignmentsController < ApplicationController
 
       render :student_assignment_list
     elsif current_user.ta?
-      @assignments = Assignment.all(order: :id)
+      @assignments = Assignment.includes(:submission_rule).order(:id)
       render :grader_index
     else
-      @assignments = Assignment.all(order: :id)
+      @assignments = Assignment.includes(:submission_rule).order(:id)
       render :index
     end
   end
@@ -197,9 +190,11 @@ class AssignmentsController < ApplicationController
   # Called on editing assignments (GET)
   def edit
     @assignment = Assignment.find_by_id(params[:id])
-
     @past_date = @assignment.section_names_past_due_date
     @assignments = Assignment.all
+    @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .where.not(id: @assignment.id)
+                                   .order(:id)
     @sections = Section.all
 
     unless @past_date.nil? || @past_date.empty?
@@ -219,6 +214,9 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:id])
     @assignments = Assignment.all
     @sections = Section.all
+    @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .where.not(id: @assignment.id)
+                                   .order(:id)
 
     unless params[:assignment].nil?
       @oldcriteria = @assignment.marking_scheme_type
@@ -237,8 +235,8 @@ class AssignmentsController < ApplicationController
         @assignment = process_assignment_form(@assignment)
       end
     rescue SubmissionRule::InvalidRuleType => e
-      @assignment.errors.add(:base, I18n.t('assignment.error',
-                                           message: e.message))
+      @assignment.errors.add(:base, t('assignment.error', message: e.message))
+      flash[:error] = t('assignment.error', message: e.message)
       render :edit, id: @assignment.id
       return
     end
@@ -256,6 +254,8 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    @clone_assignments = Assignment.where(allow_web_submits: false)
+                                   .order(:id)
     @sections = Section.all
     @assignment.build_submission_rule
     @assignment.build_assignment_stat
@@ -293,18 +293,18 @@ class AssignmentsController < ApplicationController
         flash[:success] = I18n.t('assignment.create_success')
       end
     end
-
     redirect_to action: 'edit', id: @assignment.id
   end
 
-  def update_group_properties_on_persist
-    @assignment = Assignment.find(params[:assignment_id])
-  end
-
   def download_csv_grades_report
-    assignments = Assignment.all(order: 'id')
+    assignments = Assignment.order(:id)
     students = Student.all
     csv_string = CSV.generate do |csv|
+      header = ['Username']
+      assignments.each do |assignment|
+        header.push(assignment.short_identifier)
+      end
+      csv << header
       students.each do |student|
         row = []
         row.push(student.user_name)
@@ -420,7 +420,7 @@ class AssignmentsController < ApplicationController
       if @grouping.has_submission?
         raise I18n.t('groups.cant_delete_already_submitted')
       end
-      @grouping.student_memberships.all(include: :user).each do |member|
+      @grouping.student_memberships.includes(:user).each do |member|
         member.destroy
       end
       # update repository permissions
@@ -575,7 +575,9 @@ class AssignmentsController < ApplicationController
             map.delete(nil)
             update_assignment!(map)
           end
-        rescue ActiveRecord::ActiveRecordError, ArgumentError => e
+        rescue ArgumentError
+          flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+        rescue ActiveRecord::ActiveRecordError => e
           flash[:error] = e.message
           redirect_to action: 'index'
           return
@@ -602,7 +604,7 @@ class AssignmentsController < ApplicationController
 
     def update_assignment!(map)
       assignment = Assignment.
-          find_or_create_by_short_identifier(map[:short_identifier])
+          find_or_create_by(short_identifier: map[:short_identifier])
       unless assignment.id
         assignment.submission_rule = NoLateSubmissionRule.new
         assignment.assignment_stat = AssignmentStat.new
@@ -631,11 +633,12 @@ class AssignmentsController < ApplicationController
     # First, figure out what kind of rule has been requested
     rule_attributes = params[:assignment][:submission_rule_attributes]
     rule_name       = rule_attributes[:type]
-    potential_rule  = if SubmissionRule.const_defined?(rule_name)
-                        SubmissionRule.const_get(rule_name)
-                      end
 
-    unless potential_rule && potential_rule.ancestors.include?(SubmissionRule)
+    [NoLateSubmissionRule, GracePeriodSubmissionRule,
+     PenaltyPeriodSubmissionRule, PenaltyDecayPeriodSubmissionRule]
+    if SubmissionRule.const_defined?(rule_name)
+      potential_rule = SubmissionRule.const_get(rule_name)
+    else
       raise SubmissionRule::InvalidRuleType, rule_name
     end
 
@@ -741,6 +744,7 @@ class AssignmentsController < ApplicationController
         :repository_folder,
         :due_date,
         :allow_web_submits,
+        :vcs_submit,
         :display_grader_names_to_students,
         :is_hidden,
         :marking_scheme_type,
@@ -758,6 +762,7 @@ class AssignmentsController < ApplicationController
         :group_name_displayed,
         :invalid_override,
         :section_groups_only,
+        :only_required_files,
         section_due_dates_attributes: [:_destroy,
                                        :id,
                                        :section_id,

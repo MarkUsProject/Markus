@@ -27,7 +27,8 @@ class RubricCriterion < Criterion
 
   validates_presence_of :rubric_criterion_name
   validates_uniqueness_of :rubric_criterion_name,
-                          scope: :assignment_id
+                          scope: :assignment_id,
+                          message: I18n.t('rubric_criteria.errors.messages.name_taken')
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count
@@ -135,7 +136,8 @@ class RubricCriterion < Criterion
     rubric_criterion_name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.rubric_criteria.find_or_create_by_rubric_criterion_name(rubric_criterion_name)
+    criterion = assignment.rubric_criteria.find_or_create_by(
+      rubric_criterion_name: rubric_criterion_name)
     #Check that the weight is not a string.
     begin
       criterion.weight = Float(working_row.shift)
@@ -183,7 +185,8 @@ class RubricCriterion < Criterion
     rubric_criterion_name = key[0]
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.rubric_criteria.find_or_create_by_rubric_criterion_name(rubric_criterion_name)
+    criterion = assignment.rubric_criteria.find_or_create_by(
+      rubric_criterion_name: rubric_criterion_name)
     #Check that the weight is not a string.
     begin
       criterion.weight = Float(key[1]['weight'])
@@ -262,7 +265,7 @@ class RubricCriterion < Criterion
 
   def add_tas(ta_array)
     ta_array = Array(ta_array)
-    associations = criterion_ta_associations.all(conditions: {ta_id: ta_array})
+    associations = criterion_ta_associations.where(ta_id: ta_array).to_a
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
       if (ta.criterion_ta_associations & associations).size < 1
@@ -278,7 +281,8 @@ class RubricCriterion < Criterion
 
   def remove_tas(ta_array)
     ta_array = Array(ta_array)
-    associations_for_criteria = criterion_ta_associations.all(conditions: {ta_id: ta_array})
+    associations_for_criteria = criterion_ta_associations.where(
+      ta_id: ta_array).to_a
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
       assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)

@@ -133,7 +133,7 @@ module Api
       # Apply offsets and limits, or get all if they aren't set
       collection = collection.offset(params[:offset].to_i) if !params[:offset].blank?
       collection = collection.limit(params[:limit].to_i) if !params[:limit].blank?
-      collection.all if filters.empty?
+      collection if filters.empty?
     end
 
     # Helper method handling which fields to render, given the provided default

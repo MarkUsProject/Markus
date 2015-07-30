@@ -18,11 +18,6 @@ describe GroupsController do
 
     describe 'GET #new' do
       context 'when no group name is specified' do
-        it 'assigns the requested assignment to @assignment' do
-          get :new, assignment_id: assignment
-          expect(assigns(:assignment)).to eq(assignment)
-        end
-
         it 'adds a new group to assignment' do
           expect(assignment).to receive(:add_group)
             .with(nil)
@@ -121,9 +116,6 @@ describe GroupsController do
       end
     end
 
-    describe '#upload_dialog'
-    describe '#download_dialog'
-    describe '#rename_group_dialog'
     describe '#rename_group'
     describe '#valid_grouping'
     describe '#invalid_grouping'
@@ -132,12 +124,7 @@ describe GroupsController do
 
     describe 'GET #index' do
       before :each do
-        allow(Assignment).to receive(:all).and_return([assignment])
         get :index, assignment_id: assignment
-      end
-
-      it 'populates @all_assignments with assignments' do
-        expect(assigns(:all_assignments)).to match_array([assignment])
       end
 
       it 'assigns the requested assignment to @assignment' do

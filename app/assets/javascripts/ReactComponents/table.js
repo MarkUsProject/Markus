@@ -71,7 +71,8 @@ var Table = React.createClass({displayName: 'Table',
       filter_func: first_filter_func,
       sort_column: first_sortable_column.id,
       sort_direction: 'asc',
-      sort_compare: first_sortable_column.compare
+      sort_compare: first_sortable_column.compare,
+      header_selected: false
     }
   },
   componentDidMount: function() {
@@ -119,7 +120,7 @@ var Table = React.createClass({displayName: 'Table',
     } else {
       new_selected_rows = [];
     }
-    this.setState({selected_rows: new_selected_rows});
+    this.setState({selected_rows: new_selected_rows, header_selected: value});
     this.props.onSelectedRowsChange(new_selected_rows);
   },
   rowCheckboxClicked: function(event) {
@@ -134,6 +135,9 @@ var Table = React.createClass({displayName: 'Table',
     }
     this.setState({selected_rows:new_selected_rows});
     this.props.onSelectedRowsChange(new_selected_rows);
+  },
+  clearCheckboxes: function() {
+    this.setState({selected_rows: [], header_selected: false});
   },
   // If search input or filter changed, pass the changed item into an object changed inhere
   // and it'll return the new visible rows so you can update the state with it.
@@ -160,7 +164,7 @@ var Table = React.createClass({displayName: 'Table',
     var columns = null;
     if (this.props.selectable) {
       columns = [{id:'checkbox', content:
-        React.DOM.input({type:'checkbox', onChange:this.headerCheckboxClicked})}]
+        React.DOM.input({type:'checkbox', checked:this.state.header_selected, onChange:this.headerCheckboxClicked})}]
         .concat(this.props.columns);
     } else {
       columns = this.props.columns;
@@ -493,15 +497,30 @@ function sort_by_column(data, column, direction, compare) {
   // determine sort behaviour
   function makeComparable(a)
   {
-    if (typeof a == 'string') {
+    if (typeof a === 'string') {
       return a.toLowerCase().replace(' ', '');
     } else if (a.hasOwnProperty('props')) {
+      // Is a react Grade Box
+      if (a.props.hasOwnProperty('grade_entry_column') || 
+          a.props.hasOwnProperty('data-grade-entry-item-id')) {
+        return a;
+      // Contains image
+      } else if (a.props.hasOwnProperty('src')) {
+        return a.props.src;
       // Is a react component, get innerHTML
-      return a.props.dangerouslySetInnerHTML.__html.toLowerCase();
-    } else {
-      return a;
+      } else if (a.props.hasOwnProperty('dangerouslySetInnerHTML')) {
+        return a.props.dangerouslySetInnerHTML.__html.toLowerCase();
+      } else {
+        return React.renderComponentToString(a);
+      }
     }
+    return a;
   }
+
+  if (typeof compare === 'string') {
+    compare = window[compare]
+  }
+
   compare = compare || compare_values;
 
   // sort row by column id

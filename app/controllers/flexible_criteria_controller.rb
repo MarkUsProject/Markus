@@ -9,8 +9,7 @@ class FlexibleCriteriaController < ApplicationController
     end
     # TODO until Assignment gets its criteria method
     @criteria =
-      FlexibleCriterion.find_all_by_assignment_id( @assignment.id,
-                                                   order: :position)
+      FlexibleCriterion.where(assignment_id: @assignment.id).order(:position)
   end
 
   def edit
@@ -20,6 +19,7 @@ class FlexibleCriteriaController < ApplicationController
   def update
     @criterion = FlexibleCriterion.find(params[:id])
     unless @criterion.update_attributes(flexible_criterion_params)
+      @errors = @criterion.errors
       render :errors
       return
     end
@@ -89,6 +89,8 @@ class FlexibleCriteriaController < ApplicationController
               nb_updates: nb_updates)
           end
         end
+      rescue CSV::MalformedCSVError
+        flash[:error] = I18n.t('csv.upload.malformed_csv')
       end
     end
     redirect_to action: 'index', assignment_id: @assignment.id

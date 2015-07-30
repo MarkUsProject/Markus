@@ -3,7 +3,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
 require 'shoulda'
-require 'mocha/setup'
 
 class GradersControllerTest < AuthenticatedControllerTest
 
@@ -11,16 +10,6 @@ class GradersControllerTest < AuthenticatedControllerTest
 
     setup do
       @student = Student.make
-    end
-
-    should 'GET on :upload_dialog' do
-      get_as @student, :upload_dialog, :assignment_id => 1
-      assert_response :missing
-    end
-
-    should 'GET on :download_dialog' do
-      get_as @student, :download_dialog, :assignment_id => 1
-      assert_response :missing
     end
 
     should 'GET on :groups_coverage_dialog' do
@@ -55,16 +44,6 @@ class GradersControllerTest < AuthenticatedControllerTest
 
     should 'GET on :global_actions' do
       get_as @student, :global_actions, :assignment_id => 1
-      assert_response :missing
-    end
-
-    should 'POST on :upload_dialog' do
-      post_as @student, :upload_dialog, :assignment_id => 1
-      assert_response :missing
-    end
-
-    should 'POST on :download_dialog' do
-      post_as @student, :download_dialog, :assignment_id => 1
       assert_response :missing
     end
 
@@ -202,6 +181,30 @@ class GradersControllerTest < AuthenticatedControllerTest
         assert @grouping2.tas.include? @ta1
         assert @grouping3.tas.count == 1
         assert @grouping3.tas.include? @ta3
+      end
+
+      should 'gracefully handle malformed csv files' do
+        tempfile = fixture_file_upload('files/malformed.csv')
+        post_as @admin,
+                :csv_upload_grader_groups_mapping,
+                assignment_id: @assignment.id,
+                grader_mapping: tempfile
+
+        assert_response :redirect
+        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+      end
+
+      should 'gracefully handle a non csv file with a csv extension' do
+        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+        post_as @admin,
+                :csv_upload_grader_groups_mapping,
+                assignment_id: @assignment.id,
+                grader_mapping: tempfile,
+                encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error],
+                     I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
     end #groups csv upload
 
@@ -349,6 +352,31 @@ class GradersControllerTest < AuthenticatedControllerTest
           assert @criterion3.tas.include? @ta3
         end
       end # flexible criteria
+
+      should 'gracefully handle malformed csv files' do
+        tempfile = fixture_file_upload('files/malformed.csv')
+        post_as @admin,
+                :csv_upload_grader_criteria_mapping,
+                assignment_id: @assignment.id,
+                grader_criteria_mapping: tempfile,
+                encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+      end
+
+      should 'gracefully handle a non csv file with a csv extension' do
+        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+        post_as @admin,
+                :csv_upload_grader_criteria_mapping,
+                assignment_id: @assignment.id,
+                grader_criteria_mapping: tempfile,
+                encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error],
+                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+      end
     end # criteria csv upload
 
     context 'doing a GET on :download_grader_groupings_mapping' do

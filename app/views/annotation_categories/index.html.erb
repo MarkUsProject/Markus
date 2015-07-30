@@ -1,10 +1,12 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'AnnotationCategories/index' %>
-
   <%= render partial: 'boot',
              formats: [:js],
              handlers: [:erb] %>
 <% end %>
+
+<%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
+<%= javascript_include_tag 'MathJax/mathjax_helpers' %>
 
 <div class='title_bar'>
   <h1>
@@ -36,23 +38,7 @@
 
 <div class='wrapper'>
   <div id='annotation_category_pane'>
-    <div class='sortable'>
-      <header>
-        <span><%= t('annotations.annotation_category') %></span>
-      </header>
-      <ul id='annotation_category_pane_list'>
-        <% if @annotation_categories.length > 0 %>
-          <% @annotation_categories.each do |annotation_category| %>
-            <%= render partial: 'annotation_category',
-                       locals: { annotation_category: annotation_category } %>
-          <% end %>
-        <% else %>
-          <div id='no_annotation_categories_info' class='information'>
-            <%= t('annotations.no_annotation_categories') %>
-          </div>
-        <% end %>
-      </ul>
-    </div>
+    <%= render partial: 'annotation_categories/annotation_category_pane' %>
   </div>
 
   <div id='annotations_pane'>

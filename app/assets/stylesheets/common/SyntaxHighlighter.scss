@@ -25,22 +25,22 @@
   }
 
   .bar {
-    @include border-radius($radius);
-    background: #ededed;
+    background: $grey;
+    border-radius: $radius;
     margin: 0 0 20px 0;
     padding: 5px;
   }
 
   /* Actual styling */
   ol {
-    background-color: #fff;
-    color: #5c5c5c;
+    background-color: $white;
+    color: $dark-grey;
     list-style: decimal; /* for ie */
     padding: 0;
 
     li {
       &:nth-child(odd) {
-        background-color: #fff;
+        background-color: $white;
         color: inherit;
       }
 
@@ -170,14 +170,16 @@
     color: gray;
   }
 
-  .source_code_glowing_1 {
+  .source-code-glowing-1 {
     background-color: #fffcc4 !important;
-    color: #000 !important;
   }
 
-  .source_code_glowing_2 {
-    background-color: #ff9 !important;
-    color: #00f !important;
+  .source-code-glowing-2 {
+    background-color: #fff085 !important;
+  }
+
+  .source-code-glowing-3 {
+    background-color: #ffea49 !important;
   }
 }
 

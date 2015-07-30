@@ -10,7 +10,7 @@
       <%= button_to t(:delete),
                     delete_annotation_text_assignment_annotation_category_path(id: annotation_text.id),
                     method: 'delete',
-                    confirm: t('annotations.delete.annotation_text'),
+                    data: { confirm: t('annotations.delete.annotation_text') },
                     remote: true,
                     class: 'inline-button' %>
     </div>

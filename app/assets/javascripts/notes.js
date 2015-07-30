@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
     };
 
     jQuery.ajax({
-      url:      '/en/notes/noteable_object_selector',
+      url:      'noteable_object_selector',
       data:     params,
       type:     'POST'
     }).done(function(data) {

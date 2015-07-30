@@ -4,7 +4,7 @@
       <%= link_to I18n.t(:assignment_link,
                          short_id: assignment.short_identifier,
                          description: assignment.description),
-                  edit_assignment_path(id: assignment.id),
+                  browse_assignment_submissions_path(assignment.id),
                   class: 'title' %>
     </h2>
 

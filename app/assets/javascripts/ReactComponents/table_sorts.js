@@ -10,6 +10,10 @@ function compare_dates(a, b) {
   return compare_numeric_values(parse_date(a), parse_date(b));
 }
 
+function compare_gradebox(a, b) {
+  return compare_numeric_values(a.props.value, b.props.value);
+}
+
 function compare_anchor_text(a, b) {
   function parse_anchor(a) {
     var open_tag_end = a.indexOf('>', a.indexOf('<a'));

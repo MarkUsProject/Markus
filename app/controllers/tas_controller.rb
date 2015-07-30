@@ -3,12 +3,10 @@ class TasController < ApplicationController
   before_filter  :authorize_only_for_admin
 
   def index
-    respond_to do |format|
-      format.html
-      format.json do
-        render json: get_tas_table_info
-      end
-    end
+  end
+
+  def populate
+    render json: get_tas_table_info
   end
 
   def new
@@ -54,7 +52,7 @@ class TasController < ApplicationController
   #downloads users with the given role as a csv list
   def download_ta_list
     #find all the users
-    tas = Ta.all(order: 'user_name')
+    tas = Ta.order(:user_name)
     case params[:format]
     when 'csv'
       output = User.generate_csv_list(tas)
@@ -72,16 +70,22 @@ class TasController < ApplicationController
 
   def upload_ta_list
     if request.post? && !params[:userlist].blank?
-      result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
-      if !result
-        flash[:notice] = I18n.t('csv.invalid_csv')
-        redirect_to action: 'index'
-        return
+      begin
+        result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
+        if !result
+          flash[:notice] = I18n.t('csv.invalid_csv')
+          redirect_to action: 'index'
+          return
+        end
+        if result[:invalid_lines].length > 0
+          flash[:invalid_lines] = result[:invalid_lines]
+        end
+        flash[:notice] = result[:upload_notice]
+      rescue CSV::MalformedCSVError
+        flash[:error] = t('csv.upload.malformed_csv')
+      rescue ArgumentError
+        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
-      if result[:invalid_lines].length > 0
-        flash[:invalid_lines] = result[:invalid_lines]
-      end
-      flash[:notice] = result[:upload_notice]
     end
     redirect_to action: 'index'
   end
