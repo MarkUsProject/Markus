@@ -171,7 +171,7 @@ Markus::Application.configure do
 
   ###################################################################
   # Location of the public and private key for the git user on the system
-  GITOLITE_SETTINGS = { public_key: '/home/vagrant/.ssh/id_rsa.pub',
+  GITOLITE_SETTINGS = { public_key: '/home/git/vagrant.pub',
                         private_key: '/home/vagrant/.ssh/id_rsa',
                         host: 'localhost' }
 
