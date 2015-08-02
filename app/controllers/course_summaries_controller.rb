@@ -41,11 +41,11 @@ def populate_header_titles(assignments)
 end
 
 #Helper function for populate_students_and_marks. Checks grouping, submission and it's mark for nil.
-def check_for_nil_fields(grouping, row, out_of)
-  if grouping.nil? or grouping.current_submission_used.nil? or (grouping.current_submission_used.get_latest_result.total_mark / out_of * 100).nan?
+def fill_row_with_marks(grouping, row)
+  if check_for_nil_fields(grouping)
     row.push('')
   else
-    row.push(grouping.current_submission_used.get_latest_result.total_mark / out_of * 100)
+    row.push(grouping.current_submission_used.get_latest_result.total_mark / grouping.assignment.total_mark * 100)
   end
   return row
 end
@@ -57,14 +57,72 @@ def populate_students_and_marks(csv)
   #Populates the csv header titles here
   csv << populate_header_titles(assignments)
   students.each do |student|
+    total_mark = 0
     row = []
     row.push(student.user_name)
       assignments.each do |assignment|
         grouping = student.accepted_grouping_for(assignment.id)
-        #Cheeck for nil fields. If not nil, then fill up the rows!
-        row = check_for_nil_fields(grouping, row, assignment.total_mark)
+        #Check for nil fields. If not nil, then fill up the rows!
+        row = fill_row_with_marks(grouping, row)
+        total_mark += get_total_marks_for_student(grouping)
       end
+    row.push(total_mark)
     csv << row
   end
   return csv
+end
+
+#Return the total marks for that student with its appropriate weights
+def get_total_marks_for_student(grouping)
+  current_total_marks = 0
+  if not check_for_nil_fields(grouping)
+  #Create Hashmap with Criteria ID as keys and it's weight as values
+    criteria_id_to_weight = return_criteria_to_weight_for_grouping(grouping)
+    get_assignment_marks(grouping).each do |mark|
+      current_total_marks += mark.mark * criteria_id_to_weight[mark.markable_id].to_f
+    end
+  end
+  return current_total_marks
+end
+    
+
+#Function that is called to check for nill grouping, submissions and marks
+def check_for_nil_fields(grouping)
+  if grouping.nil? or grouping.current_submission_used.nil? or
+    (grouping.current_submission_used.get_latest_result.total_mark/grouping.assignment.total_mark * 100).nan?
+    return true
+  else 
+    return false
+  end
+end
+
+#Returns the appropriate criteria for a group assignment
+def return_criteria_to_weight_for_grouping(grouping)
+  criteria_id_to_weight = {}
+  if grouping.assignment.marking_scheme_type == "rubric"
+    criteria_id_to_weight = map_criteria_id_to_weight("rubric", grouping.assignment.rubric_criteria)
+  elsif grouping.assignment.marking_scheme_type == "flexible"
+    criteria_id_to_weight = map_criteria_id_to_weight("flexible", grouping.assignment.flexible_criteria)
+  end
+  return criteria_id_to_weight
+end
+ 
+#Returns the marks that the group got on the assignment
+def get_assignment_marks(grouping)
+  return grouping.current_submission_used.results.first.marks
+end
+
+#Load a hashmap with the criteria id key to its value weight according to its criterion
+def map_criteria_id_to_weight(type, criterias)
+  criteria_id_to_weight = {}
+  if type == "rubric"
+    criterias.each do |criteria|
+      criteria_id_to_weight[criteria.id] = criteria.weight
+    end
+  elsif type == "flexible"
+    criterias.each do |criteria|
+      criteria_id_to_weight[criteria.id] = criteria.max.to_s("F")
+    end
+  end
+  return criteria_id_to_weight
 end
