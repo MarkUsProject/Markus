@@ -32,15 +32,15 @@ module Repository
       # Check if configuration is in order
       if Repository.conf[:IS_REPOSITORY_ADMIN].nil?
         raise ConfigurationError.new(
-                  "Required config 'IS_REPOSITORY_ADMIN' not set")
+                "Required config 'IS_REPOSITORY_ADMIN' not set")
       end
       if Repository.conf[:REPOSITORY_STORAGE].nil?
         raise ConfigurationError.new(
-                  "Required config 'REPOSITORY_STORAGE' not set")
+                "Required config 'REPOSITORY_STORAGE' not set")
       end
       if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
         raise ConfigurationError.new(
-                  "Required config 'REPOSITORY_PERMISSION_FILE' not set")
+                "Required config 'REPOSITORY_PERMISSION_FILE' not set")
       end
       begin
         super(connect_string) # dummy call to super
@@ -65,7 +65,7 @@ module Repository
     def self.create(connect_string)
       if GitRepository.repository_exists?(connect_string)
         raise RepositoryCollision.new(
-                  "There is already a repository at #{connect_string}")
+                "There is already a repository at #{connect_string}")
       end
       if File.exists?(connect_string)
         raise IOError.new("Could not create a repository at #{connect_string}:
@@ -143,11 +143,9 @@ module Repository
       Rugged::Commit.create(
         repo,
         commit_options(
-                repo,
-                'Markus',
-                'Initial readme commit.'
-        )
-      )
+          repo,
+          'Markus',
+          'Initial readme commit.'))
 
       cloned_repo.push
       return true

@@ -128,7 +128,7 @@ Markus::Application.configure do
   ###################################################################
   # Directory where authentication keys will be uploaded.
   # Make sure MarkUs is allowed to write to this directory
-  KEY_STORAGE = "#{::Rails.root.to_s}/data/test/keys"
+  KEY_STORAGE = "#{::Rails.root}/data/test/keys"
 
   ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs

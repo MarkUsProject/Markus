@@ -10,7 +10,7 @@ class KeyPairsController < ApplicationController
     @key_pairs.each do |keypair|
       # Read the key
       key = File.open(File.join(KEY_STORAGE, keypair.file_name))
-      @key_strings.pushkey.read)
+      @key_strings.push(key.read)
     end
 
     @key_pairs = @key_pairs.zip(@key_strings)
@@ -20,7 +20,7 @@ class KeyPairsController < ApplicationController
       format.json { render json: { key_pairs: @key_pairs } }
     end
   end
-  
+
   # GET /key_pairs/1
   # GET /key_pairs/1.json
   def show
@@ -199,11 +199,11 @@ class KeyPairsController < ApplicationController
 
   private
 
-    # Use this method to whitelist the permissible parameters. Example:
-    # params.require(:person).permit(:name, :age)
-    # Also, you can specialize this method with per-user checking of
-    # permissible attributes.
-    def key_pair_params
-      params.require(:key_pair).permit(:file, :key_string)
-    end
+  # Use this method to whitelist the permissible parameters. Example:
+  # params.require(:person).permit(:name, :age)
+  # Also, you can specialize this method with per-user checking of
+  # permissible attributes.
+  def key_pair_params
+    params.require(:key_pair).permit(:file, :key_string)
+  end
 end

@@ -41,7 +41,7 @@ Markus::Application.configure do
 
   ###################################################################
   # Set the course name here
-  COURSE_NAME         = 'CSC108 Fall 2009: Introduction to Computer Programming'
+  COURSE_NAME = 'CSC108 Fall 2009: Introduction to Computer Programming'
 
   ###################################################################
   # MarkUs relies on external user authentication: An external script
@@ -55,7 +55,7 @@ Markus::Application.configure do
   #
   # That is why MarkUs does not allow usernames/passwords which contain
   # \n or \0. These are the only restrictions.
-  VALIDATE_FILE = "#{::Rails.root.to_s}/config/dummy_validate.sh"
+  VALIDATE_FILE = "#{::Rails.root}/config/dummy_validate.sh"
 
   # Normally exit status 0 means successful, 1 means no such user,
   # and 2 means wrong password.
@@ -129,7 +129,7 @@ Markus::Application.configure do
   ###################################################################
   # Directory where authentication keys will be uploaded. Make sure MarkUs is
   # allowed to write to this directory
-  KEY_STORAGE = "#{::Rails.root.to_s}/data/dev/keys"
+  KEY_STORAGE = "#{::Rails.root}/data/dev/keys"
 
   ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
