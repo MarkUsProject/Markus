@@ -37,7 +37,7 @@ def populate_header_titles(assignments)
   assignments.each do |assignment|
     header.push(assignment.short_identifier)
   end
-  header.push("Total marks")
+  header.push('Total marks')
 end
 
 #Helper function for populate_students_and_marks. Checks grouping, submission and it's mark for nil.
@@ -47,7 +47,7 @@ def fill_row_with_marks(grouping, row)
   else
     row.push(grouping.current_submission_used.get_latest_result.total_mark / grouping.assignment.total_mark * 100)
   end
-  return row
+  row
 end
 
 #Helper function for download_csv_grades_report. Loads up the CSV with headers, students and marks.
@@ -69,7 +69,7 @@ def populate_students_and_marks(csv)
     row.push(total_mark)
     csv << row
   end
-  return csv
+  csv
 end
 
 #Return the total marks for that student with its appropriate weights
@@ -82,9 +82,8 @@ def get_total_marks_for_student(grouping)
       current_total_marks += mark.mark * criteria_id_to_weight[mark.markable_id].to_f
     end
   end
-  return current_total_marks
+  current_total_marks
 end
-    
 
 #Function that is called to check for nill grouping, submissions and marks
 def check_for_nil_fields(grouping)
@@ -99,30 +98,30 @@ end
 #Returns the appropriate criteria for a group assignment
 def return_criteria_to_weight_for_grouping(grouping)
   criteria_id_to_weight = {}
-  if grouping.assignment.marking_scheme_type == "rubric"
-    criteria_id_to_weight = map_criteria_id_to_weight("rubric", grouping.assignment.rubric_criteria)
-  elsif grouping.assignment.marking_scheme_type == "flexible"
-    criteria_id_to_weight = map_criteria_id_to_weight("flexible", grouping.assignment.flexible_criteria)
+  if grouping.assignment.marking_scheme_type == 'rubric'
+    criteria_id_to_weight = map_criteria_id_to_weight('rubric', grouping.assignment.rubric_criteria)
+  elsif grouping.assignment.marking_scheme_type == 'flexible'
+    criteria_id_to_weight = map_criteria_id_to_weight('flexible', grouping.assignment.flexible_criteria)
   end
-  return criteria_id_to_weight
+  criteria_id_to_weight
 end
  
 #Returns the marks that the group got on the assignment
 def get_assignment_marks(grouping)
-  return grouping.current_submission_used.results.first.marks
+  grouping.current_submission_used.results.first.marks
 end
 
 #Load a hashmap with the criteria id key to its value weight according to its criterion
 def map_criteria_id_to_weight(type, criterias)
   criteria_id_to_weight = {}
-  if type == "rubric"
+  if type == 'rubric'
     criterias.each do |criteria|
       criteria_id_to_weight[criteria.id] = criteria.weight
     end
-  elsif type == "flexible"
+  elsif type == 'flexible'
     criterias.each do |criteria|
-      criteria_id_to_weight[criteria.id] = criteria.max.to_s("F")
+      criteria_id_to_weight[criteria.id] = criteria.max.to_s('F')
     end
   end
-  return criteria_id_to_weight
+  criteria_id_to_weight
 end
