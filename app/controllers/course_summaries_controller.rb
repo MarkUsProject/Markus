@@ -45,8 +45,7 @@ def fill_row_with_marks(grouping, row)
   if check_for_nil_fields(grouping)
     row.push('')
   else
-    row.push(grouping.current_submission_used.get_latest_result.total_mark 
-      / grouping.assignment.total_mark * 100)
+    row.push(grouping.current_submission_used.get_latest_result.total_mark/grouping.assignment.total_mark * 100)
   end
   row
 end
@@ -89,8 +88,7 @@ end
 # Function that is called to check for nill grouping, submissions and marks
 def check_for_nil_fields(grouping)
   if grouping.nil? || grouping.current_submission_used.nil? ||
-    (grouping.current_submission_used.get_latest_result.total_mark
-      /grouping.assignment.total_mark * 100).nan?
+    (grouping.current_submission_used.get_latest_result.total_mark/grouping.assignment.total_mark * 100).nan?
     return true
   else 
     return false
