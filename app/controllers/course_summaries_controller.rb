@@ -22,9 +22,9 @@ class CourseSummariesController < ApplicationController
       populate_students_and_marks(csv)
     end
     course_name = "#{COURSE_NAME}"
-    course_name_underscore = course_name.squish.downcase.tr(" ", "_")
+    course_name_underscore = course_name.squish.downcase.tr(' ', '_')
     send_data csv_string, disposition: 'attachment',
-                         filename: "#{course_name_underscore}_grades_report.csv"
+                          filename: "#{course_name_underscore}_grades_report.csv"
   end
 end
 
