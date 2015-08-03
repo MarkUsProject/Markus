@@ -17,7 +17,6 @@ class CourseSummariesController < ApplicationController
   end
 
   def download_csv_grades_report
-    assignments = Assignment.order(:id)
     csv_string = CSV.generate do |csv|
       # Populates the entire CSV with headers, students and their marks
       populate_students_and_marks(csv)
