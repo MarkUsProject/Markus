@@ -20,7 +20,7 @@ class CourseSummariesController < ApplicationController
     assignments = Assignment.order(:id)
     csv_string = CSV.generate do |csv|
       # Populates the entire CSV with headers, students and their marks
-      populated_csv = populate_students_and_marks(csv)
+      populate_students_and_marks(csv)
     end
     course_name = "#{COURSE_NAME}"
     course_name_underscore = course_name.squish.downcase.tr(" ", "_")
@@ -54,14 +54,13 @@ end
 # Loads up the CSV with headers, students and marks.
 def populate_students_and_marks(csv)
   students = Student.all
-  assignments = Assignment.order(:id)
   # Populates the csv header titles here
-  csv << populate_header_titles(assignments)
+  csv << populate_header_titles(Assignment.order(:id))
   students.each do |student|
     total_mark = 0
     row = []
     row.push(student.user_name)
-    assignments.each do |assignment|
+    Assignment.order(:id).each do |assignment|
       grouping = student.accepted_grouping_for(assignment.id)
       # Check for nil fields. If not nil, then fill up the rows!
       row = fill_row_with_marks(grouping, row)
