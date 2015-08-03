@@ -28,7 +28,6 @@ Markus::Application.routes.draw do
     resources :assignments do
 
       collection do
-        get 'download_csv_grades_report'
         get 'delete_rejected'
         post 'update_collected_submissions'
         get 'download_assignment_list'
@@ -308,6 +307,7 @@ Markus::Application.routes.draw do
       collection do
         get 'populate'
         get 'get_marking_scheme_details'
+        get 'download_csv_grades_report'
       end
     end
 
