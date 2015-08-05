@@ -238,9 +238,10 @@ class Student < User
         end
         student = Student.find(student_id)
         memberships.each do |membership|
-          group = membership.grouping.group
+          grouping = membership.grouping
+          group = grouping.group
           group.access_repo do |repo|
-            if membership.grouping.repository_external_commits_only? && membership.grouping.is_valid?
+            if grouping.assignment.vcs_submit && grouping.is_valid?
               begin
                 repo.remove_user(student.user_name) # revoke repo permissions
               rescue Repository::UserNotFound
@@ -270,9 +271,10 @@ class Student < User
         end
         student = Student.find(student_id)
         memberships.each do |membership|
-          group = membership.grouping.group
+          grouping = membership.grouping
+          group = grouping.group
           group.access_repo do |repo|
-            if membership.grouping.repository_external_commits_only? && membership.grouping.is_valid?
+            if grouping.assignment.vcs_submit && grouping.is_valid?
               begin
                 repo.add_user(student.user_name, Repository::Permission::READ_WRITE) # grant repo permissions
               rescue Repository::UserAlreadyExistent

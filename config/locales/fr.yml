@@ -192,6 +192,7 @@ fr:
         notice:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois via l'interface web"
+        vcs_submit: "permettre soumet à travers le contrôle de version"
         is_hidden: "Cacher le projet aux étudiants"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants"
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
@@ -393,8 +394,9 @@ fr:
       find_by_revision_timestamp: "Par date de révision"
       find_by_revision_number:    "Par numéro de révision"
       viewing_revision:           "Révision : #<span id=\"current_revision_number_display\">%{revision_number}</span>"
+      currently_collected:  "Version recueillies:"
       current_path:         "Chemin actuel : "
-      download_all_files:  "Télécharger tous les fichiers"
+      download_all_files:   "Télécharger tous les fichiers"
       root:                 "[racine]"
       collect_and_grab:     "Récupérer et évaluer cette révision"
       could_not_collect:    "N'a pas pu récupérer cette révision pour le groupe %{group_name}. — La date de de récupération n'a pas encore été atteinte."
@@ -722,6 +724,7 @@ fr:
         # DO NOT change 'file_name' and 'new_file_name' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
         replace_file_js_error: "\"Vous ne pouvez pas remplacer '\" + file_name + \"' par '\" + new_file_name + \"'. Vous devez remplacer le fichier par un fichier ayant le même nom.\""
+        version_control_warning: "Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version. Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre."
 
     tas:
       create:

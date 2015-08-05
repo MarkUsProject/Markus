@@ -200,7 +200,8 @@ en:
             submissions_graders: "Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks."
             groups: "Manage student groups. You can create new groups and manually add and remove students to groups."
             graders: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."
-        allow_web_submits: "Allow Web Submits"
+        allow_web_submits: "Allow web submits"
+        vcs_submits: "Allow submits through version control"
         is_hidden: "Hide assignment from students"
         display_grader_names_to_students: "Display grader names to students"
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
@@ -413,8 +414,9 @@ en:
       find_by_revision_timestamp: "Find by Revision Timestamp"
       find_by_revision_number:    "Find by Revision Number"
       viewing_revision:           "Viewing Revision: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
+      currently_collected:  "Collected version:"
       current_path:         "Current Path:"
-      download_all_files:  "Download all files"
+      download_all_files:   "Download all files"
       root:                 "[root]"
       collect_and_grab:     "Collect and Grade This Revision"
       could_not_collect:    "Could not collect submission for group %{group_name} - the collection date has not been reached yet."
@@ -758,6 +760,7 @@ en:
         # DO NOT change 'file_name' and 'new_file_name' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
         replace_file_js_error: "\"You cannot replace '\" + file_name + \"' with '\" + new_file_name + \"'. You must replace a file with a file which has the same name.\""
+        version_control_warning: "Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting."
 
 
     tas:

@@ -704,6 +704,7 @@ class AssignmentsController < ApplicationController
         :repository_folder,
         :due_date,
         :allow_web_submits,
+        :vcs_submit,
         :display_grader_names_to_students,
         :is_hidden,
         :marking_scheme_type,

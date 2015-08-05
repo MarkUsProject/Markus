@@ -189,6 +189,7 @@ pt:
         notice:
             change_marking_scheme_type: "Alterar a escala de avaliação ira apagar avalições e critérios."
         allow_web_submits: "Permitir envio pelo web"
+        vcs_submit: "Permitir que sustenta através de controle de versão"
         is_hidden: "Ocultar este projeto dos alunos"
         display_grader_names_to_students: "Mostrar nome de avaliador para alunos"
         section_due_date_option:  "Se a opção de prazo de entrega por sessão foi selecionada, alunos só podem formar grupos dentro da sua sessão."
@@ -390,8 +391,9 @@ pt:
       find_by_revision_timestamp: "Encontrar revisão por Timestamp"
       find_by_revision_number:    "Encontrar revisão por número"
       viewing_revision:           "Vendo revisão: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
+      currently_collected:  "Versão coletada:"
       current_path:         "Caminho atual:"
-      download_all_files:  "Baixar todos os arquivos"
+      download_all_files:   "Baixar todos os arquivos"
       root:                 "[root]"
       collect_and_grab:     "Coletar e avaliar essa revisão"
       could_not_collect:    "Não foi possível coletar a submissão do grupo %{group_name} - a data de coleta ainda não chegou."
@@ -710,7 +712,7 @@ pt:
         # DO NOT change 'file_name' and 'new_file_name' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
         replace_file_js_error: "\"Você não pode substituir '\" + file_name + \"' por '\" + new_file_name + \"'. Você deve substituir um arquivo por outro com o mesmo nome.\""
-
+        version_control_warning: "Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão. Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar."
 
     tas:
       create:
