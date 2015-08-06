@@ -44,7 +44,6 @@ class CourseSummariesController < ApplicationController
 
   def insert_student_marks(csv)
     JSON.parse(get_table_json_data).each do |student|
-      puts (student)
       row = []
       row.push(student['user_name'])
       student['assignment_marks'].values.each do |assignment_mark|
@@ -62,7 +61,7 @@ class CourseSummariesController < ApplicationController
 
   def name_grades_report_file(csv_string)
     course_name = "#{COURSE_NAME}"
-    course_name_underscore = course_name.squish.downcase.tr(" ", "_")
+    course_name_underscore = course_name.squish.downcase.tr(' ', '_')
     send_data csv_string, disposition: 'attachment',
               filename: "#{course_name_underscore}_grades_report.csv"
   end
