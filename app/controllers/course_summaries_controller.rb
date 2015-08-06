@@ -30,15 +30,10 @@ class CourseSummariesController < ApplicationController
     marking_schemes = MarkingScheme.order(:id)
 
     header = ['Username']
-    assignments.each do |assignment|
-      header.push(assignment.short_identifier)
-    end
-    grade_entry_forms.each do |grade_entry_form|
-      header.push(grade_entry_form.short_identifier)
-    end
-    marking_schemes.each do |marking_scheme|
-      header.push(marking_scheme.name)
-    end
+    header.concat(assignments.map(&:short_identifier))
+    header.concat(grade_entry_forms.map(&:short_identifier))
+    header.concat(marking_schemes.map(&:name))
+
     csv << header
   end
 
@@ -46,15 +41,9 @@ class CourseSummariesController < ApplicationController
     JSON.parse(get_table_json_data).each do |student|
       row = []
       row.push(student['user_name'])
-      student['assignment_marks'].values.each do |assignment_mark|
-        row.push(assignment_mark)
-      end
-      student['grade_entry_form_marks'].values.each do |grade_entry_form_mark|
-        row.push(grade_entry_form_mark)
-      end
-      student['weighted_marks'].values.each do |scheme_grade|
-        row.push(scheme_grade)
-      end
+      row.concat(student['assignment_marks'].values)
+      row.concat(student['grade_entry_form_marks'].values)
+      row.concat(student['weighted_marks'].values)
       csv << row
     end
   end
@@ -62,7 +51,8 @@ class CourseSummariesController < ApplicationController
   def name_grades_report_file(csv_string)
     course_name = "#{COURSE_NAME}"
     course_name_underscore = course_name.squish.downcase.tr(' ', '_')
-    send_data csv_string, disposition: 'attachment',
+    send_data csv_string,
+              disposition: 'attachment',
               filename: "#{course_name_underscore}_grades_report.csv"
   end
 end

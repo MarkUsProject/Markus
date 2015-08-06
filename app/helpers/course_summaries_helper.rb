@@ -25,18 +25,19 @@ module CourseSummariesHelper
     @gef_weights = get_gef_marking_weights_for_all_marking_schemes
 
     @max_marks = Hash[Assignment.all.map do |a|
-                        [a.id, get_max_mark_for_assignment(a.id)]
+      [a.id, get_max_mark_for_assignment(a.id)]
     end
     ]
     @gef_max_marks = Hash[GradeEntryForm.all.map do |gef|
-                            [gef.id, get_max_mark_for_grade_entry_form(gef.id)]
+      [gef.id, get_max_mark_for_grade_entry_form(gef.id)]
     end
     ]
   end
 
   def get_student_information(student)
     marks = get_mark_for_all_assignments_for_student(student, @all_assignments)
-    gef_marks = get_mark_for_all_gef_for_student(student, @all_grade_entry_forms)
+    gef_marks = get_mark_for_all_gef_for_student(
+      student, @all_grade_entry_forms)
 
     {
         id: student.id,
@@ -46,9 +47,9 @@ module CourseSummariesHelper
         assignment_marks: marks,
         grade_entry_form_marks: gef_marks,
         weighted_marks:
-            get_weighted_total_for_all_marking_schemes_for_student(
-                @all_schemes, marks, gef_marks, @weights,
-                @gef_weights, @max_marks, @gef_max_marks)
+          get_weighted_total_for_all_marking_schemes_for_student(
+            @all_schemes, marks, gef_marks, @weights,
+            @gef_weights, @max_marks, @gef_max_marks)
     }
   end
 
