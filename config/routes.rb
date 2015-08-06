@@ -9,6 +9,9 @@ Markus::Application.routes.draw do
       resources :users, except: [:new, :edit]
       resources :assignments, except: [:new, :edit] do
         resources :groups, except: [:new, :edit] do
+          collection do
+            get 'group_ids_by_name'
+          end
           resources :submission_downloads, except: [:new, :edit]
           resources :test_results, except: [:new, :edit]
           member do

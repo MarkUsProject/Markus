@@ -142,11 +142,33 @@ module Api
 
     def set_mark_by_criteria(criteria, mark_to_change)
       if criteria.is_a?(FlexibleCriterion)
-        mark_to_change.mark = params[criteria.flexible_criterion_name].to_f
+        if params[criteria.flexible_criterion_name] == "nil"
+          mark_to_change.mark = nil
+        else
+          mark_to_change.mark = params[criteria.flexible_criterion_name].to_f
+        end
       else
-        mark_to_change.mark = params[criteria.rubric_criterion_name]
+        if params[criteria.rubric_criterion_name] == "nil"
+          mark_to_change.mark = nil
+        else
+          mark_to_change.mark = params[criteria.rubric_criterion_name]
+        end
       end
       mark_to_change.save
+    end
+
+    # Return key:value pairs of group_name:group_id
+    def group_ids_by_name
+      reversed = Assignment.find_by_id(params[:assignment_id])
+                           .groups
+                           .inject({}) do |dict, group|
+                             dict[group.group_name] = group.id
+                             dict
+                           end
+      respond_to do |format|
+        format.xml{render xml: reversed.to_xml(root: 'groups', skip_types: 'true')}
+        format.json{render json: reversed.to_json}
+      end
     end
   end # end GroupsController
 end
