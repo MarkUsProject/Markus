@@ -46,15 +46,9 @@ class CourseSummariesController < ApplicationController
     JSON.parse(get_table_json_data).each do |student|
       row = []
       row.push(student['user_name'])
-      student['assignment_marks'].values.each do |assignment_mark|
-        row.push(assignment_mark)
-      end
-      student['grade_entry_form_marks'].values.each do |grade_entry_form_mark|
-        row.push(grade_entry_form_mark)
-      end
-      student['weighted_marks'].values.each do |scheme_grade|
-        row.push(scheme_grade)
-      end
+      row.concat(student['assignment_marks'].values)
+      row.concat(student['grade_entry_form_marks'].values)
+      row.concat(student['weighted_marks'].values)
       csv << row
     end
   end
