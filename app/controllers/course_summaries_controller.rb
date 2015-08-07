@@ -12,6 +12,10 @@ class CourseSummariesController < ApplicationController
     render json: get_table_json_data
   end
 
+  def student_course_summary
+    render json: get_student_information(@current_user)
+  end
+
   def get_marking_scheme_details
     redirect_to url_for(controller: 'marking_schemes', action: 'populate')
   end

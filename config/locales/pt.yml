@@ -513,6 +513,8 @@ pt:
     spreadsheet_date: "Data"
     mark_message: "Sua nota:"
 
+    student_course_summary: "Resumo do Curso"
+
     student_interface_assignments: "Seus projetos"
 
     stopping_collection_process: "Pausando processo de coleta..."

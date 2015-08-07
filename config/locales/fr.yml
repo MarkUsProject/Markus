@@ -527,6 +527,8 @@ fr:
     spreadsheet_date: "Date"
     mark_message: "Votre note : "
 
+    student_course_summary: "Résumé du Cours"
+
     student_interface_assignments: "Vos projets"
 
     stopping_collection_process: "Arrêt du processus de récupération…"

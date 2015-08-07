@@ -551,6 +551,8 @@ en:
     spreadsheet_date: "Date"
     mark_message: "Your mark:"
 
+    student_course_summary: "Course Summary"
+
     student_interface_assignments: "Your Assignments"
 
     stopping_collection_process: "Now stopping collection process..."
