@@ -13,7 +13,7 @@ class CourseSummariesController < ApplicationController
   end
 
   def student_course_summary
-    render json: get_student_information(@current_user)
+    render json: get_student_row_information
   end
 
   def get_marking_scheme_details

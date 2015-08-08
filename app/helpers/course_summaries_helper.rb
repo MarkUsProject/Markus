@@ -11,9 +11,9 @@ module CourseSummariesHelper
     student_list.to_json
   end
 
-  def get_student_row_information(student)
+  def get_student_row_information
     course_information
-    get_student_information(student).to_json
+    [get_student_information(@current_user)].to_json
   end
 
   def course_information
