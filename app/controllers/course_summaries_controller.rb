@@ -1,6 +1,9 @@
 class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
+  before_filter      :authorize_only_for_admin,
+                     only: [:download_csv_grades_report]
+
   def index
     @assignments = Assignment.all
     @marking_schemes = MarkingScheme.all
