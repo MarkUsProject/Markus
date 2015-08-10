@@ -1,7 +1,6 @@
 require 'shoulda'
 
 class CourseSummariesControllerTest < AuthenticatedControllerTest
-
   def setup
     @controller = CourseSummariesController.new
     @request = ActionController::TestRequest.new
@@ -38,7 +37,7 @@ class CourseSummariesControllerTest < AuthenticatedControllerTest
           assert_not_nil student
           assert_equal assignments.size, csv_row.size
 
-          csv_row.each_with_index do |final_mark,index|
+          csv_row.each_with_index do |final_mark, index|
             if final_mark.blank?
               if student.has_accepted_grouping_for?(assignments[index])
                 grouping = student.accepted_grouping_for(assignments[index])
@@ -53,8 +52,8 @@ class CourseSummariesControllerTest < AuthenticatedControllerTest
               submission = grouping.current_submission_used
               assert_not_nil submission.get_latest_result
               assert_equal final_mark.to_f.round,
-                           (submission.get_latest_result.total_mark / out_of * 100
-                           ).to_f.round
+                           (submission.get_latest_result.total_mark / out_of *
+                            100).to_f.round
             end
           end
         end
@@ -62,7 +61,6 @@ class CourseSummariesControllerTest < AuthenticatedControllerTest
       end
     end
   end
-
 
   context 'A grader' do
     setup do
@@ -80,10 +78,10 @@ class CourseSummariesControllerTest < AuthenticatedControllerTest
       @student = Student.make
     end
 
-      should 'not be able to access grades report' do
-        get_as @student, :download_csv_grades_report
-        assert_response :missing
-      end
+    should 'not be able to access grades report' do
+      get_as @student, :download_csv_grades_report
+      assert_response :missing
     end
-
+  end
 end
+
