@@ -137,7 +137,7 @@ Markus::Application.routes.draw do
           get 'download_simple_csv_report'
           get 'download_detailed_csv_report'
           get 'download_svn_export_list'
-          get 'download_svn_export_commands'
+          get 'download_svn_checkout_commands'
           get 'download_svn_repo_list'
           get 'collect_ta_submissions'
           post 'update_submissions'

@@ -437,7 +437,7 @@ fr:
       csv_report:           "Rapport CSV"
       detailed_csv_report: "Rappost CSV détaillé"
       subversion_repo_list: "Liste des dépôts Subversion"
-      subversion_export_file: "Commandes SVN pour exporter les projets"
+      subversion_checkout_file: "Commandes SVN pour extraire les projets"
       errors:               "Erreurs"
       filter:               "Filtres :"
       show:                 "Montrer"
