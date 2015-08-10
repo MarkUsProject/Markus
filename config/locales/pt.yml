@@ -419,7 +419,7 @@ pt:
       csv_report:           "Relatório CSV"
       detailed_csv_report: "Relatório detalhado CSV"
       subversion_repo_list: "Lista de repositórios subversion"
-      subversion_export_file: "Comando SVN para exportar projetos"
+      subversion_checkout_file: "Comando SVN para transferir projetos"
       errors:               "Erros"
       filter:               "Filtro:"
       show:                 "Mostrar"
@@ -1072,6 +1072,21 @@ pt:
       grade: "Nota"
       x_mark: "x Mark"
       weight: "Peso"
+
+    key_pairs:
+      title: "Os Pares de Chaves"
+      key_pairs_title:         "Os Seus Pares de Chaves"
+      time_of_upload:         "Tempo de Carregamento"
+      key_content:         "Conteúdo de Chave"
+      new_key_pair:         "Novo Par de Chaves"
+      add_key_pair:         "Adicionar um Par de Chaves"
+      remove_key:         "Remova a Chave"
+      are_you_sure:         "Tem certeza?"
+      file:         "Arquivo"
+      or:         "OU"
+      copy_paste_key:         "Copie e Cole a Sua Chave Pública"
+      create_key_pair:         "Criar Par de Chaves"
+      back:         "De Volta"
 
     course_summaries:
       title: "Sumário"

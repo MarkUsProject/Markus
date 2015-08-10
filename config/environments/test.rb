@@ -117,7 +117,18 @@ Markus::Application.configure do
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
   # to write to this directory
-  REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/test/dummy" # unused, because of type memory
+  REPOSITORY_STORAGE = "#{::Rails.root}/data/test/repos"
+
+  ###################################################################
+  # Location of the public and private key for the git user on the system
+  GITOLITE_SETTINGS = { public_key: '/home/git/vagrant.pub',
+                        private_key: '/home/vagrant/.ssh/id_rsa',
+                        host: 'localhost' }
+
+  ###################################################################
+  # Directory where authentication keys will be uploaded.
+  # Make sure MarkUs is allowed to write to this directory
+  KEY_STORAGE = "#{::Rails.root}/data/test/keys"
 
   ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
