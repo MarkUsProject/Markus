@@ -25,7 +25,11 @@
                             class: 'assignment_list' %>
               </td>
               <td>
-                <%= l(grade_entry_form.date, format: :short_date) %>
+		<% if grade_entry_form.date %>
+                  <%= l(grade_entry_form.date, format: :short_date) %>
+		<% else %>
+		  <%= '' %>
+		<% end %>
               </td>
             </tr>
           <% end %>

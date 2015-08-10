@@ -13,7 +13,7 @@
 <% end %>
 
 
-<% @assignments = Assignment.all(order: 'short_identifier ASC') %>
+<% @assignments = Assignment.order(short_identifier: :asc) %>
 
 <% @assignments.each do |assignment| %>
   <% if assignment == @assignments.first %>
@@ -134,7 +134,7 @@
 
 
 <% # Display grade entry forms in the dropdown menu %>
-<% @grade_entry_forms = GradeEntryForm.all(order: 'short_identifier ASC') %>
+<% @grade_entry_forms = GradeEntryForm.order('id ASC') %>
 
 <% @grade_entry_forms.each do |grade_entry_form| %>
   <% if grade_entry_form == @grade_entry_forms.first %>

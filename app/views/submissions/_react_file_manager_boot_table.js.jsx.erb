@@ -100,11 +100,9 @@
         return f;
       }.bind(this));
 
-      var selectable = <%= not @grouping.repository_external_commits_only? %>;
-
       return (
         <div>
-          <% unless !@grouping.is_valid? || @grouping.repository_external_commits_only? %>
+          <% if @grouping.is_valid? && @assignment.allow_web_submits %>
             <FileManagerActionBox
               selected_files={this.state.selected_files}
               data_file={files_data}
@@ -114,7 +112,7 @@
 
           <Table data={files_data}
             columns={this.props.columns}
-            selectable={selectable}
+            selectable={<%= @assignment.allow_web_submits %>}
             onSelectedRowsChange={this.updateSelectedFiles}
             search_placeholder={'<%= raw I18n.t("student.submission.search_files") %>'}
             ref='table' />
@@ -181,10 +179,8 @@
 
     openModal: function(e) {
       e.preventDefault();
-      <% if (@grouping.is_valid? && !@grouping.repository_external_commits_only?) %>
-        modal_addnew.open();
-        set_onbeforeunload(true);
-      <% end %>
+      modal_addnew.open();
+      set_onbeforeunload(true);
     },
 
     render: function() {

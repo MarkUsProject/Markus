@@ -39,7 +39,7 @@ fieldset {
   }
 
   &.period,
-  .sub_rule_link {
+  a {
     margin-left: 2.5em;
   }
 
@@ -55,8 +55,22 @@ label {
   min-width: 12em;
 }
 
+.section_due_date_label {
+  margin-left: 10em;
+}
+
 input[type='number'] {
   width: 5em;
+}
+
+input#assignment_short_identifier {
+  margin-right: 4em;
+}
+
+input#assignment_repository_folder[readonly] {
+  background-color: $disabled-grey;
+  border-color: $disabled-dark;
+  color: black;
 }
 
 .PeriodDeltaChain {

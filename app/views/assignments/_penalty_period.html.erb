@@ -12,7 +12,9 @@
 
   <%= pf.fields_for :periods, penalty_period do |f| %>
     <p>
-      <%= f.label :hours, t('submission_rules.penalty_period_submission_rule.after').html_safe %>
+      <%= f.label :hours,
+                  t('submission_rules.penalty_period_submission_rule.after'),
+                  class: 'required' %>
       <%= f.text_field :hours,
                        size: 1,
                        class: 'PeriodDeltaChain_Hours',
@@ -29,7 +31,9 @@
       </span>
     </div>
     <p>
-      <%= f.label :deduction, t('submission_rules.penalty_period_submission_rule.deduction').html_safe %>
+      <%= f.label :deduction,
+                  t('submission_rules.penalty_period_submission_rule.deduction'),
+                  class: 'required' %>
       <%= f.text_field :deduction, required: true, size: 1 %>%
     </p>
     <p>
@@ -37,9 +41,9 @@
         <%= f.label :_destroy, t(:remove) %>
         <%= f.check_box :_destroy %>
       <% else %>
-        <%= link_to_function t(:remove),
-                             "jQuery(this).parents(\".period\").remove();
-                              if (penalty_periods) { penalty_periods.refresh(); }" %>
+        <%= link_to t(:remove),
+                    '#',
+                    onclick: 'remove_period(this, penalty_periods); return false;' %>
       <% end %>
     </p>
   <% end %>

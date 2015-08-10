@@ -37,7 +37,7 @@
               <%= button_to t('delete'),
                             { action: 'destroy',
                               id: section.id },
-                            confirm: t('section.delete.link_confirm'),
+                            data: { confirm: t('section.delete.link_confirm') },
                             method: 'delete',
                             disabled: !section.students.empty?,
                             class: 'inline-button' %>

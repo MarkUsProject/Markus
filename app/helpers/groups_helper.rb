@@ -4,11 +4,10 @@ module GroupsHelper
   # an array of hashes.
   def get_students_table_info
     students = Student.all
-    student_memberships = StudentMembership.all(
-      conditions:
-        { grouping_id: @assignment.groupings,
-          user_id: students },
-      include: :user)
+    student_memberships = StudentMembership
+                          .where(grouping_id: @assignment.groupings,
+                                 user_id: students)
+                          .includes(:user)
     students_in_assignment = student_memberships.map do |membership|
       membership.user
     end
@@ -49,13 +48,14 @@ module GroupsHelper
           confirm:  I18n.t('groups.invalidate_confirm'),
         remote: true)
 
-      g[:rename_link] = view_context.link_to(
+      rename_link = rename_group_assignment_group_path(@assignment, grouping)
+      g[:rename_link] = view_context.link_to_function(
         view_context.image_tag(
           'icons/pencil.png',
           alt: I18n.t('groups.rename_group.link'),
           title: I18n.t('groups.rename_group.link')),
-        rename_group_dialog_assignment_group_path(@assignment, grouping),
-        remote: true)
+        "modal_rename.open();"\
+        "jQuery('#rename_group_dialog form').attr('action', '#{rename_link}')")
 
       g[:note_link] = view_context.link_to(
         view_context.image_tag(

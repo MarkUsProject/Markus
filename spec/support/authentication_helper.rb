@@ -8,24 +8,24 @@ module AuthenticationHelper
 
   def get_as(user, action, params = nil, flash = nil)
     session_vars = { 'uid' => user.id, 'timeout' => 3.days.from_now }
-    get action, params, session_vars, flash
+    xhr :get, action, params, session_vars, flash
   end
 
   # Performs POST request as the supplied user for authentication
   def post_as(user, action, params = nil, flash = nil)
     session_vars = { 'uid' => user.id, 'timeout' => 3.days.from_now }
-    post action, params, session_vars, flash
+    xhr :post, action, params, session_vars, flash
   end
 
   # Performs PUT request as the supplied user for authentication
   def put_as(user, action, params = nil, flash = nil)
     session_vars = { 'uid' => user.id, 'timeout' => 3.days.from_now }
-    put action, params, session_vars, flash
+    xhr :put, action, params, session_vars, flash
   end
 
   # Performs DELETE request as the supplied user for authentication
   def delete_as(user, action, params = nil, flash = nil)
     session_vars = { 'uid' => user.id, 'timeout' => 3.days.from_now }
-    delete action, params, session_vars, flash
+    xhr :delete, action, params, session_vars, flash
   end
 end
