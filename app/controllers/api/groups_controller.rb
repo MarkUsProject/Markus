@@ -142,13 +142,13 @@ module Api
 
     def set_mark_by_criteria(criteria, mark_to_change)
       if criteria.is_a?(FlexibleCriterion)
-        if params[criteria.flexible_criterion_name] == "nil"
+        if params[criteria.flexible_criterion_name] == 'nil'
           mark_to_change.mark = nil
         else
           mark_to_change.mark = params[criteria.flexible_criterion_name].to_f
         end
       else
-        if params[criteria.rubric_criterion_name] == "nil"
+        if params[criteria.rubric_criterion_name] == 'nil'
           mark_to_change.mark = nil
         else
           mark_to_change.mark = params[criteria.rubric_criterion_name]
@@ -166,8 +166,9 @@ module Api
                              dict
                            end
       respond_to do |format|
-        format.xml{render xml: reversed.to_xml(root: 'groups', skip_types: 'true')}
-        format.json{render json: reversed.to_json}
+        format.xml { render xml: reversed.to_xml(root: 'groups',
+                                                 skip_types: 'true') }
+        format.json { render json: reversed.to_json }
       end
     end
   end # end GroupsController
