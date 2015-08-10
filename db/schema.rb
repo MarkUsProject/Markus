@@ -50,6 +50,8 @@ ActiveRecord::Schema.define(version: 20150724162632) do
     t.integer "annotation_number"
     t.boolean "is_remark"
     t.integer "page"
+    t.integer "column_start"
+    t.integer "column_end"
   end
 
   add_index "annotations", ["submission_file_id"], name: "index_annotations_on_assignmentfile_id", using: :btree
@@ -244,6 +246,12 @@ ActiveRecord::Schema.define(version: 20150724162632) do
     t.integer  "user_id"
     t.string   "user_name"
     t.string   "file_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "marking_schemes", force: :cascade do |t|
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
