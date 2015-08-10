@@ -1,0 +1,26 @@
+<%= form_for(@key_pair) do |f| %>
+  <% if @key_pair.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@key_pair.errors.count, "error") %> prohibited this key_pair from being saved:</h2>
+
+      <ul>
+      <% @key_pair.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label t('key_pairs.file') %><br />
+    <%= f.file_field :file %>
+    <p><strong><%= t('key_pairs.or') %></strong></p>
+    <%= f.label t('key_pairs.copy_paste_key') %>
+    <br>
+    <textarea cols="55" rows="14" id="key_pair_key_string" name="key_pair[key_string]"></textarea>
+  </div>
+
+  <div class="actions">
+    <%= f.submit(t('key_pairs.create_key_pair')) %>
+  </div>
+<% end %>

@@ -50,8 +50,6 @@ ActiveRecord::Schema.define(version: 20150724162632) do
     t.integer "annotation_number"
     t.boolean "is_remark"
     t.integer "page"
-    t.integer "column_start"
-    t.integer "column_end"
   end
 
   add_index "annotations", ["submission_file_id"], name: "index_annotations_on_assignmentfile_id", using: :btree
@@ -107,7 +105,6 @@ ActiveRecord::Schema.define(version: 20150724162632) do
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                        default: false
-    t.boolean  "only_required_files"
     t.boolean  "vcs_submit"
   end
 
@@ -243,18 +240,20 @@ ActiveRecord::Schema.define(version: 20150724162632) do
 
   add_index "groups", ["group_name"], name: "groups_name_unique", unique: true, using: :btree
 
-  create_table "marking_schemes", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "key_pairs", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "user_name"
+    t.string   "file_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "marking_weights", force: :cascade do |t|
     t.integer  "marking_scheme_id"
     t.integer  "gradable_item_id"
     t.decimal  "weight"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.boolean  "is_assignment",     null: false
   end
 

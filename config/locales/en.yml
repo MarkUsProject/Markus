@@ -1217,6 +1217,21 @@ en:
       x_mark: "x Mark"
       weight: "Weight"
 
+    key_pairs:
+      title: "Key Pairs"
+      key_pairs_title:         "Your Key Pairs"
+      time_of_upload:         "Time Of Upload"
+      key_content:         "Key Content"
+      new_key_pair:         "New Key Pair"
+      add_key_pair:         "Add a Key Pair"
+      remove_key:         "Remove Key"
+      are_you_sure:         "Are you sure?"
+      file:         "File"
+      or:         "OR"
+      copy_paste_key:         "Copy and paste your public key"
+      create_key_pair:         "Create Key Pair"
+      back:         "Back"
+
     course_summaries:
       title: "Summary"
 
