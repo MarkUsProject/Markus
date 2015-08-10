@@ -159,12 +159,9 @@ module Api
 
     # Return key:value pairs of group_name:group_id
     def group_ids_by_name
-      reversed = Assignment.find_by_id(params[:assignment_id])
-                           .groups
-                           .inject({}) do |dict, group|
-                             dict[group.group_name] = group.id
-                             dict
-                           end
+      groups = Assignment.find(params[:assignment_id])
+                        .groups
+      reversed = Hash[groups.map { |g| [g.group_name, g.id] }]
       respond_to do |format|
         format.xml do
           render xml: reversed.to_xml(root: 'groups', skip_types: 'true')
