@@ -114,7 +114,7 @@
                               id: @assignment.id,
                               grouping_id: grouping.id },
                             { class: 'button',
-                              confirm: t('student.decline_invitation') } %>
+                              data: { confirm: t('student.decline_invitation') } } %>
                 </div>
             <% end %>
           <% end %>
@@ -146,7 +146,7 @@
                             { action: 'creategroup',
                               id: @assignment.id },
                             { class: 'button',
-                              confirm: t('student.decline_invitation2') } %>
+                              data: { confirm: t('student.decline_invitation2') } }%>
               <% else %>
                 <%= link_to t(:create),
                             { action: 'creategroup',
@@ -220,7 +220,7 @@
           </ul>
 
           <% # Display the URL of this group's repository if applicable
-             if @grouping.repository_external_commits_only? %>
+             if @assignment.vcs_submit %>
             <h3><%= t('student.url_group_repository') %></h3>
             <div class='sub_block'>
               <a href='<%= @grouping.group.repository_external_access_url %>'><%= @grouping.group.repository_external_access_url %></a>

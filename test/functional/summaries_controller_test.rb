@@ -7,7 +7,6 @@ require File.expand_path(File.join(File.dirname(__FILE__),
 require File.expand_path(File.join(File.dirname(__FILE__),
                                    '..', 'blueprints', 'helper'))
 require 'shoulda'
-require 'mocha/setup'
 
 class SummariesControllerTest < AuthenticatedControllerTest
   context 'instructor attempts to display all information' do

@@ -4,24 +4,22 @@
                       action: 'update_remark_request',
                       id: submission.id,
                       assignment_id: assignment.id },
-               html: { method: :get },
                remote: true do |f| %>
     <%= f.text_area :remark_request, cols: 50, rows: 5,
                     id: 'remark_request_text_area',
                     onkeydown: 'enableRemarkRequestButtons();' %>
 
     <div>
-      <%= hidden_field_tag 'real_commit', 'Submit' %>
       <%= f.submit t(:save_changes),
-                   onclick: "jQuery('#real_commit').val('Save');",
                    disabled: true,
                    id: 'remark_request_save',
-                   data: { disable_with: t('working') } 
-      %>
-      <%= f.submit t(:submit_request),
                    data: { disable_with: t('working') },
+                   name: 'save' %>
+      <%= f.submit t(:submit_request),
                    id: 'remark_request_submit',
-                   confirm: t(:confirm_remark_submit) %>
+                   data: { confirm: t(:confirm_remark_submit),
+                           disable_with: t(:working) },
+                   name: 'submit' %>
     </div>
   <% end %>
 </div>

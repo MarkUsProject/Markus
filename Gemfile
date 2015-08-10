@@ -9,36 +9,43 @@
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem 'rails', '3.2.18'
+gem 'rails', '~> 4.2.0'
+gem 'rubyzip'
+gem 'ya2yaml'
+gem 'i18n'
+gem 'will_paginate'
+gem 'dynamic_form'
+gem 'exception_notification'
 gem 'activerecord-import'
 gem 'auto_complete'
 gem 'best_in_place'
 gem 'coffee-script'
-gem 'dynamic_form'
-gem 'exception_notification'
 gem 'gitolite'
-gem 'i18n'
 gem 'jquery-rails'
+gem 'prototype-rails', github: 'rails/prototype-rails', branch: '4.2'
+gem 'sprockets', '~> 2.12.0'
+gem 'rails-html-sanitizer'
+gem 'rails-deprecated_sanitizer'
+
+gem 'tilt', '~> 1.3.7'
+gem 'sass-rails',   '5.0.0.beta1'
+gem 'coffee-rails', '~> 4.0.0'
+gem 'uglifier',     '>= 1.3.0'
+gem 'execjs'
+gem 'libv8'
+gem 'therubyracer'
 gem 'json'
-gem 'minitest',"4.7.5", platforms: :ruby_20
-gem 'prototype-rails' # FIXME: Will be needed with Rails3.1
-gem 'rubyzip'
+gem 'minitest', platforms: :ruby_20
 gem 'rugged'
-gem 'strong_parameters' # NOTE: this goes away when upgrading to Rails4
-gem 'will_paginate'
-gem 'ya2yaml'
+gem 'autoprefixer-rails'
 
-group :assets do
-  gem 'autoprefixer-rails'
-  gem 'coffee-rails', '~> 3.2.1'
-  gem 'execjs'
-  gem 'libv8'
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'therubyracer'
-  gem 'tilt', '~> 1.3.7'
-  gem 'uglifier',     '>= 1.0.3'
-end
-
+gem 'actionpack-action_caching', '~>1.0.0'
+gem 'actionpack-page_caching', '~>1.0.0'
+gem 'actionpack-xml_parser', '~>1.0.0'
+gem 'actionview-encoded_mail_to', '~>1.0.4'
+gem 'activerecord-session_store', '~>0.1.0'
+gem 'rails-observers', '~>0.1.1'
+gem 'rails-perftest', '~>0.0.2'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
@@ -70,6 +77,7 @@ group :development do
   gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'spring'
   gem 'debugger', :platforms => :mri_19
   gem 'quiet_assets'
 end

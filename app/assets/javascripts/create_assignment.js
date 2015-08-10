@@ -1,56 +1,45 @@
 jQuery(document).ready(function() {
   // Change repo folder to be same as short identifier
-  jQuery('#short_identifier').change(function() {
-    jQuery("#assignment_repository_folder").val(jQuery(this).val());
+  jQuery('#assignment_short_identifier').keyup(function() {
+    jQuery('#assignment_repository_folder').val(jQuery(this).val());
   });
 
   jQuery('#assignment_due_date').change(function() {
-    update_due_date(jQuery('#actual_assignment_due_date').val());
+    update_due_date(jQuery('#assignment_due_date').val());
   });
 
   jQuery('#assignment_section_due_dates_type').change(function() {
-    toggle_sections_due_date(jQuery(this).is(':checked'));
+    toggle_sections_due_date(this.checked);
   });
+  toggle_sections_due_date(
+    jQuery('#assignment_section_due_dates_type').is(':checked'));
 
-  toggle_sections_due_date(jQuery('#assignment_section_due_dates_type').is(':checked'));
-
-  /* Update the global due date with the first section due date added, if the global due date
-     has not been set yet. */
-  var first = true;
-  jQuery('.section_due_date').change(function() {
-    if (first && (jQuery('#actual_assignment_due_date').val() == '')) {
-      jQuery('#actual_assignment_due_date').val(jQuery(this).siblings('.actual_section_due_date').val());
+  jQuery('.section_due_date_input').change(function() {
+    if (jQuery('#assignment_due_date').val() === '') {
       jQuery('#assignment_due_date').val(jQuery(this).val());
-      first = false;
     }
   });
 
   jQuery('#persist_groups').change(function() {
-    toggle_persist_groups(jQuery(this).is(':checked'));
-  });
-
-  jQuery('#persist_groups_assignment').change(function() {
-    jQuery.ajax({
-      url:  this.getAttribute('data-path'),
-      type: 'POST',
-      data: 'assignment_id=' + this.value +
-            '&authenticity_token=' + AUTH_TOKEN
-    });
+    toggle_persist_groups(this.checked);
   });
 
   jQuery('#is_group_assignment').change(function() {
-    toggle_group_assignment(jQuery(this).is(':checked'));
+    toggle_group_assignment(this.checked);
   });
 
   toggle_group_assignment(jQuery('#is_group_assignment').is(':checked'));
 
-  jQuery('#student_form_groups').change(function() {
-    toggle_student_form_groups(jQuery(this).is(':checked'));
+  jQuery('#assignment_student_form_groups').change(function() {
+    toggle_student_form_groups(this.checked);
   });
 
-  jQuery('#allow_remarks').change(function() {
-    toggle_remark_requests(jQuery(this).is(':checked'));
+  jQuery('#assignment_allow_remarks').change(function() {
+    toggle_remark_requests(this.checked);
   });
+
+  jQuery('#submission_rule_fields input[type=radio]').change(
+    change_submission_rule);
 
   change_submission_rule();  // Opens the correct rule
 
@@ -68,16 +57,6 @@ jQuery(document).ready(function() {
       document.getElementById('assignment_group_min').value = this.value;
     }
   });
-  
-  // Hide the checkbox for "Required Files" by default
-  jQuery('#assignment_only_required_files').hide();
-  jQuery('#assignment_only_required_files_label').hide();
-  
-  
-  jQuery('#assignment_only_required_files_edit').show();
-  jQuery('#assignment_only_required_files_edit_label').show();
-  
-  
 });
 
 
@@ -92,23 +71,15 @@ function toggle_persist_groups(persist_groups) {
   jQuery('#persist_groups_assignment').prop('disabled', !persist_groups);
   jQuery('#is_group_assignment').prop('disabled', persist_groups);
   jQuery('#is_group_assignment_style').toggleClass('disable', persist_groups);
-
-  if (persist_groups) {
-    toggle_group_assignment(false);
-  }
 }
 
 function toggle_group_assignment(is_group_assignment) {
-  jQuery('#is_group_assignment').prop('checked', is_group_assignment);
-
-  jQuery('.group_properties').toggle(is_group_assignment)
-                             .prop('disabled', !is_group_assignment)
-                             .toggleClass('disable', !is_group_assignment);
+  jQuery('.group_properties').toggle(is_group_assignment);
 
   // Toggle the min/max fields depending on if students form their own groups
-  var student_form_groups = document.getElementById('student_form_groups').checked;
-  document.getElementById('assignment_group_min').disabled = !student_form_groups;
-  document.getElementById('assignment_group_max').disabled = !student_form_groups;
+  var student_groups = document.getElementById('assignment_student_form_groups')
+                               .checked;
+  toggle_student_form_groups(student_groups);
 
   jQuery('#persist_groups').prop('disabled', is_group_assignment);
   jQuery('#persist_groups_assignment_style').toggleClass('disable', is_group_assignment);
@@ -126,93 +97,8 @@ function toggle_student_form_groups(student_form_groups) {
   }
 }
 
-function toggle_remark_requests(allow_remark_requests) {
-  jQuery('#allow_remarks').prop('checked', allow_remark_requests);
-
-  jQuery('#remark_due_date').prop('disabled', !allow_remark_requests);
-  jQuery('#assignment_remark_message').prop('disabled', !allow_remark_requests);
-
-  jQuery('#remark_properties').toggle(allow_remark_requests)
-                              .toggleClass('disable', !allow_remark_requests);
-}
-
-/* This isn't being used yet... (needs to be converted to jQuery when it is) */
-function toggle_automated_tests(is_testing_framework_enabled) {
-  // $('is_testing_framework_enabled').setValue(is_testing_framework_enabled);
-
-  // if (is_testing_framework_enabled) {
-  //   $('tokens').removeClassName('disable');
-  //   $('tokens_per_day').enable();
-
-  //   $$('#antbuildfile_style').each(function(node) { node.removeClassName('disable'); });
-  //   $$('#antbuildfile_style input').each(function(node) {
-  //     $(node).enable();
-  //   });
-  //   $$('#antbuildprop_style').each(function(node) { node.removeClassName('disable'); });
-  //   $$('#antbuildprop_style input').each(function(node) {
-  //     $(node).enable();
-  // });
-  //   $$('#test_files .test_file').each(function(node) { node.removeClassName('disabled'); });
-  //   $$('#test_files .test_file input').each(function(node) {
-  //     $(node).enable();
-  //   });
-  //   $$('#lib_files .test_file').each(function(node) { node.removeClassName('disabled'); });
-  //   $$('#lib_files .test_file input').each(function(node) {
-  //     $(node).enable();
-  //   });
-  //   $$('#parser_files .test_file').each(function(node) { node.removeClassName('disabled'); });
-  //   $$('#parser_files .test_file input').each(function(node) {
-  //     $(node).enable();
-  //   });
-  // } else {
-  //   $('tokens').addClassName('disable');
-  //   $('tokens_per_day').disable();
-
-  //   $$('#antbuildfile_style').each(function(node) { node.addClassName('disable'); });
-  //   $$('#antbuildfile_style input').each(function(node) {
-  //     $(node).disable();
-  //   });
-  //   $$('#antbuildprop_style').each(function(node) { node.addClassName('disable'); });
-  //   $$('#antbuildprop_style input').each(function(node) {
-  //     $(node).disable();
-  //   });
-  //   $$('#test_files .test_file').each(function(node) { node.addClassName('disabled'); });
-  //   $$('#test_files .test_file input').each(function(node) {
-  //     $(node).disable();
-  //   });
-  //   $$('#lib_files .test_file').each(function(node) { node.addClassName('disabled'); });
-  //   $$('#lib_files .test_file input').each(function(node) {
-  //     $(node).disable();
-  //   });
-  //   $$('#parser_files .test_file').each(function(node) { node.addClassName('disabled'); });
-  //   $$('#parser_files .test_file input').each(function(node) {
-  //     $(node).disable();
-  //   });
-  // }
-}
-
-function update_group_properties(is_group_assignment, student_form_groups, group_min, group_max, group_name_autogenerated) {
-  jQuery('#is_group_assignment').val(is_group_assignment);
-  jQuery('#student_form_groups').val(student_form_groups);
-  jQuery('#assignment_group_min').val(group_min)
-                                 .prop('disabled', true);
-  jQuery('#assignment_group_max').val(group_max)
-                                 .prop('disabled', true);
-  jQuery('#assignment_group_name_autogenerated').val(group_name_autogenerated);
-
-  jQuery('#is_group_assignment').prop('disabled', true)
-                                .addClass('disable');
-  jQuery('#student_form_groups').prop('disabled', true);
-  jQuery('#student_form_groups_style').addClass('disable');
-  jQuery('#group_limit_style').addClass('disable');
-  jQuery('#assignment_group_name_autogenerated').prop('disabled', true);
-  jQuery('#group_name_autogenerated_style').addClass('disable');
-}
-
-function default_group_fields() {
-  toggle_persist_groups(false);
-  toggle_group_assignment(false);
-  toggle_remark_requests(true);
+function toggle_remark_requests(bool) {
+  jQuery('#remark_properties').toggle(bool);
 }
 
 function update_due_date(new_due_date) {
@@ -235,35 +121,20 @@ function toggle_sections_due_date(section_due_dates_type) {
 }
 
 function change_submission_rule() {
-  jQuery('.period').hide();
-  jQuery('.sub_rule_link a').hide();
-  jQuery('.period input').prop('disabled', true);
-
+  jQuery('#grace_periods, #penalty_periods, #penalty_decay_periods').hide();
+  jQuery('#grace_periods input, #penalty_periods input,' +
+         '#penalty_decay_periods input').prop('disabled', 'disabled');
   if (jQuery('#grace_period_submission_rule').is(':checked')) {
-    jQuery('#grace_periods .period').show();
-    jQuery('#grace_period_link').show();
-    if (jQuery('#grace_periods .period').length === 0) {
-      jQuery('#grace_period_link').click();
-    }
-    jQuery('#grace_periods .period input').prop('disabled', false);
+    jQuery('#grace_periods').show();
+    jQuery('#grace_periods input').prop('disabled', '');
   }
-
   if (jQuery('#penalty_decay_period_submission_rule').is(':checked')) {
-    jQuery('#penalty_decay_periods .period').show();
-    jQuery('#penalty_decay_period_link').show();
-    if (jQuery('#penalty_decay_periods .period').length === 0) {
-      jQuery('#penalty_decay_period_link').click();
-    }
-    jQuery('#penalty_decay_periods .period input').prop('disabled', false);
+    jQuery('#penalty_decay_periods').show();
+    jQuery('#penalty_decay_periods input').prop('disabled', '');
   }
-
   if (jQuery('#penalty_period_submission_rule').is(':checked')) {
-    jQuery('#penalty_periods .period').show();
-    jQuery('#penalty_period_link').show();
-    if (jQuery('#penalty_periods .period').length === 0) {
-      jQuery('#penalty_period_link').click();
-    }
-    jQuery('#penalty_periods .period input').prop('disabled', false);
+    jQuery('#penalty_periods').show();
+    jQuery('#penalty_periods input').prop('disabled', '');
   }
 }
 
@@ -276,8 +147,3 @@ function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme
   }
 }
 
-function check_due_date(new_due_date) {
-  if (new Date(new_due_date) < new Date()) {
-    alert(past_due_date);
-  }
-}

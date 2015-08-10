@@ -185,7 +185,7 @@ Note.blueprint do
   noteable_type  {'Grouping'}
   noteable_id {Grouping.make.id}
   user {Admin.make}
-  notes_message  {Faker::Lorem.paragraphs}
+  notes_message { Faker::Lorem.paragraphs[0] }
 end
 
 NoLateSubmissionRule.blueprint do

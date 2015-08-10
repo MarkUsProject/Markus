@@ -52,7 +52,7 @@ class TasController < ApplicationController
   #downloads users with the given role as a csv list
   def download_ta_list
     #find all the users
-    tas = Ta.all(order: 'user_name')
+    tas = Ta.order(:user_name)
     case params[:format]
     when 'csv'
       output = User.generate_csv_list(tas)

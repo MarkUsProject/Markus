@@ -74,19 +74,23 @@ class SubmissionsController < ApplicationController
     #  @revisions_history << {num: revision.revision_number,
     #                         date: revision.timestamp}
     rev_number = repo.get_latest_revision.revision_number + 1
+    assign_path = File.join(@assignment.repository_folder, @path)
     rev_number.times.each do |rev|
       begin
         revision = repo.get_revision(rev)
-        unless revision.path_exists?(
-            File.join(@assignment.repository_folder, @path))
+        unless revision.path_exists?(assign_path)
           raise 'error'
         end
       rescue Exception
         revision = nil
       end
-      if revision
+      if revision && !revision.changed_files_at_path(assign_path).empty?
         @revisions_history << { num: revision.revision_number,
                                 date: revision.timestamp }
+        unless params[:revision_number] || params[:revision_timestamp]
+          @revision_number = revision.revision_number
+          @revision_timestamp = revision.timestamp
+        end
       end
     end
     respond_to do |format|
@@ -179,7 +183,7 @@ class SubmissionsController < ApplicationController
   end
 
   def collect_all_submissions
-    assignment = Assignment.find(params[:assignment_id], include: [:groupings])
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(assignment.groupings)
@@ -197,9 +201,9 @@ class SubmissionsController < ApplicationController
   def collect_ta_submissions
     assignment = Assignment.find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
-      groupings = assignment.groupings.all(include: :tas,
-                                           conditions: ['users.id = ?',
-                                                        current_user.id])
+      groupings = assignment.groupings
+                            .joins(:tas)
+                            .where(users: { id: current_user.id })
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(groupings)
       flash[:success] =
@@ -260,19 +264,20 @@ class SubmissionsController < ApplicationController
   # when the state stored in the cookie exceeds 4k in serialized
   # form. This was happening prior to the fix of Github issue #30.
   def update_files
+    assignment_id = params[:assignment_id]
+    @assignment = Assignment.find(assignment_id)
+    unless @assignment.allow_web_submits
+      raise t('student.submission.external_submit_only')
+    end
+
     # We'll use this hash to carry over some error state to the
     # file_manager view.
     @file_manager_errors = Hash.new
-    assignment_id = params[:assignment_id]
-    @assignment = Assignment.find(assignment_id)
     required_files = AssignmentFile.where(
                            assignment_id: @assignment).pluck(:filename)
     students_filename = []
     @path = params[:path] || '/'
     @grouping = current_user.accepted_grouping_for(assignment_id)
-    if @grouping.repository_external_commits_only?
-      raise I18n.t('student.submission.external_submit_only')
-    end
     unless @grouping.is_valid?
       # can't use redirect_to here. See comment of this action for more details.
       set_filebrowser_vars(@grouping.group, @assignment)

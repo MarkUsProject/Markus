@@ -6,7 +6,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - bundle install --path=~/.bundle --without development production console
+  - travis_wait bundle install --path=~/.bundle --without development production console
   - sudo apt-get install -y libaprutil1-dev swig
   - wget http://mirror.its.dal.ca/apache/subversion/subversion-1.8.11.tar.gz
   - tar xzf subversion-1.8.11.tar.gz
@@ -26,7 +26,6 @@ before_script:
   - sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
   - cp config/database.yml.ci config/database.yml
   - psql -c 'create database markus_test;' -U postgres
-  - bundle exec rake db:migrate
   - bundle exec rake db:test:prepare
 
 script:
@@ -35,3 +34,5 @@ script:
 
 notifications:
   email: false
+
+bundler_args: --retry 10
