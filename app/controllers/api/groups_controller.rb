@@ -166,9 +166,12 @@ module Api
                              dict
                            end
       respond_to do |format|
-        format.xml { render xml: reversed.to_xml(root: 'groups',
-                                                 skip_types: 'true') }
-        format.json { render json: reversed.to_json }
+        format.xml do
+          render xml: reversed.to_xml(root: 'groups', skip_types: 'true')
+        end
+        format.json do
+          render json: reversed.to_json
+        end
       end
     end
   end # end GroupsController
