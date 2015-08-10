@@ -270,20 +270,20 @@ class AssignmentTest < ActiveSupport::TestCase
           end
         end
 
-        should 'be able to get_svn_export_commands' do
+        should 'be able to get_svn_checkout_commands' do
           expected_array = []
 
           @assignment.groupings.each do |grouping|
             submission = grouping.current_submission_used
             if submission
               group = grouping.group
-              expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+              expected_array.push("svn checkout -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
             end
           end
-          assert_equal expected_array, @assignment.get_svn_export_commands
+          assert_equal expected_array, @assignment.get_svn_checkout_commands
         end
 
-        should 'be able to get_svn_export_commands with spaces in group name ' do
+        should 'be able to get_svn_checkout_commands with spaces in group name ' do
           Group.all.each do |group|
             group.group_name = group.group_name + ' Test'
             group.save
@@ -294,10 +294,10 @@ class AssignmentTest < ActiveSupport::TestCase
             submission = grouping.current_submission_used
             if submission
               group = grouping.group
-              expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+              expected_array.push("svn checkout -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
             end
           end
-          assert_equal expected_array, @assignment.get_svn_export_commands
+          assert_equal expected_array, @assignment.get_svn_checkout_commands
         end
       end
 
@@ -320,17 +320,17 @@ class AssignmentTest < ActiveSupport::TestCase
           end
         end
 
-        should 'be able to get_svn_export_commands' do
+        should 'be able to get_svn_checkout_commands' do
           expected_array = []
 
           @assignment.groupings.each do |grouping|
             submission = grouping.current_submission_used
             if submission
               group = grouping.group
-              expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+              expected_array.push("svn checkout -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
             end
           end
-          assert_equal expected_array, @assignment.get_svn_export_commands
+          assert_equal expected_array, @assignment.get_svn_checkout_commands
         end
       end
     end
