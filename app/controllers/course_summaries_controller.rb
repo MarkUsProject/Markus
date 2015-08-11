@@ -1,7 +1,8 @@
 class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
-  before_filter :authorize_only_for_admin
+  before_filter :authorize_only_for_admin,
+                except: [:populate]
 
   def index
     @assignments = Assignment.all
@@ -11,11 +12,11 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
-    render json: get_table_json_data
-  end
-
-  def student_course_summary
-    render json: get_student_row_information
+    if current_user.admin?
+      render json: get_table_json_data
+    else
+      render json: get_student_row_information
+    end
   end
 
   def get_marking_scheme_details
