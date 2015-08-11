@@ -27,7 +27,7 @@
                   id: grade_entry_form.id %>
               </td>
               <td>
-                <% if grade_entry_form.date %>
+                <% if !grade_entry_form.date.nil? %>
                   <strong><%= l(grade_entry_form.date, format: :short_date) %></strong>
                   <% if grade_entry_form.date > Time.zone.now.to_date %>
                     <p>
