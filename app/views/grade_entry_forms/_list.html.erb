@@ -27,13 +27,17 @@
                   id: grade_entry_form.id %>
               </td>
               <td>
-                <strong><%= l(grade_entry_form.date, format: :short_date) %></strong>
-                <% if grade_entry_form.date > Time.zone.now.to_date %>
-                  <p>
-                    <%= t(:days_left,
-                          days: (grade_entry_form.date - Time.zone.now.to_date).to_i)
+                <% if !grade_entry_form.date.nil? %>
+                  <strong><%= l(grade_entry_form.date, format: :short_date) %></strong>
+                  <% if grade_entry_form.date > Time.zone.now.to_date %>
+                    <p>
+                      <%= t(:days_left,
+                            days: (grade_entry_form.date - Time.zone.now.to_date).to_i)
                     %>
-                  </p>
+                    </p>
+                  <% end %>
+                <% else %>
+                  <%= '' %>
                 <% end %>
               </td>
               <td class="grade_entry_form_result">
@@ -52,7 +56,8 @@
                   <% else %>
                     <strong> <%= t('grade_entry_forms.students.detailed_marks_message') %> </strong>
                   <% end %>
-                <% elsif grade_entry_form.date < Time.zone.now.to_date %>
+                <% elsif grade_entry_form.date.nil? || 
+                         grade_entry_form.date < Time.zone.now.to_date %>
                   <%= t('grade_entry_forms.students.no_results') %>
                 <% end %>
               </td>

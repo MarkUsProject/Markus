@@ -70,7 +70,7 @@ class SubmissionsController < ApplicationController
     # Good idea from git branch. But SubversionRepository has
     # no get_all_revisions method... yet (TODO)
     # hmm. Let's make rev_number a method and have it return an array.
-    #repo.get_all_revisions.each do |revision|
+    # repo.get_all_revisions.each do |revision|
     #  @revisions_history << {num: revision.revision_number,
     #                         date: revision.timestamp}
     rev_number = repo.get_latest_revision.revision_number + 1
@@ -93,6 +93,28 @@ class SubmissionsController < ApplicationController
         end
       end
     end
+
+    if @revisions_history.empty?
+      rev_number.times.each do |rev|
+        begin
+          revision = repo.get_revision(rev)
+          unless revision.path_exists?(assign_path)
+            raise 'error'
+          end
+        rescue Exception
+          revision = nil
+        end
+        if revision
+          @revisions_history << { num: revision.revision_number,
+                                  date: revision.timestamp }
+          unless params[:revision_number] || params[:revision_timestamp]
+            @revision_number = revision.revision_number
+            @revision_timestamp = revision.timestamp
+          end
+        end
+      end
+    end
+
     respond_to do |format|
       format.html
       format.json do
@@ -680,14 +702,14 @@ class SubmissionsController < ApplicationController
               filename: "#{assignment.short_identifier}_detailed_report.csv"
   end
 
-  # See Assignment.get_svn_export_commands for details
-  def download_svn_export_commands
+  # See Assignment.get_svn_checkout_commands for details
+  def download_svn_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
-    svn_commands = assignment.get_svn_export_commands
+    svn_commands = assignment.get_svn_checkout_commands
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
               type: 'application/vnd.ms-excel',
-              filename: "#{assignment.short_identifier}_svn_exports.csv"
+              filename: "#{assignment.short_identifier}_svn_checkouts.csv"
   end
 
   # See Assignment.get_svn_repo_list for details

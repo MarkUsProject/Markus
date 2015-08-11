@@ -3,7 +3,35 @@ rvm:
   - 2.1.2
 
 before_install:
+  - sudo echo host localhost >> ~/.ssh/config
+  - sudo echo   user git >> ~/.ssh/config
+  - sudo echo   identityfile ~/git >> ~/.ssh/config
+  - sudo echo   port 22 >> ~/.ssh/config
+  - sudo echo NoHostAuthenticationForLocalhost yes >> ~/.ssh/config
   - sudo apt-get update -qq
+  - sudo apt-get install -y sshpass
+  - ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
+  - sudo adduser -disabled-password --gecos "" git
+  - echo "git:password" | sudo chpasswd
+  - sudo adduser git sudo
+  - sudo cp ~/.ssh/id_rsa.pub /home/git/git.pub
+  - sudo cp ~/.ssh/id_rsa /home/git/git
+  - sudo chmod 777 /home/git/git.pub
+  - sudo chmod 777 /home/git/git
+  - cp ~/.ssh/id_rsa ~/git
+  - cp ~/.ssh/id_rsa.pub ~/git.pub
+  - sudo -H -u git bash -c 'git clone git://github.com/sitaramc/gitolite /home/git/gitolite'
+  - sudo -H -u git bash -c 'mkdir /home/git/bin'
+  - sudo -H -u git bash -c '/home/git/gitolite/install -ln'
+  - sudo -H -u git bash -c 'export PATH="~/bin:$PATH"'
+  - sudo -H -u git bash -c '/home/git/bin/gitolite setup -pk /home/git/git.pub'
+  - eval $(ssh-agent -s)
+  - ssh-add ~/git
+  - ssh git@localhost
+  - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no git@localhost
+  - sudo apt-get install -y cmake libssh2* libgit2* ruby1.9.1-dev
+  - git config --global user.email "travis@travis.com"
+  - git config --global user.name "Travis CI"
 
 install:
   - travis_wait bundle install --path=~/.bundle --without development production console

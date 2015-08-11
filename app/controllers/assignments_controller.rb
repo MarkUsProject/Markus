@@ -325,7 +325,6 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @student = @current_user
     m_logger = MarkusLogger.instance
-
     begin
       # We do not allow group creations by students after the due date
       # and the grace period for an assignment

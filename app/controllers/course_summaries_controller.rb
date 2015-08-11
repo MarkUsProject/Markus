@@ -1,6 +1,8 @@
 class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
+  before_filter :authorize_only_for_admin
+
   def index
     @assignments = Assignment.all
     @marking_schemes = MarkingScheme.all
@@ -34,15 +36,10 @@ class CourseSummariesController < ApplicationController
     marking_schemes = MarkingScheme.order(:id)
 
     header = ['Username']
-    assignments.each do |assignment|
-      header.push(assignment.short_identifier)
-    end
-    grade_entry_forms.each do |grade_entry_form|
-      header.push(grade_entry_form.short_identifier)
-    end
-    marking_schemes.each do |marking_scheme|
-      header.push(marking_scheme.name)
-    end
+    header.concat(assignments.map(&:short_identifier))
+    header.concat(grade_entry_forms.map(&:short_identifier))
+    header.concat(marking_schemes.map(&:name))
+
     csv << header
   end
 
@@ -60,7 +57,8 @@ class CourseSummariesController < ApplicationController
   def name_grades_report_file(csv_string)
     course_name = "#{COURSE_NAME}"
     course_name_underscore = course_name.squish.downcase.tr(' ', '_')
-    send_data csv_string, disposition: 'attachment',
+    send_data csv_string,
+              disposition: 'attachment',
               filename: "#{course_name_underscore}_grades_report.csv"
   end
 end
