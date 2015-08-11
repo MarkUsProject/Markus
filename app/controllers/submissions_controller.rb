@@ -93,6 +93,28 @@ class SubmissionsController < ApplicationController
         end
       end
     end
+
+    if @revisions_history.empty?
+      rev_number.times.each do |rev|
+        begin
+          revision = repo.get_revision(rev)
+          unless revision.path_exists?(assign_path)
+            raise 'error'
+          end
+        rescue Exception
+          revision = nil
+        end
+        if revision
+          @revisions_history << { num: revision.revision_number,
+                                  date: revision.timestamp }
+          unless params[:revision_number] || params[:revision_timestamp]
+            @revision_number = revision.revision_number
+            @revision_timestamp = revision.timestamp
+          end
+        end
+      end
+    end
+
     respond_to do |format|
       format.html
       format.json do
