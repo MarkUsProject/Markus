@@ -501,7 +501,7 @@ fr:
         no_mark: "NC"
         marking_state: "Affichage de la note aux étudiants"
       students:
-        title: "Vos feuilles de notes"
+        title: "Vos marques de feuilles de calcul"
         no_results: "Il n'y a pas encore de résultats pour cette feuille de notes."
         detailed_marks_message: "Les notes détaillées sont disponibles."
       csv:
@@ -527,7 +527,7 @@ fr:
     spreadsheet_date: "Date"
     mark_message: "Votre note : "
 
-    student_course_summary: "Résumé du Cours"
+    student_course_summary: "Vos marques de terme"
 
     student_interface_assignments: "Vos projets"
 

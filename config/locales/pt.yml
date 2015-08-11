@@ -487,7 +487,7 @@ pt:
         marking_state: "Estado da avaliação"
 
       students:
-        title: "Suas notas"
+        title: "Suas Marcas Planilhas"
         no_results: "Não há notas disponíveis ainda..."
         detailed_marks_message: "Notas detalhadas estão disponíveis."
       csv:
@@ -513,7 +513,7 @@ pt:
     spreadsheet_date: "Data"
     mark_message: "Sua nota:"
 
-    student_course_summary: "Resumo do Curso"
+    student_course_summary: "Suas notas"
 
     student_interface_assignments: "Seus projetos"
 

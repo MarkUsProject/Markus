@@ -525,7 +525,7 @@ en:
         marking_state: "Marking State"
 
       students:
-        title: "Your Term Marks"
+        title: "Your Mark Spreadsheets"
         no_results: "There are no marks available yet."
         detailed_marks_message: "Detailed marks are available."
       csv:
@@ -551,7 +551,7 @@ en:
     spreadsheet_date: "Date"
     mark_message: "Your mark:"
 
-    student_course_summary: "Course Summary"
+    student_course_summary: "Your Term Marks"
 
     student_interface_assignments: "Your Assignments"
 
