@@ -315,7 +315,6 @@ Markus::Application.routes.draw do
         get 'populate'
         get 'get_marking_scheme_details'
         get 'download_csv_grades_report'
-        get 'student_course_summary'
       end
     end
 
