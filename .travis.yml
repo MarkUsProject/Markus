@@ -36,12 +36,12 @@ before_install:
 install:
   - travis_wait bundle install --path=~/.bundle --without development production console
   - sudo apt-get install -y libaprutil1-dev swig
-  - wget http://mirror.its.dal.ca/apache/subversion/subversion-1.8.11.tar.gz
-  - tar xzf subversion-1.8.11.tar.gz
+  - wget http://mirror.its.dal.ca/apache/subversion/subversion-1.8.14.tar.gz
+  - tar xzf subversion-1.8.14.tar.gz
   - wget http://www.sqlite.org/sqlite-amalgamation-3071501.zip
   - unzip sqlite-amalgamation-3071501.zip
-  - mv sqlite-amalgamation-3071501 subversion-1.8.11/sqlite-amalgamation
-  - cd subversion-1.8.11
+  - mv sqlite-amalgamation-3071501 subversion-1.8.14/sqlite-amalgamation
+  - cd subversion-1.8.14
   - LDFLAGS="-L/home/travis/.rvm/rubies/ruby-2.1.2/lib/" ./configure --prefix=/home/travis/.rvm/rubies/ruby-2.1.2/
   - make
   - make swig-rb
