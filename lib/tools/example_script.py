@@ -9,8 +9,12 @@ There will be some variance in set up between users, so it is possible
 that the user will need to make some modifications to suit their own needs.
 Still, we hope this template is useful.
 
-Usage: Fill in the macros with the correct information, following the
-format of the given examples.
+Usage:
+-Place this file in the folder containing all your group repos.
+-Make sure the api_python_module.py is somewhere it can be imported from.
+-Fill in the macros with the correct information, following the
+ format of the given examples.
+-Run the script with python3.
 
 Macros:
 API_KEY       -- an Admin API key. It can be found on the admin dashboard page.
@@ -28,7 +32,7 @@ import api_python_module
 # Required macros
 API_KEY = 'MjA5MDdkMjlmZzTlmMXTc5NmZEjNTgE0ODIa0Mm1UQ='
 ROOT_URL = 'http://localhost:3000/'
-ROOT_DIR = 'test_root'
+ROOT_DIR = 'root/repos'
 ASSIGNMENT_ID = 1
 FILE_NAME = 'test_results.txt'
 
