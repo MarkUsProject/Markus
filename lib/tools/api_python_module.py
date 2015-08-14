@@ -165,8 +165,6 @@ class ApiInterface:
                          headers)
             resp = conn.getresponse()
             lst = [resp.status, resp.reason, resp.read()]
-            for x in lst:
-                print(type(x))
             conn.close()
             return lst
         except http.client.HTTPException as e: # Catch HTTP errors
