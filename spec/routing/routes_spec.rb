@@ -95,13 +95,6 @@ describe 'An Assignment' do
 
   # start Assignment collection route tests
   context 'collection' do
-    it 'routes GET download_csv_grades_report properly' do
-      expect(get: path + '/download_csv_grades_report').to route_to(
-        controller: ctrl,
-        action: 'download_csv_grades_report',
-        locale: 'en')
-    end
-
     it 'routes GET delete_rejected properly' do
       expect(get: path + '/delete_rejected').to route_to(
         controller: ctrl,
@@ -566,18 +559,10 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET download_svn_export_list properly' do
-        expect(get: sub_path + '/download_svn_export_list').to route_to(
+      it 'routes GET download_svn_checkout_commands properly' do
+        expect(get: sub_path + '/download_svn_checkout_commands').to route_to(
           controller: sub_ctrl,
-          action: 'download_svn_export_list',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET download_svn_export_commands properly' do
-        expect(get: sub_path + '/download_svn_export_commands').to route_to(
-          controller: sub_ctrl,
-          action: 'download_svn_export_commands',
+          action: 'download_svn_checkout_commands',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
@@ -879,8 +864,8 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes PUT update_overall_comment properly' do
-          expect(put: res_path + '/1/update_overall_comment').to route_to(
+        it 'routes PATCH update_overall_comment properly' do
+          expect(patch: res_path + '/1/update_overall_comment').to route_to(
             controller: res_ctrl,
             action: 'update_overall_comment',
             id: '1',

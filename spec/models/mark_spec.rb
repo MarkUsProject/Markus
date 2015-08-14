@@ -21,7 +21,6 @@ describe Mark do
   it { should allow_value(3).for(:markable_id) }
   it { should_not allow_value(-2).for(:markable_id) }
   it { should_not allow_value(-1).for(:markable_id) }
-  it { should_not allow_value(0).for(:markable_id) }
 
   it { should allow_value('RubricCriterion').for(:markable_type) }
   it { should allow_value('FlexibleCriterion').for(:markable_type) }

@@ -6,11 +6,6 @@
   <h1><%= t(:manage_course_work) %></h1>
 
   <div class='heading_buttons'>
-    <% if @current_user.admin? %>
-      <%= link_to t(:download_csv_grade_report),
-                  download_csv_grades_report_assignments_path%>
-      <span class='menu_bar'></span>
-    <% end %>
     <%= link_to_function t(:upload), 'modal_upload.open()' %>
     <span class='menu_bar'></span>
     <%= link_to_function t(:download), 'modal_download.open()' %>

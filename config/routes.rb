@@ -1,4 +1,6 @@
 Markus::Application.routes.draw do
+  resources :key_pairs
+
   # Install the default routes as the lowest priority.
   root controller: 'main', action: 'login', via: [:post, :get]
 
@@ -31,7 +33,6 @@ Markus::Application.routes.draw do
     resources :assignments do
 
       collection do
-        get 'download_csv_grades_report'
         get 'delete_rejected'
         post 'update_collected_submissions'
         get 'download_assignment_list'
@@ -138,7 +139,7 @@ Markus::Application.routes.draw do
           get 'download_simple_csv_report'
           get 'download_detailed_csv_report'
           get 'download_svn_export_list'
-          get 'download_svn_export_commands'
+          get 'download_svn_checkout_commands'
           get 'download_svn_repo_list'
           get 'collect_ta_submissions'
           post 'update_submissions'
@@ -180,7 +181,7 @@ Markus::Application.routes.draw do
             get 'next_grouping'
             post 'remove_extra_mark'
             post 'set_released_to_students'
-            put 'update_overall_comment'
+            patch 'update_overall_comment'
             post 'update_marking_state'
             put 'update_remark_request'
             get 'update_positions'
@@ -307,10 +308,13 @@ Markus::Application.routes.draw do
       end
     end
 
+    resources :key_pairs
+
     resources :course_summaries do
       collection do
         get 'populate'
         get 'get_marking_scheme_details'
+        get 'download_csv_grades_report'
       end
     end
 

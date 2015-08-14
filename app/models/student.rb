@@ -83,7 +83,6 @@ class Student < User
   # Returns the Membership for a Grouping for an Assignment with id 'aid' if
   # this Student is a member with either 'accepted' or 'invitier' membership
   # status
-
   def memberships_for(aid)
     StudentMembership.where(user_id: id)
                      .select { |m| m.grouping.assignment_id == aid }
@@ -124,6 +123,7 @@ class Student < User
         @group = Group.where(group_name: user_name).first
       else
         @group = Group.new(group_name: user_name)
+
         # We want to have the user_name as repository name,
         # so we have to set the repo_name before we save the group.
         @group.repo_name = user_name
@@ -238,9 +238,10 @@ class Student < User
         end
         student = Student.find(student_id)
         memberships.each do |membership|
-          group = membership.grouping.group
+          grouping = membership.grouping
+          group = grouping.group
           group.access_repo do |repo|
-            if membership.grouping.repository_external_commits_only? && membership.grouping.is_valid?
+            if grouping.assignment.vcs_submit && grouping.is_valid?
               begin
                 repo.remove_user(student.user_name) # revoke repo permissions
               rescue Repository::UserNotFound
@@ -270,9 +271,10 @@ class Student < User
         end
         student = Student.find(student_id)
         memberships.each do |membership|
-          group = membership.grouping.group
+          grouping = membership.grouping
+          group = grouping.group
           group.access_repo do |repo|
-            if membership.grouping.repository_external_commits_only? && membership.grouping.is_valid?
+            if grouping.assignment.vcs_submit && grouping.is_valid?
               begin
                 repo.add_user(student.user_name, Repository::Permission::READ_WRITE) # grant repo permissions
               rescue Repository::UserAlreadyExistent

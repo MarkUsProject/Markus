@@ -70,7 +70,7 @@ class SubmissionsController < ApplicationController
     # Good idea from git branch. But SubversionRepository has
     # no get_all_revisions method... yet (TODO)
     # hmm. Let's make rev_number a method and have it return an array.
-    #repo.get_all_revisions.each do |revision|
+    # repo.get_all_revisions.each do |revision|
     #  @revisions_history << {num: revision.revision_number,
     #                         date: revision.timestamp}
     rev_number = repo.get_latest_revision.revision_number + 1
@@ -93,6 +93,28 @@ class SubmissionsController < ApplicationController
         end
       end
     end
+
+    if @revisions_history.empty?
+      rev_number.times.each do |rev|
+        begin
+          revision = repo.get_revision(rev)
+          unless revision.path_exists?(assign_path)
+            raise 'error'
+          end
+        rescue Exception
+          revision = nil
+        end
+        if revision
+          @revisions_history << { num: revision.revision_number,
+                                  date: revision.timestamp }
+          unless params[:revision_number] || params[:revision_timestamp]
+            @revision_number = revision.revision_number
+            @revision_timestamp = revision.timestamp
+          end
+        end
+      end
+    end
+
     respond_to do |format|
       format.html
       format.json do
@@ -264,19 +286,20 @@ class SubmissionsController < ApplicationController
   # when the state stored in the cookie exceeds 4k in serialized
   # form. This was happening prior to the fix of Github issue #30.
   def update_files
+    assignment_id = params[:assignment_id]
+    @assignment = Assignment.find(assignment_id)
+    unless @assignment.allow_web_submits
+      raise t('student.submission.external_submit_only')
+    end
+
     # We'll use this hash to carry over some error state to the
     # file_manager view.
     @file_manager_errors = Hash.new
-    assignment_id = params[:assignment_id]
-    @assignment = Assignment.find(assignment_id)
     required_files = AssignmentFile.where(
                            assignment_id: @assignment).pluck(:filename)
     students_filename = []
     @path = params[:path] || '/'
     @grouping = current_user.accepted_grouping_for(assignment_id)
-    if @grouping.repository_external_commits_only?
-      raise I18n.t('student.submission.external_submit_only')
-    end
     unless @grouping.is_valid?
       # can't use redirect_to here. See comment of this action for more details.
       set_filebrowser_vars(@grouping.group, @assignment)
@@ -679,14 +702,14 @@ class SubmissionsController < ApplicationController
               filename: "#{assignment.short_identifier}_detailed_report.csv"
   end
 
-  # See Assignment.get_svn_export_commands for details
-  def download_svn_export_commands
+  # See Assignment.get_svn_checkout_commands for details
+  def download_svn_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
-    svn_commands = assignment.get_svn_export_commands
+    svn_commands = assignment.get_svn_checkout_commands
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
               type: 'application/vnd.ms-excel',
-              filename: "#{assignment.short_identifier}_svn_exports.csv"
+              filename: "#{assignment.short_identifier}_svn_checkouts.csv"
   end
 
   # See Assignment.get_svn_repo_list for details

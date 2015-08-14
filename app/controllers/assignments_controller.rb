@@ -144,6 +144,7 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
+    @marking_schemes = MarkingScheme.all
     @grade_entry_forms = GradeEntryForm.order(:id)
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
@@ -296,47 +297,6 @@ class AssignmentsController < ApplicationController
     redirect_to action: 'edit', id: @assignment.id
   end
 
-  def download_csv_grades_report
-    assignments = Assignment.order(:id)
-    students = Student.all
-    csv_string = CSV.generate do |csv|
-      header = ['Username']
-      assignments.each do |assignment|
-        header.push(assignment.short_identifier)
-      end
-      csv << header
-      students.each do |student|
-        row = []
-        row.push(student.user_name)
-        assignments.each do |assignment|
-          out_of = assignment.total_mark
-          grouping = student.accepted_grouping_for(assignment.id)
-          if grouping.nil?
-            row.push('')
-          else
-            submission = grouping.current_submission_used
-            if submission.nil?
-              row.push('')
-            else
-              total_mark_percentage = submission.get_latest_result.total_mark / out_of * 100
-              if total_mark_percentage.nan?
-                row.push('')
-              else
-                row.push(total_mark_percentage)
-              end
-            end
-          end
-        end
-        csv << row
-      end
-    end
-    course_name = "#{COURSE_NAME}"
-    course_name_underscore = course_name.squish.downcase.tr(" ", "_")
-    send_data csv_string, disposition: 'attachment',
-                          filename: "#{course_name_underscore}_grades_report.csv"
-  end
-
-
   # Methods for the student interface
 
   def join_group
@@ -365,7 +325,6 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @student = @current_user
     m_logger = MarkusLogger.instance
-
     begin
       # We do not allow group creations by students after the due date
       # and the grace period for an assignment
@@ -745,6 +704,7 @@ class AssignmentsController < ApplicationController
         :repository_folder,
         :due_date,
         :allow_web_submits,
+        :vcs_submit,
         :display_grader_names_to_students,
         :is_hidden,
         :marking_scheme_type,

@@ -192,6 +192,7 @@ fr:
         notice:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois via l'interface web"
+        vcs_submit: "permettre soumet à travers le contrôle de version"
         is_hidden: "Cacher le projet aux étudiants"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants"
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
@@ -269,6 +270,21 @@ fr:
 
     #app/views/assignments/grader_index.html
     grade_assignments: "Évaluation des projets"
+
+    key_pairs:
+      title: "Les Paires de Clés"
+      key_pairs_title:         "Vos Paires de Clés"
+      time_of_upload:         "Moment du Téléchargement"
+      key_content:         "Contenu de Key"
+      new_key_pair:         "Nouvelle Paire de Clés"
+      add_key_pair:         "Ajouter une Paire de Clés"
+      remove_key:         "Retirez la clé"
+      are_you_sure:         "Êtes-vous sûr?"
+      file:         "Fichier"
+      or:         "OU"
+      copy_paste_key:         "Copiez et Collez Votre clé Publique"
+      create_key_pair:         "Créer une Paire de Clés"
+      back:         "Dos"
 
     #app/views/resluts/marker/_marker_panes.html.erb
     marker:
@@ -421,7 +437,7 @@ fr:
       csv_report:           "Rapport CSV"
       detailed_csv_report: "Rappost CSV détaillé"
       subversion_repo_list: "Liste des dépôts Subversion"
-      subversion_export_file: "Commandes SVN pour exporter les projets"
+      subversion_checkout_file: "Commandes SVN pour extraire les projets"
       errors:               "Erreurs"
       filter:               "Filtres :"
       show:                 "Montrer"
@@ -500,7 +516,7 @@ fr:
         no_mark: "NC"
         marking_state: "Affichage de la note aux étudiants"
       students:
-        title: "Vos feuilles de notes"
+        title: "Vos marques de feuilles de calcul"
         no_results: "Il n'y a pas encore de résultats pour cette feuille de notes."
         detailed_marks_message: "Les notes détaillées sont disponibles."
       csv:
@@ -525,6 +541,8 @@ fr:
     spreadsheet_item: "Feuille de notes"
     spreadsheet_date: "Date"
     mark_message: "Votre note : "
+
+    student_course_summary: "Vos marques de terme"
 
     student_interface_assignments: "Vos projets"
 
@@ -723,6 +741,7 @@ fr:
         # DO NOT change 'file_name' and 'new_file_name' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
         replace_file_js_error: "\"Vous ne pouvez pas remplacer '\" + file_name + \"' par '\" + new_file_name + \"'. Vous devez remplacer le fichier par un fichier ayant le même nom.\""
+        version_control_warning: "Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version. Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre."
 
     tas:
       create:

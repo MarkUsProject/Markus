@@ -608,15 +608,6 @@ class Grouping < ActiveRecord::Base
     end
   end
 
-  # Returns true, if and only if the configured repository setup
-  # allows for externally accessible repositories, in which case
-  # file submissions via the Web interface are not permitted. For
-  # now, this works for Subversion repositories only.
-  def repository_external_commits_only?
-    assignment = self.assignment
-    !assignment.allow_web_submits
-  end
-
   # Should we write repository permissions for this grouping?
   def write_repo_permissions?
     MarkusConfigurator.markus_config_repository_admin?

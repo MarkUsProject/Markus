@@ -218,7 +218,7 @@ class StudentTest < ActiveSupport::TestCase
 
     should 'hide students and have the repo remove them' do
       # Mocks to enter into the if
-      Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
+      Assignment.any_instance.stubs(:vcs_submit).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
 
       # Mock the repository and expect :remove_user with the student's user_name
@@ -233,7 +233,7 @@ class StudentTest < ActiveSupport::TestCase
 
     should 'not error when user is not found on hide and remove' do
       # Mocks to enter into the if that leads to the call to remove the student
-      Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
+      Assignment.any_instance.stubs(:vcs_submit).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
 
       # Mock the repository and raise Repository::UserNotFound
@@ -282,7 +282,7 @@ class StudentTest < ActiveSupport::TestCase
 
     should 'unhide without error when users already exists in repo' do
       # Mocks to enter into the if
-      Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
+      Assignment.any_instance.stubs(:vcs_submit).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
 
       # Mock the repository and raise Repository::UserNotFound

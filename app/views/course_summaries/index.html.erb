@@ -8,6 +8,11 @@
   </h1>
   <div class='heading_buttons'>
     <%= link_to t('marking_schemes.title'), marking_schemes_path %>
+    <% if @current_user.admin? %>
+        <span class='menu_bar'></span>
+        <%= link_to t(:download_csv_grade_report),
+                    download_csv_grades_report_course_summaries_path%>
+    <% end %>
   </div>
 </div>
 

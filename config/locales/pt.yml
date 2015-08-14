@@ -189,6 +189,7 @@ pt:
         notice:
             change_marking_scheme_type: "Alterar a escala de avaliação ira apagar avalições e critérios."
         allow_web_submits: "Permitir envio pelo web"
+        vcs_submit: "Permitir que sustenta através de controle de versão"
         is_hidden: "Ocultar este projeto dos alunos"
         display_grader_names_to_students: "Mostrar nome de avaliador para alunos"
         section_due_date_option:  "Se a opção de prazo de entrega por sessão foi selecionada, alunos só podem formar grupos dentro da sua sessão."
@@ -418,7 +419,7 @@ pt:
       csv_report:           "Relatório CSV"
       detailed_csv_report: "Relatório detalhado CSV"
       subversion_repo_list: "Lista de repositórios subversion"
-      subversion_export_file: "Comando SVN para exportar projetos"
+      subversion_checkout_file: "Comando SVN para transferir projetos"
       errors:               "Erros"
       filter:               "Filtro:"
       show:                 "Mostrar"
@@ -486,7 +487,7 @@ pt:
         marking_state: "Estado da avaliação"
 
       students:
-        title: "Suas notas"
+        title: "Suas Marcas Planilhas"
         no_results: "Não há notas disponíveis ainda..."
         detailed_marks_message: "Notas detalhadas estão disponíveis."
       csv:
@@ -511,6 +512,8 @@ pt:
     spreadsheet_item: "Notas nas planilhas"
     spreadsheet_date: "Data"
     mark_message: "Sua nota:"
+
+    student_course_summary: "Suas notas"
 
     student_interface_assignments: "Seus projetos"
 
@@ -711,7 +714,7 @@ pt:
         # DO NOT change 'file_name' and 'new_file_name' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
         replace_file_js_error: "\"Você não pode substituir '\" + file_name + \"' por '\" + new_file_name + \"'. Você deve substituir um arquivo por outro com o mesmo nome.\""
-
+        version_control_warning: "Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão. Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar."
 
     tas:
       create:
@@ -1071,6 +1074,21 @@ pt:
       grade: "Nota"
       x_mark: "x Mark"
       weight: "Peso"
+
+    key_pairs:
+      title: "Os Pares de Chaves"
+      key_pairs_title:         "Os Seus Pares de Chaves"
+      time_of_upload:         "Tempo de Carregamento"
+      key_content:         "Conteúdo de Chave"
+      new_key_pair:         "Novo Par de Chaves"
+      add_key_pair:         "Adicionar um Par de Chaves"
+      remove_key:         "Remova a Chave"
+      are_you_sure:         "Tem certeza?"
+      file:         "Arquivo"
+      or:         "OU"
+      copy_paste_key:         "Copie e Cole a Sua Chave Pública"
+      create_key_pair:         "Criar Par de Chaves"
+      back:         "De Volta"
 
     course_summaries:
       title: "Sumário"

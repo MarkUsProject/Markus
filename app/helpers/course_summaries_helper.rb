@@ -3,28 +3,43 @@ module CourseSummariesHelper
 
   # Get JSON data for the table
   def get_table_json_data
+    course_information
     all_students = Student.includes(:memberships, groupings: :current_submission_used, grade_entry_students: :grades)
-    all_assignments = Assignment.all
-    all_grade_entry_forms = GradeEntryForm.all
-    all_schemes = MarkingScheme.all
-
-    weights = get_marking_weights_for_all_marking_schemes
-    gef_weights = get_gef_marking_weights_for_all_marking_schemes
-
-    max_marks = Hash[Assignment.all.map do |a|
-                  [a.id, get_max_mark_for_assignment(a.id)]
-    end
-    ]
-    gef_max_marks = Hash[GradeEntryForm.all.map do |gef|
-                      [gef.id, get_max_mark_for_grade_entry_form(gef.id)]
-    end
-    ]
-
     student_list = all_students.map do |student|
-      marks = get_mark_for_all_assignments_for_student(student, all_assignments)
-      gef_marks = get_mark_for_all_gef_for_student(student, all_grade_entry_forms)
+      get_student_information(student)
+    end
+    student_list.to_json
+  end
 
-      {
+  def get_student_row_information
+    course_information
+    [get_student_information(@current_user)].to_json
+  end
+
+  def course_information
+    @all_assignments = Assignment.all
+    @all_grade_entry_forms = GradeEntryForm.all
+    @all_schemes = MarkingScheme.all
+
+    @weights = get_marking_weights_for_all_marking_schemes
+    @gef_weights = get_gef_marking_weights_for_all_marking_schemes
+
+    @max_marks = Hash[Assignment.all.map do |a|
+      [a.id, get_max_mark_for_assignment(a.id)]
+    end
+    ]
+    @gef_max_marks = Hash[GradeEntryForm.all.map do |gef|
+      [gef.id, get_max_mark_for_grade_entry_form(gef.id)]
+    end
+    ]
+  end
+
+  def get_student_information(student)
+    marks = get_mark_for_all_assignments_for_student(student, @all_assignments)
+    gef_marks = get_mark_for_all_gef_for_student(
+      student, @all_grade_entry_forms)
+
+    {
         id: student.id,
         user_name: student.user_name,
         first_name: student.first_name,
@@ -33,11 +48,9 @@ module CourseSummariesHelper
         grade_entry_form_marks: gef_marks,
         weighted_marks:
           get_weighted_total_for_all_marking_schemes_for_student(
-            all_schemes, marks, gef_marks, weights, gef_weights, max_marks,
-            gef_max_marks)
-      }
-    end
-    student_list.to_json
+            @all_schemes, marks, gef_marks, @weights,
+            @gef_weights, @max_marks, @gef_max_marks)
+    }
   end
 
   # Get marks for all assignments for a student
