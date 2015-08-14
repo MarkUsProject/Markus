@@ -27,7 +27,7 @@ process_marks -- function for converting test results into a map from criteria
 
 """
 
-import api_python_module
+from api_python_module import Markus
 
 # Required macros
 API_KEY = 'MjA5MDdkMjlmZzTlmMXTc5NmZEjNTgE0ODIa0Mm1UQ='
@@ -54,9 +54,8 @@ def process_marks(file_contents):
 """ --------Ideally, nothing below need be touched-------- """
 
 # Initialize an instance of the API class
-api = api_python_module.ApiInterface(API_KEY, ROOT_URL)
+api = Markus(API_KEY, ROOT_URL)
 print('Initialized API object successfully.')
-name_to_id = api.get_groups_by_name(ASSIGNMENT_ID)
 group_names = api.get_groups(ASSIGNMENT_ID).keys()
 
 # Upload the test results.
@@ -64,11 +63,10 @@ for group in group_names:
     with open(ROOT_DIR + '/' + group + '/' + FILE_NAME) as open_file:
         try:
             file_contents = open_file.read()
-            group_id = name_to_id[group]
-            api.upload_test_results(ASSIGNMENT_ID, group_id,
+            api.upload_test_results(ASSIGNMENT_ID, group,
                                     FILE_NAME, file_contents)
         except:
-            print('Error: uploading results for %(group)s failed.' % locals())
+            print('Error: uploading results for {} failed.'.format(locals()))
 print('Done uploading results.')
         
 # All test results files are now uploaded.
@@ -78,10 +76,9 @@ for group in group_names:
         try:
             file_contents = open_file.read()
             results = process_marks(file_contents)
-            group_id = name_to_id[group]
-            api.update_marks_single_group(results, ASSIGNMENT_ID, group_id)
+            api.update_marks_single_group(results, ASSIGNMENT_ID, group)
         except:
-            print('Error: updating marks for %(group)s failed.' % locals())
+            print('Error: updating marks for {} failed.'.format(locals()))
 print('Done updating marks.')
 print('Finished')
 

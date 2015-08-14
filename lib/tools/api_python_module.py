@@ -19,10 +19,10 @@ import http.client, sys, socket, os
 from urllib.parse import urlparse, urlencode
 import json
 
-class ApiInterface:
+class Markus:
     """A class for interfacing with the MarkUs API."""
 
-    def __init__(self, api_key, url, protocol='http'):
+    def __init__(self, api_key, url, protocol='https'):
         """ (str, str, str) -> ApiInterface
         Initialize an instance of ApiInterface.
 
@@ -98,16 +98,18 @@ class ApiInterface:
         response = self.submit_request(params, path, 'GET')
         return ApiInterface.decode_response(response)
 
-    def upload_test_results(self, assignment_id, group_id, title, contents):
-        """ (ApiInterface, int, int, string, string) -> list of str
+    def upload_test_results(self, assignment_id, group_name, title, contents):
+        """ (ApiInterface, int, str, str, str) -> list of str
         Upload test results to Markus.
 
         Keyword arguments:
         assignment_id -- the assignment's id
-        group_id      -- the id of the group to which we are uploading
+        group_name    -- the name of the group to which we are uploading
         title         -- the file name that will be displayed
         contents      -- what will be in the file
         """
+        groupname_id_map = self.get_groups_by_name(assignment_id)
+        group_id = groupname_id_map[group_name]
         params = {}
         params['filename'] = title
         params['file_content'] = contents
@@ -115,7 +117,7 @@ class ApiInterface:
         return self.submit_request(params, path, 'POST')
 
     def update_marks_single_group(self, criteria_mark_map,
-                                  assignment_id, group_id):
+                                  assignment_id, group_name):
         """ (ApiInterface, dict, int, int) -> list of str
         Update the marks of a single group. 
         Only the marks specified in criteria_mark_map will be changed.
@@ -125,10 +127,12 @@ class ApiInterface:
         exactly as they appear in the MarkUs GUI, punctuation included.
 
         Keyword arguments:
-        criteria_mark_map --  maps criteria to the desired grade.
-        assignment_id -- the assignment's id
-        group_id      -- the id of the group whose marks we are updating
+        criteria_mark_map -- maps criteria to the desired grade
+        assignment_id     -- the assignment's id
+        group_name        -- the name of the group whose marks we are updating
         """
+        groupname_id_map = self.get_groups_by_name(assignment_id)
+        group_id = groupname_id_map[group_name]
         params = criteria_mark_map
         path = self.get_path(assignment_id, group_id) + 'update_marks'
         return self.submit_request(params, path, 'PUT')
@@ -143,7 +147,8 @@ class ApiInterface:
         path         -- route to the resource we are targetting
         request_type -- the desired HTTP method (usually 'GET' or 'POST')
         """
-        auth_header = 'MarkUsAuth %s' % self.api_key
+        auth_header = 'MarkUsAuth {}'.format(self.api_key)
+        print(auth_header)
         headers = { 'Authorization': auth_header,
                     'Content-type': 'application/x-www-form-urlencoded' }
         if request_type == 'GET': # we only want this for GET requests
@@ -160,7 +165,7 @@ class ApiInterface:
                 print('Panic! Neither http nor https URL.')
                 sys.exit(1)
             conn.request(request_type,
-                         (self.parsed_url.path + path),
+                         self.parsed_url.path + path,
                          params,
                          headers)
             resp = conn.getresponse()
