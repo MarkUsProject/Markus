@@ -1,180 +1,191 @@
 #!/usr/bin/python
-# Interface for python to interact with API.
-
-# The behaviour we seek is for a user to be able to import
-# this module, and perform API functions without having to 
+# Interface for python to interact with MarkUs API.
+#
+# The purpose of this Python module is for users to be able to 
+# perform MarkUs API functions without having to 
 # specify the API auth key and URL with each call.
+#
+##  DISCLAIMER
+#
+# This script is made available under the OSI-approved
+# MIT license. See http://www.markusproject.org/#license for
+# more information. WARNING: This script is still considered
+# experimental.
+#
+# (c) by the authors, 2008 - 2015.
+#
 
-#TODO debug https requests.
-
-import http.client, urllib, sys, socket, os
-import urllib.request
-from urllib.parse import urlparse
+import http.client, sys, socket, os
+from urllib.parse import urlparse, urlencode
 import json
-import csv
-import socket
 
 class ApiInterface:
-    def __init__(self, api_key, url, protocol="http", verbose=True):
+    """A class for interfacing with the MarkUs API."""
+
+    def __init__(self, api_key, url, protocol='http'):
+        """ (str, str, str) -> ApiInterface
+        Initialize an instance of ApiInterface.
+
+        A valid API key can be found on the dashboard page of the GUI,
+        when logged in as an admin.
+
+        Keywork arguments:
+        api_key  -- any admin API key for the MarkUs instance.
+        url      -- the root domain of the MarkUs instance.
+        protocol -- the protocol requests should use (either http or https).
+        """
         self.api_key = api_key
         self.url = url
         self.parsed_url = urlparse(url.strip())
         self.protocol = protocol
-        self.verbose = verbose
 
-    def get_all_users(self): # Done (unless we add functionality)
+    def get_all_users(self):
         """ (ApiInterface, str) -> list of dict
-        Return a list of all users. (we could filter by type if we just want students/tas/admins)
-        For now, let's treat a user as a dictionary object.
+        Return a list of every user in the MarkUs instance.
+        Each user is a dictionary object, with the following keys:
+        'id', 'user_name', 'first_name', 'last_name',
+        'type', 'grace_credits', 'notes_count'.
         """
         params = None
-        users = self.submit_request(params, "/api/users.json", 'GET')
-        decoded_users = json.loads(users[2].decode('utf-8'))
-        return decoded_users
+        response = self.submit_request(params, '/api/users.json', 'GET')
+        return ApiInterface.decode_response(response)
 
-    def new_user(self, user_name, user_type, first_name, last_name, section_name=None, grace_credits=None):
-        """ (ApiInterface, str, str, str, str, str) -> bool
-        Add a new user to the markus database.
-        Returns True if successful, False otherwise.
+    def new_user(self, user_name, user_type, first_name,
+                 last_name, section_name=None, grace_credits=None):
+        """ (ApiInterface, str, str, str, str, str, int) -> list
+        Add a new user to the MarkUs database.
+        Returns a list containing the response's status,
+        reason, and data.
+
         Requires: user_name, user_type, first_name, last_name
         Optional: section_name, grace_credits
         """
-        params = {'user_name': user_name, 'type': user_type, 'first_name': first_name, 'last_name': last_name}
+        params = { 
+            'user_name': user_name,
+            'type': user_type,
+            'first_name': first_name,
+            'last_name': last_name
+            }
         if section_name != None:
             params['section_name'] = section_name
         if grace_credits != None:
             params['grace_credits'] = grace_credits
-        students = self.submit_request(params, "/api/users", "POST")
-        return students
+        return self.submit_request(params, '/api/users', 'POST')
 
     def get_assignments(self):
         """ (ApiInterface) -> list of dict
         Return a list of all assignments.
         """
-        #params = urllib.parse.urlencode({'limit':1})
         params = None
-        assignments = self.submit_request(params, "/api/assignments.json", 'GET')
-        decoded_assignments = json.loads(assignments[2].decode('utf-8'))
-        return decoded_assignments
+        response = self.submit_request(params, '/api/assignments.json', 'GET')
+        return ApiInterface.decode_response(response)
 
-    def get_groups(self, assignment):
+    def get_groups(self, assignment_id):
         """ (ApiInterface, int) -> list of dict
         Return a list of all groups associated with the given assignment.
         """
         params = None
-        groups = self.submit_request(params, "/api/assignments/" + str(assignment) + "/groups.json", 'GET') # obvsly needs to be changed.
-        decoded_groups = json.loads(groups[2].decode('utf-8'))
-        return decoded_groups
+        path = self.get_path(assignment_id) + '.json'
+        response = self.submit_request(params, path, 'GET')
+        return ApiInterface.decode_response(response)
 
-    def get_groups_by_name(self, assignment):
-        """ (ApiInterface, int) -> dict of str to int
+    def get_groups_by_name(self, assignment_id):
+        """ (ApiInterface, int) -> dict of str:int
         Return a dictionary mapping group names to group ids.
         """
-        # use assignment/id/groups/group_ids_by_name route
         params = None
-        pairs = self.submit_request(params, "api/assignments/" + str(assignment) + "/groups/group_ids_by_name.json", 'GET')
-        return json.loads(pairs[2].decode('utf-8'))
+        path = self.get_path(assignment_id) + '/group_ids_by_name.json'
+        response = self.submit_request(params, path, 'GET')
+        return ApiInterface.decode_response(response)
 
-    # Works
-    def upload_test_results_old(self, assignment_id, group_id, FILE): # should take name and contents
-        """ (ApiInterface, FILE) -> bool
-        Take an open file, upload it to Markus.
-        """
-        params = {}
-        params['filename'] = FILE.name
-        params['file_content'] = FILE.read() # put this in script
-        url = self.get_path(assignment_id, group_id) + 'test_results.xml'
-        return self.submit_request(params, url, 'POST')
+    def upload_test_results(self, assignment_id, group_id, title, contents):
+        """ (ApiInterface, int, int, string, string) -> list of str
+        Upload test results to Markus.
 
-    def upload_test_results(self, assignment_id, group_id, title, content): # should take name and contents
-        """ (ApiInterface, int, int, string, string) -> bool
-        Take a string and title, upload it to Markus.
+        Keyword arguments:
+        assignment_id -- the assignment's id
+        group_id      -- the id of the group to which we are uploading
+        title         -- the file name that will be displayed
+        contents      -- what will be in the file
         """
         params = {}
         params['filename'] = title
-        params['file_content'] = content
-        url = self.get_path(assignment_id, group_id) + 'test_results.xml'
-        return self.submit_request(params, url, 'POST')
+        params['file_content'] = contents
+        path = self.get_path(assignment_id, group_id) + 'test_results.xml'
+        return self.submit_request(params, path, 'POST')
 
-    def get_path(self, assignment_id, group_id):
-        # Helper for formatting path
-        return ('/api/assignments/' + str(assignment_id) + '/groups/' + str(group_id) + '/')
+    def update_marks_single_group(self, criteria_mark_map,
+                                  assignment_id, group_id):
+        """ (ApiInterface, dict, int, int) -> list of str
+        Update the marks of a single group. 
+        Only the marks specified in criteria_mark_map will be changed.
+        To set a mark to unmarked, use 'nil' as it's value.
+        Otherwise, marks must have valid numeric types (floats or ints).
+        Criteria are specified by their title. Titles must be formatted
+        exactly as they appear in the MarkUs GUI, punctuation included.
 
-    def get_group_submission_downloads(self):
-        pass
-
-    def update_marks_single_group(self, titles_to_mark, assignment_id, group_id):
-        """ (ApiInterface, dict, int, int) -> bool
-        Update the marks of a single group.
-        Requires: - titles_to_mark matches criteria titles to the grades we want.
-                  - assignment_id is the assignment id.
-                  - group_id is the group id.
+        Keyword arguments:
+        criteria_mark_map --  maps criteria to the desired grade.
+        assignment_id -- the assignment's id
+        group_id      -- the id of the group whose marks we are updating
         """
-        params = titles_to_mark
-        url_parts = ["/api/assignments/",
-                         str(assignment_id),
-                         "/groups/",
-                         str(group_id),
-                         "/update_marks"]
-        return self.submit_request(params, ''.join(url_parts), "PUT")
-
-    # Defunct (no longer what we want)
-    def update_marks_all(self, open_csv_file):
-        """ (ApiInterface, csv) -> bool
-        Take a csv file object (formatted properly), read it, and upload the marks.
-        Return True if the operation succeeds.
-        """
-        # First, we are going to need to read and parse the file.
-        # What should a line in the file look like?
-        # >> groupname/id,crit1,crit2,crit3
-        # >> c9magnar,3,1,2
-        
-        groups_by_name = self.get_groups_by_name(1) # fix
-        reader = csv.reader(open_csv_file)
-        for row in reader:
-            print(row)
-            assignment_id = row[0]
-            params = {}
-            group_name = str(row[1])
-            self.update_marks_single_group(params, assignment_id, groups_by_name[group_name])
-        return True
+        params = criteria_mark_map
+        path = self.get_path(assignment_id, group_id) + 'update_marks'
+        return self.submit_request(params, path, 'PUT')
 
     def submit_request(self, params, path, request_type):
-        auth_header = "MarkUsAuth %s" % self.api_key
-        headers = { "Authorization": auth_header,
-            "Content-type": "application/x-www-form-urlencoded" }
-        if request_type == "GET": # we only want this for GET requests
-            headers["Accept"] = "text/plain"
+        """ (ApiInterface, dict, str, str) -> list of str
+        Perform the HTTP/HTTPS request. Return a list 
+        containing the response's status, reason, and content.
+
+        Keyword arguments:
+        params       -- contains the parameters of the request
+        path         -- route to the resource we are targetting
+        request_type -- the desired HTTP method (usually 'GET' or 'POST')
+        """
+        auth_header = 'MarkUsAuth %s' % self.api_key
+        headers = { 'Authorization': auth_header,
+                    'Content-type': 'application/x-www-form-urlencoded' }
+        if request_type == 'GET': # we only want this for GET requests
+            headers['Accept'] = 'text/plain'
+        if params != None:
+            params = urlencode(params)
         try:
             resp = None; conn = None
-            if self.protocol == "http":
+            if self.protocol == 'http':
                 conn = http.client.HTTPConnection(self.parsed_url.netloc)
-            elif self.protocol == "https":
+            elif self.protocol == 'https':
                 conn = http.client.HTTPSConnection(self.parsed_url.netloc)
-                print('conn established')
             else:
-                print("Panic! Neither http nor https URL.")
+                print('Panic! Neither http nor https URL.')
                 sys.exit(1)
-            if (params) != None:
-                params = urllib.parse.urlencode(params)
-            print('request ready')
-            conn.request(request_type, (self.parsed_url.path + path), params, headers)
-            print('request sent')
+            conn.request(request_type,
+                         (self.parsed_url.path + path),
+                         params,
+                         headers)
             resp = conn.getresponse()
-            lst = [resp.status, resp.reason]
-            if self.verbose: # Is verbose turned on?
-                data = resp.read()
-                lst.append(data)
+            lst = [resp.status, resp.reason, resp.read()]
+            for x in lst:
+                print(type(x))
             conn.close()
-            return lst # currently a list of json formatted strings.
+            return lst
         except http.client.HTTPException as e: # Catch HTTP errors
             print(str(e), file=sys.stderr)
             sys.exit(1)
-    #    except socket.error (value, message):
-    #        if value == 111: # Connection Refused
-    #            print("%s: %s" % (self.parsed_url.netloc, message), file=sys.stderr)
-    #            sys.exit(1)
-    #        else:
-    #            print("%s: %s (Errno: %s)" % (self.parsed_url.netloc, message, value), file=sys.stderr)
-    #            sys.exit(1)
+        except OSError as e:
+            print('OSError: ' + str(e))
+            sys.exit(1)
+
+    # Helpers
+    def get_path(self, assignment_id, group_id=None):
+        """Return a path to an assignment's groups, or a single group."""
+        path = '/api/assignments/' + str(assignment_id) + '/groups'
+        if group_id != None:
+            path += '/' + str(group_id) + '/'
+        return path
+
+    def decode_response(resp):
+        """Converts response from submit_request into python dict."""
+        return json.loads(resp[2].decode('utf-8'))
+
 
