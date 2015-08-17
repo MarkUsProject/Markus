@@ -23,8 +23,8 @@ class Markus:
     """A class for interfacing with the MarkUs API."""
 
     def __init__(self, api_key, url, protocol='https'):
-        """ (str, str, str) -> ApiInterface
-        Initialize an instance of ApiInterface.
+        """ (str, str, str) -> Markus
+        Initialize an instance of the Markus class.
 
         A valid API key can be found on the dashboard page of the GUI,
         when logged in as an admin.
@@ -35,12 +35,11 @@ class Markus:
         protocol -- the protocol requests should use (either http or https).
         """
         self.api_key = api_key
-        self.url = url
         self.parsed_url = urlparse(url.strip())
         self.protocol = protocol
 
     def get_all_users(self):
-        """ (ApiInterface, str) -> list of dict
+        """ (Markus, str) -> list of dict
         Return a list of every user in the MarkUs instance.
         Each user is a dictionary object, with the following keys:
         'id', 'user_name', 'first_name', 'last_name',
@@ -48,11 +47,11 @@ class Markus:
         """
         params = None
         response = self.submit_request(params, '/api/users.json', 'GET')
-        return ApiInterface.decode_response(response)
+        return Markus.decode_response(response)
 
     def new_user(self, user_name, user_type, first_name,
                  last_name, section_name=None, grace_credits=None):
-        """ (ApiInterface, str, str, str, str, str, int) -> list
+        """ (Markus, str, str, str, str, str, int) -> list
         Add a new user to the MarkUs database.
         Returns a list containing the response's status,
         reason, and data.
@@ -73,33 +72,33 @@ class Markus:
         return self.submit_request(params, '/api/users', 'POST')
 
     def get_assignments(self):
-        """ (ApiInterface) -> list of dict
+        """ (Markus) -> list of dict
         Return a list of all assignments.
         """
         params = None
         response = self.submit_request(params, '/api/assignments.json', 'GET')
-        return ApiInterface.decode_response(response)
+        return Markus.decode_response(response)
 
     def get_groups(self, assignment_id):
-        """ (ApiInterface, int) -> list of dict
+        """ (Markus, int) -> list of dict
         Return a list of all groups associated with the given assignment.
         """
         params = None
         path = self.get_path(assignment_id) + '.json'
         response = self.submit_request(params, path, 'GET')
-        return ApiInterface.decode_response(response)
+        return Markus.decode_response(response)
 
     def get_groups_by_name(self, assignment_id):
-        """ (ApiInterface, int) -> dict of str:int
+        """ (Markus, int) -> dict of str:int
         Return a dictionary mapping group names to group ids.
         """
         params = None
         path = self.get_path(assignment_id) + '/group_ids_by_name.json'
         response = self.submit_request(params, path, 'GET')
-        return ApiInterface.decode_response(response)
+        return Markus.decode_response(response)
 
     def upload_test_results(self, assignment_id, group_name, title, contents):
-        """ (ApiInterface, int, str, str, str) -> list of str
+        """ (Markus, int, str, str, str) -> list of str
         Upload test results to Markus.
 
         Keyword arguments:
@@ -118,7 +117,7 @@ class Markus:
 
     def update_marks_single_group(self, criteria_mark_map,
                                   assignment_id, group_name):
-        """ (ApiInterface, dict, int, int) -> list of str
+        """ (Markus, dict, int, int) -> list of str
         Update the marks of a single group. 
         Only the marks specified in criteria_mark_map will be changed.
         To set a mark to unmarked, use 'nil' as it's value.
@@ -138,7 +137,7 @@ class Markus:
         return self.submit_request(params, path, 'PUT')
 
     def submit_request(self, params, path, request_type):
-        """ (ApiInterface, dict, str, str) -> list of str
+        """ (Markus, dict, str, str) -> list of str
         Perform the HTTP/HTTPS request. Return a list 
         containing the response's status, reason, and content.
 

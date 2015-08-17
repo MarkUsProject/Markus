@@ -27,7 +27,7 @@ process_marks -- function for converting test results into a map from criteria
 
 """
 
-from api_python_module import Markus
+from markusapi import Markus
 
 # Required macros
 API_KEY = 'MjA5MDdkMjlmZzTlmMXTc5NmZEjNTgE0ODIa0Mm1UQ='
@@ -55,7 +55,7 @@ def process_marks(file_contents):
 
 # Initialize an instance of the API class
 api = Markus(API_KEY, ROOT_URL)
-print('Initialized API object successfully.')
+print('Initialized Markus object successfully.')
 group_names = api.get_groups(ASSIGNMENT_ID).keys()
 
 # Upload the test results.
