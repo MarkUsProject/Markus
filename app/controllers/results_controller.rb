@@ -159,9 +159,7 @@ class ResultsController < ApplicationController
                     id: grouping.current_submission_used.get_latest_result.id
     else
       redirect_to controller: 'submissions',
-                  action: 'collect_and_begin_grading',
-                  id: grouping.assignment.id,
-                  grouping_id: grouping.id
+                  action: 'browse'
     end
   end
 

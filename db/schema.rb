@@ -243,6 +243,14 @@ ActiveRecord::Schema.define(version: 20150724162632) do
 
   add_index "groups", ["group_name"], name: "groups_name_unique", unique: true, using: :btree
 
+  create_table "key_pairs", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "user_name"
+    t.string   "file_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "marking_schemes", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false

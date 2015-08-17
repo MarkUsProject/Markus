@@ -271,6 +271,21 @@ fr:
     #app/views/assignments/grader_index.html
     grade_assignments: "Évaluation des projets"
 
+    key_pairs:
+      title: "Les Paires de Clés"
+      key_pairs_title:         "Vos Paires de Clés"
+      time_of_upload:         "Moment du Téléchargement"
+      key_content:         "Contenu de Key"
+      new_key_pair:         "Nouvelle Paire de Clés"
+      add_key_pair:         "Ajouter une Paire de Clés"
+      remove_key:         "Retirez la clé"
+      are_you_sure:         "Êtes-vous sûr?"
+      file:         "Fichier"
+      or:         "OU"
+      copy_paste_key:         "Copiez et Collez Votre clé Publique"
+      create_key_pair:         "Créer une Paire de Clés"
+      back:         "Dos"
+
     #app/views/resluts/marker/_marker_panes.html.erb
     marker:
       new_annot: "Nouv. annot."
@@ -422,7 +437,7 @@ fr:
       csv_report:           "Rapport CSV"
       detailed_csv_report: "Rappost CSV détaillé"
       subversion_repo_list: "Liste des dépôts Subversion"
-      subversion_export_file: "Commandes SVN pour exporter les projets"
+      subversion_checkout_file: "Commandes SVN pour extraire les projets"
       errors:               "Erreurs"
       filter:               "Filtres :"
       show:                 "Montrer"
@@ -501,7 +516,7 @@ fr:
         no_mark: "NC"
         marking_state: "Affichage de la note aux étudiants"
       students:
-        title: "Vos feuilles de notes"
+        title: "Vos marques de feuilles de calcul"
         no_results: "Il n'y a pas encore de résultats pour cette feuille de notes."
         detailed_marks_message: "Les notes détaillées sont disponibles."
       csv:
@@ -526,6 +541,8 @@ fr:
     spreadsheet_item: "Feuille de notes"
     spreadsheet_date: "Date"
     mark_message: "Votre note : "
+
+    student_course_summary: "Vos marques de terme"
 
     student_interface_assignments: "Vos projets"
 

@@ -11,7 +11,7 @@ class GracePeriodSubmissionRule < SubmissionRule
     I18n.t 'submission_rules.grace_period_submission_rule.after_collection_message'
   end
 
-  # This message will be dislayed to Students on viewing their file manager
+  # This message will be displayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.
   def overtime_message(grouping)
 
