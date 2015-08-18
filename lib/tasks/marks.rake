@@ -9,7 +9,6 @@ namespace :db do
       Mark.create(
         result_id: result_id,
         mark: rand(1..5),
-        markable_id: rand(1..5),
         markable_type: markable_type,
         markable: markable)
     end
