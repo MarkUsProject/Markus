@@ -312,12 +312,8 @@ class ResultsController < ApplicationController
     if current_user.student?
       # The Student does not have access to this file. Display an error.
       if @file.submission.grouping.membership_status(current_user).nil?
-        render partial: 'shared/handle_error',
-               formats:[:js],
-               handlers: [:erb],
-               locals: { error: t('submission_file.error.no_access',
-                         submission_file_id: @submission_file_id) }
-        return
+        flash_message(:error, t('submission_file.error.no_access',
+                      submission_file_id: @submission_file_id))
       end
     end
 
@@ -327,11 +323,7 @@ class ResultsController < ApplicationController
     begin
       @file_contents = @file.retrieve_file
     rescue Exception => e
-      render partial: 'shared/handle_error',
-             formats:[:js],
-             handlers: [:erb],
-             locals: { error: e.message }
-      return
+      flash_message(:error, e.message)
     end
     @code_type = @file.get_file_type
 

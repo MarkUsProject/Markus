@@ -50,12 +50,8 @@ class AssignmentsController < ApplicationController
     if current_user.student? &&
         (@test_result.submission.grouping.membership_status(current_user).nil? ||
         @test_result.submission.get_latest_result.released_to_students == false)
-      render partial: 'shared/handle_error',
-             formats: [:js],
-             handlers: [:erb],
-             locals: { error: t('test_result.error.no_access',
-                       test_result_id: @test_result.id) }
-      return
+      flash_message(:error, t('test_result.error.no_access',
+                    test_result_id: @test_result.id))
     end
 
     render template: 'assignments/render_test_result', layout: 'plain'
@@ -97,8 +93,7 @@ class AssignmentsController < ApplicationController
             Grouping.find_by_group_id_and_assignment_id( Group.find_by_group_name(@student.user_name), @assignment.id).destroy
           end
         rescue RuntimeError => @error
-          render 'shared/generic_error', layout: 'error'
-          return
+          flash_message(:error, 'Error')
         end
         redirect_to action: 'student_interface', id: @assignment.id
       else
