@@ -313,7 +313,8 @@ class ResultsController < ApplicationController
       # The Student does not have access to this file. Display an error.
       if @file.submission.grouping.membership_status(current_user).nil?
         flash_message(:error, t('submission_file.error.no_access',
-                      submission_file_id: @submission_file_id))
+                                submission_file_id: @submission_file_id))
+        redirect_to :back
       end
     end
 

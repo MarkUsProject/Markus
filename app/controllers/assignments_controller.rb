@@ -51,7 +51,7 @@ class AssignmentsController < ApplicationController
         (@test_result.submission.grouping.membership_status(current_user).nil? ||
         @test_result.submission.get_latest_result.released_to_students == false)
       flash_message(:error, t('test_result.error.no_access',
-                    test_result_id: @test_result.id))
+                              test_result_id: @test_result.id))
     end
 
     render template: 'assignments/render_test_result', layout: 'plain'
