@@ -4,7 +4,6 @@ class MarksPolymorphicAssociation < ActiveRecord::Migration
     add_column :marks, :markable_type, :string
     add_index :marks, [:markable_id, :result_id, :markable_type], :unique => true, :name => "marks_u1"
     remove_index :marks, :name => "index_marks_on_result_id"
-    remove_index :marks, :name => "index_marks_on_rubric_criterion_id"
   end
 
   def self.down
@@ -12,7 +11,6 @@ class MarksPolymorphicAssociation < ActiveRecord::Migration
     remove_column :marks, :markable_type
     remove_index :marks, :name => "marks_u1"
     add_index :marks, [:result_id]
-    add_index :marks, [:rubric_criterion_id]
 
   end
 end
