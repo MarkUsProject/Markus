@@ -370,17 +370,6 @@ pt:
         malformed_csv: "O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus."
         non_text_file_with_csv_extension: "O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV)."
 
-    pagination:
-      first: "≪ Primeiro"
-      prev: "< Anterior"
-      next: "Próximo >"
-      last: "Último ≫"
-      per_page: "Por página"
-      jump_to: "Ir para:"
-      show: "mostrar"
-      of:   "%{low} - %{high} de %{total}"
-      select: "Selecionar: "
-
     selects:
       all_on_page: "Todos %{page_items} items nessa página serão selecionados."
       all: "Todos %{total_items} items serão selecionados."
