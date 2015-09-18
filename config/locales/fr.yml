@@ -310,6 +310,7 @@ fr:
       marking_status:       "État de l'évaluation : "
       notes:                "Remarques (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Ajouter les annotations : "
+      include_annotations_warning: "Attention! Annotations sur les fichiers PDF ne sont actuellement pas téléchargés."
       marks:
         total_mark: "Notes totales : "
         released:   "Dévoilées : "
