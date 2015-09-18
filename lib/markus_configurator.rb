@@ -47,6 +47,14 @@ module MarkusConfigurator
     end
   end
 
+  def markus_config_max_file_size
+    if defined? MAX_FILE_SIZE
+      return MAX_FILE_SIZE
+    else
+      return 5000000
+    end
+  end
+
   def markus_config_repository_type
     if defined? REPOSITORY_TYPE
       return REPOSITORY_TYPE
