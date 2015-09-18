@@ -201,7 +201,7 @@ en:
             groups: "Manage student groups. You can create new groups and manually add and remove students to groups."
             graders: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."
         allow_web_submits: "Allow web submits"
-        vcs_submits: "Allow submits through version control"
+        vcs_submit: "Allow submits through version control"
         is_hidden: "Hide assignment from students"
         display_grader_names_to_students: "Display grader names to students"
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
