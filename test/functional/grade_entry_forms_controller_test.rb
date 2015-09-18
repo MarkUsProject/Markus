@@ -2,7 +2,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_controller_test'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
-require 'will_paginate'
 
 class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
@@ -770,7 +769,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
       should 'attempt to set an empty grade to a negative number' do
         @new_grade = -7
-        post_as @admin, 
+        post_as @admin,
                 :update_grade,
                 format: :js,
                 grade_entry_item_id: @grade_entry_items[0].id,

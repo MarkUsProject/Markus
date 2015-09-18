@@ -1043,7 +1043,7 @@ describe 'An Assignment' do
   # end assignment graders route tests
 
   context 'annotation_categories' do
-    let(:annot_path) do 
+    let(:annot_path) do
       path + '/' + assignment.id.to_s +
         '/annotation_categories'
     end
@@ -1211,15 +1211,6 @@ context 'grade_entry_forms' do
         .to route_to(
           controller: ctrl,
           action: 'grades',
-          id: grade_entry_form.id.to_s,
-          locale: 'en')
-    end
-
-    it 'routes GET g_table_paginate properly' do
-      expect(get: path + '/' + grade_entry_form.id.to_s + '/g_table_paginate')
-        .to route_to(
-          controller: ctrl,
-          action: 'g_table_paginate',
           id: grade_entry_form.id.to_s,
           locale: 'en')
     end

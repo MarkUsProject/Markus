@@ -1,7 +1,6 @@
 # The actions necessary for managing grade entry forms.
 
 class GradeEntryFormsController < ApplicationController
-  include GradeEntryFormsPaginationHelper
   include GradeEntryFormsHelper
 
   before_filter :authorize_only_for_admin,
@@ -10,14 +9,12 @@ class GradeEntryFormsController < ApplicationController
                          :populate_grades_table,
                          :get_mark_columns,
                          :grades,
-                         :g_table_paginate,
                          :csv_download,
                          :csv_upload,
                          :update_grade]
   before_filter :authorize_for_ta_and_admin,
                 only: [:grades,
                        :populate_grades_table,
-                       :g_table_paginate,
                        :csv_download,
                        :csv_upload,
                        :update_grade]
