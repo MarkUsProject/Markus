@@ -23,7 +23,7 @@
   function update_cell(cell, value) {
     // If the total marks cell exists, change it's value to the one supplied
     if (document.getElementById(cell)) {
-      document.getElementById(cell).value = value;
+      document.getElementById(cell).innerHTML = value;
       var e = new MouseEvent('click', {
         'view': window,
         'bubbles': true,
@@ -40,9 +40,12 @@
     },
     render: function() {
       return(
-        <input id={this.props.grade_id} type="text" size="4" 
-         className="grade-input" value={this.props.value} 
-         onClick={this.handleChange} readonly/>
+        <p 
+        id={this.props.grade_id} 
+        size="4" 
+        className="grade-input">
+        {this.props.value}
+        </p>
         );
     }
   });
