@@ -260,7 +260,7 @@
 
         <h3><%= t('student.group_properties') %></h3>
         <ul>
-          <% if @assignment.section_groups_only %>
+          <% if @assignment.section_groups_only && Section.any? %>
             <li><%= t('student.section_groups_only') %></li>
           <% end %>
 
