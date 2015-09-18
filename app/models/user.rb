@@ -161,7 +161,7 @@ class User < ActiveRecord::Base
           next if CSV.generate_line(row).strip.empty?
           if processed_users.include?(row[0])
             if result[:invalid_lines].count < max_invalid_lines
-              result[:invalid_lines] = I18n.t('csv_upload_user_duplicate',
+              result[:invalid_lines] << I18n.t('csv_upload_user_duplicate',
                                               {user_name: row[0]})
             end
           else
