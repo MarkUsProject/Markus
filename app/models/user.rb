@@ -145,7 +145,7 @@ class User < ActiveRecord::Base
   end
 
   def self.upload_user_list(user_class, user_list, encoding)
-    max_invalid_lines = 10;
+    max_invalid_lines = 10
     num_update = 0
     result = {}
     result[:invalid_lines] = []  # store lines that were not processed
@@ -162,7 +162,7 @@ class User < ActiveRecord::Base
           if processed_users.include?(row[0])
             if result[:invalid_lines].count < max_invalid_lines
               result[:invalid_lines] << I18n.t('csv_upload_user_duplicate',
-                                              {user_name: row[0]})
+                                               { user_name: row[0] })
             end
           else
             if User.add_user(user_class, row).nil?
