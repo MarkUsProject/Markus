@@ -1,5 +1,8 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'Results/file_selector' %>
+  <%= render partial: 'results/common/included_annotations',
+             formats: [:js],
+             handlers: [:erb] %>
 <% end %>
 
 <%= form_tag(download_assignment_submission_result_path(
@@ -33,7 +36,7 @@
   </div>
 
   <div class='download_file'>
-    
+
     <%= submit_tag t(:download), onclick: 'with_annotations();' if can_download && !files.empty? %>
 
     <%= label_tag('include_annotations',
@@ -43,6 +46,7 @@
                       true,
                       false,
                       id: 'include_annotations',
+                      onclick: 'annotations_included();',
                       class: 'inline_checkbox') if can_download && !files.empty? %>
 
     <%= submit_tag t('browse_submissions.download_all_files'),
