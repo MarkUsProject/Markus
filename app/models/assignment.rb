@@ -257,7 +257,7 @@ class Assignment < ActiveRecord::Base
         [0, 0]
       else
         # Calculates average and median in percentage.
-        [average(marks), median(marks)].map { |stat| stat * 100 / total_mark }
+        [average(marks), median(marks)].map { |stat| (stat * 100 / total_mark).round(2) }
       end
     self.save
   end
