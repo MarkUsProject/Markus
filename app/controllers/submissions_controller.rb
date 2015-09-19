@@ -311,9 +311,10 @@ class SubmissionsController < ApplicationController
           @file_manager_errors[:size_conflict] =
             "Error occured while uploading file \"" +
              f.original_filename +
-             "\": The size of the uploaded file exceeds the maximum of " +
-             "#{(MarkusConfigurator.markus_config_max_file_size/1000000.00).round(2)}" +
-             "MB."
+             '": The size of the uploaded file exceeds the maximum of ' +
+             "#{(MarkusConfigurator.markus_config_max_file_size/ 1000000.00)
+		.round(2)}" +
+             'MB.'
           render :file_manager
           return
         end
