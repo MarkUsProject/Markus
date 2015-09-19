@@ -44,11 +44,14 @@
 
           <ul id='annotation_summary_list'></ul>
         </div>
+
+        <% if has_test_results?(submission) %>
         <div id='test_result_tab' style='display:none;'>
             <div id='testviewer'>
               <pre id='test_result_content' cols='80' rows='50'>Please select a test</pre>
             </div>
         </div>
+        <% end %>
 
         <div id='remark_request_tab' style='display:none;'>
           <% if can_show_remark_request_tab_in_marker_pane(submission) %>
