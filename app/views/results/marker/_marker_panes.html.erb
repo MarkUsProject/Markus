@@ -6,7 +6,7 @@
            <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
            <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
 
-          <% if has_test_results(submission) %>
+          <% if has_test_results?(submission) %>
               <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
           <% end %>
 
