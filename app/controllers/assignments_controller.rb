@@ -60,7 +60,7 @@ class AssignmentsController < ApplicationController
   def student_interface
     @assignment = Assignment.find(params[:id])
     if @assignment.is_hidden
-      render file: "public/404.html", status: 404
+      render 'shared/http_status', formats: [:html], locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404, layout: false
       return
     end
 
