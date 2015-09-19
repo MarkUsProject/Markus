@@ -18,11 +18,22 @@
           <% @grade_entry_forms.each do |grade_entry_form| %>
             <tr>
               <td>
-                <%= link_to grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
-                            { controller: 'grade_entry_forms',
-                              action: action,
-                              id: grade_entry_form },
-                            class: 'assignment_list' %>
+                <% if grade_entry_form.is_hidden %>
+                    <%= link_to t('assignment.hidden',
+                                  assignment_text:
+                                          "#{h(grade_entry_form.short_identifier)}: #{h(grade_entry_form.description)}" ),
+                                { controller: 'grade_entry_forms',
+                                  action: action,
+                                  id: grade_entry_form },
+                                class: 'assignment_list' %>
+                <% else %>
+                    <%= link_to grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
+                                { controller: 'grade_entry_forms',
+                                  action: action,
+                                  id: grade_entry_form },
+                                class: 'assignment_list' %>
+                <% end %>
+
               </td>
               <td>
 		<% if grade_entry_form.date %>
