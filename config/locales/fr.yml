@@ -310,6 +310,7 @@ fr:
       marking_status:       "État de l'évaluation : "
       notes:                "Remarques (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Ajouter les annotations : "
+      include_annotations_warning: "Attention! Annotations sur les fichiers PDF ne sont actuellement pas téléchargés."
       marks:
         total_mark: "Notes totales : "
         released:   "Dévoilées : "
@@ -386,17 +387,6 @@ fr:
       upload:
         malformed_csv: "Le fichier sélectionné a été mal formé. Se il vous plaît vérifier que le fichier est conforme aux spécifications Markus."
         non_text_file_with_csv_extension: "Le fichier sélectionné ne est pas un fichier csv (même si elle peut avoir une extension .csv)."
-
-    pagination:
-      first: "≪ Première"
-      prev: "< Précédente"
-      next: "Suivante >"
-      last: "Dernière ≫"
-      per_page: "par page"
-      jump_to: "Aller à la page : "
-      show: "Afficher"
-      of:   "%{low} – %{high} sur %{total}"
-      select: "Sélectionner : "
 
     selects:
       all_on_page: "Les %{page_items} éléments de cette page sont séléctionnés."

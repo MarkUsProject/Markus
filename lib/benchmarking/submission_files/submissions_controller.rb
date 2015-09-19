@@ -3,7 +3,6 @@ require 'cgi'
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
-  include PaginationHelper
 
   helper_method :all_assignments_marked?
 
@@ -16,7 +15,6 @@ class SubmissionsController < ApplicationController
                          :update_files,
                          :download,
                          :downloads,
-                         :s_table_paginate,
                          :collect_and_begin_grading,
                          :download_groupings_files,
                          :manually_collect_and_begin_grading,
@@ -27,7 +25,6 @@ class SubmissionsController < ApplicationController
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
                        :index,
-                       :s_table_paginate,
                        :collect_and_begin_grading,
                        :manually_collect_and_begin_grading,
                        :collect_ta_submissions,
