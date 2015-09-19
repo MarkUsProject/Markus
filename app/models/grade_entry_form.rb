@@ -22,7 +22,7 @@ class GradeEntryForm < ActiveRecord::Base
   validates_presence_of     :short_identifier
   validates_uniqueness_of   :short_identifier, case_sensitive: true
 
-  validates_inclusion_of    :is_hidden, in: [true, false]
+  validates                 :is_hidden, inclusion: [true, false]
 
   accepts_nested_attributes_for :grade_entry_items, allow_destroy: true
 

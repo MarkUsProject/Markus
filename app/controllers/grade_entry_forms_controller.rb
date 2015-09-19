@@ -106,7 +106,7 @@ class GradeEntryFormsController < ApplicationController
       render 'shared/http_status',
              formats: [:html],
              locals: {
-               code:    '404',
+               code: '404',
                message: HttpStatusHelper::ERROR_CODE['message']['404']
              },
              status: 404,
