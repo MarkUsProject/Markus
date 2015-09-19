@@ -55,6 +55,7 @@ module GradeEntryFormsHelper
                       :date,
                       :show_total,
                       :short_identifier,
+                      :is_hidden,
                       grade_entry_items_attributes: [:name,
                                                      :out_of,
                                                      :position,

@@ -38,7 +38,11 @@
             <% end %>
           <% elsif !@grade_entry_form.nil? %>
             <%# Display the grade entry form's short identifier %>
-            <%= @grade_entry_form.short_identifier %>
+            <% if @grade_entry_form.is_hidden %>
+              <%= @grade_entry_form.short_identifier + " (hidden)" %>
+            <% else %>
+              <%= @grade_entry_form.short_identifier %>
+            <% end %>
           <% end %>
           <ul>
             <%= render partial: 'shared/assignments_dropdown_menu' %>

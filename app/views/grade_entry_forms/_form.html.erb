@@ -62,6 +62,11 @@
         <%= f.check_box :show_total %>
       </div>
 
+      <div>
+        <%= f.label :is_hidden, t('grade_entry_forms.is_hidden') %>
+        <%= f.check_box :is_hidden %>
+      </div>
+
       <% # Display the column names and totals %>
       <div id='grade_entry_items'>
         <% # Ensures there is at least one column whenever the form is loaded. %>

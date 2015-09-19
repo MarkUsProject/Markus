@@ -60,7 +60,14 @@ class AssignmentsController < ApplicationController
   def student_interface
     @assignment = Assignment.find(params[:id])
     if @assignment.is_hidden
-      render file: "public/404.html", status: 404
+      render 'shared/http_status',
+             formats: [:html],
+             locals: {
+               code: '404',
+               message: HttpStatusHelper::ERROR_CODE['message']['404']
+             },
+             status: 404,
+             layout: false
       return
     end
 
@@ -140,9 +147,9 @@ class AssignmentsController < ApplicationController
   # assignment information
   def index
     @marking_schemes = MarkingScheme.all
-    @grade_entry_forms = GradeEntryForm.order(:id)
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
+      @grade_entry_forms = GradeEntryForm.where(is_hidden: false).order(:id)
       @assignments = Assignment.where(is_hidden: false).order(:id)
       #get the section of current user
       @section = current_user.section
@@ -175,9 +182,11 @@ class AssignmentsController < ApplicationController
 
       render :student_assignment_list
     elsif current_user.ta?
+      @grade_entry_forms = GradeEntryForm.order(:id)
       @assignments = Assignment.includes(:submission_rule).order(:id)
       render :grader_index
     else
+      @grade_entry_forms = GradeEntryForm.order(:id)
       @assignments = Assignment.includes(:submission_rule).order(:id)
       render :index
     end

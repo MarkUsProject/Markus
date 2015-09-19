@@ -512,6 +512,7 @@ en:
         errors: "Errors"
         no_mark: "N/A"
         marking_state: "Marking State"
+      is_hidden: "Hide Spreadsheet"
 
       students:
         title: "Your Mark Spreadsheets"

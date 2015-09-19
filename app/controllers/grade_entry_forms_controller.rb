@@ -102,6 +102,17 @@ class GradeEntryFormsController < ApplicationController
   # For students
   def student_interface
     @grade_entry_form = GradeEntryForm.find(params[:id])
+    if @grade_entry_form.is_hidden
+      render 'shared/http_status',
+             formats: [:html],
+             locals: {
+               code: '404',
+               message: HttpStatusHelper::ERROR_CODE['message']['404']
+             },
+             status: 404,
+             layout: false
+      return
+    end
     @student = current_user
   end
 
