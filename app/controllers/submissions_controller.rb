@@ -2,7 +2,6 @@ require 'zip'
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
-  include PaginationHelper
 
   helper_method :all_assignments_marked?
 
