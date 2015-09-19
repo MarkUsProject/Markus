@@ -5,6 +5,12 @@
 
 /* Dashboard */
 
+.link_disabled {
+  color: $black;
+  display: block;
+  pointer-events: none;
+}
+
 #dashboard_lists {
   float: left;
   width: 30%;

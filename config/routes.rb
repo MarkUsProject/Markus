@@ -256,8 +256,6 @@ Markus::Application.routes.draw do
         get 'populate_grades_table'
         get 'get_mark_columns'
         get 'grades'
-        get 'g_table_paginate'
-        post 'g_table_paginate'
         get 'csv_download'
         post 'csv_upload'
         post 'update_grade'

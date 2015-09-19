@@ -304,6 +304,7 @@ en:
       marking_status:       "Marking Status:"
       notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Include Annotations:"
+      include_annotations_warning: "Warning! Annotations on PDFs are not currently downloaded."
       marks:
         total_mark: "Total Mark:"
         released:   "Released:"
@@ -390,18 +391,6 @@ en:
         # when a non-text file has a csv extension (ie: user changes extension
         # from .pdf to .csv on a pdf file)
         non_text_file_with_csv_extension: "The selected file is not a csv file (even though it may have a csv extension)."
-
-
-    pagination:
-      first: "≪ First"
-      prev: "< Prev"
-      next: "Next >"
-      last: "Last ≫"
-      per_page: "per page"
-      jump_to: "Jump to:"
-      show: "Show"
-      of:   "%{low} - %{high} of %{total}"
-      select: "Select: "
 
     selects:
       all_on_page: "All %{page_items} items on this page are selected."
@@ -720,7 +709,7 @@ en:
       working_alone: "You have asked to work alone on this assignment. If you change your mind and want to form or join a group, first delete your group."
       may_not_add_more: "You may not add more people to your group at this time."
       may_not_modify: "You may not modify your group at this time."
-      group_not_deletable: "You must contact your instructor to remove the group." 
+      group_not_deletable: "You must contact your instructor to remove the group."
       url_group_repository: "URL to your group's repository"
       group_properties: " Group Properties "
       students_can_form_groups: " Students can form groups. "
