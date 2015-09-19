@@ -264,6 +264,16 @@ class SubmissionsController < ApplicationController
     else
       @grace_credit_column = ''
     end
+
+    if @assignment.past_collection_date?
+      notice_text = t('browse_submissions.grading_can_begin')
+    else
+      collection_time = @assignment.submission_rule.calculate_collection_time
+      notice_text = t('browse_submissions.grading_can_begin_after',
+                      time: I18n.l(collection_time, format: :long_date))
+    end
+
+    flash_now(:notice, notice_text)
   end
 
   def populate_submissions_table

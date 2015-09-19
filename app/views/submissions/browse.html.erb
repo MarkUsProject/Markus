@@ -1,15 +1,5 @@
 <%= render partial: 'submissions_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
-<div class='notice'>
-  <% if @assignment.past_collection_date? %>
-     <%= t('browse_submissions.grading_can_begin') %>
-  <% else %>
-     <%= t('browse_submissions.grading_can_begin_after',
-           time: I18n.l(@assignment.submission_rule.calculate_collection_time,
-           format: :long_date)) %>
-  <% end %>
-</div>
-
 <div class='title_bar'>
   <h1>
     <%= t('browse_submissions.submissions',
