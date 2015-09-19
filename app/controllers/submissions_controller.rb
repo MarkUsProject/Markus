@@ -34,7 +34,7 @@ class SubmissionsController < ApplicationController
                        :update_files,
                        :populate_file_manager_react]
   before_filter :authorize_for_user, only: [:download, :downloads]
-  layout "assignment_content", only: [:browse]
+  layout 'assignment_content', only: [:browse]
 
   def repo_browser
     @assignment = Assignment.find(params[:assignment_id])
