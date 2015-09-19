@@ -147,7 +147,6 @@ class AssignmentsController < ApplicationController
   # assignment information
   def index
     @marking_schemes = MarkingScheme.all
-
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
       @grade_entry_forms = GradeEntryForm.where(is_hidden: false).order(:id)
