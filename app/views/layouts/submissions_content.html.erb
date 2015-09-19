@@ -41,7 +41,9 @@
       <%= content_for?(:content) ? yield(:content) : yield %>
 
       <div class='title_bar'>
-        <%= yield(:title) %>
+        <h1>
+          <%= yield(:title) %>
+        </h1>
         <div class='heading_buttons'>
           <%= yield(:heading_buttons) %>
         </div>

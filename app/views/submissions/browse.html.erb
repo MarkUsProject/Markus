@@ -1,19 +1,17 @@
 <%= render partial: 'submissions_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
 <% content_for :title do %>
-  <h1>
-    <%= t('browse_submissions.submissions',
-          short_identifier: sanitize(@assignment.short_identifier)) %>
-    <div class='title-help submissions_help'>
-      <p class='help-message-title submissions_help'>
-        <% if @current_user.ta? %>
-          <%= t('assignment.help.submissions_graders') %>
-        <% else %>
-          <%= t('assignment.help.submissions_admins') %>
-        <% end %>
-      </p>
-    </div>
-  </h1>
+  <%= t('browse_submissions.submissions',
+        short_identifier: sanitize(@assignment.short_identifier)) %>
+  <div class='title-help submissions_help'>
+    <p class='help-message-title submissions_help'>
+      <% if @current_user.ta? %>
+        <%= t('assignment.help.submissions_graders') %>
+      <% else %>
+        <%= t('assignment.help.submissions_admins') %>
+      <% end %>
+    </p>
+  </div>
 <% end %>
 
 <% content_for :heading_buttons do %>
