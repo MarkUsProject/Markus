@@ -186,6 +186,10 @@ Markus::Application.configure do
   PDF_SUPPORT = false
 
   ###################################################################
+  # Max file size for submissions in Bytes
+  MAX_FILE_SIZE = 5000000
+
+  ###################################################################
   # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
   # are using Subversion as a storage backend and the instructor wants his/her
   # students to submit to the repositories Subversion clients only. Set this
