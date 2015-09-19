@@ -2,6 +2,8 @@ require 'zip'
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
+  include PaginationHelper
+  include ApplicationHelper
 
   helper_method :all_assignments_marked?
 
@@ -264,6 +266,16 @@ class SubmissionsController < ApplicationController
     else
       @grace_credit_column = ''
     end
+
+    if @assignment.past_collection_date?
+      notice_text = t('browse_submissions.grading_can_begin')
+    else
+      notice_text = t('browse_submissions.grading_can_begin_after',
+           time: I18n.l(@assignment.submission_rule.calculate_collection_time,
+           format: :long_date))
+    end
+
+    flash_now(:notice, notice_text)
   end
 
   def populate_submissions_table
