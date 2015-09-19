@@ -73,7 +73,7 @@ Assignment.blueprint do
   enable_test {true}
   tokens_per_day {10}
   assign_graders_to_criteria {false}
-  assignment_stat {AssignmentStat.make}
+  assignment_stat
 end
 
 AssignmentFile.blueprint do
