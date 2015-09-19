@@ -61,9 +61,10 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     if @assignment.is_hidden
       render 'shared/http_status', formats: [:html],
-             locals: { code: '404',
-                       message:
-                           HttpStatusHelper::ERROR_CODE['message']['404'] },
+             locals: {
+                 code: '404',
+                 message: HttpStatusHelper::ERROR_CODE['message']['404']
+             },
              status: 404, layout: false
       return
     end
