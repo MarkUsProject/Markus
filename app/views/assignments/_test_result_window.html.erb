@@ -10,10 +10,10 @@
       data: 'test_result_id=' + test_result_id,
       success: function (data) {
         test_html = data;
-        jQuery('#testviewer').html(test_html);
+        jQuery('#test_result_content').html(test_html);
       },
       error: function () {
-        jQuery('#testviewer').html('Error retrieving test results');
+        jQuery('#test_result_content').html('Error retrieving test results');
       },
     });
 
