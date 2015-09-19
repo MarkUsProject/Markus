@@ -277,6 +277,7 @@ pt:
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
       annot_summary: "Resumo de anot."
       source_code: "código fonte"
+      test_reuslts: "resultado dos testes"
       remark_request: "Pedido de revisão"
       remark_submitted_on: "Pedido de revisão enviado"
       remark_instructions: "Instruções para pedidos de revisão"
