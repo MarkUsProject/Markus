@@ -9,7 +9,7 @@
       type: 'GET',
       data: 'test_result_id=' + test_result_id,
       success: function (data) {
-        test_html = "<pre id='test_result_content' cols='80' rows='50'>" + data + "</pre>"
+        test_html = data;
         jQuery('#testviewer').html(test_html);
       },
       error: function () {
