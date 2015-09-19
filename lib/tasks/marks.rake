@@ -8,7 +8,7 @@ namespace :db do
     def create_mark(result_id, markable_type, markable)
       Mark.create(
         result_id: result_id,
-        mark: rand(1..5),
+        mark: rand(0..4),
         markable_type: markable_type,
         markable: markable)
     end
