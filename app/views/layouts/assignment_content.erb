@@ -45,7 +45,11 @@
           <%= yield(:title) %>
         </h1>
         <div class='heading_buttons'>
-          <%= yield(:heading_buttons) %>
+            <%= render partial: "layouts/heading_buttons",
+                    collection: @heading_buttons,
+                            as: :heading_button,
+               spacer_template: "layouts/heading_buttons_spacer" %>
+          <%= yield(:additional_headings) %>
         </div>
       </div>
 
