@@ -179,9 +179,9 @@ class SubmissionsController < ApplicationController
   def manually_collect_and_begin_grading
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
-    @apply_late_penalty = params[:apply_late_penalty]
+    apply_late_penalty = params[:apply_late_penalty]
     submission = SubmissionCollector.instance.manually_collect_submission(
-      @grouping, @revision_number, @apply_late_penalty, false)
+      @grouping, @revision_number, apply_late_penalty, false)
     redirect_to edit_assignment_submission_result_path(
       assignment_id: @grouping.assignment_id,
       submission_id: submission.id,
