@@ -166,6 +166,7 @@ ActiveRecord::Schema.define(version: 20150919173134) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "show_total"
+    t.boolean  "is_hidden"
   end
 
   add_index "grade_entry_forms", ["short_identifier"], name: "index_grade_entry_forms_on_short_identifier", unique: true, using: :btree

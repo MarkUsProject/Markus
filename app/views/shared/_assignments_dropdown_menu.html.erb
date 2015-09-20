@@ -144,27 +144,49 @@
   <% if grade_entry_form != @grade_entry_form %>
     <% if @current_user.admin? %>
       <li>
-        <%= link_to grade_entry_form.short_identifier,
-                    edit_grade_entry_form_path(grade_entry_form),
-                    title: grade_entry_form.description %>
+        <% if grade_entry_form.is_hidden %>
+            <%= link_to t('assignment.hidden',
+                          assignment_text: h(grade_entry_form.short_identifier)),
+                        edit_grade_entry_form_path(grade_entry_form),
+                        title: grade_entry_form.description %>
+        <% else %>
+            <%= link_to h(grade_entry_form.short_identifier),
+                        edit_grade_entry_form_path(grade_entry_form),
+                        title: grade_entry_form.description %>
+        <% end %>
       </li>
     <% elsif @current_user.ta? %>
       <li>
-        <%= link_to grade_entry_form.short_identifier,
-                    grades_grade_entry_form_path(grade_entry_form),
-                    title: grade_entry_form.description %>
+        <% if grade_entry_form.is_hidden %>
+            <%= link_to t('assignment.hidden',
+                          assignment_text: h(grade_entry_form.short_identifier)),
+                        edit_grade_entry_form_path(grade_entry_form),
+                        title: grade_entry_form.description %>
+        <% else %>
+            <%= link_to h(grade_entry_form.short_identifier),
+                        edit_grade_entry_form_path(grade_entry_form),
+                        title: grade_entry_form.description %>
+        <% end %>
       </li>
     <% elsif @current_user.student? %>
       <li>
-        <%= link_to grade_entry_form.short_identifier,
-                    student_interface_grade_entry_form_path(grade_entry_form),
-                    title: grade_entry_form.description %>
+        <% if !grade_entry_form.is_hidden %>
+            <%= link_to h(grade_entry_form.short_identifier),
+                        edit_grade_entry_form_path(grade_entry_form),
+                        title: grade_entry_form.description %>
+        <% end %>
       </li>
     <% end %>
   <% else %>
     <li class='active'>
       <span title='<%= grade_entry_form.description %>'>
-        <%= grade_entry_form.short_identifier %>
+        <% # Appends hidden to the active link, if hidden.
+           if grade_entry_form.is_hidden %>
+            <%= t('assignment.hidden',
+                assignment_text: h(grade_entry_form.short_identifier)) %>
+        <% else %>
+          <%= grade_entry_form.short_identifier %>
+        <% end %>
       </span>
     </li>
   <% end %>

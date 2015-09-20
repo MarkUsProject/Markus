@@ -289,6 +289,7 @@ en:
       across_all_submission_files: "Current annotations across all submission files. Click on the line number to jump to the location in the file."
       annot_summary: "Annotations"
       source_code: "Source Code"
+      test_results: "Test Results"
       remark_request: "Remark Request"
       remark_submitted_on: "Remark Request Submitted On"
       remark_instructions: "Instructions for Remark Requests"
@@ -305,6 +306,7 @@ en:
       notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Include Annotations:"
       include_annotations_warning: "Warning! Annotations on PDFs are not currently downloaded."
+      select_a_test: "Please select a test"
       marks:
         total_mark: "Total Mark:"
         released:   "Released:"
@@ -512,6 +514,7 @@ en:
         errors: "Errors"
         no_mark: "N/A"
         marking_state: "Marking State"
+      is_hidden: "Hide Spreadsheet"
 
       students:
         title: "Your Mark Spreadsheets"

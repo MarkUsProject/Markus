@@ -277,6 +277,7 @@ pt:
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
       annot_summary: "Resumo de anot."
       source_code: "código fonte"
+      test_reuslts: "Resultado dos testes"
       remark_request: "Pedido de revisão"
       remark_submitted_on: "Pedido de revisão enviado"
       remark_instructions: "Instruções para pedidos de revisão"
@@ -293,6 +294,7 @@ pt:
       notes:                "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Incluir anotações:"
       include_annotations_warning: "Aviso! Anotações sobre PDFs não são presentemente descarregado."
+      select_a_test: "Por favor seleccione um teste"
       marks:
         total_mark: "Nota total:"
         released:   "Liberar:"
@@ -496,6 +498,7 @@ pt:
                              <code>\"\",q1_name,q2_name,q3_name</code><br>
                              <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
+        is_hidden: "Ocultar Planilha"
 
     no_grade_entry_forms_message: "Atualmente não há notas nas planilhas."
     current_grade_entry_forms_title: "Planilha atual de notas"

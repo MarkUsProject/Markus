@@ -30,4 +30,7 @@ module ResultsHelper
     !student_can_edit_remark_request(submission)
   end
 
+  def can_show_test_results_tab?(assignment, submission)
+    submission.test_results && assignment.enable_test
+  end
 end

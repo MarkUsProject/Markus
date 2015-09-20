@@ -125,6 +125,7 @@ GradeEntryForm.blueprint do
   description
   message
   date
+  is_hidden {false}
 end
 
 GradeEntryItem.blueprint do

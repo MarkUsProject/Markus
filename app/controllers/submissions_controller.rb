@@ -274,6 +274,7 @@ class SubmissionsController < ApplicationController
     end
 
     flash_now(:notice, notice_text)
+    render layout: 'assignment_content'
   end
 
   def populate_submissions_table
@@ -317,11 +318,14 @@ class SubmissionsController < ApplicationController
     end
     unless params[:new_files].nil?
       params[:new_files].each do |f|
-        if f.size > 5000000
+        if f.size > MarkusConfigurator.markus_config_max_file_size
           @file_manager_errors[:size_conflict] =
             "Error occured while uploading file \"" +
              f.original_filename +
-             "\": The size of the uploaded file exceeds the maximum of 5MB."
+             '": The size of the uploaded file exceeds the maximum of ' +
+             "#{(MarkusConfigurator.markus_config_max_file_size/ 1000000.00)
+	          .round(2)}" +
+             'MB.'
           render :file_manager
           return
         end

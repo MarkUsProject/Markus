@@ -5,6 +5,11 @@
         <ul id='code_and_annotations_tabs' class='subsection_tabs'>
            <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
            <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
+
+          <% if can_show_test_results_tab?(assignment, submission) %>
+              <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
+          <% end %>
+
            <% if can_show_remark_request_tab_in_marker_pane(submission) %>
               <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
            <% end %>
@@ -39,6 +44,14 @@
 
           <ul id='annotation_summary_list'></ul>
         </div>
+
+        <% if can_show_test_results_tab?(assignment, submission) %>
+          <div id='test_result_tab' style='display:none;'>
+            <div id='testviewer'>
+              <pre id='test_result_content' cols='80' rows='50'><%= t('marker.select_a_test') %></pre>
+            </div>
+          </div>
+        <% end %>
 
         <div id='remark_request_tab' style='display:none;'>
           <% if can_show_remark_request_tab_in_marker_pane(submission) %>
