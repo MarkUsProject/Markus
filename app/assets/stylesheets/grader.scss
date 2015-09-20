@@ -113,12 +113,14 @@
 #summary_viewer,
 #submission_rule_viewer,
 #codeviewer,
+#testviewer,
 #annotations_summary {
   border-radius: 0 0 $radius $radius;
   overflow: auto;
 }
 
 #codeviewer,
+#testviewer,
 #mark_viewer,
 #summary_viewer,
 #submission_rule_viewer,

@@ -54,7 +54,7 @@ class AssignmentsController < ApplicationController
                               test_result_id: @test_result.id))
     end
 
-    render template: 'assignments/render_test_result', layout: 'plain'
+    render text: @test_result.file_content
   end
 
   def student_interface

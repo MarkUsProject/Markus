@@ -1,14 +1,25 @@
 <script>
-//<![CDATA[
+  //<![CDATA[
   function load_test_result(test_result_id) {
     document.getElementById('working').style.display = '';
     $('select_test_result_id').disable();
 
-    window.open('<%= render_test_result_assignment_path(id: @assignment.id, aid: aid)%>&test_result_id='+test_result_id,
-    "Test Results", "width=400,height=250,resizable=yes,scrollbars=yes")
+    jQuery.ajax({
+      url: '<%= render_test_result_assignment_path(id: @assignment.id, aid: aid) %>',
+      type: 'GET',
+      data: 'test_result_id=' + test_result_id,
+      success: function (data) {
+        test_html = data;
+        jQuery('#test_result_content').html(test_html);
+      },
+      error: function () {
+        jQuery('#test_result_content').html('Error retrieving test results');
+      },
+    });
 
     document.getElementById('working').style.display = 'none';
     $('select_test_result_id').enable();
   }
-//]]>
+
+  //]]>
 </script>

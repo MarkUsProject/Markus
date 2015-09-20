@@ -30,4 +30,7 @@ module ResultsHelper
     !student_can_edit_remark_request(submission)
   end
 
+  def has_test_results?(submission)
+    submission.test_results
+  end
 end
