@@ -6,6 +6,7 @@
           <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
           <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
           <% if has_test_results?(submission) %>
+          <% if can_show_test_results_tab?(assignment, submission) %>
             <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
           <% end %>
           <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
@@ -35,6 +36,7 @@
         </div>
 
         <% if has_test_results?(submission) %>
+        <% if can_show_test_results_tab?(assignment, submission) %>
         <div id='test_result_tab' style='display:none;'>
           <div id='testviewer'>
             <pre id='test_result_content' cols='80' rows='50'>Please select a test</pre>
