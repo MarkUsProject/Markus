@@ -187,7 +187,7 @@ class SubmissionCollector < ActiveRecord::Base
   #Use the database to communicate to the child to stop, and restart itself
   #and manually collect the submission
   #The third parameter enables or disables the forking.
-  def manually_collect_submission(grouping, rev_num, 
+  def manually_collect_submission(grouping, rev_num,
                                   apply_late_penalty, async = true)
 
     #Since windows doesn't support fork, the main process will have to collect
