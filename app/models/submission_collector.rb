@@ -187,7 +187,8 @@ class SubmissionCollector < ActiveRecord::Base
   #Use the database to communicate to the child to stop, and restart itself
   #and manually collect the submission
   #The third parameter enables or disables the forking.
-  def manually_collect_submission(grouping, rev_num, apply_late_penalty, async=true)
+  def manually_collect_submission(grouping, rev_num, 
+                                  apply_late_penalty, async = true)
 
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
@@ -197,8 +198,8 @@ class SubmissionCollector < ActiveRecord::Base
       grouping.save
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
       if apply_late_penalty
-        new_submission = grouping.assignment.submission_rule.apply_submission_rule(
-          new_submission)
+        new_submission = grouping.assignment.submission_rule
+                                 .apply_submission_rule(new_submission)
       end
       grouping.is_collected = true
       grouping.save
@@ -217,8 +218,8 @@ class SubmissionCollector < ActiveRecord::Base
 
     new_submission = Submission.create_by_revision_number(grouping, rev_num)
     if apply_late_penalty
-      new_submission = grouping.assignment.submission_rule.apply_submission_rule(
-        new_submission)
+      new_submission = grouping.assignment.submission_rule
+                               .apply_submission_rule(new_submission)
     end
 
     #This is to help determine the progress of the method.
