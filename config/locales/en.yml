@@ -305,6 +305,7 @@ en:
       marking_status:       "Marking Status:"
       notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Include Annotations:"
+      select_a_test: "Please select a test"
       marks:
         total_mark: "Total Mark:"
         released:   "Released:"

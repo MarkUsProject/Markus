@@ -311,6 +311,7 @@ fr:
       marking_status:       "État de l'évaluation : "
       notes:                "Remarques (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Ajouter les annotations : "
+      select_a_test: "S'il vous plaît sélectionner un test"
       marks:
         total_mark: "Notes totales : "
         released:   "Dévoilées : "
