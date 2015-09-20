@@ -223,7 +223,7 @@ class Assignment < ActiveRecord::Base
     # groupings.first(include: :memberships, conditions: [condition, uid]) #FIXME: needs schema update
 
     #FIXME: needs to be rewritten using a proper query...
-    User.find(uid).accepted_grouping_for(id)
+    User.find(uid.id).accepted_grouping_for(id)
   end
 
   def display_for_note

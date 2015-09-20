@@ -579,11 +579,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
               path_prefix = "/en/assignments/#{@assignment.id}" +
                             "/submissions/#{submission.id}/results"
               assert_select '#overall_comment_edit form[action=' +
-                            "#{path_prefix}/#{original_result.id}" +
-                            '/update_overall_comment]'
+                            "'#{path_prefix}/#{original_result.id}" +
+                            "/update_overall_comment']"
               assert_select '#overall_remark_comment_edit form[action=' +
-                            "#{path_prefix}/#{remark_result.id}" +
-                            '/update_overall_comment]'
+                            "'#{path_prefix}/#{remark_result.id}" +
+                            "/update_overall_comment']"
             end
 
             should 'edit third result' do
