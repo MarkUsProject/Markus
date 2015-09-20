@@ -1,0 +1,391 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  // The master component that manages both tables and
+  // the add/remove actions
+  var GroupsManager = React.createClass({
+    getInitialState: function() {
+      return {
+        students: [],
+        selected_students: [],
+        groups: [],
+        selected_groups: [],
+        selected_students_in_groups: [],
+        error: null
+      };
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    updateSelectedStudents: function(students) {
+      this.setState({selected_students: students});
+    },
+    updateSelectedGroups: function(groups) {
+      this.setState({selected_groups: groups});
+    },
+    updateSelectedStudentsInGroups: function(students) {
+      this.setState({selected_students_in_groups: students});
+    },
+    // Sends a request to the server to perform some action
+    // such as assigning or removing a member to/from a group
+    // todo: function should be moved to actions column (separation of concerns)
+    performAction: function(action) {
+      var dataLoad = {
+        submit_type: 'global_action',
+        global_actions: action,
+        students: this.state.selected_students,
+        students_to_remove: this.state.selected_students_in_groups,
+        groupings: this.state.selected_groups
+      };
+
+      jQuery.ajax({
+        method: 'POST',
+        url: 'groups/global_actions',
+        data: dataLoad,
+        success: function(data) {
+          this.refresh();
+          this.refs.groupsStudentsTable.clearCheckboxes();
+          this.refs.groupsTable.clearCheckboxes();
+          this.setState({
+            selected_students: [],
+            selected_groups: [],
+            selected_students_in_groups: [],
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this)
+      });
+    },
+    componentDidMount: function () {
+      var me = this;
+      jQuery(document).ready(function () {
+        jQuery('#create_group_dialog form').on('ajax:success', function() {
+          modalCreate.close();
+          me.refresh();
+        });
+      });
+    },
+    // Asks for new info from backend and sets state accordingly.
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+
+      jQuery.ajax({
+        url: 'groups/populate',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          document.getElementById('working').style.display = 'none';
+          this.setState({
+            students: data[0],
+            groups: data[1]
+          });
+        }.bind(this)
+      });
+    },
+    render: function() {
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <div className='columns'>
+            <GroupsStudentsTable ref="groupsStudentsTable"
+              students={this.state.students}
+              selected_students={this.state.selected_students}
+              onSelectedStudentsChange={this.updateSelectedStudents} />
+            <GroupsActionsColumn refresh={this.refresh} performAction={this.performAction} />
+            <GroupsTable ref="groupsTable"
+              groups={this.state.groups} 
+              selected_groups={this.state.selected_groups}
+              onSelectedGroupsChange={this.updateSelectedGroups}
+              selected_students_in_groups={this.state.selected_students_in_groups}
+              onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
+              refresh={this.refresh} />
+          </div>
+        </div>
+      );
+    }
+  });
+
+  // Table of students, on the left.
+  var GroupsStudentsTable = React.createClass({
+    getDefaultProps: function() {
+      return {
+        columns: [
+          {
+            id: 'user_name',
+            content: '<%= j raw I18n.t('user.user_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'last_name',
+            content: '<%= j raw I18n.t('user.last_name') %>',
+            sortable: true,
+            searchable: true,
+          },
+          {
+            id: 'first_name',
+            content: '<%= j raw I18n.t('user.first_name') %>',
+            sortable: true,
+            searchable: true
+          }
+        ],
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw I18n.t('groups.all_students') %>',
+            func: function(student) {
+              return student;
+            }
+          },
+          {
+            name: 'unassigned',
+            text: '<%= j raw I18n.t('groups.unassigned_students') %>',
+            func: function(student) {
+              return !student.assigned;
+            }
+          },
+          {
+            name: 'assigned',
+            text: '<%= j raw I18n.t('groups.assigned_students') %>',
+            func: function(student) {
+              return student.assigned;
+            }
+          },
+          {
+            name: 'inactive',
+            text: '<%= j raw I18n.t('groups.inactive_students') %>',
+            func: function(student) {
+              return student.hidden;
+            }
+          }
+        ]
+      };
+    },
+    clearCheckboxes: function() {
+      this.refs.table.clearCheckboxes();
+    },
+    render: function() {
+      var students_data = this.props.students.map(function(student) {
+        var s = {};
+        s['id'] = student.id;
+        s['user_name'] = student.user_name;
+        s['last_name'] = student.last_name;
+        s['first_name'] = student.first_name;
+        s['hidden'] = student.hidden;
+        s['assigned'] = student.assigned;
+        return s;
+      }.bind(this));
+
+      return (
+        <div className={'col-left'} >
+          <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='students-tabs'>
+            <Table ref="table"
+                   data={students_data}
+                   columns={this.props.columns}
+                   filters={this.props.filters}
+                   selectable={true}
+                   onSelectedRowsChange={this.props.onSelectedStudentsChange}
+                   search_placeholder={'<%= j raw I18n.t('students.search_students') %>'} />
+          </div>
+        </div>
+      );
+    }
+  });
+
+  // The table of groups on the right.
+  var GroupsTable = React.createClass({
+    getDefaultProps: function() {
+      return {
+        columns: [
+          {
+            id: 'name',
+            content: '<%= j raw I18n.t('groups.group_name') %>',
+            sortable: true,
+            searchable: true
+           },
+           {
+             id: 'links',
+             content: '<%= j raw I18n.t('actions') %>',
+             sortable: false,
+             searchable: false
+           },
+           {
+             id: 'members',
+             content: '<%= j raw I18n.t('members') %>',
+             sortable: false,
+             searchable: false
+           },
+        ],
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
+            func: function(group) {
+              return true;
+            }
+          },
+          {
+            name: 'valid',
+            text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
+            func: function(group) {
+              return group.valid;
+            }
+          },
+          {
+            name: 'not_valid',
+            text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
+            func: function(group) {
+            return !group.valid;
+            }
+          },
+        ]
+      };
+    },
+    studentCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
+      if (value) {
+        new_selected_students_in_groups.push(group_student_id);
+      } else {
+        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
+      }
+      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
+    },
+    clearCheckboxes: function() {
+      this.refs.table.clearCheckboxes();
+    },
+    render: function() {
+      var filters = [
+      {
+        name: 'all',
+        text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
+        func: function(group) {
+          return true;
+        }
+      },
+      {
+        name: 'valid',
+        text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
+        func: function(group) {
+          return group.valid;
+        }
+      },
+      {
+        name: 'not_valid',
+        text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
+        func: function(group) {
+        return !group.valid;
+        }
+      },
+      ];
+
+      // Massage the data so it will fit into the table.
+      var groups_data = this.props.groups.map(function(group) {
+        var g = {};
+        g['id'] = group.id;
+        g['name'] = group.name;
+        var links = [];
+        if (group.valid) {
+          links.push(group.invalidate_link);
+        } else {
+          links.push(group.validate_link);
+        }
+        links.push(group.rename_link);
+        links.push(group.note_link);
+        links.push(group.delete_link);
+        g['links'] = <span onClick={this.props.refresh} dangerouslySetInnerHTML={{__html: links.join(' ')}} ></span>
+
+        var members = [];
+        for (var i = 0; i < group.members.length; i++) {
+          members.push(<div key={group.members[i].id}>
+            <input id={group.members[i].id}
+              type='checkbox'
+              checked={this.props.selected_students_in_groups.indexOf(group.members[i].id) !== -1}
+              onChange={this.studentCheckboxClicked} /> {group.members[i].user_name}</div>);
+        }
+        g['members'] = members;
+        g['valid'] = group.valid;
+
+        return g;
+      }.bind(this));
+
+      return (
+        <div className={'col-right'}>
+          <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
+            <AddGroupButton refresh={this.props.refresh} />
+            <Table ref="table"
+              data={groups_data}
+              columns={this.props.columns}
+              filters={this.props.filters} 
+              selectable={true}
+              onSelectedRowsChange={this.props.onSelectedGroupsChange}
+              search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
+          </div>
+        </div>
+      );
+    }
+  });
+
+  var AddGroupButton = React.createClass({
+    <% if @assignment.group_name_autogenerated %>
+      createGroup: function() {
+        jQuery.ajax({
+          method: 'GET',
+          url: '<%= new_assignment_group_path(@assignment) %>',
+          success: function(data) {
+            this.props.refresh();
+          }.bind(this)
+        });
+      },
+    <% else %>
+      createGroup: function() {
+        modalCreate.open();
+        jQuery('#new_group_name').val('');
+        return false;
+      },
+    <% end %>
+    render: function() {
+      return (
+        <button className='floatRight' onClick={this.createGroup} >
+          <%= t('groups.add_new') %>
+        </button>
+      );
+    }
+  });
+
+  var GroupsActionsColumn = React.createClass({
+    performAction: function(event) {
+      var action = event.currentTarget.getAttribute('id');
+      this.props.performAction(action);
+    },
+    render: function() {
+      return (
+        <div className={'col-center'}>
+          <div id='icons'>
+            <input id='assign'
+              className='image_input'
+              src='<%= image_path('add_arrow.png') %>'
+              alt='<%= j raw I18n.t('add_members') %>'
+              onClick={this.performAction}
+              type='image'
+            />
+            <input id='unassign'
+              className='image_input'
+              src='<%= image_path('remove_arrow.png') %>'
+              alt='<%= j raw I18n.t('remove_members') %>'
+              onClick={this.performAction}
+              type='image'
+            />
+          </div>
+        </div>
+      );
+    }
+  });
+  React.renderComponent(<GroupsManager />, document.getElementById('groups_manager'));
+</script>

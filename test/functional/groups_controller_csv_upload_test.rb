@@ -2,9 +2,7 @@ require File.expand_path(File.join(File.dirname(__FILE__),  'authenticated_contr
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
-include CsvHelper
 require 'shoulda'
-require 'mocha/setup'
 require 'fileutils'
 
 include MarkusConfigurator
@@ -154,6 +152,40 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
           assert_equal([], Dir.glob('group_*'), 'Did not expect any repositories.')
         end
 
+      end
+
+      should 'gracefully handle malformed csv files' do
+        MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
+        @assignment = Assignment.make(allow_web_submits: false,
+                                      group_max: 1,
+                                      group_min: 1)
+
+        tempfile = fixture_file_upload('files/malformed.csv')
+
+        @res = post_as @admin,
+                       :csv_upload,
+                       assignment_id: @assignment.id,
+                       group: { grouplist: tempfile }
+
+        assert_response :redirect
+        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+      end
+
+      should 'gracefully handle a non csv file with a csv extension' do
+        MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
+        @assignment = Assignment.make(allow_web_submits: false,
+                                      group_max: 1,
+                                      group_min: 1)
+        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+        @res = post_as @admin,
+                       :csv_upload,
+                       assignment_id: @assignment.id,
+                       group: { grouplist: tempfile },
+                       encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error],
+                     I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
     end
   end

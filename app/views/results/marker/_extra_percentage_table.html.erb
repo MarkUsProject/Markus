@@ -6,7 +6,7 @@
   </thead>
   <tbody id="extra_percentage_list" >
      <% extra_marks_percentage.each do |extra_percentage| -%>
-       <%= render :partial => "results/marker/extra_percentage", :locals => {:extra_percentage => extra_percentage, :result_id=>result_id} %>
+       <%= render partial: "results/marker/extra_percentage", locals: {extra_percentage: extra_percentage, result_id:result_id} %>
      <% end -%>
    </tbody>
 </table>

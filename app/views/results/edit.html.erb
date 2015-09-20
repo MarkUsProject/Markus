@@ -1,160 +1,205 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag("livepipe/tabs") %>
-  <%= stylesheet_link_tag("SyntaxHighlighter") %>
-  <%= stylesheet_link_tag("grader") %>
+  <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
+  <%= stylesheet_link_tag('grader') %>
+  <%= stylesheet_link_tag('pdfjs/viewer') %>
+
+  <%= javascript_include_tag 'panes' %>
+  <%= javascript_include_tag 'pdfjs' %>
 <% end %>
 
 <% # UI LIBRARIES %>
-<%= javascript_include_tag "effects.js",
-  "dragdrop.js",
-  "controls.js",
-  "DropDownMenu/DropDownMenu.js",
-  "ResizePane/ResizePane.js" %>
+<%= javascript_include_tag 'DropDownMenu/DropDownMenu' %>
 
-<% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
-<%= javascript_include_tag "SourceCodeGlower/AnnotationText.js",
-  "SourceCodeGlower/AnnotationTextDisplayer.js",
-  "SourceCodeGlower/AnnotationTextManager.js",
-  "SourceCodeGlower/SourceCodeLine.js",
-  "SourceCodeGlower/SourceCodeLineAnnotations.js",
-  "SourceCodeGlower/SourceCodeLineCollection.js",
-  "SourceCodeGlower/SourceCodeLineArray.js",
-  "SourceCodeGlower/SourceCodeLine.js",
-  "SourceCodeGlower/SyntaxHighlighter1p5Line.js",
-  "SourceCodeGlower/SourceCodeLineManager.js",
-  "SourceCodeGlower/SourceCodeLineFactory.js",
-  "SourceCodeGlower/SourceCodeAdapter.js",
-  "SourceCodeGlower/SyntaxHighlighter1p5Adapter.js",
-  "SourceCodeGlower/ImageAnnotationGrid.js",
-  "SourceCodeGlower/ImageEventHandler.js" %>
-
-<% # SYNTAX HIGHLIGHTER %>
-<%= javascript_include_tag "syntaxhighlighter/shCore.js",
-  "syntaxhighlighter/shBrushJava.js",
-  "syntaxhighlighter/shBrushXml.js",
-  "syntaxhighlighter/shBrushRuby.js",
-  "syntaxhighlighter/shBrushPython.js",
-  "syntaxhighlighter/shBrushJScript.js",
-  "syntaxhighlighter/shBrushCpp.js",
-  "syntaxhighlighter/shBrushScheme.js",
-  "syntaxhighlighter/shBrushScilab.js",
-  "syntaxhighlighter/shBrushUnknown.js" %>
+<!-- MathML -->
+<%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
+<%= javascript_include_tag 'MathJax/mathjax_helpers' %>
 
 <% # EDITING MARKS FUNCTIONS AND BOOT SCRIPTS%>
-<%= javascript_include_tag "Grader/file_selector.js",
-  "Grader/marking.js",
-  "Grader/mouse_selections.js" %>
+<%= javascript_include_tag 'Grader/file_selector',
+                           'Grader/marking',
+                           'Grader/mouse_selections' %>
 
 <% # This file can't be cached %>
-<%= javascript_include_tag "Grader/tabs_boot.js"%>
+<%= javascript_include_tag 'Grader/tabs_boot'%>
 
-<script type="text/javascript">
+<% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
+<%= render partial: 'results/common/syntax_highlighter_brushes',
+           formats: [:html],
+           handlers: [:erb] %>
+
+<script>
 //<![CDATA[
-
   var modalNotesGroup = null;
-  document.observe("dom:loaded", function(){
-    modalNotesGroup = new Control.Modal($('notes_dialog'),
-     {
-       overlayOpacity: 0.75,
-       className: 'modalNotesGroup',
-       fade:false
-      });
 
-  // Set up the "working" notices
-  Ajax.Responders.register({
-    onCreate: function() {
-      $('working').show();
+  jQuery(document).ready(function() {
+    window.modalNotesGroup = new ModalMarkus('#notes_dialog');
+
+    // Set up the 'working' notices
+    jQuery('#working').ajaxStart(function() {
+      this.style.display = '';
       window.onbeforeunload = check_working;
-    },
-    onComplete: function() {
-      $('working').hide();
+    }).ajaxStop(function() {
+      this.style.display = 'none';
       window.onbeforeunload = null;
+    });
+
+    // If the mark_description div is empty, that means it isn't marked
+    // Hide the criterion that AREN'T empty (i.e. are marked)
+    // Check if the marks are released, if they are there is nothing to hide
+    if (document.getElementById('released') === null ||
+        !document.getElementById('released').checked) {
+      jQuery('.mark_description').each(function() {
+        if (this.innerHTML.trim()) {
+          hide_criterion(parseInt(this.getAttribute('data-id'), 10));
+        }
+      });
     }
   });
 
- })
-
-
-function check_working() {
-  return '<%=t(:still_working_warning)%>';
-}
-
+  function check_working() {
+    return '<%= t(:still_working_warning) %>';
+  }
 //]]>
 </script>
 
-<%
-# Javascript for showing/hiding old marks
-%>
-<%= render :partial => "results/common/old_marks_view_functions.html"%>
+<% # Javascript for showing/hiding old marks %>
+<%= render partial: 'results/common/old_marks_view_functions',
+           formats: [:html] %>
 
-<%
-# Javascript for test result window
-%>
-<%= render :partial => "assignments/test_result_window.html", :locals => {:aid => @assignment.id}  %>
+<% # Javascript for test result window %>
+<%= render partial: 'assignments/test_result_window',
+           formats: [:html],
+           locals: { aid: @assignment.id } %>
 
-<%= render :partial => "results/common/annotations.js" %>
-<%= render :partial => "results/marker/setup_annotation_categories.js" %>
+<%= render partial: 'results/common/annotations',
+           formats: [:js] %>
 
-<%= render :partial => "results/marker/boot.js", :locals => {:first_file => @first_file} %>
+<%= render partial: 'results/marker/setup_annotation_categories',
+           formats: [:js],
+           locals: { categories: @assignment.annotation_categories } %>
 
-<div id="notes_dialog">
+<%= render partial: 'results/marker/boot',
+           formats: [:js],
+           locals: { first_file: @first_file } %>
+
+<!-- Dialogs -->
+<aside class='dialog' id='notes_dialog'></aside>
+<% if @current_user.admin? %>
+  <aside class='dialog' id='create_new_tag'>
+    <%= javascript_include_tag 'Tags/text_updater.js',
+                               id: 'create_script',
+                               text_id: 'description',
+                               info_id: 'descript_amount',
+                               num_char: '120' %>
+
+    <h1><%= t('tags.create.create_new') %></h1>
+    <p><%= t('tags.create.tag_prompt') %></p>
+    <%= form_for :create_new,
+                 url: assignment_tags_path(@assignment),
+                 html: { multipart: true } do |f| %>
+        <div>
+          <p><%= f.text_field :name,
+                              placeholder: t('tags.create.name_prompt') %></p>
+        </div>
+        <div>
+          <p class='alignleft'><%= t('tags.create.tag_description') %></p>
+          <p id='descript_amount' class='alignright'>0/120</p>
+          <p class="clear-alignment"><%= f.text_area :description,
+                                                  id: 'description',
+                                                  cols: 30,
+                                                  rows: 3,
+                                                  maxlength: 120,
+                                                  onKeyDown: 'updateCharCount()',
+                                                  placeholder: t('tags.create.descript_prompt') %></p>
+        </div>
+        <section class='dialog-actions'>
+          <%= hidden_field_tag 'grouping_id', @grouping.id %>
+          <%= f.submit t('tags.create.button_text') %>
+          <input type='reset'
+                 value='<%= t(:cancel) %>'
+                 onclick='modal_create_new.close();'>
+        </section>
+    <% end %>
+  </aside>
+  <aside class='dialog' id='delete_tags'>
+    <h1><%= t('tags.delete.delete_tags') %></h1>
+    <p><%= t('tags.delete.tag_prompt') %></p>
+    <%= form_for :delete,
+                 url: assignment_tags_path(@assignment),
+                 html: { multipart: true } do |f| %>
+
+    <% end %>
+    <input type='reset'
+           value='<%= t(:cancel) %>'
+           onclick='modal_delete_tags.close();'>
+  </aside>
+<% end %>
+
+<div class='title_bar'>
+  <h1>
+    <%= t('results.title',
+          { assignment_name: @assignment.short_identifier,
+            group_name: @grouping.get_group_name }) %>
+  </h1>
 </div>
 
-<div id="title_bar">
-<h1>
-<%= t('results.title', {:assignment_name => @assignment.short_identifier, :group_name => @group.group_name}) %>
-(<%= @grouping.get_all_students_in_group %>)
-</h1>
-</div>
-<div class="wrapLeft">
-<% if flash[:fail_notice] %>
-  <p class="error"><%= flash[:fail_notice] %></p>
-<% end %>
-<% if @result.released_to_students %>
-  <p class="notice"><%=t(:marks_released_notice)%></p>
-<% end %>
-
-<% if @grouping.past_due_date? %>
-  <p class="warning">
-    <%= t(:past_due_date_edit_result_warning,
-          :href => link_to(t(:last_commit),
-                           repo_browser_assignment_submission_path(
-                                   @assignment, @grouping))).html_safe %>
-  </p>
-<% end %>
-
-<%= render :partial => 'results/common/submission_selector', :locals => {:group => @group, :result => @result, :assignment => @assignment, :previous_grouping => @previous_grouping, :next_grouping => @next_grouping} %>
-
-<%= render :partial => 'results/common/errors' %>
-
-<div id="file_selector">
-  <%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true} %>
-  <!-- Old testing infrastructure - not in used now 
-  <% if false %>
-  <% if @assignment.enable_test %>
-    <div id="test_results_controls">
-      <%= render :partial => 'results/common/test_selector', :locals => {:test_result_files => @test_result_files, :result => @result} %>
-    </div>
+<div class='wrapLeft'>
+  <% if flash[:fail_notice] %>
+    <p class='error'><%= flash[:fail_notice] %></p>
   <% end %>
+
+  <% if @result.released_to_students %>
+    <p class='notice'><%= t(:marks_released_notice) %></p>
   <% end %>
-  -->
 </div>
 
+  <% if @grouping.past_due_date? %>
+    <p class='warning'>
+      <%= t(:past_due_date_edit_result_warning,
+            href: link_to(t(:last_commit),
+                          repo_browser_assignment_submission_path(
+                             @assignment, @grouping))).html_safe %>
+    </p>
+  <% end %>
 
-<% if !@result.released_to_students %>
+  <%= render partial: 'results/common/submission_selector',
+             locals: { group: @group,
+                       result: @result,
+                       assignment: @assignment,
+                       previous_grouping: @previous_grouping,
+                       next_grouping: @next_grouping } %>
 
-<%= render :partial => 'results/marker/marker_panes',
-           :locals => {:extra_marks_points => @extra_marks_points,
-                       :extra_marks_percentage => @extra_marks_percentage,
-                       :annotation_categories => @annotation_categories,
-                       :result => @result,
-                       :assignment => @assignment,
-                       :marks_map => @marks_map,
-                       :mark_criteria =>@mark_criteria,
-                       :submission => @submission,
-                       :old_result => @old_result} %>
-<% else %>
-<%= render :partial => 'results/result_summary'%>
+  <%= render partial: 'results/common/errors' %>
 
-<% end %>
+  <div id='file_selector'>
+    <%= render partial: 'results/common/file_selector',
+               locals: { files: @files,
+                         can_download: true } %>
+    <% if @assignment.enable_test %>
+      <div id='test_results_controls'>
+        <%= render partial: 'results/common/test_selector',
+                   locals: { test_result_files: @test_result_files,
+                             result: @result,
+                             submission_id: @submission.id } %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if !@result.released_to_students %>
+    <%= render partial: 'results/marker/marker_panes',
+               locals: { extra_marks_points: @extra_marks_points,
+                         extra_marks_percentage: @extra_marks_percentage,
+                         annotation_categories: 
+                           @assignment.annotation_categories,
+                         result: @result,
+                         assignment: @assignment,
+                         marks_map: @marks_map,
+                         mark_criteria:@mark_criteria,
+                         submission: @submission,
+                         old_result: @old_result } %>
+  <% else %>
+    <%= render partial: 'results/result_summary',
+               formats: [:html],
+               handlers: [:erb] %>
+  <% end %>
 </div>

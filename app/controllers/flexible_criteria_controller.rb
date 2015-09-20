@@ -4,13 +4,12 @@ class FlexibleCriteriaController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    if @assignment.past_due_date?
+    if @assignment.past_all_due_dates?
       flash[:notice] = t('past_due_date_warning')
     end
     # TODO until Assignment gets its criteria method
     @criteria =
-      FlexibleCriterion.find_all_by_assignment_id( @assignment.id,
-                                                   :order => :position)
+      FlexibleCriterion.where(assignment_id: @assignment.id).order(:position)
   end
 
   def edit
@@ -19,7 +18,8 @@ class FlexibleCriteriaController < ApplicationController
 
   def update
     @criterion = FlexibleCriterion.find(params[:id])
-    unless @criterion.update_attributes(params[:flexible_criterion])
+    unless @criterion.update_attributes(flexible_criterion_params)
+      @errors = @criterion.errors
       render :errors
       return
     end
@@ -43,7 +43,7 @@ class FlexibleCriteriaController < ApplicationController
     @criterion.assignment = @assignment
     @criterion.max = FlexibleCriterion::DEFAULT_MAX
     @criterion.position = new_position
-    unless @criterion.update_attributes(params[:flexible_criterion])
+    unless @criterion.update_attributes(flexible_criterion_params)
       @errors = @criterion.errors
       render :add_criterion_error
       return
@@ -66,9 +66,9 @@ class FlexibleCriteriaController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     file_out = FlexibleCriterion.create_csv(@assignment)
     send_data(file_out,
-              :type => 'text/csv',
-              :filename => "#{@assignment.short_identifier}_flexible_criteria.csv",
-              :disposition => 'inline')
+              type: 'text/csv',
+              filename: "#{@assignment.short_identifier}_flexible_criteria.csv",
+              disposition: 'inline')
   end
 
   def upload
@@ -86,57 +86,43 @@ class FlexibleCriteriaController < ApplicationController
           end
           if nb_updates > 0
             flash[:notice] = I18n.t('flexible_criteria.upload.success',
-              :nb_updates => nb_updates)
+              nb_updates: nb_updates)
           end
         end
+      rescue CSV::MalformedCSVError
+        flash[:error] = I18n.t('csv.upload.malformed_csv')
       end
     end
-    redirect_to :action => 'index', :assignment_id => @assignment.id
+    redirect_to action: 'index', assignment_id: @assignment.id
   end
 
   # This method handles the drag/drop criteria sorting
   def update_positions
     unless request.post?
-      render :nothing => true
+      render nothing: true
       return
     end
+
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.flexible_criteria
-    params[:flexible_criteria_pane_list].each_with_index do |id, position|
-      unless id == ''
-        FlexibleCriterion.update(id, :position => position + 1)
+    position = 0
+
+    # if params[:criterion]
+      params[:criterion].each do |id|
+        if id != ''
+          position += 1
+          FlexibleCriterion.update(id, position: position)
+        end
       end
-    end
+    # end
   end
 
-  #This method handles the arrows
-  def move_criterion
-    if params[:direction] == 'up'
-      offset = -1
-    elsif  params[:direction] == 'down'
-      offset = 1
-    else
-      render :nothing => true
-      return
-    end
+  private
 
-    @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.flexible_criteria
-    criterion = @criteria.find(params[:id])
-    index = @criteria.index(criterion)
-    other_criterion = @criteria[index + offset]
-    if other_criterion.nil?
-      render :nothing => true
-      return
-    end
-    # Increase the index by one as the position value is 1 greater than the index
-    index = index + 1
-    criterion.position = index + offset
-    other_criterion.position = index
-    unless criterion.save and other_criterion.save
-      flash[:error] = I18n.t('flexible_criteria.move_criterion.error')
-    end
-    @criteria.reload
+  def flexible_criterion_params
+    params.require(:flexible_criterion).permit(:flexible_criterion_name,
+                                               :description,
+                                               :position,
+                                               :max)
   end
-
 end

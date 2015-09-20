@@ -11,18 +11,11 @@ Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 module Markus
   class Application < Rails::Application
+
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
   # See Rails::Configuration for more options.
-
-  # Only load the plugins named here, in the order given. By default, all plugins
-  # in vendor/plugins are loaded in alphabetical order.
-  # :all can be used as a placeholder for all plugins not explicitly named
-  config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select ]
-
-  # Javascripts files always loaded in views
-  config.action_view.javascript_expansions[:defaults] = %w(prototype rails application )
 
   # Set this if MarkUs is not hosted under / of your Web-host.
   # E.g. if MarkUs should be accessible by http://yourhost.com/markus/instance0
@@ -61,5 +54,8 @@ module Markus
   config.assets.enabled = true
   config.assets.version = '1.0'
 
+  # Validate passed locales
+  I18n.enforce_available_locales = true
+  I18n.available_locales = [:en, :fr, :pt]
   end
 end

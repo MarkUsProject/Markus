@@ -1,0 +1,7 @@
+document.getElementById('overall_remark_comment').innerHTML =
+  "<%= escape_javascript(render partial: 'results/marker/overall_remark_comment',
+                                locals: { result: @result }).html_safe %>";
+
+jQuery('#overall_remark_comment_text_area').effect('highlight',
+                                                   { color: '#bdfcc9' },
+                                                   1000);

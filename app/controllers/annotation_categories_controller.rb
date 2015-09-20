@@ -1,5 +1,4 @@
-include CsvHelper
-require 'iconv'
+require 'encoding'
 
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
@@ -8,7 +7,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = @assignment.annotation_categories
+    @annotation_categories = @assignment.annotation_categories(order: 'position')
   end
 
   def get_annotations
@@ -20,8 +19,9 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     if request.post?
       # Attempt to add Annotation Category
+      @annotation_categories = @assignment.annotation_categories
       @annotation_category = AnnotationCategory.new
-      @annotation_category.update_attributes(params[:annotation_category])
+      @annotation_category.update_attributes(annotation_category_params)
       @annotation_category.assignment = @assignment
       unless @annotation_category.save
         render :new_annotation_category_error
@@ -35,7 +35,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_category = AnnotationCategory.find(params[:id])
 
-    @annotation_category.update_attributes(params[:annotation_category])
+    @annotation_category.update_attributes(annotation_category_params)
     if @annotation_category.save
       flash.now[:success] = I18n.t('annotations.update.annotation_category_success')
     else
@@ -45,7 +45,8 @@ class AnnotationCategoriesController < ApplicationController
 
   def update_annotation
     @annotation_text = AnnotationText.find(params[:id])
-    @annotation_text.update_attributes(params[:annotation_text])
+    @annotation_text.update_attributes(annotation_text_params)
+    @annotation_text.last_editor_id = current_user.id
     @annotation_text.save
   end
 
@@ -54,8 +55,10 @@ class AnnotationCategoriesController < ApplicationController
     if request.post?
       # Attempt to add Annotation Text
       @annotation_text = AnnotationText.new
-      @annotation_text.update_attributes(params[:annotation_text])
+      @annotation_text.update_attributes(annotation_text_params)
       @annotation_text.annotation_category = @annotation_category
+      @annotation_text.creator_id = current_user.id
+      @annotation_text.last_editor_id = current_user.id
       unless @annotation_text.save
         render :new_annotation_text_error
         return
@@ -76,23 +79,42 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_category.destroy
   end
 
+  # This method handles the drag/drop Annotations sorting
+  def update_positions
+    unless request.post?
+      render nothing: true
+      return
+    end
+
+    @assignment = Assignment.find(params[:assignment_id])
+    @annotation_categories = @assignment.annotation_categories
+    position = 0
+
+    params[:annotation_category].each do |id|
+      if id != ''
+        position += 1
+        AnnotationCategory.update(id, position: position)
+      end
+    end
+  end
+
   def download
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories
     case params[:format]
     when 'csv'
       send_data convert_to_csv(@annotation_categories),
-                :filename => "#{@assignment.short_identifier}_annotations.csv",
-                :disposition => 'attachment'
+                filename: "#{@assignment.short_identifier}_annotations.csv",
+                disposition: 'attachment'
     when 'yml'
       send_data convert_to_yml(@annotation_categories),
-                :filename => "#{@assignment.short_identifier}_annotations.yml",
-                :disposition => 'attachment'
+                filename: "#{@assignment.short_identifier}_annotations.yml",
+                disposition: 'attachment'
     else
       flash[:error] = I18n.t('annotations.upload.flash_error',
-        :format => params[:format])
-      redirect_to :action => 'index',
-                  :id => params[:id]
+        format: params[:format])
+      redirect_to action: 'index',
+                  id: params[:id]
     end
   end
 
@@ -100,64 +122,76 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     encoding = params[:encoding]
     unless request.post?
-      redirect_to :action => 'index', :id => @assignment.id
+      redirect_to action: 'index', id: @assignment.id
       return
     end
     annotation_category_list = params[:annotation_category_list_csv]
     annotation_category_number = 0
     annotation_line = 0
-    unless annotation_category_list.nil?
-      if encoding != nil
-        annotation_category_list = StringIO.new(Iconv.iconv('UTF-8', encoding, annotation_category_list.read).join)
-      end
-      CsvHelper::Csv.parse(annotation_category_list) do |row|
-        next if CsvHelper::Csv.generate_line(row).strip.empty?
-        annotation_line += 1
-        result = AnnotationCategory.add_by_row(row, @assignment)
-        if result[:annotation_upload_invalid_lines].size > 0
-          flash[:error] = I18n.t('annotations.upload.error',
-            :annotation_category => row, :annotation_line => annotation_line)
-          break
-        else
-          annotation_category_number += 1
+    if annotation_category_list
+      begin
+        annotation_category_list = annotation_category_list.utf8_encode(encoding)
+        CSV.parse(annotation_category_list) do |row|
+          next if CSV.generate_line(row).strip.empty?
+          annotation_line += 1
+          result = AnnotationCategory.add_by_row(row, @assignment, current_user)
+          if result[:annotation_upload_invalid_lines].size > 0
+            flash[:error] =
+              I18n.t('annotations.upload.error',
+                     annotation_category: row,
+                     annotation_line: annotation_line)
+            break
+          else
+            annotation_category_number += 1
+          end
         end
+      rescue CSV::MalformedCSVError
+        flash[:error] = I18n.t('csv.upload.malformed_csv')
+      rescue ArgumentError
+        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
       if annotation_category_number > 0
-        flash[:success] = I18n.t('annotations.upload.success',
-          :annotation_category_number => annotation_category_number)
+        flash[:success] =
+          I18n.t('annotations.upload.success',
+                 annotation_category_number: annotation_category_number)
       end
     end
-    redirect_to :action => 'index', :id => @assignment.id
+    redirect_to action: 'index', id: @assignment.id
   end
 
   def yml_upload
     @assignment = Assignment.find(params[:assignment_id])
     encoding = params[:encoding]
     unless request.post?
-      redirect_to :action => 'index', :assignment_id => @assignment.id
+      redirect_to action: 'index', assignment_id: @assignment.id
       return
     end
     file = params[:annotation_category_list_yml]
     annotation_category_number = 0
     annotation_line = 0
-    if !file.nil? && !file.blank?
+    unless file.blank?
       begin
-        if encoding != nil
-          file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
-        end
-        annotations = YAML::load(file)
-      rescue ArgumentError => e
+        annotations = YAML::load(file.utf8_encode(encoding))
+      rescue Psych::SyntaxError => e
         flash[:error] = I18n.t('annotations.upload.syntax_error',
-          :error => "#{e}")
-        redirect_to :action => 'index', :assignment_id => @assignment.id
+          error: "#{e}")
+        redirect_to action: 'index', assignment_id: @assignment.id
         return
       end
+
+      # YAML::load returns a hash if successful
+      unless annotations.is_a? Hash
+        flash[:error] = I18n.t('annotations.upload.unparseable_yaml')
+        redirect_to action: 'index', assignment_id: @assignment.id
+        return
+      end
+
       annotations.each_key do |key|
-      result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment)
+      result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment, current_user)
       annotation_line += 1
       if result[:annotation_upload_invalid_lines].size > 0
         flash[:error] = I18n.t('annotations.upload.error',
-          :annotation_category => key, :annotation_line => annotation_line)
+          annotation_category: key, annotation_line: annotation_line)
         break
       else
         annotation_category_number += 1
@@ -165,9 +199,21 @@ class AnnotationCategoriesController < ApplicationController
      end
      if annotation_category_number > 0
         flash[:success] = I18n.t('annotations.upload.success',
-          :annotation_category_number => annotation_category_number)
+          annotation_category_number: annotation_category_number)
      end
     end
-    redirect_to :action => 'index', :assignment_id => @assignment.id
+    redirect_to action: 'index', assignment_id: @assignment.id
+  end
+
+  private
+
+  def annotation_category_params
+    # we do not want to allow :position to be given directly
+    params.require(:annotation_category)
+          .permit(:annotation_category_name, :assignment_id)
+  end
+
+  def annotation_text_params
+    params.require(:annotation_text).permit(:content)
   end
 end

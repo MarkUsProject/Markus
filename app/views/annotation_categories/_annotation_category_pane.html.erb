@@ -1,0 +1,17 @@
+<div class='sortable'>
+  <header>
+    <span><%= t('annotations.annotation_category') %></span>
+  </header>
+  <ul id='annotation_category_pane_list'>
+    <% if @annotation_categories.length > 0 %>
+      <% @annotation_categories.each do |annotation_category| %>
+        <%= render partial: 'annotation_category',
+                   locals: { annotation_category: annotation_category } %>
+      <% end %>
+    <% else %>
+      <div id='no_annotation_categories_info' class='information'>
+        <%= t('annotations.no_annotation_categories') %>
+      </div>
+    <% end %>
+  </ul>
+</div>

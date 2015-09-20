@@ -48,7 +48,7 @@ end
 # Example of getting a user that doesn't exist
 puts "Getting a user that doesn't exist, printing the exception"
 begin
-  user = MarkusRESTfulAPI::Users.get_by_id(84999999)
+  MarkusRESTfulAPI::Users.get_by_id(84999999)
 rescue Exception => e
   # Outputs 'No user exists with that id'
   puts e.message

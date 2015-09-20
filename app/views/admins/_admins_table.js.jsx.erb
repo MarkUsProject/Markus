@@ -1,0 +1,83 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  AdminsTable = React.createClass({
+    getDefaultProps: function() {
+      var columns = [
+        {
+          id: 'user_name',
+          content: '<%= j raw I18n.t(:'user.user_name') %>',
+          sortable: true,
+          searchable: true 
+        },
+        {
+          id: 'last_name',
+          content: '<%= j raw I18n.t(:'user.last_name') %>',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'first_name',
+          content: '<%= j raw I18n.t(:'user.first_name') %>',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'edit_link',
+          content: '<%= j raw I18n.t(:'edit') %>',
+          sortable: false,
+          searchable: false
+        }
+      ];
+      return {
+        columns: columns
+      };
+    },
+    getInitialState: function() {
+      return {
+        admins: [],
+      };
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      // Show the loading indicator
+      document.getElementById('working').style.display = '';
+
+      jQuery.ajax({
+        url: 'admins/populate',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          document.getElementById('working').style.display = 'none';
+          this.setState({
+            admins: data
+          });
+        }.bind(this)
+      });
+    },
+    render: function() {
+      // Gather relevant data for table display.
+      var admins_info = this.state.admins.map(function(admin) {
+        var a = {};
+
+        a['id'] = admin.id;
+        a['user_name'] = admin.user_name;
+        a['last_name'] = admin.last_name;
+        a['first_name'] = admin.first_name;
+        a['edit_link'] = <a href={admin.edit_link}><%= j raw I18n.t(:edit) %></a>
+
+        return a;
+      })
+
+      return (
+        <Table data={admins_info} columns={this.props.columns}
+        filters={null} search_placeholder={'<%= j raw I18n.t(:search) %>'} />
+      );
+    }
+  });
+
+  React.renderComponent(<AdminsTable />, document.getElementById('admins_table'));
+</script>

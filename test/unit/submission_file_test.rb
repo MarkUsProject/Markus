@@ -287,24 +287,6 @@ require 'shoulda'
     end
   end
 
-   context 'Calling the convert_pdf_to_jpg method' do
-     context 'from a text file' do
-       should 'return nil' do
-        @submissionfile = SubmissionFile.make(:filename => 'filename',
-        :path => 'path')
-        assert_nil @submissionfile.convert_pdf_to_jpg
-       end
-     end
-
-     context 'from an image file' do
-       should 'return nil' do
-        @submissionfile = SubmissionFile.make(:filename => 'filename.jpg',
-        :path => 'path')
-        assert_nil @submissionfile.convert_pdf_to_jpg
-       end
-     end
-   end
-
   context 'A binary content' do
 
     should 'return true' do

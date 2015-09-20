@@ -1,6 +1,6 @@
 <% #requires locals: model - the object that may have an error %>
 <% if model.errors.any? %>
-    <% model.errors.full_messages.each do |msg| %>
-      <%= content_tag :div, msg, :class => 'error' %>
-    <% end %>
+  <% model.errors.full_messages.each do |msg| %>
+    <%= content_tag :div, msg, class: 'error' %>
+  <% end %>
 <% end %>

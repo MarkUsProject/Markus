@@ -1,0 +1,205 @@
+@import 'markus';
+
+@import 'navigation';
+
+
+#about_dialog {
+  width: 50%;
+  max-height: 75%;
+
+  #about_text {
+    max-height: 200px;
+    overflow: auto;
+  }
+}
+
+#role_switch_dialog {
+  input[type='text'],
+  input[type='password'] {
+    margin-top: 1em;
+    padding: 0.5em 0.75em;
+    width: 100%;
+  }
+}
+
+.image_input {
+  background: none;
+  border: none;
+}
+
+.ui-datepicker-current {
+  display: none !important;
+}
+
+input,
+textarea {
+  display: inline-block;
+  width: auto;
+}
+
+input[type='radio'] {
+  min-width: 30px;
+  max-width: 30px;
+}
+
+.required_field {
+  color: $red;
+}
+
+label.required::after {
+  content: "*";
+  color: $red;
+}
+
+.hidden {
+  display: none;
+}
+
+.section h3 {
+  border-bottom: 1px solid #ccc;
+  color: $dark-grey;
+  font-size: 1.25em;
+  font-weight: 300;
+  margin: 0 0 1em 0;
+  padding: 0.5em 0.1em;
+}
+
+
+/* Main content */
+
+#content {
+  background: $white;
+  border-bottom: 1px solid $blue;
+  padding: $dimen-vertical $dimen-horizontal;
+
+  @include breakpoint(mobile) {
+    margin-top: 3.5em;
+    padding: $dimen-vertical $dimen-hor-mobile;
+  }
+}
+
+
+/* Title Bar */
+
+.title_bar {
+  display: table;
+  margin-bottom: $dimen-vertical;
+  width: 100%;
+
+  span.menu_bar {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: normal;
+
+    &::before {
+      content: "|";
+    }
+  }
+
+  input:hover,
+  a:hover {
+    background: none;
+    border: none;
+  }
+
+  h1,
+  .heading_buttons {
+    display: table-cell;
+
+    @include breakpoint(mobile) {
+      display: block;
+    }
+  }
+
+  .heading_buttons {
+    text-align: right;
+    vertical-align: middle;
+
+    @include breakpoint(mobile) {
+      text-align: left;
+    }
+  }
+}
+
+
+/* Help messages */
+
+.help-icon {
+  background: url(icons/help_icon.png) no-repeat;
+  cursor: help;
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1rem;
+  height: 28px;
+  width: 28px;
+
+  a {
+    font-size: 1em;
+  }
+}
+
+.help {
+  @extend .help-icon;
+  float: right;
+}
+
+.title-help {
+  @extend .help-icon;
+  margin-left: 10px;
+}
+
+.help-message {
+  background: $light-yellow;
+  border: 1px solid $yellow;
+  border-radius: $radius;
+  display: inline-block;
+  padding: 10px;
+  position: relative;
+  top: -15px;
+  width: 350px;
+  z-index: 10000;
+}
+
+.help-message-title {
+  @extend .help-message;
+  float: left;
+  left: 35px;
+}
+
+.help-message-box {
+  @extend .help-message;
+  float: right;
+  right: 35px;
+}
+
+/* Tables */
+
+.table-filters {
+  display: inline-block;
+}
+
+.table-search {
+  display: inline-block;
+  margin-bottom: 1em;
+}
+
+.table-filters a,
+.table-filters span {
+  padding-right: 10px;
+  font-size: 110%;
+}
+
+/* Text Alignment */
+.alignleft {
+  float: left;
+}
+
+.alignright {
+  float: right;
+}
+
+.clear-alignment {
+  clear: both;
+}

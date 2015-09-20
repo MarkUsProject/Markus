@@ -2,7 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
 require 'shoulda'
-require 'mocha/setup'
 
 include MarkusConfigurator
 class AdminTest < ActiveSupport::TestCase
@@ -11,6 +10,7 @@ class AdminTest < ActiveSupport::TestCase
     setup do
       conf = Hash.new
       conf['IS_REPOSITORY_ADMIN'] = true
+      conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
       conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
       MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
@@ -46,6 +46,7 @@ class AdminTest < ActiveSupport::TestCase
       # set repository_admin false
       conf = Hash.new
       conf['IS_REPOSITORY_ADMIN'] = false
+      conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
       conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
       MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(false)

@@ -1,0 +1,8 @@
+ruby:
+  config_file: config/.rubocop.yml
+
+java_script:
+  config_file: config/.javascript-style.json
+
+scss:
+  config_file: config/.scss-style.yml

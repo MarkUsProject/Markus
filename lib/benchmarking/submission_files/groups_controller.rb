@@ -1,4 +1,3 @@
-require 'fastercsv'
 require 'auto_complete'
 
 # Manages actions relating to editing and modifying
@@ -20,7 +19,7 @@ class GroupsController < ApplicationController
     return unless (request.post? && params[:student_user_name])
     # add member to the group with status depending if group is empty or not
     grouping = Grouping.find(params[:grouping_id])
-    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])
+    @assignment = Assignment.find(params[:id], include: [{groupings: [{student_memberships: :user, ta_memberships: :user}, :group]}])
     student = Student.find_by_user_name(params[:student_user_name])
     if student.nil?
       @error = "Could not find student with user name #{params[:student_user_name]}"
@@ -53,7 +52,7 @@ class GroupsController < ApplicationController
     end
 
     render :update do |page|
-      page.visual_effect(:fade, "mbr_#{params[:mbr_id]}", :duration => 0.5)
+      page.visual_effect(:fade, "mbr_#{params[:mbr_id]}", duration: 0.5)
       page.delay(0.5) { page.remove "mbr_#{params[:mbr_id]}" }
       # add members back to student list
       page.insert_html :bottom, 'student_list',
@@ -63,8 +62,8 @@ class GroupsController < ApplicationController
  #       inviter = grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
         # replace the status of the new inviter to 'inviter'
          page.replace_html "mbr_#{inviter.id}",
-           :partial => 'groups/manage/member', :locals => {:grouping =>
-          grouping, :member => inviter}
+           partial: 'groups/manage/member', locals: {grouping:
+          grouping, member: inviter}
       end
     end
   end
@@ -106,8 +105,8 @@ class GroupsController < ApplicationController
 
     # Checking if a group with this name already exists
 
-    if (@groups = Group.first(:conditions =>
-                                  {:group_name => [params[:new_groupname]]}))
+    if (@groups = Group.first(conditions:
+                                  {group_name: [params[:new_groupname]]}))
          existing = true
          groupexist_id = @groups.id
     end
@@ -121,16 +120,14 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-        if Grouping.all(:conditions => ["assignment_id =
-        :assignment_id and group_id = :groupexist_id", {:groupexist_id =>
-        groupexist_id, :assignment_id => @assignment.id}])
-           flash[:fail_notice] = 'This name is already used for this
-           assignement'
-        else
-          @grouping.update_attribute(:group_id, groupexist_id)
-          flash[:edit_notice] = 'Group name has been changed'
-        end
-     end
+      if Grouping.where(assignment_id: @assignment.id,
+                        group_id: groupexist_id)
+        flash[:fail_notice] = 'This name is already used for this assignement'
+      else
+        @grouping.update_attribute(:group_id, groupexist_id)
+        flash[:edit_notice] = 'Group name has been changed'
+      end
+    end
   end
 
   def valid_grouping
@@ -140,7 +137,7 @@ class GroupsController < ApplicationController
   end
 
   def populate
-    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])
+    @assignment = Assignment.find(params[:id], include: [{groupings: [{student_memberships: :user, ta_memberships: :user}, :group]}])
     @groupings = @assignment.groupings
     @table_rows = {}
     @groupings.each do |grouping|
@@ -151,8 +148,8 @@ class GroupsController < ApplicationController
   end
 
   def manage
-    @all_assignments = Assignment.all(:order => :id)
-    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])
+    @all_assignments = Assignment.order(:id)
+    @assignment = Assignment.find(params[:id], include: [{groupings: [{student_memberships: :user, ta_memberships: :user}, :group]}])
     @groupings = @assignment.groupings
     # Returns a hash where s.id is the key, and student record is the value
     @ungrouped_students = @assignment.ungrouped_students
@@ -163,7 +160,7 @@ class GroupsController < ApplicationController
   def csv_upload_grader_mapping
     if !request.post? || params[:grader_mapping].nil?
       flash[:error] = 'You must supply a CSV file for group to grader mapping'
-      redirect_to :action => 'manage', :id => params[:id]
+      redirect_to action: 'manage', id: params[:id]
       return
     end
 
@@ -171,7 +168,7 @@ class GroupsController < ApplicationController
     if invalid_lines.size > 0
       flash[:invalid_lines] = invalid_lines
     end
-    redirect_to :action => 'manage', :id => params[:id]
+    redirect_to action: 'manage', id: params[:id]
   end
 
   # Allows the user to upload a csv file listing groups.
@@ -193,7 +190,7 @@ class GroupsController < ApplicationController
           # Loop over each row, which lists the members to be added to the group.
           line_nr = 1
           flash[:users_not_found] = [] # contains a list of user_name(s) not found in DB
-          FasterCSV.parse(params[:group][:grouplist]) do |row|
+          CSV.parse(params[:group][:grouplist]) do |row|
             retval = @assignment.add_csv_group(row)
             if retval == nil || retval.instance_of?(Array)
               if retval
@@ -216,7 +213,7 @@ class GroupsController < ApplicationController
         end
       end
     end
-    redirect_to :action => 'manage', :id => params[:id]
+    redirect_to action: 'manage', id: params[:id]
   end
 
   def download_grouplist
@@ -225,18 +222,18 @@ class GroupsController < ApplicationController
     #get all the groups
     groupings = assignment.groupings #FIXME: optimize with eager loading
 
-    file_out = FasterCSV.generate do |csv|
+    file_out = CSV.generate do |csv|
        groupings.each do |grouping|
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc
-         grouping.memberships.all(:include => :user).each do |member|
+         grouping.memberships.includes(:user).each do |member|
             group_array.push(member.user.user_name);
          end
          csv << group_array
        end
      end
 
-    send_data(file_out, :type => 'text/csv', :disposition => 'inline')
+    send_data(file_out, type: 'text/csv', disposition: 'inline')
   end
 
   def use_another_assignment_groups
@@ -290,7 +287,7 @@ class GroupsController < ApplicationController
   # TODO:  This method is massive, and does way too much.  Whatever happened
   # to single-responsibility?
   def global_actions
-    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])
+    @assignment = Assignment.find(params[:id], include: [{groupings: [{student_memberships: :user, ta_memberships: :user}, :group]}])
     @tas = Ta.all
 
     if params[:submit_type] == 'random_assign'

@@ -2,16 +2,14 @@ class SectionDueDate < ActiveRecord::Base
   belongs_to :section
   belongs_to :assignment
 
-
-  # returns the dute date for a section and an assignment
+  # Returns the dute date for a section of an assignment. Defaults to the global
+  # due date of the assignment.
   def self.due_date_for(section, assignment)
-    d = SectionDueDate.find_by_assignment_id_and_section_id(assignment.id,
-                                                            section.id)
-    if assignment.section_due_dates_type && !d.nil? && !d.due_date.nil?
-      return d.due_date
-    else
-      return assignment.due_date
-    end
+    return assignment.due_date unless assignment.section_due_dates_type
+
+    section_due_date =
+      where(section_id: section.id, assignment_id: assignment.id).first
+    section_due_date.try(:due_date) || assignment.due_date
   end
 
 end

@@ -1,0 +1,10 @@
+modalNotesGroup.close();
+
+if (<%= escape_javascript(@number_of_notes_field).html_safe %>){
+  jQuery('#<%= escape_javascript(@number_of_notes_field.to_s).html_safe %>').html(
+                       '<%= escape_javascript(@number_of_notes.to_s).html_safe %>');
+}
+if (<%= escape_javascript(@highlight_field).html_safe %>){
+  jQuery('#<%= escape_javascript(@highlight_field).html_safe %>').effect(
+                                   "highlight", { color: "#99CCFF" }, 1000);
+}

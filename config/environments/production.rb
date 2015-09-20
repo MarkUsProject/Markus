@@ -14,6 +14,7 @@ Markus::Application.configure do
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
 
+  config.eager_load = true
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
   #
@@ -27,7 +28,9 @@ Markus::Application.configure do
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local = true
   # set to false to turn off traces
-  config.action_view.debug_rjs                         = true
+
+  # FIXME: The following lines can be commented
+  # out when jQuery is fully implemented
   config.action_controller.perform_caching             = true
   config.cache_classes                                 = true
 
@@ -40,19 +43,19 @@ Markus::Application.configure do
   # Defaults to:
   config.action_mailer.delivery_method = :sendmail
   #config.action_mailer.sendmail_settings = {
-  #  :location => '/usr/sbin/sendmail',
-  #  :arguments => '-i -t'  }
+  #  location: '/usr/sbin/sendmail',
+  #  arguments: '-i -t'  }
 
   # or using smtp configuration
   #config.action_mailer.delivery_method = :smtp
   #config.action_mailer.smtp_settings = {
-  #  :address              => "smtp.gmail.com",
-  #  :port                 => 587,
-  #  :domain               => 'gmail.com',
-  #  :user_name            => '<username>',
-  #  :password             => '<password>',
-  #  :authentication       => 'plain',
-  #  :enable_starttls_auto => true  }
+  #  address: "smtp.gmail.com",
+  #  port: 587,
+  #  domain: 'gmail.com',
+  #  user_name: '<username>',
+  #  password: '<password>',
+  #  authentication: 'plain',
+  #  enable_starttls_auto: true  }
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store # place where to put cached files is configured in config/environment.rb
@@ -86,6 +89,23 @@ Markus::Application.configure do
   # That is why MarkUs does not allow usernames/passwords which contain
   # \n or \0. These are the only restrictions.
   VALIDATE_FILE = "#{::Rails.root.to_s}/config/dummy_validate.sh"
+
+  # Normally exit status 0 means successful, 1 means no such user,
+  # and 2 means wrong password.
+  # The following allows for one additional custom exit status which also
+  # represents a failure to log in, but says so with a custom string.
+  # It is commented out by default because there is no additional custom
+  # exit status by default.
+  #VALIDATE_CUSTOM_EXIT_STATUS = 38
+  #VALIDATE_CUSTOM_STATUS_DISPLAY = 'You are a squid.  Only vertebrates may use MarkUs.'
+
+  # Custom messages for "user not allowed" and "login incorrect",
+  # overriding the default "login failed" message.  By default,
+  # MarkUs does not distinguish these cases for security reasons.
+  # If these variables are not defined (commented out), it uses the
+  # standard "login failed" message for both situations.
+  #VALIDATE_USER_NOT_ALLOWED_DISPLAY = 'That is your correct University of Foo user name and password, but you have not been added to this particular MarkUs database.  Please contact your instructor or check your course web page.'
+  #VALIDATE_LOGIN_INCORRECT_DISPLAY = 'Login incorrect.  You can check your Foo U user name or reset your password at https://www.foo.example.edu/passwords.'
 
   ###################################################################
   # Authentication Settings
@@ -140,9 +160,20 @@ Markus::Application.configure do
   REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/prod/repos"
 
   ###################################################################
+  # Directory where authentication keys will be uploaded. Make sure MarkUs
+  # is allowed to write to this directory
+  KEY_STORAGE = "#{::Rails.root}/data/prod/keys"
+
+  ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
   # is allowed to write to this directory
   PDF_STORAGE = "#{::Rails.root.to_s}/data/prod/pdfs"
+
+  ###################################################################
+  # Location of the public and private key for the git user on the system
+  GITOLITE_SETTINGS = { public_key: '/home/git/vagrant.pub',
+                        private_key: '/home/vagrant/.ssh/id_rsa',
+                        host: 'localhost' }
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.
@@ -152,8 +183,6 @@ Markus::Application.configure do
   ###################################################################
   # Set this to true or false if you want to be able to display and annotate
   # PDF documents within the browser.
-  # When collecting pdfs files, it converts them to jpg format via RGhost.
-  # RGhost is ghostscript dependent. Be sure ghostscript is installed.
   PDF_SUPPORT = false
 
   ###################################################################

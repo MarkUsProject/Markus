@@ -1,9 +1,0 @@
-page.call 'modalNotesGroup.close'
-
-if !@number_of_notes_field.blank?
-  page.replace_html @number_of_notes_field, @number_of_notes
-end
-if !@highlight_field.blank?
-  page[@highlight_field].visual_effect :highlight,  :startcolor => "#99CCFF"
-end
-

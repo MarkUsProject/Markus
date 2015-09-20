@@ -1,68 +1,77 @@
-<% # MENU
-%>
+<ul class='main'>
+  <li id='logo'>
+    <a href='<%= root_url %>' id='logo-img'></a>
+  </li>
 
-<div id="menu">
-<% if @current_user.admin? %>
-       <span<% if controller.controller_name == 'main'%>
-      id="menu_active"<%end%>>
-      <%= link_to I18n.t(:dashboard), :controller => 'main'%>
-      </span>
+  <% if @current_user.admin? %>
+    <li class='<%= "active" if controller.controller_name == 'main' %>'>
+      <%= link_to t(:dashboard), controller: 'main' %>
+    </li>
 
-      <span <% if controller.controller_name == 'assignments' or
-                  controller.controller_name == 'flexible_criteria' or
-                  controller.controller_name == 'rubrics' or
-                  controller.controller_name == 'ta_assignments' or
-                  controller.controller_name == 'submissions' or
-                  controller.controller_name == 'groups' or
-                  controller.controller_name == 'graders' or
-                  controller.controller_name == 'marks_graders' or
-                  controller.controller_name == 'results' or
-                  controller.controller_name == 'annotation_categories' or
-                  controller.controller_name == 'grade_entry_forms' or
-                  controller.controller_name == 'automated_tests'
-           %> id ="menu_active"<% end %>>
-	   <%= link_to I18n.t(:assignments), :controller => 'assignments'%>
-	</span>
+    <li <% if controller.controller_name == 'assignments' ||
+              controller.controller_name == 'flexible_criteria' ||
+              controller.controller_name == 'rubrics' ||
+              controller.controller_name == 'ta_assignments' ||
+              controller.controller_name == 'tags' ||
+              controller.controller_name == 'submissions' ||
+              controller.controller_name == 'summaries' ||
+              controller.controller_name == 'groups' ||
+              controller.controller_name == 'graders' ||
+              controller.controller_name == 'marks_graders' ||
+              controller.controller_name == 'results' ||
+              controller.controller_name == 'annotation_categories' ||
+              controller.controller_name == 'grade_entry_forms' ||
+              controller.controller_name == 'automated_tests' %>
+          class='active'
+        <% end %>>
+      <%= link_to t(:assignments), controller: 'assignments'%>
+    </li>
 
-        <span <% if
-		  controller.controller_name == 'admins' or
-	          controller.controller_name == 'students' or
-		  controller.controller_name == 'tas'
-	     %>
-	       id = "menu_active"
-	     <% end %>>
+    <li <% if controller.controller_name == 'admins' ||
+              controller.controller_name == 'students' ||
+              controller.controller_name == 'tas' ||
+              controller.controller_name == 'sections' %>
+          class='active'
+        <% end %>>
+      <%= link_to t(:users), controller: 'students' %>
+    </li>
+  <% else %>
+    <li <% if controller.controller_name == 'assignments' ||
+              controller.controller_name == 'flexible_criteria' ||
+              controller.controller_name == 'rubrics' ||
+              controller.controller_name == 'ta_assignments' ||
+              controller.controller_name == 'submissions' ||
+              controller.controller_name == 'summaries' ||
+              controller.controller_name == 'groups' ||
+              controller.controller_name == 'results' ||
+              controller.controller_name == 'grade_entry_forms' %>
+          class='active'
+        <% end %>>
+      <%= link_to t(:home), controller: 'assignments' %>
+   </li>
 
-	<%= link_to I18n.t(:users), :controller => 'students' %>
+  <% end %>
 
-        </span>
-        <span <% if
-		  controller.controller_name == 'sections'
-	     %>
-	       id = "menu_active"
-	     <% end %>>
-            <%= link_to 'Sections', :controller => 'sections' %>
-        </span>
+  <% if @current_user.admin? || @current_user.ta? %>
+    <li class='<%= "active" if controller.controller_name == 'notes' %>'>
+      <%= link_to t('notes.title'), notes_path %>
+    </li>
+  <% end %>
 
+  <% if @current_user.admin? %>
+    <li <% if controller.controller_name == 'course_summaries' ||
+              controller.controller_name == 'marking_schemes' %>
+          class='active'
+        <% end %>>
+      <%= link_to t('course_summaries_index.page_title'), course_summaries_path %>
+    </li>
+  <% end %>
 
-<% else %>
-      <span <% if controller.controller_name == 'assignments' or
-                  controller.controller_name == 'flexible_criteria' or
-                  controller.controller_name == 'rubrics' or
-                  controller.controller_name == 'ta_assignments' or
-                  controller.controller_name == 'submissions' or
-                  controller.controller_name == 'groups' or
-                  controller.controller_name == 'results' or
-                  controller.controller_name == 'grade_entry_forms'
-           %> id ="menu_active"<% end %>>
-	   <%= link_to I18n.t(:home), :controller => 'assignments'%>
-	</span>
-<% end %>
-
-<% if @current_user.admin? || @current_user.ta? %>
-	  <span<% if controller.controller_name == 'notes'%>
-      id="menu_active"<%end%>>
-          <%= link_to I18n.t('notes.title'), notes_path() %>
-      </span>
-<% end %>
-
-</div>
+  <% if REPOSITORY_TYPE == 'git' %>
+      <li <% if controller.controller_name == 'key_pairs' %>
+          class='active'
+          <% end %>>
+        <%= link_to t('key_pairs.title'), controller: 'key_pairs' %>
+      </li>
+  <% end %>
+</ul>

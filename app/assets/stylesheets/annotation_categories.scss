@@ -1,0 +1,95 @@
+@import 'common/core';
+
+
+.wrapper {
+  display: table;
+  margin-top: 1em;
+  width: 100%;
+}
+
+#add_annotation_category {
+  background: none;
+  padding-right: 1em;
+
+  #add_annotation_category_prompt {
+    margin: 1em 0;
+    width: 100%;
+  }
+}
+
+#annotations_pane,
+#annotation_category_pane {
+  display: table-cell;
+  vertical-align: top;
+}
+
+#annotation_category {
+  width: 25%;
+}
+
+#annotations_pane {
+  padding-left: 2em;
+  width: 75%;
+
+  #annotation_list_holder {
+    border: 1px solid $grey;
+    border-radius: $radius;
+    padding: 1em;
+  }
+
+  .float_right {
+    float: right;
+  }
+
+  fieldset {
+    box-shadow: none;
+    margin: 1em 0 2em;
+    padding-top: 1.5em;
+
+    input[type='text'] {
+      margin: 0 1em;
+    }
+  }
+
+  h2 a {
+    font-size: 1rem;
+  }
+}
+
+ul#annotation_list {
+  padding-left: 0;
+
+  li {
+    border-bottom: 1px solid $grey;
+    list-style: none;
+
+    &:first-child {
+      border-top: 1px solid $grey;
+    }
+
+    &#add_annotation_text,
+    .edit_annotation_text {
+      padding: 1em 0;
+
+      textarea {
+        margin-bottom: 1em;
+      }
+    }
+  }
+
+  textarea {
+    width: 100%;
+  }
+}
+
+.annotation_text_details {
+  display: inline-block;
+  font-style: italic;
+  margin-left: 5px;
+  min-width: 200px;
+
+  .button_to {
+    display: inline-block;
+    margin-left: 0.25em;
+  }
+}

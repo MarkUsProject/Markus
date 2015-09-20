@@ -1,0 +1,302 @@
+
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  var StudentsTable = React.createClass({
+    getDefaultProps: function() {
+      // Defines the columns used for the table and whether they
+      // are sortable searchable. The default initially sorted
+      // column is the first sortable column in the array.
+
+      return {
+        columns: [
+          {
+            id: 'user_name',
+            content: '<%= j raw I18n.t(:'user.user_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'last_name',
+            content: '<%= j raw I18n.t(:'user.last_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'first_name',
+            content: '<%= j raw I18n.t(:'user.first_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          <%= raw @section_column  %>
+          {
+            id: 'grace_credits',
+            content: '<%= j raw I18n.t(:'user.grace_credits') %>',
+            sortable: true,
+            compare: compare_fractions
+          },
+          {
+            id: 'notes',
+            content: '<%= j raw I18n.t(:'user.notes_count') %>',
+            sortable: false
+          }
+        ],
+        // Defines the filters used for the table filters. func
+        // must implement the filter method that valid objects
+        // should return true for, and invalid ones should return false.
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw I18n.t(:'all') %>',
+            func: function(student) {
+              return true;
+            }
+          },
+          {
+            name: 'active',
+            text: '<%= j raw I18n.t(:'active') %>',
+            func: function(student) {
+              return !student.hidden;
+            }
+          },
+          {
+            name: 'not_active',
+            text: '<%= j raw I18n.t(:'not_active') %>',
+            func: function(student) {
+              return student.hidden;
+            }
+          }
+        ]
+      }
+    },
+    getInitialState: function() {
+      return {
+        error: null,
+        students: [],
+        selected_students: []
+      };
+    },
+    updateSelectedStudents: function(students) {
+      this.setState({selected_students:students});
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+
+      jQuery.ajax({
+        url: 'students/populate',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            students: data,
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text;
+          this.setState({
+            error: error
+          });
+        },
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+
+      });
+    },
+    onError: function(error) {
+      this.setState({
+        error: error
+      });
+    },
+    render: function() {
+      // Do student-specific table stuff here.
+      var students_data = this.state.students.map(function(student) {
+        var s = {};
+
+        s['id'] = student.id;
+        s['user_name'] = student.user_name;
+        s['last_name'] = student.last_name;
+        s['first_name'] = student.first_name;
+        s['section'] = student.section_name ? student.section_name : '-';
+        s['grace_credits'] = student.grace_credits_remaining + ' / ' + student.grace_credits;
+        s['notes'] = <span>
+          <a key={student.edit_link}
+            href={student.edit_link}><%= j raw I18n.t(:'edit') %></a>
+          | 
+          <a key={student.notes_link}
+            href={student.notes_link}
+            data-remote='true'
+            id='notes_highlight_user_id'><%= j raw I18n.t(:'notes.title') %> ({student.num_notes})</a>
+          </span>;
+        s['hidden'] = student.hidden;
+    
+        return s;
+      }.bind(this));
+
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <StudentsActionBox selected_students={this.state.selected_students}
+            sections={this.props.sections}
+            refresh={this.refresh}
+            errorThrown={this.onError} />
+          <Table data={students_data}
+            search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
+            selectable={true}
+            onSelectedRowsChange={this.updateSelectedStudents}
+            columns={this.props.columns}
+            filters={this.props.filters} />
+        </div>
+      );
+    }
+  });
+
+  // The bulk action box where you can give grace credits,
+  // change sections, or mark as active or inactive.
+  var StudentsActionBox = React.createClass({
+    propTypes: {
+      selected_students: React.PropTypes.array,
+      sections: React.PropTypes.array,
+      refresh: React.PropTypes.func
+    },
+    render: function() {
+      // Create apply button and secondary select input based on current state.
+      var applyButton = 
+        <button onClick={this.performAction}
+          disabled={this.state.button_disabled}>
+          <%= I18n.t(:apply) %>
+        </button>;
+      var optionalInputBox = null;
+      if (this.state.select_value == 'give_grace_credits') {
+        optionalInputBox =
+          <input type='text' value={this.state.grace_credits_input} onChange={this.graceCreditsChanged} />
+      } else if (this.state.select_value == 'update_section') {
+        if (this.props.sections.length > 0) {
+          var section_options = [];
+          for (var i = 0; i < this.props.sections.length; i++) {
+            var section = this.props.sections[i];
+            var option = 
+              <option value={section.id} onChange={this.sectionSelectChanged}>
+                {section.name}
+              </option>
+            section_options.push(option);
+          }
+          optionalInputBox =
+            <select value={this.state.section_id} onChange={this.sectionSelectChanged}>
+              {section_options}
+            </select>
+        } else {
+          optionalInputBox =
+            <span>
+              <%= j raw I18n.t(:'section.no_sections') %>
+            </span>
+        }
+      }
+
+      // If more than one student is selected render the div. Otherwise nothing.
+      if (this.props.selected_students.length > 0) {
+        return (
+          <div>
+            <select value={this.state.select_value} onChange={this.actionSelectChanged}>
+              <option value='give_grace_credits'><%= j raw I18n.t(:'give_grace_credits') %></option>
+              <option value='update_section'><%= j raw I18n.t(:'add_section') %></option>
+              <option value='hide'><%= j raw I18n.t(:'hide_students') %></option>
+              <option value='unhide'><%= j raw I18n.t(:'unhide_students') %></option>
+            </select>
+            {optionalInputBox}
+            {applyButton}
+          </div>
+        );
+      } else {
+        return (
+          <div></div>
+        );
+      }
+    },
+    getInitialState: function() {
+      return {
+        select_value: 'give_grace_credits',
+        grace_credits_input: '0',
+        button_disabled: false
+      };
+    },
+    actionSelectChanged: function(event) {
+      // Reset state based on action selected.
+      this.setState({
+        select_value: event.target.value,
+      button_disabled: false
+      });
+      if (event.target.value == 'give_grace_credits') {
+        this.setState({
+          grace_credits_input: '0',
+          section_id: ''
+        });
+      } else if (event.target.value == 'update_section') {
+        if (this.props.sections.length > 0) {
+          var initial_section = this.props.sections[0].id;
+          this.setState({
+            grace_credits_input: '0',
+            section_id: initial_section
+          });
+        } else {
+          this.setState({
+            grace_credits_input: '0',
+            section_id: '',
+            button_disabled: true
+          });
+        }
+      }
+    },
+    sectionSelectChanged: function(event) {
+      this.setState({
+        section_id: event.target.value
+      });
+    },
+    graceCreditsChanged: function(event) {
+      // Checks that the input is valid (integer)
+      var value = event.target.value;
+      if (!isNaN(+value)) {
+        this.setState({
+          grace_credits_input: value, 
+          button_disabled: false
+        });
+      } else {
+        this.setState({
+          grace_credits_input: value,
+          button_disabled: true});
+      }
+    },
+    performAction: function() {
+      // Gets student ids and other relevant info from this.state and
+      // sends an AJAX call over to the appropriate backend. Then tells
+      // parent to refresh.
+      var dataLoad = {
+        student_ids: this.props.selected_students,
+        bulk_action: this.state.select_value,
+        number_of_grace_credits: this.state.grace_credits_input,
+        section: this.state.section_id
+      };
+
+      jQuery.ajax({
+        method: 'POST',
+        url: 'students/bulk_modify',
+        data: dataLoad,
+        success: function(data) {
+          this.props.errorThrown(null);
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.errorThrown(error);
+        }.bind(this)
+      });
+    }
+  });
+
+  React.renderComponent(<StudentsTable sections={<%= raw @sections.to_json %>} />, document.getElementById('students_table'));
+</script>

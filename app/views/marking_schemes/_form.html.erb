@@ -1,0 +1,35 @@
+<div class='section'>
+  <%= form_for @marking_scheme, as: :marking_scheme do |f| %>
+
+    <%= render 'shared/flash_message' %>
+
+    <div class='table'>
+      <table>
+        <tr>
+          <td><%= raw(f.label(:name, t('marking_scheme.name'))) %>:</td>
+          <td><%= raw(f.text_field :name) %></td>
+        </tr>
+
+        <% @marking_scheme.marking_weights.each_with_index do |marking_weight, index| %>
+          <%= f.fields_for :marking_weights, marking_weight do |builder| %>
+            <tr>
+              <%= builder.hidden_field :type, value: (@all_gradable_items[index].is_a?(Assignment)) ? 'Assignment' : 'GEF' %>
+              <%= builder.hidden_field :id, value: @all_gradable_items[index].id %>
+              <td><%= raw(builder.label(t('marking_schemes.weight_label') + @all_gradable_items[index].short_identifier)) %>:</td>
+              <td><%= raw(builder.text_field :weight) %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      </table>
+    </div>
+
+    <div id='form_actions'>
+      <%= f.submit t(:submit),
+                   name: 'submit',
+                   data: { disable_with: t('working') },
+                   class: 'button' %>
+      <%= link_to t(:cancel), marking_schemes_path, class: 'button' %>
+    </div>
+
+  <% end %>
+</div>

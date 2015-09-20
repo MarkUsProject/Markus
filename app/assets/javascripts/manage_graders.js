@@ -1,24 +1,19 @@
-/**
- * page specific event handlers for grader/index.html.erb
- */
-document.observe("dom:loaded", function() {
+/** Page specific event handlers for grader/index.html.erb */
 
-  new Form.Element.EventObserver('assign_criteria', function(element, value) {
+jQuery(document).ready(function() {
 
-    var value = value || false;
-    var url = element.readAttribute('data-action');
-
+  jQuery('#assign_criteria').change(function() {
     var params = {
-      'value': value,
+      'value': this.value || false,
       'authenticity_token': AUTH_TOKEN
-    }
+    };
 
-    new Ajax.Request(url, {
-      asynchronous: true,
-      evalScripts: true,
-      parameters: params
-    })
-  })
+    jQuery.ajax({
+      url:  this.getAttribute('data-action'),
+      type: 'POST',
+      data: params
+    });
+  });
 
 });
 
@@ -38,7 +33,7 @@ function populate_criteria(json_data) {
 }
 
 function filter(filter_name) {
-  $('loading_list').show();
+  document.getElementById('working').style.display = '';
   try {
     switch(filter_name) {
       case 'validated':
@@ -58,7 +53,7 @@ function filter(filter_name) {
   catch (e) {
     alert(e);
   }
-  $('loading_list').hide();
+  document.getElementById('working').style.display = 'none';
 }
 
 function modify_grader(grader_json) {
@@ -116,12 +111,12 @@ function remove_groupings(grouping_ids_json) {
 
 function thinking() {
   $('global_action_form').disable();
-  $('loading_list').show();
+  document.getElementById('working').style.display = '';
 }
 
 function done_thinking() {
   $('global_action_form').enable();
-  $('loading_list').hide();
+  document.getElementById('working').style.display = 'none';
 }
 
 function press_on_enter(event, element_id) {
@@ -155,17 +150,6 @@ function clear_all() {
   }
 }
 
-function check_all (prefix, check) {
-  cbox=document.getElementsByTagName('INPUT');
-  for (i = 0; i < cbox.length; i++){
-    if (cbox[i].type == 'checkbox'){
-      if (cbox[i].name.split('_')[0] == prefix) {
-        if (check == true) {
-          cbox[i].checked = true;
-        } else {
-          cbox[i].checked = null;
-        }
-      }
-    }
-  }
+function check_all(container, check) {
+  jQuery(container).find('.inline_checkbox').prop('checked', check);
 }

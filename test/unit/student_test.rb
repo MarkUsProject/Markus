@@ -16,7 +16,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
-require 'mocha/setup'
 
 class StudentTest < ActiveSupport::TestCase
 
@@ -202,7 +201,7 @@ class StudentTest < ActiveSupport::TestCase
     setup do
       @membership1 = StudentMembership.make(:membership_status => StudentMembership::STATUSES[:inviter])
       @grouping = @membership1.grouping
-      @membership2 = StudentMembership.make({:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:accepted]});
+      @membership2 = StudentMembership.make({:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
       @student1 = @membership1.user
       @student2 = @membership2.user
 
@@ -219,7 +218,7 @@ class StudentTest < ActiveSupport::TestCase
 
     should 'hide students and have the repo remove them' do
       # Mocks to enter into the if
-      Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
+      Assignment.any_instance.stubs(:vcs_submit).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
 
       # Mock the repository and expect :remove_user with the student's user_name
@@ -229,12 +228,12 @@ class StudentTest < ActiveSupport::TestCase
       mock_repo.expects(:remove_user).with(any_of(@student1.user_name, @student2.user_name)).at_least(2)
       Group.any_instance.stubs(:repo).returns(mock_repo)
 
-      assert Student.hide_students(@student_id_list)
+      Student.hide_students(@student_id_list)
     end
 
     should 'not error when user is not found on hide and remove' do
       # Mocks to enter into the if that leads to the call to remove the student
-      Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
+      Assignment.any_instance.stubs(:vcs_submit).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
 
       # Mock the repository and raise Repository::UserNotFound
@@ -243,7 +242,7 @@ class StudentTest < ActiveSupport::TestCase
       mock_repo.stubs(:remove_user).raises(Repository::UserNotFound)
       Group.any_instance.stubs(:repo).returns(mock_repo)
 
-      assert Student.hide_students(@student_id_list)
+      Student.hide_students(@student_id_list)
     end
 
     [{:type => 'negative', :grace_credits => '-10', :expected => 0 },
@@ -274,7 +273,7 @@ class StudentTest < ActiveSupport::TestCase
 
     should 'unhide without error' do
       #TODO test the repo with mocks
-      assert Student.unhide_students(@student_id_list)
+      Student.unhide_students(@student_id_list)
 
       students = Student.find(@student_id_list)
       assert_equal(false, students[0].hidden)
@@ -283,7 +282,7 @@ class StudentTest < ActiveSupport::TestCase
 
     should 'unhide without error when users already exists in repo' do
       # Mocks to enter into the if
-      Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
+      Assignment.any_instance.stubs(:vcs_submit).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
 
       # Mock the repository and raise Repository::UserNotFound
@@ -292,7 +291,7 @@ class StudentTest < ActiveSupport::TestCase
       mock_repo.stubs(:add_user).raises(Repository::UserAlreadyExistent)
       Group.any_instance.stubs(:repo).returns(mock_repo)
 
-      assert Student.unhide_students(@student_id_list)
+      Student.unhide_students(@student_id_list)
     end
   end
 
@@ -444,10 +443,16 @@ class StudentTest < ActiveSupport::TestCase
         context 'working alone' do
           setup do
             assert @student.create_group_for_working_alone_student(@assignment.id)
+            @group = Group.where(group_name: @student.user_name).first
           end
 
           should 'create the group' do
-            assert Group.first(:conditions => {:group_name => @student.user_name}), 'the group has not been created'
+            assert Group.where(group_name: @student.user_name).first,
+                   'the group has not been created'
+          end
+
+          should 'have their repo name equal their user name' do
+            assert_equal(@group.repo_name, @student.user_name)
           end
 
           should 'not have any pending memberships' do

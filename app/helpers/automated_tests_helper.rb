@@ -4,12 +4,63 @@ require 'open3'
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
 
+  def add_test_file_link(name, form)
+    link_to_function name do |page|
+      test_file = render(partial: 'test_file',
+                         locals: {form: form,
+                                     test_file: TestFile.new,
+                                     file_type: 'test'})
+      page << %{
+        if ($F('is_testing_framework_enabled') != null) {
+          var new_test_file_id = new Date().getTime();
+          $('test_files').insert({bottom: "#{ escape_javascript test_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_file_id) });
+          $('assignment_test_files_' + new_test_file_id + '_filename').focus();
+        } else {
+          alert("#{I18n.t('automated_tests.add_test_file_alert')}");
+        }
+      }
+    end
+  end
   include LibXML
 
+  def add_lib_file_link(name, form)
+    link_to_function name do |page|
+      test_file = render(partial: 'test_file',
+                         locals: {form: form,
+                                     test_file: TestFile.new,
+                                     file_type: 'lib'})
+      page << %{
+        if ($F('is_testing_framework_enabled') != null) {
+          var new_test_file_id = new Date().getTime();
+          $('lib_files').insert({bottom: "#{ escape_javascript test_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_file_id) });
+          $('assignment_test_files_' + new_test_file_id + '_filename').focus();
+        } else {
+          alert("#{I18n.t('automated_tests.add_lib_file_alert')}");
+        }
+      }
+    end
+  end
   # This is the waiting list for automated testing. Once a test is requested,
   # it is enqueued and it is waiting for execution. Resque manages this queue.
   @queue = :test_waiting_list
 
+  def add_parser_file_link(name, form)
+    link_to_function name do |page|
+      test_file = render(partial: 'test_file',
+                         locals: {form: form,
+                                     test_file: TestFile.new,
+                                     file_type: 'parse'})
+      page << %{
+        if ($F('is_testing_framework_enabled') != null) {
+          var new_test_file_id = new Date().getTime();
+          $('parser_files').insert({bottom: "#{ escape_javascript test_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_file_id) });
+          $('assignment_test_files_' + new_test_file_id + '_filename').focus();
+        } else {
+          alert("#{I18n.t('automated_tests.add_parser_file_alert')}");
+        }
+      }
+    end
+  end
   # This is the calling interface to request a test run.
   def AutomatedTestsHelper.request_a_test_run(grouping_id, call_on, current_user)
     @current_user = current_user
@@ -18,9 +69,22 @@ module AutomatedTestsHelper
     @assignment = @grouping.assignment
     @group = @grouping.group
 
+  def create_ant_test_files(assignment)
+    # Create required ant test files - build.xml and build.properties
+    if assignment && assignment.test_files.empty?
+      @ant_build_file = TestFile.new
+      @ant_build_file.assignment = assignment
+      @ant_build_file.filetype = 'build.xml'
+      @ant_build_file.filename = 'tempbuild.xml'        # temporary placeholder for now
+      @ant_build_file.save(validate: false)
     @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
     export_group_repo(@group, @repo_dir)
 
+      @ant_build_prop = TestFile.new
+      @ant_build_prop.assignment = assignment
+      @ant_build_prop.filetype = 'build.properties'
+      @ant_build_prop.filename = 'tempbuild.properties' # temporary placeholder for now
+      @ant_build_prop.save(validate: false)
     @list_run_scripts = scripts_to_run(@assignment, call_on)
 
     async_test_request(grouping_id, call_on)
@@ -34,6 +98,28 @@ module AutomatedTestsHelper
     end
   end
 
+  # Process Testing Framework form
+  # - Process new and updated test files (additional validation to be done at the model level)
+  def process_test_form(assignment, params)
+
+    # Hash for storing new and updated test files
+    updated_files = {}
+
+    # Retrieve all test file entries
+    testfiles = params[:test_files_attributes]
+
+    # First check for duplicate filenames:
+    filename_array = []
+    testfiles.values.each do |tfile|
+      if tfile['filename'].respond_to?(:original_filename)
+        fname = tfile['filename'].original_filename
+        # If this is a duplicate filename, raise error and return
+        if filename_array.include?(fname)
+          raise I18n.t('automated_tests.duplicate_filename') + fname
+        else
+          filename_array << fname
+        end
+      end
   # Export group repository for testing. Students' submitted files
   # are stored in the group svn repository. They must be exported
   # before copying to the test server.
@@ -52,6 +138,13 @@ module AutomatedTestsHelper
       return "#{e.message}"
   end
 
+      # Can't mass assign assignment_id
+      tfile.delete(:assignment_id)
+
+      # Check to see if this is an update or a new file:
+      # - If 'id' exists, this is an update
+      # - If 'id' does not exist, this is a new test file
+      tf_id = tfile['id']
   # Find the list of test scripts to run the test. Return the list of
   # test scripts in the order specified by seq_num (running order)
   def self.scripts_to_run(assignment, call_on)
@@ -92,6 +185,11 @@ module AutomatedTestsHelper
     return list_run_scripts
   end
 
+    # Update assignment enable_test and tokens_per_day attributes
+    assignment.enable_test = params[:enable_test]
+    num_tokens = params[:tokens_per_day]
+    if num_tokens
+      assignment.tokens_per_day = num_tokens
   # Request an automated test. Ask Resque to enqueue a job.
   def self.async_test_request(grouping_id, call_on)
     if files_available?
@@ -222,6 +320,11 @@ module AutomatedTestsHelper
 
   end
 
+  # Copy files needed for testing
+  def copy_ant_files(assignment, repo_dest_dir)
+    # Check if the repository where you want to copy Ant files to exists
+    unless File.exists?(repo_dest_dir)
+      raise I18n.t('automated_tests.dir_not_exist', {dir: repo_dest_dir})
   # Launch the test on the test server by scp files to the server
   # and run the script.
   # This function returns two values: first one is the output from
@@ -256,6 +359,10 @@ module AutomatedTestsHelper
       return [stderr, false]
     end
 
+    # Move student's source files to the src repository
+    pwd = FileUtils.pwd
+    FileUtils.cd(repo_assignment_dir)
+    FileUtils.mv(Dir.glob('*'), File.join(repo_assignment_dir, 'src'), force: true )
     # Securely copy source files, test files and test runner script to run_dir
     stdout, stderr, status = Open3.capture3("scp -p -r '#{src_dir}'/* #{server}:#{run_dir}")
     if !(status.success?)
@@ -286,6 +393,20 @@ module AutomatedTestsHelper
       return [stdout, true]
     end
 
+      # Copy the test folder:
+      # If the current user is a student, do not copy tests that are marked 'is_private' over
+      # Otherwise, copy all tests over
+      if @current_user.student?
+        # Create the test folder
+        assignment_test_dir = File.join(assignment_dir, 'test')
+        repo_assignment_test_dir = File.join(repo_assignment_dir, 'test')
+        FileUtils.mkdir(repo_assignment_test_dir)
+        # Copy all non-private tests over
+        assignment.test_files
+                  .where(filetype: 'test', is_private: 'false')
+                  .each do |file|
+          FileUtils.cp(File.join(assignment_test_dir, file.filename), repo_assignment_test_dir)
+        end
   end
 
   def self.process_result(result, grouping_id, assignment_id)
@@ -377,6 +498,8 @@ module AutomatedTestsHelper
         # save to database
         test_result.save
       end
+    else
+      raise I18n.t('automated_tests.dir_not_exist', {dir: assignment_dir})
 
       # if a marks_earned tag exists under test_script tag, get the value;
       # otherwise, use the cumulative marks earned from all unit tests
@@ -390,6 +513,11 @@ module AutomatedTestsHelper
     end
   end
 
+  # Execute Ant which will run the tests against the students' code
+  def run_ant_file(result, assignment, repo_dest_dir)
+    # Check if the repository where you want to copy Ant files to exists
+    unless File.exists?(repo_dest_dir)
+      raise I18n.t('automated_tests.dir_not_exist', {dir: repo_dest_dir})
   # Create a repository for the test scripts, and a placeholder script
   def create_test_scripts(assignment)
 
@@ -435,6 +563,10 @@ module AutomatedTestsHelper
             new_seqnum = 16 + parseFloat(last_seqnum);
           }
 
+    # File to store build details
+    filename = I18n.l(Time.zone.now, format: :ant_date) + '.log'
+    # Status of Ant build
+    status = ''
           var new_test_script = jQuery("#{ escape_javascript test_script}".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_script_id));
           jQuery('#test_scripts').append(new_test_script);
 
@@ -546,6 +678,14 @@ module AutomatedTestsHelper
       end
     end
 
+    # Create TestResult object
+    # (Build failures and errors will be logged and stored as well for diagnostic purposes)
+    TestResult.create(filename: filename,
+      file_content: data,
+      submission_id: result.submission.id,
+      status: status,
+      user_id: @current_user.id)
+  end
     # Filter out test support files that need to be created and updated
     if !testsupporters.nil?
       testsupporters.each_key do |key|

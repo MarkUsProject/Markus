@@ -5,35 +5,50 @@
 # For production mode MySQL option :
 #   bundle install --without development test postgresql sqlite
 #
-# Make sure to decleare at least one 'source'
-source 'http://rubygems.org'
+# Make sure to declare at least one 'source'
+source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem "resque"
-gem 'rails', '3.1.12'
+gem 'rails', '~> 4.2.0'
 gem 'rubyzip'
 gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
-gem 'fastercsv', :platforms => :ruby_18
-gem 'routing-filter'
 gem 'dynamic_form'
-gem "libxml-ruby" # xml parser library to parse test results
-# The 'exception_notification' gem version 4 is not compatible with
-# Rails 3.0.x
-gem 'exception_notification', '<4.0'
-
-gem 'json'
+gem 'exception_notification'
+gem 'activerecord-import'
+gem 'auto_complete'
+gem 'best_in_place'
 gem 'coffee-script'
+gem 'git'
+gem 'rugged', '~> 0.21.4'
+gem 'gitolite'
+gem 'gitolite-rugged'
 gem 'jquery-rails'
-gem 'prototype-rails' #Will be needed with Rails3.1
+gem 'responders', '~> 2.0'
+gem 'prototype-rails', github: 'rails/prototype-rails', branch: '4.2'
+gem 'sprockets', '~> 2.12.0'
+gem 'rails-html-sanitizer'
+gem 'rails-deprecated_sanitizer'
 
-group :assets do
-  gem 'tilt', '~> 1.3.7'
-  gem 'sass-rails',   '~> 3.1.5'
-  gem 'coffee-rails', '~> 3.1.1'
-  gem 'uglifier',     '>= 1.0.3'
-end
+gem 'tilt', '~> 1.3.7'
+gem 'sass-rails',   '5.0.0.beta1'
+gem 'coffee-rails', '~> 4.0.0'
+gem 'uglifier',     '>= 1.3.0'
+gem 'execjs'
+gem 'libv8'
+gem 'therubyracer', '>= 0.11.1'
+gem 'json'
+gem 'minitest'
+gem 'autoprefixer-rails'
+
+gem 'actionpack-action_caching'
+gem 'actionpack-page_caching', '~>1.0.0'
+gem 'actionpack-xml_parser', '~>1.0.0'
+gem 'actionview-encoded_mail_to', '~>1.0.4'
+gem 'activerecord-session_store', '~>0.1.0'
+gem 'rails-observers', '~>0.1.1'
+gem 'rails-perftest', '~>0.0.2'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
@@ -59,26 +74,41 @@ group :sqlite do
   gem 'sqlite3'
 end
 
-# Other development related required gems. You don't need them
-# for production.
-group :development, :test do
-  gem 'rdoc'
-  gem 'rcov', :platforms => :mri_18
-  gem 'simplecov', :platforms => :mri_19
-  # FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
-  # we have to fix before doing an upgrade
-  gem 'shoulda', '<3.4'
-  # FIXME: shoulda-matchers (>= 2) is incompatible with Ruby 1.8
-  # Remove next line once MarkUs will not support Ruby 1.8,
-  # as shoulda-matchers is a dependency of shoulda
-  gem 'shoulda-matchers', '~>1.5'
-  gem 'machinist', '< 2'
-  gem 'faker'
-  gem 'railroady'
-  gem 'time-warp'
-  gem 'ruby-debug', :platforms => :mri_18
+# Gems only used for development should be listed here so that they
+# are not loaded in other environments.
+group :development do
+  gem 'awesome_print'
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'spring'
   gem 'debugger', :platforms => :mri_19
-  gem 'mocha', :require => false
+  gem 'quiet_assets'
+end
+
+group :test do
+  gem 'factory_girl_rails'
+  gem 'machinist', '< 2'
+  gem 'mocha', require: false
+  gem 'rspec-rails', '~> 3.0'
+  gem 'shoulda'
+  gem 'simplecov'
+  gem 'time-warp'
+end
+
+# Gems needed (wanted) for both development and test can be
+# listed here
+group :development, :test do
+  gem 'byebug', :platforms => [:mri_20, :mri_21]
+  gem 'faker' # required for database seeding
+end
+
+# Gems not needed at runtime should go here so that MarkUs does
+# not waste time/memory loading them during boot
+group :offline do
+  gem 'railroady'
+  gem 'rdoc'
+  gem 'rubocop'
+  gem 'thin'
 end
 
 # If you  plan to use unicorn servers for production
@@ -86,12 +116,4 @@ end
 # group if you are using Phusion Passenger.
 group :unicorn do
   gem 'unicorn'
-end
-
-# If you want to be able to view and annotate PDF files,
-# make sure that this group is included. GhostScript has to be
-# installed for rghost to work well. You also need to set
-# the PDF_SUPPORT bool to true in the config file(s).
-group :rghost do
-  gem 'rghost'
 end

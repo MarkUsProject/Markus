@@ -2,10 +2,8 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_contro
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
-include CsvHelper
 require 'shoulda'
 require 'machinist'
-require 'mocha/setup'
 require 'time-warp'
 
 class AssignmentsControllerTest < AuthenticatedControllerTest
@@ -58,7 +56,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         post_as @admin, :create, @attributes
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
         assert_not_nil new_assignment
-        assert redirect_to(:action => 'edit', :id => new_assignment)
+        assert redirect_to(action: 'edit', id: new_assignment)
       end
 
       should 'have an assignment stat object associated' do
@@ -66,13 +64,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
         assert_not_nil new_assignment.assignment_stat
         assert respond_with :redirect
-        assert set_the_flash
+        assert set_flash
       end
 
       should "set the flash's success message" do
         post_as @admin, :create, @attributes
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
-        assert_equal flash[:success], 'Successfully created the assignment'
+        assert_equal 'Successfully created the assignment', flash[:success]
       end
 
       context 'with section due dates' do
@@ -82,46 +80,60 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should 'be able to create assignment with section due dates' do
-          @attributes['section_due_dates_type'] = '1'
+          @attributes['assignment']['section_due_dates_type'] = '1'
           due_date_attributes = {
-              0 => { 'section_id' => "#{@section1.id}",
+            '0' => { 'section_id' => "#{@section1.id}",
                      'due_date'   => '2011-10-27 00:00' },
-              1 => { 'section_id' => "#{@section2.id}",
+            '1' => { 'section_id' => "#{@section2.id}",
                      'due_date'   => '2011-10-29 00:00' }
           }
-          @attributes['assignment']['section_due_dates_attributes'] = due_date_attributes
+          @attributes['assignment']['section_due_dates_attributes'] =
+            due_date_attributes
 
           post_as @admin, :create, @attributes
-          new_assignment = Assignment.find_by_short_identifier(@short_identifier)
+          new_assignment =
+            Assignment.where(short_identifier: @short_identifier).first
+
           assert_not_nil new_assignment
           assert_equal true, new_assignment.section_due_dates_type
           due_date_attributes.each do |key, value|
-            assert new_assignment.section_due_dates[key].
-                       due_date.to_s.include?(value['due_date'])
+            date     = Time.parse(value['due_date'])
+            due_date =
+              new_assignment.section_due_dates
+                            .find { |d| d.due_date == date }
+            refute_nil due_date, "Due date not added for section #{key}"
+            assert_equal value['section_id'].to_i, due_date.section_id
           end
-          assert redirect_to(:action => 'edit', :id => new_assignment)
+          assert redirect_to(action: 'edit', id: new_assignment)
         end
 
         should 'be able to create assignment due date with some section due dates set' do
           # A section due date can be nil
           # That section then uses the main due_date
-          @attributes['section_due_dates_type'] = '1'
+          @attributes['assignment']['section_due_dates_type'] = '1'
           due_date_attributes = {
-              0 => { 'section_id' => "#{@section1.id}",
+            '0' => { 'section_id' => "#{@section1.id}",
                      'due_date'   => nil },
-              1 => { 'section_id' => "#{@section2.id}",
+            '1' => { 'section_id' => "#{@section2.id}",
                      'due_date'   => '2011-10-29 00:00' }
           }
-          @attributes['assignment']['section_due_dates_attributes'] = due_date_attributes
+          @attributes['assignment']['section_due_dates_attributes'] =
+            due_date_attributes
 
           post_as @admin, :create, @attributes
-          new_assignment = Assignment.find_by_short_identifier(@short_identifier)
+
+          new_assignment =
+            Assignment.where(short_identifier: @short_identifier).first
+
           assert_not_nil new_assignment
           assert_equal true, new_assignment.section_due_dates_type
           assert_nil new_assignment.section_due_dates[0].due_date
-          assert new_assignment.section_due_dates[1].
-                     due_date.to_s.include? due_date_attributes[1]['due_date']
-          assert redirect_to(:action => 'edit', :id => new_assignment)
+
+          expected_date = new_assignment.section_due_dates[1].due_date
+          actual_date   = Time.parse(due_date_attributes['1']['due_date'])
+          assert_equal expected_date, actual_date
+
+          assert redirect_to(action: 'edit', id: new_assignment)
         end
       end  # With some sections
     end #creating new assignment
@@ -178,14 +190,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                :student_interface,
                :id => @assignment.id
         assert_response :missing
-      end
-
-      should 'update group properties on persist' do
-        get_as  @admin,
-                :update_group_properties_on_persist,
-                :assignment_id => @assignment.id
-        assert assigns(:assignment)
-        assert_equal @assignment, assigns(:assignment)
       end
 
       should 'edit basic paramaters' do
@@ -250,7 +254,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_equal @assignment.submission_rule.type.to_s,
                      a.submission_rule.type.to_s
         assert_not_nil assigns(:assignment)
-        assert !assigns(:assignment).errors.empty?
+        refute_empty assigns(:assignment).errors
       end
 
       should 'be able to add periods to submission rule class' do
@@ -318,15 +322,18 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert @assignment.submission_rule.is_a?(GracePeriodSubmissionRule)
 
         put_as @admin,
-                :update,
-                {:id => @assignment.id,
-                 :assignment => {
-                   :submission_rule_attributes => {
-                     :type => 'NoLateSubmissionRule',
-                     :periods_attributes => {
-                        '1' => { :id => period.id } },
-                     :id => @assignment.submission_rule.id,
-                     }}}
+               :update,
+               id: @assignment.id,
+               assignment: {
+                 submission_rule_attributes: {
+                   type: 'NoLateSubmissionRule',
+                   periods_attributes: {
+                     '1' => { id: period.id, hours: 1 }
+                   },
+                   id: @assignment.submission_rule.id,
+                 }
+               }
+
         assert_response :redirect
         # no errors should have been produced
         assert_equal [], assigns(:assignment).errors[:base]
@@ -395,41 +402,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
             :submission_rule).returns(submission_rule)
         get_as @admin, :index
         assert assigns(:assignments)
-        assert_response :success
-      end
-
-      should 'be able to get a csv grade report' do
-        student = Student.make
-        response_csv = get_as(@admin, :download_csv_grades_report).body
-        csv_rows = CsvHelper::Csv.parse(response_csv)
-        assert_equal Student.all.size, csv_rows.size
-        assignments = Assignment.all(:order => 'id')
-        csv_rows.each do |csv_row|
-          student_name = csv_row.shift
-          student = Student.find_by_user_name(student_name)
-          assert_not_nil student
-          assert_equal assignments.size, csv_row.size
-
-          csv_row.each_with_index do |final_mark,index|
-            if final_mark.blank?
-              if student.has_accepted_grouping_for?(assignments[index])
-                grouping = student.accepted_grouping_for(assignments[index])
-                assert (!grouping.has_submission? ||
-                        assignments[index].total_mark == 0)
-              end
-            else
-              out_of = assignments[index].total_mark
-              grouping = student.accepted_grouping_for(assignments[index])
-              assert_not_nil grouping
-              assert grouping.has_submission?
-              submission = grouping.current_submission_used
-              assert_not_nil submission.get_latest_result
-              assert_equal final_mark.to_f.round,
-                           (submission.get_latest_result.total_mark / out_of * 100
-                           ).to_f.round
-            end
-          end
-        end
         assert_response :success
       end
 
@@ -528,10 +500,21 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         @assignment.reload
         assert_equal false, @assignment.section_due_dates_type
-        assert_equal 0, @assignment.section_due_dates.size
-        assert_equal 0, SectionDueDate.all.size
+        assert_empty @assignment.section_due_dates
+        assert_empty SectionDueDate.all
       end
     end  # -- with an assignment
+
+    context 'with a hidden assignment' do
+      setup do
+        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+      end
+
+      should 'be able to view it' do
+        get_as @admin, :index
+        assert @response.body.include?(@assignment.short_identifier)
+      end
+    end # -- with a hidden assignment
 
     context ', on :download_assignment_list,' do
 
@@ -550,7 +533,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'not be able to download an xml file' do
         get_as @admin, :download_assignment_list, :file_format => 'xml'
         assert_response :redirect
-        assert set_the_flash.to((I18n.t(:incorrect_format)))
+        assert set_flash.to(t(:incorrect_format))
       end
     end
 
@@ -569,7 +552,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_not_nil test1
         test2 = Assignment.find_by_short_identifier('ATest2')
         assert_not_nil test2
-        assert_generates '/en/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
+        assert_generates '/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
         assert_recognizes({:controller => 'assignments', :action => 'upload_assignment_list' },
                           {:path => 'assignments/upload_assignment_list', :method => :post})
       end
@@ -587,7 +570,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_not_nil test1
         test2 = Assignment.find_by_short_identifier('ATest4')
         assert_not_nil test2
-        assert_generates '/en/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
+        assert_generates '/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
         assert_recognizes({:controller => 'assignments', :action => 'upload_assignment_list' },
                           {:path => 'assignments/upload_assignment_list', :method => :post})
       end
@@ -604,6 +587,19 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         test1 = Assignment.find_by_short_identifier('ATest5')
         assert_nil test1
       end
+
+      should 'gracefully handle a non csv file with a csv extension' do
+        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+        post_as @admin,
+                :upload_assignment_list,
+                assignment_list: tempfile,
+                file_format: 'csv',
+                encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error],
+                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+      end
     end
 
   end  # -- an Admin
@@ -611,11 +607,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
   context 'A grader' do
     setup do
       @grader = Ta.make
-    end
-
-    should 'not be able to CSV graders report' do
-      get_as @grader, :download_csv_grades_report
-      assert_response :missing
     end
 
     context 'with an assignment' do
@@ -637,13 +628,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_response :missing
       end
 
-      should 'not be able to get group properties' do
-        get_as @grader,
-               :update_group_properties_on_persist,
-               :assignment_id => @assignment.id
-        assert_response :missing
-      end
-
       should 'gets assignment list on the graders' do
         submission_rule = NoLateSubmissionRule.make
         submission_rule.stubs(:can_collect_now?).returns(false)
@@ -655,6 +639,17 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
     end  # -- with an Assignment
+
+    context 'with a hidden assignment' do
+      setup do
+        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+      end
+
+      should 'be able to view it' do
+        get_as @grader, :index
+        assert @response.body.include?(@assignment.short_identifier)
+      end
+    end # -- with a hidden assignment
   end  # -- with a Grader
 
   context 'A student' do
@@ -672,18 +667,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert assigns(:a_id_results)
         assert assigns(:assignments)
         assert_response :success
-      end
-
-      should 'not be able to get group properties' do
-        get_as @student,
-               :update_group_properties_on_persist,
-               :assignment_id => @assignment.id
-        assert_response :missing
-      end
-
-      should 'not be able to access grades report' do
-        get_as @student, :download_csv_grades_report
-        assert_response :missing
       end
 
       should 'not be able to edit assignment' do
@@ -1227,7 +1210,17 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         end
       end
+    end # -- with an assignmt, with past due date but collection in future'
+
+    context 'with a hidden assignment' do
+      setup do
+        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+      end
+
+      should 'not be able to view it' do
+        get_as @student, :index
+        assert !@response.body.include?(@assignment.short_identifier)
+      end
     end
   end  # -- A student
-
 end

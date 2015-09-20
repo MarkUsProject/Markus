@@ -5,7 +5,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 require File.expand_path(File.join(File.dirname(__FILE__),'..', 'test_helper'))
 
 require 'shoulda'
-require 'mocha/setup'
 require 'machinist'
 
 class RubricsControllerTest < AuthenticatedControllerTest
@@ -45,12 +44,6 @@ class RubricsControllerTest < AuthenticatedControllerTest
 
      should 'be redirected on :update_positions' do
         get :update_positions, :assignment_id => @assignment.id
-        assert_response :redirect
-      end
-
-      should 'be redirected on :move_criterion' do
-        get :move_criterion, :assignment_id => @assignment.id, :id => 1
-        # FIXME
         assert_response :redirect
       end
 
@@ -100,7 +93,7 @@ class RubricsControllerTest < AuthenticatedControllerTest
       rubric_criteria = @assignment.rubric_criteria
       assert_not_nil assigns :assignment
       assert_response :redirect
-      assert set_the_flash.to( I18n.t('rubric_criteria.upload.success', :nb_updates => 4))
+      assert set_flash.to(t('rubric_criteria.upload.success', nb_updates: 4))
       assert_response :redirect
       assert_equal 4, @assignment.rubric_criteria.size
 
@@ -122,6 +115,32 @@ class RubricsControllerTest < AuthenticatedControllerTest
               :csv_upload => {:rubric => tempfile}
       assert_not_nil assigns :assignment
       assert flash[:error].include?(I18n.t('csv_invalid_lines'))
+      assert_response :redirect
+    end
+
+    should 'deal properly with malformed CSV files' do
+      tempfile = fixture_file_upload('files/malformed.csv')
+      post_as @admin,
+              :csv_upload,
+              assignment_id: @assignment.id,
+              csv_upload: { rubric: tempfile }
+
+      assert_not_nil assigns :assignment
+      assert_equal(flash[:error], I18n.t('csv.upload.malformed_csv'))
+      assert_response :redirect
+    end
+
+    should 'deal properly with a non csv file with a csv extension' do
+      tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+      post_as @admin,
+              :csv_upload,
+              assignment_id: @assignment.id,
+              csv_upload: { rubric: tempfile },
+              encoding: 'UTF-8'
+
+      assert_not_nil assigns :assignment
+      assert_equal(flash[:error],
+                   I18n.t('csv.upload.non_text_file_with_csv_extension'))
       assert_response :redirect
     end
 
@@ -186,8 +205,8 @@ END
               :yml_upload => {:rubric => yml_string}
 
       assert_response :redirect
-      assert_not_nil set_the_flash.to((I18n.t('rubric_criteria.upload.success',
-                                      :nb_updates => 2)))
+      assert_not_nil set_flash.to(t('rubric_criteria.upload.success',
+                                    nb_updates: 2))
       @assignment.reload
       cr1 = @assignment.rubric_criteria.find_by_rubric_criterion_name('cr1')
       cr2 = @assignment.rubric_criteria.find_by_rubric_criterion_name('cr2')
@@ -214,8 +233,8 @@ END
                 "cr1:\n  weight: monstrously heavy\n"}
 
       assert_response  :redirect
-      assert_not_nil set_the_flash.to(
-          I18n.t('rubric_criteria.upload.error') + ' ' + 'cr1')
+      assert_not_nil set_flash.to(
+        t('rubric_criteria.upload.error') + ' cr1')
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
       assert_equal [], @assignment.rubric_criteria
@@ -229,7 +248,9 @@ END
              :yml_upload => {:rubric => "cr1:\n  weight: 5\na"}
 
       assert_response :redirect
-      assert_not_nil set_the_flash.to(I18n.t('rubric_criteria.upload.error') + '  ' + I18n.t('rubric_criteria.upload.syntax_error', :error => "syntax error on line 2, col 1: `'"))
+      assert_not_nil set_flash.to(t('rubric_criteria.upload.error') + '  ' +
+                                  t('rubric_criteria.upload.syntax_error',
+                                    error: "syntax error on line 2, col 1: `'"))
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
       assert_equal(@assignment.rubric_criteria.length, 0)
@@ -269,26 +290,29 @@ END
       end
 
       should 'be able to save with errors' do
+        @errors = ActiveModel::Errors.new(self)
         RubricCriterion.any_instance.expects(:save).once.returns(false)
-        RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
+        RubricCriterion.any_instance.expects(:errors).once.returns(@errors)
         get_as @admin,
-              :update,
-              :assignment_id => @assignment.id,
-              :id => @criterion.id,
-              :rubric_criterion => {:rubric_criterion_name => 'one',
-                                    :weight => 10}
+               :update,
+               format: :js,
+               assignment_id: @assignment.id,
+               id: @criterion.id,
+               rubric_criterion: { rubric_criterion_name: 'one',
+                                   weight: 10 }
         assert assigns :criterion
         assert render_template 'errors'
         assert_response :success
       end
 
-      should 'be able to  save without errors' do
+      should 'be able to save without errors' do
         get_as @admin,
-              :update,
-              :assignment_id => @assignment.id,
-              :id => @criterion.id,
-              :rubric_criterion => {:rubric_criterion_name => 'one',
-                                    :weight => 10}
+               :update,
+               format: :js,
+               assignment_id: @assignment.id,
+               id: @criterion.id,
+               rubric_criterion: { rubric_criterion_name: 'one',
+                                   weight: 10 }
         assert assigns :criterion
         assert_equal I18n.t('criterion_saved_success'), flash[:success]
         assert render_template :update
@@ -320,6 +344,7 @@ END
         # XXX move elsewhere -> does not need this context
         post_as @admin,
                 :create,
+                format: :js,
                 :assignment_id => assignment.id,
                 :rubric_criterion => {:rubric_criterion_name => 'first',
                                       :weight => 10}
@@ -332,6 +357,7 @@ END
       should 'save without errors' do
         post_as @admin,
                 :create,
+                format: :js,
                 :assignment_id => @assignment.id,
                 :rubric_criterion => {:rubric_criterion_name => 'first',
                                       :weight => 10}
@@ -371,8 +397,8 @@ END
 
 
         assert_response :redirect
-        assert set_the_flash.to((I18n.t('rubric_criteria.upload.success',
-                                        :nb_updates => 2)))
+        assert set_flash.to(t('rubric_criteria.upload.success',
+                              nb_updates: 2))
         @assignment.reload
         assert_equal(@assignment.rubric_criteria.length, 3)
         assert_equal(@assignment.rubric_criteria[0].weight, 1.0)
@@ -388,9 +414,9 @@ END
         should 'be able to update_positions' do
           get_as @admin,
                 :update_positions,
-                :rubric_criteria_pane_list => [@criterion2.id,
-                                              @criterion.id],
-                :assignment_id => @assignment.id
+                criterion: [@criterion2.id,
+                            @criterion.id],
+                assignment_id: @assignment.id
           assert render_template ''
           assert_response :success
 
@@ -399,78 +425,8 @@ END
           c2 = RubricCriterion.find(@criterion2.id)
           assert_equal 2, c2.position
         end
+      end
 
-        should 'be able to move_criterion up' do
-          get_as @admin,
-                :move_criterion,
-                :assignment_id => @assignment.id,
-                :id => @criterion2.id,
-                :position => @criterion2.position,
-                :direction => :up
-          assert render_template ''
-          assert_response :success
-
-          c1 = RubricCriterion.find(@criterion.id)
-          assert_equal 1, c1.position
-          c2 = RubricCriterion.find(@criterion2.id)
-          assert_equal 0, c2.position
-        end
-
-        should 'be able to move_criterion down' do
-          get_as @admin,
-                :move_criterion,
-                :assignment_id => @assignment.id,
-                :id => @criterion.id,
-                :position => @criterion.position,
-                :direction => :down
-          assert render_template ''
-          assert_response :success
-
-          c1 = RubricCriterion.find(@criterion.id)
-          c2 = RubricCriterion.find(@criterion2.id)
-          assert_equal 1, c1.position
-          assert_equal 0, c2.position
-
-        end
-
-        context 'And yet another' do
-          setup do
-            criterion = RubricCriterion.make(:assignment => @assignment,
-                                            :position => 3)
-            @criteria = @assignment.rubric_criteria
-          end
-
-          should 'be able to move up top criteria' do
-            criterion = @criteria[0]
-            post_as @admin,
-                    :move_criterion,
-                    :assignment_id => @assignment,
-                    :id => criterion,
-                    :position => criterion.position,
-                    :direction => 'up'
-            @criteria.reload
-            assert_equal 1, criterion.position
-            assert render_template ''
-            assert_response :success
-          end
-
-          should 'be able to move down top criteria' do
-            criterion = @criteria.last
-            position = criterion.position
-            post_as @admin,
-                    :move_criterion,
-                    :assignment_id => @assignment,
-                    :id => criterion,
-                    :position => criterion.position,
-                    :direction => 'down'
-            @criteria.reload
-            assert_equal position, criterion.position
-            assert render_template ''
-            assert_response :success
-          end
-
-        end
-      end # with another submission
     end
   end # An admin, with an assignment, and a rubric criterion
 end

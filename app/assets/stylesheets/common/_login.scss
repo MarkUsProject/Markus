@@ -1,0 +1,75 @@
+/**
+ * Login screen
+ */
+
+.login {
+  background: $white;
+  border-radius: $radius;
+  box-shadow: 0 3px 0 0 $grey;
+  height: auto;
+  left: 50%;
+  margin-left: -180px;
+  margin-top: -200px;
+  position: absolute;
+  top: 50%;
+  width: 360px;
+
+  /* Mobile friendly! */
+  @include breakpoint(tiny) {
+    border-radius: 0;
+    box-shadow: none;
+    left: 0;
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .login-form {
+    margin: 20px auto 0 auto;
+    width: 80%;
+
+    input[type=text],
+    input[type=password],
+    input[type=submit] {
+      width: 100%;
+    }
+
+    input[type=text],
+    input[type=password] {
+      margin: 0.5em 0;
+      padding: 1em;
+    }
+
+    .submit {
+      margin: 15px 0 25px 0;
+
+      input[type=submit] {
+        margin: 0.5em 0;
+        padding: 10px;
+      }
+    }
+  }
+
+  .login-course {
+    color: #777;
+    margin: auto;
+    text-align: center;
+    width: 90%;
+  }
+
+  .login-image {
+    background: transparent url(markus_logo_big.png) no-repeat center center / contain;
+    margin: 1em auto;
+    height: 115px;
+    width: 220px;
+
+    @include hidpi {
+      background-image: url(markus_logo_big@2x.png);
+    }
+  }
+
+  .login-error .error {
+    margin: 2em auto;
+    text-align: center;
+    width: 90%;
+  }
+}

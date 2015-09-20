@@ -123,7 +123,7 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
         penalty = result.extra_marks.first
         assert_not_nil penalty.unit
         assert_equal -10, penalty.extra_mark
-        assert_equal ExtraMark::UNITS[:percentage], penalty.unit
+        assert_equal ExtraMark::PERCENTAGE, penalty.unit
 
         # We should have all files except NotIncluded.java in the repository.
         assert_not_nil submission.submission_files.find_by_filename('TestFile.java')
@@ -199,7 +199,7 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
         penalty = result.extra_marks.first
         assert_not_nil penalty.unit
         assert_equal -20, penalty.extra_mark
-        assert_equal ExtraMark::UNITS[:percentage], penalty.unit
+        assert_equal ExtraMark::PERCENTAGE, penalty.unit
 
 
         # We should have all files except NotIncluded.java in the repository.

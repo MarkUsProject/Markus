@@ -1,0 +1,295 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+  jQuery(document).ready(function() {
+  // Prevent the enter key from releasing grades
+    preventEnterSubmit();
+  });
+
+  /** This function will prevent the default HTML5 action of submitting the content form
+    *  when the user presses "enter". As an Admin user, this would release the grades.
+    */
+  function preventEnterSubmit() {
+    jQuery(document).keypress(function(event) {
+      if (event.which === 13) {
+        event.preventDefault();
+      }
+    });
+  }
+
+  /** Updates total marks cell. Called from Rails controller grade_entry_forms/update_grade to
+    * check if a cell exists before updating it, as cell existence can't be efficiently
+    * checked from the Ruby controller
+    */
+  function update_cell(cell, value) {
+    // If the total marks cell exists, change it's value to the one supplied
+    if (document.getElementById(cell)) {
+      document.getElementById(cell).value = value;
+      var e = new MouseEvent('click', {
+        'view': window,
+        'bubbles': true,
+        'cancelable': false
+      });
+      var node = document.getElementById(cell);
+      node.dispatchEvent(e);
+    }
+  }
+
+  var GradeBoxTotal = React.createClass({
+    handleChange: function() {
+      this.props.value = parseInt(event.target.value, 10);
+    },
+    render: function() {
+      return(
+        <input id={this.props.grade_id} type="text" size="4" 
+         className="grade-input" value={this.props.value} 
+         onClick={this.handleChange} readonly/>
+        );
+    }
+  });
+
+  var GradeEntryBox = React.createClass({
+    componentDidMount: function(){
+        this.props.value = this.props.default_value;
+    },
+    handleChange: function(event) {
+      var params = {
+        'updated_grade':       parseInt(event.target.value),
+        'student_id':          this.props.student_id,
+        'grade_entry_item_id': this.props.grade_entry_column,
+        'authenticity_token':  AUTH_TOKEN
+      };
+      jQuery.ajax({
+        url:  this.props.data_action,
+        data: params,
+        type: 'POST',
+        dataType: 'script',
+      });
+      this.props.value = parseInt(event.target.value, 10);
+    },
+    render: function() {
+      return (
+        <input id={this.props.grade_id} type="text" size="4"
+          className="grade-input" defaultValue={this.props.default_value}
+          onChange={this.handleChange}/>
+        );
+    }
+  });
+
+  var GradesTable = React.createClass({
+    getDefaultProps: function() {
+      // Creates a new table with the columns defined below.
+      // The first column will be the column initially sorted.
+      return {
+        columns: [
+          {
+            id: 'user_name',
+            content: '<%= j raw I18n.t(:'user.user_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'last_name',
+            content: '<%= j raw I18n.t(:'user.last_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'first_name',
+            content: '<%= j raw I18n.t(:'user.first_name') %>',
+            sortable: true,
+            searchable: true
+          },
+          {
+            id: 'section',
+            content: '<%= j raw I18n.t(:'user.section') %>',
+          }
+        ],
+        filters: [
+        {
+          name: 'all',
+          text: '<%= j raw I18n.t(:'all') %>',
+          func: function(student) {
+            return true;
+          }
+        }]
+      }
+    },
+    getInitialState: function() {
+      return {
+        error: null,
+        row_data: [],
+        grade_columns:[],
+        selected_students: [],
+      }
+    },
+    updateSelectedStudents: function(students) {
+      this.setState({selected_students: students});
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    refresh: function() {
+     document.getElementById('working').style.display = '';
+
+      // Getting additional grade entry item columns
+      jQuery.ajax({
+        url: 'get_mark_columns',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            grade_columns: data,
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this),
+        // Close working indicator.
+        complete: function () {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+      // Getting row data
+      jQuery.ajax({
+        url: 'populate_grades_table',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({
+            row_data: data,
+            error: null
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this),
+        // Close working indicator.
+        complete: function () {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+    render: function() {
+      // Add grades and marking state columns to array of table columns
+      var all_columns = this.props.columns.concat(this.state.grade_columns);
+
+      // Set React Table data from JSON data
+      var rows = this.state.row_data.map(function(row){
+        var r = {};
+        r['id'] = row.id
+        r['user_name'] = row.user_name
+        r['first_name'] = row.first_name
+        r['last_name'] = row.last_name
+
+        this.state.grade_columns.map(function(column){
+          var column_id = column.id;
+
+          if (column_id === 'marking_state'){
+            r[column_id] = <img src={row[column_id]}/>;
+          } 
+          else if (column_id === 'total_marks'){
+            r[column_id] = <GradeBoxTotal grade_id={'grade_' + row.id + '_' + column.id} 
+                           grade_entry_column={column.id} student_id={row.id} 
+                           value={row[column_id]}/>;
+          } 
+          else {
+            r[column_id] =
+              <GradeEntryBox
+               grade_id={'grade_' + row.id + '_' + column.id}
+               data_action=
+                 "<%= update_grade_grade_entry_form_path(@grade_entry_form) %>"
+               grade_entry_column={column.id}
+               student_id={row.id}
+               default_value={row[column_id]}/>
+          }
+        }.bind(this));
+        return r;
+      }.bind(this));
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <GradesActionBox
+            selected_students={this.state.selected_students}
+            onError={this.onError}
+            refresh={this.refresh} />
+          <Table data={rows}
+            search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
+            selectable={true} // True if you want checkboxed elements
+            onSelectedRowsChange={this.updateSelectedStudents}          
+            columns={all_columns}
+            filters={null} // Optional: pass null 
+           />
+        </div>
+      );
+    }
+  });
+
+  var GradesActionBox = React.createClass({
+    propTypes: {
+      selected_students: React.PropTypes.array
+    },
+    releaseMarks: function() {
+      var dataLoad = {
+        release_results: true,
+        filter: 'none',
+        students: this.props.selected_students
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_grade_entry_students',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    unreleaseMarks: function() {
+      var dataLoad = {
+        unrelease_results: false,
+        filter: 'none',
+        students: this.props.selected_students
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_grade_entry_students',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    render: function() {
+      return (
+        <div class='floatRight'>
+          <div className='react-release-marks'>
+            <button onClick={this.releaseMarks}>
+              <%= j raw I18n.t('browse_submissions.release_marks') %>
+            </button>
+            <button onClick={this.unreleaseMarks}>
+              <%= j raw I18n.t('browse_submissions.unrelease_marks') %>
+            </button>
+          </div>
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<GradesTable />, document.getElementById('react_grades_table'));
+
+</script>
+

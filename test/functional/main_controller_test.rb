@@ -3,13 +3,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 require 'shoulda'
 require 'machinist'
 
-# re-raise errors caught by controller
-class MainController
-  def rescue_action(e)
-    raise e
-  end
-end
-
 class MainControllerTest < AuthenticatedControllerTest
 
   # TODO need to change username and password for valid logins when
@@ -109,12 +102,12 @@ class MainControllerTest < AuthenticatedControllerTest
     context 'signed' do
       setup do
         @assignments = []
-        @assignments[1] = Assignment.make(:due_date => 1.day.ago)
-        @assignments[2] = Assignment.make(:due_date => 2.day.ago)
-        @assignments[0] = Assignment.make(:due_date => 1.day.from_now)
+        @assignments[1] = Assignment.make(due_date: 1.day.ago)
+        @assignments[0] = Assignment.make(due_date: 2.day.ago)
+        @assignments[2] = Assignment.make(due_date: 1.day.from_now)
       end
 
-      should 'see assignments dashboard ordered by due_date desc' do
+      should 'see assignments dashboard ordered by due_date asc' do
         get_as @admin, :index
         assert assigns['assignments'] == @assignments
       end

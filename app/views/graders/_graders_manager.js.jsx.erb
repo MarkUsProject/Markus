@@ -1,0 +1,583 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+  // This file contains the main GradersManager component
+  // as well as the manager and tables for the groups + criteria
+  // tables, which is on the right.
+
+
+  var GradersManager = React.createClass({
+    getInitialState: function() {
+      return {
+        assign_to_criteria: false,
+        error: null,
+        current_table: 'groups_table',
+        groups_and_criteria: {groups: [], criteria: []},
+        graders: [],
+        sections: [],
+        selected_groups: [],
+        selected_criteria: [],
+        selected_graders: [],
+        selected_graders_in_groups: [],
+        selected_graders_in_criteria: []
+      }
+    },
+    updateCurrentTable: function(table) {
+      this.setState({current_table: table});
+    },
+    updateSelectedGraders: function(graders) {
+      this.setState({selected_graders: graders});
+    },
+    updateSelectedGroups: function(groups) {
+      this.setState({selected_groups: groups});
+    },
+    updateSelectedGradersInGroups: function(graders) {
+      this.setState({selected_graders_in_groups: graders});
+    },
+    updateSelectedCriteria: function(criteria) {
+      this.setState({selected_criteria: criteria});
+    },
+    updateSelectedGradersInCriteria: function(graders) {
+      this.setState({selected_graders_in_criteria: graders});
+    },
+    setError: function(error_msg) {
+      this.setState({error: error_msg});
+    },
+    criteriaCheckboxClicked: function(event) {
+      var dataLoad = {value: event.currentTarget.checked};
+      jQuery.ajax({
+        method: 'POST',
+        url: 'graders/set_assign_criteria',
+        data: dataLoad,
+        success: function(data) {
+          this.refresh();
+        }.bind(this)
+      });
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+      // Collects data as an array from the server to populate the tables
+      // 1st element: Boolean that is true when grading with criteria
+      //              and false when not
+      // 2nd element: Sections info
+      // 3nd element: Info for the graders table
+      // 4rd element: Info for groups table + criteria (if we are using crit.)
+      //              this is actually a hash.
+      jQuery.ajax({
+        url: 'graders/populate',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          document.getElementById('working').style.display = 'none';
+          // If not assigning graders to criteria,
+          // make current_table groups_table
+          if (!data[0]) {
+            this.setState({current_table: 'groups_table'});
+          }
+          this.setState({
+            assign_to_criteria: data[0],
+            sections: data[1],
+            graders: data[2],
+            groups_and_criteria: data[3],
+          });
+        }.bind(this)
+      });
+    },
+    render: function() {
+      var to_render = [];
+      to_render.push(<GradersTable graders={this.state.graders}
+        selected_graders={this.state.selected_graders}
+        onSelectedGradersChange={this.updateSelectedGraders} />);
+      to_render.push(<GradersActionsColumn
+        refresh={this.refresh}
+        current_table={this.state.current_table}
+        selected_graders={this.state.selected_graders}
+        selected_groups={this.state.selected_groups}
+        selected_criteria={this.state.selected_criteria}
+        selected_graders_in_groups={this.state.selected_graders_in_groups}
+        selected_graders_in_criteria={this.state.selected_graders_in_criteria}
+        updateSelectedGraders={this.updateSelectedGraders}
+        updateSelectedGroups={this.updateSelectedGroups}
+        updateSelectedCriteria={this.updateSelectedCriteria}
+        updateSelectedGradersInGroups={this.updateSelectedGradersInGroups}
+        updateSelectedGradersInCriteria={this.updateSelectedGradersInCriteria}
+        setError={this.setError}
+      />);
+      to_render.push(<input type='checkbox'
+        checked={this.state.assign_to_criteria}
+        onChange={this.criteriaCheckboxClicked}><%= j raw I18n.t('graders.assign_to_criteria') %></input>);
+      to_render.push(<GroupsTableManager
+        assign_to_criteria={this.state.assign_to_criteria} 
+        groups_and_criteria={this.state.groups_and_criteria}
+        selected_groups={this.state.selected_groups}
+        onSelectedGroupsChange={this.updateSelectedGroups}
+        selected_graders_in_groups={this.state.selected_graders_in_groups}
+        onSelectedGradersInGroupsChange={this.updateSelectedGradersInGroups}
+        selected_criteria={this.state.selected_criteria}
+        onSelectedCriteriaChange={this.updateSelectedCriteria}
+        selected_graders_in_criteria={this.state.selected_graders_in_criteria}
+        onSelectedGradersInCriteriaChange={this.updateSelectedGradersInCriteria}
+        sections={this.state.sections}
+        refresh={this.refresh}
+        current_table={this.state.current_table}
+        onTableChange={this.updateCurrentTable}
+      />);
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <div className='columns'>{to_render}</div>
+        </div>
+        
+        
+      );
+    }
+  });
+
+  var GroupsTableManager = React.createClass({
+    propTypes: {
+      assign_to_criteria: React.PropTypes.bool,
+      groups_and_criteria: React.PropTypes.object,
+      selected_groups: React.PropTypes.array,
+      onSelectedGroupsChange: React.PropTypes.func,
+      selected_graders_in_groups: React.PropTypes.array,
+      onSelectedGradersInGroupsChange: React.PropTypes.func,
+      selected_criteria: React.PropTypes.array,
+      onSelectedCriteriaChange: React.PropTypes.func,
+      selected_graders_in_criteria: React.PropTypes.array,
+      onSelectedGradersInCriteriaChange: React.PropTypes.func,
+      sections: React.PropTypes.array,
+      refresh: React.PropTypes.func,
+      current_table: React.PropTypes.string,
+      onTableChange: React.PropTypes.func
+    },
+     render: function() {
+      if (this.props.assign_to_criteria) {
+        return (
+          <div className={'col-right'}>
+            <GroupsTableWithCriteria
+              groups={this.props.groups_and_criteria.groups}
+              selected_groups={this.props.selected_groups}
+              onSelectedGroupsChange={this.props.onSelectedGroupsChange}
+              selected_graders_in_groups={this.props.selected_graders_in_groups}
+              onSelectedGradersInGroupsChange={this.props.onSelectedGradersInGroupsChange}
+              criteria={this.props.groups_and_criteria.criteria}
+              selected_criteria={this.props.selected_criteria}
+              onSelectedCriteriaChange={this.props.onSelectedCriteriaChange}
+              selected_graders_in_criteria={this.props.selected_graders_in_criteria}
+              onSelectedGradersInCriteriaChange={this.props.onSelectedGradersInCriteriaChange}
+              sections={this.props.sections}
+              refresh={this.props.refresh}
+              onTableChange={this.props.onTableChange}
+            />
+          </div>
+        );
+      } else {
+        return (
+          <div className={'col-right'}>
+            <GroupsTableNoCriteria 
+              groups={this.props.groups_and_criteria.groups}
+              selected_groups={this.props.selected_groups}
+              onSelectedGroupsChange={this.props.onSelectedGroupsChange}
+              selected_graders_in_groups={this.props.selected_graders_in_groups}
+              onSelectedGradersInGroupsChange={this.props.onSelectedGradersInGroupsChange}
+              sections={this.props.sections}
+              refresh={this.props.refresh}
+            />
+          </div>
+        );
+      }
+    }
+  });
+
+  var GroupsTableWithCriteria = React.createClass({
+    propTypes: {
+      groups: React.PropTypes.array,
+      selected_groups: React.PropTypes.array,
+      onSelectedGroupsChange: React.PropTypes.func,
+      selected_graders_in_groups: React.PropTypes.array,
+      onSelectedGradersInGroupsChange: React.PropTypes.func,
+      criteria: React.PropTypes.array,
+      selected_criteria: React.PropTypes.array,
+      onSelectedCriteriaChange: React.PropTypes.func,
+      sections: React.PropTypes.array,
+      refresh: React.PropTypes.func
+    },
+    componentDidMount: function() {
+      jQuery('#group-tabs').tabs();
+    },
+    tableChanged: function(event) {
+      var table = event.currentTarget.getAttribute('id');
+      this.props.onTableChange(table);
+    },
+    groupCheckboxAllClicked: function(event) {
+      var value = event.currentTarget.checked;
+      if (value) {
+        var new_selected_groups = this.props.groups.map(function(x) { return x.id; }).slice();
+        this.props.onSelectedGroupsChange(new_selected_groups);
+      } else {
+        this.props.onSelectedGroupsChange([]);
+      }
+    },
+    criteriaCheckboxAllClicked: function(event) {
+      var value = event.currentTarget.checked;
+      if (value) {
+        var new_selected_criteria = this.props.criteria.map(function(x) { return x.id; }).slice();
+        this.props.onSelectedCriteriaChange(new_selected_criteria);
+      } else {
+        this.props.onSelectedCriteriaChange([]);
+      }
+    },
+    gradersInGroupsCheckboxAllClicked: function(event) {
+      var value = event.currentTarget.checked;
+      if (value) {
+        var new_selected_graders_in_groups = [];
+        for (var i = 0; i < this.props.groups.length; i++) {
+          for (var j = 0; j < this.props.groups[i].graders.length; j++) {
+            new_selected_graders_in_groups.push(this.props.groups[i].graders[j].membership_id);
+          }
+        }
+        this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
+      } else {
+        this.props.onSelectedGradersInGroupsChange([]);
+      }
+    },
+     gradersInCriteriaCheckboxAllClicked: function(event) {
+      var value = event.currentTarget.checked;
+      if (value) {
+        var new_selected_graders_in_criteria = [];
+        for (var i = 0; i < this.props.criteria.length; i++) {
+          for (var j = 0; j < this.props.criteria[i].graders.length; j++) {
+            new_selected_graders_in_criteria.push(this.props.criteria[i].graders[j].criterion_association);
+          }
+        }
+        this.props.onSelectedGradersInCriteriaChange(new_selected_graders_in_criteria);
+      } else {
+        this.props.onSelectedGradersInCriteriaChange([]);
+      }
+    },
+    groupCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var group_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_groups = this.props.selected_groups.slice();
+      if (value) {
+        new_selected_groups.push(group_id);
+      } else {
+        new_selected_groups.splice(new_selected_groups.indexOf(group_id), 1);
+      }
+      this.props.onSelectedGroupsChange(new_selected_groups);
+    },
+    criteriaCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var criteria_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_criteria = this.props.selected_criteria.slice();
+      if (value) {
+        new_selected_criteria.push(criteria_id);
+      } else {
+        new_selected_criteria.splice(new_selected_criteria.indexOf(criteria_id), 1);
+      }
+      this.props.onSelectedCriteriaChange(new_selected_criteria);
+    },
+    graderInGroupCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var group_grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_graders_in_groups = this.props.selected_graders_in_groups.slice();
+      if (value) {
+        new_selected_graders_in_groups.push(group_grader_id);
+      } else {
+        new_selected_graders_in_groups.splice(new_selected_graders_in_groups.indexOf(group_grader_id), 1);
+      }
+      this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
+    },
+    graderInCriteriaCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var criterion_grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_graders_in_criteria = this.props.selected_graders_in_criteria.slice();
+      if (value) {
+        new_selected_graders_in_criteria.push(criterion_grader_id);
+      } else {
+        new_selected_graders_in_criteria.splice(new_selected_graders_in_criteria.indexOf(criterion_grader_id), 1);
+      }
+      this.props.onSelectedGradersInCriteriaChange(new_selected_graders_in_criteria);
+    },
+    render: function() {
+      var group_columns = [
+      {
+        id: 'checkbox',
+        content: <div>
+          <input type='checkbox'
+            onChange={this.groupCheckboxAllClicked} />
+          </div>,
+        sortable: false,
+        searchable: false
+      },
+      {
+        id: 'name',
+        content: '<%= j raw I18n.t('groups.group_name') %>',
+        sortable: true,
+        searchable: true
+      },
+      <%= raw @section_column  %>
+      {
+        id: 'graders',
+        content:
+          <input type='checkbox'
+          onChange={this.gradersInGroupsCheckboxAllClicked}> <%= j raw I18n.t('graders.graders') %>
+        </input>,
+        sortable: true,
+        searchable: false
+      },
+      {
+        id: 'coverage',
+        content: '<%= j raw I18n.t('graders.coverage') %>',
+        sortable: true,
+        searchable: false
+      }
+      ];
+
+      // need to filter for each section
+      var section_filters = [];
+      section_filters.push({name: '-', text: '-', func: function(g) { return g; } });
+
+      for (var i = 0; i < this.props.sections.length; i++) {
+        var filter = {
+          name: this.props.sections[i].name,
+          text: this.props.sections[i].name,
+          func: function(group) {
+            return (group.section == this.name);
+          }.bind(this.props.sections[i])
+        };
+        section_filters.push(filter);
+      }
+
+      // Massage the data so it will fit into the table.
+      var groups_data = this.props.groups.map(function(group) {
+        var g = {};
+        g['id'] = group.id;
+        g['checkbox'] = <input id={group.id} type='checkbox'
+          checked={this.props.selected_groups.indexOf(group.id) !== -1}
+          onChange={this.groupCheckboxClicked} />
+        g['name'] = group.name;
+        g['section'] = group.section;
+        var graders = [];
+        for (var i = 0; i < group.graders.length; i++) {
+          graders.push(<div key={group.graders[i].membership_id}>
+            <input id={group.graders[i].membership_id}
+              type='checkbox'
+              checked={this.props.selected_graders_in_groups.indexOf(group.graders[i].membership_id) !== -1}
+              onChange={this.graderInGroupCheckboxClicked} />{group.graders[i].user_name}</div>);
+        }
+        g['graders'] = graders;
+        g['coverage'] = <span dangerouslySetInnerHTML={{__html: group.coverage}} />;
+        return g;
+      }.bind(this));
+
+      var criteria_columns = [
+       {
+        id: 'checkbox',
+        content: <div>
+          <input type='checkbox'
+            onChange={this.criteriaCheckboxAllClicked} />
+          </div>,
+        sortable: false,
+        searchable: false
+      },
+       {
+        id: 'name',
+        content: '<%= j raw I18n.t('criterion_name') %>',
+        sortable: true,
+        searchable: true
+      },
+      {
+        id: 'graders',
+        content:<input type='checkbox'
+          onChange={this.gradersInCriteriaCheckboxAllClicked}> <%= j raw I18n.t('graders.graders') %></input>,
+        sortable: true,
+        searchable: false
+      },
+      {
+        id: 'coverage',
+        content: '<%= j raw I18n.t('graders.coverage') %>',
+        sortable: true,
+        searchable: false
+      }
+      ];
+
+      // Massage the data so it will fit into the table.
+      var criteria_data = this.props.criteria.map(function(criterion) {
+        var c = {};
+        c['id'] = criterion.id;
+        c['checkbox'] = <input id={criterion.id} type='checkbox'
+          checked={this.props.selected_criteria.indexOf(criterion.id) !== -1}
+          onChange={this.criteriaCheckboxClicked} />
+        c['name'] = criterion.name;
+        var graders = [];
+        for (var i = 0; i < criterion.graders.length; i++) {
+          graders.push(<div key={criterion.graders[i].criterion_association}>
+            <input id={criterion.graders[i].criterion_association}
+              type='checkbox'
+              checked={this.props.selected_graders_in_criteria.indexOf(criterion.graders[i].criterion_association) !== -1}
+              onChange={this.graderInCriteriaCheckboxClicked} />{criterion.graders[i].user_name}</div>);
+        }
+        c['graders'] = graders;
+        c['coverage'] = <span dangerouslySetInnerHTML={{__html: criterion.coverage}} />;
+        return c;
+      }.bind(this));
+
+      return (
+        <div>
+            <div id='group-tabs' className='tab-pane'>
+              <ul>
+              <li><a id='groups_table' onClick={this.tableChanged} href='#groups-tab'><span><%= j raw I18n.t('groups.groups') %></span></a></li>
+              <li><a id='criteria_table' onClick={this.tableChanged} href='#criteria-tab'><span><%= j raw I18n.t('criteria') %></span></a></li>
+              </ul>
+             <div id='groups-tab'>
+               <Table data={groups_data} columns={group_columns}
+                 filters={section_filters} filter_type={false}
+                 search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
+             </div>
+             <div id='criteria-tab'>
+               <Table data={criteria_data} columns={criteria_columns}
+                 filters={null} filter_type={false}
+                 search_placeholder={'<%= j raw I18n.t('graders.search_criteria') %>'} />
+            </div>
+          </div>
+        </div>);
+    }
+  });
+
+  var GroupsTableNoCriteria = React.createClass({
+    propTypes: {
+      groups: React.PropTypes.array,
+      selected_groups: React.PropTypes.array,
+      onSelectedGroupsChange: React.PropTypes.func,
+      selected_graders_in_groups: React.PropTypes.array,
+      onSelectedGradersInGroupsChange: React.PropTypes.func,
+      sections: React.PropTypes.array,
+      refresh: React.PropTypes.func
+    },
+    groupCheckboxAllClicked: function(event) {
+      var value = event.currentTarget.checked;
+      if (value) {
+        var new_selected_groups = this.props.groups.map(function(x) { return x.id; }).slice();
+        this.props.onSelectedGroupsChange(new_selected_groups);
+      } else {
+        this.props.onSelectedGroupsChange([]);
+      }
+    },
+    graderCheckboxAllClicked: function(event) {
+      var value = event.currentTarget.checked;
+      if (value) {
+        var new_selected_graders_in_groups = [];
+        for (var i = 0; i < this.props.groups.length; i++) {
+          for (var j = 0; j < this.props.groups[i].graders.length; j++) {
+            new_selected_graders_in_groups.push(this.props.groups[i].graders[j].membership_id);
+          }
+        }
+        this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
+      } else {
+        this.props.onSelectedGradersInGroupsChange([]);
+      }
+    },
+    groupCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var group_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_groups = this.props.selected_groups.slice();
+      if (value == true) {
+        new_selected_groups.push(group_id);
+      } else {
+        new_selected_groups.splice(new_selected_groups.indexOf(group_id), 1);
+      }
+      this.props.onSelectedGroupsChange(new_selected_groups);
+    },
+    graderCheckboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var group_grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_graders_in_groups = this.props.selected_graders_in_groups.slice();
+      if (value == true) {
+        new_selected_graders_in_groups.push(group_grader_id);
+      } else {
+        new_selected_graders_in_groups.splice(new_selected_graders_in_groups.indexOf(group_grader_id), 1);
+      }
+      this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
+    },
+    refresh: function() {
+      this.props.refresh();
+    },
+    render: function() {
+      var columns = [
+      {
+        id: 'checkbox',
+        content: <div>
+          <input type='checkbox'
+            onChange={this.groupCheckboxAllClicked} />
+          </div>,
+        sortable: false,
+        searchable: false
+      },
+      {
+        id: 'name',
+        content: '<%= j raw I18n.t('groups.group_name') %>',
+        sortable: true,
+        searchable: true
+      },
+      <%= raw @section_column  %>
+      {
+        id: 'graders',
+        content:<input type='checkbox'
+        onChange={this.graderCheckboxAllClicked}> <%= j raw I18n.t('graders.graders') %></input>,
+        sortable: true,
+        searchable: false
+      },
+      ];
+
+      // need to filter for each section
+      var filters = [];
+      filters.push({name: '-', text: '-', func: function(g) { return g; } });
+
+      for (var i = 0; i < this.props.sections.length; i++) {
+        var filter = {
+          name: this.props.sections[i].name,
+          text: this.props.sections[i].name,
+          func: function(group) {
+            return (group.section == this.name);
+          }.bind(this.props.sections[i])
+        }
+        filters.push(filter);
+      }
+
+      // Massage the data so it will fit into the table.
+      var groups_data = this.props.groups.map(function(group) {
+        var g = {};
+        g['id'] = group.id;
+        g['checkbox'] = <input id={group.id} type='checkbox'
+          checked={this.props.selected_groups.indexOf(group.id) !== -1 ? true : false}
+          onChange={this.groupCheckboxClicked} />
+        g['name'] = group.name;
+        g['section'] = group.section;
+        var graders = [];
+        for (var i = 0; i < group.graders.length; i++) {
+          graders.push(<div key={group.graders[i].membership_id}>
+            <input id={group.graders[i].membership_id}
+              type='checkbox'
+              checked={this.props.selected_graders_in_groups.indexOf(group.graders[i].membership_id) !== -1 ? true : false}
+              onChange={this.graderCheckboxClicked} />{group.graders[i].user_name}</div>);
+        }
+        
+        g['graders'] = graders;
+        return g;
+      }.bind(this));
+
+      return (
+       <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
+        <Table data={groups_data} columns={columns}
+               filters={filters} filter_type={false}
+               search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
+        </div>
+      );
+    }
+  });
+
+  React.renderComponent(<GradersManager/>, document.getElementById('graders_manager'));
+</script>

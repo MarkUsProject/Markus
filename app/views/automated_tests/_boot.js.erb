@@ -1,13 +1,10 @@
-<script type="text/javascript">
+<script>
 //<![CDATA[
-
-  document.observe('dom:loaded', function() {
-
+  jQuery(document).ready(function() {
     <% if @assignment %>
       toggle_automated_tests(<%= @assignment.enable_test %>);
       toggle_tests_tokens(<%= @assignment.unlimited_tokens %>)
     <% end %>
-
   });
 //]]>
 </script>

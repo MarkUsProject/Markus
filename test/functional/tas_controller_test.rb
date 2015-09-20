@@ -75,7 +75,7 @@ class TasControllerTest < AuthenticatedControllerTest
         assert_redirected_to(:controller => 'tas', :action => 'index')
         c8mahler = Ta.find_by_user_name('c8mahlernew')
         assert_not_nil c8mahler
-        assert_generates '/en/tas/upload_ta_list', :controller => 'tas', :action => 'upload_ta_list'
+        assert_generates '/tas/upload_ta_list', :controller => 'tas', :action => 'upload_ta_list'
         assert_recognizes({:controller => 'tas', :action => 'upload_ta_list' },
           {:path => 'tas/upload_ta_list', :method => :post})
       end
@@ -111,6 +111,29 @@ class TasControllerTest < AuthenticatedControllerTest
         assert_redirected_to(:controller => 'tas', :action => 'index')
         test_student = Ta.find_by_user_name('c2ÈrÉØrr')
         assert_nil test_student # student should not be found, despite existing in the CSV file
+      end
+
+      should 'gracefully handle malformed csv files' do
+        tempfile = fixture_file_upload('files/malformed.csv')
+        post_as @admin,
+                :upload_ta_list,
+                userlist: tempfile,
+                encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+      end
+
+      should 'gracefully handle a non csv file with a csv extension' do
+        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+        post_as @admin,
+                :upload_ta_list,
+                userlist: tempfile,
+                encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error],
+                     I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
     end # -- With a TA
   end # -- An admin

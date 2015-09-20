@@ -56,6 +56,10 @@ class AutomatedTestsController < ApplicationController
       end
 
     end
+    render :test_replace,
+           format: :js,
+           locals: { test_result_files: @test_result_files,
+                     result: @result }
   end
 
   # Manage is called when the Automated Test UI is loaded
@@ -63,10 +67,7 @@ class AutomatedTestsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
   end
 
-  def student_interface
-    @assignment = Assignment.find(params[:id])
-    @student = current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
+  #Update function called when files are added to the assignment
 
     if !@grouping.nil?
       # Look up submission information
@@ -76,16 +77,21 @@ class AutomatedTestsController < ApplicationController
 
       @test_script_results = TestScriptResult.find_by_grouping_id(@grouping.id)
 
-      @token = Token.find_by_grouping_id(@grouping.id)
-      if @token
-        @token.reassign_tokens_if_new_day()
-      end
+        begin
+          # Process testing framework form for validation
+          @assignment = process_test_form(@assignment, assignment_params)
+        rescue Exception, RuntimeError => e
+          @assignment.errors.add(:base, I18n.t('assignment.error',
+            message: e.message))
+          return redirect_to action: 'manage',
+            assignment_id: params[:assignment_id]
+        end
 
-      # For running tests
-      if params[:run_tests] && ((@token && @token.tokens > 0) || @assignment.unlimited_tokens)
-        result = run_tests(@grouping.id)
-        if result == nil
-          flash[:notice] = I18n.t("automated_tests.tests_running")
+        # Save assignment and associated test files
+        if @assignment.save
+          flash[:success] = I18n.t('assignment.update_success')
+          redirect_to action: 'manage',
+            assignment_id: params[:assignment_id]
         else
           flash[:failure] = result
         end
@@ -193,4 +199,44 @@ class AutomatedTestsController < ApplicationController
     end
   end
 
+  private
+
+  def assignment_params
+    params.require(:assignment)
+          .permit(:enable_test,
+                  :assignment_id,
+                  test_files_attributes:
+                  [:id, :filename, :filetype, :is_private, :_destroy])
+  end
 end
+
+
+# def student_interface
+#   @assignment = Assignment.find(params[:id])
+#   @student = current_user
+#   @grouping = @student.accepted_grouping_for(@assignment.id)
+# 
+#   if !@grouping.nil?
+#     # Look up submission information
+#     repo = @grouping.group.repo
+#     @revision  = repo.get_latest_revision
+#     @revision_number = @revision.revision_number
+# 
+#     @test_script_results = TestScriptResult.find_by_grouping_id(@grouping.id)
+# 
+#     @token = Token.find_by_grouping_id(@grouping.id)
+#     if @token
+#       @token.reassign_tokens_if_new_day()
+#     end
+# 
+#     # For running tests
+#     if params[:run_tests] && ((@token && @token.tokens > 0) || @assignment.unlimited_tokens)
+#       result = run_tests(@grouping.id)
+#       if result == nil
+#         flash[:notice] = I18n.t("automated_tests.tests_running")
+#       else
+#         flash[:failure] = result
+#       end
+#     end
+#   end
+# end
