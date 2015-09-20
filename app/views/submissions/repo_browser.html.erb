@@ -97,6 +97,8 @@
                    id: @grouping.id,
                    assignment_id: @assignment.id) do %>
       <%= hidden_field_tag 'current_revision_number', @revision_number %>
+      <label><%= check_box_tag(:apply_late_penalty) %><%=t('apply_late_penalty')%></label>
+
       <input type='submit'
              value='<%= t('browse_submissions.collect_and_grab') %>'
              onclick="if (!confirm('<%=t(:collect_and_grade_overwrite_warning)%>')) return false;

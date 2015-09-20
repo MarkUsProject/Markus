@@ -122,6 +122,7 @@ en:
       no_submission: "%{group_name} has no submissions"
       result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
+      apply_late_penalty: "Apply Late Penalty"
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
       disable_collect: "Collection disabled, more than one TA marking displayed submissions."
