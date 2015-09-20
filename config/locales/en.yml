@@ -306,6 +306,7 @@ en:
       notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Include Annotations:"
       include_annotations_warning: "Warning! Annotations on PDFs are not currently downloaded."
+      select_a_test: "Please select a test"
       marks:
         total_mark: "Total Mark:"
         released:   "Released:"

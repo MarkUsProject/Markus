@@ -6,7 +6,7 @@
            <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
            <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
 
-          <% if has_test_results?(submission) %>
+          <% if can_show_test_results_tab?(assignment, submission) %>
               <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
           <% end %>
 
@@ -45,12 +45,12 @@
           <ul id='annotation_summary_list'></ul>
         </div>
 
-        <% if has_test_results?(submission) %>
-        <div id='test_result_tab' style='display:none;'>
+        <% if can_show_test_results_tab?(assignment, submission) %>
+          <div id='test_result_tab' style='display:none;'>
             <div id='testviewer'>
-              <pre id='test_result_content' cols='80' rows='50'>Please select a test</pre>
+              <pre id='test_result_content' cols='80' rows='50'><%= t('marker.select_a_test') %></pre>
             </div>
-        </div>
+          </div>
         <% end %>
 
         <div id='remark_request_tab' style='display:none;'>

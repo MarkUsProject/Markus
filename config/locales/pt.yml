@@ -294,6 +294,7 @@ pt:
       notes:                "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Incluir anotações:"
       include_annotations_warning: "Aviso! Anotações sobre PDFs não são presentemente descarregado."
+      select_a_test: "Por favor seleccione um teste"
       marks:
         total_mark: "Nota total:"
         released:   "Liberar:"

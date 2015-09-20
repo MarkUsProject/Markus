@@ -312,6 +312,7 @@ fr:
       notes:                "Remarques (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Ajouter les annotations : "
       include_annotations_warning: "Attention! Annotations sur les fichiers PDF ne sont actuellement pas téléchargés."
+      select_a_test: "S'il vous plaît sélectionner un test"
       marks:
         total_mark: "Notes totales : "
         released:   "Dévoilées : "
