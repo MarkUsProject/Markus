@@ -288,6 +288,8 @@ class AssignmentsController < ApplicationController
       unless @assignment.save
         @assignments = Assignment.all
         @sections = Section.all
+        @clone_assignments = Assignment.where(allow_web_submits: false)
+                                       .order(:id)
         render :new
         return
       end
