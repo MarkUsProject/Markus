@@ -201,6 +201,48 @@ module Repository
     end
     alias download_as_string stringify_files # create alias
 
+    # Generate and write the SVN authorization file for the repo.
+    def self.__generate_authz_file
+      return true if !MarkusConfigurator.markus_config_repository_admin?
+      valid_groupings_and_members = {}
+      assignments = Assignment.all
+      assignments.each do |assignment|
+        valid_groupings = assignment.valid_groupings
+        valid_groupings.each do |gr|
+          accepted_students = gr.accepted_students
+          accepted_students = accepted_students.map(&:user_name)
+          valid_groupings_and_members[gr.group.repo_name] = accepted_students
+        end
+      end
+      tas = Ta.all
+      tas = tas.map(&:user_name)
+      admins = Admin.all
+      admins = admins.map(&:user_name)
+      tas_and_admins = tas + admins
+      invalid_groups = Group.all
+      invalid_groups = invalid_groups.map(&:repository_name)
+      authz_string = ''
+      valid_groupings_and_members.each do |repo_name, students|
+        authz_string += "[#{repo_name}:/]\n"
+        students.each do |user_name|
+          authz_string += "#{user_name} = rw\n"
+        end
+        tas_and_admins.each do |admin_user|
+          authz_string += "#{admin_user} = rw\n"
+        end
+        authz_string += "\n"
+        invalid_groups.delete(repo_name)
+      end
+      invalid_groups.each do |repo_name|
+        authz_string += "[#{repo_name}:/]\n"
+        tas_and_admins.each do |admin_user|
+          authz_string += "#{admin_user} = rw\n"
+        end
+        authz_string += "\n"
+      end
+      __write_out_authz_file(authz_string)
+    end
+
     # Returns a Repository::SubversionRevision instance
     # holding the latest Subversion repository revision
     # number
@@ -774,7 +816,8 @@ module Repository
 
     # replaces file at provided path with file_data
     def replace_file(txn, path, file_data=nil, mime_type=nil, expected_revision_number=0)
-      if latest_revision_number(path).to_i != expected_revision_number.to_i
+      # Note: this check is inconsistent with the MemoryRepository
+      if latest_revision_number(path).to_i > expected_revision_number.to_i
         raise Repository::FileOutOfSyncConflict.new(path)
       end
       txn = write_file(txn, path, file_data, mime_type)
@@ -954,7 +997,7 @@ module Repository
             last_modified_revision: last_modified_revision,
             last_modified_date: last_modified_date,
             changed: (last_modified_revision == @revision_number),
-            user_id: @repo.__get_property(:author, last_modified_revision)
+            user_id: @repo.__get_property(:author, @revision_number)
           })
           result[file_name] = new_directory
         end

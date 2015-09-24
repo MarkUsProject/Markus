@@ -12,9 +12,12 @@
 
   <%= pf.fields_for :periods, grace_period do |f| %>
     <p>
-      <%= f.label :hours, t('submission_rules.grace_period_submission_rule.after') %>
+      <%= f.label :hours,
+                  t('submission_rules.grace_period_submission_rule.after'),
+                  class: 'required' %>
       <%= f.text_field :hours,
                        size: 1,
+                       required: true,
                        class: 'PeriodDeltaChain_Hours',
                        onchange: "if (grace_periods) { grace_periods.refresh(); }" %>
       <%= t('submission_rules.grace_period_submission_rule.hours') %>
@@ -32,9 +35,9 @@
         <%= f.label :_destroy, t(:remove) %>
         <%= f.check_box :_destroy %>
       <% else %>
-        <%= link_to_function t(:remove),
-                            "jQuery(this).parents('.period').remove();
-                             if (grace_periods) { grace_periods.refresh(); }" %>
+        <%= link_to t(:remove),
+                    '#',
+                    onclick: 'remove_period(this, grace_periods); return false;' %>
       <% end %>
     </p>
   <% end %>

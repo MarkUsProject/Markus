@@ -28,14 +28,9 @@
                      assignment_flexible_criteria_path(@assignment) %>
             <% end %>
           </li>
-
           <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
             <%= link_to t('annotations.annotations'),
                         assignment_annotation_categories_path(@assignment) %>
-          </li>
-          <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
-            <%= link_to t('automated_tests.automated_tests'),
-                        manage_assignment_automated_tests_path(@assignment) %>
           </li>
         <% end %>
       <% end %>

@@ -31,7 +31,9 @@ module Repository
       @revision_history = []                      # a list (array) of old revisions (i.e. < @current_revision)
       # mapping (hash) of timestamps and revisions
       @timestamps_revisions = {}
-      @timestamps_revisions[Marshal.dump(Time.now)] = @current_revision   # push first timestamp-revision mapping
+      # push first timestamp-revision mapping
+      @timestamps_revisions[Marshal.dump(
+        Marshal.load(Marshal.dump(Time.now)))] = @current_revision
       @repository_location = location
       @opened = true
 
@@ -158,7 +160,8 @@ module Repository
       @revision_history.push(@current_revision)
       @current_revision = new_rev
       @current_revision.__increment_revision_number() # increment revision number
-      @timestamps_revisions[Marshal.dump(timestamp)] = @current_revision
+      @timestamps_revisions[Marshal.dump(
+        Marshal.load(Marshal.dump(timestamp)))] = @current_revision
       @@repositories[@repository_location] = self
       return true
     end
@@ -567,9 +570,11 @@ module Repository
       @files.each do |object|
         alt_path = ""
         if object.path != '/'
-          alt_path = object.path + '/'
+          alt_path = '/' + object.path
         end
-        if object.instance_of?(type) && (object.path == path || alt_path == path)
+        git_path = object.path + '/'
+        if object.instance_of?(type) && (object.path == path ||
+            alt_path == path || git_path == path)
           if (!only_changed)
             object.from_revision = @revision_number # set revision number
             result[object.name] = object

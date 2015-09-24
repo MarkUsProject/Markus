@@ -40,53 +40,39 @@ class Result < ActiveRecord::Base
       .order(:total_mark).pluck(:total_mark)
   end
 
-  # calculate the total mark for this assignment
+  # Calculate the total mark for this submission
   def update_total_mark
-    total = get_subtotal + get_total_extra_points
-    # added_percentage
-    percentage = get_total_extra_percentage
-    total = total + (percentage * submission.assignment.total_mark / 100)
-    self.total_mark = total
-    self.save
+    update_attributes(total_mark:
+      [0, get_subtotal + get_total_extra_points +
+          get_total_extra_percentage_as_points].max)
   end
 
-  #returns the sum of the marks not including bonuses/deductions
+  # The sum of the marks not including bonuses/deductions
   def get_subtotal
-    total = 0.0
-    self.marks.all(include: [:markable]).each do |m|
-      total = total + m.get_mark
-    end
-    total
+    marks.includes(:markable).map(&:get_mark).reduce(0, :+)
   end
 
-  #returns the sum of all the POSITIVE extra marks
-  def get_positive_extra_points
-    extra_marks.positive.points.sum('extra_mark')
-  end
-
-  # Returns the sum of all the negative bonus marks
-  def get_negative_extra_points
-    extra_marks.negative.points.sum('extra_mark')
-  end
-
+  # The sum of the bonuses and deductions, other than late penalty
   def get_total_extra_points
-    return 0.0 if extra_marks.empty?
-    get_positive_extra_points + get_negative_extra_points
+    extra_marks.points.map(&:extra_mark).reduce(0, :+)
   end
 
-  def get_positive_extra_percentage
-    extra_marks.positive.percentage.sum('extra_mark')
+  # The sum of all the positive extra marks
+  def get_positive_extra_points
+    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+)
   end
 
-  def get_negative_extra_percentage
-    extra_marks.negative.percentage.sum('extra_mark')
+  # The sum of all the negative extra marks
+  def get_negative_extra_points
+    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+)
   end
 
+  # Percentage deduction for late penalty
   def get_total_extra_percentage
-    return 0.0 if extra_marks.empty?
-    get_positive_extra_percentage + get_negative_extra_percentage
+    extra_marks.percentage.map(&:extra_mark).reduce(0, :+)
   end
 
+  # Point deduction for late penalty
   def get_total_extra_percentage_as_points
     get_total_extra_percentage * submission.assignment.total_mark / 100
   end
@@ -118,7 +104,7 @@ class Result < ActiveRecord::Base
     if marks.where(mark: nil).first &&
           marking_state == Result::MARKING_STATES[:complete]
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))
-      false
+      return false
     end
     true
   end

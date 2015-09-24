@@ -2,24 +2,6 @@
 
 module GradeEntryFormsHelper
 
-  # Allow the user to create a new column for the grade entry form.
-  # This JavaScript below is necessary because it is possible for the GradeEntryForm
-  # to not exist yet when the form fields come up (i.e. when an instructor
-  # is creating a new grade entry form).
-  def add_grade_entry_item_link(name, form)
-    link_to_function name do |page|
-      grade_entry_item = render(partial: 'grade_entry_item',
-                                locals: {form: form,
-                                            new_position: 0,
-                                            grade_entry_item: GradeEntryItem.new})
-      page << %{
-      var new_grade_entry_item_id = "new_" + new Date().getTime();
-      $('grade_entry_items').insert({bottom: "#{ escape_javascript grade_entry_item }".replace(/attributes_\\d+|\\d+\(?=\\]\)/g, new_grade_entry_item_id) });
-      $('grade_entry_form_grade_entry_items_' + new_grade_entry_item_id + '_name').focus();
-      }
-    end
-  end
-
   # Release/unrelease the marks for a grade entry form for the given
   # grade_entry_students
   # Return the number of GradeEntryStudents that have been updated successfully
@@ -40,43 +22,45 @@ module GradeEntryFormsHelper
     numGradeEntryStudentsChanged
   end
 
-  # Adds a position to the item's attributes if it doesn't have one
   # Removes items that have empty names (so they don't get updated)
   def update_grade_entry_form_params(attributes)
-
     grade_entry_items =
       params[:grade_entry_form][:grade_entry_items_attributes]
 
-    if grade_entry_items == nil
-      return attributes
+    unless grade_entry_items.nil?
+      # Update the attributes hash
+      max_position = 1
+      grade_entry_items.each do |_, item|
+        # Some items are being deleted so don't update those
+        unless item[:_destroy]
+          item[:position] = max_position
+          max_position += 1
+        end
+      end
     end
-
-    # Find the largest position that has been set
-    max_position = 0
-    grade_entry_items.each_value do |value|
-      next unless value
-      this_position = value[:position]
-      next unless this_position && this_position.to_i > max_position
-      max_position = this_position.to_i
-    end
-
-    # Update the attributes hash
-    max_position += 1
-    grade_entry_items.sort.each do |item|
-      # Items not added don't have a name
-      # Some items are being deleted so don't update those
-      next if item[1][:name] && item[1][:destroy] == 1
-      # If the set position is not valid, update it
-      next if grade_entry_items[item[0]][:position].to_i > 0
-      grade_entry_items[item[0]][:position] = max_position
-      max_position += 1
-    end
-
     attributes[:grade_entry_items_attributes] = grade_entry_items
-    attributes
+    grade_entry_form_params(attributes)
   end
 
   def sort_items_by_position(items)
     sorted = items.sort_by { |hsh| hsh[:position] }
+  end
+
+  private
+
+  def grade_entry_form_params(attributes)
+    attributes.require(:grade_entry_form)
+              .permit(:description,
+                      :message,
+                      :date,
+                      :show_total,
+                      :short_identifier,
+                      :is_hidden,
+                      grade_entry_items_attributes: [:name,
+                                                     :out_of,
+                                                     :position,
+                                                     :bonus,
+                                                     :_destroy,
+                                                     :id])
   end
 end

@@ -1,6 +1,9 @@
+# This lets rails autoreload the lib/repo files on every request
+# Should be taken out before production.
+require_dependency Rails.root.join('lib', 'repo', 'repository').to_s
+
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
-
 class ApplicationController < ActionController::Base
   include ApplicationHelper, SessionHandler
 
@@ -13,7 +16,7 @@ class ApplicationController < ActionController::Base
   # activate i18n for renaming constants in views
   before_filter :set_locale, :set_markus_version, :set_remote_user, :get_file_encodings
   # check for active session on every page
-  before_filter :authenticate, except: [:login, :page_not_found]
+  before_filter :authenticate, except: [:login, :page_not_found, :check_timeout]
 
   # Define default URL options to include the locale
   def default_url_options(options={})

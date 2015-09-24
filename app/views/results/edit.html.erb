@@ -13,6 +13,10 @@
 <% # UI LIBRARIES %>
 <%= javascript_include_tag 'DropDownMenu/DropDownMenu' %>
 
+<!-- MathML -->
+<%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
+<%= javascript_include_tag 'MathJax/mathjax_helpers' %>
+
 <% # EDITING MARKS FUNCTIONS AND BOOT SCRIPTS%>
 <%= javascript_include_tag 'Grader/file_selector',
                            'Grader/marking',
@@ -44,11 +48,15 @@
 
     // If the mark_description div is empty, that means it isn't marked
     // Hide the criterion that AREN'T empty (i.e. are marked)
-    jQuery('.mark_description').each(function() {
-      if (this.innerHTML.trim()) {
-        hide_criterion(parseInt(this.getAttribute('data-id'), 10));
-      }
-    });
+    // Check if the marks are released, if they are there is nothing to hide
+    if (document.getElementById('released') === null ||
+        !document.getElementById('released').checked) {
+      jQuery('.mark_description').each(function() {
+        if (this.innerHTML.trim()) {
+          hide_criterion(parseInt(this.getAttribute('data-id'), 10));
+        }
+      });
+    }
   });
 
   function check_working() {
@@ -70,20 +78,71 @@
            formats: [:js] %>
 
 <%= render partial: 'results/marker/setup_annotation_categories',
-           formats: [:js] %>
+           formats: [:js],
+           locals: { categories: @assignment.annotation_categories } %>
 
 <%= render partial: 'results/marker/boot',
            formats: [:js],
            locals: { first_file: @first_file } %>
 
+<!-- Dialogs -->
 <aside class='dialog' id='notes_dialog'></aside>
+<% if @current_user.admin? %>
+  <aside class='dialog' id='create_new_tag'>
+    <%= javascript_include_tag 'Tags/text_updater.js',
+                               id: 'create_script',
+                               text_id: 'description',
+                               info_id: 'descript_amount',
+                               num_char: '120' %>
+
+    <h1><%= t('tags.create.create_new') %></h1>
+    <p><%= t('tags.create.tag_prompt') %></p>
+    <%= form_for :create_new,
+                 url: assignment_tags_path(@assignment),
+                 html: { multipart: true } do |f| %>
+        <div>
+          <p><%= f.text_field :name,
+                              placeholder: t('tags.create.name_prompt') %></p>
+        </div>
+        <div>
+          <p class='alignleft'><%= t('tags.create.tag_description') %></p>
+          <p id='descript_amount' class='alignright'>0/120</p>
+          <p class="clear-alignment"><%= f.text_area :description,
+                                                  id: 'description',
+                                                  cols: 30,
+                                                  rows: 3,
+                                                  maxlength: 120,
+                                                  onKeyDown: 'updateCharCount()',
+                                                  placeholder: t('tags.create.descript_prompt') %></p>
+        </div>
+        <section class='dialog-actions'>
+          <%= hidden_field_tag 'grouping_id', @grouping.id %>
+          <%= f.submit t('tags.create.button_text') %>
+          <input type='reset'
+                 value='<%= t(:cancel) %>'
+                 onclick='modal_create_new.close();'>
+        </section>
+    <% end %>
+  </aside>
+  <aside class='dialog' id='delete_tags'>
+    <h1><%= t('tags.delete.delete_tags') %></h1>
+    <p><%= t('tags.delete.tag_prompt') %></p>
+    <%= form_for :delete,
+                 url: assignment_tags_path(@assignment),
+                 html: { multipart: true } do |f| %>
+
+    <% end %>
+    <input type='reset'
+           value='<%= t(:cancel) %>'
+           onclick='modal_delete_tags.close();'>
+  </aside>
+<% end %>
 
 <div class='title_bar'>
   <h1>
     <%= t('results.title',
           { assignment_name: @assignment.short_identifier,
-            group_name: @group.group_name }) %>
-    (<%= @grouping.get_all_students_in_group %>)
+            group_name: @grouping.get_group_name }) %>
   </h1>
 </div>
 
@@ -132,7 +191,8 @@
     <%= render partial: 'results/marker/marker_panes',
                locals: { extra_marks_points: @extra_marks_points,
                          extra_marks_percentage: @extra_marks_percentage,
-                         annotation_categories: @annotation_categories,
+                         annotation_categories: 
+                           @assignment.annotation_categories,
                          result: @result,
                          assignment: @assignment,
                          marks_map: @marks_map,

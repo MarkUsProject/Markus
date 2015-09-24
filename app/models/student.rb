@@ -1,32 +1,22 @@
 class Student < User
 
   has_many :accepted_groupings,
+           -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'Grouping',
            through: :memberships,
-           source: :grouping,
-           conditions: {
-             'memberships.membership_status' =>
-               [StudentMembership::STATUSES[:accepted],
-                StudentMembership::STATUSES[:inviter]]
-           }
+           source: :grouping
 
   has_many :pending_groupings,
+           -> { where 'memberships.membership_status' => StudentMembership::STATUSES[:pending] },
            class_name: 'Grouping',
            through: :memberships,
-           source: :grouping,
-           conditions: {
-             'memberships.membership_status' =>
-               StudentMembership::STATUSES[:pending]
-           }
+           source: :grouping
 
   has_many :rejected_groupings,
+           -> { where 'memberships.membership_status' => StudentMembership::STATUSES[:rejected] },
            class_name: 'Grouping',
            through: :memberships,
-           source: :grouping,
-           conditions: {
-             'memberships.membership_status' =>
-               StudentMembership::STATUSES[:rejected]
-           }
+           source: :grouping
 
   has_many :student_memberships, foreign_key: 'user_id'
 
@@ -93,7 +83,6 @@ class Student < User
   # Returns the Membership for a Grouping for an Assignment with id 'aid' if
   # this Student is a member with either 'accepted' or 'invitier' membership
   # status
-
   def memberships_for(aid)
     StudentMembership.where(user_id: id)
                      .select { |m| m.grouping.assignment_id == aid }
@@ -134,6 +123,7 @@ class Student < User
         @group = Group.where(group_name: user_name).first
       else
         @group = Group.new(group_name: user_name)
+
         # We want to have the user_name as repository name,
         # so we have to set the repo_name before we save the group.
         @group.repo_name = user_name
@@ -203,6 +193,7 @@ class Student < User
 
     # write repo permissions if need be
     grouping.update_repository_permissions
+    group.set_repo_permissions
 
     member = StudentMembership.new(grouping_id: grouping.id, membership_status: StudentMembership::STATUSES[:inviter], user_id: self.id)
     member.save
@@ -247,9 +238,10 @@ class Student < User
         end
         student = Student.find(student_id)
         memberships.each do |membership|
-          group = membership.grouping.group
+          grouping = membership.grouping
+          group = grouping.group
           group.access_repo do |repo|
-            if membership.grouping.repository_external_commits_only? && membership.grouping.is_valid?
+            if grouping.assignment.vcs_submit && grouping.is_valid?
               begin
                 repo.remove_user(student.user_name) # revoke repo permissions
               rescue Repository::UserNotFound
@@ -279,9 +271,10 @@ class Student < User
         end
         student = Student.find(student_id)
         memberships.each do |membership|
-          group = membership.grouping.group
+          grouping = membership.grouping
+          group = grouping.group
           group.access_repo do |repo|
-            if membership.grouping.repository_external_commits_only? && membership.grouping.is_valid?
+            if grouping.assignment.vcs_submit && grouping.is_valid?
               begin
                 repo.add_user(student.user_name, Repository::Permission::READ_WRITE) # grant repo permissions
               rescue Repository::UserAlreadyExistent

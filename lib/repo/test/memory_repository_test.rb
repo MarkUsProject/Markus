@@ -5,7 +5,7 @@ require 'shoulda'   # load Thoughtbot Shoulda (used as testing framework)
 require 'time'
 include Repository # bring Repository module into current namespace
 
-class MemoryRepositoryTest < Test::Unit::TestCase
+class MemoryRepositoryTest < ActiveSupport::TestCase
 
   RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__), "input_files"))
   TEST_USER = "testuser"

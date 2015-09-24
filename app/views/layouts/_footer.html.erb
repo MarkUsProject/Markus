@@ -3,7 +3,7 @@
               about_main_index_path(),
               remote: true) %>
 
-  <span id="lang_chooser">
+  <span class="lang_chooser">
     <%= I18n.t(:choose_language) %>
     <%= #gets the relative path without the language choice, then on change of the language,
         #it adds this relative path to the end of the new language that was chosen.
@@ -16,7 +16,7 @@
   </span>
 
   <% if @current_user.admin? or @current_user.ta? %>
-    <span id="issues">
+    <span class="issues">
       <a href="https://github.com/MarkUsProject/Markus/issues/"><%= I18n.t(:issues) %></a>
     </span>
   <% end %>

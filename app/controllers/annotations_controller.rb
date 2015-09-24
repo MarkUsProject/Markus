@@ -36,6 +36,8 @@ class AnnotationsController < ApplicationController
       @annotation.update_attributes({
         line_start: params[:line_start],
         line_end: params[:line_end],
+        column_start: params[:column_start],
+        column_end: params[:column_end],
         submission_file_id: @submission_file_id,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
@@ -63,6 +65,8 @@ class AnnotationsController < ApplicationController
       @annotation = TextAnnotation.create(
         line_start: params[:line_start],
         line_end: params[:line_end],
+        column_start: params[:column_start],
+        column_end: params[:column_end],
         annotation_text_id: @text.id,
         submission_file_id: @submission_file_id,
         is_remark: is_remark,

@@ -1,0 +1,28 @@
+# Multi-line method chaining should be done with leading dots.
+Style/DotPosition:
+  EnforcedStyle: leading
+
+# Prefer single-quoted strings when you don't need string interpolation or
+# special symbols.
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+# Prefer specific method aliases over others
+Style/CollectionMethods:
+  # Mapping from undesired method to desired_method
+  # e.g. to use `detect` over `find`:
+  #
+  # CollectionMethods:
+  #   PreferredMethods:
+  #     find: detect
+  PreferredMethods:
+    find:
+    detect: 'find'
+
+# Disable to allow method chaining aligned at the '.'
+Style/MultilineOperationIndentation:
+  Enabled: false
+
+# Disable ABC code complexity metric
+Metrics/AbcSize:
+  Enabled: false

@@ -14,30 +14,18 @@ class GradersController < ApplicationController
   # -
   before_filter      :authorize_only_for_admin
 
-  def upload_dialog
-    @assignment = Assignment.find(params[:assignment_id])
-    render partial: 'graders/modal_dialogs/upload_dialog',
-           handlers: [:rjs]
-  end
-
-  def download_dialog
-    @assignment = Assignment.find(params[:assignment_id])
-    render partial: 'graders/modal_dialogs/download_dialog',
-           handlers: [:rjs]
-  end
-
   def groups_coverage_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping])
     render partial: 'graders/modal_dialogs/groups_coverage_dialog',
-           handlers: [:rjs]
+           handlers: [:erb]
   end
 
   def grader_criteria_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @grader = Ta.find(params[:grader])
-    render partial: 'graders/modal_dialogs/grader_criteria_dialog',
-           handlers: [:rjs]
+    render partial: 'graders/modal_dialogs/graders_criteria_dialog',
+           handlers: [:erb]
   end
 
   def set_assign_criteria
@@ -53,23 +41,31 @@ class GradersController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @sections = Section.all
-    respond_to do |format|
-      format.html
-      format.json do
-        assign_to_criteria = @assignment.assign_graders_to_criteria
-        if assign_to_criteria
-          graders_table_info = get_graders_table_info_with_criteria(@assignment)
-          groups_table_info = get_groups_table_info_with_criteria(@assignment)
-        else
-          graders_table_info = get_graders_table_info_no_criteria(@assignment)
-          groups_table_info = get_groups_table_info_no_criteria(@assignment)
-        end
-        # better to use a hash?
-        render json: [assign_to_criteria, @sections,
-                      graders_table_info, groups_table_info]
-      end
+    @section_column = ''
+    if Section.all.size > 0
+      @section_column = "{
+        id: 'section',
+        content: '" + I18n.t(:'graders.section') + "',
+        sortable: true
+      },"
     end
+  end
+
+  def populate
+    @assignment = Assignment.find(params[:assignment_id])
+    @sections = Section.all
+
+    assign_to_criteria = @assignment.assign_graders_to_criteria
+    if assign_to_criteria
+      graders_table_info = get_graders_table_info_with_criteria(@assignment)
+      groups_table_info = get_groups_table_info_with_criteria(@assignment)
+    else
+      graders_table_info = get_graders_table_info_no_criteria(@assignment)
+      groups_table_info = get_groups_table_info_no_criteria(@assignment)
+    end
+    # better to use a hash?
+    render json: [assign_to_criteria, @sections,
+                  graders_table_info, groups_table_info]
   end
 
   # Assign TAs to Groupings via a csv file
@@ -80,10 +76,17 @@ class GradersController < ApplicationController
       return
     end
 
-    invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
-                                               params[:assignment_id], params[:encoding])
-    if invalid_lines.size > 0
-      flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+    begin
+      invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
+                                                 params[:assignment_id],
+                                                 params[:encoding])
+      if invalid_lines.size > 0
+        flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+      end
+    rescue CSV::MalformedCSVError
+      flash[:error] = I18n.t('csv.upload.malformed_csv')
+    rescue ArgumentError
+      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
@@ -97,13 +100,19 @@ class GradersController < ApplicationController
       return
     end
 
-    invalid_lines = @assignment.criterion_class.assign_tas_by_csv(
-      params[:grader_criteria_mapping].read,
-      params[:assignment_id],
-      params[:encoding]
-    )
-    if invalid_lines.size > 0
-      flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+    begin
+      invalid_lines = @assignment.criterion_class.assign_tas_by_csv(
+        params[:grader_criteria_mapping].read,
+        params[:assignment_id],
+        params[:encoding]
+      )
+      if invalid_lines.size > 0
+        flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+      end
+    rescue CSV::MalformedCSVError
+      flash[:error] = t('csv.upload.malformed_csv')
+    rescue ArgumentError
+      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
@@ -146,8 +155,7 @@ class GradersController < ApplicationController
 
   def add_grader_to_grouping
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id],
-                                include: [:students, :tas, :group])
+    @grouping = Grouping.includes([:students, :tas, :group]).find(params[:grouping_id])
     grader = Ta.find(params[:grader_id])
     @grouping.add_tas(grader)
     criteria = grader.get_criterion_associations_by_assignment(@assignment).map{|c| c.criterion}

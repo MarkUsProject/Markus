@@ -13,19 +13,24 @@ class StudentsController < ApplicationController
   end
 
   def index
-    respond_to do |format|
-      format.html do
-        @sections = Section.all
-      end
-      format.json do
-        render json: get_students_table_info
-      end
+    @sections = Section.all
+    @section_column = ''
+    if Section.all.size > 0
+      @section_column = "{
+        id: 'section',
+        content: '" + I18n.t(:'user.section') + "',
+        sortable: true
+      },"
     end
+  end
+
+  def populate
+    render json: get_students_table_info
   end
 
   def edit
     @user = Student.find_by_id(params[:id])
-    @sections = Section.all(order: 'name')
+    @sections = Section.order(:name)
   end
 
   def update
@@ -37,7 +42,7 @@ class StudentsController < ApplicationController
       redirect_to action: 'index'
     else
       flash[:error] = I18n.t('students.update.error')
-      @sections = Section.all(order: 'name')
+      @sections = Section.order(:name)
       render :edit
     end
   end
@@ -67,7 +72,7 @@ class StudentsController < ApplicationController
 
   def new
     @user = Student.new
-    @sections = Section.all(order: 'name')
+    @sections = Section.order(:name)
   end
 
   def create
@@ -80,7 +85,7 @@ class StudentsController < ApplicationController
                                user_name: @user.user_name)
       redirect_to action: 'index' # Redirect
     else
-      @sections = Section.all(order: 'name')
+      @sections = Section.order(:name)
       flash[:error] = I18n.t('students.create.error')
       render :new
     end
@@ -96,7 +101,7 @@ class StudentsController < ApplicationController
   #downloads users with the given role as a csv list
   def download_student_list
     #find all the users
-    students = Student.all(order: 'user_name')
+    students = Student.order(:user_name)
     case params[:format]
     when 'csv'
       output = User.generate_csv_list(students)
@@ -121,6 +126,10 @@ class StudentsController < ApplicationController
             result[:invalid_lines].join(', ')
         end
         flash[:success] = result[:upload_notice]
+      rescue CSV::MalformedCSVError
+        flash[:error] = t('csv.upload.malformed_csv')
+      rescue ArgumentError
+        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       rescue RuntimeError
         flash[:notice] = I18n.t('csv_valid_format')
       end

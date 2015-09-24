@@ -3,9 +3,11 @@
     <% if flash[key].is_a?(Array) -%>
       <% flash[key].each do |msg| -%>
         <%= content_tag :div, msg, class: key %>
+        <% response.header['X-message ' + key.to_s] = msg %>
       <% end -%>
     <% else -%>
       <%= content_tag :div, flash[key], class: key %>
+      <% response.headers['X-message ' + key.to_s] = flash[key] %>
     <% end -%>
   <% end -%>
 <% end -%>

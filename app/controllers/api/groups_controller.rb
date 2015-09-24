@@ -80,5 +80,96 @@ module Api
       end
     end
 
+    # Update the group's marks for the given assignment.
+    def update_marks
+      assignment = Assignment.find(params[:assignment_id])
+      if assignment.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No assignment exists with that id' }, status: 404
+        return
+      end
+
+      group = Group.find(params[:id])
+      if group.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No group exists with that id' }, status: 404
+        return
+      end
+      if group.grouping_for_assignment(params[:assignment_id])
+              .has_submission?
+        result = group.grouping_for_assignment(params[:assignment_id])
+                      .current_submission_used
+                      .get_latest_result
+      else
+        render 'shared/http_status', locals: { code: '404', message:
+          'No submissions exist for that group' }, status: 404
+        return
+      end
+
+      # We shouldn't be able to update marks if marking is already complete.
+      if result.marking_state == Result::MARKING_STATES[:complete]
+        render 'shared/http_status', locals: { code: '404', message:
+          'Marking for that submission is already completed' }, status: 404
+        return
+      end
+
+      matched_criteria = RubricCriterion
+                           .where(rubric_criterion_name: params.keys,
+                                  assignment_id: params[:assignment_id])
+      matched_criteria.concat(FlexibleCriterion
+                                .where(flexible_criterion_name: params.keys,
+                                       assignment_id: params[:assignment_id]))
+      if matched_criteria.empty?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No criteria were found that match that request.' }, status: 404
+        return
+      end
+
+      matched_criteria.each do |crit|
+        mark_to_change = result.marks
+                               .where(markable_id: crit.id)
+                               .first
+        unless set_mark_by_criteria(crit, mark_to_change)
+          # Some error occurred (including invalid mark)
+          render 'shared/http_status', locals: { code: '500', message:
+            mark_to_change.errors.full_messages.first }, status: 500
+          return
+        end
+      end
+      render 'shared/http_status', locals: { code: '200', message:
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+    end
+
+    def set_mark_by_criteria(criteria, mark_to_change)
+      if criteria.is_a?(FlexibleCriterion)
+        if params[criteria.flexible_criterion_name] == 'nil'
+          mark_to_change.mark = nil
+        else
+          mark_to_change.mark = params[criteria.flexible_criterion_name].to_f
+        end
+      else
+        if params[criteria.rubric_criterion_name] == 'nil'
+          mark_to_change.mark = nil
+        else
+          mark_to_change.mark = params[criteria.rubric_criterion_name]
+        end
+      end
+      mark_to_change.save
+    end
+
+    # Return key:value pairs of group_name:group_id
+    def group_ids_by_name
+      groups = Assignment.find(params[:assignment_id])
+                        .groups
+      reversed = Hash[groups.map { |g| [g.group_name, g.id] }]
+      respond_to do |format|
+        format.xml do
+          render xml: reversed.to_xml(root: 'groups', skip_types: 'true')
+        end
+        format.json do
+          render json: reversed.to_json
+        end
+      end
+    end
   end # end GroupsController
 end

@@ -2,8 +2,6 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 require 'active_support/all'
-# in order to paginate static arrays
-require 'will_paginate/array'
 
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
@@ -16,12 +14,6 @@ module Markus
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
   # See Rails::Configuration for more options.
-
-  # Javascripts files always loaded in views
-  config.action_view.javascript_expansions[:defaults] = %w(prototype rails application )
-
-  # NOTE: this should be removed when upgrading to Rails 4
-  config.active_record.whitelist_attributes = false
 
   # Set this if MarkUs is not hosted under / of your Web-host.
   # E.g. if MarkUs should be accessible by http://yourhost.com/markus/instance0

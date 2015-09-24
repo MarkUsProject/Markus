@@ -66,6 +66,7 @@
       // 4rd element: Info for groups table + criteria (if we are using crit.)
       //              this is actually a hash.
       jQuery.ajax({
+        url: 'graders/populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -86,6 +87,10 @@
     },
     render: function() {
       var to_render = [];
+      var graders_to_criteria = [];
+      graders_to_criteria.push(<input type='checkbox'
+        checked={this.state.assign_to_criteria}
+        onChange={this.criteriaCheckboxClicked}> <%= j raw I18n.t('graders.assign_to_criteria') %></input>);
       to_render.push(<GradersTable graders={this.state.graders}
         selected_graders={this.state.selected_graders}
         onSelectedGradersChange={this.updateSelectedGraders} />);
@@ -104,10 +109,7 @@
         updateSelectedGradersInCriteria={this.updateSelectedGradersInCriteria}
         setError={this.setError}
       />);
-      to_render.push(<input type='checkbox'
-        checked={this.state.assign_to_criteria}
-        onChange={this.criteriaCheckboxClicked}><%= j raw I18n.t('graders.assign_to_criteria') %></input>);
-      to_render.push(<GroupsTableManager 
+      to_render.push(<GroupsTableManager
         assign_to_criteria={this.state.assign_to_criteria} 
         groups_and_criteria={this.state.groups_and_criteria}
         selected_groups={this.state.selected_groups}
@@ -126,7 +128,12 @@
       return (
         <div>
           <ErrorDiv error={this.state.error} />
-          <div className='columns'>{to_render}</div>
+          <div className='graders-to-criteria'>
+            {graders_to_criteria}
+          </div>
+          <div className='columns'>
+            {to_render}
+          </div>
         </div>
         
         
@@ -317,12 +324,7 @@
         sortable: true,
         searchable: true
       },
-      {
-        id: 'section',
-        content: '<%= j raw I18n.t('graders.section') %>',
-        sortable: true,
-        searchable: true
-      },
+      <%= raw @section_column  %>
       {
         id: 'graders',
         content:
@@ -526,12 +528,7 @@
         sortable: true,
         searchable: true
       },
-      {
-        id: 'section',
-        content: '<%= j raw I18n.t('graders.section') %>',
-        sortable: true,
-        searchable: true
-      },
+      <%= raw @section_column  %>
       {
         id: 'graders',
         content:<input type='checkbox'

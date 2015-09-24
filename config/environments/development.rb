@@ -10,8 +10,7 @@ Markus::Application.configure do
   # since you don't have to restart the webserver when you make code changes.
   config.cache_classes = false
 
-  # Log error messages when you accidentally call methods on nil.
-  config.whiny_nils = true
+  config.eager_load = false
 
   # Show full error reports and disable caching
   config.consider_all_requests_local = true
@@ -35,10 +34,6 @@ Markus::Application.configure do
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
 
-  # Log the query plan for queries taking more than this (works
-  # with SQLite, MySQL, and PostgreSQL)
-  config.active_record.auto_explain_threshold_in_seconds = 1.0
-
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
   #   - use "/" as path separator no matter what OS server is running
@@ -46,7 +41,7 @@ Markus::Application.configure do
 
   ###################################################################
   # Set the course name here
-  COURSE_NAME         = "CSC108 Fall 2009: Introduction to Computer Programming"
+  COURSE_NAME = 'CSC108 Fall 2009: Introduction to Computer Programming'
 
   ###################################################################
   # MarkUs relies on external user authentication: An external script
@@ -60,7 +55,24 @@ Markus::Application.configure do
   #
   # That is why MarkUs does not allow usernames/passwords which contain
   # \n or \0. These are the only restrictions.
-  VALIDATE_FILE = "#{::Rails.root.to_s}/config/dummy_validate.sh"
+  VALIDATE_FILE = "#{::Rails.root}/config/dummy_validate.sh"
+
+  # Normally exit status 0 means successful, 1 means no such user,
+  # and 2 means wrong password.
+  # The following allows for one additional custom exit status which also
+  # represents a failure to log in, but says so with a custom string.
+  # It is commented out by default because there is no additional custom
+  # exit status by default.
+  #VALIDATE_CUSTOM_EXIT_STATUS = 38
+  #VALIDATE_CUSTOM_STATUS_DISPLAY = 'You are a squid.  Only vertebrates may use MarkUs.'
+
+  # Custom messages for "user not allowed" and "login incorrect",
+  # overriding the default "login failed" message.  By default,
+  # MarkUs does not distinguish these cases for security reasons.
+  # If these variables are not defined (commented out), it uses the
+  # standard "login failed" message for both situations.
+  #VALIDATE_USER_NOT_ALLOWED_DISPLAY = 'That is your correct University of Foo user name and password, but you have not been added to this particular MarkUs database.  Please contact your instructor or check your course web page.'
+  #VALIDATE_LOGIN_INCORRECT_DISPLAY = 'Login incorrect.  You can check your Foo U user name or reset your password at https://www.foo.example.edu/passwords.'
 
   ###################################################################
   # Authentication Settings
@@ -100,14 +112,14 @@ Markus::Application.configure do
   # If you are using HTTP's basic authentication, you probably want to use this
   # option.
 
-  LOGOUT_REDIRECT = "DEFAULT"
+  LOGOUT_REDIRECT = 'DEFAULT'
 
   ###################################################################
   # File storage (Repository) settings
   ###################################################################
   # Options for Repository_type are 'svn' and 'memory' for now
   # 'memory' is by design not persistent and only used for testing MarkUs
-  REPOSITORY_TYPE = "svn" # use Subversion as storage backend
+  REPOSITORY_TYPE = 'svn' # use Subversion as storage backend
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
@@ -115,10 +127,20 @@ Markus::Application.configure do
   REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/dev/repos"
 
   ###################################################################
+  # Directory where authentication keys will be uploaded. Make sure MarkUs is
+  # allowed to write to this directory
+  KEY_STORAGE = "#{::Rails.root}/data/dev/keys"
+
+  ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
   # is allowed to write to this directory
-
   PDF_STORAGE = "#{::Rails.root.to_s}/data/dev/pdfs"
+
+  ###################################################################
+  # Location of the public and private key for the git user on the system
+  GITOLITE_SETTINGS = { public_key: '/home/git/vagrant.pub',
+                        private_key: '/home/vagrant/.ssh/id_rsa',
+                        host: 'localhost' }
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.
@@ -129,6 +151,10 @@ Markus::Application.configure do
   # Set this to true or false if you want to be able to display and annotate
   # PDF documents within the browser.
   PDF_SUPPORT = false
+
+  ###################################################################
+  # Max file size for submissions in Bytes
+  MAX_FILE_SIZE = 5000000
 
   ###################################################################
   # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
@@ -148,7 +174,7 @@ Markus::Application.configure do
   # http://www.example.com/markus/svn/Repository_Name. Make sure the path
   # after the hostname matches your <Location> directive in your Apache
   # httpd configuration
-  REPOSITORY_EXTERNAL_BASE_URL = "http://www.example.com/markus/svn"
+  REPOSITORY_EXTERNAL_BASE_URL = 'http://www.example.com/markus/svn'
 
   ###################################################################
   # This setting is important for two scenarios:
@@ -159,7 +185,7 @@ Markus::Application.configure do
   # Second, if MarkUs is configured with REPOSITORY_EXTERNAL_SUBMITS_ONLY
   # set to 'true', you can configure as to where MarkUs should write the
   # Subversion authz file.
-  REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + "/svn_authz"
+  REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + '/conf'
 
   ###################################################################
   # This setting configures if MarkUs is reading Subversion

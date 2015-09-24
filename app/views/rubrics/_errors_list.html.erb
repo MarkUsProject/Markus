@@ -1,5 +1,12 @@
 <ul>
-<%= criterion.errors.each_line do |error| %>
-  <li><%=error[0]%> <%=error[1]%></li>
-<% end %>
+  <% errors.messages.each do |a, messages| %>
+    <% if errors.size == 1 and messages.size == 1 %>
+      <p><%= messages.first %></p>
+    <% else %>
+      <% messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    <% end %>
+  <% end %>
 </ul>
+

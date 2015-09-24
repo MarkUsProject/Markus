@@ -1,13 +1,12 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'file_manager' %>
-  <%= javascript_include_tag 'FilterTable/FilterTable.js' %>
 
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
              handlers: [:erb] %>
 
-  <%= render partial: 'file_manager_boot',
-             formats: [:js],
+  <%= render partial: 'react_file_manager_boot_table',
+             formats: [:'js.jsx'],
              handlers: [:erb] %>
 <% end %>
 
@@ -18,22 +17,23 @@
   </h1>
 </div>
 
-<div id='current_time'>
-  <%= render partial: 'server_time' %>
+<div>
+  <strong><%= t('server_time') %></strong>
+  <span id='current_time'>
+    <%= I18n.l(Time.zone.now, format: :long_date)%>
+  </span>
 
   <script>
-    new PeriodicalExecuter(
-      function() {
-        new Ajax.Updater('current_time',
-          '<%= server_time_assignment_submissions_path(@assignment.id) %>',
-          {
-            asynchronous:true,
-            evalScripts:true,
-            parameters:'authenticity_token=' + AUTH_TOKEN
-          }
-        )
-    }, 60);
-  </script>
+    window.setInterval(function () {
+      jQuery.ajax({
+        url: '<%= server_time_assignment_submissions_path(@assignment.id) %>',
+        method: 'GET',
+        success: function(data) {
+          document.getElementById('current_time').innerHTML = data;
+        }
+      });
+    }, 60000);
+    </script>
 </div>
 
 <div class='wrapper'>
@@ -41,19 +41,21 @@
     <p class='success'><%= flash[:submit_notice] %></p>
   <% end %>
 
-  <div id='directory_selector' <%=raw('style="display:none;"') unless @grouping.repository_external_commits_only? %>>
-    <p>
-      <%= I18n.t('student.submission.current_path') %>
-      <% path_memory = '/'
-         links = []
-         @path.split('/').each do |folder|
-         path_memory = File.join(path_memory, folder)
-         links.push(link_to folder, action: 'file_manager', path: path_memory)
-      end %>
-      <%= link_to '[root]', action: 'file_manager', path: '/' %>
-      <%= links.join('/')%>
-    </p>
-  </div>
+  <% if @assignment.vcs_submit %>
+    <div id='directory_selector'>
+      <p>
+        <%= I18n.t('student.submission.current_path') %>
+        <% path_memory = '/'
+           links = []
+           @path.split('/').each do |folder|
+           path_memory = File.join(path_memory, folder)
+           links.push(link_to folder, action: 'file_manager', path: path_memory)
+        end %>
+        <%= link_to '[root]', action: 'file_manager', path: '/' %>
+        <%= links.join('/')%>
+      </p>
+    </div>
+  <% end %>
 
   <% if flash[:transaction_warning] %>
     <div class='warning'><%= flash[:transaction_warning] %></div>
@@ -100,11 +102,17 @@
     </div>
   <% end %>
 
+  <% if !@file_manager_errors.nil? && @file_manager_errors[:size_conflict] %>
+    <div class='error'>
+      <%= @file_manager_errors[:size_conflict] %>
+    </div>
+  <% end %>
+
   <% if !@grouping.is_valid? %>
     <div class='error'>
       <%= t(:invalid_group_warning) %>
     </div>
-  <% elsif @missing_assignment_files.size > 0 %>
+  <% elsif !@missing_assignment_files.nil? && @missing_assignment_files.size > 0 %>
     <div class='warning'>
       <p>
         <%= I18n.t('student.submission.missing_files', file: @missing_assignment_files.size) %>
@@ -112,6 +120,7 @@
           <%= link_to_function I18n.t('student.submission.toggle_file_list'), "$('missing_assignment_files_list').toggle();"%>
         <% end %>
       </p>
+
       <ul id='missing_assignment_files_list' <%='style="display:none;"' if @missing_assignment_files.size > 5 %>>
         <% @missing_assignment_files.each do |assignment_file| %>
           <li><%= assignment_file.filename %></li>
@@ -120,34 +129,27 @@
     </div>
   <% end %>
 
-  <%= form_tag update_files_assignment_submissions_path(@assignment.id),
-               { multipart: true,
-                 id: 'submit_form' } unless (!@grouping.is_valid? || @grouping.repository_external_commits_only?) %>
-
-    <div class='global_action'>
-      <% if (@grouping.is_valid? && !@grouping.repository_external_commits_only?) %>
-        <%= button_to_function I18n.t('add_new'),
-                               'injectFileInput(); set_onbeforeunload(true);' %>
-      <% end %>
-
-      <% if @grouping.is_valid? %>
-        <%= submit_tag(I18n.t(:submit),
-                       disabled: !@grouping.is_valid?,
-                       onclick: 'set_onbeforeunload(false);') unless @grouping.repository_external_commits_only? %>
-        <%= link_to(I18n.t(:cancel),
-                    { controller: 'submissions',
-                      action: 'file_manager' },
-                   id: @assignment.id,
-                   disabled: !@grouping.is_valid?,
-                   class: 'button',
-                   onclick: "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
-                   ) unless @grouping.repository_external_commits_only? %>
-      <% end %>
-    </div>
-
-    <div class='table'>
-      <table class='files' id='files'></table>
-    </div>
-
-  </form>
+  <div id='file_table'></div>
 </div>
+
+<aside class='dialog' id='addnew_dialog'>
+  <h2><%= t('add_new') %></h2>
+
+  <% if @assignment.allow_web_submits && @assignment.vcs_submit %>
+    <div class='notice'>
+      <%= t('student.submission.version_control_warning') %>
+    </div>
+  <% end %>
+
+  <%= form_tag update_files_assignment_submissions_path(@assignment.id),
+               { multipart: true, id: 'file_form' } do %>
+    <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:submit),
+                     disabled: !@grouping.is_valid?,
+                     onclick: 'set_onbeforeunload(false); submitFile(event)' %>
+      <%= button_to_function t(:close), 'modal_addnew.close();' %>
+    </section>
+  <% end %>
+</aside>

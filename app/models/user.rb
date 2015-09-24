@@ -15,8 +15,9 @@ class User < ActiveRecord::Base
   has_many :grade_entry_students
   has_many :groupings, through: :memberships
   has_many :notes, as: :noteable, dependent: :destroy
-  has_many :accepted_memberships, class_name: 'Membership', conditions: {membership_status: [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
-
+  has_many :accepted_memberships,
+           -> { where membership_status: [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
+           class_name: 'Membership'
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
 
@@ -34,6 +35,7 @@ class User < ActiveRecord::Base
   AUTHENTICATE_ERROR =        3   # generic/unknown error
   AUTHENTICATE_BAD_CHAR =     4   # invalid character in username/password
   AUTHENTICATE_BAD_PLATFORM = 5   # external authentication works for *NIX platforms only
+  AUTHENTICATE_CUSTOM_MESSAGE = 6 # custom validate code for custom message
 
   # Verifies if user is allowed to enter MarkUs
   # Returns user object representing the user with the given login.
@@ -50,6 +52,7 @@ class User < ActiveRecord::Base
     # are delimited by \n and C programs use \0 to terminate strings
     not_allowed_regexp = Regexp.new(/[\n\0]+/)
     if not_allowed_regexp.match(login) || not_allowed_regexp.match(password)
+      m_logger = MarkusLogger.instance
       m_logger.log("User '#{login}' failed to log in. Username/password contained " +
                        'illegal characters', MarkusLogger::ERROR)
       AUTHENTICATE_BAD_CHAR
@@ -72,6 +75,10 @@ class User < ActiveRecord::Base
       pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
       pipe.close
       m_logger = MarkusLogger.instance
+      if (defined? VALIDATE_CUSTOM_EXIT_STATUS) && $?.exitstatus == VALIDATE_CUSTOM_EXIT_STATUS
+        m_logger.log("Login failed. Reason: Custom exit status.", MarkusLogger::ERROR)
+        return AUTHENTICATE_CUSTOM_MESSAGE
+      end
       case $?.exitstatus
         when 0
           m_logger.log("User '#{login}' logged in.", MarkusLogger::INFO)
@@ -138,6 +145,7 @@ class User < ActiveRecord::Base
   end
 
   def self.upload_user_list(user_class, user_list, encoding)
+    max_invalid_lines = 10
     num_update = 0
     result = {}
     result[:invalid_lines] = []  # store lines that were not processed
@@ -152,11 +160,15 @@ class User < ActiveRecord::Base
           # don't know how to fetch line so we concat given array
           next if CSV.generate_line(row).strip.empty?
           if processed_users.include?(row[0])
-            result[:invalid_lines] = I18n.t('csv_upload_user_duplicate',
-                                            {user_name: row[0]})
+            if result[:invalid_lines].count < max_invalid_lines
+              result[:invalid_lines] << I18n.t('csv_upload_user_duplicate',
+                                               { user_name: row[0] })
+            end
           else
             if User.add_user(user_class, row).nil?
-              result[:invalid_lines] << row.join(',')
+              if result[:invalid_lines].count < max_invalid_lines
+                result[:invalid_lines] << row.join(',')
+              end
             else
               num_update += 1
               processed_users.push(row[0])
@@ -164,8 +176,6 @@ class User < ActiveRecord::Base
           end
         end # end parse
       end
-    rescue
-        return false
     end
     result[:upload_notice] = "#{num_update} user(s) added/updated."
     result
@@ -184,7 +194,7 @@ class User < ActiveRecord::Base
       if key == :section_name
         if val
           # check if the section already exist
-          section = Section.find_or_create_by_name(val)
+          section = Section.find_or_create_by(name: val)
           user_attributes['section_id'] = section.id
         end
       else
@@ -193,7 +203,8 @@ class User < ActiveRecord::Base
     end
 
     # Is there already a Student with this User number?
-    current_user = user_class.find_or_create_by_user_name(user_attributes[:user_name])
+    current_user = user_class.find_or_create_by(
+      user_name: user_attributes[:user_name])
     current_user.attributes = user_attributes
 
     return unless current_user.save
@@ -205,9 +216,11 @@ class User < ActiveRecord::Base
   def self.repo_config
     {
       'IS_REPOSITORY_ADMIN' =>
-        MarkusConfigurator.markus_config_repository_admin?,
+          MarkusConfigurator.markus_config_repository_admin?,
+      'REPOSITORY_STORAGE' =>
+          MarkusConfigurator.markus_config_repository_storage,
       'REPOSITORY_PERMISSION_FILE' =>
-        MarkusConfigurator.markus_config_repository_permission_file
+          MarkusConfigurator.markus_config_repository_permission_file
     }
   end
 

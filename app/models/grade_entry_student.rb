@@ -38,12 +38,9 @@ class GradeEntryStudent < ActiveRecord::Base
     form_ids = GradeEntryForm.where(id: Array(form_ids)).pluck(:id)
 
     columns = [:user_id, :grade_entry_form_id]
-    # TODO replace `select ... map` with pluck when migrated to Rails 4.
-    existing_values = select(columns)
+    existing_values = GradeEntryStudent
       .where(user_id: student_ids, grade_entry_form_id: form_ids)
-      .map do |grade_entry_student|
-        [grade_entry_student.user_id, grade_entry_student.grade_entry_form_id]
-      end
+      .pluck(:user_id, :grade_entry_form_id)
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(student_ids, form_ids) - existing_values
@@ -111,7 +108,8 @@ class GradeEntryStudent < ActiveRecord::Base
   # username,q1mark,q2mark,...,
   # create or update the GradeEntryStudent and Grade objects that
   # correspond to the student
-  def self.create_or_update_from_csv_row(row, grade_entry_form, grade_entry_items, names)
+  def self.create_or_update_from_csv_row(row, grade_entry_form,
+                                         grade_entry_items, names, overwrite)
     working_row = row.clone
     user_name = working_row.shift
 
@@ -122,7 +120,7 @@ class GradeEntryStudent < ActiveRecord::Base
     end
 
     # Create the GradeEntryStudent if it doesn't already exist
-    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id)
+    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(user_id: student.id)
 
     # Create or update the student's grade for each question
     names.each do |grade_entry_name|
@@ -130,20 +128,37 @@ class GradeEntryStudent < ActiveRecord::Base
       grade_entry_item = grade_entry_items.where(name: grade_entry_name).first
 
       # Don't add empty grades and remove grades that did exist but are now empty
-      if !grade_for_grade_entry_item || grade_for_grade_entry_item.empty?
-        grade =
-          grade_entry_student.grades
-                             .where(grade_entry_item_id: grade_entry_item.id)
-                             .first
-        unless grade.nil?
-          grade.destroy
-        end
-      else
-        grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(grade_entry_item.id)
-        grade.grade = grade_for_grade_entry_item
+      old_grade = grade_entry_student.grades
+                  .where(grade_entry_item_id: grade_entry_item.id)
+                  .first
 
-        unless grade.save
-          raise RuntimeError.new(grade.errors)
+      if overwrite
+        if !grade_for_grade_entry_item || grade_for_grade_entry_item.empty?
+
+          unless old_grade.nil?
+            old_grade.destroy
+          end
+        else
+          grade = grade_entry_student.grades
+                  .find_or_create_by(grade_entry_item: grade_entry_item)
+          grade.grade = grade_for_grade_entry_item
+
+          unless grade.save
+            raise RuntimeError.new(grade.errors)
+          end
+        end
+
+      else
+        if old_grade.nil? &&
+           (grade_for_grade_entry_item || !grade_for_grade_entry_item.empty?)
+
+          grade = grade_entry_student.grades
+                  .find_or_create_by(grade_entry_item_id: grade_entry_item.id)
+          grade.grade = grade_for_grade_entry_item
+
+          unless grade.save
+            raise RuntimeError.new(grade.errors)
+          end
         end
       end
     end
@@ -163,7 +178,7 @@ class GradeEntryStudent < ActiveRecord::Base
       if student.nil?
         failures.push(student_name)
       else
-        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id)
+        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(user_id: student.id)
         if grade_entry_student.nil?
           failures.push(student_name)
         else
@@ -221,7 +236,7 @@ class GradeEntryStudent < ActiveRecord::Base
     refresh_total_grade
   end
 
-  def save
+  def save(*)
     refresh_total_grade # make sure the latest total grade is always saved
     super
   end

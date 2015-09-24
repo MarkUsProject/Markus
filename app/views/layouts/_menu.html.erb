@@ -1,6 +1,6 @@
 <ul class='main'>
   <li id='logo'>
-    <%= render partial: 'layouts/breadcrumb' %>
+    <a href='<%= root_url %>' id='logo-img'></a>
   </li>
 
   <% if @current_user.admin? %>
@@ -12,6 +12,7 @@
               controller.controller_name == 'flexible_criteria' ||
               controller.controller_name == 'rubrics' ||
               controller.controller_name == 'ta_assignments' ||
+              controller.controller_name == 'tags' ||
               controller.controller_name == 'submissions' ||
               controller.controller_name == 'summaries' ||
               controller.controller_name == 'groups' ||
@@ -28,14 +29,11 @@
 
     <li <% if controller.controller_name == 'admins' ||
               controller.controller_name == 'students' ||
-              controller.controller_name == 'tas' %>
+              controller.controller_name == 'tas' ||
+              controller.controller_name == 'sections' %>
           class='active'
         <% end %>>
       <%= link_to t(:users), controller: 'students' %>
-    </li>
-
-    <li class='<%= "active" if controller.controller_name == 'sections' %>'>
-      <%= link_to t(:sections), controller: 'sections' %>
     </li>
   <% else %>
     <li <% if controller.controller_name == 'assignments' ||
@@ -51,11 +49,29 @@
         <% end %>>
       <%= link_to t(:home), controller: 'assignments' %>
    </li>
+
   <% end %>
 
   <% if @current_user.admin? || @current_user.ta? %>
     <li class='<%= "active" if controller.controller_name == 'notes' %>'>
       <%= link_to t('notes.title'), notes_path %>
     </li>
+  <% end %>
+
+  <% if @current_user.admin? %>
+    <li <% if controller.controller_name == 'course_summaries' ||
+              controller.controller_name == 'marking_schemes' %>
+          class='active'
+        <% end %>>
+      <%= link_to t('course_summaries_index.page_title'), course_summaries_path %>
+    </li>
+  <% end %>
+
+  <% if REPOSITORY_TYPE == 'git' %>
+      <li <% if controller.controller_name == 'key_pairs' %>
+          class='active'
+          <% end %>>
+        <%= link_to t('key_pairs.title'), controller: 'key_pairs' %>
+      </li>
   <% end %>
 </ul>
