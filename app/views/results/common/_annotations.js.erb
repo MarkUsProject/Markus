@@ -249,11 +249,27 @@
   }
 
 var angle = 0;
+
 function rotate() {
     console.log(angle);
     angle += 90;
+    if (angle == 360) angle = 0;
     var image_preview = document.getElementById('image_preview');
-    image_preview.style.webkitTransform = "rotate(" + angle + "deg)";
+    var bounding_rect = image_preview.getBoundingClientRect();
+    var half_width = bounding_rect.width/2;
+    if (angle % 180 == 0)
+    {
+        image_preview.style.webkitTransform = "rotate(" + angle + "deg)";
+    }
+    else if (angle == 90)
+    {
+        image_preview.style.webkitTransform = "rotate(" + angle + "deg) translate(0%, " + -half_width + "px)";
+    }
+    else //angle is 270
+    {
+        image_preview.style.webkitTransform = "rotate(" + angle + "deg) translate(0%, " + half_width + "px)";
+
+    }
     }
 
   function make_new_annotation() {
