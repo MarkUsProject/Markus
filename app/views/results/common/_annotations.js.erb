@@ -248,6 +248,14 @@
     return { x1: x1, x2: x2, y1: y1, y2: y2 };
   }
 
+var angle = 0;
+function rotate() {
+    console.log(angle);
+    angle += 90;
+    var image_preview = document.getElementById('image_preview');
+    image_preview.style.webkitTransform = "rotate(" + angle + "deg)";
+    }
+
   function make_new_annotation() {
     // Check if image is shown, and call the appropriate function if so
     // Set global variable 'positions' to current mouse positions

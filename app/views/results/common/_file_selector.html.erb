@@ -11,6 +11,10 @@
   <%= hidden_field_tag :include_annotations,
                        true,
                        id: 'download_include_annotations' %>
+
+    <input type='button'
+           onclick='rotate(); return false;'
+           value='Rotate'>
   <div class='file_selector'>
     <input type='button'
            onclick='bump_select("select_file_id", -1, "back_button", "next_button"); return false;'
@@ -36,7 +40,6 @@
   </div>
 
   <div class='download_file'>
-
     <%= submit_tag t(:download), onclick: 'with_annotations();' if can_download && !files.empty? %>
 
     <%= label_tag('include_annotations',
@@ -53,4 +56,6 @@
                    name: 'download_zip_button',
                    onclick: 'with_annotations();' unless files.empty? %>
   </div>
+
+
 <% end %>
