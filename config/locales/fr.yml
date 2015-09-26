@@ -359,6 +359,7 @@ fr:
 
     #app/views/results/common
     common:
+      rotate: "Tourner"
       submission_file: "Fichier envoyé : "
       test_results: "Résultat des tests : "
       no_file_in_repository: "[Pas de fichiers dans le dépôt]"

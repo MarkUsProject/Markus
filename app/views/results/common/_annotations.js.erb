@@ -248,41 +248,40 @@
     return { x1: x1, x2: x2, y1: y1, y2: y2 };
   }
 
-var angle = 0;
+  var angle = 0;
 
-function rotate() {
+  function rotate() {
     if (annotation_type === ANNOTATION_TYPES.PDF)
     {
-        PDFView.rotatePages(90);
+      PDFView.rotatePages(90);
     }
-    var image_preview = document.getElementById('image_preview');
-    if (image_preview != null)
+    else if (annotation_type == ANNOTATION_TYPES.IMAGE)
     {
-        angle += 90;
-        if (angle == 360) angle = 0;
-        var bounding_rect = image_preview.getBoundingClientRect();
-        var half_width = bounding_rect.width/2;
-        var half_height = bounding_rect.height/2;
+      var image_preview = document.getElementById('image_preview');
+      angle += 90;
+      if (angle == 360) angle = 0;
+      var bounding_rect = image_preview.getBoundingClientRect();
+      var half_width = bounding_rect.width/2;
+      var half_height = bounding_rect.height/2;
 
-        //If the image is originally in portrait mode and we rotate to either 90 degress or 270 degrees,
-        //we need to offset the image so that it doesn't get cut off on the left side.
+      //If the image is originally in portrait mode and we rotate to either 90 degress or 270 degrees,
+      //we need to offset the image so that it doesn't get cut off on the left side.
 
-        if (angle % 180 == 0 || half_width >= half_height)
-        {
-            image_preview.style.webkitTransform = "rotate(" + angle + "deg)";
-        }
-        else if (angle == 90)
-        {
-            image_preview.style.webkitTransform = "rotate(" + angle + "deg) translate(0%, " + -half_width + "px)";
-        }
-        else //angle is 270
-        {
-            image_preview.style.webkitTransform = "rotate(" + angle + "deg) translate(0%, " + half_width + "px)";
-        }
-        image_preview.style.zIndex = "-10";
+      var rotation_call = "rotate(" + angle + "deg)";
+      if (angle % 180 == 0 || half_width >= half_height)
+      {
+        image_preview.style.webkitTransform = rotation_call
+      }
+      else if (angle == 90)
+      {
+        image_preview.style.webkitTransform = rotation_call + " translate(0%, " + -half_width + "px)";
+      }
+      else //angle is 270
+      {
+        image_preview.style.webkitTransform = rotation_call + " translate(0%, " + half_width + "px)";
+      }
     }
-
-    }
+  }
 
   function make_new_annotation() {
     // Check if image is shown, and call the appropriate function if so

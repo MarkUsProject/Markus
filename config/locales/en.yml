@@ -361,6 +361,7 @@ en:
 
     #app/views/results/common
     common:
+      rotate: "Rotate"
       submission_file: "Submission File:"
       test_results: "Test Results:"
       no_file_in_repository: "[No files in repository]"
