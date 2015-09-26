@@ -251,10 +251,10 @@
 var angle = 0;
 
 function rotate() {
-//    if (annotation_type === ANNOTATION_TYPES.PDF)
-//    {
-//
-//        }
+    if (annotation_type === ANNOTATION_TYPES.PDF)
+    {
+        PDFView.rotatePages(90);
+    }
     var image_preview = document.getElementById('image_preview');
     if (image_preview != null)
     {
