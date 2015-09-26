@@ -268,17 +268,23 @@
       //we need to offset the image so that it doesn't get cut off on the left side.
 
       var rotation_call = "rotate(" + angle + "deg)";
+      var translation_call_begin = " translate(0%, ";
+      var translation_call_end = "px)"; 
       if (angle % 180 == 0 || half_width >= half_height)
       {
         image_preview.style.webkitTransform = rotation_call
       }
       else if (angle == 90)
       {
-        image_preview.style.webkitTransform = rotation_call + " translate(0%, " + -half_width + "px)";
+        //Because we're rotated, translating along the y moves the image horizontally.
+        //We want to line up the original bottom edge with left of the screen.
+        image_preview.style.webkitTransform = rotation_call + translation_call_begin + (half_width - half_height) + translation_call_end; 
       }
       else //angle is 270
       {
-        image_preview.style.webkitTransform = rotation_call + " translate(0%, " + half_width + "px)";
+        //Because we're rotated, translating along the y moves the image horizontally.
+        //We want to line up the original right edge with the left of the screen.
+        image_preview.style.webkitTransform = rotation_call + " translate(0%, " + (half_height - half_width) + translation_call_end;
       }
     }
   }

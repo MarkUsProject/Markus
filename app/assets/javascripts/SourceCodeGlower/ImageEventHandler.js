@@ -167,6 +167,8 @@ ImageEventHandler.prototype.check_for_annotations = function(e) {
     return;
   }
 
+  console.log("check for annotations");
+
   var abs_xy = this.get_absolute_cursor_pos(e);
 
   // X/Y coords relative to the image
