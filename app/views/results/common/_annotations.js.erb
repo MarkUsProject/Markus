@@ -251,25 +251,37 @@
 var angle = 0;
 
 function rotate() {
-    console.log(angle);
-    angle += 90;
-    if (angle == 360) angle = 0;
+//    if (annotation_type === ANNOTATION_TYPES.PDF)
+//    {
+//
+//        }
     var image_preview = document.getElementById('image_preview');
-    var bounding_rect = image_preview.getBoundingClientRect();
-    var half_width = bounding_rect.width/2;
-    if (angle % 180 == 0)
+    if (image_preview != null)
     {
-        image_preview.style.webkitTransform = "rotate(" + angle + "deg)";
-    }
-    else if (angle == 90)
-    {
-        image_preview.style.webkitTransform = "rotate(" + angle + "deg) translate(0%, " + -half_width + "px)";
-    }
-    else //angle is 270
-    {
-        image_preview.style.webkitTransform = "rotate(" + angle + "deg) translate(0%, " + half_width + "px)";
+        angle += 90;
+        if (angle == 360) angle = 0;
+        var bounding_rect = image_preview.getBoundingClientRect();
+        var half_width = bounding_rect.width/2;
+        var half_height = bounding_rect.height/2;
 
+        //If the image is originally in portrait mode and we rotate to either 90 degress or 270 degrees,
+        //we need to offset the image so that it doesn't get cut off on the left side.
+
+        if (angle % 180 == 0 || half_width >= half_height)
+        {
+            image_preview.style.webkitTransform = "rotate(" + angle + "deg)";
+        }
+        else if (angle == 90)
+        {
+            image_preview.style.webkitTransform = "rotate(" + angle + "deg) translate(0%, " + -half_width + "px)";
+        }
+        else //angle is 270
+        {
+            image_preview.style.webkitTransform = "rotate(" + angle + "deg) translate(0%, " + half_width + "px)";
+        }
+        image_preview.style.zIndex = "-10";
     }
+
     }
 
   function make_new_annotation() {
