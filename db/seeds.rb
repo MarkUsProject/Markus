@@ -5,3 +5,4 @@ Rake::Task['db:assignments'].invoke
 Rake::Task['db:groups'].invoke
 Rake::Task['db:rubric'].invoke
 Rake::Task['db:marks'].invoke
+Rake::Task['db:remarks'].invoke
