@@ -8,26 +8,46 @@
 //= require jquery
 //= require jquery-ui
 //= require jquery_ujs
+//= require jquery.easyModal
+//= require_tree ./ReactComponents
 
-var ModalMarkus = function (elem) {
-  this.elem = elem;
-  this.modal_dialog = jQuery(this.elem).dialog({
-    autoOpen: false,
-    resizable: false,
-    modal: true,
-    width: 'auto',
-    dialogClass: 'no-close'
+
+/** Modal windows, powered by jQuery.easyModal. */
+
+function ModalMarkus(elem) {
+  this.modal_dialog = jQuery(elem).easyModal({
+    updateZIndexOnOpen: false
   });
-};
+}
 
-ModalMarkus.prototype = {
+ModalMarkus.prototype.open = function() {
+  this.modal_dialog.trigger('openModal');
+}
 
-  open: function () {
-    this.modal_dialog.dialog('open');
-  },
+ModalMarkus.prototype.close = function() {
+  this.modal_dialog.trigger('closeModal');
+}
 
-  close: function () {
-    this.modal_dialog.dialog('close');
-  }
 
-};
+/** Helper functions for managing DOM elements' classes via pure JavaScript. */
+
+Element.prototype.addClass = function(className) {
+  if (this.classList)
+    this.classList.add(className);
+  else
+    this.className += ' ' + className;
+}
+
+Element.prototype.removeClass = function(className) {
+  if (this.classList)
+    this.classList.remove(className);
+  else
+    this.className = this.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+}
+
+Element.prototype.hasClass = function(className) {
+  if (this.classList)
+    return this.classList.contains(className);
+  else
+    return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
+}

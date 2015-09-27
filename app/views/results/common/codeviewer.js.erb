@@ -1,0 +1,58 @@
+<%# Render the source code for syntax highlighting... %>
+
+document.getElementById('code_pane').onmousemove = null;
+document.getElementById('codeviewer').onmousemove = null;
+
+<%# Non-binary files %>
+<% if !SubmissionFile.is_binary?(@file_contents) %>
+  <% begin %>
+    <% @file_contents = @file_contents.utf8_encode(Encoding::UTF_8) %>
+  <% rescue Encoding::InvalidByteSequenceError, Encoding::UndefinedConversionError %>
+    <% @file_contents = @file_contents.utf8_encode(Encoding::ISO_8859_1) %>
+  <% end %>
+  jQuery('#codeviewer').html(
+    "<%= escape_javascript(render partial: 'results/common/text_codeviewer',
+                                  locals: { uid: params[:uid],
+                                            file_contents: @file_contents,
+                                            annots: @annots,
+                                            code_type: @code_type }) %>");
+<%# Supported image files %>
+<% elsif @file.is_supported_image? %>
+  jQuery('#codeviewer').html(
+    "<%= escape_javascript(render partial: 'results/common/image_codeviewer',
+                                  locals: { uid: params[:uid],
+                                            file_contents: @file_contents,
+                                            annots: @annots,
+                                            code_type: @code_type,
+                                            submission_file_id: @submission_file_id }) %>");
+<%# PDF files %>
+<% elsif @file.is_pdf? %>
+  jQuery('#codeviewer').html(
+    "<%= escape_javascript(render partial: 'results/common/pdf_codeviewer',
+                                  locals: { uid: params[:uid],
+                                            annots: @annots,
+                                            submission_file_id: @submission_file_id }) %>");
+<% else %>
+  jQuery('#codeviewer').html(
+    "<%= escape_javascript(render partial: 'results/common/text_codeviewer',
+                                  locals: { uid: params[:uid],
+                                            file_contents: t('submission_file.error.binary_file_message'),
+                                            annots: @annots,
+                                            code_type: @code_type }) %>");
+<% end %>
+
+<%# Also update the annotation_summary_list %>
+<% if @current_user.ta? || @current_user.admin? %>
+  jQuery('#annotation_summary_list').html(
+    "<%= escape_javascript(render partial: 'results/marker/annotation_summary',
+                                  locals: { annots: @all_annots,
+                                            submission_file_id: @submission_file_id }) %>");
+
+  hide_all_annotation_content_editors();
+<% else %>
+  jQuery('#annotation_summary_list').html(
+    "<%= escape_javascript(render partial: 'results/student/annotation_summary',
+                                  locals: { annots: @all_annots,
+                                            submission_file_id: @submission_file_id }) %>");
+<% end %>
+reloadDOM();

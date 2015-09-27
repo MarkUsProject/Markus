@@ -1,0 +1,159 @@
+<% content_for :head do %>
+    <%= render partial: 'boot',
+               formats: [:js],
+               handlers: [:erb] %>
+    <%= render partial: 'tags_table',
+               formats: [:'js.jsx'],
+               handlers: [:erb] %>
+<% end %>
+
+<!--The title bar for the page-->
+<div class='title_bar'>
+  <h1>
+    <%= t('tags.title',
+          assignment_short_identifier: @assignment.short_identifier) %>
+  </h1>
+
+  <!--The buttons for creating tags, uploading and downloading-->
+  <div class='heading_buttons'>
+    <%= link_to_function t('tags.create.create_new'), 'modal_create_new.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t('tags.download.download'), 'modal_download.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to_function  t('tags.upload.upload_csv'), 'modal_upload_csv.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to_function t('tags.upload.upload_yml'), 'modal_upload_yml.open()' %>
+  </div>
+</div>
+
+<div class="wrapLeft">
+  <%= render 'shared/flash_message' %>
+
+  <!--The table that contains all the tags.-->
+  <div id='tags_table'></div>
+</div>
+
+<!--Modal dialogs for creating, uploading and downloading tags-->
+<aside class='dialog' id='create_new_dialog'>
+  <%= javascript_include_tag 'Tags/text_updater.js',
+                             id: 'text_script' %>
+
+  <h1><%= t('tags.create.create_new') %></h1>
+  <p><%= t('tags.create.tag_prompt') %></p>
+  <%= form_for :create_new,
+               url: assignment_tags_path(@assignment),
+               html: { multipart: true, size: 1 } do |f| %>
+    <div>
+      <p>
+        <%= f.text_field :name,
+                         placeholder: t('tags.create.name_prompt'),
+                         maxlength: 30 %>
+      </p>
+    </div>
+    <div>
+      <p class="alignleft"><%= t('tags.create.tag_description') %></p>
+      <p id='descript_amount' class='alignright'>0/120</p>
+      <p class="clear-alignment">
+          <%= f.text_area :description,
+                          id: 'description',
+                          cols: 30,
+                          rows: 3,
+                          maxlength: 120,
+                          placeholder: t('tags.create.descript_prompt') %>
+      </p>
+    </div>
+    <section class='dialog-actions'>
+      <%= f.submit t('tags.create.button_text'),
+                   name: 'submit',
+                   data: { disable_with: t('working') },
+                   class: 'button' %>
+      <input type='reset'
+             value='<%= t(:cancel) %>'
+             onclick='modal_create_new.close();'>
+    </section>
+  <% end %>
+</aside>
+<aside class='dialog' id='upload_csv_dialog'>
+  <!-- Script for disabling upload control. -->
+  <!-- TODO: INSERT SCRIPT ONCE MERGE IS COMPLETE -->
+
+  <h1><%= t('tags.upload.upload_csv_title') %></h1>
+  <p><%= t('tags.upload.upload_csv_prompt') %></p>
+  <%= form_for :upload_csv,
+               url: csv_upload_assignment_tags_path(@assignment),
+               html: { multipart: true, size: 1 } do |f| %>
+    <div class='content'>
+      <p><input type='file' name='csv_tags' id='csv_tags'></p>
+      <%= t('tags.upload.upload_csv_html') %>
+      <%= t('csv_special_characters_html') %>
+    </div>
+    <div class='encoding_type'>
+      <%= t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </div>
+
+    <section class='dialog-actions'>
+      <%= f.submit t(:upload),
+                   data: { disable_with: t(:uploading_please_wait) } %>
+      <input type='reset'
+             value='<%= t(:cancel) %>'
+             onclick='modal_upload_csv.close();'>
+    </section>
+   <% end %>
+</aside>
+<aside class='dialog' id='upload_yml_dialog'>
+  <!-- Script for disabling upload control. -->
+  <!-- TODO: INSERT SCRIPT ONCE MERGE IS COMPLETE -->
+
+  <h1><%= t('tags.upload.upload_yml_title') %></h1>
+  <p><%= t('tags.upload.upload_yml_prompt') %></p>
+  <%= form_for :upload_yml,
+               url: yml_upload_assignment_tags_path(@assignment),
+               html: { multipart: true, size: 1 } do |f| %>
+      <div class='content'>
+        <p><input type='file' name='yml_tags' id='yml_tags'></p>
+        <%= t('tags.upload.upload_yml_html') %>
+      </div>
+
+      <div class='encoding_type'>
+        <%= t('encoding') %>
+        <%= select_tag(:encoding, options_for_select(@encodings)) %>
+      </div>
+
+      <section class='dialog-actions'>
+        <%= f.submit t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) } %>
+        <input type='reset'
+               value='<%= t(:cancel) %>'
+               onclick='modal_upload_yml.close();'>
+      </section>
+  <% end %>
+</aside>
+<aside class='dialog' id='download_dialog'>
+  <h1><%= t('tags.download.download_title') %></h1>
+  <%= t('tags.download.download_html',
+           assignment_short_identifier: @assignment.short_identifier) %>
+  <section class ='dialog-actions'>
+    <p>
+      <%= link_to t('tags.download.button_message', file_format: 'CSV'),
+                  { controller: 'tags',
+                    action: 'download_tag_list',
+                    format: 'csv' },
+                  onclick: 'modal_download.close();',
+                  target: '_blank' %>
+    </p>
+    <p>
+      <%= link_to t('tags.download.button_message', file_format: 'YAML'),
+                  { controller: 'tags',
+                    action: 'download_tag_list',
+                    format: 'yaml' },
+                  onclick: 'modal_download.close();',
+                  target: '_blank' %>
+    </p>
+    <input type='reset'
+           value='<%= t(:cancel) %>'
+           onclick='modal_download.close();'>
+  </section>
+</aside>
+
+<aside class='dialog' id='edit_tags_dialog'></aside>

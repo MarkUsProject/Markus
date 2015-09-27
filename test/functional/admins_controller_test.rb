@@ -25,7 +25,7 @@ class AdminsControllerTest < AuthenticatedControllerTest
     end
 
     should 'be able to get :new' do
-      get_as @admin, :new
+      get_as @admin, :new, user_params
       assert_response :success
     end
 

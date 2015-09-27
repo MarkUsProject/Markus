@@ -16,17 +16,15 @@ class SectionsController < ApplicationController
 
   # Creates a new section
   def create
-    @user = Student.new(params[:user])
-
-    @section = Section.new(params[:section])
+    @section = Section.new(section_params)
     if @section.save
       @sections = Section.all
-      flash[:success] = I18n.t('section.create.success', :name => @section.name)
+      flash[:success] = I18n.t('section.create.success', name: @section.name)
       if params[:section_modal]
         render 'close_modal_add_section'
         return
       end
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
     else
       flash[:error] = I18n.t('section.create.error')
       if params[:section_modal]
@@ -45,9 +43,9 @@ class SectionsController < ApplicationController
 
   def update
     @section = Section.find(params[:id])
-    if @section.update_attributes(params[:section])
-      flash[:success] = I18n.t('section.update.success', :name => @section.name)
-      redirect_to :action => 'index'
+    if @section.update_attributes(section_params)
+      flash[:success] = I18n.t('section.update.success', name: @section.name)
+      redirect_to action: 'index'
     else
       flash[:error] = I18n.t('section.update.error')
       render :edit
@@ -68,6 +66,12 @@ class SectionsController < ApplicationController
     else
       flash[:error] = I18n.t('section.delete.error_permissions')
     end
-    redirect_to :action => :index
+    redirect_to action: :index
+  end
+
+  private
+
+  def section_params
+    params.require(:section).permit(:name)
   end
 end

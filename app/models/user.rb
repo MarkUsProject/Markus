@@ -1,5 +1,4 @@
-include CsvHelper
-require 'iconv'
+require 'encoding'
 require 'digest' # required for {set,reset}_api_token
 require 'base64' # required for {set,reset}_api_token
 # required for repository actions
@@ -13,14 +12,16 @@ class User < ActiveRecord::Base
 
   # Group relationships
   has_many :memberships
-  has_many :groupings, :through => :memberships
-  has_many :notes, :as => :noteable, :dependent => :destroy
-  has_many :accepted_memberships, :class_name => 'Membership', :conditions => {:membership_status => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
-
+  has_many :grade_entry_students
+  has_many :groupings, through: :memberships
+  has_many :notes, as: :noteable, dependent: :destroy
+  has_many :accepted_memberships,
+           -> { where membership_status: [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
+           class_name: 'Membership'
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
 
-  validates_format_of       :type,          :with => /Student|Admin|Ta/
+  validates_format_of       :type,          with: /Student|Admin|Ta/
   # role constants
   STUDENT = 'Student'
   ADMIN = 'Admin'
@@ -34,12 +35,13 @@ class User < ActiveRecord::Base
   AUTHENTICATE_ERROR =        3   # generic/unknown error
   AUTHENTICATE_BAD_CHAR =     4   # invalid character in username/password
   AUTHENTICATE_BAD_PLATFORM = 5   # external authentication works for *NIX platforms only
+  AUTHENTICATE_CUSTOM_MESSAGE = 6 # custom validate code for custom message
 
   # Verifies if user is allowed to enter MarkUs
   # Returns user object representing the user with the given login.
   def self.authorize(login)
     # fetch login in database to see if it is registered.
-    find_by_user_name(login)
+    where(user_name: login).first
   end
 
   # Authenticates login against its password
@@ -50,6 +52,7 @@ class User < ActiveRecord::Base
     # are delimited by \n and C programs use \0 to terminate strings
     not_allowed_regexp = Regexp.new(/[\n\0]+/)
     if not_allowed_regexp.match(login) || not_allowed_regexp.match(password)
+      m_logger = MarkusLogger.instance
       m_logger.log("User '#{login}' failed to log in. Username/password contained " +
                        'illegal characters', MarkusLogger::ERROR)
       AUTHENTICATE_BAD_CHAR
@@ -72,6 +75,10 @@ class User < ActiveRecord::Base
       pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
       pipe.close
       m_logger = MarkusLogger.instance
+      if (defined? VALIDATE_CUSTOM_EXIT_STATUS) && $?.exitstatus == VALIDATE_CUSTOM_EXIT_STATUS
+        m_logger.log("Login failed. Reason: Custom exit status.", MarkusLogger::ERROR)
+        return AUTHENTICATE_CUSTOM_MESSAGE
+      end
       case $?.exitstatus
         when 0
           m_logger.log("User '#{login}' logged in.", MarkusLogger::INFO)
@@ -93,8 +100,8 @@ class User < ActiveRecord::Base
   #TODO: make these proper associations. They work fine for now but
   # they'll be slow in production
   def active_groupings
-    self.groupings.all(:conditions => ['memberships.membership_status != :u',
-                                       { :u => StudentMembership::STATUSES[:rejected]}])
+    groupings.where('memberships.membership_status != ?',
+                         StudentMembership::STATUSES[:rejected])
   end
 
   # Helper methods -----------------------------------------------------
@@ -115,15 +122,13 @@ class User < ActiveRecord::Base
 
   def submission_for(aid)
     grouping = grouping_for(aid)
-    if grouping.nil?
-      return nil
-    end
+    return if grouping.nil?
     grouping.current_submission_used
   end
 
   # Classlist parsing --------------------------------------------------------
   def self.generate_csv_list(user_list)
-     file_out = CsvHelper::Csv.generate do |csv|
+     file_out = CSV.generate do |csv|
        user_list.each do |user|
          # csv format is user_name,last_name,first_name
          # We check for user's section
@@ -140,29 +145,30 @@ class User < ActiveRecord::Base
   end
 
   def self.upload_user_list(user_class, user_list, encoding)
+    max_invalid_lines = 10
     num_update = 0
     result = {}
     result[:invalid_lines] = []  # store lines that were not processed
     # read each line of the file and update classlist
     begin
-      if encoding != nil
-        user_list = StringIO.new(Iconv.iconv('UTF-8',
-                                            encoding,
-                                            user_list.read).join)
-      end
+      user_list = user_list.utf8_encode(encoding)
       User.transaction do
         processed_users = []
-        CsvHelper::Csv.parse(user_list,
-                             :skip_blanks => true,
-                             :row_sep => :auto) do |row|
+        CSV.parse(user_list,
+                  skip_blanks: true,
+                  row_sep: :auto) do |row|
           # don't know how to fetch line so we concat given array
-          next if CsvHelper::Csv.generate_line(row).strip.empty?
+          next if CSV.generate_line(row).strip.empty?
           if processed_users.include?(row[0])
-            result[:invalid_lines] = I18n.t('csv_upload_user_duplicate',
-                                            {:user_name => row[0]})
+            if result[:invalid_lines].count < max_invalid_lines
+              result[:invalid_lines] << I18n.t('csv_upload_user_duplicate',
+                                               { user_name: row[0] })
+            end
           else
             if User.add_user(user_class, row).nil?
-              result[:invalid_lines] << row.join(',')
+              if result[:invalid_lines].count < max_invalid_lines
+                result[:invalid_lines] << row.join(',')
+              end
             else
               num_update += 1
               processed_users.push(row[0])
@@ -170,8 +176,6 @@ class User < ActiveRecord::Base
           end
         end # end parse
       end
-    rescue
-        return false
     end
     result[:upload_notice] = "#{num_update} user(s) added/updated."
     result
@@ -190,7 +194,7 @@ class User < ActiveRecord::Base
       if key == :section_name
         if val
           # check if the section already exist
-          section = Section.find_or_create_by_name(val)
+          section = Section.find_or_create_by(name: val)
           user_attributes['section_id'] = section.id
         end
       else
@@ -199,24 +203,25 @@ class User < ActiveRecord::Base
     end
 
     # Is there already a Student with this User number?
-    current_user = user_class.find_or_create_by_user_name(user_attributes[:user_name])
+    current_user = user_class.find_or_create_by(
+      user_name: user_attributes[:user_name])
     current_user.attributes = user_attributes
 
-    unless current_user.save
-      return nil
-    end
-
+    return unless current_user.save
     current_user
   end
 
   # Convenience method which returns a configuration Hash for the
   # repository lib
   def self.repo_config
-    # create config
-    conf = Hash.new
-    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
-    conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
-    return conf
+    {
+      'IS_REPOSITORY_ADMIN' =>
+          MarkusConfigurator.markus_config_repository_admin?,
+      'REPOSITORY_STORAGE' =>
+          MarkusConfigurator.markus_config_repository_storage,
+      'REPOSITORY_PERMISSION_FILE' =>
+          MarkusConfigurator.markus_config_repository_permission_file
+    }
   end
 
   # Set API key for user model. The key is a
@@ -256,7 +261,7 @@ class User < ActiveRecord::Base
   # Create some random, hard to guess SHA2 512 bit long
   # digest.
   def generate_api_key
-    digest = Digest::SHA2.new(bitlen=512)
+    digest = Digest::SHA2.new(512)
     # generate a unique token
     unique_seed = SecureRandom.hex(20)
     digest.update("#{unique_seed} SECRET! #{Time.zone.now.to_f}").to_s

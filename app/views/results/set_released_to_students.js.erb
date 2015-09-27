@@ -1,0 +1,5 @@
+<% if @old_result %>
+  window.location = "<%= edit_assignment_submission_result_path(id: @old_result.id) %>";
+<% else %>
+  window.location = "<%= edit_assignment_submission_result_path(id: @result.id) %>";
+<% end %>

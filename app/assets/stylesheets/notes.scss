@@ -1,0 +1,40 @@
+@import 'common/core';
+
+
+.table {
+  margin-top: $dimen-vertical;
+}
+
+.button_to {
+  display: inline-block;
+
+  & + .button_to {
+    margin-left: 0.75em;
+  }
+}
+
+fieldset {
+  padding-top: 0;
+}
+
+small {
+  font-size: 0.9em;
+}
+
+table {
+  td {
+    padding-bottom: 1em;
+    padding-right: 1em;
+  }
+}
+
+#noteable_type label,
+#noteable_selector label {
+  display: inline-block;
+  min-width: 10em;
+}
+
+label + textarea {
+  display: block;
+  margin-top: 0.5em;
+}

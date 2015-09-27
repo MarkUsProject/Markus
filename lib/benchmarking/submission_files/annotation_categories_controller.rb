@@ -1,5 +1,3 @@
-require 'fastercsv'
-
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
   def index
@@ -73,31 +71,31 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_categories = @assignment.annotation_categories
     case params[:format]
     when 'csv'
-      send_data convert_to_csv(@annotation_categories), :type => 'csv', :disposition => 'attachment'
+      send_data convert_to_csv(@annotation_categories), type: 'csv', disposition: 'attachment'
     when 'yml'
-      send_data convert_to_yml(@annotation_categories), :type => 'yml', :disposition => 'attachment'
+      send_data convert_to_yml(@annotation_categories), type: 'yml', disposition: 'attachment'
     else
       flash[:error] = "Could not recognize #{params[:format]} format to download with"
-      redirect_to :action => 'index', :id => params[:id]
+      redirect_to action: 'index', id: params[:id]
     end
   end
 
   def csv_upload
     @assignment = Assignment.find(params[:id])
     unless request.post?
-      redirect_to :action => 'index', :id => @assignment.id
+      redirect_to action: 'index', id: @assignment.id
     end
     annotation_category_list = params[:annotation_category_list]
     annotation_category_number = 0
-    FasterCSV.parse(annotation_category_list) do |row|
-      next if FasterCSV.generate_line(row).strip.empty?
+    CSV.parse(annotation_category_list) do |row|
+      next if CSV.generate_line(row).strip.empty?
       if AnnotationCategory.add_by_row(row, @assignment)
         annotation_category_number += 1
       else
         flash[:annotation_upload_invalid_lines] << row.join(',')
       end
     end
-    flash[:annotation_upload_success] = I18n.t('annotations.upload.success', :annotation_category_number => annotation_category_number)
-    redirect_to :action => 'index', :id => @assignment.id
+    flash[:annotation_upload_success] = I18n.t('annotations.upload.success', annotation_category_number: annotation_category_number)
+    redirect_to action: 'index', id: @assignment.id
   end
 end

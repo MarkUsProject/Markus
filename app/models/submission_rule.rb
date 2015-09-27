@@ -1,11 +1,24 @@
 class SubmissionRule < ActiveRecord::Base
 
-  belongs_to :assignment
-  has_many :periods, :dependent => :destroy, :order => 'id'
-  accepts_nested_attributes_for :periods, :allow_destroy => true
+  class InvalidRuleType < Exception
+    def initialize(rule_name)
+      super I18n.t('assignment.not_valid_submission_rule', type: rule_name)
+    end
+  end
+
+  belongs_to :assignment, inverse_of: :submission_rule
+  has_many :periods, -> { order('id') }, dependent: :destroy
+  accepts_nested_attributes_for :periods, allow_destroy: true
 
 #  validates_associated :assignment
 #  validates_presence_of :assignment
+
+  def self.descendants
+    [NoLateSubmissionRule,
+     PenaltyPeriodSubmissionRule,
+     PenaltyDecayPeriodSubmissionRule,
+     GracePeriodSubmissionRule]
+  end
 
   def can_collect_now?
     return @can_collect_now if !@can_collect_now.nil?
@@ -21,7 +34,7 @@ class SubmissionRule < ActiveRecord::Base
     return @get_collection_time if !@get_collection_time.nil?
     @get_collection_time = calculate_collection_time
   end
-
+  
   def calculate_collection_time
     assignment.latest_due_date + hours_sum.hours
   end

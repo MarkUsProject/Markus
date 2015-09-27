@@ -1,0 +1,26 @@
+<div class='section'>
+  <% if @grade_entry_forms.empty? %>
+    <p><%= t(:no_grade_entry_forms_message) %></p>
+  <% else %>
+    <div class="table">
+      <table>
+        <thead>
+        <tr>
+          <th><%= t(:name) %></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @grade_entry_forms.each do |grade_entry_form| -%>
+          <tr>
+            <td>
+              <%= link_to grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
+                          grades_grade_entry_form_path(grade_entry_form),
+                          title: grade_entry_form.description %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

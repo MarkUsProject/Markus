@@ -1,0 +1,129 @@
+@import 'common/core';
+@import 'common/tags';
+
+
+#disable {
+  color: $grey !important;
+}
+
+#repo_browser_controls {
+  fieldset {
+    box-shadow: none;
+  }
+
+  form {
+    display: inline-block;
+  }
+}
+
+.global_action {
+  margin-top: 2.5em;
+
+  input[type='button'],
+  input[type='submit'],
+  .button {
+    min-width: 8em;
+  }
+}
+
+#directory_selector {
+  font-style: italic;
+}
+
+.react_buttons {
+  margin-bottom: 1em;
+
+  button {
+    margin-right: 1em;
+  }
+}
+
+#file_form {
+  margin-top: 1em;
+}
+
+#files_table {
+  margin-top: 1.5em;
+}
+
+.submission_collected {
+  background-color: $light-green !important;
+}
+
+.submission_error {
+  background-color: $light-red !important;
+}
+
+.react-release-marks {
+  float: right;
+
+  button {
+    margin-left: 1em;
+  }
+}
+
+/* Tag CSS Elements */
+
+.tag_list {
+  text-align: left;
+  list-style: none;
+  margin: 0px;
+  cursor: pointer;
+
+  li {
+    margin-left: -40px;
+    position: left;
+    transition: all 0.2s;
+
+    &:hover {
+      color: $dark-blue;
+
+      // When hover is activated on li, shows the menu
+      ul {
+        display: block;
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+
+    ul {
+      background-color: $light-grey;
+      cursor: pointer;
+      list-style: none;
+      margin: 0;
+      opacity: 0;
+      position: absolute;
+      text-align: left;
+      transition: all 0.2s;
+      visibility: hidden;
+
+      li {
+        color: $dark-blue !important;
+        padding: 2px;
+        text-align: left;
+
+        &:hover {
+          background-color: $dark-grey;
+        }
+      }
+    }
+  }
+}
+
+// Removes CSS formatting for titles and search bars
+.tag_list_search:hover,
+.tag_list_title:hover {
+  background-color: $light-grey !important;
+  cursor: default !important;
+}
+
+
+/* Student view */
+
+#current_time {
+  margin-bottom: 1em;
+}
+
+.global_action {
+  margin: 1em 0;
+}

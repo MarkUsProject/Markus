@@ -1,3 +1,0 @@
-page.hide 'ajax_error'
-page.call "modify_students", @students.to_json
-

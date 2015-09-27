@@ -1,9 +1,7 @@
 require File.expand_path(File.join(File.expand_path(File.dirname(__FILE__)), 'authenticated_controller_test'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
-include CsvHelper
 require 'shoulda'
-require 'mocha/setup'
 
 ## TODO refactor this code
 
@@ -16,8 +14,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       @assignment = Assignment.make
     end
 
-    should 'GET on :add_group' do
-      get_as @student, :add_group, :assignment_id => @assignment.id
+    should 'GET on :new' do
+      get_as @student, :new, :assignment_id => @assignment.id
       assert_response :missing
     end
 
@@ -56,8 +54,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert_response :missing
     end
 
-    should 'GET on :use_another_assignment_groups' do
-      get_as @student,
+    should 'POST on :use_another_assignment_groups' do
+      post_as @student,
              :use_another_assignment_groups,
              :assignment_id => @assignment.id
       assert_response :missing
@@ -80,20 +78,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert_response :success
     end
 
-    should 'GET on :populate' do
-      get_as @admin,
-             :populate,
-             :assignment_id => @assignment.id
-      assert_response :success
-    end
-
-    should 'GET on :populate_students' do
-      get_as @admin,
-             :populate_students,
-             :assignment_id => @assignment.id
-      assert_response :success
-    end
-
     should 'GET on :index' do
       get_as @admin,
              :index,
@@ -101,25 +85,19 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert_response :success
     end
 
-    context 'POST on :add_group' do
+    context 'GET on :add_group' do
 
       should 'be able to add group without groupname' do
         @assignment = Assignment.make
         Assignment.any_instance.stubs(:add_group).returns(Grouping.make)
-        post_as @admin, :new, :assignment_id => @assignment.id
+        get_as @admin, :new, :assignment_id => @assignment.id
         assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row'
-        assert_not_nil assigns(:assignment) { @assignment }
-        assert_not_nil assigns :new_grouping
       end
 
       should 'be able to create with groupname' do
-        post_as @admin, :new,
+        get_as @admin, :new,
           { :assignment_id => @assignment.id, :new_group_name => 'test' }
         assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
-        assert_not_nil assigns(:assignment) { @assignment }
-        assert_not_nil assigns :new_grouping
       end
     end #:add_group
 
@@ -131,7 +109,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
                  {:assignment_id => @assignment.id,
                   :grouping_id => @grouping.id}
         assert_response :success
-        assert render_template 'groups/delete_groupings'
         assert_not_nil assigns(:assignment) { @assignment }
         assert_not_nil assigns(:errors) { [] }
         assert_not_nil assigns(:removed_groupings) { [@grouping] }
@@ -144,7 +121,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
                   {:assignment_id => @assignment.id,
                    :grouping_id => @grouping_with_submission.id}
         assert_response :success
-        assert render_template 'groups/delete_groupings'
         assert_not_nil assigns(:assignment) { Assignment.make }
         assert_not_nil assigns(:errors) { [@grouping_with_submission.group.group_name] }
         assert_not_nil assigns(:removed_groupings) { [] }
@@ -158,7 +134,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @new_name = 'NeW'
         post_as @admin,
                 :rename_group, {:assignment_id => @assignment.id,
-          :id => @grouping.id, :new_groupname => @new_name}
+          :id => @grouping.id, :new_groupname => @new_name, :format => 'js'}
         assert_not_nil assigns :assignment
         assert_not_nil assigns :grouping
         assert_not_nil assigns :group
@@ -169,88 +145,73 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'with existing name' do
         @new_name = Grouping.make.group.group_name
         post_as @admin, :rename_group, {:assignment_id => @assignment.id,
-          :id => @grouping.id, :new_groupname => @new_name}
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns :grouping
-        assert_not_nil assigns :group
+          :id => @grouping.id, :new_groupname => @new_name, :format => 'js'}
         assert_response :success
         assert_equal @grouping.group.group_name, assigns(:group).group_name
-        assert_equal flash[:error], I18n.t('groups.rename_group.already_in_use')
       end
-
     end #:rename_group
 
     should 'POST on :valid_grouping' do
       post_as @admin, :valid_grouping, {:assignment_id => @assignment.id,
         :grouping_id => @grouping.id}
-      assert_not_nil assigns :assignment
       assert_response :success
     end
 
     should 'POST on :invalid_grouping' do
       post_as @admin, :invalid_grouping, {:assignment_id => @assignment.id,
         :grouping_id => @grouping.id}
-      assert_not_nil assigns :assignment
       assert_response :success
     end
 
     should 'be able to clone groups from another assignment' do
       target_assignment = Assignment.make
+      @request.env['HTTP_REFERER'] = "assignments/#{target_assignment.id}/groups"
       post_as @admin,
               :use_another_assignment_groups,
-              {:assignment_id => target_assignment.id,
-               :clone_groups_assignment_id => @assignment.id}
+              { assignment_id: target_assignment.id,
+                clone_assignment_id: @assignment.id }
 
-      assert_not_nil assigns :target_assignment
-      assert_response :success
-      assert render_template 'use_another_assignment_groups.rjs'
+      assert_response :found
+      assert render_template 'index', formats: [:'js.jsx'], handlers: [:erb]
     end
 
-    should 'should be able to delete' do
+    should 'should be able to delete without groupings' do
       post_as @admin, :global_actions, {:assignment_id => @assignment.id,
         :global_actions => 'delete'}
-      assert_not_nil assigns :assignment
-      assert_not_nil assigns :tas
+      # check error: must select grouping
+      assert_response 400
     end
 
     should 'be able to delete a grouping' do
       post_as @admin, :global_actions, {:assignment_id => @assignment.id,
           :global_actions => 'delete', :groupings => [@grouping.id]}
-      assert_not_nil assigns :assignment
-      assert_not_nil assigns :tas
-      assert_same_elements [@grouping], assigns(:removed_groupings)
-      assert_not_nil assigns(:errors) { [] }
-      assert render_template 'delete_groupings.rjs'
+      assert_response :success
     end
 
-    should 'should be able to do invalid' do
+    should 'should not be able to do invalid any students' do
       post_as @admin, :global_actions, {:assignment_id => @assignment.id,
         :global_actions => 'invalid'}
-      assert_not_nil assigns :assignment
-      assert_not_nil assigns :tas
+      # check error: must select students
+      assert_response 400
     end
 
     should 'should be able to invalide a selected grouping' do
       post_as @admin, :global_actions, {:assignment_id => @assignment.id,
         :global_actions => 'invalid', :groupings => [@grouping.id]}
-      assert_not_nil assigns :assignment
-      assert_not_nil assigns :tas
-      assert render_template 'groups/table_row/_filter_table_row.html.erb'
+      assert_response :success
     end
 
     should 'be able to validate' do
       post_as @admin, :global_actions, {:assignment_id => @assignment.id,
         :global_actions => 'valid'}
-      assert_not_nil assigns :assignment
-      assert_not_nil assigns :tas
+      # should raise error: select a group
+      assert_response 400
     end
 
     should 'and one is selected' do
       post_as @admin, :global_actions, {:assignment_id => @assignment.id,
         :global_actions => 'valid', :groupings => [@grouping.id]}
-      assert_not_nil assigns :assignment
-      assert_not_nil assigns :tas
-      assert render_template 'groups/table_row/_filter_table_row.html.erb'
+      assert_response :success
     end
 
     context 'group creation with grace days deduction, All members' do
@@ -372,32 +333,29 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
       setup do
         @assignment = Assignment.make
+        @admin = Admin.make
       end
 
       should 'and no group selected' do
         @student =  Student.make
         post_as @admin, :global_actions, {:assignment_id => @assignment.id,
           :global_actions => 'assign', :students => [@student.id]}
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns :tas
+        assert_response 400
       end
 
       should 'and no students selected' do
         @grouping = Grouping.make
         post_as @admin, :global_actions, {:assignment_id => @assignment.id,
           :global_actions => 'assign', :groupings => [@grouping.id]}
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns :tas
         assert_equal 0, @grouping.student_memberships.size
+        assert_response 400
       end
 
       should 'with a single student not in a group' do
         @student =  Student.make
         @grouping = Grouping.make
         post_add [@student.id]
-        assert_not_nil assigns :assignment
         assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 1, @grouping.student_memberships.size
         assert_equal 'inviter',
                       @grouping.student_memberships.at(0).membership_status
@@ -409,12 +367,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @grouping = Grouping.make
         @grouping.add_member(@student)
         post_add [@student.id]
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns(:messages) {
-          [ I18n.t('add_student.fail.already_grouped', :user_name => @user_name) ] }
-        assert_not_nil assigns(:error) { true }
-        assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
+        # should also assert error: student already grouped
+        assert_response 400
         assert_equal 1, @grouping.student_memberships.size
       end
 
@@ -423,10 +377,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @student2 =  Student.make
         @grouping = Grouping.make
         post_add [@student1.id, @student2.id]
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns(:error) { false }
         assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 2,
                      @grouping.student_memberships.size
         assert_equal 'inviter',
@@ -443,11 +394,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @student1 =  Student.make
         @student2 =  Student.make
         @grouping = Grouping.make
-        post_add [@student1.id, @student2.id]
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns(:error) { false }
+        post_add [@student1, @student2]
         assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 2, @grouping.student_memberships.size
         assert_equal 'inviter',
                      @grouping.student_memberships.at(0).membership_status
@@ -461,23 +409,18 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @student1 =  Student.make
         @student2 =  Student.make
         @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
-        @grouping2.add_member(@student1)
-        post_add [@student1.id, @student2.id]
+        @grouping.add_member(@student1)
+        post_add [@student2]
 
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns(:messages) {
-          [
-            I18n.t('add_student.fail.already_grouped', :user_name => @student1.user_name)
-          ]
-        }
-        assert_not_nil assigns(:error) { true }
+        # check for error: student already assigned
         assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
-        assert_equal 1, @grouping.student_memberships.size
-        assert_equal 'inviter',
+        assert_equal 2, @grouping.student_memberships.size
+        assert_equal 'accepted',
                      @grouping.student_memberships.at(0).membership_status
-        assert_equal @student2.id, @grouping.student_memberships.at(0).user_id
+        assert_equal 'accepted',
+                     @grouping.student_memberships.at(1).membership_status
+        assert_equal @student1.id, @grouping.student_memberships.at(0).user_id
+        assert_equal @student2.id, @grouping.student_memberships.at(1).user_id
       end
 
       should 'with 1 valid user, 1 already assigned user' do
@@ -486,18 +429,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @grouping = Grouping.make(:assignment => @assignment)
         @grouping2 = Grouping.make(:assignment => @assignment)
         @grouping2.add_member(@student2)
-        post_add [@student1.id, @student2.id]
-
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns(:messages) {
-          [
-            I18n.t('add_student.fail.already_grouped',
-                   :user_name => @student2.user_name)
-          ]
-        }
-        assert_not_nil assigns(:error) { true }
-        assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
+        post_add [@student1, @student2]
+        # should also get error message we return is 'student already assigned'
+        assert_response 400
         assert_equal 1, @grouping.student_memberships.size
         assert_equal 'inviter', @grouping.student_memberships.at(0).membership_status
         assert_equal @student1.id, @grouping.student_memberships.at(0).user_id
@@ -509,10 +443,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @student3 =  Student.make
         @grouping = Grouping.make
         post_add [@student1.id, @student2.id, @student3.id]
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns(:error) { true }
         assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 3, @grouping.student_memberships.size
         assert_equal 'inviter',
                      @grouping.student_memberships.at(0).membership_status
@@ -534,15 +465,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @grouping2 = Grouping.make(:assignment => @assignment)
         @grouping2.add_member(@student3)
         post_add [@student1.id, @student2.id, @student3.id]
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns(:messages) {
-          [
-            I18n.t('add_student.fail.already_grouped', :user_name => @student3.user_name)
-          ]
-        }
-        assert_not_nil assigns(:error) { true }
-        assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
+        # should return error: already assigned
+        assert_response 400
         assert_equal 2, @grouping.student_memberships.size
         assert_equal 'inviter',
                      @grouping.student_memberships.at(0).membership_status
@@ -550,111 +474,43 @@ class GroupsControllerTest < AuthenticatedControllerTest
                      @grouping.student_memberships.at(0).user_id
         assert_equal 'accepted',
                      @grouping.student_memberships.at(1).membership_status
-        assert_equal  @student2.id, @grouping.student_memberships.at(1).user_id
-      end
-
-      should 'with valid,invalid,valid users' do
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @student3 =  Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
-        @grouping2.add_member(@student2)
-        post_add [@student1.id, @student2.id, @student3.id]
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns(:messages) {
-          [
-            I18n.t('add_student.fail.already_grouped', :user_name => @student2.user_name)
-          ]
-        }
-        assert_not_nil assigns(:error) { true }
-        assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
-        assert_equal 2, @grouping.student_memberships.size
-        assert_equal 'inviter',
-                     @grouping.student_memberships.at(0).membership_status
-        assert_equal  @student1.id, @grouping.student_memberships.at(0).user_id
-        assert_equal 'accepted',
-                     @grouping.student_memberships.at(1).membership_status
-        assert_equal @student3.id, @grouping.student_memberships.at(1).user_id
-      end
-
-      should 'with invalid,valid,valid users' do
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @student3 =  Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
-        @grouping2.add_member(@student1)
-        post_add [@student1.id, @student2.id, @student3.id]
-        assert_not_nil assigns :assignment
-        assert_not_nil assigns(:messages) {
-          [
-            I18n.t('add_student.fail.already_grouped', :user_name => @student1.user_name)
-          ]
-        }
-        assert_not_nil assigns(:error) { true }
-        assert_response :success
-        assert render_template 'groups/table_row/_filter_table_row.html.erb'
-        assert_equal 2, @grouping.student_memberships.size
-        assert_equal 'inviter',
-                     @grouping.student_memberships.at(0).membership_status
-        assert_equal @student2.id, @grouping.student_memberships.at(0).user_id
-        assert_equal 'accepted',
-                     @grouping.student_memberships.at(1).membership_status
-        assert_equal @student3.id, @grouping.student_memberships.at(1).user_id
+        assert_equal @student2.id, @grouping.student_memberships.at(1).user_id
       end
 
     end #POST on global_actions on assign
 
     context 'with a grouping' do
       setup do
-        @grouping = Grouping.make
+        @assignment = Assignment.make
+        @admin = Admin.make
       end
 
-      should 'be able to unassigne a member' do
+      should 'be able to unassign a member' do
         @student1 = Student.make
         @student2 = Student.make
+        @grouping = Grouping.make(:assignment => @assignment)
         @grouping.add_member(@student1)
         @grouping.add_member(@student2)
-        post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-          :global_actions => 'unassign', :groupings => [@grouping.id],
-          "#{@grouping.id}_#{@student2.user_name}" => true}
-        assert respond_with :success
-        assert render_template 'groups/table_row/_filter_table_student_row.erb'
-        assert_not_nil assigns :assignment
+        post_as @admin, :global_actions, {
+          :assignment_id => @assignment.id,
+          :global_actions => 'unassign',
+          :students_to_remove => [@student1.id]}
+        assert_response :success
         @grouping.reload
         assert_equal 1, @grouping.student_memberships.size
       end
 
-      should 'be able to unassign an inviter' do
+      should 'be able to unassign all group members' do
         @student1 = Student.make
         @student2 = Student.make
+        @grouping = Grouping.make(:assignment => @assignment)
         @grouping.add_member(@student1)
         @grouping.add_member(@student2)
-        post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-          :global_actions => 'unassign', :groupings => [@grouping.id],
-          "#{@grouping.id}_#{@student1.user_name}" => true}
+        post_as @admin, :global_actions, {
+          :assignment_id => @assignment.id,
+          :global_actions => 'unassign',
+          :students_to_remove => [@student1.id, @student2.id]}
         assert_response :success
-        assert render_template 'groups/table_row/_filter_table_student_row.erb'
-        assert_not_nil assigns :assignment
-        @grouping.reload
-        assert_equal 1, @grouping.student_memberships.size
-      end
-
-      should 'be able to unassigne all group members' do
-        @student1 = Student.make
-        @student2 = Student.make
-        @grouping.add_member(@student1)
-        @grouping.add_member(@student2)
-        post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-          :global_actions => 'unassign', :groupings => [@grouping.id],
-          :students => [@student1.id, @student2.id],
-          "#{@grouping.id}_#{@student1.user_name}" => true,
-          "#{@grouping.id}_#{@student2.user_name}" => true}
-        assert_response :success
-        assert render_template 'groups/table_row/_filter_table_student_row.erb'
-        assert_not_nil assigns :assignment
         @grouping.reload
         assert_equal 0, @grouping.student_memberships.size
       end
@@ -694,7 +550,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert !@response.body.empty?
         end
         should 'return the expected CSV' do
-          assert_equal @match_array, CsvHelper::Csv.parse(@response.body)
+          assert_equal @match_array, CSV.parse(@response.body)
         end
         should 'route properly' do
           assert_recognizes({:controller => 'groups', :assignment_id => '1', :action => 'download_grouplist' },
@@ -720,15 +576,17 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert !@response.body.empty?
         end
         should 'return the expected CSV, without TAs included' do
-          assert_equal @match_array, CsvHelper::Csv.parse(@response.body)
+          assert_equal @match_array, CSV.parse(@response.body)
         end
         should 'route properly' do
           assert_recognizes({:controller => 'groups', :assignment_id => '1', :action => 'download_grouplist' },
             {:path => 'assignments/1/groups/download_grouplist', :method => :get})
         end
+
       end # with groups, with TAs assigned
 
     end
+
   end #admin context
 
   def post_add(students)

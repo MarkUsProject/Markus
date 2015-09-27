@@ -1,10 +1,9 @@
-require 'fastercsv'
 class AssignmentsController < ApplicationController
-  before_filter      :authorize_only_for_admin, :except => [:deletegroup, :delete_rejected, :disinvite_member, :invite_member,
+  before_filter      :authorize_only_for_admin, except: [:deletegroup, :delete_rejected, :disinvite_member, :invite_member,
   :creategroup, :join_group, :decline_invitation, :index, :student_interface]
-  before_filter      :authorize_for_student, :only => [:student_interface, :deletegroup, :delete_rejected, :disinvite_member,
+  before_filter      :authorize_for_student, only: [:student_interface, :deletegroup, :delete_rejected, :disinvite_member,
   :invite_member, :creategroup, :join_group, :decline_invitation]
-  before_filter      :authorize_for_user, :only => [:index]
+  before_filter      :authorize_for_user, only: [:index]
 
   auto_complete_for :assignment, :name
   # Publicly accessible actions ---------------------------------------
@@ -19,9 +18,9 @@ class AssignmentsController < ApplicationController
     if @grouping.nil?
       if @assignment.group_max == 1
         @student.create_group_for_working_alone_student(@assignment.id)
-        redirect_to :action => 'student_interface', :id => @assignment.id
+        redirect_to action: 'student_interface', id: @assignment.id
       else
-        render :student_interface, :layout => 'no_menu_header'
+        render :student_interface, layout: 'no_menu_header'
         return
       end
     else
@@ -52,7 +51,7 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
-    @assignments = Assignment.all(:order => :id)
+    @assignments = Assignment.order(:id)
     if current_user.student?
       # get results for assignments for the current user
       @a_id_results = Hash.new()
@@ -123,7 +122,7 @@ class AssignmentsController < ApplicationController
 
     if @assignment.save
       flash[:notice] = 'Successfully Updated Assignment'
-      redirect_to :action => 'edit', :id => params[:id]
+      redirect_to action: 'edit', id: params[:id]
     else
       render :edit
     end
@@ -166,7 +165,7 @@ class AssignmentsController < ApplicationController
       if params[:assignment_files]
         params[:assignment_files].each do |assignment_file_name|
           unless assignment_file_name.empty?
-            assignment_file = AssignmentFile.new(:filename => assignment_file_name, :assignment => @assignment)
+            assignment_file = AssignmentFile.new(filename: assignment_file_name, assignment: @assignment)
             assignment_file.save
           end
         end
@@ -176,7 +175,7 @@ class AssignmentsController < ApplicationController
       end
       @assignment.save
     end
-    redirect_to :action => 'edit', :id => @assignment.id
+    redirect_to action: 'edit', id: @assignment.id
   end
 
   def update_group_properties_on_persist
@@ -186,7 +185,7 @@ class AssignmentsController < ApplicationController
   def download_csv_grades_report
     assignments = Assignment.all
     students = Student.all
-    csv_string = FasterCSV.generate do |csv|
+    csv_string = CSV.generate do |csv|
       students.each do |student|
         row = []
         row.push(student.user_name)
@@ -206,7 +205,7 @@ class AssignmentsController < ApplicationController
         csv << row
       end
     end
-    send_data csv_string, :disposition => 'attachment', :filename => "#{COURSE_NAME} grades report.csv"
+    send_data csv_string, disposition: 'attachment', filename: "#{COURSE_NAME}_grades_report.csv"
   end
 
 
@@ -217,7 +216,7 @@ class AssignmentsController < ApplicationController
     @grouping = Grouping.find(params[:grouping_id])
     @user = Student.find(session[:uid])
     @user.join(@grouping.id)
-    redirect_to :action => 'student_interface', :id => params[:id]
+    redirect_to action: 'student_interface', id: params[:id]
   end
 
   def decline_invitation
@@ -225,7 +224,7 @@ class AssignmentsController < ApplicationController
     @grouping = Grouping.find(params[:grouping_id])
     @user = Student.find(session[:uid])
     @grouping.decline_invitation(@user)
-    redirect_to :action => 'student_interface', :id => params[:id]
+    redirect_to action: 'student_interface', id: params[:id]
   end
 
   def creategroup
@@ -250,7 +249,7 @@ class AssignmentsController < ApplicationController
     rescue RuntimeError => e
       flash[:fail_notice] = e.message
     end
-    redirect_to :action => 'student_interface', :id => params[:id]
+    redirect_to action: 'student_interface', id: params[:id]
   end
 
   def deletegroup
@@ -269,7 +268,7 @@ class AssignmentsController < ApplicationController
       if @grouping.is_valid?
         raise 'Your group is valid, and can only be deleted by instructors.'
       end
-      @grouping.student_memberships.all(:include => :user).each do |member|
+      @grouping.student_memberships.includes(:user).each do |member|
         member.destroy
       end
       # update repository permissions
@@ -280,7 +279,7 @@ class AssignmentsController < ApplicationController
     rescue RuntimeError => e
       flash[:fail_notice] = e.message
     end
-    redirect_to :action => 'student_interface', :id => params[:id]
+    redirect_to action: 'student_interface', id: params[:id]
   end
 
   def invite_member
@@ -303,31 +302,31 @@ class AssignmentsController < ApplicationController
       @invited = Student.find_by_user_name(user_name)
       begin
         if @grouping.student_membership_number >= @assignment.group_max
-          raise I18n.t('invite_student.fail.group_max_reached', :user_name => user_name)
+          raise I18n.t('invite_student.fail.group_max_reached', user_name: user_name)
         end
         if @invited.nil?
-          raise I18n.t('invite_student.fail.dne', :user_name => user_name)
+          raise I18n.t('invite_student.fail.dne', user_name: user_name)
         end
         if @invited == @student
           raise I18n.t('invite_student.fail.inviting_self')
         end
         if @invited.hidden
-          raise I18n.t('invite_student.fail.hidden', :user_name => user_name)
+          raise I18n.t('invite_student.fail.hidden', user_name: user_name)
         end
         if @grouping.pending?(@invited)
-          raise I18n.t('invite_student.fail.already_pending', :user_name => user_name)
+          raise I18n.t('invite_student.fail.already_pending', user_name: user_name)
         end
         if @invited.has_accepted_grouping_for?(@assignment.id)
-          raise I18n.t('invite_student.fail.already_grouped', :user_name => user_name)
+          raise I18n.t('invite_student.fail.already_grouped', user_name: user_name)
         end
 
         @invited.invite(@grouping.id)
-        flash[:success].push(I18n.t('invite_student.success', :user_name => @invited.user_name))
+        flash[:success].push(I18n.t('invite_student.success', user_name: @invited.user_name))
       rescue Exception => e
         flash[:fail_notice].push(e.message)
       end
     end
-    redirect_to :action => 'student_interface', :id => @assignment.id
+    redirect_to action: 'student_interface', id: @assignment.id
   end
 
   # Called by clicking the cancel link in the student's interface
@@ -349,7 +348,7 @@ class AssignmentsController < ApplicationController
     membership = StudentMembership.find(params[:membership])
     membership.delete
     membership.save
-    redirect_to :action => 'student_interface', :id => params[:id]
+    redirect_to action: 'student_interface', id: params[:id]
   end
 
 end

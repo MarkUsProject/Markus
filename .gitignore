@@ -2,24 +2,24 @@
 # Ignore nncessary mac files
 .DS_Store
 
-config/database.yml
-config/local_environment_override.rb
+/config/database.yml
+/config/local_environment_override.rb
 
 # Data, app documentation, log and bundle folder
-data/
-log/
-doc/app/
-.bundle/
+/data/
+/log/
+/doc/app/
+/.bundle/
 
 # Files created by sass
 .sass-cache
 
 # Files created by rcov/simplecov
-test/coverage
-test/coverage.data
+/test/coverage
+/test/coverage.data
 
 # Files created by tests
-lib/repo/test/svn_repos/svn_authz
+/lib/repo/test/svn_repos/svn_authz
 
 # Patch
 *.diff
@@ -47,3 +47,6 @@ lib/repo/test/svn_repos/svn_authz
 
 # RubyMine generated project folder
 .idea
+
+#Ignore files for Vagrant instance
+.vagrant

@@ -1,6 +1,0 @@
-page.remove "extra_mark_#{@extra_mark.id}"
-page.replace_html("current_total_mark_div", @result.total_mark)
-page.replace_html 'total_extra_points', @result.get_total_extra_points
-page.replace_html 'total_extra_percentage', @result.get_total_extra_percentage
-page.replace_html 'total_extra_percentage_as_points', @result.get_total_extra_percentage_as_points
-page.call "update_total_mark", @result.total_mark

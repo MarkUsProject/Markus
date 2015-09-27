@@ -29,7 +29,7 @@ module SessionHandler
     return user.is_a?(type)
   end
 
-  # Checks user satsifies the following conditions:
+  # Checks user satisfies the following conditions:
   # => User has an active session and is not expired
   # => User has privilege to view the page/perform action
   # If not, then user is redirected to login page for authentication.
@@ -59,9 +59,9 @@ module SessionHandler
         # Redirect users back to referer, or else
         # they might be redirected to an rjs page.
         session[:redirect_uri] = request.referer
-        render :nothing => true, :status => :forbidden  # 403 http code
+        render nothing: true, status: :forbidden  # 403 http code
       else
-        redirect_to :controller => 'main', :action => 'login'
+        redirect_to controller: 'main', action: 'login'
       end
     end
   end
@@ -70,31 +70,63 @@ module SessionHandler
   # specific role.
   def authorize_only_for_admin
     unless authorized?(Admin)
-      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+      render 'shared/http_status', formats: [:html],
+             locals:
+                 { code: '404',
+                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: 404, layout: false
+    end
+  end
+
+  def authorize_for_admin_and_admin_logged_in_as
+    real_user = (session[:real_uid] && User.find_by_id(session[:real_uid])) ||
+        nil
+    unless authorized?(Admin) || (real_user && real_user.is_a?(Admin))
+      render 'shared/http_status', formats: [:html],
+             locals:
+                 { code: '404',
+                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: 404, layout: false
     end
   end
 
   def authorize_for_ta_and_admin
     unless authorized?(Admin) || authorized?(Ta)
-      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+      render 'shared/http_status', formats: [:html],
+             locals:
+                 { code: '404',
+                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: 404, layout: false
     end
   end
 
   def authorize_for_student
     unless authorized?(Student)
-      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+      render 'shared/http_status', formats: [:html],
+             locals:
+                 { code: '404',
+                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: 404, layout: false
     end
   end
 
   def authorize_for_student_and_ta
     unless authorized?(Ta) || authorized?(Student)
-      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+      render 'shared/http_status', formats: [:html],
+             locals:
+                 { code: '404',
+                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: 404, layout: false
     end
   end
 
   def authorize_for_user
     unless authorized?(User)
-      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+      render 'shared/http_status', formats: [:html],
+             locals:
+                 { code: '404',
+                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: 404, layout: false
     end
   end
 
@@ -105,6 +137,15 @@ module SessionHandler
   # This should be done on every page request or refresh that a user does.
   def refresh_timeout
     session[:timeout] = current_user.class::SESSION_TIMEOUT.seconds.from_now
+    session[:has_warned] = false
+  end
+
+  def set_warned
+    session[:has_warned] = true
+  end
+
+  def check_warned
+    session[:has_warned]
   end
 
   # Check if this current user's session has not yet expired.
@@ -125,7 +166,7 @@ module SessionHandler
           return true
         end
         # Otherwise, expire only if the session timed out.
-        return session[:timeout] < Time.now
+        session[:timeout] < Time.now
       end
       # Expire session if remote user does not match the session's uid.
       # We cannot have switched roles at this point.
@@ -135,7 +176,14 @@ module SessionHandler
       end
     end
     # No REMOTE_USER is involed.
-    return session[:timeout] < Time.now
+    session[:timeout] < Time.now
+  end
+
+  def check_imminent_expiry
+    if Time.parse(session[:timeout]) - Time.now <= 5.minutes
+      return true
+    end
+    false
   end
 
   # Clear this current user's session set by this app

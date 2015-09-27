@@ -1,392 +1,458 @@
-<%
-  # For the internationalization of the Calendar
-%>
-
-<% if I18n.default_locale == :en %>
-   <%= calendar_date_select_includes "silver" %>
-<% else %>
-   <%= calendar_date_select_includes "silver", :locale => I18n.default_locale %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'common/jquery-ui', 'common/jquery-ui-timepicker-addon' %>
+  <%= javascript_include_tag 'create_assignment',
+                             'jquery-ui-timepicker-addon',
+                             'PeriodDeltaChain/PeriodDeltaChain',
+                             'moment-with-langs.min',
+                             'localize_date' %>
+  <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
+  <%= render partial: 'shared/navigation_warning',
+             formats: [:js],
+             handlers: [:erb] %>
 <% end %>
-<%= javascript_include_tag "PeriodDeltaChain/PeriodDeltaChain" %>
 
-<%= render :partial => 'boot.js' %>
+<%= render 'shared/flash_message' %>
+<%= render partial: 'shared/error_explanation',
+           locals: { model: @assignment } %>
 
-<div class="wrapLeft">
-  <%= render 'shared/flash_message' %>
+<%= form_for @assignment do |f| %>
 
-  <%= render :partial => "shared/navigation_warning.js.erb" %>
+  <label class='required'><%= t('assignment.required_fields') %></label>
 
-  <%= form_for @assignment do |f| %>
-    <%= render :partial => "shared/error_explanation",
-        :locals => { :model => @assignment } %>
+  <%# Assignment properties %>
   <fieldset>
-    <legend><%= t("assignment.properties") %></legend>
-      <%= raw( f.label :short_identifier, t("assignment.short_identifier").html_safe ) %>
-      <% if @assignment.id.nil? %>
-        <%=raw( f.text_field :short_identifier ,
-                         :onchange =>  "set_onbeforeunload(true);
-                         $('assignment_repository_folder').setValue(
-                           $(this).getValue() )",
-                         :maxlength => 30 )%><br />
-      <% else %>
-        <%= raw( f.text_field :short_identifier ,
-                              :onchange =>  "set_onbeforeunload(true);",
-                              :maxlength => 30 ) %><br />
-      <% end %>
+    <legend>
+      <span><%= t('assignment.properties') %></span>
+    </legend>
 
-      <%= raw( f.label :description, t("assignment.name").html_safe ) %>
-      <%= raw( f.text_field :description,
-                            :onchange => "set_onbeforeunload(true);" ) %><br />
-      <%= raw( f.label :message ) %>
-      <%= raw( f.text_area  :message,
-                            :rows => 8, :cols => 65,
-                            :onchange => "set_onbeforeunload(true);" ) %><br />
-
-      <% if !@sections.empty? %>
-        <div id="section_due_dates_type_form_right" class="information">
-          <%= t("assignment.section_due_date_option") %>
-        </div>
-
-        <div id="section_due_dates_type_form">
-          <%= raw( f.label :section_due_dates_type, t("section.due_dates_type") ) %>
-          <%= raw( f.check_box  :section_due_dates_type,
-                                :checked => @assignment.section_due_dates_type,
-                                :onclick => "set_onbeforeunload(true);" ) %>
-        </div>
-
-        <div id="section_due_dates_information" style="<%= 'display: none' unless @assignment.section_due_dates_type %>">
-          <p class="information">
-            <%= raw t("assignment.section_due_dates_info") %>
-          </p>
-          <div class="section_due_date_form">
-            <%= f.fields_for :section_due_dates do |due_date_f| %>
-              <p>
-                <%= label 'section', t("section.legend") %> <%= Section.find(due_date_f.object.section_id).name %>
-                <br />
-                <%= due_date_f.text_field :section_id, :class => 'hidden'%>
-                <br />
-                <%= due_date_f.label :due_date, t("due_date") %>
-                <%= due_date_f.calendar_date_select :due_date, { :time => "mixed",
-                                            :after_close => "refresh_due_date();",
-                                            :year_range => 0.years.ago..1.years.from_now } %>
-              </p>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-      <%= raw( f.label :due_date, t("assignment.due_date").html_safe, :onchange => "set_onbeforeunload(true);" ) %>
-
-      <%# TODO update the global due date with the first due date added. %>
-
-      <%=raw( f.calendar_date_select :due_date, {
-            :time => "mixed",
-            :locale => I18n.default_locale,
-            :after_close => "refresh_due_date();",
-            :year_range => 0.years.ago..1.years.from_now,
-            :id => "assignment_due_date",
-            :onchange => "set_onbeforeunload(true);"  } )%>
-
-      <%# TODO The following code seriously needs some clean up  !!!!  %>
-
-      <%= t(:iso_due_date_format_example) %><br />
-
-      <%= raw( f.label :repository_folder, t(:repository_folder).html_safe ) %>
-      /<%= raw( f.text_field :repository_folder, :onchange => "set_onbeforeunload(true);" ) %><br />
-      <%= raw( f.label :allow_web_submits, t("assignment.allow_web_submits").html_safe ) %>&nbsp;&nbsp;
-      <%= raw( f.radio_button :allow_web_submits,
-                        true,
-                        :checked => @assignment.allow_web_submits,
-                        :onchange => "set_onbeforeunload(true);" ) %>
-      <%= raw( f.label :allow_web_submits_true,
-                 t("answer_yes"), :class => "radio_label" ) %>&nbsp;&nbsp;
-      <%= raw( f.radio_button :allow_web_submits,
-                        false,
-                        :checked => !@assignment.allow_web_submits,
-                        :onchange => "set_onbeforeunload(true);" ) %>
-      <%= raw( f.label :allow_web_submits_false,
-                 t("answer_no"),
-                 :class => "radio_label" )  %><br />
-      <%= raw( f.label :display_grader_names_to_students,
-                  t("assignment.display_grader_names_to_students").html_safe ) %>&nbsp;&nbsp;
-      <%= raw( f.radio_button :display_grader_names_to_students,
-                         true,
-                         :checked => @assignment.display_grader_names_to_students ,
-                         :onchange => "set_onbeforeunload(true);" ) %>
-      <%= raw( f.label :display_grader_names_to_students_true,
-                  t("answer_yes"),
-                  :class => "radio_label" ) %>&nbsp;&nbsp;
-      <%= raw( f.radio_button :display_grader_names_to_students,
-                         false,
-                         :checked => !@assignment.display_grader_names_to_students,
-                         :onchange => "set_onbeforeunload(true);" ) %>
-      <%= raw( f.label :display_grader_names_to_students_false,
-                  t("answer_no"),
-                  :class => "radio_label" ) %>
-
-     <br />
-     <br />
-  </fieldset>
-  <!--select scheme -->
-  <div id='marking_scheme_notice' class="warning" style="display:none">
-    <%= t("assignment.notice.change_marking_scheme_type")%>
-  </div>
-  <fieldset>
-    <legend><%= t("assignment.marking_scheme.title").html_safe %></legend>
-    <% Assignment::MARKING_SCHEME_TYPE.each do |key,value| %>
-      <p>
-        <%= raw( f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[key],
-          :checked => @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[key],
-          :onclick =>"notice_marking_scheme_changed(#{@assignment.id.nil?},
-                     '#{Assignment::MARKING_SCHEME_TYPE[key]}',
-                     '#{@assignment.marking_scheme_type}')" ,
-          :onchange => "set_onbeforeunload(true);" ) %>
-
-        <%= raw( f.label("marking_scheme_type_" + Assignment::MARKING_SCHEME_TYPE[key],
-            I18n.t("assignment.marking_scheme.#{value}"),
-            :class => "radio_label") ) %>
+    <div class='help assignment_properties_help'>
+      <p class='help-message-box assignment_properties_help'>
+        <%= t('assignment.help.assignment_form.properties').html_safe %>
       </p>
+    </div>
+
+    <div>
+      <%= f.label :short_identifier,
+                  t('assignment.short_identifier'),
+                  class: 'required' %>
+      <%= f.text_field :short_identifier,
+                       onchange: 'set_onbeforeunload(true);',
+                       size: 35,
+                       maxlength: 30,
+                       required: true %>
+    </div>
+    
+    <div>
+
+      <%= f.label :repository_folder,
+                  t(:repository_folder),
+                  class: 'required' %>
+      <%= f.text_field :repository_folder,
+                       onchange: 'set_onbeforeunload(true);',
+                       size: 35,
+                       required: true,
+                       readonly: true %>
+    </div>
+
+    <div>
+      <%= f.label :description,
+                  t('assignment.name'),
+                  class: 'required' %>
+      <%= f.text_field :description,
+                       onchange: 'set_onbeforeunload(true);',
+                       size: 35,
+                       required: true %>
+    </div>
+
+    <div>
+      <%= f.label :message %>
+      <%= f.text_area :message,
+                      cols: 65,
+                      rows: 8,
+                      onchange: 'set_onbeforeunload(true);' %>
+    </div>
+
+    <% unless @sections.empty? %>
+      <div class='information'>
+        <%= t('assignment.section_due_date_option') %>
+      </div>
+
+      <div>
+        <%= f.label :section_due_dates_type, t('section.due_dates_type') %>
+        <%= f.check_box :section_due_dates_type,
+                        onclick: 'set_onbeforeunload(true);' %>
+      </div>
+
+      <div id='section_due_dates_information'
+           style='<%= 'display: none' unless @assignment.section_due_dates_type %>'>
+        <p class='information'>
+          <%= t('assignment.section_due_dates_info').html_safe %>
+        </p>
+        <div class='section_due_date_form'>
+          <%= f.fields_for :section_due_dates,
+                           @section_due_dates do |due_date_f| %>
+            <% obj = due_date_f.object %>
+            <p>
+              <%= due_date_f.label :section, t('section.legend') %>
+              <%= obj.section.name %>
+              <%= due_date_f.text_field :section_id, class: 'hidden' %>
+              <%= due_date_f.label :due_date, t(:due_date),
+                                   class: 'section_due_date_label' %>
+              <%= due_date_f.text_field :due_date,
+                                        class: 'section_due_date_input',
+                                        value: obj.due_date.nil? ? '' :
+                                               obj.due_date.strftime(
+                                                 '%Y-%m-%d %l:%M %p') %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :due_date,
+                  t('assignment.due_date'),
+                  class: 'required' %>
+      <%= f.text_field :due_date,
+                       onchange: 'set_onbeforeunload(true);',
+                       value: @assignment.due_date.nil? ? '' :
+                              @assignment.due_date.strftime(
+                                '%Y-%m-%d %l:%M %p'),
+                       size: 35,
+                       required: true,
+                       placeholder: t('date.formats.datetime_placeholder') %>
+    </div>
+
+    <div>
+      <%= f.check_box :allow_web_submits,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :allow_web_submits,
+                  t('assignment.allow_web_submits') %>
+    </div>
+
+    <div>
+      <%= f.check_box :vcs_submit,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :vcs_submit,
+                  t('assignment.vcs_submit') %>
+    </div>
+
+    <div>
+      <%= f.check_box :display_grader_names_to_students,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :display_grader_names_to_students,
+                  t('assignment.display_grader_names_to_students') %>
+    </div>
+
+    <div>
+      <%= f.check_box :is_hidden,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :is_hidden, t('assignment.is_hidden') %>
+    </div>
+    <div>
+      <%= f.check_box :enable_test,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :enable_test,
+                    t('automated_tests.enable_test') %>
+    </div>
+  </fieldset>
+
+  <%# Marking scheme %>
+  <fieldset>
+    <legend>
+      <span><%= t('assignment.marking_scheme.title') %></span>
+    </legend>
+
+    <% unless @assignment.new_record? %>
+      <div id='marking_scheme_notice' class='warning'>
+        <%= t('assignment.notice.change_marking_scheme_type') %>
+      </div>
+    <% end %>
+
+    <div class='help assignment_marking_scheme_help'>
+      <p class='help-message-box assignment_marking_scheme_help'>
+        <%= t('assignment.help.assignment_form.marking_scheme') %>
+      </p>
+    </div>
+
+    <% Assignment::MARKING_SCHEME_TYPE.each do |key, value| %>
+      <%= f.radio_button :marking_scheme_type, value %>
+      <%= f.label :marking_scheme_type,
+                  t("assignment.marking_scheme.#{value}"),
+                  value: value %>
     <% end %>
   </fieldset>
+
+  <%# Required files %>
   <fieldset>
-    <legend><%= t("assignment.required_files") %></legend>
-    <h4><%= t("assignment.required_files_by_student") %></h4>
-     <div id="assignment_files">
-       <%= f.fields_for :assignment_files do |assignment_file_form| %>
-         <%= render :partial => 'assignment_file',
-                    :locals => {:assignment_file => assignment_file_form.object,
-                                :form => f} %>
-       <% end %>
-     </div>
-     <p id="assignment_file_add_link">
-       <%= add_assignment_file_link t("assignment.add_required_file"), f %>
-     </p>
+    <legend>
+      <span><%= t('assignment.required_files') %></span>
+    </legend>
+
+    <div class='help assignment_required_files_help'>
+      <p class='help-message-box assignment_required_files_help'>
+        <%= t('assignment.help.assignment_form.required_files') %>
+      </p>
+    </div>
+
+    <h4><%= t('assignment.required_files_by_student') %></h4>
+    <div id='assignment_files'>
+      <%= f.fields_for :assignment_files do |assignment_file_form| %>
+        <%= render partial: 'assignment_file',
+                   locals: { assignment_file: assignment_file_form.object,
+                             form: f } %>
+      <% end %>
+    </div>
+    <p id='assignment_file_add_link'>
+      <%= link_to t('assignment.add_required_file'),
+                  '#',
+                  onclick: 'add_assignment_file(); return false;' %>
+    </p>
+    <p id='only_required_files_option'
+       <% if @assignment.assignment_files.empty? %>
+         class='disable'
+       <% end %>>
+      <%= f.check_box :only_required_files,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :only_required_files, t('required_file_warning') %>
+    </p>
   </fieldset>
 
+  <%# Group properties %>
   <fieldset>
-    <legend><%= t("assignment.type") %></legend>
-    <p id="persist_groups_assignment_style" <%='style="display:none;"' unless @assignments.size > 0 && @assignment.id.nil? %> class="disable">
-      <%= check_box_tag "persist_groups", true, false, :id => "persist_groups", :onclick => "toggle_persist_groups($(this).getValue());", :disabled => true%>
-      <%= label_tag "persist_groups",
-                    t("assignment.group.persist_group_from"),
-                    :class => "checkbox_label" %>
-      <select id="persist_groups_assignment"
-              name="persist_groups_assignment"
-              onchange = "new Ajax.Request(
-                '<%= update_group_properties_on_persist_assignments_path() %>',
-                { asynchronous:true, evalScripts:true, parameters: 'assignment_id=' + $F('persist_groups_assignment') }
-                );"
+    <legend>
+      <span><%= t('assignment.group.properties') %></span>
+    </legend>
 
-              disabled="">
-        <% @assignments.each do |assignment| %>
-          <option value="<%= assignment.id %>">
-            <%= assignment.short_identifier %>
-          </option>
-        <% end %>
-      </select>
+    <div class='help assignment_assignment_type_help'>
+      <p class='help-message-box assignment_assignment_type_help'>
+        <%= t('assignment.help.assignment_form.assignment_type').html_safe %>
+      </p>
+    </div>
+
+    <p id='persist_groups_assignment_style'
+       style='<%= 'display: none' unless @clone_assignments.size > 0 &&
+                                         @assignment.new_record? %>'>
+      <%= check_box_tag :persist_groups,
+                        onclick: 'set_onbeforeunload(true);' %>
+      <%= label_tag :persist_groups,
+                    t('assignment.group.persist_group_from') %>
+      <%= select_tag :persist_groups_assignment,
+                     options_for_select(
+                       @clone_assignments.map do |a|
+                         [a.short_identifier, a.id]
+                       end),
+                     disabled: true %>
     </p>
-    <p id="is_group_assignment_style">
-      <%= raw( check_box_tag "is_group_assignment", true, false,
-                             :id => "is_group_assignment",
-                             :onchange => "toggle_group_assignment($F('is_group_assignment'))" ) %>
-      <%= raw( label_tag "is_group_assignment", t("assignment.group.work_in_groups"), :class => "checkbox_label" ) %>
+    <p id='is_group_assignment_style'>
+      <%= check_box_tag :is_group_assignment, true,
+                        @assignment.student_form_groups ||
+                        @assignment.invalid_override,
+                        onchange: 'set_onbeforeunload(true);' %>
+      <%= label_tag :is_group_assignment,
+                    t('assignment.group.work_in_groups') %>
     </p>
-    <fieldset class="group_properties">
-      <legend><%= t("assignment.group.properties") %></legend>
-      <div id="group_properties" class="">
-        <p id="student_form_groups_style" class="disable">
-          <%= raw( f.check_box :student_form_groups, :id => "student_form_groups",
-                               :onchange =>
-                               "toggle_student_form_groups($F('student_form_groups'))" ) %>
-          <%= raw( label_tag "student_form_groups",
-                              t("assignment.group.students_allowed_form_groups"),
-                              :class => "checkbox_label" ) %>
+    <fieldset class='group_properties'>
+      <legend>
+        <span><%= t('assignment.group.properties') %></span>
+      </legend>
+
+      <div id='group_properties'>
+        <p id='student_form_groups_style'>
+          <%= f.check_box :student_form_groups,
+                          onchange: 'set_onbeforeunload(true);' %>
+          <%= f.label :student_form_groups,
+                      t('assignment.group.students_allowed_form_groups') %>
         </p>
 
-        <p id="group_limit_style" class="disable">
-          <%= raw( f.label :group_min,
-                      t("assignment.group.limit_min").html_safe,
-                      :class => "inline_label") %>
-          <%= raw( f.text_field :group_min,
-                           :size => 5,
-                           :maxlength => 3,
-                           :onchange => "set_onbeforeunload(true);" ) %>
-          <%= raw( f.label :group_max,
-                      t("assignment.group.limit_max"),
-                      :class => "inline_label") %>
-          <%= raw( f.text_field :group_max,
-                           :size => 5,
-                           :maxlength => 3,
-                           :onchange => "set_onbeforeunload(true);" ) %>
+        <p id='group_limit_style'>
+          <%= f.label :group_min,
+                      t('assignment.group.limit_min') %>
+          <%= f.number_field :group_min,
+                             min: 1,
+                             max: 999,
+                             onchange: 'set_onbeforeunload(true);' %>
+          <%= f.label :group_max,
+                      t('assignment.group.limit_max') %>
+          <%= f.number_field :group_max,
+                             min: 1,
+                             max: 999,
+                             onchange: 'set_onbeforeunload(true);' %>
         </p>
 
-        <p id="group_name_autogenerated_style" class="disable">
-          <%= raw( f.check_box :group_name_autogenerated ) %>
-          <%= raw( f.label :group_name_autogenerated,
-                      t("assignment.group.name_autogenerated"),
-                      :class => "checkbox_label",
-                      :onchange => "set_onbeforeunload(true);" ) %>
+        <p id='group_name_autogenerated_style'>
+          <%= f.check_box :group_name_autogenerated %>
+          <%= f.label :group_name_autogenerated,
+                      t('assignment.group.name_autogenerated'),
+                      onchange: 'set_onbeforeunload(true);' %>
 
         </p>
       </div>
     </fieldset>
   </fieldset>
 
-  <fieldset>
-    <legend><%= t("assignment.submission_rules").html_safe %></legend>
+  <%# Submission rules %>
+  <fieldset id='submission_rule_fields'>
+    <legend>
+      <span><%= t('assignment.submission_rules') %></span>
+    </legend>
+
+    <div class='help assignment_submission_rules_help'>
+      <p class='help-message-box assignment_submission_rules_help'>
+        <%= t('assignment.help.assignment_form.submission_rules') %>
+      </p>
+    </div>
 
     <%= f.fields_for :submission_rule do |rule| %>
-      <h5><%= t("assignment.submission.penalty_rules").html_safe %></h5>
+      <h5><%= t('assignment.submission.penalty_rules') %></h5>
 
       <p>
         <%= rule.radio_button :type,
-                              "NoLateSubmissionRule",
-                              :checked => true,
-                              :onchange => "change_submission_rule();",
-                              :id => "no_late_submission_rule" %>
-        <%= label_tag "no_late_submission_rule",
-                      t("submission_rules.no_late_submission_rule.form_description"),
-                      :class => "radio_label" %>
+                              'NoLateSubmissionRule',
+                              checked: true,
+                              id: 'no_late_submission_rule' %>
+        <%= label_tag 'no_late_submission_rule',
+                      t('submission_rules.no_late_submission_rule' +
+                        '.form_description') %>
       </p>
 
       <p>
         <%= rule.radio_button :type,
-                              "GracePeriodSubmissionRule",
-                              :onchange => "change_submission_rule(); ",
-                              :id => "grace_period_submission_rule" %>
-        <%= label_tag "grace_period_submission_rule",
-                      t("submission_rules.grace_period_submission_rule.form_description"),
-                      :class => "radio_label" %>
+                              'GracePeriodSubmissionRule',
+                              id: 'grace_period_submission_rule' %>
+        <%= label_tag 'grace_period_submission_rule',
+                      t('submission_rules.grace_period_submission_rule' +
+                        '.form_description') %>
       </p>
-      <div id="grace_periods">
-      <% if rule.object.type.to_s == "GracePeriodSubmissionRule" %>
-        <%= rule.fields_for :periods do |period_form| %>
-           <%
-          # The bellow conditional is meant to filter out periods that do not match
-          # the currently selected submission rule. This only happens when we fail to
-          # save a new submission rule.
-          if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
-            <%= render :partial => 'grace_period',
-                    :locals => {:grace_period => period_form.object,
-                                :pf => rule} %>
-          <% end %>
-        <% end %>
-      <% end %>
-      </div>
-        <div id="sub_rule_link">
-        <span class="grace_periods_link">
-          <%= add_grace_period_link(
-                      t("submission_rules.grace_period_submission_rule.add_grace_period"),
-                      rule,
-                      "grace_period_link")  %>
-        </span>
-        </div>
-      <p>
-        <%= rule.radio_button :type,
-                              "PenaltyDecayPeriodSubmissionRule",
-                              :onchange => "change_submission_rule();",
-                              :id => "penalty_decay_period_submission_rule" %>
-        <%= label_tag "penalty_decay_period_submission_rule",
-                      t("submission_rules.penalty_decay_period_submission_rule.form_description"),
-                      :class => "radio_label" %>
-      </p>
-      <div id="penalty_decay_periods">
-        <% if rule.object.type.to_s == "PenaltyDecayPeriodSubmissionRule" %>
+      <div id='grace_periods'>
+        <%= link_to t('submission_rules.grace_period_submission_rule' +
+                      '.add_grace_period'),
+                    '#',
+                    onclick: 'add_period("grace_periods", grace_periods);' +
+                             'return false;' %>
+        <% if rule.object.type.to_s == 'GracePeriodSubmissionRule' %>
           <%= rule.fields_for :periods do |period_form| %>
             <%
-            # The bellow conditional is meant to filter out periods that do not match
-            # the currently selected submission rule. This only happens when we fail to
-            # save a new submission rule.
-            if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
-              <%= render :partial => 'penalty_decay_period',
-                       :locals => {:penalty_decay_period => period_form.object,
-                                   :pf => rule} %>
+              # The below conditional is meant to filter out periods that do not match
+              # the currently selected submission rule. This only happens when we fail to
+              # save a new submission rule.
+              if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
+              <%= render partial: 'grace_period',
+                         locals: { grace_period: period_form.object,
+                                   pf: rule } %>
             <% end %>
           <% end %>
+        <% else %>
+          <%= render partial: 'grace_period',
+                     locals: { pf: rule, grace_period: Period.new } %>
         <% end %>
       </div>
-        <div id="sub_rule_link">
-        <span class="penalty_decay_period_link">
-          <%= add_penalty_decay_period_link(
-                      t("submission_rules.penalty_decay_period_submission_rule.add_penalty_decay"),
-                      rule,
-                      "penalty_decay_period_link") %>
-        </span>
-        </div>
+
       <p>
         <%= rule.radio_button :type,
-                              "PenaltyPeriodSubmissionRule",
-                              :onchange => "change_submission_rule();",
-                              :id => "penalty_period_submission_rule" %>
-        <%= label_tag "penalty_period_submission_rule",
-                      t("submission_rules.penalty_period_submission_rule.form_description"),
-                      :class => "radio_label" %>
+                              'PenaltyDecayPeriodSubmissionRule',
+                              id: 'penalty_decay_period_submission_rule' %>
+        <%= label_tag 'penalty_decay_period_submission_rule',
+                      t('submission_rules.penalty_decay_period_submission_rule' +
+                        '.form_description') %>
       </p>
-
-      <div id="penalty_periods">
-      <% if rule.object.type.to_s == "PenaltyPeriodSubmissionRule" %>
-        <%= rule.fields_for :periods do |period_form| %>
-           <%
-          # The bellow conditional is meant to filter out periods that do not match
-          # the currently selected submission rule. This only happens when we fail to
-          # save a new submission rule.
-          if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
-            <%= render :partial => 'penalty_period',
-                    :locals => {:penalty_period => period_form.object,
-                                :pf => rule} %>
+      <div id='penalty_decay_periods'>
+        <%= link_to t('submission_rules.penalty_decay_period_submission_rule' +
+                      '.add_penalty_decay_period'),
+                    '#',
+                    onclick: 'add_period("penalty_decay_periods", ' +
+                             'penalty_decay_periods); return false;' %>
+        <% if rule.object.type.to_s == 'PenaltyDecayPeriodSubmissionRule' %>
+          <%= rule.fields_for :periods do |period_form| %>
+            <%
+              # The below conditional is meant to filter out periods that do not match
+              # the currently selected submission rule. This only happens when we fail to
+              # save a new submission rule.
+              if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
+              <%= render partial: 'penalty_decay_period',
+                         locals: { penalty_decay_period: period_form.object,
+                                   pf: rule } %>
+            <% end %>
           <% end %>
+        <% else %>
+          <%= render partial: 'penalty_decay_period',
+                     locals: { pf: rule, penalty_decay_period: Period.new } %>
         <% end %>
-      <% end %>
       </div>
-        <div id="sub_rule_link">
-        <span class="penalty_periods_link">
-          <%= add_penalty_period_link(
-                      t("submission_rules.penalty_period_submission_rule.add_penalty_period"),
-                      rule,
-                      "penalty_period_link") %>
-        </span>
-        </div>
-    <%- end -%>
+
+      <p>
+        <%= rule.radio_button :type,
+                              'PenaltyPeriodSubmissionRule',
+                              id: 'penalty_period_submission_rule' %>
+        <%= label_tag 'penalty_period_submission_rule',
+                      t('submission_rules.penalty_period_submission_rule' +
+                        '.form_description') %>
+      </p>
+      <div id='penalty_periods'>
+        <%= link_to t('submission_rules.penalty_period_submission_rule' +
+                      '.add_penalty_period'),
+                    '#',
+                    onclick: 'add_period("penalty_periods",penalty_periods);' +
+                             ' return false;' %>
+        <% if rule.object.type.to_s == 'PenaltyPeriodSubmissionRule' %>
+          <%= rule.fields_for :periods do |period_form| %>
+            <%
+              # The below conditional is meant to filter out periods that do not match
+              # the currently selected submission rule. This only happens when we fail to
+              # save a new submission rule.
+              if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
+              <%= render partial: 'penalty_period',
+                         locals: { penalty_period: period_form.object,
+                                   pf: rule } %>
+            <% end %>
+          <% end %>
+        <% else %>
+          <%= render partial: 'penalty_period',
+                     locals: { pf: rule, penalty_period: Period.new } %>
+        <% end %>
+      </div>
+    <% end %>
   </fieldset>
 
+  <%# Remark request rules %>
   <fieldset>
-    <legend><%= t("assignment.remark.rules")%></legend>
-    <p id="allow_remark_requests">
-      <%= raw( f.check_box(:allow_remarks,
-                      {:id => "allow_remarks",
-                      :onchange => "toggle_remark_requests($F('allow_remarks'));
-                                    set_onbeforeunload(true);",
-                      :checked => false},
-                      true,
-                      false) ) %>
-      <%= raw( f.label("allow_remarks",
-                  I18n.t("assignment.remark.allow"),
-                  :class => "checkbox_label") ) %>
-    </p>
-    <p id="remark_properties">
-      <%= raw( f.label("remark_due_date",
-                  I18n.t("assignment.remark.due_date"),
-                  :class => "inline_label") ) %>
-      <%= raw( f.calendar_date_select :remark_due_date,
-                                 {:time => "mixed",
-                                  :locale => I18n.default_locale,
-                                  :after_close => "check_due_date(
-                                                      $F('remark_due_date'))",
-                                  :year_range => 0.years.ago..1.years.from_now,
-                                  :id => "remark_due_date",
-                                  :onchange => "set_onbeforeunload(true);"  } ) %>
+    <legend>
+      <span><%= t('assignment.remark.rules')%></span>
+    </legend>
 
-      <%=t(:iso_due_date_format_example)%><br />
-      <%= raw( f.label("remark_message",
-                  I18n.t("assignment.remark.message"),
-                  :class => "textbox_label") ) %>
-      <%= raw( f.text_area  :remark_message,
-                            :rows => 8,
-                            :cols => 65,
-                            :onchange => "set_onbeforeunload(true);" ) %>
+    <div class='help assignment_remark_request_rules_help'>
+      <p class='help-message-box assignment_remark_request_rules_help'>
+        <%= t('assignment.help.assignment_form.remark_request_rules') %>
+      </p>
+    </div>
+
+    <p id='allow_remark_requests'>
+      <%= f.check_box :allow_remarks,
+                      onchange: 'set_onbeforeunload(true);' %>
+      <%= f.label :allow_remarks, t('assignment.remark.allow') %>
     </p>
+
+    <div id='remark_properties'>
+      <p>
+        <%= f.label :remark_due_date, t('assignment.remark.due_date') %>
+        <%= f.text_field :remark_due_date,
+                         onchange: 'set_onbeforeunload(true);',
+                         value: @assignment.remark_due_date.nil? ? '' :
+                                @assignment.remark_due_date.strftime(
+                                  '%Y-%m-%d %l:%M %p'),
+                         size: 35 %>
+      </p>
+      <p>
+        <%= f.label :remark_message, t('assignment.remark.message') %>
+        <%= f.text_area :remark_message,
+                        rows: 8,
+                        cols: 65,
+                        onchange: 'set_onbeforeunload(true);' %>
+      </p>
+    </div>
   </fieldset>
 
-  <%= f.submit t(:submit), :disable_with => I18n.t('working'), :onclick => "set_onbeforeunload(false);" %>
-  <% end %>
-
-</div>
+  <%= f.submit t(:submit),
+               data: { disable_with: t('working') },
+               onclick: 'set_onbeforeunload(false);' %>
+<% end %>

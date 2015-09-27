@@ -1,0 +1,23 @@
+@import 'common/core';
+
+
+#remark_request {
+  h3 + h3 {
+    margin: 1em 0 0.5em;
+  }
+}
+
+#standby_highlighting {
+  background: $light-yellow;
+  font-size: 2em;
+  margin: 5px;
+  padding: 5px;
+}
+
+.no_tags_hidden {
+  display: none;
+}
+
+.no_tags {
+  display: inline;
+}

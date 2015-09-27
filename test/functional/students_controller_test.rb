@@ -42,7 +42,7 @@ class StudentsControllerTest < AuthenticatedControllerTest
     end
 
     should 'be able to get :new' do
-      get_as @admin, :new
+      get_as @admin, :new, user_params
       assert_response :success
     end
 
@@ -128,10 +128,11 @@ class StudentsControllerTest < AuthenticatedControllerTest
       should 'be able to update student (and change his section)' do
         put_as @admin,
                :update,
-               :id => @student.id,
-               :user => {:last_name => 'Doe',
-                         :first_name => 'John',
-                         :section_id => @section.id }
+               id: @student.id,
+               user: {  user_name:  'machinist_student1',
+                        last_name:  'Doe',
+                        first_name: 'John',
+                        section_id: @section.id }
         assert_response :redirect
         assert_equal I18n.t('students.update.success',
                             :user_name => @student.user_name),
@@ -152,7 +153,7 @@ class StudentsControllerTest < AuthenticatedControllerTest
         assert_redirected_to(:controller => 'students', :action => 'index')
         c8mahler = Student.find_by_user_name('c8mahlernew')
         assert_not_nil c8mahler
-        assert_generates '/en/students/upload_student_list', :controller => 'students', :action => 'upload_student_list'
+        assert_generates '/students/upload_student_list', :controller => 'students', :action => 'upload_student_list'
         assert_recognizes({:controller => 'students', :action => 'upload_student_list' },
           {:path => 'students/upload_student_list', :method => :post})
       end
@@ -188,6 +189,28 @@ class StudentsControllerTest < AuthenticatedControllerTest
         assert_redirected_to(:controller => 'students', :action => 'index')
         test_student = Student.find_by_user_name('c2ÈrÉØrr')
         assert_nil test_student # student should not be found, despite existing in the CSV file
+      end
+
+      should 'gracefully handle malformed csv files' do
+        tempfile = fixture_file_upload('files/malformed.csv')
+        post_as @admin,
+                :upload_student_list,
+                userlist: tempfile
+
+        assert_response :redirect
+        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+      end
+
+      should 'gracefully handle a non csv file with a csv extension' do
+        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
+        post_as @admin,
+                :upload_student_list,
+                userlist: tempfile,
+                encoding: 'UTF-8'
+
+        assert_response :redirect
+        assert_equal flash[:error],
+                     I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
     end  # -- with a student
   end  # -- An admin

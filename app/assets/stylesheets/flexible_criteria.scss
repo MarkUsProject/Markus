@@ -1,0 +1,69 @@
+@import 'common/core';
+
+
+.pane_wrapper {
+  display: table;
+  width: 100%;
+}
+
+#new_flexible_criterion {
+  background: none;
+  padding-right: 1em;
+
+  #new_flexible_criterion_prompt {
+    margin: 1em 0;
+    width: 100%;
+  }
+}
+
+#flexible_criteria_pane,
+#flexible_edition_pane {
+  display: table-cell;
+  vertical-align: top;
+}
+
+#flexible_criteria_pane {
+  width: 25%;
+}
+
+#flexible_edition_pane {
+  border: 1px solid $grey;
+  border-radius: $radius;
+  display: table;
+  margin-left: 2em;
+  padding: 1em;
+  width: 100%;
+
+  h2 {
+    margin-bottom: 0.5em;
+  }
+
+  .float_right {
+    float: right;
+  }
+
+  label {
+    display: inline-block;
+    font-weight: 600;
+    min-width: 8em;
+
+    & + input {
+      margin-top: 0.5em;
+    }
+  }
+
+  .criterion_description_edit {
+    display: block;
+    margin: 0.5em 0 1em;
+  }
+
+  input[type='submit'] {
+    margin-top: 1em;
+  }
+
+  #flexible_criteria_preview {
+    border-top: 1px solid $grey;
+    margin-top: 1.5em;
+    padding-top: 1.5em;
+  }
+}

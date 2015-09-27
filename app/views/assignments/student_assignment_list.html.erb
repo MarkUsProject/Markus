@@ -1,11 +1,25 @@
-<div class="title_bar"><h1><%= t('student_interface_assignments') %></h1></div>
-<div class="wrapLeft">
-<%= render :partial => "assignments/list",
-  :locals => { :controller => 'assignments', :action => 'student_interface' } -%>
+<%= content_for :head do %>
+  <%= render partial: 'course_summaries/course_summaries_table', formats: [:'js.jsx'], handlers: [:erb] %>
+<% end %>
+
+<div class='title_bar'>
+  <h1><%= t('student_interface_assignments') %></h1>
 </div>
 
-<div class="title_bar"><h1><%= t('grade_entry_forms.students.title') %></h1></div>
-<div class="wrapLeft">
-  <%= render :partial => "grade_entry_forms/list" %>
+<%= render partial: 'assignments/list',
+           locals: { controller: 'assignments',
+                     action: 'student_interface' } %>
+
+<div class='title_bar'>
+  <h1><%= t('grade_entry_forms.students.title') %></h1>
 </div>
 
+<%= render partial: 'grade_entry_forms/list' %>
+
+<div class='title_bar'>
+  <h1><%= t('student_course_summary') %></h1>
+</div>
+
+<div class='wrapLeft'>
+  <div id='course_summaries_table'></div>
+</div>

@@ -1,68 +1,216 @@
-<%= render :partial => 'boot.js' %>
+<!-- <<<<<<< HEAD
+<%#= render :partial => 'boot.js' %>
 
 <div class="wrapLeft">
-<% if flash[:success] %>
+<%# if flash[:success] %>
 <div class="success">
-  <span><%=flash[:success]%></span>
+  <span><%#=flash[:success]%></span>
 </div>
-<% elsif flash[:error] %>
+<%# elsif flash[:error] %>
 <div class="error">
-  <span><%=flash[:error]%></span>
+  <span><%#=flash[:error]%></span>
 </div>
-<% end %>
+<%# end %>
 
-<%= form_for @assignment,
+<%#= form_for @assignment,
        :as => :assignment,
        :url => manage_assignment_automated_tests_path(),
        :html => {:multipart => true} do |f| %>
-<%= f.error_messages%>
+<%#= f.error_messages%>
 
   <p id="testing_framework_style">
-    <%= f.check_box :enable_test, :id => "is_testing_framework_enabled", :onchange => "toggle_automated_tests(jQuery('#is_testing_framework_enabled').is(':checked'))" %>
-    <%= label_tag "is_testing_framework_enabled", I18n.t("automated_tests.enable_test"), :class => "checkbox_label" %>
+    <%#= f.check_box :enable_test, :id => "is_testing_framework_enabled", :onchange => "toggle_automated_tests(jQuery('#is_testing_framework_enabled').is(':checked'))" %>
+    <%#= label_tag "is_testing_framework_enabled", I18n.t("automated_tests.enable_test"), :class => "checkbox_label" %>
   </p>
 
   <div id="testing_framework_tokens">
     <p id="tokens">
-      <%= label_tag :tokens_per_day, I18n.t("automated_tests.token.tokens_form"), :class => "inline_label" %>
-      <%= f.text_field :tokens_per_day, :id=>"tokens_per_day", :size => 5, :maxlength => 3 %>
-      <%= label_tag :unlimited_tokens, I18n.t("automated_tests.token.unlimited"), :class => "checkbox_label" %>
-      <%= f.check_box :unlimited_tokens, :id => "unlimited_tokens", :onchange => "toggle_tests_tokens(jQuery('#unlimited_tokens').is(':checked'))" %>
+      <%#= label_tag :tokens_per_day, I18n.t("automated_tests.token.tokens_form"), :class => "inline_label" %>
+      <%#= f.text_field :tokens_per_day, :id=>"tokens_per_day", :size => 5, :maxlength => 3 %>
+      <%#= label_tag :unlimited_tokens, I18n.t("automated_tests.token.unlimited"), :class => "checkbox_label" %>
+      <%#= f.check_box :unlimited_tokens, :id => "unlimited_tokens", :onchange => "toggle_tests_tokens(jQuery('#unlimited_tokens').is(':checked'))" %>
     </p>
   </div>
 
   <fieldset>
-    <legend><%= t("automated_tests.assignment_test_script_files") %></legend>
+    <legend><%#= t("automated_tests.assignment_test_script_files") %></legend>
       <p>
-        <%= button_to_function t('marker.marks.expand_all'), "change_all('expand');" %>
-        <%= button_to_function t('marker.marks.collapse_all'), "change_all('collapse');" %>
+        <%#= button_to_function t('marker.marks.expand_all'), "change_all('expand');" %>
+        <%#= button_to_function t('marker.marks.collapse_all'), "change_all('collapse');" %>
       </p>
-      <p><%= raw t("assignment.required_fields") %></p>
+      <p><%#= raw t("assignment.required_fields") %></p>
 
       <div id="test_scripts">
-        <%= f.fields_for :test_scripts, @assignment.test_scripts.sort_by(&:seq_num) do |ts| %>
-          <%  render :partial => 'test_script_upload', :locals => {:test_script => ts.object, :form => f } %>
-        <% end %>
+        <%#= f.fields_for :test_scripts, @assignment.test_scripts.sort_by(&:seq_num) do |ts| %>
+          <%#  render :partial => 'test_script_upload', :locals => {:test_script => ts.object, :form => f } %>
+        <%# end %>
       </div>
       <p id="test_script_add_link">
-        <%= add_test_script_link t("automated_tests.add_test_script_file_link"), f %>
+        <%#= add_test_script_link t("automated_tests.add_test_script_file_link"), f %>
       </p>
   </fieldset>
 
   <fieldset>
-    <legend><%= t("automated_tests.assignment_test_support_files") %></legend>
+    <legend><%#= t("automated_tests.assignment_test_support_files") %></legend>
     <div class="wrapLeft">
       <div id="test_support_files">
-	    <%= f.fields_for :test_support_files do |tsf| %>
-	      <%= render :partial => 'test_support_file_upload', :locals => {:test_support_file => tsf.object, :form => f } %>
-	    <% end %>
+	    <%#= f.fields_for :test_support_files do |tsf| %>
+	      <%#= render :partial => 'test_support_file_upload', :locals => {:test_support_file => tsf.object, :form => f } %>
+	    <%# end %>
       </div>
       <p id="test_support_file_add_link">
-        <%= add_test_support_file_link t("automated_tests.add_test_support_file_link"), f %>
+        <%#= add_test_support_file_link t("automated_tests.add_test_support_file_link"), f %>
       </p>
     </div>
   </fieldset>
-
-<%= f.submit t(:submit) , :disable_with => I18n.t('working')%>
+======= -->
+<% content_for :head do %>
+  <%= render partial: 'boot',
+             formats: [:js] %>
 <% end %>
+
+<div class='wrapper'>
+  <% if flash[:success] %>
+    <div class='success'>
+      <span><%= flash[:success] %></span>
+    </div>
+  <% end %>
+
+  <%= form_for @assignment,
+               as: :assignment,
+               url: manage_assignment_automated_tests_path,
+               html: { multipart: true } do |f| %>
+
+    <%= f.error_messages %>
+
+    <fieldset>
+      <legend>
+        <span><%= t('automated_tests.automated_tests') %></span>
+      </legend>
+
+      <p id='testing_framework_style'>
+        <%= f.check_box :enable_test,
+                        id: 'is_testing_framework_enabled',
+                        onchange: "toggle_automated_tests(document.getElementById('is_testing_framework_enabled').value)" %>
+        <%= label_tag 'is_testing_framework_enabled',
+                      t('automated_tests.enable_test'),
+                      class: 'checkbox_label' %>
+      </p>
+
+      <div id='testing_framework_tokens'>
+        <p id='tokens'>
+          <%= label_tag :tokens_per_day,
+                        t('automated_tests.token.tokens_form'),
+                        class: 'inline_label' %>
+          <%= f.text_field :tokens_per_day,
+                           id: 'tokens_per_day',
+                           size: 5,
+                           maxlength: 3 %>
+        </p>
+      </div>
+
+      <fieldset>
+        <div class='wrapper'>
+        <legend>
+          <span><%= t('automated_tests.required_files_ant') %></span>
+        </legend>
+
+        <div id='test_properties' class='disabled' >
+          <%= f.fields_for :test_files do |tf| %>
+            <p id='antbuildfile_style'>
+              <% if tf.object.filetype.to_s == 'build.xml' %>
+                <%= label_tag 'antbuildxmlfile',
+                              t('automated_tests.build_xml'),
+                              class: 'accordian_label' %>
+
+                <% if tf.object.filename.to_s != '' && tf.object.filetype == tf.object.filename %>
+                  <%= text_field_tag 'test_file_' + tf.id.to_s,
+                                     tf.object.filename,
+                                     id:'antxmlfilename',
+                                     readonly: 'true' %>
+                  <%= label_tag 'replacebuildxmlfile',
+                                t('automated_tests.replace'),
+                                class: 'inline_label' %>
+                <% end %>
+
+                <%= tf.file_field :filename,
+                                  id: 'antbuildxmlfile',
+                                  size: 30 %>
+              <% end %>
+            </p>
+
+            <p id='antbuildprop_style'>
+              <% if tf.object.filetype.to_s == 'build.properties' %>
+                <%= label_tag 'antbuildpropfile',
+                              t('automated_tests.build_prop'),
+                              class: 'accordian_label' %>
+
+                <% if tf.object.filename.to_s != '' && tf.object.filetype == tf.object.filename %>
+                  <%= text_field_tag 'test_file_' + tf.id.to_s,
+                                     tf.object.filename,
+                                     id: 'antpropfilename',
+                                     readonly: 'true' %>
+                  <%= label_tag 'replacebuildpropfile',
+                                t('automated_tests.replace'),
+                                class: 'inline_label' %>
+                <% end %>
+
+                <%= tf.file_field :filename,
+                                  id: 'antbuildpropfile',
+                                  size: 30 %>
+              <% end %>
+            </p>
+          <% end %>
+
+          <h4><%= t('automated_tests.assignment_test_files') %></h4>
+          <div id='test_files'>
+            <%= f.fields_for :test_files do |tf| %>
+              <% if tf.object.filetype.to_s == 'test' %>
+                <%= render partial: 'test_file',
+                           locals: { test_file: tf.object,
+                                     form: f,
+                                     file_type: 'test' } %>
+              <% end %>
+            <% end %>
+          </div>
+          <p id='test_file_add_link'>
+            <%= add_test_file_link t('automated_tests.add_test_file_link'), f %>
+          </p>
+
+          <h4><%= t('automated_tests.assignment_lib_files') %></h4>
+          <div id='lib_files'>
+            <%= f.fields_for :test_files do |tf| %>
+              <% if tf.object.filetype.to_s == 'lib' %>
+                <%= render partial: 'test_file',
+                           locals: { test_file: tf.object,
+                                     form: f,
+                                     file_type: 'lib' } %>
+              <% end %>
+            <% end %>
+          </div>
+          <p id='lib_file_add_link'>
+            <%= add_lib_file_link t('automated_tests.add_lib_file_link'), f %>
+          </p>
+
+          <h4><%= t('automated_tests.assignment_parser_files') %></h4>
+          <div id='parser_files'>
+            <%= f.fields_for :test_files do |tf| %>
+              <% if tf.object.filetype.to_s == 'parse' %>
+                <%= render partial: 'test_file',
+                           locals: { test_file: tf.object,
+                                     form: f,
+                                     file_type: 'parse' } %>
+              <% end %>
+            <% end %>
+          </div>
+          <p id='parser_file_add_link'>
+            <%= add_parser_file_link t('automated_tests.add_parser_file_link'), f %>
+          </p>
+
+        </div>
+      </fieldset>
+    </fieldset>
+
+    <%= f.submit t(:submit) , data: { disable_with: t('working') } %>
+  <% end %>
 </div>

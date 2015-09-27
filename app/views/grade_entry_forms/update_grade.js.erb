@@ -1,0 +1,27 @@
+<% if @grade_saved %>
+  <%# Highlight the cell on update %>
+  jQuery('<%= "#grade_#{@student_id}_#{@grade_entry_item_id}" %>').parent()
+      .css({ "background-color": "#FFFFFF" })
+      .effect('highlight', { color: '#99CCFF' }, 1000);
+
+  <%
+    # This code calls the javascript function 'update_cell(cell, value)' in 
+    # app/assets/javascripts/grades_table.js. The reason this function is 
+    # called instead of updating the cell directly here is that one 
+    # cannot check for the existence of the cell "total_#{@student_id}" 
+    # from this context (aka the controller). So we call a javascript 
+    # function to update the cell instead, if it exists.
+
+    # Update the cell value
+    value = ''
+    if !@updated_student_total.nil?
+      value = @updated_student_total.round(2)
+    end
+  %>
+
+  update_cell('<%= "grade_#{@student_id}_total_marks" %>', <%= value %>);
+<% else %>
+  <%# Show Error %>
+  jQuery('<%= "#grade_#{@student_id}_#{@grade_entry_item_id}" %>').parent()
+    .animate({ 'background-color': '#FF9999' }, 500);
+<% end %>

@@ -14,7 +14,7 @@ class Section < ActiveRecord::Base
   end
 
   def section_due_date_for(aid)
-    SectionDueDate.find_by_assignment_id_and_section_id(aid, self.id)
+    SectionDueDate.where(assignment_id: aid, section_id: id).first
   end
 
   def user_can_modify?(current_user)

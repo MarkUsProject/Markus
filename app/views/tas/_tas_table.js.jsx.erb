@@ -1,0 +1,80 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  TasTable = React.createClass({
+    getDefaultProps: function() {
+      var columns = [
+        {
+          id: 'user_name',
+          content: '<%= j raw I18n.t(:'user.user_name') %>',
+          sortable: true,
+          searchable: true 
+        },
+        {
+          id: 'last_name',
+          content: '<%= j raw I18n.t(:'user.last_name') %>',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'first_name',
+          content: '<%= j raw I18n.t(:'user.first_name') %>',
+          sortable: true,
+          searchable: true
+        },
+        {
+          id: 'edit_link',
+          content: '<%= j raw I18n.t(:edit) %>',
+          sortable: false,
+          searchable: false
+        }
+      ];
+      return {
+        columns: columns
+      };
+    },
+    getInitialState: function() {
+      return {
+        tas: [],
+      };
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      document.getElementById('working').style.display = '';
+
+      jQuery.ajax({
+        url: 'tas/populate',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          document.getElementById('working').style.display = 'none';
+          this.setState({
+            tas: data
+          });
+        }.bind(this)
+      });
+    },
+    render: function() {
+      var tas_info = this.state.tas.map(function(ta) {
+        var t = {};
+        t['id'] = ta.id;
+        t['last_name'] = ta.last_name;
+        t['user_name'] = ta.user_name;
+        t['first_name'] = ta.first_name;
+        t['edit_link'] = <a href={ta.edit_link}><%= j raw I18n.t(:edit) %></a>
+
+        return t;
+      });
+
+      return (
+        <Table data={tas_info} columns={this.props.columns}
+          filters={null} search_placeholder={'<%= j raw I18n.t(:search_graders) %>'}/>
+      );
+    }
+  });
+
+  React.renderComponent(<TasTable />, document.getElementById('tas_table'));
+</script>

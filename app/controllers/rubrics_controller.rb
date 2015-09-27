@@ -4,16 +4,17 @@ class RubricsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.rubric_criteria(:order => 'position')
+    @criteria = @assignment.rubric_criteria(order: 'position')
   end
 
   def edit
     @criterion = RubricCriterion.find(params[:id])
+    render 'edit', formats: [:js]
   end
 
   def update
     @criterion = RubricCriterion.find(params[:id])
-    unless @criterion.update_attributes(params[:rubric_criterion])
+    unless @criterion.update_attributes(rubric_criterion_params)
       render :errors
       return
     end
@@ -23,6 +24,7 @@ class RubricsController < ApplicationController
   def new
     @assignment = Assignment.find(params[:assignment_id])
     @criterion = RubricCriterion.new
+    render 'new', formats: [:js]
   end
 
   def create
@@ -38,9 +40,9 @@ class RubricsController < ApplicationController
     @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
     @criterion.set_default_levels
     @criterion.position = new_position
-    unless @criterion.update_attributes(params[:rubric_criterion])
+    unless @criterion.update_attributes(rubric_criterion_params)
       @errors = @criterion.errors
-      render :add_criterion_error
+      render 'add_criterion_error', formats: [:js]
       return
     end
     @criteria.reload
@@ -54,18 +56,19 @@ class RubricsController < ApplicationController
     #delete all marks associated with this criterion
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
+    render 'destroy', formats: [:js]
   end
 
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
     file_out = RubricCriterion.create_csv(@assignment)
-    send_data(file_out, :type => 'text/csv', :filename => "#{@assignment.short_identifier}_rubric_criteria.csv", :disposition => 'inline')
+    send_data(file_out, type: 'text/csv', filename: "#{@assignment.short_identifier}_rubric_criteria.csv", disposition: 'inline')
   end
 
   def download_yml
      assignment = Assignment.find(params[:assignment_id])
      file_out = assignment.export_rubric_criteria_yml
-     send_data(file_out, :type => 'text/plain', :filename => "#{assignment.short_identifier}_rubric_criteria.yml", :disposition => 'inline')
+     send_data(file_out, type: 'text/plain', filename: "#{assignment.short_identifier}_rubric_criteria.yml", disposition: 'inline')
   end
 
   def csv_upload
@@ -82,12 +85,16 @@ class RubricsController < ApplicationController
           end
           if nb_updates > 0
             flash[:notice] = I18n.t('rubric_criteria.upload.success',
-              :nb_updates => nb_updates)
+              nb_updates: nb_updates)
           end
         end
+      rescue CSV::MalformedCSVError
+        flash[:error] = t('csv.upload.malformed_csv')
+      rescue ArgumentError
+        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
     end
-    redirect_to :action => 'index', :id => @assignment.id
+    redirect_to action: 'index', id: @assignment.id
   end
 
   def yml_upload
@@ -95,26 +102,23 @@ class RubricsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     encoding = params[:encoding]
     unless request.post?
-      redirect_to :action => 'index', :id => assignment.id
+      redirect_to action: 'index', id: assignment.id
       return
     end
     file = params[:yml_upload][:rubric]
-    if !file.nil? && !file.blank?
+    unless file.blank?
       begin
-        if encoding != nil
-          file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
-        end
-        rubrics = YAML::load(file)
-      rescue ArgumentError => e
+        rubrics = YAML::load(file.utf8_encode(encoding))
+      rescue Psych::SyntaxError => e
         flash[:error] = I18n.t('rubric_criteria.upload.error') + '  ' +
-           I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")
-        redirect_to :action => 'index', :id => assignment.id
+           I18n.t('rubric_criteria.upload.syntax_error', error: "#{e}")
+        redirect_to action: 'index', id: assignment.id
         return
       end
       unless rubrics
         flash[:error] = I18n.t('rubric_criteria.upload.error') +
           '  ' + I18n.t('rubric_criteria.upload.empty_error')
-        redirect_to :action => 'index', :id => assignment.id
+        redirect_to action: 'index', id: assignment.id
         return
       end
       successes = 0
@@ -127,7 +131,7 @@ class RubricsController < ApplicationController
           #collect the names of the criterion that contains an error in it.
           criteria_with_errors[i] = key.at(0)
           i = i + 1
-          flash[:error] = I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")
+          flash[:error] = I18n.t('rubric_criteria.upload.syntax_error', error: "#{e}")
         end
       end
 
@@ -148,54 +152,47 @@ class RubricsController < ApplicationController
       end
 
       if successes > 0
-        flash[:notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => successes)
+        flash[:notice] = I18n.t('rubric_criteria.upload.success', nb_updates: successes)
       end
     end
-    redirect_to :action => 'index', :assignment_id => assignment.id
+    redirect_to action: 'index', assignment_id: assignment.id
   end
 
-
-  #This method handles the drag/drop RubricCriteria sorting
+  # This method handles the drag/drop RubricCriteria sorting
   def update_positions
     unless request.post?
-      render :nothing => true
+      render nothing: true
       return
     end
+
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.rubric_criteria
-    params[:rubric_criteria_pane_list].each_with_index do |id, position|
+    position = 0
+
+    params[:criterion].each do |id|
       if id != ''
-        RubricCriterion.update(id, :position => position + 1)
+        position += 1
+        RubricCriterion.update(id, position: position)
       end
     end
   end
 
-  def move_criterion
-    position = params[:position].to_i
-    if params[:direction] == 'up'
-      offset = -1
-    elsif  params[:direction] == 'down'
-      offset = 1
-    else
-      render :nothing => true
-      return
-    end
-    @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.rubric_criteria
-    criterion = @criteria.find(params[:id])
-    index = @criteria.index(criterion)
-    other_criterion = @criteria[index + offset]
-    if other_criterion.nil?
-      render :nothing => true
-      return
-    end
-    position = criterion.position
-    criterion.position = index + offset
-    other_criterion.position = index
-    unless criterion.save and other_criterion.save
-      flash[:error] = I18n.t('rubrics.move_criterion.error')
-    end
-    @criteria.reload
-  end
+  private
 
+  def rubric_criterion_params
+    params.require(:rubric_criterion).permit(:rubric_criterion_name,
+                                             :assignment,
+                                             :position,
+                                             :level_0_name,
+                                             :level_0_description,
+                                             :level_1_name,
+                                             :level_1_description,
+                                             :level_2_name,
+                                             :level_2_description,
+                                             :level_3_name,
+                                             :level_3_description,
+                                             :level_4_name,
+                                             :level_4_description,
+                                             :weight)
+  end
 end

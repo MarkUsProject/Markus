@@ -1,0 +1,3 @@
+document.getElementById('submission_rule_viewer').innerHTML =
+  '<%= escape_javascript(render partial: @grouping.assignment.submission_rule.grader_tab_partial,
+                                locals: { grouping: @grouping }).html_safe %>';

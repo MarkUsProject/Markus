@@ -1,0 +1,12 @@
+jQuery('#extra_mark_<%= @extra_mark.id %>').remove();
+
+document.getElementById('current_total_mark_div').innerHTML =
+  '<%= @result.total_mark %>';
+document.getElementById('total_extra_points').innerHTML =
+  '<%= @result.get_total_extra_points %>';
+document.getElementById('total_extra_percentage').innerHTML =
+  '<%= @result.get_total_extra_percentage %>';
+document.getElementById('total_extra_percentage_as_points').innerHTML =
+  '<%= @result.get_total_extra_percentage_as_points %>';
+
+update_total_mark('<%= @result.total_mark %>')

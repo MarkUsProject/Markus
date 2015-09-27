@@ -1,0 +1,1 @@
+document.getElementById("files").innerHTML += "<%= escape_javascript("#{render partial: 'file_fields', locals: { assignment_file: @assignment_file }}").html_safe %>";

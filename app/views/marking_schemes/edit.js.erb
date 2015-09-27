@@ -1,0 +1,27 @@
+// Remove HTML from add div and hide it
+jQuery('.new-ms').html('');
+jQuery('.new-ms').hide();
+
+// Remove HTML from edit div incase another marking
+// scheme is being edited
+jQuery('.edit-ms').html('');
+
+jQuery('.edit-ms').append("<h2><%= t('marking_schemes.edit') %></h2>");
+jQuery('.edit-ms').append("<%= j (render 'form') %>");
+
+// Show edit div if hidden
+jQuery('.edit-ms').show();
+
+// Scroll to div
+jQuery('html, body').animate({
+  scrollTop: jQuery('.edit-ms').offset().top
+}, 1000);
+
+// avoid any non-numbers in the weight field
+jQuery("input[id^='marking_scheme_marking_weights_attributes_']").keypress(function(key) {
+  if (key.charCode !== 9 && key.charCode !== 46 &&
+      (key.charCode < 48 || key.charCode > 57)) {
+    return false;
+  }
+});
+

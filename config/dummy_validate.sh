@@ -29,4 +29,3 @@ read password
 # Exit with 0 return code, if and only if user/password combination
 # is valid
 exit 0
-

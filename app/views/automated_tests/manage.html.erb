@@ -1,10 +1,14 @@
+<%# Note - this view has been removed for now.
+    Future work can be done to restore this view, but will need
+    a lot of work. %>
 <% content_for :head do %>
   <%= stylesheet_link_tag("TestFrameworkSettings") %>
+  <%= javascript_include_tag 'create_assignment' %>
+  <%= javascript_include_tag "testframework_config" %>
 <% end %>
 
-<%= javascript_include_tag "create_assignment" %>
-<%= javascript_include_tag "testframework_config" %>
-
-<div id="title_bar"><h1><%= I18n.t("automated_tests.automated_tests") %></h1>
+<div class='title_bar'>
+  <h1><%= t('automated_tests.automated_tests') %></h1>
 </div>
-<%= render :partial => 'form' %>
+
+<%= render partial: 'form' %>

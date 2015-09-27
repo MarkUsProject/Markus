@@ -9,7 +9,7 @@ function populate_students(json_data) {
 }
 
 function filter(filter_name) {
-  $('loading_list').show();
+  document.getElementById('working').style.display = '';
   try {
     switch(filter_name) {
       case 'validated':
@@ -18,6 +18,7 @@ function filter(filter_name) {
         break;
       case 'assigned':
       case 'unassigned':
+      case 'inactive':
         students_table.filter_only_by(filter_name).render();
         break;
       case 'students_none':
@@ -29,26 +30,27 @@ function filter(filter_name) {
   catch (e) {
     alert(e);
   }
-  $('loading_list').hide();
+  document.getElementById('working').style.display = 'none';
 }
 
 function modify_student(student_json) {
-  var student = student_json.evalJSON();
+  var student = JSON.parse(student_json);
   students_table.write_row(student.id, student);
   students_table.resort_rows().render();
 }
 
 function modify_grouping(grouping_json, focus_after) {
-  var grouping = grouping_json.evalJSON();
+  var grouping = JSON.parse(grouping_json);
   groupings_table.write_row(grouping.id, grouping);
   groupings_table.resort_rows().render();
-  if(focus_after) {
+
+  if (focus_after) {
     groupings_table.focus_row(grouping.id);
   }
 }
 
 function modify_groupings(groupings_json) {
-  var groupings = $H(groupings_json.evalJSON());
+  var groupings = $H(JSON.parse(groupings_json));
   groupings.each(function(grouping_record) {
     groupings_table.write_row(grouping_record.key, grouping_record.value);
   });
@@ -56,7 +58,7 @@ function modify_groupings(groupings_json) {
 }
 
 function modify_students(students_json) {
-  var students = $H(students_json.evalJSON());
+  var students = $H(JSON.parse(students_json));
   students.each(function(student_record) {
     students_table.write_row(student_record.key, student_record.value);
   });
@@ -72,20 +74,20 @@ function remove_groupings(grouping_ids_json) {
 }
 
 function thinking() {
-  $('global_action_form').disable();
-  $('loading_list').show();
+  document.getElementById('global_action_form').disabled = true;
+  document.getElementById('working').style.display = '';
 }
 
 function done_thinking() {
-  $('global_action_form').enable();
-  $('loading_list').hide();
+  document.getElementById('global_action_form').disabled = false;
+  document.getElementById('working').style.display = 'none';
 }
 
 function press_on_enter(event, element_id) {
-  if (event.keyCode == 13)
-  {
-    $(element_id).click();
-    return false;
+  event.preventDefault();
+
+  if (event.keyCode == 13) {
+    jQuery('#' + element_id).click();
   }
 }
 
@@ -104,10 +106,11 @@ function stop_submit(event) {
   }
 }
 
-function check_all (prefix, check) {
-  cbox=document.getElementsByTagName('INPUT');
-  for (i = 0; i < cbox.length; i++){
-    if (cbox[i].type == 'checkbox'){
+function check_all(prefix, check) {
+  var cbox = document.getElementsByTagName('INPUT');
+
+  for (var i = 0; i < cbox.length; i++) {
+    if (cbox[i].type == 'checkbox') {
       if (cbox[i].name.split('_')[0] == prefix) {
         if (check == true) {
           cbox[i].checked = true;

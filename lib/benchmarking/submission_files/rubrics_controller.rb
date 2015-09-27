@@ -1,5 +1,3 @@
-require 'fastercsv'
-
 class RubricsController < ApplicationController
 
   before_filter      :authorize_only_for_admin
@@ -9,7 +7,7 @@ class RubricsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:id])
-    @criteria = @assignment.rubric_criteria(:order => 'position')
+    @criteria = @assignment.rubric_criteria(order: 'position')
   end
 
   def edit
@@ -46,7 +44,7 @@ class RubricsController < ApplicationController
     return unless request.delete?
     @criterion = RubricCriterion.find(params[:id])
      #delete all marks associated with this criterion
-    Mark.delete_all(['rubric_criterion_id = :c', {:c => @criterion.id}])
+    Mark.delete_all(['rubric_criterion_id = :c', {c: @criterion.id}])
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
   end
@@ -60,7 +58,7 @@ class RubricsController < ApplicationController
      when 'yml'
        file_out = create_yml_rubric(@assignment)
      end
-     send_data(file_out, :type => 'text/csv', :disposition => 'inline')
+     send_data(file_out, type: 'text/csv', disposition: 'inline')
    end
 
    #given an assignment, return the names of the levels in the assignment's
@@ -76,7 +74,7 @@ class RubricsController < ApplicationController
    end
 
    def create_csv_rubric(assignment)
-     csv_string = FasterCSV.generate do |csv|
+     CSV.generate do |csv|
        #first line is level names
        levels_array = get_level_names(assignment)
        csv << levels_array
@@ -88,7 +86,6 @@ class RubricsController < ApplicationController
          csv << criterion_array
        end
      end
-     csv_string
    end
 
    def create_yml_rubric(assignment)
@@ -142,14 +139,14 @@ class RubricsController < ApplicationController
           end
           flash[:success] = 'Rubric added/updated.'
         end
-      rescue Exception => e
+      rescue Exception
         flash[:error] = I18n.t('csv_valid_format')
       end
     end
 
 
 
-    redirect_to :action => 'index', :id => @assignment.id
+    redirect_to action: 'index', id: @assignment.id
    end
 
    def parse_csv_rubric(file, assignment)
@@ -159,20 +156,20 @@ class RubricsController < ApplicationController
     # flag
     first_line = true
     levels = nil
-    FasterCSV.parse(file.read) do |row|
-     next if FasterCSV.generate_line(row).strip.empty?
-     begin
-       if first_line #get the row of levels
-         levels = row
-         first_line = false
-       elsif add_csv_criterion(row, levels, assignment) == nil
-         raise row.join(',')
-       else
-         num_update += 1
-       end
-     rescue RuntimeError => e
-       flash[:invalid_lines] << e.message
-     end
+    CSV.parse(file.read) do |row|
+      next if CSV.generate_line(row).strip.empty?
+      begin
+        if first_line #get the row of levels
+          levels = row
+          first_line = false
+        elsif add_csv_criterion(row, levels, assignment) == nil
+          raise row.join(',')
+        else
+          num_update += 1
+        end
+      rescue RuntimeError => e
+        flash[:invalid_lines] << e.message
+      end
     end
    end
 
@@ -189,7 +186,6 @@ class RubricsController < ApplicationController
        criterion.weight = c['weight']
        criterion.position = assignment.rubric_criteria.maximum('position') + 1
        levels = c['levels']
-       i = 0
        0..NUM_LEVELS do |i|
          criterion['level_' + i.to_s + '_description'] = levels[i]
        end
@@ -227,15 +223,21 @@ class RubricsController < ApplicationController
 
   #This method handles the drag/drop RubricCriteria sorting
   def update_positions
-    params[:rubric_criteria_pane_list].each_with_index do |id, position|
+    unless request.post?
+      render nothing: true
+      return
+    end
+
+    @assignment = Assignment.find(params[:assignment_id])
+    @criteria = @assignment.rubric_criteria
+    position = 0
+
+    params[:criterion].each do |id|
       if id != ''
-        RubricCriterion.update(id, :position => position+1)
+        position += 1
+        RubricCriterion.update(id, position: position)
       end
     end
-    render :nothing => true
   end
 
 end
-
-
-

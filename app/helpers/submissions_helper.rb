@@ -9,44 +9,131 @@ module SubmissionsHelper
     end
   end
 
-  def set_release_on_results(groupings, release, errors)
+  # Release or unrelease the submissions of a set of groupings.
+  # TODO: Note that this terminates the first time an error is encountered,
+  # and displays an error message to the user, even though some groupings
+  # *will* have their results released. We should change this to behave
+  # similar to other bulk actions, in which all errors are collected
+  # and reported, but the page does refresh and successes displayed.
+  def set_release_on_results(groupings, release)
     changed = 0
     groupings.each do |grouping|
-      begin
-        raise I18n.t('marking_state.no_submission', :group_name => grouping.group.group_name) if !grouping.has_submission?
-        submission = grouping.current_submission_used
-        raise I18n.t('marking_state.no_result', :group_name => grouping.group.group_name) if !submission.has_result?
-        raise I18n.t('marking_state.not_complete', :group_name => grouping.group.group_name) if
-          submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete] && release
-        raise I18n.t('marking_state.not_complete_unrelease', :group_name => grouping.group.group_name) if
-          submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
-        @result = submission.get_latest_result
-        @result.released_to_students = release
-        unless @result.save
-          raise I18n.t('marking_state.result_not_saved', :group_name => grouping.group.group_name)
-        end
-        changed += 1
-      rescue Exception => e
-        errors.push(e.message)
+      name = grouping.group.group_name
+
+      unless grouping.has_submission?
+        raise t('marking_state.no_submission', group_name: name)
       end
+
+      unless grouping.marking_completed?
+        if release
+          raise t('marking_state.not_complete', group_name: name)
+        else
+          raise t('marking_state.not_complete_unrelease', group_name: name)
+        end
+      end
+
+      result = grouping.current_submission_used.get_latest_result
+      result.released_to_students = release
+      unless result.save
+        raise t('marking_state.result_not_saved', group_name: name)
+      end
+
+      changed += 1
     end
     changed
   end
 
-  # ATE_SIMPLE_UI: this is temporary
-  def run_tests(groupings, errors)
-    changed = 0
-    groupings.each do |grouping|
-      begin
-        raise I18n.t("marking_state.no_submission", :group_name => grouping.group.group_name) if !grouping.has_submission?
+# <<<<<<< HEAD
+#   # ATE_SIMPLE_UI: this is temporary
+#   def run_tests(groupings, errors)
+#     changed = 0
+#     groupings.each do |grouping|
+#       begin
+#         raise I18n.t("marking_state.no_submission", :group_name => grouping.group.group_name) if !grouping.has_submission?
 
-        AutomatedTestsHelper.request_a_test_run(grouping.id, 'collection', @current_user)
-        changed += 1
-      rescue Exception => e
-        errors.push(e.message)
+#         AutomatedTestsHelper.request_a_test_run(grouping.id, 'collection', @current_user)
+#         changed += 1
+#       rescue Exception => e
+#         errors.push(e.message)
+#       end
+#     end
+#     return changed
+# =======
+  def get_submissions_table_info(assignment, groupings)
+    parts = groupings.select &:has_submission?
+    results = Result.where(submission_id:
+                             parts.map(&:current_submission_used))
+                    .order(:id)
+    groupings.map do |grouping|
+      g = Hash.new
+      begin # if anything raises an error, catch it and log in the object.
+        submission = grouping.current_submission_used
+        if submission.nil?
+          result = nil
+        elsif !submission.remark_submitted?
+          result = (results.select do |r|
+            r.submission_id == submission.id
+          end).first
+        else
+          result = (results.select do |r|
+            r.id == submission.remark_result_id
+          end).first
+        end
+        final_due_date = assignment.submission_rule.get_collection_time
+        g[:name] = grouping.get_group_name
+        g[:id] = grouping.id
+        g[:section] = grouping.section
+        g[:tags] = grouping.tags
+        g[:commit_date] = grouping.last_commit_date
+        g[:late_commit] = grouping.past_due_date?
+        g[:name_url] = get_grouping_name_url(grouping, final_due_date, result)
+        g[:class_name] = get_tr_class(grouping)
+        g[:grace_credits_used] = grouping.grace_period_deduction_single
+        g[:repo_name] = grouping.group.repository_name
+        g[:repo_url] = repo_browser_assignment_submission_path(assignment,
+                                                               grouping)
+        g[:final_grade] = grouping.final_grade(result)
+        g[:state] = grouping.marking_state(result)
+        g[:error] = ''
+      rescue => e
+        m_logger = MarkusLogger.instance
+        m_logger.log(
+          "Unexpected exception #{e.message}: could not display submission " +
+          "on assignment id #{grouping.group_id}. Backtrace follows:" + "\n" +
+          e.backtrace.join("\n"), MarkusLogger::ERROR)
+        g[:error] = e.message
       end
+      g
     end
-    return changed
+  end
+
+  # If the grouping is collected or has an error,
+  # style the table row green or red respectively.
+  # Classname will be applied to the table row
+  # and actually styled in CSS.
+  def get_tr_class(grouping)
+    if grouping.is_collected?
+      'submission_collected'
+    elsif grouping.error_collecting
+      'submission_error'
+    else
+      nil
+    end
+  end
+
+  def get_grouping_name_url(grouping, final_due_date, result)
+    assignment = grouping.assignment
+    if grouping.is_collected?
+      url_for(edit_assignment_submission_result_path(
+                assignment, grouping, result))
+    elsif grouping.has_submission? ||
+          (grouping.inviter.section.nil? && Time.zone.now > final_due_date) ||
+          assignment.submission_rule.can_collect_grouping_now?(grouping)
+      url_for(collect_and_begin_grading_assignment_submission_path(
+                assignment, grouping))
+    else
+      ''
+    end
   end
 
   # Collects submissions for all the groupings of the given section and assignment
@@ -63,12 +150,12 @@ module SubmissionsHelper
       # Check collection date
       if Time.zone.now < SectionDueDate.due_date_for(section, assignment)
         raise I18n.t('collect_submissions.could_not_collect_section',
-          :assignment_identifier => assignment.short_identifier,
-          :section_name => section.name)
+          assignment_identifier: assignment.short_identifier,
+          section_name: section.name)
       end
 
       # Collect and count submissions for all groupings of this section
-      groupings = Grouping.find_all_by_assignment_id(assignment.id)
+      groupings = Grouping.where(assignment_id: assignment.id)
       submission_collector = SubmissionCollector.instance
       groupings.each do |grouping|
         if grouping.section == section.name
@@ -79,7 +166,7 @@ module SubmissionsHelper
 
       if collected == 0
         raise I18n.t('collect_submissions.no_submission_for_section',
-          :section_name => section.name)
+          section_name: section.name)
       end
 
     rescue Exception => e
@@ -90,72 +177,111 @@ module SubmissionsHelper
 
   end
 
-  def construct_file_manager_dir_table_row(directory_name, directory)
-    table_row = {}
-    table_row[:id] = directory.object_id
-    table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/directory_table_row', :locals => {:directory_name => directory_name, :directory => directory}
-    table_row[:filename] = directory_name
-    table_row[:last_modified_date_unconverted] = directory.last_modified_date.strftime('%b %d, %Y %H:%M')
-    table_row[:revision_by] = directory.user_id
-    table_row
+# <<<<<<< HEAD
+#   def construct_file_manager_dir_table_row(directory_name, directory)
+#     table_row = {}
+#     table_row[:id] = directory.object_id
+#     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/directory_table_row', :locals => {:directory_name => directory_name, :directory => directory}
+#     table_row[:filename] = directory_name
+#     table_row[:last_modified_date_unconverted] = directory.last_modified_date.strftime('%b %d, %Y %H:%M')
+#     table_row[:revision_by] = directory.user_id
+#     table_row
 
-  end
+#   end
 
-  def construct_file_manager_table_row(file_name, file)
-    table_row = {}
-    table_row[:id] = file.object_id
-    table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/filter_table_row', :locals => {:file_name => file_name, :file => file}
+#   def construct_file_manager_table_row(file_name, file)
+#     table_row = {}
+#     table_row[:id] = file.object_id
+#     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/filter_table_row', :locals => {:file_name => file_name, :file => file}
 
-    table_row[:filename] = file_name
+#     table_row[:filename] = file_name
 
-    table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
+#     table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
 
-    table_row[:last_modified_date_unconverted] = file.last_modified_date.strftime('%b %d, %Y %H:%M')
+#     table_row[:last_modified_date_unconverted] = file.last_modified_date.strftime('%b %d, %Y %H:%M')
 
-    table_row[:revision_by] = file.user_id
+#     table_row[:revision_by] = file.user_id
 
-    table_row
-  end
+#     table_row
+#   end
 
 
-  def construct_file_manager_table_rows(files)
-    result = {}
-    files.each do |file_name, file|
-      result[file.object_id] = construct_file_manager_table_row(file_name, file)
+#   def construct_file_manager_table_rows(files)
+#     result = {}
+#     files.each do |file_name, file|
+#       result[file.object_id] = construct_file_manager_table_row(file_name, file)
+# =======
+  def get_repo_browser_table_info(assignment, revision, revision_number, path,
+                                  previous_path, grouping_id)
+    exit_directory = get_exit_directory(previous_path, grouping_id,
+                                        revision_number, revision,
+                                        assignment.repository_folder)
+
+    full_path = File.join(assignment.repository_folder, path)
+    if revision.path_exists?(full_path)
+      files = revision.files_at_path(full_path)
+      files_info = get_files_info(files, assignment.id, revision_number, path,
+                                  grouping_id)
+
+      directories = revision.directories_at_path(full_path)
+      directories_info = get_directories_info(directories, revision_number,
+                                              path, grouping_id)
+      return exit_directory + files_info + directories_info
+    else
+      return exit_directory
     end
-    result
   end
 
-  def construct_repo_browser_table_row(file_name, file)
-    table_row = {}
-    table_row[:id] = file.object_id
-    table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/repo_browser/filter_table_row', :locals => {:file_name => file_name, :file => file}
-    table_row[:filename] = file_name
-    table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
-    table_row[:last_modified_date_unconverted] = file.last_modified_date.strftime('%b %d, %Y %H:%M')
-    table_row[:revision_by] = file.user_id
-    table_row
+  def get_exit_directory(previous_path, grouping_id, revision_number,
+                         revision, folder)
+    directories = revision.directories_at_path(previous_path)
+
+    e = {}
+    e[:id] = nil
+    e[:filename] = view_context.link_to '../', action: 'repo_browser',
+                                        id: grouping_id, path: previous_path,
+                                        revision_number: revision_number
+    e[:last_revised_date] = directories[folder].last_modified_date
+    e[:revision_by] = directories[folder].user_id
+    [e]
   end
 
-  def construct_repo_browser_directory_table_row(directory_name, directory)
-    table_row = {}
-    table_row[:id] = directory.object_id
-    table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/repo_browser/directory_row', :locals => {:directory_name => directory_name, :directory => directory}
-    table_row[:filename] = directory_name
-    table_row[:last_modified_date] = directory.last_modified_date.strftime('%d %B, %l:%M%p')
-    table_row[:last_modified_date_unconverted] = directory.last_modified_date.strftime('%b %d, %Y %H:%M')
-    table_row[:revision_by] = directory.user_id
-    table_row
-  end
-
-  def construct_repo_browser_table_rows(files)
-    result = {}
-    files.each do |file_name, file|
-      result[file.object_id] = construct_repo_browser_row(file_name, file)
+  def get_files_info(files, assignment_id, revision_number, path, grouping_id)
+    files.map do |file_name, file|
+      f = {}
+      f[:id] = file.object_id
+      f[:filename] = view_context.image_tag('icons/page_white_text.png') +
+          view_context.link_to(" #{file_name}", action: 'download',
+                               id: assignment_id,
+                               revision_number: revision_number,
+                               file_name: file_name,
+                               path: path, grouping_id: grouping_id)
+      f[:last_revised_date] = I18n.l(file.last_modified_date,
+                                     format: :long_date)
+      f[:revision_by] = file.user_id
+      f
     end
-    result
   end
 
+  def get_directories_info(directories, revision_number, path, grouping_id)
+    directories.map do |directory_name, directory|
+      d = {}
+      d[:id] = directory.object_id
+      d[:filename] = view_context.image_tag('icons/folder.png') +
+          # TODO: should the call below use
+          # id: assignment_id and grouping_id: grouping_id
+          # like the files info?
+          view_context.link_to(" #{directory_name}/",
+                               action: 'repo_browser',
+                               id: grouping_id,
+                               revision_number: revision_number,
+                               path: File.join(path, directory_name))
+      d[:last_revised_date] = I18n.l(directory.last_modified_date,
+                                     format: :long_date)
+      d[:revision_by] = directory.user_id
+      d
+    end
+  end
 
   def sanitize_file_name(file_name)
     # If file_name is blank, return the empty string
@@ -165,14 +291,24 @@ module SubmissionsHelper
         SubmissionFile::SUBSTITUTION_CHAR)
   end
 
-
   # Helper methods to determine remark request status on a submission
   def remark_in_progress(submission)
-    submission.get_remark_result and submission.get_remark_result.marking_state == Result::MARKING_STATES[:partial]
+    submission.remark_result &&
+      submission.remark_result.marking_state == Result::MARKING_STATES[:partial]
   end
 
   def remark_complete_but_unreleased(submission)
-    submission.get_remark_result and submission.get_remark_result.marking_state == Result::MARKING_STATES[:complete] and !submission.get_remark_result.released_to_students
+    submission.remark_result &&
+      (submission.remark_result.marking_state ==
+         Result::MARKING_STATES[:complete]) &&
+        !submission.remark_result.released_to_students
+  end
+
+  # Checks if all the assignments for the current submission are marked.
+  def all_assignments_marked?
+    Assignment.includes(groupings: [:current_submission_used])
+              .find(params[:assignment_id])
+              .groupings.all?(&:marking_completed?)
   end
 
 end
