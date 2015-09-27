@@ -192,13 +192,19 @@ class Submission < ActiveRecord::Base
     original_result = get_original_result
 
     original_result.extra_marks.each do |extra_mark|
-      remark.extra_marks.create(extra_mark.attributes.merge(
-                                  result: remark, created_at: Time.zone.now))
+      remark.extra_marks.create(result: remark,
+                                created_at: Time.zone.now,
+                                markable_id: extra_mark.markable_id,
+                                mark: extra_mark.mark,
+                                markable_type: extra_mark.markable_type)
     end
 
     original_result.marks.each do |mark|
-      remark_result.marks.create(mark.attributes.merge(
-                                   result: remark, created_at: Time.zone.now))
+      remark_result.marks.create(result: remark,
+                                 created_at: Time.zone.now,
+                                 markable_id: extra_mark.markable_id,
+                                 mark: extra_mark.mark,
+                                 markable_type: extra_mark.markable_type)
     end
   end
 
