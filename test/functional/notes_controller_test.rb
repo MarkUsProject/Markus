@@ -468,7 +468,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         {:noteable_type => 'Grouping',
           :note => {:noteable_id => @note.id,
                     :notes_message => @message}}
-        assert_tag :tag => 'select', :attributes => { :id => 'note_noteable_id' }
+        assert_select 'select#note_noteable_id'
       end
 
       should 'have noteable options for selection when viewing noteable_type Student' do
@@ -478,7 +478,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         {:noteable_type => 'Student',
           :note => {:noteable_id => @note.id,
                     :notes_message => @message}}
-        assert_tag :tag => 'select', :attributes => { :id => 'note_noteable_id' }
+        assert_select 'select#note_noteable_id'
       end
 
       should 'have noteable options for selection when viewing noteable_type Assignment' do
@@ -488,7 +488,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         {:noteable_type => 'Assignment',
           :note => {:noteable_id => @note.id,
                     :notes_message => @message}}
-        assert_tag :tag => 'select', :attributes => { :id => 'note_noteable_id' }
+        assert_select 'select#note_noteable_id'
       end
     end
   end # admin context
