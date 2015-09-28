@@ -25,7 +25,7 @@ class TagsController < ApplicationController
     new_tag = Tag.new(
       name: params[:create_new][:name],
       description: params[:create_new][:description],
-      user: @current_user)
+      user: @current_user.id.to_s)
 
     if new_tag.save
       flash[:success] = I18n.t('tags.create.successful')
