@@ -5,6 +5,9 @@
 
   <%= javascript_include_tag 'panes' %>
   <%= javascript_include_tag 'pdfjs' %>
+  <%= javascript_tag do -%>
+    PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
+  <% end -%>
 <% end %>
 
 <% # UI LIBRARIES %>
