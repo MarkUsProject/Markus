@@ -251,12 +251,38 @@
   var angle = 0;
 
   function rotate() {
+      var annotations = document.getElementsByClassName("annotation_holder");
+      var annotation_grid = document.getElementById("annotation_grid");
+      var annotation_grid_value = JSON.parse(annotation_grid.value)
+      console.log(annotation_grid_value[0]["x_range"]);
     if (annotation_type === ANNOTATION_TYPES.PDF)
     {
-      PDFView.rotatePages(90);
+        //todo: get annotation_holders and change percentages
+        console.log(annotations.length);
+
+        PDFView.rotatePages(90);
+        console.log(annotations.length);
+        for (var i = 0; i < annotations.length; i++)
+        {
+            console.log(i);
+//            console.log(annotations[i].style.width);
+            if (angle == 0)
+            {
+            }
+            else if (angle == 90)
+            {
+            }
+            else if (angle == 180)
+            {
+            }
+            else //angle == 270
+            {
+            }
+        }
     }
     else if (annotation_type == ANNOTATION_TYPES.IMAGE)
     {
+        //todo: get annotation_holders and change px
       var image_preview = document.getElementById('image_preview');
       angle += 90;
       if (angle == 360) angle = 0;
@@ -278,7 +304,7 @@
       {
         //Because we're rotated, translating along the y moves the image horizontally.
         //We want to line up the original bottom edge with left of the screen.
-        image_preview.style.webkitTransform = rotation_call + translation_call_begin + (half_width - half_height) + translation_call_end; 
+        image_preview.style.webkitTransform = rotation_call + translation_call_begin + (half_width - half_height) + translation_call_end;
       }
       else //angle is 270
       {
@@ -286,7 +312,37 @@
         //We want to line up the original right edge with the left of the screen.
         image_preview.style.webkitTransform = rotation_call + " translate(0%, " + (half_height - half_width) + translation_call_end;
       }
+
+
+        for (var i = 0; i < annotations.length; i++)
+        {
+            console.log(annotations[i].style.width);
+
+            var oldWidth = annotations[i].style.width;
+            annotations[i].style.width = annotations[i].style.height;
+            annotations[i].style.height = oldWidth;
+            if (angle == 0)
+            {
+
+            }
+            else if (angle == 90)
+            {
+//                var oldTop = annotations[i].style.top;
+//                annotations[i].style.top = annotations[i].style.left;
+//                annotations[i].style.left = oldTop - annotations[i].style.width;
+            }
+            else if (angle == 180)
+            {
+            }
+            else //angle == 270
+            {
+            }
+        }
+
     }
+
+
+
   }
 
   function make_new_annotation() {
