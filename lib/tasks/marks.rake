@@ -48,5 +48,28 @@ namespace :db do
     end
 
     Assignment.find([1, 2]).each { |a| a.update_results_stats }
+
+    puts 'Assign Marks for Spreadsheets'
+    GradeEntryForm.where(id: 1).each do |grade_entry_form|
+      # Add marks to every student
+      Student.find_each do |student|
+        out_of_total = 0
+        grade_entry_form_total = 0
+        # For each question, assign a random mark based on its out_of value
+        grade_entry_form.grade_entry_items.each do |grade_entry_item|
+          random_grade = 1 + rand(0...Integer(grade_entry_item.out_of))
+          out_of_total += grade_entry_item.out_of
+          Grade.create(grade_entry_student_id: student.id,
+                       grade_entry_item_id: grade_entry_item.id,
+                       grade: random_grade)
+          grade_entry_form_total += random_grade
+        end
+        # Create grade entry student row with total mark
+        GradeEntryStudent.create(user_id: student.id,
+                                 grade_entry_form_id: grade_entry_form.id,
+                                 released_to_student: true,
+                                 total_grade: grade_entry_form_total)
+      end
+    end
   end
 end
