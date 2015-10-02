@@ -150,7 +150,6 @@
     getFileRevisions: function() {
       var revs = {}
 
-      console.log("getfilerevisions")
       this.props.selected_files.forEach(function(id) {
         var file = this.accessById(id);
         revs[file.raw_name] = file.last_modified_revision;
@@ -164,8 +163,6 @@
 
       var delete_file = this.accessThroughArray();
       var file_revisions = this.getFileRevisions();
-      console.log("here", delete_file);
-      console.log(file_revisions)
 
       jQuery.ajax({
         url: '<%= update_files_assignment_submissions_path(@assignment.id) %>',
