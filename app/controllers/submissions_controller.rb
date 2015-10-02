@@ -117,7 +117,8 @@ class SubmissionsController < ApplicationController
     last_rev = @grouping.submissions
     @last_submission = nil
     if !last_rev.empty?
-      selected = @revisions_history.select {|rev| rev[:num] == last_rev.last.revision_number}
+      selected = @revisions_history.select { |rev| rev[:num] == 
+                                             last_rev.last.revision_number }
       @last_submission = selected.empty? ? nil : last_rev.last
     end
 
