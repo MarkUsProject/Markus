@@ -153,26 +153,25 @@ class SubmissionsController < ApplicationController
     @path = params[:path] || '/'
     @previous_path = File.split(@path).first
 
-    user_group.access_repo do |repo|
-      if revision_number.nil?
-        @revision = repo.get_latest_revision
-      else
-        @revision = repo.get_revision(revision_number.to_i)
-      end
-      @directories = @revision.directories_at_path(
-          File.join(@assignment.repository_folder, @path))
-      @files = @revision.files_at_path(
-          File.join(@assignment.repository_folder, @path))
-     files_array = @files.each do |file_name, file|
-       f = Hash.new
-       f[:id] = file.object_id
-       f[:file_name] = file_name
-       f[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
-       f[:revision_by] = file.user_id
-       f[:last_modified_revision] = file.last_modified_revision
-     end
-      # Converts the hash to an array
-      render json: files_array.to_a
+    repo = user_group.repo
+    if revision_number.nil?
+      @revision = repo.get_latest_revision
+    else
+      @revision = repo.get_revision(revision_number.to_i)
+    end
+
+    full_path = File.join(@assignment.repository_folder, @path)
+    if @revision.path_exists?(full_path)
+      files = @revision.files_at_path(full_path)
+      files_info = get_files_info(files, @assignment.id, revision_number, @path,
+                                  @grouping.id)
+
+      directories = @revision.directories_at_path(full_path)
+      directories_info = get_directories_info(directories, revision_number,
+                                              @path, @grouping.id)
+      render json: files_info + directories_info
+    else
+      return []
     end
   end
 
