@@ -252,9 +252,9 @@
 
   function rotate() {
       var annotations = document.getElementsByClassName("annotation_holder");
-      var annotation_grid = document.getElementById("annotation_grid");
-      var annotation_grid_value = JSON.parse(annotation_grid.value)
-      console.log(annotation_grid_value[0]["x_range"]);
+//      var annotation_grid = document.getElementById("annotation_grid");
+//      var annotation_grid_value = JSON.parse(annotation_grid.value)
+//      console.log(annotation_grid_value[0]["x_range"]);
     if (annotation_type === ANNOTATION_TYPES.PDF)
     {
         //todo: get annotation_holders and change percentages
@@ -262,10 +262,13 @@
 
         PDFView.rotatePages(90);
         console.log(annotations.length);
+
         for (var i = 0; i < annotations.length; i++)
         {
-            console.log(i);
-//            console.log(annotations[i].style.width);
+            var oldWidth = annotations[i].style.width;
+            console.log(oldWidth);
+            annotations[i].style.width = annotations[i].style.height;
+            annotations[i].style.height = oldWidth;
             if (angle == 0)
             {
             }
@@ -316,7 +319,7 @@
 
         for (var i = 0; i < annotations.length; i++)
         {
-            console.log(annotations[i].style.width);
+//            console.log(annotations[i].style.width);
 
             var oldWidth = annotations[i].style.width;
             annotations[i].style.width = annotations[i].style.height;
