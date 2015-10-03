@@ -249,37 +249,71 @@
   }
 
   var angle = 0;
+//Cache the positions so we don't need to recalculate each time
+//Needed because at the moment, we have some miscalculations in the annotation grid, so if we
+//recalculated on the fly each time based on the current values, the error would increase as the user rotates more
+var left0;
+var top0;
+var left90;
+var top90; //Same as left0, extra variable just for symmetry
 
   function rotate() {
       var annotations = document.getElementsByClassName("annotation_holder");
 //      var annotation_grid = document.getElementById("annotation_grid");
 //      var annotation_grid_value = JSON.parse(annotation_grid.value)
 //      console.log(annotation_grid_value[0]["x_range"]);
+      angle += 90;
+      if (angle == 360) angle = 0;
+      if (left0 == null)
+      {
+
+          for (var i = 0; i < annotations.length; i++)
+          {
+              left0 = annotations[i].style.left;
+              top0 = annotations[i].style.top;
+              left90 = (100 - parseFloat(top0) - parseFloat(annotations[i].style.height)) + "%";
+              top90 = left0;
+              console.log(left0, top0, left90, top90);
+          }
+      }
+
+
+
     if (annotation_type === ANNOTATION_TYPES.PDF)
     {
         //todo: get annotation_holders and change percentages
-        console.log(annotations.length);
+//        console.log(annotations.length);
 
         PDFView.rotatePages(90);
-        console.log(annotations.length);
+//        console.log(annotations.length);
 
         for (var i = 0; i < annotations.length; i++)
         {
+            //swap the width and height
             var oldWidth = annotations[i].style.width;
-            console.log(oldWidth);
+            var oldHeight = annotations[i].style.height;
             annotations[i].style.width = annotations[i].style.height;
             annotations[i].style.height = oldWidth;
             if (angle == 0)
             {
+                annotations[i].style.left = left0;
+                annotations[i].style.top = top0;
             }
             else if (angle == 90)
             {
+               annotations[i].style.left = left90;
+                annotations[i].style.top = top90;
+
             }
             else if (angle == 180)
             {
+                annotations[i].style.left = (100 - parseFloat(left0) - parseFloat(annotations[i].style.width)) + "%";
+                annotations[i].style.top = (100 - parseFloat(top0) - parseFloat(annotations[i].style.height)) + "%";
             }
             else //angle == 270
             {
+                annotations[i].style.left = (100 - parseFloat(left90) - parseFloat(annotations[i].style.width)) + "%";
+                annotations[i].style.top = (100 - parseFloat(top90) - parseFloat(annotations[i].style.height)) + "%";
             }
         }
     }
@@ -287,8 +321,8 @@
     {
         //todo: get annotation_holders and change px
       var image_preview = document.getElementById('image_preview');
-      angle += 90;
-      if (angle == 360) angle = 0;
+
+
       var bounding_rect = image_preview.getBoundingClientRect();
       var half_width = bounding_rect.width/2;
       var half_height = bounding_rect.height/2;
