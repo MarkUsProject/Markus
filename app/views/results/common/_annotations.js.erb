@@ -302,7 +302,10 @@
       var translation_call_begin = " translate(0%, ";
       var translation_call_end = "px)";
 
-      if (angle % 180 == 0 || half_width >= half_height)
+        var alignment_translation = half_width - half_height;
+
+
+        if (angle % 180 == 0 || half_width >= half_height)
       {
           img_preview.style.webkitTransform = rotation_call
       }
@@ -310,15 +313,13 @@
       {
         //Because we're rotated, translating along the y moves the image horizontally.
         //We want to line up the original bottom edge with left of the screen.
-//          alignment_translation = half_width - half_height;
-          img_preview.style.webkitTransform = rotation_call + translation_call_begin + (half_width - half_height) + translation_call_end;
+          img_preview.style.webkitTransform = rotation_call + translation_call_begin + alignment_translation + translation_call_end;
       }
       else //angle is 270
       {
         //Because we're rotated, translating along the y moves the image horizontally.
         //We want to line up the original right edge with the left of the screen.
-//          alignment_translation = half_height - half_width;
-          img_preview.style.webkitTransform = rotation_call + " translate(0%, " + (half_height - half_width) + translation_call_end;
+          img_preview.style.webkitTransform = rotation_call + " translate(0%, " + (-alignment_translation) + translation_call_end;
       }
 
         var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
@@ -336,7 +337,6 @@
             var left = offsetLeft + img_bound - parseFloat(annotations[i].style.width) - oldTop;
 
             //need to undo the translation that we did to align the image with the edges of the panel
-            var alignment_translation = half_width - half_height;
             if (angle == 90 || angle == 270)
             {
                 top -= alignment_translation;

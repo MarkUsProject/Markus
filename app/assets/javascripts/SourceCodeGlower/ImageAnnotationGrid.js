@@ -44,6 +44,7 @@ ImageAnnotationGrid.prototype.get_annotation_grid = function() {
 }
 
 ImageAnnotationGrid.prototype.process_grid = function() {
+    console.log("process grid");
   this.annotation_grid = JSON.parse(document.getElementById('annotation_grid').value);
   var annot_grid = this.get_annotation_grid();
 }
