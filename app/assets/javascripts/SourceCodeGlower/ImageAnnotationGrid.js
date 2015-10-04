@@ -44,7 +44,6 @@ ImageAnnotationGrid.prototype.get_annotation_grid = function() {
 }
 
 ImageAnnotationGrid.prototype.process_grid = function() {
-    console.log("process grid");
   this.annotation_grid = JSON.parse(document.getElementById('annotation_grid').value);
   var annot_grid = this.get_annotation_grid();
 }
@@ -95,6 +94,21 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
       holder.style.height = Math.min(Math.min(holder_height, (holder_top + holder_height) - top_edge),
                                      bottom_edge - holder_top - HORIZONTAL_SCROLLBAR_COMPENSATION) + 'px';
     }
+
+
+      if (angle > 0)
+      {
+          rotate_img_annotations(90);
+      }
+      if (angle > 90)
+      {
+          rotate_img_annotations(180);
+      }
+      if (angle > 180) {
+          rotate_img_annotations(270);
+      }
+
+
   }
 }
 
