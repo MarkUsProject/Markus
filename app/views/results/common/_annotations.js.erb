@@ -249,7 +249,6 @@
   }
 
   var angle = 0;
-
   function rotate() {
       var annotations = document.getElementsByClassName("annotation_holder");
 
@@ -266,17 +265,14 @@
 
         for (var i = 0; i < annotations.length; i++)
         {
-            var oldWidth = annotations[i].style.width;
-            var oldHeight = annotations[i].style.height;
-            var oldTop = parseFloat(annotations[i].style.top);
-            var oldLeft = parseFloat(annotations[i].style.left);
-
             //swap the width and height
+            var oldWidth = annotations[i].style.width;
             annotations[i].style.width = annotations[i].style.height;
             annotations[i].style.height = oldWidth;
 
             //rotate the top and left anchors
-            annotations[i].style.top = oldLeft + units;
+            var oldTop = parseFloat(annotations[i].style.top);
+            annotations[i].style.top = annotations[i].style.left;
             annotations[i].style.left = (img_bound - parseFloat(annotations[i].style.width) - oldTop) + units;
         }
 
@@ -329,17 +325,15 @@
         var offsetLeft = document.getElementById('image_preview').offsetLeft + + document.getElementById('image_preview').scrollLeft;
         for (var i = 0; i < annotations.length; i++)
         {
-            var oldWidth = annotations[i].style.width;
-            var oldHeight = annotations[i].style.height;
-            var oldTop = parseFloat(annotations[i].style.top) - offsetTop;
-            var oldLeft = parseFloat(annotations[i].style.left) - offsetLeft;
-
             //swap the width and height
+            var oldWidth = annotations[i].style.width;
             annotations[i].style.width = annotations[i].style.height;
             annotations[i].style.height = oldWidth;
 
             //rotate the anchors
-            annotations[i].style.top = (offsetTop + oldLeft) + units;
+            var oldTop = parseFloat(annotations[i].style.top) - offsetTop;
+            //todo: take into account the offset for lining up the img with the edges
+            annotations[i].style.top = (offsetTop + parseFloat(annotations[i].style.left) - offsetLeft) + units;
             annotations[i].style.left = (offsetLeft + img_bound - parseFloat(annotations[i].style.width) - oldTop) + units;
         }
     }
