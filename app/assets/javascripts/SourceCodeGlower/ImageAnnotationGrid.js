@@ -143,20 +143,20 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
 
       if ((angle % 180 == 0 && half_height > half_width) || (angle % 180 != 0 && half_width > half_height))
       {
-          if (angle == 0 || angle == 90)
-          {
-              top -= alignment_translation;
-          }
-          else if (angle == 180)
-          {
-              top += alignment_translation;
-              left += alignment_translation;
-          }
+        if (angle == 0 || angle == 90)
+        {
+          top -= alignment_translation;
+        }
+        else if (angle == 180)
+        {
+          top += alignment_translation;
+          left += alignment_translation;
+        }
 
-          else
-          {
-              left += alignment_translation;
-          }
+        else
+        {
+          left += alignment_translation;
+        }
       }
 
       annotations[i].style.top = top + units;
