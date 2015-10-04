@@ -254,71 +254,48 @@
       var annotations = document.getElementsByClassName("annotation_holder");
       var annotation_grid = document.getElementById("annotation_grid");
 //      var annotation_grid_value = JSON.parse(annotation_grid.value)
-      var img_right_orig = 100;
-      var img_bottom_orig = 100;
+
+      angle += 90;
+      if (angle == 360) angle = 0;
+
+      var units = "px"
+
+      var img_bound = 100;
       if (annotation_type == ANNOTATION_TYPES.IMAGE)
       {
           var img_preview = document.getElementById("image_preview");
-          img_right_orig = document.getElementById('image_preview').offsetLeft + document.getElementById('image_container').scrollLeft + parseFloat(img_preview.width);
-          img_bottom_orig = document.getElementById('image_preview').offsetTop + document.getElementById('image_container').scrollTop + parseFloat(img_preview.height);
-
-      }
-      console.log(img_right_orig, img_bottom_orig);
-
-      var prevAngleWas270 = false;
-      angle += 90;
-      if (angle == 360)
+          if (angle == 90 || angle == 270)
           {
-              angle = 0;
-              prevAngleWas270 = true;
+              img_bound = parseFloat(img_preview.height);
           }
-
-      var units = "px"
+          else
+          {
+              img_bound = parseFloat(img_preview.width);
+          }
+      }
 
     if (annotation_type === ANNOTATION_TYPES.PDF)
     {
         units = "%";
         //        console.log(annotations.length);
-
         PDFView.rotatePages(90);
 //        console.log(annotations.length);
+
         for (var i = 0; i < annotations.length; i++)
         {
-            //swap the width and height
             var oldWidth = annotations[i].style.width;
             var oldHeight = annotations[i].style.height;
-            annotations[i].style.width = annotations[i].style.height;
-            annotations[i].style.height = oldWidth;
             var oldTop = parseFloat(annotations[i].style.top);
             var oldLeft = parseFloat(annotations[i].style.left);
-            if (angle == 0)
-            {
 
-                if (prevAngleWas270)
-                {
-                    annotations[i].style.top = oldLeft + units;
-                    annotations[i].style.left = (img_right_orig - parseFloat(annotations[i].style.width) - oldTop) + units;
-                }
-            }
-            else if (angle == 90)
-            {
-                annotations[i].style.top = oldLeft + units;
-                annotations[i].style.left = (img_bottom_orig - parseFloat(annotations[i].style.width) - oldTop) + units;
-             }
-            else if (angle == 180)
-            {
-                annotations[i].style.top = oldLeft + units;
-                annotations[i].style.left = (img_right_orig - parseFloat(annotations[i].style.width) - oldTop) + units;
-            }
-            else //angle == 270
-            {
-                annotations[i].style.top = oldLeft + units;
-                annotations[i].style.left = (img_bottom_orig - parseFloat(annotations[i].style.width) - oldTop) + units;
-            }
+            //swap the width and height
+            annotations[i].style.width = annotations[i].style.height;
+            annotations[i].style.height = oldWidth;
+
+            //rotate the top and left anchors
+            annotations[i].style.top = oldLeft + units;
+            annotations[i].style.left = (img_bound - parseFloat(annotations[i].style.width) - oldTop) + units;
         }
-        //todo: get annotation_holders and change percentages
-
-
 
     }
     else if (annotation_type == ANNOTATION_TYPES.IMAGE)
@@ -338,9 +315,6 @@
       var translation_call_begin = " translate(0%, ";
       var translation_call_end = "px)";
 
-
-
-
       if (angle % 180 == 0 || half_width >= half_height)
       {
         image_preview.style.webkitTransform = rotation_call
@@ -357,40 +331,23 @@
         //We want to line up the original right edge with the left of the screen.
         image_preview.style.webkitTransform = rotation_call + " translate(0%, " + (half_height - half_width) + translation_call_end;
       }
+
+        var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
+        var offsetLeft = document.getElementById('image_preview').offsetLeft + + document.getElementById('image_preview').scrollLeft;
         for (var i = 0; i < annotations.length; i++)
         {
-            //swap the width and height
             var oldWidth = annotations[i].style.width;
             var oldHeight = annotations[i].style.height;
+            var oldTop = parseFloat(annotations[i].style.top) - offsetTop;
+            var oldLeft = parseFloat(annotations[i].style.left) - offsetLeft;
+
+            //swap the width and height
             annotations[i].style.width = annotations[i].style.height;
             annotations[i].style.height = oldWidth;
 
-            if (angle == 0)
-            {
-
-//                annotations[i].style.left = left0 + units;
-//                annotations[i].style.top = top0 + units;
-                if (prevAngleWas270)
-                {
-
-                }
-            }
-            else if (angle == 90)
-            {
-//                annotations[i].style.left = left90 + units;
-//                annotations[i].style.top = top90 + units
-//                console.log(annotations[i].style.left,  annotations[i].style.top);
-            }
-//            else if (angle == 180)
-//            {
-//                annotations[i].style.left = (width - parseFloat(left0) - parseFloat(annotations[i].style.width)) + units;
-//                annotations[i].style.top = (height - parseFloat(top0) - parseFloat(annotations[i].style.height)) + units;
-//            }
-//            else //angle == 270
-//            {
-//                annotations[i].style.left = (height - parseFloat(left90) - parseFloat(annotations[i].style.width)) + units;
-//                annotations[i].style.top = (width - parseFloat(top90) - parseFloat(annotations[i].style.height)) + units;
-//            }
+            //rotate the anchors
+            annotations[i].style.top = (offsetTop + oldLeft) + units;
+            annotations[i].style.left = (offsetLeft + img_bound - parseFloat(annotations[i].style.width) - oldTop) + units;
         }
 
     }
