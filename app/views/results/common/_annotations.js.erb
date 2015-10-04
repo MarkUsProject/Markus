@@ -250,38 +250,20 @@
 
   var angle = 0;
   function rotate() {
-      var annotations = document.getElementsByClassName("annotation_holder");
+    var annotations = document.getElementsByClassName("annotation_holder");
 
-      angle += 90;
-      if (angle == 360) angle = 0;
+    angle += 90;
+    if (angle == 360) angle = 0;
 
     if (annotation_type === ANNOTATION_TYPES.PDF)
     {
-        PDFView.rotatePages(90);
-//        setTimeout(rotate_pdf_annotations, 1000);
-        rotate_pdf_annotations();
+      PDFView.rotatePages(90);
+      var img_bound = 100;
+      var units = "%";
+      var annotations = document.getElementsByClassName("annotation_holder");
 
-
-    }
-    else if (annotation_type == ANNOTATION_TYPES.IMAGE)
-    {
-        rotate_img();
-        rotate_img_annotations(angle);
-
-
-
-    }
-
-  }
-
-function rotate_pdf_annotations()
-{
-    var img_bound = 100;
-    var units = "%";
-    var annotations = document.getElementsByClassName("annotation_holder");
-
-    for (var i = 0; i < annotations.length; i++)
-    {
+      for (var i = 0; i < annotations.length; i++)
+      {
         //swap the width and height
         var oldWidth = annotations[i].style.width;
         annotations[i].style.width = annotations[i].style.height;
@@ -291,108 +273,93 @@ function rotate_pdf_annotations()
         var oldTop = parseFloat(annotations[i].style.top);
         annotations[i].style.top = annotations[i].style.left;
         annotations[i].style.left = (img_bound - parseFloat(annotations[i].style.width) - oldTop) + units;
+      }
     }
-}
-
-function rotate_img()
-{
-    var img_preview = document.getElementById("image_preview");
-
-    var bounding_rect = img_preview.getBoundingClientRect();
-    var half_width = bounding_rect.width/2;
-    var half_height = bounding_rect.height/2;
-
-    //If the image is originally in portrait mode and we rotate to either 90 degress or 270 degrees,
-    //we need to offset the image so that it doesn't get cut off on the left side.
-
-    var rotation_call = "rotate(" + angle + "deg)";
-    var translation_call_begin = " translate(0%, ";
-    var translation_call_end = "px)";
-
-    var alignment_translation = half_width - half_height;
-
-
-    if (angle % 180 == 0 || half_width >= half_height)
+    else if (annotation_type == ANNOTATION_TYPES.IMAGE)
     {
+      var img_preview = document.getElementById("image_preview");
+
+      var bounding_rect = img_preview.getBoundingClientRect();
+      var half_width = bounding_rect.width/2;
+      var half_height = bounding_rect.height/2;
+
+      //If the image is originally in portrait mode and we rotate to either 90 degress or 270 degrees,
+      //we need to offset the image so that it doesn't get cut off on the left side.
+      var rotation_call = "rotate(" + angle + "deg)";
+      var translation_call_begin = " translate(0%, ";
+      var translation_call_end = "px)";
+
+      var alignment_translation = half_width - half_height;
+
+      if (angle % 180 == 0 || half_width >= half_height)
+      {
         img_preview.style.webkitTransform = rotation_call
-    }
-    else if (angle == 90)
-    {
+      }
+      else if (angle == 90)
+      {
         //Because we're rotated, translating along the y moves the image horizontally.
         //We want to line up the original bottom edge with left of the screen.
         img_preview.style.webkitTransform = rotation_call + translation_call_begin + alignment_translation + translation_call_end;
-    }
-    else //angle is 270
-    {
+      }
+      else //angle is 270
+      {
         //Because we're rotated, translating along the y moves the image horizontally.
         //We want to line up the original right edge with the left of the screen.
         img_preview.style.webkitTransform = rotation_call + " translate(0%, " + (-alignment_translation) + translation_call_end;
+      }
+      rotate_img_annotations(angle);
     }
-}
+  }
 
  function rotate_img_annotations(targetAngle)
  {
-     var img_preview = document.getElementById("image_preview");
-     var bounding_rect = img_preview.getBoundingClientRect();
-     var half_width = bounding_rect.width/2;
-     var half_height = bounding_rect.height/2;
-     var alignment_translation = half_height - half_width;
-//     var alignment_translation;//since this is called after the image has been rotated, the bounding_rect has changed so this is different from
-     //the value computed in the rotate() function
-//     if (angle % 180 != 0)
-//     {
-//         alignment_translation = half_width - half_height;
-//     }
-//     else
-//     {
-//         alignment_translation = half_height - half_width;
-//     }
+   var img_preview = document.getElementById("image_preview");
+   var bounding_rect = img_preview.getBoundingClientRect();
+   var half_width = bounding_rect.width/2;
+   var half_height = bounding_rect.height/2;
+   var alignment_translation = half_height - half_width;
+   var annotations = document.getElementsByClassName("annotation_holder");
+   var img_bound;
+   if (angle == 90 || angle == 270)
+   {
+      img_bound = parseFloat(img_preview.height);
+   }
+   else
+   {
+      img_bound = parseFloat(img_preview.width);
+   }
+   var units = "px"
 
+   var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
+   var offsetLeft = document.getElementById('image_preview').offsetLeft + + document.getElementById('image_preview').scrollLeft;
+   for (var i = 0; i < annotations.length; i++)
+   {
+       //swap the width and height
+      var oldWidth = annotations[i].style.width;
+      annotations[i].style.width = annotations[i].style.height;
+      annotations[i].style.height = oldWidth;
 
-     var annotations = document.getElementsByClassName("annotation_holder");
-     var img_bound;
-     if (angle == 90 || angle == 270)
-     {
-         img_bound = parseFloat(img_preview.height);
-     }
-     else
-     {
-         img_bound = parseFloat(img_preview.width);
-     }
-     var units = "px"
+       //rotate the anchors
+      var oldTop = parseFloat(annotations[i].style.top) - offsetTop;
+      var top = offsetTop + parseFloat(annotations[i].style.left) - offsetLeft;
+      var left = offsetLeft + img_bound - parseFloat(annotations[i].style.width) - oldTop;
 
-     var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
-     var offsetLeft = document.getElementById('image_preview').offsetLeft + + document.getElementById('image_preview').scrollLeft;
-     for (var i = 0; i < annotations.length; i++)
-     {
-         //swap the width and height
-         var oldWidth = annotations[i].style.width;
-         annotations[i].style.width = annotations[i].style.height;
-         annotations[i].style.height = oldWidth;
+      //need to undo the translation that we did to align the image with the edges of the panel
+      if ((angle % 180 == 0 && half_height > half_width) || (angle % 180 != 0 && half_width > half_height))
+      {
+        if (targetAngle % 180 != 0)
+        {
+          top -= alignment_translation;
+        }
+        else
+        {
+          left += alignment_translation;
+        }
+      }
 
-         //rotate the anchors
-         var oldTop = parseFloat(annotations[i].style.top) - offsetTop;
-         var top = offsetTop + parseFloat(annotations[i].style.left) - offsetLeft;
-         var left = offsetLeft + img_bound - parseFloat(annotations[i].style.width) - oldTop;
-
-         //need to undo the translation that we did to align the image with the edges of the panel
-
-         if ((angle % 180 == 0 && half_height > half_width) || (angle % 180 != 0 && half_width > half_height))
-         {
-             if (targetAngle % 180 != 0)
-             {
-                 top -= alignment_translation;
-             }
-             else
-             {
-                 left += alignment_translation;
-             }
-         }
-
-
-         annotations[i].style.top = top + units;
-         annotations[i].style.left = left + units;
-     }
+      annotations[i].style.top = top + units;
+      annotations[i].style.left = left + units;
+    }
  }
 
   function make_new_annotation() {

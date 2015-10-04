@@ -95,81 +95,74 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
                                      bottom_edge - holder_top - HORIZONTAL_SCROLLBAR_COMPENSATION) + 'px';
     }
   }
-    //todo: modularize with rotate_img_annotations()
-    var num_rotations = 0;
-    if (angle == 90) num_rotations = 1;
-    if (angle == 180) num_rotations = 2;
-    if (angle == 270) num_rotations = 3;
-    var img_preview = document.getElementById("image_preview");
-    var bounding_rect = img_preview.getBoundingClientRect();
-    var half_width = bounding_rect.width/2;
-    var half_height = bounding_rect.height/2;
-    var alignment_translation = half_height - half_width;
+  //todo: modularize with rotate_img_annotations()
+  var num_rotations = 0;
+  if (angle == 90) num_rotations = 1;
+  if (angle == 180) num_rotations = 2;
+  if (angle == 270) num_rotations = 3;
+  var img_preview = document.getElementById("image_preview");
+  var bounding_rect = img_preview.getBoundingClientRect();
+  var half_width = bounding_rect.width/2;
+  var half_height = bounding_rect.height/2;
+  var alignment_translation = half_height - half_width;
 
-    for (var j = 0; j < num_rotations; j++)
+  for (var j = 0; j < num_rotations; j++)
+  {
+    var annotations = document.getElementsByClassName("annotation_holder");
+    var img_bound;
+    if (angle == 90 || angle == 270)
     {
-
-        var annotations = document.getElementsByClassName("annotation_holder");
-        var img_bound;
-        if (angle == 90 || angle == 270)
-        {
-            img_bound = parseFloat(img_preview.height);
-        }
-        else
-        {
-            img_bound = parseFloat(img_preview.width);
-        }
-        var units = "px"
-
-        var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
-        var offsetLeft = document.getElementById('image_preview').offsetLeft + + document.getElementById('image_preview').scrollLeft;
-        for (var i = 0; i < annotations.length; i++)
-        {
-            //swap the width and height
-            var oldWidth = annotations[i].style.width;
-            if (i == 0)
-            {
-                console.log(i, "before", annotations[i].style.width);
-            }
-
-            annotations[i].style.width = annotations[i].style.height;
-            annotations[i].style.height = oldWidth;
-
-
-            //rotate the anchors
-            var oldTop = parseFloat(annotations[i].style.top) - offsetTop;
-            var top = offsetTop + parseFloat(annotations[i].style.left) - offsetLeft;
-            var left = offsetLeft + img_bound - parseFloat(annotations[i].style.width) - oldTop;
-
-            //need to undo the translation that we did to align the image with the edges of the panel
-
-            if ((angle % 180 == 0 && half_height > half_width) || (angle % 180 != 0 && half_width > half_height))
-            {
-                if (angle == 0 || angle == 90)
-                {
-                    top -= alignment_translation;
-                }
-                else if (angle == 180)
-                {
-                    top += alignment_translation;
-                    left += alignment_translation;
-                }
-
-                else
-                {
-                    left += alignment_translation;
-                }
-            }
-
-
-            annotations[i].style.top = top + units;
-            annotations[i].style.left = left + units;
-        }
+      img_bound = parseFloat(img_preview.height);
     }
+    else
+    {
+      img_bound = parseFloat(img_preview.width);
+    }
+    var units = "px"
 
+    var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
+    var offsetLeft = document.getElementById('image_preview').offsetLeft + + document.getElementById('image_preview').scrollLeft;
+    for (var i = 0; i < annotations.length; i++)
+    {
+      //swap the width and height
+      var oldWidth = annotations[i].style.width;
+      if (i == 0)
+      {
+          console.log(i, "before", annotations[i].style.width);
+      }
 
+      annotations[i].style.width = annotations[i].style.height;
+      annotations[i].style.height = oldWidth;
 
+      //rotate the anchors
+      var oldTop = parseFloat(annotations[i].style.top) - offsetTop;
+      var top = offsetTop + parseFloat(annotations[i].style.left) - offsetLeft;
+      var left = offsetLeft + img_bound - parseFloat(annotations[i].style.width) - oldTop;
 
+      //need to undo the translation that we did to align the image with the edges of the panel
+
+      if ((angle % 180 == 0 && half_height > half_width) || (angle % 180 != 0 && half_width > half_height))
+      {
+          if (angle == 0 || angle == 90)
+          {
+              top -= alignment_translation;
+          }
+          else if (angle == 180)
+          {
+              top += alignment_translation;
+              left += alignment_translation;
+          }
+
+          else
+          {
+              left += alignment_translation;
+          }
+      }
+
+      annotations[i].style.top = top + units;
+      annotations[i].style.left = left + units;
+    }
+  }
 }
 
 ImageAnnotationGrid.prototype.add_to_grid = function(extracted_coords) {
