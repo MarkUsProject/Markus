@@ -114,6 +114,7 @@ var PageView = function pageView(container, id, scale,
   };
 
   this.update = function pageViewUpdate(scale, rotation) {
+      var prevScale = this.scale
     this.scale = scale || this.scale;
 
     if (typeof rotation !== 'undefined') {
@@ -151,8 +152,14 @@ var PageView = function pageView(container, id, scale,
     if (this.zoomLayer) {
       this.cssTransform(this.zoomLayer.firstChild);
     }
-    //this.reset(true); //Rotating causes annotation references to be lost if this is commented in,
-      //but without it, we can't scale
+      //annotation references get killed when we reset,
+      // and we need those because we're rotating the annotations right after we rotate the page,
+      // so don't reset when we're just rotating the page
+      if (prevScale != this.scale)
+      {
+          this.reset(true);
+      }
+
   };
 
   this.cssTransform = function pageCssTransform(canvas, redrawAnnotations) {

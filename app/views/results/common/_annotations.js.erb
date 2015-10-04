@@ -257,24 +257,10 @@
 
     if (annotation_type === ANNOTATION_TYPES.PDF)
     {
-        var img_bound = 100;
-        var units = "%";
-        //        console.log(annotations.length);
         PDFView.rotatePages(90);
-//        console.log(annotations.length);
+//        setTimeout(rotate_pdf_annotations, 1000);
+        rotate_pdf_annotations();
 
-        for (var i = 0; i < annotations.length; i++)
-        {
-            //swap the width and height
-            var oldWidth = annotations[i].style.width;
-            annotations[i].style.width = annotations[i].style.height;
-            annotations[i].style.height = oldWidth;
-
-            //rotate the top and left anchors
-            var oldTop = parseFloat(annotations[i].style.top);
-            annotations[i].style.top = annotations[i].style.left;
-            annotations[i].style.left = (img_bound - parseFloat(annotations[i].style.width) - oldTop) + units;
-        }
 
     }
     else if (annotation_type == ANNOTATION_TYPES.IMAGE)
@@ -287,6 +273,26 @@
     }
 
   }
+
+function rotate_pdf_annotations()
+{
+    var img_bound = 100;
+    var units = "%";
+    var annotations = document.getElementsByClassName("annotation_holder");
+
+    for (var i = 0; i < annotations.length; i++)
+    {
+        //swap the width and height
+        var oldWidth = annotations[i].style.width;
+        annotations[i].style.width = annotations[i].style.height;
+        annotations[i].style.height = oldWidth;
+
+        //rotate the top and left anchors
+        var oldTop = parseFloat(annotations[i].style.top);
+        annotations[i].style.top = annotations[i].style.left;
+        annotations[i].style.left = (img_bound - parseFloat(annotations[i].style.width) - oldTop) + units;
+    }
+}
 
 function rotate_img()
 {
