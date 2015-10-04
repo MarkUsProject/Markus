@@ -121,15 +121,11 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
     var units = "px"
 
     var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
-    var offsetLeft = document.getElementById('image_preview').offsetLeft + + document.getElementById('image_preview').scrollLeft;
+    var offsetLeft = document.getElementById('image_preview').offsetLeft + document.getElementById('image_preview').scrollLeft;
     for (var i = 0; i < annotations.length; i++)
     {
       //swap the width and height
       var oldWidth = annotations[i].style.width;
-      if (i == 0)
-      {
-          console.log(i, "before", annotations[i].style.width);
-      }
 
       annotations[i].style.width = annotations[i].style.height;
       annotations[i].style.height = oldWidth;
@@ -142,7 +138,7 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
       //need to undo the translation that we did to align the image with the edges of the panel
 
       if ((angle % 180 == 0 && half_height > half_width) || (angle % 180 != 0 && half_width > half_height))
-      {
+      { 
         if (angle == 0 || angle == 90)
         {
           top -= alignment_translation;
@@ -152,9 +148,21 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
           top += alignment_translation;
           left += alignment_translation;
         }
-
         else
         {
+          left += alignment_translation;
+        }
+      }
+      else
+      {
+        if (angle % 180 == 0)
+        {
+          top += alignment_translation;
+          left += alignment_translation;
+        }
+        else 
+        {
+          top -= alignment_translation;
           left += alignment_translation;
         }
       }

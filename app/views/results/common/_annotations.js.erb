@@ -307,33 +307,33 @@
         //We want to line up the original right edge with the left of the screen.
         img_preview.style.webkitTransform = rotation_call + " translate(0%, " + (-alignment_translation) + translation_call_end;
       }
-      rotate_img_annotations(angle);
+      rotate_img_annotations();
     }
   }
 
- function rotate_img_annotations(targetAngle)
+ function rotate_img_annotations()
  {
-   var img_preview = document.getElementById("image_preview");
-   var bounding_rect = img_preview.getBoundingClientRect();
-   var half_width = bounding_rect.width/2;
-   var half_height = bounding_rect.height/2;
-   var alignment_translation = half_height - half_width;
-   var annotations = document.getElementsByClassName("annotation_holder");
-   var img_bound;
-   if (angle == 90 || angle == 270)
-   {
-      img_bound = parseFloat(img_preview.height);
-   }
-   else
-   {
+    var img_preview = document.getElementById("image_preview");
+    var bounding_rect = img_preview.getBoundingClientRect();
+    var half_width = bounding_rect.width/2;
+    var half_height = bounding_rect.height/2;
+    var alignment_translation = half_height - half_width;
+    var annotations = document.getElementsByClassName("annotation_holder");
+    var img_bound;
+    if (angle % 180 == 0)
+    {
       img_bound = parseFloat(img_preview.width);
-   }
-   var units = "px"
+    }
+    else
+    {
+      img_bound = parseFloat(img_preview.height); 
+    }
+    var units = "px"
 
-   var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
-   var offsetLeft = document.getElementById('image_preview').offsetLeft + + document.getElementById('image_preview').scrollLeft;
-   for (var i = 0; i < annotations.length; i++)
-   {
+    var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
+    var offsetLeft = document.getElementById('image_preview').offsetLeft + + document.getElementById('image_preview').scrollLeft;
+    for (var i = 0; i < annotations.length; i++)
+    {
        //swap the width and height
       var oldWidth = annotations[i].style.width;
       annotations[i].style.width = annotations[i].style.height;
@@ -345,14 +345,28 @@
       var left = offsetLeft + img_bound - parseFloat(annotations[i].style.width) - oldTop;
 
       //need to undo the translation that we did to align the image with the edges of the panel
+      //check if JPG is originally portrait
       if ((angle % 180 == 0 && half_height > half_width) || (angle % 180 != 0 && half_width > half_height))
       {
-        if (targetAngle % 180 != 0)
+        if (angle % 180 != 0)
         {
           top -= alignment_translation;
         }
         else
         {
+          left += alignment_translation;
+        }
+      }
+      else
+      {
+        if (angle % 180 == 0)
+        {
+          top += alignment_translation;
+          left += alignment_translation;
+        }
+        else 
+        {
+          top -= alignment_translation;
           left += alignment_translation;
         }
       }
