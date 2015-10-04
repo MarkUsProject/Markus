@@ -137,9 +137,9 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
 
       //need to undo the translation that we did to align the image with the edges of the panel
 
-      if ((angle % 180 == 0 && half_height > half_width) || (angle % 180 != 0 && half_width > half_height))
+      if ((angle == 180 && half_height > half_width) || (angle != 180 && half_width > half_height))
       { 
-        if (angle == 0 || angle == 90)
+        if (angle == 90)
         {
           top -= alignment_translation;
         }

@@ -282,7 +282,6 @@
       var bounding_rect = img_preview.getBoundingClientRect();
       var half_width = bounding_rect.width/2;
       var half_height = bounding_rect.height/2;
-      img_preview.
 
       //If the image is originally in portrait mode and we rotate to either 90 degress or 270 degrees,
       //we need to offset the image so that it doesn't get cut off on the left side.
@@ -291,7 +290,6 @@
       var translation_call_end = "px)";
 
       var alignment_translation = half_width - half_height;
-
 
       if ((angle % 180 != 0 && half_width >= half_height) || (angle % 180 == 0 && half_height >= half_width)) //originally landscape
       {
