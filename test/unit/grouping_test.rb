@@ -133,14 +133,14 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
       should 'be able to remove a member' do
-        @grouping.remove_member(@membership)
+        @grouping.remove_member(@membership.id)
         assert_nil @grouping.membership_status(@membership.user),
                    'This student has just been deleted from this group. His ' +
                        'membership status should be nil'
       end
 
       should 'be able to remove the inviter' do
-        @grouping.remove_member(@inviter_membership)
+        @grouping.remove_member(@inviter_membership.id)
         assert_nil @grouping.membership_status(@inviter)
         assert_not_nil @grouping.inviter
       end
@@ -196,7 +196,7 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
       should 'be able to delete rejected memberships' do
-        @grouping.remove_rejected(@membership)
+        @grouping.remove_rejected(@membership.id)
         assert_nil @grouping.membership_status(@student)
       end
     end
