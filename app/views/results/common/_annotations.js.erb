@@ -279,41 +279,7 @@
     }
     else if (annotation_type == ANNOTATION_TYPES.IMAGE)
     {
-        var img_preview = document.getElementById("image_preview");
-
-      var bounding_rect = img_preview.getBoundingClientRect();
-      var half_width = bounding_rect.width/2;
-      var half_height = bounding_rect.height/2;
-
-      //If the image is originally in portrait mode and we rotate to either 90 degress or 270 degrees,
-      //we need to offset the image so that it doesn't get cut off on the left side.
-
-      var rotation_call = "rotate(" + angle + "deg)";
-      var translation_call_begin = " translate(0%, ";
-      var translation_call_end = "px)";
-
-        var alignment_translation = half_width - half_height;
-
-        console.log(alignment_translation);
-
-
-        if (angle % 180 == 0 || half_width >= half_height)
-      {
-          img_preview.style.webkitTransform = rotation_call
-      }
-      else if (angle == 90)
-      {
-        //Because we're rotated, translating along the y moves the image horizontally.
-        //We want to line up the original bottom edge with left of the screen.
-          img_preview.style.webkitTransform = rotation_call + translation_call_begin + alignment_translation + translation_call_end;
-      }
-      else //angle is 270
-      {
-        //Because we're rotated, translating along the y moves the image horizontally.
-        //We want to line up the original right edge with the left of the screen.
-          img_preview.style.webkitTransform = rotation_call + " translate(0%, " + (-alignment_translation) + translation_call_end;
-      }
-
+        rotate_img();
         rotate_img_annotations(angle);
 
 
@@ -321,6 +287,42 @@
     }
 
   }
+
+function rotate_img()
+{
+    var img_preview = document.getElementById("image_preview");
+
+    var bounding_rect = img_preview.getBoundingClientRect();
+    var half_width = bounding_rect.width/2;
+    var half_height = bounding_rect.height/2;
+
+    //If the image is originally in portrait mode and we rotate to either 90 degress or 270 degrees,
+    //we need to offset the image so that it doesn't get cut off on the left side.
+
+    var rotation_call = "rotate(" + angle + "deg)";
+    var translation_call_begin = " translate(0%, ";
+    var translation_call_end = "px)";
+
+    var alignment_translation = half_width - half_height;
+
+
+    if (angle % 180 == 0 || half_width >= half_height)
+    {
+        img_preview.style.webkitTransform = rotation_call
+    }
+    else if (angle == 90)
+    {
+        //Because we're rotated, translating along the y moves the image horizontally.
+        //We want to line up the original bottom edge with left of the screen.
+        img_preview.style.webkitTransform = rotation_call + translation_call_begin + alignment_translation + translation_call_end;
+    }
+    else //angle is 270
+    {
+        //Because we're rotated, translating along the y moves the image horizontally.
+        //We want to line up the original right edge with the left of the screen.
+        img_preview.style.webkitTransform = rotation_call + " translate(0%, " + (-alignment_translation) + translation_call_end;
+    }
+}
 
  function rotate_img_annotations(targetAngle)
  {
@@ -339,8 +341,6 @@
 //     {
 //         alignment_translation = half_height - half_width;
 //     }
-
-     console.log(alignment_translation);
 
 
      var annotations = document.getElementsByClassName("annotation_holder");
