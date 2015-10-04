@@ -252,31 +252,14 @@
 
   function rotate() {
       var annotations = document.getElementsByClassName("annotation_holder");
-      var annotation_grid = document.getElementById("annotation_grid");
-//      var annotation_grid_value = JSON.parse(annotation_grid.value)
 
       angle += 90;
       if (angle == 360) angle = 0;
 
-      var units = "px"
-
-      var img_bound = 100;
-      if (annotation_type == ANNOTATION_TYPES.IMAGE)
-      {
-          var img_preview = document.getElementById("image_preview");
-          if (angle == 90 || angle == 270)
-          {
-              img_bound = parseFloat(img_preview.height);
-          }
-          else
-          {
-              img_bound = parseFloat(img_preview.width);
-          }
-      }
-
     if (annotation_type === ANNOTATION_TYPES.PDF)
     {
-        units = "%";
+        var img_bound = 100;
+        var units = "%";
         //        console.log(annotations.length);
         PDFView.rotatePages(90);
 //        console.log(annotations.length);
@@ -300,9 +283,19 @@
     }
     else if (annotation_type == ANNOTATION_TYPES.IMAGE)
     {
-        //todo: get annotation_holders and change px
-      var image_preview = document.getElementById('image_preview');
+        var img_bound;
+        var img_preview = document.getElementById("image_preview");
+        if (angle == 90 || angle == 270)
+        {
+            img_bound = parseFloat(img_preview.height);
+        }
+        else
+        {
+            img_bound = parseFloat(img_preview.width);
+        }
+        var units = "px"
 
+        //todo: get annotation_holders and change px
 
       var bounding_rect = image_preview.getBoundingClientRect();
       var half_width = bounding_rect.width/2;
@@ -317,19 +310,19 @@
 
       if (angle % 180 == 0 || half_width >= half_height)
       {
-        image_preview.style.webkitTransform = rotation_call
+          img_preview.style.webkitTransform = rotation_call
       }
       else if (angle == 90)
       {
         //Because we're rotated, translating along the y moves the image horizontally.
         //We want to line up the original bottom edge with left of the screen.
-        image_preview.style.webkitTransform = rotation_call + translation_call_begin + (half_width - half_height) + translation_call_end;
+          img_preview.style.webkitTransform = rotation_call + translation_call_begin + (half_width - half_height) + translation_call_end;
       }
       else //angle is 270
       {
         //Because we're rotated, translating along the y moves the image horizontally.
         //We want to line up the original right edge with the left of the screen.
-        image_preview.style.webkitTransform = rotation_call + " translate(0%, " + (half_height - half_width) + translation_call_end;
+          img_preview.style.webkitTransform = rotation_call + " translate(0%, " + (half_height - half_width) + translation_call_end;
       }
 
         var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
@@ -349,7 +342,6 @@
             annotations[i].style.top = (offsetTop + oldLeft) + units;
             annotations[i].style.left = (offsetLeft + img_bound - parseFloat(annotations[i].style.width) - oldTop) + units;
         }
-
     }
 
   }
