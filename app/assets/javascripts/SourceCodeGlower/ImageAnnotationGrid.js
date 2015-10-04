@@ -95,7 +95,7 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
                                      bottom_edge - holder_top - HORIZONTAL_SCROLLBAR_COMPENSATION) + 'px';
     }
   }
-  //todo: modularize with rotate_img_annotations()
+  //todo: factor out commonalities with rotate_img_annotations()
   var num_rotations = 0;
   if (angle == 90) num_rotations = 1;
   if (angle == 180) num_rotations = 2;
@@ -155,13 +155,18 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
       }
       else
       {
-        if (angle % 180 == 0)
+        if (angle == 90)
         {
-          top += alignment_translation;
           left += alignment_translation;
         }
-        else 
+        else if (angle == 180)
         {
+          left += alignment_translation;
+          top += alignment_translation;
+        }
+        else if (angle == 270)
+        {
+          //todo: annotation goes slightly too high
           top -= alignment_translation;
           left += alignment_translation;
         }
