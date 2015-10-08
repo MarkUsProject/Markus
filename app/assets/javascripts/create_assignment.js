@@ -38,18 +38,18 @@ jQuery(document).ready(function() {
     toggle_remark_requests(this.checked);
   });
 
-  jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
+  // jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
 
-  if(is_testing_framework_enabled) {
-    jQuery('#tokens').removeClass('disable');
-    jQuery('#tokens_per_day').attr('disabled', false);
-    jQuery('#unlimited_tokens').attr('disabled', false);
-  } else {
-    jQuery('#tokens').addClass('disable');
-    jQuery('#tokens_per_day').attr('disabled', true);
-    jQuery('#unlimited_tokens').attr('disabled', true);
-  }
-}
+  // if(is_testing_framework_enabled) {
+  //   jQuery('#tokens').removeClass('disable');
+  //   jQuery('#tokens_per_day').attr('disabled', false);
+  //   jQuery('#unlimited_tokens').attr('disabled', false);
+  // } else {
+  //   jQuery('#tokens').addClass('disable');
+  //   jQuery('#tokens_per_day').attr('disabled', true);
+  //   jQuery('#unlimited_tokens').attr('disabled', true);
+  // }
+});
 
 function toggle_tests_tokens(is_unlimited) {
 
@@ -82,7 +82,7 @@ function toggle_tests_tokens(is_unlimited) {
       document.getElementById('assignment_group_min').value = this.value;
     }
   });
-});
+}
 
 
 function check_group_size() {
