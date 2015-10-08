@@ -38,31 +38,6 @@ jQuery(document).ready(function() {
     toggle_remark_requests(this.checked);
   });
 
-  // jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
-
-  // if(is_testing_framework_enabled) {
-  //   jQuery('#tokens').removeClass('disable');
-  //   jQuery('#tokens_per_day').attr('disabled', false);
-  //   jQuery('#unlimited_tokens').attr('disabled', false);
-  // } else {
-  //   jQuery('#tokens').addClass('disable');
-  //   jQuery('#tokens_per_day').attr('disabled', true);
-  //   jQuery('#unlimited_tokens').attr('disabled', true);
-  // }
-});
-
-function toggle_tests_tokens(is_unlimited) {
-
-  jQuery('#unlimited_tokens').val(is_unlimited);
-
-  if(is_unlimited) {
-    jQuery('#tokens').removeClass('disable');
-    jQuery('#tokens_per_day').attr('disabled', true);
-  } else {
-    jQuery('#tokens').addClass('disable');
-    jQuery('#tokens_per_day').attr('disabled', false);
-  }
-
   jQuery('#submission_rule_fields input[type=radio]').change(
     change_submission_rule);
 
@@ -82,7 +57,7 @@ function toggle_tests_tokens(is_unlimited) {
       document.getElementById('assignment_group_min').value = this.value;
     }
   });
-}
+});
 
 
 function check_group_size() {
@@ -172,3 +147,30 @@ function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme
   }
 }
 
+function toggle_automated_tests(is_testing_framework_enabled) {
+
+  jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
+
+  if(is_testing_framework_enabled) {
+    jQuery('#tokens').removeClass('disable');
+    jQuery('#tokens_per_day').attr('disabled', false);
+    jQuery('#unlimited_tokens').attr('disabled', false);
+  } else {
+    jQuery('#tokens').addClass('disable');
+    jQuery('#tokens_per_day').attr('disabled', true);
+    jQuery('#unlimited_tokens').attr('disabled', true);
+  }
+}
+
+function toggle_tests_tokens(is_unlimited) {
+
+  jQuery('#unlimited_tokens').val(is_unlimited);
+
+  if(is_unlimited) {
+    jQuery('#tokens').removeClass('disable');
+    jQuery('#tokens_per_day').attr('disabled', true);
+  } else {
+    jQuery('#tokens').addClass('disable');
+    jQuery('#tokens_per_day').attr('disabled', false);
+  }
+}
