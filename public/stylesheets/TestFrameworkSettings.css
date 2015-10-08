@@ -1,0 +1,14 @@
+div.dragarrows {
+  float:left;
+  padding:0 10px;
+  font-weight:bold;
+}
+
+a.collapse {
+  font-style:normal;
+}
+
+div.settings_left_side {
+  margin-right:30px;
+  float:left;
+}

@@ -120,22 +120,6 @@ class AssignmentsController < ApplicationController
       @revision  = repo.get_latest_revision
       @revision_number = @revision.revision_number
 
-      # For running tests
-      if params[:collect]
-        @result = manually_collect_and_prepare_test(@grouping, @revision.revision_number)
-      else
-        @result = automatically_collect_and_prepare_test(@grouping, @revision.revision_number)
-      end
-      #submission = @grouping.submissions.find_by_submission_version_used(true)
-      if @result
-        @test_result_files = @result.submission.test_results
-      else
-        @test_result_files = nil
-      end
-      @token = Token.find_by_grouping_id(@grouping.id)
-      if @token
-        @token.reassign_tokens_if_new_day()
-      end
       @last_modified_date = @grouping.assignment_folder_last_modified_date
       @num_submitted_files = @grouping.number_of_submitted_files
       @num_missing_assignment_files = @grouping.missing_assignment_files.length

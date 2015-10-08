@@ -8,11 +8,14 @@ class Submission < ActiveRecord::Base
 
   validates_numericality_of :submission_version, only_integer: true
   belongs_to :grouping
+
   has_many   :results, dependent: :destroy
   belongs_to :remark_result, class_name: 'Result', dependent: :destroy
   has_many   :submission_files, dependent: :destroy
   has_many   :annotations, through: :submission_files
   has_many   :test_results, dependent: :destroy
+  has_many   :test_script_results, :dependent => :destroy
+
 
   def self.create_by_timestamp(grouping, timestamp)
      unless timestamp.kind_of? Time

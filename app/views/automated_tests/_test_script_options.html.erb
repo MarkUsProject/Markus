@@ -1,0 +1,70 @@
+<div class="test_script_options">
+<% display_options = { 
+  I18n.t("automated_tests.script_option.display_option.display_after_submission") => "display_after_submission", 
+  I18n.t("automated_tests.script_option.display_option.display_after_collection") => "display_after_collection",
+  I18n.t("automated_tests.script_option.display_option.do_not_display") => "do_not_display"
+} # this is defined and used to validate input in test_script.rb 
+%>
+
+<%= form.fields_for :test_scripts, test_script do |f| %>
+
+  <div id="test_script_<%= f.object_id.to_s + "_options" %>"</div>
+
+  <% if f.object.script_name %>
+    <h3 id="test_script_<% f.object_id %>">
+      <% if f.object.script_name.respond_to?(:original_filename) %>
+        <%= f.object.script_name.original_filename + " " + I18n.t("automated_tests.test_parameters") %>
+      <% else %>
+        <%= f.object.script_name + " " + I18n.t("automated_tests.test_parameters") %>
+      <% end %>
+    </h3>
+  <% else %>
+    <h3 id="test_script_<% f.object_id %>">
+      <%= f.object_id.to_s + " " + I18n.t("automated_tests.test_parameters") %>"
+    </h3>
+  <% end %>
+
+  <div id="test_script_#{f.object_id}_run_options" width="60%">
+    <%= f.label :run_settings, I18n.t("automated_tests.script_option.run_settings") %>
+
+    <%= I18n.t("automated_tests.script_option.seq_num") %>
+    <%= f.number_field :seq_num, :value => f.object.seq_num %>
+
+    <%= I18n.t("automated_tests.script_option.max_marks") %>
+    <%= f.number_field :max_marks, :value => f.object.max_marks %>
+
+    <%= I18n.t("automated_tests.script_option.run_on_request") %>
+    <%= f.check_box :run_on_request, :value => f.object.run_on_request %>
+
+    <%= I18n.t("automated_tests.script_option.run_on_submission") %>
+    <%= f.check_box :run_on_submission, :value => f.object.run_on_submission %>
+
+    <%= I18n.t("automated_tests.script_option.halts_testing") %>
+    <%= f.check_box :halts_testing, :value => f.object.halts_testing %>
+  </div>
+  </br>
+  <div id="test_script_#{f.object_id}_display_options" width="60%">
+  	<%= f.label :display_settings, I18n.t("automated_tests.script_option.display_settings") %>
+  	
+    <%= I18n.t("automated_tests.script_option.display_description") %>
+    <%= f.select :display_description, options_for_select(display_options, f.object.display_description) %>
+
+    <%= I18n.t("automated_tests.script_option.display_run_status") %>
+    <%= f.select :display_run_status, options_for_select(display_options, f.object.display_run_status) %>
+
+    <%= I18n.t("automated_tests.script_option.display_marks_earned") %>
+    <%= f.select :display_marks_earned, options_for_select(display_options, f.object.display_marks_earned) %>
+
+    <%= I18n.t("automated_tests.script_option.display_input") %>
+    <%= f.select :display_input, options_for_select(display_options, f.object.display_input) %>
+
+    <%= I18n.t("automated_tests.script_option.display_expected_output") %>
+    <%= f.select :display_expected_output, options_for_select(display_options, f.object.display_expected_output) %>
+
+    <%= I18n.t("automated_tests.script_option.display_actual_output") %>
+    <%= f.select :display_actual_output, options_for_select(display_options, f.object.display_actual_output) %>
+  </div>
+
+<% end %>
+
+</div>

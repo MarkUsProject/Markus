@@ -40,6 +40,13 @@ class Result < ActiveRecord::Base
       .order(:total_mark).pluck(:total_mark)
   end
 
+
+
+  #returns the sum of all the POSITIVE extra marks
+  def get_positive_extra_points
+    extra_marks.positive.points.sum('extra_mark')
+  end
+
   # Calculate the total mark for this submission
   def update_total_mark
     update_attributes(total_mark:
@@ -51,6 +58,19 @@ class Result < ActiveRecord::Base
   def get_subtotal
     marks.includes(:markable).map(&:get_mark).reduce(0, :+)
   end
+
+# <<<<<<< HEAD
+#   #returns the sum of the marks not including bonuses/deductions
+#   def get_subtotal
+#     total = 0.0
+#     self.marks.all(:include => [:markable]).each do |m|
+#       total = total + m.get_mark
+#     end
+#     total = total + get_total_test_script_marks
+
+#     total
+#   end
+# =========
 
   # The sum of the bonuses and deductions, other than late penalty
   def get_total_extra_points
@@ -75,6 +95,26 @@ class Result < ActiveRecord::Base
   # Point deduction for late penalty
   def get_total_extra_percentage_as_points
     get_total_extra_percentage * submission.assignment.total_mark / 100
+  end
+
+  def get_total_test_script_marks
+    total = 0
+
+    #find the unique test scripts for this submission
+    test_script_ids = TestScriptResult.select(:test_script_id).where(:grouping_id => submission.grouping_id)
+
+    #pull out the actual ids from the ActiveRecord objects
+    test_script_ids = test_script_ids.map { |script_id_obj| script_id_obj.test_script_id }
+
+    #take only the unique ids so we don't add marks from the same script twice
+    test_script_ids = test_script_ids.uniq
+
+    #add the latest result from each of our test scripts
+    test_script_ids.each do |test_script_id|
+      test_result = TestScriptResult.where(:test_script_id => test_script_id, :grouping_id => submission.grouping_id).last
+      total = total + test_result.marks_earned
+    end
+    return total
   end
 
   # un-releases the result

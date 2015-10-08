@@ -642,6 +642,34 @@ class SubmissionsController < ApplicationController
       end
     end
 
+    # FROM HEAD(test-framework)
+    # log_message = ''
+    # if params[:release_results]
+    #   changed = set_release_on_results(groupings, true, errors)
+    #   log_message = "Marks released for assignment '#{assignment.short_identifier}', ID: '" +
+    #                 "#{assignment.id}' (for #{changed} groups)."
+    # elsif params[:unrelease_results]
+    #   changed = set_release_on_results(groupings, false, errors)
+    #   log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
+    #                 "#{assignment.id}' (for #{changed} groups)."
+    # # ATE_SIMPLE_UI: this is temporary
+    # # After this action successfully done, it flashes the message "# of results has successfully changed"
+    # # which here, running test is not changing anything. Please see the user table UI for how to properly
+    # # do bulk action to table rows.
+    # elsif !params[:run_test].nil?
+    #   changed = run_tests(groupings, errors)
+    #   log_message = "Run test for assignment '#{assignment.short_identifier}', ID: '" +
+    #                 "#{assignment.id}' (For #{changed} groups)."
+    # # ATE_SIMPLE_UI end
+    # elsif params[:collect_section]
+    #   if params[:section_to_collect] == ''
+    #     errors.push(I18n.t('collect_submissions.must_select_a_section'))
+    #   else
+    #     collected = collect_submissions_for_section(params[:section_to_collect], assignment, errors)
+    #     if collected > 0
+    #       flash[:success] = I18n.t('collect_submissions.successfully_collected', :collected => collected)
+    #     end
+
     # Now recursively call this function on all sub directories.
     directories.each do |new_subdirectory|
       begin

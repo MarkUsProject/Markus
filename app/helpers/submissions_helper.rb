@@ -1,4 +1,6 @@
 module SubmissionsHelper
+  include AutomatedTestsHelper
+
   def find_appropriate_grouping(assignment_id, params)
     if current_user.admin? || current_user.ta?
       Grouping.find(params[:grouping_id])
@@ -41,6 +43,22 @@ module SubmissionsHelper
     changed
   end
 
+# <<<<<<< HEAD
+#   # ATE_SIMPLE_UI: this is temporary
+#   def run_tests(groupings, errors)
+#     changed = 0
+#     groupings.each do |grouping|
+#       begin
+#         raise I18n.t("marking_state.no_submission", :group_name => grouping.group.group_name) if !grouping.has_submission?
+
+#         AutomatedTestsHelper.request_a_test_run(grouping.id, 'collection', @current_user)
+#         changed += 1
+#       rescue Exception => e
+#         errors.push(e.message)
+#       end
+#     end
+#     return changed
+# =======
   def get_submissions_table_info(assignment, groupings)
     parts = groupings.select &:has_submission?
     results = Result.where(submission_id:
@@ -159,6 +177,40 @@ module SubmissionsHelper
 
   end
 
+# <<<<<<< HEAD
+#   def construct_file_manager_dir_table_row(directory_name, directory)
+#     table_row = {}
+#     table_row[:id] = directory.object_id
+#     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/directory_table_row', :locals => {:directory_name => directory_name, :directory => directory}
+#     table_row[:filename] = directory_name
+#     table_row[:last_modified_date_unconverted] = directory.last_modified_date.strftime('%b %d, %Y %H:%M')
+#     table_row[:revision_by] = directory.user_id
+#     table_row
+
+#   end
+
+#   def construct_file_manager_table_row(file_name, file)
+#     table_row = {}
+#     table_row[:id] = file.object_id
+#     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/filter_table_row', :locals => {:file_name => file_name, :file => file}
+
+#     table_row[:filename] = file_name
+
+#     table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
+
+#     table_row[:last_modified_date_unconverted] = file.last_modified_date.strftime('%b %d, %Y %H:%M')
+
+#     table_row[:revision_by] = file.user_id
+
+#     table_row
+#   end
+
+
+#   def construct_file_manager_table_rows(files)
+#     result = {}
+#     files.each do |file_name, file|
+#       result[file.object_id] = construct_file_manager_table_row(file_name, file)
+# =======
   def get_repo_browser_table_info(assignment, revision, revision_number, path,
                                   previous_path, grouping_id)
     exit_directory = get_exit_directory(previous_path, grouping_id,

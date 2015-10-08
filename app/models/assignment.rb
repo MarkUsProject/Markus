@@ -7,15 +7,25 @@ class Assignment < ActiveRecord::Base
     rubric: 'rubric'
   }
 
+  has_many :automated_tests
   has_many :rubric_criteria,
            -> { order(:position) },
-           class_name: 'RubricCriterion', 
+           class_name: 'RubricCriterion',
 		   dependent: :destroy
 
   has_many :flexible_criteria,
            -> { order(:position) },
            class_name: 'FlexibleCriterion',
-		   dependent: :destroy
+       dependent: :destroy
+
+  has_many :test_support_files, :dependent => :destroy
+  has_many :test_scripts, :dependent => :destroy
+
+
+  # has_many :annotation_categories
+  #          -> { order(:position) },
+  #          class_name: 'FlexibleCriterion',
+		#    dependent: :destroy
 
   has_many :criterion_ta_associations,
 		   dependent: :destroy
@@ -79,7 +89,24 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :enable_test, in: [true, false]
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
 
+
+  # For those, please refer to issue #1126
+  # Because of app/views/assignments/_list_manage.html.erb line:13
+  validates :description, :presence => true
+  # Because of app/views/main/_grade_distribution_graph.html.erb:25
+  validates :assignment_stat, :presence => true
+
+  # since allow_web_submits is a boolean, validates_presence_of does not work:
+  # see the Rails API documentation for validates_presence_of (Model
+  # validations)
+  validates_inclusion_of :allow_web_submits, :in => [true, false]
+  validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
+  validates_inclusion_of :enable_test, :in => [true, false]
+  validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
+  validates_inclusion_of :unlimited_tokens, :in => [true, false]
+
   validate :minimum_number_of_groups
+
 
   before_save :reset_collection_time
 
@@ -232,6 +259,8 @@ class Assignment < ActiveRecord::Base
 
   def total_mark
     total = 0
+
+    #add the marks from the criteria
     if self.marking_scheme_type == 'rubric'
       rubric_criteria.each do |criterion|
         total = total + criterion.weight * 4
@@ -239,6 +268,12 @@ class Assignment < ActiveRecord::Base
     else
       total = flexible_criteria.sum('max')
     end
+# <<<<<<< HEAD
+
+#     #separately add marks for test scripts
+#     total = total + total_test_script_marks
+
+# =======
     total.round(2)
   end
 
@@ -310,6 +345,19 @@ class Assignment < ActiveRecord::Base
   def total_criteria_weight
     factor = 10.0 ** 2
     (rubric_criteria.sum('weight') * factor).floor / factor
+  end
+
+  def total_test_script_marks
+    return test_scripts.sum("max_marks")
+  end
+
+  #total marks for scripts that are run on request
+  def total_ror_script_marks
+    return test_scripts.where("run_on_request" => true).sum("max_marks")
+  end
+
+  def has_test_scripts?
+    return TestScript.exists?(:assignment_id => self.id)
   end
 
   def add_group(new_group_name=nil)
@@ -567,9 +615,10 @@ class Assignment < ActiveRecord::Base
   # Get a detailed CSV report of rubric based marks
   # (includes each criterion) for this assignment.
   # Produces CSV rows such as the following:
-  #   student_name,95.22222,3,4,2,5,5,4,0/2
+  #   student_name,95.22222,3,4,2,5,5,4,1,0/2
   # Criterion values should be read in pairs. I.e. 2,3 means
   # a student scored 2 for a criterion with weight 3.
+  # Second last column is marks from test scripts
   # Last column are grace-credits.
   def get_detailed_csv_report_rubric
     out_of = self.total_mark
@@ -589,6 +638,7 @@ class Assignment < ActiveRecord::Base
           end
           final_result.push('')                         # extra-mark
           final_result.push('')                         # extra-percentage
+          final_result.push('')                         # test script marks
         else
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
@@ -607,7 +657,11 @@ class Assignment < ActiveRecord::Base
           end
           final_result.push(submission.get_latest_result.get_total_extra_points)
           final_result.push(submission.get_latest_result.get_total_extra_percentage)
+
+          #push test script results
+          final_result.push(submission.get_latest_result.get_total_test_script_marks)
         end
+
         # push grace credits info
         grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s
         final_result.push(grace_credits_data)
@@ -620,7 +674,7 @@ class Assignment < ActiveRecord::Base
   # Get a detailed CSV report of flexible criteria based marks
   # (includes each criterion, with it's out-of value) for this assignment.
   # Produces CSV rows such as the following:
-  #   student_name,95.22222,3,4,2,5,5,4,0/2
+  #   student_name,95.22222,3,4,2,5,5,4,1,0/2
   # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
   # Last column are grace-credits.
   def get_detailed_csv_report_flexible
@@ -641,6 +695,7 @@ class Assignment < ActiveRecord::Base
           end
           final_result.push('')                 # extra-marks
           final_result.push('')                 # extra-percentage
+          final_result.push('')                 # test script marks
         else
           # Fill in actual values, since we have a grouping
           # and a submission.
@@ -661,6 +716,9 @@ class Assignment < ActiveRecord::Base
           end
           final_result.push(submission.get_latest_result.get_total_extra_points)
           final_result.push(submission.get_latest_result.get_total_extra_percentage)
+
+          #push test script results
+          final_result.push(submission.get_latest_result.get_total_test_script_marks)
         end
         # push grace credits info
         grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s

@@ -31,8 +31,8 @@ Sham.rubric_criterion_name {|i| "machinist_rubric_criterion_#{i}"}
 Sham.date {rand(50).days.from_now}
 Sham.name {Faker::Name.name}
 
-
 Sham.filename {|i| "file#{i}"}
+Sham.filetype {|i| ['test', 'lib', 'parse'][i % 3] }
 Sham.path {|i| "path#{i}"}
 
 Sham.annotation_category_name {|i| "Machinist Annotation Category #{i}"}
@@ -282,17 +282,49 @@ TaMembership.blueprint do
   membership_status {'pending'}
 end
 
+TestScript.blueprint do
+  assignment {Assignment.make}
+  seq_num {0}
+  script_name {Sham.filename}
+  description {Sham.description}
+  max_marks {0}
+  run_on_submission {true}
+  run_on_request {true}
+  halts_testing {false}
+  display_description {'do_not_display'}
+  display_run_status {'do_not_display'}
+  display_marks_earned {'do_not_display'}
+  display_input {'do_not_display'}
+  display_expected_output {'do_not_display'}
+  display_actual_output {'do_not_display'}
+end
+
+TestSupportFile.blueprint do
+  file_name {Sham.filename}
+  assignment {Assignment.make}
+  description {Sham.description}
+end
+
+TestScriptResult.blueprint do
+  submission {Submission.make}
+  test_script {TestScript.make}
+  marks_earned {0}
+end
+
 TestFile.blueprint do
-  assignment_id {0}
-  filename
-  filetype
-  is_private {false}
+  filename {Sham.filename}
+  filetype {Sham.filetype}
 end
 
 TestResult.blueprint do
-  submission
-  filename {Sham.filename}
-  file_content {Sham.message}
+  submission {Submission.make}
+  test_script {TestScript.make}
+  name {Sham.filename}
+  completion_status {'pass'}
+  marks_earned {0}
+  input_description {Sham.message}
+  actual_output {Sham.message}
+  expected_output {Sham.message}
 end
 
 TextAnnotation.blueprint do

@@ -9,12 +9,14 @@
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
+gem "resque"
 gem 'rails', '~> 4.2.0'
 gem 'rubyzip'
 gem 'ya2yaml'
 gem 'i18n'
 gem 'dynamic_form'
 gem 'exception_notification'
+gem "libxml-ruby" # xml parser library to parse test results
 gem 'activerecord-import'
 gem 'auto_complete'
 gem 'best_in_place'

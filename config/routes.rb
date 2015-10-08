@@ -369,6 +369,12 @@ Markus::Application.routes.draw do
       end
     end
   end
+  
+  resources :automated_tests do
+    member do
+      get 'student_interface'
+    end
+  end
 
   match 'main', controller: 'main', action: 'index', via: :post
   match 'main/about', controller: 'main', action: 'about', via: :post

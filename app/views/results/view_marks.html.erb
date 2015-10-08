@@ -47,6 +47,13 @@
   <h1>Results for <%= sanitize(@assignment.short_identifier) %></h1>
 </div>
 
+
+<!-- old testing infrastructure - not in use now
+<#% if false %>
+<#%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => false, :test_result_files => @test_result_files } %>
+<%# end %>
+-->
+
 <div class='wrapLeft'>
   <%= render partial: 'results/common/errors' %>
 
@@ -61,7 +68,7 @@
                              result: @result,
                              submission_id: @submission.id } %>
       </div>
-    <% end %>
+
 
   <%= render partial: 'results/student/student_panes',
              locals: { extra_marks_points: @extra_marks_points,
