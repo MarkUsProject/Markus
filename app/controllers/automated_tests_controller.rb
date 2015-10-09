@@ -56,10 +56,6 @@ class AutomatedTestsController < ApplicationController
       end
 
     end
-    render :test_replace,
-           format: :js,
-           locals: { test_result_files: @test_result_files,
-                     result: @result }
   end
 
   # Manage is called when the Automated Test UI is loaded
@@ -72,8 +68,6 @@ class AutomatedTestsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
-  #Update function called when files are added to the assignment
-
 
     if !@grouping.nil?
       # Look up submission information
@@ -82,7 +76,6 @@ class AutomatedTestsController < ApplicationController
       @revision_number = @revision.revision_number
 
       @test_script_results = TestScriptResult.find_by_grouping_id(@grouping.id)
-
 
       @token = Token.find_by_grouping_id(@grouping.id)
       if @token
@@ -94,22 +87,6 @@ class AutomatedTestsController < ApplicationController
         result = run_tests(@grouping.id)
         if result == nil
           flash[:notice] = I18n.t("automated_tests.tests_running")
-
-        begin
-          # Process testing framework form for validation
-          @assignment = process_test_form(@assignment, assignment_params)
-        rescue Exception, RuntimeError => e
-          @assignment.errors.add(:base, I18n.t('assignment.error',
-            message: e.message))
-          return redirect_to action: 'manage',
-            assignment_id: params[:assignment_id]
-        end
-
-        # Save assignment and associated test files
-        if @assignment.save
-          flash[:success] = I18n.t('assignment.update_success')
-          redirect_to action: 'manage',
-            assignment_id: params[:assignment_id]
         else
           flash[:failure] = result
         end
