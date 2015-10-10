@@ -61,6 +61,7 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
+    @assignment.test_scripts.build
   end
 
 
