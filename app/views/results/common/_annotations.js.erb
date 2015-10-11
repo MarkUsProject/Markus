@@ -292,127 +292,7 @@
         annotations[i].style.left = (img_bound - parseFloat(annotations[i].style.width) - oldTop) + units;
       }
     }
-    // else if (annotation_type == ANNOTATION_TYPES.IMAGE)
-    // {
-    //   var img_preview = document.getElementById("image_preview");
-
-    //   var bounding_rect = img_preview.getBoundingClientRect();
-    //   var half_width = bounding_rect.width/2;
-    //   var half_height = bounding_rect.height/2;
-
-    //   //If the image is originally in portrait mode and we rotate to either 90 degress or 270 degrees,
-    //   //we need to offset the image so that it doesn't get cut off on the left side.
-    //   var rotation_call = "rotate(" + angle + "deg)";
-    //   var translation_call_begin = " translate(0%, ";
-    //   var translation_call_end = "px)";
-
-    //   var alignment_translation = half_width - half_height;
-
-    //   if ((angle % 180 != 0 && half_width >= half_height) || (angle % 180 == 0 && half_height >= half_width)) //originally landscape
-    //   {
-    //     if (angle == 90)
-    //     {
-    //       img_preview.style.webkitTransform = rotation_call + " translate(" + (alignment_translation) + "px, 0%)";
-    //     }
-    //     else if (angle == 180 || angle == 0)
-    //     {
-    //       img_preview.style.webkitTransform = rotation_call;
-    //     }
-    //     else if (angle == 270)
-    //     {
-    //       img_preview.style.webkitTransform = rotation_call + " translate(" + (-alignment_translation) + "px, 0%)";
-    //     }
-    //   }
-    //   else //originally portrait
-    //   {
-    //     if (angle % 180 == 0)
-    //     {
-    //       img_preview.style.webkitTransform = rotation_call
-    //     }
-    //     else if (angle == 90)
-    //     {
-    //       //Because we're rotated, translating along the y moves the image horizontally.
-    //       //We want to line up the original bottom edge with left of the screen.
-    //       img_preview.style.webkitTransform = rotation_call + translation_call_begin + alignment_translation + translation_call_end;
-    //     }
-    //     else //angle is 270
-    //     {
-    //       //Because we're rotated, translating along the y moves the image horizontally.
-    //       //We want to line up the original right edge with the left of the screen.
-    //       img_preview.style.webkitTransform = rotation_call + " translate(0%, " + (-alignment_translation) + translation_call_end;
-    //     }
-    //   }
-
-    //   rotate_img_annotations();
-    // }
   }
-
- function rotate_img_annotations()
- {
-    var img_preview = document.getElementById("image_preview");
-    var bounding_rect = img_preview.getBoundingClientRect();
-    var half_width = bounding_rect.width/2;
-    var half_height = bounding_rect.height/2;
-    var alignment_translation = half_height - half_width;
-    var annotations = document.getElementsByClassName("annotation_holder");
-    var img_bound;
-    if (angle % 180 == 0)
-    {
-      img_bound = parseFloat(img_preview.width);
-    }
-    else
-    {
-      img_bound = parseFloat(img_preview.height); 
-    }
-    var units = "px"
-
-    var offsetTop = document.getElementById('image_preview').offsetTop + document.getElementById('image_preview').scrollTop;
-    var offsetLeft = document.getElementById('image_preview').offsetLeft + + document.getElementById('image_preview').scrollLeft;
-    for (var i = 0; i < annotations.length; i++)
-    {
-       //swap the width and height
-      var oldWidth = annotations[i].style.width;
-      annotations[i].style.width = annotations[i].style.height;
-      annotations[i].style.height = oldWidth;
-
-       //rotate the anchors
-      var oldTop = parseFloat(annotations[i].style.top) - offsetTop;
-      var top = offsetTop + parseFloat(annotations[i].style.left) - offsetLeft;
-      var left = offsetLeft + img_bound - parseFloat(annotations[i].style.width) - oldTop;
-
-      //need to undo the translation that we did to align the image with the edges of the panel
-      //check if JPG is originally portrait
-      if ((angle % 180 == 0 && half_height > half_width) || (angle % 180 != 0 && half_width > half_height))
-      {
-        if (angle % 180 != 0)
-        {
-          top -= alignment_translation;
-        }
-        else
-        {
-          left += alignment_translation;
-        }
-      }
-      else
-      {
-        if (angle == 90)
-        {
-          left += alignment_translation;
-        }
-        else if (angle % 180 == 0)
-        {
-          top += alignment_translation;
-        }
-        else if (angle == 270)
-        {
-          left += alignment_translation;
-        }
-      }
-
-      annotations[i].style.top = top + units;
-      annotations[i].style.left = left + units;
-    }
- }
 
   function make_new_annotation() {
     // Check if image is shown, and call the appropriate function if so
@@ -439,7 +319,6 @@
   }
 
   function make_new_pdf_annotation () {
-    console.log("make new pdf annotation");
     var box = annotation_manager.selectionRectangleAsInts();
     var boxSize = annotation_manager.selectionBoxSize();
     
@@ -453,27 +332,6 @@
 
     // Manually reset the modal dialog values
     set_dialog_values('', '', box.x1, box.x2, box.y1, box.y2, box.page);
-
-    // // //the box is in unrated coordinates, so we need to rotate it to the correct orientation
-    // for (var i = 0; i < angle / 90; i++)
-    // {
-    //   var img_bound = 100;
-    //   var units = "%";
-    //   var annotations = document.getElementsByClassName("annotation_holder");
-
-
-    //   //swap the width and height
-    //   var oldWidth = annotations[i].style.width;
-    //   annotations[annotations.length - 1].style.width = annotations[annotations.length-1].style.height;
-    //   annotations[annotations.length-1].style.height = oldWidth;
-
-    //   //rotate the top and left anchors
-    //   var oldTop = parseFloat(annotations[annotations.length-1].style.top);
-    //   annotations[annotations.length-1].style.top = annotations[annotations.length-1].style.left;
-    //   annotations[annotations.length-1].style.left = (img_bound - parseFloat(annotations[annotations.length-1].style.width) - oldTop) + units;
-
-    // }
-
   }
 
   function make_new_image_annotation() {
@@ -490,7 +348,6 @@
   // Takes the ID of an existing annotation (from the database), adds the new
   // annotation link to the currently selected text, then highlights the lines.
   function add_existing_annotation(annotation_text_id) {
-    console.log("add existing annotation");
     if (annotation_type === ANNOTATION_TYPES.IMAGE) {
       var box = get_selection_box();
       if (!box) { return; }
@@ -593,7 +450,6 @@
    * @return {[type]}             [description]
    */
   function submit_new_annotation(content, category_id, x1, x2, y1, y2, page) {
-    console.log("submit new annotation");
     // Was any annotation text content provided?
     if (content == '') {
       alert("<%= I18n.t('marker.annotation.provide_text') %>");
@@ -663,9 +519,6 @@
         y1 = old_x1;
         y2 = old_x2;
       }
-      // y2 = 100000
-
-      console.log(x1, x2, y1, y2)
 
       // PDF Annotation
       jQuery.ajax({
@@ -680,8 +533,7 @@
               '&y1=' + y1 +
               '&y2=' + y2 +
               '&page=' + page +
-              '&authenticity_token=' + AUTH_TOKEN +
-              '&angle=' + angle
+              '&authenticity_token=' + AUTH_TOKEN
       });
 
     }

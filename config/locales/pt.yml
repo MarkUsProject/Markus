@@ -341,7 +341,6 @@ pt:
 
     #app/views/results/common
     common:
-      rotate: "Rodar"
       submission_file: "Arquivo enviado:"
       test_results: "Resultado dos testes:"
       no_file_in_repository: "[Nenhum arquivo no respositório]"

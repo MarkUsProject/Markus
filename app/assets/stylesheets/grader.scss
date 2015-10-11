@@ -146,7 +146,6 @@
   border: 1px dashed #f00;
   display: none;
   position: absolute;
-  z-index: 1;
 }
 
 .annotation_holder {
@@ -155,7 +154,6 @@
   cursor: crosshair;
   opacity: 0.2;
   position: absolute;
-  z-index: 1;
 }
 
 .code_scroller {
