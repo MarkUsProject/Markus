@@ -84,13 +84,47 @@ class AnnotationsController < ApplicationController
         annotation_number: submission.annotations.count + 1
       )
     when 'pdf'
+      # print "ruby printing in pdf " + params[:angle]
+
+      angle = Integer(params[:angle])
+      x1 = Integer(params[:x1]);
+      x2 = Integer(params[:x2]);
+      y1 = Integer(params[:y1]);
+      y2 = Integer(params[:y2]);
+      # old_x1 = x1
+      # old_x2 = x2
+      # old_y1 = y1
+      # old_y2 = y2
+
+      # #store the coordinates in unrotated form
+      # if angle == 90
+      #   x1 = old_y1
+      #   x2 = old_y2
+      #   y1 = old_x2
+      #   y2 = old_x1
+      
+      # elsif angle == 180
+      
+      #   x1 = old_x2
+      #   x2 = old_x1
+      #   y1 = old_y2
+      #   y2 = old_y1
+      
+      # elsif angle == 270
+      #   x1 = old_y2
+      #   x2 = old_y1
+      #   y1 = old_x1
+      #   y2 = old_x2
+      # end
+
+
       @annotation = PdfAnnotation.create(
         annotation_text_id: @text.id,
         submission_file_id: @submission_file_id,
-        x1: Integer(params[:x1]),
-        x2: Integer(params[:x2]),
-        y1: Integer(params[:y1]),
-        y2: Integer(params[:y2]),
+        x1: x1,
+        x2: x2,
+        y1: y1,
+        y2: y2,
         page: Integer(params[:page]),
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
