@@ -90,25 +90,15 @@
 
   function add_pdf_annotation(annotation_text_id, content, extracted_coords) {
     var coords = (typeof extracted_coords === 'string' ? JSON.parse(extracted_coords) : extracted_coords);
-
     annotation_manager.addAnnotation(annotation_text_id, content, coords);
 
     //since we stored the coordinates in unrotated form, when making a new annotation in a rotated orientation, we need to 
     //rotate it
-    var img_bound = 100;
-    var units = "%";
     var annotations = document.getElementsByClassName("annotation_holder");
-    last_ind = annotations.length - 1;
     for (var i = 0; i < angle / 90; i++)
     {
-      var oldWidth = annotations[last_ind].style.width;
-      annotations[last_ind].style.width = annotations[last_ind].style.height;
-      annotations[last_ind].style.height = oldWidth;
-      var oldTop = parseFloat(annotations[last_ind].style.top);
-      annotations[last_ind].style.top = annotations[last_ind].style.left;
-      annotations[last_ind].style.left = (img_bound - parseFloat(annotations[last_ind].style.width) - oldTop) + units;
+      rotate_pdf_annotation(annotations[annotations.length - 1]);
     }
-
   }
 
   function add_annotation(annotation_id, range, annotation_text_id) {
@@ -267,6 +257,7 @@
 
   var angle = 0;
   function rotate() {
+    annotation_manager.hideSelectionBox();
     var annotations = document.getElementsByClassName("annotation_holder");
 
     angle += 90;
@@ -275,23 +266,28 @@
     if (annotation_type === ANNOTATION_TYPES.PDF)
     {
       PDFView.rotatePages(90);
-      var img_bound = 100;
-      var units = "%";
       var annotations = document.getElementsByClassName("annotation_holder");
 
       for (var i = 0; i < annotations.length; i++)
       {
-        //swap the width and height
-        var oldWidth = annotations[i].style.width;
-        annotations[i].style.width = annotations[i].style.height;
-        annotations[i].style.height = oldWidth;
-
-        //rotate the top and left anchors
-        var oldTop = parseFloat(annotations[i].style.top);
-        annotations[i].style.top = annotations[i].style.left;
-        annotations[i].style.left = (img_bound - parseFloat(annotations[i].style.width) - oldTop) + units;
+        rotate_pdf_annotation(annotations[i]);
       }
     }
+  }
+
+  function rotate_pdf_annotation(annotation) {
+    var img_bound = 100;
+    var units = "%";
+
+    //swap the width and height
+    var oldWidth = annotation.style.width;
+    annotation.style.width = annotation.style.height;
+    annotation.style.height = oldWidth;
+
+    //rotate the top and left anchors
+    var oldTop = parseFloat(annotation.style.top);
+    annotation.style.top = annotation.style.left;
+    annotation.style.left = (img_bound - parseFloat(annotation.style.width) - oldTop) + units;
   }
 
   function make_new_annotation() {
@@ -491,13 +487,15 @@
               '&authenticity_token=' + AUTH_TOKEN
       });
     } else if (annotation_type === ANNOTATION_TYPES.PDF) {
+      // PDF Annotation
       var old_x1 = x1;
       var old_x2 = x2;
       var old_y1 = y1;
       var old_y2 = y2;
-      console.log(x1, x2, y1, y2)
+
+      var max = 100000; //todo: find the exact pixel size of the pdf (although this is the value used in PDFAnnotationManager, it's slightly off)
+
       // store the coordinates in unrotated form
-      var max = 100000;
       if (angle == 90)
       {
         x1 = old_y1;
@@ -520,7 +518,6 @@
         y2 = old_x2;
       }
 
-      // PDF Annotation
       jQuery.ajax({
         url:  '<%= annotations_path %>',
         type: 'POST',
