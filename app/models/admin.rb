@@ -12,7 +12,7 @@ class Admin < User
     assignment.groupings.size
   end
 
-  # for an admin, we want all the assignment groupings marked completed ################################
+  # for an admin, we want all the assignment groupings marked completed ##################################
   def get_num_marked(assignment)
     n = 0
     assignment.groupings.each do |x|
