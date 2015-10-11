@@ -408,6 +408,8 @@
       alert("<%= I18n.t('marker.annotation.provide_text') %>");
       return false;
     }
+
+    //words too long cause the text to overflow the bubble, cap at 50 characters
     var current_word_len = 0;
     for (var i = 0; i < content.length; i++)
     {
@@ -415,9 +417,9 @@
       {
         current_word_len = 0;
       }
-      else if (++current_word_len > 50) //make sure there is at least one space every 50 characters
+      else if (++current_word_len > 50) 
       {
-        content = content.slice(0, i) + " " + content.slice(i, content.length);
+        content = content.slice(0, i) + "\n" + content.slice(i, content.length);
         current_word_len = 0;
         i++;
       }
