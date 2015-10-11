@@ -16,6 +16,6 @@ if $CHILD_STATUS.to_s[-1].to_i != 0
 end
 
 # now only check the diffs of remaining .rb files checked in
-system("rubocop-git -c ./config/.rubocop.yml")
+system("rubocop-git --staged -c ./config/.rubocop.yml")
 exit $CHILD_STATUS.to_s[-1].to_i
 
