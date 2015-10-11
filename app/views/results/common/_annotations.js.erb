@@ -106,7 +106,7 @@
       annotations[last_ind].style.height = oldWidth;
       var oldTop = parseFloat(annotations[last_ind].style.top);
       annotations[last_ind].style.top = annotations[last_ind].style.left;
-      annotations[last_ind].style.left = (oldTop) + units;
+      annotations[last_ind].style.left = (img_bound - parseFloat(annotations[last_ind].style.width) - oldTop) + units;
     }
 
   }
@@ -266,7 +266,7 @@
   }
 
   var angle = 0;
-  function rotate(only_annotations) {
+  function rotate() {
     var annotations = document.getElementsByClassName("annotation_holder");
 
     angle += 90;
@@ -274,7 +274,7 @@
 
     if (annotation_type === ANNOTATION_TYPES.PDF)
     {
-      if (typeof only_annotations == 'undefined') PDFView.rotatePages(90);
+      PDFView.rotatePages(90);
       var img_bound = 100;
       var units = "%";
       var annotations = document.getElementsByClassName("annotation_holder");
@@ -641,27 +641,29 @@
       var old_y2 = y2;
       console.log(x1, x2, y1, y2)
       // store the coordinates in unrotated form
+      var max = 100000;
       if (angle == 90)
       {
         x1 = old_y1;
         x2 = old_y2;
-        y1 = old_x2;
-        y2 = old_x1;
+        y1 = max - old_x2;
+        y2 = max - old_x1;
       }
       else if (angle == 180)
       {
-        x1 = old_x2;
-        x2 = old_x1;
-        y1 = old_y2;
-        y2 = old_y1;
+        x1 = max - old_x2;
+        x2 = max - old_x1;
+        y1 = max - old_y2;
+        y2 = max - old_y1;
       }
       else if (angle == 270)
       {
-        x1 = old_y2;
-        x2 = old_y1;
+        x1 = max - old_y2;
+        x2 = max - old_y1;
         y1 = old_x1;
         y2 = old_x2;
       }
+      // y2 = 100000
 
       console.log(x1, x2, y1, y2)
 

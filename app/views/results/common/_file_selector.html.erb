@@ -11,10 +11,7 @@
   <%= hidden_field_tag :include_annotations,
                        true,
                        id: 'download_include_annotations' %>
-<!-- 
-  <input type='button'
-         onclick='rotate(); return false;'
-         value='<%= t('common.rotate') %>'> -->
+
   <div class='file_selector'>
     <input type='button'
            onclick='bump_select("select_file_id", -1, "back_button", "next_button"); return false;'
