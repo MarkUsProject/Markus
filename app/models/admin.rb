@@ -7,4 +7,20 @@ class Admin < User
   after_destroy :revoke_repository_permissions
   after_update  :maintain_repository_permissions
 
+  #in the context of the admin, we just want all the assignment groupings submitted
+  def get_num_assigned(assignment)
+    assignment.groupings.size
+  end
+
+  #in the context of the admin, we want all the assignment groupings marked completed ########################################################
+  def get_num_marked(assignment)
+    n = 0
+    assignment.groupings.each do |x|
+      if x.marking_completed?
+        n += 1
+      end
+    end
+    n
+  end
+
 end

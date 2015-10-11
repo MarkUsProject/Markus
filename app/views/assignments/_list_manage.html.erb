@@ -57,8 +57,10 @@
               </td>
 
               <td>
-                <span id='collected_submissions_<%= assignment.short_identifier %>'>
+                <ul>
                   <% if assignment.submission_rule.can_collect_now? %>
+<li>                <span id='collected_submissions_<%= assignment.short_identifier %>'>
+
                     <%= link_to t('submissions_collected',
                                   count: assignment.groupings
                                                    .where(is_collected: true)
@@ -67,14 +69,29 @@
                                   controller: :submissions,
                                   action: :browse,
                                   assignment_id: assignment.id %>
+
+                </span></li>
                   <% end %>
-                </span>
-                <span id='class_average__<%= assignment.short_identifier %>'>
                   <% if !assignment.results_average.nil? %>
+                <li><span id='class_average__<%= assignment.short_identifier %>'>
+
                     <%= t(:class_average,
                           results_average: assignment.results_average) %>
+
+                </span></li>
                   <% end %>
+                  <% if assignment.submission_rule.can_collect_now? %>
+                  <li>
+                <span id='ta_marked__<%= assignment.short_identifier %>'>
+
+                    <%= t('browse_submissions.how_many_marked',
+                          num_marked: @current_user.get_num_marked(assignment),
+                          num_assigned: @current_user.get_num_assigned(assignment)) %>
+
                 </span>
+                  </li>
+                  <% end %>
+                </ul>
               </td>
             </tr>
           <% end %>
