@@ -89,6 +89,8 @@
           target_action = 'browse'
            elsif target_action == 'update'
              target_action = 'edit'
+           elsif target_action == 'create'
+             target_action = 'new'
         end %>
         <% # Don't show hidden assignments in the dropdown menu for students
            # either. Append '(hidden)' for TAs and Admins.
