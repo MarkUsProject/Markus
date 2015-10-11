@@ -91,7 +91,15 @@ module CourseSummariesHelper
   def get_mark_for_all_gef_for_student(student, gefs)
     gef_marks = Hash[gefs.map {|gef| [gef.id, 0]}]
     student.grade_entry_students.each do |ges|
-      gef_marks[ges.grade_entry_form_id] = ges.total_grade.nil? ? 0 : ges.total_grade
+      if current_user.admin?
+        gef_marks[ges.grade_entry_form_id] = ges.total_grade.nil? ? 0 : ges.total_grade
+      else
+        if ges.released_to_student.nil?
+          gef_marks[ges.grade_entry_form_id] = 0
+        else
+          gef_marks[ges.grade_entry_form_id] = ges.total_grade.nil? ? 0 : ges.total_grade
+        end
+      end
     end
     gef_marks
   end
