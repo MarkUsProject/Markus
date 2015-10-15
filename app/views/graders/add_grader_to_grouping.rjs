@@ -1,5 +1,0 @@
-page << render(partial: 'shared/global_action_warning', formats:[:js], handlers: [:erb])
-page.call 'modify_graders', @graders_data.to_json
-page.call 'modify_groupings', @groupings_data.to_json
-page.call 'modify_criteria', @criteria_data.to_json
-page.replace_html 'groups_coverage_dialog', partial: 'graders/modal_dialogs/groups_coverage'
