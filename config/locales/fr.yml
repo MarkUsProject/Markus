@@ -402,6 +402,7 @@ fr:
       find_by_revision_number:    "Par numéro de révision"
       viewing_revision:           "Révision : #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       currently_collected:  "Version recueillies:"
+      no_rev_before_deadline:   "Aucune révision soumise avant la date limite"
       current_path:         "Chemin actuel : "
       download_all_files:   "Télécharger tous les fichiers"
       root:                 "[racine]"

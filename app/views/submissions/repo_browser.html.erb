@@ -65,7 +65,13 @@
         <br>
         <%= t('browse_submissions.currently_collected') %> 
         <% if @grouping.is_collected %>
-           <%= "#" + @grouping.submissions.last.revision_number.to_s + " ( " + 
+           <% if @last_submission %>
+               <%= "#" +  @last_submission.revision_number.to_s +
+          " (" + l(@last_submission.revision_timestamp, format: :long_date) + " )"  %>
+           <% else %>
+               <%= t('browse_submissions.no_rev_before_deadline') %>
+           <% end %>
+           <%#= "#" + @grouping.submissions.last.revision_number.to_s + " ( " + 
                l((@revisions_history.select {|rev| rev[:num] == @grouping.submissions.last.revision_number }).first[:date], 
              format: :long_date) + " )" %>
         <% else %>
