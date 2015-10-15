@@ -17,7 +17,8 @@
             id: 'file_name',
             content: '<%= j raw I18n.t(:'browse_submissions.filename') %>',
             sortable: true,
-            compare: compare_anchor_text
+            searchable: true
+            //compare: compare_anchor_text
           },
           {
             id: 'last_modified_date',
@@ -92,10 +93,12 @@
         var f = {};
 
         f.id = i;
-        f.file_name = file[1].name;
-        f.last_modified_date = new Date(file[1].last_modified_date).toLocaleString();
-        f.revision_by = file[1].user_id;
-        f.last_modified_revision = file[1].last_modified_revision;
+        f.file_name =  <span dangerouslySetInnerHTML={{__html: file.filename}} />;
+        f.raw_name = file.raw_name
+        //f.file_name = file.filename;
+        f.last_modified_date = new Date(file.last_revised_date).toLocaleString();
+        f.revision_by = file.revision_by;
+        f.last_modified_revision = file.last_modified_revision;
 
         return f;
       }.bind(this));
@@ -140,7 +143,7 @@
 
     accessThroughArray: function() {
       return this.props.selected_files.map(function(id) {
-        return this.accessById(id).file_name;
+        return this.accessById(id).raw_name;
       }.bind(this));
     },
 
@@ -149,7 +152,7 @@
 
       this.props.selected_files.forEach(function(id) {
         var file = this.accessById(id);
-        revs[file.file_name] = file.last_modified_revision;
+        revs[file.raw_name] = file.last_modified_revision;
       }.bind(this));
 
       return revs;
@@ -160,6 +163,7 @@
 
       var delete_file = this.accessThroughArray();
       var file_revisions = this.getFileRevisions();
+
       jQuery.ajax({
         url: '<%= update_files_assignment_submissions_path(@assignment.id) %>',
         method: 'POST',
