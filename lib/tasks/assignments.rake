@@ -21,7 +21,9 @@ namespace :db do
         allow_web_submits: true,
         display_grader_names_to_students: false,
         submission_rule: rule,
-        assignment_stat: assignment_stat
+        assignment_stat: assignment_stat,
+        allow_remarks: true,
+        remark_due_date: 7.days.from_now
     )
 
     rule = NoLateSubmissionRule.new
@@ -46,7 +48,8 @@ namespace :db do
         allow_web_submits: true,
         display_grader_names_to_students: false,
         submission_rule: rule,
-        assignment_stat: assignment_stat
+        assignment_stat: assignment_stat,
+        allow_remarks: false
     )
 
     assignment_stat = AssignmentStat.new
@@ -67,7 +70,8 @@ namespace :db do
         allow_web_submits: true,
         display_grader_names_to_students: false,
         submission_rule: rule,
-        assignment_stat: assignment_stat
+        assignment_stat: assignment_stat,
+        allow_remarks: false
     )
 
     rule = NoLateSubmissionRule.new
@@ -88,7 +92,8 @@ namespace :db do
         allow_web_submits: true,
         display_grader_names_to_students: false,
         submission_rule: rule,
-        assignment_stat: assignment_stat
+        assignment_stat: assignment_stat,
+        allow_remarks: false
     )
   end
 end
