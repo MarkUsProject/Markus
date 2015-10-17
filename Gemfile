@@ -107,6 +107,7 @@ group :offline do
   gem 'railroady'
   gem 'rdoc'
   gem 'rubocop'
+  gem 'rubocop-git'
   gem 'thin'
 end
 
