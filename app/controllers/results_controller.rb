@@ -94,6 +94,8 @@ class ResultsController < ApplicationController
                  "of assignment '#{@assignment.short_identifier}' for group '" +
                  "#{@group.group_name}'")
 
+    @host = Rails.application.config.action_controller.relative_url_root
+
     # Sets up the tags for the tag pane.
     # Creates a variable for all the tags not used
     # and all the tags that are used by the assignment.

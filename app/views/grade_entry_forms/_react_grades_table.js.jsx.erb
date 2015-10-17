@@ -83,7 +83,7 @@
     getDefaultProps: function() {
       // Creates a new table with the columns defined below.
       // The first column will be the column initially sorted.
-      return {
+      var gradesTable = {
         columns: [
           {
             id: 'user_name',
@@ -102,10 +102,6 @@
             content: '<%= j raw I18n.t(:'user.first_name') %>',
             sortable: true,
             searchable: true
-          },
-          {
-            id: 'section',
-            content: '<%= j raw I18n.t(:'user.section') %>',
           }
         ],
         filters: [
@@ -116,7 +112,14 @@
             return true;
           }
         }]
+      };
+      if (<%= Section.any? %>) {
+          gradesTable['columns'].push({
+              id: 'section',
+              content: '<%= j raw I18n.t(:'user.section') %>',
+          });
       }
+      return gradesTable;
     },
     getInitialState: function() {
       return {
