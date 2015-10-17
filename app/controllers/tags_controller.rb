@@ -67,7 +67,7 @@ class TagsController < ApplicationController
 
   def download_tag_list
     # Gets all the tags
-    tags = Tag.all(order: 'name')
+    tags = Tag.all.order(:name)
 
     # Gets what type of format.
     case params[:format]
