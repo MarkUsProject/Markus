@@ -409,21 +409,6 @@
       return false;
     }
 
-    //words too long cause the text to overflow the bubble, cap at 50 characters
-    var current_word_len = 0;
-    for (var i = 0; i < content.length; i++)
-    {
-      if (content[i] == ' ' || content[i] == '\n')
-      {
-        current_word_len = 0;
-      }
-      else if (++current_word_len > 50) 
-      {
-        content = content.slice(0, i) + "\n" + content.slice(i, content.length);
-        current_word_len = 0;
-        i++;
-      }
-    }
     // Close the dialog
     modal.close();
 
