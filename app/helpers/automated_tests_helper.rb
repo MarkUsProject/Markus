@@ -1,5 +1,18 @@
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
+  # Create a repository for the test scripts and test support files
+  # if it does not exist
+  def create_test_repo(assignment)
+    # Create the automated test repository
+    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
+      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    end
+
+    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
+    if !(File.exists?(test_dir))
+      FileUtils.mkdir(test_dir)
+    end
+  end
 
   def add_test_support_file_link(name, form)
     link_to_function name do |page|
