@@ -11,7 +11,7 @@
     <%= @assignment.remark_message %>
     <h3><%= t('marker.remark_request') %></h3>
     <div id="remark_request_text">
-      <%= @submission.remark_request %>
+      <%= simple_format(@submission.remark_request) %>
     </div>
   </div>
   <div>
