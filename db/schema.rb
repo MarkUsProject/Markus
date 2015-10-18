@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150919173134) do
+ActiveRecord::Schema.define(version: 20151005010958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -408,10 +408,12 @@ ActiveRecord::Schema.define(version: 20150919173134) do
   add_index "submissions", ["grouping_id"], name: "index_submissions_on_grouping_id", using: :btree
 
   create_table "tags", force: :cascade do |t|
-    t.string "name",        null: false
-    t.string "description"
-    t.string "user"
+    t.string  "name",        null: false
+    t.string  "description"
+    t.integer "user_id"
   end
+
+  add_index "tags", ["user_id"], name: "index_tags_on_user_id", using: :btree
 
   create_table "test_files", force: :cascade do |t|
     t.string   "filename"
@@ -473,4 +475,5 @@ ActiveRecord::Schema.define(version: 20150919173134) do
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
+  add_foreign_key "tags", "users"
 end

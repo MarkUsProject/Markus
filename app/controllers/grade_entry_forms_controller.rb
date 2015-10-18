@@ -230,6 +230,7 @@ class GradeEntryFormsController < ApplicationController
   # Release/unrelease the marks for all the students or for a subset of students
   def update_grade_entry_students
     return unless request.post?
+
     grade_entry_form = GradeEntryForm.find_by_id(params[:id])
     errors = []
     grade_entry_students = []
