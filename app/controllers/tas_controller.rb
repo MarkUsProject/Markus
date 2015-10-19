@@ -18,8 +18,8 @@ class TasController < ApplicationController
   end
 
   def destroy
-    @user = Ta.find_by_id(params[:id])
-    if @user.destroy
+    @user = Ta.find(params[:id])
+    if @user && @user.destroy
       flash[:success] = I18n.t('tas.delete.success',
                                user_name: @user.user_name)
     else
