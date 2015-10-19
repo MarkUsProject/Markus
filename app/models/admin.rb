@@ -26,6 +26,8 @@ class Admin < User
   def get_num_annotations(assignment)
     n = 0
     assignment.groupings.each do |x|
+      # only grab annotations from groupings where marking is completed
+      next unless x.marking_completed?
       x.submissions.each do |s|
         puts s.annotations.size
         n += s.annotations.size
