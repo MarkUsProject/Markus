@@ -23,4 +23,26 @@ class Admin < User
     n
   end
 
+  def get_num_annotations(assignment)
+    n = 0
+    assignment.groupings.each do |x|
+      x.submissions.each do |s|
+        puts s.annotations.size
+        n += s.annotations.size
+      end
+    end
+    n
+  end
+
+  def average_annotations(assignment)
+    num_marked = get_num_marked(assignment)
+    avg = 0
+    if num_marked != 0
+      num_annotations = get_num_annotations(assignment)
+      puts num_marked
+      puts num_annotations
+      avg = num_annotations.to_f / num_marked
+    end
+    avg.round(2)
+  end
 end
