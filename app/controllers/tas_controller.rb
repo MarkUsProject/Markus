@@ -17,6 +17,17 @@ class TasController < ApplicationController
     @user = Ta.find_by_id(params[:id])
   end
 
+  def destroy
+    @user = Ta.find_by_id(params[:id])
+    if @user.destroy
+      flash[:success] = I18n.t('tas.delete.success',
+                               user_name: @user.user_name)
+      redirect_to action: :index
+    else
+      flash[:error] = I18n.t('tas.delete.error')
+    end
+  end
+
   def update
     @user = Ta.find_by_id(params[:user][:id])
     # update_attributes supplied by ActiveRecords

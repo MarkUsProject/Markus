@@ -717,6 +717,10 @@ pt:
       update:
         success: "Avaliador %{user_name} atualizado com sucesso."
         error:   "Falha ao atualizar avaliador."
+      delete:
+        success: "Avaliador %{user_name} suprimido com sucesso."
+        error:   "Falha ao atualizar suprimido."
+
 
     #Graders' View
     graders:

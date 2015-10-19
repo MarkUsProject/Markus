@@ -12,8 +12,8 @@ class Ta < User
 
   has_many :criterion_ta_associations, dependent: :delete_all
 
-  has_many :grade_entry_student_tas
-  has_many :grade_entry_students, through: :grade_entry_student_tas
+  has_many :grade_entry_student_tas, dependent: :delete_all
+  has_many :grade_entry_students, through: :grade_entry_student_tas, dependent: :delete_all
 
   def get_num_assigned(assignment)
     assignment.ta_memberships.where(user_id: id).size

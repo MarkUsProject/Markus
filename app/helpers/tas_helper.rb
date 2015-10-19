@@ -6,6 +6,9 @@ module TasHelper
       t['edit_link'] = url_for(controller: 'tas',
                                action: 'edit',
                                id: ta.id)
+      t['delete_link'] = url_for(controller: 'tas',
+                                 action: 'destroy',
+                                 id: ta.id)
       t
     end
   end

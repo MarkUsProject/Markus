@@ -765,6 +765,9 @@ en:
       update:
         success: "Successfully updated grader %{user_name}."
         error:   "Failed to update grader."
+      delete:
+        success: "Successfully deleted grader %{user_name}."
+        error:   "Failed to delete grader."
 
     #Graders' View
     graders:

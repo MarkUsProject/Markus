@@ -744,6 +744,9 @@ fr:
       update:
         success: "Mise à jour de le correcteur %{user_name}"
         error: "Erreur dans la mise à jour de le correcteur"
+      delete:
+        success: "Supprimé avec succès niveleuse %{user_name}."
+        error:   "Impossible de supprimer niveleuse."
 
     #Graders' View
     graders:
