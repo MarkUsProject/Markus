@@ -71,7 +71,7 @@
         t['user_name'] = ta.user_name;
         t['first_name'] = ta.first_name;
         t['edit_link'] = <a href={ta.edit_link}><%= j raw I18n.t(:edit) %></a>
-        t['delete_link'] = <a href={ta.delete_link} data-method="delete" rel="nofollow" data-confirm="Are you sure?"><%= j raw I18n.t(:delete) %></a>
+        t['delete_link'] = <a href={ta.delete_link} data-method="delete" rel="nofollow" data-confirm="<%= j raw I18n.t('tas.delete.confirm') %>"><%= j raw I18n.t(:delete) %></a>
 
         return t;
       });

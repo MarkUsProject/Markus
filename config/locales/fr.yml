@@ -745,6 +745,7 @@ fr:
         success: "Mise à jour de le correcteur %{user_name}"
         error: "Erreur dans la mise à jour de le correcteur"
       delete:
+        confirm: "Êtes-vous sûr de vouloir supprimer cette niveleuse?"
         success: "Supprimé avec succès niveleuse %{user_name}."
         error:   "Impossible de supprimer niveleuse."
 
