@@ -7,80 +7,80 @@
     <div class='table'>
       <table>
         <thead>
-          <tr>
-            <th><%= t(:assignment_item) %></th>
-            <th><%= t(:due) %></th>
-            <th><%= t(:submission_status) %></th>
-          </tr>
+        <tr>
+          <th><%= t(:assignment_item) %></th>
+          <th><%= t(:due) %></th>
+          <th><%= t(:submission_status) %></th>
+        </tr>
         </thead>
         <tbody>
-          <% @assignments.each do |assignment| %>
-            <tr>
-              <td>
-                <% if controller == 'assignments' %>
-                  <% if assignment.is_hidden %>
-                    <%= link_to t('assignment.hidden',
-                                     assignment_text:
-                                     "#{h(assignment.short_identifier)}: #{h(assignment.description)}" ),
-                                { controller: controller,
-                                  action: action,
-                                  id: assignment },
-                                class: 'assignment_list' %>
-                  <% else %>
-                    <%= link_to assignment.short_identifier + ': ' + assignment.description,
-                                { controller: controller,
-                                   action: action,
-                                   id: assignment },
-                                class: 'assignment_list' %>
-                  <% end %>
+        <% @assignments.each do |assignment| %>
+          <tr>
+            <td>
+              <% if controller == 'assignments' %>
+                <% if assignment.is_hidden %>
+                  <%= link_to t('assignment.hidden',
+                                assignment_text:
+                                    "#{h(assignment.short_identifier)}: #{h(assignment.description)}"),
+                              { controller: controller,
+                                action: action,
+                                id: assignment },
+                              class: 'assignment_list' %>
                 <% else %>
-                  <% if assignment.is_hidden %>
-                    <%= link_to t('assignment.hidden',
-                                     assignment_text:
-                                     "#{h(assignment.short_identifier)}: #{h(assignment.description)}" ),
-                                { controller: controller,
-                                  action: action,
-                                  assignment_id: assignment },
-                                class: 'assignment_list' %>
-                  <% else %>
-                    <%= link_to assignment.short_identifier + ': ' + assignment.description,
-                                { controller: controller,
-                                  action: action,
-                                  assignment_id: assignment },
-                                class: 'assignment_list'%>
-                  <% end %>
+                  <%= link_to assignment.short_identifier + ': ' + assignment.description,
+                              { controller: controller,
+                                action: action,
+                                id: assignment },
+                              class: 'assignment_list' %>
                 <% end %>
-              </td>
+              <% else %>
+                <% if assignment.is_hidden %>
+                  <%= link_to t('assignment.hidden',
+                                assignment_text:
+                                    "#{h(assignment.short_identifier)}: #{h(assignment.description)}"),
+                              { controller: controller,
+                                action: action,
+                                assignment_id: assignment },
+                              class: 'assignment_list' %>
+                <% else %>
+                  <%= link_to assignment.short_identifier + ': ' + assignment.description,
+                              { controller: controller,
+                                action: action,
+                                assignment_id: assignment },
+                              class: 'assignment_list' %>
+                <% end %>
+              <% end %>
+            </td>
 
-              <td>
-                <%= l(assignment.due_date, format: :long_date ) %>
-              </td>
+            <td>
+              <%= l(assignment.due_date, format: :long_date) %>
+            </td>
 
-              <td>
-                <ul>
-                  <% if assignment.submission_rule.can_collect_now? %>
-<li>                <span id='collected_submissions_<%= assignment.short_identifier %>'>
+            <td>
+              <ul>
+                <% if assignment.submission_rule.can_collect_now? %>
+                  <li>                <span id='collected_submissions_<%= assignment.short_identifier %>'>
 
                     <%= link_to t('submissions_collected',
                                   count: assignment.groupings
-                                                   .where(is_collected: true)
-                                                   .size,
+                                      .where(is_collected: true)
+                                      .size,
                                   size: assignment.groupings.size),
-                                  controller: :submissions,
-                                  action: :browse,
-                                  assignment_id: assignment.id %>
+                                controller: :submissions,
+                                action: :browse,
+                                assignment_id: assignment.id %>
 
                 </span></li>
-                  <% end %>
-                  <% if !assignment.results_average.nil? %>
-                <li><span id='class_average__<%= assignment.short_identifier %>'>
+                <% end %>
+                <% if !assignment.results_average.nil? %>
+                  <li><span id='class_average__<%= assignment.short_identifier %>'>
 
                     <%= t(:class_average,
                           results_average: assignment.results_average) %>
 
                 </span></li>
-                  <% end %>
-                  <% if assignment.submission_rule.can_collect_now? %>
+                <% end %>
+                <% if assignment.submission_rule.can_collect_now? %>
                   <li>
                 <span id='ta_marked__<%= assignment.short_identifier %>'>
 
@@ -90,11 +90,22 @@
 
                 </span>
                   </li>
-                  <% end %>
-                </ul>
-              </td>
-            </tr>
-          <% end %>
+                <% end %>
+                <% if assignment.submission_rule.can_collect_now? %>
+                  <li>
+                <span id='ta_avg_annotations__<%= assignment.short_identifier %>'>
+
+                    <%= t('browse_submissions.average_annotations',
+                          average_annotations: @current_user.average_annotations(assignment))
+                    %>
+
+                </span>
+                  </li>
+                <% end %>
+              </ul>
+            </td>
+          </tr>
+        <% end %>
         </tbody>
       </table>
     </div>

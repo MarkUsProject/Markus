@@ -29,6 +29,26 @@ class Ta < User
     n
   end
 
+  def get_num_annotations(assignment)
+    n = 0
+    assignment.ta_memberships.where(user_id: id).each do |x|
+      x.grouping.submissions.each do |s|
+        n += s.annotations.size
+      end
+    end
+    n
+  end
+
+  def average_annotations(assignment)
+    num_marked = get_num_marked(assignment)
+    avg = 0
+    if num_marked != 0
+      num_annotations = get_num_annotations(assignment)
+      avg = num_annotations / num_marked
+    end
+    avg
+  end
+
   def memberships_for_assignment(assignment)
     assignment.ta_memberships.where(user_id: id, include: { grouping: :group })
   end
