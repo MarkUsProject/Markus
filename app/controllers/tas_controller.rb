@@ -22,10 +22,10 @@ class TasController < ApplicationController
     if @user.destroy
       flash[:success] = I18n.t('tas.delete.success',
                                user_name: @user.user_name)
-      redirect_to action: :index
     else
       flash[:error] = I18n.t('tas.delete.error')
     end
+      redirect_to action: :index
   end
 
   def update
