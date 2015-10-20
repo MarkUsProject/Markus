@@ -172,7 +172,7 @@ class Student < User
       # after memberships have been established.
       @grouping.update_repository_permissions
       # Add permissions for TAs and admins.  This completely rerwrites the auth file
-      # but that should be a big deal in this case.
+      # but that shouldn't be a big deal in this case.
       @group.set_repo_permissions
     end
     return true
