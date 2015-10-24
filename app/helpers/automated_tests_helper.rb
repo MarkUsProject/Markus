@@ -18,7 +18,7 @@ module AutomatedTestsHelper
     link_to_function name do |page|
       test_support_file = render(:partial => 'test_support_file_upload',
                                  :locals => {:form => form,
-                                             :test_support_file => TestSupportFile.new })
+                                             :test_support_file => TestSupportFile.new})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_support_file_id = new Date().getTime();
@@ -35,8 +35,8 @@ module AutomatedTestsHelper
     link_to_function name do |page|
       test_file = render(partial: 'test_file',
                          locals: {form: form,
-                                     test_file: TestFile.new,
-                                     file_type: 'test'})
+                                  test_file: TestFile.new,
+                                  file_type: 'test'})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -53,8 +53,8 @@ module AutomatedTestsHelper
     link_to_function name do |page|
       test_file = render(partial: 'test_file',
                          locals: {form: form,
-                                     test_file: TestFile.new,
-                                     file_type: 'lib'})
+                                  test_file: TestFile.new,
+                                  file_type: 'lib'})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -71,8 +71,8 @@ module AutomatedTestsHelper
     link_to_function name do |page|
       test_file = render(partial: 'test_file',
                          locals: {form: form,
-                                     test_file: TestFile.new,
-                                     file_type: 'parse'})
+                                  test_file: TestFile.new,
+                                  file_type: 'parse'})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -91,7 +91,7 @@ module AutomatedTestsHelper
       @ant_build_file = TestFile.new
       @ant_build_file.assignment = assignment
       @ant_build_file.filetype = 'build.xml'
-      @ant_build_file.filename = 'tempbuild.xml'        # temporary placeholder for now
+      @ant_build_file.filename = 'tempbuild.xml' # temporary placeholder for now
       @ant_build_file.save(validate: false)
 
       @ant_build_prop = TestFile.new
@@ -102,8 +102,8 @@ module AutomatedTestsHelper
 
       # Setup Testing Framework repository
       test_dir = File.join(
-                  MarkusConfigurator.markus_config_automated_tests_repository,
-                  assignment.short_identifier)
+          MarkusConfigurator.markus_config_automated_tests_repository,
+          assignment.short_identifier)
       FileUtils.makedirs(test_dir)
 
       assignment.reload
@@ -216,8 +216,8 @@ module AutomatedTestsHelper
     end
 
     return group.repo.export(repo_dest_dir)
-    rescue Exception => e
-      return "#{e.message}"
+  rescue Exception => e
+    return "#{e.message}"
   end
 
   # Export configuration files for testing
@@ -263,7 +263,7 @@ module AutomatedTestsHelper
     # Move student's source files to the src repository
     pwd = FileUtils.pwd
     FileUtils.cd(repo_assignment_dir)
-    FileUtils.mv(Dir.glob('*'), File.join(repo_assignment_dir, 'src'), force: true )
+    FileUtils.mv(Dir.glob('*'), File.join(repo_assignment_dir, 'src'), force: true)
 
     # You always have to come back to your former working directory if you want to avoid errors
     FileUtils.cd(pwd)
@@ -285,8 +285,8 @@ module AutomatedTestsHelper
         FileUtils.mkdir(repo_assignment_test_dir)
         # Copy all non-private tests over
         assignment.test_files
-                  .where(filetype: 'test', is_private: 'false')
-                  .each do |file|
+            .where(filetype: 'test', is_private: 'false')
+            .each do |file|
           FileUtils.cp(File.join(assignment_test_dir, file.filename), repo_assignment_test_dir)
         end
       else
@@ -375,10 +375,10 @@ module AutomatedTestsHelper
     # Create TestResult object
     # (Build failures and errors will be logged and stored as well for diagnostic purposes)
     TestResult.create(filename: filename,
-      file_content: data,
-      submission_id: result.submission.id,
-      status: status,
-      user_id: @current_user.id)
+                      file_content: data,
+                      submission_id: result.submission.id,
+                      status: status,
+                      user_id: @current_user.id)
   end
 
   # Send output to parser(s) if any
