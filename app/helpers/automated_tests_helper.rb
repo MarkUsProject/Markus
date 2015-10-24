@@ -4,12 +4,12 @@ module AutomatedTestsHelper
   # if it does not exist
   def create_test_repo(assignment)
     # Create the automated test repository
-    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
+    unless File.exist?(MarkusConfigurator.markus_config_automated_tests_repository)
       FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
     end
 
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
-    if !(File.exists?(test_dir))
+    if !(File.exist?(test_dir))
       FileUtils.mkdir(test_dir)
     end
   end
@@ -143,11 +143,11 @@ module AutomatedTestsHelper
       tfile.delete(:assignment_id)
 
       # Check to see if this is an update or a new file:
-      # - If 'id' exists, this is an update
+      # - If 'id' exist, this is an update
       # - If 'id' does not exist, this is a new test file
       tf_id = tfile['id']
 
-      # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
+      # If only the 'id' exist in the hash, other attributes were not updated so we skip this entry.
       # Otherwise, this test file possibly requires an update
       if tf_id != nil && tfile.size > 1
 
@@ -205,13 +205,13 @@ module AutomatedTestsHelper
   # Export group repository for testing
   def export_repository(group, repo_dest_dir)
     # Create the test framework repository
-    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
+    unless File.exist?(MarkusConfigurator.markus_config_automated_tests_repository)
       FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
     end
 
-    # Delete student's assignment repository if it already exists
+    # Delete student's assignment repository if it already exist
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
-    if File.exists?(repo_dir)
+    if File.exist?(repo_dir)
       FileUtils.rm_rf(repo_dir)
     end
 
@@ -242,16 +242,16 @@ module AutomatedTestsHelper
   # Delete test repository directory
   def delete_test_repo(group, repo_dest_dir)
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
-    # Delete student's assignment repository if it exists
-    if File.exists?(repo_dir)
+    # Delete student's assignment repository if it exist
+    if File.exist?(repo_dir)
       FileUtils.rm_rf(repo_dir)
     end
   end
 
   # Copy files needed for testing
   def copy_ant_files(assignment, repo_dest_dir)
-    # Check if the repository where you want to copy Ant files to exists
-    unless File.exists?(repo_dest_dir)
+    # Check if the repository where you want to copy Ant files to exist
+    unless File.exist?(repo_dest_dir)
       raise I18n.t('automated_tests.dir_not_exist', {dir: repo_dest_dir})
     end
 
@@ -269,7 +269,7 @@ module AutomatedTestsHelper
     FileUtils.cd(pwd)
 
     # Copy the build.xml, build.properties Ant Files and api_helpers (only one is needed)
-    if File.exists?(assignment_dir)
+    if File.exist?(assignment_dir)
       FileUtils.cp(File.join(assignment_dir, 'build.xml'), repo_assignment_dir)
       FileUtils.cp(File.join(assignment_dir, 'build.properties'), repo_assignment_dir)
       FileUtils.cp('lib/tools/api_helper.rb', repo_assignment_dir)
@@ -290,18 +290,18 @@ module AutomatedTestsHelper
           FileUtils.cp(File.join(assignment_test_dir, file.filename), repo_assignment_test_dir)
         end
       else
-        if File.exists?(File.join(assignment_dir, 'test'))
+        if File.exist?(File.join(assignment_dir, 'test'))
           FileUtils.cp_r(File.join(assignment_dir, 'test'), File.join(repo_assignment_dir, 'test'))
         end
       end
 
       # Copy the lib folder
-      if File.exists?(File.join(assignment_dir, 'lib'))
+      if File.exist?(File.join(assignment_dir, 'lib'))
         FileUtils.cp_r(File.join(assignment_dir, 'lib'), repo_assignment_dir)
       end
 
       # Copy the parse folder
-      if File.exists?(File.join(assignment_dir, 'parse'))
+      if File.exist?(File.join(assignment_dir, 'parse'))
         FileUtils.cp_r(File.join(assignment_dir, 'parse'), repo_assignment_dir)
       end
     else
@@ -311,8 +311,8 @@ module AutomatedTestsHelper
 
   # Execute Ant which will run the tests against the students' code
   def run_ant_file(result, assignment, repo_dest_dir)
-    # Check if the repository where you want to copy Ant files to exists
-    unless File.exists?(repo_dest_dir)
+    # Check if the repository where you want to copy Ant files to exist
+    unless File.exist?(repo_dest_dir)
       raise I18n.t('automated_tests.dir_not_exist', {dir: repo_dest_dir})
     end
 
@@ -443,8 +443,8 @@ end
 
 #   # Delete repository directory
 #   def self.delete_repo(repo_dir)
-#     # Delete student's assignment repository if it already exists
-#     if File.exists?(repo_dir)
+#     # Delete student's assignment repository if it already exist
+#     if File.exist?(repo_dir)
 #       FileUtils.rm_rf(repo_dir)
 #     end
 #   end
@@ -454,11 +454,11 @@ end
 #   # before copying to the test server.
 #   def self.export_group_repo(group, repo_dir)
 #     # Create the automated test repository
-#     if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
+#     if !(File.exist?(MarkusConfigurator.markus_config_automated_tests_repository))
 #       FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
 #     end
 
-#     # Delete student's assignment repository if it already exists
+#     # Delete student's assignment repository if it already exist
 #     delete_repo(repo_dir)
 
 #     # export
@@ -557,15 +557,15 @@ end
 #     src_dir = @repo_dir
 #     assign_dir = @repo_dir + "/" + @assignment.repository_folder
 
-#     if !(File.exists?(test_dir))
+#     if !(File.exist?(test_dir))
 #       # TODO: show the error to user instead of raising a runtime error
 #       raise I18n.t("automated_tests.test_files_unavailable")
-#     elsif !(File.exists?(src_dir))
+#     elsif !(File.exist?(src_dir))
 #       # TODO: show the error to user instead of raising a runtime error
 #       raise I18n.t("automated_tests.source_files_unavailable")
 #     end
 
-#     if !(File.exists?(assign_dir))
+#     if !(File.exist?(assign_dir))
 #       # TODO: show the error to user instead of raising a runtime error
 #       raise I18n.t("automated_tests.source_files_unavailable")
 #     end
@@ -793,7 +793,7 @@ end
 #         test_result.save
 #       end
 
-#       # if a marks_earned tag exists under test_script tag, get the value;
+#       # if a marks_earned tag exist under test_script tag, get the value;
 #       # otherwise, use the cumulative marks earned from all unit tests
 #       script_marks_earned_nodes = s_node.find('./marks_earned')
 #       if script_marks_earned_nodes.length == 1
@@ -821,12 +821,12 @@ end
 #   # if it does not exist
 #   def create_test_repo(assignment)
 #     # Create the automated test repository
-#     unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
+#     unless File.exist?(MarkusConfigurator.markus_config_automated_tests_repository)
 #       FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
 #     end
 
 #     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
-#     if !(File.exists?(test_dir))
+#     if !(File.exist?(test_dir))
 #       FileUtils.mkdir(test_dir)
 #     end
 #   end
@@ -938,11 +938,11 @@ end
 #         tfile = testscripts[key]
 
 #         # Check to see if this is an update or a new file:
-#         # - If 'id' exists, this is an update
+#         # - If 'id' exist, this is an update
 #         # - If 'id' does not exist, this is a new test file
 #         tf_id = tfile['id']
 
-#         # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
+#         # If only the 'id' exist in the hash, other attributes were not updated so we skip this entry.
 #         # Otherwise, this test file possibly requires an update
 #         if tf_id != nil && tfile.size > 1
 
@@ -968,11 +968,11 @@ end
 #         tfile = testsupporters[key]
 
 #         # Check to see if this is an update or a new file:
-#         # - If 'id' exists, this is an update
+#         # - If 'id' exist, this is an update
 #         # - If 'id' does not exist, this is a new test file
 #         tf_id = tfile['id']
 
-#         # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
+#         # If only the 'id' exist in the hash, other attributes were not updated so we skip this entry.
 #         # Otherwise, this test file possibly requires an update
 #         if tf_id != nil && tfile.size > 1
 
