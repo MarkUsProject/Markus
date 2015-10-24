@@ -80,7 +80,8 @@
             target_controller = 'flexible_criteria'
           end
         else
-          target_controller = controller.controller_name == 'assignments' || 'automated_tests' ? nil : controller.controller_name
+          target_controller = controller.controller_name == 'assignments' || controller.controller_name ==
+                  'automated_tests' || controller.action_name == 'manage' ? nil : controller.controller_name
           target_action = controller.action_name == 'index' ? nil : controller.action_name
         end %>
         <% # If the current controller action is repo_browser, the drop down
