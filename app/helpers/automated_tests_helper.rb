@@ -17,14 +17,15 @@ module AutomatedTestsHelper
   def add_test_support_file_link(name, form)
     link_to_function name do |page|
       test_support_file = render(:partial => 'test_support_file_upload',
-                                 :locals => {:form => form,
-                                             :test_support_file => TestSupportFile.new})
+                                 :locals => { key: form,
+                                             test_support_file:
+                                                 TestSupportFile.new })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_support_file_id = new Date().getTime();
           $('test_support_files').insert({bottom: "#{ escape_javascript test_support_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_support_file_id) });
         } else {
-          alert("#{I18n.t("automated_tests.add_test_support_file_alert")}");
+          alert('#{I18n.t('automated_tests.add_test_support_file_alert')}');
         }
       }
     end
