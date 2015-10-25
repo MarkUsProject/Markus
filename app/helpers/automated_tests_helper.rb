@@ -111,7 +111,7 @@ module AutomatedTestsHelper
       # Setup Testing Framework repository
       test_dir = File.join(MarkusConfigurator
                                .markus_config_automated_tests_repository,
-          assignment.short_identifier)
+                           assignment.short_identifier)
       FileUtils.makedirs(test_dir)
 
       assignment.reload
