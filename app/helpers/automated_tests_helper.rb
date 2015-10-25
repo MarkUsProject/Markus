@@ -21,7 +21,7 @@ module AutomatedTestsHelper
   def add_test_support_file_link(name, form)
     link_to_function name do |page|
       test_support_file = render(partial: 'test_support_file_upload',
-                                 locals: { key: form,
+                                 locals: { form: form,
                                            test_support_file:
                                                TestSupportFile.new })
       page << %{
@@ -109,8 +109,8 @@ module AutomatedTestsHelper
       @ant_build_prop.save(validate: false)
 
       # Setup Testing Framework repository
-      test_dir = File.join(
-          MarkusConfigurator.markus_config_automated_tests_repository,
+      test_dir = File.join(MarkusConfigurator
+                               .markus_config_automated_tests_repository,
           assignment.short_identifier)
       FileUtils.makedirs(test_dir)
 
