@@ -9,7 +9,7 @@ module AutomatedTestsHelper
     end
 
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
-    unless !(File.exist?(test_dir))
+    if !(File.exist?(test_dir))
       FileUtils.mkdir(test_dir)
     end
   end
@@ -36,7 +36,7 @@ module AutomatedTestsHelper
       test_file = render(partial: 'test_file',
                          locals: {form: form,
                                   test_file: TestFile.new,
-                                  file_type: 'test'})
+                                  file_type: 'test' })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -54,7 +54,7 @@ module AutomatedTestsHelper
       test_file = render(partial: 'test_file',
                          locals: {form: form,
                                   test_file: TestFile.new,
-                                  file_type: 'lib'})
+                                  file_type: 'lib' })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -72,7 +72,7 @@ module AutomatedTestsHelper
       test_file = render(partial: 'test_file',
                          locals: {form: form,
                                   test_file: TestFile.new,
-                                  file_type: 'parse'})
+                                  file_type: 'parse' })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -147,8 +147,9 @@ module AutomatedTestsHelper
       # - If 'id' does not exist, this is a new test file
       tf_id = tfile['id']
 
-      # If only the 'id' exist in the hash, other attributes were not updated so we skip this entry.
-      # Otherwise, this test file possibly requires an update
+      # If only the 'id' exist in the hash, other attributes were not updated
+      # so we skip this entry. Otherwise, this test file possibly requires an
+      # update
       if tf_id != nil && tfile.size > 1
 
         # Find existing test file to update
@@ -205,8 +206,10 @@ module AutomatedTestsHelper
   # Export group repository for testing
   def export_repository(group, repo_dest_dir)
     # Create the test framework repository
-    unless File.exist?(MarkusConfigurator.markus_config_automated_tests_repository)
-      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    unless File.exist?(MarkusConfigurator.
+                           markus_config_automated_tests_repository)
+      FileUtils.mkdir(MarkusConfigurator.
+                          markus_config_automated_tests_repository)
     end
 
     # Delete student's assignment repository if it already exist
@@ -263,7 +266,8 @@ module AutomatedTestsHelper
     # Move student's source files to the src repository
     pwd = FileUtils.pwd
     FileUtils.cd(repo_assignment_dir)
-    FileUtils.mv(Dir.glob('*'), File.join(repo_assignment_dir, 'src'), force: true)
+    FileUtils.mv(Dir.glob('*'), File.join(repo_assignment_dir, 'src'),
+                 force: true)
 
     # You always have to come back to your former working directory if you want to avoid errors
     FileUtils.cd(pwd)
@@ -443,8 +447,8 @@ end
 
 #   # Delete repository directory
 #   def self.delete_repo(repo_dir)
-#     # Delete student's assignment repository if it already exist
-#     if File.exist?(repo_dir)
+#     # Delete student's assignment repository if it already exists
+#     if File.exists?(repo_dir)
 #       FileUtils.rm_rf(repo_dir)
 #     end
 #   end
@@ -454,11 +458,12 @@ end
 #   # before copying to the test server.
 #   def self.export_group_repo(group, repo_dir)
 #     # Create the automated test repository
-#     if !(File.exist?(MarkusConfigurator.markus_config_automated_tests_repository))
+#     if !(File.exists?(MarkusConfigurator.
+#             markus_config_automated_tests_repository))
 #       FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
 #     end
 
-#     # Delete student's assignment repository if it already exist
+#     # Delete student's assignment repository if it already exists
 #     delete_repo(repo_dir)
 
 #     # export
@@ -557,15 +562,15 @@ end
 #     src_dir = @repo_dir
 #     assign_dir = @repo_dir + "/" + @assignment.repository_folder
 
-#     if !(File.exist?(test_dir))
+#     if !(File.exists?(test_dir))
 #       # TODO: show the error to user instead of raising a runtime error
 #       raise I18n.t("automated_tests.test_files_unavailable")
-#     elsif !(File.exist?(src_dir))
+#     elsif !(File.exists?(src_dir))
 #       # TODO: show the error to user instead of raising a runtime error
 #       raise I18n.t("automated_tests.source_files_unavailable")
 #     end
 
-#     if !(File.exist?(assign_dir))
+#     if !(File.exists?(assign_dir))
 #       # TODO: show the error to user instead of raising a runtime error
 #       raise I18n.t("automated_tests.source_files_unavailable")
 #     end
@@ -793,7 +798,7 @@ end
 #         test_result.save
 #       end
 
-#       # if a marks_earned tag exist under test_script tag, get the value;
+#       # if a marks_earned tag exists under test_script tag, get the value;
 #       # otherwise, use the cumulative marks earned from all unit tests
 #       script_marks_earned_nodes = s_node.find('./marks_earned')
 #       if script_marks_earned_nodes.length == 1
@@ -818,15 +823,16 @@ end
 #   end
 
 #   # Create a repository for the test scripts and test support files
-#   # if it does not exist
+#   # if it does not exists
 #   def create_test_repo(assignment)
 #     # Create the automated test repository
-#     unless File.exist?(MarkusConfigurator.markus_config_automated_tests_repository)
+#     unless File.exists?(MarkusConfigurator.
+#                 markus_config_automated_tests_repository)
 #       FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
 #     end
 
 #     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
-#     if !(File.exist?(test_dir))
+#     if !(File.exists?(test_dir))
 #       FileUtils.mkdir(test_dir)
 #     end
 #   end
@@ -892,7 +898,7 @@ end
 #     # Array for checking duplicate file names
 #     file_name_array = []
 
-#     #add existing scripts names
+#     #add existsing scripts names
 #     params.each {|key, value| if(key[/test_script_\d+/] != nil) then file_name_array << value end}
 
 #     # Retrieve all test scripts
@@ -938,23 +944,24 @@ end
 #         tfile = testscripts[key]
 
 #         # Check to see if this is an update or a new file:
-#         # - If 'id' exist, this is an update
-#         # - If 'id' does not exist, this is a new test file
+#         # - If 'id' exists, this is an update
+#         # - If 'id' does not exists, this is a new test file
 #         tf_id = tfile['id']
 
-#         # If only the 'id' exist in the hash, other attributes were not updated so we skip this entry.
+#         # If only the 'id' exists in the hash, other attributes were not
+#         # updated so we skip this entry.
 #         # Otherwise, this test file possibly requires an update
 #         if tf_id != nil && tfile.size > 1
 
-#           # Find existing test file to update
-#           @existing_testscript = TestScript.find_by_id(tf_id)
-#           if @existing_testscript
+#           # Find existsing test file to update
+#           @existsing_testscript = TestScript.find_by_id(tf_id)
+#           if @existsing_testscript
 #             # Store test file for any possible updating
 #             updated_script_files[key] = tfile
 #           end
 #         end
 
-#         # Test file needs to be created since record doesn't exist yet
+#         # Test file needs to be created since record doesn't exists yet
 #         if tf_id.nil? && tfile['script_name']
 #           updated_script_files[key] = tfile
 #         end
@@ -968,23 +975,24 @@ end
 #         tfile = testsupporters[key]
 
 #         # Check to see if this is an update or a new file:
-#         # - If 'id' exist, this is an update
-#         # - If 'id' does not exist, this is a new test file
+#         # - If 'id' exists, this is an update
+#         # - If 'id' does not exists, this is a new test file
 #         tf_id = tfile['id']
 
-#         # If only the 'id' exist in the hash, other attributes were not updated so we skip this entry.
+#         # If only the 'id' exists in the hash, other attributes were not
+#         # updated so we skip this entry.
 #         # Otherwise, this test file possibly requires an update
 #         if tf_id != nil && tfile.size > 1
 
-#           # Find existing test file to update
-#           @existing_testsupport = TestSupportFile.find_by_id(tf_id)
-#           if @existing_testsupport
+#           # Find existsing test file to update
+#           @existsing_testsupport = TestSupportFile.find_by_id(tf_id)
+#           if @existsing_testsupport
 #             # Store test file for any possible updating
 #             updated_support_files[key] = tfile
 #           end
 #         end
 
-#         # Test file needs to be created since record doesn't exist yet
+#         # Test file needs to be created since record doesn't exists yet
 #         if tf_id.nil? && tfile['file_name']
 #           updated_support_files[key] = tfile
 #         end
