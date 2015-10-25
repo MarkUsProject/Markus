@@ -13,7 +13,7 @@ module AutomatedTestsHelper
     test_dir = File.join(MarkusConfigurator
                              .markus_config_automated_tests_repository,
                          assignment.short_identifier)
-    unless !(File.exist?(test_dir))
+    unless File.exist?(test_dir)
       FileUtils.mkdir(test_dir)
     end
   end
