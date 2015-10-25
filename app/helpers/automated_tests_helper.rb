@@ -4,26 +4,33 @@ module AutomatedTestsHelper
   # if it does not exist
   def create_test_repo(assignment)
     # Create the automated test repository
-    unless File.exist?(MarkusConfigurator.markus_config_automated_tests_repository)
-      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    unless File.exist?(MarkusConfigurator
+                           .markus_config_automated_tests_repository)
+      FileUtils.mkdir(MarkusConfigurator
+                          .markus_config_automated_tests_repository)
     end
 
-    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
-    if !(File.exist?(test_dir))
+    test_dir = File.join(MarkusConfigurator
+                             .markus_config_automated_tests_repository,
+                         assignment.short_identifier)
+    unless !(File.exist?(test_dir))
       FileUtils.mkdir(test_dir)
     end
   end
 
   def add_test_support_file_link(name, form)
     link_to_function name do |page|
-      test_support_file = render(:partial => 'test_support_file_upload',
-                                 :locals => { key: form,
-                                             test_support_file:
-                                                 TestSupportFile.new })
+      test_support_file = render(partial: 'test_support_file_upload',
+                                 locals: { key: form,
+                                           test_support_file:
+                                               TestSupportFile.new })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_support_file_id = new Date().getTime();
-          $('test_support_files').insert({bottom: "#{ escape_javascript test_support_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_support_file_id) });
+          $('test_support_files').insert({bottom:
+          "#{escape_javascript test_support_file}"
+              .replace(/(attributes_\\d+|\\[\\d+\\])/g,
+                       new_test_support_file_id) });
         } else {
           alert('#{I18n.t('automated_tests.add_test_support_file_alert')}');
         }
@@ -207,10 +214,10 @@ module AutomatedTestsHelper
   # Export group repository for testing
   def export_repository(group, repo_dest_dir)
     # Create the test framework repository
-    unless File.exist?(MarkusConfigurator.
-                           markus_config_automated_tests_repository)
-      FileUtils.mkdir(MarkusConfigurator.
-                          markus_config_automated_tests_repository)
+    unless File.exist?(MarkusConfigurator
+                           .markus_config_automated_tests_repository)
+      FileUtils.mkdir(MarkusConfigurator
+                          .markus_config_automated_tests_repository)
     end
 
     # Delete student's assignment repository if it already exist
@@ -220,7 +227,7 @@ module AutomatedTestsHelper
     end
 
     return group.repo.export(repo_dest_dir)
-  rescue Exception => e
+  rescue StandardError => e
     return "#{e.message}"
   end
 
