@@ -448,6 +448,7 @@ fr:
       revision_history:     "%{num} : "
       search_submissions:   "Rechercher Soumissions"
       how_many_marked:      "%{num_marked}/%{num_assigned} soumissions sont corrigés"
+      average_annotations:  "%{average_annotations} annotations par soumission marquée"
 
     summaries_index:
       group_name:           "Nom du groupe"
