@@ -31,7 +31,7 @@ class Ta < User
 
   def get_num_annotations(assignment)
     n = 0
-    assignment.ta_memberships.where(user_id: id).each do |x|
+    assignment.ta_memberships.where(user_id: id).find_each do |x|
       # only grab annotations from groupings where marking is completed
       next unless x.grouping.marking_completed?
       x.grouping.submissions.each do |s|

@@ -29,7 +29,6 @@ class Admin < User
       # only grab annotations from groupings where marking is completed
       next unless x.marking_completed?
       x.submissions.each do |s|
-        puts s.annotations.size
         n += s.annotations.size
       end
     end
@@ -41,8 +40,6 @@ class Admin < User
     avg = 0
     if num_marked != 0
       num_annotations = get_num_annotations(assignment)
-      puts num_marked
-      puts num_annotations
       avg = num_annotations.to_f / num_marked
     end
     avg.round(2)
