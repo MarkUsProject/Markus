@@ -36,7 +36,7 @@
 
   var GradeBoxTotal = React.createClass({
     handleChange: function() {
-      this.props.value = parseInt(event.target.value, 10);
+      this.props.value = parseFloat(event.target.value, 10);
     },
     render: function() {
       return(
@@ -57,7 +57,7 @@
     },
     handleChange: function(event) {
       var params = {
-        'updated_grade':       parseInt(event.target.value),
+        'updated_grade':       parseFloat(event.target.value),
         'student_id':          this.props.student_id,
         'grade_entry_item_id': this.props.grade_entry_column,
         'authenticity_token':  AUTH_TOKEN
@@ -68,7 +68,7 @@
         type: 'POST',
         dataType: 'script',
       });
-      this.props.value = parseInt(event.target.value, 10);
+      this.props.value = parseFloat(event.target.value);
     },
     render: function() {
       return (

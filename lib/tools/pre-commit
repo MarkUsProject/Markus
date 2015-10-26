@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'English'
+require 'rubocop'
+
+changed_files = `git diff --cached --name-only --diff-filter=ACM`.split(/\n/).
+    select { |file_name|
+      File.extname(file_name) == '.rake'
+    }.join(' ')
+
+# first check the whole rake file that is modified
+system("rubocop -c ./config/.rubocop.yml #{changed_files}") unless changed_files.empty?
+
+if $CHILD_STATUS.to_s[-1].to_i != 0
+    exit $CHILD_STATUS.to_s[-1].to_i
+end
+
+# now only check the diffs of remaining .rb files checked in
+system("rubocop-git --staged -c ./config/.rubocop.yml")
+exit $CHILD_STATUS.to_s[-1].to_i
+

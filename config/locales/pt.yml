@@ -384,6 +384,7 @@ pt:
       find_by_revision_number:    "Encontrar revisão por número"
       viewing_revision:           "Vendo revisão: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       currently_collected:  "Versão coletada:"
+      no_rev_before_deadline: 	"Nenhuma revisão apresentado antes do prazo"
       current_path:         "Caminho atual:"
       download_all_files:   "Baixar todos os arquivos"
       root:                 "[root]"

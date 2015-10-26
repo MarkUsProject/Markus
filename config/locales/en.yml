@@ -406,6 +406,7 @@ en:
       find_by_revision_number:    "Find by Revision Number"
       viewing_revision:           "Viewing Revision: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       currently_collected:  "Collected version:"
+      no_rev_before_deadline: 	"No revision submitted before deadline"
       current_path:         "Current Path:"
       download_all_files:   "Download all files"
       root:                 "[root]"

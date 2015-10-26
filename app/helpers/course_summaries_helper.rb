@@ -59,7 +59,17 @@ module CourseSummariesHelper
 
     student.groupings.each do |g|
       sub = g.current_submission_used
-      marks[g.assignment_id] = sub ? sub.get_latest_result.total_mark : 0
+      if current_user.admin?
+        marks[g.assignment_id] = sub ? sub.get_latest_result.total_mark : 0
+      else
+        if sub && sub.has_remark? && sub.remark_result.released_to_students
+          marks[g.assignment_id] = sub.remark_result.total_mark
+        elsif sub && sub.has_result? && sub.get_original_result.released_to_students
+          marks[g.assignment_id] = sub.get_original_result.total_mark
+        else
+          marks[g.assignment_id] = 0
+        end
+      end
     end
 
     marks
@@ -81,7 +91,16 @@ module CourseSummariesHelper
   def get_mark_for_all_gef_for_student(student, gefs)
     gef_marks = Hash[gefs.map {|gef| [gef.id, 0]}]
     student.grade_entry_students.each do |ges|
-      gef_marks[ges.grade_entry_form_id] = ges.total_grade.nil? ? 0 : ges.total_grade
+      form_id = ges.grade_entry_form_id
+      if current_user.admin?
+        gef_marks[form_id] = ges.total_grade.nil? ? 0 : ges.total_grade
+      else
+        if ges.released_to_student.nil?
+          gef_marks[form_id] = 0
+        else
+          gef_marks[form_id] = ges.total_grade.nil? ? 0 : ges.total_grade
+        end
+      end
     end
     gef_marks
   end
