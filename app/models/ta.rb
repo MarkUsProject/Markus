@@ -46,9 +46,9 @@ class Ta < User
     avg = 0
     if num_marked != 0
       num_annotations = get_num_annotations(assignment)
-      avg = num_annotations / num_marked
+      avg = num_annotations.to_f / num_marked
     end
-    avg
+    avg.round(2)
   end
 
   def memberships_for_assignment(assignment)

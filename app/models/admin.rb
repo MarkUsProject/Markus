@@ -14,12 +14,7 @@ class Admin < User
 
   # for an admin, we want all the assignment groupings marked completed
   def get_num_marked(assignment)
-    n = 0
-    assignment.groupings.each do |x|
-      if x.marking_completed?
-        n += 1
-      end
-    end
+    n = assignment.groupings.count(marking_completed: true)
     n
   end
 
