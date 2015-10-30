@@ -96,7 +96,7 @@ class TasController < ApplicationController
     params.require(:user).permit(:user_name, :last_name, :first_name)
   end
 
-  before_filter :set_assignment_ta, only: [:refresh_graph]
+  before_action :set_assignment_ta, only: [:refresh_graph]
 
   def set_assignment_ta
     @assignment = Assignment.find(params[:assignment])
