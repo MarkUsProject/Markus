@@ -478,6 +478,7 @@ class AssignmentsController < ApplicationController
 
   def view_summary
     @assignment = Assignment.find(params[:id])
+    @current_ta = @assignment.tas.first
   end
 
   def download_assignment_list

@@ -95,4 +95,17 @@ class TasController < ApplicationController
   def user_params
     params.require(:user).permit(:user_name, :last_name, :first_name)
   end
+
+  before_filter :set_assignment_ta, only: [:refresh_graph]
+
+  def set_assignment_ta
+    @assignment = Assignment.find(params[:assignment])
+    @current_ta = Ta.find(params[:id])
+  end
+
+  def refresh_graph
+    respond_to do |format|
+      format.js
+    end
+  end
 end

@@ -1,4 +1,4 @@
-<p class="grader_distribution"><%= I18n.t(:grader_distribution ) %></p>
+<p class="grader_distribution"><%= I18n.t(:grader_distribution) %></p>
 
 <% if assignment.tas.empty? %>
   <%= link_to I18n.t(:assign_graders),
@@ -6,7 +6,12 @@
 <% else %>
   <ul>
     <% assignment.tas.each do |ta| %>
-      <li><%= "#{ta.first_name} #{ta.last_name}" %>
+      <li>
+
+        <%= link_to "#{ta.first_name} #{ta.last_name}",
+                    { :controller => "tas", :action => "refresh_graph", :id => ta.id,
+                      :assignment => assignment.id },
+                    remote: true %>
         (<%= t('browse_submissions.how_many_marked',
                num_marked: ta.get_num_marked(assignment),
                num_assigned: ta.get_num_assigned(assignment)) %>)

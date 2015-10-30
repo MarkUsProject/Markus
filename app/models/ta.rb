@@ -6,9 +6,9 @@ class Ta < User
   CSV_UPLOAD_ORDER = USER_TA_CSV_UPLOAD_ORDER
   SESSION_TIMEOUT = USER_TA_SESSION_TIMEOUT
 
-  after_create  :grant_repository_permissions
+  after_create :grant_repository_permissions
   after_destroy :revoke_repository_permissions
-  after_update  :maintain_repository_permissions
+  after_update :maintain_repository_permissions
 
   has_many :criterion_ta_associations, dependent: :delete_all
 
@@ -72,24 +72,48 @@ class Ta < User
 
   def get_criterion_associations_count_by_assignment(assignment)
     assignment.criterion_ta_associations
-              .where(ta_id: id)
-              .count
+      .where(ta_id: id)
+      .count
   end
 
   def get_membership_count_by_assignment(assignment)
     memberships.where(groupings: { assignment_id: assignment.id })
-               .includes(:grouping)
-               .count
+      .includes(:grouping)
+      .count
   end
 
   def get_groupings_by_assignment(assignment)
     groupings.where(assignment_id: assignment.id)
-             .includes(:students, :tas, :group, :assignment)
+      .includes(:students, :tas, :group, :assignment)
   end
 
   def get_membership_count_by_grade_entry_form(grade_entry_form)
     grade_entry_students.where('grade_entry_form_id = ?', grade_entry_form.id)
-                        .includes(:grade_entry_form)
-                        .count
+      .includes(:grade_entry_form)
+      .count
+  end
+
+  def grade_distribution_array(assignment, intervals = 20)
+    distribution = Array.new(intervals, 0)
+    assignment.groupings.joins(:tas)
+      .where(memberships: { user_id: id }).each do |grouping|
+      result = grouping.current_submission_used.get_latest_completed_result
+      next if result.nil?
+      distribution = update_distribution(distribution, result,
+                                         assignment.total_mark, intervals)
+    end # end of groupings loop
+    distribution.to_json
+  end
+
+  def update_distribution(distribution, result, out_of, intervals)
+    steps = 100 / intervals # number of percentage steps in each interval
+    percentage = (result.total_mark / out_of * 100).ceil
+    if percentage == 0 then distribution[0] += 1
+    elsif percentage >= 100 then distribution[intervals - 1] += 1
+    elsif (percentage % steps) == 0
+      distribution[percentage / steps - 1] += 1
+    else distribution[percentage / steps] += 1
+    end
+    distribution
   end
 end

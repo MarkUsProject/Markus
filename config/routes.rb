@@ -354,6 +354,9 @@ Markus::Application.routes.draw do
         post 'upload_ta_list'
         get 'download_ta_list'
       end
+      member do
+        get 'refresh_graph'
+      end
     end
 
     resources :main do
