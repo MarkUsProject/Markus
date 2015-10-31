@@ -26,9 +26,9 @@
       <%= submit_tag t(:log_in),
                      data: { disable_with: t(:logging_in) },
                      tabindex: 100 %>
-      <%= button_to_function t(:cancel),
-                             'role_switch_modal.close()',
-                             tabindex: 110 %>
+      <%= button_tag t(:cancel),
+                     onclick: 'role_switch_modal.close()',
+                     tabindex: 110 %>
     </section>
   <% end %>
 </div>
