@@ -247,7 +247,7 @@
               <% # Student has reached the group max and is not working alone 
                if @grouping.student_membership_number < @assignment.group_max &&
                   @group.group_name != @current_user.user_name %>
-                <%= button_to_function t(:invite), 'invite(); return false;' %>
+                <%= button_tag t(:invite), onclick: 'invite(); return false;' %>
               <% elsif @grouping.student_membership_number ==
                         @assignment.group_max &&
                         @group.group_name != @current_user.user_name %>
