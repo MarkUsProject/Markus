@@ -5,13 +5,16 @@ class ResultsController < ApplicationController
                 except: [:codeviewer, :edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
                          :update_overall_comment, :remove_extra_mark,
-                         :update_marking_state, :download, :download_zip,
+                         :update_marking_state, 
+                         :complete_marking,
+                         :download, :download_zip,
                          :note_message,
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
                 only: [:edit, :update_mark, :create, :add_extra_mark,
                        :next_grouping, :update_overall_comment,
-                       :remove_extra_mark, :update_marking_state, :note_message]
+                       :remove_extra_mark, :update_marking_state, 
+                       :complete_marking, :note_message]
   before_filter :authorize_for_user,
                 only: [:codeviewer, :download, :download_zip]
   before_filter :authorize_for_student,
@@ -183,6 +186,27 @@ class ResultsController < ApplicationController
     else
       m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
                    "#{assignment.id}' (for 1 group).")
+    end
+  end
+
+  #Updates the marking state
+  def complete_marking
+    @result = Result.find(params[:id])
+    @result.marking_state = Result::MARKING_STATES[:complete]
+    puts (@result == nil), "***********"
+    if @result.save
+      puts "success ******"
+      # If marking_state is complete, update the cached distribution
+      if params[:value] == Result::MARKING_STATES[:complete]
+        @result.submission.assignment.assignment_stat.refresh_grade_distribution
+        @result.submission.assignment.update_results_stats
+      end
+      # render template: 'results/complete_marking'
+      redirect_to('results/complete_marking')
+    else # Failed to pass validations
+      # Show error message
+      puts "failed *******"
+      redirect_to('results/marker/show_result_error')
     end
   end
 

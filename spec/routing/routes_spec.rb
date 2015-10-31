@@ -884,6 +884,16 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
+        it 'routes POST complete_marking properly' do
+          expect(post: res_path + '/1/complete_marking').to route_to(
+            controller: res_ctrl,
+            action: 'complete_marking',
+            id: '1',
+            assignment_id: assignment.id.to_s,
+            submission_id: submission.id.to_s,
+            locale: 'en')
+        end
+
         it 'routes PUT update_remark_request properly' do
           expect(put: res_path + '/1/update_remark_request').to route_to(
             controller: res_ctrl,

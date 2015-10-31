@@ -22,7 +22,16 @@
                     id: 'notes_dialog_link',
                     remote: true %>
     |
-    (<%= label_tag 'marking_state',
+
+    <%= button_to 'Set to Complete', 
+                  url_for(action: 'complete_marking', id: @result.id), 
+                  disabled: @result.released_to_students,
+                  form: {style: 'display:inline-block;'} %>
+
+
+    (
+
+<!--     <%= label_tag 'marking_state',
                    t('marker.marking_status'),
                    class: 'inline_label' %>
     <% old_result_id = nil %>
@@ -31,12 +40,15 @@
       <% possible_states = [[t('partial'), Result::MARKING_STATES[:partial]], [t('complete'), Result::MARKING_STATES[:complete]]] %>
     <% else %>
       <% possible_states = [[t('unmarked'), Result::MARKING_STATES[:unmarked]], [t('partial'), Result::MARKING_STATES[:partial]], [t('complete'), Result::MARKING_STATES[:complete]]] %>
-    <% end %>
-    <%= select_tag 'marking_state',
+    <% end %> -->
+
+
+    <!-- causes thing to go wonky when removed -->
+<!--     <%= select_tag 'marking_state',
                    options_for_select(possible_states,[result.marking_state]),
                    disabled: @result.released_to_students,
                    'data-action' => url_for(action: 'update_marking_state',
-                                            id: @result.id) %>
+                                            id: @result.id) %> -->
 
     <em><%= t('marker.marks.total_mark') %></em>
     <span id='current_mark_div'><%= result.total_mark %></span> /
