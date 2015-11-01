@@ -46,7 +46,8 @@
 
     <section class='dialog-actions'>
       <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <%= button_tag t(:close), onclick: 'modal_upload.close();' %>
+      <input type='reset' value='<%= t(:close) %>' onclick='modal_upload.close();' />      
+
     </section>
   <% end %>
 </aside>

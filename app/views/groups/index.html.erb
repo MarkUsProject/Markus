@@ -125,7 +125,7 @@
     <%= text_field_tag :new_groupname, '', maxlength: 30 %>
     <section class='dialog-actions'>
       <%= submit_tag t('groups.rename_group.title') %>
-      <%= button_tag t(:cancel), onclick:'modal_rename.close()' %>
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_rename.close();' />      
     </section>
   <% end %>
 </aside>
@@ -163,8 +163,7 @@
                      data: { disable_with: t(:uploading_please_wait) },
                      disabled: true,
                      id: 'upload' %>
-      <%= button_tag t('cancel'),
-                     onclick:'modal_upload.close();' %>
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'/>      
     </section>
   <% end %>
 </aside>

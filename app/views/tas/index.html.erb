@@ -81,7 +81,7 @@
                      data: { disable_with: t(:uploading_please_wait) },
                      id: 'upload',
                      disabled: true %>
-      <%= button_tag I18n.t(:close), onclick:'modal_upload.close()' %>
+      <input type='reset' value='<%= I18n.t(:close) %>' onclick='modal_upload.close();' />      
     </section>
   </form>
 </aside>
@@ -98,6 +98,6 @@
   </p>
 
   <section class='dialog-actions'>
-    <%= button_tag I18n.t(:close), onclick:'modal_download.close()' %>
+     <input type='reset' value='<%= I18n.t(:close) %>' onclick='modal_download.close();' />    
   </section>
 </aside>

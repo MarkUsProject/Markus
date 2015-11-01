@@ -20,8 +20,8 @@ PeriodDeltaChain.prototype.refresh = function() {
     var from_time = moment(current_time, me.date_format);
     var to_time   = moment(current_time, me.date_format);
 
-    from_time_node.update(from_time.format(format));
-    to_time_node.update(to_time.add('hours', hours_value).format(format));
+    jQuery(from_time_node).html(from_time.format(format));
+    jQuery(to_time_node).html(to_time.add('hours', hours_value).format(format));
 
     current_time = to_time;
   });
