@@ -11,6 +11,6 @@
   <section class='dialog-actions'>
     <%= hidden_field_tag 'section_modal', 'true' %>
     <%= f.submit t(:save) , data: { disable_with: t('working') } %>
-    <%= button_to_function t(:close), 'modal_add_section.close()' %>
+    <%= button_tag t(:close), onclick: 'modal_add_section.close()' %>
   </section>
 <% end %>
