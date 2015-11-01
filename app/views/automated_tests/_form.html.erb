@@ -56,12 +56,12 @@
     <legend><%= t("automated_tests.assignment_test_support_files") %></legend>
     <div class="wrapLeft">
       <div id="test_support_files">
-      <%= f.object.test_support_files do |tsf| %>
+      <%= f.object.test_support_files.each do |tsf| %>
         <%= render :partial => 'test_support_file_upload', :locals => {:test_support_file => tsf, :form => f } %>
       <% end %>
       </div>
       <p id="test_support_file_add_link">
-      <%=# add_test_support_file_link t("automated_tests.add_test_support_file_link"), f
+      <%= add_test_support_file_link t("automated_tests.add_test_support_file_link"), f
       %>
       </p>
     </div>
