@@ -103,7 +103,7 @@ class Result < ActiveRecord::Base
     num_criteria = submission.assignment.rubric_criteria.count +
                    submission.assignment.flexible_criteria.count
     # Check that the marking state is incomplete or all marks are entered
-    if (marks.where(mark: nil).first || marks.count != num_criteria) &&
+    if (marks.find(mark: nil) || marks.count != num_criteria) &&
        marking_state == Result::MARKING_STATES[:complete]
 
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))

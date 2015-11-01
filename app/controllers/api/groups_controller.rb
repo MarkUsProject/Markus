@@ -126,8 +126,9 @@ module Api
       end
 
       matched_criteria.each do |crit|
-        mark_to_change = result.marks.find_or_create_by(markable_id: crit.id,
-                                                        markable_type: crit.class.name)
+        mark_to_change = result.marks.find_or_create_by(
+          markable_id: crit.id,
+          markable_type: crit.class.name)
         unless set_mark_by_criteria(crit, mark_to_change)
           # Some error occurred (including invalid mark)
           render 'shared/http_status', locals: { code: '500', message:
@@ -173,7 +174,6 @@ module Api
 
     # Allow user to set marking state to complete
     def update_marking_state
-      assignment = Assignment.find(params[:assignment_id])
       group = Group.find(params[:id])
       result = group.grouping_for_assignment(params[:assignment_id])
                     .current_submission_used
