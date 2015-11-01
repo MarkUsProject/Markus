@@ -18,6 +18,7 @@ Markus::Application.routes.draw do
           resources :test_results, except: [:new, :edit]
           member do
             put 'update_marks'
+            put 'update_marking_state'
           end
         end
       end

@@ -170,5 +170,24 @@ module Api
         end
       end
     end
+
+    # Allow user to set marking state to complete
+    def update_marking_state
+      assignment = Assignment.find(params[:assignment_id])
+      group = Group.find(params[:id])
+      result = group.grouping_for_assignment(params[:assignment_id])
+                    .current_submission_used
+                    .get_latest_result
+      result.marking_state = params[:marking_state]
+      if result.save
+        result.submission.assignment.assignment_stat.refresh_grade_distribution
+        result.submission.assignment.update_results_stats
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+      else
+        render 'shared/http_status', locals: { code: '500', message:
+          result.errors.full_messages.first }, status: 500
+      end
+    end
   end # end GroupsController
 end
