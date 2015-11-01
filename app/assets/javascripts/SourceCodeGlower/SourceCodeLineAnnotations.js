@@ -144,8 +144,11 @@ SourceCodeLineAnnotations.prototype.removeRelationship = function(annotation_id,
   // Just return if no relationship existed
   if (relationship == null) { return;   }
 
-  // Remove the found relationship from the relationships array
-  this.setRelationships(this.getRelationships().without(relationship));
+  // Clone relationships array and remove the found relationship
+  var index = this.getRelationships().indexOf(relationship);
+  var clonedRelationships = this.getRelationships().slice().splice(index,relationship);
+
+  this.setRelationships(clonedRelationships);
 }
 
 SourceCodeLineAnnotations.prototype.getAnnotationTextsForLineNum = function(
