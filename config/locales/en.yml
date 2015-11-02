@@ -303,6 +303,8 @@ en:
       previous_submission:  "Previous Submission"
       next_submission:      "Next Submission"
       marking_status:       "Marking Status:"
+      set_to_complete:      "Set to Complete"
+      revert_to_incomplete: "Revert to Incomplete"
       notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Include Annotations:"
       include_annotations_warning: "Warning! Annotations on PDFs are not currently downloaded."

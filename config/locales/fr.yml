@@ -309,6 +309,8 @@ fr:
       previous_submission:  "Envoi précédent"
       next_submission:      "Envoi suivant"
       marking_status:       "État de l'évaluation : "
+      set_to_complete:      "Réglage pour terminer"
+      revert_to_incomplete: "Revenir à incomplet"
       notes:                "Remarques (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Ajouter les annotations : "
       include_annotations_warning: "Attention! Annotations sur les fichiers PDF ne sont actuellement pas téléchargés."

@@ -213,12 +213,14 @@ class ResultsController < ApplicationController
         @result.submission.assignment.update_results_stats
       end
       # render template: 'results/toggle_marking_state'
-      redirect_to('results/toggle_marking_state')
+      # redirect_to('results/toggle_marking_state')
+      render 'results/toggle_marking_state'
     else # Failed to pass validations
       # Show error message
       puts "failed *******"
       # render template: 'results/marker/show_result_error'
-      redirect_to('results/marker/show_result_error')
+      # redirect_to('results/marker/show_result_error')
+      render 'results/marker/show_result_error'
     end
   end
 
@@ -238,33 +240,6 @@ class ResultsController < ApplicationController
       # Show error message
       render template: 'results/marker/show_result_error'
     end
-
-    # @result = Result.find(params[:id])
-    # @old_marking_state = @result.marking_state
-    # # @result.marking_state = params[:value]
-    # # puts "COMPLETE MARKING", params[:value], "***********"
-
-    # if @result.marking_state == Result::MARKING_STATES[:complete]
-    #   puts "current state is complete"
-    #   @result.marking_state = Result::MARKING_STATES[:partial]
-    # else
-    #   puts "current state is incomplete"
-    #   @result.marking_state = Result::MARKING_STATES[:complete]
-    # end
-
-    # if @result.save
-    #   puts "success ******"
-    #   # If marking_state is complete, update the cached distribution
-    #   if @result.marking_state == Result::MARKING_STATES[:complete]
-    #     @result.submission.assignment.assignment_stat.refresh_grade_distribution
-    #     @result.submission.assignment.update_results_stats
-    #   end
-    #   render template: 'results/update_marking_state'
-    # else # Failed to pass validations
-    #   # Show error message
-    #   puts "failed *******"
-    #   render template: 'results/marker/show_result_error'
-    # end
   end
 
   def download

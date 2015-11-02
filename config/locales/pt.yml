@@ -291,6 +291,8 @@ pt:
       previous_submission:  "Submissão anterior"
       next_submission:      "Próxima submissão"
       marking_status:       "Status de avaliação:"
+      set_to_complete:      "Conjunto para completar"
+      revert_to_incomplete: "Reverter para incompleta"
       notes:                "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Incluir anotações:"
       include_annotations_warning: "Aviso! Anotações sobre PDFs não são presentemente descarregado."
