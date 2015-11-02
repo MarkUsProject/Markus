@@ -577,8 +577,8 @@ class Assignment < ActiveRecord::Base
         else
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
-          final_result.push(submission.get_latest_result.total_mark.to_s \
-                                                        +  '/' + out_of.to_s)
+          final_result.push(submission.get_latest_result.total_mark.to_s + \
+                                                         '/' + out_of.to_s)
           rubric_criteria.each do |rubric_criterion|
             mark = submission.get_latest_result
                              .marks
@@ -634,8 +634,8 @@ class Assignment < ActiveRecord::Base
           # and a submission.
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
-          final_result.push(submission.get_latest_result.total_mark.to_s \
-                                                          + '/' + out_of.to_s)
+          final_result.push(submission.get_latest_result.total_mark.to_s + \
+                                                            '/' + out_of.to_s)
           flexible_criteria.each do |criterion|
             mark = submission.get_latest_result
                              .marks
