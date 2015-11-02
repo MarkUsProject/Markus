@@ -203,7 +203,7 @@ namespace :markus do
             marked = rand(3)
             if (marked == 1 and !submission.nil?)
               @result = submission.get_latest_result
-              @result.marking_state = Result::MARKING_STATES[:partial]
+              @result.marking_state = Result::MARKING_STATES[:incomplete]
               @result.save!
               submission.save!
             elsif (marked == 2 and  !submission.nil?)

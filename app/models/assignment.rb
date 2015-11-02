@@ -298,7 +298,7 @@ class Assignment < ActiveRecord::Base
       submission = grouping.current_submission_used
       if !submission.nil? && submission.has_remark?
         if submission.remark_result.marking_state ==
-            Result::MARKING_STATES[:partial]
+            Result::MARKING_STATES[:incomplete]
           outstanding_count += 1
         end
       end

@@ -67,14 +67,4 @@ class AnnotationsController < ApplicationController
     render :update
   end
 
-  #Updates the marking state
-  def update_marking_state
-    result = Result.find(params[:id])
-    result.marking_state = params[:value]
-    result.save
-    render :update do |page|
-       page.redirect_to controller: 'results', action: 'edit', id:
-       result.id
-    end
-  end
 end

@@ -2,8 +2,7 @@ class Result < ActiveRecord::Base
 
   MARKING_STATES = {
     complete: 'complete',
-    partial: 'partial',
-    unmarked: 'unmarked'
+    incomplete: 'incomplete'
   }
 
   belongs_to :submission
@@ -85,7 +84,7 @@ class Result < ActiveRecord::Base
 
   def mark_as_partial
     return if self.released_to_students
-    self.marking_state = Result::MARKING_STATES[:partial]
+    self.marking_state = Result::MARKING_STATES[:incomplete]
     self.save
   end
 

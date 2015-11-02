@@ -11,7 +11,7 @@ class SubmissionTest < ActiveSupport::TestCase
     s = Submission.make
     s.save
     assert_not_nil s.get_latest_result, 'Result was supposed to be created automatically'
-    assert_equal s.get_latest_result.marking_state, Result::MARKING_STATES[:unmarked], 'Result marking_state should have been automatically set to unmarked'
+    assert_equal s.get_latest_result.marking_state, Result::MARKING_STATES[:incomplete], 'Result marking_state should have been automatically set to incomplete'
   end
 
   should 'create a new remark result' do
@@ -20,9 +20,9 @@ class SubmissionTest < ActiveSupport::TestCase
     s.make_remark_result
     assert_not_nil s.remark_result, 'Remark result was supposed to be created'
     assert_equal s.remark_result.marking_state,
-                 Result::MARKING_STATES[:unmarked],
+                 Result::MARKING_STATES[:incomplete],
                  'Remark result marking_state should have been ' +
-                   'automatically set to unmarked'
+                   'automatically set to incomplete'
   end
 
   context 'A submission with a remark result submitted' do
@@ -31,7 +31,7 @@ class SubmissionTest < ActiveSupport::TestCase
       @submission.save
       @submission.make_remark_result
       @result = @submission.remark_result
-      @result.marking_state = Result::MARKING_STATES[:partial]
+      @result.marking_state = Result::MARKING_STATES[:incomplete]
       @result.save
     end
 
@@ -100,9 +100,9 @@ class SubmissionTest < ActiveSupport::TestCase
     s.make_remark_result
     assert_not_nil s.remark_result, 'Remark result was supposed to be created'
     assert_equal s.remark_result.marking_state,
-                 Result::MARKING_STATES[:unmarked],
+                 Result::MARKING_STATES[:incomplete],
                  'Remark result marking_state should have been ' +
-                   'automatically set to unmarked'
+                   'automatically set to incomplete'
   end
 
 end

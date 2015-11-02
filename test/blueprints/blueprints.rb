@@ -194,7 +194,7 @@ end
 
 Result.blueprint do
   submission {Submission.make}
-  marking_state {Result::MARKING_STATES[:partial]}
+  marking_state {Result::MARKING_STATES[:incomplete]}
   total_mark {0}
 end
 

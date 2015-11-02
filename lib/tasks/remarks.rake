@@ -25,7 +25,7 @@ namespace :db do
 
         # Create new entry in results table for the remark
         remark = Result.new(
-          marking_state: Result::MARKING_STATES[:unmarked],
+          marking_state: Result::MARKING_STATES[:incomplete],
           submission_id: submission.id)
         remark.save
 
@@ -36,7 +36,7 @@ namespace :db do
           remark_request_timestamp: Time.zone.now)
 
         submission.remark_result.update_attributes(
-          marking_state: Result::MARKING_STATES[:partial])
+          marking_state: Result::MARKING_STATES[:incomplete])
       end
     end
 

@@ -26,7 +26,7 @@ class ResultsController < ApplicationController
 
     new_result = Result.new
     new_result.submission = @submission
-    new_result.marking_state = Result::MARKING_STATES[:partial]
+    new_result.marking_state = Result::MARKING_STATES[:incomplete]
     new_result.save
     redirect_to action: 'edit', id: new_result.id
   end
@@ -185,7 +185,7 @@ class ResultsController < ApplicationController
       @result = @submission.get_remark_result
       # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
-      if @result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students
+      if @result.marking_state != Result::MARKING_STATES[:incomplete] && !@result.released_to_students
         render 'results/student/no_remark_result'
         return
       end

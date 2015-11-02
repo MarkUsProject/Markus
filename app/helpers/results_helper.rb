@@ -1,7 +1,7 @@
 module ResultsHelper
 
   def remark_result_unsubmitted_or_released(remark_result)
-    remark_result.marking_state == Result::MARKING_STATES[:unmarked] ||
+    remark_result.marking_state == Result::MARKING_STATES[:incomplete] ||
       remark_result.released_to_students
   end
 
@@ -23,7 +23,7 @@ module ResultsHelper
   def student_can_edit_remark_request(submission)
     !submission.remark_result ||
       submission.remark_result.marking_state ==
-        Result::MARKING_STATES[:unmarked]
+        Result::MARKING_STATES[:incomplete]
   end
 
   def can_show_remark_request_tab_in_marker_pane(submission)

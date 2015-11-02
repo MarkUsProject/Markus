@@ -195,7 +195,7 @@ class ResultsController < ApplicationController
     @old_marking_state = @result.marking_state
 
     if @result.marking_state == Result::MARKING_STATES[:complete]
-      @result.marking_state = Result::MARKING_STATES[:partial]
+      @result.marking_state = Result::MARKING_STATES[:incomplete]
     else
       @result.marking_state = Result::MARKING_STATES[:complete]
     end
@@ -412,7 +412,7 @@ class ResultsController < ApplicationController
       @result = @submission.remark_result
       # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
-      if @result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students
+      if @result.marking_state != Result::MARKING_STATES[:incomplete] && !@result.released_to_students
         render 'results/student/no_remark_result'
         return
       end
@@ -506,7 +506,7 @@ class ResultsController < ApplicationController
           @submission.make_remark_result
         end
         @submission.remark_result.update_attributes(
-          marking_state: Result::MARKING_STATES[:partial])
+          marking_state: Result::MARKING_STATES[:incomplete])
         @submission.get_original_result.update_attributes(
           released_to_students: false)
         render js: 'location.reload();'
