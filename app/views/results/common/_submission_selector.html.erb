@@ -25,7 +25,7 @@
 
     (
 
-<!-- <%= label_tag 'marking_state',
+<%= label_tag 'marking_state',
                    t('marker.marking_status'),
                    class: 'inline_label' %>
     <% old_result_id = nil %>
@@ -35,29 +35,31 @@
     <% else %>
       <% possible_states = [[t('unmarked'), Result::MARKING_STATES[:unmarked]], [t('partial'), Result::MARKING_STATES[:partial]], [t('complete'), Result::MARKING_STATES[:complete]]] %>
     <% end %> 
- -->
+ 
 
     <!-- causes thing to go wonky when removed -->
-<!--   <%= select_tag 'marking_state',
+   <%= select_tag 'marking_state',
                    options_for_select(possible_states,[result.marking_state]),
                    disabled: @result.released_to_students,
                    'data-action' => url_for(action: 'update_marking_state',
-                                            id: @result.id) %>   -->
-
+                                            id: @result.id) %> 
     <em><%= t('marker.marks.total_mark') %></em>
     <span id='current_mark_div'><%= result.total_mark %></span> /
     <span id='total_mark_div'><%= assignment.total_mark %></span>)
     |
     <% if @result.marking_state == Result::MARKING_STATES[:complete] %>
+       
       <%= button_to 'Revert to Incomplete', 
                      url_for(action: 'toggle_marking_state', id: @result.id), 
+
                      disabled: @result.released_to_students,
-                     form: {style: 'display:inline-block;'} %> 
+                     form: {style: 'display:inline-block;', :id => 'toggle_marking_state'} %> 
     <% else %>
-     <%= button_to 'Set to Complete', 
+    
+      <%= button_to 'Set to Complete', 
                     url_for(action: 'toggle_marking_state', id: @result.id), 
                     disabled: @result.released_to_students,
-                    form: {style: 'display:inline-block;'} %> 
+                    form: {style: 'display:inline-block;', :id => 'toggle_marking_state'} %> 
     <% end %>
 
 <!-- 

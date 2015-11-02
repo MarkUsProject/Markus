@@ -1,0 +1,8 @@
+<%# Hide error message (if any) %>
+document.getElementById('criterion_incomplete_error').style.display = 'none';
+
+<% if @result.marking_state == Result::MARKING_STATES[:complete] %>
+document.getElementById('toggle_marking_state').innerHTML = "Revert to Incomplete"
+<% else %>
+document.getElementById('toggle_marking_state').innerHTML = "Set to Complete";
+<% end %>
