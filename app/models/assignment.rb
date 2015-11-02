@@ -800,23 +800,21 @@ class Assignment < ActiveRecord::Base
   end
 
   #
-  # For each student, check if the student is a member of an accepted group for the current assignment in which case
-  # the
+  # Return true if for each membership given, a corresponding student exists and if they are not part of a different
+  # grouping for the same assignment
   #
   def membership_unique?(row)
-    if !groupings.nil? && groupings.length > 0
-      start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
-      (start_index_group_members..(row.length - 1)).each do |i|
-        student = Student.where(user_name: row[i]).first
-        if student
-          if student.accepted_grouping_for(id).nil?
-            errors.add(:groupings, student.user_name)
-            return false
-          end
-        else
-          errors.add(:student_memberships, row[i])
+    start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
+    (start_index_group_members..(row.length - 1)).each do |i|
+      student = Student.where(user_name: row[i]).first
+      if student
+        unless student.accepted_grouping_for(id).nil?
+          errors.add(:groupings, student.user_name)
           return false
         end
+      else
+        errors.add(:student_memberships, row[i])
+        return false
       end
     end
 
@@ -824,8 +822,15 @@ class Assignment < ActiveRecord::Base
 
   end
 
-  def repository_already_exists?(repo_name)
-    Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config)\
-          .repository_exists?(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
+  def repository_already_exists?(repository_name)
+
+    repository_path = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
+    if Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config)\
+          .repository_exists?(repository_path)
+      errors.add(:repo_name, repository_path)
+      true
+    else
+      false
+    end
   end
 end
