@@ -182,7 +182,6 @@ Markus::Application.routes.draw do
             post 'remove_extra_mark'
             post 'set_released_to_students'
             post 'update_overall_comment'
-            post 'update_marking_state'
             post 'toggle_marking_state'
             patch 'update_remark_request'
             get 'update_positions'

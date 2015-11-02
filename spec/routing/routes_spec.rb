@@ -874,16 +874,6 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes POST update_marking_state properly' do
-          expect(post: res_path + '/1/update_marking_state').to route_to(
-            controller: res_ctrl,
-            action: 'update_marking_state',
-            id: '1',
-            assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s,
-            locale: 'en')
-        end
-
         it 'routes POST toggle_marking_state properly' do
           expect(post: res_path + '/1/toggle_marking_state').to route_to(
             controller: res_ctrl,
