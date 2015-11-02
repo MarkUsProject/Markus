@@ -567,7 +567,7 @@ class Assignment < ActiveRecord::Base
         if grouping.nil? || !grouping.has_submission?
           # No grouping/no submission
           final_result.push('')                         # total percentage
-          final_result.push('0/' + out_of)              # total_grade / out_of
+          final_result.push('0/' + out_of.to_s)         # total_grade / out_of
           rubric_criteria.each do |rubric_criterion|
             final_result.push('')                       # mark
             final_result.push(rubric_criterion.weight)  # weight
