@@ -1,6 +1,10 @@
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
 
+  # This is the waiting list for automated testing. Once a test is requested,
+  # it is enqueued and it is waiting for execution. Resque manages this queue.
+  @queue = :test_waiting_list
+
   def create_test_repo(assignment)
     # Create the automated test repository
     unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
@@ -469,6 +473,175 @@ module AutomatedTestsHelper
     # Return parsed (or unparsed) test output
     output
   end
+
+
+
+
+
+
+  def AutomatedTestsHelper.request_a_test_run(grouping_id, call_on, current_user)
+    @current_user = current_user
+    #@submission = Submission.find(submission_id)
+    @grouping = Grouping.find(grouping_id)
+    @assignment = @grouping.assignment
+    @group = @grouping.group
+
+    @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
+    export_group_repo(@group, @repo_dir)
+
+    @list_run_scripts = scripts_to_run(@assignment, call_on)
+
+    async_test_request(grouping_id, call_on)
+  end
+
+
+  # Export group repository for testing. Students' submitted files
+  # are stored in the group svn repository. They must be exported
+  # before copying to the test server.
+  def self.export_group_repo(group, repo_dir)
+    # Create the automated test repository
+    if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
+      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    end
+
+    # Delete student's assignment repository if it already exists
+    delete_repo(repo_dir)
+
+    # export
+    return group.repo.export(repo_dir)
+    rescue Exception => e
+      return "#{e.message}"
+  end
+
+  # Delete repository directory
+  def self.delete_repo(repo_dir)
+    # Delete student's assignment repository if it already exists
+    if File.exists?(repo_dir)
+      FileUtils.rm_rf(repo_dir)
+    end
+  end
+
+
+  # Find the list of test scripts to run the test. Return the list of
+  # test scripts in the order specified by seq_num (running order)
+  def self.scripts_to_run(assignment, call_on)
+    # Find all the test scripts of the current assignment
+    all_scripts = TestScript.where(assignment_id: assignment.id)
+
+    list_run_scripts = Array.new
+
+    # If the test run is requested at collection (by Admin or TA),
+    # All of the test scripts should be run.
+    if call_on == "collection"
+      list_run_scripts = all_scripts
+    else
+      # If the test run is requested at submission or upon request,
+      # verify the script is allowed to run.
+      all_scripts.each do |script|
+        if (call_on == "submission") && script.run_on_submission
+          list_run_scripts.insert(list_run_scripts.length, script)
+        elsif (call_on == "request") && script.run_on_request
+          list_run_scripts.insert(list_run_scripts.length, script)
+        end
+      end
+    end
+
+    # sort list_run_scripts using ruby's in place sorting method
+    list_run_scripts.sort_by! {|script| script.seq_num}
+
+    # list_run_scripts should be sorted now. Perform a check here.
+    # Take this out if it causes performance issue.
+    ctr = 0
+    while ctr < list_run_scripts.length - 1
+      if (list_run_scripts[ctr].seq_num) > (list_run_scripts[ctr+1].seq_num)
+        raise "list_run_scripts is not sorted"
+      end
+      ctr = ctr + 1
+    end
+
+    return list_run_scripts
+  end
+
+  # Request an automated test. Ask Resque to enqueue a job.
+  def self.async_test_request(grouping_id, call_on)
+    if files_available?
+      if has_permission?
+        Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on)
+      end
+    end
+  end
+
+
+  # Verify that MarkUs has some files to run the test.
+  # Note: this does not guarantee all required files are presented.
+  # Instead, it checks if there is at least one test script and
+  # source files are successfully exported.
+  def self.files_available?()
+    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @assignment.short_identifier)
+    src_dir = @repo_dir
+    assign_dir = @repo_dir + "/" + @assignment.repository_folder
+    p "**ZQQ test dir is #{test_dir} src_dir is #{src_dir} assign_dir is #{assign_dir}"
+    if !(File.exists?(test_dir))
+      # TODO: show the error to user instead of raising a runtime error
+      raise I18n.t("automated_tests.test_files_unavailable")
+    elsif !(File.exists?(src_dir))
+      # TODO: show the error to user instead of raising a runtime error
+      raise I18n.t("automated_tests.source_files_unavailable")
+    end
+
+    if !(File.exists?(assign_dir))
+      # TODO: show the error to user instead of raising a runtime error
+      raise I18n.t("automated_tests.source_files_unavailable")
+    end
+
+    dir_contents = Dir.entries(assign_dir)
+
+    #if there are no files in repo (ie only the current and parent directory pointers)
+    if (dir_contents.length <= 2)
+      raise I18n.t("automated_tests.source_files_unavailable")
+    end
+
+    scripts = TestScript.where(assignment_id: @assignment.id)
+    if scripts.empty?
+      # TODO: show the error to user instead of raising a runtime error
+      raise I18n.t("automated_tests.test_files_unavailable")
+    end
+
+    return true
+  end
+
+  # Verify the user has the permission to run the tests - admin
+  # and graders always have the permission, while student has to
+  # belong to the group, and have at least one token.
+  def self.has_permission?()
+    if @current_user.admin?
+      true
+    elsif @current_user.ta?
+      true
+    elsif @current_user.student?
+      # Make sure student belongs to this group
+      if not @current_user.accepted_groupings.include?(@grouping)
+        # TODO: show the error to user instead of raising a runtime error
+        raise I18n.t("automated_tests.not_belong_to_group")
+      end
+      #can skip checking tokens if we have unlimited
+      if @grouping.assignment.unlimited_tokens
+        return true
+      end
+      t = @grouping.token
+      if t == nil
+        raise I18n.t('automated_tests.missing_tokens')
+      end
+      if t.tokens > 0
+        t.decrease_tokens
+        true
+      else
+        # TODO: show the error to user instead of raising a runtime error
+        raise I18n.t("automated_tests.missing_tokens")
+      end
+    end
+  end
+
 end
 
 #test-framework version

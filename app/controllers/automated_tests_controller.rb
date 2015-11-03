@@ -102,11 +102,12 @@ class AutomatedTestsController < ApplicationController
       return nil
     rescue Exception => e
       #TODO: shouldn't leak error if student.
-      if authorized?(Admin)
+      # problem is that legitimate error messages to students are currently done through runtime errors :(
+      # if authorized?(Admin)
         return e.message
-      else
-        return "There was a problem running the test."
-      end
+      # else
+      #   return "There was a problem running the test."
+      # end
     end
   end
 
