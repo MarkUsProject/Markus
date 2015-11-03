@@ -101,7 +101,12 @@ class AutomatedTestsController < ApplicationController
       AutomatedTestsHelper.request_a_test_run(grouping_id, 'request', @current_user)
       return nil
     rescue Exception => e
-      return e.message
+      #TODO: shouldn't leak error if student.
+      if authorized?(Admin)
+        return e.message
+      else
+        return "There was a problem running the test."
+      end
     end
   end
 
