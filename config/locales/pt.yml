@@ -300,6 +300,8 @@ pt:
       marks:
         total_mark: "Nota total:"
         released:   "Liberar:"
+        release:    "Lançamento"
+        unrelease:  "Pegue de volta"
         comment: "Comentário"
         percentage: "Porcentagem"
         invalid_mark: "Nota inválida!"

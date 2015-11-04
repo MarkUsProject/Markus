@@ -318,6 +318,8 @@ fr:
       marks:
         total_mark: "Notes totales : "
         released:   "Dévoilées : "
+        release:    "Libération"
+        unrelease:  "Reprendre"
         comment: "Commentaire"
         percentage: "Pourcentage"
         invalid_mark: "Note invalide !"

@@ -312,6 +312,8 @@ en:
       marks:
         total_mark: "Total Mark:"
         released:   "Released:"
+        release:    "Release"
+        unrelease:  "Unrelease"
         comment: "Comment"
         percentage: "Percentage"
         invalid_mark: "Invalid Mark!"

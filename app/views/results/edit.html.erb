@@ -49,8 +49,9 @@
     // If the mark_description div is empty, that means it isn't marked
     // Hide the criterion that AREN'T empty (i.e. are marked)
     // Check if the marks are released, if they are there is nothing to hide
-    if (document.getElementById('released') === null ||
-        !document.getElementById('released').checked) {
+    if (document.getElementById('toggle_released') === null ||
+        document.getElementById('toggle_released').firstChild.value != 
+        '<%= t('marker.marks.unrelease') %>') {
       jQuery('.mark_description').each(function() {
         if (this.innerHTML.trim()) {
           hide_criterion(parseInt(this.getAttribute('data-id'), 10));

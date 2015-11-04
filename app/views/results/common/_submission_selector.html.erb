@@ -43,16 +43,28 @@
     <% end %>
 
     <% if @current_user.admin? %>
-      | <%= label_tag 'released',
-                      t('marker.marks.released'),
-                      class: 'inline_label' %>
-        <%= check_box_tag 'released',
+
+        <% if @result.released_to_students %>
+          <%= button_to t('marker.marks.unrelease'), 
+                        url_for(action: 'set_released_to_students', id: @result.id), 
+                        disabled: result.marking_state != Result::MARKING_STATES[:complete],
+                        form: {style: 'display:inline-block;', :id => 'toggle_released'},
+                        remote: true %> 
+        <% else %>
+          <%= button_to t('marker.marks.release'), 
+                        url_for(action: 'set_released_to_students', id: @result.id), 
+                        disabled: result.marking_state != Result::MARKING_STATES[:complete],
+                        form: {style: 'display:inline-block;', :id => 'toggle_released'},
+                        remote: true %> 
+        <% end %>
+
+<!--          <%= check_box_tag 'released',
                           true,
                           result.released_to_students,
                           disabled: result.marking_state != Result::MARKING_STATES[:complete],
                           class: 'inline_checkbox',
                           'data-action' => url_for(action: 'set_released_to_students',
-                                                   id: @result.id) %>
+                                                   id: @result.id) %>  -->
     <% end %>
   </span>
 

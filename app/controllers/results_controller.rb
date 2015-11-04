@@ -170,7 +170,7 @@ class ResultsController < ApplicationController
 
   def set_released_to_students
     @result = Result.find(params[:id])
-    released_to_students = (params[:value] == 'true')
+    released_to_students = !@result.released_to_students
     if params[:old_id]
       @old_result = Result.find(params[:old_id])
       @old_result.released_to_students = released_to_students
