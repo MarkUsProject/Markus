@@ -101,6 +101,7 @@ class AutomatedTestsController < ApplicationController
       AutomatedTestsHelper.request_a_test_run(grouping_id, 'request', @current_user)
       return nil
     rescue Exception => e
+      p "*******ERROR: #{e.message}"
       #TODO: shouldn't leak error if student.
       # problem is that legitimate error messages to students are currently done through runtime errors :(
       # if authorized?(Admin)
