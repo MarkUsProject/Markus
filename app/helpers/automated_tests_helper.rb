@@ -3,12 +3,16 @@ module AutomatedTestsHelper
 
   def create_test_repo(assignment)
     # Create the automated test repository
-    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
-      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    unless File.exist?(MarkusConfigurator
+                            .markus_config_automated_tests_repository)
+      FileUtils.mkdir(MarkusConfigurator
+                          .markus_config_automated_tests_repository)
     end
 
-    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
-    unless File.exists?(test_dir)
+    test_dir = File.join(MarkusConfigurator
+                             .markus_config_automated_tests_repository,
+                         assignment.short_identifier)
+    unless File.exist?(test_dir)
       FileUtils.mkdir(test_dir)
     end
   end
@@ -17,11 +21,15 @@ module AutomatedTestsHelper
     link_to_function name do |page|
       test_support_file = render(partial: 'test_support_file_upload',
                                  locals: {form: form,
-                                          test_support_file: TestSupportFile.new })
+                                          test_support_file:
+                                              TestSupportFile.new })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_support_file_id = new Date().getTime();
-          $('test_support_files').insert({bottom: "#{ escape_javascript test_support_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_support_file_id) });
+          $('test_support_files')
+          .insert({bottom: "#{escape_javascript test_support_file}"
+          .replace(/(attributes_\\d+|\\[\\d+\\])/g,
+                   new_test_support_file_id) });
         } else {
           alert("#{I18n.t('automated_tests.add_test_support_file_alert')}");
         }
@@ -120,7 +128,8 @@ module AutomatedTestsHelper
     file_name_array = []
 
     # add existing scripts names
-    params.each {|key, value| if(key[/test_script_\d+/] != nil) then file_name_array << value end}
+    params.each { |key, value| if(!key[/test_script_\d+/].nil?) then
+                                 file_name_array << value end }
 
     # Retrieve all test scripts
     testscripts = params[:test_scripts_attributes]
@@ -169,8 +178,9 @@ module AutomatedTestsHelper
         # - If 'id' does not exist, this is a new test file
         tf_id = tfile['id']
 
-        # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
-        # Otherwise, this test file possibly requires an update
+        # If only the 'id' exists in the hash, other attributes were not updated
+        # so we skip this entry. Otherwise, this test file possibly requires an
+        # update
         if !tf_id.nil? && tfile.size > 1
 
           # Find existing test file to update
@@ -198,8 +208,9 @@ module AutomatedTestsHelper
         # - If 'id' does not exist, this is a new test file
         tf_id = tfile['id']
 
-        # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
-        # Otherwise, this test file possibly requires an update
+        # If only the 'id' exists in the hash, other attributes were not updated
+        # so we skip this entry. Otherwise, this test file possibly requires an
+        # update
         if !tf_id.nil? && tfile.size > 1
 
           # Find existing test file to update
