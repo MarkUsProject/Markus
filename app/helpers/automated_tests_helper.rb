@@ -1,6 +1,5 @@
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
-
   def create_test_repo(assignment)
     # Create the automated test repository
     unless File.exist?(MarkusConfigurator
@@ -20,8 +19,8 @@ module AutomatedTestsHelper
   def add_test_support_file_link(name, form)
     link_to_function name do |page|
       test_support_file = render(partial: 'test_support_file_upload',
-                                 locals: {form: form,
-                                          test_support_file:
+                                 locals: { form: form,
+                                           test_support_file:
                                               TestSupportFile.new })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
@@ -128,8 +127,9 @@ module AutomatedTestsHelper
     file_name_array = []
 
     # add existing scripts names
-    params.each { |key, value| if(!key[/test_script_\d+/].nil?) then
-                                 file_name_array << value end }
+    params.each do |key, value|
+      if !key[/test_script_\d+/].nil? then file_name_array << value
+    end
 
     # Retrieve all test scripts
     testscripts = params[:test_scripts_attributes]
