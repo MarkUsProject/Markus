@@ -128,7 +128,9 @@ module AutomatedTestsHelper
 
     # add existing scripts names
     params.each do |key, value|
-      if !key[/test_script_\d+/].nil? then file_name_array << value
+      if !key[/test_script_\d+/].nil?
+        file_name_array << value
+      end
     end
 
     # Retrieve all test scripts
@@ -240,7 +242,7 @@ module AutomatedTestsHelper
       assignment.tokens_per_day = num_tokens
     end
 
-    assignment
+    return assignment
   end
 
   # Verify tests can be executed
