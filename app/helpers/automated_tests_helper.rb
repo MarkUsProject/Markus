@@ -580,7 +580,6 @@ module AutomatedTestsHelper
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @assignment.short_identifier)
     src_dir = @repo_dir
     assign_dir = @repo_dir + "/" + @assignment.repository_folder
-    p "**ZQQ test dir is #{test_dir} src_dir is #{src_dir} assign_dir is #{assign_dir}"
     if !(File.exists?(test_dir))
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t("automated_tests.test_files_unavailable")
