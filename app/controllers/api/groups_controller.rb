@@ -126,9 +126,9 @@ module Api
       end
 
       matched_criteria.each do |crit|
-        mark_to_change = result.marks
-                               .where(markable_id: crit.id)
-                               .first
+        mark_to_change = result.marks.find_or_create_by(
+          markable_id: crit.id,
+          markable_type: crit.class.name)
         unless set_mark_by_criteria(crit, mark_to_change)
           # Some error occurred (including invalid mark)
           render 'shared/http_status', locals: { code: '500', message:
@@ -169,6 +169,24 @@ module Api
         format.json do
           render json: reversed.to_json
         end
+      end
+    end
+
+    # Allow user to set marking state to complete
+    def update_marking_state
+      group = Group.find(params[:id])
+      result = group.grouping_for_assignment(params[:assignment_id])
+                    .current_submission_used
+                    .get_latest_result
+      result.marking_state = params[:marking_state]
+      if result.save
+        result.submission.assignment.assignment_stat.refresh_grade_distribution
+        result.submission.assignment.update_results_stats
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+      else
+        render 'shared/http_status', locals: { code: '500', message:
+          result.errors.full_messages.first }, status: 500
       end
     end
   end # end GroupsController
