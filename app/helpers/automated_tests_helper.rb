@@ -1,6 +1,7 @@
+require 'libxml'
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
-
+  include LibXML
   # This is the waiting list for automated testing. Once a test is requested,
   # it is enqueued and it is waiting for execution. Resque manages this queue.
   @queue = :test_waiting_list
@@ -668,6 +669,30 @@ module AutomatedTestsHelper
     result, status = launch_test(@test_server_id, @assignment, @repo_dir, call_on)
 
     if !status
+      #for debugging any errors in launch_test
+      # server_id = @test_server_id
+      # assignment = @assignment
+      # repo_dir = @repo_dir
+      # m_logger = MarkusLogger.instance
+
+
+      # src_dir = File.join(repo_dir, assignment.repository_folder)
+
+      # # Get test_dir
+      # test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
+
+      # # Get the name of the test server
+      # server = @list_of_servers[server_id]
+
+      # # Get the directory and name of the test runner script
+      # test_runner = MarkusConfigurator.markus_ate_test_runner_script_name
+
+      # # Get the test run directory of the files
+      # run_dir = MarkusConfigurator.markus_ate_test_run_directory
+
+
+      # m_logger.log("error with launching test, result: #{result} and status: #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver: #{server}\ntest_runner: #{test_runner}\nrun_dir: #{run_dir}",MarkusLogger::ERROR)
+
       # TODO: handle this error better
       raise "error"
     else
@@ -728,11 +753,11 @@ module AutomatedTestsHelper
     end
 
     # Securely copy source files, test files and test runner script to run_dir
-    stdout, stderr, status = Open3.capture3("scp -p -r '#{src_dir}'/* #{server}:#{run_dir}")
+    stdout, stderr, status = Open3.capture3("scp -p -r '#{src_dir}' #{server}:#{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
-    stdout, stderr, status = Open3.capture3("scp -p -r '#{test_dir}'/* #{server}:#{run_dir}")
+    stdout, stderr, status = Open3.capture3("scp -p -r '#{test_dir}' #{server}:#{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
