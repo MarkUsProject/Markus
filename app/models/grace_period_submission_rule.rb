@@ -43,7 +43,6 @@ class GracePeriodSubmissionRule < SubmissionRule
     collection_time = submission.revision_timestamp
     due_date = assignment.due_date
 
-
     overtime_hours = calculate_overtime_hours_from(collection_time)
     # Now we need to figure out how many Grace Credits to deduct
     deduction_amount = calculate_deduction_amount(overtime_hours)
@@ -110,6 +109,7 @@ class GracePeriodSubmissionRule < SubmissionRule
           deduction.destroy
         end
       end
+      student_membership.user.grace_period_deductions.reload
     end
   end
 
