@@ -271,6 +271,7 @@ en:
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     commit_after_due_date: "This commit is after the due date."
+    no_files_submitted: "This submission has no files."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
     past_due_date_edit_result_warning: "The %{href} of this group is after the due date."
     last_commit: "last commit"

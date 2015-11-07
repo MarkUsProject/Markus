@@ -259,6 +259,7 @@ pt:
 
     marks_released_notice:  "As notas foram liberadas. Você não pode alterá-las."
     commit_after_due_date: "O envio foi fora do prazo."
+    no_files_submitted: "Esta apresentação não tem arquivos."
     past_due_date_edit_warning:  "Alerta:  O data selecionada está no passado."
     past_due_date_edit_result_warning: "O %{href} desse grupo está depois do prazo."
     last_commit: "Último envio"
