@@ -24,7 +24,8 @@
         groupings: this.props.selected_groups,
         grader_memberships: this.props.selected_graders_in_groups,
         criteria: this.props.selected_criteria,
-        criterion_associations: this.props.selected_graders_in_criteria
+        criterion_associations: this.props.selected_graders_in_criteria,
+        skip_empty_submissions: this.props.skip_empty_submissions
       };
       jQuery.ajax({
         method: 'POST',
