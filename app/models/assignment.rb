@@ -379,9 +379,10 @@ class Assignment < ActiveRecord::Base
   # Add a group and corresponding grouping as provided in
   # the passed in Array.
   # Format: [ groupname, repo_name, member, member, etc ]
-  # The groupname, repo_name must not pre exist, each member should exist and not
-  # belong to a different grouping for the same assignment. If these requirements
-  # are not satisfied, the group and the grouping is not created.
+  # The groupname, repo_name must not pre exist, each member should exist and
+  # not belong to a different grouping for the same assignment.
+  # If these requirements are not satisfied, the group and the grouping is
+  # not created.
   def add_csv_group(row)
     return if row.length.zero?
 
@@ -486,7 +487,6 @@ class Assignment < ActiveRecord::Base
 
     end
     collision_error
-
   end
 
   def grouped_students
@@ -814,11 +814,11 @@ class Assignment < ActiveRecord::Base
   end
 
   #
-  # Return true if for each membership given, a corresponding student exists and if they are not part of a different
-  # grouping for the same assignment
+  # Return true if for each membership given, a corresponding student exists
+  # and if they are not part of a different grouping for the same assignment
   #
   def membership_unique?(row)
-    start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
+    start_index_group_members = 2 # index where student names start in the row
     (start_index_group_members..(row.length - 1)).each do |i|
       student = Student.where(user_name: row[i]).first
       if student
