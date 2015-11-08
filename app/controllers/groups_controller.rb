@@ -122,7 +122,8 @@ class GroupsController < ApplicationController
   # Allows the user to upload a csv file listing groups. If group_name is equal
   # to the only member of a group and the assignment is configured with
   # allow_web_subits == false, the student's username will be used as the
-  # repository name.
+  # repository name. If MarkUs is not repository admin, the repository name as
+  # specified by the second field will be used instead.
   def csv_upload
     file = params[:group][:grouplist]
     @assignment = Assignment.find(params[:assignment_id])
@@ -132,8 +133,6 @@ class GroupsController < ApplicationController
       # really bad happens.
       ActiveRecord::Base.transaction do
         file = file.utf8_encode(encoding)
-        # Old groupings get wiped out
-
         begin
           # Loop over each row, which lists the members to be added to the group.
           CSV.parse(file).each_with_index do |row, line_nr|

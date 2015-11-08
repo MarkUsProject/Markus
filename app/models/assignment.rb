@@ -1,7 +1,7 @@
 require 'csv_invalid_line_error'
 
 class Assignment < ActiveRecord::Base
-
+  include RepositoryHelper
   MARKING_SCHEME_TYPE = {
     flexible: 'flexible',
     rubric: 'rubric'
@@ -389,43 +389,57 @@ class Assignment < ActiveRecord::Base
 
     group = Group.where(group_name: row.first).first
 
-    # If a group with the same name already exists, an error is shown and no new group is created
-    unless group.nil
-      I18n.t('csv.add_group.group_name_already_exists', { group_name: row[0]})
-      return
+    # If a group with the same name already exists, an error is returned
+    # and no new group is created
+    unless group.nil?
+      duplicate_group_error = I18n.t('csv.group_name_already_exists',
+                                     { group_name: row[0] })
+      return duplicate_group_error
     end
 
-    # If any of the given members do not exist or is part of anothe group, error shown and return without
-    # creating a group
-    unless membership_unique?
-      unless group.errors[:groupings].blank?
-        I18n.t('csv.add_group.memberships_not_unique',
-               { group_name: row[0], student_user_name: errors.on('groupings')})
+    # If any of the given members do not exist or is part of another group,
+    # an error is returned without creating a group
+    unless membership_unique?(row)
+      if !errors[:groupings].blank?
+        # groupings error set if a member is already in differnt group
+        membership_error = I18n.t('csv.memberships_not_unique',
+                                  { group_name: row[0],
+                             student_user_name: errors.get(:groupings).first })
+        errors.delete(:groupings)
       else
-        I18n.t('csv.add_group.member_does_not_exist',
-               { group_name: row[0], student_user_name: errors.on('student_memberships')})
+        # student_membership error set if a member does not exist
+        membership_error = I18n.t('csv.member_does_not_exist',
+                                  { group_name: row[0],
+                    student_user_name: errors.get(:student_memberships).first })
+        errors.delete(:student_memberships)
       end
-      return
+      return membership_error
     end
 
+    # If this assignment is an individual assignment, then the repostiory
+    # name is set to be the student's user name. If this assignment is a
+    # group assignment then the repository name is taken from the csv file
     if is_candidate_for_setting_custom_repo_name?(row)
-      repo_name = row[2]   ## TODO: Originally it was row[0]
+      repo_name = row[2]
     else
       repo_name = row[1]
     end
 
-
-    # If a repository already exists with the same repo name as the one given in the csv file, error is shown
-    # and the group is not created
-    if repository_alread_exists?(repo_name)
-      I18n.t('csv.add_group.repository_already_exists',
-                {group_name: row[0], repo_path: errors.on('repo_name')})
-      return
-    else
-      group = Group.new
-      group.group_name = row[0]
-      group.repo_name = repo_name
+    # If a repository already exists with the same repo name as the one given
+    #  in the csv file, error is returned and the group is not created
+    if repository_already_exists?(repo_name)
+      repository_error = I18n.t('csv.repository_already_exists',
+                                { group_name: row[0],
+                                   repo_path: errors.get(:repo_name).last })
+      errors.delete(:repo_name)
+      return repository_error
     end
+
+    # At this point we can be sure that the group_name, memberships and
+    # the repo_name does not already exist. So we create the new group.
+    group = Group.new
+    group.group_name = row[0]
+    group.repo_name = repo_name
 
     # Note: after_create hook build_repository might raise
     # Repository::RepositoryCollision. If it does, it adds the colliding
@@ -819,18 +833,5 @@ class Assignment < ActiveRecord::Base
     end
 
     true
-
-  end
-
-  def repository_already_exists?(repository_name)
-
-    repository_path = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
-    if Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config)\
-          .repository_exists?(repository_path)
-      errors.add(:repo_name, repository_path)
-      true
-    else
-      false
-    end
   end
 end
