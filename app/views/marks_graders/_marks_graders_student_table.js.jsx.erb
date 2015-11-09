@@ -135,7 +135,7 @@
           onChange={this.studentCheckboxClicked} />
         g['user_name'] = student.user_name;
         g['full_name'] = student.first_name + " " + student.last_name;
-        g['section'] = student.section == "" ? "-" : student.section;
+        g['section'] = student.section_name == "" ? "-" : student.section_name;
         var graders = student.graders.length > 0 ? [] : '';
         for (var i = 0; i < student.graders.length; i++) {
            graders.push(<div key={student.graders[i].membership_id}>
