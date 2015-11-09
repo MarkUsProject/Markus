@@ -20,9 +20,10 @@ class MarksGradersController < ApplicationController
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     @section_column = ''
     if Section.all.size > 0
-      @section_column = "section: {display: \"" +
-          I18n.t(:'user.section') +
-          "\", sortable: true},"
+      @section_column = "{
+          id: 'section',
+          content: '#{I18n.t(:'user.section')}',
+          sortable: true},"
     end
   end
 
