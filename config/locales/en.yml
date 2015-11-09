@@ -455,6 +455,7 @@ en:
       tags_list:            "Filter by Tag:"
       search_submissions:   "Search Submissions"
       how_many_marked:      "%{num_marked}/%{num_assigned} assignments have been marked"
+      how_many_marked_short: "%{num_marked}/%{num_assigned} marked"
       average_annotations:  "%{average_annotations} annotations per marked submission"
 
     summaries_index:

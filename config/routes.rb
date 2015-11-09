@@ -369,6 +369,7 @@ Markus::Application.routes.draw do
         get 'clear_role_switch_session'
         post 'reset_api_key'
         get 'check_timeout'
+        get 'grader_summary'
       end
     end
   end

@@ -1,7 +1,11 @@
 <% unless ta.nil? %>
   <h3><%= ta.first_name + " " + ta.last_name%></h3>
+  <div>
+    (<%= t('browse_submissions.how_many_marked',
+           num_marked: ta.get_num_marked(@assignment),
+           num_assigned: ta.get_num_assigned(@assignment)) %>)
+  </div>
   <canvas id='a<%= assignment.id %>_ta_<%= ta.id %>' width='400' height='350'></canvas>
-
   <script>
     //<![CDATA[
     // Set up graph
@@ -20,7 +24,8 @@
     var options = {
       scaleLineWidth: 2,
       barStrokeWidth: 1,
-      barValueSpacing: 2
+      barValueSpacing: 2,
+      scaleLabel: "   <%%=value%>"
     };
 
     // Draw it
