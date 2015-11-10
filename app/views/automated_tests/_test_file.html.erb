@@ -19,7 +19,9 @@
     <%= f.label :_destroy, I18n.t(:remove), class: "checkbox_label" %>
     <%= f.check_box :_destroy %>
   <% else %>
-    <%= link_to_function I18n.t(:remove), "jQuery(this).parents(\".test_file\").remove()" %>
+    <%= link_to I18n.t(:remove),
+                'javascript:void(0);',
+                onclick: "jQuery(this).parents(\".test_file\").remove()" %>
   <% end %>
 
   <% if file_type == "test" %>

@@ -5,8 +5,8 @@ function reloadDOM() {
 }
 
 function hideAnnotationPreview() {
-    document.getElementById('annotation_preview').hide();
-    document.getElementById('annotation_preview_title').hide();
+    jQuery('#annotation_preview').hide();
+    jQuery('#annotation_preview_title').hide();
 
     // recenter dialog
     var dialog = jQuery('#create_annotation_dialog');
@@ -14,8 +14,8 @@ function hideAnnotationPreview() {
 }
 
 function showAnnotationPreview() {
-    document.getElementById('annotation_preview').show();
-    document.getElementById('annotation_preview_title').show();
+    jQuery('#annotation_preview').show();
+    jQuery('#annotation_preview_title').show();
 
     // recenter dialog
     var dialog = jQuery('#create_annotation_dialog');

@@ -1,5 +1,5 @@
-<%= link_to_function t('marker.annotation.from_line_to',
-                       file_path: File.join(annot.submission_file.path, annot.submission_file.filename),
-                       line_start: annot.line_start,
-                       line_end: annot.line_end),
-                     "load_submitted_file_and_focus(#{annot.submission_file.id}, #{annot.line_start})" %>
+<%= link_to t('marker.annotation.from_line_to',
+            file_path: File.join(annot.submission_file.path, annot.submission_file.filename),
+            line_start: annot.line_start,
+            line_end: annot.line_end),
+            onclick: "load_submitted_file_and_focus(#{annot.submission_file.id}, #{annot.line_start})" %>

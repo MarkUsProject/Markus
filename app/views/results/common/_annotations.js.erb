@@ -24,9 +24,10 @@
     annotation_type = ANNOTATION_TYPES.CODE;
 
     document.getElementById('select_file_id').disabled = false;
-
+    var dp_highlighter = jQuery('.dp-highlighter')[0];
+    var first_ol = jQuery('ol')[0];
     syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
-        jQuery('.dp-highlighter')[0].getElementsBySelector('ol')[0]);
+        jQuery(dp_highlighter).find(first_ol)[0]);
 
     // Apply modifications to Syntax Highlighter
     syntax_highlighter_adapter.applyMods();
@@ -476,7 +477,7 @@
 
   function hide_all_annotation_content_editors() {
     jQuery('.annotation_text_content_editor').each(function(index) {
-      this.hide();
+      jQuery(this).hide();
     });
 
     var box = document.getElementById('sel_box');

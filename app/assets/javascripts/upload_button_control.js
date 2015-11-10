@@ -9,7 +9,7 @@ var button_id = _get('button_id');
 var Function_List = {
   onReady: function(u_id, b_id){
     // Ensures only one upload field was entered.
-    if (u_id.size() != 1) return;
+    if (jQuery(u_id).length != 1) return;
 
     // Checks to see if the file upload id changed.
     jQuery('body').on('change','#' + u_id, function(){
@@ -19,7 +19,7 @@ var Function_List = {
       var i;
 
       // Enables/Disables all buttons.
-      for (i = 0; i < b_id.size(); i++) {
+      for (i = 0; i < jQuery(b_id).length; i++) {
         // Either disables or enables upload buttons.
         if (filePath === "") {
           document.getElementById(b_id[i]).disabled = true;

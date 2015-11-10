@@ -40,15 +40,16 @@
     <% # Allow cloning groups forward only if its web submits are disallowed
        # for this assignment.
        unless @assignment.allow_web_submits %>
-      <%= link_to_function t('groups.another_assignment_group'),
-                           'modalAssignmentGroupReUse.open();' %>
+      <%= link_to t('groups.another_assignment_group'),
+                  'javascript:void(0);',
+                  onclick:'modalAssignmentGroupReUse.open();' %>
       <span class='menu_bar'></span>
     <% end %>
     <%= link_to t(:download),
                 { controller: 'groups', action: 'download_grouplist',
                   id: @assignment.id } %>
     <span class='menu_bar'></span>
-    <%= link_to_function t('upload'), 'modal_upload.open();' %>
+    <%= link_to t('upload'), 'javascript:void(0);', onclick:'modal_upload.open();' %>
   </div>
 </div>
 
@@ -96,7 +97,7 @@
       <%= submit_tag t(:submit),
                      data: { disable_with: t(:working),
                              confirm: t('groups.delete_groups_linked') } %>
-      <%= button_to_function t(:cancel), 'modalAssignmentGroupReUse.close()' %>
+      <%= button_tag t(:cancel), onclick:'modalAssignmentGroupReUse.close()' %>
     </section>
   <% end %>
 </aside>
@@ -112,7 +113,7 @@
                        maxlength: 30 %>
     <section class='dialog-actions'>
       <%= submit_tag t('groups.create_new_group') %>
-      <%= button_to_function t(:cancel), 'modalCreate.close()' %>
+      <%= button_tag t(:cancel), onclick:'modalCreate.close()' %>
     </section>
   <% end %>
 </aside>
@@ -124,7 +125,7 @@
     <%= text_field_tag :new_groupname, '', maxlength: 30 %>
     <section class='dialog-actions'>
       <%= submit_tag t('groups.rename_group.title') %>
-      <%= button_to_function t(:cancel), 'modal_rename.close()' %>
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_rename.close();' />      
     </section>
   <% end %>
 </aside>
@@ -162,8 +163,7 @@
                      data: { disable_with: t(:uploading_please_wait) },
                      disabled: true,
                      id: 'upload' %>
-      <%= button_to_function t('cancel'),
-                             'modal_upload.close();' %>
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'/>      
     </section>
   <% end %>
 </aside>
