@@ -670,28 +670,28 @@ module AutomatedTestsHelper
 
     if !status
       #for debugging any errors in launch_test
-      # server_id = @test_server_id
-      # assignment = @assignment
-      # repo_dir = @repo_dir
-      # m_logger = MarkusLogger.instance
+      server_id = @test_server_id
+      assignment = @assignment
+      repo_dir = @repo_dir
+      m_logger = MarkusLogger.instance
 
 
-      # src_dir = File.join(repo_dir, assignment.repository_folder)
+      src_dir = File.join(repo_dir, assignment.repository_folder)
 
-      # # Get test_dir
-      # test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
+      # Get test_dir
+      test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
 
-      # # Get the name of the test server
-      # server = @list_of_servers[server_id]
+      # Get the name of the test server
+      server = @list_of_servers[server_id]
 
-      # # Get the directory and name of the test runner script
-      # test_runner = MarkusConfigurator.markus_ate_test_runner_script_name
+      # Get the directory and name of the test runner script
+      test_runner = MarkusConfigurator.markus_ate_test_runner_script_name
 
-      # # Get the test run directory of the files
-      # run_dir = MarkusConfigurator.markus_ate_test_run_directory
+      # Get the test run directory of the files
+      run_dir = MarkusConfigurator.markus_ate_test_run_directory
 
 
-      # m_logger.log("error with launching test, result: #{result} and status: #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver: #{server}\ntest_runner: #{test_runner}\nrun_dir: #{run_dir}",MarkusLogger::ERROR)
+      m_logger.log("error with launching test, result: #{result} and status: #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver: #{server}\ntest_runner: #{test_runner}\nrun_dir: #{run_dir}",MarkusLogger::ERROR)
 
       # TODO: handle this error better
       raise "error"
@@ -753,14 +753,16 @@ module AutomatedTestsHelper
     end
 
     # Securely copy source files, test files and test runner script to run_dir
-    stdout, stderr, status = Open3.capture3("scp -p -r '#{src_dir}' #{server}:#{run_dir}")
+    stdout, stderr, status = Open3.capture3("scp -p -r '#{src_dir}'/* #{server}:#{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
+
     stdout, stderr, status = Open3.capture3("scp -p -r '#{test_dir}' #{server}:#{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
+
     stdout, stderr, status = Open3.capture3("ssh #{server} cp #{test_runner} #{run_dir}")
     if !(status.success?)
       return [stderr, false]
@@ -773,9 +775,11 @@ module AutomatedTestsHelper
       arg_list = arg_list + "#{script.script_name.gsub(/\s/, "\\ ")} #{script.halts_testing} "
     end
 
+
     # Run script
     test_runner_name = File.basename(test_runner)
     stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ruby #{test_runner_name} #{arg_list}\"")
+
     if !(status.success?)
       return [stderr, false]
     else
@@ -789,7 +793,6 @@ module AutomatedTestsHelper
 
     # parse the xml doc
     doc = parser.parse
-
     @grouping = Grouping.find(grouping_id)
 
     repo = @grouping.group.repo
@@ -798,6 +801,7 @@ module AutomatedTestsHelper
 
     # find all the test_script nodes and loop over them
     test_scripts = doc.find('/testrun/test_script')
+
     test_scripts.each do |s_node|
       script_result = TestScriptResult.new
       script_result.grouping_id = grouping_id
@@ -814,7 +818,7 @@ module AutomatedTestsHelper
 
       # Find all the test scripts with this script_name.
       # There should be one and only one record - raise exception if not
-      test_script_array = TestScript.find_all_by_assignment_id_and_script_name(assignment_id, script_name)
+      test_script_array = TestScript.where(assignment:assignment_id, script_name: script_name)
       if test_script_array.length != 1
         # FIXME: better error message is required (use locale)
         raise "None or more than one test script is found for script name " + script_name
@@ -829,9 +833,17 @@ module AutomatedTestsHelper
 
       script_result.repo_revision = @revision_number
 
-      # save to database
-      script_result.save
+      # TODO: fix this - why is there a validation when this isn't even
+      # passed in...
+      script_result.submission_id = Submission.last.id
 
+      # save to database
+        if script_result.save
+          #great
+          raise "saved script result with id #{script_result.id}"
+        else
+          raise "could not save test-result #{script_result.errors.full_messages}"
+        end
       # find all the test nodes and loop over them
       tests = s_node.find('./test')
       tests.each do |t_node|
@@ -871,7 +883,13 @@ module AutomatedTestsHelper
         test_result.test_script_result_id = script_result.id
 
         # save to database
-        test_result.save
+        if test_result.save
+          raise "able to save test result with id #{test_result.id}"
+          #great
+        else
+          raise "could not save test-result #{test_result.errors.full_messages}"
+        end
+
       end
 
       # if a marks_earned tag exists under test_script tag, get the value;
@@ -882,7 +900,6 @@ module AutomatedTestsHelper
 
         script_result.save
       end
-
     end
   end
 
