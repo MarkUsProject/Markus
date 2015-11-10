@@ -96,18 +96,12 @@ class AutomatedTestsController < ApplicationController
   end
 
   def run_tests(grouping_id)
-    changed = 0
     begin
       AutomatedTestsHelper.request_a_test_run(grouping_id, 'request', @current_user)
       return nil
     rescue Exception => e
-      #TODO: shouldn't leak error if student.
-      # problem is that legitimate error messages to students are currently done through runtime errors :(
-      # if authorized?(Admin)
-        return e.message
-      # else
-      #   return "There was a problem running the test."
-      # end
+      #TODO: really shouldn't be leaking error if student.
+      return e.message
     end
   end
 
