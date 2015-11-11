@@ -6,22 +6,22 @@ class Ta < User
   CSV_UPLOAD_ORDER = USER_TA_CSV_UPLOAD_ORDER
   SESSION_TIMEOUT = USER_TA_SESSION_TIMEOUT
 
-  after_create :grant_repository_permissions
+  after_create  :grant_repository_permissions
   after_destroy :revoke_repository_permissions
-  after_update :maintain_repository_permissions
+  after_update  :maintain_repository_permissions
 
   has_many :criterion_ta_associations, dependent: :delete_all
 
   has_many :grade_entry_student_tas
   has_many :grade_entry_students, through: :grade_entry_student_tas
 
-  def get_num_assigned(assignment)
-    assignment.ta_memberships.where(user_id: id).size
+  def get_num_assigned(assignment, ta_id = id)
+    assignment.ta_memberships.where(user_id: ta_id).size
   end
 
-  def get_num_marked(assignment)
+  def get_num_marked(assignment, ta_id = id)
     n = 0
-    assignment.ta_memberships.where(user_id: id).each do |x|
+    assignment.ta_memberships.where(user_id: ta_id).each do |x|
       if x.grouping.marking_completed?
         n += 1
       end
@@ -29,9 +29,9 @@ class Ta < User
     n
   end
 
-  def get_num_annotations(assignment)
+  def get_num_annotations(assignment, ta_id = id)
     n = 0
-    assignment.ta_memberships.where(user_id: id).find_each do |x|
+    assignment.ta_memberships.where(user_id: ta_id).find_each do |x|
       # only grab annotations from groupings where marking is completed
       next unless x.grouping.marking_completed?
       x.grouping.submissions.each do |s|
@@ -72,25 +72,25 @@ class Ta < User
 
   def get_criterion_associations_count_by_assignment(assignment)
     assignment.criterion_ta_associations
-      .where(ta_id: id)
-      .count
+              .where(ta_id: id)
+              .count
   end
 
   def get_membership_count_by_assignment(assignment)
     memberships.where(groupings: { assignment_id: assignment.id })
-      .includes(:grouping)
-      .count
+               .includes(:grouping)
+               .count
   end
 
   def get_groupings_by_assignment(assignment)
     groupings.where(assignment_id: assignment.id)
-      .includes(:students, :tas, :group, :assignment)
+             .includes(:students, :tas, :group, :assignment)
   end
 
   def get_membership_count_by_grade_entry_form(grade_entry_form)
     grade_entry_students.where('grade_entry_form_id = ?', grade_entry_form.id)
-      .includes(:grade_entry_form)
-      .count
+                        .includes(:grade_entry_form)
+                        .count
   end
 
   def grade_distribution_array(assignment, intervals = 20)

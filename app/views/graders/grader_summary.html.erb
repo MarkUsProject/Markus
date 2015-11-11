@@ -14,10 +14,10 @@
   <div id='section'>
     <div style="text-align: center">
       <% @assignment.tas.each do |ta| %>
-        <div style="display:inline-block;">
-          <div id='assignment_<%= @assignment.id %>_ta_
-            <% ta.id %>_graph'>
-            <%= render partial: 'graders/ta_grade_distribution_graph', locals: { assignment: @assignment, ta: ta } %>
+        <div class='grader-summary-graph'>
+          <div id='assignment_<%= @assignment.id %>_ta_<% ta.id %>_graph'>
+            <%= render partial: 'graders/ta_grade_distribution_graph',
+                       locals: { assignment: @assignment, ta: ta } %>
           </div>
         </div>
       <% end %>

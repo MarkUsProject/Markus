@@ -1,32 +1,20 @@
-<style>
-  ::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 7px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background-color: rgba(0, 0, 0, .5);
-    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
-  }
-</style>
-
 <% if assignment.tas.empty? %>
-  <p class="grader_distribution"><%= I18n.t(:grader_distribution) %></p>
-  <%= link_to I18n.t(:assign_graders),
+  <p class="grader_distribution"><%= t(:grader_distribution) %></p>
+  <%= link_to t(:assign_graders),
               assignment_graders_path(assignment) %>
 <% else %>
-  <p class="grader_distribution"><%= I18n.t(:grader_distribution) %>
-    (<%= link_to t('graders.all_graders'), { :controller => "main", :action => "grader_summary",
-                                             :assignment => assignment.id }
+  <p class="grader_distribution"><%= t(:grader_distribution) %>
+    (<%= link_to t('graders.all_graders'), { controller: 'graders',
+                                             action: 'grader_summary',
+                                             assignment_id: assignment.id }
   %>)</p>
-  <div style="height:380px; overflow:scroll">
+  <div id="grader-right">
     <ul>
       <% assignment.tas.each do |ta| %>
         <li>
           <%= link_to "#{ta.first_name} #{ta.last_name}",
-                      { :controller => "tas", :action => "refresh_graph", :id => ta.id,
-                        :assignment => assignment.id },
+                      { controller: 'tas', action: 'refresh_graph', id: ta.id,
+                        assignment: assignment.id },
                       remote: true %>
           (<%= t('browse_submissions.how_many_marked_short',
                  num_marked: ta.get_num_marked(assignment),

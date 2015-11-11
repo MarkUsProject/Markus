@@ -90,22 +90,14 @@ class TasController < ApplicationController
     redirect_to action: 'index'
   end
 
-  private
-
-  def user_params
-    params.require(:user).permit(:user_name, :last_name, :first_name)
-  end
-
-  before_action :set_assignment_ta, only: [:refresh_graph]
-
-  def set_assignment_ta
+  def refresh_graph
     @assignment = Assignment.find(params[:assignment])
     @current_ta = Ta.find(params[:id])
   end
 
-  def refresh_graph
-    respond_to do |format|
-      format.js
-    end
+  private
+
+  def user_params
+    params.require(:user).permit(:user_name, :last_name, :first_name)
   end
 end

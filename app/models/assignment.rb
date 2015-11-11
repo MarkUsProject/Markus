@@ -756,6 +756,32 @@ class Assignment < ActiveRecord::Base
     groupings.select(&:has_submission?)
   end
 
+  # for an admin, we just want all the assignment groupings submitted
+  def get_num_assigned(assignment = self)
+    assignment.groupings.size
+  end
+
+  # for an admin, we want all the assignment groupings marked completed
+  def get_num_marked(assignment = self)
+    assignment.groupings.count(marking_completed: true)
+  end
+
+  def get_num_annotations(assignment = self)
+    assignment.groupings.map do |g|
+      g.current_submission_used.annotations.size if g.marking_completed?
+    end.compact.sum
+  end
+
+  def average_annotations(assignment = self)
+    num_marked = get_num_marked(assignment)
+    avg = 0
+    if num_marked != 0
+      num_annotations = get_num_annotations(assignment)
+      avg = num_annotations.to_f / num_marked
+    end
+    avg.round(2)
+  end
+
   private
 
   # Returns true if we are safe to set the repository name

@@ -165,16 +165,6 @@ class MainController < ApplicationController
     render :index, layout: 'content'
   end
 
-  def grader_summary
-    @current_user = current_user
-    if @current_user.student? || @current_user.ta?
-      redirect_to controller: 'assignments', action: 'index'
-      return
-    end
-    @assignment = Assignment.find(params[:assignment])
-    render :grader_summary, layout: 'content'
-  end
-
   def about
     # dummy action for remote rjs calls
     # triggered by clicking on the about icon
