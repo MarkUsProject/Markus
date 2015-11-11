@@ -35,16 +35,16 @@ class AutomatedTestsController < ApplicationController
 
     # Perform transaction, if errors, none of new config saved
     @assignment.transaction do
-
-      begin
-        # Process testing framework form for validation
-        @assignment = process_test_form(@assignment, params)
-        # rescue Exception, RuntimeError => e
-        #   @assignment.errors.add(:base, I18n.t("assignment.error",
-        #                                        :message => e.message))
-        #   render :manage
-        #   return
-      end
+      @assignment = process_test_form(@assignment, assignment_params)
+      # begin
+      #   # Process testing framework form for validation
+      #   @assignment = process_test_form(@assignment, params)
+      # rescue Exception, RuntimeError => e
+      #   @assignment.errors.add(:base, I18n.t("assignment.error",
+      #                                        :message => e.message))
+      #   render :manage
+      #   return
+      # end
 
       # Save assignment and associated test files
       if @assignment.save
@@ -199,9 +199,17 @@ class AutomatedTestsController < ApplicationController
 
   def assignment_params
     params.require(:assignment)
-          .permit(:enable_test,
-                  :assignment_id,
-                  test_files_attributes:
-                  [:id, :filename, :filetype, :is_private, :_destroy])
+        .permit(:enable_test,
+                :assignment_id,
+                :tokens_per_day,
+                :unlimited_tokens,
+                test_files_attributes:
+                    [:id, :filename, :filetype, :is_private, :_destroy],
+                test_scripts_attributes:
+                    [:assignment_id, :seq_num, :script_name, :description,
+                     :max_marks, :run_on_submission, :run_on_request,
+                     :halts_testing, :display_description, :display_run_status,
+                     :display_marks_earned, :display_input,
+                     :display_expected_output, :display_actual_output])
   end
 end

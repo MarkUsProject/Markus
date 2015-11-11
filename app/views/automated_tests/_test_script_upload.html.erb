@@ -1,9 +1,9 @@
 <div class="test_script">
-<% display_options = { 
-  I18n.t("automated_tests.script_option.display_option.display_after_submission") => "display_after_submission", 
+<% display_options = {
+  I18n.t("automated_tests.script_option.display_option.display_after_submission") => "display_after_submission",
   I18n.t("automated_tests.script_option.display_option.display_after_collection") => "display_after_collection",
   I18n.t("automated_tests.script_option.display_option.do_not_display") => "do_not_display"
-} # this is defined and used to validate input in test_script.rb 
+} # this is defined and used to validate input in test_script.rb
 %>
 
 <%= form.fields_for :test_scripts, test_script do |f| %>
@@ -25,7 +25,7 @@
     <%= link_to_function (saved ? '[+]' : '[-]'), "toggleSettings(this);", :class => "collapse" %>
   </legend>
 
-  <%= f.hidden_field :seq_num, :value => f.object.seq_num, :class => "seqnum" %>
+  <%= f.hidden_field :seq_num, :value => f.object.seq_num || 1.0, :class => "seqnum" %>
 
   <div class="settings_left_side">
     <div class="desc">
@@ -88,7 +88,7 @@
       <% if saved %>
         <span class="label">
           <%= link_to(t(:download),
-                      :action => 'download', 
+                      :action => 'download',
                       :assignment_id => @assignment.id,
                       :type => 'script',
                       :filename => f.object.script_name) %>
@@ -105,7 +105,7 @@
 
       <%= f.label :run_on_request, t("automated_tests.script_option.run_on_request") %>
       <%= f.check_box :run_on_request, :value => f.object.run_on_request %><br/>
-    
+
       <%= f.label :run_on_submission, t("automated_tests.script_option.run_on_submission") %>
       <%= f.check_box :run_on_submission, :value => f.object.run_on_submission %><br/>
 

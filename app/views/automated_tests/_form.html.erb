@@ -42,7 +42,7 @@
       <p><%= raw t("assignment.required_fields") %></p>
 
       <div id="test_scripts">
-        <% @assignment.test_scripts.sort_by(&:seq_num).each do |ts| %>
+        <% @assignment.test_scripts.each do |ts| %>
           <%= render partial: 'test_script_upload', locals: {test_script: ts, form: f} %>
         <% end %>
       </div>
