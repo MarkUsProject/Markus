@@ -21,7 +21,7 @@ class Ta < User
 
   def get_num_marked(assignment, ta_id = id)
     n = 0
-    assignment.ta_memberships.where(user_id: ta_id).each do |x|
+    assignment.ta_memberships.where(user_id: ta_id).find_each do |x|
       if x.grouping.marking_completed?
         n += 1
       end
