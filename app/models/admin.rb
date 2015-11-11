@@ -6,4 +6,5 @@ class Admin < User
   after_create  :grant_repository_permissions
   after_destroy :revoke_repository_permissions
   after_update  :maintain_repository_permissions
+
 end
