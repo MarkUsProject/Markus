@@ -5,9 +5,9 @@
 <div class='title_bar'>
   <h1>
     <%= t(:assignment_link,
-            short_id: @assignment.short_identifier,
-            description: @assignment.description) %> -
-    <%=t(:grader_distribution)%>
+          short_id: @assignment.short_identifier,
+          description: @assignment.description) %> -
+    <%= t(:grader_distribution) %>
   </h1>
 </div>
 <div class='wrapper'>
@@ -17,7 +17,7 @@
         <div style="display:inline-block;">
           <div id='assignment_<%= @assignment.id %>_ta_
             <% ta.id %>_graph'>
-            <%= render partial: 'graders/ta_grade_distribution_graph', locals: { assignment: @assignment, ta: ta, a:1 } %>
+            <%= render partial: 'graders/ta_grade_distribution_graph', locals: { assignment: @assignment, ta: ta } %>
           </div>
         </div>
       <% end %>
