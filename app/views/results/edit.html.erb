@@ -31,7 +31,6 @@
            handlers: [:erb] %>
 
 <script>
-//<![CDATA[
   var modalNotesGroup = null;
 
   jQuery(document).ready(function() {
@@ -62,7 +61,6 @@
   function check_working() {
     return '<%= t(:still_working_warning) %>';
   }
-//]]>
 </script>
 
 <% # Javascript for showing/hiding old marks %>
@@ -191,7 +189,7 @@
     <%= render partial: 'results/marker/marker_panes',
                locals: { extra_marks_points: @extra_marks_points,
                          extra_marks_percentage: @extra_marks_percentage,
-                         annotation_categories: 
+                         annotation_categories:
                            @assignment.annotation_categories,
                          result: @result,
                          assignment: @assignment,
