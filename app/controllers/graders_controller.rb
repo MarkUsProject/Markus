@@ -182,17 +182,11 @@ class GradersController < ApplicationController
         # If the instructor wants to skip empty submissions, remove those groups
         # from the list of grouping_ids to assign graders to
         if params[:skip_empty_submissions] == 'true'
-          found_empty_submission = false;
-          grouping_ids.each do |grouping_id|
-            submission = Submission.find_by_grouping_id(grouping_id)
-            if !submission || !SubmissionFile.where(submission_id: submission.id).exists?
-              grouping_ids.delete(grouping_id)
-              found_empty_submission = true;
-            end
-          end
+          @found_empty_submission = false;
+          grouping_ids = find_empty_submissions(grouping_ids)
         end
         assign_all_graders(grouping_ids, grader_ids)
-        if found_empty_submission == true
+        if @found_empty_submission == true
           render text: I18n.t('assignment.group.group_submission_no_files'), status: 200
         else
           head :ok
@@ -209,8 +203,16 @@ class GradersController < ApplicationController
         if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
+          if params[:skip_empty_submissions] == 'true'
+            @found_empty_submission = false;
+            grouping_ids = find_empty_submissions(grouping_ids)
+          end
           randomly_assign_graders(grouping_ids, grader_ids)
-          head :ok
+          if @found_empty_submission == true
+            render text: I18n.t('assignment.group.group_submission_no_files'), status: 200
+          else
+            head :ok
+          end
         end
       end
     when 'criteria_table'
@@ -301,5 +303,16 @@ class GradersController < ApplicationController
       membership.grouping.id
     end
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
+  end
+
+  def find_empty_submissions(grouping_ids)
+     grouping_ids.each do |grouping_id|
+      submission = Submission.find_by_grouping_id(grouping_id)
+      if !submission || !SubmissionFile.where(submission_id: submission.id).exists?
+        grouping_ids.delete(grouping_id)
+        @found_empty_submission = true;
+      end
+    end
+    return grouping_ids
   end
 end
