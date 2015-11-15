@@ -178,7 +178,7 @@ class GradersController < ApplicationController
       when 'assign'
         if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'),
-                 status: 400
+                status: 400
         end        
         if params[:skip_empty_submissions] == 'true'
           # If the instructor wants to skip empty submissions, remove those groups
@@ -209,7 +209,7 @@ class GradersController < ApplicationController
           end
           randomly_assign_graders(grouping_ids, grader_ids)
           if @found_empty_submission == true
-            render text: I18n.t('assignment.group.group_submission_no_files'), 
+            render text: I18n.t('assignment.group.group_submission_no_files'),
                    status: 200
           else
             head :ok
