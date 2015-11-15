@@ -179,11 +179,13 @@ class GradersController < ApplicationController
         if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
         end        
+        # If the instructor wants to skip empty submissions, remove those groups
+        # from the list of grouping_ids to assign graders to
         if params[:skip_empty_submissions] == 'true'
           found_empty_submission = false;
           grouping_ids.each do |grouping_id|
             submission = Submission.find_by_grouping_id(grouping_id)
-            if !SubmissionFile.where(submission_id: submission.id).exists?
+            if !submission || !SubmissionFile.where(submission_id: submission.id).exists?
               grouping_ids.delete(grouping_id)
               found_empty_submission = true;
             end
@@ -191,7 +193,7 @@ class GradersController < ApplicationController
         end
         assign_all_graders(grouping_ids, grader_ids)
         if found_empty_submission == true
-          render text: I18n.t('assignment.group.group_submission_no_files'), status: 400
+          render text: I18n.t('assignment.group.group_submission_no_files'), status: 200
         else
           head :ok
         end
