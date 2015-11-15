@@ -61,14 +61,13 @@ module SubmissionsHelper
             r.id == submission.remark_result_id
           end).first
         end
-        has_files = SubmissionFile.where(submission_id: submission.id).exists?
         final_due_date = assignment.submission_rule.get_collection_time
         g[:name] = grouping.get_group_name
         g[:id] = grouping.id
         g[:section] = grouping.section
         g[:tags] = grouping.tags
-        g[:has_files] = has_files
         g[:commit_date] = grouping.last_commit_date
+        g[:has_files] = grouping.has_files_in_submission
         g[:late_commit] = grouping.past_due_date?
         g[:name_url] = get_grouping_name_url(grouping, final_due_date, result)
         g[:class_name] = get_tr_class(grouping)
