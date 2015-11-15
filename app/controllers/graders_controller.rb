@@ -309,8 +309,9 @@ class GradersController < ApplicationController
   def find_empty_submissions(grouping_ids)
     grouping_ids.each do |grouping_id|
       submission = Submission.find_by_grouping_id(grouping_id)
-      if !submission || 
-         !SubmissionFile.where(submission_id: submission.id).exists?
+      if !submission
+        next
+      elsif !SubmissionFile.where(submission_id: submission.id).exists?
         grouping_ids.delete(grouping_id)
         @found_empty_submission = true
       end
