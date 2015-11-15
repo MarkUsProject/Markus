@@ -117,7 +117,6 @@ class AnnotationsController < ApplicationController
   end
 
   def update_annotation
-    return unless request.put?
     @content = params[:annotation_text][:content]
     @id = params[:annotation_text][:id]
     @submission_file_id = params[:annotation_text][:submission_file_id]
