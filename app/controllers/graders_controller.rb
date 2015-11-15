@@ -178,7 +178,7 @@ class GradersController < ApplicationController
       when 'assign'
         if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'),
-                status: 400
+                 status: 400
         end        
         if params[:skip_empty_submissions] == 'true'
           # If the instructor wants to skip empty submissions, remove those groups
