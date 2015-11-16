@@ -156,7 +156,7 @@ class GroupsController < ApplicationController
             invalid_lines_count = flash[:error].length
             flash[:notice] = I18n.t('csv.groups_added_msg',
                                     number_groups: lines - invalid_lines_count,
-                number_lines: invalid_lines_count)
+                                    number_lines: invalid_lines_count)
           end
         rescue CSV::MalformedCSVError
           flash[:error] = t('csv.upload.malformed_csv')
