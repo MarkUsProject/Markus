@@ -230,16 +230,20 @@
 
         <% if !@group.nil? %>
           <h3><%= t('student.group_options') %></h3>
-          <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? && @assignment.group_max > 1 %> 
+          <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? && @assignment.group_max > 1 %>
             <p class='information'>
               <%= t('student.working_alone') %>
             </p>
           <% end %>
 
           <% if !@grouping.nil? && @assignment.group_max > 1 %>
-            <p class='information'> <%= t('student.group_not_deletable') %> </p> 
+            <p class='information'> <%= t('student.group_not_deletable') %> </p>
           <% end %>
-            
+          <% if !@grouping.nil? && @assignment.group_max > 1 && @grouping.student_membership_number > 1 && @grouping.inviter == @current_user%>
+                      <%= button_tag "delete group1", onclick: remove_group_assignment_groups_path(grouping_id:@grouping.id, assignment_id:@assignment.id) %>
+                      <%= button_to "Delete Image", action: remove_group_assignment_groups_path(grouping_id:@grouping.id, assignment_id:@assignment.id), method: :delete %>
+          <% end %>
+
           <% # Student not reached the group max and is not working alone 
            if @grouping.inviter == @current_user &&
               @assignment.student_form_groups &&
@@ -247,7 +251,7 @@
               <% # Student has reached the group max and is not working alone 
                if @grouping.student_membership_number < @assignment.group_max &&
                   @group.group_name != @current_user.user_name %>
-                <%= button_to_function t(:invite), 'invite(); return false;' %>
+                <%= button_tag t(:invite), onclick: 'invite(); return false;' %>
               <% elsif @grouping.student_membership_number ==
                         @assignment.group_max &&
                         @group.group_name != @current_user.user_name %>
