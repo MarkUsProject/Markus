@@ -97,6 +97,21 @@
   }
 }
 
+.nested_files ul {
+  list-style-type: none;
+}
+
+.nested_files ul li ul {
+    display: none;
+    list-style-type: none;
+} 
+
+.nested_files a {
+    color: $dark-blue;
+    list-style-type: none;
+}
+
+
 .download_file {
   .inline_label {
     margin-left: 0.5em;

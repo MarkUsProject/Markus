@@ -17,7 +17,7 @@
            value='←'
            id='back_button'
            disabled>
-    <select id='select_file_id'
+<!--     <select id='select_file_id'
             name='select_file_id'
             onchange='bump_select("select_file_id", 0, "back_button", "next_button");'>
       <% if files.empty? %>
@@ -28,12 +28,58 @@
           <%= File.join(file.path, file.filename) %>
         </option>
       <% end %>
-    </select>
+    </select> -->
+
+
+    <div class="nested_files">
+      <ul>
+          <li>
+              <a>Outer Dir 1</a>
+              <ul>
+                  <a>Inner Dir</a>
+                  <ul>
+                      <li>File 1</li>  
+                      <li>File 2</li>          
+                  </ul>  
+                  <li>File X</li>  
+
+                  <a>Inner Dir 2</a>
+                  <ul>
+                      <li>File 3</li>  
+                      <li>File 4</li>          
+                  </ul> 
+                  <li>File Y </li>            
+              </ul>                
+          </li>
+          
+          <li>
+              <a>Outer Dir 2</a>
+              <ul>
+                  <li>File Z</li>      
+              </ul>                
+          </li>
+      </ul>
+    </div> 
+
+
+
+
     <input type='button'
            onclick='bump_select("select_file_id", 1, "back_button", "next_button"); return false;'
            value='→'
            id='next_button'>
   </div>
+
+
+
+
+  <script type="text/javascript">
+
+  jQuery('.nested_files a').click(function() {
+    jQuery(this).next().toggle();
+  });
+  </script>
+
 
   <div class='download_file'>
 
