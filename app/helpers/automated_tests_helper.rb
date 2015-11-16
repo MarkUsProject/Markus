@@ -8,27 +8,35 @@ module AutomatedTestsHelper
 
   def create_test_repo(assignment)
     # Create the automated test repository
-    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
-      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    unless File.exist?(MarkusConfigurator
+                            .markus_config_automated_tests_repository)
+      FileUtils.mkdir(MarkusConfigurator
+                          .markus_config_automated_tests_repository)
     end
 
-    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
-    if !(File.exists?(test_dir))
+    test_dir = File.join(MarkusConfigurator
+                             .markus_config_automated_tests_repository,
+                         assignment.short_identifier)
+    unless File.exist?(test_dir)
       FileUtils.mkdir(test_dir)
     end
   end
 
   def add_test_support_file_link(name, form)
     link_to_function name do |page|
-      test_support_file = render(:partial => 'test_support_file_upload',
-                                 :locals => {:form => form,
-                                             :test_support_file => TestSupportFile.new })
+      test_support_file = render(partial: 'test_support_file_upload',
+                                 locals: { form: form,
+                                           test_support_file:
+                                              TestSupportFile.new })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_support_file_id = new Date().getTime();
-          $('test_support_files').insert({bottom: "#{ escape_javascript test_support_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_support_file_id) });
+          $('test_support_files')
+          .insert({bottom: "#{escape_javascript test_support_file}"
+          .replace(/(attributes_\\d+|\\[\\d+\\])/g,
+                   new_test_support_file_id) });
         } else {
-          alert("#{I18n.t("automated_tests.add_test_support_file_alert")}");
+          alert("#{I18n.t('automated_tests.add_test_support_file_alert')}");
         }
       }
     end
@@ -38,8 +46,8 @@ module AutomatedTestsHelper
     link_to_function name do |page|
       test_file = render(partial: 'test_file',
                          locals: {form: form,
-                                     test_file: TestFile.new,
-                                     file_type: 'test'})
+                                  test_file: TestFile.new,
+                                  file_type: 'test' })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -56,8 +64,8 @@ module AutomatedTestsHelper
     link_to_function name do |page|
       test_file = render(partial: 'test_file',
                          locals: {form: form,
-                                     test_file: TestFile.new,
-                                     file_type: 'lib'})
+                                  test_file: TestFile.new,
+                                  file_type: 'lib' })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -74,8 +82,8 @@ module AutomatedTestsHelper
     link_to_function name do |page|
       test_file = render(partial: 'test_file',
                          locals: {form: form,
-                                     test_file: TestFile.new,
-                                     file_type: 'parse'})
+                                  test_file: TestFile.new,
+                                  file_type: 'parse' })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -94,7 +102,7 @@ module AutomatedTestsHelper
       @ant_build_file = TestFile.new
       @ant_build_file.assignment = assignment
       @ant_build_file.filetype = 'build.xml'
-      @ant_build_file.filename = 'tempbuild.xml'        # temporary placeholder for now
+      @ant_build_file.filename = 'tempbuild.xml' # temporary placeholder for now
       @ant_build_file.save(validate: false)
 
       @ant_build_prop = TestFile.new
@@ -104,9 +112,9 @@ module AutomatedTestsHelper
       @ant_build_prop.save(validate: false)
 
       # Setup Testing Framework repository
-      test_dir = File.join(
-                  MarkusConfigurator.markus_config_automated_tests_repository,
-                  assignment.short_identifier)
+      test_dir = File.join(MarkusConfigurator
+                               .markus_config_automated_tests_repository,
+                           assignment.short_identifier)
       FileUtils.makedirs(test_dir)
 
       assignment.reload
@@ -124,18 +132,18 @@ module AutomatedTestsHelper
     # Array for checking duplicate file names
     file_name_array = []
 
-    #add existing scripts names
-    params.each {|key, value| if(key[/test_script_\d+/] != nil) then file_name_array << value end}
+    # add existing scripts names
+    params.each do |key, value|
+      unless key[/test_script_\d+/].nil?
+        file_name_array << value
+      end
+    end
 
     # Retrieve all test scripts
-
-
     testscripts = params[:test_scripts_attributes]
 
-
-
     # First check for duplicate script names in test scripts
-    if !testscripts.nil?
+    unless testscripts.nil?
       testscripts.values.each do |tfile|
         if tfile['script_name'].respond_to?(:original_filename)
           fname = tfile['script_name'].original_filename
@@ -143,7 +151,7 @@ module AutomatedTestsHelper
           if !file_name_array.include?(fname)
             file_name_array << fname
           else
-            raise I18n.t("automated_tests.duplicate_filename") + fname
+            raise I18n.t('automated_tests.duplicate_filename') + fname
           end
         end
       end
@@ -153,7 +161,7 @@ module AutomatedTestsHelper
     testsupporters = params[:test_support_files_attributes]
 
     # Now check for duplicate file names in test support files
-    if !testsupporters.nil?
+    unless testsupporters.nil?
       testsupporters.values.each do |tfile|
         if tfile['file_name'].respond_to?(:original_filename)
           fname = tfile['file_name'].original_filename
@@ -168,7 +176,7 @@ module AutomatedTestsHelper
     end
 
     # Filter out script files that need to be created and updated
-    if !testscripts.nil?
+    unless testscripts.nil?
       testscripts.each_key do |key|
 
         tfile = testscripts[key]
@@ -178,9 +186,10 @@ module AutomatedTestsHelper
         # - If 'id' does not exist, this is a new test file
         tf_id = tfile['id']
 
-        # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
-        # Otherwise, this test file possibly requires an update
-        if tf_id != nil && tfile.size > 1
+        # If only the 'id' exists in the hash, other attributes were not updated
+        # so we skip this entry. Otherwise, this test file possibly requires an
+        # update
+        if !tf_id.nil? && tfile.size > 1
 
           # Find existing test file to update
           @existing_testscript = TestScript.find_by_id(tf_id)
@@ -198,9 +207,8 @@ module AutomatedTestsHelper
     end
 
     # Filter out test support files that need to be created and updated
-    if !testsupporters.nil?
+    unless testsupporters.nil?
       testsupporters.each_key do |key|
-
         tfile = testsupporters[key]
 
         # Check to see if this is an update or a new file:
@@ -208,9 +216,10 @@ module AutomatedTestsHelper
         # - If 'id' does not exist, this is a new test file
         tf_id = tfile['id']
 
-        # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
-        # Otherwise, this test file possibly requires an update
-        if tf_id != nil && tfile.size > 1
+        # If only the 'id' exists in the hash, other attributes were not updated
+        # so we skip this entry. Otherwise, this test file possibly requires an
+        # update
+        if !tf_id.nil? && tfile.size > 1
 
           # Find existing test file to update
           @existing_testsupport = TestSupportFile.find_by_id(tf_id)
@@ -269,19 +278,21 @@ module AutomatedTestsHelper
   # Export group repository for testing
   def export_repository(group, repo_dest_dir)
     # Create the test framework repository
-    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
-      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    unless File.exist?(MarkusConfigurator
+                           .markus_config_automated_tests_repository)
+      FileUtils.mkdir(MarkusConfigurator
+                          .markus_config_automated_tests_repository)
     end
 
-    # Delete student's assignment repository if it already exists
+    # Delete student's assignment repository if it already exist
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
-    if File.exists?(repo_dir)
+    if File.exist?(repo_dir)
       FileUtils.rm_rf(repo_dir)
     end
 
     return group.repo.export(repo_dest_dir)
-    rescue Exception => e
-      return "#{e.message}"
+  rescue StandardError => e
+    return "#{e.message}"
   end
 
   # Export configuration files for testing
@@ -306,16 +317,16 @@ module AutomatedTestsHelper
   # Delete test repository directory
   def delete_test_repo(group, repo_dest_dir)
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
-    # Delete student's assignment repository if it exists
-    if File.exists?(repo_dir)
+    # Delete student's assignment repository if it exist
+    if File.exist?(repo_dir)
       FileUtils.rm_rf(repo_dir)
     end
   end
 
   # Copy files needed for testing
   def copy_ant_files(assignment, repo_dest_dir)
-    # Check if the repository where you want to copy Ant files to exists
-    unless File.exists?(repo_dest_dir)
+    # Check if the repository where you want to copy Ant files to exist
+    unless File.exist?(repo_dest_dir)
       raise I18n.t('automated_tests.dir_not_exist', {dir: repo_dest_dir})
     end
 
@@ -327,13 +338,14 @@ module AutomatedTestsHelper
     # Move student's source files to the src repository
     pwd = FileUtils.pwd
     FileUtils.cd(repo_assignment_dir)
-    FileUtils.mv(Dir.glob('*'), File.join(repo_assignment_dir, 'src'), force: true )
+    FileUtils.mv(Dir.glob('*'), File.join(repo_assignment_dir, 'src'),
+                 force: true)
 
     # You always have to come back to your former working directory if you want to avoid errors
     FileUtils.cd(pwd)
 
     # Copy the build.xml, build.properties Ant Files and api_helpers (only one is needed)
-    if File.exists?(assignment_dir)
+    if File.exist?(assignment_dir)
       FileUtils.cp(File.join(assignment_dir, 'build.xml'), repo_assignment_dir)
       FileUtils.cp(File.join(assignment_dir, 'build.properties'), repo_assignment_dir)
       FileUtils.cp('lib/tools/api_helper.rb', repo_assignment_dir)
@@ -349,23 +361,23 @@ module AutomatedTestsHelper
         FileUtils.mkdir(repo_assignment_test_dir)
         # Copy all non-private tests over
         assignment.test_files
-                  .where(filetype: 'test', is_private: 'false')
-                  .each do |file|
+            .where(filetype: 'test', is_private: 'false')
+            .each do |file|
           FileUtils.cp(File.join(assignment_test_dir, file.filename), repo_assignment_test_dir)
         end
       else
-        if File.exists?(File.join(assignment_dir, 'test'))
+        if File.exist?(File.join(assignment_dir, 'test'))
           FileUtils.cp_r(File.join(assignment_dir, 'test'), File.join(repo_assignment_dir, 'test'))
         end
       end
 
       # Copy the lib folder
-      if File.exists?(File.join(assignment_dir, 'lib'))
+      if File.exist?(File.join(assignment_dir, 'lib'))
         FileUtils.cp_r(File.join(assignment_dir, 'lib'), repo_assignment_dir)
       end
 
       # Copy the parse folder
-      if File.exists?(File.join(assignment_dir, 'parse'))
+      if File.exist?(File.join(assignment_dir, 'parse'))
         FileUtils.cp_r(File.join(assignment_dir, 'parse'), repo_assignment_dir)
       end
     else
@@ -375,8 +387,8 @@ module AutomatedTestsHelper
 
   # Execute Ant which will run the tests against the students' code
   def run_ant_file(result, assignment, repo_dest_dir)
-    # Check if the repository where you want to copy Ant files to exists
-    unless File.exists?(repo_dest_dir)
+    # Check if the repository where you want to copy Ant files to exist
+    unless File.exist?(repo_dest_dir)
       raise I18n.t('automated_tests.dir_not_exist', {dir: repo_dest_dir})
     end
 
@@ -439,10 +451,10 @@ module AutomatedTestsHelper
     # Create TestResult object
     # (Build failures and errors will be logged and stored as well for diagnostic purposes)
     TestResult.create(filename: filename,
-      file_content: data,
-      submission_id: result.submission.id,
-      status: status,
-      user_id: @current_user.id)
+                      file_content: data,
+                      submission_id: result.submission.id,
+                      status: status,
+                      user_id: @current_user.id)
   end
 
   # Send output to parser(s) if any
@@ -947,7 +959,8 @@ end
 #   # before copying to the test server.
 #   def self.export_group_repo(group, repo_dir)
 #     # Create the automated test repository
-#     if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
+#     if !(File.exists?(MarkusConfigurator.
+#             markus_config_automated_tests_repository))
 #       FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
 #     end
 
