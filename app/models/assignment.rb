@@ -9,7 +9,7 @@ class Assignment < ActiveRecord::Base
 
   has_many :rubric_criteria,
            -> { order(:position) },
-           class_name: 'RubricCriterion', 
+           class_name: 'RubricCriterion',
 		   dependent: :destroy
 
   has_many :flexible_criteria,
@@ -394,7 +394,7 @@ class Assignment < ActiveRecord::Base
     # and no new group is created
     unless group.nil?
       duplicate_group_error = I18n.t('csv.group_name_already_exists',
-                                     { group_name: row[0] })
+                                     group_name: row[0])
       return duplicate_group_error
     end
 
@@ -404,14 +404,14 @@ class Assignment < ActiveRecord::Base
       if !errors[:groupings].blank?
         # groupings error set if a member is already in differnt group
         membership_error = I18n.t('csv.memberships_not_unique',
-                                  { group_name: row[0],
-                             student_user_name: errors.get(:groupings).first })
+                                  group_name: row[0],
+            student_user_name: errors.get(:groupings).first)
         errors.delete(:groupings)
       else
         # student_membership error set if a member does not exist
         membership_error = I18n.t('csv.member_does_not_exist',
-                                  { group_name: row[0],
-                    student_user_name: errors.get(:student_memberships).first })
+                                  group_name: row[0],
+            student_user_name: errors.get(:student_memberships).first)
         errors.delete(:student_memberships)
       end
       return membership_error
@@ -430,8 +430,8 @@ class Assignment < ActiveRecord::Base
     #  in the csv file, error is returned and the group is not created
     if repository_already_exists?(repo_name)
       repository_error = I18n.t('csv.repository_already_exists',
-                                { group_name: row[0],
-                                   repo_path: errors.get(:repo_name).last })
+                                group_name: row[0],
+          repo_path: errors.get(:repo_name).last)
       errors.delete(:repo_name)
       return repository_error
     end
@@ -820,7 +820,7 @@ class Assignment < ActiveRecord::Base
   def membership_unique?(row)
     start_index_group_members = 2 # index where student names start in the row
     (start_index_group_members..(row.length - 1)).each do |i|
-      student = Student.where(user_name: row[i]).first
+      student = Student.find_by user_name: row[i]
       if student
         unless student.accepted_grouping_for(id).nil?
           errors.add(:groupings, student.user_name)

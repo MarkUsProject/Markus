@@ -133,6 +133,7 @@ class GroupsController < ApplicationController
       # really bad happens.
       ActiveRecord::Base.transaction do
         file = file.utf8_encode(encoding)
+        lines = 0
         begin
           # Loop over each row, which lists the members to be added to the group.
           CSV.parse(file).each_with_index do |row, line_nr|
@@ -147,13 +148,15 @@ class GroupsController < ApplicationController
               flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
                 { line_number: line_nr + 1 }) + " #{e.message}")
             end
+            lines = line_nr + 1
           end
           @assignment.reload # Need to reload to get newly created groupings
           number_groupings_added = @assignment.groupings.length
           if number_groupings_added > 0 && flash[:error].is_a?(Array)
             invalid_lines_count = flash[:error].length
-            flash[:notice] = I18n.t('csv.groups_added_msg', { number_groups:
-              number_groupings_added, number_lines: invalid_lines_count })
+            flash[:notice] = I18n.t('csv.groups_added_msg',
+                                    number_groups: lines - invalid_lines_count,
+                number_lines: invalid_lines_count)
           end
         rescue CSV::MalformedCSVError
           flash[:error] = t('csv.upload.malformed_csv')
