@@ -567,6 +567,7 @@ class Assignment < ActiveRecord::Base
         if grouping.nil? || !grouping.has_submission?
           # No grouping/no submission
           final_result.push('')                         # total percentage
+          final_result.push('0')                        # total_grade
           rubric_criteria.each do |rubric_criterion|
             final_result.push('')                       # mark
             final_result.push(rubric_criterion.weight)  # weight
@@ -576,6 +577,7 @@ class Assignment < ActiveRecord::Base
         else
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
+          final_result.push(submission.get_latest_result.total_mark)
           rubric_criteria.each do |rubric_criterion|
             mark = submission.get_latest_result
                              .marks
@@ -619,6 +621,7 @@ class Assignment < ActiveRecord::Base
         if grouping.nil? || !grouping.has_submission?
           # No grouping/no submission
           final_result.push('')                 # total percentage
+          final_result.push('0')                # total_grade
           flexible_criteria.each do |criterion| ##  empty criteria
             final_result.push('')               # mark
             final_result.push(criterion.max)    # out-of
@@ -630,6 +633,7 @@ class Assignment < ActiveRecord::Base
           # and a submission.
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
+          final_result.push(submission.get_latest_result.total_mark)
           flexible_criteria.each do |criterion|
             mark = submission.get_latest_result
                              .marks
