@@ -100,9 +100,12 @@ class Result < ActiveRecord::Base
   end
 
   def check_for_nil_marks
-    # Check that the marking state is not no mark is nil or
-    if marks.where(mark: nil).first &&
-          marking_state == Result::MARKING_STATES[:complete]
+    num_criteria = submission.assignment.rubric_criteria.count +
+                   submission.assignment.flexible_criteria.count
+    # Check that the marking state is incomplete or all marks are entered
+    if (marks.find_by(mark: nil) || marks.count != num_criteria) &&
+       marking_state == Result::MARKING_STATES[:complete]
+
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))
       return false
     end

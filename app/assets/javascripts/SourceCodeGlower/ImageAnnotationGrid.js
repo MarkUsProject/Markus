@@ -119,6 +119,10 @@ ImageAnnotationGrid.prototype.add_to_grid = function(extracted_coords) {
 ImageAnnotationGrid.prototype.remove_annotation = function(unused_param1, unused_param2, annotation_text_id) {
   if (this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
     this.getAnnotationTextManager().removeAnnotationText(annotation_text_id);
+    var holder = document.getElementById('annotation_holder_' + annotation_text_id);
+    if (holder != null) {
+      holder.parentElement.removeChild(holder);
+    }
   }
 
   var annot_grid = this.get_annotation_grid();

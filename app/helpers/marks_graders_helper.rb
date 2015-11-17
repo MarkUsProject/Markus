@@ -17,7 +17,7 @@ module MarksGradersHelper
     students.map do |student|
       s = student.attributes
       s[:graders] = lookup_graders_for_student(student, grade_entry_form)
-
+      s[:section_name] = student.has_section? ? student.section.name : nil
       s
     end
   end

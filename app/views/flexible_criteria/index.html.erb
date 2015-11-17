@@ -9,16 +9,24 @@
     <%= t('flexible_criteria.criteria_management', identifier: @assignment.short_identifier) %>
   </h1>
   <div class='heading_buttons'>
-    <%= link_to_function t('add_criterion'), %| if($('new_flexible_criterion') != null) {
-          $('flexible_criterion_flexible_criterion_name').select();
-          $('flexible_criterion_flexible_criterion_name').focus();
+    <%= link_to t('add_criterion'), 
+          'javascript:void(0);',
+          onclick: "if(document.getElementById('new_flexible_criterion') != null) {
+          document.getElementById('new_flexible_criterion_prompt').focus();
         } else {
-        #{remote_function url: {action: 'new', id: @assignment.id}, method: 'get'}
-        }|%>
+          jQuery.ajax({
+            url: '" +new_assignment_flexible_criterium_path(@assignment.id) + "',
+            type: 'GET'
+          });
+        }"%>
     <span class='menu_bar'></span>
-    <%= link_to_function t('upload'), 'modal_upload.open();' %>
+    <%= link_to t('upload'), 
+                'javascript:void(0);',
+                onclick: 'modal_upload.open();' %>
     <span class='menu_bar'></span>
-    <%= link_to_function t('download'), 'modal_download.open();' %>
+    <%= link_to t('download'),
+                'javascript:void(0);',
+                onclick: 'modal_download.open();' %>
   </div>
 </div>
 

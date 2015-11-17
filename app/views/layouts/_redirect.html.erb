@@ -2,7 +2,7 @@
   <%= form_tag do %>
     <p><strong><%= I18n.t(:session_expired)%></strong></p>
     <br>
-    <%= button_to_function I18n.t(:log_in), 'redirectToLogin()' %>
-    <%= button_to_function I18n.t(:cancel), 'redirect_modal.close()' %>
+    <%= button_tag I18n.t(:log_in), onclick: 'redirectToLogin()' %>
+    <%= button_tag I18n.t(:cancel), onclick: 'redirect_modal.close()' %>
   <% end %>
 </div>

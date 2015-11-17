@@ -1,7 +1,6 @@
 <canvas id='assignment_<%= assignment.id %>' width='400' height='350'></canvas>
 
 <script>
-//<![CDATA[
   // Set up graph
   var ctx = document.getElementById('assignment_<%= assignment.id %>').getContext('2d');
 
@@ -23,5 +22,4 @@
 
   // Draw it
   new Chart(ctx).Bar(data, options);
-//]]>
 </script>

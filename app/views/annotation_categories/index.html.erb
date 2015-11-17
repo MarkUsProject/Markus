@@ -17,12 +17,17 @@
     <% path = add_annotation_category_assignment_annotation_categories_path(
                 id: @assignment.id) %>
 
-    <%= link_to_function t('annotations.add_annotation_category'),
-                         "add_annotation_category('#{path}')" %>
+    <%= link_to t('annotations.add_annotation_category'),
+                'javascript:void(0);',
+                 onclick:"add_annotation_category('#{path}')" %>
     <span class='menu_bar'></span>
-    <%= link_to_function t('download'), 'modal_download.open();' %>
+    <%= link_to t('download'),
+                'javascript:void(0);',
+                onclick:'modal_download.open();' %>
     <span class='menu_bar'></span>
-    <%= link_to_function t('upload'), 'modal_upload.open();' %>
+    <%= link_to t('upload'),
+                'javascript:void(0);',
+                onclick:'modal_upload.open();' %>
   </div>
 </div>
 

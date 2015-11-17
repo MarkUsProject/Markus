@@ -11,12 +11,17 @@
    </tbody>
    <tbody>
      <tr>
-       <td colspan="3"><%= link_to_function I18n.t("marker.marks.add_extra_mark"), %| if($('add_extra_mark_prompt') != null) {
-          $('add_extra_mark_prompt').down('input').select();
-          $('add_extra_mark_prompt').down('input').focus();
-        } else {
-        #{remote_function url: {action: "add_extra_mark", id: result_id}, method: 'get'}
-        }|%>
+       <td colspan="3">
+         <%= link_to I18n.t("marker.marks.add_extra_mark"),
+               'javascript:void(0);',
+               onclick: "if (document.getElementById('add_extra_mark_prompt') != null) {
+                 document.getElementById('add_extra_mark_prompt').down('input').focus();
+               } else {
+                 jQuery.ajax({
+                   url: '" + add_extra_mark_assignment_submission_result_path + "',
+                   type: 'GET'
+                 });
+               }"%>
         </td>
      </tr>
    </tbody>

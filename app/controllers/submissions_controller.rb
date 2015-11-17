@@ -83,7 +83,8 @@ class SubmissionsController < ApplicationController
       rescue Exception
         revision = nil
       end
-      if revision && !revision.changed_files_at_path(assign_path).empty?
+      if revision && (!revision.changed_files_at_path(assign_path).empty? ||
+                      !revision.changed_filenames_at_path(assign_path).empty?)
         @revisions_history << { num: revision.revision_number,
                                 date: revision.timestamp }
         unless params[:revision_number] || params[:revision_timestamp]
