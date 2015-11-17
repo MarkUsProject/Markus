@@ -1,12 +1,10 @@
 <% content_for :head do %>
-
   <%= render partial: 'marks_graders_actions', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'marks_grader_table', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'marks_graders_student_table', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'marks_graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 
   <script>
-  //<![CDATA[
     var modalCreate = null;
     var modalAssignmentGroupReUse = null;
     var modalRenameGroup = null;
@@ -19,7 +17,6 @@
       modalUpload   = new ModalMarkus('#upload_dialog');
       modalDownload = new ModalMarkus('#download_dialog');
     });
-  //]]>
   </script>
 <% end %>
 

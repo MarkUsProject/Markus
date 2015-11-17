@@ -1,5 +1,4 @@
 <script>
-//<![CDATA[
   var invite_modal = null;
 
   function invite() {
@@ -11,7 +10,6 @@
   jQuery(document).ready(function() {
     invite_modal = new ModalMarkus('#invite_dialog');
   });
-//]]>
 </script>
 
 <div class='title_bar'>
@@ -64,7 +62,7 @@
       <h2><%= t('student.group_information') %></h2>
 
       <div class='block_content'>
-        <% # If student has no group, inform them 
+        <% # If student has no group, inform them
         if @grouping.nil? %>
           <p class='notice'>
             <%= t('student.no_group_yet') %>
@@ -230,21 +228,21 @@
 
         <% if !@group.nil? %>
           <h3><%= t('student.group_options') %></h3>
-          <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? && @assignment.group_max > 1 %> 
+          <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? && @assignment.group_max > 1 %>
             <p class='information'>
               <%= t('student.working_alone') %>
             </p>
           <% end %>
 
           <% if !@grouping.nil? && @assignment.group_max > 1 %>
-            <p class='information'> <%= t('student.group_not_deletable') %> </p> 
+            <p class='information'> <%= t('student.group_not_deletable') %> </p>
           <% end %>
-            
-          <% # Student not reached the group max and is not working alone 
+
+          <% # Student not reached the group max and is not working alone
            if @grouping.inviter == @current_user &&
               @assignment.student_form_groups &&
               !@assignment.past_collection_date? %>
-              <% # Student has reached the group max and is not working alone 
+              <% # Student has reached the group max and is not working alone
                if @grouping.student_membership_number < @assignment.group_max &&
                   @group.group_name != @current_user.user_name %>
                 <%= button_tag t(:invite), onclick: 'invite(); return false;' %>
