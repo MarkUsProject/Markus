@@ -34,7 +34,7 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
       penalty.extra_mark = -penalty_amount
       penalty.unit = ExtraMark::PERCENTAGE
 
-      penalty.description = I18n.t 'submission_rules.penalty_decay_period_submission_rule.extramark_description', overtime_hours: overtime_hours, penalty_amount: penalty_amount
+      penalty.description = I18n.t 'submission_rules.penalty_decay_period_submission_rule.extramark_description', overtime_hours: overtime_hours.round(2), penalty_amount: penalty_amount
       penalty.save
     end
 
@@ -71,7 +71,7 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
       if overtime_hours / interval < 1
         total_penalty = total_penalty + deduction
       else
-        total_penalty = total_penalty + (overtime_hours/interval).to_i * deduction
+        total_penalty = total_penalty + (overtime_hours/interval).to_f * deduction
       end
       overtime_hours = overtime_hours - period.hours
       break if overtime_hours <= 0
