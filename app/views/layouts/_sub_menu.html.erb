@@ -236,9 +236,9 @@
         </li>
         <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
           <%= link_to I18n.t("automated_tests.title"),
-                      :controller => 'automated_tests',
-                      :action => 'student_interface',
-                      :id => @assignment.id %>
+                      controller: 'automated_tests',
+                      action:'student_interface',
+                      id: @assignment.id %>
         </li>
       <% end %>
     </ul>

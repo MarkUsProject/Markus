@@ -36,16 +36,6 @@ class AutomatedTestsController < ApplicationController
     # Perform transaction, if errors, none of new config saved
     @assignment.transaction do
       @assignment = process_test_form(@assignment, assignment_params)
-      begin
-        # Process testing framework form for validation
-        @assignment = process_test_form(@assignment, params)
-      rescue Exception, RuntimeError => e
-        @assignment.errors.add(:base, I18n.t("assignment.error",
-                                             :message => e.message))
-        render :manage
-        return
-      end
-
       # Save assignment and associated test files
       if @assignment.save
         flash[:success] = I18n.t("assignment.update_success")
