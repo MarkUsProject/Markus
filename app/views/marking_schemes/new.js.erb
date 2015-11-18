@@ -17,10 +17,3 @@ jQuery('html, body').animate({
   scrollTop: jQuery('.new-ms').offset().top
 }, 1000);
 
-// Avoid any non-numbers in the weight field
-jQuery("input[id^='marking_scheme_marking_weights_attributes_']").keypress(function(key) {
-  if (key.keyCode !== 9 && key.charCode !== 46 &&
-      (key.charCode < 48 || key.charCode > 57)) {
-    return false;
-  }
-});

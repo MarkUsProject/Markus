@@ -97,5 +97,8 @@ class MarkingSchemesController < ApplicationController
 
   def destroy
     MarkingScheme.find(params['id']).destroy
+    @assignments = Assignment.all
+    @grade_entry_forms = GradeEntryForm.all
+    render :index
   end
 end
