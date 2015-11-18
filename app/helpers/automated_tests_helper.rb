@@ -583,6 +583,7 @@ module AutomatedTestsHelper
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @assignment.short_identifier)
     src_dir = @repo_dir
     assign_dir = @repo_dir + "/" + @assignment.repository_folder
+
     if !(File.exists?(test_dir))
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t("automated_tests.test_files_unavailable")
@@ -657,22 +658,22 @@ module AutomatedTestsHelper
     @group = @grouping.group
     @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
 
-    @list_of_servers = MarkusConfigurator.markus_ate_test_server_hosts.split(' ')
+    # @list_of_servers = MarkusConfigurator.markus_ate_test_server_hosts.split(' ')
 
-    while true
-      @test_server_id = choose_test_server()
-      if @test_server_id >= 0
-        break
-      else
-        sleep 5               # if no server is available, sleep for 5 second before it checks again
-      end
-    end
+    # while true
+    #   @test_server_id = choose_test_server()
+    #   if @test_server_id >= 0
+    #     break
+    #   else
+    #     sleep 5               # if no server is available, sleep for 5 second before it checks again
+    #   end
+    # end
 
-    result, status = launch_test(@test_server_id, @assignment, @repo_dir, call_on)
+    stderr, result, status = launch_test(@assignment, @repo_dir, call_on)
 
     if !status
       #for debugging any errors in launch_test
-      server_id = @test_server_id
+      # server_id = @test_server_id
       assignment = @assignment
       repo_dir = @repo_dir
       m_logger = MarkusLogger.instance
@@ -684,7 +685,8 @@ module AutomatedTestsHelper
       test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
 
       # Get the name of the test server
-      server = @list_of_servers[server_id]
+      # server = @list_of_servers[server_id]
+      server = 'localhost'
 
       # Get the directory and name of the test runner script
       test_runner = MarkusConfigurator.markus_ate_test_runner_script_name
@@ -693,7 +695,7 @@ module AutomatedTestsHelper
       run_dir = MarkusConfigurator.markus_ate_test_run_directory
 
 
-      m_logger.log("error with launching test, result: #{result} and status: #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver: #{server}\ntest_runner: #{test_runner}\nrun_dir: #{run_dir}",MarkusLogger::ERROR)
+      m_logger.log("error with launching test, error: #{stderr} and status: #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver: #{server}\ntest_runner: #{test_runner}\nrun_dir: #{run_dir}",MarkusLogger::ERROR)
 
       # TODO: handle this error better
       raise "error"
@@ -705,52 +707,40 @@ module AutomatedTestsHelper
 
   # Launch the test on the test server by scp files to the server
   # and run the script.
-  # This function returns two values: first one is the output from
-  # stdout or stderr, depending on whether the execution passed or
-  # had error; the second one is a boolean variable, true => execution
-  # passeed, false => error occurred.
-  def self.launch_test(server_id, assignment, repo_dir, call_on)
-    # Get src_dir
-    src_dir = File.join(repo_dir, assignment.repository_folder)
+  # This function returns three values:
+  # stderr
+  # stdout
+  # boolean indicating whether execution suceeeded
+  def self.launch_test(assignment, repo_path, call_on)
+    submission_path = File.join(repo_path, assignment.repository_folder)
+    assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
+    server = 'localhost'
 
-    # Get test_dir
-    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
+    test_harness_path = MarkusConfigurator.markus_ate_test_runner_script_name
 
-    # Get the name of the test server
-    server = @list_of_servers[server_id]
+    # Where to run the tests
+    test_box_path = MarkusConfigurator.markus_ate_test_run_directory
 
-    # Get the directory and name of the test runner script
-    test_runner = MarkusConfigurator.markus_ate_test_runner_script_name
-
-    # Get the test run directory of the files
-    run_dir = MarkusConfigurator.markus_ate_test_run_directory
-
-    # Delete the test run directory to remove files from previous test
-    stdout, stderr, status = Open3.capture3("ssh #{server} rm -rf #{run_dir}")
-    if !(status.success?)
-      return [stderr, false]
+    # Create clean folder to execute tests
+    stdout, stderr, status = Open3.capture3("ssh #{server} \"rm -rf #{test_box_path} && mkdir #{test_box_path}\"")
+    if !status.success?
+      return [stderr, stdout, status]
     end
 
-    # Recreate the test run directory
-    stdout, stderr, status = Open3.capture3("ssh #{server} mkdir #{run_dir}")
-    if !(status.success?)
-      return [stderr, false]
+    # Securely copy student's submission, test files and test harness script to test_box_path
+    stdout, stderr, status = Open3.capture3("scp -p -r '#{submission_path}'/* #{server}:#{test_box_path}")
+    if !status.success?
+      return [stderr, stdout, status]
     end
 
-    # Securely copy source files, test files and test runner script to run_dir
-    stdout, stderr, status = Open3.capture3("scp -p -r '#{src_dir}'/* #{server}:#{run_dir}")
-    if !(status.success?)
-      return [stderr, false]
+    stdout, stderr, status = Open3.capture3("scp -p -r '#{assignment_tests_path}'/* #{server}:#{test_box_path}")
+    if !status.success?
+      return [stderr, stdout, status]
     end
 
-    stdout, stderr, status = Open3.capture3("scp -p -r '#{test_dir}' #{server}:#{run_dir}")
-    if !(status.success?)
-      return [stderr, false]
-    end
-
-    stdout, stderr, status = Open3.capture3("ssh #{server} cp #{test_runner} #{run_dir}")
-    if !(status.success?)
-      return [stderr, false]
+    stdout, stderr, status = Open3.capture3("ssh #{server} cp #{test_harness_path} #{test_box_path}")
+    if !status.success?
+      return [stderr, stdout, status]
     end
 
     # Find the test scripts for this test run, and parse the argument list
@@ -762,15 +752,21 @@ module AutomatedTestsHelper
 
 
     # Run script
-    test_runner_name = File.basename(test_runner)
-    stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ruby #{test_runner_name} #{arg_list}\"")
+    test_harness_name = File.basename(test_harness_path)
+    stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{test_box_path}; ruby #{test_harness_name} #{arg_list}\"")
 
     if !(status.success?)
-      return [stderr, false]
+      return [stderr, stdout, false]
     else
-      return [stdout, true]
+      test_results_path = "#{AUTOMATED_TESTS_REPOSITORY}/test_runs/test_run_#{Time.now.to_i}"
+      FileUtils.mkdir_p(test_results_path)
+      File.write("#{test_results_path}/output.txt", stdout)
+      File.write("#{test_results_path}/error.txt", stderr)
+      return [stdout, stdout, true]
     end
+  end
 
+  def self.process_result(result, grouping_id, assignment_id)
   end
 
 end
