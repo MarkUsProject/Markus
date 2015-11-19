@@ -2,10 +2,10 @@
 <%= javascript_include_tag "livepipe/livepipe.js",
   "livepipe/window.js" %>
 
-  <% # HTML for Student Testing Interface %> 
+  <% # HTML for Student Testing Interface %>
 <div class="block">
   <h2><%= I18n.t("automated_tests.title") %></h2>
-  
+
   <% if flash[:failure] && !flash[:failure].empty? %>
     <div class="notice">
       <%=flash[:failure]%>
@@ -55,11 +55,10 @@
       <% if @assignment.unlimited_tokens || (!@token.nil? && @token.tokens > 0) %>
         <h3><%= I18n.t("automated_tests.run_tests") %></h3>
         <% if @grouping.assignment.submission_rule.can_collect_now? %>
-          <%= I18n.t("automated_tests.due_date_is_passed") %>
+          <p><%= t('automated_tests.due_date_is_passed') %></p>
           <br />
         <% else %>
-          <%= I18n.t("automated_tests.need_one_file") %>
-          <br />
+          <p><%= raw t('automated_tests.need_one_file') %></p>
           <br />
           <%= link_to I18n.t("automated_tests.run_tests"), {:controller => 'automated_tests', :action => 'student_interface', :id => @assignment.id, :grouping_id => @grouping.id , :revision_number => @revision_number, :run_tests => true}, :class => "button"%>
           <br />
@@ -74,12 +73,12 @@
 	  <h2><%= I18n.t("automated_tests.test_results") %></h2>
 	  <br />
 	  <div class="sub_block">
-	  	<%= raw ( I18n.t("automated_tests.marks_obtained", 
+	  	<%= raw ( I18n.t("automated_tests.marks_obtained",
 	   	          	      :marking => "#{@grouping.get_total_test_script_marks * 1.0} / #{@assignment.total_ror_script_marks * 1.0}" ) ) %>
 	  </div>
 	  <div id="test_results" class="sub_block">
-		  <% test_script_results = TestScriptResult.order("created_at DESC").find_all_by_grouping_id(@grouping.id) %>
-		
+		  <% test_script_results = TestScriptResult.order(created_at: :desc).where(grouping: @grouping) %>
+
 		  <ul>
 		  <% test_script_results.each do |ts_result| %>
 		  	<% test_script = TestScript.find(ts_result.test_script_id) %>
@@ -89,9 +88,9 @@
 		  	  <li><%= I18n.t("automated_tests.marks_earned") %> <%= ts_result.marks_earned %></li>
 		  	  <li><%= I18n.t("automated_tests.date_run") %> <%= ts_result.created_at.strftime("%F %R") %></li>
 		  	  <li><%= I18n.t("automated_tests.revision_used") %> <%= ts_result.repo_revision.to_i %></li>
-		   	  <% test_results = TestResult.where(:grouping_id => ts_result.grouping_id, 
-		   	                                     :test_script_id => ts_result.test_script_id, 
-		   	                                     :test_script_result_id => ts_result.id) %>
+		   	  <% test_results = TestResult.where(grouping_id: ts_result.grouping_id,
+		   	                                     test_script_id: ts_result.test_script_id,
+		   	                                     test_script_result_id: ts_result.id) %>
 		  	  <% test_results.each do |t_result| %>
 		 	      <li><%= I18n.t("automated_tests.test_name") %> <%= t_result.name %></li>
 		   	    <ul>

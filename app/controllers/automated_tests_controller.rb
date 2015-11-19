@@ -36,16 +36,6 @@ class AutomatedTestsController < ApplicationController
     # Perform transaction, if errors, none of new config saved
     @assignment.transaction do
       @assignment = process_test_form(@assignment, assignment_params)
-      # begin
-      #   # Process testing framework form for validation
-      #   @assignment = process_test_form(@assignment, params)
-      # rescue Exception, RuntimeError => e
-      #   @assignment.errors.add(:base, I18n.t("assignment.error",
-      #                                        :message => e.message))
-      #   render :manage
-      #   return
-      # end
-
       # Save assignment and associated test files
       if @assignment.save
         flash[:success] = I18n.t("assignment.update_success")
@@ -96,11 +86,11 @@ class AutomatedTestsController < ApplicationController
   end
 
   def run_tests(grouping_id)
-    changed = 0
     begin
       AutomatedTestsHelper.request_a_test_run(grouping_id, 'request', @current_user)
       return nil
     rescue Exception => e
+      #TODO: really shouldn't be leaking error if student.
       return e.message
     end
   end
