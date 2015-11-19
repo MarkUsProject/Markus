@@ -487,12 +487,7 @@ module AutomatedTestsHelper
     output
   end
 
-
-
-
-
-
-  def AutomatedTestsHelper.request_a_test_run(grouping_id, call_on, current_user)
+  def self.request_a_test_run(grouping_id, call_on, current_user)
     @current_user = current_user
     #@submission = Submission.find(submission_id)
     @grouping = Grouping.find(grouping_id)
@@ -513,7 +508,7 @@ module AutomatedTestsHelper
   # before copying to the test server.
   def self.export_group_repo(group, repo_dir)
     # Create the automated test repository
-    if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
+    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
       FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
     end
 
@@ -522,13 +517,10 @@ module AutomatedTestsHelper
 
     # export
     return group.repo.export(repo_dir)
-    rescue Exception => e
-      return "#{e.message}"
   end
 
-  # Delete repository directory
+  # Delete student's assignment repository if it already exists
   def self.delete_repo(repo_dir)
-    # Delete student's assignment repository if it already exists
     if File.exists?(repo_dir)
       FileUtils.rm_rf(repo_dir)
     end
@@ -545,32 +537,29 @@ module AutomatedTestsHelper
 
     # If the test run is requested at collection (by Admin or TA),
     # All of the test scripts should be run.
-    if call_on == "collection"
+    if call_on == 'collection'
       list_run_scripts = all_scripts
     else
       # If the test run is requested at submission or upon request,
       # verify the script is allowed to run.
       all_scripts.each do |script|
-        if (call_on == "submission") && script.run_on_submission
+        if call_on == 'submission' && script.run_on_submission
           list_run_scripts.insert(list_run_scripts.length, script)
-        elsif (call_on == "request") && script.run_on_request
+        elsif call_on == 'request' && script.run_on_request
           list_run_scripts.insert(list_run_scripts.length, script)
         end
       end
     end
 
     # sort list_run_scripts using ruby's in place sorting method
-    list_run_scripts.sort_by! {|script| script.seq_num}
-
-    return list_run_scripts
+    list_run_scripts.sort_by! &:seq_num
+    list_run_scripts
   end
 
   # Request an automated test. Ask Resque to enqueue a job.
   def self.async_test_request(grouping_id, call_on)
-    if files_available?
-      if has_permission?
-        Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on)
-      end
+    if files_available? &&
+      Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on)
     end
   end
 
@@ -579,44 +568,44 @@ module AutomatedTestsHelper
   # Note: this does not guarantee all required files are presented.
   # Instead, it checks if there is at least one test script and
   # source files are successfully exported.
-  def self.files_available?()
+  def self.files_available?
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @assignment.short_identifier)
     src_dir = @repo_dir
-    assign_dir = @repo_dir + "/" + @assignment.repository_folder
+    assign_dir = @repo_dir + '/' + @assignment.repository_folder
 
     if !(File.exists?(test_dir))
       # TODO: show the error to user instead of raising a runtime error
-      raise I18n.t("automated_tests.test_files_unavailable")
+      raise I18n.t('automated_tests.test_files_unavailable')
     elsif !(File.exists?(src_dir))
       # TODO: show the error to user instead of raising a runtime error
-      raise I18n.t("automated_tests.source_files_unavailable")
+      raise I18n.t('automated_tests.source_files_unavailable')
     end
 
     if !(File.exists?(assign_dir))
       # TODO: show the error to user instead of raising a runtime error
-      raise I18n.t("automated_tests.source_files_unavailable")
+      raise I18n.t('automated_tests.source_files_unavailable')
     end
 
     dir_contents = Dir.entries(assign_dir)
 
     #if there are no files in repo (ie only the current and parent directory pointers)
     if (dir_contents.length <= 2)
-      raise I18n.t("automated_tests.source_files_unavailable")
+      raise I18n.t('automated_tests.source_files_unavailable')
     end
 
     scripts = TestScript.where(assignment_id: @assignment.id)
     if scripts.empty?
       # TODO: show the error to user instead of raising a runtime error
-      raise I18n.t("automated_tests.test_files_unavailable")
+      raise I18n.t('automated_tests.test_files_unavailable')
     end
 
-    return true
+    true
   end
 
   # Verify the user has the permission to run the tests - admin
   # and graders always have the permission, while student has to
   # belong to the group, and have at least one token.
-  def self.has_permission?()
+  def self.has_permission?
     if @current_user.admin?
       true
     elsif @current_user.ta?
@@ -625,14 +614,14 @@ module AutomatedTestsHelper
       # Make sure student belongs to this group
       if not @current_user.accepted_groupings.include?(@grouping)
         # TODO: show the error to user instead of raising a runtime error
-        raise I18n.t("automated_tests.not_belong_to_group")
+        raise I18n.t('automated_tests.not_belong_to_group')
       end
       #can skip checking tokens if we have unlimited
       if @grouping.assignment.unlimited_tokens
         return true
       end
       t = @grouping.token
-      if t == nil
+      if t.nil?
         raise I18n.t('automated_tests.missing_tokens')
       end
       if t.tokens > 0
@@ -640,7 +629,7 @@ module AutomatedTestsHelper
         true
       else
         # TODO: show the error to user instead of raising a runtime error
-        raise I18n.t("automated_tests.missing_tokens")
+        raise I18n.t('automated_tests.missing_tokens')
       end
     end
   end
@@ -649,31 +638,16 @@ module AutomatedTestsHelper
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
   def self.perform(grouping_id, call_on)
-    # Pick a server, launch the Test Runner and wait for the result
-    # Then store the result into the database
-
     #@submission = Submission.find(submission_id)
     @grouping = Grouping.find(grouping_id)
     @assignment = @grouping.assignment
     @group = @grouping.group
     @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
 
-    # @list_of_servers = MarkusConfigurator.markus_ate_test_server_hosts.split(' ')
-
-    # while true
-    #   @test_server_id = choose_test_server()
-    #   if @test_server_id >= 0
-    #     break
-    #   else
-    #     sleep 5               # if no server is available, sleep for 5 second before it checks again
-    #   end
-    # end
-
     stderr, result, status = launch_test(@assignment, @repo_dir, call_on)
 
     if !status
       #for debugging any errors in launch_test
-      # server_id = @test_server_id
       assignment = @assignment
       repo_dir = @repo_dir
       m_logger = MarkusLogger.instance
@@ -685,7 +659,6 @@ module AutomatedTestsHelper
       test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
 
       # Get the name of the test server
-      # server = @list_of_servers[server_id]
       server = 'localhost'
 
       # Get the directory and name of the test runner script
@@ -698,7 +671,7 @@ module AutomatedTestsHelper
       m_logger.log("error with launching test, error: #{stderr} and status: #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver: #{server}\ntest_runner: #{test_runner}\nrun_dir: #{run_dir}",MarkusLogger::ERROR)
 
       # TODO: handle this error better
-      raise "error"
+      raise 'error'
     else
       process_result(result, grouping_id, @assignment.id)
     end
@@ -723,33 +696,32 @@ module AutomatedTestsHelper
 
     # Create clean folder to execute tests
     stdout, stderr, status = Open3.capture3("ssh #{server} \"rm -rf #{test_box_path} && mkdir #{test_box_path}\"")
-    if !status.success?
+    unless status.success?
       return [stderr, stdout, status]
     end
 
     # Securely copy student's submission, test files and test harness script to test_box_path
     stdout, stderr, status = Open3.capture3("scp -p -r '#{submission_path}'/* #{server}:#{test_box_path}")
-    if !status.success?
+    unless status.success?
       return [stderr, stdout, status]
     end
 
     stdout, stderr, status = Open3.capture3("scp -p -r '#{assignment_tests_path}'/* #{server}:#{test_box_path}")
-    if !status.success?
+    unless status.success?
       return [stderr, stdout, status]
     end
 
     stdout, stderr, status = Open3.capture3("ssh #{server} cp #{test_harness_path} #{test_box_path}")
-    if !status.success?
+    unless status.success?
       return [stderr, stdout, status]
     end
 
     # Find the test scripts for this test run, and parse the argument list
     list_run_scripts = scripts_to_run(assignment, call_on)
-    arg_list = ""
+    arg_list = ''
     list_run_scripts.each do |script|
       arg_list = arg_list + "#{script.script_name.gsub(/\s/, "\\ ")} #{script.halts_testing} "
     end
-
 
     # Run script
     test_harness_name = File.basename(test_harness_path)
