@@ -739,10 +739,10 @@ module AutomatedTestsHelper
 
   #make use of @assignment and @grouping
   def self.process_result(raw_result)
-     result = Hash.from_xml(raw_result)
-     repo = @grouping.group.repo
-     @revision = repo.get_latest_Revision
-     @revision_number = @revision.revision_number
+    result = Hash.from_xml(raw_result)
+    repo = @grouping.group.repo
+    @revision = repo.get_latest_revision
+    @revision_number = @revision.revision_number
 
      # use results, go through each test script
      # create a test sript result, populate it and save
@@ -753,7 +753,7 @@ module AutomatedTestsHelper
      raw_test_scripts = result["testrun"]["test_script"]
 
     # Hash.from_xml will yield a hash if only one test script
-    # and an arrayo therwise
+    # and an array therwise
     if raw_test_scripts.nil?
       return
     elsif raw_test_scripts.kind_of?(Array)
@@ -762,24 +762,38 @@ module AutomatedTestsHelper
       test_scripts = [raw_test_scripts]
     end
 
-    test_scripts.each do |script|
-      script_name = script["script_name"]
-      # TODO: old code raised if there existed multiple assignment_id/script name
-      # double check there is an assertion for this in the db
-      script_object = TestScript.find_by(assignment_id: @assignment.id, script_name: script_name)
-      script_result = TestScriptResult.new
-      script_result.grouping_id = @grouping.id
-      #TODO: calculate marks earned
-      marks_earned = 0
-      script_result.test_script_id = script_object.id
-      script_result.marks_earned = marks_earned
-      script_result.repo_revision = @revision_number
-      script_result.save
-      #TODO: do we want to add record for each test result?
-      #TODO: save raw content json_content instead? This might be better?
-    end
-  end
+    # For now, we assume there is only one test script.
+    test_result = TestResult.new
+    raw_test_script = test_scripts.first
+    # raise "#{raw_test_script}"
+    script_name = raw_test_script["script_name"]
+    # raise "#{script_name} #{raw_test_script} #{test_scripts}"
+    test_script = TestScript.find_by(assignment_id: @assignment.id, script_name: script_name)
+    # raise "grouping #{@grouping} test_script #{test_script}"
+    test_result.grouping_id = @grouping.id
+    test_result.test_script_id = test_script.id
+    test_result.name = script_name
 
+    test_result.repo_revision = @revision_number
+    test_result.input_description = ''
+    test_result.actual_output = result.to_json
+    test_result.expected_output = ''
+    test_result.submission_id = Submission.last.id #TODO: figure out how to get submission
+
+    test_result.marks_earned = 0  #TODO: put marks earned
+
+    completion_status = 'pass'
+    test_scripts.each do |script|
+      tests = script["test"]
+      tests.each do |test|
+        test_result.marks_earned += test["marks_earned"].to_i
+        # if any of the tests fail, we consider the completion status to be fail
+        completion_status = 'fail' if test["status"] != 'pass'
+      end
+    end
+    test_result.completion_status = completion_status
+    test_result.save
+  end
 end
 
 #test-framework version
