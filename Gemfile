@@ -16,7 +16,6 @@ gem 'ya2yaml'
 gem 'i18n'
 gem 'dynamic_form'
 gem 'exception_notification'
-gem "libxml-ruby" # xml parser library to parse test results
 gem 'activerecord-import'
 gem 'auto_complete'
 gem 'best_in_place'

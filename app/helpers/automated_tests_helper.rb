@@ -754,15 +754,12 @@ module AutomatedTestsHelper
       test_scripts = [raw_test_scripts]
     end
 
-    # For now, we assume there is only one test script.
+    # For now, we just use the first test script for the association
     test_result = TestResult.new
     raw_test_script = test_scripts.first
-    # raise "#{raw_test_script}"
     script_name = raw_test_script["script_name"]
-    # raise "#{script_name} #{raw_test_script} #{test_scripts}"
     test_script = TestScript.find_by(assignment_id: @assignment.id,
       script_name: script_name)
-    # raise "grouping #{@grouping} test_script #{test_script}"
     test_result.grouping_id = @grouping.id
     test_result.test_script_id = test_script.id
     test_result.name = script_name
