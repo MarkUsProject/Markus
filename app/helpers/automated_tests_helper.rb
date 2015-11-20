@@ -1,7 +1,6 @@
-require 'libxml'
+require 'json'
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
-  include LibXML
   # This is the waiting list for automated testing. Once a test is requested,
   # it is enqueued and it is waiting for execution. Resque manages this queue.
   @queue = :test_waiting_list
@@ -673,7 +672,7 @@ module AutomatedTestsHelper
       # TODO: handle this error better
       raise 'error'
     else
-      process_result(result, grouping_id, @assignment.id)
+      process_result(result)
     end
 
   end
@@ -738,7 +737,47 @@ module AutomatedTestsHelper
     end
   end
 
-  def self.process_result(result, grouping_id, assignment_id)
+  #make use of @assignment and @grouping
+  def self.process_result(raw_result)
+     result = Hash.from_xml(raw_result)
+     repo = @grouping.group.repo
+     @revision = repo.get_latest_Revision
+     @revision_number = @revision.revision_number
+
+     # use results, go through each test script
+     # create a test sript result, populate it and save
+     # cases to consider
+     # test script doesn't exist, accessing key will give nil
+     # 1 test script, accessing key  will be a hash
+     # 2 test scripts will be an array
+     raw_test_scripts = result["testrun"]["test_script"]
+
+    # Hash.from_xml will yield a hash if only one test script
+    # and an arrayo therwise
+    if raw_test_scripts.nil?
+      return
+    elsif raw_test_scripts.kind_of?(Array)
+      test_scripts = raw_test_scripts
+    else
+      test_scripts = [raw_test_scripts]
+    end
+
+    test_scripts.each do |script|
+      script_name = script["script_name"]
+      # TODO: old code raised if there existed multiple assignment_id/script name
+      # double check there is an assertion for this in the db
+      script_object = TestScript.find_by(assignment_id: @assignment.id, script_name: script_name)
+      script_result = TestScriptResult.new
+      script_result.grouping_id = @grouping.id
+      #TODO: calculate marks earned
+      marks_earned = 0
+      script_result.test_script_id = script_object.id
+      script_result.marks_earned = marks_earned
+      script_result.repo_revision = @revision_number
+      script_result.save
+      #TODO: do we want to add record for each test result?
+      #TODO: save raw content json_content instead? This might be better?
+    end
   end
 
 end
