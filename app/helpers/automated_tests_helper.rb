@@ -742,7 +742,7 @@ module AutomatedTestsHelper
     repo = @grouping.group.repo
     @revision = repo.get_latest_revision
     @revision_number = @revision.revision_number
-    raw_test_scripts = result["testrun"]["test_script"]
+    raw_test_scripts = result['testrun']['test_script']
 
     # Hash.from_xml will yield a hash if only one test script
     # and an array therwise
@@ -757,7 +757,7 @@ module AutomatedTestsHelper
     # For now, we just use the first test script for the association
     test_result = TestResult.new
     raw_test_script = test_scripts.first
-    script_name = raw_test_script["script_name"]
+    script_name = raw_test_script['script_name']
     test_script = TestScript.find_by(assignment_id: @assignment.id,
       script_name: script_name)
     test_result.grouping_id = @grouping.id
@@ -774,11 +774,11 @@ module AutomatedTestsHelper
     completion_status = 'pass'
 
     test_scripts.each do |script|
-      tests = script["test"]
+      tests = script['test']
       tests.each do |test|
-        test_result.marks_earned += test["marks_earned"].to_i
+        test_result.marks_earned += test['marks_earned'].to_i
         # if any of the tests fail, we consider the completion status to be fail
-        completion_status = 'fail' if test["status"] != 'pass'
+        completion_status = 'fail' if test['status'] != 'pass'
       end
     end
     test_result.completion_status = completion_status
