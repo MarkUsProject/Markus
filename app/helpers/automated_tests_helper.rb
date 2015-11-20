@@ -737,20 +737,12 @@ module AutomatedTestsHelper
     end
   end
 
-  #make use of @assignment and @grouping
   def self.process_result(raw_result)
     result = Hash.from_xml(raw_result)
     repo = @grouping.group.repo
     @revision = repo.get_latest_revision
     @revision_number = @revision.revision_number
-
-     # use results, go through each test script
-     # create a test sript result, populate it and save
-     # cases to consider
-     # test script doesn't exist, accessing key will give nil
-     # 1 test script, accessing key  will be a hash
-     # 2 test scripts will be an array
-     raw_test_scripts = result["testrun"]["test_script"]
+    raw_test_scripts = result["testrun"]["test_script"]
 
     # Hash.from_xml will yield a hash if only one test script
     # and an array therwise
@@ -768,7 +760,8 @@ module AutomatedTestsHelper
     # raise "#{raw_test_script}"
     script_name = raw_test_script["script_name"]
     # raise "#{script_name} #{raw_test_script} #{test_scripts}"
-    test_script = TestScript.find_by(assignment_id: @assignment.id, script_name: script_name)
+    test_script = TestScript.find_by(assignment_id: @assignment.id,
+      script_name: script_name)
     # raise "grouping #{@grouping} test_script #{test_script}"
     test_result.grouping_id = @grouping.id
     test_result.test_script_id = test_script.id
@@ -778,11 +771,11 @@ module AutomatedTestsHelper
     test_result.input_description = ''
     test_result.actual_output = result.to_json
     test_result.expected_output = ''
-    test_result.submission_id = Submission.last.id #TODO: figure out how to get submission
-
-    test_result.marks_earned = 0  #TODO: put marks earned
-
+    #TODO: HACK. Do we always need a submission id?
+    test_result.submission_id = Submission.last.id
+    test_result.marks_earned = 0
     completion_status = 'pass'
+
     test_scripts.each do |script|
       tests = script["test"]
       tests.each do |test|
