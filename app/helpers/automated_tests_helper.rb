@@ -748,7 +748,7 @@ module AutomatedTestsHelper
     # and an array therwise
     if raw_test_scripts.nil?
       return
-    elsif raw_test_scripts.kind_of?(Array)
+    elsif raw_test_scripts.is_a?(Array)
       test_scripts = raw_test_scripts
     else
       test_scripts = [raw_test_scripts]
@@ -759,7 +759,7 @@ module AutomatedTestsHelper
     raw_test_script = test_scripts.first
     script_name = raw_test_script['script_name']
     test_script = TestScript.find_by(assignment_id: @assignment.id,
-      script_name: script_name)
+                                       script_name: script_name)
     test_result.grouping_id = @grouping.id
     test_result.test_script_id = test_script.id
     test_result.name = script_name
@@ -768,7 +768,7 @@ module AutomatedTestsHelper
     test_result.input_description = ''
     test_result.actual_output = result.to_json
     test_result.expected_output = ''
-    #TODO: HACK. Do we always need a submission id?
+    # TODO: HACK. Do we always need a submission id?
     test_result.submission_id = Submission.last.id
     test_result.marks_earned = 0
     completion_status = 'pass'
