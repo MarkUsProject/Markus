@@ -55,12 +55,7 @@
       });
     },
     skipEmptySubmissionsClicked: function(event) {
-      var value = event.currentTarget.checked;
-      if (value) {
-        this.setState({skip_empty_submissions: true});
-      } else {
-        this.setState({skip_empty_submissions: false});
-      }
+     this.setState({skip_empty_submissions: event.currentTarget.checked});
     },
     componentWillMount: function() {
       this.refresh();
