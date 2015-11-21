@@ -740,8 +740,8 @@ module AutomatedTestsHelper
   def self.process_result(raw_result)
     result = Hash.from_xml(raw_result)
     repo = @grouping.group.repo
-    @revision = repo.get_latest_revision
-    @revision_number = @revision.revision_number
+    revision = repo.get_latest_revision
+    revision_number = revision.revision_number
     raw_test_scripts = result['testrun']['test_script']
 
     # Hash.from_xml will yield a hash if only one test script
@@ -776,7 +776,7 @@ module AutomatedTestsHelper
     TestResult.create(grouping_id: @grouping.id,
                       test_script_id: test_script.id,
                       name: script_name,
-                      repo_revision: @revision_number,
+                      repo_revision: revision_number,
                       input_description: '',
                       actual_output: result.to_json,
                       expected_output: '',
