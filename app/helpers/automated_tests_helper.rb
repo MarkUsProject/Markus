@@ -745,7 +745,7 @@ module AutomatedTestsHelper
     raw_test_scripts = result['testrun']['test_script']
 
     # Hash.from_xml will yield a hash if only one test script
-    # and an array therwise
+    # and an array otherwise
     if raw_test_scripts.nil?
       return
     elsif raw_test_scripts.is_a?(Array)
@@ -755,34 +755,34 @@ module AutomatedTestsHelper
     end
 
     # For now, we just use the first test script for the association
-    test_result = TestResult.new
     raw_test_script = test_scripts.first
     script_name = raw_test_script['script_name']
     test_script = TestScript.find_by(assignment_id: @assignment.id,
                                        script_name: script_name)
-    test_result.grouping_id = @grouping.id
-    test_result.test_script_id = test_script.id
-    test_result.name = script_name
 
-    test_result.repo_revision = @revision_number
-    test_result.input_description = ''
-    test_result.actual_output = result.to_json
-    test_result.expected_output = ''
-    # TODO: HACK. Do we always need a submission id?
-    test_result.submission_id = Submission.last.id
-    test_result.marks_earned = 0
     completion_status = 'pass'
-
+    marks_earned = 0
     test_scripts.each do |script|
       tests = script['test']
       tests.each do |test|
-        test_result.marks_earned += test['marks_earned'].to_i
+        marks_earned += test['marks_earned'].to_i
         # if any of the tests fail, we consider the completion status to be fail
         completion_status = 'fail' if test['status'] != 'pass'
       end
     end
-    test_result.completion_status = completion_status
-    test_result.save
+
+    # TODO: HACK. Do we always need a submission id?
+    submission_id = Submission.last.id
+    TestResult.create(grouping_id: @grouping.id,
+                      test_script_id: test_script.id,
+                      name: script_name,
+                      repo_revision: @revision_number,
+                      input_description: '',
+                      actual_output: result.to_json,
+                      expected_output: '',
+                      submission_id: submission_id,
+                      marks_earned: marks_earned,
+                      completion_status: completion_status)
   end
 end
 
