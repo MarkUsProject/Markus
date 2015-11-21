@@ -758,7 +758,7 @@ module AutomatedTestsHelper
     raw_test_script = test_scripts.first
     script_name = raw_test_script['script_name']
     test_script = TestScript.find_by(assignment_id: @assignment.id,
-                                       script_name: script_name)
+                                     script_name: script_name)
 
     completion_status = 'pass'
     marks_earned = 0
