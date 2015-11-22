@@ -1269,7 +1269,7 @@ pt:
     outstanding_remark_requests: "%{request_count} pedidos de avaliação"
 
     #app/views/main/_grader_summary.erb
-    grader_distribution:       "Distribuição de notas:"
+    grader_distribution:       "Distribuição de notas"
     assign_graders:            "Atribuir avaliadores"
 
     #app/views/main/_grade_distribution_graph.html.erb

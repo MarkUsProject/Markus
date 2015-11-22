@@ -1282,7 +1282,7 @@ fr:
     outstanding_remark_requests: "%{request_count} demandes de remarque restantes."
 
     #app/views/main/_grader_summary.erb
-    grader_distribution:       "Correcteurs assignés :"
+    grader_distribution:       "Correcteurs assignés"
     assign_graders:            "Attribuer Correcteurs"
 
     #app/views/main/_grade_distribution_graph.html.erb
