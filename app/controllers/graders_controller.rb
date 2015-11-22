@@ -191,7 +191,7 @@ class GradersController < ApplicationController
         if found_empty_submission
           assign_all_graders(filtered_grouping_ids, grader_ids)
           render text: I18n.t('assignment.group.group_submission_no_files'),
-          status: 200
+                 status: 200
         else
           assign_all_graders(grouping_ids, grader_ids)
           head :ok
