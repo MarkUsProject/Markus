@@ -698,7 +698,8 @@ class Grouping < ActiveRecord::Base
   # Helper for populate_submission_table
   # Returns boolean value based on if the submission has files or not
   def has_files_in_submission?
-    return !has_submission? || SubmissionFile.where(submission_id: current_submission_used.id).exists?
+    !has_submission? ||
+    SubmissionFile.where(submission_id: current_submission_used.id).exists?
   end
 
   # Helper for populate_submissions_table.
