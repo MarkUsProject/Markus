@@ -96,7 +96,7 @@
   ::-webkit-scrollbar-thumb {
     background-color: rgba($black, 0.5);
     border-radius: 4px;
-    -webkit-box-shadow: 0 0 1px rgba($grey, 0.5);
+    box-shadow: 0 0 1px rgba($grey, 0.5);
   }
 
 }

@@ -71,13 +71,10 @@ class Ta < User
 
   def update_distribution(distribution, result, out_of, intervals)
     steps = 100 / intervals # number of percentage steps in each interval
-    percentage = (result.total_mark / out_of * 100).ceil
-    if percentage == 0 then distribution[0] += 1
-    elsif percentage >= 100 then distribution[intervals - 1] += 1
-    elsif (percentage % steps) == 0
-      distribution[percentage / steps - 1] += 1
-    else distribution[percentage / steps] += 1
-    end
+    percentage = [100, (result.total_mark / out_of * 100).ceil].min
+    interval = (percentage / steps).floor
+    interval -= (percentage % steps == 0) ? 1 : 0
+    distribution[interval] += 1
     distribution
   end
 end
