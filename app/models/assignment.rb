@@ -760,6 +760,55 @@ class Assignment < ActiveRecord::Base
     groupings.select(&:has_submission?)
   end
 
+  def get_num_assigned(ta_id = nil)
+    if ta_id.nil?
+      groupings.size
+    else
+      ta_memberships.where(user_id: ta_id).size
+    end
+  end
+
+  def get_num_marked(ta_id = nil)
+    if ta_id.nil?
+      groupings.count(marking_completed: true)
+    else
+      n = 0
+      ta_memberships.where(user_id: ta_id).find_each do |x|
+        x.grouping.marking_completed? && n += 1
+      end
+      n
+    end
+  end
+
+  def get_num_annotations(ta_id = nil)
+    if ta_id.nil?
+      num_annotations_all
+    else
+      n = 0
+      ta_memberships.where(user_id: ta_id).find_each do |x|
+        x.grouping.marking_completed? &&
+          n += x.grouping.current_submission_used.annotations.size
+      end
+      n
+    end
+  end
+
+  def num_annotations_all
+    groupings.map do |g|
+      g.current_submission_used.annotations.size if g.marking_completed?
+    end.compact.sum
+  end
+
+  def average_annotations(ta_id = nil)
+    num_marked = get_num_marked(ta_id)
+    avg = 0
+    if num_marked != 0
+      num_annotations = get_num_annotations(ta_id)
+      avg = num_annotations.to_f / num_marked
+    end
+    avg.round(2)
+  end
+
   private
 
   # Returns true if we are safe to set the repository name

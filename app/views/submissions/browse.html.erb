@@ -68,8 +68,8 @@
   <% if @current_user.ta? %>
     <span class='menu_bar'></span>
     <%= t('browse_submissions.how_many_marked',
-          num_marked: @current_user.get_num_marked(@assignment),
-          num_assigned: @current_user.get_num_assigned(@assignment)) %>
+          num_marked: @assignment.get_num_marked(@current_user.id),
+          num_assigned: @assignment.get_num_assigned(@current_user.id)) %>
   <% end %>
 <% end %>
 

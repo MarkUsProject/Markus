@@ -1,0 +1,4 @@
+jQuery('#assignment_<%= @assignment.id %>_ta_graph').html(
+    "<%= escape_javascript(render partial: 'graders/ta_grade_distribution_graph',
+                                  locals: { assignment: @assignment,
+                                  ta: @current_ta }) %>");

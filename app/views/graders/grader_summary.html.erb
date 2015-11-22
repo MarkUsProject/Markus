@@ -1,0 +1,26 @@
+<% content_for :head do %>
+  <%= javascript_include_tag 'Chart' %>
+<% end %>
+
+<div class='title_bar'>
+  <h1>
+    <%= t(:assignment_link,
+          short_id: @assignment.short_identifier,
+          description: @assignment.description) %> -
+    <%= t(:grader_distribution) %>
+  </h1>
+</div>
+<div class='wrapper'>
+  <div id='section'>
+    <div class='grader-summary-content'>
+      <% @assignment.tas.each do |ta| %>
+        <div class='grader-summary-graph'>
+          <div id='assignment_<%= @assignment.id %>_ta_<% ta.id %>_graph'>
+            <%= render partial: 'graders/ta_grade_distribution_graph',
+                       locals: { assignment: @assignment, ta: ta } %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

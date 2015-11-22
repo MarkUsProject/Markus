@@ -455,6 +455,8 @@ en:
       tags_list:            "Filter by Tag:"
       search_submissions:   "Search Submissions"
       how_many_marked:      "%{num_marked}/%{num_assigned} assignments have been marked"
+      how_many_marked_short: "%{num_marked}/%{num_assigned} marked"
+      average_annotations:  "%{average_annotations} annotations per marked submission"
 
     summaries_index:
       group_name:           "Group Name"
@@ -1417,7 +1419,7 @@ en:
     outstanding_remark_requests: "%{request_count} outstanding remark requests"
 
     #app/views/main/_grader_summary.erb
-    grader_distribution:       "Grader Distribution:"
+    grader_distribution:       "Grader Distribution"
     assign_graders:            "Assign Graders"
 
     #app/views/main/_grade_distribution_graph.html.erb
