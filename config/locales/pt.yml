@@ -405,6 +405,7 @@ pt:
       show_partial:         "Mostrar parcial"
       show_complete:        "Mostrar completos"
       show_released:        "Mostrar liberados"
+      show_remark_request:  "Mostrar comentários"
       show_assigned_to_me:  "Mostrar atribuidos à você"
       grading_can_begin:    "Avaliação pode começar"
       grading_can_begin_after: "Avaliação pode começar depois %{time}"

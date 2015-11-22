@@ -427,6 +427,7 @@ en:
       show_partial:         "Show Partial"
       show_complete:        "Show Complete"
       show_released:        "Show Released"
+      show_remark_request:  "Show Remarks"
       show_assigned_to_me:  "Show Assigned to Me"
       grading_can_begin:    "Grading can begin"
       grading_can_begin_after: "Grading can begin after %{time}"
