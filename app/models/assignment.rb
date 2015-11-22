@@ -405,7 +405,7 @@ class Assignment < ActiveRecord::Base
         # groupings error set if a member is already in differnt group
         membership_error = I18n.t('csv.memberships_not_unique',
                                   group_name: row[0],
-                                  student_user_name: errors\
+                                  student_user_name: errors
                                     .get(:groupings).first)
         errors.delete(:groupings)
       else
