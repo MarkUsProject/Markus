@@ -2,8 +2,8 @@
   <h3><%= ta.first_name + ' ' + ta.last_name%></h3>
   <div>
     (<%= t('browse_submissions.how_many_marked',
-           num_marked: assignment.get_num_marked(assignment, ta.id),
-           num_assigned: assignment.get_num_assigned(assignment, ta.id)) %>)
+           num_marked: assignment.get_num_marked(ta.id),
+           num_assigned: assignment.get_num_assigned(ta.id)) %>)
   </div>
   <canvas id='a<%= assignment.id %>_ta_<%= ta.id %>' width='400' height='350'></canvas>
   <script>
