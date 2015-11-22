@@ -136,66 +136,21 @@ module AutomatedTestsHelper
     # Retrieve all test scripts
     testscripts = params[:test_scripts_attributes]
 
-    # First check for duplicate script names in test scripts
-    unless testscripts.nil?
-      testscripts.values.each do |tfile|
-        if tfile['script_name'].respond_to?(:original_filename)
-          fname = tfile['script_name'].original_filename
-          # If this is a duplicate script name, raise error and return
-          if !file_name_array.include?(fname)
-            file_name_array << fname
-          else
-            raise I18n.t('automated_tests.duplicate_filename') + fname
-          end
-        end
-      end
-    end
-
     # Retrieve all test support files
     testsupporters = params[:test_support_files_attributes]
 
-    # Now check for duplicate file names in test support files
-    unless testsupporters.nil?
-      testsupporters.values.each do |tfile|
-        if tfile['file_name'].respond_to?(:original_filename)
-          fname = tfile['file_name'].original_filename
-          # If this is a duplicate file name, raise error and return
-          if filename_array.include?(fname)
-            raise I18n.t('automated_tests.duplicate_filename') + fname
-          else
-            filename_array << fname
-          end
-        end
-      end
-    end
-
     # Filter out script files that need to be created and updated
     unless testscripts.nil?
-      testscripts.each_key do |key|
-
-        tfile = testscripts[key]
-
-        # Check to see if this is an update or a new file:
-        # - If 'id' exists, this is an update
-        # - If 'id' does not exist, this is a new test file
-        tf_id = tfile['id']
-
-        # If only the 'id' exists in the hash, other attributes were not updated
-        # so we skip this entry. Otherwise, this test file possibly requires an
-        # update
-        if !tf_id.nil? && tfile.size > 1
-
-          # Find existing test file to update
-          @existing_testscript = TestScript.find_by_id(tf_id)
-          if @existing_testscript
-            # Store test file for any possible updating
-            updated_script_files[key] = tfile
+      testscripts.each do |file_num, file|
+        updated_script_files[file_num] = {}
+        unless file_num.nil?
+          file.each do |key, value|
+            if key == 'script_name'
+              updated_script_files[file_num][key] = value.original_filename
+            else
+              updated_script_files[file_num][key] = value
+            end
           end
-        end
-
-        # Test file needs to be created since record doesn't exist yet
-        if tf_id.nil? && tfile['script_name']
-          updated_script_files[key] = tfile
         end
       end
     end
@@ -221,11 +176,6 @@ module AutomatedTestsHelper
             # Store test file for any possible updating
             updated_support_files[key] = tfile
           end
-        end
-
-        # Test file needs to be created since record doesn't exist yet
-        if tf_id.nil? && tfile['file_name']
-          updated_support_files[key] = tfile
         end
       end
     end
