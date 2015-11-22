@@ -181,15 +181,18 @@ class GradersController < ApplicationController
                  status: 400
         end        
         if params[:skip_empty_submissions] == 'true'
-          # If the instructor wants to skip empty submissions, remove those groups
-          # from the list of grouping_ids to assign graders to
-          @found_empty_submission = false
-          grouping_ids = find_empty_submissions(grouping_ids)
+          # If the instructor wants to skip empty submissions, filter
+          # groups with empty submissions into a new array
+          filtered_grouping_ids = filter_empty_submissions(grouping_ids)
+          if filtered_grouping_ids.count != grouping_ids.count
+            found_empty_submission = true
+          end
         end
-        assign_all_graders(grouping_ids, grader_ids)
-        if @found_empty_submission == true
+        if found_empty_submission
+          assign_all_graders(filtered_grouping_ids, grader_ids)
           render text: I18n.t('assignment.group.group_submission_no_files'), status: 200
         else
+          assign_all_graders(grouping_ids, grader_ids)
           head :ok
         end
       when 'unassign'
@@ -204,14 +207,17 @@ class GradersController < ApplicationController
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
           if params[:skip_empty_submissions] == 'true'
-            @found_empty_submission = false
-            grouping_ids = find_empty_submissions(grouping_ids)
+            filtered_grouping_ids = filter_empty_submissions(grouping_ids)
+            if filtered_grouping_ids.count != grouping_ids.count
+              found_empty_submission = true
+            end
           end
-          randomly_assign_graders(grouping_ids, grader_ids)
-          if @found_empty_submission == true
+          if found_empty_submission
+            randomly_assign_graders(filtered_grouping_ids, grader_ids)
             render text: I18n.t('assignment.group.group_submission_no_files'),
                    status: 200
           else
+            randomly_assign_graders(grouping_ids, grader_ids)
             head :ok
           end
         end
@@ -306,15 +312,15 @@ class GradersController < ApplicationController
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
   end
 
-  def find_empty_submissions(grouping_ids)
+  # Returns array of grouping ids with non empty submissions
+  def filter_empty_submissions(grouping_ids)
+    filtered_grouping_ids = Array.new
     grouping_ids.each do |grouping_id|
-      submission = Submission.find_by_grouping_id(grouping_id)
-      if !submission
-        next
-      elsif !SubmissionFile.where(submission_id: submission.id).exists?
-        grouping_ids.delete(grouping_id)
-        @found_empty_submission = true
+      submission = Submission.find_by(grouping_id: grouping_id)
+      if submission && SubmissionFile.where(submission_id: submission.id).exists?
+        filtered_grouping_ids << grouping_id
       end
     end
+    filtered_grouping_ids
   end
 end
