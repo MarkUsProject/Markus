@@ -17,8 +17,8 @@
                         assignment: assignment.id },
                       remote: true %>
           (<%= t('browse_submissions.how_many_marked_short',
-                 num_marked: ta.get_num_marked(assignment),
-                 num_assigned: ta.get_num_assigned(assignment)) %>)
+                 num_marked: assignment.get_num_marked(assignment, ta.id),
+                 num_assigned: assignment.get_num_assigned(assignment, ta.id)) %>)
         </li>
       <% end %>
     </ul>

@@ -756,27 +756,50 @@ class Assignment < ActiveRecord::Base
     groupings.select(&:has_submission?)
   end
 
-  # for an admin, we just want all the assignment groupings submitted
-  def get_num_assigned(assignment = self)
-    assignment.groupings.size
+  def get_num_assigned(assignment, ta_id = nil)
+    if ta_id.nil?
+      assignment.groupings.size
+    else
+      assignment.ta_memberships.where(user_id: ta_id).size
+    end
   end
 
-  # for an admin, we want all the assignment groupings marked completed
-  def get_num_marked(assignment = self)
-    assignment.groupings.count(marking_completed: true)
+  def get_num_marked(assignment, ta_id = nil)
+    if ta_id.nil?
+      assignment.groupings.count(marking_completed: true)
+    else
+      n = 0
+      assignment.ta_memberships.where(user_id: ta_id).find_each do |x|
+        x.grouping.marking_completed? && n += 1
+      end
+      n
+    end
   end
 
-  def get_num_annotations(assignment = self)
+  def get_num_annotations(assignment, ta_id = nil)
+    if ta_id.nil?
+      get_num_annotations_all(assignment)
+    else
+      n = 0
+      assignment.ta_memberships.where(user_id: ta_id).find_each do |x|
+        x.grouping.marking_completed? &&
+          n += x.grouping.current_submission_used.annotations.size
+      end
+      n
+    end
+  end
+
+  def get_num_annotations_all(assignment)
     assignment.groupings.map do |g|
       g.current_submission_used.annotations.size if g.marking_completed?
     end.compact.sum
   end
 
-  def average_annotations(assignment = self)
-    num_marked = get_num_marked(assignment)
+  def average_annotations(assignment = self, ta_id = nil)
+    num_marked = get_num_marked(assignment, ta_id)
     avg = 0
     if num_marked != 0
-      num_annotations = get_num_annotations(assignment)
+      num_annotations = get_num_annotations(assignment, ta_id)
       avg = num_annotations.to_f / num_marked
     end
     avg.round(2)

@@ -15,42 +15,6 @@ class Ta < User
   has_many :grade_entry_student_tas
   has_many :grade_entry_students, through: :grade_entry_student_tas
 
-  def get_num_assigned(assignment, ta_id = id)
-    assignment.ta_memberships.where(user_id: ta_id).size
-  end
-
-  def get_num_marked(assignment, ta_id = id)
-    n = 0
-    assignment.ta_memberships.where(user_id: ta_id).find_each do |x|
-      if x.grouping.marking_completed?
-        n += 1
-      end
-    end
-    n
-  end
-
-  def get_num_annotations(assignment, ta_id = id)
-    n = 0
-    assignment.ta_memberships.where(user_id: ta_id).find_each do |x|
-      # only grab annotations from groupings where marking is completed
-      next unless x.grouping.marking_completed?
-      x.grouping.submissions.each do |s|
-        n += s.annotations.size
-      end
-    end
-    n
-  end
-
-  def average_annotations(assignment)
-    num_marked = get_num_marked(assignment)
-    avg = 0
-    if num_marked != 0
-      num_annotations = get_num_annotations(assignment)
-      avg = num_annotations.to_f / num_marked
-    end
-    avg.round(2)
-  end
-
   def memberships_for_assignment(assignment)
     assignment.ta_memberships.where(user_id: id, include: { grouping: :group })
   end
