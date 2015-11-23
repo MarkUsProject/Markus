@@ -139,7 +139,6 @@ GEM
     json (1.8.3)
     kgio (2.10.0)
     libv8 (3.16.14.11)
-    libxml-ruby (2.8.0)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     machinist (1.0.6)
@@ -327,7 +326,6 @@ DEPENDENCIES
   jquery-rails
   json
   libv8
-  libxml-ruby
   machinist (< 2)
   minitest
   mocha

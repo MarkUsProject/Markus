@@ -1,7 +1,6 @@
-require 'libxml'
+require 'json'
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
-  include LibXML
   # This is the waiting list for automated testing. Once a test is requested,
   # it is enqueued and it is waiting for execution. Resque manages this queue.
   @queue = :test_waiting_list
@@ -673,7 +672,7 @@ module AutomatedTestsHelper
       # TODO: handle this error better
       raise 'error'
     else
-      process_result(result, grouping_id, @assignment.id)
+      process_result(result)
     end
 
   end
@@ -738,9 +737,53 @@ module AutomatedTestsHelper
     end
   end
 
-  def self.process_result(result, grouping_id, assignment_id)
-  end
+  def self.process_result(raw_result)
+    result = Hash.from_xml(raw_result)
+    repo = @grouping.group.repo
+    revision = repo.get_latest_revision
+    revision_number = revision.revision_number
+    raw_test_scripts = result['testrun']['test_script']
 
+    # Hash.from_xml will yield a hash if only one test script
+    # and an array otherwise
+    if raw_test_scripts.nil?
+      return
+    elsif raw_test_scripts.is_a?(Array)
+      test_scripts = raw_test_scripts
+    else
+      test_scripts = [raw_test_scripts]
+    end
+
+    # For now, we just use the first test script for the association
+    raw_test_script = test_scripts.first
+    script_name = raw_test_script['script_name']
+    test_script = TestScript.find_by(assignment_id: @assignment.id,
+                                     script_name: script_name)
+
+    completion_status = 'pass'
+    marks_earned = 0
+    test_scripts.each do |script|
+      tests = script['test']
+      tests.each do |test|
+        marks_earned += test['marks_earned'].to_i
+        # if any of the tests fail, we consider the completion status to be fail
+        completion_status = 'fail' if test['status'] != 'pass'
+      end
+    end
+
+    # TODO: HACK. Do we always need a submission id?
+    submission_id = Submission.last.id
+    TestResult.create(grouping_id: @grouping.id,
+                      test_script_id: test_script.id,
+                      name: script_name,
+                      repo_revision: revision_number,
+                      input_description: '',
+                      actual_output: result.to_json,
+                      expected_output: '',
+                      submission_id: submission_id,
+                      marks_earned: marks_earned,
+                      completion_status: completion_status)
+  end
 end
 
 #test-framework version
