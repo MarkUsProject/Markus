@@ -474,7 +474,6 @@ class Grouping < ActiveRecord::Base
   def deletable_by?(user)
     return false unless self.inviter == user
     (!self.is_valid?) || (self.is_valid? &&
-                          self.accepted_students.size == 1 &&
                           self.number_of_submitted_files == 0 &&
                           self.assignment.group_assignment? &&
                           !assignment.past_collection_date?)
