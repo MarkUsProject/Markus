@@ -158,8 +158,11 @@ input#assignment_repository_folder[readonly] {
       margin-bottom: 2em;
     }
   }
+}
 
-  .group_options .group_button, .button_to{
+.group-options {
+  .group-button,
+  .button_to {
     display: inline;
   }
 }
