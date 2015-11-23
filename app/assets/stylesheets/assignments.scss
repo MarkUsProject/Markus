@@ -158,6 +158,10 @@ input#assignment_repository_folder[readonly] {
       margin-bottom: 2em;
     }
   }
+
+  .group_options .group_button, .button_to{
+    display: inline;
+  }
 }
 
 .info {
@@ -243,3 +247,5 @@ span.info_date {
     width: auto;
   }
 }
+
+
