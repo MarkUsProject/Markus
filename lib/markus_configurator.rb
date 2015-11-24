@@ -169,7 +169,7 @@ module MarkusConfigurator
       return false
     end
   end
-  
+
   ######################################
   # MarkusLogger configuration
   ######################################
@@ -249,11 +249,11 @@ module MarkusConfigurator
   ##########################################
   # Automated Testing Engine Configuration
   ##########################################
-  
+
   def automated_testing_engine_on?
     return ( (defined? AUTOMATED_TESTING_ENGINE_ON) && AUTOMATED_TESTING_ENGINE_ON == true )
   end
-  
+
   def markus_ate_num_test_servers
     if automated_testing_engine_on? && (defined? ATE_NUMBER_TEST_SERVERS)
       return ATE_NUMBER_TEST_SERVERS
@@ -261,7 +261,7 @@ module MarkusConfigurator
       return 0
     end
   end
-  
+
   def markus_ate_max_num_of_running_tests
     if automated_testing_engine_on? && (defined? ATE_MAX_NUMBER_OF_RUNNING_TESTS)
       return ATE_MAX_NUMBER_OF_RUNNING_TESTS
@@ -269,7 +269,7 @@ module MarkusConfigurator
       return 0
     end
   end
-  
+
   def markus_ate_test_server_hosts
     if automated_testing_engine_on? && (defined? ATE_TEST_SERVER_HOSTS)
       return ATE_TEST_SERVER_HOSTS
@@ -277,21 +277,21 @@ module MarkusConfigurator
       return 'username@testing.example.com'
     end
   end
-  
+
   def markus_ate_test_runner_script_name
     if automated_testing_engine_on? && (defined? ATE_TEST_RUNNER_NAME)
       return ATE_TEST_RUNNER_NAME
     else
-      return 'testrunner/testrunner.rb'
+      return '~/testrunner/testrunner.rb'
     end
   end
-  
+
   def markus_ate_test_run_directory
     if automated_testing_engine_on? && (defined? ATE_TEST_RUN_DIRECTORY)
       return ATE_TEST_RUN_DIRECTORY
     else
-      return 'testrunner/test/'
+      return '~/testrunner/test/'
     end
   end
-  
+
 end
