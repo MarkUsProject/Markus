@@ -694,23 +694,24 @@ module AutomatedTestsHelper
     test_box_path = MarkusConfigurator.markus_ate_test_run_directory
 
     # Create clean folder to execute tests
-    stdout, stderr, status = Open3.capture3("ssh #{server} \"rm -rf #{test_box_path} && mkdir #{test_box_path}\"")
+
+    stdout, stderr, status = Open3.capture3("rm -rf #{test_box_path} && mkdir #{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
     end
 
     # Securely copy student's submission, test files and test harness script to test_box_path
-    stdout, stderr, status = Open3.capture3("scp -p -r '#{submission_path}'/* #{server}:#{test_box_path}")
+    stdout, stderr, status = Open3.capture3("cp '#{submission_path}'/* #{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
     end
 
-    stdout, stderr, status = Open3.capture3("scp -p -r '#{assignment_tests_path}'/* #{server}:#{test_box_path}")
+    stdout, stderr, status = Open3.capture3("cp '#{assignment_tests_path}'/* #{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
     end
 
-    stdout, stderr, status = Open3.capture3("ssh #{server} cp #{test_harness_path} #{test_box_path}")
+    stdout, stderr, status = Open3.capture3("cp #{test_harness_path} #{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
     end
@@ -724,7 +725,7 @@ module AutomatedTestsHelper
 
     # Run script
     test_harness_name = File.basename(test_harness_path)
-    stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{test_box_path}; ruby #{test_harness_name} #{arg_list}\"")
+    stdout, stderr, status = Open3.capture3("cd #{test_box_path}; ruby #{test_harness_name} #{arg_list}")
 
     if !(status.success?)
       return [stderr, stdout, false]
