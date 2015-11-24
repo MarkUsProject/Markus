@@ -293,5 +293,4 @@ module MarkusConfigurator
       return '~/testrunner/test/'
     end
   end
-
 end
