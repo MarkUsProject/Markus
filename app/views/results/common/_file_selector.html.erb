@@ -26,46 +26,29 @@
        <% folders = file.path.split('/') %>
        <% folders.each do |folder_name| %>
          <% if !innermost_dir.key?(folder_name) %>
-           <%= puts "don't have folder ", folder_name %>
            <% innermost_dir[folder_name] = Hash.new %>
            <% innermost_dir[folder_name]["files"] = Array.new %>
          <% end %>
          <% innermost_dir = innermost_dir[folder_name] %>
-         <% innermost_dir["files"].push(file.filename) %>
+         <% innermost_dir["files"].push(file) %>
        <% end %>
      <% end %>
 
+     <% def show_folder_recursive(dir) %>
+      <% dir.each do |name, contents|  %>
+        <% if name != "files" %>
+          <a><%= name %></a>
+          <ul><% show_folder_recursive(contents) %></ul>
+        <% end %>
+      <% end %>
+      <% dir["files"].each do |file| %>
+        <li><%=file.filename%></li>
+      <% end %>
+     <% end %>
 
-    <div class="nested_files">
-      <ul>
-          <li>
-              <a>Outer Dir 1</a>
-              <ul>
-                  <a>Inner Dir</a>
-                  <ul>
-                      <li>File 1</li>  
-                      <li>File 2</li>          
-                  </ul>  
-                  <li>File X</li>  
-
-                  <a>Inner Dir 2</a>
-                  <ul>
-                      <li>File 3</li>  
-                      <li>File 4</li>          
-                  </ul> 
-                  <li>File Y </li>            
-              </ul>                
-          </li>
-          
-          <li>
-              <a>Outer Dir 2</a>
-              <ul>
-                  <li>File Z</li>      
-              </ul>                
-          </li>
-      </ul>
-    </div> 
-
+     <div class="nested_files">
+     <% show_folder_recursive(h) %>
+     </div>
 
 
 
