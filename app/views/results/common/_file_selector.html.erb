@@ -18,10 +18,10 @@
            id='back_button'
            disabled>
 
-     <% h = Hash.new %> 
+     <% outermost_dir = Hash.new %> 
 
      <% files.each do |file| %>
-       <% innermost_dir = h %>
+       <% innermost_dir = outermost_dir %>
        <% innermost_dir["files"] = Array.new %>
        <% folders = file.path.split('/') %>
        <% folders.each do |folder_name| %>
@@ -47,10 +47,10 @@
      <% end %>
 
      <div class="nested_files">
-     <% show_folder_recursive(h) %>
+      <ul><li>
+        <% show_folder_recursive(outermost_dir) %>
+      </ul></li>
      </div>
-
-
 
     <input type='button'
            onclick='bump_select("select_file_id", 1, "back_button", "next_button"); return false;'
