@@ -17,18 +17,23 @@
            value='←'
            id='back_button'
            disabled>
-<!--     <select id='select_file_id'
-            name='select_file_id'
-            onchange='bump_select("select_file_id", 0, "back_button", "next_button");'>
-      <% if files.empty? %>
-        <option value=''><%= t('common.no_file_in_repository') %></option>
-      <% end %>
-      <% files.each do |file| %>
-        <option value='<%= file.id %>'>
-          <%= File.join(file.path, file.filename) %>
-        </option>
-      <% end %>
-    </select> -->
+
+     <% h = Hash.new %> 
+
+     <% files.each do |file| %>
+       <% innermost_dir = h %>
+       <% innermost_dir["files"] = Array.new %>
+       <% folders = file.path.split('/') %>
+       <% folders.each do |folder_name| %>
+         <% if !innermost_dir.key?(folder_name) %>
+           <%= puts "don't have folder ", folder_name %>
+           <% innermost_dir[folder_name] = Hash.new %>
+           <% innermost_dir[folder_name]["files"] = Array.new %>
+         <% end %>
+         <% innermost_dir = innermost_dir[folder_name] %>
+         <% innermost_dir["files"].push(file.filename) %>
+       <% end %>
+     <% end %>
 
 
     <div class="nested_files">

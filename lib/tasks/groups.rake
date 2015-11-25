@@ -37,7 +37,18 @@ namespace :db do
 
         file_dir  = File.join(File.dirname(__FILE__), '/../../db/data')
         Dir.foreach(file_dir) do |filename|
-          unless File.directory?(File.join(file_dir, filename))
+          if File.directory?(File.join(file_dir, filename))
+            if filename != "." && filename != ".."
+              group.access_repo do |repo|
+                txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
+                path = File.join(assignment.repository_folder, 'bleh')
+                puts "ADD PATH ", path
+                txn.add_path(path)
+                puts "DONE ADDING PATH"
+                repo.commit(txn)
+              end
+            end
+          else
             file_contents = File.open(File.join(file_dir, filename))
             file_contents.rewind
             group.access_repo do |repo|
@@ -47,7 +58,44 @@ namespace :db do
               repo.commit(txn)
             end
           end
+
+
         end
+
+        #add extra files here
+
+        file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/test-folder')
+
+        # group.access_repo do |repo|
+        #   txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
+        #   path = File.join(assignment.repository_folder, 'test-folder')
+        #   puts "ADD PATH ", path
+        #   txn.add_path(path)
+        #   puts "DONE ADDING PATH"
+        #   repo.commit(txn)
+        # end
+
+
+        Dir.foreach(file_dir) do |filename|
+          unless File.directory?(File.join(file_dir, filename))
+            file_contents = File.open(File.join(file_dir, filename))
+            file_contents.rewind
+            group.access_repo do |repo|
+              txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
+              # txn.add_path(File.join(assignment.repository_folder, 'test-folder'))
+              # puts "ok we put in the path"
+              path = File.join(File.join(assignment.repository_folder, 'bleh'), filename)
+              puts "PATH OF INNER IS ", path
+              txn.add(path, file_contents.read, '')
+              repo.commit(txn)
+              puts "ok we put in the file"
+              repo.commit(txn)
+              puts "committed"
+            end
+          end
+        end
+
+
       end
     end
     # This really should be done in a more generic way
