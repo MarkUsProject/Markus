@@ -42,7 +42,7 @@
         <% end %>
       <% end %>
       <% dir["files"].each do |file| %>
-        <li><%=file.filename%></li>
+        <li><a onclick='open_file(<%=file.id%>)'><option value='<%=file.id%>'><%=file.filename%></option></a></li>
       <% end %>
      <% end %>
 
@@ -51,6 +51,19 @@
         <% show_folder_recursive(outermost_dir) %>
       </ul></li>
      </div>
+<!-- 
+     <select id='select_file_id'
+             name='select_file_id'
+             onchange='bump_select("select_file_id", 0, "back_button", "next_button");'>
+       <% if files.empty? %>
+         <option value=''><%= t('common.no_file_in_repository') %></option>
+       <% end %>
+       <% files.each do |file| %>
+         <option value='<%= file.id %>'>
+           <%= File.join(file.path, file.filename) %>
+         </option>
+       <% end %>
+     </select> -->
 
     <input type='button'
            onclick='bump_select("select_file_id", 1, "back_button", "next_button"); return false;'

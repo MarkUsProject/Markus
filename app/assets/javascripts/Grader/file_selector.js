@@ -20,9 +20,15 @@ function bump_select(select_node_id, bump_amount, back_button_id, next_button_id
   // load_submitted_file(select_node.value);
 }
 
+function open_file(select_node_id) {
+  console.log(select_node_id);
+  load_submitted_file(select_node_id);
+}
+
 jQuery(document).ready(function() {
   bump_select('select_file_id', 0, 'back_button', 'next_button');
 });
+
 
 
 

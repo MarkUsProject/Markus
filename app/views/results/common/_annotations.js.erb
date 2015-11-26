@@ -362,7 +362,7 @@
     });
 
     document.getElementById('working').style.display = '';
-    document.getElementById('select_file_id').disabled = true;
+    // document.getElementById('select_file_id').disabled = true;
 
     positions = null;
     annotation_manager = null;
@@ -375,7 +375,7 @@
             '&authenticity_token=' + AUTH_TOKEN
     }).always(function() {
       document.getElementById('working').style.display = 'none';
-      document.getElementById('select_file_id').disabled = false;
+      // document.getElementById('select_file_id').disabled = false;
     });
   }
 
