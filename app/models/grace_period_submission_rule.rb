@@ -109,7 +109,7 @@ class GracePeriodSubmissionRule < SubmissionRule
           deduction.destroy
         end
       end
-      student_membership.user.grace_period_deductions.reload
+      deductions.reload
     end
   end
 
