@@ -1382,7 +1382,7 @@ fr:
            display_after_submission: "UPDATE ME display after submission"
            display_after_collection: "UPDATE ME display after collection"
       token:
-        tokens_form: "Jetons disponibles par groupe"
+        tokens_form: "Jetons disponibles par groupe par jour"
         tokens_per_day: "<span class=\"prop_label\">Jetons par jour :</span> %{tokens}"
         tokens_not_given_yet: "<span class=\"prop_label\">Jetons disponibles :</span> jetons pas encore donnés"
         tokens_no_more_available: "<span class=\"prop_label\">Jetons disponibles:</span >pas de jetons disponibles"
