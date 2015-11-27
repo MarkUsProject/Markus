@@ -16,13 +16,13 @@
 
   <!--The buttons for creating tags, uploading and downloading-->
   <div class='heading_buttons'>
-    <%= link_to_function t('tags.create.create_new'), 'modal_create_new.open()' %>
+    <%= link_to t('tags.create.create_new'), '#', onclick:'modal_create_new.open()' %>
     <span class='menu_bar'></span>
-    <%= link_to_function t('tags.download.download'), 'modal_download.open()' %>
+    <%= link_to t('tags.download.download'), '#', onclick:'modal_download.open()' %>
     <span class='menu_bar'></span>
-    <%= link_to_function  t('tags.upload.upload_csv'), 'modal_upload_csv.open()' %>
+    <%= link_to  t('tags.upload.upload_csv'), '#', onclick:'modal_upload_csv.open()' %>
     <span class='menu_bar'></span>
-    <%= link_to_function t('tags.upload.upload_yml'), 'modal_upload_yml.open()' %>
+    <%= link_to t('tags.upload.upload_yml'), '#', onclick:'modal_upload_yml.open()' %>
   </div>
 </div>
 

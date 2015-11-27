@@ -233,6 +233,16 @@ class GradersController < ApplicationController
     end
   end
 
+  def grader_summary
+    @current_user = current_user
+    if @current_user.student? || @current_user.ta?
+      redirect_to controller: 'assignments', action: 'index'
+      return
+    end
+    @assignment = Assignment.find(params[:assignment_id])
+    render :grader_summary, layout: 'content'
+  end
+
   private
 
   # Returns a list of groupings with included associations.

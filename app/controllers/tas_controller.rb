@@ -90,6 +90,11 @@ class TasController < ApplicationController
     redirect_to action: 'index'
   end
 
+  def refresh_graph
+    @assignment = Assignment.find(params[:assignment])
+    @current_ta = Ta.find(params[:id])
+  end
+
   private
 
   def user_params

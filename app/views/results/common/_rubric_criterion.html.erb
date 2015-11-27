@@ -1,9 +1,10 @@
 <div id="<%= "mark_criterion_title_#{mark_criterion.id}_name" %>"
      class="mark_criterion_title_div_level float_left">
   <strong>
-    <%= link_to_function mark_criterion.rubric_criterion_name,
-                         'return false;',
-                         class: 'rubric_criterion_link' %>
+    <%= link_to mark_criterion.rubric_criterion_name,
+                'javascript:void(0);',
+                onclick: 'return false;',
+                class: 'rubric_criterion_link' %>
   </strong>
 </div>
 

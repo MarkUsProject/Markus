@@ -752,6 +752,13 @@ module Repository
       end # end case
     end
 
+    # Returns a list of paths changed at a particular revision.
+    # This seems to include deleted files, while the above methods don't.
+    def __get_file_paths(revision_number)
+      rev = @repos.fs.root(revision_number)
+      rev.paths_changed.keys
+    end
+
     ####################################################################
     ##  Private method definitions
     ####################################################################
@@ -1008,6 +1015,12 @@ module Repository
     # Return changed files at 'path' (recursively)
     def changed_files_at_path(path)
       return files_at_path_helper(path, true)
+    end
+
+    # Return the names of changed files at this revision at 'path'
+    def changed_filenames_at_path(path)
+      paths = @repo.__get_file_paths(@revision_number)
+      paths.select { |p| p.start_with? ('/' + path) }
     end
 
     private

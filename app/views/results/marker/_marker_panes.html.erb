@@ -166,7 +166,7 @@
                             jQuery('#annot_dialog_page').val());">
                   <%= I18n.t('marker.annotation.new_annotation') %>
                 </button>
-                <%= button_to_function t('cancel'), 'modal.close(); hideAnnotationPreview();' %>
+                <%= button_tag t('cancel'), onclick: 'modal.close(); hideAnnotationPreview();' %>
               </section>
             </div>
             <div style="float: right">

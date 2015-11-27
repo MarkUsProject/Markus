@@ -160,6 +160,7 @@ class MainController < ApplicationController
     ]).order('id ASC')
 
     @current_assignment = Assignment.get_current_assignment
+    @current_ta = @current_assignment.tas.first
 
     render :index, layout: 'content'
   end
