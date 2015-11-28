@@ -71,27 +71,23 @@ namespace :db do
         end
 
         file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/test-files-in-inner-dirs')
-
+        inner_repo_dirs = ['a', 'a/b', 'a/c', 'a/c/d', 'e', 'e/f']
         Dir.foreach(file_dir) do |filename|
           unless File.directory?(File.join(file_dir, filename))
+
             file_contents = File.open(File.join(file_dir, filename))
             file_contents.rewind
-            group.access_repo do |repo|
-              txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
-              path = File.join(File.join(assignment.repository_folder, 'a'), filename)
-              txn.add(path, file_contents.read, '')
-              path = File.join(File.join(assignment.repository_folder, 'a/b'), filename)
-              txn.add(path, file_contents.read, '')
-              path = File.join(File.join(assignment.repository_folder, 'a/c'), filename)
-              txn.add(path, file_contents.read, '')
-              path = File.join(File.join(assignment.repository_folder, 'a/c/d'), filename)
-              txn.add(path, file_contents.read, '')
-              path = File.join(File.join(assignment.repository_folder, 'e'), filename)
-              txn.add(path, file_contents.read, '')
-              path = File.join(File.join(assignment.repository_folder, 'e/f'), filename)
-              txn.add(path, file_contents.read, '')
-              repo.commit(txn)
+
+            inner_repo_dirs.each do |inner_repo_dir|
+              group.access_repo do |repo|
+                txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
+                path = File.join(File.join(assignment.repository_folder, inner_repo_dir), filename)
+                txn.add(path, file_contents.read, '')
+                repo.commit(txn)
+              end
             end
+
+
           end
         end
 
