@@ -1,5 +1,5 @@
 namespace :db do
-  
+
   desc 'Create groups for assignments'
   task :groups => :environment do
     puts 'Assign Groups/Students for Assignments'
@@ -9,25 +9,25 @@ namespace :db do
         student = students[time]
         if assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3'
           group = Group.create(
-              group_name: "#{ student.user_name } #{ assignment.short_identifier }"
-          )
+            group_name: "#{ student.user_name } #{ assignment.short_identifier }"
+            )
           grouping = Grouping.create(
-              group: group,
-              assignment: assignment
-          )
+            group: group,
+            assignment: assignment
+            )
           grouping.invite([student.user_name],
-                          StudentMembership::STATUSES[:inviter],
-                          invoked_by_admin=true)
+            StudentMembership::STATUSES[:inviter],
+            invoked_by_admin=true)
         elsif assignment.short_identifier == 'A2' || assignment.short_identifier == 'A4'
           group = Group.create(
-              group_name: "#{ student.user_name } #{ assignment.short_identifier }"
-          )
+            group_name: "#{ student.user_name } #{ assignment.short_identifier }"
+            )
           grouping = Grouping.create(
-              group: group,
-              assignment: assignment
-          )
+            group: group,
+            assignment: assignment
+            )
           (0..1).each do |count|
-              grouping.invite(
+            grouping.invite(
               [students[time + count * 15].user_name],
               StudentMembership::STATUSES[:inviter],
               invoked_by_admin = true)
@@ -35,6 +35,7 @@ namespace :db do
           group.set_repo_permissions
         end
 
+        #add files to the root folder of the repo (e.g. "A1")
         file_dir  = File.join(File.dirname(__FILE__), '/../../db/data')
         Dir.foreach(file_dir) do |filename|
           unless File.directory?(File.join(file_dir, filename))
@@ -51,8 +52,7 @@ namespace :db do
 
         end
 
-        #add extra files here
-
+        #create subdirectories in the repos 
         group.access_repo do |repo|
           txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
           path_a = File.join(assignment.repository_folder, 'a')
@@ -70,31 +70,34 @@ namespace :db do
           repo.commit(txn)
         end
 
+        #the files in "test-files-in-inner-dirs" folder are used to populate the subdirectories in the repos
         file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/test-files-in-inner-dirs')
-        inner_repo_dirs = ['a', 'a/b', 'a/c', 'a/c/d', 'e', 'e/f']
-        Dir.foreach(file_dir) do |filename|
-          unless File.directory?(File.join(file_dir, filename))
+        subdirs_to_contents = {
+          'a' => ['1.py', '2.py'],
+          'a/b' => ['3.py'],
+          'a/c' => ['4.py'],
+          'a/c/d' => ['5.py', '6.py'],
+          'e' => ['7.py'],
+          'e/f'=> ['8.py', '9.py', '10.py']
+        }
 
+        subdirs_to_contents.each do |subdir, filenames|
+          filenames.each do |filename|
             file_contents = File.open(File.join(file_dir, filename))
             file_contents.rewind
 
-            inner_repo_dirs.each do |inner_repo_dir|
-              group.access_repo do |repo|
-                txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
-                path = File.join(File.join(assignment.repository_folder, inner_repo_dir), filename)
-                txn.add(path, file_contents.read, '')
-                repo.commit(txn)
-              end
+            group.access_repo do |repo|
+              txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
+              path = File.join(File.join(assignment.repository_folder, subdir), filename)
+              txn.add(path, file_contents.read, '')
+              repo.commit(txn)
             end
-
-
           end
         end
-
-
       end
     end
     # This really should be done in a more generic way
     Repository::SubversionRepository.__generate_authz_file
   end
 end
+
