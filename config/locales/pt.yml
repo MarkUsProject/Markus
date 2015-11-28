@@ -1315,7 +1315,7 @@ pt:
       missing_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
       dir_not_exist: "O diretório %{dir} necessario para o Ant não existe"
       token:
-        tokens_form: "Tokens disponíveis por grupo"
+        tokens_form: "Tokens disponíveis por grupo por dia"
         tokens_per_day: "<span class=\"prop_label\">Tokens por dia:</span> %{tokens}"
         tokens_not_given_yet: "<span class=\"prop_label\">Tokens disponíveis:</span> Nenhum tokens dado"
         tokens_no_more_available: "<span class=\"prop_label\">Tokens disponíveis:</span > Mais nenhum token disponível "

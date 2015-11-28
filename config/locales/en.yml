@@ -1504,7 +1504,7 @@ en:
            display_after_submission: "Display after submission"
            display_after_collection: "Display after collection"
       token:
-        tokens_form: "Tokens available per group"
+        tokens_form: "Tokens available per group per day"
         tokens_per_day: "<span class=\"prop_label\">Tokens per day:</span> %{tokens}"
         tokens_not_given_yet: "<span class=\"prop_label\">Tokens available:</span> No tokens given yet"
         tokens_no_more_available: "<span class=\"prop_label\">Tokens available:</span >No more tokens available "
