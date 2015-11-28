@@ -37,18 +37,7 @@ namespace :db do
 
         file_dir  = File.join(File.dirname(__FILE__), '/../../db/data')
         Dir.foreach(file_dir) do |filename|
-          if File.directory?(File.join(file_dir, filename))
-            if filename != "." && filename != ".."
-              group.access_repo do |repo|
-                txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
-                path = File.join(assignment.repository_folder, 'bleh')
-                puts "ADD PATH ", path
-                txn.add_path(path)
-                puts "DONE ADDING PATH"
-                repo.commit(txn)
-              end
-            end
-          else
+          unless File.directory?(File.join(file_dir, filename))
             file_contents = File.open(File.join(file_dir, filename))
             file_contents.rewind
             group.access_repo do |repo|
@@ -64,17 +53,24 @@ namespace :db do
 
         #add extra files here
 
-        file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/test-folder')
+        group.access_repo do |repo|
+          txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
+          path_a = File.join(assignment.repository_folder, 'a')
+          txn.add_path(path_a)
+          path_b = File.join(path_a, 'b')
+          txn.add_path(path_b)
+          path_c = File.join(path_a, 'c')
+          txn.add_path(path_c)
+          path_d = File.join(path_c, 'd')
+          txn.add_path(path_d)
+          path_e = File.join(assignment.repository_folder, 'e')
+          txn.add_path(path_e)
+          path_f = File.join(path_e, 'f')
+          txn.add_path(path_f)
+          repo.commit(txn)
+        end
 
-        # group.access_repo do |repo|
-        #   txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
-        #   path = File.join(assignment.repository_folder, 'test-folder')
-        #   puts "ADD PATH ", path
-        #   txn.add_path(path)
-        #   puts "DONE ADDING PATH"
-        #   repo.commit(txn)
-        # end
-
+        file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/test-files-in-inner-dirs')
 
         Dir.foreach(file_dir) do |filename|
           unless File.directory?(File.join(file_dir, filename))
@@ -82,15 +78,19 @@ namespace :db do
             file_contents.rewind
             group.access_repo do |repo|
               txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
-              # txn.add_path(File.join(assignment.repository_folder, 'test-folder'))
-              # puts "ok we put in the path"
-              path = File.join(File.join(assignment.repository_folder, 'bleh'), filename)
-              puts "PATH OF INNER IS ", path
+              path = File.join(File.join(assignment.repository_folder, 'a'), filename)
+              txn.add(path, file_contents.read, '')
+              path = File.join(File.join(assignment.repository_folder, 'a/b'), filename)
+              txn.add(path, file_contents.read, '')
+              path = File.join(File.join(assignment.repository_folder, 'a/c'), filename)
+              txn.add(path, file_contents.read, '')
+              path = File.join(File.join(assignment.repository_folder, 'a/c/d'), filename)
+              txn.add(path, file_contents.read, '')
+              path = File.join(File.join(assignment.repository_folder, 'e'), filename)
+              txn.add(path, file_contents.read, '')
+              path = File.join(File.join(assignment.repository_folder, 'e/f'), filename)
               txn.add(path, file_contents.read, '')
               repo.commit(txn)
-              puts "ok we put in the file"
-              repo.commit(txn)
-              puts "committed"
             end
           end
         end

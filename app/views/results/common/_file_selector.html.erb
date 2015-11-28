@@ -39,6 +39,7 @@
         <% if name != "files" %>
           <a><%= name %></a>
           <ul><% show_folder_recursive(contents) %></ul>
+          <br>
         <% end %>
       <% end %>
       <% dir["files"].each do |file| %>
