@@ -79,7 +79,8 @@
   	  </div>
   	  <div id="test_results" class="sub_block">
         <% @test_script_results.each do |test_script_result| %>
-          <h3>Test Run on 10th November 2015</h3>
+        <!-- TODO: format time -->
+          <h3>Test Run on <%= test_script_result.created_at.time %></h3>
           <p><%= test_script_result.actual_output %></p>
         <% end %>
   		</div>
