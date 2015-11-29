@@ -71,62 +71,16 @@
 	<% if !@test_script_results.nil? %>
 	<div class="block">
 	  <h2><%= I18n.t("automated_tests.test_results") %></h2>
-	  <br />
-	  <div class="sub_block">
-	  	<%= raw ( I18n.t("automated_tests.marks_obtained",
-	   	          	      :marking => "#{@grouping.get_total_test_script_marks * 1.0} / #{@assignment.total_ror_script_marks * 1.0}" ) ) %>
-	  </div>
-	  <div id="test_results" class="sub_block">
-		  <% test_script_results = TestScriptResult.order(created_at: :desc).where(grouping: @grouping) %>
-
-		  <ul>
-		  <% test_script_results.each do |ts_result| %>
-		  	<% test_script = TestScript.find(ts_result.test_script_id) %>
-		  	<li>
-		  	  <%= I18n.t("automated_tests.script_name") %> <%= test_script.script_name %>
-		  	  <ul>
-		  	  <li><%= I18n.t("automated_tests.marks_earned") %> <%= ts_result.marks_earned %></li>
-		  	  <li><%= I18n.t("automated_tests.date_run") %> <%= ts_result.created_at.strftime("%F %R") %></li>
-		  	  <li><%= I18n.t("automated_tests.revision_used") %> <%= ts_result.repo_revision.to_i %></li>
-		   	  <% test_results = TestResult.where(grouping_id: ts_result.grouping_id,
-		   	                                     test_script_id: ts_result.test_script_id,
-		   	                                     test_script_result_id: ts_result.id) %>
-		  	  <% test_results.each do |t_result| %>
-		 	      <li><%= I18n.t("automated_tests.test_name") %> <%= t_result.name %></li>
-		   	    <ul>
-		   	      <% if test_script.display_run_status == "display_after_submission" or
-		   	      			(test_script.display_run_status == "display_after_collection" &&
-		   	      			@grouping.is_collected) %>
-			 	        <li><%= I18n.t("automated_tests.completion_status") %> <%= t_result.completion_status %></li>
-			 	      <% end %>
-			 	      <% if test_script.display_marks_earned == "display_after_submission" or
-			   	      		(test_script.display_marks_earned == "display_after_collection" &&
-			   	      		@grouping.is_collected) %>
-			 	        <li><%= I18n.t("automated_tests.marks_earned") %> <%= t_result.marks_earned %></li>
-			 	      <% end %>
-			 	      <% if test_script.display_input == "display_after_submission" or
-                    (test_script.display_input == "display_after_collection" &&
-                    @grouping.is_collected) %>
-			  	      <li><%= I18n.t("automated_tests.input_description") %> <%= t_result.input_description %></li>
-			  	    <% end %>
-			 	      <% if test_script.display_actual_output == "display_after_submission" or
-                    (test_script.display_actual_output == "display_after_collection" &&
-                    @grouping.is_collected) %>
-			  	      <li><%= I18n.t("automated_tests.actual_output") %> <%= t_result.actual_output %></li>
-			  	    <% end %>
-			 	      <% if test_script.display_expected_output == "display_after_submission" or
-                    (test_script.display_expected_output == "display_after_collection" &&
-                    @grouping.is_collected) %>
-			  	      <li><%= I18n.t("automated_tests.expected_output") %> <%= t_result.expected_output %></li>
-			  	    <% end %>
-		  	    </ul>
-		  	    <ul> </ul>
-		  	  <% end %>
-		  	  </ul>
-		  	</li>
-		  <% end %>
-		  </ul>
-		</div>
+    <div class="block_content">
+  	  <br />
+  	  <div class="sub_block">
+  	  	<%= raw ( I18n.t("automated_tests.marks_obtained",
+  	   	          	      :marking => "#{@grouping.get_total_test_script_marks * 1.0} / #{@assignment.total_ror_script_marks * 1.0}" ) ) %>
+  	  </div>
+  	  <div id="test_results" class="sub_block">
+  		  <% test_script_results = TestScriptResult.order(created_at: :desc).where(grouping: @grouping) %>
+  		</div>
+    </div>
 	<% end %>
 <% else %>
   <div class="block_content">

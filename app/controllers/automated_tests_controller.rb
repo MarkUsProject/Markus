@@ -66,9 +66,9 @@ class AutomatedTestsController < ApplicationController
       @revision  = repo.get_latest_revision
       @revision_number = @revision.revision_number
 
-      @test_script_results = TestScriptResult.find_by_grouping_id(@grouping.id)
+      @test_script_results = TestResult.find_by(grouping: @grouping)
 
-      @token = Token.find_by_grouping_id(@grouping.id)
+      @token = Token.find_by(grouping: @grouping)
       if @token
         @token.reassign_tokens_if_new_day()
       end
