@@ -84,7 +84,7 @@
 
     <div <%= raw hide %>>
       <%= f.label :script_name, (saved ? t('automated_tests.replace') : t('automated_tests.upload_required').html_safe) %>
-      <%= f.file_field :script_name, :size=>"30", :class => 'upload_file' %><br/>
+      <%= file_field_tag :new_script, :size=>"30", :class => 'upload_file' %><br/>
 
       <% if saved %>
         <span class="label">
