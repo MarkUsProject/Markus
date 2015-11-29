@@ -78,7 +78,10 @@
   	   	          	      :marking => "#{@grouping.get_total_test_script_marks * 1.0} / #{@assignment.total_ror_script_marks * 1.0}" ) ) %>
   	  </div>
   	  <div id="test_results" class="sub_block">
-  		  <% test_script_results = TestScriptResult.order(created_at: :desc).where(grouping: @grouping) %>
+        <% @test_script_results.each do |test_script_result| %>
+          <h3>Test Run on 10th November 2015</h3>
+          <p><%= test_script_result.actual_output %></p>
+        <% end %>
   		</div>
     </div>
 	<% end %>

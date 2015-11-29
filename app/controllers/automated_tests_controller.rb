@@ -66,7 +66,7 @@ class AutomatedTestsController < ApplicationController
       @revision  = repo.get_latest_revision
       @revision_number = @revision.revision_number
 
-      @test_script_results = TestResult.find_by(grouping: @grouping)
+      @test_script_results = TestResult.where(grouping: @grouping)
 
       @token = Token.find_by(grouping: @grouping)
       if @token
