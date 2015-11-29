@@ -70,42 +70,42 @@
         filters: [
           {
             name: 'all',
-            text: '<%= j raw I18n.t(:'browse_submissions.show_all') %>',
+            text: '<%= j raw t(:'browse_submissions.show_all') %>',
             func: function(submission) {
               return true;
             }
           },
           {
             name: 'unmarked',
-            text: '<%= j raw I18n.t(:'browse_submissions.show_unmarked') %>',
+            text: '<%= j raw t(:'browse_submissions.show_unmarked') %>',
             func: function(submission) {
               return submission.state == 'unmarked';
             }
           },
           {
             name: 'partial',
-            text: '<%= j raw I18n.t(:'browse_submissions.show_partial') %>',
+            text: '<%= j raw t(:'browse_submissions.show_partial') %>',
             func: function(submission) {
               return submission.state == 'partial';
             }
           },
           {
             name: 'complete',
-            text: '<%= j raw I18n.t(:'browse_submissions.show_complete') %>',
+            text: '<%= j raw t(:'browse_submissions.show_complete') %>',
             func: function(submission) {
               return submission.state == 'completed';
             }
           },
           {
             name: 'released',
-            text: '<%= j raw I18n.t(:'browse_submissions.show_released') %>',
+            text: '<%= j raw t(:'browse_submissions.show_released') %>',
             func: function(submission) {
               return submission.state == 'released';
             }
           },
           {
             name: 'remark_requested',
-            text: '<%= j raw I18n.t(:'browse_submissions.show_remark_request') %>',
+            text: '<%= j raw t(:'browse_submissions.show_remark_request') %>',
             func: function(submission) {
               return submission.state == 'remark';
             }
