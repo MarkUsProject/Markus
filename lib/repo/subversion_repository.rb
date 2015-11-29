@@ -852,11 +852,8 @@ module Repository
 
     # Make a file if it's not already present.
     def make_file(txn, path)
-      puts "we have the path"
       if (txn.root.check_path(path) == 0)
-        puts "the path is not zero ", path
         txn.root.make_file(path)
-        puts "done making file"
       end
       return txn
     end
