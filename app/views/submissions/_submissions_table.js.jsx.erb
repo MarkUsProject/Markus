@@ -195,9 +195,9 @@
         var s = {};
         s['id'] = submission.id;
         if (submission.name_url === '') {
-          s['group_name'] = <span dangerouslySetInnerHTML={{__html: submission.name}} />;
+          s['group_name'] = <span>{submission.name}</span>;
         } else {
-          s['group_name'] = <a href={submission.name_url} dangerouslySetInnerHTML={{__html: submission.name}} />;
+          s['group_name'] = <a href={submission.name_url}>{submission.name}</a>;
         }
         if (submission.error !== '') {
           s['class_name'] = "submission_error";
@@ -208,7 +208,7 @@
           }
 
           s['class_name'] = submission.class_name;
-          s['repository'] = <a href={submission.repo_url} dangerouslySetInnerHTML={{__html: submission.repo_name}} />;
+          s['repository'] = <a href={submission.repo_url}>{submission.repo_name}</a>;
           if (submission.late_commit) {
             s['commit_date'] = (<span>
               <%= image_tag('icons/error.png',
