@@ -144,6 +144,9 @@ module AutomatedTestsHelper
       testscripts.each do |file_num, file|
         updated_script_files[file_num] = {}
 
+        # Empty file submission, skip
+        next if testscripts[file_num][:script_name].nil?
+
         if testscripts[file_num][:script_name].is_a? String
           # Edit existing test script file
           filename = file[:script_name]
@@ -151,10 +154,6 @@ module AutomatedTestsHelper
             updated_script_files[file_num][key] = value
           end
         else
-          if testscripts[file_num][:script_name].nil?
-            # Empty file submission, skip
-            next
-          end
           # Create new test script file
           filename = testscripts[file_num][:script_name].original_filename
           if TestScript.exists?(script_name: filename, assignment: assignment)

@@ -18,8 +18,7 @@
     <span class='file_name'>
       <% if saved %>
         <%= f.object.script_name %>
-        <%= f.hidden_field :script_name, :value => f.object.script_name,
-                           :class => "script_name" %>
+        <%= f.hidden_field :script_name, :value => f.object.script_name %>
       <% else %>
         <%= t('automated_tests.new_test_script_file') %>
       <% end %>
