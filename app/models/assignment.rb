@@ -9,7 +9,7 @@ class Assignment < ActiveRecord::Base
 
   has_many :rubric_criteria,
            -> { order(:position) },
-           class_name: "RubricCriterion",
+           class_name: 'RubricCriterion',
 		   dependent: :destroy
 
   has_many :flexible_criteria,
@@ -459,8 +459,8 @@ class Assignment < ActiveRecord::Base
         # groupings error set if a member is already in different group
         membership_error = I18n.t("csv.memberships_not_unique",
                                   group_name: row[0],
-                                  student_user_name: errors.
-                                      get(:groupings).first)
+                                  student_user_name: errors
+                                                         .get(:groupings).first)
         errors.delete(:groupings)
       else
         # student_membership error set if a member does not exist
@@ -901,7 +901,7 @@ class Assignment < ActiveRecord::Base
 
     # Form groups
     start_index_group_members = 2
-    for i in start_index_group_members..(row.length - 1)
+    (start_index_group_members..(row.length - 1)).each do |i|
       student = Student.find_by user_name: row[i]
       if student
         if grouping.student_membership_number == 0
@@ -958,8 +958,8 @@ class Assignment < ActiveRecord::Base
     (start_index_group_members..(row.length - 1)).each do |i|
       student = Student.find_by user_name: row[i]
       if student
-        grouping = student.accepted_grouping_for(
-                               existing_grouping.assignment.id)
+        grouping = student
+            .accepted_grouping_for(existing_grouping.assignment.id)
         if grouping.nil?
           # Student doesn't belong to a grouping for the given assignment
           # ==> membership cannot be the same
