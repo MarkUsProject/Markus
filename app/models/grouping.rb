@@ -734,7 +734,7 @@ class Grouping < ActiveRecord::Base
     total = 0
 
     #find the unique test scripts for this submission
-    test_script_ids = TestResult.select(:test_script_id).where(:grouping_id => self.id)
+    test_script_ids = TestResult.select(:test_script_id).where(grouping_id: id)
 
     #pull out the actual ids from the ActiveRecord objects
     test_script_ids = test_script_ids.map { |script_id_obj| script_id_obj.test_script_id }
