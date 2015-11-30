@@ -5,7 +5,7 @@
       <%= t('marker.annotation.remark_flag') if (annot.is_remark) %>
     </p>
     <p class='annotationContent' id='annotation_text_content_display_<%= annot.annotation_text.id %>'>
-      <%= simple_format(annot.annotation_text.content) %>
+      <%= markdown(annot.annotation_text.content) %>
     </p>
   </li>
 <% end %>

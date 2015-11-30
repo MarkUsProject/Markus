@@ -26,7 +26,7 @@ function updateAnnotationPreview() {
     var newAnnotation = document.getElementById('new_annotation_content').value;
 
     var preview = document.getElementById('annotation_preview');
-    preview.innerHTML = newAnnotation;
+    preview.innerHTML = marked(newAnnotation);
 
     showAnnotationPreview();
 
