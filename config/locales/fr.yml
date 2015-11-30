@@ -125,7 +125,7 @@ fr:
       no_submission: "%{group_name} n'a pas d'envoi"
       result_not_saved: "Le résultat du groupe %{group_name} n'a pas pu être sauvegardé."
     collect_submissions:
-      apply_late_penalty: "Appliquer pénalité de retard"
+      apply_late_penalty: "Appliquer la règle de pénalité de retard ( Laissant cette case décochée va supprimer toutes les pénalités de retard existants . )"
       collect_all: "Récupérer tous les envois"
       collect_ta: "Récupérer tous les envois qui me sont assignés"
       disable_collect: "Récupération des envois n'est pas disponible, il y a déjà un correcteur assigné aux envois."
