@@ -98,7 +98,7 @@
                    assignment_id: @assignment.id) do %>
       <%= hidden_field_tag 'current_revision_number', @revision_number %>
       <%= check_box_tag 'apply_late_penalty' %>
-      <%= label_tag nil, t('apply_late_penalty') %>
+      <%= label_tag nil, t('collect_submissions.apply_late_penalty') %>
 
       <input type='submit'
              value='<%= t('browse_submissions.collect_and_grab') %>'
