@@ -9,7 +9,7 @@ class Assignment < ActiveRecord::Base
 
   has_many :rubric_criteria,
            -> { order(:position) },
-           class_name: 'RubricCriterion',
+           class_name: "RubricCriterion",
 		   dependent: :destroy
 
   has_many :flexible_criteria,
@@ -393,7 +393,7 @@ class Assignment < ActiveRecord::Base
     unless group.nil?
       if group.repo_name != row[1]
         # CASE: Group already exits but the repo name is different
-        duplicate_group_error = I18n.t('csv.group_with_different_repo',
+        duplicate_group_error = I18n.t("csv.group_with_different_repo",
                                        group_name: row[0])
         return duplicate_group_error
       else
@@ -422,7 +422,7 @@ class Assignment < ActiveRecord::Base
               # The existing groupings and the current group is not compatible
               # Return an error.
               duplicate_group_error = I18n.t(
-                'csv.group_with_different_membership_different_assignment',
+                "csv.group_with_different_membership_different_assignment",
                 group_name: row[0])
               return duplicate_group_error
             end
@@ -442,7 +442,7 @@ class Assignment < ActiveRecord::Base
               #     different.
               # Return error since the membership is different
               duplicate_group_error = I18n.t(
-                'csv.group_with_different_membership_current_assignment',
+                "csv.group_with_different_membership_current_assignment",
                 group_name: row[0])
               return duplicate_group_error
             end
@@ -457,15 +457,15 @@ class Assignment < ActiveRecord::Base
     unless membership_unique?(row)
       if !errors[:groupings].blank?
         # groupings error set if a member is already in different group
-        membership_error = I18n.t('csv.memberships_not_unique',
+        membership_error = I18n.t("csv.memberships_not_unique",
                                   group_name: row[0],
-                                  student_user_name: errors
-                                                         .get(:groupings).first)
+                                  student_user_name: errors.
+                                      get(:groupings).first)
         errors.delete(:groupings)
       else
         # student_membership error set if a member does not exist
         membership_error = I18n.t(
-          'csv.member_does_not_exist',
+          "csv.member_does_not_exist",
           group_name: row[0],
           student_user_name: errors.get(:student_memberships).first)
         errors.delete(:student_memberships)
@@ -485,7 +485,7 @@ class Assignment < ActiveRecord::Base
     # If a repository already exists with the same repo name as the one given
     #  in the csv file, error is returned and the group is not created
     if repository_already_exists?(repo_name)
-      repository_error = I18n.t('csv.repository_already_exists',
+      repository_error = I18n.t("csv.repository_already_exists",
                                 group_name: row[0],
                                 repo_path: errors.get(:repo_name).last)
       errors.delete(:repo_name)
@@ -901,9 +901,8 @@ class Assignment < ActiveRecord::Base
 
     # Form groups
     start_index_group_members = 2
-    (start_index_group_members..(row.length - 1)).each do |i|
-      student = Student.where(user_name: row[i])
-                    .first
+    for i in start_index_group_members..(row.length - 1)
+      student = Student.find_by user_name: row[i]
       if student
         if grouping.student_membership_number == 0
           # Add first valid member as inviter to group.
@@ -959,8 +958,8 @@ class Assignment < ActiveRecord::Base
     (start_index_group_members..(row.length - 1)).each do |i|
       student = Student.find_by user_name: row[i]
       if student
-        grouping = student
-            .accepted_grouping_for(existing_grouping.assignment.id)
+        grouping = student.accepted_grouping_for(
+                               existing_grouping.assignment.id)
         if grouping.nil?
           # Student doesn't belong to a grouping for the given assignment
           # ==> membership cannot be the same
