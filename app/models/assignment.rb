@@ -390,30 +390,84 @@ class Assignment < ActiveRecord::Base
 
     group = Group.where(group_name: row.first).first
 
-    # If a group with the same name already exists, an error is returned
-    # and no new group is created
     unless group.nil?
-      duplicate_group_error = I18n.t('csv.group_name_already_exists',
-                                     group_name: row[0])
-      return duplicate_group_error
+      if group.repo_name != row[1]
+        # CASE: Group already exits but the repo name is different
+        duplicate_group_error = I18n.t('csv.group_with_different_repo',
+                                       group_name: row[0])
+        return duplicate_group_error
+      else
+        any_grouping = Grouping.find_by group_id: group.id
+        if any_grouping.nil?
+          # CASE: Group exists with same repo name but has no grouping
+          #       associated with it for any assignment
+          # Use existing group and create a new grouping between the existing
+          # group and the given students and return without error
+          add_new_grouping_for_group(row, group)
+          return
+        else
+          grouping_for_current_assignment = group.grouping_for_assignment(id)
+          if grouping_for_current_assignment.nil?
+            if same_membership_as_csv_row?(row, any_grouping)
+              # CASE: Group already exists with the same repo name and has a
+              #     grouping for another assignment with the same membership
+              # Use existing group and create a new grouping between the
+              # existing  group and the given students and return without error
+              add_new_grouping_for_group(row, group)
+              return
+            else
+              # CASE: Group already exists with the same repo name and has
+              #     a grouping for another assignment BUT with different
+              #     membership
+              # The existing groupings and the current group is not compatible
+              # Return an error.
+              duplicate_group_error = I18n.t(
+                'csv.group_with_different_membership_different_assignment',
+                group_name: row[0])
+              return duplicate_group_error
+            end
+          else
+            if same_membership_as_csv_row?(row,
+                                           grouping_for_current_assignment)
+              # CASE: Group already exists with the same repo name and also has
+              #     a grouping for the current assignment with the same
+              #     membership
+              # No new group or grouping created. Since the exact group given by
+              # the csv file already exists treat this as a successful case
+              # and don't return an error
+              return
+            else
+              # CASE: Group already exists with the same repo name and has a
+              #     grouping for the current assignment BUT the membership is
+              #     different.
+              # Return error since the membership is different
+              duplicate_group_error = I18n.t(
+                'csv.group_with_different_membership_current_assignment',
+                group_name: row[0])
+              return duplicate_group_error
+            end
+          end
+        end
+      end
+
     end
 
     # If any of the given members do not exist or is part of another group,
     # an error is returned without creating a group
     unless membership_unique?(row)
       if !errors[:groupings].blank?
-        # groupings error set if a member is already in differnt group
+        # groupings error set if a member is already in different group
         membership_error = I18n.t('csv.memberships_not_unique',
                                   group_name: row[0],
                                   student_user_name: errors
-                                    .get(:groupings).first)
+                                                         .get(:groupings).first)
         errors.delete(:groupings)
       else
         # student_membership error set if a member does not exist
-        membership_error = I18n.t('csv.member_does_not_exist',
-                                  group_name: row[0],
-                                  student_user_name: errors
-                                    .get(:student_memberships).first)
+        membership_error = I18n.t(
+          'csv.member_does_not_exist',
+          group_name: row[0],
+          student_user_name: errors.get(:student_memberships).first)
         errors.delete(:student_memberships)
       end
       return membership_error
@@ -454,40 +508,11 @@ class Assignment < ActiveRecord::Base
     group.save
     unless group.errors[:base].blank?
       collision_error = I18n.t('csv.repo_collision_warning',
-                          { repo_name: group.errors.on_base,
-                            group_name: row[0] })
+                               repo_name: group.errors.on_base,
+                               group_name: row[0])
     end
 
-    # Create a new Grouping for this assignment and the newly
-    # crafted group
-    grouping = Grouping.new(assignment: self, group: group)
-    grouping.save
-
-    # Form groups
-    start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
-    (start_index_group_members..(row.length - 1)).each do |i|
-      student = Student.where(user_name: row[i])
-                       .first
-      if student
-        if grouping.student_membership_number == 0
-          # Add first valid member as inviter to group.
-          grouping.group_id = group.id
-          grouping.save # grouping has to be saved, before we can add members
-
-          # We could call grouping.add_member, but it updates repo permissions
-          # For performance reasons in the csv upload we will just create the
-          # member here, and do the permissions update as a bulk operation.
-          member = StudentMembership.new(user: student, membership_status:
-                   StudentMembership::STATUSES[:inviter], grouping: grouping)
-          member.save
-        else
-          member = StudentMembership.new(user: student, membership_status:
-                   StudentMembership::STATUSES[:accepted], grouping: grouping)
-          member.save
-        end
-      end
-
-    end
+    add_new_grouping_for_group(row, group)
     collision_error
   end
 
@@ -868,6 +893,42 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  def add_new_grouping_for_group(row, group)
+    # Create a new Grouping for this assignment and the newly
+    # crafted group
+    grouping = Grouping.new(assignment: self, group: group)
+    grouping.save
+
+    # Form groups
+    start_index_group_members = 2
+    (start_index_group_members..(row.length - 1)).each do |i|
+      student = Student.where(user_name: row[i])
+                    .first
+      if student
+        if grouping.student_membership_number == 0
+          # Add first valid member as inviter to group.
+          grouping.group_id = group.id
+          grouping.save # grouping has to be saved, before we can add members
+
+          # We could call grouping.add_member, but it updates repo permissions
+          # For performance reasons in the csv upload we will just create the
+          # member here, and do the permissions update as a bulk operation.
+          member = StudentMembership.new(
+            user: student,
+            membership_status: StudentMembership::STATUSES[:inviter],
+            grouping: grouping)
+          member.save
+        else
+          member = StudentMembership.new(
+            user: student,
+            membership_status: StudentMembership::STATUSES[:accepted],
+            grouping: grouping)
+          member.save
+        end
+      end
+    end
+  end
+
   #
   # Return true if for each membership given, a corresponding student exists
   # and if they are not part of a different grouping for the same assignment
@@ -886,7 +947,51 @@ class Assignment < ActiveRecord::Base
         return false
       end
     end
-
     true
+  end
+
+  # Return true if the given membership in the csv row is the exact same as the
+  # membership of the given existing_grouping.
+  def same_membership_as_csv_row?(row, existing_grouping)
+    start_index_group_members = 2 # index where student names start in the row
+    # check if all the members given in the csv file exists and belongs to the
+    # given grouping
+    (start_index_group_members..(row.length - 1)).each do |i|
+      student = Student.find_by user_name: row[i]
+      if student
+        grouping = student
+            .accepted_grouping_for(existing_grouping.assignment.id)
+        if grouping.nil?
+          # Student doesn't belong to a grouping for the given assignment
+          # ==> membership cannot be the same
+          return false
+        elsif grouping.id != existing_grouping.id
+          # Student belongs to a different grouping for the given assignment
+          # ==> membership is different
+          return false
+        end
+      else
+        # Student doesn't exist in the database
+        # # ==> membership cannot be the same
+        return false
+      end
+
+      num_students_in_csv_row = row.length - start_index_group_members
+      num_students_in_existing_grouping = grouping.accepted_students.length
+
+      if num_students_in_csv_row != num_students_in_existing_grouping
+        # All students given in the csv row belongs to the existing grouping
+        # but the existing group contains more students than the ones given in
+        # the csv row
+        # ==> membership is different
+        return false
+      else
+        # All students given in the csv row belongs to the existing grouping
+        # and the grouping contains the same number of students as the one
+        # in the csv row
+        # ==> membership is the exact same
+        return true
+      end
+    end
   end
 end
