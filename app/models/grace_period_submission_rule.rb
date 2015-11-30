@@ -110,6 +110,7 @@ class GracePeriodSubmissionRule < SubmissionRule
           deduction.destroy
         end
       end
+      deductions.reload
     end
   end
 
