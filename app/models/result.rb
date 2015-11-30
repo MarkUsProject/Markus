@@ -3,6 +3,7 @@ class Result < ActiveRecord::Base
   MARKING_STATES = {
     complete: 'complete',
     incomplete: 'incomplete'
+    unsubmitted: 'unsubmitted'
   }
 
   belongs_to :submission
