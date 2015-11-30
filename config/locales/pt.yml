@@ -1291,6 +1291,7 @@ pt:
       due_date_is_passed: "Você não pode executar o teste pois a sua entrega está fora do prazo "
       information: "Informação"
       run_tests: "Executar testes"
+      test_run: "Execução de Teste"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br>
                       Se você já enviou um arquivo e que executar os testes nele, use o botao \"Coletar e preparar testes\" abaixo."
       collect_and_test: "Colete e prepare os testes"

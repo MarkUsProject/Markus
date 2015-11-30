@@ -1452,6 +1452,7 @@ en:
       due_date_is_passed: "You cannot run test as the due date for this assignment is passed"
       information: "Information"
       run_tests: "Run tests"
+      test_run: "Test Run"
       tests_running: "Running tests. Please wait."
       need_one_file: "You need at least one file submitted in order to run tests.<br><br>If you have already submitted a file and want to run tests on it, use the \"Run Tests\" button below."
       collect_and_test: "Collect and Prepare Test"
