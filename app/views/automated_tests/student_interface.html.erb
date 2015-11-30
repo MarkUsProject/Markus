@@ -1,6 +1,11 @@
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
   "livepipe/window.js" %>
+<%= stylesheet_link_tag '//cdnjs.cloudflare.com/'\
+'ajax/libs/highlight.js/8.9.1/styles/github.min.css' %>
+<%= javascript_include_tag '//cdnjs.cloudflare.com/'\
+'ajax/libs/highlight.js/8.9.1/highlight.min.js' %>
+<%= javascript_tag 'hljs.initHighlightingOnLoad();' %>
 
   <% # HTML for Student Testing Interface %>
 <div class="block">
@@ -81,7 +86,11 @@
         <% @test_script_results.each do |test_script_result| %>
           <h3><%= I18n.t("automated_tests.test_run") %> -
             <%= l(test_script_result.created_at, format: :long)%></h3>
-          <p><%= test_script_result.actual_output %></p>
+          <pre>
+            <code class="js">
+              <%= "\n#{JSON.pretty_generate(JSON.parse(test_script_result.actual_output))}\n" %>
+            </code>
+          </pre>
         <% end %>
   		</div>
     </div>
