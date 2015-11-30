@@ -386,11 +386,17 @@ class AssignmentsController < ApplicationController
       if @grouping.has_submission?
         raise I18n.t('groups.cant_delete_already_submitted')
       end
-      @grouping.student_memberships.includes(:user).each do |member|
-        member.destroy
+
+      if (@grouping.group.assignments.count == 1)
+        # only update repo permissions if the group is not in another assignment
+        @grouping.student_memberships.each do |member|
+          @grouping.remove_member(member.id)
+        end
+      else
+        # remove only the membership, but dont revoke permissions
+        @grouping.student_memberships.includes(:user).each(&:destroy)
       end
-      # update repository permissions
-      @grouping.update_repository_permissions
+
       @grouping.destroy
       flash[:edit_notice] = I18n.t('assignment.group.deleted')
       m_logger.log("Student '#{current_user.user_name}' deleted group '" +

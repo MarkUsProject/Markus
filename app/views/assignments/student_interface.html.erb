@@ -257,7 +257,7 @@
             <% end %>
 
             <% if !@grouping.nil? && @assignment.group_max > 1 && !@assignment.past_collection_date? %>
-              <% if @grouping.inviter == @current_user %>
+              <% if @grouping.inviter == @current_user && @grouping.accepted_students.size == 1%>
                 <div class='group-button'>
                   <%= button_to "delete group", {action: 'deletegroup', id: @assignment.id}, method: :get %>
                 </div>
