@@ -119,77 +119,52 @@ module AutomatedTestsHelper
   # - Process new and updated test files (additional validation to be done at the model level)
   def process_test_form(assignment, params)
 
-    # Hash for storing new and updated test files
     updated_script_files = {}
     updated_support_files = {}
 
-    # Array for checking duplicate file names
-    file_name_array = []
-
-    # add existing scripts names
-    params.each do |key, value|
-      unless key[/test_script_\d+/].nil?
-        file_name_array << value
-      end
-    end
-
-    # Retrieve all test scripts
-    testscripts = params[:test_scripts_attributes]
-
-    # Retrieve all test support files
-    testsupporters = params[:test_support_files_attributes]
+    testscripts = params[:test_scripts_attributes] || []
+    testsupporters = params[:test_support_files_attributes] || []
 
     # Create/Update test scripts
-    unless testscripts.nil?
-      testscripts.each do |file_num, file|
-        updated_script_files[file_num] = {}
+    testscripts.each do |file_num, file|
+      updated_script_files[file_num] = {}
 
-        # Empty file submission, skip
-        next if testscripts[file_num][:script_name].nil?
+      # Empty file submission, skip
+      next if testscripts[file_num][:script_name].nil?
 
-        if testscripts[file_num][:script_name].is_a? String
-          # Edit existing test script file
-          filename = file[:script_name]
-          file.each do |key, value|
-            updated_script_files[file_num][key] = value
-          end
+      if testscripts[file_num][:script_name].is_a? String
+        # Edit existing test script file
+        updated_script_files[file_num] = file.clone
+      else
+        # Create new test script file
+        filename = testscripts[file_num][:script_name].original_filename
+        if TestScript.exists?(script_name: filename, assignment: assignment)
+          raise I18n.t('automated_tests.duplicate_filename') + filename
         else
-          # Create new test script file
-          filename = testscripts[file_num][:script_name].original_filename
-          if TestScript.exists?(script_name: filename, assignment: assignment)
-            raise I18n.t('automated_tests.duplicate_filename') + filename
-          else
-            file.each do |key, value|
-              updated_script_files[file_num][key] = value
-            end
-            # Override filename from form
-            updated_script_files[file_num][:script_name] = filename
-          end
+          # Override filename from form
+          file[:script_name] = filename
+          updated_script_files[file_num] = file.clone
         end
-
       end
+
     end
 
     # Create/Update test support files
-    unless testsupporters.nil?
-      # Ignore editing files for now
-      testsupporters.each do |file_num, file|
-        if testsupporters[file_num][:file_name].nil?
-          next
-        end
-        updated_support_files[file_num] = {}
-        filename = testsupporters[file_num][:file_name].original_filename unless nil?
+    # Ignore editing files for now
+    testsupporters.each do |file_num, file|
+      # Empty file submission, skip
+      next if testsupporters[file_num][:file_name].nil?
 
-        # Create test support file if it does not exist
-        if TestSupportFile.exists?(file_name: filename, assignment: assignment)
-          raise I18n.t('automated_tests.duplicate_filename') + filename
-        else
-          file.each do |key, value|
-            updated_support_files[file_num][key] = value
-          end
-          # Override filename from form
-          updated_support_files[file_num][:file_name] = filename
-        end
+      updated_support_files[file_num] = {} || []
+      filename = testsupporters[file_num][:file_name].original_filename
+
+      # Create test support file if it does not exist
+      if TestSupportFile.exists?(file_name: filename, assignment: assignment)
+        raise I18n.t('automated_tests.duplicate_filename') + filename
+      else
+        updated_support_files[file_num] = file.clone
+        # Override filename from form
+        updated_support_files[file_num][:file_name] = filename
       end
     end
 
