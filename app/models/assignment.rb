@@ -442,7 +442,7 @@ class Assignment < ActiveRecord::Base
               #     different.
               # Return error since the membership is different
               duplicate_group_error = I18n.t(
-                "csv.group_with_different_membership_current_assignment",
+                'csv.group_with_different_membership_current_assignment',
                 group_name: row[0])
               return duplicate_group_error
             end
@@ -459,8 +459,8 @@ class Assignment < ActiveRecord::Base
         # groupings error set if a member is already in different group
         membership_error = I18n.t('csv.memberships_not_unique',
                                   group_name: row[0],
-                                  student_user_name: errors
-                                                         .get(:groupings).first)
+                                  student_user_name: errors.get(:groupings)
+                                                         .first)
         errors.delete(:groupings)
       else
         # student_membership error set if a member does not exist
