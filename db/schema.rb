@@ -105,10 +105,10 @@ ActiveRecord::Schema.define(version: 20151129233225) do
     t.integer  "results_fails"
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
+    t.boolean  "unlimited_tokens",                 default: false
     t.boolean  "is_hidden",                        default: false
     t.boolean  "only_required_files"
     t.boolean  "vcs_submit"
-    t.boolean  "unlimited_tokens",                 default: false
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree

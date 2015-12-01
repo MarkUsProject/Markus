@@ -80,10 +80,10 @@ class AutomatedTestsController < ApplicationController
     @token = fetch_latest_tokens_for_grouping(@grouping)
 
     # For running tests
-    if ((@token && @token.tokens > 0) || @assignment.unlimited_tokens)
+    if (@token && @token.tokens > 0) || @assignment.unlimited_tokens
       result = run_tests(@grouping.id)
-      if result == nil
-        flash[:notice] = I18n.t("automated_tests.tests_running")
+      if result.nil?
+        flash[:notice] = I18n.t('automated_tests.tests_running')
       else
         flash[:failure] = result
       end

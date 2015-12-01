@@ -6,11 +6,11 @@ module AutomatedTestsHelper
   @queue = :test_waiting_list
 
   def fetch_latest_tokens_for_grouping(grouping)
-      token = Token.find_by(grouping: @grouping)
-      if token
-        token.reassign_tokens_if_new_day()
-      end
-      token
+    token = Token.find_by(grouping: grouping)
+    if token
+      token.reassign_tokens_if_new_day
+    end
+    token
   end
 
   def create_test_repo(assignment)
