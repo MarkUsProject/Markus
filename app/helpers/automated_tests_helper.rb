@@ -5,6 +5,14 @@ module AutomatedTestsHelper
   # it is enqueued and it is waiting for execution. Resque manages this queue.
   @queue = :test_waiting_list
 
+  def fetch_latest_tokens_for_grouping(grouping)
+      token = Token.find_by(grouping: @grouping)
+      if token
+        token.reassign_tokens_if_new_day()
+      end
+      token
+  end
+
   def create_test_repo(assignment)
     # Create the automated test repository
     unless File.exist?(MarkusConfigurator

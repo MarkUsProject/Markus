@@ -69,21 +69,26 @@ class AutomatedTestsController < ApplicationController
       @test_script_results = TestResult.where(grouping:
         @grouping).order(created_at: :desc)
 
-      @token = Token.find_by(grouping: @grouping)
-      if @token
-        @token.reassign_tokens_if_new_day()
-      end
+      @token = fetch_latest_tokens_for_grouping(@grouping)
+    end
+  end
 
-      # For running tests
-      if params[:run_tests] && ((@token && @token.tokens > 0) || @assignment.unlimited_tokens)
-        result = run_tests(@grouping.id)
-        if result == nil
-          flash[:notice] = I18n.t("automated_tests.tests_running")
-        else
-          flash[:failure] = result
-        end
+  def execute_test_run
+    @assignment = Assignment.find(params[:id])
+    @student = current_user
+    @grouping = @student.accepted_grouping_for(@assignment.id)
+    @token = fetch_latest_tokens_for_grouping(@grouping)
+
+    # For running tests
+    if ((@token && @token.tokens > 0) || @assignment.unlimited_tokens)
+      result = run_tests(@grouping.id)
+      if result == nil
+        flash[:notice] = I18n.t("automated_tests.tests_running")
+      else
+        flash[:failure] = result
       end
     end
+    redirect_to student_interface_automated_test_path
   end
 
   def run_tests(grouping_id)

@@ -958,7 +958,7 @@ pt:
         load: "Carregar"
       no_files_available: "[Nenhum resultado disponíveis dos testes]"
       loading_results: "Carregando resultados..."
-      running_tests: "Executando testes..."
+      running_tests: "Executando testes. Por favor, atualize esta página para visualizar os resultados."
       build_successful: "Testes Completados. Veja '%{logfile}' para detalhes."
       build_failed: "Falha de compilação. Veja '%{logfile}' para investigar."
       build_error: "Erro desconhecido com Ant. O Ant foi corretamente instalado? Veja '%{logfile}' para investigar."

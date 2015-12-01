@@ -1316,7 +1316,7 @@ fr:
       information: "Information"
       run_tests: "Exécuter les tests."
       test_run: "L'exécution du test"
-      tests_running: "Tests en cours. Veuillez patienter."
+      tests_running: "Tests en cours. S'il vous plaît rafraîchir la page pour afficher les résultats."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test. Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
       collect_and_test: "Récupérer et préparer test"
       date_run: "Lancement des tests le :"
