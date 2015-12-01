@@ -274,7 +274,7 @@ class GradeEntryFormsController < ApplicationController
     end
     flash[:error] = errors
 
-    redirect_to action: 'grades', id: params[:id]
+    head :ok
   end
 
   # Download the grades for this grade entry form as a CSV file
