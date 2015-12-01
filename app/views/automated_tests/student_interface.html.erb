@@ -1,15 +1,10 @@
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
   "livepipe/window.js" %>
-<%= stylesheet_link_tag '//cdnjs.cloudflare.com/'\
-'ajax/libs/highlight.js/8.9.1/styles/github.min.css' %>
-<%= javascript_include_tag '//cdnjs.cloudflare.com/'\
-'ajax/libs/highlight.js/8.9.1/highlight.min.js' %>
-<%= javascript_tag 'hljs.initHighlightingOnLoad();' %>
 
   <% # HTML for Student Testing Interface %>
 <div class="block">
-  <h2><%= I18n.t("automated_tests.title") %></h2>
+  <h2><%= t("automated_tests.title") %></h2>
 
   <% if flash[:failure] && !flash[:failure].empty? %>
     <div class="notice">
@@ -26,17 +21,17 @@
   <% if @grouping.nil? %>
     <div class="sub_block">
       <br />
-        <%= I18n.t("automated_tests.need_group_for_test") %>
+        <%= t("automated_tests.need_group_for_test") %>
       <br />
     </div>
   <% else %>
     <div class="block_content">
-      <h3><%= I18n.t("automated_tests.information") %></h3>
+      <h3><%= t("automated_tests.information") %></h3>
       <div class="sub_block">
         <% if @assignment.unlimited_tokens %>
-            <%= raw( I18n.t("automated_tests.token.unlimited_tokens") ) %>
+            <%= raw( t("automated_tests.token.unlimited_tokens") ) %>
         <% else %>
-          <%= raw( I18n.t("automated_tests.token.tokens_per_day",
+          <%= raw( t("automated_tests.token.tokens_per_day",
                            :tokens => @assignment.tokens_per_day) ) %>
         <% end %>
       </div>
@@ -44,12 +39,12 @@
       <% if !@assignment.unlimited_tokens %>
         <div class="sub_block">
           <% if @token.nil? %>
-            <%= raw ( I18n.t("automated_tests.token.tokens_not_given_yet") ) %>
+            <%= raw ( t("automated_tests.token.tokens_not_given_yet") ) %>
           <% else %>
             <% if @token.tokens == 0 %>
-              <%= raw( I18n.t("automated_tests.token.tokens_no_more_available") ) %>
+              <%= raw( t("automated_tests.token.tokens_no_more_available") ) %>
             <% else %>
-              <%= raw( I18n.t("automated_tests.token.tokens_available",
+              <%= raw( t("automated_tests.token.tokens_available",
                               :tokens => @token.tokens) ) %>
             <% end %>
           <% end %>
@@ -58,14 +53,14 @@
       <% end %>
       <br />
       <% if @assignment.unlimited_tokens || (!@token.nil? && @token.tokens > 0) %>
-        <h3><%= I18n.t("automated_tests.run_tests") %></h3>
+        <h3><%= t("automated_tests.run_tests") %></h3>
         <% if @grouping.assignment.submission_rule.can_collect_now? %>
           <p><%= t('automated_tests.due_date_is_passed') %></p>
           <br />
         <% else %>
           <p><%= raw t('automated_tests.need_one_file') %></p>
           <br />
-          <%= link_to I18n.t("automated_tests.run_tests"), {:controller => 'automated_tests', :action => 'student_interface', :id => @assignment.id, :grouping_id => @grouping.id , :revision_number => @revision_number, :run_tests => true}, :class => "button"%>
+          <%= link_to t("automated_tests.run_tests"), {:controller => 'automated_tests', :action => 'student_interface', :id => @assignment.id, :grouping_id => @grouping.id , :revision_number => @revision_number, :run_tests => true}, :class => "button"%>
           <br />
         <% end %>
       <% end %>
@@ -73,33 +68,29 @@
     </div>
   </div>
 
-	<% if !@test_script_results.nil? %>
-	<div class="block">
-	  <h2><%= I18n.t("automated_tests.test_results") %></h2>
+  <% if !@test_script_results.nil? %>
+  <div class="block">
+    <h2><%= t("automated_tests.test_results") %></h2>
     <div class="block_content">
-  	  <br />
-  	  <div class="sub_block">
-  	  	<%= raw ( I18n.t("automated_tests.marks_obtained",
-  	   	          	      :marking => "#{@grouping.get_total_test_script_marks * 1.0} / #{@assignment.total_ror_script_marks * 1.0}" ) ) %>
-  	  </div>
-  	  <div id="test_results" class="sub_block">
+    <br />
+      <div class="sub_block">
+        <%= raw (t("automated_tests.marks_obtained",
+                      :marking => "#{@grouping.get_total_test_script_marks *
+                      1.0} / #{@assignment.total_ror_script_marks * 1.0}" )) %>
+      </div>
+      <div id="test_results" class="sub_block">
         <% @test_script_results.each do |test_script_result| %>
-          <h3><%= I18n.t("automated_tests.test_run") %> -
-            <%= l(test_script_result.created_at, format: :long)%></h3>
-          <pre>
-            <code class="js">
-              <%= "\n#{JSON.pretty_generate(JSON.parse(test_script_result.actual_output))}\n" %>
-            </code>
-          </pre>
+          <%= render partial: 'test_script_result',
+                     locals: {test_script_result: test_script_result} %>
         <% end %>
-  		</div>
+      </div>
     </div>
 	<% end %>
 <% else %>
   <div class="block_content">
-    <h3><%= I18n.t("automated_tests.information") %></h3>
+    <h3><%= t("automated_tests.information") %></h3>
     <div class="sub_block">
-      <%= I18n.t("automated_tests.testing_disabled") %>
+      <%= t("automated_tests.testing_disabled") %>
     </div>
   </div>
 <% end %>

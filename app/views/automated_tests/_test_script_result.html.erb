@@ -1,0 +1,7 @@
+<h3><%= t("automated_tests.test_run") %> -
+  <%= l(test_script_result.created_at, format: :long)%></h3>
+<pre>
+  <code class="js">
+    <%= "#{test_script_result.actual_output}" %>
+  </code>
+</pre>
