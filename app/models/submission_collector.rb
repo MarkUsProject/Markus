@@ -210,7 +210,8 @@ class SubmissionCollector < ActiveRecord::Base
       grouping.save
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
       new_submission = apply_penalty_or_add_grace_credits(grouping, 
-        apply_late_penalty, new_submission)
+                                                          apply_late_penalty, 
+                                                          new_submission)
       grouping.is_collected = true
       grouping.save
       return new_submission
@@ -228,7 +229,8 @@ class SubmissionCollector < ActiveRecord::Base
 
     new_submission = Submission.create_by_revision_number(grouping, rev_num)
     new_submission = apply_penalty_or_add_grace_credits(grouping, 
-      apply_late_penalty, new_submission)
+                                                        apply_late_penalty, 
+                                                        new_submission)
 
     #This is to help determine the progress of the method.
     self.safely_stop_child_exited = true
