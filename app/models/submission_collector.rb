@@ -189,7 +189,7 @@ class SubmissionCollector < ActiveRecord::Base
       new_submission = grouping.assignment.submission_rule
                                .apply_submission_rule(new_submission)
     elsif grouping.assignment.submission_rule.is_a?(GracePeriodSubmissionRule)
-      #Return any grace credits previously deducted for this grouping.
+      # Return any grace credits previously deducted for this grouping.
       grouping.assignment.submission_rule
                                        .remove_deductions(new_submission)
     end
