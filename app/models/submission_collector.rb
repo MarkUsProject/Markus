@@ -209,8 +209,8 @@ class SubmissionCollector < ActiveRecord::Base
       remove_grouping_from_queue(grouping)
       grouping.save
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
-      new_submission = apply_penalty_or_add_grace_credits(grouping, 
-                                                          apply_late_penalty, 
+      new_submission = apply_penalty_or_add_grace_credits(grouping,
+                                                          apply_late_penalty,
                                                           new_submission)
       grouping.is_collected = true
       grouping.save
@@ -228,8 +228,8 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.save
 
     new_submission = Submission.create_by_revision_number(grouping, rev_num)
-    new_submission = apply_penalty_or_add_grace_credits(grouping, 
-                                                        apply_late_penalty, 
+    new_submission = apply_penalty_or_add_grace_credits(grouping,
+                                                        apply_late_penalty,
                                                         new_submission)
 
     #This is to help determine the progress of the method.
