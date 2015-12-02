@@ -178,7 +178,7 @@ class GradersController < ApplicationController
       when 'assign'
         if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'),
-                 status: 400
+                  status: 400
         end        
         if params[:skip_empty_submissions] == 'true'
           # If the instructor wants to skip empty submissions, filter
@@ -315,13 +315,9 @@ class GradersController < ApplicationController
 
   # Returns array of grouping ids with non empty submissions
   def filter_empty_submissions(grouping_ids)
-    filtered_grouping_ids = Array.new
-    grouping_ids.each do |grouping_id|
+    filtered_grouping_ids = grouping_ids.select do |grouping_id|
       submission = Submission.find_by(grouping_id: grouping_id)
-      if submission && SubmissionFile.where(submission_id: submission.id).exists?
-        filtered_grouping_ids << grouping_id
-      end
+      submission && SubmissionFile.where(submission_id: submission.id).exists?
     end
-    filtered_grouping_ids
   end
 end
