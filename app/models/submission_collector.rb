@@ -184,7 +184,9 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.save
   end
 
-  def apply_penalty_or_add_grace_credits(grouping, apply_late_penalty, new_submission)
+  def apply_penalty_or_add_grace_credits(grouping,
+                                         apply_late_penalty,
+                                         new_submission)
     if apply_late_penalty
       new_submission = grouping.assignment.submission_rule
                                .apply_submission_rule(new_submission)
