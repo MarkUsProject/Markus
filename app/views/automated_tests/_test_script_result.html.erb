@@ -1,7 +1,20 @@
-<h3><%= t("automated_tests.test_run") %> -
-  <%= l(test_script_result.created_at, format: :long)%></h3>
-<pre>
-  <code class="js">
-    <%= "#{test_script_result.actual_output}" %>
-  </code>
-</pre>
+<% test_script_output = JSON.parse(test_script_result.actual_output) %>
+<% test_script_name = test_script_output['testrun']['test_script']['script_name'] %>
+
+<h3><%= "#{t('automated_tests.test_run')} - #{test_script_name}" %>
+  <span class='right'><%= l(test_script_result.created_at, format: :long)%></span></h3>
+
+<% tests = test_script_output['testrun']['test_script']['test'] %>
+
+
+  <% tests.each do |test| %>
+    <div class='test_result'>
+      <p><strong>Test Name:</strong> <%= test['name'] %></p>
+      <p><strong>Input:</strong> <%= test['input'] %></p>
+      <p><strong>Output:</strong> <%= test['actual'] %></p>
+      <p><strong>Expected:</strong> <%= test['expected'] %></p>
+      <p><strong>Marks Earned:</strong> <%= test['marks_earned'] %></p>
+      <p><strong>Status:</strong> <%= test['status'].capitalize %></p>
+      <br>
+    </div>
+  <% end %>
