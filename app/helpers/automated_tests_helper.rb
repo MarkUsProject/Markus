@@ -129,16 +129,16 @@ module AutomatedTestsHelper
     testscripts.each do |file_num, file|
       updated_script_files[file_num] = {}
 
-     if testscripts[file_num][:script_name].nil?
-       # Create new test script file
-       filename = new_script.original_filename
-       if TestScript.exists?(script_name: filename, assignment: assignment)
-         raise I18n.t('automated_tests.duplicate_filename') + filename
-       else
-         # Override filename from form
-         file[:script_name] = filename
-         updated_script_files[file_num] = file.clone
-       end
+      if testscripts[file_num][:script_name].nil?
+        # Create new test script file
+        filename = new_script.original_filename
+        if TestScript.exists?(script_name: filename, assignment: assignment)
+          raise I18n.t('automated_tests.duplicate_filename') + filename
+        else
+          # Override filename from form
+          file[:script_name] = filename
+          updated_script_files[file_num] = file.clone
+        end
       else
         # Edit existing test script file
         updated_script_files[file_num] = file.clone

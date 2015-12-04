@@ -36,7 +36,9 @@ class AutomatedTestsController < ApplicationController
     # Perform transaction, if errors, none of new config saved
     @assignment.transaction do
       new_script = params[:new_script]
-      @assignment = process_test_form(@assignment, assignment_params, new_script)
+      @assignment = process_test_form(@assignment,
+                                      assignment_params,
+                                      new_script)
       # begin
       #   # Process testing framework form for validation
       #   @assignment = process_test_form(@assignment, params)
