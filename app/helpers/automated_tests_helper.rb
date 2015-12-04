@@ -129,7 +129,8 @@ module AutomatedTestsHelper
     testscripts.each do |file_num, file|
       updated_script_files[file_num] = {}
 
-      if testscripts[file_num][:script_name].nil?
+      # Seq_num only exists if it is a file being edited
+      if testscripts[file_num][:seq_num].empty?
         # Create new test script file
         filename = new_script.original_filename
         if TestScript.exists?(script_name: filename, assignment: assignment)
@@ -137,6 +138,7 @@ module AutomatedTestsHelper
         else
           # Override filename from form
           file[:script_name] = filename
+          file[:seq_num] = file_num
           updated_script_files[file_num] = file.clone
         end
       else

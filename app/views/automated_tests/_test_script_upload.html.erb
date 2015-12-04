@@ -26,7 +26,7 @@
     <%= link_to_function (saved ? '[+]' : '[-]'), "toggleSettings(this);", :class => "collapse" %>
   </legend>
 
-  <%= f.hidden_field :seq_num, :value => f.object.seq_num || 1.0, :class => "seqnum" %>
+  <%= f.hidden_field :seq_num, :value => f.object.seq_num || nil, :class => "seqnum" %>
 
   <div class="settings_left_side">
     <div class="desc">
