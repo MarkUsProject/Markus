@@ -127,8 +127,6 @@ module AutomatedTestsHelper
 
     # Create/Update test scripts
     testscripts.each do |file_num, file|
-      updated_script_files[file_num] = {}
-
       # If no new_script then form is empty and skip
       next if testscripts[file_num][:seq_num].empty? && file[:script_name].nil?
 
