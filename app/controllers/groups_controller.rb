@@ -188,7 +188,7 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:assignment_id])
 
     if @assignment.group_max == 1
-      students.map do |student|
+      Student.all.map do |student|
         # Check to see if the student already has a grouping for
         # the current assignment
         grouping = student.accepted_grouping_for(@assignment.id)
