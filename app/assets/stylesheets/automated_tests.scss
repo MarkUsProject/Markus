@@ -1,6 +1,11 @@
+@import 'common/_markus';
 @import "assignments";
 
 .right {
   float: right;
 }
 
+.test-result {
+  margin-top: 25px;
+  padding-bottom: 20px;
+}
