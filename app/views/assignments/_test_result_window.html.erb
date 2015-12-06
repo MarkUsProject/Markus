@@ -1,4 +1,10 @@
-<script>
+<%
+  # Prototype code that needs to be removed:
+  # Anything like $('id') can be replaced with something like jQuery('#id')
+  # .disable() can be replaced with something like jQuery('#id').disabled=false;
+%>
+
+   <script>
   function load_test_result(test_result_id) {
     document.getElementById('working').style.display = '';
     $('select_test_result_id').disable();
