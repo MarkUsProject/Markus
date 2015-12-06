@@ -1321,6 +1321,13 @@ pt:
         tokens_not_given_yet: "<span class=\"prop_label\">Tokens disponíveis:</span> Nenhum tokens dado"
         tokens_no_more_available: "<span class=\"prop_label\">Tokens disponíveis:</span > Mais nenhum token disponível "
         tokens_available: "<span class=\"prop_label\">Tokens disponíveis:</span> %{tokens}"
+      test_results_table:
+        test_name: "Nome do Teste"
+        input: "Entrada"
+        output: "Saída"
+        expected: "Esperado"
+        marks_earned: "Marcas Ganhou"
+        status: "Estado"
 
 #Missing Activerecord Translations for english
     datetime:
