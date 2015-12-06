@@ -37,8 +37,10 @@
      <% def show_folder_recursive(dir) %>
       <% dir.each do |name, contents|  %>
         <% if name != "files" %>
-          <a><b><%= name %></b></a>
-          <ul><% show_folder_recursive(contents) %></ul>
+          <li class="nested-submenu">
+          <a onmouseenter='open_submenu(this)'><b><%= name %></b></a>
+          <ul class="nested-folder" style="display: none;"><% show_folder_recursive(contents) %></ul>
+          </li>
           <br>
         <% end %>
       <% end %>
@@ -49,33 +51,18 @@
       <% end %>
      <% end %>
 
-     <div class="nested_files">
-      <ul><li>
-        <% show_folder_recursive(outermost_dir) %>
-      </ul></li>
+     <div class="dropdown">
+       <a>Files</a>
+       <span class="caret"></span>
+       <ul class="nested-folder">
+          <% outermost_dir.each do |key, value| %>
+            <% if key != "files" %>
+              <% show_folder_recursive(outermost_dir[key]) %>
+            <% end %>
+          <% end %>
+       </ul>
      </div>
-
-<!--      <select id='select_file_id'
-             name='select_file_id'
-             onchange='bump_select("select_file_id", 0, "back_button", "next_button");'>
-       <% if files.empty? %>
-         <option value=''><%= t('common.no_file_in_repository') %></option>
-       <% end %>
-       <% files.each do |file| %>
-         <option value='<%= file.id %>'>
-           <%= File.join(file.path, file.filename) %>
-         </option>
-       <% end %>
-     </select>  -->
-
-<!--     <input type='button'
-           onclick='bump_select("select_file_id", 1, "back_button", "next_button"); return false;'
-           value='→'
-           id='next_button'> -->
   </div>
-
-
-
 
   <script type="text/javascript">
 

@@ -2,15 +2,7 @@
 # See LICENSE for details.
 
 """
-Service architecture for Twisted.
-
-Services are arranged in a hierarchy. At the leafs of the hierarchy,
-the services which actually interact with the outside world are started.
-Services can be named or anonymous -- usually, they will be named if
-there is need to access them through the hierarchy (from a parent or
-a sibling).
-
-Maintainer: Moshe Zadka
+TEST FILE 5
 """
 
 from zope.interface import implements, Interface, Attribute
