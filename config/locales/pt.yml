@@ -958,7 +958,7 @@ pt:
         load: "Carregar"
       no_files_available: "[Nenhum resultado disponíveis dos testes]"
       loading_results: "Carregando resultados..."
-      running_tests: "Executando testes..."
+      running_tests: "Executando testes. Por favor, atualize esta página para visualizar os resultados."
       build_successful: "Testes Completados. Veja '%{logfile}' para detalhes."
       build_failed: "Falha de compilação. Veja '%{logfile}' para investigar."
       build_error: "Erro desconhecido com Ant. O Ant foi corretamente instalado? Veja '%{logfile}' para investigar."
@@ -1291,6 +1291,7 @@ pt:
       due_date_is_passed: "Você não pode executar o teste pois a sua entrega está fora do prazo "
       information: "Informação"
       run_tests: "Executar testes"
+      test_run: "Execução de Teste"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br>
                       Se você já enviou um arquivo e que executar os testes nele, use o botao \"Coletar e preparar testes\" abaixo."
       collect_and_test: "Colete e prepare os testes"

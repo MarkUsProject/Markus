@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150919173134) do
+ActiveRecord::Schema.define(version: 20151129233225) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,10 +105,10 @@ ActiveRecord::Schema.define(version: 20150919173134) do
     t.integer  "results_fails"
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
+    t.boolean  "unlimited_tokens",                 default: false
     t.boolean  "is_hidden",                        default: false
     t.boolean  "only_required_files"
     t.boolean  "vcs_submit"
-    t.boolean  "unlimited_tokens",                 default: false
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
@@ -415,17 +415,19 @@ ActiveRecord::Schema.define(version: 20150919173134) do
   end
 
   create_table "test_results", force: :cascade do |t|
-    t.integer "grouping_id"
-    t.integer "test_script_id"
-    t.integer "test_script_result_id"
-    t.string  "name"
-    t.string  "completion_status",     null: false
-    t.integer "marks_earned",          null: false
-    t.integer "repo_revision"
-    t.text    "input_description",     null: false
-    t.text    "actual_output",         null: false
-    t.text    "expected_output",       null: false
-    t.integer "submission_id"
+    t.integer  "grouping_id"
+    t.integer  "test_script_id"
+    t.integer  "test_script_result_id"
+    t.string   "name"
+    t.string   "completion_status",     null: false
+    t.integer  "marks_earned",          null: false
+    t.integer  "repo_revision"
+    t.text     "input_description",     null: false
+    t.text     "actual_output",         null: false
+    t.text     "expected_output",       null: false
+    t.integer  "submission_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "test_results", ["grouping_id", "test_script_id"], name: "grouping_id_and_test_script_id", using: :btree
