@@ -52,10 +52,11 @@ function close_submenu_recursive(dir_element, orig_dir_element) {
   }
 }
 
-
 jQuery(document).ready(function() {
-  // open('select_file_id', 0, 'back_button', 'next_button');
-  console.log(document.getElementById('select_file_id'));
+  if (first_file_to_load_id != null && first_file_to_load_name != null)
+  {
+    open_file(first_file_to_load_id, first_file_to_load_name);
+  }
 });
 
 
