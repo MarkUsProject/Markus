@@ -35,7 +35,12 @@ class AutomatedTestsController < ApplicationController
 
     # Perform transaction, if errors, none of new config saved
     @assignment.transaction do
-      @assignment = process_test_form(@assignment, assignment_params)
+      # Get new script from upload form
+      new_script = params[:new_script]
+      @assignment = process_test_form(@assignment,
+                                      assignment_params,
+                                      new_script)
+
       # Save assignment and associated test files
       if @assignment.save
         flash[:success] = I18n.t("assignment.update_success")
@@ -157,7 +162,7 @@ class AutomatedTestsController < ApplicationController
                 test_files_attributes:
                     [:id, :filename, :filetype, :is_private, :_destroy],
                 test_scripts_attributes:
-                    [:assignment_id, :seq_num, :script_name, :description,
+                    [:id, :assignment_id, :seq_num, :script_name, :description,
                      :max_marks, :run_on_submission, :run_on_request,
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,

@@ -130,116 +130,54 @@ module AutomatedTestsHelper
 
   # Process Testing Framework form
   # - Process new and updated test files (additional validation to be done at the model level)
-  def process_test_form(assignment, params)
+  def process_test_form(assignment, params, new_script)
 
-    # Hash for storing new and updated test files
     updated_script_files = {}
     updated_support_files = {}
 
-    # Array for checking duplicate file names
-    file_name_array = []
+    testscripts = params[:test_scripts_attributes] || []
+    testsupporters = params[:test_support_files_attributes] || []
 
-    # add existing scripts names
-    params.each do |key, value|
-      unless key[/test_script_\d+/].nil?
-        file_name_array << value
+    # Create/Update test scripts
+    testscripts.each do |file_num, file|
+      # If no new_script then form is empty and skip
+      next if testscripts[file_num][:seq_num].empty? && new_script.nil?
+
+      # Seq_num only exists if it is a file being edited
+      if testscripts[file_num][:seq_num].empty?
+        # Create new test script file
+        filename = new_script.original_filename
+        if TestScript.exists?(script_name: filename, assignment: assignment)
+          raise I18n.t('automated_tests.duplicate_filename') + filename
+        else
+          # Override filename from form
+          file[:script_name] = filename
+          file[:seq_num] = file_num
+          updated_script_files[file_num] = file.clone
+        end
+      else
+        # Edit existing test script file
+        updated_script_files[file_num] = file.clone
       end
+
     end
 
-    # Retrieve all test scripts
-    testscripts = params[:test_scripts_attributes]
+    # Create/Update test support files
+    # Ignore editing files for now
+    testsupporters.each do |file_num, file|
+      # Empty file submission, skip
+      next if testsupporters[file_num][:file_name].nil?
 
-    # First check for duplicate script names in test scripts
-    unless testscripts.nil?
-      testscripts.values.each do |tfile|
-        if tfile['script_name'].respond_to?(:original_filename)
-          fname = tfile['script_name'].original_filename
-          # If this is a duplicate script name, raise error and return
-          if !file_name_array.include?(fname)
-            file_name_array << fname
-          else
-            raise I18n.t('automated_tests.duplicate_filename') + fname
-          end
-        end
-      end
-    end
+      updated_support_files[file_num] = {} || []
+      filename = testsupporters[file_num][:file_name].original_filename
 
-    # Retrieve all test support files
-    testsupporters = params[:test_support_files_attributes]
-
-    # Now check for duplicate file names in test support files
-    unless testsupporters.nil?
-      testsupporters.values.each do |tfile|
-        if tfile['file_name'].respond_to?(:original_filename)
-          fname = tfile['file_name'].original_filename
-          # If this is a duplicate file name, raise error and return
-          if filename_array.include?(fname)
-            raise I18n.t('automated_tests.duplicate_filename') + fname
-          else
-            filename_array << fname
-          end
-        end
-      end
-    end
-
-    # Filter out script files that need to be created and updated
-    unless testscripts.nil?
-      testscripts.each_key do |key|
-
-        tfile = testscripts[key]
-
-        # Check to see if this is an update or a new file:
-        # - If 'id' exists, this is an update
-        # - If 'id' does not exist, this is a new test file
-        tf_id = tfile['id']
-
-        # If only the 'id' exists in the hash, other attributes were not updated
-        # so we skip this entry. Otherwise, this test file possibly requires an
-        # update
-        if !tf_id.nil? && tfile.size > 1
-
-          # Find existing test file to update
-          @existing_testscript = TestScript.find_by_id(tf_id)
-          if @existing_testscript
-            # Store test file for any possible updating
-            updated_script_files[key] = tfile
-          end
-        end
-
-        # Test file needs to be created since record doesn't exist yet
-        if tf_id.nil? && tfile['script_name']
-          updated_script_files[key] = tfile
-        end
-      end
-    end
-
-    # Filter out test support files that need to be created and updated
-    unless testsupporters.nil?
-      testsupporters.each_key do |key|
-        tfile = testsupporters[key]
-
-        # Check to see if this is an update or a new file:
-        # - If 'id' exists, this is an update
-        # - If 'id' does not exist, this is a new test file
-        tf_id = tfile['id']
-
-        # If only the 'id' exists in the hash, other attributes were not updated
-        # so we skip this entry. Otherwise, this test file possibly requires an
-        # update
-        if !tf_id.nil? && tfile.size > 1
-
-          # Find existing test file to update
-          @existing_testsupport = TestSupportFile.find_by_id(tf_id)
-          if @existing_testsupport
-            # Store test file for any possible updating
-            updated_support_files[key] = tfile
-          end
-        end
-
-        # Test file needs to be created since record doesn't exist yet
-        if tf_id.nil? && tfile['file_name']
-          updated_support_files[key] = tfile
-        end
+      # Create test support file if it does not exist
+      if TestSupportFile.exists?(file_name: filename, assignment: assignment)
+        raise I18n.t('automated_tests.duplicate_filename') + filename
+      else
+        updated_support_files[file_num] = file.clone
+        # Override filename from form
+        updated_support_files[file_num][:file_name] = filename
       end
     end
 

@@ -105,10 +105,10 @@ ActiveRecord::Schema.define(version: 20151129233225) do
     t.integer  "results_fails"
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
-    t.boolean  "unlimited_tokens",                 default: false
     t.boolean  "is_hidden",                        default: false
     t.boolean  "only_required_files"
     t.boolean  "vcs_submit"
+    t.boolean  "unlimited_tokens",                 default: false
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
@@ -409,10 +409,12 @@ ActiveRecord::Schema.define(version: 20151129233225) do
   add_index "submissions", ["grouping_id"], name: "index_submissions_on_grouping_id", using: :btree
 
   create_table "tags", force: :cascade do |t|
-    t.string "name",        null: false
-    t.string "description"
-    t.string "user"
+    t.string  "name",        null: false
+    t.string  "description"
+    t.integer "user_id"
   end
+
+  add_index "tags", ["user_id"], name: "index_tags_on_user_id", using: :btree
 
   create_table "test_results", force: :cascade do |t|
     t.integer  "grouping_id"
@@ -505,4 +507,5 @@ ActiveRecord::Schema.define(version: 20151129233225) do
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
+  add_foreign_key "tags", "users"
 end

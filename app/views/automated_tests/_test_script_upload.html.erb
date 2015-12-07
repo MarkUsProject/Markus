@@ -18,6 +18,7 @@
     <span class='file_name'>
       <% if saved %>
         <%= f.object.script_name %>
+        <%= f.hidden_field :script_name, :value => f.object.script_name %>
       <% else %>
         <%= t('automated_tests.new_test_script_file') %>
       <% end %>
@@ -25,7 +26,8 @@
     <%= link_to_function (saved ? '[+]' : '[-]'), "toggleSettings(this);", :class => "collapse" %>
   </legend>
 
-  <%= f.hidden_field :seq_num, :value => f.object.seq_num || 1.0, :class => "seqnum" %>
+  <%= f.hidden_field :seq_num, value: saved ? f.object.seq_num : nil,
+                     :class => "seqnum" %>
 
   <div class="settings_left_side">
     <div class="desc">
@@ -83,7 +85,7 @@
 
     <div <%= raw hide %>>
       <%= f.label :script_name, (saved ? t('automated_tests.replace') : t('automated_tests.upload_required').html_safe) %>
-      <%= f.file_field :script_name, :size=>"30", :class => 'upload_file' %><br/>
+      <%= file_field_tag :new_script, :size=>"30", :class => 'upload_file' %><br/>
 
       <% if saved %>
         <span class="label">
