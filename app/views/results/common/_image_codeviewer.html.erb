@@ -22,7 +22,7 @@
     <% if (defined? annots) %>
       <% annots.each do |annot| %>
           add_annotation_text(<%= annot.annotation_text.id %>,
-                              '<%= escape_javascript(simple_format(annot.annotation_text.html_content)) %>');
+                              '<%= escape_javascript(markdown(annot.annotation_text.html_content)) %>');
       <% end %>
     <% end %>
   </script>

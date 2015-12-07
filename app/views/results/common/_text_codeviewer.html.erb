@@ -23,7 +23,7 @@
     <% if annots.respond_to?('each') %>
       <% annots.each do |annot| %>
         add_annotation_text(<%= annot.annotation_text.id %>,
-                            '<%= escape_javascript(simple_format(annot.annotation_text.content.to_s)) %>');
+                            '<%= escape_javascript(markdown(annot.annotation_text.content.to_s)) %>');
         add_annotation(<%= annot.id %>,
                        { start: <%= annot.line_start %>,
                          end: <%= annot.line_end %>,
