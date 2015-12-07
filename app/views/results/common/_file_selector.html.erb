@@ -12,6 +12,21 @@
                        true,
                        id: 'download_include_annotations' %>
   <div class='file_selector'>
+
+<!-- so jQuery know which file to autoload when the page loads -->
+    <script type="text/javascript">
+     var first_file_id;
+     var first_file_name;
+    <% if files.empty? %>
+      first_file_id = null;
+      first_file_name = null;
+    <% else %>
+      first_file_id = <%=files[0].id%>
+      first_file_name = "<%=files[0].filename%>"
+    <% end %>
+    </script>
+
+
     <!-- arrange the files list into a nested hashtable for displaying in a recursive menu -->
      <% outermost_dir = Hash.new %> 
      <% files.each do |file| %>
@@ -45,21 +60,7 @@
       <% end %>
      <% end %>
 
-     <!-- store the first file in a global so we can access it in jQuery when the page loads -->
-     <script type="text/javascript">
-      var first_file_to_load_id;
-      var first_file_to_load_name;
-     <% if files.empty? %>
-       first_file_to_load_id = null;
-       first_file_to_load_name = null;
-     <% else %>
-       first_file_to_load_id = <%=files[0].id%>
-       first_file_to_load_name = "<%=files[0].filename%>"
-     <% end %>
-     </script>
-
-     <div class="dropdown">
-
+     <div class="dropdown" id="select_file_id">
        <a id="file_selector_dropdown_text">Files</a>
        <span class="caret"></span>
        <ul class="nested-folder">
