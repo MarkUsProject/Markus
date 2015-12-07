@@ -20,36 +20,23 @@ function bump_select(select_node_id, bump_amount, back_button_id, next_button_id
   // load_submitted_file(select_node.value);
 }
 
-function open_file(select_node_id) {
+function open_file(select_node_id, filename) {
   load_submitted_file(select_node_id);
+  document.getElementById("file_selector_dropdown_text").innerHTML = filename;
 }
 
 function open_submenu(dir_element) {
   dir_element.nextElementSibling.style.display = 'block';
-  var siblings = dir_element.parentNode.parentNode.childNodes;
-  for (i = 0; i < siblings.length; i++)
-  {
-    if (siblings[i].className == "nested-submenu" && siblings[i] != dir_element.parentNode)
-    {
-      var sibling_folder_contents = siblings[i].childNodes;
-
-      for (j = 0; j < sibling_folder_contents.length; j++)
-      {
-        if (sibling_folder_contents[j].className == "nested-folder")
-        {
-          close_submenu_recursive(sibling_folder_contents[j]);
-        }
-      }
-    }
-  }
+  // When opening a submenu, we want to close all currently open submenus 
+  // that aren't part of this submenu's path.
+  close_submenu_recursive(dir_element.parentNode.parentNode, dir_element.parentNode);
 }
 
-function close_submenu_recursive(dir_element) {
-  dir_element.style.display = 'none';
+function close_submenu_recursive(dir_element, orig_dir_element) {
   var children = dir_element.childNodes;
   for (i = 0; i < children.length; i++)
   {
-    if (children[i].className == "nested-submenu")
+    if (children[i].className == "nested-submenu" && children[i] != orig_dir_element)
     {
       var child_folder_contents = children[i].childNodes;
 
@@ -57,20 +44,18 @@ function close_submenu_recursive(dir_element) {
       {
         if (child_folder_contents[j].className == "nested-folder")
         {
-          close_submenu_recursive(child_folder_contents[j]);
+          child_folder_contents[j].style.display = 'none';
+          close_submenu_recursive(child_folder_contents[j], orig_dir_element);
         }
       }
     }
   }
 }
 
-function test() {
-  console.log("hey");
-}
-
 
 jQuery(document).ready(function() {
-  bump_select('select_file_id', 0, 'back_button', 'next_button');
+  // open('select_file_id', 0, 'back_button', 'next_button');
+  console.log(document.getElementById('select_file_id'));
 });
 
 

@@ -12,14 +12,8 @@
                        true,
                        id: 'download_include_annotations' %>
   <div class='file_selector'>
-<!--     <input type='button'
-           onclick='bump_select("select_file_id", -1, "back_button", "next_button"); return false;'
-           value='←'
-           id='back_button'
-           disabled>
- -->
+    <!-- arrange the files into a nested hashtable for displaying in a recursive menu -->
      <% outermost_dir = Hash.new %> 
-
      <% files.each do |file| %>
        <% innermost_dir = outermost_dir %>
        <% innermost_dir["files"] = Array.new %>
@@ -46,13 +40,13 @@
       <% end %>
       <% if dir["files"] != nil %>
         <% dir["files"].each do |file| %>
-          <li><a onclick='open_file(<%=file.id%>)'><option value='<%=file.id%>'><%=file.filename%></option></a></li>
+          <li><a onclick='open_file(<%=file.id%>, "<%=file.filename%>")'><option value='<%=file.id%>'><%=file.filename%></option></a></li>
         <% end %>
       <% end %>
      <% end %>
 
      <div class="dropdown">
-       <a>Files</a>
+       <a id="file_selector_dropdown_text">Files</a>
        <span class="caret"></span>
        <ul class="nested-folder">
           <% outermost_dir.each do |key, value| %>
