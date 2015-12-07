@@ -1397,6 +1397,8 @@ fr:
         expected: "Attendu"
         marks_earned: "Marques Gagnés"
         status: "Statut"
+        passed: "Passé"
+        failed: "Échoué"
 
 #Missing Activerecord Translations for french
     datetime:

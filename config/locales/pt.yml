@@ -1328,6 +1328,8 @@ pt:
         expected: "Esperado"
         marks_earned: "Marcas Ganhou"
         status: "Estado"
+        passed: "Passou"
+        failed: "Fracassado"
 
 #Missing Activerecord Translations for english
     datetime:

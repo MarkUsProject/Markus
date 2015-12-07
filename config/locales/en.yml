@@ -1519,6 +1519,8 @@ en:
         expected: "Expected"
         marks_earned: "Marks Earned"
         status: "Status"
+        passed: "Passed"
+        failed: "Failed"
 
 #Missing Activerecord Translations for english
     datetime:
