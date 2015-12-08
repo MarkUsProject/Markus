@@ -1,3 +1,5 @@
+# Need to create a resque worker to listen to default queue to perform the job
+# VVERBOSE=1 QUEUE=default rake environment resque:work
 class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
   queue_as :default
 
@@ -5,7 +7,7 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
 
     assignment = Assignment.find_by_id(assignment_id)
     if assignment.group_max == 1
-      students.map do |student|
+      Student.all.map do |student|
         # Check to see if the student already has a grouping for
         # the current assignment
         grouping = student.accepted_grouping_for(assignment.id)
@@ -23,13 +25,7 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
             group.repo_name = student.user_name
             group.save
             unless group.errors[:base].blank?
-              # raise an error and continue
-              # collision_error = I18n.t('csv.repo_collision_warning',
-              #                          repo_name: group.errors[:base],
-              #                          group_name: group.group_name)
-              # # flash_message(:error,
-              #               'Student ' + student.user_name + ': ' + \
-              #                collision_error)
+              # TODO: need to output an error.
             end
           end
 
@@ -41,14 +37,12 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
             membership_status: StudentMembership::STATUSES[:inviter],
             user_id: student.id)
           member.save
-          # Update repo permissions if need be. This has to happen
-          # after memberships have been established.
-          grouping.update_repository_permissions
-          # Add permissions for TAs and admins.  This completely rerwrites the
-          # auth file but that shouldn't be a big deal in this case.
-          group.set_repo_permissions
         end
       end
+
+      # The generation of the permissions file for all valid groups
+      Repository::SubversionRepository.__generate_authz_file
+
     end
   end
 end

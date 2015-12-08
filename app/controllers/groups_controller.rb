@@ -191,6 +191,7 @@ class GroupsController < ApplicationController
       CreateIndividualGroupsForAllStudentsJob.perform_later @assignment.id
     end
 
+    flash[:success] =  I18n.t('groups.creating_groups_for_all_students')
     redirect_to action: 'index', id: params[:id]
   end
 
