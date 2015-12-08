@@ -39,6 +39,7 @@ gem 'therubyracer', '>= 0.11.1'
 gem 'json'
 gem 'minitest'
 gem 'autoprefixer-rails'
+gem 'resque'
 
 gem 'actionpack-action_caching'
 gem 'actionpack-page_caching', '~>1.0.0'
