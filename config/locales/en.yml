@@ -727,6 +727,7 @@ en:
       work_alone: "Work alone"
       confirm_delete_group: "Are you sure you want to delete your group?"
       delete_your_group: "Delete your group"
+      delete_group: "Delete group"
       disinvite_member: "Are you sure you want to uninvite this member?"
       member_disinvited: "Member disinvited"
       invited: "(invited)"
