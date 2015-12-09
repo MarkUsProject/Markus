@@ -73,14 +73,6 @@
      </div>
   </div>
 
-  <script type="text/javascript">
-
-  jQuery('.nested_files a').click(function() {
-    jQuery(this).next().toggle();
-  });
-  </script>
-
-
   <div class='download_file'>
 
     <%= submit_tag t(:download), onclick: 'with_annotations();' if can_download && !files.empty? %>
