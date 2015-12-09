@@ -720,6 +720,11 @@ pt:
       update:
         success: "Avaliador %{user_name} atualizado com sucesso."
         error:   "Falha ao atualizar avaliador."
+      delete:
+        confirm: "Tem certeza de que deseja excluir este aluno?"
+        success: "Avaliador %{user_name} suprimido com sucesso."
+        error:   "Falha ao atualizar suprimido."
+
 
     #Graders' View
     graders:
