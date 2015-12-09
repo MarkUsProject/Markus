@@ -24,4 +24,10 @@ class AnnotationText < ActiveRecord::Base
   def html_content
     content.gsub(/\n/, '<br/>').html_safe
   end
+
+  # Fixes the bug in PDF annotation where '<=' is stripped
+  def html_content_symbols
+    content.gsub(/\n/, '<br/>').html_safe
+    content.gsub('<=', '&lt;=')
+  end
 end
