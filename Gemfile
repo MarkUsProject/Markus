@@ -28,6 +28,7 @@ gem 'responders', '~> 2.0'
 gem 'sprockets', '~> 2.12.0'
 gem 'rails-html-sanitizer'
 gem 'rails-deprecated_sanitizer'
+gem 'redcarpet', '~> 3.0.0'
 
 gem 'tilt', '~> 1.3.7'
 gem 'sass-rails',   '5.0.0.beta1'
