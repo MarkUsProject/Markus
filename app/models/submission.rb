@@ -142,7 +142,7 @@ class Submission < ActiveRecord::Base
   # submitted to instructors or TAs.
   def remark_submitted?
     has_remark? &&
-      remark_result.marking_state != Result::MARKING_STATES[:unsubmitted]
+      remark_result.marking_state != Result::MARKING_STATES[:incomplete]
   end
 
   # Helper methods
@@ -184,7 +184,7 @@ class Submission < ActiveRecord::Base
 
   def make_remark_result
     remark = create_remark_result(
-      marking_state: Result::MARKING_STATES[:unsubmitted],
+      marking_state: Result::MARKING_STATES[:incomplete],
       submission_id: id)
     self.save
 

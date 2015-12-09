@@ -410,9 +410,9 @@ class ResultsController < ApplicationController
     if @submission.remark_submitted?
       @old_result = @result
       @result = @submission.remark_result
-      # if remark result's marking state is 'unsubmitted' then the student has
+      # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
-      if @result.marking_state == Result::MARKING_STATES[:complete] && !@result.released_to_students
+      if @result.marking_state != Result::MARKING_STATES[:incomplete] && !@result.released_to_students
         render 'results/student/no_remark_result'
         return
       end
