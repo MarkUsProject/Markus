@@ -160,6 +160,13 @@ input#assignment_repository_folder[readonly] {
   }
 }
 
+.group-options {
+  .group-button,
+  .button_to {
+    display: inline;
+  }
+}
+
 .info {
   margin-bottom: 1em;
 }
@@ -243,3 +250,5 @@ span.info_date {
     width: auto;
   }
 }
+
+
