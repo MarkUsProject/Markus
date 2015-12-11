@@ -705,7 +705,7 @@ fr:
       invite: "Inviter"
       please_wait: "Merci de patienter…"
       work_alone: "Travailleur seul"
-      confirm_delete_group: "Êtes-vous sûr de vouloir supprimer votre groupe ?"
+      confirm_delete_group: "AVERTISSEMENT : Vous perdrez l'accès à vos dossiers présentés après la suppression de votre groupe . Assurez-vous que vous avez une copie locale de vos fichiers avant de cliquer sur OK ."
       delete_your_group: "Suppression du groupe"
       disinvite_member: "Êtes-vous sûr de vouloir annuler l'invitation de cet utilisateur ?"
       member_disinvited: "Ce membre ne fait plus partie du groupe"

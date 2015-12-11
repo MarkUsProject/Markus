@@ -678,7 +678,7 @@ pt:
       invite: "Convidar"
       please_wait: " Aguarde por favor..."
       work_alone: "Trabalhe sozinho"
-      confirm_delete_group: "Você tem certeza que quer deletar o grupo?"
+      confirm_delete_group: "AVISO: Você vai perder o acesso a seus arquivos submetidos após a exclusão de seu grupo. Verifique se você tem uma cópia local de seus arquivos antes de clicar em OK."
       delete_your_group: "Deletar o seu grupo"
       disinvite_member: "Você tem certeza que quer retirar o convite deste membro?"
       member_disinvited: "Membro desconvidado"
