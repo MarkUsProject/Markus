@@ -383,6 +383,8 @@ class AssignmentsController < ApplicationController
       unless @grouping.deletable_by?(@current_user)
         raise I18n.t('groups.cant_delete')
       end
+      # Note: This error shouldn't be raised normally, as the student shouldn't
+      # be able to try to delete the group in this case.
       if @grouping.has_submission?
         raise I18n.t('groups.cant_delete_already_submitted')
       end
