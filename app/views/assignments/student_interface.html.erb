@@ -226,34 +226,52 @@
           <% end %>
         <% end %>
 
-        <% if !@group.nil? %>
-          <h3><%= t('student.group_options') %></h3>
-          <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? && @assignment.group_max > 1 %>
-            <p class='information'>
-              <%= t('student.working_alone') %>
-            </p>
-          <% end %>
+        <% unless @group.nil? %>
+          <div class='group-options'>
+            <h3><%= t('student.group_options') %></h3>
+            <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? && @assignment.group_max > 1 %>
+              <p class='information'>
+                <%= t('student.working_alone') %>
+              </p>
+            <% end %>
 
-          <% if !@grouping.nil? && @assignment.group_max > 1 %>
-            <p class='information'> <%= t('student.group_not_deletable') %> </p>
-          <% end %>
-
-          <% # Student not reached the group max and is not working alone
-           if @grouping.inviter == @current_user &&
-              @assignment.student_form_groups &&
-              !@assignment.past_collection_date? %>
+            <% # Student not reached the group max and is not working alone
+               if @grouping.inviter == @current_user &&
+                  @assignment.student_form_groups &&
+                  !@assignment.past_collection_date? %>
               <% # Student has reached the group max and is not working alone
-               if @grouping.student_membership_number < @assignment.group_max &&
-                  @group.group_name != @current_user.user_name %>
-                <%= button_tag t(:invite), onclick: 'invite(); return false;' %>
+                 if @grouping.student_membership_number < @assignment.group_max &&
+                         @group.group_name != @current_user.user_name %>
+                <div class='group-button'>
+                  <%= button_tag t(:invite), onclick: 'invite(); return false;' %>
+                </div>
               <% elsif @grouping.student_membership_number ==
-                        @assignment.group_max &&
-                        @group.group_name != @current_user.user_name %>
-                <p class='information'> <%= t('student.may_not_add_more') %> </p>
+                         @assignment.group_max &&
+                       @group.group_name != @current_user.user_name %>
+                <p class='information'><%= t('student.may_not_add_more') %></p>
               <% end %>
-          <% else %>
-            <p class='information'> <%= t('student.may_not_modify') %> </p>
-          <% end %>
+            <% else %>
+              <p class='information'><%= t('student.may_not_modify') %></p>
+            <% end %>
+
+            <% if !@grouping.nil? && @assignment.group_max > 1 &&
+                  !@assignment.past_collection_date? &&
+                  !@grouping.has_submission? %>
+              <% if @grouping.inviter == @current_user &&
+                    @grouping.accepted_students.size == 1 %>
+                <div class='group-button'>
+                  <%= button_to t('student.delete_group'),
+                                { action: 'deletegroup',
+                                  id: @assignment.id },
+                                method: :get,
+                                data: { confirm: t('student.confirm_delete_group') }
+                                %>
+                </div>
+              <% else %>
+                <p class='information'> <%= t('student.group_not_deletable') %> </p>
+              <% end %>
+            <% end %>
+          </div>
         <% end %>
 
         <h3><%= t('student.group_properties') %></h3>

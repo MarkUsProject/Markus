@@ -174,7 +174,7 @@
       <li>
         <% if !grade_entry_form.is_hidden %>
             <%= link_to h(grade_entry_form.short_identifier),
-                        edit_grade_entry_form_path(grade_entry_form),
+                        student_interface_grade_entry_form_path(grade_entry_form),
                         title: grade_entry_form.description %>
         <% end %>
       </li>
