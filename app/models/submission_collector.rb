@@ -195,7 +195,6 @@ class SubmissionCollector < ActiveRecord::Base
       grouping.assignment.submission_rule
                                        .remove_deductions(new_submission)
     end
-    return new_submission
   end
 
   #Use the database to communicate to the child to stop, and restart itself
@@ -230,9 +229,7 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.save
 
     new_submission = Submission.create_by_revision_number(grouping, rev_num)
-    new_submission = apply_penalty_or_add_grace_credits(grouping,
-                                                        apply_late_penalty,
-                                                        new_submission)
+    apply_penalty_or_add_grace_credits(grouping, apply_late_penalty, new_submission)
 
     #This is to help determine the progress of the method.
     self.safely_stop_child_exited = true
