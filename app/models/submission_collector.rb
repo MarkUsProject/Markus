@@ -229,8 +229,8 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.save
 
     new_submission = Submission.create_by_revision_number(grouping, rev_num)
-    apply_penalty_or_add_grace_credits(grouping, 
-                                       apply_late_penalty, 
+    apply_penalty_or_add_grace_credits(grouping,
+                                       apply_late_penalty,
                                        new_submission)
 
     #This is to help determine the progress of the method.
