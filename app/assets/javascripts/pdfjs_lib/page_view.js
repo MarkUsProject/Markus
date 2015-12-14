@@ -156,10 +156,12 @@ var PageView = function pageView(container, id, scale,
     // Annotation references get killed when we reset,
     // and we need those because we're rotating the annotations right after we rotate the page,
     // so don't reset when we're just rotating the page
-    if (prevScale != this.scale)
-    {
-      this.reset(true);
-    }
+    // if (prevScale != this.scale)
+    // {
+    //   this.reset(true);
+    // }
+    this.reset(true);
+
   };
 
   this.cssTransform = function pageCssTransform(canvas, redrawAnnotations) {

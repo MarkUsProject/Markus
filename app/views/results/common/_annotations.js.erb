@@ -65,6 +65,8 @@
     annotation_type = ANNOTATION_TYPES.PDF;
 
     annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId);
+    annotation_manager.resetAngle();
+
   }
 
   /**
@@ -255,40 +257,80 @@
     return { x1: x1, x2: x2, y1: y1, y2: y2 };
   }
 
-  var angle = 0;
+  // var angle = 0;
   function rotate() {
     annotation_manager.hideSelectionBox();
-    var annotations = document.getElementsByClassName("annotation_holder");
+    // var annotations = document.getElementsByClassName("annotation_holder");
 
-    angle += 90;
-    if (angle == 360) angle = 0;
-
-    if (annotation_type === ANNOTATION_TYPES.PDF)
+    if (annotation_type == ANNOTATION_TYPES.PDF)
     {
+      
+      
+
+      annotation_manager.rotateClockwise90();
       PDFView.rotatePages(90);
-      var annotations = document.getElementsByClassName("annotation_holder");
 
-      for (var i = 0; i < annotations.length; i++)
-      {
-        rotate_pdf_annotation(annotations[i]);
-      }
+      // for (var i = 0; i < annotations.length; i++)
+      // {
+      //   rotate_pdf_annotation(annotations[i]);
+      // }
     }
+
+
+    // if (annotation_type === ANNOTATION_TYPES.PDF)
+    // {
+    //   console.log(PDFView.currentScaleValue)
+    //   var oldScale = PDFView.currentScaleValue;
+    //   PDFView.rotatePages(90);
+    //   if (PDFView.currentScaleValue == 'auto' || 
+    //       PDFView.currentScaleValue == 'page-fit' ||
+    //       PDFView.currentScaleValue == 'page-width')
+    //   {
+    //     var newScale = PDFView.currentScaleValue;
+    //     setTimeout( function () {
+    //       var newestScale = PDFView.currentScaleValue;
+    //       console.log("SCALE VALS ", oldScale, newScale, newestScale);
+    //       var annotations = document.getElementsByClassName("annotation_holder");
+    //       // console.log("annotations is null ", annotations == null, annotations.length);
+    //       for (var i = 0; i < annotations.length; i++)
+    //       {
+    //         var times_to_rotate = angle / 90;
+    //         while (times_to_rotate > 0)
+    //         {
+    //           rotate_pdf_annotation(annotations[i]);
+    //           times_to_rotate--;
+    //         }
+    //       }
+    //     } , 100 );
+    //   }
+    //   else
+    //   {
+    //     for (var i = 0; i < annotations.length; i++)
+    //     {
+    //       rotate_pdf_annotation(annotations[i]);
+    //     }
+    //   }
+
+
+    // }
   }
 
-  function rotate_pdf_annotation(annotation) {
-    var img_bound = 100;
-    var units = "%";
+  // function rotate_pdf_annotation(annotation) {
+  //   var img_bound = 100;
+  //   var units = "%";
 
-    //swap the width and height
-    var oldWidth = annotation.style.width;
-    annotation.style.width = annotation.style.height;
-    annotation.style.height = oldWidth;
 
-    //rotate the top and left anchors
-    var oldTop = parseFloat(annotation.style.top);
-    annotation.style.top = annotation.style.left;
-    annotation.style.left = (img_bound - parseFloat(annotation.style.width) - oldTop) + units;
-  }
+
+  //   //swap the width and height
+  //   var oldWidth = annotation.style.width;
+  //   annotation.style.width = annotation.style.height;
+  //   annotation.style.height = oldWidth;
+
+  //   //rotate the top and left anchors
+  //   var oldTop = parseFloat(annotation.style.top);
+  //   annotation.style.top = annotation.style.left;
+  //   annotation.style.left = (img_bound - parseFloat(annotation.style.width) - oldTop) + units;
+  // }
 
   function make_new_annotation() {
     // Check if image is shown, and call the appropriate function if so
@@ -310,11 +352,11 @@
 
     // Manually reset the modal dialog values
     set_dialog_values('', '', '', '', '', '');
-
     return false;
   }
 
   function make_new_pdf_annotation () {
+    console.log("make new pdf annot");
     var box = annotation_manager.selectionRectangleAsInts();
     var boxSize = annotation_manager.selectionBoxSize();
     
@@ -397,7 +439,7 @@
 
   // Load a submitted file into the code-viewer based on file id's
   function load_submitted_file(submission_file_id, focus_line) {
-     angle = 0;
+     // angle = 0;
     // Clear out any annotation_texts still on the screen
     jQuery('.annotation_text_display').each(function() {
       this.remove();
@@ -487,36 +529,39 @@
               '&authenticity_token=' + AUTH_TOKEN
       });
     } else if (annotation_type === ANNOTATION_TYPES.PDF) {
-      // PDF Annotation
-      var old_x1 = x1;
-      var old_x2 = x2;
-      var old_y1 = y1;
-      var old_y2 = y2;
+      // // PDF Annotation
+      // var old_x1 = x1;
+      // var old_x2 = x2;
+      // var old_y1 = y1;
+      // var old_y2 = y2;
 
-      var max = 100000; //todo: find the exact pixel size of the pdf (although this is the value used in PDFAnnotationManager, it's slightly off)
+      // var max = 100000; 
 
-      // store the coordinates in unrotated form
-      if (angle == 90)
-      {
-        x1 = old_y1;
-        x2 = old_y2;
-        y1 = max - old_x2;
-        y2 = max - old_x1;
-      }
-      else if (angle == 180)
-      {
-        x1 = max - old_x2;
-        x2 = max - old_x1;
-        y1 = max - old_y2;
-        y2 = max - old_y1;
-      }
-      else if (angle == 270)
-      {
-        x1 = max - old_y2;
-        x2 = max - old_y1;
-        y1 = old_x1;
-        y2 = old_x2;
-      }
+      // var angle = annotation_manager.getAngle();
+      // // store the coordinates in unrotated form
+      // if (angle == 90)
+      // {
+      //   x1 = old_y1;
+      //   x2 = old_y2;
+      //   y1 = max - old_x2;
+      //   y2 = max - old_x1;
+      // }
+      // else if (angle == 180)
+      // {
+      //   x1 = max - old_x2;
+      //   x2 = max - old_x1;
+      //   y1 = max - old_y2;
+      //   y2 = max - old_y1;
+      // }
+      // else if (angle == 270)
+      // {
+      //   x1 = max - old_y2;
+      //   x2 = max - old_y1;
+      //   y1 = old_x1;
+      //   y2 = old_x2;
+      // }
+
+      console.log("make new annot with x1 ", x1);
 
       jQuery.ajax({
         url:  '<%= annotations_path %>',
