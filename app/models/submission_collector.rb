@@ -185,10 +185,24 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.save
   end
 
+  def apply_penalty_or_add_grace_credits(grouping,
+                                         apply_late_penalty,
+                                         new_submission)
+    if apply_late_penalty
+      new_submission = grouping.assignment.submission_rule
+                               .apply_submission_rule(new_submission)
+    elsif grouping.assignment.submission_rule.is_a?(GracePeriodSubmissionRule)
+      # Return any grace credits previously deducted for this grouping.
+      grouping.assignment.submission_rule
+                                       .remove_deductions(new_submission)
+    end
+  end
+
   #Use the database to communicate to the child to stop, and restart itself
   #and manually collect the submission
   #The third parameter enables or disables the forking.
-  def manually_collect_submission(grouping, rev_num, async=true)
+  def manually_collect_submission(grouping, rev_num,
+                                  apply_late_penalty, async = true)
 
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
@@ -197,6 +211,9 @@ class SubmissionCollector < ActiveRecord::Base
       remove_grouping_from_queue(grouping)
       grouping.save
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
+      new_submission = apply_penalty_or_add_grace_credits(grouping,
+                                                          apply_late_penalty,
+                                                          new_submission)
       grouping.is_collected = true
       grouping.save
       return new_submission
@@ -213,6 +230,9 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.save
 
     new_submission = Submission.create_by_revision_number(grouping, rev_num)
+    apply_penalty_or_add_grace_credits(grouping,
+                                       apply_late_penalty,
+                                       new_submission)
 
     #This is to help determine the progress of the method.
     self.safely_stop_child_exited = true

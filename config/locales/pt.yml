@@ -122,6 +122,7 @@ pt:
       no_submission: "%{group_name} não tem submissões"
       result_not_saved: "O resultado da submissão de %{group_name} não pode ser salvo"
     collect_submissions:
+      apply_late_penalty: "Aplicar regra pênalti no final ( Deixando esta caixa desmarcada irá remover quaisquer penalidades de atraso existentes. )"
       collect_all: "Coletar todas as submissões"
       collect_ta: "Coletar todas as submissões atribuidos à você"
       disable_collect: "Coleta de submissões desabilitada, já existe um monitor avaliando as submissões exibidas."
