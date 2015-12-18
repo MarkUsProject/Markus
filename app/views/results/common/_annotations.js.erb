@@ -529,39 +529,45 @@
               '&authenticity_token=' + AUTH_TOKEN
       });
     } else if (annotation_type === ANNOTATION_TYPES.PDF) {
-      // // PDF Annotation
-      // var old_x1 = x1;
-      // var old_x2 = x2;
-      // var old_y1 = y1;
-      // var old_y2 = y2;
+      // PDF Annotation
+      var old_x1 = x1;
+      var old_x2 = x2;
+      var old_y1 = y1;
+      var old_y2 = y2;
 
-      // var max = 100000; 
+      var max = 100000; 
 
-      // var angle = annotation_manager.getAngle();
-      // // store the coordinates in unrotated form
-      // if (angle == 90)
-      // {
-      //   x1 = old_y1;
-      //   x2 = old_y2;
-      //   y1 = max - old_x2;
-      //   y2 = max - old_x1;
-      // }
-      // else if (angle == 180)
-      // {
-      //   x1 = max - old_x2;
-      //   x2 = max - old_x1;
-      //   y1 = max - old_y2;
-      //   y2 = max - old_y1;
-      // }
-      // else if (angle == 270)
-      // {
-      //   x1 = max - old_y2;
-      //   x2 = max - old_y1;
-      //   y1 = old_x1;
-      //   y2 = old_x2;
-      // }
+      var angle = annotation_manager.getAngle();
+      console.log("angle is ", angle);
+      // store the coordinates in unrotated form
+      if (angle == 90)
+      {
+        console.log("store in unrotated 90");
+        x1 = old_y1;
+        x2 = old_y2;
+        y1 = max - old_x2;
+        y2 = max - old_x1;
+      }
+      else if (angle == 180)
+      {
+        x1 = max - old_x2;
+        x2 = max - old_x1;
+        y1 = max - old_y2;
+        y2 = max - old_y1;
+      }
+      else if (angle == 270)
+      {
+        x1 = max - old_y2;
+        x2 = max - old_y1;
+        y1 = old_x1;
+        y2 = old_x2;
+      }
+      else
+      {
+        console.log("bleh");
+      }
 
-      console.log("make new annot with x1 ", x1);
+      // console.log("make new annot with x1 ", x1);
 
       jQuery.ajax({
         url:  '<%= annotations_path %>',
