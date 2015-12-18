@@ -35,21 +35,19 @@
 
   <fieldset>
     <legend><%= t("automated_tests.assignment_test_script_files") %></legend>
-      <p>
-        <%= button_to_function t('marker.marks.expand_all'), "change_all('expand');" %>
-        <%= button_to_function t('marker.marks.collapse_all'), "change_all('collapse');" %>
-      </p>
-      <p><%= raw t("assignment.required_fields") %></p>
+    <p>
+      <%= button_tag t('marker.marks.expand_all'),
+                     onclick: "change_all('expand');" %>
+      <%= button_tag t('marker.marks.collapse_all'),
+                     onclick: "change_all('collapse');" %>
+    </p>
+    <p><%= raw t("assignment.required_fields") %></p>
 
-      <div id="test_scripts">
-        <% @assignment.test_scripts.each do |ts| %>
-          <%= render partial: 'test_script_upload', locals: {test_script: ts, form: f} %>
-        <% end %>
-      </div>
-      <p id="test_script_add_link">
-      <%# add_test_script_link t("automated_tests.add_test_script_file_link"), f
-       %>
-      </p>
+    <div id="test_scripts">
+      <% @assignment.test_scripts.each do |ts| %>
+        <%= render partial: 'test_script_upload', locals: {test_script: ts, form: f} %>
+      <% end %>
+    </div>
   </fieldset>
 
   <fieldset>
@@ -60,10 +58,6 @@
         <%= render :partial => 'test_support_file_upload', :locals => {:test_support_file => tsf, :form => f } %>
       <% end %>
       </div>
-      <p id="test_support_file_add_link">
-      <%= add_test_support_file_link t("automated_tests.add_test_support_file_link"), f
-      %>
-      </p>
     </div>
   </fieldset>
 
