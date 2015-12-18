@@ -82,7 +82,6 @@ AssignmentFile.blueprint do
 end
 
 AssignmentStat.blueprint do
-  assignment_id {0}
 end
 
 CriterionTaAssociation.blueprint do

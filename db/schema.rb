@@ -308,7 +308,7 @@ ActiveRecord::Schema.define(version: 20151129233225) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "hours"
-    t.integer  "interval"
+    t.float  "interval"
     t.string   "submission_rule_type"
   end
 

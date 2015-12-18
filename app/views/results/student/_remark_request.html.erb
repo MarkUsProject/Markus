@@ -4,7 +4,7 @@
       <p class='notice'><%= t('marker.past_remark_due_date') %></p>
     <% else %>
       <div id='remark_request_show_results'>
-        <%= submission.remark_request %>
+        <%= markdown(submission.remark_request) %>
           <div id='overall_comments_show'>
             <h3><%= t('marker.overall_comments') %></h3>
             <%= result.overall_comment %>
@@ -35,7 +35,7 @@
       </p>
     <% else %>
       <div id='remark_request_show'>
-        <%= submission.remark_request %>
+        <%= markdown(submission.remark_request) %>
           <div id='overall_comments_show'>
             <h3><%= t('marker.overall_comments') %></h3>
             <%= result.overall_comment %>

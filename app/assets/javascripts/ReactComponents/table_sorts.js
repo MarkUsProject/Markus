@@ -1,10 +1,7 @@
 function compare_dates(a, b) {
   function parse_date(d) {
-    var close_tag_end = d.lastIndexOf('>');
-    if (close_tag_end !== -1) {
-      return Date.parse(d.substring(close_tag_end + 1));
-    }
-    return Date.parse(d);
+    var dateElement = jQuery.parseHTML(d);
+    return Date.parse(jQuery(dateElement[0]).text());
   }
 
   return compare_numeric_values(parse_date(a), parse_date(b));

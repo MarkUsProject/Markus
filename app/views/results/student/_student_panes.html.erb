@@ -25,7 +25,7 @@
             <h3><%= t('marker.overall_comments') %></h3>
 
             <% comment = ( old_result ? old_result.overall_comment : result.overall_comment )%>
-            <p><%= simple_format(comment) %></p>
+            <p><%= markdown(comment) %></p>
 
             <h3><%= t('marker.current_annotations') %></h3>
             <p><%= t('marker.across_all_submission_files') %></p>

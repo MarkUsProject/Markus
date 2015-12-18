@@ -20,8 +20,8 @@ PeriodDeltaChain.prototype.refresh = function() {
     var from_time = moment(current_time, me.date_format);
     var to_time   = moment(current_time, me.date_format);
 
-    from_time_node.update(from_time.format(format));
-    to_time_node.update(to_time.add('hours', hours_value).format(format));
+    jQuery(from_time_node).html(from_time.format(format));
+    jQuery(to_time_node).html(to_time.add('hours', hours_value).format(format));
 
     current_time = to_time;
   });
@@ -49,7 +49,9 @@ PeriodDeltaChain.prototype.set_or_default = function(value, default_value) {
 /** Converts date string to an actual Date object. */
 function convert_date(due_date) {
   if (due_date.indexOf(' ') > -1) {
-    var arr_date = due_date.split(/[ T]/);
+    var arr_date = due_date.split(/[ T]/).filter(function (s) {
+      return s !== '';
+    });
     due_date = arr_date[0] + ' ' + arr_date[1] + ' ' + arr_date[2];
   }
   return due_date;

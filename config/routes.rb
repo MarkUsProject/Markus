@@ -18,6 +18,7 @@ Markus::Application.routes.draw do
           resources :test_results, except: [:new, :edit]
           member do
             put 'update_marks'
+            put 'update_marking_state'
           end
         end
       end
@@ -181,7 +182,7 @@ Markus::Application.routes.draw do
             get 'next_grouping'
             post 'remove_extra_mark'
             post 'set_released_to_students'
-            patch 'update_overall_comment'
+            post 'update_overall_comment'
             post 'update_marking_state'
             patch 'update_remark_request'
             get 'update_positions'
@@ -217,6 +218,7 @@ Markus::Application.routes.draw do
           get 'upload_dialog'
           get 'unassign'
           post 'global_actions'
+          get 'grader_summary'
         end
       end
 
@@ -327,7 +329,7 @@ Markus::Application.routes.draw do
     resources :annotations do
       collection do
         post 'add_existing_annotation'
-        put 'update_annotation'
+        patch 'update_annotation'
         post 'update_comment'
         delete '/' => 'annotations#destroy'
       end
@@ -353,6 +355,9 @@ Markus::Application.routes.draw do
         get 'populate'
         post 'upload_ta_list'
         get 'download_ta_list'
+      end
+      member do
+        get 'refresh_graph'
       end
     end
 

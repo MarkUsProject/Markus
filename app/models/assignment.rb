@@ -252,7 +252,7 @@ class Assignment < ActiveRecord::Base
     # groupings.first(include: :memberships, conditions: [condition, uid]) #FIXME: needs schema update
 
     #FIXME: needs to be rewritten using a proper query...
-    User.find(uid).accepted_grouping_for(id)
+    User.find(uid.id).accepted_grouping_for(id)
   end
 
   def display_for_note
@@ -382,18 +382,6 @@ class Assignment < ActiveRecord::Base
     Grouping.create(group: group, assignment: self)
   end
 
-
-  # Create all the groupings for an assignment where students don't work
-  # in groups.
-  def create_groupings_when_students_work_alone
-     @students = Student.all
-     for student in @students do
-       unless student.has_accepted_grouping_for?(self.id)
-        student.create_group_for_working_alone_student(self.id)
-       end
-     end
-  end
-
   # Clones the Groupings from the assignment with id assignment_id
   # into self.  Destroys any previously existing Groupings associated
   # with this Assignment
@@ -506,26 +494,22 @@ class Assignment < ActiveRecord::Base
           # Add first valid member as inviter to group.
           grouping.group_id = group.id
           grouping.save # grouping has to be saved, before we can add members
-          grouping.add_member(student, StudentMembership::STATUSES[:inviter])
+
+          # We could call grouping.add_member, but it updates repo permissions
+          # For performance reasons in the csv upload we will just create the
+          # member here, and do the permissions update as a bulk operation.
+          member = StudentMembership.new(user: student, membership_status:
+                   StudentMembership::STATUSES[:inviter], grouping: grouping)
+          member.save
         else
-          grouping.add_member(student)
+          member = StudentMembership.new(user: student, membership_status:
+                   StudentMembership::STATUSES[:accepted], grouping: grouping)
+          member.save
         end
       end
 
     end
     collision_error
-  end
-
-  # Updates repository permissions for all groupings of
-  # an assignment. This is a handy method, if for example grouping
-  # creation/deletion gets rolled back. The rollback does not
-  # reestablish proper repository permissions.
-  def update_repository_permissions_forall_groupings
-    # IMPORTANT: need to reload from DB
-    self.reload
-    groupings.each do |grouping|
-      grouping.update_repository_permissions
-    end
   end
 
   def grouped_students
@@ -634,6 +618,7 @@ class Assignment < ActiveRecord::Base
         if grouping.nil? || !grouping.has_submission?
           # No grouping/no submission
           final_result.push('')                         # total percentage
+          final_result.push('0')                        # total_grade
           rubric_criteria.each do |rubric_criterion|
             final_result.push('')                       # mark
             final_result.push(rubric_criterion.weight)  # weight
@@ -644,6 +629,7 @@ class Assignment < ActiveRecord::Base
         else
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
+          final_result.push(submission.get_latest_result.total_mark)
           rubric_criteria.each do |rubric_criterion|
             mark = submission.get_latest_result
                              .marks
@@ -691,6 +677,7 @@ class Assignment < ActiveRecord::Base
         if grouping.nil? || !grouping.has_submission?
           # No grouping/no submission
           final_result.push('')                 # total percentage
+          final_result.push('0')                # total_grade
           flexible_criteria.each do |criterion| ##  empty criteria
             final_result.push('')               # mark
             final_result.push(criterion.max)    # out-of
@@ -703,6 +690,7 @@ class Assignment < ActiveRecord::Base
           # and a submission.
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
+          final_result.push(submission.get_latest_result.total_mark)
           flexible_criteria.each do |criterion|
             mark = submission.get_latest_result
                              .marks
@@ -830,6 +818,55 @@ class Assignment < ActiveRecord::Base
 
   def groups_submitted
     groupings.select(&:has_submission?)
+  end
+
+  def get_num_assigned(ta_id = nil)
+    if ta_id.nil?
+      groupings.size
+    else
+      ta_memberships.where(user_id: ta_id).size
+    end
+  end
+
+  def get_num_marked(ta_id = nil)
+    if ta_id.nil?
+      groupings.count(marking_completed: true)
+    else
+      n = 0
+      ta_memberships.where(user_id: ta_id).find_each do |x|
+        x.grouping.marking_completed? && n += 1
+      end
+      n
+    end
+  end
+
+  def get_num_annotations(ta_id = nil)
+    if ta_id.nil?
+      num_annotations_all
+    else
+      n = 0
+      ta_memberships.where(user_id: ta_id).find_each do |x|
+        x.grouping.marking_completed? &&
+          n += x.grouping.current_submission_used.annotations.size
+      end
+      n
+    end
+  end
+
+  def num_annotations_all
+    groupings.map do |g|
+      g.current_submission_used.annotations.size if g.marking_completed?
+    end.compact.sum
+  end
+
+  def average_annotations(ta_id = nil)
+    num_marked = get_num_marked(ta_id)
+    avg = 0
+    if num_marked != 0
+      num_annotations = get_num_annotations(ta_id)
+      avg = num_annotations.to_f / num_marked
+    end
+    avg.round(2)
   end
 
   private

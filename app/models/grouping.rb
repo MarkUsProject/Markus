@@ -473,13 +473,12 @@ class Grouping < ActiveRecord::Base
 
   # If a group is invalid OR valid and the user is the inviter of the group and
   # she is the _only_ member of this grouping it should be deletable
-  # by this user, provided there haven't been any files submitted. Additionally,
-  # the grace period for the assignment should not have passed.
+  # by this user.
+  # Additionally, the grace period for the assignment should not have passed.
   def deletable_by?(user)
     return false unless self.inviter == user
     (!self.is_valid?) || (self.is_valid? &&
-                          self.accepted_students.size == 1 &&
-                          self.number_of_submitted_files == 0 &&
+                          accepted_students.size == 1 &&
                           self.assignment.group_assignment? &&
                           !assignment.past_collection_date?)
   end

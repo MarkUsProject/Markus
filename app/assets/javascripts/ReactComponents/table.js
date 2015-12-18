@@ -487,7 +487,7 @@ function search_data(data, searchables, search_text) {
 function search_item(search_text, item) {
   if (item.hasOwnProperty('props')) {
     // is a React Component- need to get innerHTML
-    return item.props.dangerouslySetInnerHTML.__html.toLowerCase().indexOf(search_text) !== -1
+    return item.props.children.toLowerCase().indexOf(search_text) !== -1
   } else {
     return item.toLowerCase().indexOf(search_text) !== -1
   }

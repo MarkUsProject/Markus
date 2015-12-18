@@ -384,6 +384,7 @@ pt:
       find_by_revision_number:    "Encontrar revisão por número"
       viewing_revision:           "Vendo revisão: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       currently_collected:  "Versão coletada:"
+      no_rev_before_deadline: 	"Nenhuma revisão apresentado antes do prazo"
       current_path:         "Caminho atual:"
       download_all_files:   "Baixar todos os arquivos"
       root:                 "[root]"
@@ -404,6 +405,7 @@ pt:
       show_partial:         "Mostrar parcial"
       show_complete:        "Mostrar completos"
       show_released:        "Mostrar liberados"
+      show_remark_request:  "Mostrar comentários"
       show_assigned_to_me:  "Mostrar atribuidos à você"
       grading_can_begin:    "Avaliação pode começar"
       grading_can_begin_after: "Avaliação pode começar depois %{time}"
@@ -429,6 +431,8 @@ pt:
       revision_history:     "%{num}: "
       search_submissions:   "Pesquisa Submissões"
       how_many_marked:      "%{num_marked}/%{num_assigned} submissões são corrigidos"
+      how_many_marked_short: "%{num_marked}/%{num_assigned} corrigidos"
+      average_annotations:  "%{average_annotations} anotaciones por presentación marcada"
 
     summaries_index:
       search_summaries:     "Pesquisa Resumos"
@@ -674,7 +678,7 @@ pt:
       invite: "Convidar"
       please_wait: " Aguarde por favor..."
       work_alone: "Trabalhe sozinho"
-      confirm_delete_group: "Você tem certeza que quer deletar o grupo?"
+      confirm_delete_group: "AVISO: Você vai perder o acesso a seus arquivos submetidos após a exclusão de seu grupo. Verifique se você tem uma cópia local de seus arquivos antes de clicar em OK."
       delete_your_group: "Deletar o seu grupo"
       disinvite_member: "Você tem certeza que quer retirar o convite deste membro?"
       member_disinvited: "Membro desconvidado"
@@ -716,6 +720,11 @@ pt:
       update:
         success: "Avaliador %{user_name} atualizado com sucesso."
         error:   "Falha ao atualizar avaliador."
+      delete:
+        confirm: "Tem certeza de que deseja excluir este aluno?"
+        success: "Avaliador %{user_name} suprimido com sucesso."
+        error:   "Falha ao atualizar suprimido."
+
 
     #Graders' View
     graders:
@@ -1266,7 +1275,7 @@ pt:
     outstanding_remark_requests: "%{request_count} pedidos de avaliação"
 
     #app/views/main/_grader_summary.erb
-    grader_distribution:       "Distribuição de notas:"
+    grader_distribution:       "Distribuição de notas"
     assign_graders:            "Atribuir avaliadores"
 
     #app/views/main/_grade_distribution_graph.html.erb

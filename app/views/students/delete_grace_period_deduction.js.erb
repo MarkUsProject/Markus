@@ -1,0 +1,3 @@
+jQuery('#grace_period_deductions').html(
+  "<%= escape_javascript("#{render partial: 'grace_period_deductions',
+                                   locals: { grace_period_deductions: @grace_period_deductions }}").html_safe %>");

@@ -24,7 +24,3 @@
 //= require ./pdfjs_lib/document_properties.js
 //= require ./pdfjs_lib/viewer.js
 
-(function() {
- // TODO: Remove path directly to assets (will break in production)
- PDFJS.workerSrc = '/assets/pdfjs_lib/pdf.worker.js';
-})();

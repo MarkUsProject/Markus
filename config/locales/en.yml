@@ -406,6 +406,7 @@ en:
       find_by_revision_number:    "Find by Revision Number"
       viewing_revision:           "Viewing Revision: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       currently_collected:  "Collected version:"
+      no_rev_before_deadline: 	"No revision submitted before deadline"
       current_path:         "Current Path:"
       download_all_files:   "Download all files"
       root:                 "[root]"
@@ -427,6 +428,7 @@ en:
       show_partial:         "Show Partial"
       show_complete:        "Show Complete"
       show_released:        "Show Released"
+      show_remark_request:  "Show Remarks"
       show_assigned_to_me:  "Show Assigned to Me"
       grading_can_begin:    "Grading can begin"
       grading_can_begin_after: "Grading can begin after %{time}"
@@ -455,6 +457,8 @@ en:
       tags_list:            "Filter by Tag:"
       search_submissions:   "Search Submissions"
       how_many_marked:      "%{num_marked}/%{num_assigned} assignments have been marked"
+      how_many_marked_short: "%{num_marked}/%{num_assigned} marked"
+      average_annotations:  "%{average_annotations} annotations per marked submission"
 
     summaries_index:
       group_name:           "Group Name"
@@ -722,8 +726,9 @@ en:
       invite: "Invite"
       please_wait: " Please wait..."
       work_alone: "Work alone"
-      confirm_delete_group: "Are you sure you want to delete your group?"
+      confirm_delete_group: "WARNING: You will lose access to your submitted files after deleting your group. Make sure you have a local copy of your files before clicking OK."
       delete_your_group: "Delete your group"
+      delete_group: "Delete Group"
       disinvite_member: "Are you sure you want to uninvite this member?"
       member_disinvited: "Member disinvited"
       invited: "(invited)"
@@ -765,6 +770,10 @@ en:
       update:
         success: "Successfully updated grader %{user_name}."
         error:   "Failed to update grader."
+      delete:
+        confirm: "Are you sure you want to delete this grader?"
+        success: "Successfully deleted grader %{user_name}."
+        error:   "Failed to delete grader."
 
     #Graders' View
     graders:
@@ -1399,7 +1408,7 @@ en:
     additional_information: "Additional Information"
     penalty_decay_message_first: "A deduction of %{deduction}% will be applied every %{interval} hours up to %{hours} hours after the assignment is due."
     penalty_decay_message_other: "Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours."
-    penalty_period_message: "After %{hours} hours after the due date, your grade will be reduced by %{deduction}%"
+    penalty_period_message: "Up to %{hours} hours after the due date, your grade will be reduced by %{deduction}%"
 
     #app/views/main/_assignment_summary.html.erb
 
@@ -1418,7 +1427,7 @@ en:
     outstanding_remark_requests: "%{request_count} outstanding remark requests"
 
     #app/views/main/_grader_summary.erb
-    grader_distribution:       "Grader Distribution:"
+    grader_distribution:       "Grader Distribution"
     assign_graders:            "Assign Graders"
 
     #app/views/main/_grade_distribution_graph.html.erb

@@ -6,13 +6,12 @@
   <%# React stuff (compressed version + JSX transformer) %>
   <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
                              'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/JSXTransformer.js' %>
-  <%= javascript_include_tag 'application', 'prototype' %>
+  <%= javascript_include_tag 'application' %>
   <%= stylesheet_link_tag params[:controller], media: 'all' %>
   <%= favicon_link_tag 'favicon.ico' %>
   <% # UI LIBRARIES %>
   <%= javascript_include_tag 'menu',
                              'layouts',
-                             'prototype-snippet',
                              'help-system' %>
   <%= csrf_meta_tags %>
   <%= yield :head %>

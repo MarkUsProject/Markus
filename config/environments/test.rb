@@ -27,6 +27,11 @@ Markus::Application.configure do
   # Show Deprecated Warnings (to :log or to :stderr)
   config.active_support.deprecation = :stderr
 
+  # In rails 5, the default value is "random".
+  Rails.application.configure do
+    config.active_support.test_order = :sorted
+  end
+
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
   #   - use "/" as path separator no matter what OS server is running

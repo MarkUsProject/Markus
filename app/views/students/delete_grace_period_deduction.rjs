@@ -1,1 +1,0 @@
-page.replace_html 'grace_period_deductions', partial: 'grace_period_deductions', locals: {grace_period_deductions: @grace_period_deductions}

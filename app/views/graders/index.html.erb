@@ -17,9 +17,9 @@
   </h1>
 
   <div class='heading_buttons'>
-    <%= link_to_function t('download'), 'modal_download.open();' %>
+    <%= link_to t('download'), '#', onclick:'modal_download.open();' %>
     <span class='menu_bar'></span>
-    <%= link_to_function t('upload'), 'modal_upload.open();' %>
+    <%= link_to t('upload'), '#', onclick:'modal_upload.open();' %>
   </div>
 </div>
 
@@ -66,7 +66,7 @@
   </ul>
 
   <section class='dialog-actions'>
-    <%= button_to_function I18n.t('cancel'), 'modal_download.close();' %>
+    <input type='reset' value='<%= I18n.t(:cancel) %>' onclick='modal_download.close();' />    
   </section>
 </aside>
 
@@ -93,7 +93,7 @@
                      data: { disable_with: t(:uploading_please_wait) },
                      disabled: true,
                      id: 'upload'  %>
-      <%= button_to_function I18n.t('cancel'), 'modal_upload.close();' %>
+      <input type='reset' value='<%= I18n.t(:cancel) %>' onclick='modal_upload.close();' />
     </section>
   <% end %>
 
@@ -111,7 +111,7 @@
 
       <section class='dialog-actions'>
         <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-        <%= button_to_function I18n.t('cancel'), 'modal_upload.close();' %>
+        <%= button_tag I18n.t('cancel'), onclick:'modal_upload.close();' %>
       </section>
     <% end %>
   <% end %>

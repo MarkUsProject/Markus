@@ -26,10 +26,10 @@ gem 'gitolite'
 gem 'gitolite-rugged'
 gem 'jquery-rails'
 gem 'responders', '~> 2.0'
-gem 'prototype-rails', github: 'rails/prototype-rails', branch: '4.2'
 gem 'sprockets', '~> 2.12.0'
 gem 'rails-html-sanitizer'
 gem 'rails-deprecated_sanitizer'
+gem 'redcarpet', '~> 3.0.0'
 
 gem 'tilt', '~> 1.3.7'
 gem 'sass-rails',   '5.0.0.beta1'
@@ -108,6 +108,7 @@ group :offline do
   gem 'railroady'
   gem 'rdoc'
   gem 'rubocop'
+  gem 'rubocop-git'
   gem 'thin'
 end
 

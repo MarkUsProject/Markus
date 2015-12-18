@@ -9,6 +9,6 @@ document.getElementById('annotation_summary_list').innerHTML =
                                   locals: { annotation_category: @annotation_text.annotation_category }) %>';
 <% end %>
 
-update_annotation_text('<%= @annotation_text.id %>', '<%= escape_javascript(simple_format(@annotation_text.content)) %>');
+update_annotation_text('<%= @annotation_text.id %>', '<%= escape_javascript(markdown(@annotation_text.content)) %>');
 hide_all_annotation_content_editors();
 reloadDOM();

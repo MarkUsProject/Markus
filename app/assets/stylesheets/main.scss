@@ -82,6 +82,23 @@
   .grader_distribution {
     margin-bottom: 0;
   }
+
+  #grader-right {
+    height: 380px;
+    overflow: scroll;
+  }
+
+  ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba($black, 0.5);
+    border-radius: 4px;
+    box-shadow: 0 0 1px rgba($grey, 0.5);
+  }
+
 }
 
 .due_date {
@@ -125,3 +142,4 @@
   top: 50%;
   width: 100%;
 }
+

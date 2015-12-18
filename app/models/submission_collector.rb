@@ -108,6 +108,7 @@ class SubmissionCollector < ActiveRecord::Base
                  ' process running')
     begin
       unless self.child_pid.nil?
+        m_logger.log("waitpid on '#{child_pid}'")
         Process.waitpid(self.child_pid, Process::WNOHANG)
         #If child is still running do nothing, otherwise reset the child_pid
         if $?.nil?

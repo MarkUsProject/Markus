@@ -32,6 +32,7 @@ namespace :db do
               StudentMembership::STATUSES[:inviter],
               invoked_by_admin = true)
           end
+          group.set_repo_permissions
         end
 
         file_dir  = File.join(File.dirname(__FILE__), '/../../db/data')
@@ -49,5 +50,7 @@ namespace :db do
         end
       end
     end
+    # This really should be done in a more generic way
+    Repository::SubversionRepository.__generate_authz_file
   end
 end

@@ -8,7 +8,7 @@
           id: 'user_name',
           content: '<%= j raw I18n.t(:'user.user_name') %>',
           sortable: true,
-          searchable: true 
+          searchable: true
         },
         {
           id: 'last_name',
@@ -27,7 +27,13 @@
           content: '<%= j raw I18n.t(:edit) %>',
           sortable: false,
           searchable: false
-        }
+        },
+        {
+          id: 'delete_link',
+          content: '<%= j raw I18n.t(:delete) %>',
+          sortable: false,
+          searchable: false
+        },
       ];
       return {
         columns: columns
@@ -65,6 +71,7 @@
         t['user_name'] = ta.user_name;
         t['first_name'] = ta.first_name;
         t['edit_link'] = <a href={ta.edit_link}><%= j raw I18n.t(:edit) %></a>
+        t['delete_link'] = <a href={ta.delete_link} data-method="delete" rel="nofollow" data-confirm="<%= j raw I18n.t('tas.delete.confirm') %>"><%= j raw I18n.t(:delete) %></a>
 
         return t;
       });

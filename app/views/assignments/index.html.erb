@@ -6,9 +6,9 @@
   <h1><%= t(:manage_course_work) %></h1>
 
   <div class='heading_buttons'>
-    <%= link_to_function t(:upload), 'modal_upload.open()' %>
+    <%= link_to t(:upload), '#', onclick: 'modal_upload.open()' %>
     <span class='menu_bar'></span>
-    <%= link_to_function t(:download), 'modal_download.open()' %>
+    <%= link_to t(:download), '#',  onclick: 'modal_download.open()' %>
   </div>
 </div>
 
@@ -54,7 +54,7 @@
   </p>
 
   <section class='dialog-actions'>
-    <%= button_to_function t(:close), 'modal_download.close()' %>
+    <%= button_tag t(:close), onclick: 'modal_download.close()' %>
   </section>
 </aside>
 
@@ -72,7 +72,7 @@
   </p>
   <p>
     <%= t(:all_csv_file) %>
-    <%= link_to_function '[...]', "toggleElem('hide')" %>
+    <%= link_to '[...]', '#', onclick: "toggleElem('hide')" %>
     <span id='hide' style='display: none;'>
       <%= "<code>#{@default_fields.join(', ')}</code>".html_safe %>
     </span>

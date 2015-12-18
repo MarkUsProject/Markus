@@ -36,7 +36,7 @@
 
   var GradeBoxTotal = React.createClass({
     handleChange: function() {
-      this.props.value = parseInt(event.target.value, 10);
+      this.props.value = parseFloat(event.target.value, 10);
     },
     render: function() {
       return(
@@ -57,7 +57,7 @@
     },
     handleChange: function(event) {
       var params = {
-        'updated_grade':       parseInt(event.target.value),
+        'updated_grade':       parseFloat(event.target.value),
         'student_id':          this.props.student_id,
         'grade_entry_item_id': this.props.grade_entry_column,
         'authenticity_token':  AUTH_TOKEN
@@ -68,7 +68,7 @@
         type: 'POST',
         dataType: 'script',
       });
-      this.props.value = parseInt(event.target.value, 10);
+      this.props.value = parseFloat(event.target.value);
     },
     render: function() {
       return (
@@ -83,7 +83,7 @@
     getDefaultProps: function() {
       // Creates a new table with the columns defined below.
       // The first column will be the column initially sorted.
-      return {
+      var gradesTable = {
         columns: [
           {
             id: 'user_name',
@@ -102,10 +102,6 @@
             content: '<%= j raw I18n.t(:'user.first_name') %>',
             sortable: true,
             searchable: true
-          },
-          {
-            id: 'section',
-            content: '<%= j raw I18n.t(:'user.section') %>',
           }
         ],
         filters: [
@@ -116,7 +112,14 @@
             return true;
           }
         }]
+      };
+      if (<%= Section.any? %>) {
+          gradesTable['columns'].push({
+              id: 'section',
+              content: '<%= j raw I18n.t(:'user.section') %>',
+          });
       }
+      return gradesTable;
     },
     getInitialState: function() {
       return {

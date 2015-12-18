@@ -7,7 +7,7 @@
     <% if submission.remark_request_timestamp %>
       <%= I18n.l(submission.remark_request_timestamp, format: :long_date) %>
     <% end %><br><br>
-    <%= submission.remark_request %>
+    <%= markdown(submission.remark_request) %>
   </div>
   <div id="overall_remark_comment">
     <h3><%= I18n.t("marker.overall_comments") %></h3>

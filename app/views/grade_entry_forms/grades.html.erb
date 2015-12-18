@@ -8,7 +8,7 @@
     <%= t('grade_entry_forms.grades.title') + ' ' + @grade_entry_form.short_identifier %>
   </h1>
   <div class='heading_buttons'>
-    <%= link_to_function t(:upload), 'modal_upload.open();' %>
+    <%= link_to t(:upload), 'javascript:void(0);', onclick: 'modal_upload.open();' %>
     <span class='menu_bar'></span>
     <%= link_to t(:download), csv_download_grade_entry_form_path(@grade_entry_form) %>
   </div>
@@ -46,7 +46,8 @@
 
     <section class='dialog-actions'>
       <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <%= button_to_function t(:close), 'modal_upload.close();' %>
+      <input type='reset' value='<%= t(:close) %>' onclick='modal_upload.close();' />      
+
     </section>
   <% end %>
 </aside>
