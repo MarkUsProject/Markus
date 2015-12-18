@@ -94,13 +94,13 @@
     var coords = (typeof extracted_coords === 'string' ? JSON.parse(extracted_coords) : extracted_coords);
     annotation_manager.addAnnotation(annotation_text_id, content, coords);
 
-    //since we stored the coordinates in unrotated form, when making a new annotation in a rotated orientation, we need to 
-    //rotate it
-    var annotations = document.getElementsByClassName("annotation_holder");
-    for (var i = 0; i < angle / 90; i++)
-    {
-      rotate_pdf_annotation(annotations[annotations.length - 1]);
-    }
+    // //since we stored the coordinates in unrotated form, when making a new annotation in a rotated orientation, we need to 
+    // //rotate it
+    // var annotations = document.getElementsByClassName("annotation_holder");
+    // for (var i = 0; i < angle / 90; i++)
+    // {
+    //   rotate_pdf_annotation(annotations[annotations.length - 1]);
+    // }
   }
 
   function add_annotation(annotation_id, range, annotation_text_id) {
