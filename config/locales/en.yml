@@ -122,7 +122,7 @@ en:
       no_submission: "%{group_name} has no submissions"
       result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
-      apply_late_penalty: "Apply late penalty rule (Leaving this box unchecked will remove any existing late penalties.)"
+      apply_late_penalty: "Apply late penalty/Deduct grace tokens (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)"
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
       disable_collect: "Collection disabled, more than one TA marking displayed submissions."

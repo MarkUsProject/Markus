@@ -188,14 +188,14 @@ class SubmissionCollector < ActiveRecord::Base
   def apply_penalty_or_add_grace_credits(grouping,
                                          apply_late_penalty,
                                          new_submission)
-    if apply_late_penalty
-      new_submission = grouping.assignment.submission_rule
-                               .apply_submission_rule(new_submission)
-    elsif grouping.assignment.submission_rule.is_a?(GracePeriodSubmissionRule)
+    if grouping.assignment.submission_rule.is_a? GracePeriodSubmissionRule
       # Return any grace credits previously deducted for this grouping.
-      grouping.assignment.submission_rule
-                                       .remove_deductions(new_submission)
+      grouping.assignment.submission_rule.remove_deductions(new_submission)
     end
+    if apply_late_penalty
+      grouping.assignment.submission_rule.apply_submission_rule(new_submission)
+    end
+
   end
 
   #Use the database to communicate to the child to stop, and restart itself
@@ -211,9 +211,9 @@ class SubmissionCollector < ActiveRecord::Base
       remove_grouping_from_queue(grouping)
       grouping.save
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
-      new_submission = apply_penalty_or_add_grace_credits(grouping,
-                                                          apply_late_penalty,
-                                                          new_submission)
+      apply_penalty_or_add_grace_credits(grouping,
+                                         apply_late_penalty,
+                                         new_submission)
       grouping.is_collected = true
       grouping.save
       return new_submission
