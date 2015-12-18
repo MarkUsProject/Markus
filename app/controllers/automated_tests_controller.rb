@@ -44,11 +44,13 @@ class AutomatedTestsController < ApplicationController
       # Save assignment and associated test files
       if @assignment.save
         flash[:success] = I18n.t("assignment.update_success")
-        assignment_tests_path = File.join(
-          MarkusConfigurator.markus_config_automated_tests_repository,
-          @assignment.repository_folder,
-          new_script.original_filename)
-        File.open(assignment_tests_path, 'w') { |f| f.write new_script.read }
+        unless new_script.nil?
+          assignment_tests_path = File.join(
+            MarkusConfigurator.markus_config_automated_tests_repository,
+            @assignment.repository_folder,
+            new_script.original_filename)
+          File.open(assignment_tests_path, 'w') { |f| f.write new_script.read }
+        end
         redirect_to :action => 'manage',
                     :assignment_id => params[:assignment_id]
       else

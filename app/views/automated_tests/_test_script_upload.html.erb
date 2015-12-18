@@ -23,7 +23,10 @@
         <%= t('automated_tests.new_test_script_file') %>
       <% end %>
     </span>
-    <%= link_to_function (saved ? '[+]' : '[-]'), "toggleSettings(this);", :class => "collapse" %>
+    <%= link_to(saved ? '[+]' : '[-]',
+                'javascript:void(0);',
+                onclick: 'toggleSettings(this);',
+                class: 'collapse') %>
   </legend>
 
   <%= f.hidden_field :seq_num, value: saved ? f.object.seq_num : nil,
@@ -100,7 +103,10 @@
         <%= f.label :_destroy, t('automated_tests.remove_file') %>
         <%= f.check_box :_destroy, :class => "remove_test_script_file" %>
       <% else %>
-        <%= label_tag "remove", link_to_function(t('automated_tests.remove_file'), "removeNewTestScript(this);") %>
+        <%= label_tag "remove",
+                      link_to(t('automated_tests.remove_file'),
+                              'javascript:void(0);',
+                              onclick: 'removeNewTestScript(this);') %>
       <% end %>
 
       <br/><br/>

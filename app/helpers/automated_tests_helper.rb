@@ -540,7 +540,6 @@ module AutomatedTestsHelper
     test_box_path = MarkusConfigurator.markus_ate_test_run_directory
 
     # Create clean folder to execute tests
-
     stdout, stderr, status = Open3.capture3("rm -rf #{test_box_path} && "\
       "mkdir #{test_box_path}")
     unless status.success?
