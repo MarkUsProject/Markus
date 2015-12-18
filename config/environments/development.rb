@@ -255,7 +255,7 @@ Markus::Application.configure do
   ###################################################################
   
   # Automated Testing Engine(ATE) can only be used when this is set to true 
-  AUTOMATED_TESTING_ENGINE_ON = false
+  AUTOMATED_TESTING_ENGINE_ON = true
   
   # The number of test servers for running automated testing
   ATE_NUMBER_TEST_SERVERS = 1
@@ -272,7 +272,7 @@ Markus::Application.configure do
   ATE_TEST_SERVER_HOSTS = 'username@testing.example.com'
   
   # The name and the path of the test runner script on the test server.
-  ATE_TEST_RUNNER_NAME = 'testrunner/testrunner.rb'
+  ATE_TEST_RUNNER_NAME = "#{::Rails.root.to_s}/automated-tests-files/test_runner/testrunner.rb"
   
   ###################################################################
   # The name and the path of the directory where the test runs.
@@ -280,7 +280,7 @@ Markus::Application.configure do
   # Then the test runner script along with all test files and source
   # files will be copied to this directory, and the test runner
   # script is executed.
-  ATE_TEST_RUN_DIRECTORY = 'testrunner/test/'
+  ATE_TEST_RUN_DIRECTORY = "#{::Rails.root.to_s}/automated-tests-files/test_runner/test"
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
