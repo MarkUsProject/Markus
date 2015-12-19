@@ -48,8 +48,6 @@ namespace :db do
               repo.commit(txn)
             end
           end
-
-
         end
 
         #create subdirectories in the repos 
@@ -100,4 +98,3 @@ namespace :db do
     Repository::SubversionRepository.__generate_authz_file
   end
 end
-

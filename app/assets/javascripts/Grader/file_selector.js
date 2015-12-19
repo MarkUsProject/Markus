@@ -1,28 +1,26 @@
 function open_file(id, name) {
   load_submitted_file(id);
-  document.getElementById("select_file_id").value = id;
-  document.getElementById("file_selector_dropdown_text").innerHTML = name;
+  document.getElementById('select_file_id').value = id;
+  document.getElementById('file_selector_dropdown_text').innerHTML = name;
 }
 
 function open_submenu(dir_element) {
   dir_element.nextElementSibling.style.display = 'block';
   // When opening a submenu, we want to close all currently open submenus 
   // that aren't part of this submenu's path.
-  close_submenu_recursive(dir_element.parentNode.parentNode, dir_element.parentNode);
+  close_submenu_recursive(dir_element.parentNode.parentNode,
+      dir_element.parentNode);
 }
 
 function close_submenu_recursive(dir_element, orig_dir_element) {
   var children = dir_element.childNodes;
-  for (i = 0; i < children.length; i++)
-  {
-    if (children[i].className == "nested-submenu" && children[i] != orig_dir_element)
-    {
+  for (var i = 0; i < children.length; i++) {
+    if (children[i].className === 'nested-submenu' &&
+        children[i] !== orig_dir_element) {
       var child_folder_contents = children[i].childNodes;
-
-      for (j = 0; j < child_folder_contents.length; j++)
-      {
-        if (child_folder_contents[j].className == "nested-folder")
-        {
+      for (var j = 0; j < child_folder_contents.length; j++) {
+        if (child_folder_contents[j].className === 'nested-folder' &&
+            child_folder_contents[j].style.display !== 'none') {
           child_folder_contents[j].style.display = 'none';
           close_submenu_recursive(child_folder_contents[j], orig_dir_element);
         }
@@ -32,12 +30,7 @@ function close_submenu_recursive(dir_element, orig_dir_element) {
 }
 
 jQuery(document).ready(function() {
-  if (first_file_id != null && first_file_name != null)
-  {
+  if (first_file_id !== null && first_file_name !== null) {
     open_file(first_file_id, first_file_name);
   }
 });
-
-
-
-

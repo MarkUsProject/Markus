@@ -370,7 +370,6 @@
     });
 
     document.getElementById('working').style.display = '';
-    // document.getElementById('select_file_id').disabled = true;
 
     positions = null;
     annotation_manager = null;
@@ -383,7 +382,6 @@
             '&authenticity_token=' + AUTH_TOKEN
     }).always(function() {
       document.getElementById('working').style.display = 'none';
-      // document.getElementById('select_file_id').disabled = false;
     });
   }
 
@@ -459,7 +457,7 @@
       var old_y1 = y1;
       var old_y2 = y2;
 
-      var max = 100000; 
+      var max = 100000;
 
       var angle = annotation_manager.getAngle();
       // store the coordinates in unrotated form
