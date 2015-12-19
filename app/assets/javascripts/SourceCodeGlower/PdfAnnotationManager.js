@@ -10,6 +10,8 @@
   var COORDINATE_PRECISION = 5; // Keep 5 decimal places (used when converting back from ints)
   var COORDINATE_MULTIPLIER = Math.pow(10, COORDINATE_PRECISION);
 
+  var angle = 0; //current orientation of the PDF
+
   /**
    * Manager to load and display pdf annotations.
    *
@@ -76,7 +78,6 @@
    */
   PdfAnnotationManager.prototype.getPageAnnotations = function(pageNumber) {
     var pageData = this.annotations[pageNumber];
-
     if (!pageData) {
       return []; // No annotations on page
     } else {
@@ -295,6 +296,26 @@
     return $("#" + this.pageParentId + " #pageContainer" + pageNum);
   }
 
+
+  /**
+   * These three PDF orientation functions are called by _annotations.js.erb. 
+   * They are here here because when scaling/rotating the PDF, 
+   * the annotations are rerendered in addition to the PDF itself, 
+   * and we need to set those annotations to the correct orientation. 
+   */
+  PdfAnnotationManager.prototype.rotateClockwise90 = function() {
+    angle += 90;
+    if (angle == 360) angle = 0;
+  }
+
+  PdfAnnotationManager.prototype.resetAngle = function() {
+    angle = 0;
+  }
+
+  PdfAnnotationManager.prototype.getAngle = function() {
+    return angle;
+  }
+
   /**
    * Draw the annotation on the screen.
    *
@@ -306,12 +327,39 @@
       this.annotationControls[annotation.getId()].remove(); // Remove old controls
     }
 
+    var x1 = coords.x1;
+    var x2 = coords.x2;
+    var y1 = coords.y1;
+    var y2 = coords.y2;
+
+    switch (angle) {
+      case 90: 
+        x1 = COORDINATE_MULTIPLIER - coords.y2;
+        x2 = COORDINATE_MULTIPLIER - coords.y1;
+        y1 = coords.x1;
+        y2 = coords.x2;
+        break;
+      case 180:
+        x1 = COORDINATE_MULTIPLIER - coords.x2;
+        x2 = COORDINATE_MULTIPLIER - coords.x1;
+        y1 = COORDINATE_MULTIPLIER - coords.y2;
+        y2 = COORDINATE_MULTIPLIER - coords.y1;
+        break;
+      case 270:
+        x1 = coords.y1;
+        x2 = coords.y2;
+        y1 = COORDINATE_MULTIPLIER - coords.x2;
+        y2 = COORDINATE_MULTIPLIER - coords.x1;
+        break;
+    }
+
     var $control = $("<div />").addClass("annotation_holder").css({
-      top: ((coords.y1 / COORDINATE_MULTIPLIER) * 100) + "%",
-      left: ((coords.x1 / COORDINATE_MULTIPLIER) * 100) + "%",
-      width: (((coords.x2 - coords.x1) / COORDINATE_MULTIPLIER) * 100) + "%",
-      height: (((coords.y2 - coords.y1) / COORDINATE_MULTIPLIER) * 100) + "%"
+      top: ((y1 / COORDINATE_MULTIPLIER) * 100) + "%",
+      left: ((x1 / COORDINATE_MULTIPLIER) * 100) + "%",
+      width: (((x2 - x1) / COORDINATE_MULTIPLIER) * 100) + "%",
+      height: (((y2 - y1) / COORDINATE_MULTIPLIER) * 100) + "%"
     });
+
 
     var $page = this.getPageContainer(coords.page);
 
