@@ -12,16 +12,16 @@
                        true,
                        id: 'download_include_annotations' %>
   <div class='file_selector'>
-    <!-- so jQuery know which file to autoload when the page loads -->
+    <!-- so jQuery knows which file to autoload when the page loads -->
     <script>
       var first_file_id;
-      var first_file_name;
+      var first_file_path;
       <% if files.empty? %>
         first_file_id = null;
-        first_file_name = null;
+        first_file_path = null;
       <% else %>
         first_file_id = <%= files[0].id %>;
-        first_file_name = '<%= files[0].filename %>';
+        first_file_path = '<%= files[0].path %>/<%= files[0].filename %>';
       <% end %>
     </script>
 
@@ -55,10 +55,10 @@
       <% end %>
       <% if dir["files"] != nil %>
         <% dir["files"].each do |file| %>
-          <li><a onclick='open_file(<%=file.id%>, "<%=file.filename%>")'
+          <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
                  onmouseover='close_submenu_recursive(
                      this.parentNode.parentNode, null)'>
-            <option value='<%=file.id%>'><%=file.filename%></option>
+            <option value='<%= file.id %>'><%=file.filename%></option>
           </a></li>
         <% end %>
       <% end %>
