@@ -1,10 +1,14 @@
 document.getElementById('assignment_summaries').innerHTML =
   "<%= escape_javascript(render partial: 'assignment_summary',
-                                locals: { assignment: @assignment }).html_safe %>";
+                                locals: { assignment: @assignment, ta: @current_ta}).html_safe %>";
 
 jQuery('#assignment_<%= @assignment.id %>_graph').html(
   "<%= escape_javascript(render partial: 'grade_distribution_graph',
                                 locals: { assignment: @assignment }) %>");
+
+jQuery('#assignment_<%= @assignment.id %>_ta_graph').html(
+  "<%= escape_javascript(render partial: 'graders/ta_grade_distribution_graph',
+                                locals: { assignment: @assignment, ta: @current_ta }) %>");
 
 jQuery('a[data-id]').removeClass('link_disabled');
 

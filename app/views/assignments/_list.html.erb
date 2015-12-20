@@ -67,7 +67,7 @@
                     <strong><%= t('assignment.overall_comment') %></strong>
                   </p>
                   <p>
-                    <%= simple_format(sanitize(@a_id_results[assignment.id].overall_comment)) %>
+                    <%= markdown(@a_id_results[assignment.id].overall_comment) %>
                   </p>
                   <%= link_to t('results.results_name'),
                               view_marks_assignment_submission_result_path(

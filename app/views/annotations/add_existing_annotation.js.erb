@@ -1,5 +1,5 @@
 <% if @annotation.is_a?(TextAnnotation) %>
-  add_annotation_text('<%= @text.id %>', '<%= escape_javascript(simple_format(@text.html_content)) %>');
+  add_annotation_text('<%= @text.id %>', '<%= escape_javascript(markdown(@text.html_content)) %>');
   add_annotation('<%= @annotation.id %>',
                  { start: '<%= @annotation.line_start %>',
                    end: '<%= @annotation.line_end %>',
@@ -7,11 +7,11 @@
                    column_end: '<%= @annotation.column_end %>'},
                  '<%= @text.id %>');
 <% elsif @annotation.is_a?(ImageAnnotation) %>
-  add_annotation_text('<%= @text.id %>', '<%= escape_javascript(simple_format(@text.html_content)) %>');
+  add_annotation_text('<%= @text.id %>', '<%= escape_javascript(markdown(@text.html_content)) %>');
   add_to_annotation_grid('<%= @annotation.extract_coords.to_json().html_safe %>');
 <% elsif @annotation.is_a?(PdfAnnotation) %>
   add_pdf_annotation('<%= @text.id %>',
-                     '<%= escape_javascript(simple_format(@text.html_content)) %>',
+                     '<%= escape_javascript(markdown(@text.html_content)) %>',
                      '<%= @annotation.extract_coords.to_json().html_safe %>');
 <% end %>
 

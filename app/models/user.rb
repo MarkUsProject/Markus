@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   before_validation :strip_name
 
   # Group relationships
-  has_many :memberships
+  has_many :memberships, dependent: :delete_all
   has_many :grade_entry_students
   has_many :groupings, through: :memberships
   has_many :notes, as: :noteable, dependent: :destroy

@@ -1,0 +1,35 @@
+<% unless ta.nil? %>
+  <h3><%= ta.first_name + ' ' + ta.last_name%></h3>
+  <div>
+    (<%= t('browse_submissions.how_many_marked',
+           num_marked: assignment.get_num_marked(ta.id),
+           num_assigned: assignment.get_num_assigned(ta.id)) %>)
+  </div>
+  <canvas id='a<%= assignment.id %>_ta_<%= ta.id %>' width='400' height='350'></canvas>
+  <script>
+    //<![CDATA[
+    // Set up graph
+    var ctx = document.getElementById('a<%= assignment.id %>_ta_<%= ta.id %>').getContext('2d');
+
+    // Set up data
+    var data = {
+      labels: ['0% - 5%', '6% - 10%', '11% - 15%', '16% - 20%', '21% - 25%', '26% - 30%', '31% - 35%', '36% - 40%', '41% - 45%', '46% - 50%', '51% - 55%', '56% - 60%', '61% - 65%', '66% - 70%', '71% - 75%', '76% - 80%', '81% - 85%', '86% - 90%', '91% - 95%', '96% - 100%'],
+      datasets: [{
+        fillColor: 'rgba(151,187,205,0.5)',
+        strokeColor: 'rgba(151,187,205,1)',
+        data:        <%= ta.grade_distribution_array(assignment,20) %>
+      }]
+    };
+
+    var options = {
+      scaleLineWidth: 2,
+      barStrokeWidth: 1,
+      barValueSpacing: 2,
+      scaleLabel: '   <%%=value%>'
+    };
+
+    // Draw it
+    new Chart(ctx).Bar(data, options);
+    //]]>
+  </script>
+<% end %>

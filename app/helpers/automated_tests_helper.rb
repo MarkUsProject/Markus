@@ -1,6 +1,11 @@
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
 
+  # Prototype code that needs to be removed:
+  # Methods: add_test_file_link, add_lib_file_link, add_parser_file_link
+  # $F, .insert() and .replace() are all Prototype functions
+  # Places with $('id') need to be replaced with something like jQuery('#id')
+
   def add_test_file_link(name, form)
     link_to_function name do |page|
       test_file = render(partial: 'test_file',

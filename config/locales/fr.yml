@@ -125,6 +125,7 @@ fr:
       no_submission: "%{group_name} n'a pas d'envoi"
       result_not_saved: "Le résultat du groupe %{group_name} n'a pas pu être sauvegardé."
     collect_submissions:
+      apply_late_penalty: "Appliquer pénalité de retard / Déduire jetons de grâce ( Laissant cette case cochée signifie la soumission ne sera pas pénalisé , indépendamment du moment de la soumission . )"
       collect_all: "Récupérer tous les envois"
       collect_ta: "Récupérer tous les envois qui me sont assignés"
       disable_collect: "Récupération des envois n'est pas disponible, il y a déjà un correcteur assigné aux envois."
@@ -423,6 +424,7 @@ fr:
       show_partial:         "Partiellement notés"
       show_complete:        "Terminés"
       show_released:        "Notes affichées"
+      show_remark_request:  "Remarques"
       show_assigned_to_me:  "Montrer les groupes qui me sont assignés"
       grading_can_begin:    "L'évaluation peut commencer"
       grading_can_begin_after: "L'évaluation commencera à partir du %{time}"
@@ -448,6 +450,8 @@ fr:
       revision_history:     "%{num} : "
       search_submissions:   "Rechercher Soumissions"
       how_many_marked:      "%{num_marked}/%{num_assigned} soumissions sont corrigés"
+      how_many_marked_short: "%{num_marked}/%{num_assigned} corrigés"
+      average_annotations:  "%{average_annotations} annotations par soumission marquée"
 
     summaries_index:
       group_name:           "Nom du groupe"
@@ -702,7 +706,7 @@ fr:
       invite: "Inviter"
       please_wait: "Merci de patienter…"
       work_alone: "Travailleur seul"
-      confirm_delete_group: "Êtes-vous sûr de vouloir supprimer votre groupe ?"
+      confirm_delete_group: "AVERTISSEMENT : Vous perdrez l'accès à vos dossiers présentés après la suppression de votre groupe . Assurez-vous que vous avez une copie locale de vos fichiers avant de cliquer sur OK ."
       delete_your_group: "Suppression du groupe"
       disinvite_member: "Êtes-vous sûr de vouloir annuler l'invitation de cet utilisateur ?"
       member_disinvited: "Ce membre ne fait plus partie du groupe"
@@ -744,6 +748,10 @@ fr:
       update:
         success: "Mise à jour de le correcteur %{user_name}"
         error: "Erreur dans la mise à jour de le correcteur"
+      delete:
+        confirm: "Êtes-vous sûr de vouloir supprimer cette niveleuse?"
+        success: "Supprimé avec succès niveleuse %{user_name}."
+        error:   "Impossible de supprimer niveleuse."
 
     #Graders' View
     graders:
@@ -1280,7 +1288,7 @@ fr:
     outstanding_remark_requests: "%{request_count} demandes de remarque restantes."
 
     #app/views/main/_grader_summary.erb
-    grader_distribution:       "Correcteurs assignés :"
+    grader_distribution:       "Correcteurs assignés"
     assign_graders:            "Attribuer Correcteurs"
 
     #app/views/main/_grade_distribution_graph.html.erb

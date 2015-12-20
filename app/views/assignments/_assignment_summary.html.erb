@@ -14,12 +14,18 @@
 
     <div class='right'>
       <%= render partial: 'assignments/assignment_info_summary', locals: { assignment: assignment } %>
-      <%= render partial: 'assignments/grader_summary', locals: { assignment: assignment } %>
       <p>
         <%= link_to I18n.t(:refresh_graph),
                     refresh_graph_assignment_path(id: assignment.id),
                     remote: true %>
        </p>
+    </div>
+    <br>
+    <div id='assignment_<%= assignment.id %>_ta_graph' class='left'>
+      <%= render partial: 'graders/ta_grade_distribution_graph', locals: { assignment: assignment, ta: ta } %>
+    </div>
+    <div class='right'>
+      <%= render partial: 'assignments/grader_summary', locals: { assignment: assignment } %>
     </div>
   </div>
 <% end %>

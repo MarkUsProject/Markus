@@ -75,6 +75,30 @@
                           results_average: assignment.results_average) %>
                   <% end %>
                 </span>
+                <% if assignment.submission_rule.can_collect_now? %>
+                  <br>
+                  <span id='ta_marked__<%= assignment.short_identifier %>'>
+                    <% if @current_user.admin? %>
+                      <%= t('browse_submissions.how_many_marked',
+                            num_marked: assignment.get_num_marked(),
+                            num_assigned: assignment.get_num_assigned()) %>
+                    <% else %>
+                      <%= t('browse_submissions.how_many_marked',
+                            num_marked: assignment.get_num_marked(@current_user.id),
+                            num_assigned: assignment.get_num_assigned(@current_user.id)) %>
+                    <% end %>
+                  </span>
+                  <br>
+                  <span id='ta_avg_annotations__<%= assignment.short_identifier %>'>
+                    <% if @current_user.admin? %>
+                      <%= t('browse_submissions.average_annotations',
+                            average_annotations: assignment.average_annotations()) %>
+                    <% else %>
+                      <%= t('browse_submissions.average_annotations',
+                            average_annotations: assignment.average_annotations(@current_user.id)) %>
+                    <% end %>
+                  </span>
+                <% end %>
               </td>
             </tr>
           <% end %>

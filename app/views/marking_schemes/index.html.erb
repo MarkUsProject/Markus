@@ -1,5 +1,4 @@
 <%= content_for :head do %>
-  <%= javascript_include_tag 'marking_schemes' %>
   <%= render partial: 'marking_schemes_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 

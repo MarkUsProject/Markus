@@ -10,8 +10,6 @@
   var COORDINATE_PRECISION = 5; // Keep 5 decimal places (used when converting back from ints)
   var COORDINATE_MULTIPLIER = Math.pow(10, COORDINATE_PRECISION);
 
-  var angle = 0; //current orientation of the PDF
-
   /**
    * Manager to load and display pdf annotations.
    *
@@ -27,6 +25,7 @@
     this.pdfView = pdfView;
     this.annotationTextManager = new AnnotationTextManager();
     this.pageParentId = pageParentId;
+    this.angle = 0; //current orientation of the PDF
 
     /** @type {<page> : {[id]: {annotation: AnnotationText, coords: Object}} */
     this.annotations = {};        // Lookup of annotations by page number
@@ -302,16 +301,16 @@
    */
 
   PdfAnnotationManager.prototype.rotateClockwise90 = function() {
-    angle += 90;
-    if (angle == 360) angle = 0;
+    this.angle += 90;
+    if (this.angle == 360) this.angle = 0;
   }
 
   PdfAnnotationManager.prototype.resetAngle = function() {
-    angle = 0;
+    this.angle = 0;
   }
 
   PdfAnnotationManager.prototype.getAngle = function() {
-    angle = 0;
+    return this.angle;
   }
 
 
@@ -368,7 +367,7 @@
     // The coords are in the unrotated form, but the PDF may be in a different 
     // orientation.
     var newCoords;
-    switch (angle) {
+    switch (this.angle) {
       case 90: 
         newCoords = this.getRotatedCoords(coords, 1);
         break;

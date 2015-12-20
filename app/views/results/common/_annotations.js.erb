@@ -1,5 +1,4 @@
 <script>
-//<![CDATA[
   var selected_markable_id = null;
   var selected_extra_mark_id = null;
   var positions = null;
@@ -67,7 +66,6 @@
 
     annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId);
     annotation_manager.resetAngle();
-
   }
 
   /**
@@ -94,14 +92,6 @@
   function add_pdf_annotation(annotation_text_id, content, extracted_coords) {
     var coords = (typeof extracted_coords === 'string' ? JSON.parse(extracted_coords) : extracted_coords);
     annotation_manager.addAnnotation(annotation_text_id, content, coords);
-
-    // //since we stored the coordinates in unrotated form, when making a new annotation in a rotated orientation, we need to 
-    // //rotate it
-    // var annotations = document.getElementsByClassName("annotation_holder");
-    // for (var i = 0; i < angle / 90; i++)
-    // {
-    //   rotate_pdf_annotation(annotations[annotations.length - 1]);
-    // }
   }
 
   function add_annotation(annotation_id, range, annotation_text_id) {
@@ -262,8 +252,7 @@
   function rotate() {
     annotation_manager.hideSelectionBox();
 
-    if (annotation_type == ANNOTATION_TYPES.PDF)
-    {
+    if (annotation_type === ANNOTATION_TYPES.PDF) {
       annotation_manager.rotateClockwise90();
       PDFView.rotatePages(90);
     }
@@ -295,7 +284,7 @@
   function make_new_pdf_annotation () {
     var box = annotation_manager.selectionRectangleAsInts();
     var boxSize = annotation_manager.selectionBoxSize();
-    
+
     if (!box || boxSize.width < 5 || boxSize.height < 5) {
       alert("<%= I18n.t('marker.annotation.select_an_area_pdf') %>");
       return;
@@ -381,7 +370,6 @@
     });
 
     document.getElementById('working').style.display = '';
-    document.getElementById('select_file_id').disabled = true;
 
     positions = null;
     annotation_manager = null;
@@ -394,7 +382,6 @@
             '&authenticity_token=' + AUTH_TOKEN
     }).always(function() {
       document.getElementById('working').style.display = 'none';
-      document.getElementById('select_file_id').disabled = false;
     });
   }
 
@@ -466,7 +453,6 @@
     } else if (annotation_type === ANNOTATION_TYPES.PDF) {
       // PDF Annotation
 
-
       // Get the unrotated coordinates of the new annotation.
       // e.g. If the angle is 90 degrees, since getRotateCoords applies clockwise-rotations,
       // we need to rotate it 3 times to get back to 0 degrees.
@@ -481,13 +467,13 @@
       var newCoords = oldCoords;
       switch (angle) {
         case 90:
-          newCoords = annotation_manager.getRotateCoords(oldCoords, 3);
+          newCoords = annotation_manager.getRotatedCoords(oldCoords, 3);
           break;
         case 180:
-          newCoords = annotation_manager.getRotateCoords(oldCoords, 2);
+          newCoords = annotation_manager.getRotatedCoords(oldCoords, 2);
           break;
         case 270:
-          newCoords = annotation_manager.getRotateCoords(oldCoords, 1);
+          newCoords = annotation_manager.getRotatedCoords(oldCoords, 1);
           break;
       }
 
@@ -505,7 +491,6 @@
               '&page=' + page +
               '&authenticity_token=' + AUTH_TOKEN
       });
-
     }
   }
 
@@ -539,5 +524,4 @@
     if (annotation_manager == null) { return; }
     annotation_manager.getAnnotationTextDisplayer().hideShowing();
   }
-//]]>
 </script>

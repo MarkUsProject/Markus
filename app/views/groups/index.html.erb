@@ -5,7 +5,6 @@
   <%= render partial: 'groups_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 
   <script>
-  //<![CDATA[
     var modalCreate     = null;
     var modalAddMember  = null;
     var modalNotesGroup = null;
@@ -16,7 +15,6 @@
       modalNotesGroup = new ModalMarkus('#notes_dialog');
       modalAssignmentGroupReUse = new ModalMarkus('#assignment_group_use_dialog');
     });
-  //]]>
   </script>
 <% end %>
 
@@ -125,7 +123,7 @@
     <%= text_field_tag :new_groupname, '', maxlength: 30 %>
     <section class='dialog-actions'>
       <%= submit_tag t('groups.rename_group.title') %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_rename.close();' />      
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_rename.close();' />
     </section>
   <% end %>
 </aside>
@@ -163,7 +161,7 @@
                      data: { disable_with: t(:uploading_please_wait) },
                      disabled: true,
                      id: 'upload' %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'/>      
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'/>
     </section>
   <% end %>
 </aside>

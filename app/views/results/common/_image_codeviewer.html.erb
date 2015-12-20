@@ -18,14 +18,12 @@
          value=<%= (@current_user.ta? || @current_user.admin?) && !@result.released_to_students %>>
 
   <script>
-  //<![CDATA[
     source_code_ready_for_image();
     <% if (defined? annots) %>
       <% annots.each do |annot| %>
           add_annotation_text(<%= annot.annotation_text.id %>,
-                              '<%= escape_javascript(simple_format(annot.annotation_text.html_content)) %>');
+                              '<%= escape_javascript(markdown(annot.annotation_text.html_content)) %>');
       <% end %>
     <% end %>
-  //]]>
   </script>
 </div>

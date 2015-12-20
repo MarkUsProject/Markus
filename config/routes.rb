@@ -218,6 +218,7 @@ Markus::Application.routes.draw do
           get 'upload_dialog'
           get 'unassign'
           post 'global_actions'
+          get 'grader_summary'
         end
       end
 
@@ -354,6 +355,9 @@ Markus::Application.routes.draw do
         get 'populate'
         post 'upload_ta_list'
         get 'download_ta_list'
+      end
+      member do
+        get 'refresh_graph'
       end
     end
 
