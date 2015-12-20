@@ -332,18 +332,6 @@ class Assignment < ActiveRecord::Base
     Grouping.create(group: group, assignment: self)
   end
 
-
-  # Create all the groupings for an assignment where students don't work
-  # in groups.
-  def create_groupings_when_students_work_alone
-     @students = Student.all
-     for student in @students do
-       unless student.has_accepted_grouping_for?(self.id)
-        student.create_group_for_working_alone_student(self.id)
-       end
-     end
-  end
-
   # Clones the Groupings from the assignment with id assignment_id
   # into self.  Destroys any previously existing Groupings associated
   # with this Assignment
@@ -456,26 +444,22 @@ class Assignment < ActiveRecord::Base
           # Add first valid member as inviter to group.
           grouping.group_id = group.id
           grouping.save # grouping has to be saved, before we can add members
-          grouping.add_member(student, StudentMembership::STATUSES[:inviter])
+
+          # We could call grouping.add_member, but it updates repo permissions
+          # For performance reasons in the csv upload we will just create the
+          # member here, and do the permissions update as a bulk operation.
+          member = StudentMembership.new(user: student, membership_status:
+                   StudentMembership::STATUSES[:inviter], grouping: grouping)
+          member.save
         else
-          grouping.add_member(student)
+          member = StudentMembership.new(user: student, membership_status:
+                   StudentMembership::STATUSES[:accepted], grouping: grouping)
+          member.save
         end
       end
 
     end
     collision_error
-  end
-
-  # Updates repository permissions for all groupings of
-  # an assignment. This is a handy method, if for example grouping
-  # creation/deletion gets rolled back. The rollback does not
-  # reestablish proper repository permissions.
-  def update_repository_permissions_forall_groupings
-    # IMPORTANT: need to reload from DB
-    self.reload
-    groupings.each do |grouping|
-      grouping.update_repository_permissions
-    end
   end
 
   def grouped_students

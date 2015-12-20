@@ -5,7 +5,8 @@
     Annotations
     <% path = add_annotation_text_assignment_annotation_category_path(
             id: @annotation_category.id) %>
-    <%= link_to t('annotations.update.add_annotation'), '#',
+    <%= link_to t('annotations.update.add_annotation'),
+                'javascript:void(0);',
                 onclick: "add_annotation_prompt('#{path}')" %>
   </h2>
 

@@ -130,8 +130,8 @@
         dataType: 'json',
         success: function(data) {
           this.setState({error: []});
-          data.each(function (submission) {
-            if (submission.error !== '') {
+          jQuery.each(data, function (submission) {
+            if (submission.error !== undefined && submission.error !== '') {
               this.setState({error: this.state.error.concat([submission.error])});
             }
           }.bind(this));

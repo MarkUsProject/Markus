@@ -49,13 +49,14 @@ module GroupsHelper
         remote: true)
 
       rename_link = rename_group_assignment_group_path(@assignment, grouping)
-      g[:rename_link] = view_context.link_to_function(
+      g[:rename_link] = view_context.link_to(
         view_context.image_tag(
           'icons/pencil.png',
           alt: I18n.t('groups.rename_group.link'),
           title: I18n.t('groups.rename_group.link')),
-        "modal_rename.open();"\
-        "jQuery('#rename_group_dialog form').attr('action', '#{rename_link}')")
+        'javascript:void(0);',
+        onclick:"modal_rename.open();"\
+                "jQuery('#rename_group_dialog form').attr('action', '#{rename_link}')")
 
       g[:note_link] = view_context.link_to(
         view_context.image_tag(

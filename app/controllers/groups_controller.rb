@@ -159,7 +159,6 @@ class GroupsController < ApplicationController
             flash[:notice] = I18n.t('csv.groups_added_msg', { number_groups:
               number_groupings_added, number_lines: invalid_lines_count })
           end
-          Repository::SubversionRepository.__generate_authz_file
         rescue CSV::MalformedCSVError
           flash[:error] = t('csv.upload.malformed_csv')
           raise ActiveRecord::Rollback
@@ -175,7 +174,12 @@ class GroupsController < ApplicationController
       end
       # Need to reestablish repository permissions.
       # This is not handled by the roll back.
-      @assignment.update_repository_permissions_forall_groupings
+
+      # The generation of the permissions file has been moved out of the transaction
+      # for perfomance reasons. Because the groups are being created as part of
+      # this transaction, the race condition of the repos being created before the 
+      # permissions are set should not be a problem.
+      Repository::SubversionRepository.__generate_authz_file
     end
     redirect_to action: 'index', id: params[:id]
   end

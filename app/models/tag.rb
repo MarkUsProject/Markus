@@ -1,5 +1,6 @@
 class Tag < ActiveRecord::Base
   has_and_belongs_to_many :groupings
+  belongs_to :user
 
   # Constants
   CSV_FIELDS = 2

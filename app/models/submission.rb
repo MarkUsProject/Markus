@@ -202,9 +202,9 @@ class Submission < ActiveRecord::Base
     original_result.marks.each do |mark|
       remark_result.marks.create(result: remark,
                                  created_at: Time.zone.now,
-                                 markable_id: extra_mark.markable_id,
-                                 mark: extra_mark.mark,
-                                 markable_type: extra_mark.markable_type)
+                                 markable_id: mark.markable_id,
+                                 mark: mark.mark,
+                                 markable_type: mark.markable_type)
     end
   end
 
