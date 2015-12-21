@@ -737,7 +737,7 @@ pt:
       search_criteria:    "Pesquisar os critérios"
       assign_to_criteria: "Atribuir avaliador aos critérios"
       lines_not_processed: "As linhas a seguir não puderam ser processadas:"
-      skip_empty_submission: "Não atribua Graders a grupos com apresentações vazias"
+      skip_empty_submissions: "Não atribua Graders a grupos com apresentações vazias (requer que as candidaturas são recolhidas)"
       upload:
         select_csv_file: "Selecione um arquivo CSV no seguinte formato: <code>user_name,last_name,first_name</code>"
         grader_same_user: "Se existir um avaliador com o mesmo user_name, suas informações serão atualizadas."

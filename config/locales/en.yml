@@ -785,7 +785,7 @@ en:
       search_criteria:    "Search Criteria"
       assign_to_criteria: "Assign Graders to Criteria"
       lines_not_processed: "The following lines could not be processed:"
-      skip_empty_submissions: "Do not assign Graders to groups with empty submissions"
+      skip_empty_submissions: "Do not assign Graders to groups with empty submissions (requires that submissions are collected)"
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
