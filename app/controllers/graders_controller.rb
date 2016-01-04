@@ -121,36 +121,26 @@ class GradersController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     groupings = groupings_with_assoc(assignment, includes: [:group, :tas])
 
-    file_out = CSV.generate do |csv|
-       groupings.each do |grouping|
-         group_array = [grouping.group.group_name]
-         # csv format is group_name, ta1_name, ta2_name, ... etc
-         grouping.tas.each do |ta|
-            group_array.push(ta.user_name)
-         end
-         csv << group_array
-       end
-     end
-
-    send_data(file_out, type: 'text/csv', disposition: 'inline')
+    file_out = MarkusCSV.generate(groupings) do |grouping|
+      [grouping.group.group_name] + grouping.tas.map(&:user_name)
+    end
+    send_data(file_out,
+              type: 'text/csv', disposition: 'inline',
+              filename: 'grader_groupings_mapping.csv')
   end
 
   def download_grader_criteria_mapping
     assignment = Assignment.find(params[:assignment_id])
-    criteria = criteria_with_assoc(assignment, includes: [:tas])
+    criteria = criteria_with_assoc(assignment,
+                                   includes: [criterion_ta_associations: :ta])
 
-    file_out = CSV.generate do |csv|
-       criteria.each do |criterion|
-         criterion_array = [criterion.get_name]
-         # csv format is criterion_name, ta1_name, ta2_name, ... etc
-         criterion.tas.each do |ta|
-            criterion_array.push(ta.user_name)
-         end
-         csv << criterion_array
-       end
-     end
+    file_out = MarkusCSV.generate(criteria) do |criterion|
+      [criterion.get_name] + criterion.tas.map(&:user_name)
+    end
 
-    send_data(file_out, type: 'text/csv', disposition: 'inline')
+    send_data(file_out,
+              type: 'text/csv', disposition: 'inline',
+              filename: 'grader_criteria_mapping.csv')
   end
 
   def add_grader_to_grouping
