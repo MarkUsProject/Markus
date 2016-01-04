@@ -295,13 +295,11 @@
     return $("#" + this.pageParentId + " #pageContainer" + pageNum);
   }
 
-
   /**
-   * These three PDF orientation functions are called by _annotations.js.erb. 
-   * They are here here because when scaling/rotating the PDF, 
-   * the annotations are rerendered in addition to the PDF itself, 
-   * and we need to set those annotations to the correct orientation. 
+   * The following four functions are used to keep track of the orientation of 
+   * the PDF so we know how to render the annotations. 
    */
+
   PdfAnnotationManager.prototype.rotateClockwise90 = function() {
     this.angle += 90;
     if (this.angle == 360) this.angle = 0;
@@ -315,6 +313,46 @@
     return this.angle;
   }
 
+
+  /**
+   * Returns the rotated coordinates of the annotation after applying 
+   * 0, 1, 2, or 3 90-degree clockwise rotations.
+   *
+   * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
+   * @param {num_rotations} in
+   */
+  PdfAnnotationManager.prototype.getRotatedCoords = function(coords, num_rotations) {
+
+    var newCoords = {};
+    newCoords.x1 = coords.x1;
+    newCoords.x2 = coords.x2;
+    newCoords.y1 = coords.y1;
+    newCoords.y2 = coords.y2;
+
+    // If num_rotations is not 1, 2, or 3, return original coordinates.
+    switch (num_rotations) {
+      case 1:
+        newCoords.x1 = COORDINATE_MULTIPLIER - coords.y2;
+        newCoords.x2 = COORDINATE_MULTIPLIER - coords.y1;
+        newCoords.y1 = coords.x1;
+        newCoords.y2 = coords.x2;
+        break;
+      case 2: 
+        newCoords.x1 = COORDINATE_MULTIPLIER - coords.x2;
+        newCoords.x2 = COORDINATE_MULTIPLIER - coords.x1;
+        newCoords.y1 = COORDINATE_MULTIPLIER - coords.y2;
+        newCoords.y2 = COORDINATE_MULTIPLIER - coords.y1;
+        break;
+      case 3: 
+        newCoords.x1 = coords.y1;
+        newCoords.x2 = coords.y2;
+        newCoords.y1 = COORDINATE_MULTIPLIER - coords.x2;
+        newCoords.y2 = COORDINATE_MULTIPLIER - coords.x1;
+        break;
+    }
+    return newCoords;
+  }
+
   /**
    * Draw the annotation on the screen.
    *
@@ -326,37 +364,29 @@
       this.annotationControls[annotation.getId()].remove(); // Remove old controls
     }
 
-    var x1 = coords.x1;
-    var x2 = coords.x2;
-    var y1 = coords.y1;
-    var y2 = coords.y2;
-
+    // The coords are in the unrotated form, but the PDF may be in a different 
+    // orientation.
+    var newCoords;
     switch (this.angle) {
       case 90: 
-        x1 = COORDINATE_MULTIPLIER - coords.y2;
-        x2 = COORDINATE_MULTIPLIER - coords.y1;
-        y1 = coords.x1;
-        y2 = coords.x2;
+        newCoords = this.getRotatedCoords(coords, 1);
         break;
       case 180:
-        x1 = COORDINATE_MULTIPLIER - coords.x2;
-        x2 = COORDINATE_MULTIPLIER - coords.x1;
-        y1 = COORDINATE_MULTIPLIER - coords.y2;
-        y2 = COORDINATE_MULTIPLIER - coords.y1;
+        newCoords = this.getRotatedCoords(coords, 2);
         break;
       case 270:
-        x1 = coords.y1;
-        x2 = coords.y2;
-        y1 = COORDINATE_MULTIPLIER - coords.x2;
-        y2 = COORDINATE_MULTIPLIER - coords.x1;
+        newCoords = this.getRotatedCoords(coords, 3);
+        break;
+      default:
+        newCoords = this.getRotatedCoords(coords, 0);
         break;
     }
 
     var $control = $("<div />").addClass("annotation_holder").css({
-      top: ((y1 / COORDINATE_MULTIPLIER) * 100) + "%",
-      left: ((x1 / COORDINATE_MULTIPLIER) * 100) + "%",
-      width: (((x2 - x1) / COORDINATE_MULTIPLIER) * 100) + "%",
-      height: (((y2 - y1) / COORDINATE_MULTIPLIER) * 100) + "%"
+      top: ((newCoords.y1 / COORDINATE_MULTIPLIER) * 100) + "%",
+      left: ((newCoords.x1 / COORDINATE_MULTIPLIER) * 100) + "%",
+      width: (((newCoords.x2 - newCoords.x1) / COORDINATE_MULTIPLIER) * 100) + "%",
+      height: (((newCoords.y2 - newCoords.y1) / COORDINATE_MULTIPLIER) * 100) + "%"
     });
 
 

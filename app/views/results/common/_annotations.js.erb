@@ -248,7 +248,7 @@
     return { x1: x1, x2: x2, y1: y1, y2: y2 };
   }
 
-  // var angle = 0;
+
   function rotate() {
     annotation_manager.hideSelectionBox();
 
@@ -452,30 +452,29 @@
       });
     } else if (annotation_type === ANNOTATION_TYPES.PDF) {
       // PDF Annotation
-      var old_x1 = x1;
-      var old_x2 = x2;
-      var old_y1 = y1;
-      var old_y2 = y2;
 
-      var max = 100000;
+      // Get the unrotated coordinates of the new annotation.
+      // e.g. If the angle is 90 degrees, since getRotateCoords applies clockwise-rotations,
+      // we need to rotate it 3 times to get back to 0 degrees.
+
+      var oldCoords = {}
+      oldCoords.x1 = x1;
+      oldCoords.x2 = x2;
+      oldCoords.y1 = y1;
+      oldCoords.y2 = y2;
 
       var angle = annotation_manager.getAngle();
-      // store the coordinates in unrotated form
-      if (angle == 90) {
-        x1 = old_y1;
-        x2 = old_y2;
-        y1 = max - old_x2;
-        y2 = max - old_x1;
-      } else if (angle == 180) {
-        x1 = max - old_x2;
-        x2 = max - old_x1;
-        y1 = max - old_y2;
-        y2 = max - old_y1;
-      } else if (angle == 270) {
-        x1 = max - old_y2;
-        x2 = max - old_y1;
-        y1 = old_x1;
-        y2 = old_x2;
+      var newCoords = oldCoords;
+      switch (angle) {
+        case 90:
+          newCoords = annotation_manager.getRotatedCoords(oldCoords, 3);
+          break;
+        case 180:
+          newCoords = annotation_manager.getRotatedCoords(oldCoords, 2);
+          break;
+        case 270:
+          newCoords = annotation_manager.getRotatedCoords(oldCoords, 1);
+          break;
       }
 
       jQuery.ajax({
@@ -485,10 +484,10 @@
               '&submission_file_id=' + document.getElementById('select_file_id').value +
               '&content=' + encodeURIComponent(content) +
               '&category_id=' + category_id +
-              '&x1=' + x1 +
-              '&x2=' + x2 +
-              '&y1=' + y1 +
-              '&y2=' + y2 +
+              '&x1=' + newCoords.x1 +
+              '&x2=' + newCoords.x2 +
+              '&y1=' + newCoords.y1 +
+              '&y2=' + newCoords.y2 +
               '&page=' + page +
               '&authenticity_token=' + AUTH_TOKEN
       });
