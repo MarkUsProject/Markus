@@ -70,50 +70,38 @@ class GradersController < ApplicationController
 
   # Assign TAs to Groupings via a csv file
   def csv_upload_grader_groups_mapping
-    if !request.post? || params[:grader_mapping].nil?
+    if params[:grader_mapping].nil?
       flash[:error] = I18n.t('csv.group_to_grader')
-      redirect_to action: 'index', assignment_id: params[:assignment_id]
-      return
-    end
+    else
+      errors = MarkusCSV.parse(params[:grader_mapping].read,
+                               encoding: params[:encoding]) do |row|
+        raise CSVInvalidLineError if row.empty?
+        grouping = Grouping.joins(:group)
+                           .find_by(groups: { group_name: row.first },
+                                    assignment_id: params[:assignment_id])
+        raise CSVInvalidLineError if grouping.nil?
 
-    begin
-      invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
-                                                 params[:assignment_id],
-                                                 params[:encoding])
-      if invalid_lines.size > 0
-        flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+        grouping.add_tas_by_user_name_array(row.drop(1))
       end
-    rescue CSV::MalformedCSVError
-      flash[:error] = I18n.t('csv.upload.malformed_csv')
-    rescue ArgumentError
-      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+      flash_message(:error, errors) unless errors.empty?
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
 
   # Assign TAs to Criteria via a csv file
   def csv_upload_grader_criteria_mapping
-    @assignment = Assignment.find(params[:assignment_id])
-    if !request.post? || params[:grader_criteria_mapping].nil?
+    if params[:grader_criteria_mapping].nil?
       flash[:error] = I18n.t('csv.criteria_to_grader')
-      redirect_to action: 'index', assignment_id: params[:assignment_id]
-      return
+    else
+      @assignment = Assignment.find(params[:assignment_id])
+      errors = MarkusCSV.parse(params[:grader_criteria_mapping].read,
+                               encoding: params[:encoding]) do |row|
+        raise CSVInvalidLineError if row.empty?
+        @assignment.add_graders_to_criterion(row.first, row.drop(1))
+      end
+      flash_message(:error, errors) unless errors.empty?
     end
 
-    begin
-      invalid_lines = @assignment.criterion_class.assign_tas_by_csv(
-        params[:grader_criteria_mapping].read,
-        params[:assignment_id],
-        params[:encoding]
-      )
-      if invalid_lines.size > 0
-        flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
-      end
-    rescue CSV::MalformedCSVError
-      flash[:error] = t('csv.upload.malformed_csv')
-    rescue ArgumentError
-      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
-    end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
 
@@ -121,36 +109,26 @@ class GradersController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     groupings = groupings_with_assoc(assignment, includes: [:group, :tas])
 
-    file_out = CSV.generate do |csv|
-       groupings.each do |grouping|
-         group_array = [grouping.group.group_name]
-         # csv format is group_name, ta1_name, ta2_name, ... etc
-         grouping.tas.each do |ta|
-            group_array.push(ta.user_name)
-         end
-         csv << group_array
-       end
-     end
-
-    send_data(file_out, type: 'text/csv', disposition: 'inline')
+    file_out = MarkusCSV.generate(groupings) do |grouping|
+      [grouping.group.group_name] + grouping.tas.map(&:user_name)
+    end
+    send_data(file_out,
+              type: 'text/csv', disposition: 'inline',
+              filename: 'grader_groupings_mapping.csv')
   end
 
   def download_grader_criteria_mapping
     assignment = Assignment.find(params[:assignment_id])
-    criteria = criteria_with_assoc(assignment, includes: [:tas])
+    criteria = criteria_with_assoc(assignment,
+                                   includes: [criterion_ta_associations: :ta])
 
-    file_out = CSV.generate do |csv|
-       criteria.each do |criterion|
-         criterion_array = [criterion.get_name]
-         # csv format is criterion_name, ta1_name, ta2_name, ... etc
-         criterion.tas.each do |ta|
-            criterion_array.push(ta.user_name)
-         end
-         csv << criterion_array
-       end
-     end
+    file_out = MarkusCSV.generate(criteria) do |criterion|
+      [criterion.get_name] + criterion.tas.map(&:user_name)
+    end
 
-    send_data(file_out, type: 'text/csv', disposition: 'inline')
+    send_data(file_out,
+              type: 'text/csv', disposition: 'inline',
+              filename: 'grader_criteria_mapping.csv')
   end
 
   def add_grader_to_grouping

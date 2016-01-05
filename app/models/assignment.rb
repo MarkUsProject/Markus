@@ -809,6 +809,28 @@ class Assignment < ActiveRecord::Base
     avg.round(2)
   end
 
+  # Assign graders to a criterion for this assignment.
+  # Raise a CSVInvalidLineError if the criterion or a grader doesn't exist.
+  def add_graders_to_criterion(criterion_name, graders)
+    if marking_scheme_type == 'rubric'
+      criterion = rubric_criteria.find_by(
+        rubric_criterion_name: criterion_name)
+    else
+      criterion = flexible_criteria.find_by(
+        flexible_criterion_name: criterion_name)
+    end
+
+    if criterion.nil?
+      raise CSVInvalidLineError
+    end
+
+    unless graders.all? { |g| Ta.exists?(user_name: g) }
+      raise CSVInvalidLineError
+    end
+
+    criterion.add_tas_by_user_name_array(graders)
+  end
+  
   private
 
   # Returns true if we are safe to set the repository name

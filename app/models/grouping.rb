@@ -549,27 +549,6 @@ class Grouping < ActiveRecord::Base
     self.save
   end
 
-  # Returns an array containing the group names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
-    failures = []
-    csv_file_contents = csv_file_contents.utf8_encode(encoding)
-    CSV.parse(csv_file_contents) do |row|
-      group_name = row.shift # Knocks the first item from array
-      group = Group.where(group_name: group_name).first
-      if group.nil?
-        failures.push(group_name)
-      else
-        grouping = group.grouping_for_assignment(assignment_id)
-        if grouping.nil?
-          failures.push(group_name)
-        else
-          grouping.add_tas_by_user_name_array(row) # The rest of the array
-        end
-      end
-    end
-    return failures
-  end
-
   # Update repository permissions for students, if we allow external commits
   #   see: grant_repository_permissions and revoke_repository_permissions
   def update_repository_permissions
