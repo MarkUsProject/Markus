@@ -70,50 +70,38 @@ class GradersController < ApplicationController
 
   # Assign TAs to Groupings via a csv file
   def csv_upload_grader_groups_mapping
-    if !request.post? || params[:grader_mapping].nil?
+    if params[:grader_mapping].nil?
       flash[:error] = I18n.t('csv.group_to_grader')
-      redirect_to action: 'index', assignment_id: params[:assignment_id]
-      return
-    end
+    else
+      errors = MarkusCSV.parse(params[:grader_mapping].read,
+                               encoding: params[:encoding]) do |row|
+        raise CSVInvalidLineError if row.empty?
+        grouping = Grouping.joins(:group)
+                           .find_by(groups: { group_name: row.first },
+                                    assignment_id: params[:assignment_id])
+        raise CSVInvalidLineError if grouping.nil?
 
-    begin
-      invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
-                                                 params[:assignment_id],
-                                                 params[:encoding])
-      if invalid_lines.size > 0
-        flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+        grouping.add_tas_by_user_name_array(row.drop(1))
       end
-    rescue CSV::MalformedCSVError
-      flash[:error] = I18n.t('csv.upload.malformed_csv')
-    rescue ArgumentError
-      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+      flash_message(:error, errors) unless errors.empty?
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
 
   # Assign TAs to Criteria via a csv file
   def csv_upload_grader_criteria_mapping
-    @assignment = Assignment.find(params[:assignment_id])
-    if !request.post? || params[:grader_criteria_mapping].nil?
+    if params[:grader_criteria_mapping].nil?
       flash[:error] = I18n.t('csv.criteria_to_grader')
-      redirect_to action: 'index', assignment_id: params[:assignment_id]
-      return
+    else
+      @assignment = Assignment.find(params[:assignment_id])
+      errors = MarkusCSV.parse(params[:grader_criteria_mapping].read,
+                               encoding: params[:encoding]) do |row|
+        raise CSVInvalidLineError if row.empty?
+        @assignment.add_graders_to_criterion(row.first, row.drop(1))
+      end
+      flash_message(:error, errors) unless errors.empty?
     end
 
-    begin
-      invalid_lines = @assignment.criterion_class.assign_tas_by_csv(
-        params[:grader_criteria_mapping].read,
-        params[:assignment_id],
-        params[:encoding]
-      )
-      if invalid_lines.size > 0
-        flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
-      end
-    rescue CSV::MalformedCSVError
-      flash[:error] = t('csv.upload.malformed_csv')
-    rescue ArgumentError
-      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
-    end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
 
