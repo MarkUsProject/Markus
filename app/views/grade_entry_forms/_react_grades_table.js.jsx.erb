@@ -199,7 +199,9 @@
           var column_id = column.id;
 
           if (column_id === 'marking_state'){
-            r[column_id] = <img src={row[column_id]}/>;
+            if(row[column_id]){
+              r[column_id] = <img src={row[column_id]} alt="<%= t('marking_state.released') %>" title="<%= t('marking_state.released') %>"/>;
+            }
           } 
           else if (column_id === 'total_marks'){
             r[column_id] = <GradeBoxTotal grade_id={'grade_' + row.id + '_' + column.id} 
