@@ -154,7 +154,11 @@
           this.setState({
             error: error
           });
-        }.bind(this)
+        }.bind(this),
+        // Close working indicator.
+        complete: function () {
+          document.getElementById('working').style.display = 'none';
+        }
       });
       // Getting row data
       jQuery.ajax({
