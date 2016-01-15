@@ -311,24 +311,6 @@ class RubricCriterion < Criterion
     add_tas(result)
   end
 
-  # Returns an array containing the criterion names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
-    failures = []
-    csv_file_contents = csv_file_contents.utf8_encode encoding
-    CSV.parse(csv_file_contents) do |row|
-      criterion_name = row.shift # Knocks the first item from array
-      criterion = RubricCriterion.where(assignment_id: assignment_id,
-                                        rubric_criterion_name: criterion_name)
-                                 .first
-      if criterion.nil?
-        failures.push(criterion_name)
-      else
-        criterion.add_tas_by_user_name_array(row) # The rest of the array
-      end
-    end
-    return failures
-  end
-
   # Updates results already entered with new criteria
   def update_existing_results
     self.assignment.submissions.each { |submission| submission.get_latest_result.update_total_mark }

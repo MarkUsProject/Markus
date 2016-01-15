@@ -1,7 +1,7 @@
-function open_file(id, name) {
+function open_file(id, path) {
   load_submitted_file(id);
   document.getElementById('select_file_id').value = id;
-  document.getElementById('file_selector_dropdown_text').innerHTML = name;
+  document.getElementById('file_selector_dropdown_text').innerHTML = path;
 }
 
 function open_submenu(dir_element) {
@@ -30,7 +30,7 @@ function close_submenu_recursive(dir_element, orig_dir_element) {
 }
 
 jQuery(document).ready(function() {
-  if (first_file_id !== null && first_file_name !== null) {
-    open_file(first_file_id, first_file_name);
+  if (first_file_id !== null && first_file_path !== null) {
+    open_file(first_file_id, first_file_path);
   }
 });
