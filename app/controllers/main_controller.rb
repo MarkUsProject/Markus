@@ -160,7 +160,7 @@ class MainController < ApplicationController
     ]).order('id ASC')
 
     @current_assignment = Assignment.get_current_assignment
-    if @current_assignment!=nil
+    if @current_assignment.present?
       @current_ta = @current_assignment.tas.first
     end
 
