@@ -92,6 +92,7 @@ group :test do
   gem 'shoulda'
   gem 'simplecov'
   gem 'time-warp'
+  gem 'database_cleaner'
 end
 
 # Gems needed (wanted) for both development and test can be

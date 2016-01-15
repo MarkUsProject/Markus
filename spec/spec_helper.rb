@@ -6,6 +6,7 @@ require 'rspec/rails'
 require 'repo/repository'
 require 'repo/git_repository'
 require 'repo/subversion_repository'
+require 'database_cleaner'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -58,9 +59,7 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    ActiveRecord::Base.connection.tables.each do |table|
-      ActiveRecord::Base.connection.execute("TRUNCATE #{table} CASCADE;")
-    end
+    DatabaseCleaner.clean_with :truncation
   end
 
   RSpec::Matchers.define :same_time_within_ms do |e|
