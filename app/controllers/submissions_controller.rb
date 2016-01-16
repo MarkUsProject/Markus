@@ -585,7 +585,6 @@ class SubmissionsController < ApplicationController
   ##
   def check_collect_status
 
-    assignment = Assignment.find(params[:assignment_id])
     grouping_ids = params[:groupings]
 
     ## if there is no grouping, render a message
@@ -610,7 +609,7 @@ class SubmissionsController < ApplicationController
         break
       end
     end
-    render json: {collect_status: all_groupings_collected} #, error: !collect_status}
+    render json: { collect_status: all_groupings_collected }
   end
 
   ##
