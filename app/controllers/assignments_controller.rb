@@ -400,7 +400,7 @@ class AssignmentsController < ApplicationController
       end
 
       @grouping.destroy
-      flash[:edit_notice] = I18n.t('assignment.group.deleted')
+      flash[:success] = I18n.t('assignment.group.deleted')
       m_logger.log("Student '#{current_user.user_name}' deleted group '" +
                    "#{@grouping.group.group_name}'.", MarkusLogger::INFO)
 
@@ -455,7 +455,7 @@ class AssignmentsController < ApplicationController
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' cancelled invitation for " +
                  "'#{disinvited_student.user_name}'.")
-    flash[:edit_notice] = I18n.t('student.member_disinvited')
+    flash[:success] = I18n.t('student.member_disinvited')
   end
 
   # Deletes memberships which have been declined by students
