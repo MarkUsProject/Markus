@@ -600,7 +600,7 @@ class SubmissionsController < ApplicationController
                     submission: { grouping: :group }
                   }
                 })
-    
+
     ## check collection is completed for all groupings
     all_groupings_collected = true
     groupings.each do |g|
