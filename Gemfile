@@ -48,6 +48,7 @@ gem 'actionview-encoded_mail_to', '~>1.0.4'
 gem 'activerecord-session_store', '~>0.1.0'
 gem 'rails-observers', '~>0.1.1'
 gem 'rails-perftest', '~>0.0.2'
+gem 'arel', '~>6.0.2'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
@@ -82,6 +83,7 @@ group :development do
   gem 'spring'
   gem 'debugger', :platforms => :mri_19
   gem 'quiet_assets'
+  gem 'bullet'
 end
 
 group :test do

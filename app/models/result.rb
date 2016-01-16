@@ -19,6 +19,11 @@ class Result < ActiveRecord::Base
 
   before_save :check_for_nil_marks
 
+  scope :submitted_results, -> {
+    where.not(marking_state: MARKING_STATES[:unmarked])
+  }
+
+
   # Returns a list of total marks for each student whose submissions are graded
   # for the assignment specified by +assignment_id+, sorted in ascending order.
   # This includes duplicated marks for each student in the same group (marks
