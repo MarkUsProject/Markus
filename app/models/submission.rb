@@ -188,9 +188,9 @@ class Submission < ActiveRecord::Base
 
   def make_remark_result
     remark = Result.create(
-        marking_state: Result::MARKING_STATES[:unmarked],
-        submission: self,
-        remark_request_submitted_at: Time.zone.now)
+      marking_state: Result::MARKING_STATES[:unmarked],
+      submission: self,
+      remark_request_submitted_at: Time.zone.now)
 
     # populate remark result with old marks
     original_result = get_original_result
@@ -240,5 +240,4 @@ class Submission < ActiveRecord::Base
   def max_number_of_results
     results.size < 3
   end
-
 end
