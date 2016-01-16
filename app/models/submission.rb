@@ -149,8 +149,9 @@ class Submission < ActiveRecord::Base
   # Returns whether this submission has a remark request that has been
   # submitted to instructors or TAs.
   def remark_submitted?
-    has_remark? &&
-      remark_result.marking_state != Result::MARKING_STATES[:unmarked]
+    # has_remark? &&
+    #   remark_result.marking_state != Result::MARKING_STATES[:unmarked]
+    results.where.not(remark_request_submitted_at: nil).where.not(marking_state: Result::MARKING_STATES[:unmarked]).size > 0
   end
 
   # Helper methods
@@ -191,7 +192,7 @@ class Submission < ActiveRecord::Base
   end
 
   def make_remark_result
-    remark = Result.create(marking_state: Result::MARKING_STATES[:unmarked], submission: self)
+    remark = Result.create(marking_state: Result::MARKING_STATES[:unmarked], submission: self, remark_request_submitted_at: Time.now)
 
     # populate remark result with old marks
     original_result = get_original_result

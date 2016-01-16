@@ -23,6 +23,11 @@ class Result < ActiveRecord::Base
     where.not(marking_state: MARKING_STATES[:unmarked])
   }
 
+  scope :submitted_remarks_and_all_non_remarks, -> {
+    results = Result.arel_table
+    where(results[:remark_request_submitted_at].eq(nil).or(results[:marking_state].not_eq(MARKING_STATES[:unmarked])))
+  }
+
 
   # Returns a list of total marks for each student whose submissions are graded
   # for the assignment specified by +assignment_id+, sorted in ascending order.
