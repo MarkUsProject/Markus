@@ -15,6 +15,7 @@ class SubmissionsController < ApplicationController
                          :downloads,
                          :collect_and_begin_grading,
                          :download_groupings_files,
+                         :check_collect_status,
                          :manually_collect_and_begin_grading,
                          :collect_ta_submissions,
                          :repo_browser,
@@ -27,6 +28,7 @@ class SubmissionsController < ApplicationController
                        :collect_ta_submissions,
                        :repo_browser,
                        :download_groupings_files,
+                       :check_collect_status,
                        :update_submissions,
                        :populate_submissions_table]
   before_filter :authorize_for_student,
@@ -511,6 +513,7 @@ class SubmissionsController < ApplicationController
   # Download all files from all groupings in a .zip file.
   ##
   def download_groupings_files
+
     assignment = Assignment.find(params[:assignment_id])
 
     ## create the zip name with the user name to have less chance to delete
@@ -575,6 +578,40 @@ class SubmissionsController < ApplicationController
 
     ## Send the Zip file
     send_file zip_path, disposition: 'inline', filename: zip_name
+  end
+
+  ##
+  # Check the status of collection for all groupings
+  ##
+  def check_collect_status
+
+    assignment = Assignment.find(params[:assignment_id])
+    grouping_ids = params[:groupings]
+
+    ## if there is no grouping, render a message
+    if grouping_ids.blank?
+      render text: t('student.submission.no_groupings_available')
+      return
+    end
+
+    groupings = Grouping.where(id: grouping_ids)
+                    .includes(:group,
+                              current_submission_used: {
+                                  submission_files: {
+                                      submission: { grouping: :group }
+                                  }
+                              })
+
+
+    ## check collection is completed for all groupings
+    all_groupings_collected = true;
+    groupings.each do |g|
+      if(!g.is_collected?)
+        all_groupings_collected = false
+        break
+      end
+    end
+    render json: {collect_status: all_groupings_collected} #, error: !collect_status}
   end
 
   ##
