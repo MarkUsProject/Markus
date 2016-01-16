@@ -104,7 +104,7 @@ class AnnotationsController < ApplicationController
   def destroy
     @annotation = Annotation.find(params[:id])
     @text_annotation = @annotation.annotation_text
-    @text_annotation.destroy
+    @text_annotation.destroy unless @text_annotation.annotation_category.present?
     @old_annotation = @annotation.destroy
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
