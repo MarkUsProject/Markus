@@ -586,6 +586,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       csv:
         could_not_find_source: "O projeto fonte de onde os grupos serão copiados não foi encontrado"
         could_not_find_target: "O projeto alvo para o qual os grupos serão copiados não foi encontrado"
+      add_all_groups: "Adicionar todos os grupos"
+      creating_groups_for_all_students: "A criação de grupos para todos os alunos. (Tarefa de fundo. Atualize a página para ver quando todos os grupos criados.)"
 
     results:
       title:  "Projeto %{assignment_name} : %{group_name}"
