@@ -1,42 +1,34 @@
 <%= javascript_include_tag 'jquery' %>
+<%= javascript_include_tag 'jquery_ujs' %>
 
 <div class='login'>
   <div class='login-image'></div>
 
-  <p class='login-course'><%= MarkusConfigurator.markus_config_course_name %></p>
+  <p class='login-course'>
+    <%= MarkusConfigurator.markus_config_course_name %>
+  </p>
 
   <div class='login-error'>
     <%= render 'shared/flash_message' %>
   </div>
 
   <div class='login-form'>
-    <%= form_tag({ action: 'login',
-                   id: nil },
-                 { # Quotes for onsubmit must be like this to show string properly
-                   onsubmit: "jQuery('#submit').prop('disabled', true);
-                              jQuery('#submit').val('#{ t(:logging_in) }');",
-                   id: 'login_form' }) do %>
+    <%= form_tag({ action: 'login' }) do %>
       <%= text_field_tag 'user_login',
                          nil,
-                         tabindex: 10,
+                         tabindex: 1,
                          placeholder: t(:login),
-                         autocorrect: 'off' %>
+                         autocorrect: 'off',
+                         autofocus: true %>
       <%= password_field_tag 'user_password',
                              nil,
-                             tabindex: 20,
+                             tabindex: 2,
                              placeholder: t(:password) %>
       <div class='submit'>
         <%= submit_tag t(:log_in),
-                       tabindex: 100,
-                       id: 'submit' %>
+                       data: { disable_with: t(:logging_in) },
+                       tabindex: 3 %>
       </div>
     <% end %>
   </div>
 </div>
-
-<script>
-  <%# Try to put focus on the login text field on load %>
-  jQuery(document).ready(function() {
-    document.getElementById('user_login').focus();
-  });
-</script>
