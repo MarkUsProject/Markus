@@ -7,7 +7,7 @@ class Submission < ActiveRecord::Base
   before_validation :bump_old_submissions, on: :create
 
   validates_numericality_of :submission_version, only_integer: true
-  validates :max_number_of_results
+  validate :max_number_of_results
   belongs_to :grouping
   has_many   :results, dependent: :destroy
   has_many   :submission_files, dependent: :destroy

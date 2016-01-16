@@ -512,7 +512,6 @@ class ResultsController < ApplicationController
     submission = Submission.find(params[:submission_id])
 
     submission.remark_result.destroy
-   # submission.update_attributes(remark_result_id: nil)
     submission.get_original_result.update_attributes(
       released_to_students: true)
 
