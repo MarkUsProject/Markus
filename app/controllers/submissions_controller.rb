@@ -595,18 +595,17 @@ class SubmissionsController < ApplicationController
     end
 
     groupings = Grouping.where(id: grouping_ids)
-                    .includes(:group,
-                              current_submission_used: {
-                                  submission_files: {
-                                      submission: { grouping: :group }
-                                  }
-                              })
-
-
+      .includes(:group,
+                current_submission_used: {
+                  submission_files: {
+                    submission: { grouping: :group }
+                  }
+                })
+    
     ## check collection is completed for all groupings
-    all_groupings_collected = true;
+    all_groupings_collected = true
     groupings.each do |g|
-      if(!g.is_collected?)
+      unless g.is_collected?
         all_groupings_collected = false
         break
       end
