@@ -1,19 +1,10 @@
 // Easier media query breakpoints
-$breakpoints: (
-  'tiny':   ( max-width:  360px ),
-  'small':  ( max-width:  500px ),
-  'mobile': ( max-width:  745px ),
-  'medium': ( max-width:  990px ),
-  'large':  ( max-width: 1040px )
-);
-
 @mixin breakpoint($name) {
   @if map-has-key($breakpoints, $name) {
     @media #{inspect(map-get($breakpoints, $name))} {
       @content;
     }
-  }
-  @else {
+  } @else {
     @media ("#{$name}") {
       @content;
     }
