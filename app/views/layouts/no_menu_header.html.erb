@@ -16,9 +16,9 @@
     <%= render partial: 'layouts/about' %>
     <%= render partial: 'layouts/redirect' %>
 
-    <div id='content'>
+    <main class='content' id='content'>
       <%= yield :layout %>
-    </div>
+    </main>
   </div>
 
   <%= render partial: 'layouts/redirect', formats: [:js], handlers: [:erb] %>

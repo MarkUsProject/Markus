@@ -40,17 +40,6 @@ fieldset {
   }
 }
 
-label {
-  display: inline-block;
-  min-width: 12em;
-  margin-top: 5px;
-}
-
-// Column "Out Of" labels
-input + label {
-  min-width: 0;
-}
-
 // For Hide/Show toggle in the grades view for the Total column
 .hideTotal .total_value {
   display: none;

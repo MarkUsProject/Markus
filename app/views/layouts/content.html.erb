@@ -32,10 +32,10 @@
     <%= render partial: 'layouts/role_switch' %>
     <%= render partial: 'layouts/redirect' %>
 
-    <section id='content'>
+    <main class='content' id='content'>
       <%= render partial: 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
-    </section>
+    </main>
 
     <%= render partial: 'layouts/footer' %>
   </div>

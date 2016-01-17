@@ -1,3 +1,17 @@
+// Core page styling
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  min-height: 100%;
+  width: 100%;
+}
+
 body {
   background-color: $lighter-blue;
   color: $dark-grey;
@@ -13,25 +27,29 @@ body {
   background-color: $blue;
 }
 
+
+// Helper classes
+
 .hidden {
   display: none;
 }
 
-.alignleft {
+.align-left {
   float: left;
 }
 
-.alignright {
+.align-right {
   float: right;
 }
 
-.clear-alignment {
+.align-clear {
   clear: both;
 }
 
-/* Main content */
 
-#content {
+// Main content
+
+.content {
   background: $white;
   border-bottom: 1px solid $blue;
   padding: $dimen-vertical $dimen-horizontal;
@@ -44,8 +62,4 @@ body {
 
 .wrapper {
   margin-top: 1em;
-}
-
-.ui-datepicker-current {
-  display: none !important;
 }

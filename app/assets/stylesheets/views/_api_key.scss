@@ -1,0 +1,21 @@
+.api_key {
+  margin-top: $dimen-vertical;
+}
+
+.api_key_container {
+  border: 1px solid $grey;
+  border-radius: $radius;
+  margin-top: 0.5em;
+  overflow: auto;
+  padding: 0.75em;
+
+  form,
+  .api_key_value {
+    display: inline-block;
+    width: auto;
+  }
+}
+
+.api_key_value {
+  margin-left: 1em;
+}

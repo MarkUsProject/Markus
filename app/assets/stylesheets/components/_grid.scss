@@ -13,6 +13,6 @@
 @for $i from 1 to 13 {
   .grid-col-#{$i} {
     float: left;
-    width: 100% / $i;
+    width: 100% / 12 * $i;
   }
 }

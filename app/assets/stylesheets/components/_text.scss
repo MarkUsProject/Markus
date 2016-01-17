@@ -1,22 +1,32 @@
 // Headings
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $fonts;
+  margin: 0.5rem 0 1rem;
+}
+
 h1 {
-  font: 300 2.5em $fonts;
-  margin: 0;
+  font-size: 2.5em;
+  font-weight: 300;
 }
 
 h2 {
-  font: 300 2em $fonts;
-  margin: 0;
+  font-size: 2em;
+  font-weight: 300;
 }
 
 h3 {
-  font: 400 1.5em $fonts;
-  margin: 0;
+  font-size: 1.5em;
+  font-weight: 400;
 }
 
 h4 {
-  font: 600 1em $fonts;
-  margin: 0;
+  font-size: 1em;
+  font-weight: 600;
 }
 
 
@@ -42,6 +52,13 @@ a {
 // Bold text
 strong {
   font-weight: 600;
+}
+
+
+// Disabled text
+.disabled {
+  color: $disabled-dark !important;
+  pointer-events: none;
 }
 
 

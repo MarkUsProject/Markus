@@ -1,31 +1,39 @@
 <% unless assignment.nil? %>
   <div class='assignment_summary'>
-    <h2 class='title'>
-      <%= link_to I18n.t(:assignment_link,
-                         short_id: assignment.short_identifier,
-                         description: assignment.description),
-                  browse_assignment_submissions_path(assignment.id),
-                  class: 'title' %>
+    <h2>
+      <%= link_to t(:assignment_link,
+                     short_id: assignment.short_identifier,
+                     description: assignment.description),
+                  browse_assignment_submissions_path(assignment.id) %>
     </h2>
 
-    <div id='assignment_<%= assignment.id %>_graph' class='left'>
-      <%= render partial: 'assignments/grade_distribution_graph', locals: { assignment: assignment } %>
+    <div class='grid-row'>
+      <div class='grid-col-8' id='assignment_<%= assignment.id %>_graph'>
+        <%= render partial: 'assignments/grade_distribution_graph',
+                   locals: { assignment: assignment } %>
+      </div>
+
+      <div class='grid-col-4'>
+        <%= render partial: 'assignments/assignment_info_summary',
+                   locals: { assignment: assignment } %>
+        <p>
+          <%= link_to t(:refresh_graph),
+                      refresh_graph_assignment_path(id: assignment.id),
+                      remote: true %>
+        </p>
+      </div>
     </div>
 
-    <div class='right'>
-      <%= render partial: 'assignments/assignment_info_summary', locals: { assignment: assignment } %>
-      <p>
-        <%= link_to I18n.t(:refresh_graph),
-                    refresh_graph_assignment_path(id: assignment.id),
-                    remote: true %>
-       </p>
-    </div>
-    <br>
-    <div id='assignment_<%= assignment.id %>_ta_graph' class='left'>
-      <%= render partial: 'graders/ta_grade_distribution_graph', locals: { assignment: assignment, ta: ta } %>
-    </div>
-    <div class='right'>
-      <%= render partial: 'assignments/grader_summary', locals: { assignment: assignment } %>
+    <div class='grid-row'>
+      <div class='grid-col-8' id='assignment_<%= assignment.id %>_ta_graph'>
+        <%= render partial: 'graders/ta_grade_distribution_graph',
+                   locals: { assignment: assignment, ta: ta } %>
+      </div>
+
+      <div class='grid-col-4'>
+        <%= render partial: 'assignments/grader_summary',
+                   locals: { assignment: assignment } %>
+      </div>
     </div>
   </div>
 <% end %>

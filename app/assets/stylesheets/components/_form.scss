@@ -34,6 +34,11 @@ textarea {
 
 textarea {
   resize: none;
+
+  label + & {
+    display: block;
+    margin-top: 0.5em;
+  }
 }
 
 
@@ -152,6 +157,13 @@ fieldset {
 input[type='radio'] {
   min-width: 30px;
   max-width: 30px;
+}
+
+
+// Number inputs
+
+input[type='number'] {
+  min-width: 5em;
 }
 
 

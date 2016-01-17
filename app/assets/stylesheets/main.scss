@@ -7,7 +7,7 @@
 @import 'core/core';
 
 @import 'components/alerts';
-@import 'components/columns';
+@import 'components/datepicker';
 @import 'components/dialogs';
 @import 'components/dropdown';
 @import 'components/form';
@@ -23,6 +23,7 @@
 @import 'components/title';
 
 @import 'views/annotation_categories';
+@import 'views/api_key';
 @import 'views/assignments';
 @import 'views/automated_tests';
 @import 'views/course_summaries';
@@ -32,10 +33,8 @@
 @import 'views/grade_entry_forms';
 @import 'views/grader';
 @import 'views/graders';
-@import 'views/groups';
 @import 'views/login';
 @import 'views/marking_schemes';
-@import 'views/marks_graders';
 @import 'views/notes';
 @import 'views/results';
 @import 'views/rubrics';
