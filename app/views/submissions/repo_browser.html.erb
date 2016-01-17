@@ -71,9 +71,6 @@
            <% else %>
                <%= t('browse_submissions.no_rev_before_deadline') %>
            <% end %>
-           <%#= "#" + @grouping.submissions.last.revision_number.to_s + " ( " +
-               l((@revisions_history.select {|rev| rev[:num] == @grouping.submissions.last.revision_number }).first[:date],
-             format: :long_date) + " )" %>
         <% else %>
            <%= t('none') %>
         <% end %>
