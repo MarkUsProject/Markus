@@ -140,6 +140,8 @@ fr:
       no_submission_for_section: "Il n'y a ancun envoi à récupérer pour la section %{section_name}."
       successfully_collected: "Récupération de %{collected} envoi(s)."
       marking_incomplete_warning: "Attention: Cela ne fera que télécharger les envois qui ont été recuillis.\n\nÊtes-vous sûr de vouloir continuer?"
+      collection_incomplete_warning: "La récuperation des envois est en cours. Certains envois seront manquants. Désirez-vous tout de même continuer?"
+      check_collection_status_error: "Une erreur s'est produite lors de la vérification de l'état de la récuperation."
     assignment:
         hidden: "%{assignment_text} (masqué)"
         assignment: "Projet %{short_identifier}"
