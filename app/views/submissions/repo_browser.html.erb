@@ -1,6 +1,6 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'jquery-ui-timepicker-addon' %>
-  <%= stylesheet_link_tag 'common/jquery-ui', 'common/jquery-ui-timepicker-addon' %>
+  <%= stylesheet_link_tag 'vendor/jquery-ui', 'vendor/jquery-ui-timepicker-addon' %>
   <%= render partial: 'repo_files_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
@@ -63,7 +63,7 @@
            <%= l(@revision_timestamp, format: :long_date) %>
         </span>)
         <br>
-        <%= t('browse_submissions.currently_collected') %> 
+        <%= t('browse_submissions.currently_collected') %>
         <% if @grouping.is_collected %>
            <% if @last_submission %>
                <%= "#" +  @last_submission.revision_number.to_s +
@@ -71,8 +71,8 @@
            <% else %>
                <%= t('browse_submissions.no_rev_before_deadline') %>
            <% end %>
-           <%#= "#" + @grouping.submissions.last.revision_number.to_s + " ( " + 
-               l((@revisions_history.select {|rev| rev[:num] == @grouping.submissions.last.revision_number }).first[:date], 
+           <%#= "#" + @grouping.submissions.last.revision_number.to_s + " ( " +
+               l((@revisions_history.select {|rev| rev[:num] == @grouping.submissions.last.revision_number }).first[:date],
              format: :long_date) + " )" %>
         <% else %>
            <%= t('none') %>

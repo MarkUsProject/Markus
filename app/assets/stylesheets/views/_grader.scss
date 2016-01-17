@@ -1,0 +1,699 @@
+/* Annotations */
+
+.annotationContent,
+.manageAnnotations {
+  font: 0.85em/0.9em $fonts;
+  margin-bottom: 10px;
+  padding-left: 10px;
+}
+
+.annotationContent p {
+  white-space: pre-wrap;
+}
+
+.annotation_text_display {
+  background: #f6f6f6;
+  border: 1px solid $grey;
+  border-radius: $radius;
+  max-width: 400px;
+  padding: 0.25em 1em;
+  position: absolute;
+  white-space: pre-wrap;
+  width: auto;
+  z-index: 100000;
+  word-wrap: break-word;
+}
+
+
+/* Top toolbars: student selector/file selector/download buttons */
+
+#student_selector {
+  background: #ececec;
+  border: 1px solid #ddd;
+  border-radius: $radius;
+  display: table;
+  margin: 0 0 10px 0;
+  padding: 2px 10px;
+  width: 100%;
+
+  #criterion_incomplete_error {
+    display: table-row;
+  }
+
+  #student_selector_controls {
+    display: table-row;
+  }
+
+  .left,
+  .middle,
+  .right {
+    display: table-cell;
+  }
+
+  .left {
+    text-align: left;
+    width: 20%;
+  }
+
+  .middle {
+    text-align: center;
+    width: 60%;
+  }
+
+  .right {
+    text-align: right;
+    width: 20%;
+  }
+}
+
+.file_selector,
+.download_file {
+  background: $light-grey;
+  border: 1px solid #ddd;
+  border-radius: $radius;
+  display: inline-block;
+  padding: 0.5em;
+}
+
+.file_selector {
+  margin-right: 1em;
+
+  @include breakpoint(mobile) {
+    margin-bottom: 1em;
+  }
+
+  select {
+    background: $white;
+  }
+
+  #next_button,
+  #back_button {
+    min-width: 0;
+  }
+}
+
+.nested-submenu > .nested-folder {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+}
+
+.nested-submenu > a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #ccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+
+.download_file {
+  .inline_label {
+    margin-left: 0.5em;
+  }
+
+  #include_annotations {
+    margin-right: 0.5em;
+  }
+}
+
+
+/* Panes content (for controlling the heights) */
+
+#mark_viewer,
+#summary_viewer,
+#submission_rule_viewer,
+#codeviewer,
+#testviewer,
+#annotations_summary {
+  border-radius: 0 0 $radius $radius;
+  overflow: auto;
+}
+
+#codeviewer,
+#testviewer,
+#mark_viewer,
+#summary_viewer,
+#submission_rule_viewer,
+#annotations_summary,
+#remark_request_tab {
+  height: 650px;
+}
+
+
+/* Source code pane */
+
+// Adjusted height for users that also see the annotation menu
+#annotation_menu + #codeviewer {
+  height: 600px;
+}
+
+.image_container {
+  overflow: auto;
+  width: auto;
+}
+
+#sel_box {
+  border: 1px dashed #f00;
+  display: none;
+  position: absolute;
+}
+
+.annotation_holder {
+  background: orange;
+  border: 1px solid #000;
+  cursor: crosshair;
+  opacity: 0.2;
+  position: absolute;
+}
+
+.code_scroller {
+  margin: 0;
+  overflow: auto;
+  padding-left: 50px !important;
+}
+
+.dp-highlighter {
+  .annotation_highlighted_text {
+    background-color: #f99;
+    color: $dark-grey;
+  }
+
+  .annotation_highlighted_text_overlap {
+    background-color: #dd5;
+    color: $dark-blue;
+  }
+
+  ol {
+    overflow-y: hidden;
+  }
+}
+
+
+/* New annotation dialog */
+
+#create_annotation_dialog {
+  padding-top: 1.5em;
+
+  textarea#new_annotation_content {
+    height: 175px;
+    margin-top: 1em;
+    width: 100%;
+  }
+
+  #annotation_preview {
+    max-width: 175px;
+    margin: 1em auto 0 auto;
+  }
+}
+
+
+/* Annotations menus */
+
+#annotation_menu {
+  background: #b7d3ec;
+  border-radius: $radius $radius 0 0;
+  display: table;
+  margin: 0 0 1em 0;
+  padding: 0.5em;
+  width: 100%;
+}
+
+#new_annotation_button {
+  display: table-cell;
+  font-weight: 300;
+  margin: 0 0.25em 0 0;
+  min-width: 0;
+  vertical-align: top;
+}
+
+#annotation_categories {
+  display: table-cell;
+  vertical-align: top;
+}
+
+li.annotation_category {
+  margin-bottom: 0.25em;
+}
+
+ul.annotation_text_list {
+  background: $white !important;
+  border: 1px solid #aaa;
+  border-radius: 0 0 $radius $radius;
+  height: auto;
+  margin: 0;
+  overflow: auto;
+  padding: 0;
+  position: absolute;
+  left: -0.65em !important;
+  top: 0 !important;
+  width: 300px;
+
+  li {
+    background: $white !important;
+    border-radius: 0 !important;
+    padding: 0.5em 0.25em;
+    width: 100%;
+
+    &:hover {
+      background: $blue !important;
+      color: $white;
+      cursor: pointer;
+    }
+
+    &:last-child {
+      border: 0;
+      border-radius: 0 0 $radius $radius;
+    }
+  }
+}
+
+
+/* Annotations pane */
+
+#annotations_summary_head {
+  padding: 0.5em 0;
+
+  textarea#overall_comment_text_area {
+    margin: 1em 0;
+    width: 100%;
+  }
+
+  input#overall_comment_submit {
+    margin-bottom: 2em;
+  }
+}
+
+#annotation_summary_list {
+  border-top: 1px solid $grey;
+  list-style: none;
+  margin: 0 0 20px 0;
+  padding: 0;
+
+  li {
+    border-bottom: 1px solid $grey;
+    padding: 0.25em 0.5em;
+    width: 100%;
+
+    &:nth-child(odd) {
+      background-color: #fffcc4;
+    }
+
+    &:nth-child(even) {
+      background-color: #ff9;
+    }
+  }
+
+  a {
+    color: $dark-blue;
+  }
+
+  input,
+  form.button_to {
+    display: inline-block;
+  }
+}
+
+.edit_remove_annotation_button {
+  font-size: 0.85em !important;
+}
+
+
+/* Remark request pane */
+
+#remark_request {
+  padding: 1em;
+
+  h3 + h3 {
+    margin: 1em 0 0.5em;
+  }
+
+  textarea {
+    margin-bottom: 1em;
+    width: 100%;
+  }
+}
+
+
+/* Marks pane */
+
+#mark_criteria_pane_list {
+  font-size: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+
+  li {
+    border-bottom: 1px solid #dadada;
+    border-radius: 0;
+    padding: 5px;
+    width: 100%;
+
+    &:nth-child(odd) {
+      background: $light-grey;
+    }
+
+    &:nth-child(even) {
+      background: $white;
+    }
+
+    .mark_criterion_expand {
+      float: left;
+      font-size: 1.2em;
+      width: 1em;
+    }
+
+    .mark_description {
+      margin-left: 2.5em;
+    }
+  }
+
+  table tr {
+    cursor: pointer;
+  }
+}
+
+.mark_tools {
+  margin: 1em 0;
+  text-align: center;
+}
+
+// /* ================ CRITERION STYLES ============== */
+// #old_summary_criteria_pane {
+//   display: none;
+// }
+
+// .assigned {
+//   border: 4px solid #b7d3ec;
+// }
+
+//   .mark_criterion_title {
+//     cursor: pointer;
+//   }
+
+//   .mark_criterion_holder_selected,
+//   .mark_level {
+//     background: #ccf;
+//   }
+
+// .mark_criterion_level {
+//   background: none;
+//   color: #000;
+//   font-size: 0.625em;
+// }
+
+.mark_reset {
+  background: none;
+  color: #000;
+  cursor: pointer;
+  float: right;
+  font-size: 0.625em;
+}
+
+.mark_criterion_level_selected,
+.rubric_criterion_level_selected {
+  background-color: $light-green;
+}
+
+.mark_criterion_level_container {
+  margin-left: 20px;
+  margin-top: 10px;
+
+  table {
+    background: #fff;
+    border: 1px solid #dadada;
+    border-collapse: collapse;
+    padding: 4px;
+  }
+
+  td {
+    border-bottom:1px solid #dadada;
+    border-top:1px solid #dadada;
+    font-size: 1.1em;
+    padding: 4px;
+  }
+}
+
+.rubric_criterion_level {
+  background: $white;
+}
+
+.rubric_criterion_level_old_mark {
+  background: #fdfebc;
+}
+
+.mark_grade_input{
+  font-size: 1em;
+  margin: 1px 1px 4px;
+  min-width: 0;
+  padding: 2px;
+}
+
+  .editing {
+    background: #f9ffb1;
+    border: 1px dashed #d6de78;
+  }
+
+#selected_criterion_name {
+  font-weight: bold;
+}
+
+
+/* Extra Mark holder */
+
+.extra_mark_holder,
+.link {
+  background: #fbfbfb;
+  border-bottom: 1px solid #dadada;
+  min-width: 5px;
+  padding: 5px;
+}
+
+  // .extra_mark_title_div {
+  //   cursor: pointer;
+  // }
+
+  // .extra_mark_holder_selected {
+  //   background: #ccf;
+  // }
+
+  // .extra_mark_delete {
+  //   float: right;
+  // }
+
+  .extra_marks_pane {
+    border: 1px solid #dadada;
+    margin-top: 1em;
+  }
+
+  .extra_marks_pane_list {
+    tbody + tbody {
+      tr {
+        background: $white !important;
+      }
+    }
+
+    #add_extra_mark_prompt {
+      div {
+        margin-bottom: 0.5em;
+      }
+
+      label {
+        display: inline-block;
+        min-width: 25%;
+      }
+    }
+  }
+
+  #extra_marks_bonus,
+  #extra_marks_deducted {
+    text-align: right;
+  }
+
+
+/* Summary pane */
+
+.summary_block {
+  border: 1px solid $light-grey;
+  text-align: right;
+  line-height: 1.6em;
+  margin: 0.25em 0.25em 1.5em;
+  padding: 5px;
+}
+
+.extra_marks_pane_list,
+.extra_percentage_pane_list,
+.marks_summary_pane_list {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+
+  th {
+    background-color: $light-blue;
+    padding: 0.25em;
+    text-align: left;
+  }
+
+  tr {
+    &:nth-child(odd) {
+      background: $light-grey;
+    }
+
+    &:nth-child(even) {
+      background: $white;
+    }
+
+    td {
+      padding: 0.25em;
+    }
+  }
+}
+
+.mark_subtotal {
+  font-weight: 600;
+  padding: 10px 20px;
+}
+
+.mark_total {
+  background: $light-grey;
+  border: 1px solid $grey;
+  border-radius: $radius;
+  font-weight: 600;
+  margin: 1em 0;
+  padding: 10px;
+
+  .final_mark {
+    float: right;
+    font-size: 1.5em;
+    font-style: italic;
+  }
+}
+
+.padding_left {
+  padding-left: 30px;
+}
+
+.padding_left_old {
+  padding-left: 30px;
+  background-color: #fdfebc;
+}
+
+
+/* Submission rule pane */
+
+#submission_rule_viewer h3 {
+  margin-bottom: 1em;
+}
+
+/* Tag pane */
+
+#tag_viewer {
+  margin-bottom: 1em;
+}
+
+.tag_collector_pane {
+  background: $light-grey;
+  border: 1px solid $grey;
+  border-radius: $radius;
+  font-weight: 600;
+  margin: 1em 0;
+  padding: 10px;
+
+  .tag_list {
+    font-weight: 400 !important;
+    line-height: 200%;
+    padding-top: 5px;
+    text-align: center;
+  }
+}
+
+.tag_summary {
+  font-weight: 600;
+  padding-bottom: 10px;
+
+  .top_tag_list {
+    line-height: 2;
+    padding-top: 5px;
+    text-align: center;
+
+    .tag_line:nth-child(odd) {
+      background-color: $light-grey;
+    }
+  }
+}
+
+.tag_admin {
+  text-align: center;
+}
+
+/* Resizable column panes */
+
+#panes-content {
+  height: 100%;
+  margin-top: 1em;
+  width: 100%;
+
+  #panes {
+    height: 100%;
+    width: 100%;
+  }
+
+  #left-pane,
+  #drag,
+  #right-pane {
+    display: inline-block;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+  }
+
+  #left-pane,
+  #right-pane {
+    overflow: auto;
+
+    @include breakpoint(small) {
+      display: block;
+      float: none;
+      width: 100% !important;
+    }
+  }
+
+  #left-pane {
+    padding-right: 0.5em;
+
+    @include breakpoint(small) {
+      margin-bottom: 1em;
+      padding-right: 0;
+    }
+  }
+
+  #right-pane {
+    padding-left: 0.5em;
+
+    @include breakpoint(small) {
+      padding-left: 0;
+    }
+  }
+
+  #drag {
+    background: #ccc;
+    cursor: col-resize;
+    height: 700px;
+    margin-left: -5px;
+    overflow: hidden;
+    position: absolute;
+    width: 5px;
+
+    @include breakpoint(small) {
+      display: none;
+    }
+  }
+}

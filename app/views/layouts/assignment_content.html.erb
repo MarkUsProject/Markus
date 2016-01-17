@@ -35,6 +35,24 @@
     <section id='content'>
       <%= render partial: 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
+
+      <div class='title_bar'>
+        <h1>
+          <%= yield(:title) %>
+        </h1>
+        <div class='heading_buttons'>
+            <%= render partial: "layouts/heading_buttons",
+                    collection: @heading_buttons,
+                            as: :heading_button,
+               spacer_template: "layouts/heading_buttons_spacer" %>
+          <%= yield(:additional_headings) %>
+        </div>
+      </div>
+
+      <div class='wrapLeft'>
+        <%= render partial: 'shared/flash_message' %>
+        <%= yield(:wrap_left_content) %>
+      </div>
     </section>
 
     <%= render partial: 'layouts/footer' %>
