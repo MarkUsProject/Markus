@@ -631,7 +631,7 @@ en:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"
       add_all_groups: "Add all groups"
-      creating_groups_for_all_students: "Creating groups for all students.(Background task. Refresh page to see when all groups created.)"
+      creating_groups_for_all_students: "Creating groups for all students. (Background task. Refresh page to see when all groups created.)"
 
     results:
       title:  "Assignment %{assignment_name} : %{group_name}"

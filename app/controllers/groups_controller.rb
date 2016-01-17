@@ -184,10 +184,10 @@ class GroupsController < ApplicationController
   end
 
   def create_groups_when_students_work_alone
-    @assignment = Assignment.find_by_id(params[:assignment_id])
+    @assignment = Assignment.find(params[:assignment_id])
 
     if @assignment.group_max == 1
-      CreateIndividualGroupsForAllStudentsJob.perform_later @assignment.id
+      CreateIndividualGroupsForAllStudentsJob.perform_later @assignment
     end
 
     flash[:success] = I18n.t('groups.creating_groups_for_all_students')

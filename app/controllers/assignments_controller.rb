@@ -658,7 +658,7 @@ class AssignmentsController < ApplicationController
       # Is the instructor forming groups?
       if assignment_params[:student_form_groups] == '0'
         assignment.invalid_override = true
-        # increase group_max so that create_all_groups button is not displayed
+        # Increase group_max so that create_all_groups button is not displayed
         # in the groups view.
         assignment.group_max = 2
       else
