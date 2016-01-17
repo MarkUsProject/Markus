@@ -1,4 +1,4 @@
-/** Tables */
+// Tables
 
 .table {
   border-left: 1px solid $grey;
@@ -9,88 +9,84 @@
   table {
     border-top: 1px solid $grey;
     width: 100%;
+  }
 
-    thead,
-    tfoot {
-      background-color: $light-grey;
-      font-weight: 600;
-      text-align: left;
-      text-transform: uppercase;
+  thead,
+  tfoot {
+    background-color: $light-grey;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
 
-      .sortable-col {
-        background: url(sort_both.png) no-repeat center right;
-      }
-
-      .asc,
-      .desc {
-        cursor: pointer;
-      }
-
-      .asc {
-        background: url(sort_asc.png) no-repeat center right;
-      }
-
-      .desc {
-        background: url(sort_desc.png) no-repeat center right;
-      }
+    .sortable-col {
+      background: url('sort_both.png') no-repeat center right;
     }
 
-    thead {
-      border-bottom: 2px solid $grey;
+    .asc,
+    .desc {
+      cursor: pointer;
     }
 
-    tfoot {
-      border-top: 2px solid $grey;
+    .asc {
+      background: url('sort_asc.png') no-repeat center right;
     }
 
-    tr {
-      border-bottom: 1px solid $grey;
+    .desc {
+      background: url('sort_desc.png') no-repeat center right;
+    }
+  }
 
-      th,
-      td {
-        border-right: 1px solid $grey;
-        padding: 0.5em 1.5em 0.5em 1em;
-        vertical-align: middle;
+  thead {
+    border-bottom: 2px solid $grey;
+  }
 
-        &:last-child {
-          border-right: none;
-        }
+  tfoot {
+    border-top: 2px solid $grey;
+  }
+
+  tr {
+    border-bottom: 1px solid $grey;
+
+    tbody & {
+      transition: background-color $time-quick;
+
+      &:nth-child(odd) {
+        background-color: $white;
+      }
+
+      &:nth-child(even) {
+        background-color: $light-grey;
+      }
+
+      &:hover {
+        background-color: $lighter-blue;
       }
     }
+  }
 
-    tbody {
-      tr {
-        transition: background-color $time-quick;
+  th,
+  td {
+    border-right: 1px solid $grey;
+    padding: 0.5em 1.5em;
+    vertical-align: middle;
 
-        &:nth-child(odd) {
-          background-color: $white;
-        }
-
-        &:nth-child(even) {
-          background-color: $light-grey;
-        }
-
-        &:hover {
-          background-color: $lighter-blue;
-        }
-      }
+    &:last-child {
+      border-right: none;
     }
   }
 }
 
-/* Tables */
-
 .table-filters {
   display: inline-block;
+
+  a,
+  span {
+    padding-right: 10px;
+    font-size: 1.1em;
+  }
 }
 
 .table-search {
   display: inline-block;
   margin-bottom: 1em;
-}
-
-.table-filters a,
-.table-filters span {
-  padding-right: 10px;
-  font-size: 110%;
 }

@@ -1,4 +1,4 @@
-/** Text field inputs */
+// Text input fields
 
 input,
 textarea {
@@ -10,7 +10,6 @@ textarea {
   outline: none;
   padding: 0.25em 0.75em;
   transition: all $time-quick;
-  width: 100%;
 
   &:hover {
     background-color: $white;
@@ -37,17 +36,8 @@ textarea {
   resize: none;
 }
 
-select {
-  background: none;
-  border: 1px solid $light-blue;
-  border-radius: $radius;
-  font-family: $fonts;
-  margin: 5px;
-  padding-left: 5px;
-}
 
-
-/** Buttons */
+// Buttons
 
 input[type='button'],
 input[type='submit'],
@@ -105,7 +95,19 @@ button,
 }
 
 
-/** Fieldset */
+// Select dropdown
+
+select {
+  background: none;
+  border: 1px solid $light-blue;
+  border-radius: $radius;
+  font-family: $fonts;
+  margin: 5px;
+  padding-left: 5px;
+}
+
+
+// Fieldset
 
 fieldset {
   background: $white;
@@ -145,26 +147,23 @@ fieldset {
 }
 
 
-input,
-textarea {
-  display: inline-block;
-  width: auto;
-}
+// Radio buttons
 
 input[type='radio'] {
   min-width: 30px;
   max-width: 30px;
 }
 
-.required_field {
+
+// Required fields
+
+.required::after {
+  content: '*';
   color: $red;
 }
 
-label.required::after {
-  content: "*";
-  color: $red;
-}
 
+// Image input
 
 .image_input {
   background: none;

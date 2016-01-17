@@ -1,5 +1,3 @@
-/** Main */
-
 body {
   background-color: $lighter-blue;
   color: $dark-grey;
@@ -42,6 +40,10 @@ body {
     margin-top: 3.5em;
     padding: $dimen-vertical $dimen-horizontal-mobile;
   }
+}
+
+.wrapper {
+  margin-top: 1em;
 }
 
 .ui-datepicker-current {

@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('vendor/SyntaxHighlighter/SyntaxHighlighterHighlighter') %>
+  <%= stylesheet_link_tag('vendor/SyntaxHighlighter/SyntaxHighlighter') %>
   <%= stylesheet_link_tag('vendor/pdfjs/viewer') %>
 
   <%= javascript_include_tag 'panes.js' %>
@@ -46,7 +46,7 @@
   <h1>Results for <%= sanitize(@assignment.short_identifier) %></h1>
 </div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <%= render partial: 'results/common/errors' %>
 
   <%= render partial: 'results/common/file_selector',

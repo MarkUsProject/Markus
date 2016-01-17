@@ -1,5 +1,4 @@
-/** For easier size breakpoints. */
-
+// Easier media query breakpoints
 $breakpoints: (
   'tiny':   ( max-width:  360px ),
   'small':  ( max-width:  500px ),
@@ -21,8 +20,9 @@ $breakpoints: (
   }
 }
 
+// For "Retina" displays
 @mixin hidpi {
-  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dppx) {
     @content;
   }
 }

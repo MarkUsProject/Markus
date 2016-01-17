@@ -1,4 +1,4 @@
-/** Tags */
+// Tags
 
 ul.tags {
   display: block;
@@ -83,5 +83,51 @@ ul.tags {
   &:hover {
     background-color: $dark-blue;
     color: $white;
+  }
+}
+
+.tag_list {
+  text-align: left;
+  list-style: none;
+  margin: 0px;
+  cursor: pointer;
+
+  li {
+    margin-left: -40px;
+    position: left;
+    transition: all 0.2s;
+
+    &:hover {
+      color: $dark-blue;
+
+      // When hover is activated on li, shows the menu
+      ul {
+        display: block;
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+
+    ul {
+      background-color: $light-grey;
+      cursor: pointer;
+      list-style: none;
+      margin: 0;
+      opacity: 0;
+      position: absolute;
+      text-align: left;
+      transition: all 0.2s;
+      visibility: hidden;
+
+      li {
+        color: $dark-blue !important;
+        padding: 2px;
+        text-align: left;
+
+        &:hover {
+          background-color: $dark-grey;
+        }
+      }
+    }
   }
 }

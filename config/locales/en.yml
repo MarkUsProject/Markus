@@ -505,7 +505,7 @@ en:
       remove_column: "Remove"
       toggle_column: "hide/show"
       properties: "Marks Spreadsheet Properties"
-      required_fields: "Required Fields <span class='required_field'>*</span>"
+      required_fields: "Required Fields"
       show_total: "Show Total"
       create:
         success: "Successfully created new marks spreadsheet"

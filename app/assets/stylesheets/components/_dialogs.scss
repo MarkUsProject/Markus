@@ -1,4 +1,4 @@
-/** Dialog modal windows */
+// Modal dialogs
 
 .dialog {
   background: $white;
@@ -78,5 +78,12 @@
     margin-top: 1em;
     padding: 0.5em 0.75em;
     width: 100%;
+  }
+}
+
+#add_new_section_dialog {
+  h2 {
+    margin-bottom: 1em;
+    margin-top: 0;
   }
 }

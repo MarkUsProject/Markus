@@ -13,6 +13,7 @@
 @import 'components/form';
 @import 'components/grid';
 @import 'components/help';
+@import 'components/loading';
 @import 'components/navigation';
 @import 'components/sortable';
 @import 'components/table';
@@ -21,7 +22,6 @@
 @import 'components/text';
 @import 'components/title';
 
-@import 'views/admins';
 @import 'views/annotation_categories';
 @import 'views/assignments';
 @import 'views/automated_tests';
@@ -39,8 +39,4 @@
 @import 'views/notes';
 @import 'views/results';
 @import 'views/rubrics';
-@import 'views/sections';
-@import 'views/students';
 @import 'views/submissions';
-@import 'views/tags';
-@import 'views/tas';
