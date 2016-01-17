@@ -41,12 +41,10 @@
       <%= link_to t('groups.another_assignment_group'),
                   'javascript:void(0);',
                   onclick:'modalAssignmentGroupReUse.open();' %>
-      <span class='menu_bar'></span>
     <% end %>
     <%= link_to t(:download),
                 { controller: 'groups', action: 'download_grouplist',
                   id: @assignment.id } %>
-    <span class='menu_bar'></span>
     <%= link_to t('upload'), 'javascript:void(0);', onclick:'modal_upload.open();' %>
   </div>
 </div>

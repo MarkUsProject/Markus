@@ -43,8 +43,7 @@
         <div class='heading_buttons'>
             <%= render partial: "layouts/heading_buttons",
                     collection: @heading_buttons,
-                            as: :heading_button,
-               spacer_template: "layouts/heading_buttons_spacer" %>
+                            as: :heading_button %>
           <%= yield(:additional_headings) %>
         </div>
       </div>

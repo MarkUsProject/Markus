@@ -28,15 +28,12 @@
           type: 'GET'
         });
       } "%>
-  <span class='menu_bar'></span>
   <%= link_to t(:download),
               'javascript:void(0);',
               onclick: 'modal_download.open()' %>
-  <span class='menu_bar'></span>
   <%= link_to t('rubric_criteria.upload.csv'),
               'javascript:void(0);',
               onclick: 'modal_upload_csv.open()' %>
-  <span class='menu_bar'></span>
   <%= link_to t('rubric_criteria.upload.yml'),
               'javascript:void(0);',
               onclick: 'modal_upload_yml.open()' %>
