@@ -6,10 +6,20 @@
 @import 'core/reset';
 @import 'core/core';
 
+@import 'components/alerts';
 @import 'components/columns';
 @import 'components/dialogs';
+@import 'components/dropdown';
+@import 'components/form';
+@import 'components/grid';
+@import 'components/help';
 @import 'components/navigation';
+@import 'components/sortable';
+@import 'components/table';
+@import 'components/tabs';
 @import 'components/tags';
+@import 'components/text';
+@import 'components/title';
 
 @import 'views/admins';
 @import 'views/annotation_categories';

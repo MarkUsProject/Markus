@@ -1,3 +1,73 @@
+/** Tags */
+
+ul.tags {
+  display: block;
+  height: 2em;
+  margin: 0;
+  padding: 0;
+
+  & > li {
+    background: $grey;
+    border: 1px solid $grey;
+    border-radius: $radius;
+    color: $white;
+    cursor: pointer;
+    display: block;
+    font-size: 0.9em;
+    float: left;
+    list-style: none;
+    margin-right: 0.5em;
+    padding: 0 0.6em;
+    position: relative;
+    text-transform: uppercase;
+    transition: all $time-quick;
+
+    &:hover {
+      background: $white;
+      border: 1px solid $blue;
+      border-radius: 0;
+      color: $dark-blue;
+
+      ul {
+        display: block;
+      }
+    }
+
+    ul {
+      background: $white;
+      border: 1px solid $blue;
+      border-radius: 0 0 $radius $radius;
+      display: none;
+      left: -1px;
+      padding: 0;
+      position: absolute;
+      top: 0.65em;
+      width: 200px;
+      z-index: 9000;
+
+      li {
+        color: $dark-grey;
+        list-style: none;
+        text-transform: none;
+
+        a {
+          color: $dark-grey;
+          display: block;
+          padding: 0.4em 0.5em;
+
+          &:hover {
+            color: $white;
+          }
+        }
+
+        &:hover {
+          background: $blue;
+        }
+      }
+    }
+  }
+}
+
 .tag_element {
   background-color: $light-blue;
   border-radius: 15px;

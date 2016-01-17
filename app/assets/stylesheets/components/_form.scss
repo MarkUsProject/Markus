@@ -1,0 +1,172 @@
+/** Text field inputs */
+
+input,
+textarea {
+  background: lighten($light-grey, 10%);
+  border: 1px solid $grey;
+  border-radius: $radius;
+  color: $dark-grey;
+  font: 400 1em $fonts;
+  outline: none;
+  padding: 0.25em 0.75em;
+  transition: all $time-quick;
+  width: 100%;
+
+  &:hover {
+    background-color: $white;
+    border-color: $dark-blue;
+  }
+
+  &:focus {
+    background-color: $white;
+    border-color: $blue;
+  }
+
+  &[disabled] {
+    background-color: $disabled-grey;
+    border-color: $disabled-dark;
+    color: $disabled-dark;
+  }
+
+  &.large-text {
+    padding: 1em 1.15em;
+  }
+}
+
+textarea {
+  resize: none;
+}
+
+select {
+  background: none;
+  border: 1px solid $light-blue;
+  border-radius: $radius;
+  font-family: $fonts;
+  margin: 5px;
+  padding-left: 5px;
+}
+
+
+/** Buttons */
+
+input[type='button'],
+input[type='submit'],
+input[type='reset'],
+button,
+.button {
+  background: linear-gradient(to bottom, $white, $light-grey);
+  border: 1px solid $blue;
+  border-radius: $radius;
+  box-shadow: inset 0 -1px 0 $grey;
+  color: $dark-grey;
+  cursor: pointer;
+  display: inline-block;
+  font: 400 1em $fonts;
+  min-width: 150px;
+  outline: none;
+  padding: 0.5em 1.5em;
+  text-align: center;
+  text-shadow: 0 1px 0 $white;
+  transition: all $time-quick;
+
+  &:hover {
+    border-color: $dark-blue;
+    box-shadow: inset 0 -1px 0 $grey, 0 1px 0 $light-grey;
+    color: $dark-blue;
+    top: 1px;
+  }
+
+  &:focus {
+    box-shadow: inset 0 -1px 0 $grey, 0 0 3px $blue;
+  }
+
+  &:active {
+    background: linear-gradient(to bottom, $light-grey, $white);
+    box-shadow: none;
+    color: $dark-blue;
+  }
+
+  &[disabled] {
+    background: linear-gradient(to bottom, $light-grey, $disabled-grey);
+    border-color: $disabled-dark;
+    box-shadow: none;
+    color: $disabled-dark;
+  }
+
+  &.large-button {
+    min-width: 200px;
+    padding: 0.75em 2em;
+  }
+
+  &.inline-button {
+    min-width: 100px;
+    padding: 0.25em 1em;
+  }
+}
+
+
+/** Fieldset */
+
+fieldset {
+  background: $white;
+  border-radius: $radius;
+  box-shadow: 0 3px 0 $grey;
+  padding: 0.25em 1.5em 1.5em;
+  position: relative;
+
+  legend {
+    border: none;
+
+    & > span {
+      @extend h3;
+      padding: 0 0.25em;
+    }
+  }
+
+  // Fieldsets within fieldsets
+  fieldset {
+    border: none;
+    border-radius: 0;
+    border-top: 1px solid $grey;
+    box-shadow: none;
+    padding: 0;
+
+    legend {
+      width: 100%;
+
+      & > span {
+        display: block;
+        padding-top: 0.5em;
+        position: relative;
+        top: 1em;
+      }
+    }
+  }
+}
+
+
+input,
+textarea {
+  display: inline-block;
+  width: auto;
+}
+
+input[type='radio'] {
+  min-width: 30px;
+  max-width: 30px;
+}
+
+.required_field {
+  color: $red;
+}
+
+label.required::after {
+  content: "*";
+  color: $red;
+}
+
+
+.image_input {
+  background: none;
+  border: none;
+}

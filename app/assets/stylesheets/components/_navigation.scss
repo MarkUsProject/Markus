@@ -1,3 +1,69 @@
+/** Menus */
+
+nav {
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      border-radius: $radius $radius 0 0;
+      display: inline-block;
+      text-align: center;
+      vertical-align: bottom;
+
+      a {
+        border-radius: $radius $radius 0 0;
+        display: block;
+        height: 3em;
+        line-height: 3em;
+        min-width: 11em;
+        padding: 0 1em;
+      }
+    }
+  }
+
+  ul.main,
+  ul.sub_sub {
+    border-bottom: 2px solid $blue;
+
+    li:hover,
+    .active {
+      background-color: $blue;
+      color: $white;
+      transition: background-color $time-quick;
+
+      a {
+        color: $white;
+      }
+    }
+  }
+
+  ul.sub {
+    background-color: $blue;
+    border-bottom: 2px solid $white;
+    min-height: 3em;
+
+    li:hover,
+    .active {
+      background-color: $white;
+      color: $dark-blue;
+      transition: background-color $time-quick;
+
+      a {
+        color: $dark-blue;
+      }
+    }
+
+    a {
+      color: $white;
+    }
+  }
+
+  ul.sub_sub {
+    background-color: $white;
+  }
+}
+
 /**
  * Header, main menu, sub menu, sub_sub menu, and footer.
  */

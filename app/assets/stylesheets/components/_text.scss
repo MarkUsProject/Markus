@@ -1,0 +1,62 @@
+// Headings
+h1 {
+  font: 300 2.5em $fonts;
+  margin: 0;
+}
+
+h2 {
+  font: 300 2em $fonts;
+  margin: 0;
+}
+
+h3 {
+  font: 400 1.5em $fonts;
+  margin: 0;
+}
+
+h4 {
+  font: 600 1em $fonts;
+  margin: 0;
+}
+
+
+// Paragraphs
+p + p {
+  margin-bottom: 1.125em;
+}
+
+
+// Hyperlinks
+a {
+  color: $dark-blue;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color $time-quick;
+
+  &:hover {
+    color: $blue;
+  }
+}
+
+
+// Bold text
+strong {
+  font-weight: 600;
+}
+
+
+// Code
+pre,
+.code {
+  font: 14px/20px $mono-fonts;
+}
+
+
+.section h3 {
+  border-bottom: 1px solid #ccc;
+  color: $dark-grey;
+  font-size: 1.25em;
+  font-weight: 300;
+  margin: 0 0 1em 0;
+  padding: 0.5em 0.1em;
+}
