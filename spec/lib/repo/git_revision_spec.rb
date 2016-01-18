@@ -12,7 +12,13 @@ describe Repository::GitRevision do
 
       # Make sure repo exists, if not make it
       repo = ga_repo.config.get_repo('test_repo_workdir')
+
       if repo.nil?
+        Repository.conf = {
+            REPOSITORY_STORAGE: REPOSITORY_STORAGE,
+            REPOSITORY_PERMISSION_FILE: REPOSITORY_PERMISSION_FILE,
+            IS_REPOSITORY_ADMIN: IS_REPOSITORY_ADMIN
+        }
         Repository::GitRepository.create('test_repo_workdir')
       end
     end

@@ -84,7 +84,7 @@ group :development do
   gem 'quiet_assets'
 end
 
-group :test do
+  group :test do
   gem 'factory_girl_rails'
   gem 'machinist', '< 2'
   gem 'mocha', require: false
