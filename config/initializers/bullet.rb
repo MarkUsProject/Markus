@@ -15,4 +15,3 @@ if Rails.env.development?
   # Bullet.slack = { webhook_url: 'http://some.slack.url', foo: 'bar' }
   Bullet.unused_eager_loading_enable = false
 end
-
