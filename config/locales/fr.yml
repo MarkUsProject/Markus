@@ -617,6 +617,8 @@ fr:
       csv:
         could_not_find_source: "Le projet source pour la copie des groupes n'a pas été trouvé."
         could_not_find_target: "Le projet cible pour la copie des groupes n'a pas été trouvé."
+      add_all_groups: "Ajouter tous les groupes"
+      creating_groups_for_all_students: "Création de groupes pour tous les élèves. (Processus qui s'exécute en arrière-plan. Rechargez la page pour voir tous les groupes créés lors.)"
 
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
