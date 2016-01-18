@@ -854,11 +854,11 @@ class Assignment < ActiveRecord::Base
                .where(groupings[:assignment_id].eq(id)
                .and(submissions[:submission_version_used].eq(true)))
 
-    res = Result.submitted_remarks_and_all_non_remarks.
-        where(submission_id: subs.pluck(:id))
+    res = Result.submitted_remarks_and_all_non_remarks
+        .where(submission_id: subs.pluck(:id))
     filtered_subs = subs.where(id: res.pluck(:submission_id))
-    Annotation.joins(:submission_file).
-        where(submission_files:
+    Annotation.joins(:submission_file)
+        .where(submission_files:
                   { submission_id: filtered_subs.pluck(:id) }).size
   end
 
