@@ -18,13 +18,12 @@ class Result < ActiveRecord::Base
   before_update :unrelease_partial_results
   before_save :check_for_nil_marks
 
-  scope :submitted_results, -> {
-    where.not(marking_state: MARKING_STATES[:unmarked])
-  }
+  scope :submitted_results, -> { where.not(marking_state: MARKING_STATES[:unmarked]) }
 
-  scope :submitted_remarks_and_all_non_remarks, -> {
+  scope :submitted_remarks_and_all_non_remarks, lambda {
     results = Result.arel_table
-    where(results[:remark_request_submitted_at].eq(nil).or(results[:marking_state].not_eq(MARKING_STATES[:unmarked])))
+    where(results[:remark_request_submitted_at].eq(nil).
+        or(results[:marking_state].not_eq(MARKING_STATES[:unmarked])))
   }
 
   # Returns a list of total marks for each student whose submissions are graded
