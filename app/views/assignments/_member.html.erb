@@ -20,10 +20,10 @@ member.user.last_name %> <%= I18n.t("student.inviter") %></li>
    <% if grouping.is_inviter?(@current_user) %>
      <%= link_to I18n.t(:cancel), disinvite_member_assignment_path(id: @assignment.id, membership: member.id),
         method: 'POST',
-        confirm: I18n.t("student.cancel_invitation"),
         title: I18n.t("student.cancel_invitation_title"),
         class: "delete",
-        remote: true
+        remote: true,
+        data: {confirm: I18n.t("student.cancel_invitation")}
         %>
    <% end %>
 </li>
