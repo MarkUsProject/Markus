@@ -9,6 +9,7 @@
     getInitialState: function() {
       return {
         assign_to_criteria: false,
+        skip_empty_submissions: false,
         error: null,
         current_table: 'groups_table',
         groups_and_criteria: {groups: [], criteria: []},
@@ -53,6 +54,9 @@
         }.bind(this)
       });
     },
+    skipEmptySubmissionsClicked: function(event) {
+     this.setState({skip_empty_submissions: event.currentTarget.checked});
+    },
     componentWillMount: function() {
       this.refresh();
     },
@@ -80,7 +84,7 @@
             assign_to_criteria: data[0],
             sections: data[1],
             graders: data[2],
-            groups_and_criteria: data[3],
+            groups_and_criteria: data[3]
           });
         }.bind(this)
       });
@@ -88,9 +92,13 @@
     render: function() {
       var to_render = [];
       var graders_to_criteria = [];
+      var skip_empty_submissions = [];
       graders_to_criteria.push(<input type='checkbox'
         checked={this.state.assign_to_criteria}
         onChange={this.criteriaCheckboxClicked}> <%= j raw I18n.t('graders.assign_to_criteria') %></input>);
+      skip_empty_submissions.push(<input type='checkbox'
+        checked={this.state.skip_empty_submissions}
+        onChange={this.skipEmptySubmissionsClicked}> <%= j raw I18n.t('graders.skip_empty_submissions') %></input>);
       to_render.push(<GradersTable graders={this.state.graders}
         selected_graders={this.state.selected_graders}
         onSelectedGradersChange={this.updateSelectedGraders} />);
@@ -107,6 +115,7 @@
         updateSelectedCriteria={this.updateSelectedCriteria}
         updateSelectedGradersInGroups={this.updateSelectedGradersInGroups}
         updateSelectedGradersInCriteria={this.updateSelectedGradersInCriteria}
+        skip_empty_submissions={this.state.skip_empty_submissions}
         setError={this.setError}
       />);
       to_render.push(<GroupsTableManager
@@ -131,6 +140,9 @@
           <div className='graders-to-criteria'>
             {graders_to_criteria}
           </div>
+          <div className='skip-empty-submissions'>
+            {skip_empty_submissions}
+          </div>
           <div className='columns'>
             {to_render}
           </div>
@@ -144,6 +156,7 @@
   var GroupsTableManager = React.createClass({
     propTypes: {
       assign_to_criteria: React.PropTypes.bool,
+      skip_empty_submissions: React.PropTypes.bool,
       groups_and_criteria: React.PropTypes.object,
       selected_groups: React.PropTypes.array,
       onSelectedGroupsChange: React.PropTypes.func,

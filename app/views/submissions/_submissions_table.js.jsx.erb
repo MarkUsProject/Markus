@@ -208,7 +208,15 @@
           }
 
           s['class_name'] = submission.class_name;
-          s['repository'] = <a href={submission.repo_url}>{submission.repo_name}</a>;
+          if (!submission.has_files) {
+            s['repository'] = (<span>
+              <%= image_tag('icons/error.png',
+                            title: t(:no_files_submitted)) %>
+              <a href={submission.repo_url}>{submission.repo_name}</a>
+            </span>);
+          } else {
+            s['repository'] = <a href={submission.repo_url}>{submission.repo_name}</a>;
+          }
           if (submission.late_commit) {
             s['commit_date'] = (<span>
               <%= image_tag('icons/error.png',
@@ -225,6 +233,7 @@
           s['tags'] = <div className='tag_list'>{tag_list}</div>;
           s['final_grade'] = submission.final_grade;
           s['section'] = submission.section;
+          s['has_files'] = submission.has_files;
         }
         return s;
       }.bind(this));
