@@ -1,0 +1,65 @@
+// Core page styling
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  background-color: $lighter-blue;
+  color: $dark-grey;
+  font: 400 14px/1.2 $fonts;
+  transition: background-color $time-quick;
+
+  @include breakpoint(tiny) {
+    background-color: $white;
+  }
+}
+
+::selection {
+  background-color: $blue;
+}
+
+
+// Helper classes
+
+.hidden {
+  display: none;
+}
+
+.align-left {
+  float: left;
+}
+
+.align-right {
+  float: right;
+}
+
+.align-clear {
+  clear: both;
+}
+
+
+// Main content
+
+.content {
+  background: $white;
+  border-bottom: 1px solid $blue;
+  padding: $dimen-vertical $dimen-horizontal;
+
+  @include breakpoint(mobile) {
+    margin-top: 3.5em;
+    padding: $dimen-vertical $dimen-horizontal-mobile;
+  }
+}
+
+.wrapper {
+  margin-top: 1em;
+}

@@ -1,0 +1,50 @@
+// Dashboard
+
+.assignment_summary {
+  background-color: $light-grey;
+  border-radius: $radius;
+  border: 1px solid $blue;
+  display: inline-block;
+  margin: $dimen-vertical / 2;
+  min-width: 650px;
+  padding: 1.25em;
+  text-align: left;
+  width: 100%;
+}
+
+.due_date {
+  font-weight: 600;
+
+  .after {
+    color: $red;
+  }
+
+  .before {
+    color: $green;
+  }
+}
+
+.assignment_summary_table {
+  font-size: 0.95em;
+  margin-top: 1em;
+  width: 100%;
+
+  td {
+    padding-bottom: 1em;
+    padding-right: 1em;
+  }
+}
+
+.grader_distribution {
+  margin-bottom: 0;
+}
+
+#grader-right {
+  height: 380px;
+  overflow: scroll;
+
+  ul {
+    list-style-type: square;
+    margin-top: 0;
+  }
+}

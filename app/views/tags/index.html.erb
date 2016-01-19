@@ -17,16 +17,13 @@
   <!--The buttons for creating tags, uploading and downloading-->
   <div class='heading_buttons'>
     <%= link_to t('tags.create.create_new'), '#', onclick:'modal_create_new.open()' %>
-    <span class='menu_bar'></span>
     <%= link_to t('tags.download.download'), '#', onclick:'modal_download.open()' %>
-    <span class='menu_bar'></span>
     <%= link_to  t('tags.upload.upload_csv'), '#', onclick:'modal_upload_csv.open()' %>
-    <span class='menu_bar'></span>
     <%= link_to t('tags.upload.upload_yml'), '#', onclick:'modal_upload_yml.open()' %>
   </div>
 </div>
 
-<div class="wrapLeft">
+<div class="wrapper">
   <%= render 'shared/flash_message' %>
 
   <!--The table that contains all the tags.-->
@@ -51,9 +48,9 @@
       </p>
     </div>
     <div>
-      <p class="alignleft"><%= t('tags.create.tag_description') %></p>
-      <p id='descript_amount' class='alignright'>0/120</p>
-      <p class="clear-alignment">
+      <p class="align-left"><%= t('tags.create.tag_description') %></p>
+      <p id='descript_amount' class='align-right'>0/120</p>
+      <p class="align-clear">
           <%= f.text_area :description,
                           id: 'description',
                           cols: 30,

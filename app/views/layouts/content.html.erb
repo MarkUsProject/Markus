@@ -7,13 +7,10 @@
   <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
                              'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/JSXTransformer.js' %>
   <%= javascript_include_tag 'application' %>
-  <%= stylesheet_link_tag params[:controller], media: 'all' %>
-  <%= favicon_link_tag 'favicon.ico' %>
   <% # UI LIBRARIES %>
   <%= javascript_include_tag 'menu',
                              'layouts',
                              'help-system' %>
-  <%= csrf_meta_tags %>
   <%= yield :head %>
 </head>
 <body>
@@ -35,10 +32,10 @@
     <%= render partial: 'layouts/role_switch' %>
     <%= render partial: 'layouts/redirect' %>
 
-    <section id='content'>
+    <main class='content' id='content'>
       <%= render partial: 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
-    </section>
+    </main>
 
     <%= render partial: 'layouts/footer' %>
   </div>

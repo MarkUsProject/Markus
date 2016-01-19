@@ -98,7 +98,7 @@
               onSelectedStudentsChange={this.updateSelectedStudents} />
             <GroupsActionsColumn refresh={this.refresh} performAction={this.performAction} />
             <GroupsTable ref="groupsTable"
-              groups={this.state.groups} 
+              groups={this.state.groups}
               selected_groups={this.state.selected_groups}
               onSelectedGroupsChange={this.updateSelectedGroups}
               selected_students_in_groups={this.state.selected_students_in_groups}
@@ -328,7 +328,7 @@
             <Table ref="table"
               data={groups_data}
               columns={this.props.columns}
-              filters={this.props.filters} 
+              filters={this.props.filters}
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
               search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
@@ -358,7 +358,7 @@
     <% end %>
     render: function() {
       return (
-        <button className='floatRight' onClick={this.createGroup} >
+        <button className='align-right' onClick={this.createGroup} >
           <%= t('groups.add_new') %>
         </button>
       );

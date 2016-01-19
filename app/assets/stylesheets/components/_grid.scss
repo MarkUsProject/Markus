@@ -1,0 +1,18 @@
+.grid-row {
+  width: 100%;
+
+  &::before,
+  &::after {
+    clear: both;
+    content: '';
+    display: table;
+  }
+}
+
+// 12 columns
+@for $i from 1 to 13 {
+  .grid-col-#{$i} {
+    float: left;
+    width: 100% / 12 * $i;
+  }
+}

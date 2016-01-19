@@ -1,145 +1,41 @@
-@import 'common/core';
+@charset "UTF-8";
 
-@import 'common/login';
+@import 'utils/variables';
+@import 'utils/mixins';
 
+@import 'core/reset';
+@import 'core/core';
 
-/* Dashboard */
+@import 'components/alerts';
+@import 'components/datepicker';
+@import 'components/dialogs';
+@import 'components/dropdown';
+@import 'components/form';
+@import 'components/grid';
+@import 'components/help';
+@import 'components/loading';
+@import 'components/navigation';
+@import 'components/sortable';
+@import 'components/table';
+@import 'components/tabs';
+@import 'components/tags';
+@import 'components/text';
+@import 'components/title';
 
-.link_disabled {
-  color: $black;
-  display: block;
-  pointer-events: none;
-}
-
-#dashboard_lists {
-  float: left;
-  width: 30%;
-}
-
-#spreadsheet_list {
-  padding-top: 15px;
-}
-
-#assignment_summaries {
-  position: relative;
-  min-height: 1px;
-  padding-right: 15px;
-  padding-left: 15px;
-  float: right;
-  width: 70%;
-  text-align: center;
-}
-
-.assignment_summary {
-  background-color: $light-grey;
-  border: 1px solid $blue;
-  border-radius: $radius;
-  display: inline-block;
-  margin: $dimen-vertical / 2;
-  padding: 1.25em;
-  text-align: left;
-  width: auto;
-
-  .left {
-    display: inline-block;
-    width: 400px;
-  }
-
-  .right {
-    display: inline-block;
-    font-size: 0.95em;
-    margin-left: 1em;
-    vertical-align: top;
-    width: 250px;
-  }
-
-  .title {
-    color: $dark-blue;
-    font-weight: 300;
-    margin-bottom: 1em;
-    padding: 0;
-  }
-
-  table {
-    width: 100%;
-
-    tr {
-      border: none;
-
-      td {
-        border: none;
-        padding-bottom: 1em;
-        padding-right: 1em;
-      }
-    }
-  }
-
-  ul {
-    list-style-type: square;
-    margin-top: 0;
-  }
-
-  .grader_distribution {
-    margin-bottom: 0;
-  }
-
-  #grader-right {
-    height: 380px;
-    overflow: scroll;
-  }
-
-  ::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 7px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: rgba($black, 0.5);
-    border-radius: 4px;
-    box-shadow: 0 0 1px rgba($grey, 0.5);
-  }
-
-}
-
-.due_date {
-  font-weight: 600;
-
-  .after {
-    color: $red;
-  }
-
-  .before {
-    color: $green;
-  }
-}
-
-.api_key {
-  margin-top: $dimen-vertical;
-}
-
-#api_key_box {
-  border: 1px solid $grey;
-  border-radius: $radius;
-  margin-top: 0.5em;
-  overflow: auto;
-  padding: 0.75em;
-
-  #api_key,
-  form {
-    display: inline-block;
-    width: auto;
-  }
-}
-
-
-/* Error status page (e.g. 404) */
-
-#error {
-  height: 4em;
-  margin-top: -2em;
-  position: absolute;
-  text-align: center;
-  top: 50%;
-  width: 100%;
-}
-
+@import 'views/annotation_categories';
+@import 'views/api_key';
+@import 'views/assignments';
+@import 'views/automated_tests';
+@import 'views/course_summaries';
+@import 'views/dashboard';
+@import 'views/error';
+@import 'views/flexible_criteria';
+@import 'views/grade_entry_forms';
+@import 'views/grader';
+@import 'views/graders';
+@import 'views/login';
+@import 'views/marking_schemes';
+@import 'views/notes';
+@import 'views/results';
+@import 'views/rubrics';
+@import 'views/submissions';

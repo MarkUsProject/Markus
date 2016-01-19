@@ -104,7 +104,7 @@ fr:
     days_left:          "(%{days} jour(s) restant(s))"
     short_identifier:   "Identifiant du projet"
     description:        "Description "
-    shortened_date:     "Date<span class='required_field'>*</span>"
+    shortened_date:     "Date"
     due_date:           "Date de retour "
     remove_date:        "Enlever date"
     deadline_grace_tokens: "Date limite en <br> utilisant tous les <br> jetons de grâce <br> restants"
@@ -492,7 +492,7 @@ fr:
       remove_column: "Supprimer"
       toggle_column: "cacher/montrer"
       properties: "Propriétés de la feuille de note"
-      required_fields: "Champs obligatoires <span class='required_field'>*</span>"
+      required_fields: "Champs obligatoires"
       show_total: "Total"
       create:
         success: "Feuille de notes créée"

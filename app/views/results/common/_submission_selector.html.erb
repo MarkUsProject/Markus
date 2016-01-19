@@ -23,8 +23,7 @@
                     remote: true %>
     |
     (<%= label_tag 'marking_state',
-                   t('marker.marking_status'),
-                   class: 'inline_label' %>
+                   t('marker.marking_status') %>
     <% old_result_id = nil %>
     <% if @old_result %>
       <% old_result_id = @old_result.id %>
@@ -44,8 +43,7 @@
 
     <% if @current_user.admin? %>
       | <%= label_tag 'released',
-                      t('marker.marks.released'),
-                      class: 'inline_label' %>
+                      t('marker.marks.released') %>
         <%= check_box_tag 'released',
                           true,
                           result.released_to_students,

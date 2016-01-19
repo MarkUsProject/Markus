@@ -17,15 +17,13 @@
 
   <div class='heading_buttons'>
     <%= link_to t(:add_new_grader), new_ta_path %>
-    <span class='menu_bar'></span>
     <%= link_to t(:upload), 'javascript:void(0);', onclick:'modal_upload.open()' %>
-    <span class='menu_bar'></span>
     <%= link_to t(:download), 'javascript:void(0);', onclick:'modal_download.open()' %>
   </div>
 </div>
 
 <div class='colsLeftHeavy'>
-  <div class='wrapLeft'>
+  <div class='wrapper'>
     <div id='list'>
 
       <%= render 'shared/flash_message' %>
@@ -81,7 +79,7 @@
                      data: { disable_with: t(:uploading_please_wait) },
                      id: 'upload',
                      disabled: true %>
-      <input type='reset' value='<%= I18n.t(:close) %>' onclick='modal_upload.close();' />      
+      <input type='reset' value='<%= I18n.t(:close) %>' onclick='modal_upload.close();' />
     </section>
   </form>
 </aside>
@@ -98,6 +96,6 @@
   </p>
 
   <section class='dialog-actions'>
-     <input type='reset' value='<%= I18n.t(:close) %>' onclick='modal_download.close();' />    
+     <input type='reset' value='<%= I18n.t(:close) %>' onclick='modal_download.close();' />
   </section>
 </aside>

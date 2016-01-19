@@ -101,7 +101,7 @@ pt:
     days_left:          "(%{days} dia(s) restante(s))"
     short_identifier:   "Identificador"
     description:        "Descrição"
-    shortened_date:     "Data<span class='required_field'>*</span>"
+    shortened_date:     "Data"
     due_date:           "Prazo de entrega"
     remove_date:        "Remover data"
     deadline_grace_tokens: "Prazo usando todos <br> os restantes fichas <br> de carência"
@@ -463,7 +463,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       remove_column: "Remover"
       toggle_column: "esconder/mostrar"
       properties: "Propriedade da planilha de notas"
-      required_fields: "Campos obrigatórios <span class='required_field'>*</span>"
+      required_fields: "Campos obrigatórios"
       show_total: "Mostrar total"
       create:
         success: "Planilha com novas notas criadas com sucesso"

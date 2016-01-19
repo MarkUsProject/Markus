@@ -6,16 +6,14 @@
   <h1>
     <%= t('course_summaries.title') %>
   </h1>
+
   <div class='heading_buttons'>
     <%= link_to t('marking_schemes.title'), marking_schemes_path %>
     <% if @current_user.admin? %>
-        <span class='menu_bar'></span>
         <%= link_to t(:download_csv_grade_report),
                     download_csv_grades_report_course_summaries_path%>
     <% end %>
   </div>
 </div>
 
-<div class='wrapLeft'>
-    <div id='course_summaries_table'></div>
-</div>
+<div id='course_summaries_table'></div>

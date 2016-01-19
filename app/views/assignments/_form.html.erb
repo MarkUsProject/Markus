@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag 'common/jquery-ui', 'common/jquery-ui-timepicker-addon' %>
+  <%= stylesheet_link_tag 'vendor/jquery-ui/jquery-ui', 'vendor/jquery-ui/jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'create_assignment',
                              'jquery-ui-timepicker-addon',
                              'PeriodDeltaChain/PeriodDeltaChain',
@@ -41,7 +41,7 @@
                        maxlength: 30,
                        required: true %>
     </div>
-    
+
     <div>
 
       <%= f.label :repository_folder,

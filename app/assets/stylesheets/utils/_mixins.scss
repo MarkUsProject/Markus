@@ -1,0 +1,19 @@
+// Easier media query breakpoints
+@mixin breakpoint($name) {
+  @if map-has-key($breakpoints, $name) {
+    @media #{inspect(map-get($breakpoints, $name))} {
+      @content;
+    }
+  } @else {
+    @media ("#{$name}") {
+      @content;
+    }
+  }
+}
+
+// For "Retina" displays
+@mixin hidpi {
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dppx) {
+    @content;
+  }
+}

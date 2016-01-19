@@ -1,13 +1,14 @@
 <% if assignment.tas.empty? %>
-  <p class="grader_distribution"><%= t(:grader_distribution) %>:</p>
-  <%= link_to t(:assign_graders),
-              assignment_graders_path(assignment) %>
+  <p class='grader_distribution'><%= t(:grader_distribution) %>:</p>
+
+  <%= link_to t(:assign_graders), assignment_graders_path(assignment) %>
 <% else %>
-  <p class="grader_distribution"><%= t(:grader_distribution) %>
+  <p class='grader_distribution'><%= t(:grader_distribution) %>
     (<%= link_to t('graders.all_graders'), { controller: 'graders',
                                              action: 'grader_summary',
                                              assignment_id: assignment.id }
   %>):</p>
+
   <div id="grader-right">
     <ul>
       <% assignment.tas.each do |ta| %>
@@ -24,4 +25,3 @@
     </ul>
   </div>
 <% end %>
-

@@ -1,7 +1,6 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
-  <%= stylesheet_link_tag('grader') %>
-  <%= stylesheet_link_tag('pdfjs/viewer') %>
+  <%= stylesheet_link_tag('vendor/SyntaxHighlighter/SyntaxHighlighter') %>
+  <%= stylesheet_link_tag('vendor/pdfjs/viewer') %>
 
   <%= javascript_include_tag 'panes' %>
   <%= javascript_include_tag 'pdfjs' %>
@@ -103,9 +102,9 @@
                               placeholder: t('tags.create.name_prompt') %></p>
         </div>
         <div>
-          <p class='alignleft'><%= t('tags.create.tag_description') %></p>
-          <p id='descript_amount' class='alignright'>0/120</p>
-          <p class="clear-alignment"><%= f.text_area :description,
+          <p class='align-left'><%= t('tags.create.tag_description') %></p>
+          <p id='descript_amount' class='align-right'>0/120</p>
+          <p class="align-clear"><%= f.text_area :description,
                                                   id: 'description',
                                                   cols: 30,
                                                   rows: 3,
@@ -144,7 +143,7 @@
   </h1>
 </div>
 
-<div class='wrapLeft'>
+<div class='wrapper'>
   <% if flash[:fail_notice] %>
     <p class='error'><%= flash[:fail_notice] %></p>
   <% end %>

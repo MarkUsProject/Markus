@@ -1,0 +1,17 @@
+.api-key-container {
+  border: 1px solid $grey;
+  border-radius: $radius;
+  margin-top: 0.5em;
+  overflow: auto;
+  padding: 0.75em;
+
+  form,
+  .api-key-value {
+    display: inline-block;
+    width: auto;
+  }
+}
+
+.api-key-value {
+  margin-left: 1em;
+}
