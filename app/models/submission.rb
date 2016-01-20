@@ -146,7 +146,7 @@ class Submission < ActiveRecord::Base
   # submitted to instructors or TAs.
   def remark_submitted?
     results.where.not(remark_request_submitted_at: nil)
-        .where.not(marking_state: Result::MARKING_STATES[:unmarked]).size > 0
+           .where.not(marking_state: Result::MARKING_STATES[:unmarked]).size > 0
   end
 
   # Helper methods
