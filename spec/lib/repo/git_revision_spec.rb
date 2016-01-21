@@ -15,11 +15,11 @@ describe Repository::GitRevision do
 
       if repo.nil?
         Repository.conf =
-            {
-              REPOSITORY_STORAGE: REPOSITORY_STORAGE,
-              REPOSITORY_PERMISSION_FILE: REPOSITORY_PERMISSION_FILE,
-              IS_REPOSITORY_ADMIN: IS_REPOSITORY_ADMIN
-            }
+          {
+            REPOSITORY_STORAGE: REPOSITORY_STORAGE,
+            REPOSITORY_PERMISSION_FILE: REPOSITORY_PERMISSION_FILE,
+            IS_REPOSITORY_ADMIN: IS_REPOSITORY_ADMIN
+          }
 
         Repository::GitRepository.create('test_repo_workdir')
       end
