@@ -1028,7 +1028,7 @@ describe Assignment do
           @assignment.rubric_criteria.each do |cri|
             result.marks.create!(markable_id: cri.id,
                                  markable_type: RubricCriterion,
-                                 mark: (total_mark * 4.0 /  20).round)
+                                 mark: (total_mark * 4.0 / 20).round)
           end
           result.save!
         end
