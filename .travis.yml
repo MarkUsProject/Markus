@@ -14,10 +14,15 @@ before_install:
   - sudo adduser -disabled-password --gecos "" git
   - echo "git:password" | sudo chpasswd
   - sudo adduser git sudo
-  - sudo cp ~/.ssh/id_rsa.pub /home/git/git.pub
+  - sudo cp ~/.ssh/id_rsa.pub /home/git/vagrant.pub
   - sudo cp ~/.ssh/id_rsa /home/git/git
-  - sudo chmod 777 /home/git/git.pub
+  - sudo chmod 777 /home/git/vagrant.pub
   - sudo chmod 777 /home/git/git
+  - sudo mkdir /home/vagrant
+  - sudo chown $USER /home/vagrant
+  - mkdir /home/vagrant/.ssh
+  - cp ~/.ssh/id_rsa /home/vagrant/.ssh/id_rsa
+  - chmod 600 /home/vagrant/.ssh/id_rsa
   - cp ~/.ssh/id_rsa ~/git
   - cp ~/.ssh/id_rsa.pub ~/git.pub
   - sudo -H -u git bash -c 'git clone git://github.com/sitaramc/gitolite /home/git/gitolite'
@@ -27,6 +32,7 @@ before_install:
   - sudo -H -u git bash -c '/home/git/bin/gitolite setup -pk /home/git/git.pub'
   - eval $(ssh-agent -s)
   - ssh-add ~/git
+  - ssh-add /home/vagrant/.ssh/id_rsa
   - ssh git@localhost
   - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no git@localhost
   - sudo apt-get install -y cmake libssh2* libgit2* ruby1.9.1-dev
