@@ -159,7 +159,7 @@ class AssignmentTest < ActiveSupport::TestCase
       context 'with an assignment with other groupings' do
         setup do
           @target = Assignment.make({:group_min => 1, :group_max => 1})
-          3.times do |i|
+          3.times do
             target_grouping = Grouping.make(assignment: @target)
             StudentMembership.make(
               membership_status: StudentMembership::STATUSES[:accepted],
@@ -182,8 +182,10 @@ class AssignmentTest < ActiveSupport::TestCase
           @assignment.save
           @target = Assignment.make({:allow_web_submits => false, :group_min => 1, :group_max => 1})
           # And for this test, let's make sure all groupings cloned have admin approval
-          3.times do |i|
-            target_grouping = Grouping.make(assignment: @target, admin_approved: true)
+          3.times do
+            target_grouping = Grouping.make(
+              assignment: @target,
+              admin_approved: true)
             StudentMembership.make(
               membership_status: StudentMembership::STATUSES[:accepted],
               grouping: target_grouping)

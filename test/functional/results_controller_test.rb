@@ -568,8 +568,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
               # Create a remark result associated with the created submission.
               remark_result = Result.make(
-                  submission: submission,
-                  remark_request_submitted_at: Time.zone.now
+                submission: submission,
+                remark_request_submitted_at: Time.zone.now
               )
               submission.save!
 

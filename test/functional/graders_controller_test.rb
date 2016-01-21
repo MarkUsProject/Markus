@@ -259,7 +259,7 @@ class GradersControllerTest < AuthenticatedControllerTest
               :grader_criteria_mapping => @ctieria_grader_map_file}
 
           assert_response :redirect
-          assert @criterion1.tas.count == 0  # entire row is ignored
+          assert @criterion1.tas.count == 0 # entire row is ignored
           assert @criterion2.tas.count == 1
           assert @criterion2.tas.include? @ta1
           assert @criterion3.tas.count == 1
@@ -324,7 +324,7 @@ class GradersControllerTest < AuthenticatedControllerTest
               :grader_criteria_mapping => @ctieria_grader_map_file}
 
           assert_response :redirect
-          assert @criterion1.tas.count == 0  # entire row is ignored
+          assert @criterion1.tas.count == 0 # entire row is ignored
           assert @criterion2.tas.count == 1
           assert @criterion2.tas.include? @ta1
           assert @criterion3.tas.count == 1

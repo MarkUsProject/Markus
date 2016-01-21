@@ -83,7 +83,8 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
 
         should 'be named after student usernames only' do
           group_names = Group.all.map(&:group_name)
-          assert_equal(group_names.sort, ['c5anthei', 'c5cagejo', 'c5charpe', 'c6scriab'])
+          assert_equal(group_names.sort,
+                       %w(c5anthei c5cagejo c5charpe c6scriab))
         end
         should 'route properly' do
           assert_recognizes({:controller => 'groups', :assignment_id => '1', :action => 'csv_upload' },
@@ -91,7 +92,8 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
         end
       end
 
-      context 'should be able to upload groups using CSV file upload, and repos' do
+      context 'should be able to upload groups using CSV file upload '\
+              'when web submits are allowed, and repos' do
         setup do
           # We want to be repo admin
           MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
@@ -100,18 +102,21 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
           @res = post_as @admin, :csv_upload, {:assignment_id => @assignment.id, :group => { :grouplist=> @username_repos_csv_file } }
         end
 
-        should 'have the specified group names when web submits are allowed' do
-          group_names = Group.all.map(&:group_name)
-          assert_equal(group_names.sort, ['c5anthei', 'c5cagejo', 'c5charpe', 'c6scriab'])
+        should 'have the specified group names' do
+          group_names = Group.pluck(:group_name)
+          assert_equal(group_names.sort,
+                       %w(c5anthei c5cagejo c5charpe c6scriab))
         end
 
-        should 'have the specified repo names when web submits are allowed' do
-          group_names = Group.all.map(&:repo_name)
-          assert_equal(group_names.sort, ['c5anthei', 'c5cagejo', 'c5charpe', 'c6scriab'])
+        should 'have the specified repo names' do
+          group_names = Group.pluck(:repo_name)
+          assert_equal(group_names.sort,
+                       %w(c5anthei c5cagejo c5charpe c6scriab))
         end
       end
 
-      context 'should be able to upload groups using CSV file upload, and repos' do
+      context 'should be able to upload groups using CSV file upload, '\
+              'when web submits are not allowed, and repos' do
 
         setup do
           # We want to be repo admin
@@ -121,14 +126,14 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
           @res = post_as @admin, :csv_upload, { :assignment_id => @assignment.id, :group => { :grouplist=> @autogen_repos_csv_file } }
         end
 
-        should 'have the specified group names when web submits are not allowed' do
-          group_names = Group.all.map(&:group_name)
-          assert_equal(group_names.sort, ['group1', 'group2', 'group3'])
+        should 'have the specified group names' do
+          group_names = Group.pluck(:group_name)
+          assert_equal(group_names.sort, %w(group1 group2 group3))
         end
 
-        should 'have the specified repo names when web submits are not allowed' do
-          group_names = Group.all.map(&:repo_name)
-          assert_equal(group_names.sort, ['x1', 'x2', 'x3'])
+        should 'have the specified repo names' do
+          group_names = Group.pluck(:repo_name)
+          assert_equal(group_names.sort, %w(x1 x2 x3))
         end
 
       end
