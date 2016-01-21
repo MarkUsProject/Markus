@@ -7,7 +7,7 @@
 %>
 
 <% content_for :head do %>
-  <%= stylesheet_link_tag 'common/jquery-ui' %>
+  <%= stylesheet_link_tag 'vendor/jquery-ui/jquery-ui' %>
   <%= javascript_include_tag 'moment-with-langs.min' %>
 
   <%= render partial: 'boot',
@@ -92,8 +92,8 @@
 
     </fieldset>
 
-    <%= f.submit t(f.object.new_record? ? 'grade_entry_forms.create.submit' : 
-                                          'grade_entry_forms.edit.submit'), 
+    <%= f.submit t(f.object.new_record? ? 'grade_entry_forms.create.submit' :
+                                          'grade_entry_forms.edit.submit'),
                  data: { disable_with: t('working') } %>
   <% end %>
 </div>
