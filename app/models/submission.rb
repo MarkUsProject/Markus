@@ -62,6 +62,10 @@ class Submission < ActiveRecord::Base
     results.where.not(remark_request_submitted_at: nil).first
   end
 
+  def remark_result_id
+    remark_result.try(:id)
+  end
+
   # Returns the latest result.
   def get_latest_result
     if remark_submitted?
