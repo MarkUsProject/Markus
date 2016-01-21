@@ -593,11 +593,11 @@ describe Assignment do
         @students = Array.new(2) { create(:student) }
         user_names = @students.map { |student| student.user_name }
         @row = ['group_name', 'repo_name'] + user_names
+        @assignment.add_csv_group(@row)
       end
 
       context 'and the group does not exist' do
         it 'adds a Group and an associated Grouping' do
-          @assignment.add_csv_group(@row)
           group = Group.where(group_name: @row[0])
           grouping = group ? group.first.groupings : nil
 
@@ -606,9 +606,7 @@ describe Assignment do
         end
 
         it 'adds the StudentMemberships for the students' do
-          @assignment.add_csv_group(@row)
           memberships = StudentMembership.where(user_id: @students)
-
           expect(memberships.size).to eq 2
         end
       end
