@@ -180,7 +180,6 @@ class SubmissionsController < ApplicationController
       directories = @revision.directories_at_path(full_path)
       directories_info = get_directories_info(directories, revision_number,
                                               @path, @grouping.id)
-      debugger
       render json: files_info + directories_info
     else
       render json: []

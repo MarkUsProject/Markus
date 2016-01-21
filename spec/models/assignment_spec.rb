@@ -1026,10 +1026,11 @@ describe Assignment do
           result.total_mark = total_mark
           result.marking_state = Result::MARKING_STATES[:complete]
           @assignment.rubric_criteria.each do |cri|
-            result.marks.create!(markable_id: cri.id, markable_type: RubricCriterion, mark: (total_mark*4.0/20).round)
+            result.marks.create!(markable_id: cri.id,
+                                 markable_type: RubricCriterion,
+                                 mark: (total_mark * 4.0 /  20).round)
           end
           result.save!
-
         end
       end
 
