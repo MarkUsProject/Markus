@@ -593,11 +593,11 @@ describe Assignment do
         @students = Array.new(2) { create(:student) }
         user_names = @students.map { |student| student.user_name }
         @row = ['group_name', 'repo_name'] + user_names
-        @assignment.add_csv_group(@row)
       end
 
       context 'and the group does not exist' do
         it 'adds a Group and an associated Grouping' do
+          @assignment.add_csv_group(@row)
           group = Group.where(group_name: @row[0])
           grouping = group ? group.first.groupings : nil
 
@@ -606,6 +606,7 @@ describe Assignment do
         end
 
         it 'adds the StudentMemberships for the students' do
+          @assignment.add_csv_group(@row)
           memberships = StudentMembership.where(user_id: @students)
           expect(memberships.size).to eq 2
         end
@@ -1024,7 +1025,11 @@ describe Assignment do
           result = s.get_latest_result
           result.total_mark = total_mark
           result.marking_state = Result::MARKING_STATES[:complete]
-          result.save
+          @assignment.rubric_criteria.each do |cri|
+            result.marks.create!(markable_id: cri.id, markable_type: RubricCriterion, mark: (total_mark*4.0/20).round)
+          end
+          result.save!
+
         end
       end
 
@@ -1035,7 +1040,7 @@ describe Assignment do
 
         it 'returns the correct distribution' do
           expect(@assignment.grade_distribution_as_percentage)
-            .to eq [1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+            .to eq [1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
         end
       end
 
