@@ -14,11 +14,12 @@ before_install:
   - sudo adduser -disabled-password --gecos "" git
   - echo "git:password" | sudo chpasswd
   - sudo adduser git sudo
+  - sudo cp ~/.ssh/id_rsa.pub /home/git/git.pub
   - sudo cp ~/.ssh/id_rsa.pub /home/git/vagrant.pub
   - sudo cp ~/.ssh/id_rsa /home/git/git
+  - sudo chmod 777 /home/git/git.pub
   - sudo chmod 777 /home/git/vagrant.pub
   - sudo chmod 777 /home/git/git
-  - chmod 600 /home/vagrant/.ssh/id_rsa
   - cp ~/.ssh/id_rsa ~/git
   - cp ~/.ssh/id_rsa.pub ~/git.pub
   - sudo -H -u git bash -c 'git clone git://github.com/sitaramc/gitolite /home/git/gitolite'
