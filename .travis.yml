@@ -18,7 +18,6 @@ before_install:
   - sudo cp ~/.ssh/id_rsa /home/git/git
   - sudo chmod 777 /home/git/vagrant.pub
   - sudo chmod 777 /home/git/git
-  - sudo mkdir /home/vagrant
   - sudo chown $USER /home/vagrant
   - mkdir /home/vagrant/.ssh
   - cp ~/.ssh/id_rsa /home/vagrant/.ssh/id_rsa
