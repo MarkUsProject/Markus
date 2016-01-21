@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151114204502) do
+ActiveRecord::Schema.define(version: 20160116172051) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -319,8 +322,9 @@ ActiveRecord::Schema.define(version: 20151114204502) do
     t.text     "overall_comment"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "released_to_students", default: false, null: false
-    t.float    "total_mark",           default: 0.0
+    t.boolean  "released_to_students",        default: false, null: false
+    t.float    "total_mark",                  default: 0.0
+    t.datetime "remark_request_submitted_at"
   end
 
   create_table "rubric_criteria", force: :cascade do |t|
@@ -468,11 +472,11 @@ ActiveRecord::Schema.define(version: 20151114204502) do
   add_foreign_key "assignment_stats", "assignments", name: "fk_assignment_stats_assignments", on_delete: :cascade
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "groupings", "assignments", name: "fk_groupings_assignments"
-  add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
-  add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
+  add_foreign_key "groupings", "groups"
+  add_foreign_key "marks", "results"
   add_foreign_key "memberships", "groupings", name: "fk_memberships_groupings"
   add_foreign_key "memberships", "users", name: "fk_memberships_users"
-  add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
+  add_foreign_key "results", "submissions"
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "users"

@@ -166,6 +166,7 @@ en:
             select_a_group: "Select a group"
             select_a_student: "Select a student"
             select_a_grader: "Select a grader"
+            group_submission_no_files: "One or more of the groups selected has no files in their submission. Grader not assigned."
             select_only_one_group: "You may only assign each student to one group."
             deleted: "Group has been deleted"
             work_in_groups:  "Students can work in groups"
@@ -272,6 +273,7 @@ en:
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     commit_after_due_date: "This commit is after the due date."
+    no_files_submitted: "This submission has no files."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
     past_due_date_edit_result_warning: "The %{href} of this group is after the due date."
     last_commit: "last commit"
@@ -630,6 +632,8 @@ en:
       csv:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"
+      add_all_groups: "Add all groups"
+      creating_groups_for_all_students: "Creating groups for all students. (Background task. Refresh page to see when all groups created.)"
 
     results:
       title:  "Assignment %{assignment_name} : %{group_name}"
@@ -800,6 +804,7 @@ en:
       search_criteria:    "Search Criteria"
       assign_to_criteria: "Assign Graders to Criteria"
       lines_not_processed: "The following lines could not be processed:"
+      skip_empty_submissions: "Do not assign Graders to groups with empty submissions (requires that submissions are collected)"
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
