@@ -30,24 +30,24 @@ module Repository
     # created using GitRespository.create(), it it is not yet existent
     def initialize(connect_string)
       # Check if configuration is in order
-      if IS_REPOSITORY_ADMIN.nil?
+      if MarkusConfigurator.markus_config_repository_admin?.nil?
         raise ConfigurationError.new(
-                "Required config 'IS_REPOSITORY_ADMIN' not set")
+                "Required config 'MarkusConfigurator.markus_config_repository_admin?' not set")
       end
-      if REPOSITORY_STORAGE.nil?
+      if MarkusConfigurator.markus_config_repository_storage.nil?
         raise ConfigurationError.new(
-                "Required config 'REPOSITORY_STORAGE' not set")
+                "Required config 'MarkusConfigurator.markus_config_repository_storage' not set")
       end
-      if REPOSITORY_PERMISSION_FILE.nil?
+      if MarkusConfigurator.markus_config_repository_permission_file.nil?
         raise ConfigurationError.new(
-                "Required config 'REPOSITORY_PERMISSION_FILE' not set")
+                "Required config 'MarkusConfigurator.markus_config_repository_permission_file' not set")
       end
       begin
         super(connect_string) # dummy call to super
       rescue NotImplementedError; end
       @repos_path = connect_string
       @closed = false
-      @repos_admin = IS_REPOSITORY_ADMIN
+      @repos_admin = MarkusConfigurator.markus_config_repository_admin?
       if GitRepository.repository_exists?(@repos_path)
 
         # make sure working directory is up-to-date
@@ -73,7 +73,7 @@ module Repository
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(
-        REPOSITORY_STORAGE +
+        MarkusConfigurator.markus_config_repository_storage +
           '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Bring the repo up to date
@@ -108,9 +108,9 @@ module Repository
       # Repo is created by gitolite, proceed to clone it in
       # the repository storage location
       cloned_repo = Git.clone(
-        'git@localhost:' + repo_name, REPOSITORY_STORAGE + '/' + repo_name)
+        'git@localhost:' + repo_name, MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
 
-      repo = Rugged::Repository.discover(REPOSITORY_STORAGE + '/' + repo_name)
+      repo = Rugged::Repository.discover(MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
 
       # Lets make some sample files and the new master branch
       cloned_repo.reset
@@ -129,7 +129,7 @@ module Repository
 
       # Finished cloning repo
 
-      repo = Rugged::Repository.discover(REPOSITORY_STORAGE + '/' + repo_name)
+      repo = Rugged::Repository.discover(MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
 
       # Do an initial commit with a README to create index.
       file_path_for_readme = File.join(repo.workdir, 'README.md')
@@ -394,7 +394,7 @@ module Repository
 
       if @repos_admin # Are we admin?
         ga_repo = Gitolite::GitoliteAdmin.new(
-          REPOSITORY_STORAGE +
+          MarkusConfigurator.markus_config_repository_storage +
             '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync the gitolite admin repo
@@ -445,7 +445,7 @@ module Repository
 
       # Access the gitolite admin repo
       ga_repo = Gitolite::GitoliteAdmin.new(
-        REPOSITORY_STORAGE +
+        MarkusConfigurator.markus_config_repository_storage +
           '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Sync the repo
@@ -475,7 +475,7 @@ module Repository
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          REPOSITORY_STORAGE +
+          MarkusConfigurator.markus_config_repository_storage +
             '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync the admin repo
@@ -505,7 +505,7 @@ module Repository
 
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          REPOSITORY_STORAGE +
+          MarkusConfigurator.markus_config_repository_storage +
             '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
@@ -549,7 +549,7 @@ module Repository
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          REPOSITORY_STORAGE +
+          MarkusConfigurator.markus_config_repository_storage +
             '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
@@ -613,13 +613,13 @@ module Repository
     def self.add_user(user_id, permissions, repo_name)
 
       # Adds a user with given permissions to the repository
-      unless File.exist?(REPOSITORY_PERMISSION_FILE)
+      unless File.exist?(MarkusConfigurator.markus_config_repository_permission_file)
         # create file if not existent
-        File.open(REPOSITORY_PERMISSION_FILE, 'w').close
+        File.open(MarkusConfigurator.markus_config_repository_permission_file, 'w').close
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(
-        REPOSITORY_STORAGE +
+        MarkusConfigurator.markus_config_repository_storage +
           '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Sync repo
@@ -656,18 +656,18 @@ module Repository
     # permissions on a single repository.
     def self.set_bulk_permissions(repo_names, user_id_permissions_map)
       # Check if configuration is in order
-      if IS_REPOSITORY_ADMIN.nil?
+      if MarkusConfigurator.markus_config_repository_admin?.nil?
         raise ConfigurationError.new(
-          "Required config 'IS_REPOSITORY_ADMIN' not set")
+          "Required config 'MarkusConfigurator.markus_config_repository_admin?' not set")
       end
       # If we're not in authoritative mode, bail out
-      unless IS_REPOSITORY_ADMIN # Are we admin?
+      unless MarkusConfigurator.markus_config_repository_admin? # Are we admin?
         raise NotAuthorityError.new(
           'Unable to set bulk permissions: Not in authoritative mode!')
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(
-        REPOSITORY_STORAGE +
+        MarkusConfigurator.markus_config_repository_storage +
           '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Sync admin repo
@@ -712,7 +712,7 @@ module Repository
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          REPOSITORY_STORAGE +
+          MarkusConfigurator.markus_config_repository_storage +
             '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
