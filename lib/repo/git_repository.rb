@@ -613,7 +613,7 @@ module Repository
     def self.add_user(user_id, permissions, repo_name)
 
       # Adds a user with given permissions to the repository
-      if !File.exist?(REPOSITORY_PERMISSION_FILE)
+      unless File.exist?(REPOSITORY_PERMISSION_FILE)
         # create file if not existent
         File.open(REPOSITORY_PERMISSION_FILE, 'w').close
       end
@@ -661,7 +661,7 @@ module Repository
           "Required config 'IS_REPOSITORY_ADMIN' not set")
       end
       # If we're not in authoritative mode, bail out
-      if !IS_REPOSITORY_ADMIN # Are we admin?
+      unless IS_REPOSITORY_ADMIN # Are we admin?
         raise NotAuthorityError.new(
           'Unable to set bulk permissions: Not in authoritative mode!')
       end
