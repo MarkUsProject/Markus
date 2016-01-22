@@ -1,8 +1,8 @@
 class PdfAnnotation < Annotation
   # (x1, y1) is the top left corner and (x2, y2) is the bottom right corner
   # of the rectangle containing the annotation.
-  validates_presence_of :x1, :x2, :y1, :y2, :page, :id
-  validates_numericality_of :x1, :x2, :y1, :y2, :page, :id
+  validates_presence_of :x1, :x2, :y1, :y2, :page
+  validates_numericality_of :x1, :x2, :y1, :y2, :page
 
   # Return a hash containing the coordinates of the rectangle containing the
   # annotation and the page.
@@ -18,7 +18,7 @@ class PdfAnnotation < Annotation
 
     {
       id: annotation_text_id,
-      annot_id: id,
+      annot_id: self.id,
       x1: horiz_range[:start], y1: vert_range[:start],
       x2: horiz_range[:end], y2: vert_range[:end],
       page: page
