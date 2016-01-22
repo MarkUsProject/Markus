@@ -38,6 +38,10 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
 
       # Generate the permissions file for all valid groups
       Repository::SubversionRepository.__generate_authz_file
+      m_logger = MarkusLogger.instance
+      m_logger.log("Creating all individual groups completed",
+                   MarkusLogger::INFO)
+      puts "Creating all groups complete"
 
     end
   end
