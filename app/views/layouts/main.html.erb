@@ -3,9 +3,6 @@
 <head>
   <%= render partial: 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
-  <%= stylesheet_link_tag params[:controller], media: 'all' %>
-  <%= favicon_link_tag 'favicon.ico' %>
-  <%= csrf_meta_tags %>
   <%= yield :head %>
 </head>
 <body>
