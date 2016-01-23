@@ -214,7 +214,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                     :short_identifier => 'NT',
                     :description => @grade_entry_form.description,
                     :message => @grade_entry_form.message,
-                    :date => @grade_entry_form.date}}
+                    :date => @grade_entry_form.date,
+                    :is_hidden => @grade_entry_form.is_hidden } }
       assert_not_nil assigns :grade_entry_form
       assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
       assert_response :redirect
@@ -323,6 +324,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                          :description => @grade_entry_form.description,
                                                          :message => @grade_entry_form.message,
                                                          :date => @grade_entry_form.date,
+                                                         :is_hidden => @grade_entry_form.is_hidden,
                                                          :grade_entry_items_attributes => {'1' => @q1}} }
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
@@ -334,6 +336,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :description => @grade_entry_form.description,
                                                         :message => @grade_entry_form.message,
                                                         :date => @grade_entry_form.date,
+                                                        :is_hidden => @grade_entry_form.is_hidden,
                                                         :grade_entry_items_attributes => {'1' => @q1,
                                                                                           '2' => @q2,
                                                                                           '3' => @q3}}}
@@ -351,6 +354,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :description => @grade_entry_form.description,
                                                         :message => @grade_entry_form.message,
                                                         :date => @grade_entry_form.date,
+                                                        :is_hidden => @grade_entry_form.is_hidden,
                                                         :grade_entry_items_attributes => {'1' => @q1,
                                                                                           '2' => @q2,
                                                                                           '3' => @q3}}}
@@ -412,7 +416,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                     :description => @grade_entry_form.description,
                     :message => @grade_entry_form.message,
                     :date => @grade_entry_form.date,
-                    :grade_entry_items_attributes => {'1' => @q1, '2' => @q2}}}
+                    :grade_entry_items_attributes => { '1' => @q1, '2' => @q2 },
+                    :is_hidden => false } }
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
         assert_response :redirect
@@ -427,7 +432,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                    :description => NEW_DESCRIPTION,
                    :message => NEW_MESSAGE,
                    :date => @grade_entry_form.date,
-                   :grade_entry_items_attributes => {'1' => @q1}}
+                   :grade_entry_items_attributes => { '1' => @q1 },
+                   :is_hidden => false }
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
         assert_response :redirect
@@ -455,7 +461,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                    :date => @grade_entry_form.date,
                    :grade_entry_items_attributes => {'1' => @q1,
                                                      '2' => @q2,
-                                                     '3' => @q3}}
+                                                     '3' => @q3 },
+                   :is_hidden => false }
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
         assert_response :redirect
@@ -487,7 +494,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                    date: @grade_entry_form.date,
                                    grade_entry_items_attributes: { '0' => @q2,
                                                                    '1' => @q1,
-                                                                   '2' => @q3 }}
+                                                                   '2' => @q3 },
+                                   is_hidden: false }
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
         assert_response :redirect
@@ -516,6 +524,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :description => NEW_DESCRIPTION,
                                                         :message => NEW_MESSAGE,
                                                         :date => @grade_entry_form.date,
+                                                        :is_hidden => false,
                                                         :grade_entry_items_attributes => {'1' => @q1, '2' => @q2}}}
         assert_not_nil assigns :grade_entry_form
         assert_response :ok
@@ -533,6 +542,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :description => NEW_DESCRIPTION,
                                                         :message => NEW_MESSAGE,
                                                         :date => @grade_entry_form.date,
+                                                        :is_hidden => false,
                                                         :grade_entry_items_attributes => {'1' => @q1, '2' => @q2}}}
         assert_not_nil assigns :grade_entry_form
         assert_response :ok
@@ -555,6 +565,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                    :description => NEW_DESCRIPTION,
                    :message => NEW_MESSAGE,
                    :date => @grade_entry_form.date,
+                   :is_hidden => false,
                    :grade_entry_items_attributes => {'1' => @q1, '2' => @q2}}
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
@@ -585,6 +596,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :description => NEW_DESCRIPTION,
                                                         :message => NEW_MESSAGE,
                                                         :date => @grade_entry_form_with_dup.date,
+                                                        :is_hidden => false,
                                                         :grade_entry_items_attributes => {'1' => @q1,
                                                                                           '2' => @q2}}}
         @grade_entry_form_before.reload
@@ -807,7 +819,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :ap_select_full => false,
                                                         :release_results => true,
                                                         :id => @grade_entry_form1.id}
-        assert_response :redirect
+        assert_response :success
         (0..2).each do |i|
           grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
           assert_equal true, grade_entry_student.released_to_student
@@ -828,7 +840,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :ap_select_full => true,
                                                         :release_results => true,
                                                         :id => @grade_entry_form1.id}
-        assert_response :redirect
+        assert_response :success
         (0..(@specific_students.size-1)).each do |i|
           grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
           assert_equal true, grade_entry_student.released_to_student
@@ -842,7 +854,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :ap_select_full => false,
                                                         :unrelease_results => false,
                                                         :id => @grade_entry_form1.id}
-        assert_response :redirect
+        assert_response :success
         (0..2).each do |i|
           grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
           assert_equal false, grade_entry_student.released_to_student
@@ -858,7 +870,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :ap_select_full => true,
                                                         :unrelease_results => true,
                                                         :id => @grade_entry_form1.id}
-        assert_response :redirect
+        assert_response :success
         (0..(@specific_students.size-1)).each do |i|
           grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
           assert_equal false, grade_entry_student.released_to_student

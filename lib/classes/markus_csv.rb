@@ -22,6 +22,9 @@ class MarkusCSV
   def self.parse(input, options = {}, &parse_obj)
     invalid_lines = []
     begin
+      if options[:encoding]
+        input = input.utf8_encode(options[:encoding])
+      end
       CSV.parse(input, options) do |row|
         begin
           parse_obj.call(row)
