@@ -191,7 +191,7 @@ class GradersControllerTest < AuthenticatedControllerTest
                 grader_mapping: tempfile
 
         assert_response :redirect
-        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+        assert_equal flash[:error], [I18n.t('csv.upload.malformed_csv')]
       end
 
       should 'gracefully handle a non csv file with a csv extension' do
@@ -204,7 +204,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+                     [I18n.t('csv.upload.non_text_file_with_csv_extension')]
       end
     end #groups csv upload
 
@@ -259,8 +259,7 @@ class GradersControllerTest < AuthenticatedControllerTest
               :grader_criteria_mapping => @ctieria_grader_map_file}
 
           assert_response :redirect
-          assert @criterion1.tas.count == 1
-          assert @criterion1.tas.include? @ta1
+          assert @criterion1.tas.count == 0 # entire row is ignored
           assert @criterion2.tas.count == 1
           assert @criterion2.tas.include? @ta1
           assert @criterion3.tas.count == 1
@@ -325,8 +324,7 @@ class GradersControllerTest < AuthenticatedControllerTest
               :grader_criteria_mapping => @ctieria_grader_map_file}
 
           assert_response :redirect
-          assert @criterion1.tas.count == 1
-          assert @criterion1.tas.include? @ta1
+          assert @criterion1.tas.count == 0 # entire row is ignored
           assert @criterion2.tas.count == 1
           assert @criterion2.tas.include? @ta1
           assert @criterion3.tas.count == 1
@@ -362,7 +360,7 @@ class GradersControllerTest < AuthenticatedControllerTest
                 encoding: 'UTF-8'
 
         assert_response :redirect
-        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+        assert_equal flash[:error], [I18n.t('csv.upload.malformed_csv')]
       end
 
       should 'gracefully handle a non csv file with a csv extension' do
@@ -375,7 +373,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+                     [I18n.t('csv.upload.non_text_file_with_csv_extension')]
       end
     end # criteria csv upload
 

@@ -317,6 +317,7 @@ class ResultsController < ApplicationController
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
+        return
       end
     end
 
