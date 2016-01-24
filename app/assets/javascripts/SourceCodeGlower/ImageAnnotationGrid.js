@@ -127,13 +127,13 @@ ImageAnnotationGrid.prototype.remove_annotation = function(annotation_id, unused
   var annot_grid = this.get_annotation_grid();
   var otherAnnotationsWithText = false;
   for (var i = 0; i < annot_grid.length; i++) {
-    if (annot_grid[i].annot_id == annotation_id) {
+    if (annot_grid[i].annot_id === annotation_id) {
       annot_grid.splice(i, 1);
-    }else if(annot_grid[i].id == annotation_text_id){
+    } else if (annot_grid[i].id === annotation_text_id) {
       otherAnnotationsWithText = true;
     }
   }
-  if(!otherAnnotationsWithText){
+  if (!otherAnnotationsWithText) {
     this.getAnnotationTextManager().removeAnnotationText(annotation_text_id);
   }
   this.share_grid_with_event_handler();

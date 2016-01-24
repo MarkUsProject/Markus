@@ -476,7 +476,7 @@
     var annotationData = this.annotationsById[annotation_id];
 
     // Remove from rendering lookups
-    if(annotationData!=undefined){
+    if (annotationData!=undefined) {
       delete this.annotationsByPageNumber[annotationData.coords.page][annotation_id];
       delete this.annotationsById[annotation_id];
       delete this.annotationsByAnnotationTextId[annotation_text_id][annotation_id];
@@ -490,8 +490,8 @@
     }
   }
 
-  PdfAnnotationManager.prototype.isObjectEmpty = function(obj){
-    for(var prop in obj){
+  PdfAnnotationManager.prototype.isObjectEmpty = function(obj) {
+    for (var prop in obj) {
       return false;
     }
     return true;
