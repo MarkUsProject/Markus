@@ -29,29 +29,20 @@ class MarksGradersController < ApplicationController
 
   # Assign TAs to Students via a csv file
   def csv_upload_grader_groups_mapping
-    if !request.post? || params[:grader_mapping].nil?
+    if params[:grader_mapping].nil?
       flash[:error] = I18n.t('csv.student_to_grader')
-      redirect_to action: 'index',
-                  grade_entry_form_id: params[:grade_entry_form_id]
-      return
+    else
+      errors = MarkusCSV.parse(params[:grader_mapping].read,
+                               encoding: params[:encoding]) do |row|
+        raise CSVInvalidLineError if row.empty?
+        grade_entry_student = GradeEntryStudent.joins(:user)
+                                  .find_by(users: { user_name: row.first},
+                                           grade_entry_form_id: params[:grade_entry_form_id])
+        raise CSVInvalidLineError if grade_entry_student.nil?
+        grade_entry_student.add_tas_by_user_name_array(row.drop(1))
+        end
+      flash_message(:error, errors) unless errors.empty?
     end
-
-    begin
-      invalid_lines =
-        GradeEntryStudent.assign_tas_by_csv(params[:grader_mapping].read,
-                                            params[:grade_entry_form_id],
-                                            params[:encoding])
-
-      if invalid_lines.size > 0
-        flash[:error] =
-          I18n.t('graders.lines_not_processed') + invalid_lines.join(', ')
-      end
-    rescue CSV::MalformedCSVError
-      flash[:error] = t('csv.upload.malformed_csv')
-    rescue ArgumentError
-      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
-    end
-
     redirect_to action: 'index', grade_entry_form_id: params[:grade_entry_form_id]
   end
 
@@ -67,7 +58,7 @@ class MarksGradersController < ApplicationController
         grade_entry_student = student.grade_entry_students.find do |entry|
           entry.grade_entry_form_id == grade_entry_form.id
         end
-        unless grade_entry_student.nil?
+        unless grade_entry_student.nil?c8shosta
           grade_entry_student.tas.order(:user_name).each do |ta|
             student_array.push(ta.user_name)
           end
