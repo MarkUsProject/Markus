@@ -317,6 +317,7 @@ class ResultsController < ApplicationController
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
+        return
       end
     end
 
@@ -512,7 +513,6 @@ class ResultsController < ApplicationController
     submission = Submission.find(params[:submission_id])
 
     submission.remark_result.destroy
-    submission.update_attributes(remark_result_id: nil)
     submission.get_original_result.update_attributes(
       released_to_students: true)
 

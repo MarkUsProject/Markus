@@ -155,7 +155,21 @@ class GradersController < ApplicationController
       case params[:global_actions]
       when 'assign'
         if grader_ids.blank?
-          render text: I18n.t('assignment.group.select_a_grader'), status: 400
+          render text: I18n.t('assignment.group.select_a_grader'),
+                  status: 400
+        end        
+        if params[:skip_empty_submissions] == 'true'
+          # If the instructor wants to skip empty submissions, filter
+          # groups with empty submissions into a new array
+          filtered_grouping_ids = filter_empty_submissions(grouping_ids)
+          if filtered_grouping_ids.count != grouping_ids.count
+            found_empty_submission = true
+          end
+        end
+        if found_empty_submission
+          assign_all_graders(filtered_grouping_ids, grader_ids)
+          render text: I18n.t('assignment.group.group_submission_no_files'),
+                 status: 200
         else
           assign_all_graders(grouping_ids, grader_ids)
           head :ok
@@ -171,8 +185,20 @@ class GradersController < ApplicationController
         if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
         else
-          randomly_assign_graders(grouping_ids, grader_ids)
-          head :ok
+          if params[:skip_empty_submissions] == 'true'
+            filtered_grouping_ids = filter_empty_submissions(grouping_ids)
+            if filtered_grouping_ids.count != grouping_ids.count
+              found_empty_submission = true
+            end
+          end
+          if found_empty_submission
+            randomly_assign_graders(filtered_grouping_ids, grader_ids)
+            render text: I18n.t('assignment.group.group_submission_no_files'),
+                   status: 200
+          else
+            randomly_assign_graders(grouping_ids, grader_ids)
+            head :ok
+          end
         end
       end
     when 'criteria_table'
@@ -273,5 +299,13 @@ class GradersController < ApplicationController
       membership.grouping.id
     end
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
+  end
+
+  # Returns array of grouping ids with non empty submissions
+  def filter_empty_submissions(grouping_ids)
+    grouping_ids.select do |grouping_id|
+      submission = Submission.find_by(grouping_id: grouping_id)
+      submission && SubmissionFile.where(submission_id: submission.id).exists?
+    end
   end
 end

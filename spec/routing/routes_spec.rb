@@ -864,8 +864,8 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes PATCH update_overall_comment properly' do
-          expect(patch: res_path + '/1/update_overall_comment').to route_to(
+        it 'routes POST update_overall_comment properly' do
+          expect(post: res_path + '/1/update_overall_comment').to route_to(
             controller: res_ctrl,
             action: 'update_overall_comment',
             id: '1',
@@ -884,8 +884,8 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes PUT update_remark_request properly' do
-          expect(put: res_path + '/1/update_remark_request').to route_to(
+        it 'routes PATCH update_remark_request properly' do
+          expect(patch: res_path + '/1/update_remark_request').to route_to(
             controller: res_ctrl,
             action: 'update_remark_request',
             id: '1',
@@ -1343,7 +1343,8 @@ context 'annotation collection' do
   it 'routes PUT update_annotation properly' do
     expect(put: path + '/update_annotation').to route_to(
       controller: ctrl,
-      action: 'update_annotation',
+      action: 'update',
+      id: 'update_annotation',
       locale: 'en')
   end
 

@@ -333,6 +333,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             SubmissionFile.make(:submission => @submission)
             @submission_file = @result.submission.submission_files.first
+            @request.env['HTTP_REFERER'] = '/assignments'
           end
 
           should 'and the student has no access to that file' do
@@ -566,8 +567,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
               submission = original_result.submission
 
               # Create a remark result associated with the created submission.
-              remark_result = Result.make(:submission => submission)
-              submission.remark_result_id = remark_result.id
+              remark_result = Result.make(
+                submission: submission,
+                remark_request_submitted_at: Time.zone.now
+              )
               submission.save!
 
               get_as @admin,

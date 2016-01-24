@@ -76,6 +76,7 @@ class GradeEntryFormsController < ApplicationController
   # View/modify the grades for this grade entry form
   def grades
     @grade_entry_form = GradeEntryForm.find(params[:id])
+    render layout: 'assignment_content'
   end
 
   # Update a grade in the table

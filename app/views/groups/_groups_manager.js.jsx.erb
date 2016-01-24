@@ -320,7 +320,10 @@
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
             <AddGroupButton refresh={this.props.refresh} />
             <% if @assignment.group_max == 1 %>
-              <%= button_to "Add all groups", {action: 'create_groups_when_students_work_alone', id: @assignment.id}, method: :get %>
+              <%= button_to t('groups.add_all_groups'),
+                            { action: 'create_groups_when_students_work_alone',
+                              id: @assignment.id },
+                            method: :get %>
             <% end %>
             <Table ref="table"
               data={groups_data}
