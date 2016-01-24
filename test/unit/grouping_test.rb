@@ -434,36 +434,6 @@ class GroupingTest < ActiveSupport::TestCase
     end
   end
 
-  context 'an assignment with three named groupings' do
-    setup do
-      @assignment = Assignment.make
-      Ta.make(:user_name => 'ta1')
-      Ta.make(:user_name => 'ta2')
-      grouping = nil
-      ['Titanic', 'Blanche Nef', 'Ukishima Maru'].each do |name|
-        group = Group.make(:group_name => name)
-        @grouping = Grouping.make(:assignment => @assignment,
-                      :group => group)
-      end
-    end
-
-    should 'load csv file' do
-      csv_file_data = "Titanic,ta1\nUkishima Maru,ta1,ta2\nBlanche Nef,ta2"
-      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id, nil)
-
-      assert_equal 2, @grouping.ta_memberships.count
-      assert_equal 0, failures.size
-    end
-
-    should 'deal with malformed csv file' do
-      csv_file_data = "Titanic,ta1\nUk125125ishima Maru,ta1,ta2\nBlanche Nef,ta2"
-      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id, nil)
-
-      assert_equal 0, @grouping.ta_memberships.count
-      assert_equal failures[0], 'Uk125125ishima Maru'
-    end
-  end
-
   context 'A grouping with students in section' do
     setup do
       @section = Section.make
