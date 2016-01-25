@@ -48,8 +48,8 @@ module Repository
       rescue NotImplementedError; end
       @repos_path = connect_string
       @closed = false
-      @repos_auth_file = MarkusConfigurator.
-                         markus_config_repository_permission_file ||
+      @repos_auth_file = MarkusConfigurator
+                         .markus_config_repository_permission_file ||
                          File.dirname(connect_string) + '/svn_authz'
       @repos_admin = MarkusConfigurator.markus_config_repository_admin?
       if (SubversionRepository.repository_exists?(@repos_path))
@@ -580,13 +580,12 @@ module Repository
       end
       # Load up the Permissions:
       file_content = ""
-      # Hound is complaining about the do block so I'm trying it with braces
       File.open(MarkusConfigurator.markus_config_repository_permission_file,
-                'r+') { |auth_file|
+                'r+') do |auth_file|
         auth_file.flock(File::LOCK_EX)
         file_content = auth_file.read()
         auth_file.flock(File::LOCK_UN) # release lock
-      }
+      end
       return file_content
     end
 
@@ -603,7 +602,8 @@ module Repository
                                      "'REPOSITORY_PERMISSION_FILE' not set")
       end
 
-      if !File.exist?(MarkusConfigurator.markus_config_repository_permission_file)
+      unless File.exist?(MarkusConfigurator
+                         .markus_config_repository_permission_file)
         # create file if not existent
         File.open(MarkusConfigurator.markus_config_repository_permission_file,
                   'w').close

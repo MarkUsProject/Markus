@@ -363,7 +363,7 @@ module Repository
     # Check if configuration is in order
     config_keys.each do |c|
       if Repository.conf[c.to_sym].nil?
-        raise ConfigurationError.new("get_class: " \
+        raise ConfigurationError.new('get_class: ' \
                                      "Required config '#{c}' not set")
       end
     end
