@@ -36,17 +36,21 @@ module Repository
     def initialize(connect_string)
       # Check if configuration is in order
       if !MarkusConfigurator.markus_config_repository_admin?
-        raise ConfigurationError.new("Init: Required config 'IS_REPOSITORY_ADMIN' not set")
+        raise ConfigurationError.new("Init: Required config " \
+                                     "'IS_REPOSITORY_ADMIN' not set")
       end
       if MarkusConfigurator.markus_config_repository_permission_file.nil?
-        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
+        raise ConfigurationError.new("Required config " \
+                                     "'REPOSITORY_PERMISSION_FILE' not set")
       end
       begin
         super(connect_string) # dummy call to super
       rescue NotImplementedError; end
       @repos_path = connect_string
       @closed = false
-      @repos_auth_file =  MarkusConfigurator.markus_config_repository_permission_file || File.dirname(connect_string) + "/svn_authz"
+      @repos_auth_file = MarkusConfigurator.
+                           markus_config_repository_permission_file 
+                         || File.dirname(connect_string) + '/svn_authz'
       @repos_admin = MarkusConfigurator.markus_config_repository_admin?
       if (SubversionRepository.repository_exists?(@repos_path))
         @repos = Svn::Repos.open(@repos_path)
@@ -561,17 +565,23 @@ module Repository
     def self.__read_in_authz_file
       # Check if configuration is in order
       if !MarkusConfigurator.markus_config_repository_admin?
-        raise NotAuthorityError.new("Unable to read authsz file:  Not in authoritative mode!");
+        raise NotAuthorityError.new('Unable to read authsz file:' \
+                                    'Not in authoritative mode!')
       end
       if MarkusConfigurator.markus_config_repository_permission_file.nil?
-        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
+        raise ConfigurationError.new("Required config " \ 
+                                     "'REPOSITORY_PERMISSION_FILE' not set")
       end
-      if !File.exist?(MarkusConfigurator.markus_config_repository_permission_file)
-        File.open(MarkusConfigurator.markus_config_repository_permission_file, "w").close() # create file if not existent
+      if !File.exist?(MarkusConfigurator.
+                        markus_config_repository_permission_file)
+        # create file if it doesn't exist
+        File.open(MarkusConfigurator.
+                    markus_config_repository_permission_file, "w").close
       end
       # Load up the Permissions:
       file_content = ""
-      File.open(MarkusConfigurator.markus_config_repository_permission_file, "r+") do |auth_file|
+      File.open(MarkusConfigurator.markus_config_repository_permission_file, 
+                'r+') do |auth_file|
         auth_file.flock(File::LOCK_EX)
         file_content = auth_file.read()
         auth_file.flock(File::LOCK_UN) # release lock
@@ -582,20 +592,24 @@ module Repository
     # Semi-private class method
     def self.__write_out_authz_file(authz_file_contents)
       # Check if configuration is in order
-  
       if !MarkusConfigurator.markus_config_repository_admin?
-        raise NotAuthorityError.new("Unable to write authsz file:  Not in authoritative mode!");
+        raise NotAuthorityError.new(
+          "Unable to write authsz file: Not in authoritative mode!")
       end
 
       if MarkusConfigurator.markus_config_repository_permission_file.nil?
-        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
+        raise ConfigurationError.new("Required config " \
+                                     "'REPOSITORY_PERMISSION_FILE' not set")
       end
 
       if !File.exist?(MarkusConfigurator.markus_config_repository_permission_file)
-        File.open(MarkusConfigurator.markus_config_repository_permission_file, "w").close() # create file if not existent
+        # create file if not existent
+        File.open(MarkusConfigurator.markus_config_repository_permission_file, 
+                  'w').close
       end
       result = false
-      File.open(MarkusConfigurator.markus_config_repository_permission_file, "w+") do |auth_file|
+      File.open(MarkusConfigurator.markus_config_repository_permission_file, 
+                'w+') do |auth_file|
         auth_file.flock(File::LOCK_EX)
         # Blast out the string to the file
         result = (auth_file.write(authz_file_contents) == authz_file_contents.length)
