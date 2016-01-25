@@ -35,7 +35,7 @@ module Repository
     # created using SubversionRepository.create(), it it is not yet existent
     def initialize(connect_string)
       # Check if configuration is in order
-      if !MarkusConfigurator.markus_config_repository_admin?
+      unless MarkusConfigurator.markus_config_repository_admin?
         raise ConfigurationError.new("Init: Required config " \
                                      "'IS_REPOSITORY_ADMIN' not set")
       end
@@ -49,8 +49,8 @@ module Repository
       @repos_path = connect_string
       @closed = false
       @repos_auth_file = MarkusConfigurator.
-                           markus_config_repository_permission_file 
-                         || File.dirname(connect_string) + '/svn_authz'
+                           markus_config_repository_permission_file ||
+                         File.dirname(connect_string) + '/svn_authz'
       @repos_admin = MarkusConfigurator.markus_config_repository_admin?
       if (SubversionRepository.repository_exists?(@repos_path))
         @repos = Svn::Repos.open(@repos_path)
@@ -491,7 +491,7 @@ module Repository
     # permissions on a single repository.
     def self.set_bulk_permissions(repo_names, user_id_permissions_map)
       # Check if configuration is in order
-      if !MarkusConfigurator.markus_config_repository_admin?
+      unless MarkusConfigurator.markus_config_repository_admin?
         raise NotAuthorityError.new("Unable to set bulk permissions:  Not in authoritative mode!");
       end
 
@@ -569,7 +569,7 @@ module Repository
                                     'Not in authoritative mode!')
       end
       if MarkusConfigurator.markus_config_repository_permission_file.nil?
-        raise ConfigurationError.new("Required config " \ 
+        raise ConfigurationError.new("Required config " \
                                      "'REPOSITORY_PERMISSION_FILE' not set")
       end
       if !File.exist?(MarkusConfigurator.
@@ -580,12 +580,13 @@ module Repository
       end
       # Load up the Permissions:
       file_content = ""
+      # Hound is complaining about the do block so I'm trying it with braces
       File.open(MarkusConfigurator.markus_config_repository_permission_file, 
-                'r+') do |auth_file|
+                'r+') { |auth_file|
         auth_file.flock(File::LOCK_EX)
         file_content = auth_file.read()
         auth_file.flock(File::LOCK_UN) # release lock
-      end
+      } 
       return file_content
     end
 
