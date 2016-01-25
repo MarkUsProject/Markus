@@ -58,7 +58,7 @@ class MarksGradersController < ApplicationController
         grade_entry_student = student.grade_entry_students.find do |entry|
           entry.grade_entry_form_id == grade_entry_form.id
         end
-        unless grade_entry_student.nil?c8shosta
+        unless grade_entry_student.nil?
           grade_entry_student.tas.order(:user_name).each do |ta|
             student_array.push(ta.user_name)
           end
