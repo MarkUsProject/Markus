@@ -165,11 +165,6 @@ Markus::Application.configure do
   KEY_STORAGE = "#{::Rails.root}/data/prod/keys"
 
   ###################################################################
-  # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
-  # is allowed to write to this directory
-  PDF_STORAGE = "#{::Rails.root.to_s}/data/prod/pdfs"
-
-  ###################################################################
   # Location of the public and private key for the git user on the system
   GITOLITE_SETTINGS = { public_key: '/home/git/vagrant.pub',
                         private_key: '/home/vagrant/.ssh/id_rsa',
@@ -179,11 +174,6 @@ Markus::Application.configure do
   # Directory where the Automated Testing Repositories will be created.
   # Make sure MarkUs is allowed to write to this directory
   AUTOMATED_TESTS_REPOSITORY = "#{::Rails.root.to_s}/data/prod/automated_tests"
-
-  ###################################################################
-  # Set this to true or false if you want to be able to display and annotate
-  # PDF documents within the browser.
-  PDF_SUPPORT = false
 
   ###################################################################
   # Max file size for submissions in Bytes

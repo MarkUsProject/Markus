@@ -53,9 +53,9 @@ gem 'rails-perftest', '~>0.0.2'
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
 # Then install your bundle by:
 #   bundle install --without mysql sqlite
-group :postgresql do
+#group :postgresql do
   gem 'pg'
-end
+#end
 
 # If you are a MarkUs developer and use MySQL, make sure you have
 # MySQL header files installed (e.g. libmysqlclient-dev on Debian/Ubuntu).
