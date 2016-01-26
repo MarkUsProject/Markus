@@ -26,7 +26,7 @@ ImageEventHandler.prototype.init_listeners = function(enable_annotations) {
   }
 
   for (var i = 0; i < annot_grid.length; i++) {
-    var grid_element = document.getElementById('annotation_holder_' + annot_grid[i].id);
+    var grid_element = document.getElementById('annotation_holder_' + annot_grid[i].annot_id);
     grid_element.onmousemove = this.check_for_annotations.bind(this);
 
     if (enable_annotations) {
@@ -88,7 +88,7 @@ ImageEventHandler.prototype.start_select_box = function(e) {
   image_preview.onmousedown = null;
 
   for (var i = 0; i < annot_grid.length; i++) {
-    var grid_element = document.getElementById('annotation_holder_' + annot_grid[i].id);
+    var grid_element = document.getElementById('annotation_holder_' + annot_grid[i].annot_id);
     grid_element.onmousemove = this.mouse_move.bind(this);
     grid_element.onmouseup   = this.stop_select_box.bind(this);
     grid_element.onmousedown = null;
@@ -110,7 +110,7 @@ ImageEventHandler.prototype.stop_select_box = function(e) {
   box.onmouseup   = null;
 
   for (var i = 0; i < annot_grid.length; i++) {
-    var grid_element = document.getElementById('annotation_holder_' + annot_grid[i].id);
+    var grid_element = document.getElementById('annotation_holder_' + annot_grid[i].annot_id);
     grid_element.onmousemove = this.check_for_annotations.bind(this);
     grid_element.onmousedown = this.start_select_box.bind(this);
     grid_element.onmouseup   = null;

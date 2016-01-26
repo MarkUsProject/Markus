@@ -16,7 +16,7 @@ class ImageAnnotation < Annotation
   def extract_coords
     horiz_range = { start: [x1, x2].min, end: [x1, x2].max }
     vert_range = { start: [y1, y2].min, end: [y1, y2].max }
-    { id: annotation_text_id, x_range: horiz_range, y_range: vert_range }
+    { id: annotation_text_id, annot_id: self.id, x_range: horiz_range, y_range: vert_range }
   end
 
   def annotation_list_link_partial

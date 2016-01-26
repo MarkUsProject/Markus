@@ -28,9 +28,10 @@
     this.angle = 0; //current orientation of the PDF
 
     /** @type {<page> : {[id]: {annotation: AnnotationText, coords: Object}} */
-    this.annotations = {};        // Lookup of annotations by page number
-    this.annotationsById = {};    // Lookup of annotations by annotation id
-    this.annotationControls = {}; // DOM elements added for annotations
+    this.annotationsByPageNumber = {};       // Lookup of annotations by page number
+    this.annotationsById = {};               // Lookup of annotations by annotation id
+    this.annotationsByAnnotationTextId = {}; // Lookup of annotations by annotation text id
+    this.annotationControls = {};            // DOM elements added for annotations
 
     /** @type {{page: int, $control: jQuery}} */
     this.selectionBox = {};
@@ -76,7 +77,7 @@
    * @return {{annotation: AnnotationText, coords: Object}[]} Annotation data.
    */
   PdfAnnotationManager.prototype.getPageAnnotations = function(pageNumber) {
-    var pageData = this.annotations[pageNumber];
+    var pageData = this.annotationsByPageNumber[pageNumber];
     if (!pageData) {
       return []; // No annotations on page
     } else {
@@ -360,8 +361,8 @@
    * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
    */
   PdfAnnotationManager.prototype.renderAnnotation = function(annotation, coords) {
-    if (this.annotationControls[annotation.getId()]) {
-      this.annotationControls[annotation.getId()].remove(); // Remove old controls
+    if (this.annotationControls[coords.annot_id]) {
+      this.annotationControls[coords.annot_id].remove(); // Remove old controls
     }
 
     // The coords are in the unrotated form, but the PDF may be in a different 
@@ -425,7 +426,7 @@
       }
     });
 
-    this.annotationControls[annotation.getId()] = $control;
+    this.annotationControls[coords.annot_id] = $control;
 
     $page.append($control);
   }
@@ -438,13 +439,13 @@
    * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
    */
   PdfAnnotationManager.prototype.addAnnotation = function(annotation_text_id, content, coords) {
-    var annotation_text = new AnnotationText(annotation_text_id, 0, content);
-
-    if (this.getAnnotationTextManager().annotationTextExists(annotation_text.getId())) {
-      return;
+    var annotation_text;
+    if (this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
+      annotation_text = this.getAnnotationTextManager().getAnnotationText(annotation_text_id);
+    } else {
+      annotation_text = new AnnotationText(annotation_text_id, 0, content);
+      this.getAnnotationTextManager().addAnnotationText(annotation_text);
     }
-
-    this.getAnnotationTextManager().addAnnotationText(annotation_text);
 
     this.renderAnnotation(annotation_text, coords);
 
@@ -456,31 +457,44 @@
 
     // Stored using multiple lookups so that there is fast rendering
     // and fast deletion.
-    this.annotations[coords.page] = this.annotations[coords.page] || {};
-    this.annotations[coords.page][annotation_text.getId()] = annotationData;
-    this.annotationsById[annotation_text.getId()] = annotationData;
+    this.annotationsByPageNumber[coords.page] = this.annotationsByPageNumber[coords.page] || {};
+    this.annotationsByPageNumber[coords.page][coords.annot_id] = annotationData;
+    this.annotationsById[coords.annot_id] = annotationData;
+    this.annotationsByAnnotationTextId[annotation_text.getId()] = this.annotationsByAnnotationTextId[annotation_text.getId()] || {};
+    this.annotationsByAnnotationTextId[annotation_text.getId()][coords.annot_id] = annotationData;
 
     this.hideSelectionBox();
   }
 
   /**
    * Remove an annotation
-   * @param  {string} annotation_id      Ignored
+   * @param  {string} annotation_id      Annotation ID
    * @param  {Object} range              Ignored
    * @param  {string} annotation_text_id Annotation text id.
    */
   PdfAnnotationManager.prototype.remove_annotation = function(annotation_id, range, annotation_text_id) {
-    var annotationData = this.annotationsById[annotation_text_id];
+    var annotationData = this.annotationsById[annotation_id];
 
     // Remove from rendering lookups
-    delete this.annotations[annotationData.coords.page][annotation_text_id];
-    delete this.annotationsById[annotation_text_id];
+    if (annotationData!=undefined) {
+      delete this.annotationsByPageNumber[annotationData.coords.page][annotation_id];
+      delete this.annotationsById[annotation_id];
+      delete this.annotationsByAnnotationTextId[annotation_text_id][annotation_id];
+      this.annotationControls[annotation_id].remove(); // Delete DOM node
+    }
 
-    this.annotationControls[annotation_text_id].remove(); // Delete DOM node
 
-    if (this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
+    if (this.isObjectEmpty(this.annotationsByAnnotationTextId[annotation_text_id])
+        && this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
       this.getAnnotationTextManager().removeAnnotationText(annotation_text_id);
     }
+  }
+
+  PdfAnnotationManager.prototype.isObjectEmpty = function(obj) {
+    for (var prop in obj) {
+      return false;
+    }
+    return true;
   }
 
   // Exports

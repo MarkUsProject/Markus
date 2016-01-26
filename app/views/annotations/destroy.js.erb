@@ -4,7 +4,7 @@
                        end: '<%= @annotation.line_end %>' },
                      '<%= @annotation.annotation_text.id %>');
 <% elsif @annotation.is_a?(ImageAnnotation) || @annotation.is_a?(PdfAnnotation) %>
-  remove_annotation(null, null, '<%= @annotation.annotation_text_id %>');
+  remove_annotation('<%= @annotation.id %>', null, '<%= @annotation.annotation_text_id %>');
 <% end %>
 
 document.getElementById('annotation_summary_list').innerHTML =
