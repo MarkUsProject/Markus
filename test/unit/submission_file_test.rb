@@ -237,18 +237,18 @@ require 'shoulda'
       context 'with valid annotations' do
         setup do
           @annot1 = ImageAnnotation.make({:submission_file => @submissionfile,
-            :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10,
+            :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10, :id => 3,
             :annotation_text => AnnotationText.make({:id => 1})})
           @annot2 = ImageAnnotation.make({:submission_file => @submissionfile,
-            :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100,
+            :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100, :id => 4,
             :annotation_text => AnnotationText.make({:id => 2})})
         end
         should 'return a corresponding array' do
           @submissionfile.annotations.push(@annot1)
           @submissionfile.annotations.push(@annot2)
-          assert_equal [{:id => 1, :x_range => {:start => 0, :end => 10},
+          assert_equal [{:id => 1, :annot_id => 3, :x_range => {:start => 0, :end => 10},
               :y_range => {:start => 0, :end => 10}},
-            {:id => 2, :x_range => {:start => 57, :end => 73},
+            {:id => 2, :annot_id => 4, :x_range => {:start => 57, :end => 73},
               :y_range => {:start => 2, :end => 100}}],
             @submissionfile.get_annotation_grid.sort { |x,y| x[:id] <=> y[:id]}
         end
@@ -268,18 +268,18 @@ require 'shoulda'
       context 'with valid annotations' do
         setup do
           @annot1 = ImageAnnotation.make({:submission_file => @submissionfile,
-            :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10,
+            :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10, :id => 3,
             :annotation_text => AnnotationText.make({:id => 1})})
           @annot2 = ImageAnnotation.make({:submission_file => @submissionfile,
-            :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100,
+            :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100, :id => 4,
             :annotation_text => AnnotationText.make({:id => 2})})
         end
         should 'return a corresponding array' do
           @submissionfile.annotations.push(@annot1)
           @submissionfile.annotations.push(@annot2)
-          assert_equal [{:id => 1, :x_range => {:start => 0, :end => 10},
+          assert_equal [{:id => 1, :annot_id => 3, :x_range => {:start => 0, :end => 10},
               :y_range => {:start => 0, :end => 10}},
-            {:id => 2, :x_range => {:start => 57, :end => 73},
+            {:id => 2, :annot_id => 4, :x_range => {:start => 57, :end => 73},
               :y_range => {:start => 2, :end => 100}}],
             @submissionfile.get_annotation_grid.sort { |x,y| x[:id] <=> y[:id]}
         end
