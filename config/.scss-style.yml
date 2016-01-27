@@ -110,6 +110,7 @@ linters:
     enabled: true
   StringQuotes:
     enabled: true
+    style: single_quotes
   TrailingSemicolon:
     enabled: true
   TrailingWhitespace:

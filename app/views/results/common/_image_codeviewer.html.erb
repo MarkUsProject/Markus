@@ -1,7 +1,7 @@
 <div id='image_container' class='image_container'>
   <% # Create a box for each image annotation %>
   <% @annots.each do |annot| %>
-    <div id='annotation_holder_<%= annot.annotation_text.id %>' class='annotation_holder'></div>
+    <div id='annotation_holder_<%= annot.id %>' class='annotation_holder'></div>
   <% end %>
 
   <img id='image_preview'

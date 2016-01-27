@@ -182,7 +182,7 @@ class SubmissionsController < ApplicationController
                                               @path, @grouping.id)
       render json: files_info + directories_info
     else
-      return []
+      render json: []
     end
   end
 

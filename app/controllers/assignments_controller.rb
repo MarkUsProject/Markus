@@ -180,15 +180,15 @@ class AssignmentsController < ApplicationController
         end
       end
 
-      render :student_assignment_list
+      render :student_assignment_list, layout: 'assignment_content'
     elsif current_user.ta?
       @grade_entry_forms = GradeEntryForm.order(:id)
       @assignments = Assignment.includes(:submission_rule).order(:id)
-      render :grader_index
+      render :grader_index, layout: 'assignment_content'
     else
       @grade_entry_forms = GradeEntryForm.order(:id)
       @assignments = Assignment.includes(:submission_rule).order(:id)
-      render :index
+      render :index, layout: 'assignment_content'
     end
   end
 
