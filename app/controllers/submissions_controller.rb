@@ -591,7 +591,8 @@ class SubmissionsController < ApplicationController
       return
     end
 
-    groupings = Grouping.where(id: grouping_ids).includes(:group,
+    groupings = Grouping.where(id: grouping_ids)
+                        .includes(:group,
                 current_submission_used: {
                   submission_files: {
                     submission: { grouping: :group }
