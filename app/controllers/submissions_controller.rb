@@ -513,7 +513,6 @@ class SubmissionsController < ApplicationController
   # Download all files from all groupings in a .zip file.
   ##
   def download_groupings_files
-
     assignment = Assignment.find(params[:assignment_id])
 
     ## create the zip name with the user name to have less chance to delete
@@ -584,7 +583,6 @@ class SubmissionsController < ApplicationController
   # Check the status of collection for all groupings
   ##
   def check_collect_status
-
     grouping_ids = params[:groupings]
 
     ## if there is no grouping, render a message
@@ -602,13 +600,7 @@ class SubmissionsController < ApplicationController
                 })
 
     ## check collection is completed for all groupings
-    all_groupings_collected = true
-    groupings.each do |g|
-      unless g.is_collected?
-        all_groupings_collected = false
-        break
-      end
-    end
+    all_groupings_collected = groupings.all?{ |g| g.is_collected? }
     render json: { collect_status: all_groupings_collected }
   end
 
