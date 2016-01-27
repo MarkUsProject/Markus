@@ -591,8 +591,7 @@ class SubmissionsController < ApplicationController
       return
     end
 
-    groupings = Grouping.where(id: grouping_ids)
-      .includes(:group,
+    groupings = Grouping.where(id: grouping_ids).includes(:group,
                 current_submission_used: {
                   submission_files: {
                     submission: { grouping: :group }
@@ -600,7 +599,7 @@ class SubmissionsController < ApplicationController
                 })
 
     ## check collection is completed for all groupings
-    all_groupings_collected = groupings.all?{ |g| g.is_collected? }
+    all_groupings_collected = groupings.all?(&:is_collected?)
     render json: { collect_status: all_groupings_collected }
   end
 
