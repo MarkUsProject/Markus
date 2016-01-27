@@ -5,7 +5,7 @@ namespace :db do
     puts 'Assign Groups/Students for Assignments'
     students = Student.all
     Assignment.all.each do |assignment|
-      15.times do |time|
+      5.times do |time|
         student = students[time]
         if assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3'
           group = Group.create(
@@ -28,7 +28,7 @@ namespace :db do
             )
           (0..1).each do |count|
             grouping.invite(
-              [students[time + count * 15].user_name],
+              [students[time + count * 5].user_name],
               StudentMembership::STATUSES[:inviter],
               invoked_by_admin = true)
           end
