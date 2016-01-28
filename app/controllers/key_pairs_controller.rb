@@ -62,8 +62,8 @@ class KeyPairsController < ApplicationController
   end
 
   def write_key(file_content, time_stamp)
-    File.open(Rails.root.join(KEY_STORAGE, @current_user.user_name + '@' +
-                                             time_stamp + '.pub'), 'wb') do |f|
+    File.open(Rails.root.join(KEY_STORAGE, @current_user.user_name +
+                                           "@#{time_stamp}.pub"), 'wb') do |f|
       f.write(file_content)
     end
   end
@@ -114,30 +114,24 @@ class KeyPairsController < ApplicationController
     time_stamp = Time.now.to_i.to_s
 
     public_key_content = ''
-
+    # If user uploads the public key as a file then that takes precedence over
+    # the key_string
     if !key_pair_params[:file]
-      # Dump the string into the file
+      # Get key from key_string param
       public_key_content = key_pair_params[:key_string]
     else
+      # Get key from file contents
       public_key_content = key_pair_params[:file].read
     end
 
-    # If user uploads the public key as a file then that takes precedence over
-    # the key string
-    if !key_pair_params[:file]
-      # Create a .pub file on the file system
-      upload_key_file(public_key_content, time_stamp)
-    else
-      # Upload the file
-      upload_key_file(public_key_content, time_stamp)
-    end
+    # Upload the file
+    upload_key_file(public_key_content, time_stamp)
 
     # Save the record
-    @key_pair = KeyPair.new(
-      key_pair_params.merge(user_name: @current_user.user_name,
-                            user_id: @current_user.id,
+    @key_pair = KeyPair.new(user_name: @current_user.user_name,
+                            user_id:   @current_user.id,
                             file_name: @current_user.user_name +
-                                '@' + time_stamp + '.pub'))
+                                         "@#{time_stamp}.pub")
 
     respond_to do |format|
       if @key_pair.save
