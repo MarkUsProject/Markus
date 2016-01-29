@@ -60,9 +60,7 @@ class SectionsController < ApplicationController
       if @section.has_students?
         flash[:error] = I18n.t('section.delete.not_empty')
       else
-        @section.section_due_dates.each do |section_due_date|
-          section_due_date.destroy
-        end
+        @section.section_due_dates.each &:destroy
         @section.destroy
         flash[:success] = I18n.t('section.delete.success')
       end
