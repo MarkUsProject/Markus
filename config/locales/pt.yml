@@ -138,6 +138,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       no_submission_for_section: "Não há submissões da sessão %{section_name} para coletar."
       successfully_collected: " %{collected} submissões coletadas com sucesso."
       marking_incomplete_warning: "Nota: Isso só vai baixar os submissões que foram recolhidos.\n\nTem certeza que deseja continuar?"
+      collection_incomplete_warning: "Coleção ainda está em andamento. Você ainda deseja continuar? Algumas apresentações podem estar ausentes."
+      check_collection_status_error: "Houve um erro ao verificar o status da conexão."
     assignment:
         hidden: "%{assignment_text} (oculto)"
         assignment: "Projetos %{short_identifier}"
