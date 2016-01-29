@@ -2,6 +2,10 @@
 <meta http-equiv='X-UA-Compatible' content='IE=Edge'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <%= csrf_meta_tags %>
-<%= stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Open+Sans:400,300,600', params[:controller], media: 'all' %>
+
+<%= stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Open+Sans:400,300,600',
+    'styles.css', params[:controller], media: 'all' %>
+
 <%= favicon_link_tag 'favicon.ico' %>
+
 <%= javascript_tag "const AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery?%>
