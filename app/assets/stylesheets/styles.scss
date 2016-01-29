@@ -1,9 +1,10 @@
 @charset "UTF-8";
 
+@import 'vendor/normalize';
+
 @import 'utils/variables';
 @import 'utils/mixins';
 
-@import 'core/reset';
 @import 'core/core';
 
 @import 'components/columns';
