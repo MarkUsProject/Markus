@@ -137,6 +137,8 @@ en:
       no_submission_for_section: "There isn't any submission to collect for section %{section_name}."
       successfully_collected: "Successfully collected %{collected} submissions."
       marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
+      collection_incomplete_warning: "Collection is still in progress. Do you still want to proceed? Some submissions might be missing."
+      check_collection_status_error: "There was an error checking collection status."
     assignment:
         hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
