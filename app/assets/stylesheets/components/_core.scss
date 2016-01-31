@@ -65,7 +65,7 @@ label.required::after {
 
   @include breakpoint(mobile) {
     margin-top: 3.5em;
-    padding: $dimen-vertical $dimen-hor-mobile;
+    padding: $dimen-vertical $dimen-horizontal-mobile;
   }
 }
 

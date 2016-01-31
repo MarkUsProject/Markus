@@ -1,12 +1,14 @@
 @charset "UTF-8";
 
+// CSS reset
 @import 'vendor/normalize';
 
+// Core
 @import 'utils/variables';
 @import 'utils/mixins';
-
 @import 'core/core';
 
+// Components
 @import 'components/columns';
 @import 'components/core';
 @import 'components/login';
