@@ -33,7 +33,7 @@ class MarksGradersController < ApplicationController
       flash[:error] = I18n.t('csv.student_to_grader')
     else
       errors = MarkusCSV.parse(params[:grader_mapping].read,
-                               encoding: params[:encoding]) do |row|
+           encoding: params[:encoding]) do |row|
         raise CSVInvalidLineError if row.empty?
         grade_entry_student =
             GradeEntryStudent.joins(:user)
