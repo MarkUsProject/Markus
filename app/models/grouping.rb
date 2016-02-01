@@ -650,15 +650,20 @@ class Grouping < ActiveRecord::Base
                 .select { |m| m.grouping.is_valid? }
                 .map &:grouping
     else
-      assignment.groupings
-                .includes(:assignment,
-                          :group,
-                          :grace_period_deductions,
-                          { current_submission_used: [:results] },
-                          { accepted_student_memberships: :user },
-                          { inviter: :section },
-                          :tags)
-                .select { |g| g.non_rejected_student_memberships.size > 0 }
+      Grouping.joins(:memberships)
+              .includes(:assignment,
+                        :group,
+                        :grace_period_deductions,
+                        { current_submission_used: [:results] },
+                        { accepted_student_memberships: :user },
+                        { inviter: :section },
+                        :tags)
+              .where(assignment_id: assignment.id)
+              .where(memberships: { membership_status:
+                                   [StudentMembership::STATUSES[:inviter],
+                                    StudentMembership::STATUSES[:pending],
+                                    StudentMembership::STATUSES[:accepted]] })
+              .distinct
     end
   end
 

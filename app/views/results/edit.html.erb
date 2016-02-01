@@ -190,7 +190,7 @@
                locals: { extra_marks_points: @extra_marks_points,
                          extra_marks_percentage: @extra_marks_percentage,
                          annotation_categories:
-                           @assignment.annotation_categories,
+                           @assignment.annotation_categories.includes(:annotation_texts),
                          result: @result,
                          assignment: @assignment,
                          marks_map: @marks_map,
