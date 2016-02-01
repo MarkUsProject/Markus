@@ -20,7 +20,7 @@ describe GradeEntryFormsController do
   context 'CSV_Uploads' do
     before :each do
       @file_without_extension =
-        fixture_file_upload('files/empty_file','text/xml')
+        fixture_file_upload('files/empty_file', 'text/xml')
       @file_wrong_format =
         fixture_file_upload(
           'files/wrong_csv_format.xls', 'text/xls')
