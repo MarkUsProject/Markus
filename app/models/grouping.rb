@@ -662,7 +662,8 @@ class Grouping < ActiveRecord::Base
               .where(memberships: { membership_status:
                                    [StudentMembership::STATUSES[:inviter],
                                     StudentMembership::STATUSES[:pending],
-                                    StudentMembership::STATUSES[:accepted]]}).distinct
+                                    StudentMembership::STATUSES[:accepted]] })
+              .distinct
     end
   end
 
