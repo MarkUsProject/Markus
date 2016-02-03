@@ -1,9 +1,71 @@
-/**
- * Header, main menu, sub menu, sub_sub menu, and footer.
- */
+// Navigation menus
+
+nav {
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      border-radius: $radius $radius 0 0;
+      display: inline-block;
+      text-align: center;
+      vertical-align: bottom;
+
+      a {
+        border-radius: $radius $radius 0 0;
+        display: block;
+        height: 3em;
+        line-height: 3em;
+        min-width: 11em;
+        padding: 0 1em;
+      }
+    }
+  }
+
+  ul.main,
+  ul.sub_sub {
+    border-bottom: 2px solid $blue;
+
+    li:hover,
+    .active {
+      background-color: $blue;
+      color: $white;
+      transition: background-color $time-quick;
+
+      a {
+        color: $white;
+      }
+    }
+  }
+
+  ul.sub {
+    background-color: $blue;
+    border-bottom: 2px solid $white;
+    min-height: 3em;
+
+    li:hover,
+    .active {
+      background-color: $white;
+      color: $dark-blue;
+      transition: background-color $time-quick;
+
+      a {
+        color: $dark-blue;
+      }
+    }
+
+    a {
+      color: $white;
+    }
+  }
+
+  ul.sub_sub {
+    background-color: $white;
+  }
+}
 
 
-/* Header */
+// Header
 
 header#header {
   border-bottom: 1px solid $blue;
@@ -30,7 +92,7 @@ header#header {
 }
 
 
-/* Menus */
+// Menus
 
 nav {
   .main {
@@ -81,7 +143,7 @@ nav {
 }
 
 
-/* Footer */
+// Footer
 
 footer {
   color: $dark-grey;
@@ -131,47 +193,7 @@ footer {
 }
 
 
-/* Working indicator */
-
-#working {
-  background: $blue;
-  border: 1px solid $dark-blue;
-  border-radius: $radius;
-  box-shadow: 0 0 5px 0 $light-blue;
-  color: $white;
-  font-size: 1.25em;
-  font-weight: 600;
-  left: 50%;
-  margin-left: -7.5em;
-  padding: 0.5em;
-  position: fixed;
-  text-align: center;
-  top: 1.5em;
-  width: 15em;
-  z-index: 99999;
-
-  #ellipsis {
-    display: inline-block;
-    text-align: left;
-    width: 1em;
-
-    &::after {
-      animation: ellipsis $time-quick infinite;
-      content: "\2026";
-      display: inline-block;
-      overflow: hidden;
-      vertical-align: bottom;
-    }
-  }
-}
-
-@keyframes ellipsis {
-  from { width: 2px; }
-  to   { width: 1em; }
-}
-
-
-/* Mobile friendly menu */
+// Mobile friendly menu
 
 #mobile_menu,
 #content {
@@ -348,7 +370,7 @@ footer {
 }
 
 
-/* Header */
+// Header
 
 #header {
   @include breakpoint(mobile) {

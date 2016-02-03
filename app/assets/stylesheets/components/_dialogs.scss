@@ -1,0 +1,89 @@
+// Modal dialogs
+
+.dialog {
+  background: $white;
+  border-radius: $radius;
+  box-shadow: 0 0 10px $grey;
+  max-width: 100%;
+  padding: 2.5em 1.5em;
+  z-index: 100000;
+
+  .dialog-actions {
+    text-align: center;
+    margin-top: 1.5em;
+
+    button {
+      margin: 0.5em;
+    }
+
+    div,
+    input {
+      display: inline-block;
+    }
+  }
+}
+
+#notes_dialog {
+  max-height: 75%;
+
+  h3 {
+    margin-top: 0;
+  }
+
+  .notes_existing,
+  .notes_new {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .notes_existing {
+    margin-right: 1em;
+    width: 250px;
+
+    .notes_existing_list {
+      border: 1px solid $grey;
+      border-radius: $radius;
+      height: 300px;
+      overflow: auto;
+      word-wrap: break-word;
+
+      .note {
+        padding: 0.25em;
+
+        p {
+          margin: 0;
+        }
+
+        & + .note {
+          margin-top: 1em;
+        }
+      }
+    }
+  }
+}
+
+#about_dialog {
+  width: 50%;
+  max-height: 75%;
+
+  #about_text {
+    max-height: 200px;
+    overflow: auto;
+  }
+}
+
+#role_switch_dialog {
+  input[type='text'],
+  input[type='password'] {
+    margin-top: 1em;
+    padding: 0.5em 0.75em;
+    width: 100%;
+  }
+}
+
+#add_new_section_dialog {
+  h2 {
+    margin-bottom: 1em;
+    margin-top: 0;
+  }
+}

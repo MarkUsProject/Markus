@@ -9,9 +9,20 @@
 @import 'core/core';
 
 // Components
+@import 'components/alerts';
 @import 'components/columns';
-@import 'components/core';
+@import 'components/datepicker';
+@import 'components/dialogs';
+@import 'components/dropdown';
+@import 'components/form';
+@import 'components/grid';
+@import 'components/help';
+@import 'components/loading';
 @import 'components/login';
 @import 'components/navigation';
-@import 'components/notes_dialog';
+@import 'components/sortable';
+@import 'components/table';
+@import 'components/tabs';
 @import 'components/tags';
+@import 'components/text';
+@import 'components/title';

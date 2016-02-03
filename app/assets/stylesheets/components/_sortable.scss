@@ -1,0 +1,44 @@
+// Sortable lists
+
+.sortable {
+  background: $white;
+  border: 1px solid $grey;
+  border-radius: $radius;
+  user-select: none;
+
+  header {
+    border-bottom: 1px solid $grey;
+    border-radius: $radius $radius 0 0;
+    font-weight: 600;
+    padding: 0.5em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .right {
+    float: right;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      background: url(handle@2x.png) 0.5em center no-repeat;
+      background-size: 12px 20px;
+      border-top: 1px solid $grey;
+      list-style: none;
+      min-height: 2.5em;
+      padding: 0.5em 0.5em 0.5em 2em;
+      transition: background-color $time-quick;
+
+      &:hover {
+        background-color: $lighter-blue;
+      }
+
+      &:last-child {
+        border-radius: 0 0 $radius $radius;
+      }
+    }
+  }
+}
