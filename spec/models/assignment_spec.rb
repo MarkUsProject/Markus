@@ -597,6 +597,7 @@ describe Assignment do
 
       context 'and the group does not exist' do
         it 'adds a Group and an associated Grouping' do
+          @row[1] = 'repo_name_1'
           @assignment.add_csv_group(@row)
           group = Group.where(group_name: @row[0])
           grouping = group ? group.first.groupings : nil
@@ -623,6 +624,7 @@ describe Assignment do
         end
 
         it 'adds a Grouping to the existing Group' do
+          @row[1] = @existing_group.repo_name
           @assignment.add_csv_group(@row)
           expect(Grouping.first.group).to eq @existing_group
         end
@@ -1089,6 +1091,7 @@ describe Assignment do
           if grouping && grouping.has_submission?
             result = grouping.current_submission_used.get_latest_result
             fields.push(result.total_mark / @assignment.total_mark * 100)
+            fields.push(result.total_mark)
             @assignment.rubric_criteria.each do |criterion|
               mark = result.marks
                 .find_by_markable_id_and_markable_type(criterion.id,
@@ -1150,6 +1153,7 @@ describe Assignment do
           if grouping && grouping.has_submission?
             result = grouping.current_submission_used.get_latest_result
             fields.push(result.total_mark / @assignment.total_mark * 100)
+            fields.push(result.total_mark)
             @assignment.flexible_criteria.each do |criterion|
               mark = result.marks
                 .find_by_markable_id_and_markable_type(criterion.id,

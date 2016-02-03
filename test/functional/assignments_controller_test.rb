@@ -546,7 +546,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                 :file_format => 'csv'
         assert_response :redirect
         assert_redirected_to(:controller => 'assignments', :action => 'index')
-        assert_equal flash[:success], I18n.t('assignment.create_success')
+        assert_equal flash[:success], [I18n.t('assignment.create_success')]
         assert_equal flash[:error], nil
         test1 = Assignment.find_by_short_identifier('ATest1')
         assert_not_nil test1
@@ -598,7 +598,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+                     [I18n.t('csv.upload.non_text_file_with_csv_extension')]
       end
     end
 

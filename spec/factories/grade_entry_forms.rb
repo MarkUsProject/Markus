@@ -10,7 +10,6 @@ FactoryGirl.define do
     date { Time.now }
     is_hidden false
     after(:create) do |grade_entry_form_with_data|
-      create(:grade_entry_student, grade_entry_form: grade_entry_form_with_data)
       create(:grade_entry_item, grade_entry_form: grade_entry_form_with_data)
     end
   end
