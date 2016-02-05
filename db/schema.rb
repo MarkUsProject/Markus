@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160116172051) do
+ActiveRecord::Schema.define(version: 20160202040552) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,7 +90,7 @@ ActiveRecord::Schema.define(version: 20160116172051) do
     t.boolean  "allow_web_submits",                default: true
     t.boolean  "section_groups_only"
     t.boolean  "section_due_dates_type",           default: false
-    t.boolean  "display_grader_names_to_students"
+    t.boolean  "display_grader_names_to_students", default: false
     t.boolean  "enable_test",                      default: false,    null: false
     t.integer  "notes_count",                      default: 0
     t.boolean  "assign_graders_to_criteria",       default: false
@@ -107,7 +107,7 @@ ActiveRecord::Schema.define(version: 20160116172051) do
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                        default: false
     t.boolean  "only_required_files"
-    t.boolean  "vcs_submit"
+    t.boolean  "vcs_submit",                       default: false
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
