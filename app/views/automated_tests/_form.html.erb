@@ -51,11 +51,21 @@
   </fieldset>
 
   <fieldset>
+
     <legend><%= t("automated_tests.assignment_test_support_files") %></legend>
+    <p>
+      <%= button_tag t('marker.marks.expand_all'),
+                     onclick: "change_all('expand');" %>
+      <%= button_tag t('marker.marks.collapse_all'),
+                     onclick: "change_all('collapse');" %>
+    </p>
+    <p><%= raw t("assignment.required_fields") %></p>
+
+
     <div class="wrapLeft">
       <div id="test_support_files">
-      <%= f.object.test_support_files.each do |tsf| %>
-        <%= render :partial => 'test_support_file_upload', :locals => {:test_support_file => tsf, :form => f } %>
+      <% @assignment.test_support_files.each do |tsf| %>
+              <%= render partial: 'test_support_file_upload', locals: {test_support_file: tsf, form: f} %>
       <% end %>
       </div>
     </div>

@@ -8,7 +8,6 @@
 
 <%= form.fields_for :test_scripts, test_script do |f| %>
 <% saved = !f.object.new_record? %>
-<% hide = saved ? 'style="display:none;"' : '' %>
 
 <div class="dragarrows">↕</div>
 
@@ -50,7 +49,7 @@
       <%= raw maxmarks_section %>
     <% end %>
 
-    <div <%= raw hide %>>
+    <div>
       <%= f.label :display_settings, t('automated_tests.script_option.display_settings') %> <br/>
       <ul>
         <li>
@@ -86,11 +85,12 @@
       <%= raw maxmarks_section %>
     <% end %>
 
-    <div <%= raw hide %>>
+    <div>
       <%= f.label :script_name, (saved ? t('automated_tests.replace') : t('automated_tests.upload_required').html_safe) %>
       <%= file_field_tag :new_script, :size=>"30", :class => 'upload_file' %><br/>
 
       <% if saved %>
+
         <span class="label">
           <%= link_to(t(:download),
                       :action => 'download',

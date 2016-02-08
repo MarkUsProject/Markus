@@ -31,7 +31,7 @@ module AutomatedTestsHelper
 
   # Process Testing Framework form
   # - Process new and updated test files (additional validation to be done at the model level)
-  def process_test_form(assignment, params, new_script)
+  def process_test_form(assignment, params, new_script, new_support_file)
 
     updated_script_files = {}
     updated_support_files = {}
@@ -60,25 +60,27 @@ module AutomatedTestsHelper
         # Edit existing test script file
         updated_script_files[file_num] = file.clone
       end
-
     end
 
     # Create/Update test support files
     # Ignore editing files for now
     testsupporters.each do |file_num, file|
       # Empty file submission, skip
-      next if testsupporters[file_num][:file_name].nil?
+      next if testsupporters[file_num][:file_name].nil? && new_support_file.nil?
 
-      updated_support_files[file_num] = {} || []
-      filename = testsupporters[file_num][:file_name].original_filename
-
-      # Create test support file if it does not exist
-      if TestSupportFile.exists?(file_name: filename, assignment: assignment)
-        raise I18n.t('automated_tests.duplicate_filename') + filename
+      if testsupporters[file_num][:file_name].nil?
+        updated_support_files[file_num] = {} || []
+        filename = new_support_file.original_filename
+        # Create test support file if it does not exist
+        if TestSupportFile.exists?(file_name: filename, assignment: assignment)
+          raise I18n.t('automated_tests.duplicate_filename') + filename
+        else
+          updated_support_files[file_num] = file.clone
+          # Override filename from form
+          updated_support_files[file_num][:file_name] = filename
+        end
       else
-        updated_support_files[file_num] = file.clone
-        # Override filename from form
-        updated_support_files[file_num][:file_name] = filename
+          updated_support_files[file_num] = file.clone
       end
     end
 
