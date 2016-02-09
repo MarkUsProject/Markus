@@ -1,0 +1,46 @@
+                  List of relations
+ Schema |           Name            | Type  | Owner  
+--------+---------------------------+-------+--------
+ public | annotation_categories     | table | markus
+ public | annotation_texts          | table | markus
+ public | annotations               | table | markus
+ public | assignment_files          | table | markus
+ public | assignment_stats          | table | markus
+ public | assignments               | table | markus
+ public | criterion_ta_associations | table | markus
+ public | extra_marks               | table | markus
+ public | flexible_criteria         | table | markus
+ public | grace_period_deductions   | table | markus
+ public | grade_entry_forms         | table | markus
+ public | grade_entry_items         | table | markus
+ public | grade_entry_students      | table | markus
+ public | grade_entry_students_tas  | table | markus
+ public | grades                    | table | markus
+ public | grouping_queues           | table | markus
+ public | groupings                 | table | markus
+ public | groupings_tags            | table | markus
+ public | groups                    | table | markus
+ public | key_pairs                 | table | markus
+ public | marking_schemes           | table | markus
+ public | marking_weights           | table | markus
+ public | marks                     | table | markus
+ public | memberships               | table | markus
+ public | notes                     | table | markus
+ public | periods                   | table | markus
+ public | results                   | table | markus
+ public | rubric_criteria           | table | markus
+ public | schema_migrations         | table | markus
+ public | section_due_dates         | table | markus
+ public | sections                  | table | markus
+ public | sessions                  | table | markus
+ public | submission_collectors     | table | markus
+ public | submission_files          | table | markus
+ public | submission_rules          | table | markus
+ public | submissions               | table | markus
+ public | tags                      | table | markus
+ public | test_files                | table | markus
+ public | test_results              | table | markus
+ public | tokens                    | table | markus
+ public | users                     | table | markus
+(41 rows)
+
