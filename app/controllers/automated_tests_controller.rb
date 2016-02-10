@@ -61,7 +61,7 @@ class AutomatedTestsController < ApplicationController
             @assignment.repository_folder,
             new_support_file.original_filename)
           File.open(
-          assignment_tests_path, 'w') { |f| f.write new_support_file.read }
+            assignment_tests_path, 'w') { |f| f.write new_support_file.read }
         end
         redirect_to :action => 'manage',
                     :assignment_id => params[:assignment_id]
