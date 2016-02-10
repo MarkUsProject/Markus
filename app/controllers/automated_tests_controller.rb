@@ -60,8 +60,8 @@ class AutomatedTestsController < ApplicationController
             MarkusConfigurator.markus_config_automated_tests_repository,
             @assignment.repository_folder,
             new_support_file.original_filename)
-          File.open(assignment_tests_path, 'w'){ 
-	  |f| f.write new_support_file.read }
+          File.open(assignment_tests_path, 'w') 
+          { |f| f.write new_support_file.read }
         end
         redirect_to :action => 'manage',
                     :assignment_id => params[:assignment_id]
@@ -186,8 +186,8 @@ class AutomatedTestsController < ApplicationController
                      :max_marks, :run_on_submission, :run_on_request,
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,
-                     :display_expected_output,:display_actual_output,
-		     :_destroy],
+                     :display_expected_output, :display_actual_output,
+                     :_destroy],
                 test_support_files_attributes:
                     [:id, :file_name, :assignment_id, :description, :_destroy])
   end
