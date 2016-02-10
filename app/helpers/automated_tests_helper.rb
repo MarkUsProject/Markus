@@ -80,7 +80,7 @@ module AutomatedTestsHelper
           updated_support_files[file_num][:file_name] = filename
         end
       else
-          updated_support_files[file_num] = file.clone
+        updated_support_files[file_num] = file.clone
       end
     end
 
