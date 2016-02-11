@@ -27,7 +27,7 @@ module Repository
 
     # Constructor: Connects to an existing Git
     # repository, using Ruby bindings; Note: A repository has to be
-    # created using GitRespository.create(), it it is not yet existent
+    # created using GitRespository.create(), if it is not yet existent
     def initialize(connect_string)
       # Check if configuration is in order
       if MarkusConfigurator.markus_config_repository_admin?.nil?
@@ -110,24 +110,9 @@ module Repository
       cloned_repo = Git.clone(
         'git@localhost:' + repo_name, MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
 
-      repo = Rugged::Repository.discover(MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
-
       # Lets make some sample files and the new master branch
       cloned_repo.reset
       cloned_repo.branch('master')
-
-      # Create the README.md on the filesystem
-      file_path_for_readme = File.join(repo.workdir, 'README.md')
-      File.open(file_path_for_readme, 'w+') do |readme|
-        readme.write('Initial commit.')
-      end
-
-      cloned_repo.add(all: true)
-
-      cloned_repo.commit_all('Initial commit.')
-      cloned_repo.push
-
-      # Finished cloning repo
 
       repo = Rugged::Repository.discover(MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
 

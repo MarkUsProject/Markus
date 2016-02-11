@@ -74,6 +74,7 @@ class Assignment < ActiveRecord::Base
   validates_presence_of :notes_count
   # "validates_presence_of" for boolean values.
   validates_inclusion_of :allow_web_submits, in: [true, false]
+  validates_inclusion_of :vcs_submit, in: [true, false]
   validates_inclusion_of :display_grader_names_to_students, in: [true, false]
   validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :enable_test, in: [true, false]
