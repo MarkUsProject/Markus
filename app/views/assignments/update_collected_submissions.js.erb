@@ -1,5 +1,5 @@
 <% @assignments.each do |assignment| %>
-  <% if assignment.submission_rule.can_collect_now? %>
+  <% if assignment.submission_rule.can_collect_all_now? %>
     jQuery("#collected_submissions_<%= assignment.short_identifier %>").html(
            " | <%= link_to(t('submissions_collected',
                               count: assignment.groupings

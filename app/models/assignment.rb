@@ -196,8 +196,12 @@ class Assignment < ActiveRecord::Base
     due_dates.compact.max
   end
 
-  def past_collection_date?
-    Time.zone.now > submission_rule.calculate_collection_time
+  def past_collection_date?(section=nil)
+    Time.zone.now > submission_rule.calculate_collection_time(section)
+  end
+
+  def past_all_collection_dates?
+    Time.zone.now > latest_due_date
   end
 
   def past_remark_due_date?

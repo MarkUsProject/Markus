@@ -13,8 +13,10 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
   # This message will be dislayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.
   def overtime_message(grouping)
+    # We need to know the section, in case there is a section due date
+    section = grouping.inviter.section
     # How far are we into overtime?
-    overtime_hours = calculate_overtime_hours_from(Time.zone.now)
+    overtime_hours = calculate_overtime_hours_from(Time.zone.now, section)
     # Calculate the penalty that the grouping will suffer
     potential_penalty = calculate_penalty(overtime_hours)
 
@@ -28,10 +30,12 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
   end
 
   def apply_submission_rule(submission)
+    # We need to know the section, in case there is a section due date
+    section = submission.grouping.inviter.section
     # Calculate the appropriate penalty, and attach the ExtraMark to the
     # submission Result
     result = submission.get_original_result
-    overtime_hours = calculate_overtime_hours_from(submission.revision_timestamp)
+    overtime_hours = calculate_overtime_hours_from(submission.revision_timestamp, section)
     penalty_amount = calculate_penalty(overtime_hours)
     if penalty_amount > 0
       penalty = ExtraMark.new

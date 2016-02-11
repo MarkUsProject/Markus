@@ -58,7 +58,7 @@
 
               <td>
                 <span id='collected_submissions_<%= assignment.short_identifier %>'>
-                  <% if assignment.submission_rule.can_collect_now? %>
+                  <% if assignment.submission_rule.can_collect_all_now? %>
                     <%= link_to t('submissions_collected',
                                   count: assignment.groupings
                                                    .where(is_collected: true)
@@ -75,7 +75,7 @@
                           results_average: assignment.results_average) %>
                   <% end %>
                 </span>
-                <% if assignment.submission_rule.can_collect_now? %>
+                <% if assignment.submission_rule.can_collect_all_now? %>
                   <br>
                   <span id='ta_marked__<%= assignment.short_identifier %>'>
                     <% if @current_user.admin? %>

@@ -65,7 +65,7 @@
     <div class='success'><%= flash[:success] %></div>
   <% end %>
 
-  <% if @assignment.submission_rule.can_collect_now? &&
+  <% if @assignment.submission_rule.can_collect_now?(@grouping.inviter.section) &&
         flash[:commit_notice] != @assignment.submission_rule.commit_after_collection_message %>
     <div class='warning'>
       <%= @assignment.submission_rule.after_collection_message %>
