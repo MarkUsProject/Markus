@@ -605,6 +605,10 @@ module AutomatedTestsHelper
       test_scripts = [raw_test_scripts]
     end
 
+    #workaround for same reason (hash for one test script
+    # array otherwise)
+    result['testrun']['test_script'] = test_scripts
+
     # For now, we just use the first test script for the association
     raw_test_script = test_scripts.first
     script_name = raw_test_script['script_name']
