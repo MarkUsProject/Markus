@@ -116,6 +116,7 @@
     getInitialState: function() {
       return {
         error: [],
+        success: [],
         submissions: [],
         selected_submissions: [],
       };
@@ -160,6 +161,9 @@
     },
     onError: function(error) {
       this.setState({error: error});
+    },
+    onSuccess: function(success) {
+      this.setState({success: success});
     },
     renderMarkingState: function(state) {
       if (state === 'unmarked') {
@@ -241,9 +245,11 @@
         return (
           <div>
             <ErrorDiv error={this.state.error} />
+            <SuccessDiv success={this.state.success} />
             <SubmissionsActionBox
               selected_submissions={this.state.selected_submissions}
               onError={this.onError}
+              onSuccess={this.onSuccess}
               refresh={this.refresh}
             />
             <Table data={submissions_data}
@@ -301,9 +307,30 @@
         }.bind(this)
       });
     },
+    collectAllSubmissions: function() {
+      jQuery.ajax({
+        method: 'GET',
+        url: 'collect_all_submissions',
+        success: function(data) {
+          if(data.message){
+            this.props.onSuccess(data.message);
+          }else{
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
     render: function() {
       return (
         <div className='react-release-marks'>
+          <button onClick={this.collectAllSubmissions}
+                  data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
+            <%= j raw I18n.t('collect_submissions.collect_all') %>
+          </button>
           <button onClick={this.releaseMarks}>
             <%= j raw I18n.t('browse_submissions.release_marks') %>
           </button>

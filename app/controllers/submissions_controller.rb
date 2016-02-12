@@ -221,15 +221,15 @@ class SubmissionsController < ApplicationController
     if assignment.submission_rule.can_collect_all_now?
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(assignment.groupings)
-      flash[:success] =
+      message =
           I18n.t('collect_submissions.collection_job_started',
                  assignment_identifier: assignment.short_identifier)
+      render json: { message: message }
     else
-      flash[:error] = I18n.t('collect_submissions.could_not_collect',
+      error = I18n.t('collect_submissions.could_not_collect',
                              assignment_identifier: assignment.short_identifier)
+      render json: { error: error }
     end
-    redirect_to action: 'browse',
-                id: assignment.id
   end
 
   def collect_ta_submissions

@@ -22,11 +22,6 @@
   <% @heading_buttons +=
   [
     {
-      link_text: t('collect_submissions.collect_all'),
-      link_path: collect_all_submissions_assignment_submissions_path(@assignment.id),
-      html_options: { data: { confirm: t('collect_submissions.results_loss_warning') } }
-    },
-    {
       link_text: t('browse_submissions.csv_report'),
       link_path: download_simple_csv_report_assignment_submissions_path(@assignment)
     },

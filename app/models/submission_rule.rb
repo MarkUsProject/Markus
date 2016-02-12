@@ -21,6 +21,7 @@ class SubmissionRule < ActiveRecord::Base
   end
 
   def can_collect_now?(section)
+    reset_collection_time if @can_collect_now.nil?
     return @can_collect_now[section.id] if !@can_collect_now[section.id].nil?
     @can_collect_now[section.id] = Time.zone.now >= get_collection_time(section)
   end
@@ -36,6 +37,7 @@ class SubmissionRule < ActiveRecord::Base
 
   # Cache that allows us to quickly get collection time
   def get_collection_time(section)
+    reset_collection_time if @get_collection_time.nil?
     return @get_collection_time[section.id] if !@get_collection_time[section.id].nil?
     @get_collection_time[section.id] = calculate_collection_time(section)
   end
