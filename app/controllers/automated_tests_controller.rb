@@ -6,26 +6,8 @@ class AutomatedTestsController < ApplicationController
 
   before_filter      :authorize_only_for_admin,
                      :only => [:manage, :update, :download]
-  before_filter      :authorize_for_user,
-                     :only => [:index]
-
-  # This is not being used right now. It was the calling interface to
-  # request a test run, however, now you can just call
-  # AutomatedTestsHelper.request_a_test_run to send a test request.
-  def index
-    submission_id = params[:submission_id]
-
-    # TODO: call_on should be passed to index as a parameter.
-    list_call_on = %w(submission request collection)
-    call_on = list_call_on[0]
-
-    AutomatedTestsHelper.request_a_test_run(submission_id, call_on, @current_user)
-
-    # TODO: render a new partial page
-    #render :test_replace,
-    #       :locals => {:test_result_files => @test_result_files,
-    #                   :result => @result}
-  end
+  before_filter      :authorize_for_student,
+                     only: [:student_interface]
 
   # Update is called when files are added to the assigment
   def update
@@ -72,15 +54,9 @@ class AutomatedTestsController < ApplicationController
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
-    if !@grouping.nil?
-      # Look up submission information
-      repo = @grouping.group.repo
-      @revision  = repo.get_latest_revision
-      @revision_number = @revision.revision_number
-
-      @test_script_results = TestResult.where(grouping:
-        @grouping).order(created_at: :desc)
-
+    unless @grouping.nil?
+      @test_script_results = TestResult.where(grouping: @grouping)
+                                       .order(created_at: :desc)
       @token = fetch_latest_tokens_for_grouping(@grouping)
     end
   end
