@@ -547,19 +547,19 @@ module AutomatedTestsHelper
     end
 
     # Securely copy student's submission, test files and test harness script to test_box_path
-    stdout, stderr, status = Open3.capture3("cp '#{submission_path}'/* "\
+    stdout, stderr, status = Open3.capture3("cp -r '#{submission_path}'/* "\
       "#{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
     end
 
-    stdout, stderr, status = Open3.capture3("cp '#{assignment_tests_path}'/* "\
+    stdout, stderr, status = Open3.capture3("cp -r '#{assignment_tests_path}'/* "\
       "#{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
     end
 
-    stdout, stderr, status = Open3.capture3("cp #{test_harness_path} "\
+    stdout, stderr, status = Open3.capture3("cp -r #{test_harness_path} "\
       "#{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
