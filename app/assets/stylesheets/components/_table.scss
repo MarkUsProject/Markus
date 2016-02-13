@@ -1,0 +1,92 @@
+// Tables
+
+.table {
+  border-left: 1px solid $grey;
+  border-right: 1px solid $grey;
+  overflow-x: auto;
+  width: 100%;
+
+  table {
+    border-top: 1px solid $grey;
+    width: 100%;
+  }
+
+  thead,
+  tfoot {
+    background-color: $light-grey;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+
+    .sortable-col {
+      background: url('sort_both.png') no-repeat center right;
+    }
+
+    .asc,
+    .desc {
+      cursor: pointer;
+    }
+
+    .asc {
+      background: url('sort_asc.png') no-repeat center right;
+    }
+
+    .desc {
+      background: url('sort_desc.png') no-repeat center right;
+    }
+  }
+
+  thead {
+    border-bottom: 2px solid $grey;
+  }
+
+  tfoot {
+    border-top: 2px solid $grey;
+  }
+
+  tr {
+    border-bottom: 1px solid $grey;
+
+    tbody & {
+      transition: background-color $time-quick;
+
+      &:nth-child(odd) {
+        background-color: $white;
+      }
+
+      &:nth-child(even) {
+        background-color: $light-grey;
+      }
+
+      &:hover {
+        background-color: $lighter-blue;
+      }
+    }
+  }
+
+  th,
+  td {
+    border-right: 1px solid $grey;
+    padding: 0.5em 1em;
+    vertical-align: middle;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+}
+
+.table-filters {
+  display: inline-block;
+
+  a,
+  span {
+    padding-right: 10px;
+    font-size: 1.1em;
+  }
+}
+
+.table-search {
+  display: inline-block;
+  margin-bottom: 1em;
+}

@@ -1,0 +1,40 @@
+// Title bar
+
+.title_bar {
+  display: table;
+  margin-bottom: $dimen-vertical;
+  width: 100%;
+
+  input:hover,
+  a:hover {
+    background: none;
+    border: none;
+  }
+
+  h1,
+  .heading_buttons {
+    display: table-cell;
+
+    @include breakpoint(mobile) {
+      display: block;
+    }
+  }
+}
+
+.heading_buttons {
+  text-align: right;
+  vertical-align: middle;
+
+  @include breakpoint(mobile) {
+    text-align: left;
+  }
+
+  a + a::before {
+    content: '|';
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: normal;
+    text-align: center;
+    width: 1em;
+  }
+}
