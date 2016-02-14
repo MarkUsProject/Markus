@@ -445,18 +445,19 @@ class AssignmentsController < ApplicationController
   # Called by clicking the cancel link in the student's interface
   # i.e. cancels invitations
   def disinvite_member
-    @assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:id])
     membership = StudentMembership.find(params[:membership])
     disinvited_student = membership.user
     membership.delete
     membership.save
     # update repository permissions
-    grouping = current_user.accepted_grouping_for(@assignment.id)
+    grouping = current_user.accepted_grouping_for(assignment.id)
     grouping.update_repository_permissions
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' cancelled invitation for " +
                  "'#{disinvited_student.user_name}'.")
     flash[:success] = I18n.t('student.member_disinvited')
+    redirect_to action: :student_interface, id: assignment.id
   end
 
   # Deletes memberships which have been declined by students
