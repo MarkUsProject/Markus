@@ -280,7 +280,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
   should 'recognize action to update_annotation' do
     assert_recognizes(
       { action: 'update_annotation', controller: 'annotations' },
-      { path: 'annotations/update_annotation', method: 'patch' })
+      path: 'annotations/update_annotation',
+      method: 'patch')
   end
 
   should 'recognize action to destroy' do
