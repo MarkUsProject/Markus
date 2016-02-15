@@ -946,9 +946,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                   {:id => @assignment.id,
                    :membership => sm.id}
 
-          assert_response :success
+          assert_response :found
           assert_equal I18n.t('student.member_disinvited'),
-                       flash[:edit_notice]
+                       flash[:success]
           assert_equal 1,
                        @grouping.memberships.length
         end
@@ -962,7 +962,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_redirected_to :action => 'student_interface',
                                :id => @assignment.id
 
-          assert_equal(I18n.t('assignment.group.deleted'), flash[:edit_notice])
+          assert_equal(I18n.t('assignment.group.deleted'), flash[:success])
           assert !@student.has_accepted_grouping_for?(@assignment.id)
         end
 
