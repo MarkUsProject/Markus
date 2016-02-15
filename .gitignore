@@ -1,5 +1,5 @@
 # Files ignored by git
-# Ignore unnecessary mac files
+# Ignore nncessary mac files
 .DS_Store
 
 /config/database.yml
