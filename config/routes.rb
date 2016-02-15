@@ -151,6 +151,7 @@ Markus::Application.routes.draw do
           get 'server_time'
           get 'download'
           get 'download_groupings_files'
+          get 'check_collect_status'
         end
 
         member do
@@ -330,7 +331,6 @@ Markus::Application.routes.draw do
       collection do
         post 'add_existing_annotation'
         patch 'update_annotation'
-        post 'update_comment'
         delete '/' => 'annotations#destroy'
       end
     end
