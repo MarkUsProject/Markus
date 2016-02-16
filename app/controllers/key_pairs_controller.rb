@@ -128,7 +128,7 @@ class KeyPairsController < ApplicationController
     # Check to see if the public_key_content is a valid ssh key: an ssh
     # key has the format "type blob email" and cannot have a nil type or blob.
     type, blob, _email = public_key_content.split
-    if (not type.nil?) and (not blob.nil?)
+    if !type.nil? && !blob.nil?
       # Upload the file
       upload_key_file(public_key_content, time_stamp)
 
@@ -161,7 +161,7 @@ class KeyPairsController < ApplicationController
       respond_to do |format|
         format.html do
           redirect_to :back,
-                      flash: { error: "Key pair was not created: Invalid key." }
+                      flash: { error: 'Key pair was not created: Invalid key.' }
         end
       end
     end
