@@ -98,13 +98,14 @@ class KeyPairsController < ApplicationController
     # Check to see if an individual repo exists for this user
     key = Gitolite::SSHKey.from_file(_path)
 
+    # Remove key from gitolite
     ga_repo.rm_key(key)
 
-    admin_key = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-    ga_repo.add_key(admin_key)
-
-    # update Gitolite repo
+    # Update Gitolite repo
     ga_repo.save_and_apply
+
+    # Delete key file
+    File.delete(_path)
   end
 
   # POST /key_pairs
@@ -124,31 +125,43 @@ class KeyPairsController < ApplicationController
       public_key_content = key_pair_params[:file].read
     end
 
-    # Upload the file
-    upload_key_file(public_key_content, time_stamp)
+    # Check to see if the public_key_content is a valid ssh key: an ssh
+    # key has the format "type blob email" and cannot have a nil type or blob.
+    type, blob, _email = public_key_content.split
+    if (not type.nil?) and (not blob.nil?)
+      # Upload the file
+      upload_key_file(public_key_content, time_stamp)
 
-    # Save the record
-    @key_pair = KeyPair.new(user_name: @current_user.user_name,
-                            user_id:   @current_user.id,
-                            file_name: @current_user.user_name +
-                                         "@#{time_stamp}.pub")
+      # Save the record
+      @key_pair = KeyPair.new(user_name: @current_user.user_name,
+                              user_id:   @current_user.id,
+                              file_name: @current_user.user_name +
+                                           "@#{time_stamp}.pub")
 
-    respond_to do |format|
-      if @key_pair.save
+      respond_to do |format|
+        if @key_pair.save
+          format.html do
+            redirect_to key_pairs_path,
+                        notice: 'Key pair was successfully created.'
+          end
+          format.json do
+            render json: @key_pair,
+                   status: :created,
+                   location: @key_pair
+          end
+        else
+          format.html { render action: 'new' }
+          format.json do
+            render json: @key_pair.errors,
+                   status: :unprocessable_entity
+          end
+        end
+      end
+    else # if type and/or blob are nil
+      respond_to do |format|
         format.html do
-          redirect_to key_pairs_path,
-                      notice: 'Key pair was successfully created.'
-        end
-        format.json do
-          render json: @key_pair,
-                 status: :created,
-                 location: @key_pair
-        end
-      else
-        format.html { render action: 'new' }
-        format.json do
-          render json: @key_pair.errors,
-                 status: :unprocessable_entity
+          redirect_to :back,
+                      flash: { error: "Key pair was not created: Invalid key." }
         end
       end
     end
@@ -186,7 +199,10 @@ class KeyPairsController < ApplicationController
     @key_pair.destroy
 
     respond_to do |format|
-      format.html { redirect_to key_pairs_url }
+      format.html do
+        redirect_to key_pairs_path,
+                    notice: 'Key pair was successfully removed.'
+      end
       format.json { head :no_content }
     end
   end
