@@ -1,4 +1,7 @@
 <%= form_for(@key_pair) do |f| %>
+  <% if flash[:error] %>
+    <div class="error"><%= flash[:error] %></div>
+  <% end %>
   <% if @key_pair.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@key_pair.errors.count, "error") %> prohibited this key_pair from being saved:</h2>
