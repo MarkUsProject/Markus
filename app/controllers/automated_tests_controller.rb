@@ -38,7 +38,7 @@ class AutomatedTestsController < ApplicationController
       # Get new script from upload form
       new_script = params[:new_script]
       # Get new support file from upload form
-      new_support_file = params[:file_name]
+      new_support_file = params[:new_support_file]
 
       @assignment = process_test_form(@assignment,
                                       assignment_params,
