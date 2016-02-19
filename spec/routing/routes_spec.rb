@@ -1348,13 +1348,6 @@ context 'annotation collection' do
       locale: 'en')
   end
 
-  it 'routes POST update_comment properly' do
-    expect(post: path + '/update_comment').to route_to(
-      controller: ctrl,
-      action: 'update_comment',
-      locale: 'en')
-  end
-
   it 'routes DELETE destroy properly' do
     expect(delete: path + '/destroy').to route_to(
       controller: ctrl,

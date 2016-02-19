@@ -332,7 +332,6 @@ Markus::Application.routes.draw do
       collection do
         post 'add_existing_annotation'
         patch 'update_annotation'
-        post 'update_comment'
         delete '/' => 'annotations#destroy'
       end
     end
