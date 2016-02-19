@@ -352,16 +352,16 @@
         <div className='react-release-marks'>
           <% if Section.all.count > 0 %>
             <% sections = Hash.new
-            all_available = t('collect_submissions.all_available')
-            sections[all_available] = Array.new
+            all_available_sections = Array.new
             Section.all.each do |section|
               if @assignment.submission_rule.can_collect_now?(section)
-                sections[all_available].push(section.id)
+                all_available_sections.push(section.id)
                 sections[section.name] = Array.new.push(section.id)
               end
             end 
-            if sections[all_available].count > 0 %>
-              <select defaultValue={"<%= sections[all_available].join(',') %>"} ref="sectionSelect">
+            if all_available_sections.count > 0 %>
+              <select defaultValue={"<%= all_available_sections.join(',') %>"} ref="sectionSelect">
+                <option selected value={"<%= all_available_sections.join(',') %>"}><%= t('collect_submissions.all_available') %></option>
                 <% sections.each do |name, ids| %>
                   <option value={"<%= ids.join(',') %>"}><%= name %></option>
                 <% end %>
