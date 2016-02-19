@@ -146,12 +146,6 @@ module SubmissionsHelper
           collected += 1
         end
       end
-
-      if collected == 0
-        raise I18n.t('collect_submissions.no_submission_for_section',
-          section_name: section.name)
-      end
-
     rescue Exception => e
       errors.push(e.message)
     end

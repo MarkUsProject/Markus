@@ -221,15 +221,53 @@ class SubmissionsController < ApplicationController
     if assignment.submission_rule.can_collect_all_now?
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(assignment.groupings)
-      message =
+      success =
           I18n.t('collect_submissions.collection_job_started',
                  assignment_identifier: assignment.short_identifier)
-      render json: { message: message }
+      render json: { success: success }
     else
       error = I18n.t('collect_submissions.could_not_collect',
                              assignment_identifier: assignment.short_identifier)
       render json: { error: error }
     end
+  end
+
+  def collect_section_submissions
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    section_ids = params[:sections]
+    errors = Array.new
+    successes = Array.new
+    noSubmissions = Array.new
+    section_ids.each do |id|
+      if !Section.exists?(id)
+        errors.push(I18n.t('collect_submissions.could_not_find_section'))
+        next
+      end
+        
+      if collect_submissions_for_section(id, assignment, errors) > 0
+        successes.push(Section.find(id).name)
+      else
+        noSubmissions.push(Section.find(id).name)
+      end
+    end
+    if successes.length > 0
+      plural = successes.length > 1 ? 's' : ''
+      sections = successes.join(', ').reverse
+                           .sub(' ,', t('and').reverse)
+                           .reverse
+      success = I18n.t('collect_submissions.section' + plural + '_collection_job_started',
+                     assignment_identifier: assignment.short_identifier,
+                     section_name: sections)
+    end
+    if noSubmissions.length > 0
+      plural = noSubmissions.length > 1 ? 's' : ''
+      sections = noSubmissions.join(', ').reverse
+                                   .sub(' ,', t('and').reverse)
+                                   .reverse
+      errors.push(I18n.t('collect_submissions.no_submission_for_section' + plural,
+                       section_name: sections))
+    end
+    render json: { success: success, error: errors }
   end
 
   def collect_ta_submissions

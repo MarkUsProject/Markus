@@ -314,7 +314,30 @@
         success: function(data) {
           if(data.message){
             this.props.onSuccess(data.message);
-          }else{
+          }
+          if(data.error){
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    collectSectionSubmissions: function() {
+      var dataLoad = {
+        sections: this.refs.sectionSelect.state.value.split(',')
+      };
+      jQuery.ajax({
+        method: 'GET',
+        url: 'collect_section_submissions',
+        data: dataLoad,
+        success: function(data) {
+          if(data.success){
+            this.props.onSuccess(data.success);
+          }
+          if(data.error){
             this.props.onError(data.error);
           }
         }.bind(this),
@@ -327,10 +350,33 @@
     render: function() {
       return (
         <div className='react-release-marks'>
-          <button onClick={this.collectAllSubmissions}
-                  data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
-            <%= j raw I18n.t('collect_submissions.collect_all') %>
-          </button>
+          <% if Section.all.count > 0 %>
+            <% sections = Hash.new
+            all_available = t('collect_submissions.all_available')
+            sections[all_available] = Array.new
+            Section.all.each do |section|
+              if @assignment.submission_rule.can_collect_now?(section)
+                sections[all_available].push(section.id)
+                sections[section.name] = Array.new.push(section.id)
+              end
+            end 
+            if sections[all_available].count > 0 %>
+              <select defaultValue={"<%= sections[all_available].join(',') %>"} ref="sectionSelect">
+                <% sections.each do |name, ids| %>
+                  <option value={"<%= ids.join(',') %>"}><%= name %></option>
+                <% end %>
+              </select>
+              <button onClick={this.collectSectionSubmissions}
+                      data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
+                <%= j raw I18n.t('collect_submissions.collect_section') %>
+              </button>
+            <% end
+          else %>
+            <button onClick={this.collectAllSubmissions}
+                    data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
+              <%= j raw I18n.t('collect_submissions.collect_all') %>
+            </button>
+          <% end %>
           <button onClick={this.releaseMarks}>
             <%= j raw I18n.t('browse_submissions.release_marks') %>
           </button>

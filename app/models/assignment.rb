@@ -898,6 +898,19 @@ class Assignment < ActiveRecord::Base
 
     criterion.add_tas_by_user_name_array(graders)
   end
+
+  # Returns the groupings of this assignment associated with the given section
+  def section_groupings(section)
+    section_groupings = Array.new
+    self.groupings.each do |grouping|
+      if !grouping.inviter.nil? and grouping.inviter.has_section?
+        if grouping.inviter.section.id == section.id
+          section_groupings.push(grouping)
+        end
+      end
+    end
+    section_groupings
+  end
   
   private
 

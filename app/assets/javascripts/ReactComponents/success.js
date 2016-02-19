@@ -23,11 +23,10 @@
       } else if (typeof(this.props.success) === 'object' &&
                  this.props.success.length > 0) { // Array
         successs = this.props.success.map(function(err) {
-          return React.DOM.li(null, err);
+          return React.DOM.div( { className: 'success' }, err);
         });
         return (
-          React.DOM.div( {className: 'success'},
-            React.DOM.ul(null, successs))
+          React.DOM.div(null, successs)
         );
       } else {
         return (

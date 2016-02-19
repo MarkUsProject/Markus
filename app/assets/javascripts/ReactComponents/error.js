@@ -23,11 +23,10 @@
       } else if (typeof(this.props.error) === 'object' &&
                  this.props.error.length > 0) { // Array
         errors = this.props.error.map(function(err) {
-          return React.DOM.li(null, err);
+          return React.DOM.li( { className: 'error' }, err);
         });
         return (
-          React.DOM.div( {className: 'error'},
-            React.DOM.ul(null, errors))
+          React.DOM.div(null, errors)
         );
       } else {
         return (
