@@ -126,8 +126,8 @@ class KeyPairsController < ApplicationController
     end
 
     # Check to see if the public_key_content is a valid ssh key: an ssh
-    # key has the format "type blob email" and cannot have a nil type or blob.
-    type, blob, _email = public_key_content.split
+    # key has the format "type blob label" and cannot have a nil type or blob.
+    type, blob, _label = public_key_content.split
     if !type.nil? && !blob.nil?
       # Upload the file
       upload_key_file(public_key_content, time_stamp)
@@ -140,9 +140,9 @@ class KeyPairsController < ApplicationController
 
       respond_to do |format|
         if @key_pair.save
+          flash_message(:success, t('key_pairs.create.success'))
           format.html do
-            redirect_to key_pairs_path,
-                        notice: 'Key pair was successfully created.'
+            redirect_to key_pairs_path
           end
           format.json do
             render json: @key_pair,
@@ -158,10 +158,10 @@ class KeyPairsController < ApplicationController
         end
       end
     else # if type and/or blob are nil
+      flash_message(:error, t('key_pairs.create.invalid_key'))
       respond_to do |format|
         format.html do
-          redirect_to :back,
-                      flash: { error: 'Key pair was not created: Invalid key.' }
+          redirect_to :back
         end
       end
     end
@@ -174,9 +174,9 @@ class KeyPairsController < ApplicationController
 
     respond_to do |format|
       if @key_pair.update_attributes(key_pair_params)
+        flash_message(:success, t('key_pairs.update.success'))
         format.html do
-          redirect_to @key_pair,
-                      notice: 'Key pair was successfully updated.'
+          redirect_to @key_pair
         end
         format.json { head :no_content }
       else
@@ -198,10 +198,11 @@ class KeyPairsController < ApplicationController
 
     @key_pair.destroy
 
+    flash_message(:success, t('key_pairs.delete.success'))
+
     respond_to do |format|
       format.html do
-        redirect_to key_pairs_path,
-                    notice: 'Key pair was successfully removed.'
+        redirect_to key_pairs_path
       end
       format.json { head :no_content }
     end
