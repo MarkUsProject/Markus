@@ -23,7 +23,7 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
               # TODO: need to output an error.
             end
           end
-
+          debugger
           grouping = Grouping.create(
                assignment_id: assignment.id,
                group: group)

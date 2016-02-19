@@ -375,6 +375,8 @@ Markus::Application.routes.draw do
     end
   end
 
+  resources :job_messages, only: %w(show), param: :job_id
+
   match 'main', controller: 'main', action: 'index', via: :post
   match 'main/about', controller: 'main', action: 'about', via: :post
   match 'main/logout', controller: 'main', action: 'logout', via: :post
