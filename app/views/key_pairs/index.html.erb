@@ -2,9 +2,7 @@
 
 <br>
 
-<% if flash[:notice] %>
-    <div class="success"><%= flash[:notice] %></div>
-<% end %>
+<%= render 'shared/flash_message' %>
 
 <table>
   <tr>
