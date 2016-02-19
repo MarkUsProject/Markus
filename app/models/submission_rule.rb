@@ -36,10 +36,15 @@ class SubmissionRule < ActiveRecord::Base
   end
 
   # Cache that allows us to quickly get collection time
-  def get_collection_time(section)
-    reset_collection_time if @get_collection_time.nil?
-    return @get_collection_time[section.id] if !@get_collection_time[section.id].nil?
-    @get_collection_time[section.id] = calculate_collection_time(section)
+  def get_collection_time(section=nil)
+    if section.nil?
+      return @get_global_collection_time if !@get_global_collection_time.nil?
+      @get_global_collection_time = calculate_collection_time
+    else
+      reset_collection_time if @get_collection_time.nil?
+      return @get_collection_time[section.id] if !@get_collection_time[section.id].nil?
+      @get_collection_time[section.id] = calculate_collection_time(section)
+    end
   end
   
   def calculate_collection_time(section=nil)
@@ -100,6 +105,7 @@ class SubmissionRule < ActiveRecord::Base
 
   def reset_collection_time
     @get_collection_time = Array.new
+    @get_global_collection_time = nil
     @can_collect_now = Array.new
     @can_collect_all_now = nil
   end
