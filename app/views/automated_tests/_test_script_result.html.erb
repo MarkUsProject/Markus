@@ -7,9 +7,9 @@
       <%= l(test_script_result.created_at, format: :long) %>
     </span>
   </h3>
-  <% tests_scripts_outputs = test_script_output['testrun']['test_script'] %>
-  <div class='table'>
 
+  <% tests = test_script_output['testrun']['test_script']['test'] %>
+  <div class='table'>
     <table>
       <thead>
         <tr>
@@ -22,8 +22,6 @@
         </tr>
       </thead>
       <tbody>
-       <% tests_scripts_outputs.each do |tso| %>
-  <% tests = tso['test'] %>
         <% tests.each do |test| %>
           <tr class="<%= test['status'] == 'pass' ?
           'test-result-success' : 'test-result-failure' %>">
@@ -38,8 +36,6 @@
           </tr>
         <% end %>
       </tbody>
-      <% end %>
     </table>
-    
   </div>
 </div>

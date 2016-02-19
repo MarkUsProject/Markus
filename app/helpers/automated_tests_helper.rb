@@ -605,7 +605,7 @@ module AutomatedTestsHelper
       test_scripts = [raw_test_scripts]
     end
 
-    #workaround for same reason (hash for one test script
+    # workaround for same reason (hash for one test script
     # array otherwise)
     result['testrun']['test_script'] = test_scripts
 
