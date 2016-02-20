@@ -323,7 +323,7 @@
               <%= button_to t('groups.add_all_groups'),
                             { action: 'create_groups_when_students_work_alone',
                               id: @assignment.id },
-                            method: :get %>
+                            method: :get, remote: true %>
             <% end %>
             <Table ref="table"
               data={groups_data}

@@ -1,0 +1,19 @@
+jQuery('#notice').find('#job-messenger').html("<div class='warning'> Processing: <%= processing_message %> </div> ");
+jQuery.poll(function(retry) {
+  jQuery.getJSON("<%= job_message_path(@current_job.job_id) %>", function(data) {
+    if (data) {
+      if (data.status === "succeeded") {
+        jQuery('#notice').find('#job-messenger').html("<div class='success'> Finished Processing. Reloading...  </div>");
+        setTimeout((function() {
+          window.location.reload()
+        }), 1500);
+      } else if (data.status === "failed") {
+        jQuery('#notice').find('#job-messenger').html("<div class='error'> Processing failed: " + data.message + "</div>");
+      } else {
+        retry();
+      }
+    } else {
+        retry();
+    }
+  });
+});
