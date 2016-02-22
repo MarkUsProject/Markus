@@ -378,22 +378,17 @@ module AutomatedTestsHelper
   def self.scripts_to_run(assignment, call_on)
     # Find all the test scripts of the current assignment
     all_scripts = TestScript.where(assignment_id: assignment.id)
-
     list_run_scripts = Array.new
 
     # If the test run is requested at collection (by Admin or TA),
     # All of the test scripts should be run.
-    if call_on == 'collection'
-      list_run_scripts = all_scripts
-    else
-      # If the test run is requested at submission or upon request,
-      # verify the script is allowed to run.
-      all_scripts.each do |script|
-        if call_on == 'submission' && script.run_on_submission
+    # If the test run is requested at submission or upon request,
+    # verify the script is allowed to run.
+    all_scripts.each do |script|
+      if (call_on == 'submission' && script.run_on_submission) ||
+         (call_on == 'request' && script.run_on_request) ||
+         (call_on == 'collection')
           list_run_scripts.insert(list_run_scripts.length, script)
-        elsif call_on == 'request' && script.run_on_request
-          list_run_scripts.insert(list_run_scripts.length, script)
-        end
       end
     end
 
@@ -404,7 +399,8 @@ module AutomatedTestsHelper
 
   # Request an automated test. Ask Resque to enqueue a job.
   def self.async_test_request(grouping_id, call_on)
-    if files_available? && has_permission?
+    # when called on collection
+    if files_available? && (call_on == "collection" || has_permission?)
       Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on)
     end
   end
