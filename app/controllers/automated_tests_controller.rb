@@ -2,7 +2,7 @@
 require 'helpers/ensure_config_helper.rb'
 
 class AutomatedTestsController < ApplicationController
-include AutomatedTestsHelper
+  include AutomatedTestsHelper
 
   before_filter      :authorize_only_for_admin,
                      :only => [:manage, :update, :download]
@@ -61,7 +61,6 @@ include AutomatedTestsHelper
     end
   end
 
-
   def execute_test_run
     assignment = Assignment.find(params[:id])
     grouping = current_user.accepted_grouping_for(assignment.id)
@@ -78,7 +77,6 @@ include AutomatedTestsHelper
     end
     redirect_to action: :student_interface
   end
-
 
   def run_tests(grouping_id)
     begin

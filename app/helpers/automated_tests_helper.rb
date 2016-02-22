@@ -143,14 +143,14 @@ module AutomatedTestsHelper
     if call_on == 'collection'
       list_run_scripts = all_scripts
     elsif call_on == 'submission'
-      list_run_scripts = all_scripts.select &:run_on_submission
+      list_run_scripts = all_scripts.select(&:run_on_submission)
     elsif call_on == 'request'
-      list_run_scripts = all_scripts.select &:run_on_request
+      list_run_scripts = all_scripts.select(&:run_on_request)
     else
       list_run_scripts = []
     end
 
-    list_run_scripts.sort_by &:seq_num
+    list_run_scripts.sort_by(&:seq_num)
   end
 
 
@@ -165,10 +165,10 @@ module AutomatedTestsHelper
     src_dir = @repo_dir
     assign_dir = @repo_dir + '/' + assignment.repository_folder
 
-    if !File.exists?(test_dir)
+    if !File.exist?(test_dir)
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t('automated_tests.test_files_unavailable')
-    elsif !File.exists?(src_dir) || !File.exists?(assign_dir)
+    elsif !File.exists?(src_dir) || !File.exist?(assign_dir)
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t('automated_tests.source_files_unavailable')
     end
@@ -185,7 +185,6 @@ module AutomatedTestsHelper
 
     true
   end
-
 
   # Verify the user has the permission to run the tests - admin
   # and graders always have the permission, while student has to
@@ -290,8 +289,8 @@ module AutomatedTestsHelper
       return [stderr, stdout, status]
     end
 
-    stdout, stderr, status = Open3.capture3("cp -r '#{assignment_tests_path}'/* "\
-      "#{test_box_path}")
+    stdout, stderr, status = Open3.capture3(
+      "cp -r '#{assignment_tests_path}'/* #{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
     end
