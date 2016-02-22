@@ -37,10 +37,13 @@ class AutomatedTestsController < ApplicationController
     @assignment.transaction do
       # Get new script from upload form
       new_script = params[:new_script]
+      # Get new support file from upload form
+      new_support_file = params[:new_support_file]
+
       @assignment = process_test_form(@assignment,
                                       assignment_params,
-                                      new_script)
-
+                                      new_script,
+                                      new_support_file)
       # Save assignment and associated test files
       if @assignment.save
         flash[:success] = I18n.t("assignment.update_success")
@@ -50,6 +53,15 @@ class AutomatedTestsController < ApplicationController
             @assignment.repository_folder,
             new_script.original_filename)
           File.open(assignment_tests_path, 'w') { |f| f.write new_script.read }
+        end
+
+        unless new_support_file.nil?
+          assignment_tests_path = File.join(
+            MarkusConfigurator.markus_config_automated_tests_repository,
+            @assignment.repository_folder,
+            new_support_file.original_filename)
+          File.open(
+            assignment_tests_path, 'w') { |f| f.write new_support_file.read }
         end
         redirect_to :action => 'manage',
                     :assignment_id => params[:assignment_id]
@@ -64,6 +76,7 @@ class AutomatedTestsController < ApplicationController
   def manage
     @assignment = Assignment.find(params[:assignment_id])
     @assignment.test_scripts.build
+    @assignment.test_support_files.build
   end
 
 
@@ -173,6 +186,9 @@ class AutomatedTestsController < ApplicationController
                      :max_marks, :run_on_submission, :run_on_request,
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,
-                     :display_expected_output, :display_actual_output])
+                     :display_expected_output, :display_actual_output,
+                     :_destroy],
+                test_support_files_attributes:
+                    [:id, :file_name, :assignment_id, :description, :_destroy])
   end
 end

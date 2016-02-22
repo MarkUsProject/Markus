@@ -12,3 +12,7 @@ div.settings_left_side {
   margin-right:30px;
   float:left;
 }
+
+div.file_link {
+  margin-left: -50px;
+}
