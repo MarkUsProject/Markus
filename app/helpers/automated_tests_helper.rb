@@ -31,7 +31,8 @@ module AutomatedTestsHelper
 
   # Process Testing Framework form
   # - Process new and updated test files (additional validation to be done at the model level)
-  def process_test_form(assignment, params, assignment_params, new_script, new_support_file)
+  def process_test_form(assignment, params, assignment_params,
+                        new_script, new_support_file)
 
     updated_script_files = {}
     updated_support_files = {}
@@ -41,47 +42,46 @@ module AutomatedTestsHelper
 
     # Create/Update test scripts
     testscripts.each do |file_num, file|
-
       # If no new_script then form is empty and skip
       next if testscripts[file_num][:seq_num].empty? && new_script.nil?
       # Seq_num only exists if it is a file being edited
       if testscripts[file_num][:seq_num].empty?
-        # Create new test script file
-        filename = new_script.original_filename
-        if TestScript.exists?(script_name: filename, assignment: assignment)
-          raise I18n.t('automated_tests.duplicate_filename') + filename
-        else
-          # Override filename from form
-          file[:script_name] = filename
-          file[:seq_num] = file_num
-          updated_script_files[file_num] = file.clone
-        end
+          # Create new test script file
+          filename = new_script.original_filename
+          if TestScript.exists?(script_name: filename, assignment: assignment)
+            raise I18n.t('automated_tests.duplicate_filename') + filename
+          else
+            # Override filename from form
+            file[:script_name] = filename
+            file[:seq_num] = file_num
+            updated_script_files[file_num] = file.clone
+          end
       else
         # Edit existing test script file
-        if !params[("new_update_script_"+testscripts[file_num][:script_name]).to_sym].nil?
-          new_update_script = params[("new_update_script_"+testscripts[file_num][:script_name]).to_sym]
-          old_scrip_name = file[:script_name]
-          file[:script_name] = new_update_script.original_filename
-          file[:seq_num] = file_num
-          updated_script_files[file_num] = file.clone
+        unless [('new_update_script_' +
+            testscripts[file_num][:script_name]).to_sym].nil?
+              new_update_script = params[("new_update_script_"+testscripts[file_num][:script_name]).to_sym]
+              old_scrip_name = file[:script_name]
+              file[:script_name] = new_update_script.original_filename
+              file[:seq_num] = file_num
+              updated_script_files[file_num] = file.clone
 
-          # Uploading new script
-          assignment_tests_path = File.join(
-              MarkusConfigurator.markus_config_automated_tests_repository,
-              @assignment.repository_folder,
-              new_update_script.original_filename)
-          File.open(
-              assignment_tests_path, 'w') { |f| f.write new_update_script.read }
+              # Uploading new script
+              assignment_tests_path = File.join(
+                  MarkusConfigurator.markus_config_automated_tests_repository,
+                  @assignment.repository_folder,
+                  new_update_script.original_filename)
+              File.open(
+                  assignment_tests_path, 'w') { |f| f.write new_update_script.read }
 
-          # Deleting old script
-          old_script_path = File.join(
-              MarkusConfigurator.markus_config_automated_tests_repository,
-              @assignment.repository_folder,
-              old_scrip_name)
-          if File.exist?(old_script_path)
-            File.delete(old_script_path)
-          end
-
+              # Deleting old script
+              old_script_path = File.join(
+                  MarkusConfigurator.markus_config_automated_tests_repository,
+                  @assignment.repository_folder,
+                  old_scrip_name)
+              if File.exist?(old_script_path)
+                File.delete(old_script_path)
+              end
         end
         updated_script_files[file_num] = file.clone
       end
@@ -94,40 +94,42 @@ module AutomatedTestsHelper
       next if testsupporters[file_num][:file_name].nil? && new_support_file.nil?
 
       if testsupporters[file_num][:file_name].nil?
-        updated_support_files[file_num] = {} || []
-        filename = new_support_file.original_filename
-        # Create test support file if it does not exist
-        if TestSupportFile.exists?(file_name: filename, assignment: assignment)
-          raise I18n.t('automated_tests.duplicate_filename') + filename
-        else
-          updated_support_files[file_num] = file.clone
-          # Override filename from form
-          updated_support_files[file_num][:file_name] = filename
-        end
+          updated_support_files[file_num] = {} || []
+          filename = new_support_file.original_filename
+          # Create test support file if it does not exist
+          if TestSupportFile.exists?(file_name: filename, assignment: assignment)
+            raise I18n.t('automated_tests.duplicate_filename') + filename
+          else
+            updated_support_files[file_num] = file.clone
+            # Override filename from form
+            updated_support_files[file_num][:file_name] = filename
+          end
       else
         # Edit existing test support file
-        if !params[("new_update_file_"+testsupporters[file_num][:file_name]).to_sym].nil?
-          new_update_file = params[("new_update_file_"+testsupporters[file_num][:file_name]).to_sym]
-          old_file_name = file[:file_name]
-          updated_support_files[file_num] = file.clone
-          file[:file_name] = new_update_file.original_filename
+        unless params[('new_update_file_' +
+            testsupporters[file_num][:file_name]).to_sym].nil?
+              new_update_file = params[('new_update_file_' +
+                  testsupporters[file_num][:file_name]).to_sym]
+              old_file_name = file[:file_name]
+              updated_support_files[file_num] = file.clone
+              file[:file_name] = new_update_file.original_filename
 
-          # Uploading new file
-          assignment_tests_path = File.join(
-              MarkusConfigurator.markus_config_automated_tests_repository,
-              @assignment.repository_folder,
-              new_update_file.original_filename)
-          File.open(
-              assignment_tests_path, 'w') { |f| f.write new_update_file.read }
+              # Uploading new file
+              assignment_tests_path = File.join(
+                  MarkusConfigurator.markus_config_automated_tests_repository,
+                  @assignment.repository_folder,
+                  new_update_file.original_filename)
+              File.open(
+                  assignment_tests_path, 'w') { |f| f.write new_update_file.read }
 
-          # Deleting old file
-          old_file_path = File.join(
-              MarkusConfigurator.markus_config_automated_tests_repository,
-              @assignment.repository_folder,
-              old_file_name)
-          if File.exist?(old_file_path)
-            File.delete(old_file_path)
-          end
+              # Deleting old file
+              old_file_path = File.join(
+                  MarkusConfigurator.markus_config_automated_tests_repository,
+                  @assignment.repository_folder,
+                  old_file_name)
+              if File.exist?(old_file_path)
+                File.delete(old_file_path)
+              end
         end
         updated_support_files[file_num] = file.clone
       end
@@ -218,7 +220,7 @@ module AutomatedTestsHelper
     if !File.exist?(test_dir)
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t('automated_tests.test_files_unavailable')
-    elsif !File.exists?(src_dir) || !File.exist?(assign_dir)
+    elsif !File.exist?(src_dir) || !File.exist?(assign_dir)
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t('automated_tests.source_files_unavailable')
     end

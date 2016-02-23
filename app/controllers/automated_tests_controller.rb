@@ -71,7 +71,7 @@ class AutomatedTestsController < ApplicationController
 
     unless @grouping.nil?
       @test_script_results = TestResult.where(grouping: @grouping)
-                                 .order(created_at: :desc)
+                                       .order(created_at: :desc)
       @token = fetch_latest_tokens_for_grouping(@grouping)
     end
   end
