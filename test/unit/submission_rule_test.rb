@@ -105,7 +105,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     end
 
     should 'have not be able to collect' do
-      assert !@assignment.submission_rule.can_collect_now?,
+      assert !@assignment.submission_rule.can_collect_all_now?,
              'assignment cannot be collected now'
     end
 
@@ -152,11 +152,11 @@ class SubmissionRuleTest < ActiveSupport::TestCase
       @assignment = Assignment.make(:due_date => 2.days.ago)
     end
 
-    should 'should be able to collect' do
+    should 'be able to collect' do
       assert_equal(@assignment.due_date, @assignment.submission_rule.get_collection_time,
         'due date should be equal to collection time for no late submission rule')
       # due date is two days ago, so it can be collected
-      assert @assignment.submission_rule.can_collect_now?,
+      assert @assignment.submission_rule.can_collect_all_now?,
              'assignment can be collected now'
     end
   end
