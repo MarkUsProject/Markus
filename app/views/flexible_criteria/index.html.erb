@@ -9,7 +9,7 @@
     <%= t('flexible_criteria.criteria_management', identifier: @assignment.short_identifier) %>
   </h1>
   <div class='heading_buttons'>
-    <%= link_to t('add_criterion'), 
+    <%= link_to t('add_criterion'),
           'javascript:void(0);',
           onclick: "if(document.getElementById('new_flexible_criterion') != null) {
           document.getElementById('new_flexible_criterion_prompt').focus();
@@ -19,11 +19,9 @@
             type: 'GET'
           });
         }"%>
-    <span class='menu_bar'></span>
-    <%= link_to t('upload'), 
+    <%= link_to t('upload'),
                 'javascript:void(0);',
                 onclick: 'modal_upload.open();' %>
-    <span class='menu_bar'></span>
     <%= link_to t('download'),
                 'javascript:void(0);',
                 onclick: 'modal_download.open();' %>
