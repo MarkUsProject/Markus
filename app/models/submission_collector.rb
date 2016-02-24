@@ -238,9 +238,16 @@ class SubmissionCollector < ActiveRecord::Base
     self.safely_stop_child_exited = true
     self.save
 
-    grouping.is_collected = true
-    grouping.save
-    
+    #Let the child process handle conversion, as things go wrong when both
+    #parent and child do this.
+    start_collection_process do
+        grouping.is_collected = true
+        grouping.save
+    end
+    #setting is_collected here will prevent an sqlite lockout error when pdfs
+    #aren't supported
+      grouping.is_collected = true
+      grouping.save
 
   end
 

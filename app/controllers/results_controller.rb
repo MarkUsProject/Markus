@@ -330,20 +330,6 @@ class ResultsController < ApplicationController
     end
     @code_type = @file.get_file_type
 
-    # if dealing with a pdf file, get the number of images to display
-    if @file.is_pdf?
-      i = 1
-      storage_path = File.join(@file.submission.grouping.group.repository_name,
-        @file.path)
-      filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf('%04d' % i.to_s()) + '.jpg')
-      while File.exists?(filePathToCheck)
-        i += 1
-        filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf('%04d' % i.to_s()) + '.jpg')
-      end
-      i -= 1
-      @nb_pdf_files_to_download = i
-    end
-
     render template: 'results/common/codeviewer'
   end
 
