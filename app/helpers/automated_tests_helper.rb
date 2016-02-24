@@ -348,7 +348,7 @@ module AutomatedTestsHelper
     end
 
     stdout, stderr, status = Open3.capture3(
-          "cp -r '#{assignment_tests_path}'/* #{test_box_path}")
+      "cp -r '#{assignment_tests_path}'/* #{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
     end
