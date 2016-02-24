@@ -159,8 +159,8 @@ module AutomatedTestsHelper
     group = @grouping.group
 
     @repo_dir = File.join(
-        MarkusConfigurator.markus_config_automated_tests_repository,
-        group.repo_name)
+         MarkusConfigurator.markus_config_automated_tests_repository,
+         group.repo_name)
     export_group_repo(group, @repo_dir)
 
     if files_available?(assignment) &&
@@ -215,8 +215,8 @@ module AutomatedTestsHelper
   # source files are successfully exported.
   def self.files_available?(assignment)
     test_dir = File.join(
-        MarkusConfigurator.markus_config_automated_tests_repository,
-        assignment.short_identifier)
+         MarkusConfigurator.markus_config_automated_tests_repository,
+         assignment.short_identifier)
     src_dir = @repo_dir
     assign_dir = @repo_dir + '/' + assignment.repository_folder
 
@@ -305,7 +305,9 @@ module AutomatedTestsHelper
       run_dir = MarkusConfigurator.markus_ate_test_run_directory
 
 
-      m_logger.log("error with launching test, error: #{stderr} and status: #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver: #{server}\ntest_runner: #{test_runner}\nrun_dir: #{run_dir}", MarkusLogger::ERROR)
+      m_logger.log("error with launching test, error: #{stderr} and status:
+      #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver: #{server}\ntest_runner:
+      #{test_runner}\nrun_dir: #{run_dir}", MarkusLogger::ERROR)
 
       # TODO: handle this error better
       raise 'error'
@@ -345,7 +347,7 @@ module AutomatedTestsHelper
     end
 
     stdout, stderr, status = Open3.capture3(
-        "cp -r '#{assignment_tests_path}'/* #{test_box_path}")
+         "cp -r '#{assignment_tests_path}'/* #{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
     end
