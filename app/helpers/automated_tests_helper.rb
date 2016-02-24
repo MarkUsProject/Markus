@@ -16,7 +16,7 @@ module AutomatedTestsHelper
   def create_test_repo(assignment)
     # Create the automated test repository
     unless File.exist?(MarkusConfigurator
-                            .markus_config_automated_tests_repository)
+                           .markus_config_automated_tests_repository)
       FileUtils.mkdir(MarkusConfigurator
                           .markus_config_automated_tests_repository)
     end
@@ -59,7 +59,7 @@ module AutomatedTestsHelper
       else
         # Edit existing test script file
         unless [('new_update_script_' +
-          testscripts[file_num][:script_name]).to_sym].nil?
+            testscripts[file_num][:script_name]).to_sym].nil?
           new_update_script = params[('new_update_script_' +
               testscripts[file_num][:script_name]).to_sym]
           old_scrip_name = file[:script_name]
@@ -77,11 +77,11 @@ module AutomatedTestsHelper
 
           # Deleting old script
           old_script_path = File.join(
-               MarkusConfigurator.markus_config_automated_tests_repository,
-               @assignment.repository_folder,
-               old_scrip_name)
+              MarkusConfigurator.markus_config_automated_tests_repository,
+              @assignment.repository_folder,
+              old_scrip_name)
           if File.exist?(old_script_path)
-                File.delete(old_script_path)
+            File.delete(old_script_path)
           end
         end
         updated_script_files[file_num] = file.clone
@@ -93,46 +93,46 @@ module AutomatedTestsHelper
     testsupporters.each do |file_num, file|
       # Empty file submission, skip
       next if testsupporters[file_num][:file_name].nil? &&
-        new_support_file.nil?
+          new_support_file.nil?
 
       if testsupporters[file_num][:file_name].nil?
-          updated_support_files[file_num] = {} || []
-          filename = new_support_file.original_filename
-          # Create test support file if it does not exist
-          if TestSupportFile.exists?(file_name: filename,
-                                     assignment: assignment)
-            raise I18n.t('automated_tests.duplicate_filename') + filename
-          else
-            updated_support_files[file_num] = file.clone
-            # Override filename from form
-            updated_support_files[file_num][:file_name] = filename
-          end
+        updated_support_files[file_num] = {} || []
+        filename = new_support_file.original_filename
+        # Create test support file if it does not exist
+        if TestSupportFile.exists?(file_name: filename,
+                                   assignment: assignment)
+          raise I18n.t('automated_tests.duplicate_filename') + filename
+        else
+          updated_support_files[file_num] = file.clone
+          # Override filename from form
+          updated_support_files[file_num][:file_name] = filename
+        end
       else
         # Edit existing test support file
         unless params[('new_update_file_' +
-          testsupporters[file_num][:file_name]).to_sym].nil?
-            new_update_file = params[('new_update_file_' +
-               testsupporters[file_num][:file_name]).to_sym]
-            old_file_name = file[:file_name]
-            updated_support_files[file_num] = file.clone
-            file[:file_name] = new_update_file.original_filename
+            testsupporters[file_num][:file_name]).to_sym].nil?
+          new_update_file = params[('new_update_file_' +
+              testsupporters[file_num][:file_name]).to_sym]
+          old_file_name = file[:file_name]
+          updated_support_files[file_num] = file.clone
+          file[:file_name] = new_update_file.original_filename
 
-            # Uploading new file
-            assignment_tests_path = File.join(
-                MarkusConfigurator.markus_config_automated_tests_repository,
-                @assignment.repository_folder,
-                new_update_file.original_filename)
-            File.open(
-                assignment_tests_path, 'w'){ |f| f.write new_update_file.read }
+          # Uploading new file
+          assignment_tests_path = File.join(
+              MarkusConfigurator.markus_config_automated_tests_repository,
+              @assignment.repository_folder,
+              new_update_file.original_filename)
+          File.open(
+              assignment_tests_path, 'w') { |f| f.write new_update_file.read }
 
-            # Deleting old file
-            old_file_path = File.join(
-                MarkusConfigurator.markus_config_automated_tests_repository,
-                @assignment.repository_folder,
-                old_file_name)
-            if File.exist?(old_file_path)
-              File.delete(old_file_path)
-            end
+          # Deleting old file
+          old_file_path = File.join(
+              MarkusConfigurator.markus_config_automated_tests_repository,
+              @assignment.repository_folder,
+              old_file_name)
+          if File.exist?(old_file_path)
+            File.delete(old_file_path)
+          end
         end
         updated_support_files[file_num] = file.clone
       end
@@ -159,12 +159,12 @@ module AutomatedTestsHelper
     group = @grouping.group
 
     @repo_dir = File.join(
-      MarkusConfigurator.markus_config_automated_tests_repository,
-      group.repo_name)
+        MarkusConfigurator.markus_config_automated_tests_repository,
+        group.repo_name)
     export_group_repo(group, @repo_dir)
 
     if files_available?(assignment) &&
-       has_permission?(current_user, assignment)
+        has_permission?(current_user, assignment)
       Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on)
     end
   end
@@ -215,8 +215,8 @@ module AutomatedTestsHelper
   # source files are successfully exported.
   def self.files_available?(assignment)
     test_dir = File.join(
-      MarkusConfigurator.markus_config_automated_tests_repository,
-      assignment.short_identifier)
+        MarkusConfigurator.markus_config_automated_tests_repository,
+        assignment.short_identifier)
     src_dir = @repo_dir
     assign_dir = @repo_dir + '/' + assignment.repository_folder
 
@@ -305,7 +305,7 @@ module AutomatedTestsHelper
       run_dir = MarkusConfigurator.markus_ate_test_run_directory
 
 
-      m_logger.log("error with launching test, error: #{stderr} and status: #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver: #{server}\ntest_runner: #{test_runner}\nrun_dir: #{run_dir}",MarkusLogger::ERROR)
+      m_logger.log("error with launching test, error: #{stderr} and status: #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver: #{server}\ntest_runner: #{test_runner}\nrun_dir: #{run_dir}", MarkusLogger::ERROR)
 
       # TODO: handle this error better
       raise 'error'
@@ -345,7 +345,7 @@ module AutomatedTestsHelper
     end
 
     stdout, stderr, status = Open3.capture3(
-      "cp -r '#{assignment_tests_path}'/* #{test_box_path}")
+        "cp -r '#{assignment_tests_path}'/* #{test_box_path}")
     unless status.success?
       return [stderr, stdout, status]
     end
