@@ -93,13 +93,14 @@ module AutomatedTestsHelper
     testsupporters.each do |file_num, file|
       # Empty file submission, skip
       next if testsupporters[file_num][:file_name].nil? &&
-          new_support_file.nil?
+        new_support_file.nil?
 
       if testsupporters[file_num][:file_name].nil?
           updated_support_files[file_num] = {} || []
           filename = new_support_file.original_filename
           # Create test support file if it does not exist
-          if TestSupportFile.exists?(file_name: filename, assignment: assignment)
+          if TestSupportFile.exists?(file_name: filename,
+                                     assignment: assignment)
             raise I18n.t('automated_tests.duplicate_filename') + filename
           else
             updated_support_files[file_num] = file.clone
@@ -122,8 +123,7 @@ module AutomatedTestsHelper
                 @assignment.repository_folder,
                 new_update_file.original_filename)
             File.open(
-                assignment_tests_path, 'w') {
-                |f| f.write new_update_file.read }
+                assignment_tests_path, 'w'){ |f| f.write new_update_file.read }
 
             # Deleting old file
             old_file_path = File.join(
