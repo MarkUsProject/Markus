@@ -15,6 +15,7 @@ class SubmissionsController < ApplicationController
                          :downloads,
                          :collect_and_begin_grading,
                          :download_groupings_files,
+                         :check_collect_status,
                          :manually_collect_and_begin_grading,
                          :collect_ta_submissions,
                          :repo_browser,
@@ -27,6 +28,7 @@ class SubmissionsController < ApplicationController
                        :collect_ta_submissions,
                        :repo_browser,
                        :download_groupings_files,
+                       :check_collect_status,
                        :update_submissions,
                        :populate_submissions_table]
   before_filter :authorize_for_student,
@@ -182,7 +184,7 @@ class SubmissionsController < ApplicationController
                                               @path, @grouping.id)
       render json: files_info + directories_info
     else
-      return []
+      render json: []
     end
   end
 
@@ -575,6 +577,31 @@ class SubmissionsController < ApplicationController
 
     ## Send the Zip file
     send_file zip_path, disposition: 'inline', filename: zip_name
+  end
+
+  ##
+  # Check the status of collection for all groupings
+  ##
+  def check_collect_status
+    grouping_ids = params[:groupings]
+
+    ## if there is no grouping, render a message
+    if grouping_ids.blank?
+      render text: t('student.submission.no_groupings_available')
+      return
+    end
+
+    groupings = Grouping.where(id: grouping_ids)
+                        .includes(:group,
+                                  current_submission_used: {
+                                    submission_files: {
+                                      submission: { grouping: :group }
+                                    }
+                                  })
+
+    ## check collection is completed for all groupings
+    all_groupings_collected = groupings.all?(&:is_collected?)
+    render json: { collect_status: all_groupings_collected }
   end
 
   ##

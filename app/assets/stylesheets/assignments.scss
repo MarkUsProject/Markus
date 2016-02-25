@@ -1,7 +1,7 @@
 @import 'common/core';
 
 
-.wrapper .section {
+.section {
   margin-top: 1.5em;
 }
 
@@ -182,11 +182,17 @@ input#assignment_repository_folder[readonly] {
     display: inline-block;
     font-weight: 600;
     min-width: 10em;
+    float: left;
 
     @include breakpoint(mobile) {
       display: block;
       min-width: 0;
     }
+  }
+
+  .prop_paragraph {
+    display: block;
+    overflow: hidden;
   }
 
   .clear {

@@ -210,25 +210,4 @@ class FlexibleCriterion < Criterion
     add_tas(result)
   end
 
-  # Returns an array containing the criterion names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
-    failures = []
-
-    csv_file_contents = csv_file_contents.utf8_encode(encoding)
-    CSV.parse(csv_file_contents) do |row|
-      criterion_name = row.shift # Knocks the first item from array
-      criterion =
-        FlexibleCriterion.where(assignment_id: assignment_id,
-                                flexible_criterion_name: criterion_name)
-                         .first
-      if criterion.nil?
-        failures.push(criterion_name)
-      else
-        criterion.add_tas_by_user_name_array(row) # The rest of the array
-      end
-    end
-
-    failures
-  end
-
 end

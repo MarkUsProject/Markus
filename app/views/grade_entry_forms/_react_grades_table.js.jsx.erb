@@ -40,9 +40,9 @@
     },
     render: function() {
       return(
-        <span 
-        id={this.props.grade_id} 
-        size="4" 
+        <span
+        id={this.props.grade_id}
+        size="4"
         className="grade-total"
         >
         {this.props.value}
@@ -136,7 +136,7 @@
       this.refresh();
     },
     refresh: function() {
-     document.getElementById('working').style.display = '';
+      document.getElementById('working').style.display = '';
 
       // Getting additional grade entry item columns
       jQuery.ajax({
@@ -199,13 +199,16 @@
           var column_id = column.id;
 
           if (column_id === 'marking_state'){
-            r[column_id] = <img src={row[column_id]}/>;
-          } 
+            if(row[column_id]){
+              r[column_id] = <img src={row[column_id]} alt="<%= t('marking_state.released') %>" title="<%= t('marking_state.released') %>"/>;
+            }
+          }
+
           else if (column_id === 'total_marks'){
-            r[column_id] = <GradeBoxTotal grade_id={'grade_' + row.id + '_' + column.id} 
-                           grade_entry_column={column.id} student_id={row.id} 
+            r[column_id] = <GradeBoxTotal grade_id={'grade_' + row.id + '_' + column.id}
+                           grade_entry_column={column.id} student_id={row.id}
                            value={row[column_id]}/>;
-          } 
+          }
           else {
             r[column_id] =
               <GradeEntryBox
@@ -229,9 +232,9 @@
           <Table data={rows}
             search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
             selectable={true} // True if you want checkboxed elements
-            onSelectedRowsChange={this.updateSelectedStudents}          
+            onSelectedRowsChange={this.updateSelectedStudents}
             columns={all_columns}
-            filters={null} // Optional: pass null 
+            filters={null} // Optional: pass null
            />
         </div>
       );
@@ -243,11 +246,13 @@
       selected_students: React.PropTypes.array
     },
     releaseMarks: function() {
+      document.getElementById('working').style.display = '';
       var dataLoad = {
         release_results: true,
         filter: 'none',
         students: this.props.selected_students
       };
+
       jQuery.ajax({
         method: 'POST',
         url: 'update_grade_entry_students',
@@ -262,6 +267,7 @@
       });
     },
     unreleaseMarks: function() {
+      document.getElementById('working').style.display = '';
       var dataLoad = {
         unrelease_results: false,
         filter: 'none',
@@ -299,4 +305,3 @@
   React.renderComponent(<GradesTable />, document.getElementById('react_grades_table'));
 
 </script>
-

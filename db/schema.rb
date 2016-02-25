@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151114204502) do
+ActiveRecord::Schema.define(version: 20160116172051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -319,8 +319,9 @@ ActiveRecord::Schema.define(version: 20151114204502) do
     t.text     "overall_comment"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "released_to_students", default: false, null: false
-    t.float    "total_mark",           default: 0.0
+    t.boolean  "released_to_students",        default: false, null: false
+    t.float    "total_mark",                  default: 0.0
+    t.datetime "remark_request_submitted_at"
   end
 
   create_table "rubric_criteria", force: :cascade do |t|
@@ -400,7 +401,6 @@ ActiveRecord::Schema.define(version: 20151114204502) do
     t.boolean  "submission_version_used"
     t.integer  "revision_number",          null: false
     t.datetime "revision_timestamp",       null: false
-    t.integer  "remark_result_id"
     t.text     "remark_request"
     t.datetime "remark_request_timestamp"
   end

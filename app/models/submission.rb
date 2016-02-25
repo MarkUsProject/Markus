@@ -7,9 +7,9 @@ class Submission < ActiveRecord::Base
   before_validation :bump_old_submissions, on: :create
 
   validates_numericality_of :submission_version, only_integer: true
+  validate :max_number_of_results
   belongs_to :grouping
   has_many   :results, dependent: :destroy
-  belongs_to :remark_result, class_name: 'Result', dependent: :destroy
   has_many   :submission_files, dependent: :destroy
   has_many   :annotations, through: :submission_files
   has_many   :test_results, dependent: :destroy
@@ -56,6 +56,14 @@ class Submission < ActiveRecord::Base
   # Returns the original result.
   def get_original_result
     Result.where(submission_id: id).order(:created_at).first
+  end
+
+  def remark_result
+    results.where.not(remark_request_submitted_at: nil).first
+  end
+
+  def remark_result_id
+    remark_result.try(:id)
   end
 
   # Returns the latest result.
@@ -141,8 +149,8 @@ class Submission < ActiveRecord::Base
   # Returns whether this submission has a remark request that has been
   # submitted to instructors or TAs.
   def remark_submitted?
-    has_remark? &&
-      remark_result.marking_state != Result::MARKING_STATES[:unmarked]
+    results.where.not(remark_request_submitted_at: nil)
+           .where.not(marking_state: Result::MARKING_STATES[:unmarked]).size > 0
   end
 
   # Helper methods
@@ -183,10 +191,10 @@ class Submission < ActiveRecord::Base
   end
 
   def make_remark_result
-    remark = create_remark_result(
+    remark = Result.create(
       marking_state: Result::MARKING_STATES[:unmarked],
-      submission_id: id)
-    self.save
+      submission: self,
+      remark_request_submitted_at: Time.zone.now)
 
     # populate remark result with old marks
     original_result = get_original_result
@@ -233,4 +241,7 @@ class Submission < ActiveRecord::Base
      end
   end
 
+  def max_number_of_results
+    results.size < 3
+  end
 end

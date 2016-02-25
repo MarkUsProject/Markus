@@ -133,10 +133,7 @@ class GroupsController < ApplicationController
       # really bad happens.
       ActiveRecord::Base.transaction do
         file = file.utf8_encode(encoding)
-        # Old groupings get wiped out
-        if !@assignment.groupings.nil? && @assignment.groupings.length > 0
-          @assignment.groupings.destroy_all
-        end
+        lines = 0
         begin
           # Loop over each row, which lists the members to be added to the group.
           CSV.parse(file).each_with_index do |row, line_nr|
@@ -151,13 +148,15 @@ class GroupsController < ApplicationController
               flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
                 { line_number: line_nr + 1 }) + " #{e.message}")
             end
+            lines = line_nr + 1
           end
           @assignment.reload # Need to reload to get newly created groupings
           number_groupings_added = @assignment.groupings.length
           if number_groupings_added > 0 && flash[:error].is_a?(Array)
             invalid_lines_count = flash[:error].length
-            flash[:notice] = I18n.t('csv.groups_added_msg', { number_groups:
-              number_groupings_added, number_lines: invalid_lines_count })
+            flash[:notice] = I18n.t('csv.groups_added_msg',
+                                    number_groups: lines - invalid_lines_count,
+                                    number_lines: invalid_lines_count)
           end
         rescue CSV::MalformedCSVError
           flash[:error] = t('csv.upload.malformed_csv')
@@ -185,54 +184,13 @@ class GroupsController < ApplicationController
   end
 
   def create_groups_when_students_work_alone
-    @assignment = Assignment.find_by_id(params[:assignment_id])
+    @assignment = Assignment.find(params[:assignment_id])
 
     if @assignment.group_max == 1
-      Student.all.map do |student|
-        # Check to see if the student already has a grouping for
-        # the current assignment
-        grouping = student.accepted_grouping_for(@assignment.id)
-        next unless grouping.nil?
-
-        ActiveRecord::Base.transaction do
-          grouping = Grouping.new
-          grouping.assignment_id = @assignment.id
-
-          # If an individual repo has already been created for this user
-          # then just use that one.
-          group = Group.find_by group_name: student.user_name
-          if group.nil?
-            group = Group.new(group_name: student.user_name)
-            group.repo_name = student.user_name
-            group.save
-            unless group.errors[:base].blank?
-              # raise an error and continue
-              collision_error = I18n.t('csv.repo_collision_warning',
-                                       repo_name: group.errors[:base],
-                                       group_name: group.group_name)
-              flash_message(:error,
-                            'Student ' + student.user_name + ': ' + \
-                             collision_error)
-            end
-          end
-
-          grouping.group = group
-          grouping.save
-          # Create the membership
-          member = StudentMembership.new(
-            grouping_id: grouping.id,
-            membership_status: StudentMembership::STATUSES[:inviter],
-            user_id: student.id)
-          member.save
-          # Update repo permissions if need be. This has to happen
-          # after memberships have been established.
-          grouping.update_repository_permissions
-          # Add permissions for TAs and admins.  This completely rerwrites the
-          # auth file but that shouldn't be a big deal in this case.
-          group.set_repo_permissions
-        end
-      end
+      CreateIndividualGroupsForAllStudentsJob.perform_later @assignment
     end
+
+    flash[:success] = I18n.t('groups.creating_groups_for_all_students')
     redirect_to action: 'index', id: params[:id]
   end
 

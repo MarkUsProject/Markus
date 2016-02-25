@@ -68,6 +68,7 @@ Assignment.blueprint do
   marking_scheme_type {'rubric'}
   submission_rule {NoLateSubmissionRule.make}
   allow_web_submits {true}
+  vcs_submit { false }
   display_grader_names_to_students {false}
   section_due_dates_type(false)
   enable_test {true}
@@ -245,7 +246,6 @@ Submission.blueprint do
   submission_version_used {true}
   revision_number {1}
   revision_timestamp {1.days.ago}
-  remark_result_id {nil}
 end
 
 SubmissionFile.blueprint do

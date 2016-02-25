@@ -3,19 +3,19 @@
 <div class='block_content'>
   <div class='sub_block'>
     <span class='prop_label'><%= t('name') %>:</span>
-    <%= @assignment.short_identifier %>
+    <span class="prop_paragraph"><%= @assignment.short_identifier %></span>
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('description') %>:</span>
-    <%= @assignment.description %>
+    <span class="prop_paragraph"><%= @assignment.description %></span>
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('message') %>:</span>
-    <%= @assignment.message %>
+    <span class="prop_paragraph"><%= @assignment.message %></span>
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('due_date') %>:</span>
-    <%= I18n.l(@due_date, format: :long_date ) %>
+    <span class="prop_paragraph"><%= I18n.l(@due_date, format: :long_date ) %></span>
   </div>
 
   <% unless @penalty.type == "NoLateSubmissionRule" %>

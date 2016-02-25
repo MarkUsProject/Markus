@@ -150,7 +150,7 @@ class GradeEntryStudent < ActiveRecord::Base
 
       else
         if old_grade.nil? &&
-           (grade_for_grade_entry_item || !grade_for_grade_entry_item.empty?)
+           (grade_for_grade_entry_item && !grade_for_grade_entry_item.empty?)
 
           grade = grade_entry_student.grades
                   .find_or_create_by(grade_entry_item_id: grade_entry_item.id)
@@ -164,29 +164,6 @@ class GradeEntryStudent < ActiveRecord::Base
     end
 
     grade_entry_student.total_grade
-  end
-
-  # Returns an array containing the student names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, grade_entry_form_id, encoding)
-    grade_entry_form  = GradeEntryForm.find(grade_entry_form_id)
-    csv_file_contents = csv_file_contents.utf8_encode(encoding)
-
-    failures = []
-    CSV.parse(csv_file_contents) do |row|
-      student_name = row.shift # Knocks the first item from array
-      student = Student.where(user_name: student_name).first
-      if student.nil?
-        failures.push(student_name)
-      else
-        grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(user_id: student.id)
-        if grade_entry_student.nil?
-          failures.push(student_name)
-        else
-          grade_entry_student.add_tas_by_user_name_array(row) # The rest of the array
-        end
-      end
-    end
-    return failures
   end
 
   def add_tas_by_user_name_array(ta_user_name_array)

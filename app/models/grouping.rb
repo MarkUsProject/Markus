@@ -650,15 +650,20 @@ class Grouping < ActiveRecord::Base
                 .select { |m| m.grouping.is_valid? }
                 .map &:grouping
     else
-      assignment.groupings
-                .includes(:assignment,
-                          :group,
-                          :grace_period_deductions,
-                          { current_submission_used: [:results] },
-                          { accepted_student_memberships: :user },
-                          { inviter: :section },
-                          :tags)
-                .select { |g| g.non_rejected_student_memberships.size > 0 }
+      Grouping.joins(:memberships)
+              .includes(:assignment,
+                        :group,
+                        :grace_period_deductions,
+                        { current_submission_used: [:results] },
+                        { accepted_student_memberships: :user },
+                        { inviter: :section },
+                        :tags)
+              .where(assignment_id: assignment.id)
+              .where(memberships: { membership_status:
+                                   [StudentMembership::STATUSES[:inviter],
+                                    StudentMembership::STATUSES[:pending],
+                                    StudentMembership::STATUSES[:accepted]] })
+              .distinct
     end
   end
 
@@ -671,6 +676,13 @@ class Grouping < ActiveRecord::Base
     else
       '-'
     end
+  end
+
+  # Helper for populate_submission_table
+  # Returns boolean value based on if the submission has files or not
+  def has_files_in_submission?
+    !has_submission? ||
+    SubmissionFile.where(submission_id: current_submission_used.id).exists?
   end
 
   # Helper for populate_submissions_table.

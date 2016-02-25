@@ -46,16 +46,6 @@ class AssignmentTest < ActiveSupport::TestCase
       end
     end
 
-    should 'be able to create groupings when students work alone' do
-      (1..5).each do
-        Student.make
-      end
-
-      assert_equal(0, @assignment.groupings.count)
-      assert @assignment.create_groupings_when_students_work_alone
-      assert_equal(5, @assignment.groupings.count)
-    end
-
     context "with some groupings with students and ta's assigned " do
       setup do
         (1..5).each do
@@ -169,7 +159,12 @@ class AssignmentTest < ActiveSupport::TestCase
       context 'with an assignment with other groupings' do
         setup do
           @target = Assignment.make({:group_min => 1, :group_max => 1})
-          @target.create_groupings_when_students_work_alone
+          3.times do
+            target_grouping = Grouping.make(assignment: @target)
+            StudentMembership.make(
+              membership_status: StudentMembership::STATUSES[:accepted],
+              grouping: target_grouping)
+          end
         end
         should 'destroy all previous groupings if cloning was successful' do
           old_groupings = @target.groupings
@@ -186,11 +181,14 @@ class AssignmentTest < ActiveSupport::TestCase
           @assignment.allow_web_submits = false
           @assignment.save
           @target = Assignment.make({:allow_web_submits => false, :group_min => 1, :group_max => 1})
-          @target.create_groupings_when_students_work_alone
           # And for this test, let's make sure all groupings cloned have admin approval
-          @assignment.groupings.each do |grouping|
-            grouping.admin_approved = true
-            grouping.save
+          3.times do
+            target_grouping = Grouping.make(
+              assignment: @target,
+              admin_approved: true)
+            StudentMembership.make(
+              membership_status: StudentMembership::STATUSES[:accepted],
+              grouping: target_grouping)
           end
           assert @assignment.groupings.size > 0
         end

@@ -546,7 +546,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                 :file_format => 'csv'
         assert_response :redirect
         assert_redirected_to(:controller => 'assignments', :action => 'index')
-        assert_equal flash[:success], I18n.t('assignment.create_success')
+        assert_equal flash[:success], [I18n.t('assignment.create_success')]
         assert_equal flash[:error], nil
         test1 = Assignment.find_by_short_identifier('ATest1')
         assert_not_nil test1
@@ -598,7 +598,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+                     [I18n.t('csv.upload.non_text_file_with_csv_extension')]
       end
     end
 
@@ -946,9 +946,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                   {:id => @assignment.id,
                    :membership => sm.id}
 
-          assert_response :success
+          assert_response :found
           assert_equal I18n.t('student.member_disinvited'),
-                       flash[:edit_notice]
+                       flash[:success]
           assert_equal 1,
                        @grouping.memberships.length
         end
@@ -962,7 +962,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_redirected_to :action => 'student_interface',
                                :id => @assignment.id
 
-          assert_equal(I18n.t('assignment.group.deleted'), flash[:edit_notice])
+          assert_equal(I18n.t('assignment.group.deleted'), flash[:success])
           assert !@student.has_accepted_grouping_for?(@assignment.id)
         end
 

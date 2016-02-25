@@ -597,6 +597,7 @@ describe Assignment do
 
       context 'and the group does not exist' do
         it 'adds a Group and an associated Grouping' do
+          @row[1] = 'repo_name_1'
           @assignment.add_csv_group(@row)
           group = Group.where(group_name: @row[0])
           grouping = group ? group.first.groupings : nil
@@ -608,7 +609,6 @@ describe Assignment do
         it 'adds the StudentMemberships for the students' do
           @assignment.add_csv_group(@row)
           memberships = StudentMembership.where(user_id: @students)
-
           expect(memberships.size).to eq 2
         end
       end
@@ -624,6 +624,7 @@ describe Assignment do
         end
 
         it 'adds a Grouping to the existing Group' do
+          @row[1] = @existing_group.repo_name
           @assignment.add_csv_group(@row)
           expect(Grouping.first.group).to eq @existing_group
         end
@@ -1026,7 +1027,12 @@ describe Assignment do
           result = s.get_latest_result
           result.total_mark = total_mark
           result.marking_state = Result::MARKING_STATES[:complete]
-          result.save
+          @assignment.rubric_criteria.each do |cri|
+            result.marks.create!(markable_id: cri.id,
+                                 markable_type: RubricCriterion,
+                                 mark: (total_mark * 4.0 / 20).round)
+          end
+          result.save!
         end
       end
 
@@ -1037,7 +1043,7 @@ describe Assignment do
 
         it 'returns the correct distribution' do
           expect(@assignment.grade_distribution_as_percentage)
-            .to eq [1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+            .to eq [1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
         end
       end
 
@@ -1085,6 +1091,7 @@ describe Assignment do
           if grouping && grouping.has_submission?
             result = grouping.current_submission_used.get_latest_result
             fields.push(result.total_mark / @assignment.total_mark * 100)
+            fields.push(result.total_mark)
             @assignment.rubric_criteria.each do |criterion|
               mark = result.marks
                 .find_by_markable_id_and_markable_type(criterion.id,
@@ -1146,6 +1153,7 @@ describe Assignment do
           if grouping && grouping.has_submission?
             result = grouping.current_submission_used.get_latest_result
             fields.push(result.total_mark / @assignment.total_mark * 100)
+            fields.push(result.total_mark)
             @assignment.flexible_criteria.each do |criterion|
               mark = result.marks
                 .find_by_markable_id_and_markable_type(criterion.id,

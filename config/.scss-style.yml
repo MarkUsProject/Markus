@@ -40,7 +40,8 @@ linters:
   HexValidation:
     enabled: true
   IdSelector:
-    enabled: false
+    enabled: true
+    severity: warning
   ImportantRule:
     enabled: true
   ImportPath:
@@ -49,7 +50,7 @@ linters:
     filename_extension: false
   Indentation:
     enabled: true
-    allow_non_nested_indentation: false
+    allow_non_nested_indentation: true
     character: space
     width: 2
   LeadingZero:
@@ -59,27 +60,21 @@ linters:
     enabled: true
     force_nesting: true
   NameFormat:
-    enabled: false
-    allow_leading_underscore: true
-    convention: hyphenated_lowercase
+    enabled: true
   NestingDepth:
     enabled: true
     max_depth: 4
     severity: warning
   PlaceholderInExtend:
     enabled: false
-  PropertyCount:
-    enabled: true
-    include_nested: false
-    max_properties: 10
   PropertySortOrder:
     enabled: true
-    ignore_unspecified: false
     severity: warning
     separate_groups: false
   PropertySpelling:
     enabled: true
-    extra_properties: []
+  PseudoElement:
+    enabled: true
   QualifyingElement:
     enabled: true
     allow_element_with_attribute: false
@@ -88,14 +83,11 @@ linters:
     severity: warning
   SelectorDepth:
     enabled: true
-    max_depth: 2
     severity: warning
   SelectorFormat:
     enabled: true
-    convention: hyphenated_lowercase
   Shorthand:
     enabled: true
-    severity: warning
   SingleLinePerProperty:
     enabled: true
     allow_single_line_rule_sets: true
@@ -105,23 +97,28 @@ linters:
     enabled: true
   SpaceAfterPropertyColon:
     enabled: true
-    style: one_space
   SpaceAfterPropertyName:
+    enabled: true
+  SpaceAfterVariableName:
+    enabled: true
+  SpaceAroundOperator:
     enabled: true
   SpaceBeforeBrace:
     enabled: true
-    style: space
-    allow_single_line_padding: false
+    allow_single_line_padding: true
   SpaceBetweenParens:
     enabled: true
-    spaces: 0
   StringQuotes:
     enabled: true
-    style: double_quotes
+    style: single_quotes
   TrailingSemicolon:
+    enabled: true
+  TrailingWhitespace:
     enabled: true
   TrailingZero:
     enabled: false
+  TransitionAll:
+    enabled: true
   UnnecessaryMantissa:
     enabled: true
   UnnecessaryParentReference:
@@ -130,16 +127,7 @@ linters:
     enabled: true
   UrlQuotes:
     enabled: true
-  VariableForProperty:
-    enabled: false
-    properties: []
   VendorPrefixes:
-    enabled: false
-    identifier_list: bourbon
-    include: []
-    exclude: []
+    enabled: true
   ZeroUnit:
     enabled: true
-    severity: warning
-  Compass::PropertyWithMixin:
-    enabled: false

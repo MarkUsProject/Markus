@@ -138,6 +138,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       no_submission_for_section: "Não há submissões da sessão %{section_name} para coletar."
       successfully_collected: " %{collected} submissões coletadas com sucesso."
       marking_incomplete_warning: "Nota: Isso só vai baixar os submissões que foram recolhidos.\n\nTem certeza que deseja continuar?"
+      collection_incomplete_warning: "Coleção ainda está em andamento. Você ainda deseja continuar? Algumas apresentações podem estar ausentes."
+      check_collection_status_error: "Houve um erro ao verificar o status da conexão."
     assignment:
         hidden: "%{assignment_text} (oculto)"
         assignment: "Projetos %{short_identifier}"
@@ -167,6 +169,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
             select_a_group: "Selecione um grupo"
             select_a_student: "Selecione um aluno"
             select_a_grader: "Selecione um avaliador"
+            group_submission_no_files: "Um ou mais dos grupos selecionados não possui arquivos em sua apresentação. Grader não atribuído."
             select_only_one_group: "Você pode indicar cada estudante a somente um grupo."
             deleted: "Grupo foi apagado"
             work_in_groups:  "Alunos podem trabalhar em grupos"
@@ -261,6 +264,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     marks_released_notice:  "As notas foram liberadas. Você não pode alterá-las."
     commit_after_due_date: "O envio foi fora do prazo."
+    no_files_submitted: "Esta apresentação não tem arquivos."
     past_due_date_edit_warning:  "Alerta:  O data selecionada está no passado."
     past_due_date_edit_result_warning: "O %{href} desse grupo está depois do prazo."
     last_commit: "Último envio"
@@ -586,6 +590,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       csv:
         could_not_find_source: "O projeto fonte de onde os grupos serão copiados não foi encontrado"
         could_not_find_target: "O projeto alvo para o qual os grupos serão copiados não foi encontrado"
+      add_all_groups: "Adicionar todos os grupos"
+      creating_groups_for_all_students: "A criação de grupos para todos os alunos. (Tarefa de fundo. Atualize a página para ver quando todos os grupos criados.)"
 
     results:
       title:  "Projeto %{assignment_name} : %{group_name}"
@@ -745,6 +751,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       search_criteria:    "Pesquisar os critérios"
       assign_to_criteria: "Atribuir avaliador aos critérios"
       lines_not_processed: "As linhas a seguir não puderam ser processadas:"
+      skip_empty_submissions: "Não atribua Graders a grupos com apresentações vazias (requer que as candidaturas são recolhidas)"
       upload:
         select_csv_file: "Selecione um arquivo CSV no seguinte formato: <code>user_name,last_name,first_name</code>"
         grader_same_user: "Se existir um avaliador com o mesmo user_name, suas informações serão atualizadas."
