@@ -5,6 +5,7 @@ describe GroupsController do
     let(:grouping) { build_stubbed(:grouping) }
     let(:assignment) { grouping.assignment }
 
+
     before :each do
       # Authenticate user is not timed out, and has administrator rights.
       allow(controller).to receive(:session_expired?).and_return(false)
@@ -136,7 +137,138 @@ describe GroupsController do
       end
     end
 
-    describe '#csv_upload'
+    context 'CSV_Uploads' do
+      before :each do
+
+        # We need to mock the rack file to return its content when
+        # the '.read' method is called to simulate the behaviour of
+        # the http uploaded file
+        @file_good = fixture_file_upload(
+            'files/groups/form_good.csv', 'text/csv')
+        allow(@file_good).to receive(:read).and_return(
+            File.read(fixture_file_upload(
+                          'files/groups/form_good.csv',
+                          'text/csv')))
+
+        @file_invalid_column = fixture_file_upload(
+            'files/groups/form_invalid_column.csv', 'text/csv')
+        allow(@file_invalid_column).to receive(:read).and_return(
+            File.read(fixture_file_upload(
+                          'files/groups/form_invalid_column.csv',
+                          'text/csv')))
+
+        @file_bad_csv = fixture_file_upload(
+            'files/bad_csv.csv', 'text/xls')
+        allow(@file_bad_csv).to receive(:read).and_return(
+            File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
+
+        @file_wrong_format = fixture_file_upload(
+            'files/wrong_csv_format.xls', 'text/xls')
+        allow(@file_wrong_format).to receive(:read).and_return(
+            File.read(fixture_file_upload(
+                          'files/wrong_csv_format.xls', 'text/csv')))
+
+        @group_names = %w(group1 group2)
+        @repo_names = %w(group_0001 group_0002)
+        assignment = create(:assignment)
+        group = create(:group, group_name: @group_names[0], repo_name: @repo_names[0])
+        # create(:grouping, group: group, assignment: assignment)
+        group = create(:group, group_name: @group_names[1], repo_name: @repo_names[1])
+        # create(:grouping, group: group, assignment: assignment)
+
+        #Create students corresponding to the file_good
+        @student_user_names = %w(c8shosta c5bennet)
+        @student_user_names.each do |name|
+          create(:user, user_name: name, type: 'Student')
+        end
+
+        #This must line up with the second entry in the file_good
+        @test_category_name= 'test_category'
+        @test_content = 'c6conley'
+      end
+
+      it 'accepts a valid file' do
+        post :csv_upload,
+             id: grouping.id,
+             assignment_id: assignment.id,
+             :group => {:grouplist => @file_good}
+
+        expect(response.status).to eq(302)
+        expect(flash[:error]).to be_nil
+        expect(flash[:success]).to include('uploaded 2')
+        expect(response).to redirect_to(action: 'index',
+                                        id: grouping.id)
+        #check that the data is being updated, in particular
+        #the last element in the file.
+        # found_cat = false
+        # AnnotationCategory.all.each do |ac|
+        #   if (ac['annotation_category_name'] == @test_category_name)
+        #     found_cat = true
+        #     expect(AnnotationText.where(annotation_category: ac).take['content'])
+        #         .to eq(@test_content)
+        #   end
+        # end
+      end
+
+      it 'does not accept files with invalid columns' do
+        post :csv_upload,
+             id: grouping.id,
+             assignment_id: assignment.id,
+             annotation_category_list_csv: @file_invalid_column
+
+        expect(response.status).to eq(302)
+        expect(flash[:error]).to_not be_empty
+        expect(response).to redirect_to(action: 'index',
+                                        id: assignment.id)
+      end
+
+      it 'does not accept files referencing non-existing groups columns' do
+        post :csv_upload,
+             id: grouping.id,
+             assignment_id: assignment.id,
+             annotation_category_list_csv: @file_invalid_column
+
+        expect(response.status).to eq(302)
+        expect(flash[:error]).to_not be_empty
+        expect(response).to redirect_to(action: 'index',
+                                        id: assignment.id)
+      end
+
+      it 'does not accept fileless submission' do
+        post :csv_upload,
+             assignment_id: assignment.id
+
+        expect(response.status).to eq(302)
+        expect(flash[:error]).to_not be_empty
+        expect(response).to redirect_to(action: 'index',
+                                        id: assignment.id)
+      end
+
+      it 'does not accept a non-csv file with .csv extension' do
+        post :csv_upload,
+             assignment_id: assignment.id,
+             annotation_category_list_csv: @file_bad_csv
+
+        expect(response.status).to eq(302)
+        expect(flash[:error]).to_not be_empty
+        expect(response).to redirect_to(action: 'index',
+                                        id: assignment.id)
+      end
+
+      it 'does not accept a .xls file' do
+        post :csv_upload,
+             assignment_id: assignment.id,
+             annotation_category_list_csv: @file_wrong_format
+
+
+        expect(response.status).to eq(302)
+        expect(flash[:error]).to_not be_empty
+        expect(flash[:error][0]).to include('not a csv')
+        expect(response).to redirect_to(action: 'index',
+                                        id: assignment.id)
+      end
+    end
+
     describe '#download_grouplist'
     describe '#use_another_assignment_groups'
     describe '#global_actions'

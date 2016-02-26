@@ -150,33 +150,28 @@ class User < ActiveRecord::Base
     result = {}
     result[:invalid_lines] = []  # store lines that were not processed
     # read each line of the file and update classlist
-    begin
-      user_list = user_list.utf8_encode(encoding)
-      User.transaction do
-        processed_users = []
-        CSV.parse(user_list,
-                  skip_blanks: true,
-                  row_sep: :auto) do |row|
-          # don't know how to fetch line so we concat given array
-          next if CSV.generate_line(row).strip.empty?
-          if processed_users.include?(row[0])
-            if result[:invalid_lines].count < max_invalid_lines
-              result[:invalid_lines] << I18n.t('csv_upload_user_duplicate',
-                                               { user_name: row[0] })
-            end
+
+    user_list = user_list.utf8_encode(encoding)
+    User.transaction do
+      processed_users = []
+      result[:invalid_lines] = MarkusCSV.parse(user_list,
+                                               skip_blanks: true,
+                                               row_sep: :auto) do |row|
+        # don't know how to fetch line so we concat given array
+        next if CSV.generate_line(row).strip.empty?
+        if processed_users.include?(row[0])
+          raise CSVInvalidLineError
+        else
+          if User.add_user(user_class, row).nil?
+            raise CSVInvalidLineError
           else
-            if User.add_user(user_class, row).nil?
-              if result[:invalid_lines].count < max_invalid_lines
-                result[:invalid_lines] << row.join(',')
-              end
-            else
-              num_update += 1
-              processed_users.push(row[0])
-            end
+            num_update += 1
+            processed_users.push(row[0])
           end
-        end # end parse
-      end
+        end
+      end # end parse
     end
+
     result[:upload_notice] = "#{num_update} user(s) added/updated."
     result
   end

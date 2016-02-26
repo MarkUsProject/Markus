@@ -130,7 +130,7 @@ class RubricCriterion < Criterion
   #                           is zero (or doesn't evaluate to a float)
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
-      raise I18n.t('criteria_csv_error.incomplete_row')
+      raise CSVInvalidLineError
     end
     working_row = row.clone
     rubric_criterion_name = working_row.shift
@@ -139,11 +139,7 @@ class RubricCriterion < Criterion
     criterion = assignment.rubric_criteria.find_or_create_by(
       rubric_criterion_name: rubric_criterion_name)
     #Check that the weight is not a string.
-    begin
-      criterion.weight = Float(working_row.shift)
-    rescue ArgumentError
-      raise ActiveRecord::RecordNotSaved, I18n.t('criteria_csv_error.weight_not_number')
-    end
+    criterion.weight = Float(working_row.shift)
     # Only set the position if this is a new record.
     if criterion.new_record?
       criterion.position = assignment.next_criterion_position
@@ -157,7 +153,7 @@ class RubricCriterion < Criterion
       criterion['level_' + i.to_s + '_description'] = working_row.shift
     end
     unless criterion.save
-      raise ActiveRecord::RecordNotSaved.new(criterion.errors)
+      raise CSVInvalidLineError
     end
     criterion
   end
@@ -234,14 +230,13 @@ class RubricCriterion < Criterion
   def self.parse_csv(file, assignment, invalid_lines, encoding)
     nb_updates = 0
     file = file.utf8_encode(encoding)
-    CSV.parse(file) do |row|
+    errors = MarkusCSV.parse(file) do |row|
       next if CSV.generate_line(row).strip.empty?
-      begin
-        RubricCriterion.create_or_update_from_csv_row(row, assignment)
-        nb_updates += 1
-      rescue RuntimeError => e
-        invalid_lines << row.join(',') + ': ' + e.message unless invalid_lines.nil?
-      end
+      RubricCriterion.create_or_update_from_csv_row(row, assignment)
+      nb_updates += 1
+    end
+    unless errors.empty?
+      invalid_lines << errors
     end
     nb_updates
   end

@@ -72,26 +72,24 @@ class RubricsController < ApplicationController
   end
 
   def csv_upload
-    file = params[:csv_upload][:rubric]
     @assignment = Assignment.find(params[:assignment_id])
-    encoding = params[:encoding]
-    if request.post? && !file.blank?
-      begin
+    if params[:csv_upload] and params[:csv_upload][:rubric]
+      file = params[:csv_upload][:rubric]
+      encoding = params[:encoding]
+      if request.post? && !file.blank?
         RubricCriterion.transaction do
           invalid_lines = []
-          nb_updates = RubricCriterion.parse_csv(file, @assignment, invalid_lines, encoding)
+          nb_updates = RubricCriterion.parse_csv(file, @assignment,
+                                                 invalid_lines,
+                                                 encoding)
           unless invalid_lines.empty?
-            flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+            flash[:error] = invalid_lines
           end
           if nb_updates > 0
-            flash[:notice] = I18n.t('rubric_criteria.upload.success',
-              nb_updates: nb_updates)
+            flash[:success] = I18n.t('rubric_criteria.upload.success',
+                                     nb_updates: nb_updates)
           end
         end
-      rescue CSV::MalformedCSVError
-        flash[:error] = t('csv.upload.malformed_csv')
-      rescue ArgumentError
-        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
     end
     redirect_to action: 'index', id: @assignment.id

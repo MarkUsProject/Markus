@@ -137,8 +137,8 @@ class GradeEntryForm < ActiveRecord::Base
   # grades_file is the CSV file to be parsed
   # grade_entry_form is the grade entry form that is being updated
   # invalid_lines will store all problematic lines from the CSV file
-  def self.parse_csv(grades_file, grade_entry_form, invalid_lines, encoding,
-                     overwrite)
+  def self.parse_csv(grades_file, grade_entry_form, encoding,
+                     overwrite, errors)
     num_updates = 0
     num_lines_read = 0
     names = []
@@ -146,7 +146,7 @@ class GradeEntryForm < ActiveRecord::Base
     grades_file = StringIO.new(grades_file.read.utf8_encode(encoding))
 
     # Parse the question names
-    CSV.parse(grades_file.readline) do |row|
+    MarkusCSV.parse(grades_file.readline, encoding: encoding) do |row|
       unless CSV.generate_line(row).strip.empty?
         names = row
         num_lines_read += 1
@@ -154,25 +154,27 @@ class GradeEntryForm < ActiveRecord::Base
     end
 
     # Parse the question totals
-    CSV.parse(grades_file.readline) do |row|
+    MarkusCSV.parse(grades_file.readline, encoding: encoding) do |row|
       unless CSV.generate_line(row).strip.empty?
         totals = row
         num_lines_read += 1
       end
+
+      # Create/update the grade entry items
+
+        GradeEntryItem.create_or_update_from_csv_rows(names, totals, grade_entry_form)
+        num_updates += 1
+      # rescue RuntimeError => e
+      #   invalid_lines << names.join(',')
+      #   error = e.message.is_a?(String) ? e.message : ''
+      #   invalid_lines << totals.join(',') + ': ' + error unless invalid_lines.nil?
+
     end
 
-    # Create/update the grade entry items
-    begin
-      GradeEntryItem.create_or_update_from_csv_rows(names, totals, grade_entry_form)
-      num_updates += 1
-    rescue RuntimeError => e
-      invalid_lines << names.join(',')
-      error = e.message.is_a?(String) ? e.message : ''
-      invalid_lines << totals.join(',') + ': ' + error unless invalid_lines.nil?
-    end
+
 
     # Parse the grades
-    CSV.parse(grades_file.read) do |row|
+    errors << MarkusCSV.parse(grades_file.read, encoding: encoding) do |row|
       next if CSV.generate_line(row).strip.empty?
       begin
         if num_lines_read > 1
@@ -183,9 +185,6 @@ class GradeEntryForm < ActiveRecord::Base
           num_updates += 1
         end
         num_lines_read += 1
-      rescue RuntimeError => e
-        error = e.message.is_a?(String) ? e.message : ''
-        invalid_lines << row.join(',') + ': ' + error unless invalid_lines.nil?
       end
     end
     return num_updates

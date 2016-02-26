@@ -119,21 +119,12 @@ class StudentsController < ApplicationController
 
   def upload_student_list
     if request.post? && !params[:userlist].blank?
-      begin
-        result = User.upload_user_list(Student, params[:userlist], params[:encoding])
-        if result[:invalid_lines].size > 0
-          flash[:error] = I18n.t('csv_invalid_lines') +
-            result[:invalid_lines].join(', ')
-        end
+      result = User.upload_user_list(Student, params[:userlist], params[:encoding])
+      unless result[:invalid_lines].empty?
+        flash[:error] = result[:invalid_lines]
+      else
         flash[:success] = result[:upload_notice]
-      rescue CSV::MalformedCSVError
-        flash[:error] = t('csv.upload.malformed_csv')
-      rescue ArgumentError
-        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
-      rescue RuntimeError
-        flash[:notice] = I18n.t('csv_valid_format')
       end
-
     end
     redirect_to action: 'index'
   end

@@ -532,6 +532,7 @@ class AssignmentsController < ApplicationController
     assignment_list = params[:assignment_list]
 
     if assignment_list.blank?
+      flash[:error] = I18n.t('csv.invalid_csv')
       redirect_to action: 'index'
       return
     end
@@ -542,7 +543,7 @@ class AssignmentsController < ApplicationController
     case params[:file_format]
       when 'csv'
         begin
-          CSV.parse(assignment_list) do |row|
+          errors = MarkusCSV.parse(assignment_list) do |row|
             map = {}
             row.length.times do |i|
               map[DEFAULT_FIELDS[i]] = row[i]
@@ -550,12 +551,7 @@ class AssignmentsController < ApplicationController
             map.delete(nil)
             update_assignment!(map)
           end
-        rescue ArgumentError
-          flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
-        rescue ActiveRecord::ActiveRecordError => e
-          flash[:error] = e.message
-          redirect_to action: 'index'
-          return
+          flash_message(:error, errors) unless errors.empty?
         end
       when 'yml'
         begin
@@ -585,7 +581,12 @@ class AssignmentsController < ApplicationController
         assignment.assignment_stat = AssignmentStat.new
         assignment.display_grader_names_to_students = false
       end
-      assignment.update_attributes!(map)
+      begin
+        assignment.update_attributes!(map)
+      rescue ActiveRecord::ActiveRecordError
+        #pass error back to MarkusCSV
+        raise CSV::MalformedCSVError
+      end
       flash[:success] = t('assignment.create_success')
     end
 
