@@ -328,6 +328,8 @@ class ResultsController < ApplicationController
       @file_contents = @file.retrieve_file
     rescue Exception => e
       flash_message(:error, e.message)
+      render partial: 'shared/handle_error', locals: { error: e.message }
+      return
     end
     @code_type = @file.get_file_type
 

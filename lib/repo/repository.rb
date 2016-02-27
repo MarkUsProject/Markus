@@ -2,6 +2,7 @@ module Repository
 
   # Configuration for the repository library,
   # which is set via Repository.get_class
+  # TODO: Get rid of Repository.conf
   @CONF = {}
   def Repository.conf
     return @CONF
@@ -344,7 +345,9 @@ module Repository
   #                        to create repositories and manage its permissions.
   #  REPOSITORY_PERMISSION_FILE: This is the absolute path to the permission file
   #                              of repositories.
+  # TODO: Get rid of second argument
   def Repository.get_class(repo_type, conf_hash)
+    # TODO: Remove from here
     if conf_hash.nil?
       raise ConfigurationError.new("Configuration must not be nil")
     end
@@ -360,9 +363,11 @@ module Repository
     # Check if configuration is in order
     config_keys.each do |c|
       if Repository.conf[c.to_sym].nil?
-        raise ConfigurationError.new("Required config '#{c}' not set")
+        raise ConfigurationError.new('get_class: ' \
+                                     "Required config '#{c}' not set")
       end
     end
+    # TODO: Remove above
 
     case repo_type
       when "svn"

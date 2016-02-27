@@ -68,6 +68,7 @@ Assignment.blueprint do
   marking_scheme_type {'rubric'}
   submission_rule {NoLateSubmissionRule.make}
   allow_web_submits {true}
+  vcs_submit { false }
   display_grader_names_to_students {false}
   section_due_dates_type(false)
   enable_test {true}

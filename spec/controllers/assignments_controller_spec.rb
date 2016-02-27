@@ -56,7 +56,7 @@ describe AssignmentsController do
       test2 = Assignment.find_by_short_identifier(@test_asn2)
       expect(test2).to_not be_nil
       expect(flash[:error]).to be_nil
-      expect(flash[:success]).to eq(I18n.t('assignment.create_success'))
+      expect(flash[:success]).to eq([I18n.t('assignment.create_success')])
       expect(response).to redirect_to(action: 'index',
                                       controller: 'assignments')
     end

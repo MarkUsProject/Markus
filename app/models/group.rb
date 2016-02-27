@@ -57,6 +57,7 @@ class Group < ActiveRecord::Base
     MarkusConfigurator.markus_config_repository_admin?
   end
 
+  # TODO: Get rid of this funcion and re-write Repository.get_class
   # Returns configuration for repository
   # configuration
   def repository_config

@@ -32,15 +32,16 @@ class MarksGradersController < ApplicationController
     if params[:grader_mapping].nil?
       flash[:error] = I18n.t('csv.student_to_grader')
     else
-      errors = MarkusCSV.parse(params[:grader_mapping].read,
-           encoding: params[:encoding]) do |row|
+      errors = MarkusCSV.parse(
+          params[:grader_mapping].read,
+          encoding: params[:encoding]) do |row|
         raise CSVInvalidLineError if row.empty?
         grade_entry_student =
             GradeEntryStudent.joins(:user)
                              .find_by(
-                                 users: { user_name: row.first },
-                                 grade_entry_form_id:
-                                     params[:grade_entry_form_id])
+                               users: { user_name: row.first },
+                               grade_entry_form_id:
+                                 params[:grade_entry_form_id])
         raise CSVInvalidLineError if grade_entry_student.nil?
         grade_entry_student.add_tas_by_user_name_array(row.drop(1))
       end

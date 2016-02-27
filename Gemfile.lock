@@ -364,6 +364,3 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
   unicorn
   ya2yaml
-
-BUNDLED WITH
-   1.11.2
