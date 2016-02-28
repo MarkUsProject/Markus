@@ -186,9 +186,11 @@ class SubmissionCollector < ActiveRecord::Base
 
     # Request a test run for the grouping
     if assignment.enable_test
-      m_logger.log("Now requesting test run for #{assignment.short_identifier} on grouping: " +
-                   "'#{grouping.id}'")
-      AutomatedTestsHelper.request_a_test_run(new_submission.grouping.id, "collection", @current_user)
+      m_logger.log("Now requesting test run for #{assignment.short_identifier} \
+                    on grouping: '#{grouping.id}'")
+      AutomatedTestsHelper.request_a_test_run(new_submission.grouping.id,
+                                              'collection',
+                                              @current_user)
     end
   end
 
