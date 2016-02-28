@@ -69,10 +69,11 @@ class Grouping < ActiveRecord::Base
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(grouping_ids, ta_ids, assignment)
-    assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
+    #assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
+    SubmissionCollector.perform_later(grouping_ids, ta_ids, assignment)
       # Assign TAs in a round-robin fashion to a list of random groupings.
-      grouping_ids.shuffle.zip(ta_ids.cycle)
-    end
+     # grouping_ids.shuffle.zip(ta_ids.cycle)
+    #end
   end
 
   # Assigns all TAs in a list of TAs specified by +ta_ids+ to each grouping in

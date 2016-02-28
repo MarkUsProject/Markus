@@ -16,15 +16,19 @@
 #
 # Both queues are stored in the database to allow for easy parent-child
 # process communication bypassing the need for pipes or signals.
-class SubmissionCollector < ActiveRecord::Base
+class SubmissionCollector < ActiveJob::Base
+  queue_as :test_job
+#   has_many :grouping_queues, dependent: :destroy
+# 
+#   validates_numericality_of :child_pid,
+#                             only_integer: true,
+#                             allow_nil: true
+# 
+#   validates_inclusion_of :stop_child, in: [true, false]
 
-  has_many :grouping_queues, dependent: :destroy
-
-  validates_numericality_of :child_pid,
-                            only_integer: true,
-                            allow_nil: true
-
-  validates_inclusion_of :stop_child, in: [true, false]
+  def perform(grouping_ids, ta_ids, assignment)
+    Grouping.assign_tas(grouping_ids, ta_ids, assignment)
+  end
 
   #Always use the instance method to get an object of this class, never call
   #new or create directly
