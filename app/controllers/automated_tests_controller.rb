@@ -6,26 +6,8 @@ class AutomatedTestsController < ApplicationController
 
   before_filter      :authorize_only_for_admin,
                      :only => [:manage, :update, :download]
-  before_filter      :authorize_for_user,
-                     :only => [:index]
-
-  # This is not being used right now. It was the calling interface to
-  # request a test run, however, now you can just call
-  # AutomatedTestsHelper.request_a_test_run to send a test request.
-  def index
-    submission_id = params[:submission_id]
-
-    # TODO: call_on should be passed to index as a parameter.
-    list_call_on = %w(submission request collection)
-    call_on = list_call_on[0]
-
-    AutomatedTestsHelper.request_a_test_run(submission_id, call_on, @current_user)
-
-    # TODO: render a new partial page
-    #render :test_replace,
-    #       :locals => {:test_result_files => @test_result_files,
-    #                   :result => @result}
-  end
+  before_filter      :authorize_for_student,
+                     only: [:student_interface]
 
   # Update is called when files are added to the assigment
   def update
@@ -37,10 +19,13 @@ class AutomatedTestsController < ApplicationController
     @assignment.transaction do
       # Get new script from upload form
       new_script = params[:new_script]
+      # Get new support file from upload form
+      new_support_file = params[:new_support_file]
+
       @assignment = process_test_form(@assignment,
                                       assignment_params,
-                                      new_script)
-
+                                      new_script,
+                                      new_support_file)
       # Save assignment and associated test files
       if @assignment.save
         flash[:success] = I18n.t("assignment.update_success")
@@ -50,6 +35,15 @@ class AutomatedTestsController < ApplicationController
             @assignment.repository_folder,
             new_script.original_filename)
           File.open(assignment_tests_path, 'w') { |f| f.write new_script.read }
+        end
+
+        unless new_support_file.nil?
+          assignment_tests_path = File.join(
+            MarkusConfigurator.markus_config_automated_tests_repository,
+            @assignment.repository_folder,
+            new_support_file.original_filename)
+          File.open(
+            assignment_tests_path, 'w') { |f| f.write new_support_file.read }
         end
         redirect_to :action => 'manage',
                     :assignment_id => params[:assignment_id]
@@ -64,6 +58,7 @@ class AutomatedTestsController < ApplicationController
   def manage
     @assignment = Assignment.find(params[:assignment_id])
     @assignment.test_scripts.build
+    @assignment.test_support_files.build
   end
 
 
@@ -72,35 +67,28 @@ class AutomatedTestsController < ApplicationController
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
-    if !@grouping.nil?
-      # Look up submission information
-      repo = @grouping.group.repo
-      @revision  = repo.get_latest_revision
-      @revision_number = @revision.revision_number
-
-      @test_script_results = TestResult.where(grouping:
-        @grouping).order(created_at: :desc)
-
+    unless @grouping.nil?
+      @test_script_results = TestResult.where(grouping: @grouping)
+                                       .order(created_at: :desc)
       @token = fetch_latest_tokens_for_grouping(@grouping)
     end
   end
 
   def execute_test_run
-    @assignment = Assignment.find(params[:id])
-    @student = current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
-    @token = fetch_latest_tokens_for_grouping(@grouping)
+    assignment = Assignment.find(params[:id])
+    grouping = current_user.accepted_grouping_for(assignment.id)
+    token = fetch_latest_tokens_for_grouping(grouping)
 
     # For running tests
-    if (@token && @token.tokens > 0) || @assignment.unlimited_tokens
-      result = run_tests(@grouping.id)
-      if result.nil?
-        flash[:notice] = I18n.t('automated_tests.tests_running')
+    if (token && token.tokens > 0) || assignment.unlimited_tokens
+      test_errors = run_tests(grouping.id)
+      if test_errors.nil?
+        flash_message(:notice, I18n.t('automated_tests.tests_running'))
       else
-        flash[:failure] = result
+        flash_message(:error, test_errors)
       end
     end
-    redirect_to student_interface_automated_test_path
+    redirect_to action: :student_interface
   end
 
   def run_tests(grouping_id)
@@ -173,6 +161,9 @@ class AutomatedTestsController < ApplicationController
                      :max_marks, :run_on_submission, :run_on_request,
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,
-                     :display_expected_output, :display_actual_output])
+                     :display_expected_output, :display_actual_output,
+                     :_destroy],
+                test_support_files_attributes:
+                    [:id, :file_name, :assignment_id, :description, :_destroy])
   end
 end

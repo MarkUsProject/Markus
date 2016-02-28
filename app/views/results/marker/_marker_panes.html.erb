@@ -48,7 +48,28 @@
         <% if can_show_test_results_tab?(assignment, submission) %>
           <div id='test_result_tab' style='display:none;'>
             <div id='testviewer'>
-              <pre id='test_result_content' cols='80' rows='50'><%= t('marker.select_a_test') %></pre>
+              <%= link_to t("automated_tests.run_tests"),
+                          run_tests_assignment_submission_result_path(grouping_id: @grouping.id),
+                          class: 'button' %>  
+              <% unless @test_results.empty? %>
+                <div class="block">
+                  <h2><%= t("automated_tests.test_results") %></h2>
+                  <div class="block_content">
+                  <br />
+                    <div class="sub_block">
+                      <%= raw (t("automated_tests.marks_obtained",
+                                    :marking => "#{@grouping.get_total_test_script_marks *
+                                    1.0} / #{@assignment.total_ror_script_marks * 1.0}" )) %>
+                    </div>
+                    <div id="test_results" class="sub_block">
+                      <% @test_results.each do |test_result| %>
+                        <%= render partial: 'automated_tests/test_script_result',
+                                   locals: {test_script_result: test_result} %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
             </div>
           </div>
         <% end %>
