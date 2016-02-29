@@ -119,11 +119,10 @@ class StudentsController < ApplicationController
 
   def upload_student_list
     if request.post? && !params[:userlist].blank?
-      result = User.upload_user_list(Student, params[:userlist], params[:encoding])
+      result = User.upload_user_list(Student, params[:userlist],
+                                     params[:encoding])
       unless result[:invalid_lines].empty?
         flash[:error] = result[:invalid_lines]
-      else
-        flash[:success] = result[:upload_notice]
       end
     end
     redirect_to action: 'index'

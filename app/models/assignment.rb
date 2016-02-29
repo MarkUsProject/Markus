@@ -387,7 +387,12 @@ class Assignment < ActiveRecord::Base
   def add_csv_group(row)
     return if row.length.zero?
 
-    row.map! { |item| item.strip }
+    begin
+      row.map! { |item| item.strip }
+      #handle null values in rows
+    rescue NoMethodError
+      raise CSVInvalidLineError
+    end
 
     group = Group.where(group_name: row.first).first
 
@@ -481,6 +486,10 @@ class Assignment < ActiveRecord::Base
       repo_name = row[2]
     else
       repo_name = row[1]
+    end
+
+    if !repo_name || repo_name.empty?
+      raise CSVInvalidLineError
     end
 
     # If a repository already exists with the same repo name as the one given

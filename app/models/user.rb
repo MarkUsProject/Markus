@@ -145,7 +145,6 @@ class User < ActiveRecord::Base
   end
 
   def self.upload_user_list(user_class, user_list, encoding)
-    max_invalid_lines = 10
     num_update = 0
     result = {}
     result[:invalid_lines] = []  # store lines that were not processed
@@ -171,8 +170,6 @@ class User < ActiveRecord::Base
         end
       end # end parse
     end
-
-    result[:upload_notice] = "#{num_update} user(s) added/updated."
     result
   end
 
