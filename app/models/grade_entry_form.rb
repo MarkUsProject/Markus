@@ -164,10 +164,6 @@ class GradeEntryForm < ActiveRecord::Base
       GradeEntryItem
         .create_or_update_from_csv_rows(names, totals, grade_entry_form)
       num_updates += 1
-      # rescue RuntimeError => e
-      #   invalid_lines << names.join(',')
-      #   error = e.message.is_a?(String) ? e.message : ''
-      #   invalid_lines << totals.join(',') + ': ' + error unless invalid_lines.nil?
     end
 
     # Parse the grades

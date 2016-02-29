@@ -59,7 +59,7 @@ describe AnnotationCategoriesController do
       # the last element in the file.
       found_cat = false
       AnnotationCategory.all.each do |ac|
-        next unless (ac['annotation_category_name'] == @test_category_name)
+        next unless ac['annotation_category_name'] == @test_category_name
         found_cat = true
         expect(AnnotationText.where(annotation_category: ac).take['content'])
           .to eq(@test_content)

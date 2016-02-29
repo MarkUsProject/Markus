@@ -80,18 +80,18 @@ class TasController < ApplicationController
   end
 
   def upload_ta_list
-    unless params[:userlist].blank?
+    if params[:userlist].blank?
+      flash[:error] = I18n.t('csv.invalid_csv')
+    else
       result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
-      if !result
+      unless result
         flash[:error] = I18n.t('csv.invalid_csv')
         redirect_to action: 'index'
         return
       end
-      if result[:invalid_lines].length > 0
+      unless result[:invalid_lines].empty?
         flash[:error] = result[:invalid_lines]
       end
-    else
-      flash[:error] = I18n.t('csv.invalid_csv')
     end
     redirect_to action: 'index'
   end

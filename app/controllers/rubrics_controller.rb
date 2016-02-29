@@ -73,7 +73,7 @@ class RubricsController < ApplicationController
 
   def csv_upload
     @assignment = Assignment.find(params[:assignment_id])
-    if params[:csv_upload] and params[:csv_upload][:rubric]
+    if params[:csv_upload] && params[:csv_upload][:rubric]
       file = params[:csv_upload][:rubric]
       encoding = params[:encoding]
       if request.post? && !file.blank?

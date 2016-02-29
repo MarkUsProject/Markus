@@ -388,8 +388,8 @@ class Assignment < ActiveRecord::Base
     return if row.length.zero?
 
     begin
-      row.map! { |item| item.strip }
-      #handle null values in rows
+      row.map!(&:strip)
+      # handle null values in rows
     rescue NoMethodError
       raise CSVInvalidLineError
     end

@@ -44,7 +44,7 @@ class AnnotationCategory < ActiveRecord::Base
       end
       valid = true
     end
-    return valid
+    valid
   end
 
   # Takes two arrays, one with annotation catogies names and one
