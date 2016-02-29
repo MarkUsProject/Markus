@@ -17,29 +17,29 @@ describe AnnotationCategoriesController do
       # the '.read' method is called to simulate the behaviour of
       # the http uploaded file
       @file_good = fixture_file_upload(
-          'files/annotation_categories/form_good.csv', 'text/csv')
+        'files/annotation_categories/form_good.csv', 'text/csv')
       allow(@file_good).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                        'files/annotation_categories/form_good.csv',
-                        'text/csv')))
+        File.read(fixture_file_upload(
+                    'files/annotation_categories/form_good.csv',
+                    'text/csv')))
 
       @file_invalid_column = fixture_file_upload(
-          'files/annotation_categories/form_invalid_column.csv', 'text/csv')
+        'files/annotation_categories/form_invalid_column.csv', 'text/csv')
       allow(@file_invalid_column).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                        'files/annotation_categories/form_invalid_column.csv',
-                        'text/csv')))
+        File.read(fixture_file_upload(
+                    'files/annotation_categories/form_invalid_column.csv',
+                    'text/csv')))
 
       @file_bad_csv = fixture_file_upload(
-          'files/bad_csv.csv', 'text/xls')
+        'files/bad_csv.csv', 'text/xls')
       allow(@file_bad_csv).to receive(:read).and_return(
-          File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
+        File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
 
       @file_wrong_format = fixture_file_upload(
-          'files/wrong_csv_format.xls', 'text/xls')
+        'files/wrong_csv_format.xls', 'text/xls')
       allow(@file_wrong_format).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                        'files/wrong_csv_format.xls', 'text/csv')))
+        File.read(fixture_file_upload(
+                    'files/wrong_csv_format.xls', 'text/csv')))
       #This must line up with the second entry in the file_good
       @test_category_name= 'test_category'
       @test_content = 'c6conley'

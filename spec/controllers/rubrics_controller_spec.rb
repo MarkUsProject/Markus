@@ -17,29 +17,29 @@ describe RubricsController do
       # the '.read' method is called to simulate the behaviour of
       # the http uploaded file
       @file_good = fixture_file_upload(
-          'files/rubrics/form_good.csv', 'text/csv')
+        'files/rubrics/form_good.csv', 'text/csv')
       allow(@file_good).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                        'files/rubrics/form_good.csv',
-                        'text/csv')))
+        File.read(fixture_file_upload(
+                    'files/rubrics/form_good.csv',
+                    'text/csv')))
 
       @file_invalid_column = fixture_file_upload(
-          'files/rubrics/form_invalid_column.csv', 'text/csv')
+        'files/rubrics/form_invalid_column.csv', 'text/csv')
       allow(@file_invalid_column).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                        'files/rubrics/form_invalid_column.csv',
-                        'text/csv')))
+        File.read(fixture_file_upload(
+                    'files/rubrics/form_invalid_column.csv',
+                    'text/csv')))
 
       @file_bad_csv = fixture_file_upload(
-          'files/bad_csv.csv', 'text/xls')
+        'files/bad_csv.csv', 'text/xls')
       allow(@file_bad_csv).to receive(:read).and_return(
-          File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
+        File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
 
       @file_wrong_format = fixture_file_upload(
-          'files/wrong_csv_format.xls', 'text/xls')
+        'files/wrong_csv_format.xls', 'text/xls')
       allow(@file_wrong_format).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                        'files/wrong_csv_format.xls', 'text/csv')))
+        File.read(fixture_file_upload(
+                    'files/wrong_csv_format.xls', 'text/csv')))
     end
 
     it 'accepts a valid file' do
@@ -50,7 +50,8 @@ describe RubricsController do
       assignment.reload
       rubric_criteria = assignment.rubric_criteria
       expect(4).to eq(rubric_criteria.size)
-      expect('Algorithm Design').to eq(rubric_criteria[0].rubric_criterion_name)
+      expect('Algorithm Design')
+        .to eq(rubric_criteria[0].rubric_criterion_name)
       expect(1).to eq(rubric_criteria[0].position)
       expect('Documentation').to eq(rubric_criteria[1].rubric_criterion_name)
       expect(2).to eq(rubric_criteria[1].position)

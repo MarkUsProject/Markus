@@ -143,35 +143,35 @@ describe GroupsController do
         # the '.read' method is called to simulate the behaviour of
         # the http uploaded file
         @file_good = fixture_file_upload(
-            'files/groups/form_good.csv', 'text/csv')
+          'files/groups/form_good.csv', 'text/csv')
         allow(@file_good).to receive(:read).and_return(
-            File.read(fixture_file_upload(
-                          'files/groups/form_good.csv',
-                          'text/csv')))
+          File.read(fixture_file_upload(
+                      'files/groups/form_good.csv',
+                      'text/csv')))
 
         @file_invalid_column = fixture_file_upload(
-            'files/groups/form_invalid_column.csv', 'text/csv')
+          'files/groups/form_invalid_column.csv', 'text/csv')
         allow(@file_invalid_column).to receive(:read).and_return(
-            File.read(fixture_file_upload(
-                          'files/groups/form_invalid_column.csv',
-                          'text/csv')))
+          File.read(fixture_file_upload(
+                      'files/groups/form_invalid_column.csv',
+                      'text/csv')))
 
         @file_bad_csv = fixture_file_upload(
-            'files/bad_csv.csv', 'text/xls')
+          'files/bad_csv.csv', 'text/xls')
         allow(@file_bad_csv).to receive(:read).and_return(
-            File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
+          File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
 
         @file_wrong_format = fixture_file_upload(
-            'files/wrong_csv_format.xls', 'text/xls')
+          'files/wrong_csv_format.xls', 'text/xls')
         allow(@file_wrong_format).to receive(:read).and_return(
-            File.read(fixture_file_upload(
-                          'files/wrong_csv_format.xls', 'text/csv')))
+          File.read(fixture_file_upload(
+                      'files/wrong_csv_format.xls', 'text/csv')))
 
         # Setup for SubversionRepository
         allow(MarkusConfigurator).to receive(:markus_config_repository_type).and_return('svn')
 
         @assignment = create(:assignment, :allow_web_submits => true,
-                     :group_max => 1, :group_min => 1)
+                             :group_max => 1, :group_min => 1)
 
         #Create students corresponding to the file_good
         @student_user_names = %w(c8shosta c5bennet)
@@ -193,13 +193,13 @@ describe GroupsController do
                           number_lines: 0))
         expect(response).to redirect_to(action: 'index')
 
-        expect(Group.where(group_name: 'group3').take['repo_name']).
-                to eq('group_0003')
+        expect(Group.where(group_name: 'group3').take['repo_name'])
+          .to eq('group_0003')
 
         #remove the generated repo so repeated test runs function properly
         FileUtils.rm_r(
-            File.join(::Rails.root.to_s, 'data/test/repos/group_0003', '/'),
-            :force => true)
+          File.join(::Rails.root.to_s, 'data/test/repos/group_0003', '/'),
+          :force => true)
 
       end
 
