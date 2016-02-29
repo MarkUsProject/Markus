@@ -143,7 +143,7 @@ module AutomatedTestsHelper
     assignment.test_support_files_attributes = updated_support_files
 
     # Update assignment enable_test and tokens_per_day attributes
-    assignment.enable_test = assignment_params[:enable_test]
+    assignment.enable_test = assignment_params[:enable_test] 
     assignment.unlimited_tokens = assignment_params[:unlimited_tokens]
     num_tokens = assignment_params[:tokens_per_day]
     if num_tokens
