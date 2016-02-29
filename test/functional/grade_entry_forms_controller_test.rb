@@ -927,7 +927,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 encoding: 'UTF-8'
 
         assert_response :redirect
-        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+        assert_equal flash[:error][0], I18n.t('csv.upload.malformed_csv')
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
           @grade_entry_student.id, @grade_entry_item.id
         )
@@ -944,7 +944,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 encoding: 'UTF-8'
 
         assert_response :redirect
-        assert_equal flash[:error],
+        assert_equal flash[:error][0],
                      I18n.t('csv.upload.non_text_file_with_csv_extension')
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
           @grade_entry_student.id, @grade_entry_item.id

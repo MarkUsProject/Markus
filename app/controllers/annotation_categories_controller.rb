@@ -129,7 +129,6 @@ class AnnotationCategoriesController < ApplicationController
     annotation_category_number = 0
     if annotation_category_list
       invalid_lines = ''
-      annotation_category_list = annotation_category_list.utf8_encode(encoding)
       invalid_lines << MarkusCSV.parse(
         annotation_category_list, encoding: encoding) do |row|
         next if CSV.generate_line(row).strip.empty?
