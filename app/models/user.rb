@@ -160,13 +160,11 @@ class User < ActiveRecord::Base
         next if CSV.generate_line(row).strip.empty?
         if processed_users.include?(row[0])
           raise CSVInvalidLineError
+        elsif User.add_user(user_class, row).nil?
+          raise CSVInvalidLineError
         else
-          if User.add_user(user_class, row).nil?
-            raise CSVInvalidLineError
-          else
-            num_update += 1
-            processed_users.push(row[0])
-          end
+          num_update += 1
+          processed_users.push(row[0])
         end
       end # end parse
     end

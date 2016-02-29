@@ -6,7 +6,7 @@ describe AnnotationCategoriesController do
     allow(controller).to receive(:session_expired?).and_return(false)
     allow(controller).to receive(:logged_in?).and_return(true)
     allow(controller).to receive(:current_user).and_return(build(:admin))
-    end
+  end
 
   let(:annotation_category) { FactoryGirl.create(:annotation_category) }
   let(:assignment) { FactoryGirl.create(:assignment) }
@@ -55,15 +55,14 @@ describe AnnotationCategoriesController do
       expect(flash[:success]).to include('uploaded 2')
       expect(response).to redirect_to(action: 'index',
                                       id: assignment.id)
-      #check that the data is being updated, in particular
-      #the last element in the file.
+      # check that the data is being updated, in particular
+      # the last element in the file.
       found_cat = false
       AnnotationCategory.all.each do |ac|
-        if (ac['annotation_category_name'] == @test_category_name)
-          found_cat = true
-          expect(AnnotationText.where(annotation_category: ac).take['content'])
-              .to eq(@test_content)
-        end
+        next unless (ac['annotation_category_name'] == @test_category_name)
+        found_cat = true
+        expect(AnnotationText.where(annotation_category: ac).take['content'])
+          .to eq(@test_content)
       end
       expect(found_cat).to eq(true)
     end
@@ -104,7 +103,6 @@ describe AnnotationCategoriesController do
       post :csv_upload,
            assignment_id: assignment.id,
            annotation_category_list_csv: @file_wrong_format
-
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty

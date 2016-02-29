@@ -161,27 +161,25 @@ class GradeEntryForm < ActiveRecord::Base
       end
 
       # Create/update the grade entry items
-
-        GradeEntryItem.create_or_update_from_csv_rows(names, totals, grade_entry_form)
-        num_updates += 1
+      GradeEntryItem
+        .create_or_update_from_csv_rows(names, totals, grade_entry_form)
+      num_updates += 1
       # rescue RuntimeError => e
       #   invalid_lines << names.join(',')
       #   error = e.message.is_a?(String) ? e.message : ''
       #   invalid_lines << totals.join(',') + ': ' + error unless invalid_lines.nil?
-
     end
-
-
 
     # Parse the grades
     errors << MarkusCSV.parse(grades_file.read, encoding: encoding) do |row|
       next if CSV.generate_line(row).strip.empty?
       begin
         if num_lines_read > 1
-          GradeEntryStudent.create_or_update_from_csv_row(row,
-                                                          grade_entry_form,
-                                                          grade_entry_form.grade_entry_items,
-                                                          names, overwrite)
+          GradeEntryStudent
+            .create_or_update_from_csv_row(row,
+                                           grade_entry_form,
+                                           grade_entry_form.grade_entry_items,
+                                           names, overwrite)
           num_updates += 1
         end
         num_lines_read += 1
@@ -189,5 +187,4 @@ class GradeEntryForm < ActiveRecord::Base
     end
     return num_updates
   end
-
 end
