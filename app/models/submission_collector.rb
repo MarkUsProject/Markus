@@ -16,19 +16,15 @@
 #
 # Both queues are stored in the database to allow for easy parent-child
 # process communication bypassing the need for pipes or signals.
-class SubmissionCollector < ActiveJob::Base
-  queue_as :test_job
-#   has_many :grouping_queues, dependent: :destroy
-# 
-#   validates_numericality_of :child_pid,
-#                             only_integer: true,
-#                             allow_nil: true
-# 
-#   validates_inclusion_of :stop_child, in: [true, false]
+class SubmissionCollector < ActiveRecord::Base
 
-  def perform(grouping_ids, ta_ids, assignment)
-    Grouping.assign_tas(grouping_ids, ta_ids, assignment)
-  end
+  has_many :grouping_queues, dependent: :destroy
+
+  validates_numericality_of :child_pid,
+                            only_integer: true,
+                            allow_nil: true
+
+  validates_inclusion_of :stop_child, in: [true, false]
 
   #Always use the instance method to get an object of this class, never call
   #new or create directly
@@ -211,16 +207,19 @@ class SubmissionCollector < ActiveJob::Base
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
     if !async || RUBY_PLATFORM =~ /(:?mswin|mingw)/ # match for Windows
-      grouping.is_collected = false
-      remove_grouping_from_queue(grouping)
-      grouping.save
-      new_submission = Submission.create_by_revision_number(grouping, rev_num)
-      apply_penalty_or_add_grace_credits(grouping,
-                                         apply_late_penalty,
-                                         new_submission)
-      grouping.is_collected = true
-      grouping.save
-      return new_submission
+       new_submission = Submission.create_by_revision_number(grouping, rev_num)
+#      grouping.is_collected = false
+#       remove_grouping_from_queue(grouping)
+#       grouping.save
+#       new_submission = Submission.create_by_revision_number(grouping, rev_num)
+#       apply_penalty_or_add_grace_credits(grouping,
+#                                          apply_late_penalty,
+#                                          new_submission)
+#       grouping.is_collected = true
+#       grouping.save
+#       return new_submission
+		::SingleSub.perform_later(grouping, rev_num, apply_late_penalty, new_submission)
+		return new_submission
     end
 
     #Make the child process exit safely, to avoid both parent and child process
