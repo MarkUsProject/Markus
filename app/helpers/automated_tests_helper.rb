@@ -68,11 +68,17 @@ module AutomatedTestsHelper
           updated_script_files[file_num] = file.clone
 
           # Uploading new script
-          assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository,@assignment.repository_folder, new_update_script.original_filename)
+          assignment_tests_path = File.join(
+                   MarkusConfigurator.markus_config_automated_tests_repository,
+                   @assignment.repository_folder,
+                   new_update_script.original_filename)
           File.open(assignment_tests_path, 'w') { |f| f.write new_update_script.read }
 
           # Deleting old script
-          old_script_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository,@assignment.repository_folder,old_scrip_name)
+          old_script_path = File.join(
+                   MarkusConfigurator.markus_config_automated_tests_repository,
+                   @assignment.repository_folder,
+                   old_scrip_name)
           if File.exist?(old_script_path)
             File.delete(old_script_path)
           end
@@ -111,11 +117,17 @@ module AutomatedTestsHelper
           file[:file_name] = new_update_file.original_filename
 
           # Uploading new file
-          assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository,@assignment.repository_folder,new_update_file.original_filename)
+          assignment_tests_path = File.join(
+                   MarkusConfigurator.markus_config_automated_tests_repository,
+                   @assignment.repository_folder,
+                   new_update_file.original_filename)
           File.open(assignment_tests_path, 'w') { |f| f.write new_update_file.read }
 
           # Deleting old file
-          old_file_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository,@assignment.repository_folder,old_file_name)
+          old_file_path = File.join(
+                   MarkusConfigurator.markus_config_automated_tests_repository,
+                   @assignment.repository_folder,
+                   old_file_name)
           if File.exist?(old_file_path)
             File.delete(old_file_path)
           end
@@ -145,8 +157,8 @@ module AutomatedTestsHelper
     group = @grouping.group
 
     @repo_dir = File.join(
-          MarkusConfigurator.markus_config_automated_tests_repository,
-          group.repo_name)
+                   MarkusConfigurator.markus_config_automated_tests_repository,
+                   group.repo_name)
     export_group_repo(group, @repo_dir)
 
     if files_available?(assignment) &&
@@ -201,8 +213,8 @@ module AutomatedTestsHelper
   # source files are successfully exported.
   def self.files_available?(assignment)
     test_dir = File.join(
-         MarkusConfigurator.markus_config_automated_tests_repository,
-         assignment.short_identifier)
+                   MarkusConfigurator.markus_config_automated_tests_repository,
+                   assignment.short_identifier)
     src_dir = @repo_dir
     assign_dir = @repo_dir + '/' + assignment.repository_folder
 
