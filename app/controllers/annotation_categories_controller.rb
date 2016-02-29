@@ -131,7 +131,7 @@ class AnnotationCategoriesController < ApplicationController
       invalid_lines = ''
       annotation_category_list = annotation_category_list.utf8_encode(encoding)
       invalid_lines << MarkusCSV.parse(
-          annotation_category_list, encoding: encoding) do |row|
+        annotation_category_list, encoding: encoding) do |row|
         next if CSV.generate_line(row).strip.empty?
         if AnnotationCategory.add_by_row(row, @assignment, current_user)
           annotation_category_number += 1
@@ -142,8 +142,8 @@ class AnnotationCategoriesController < ApplicationController
       end
       if annotation_category_number > 0
         flash[:success] =
-            I18n.t('annotations.upload.success',
-                   annotation_category_number: annotation_category_number)
+          I18n.t('annotations.upload.success',
+                 annotation_category_number: annotation_category_number)
       end
     else
       flash[:error] = I18n.t('csv.invalid_csv')

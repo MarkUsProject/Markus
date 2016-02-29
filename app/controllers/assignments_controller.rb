@@ -590,7 +590,7 @@ class AssignmentsController < ApplicationController
       begin
         assignment.update_attributes!(map)
       rescue ActiveRecord::ActiveRecordError
-        #pass error back to MarkusCSV
+        # pass error back to MarkusCSV
         raise CSV::MalformedCSVError
       end
       flash[:success] = t('assignment.create_success')
