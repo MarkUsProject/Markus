@@ -5,7 +5,6 @@ describe GroupsController do
     let(:grouping) { create(:grouping) }
     let(:assignment) { grouping.assignment }
 
-
     before :each do
       # Authenticate user is not timed out, and has administrator rights.
       allow(controller).to receive(:session_expired?).and_return(false)
@@ -168,10 +167,13 @@ describe GroupsController do
                       'files/wrong_csv_format.xls', 'text/csv')))
 
         # Setup for SubversionRepository
-        allow(MarkusConfigurator).to receive(:markus_config_repository_type).and_return('svn')
+        allow(MarkusConfigurator)
+          .to receive(:markus_config_repository_type).and_return('svn')
 
-        @assignment = create(:assignment, :allow_web_submits => true,
-                             :group_max => 1, :group_min => 1)
+        @assignment = create(:assignment,
+                             allow_web_submits: true,
+                             group_max: 1,
+                             group_min: 1)
 
         # Create students corresponding to the file_good
         @student_user_names = %w(c8shosta c5bennet)
@@ -199,8 +201,7 @@ describe GroupsController do
         # remove the generated repo so repeated test runs function properly
         FileUtils.rm_r(
           File.join(::Rails.root.to_s, 'data/test/repos/group_0003', '/'),
-          :force => true)
-
+          force: true)
       end
 
       it 'does not accept files with invalid columns' do
@@ -236,7 +237,6 @@ describe GroupsController do
         post :csv_upload,
              assignment_id: @assignment.id,
              group: { grouplist:  @file_wrong_format }
-
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to_not be_empty

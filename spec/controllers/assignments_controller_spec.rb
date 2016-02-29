@@ -39,8 +39,8 @@ describe AssignmentsController do
       allow(@file_wrong_format).to receive(:read).and_return(
         File.read(fixture_file_upload(
                     'files/wrong_csv_format.xls', 'text/csv')))
-      #This must line up with the second entry in the file_good
-      @test_asn1= 'ATest1'
+      # This must line up with the second entry in the file_good
+      @test_asn1 = 'ATest1'
       @test_asn2 = 'ATest2'
     end
 
@@ -98,7 +98,6 @@ describe AssignmentsController do
       post :upload_assignment_list,
            assignment_list: @file_wrong_format,
            file_format: 'csv'
-
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty

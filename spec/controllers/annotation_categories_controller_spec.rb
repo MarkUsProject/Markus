@@ -41,7 +41,7 @@ describe AnnotationCategoriesController do
         File.read(fixture_file_upload(
                     'files/wrong_csv_format.xls', 'text/csv')))
       #This must line up with the second entry in the file_good
-      @test_category_name= 'test_category'
+      @test_category_name = 'test_category'
       @test_content = 'c6conley'
     end
 
