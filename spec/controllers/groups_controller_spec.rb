@@ -173,7 +173,7 @@ describe GroupsController do
         @assignment = create(:assignment, :allow_web_submits => true,
                              :group_max => 1, :group_min => 1)
 
-        #Create students corresponding to the file_good
+        # Create students corresponding to the file_good
         @student_user_names = %w(c8shosta c5bennet)
         @student_user_names.each do |name|
           create(:user, user_name: name, type: 'Student')
@@ -183,20 +183,20 @@ describe GroupsController do
       it 'accepts a valid file' do
         post :csv_upload,
              assignment_id: @assignment.id,
-             group: {grouplist: @file_good}
+             group: { grouplist: @file_good }
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to be_nil
         expect(flash[:success])
-            .to eq(I18n.t('csv.groups_added_msg',
-                          number_groups: 1,
-                          number_lines: 0))
+          .to eq(I18n.t('csv.groups_added_msg',
+                        number_groups: 1,
+                        number_lines: 0))
         expect(response).to redirect_to(action: 'index')
 
         expect(Group.where(group_name: 'group3').take['repo_name'])
           .to eq('group_0003')
 
-        #remove the generated repo so repeated test runs function properly
+        # remove the generated repo so repeated test runs function properly
         FileUtils.rm_r(
           File.join(::Rails.root.to_s, 'data/test/repos/group_0003', '/'),
           :force => true)
@@ -206,7 +206,7 @@ describe GroupsController do
       it 'does not accept files with invalid columns' do
         post :csv_upload,
              assignment_id: @assignment.id,
-             group: {grouplist: @file_invalid_column}
+             group: { grouplist: @file_invalid_column }
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to_not be_empty
@@ -225,7 +225,7 @@ describe GroupsController do
       it 'does not accept a non-csv file with .csv extension' do
         post :csv_upload,
              assignment_id: @assignment.id,
-             group: {grouplist: @file_bad_csv}
+             group: { grouplist: @file_bad_csv }
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to_not be_empty
@@ -235,7 +235,7 @@ describe GroupsController do
       it 'does not accept a .xls file' do
         post :csv_upload,
              assignment_id: @assignment.id,
-             group: {grouplist:  @file_wrong_format}
+             group: { grouplist:  @file_wrong_format }
 
 
         expect(response.status).to eq(302)

@@ -45,7 +45,7 @@ describe RubricsController do
     it 'accepts a valid file' do
       post :csv_upload,
            assignment_id: assignment.id,
-           csv_upload: {rubric: @file_good}
+           csv_upload: { rubric: @file_good }
 
       assignment.reload
       rubric_criteria = assignment.rubric_criteria
@@ -71,7 +71,7 @@ describe RubricsController do
     it 'does not accept files with invalid columns' do
       post :csv_upload,
            assignment_id: assignment.id,
-           csv_upload: {rubric: @file_invalid_column}
+           csv_upload: { rubric: @file_invalid_column }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -93,7 +93,7 @@ describe RubricsController do
     it 'does not accept a non-csv file with .csv extension' do
       post :csv_upload,
            assignment_id: assignment.id,
-           csv_upload: {rubric: @file_bad_csv}
+           csv_upload: { rubric: @file_bad_csv }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -105,7 +105,7 @@ describe RubricsController do
     it 'does not accept a .xls file' do
       post :csv_upload,
            assignment_id: assignment.id,
-           csv_upload: {rubric: @file_wrong_format}
+           csv_upload: { rubric: @file_wrong_format }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
