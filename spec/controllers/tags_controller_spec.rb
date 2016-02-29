@@ -16,29 +16,29 @@ describe TagsController do
       # the '.read' method is called to simulate the behaviour of
       # the http uploaded file
       @file_good = fixture_file_upload(
-          'files/tags/form_good.csv', 'text/csv')
+        'files/tags/form_good.csv', 'text/csv')
       allow(@file_good).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                        'files/tags/form_good.csv',
-                        'text/csv')))
+        File.read(fixture_file_upload(
+                    'files/tags/form_good.csv',
+                    'text/csv')))
 
       @file_invalid_column = fixture_file_upload(
-          'files/tags/form_invalid_column.csv', 'text/csv')
+        'files/tags/form_invalid_column.csv', 'text/csv')
       allow(@file_invalid_column).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                        'files/tags/form_invalid_column.csv',
-                        'text/csv')))
+        File.read(fixture_file_upload(
+                    'files/tags/form_invalid_column.csv',
+                    'text/csv')))
 
       @file_bad_csv = fixture_file_upload(
-          'files/bad_csv.csv', 'text/xls')
+        'files/bad_csv.csv', 'text/xls')
       allow(@file_bad_csv).to receive(:read).and_return(
-          File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
+        File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
 
       @file_wrong_format = fixture_file_upload(
-          'files/wrong_csv_format.xls', 'text/xls')
+        'files/wrong_csv_format.xls', 'text/xls')
       allow(@file_wrong_format).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                        'files/wrong_csv_format.xls', 'text/csv')))
+        File.read(fixture_file_upload(
+                    'files/wrong_csv_format.xls', 'text/csv')))
 
       #set the :back redirect
       @redirect = 'index'
@@ -96,7 +96,8 @@ describe TagsController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
-      expect(flash[:error][0]).to eq(I18n.t('csv.upload.non_text_file_with_csv_extension'))
+      expect(flash[:error][0])
+        .to eq(I18n.t('csv.upload.non_text_file_with_csv_extension'))
       expect(response).to redirect_to @redirect
     end
   end
