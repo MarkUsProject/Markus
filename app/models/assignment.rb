@@ -902,14 +902,11 @@ class Assignment < ActiveRecord::Base
   # Returns the groupings of this assignment associated with the given section
   def section_groupings(section)
     section_groupings = Array.new
-    self.groupings.each do |grouping|
-      if !grouping.inviter.nil? and grouping.inviter.has_section?
-        if grouping.inviter.section.id == section.id
-          section_groupings.push(grouping)
-        end
-      end
+    self.groupings.select do |grouping|
+      grouping.inviter.present? and 
+      grouping.inviter.has_section? and 
+      grouping.inviter.section.id == section.id
     end
-    section_groupings
   end
   
   private
