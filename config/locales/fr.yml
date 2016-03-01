@@ -289,7 +289,14 @@ fr:
       or:         "OU"
       copy_paste_key:         "Copiez et Collez Votre clé Publique"
       create_key_pair:         "Créer une Paire de Clés"
-      back:         "Dos"
+      back:         "Retourner"
+      create:
+        success: "Paire de Clés créé avec succès"
+        invalid_key: "Une Paire de Clés n'a pas été créé: Clé non valide"
+      update:
+        success: "Paire de Clés mis à jour avec succès"
+      delete:
+        success: "Paire de Clés supprimé avec succès"
 
     #app/views/resluts/marker/_marker_panes.html.erb
     marker:
