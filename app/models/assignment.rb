@@ -901,7 +901,6 @@ class Assignment < ActiveRecord::Base
 
   # Returns the groupings of this assignment associated with the given section
   def section_groupings(section)
-    section_groupings = Array.new
     self.groupings.select do |grouping|
       grouping.inviter.present? and 
       grouping.inviter.has_section? and 
