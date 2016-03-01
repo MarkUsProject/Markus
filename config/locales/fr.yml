@@ -629,7 +629,7 @@ fr:
         could_not_find_source: "Le projet source pour la copie des groupes n'a pas été trouvé."
         could_not_find_target: "Le projet cible pour la copie des groupes n'a pas été trouvé."
       add_all_groups: "Ajouter tous les groupes"
-      creating_groups_for_all_students: "Création de groupes pour tous les élèves. (Processus qui s'exécute en arrière-plan. Rechargez la page pour voir tous les groupes créés lors.)"
+      creating_groups_for_all_students: "Création de groupes pour tous les élèves."
 
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
@@ -1307,6 +1307,12 @@ fr:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
+
+    #app/views/job_messages/_job_poller.js.erb
+    job_poller:
+      processing_message: "Processus en cours d`éxécution:"
+      processing_message_finished: "Processus terminé. En rechargement..."
+      processing_message_error: "Une erreur c`est produite:"
 
     #app/helpers/submissions_helper.rb
     assign_folder_missing:      "Oh non! Affectation dossier manquant."
