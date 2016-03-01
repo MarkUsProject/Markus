@@ -270,5 +270,20 @@ class SubmissionCollector < ActiveRecord::Base
       end
     end
   end
+  #Undo one level of submissions
+  def uncollect_submissions(assignment)
+    submissions = assignment.submissions
+    versions = submissions.pluck(:submission_version).uniq
+    old_submissions = submissions.where(submission_version_used: true)
+    old_submissions.update_all(submission_version_used: false)
+    groupings = assignment.groupings.joins(:submissions).where(submissions: {id: old_submissions})
+    debugger
+    groupings.update_all(is_collected: false)
+    if versions.size > 1
+      prev_submissions = submissions.where(submission_version: versions.sort[-2])
+      groupings = assignment.groupings.joins(:submissions).where(submissions: {id: prev_submissions})
+      groupings.update_all(is_collected: true)
+    end
+  end
 
 end
