@@ -228,34 +228,34 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     context 'when parsing a CSV file' do
 
       should 'raise an error message on an empty row' do
-        e = assert_raise RuntimeError do
+        e = assert_raise CSVInvalidLineError do
           RubricCriterion.create_or_update_from_csv_row([], Assignment.new)
         end
-        assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
+        assert_not_nil e.message
       end
 
       should 'raise an error message on a 1 element row' do
-        e = assert_raise RuntimeError do
+        e = assert_raise CSVInvalidLineError do
           RubricCriterion.create_or_update_from_csv_row(%w(name), Assignment.new)
         end
-        assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
+        assert_not_nil e.message
       end
 
       should 'raise an error message on a 2 element row' do
-        e = assert_raise RuntimeError do
+        e = assert_raise CSVInvalidLineError do
           RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), Assignment.new)
         end
-        assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
+        assert_not_nil e.message
       end
 
       should 'raise an error message on a row with any number of elements that does not include a name for every criterion' do
         row = %w(name 1.0)
         (0..RubricCriterion::RUBRIC_LEVELS - 2).each do |i|
           row << 'name' + i.to_s
-            e = assert_raise RuntimeError do
-              RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
-            end
-            assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
+          e = assert_raise CSVInvalidLineError do
+            RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
+          end
+          assert_not_nil e.message
         end
       end
 
@@ -368,7 +368,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
       nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines, nil)
       assert_equal 0, nb_updates
-      assert_equal 2, invalid_lines.length
+      assert_equal 1, invalid_lines.length
     end
   end
 

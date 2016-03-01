@@ -328,23 +328,19 @@ class GradeEntryFormsController < ApplicationController
       grades_file = params[:upload][:grades_file]
       begin
         GradeEntryForm.transaction do
-          invalid_lines = []
+          errors = ''
           num_updates = GradeEntryForm.parse_csv(grades_file,
                                                  @grade_entry_form,
-                                                 invalid_lines,
-                                                 encoding, overwrite)
-          unless invalid_lines.empty?
-            flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
-          end
-          if num_updates > 0
+                                                 encoding,
+                                                 overwrite,
+                                                 errors)
+          if errors.empty?
             flash[:notice] = I18n.t('grade_entry_forms.csv.upload_success',
                                     num_updates: num_updates)
+          else
+            flash_message(:error, errors)
           end
         end
-      rescue CSV::MalformedCSVError
-        flash[:error] = t('csv.upload.malformed_csv')
-      rescue ArgumentError
-        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
     end
     redirect_to action: 'grades', id: @grade_entry_form.id

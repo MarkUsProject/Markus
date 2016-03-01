@@ -116,7 +116,7 @@ class GradeEntryStudent < ActiveRecord::Base
     # Attempt to find the student
     student = Student.where(user_name: user_name).first
     if student.nil?
-      raise I18n.t('grade_entry_forms.csv.invalid_user_name')
+      raise CSVInvalidLineError
     end
 
     # Create the GradeEntryStudent if it doesn't already exist
@@ -144,7 +144,7 @@ class GradeEntryStudent < ActiveRecord::Base
           grade.grade = grade_for_grade_entry_item
 
           unless grade.save
-            raise RuntimeError.new(grade.errors)
+            raise CSVInvalidLineError
           end
         end
 
@@ -157,7 +157,7 @@ class GradeEntryStudent < ActiveRecord::Base
           grade.grade = grade_for_grade_entry_item
 
           unless grade.save
-            raise RuntimeError.new(grade.errors)
+            raise CSVInvalidLineError
           end
         end
       end

@@ -85,12 +85,12 @@ class FlexibleCriterion < Criterion
     unless FlexibleCriterion.where(assignment_id: assignment.id,
                                    flexible_criterion_name: row[0]).size.zero?
       message = I18n.t('criteria_csv_error.name_not_unique')
-      raise CSV::MalformedCSVError, message
+      raise CSVInvalidLineError, message
     end
 
     criterion.max = row[1]
     if criterion.max.zero?
-      raise CSV::MalformedCSVError, I18n.t('criteria_csv_error.max_zero')
+      raise CSVInvalidLineError, I18n.t('criteria_csv_error.max_zero')
     end
 
     criterion.description = row[2] if !row[2].nil?
@@ -122,18 +122,14 @@ class FlexibleCriterion < Criterion
   # The number of successfully created criteria.
   def self.parse_csv(file, assignment, invalid_lines = nil)
     nb_updates = 0
-    CSV.parse(file.read) do |row|
+    errors = MarkusCSV.parse(file.read) do |row|
       next if CSV.generate_line(row).strip.empty?
-      begin
         FlexibleCriterion.new_from_csv_row(row, assignment)
         nb_updates += 1
-      rescue CSV::MalformedCSVError => e
-        unless invalid_lines.nil?
-          invalid_lines << row.join(',') + ': ' + e.message
-        end
-      end
     end
-
+    unless errors.empty?
+      invalid_lines << errors
+    end
     nb_updates
   end
 

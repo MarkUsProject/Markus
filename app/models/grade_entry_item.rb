@@ -38,7 +38,7 @@ class GradeEntryItem < ActiveRecord::Base
   def self.create_or_update_from_csv_rows(names, totals, grade_entry_form)
     # The number of question names given should equal the number of question totals
     if names.size != totals.size
-      raise I18n.t('grade_entry_forms.csv.incomplete_header')
+      raise CSVInvalidLineError
     end
 
     # We ignore the first column.
@@ -51,7 +51,7 @@ class GradeEntryItem < ActiveRecord::Base
       grade_entry_item.position = i+1
       grade_entry_item.out_of = totals[i]
       unless grade_entry_item.save
-        raise RuntimeError.new(grade_entry_item.errors)
+        raise CSVInvalidLineError
       end
     end
 

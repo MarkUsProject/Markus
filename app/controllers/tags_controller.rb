@@ -125,26 +125,19 @@ class TagsController < ApplicationController
     encoding = params[:encoding]
 
     if request.post? && !file.blank?
-      begin
-        Tag.transaction do
-          invalid_lines = []
-          nb_updates = Tag.parse_csv(file,
-                                     @current_user,
-                                     invalid_lines,
-                                     encoding)
-          unless invalid_lines.empty?
-            flash[:error] = I18n.t('csv_invalid_lines') +
-                            invalid_lines.join(', ')
-          end
-          if nb_updates > 0
-            flash[:success] = I18n.t('tags.upload.upload_success',
-                                     nb_updates: nb_updates)
-          end
+      Tag.transaction do
+        invalid_lines = []
+        nb_updates = Tag.parse_csv(file,
+                                   @current_user,
+                                   invalid_lines,
+                                   encoding)
+        unless invalid_lines.empty?
+          flash[:error] = invalid_lines
         end
-      rescue CSV::MalformedCSVError
-        flash[:error] = t('csv.upload.malformed_csv')
-      rescue ArgumentError
-        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+        if nb_updates > 0
+          flash[:success] = I18n.t('tags.upload.upload_success',
+                                   nb_updates: nb_updates)
+        end
       end
     end
     redirect_to :back

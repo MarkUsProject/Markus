@@ -125,50 +125,32 @@ class GroupsController < ApplicationController
   # repository name. If MarkUs is not repository admin, the repository name as
   # specified by the second field will be used instead.
   def csv_upload
-    file = params[:group][:grouplist]
-    @assignment = Assignment.find(params[:assignment_id])
-    encoding = params[:encoding]
-    if request.post? && !params[:group].blank?
+    if params[:group] && params[:group][:grouplist]
+      file = params[:group][:grouplist]
+      @assignment = Assignment.find(params[:assignment_id])
+      encoding = params[:encoding]
       # Transaction allows us to potentially roll back if something
       # really bad happens.
       ActiveRecord::Base.transaction do
         file = file.utf8_encode(encoding)
         lines = 0
-        begin
-          # Loop over each row, which lists the members to be added to the group.
-          CSV.parse(file).each_with_index do |row, line_nr|
-            begin
-              # Potentially raises CSVInvalidLineError
-              collision_error = @assignment.add_csv_group(row)
-              unless collision_error.nil?
-                flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
-                  { line_number: line_nr + 1 }) + " #{collision_error}")
-              end
-            rescue CSVInvalidLineError => e
-              flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
-                { line_number: line_nr + 1 }) + " #{e.message}")
-            end
-            lines = line_nr + 1
-          end
-          @assignment.reload # Need to reload to get newly created groupings
-          number_groupings_added = @assignment.groupings.length
-          if number_groupings_added > 0 && flash[:error].is_a?(Array)
-            invalid_lines_count = flash[:error].length
-            flash[:notice] = I18n.t('csv.groups_added_msg',
-                                    number_groups: lines - invalid_lines_count,
-                                    number_lines: invalid_lines_count)
-          end
-        rescue CSV::MalformedCSVError
+        # Loop over each row, which lists the members to be added to the group.
+        invalid_lines = MarkusCSV.parse(file) do |row|
+          # Potentially raises CSVInvalidLineError
+          @assignment.add_csv_group(row)
+          lines += 1
+        end
+        error_count = invalid_lines.count(',') +
+            (if invalid_lines.empty? then 0 else 1 end)
+        @assignment.reload # Need to reload to get newly created groupings
+        number_groupings_added = @assignment.groupings.length
+        if number_groupings_added > 0
+          flash[:success] = I18n.t('csv.groups_added_msg',
+                                   number_groups: lines - error_count,
+                                   number_lines: error_count)
+          flash_message(:error, invalid_lines) unless invalid_lines.empty?
+        else
           flash[:error] = t('csv.upload.malformed_csv')
-          raise ActiveRecord::Rollback
-        rescue ArgumentError
-          flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
-          raise ActiveRecord::Rollback
-        rescue Exception
-          # We should only get here if something *really* bad/unexpected
-          # happened.
-          flash_message(:error, I18n.t('csv.groups_unrecoverable_error'))
-          raise ActiveRecord::Rollback
         end
       end
       # Need to reestablish repository permissions.
@@ -179,6 +161,8 @@ class GroupsController < ApplicationController
       # this transaction, the race condition of the repos being created before the 
       # permissions are set should not be a problem.
       Repository::SubversionRepository.__generate_authz_file
+    else
+      flash[:error] = t('csv.upload.malformed_csv')
     end
     redirect_to action: 'index', id: params[:id]
   end

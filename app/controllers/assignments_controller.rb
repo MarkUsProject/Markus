@@ -533,6 +533,7 @@ class AssignmentsController < ApplicationController
     assignment_list = params[:assignment_list]
 
     if assignment_list.blank?
+      flash[:error] = I18n.t('csv.invalid_csv')
       redirect_to action: 'index'
       return
     end
@@ -586,7 +587,12 @@ class AssignmentsController < ApplicationController
         assignment.assignment_stat = AssignmentStat.new
         assignment.display_grader_names_to_students = false
       end
-      assignment.update_attributes!(map)
+      begin
+        assignment.update_attributes!(map)
+      rescue ActiveRecord::ActiveRecordError
+        # pass error back to MarkusCSV
+        raise CSV::MalformedCSVError
+      end
       flash[:success] = t('assignment.create_success')
     end
 
