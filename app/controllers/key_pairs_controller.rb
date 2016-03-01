@@ -62,8 +62,8 @@ class KeyPairsController < ApplicationController
   end
 
   def write_key(file_content, time_stamp)
-    File.open(Rails.root.join(KEY_STORAGE, @current_user.user_name + '@' +
-                                             time_stamp + '.pub'), 'wb') do |f|
+    File.open(Rails.root.join(KEY_STORAGE, @current_user.user_name +
+                                           "@#{time_stamp}.pub"), 'wb') do |f|
       f.write(file_content)
     end
   end
@@ -98,13 +98,14 @@ class KeyPairsController < ApplicationController
     # Check to see if an individual repo exists for this user
     key = Gitolite::SSHKey.from_file(_path)
 
+    # Remove key from gitolite
     ga_repo.rm_key(key)
 
-    admin_key = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-    ga_repo.add_key(admin_key)
-
-    # update Gitolite repo
+    # Update Gitolite repo
     ga_repo.save_and_apply
+
+    # Delete key file
+    File.delete(_path)
   end
 
   # POST /key_pairs
@@ -114,47 +115,53 @@ class KeyPairsController < ApplicationController
     time_stamp = Time.now.to_i.to_s
 
     public_key_content = ''
-
+    # If user uploads the public key as a file then that takes precedence over
+    # the key_string
     if !key_pair_params[:file]
-      # Dump the string into the file
+      # Get key from key_string param
       public_key_content = key_pair_params[:key_string]
     else
+      # Get key from file contents
       public_key_content = key_pair_params[:file].read
     end
 
-    # If user uploads the public key as a file then that takes precedence over
-    # the key string
-    if !key_pair_params[:file]
-      # Create a .pub file on the file system
-      upload_key_file(public_key_content, time_stamp)
-    else
+    # Check to see if the public_key_content is a valid ssh key: an ssh
+    # key has the format "type blob label" and cannot have a nil type or blob.
+    type, blob, _label = public_key_content.split
+    if !type.nil? && !blob.nil?
       # Upload the file
       upload_key_file(public_key_content, time_stamp)
-    end
 
-    # Save the record
-    @key_pair = KeyPair.new(
-      key_pair_params.merge(user_name: @current_user.user_name,
-                            user_id: @current_user.id,
-                            file_name: @current_user.user_name +
-                                '@' + time_stamp + '.pub'))
+      # Save the record
+      @key_pair = KeyPair.new(user_name: @current_user.user_name,
+                              user_id:   @current_user.id,
+                              file_name: @current_user.user_name +
+                                           "@#{time_stamp}.pub")
 
-    respond_to do |format|
-      if @key_pair.save
+      respond_to do |format|
+        if @key_pair.save
+          flash_message(:success, t('key_pairs.create.success'))
+          format.html do
+            redirect_to key_pairs_path
+          end
+          format.json do
+            render json: @key_pair,
+                   status: :created,
+                   location: @key_pair
+          end
+        else
+          format.html { render action: 'new' }
+          format.json do
+            render json: @key_pair.errors,
+                   status: :unprocessable_entity
+          end
+        end
+      end
+    else # if type and/or blob are nil
+      flash_message(:error, t('key_pairs.create.invalid_key'))
+      respond_to do |format|
         format.html do
-          redirect_to key_pairs_path,
-                      notice: 'Key pair was successfully created.'
-        end
-        format.json do
-          render json: @key_pair,
-                 status: :created,
-                 location: @key_pair
-        end
-      else
-        format.html { render action: 'new' }
-        format.json do
-          render json: @key_pair.errors,
-                 status: :unprocessable_entity
+          redirect_to :back
         end
       end
     end
@@ -167,9 +174,9 @@ class KeyPairsController < ApplicationController
 
     respond_to do |format|
       if @key_pair.update_attributes(key_pair_params)
+        flash_message(:success, t('key_pairs.update.success'))
         format.html do
-          redirect_to @key_pair,
-                      notice: 'Key pair was successfully updated.'
+          redirect_to @key_pair
         end
         format.json { head :no_content }
       else
@@ -191,8 +198,12 @@ class KeyPairsController < ApplicationController
 
     @key_pair.destroy
 
+    flash_message(:success, t('key_pairs.delete.success'))
+
     respond_to do |format|
-      format.html { redirect_to key_pairs_url }
+      format.html do
+        redirect_to key_pairs_path
+      end
       format.json { head :no_content }
     end
   end

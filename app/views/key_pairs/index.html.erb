@@ -2,6 +2,8 @@
 
 <br>
 
+<%= render 'shared/flash_message' %>
+
 <table>
   <tr>
     <th><%= t('key_pairs.time_of_upload') %> |</th>
@@ -13,7 +15,7 @@
 <% @key_pairs.each do |key_pair, key_string| %>
   <tr>
     <td><%= key_pair.created_at %></td>
-    <td><textarea cols="55" rows="10"><%= key_string %></textarea></td>
+    <td><textarea cols="55" rows="10" readonly><%= key_string %></textarea></td>
     <td><%= link_to t('key_pairs.remove_key'), key_pair, method: :delete, data: { confirm: t('key_pairs.are_you_sure') } %></td>
   </tr>
 
