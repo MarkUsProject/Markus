@@ -183,7 +183,7 @@ module SubmissionsHelper
 
   def get_exit_directory(previous_path, grouping_id, revision_number,
                          revision, folder)
-    full_previous_path = File.join("/", folder, previous_path)
+    full_previous_path = File.join('/', folder, previous_path)
     parent_path_of_prev_dir, prev_dir = File.split(full_previous_path)
 
     directories = revision.directories_at_path(parent_path_of_prev_dir)
