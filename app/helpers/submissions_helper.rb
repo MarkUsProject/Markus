@@ -61,7 +61,7 @@ module SubmissionsHelper
             r.id == submission.remark_result_id
           end).first
         end
-        final_due_date = assignment.submission_rule.get_collection_time
+        final_due_date = assignment.submission_rule.get_collection_time(grouping.inviter.section)
         g[:name] = grouping.get_group_name
         g[:id] = grouping.id
         g[:section] = grouping.section
@@ -146,12 +146,6 @@ module SubmissionsHelper
           collected += 1
         end
       end
-
-      if collected == 0
-        raise I18n.t('collect_submissions.no_submission_for_section',
-          section_name: section.name)
-      end
-
     rescue Exception => e
       errors.push(e.message)
     end

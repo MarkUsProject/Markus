@@ -116,6 +116,7 @@
     getInitialState: function() {
       return {
         error: [],
+        success: [],
         submissions: [],
         selected_submissions: [],
       };
@@ -160,6 +161,9 @@
     },
     onError: function(error) {
       this.setState({error: error});
+    },
+    onSuccess: function(success) {
+      this.setState({success: success});
     },
     renderMarkingState: function(state) {
       if (state === 'unmarked') {
@@ -241,9 +245,11 @@
         return (
           <div>
             <ErrorDiv error={this.state.error} />
+            <SuccessDiv success={this.state.success} />
             <SubmissionsActionBox
               selected_submissions={this.state.selected_submissions}
               onError={this.onError}
+              onSuccess={this.onSuccess}
               refresh={this.refresh}
             />
             <Table data={submissions_data}
@@ -301,9 +307,70 @@
         }.bind(this)
       });
     },
+    collectAllSubmissions: function() {
+      jQuery.ajax({
+        method: 'GET',
+        url: 'collect_all_submissions',
+        success: function(data) {
+          if(data.message){
+            this.props.onSuccess(data.message);
+          }
+          if(data.error){
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    collectSectionSubmissions: function() {
+      var dataLoad = {
+        sections: this.refs.sectionSelect.state.value.split(',')
+      };
+      jQuery.ajax({
+        method: 'GET',
+        url: 'collect_section_submissions',
+        data: dataLoad,
+        success: function(data) {
+          if(data.success){
+            this.props.onSuccess(data.success);
+          }
+          if(data.error){
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
     render: function() {
       return (
         <div className='react-release-marks'>
+          <% if @current_user.admin?
+            if Section.all.count > 0              
+              if @available_sections.length > 0 %>
+                <select defaultValue={"<%= @available_sections.values.join(',') %>"} ref="sectionSelect">
+                  <option selected value={"<%=  @available_sections.values.join(',') %>"}><%= t('collect_submissions.all_available') %></option>
+                  <% @available_sections.each do |name, id| %>
+                    <option value={"<%= id %>"}><%= name %></option>
+                  <% end %>
+                </select>
+                <button onClick={this.collectSectionSubmissions}
+                        data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
+                  <%= j raw I18n.t('collect_submissions.collect_section') %>
+                </button>
+              <% end
+            else %>
+              <button onClick={this.collectAllSubmissions}
+                      data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
+                <%= j raw I18n.t('collect_submissions.collect_all') %>
+              </button>
+            <% end
+          end %>
           <button onClick={this.releaseMarks}>
             <%= j raw I18n.t('browse_submissions.release_marks') %>
           </button>
