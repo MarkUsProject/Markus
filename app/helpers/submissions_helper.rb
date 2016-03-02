@@ -183,15 +183,18 @@ module SubmissionsHelper
 
   def get_exit_directory(previous_path, grouping_id, revision_number,
                          revision, folder)
-    directories = revision.directories_at_path(previous_path)
+    full_previous_path = File.join("/", folder, previous_path)
+    parent_path_of_prev_dir, prev_dir = File.split(full_previous_path)
+
+    directories = revision.directories_at_path(parent_path_of_prev_dir)
 
     e = {}
     e[:id] = nil
     e[:filename] = view_context.link_to '../', action: 'repo_browser',
                                         id: grouping_id, path: previous_path,
                                         revision_number: revision_number
-    e[:last_revised_date] = directories[folder].last_modified_date
-    e[:revision_by] = directories[folder].user_id
+    e[:last_revised_date] = directories[prev_dir].last_modified_date
+    e[:revision_by] = directories[prev_dir].user_id
     [e]
   end
 
