@@ -257,6 +257,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     context 'when there is a submission to collect' do
       setup do
         setup_collector
+        @groupings[2].stubs(:inviter).returns(Student.make)
         @submission_collector.stubs(:start_collection_process)
         @submission_collector.expects(:get_next_grouping_for_collection).returns(@groupings[2])
         @submission_collector.push_groupings_to_queue(@groupings.slice(0..1))

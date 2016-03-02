@@ -335,7 +335,7 @@ class AssignmentsController < ApplicationController
     begin
       # We do not allow group creations by students after the due date
       # and the grace period for an assignment
-      if @assignment.past_collection_date?
+      if @assignment.past_collection_date?(@student.section)
         raise I18n.t('create_group.fail.due_date_passed')
       end
       if !@assignment.student_form_groups ||
@@ -445,18 +445,19 @@ class AssignmentsController < ApplicationController
   # Called by clicking the cancel link in the student's interface
   # i.e. cancels invitations
   def disinvite_member
-    @assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:id])
     membership = StudentMembership.find(params[:membership])
     disinvited_student = membership.user
     membership.delete
     membership.save
     # update repository permissions
-    grouping = current_user.accepted_grouping_for(@assignment.id)
+    grouping = current_user.accepted_grouping_for(assignment.id)
     grouping.update_repository_permissions
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' cancelled invitation for " +
                  "'#{disinvited_student.user_name}'.")
     flash[:success] = I18n.t('student.member_disinvited')
+    redirect_to action: :student_interface, id: assignment.id
   end
 
   # Deletes memberships which have been declined by students
@@ -689,7 +690,7 @@ class AssignmentsController < ApplicationController
     # must run collec_and_test manually first
     return if grouping.submissions.empty?
     # Once it is time to collect files, student should'nt start to do tests
-    unless grouping.assignment.submission_rule.can_collect_now?
+    unless grouping.assignment.submission_rule.can_collect_now?(grouping.inviter.section)
       current_submission_used = grouping.submissions.find_by_submission_version_used(true)
       if current_submission_used.revision_number < revision_number
         new_submission = Submission.create_by_revision_number(grouping, revision_number)
@@ -706,7 +707,7 @@ class AssignmentsController < ApplicationController
     # We check if it not the time to collect files
     # Once it is time to collect files, student should'nt start to do tests
     # And we create a submission with the latest revision of the svn
-    unless grouping.assignment.submission_rule.can_collect_now?
+    unless grouping.assignment.submission_rule.can_collect_now?(grouping.inviter.section)
       new_submission = Submission.create_by_revision_number(grouping, revision_number)
       new_submission.get_latest_result
     end

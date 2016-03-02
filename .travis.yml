@@ -57,7 +57,7 @@ before_script:
   - sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
   - cp config/database.yml.ci config/database.yml
   - psql -c 'create database markus_test;' -U postgres
-  - bundle exec rake db:test:prepare
+  - bundle exec rake db:migrate RAILS_ENV=test
 
 script:
   - bundle exec rake test

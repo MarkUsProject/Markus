@@ -353,15 +353,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_nil assigns :file_contents
             assert_nil assigns :annots
             assert_nil assigns :all_annots
-            assert render_template 'shared/_handle_error.js.erb'
-            assert_response :success
-
-            # Workaround to assert that the error message made its way to
-            # the response
-            r = Regexp.new(I18n.t(
-                    'submission_file.error.no_access',
-                    :submission_file_id => @no_access_submission_file.id))
-            assert_match r, @response.body
+            assert_response :found
           end
 
           should 'with file reading error' do

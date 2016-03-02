@@ -66,7 +66,7 @@
         if @grouping.nil? %>
           <p class='notice'>
             <%= t('student.no_group_yet') %>
-            <% if @assignment.past_collection_date? %>
+            <% if @assignment.past_collection_date?(@student.section) %>
               <%= t('student.grace_date_passed') %>
             <% end %>!
           </p>
@@ -120,7 +120,7 @@
           <% # If students are allowed to form groups and
              # the grace period for this assignment has not yet passed,
              # render UI elements for group creation
-             if !@assignment.past_collection_date? && @assignment.student_form_groups %>
+             if !@assignment.past_collection_date?(@student.section) && @assignment.student_form_groups %>
 
             <h3><%= t('student.form_own_group') %></h3>
             <p><%= raw(t('student.form_group',
@@ -165,7 +165,7 @@
           </h3>
           <% # Display group properties are read only warning
              # when the due date and grace period (if any) have passed.
-             if @assignment.past_collection_date? && @assignment.student_form_groups &&
+             if @assignment.past_collection_date?(@student.section) && @assignment.student_form_groups &&
                 !@assignment.invalid_override && @assignment.group_max > 1 %>
             <p class='information'>
               <%= t('student.modification_limited') %>
@@ -229,7 +229,7 @@
         <% unless @group.nil? %>
           <div class='group-options'>
             <h3><%= t('student.group_options') %></h3>
-            <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date? && @assignment.group_max > 1 %>
+            <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date?(@student.section) && @assignment.group_max > 1 %>
               <p class='information'>
                 <%= t('student.working_alone') %>
               </p>
@@ -238,7 +238,7 @@
             <% # Student not reached the group max and is not working alone
                if @grouping.inviter == @current_user &&
                   @assignment.student_form_groups &&
-                  !@assignment.past_collection_date? %>
+                  !@assignment.past_collection_date?(@student.section) %>
               <% # Student has reached the group max and is not working alone
                  if @grouping.student_membership_number < @assignment.group_max &&
                          @group.group_name != @current_user.user_name %>
@@ -255,7 +255,7 @@
             <% end %>
 
             <% if !@grouping.nil? && @assignment.group_max > 1 &&
-                  !@assignment.past_collection_date? &&
+                  !@assignment.past_collection_date?(@student.section) &&
                   !@grouping.has_submission? %>
               <% if @grouping.inviter == @current_user &&
                     @grouping.accepted_students.size == 1 %>
@@ -337,7 +337,7 @@
           </div>
 
           <h3><%= t('automated_tests.run_tests') %></h3>
-          <% if @grouping.assignment.submission_rule.can_collect_now? %>
+          <% if @grouping.assignment.submission_rule.can_collect_now?(@grouping.inviter.section) %>
             <%= t('automated_tests.due_date_is_passed') %>
             <br>
           <% else %>

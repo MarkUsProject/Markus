@@ -518,9 +518,11 @@ describe Assignment do
     before :each do
       @assignment = create(:assignment)
       @submission_collector = SubmissionCollector.instance
-      @grouping = create(:grouping, assignment: @assignment)
+      @student = create(:student)
+      @grouping = create(:grouping, assignment: @assignment, inviter: @student)
       @submission = create(:version_used_submission, grouping: @grouping)
-      @other_grouping = create(:grouping, assignment: @assignment)
+      @other_student = create(:student)
+      @other_grouping = create(:grouping, assignment: @assignment, inviter: @other_student)
       @other_submission =
         create(:version_used_submission, grouping: @other_grouping)
     end
@@ -562,7 +564,7 @@ describe Assignment do
       it 'does calculate submission results properly' do
         @assignment.due_date = (Time.now - 1.minute)
         @assignment.save
-        expect(@assignment.submission_rule.can_collect_now?).to eq true
+        expect(@assignment.submission_rule.can_collect_all_now?).to eq true
         @submission_collector.push_groupings_to_queue(@assignment.groupings)
         expect(@assignment.graded_submission_results.size).to_not be_nil
         first_result = @submission.assignment.graded_submission_results.size
@@ -782,9 +784,10 @@ describe Assignment do
       context 'and there are SectionDueDates past due' do
         before :each do
           @assignment.update_attributes(section_due_dates_type: true)
-          SectionDueDate.create(section: create(:section),
+          @section_due_date = SectionDueDate.create(section: create(:section),
                                 assignment: @assignment,
                                 due_date: 1.days.ago)
+          puts @section_due_date.inspect
         end
 
         it 'returns false' do

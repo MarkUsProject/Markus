@@ -11,7 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160202040552) do
+
+ActiveRecord::Schema.define(version: 20160219001523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -242,6 +243,16 @@ ActiveRecord::Schema.define(version: 20160202040552) do
   end
 
   add_index "groups", ["group_name"], name: "groups_name_unique", unique: true, using: :btree
+
+  create_table "job_messengers", force: :cascade do |t|
+    t.string   "job_id"
+    t.string   "status"
+    t.string   "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "job_messengers", ["job_id"], name: "index_job_messengers_on_job_id", using: :btree
 
   create_table "key_pairs", force: :cascade do |t|
     t.integer  "user_id"

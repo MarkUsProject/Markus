@@ -185,13 +185,12 @@ class GroupsController < ApplicationController
 
   def create_groups_when_students_work_alone
     @assignment = Assignment.find(params[:assignment_id])
-
     if @assignment.group_max == 1
-      CreateIndividualGroupsForAllStudentsJob.perform_later @assignment
+      @current_job = CreateIndividualGroupsForAllStudentsJob.perform_later @assignment
     end
-
-    flash[:success] = I18n.t('groups.creating_groups_for_all_students')
-    redirect_to action: 'index', id: params[:id]
+    respond_to do |format|
+      format.js {}
+    end
   end
 
   def download_grouplist
