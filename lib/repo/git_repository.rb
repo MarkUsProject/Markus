@@ -1059,12 +1059,13 @@ module Repository
 
       # Follow the 'tree-path' and return false if we cannot find
       # each part along the way
-      parts.each { |path_part|
+      parts.each do |path_part|
         found = false
         tree_ptr.each do |current_tree|
           # For each object in this tree check for our part
           if current_tree[:name] == path_part
             # Move to next part of path (next tree / subdirectory)
+            tree_ptr = @repo.lookup(current_tree[:oid])
             found = true
             break
           end
@@ -1072,7 +1073,7 @@ module Repository
         if !found
           return found
         end
-      }
+      end
       # If we made it this far, the path was traversed successfully
       true
     end
@@ -1080,8 +1081,8 @@ module Repository
     # Return changed files at 'path'
     def changed_files_at_path(path)
       files = files_at_path(path)
-      
-      files.select do |name, file|
+
+      files.select do |_name, file|
         file.changed
       end
     end
