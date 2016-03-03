@@ -346,7 +346,7 @@ module AutomatedTestsHelper
     # workaround for same reason (hash for one test script
     # array otherwise)
     result['testrun']['test_script'] = test_scripts
-    
+
     test_scripts.each do |script|
       script_name = script['script_name']
       test_script = TestScript.find_by(assignment_id: @assignment.id,
