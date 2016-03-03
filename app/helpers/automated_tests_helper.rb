@@ -347,7 +347,6 @@ module AutomatedTestsHelper
     # array otherwise)
     result['testrun']['test_script'] = test_scripts
     
-
     test_scripts.each do |script|
       script_name = script['script_name']
       test_script = TestScript.find_by(assignment_id: @assignment.id,
@@ -367,7 +366,7 @@ module AutomatedTestsHelper
         marks_earned += test['marks_earned'].to_i
         # if any of the tests fail, we consider the completion status to be fail
         completion_status = 'fail' if test['status'] != 'pass'
-        new_test_result = new_test_script_result.test_results.create(
+        new_test_script_result.test_results.create(
           grouping_id: @grouping.id,
           test_script_id: test_script.id,
           name: test['name'],
