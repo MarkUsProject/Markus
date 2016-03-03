@@ -111,7 +111,7 @@ module AutomatedTestsHelper
     export_group_repo(group, @repo_dir)
 
     if files_available?(assignment) &&
-       has_permission?(current_user, assignment)
+      (call_on == "collection" || has_permission?(current_user, assignment))
       Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on)
     end
   end
