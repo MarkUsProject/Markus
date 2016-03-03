@@ -733,7 +733,7 @@ class Grouping < ActiveRecord::Base
     total = 0
 
     #find the unique test scripts for this submission
-    test_script_ids = TestResult.select(:test_script_id).where(grouping_id: id)
+    test_script_ids = TestScriptResult.select(:test_script_id).where(grouping_id: id)
 
     #pull out the actual ids from the ActiveRecord objects
     test_script_ids = test_script_ids.map { |script_id_obj| script_id_obj.test_script_id }
@@ -743,7 +743,7 @@ class Grouping < ActiveRecord::Base
 
     #add the latest result from each of our test scripts
     test_script_ids.each do |test_script_id|
-      test_result = TestResult.where(
+      test_result = TestScriptResult.where(
         test_script_id: test_script_id,
         grouping_id: id).last
       total = total + test_result.marks_earned

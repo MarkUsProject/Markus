@@ -68,7 +68,7 @@ class AutomatedTestsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
-      @test_script_results = TestResult.where(grouping: @grouping)
+      @test_script_results = TestScriptResult.where(grouping: @grouping)
                                        .order(created_at: :desc)
       @token = fetch_latest_tokens_for_grouping(@grouping)
     end
