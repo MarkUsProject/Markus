@@ -372,7 +372,7 @@ module AutomatedTestsHelper
           test_script_id: test_script.id,
           name: test['name'],
           repo_revision: revision_number,
-          input_description: test['input'],
+          input: test['input'],
           actual_output: test['actual'],
           expected_output: test['expected'],
           submission_id: submission_id,
@@ -380,7 +380,7 @@ module AutomatedTestsHelper
           completion_status: completion_status)
       end
       new_test_script_result.marks_earned = marks_earned
-      new_test_script_result.save
+      new_test_script_result.save!
     end
 
   end

@@ -37,7 +37,7 @@ class TestResult < ActiveRecord::Base
   validates_inclusion_of :completion_status, :in => %w(pass fail error), :message => "%{value} is not a valid status"
   validates_numericality_of :marks_earned, :only_integer => true, :greater_than_or_equal_to => 0
 
-  validates_presence_of :input_description, :if => "input_description.nil?"
-  validates_presence_of :actual_output, :if => "actual_output.nil?"
-  validates_presence_of :expected_output, :if => "expected_output.nil?"
+  #validates_presence_of :input_description, :if => "input_description.nil?"
+  #validates_presence_of :actual_output, :if => "actual_output.nil?"
+  #validates_presence_of :expected_output, :if => "expected_output.nil?"
 end

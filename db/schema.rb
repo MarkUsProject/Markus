@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151129233225) do
+ActiveRecord::Schema.define(version: 20160303184449) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -308,7 +308,7 @@ ActiveRecord::Schema.define(version: 20151129233225) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "hours"
-    t.float  "interval"
+    t.float    "interval"
     t.string   "submission_rule_type"
   end
 
@@ -424,9 +424,9 @@ ActiveRecord::Schema.define(version: 20151129233225) do
     t.string   "completion_status",     null: false
     t.integer  "marks_earned",          null: false
     t.integer  "repo_revision"
-    t.text     "input_description",     null: false
-    t.text     "actual_output",         null: false
-    t.text     "expected_output",       null: false
+    t.text     "input"
+    t.text     "actual_output"
+    t.text     "expected_output"
     t.integer  "submission_id"
     t.datetime "created_at"
     t.datetime "updated_at"
