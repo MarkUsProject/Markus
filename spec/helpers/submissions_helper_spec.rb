@@ -55,7 +55,7 @@ describe SubmissionsHelper do
       expect(@assignment).to receive_message_chain(
         :submission_rule, :can_collect_now?).with(@section) { true }
       expect(@assignment).to receive(:section_groupings)
-                         .with(@section) { Array.new }
+        .with(@section) { Array.new }
       @submission_collector = SubmissionCollector.instance
       expect(SubmissionCollector)
         .to receive(:instance) { @submission_collector }
@@ -71,7 +71,7 @@ describe SubmissionsHelper do
       expect(@assignment).to receive_message_chain(
         :submission_rule, :can_collect_now?).with(@section) { true }
       expect(@assignment).to receive(:section_groupings)
-                         .with(@section) { @section_groupings }
+        .with(@section) { @section_groupings }
       @submission_collector = SubmissionCollector.instance
       expect(SubmissionCollector)
         .to receive(:instance) { @submission_collector }
