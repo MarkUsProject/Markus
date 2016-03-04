@@ -14,7 +14,7 @@ describe SubmissionsHelper do
         repo.commit(txn)
 
         # Generate submission
-        submission = 
+        submission =
           Submission.generate_new_submission(@grouping,
                                              repo.get_latest_revision)
         result = submission.get_latest_result
@@ -54,14 +54,13 @@ describe SubmissionsHelper do
       expect(Section).to receive(:exists?).with(@section.id) { true }
       expect(@assignment).to receive_message_chain(
         :submission_rule, :can_collect_now?).with(@section) { true }
-      expect(@assignment).to
-                         receive(:section_groupings)
+      expect(@assignment).to receive(:section_groupings)
                          .with(@section) { Array.new }
       @submission_collector = SubmissionCollector.instance
-      expect(SubmissionCollector).to
-                                 receive(:instance) { @submission_collector }
-      return_val = helper.collect_submissions_for_section(@section.id, 
-                                                          @assignment, 
+      expect(SubmissionCollector)
+        .to receive(:instance) { @submission_collector }
+      return_val = helper.collect_submissions_for_section(@section.id,
+                                                          @assignment,
                                                           @errors)
       expect(return_val).to eq 0
       expect(@errors).to be_empty
@@ -71,15 +70,14 @@ describe SubmissionsHelper do
       expect(Section).to receive(:exists?).with(@section.id) { true }
       expect(@assignment).to receive_message_chain(
         :submission_rule, :can_collect_now?).with(@section) { true }
-      expect(@assignment).to 
-                         receive(:section_groupings)
+      expect(@assignment).to receive(:section_groupings)
                          .with(@section) { @section_groupings }
       @submission_collector = SubmissionCollector.instance
-      expect(SubmissionCollector).to 
-                                 receive(:instance) { @submission_collector }
+      expect(SubmissionCollector)
+        .to receive(:instance) { @submission_collector }
       expect(@submission_collector).to receive(:push_grouping_to_priority_queue)
-      return_val = helper.collect_submissions_for_section(@section.id, 
-                                                          @assignment, 
+      return_val = helper.collect_submissions_for_section(@section.id,
+                                                          @assignment,
                                                           @errors)
       expect(return_val).to eq 1
       expect(@errors).to be_empty
