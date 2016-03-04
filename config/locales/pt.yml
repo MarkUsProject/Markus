@@ -127,7 +127,7 @@ pt:
 Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa desmarcada , a apresentação não será penalizado , independentemente do tempo de apresentação . )"
       collect_all: "Coletar todas as submissões"
       collect_section: "Coletar as submissões de seção"
-      all_available: "Todas as seções disponíveis"
+      all_available: "Todas as submissões disponíveis"
       collect_ta: "Coletar todas as submissões atribuidos à você"
       disable_collect: "Coleta de submissões desabilitada, já existe um monitor avaliando as submissões exibidas."
       could_not_collect: "Não foi possível coletar todas as submissões para o projeto %{assignment_identifier} - a data da coleta não foi atingida"
