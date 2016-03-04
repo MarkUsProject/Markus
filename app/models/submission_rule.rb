@@ -20,10 +20,11 @@ class SubmissionRule < ActiveRecord::Base
      GracePeriodSubmissionRule]
   end
 
-  def can_collect_now?(section)
+  def can_collect_now?(section=nil)
     reset_collection_time if @can_collect_now.nil?
-    return @can_collect_now[section.id] if !@can_collect_now[section.id].nil?
-    @can_collect_now[section.id] = Time.zone.now >= get_collection_time(section)
+    section_id = section.nil? ? 0 : section.id
+    return @can_collect_now[section_id] if !@can_collect_now[section_id].nil?
+    @can_collect_now[section_id] = Time.zone.now >= get_collection_time(section)
   end
 
   def can_collect_all_now?

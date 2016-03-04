@@ -907,6 +907,14 @@ class Assignment < ActiveRecord::Base
       grouping.inviter.section.id == section.id
     end
   end
+
+  # Returns the groupings of this assignment that have no associated section
+  def sectionless_groupings
+    self.groupings.select do |grouping|
+      grouping.inviter.present? and
+      !grouping.inviter.has_section?
+    end
+  end
   
   private
 
