@@ -239,7 +239,12 @@ class SubmissionsController < ApplicationController
     successes = Array.new
     noSubmissions = Array.new
     section_ids.each do |id|
-      unless id == '0'
+      if id == '0'
+        submission_collector = SubmissionCollector.instance
+        submission_collector.push_groupings_to_queue(
+          assignment.sectionless_groupings)
+        successes.push(t('groups.unassigned_students'))
+      else
         unless Section.exists?(id)
           errors.push(I18n.t('collect_submissions.could_not_find_section'))
           next
@@ -249,11 +254,6 @@ class SubmissionsController < ApplicationController
         else
           noSubmissions.push(Section.find(id).name)
         end
-      else
-        submission_collector = SubmissionCollector.instance
-        submission_collector.push_groupings_to_queue(
-          assignment.sectionless_groupings)
-        successes.push(t('groups.unassigned_students'))
       end
     end
     if successes.length > 0

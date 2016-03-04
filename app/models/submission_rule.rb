@@ -43,7 +43,9 @@ class SubmissionRule < ActiveRecord::Base
       @get_global_collection_time = calculate_collection_time
     else
       reset_collection_time if @get_collection_time.nil?
-      return @get_collection_time[section.id] unless @get_collection_time[section.id].nil?
+      unless @get_collection_time[section.id].nil?
+        return @get_collection_time[section.id]
+      end
       @get_collection_time[section.id] = calculate_collection_time(section)
     end
   end
