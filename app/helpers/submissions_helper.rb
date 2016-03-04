@@ -128,7 +128,7 @@ module SubmissionsHelper
       section = Section.find(section_id)
 
       # Check collection date
-      if !assignment.submission_rule.can_collect_now?(section)
+      unless assignment.submission_rule.can_collect_now?(section)
         raise I18n.t('collect_submissions.could_not_collect_section',
           assignment_identifier: assignment.short_identifier,
           section_name: section.name)

@@ -465,7 +465,7 @@ describe SubmissionsController do
           response_body = JSON.parse(response.body)
           expect(response_body['error']).to include(
             I18n.t('collect_submissions.no_submission_for_section',
-                       section_names: 's1'))
+                   section_names: 's1'))
           expect(response_body['success']).to be_nil
           is_expected.to respond_with(:ok)
         end
@@ -486,8 +486,8 @@ describe SubmissionsController do
           response_body = JSON.parse(response.body)
           expect(response_body['success']).to include(
             I18n.t('collect_submissions.section_collection_job_started',
-                     assignment_identifier: 'a1',
-                     section_names: 's1'))
+                   assignment_identifier: 'a1',
+                   section_names: 's1'))
           expect(response_body['error']).to be_empty
           is_expected.to respond_with(:ok)
         end

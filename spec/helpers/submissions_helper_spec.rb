@@ -8,20 +8,20 @@ describe SubmissionsHelper do
       @section = create(:section, name: 's1')
       @grouping = create(:grouping)
       @grouping.group.access_repo do |repo|
-          txn = repo.get_transaction('test')
-          path = File.join(@assignment.repository_folder, 'file1_name')
-          txn.add(path, 'file1 content', '')
-          repo.commit(txn)
+        txn = repo.get_transaction('test')
+        path = File.join(@assignment.repository_folder, 'file1_name')
+        txn.add(path, 'file1 content', '')
+        repo.commit(txn)
 
-          # Generate submission
-          submission =
-              Submission.generate_new_submission(@grouping,
-                                                 repo.get_latest_revision)
-          result = submission.get_latest_result
-          result.marking_state = Result::MARKING_STATES[:complete]
-          result.save
-          submission.save
-        end
+        # Generate submission
+        submission = 
+          Submission.generate_new_submission(@grouping,
+                                             repo.get_latest_revision)
+        result = submission.get_latest_result
+        result.marking_state = Result::MARKING_STATES[:complete]
+        result.save
+        submission.save
+      end
       @section_groupings = Array.new
       @section_groupings.push(@grouping)
     end
@@ -46,18 +46,23 @@ describe SubmissionsHelper do
       helper.collect_submissions_for_section(@section.id, @assignment, @errors)
       expect(@errors).to include(
         I18n.t('collect_submissions.could_not_collect_section',
-              assignment_identifier: 'a1',
-              section_name: 's1'))
+               assignment_identifier: 'a1',
+               section_name: 's1'))
     end
 
     it 'should return 0 if there are no groupings to collect' do
       expect(Section).to receive(:exists?).with(@section.id) { true }
       expect(@assignment).to receive_message_chain(
         :submission_rule, :can_collect_now?).with(@section) { true }
-      expect(@assignment).to receive(:section_groupings).with(@section) { Array.new }
+      expect(@assignment).to
+                         receive(:section_groupings)
+                         .with(@section) { Array.new }
       @submission_collector = SubmissionCollector.instance
-      expect(SubmissionCollector).to receive(:instance) { @submission_collector }
-      return_val = helper.collect_submissions_for_section(@section.id, @assignment, @errors)
+      expect(SubmissionCollector).to
+                                 receive(:instance) { @submission_collector }
+      return_val = helper.collect_submissions_for_section(@section.id, 
+                                                          @assignment, 
+                                                          @errors)
       expect(return_val).to eq 0
       expect(@errors).to be_empty
     end
@@ -66,11 +71,16 @@ describe SubmissionsHelper do
       expect(Section).to receive(:exists?).with(@section.id) { true }
       expect(@assignment).to receive_message_chain(
         :submission_rule, :can_collect_now?).with(@section) { true }
-      expect(@assignment).to receive(:section_groupings).with(@section) { @section_groupings }
+      expect(@assignment).to 
+                         receive(:section_groupings)
+                         .with(@section) { @section_groupings }
       @submission_collector = SubmissionCollector.instance
-      expect(SubmissionCollector).to receive(:instance) { @submission_collector }
+      expect(SubmissionCollector).to 
+                                 receive(:instance) { @submission_collector }
       expect(@submission_collector).to receive(:push_grouping_to_priority_queue)
-      return_val = helper.collect_submissions_for_section(@section.id, @assignment, @errors)
+      return_val = helper.collect_submissions_for_section(@section.id, 
+                                                          @assignment, 
+                                                          @errors)
       expect(return_val).to eq 1
       expect(@errors).to be_empty
     end
