@@ -315,8 +315,8 @@ describe SubmissionRule do
         context '#calculate_grouping_collection_time(grouping) with section' do
           it 'should return correct date value' do
             time_returned = @assignment
-              .submission_rule
-              .calculate_grouping_collection_time(@grouping_with_section)
+                            .submission_rule
+                            .calculate_grouping_collection_time(@grouping_with_section)
             time_difference = (2.days.ago - time_returned).abs
             expect(time_difference).to be < 600
           end
@@ -326,8 +326,8 @@ describe SubmissionRule do
         context '#calculate_grouping_collection_time(grouping) without section' do
           it 'should return correct date value' do
             time_returned = @assignment
-              .submission_rule
-              .calculate_grouping_collection_time(@grouping_without_section)
+                            .submission_rule
+                            .calculate_grouping_collection_time(@grouping_without_section)
             time_difference = (1.days.from_now - time_returned).abs
             expect(time_difference).to be < 600
           end
@@ -401,8 +401,8 @@ describe SubmissionRule do
         context '#calculate_grouping_collection_time(grouping) with section' do
           it 'should return correct date value' do
             time_returned = @assignment
-              .submission_rule
-              .calculate_grouping_collection_time(@grouping_with_section)
+                            .submission_rule
+                            .calculate_grouping_collection_time(@grouping_with_section)
             time_difference = (2.days.from_now - time_returned).abs
             expect(time_difference).to be < 600
           end
@@ -412,8 +412,8 @@ describe SubmissionRule do
         context '#calculate_grouping_collection_time(grouping) without section' do
           it 'should return correct date value' do
             time_returned = @assignment
-              .submission_rule
-              .calculate_grouping_collection_time(@grouping_without_section)
+                            .submission_rule
+                            .calculate_grouping_collection_time(@grouping_without_section)
             time_difference = (1.days.from_now - time_returned).abs
             expect(time_difference).to be < 600
           end
@@ -493,8 +493,8 @@ describe SubmissionRule do
       context '#calculate_grouping_collection_time(grouping) with section' do
         it 'should return correct date value' do
           time_returned = @assignment
-            .submission_rule
-            .calculate_grouping_collection_time(@grouping_with_section)
+                          .submission_rule
+                          .calculate_grouping_collection_time(@grouping_with_section)
           time_difference = (1.days.ago - time_returned).abs
           expect(time_difference).to be < 600
         end
@@ -504,8 +504,8 @@ describe SubmissionRule do
       context '#calculate_grouping_collection_time(grouping) without section' do
         it 'should return correct date value' do
           time_returned = @assignment
-            .submission_rule
-            .calculate_grouping_collection_time(@grouping_without_section)
+                          .submission_rule
+                          .calculate_grouping_collection_time(@grouping_without_section)
           time_difference = (1.days.ago - time_returned).abs
           expect(time_difference).to be < 600
         end
@@ -578,8 +578,8 @@ describe SubmissionRule do
       context '#calculate_grouping_collection_time(grouping) with section' do
         it 'should return correct date value' do
           time_returned = @assignment
-            .submission_rule
-            .calculate_grouping_collection_time(@grouping_with_section)
+                          .submission_rule
+                          .calculate_grouping_collection_time(@grouping_with_section)
           time_difference = (1.days.from_now - time_returned).abs
           expect(time_difference).to be < 600
         end
@@ -589,8 +589,8 @@ describe SubmissionRule do
       context '#calculate_grouping_collection_time(grouping) without section' do
         it 'should return correct date value' do
           time_returned = @assignment
-            .submission_rule
-            .calculate_grouping_collection_time(@grouping_without_section)
+                          .submission_rule
+                          .calculate_grouping_collection_time(@grouping_without_section)
           time_difference = (1.days.from_now - time_returned).abs
           expect(time_difference).to be < 600
         end
