@@ -239,8 +239,8 @@ class SubmissionsController < ApplicationController
     successes = Array.new
     noSubmissions = Array.new
     section_ids.each do |id|
-      if id != "0"
-        if !Section.exists?(id)
+      unless id == '0'
+        unless Section.exists?(id)
           errors.push(I18n.t('collect_submissions.could_not_find_section'))
           next
         end
@@ -296,7 +296,7 @@ class SubmissionsController < ApplicationController
                                                        current_user)
     @available_sections = Hash.new
     if @assignment.submission_rule.can_collect_now?
-      @available_sections[t('groups.unassigned_students')] = 0;
+      @available_sections[t('groups.unassigned_students')] = 0
     end
     if Section.all.size > 0
       @section_column = "{
