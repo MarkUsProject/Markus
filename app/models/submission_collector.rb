@@ -168,7 +168,7 @@ class SubmissionCollector < ActiveRecord::Base
     m_logger = MarkusLogger.instance
     m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                  "'#{grouping.id}'")
-    time = assignment.submission_rule.calculate_collection_time.localtime
+    time = assignment.submission_rule.calculate_collection_time(grouping.inviter.section).localtime
     # Create a new Submission by timestamp.
     # A Result is automatically attached to this Submission, thanks to some
     # callback logic inside the Submission model

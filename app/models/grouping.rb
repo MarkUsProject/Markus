@@ -294,7 +294,7 @@ class Grouping < ActiveRecord::Base
 
 
       end
-      if self.assignment.past_collection_date?
+      if self.assignment.past_collection_date?(self.inviter.section)
         errors.add(:base, I18n.t('invite_student.fail.due_date_passed',
                                   user_name: user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Current time past " +
@@ -476,7 +476,7 @@ class Grouping < ActiveRecord::Base
     (!self.is_valid?) || (self.is_valid? &&
                           accepted_students.size == 1 &&
                           self.assignment.group_assignment? &&
-                          !assignment.past_collection_date?)
+                          !assignment.past_collection_date?(self.inviter.section))
   end
 
   # Returns the number of files submitted by this grouping for a

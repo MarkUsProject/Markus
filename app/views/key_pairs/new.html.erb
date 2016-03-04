@@ -1,5 +1,7 @@
 <h1><%= t('key_pairs.add_key_pair') %></h1>
 
+<%= render 'shared/flash_message' %>
+
 <%= render 'form' %>
 
 <%= link_to t('key_pairs.back'), key_pairs_path %>

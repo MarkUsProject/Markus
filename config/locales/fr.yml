@@ -7,6 +7,7 @@ fr:
     password:           "Mot de passe"
     all:                "Tous"
     none:               "Aucun"
+    and:                " et "
     search:             "Recherche:"
     issues:             "GitHub liste des problèmes"
     actions:            "Actes"
@@ -127,17 +128,20 @@ fr:
     collect_submissions:
       apply_late_penalty: "Appliquer pénalité de retard / Déduire jetons de grâce ( Laissant cette case cochée signifie la soumission ne sera pas pénalisé , indépendamment du moment de la soumission . )"
       collect_all: "Récupérer tous les envois"
+      collect_section: "Récupérer les envois de la section"
+      all_available: "Tous les sections à disposition"
       collect_ta: "Récupérer tous les envois qui me sont assignés"
       disable_collect: "Récupération des envois n'est pas disponible, il y a déjà un correcteur assigné aux envois."
       could_not_collect: "Les envois du projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération n'est pas encore passée."
       collection_job_started: "La récupération des envois pour le projet %{assignment_identifier} a débuté. Cela peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
+      section_collection_job_started: "La récupération des envois pour les sections %{section_names} pour le projet %{assignment_identifier} a débuté. Cela peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
       priority_given: "Une priorité importante a été donné à cet envoi. Il va bientot être prêt."
       errors:               "Erreurs"
       results_loss_warning: "Attention : cette action effacera vos annotations et évaluations.\n\n!Êtes-vous sûr de vouloir continuer ?"
       must_select_a_section: "Vous devez sélectionner une section pour récupérer les envois de ses groupes."
       could_not_find_section: "La section demandée n'a pas été trouvée."
       could_not_collect_section: "Les envois de la section %{section_name} pour le projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération pour cette section n'est pas encore passée."
-      no_submission_for_section: "Il n'y a ancun envoi à récupérer pour la section %{section_name}."
+      no_submission_for_section: "Il n'y a ancun envoi à récupérer pour les sections %{section_names}."
       successfully_collected: "Récupération de %{collected} envoi(s)."
       marking_incomplete_warning: "Attention: Cela ne fera que télécharger les envois qui ont été recuillis.\n\nÊtes-vous sûr de vouloir continuer?"
       collection_incomplete_warning: "La récuperation des envois est en cours. Certains envois seront manquants. Désirez-vous tout de même continuer?"
@@ -289,7 +293,14 @@ fr:
       or:         "OU"
       copy_paste_key:         "Copiez et Collez Votre clé Publique"
       create_key_pair:         "Créer une Paire de Clés"
-      back:         "Dos"
+      back:         "Retourner"
+      create:
+        success: "Paire de Clés créé avec succès"
+        invalid_key: "Une Paire de Clés n'a pas été créé: Clé non valide"
+      update:
+        success: "Paire de Clés mis à jour avec succès"
+      delete:
+        success: "Paire de Clés supprimé avec succès"
 
     #app/views/resluts/marker/_marker_panes.html.erb
     marker:
@@ -432,6 +443,8 @@ fr:
       show_assigned_to_me:  "Montrer les groupes qui me sont assignés"
       grading_can_begin:    "L'évaluation peut commencer"
       grading_can_begin_after: "L'évaluation commencera à partir du %{time}"
+      grading_can_begin_for_sections:    "L'évaluation peut commencer pour les sections: %{sections}"
+      grading_can_begin_after_for_sections: "L'évaluation commencera à partir du %{time} pour les sections: %{sections}"
       submissions:	    "Soumissions: %{short_identifier}"
       csv_report:           "Rapport CSV"
       detailed_csv_report: "Rappost CSV détaillé"
@@ -622,7 +635,7 @@ fr:
         could_not_find_source: "Le projet source pour la copie des groupes n'a pas été trouvé."
         could_not_find_target: "Le projet cible pour la copie des groupes n'a pas été trouvé."
       add_all_groups: "Ajouter tous les groupes"
-      creating_groups_for_all_students: "Création de groupes pour tous les élèves. (Processus qui s'exécute en arrière-plan. Rechargez la page pour voir tous les groupes créés lors.)"
+      creating_groups_for_all_students: "Création de groupes pour tous les élèves."
 
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
@@ -1300,6 +1313,12 @@ fr:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
+
+    #app/views/job_messages/_job_poller.js.erb
+    job_poller:
+      processing_message: "Processus en cours d`éxécution:"
+      processing_message_finished: "Processus terminé. En rechargement..."
+      processing_message_error: "Une erreur c`est produite:"
 
     #app/helpers/submissions_helper.rb
     assign_folder_missing:      "Oh non! Affectation dossier manquant."

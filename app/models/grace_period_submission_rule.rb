@@ -17,8 +17,10 @@ class GracePeriodSubmissionRule < SubmissionRule
 
     # We need to know how many grace credits this grouping has left...
     grace_credits_remaining = grouping.available_grace_credits
+    # We need to know the section, in case there is a section due date
+    section = grouping.inviter.section
     # How far are we into overtime?
-    overtime_hours = calculate_overtime_hours_from(Time.zone.now)
+    overtime_hours = calculate_overtime_hours_from(Time.zone.now, section)
     grace_credits_to_use = calculate_deduction_amount(overtime_hours)
     if grace_credits_remaining < grace_credits_to_use
       # This grouping is out of grace credits.
@@ -35,15 +37,15 @@ class GracePeriodSubmissionRule < SubmissionRule
   end
 
   def apply_submission_rule(submission)
-
+    section = submission.grouping.inviter.section
+    due_date = assignment.section_due_date(section)
     # If we aren't overtime, we don't need to apply a rule
-    return submission if submission.revision_timestamp <= assignment.due_date
+    return submission if submission.revision_timestamp <= due_date
 
     # So we're overtime.  How far are we overtime?
     collection_time = submission.revision_timestamp
-    due_date = assignment.due_date
 
-    overtime_hours = calculate_overtime_hours_from(collection_time)
+    overtime_hours = calculate_overtime_hours_from(collection_time, section)
     # Now we need to figure out how many Grace Credits to deduct
     deduction_amount = calculate_deduction_amount(overtime_hours)
 
@@ -69,7 +71,7 @@ class GracePeriodSubmissionRule < SubmissionRule
     elsif available_grace_credits < deduction_amount
       grouping = submission.grouping
       submission.destroy
-      collection_time = calculate_collection_date_from_credits(available_grace_credits)
+      collection_time = calculate_collection_date_from_credits(available_grace_credits, due_date)
       submission = Submission.create_by_timestamp(grouping, collection_time.localtime)
       # And now, a little recursion...
       return assignment.submission_rule.apply_submission_rule(submission)
@@ -133,14 +135,14 @@ class GracePeriodSubmissionRule < SubmissionRule
 
   # Given the number of credits remaining, calculate the collection_date
   # for a Submission
-  def calculate_collection_date_from_credits(grace_credits)
+  def calculate_collection_date_from_credits(grace_credits, due_date)
     hours_after_due_date = 0
     periods.each do |period|
       hours_after_due_date = hours_after_due_date + period.hours
       grace_credits = grace_credits - 1
       break if grace_credits == 0
     end
-    assignment.due_date + hours_after_due_date.hours
+    due_date + hours_after_due_date.hours
   end
 
 end

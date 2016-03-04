@@ -7,6 +7,7 @@ en:
     password:           "Password"
     all:                "All"
     none:               "None"
+    and:                " and "
     search:             "Search:"
     issues:             "GitHub issues list"
     actions:            "Actions"
@@ -124,17 +125,20 @@ en:
     collect_submissions:
       apply_late_penalty: "Apply late penalty/Deduct grace tokens (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)"
       collect_all: "Collect All Submissions"
+      collect_section: "Collect Section Submissions"
+      all_available: "All Available Sections"
       collect_ta: "Collect all your assigned submissions"
       disable_collect: "Collection disabled, more than one TA marking displayed submissions."
       could_not_collect: "Could not collect submissions for assignment %{assignment_identifier} - the collection date has not been reached"
       collection_job_started: "Submission collection for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
+      section_collection_job_started: "Submission collection for sections %{section_names} for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
       priority_given: "The submission has been given collection priority. It will be ready soon."
       errors:               "Errors"
       results_loss_warning: "Note: This will erase any marking and annotations already done.\n\nAre you sure you want to proceed?"
       must_select_a_section: "You must select a section to collect the submissions of its groups."
       could_not_find_section: "Could not find requested section."
       could_not_collect_section: "Could not collect submissions for section %{section_name} and assignment %{assignment_identifier} - the section collection date has not been reached."
-      no_submission_for_section: "There isn't any submission to collect for section %{section_name}."
+      no_submission_for_section: "There aren't any submissions to collect for sections: %{section_names}."
       successfully_collected: "Successfully collected %{collected} submissions."
       marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
       collection_incomplete_warning: "Collection is still in progress or has not started. Do you still want to proceed? Some submissions might be missing."
@@ -444,6 +448,8 @@ en:
       show_assigned_to_me:  "Show Assigned to Me"
       grading_can_begin:    "Grading can begin"
       grading_can_begin_after: "Grading can begin after %{time}"
+      grading_can_begin_for_sections:   "Grading can begin for sections: %{sections}"
+      grading_can_begin_after_for_sections: "Grading can begin after %{time} for sections: %{sections}"
       submissions:	    "Submissions: %{short_identifier}"
       csv_report:           "CSV Report"
       detailed_csv_report: "Detailed CSV Report"
@@ -635,7 +641,7 @@ en:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"
       add_all_groups: "Add all groups"
-      creating_groups_for_all_students: "Creating groups for all students. (Background task. Refresh page to see when all groups created.)"
+      creating_groups_for_all_students: "Creating groups for all students."
 
     results:
       title:  "Assignment %{assignment_name} : %{group_name}"
@@ -1250,6 +1256,13 @@ en:
       copy_paste_key:         "Copy and paste your public key"
       create_key_pair:         "Create Key Pair"
       back:         "Back"
+      create:
+        success: "Key Pair was created successfully"
+        invalid_key: "Key Pair was not created: Invalid key"
+      update:
+        success: "Key Pair was updated successfully"
+      delete:
+        success: "Key Pair was removed successfully"
 
     course_summaries:
       title: "Summary"
@@ -1446,6 +1459,12 @@ en:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
+
+    #app/views/job_messages/_job_poller.js.erb
+    job_poller:
+      processing_message: "Processing:"
+      processing_message_finished: "Finished Processing. Reloading..."
+      processing_message_error: "Processing Failed:"
 
     #app/helpers/submissions_helper.rb
     assign_folder_missing:      "Uh oh! Assignment folder missing."

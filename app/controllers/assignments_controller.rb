@@ -335,7 +335,7 @@ class AssignmentsController < ApplicationController
     begin
       # We do not allow group creations by students after the due date
       # and the grace period for an assignment
-      if @assignment.past_collection_date?
+      if @assignment.past_collection_date?(@student.section)
         raise I18n.t('create_group.fail.due_date_passed')
       end
       if !@assignment.student_form_groups ||
@@ -690,7 +690,7 @@ class AssignmentsController < ApplicationController
     # must run collec_and_test manually first
     return if grouping.submissions.empty?
     # Once it is time to collect files, student should'nt start to do tests
-    unless grouping.assignment.submission_rule.can_collect_now?
+    unless grouping.assignment.submission_rule.can_collect_now?(grouping.inviter.section)
       current_submission_used = grouping.submissions.find_by_submission_version_used(true)
       if current_submission_used.revision_number < revision_number
         new_submission = Submission.create_by_revision_number(grouping, revision_number)
@@ -707,7 +707,7 @@ class AssignmentsController < ApplicationController
     # We check if it not the time to collect files
     # Once it is time to collect files, student should'nt start to do tests
     # And we create a submission with the latest revision of the svn
-    unless grouping.assignment.submission_rule.can_collect_now?
+    unless grouping.assignment.submission_rule.can_collect_now?(grouping.inviter.section)
       new_submission = Submission.create_by_revision_number(grouping, revision_number)
       new_submission.get_latest_result
     end

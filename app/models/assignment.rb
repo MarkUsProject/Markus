@@ -197,8 +197,12 @@ class Assignment < ActiveRecord::Base
     due_dates.compact.max
   end
 
-  def past_collection_date?
-    Time.zone.now > submission_rule.calculate_collection_time
+  def past_collection_date?(section=nil)
+    Time.zone.now > submission_rule.calculate_collection_time(section)
+  end
+
+  def past_all_collection_dates?
+    Time.zone.now > latest_due_date
   end
 
   def past_remark_due_date?
@@ -893,6 +897,15 @@ class Assignment < ActiveRecord::Base
     end
 
     criterion.add_tas_by_user_name_array(graders)
+  end
+
+  # Returns the groupings of this assignment associated with the given section
+  def section_groupings(section)
+    self.groupings.select do |grouping|
+      grouping.inviter.present? and 
+      grouping.inviter.has_section? and 
+      grouping.inviter.section.id == section.id
+    end
   end
   
   private

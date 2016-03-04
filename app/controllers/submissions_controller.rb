@@ -218,23 +218,55 @@ class SubmissionsController < ApplicationController
 
   def collect_all_submissions
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
-    if assignment.submission_rule.can_collect_now?
+    if assignment.submission_rule.can_collect_all_now?
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(assignment.groupings)
-      flash[:success] =
+      success =
           I18n.t('collect_submissions.collection_job_started',
                  assignment_identifier: assignment.short_identifier)
+      render json: { success: success }
     else
-      flash[:error] = I18n.t('collect_submissions.could_not_collect',
+      error = I18n.t('collect_submissions.could_not_collect',
                              assignment_identifier: assignment.short_identifier)
+      render json: { error: error }
     end
-    redirect_to action: 'browse',
-                id: assignment.id
+  end
+
+  def collect_section_submissions
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    section_ids = params[:sections]
+    errors = Array.new
+    successes = Array.new
+    noSubmissions = Array.new
+    section_ids.each do |id|
+      if !Section.exists?(id)
+        errors.push(I18n.t('collect_submissions.could_not_find_section'))
+        next
+      end
+        
+      if collect_submissions_for_section(id, assignment, errors) > 0
+        successes.push(Section.find(id).name)
+      else
+        noSubmissions.push(Section.find(id).name)
+      end
+    end
+    if successes.length > 0
+      sections = successes.join(', ')
+      success = I18n.t('collect_submissions.section_collection_job_started',
+                     assignment_identifier: assignment.short_identifier,
+                     section_names: sections)
+    end
+    if noSubmissions.length > 0
+      sections = noSubmissions.join(', ')
+      errors.push(I18n.t('collect_submissions.no_submission_for_section',
+                       section_names: sections))
+    end
+    render json: { success: success, error: errors }
   end
 
   def collect_ta_submissions
     assignment = Assignment.find(params[:assignment_id])
-    if assignment.submission_rule.can_collect_now?
+    if assignment.submission_rule.can_collect_all_now?
       groupings = assignment.groupings
                             .joins(:tas)
                             .where(users: { id: current_user.id })
@@ -256,12 +288,18 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                        current_user)
+    @available_sections = Hash.new
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
         content: '#{t(:'browse_submissions.section')}',
         sortable: true
       },"
+      Section.all.each do |section|
+        if @assignment.submission_rule.can_collect_now?(section)
+          @available_sections[section.name] = section.id
+        end
+      end 
     else
       @section_column = ''
     end
@@ -278,15 +316,38 @@ class SubmissionsController < ApplicationController
       @grace_credit_column = ''
     end
 
-    if @assignment.past_collection_date?
-      notice_text = t('browse_submissions.grading_can_begin')
+    if @assignment.past_all_collection_dates?
+      flash_now(:notice, t('browse_submissions.grading_can_begin'))
     else
-      collection_time = @assignment.submission_rule.calculate_collection_time
-      notice_text = t('browse_submissions.grading_can_begin_after',
-                      time: I18n.l(collection_time, format: :long_date))
+      if @assignment.section_due_dates_type
+        section_due_dates = Hash.new
+        now = Time.zone.now
+        Section.all.each do |section|
+          collection_time = @assignment.submission_rule
+                                       .calculate_collection_time(section)
+          collection_time = now if now >= collection_time
+          if section_due_dates[collection_time].nil?
+            section_due_dates[collection_time] = Array.new
+          end
+          section_due_dates[collection_time].push(section.name)
+        end
+        section_due_dates.each do |collection_time, sections|
+          sections = sections.join(', ')
+          if(collection_time == now)
+            flash_now(:notice, t('browse_submissions.grading_can_begin_for_sections',
+                                 sections: sections))
+          else
+            flash_now(:notice, t('browse_submissions.grading_can_begin_after_for_sections',
+                                 time: I18n.l(collection_time, format: :long_date),
+                                 sections: sections))
+          end
+        end
+      else
+        collection_time = @assignment.submission_rule.calculate_collection_time
+        flash_now(:notice, t('browse_submissions.grading_can_begin_after',
+                             time: I18n.l(collection_time, format: :long_date)))
+      end
     end
-
-    flash_now(:notice, notice_text)
     render layout: 'assignment_content'
   end
 
@@ -453,7 +514,7 @@ class SubmissionsController < ApplicationController
         end
 
         # Are we past collection time?
-        if @assignment.submission_rule.can_collect_now?
+        if @assignment.submission_rule.can_collect_now?(current_user.section)
           flash[:commit_notice] =
               @assignment.submission_rule.commit_after_collection_message
         end
