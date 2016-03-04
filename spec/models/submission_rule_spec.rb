@@ -72,12 +72,14 @@ describe SubmissionRule do
       context 'and Section Due Date is in the past' do
         before :each do
           @section_due_date = SectionDueDate.create(section: @section,
-                                assignment: @assignment,
-                                due_date: 2.days.ago)
+                                                    assignment: @assignment,
+                                                    due_date: 2.days.ago)
           @inviter_with_section = Student.create(section: @section)
           @inviter_without_section = Student.create
-          @grouping_with_section = Grouping.create(inviter: @inviter_with_section)
-          @grouping_without_section = Grouping.create(inviter: @inviter_without_section)
+          @grouping_with_section = Grouping.create(
+            inviter: @inviter_with_section)
+          @grouping_without_section = Grouping.create(
+            inviter: @inviter_without_section)
         end
 
         context '#can_collect_now?(section)' do
@@ -137,18 +139,20 @@ describe SubmissionRule do
           it 'should return correct date value' do
             time_returned = @assignment
                             .submission_rule
-                            .calculate_grouping_collection_time(@grouping_with_section)
+                            .calculate_grouping_collection_time(
+                              @grouping_with_section)
             time_difference = (2.days.ago - time_returned).abs
             expect(time_difference).to be < 600
           end
         end
 
         # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) without section' do
+        context '#calculate_grouping_collection_time(grouping) w/o section' do
           it 'should return correct date value' do
             time_returned = @assignment
                             .submission_rule
-                            .calculate_grouping_collection_time(@grouping_without_section)
+                            .calculate_grouping_collection_time(
+                              @grouping_without_section)
             time_difference = (1.days.ago - time_returned).abs
             expect(time_difference).to be < 600
           end
@@ -158,12 +162,14 @@ describe SubmissionRule do
       context 'and Section Due Date is in the future' do
         before :each do
           @section_due_date = SectionDueDate.create(section: @section,
-                                assignment: @assignment,
-                                due_date: 2.days.from_now)
+                                                    assignment: @assignment,
+                                                    due_date: 2.days.from_now)
           @inviter_with_section = Student.create(section: @section)
           @inviter_without_section = Student.create
-          @grouping_with_section = Grouping.create(inviter: @inviter_with_section)
-          @grouping_without_section = Grouping.create(inviter: @inviter_without_section)
+          @grouping_with_section = Grouping.create(
+            inviter: @inviter_with_section)
+          @grouping_without_section = Grouping.create(
+            inviter: @inviter_without_section)
         end
 
         context '#can_collect_now?(section)' do
@@ -223,18 +229,20 @@ describe SubmissionRule do
           it 'should return correct date value' do
             time_returned = @assignment
                             .submission_rule
-                            .calculate_grouping_collection_time(@grouping_with_section)
+                            .calculate_grouping_collection_time(
+                              @grouping_with_section)
             time_difference = (2.days.from_now - time_returned).abs
             expect(time_difference).to be < 600
           end
         end
 
         # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) without section' do
+        context '#calculate_grouping_collection_time(grouping) w/o section' do
           it 'should return correct date value' do
             time_returned = @assignment
                             .submission_rule
-                            .calculate_grouping_collection_time(@grouping_without_section)
+                            .calculate_grouping_collection_time(
+                              @grouping_without_section)
             time_difference = (1.days.ago - time_returned).abs
             expect(time_difference).to be < 600
           end
@@ -251,12 +259,14 @@ describe SubmissionRule do
       context 'and Section Due Date is in the past' do
         before :each do
           @section_due_date = SectionDueDate.create(section: @section,
-                                assignment: @assignment,
-                                due_date: 2.days.ago)
+                                                    assignment: @assignment,
+                                                    due_date: 2.days.ago)
           @inviter_with_section = Student.create(section: @section)
           @inviter_without_section = Student.create
-          @grouping_with_section = Grouping.create(inviter: @inviter_with_section)
-          @grouping_without_section = Grouping.create(inviter: @inviter_without_section)
+          @grouping_with_section = Grouping.create(
+            inviter: @inviter_with_section)
+          @grouping_without_section = Grouping.create(
+            inviter: @inviter_without_section)
         end
 
         context '#can_collect_now?(section)' do
@@ -316,18 +326,20 @@ describe SubmissionRule do
           it 'should return correct date value' do
             time_returned = @assignment
                             .submission_rule
-                            .calculate_grouping_collection_time(@grouping_with_section)
+                            .calculate_grouping_collection_time(
+                              @grouping_with_section)
             time_difference = (2.days.ago - time_returned).abs
             expect(time_difference).to be < 600
           end
         end
 
         # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) without section' do
+        context '#calculate_grouping_collection_time(grouping) w/o section' do
           it 'should return correct date value' do
             time_returned = @assignment
                             .submission_rule
-                            .calculate_grouping_collection_time(@grouping_without_section)
+                            .calculate_grouping_collection_time(
+                              @grouping_without_section)
             time_difference = (1.days.from_now - time_returned).abs
             expect(time_difference).to be < 600
           end
@@ -341,8 +353,10 @@ describe SubmissionRule do
                                                     due_date: 2.days.from_now)
           @inviter_with_section = Student.create(section: @section)
           @inviter_without_section = Student.create
-          @grouping_with_section = Grouping.create(inviter: @inviter_with_section)
-          @grouping_without_section = Grouping.create(inviter: @inviter_without_section)
+          @grouping_with_section = Grouping.create(
+            inviter: @inviter_with_section)
+          @grouping_without_section = Grouping.create(
+            inviter: @inviter_without_section)
         end
 
         context '#can_collect_now?(section)' do
@@ -402,18 +416,20 @@ describe SubmissionRule do
           it 'should return correct date value' do
             time_returned = @assignment
                             .submission_rule
-                            .calculate_grouping_collection_time(@grouping_with_section)
+                            .calculate_grouping_collection_time(
+                              @grouping_with_section)
             time_difference = (2.days.from_now - time_returned).abs
             expect(time_difference).to be < 600
           end
         end
 
         # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) without section' do
+        context '#calculate_grouping_collection_time(grouping) w/o section' do
           it 'should return correct date value' do
             time_returned = @assignment
                             .submission_rule
-                            .calculate_grouping_collection_time(@grouping_without_section)
+                            .calculate_grouping_collection_time(
+                              @grouping_without_section)
             time_difference = (1.days.from_now - time_returned).abs
             expect(time_difference).to be < 600
           end
@@ -433,8 +449,10 @@ describe SubmissionRule do
         @section = create(:section)
         @inviter_with_section = Student.create(section: @section)
         @inviter_without_section = Student.create
-        @grouping_with_section = Grouping.create(inviter: @inviter_with_section)
-        @grouping_without_section = Grouping.create(inviter: @inviter_without_section)
+        @grouping_with_section = Grouping.create(
+          inviter: @inviter_with_section)
+        @grouping_without_section = Grouping.create(
+          inviter: @inviter_without_section)
       end
 
       context '#can_collect_now?(section)' do
@@ -494,7 +512,8 @@ describe SubmissionRule do
         it 'should return correct date value' do
           time_returned = @assignment
                           .submission_rule
-                          .calculate_grouping_collection_time(@grouping_with_section)
+                          .calculate_grouping_collection_time(
+                            @grouping_with_section)
           time_difference = (1.days.ago - time_returned).abs
           expect(time_difference).to be < 600
         end
@@ -505,7 +524,8 @@ describe SubmissionRule do
         it 'should return correct date value' do
           time_returned = @assignment
                           .submission_rule
-                          .calculate_grouping_collection_time(@grouping_without_section)
+                          .calculate_grouping_collection_time(
+                            @grouping_without_section)
           time_difference = (1.days.ago - time_returned).abs
           expect(time_difference).to be < 600
         end
@@ -519,7 +539,8 @@ describe SubmissionRule do
         @inviter_with_section = Student.create(section: @section)
         @inviter_without_section = Student.create
         @grouping_with_section = Grouping.create(inviter: @inviter_with_section)
-        @grouping_without_section = Grouping.create(inviter: @inviter_without_section)
+        @grouping_without_section = Grouping.create(
+          inviter: @inviter_without_section)
       end
 
       context '#can_collect_now?(section)' do
@@ -579,7 +600,8 @@ describe SubmissionRule do
         it 'should return correct date value' do
           time_returned = @assignment
                           .submission_rule
-                          .calculate_grouping_collection_time(@grouping_with_section)
+                          .calculate_grouping_collection_time(
+                            @grouping_with_section)
           time_difference = (1.days.from_now - time_returned).abs
           expect(time_difference).to be < 600
         end
@@ -590,7 +612,8 @@ describe SubmissionRule do
         it 'should return correct date value' do
           time_returned = @assignment
                           .submission_rule
-                          .calculate_grouping_collection_time(@grouping_without_section)
+                          .calculate_grouping_collection_time(
+                            @grouping_without_section)
           time_difference = (1.days.from_now - time_returned).abs
           expect(time_difference).to be < 600
         end
