@@ -84,4 +84,3 @@ describe SubmissionsHelper do
     end
   end
 end
-
