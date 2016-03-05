@@ -63,7 +63,6 @@ class AutomatedTestsController < ApplicationController
     @assignment.test_support_files.build
   end
 
-
   def student_interface
     @assignment = Assignment.find(params[:id])
     @student = current_user

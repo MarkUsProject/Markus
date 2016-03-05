@@ -269,7 +269,6 @@ module AutomatedTestsHelper
     end
   end
 
-
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
   def self.perform(grouping_id, call_on)
