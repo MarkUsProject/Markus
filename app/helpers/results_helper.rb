@@ -30,14 +30,12 @@ module ResultsHelper
     !student_can_edit_remark_request(submission)
   end
 
-
-  # ATE_SIMPLE_UI: this is temporary
   def test_result_available(assignment, grouping)
     test_script_results = TestScriptResult.find_all_by_grouping_id(grouping.id)
     return (assignment.enable_test) && (!test_script_results.empty?)
-# =======
-#   def can_show_test_results_tab?(assignment, submission)
-#     submission.test_results && assignment.enable_test
-# >>>>>>> master
+  end
+
+  def can_show_test_results_tab?(assignment, submission)
+    submission.test_results && assignment.enable_test
   end
 end

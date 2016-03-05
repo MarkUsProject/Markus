@@ -1,104 +1,84 @@
-<% # UI LIBRARIES %>
-<%= javascript_include_tag "livepipe/livepipe.js",
-  "livepipe/window.js" %>
+<div class='title_bar'>
+  <h1>
+    <%= t('automated_tests.title') %>
+  </h1>
+</div>
 
-  <% # HTML for Student Testing Interface %>
-<div class="block">
-  <h2><%= t("automated_tests.title") %></h2>
 
-  <% if flash[:failure] && !flash[:failure].empty? %>
-    <div class="notice">
-      <%=flash[:failure]%>
-    </div>
-  <% end %>
+<%= render partial: 'shared/flash_message' %>
 
-  <% if flash[:notice] && !flash[:notice].empty? %>
-    <div class="success">
-      <%=flash[:notice]%>
-    </div>
-  <% end %>
-<% if @assignment.enable_test %>
-  <% if @grouping.nil? %>
-    <div class="sub_block">
-      <br />
-        <%= t("automated_tests.need_group_for_test") %>
-      <br />
-    </div>
-  <% else %>
-    <div class="block_content">
-      <h3><%= t("automated_tests.information") %></h3>
-      <div class="sub_block">
+<% if @assignment.enable_test && !@grouping.nil? %>
+  <div class='block'>
+    <div class='block_content'>
+      <h3><%= t('automated_tests.information') %></h3>
+      <div class='sub_block'>
         <% if @assignment.unlimited_tokens %>
-            <%= raw( t("automated_tests.token.unlimited_tokens") ) %>
+          <div class='sub_block'>
+            <%= raw t('automated_tests.token.unlimited_tokens') %>
+          </div>
         <% else %>
-          <%= raw( t("automated_tests.token.tokens_per_day",
-                           :tokens => @assignment.tokens_per_day) ) %>
+          <div class='sub_block'>
+            <%= raw t('automated_tests.token.tokens_per_day',
+                      tokens: @assignment.tokens_per_day) %>
+          </div>
+          <div class='sub_block'>
+            <% if @token.nil? %>
+              <%= raw t('automated_tests.token.tokens_not_given_yet') %>
+            <% else %>
+              <% if @token.tokens == 0 %>
+                <%= raw t('automated_tests.token.tokens_no_more_available') %>
+              <% else %>
+                  <%= raw t('automated_tests.token.tokens_available',
+                            tokens: @token.tokens) %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @assignment.unlimited_tokens || (!@token.nil? && @token.tokens > 0) %>
+          <h3><%= t('automated_tests.run_tests') %></h3>
+          <% if @grouping.assignment.submission_rule.can_collect_now? %>
+            <p><%= t('automated_tests.due_date_is_passed') %></p>
+          <% else %>
+            <p><%= raw t('automated_tests.need_one_file') %></p>
+
+            <%= link_to t('automated_tests.run_tests'),
+                        execute_test_run_automated_test_path(
+                          id: @assignment.id,
+                          grouping_id: @grouping.id),
+                        method: :post,
+                        class: 'button' %>
+          <% end %>
         <% end %>
       </div>
-      <br />
-      <% if !@assignment.unlimited_tokens %>
-        <div class="sub_block">
-          <% if @token.nil? %>
-            <%= raw ( t("automated_tests.token.tokens_not_given_yet") ) %>
-          <% else %>
-            <% if @token.tokens == 0 %>
-              <%= raw( t("automated_tests.token.tokens_no_more_available") ) %>
-            <% else %>
-              <%= raw( t("automated_tests.token.tokens_available",
-                              :tokens => @token.tokens) ) %>
-            <% end %>
-          <% end %>
-          <br />
-        </div>
-      <% end %>
-      <br />
-      <% if @assignment.unlimited_tokens || (!@token.nil? && @token.tokens > 0) %>
-        <h3><%= t("automated_tests.run_tests") %></h3>
-        <% if @grouping.assignment.submission_rule.can_collect_now? %>
-          <p><%= t('automated_tests.due_date_is_passed') %></p>
-          <br />
-        <% else %>
-          <p><%= raw t('automated_tests.need_one_file') %></p>
-          <br />
-          <%= link_to t("automated_tests.run_tests"),
-          execute_test_run_automated_test_path(
-            id: @assignment.id,
-            grouping_id: @grouping.id,
-            revision_number: @revision_number),
-            method: :post,
-            class: 'button'%>
-          <br />
-        <% end %>
-      <% end %>
-    <% end %>
     </div>
   </div>
 
-  <% if !@test_script_results.nil? %>
-  <div class="block">
-    <h2><%= t("automated_tests.test_results") %></h2>
-    <div class="block_content">
-    <br />
-      <div class="sub_block">
-        <%= raw (t("automated_tests.marks_obtained",
-                      :marking => "#{@grouping.get_total_test_script_marks *
-                      1.0} / #{@assignment.total_ror_script_marks * 1.0}" )) %>
-      </div>
-      <div id="test_results" class="sub_block">
-        <% @test_script_results.each do |test_script_result| %>
+  <% unless @test_script_results.nil? %>
+    <div class='block'>
+      <h2><%= t('automated_tests.test_results') %></h2>
+      <div class='block_content'>
+        <div class='sub_block'>
+          <%= raw t('automated_tests.marks_obtained',
+                    marking: "#{@grouping.get_total_test_script_marks * 1.0} /
+                              #{@assignment.total_ror_script_marks * 1.0}" ) %>
+        </div>
+        <div id='test_results' class='sub_block'>
           <%= render partial: 'test_script_result',
-                     locals: {test_script_result: test_script_result} %>
-        <% end %>
+                     collection: @test_script_results %>
+        </div>
       </div>
     </div>
-	<% end %>
+  <% end %>
+<% elsif @grouping.nil? %>
+  <div class='block'>
+      <%= t('automated_tests.need_group_for_test') %>
+  </div>
 <% else %>
-  <div class="block_content">
-    <h3><%= t("automated_tests.information") %></h3>
-    <div class="sub_block">
-      <%= t("automated_tests.testing_disabled") %>
+  <div class='block'>
+    <h3><%= t('automated_tests.information') %></h3>
+    <div class='sub_block'>
+      <%= t('automated_tests.testing_disabled') %>
     </div>
   </div>
 <% end %>
-</div>
-

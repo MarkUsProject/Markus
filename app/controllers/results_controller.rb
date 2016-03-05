@@ -47,9 +47,8 @@ class ResultsController < ApplicationController
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
-    # This is outdated
-    #@test_result_files = @submission.test_results
-    # ----
+    @test_results = TestResult.where(grouping:
+      @grouping).order(created_at: :desc)
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
@@ -132,6 +131,19 @@ class ResultsController < ApplicationController
         render nothing: true
       end
     end
+  end
+
+  def run_tests
+    grouping_id = params[:grouping_id]
+    begin
+      AutomatedTestsHelper.request_a_test_run(grouping_id,
+                                              'submission',
+                                              @current_user)
+    rescue => e
+      # TODO: really shouldn't be leaking error if student.
+      flash_message(:error, e.message)
+    end
+    redirect_to :back
   end
 
   ##  Tag Methods  ##

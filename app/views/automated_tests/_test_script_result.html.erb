@@ -8,17 +8,19 @@
     </span>
   </h3>
 
-  <% tests = test_script_output['testrun']['test_script']['test'] %>
+  <% tests = test_script_output['testrun']['test_script'].flat_map do |ts|
+       ts['test']
+     end %>
   <div class='table'>
     <table>
       <thead>
         <tr>
-          <th><%= t("automated_tests.test_results_table.test_name") %></th>
-          <th><%= t("automated_tests.test_results_table.input") %></th>
-          <th><%= t("automated_tests.test_results_table.output") %></th>
-          <th><%= t("automated_tests.test_results_table.expected") %></th>
-          <th><%= t("automated_tests.test_results_table.marks_earned") %></th>
-          <th><%= t("automated_tests.test_results_table.status") %></th>
+          <th><%= t('automated_tests.test_results_table.test_name') %></th>
+          <th><%= t('automated_tests.test_results_table.input') %></th>
+          <th><%= t('automated_tests.test_results_table.output') %></th>
+          <th><%= t('automated_tests.test_results_table.expected') %></th>
+          <th><%= t('automated_tests.test_results_table.marks_earned') %></th>
+          <th><%= t('automated_tests.test_results_table.status') %></th>
         </tr>
       </thead>
       <tbody>
@@ -30,9 +32,10 @@
             <td><%= test['actual'] %></td>
             <td><%= test['expected'] %></td>
             <td><%= test['marks_earned'] %></td>
-            <td><%= raw test['status'] == 'pass' ?
-            t("automated_tests.test_results_table.passed") :
-            t("automated_tests.test_results_table.failed") %></td>
+            <td><%= test['status'] == 'pass' ?
+                    t('automated_tests.test_results_table.passed') :
+                    t('automated_tests.test_results_table.failed') %>
+            </td>
           </tr>
         <% end %>
       </tbody>

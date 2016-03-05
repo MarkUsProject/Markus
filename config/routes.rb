@@ -190,6 +190,7 @@ Markus::Application.routes.draw do
             get 'view_marks'
             post 'add_tag'
             post 'remove_tag'
+            get 'run_tests'
           end
         end
       end

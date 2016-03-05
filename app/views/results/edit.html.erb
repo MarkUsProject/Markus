@@ -201,14 +201,6 @@
     <%= render partial: 'results/common/file_selector',
                locals: { files: @files,
                          can_download: true } %>
-    <% if @assignment.enable_test %>
-      <div id='test_results_controls'>
-        <%= render partial: 'results/common/test_selector',
-                   locals: { test_result_files: @test_result_files,
-                             result: @result,
-                             submission_id: @submission.id } %>
-      </div>
-    <% end %>
   </div>
 
   <% if !@result.released_to_students %>
@@ -222,7 +214,8 @@
                          marks_map: @marks_map,
                          mark_criteria:@mark_criteria,
                          submission: @submission,
-                         old_result: @old_result } %>
+                         old_result: @old_result,
+                         test_results: @test_results } %>
   <% else %>
     <%= render partial: 'results/result_summary',
                formats: [:html],

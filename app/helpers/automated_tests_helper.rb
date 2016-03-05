@@ -221,7 +221,7 @@ module AutomatedTestsHelper
     if !File.exist?(test_dir)
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t('automated_tests.test_files_unavailable')
-    elsif !File.exist?(src_dir) || !File.exist?(assign_dir)
+    elsif !File.exists?(src_dir) || !File.exist?(assign_dir)
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t('automated_tests.source_files_unavailable')
     end
