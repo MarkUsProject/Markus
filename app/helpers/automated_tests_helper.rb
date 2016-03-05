@@ -121,7 +121,8 @@ module AutomatedTestsHelper
                     MarkusConfigurator.markus_config_automated_tests_repository,
                     @assignment.repository_folder,
                     new_update_file.original_filename)
-          File.open(assignment_tests_path, 'w') { |f| f.write new_update_file.read }
+          File.open(
+              assignment_tests_path, 'w') { |f| f.write new_update_file.read }
 
           # Deleting old file
           old_file_path = File.join(
