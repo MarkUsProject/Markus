@@ -118,9 +118,9 @@ module AutomatedTestsHelper
 
           # Uploading new file
           assignment_tests_path = File.join(
-                     MarkusConfigurator.markus_config_automated_tests_repository,
-                     @assignment.repository_folder,
-                     new_update_file.original_filename)
+                    MarkusConfigurator.markus_config_automated_tests_repository,
+                    @assignment.repository_folder,
+                    new_update_file.original_filename)
           File.open(
               assignment_tests_path, 'w') { |f| f.write new_update_file.read }
 
@@ -158,8 +158,8 @@ module AutomatedTestsHelper
     group = @grouping.group
 
     @repo_dir = File.join(
-                     MarkusConfigurator.markus_config_automated_tests_repository,
-                     group.repo_name)
+                    MarkusConfigurator.markus_config_automated_tests_repository,
+                    group.repo_name)
     export_group_repo(group, @repo_dir)
 
     if files_available?(assignment) &&
@@ -214,8 +214,8 @@ module AutomatedTestsHelper
   # source files are successfully exported.
   def self.files_available?(assignment)
     test_dir = File.join(
-                     MarkusConfigurator.markus_config_automated_tests_repository,
-                     assignment.short_identifier)
+                    MarkusConfigurator.markus_config_automated_tests_repository,
+                    assignment.short_identifier)
     src_dir = @repo_dir
     assign_dir = @repo_dir + '/' + assignment.repository_folder
 
