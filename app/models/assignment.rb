@@ -907,6 +907,10 @@ class Assignment < ActiveRecord::Base
       grouping.inviter.section.id == section.id
     end
   end
+
+  def can_uncollect_submissions?
+    submissions.where(submission_version_used: true).count > 0
+  end
   
   private
 
