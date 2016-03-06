@@ -272,7 +272,7 @@ class SubmissionCollector < ActiveRecord::Base
     end
   end
 
-  #Undo one level of submissions
+  # Undo one level of submissions
   def uncollect_submissions(assignment)
     submissions = assignment.submissions
     old_submissions = submissions.where(submission_version_used: true)
