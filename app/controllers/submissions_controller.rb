@@ -236,8 +236,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     submission_collector = SubmissionCollector.instance
     submission_collector.uncollect_submissions(assignment)
-    success =
-        I18n.t('collect_submissions.uncollect_all')
+    success = I18n.t('collect_submissions.uncollect_all')
     render json: { success: success }
   end
 

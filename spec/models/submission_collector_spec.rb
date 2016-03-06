@@ -1,11 +1,12 @@
 require 'spec_helper'
 
 describe SubmissionCollector do
-
   context 'uncollect_submissions' do
     before(:each) do
       @assignment = FactoryGirl.create(:assignment)
-      10.times { @assignment.groupings << FactoryGirl.create(:grouping_with_inviter)  }
+      10.times do
+        @assignment.groupings << FactoryGirl.create(:grouping_with_inviter)
+      end
       @sub_collector = SubmissionCollector.instance
       @sub_collector.push_groupings_to_queue(@assignment.groupings)
     end
@@ -21,13 +22,14 @@ describe SubmissionCollector do
       @assignment.reload
       @sub_collector.push_groupings_to_queue(@assignment.groupings)
       @sub_collector.uncollect_submissions(@assignment)
-      versions = @assignment.submissions.pluck(:submission_version).uniq
+      submissions = @assignment.submissions
+      versions = submissions.pluck(:submission_version).uniq
       last_version = versions[-1]
       prev_version = versions[-2]
-      @assignment.submissions.where(submission_version: last_version).each do |sub|
+      submissions.where(submission_version: last_version).each do |sub|
         expect(sub.submission_version_used).to eq false
       end
-      @assignment.submissions.where(submission_version: prev_version).each do |sub|
+      submissions.where(submission_version: prev_version).each do |sub|
         expect(sub.grouping.is_collected).to eq true
         expect(sub.submission_version_used).to eq false
       end

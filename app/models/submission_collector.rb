@@ -271,6 +271,7 @@ class SubmissionCollector < ActiveRecord::Base
       end
     end
   end
+
   #Undo one level of submissions
   def uncollect_submissions(assignment)
     submissions = assignment.submissions
@@ -282,7 +283,8 @@ class SubmissionCollector < ActiveRecord::Base
         if version == 1
           grouping.assign_attributes(is_collected: false)
         else
-          prev_rev = submissions.where(submission_version: version - 1, grouping_id: grouping.id).first
+          prev_rev = submissions.where(submission_version: version - 1,
+                                       grouping_id: grouping.id).first
           prev_rev.update_attributes(submission_version_used: true)
         end
         submission.update_attributes(submission_version_used: false)
