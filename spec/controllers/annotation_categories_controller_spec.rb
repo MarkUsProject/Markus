@@ -40,7 +40,7 @@ describe AnnotationCategoriesController do
       allow(@file_wrong_format).to receive(:read).and_return(
         File.read(fixture_file_upload(
                     'files/wrong_csv_format.xls', 'text/csv')))
-      #This must line up with the second entry in the file_good
+      # This must line up with the second entry in the file_good
       @test_category_name = 'test_category'
       @test_content = 'c6conley'
     end
