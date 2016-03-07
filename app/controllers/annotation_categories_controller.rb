@@ -126,35 +126,20 @@ class AnnotationCategoriesController < ApplicationController
       return
     end
     annotation_category_list = params[:annotation_category_list_csv]
-    annotation_category_number = 0
-    annotation_line = 0
     if annotation_category_list
-      begin
-        annotation_category_list = annotation_category_list.utf8_encode(encoding)
-        CSV.parse(annotation_category_list) do |row|
-          next if CSV.generate_line(row).strip.empty?
-          annotation_line += 1
-          result = AnnotationCategory.add_by_row(row, @assignment, current_user)
-          if result[:annotation_upload_invalid_lines].size > 0
-            flash[:error] =
-              I18n.t('annotations.upload.error',
-                     annotation_category: row,
-                     annotation_line: annotation_line)
-            break
-          else
-            annotation_category_number += 1
-          end
-        end
-      rescue CSV::MalformedCSVError
-        flash[:error] = I18n.t('csv.upload.malformed_csv')
-      rescue ArgumentError
-        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+      result = MarkusCSV.parse(
+        annotation_category_list, encoding: encoding) do |row|
+        next if CSV.generate_line(row).strip.empty?
+        AnnotationCategory.add_by_row(row, @assignment, current_user)
       end
-      if annotation_category_number > 0
-        flash[:success] =
-          I18n.t('annotations.upload.success',
-                 annotation_category_number: annotation_category_number)
+      unless result[:invalid_lines].empty?
+        flash[:error] = result[:invalid_lines]
       end
+      unless result[:valid_lines].empty?
+        flash[:success] = result[:valid_lines]
+      end
+    else
+      flash[:error] = I18n.t('csv.invalid_csv')
     end
     redirect_to action: 'index', id: @assignment.id
   end

@@ -52,9 +52,12 @@ describe AnnotationCategoriesController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      expect(flash[:success]).to include('uploaded 2')
+      expect(flash[:success]).to eq(I18n.t('csv_valid_lines',
+                                           valid_line_count: 2))
       expect(response).to redirect_to(action: 'index',
                                       id: assignment.id)
+
+      expect(AnnotationCategory.all.size).to eq(2)
       # check that the data is being updated, in particular
       # the last element in the file.
       found_cat = false
@@ -106,7 +109,7 @@ describe AnnotationCategoriesController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
-      expect(flash[:error][0]).to include('not a csv')
+      expect(flash[:error]).to include('not a csv')
       expect(response).to redirect_to(action: 'index',
                                       id: assignment.id)
     end
