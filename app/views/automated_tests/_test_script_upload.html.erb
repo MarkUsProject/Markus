@@ -21,10 +21,10 @@
                    assignment_id: @assignment.id,
                    type: 'script',
                    filename: f.object.script_name) %>
-      <%= link_to(saved ? '[-]' : '[+]',
+      <%= link_to saved ? '[-]' : '[+]',
                  'javascript:void(0);',
                   onclick: 'toggleSettings(this);',
-                  class: 'collapse') %>
+                  class: 'collapse' %>
       </div>
       <%= f.hidden_field :script_name, value: f.object.script_name %>
       <% else %>
