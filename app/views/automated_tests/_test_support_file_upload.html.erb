@@ -1,6 +1,6 @@
 <div class="test_support_file">
 <%= form.fields_for :test_support_files, test_support_file do |f| %>
-<% saved = !f.object.new_record? %>
+    <% saved = !f.object.new_record? %>
     <% if saved %>
       <%# Test Support File already exists %>
       <fieldset>
