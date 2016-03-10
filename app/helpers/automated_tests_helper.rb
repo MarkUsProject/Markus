@@ -58,7 +58,7 @@ module AutomatedTestsHelper
         end
       else
         # Edit existing test script file
-        unless [('new_update_script_' +
+        unless params[('new_update_script_' +
             testscripts[file_num][:script_name]).to_sym].nil?
           new_update_script = params[('new_update_script_' +
               testscripts[file_num][:script_name]).to_sym]
