@@ -62,7 +62,7 @@ module AutomatedTestsHelper
             testscripts[file_num][:script_name]).to_sym].nil?
           new_update_script = params[('new_update_script_' +
               testscripts[file_num][:script_name]).to_sym]
-          old_scrip_name = file[:script_name]
+          old_script_name = file[:script_name]
           file[:script_name] = new_update_script.original_filename
           file[:seq_num] = file_num
           updated_script_files[file_num] = file.clone
@@ -78,7 +78,7 @@ module AutomatedTestsHelper
           old_script_path = File.join(
                     MarkusConfigurator.markus_config_automated_tests_repository,
                     @assignment.repository_folder,
-                    old_scrip_name)
+                    old_script_name)
           if File.exist?(old_script_path)
             File.delete(old_script_path)
           end
@@ -163,7 +163,7 @@ module AutomatedTestsHelper
     export_group_repo(group, @repo_dir)
 
     if files_available?(assignment) &&
-        has_permission?(current_user, assignment)
+       has_permission?(current_user, assignment)
       Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on)
     end
   end
