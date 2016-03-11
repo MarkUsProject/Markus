@@ -46,10 +46,10 @@ class MarksGradersController < ApplicationController
         grade_entry_student.add_tas_by_user_name_array(row.drop(1))
       end
       unless result[:invalid_lines].empty?
-        flash[:error] = result[:invalid_lines]
+        flash_message(:error, result[:invalid_lines])
       end
       unless result[:valid_lines].empty?
-        flash[:success] = result[:valid_lines]
+        flash_message(:success, result[:valid_lines])
       end
     end
     redirect_to action: 'index', grade_entry_form_id: params[:grade_entry_form_id]

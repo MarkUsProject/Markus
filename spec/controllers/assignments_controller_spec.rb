@@ -11,7 +11,7 @@ describe AssignmentsController do
   let(:annotation_category) { FactoryGirl.create(:annotation_category) }
   let(:assignment) { FactoryGirl.create(:assignment) }
 
-  context 'CSV_Uploads' do
+  context 'upload_assignment_list' do
     before :each do
       # We need to mock the rack file to return its content when
       # the '.read' method is called to simulate the behaviour of
@@ -55,8 +55,8 @@ describe AssignmentsController do
       test2 = Assignment.find_by_short_identifier(@test_asn2)
       expect(test2).to_not be_nil
       expect(flash[:error]).to be_nil
-      expect(flash[:success]).to eq(I18n.t('csv_valid_lines',
-                                           valid_line_count: 2))
+      expect(flash[:success]).to eq([I18n.t('csv_valid_lines',
+                                           valid_line_count: 2)])
       expect(response).to redirect_to(action: 'index',
                                       controller: 'assignments')
     end
@@ -103,7 +103,7 @@ describe AssignmentsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(flash[:error])
-        .to eq(t('csv.upload.non_text_file_with_csv_extension'))
+        .to eq([t('csv.upload.non_text_file_with_csv_extension')])
       expect(response).to redirect_to(action: 'index',
                                       controller: 'assignments')
     end

@@ -555,10 +555,10 @@ class AssignmentsController < ApplicationController
           raise CSVInvalidLineError unless assignment.valid?
         end
         unless result[:invalid_lines].empty?
-          flash[:error] = result[:invalid_lines]
+          flash_message(:error, result[:invalid_lines])
         end
         unless result[:valid_lines].empty?
-          flash[:success] = result[:valid_lines]
+          flash_message(:success, result[:valid_lines])
         end
       when 'yml'
         begin
