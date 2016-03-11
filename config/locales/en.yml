@@ -1395,7 +1395,7 @@ en:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%A, %B %d, %Y, %l:%M:%S %p"
+        long_date: "%A, %B %d, %Y, %l:%M %p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date:       "%B %d, %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
