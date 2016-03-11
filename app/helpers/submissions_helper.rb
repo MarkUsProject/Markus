@@ -193,7 +193,8 @@ module SubmissionsHelper
     e[:filename] = view_context.link_to '../', action: 'repo_browser',
                                         id: grouping_id, path: previous_path,
                                         revision_number: revision_number
-    e[:last_revised_date] = directories[prev_dir].last_modified_date
+    e[:last_revised_date] = I18n.l(directories[prev_dir].last_modified_date,
+                                   format: :long_date)
     e[:revision_by] = directories[prev_dir].user_id
     [e]
   end
