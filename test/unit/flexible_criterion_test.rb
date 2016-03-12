@@ -57,10 +57,9 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
     end
 
     should 'raise an error message on a invalid maximum value' do
-      e = assert_raise CSV::MalformedCSVError do
+      e = assert_raise CSVInvalidLineError do
         FlexibleCriterion.new_from_csv_row(%w(name max_value), Assignment.new)
       end
-      assert_equal I18n.t('criteria_csv_error.max_zero'), e.message
     end
 
     should 'raise exceptions in case of an unpredicted error' do
@@ -93,13 +92,13 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       tempfile = Tempfile.new('flexible_criteria_csv')
       tempfile << UPLOAD_CSV_STRING
       tempfile.rewind
-      invalid_lines = []
 
-      nb_updates = FlexibleCriterion.parse_csv(tempfile,
-                                               @assignment,
-                                               invalid_lines)
-      assert_equal nb_updates, 1
-      assert invalid_lines.empty?
+      result = FlexibleCriterion.parse_csv(tempfile,
+                                               @assignment)
+      assert_equal result[:valid_lines],
+                   I18n.t('csv_valid_lines',
+                          valid_line_count: 1)
+      assert result[:invalid_lines].empty?
     end
 
 
@@ -125,14 +124,12 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       tempfile = Tempfile.new('inv_flexible_criteria_csv')
       tempfile << INVALID_CSV_STRING
       tempfile.rewind
-      invalid_lines = []
 
-      nb_updates = FlexibleCriterion.parse_csv(
+      result = FlexibleCriterion.parse_csv(
                         tempfile,
-                        @assignment,
-                        invalid_lines)
-      assert_equal 0, nb_updates
-      assert_equal 1, invalid_lines.length
+                        @assignment)
+      assert result[:valid_lines].empty?
+      assert_not_empty result[:invalid_lines]
     end
 
     context 'with three flexible criteria' do
@@ -164,17 +161,18 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
         tempfile = Tempfile.new('flexible_csv')
         tempfile << csv_string
         tempfile.rewind
-        invalid_lines = []
         dst_assignment = Assignment.make(:marking_scheme_type => 'flexible')
-        nb_updates = FlexibleCriterion.parse_csv(
+        result = FlexibleCriterion.parse_csv(
                                 tempfile,
-                                dst_assignment, invalid_lines)
-        assert_equal 3, nb_updates
-        assert_equal 0, invalid_lines.size
+                                dst_assignment)
+        assert_equal result[:valid_lines],
+                     I18n.t('csv_valid_lines',
+                             valid_line_count: 3)
+        assert result[:invalid_lines].empty?
       end
 
       should 'fail with corresponding error message if the name is already in use' do
-        e = assert_raise CSV::MalformedCSVError do
+        e = assert_raise CSVInvalidLineError do
           FlexibleCriterion.new_from_csv_row(
             ['criterion1', 1.0, 'any description would do'],
             @assignment)
