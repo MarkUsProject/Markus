@@ -185,13 +185,7 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.save
 
     # Request a test run for the grouping
-    if assignment.enable_test
-      m_logger.log("Now requesting test run for #{assignment.short_identifier} \
-                    on grouping: '#{grouping.id}'")
-      AutomatedTestsHelper.request_a_test_run(new_submission.grouping.id,
-                                              'collection',
-                                              @current_user)
-    end
+    request_a_test_run(grouping, new_submission)
   end
 
   #Use the database to communicate to the child to stop, and restart itself
@@ -208,6 +202,7 @@ class SubmissionCollector < ActiveRecord::Base
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
       grouping.is_collected = true
       grouping.save
+      request_a_test_run(grouping, new_submission)
       return new_submission
     end
 
@@ -260,4 +255,14 @@ class SubmissionCollector < ActiveRecord::Base
     end
   end
 
+    def request_a_test_run(grouping, new_submission)
+      m_logger = MarkusLogger.instance
+      if grouping.assignment.enable_test
+        m_logger.log("Now requesting test run for #{grouping.assignment.short_identifier} \
+                      on grouping: '#{grouping.id}'")
+        AutomatedTestsHelper.request_a_test_run(new_submission.grouping.id,
+                                                'collection',
+                                                @current_user)
+      end
+    end
 end
