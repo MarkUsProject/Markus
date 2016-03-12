@@ -353,6 +353,7 @@ module AutomatedTestsHelper
                                        script_name: script_name)
       completion_status = 'pass'
       marks_earned = 0
+      # TODO: HACK. Do we always need a submission id?
       submission_id = Submission.last.id
 
       new_test_script_result = @grouping.test_script_results.create(
@@ -367,14 +368,11 @@ module AutomatedTestsHelper
         # if any of the tests fail, we consider the completion status to be fail
         completion_status = 'fail' if test['status'] != 'pass'
         new_test_script_result.test_results.create(
-          grouping_id: @grouping.id,
-          test_script_id: test_script.id,
           name: test['name'],
           repo_revision: revision_number,
-          input: test['input'],
-          actual_output: test['actual'],
-          expected_output: test['expected'],
-          submission_id: submission_id,
+          input: (test['input'].nil? ? '' : test['input']),
+          actual_output: (test['actual'].nil? ? '' : test['actual']),
+          expected_output: (test['expected'].nil? ? '' : test['expected']),         
           marks_earned: test['marks_earned'].to_i,
           completion_status: completion_status)
       end

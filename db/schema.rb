@@ -244,6 +244,16 @@ ActiveRecord::Schema.define(version: 20160303184449) do
 
   add_index "groups", ["group_name"], name: "groups_name_unique", unique: true, using: :btree
 
+  create_table "job_messengers", force: :cascade do |t|
+    t.string   "job_id"
+    t.string   "status"
+    t.string   "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "job_messengers", ["job_id"], name: "index_job_messengers_on_job_id", using: :btree
+
   create_table "key_pairs", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "user_name"
@@ -416,23 +426,29 @@ ActiveRecord::Schema.define(version: 20160303184449) do
 
   add_index "tags", ["user_id"], name: "index_tags_on_user_id", using: :btree
 
-  create_table "test_results", force: :cascade do |t|
-    t.integer  "grouping_id"
-    t.integer  "test_script_id"
-    t.integer  "test_script_result_id"
-    t.string   "name"
-    t.string   "completion_status",     null: false
-    t.integer  "marks_earned",          null: false
-    t.integer  "repo_revision"
-    t.text     "input"
-    t.text     "actual_output"
-    t.text     "expected_output"
-    t.integer  "submission_id"
+  create_table "test_files", force: :cascade do |t|
+    t.string   "filename"
+    t.integer  "assignment_id"
+    t.string   "filetype"
+    t.boolean  "is_private"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "test_results", ["grouping_id", "test_script_id"], name: "grouping_id_and_test_script_id", using: :btree
+  add_index "test_files", ["assignment_id", "filename"], name: "index_test_files_on_assignment_id_and_filename", unique: true, using: :btree
+
+  create_table "test_results", force: :cascade do |t|
+    t.integer  "test_script_result_id"
+    t.string   "name"
+    t.string   "completion_status",                  null: false
+    t.integer  "marks_earned",                       null: false
+    t.integer  "repo_revision"
+    t.text     "input",                 default: "", null: false
+    t.text     "actual_output",         default: "", null: false
+    t.text     "expected_output",       default: "", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "test_script_results", force: :cascade do |t|
     t.integer  "grouping_id"
