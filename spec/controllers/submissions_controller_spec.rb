@@ -376,21 +376,8 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
     end
 
-    describe 'attempting to collect all submissions at once ' do
+    describe 'attempting to collect submissions' do
       before(:each) do
-        @group = create(:group)
-        @assignment = create(:assignment,
-                             allow_web_submits: true,
-                             group_min: 1)
-        @grouping = create(:grouping,
-                           group: @group,
-                           assignment: @assignment)
-        @membership = create(:student_membership,
-                             membership_status: 'inviter',
-                             grouping: @grouping)
-        @student = @membership.user
-        @admin = create(:admin)
-
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('test')
           path = File.join(@assignment.repository_folder, 'file1_name')
@@ -408,41 +395,43 @@ describe SubmissionsController do
         end
       end
 
-      it 'should get an error if it is before assignment due date' do
-        allow(Assignment).to receive_message_chain(
-          :includes, :find) { @assignment }
-        expect(@assignment).to receive(:short_identifier) { 'a1' }
-        expect(@assignment.submission_rule).to receive(
-          :can_collect_all_now?) { false }
+      context 'all at once' do
+        it 'should get an error if it is before assignment due date' do
+          allow(Assignment).to receive_message_chain(
+            :includes, :find) { @assignment }
+          expect(@assignment).to receive(:short_identifier) { 'a1' }
+          expect(@assignment.submission_rule).to receive(
+            :can_collect_all_now?) { false }
 
-        get_as @admin,
-               :collect_all_submissions,
-               assignment_id: 1
-        expect(response.body).to include(
-          I18n.t('collect_submissions.could_not_collect',
-                 assignment_identifier: 'a1'))
-        is_expected.to respond_with(:ok)
-      end
+          get_as @admin,
+                 :collect_all_submissions,
+                 assignment_id: 1
+          expect(response.body).to include(
+            I18n.t('collect_submissions.could_not_collect',
+                   assignment_identifier: 'a1'))
+          is_expected.to respond_with(:ok)
+        end
 
-      it 'should succeed if it is after assignment due date' do
-        @submission_collector = SubmissionCollector.instance
-        allow(Assignment).to receive_message_chain(
-          :includes, :find) { @assignment }
-        expect(SubmissionCollector).to receive(
-          :instance) { @submission_collector }
-        expect(@assignment).to receive(:short_identifier) { 'a1' }
-        expect(@assignment.submission_rule).to receive(
-          :can_collect_all_now?) { true }
-        expect(@submission_collector).to receive(:push_groupings_to_queue)
+        it 'should succeed if it is after assignment due date' do
+          @submission_collector = SubmissionCollector.instance
+          allow(Assignment).to receive_message_chain(
+            :includes, :find) { @assignment }
+          expect(SubmissionCollector).to receive(
+            :instance) { @submission_collector }
+          expect(@assignment).to receive(:short_identifier) { 'a1' }
+          expect(@assignment.submission_rule).to receive(
+            :can_collect_all_now?) { true }
+          expect(@submission_collector).to receive(:push_groupings_to_queue)
 
-        get_as @admin,
-               :collect_all_submissions,
-               assignment_id: 1,
-               id: 1
-        expect(response.body).to include(
-          I18n.t('collect_submissions.collection_job_started',
-                 assignment_identifier: 'a1'))
-        is_expected.to respond_with(:ok)
+          get_as @admin,
+                 :collect_all_submissions,
+                 assignment_id: 1,
+                 id: 1
+          expect(response.body).to include(
+            I18n.t('collect_submissions.collection_job_started',
+                   assignment_identifier: 'a1'))
+          is_expected.to respond_with(:ok)
+        end
       end
 
       it 'should be able to release submissions' do
@@ -453,6 +442,55 @@ describe SubmissionsController do
                 groupings: ([] << @assignment.groupings).flatten,
                 release_results: 'true'
         is_expected.to respond_with(:success)
+      end
+
+      context 'of sections' do
+        before(:each) do
+          @section = create(:section, name: 's1')
+          @student.section = @section
+        end
+
+        it 'should get an error if it is before the section due date' do
+          allow(Assignment).to receive_message_chain(
+            :includes, :find) { @assignment }
+          allow(Section).to receive(:exists?).with('1') { true }
+          expect(Section).to receive(:find).with('1') { @section }
+          expect_any_instance_of(SubmissionsHelper).to receive(
+            :collect_submissions_for_section) { 0 }
+
+          get_as @admin,
+                 :collect_section_submissions,
+                 assignment_id: 1,
+                 sections: [1]
+          response_body = JSON.parse(response.body)
+          expect(response_body['error']).to include(
+            I18n.t('collect_submissions.no_submission_for_section',
+                   section_names: 's1'))
+          expect(response_body['success']).to be_nil
+          is_expected.to respond_with(:ok)
+        end
+
+        it 'should succeed if it is after the section due date' do
+          allow(Assignment).to receive_message_chain(
+            :includes, :find) { @assignment }
+          allow(Section).to receive(:exists?).with('1') { true }
+          expect(Section).to receive(:find).with('1') { @section }
+          expect(@assignment).to receive(:short_identifier) { 'a1' }
+          expect_any_instance_of(SubmissionsHelper).to receive(
+            :collect_submissions_for_section) { 1 }
+
+          get_as @admin,
+                 :collect_section_submissions,
+                 assignment_id: 1,
+                 sections: [1]
+          response_body = JSON.parse(response.body)
+          expect(response_body['success']).to include(
+            I18n.t('collect_submissions.section_collection_job_started',
+                   assignment_identifier: 'a1',
+                   section_names: 's1'))
+          expect(response_body['error']).to be_empty
+          is_expected.to respond_with(:ok)
+        end
       end
     end
 

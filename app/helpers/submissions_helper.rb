@@ -122,36 +122,29 @@ module SubmissionsHelper
   # Collects submissions for all the groupings of the given section and assignment
   # Return the number of actually collected submissions
   def collect_submissions_for_section(section_id, assignment, errors)
-
     collected = 0
-
     begin
-
       raise I18n.t('collect_submissions.could_not_find_section') if !Section.exists?(section_id)
       section = Section.find(section_id)
 
       # Check collection date
-      if Time.zone.now < SectionDueDate.due_date_for(section, assignment)
+      unless assignment.submission_rule.can_collect_now?(section)
         raise I18n.t('collect_submissions.could_not_collect_section',
           assignment_identifier: assignment.short_identifier,
           section_name: section.name)
       end
 
       # Collect and count submissions for all groupings of this section
-      groupings = Grouping.where(assignment_id: assignment.id)
+      section_groupings = assignment.section_groupings(section)
       submission_collector = SubmissionCollector.instance
-      groupings.each do |grouping|
-        if grouping.section == section.name
-          submission_collector.push_grouping_to_priority_queue(grouping)
-          collected += 1
-        end
+      section_groupings.each do |grouping|
+        submission_collector.push_grouping_to_priority_queue(grouping)
+        collected += 1
       end
     rescue Exception => e
       errors.push(e.message)
     end
-
     collected
-
   end
 
   def get_repo_browser_table_info(assignment, revision, revision_number, path,
