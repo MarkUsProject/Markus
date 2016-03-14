@@ -401,34 +401,38 @@ module AutomatedTestsHelper
     # array otherwise)
     result['testrun']['test_script'] = test_scripts
 
-    # For now, we just use the first test script for the association
-    raw_test_script = test_scripts.first
-    script_name = raw_test_script['script_name']
-    test_script = TestScript.find_by(assignment_id: @assignment.id,
-                                     script_name: script_name)
-
-    completion_status = 'pass'
-    marks_earned = 0
     test_scripts.each do |script|
+      script_name = script['script_name']
+      test_script = TestScript.find_by(assignment_id: @assignment.id,
+                                       script_name: script_name)
+      completion_status = 'pass'
+      marks_earned = 0
+      # TODO: HACK. Do we always need a submission id?
+      submission_id = Submission.last.id
+
+      new_test_script_result = @grouping.test_script_results.create(
+        test_script_id: test_script.id,
+        submission_id: submission_id,
+        marks_earned: 0,
+        repo_revision: revision_number)
+
       tests = script['test']
       tests.each do |test|
         marks_earned += test['marks_earned'].to_i
         # if any of the tests fail, we consider the completion status to be fail
         completion_status = 'fail' if test['status'] != 'pass'
+        new_test_script_result.test_results.create(
+          name: test['name'],
+          repo_revision: revision_number,
+          input: (test['input'].nil? ? '' : test['input']),
+          actual_output: (test['actual'].nil? ? '' : test['actual']),
+          expected_output: (test['expected'].nil? ? '' : test['expected']),         
+          marks_earned: test['marks_earned'].to_i,
+          completion_status: completion_status)
       end
+      new_test_script_result.marks_earned = marks_earned
+      new_test_script_result.save!
     end
 
-    # TODO: HACK. Do we always need a submission id?
-    submission_id = Submission.last.id
-    TestResult.create(grouping_id: @grouping.id,
-                      test_script_id: test_script.id,
-                      name: script_name,
-                      repo_revision: revision_number,
-                      input_description: '',
-                      actual_output: result.to_json,
-                      expected_output: '',
-                      submission_id: submission_id,
-                      marks_earned: marks_earned,
-                      completion_status: completion_status)
   end
 end

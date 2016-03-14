@@ -19,16 +19,8 @@
 #############################################################
 
 class TestResult < ActiveRecord::Base
-  belongs_to :submission
-  belongs_to :test_script
-  belongs_to :grouping
   belongs_to :test_script_result
 
-  validates_presence_of :submission # we require an associated submission
-  validates_presence_of :grouping # we require an associated grouping
-  validates_associated  :grouping  # grouping need to be valid
-
-  validates_presence_of :test_script
   validates_presence_of :name
   validates_presence_of :completion_status
   validates_presence_of :marks_earned
@@ -37,7 +29,8 @@ class TestResult < ActiveRecord::Base
   validates_inclusion_of :completion_status, :in => %w(pass fail error), :message => "%{value} is not a valid status"
   validates_numericality_of :marks_earned, :only_integer => true, :greater_than_or_equal_to => 0
 
-  validates_presence_of :input_description, :if => "input_description.nil?"
+  # input, actual_output and expected_output could be empty in some situations
+  validates_presence_of :input, :if => "input.nil?"
   validates_presence_of :actual_output, :if => "actual_output.nil?"
   validates_presence_of :expected_output, :if => "expected_output.nil?"
 end
