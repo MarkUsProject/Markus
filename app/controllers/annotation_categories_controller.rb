@@ -8,6 +8,7 @@ class AnnotationCategoriesController < ApplicationController
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories(order: 'position')
+    render layout: 'assignment_content'
   end
 
   def get_annotations
