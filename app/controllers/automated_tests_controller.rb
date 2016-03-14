@@ -12,7 +12,6 @@ class AutomatedTestsController < ApplicationController
   # Update is called when files are added to the assigment
   def update
     @assignment = Assignment.find(params[:assignment_id])
-
     create_test_repo(@assignment)
 
     # Perform transaction, if errors, none of new config saved
@@ -23,6 +22,7 @@ class AutomatedTestsController < ApplicationController
       new_support_file = params[:new_support_file]
 
       @assignment = process_test_form(@assignment,
+                                      params,
                                       assignment_params,
                                       new_script,
                                       new_support_file)
@@ -34,7 +34,8 @@ class AutomatedTestsController < ApplicationController
             MarkusConfigurator.markus_config_automated_tests_repository,
             @assignment.repository_folder,
             new_script.original_filename)
-          File.open(assignment_tests_path, 'w') { |f| f.write new_script.read }
+          File.open(
+            assignment_tests_path, 'w') { |f| f.write new_script.read }
         end
 
         unless new_support_file.nil?
@@ -45,12 +46,13 @@ class AutomatedTestsController < ApplicationController
           File.open(
             assignment_tests_path, 'w') { |f| f.write new_support_file.read }
         end
+
         redirect_to :action => 'manage',
                     :assignment_id => params[:assignment_id]
       else
+        @assignment.test_support_files.build
         render :manage
       end
-
     end
   end
 
@@ -60,7 +62,6 @@ class AutomatedTestsController < ApplicationController
     @assignment.test_scripts.build
     @assignment.test_support_files.build
   end
-
 
   def student_interface
     @assignment = Assignment.find(params[:id])
