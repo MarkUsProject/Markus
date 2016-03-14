@@ -239,15 +239,21 @@ class SubmissionsController < ApplicationController
     successes = Array.new
     noSubmissions = Array.new
     section_ids.each do |id|
-      if !Section.exists?(id)
-        errors.push(I18n.t('collect_submissions.could_not_find_section'))
-        next
-      end
-        
-      if collect_submissions_for_section(id, assignment, errors) > 0
-        successes.push(Section.find(id).name)
+      if id == '0'
+        submission_collector = SubmissionCollector.instance
+        submission_collector.push_groupings_to_queue(
+          assignment.sectionless_groupings)
+        successes.push(t('groups.unassigned_students'))
       else
-        noSubmissions.push(Section.find(id).name)
+        unless Section.exists?(id)
+          errors.push(I18n.t('collect_submissions.could_not_find_section'))
+          next
+        end
+        if collect_submissions_for_section(id, assignment, errors) > 0
+          successes.push(Section.find(id).name)
+        else
+          noSubmissions.push(Section.find(id).name)
+        end
       end
     end
     if successes.length > 0
@@ -289,6 +295,9 @@ class SubmissionsController < ApplicationController
     @groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                        current_user)
     @available_sections = Hash.new
+    if @assignment.submission_rule.can_collect_now?
+      @available_sections[t('groups.unassigned_students')] = 0
+    end
     if Section.all.size > 0
       @section_column = "{
         id: 'section',

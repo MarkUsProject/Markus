@@ -126,7 +126,7 @@ en:
       apply_late_penalty: "Apply late penalty/Deduct grace tokens (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)"
       collect_all: "Collect All Submissions"
       collect_section: "Collect Section Submissions"
-      all_available: "All Available Sections"
+      all_available: "All Available Submissions"
       collect_ta: "Collect all your assigned submissions"
       disable_collect: "Collection disabled, more than one TA marking displayed submissions."
       could_not_collect: "Could not collect submissions for assignment %{assignment_identifier} - the collection date has not been reached"
