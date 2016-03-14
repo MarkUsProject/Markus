@@ -133,10 +133,10 @@ class AnnotationCategoriesController < ApplicationController
         AnnotationCategory.add_by_row(row, @assignment, current_user)
       end
       unless result[:invalid_lines].empty?
-        flash[:error] = result[:invalid_lines]
+        flash_message(:error, result[:invalid_lines])
       end
       unless result[:valid_lines].empty?
-        flash[:success] = result[:valid_lines]
+        flash_message(:success, result[:valid_lines])
       end
     else
       flash[:error] = I18n.t('csv.invalid_csv')

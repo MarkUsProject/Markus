@@ -484,7 +484,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                 annotation_category_list_csv: tempfile,
                 encoding: 'UTF-8'
         assert_response :redirect
-        assert_equal(flash[:error], I18n.t('csv.upload.malformed_csv'))
+        assert_equal(flash[:error], [I18n.t('csv.upload.malformed_csv')])
       end
 
       should 'on :csv_upload gracefully handle a non csv file with .csv extension' do
@@ -496,7 +496,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                 encoding: 'UTF-8'
         assert_response :redirect
         assert_equal(flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension'))
+                     [I18n.t('csv.upload.non_text_file_with_csv_extension')])
       end
     end
   end
