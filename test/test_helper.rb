@@ -28,10 +28,6 @@ class ActiveSupport::TestCase
     Repository.get_class(REPOSITORY_TYPE, conf).purge_all
   end
 
-  def destroy_converted_pdfs
-    FileUtils.rm_rf("#{MarkusConfigurator.markus_config_pdf_storage}/*")
-  end
-
   def equal_dates(date_1, date_2)
     date_1 = Time.parse(date_1.to_s)
     date_2 = Time.parse(date_2.to_s)

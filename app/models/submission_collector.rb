@@ -241,17 +241,13 @@ class SubmissionCollector < ActiveRecord::Base
     #Let the child process handle conversion, as things go wrong when both
     #parent and child do this.
     start_collection_process do
-      if MarkusConfigurator.markus_config_pdf_support
         grouping.is_collected = true
         grouping.save
-      end
     end
     #setting is_collected here will prevent an sqlite lockout error when pdfs
     #aren't supported
-    unless MarkusConfigurator.markus_config_pdf_support
       grouping.is_collected = true
       grouping.save
-    end
 
   end
 
