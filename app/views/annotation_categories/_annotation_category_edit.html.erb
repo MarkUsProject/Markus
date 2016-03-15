@@ -4,20 +4,16 @@
   <div id='annotation_category_controls'>
     <div class='float_right'>
     <%= button_to t('annotations.delete.delete_message'),
-                  delete_annotation_category_assignment_annotation_category_path(
-                    id: annotation_category.id),
-                    method: 'delete',
-                    data: { confirm: t('annotations.delete.annotation_category') },
-                    html: { class: 'delete' },
-                    remote: true %>
+                  [@assignment, annotation_category],
+                  method: 'delete',
+                  data: { confirm: t('annotations.delete.annotation_category') },
+                  html: { class: 'delete' },
+                  remote: true %>
     </div>
     <h2><%= annotation_category.annotation_category_name %></h2>
 
     <fieldset>
-       <%= form_for :annotation_category,
-                    as: :annotation_category,
-                    url: { action: 'update_annotation_category',
-                           id: annotation_category.id },
+       <%= form_for [@assignment, annotation_category],
                     remote: true do |f| %>
        <span id='annotation_category_inputs'>
          <%= f.label :annotation_category_name,

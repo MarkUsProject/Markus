@@ -18,18 +18,13 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       assert_response :redirect
     end
 
-    should 'on :get_annotations (get)' do
-      get :get_annotations, :assignment_id => 1,:id => 1
+    should 'on :show (get)' do
+      get :show, assignment_id: 1, id: 1
       assert_response :redirect
     end
 
-    should 'on :add_annotation_category (get)' do
-      get :add_annotation_category, :assignment_id => 1
-      assert_response :redirect
-    end
-
-    should 'on :update_annotation_category (get)' do
-      get :update_annotation_category, :assignment_id => 1
+    should 'on :new (get)' do
+      get :new, assignment_id: 1
       assert_response :redirect
     end
 
@@ -38,8 +33,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       assert_response :redirect
     end
 
-    should 'on :delete_annotation_category (get)' do
-      get :delete_annotation_category, :assignment_id => 1
+    should 'on :destroy (delete)' do
+      delete :destroy, assignment_id: 1, id: 1
       assert_response :redirect
     end
 
@@ -58,18 +53,13 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       assert_response :redirect
     end
 
-    should 'on :get_annotations (post)' do
-      post :get_annotations, :assignment_id => 1, :id => 1
+    should 'on :create (post)' do
+      post :create, assignment_id: 1
       assert_response :redirect
     end
 
-    should 'on :add_annotation_category (post)' do
-      post :add_annotation_category, :assignment_id => 1
-      assert_response :redirect
-    end
-
-    should 'on :update_annotation_category (post)' do
-      post :update_annotation_category, :assignment_id => 1
+    should 'on :update (put)' do
+      put :update, assignment_id: 1, id: 1
       assert_response :redirect
     end
 
@@ -85,11 +75,6 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     should 'on :delete_annotation_text (post)' do
       post :delete_annotation_text, :assignment_id => 1, :id => 1
-      assert_response :redirect
-    end
-
-    should 'on :delete_annotation_category (post)' do
-      post :delete_annotation_category, :assignment_id => 1
       assert_response :redirect
     end
 
@@ -144,33 +129,32 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :assignment
     end
 
-    should 'on :get_annotations' do
+    should 'on :show' do
       get_as @admin,
-            :get_annotations,
+            :show,
             :assignment_id => @assignment.id,
             :id => @category.id,
             :format => :js
       assert_equal true, flash.empty?
       assert_response :success
       assert_not_nil assigns :annotation_category
-      assert_not_nil assigns :annotation_texts
     end
 
-    should 'on :add_annotation_category' do
+    should 'on :new' do
       get_as @admin,
-              :add_annotation_category,
+              :new,
               :assignment_id => @assignment.id,
               :format => :js
       assert_response :success
-      assert render_template :add_annotation_category #this makes sure it didn't call another action
+      assert render_template :new #this makes sure it didn't call another action
       assert_not_nil assigns :assignment
       assert_nil assigns :annotation_category
     end
 
-    context 'on :update_annotation_category' do
+    context 'on :update' do
       should 'update properly' do
-        get_as @admin,
-               :update_annotation_category,
+        put_as @admin,
+               :update,
                assignment_id: @assignment.id,
                id: @category.id,
                annotation_category: { annotation_category_name: 'Test' },
@@ -184,8 +168,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       should 'with an error on save' do
         AnnotationCategory.any_instance.stubs(:save).returns(false)
 
-        get_as @admin,
-               :update_annotation_category,
+        put_as @admin,
+               :update,
                assignment_id: @assignment.id,
                id: @category.id,
                annotation_category: { annotation_category_name: 'Test' },
@@ -249,9 +233,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       assert_response :success
     end
 
-    should 'on :delete_annotation_category' do
+    should 'on :destroy' do
       AnnotationCategory.any_instance.expects(:destroy).once
-      get_as @admin, :delete_annotation_category,
+      get_as @admin, :destroy,
              :assignment_id => 1,
              :id => @category.id,
              :format => :js
@@ -290,22 +274,24 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       assert_response :redirect
     end
 
-    context 'on :add_annotation_category' do
+    context 'on :create' do
 
       should 'without errors' do
-        AnnotationCategory.any_instance.stubs(:save).returns(true)
-        get_as @admin,
-               :add_annotation_category,
-               :assignment_id => @assignment.id,
-               :format => :js
+        post_as @admin,
+               :create,
+               assignment_id: @assignment.id,
+               annotation_category: { annotation_category_name: 'Test' },
+               format: :js
         assert_response :success
         assert_not_nil assigns :assignment
+        assert_not_nil assigns :annotation_category
+        assert render_template 'insert_new_annotation_category'
       end
 
       should 'with error on save' do
         AnnotationCategory.any_instance.stubs(:save).returns(false)
         post_as @admin,
-                :add_annotation_category,
+                :create,
                 assignment_id: @assignment.id,
                 annotation_category: { annotation_category_name: 'Test' },
                 format: :js

@@ -11,8 +11,7 @@
         assignment_short_identifier: @assignment.short_identifier) %>
 <% end %>
 
-<% path = add_annotation_category_assignment_annotation_categories_path(
-    id: @assignment.id) %>
+<% path = new_assignment_annotation_category_path %>
 
 <% @heading_buttons = [
        { link_text: t('annotations.add_annotation_category'),
