@@ -53,17 +53,7 @@ class GradersController < ApplicationController
 
   def populate
     @assignment = Assignment.find(params[:assignment_id])
-    @sections = Section.joins(:section_due_dates)
-                       .where("section_due_dates.assignment_id = ?", @assignment.id)
-                       .order("section_due_dates.due_date", :name)
-    @all_sections = Section.order(:name)
-    unless @sections.count == @all_sections.count
-      @all_sections.each do |section|
-        unless @sections.include? section
-          @sections.push(section)
-        end
-      end
-    end
+    @sections = Section.order(:name)
 
     assign_to_criteria = @assignment.assign_graders_to_criteria
     if assign_to_criteria
