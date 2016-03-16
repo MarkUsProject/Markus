@@ -1,16 +1,12 @@
 <li id='add_annotation_category'>
   <%= form_for :annotation_category,
-               url: { action: 'add_annotation_category',
-                      id: assignment_id },
+               url: { action: 'create' },
                remote: true do |f| %>
     <div class='error' style='display:none;' id='new_annotation_category_error'></div>
 
-    <%= label_tag 'add_annotation_category_prompt', t('annotations.name') %>
-
+    <%= f.label :annotation_category_name, t('annotations.name') %>
     <%= f.text_field :annotation_category_name,
-         id: 'add_annotation_category_prompt',
-         size: 20 %>
-
+                     size: 20 %>
     <%= f.submit t(:save) , data: { disable_with: t('working') } %>
   <% end %>
 </li>

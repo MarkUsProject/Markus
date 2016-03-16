@@ -1050,65 +1050,92 @@ describe 'An Assignment' do
     let(:annot_ctrl) { 'annotation_categories' }
 
     context 'members' do
-      it 'routes GET get_annotations properly' do
-        expect(get: annot_path + '/get_annotations').to route_to(
+      let(:id) { '1' }
+      it 'routes GET properly' do
+        expect(get: annot_path + "/#{1}").to route_to(
           controller: annot_ctrl,
           action: 'show',
-          id: 'get_annotations',
+          id: id,
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
 
-      it 'routes DELETE delete_annotation_category properly' do
-        expect(delete: annot_path + '/delete_annotation_category').to route_to(
+      it 'routes DELETE properly' do
+        expect(delete: annot_path + "/#{1}").to route_to(
           controller: annot_ctrl,
           action: 'destroy',
-          id: 'delete_annotation_category',
+          id: id,
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
+      end
+
+      it 'routes PUT properly' do
+        expect(put: annot_path + "/#{1}").to route_to(
+          controller: annot_ctrl,
+          action: 'update',
+          id: id,
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
 
       it 'routes DELETE delete_annotation_text properly' do
-        expect(delete: annot_path + '/delete_annotation_text').to route_to(
+        expect(delete: annot_path + "/#{id}/delete_annotation_text").to route_to(
           controller: annot_ctrl,
-          action: 'destroy',
-          id: 'delete_annotation_text',
+          action: 'delete_annotation_text',
+          id: id,
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
 
       it 'routes GET add_annotation_text properly' do
-        expect(get: annot_path + '/add_annotation_text').to route_to(
+        expect(get: annot_path + "/#{id}/add_annotation_text").to route_to(
           controller: annot_ctrl,
           action: 'add_annotation_text',
+          id: id,
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
 
       it 'routes POST add_annotation_text properly' do
-        expect(post: annot_path + '/1/add_annotation_text').to route_to(
+        expect(post: annot_path + "/#{id}/add_annotation_text").to route_to(
           controller: annot_ctrl,
           action: 'add_annotation_text',
-          id: '1',
+          id: id,
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
 
       it 'routes PUT update_annotation properly' do
-        expect(get: annot_path + '/update_annotation').to route_to(
+        expect(put: annot_path + "/#{id}/update_annotation").to route_to(
           controller: annot_ctrl,
-          action: 'show',
-          id: 'update_annotation',
+          action: 'update_annotation',
+          id: id,
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
     end
 
     context 'collection' do
-      it 'routes GET add_annotation_category properly' do
-        expect(get: annot_path + '/add_annotation_category').to route_to(
+      it 'routes GET new properly' do
+        expect(get: annot_path + '/new').to route_to(
           controller: annot_ctrl,
-          action: 'add_annotation_category',
+          action: 'new',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
+      end
+
+      it 'routes POST properly' do
+        expect(post: annot_path).to route_to(
+          controller: annot_ctrl,
+          action: 'create',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
+      end
+
+      it 'routes GET properly' do
+        expect(get: annot_path).to route_to(
+          controller: annot_ctrl,
+          action: 'index',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
@@ -1117,14 +1144,6 @@ describe 'An Assignment' do
         expect(post: annot_path + '/csv_upload').to route_to(
           controller: annot_ctrl,
           action: 'csv_upload',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET delete_annotation_category properly' do
-        expect(get: annot_path + '/delete_annotation_category').to route_to(
-          controller: annot_ctrl,
-          action: 'delete_annotation_category',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
@@ -1141,22 +1160,6 @@ describe 'An Assignment' do
         expect(post: annot_path + '/yml_upload').to route_to(
           controller: annot_ctrl,
           action: 'yml_upload',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes POST add_annotation_category properly' do
-        expect(post: annot_path + '/add_annotation_category').to route_to(
-          controller: annot_ctrl,
-          action: 'add_annotation_category',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes POST update_annotation_category properly' do
-        expect(post: annot_path + '/update_annotation_category').to route_to(
-          controller: annot_ctrl,
-          action: 'update_annotation_category',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
