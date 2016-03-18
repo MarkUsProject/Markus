@@ -178,6 +178,7 @@
         s['repository'] = <a href={summary.repo_url}>{summary.repo_name}</a>;
         s['marking_state'] = this.renderMarkingState(summary.state);
         s['final_grade'] = summary.final_grade;
+        s['section'] = summary.section
         s['state'] = summary.state;
         <% for criterion in @criteria %>
           var key = 'criterion_' + '<%= criterion.id %>';

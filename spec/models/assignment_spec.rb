@@ -1067,7 +1067,8 @@ describe Assignment do
     context 'when rubric marking was used' do
       before :each do
         @assignment = create(:rubric_assignment)
-        2.times { create(:assignment_file, assignment: @assignment) }
+        create(:assignment_file, filename: 'test1', assignment: @assignment)
+        create(:assignment_file, filename: 'test2', assignment: @assignment)
         criteria =
           Array.new(4) { create(:rubric_criterion, assignment: @assignment) }
 
@@ -1129,7 +1130,8 @@ describe Assignment do
     context 'when flexible marking was used' do
       before :each do
         @assignment = create(:flexible_assignment)
-        2.times { create(:assignment_file, assignment: @assignment) }
+        create(:assignment_file, filename: 'test3', assignment: @assignment)
+        create(:assignment_file, filename: 'test4', assignment: @assignment)
         criteria =
           Array.new(4) { create(:flexible_criterion, assignment: @assignment) }
 

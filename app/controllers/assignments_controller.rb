@@ -533,6 +533,7 @@ class AssignmentsController < ApplicationController
     assignment_list = params[:assignment_list]
 
     if assignment_list.blank?
+      flash[:error] = I18n.t('csv.invalid_csv')
       redirect_to action: 'index'
       return
     end
@@ -542,7 +543,7 @@ class AssignmentsController < ApplicationController
 
     case params[:file_format]
       when 'csv'
-        errors = MarkusCSV.parse(assignment_list) do |row|
+        result = MarkusCSV.parse(assignment_list) do |row|
           assignment = Assignment.find_or_create_by(short_identifier: row[0])
           attrs = Hash[DEFAULT_FIELDS.zip(row)]
           attrs.delete_if { |_, v| v.nil? }
@@ -551,13 +552,14 @@ class AssignmentsController < ApplicationController
             assignment.assignment_stat = AssignmentStat.new
           end
           assignment.update(attrs)
-          if assignment.valid?
-            flash_message(:success, t('assignment.create_success'))
-          else
-            raise CSVInvalidLineError
-          end
+          raise CSVInvalidLineError unless assignment.valid?
         end
-        flash_message(:error, errors) unless errors.empty?
+        unless result[:invalid_lines].empty?
+          flash_message(:error, result[:invalid_lines])
+        end
+        unless result[:valid_lines].empty?
+          flash_message(:success, result[:valid_lines])
+        end
       when 'yml'
         begin
           map = YAML::load(assignment_list)

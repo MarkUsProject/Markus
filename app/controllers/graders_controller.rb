@@ -71,9 +71,9 @@ class GradersController < ApplicationController
   # Assign TAs to Groupings via a csv file
   def csv_upload_grader_groups_mapping
     if params[:grader_mapping].nil?
-      flash[:error] = I18n.t('csv.group_to_grader')
+      flash_message(flash[:error], I18n.t('csv.group_to_grader'))
     else
-      errors = MarkusCSV.parse(params[:grader_mapping].read,
+      result = MarkusCSV.parse(params[:grader_mapping].read,
                                encoding: params[:encoding]) do |row|
         raise CSVInvalidLineError if row.empty?
         grouping = Grouping.joins(:group)
@@ -83,7 +83,12 @@ class GradersController < ApplicationController
 
         grouping.add_tas_by_user_name_array(row.drop(1))
       end
-      flash_message(:error, errors) unless errors.empty?
+      unless result[:invalid_lines].empty?
+        flash_message(:error, result[:invalid_lines])
+      end
+      unless result[:valid_lines].empty?
+        flash_message(:success, result[:valid_lines])
+      end
     end
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
@@ -91,15 +96,20 @@ class GradersController < ApplicationController
   # Assign TAs to Criteria via a csv file
   def csv_upload_grader_criteria_mapping
     if params[:grader_criteria_mapping].nil?
-      flash[:error] = I18n.t('csv.criteria_to_grader')
+      flash_message(:error, I18n.t('csv.criteria_to_grader'))
     else
       @assignment = Assignment.find(params[:assignment_id])
-      errors = MarkusCSV.parse(params[:grader_criteria_mapping].read,
+      result = MarkusCSV.parse(params[:grader_criteria_mapping].read,
                                encoding: params[:encoding]) do |row|
         raise CSVInvalidLineError if row.empty?
         @assignment.add_graders_to_criterion(row.first, row.drop(1))
       end
-      flash_message(:error, errors) unless errors.empty?
+      unless result[:invalid_lines].empty?
+        flash_message(:error, result[:invalid_lines])
+      end
+      unless result[:valid_lines].empty?
+        flash_message(:success, result[:valid_lines])
+      end
     end
 
     redirect_to action: 'index', assignment_id: params[:assignment_id]

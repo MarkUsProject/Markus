@@ -29,8 +29,9 @@ describe AnnotationCategory do
       end
 
       it 'saves the annotation' do
-        result = AnnotationCategory.add_by_row(@row, assignment, admin)
-        expect(result).not_to be_nil
+        AnnotationCategory.add_by_row(@row, assignment, admin)
+        expect(AnnotationCategory
+                 .where(annotation_category_name: @row[0])).not_to be_nil
       end
     end
 

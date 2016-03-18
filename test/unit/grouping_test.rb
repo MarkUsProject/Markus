@@ -49,9 +49,8 @@ class GroupingTest < ActiveSupport::TestCase
       last_modified = @grouping.assignment_folder_last_modified_date
       assert_not_nil(last_modified)
       assert_instance_of(Time, last_modified)
-      # This is not exactly accurate, but it's sufficient
-      # FIXME actually, it sometimes isn't sufficient...
-      assert_equal(Time.now.min, last_modified.min)
+      # Assert change was made sometime during the last 60 seconds.
+      assert (Time.now-60..Time.now).cover?(last_modified)
     end
 
     should 'display Empty Group since no students in the group' do
