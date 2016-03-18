@@ -895,7 +895,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :upload => nil,
                 :encoding => 'UTF-8'
         assert_response :redirect
-        assert_equal flash[:error], "No file selected!"
+        assert_equal flash[:error], [I18n.t('csv.invalid_csv')]
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id
         )
@@ -910,7 +910,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 :upload => {:grades_file => fixture_file_upload('files/failfile.txt')},
                 :encoding => 'UTF-8'
         assert_response :redirect
-        assert_equal flash[:error], "You did not upload a .csv file."
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id
         )
@@ -927,7 +926,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                 encoding: 'UTF-8'
 
         assert_response :redirect
-        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+        assert_equal flash[:error], [I18n.t('csv.upload.malformed_csv')]
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
           @grade_entry_student.id, @grade_entry_item.id
         )
@@ -945,7 +944,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+                     [I18n.t('csv.upload.non_text_file_with_csv_extension')]
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
           @grade_entry_student.id, @grade_entry_item.id
         )
