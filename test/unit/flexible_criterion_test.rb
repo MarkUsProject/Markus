@@ -88,20 +88,6 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       assert_equal '', csv_string, 'the CSV string was not the one expected!'
     end
 
-    should 'be able to parse a valid CSV file' do
-      tempfile = Tempfile.new('flexible_criteria_csv')
-      tempfile << UPLOAD_CSV_STRING
-      tempfile.rewind
-
-      result = FlexibleCriterion.parse_csv(tempfile,
-                                               @assignment)
-      assert_equal result[:valid_lines],
-                   I18n.t('csv_valid_lines',
-                          valid_line_count: 1)
-      assert result[:invalid_lines].empty?
-    end
-
-
     should 'create a new instance from a 2 element row' do
       criterion = FlexibleCriterion.new_from_csv_row(['name', 10.0],
                                                      @assignment)
@@ -118,18 +104,6 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       assert_not_nil criterion
       assert_instance_of FlexibleCriterion, criterion
       assert_equal criterion.assignment, @assignment
-    end
-
-    should 'report errors on a invalid CSV file' do
-      tempfile = Tempfile.new('inv_flexible_criteria_csv')
-      tempfile << INVALID_CSV_STRING
-      tempfile.rewind
-
-      result = FlexibleCriterion.parse_csv(
-                        tempfile,
-                        @assignment)
-      assert result[:valid_lines].empty?
-      assert_not_empty result[:invalid_lines]
     end
 
     context 'with three flexible criteria' do
@@ -154,21 +128,6 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
         csv_string = FlexibleCriterion.create_csv(@assignment)
         assert_equal CSV_STRING, csv_string,
                      'the CSV string was not the one expected!'
-      end
-
-      should 'be able to use a generated string for parsing' do
-        csv_string = FlexibleCriterion.create_csv(@assignment)
-        tempfile = Tempfile.new('flexible_csv')
-        tempfile << csv_string
-        tempfile.rewind
-        dst_assignment = Assignment.make(:marking_scheme_type => 'flexible')
-        result = FlexibleCriterion.parse_csv(
-                                tempfile,
-                                dst_assignment)
-        assert_equal result[:valid_lines],
-                     I18n.t('csv_valid_lines',
-                             valid_line_count: 3)
-        assert result[:invalid_lines].empty?
       end
 
       should 'fail with corresponding error message if the name is already in use' do

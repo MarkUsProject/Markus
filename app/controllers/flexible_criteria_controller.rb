@@ -76,8 +76,10 @@ class FlexibleCriteriaController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     if request.post? && !file.blank?
       FlexibleCriterion.transaction do
-        result = FlexibleCriterion.parse_csv(file,
-                                             @assignment)
+        result = MarkusCSV.parse(file.read) do |row|
+          next if CSV.generate_line(row).strip.empty?
+          FlexibleCriterion.new_from_csv_row(row, @assignment)
+        end
         unless result[:invalid_lines].empty?
           flash_message(:error, result[:invalid_lines])
         end

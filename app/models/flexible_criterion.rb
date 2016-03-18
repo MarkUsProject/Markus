@@ -102,30 +102,6 @@ class FlexibleCriterion < Criterion
     criterion
   end
 
-  # Parse a flexible criteria CSV file.
-  #
-  # ===Params:
-  #
-  # file::          A file object which will be tried for parsing.
-  # assignment::    The assignment to which the new criteria should belong to.
-  # invalid_lines:: An object to recieve all encountered _invalid_ lines.
-  #                 Strings representing the faulty line followed by
-  #                 a human readable error message are appended to the object
-  #                 via the << operator.
-  #
-  #                 *Hint*: An array allows for easy
-  #                 access to single invalid lines.
-  #
-  # ===Returns:
-  #
-  # The number of successfully created criteria.
-  def self.parse_csv(file, assignment)
-    MarkusCSV.parse(file.read) do |row|
-      next if CSV.generate_line(row).strip.empty?
-        FlexibleCriterion.new_from_csv_row(row, assignment)
-    end
-  end
-
   # ===Returns:
   #
   # The position that should receive the next criterion for an assignment.
