@@ -113,12 +113,11 @@ describe GradeEntryFormsController do
         grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end
 
-    it 'does not accept a file with no extension' do
+    it 'does not break on a file with no extension' do
       post :csv_upload,
            id: grade_entry_form,
            upload: { grades_file: @file_without_extension }
       expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end
