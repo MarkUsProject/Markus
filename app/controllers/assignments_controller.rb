@@ -202,9 +202,6 @@ class AssignmentsController < ApplicationController
                                    .where.not(id: @assignment.id)
                                    .order(:id)
     @sections = Section.all
-    @section_due_dates = SectionDueDate.joins(:section)
-                                       .where(assignment: @assignment)
-                                       .order(:due_date, "sections.name")
 
     unless @past_date.nil? || @past_date.empty?
       flash.now[:notice] = t('past_due_date_notice') + @past_date.join(', ')
@@ -216,6 +213,8 @@ class AssignmentsController < ApplicationController
         @assignment.section_due_dates.build(section: s)
       end
     end
+    @section_due_dates = @assignment.section_due_dates
+                                    .sort_by { |s| [SectionDueDate.due_date_for(s.section, @assignment), s.section.name] }
   end
 
   # Called when editing assignments form is submitted (PUT).
@@ -271,6 +270,8 @@ class AssignmentsController < ApplicationController
 
     # build section_due_dates for each section
     Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
+    @section_due_dates = @assignment.section_due_dates
+                                    .sort_by { |s| s.section.name }
 
     # set default value if web submits are allowed
     @assignment.allow_web_submits =
