@@ -190,6 +190,8 @@ en:
             allow:  "Allow remark requests"
             due_date:  "Remark Due Date"
             message:   "Remark Message"
+        starter_code:
+            title:  "Upload Starter Code"
         marking_scheme:
             title: "Marking Scheme"
             rubric: "Rubric"
