@@ -121,7 +121,7 @@ class TasControllerTest < AuthenticatedControllerTest
                 encoding: 'UTF-8'
 
         assert_response :redirect
-        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+        assert_equal flash[:error], [I18n.t('csv.upload.malformed_csv')]
       end
 
       should 'gracefully handle a non csv file with a csv extension' do
@@ -133,7 +133,7 @@ class TasControllerTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+                     [I18n.t('csv.upload.non_text_file_with_csv_extension')]
       end
     end # -- With a TA
   end # -- An admin
