@@ -124,13 +124,9 @@ class RubricCriterion < Criterion
   #               RUBRIC_LEVELS description (one for each level).
   # assignment::  The assignment to which the newly created criterion should belong.
   #
-  # ===Raises:
-  #
-  # RuntimeError If the row does not contains enough information, if the weight value
-  #                           is zero (or doesn't evaluate to a float)
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
-      raise I18n.t('criteria_csv_error.incomplete_row')
+      raise CSVInvalidLineError
     end
     working_row = row.clone
     rubric_criterion_name = working_row.shift
@@ -142,7 +138,7 @@ class RubricCriterion < Criterion
     begin
       criterion.weight = Float(working_row.shift)
     rescue ArgumentError
-      raise ActiveRecord::RecordNotSaved, I18n.t('criteria_csv_error.weight_not_number')
+      raise CSVInvalidLineError
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -157,7 +153,7 @@ class RubricCriterion < Criterion
       criterion['level_' + i.to_s + '_description'] = working_row.shift
     end
     unless criterion.save
-      raise ActiveRecord::RecordNotSaved.new(criterion.errors)
+      raise CSVInvalidLineError
     end
     criterion
   end
@@ -213,37 +209,6 @@ class RubricCriterion < Criterion
       raise RuntimeError.new(criterion.errors)
     end
     criterion
-  end
-
-  # Parse a rubric criteria CSV file.
-  #
-  # ===Params:
-  #
-  # file::          A file object which will be tried for parsing.
-  # assignment::    The assignment to which the new criteria should belong to.
-  # invalid_lines:: An object to recieve all encountered _invalid_ lines.
-  #                 Strings representing the faulty line followed by
-  #                 a human readable error message are appended to the object
-  #                 via the << operator.
-  #
-  #                 *Hint*: An array allows for an easy
-  #                 access of single invalid lines.
-  # ===Returns:
-  #
-  # The number of successfully created criteria.
-  def self.parse_csv(file, assignment, invalid_lines, encoding)
-    nb_updates = 0
-    file = file.utf8_encode(encoding)
-    CSV.parse(file) do |row|
-      next if CSV.generate_line(row).strip.empty?
-      begin
-        RubricCriterion.create_or_update_from_csv_row(row, assignment)
-        nb_updates += 1
-      rescue RuntimeError => e
-        invalid_lines << row.join(',') + ': ' + e.message unless invalid_lines.nil?
-      end
-    end
-    nb_updates
   end
 
   def get_weight
