@@ -164,20 +164,6 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       s = RubricCriterion.create_csv(@assignment)
       assert_equal @csv_string, s
     end
-
-    should 'be able to use a generated string for parsing' do
-      csv_string = RubricCriterion.create_csv(@assignment)
-      tempfile = Tempfile.new('rubric_csv')
-      tempfile << csv_string
-      tempfile.rewind
-      invalid_lines = []
-      dst_assignment =  Assignment.make(:marking_scheme_type => 'rubric')
-      nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines, nil)
-      assert_equal 2, nb_updates
-      assert_equal 0, invalid_lines.size
-      dst_assignment.reload
-      assert_equal 2, dst_assignment.rubric_criteria.size
-    end
   end
 
   context 'from an assignment composed of rubric criteria with commas and quotes in the descriptions' do
@@ -199,20 +185,6 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       s = RubricCriterion.create_csv(@assignment)
       assert_equal @csv_string, s
     end
-
-    should 'be able to use a generated string for parsing' do
-      csv_string = RubricCriterion.create_csv(@assignment)
-      tempfile = Tempfile.new('rubric_csv')
-      tempfile << csv_string
-      tempfile.rewind
-      invalid_lines = []
-      dst_assignment = Assignment.make
-      nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines, nil)
-      assert_equal 1, nb_updates
-      assert_equal 0, invalid_lines.size
-      dst_assignment.reload
-      assert_equal 1, dst_assignment.rubric_criteria.size
-    end
   end
 
   context 'from an assignment without criteria' do
@@ -228,34 +200,30 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     context 'when parsing a CSV file' do
 
       should 'raise an error message on an empty row' do
-        e = assert_raise RuntimeError do
+        assert_raise CSVInvalidLineError do
           RubricCriterion.create_or_update_from_csv_row([], Assignment.new)
         end
-        assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
       end
 
       should 'raise an error message on a 1 element row' do
-        e = assert_raise RuntimeError do
+        assert_raise CSVInvalidLineError do
           RubricCriterion.create_or_update_from_csv_row(%w(name), Assignment.new)
         end
-        assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
       end
 
       should 'raise an error message on a 2 element row' do
-        e = assert_raise RuntimeError do
+        assert_raise CSVInvalidLineError do
           RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), Assignment.new)
         end
-        assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
       end
 
       should 'raise an error message on a row with any number of elements that does not include a name for every criterion' do
         row = %w(name 1.0)
         (0..RubricCriterion::RUBRIC_LEVELS - 2).each do |i|
           row << 'name' + i.to_s
-            e = assert_raise RuntimeError do
+            assert_raise CSVInvalidLineError do
               RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
             end
-            assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
         end
       end
 
@@ -346,30 +314,6 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
 
     end
-
-    should 'be able to parse a valid CSV file' do
-      tempfile = Tempfile.new('rubric_criteria_csv')
-      tempfile << "criterion 6,1.0,l0,l1,l2,l3,l4,d0,d1,d2,d3,d4\n"
-      tempfile.rewind
-      assignment = Assignment.make
-      invalid_lines = []
-
-      nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines, nil)
-      assert_equal nb_updates, 1
-      assert invalid_lines.empty?
-    end
-
-    should 'report errors on a invalid CSV file' do
-      tempfile = Tempfile.new('flexible_criteria_csv')
-      tempfile << "criterion 6\n,criterion 7\n"
-      tempfile.rewind
-      assignment = Assignment.make
-      invalid_lines = []
-
-      nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines, nil)
-      assert_equal 0, nb_updates
-      assert_equal 2, invalid_lines.length
-    end
   end
 
   ####################   HELPERS    #################################
@@ -391,7 +335,4 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     new_rubric_criteria.delete(attr) if attr
     RubricCriterion.new(new_rubric_criteria)
   end
-
-
-
 end
