@@ -49,7 +49,8 @@
         error: null,
         students: [],
         graders_for_students: [],
-        selected_students: []
+        selected_students: [],
+        sections: []
       };
     },
     updateSelectedStudents: function(students) {
@@ -67,10 +68,11 @@
         dataType: 'json',
         success: function(data) {
           this.setState({
-            students: data,
-            graders_for_students: [].concat.apply([], data.map(function(student){
+            students: data[0],
+            graders_for_students: [].concat.apply([], data[0].map(function(student){
               return student.graders;
             })),
+            sections: data[1],
             error: null
           });
         }.bind(this),
@@ -92,6 +94,21 @@
       });
     },
     render: function() {
+      var section_filters = [];
+      var all = '<%= j raw I18n.t('all') %>';
+      section_filters.push({name: all, text: all, func: function(g) { return g; } });
+
+      for (var i = 0; i < this.state.sections.length; i++) {
+        var filter = {
+          name: this.state.sections[i].name,
+          text: this.state.sections[i].name,
+          func: function(group) {
+            return (group.section == this.name);
+          }.bind(this.state.sections[i])
+        };
+        section_filters.push(filter);
+      }
+
       var columns = [
           {
             id: 'checkbox',
@@ -155,6 +172,7 @@
       return (
         <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
           <Table data={students_data}
+            filters={section_filters} filter_type={false}
             search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
             onSelectedRowsChange={this.updateSelectedStudents}
             columns={columns} />
