@@ -4,7 +4,7 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class TestResultsController < MainApiController
     # Define default fields for index method
-    @@default_fields = [:id, :filename]
+    @@default_fields = [:id, :grouping_id]
 
     # Returns a list of TesResults associated with a group's assignment submission
     # Requires: assignment_id, group_id
@@ -14,37 +14,42 @@ module Api
       submission = get_submission(params[:assignment_id], params[:group_id])
       return if submission.nil?
 
-      collection = submission.test_results
-
-      test_results = get_collection(TestResult, collection)
+      collection = submission.test_script_results.includes(:test_results)
+      test_script_results = get_collection(TestScriptResult, collection)
       fields = fields_to_render(@@default_fields)
 
       respond_to do |format|
-        format.xml{render xml: test_results.to_xml(only: fields, root:
-          'test_results', skip_types: 'true')}
-        format.json{render json: test_results.to_json(only: fields)}
+        format.xml{render xml: test_script_results.to_xml(root:
+          'test_script_results', skip_types: 'true', include: {test_results: {}})}
+        format.json{render json: test_script_results.to_json(include: {test_results: {}})}
       end
     end
 
-    # Sends the contents of the specified TestResult
+    # Sends the contents of the specified Test Script Result
     # Requires: assignment_id, group_id, id
     def show
       # get_submission renders appropriate error if the submission isn't found
       submission = get_submission(params[:assignment_id], params[:group_id])
       return if submission.nil?
 
-      test_result = submission.test_results.find_by_id(params[:id])
+      test_script_result = submission.test_script_results.includes(:test_results).find_by_id(params[:id])
+     
+
+      #debugger
+      #fields = fields_to_render(@@default_fields)
 
       # Render error if the TestResult does not exist
-      if test_result.nil?
+      if test_script_result.nil?
         render 'shared/http_status', locals: { code: '404', message:
-          'Test result was not found'}, status: 404
+          'Test script result was not found'}, status: 404
         return
       end
 
-      # Everything went fine; send file_content
-      send_data test_result.file_content, disposition: 'inline',
-                                          filename: test_result.filename
+      respond_to do |format|
+        format.xml{render xml: test_script_result.to_xml(root:
+          'test_script_result', skip_types: 'true', include: {test_results: {}})}
+        format.json{render json: test_script_result.to_json(include: {test_results: {}})}
+      end
     end
 
     # Creates a new test result for a group's latest assignment submission
@@ -54,7 +59,7 @@ module Api
     #  - filename: Name of the file to be uploaded
     #  - file_content: Contents of the test results file to be uploaded
     def create
-      if has_missing_params?([:filename, :file_content])
+      if has_missing_params?([:file_content])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
@@ -64,20 +69,17 @@ module Api
       # get_submission renders appropriate error if the submission isn't found
       submission = get_submission(params[:assignment_id], params[:group_id])
       return if submission.nil?
+      
+      grouping = submission.grouping
+      assignment = submission.assignment
 
-      # Render error if there's an existing test result with that filename
-      test_result = submission.test_results.find_by_filename(params[:filename])
-      unless test_result.nil?
-        render 'shared/http_status', locals: {code: '409', message:
-          'A TestResult with that filename already exists'}, status: 409
-        return
-      end
+      
 
-      # Try creating the TestResult
-      if TestResult.create(filename: params[:filename],
-         file_content: params[:file_content],
-         submission_id: submission.id)
-        # It worked, render success
+      if AutomatedTestsHelper.process_result(params[:file_content],
+                                          'submission',
+                                          assignment,
+                                          grouping,
+                                          submission)
         render 'shared/http_status', locals: {code: '201', message:
           HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       else
@@ -87,23 +89,23 @@ module Api
       end
     end
 
-    # Deletes a TestResult instance
+    # Deletes a Test Script Result instance
     # Requires: assignment_id, group_id, id
     def destroy
       # get_submission renders appropriate error if the submission isn't found
       submission = get_submission(params[:assignment_id], params[:group_id])
       return if submission.nil?
 
-      test_result = submission.test_results.find_by_id(params[:id])
+      test_script_result = submission.test_script_results.find_by_id(params[:id])
 
       # Render error if the TestResult does not exist
-      if test_result.nil?
+      if test_script_result.nil?
         render 'shared/http_status', locals: { code: '404', message:
-          'Test result was not found'}, status: 404
+          'Test script result was not found'}, status: 404
         return
       end
 
-      if test_result.destroy
+      if test_script_result.destroy
         # Successfully deleted the TestResult; render success
         render 'shared/http_status', locals: { code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200

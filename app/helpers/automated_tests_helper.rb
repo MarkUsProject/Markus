@@ -313,7 +313,7 @@ module AutomatedTestsHelper
       # TODO: handle this error better
       raise 'error'
     else
-      process_result(result, call_on)
+      process_result(result, call_on, @assignment, @grouping, @submission)
     end
 
   end
@@ -382,9 +382,9 @@ module AutomatedTestsHelper
     end
   end
 
-  def self.process_result(raw_result, call_on)
+  def self.process_result(raw_result, call_on, assignment, grouping, submission = nil)
     result = Hash.from_xml(raw_result)
-    repo = @grouping.group.repo
+    repo = grouping.group.repo
     revision = repo.get_latest_revision
     revision_number = revision.revision_number
     raw_test_scripts = result['testrun']['test_script']
@@ -408,17 +408,17 @@ module AutomatedTestsHelper
     # If ran on collection or submission, associate a submission
     # to the test script result
     if(call_on == 'collection' || call_on == 'submission')
-      submission_id = @submission.id
+      submission_id = submission.id
     else
       submission_id = nil
     end
 
     test_scripts.each do |script|
       script_name = script['script_name']
-      test_script = TestScript.find_by(assignment_id: @assignment.id,
+      test_script = TestScript.find_by(assignment_id: assignment.id,
                                        script_name: script_name)
 
-      new_test_script_result = @grouping.test_script_results.create!(
+      new_test_script_result = grouping.test_script_results.create!(
         test_script_id: test_script.id,
         submission_id: submission_id,
         marks_earned: 0,
@@ -443,4 +443,5 @@ module AutomatedTestsHelper
     end
 
   end
+
 end
