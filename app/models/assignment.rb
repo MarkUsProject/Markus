@@ -901,10 +901,18 @@ class Assignment < ActiveRecord::Base
 
   # Returns the groupings of this assignment associated with the given section
   def section_groupings(section)
-    self.groupings.select do |grouping|
-      grouping.inviter.present? and 
-      grouping.inviter.has_section? and 
+    groupings.select do |grouping|
+      grouping.inviter.present? &&
+      grouping.inviter.has_section? &&
       grouping.inviter.section.id == section.id
+    end
+  end
+
+  # Returns the groupings of this assignment that have no associated section
+  def sectionless_groupings
+    groupings.select do |grouping|
+      grouping.inviter.present? &&
+      !grouping.inviter.has_section?
     end
   end
   

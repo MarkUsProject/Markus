@@ -17,9 +17,8 @@ class AnnotationCategory < ActiveRecord::Base
   # Annotation Category, and associated Annotation Texts
   # Format:  annotation_category,annotation_text,annotation_text,...
   def self.add_by_row(row, assignment, current_user)
-    result = {}
-    result[:annotation_upload_invalid_lines] = []
     # The first column is the annotation category name...
+    valid = false
     annotation_category_name = row.shift
     annotation_category =
       annotation_category_with_name(annotation_category_name, assignment)
@@ -39,15 +38,13 @@ class AnnotationCategory < ActiveRecord::Base
       annotation_text.creator_id = current_user.id
       annotation_text.last_editor_id = current_user.id
       unless annotation_text.save
-        # This line checks for the case where we are not given a category name
-        # i.e ,123
-        annotation_category_name = '' if annotation_category_name.nil?
         # If for some reason we are not able to update the category
         # send the respective error
-        result[:annotation_upload_invalid_lines].push(annotation_category_name)
+        raise CSVInvalidLineError
       end
+      valid = true
     end
-    return result
+    raise CSVInvalidLineError unless valid
   end
 
   # Takes two arrays, one with annotation catogies names and one

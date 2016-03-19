@@ -162,6 +162,7 @@ class GradeEntryFormsController < ApplicationController
       s = student.attributes
       student_grade_entry = @grade_entry_form.grade_entry_students
                                              .find_by_user_id(student.id)
+      s[:section] = student.section.try(:name)
       unless student_grade_entry.nil?
         # Populate grades
         @grade_entry_form.grade_entry_items.each do |grade_entry_item|

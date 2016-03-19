@@ -1,47 +1,37 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'AnnotationCategories/index' %>
   <%= render partial: 'boot',
              formats: [:js],
              handlers: [:erb] %>
+  <%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
+  <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
 <% end %>
 
-<%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
-<%= javascript_include_tag 'MathJax/mathjax_helpers' %>
-
-<div class='title_bar'>
-  <h1>
-    <%= t('annotations.title',
-          assignment_short_identifier: @assignment.short_identifier) %>
-  </h1>
-  <div class='heading_buttons'>
-    <% path = add_annotation_category_assignment_annotation_categories_path(
-                id: @assignment.id) %>
-
-    <%= link_to t('annotations.add_annotation_category'),
-                'javascript:void(0);',
-                 onclick:"add_annotation_category('#{path}')" %>
-    <span class='menu_bar'></span>
-    <%= link_to t('download'),
-                'javascript:void(0);',
-                onclick:'modal_download.open();' %>
-    <span class='menu_bar'></span>
-    <%= link_to t('upload'),
-                'javascript:void(0);',
-                onclick:'modal_upload.open();' %>
-  </div>
-</div>
-
-<%= render 'shared/flash_message' %>
-
-<% if @assignment.past_all_due_dates? %>
-  <div class='notice'>
-    <%= t('past_due_date_warning') %>
-  </div>
+<% content_for :title do %>
+  <%= t('annotations.title',
+        assignment_short_identifier: @assignment.short_identifier) %>
 <% end %>
 
-<p id='criterion_error' class='warning' style='display: none;'></p>
+<% path = new_assignment_annotation_category_path %>
 
-<div class='wrapper'>
+<% @heading_buttons = [
+       { link_text: t('annotations.add_annotation_category'),
+         link_path: '#',
+         html_options: { onclick: "add_annotation_category('#{path}')" }
+       },
+       {
+           link_text: t('download'),
+           link_path: '#',
+           html_options: { onclick: 'modal_download.open()' }
+       },
+       {
+           link_text: t('upload'),
+           link_path: '#',
+           html_options: { onclick: 'modal_upload.open()' }
+       }
+   ] %>
+
+<% content_for :wrap_left_content do %>
+  <p id='criterion_error' class='warning' style='display: none;'></p>
   <div id='annotation_category_pane'>
     <%= render partial: 'annotation_categories/annotation_category_pane' %>
   </div>
@@ -54,9 +44,9 @@
       </div>
     </div>
   </div>
-</div>
+<% end %>
 
-<aside class='dialog' id='upload_dialog' >
+<aside class='dialog' id='upload_dialog'>
   <h1><%= t('annotations.upload.upload_annotations') %></h1>
   <%= t('annotations.upload.upload_message_csv').html_safe %>
   <%= form_tag({ action: 'csv_upload',
