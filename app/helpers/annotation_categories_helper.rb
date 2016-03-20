@@ -16,12 +16,10 @@ module AnnotationCategoriesHelper
 
   def convert_to_csv(annotation_categories)
     annotation_categories = prepare_for_conversion(annotation_categories)
-    CSV.generate do |csv|
-       annotation_categories.each do |annotation_category_name, annotation_texts|
-         # csv format is user_name,last_name,first_name
-         csv << annotation_texts.unshift(annotation_category_name)
-       end
-     end
+    MarkusCSV.generate(annotation_categories) do |annotation_category_name, annotation_texts|
+      # csv format is user_name,last_name,first_name
+      annotation_texts.unshift(annotation_category_name)
+    end
   end
 
   def convert_to_yml(annotation_categories)
