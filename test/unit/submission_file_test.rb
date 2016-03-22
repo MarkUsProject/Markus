@@ -304,6 +304,5 @@ require 'shoulda'
 
   def teardown
     destroy_repos
-    destroy_converted_pdfs
   end
 end
