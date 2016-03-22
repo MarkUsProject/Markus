@@ -25,18 +25,22 @@ class Token < ActiveRecord::Base
   def decrease_tokens
     if self.tokens > 0
       self.tokens = self.tokens - 1
-      self.last_token_used_date = Date.today
+      self.last_token_used_date = Time.now
     end
     self.save
   end
 
-  def reassign_tokens_if_new_day
-    if self.last_token_used_date and self.last_token_used_date < Date.today
+  def reassign_tokens_if_after_regen_period(regeneration_period)
+    if self.last_token_used_date
+      if (self.last_token_used_date.to_i + regeneration_period*60*60) <= Time.now.to_i
+        self.reassign_tokens
+      end
+    else
       self.reassign_tokens
     end
   end
 
-  # Re-assign to the student the nomber of tokens
+  # Re-assign to the student the number of tokens
   # allowed for this assignment
   def reassign_tokens
     assignment = self.grouping.assignment

@@ -154,6 +154,8 @@ class AutomatedTestsController < ApplicationController
         .permit(:enable_test,
                 :assignment_id,
                 :tokens_per_day,
+                :regeneration_period,
+                :tokens_start_of_availability_date,
                 :unlimited_tokens,
                 test_files_attributes:
                     [:id, :filename, :filetype, :is_private, :_destroy],
@@ -163,7 +165,7 @@ class AutomatedTestsController < ApplicationController
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,
                      :display_expected_output, :display_actual_output,
-                     :_destroy],
+                     :associated_criterion, :_destroy],
                 test_support_files_attributes:
                     [:id, :file_name, :assignment_id, :description, :_destroy])
   end

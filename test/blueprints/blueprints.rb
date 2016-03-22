@@ -72,6 +72,7 @@ Assignment.blueprint do
   section_due_dates_type(false)
   enable_test {true}
   tokens_per_day {10}
+  regeneration_period {24}
   assign_graders_to_criteria {false}
   assignment_stat
 end

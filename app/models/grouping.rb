@@ -382,7 +382,7 @@ class Grouping < ActiveRecord::Base
 
   # Token Credit Query
   def give_tokens
-    Token.create(grouping_id: self.id, tokens: self.assignment.tokens_per_day) if self.assignment.enable_test
+    Token.create(grouping_id: self.id, tokens: DateTime.now >= self.assignment.tokens_start_of_availability_date ? self.assignment.tokens_per_day : nil) if self.assignment.enable_test
   end
 
   # Grace Credit Query

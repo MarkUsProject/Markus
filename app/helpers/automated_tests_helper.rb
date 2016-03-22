@@ -8,7 +8,13 @@ module AutomatedTestsHelper
   def fetch_latest_tokens_for_grouping(grouping)
     token = Token.find_by(grouping: grouping)
     if token
-      token.reassign_tokens_if_new_day
+      if (@assignment.tokens_start_of_availability_date)
+        if (DateTime.now >= @assignment.tokens_start_of_availability_date)
+          token.reassign_tokens_if_after_regen_period(@assignment.regeneration_period)
+        else
+          token=nil
+        end
+      end
     end
     token
   end
@@ -45,7 +51,7 @@ module AutomatedTestsHelper
       # If no new_script then form is empty and skip
       next if testscripts[file_num][:seq_num].empty? && new_script.nil?
       # Seq_num only exists if it is a file being edited
-      if testscripts[file_num][:seq_num].empty?
+      if new_script
         # Create new test script file
         filename = new_script.original_filename
         if TestScript.exists?(script_name: filename, assignment: assignment)
@@ -141,12 +147,17 @@ module AutomatedTestsHelper
     assignment.test_scripts_attributes = updated_script_files
     assignment.test_support_files_attributes = updated_support_files
 
-    # Update assignment enable_test and tokens_per_day attributes
+    # Update assignment enable_test, tokens_per_day, regen_period and tokens_start_of_availability_date attributes
     assignment.enable_test = assignment_params[:enable_test]
     assignment.unlimited_tokens = assignment_params[:unlimited_tokens]
+    assignment.tokens_start_of_availability_date = assignment_params[:tokens_start_of_availability_date]
     num_tokens = assignment_params[:tokens_per_day]
+    regen_period = assignment_params[:regeneration_period]
     if num_tokens
       assignment.tokens_per_day = num_tokens
+    end
+    if regen_period
+      assignment.regeneration_period = regen_period
     end
 
     assignment

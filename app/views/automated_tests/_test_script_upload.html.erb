@@ -5,6 +5,12 @@
   I18n.t("automated_tests.script_option.display_option.do_not_display") => "do_not_display"
 } # this is defined and used to validate input in test_script.rb
 %>
+<% criterion_options = {}
+  @assignment.rubric_criteria(order: 'position').each do |criterion|
+      criterion_options[criterion.rubric_criterion_name] = criterion.rubric_criterion_name
+  end
+%>
+
 
 <%= form.fields_for :test_scripts, test_script do |f| %>
 <% saved = !f.object.new_record? %>
@@ -21,10 +27,10 @@
                    assignment_id: @assignment.id,
                    type: 'script',
                    filename: f.object.script_name) %>
-      <%= link_to saved ? '[-]' : '[+]',
+      <%= link_to(saved ? '[-]' : '[+]',
                  'javascript:void(0);',
                   onclick: 'toggleSettings(this);',
-                  class: 'collapse' %>
+                  class: 'collapse') %>
       </div>
       <%= f.hidden_field :script_name, value: f.object.script_name %>
       <% else %>
@@ -96,9 +102,14 @@
       <%= file_field_tag (saved ? ("new_update_script_"+f.object.script_name).to_sym : :new_script), size: "30", class: 'upload_file' %><br/>
 
       <% if saved %>
-        <%= f.label :_destroy, t('automated_tests.remove_file') %>
-        <%= f.check_box :_destroy, class: "remove_test_script_file" %>
+          <%= f.label :_destroy, t('automated_tests.remove_file') %>
+          <%= f.check_box :_destroy, class: "remove_test_script_file" %>
+          <br/><br/>
       <% end %>
+
+      <%= f.label :associated_criterion, t('automated_tests.script_option.associated_criterion') %>
+      <%= f.select :associated_criterion, options_for_select(criterion_options, f.object.associated_criterion) %>
+
 
       <br/><br/>
 
