@@ -16,7 +16,6 @@ class SingleSubmissionJob < ActiveJob::Base
   def perform(grouping, rev_num, apply_late_penalty, new_sub)
       grouping.is_collected = false
       #Grouping.assign_tas(grouping_ids, ta_ids, assignment)
-      #remove_grouping_from_queue(grouping)
       grouping.save
       
       apply_penalty_or_add_grace_credits(grouping,

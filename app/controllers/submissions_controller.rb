@@ -205,9 +205,11 @@ class SubmissionsController < ApplicationController
     grouping = Grouping.find(params[:id])
 
     if assignment.submission_rule.can_collect_grouping_now?(grouping)
-      # Push grouping to the priority queue
-      #SubmissionCollector.instance.push_grouping_to_priority_queue(grouping)
-      submission_collector.start_collection_process ###
+      #@grouping = Grouping.find(params[:id])
+      @revision_number = params[:current_revision_number].to_i
+      apply_late_penalty = params[:apply_late_penalty]
+      submission = SubmissionCollector.instance.manually_collect_submission(
+      grouping, @revision_number, apply_late_penalty, false)
       flash[:success] = I18n.t('collect_submissions.priority_given')
     else
       flash[:error] = I18n.t('browse_submissions.could_not_collect',
@@ -221,8 +223,8 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
       submission_collector = SubmissionCollector.instance
-#       submission_collector.push_groupings_to_queue(assignment.groupings)
-     submission_collector.start_collection_process ###
+       submission_collector.push_groupings_to_queue(assignment.groupings) #
+    # SubmissionCollector.instance.start_collection_process ###
       flash[:success] =
           I18n.t('collect_submissions.collection_job_started',
                  assignment_identifier: assignment.short_identifier)
