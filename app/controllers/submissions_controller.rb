@@ -220,8 +220,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
       submission_collector = SubmissionCollector.instance
-       submission_collector.push_groupings_to_queue(assignment.groupings) #
-    # SubmissionCollector.instance.start_collection_process ###
+     SubmissionCollector.instance.start_collection_process ###
       flash[:success] =
           I18n.t('collect_submissions.collection_job_started',
                  assignment_identifier: assignment.short_identifier)
