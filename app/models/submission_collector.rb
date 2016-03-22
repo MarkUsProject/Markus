@@ -204,55 +204,11 @@ class SubmissionCollector < ActiveRecord::Base
   def manually_collect_submission(grouping, rev_num,
                                   apply_late_penalty, async = true)
 
-    #Since windows doesn't support fork, the main process will have to collect
-    #the submissions.
-    #if !async || RUBY_PLATFORM =~ /(:?mswin|mingw)/ # match for Windows
        new_submission = Submission.create_by_revision_number(grouping, rev_num)
-#      grouping.is_collected = false
-#       remove_grouping_from_queue(grouping)
-#       grouping.save
-#       new_submission = Submission.create_by_revision_number(grouping, rev_num)
-#       apply_penalty_or_add_grace_credits(grouping,
-#                                          apply_late_penalty,
-#                                          new_submission)
-#       grouping.is_collected = true
-#       grouping.save
-#       return new_submission
 		SingleSubmissionJob.perform_later(grouping, rev_num, apply_late_penalty, new_submission)
 		return new_submission
-    end
 
-    #Make the child process exit safely, to avoid both parent and child process
-    #from calling the Magick::Image.from_blob function, this breaks future calls
-    #of the method by the child.
-#     safely_stop_child
-# 
-#     #remove the grouping from the grouping_queue so it isnt collected again
-#     grouping.is_collected = false
-#     remove_grouping_from_queue(grouping)
-#     grouping.save
-# 
-#     new_submission = Submission.create_by_revision_number(grouping, rev_num)
-#     apply_penalty_or_add_grace_credits(grouping,
-#                                        apply_late_penalty,
-#                                        new_submission)
-# 
-#     #This is to help determine the progress of the method.
-#     self.safely_stop_child_exited = true
-#     self.save
-# 
-#     #Let the child process handle conversion, as things go wrong when both
-#     #parent and child do this.
-#     start_collection_process do
-#         grouping.is_collected = true
-#         grouping.save
-#     end
-#     #setting is_collected here will prevent an sqlite lockout error when pdfs
-#     #aren't supported
-#       grouping.is_collected = true
-#       grouping.save
-# 
-#   end
+    end
 
   def safely_stop_child
     unless self.child_pid.nil?

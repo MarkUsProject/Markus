@@ -205,16 +205,13 @@ class SubmissionsController < ApplicationController
     grouping = Grouping.find(params[:id])
 
     if assignment.submission_rule.can_collect_grouping_now?(grouping)
-      #@grouping = Grouping.find(params[:id])
-      @revision_number = params[:current_revision_number].to_i
-      apply_late_penalty = params[:apply_late_penalty]
-      submission = SubmissionCollector.instance.manually_collect_submission(
-      grouping, @revision_number, apply_late_penalty, false)
+      grouping.update(is_collected: true)
+      grouping.save
       flash[:success] = I18n.t('collect_submissions.priority_given')
     else
       flash[:error] = I18n.t('browse_submissions.could_not_collect',
                              group_name: grouping.group.group_name)
-    end
+     end
     redirect_to action:   'browse',
                 id:       assignment.id
   end
