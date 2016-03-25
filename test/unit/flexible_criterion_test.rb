@@ -84,10 +84,6 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       @assignment = Assignment.make(:marking_scheme_type => 'flexible')
     end
 
-    should 'get an empty CSV string' do
-      csv_string = FlexibleCriterion.create_csv(@assignment)
-      assert_equal '', csv_string, 'the CSV string was not the one expected!'
-    end
 
     should 'be able to parse a valid CSV file' do
       tempfile = Tempfile.new('flexible_criteria_csv')
@@ -151,26 +147,6 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
                               :description => 'description3!',
                               :max => 1.6,
                               :position => 3)
-      end
-
-      should 'be able to get a csv string' do
-        csv_string = FlexibleCriterion.create_csv(@assignment)
-        assert_equal CSV_STRING, csv_string,
-                     'the CSV string was not the one expected!'
-      end
-
-      should 'be able to use a generated string for parsing' do
-        csv_string = FlexibleCriterion.create_csv(@assignment)
-        tempfile = Tempfile.new('flexible_csv')
-        tempfile << csv_string
-        tempfile.rewind
-        invalid_lines = []
-        dst_assignment = Assignment.make(:marking_scheme_type => 'flexible')
-        nb_updates = FlexibleCriterion.parse_csv(
-                                tempfile,
-                                dst_assignment, invalid_lines)
-        assert_equal 3, nb_updates
-        assert_equal 0, invalid_lines.size
       end
 
       should 'fail with corresponding error message if the name is already in use' do
