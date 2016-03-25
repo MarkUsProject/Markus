@@ -157,7 +157,7 @@ describe GradeEntryFormsController do
       {
         filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
         disposition: 'attachment',
-        type: 'application/vnd.ms-excel'
+        type: 'text/csv'
       }
     end
 
@@ -182,9 +182,9 @@ describe GradeEntryFormsController do
     end
 
     # parse header object to check for the right content type
-    it 'returns vnd.ms-excel type' do
+    it 'returns text/csv type' do
       get :csv_download, id: grade_entry_form
-      expect(response.content_type).to eq 'application/vnd.ms-excel'
+      expect(response.content_type).to eq 'text/csv'
     end
 
     # parse header object to check for the right file naming convention
