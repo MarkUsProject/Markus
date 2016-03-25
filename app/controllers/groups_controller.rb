@@ -113,7 +113,7 @@ class GroupsController < ApplicationController
   end
 
   def populate
-    @assignment = Assignment.includes(:student).find(params[:assignment_id])
+    @assignment = Assignment.find(params[:assignment_id])
     students_table_info = get_students_table_info
     groupings_table_info = get_groupings_table_info
     render json: [students_table_info, groupings_table_info]
