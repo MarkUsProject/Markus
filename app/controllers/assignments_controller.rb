@@ -213,6 +213,8 @@ class AssignmentsController < ApplicationController
         @assignment.section_due_dates.build(section: s)
       end
     end
+    @section_due_dates = @assignment.section_due_dates
+                                    .sort_by { |s| [SectionDueDate.due_date_for(s.section, @assignment), s.section.name] }
   end
 
   # Called when editing assignments form is submitted (PUT).
@@ -268,6 +270,8 @@ class AssignmentsController < ApplicationController
 
     # build section_due_dates for each section
     Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
+    @section_due_dates = @assignment.section_due_dates
+                                    .sort_by { |s| s.section.name }
 
     # set default value if web submits are allowed
     @assignment.allow_web_submits =
@@ -533,6 +537,7 @@ class AssignmentsController < ApplicationController
     assignment_list = params[:assignment_list]
 
     if assignment_list.blank?
+      flash[:error] = I18n.t('csv.invalid_csv')
       redirect_to action: 'index'
       return
     end
@@ -542,7 +547,7 @@ class AssignmentsController < ApplicationController
 
     case params[:file_format]
       when 'csv'
-        errors = MarkusCSV.parse(assignment_list) do |row|
+        result = MarkusCSV.parse(assignment_list) do |row|
           assignment = Assignment.find_or_create_by(short_identifier: row[0])
           attrs = Hash[DEFAULT_FIELDS.zip(row)]
           attrs.delete_if { |_, v| v.nil? }
@@ -551,13 +556,14 @@ class AssignmentsController < ApplicationController
             assignment.assignment_stat = AssignmentStat.new
           end
           assignment.update(attrs)
-          if assignment.valid?
-            flash_message(:success, t('assignment.create_success'))
-          else
-            raise CSVInvalidLineError
-          end
+          raise CSVInvalidLineError unless assignment.valid?
         end
-        flash_message(:error, errors) unless errors.empty?
+        unless result[:invalid_lines].empty?
+          flash_message(:error, result[:invalid_lines])
+        end
+        unless result[:valid_lines].empty?
+          flash_message(:success, result[:valid_lines])
+        end
       when 'yml'
         begin
           map = YAML::load(assignment_list)

@@ -20,14 +20,15 @@ class SubmissionRule < ActiveRecord::Base
      GracePeriodSubmissionRule]
   end
 
-  def can_collect_now?(section)
+  def can_collect_now?(section = nil)
     reset_collection_time if @can_collect_now.nil?
-    return @can_collect_now[section.id] if !@can_collect_now[section.id].nil?
-    @can_collect_now[section.id] = Time.zone.now >= get_collection_time(section)
+    section_id = section.nil? ? 0 : section.id
+    return @can_collect_now[section_id] unless @can_collect_now[section_id].nil?
+    @can_collect_now[section_id] = Time.zone.now >= get_collection_time(section)
   end
 
   def can_collect_all_now?
-    return @can_collect_all_now if !@can_collect_all_now.nil?
+    return @can_collect_all_now unless @can_collect_all_now.nil?
     @can_collect_all_now = Time.zone.now >= assignment.latest_due_date
   end
 
@@ -38,11 +39,13 @@ class SubmissionRule < ActiveRecord::Base
   # Cache that allows us to quickly get collection time
   def get_collection_time(section=nil)
     if section.nil?
-      return @get_global_collection_time if !@get_global_collection_time.nil?
+      return @get_global_collection_time unless @get_global_collection_time.nil?
       @get_global_collection_time = calculate_collection_time
     else
       reset_collection_time if @get_collection_time.nil?
-      return @get_collection_time[section.id] if !@get_collection_time[section.id].nil?
+      unless @get_collection_time[section.id].nil?
+        return @get_collection_time[section.id]
+      end
       @get_collection_time[section.id] = calculate_collection_time(section)
     end
   end

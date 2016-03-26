@@ -32,7 +32,7 @@ class MarksGradersController < ApplicationController
     if params[:grader_mapping].nil?
       flash[:error] = I18n.t('csv.student_to_grader')
     else
-      errors = MarkusCSV.parse(
+      result = MarkusCSV.parse(
           params[:grader_mapping].read,
           encoding: params[:encoding]) do |row|
         raise CSVInvalidLineError if row.empty?
@@ -45,7 +45,12 @@ class MarksGradersController < ApplicationController
         raise CSVInvalidLineError if grade_entry_student.nil?
         grade_entry_student.add_tas_by_user_name_array(row.drop(1))
       end
-      flash_message(:error, errors) unless errors.empty?
+      unless result[:invalid_lines].empty?
+        flash_message(:error, result[:invalid_lines])
+      end
+      unless result[:valid_lines].empty?
+        flash_message(:success, result[:valid_lines])
+      end
     end
     redirect_to action: 'index', grade_entry_form_id: params[:grade_entry_form_id]
   end
