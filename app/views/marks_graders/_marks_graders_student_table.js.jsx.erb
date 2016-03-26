@@ -15,7 +15,8 @@
     },
     studentsCheckboxAllClicked: function(event) {
       if (event.currentTarget.checked) {
-        var new_selected_students = this.props.students.map(function(x) {
+        var visible_rows = this.refs.myTable.state.visible_rows;
+        var new_selected_students = visible_rows.map(function(x) {
           return x.id;
         }).slice();
         this.props.onSelectedStudentsChange(new_selected_students);
@@ -36,9 +37,13 @@
     },
     gradersInStudentsCheckboxAllClicked: function(event) {
       if (event.currentTarget.checked) {
-        var new_selected_graders = this.props.graders_for_students.map(function(x) {
-          return x.membership_id;
-        }).slice();
+        var visible_rows = this.refs.myTable.state.visible_rows;
+        var new_selected_graders = [];
+        for (var i = 0; i < visible_rows.length; i++) {
+          for (var j = 0; j < visible_rows[i].graders.length; j++) {
+            new_selected_graders.push(visible_rows[i].graders[j].props.key);
+          }
+        }
         this.props.onSelectedGradersForStudentsChange(new_selected_graders);
       } else {
         this.props.onSelectedGradersForStudentsChange([]);
@@ -171,8 +176,8 @@
 
       return (
         <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
-          <Table data={students_data}
-            filters={section_filters} filter_type={false}
+          <Table data={students_data} ref="myTable"
+            filters={section_filters} filter_type={section_filters.length>3}
             search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
             onSelectedRowsChange={this.updateSelectedStudents}
             columns={columns} />
