@@ -49,6 +49,7 @@ class ResultsController < ApplicationController
     end
     @test_script_results = TestScriptResult.where(grouping:
       @grouping).order(created_at: :desc)
+    @feedback_files = @submission.feedback_files
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage

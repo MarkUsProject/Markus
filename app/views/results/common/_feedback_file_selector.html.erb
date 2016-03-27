@@ -1,0 +1,15 @@
+<%=label_tag "select_feedback_file_id", I18n.t("common.feedback_files"), class: "inline_label" %>
+
+  <select id="select_feedback_file_id" onchange="if (jQuery(this).val() != '') { load_feedback_file(jQuery(this).val()); }">
+    <% if feedback_files.where(submission_id: submission_id).empty? %>
+      <option value=""><%= I18n.t("test_result.no_files_available")%></option>
+    <% else %>
+      <% feedback_files.where(submission_id: submission_id).order("created_at DESC").each do |file| %>
+        <option value="<%= file.id %>">
+          <%= file.filename %>
+        </option>
+      <% end %>
+    <% end %>
+  </select>
+  <input type="button" onclick="if (jQuery('#select_feedback_file_id').val() != '') { load_feedback_file(jQuery('#select_feedback_file_id').val()); }"
+      value="<%= I18n.t("feedback_file.button.load")%>" />

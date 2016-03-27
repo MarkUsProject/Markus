@@ -277,7 +277,8 @@ pt:
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
       annot_summary: "Resumo de anot."
       source_code: "código fonte"
-      test_reuslts: "Resultado dos testes"
+      test_results: "Resultado dos testes"
+      feedback_files: "Arquivos de comentários"
       remark_request: "Pedido de revisão"
       remark_submitted_on: "Pedido de revisão enviado"
       remark_instructions: "Instruções para pedidos de revisão"
@@ -343,6 +344,7 @@ pt:
     common:
       submission_file: "Arquivo enviado:"
       test_results: "Resultado dos testes:"
+      feedback_files: "Arquivos de comentários"
       no_file_in_repository: "[Nenhum arquivo no respositório]"
       cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
       image_downloading: "Baixando pdf, por favor espere."
@@ -971,6 +973,11 @@ pt:
       build_successful: "Testes Completados. Veja '%{logfile}' para detalhes."
       build_failed: "Falha de compilação. Veja '%{logfile}' para investigar."
       build_error: "Erro desconhecido com Ant. O Ant foi corretamente instalado? Veja '%{logfile}' para investigar."
+
+    feedback_file:
+        button:
+            load: "Carregar"
+        no_files_available: "[No arquivo de feedback disponíveis]"
 
     criteria_csv_error:
       incomplete_row: "contém poucas informações."

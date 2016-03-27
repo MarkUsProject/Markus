@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160303184449) do
+ActiveRecord::Schema.define(version: 20160327163400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -135,6 +135,16 @@ ActiveRecord::Schema.define(version: 20160303184449) do
   end
 
   add_index "extra_marks", ["result_id"], name: "index_extra_marks_on_result_id", using: :btree
+
+  create_table "feedback_files", force: :cascade do |t|
+    t.string   "filename"
+    t.text     "file_content"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.integer  "submission_id"
+  end
+
+  add_index "feedback_files", ["submission_id"], name: "index_feedback_files_on_submission_id", using: :btree
 
   create_table "flexible_criteria", force: :cascade do |t|
     t.string   "flexible_criterion_name",                                      null: false
@@ -515,6 +525,7 @@ ActiveRecord::Schema.define(version: 20160303184449) do
   add_foreign_key "assignment_files", "assignments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_stats", "assignments", name: "fk_assignment_stats_assignments", on_delete: :cascade
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
+  add_foreign_key "feedback_files", "submissions"
   add_foreign_key "groupings", "assignments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade

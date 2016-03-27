@@ -15,6 +15,7 @@ class Submission < ActiveRecord::Base
   has_many   :annotations, through: :submission_files
   has_many   :test_results, dependent: :destroy
   has_many   :test_script_results, :dependent => :destroy
+  has_many   :feedback_files, dependent: :destroy
 
 
   def self.create_by_timestamp(grouping, timestamp)

@@ -57,6 +57,13 @@ class AssignmentsController < ApplicationController
     render text: @test_result.file_content
   end
 
+  def render_feedback_file
+    @feedback_file = FeedbackFile.find_by_id(params[:feedback_file_id])
+
+    sanitized_content = ERB::Util.html_escape(@feedback_file.file_content)
+    render text: sanitized_content, layout: 'sanitized_html'
+  end
+
   def student_interface
     @assignment = Assignment.find(params[:id])
     if @assignment.is_hidden

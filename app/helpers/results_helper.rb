@@ -38,4 +38,8 @@ module ResultsHelper
   def can_show_test_results_tab?(assignment, submission)
     submission.test_results && assignment.enable_test
   end
+
+  def can_show_feedback_files_tab?(submission)
+    not submission.feedback_files.empty?
+  end
 end

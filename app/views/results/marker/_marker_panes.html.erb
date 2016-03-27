@@ -10,6 +10,10 @@
               <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
           <% end %>
 
+          <% if can_show_feedback_files_tab?(submission) %>
+              <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
+          <% end %>
+
            <% if can_show_remark_request_tab_in_marker_pane(submission) %>
               <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
            <% end %>
@@ -68,6 +72,13 @@
                   </div>
                 </div>
               <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <% if can_show_feedback_files_tab?(submission) %>
+          <div id='feedback_file_tab' style='display:none;'>
+            <div id='feedback_file_content'>
             </div>
           </div>
         <% end %>

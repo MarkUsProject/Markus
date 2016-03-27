@@ -296,6 +296,7 @@ fr:
       annot_summary: "Liste annot."
       source_code: "Code Source"
       test_results: "Résultats de test"
+      feedback_files: "Fichiers de support"
       remark_request: "Demande de retour"
       remark_submitted_on: "Demande de retour activée"
       remark_instructions: "Instructions pour les demandes de retour"
@@ -361,6 +362,7 @@ fr:
     common:
       submission_file: "Fichier envoyé : "
       test_results: "Résultat des tests : "
+      feedback_files: "Fichiers de support"
       no_file_in_repository: "[Pas de fichiers dans le dépôt]"
       cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, vérifiez que l'option permettant d'afficher les PDF est activée. Vous pouvez télécharger manuellement le fichier."
       image_downloading: "Page pdf en cours de téléchargement. Veuillez patienter."
@@ -999,6 +1001,11 @@ fr:
       build_successful: "Tests terminés. Afficher '%{logfile}' pour les détails."
       build_failed: "Tests échoués. Afficher '%{logfile}' pour voir le log."
       build_error: "Erreur inconnue avec Ant. Ant est-il correctement installé sur le serveur ? Voir '%{logfile}' pour plus d'informations."
+
+    feedback_file:
+        button:
+            load: "Charger le fichier de support"
+        no_files_available: "[Aucun fichier de support disponible]"
 
     criteria_csv_error:
       incomplete_row: "(ligne incomplète) ne contient pas assez d'informations."

@@ -16,6 +16,7 @@ Markus::Application.routes.draw do
           end
           resources :submission_downloads, except: [:new, :edit]
           resources :test_results, except: [:new, :edit]
+          resources :feedback_files, except: [:new, :edit]
           member do
             put 'update_marks'
             put 'update_marking_state'
@@ -50,6 +51,7 @@ Markus::Application.routes.draw do
         get 'decline_invitation'
         post 'disinvite_member'
         get 'render_test_result'
+        get 'render_feedback_file'
         get 'view_summary'
       end
 

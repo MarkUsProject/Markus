@@ -290,6 +290,7 @@ en:
       annot_summary: "Annotations"
       source_code: "Source Code"
       test_results: "Test Results"
+      feedback_files: "Feedback files"
       remark_request: "Remark Request"
       remark_submitted_on: "Remark Request Submitted On"
       remark_instructions: "Instructions for Remark Requests"
@@ -363,6 +364,7 @@ en:
     common:
       submission_file: "Submission File:"
       test_results: "Test Results:"
+      feedback_files: "Feedback Files"
       no_file_in_repository: "[No files in repository]"
       cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
       image_downloading: "PDF page downloading. Please wait."
@@ -1113,6 +1115,11 @@ en:
       build_successful: "Tests Completed. View '%{logfile}' for details."
       build_failed: "Build Failed. View '%{logfile}' to investigate."
       build_error: "Unknown error with Ant. Is Ant correctly installed? View '%{logfile}' to investigate."
+
+    feedback_file:
+        button:
+            load: "Load Feedback File"
+        no_files_available: "[No feedback file available]"
 
     criteria_csv_error:
       incomplete_row: "contains too little information."
