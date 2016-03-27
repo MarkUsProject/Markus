@@ -9,13 +9,6 @@
 # The actual creation of the submissions for the grouping is done inside a
 # forked process due to the length of time taken to collect submissions with
 # pdf files in them.
-#
-# The collector updates the groupings to let them know if they are in queue for
-# collection, in order to figure out if their current submission is the latest
-# one, or theres a newer one waiting to be collected.
-#
-# Both queues are stored in the database to allow for easy parent-child
-# process communication bypassing the need for pipes or signals.
 class SubmissionCollector < ActiveRecord::Base
 
   has_many :grouping_queues, dependent: :destroy
@@ -36,15 +29,12 @@ class SubmissionCollector < ActiveRecord::Base
   end
 
   def start_collection_process
-    SubmissionJob.perform_later
+    SubmissionsJob.perform_later
   end
 
 
-  #Use the database to communicate to the child to stop, and restart itself
-  #and manually collect the submission
-  #The third parameter enables or disables the forking.
   def manually_collect_submission(grouping, rev_num,
-                                  apply_late_penalty, async = true)
+                                  apply_late_penalty)
 
        new_submission = Submission.create_by_revision_number(grouping, rev_num)
 		SingleSubmissionJob.perform_later(grouping, rev_num, apply_late_penalty, new_submission)
