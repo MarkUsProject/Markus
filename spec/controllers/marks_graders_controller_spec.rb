@@ -123,4 +123,60 @@ describe MarksGradersController do
                                           grade_entry_form_with_data.id)
     end
   end
+
+  context 'download_grader_students_mapping' do
+    let(:csv_options) do
+      {
+        type: 'text/csv',
+        disposition: 'attachment'
+      }
+    end
+
+    before :each do
+      # clear user's from any previous test suites
+      User.all.each do |user|
+        user.delete
+      end
+      @grade_entry_form = create(:grade_entry_form)
+      @student = create(:student, user_name: 'c8shosta')
+      @ta = create(:ta, user_name: 'c5bennet')
+      @grade_entry_student = create(:grade_entry_student, user: @student, grade_entry_form: @grade_entry_form)
+      @grade_entry_student.add_tas_by_user_name_array([@ta.user_name])
+    end
+
+    it 'responds with appropriate status' do
+      get :download_grader_students_mapping,
+          grade_entry_form_id: @grade_entry_form.id,
+          format: 'csv'
+      expect(response.status).to eq(200)
+    end
+
+    # parse header object to check for the right disposition
+    it 'sets disposition as attachment' do
+      get :download_grader_students_mapping,
+          grade_entry_form_id: @grade_entry_form.id,
+          format: 'csv'
+      d = response.header['Content-Disposition'].split.first
+      expect(d).to eq 'attachment'
+    end
+
+    it 'expects a call to send_data' do
+      csv_data =  "#{@student.user_name},#{@ta.user_name}\n"
+      expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
+        # to prevent a 'missing template' error
+        @controller.render nothing: true
+      }
+      get :download_grader_students_mapping,
+          grade_entry_form_id: @grade_entry_form.id,
+          format: 'csv'
+    end
+
+    # parse header object to check for the right content type
+    it 'returns text/csv type' do
+      get :download_grader_students_mapping,
+          grade_entry_form_id: @grade_entry_form.id,
+          format: 'csv'
+      expect(response.content_type).to eq 'text/csv'
+    end
+  end
 end
