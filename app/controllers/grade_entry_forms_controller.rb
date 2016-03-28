@@ -290,63 +290,48 @@ class GradeEntryFormsController < ApplicationController
 
   # Upload the grades for this grade entry form using a CSV file
   def csv_upload
-
     @grade_entry_form = GradeEntryForm.find(params[:id])
-
-    encoding = params[:encoding]
-    upload = params[:upload]
-    overwrite = params[:overwrite]
-
-    #flag to check whether upload should continue. True if upload should be aborted
-    abort_upload = false
-
-    #Did the user upload a file?
-    if upload.blank?
-      flash[:error] = "No file selected!"
-      abort_upload = true
-    else
-      filename = params[:upload][:grades_file].original_filename
-      filename_extension = filename[-4, 4]
-      if filename_extension != ".csv"
-        abort_upload = true
-        flash[:error] = "You did not upload a .csv file."
-      end
-      # Replace non-UNIX line endings with standard CR+LF style
-      if (reader = File.read(params[:upload][:grades_file].path.to_s,
-                             mode: 'rb'))
-        replaced_newlines = reader.gsub!(/\r\n?|\n/, "\r\n")
-        unless replaced_newlines == nil
-          File.open(params[:upload][:grades_file].path.to_s, 'wb') do |f|
-            f.write(replaced_newlines + "\r\n")
-          end
-        end
-      end
-    end
 
     # If the request is a post type and the abort flag is down
     # (operation can continue)
-    if request.post? && !abort_upload
+    if request.post? && params[:upload] && params[:upload][:grades_file]
       grades_file = params[:upload][:grades_file]
-      begin
-        GradeEntryForm.transaction do
-          invalid_lines = []
-          num_updates = GradeEntryForm.parse_csv(grades_file,
-                                                 @grade_entry_form,
-                                                 invalid_lines,
-                                                 encoding, overwrite)
-          unless invalid_lines.empty?
-            flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
+      encoding = params[:encoding]
+      overwrite = params[:overwrite]
+      names = ''
+      totals = ''
+      result = []
+      GradeEntryForm.transaction do
+        # Parse the grades
+        result = MarkusCSV.parse(grades_file.read, encoding: encoding) do |row|
+          next if CSV.generate_line(row).strip.empty?
+          # grab names and totals from the first two rows
+          if names.empty?
+            names = row
+            next
           end
-          if num_updates > 0
-            flash[:notice] = I18n.t('grade_entry_forms.csv.upload_success',
-                                    num_updates: num_updates)
+          if totals.empty?
+            totals = row
+            # Create/update the grade entry items
+            GradeEntryItem
+              .create_or_update_from_csv_rows(names, totals, @grade_entry_form)
+            next
           end
+          GradeEntryStudent
+            .create_or_update_from_csv_row(row,
+                                           @grade_entry_form,
+                                           @grade_entry_form.grade_entry_items,
+                                           names, overwrite)
         end
-      rescue CSV::MalformedCSVError
-        flash[:error] = t('csv.upload.malformed_csv')
-      rescue ArgumentError
-        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
       end
+      unless result[:invalid_lines].empty?
+        flash_message(:error, result[:invalid_lines])
+      end
+      unless result[:valid_lines].empty?
+        flash_message(:success, result[:valid_lines])
+      end
+    else
+      flash_message(:error, I18n.t('csv.invalid_csv'))
     end
     redirect_to action: 'grades', id: @grade_entry_form.id
   end
