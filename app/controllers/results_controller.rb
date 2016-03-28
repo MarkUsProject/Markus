@@ -143,11 +143,9 @@ class ResultsController < ApplicationController
                                               submission_id)
       
     rescue => e
-
       # TODO: really shouldn't be leaking error if student.
       flash_message(:error, e.message)
     end
-    #debugger
     redirect_to :back
   end
 
