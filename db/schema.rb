@@ -138,7 +138,7 @@ ActiveRecord::Schema.define(version: 20160327163400) do
 
   create_table "feedback_files", force: :cascade do |t|
     t.string   "filename"
-    t.text     "file_content"
+    t.binary   "file_content"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.integer  "submission_id"

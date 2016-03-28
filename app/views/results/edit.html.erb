@@ -67,11 +67,6 @@
 <%= render partial: 'results/common/old_marks_view_functions',
            formats: [:html] %>
 
-<% # Javascript for test result window %>
-<%= render partial: 'assignments/test_result_window',
-           formats: [:html],
-           locals: { aid: @assignment.id } %>
-
 <% # Javascript for feedback file window %>
 <%= render partial: 'assignments/feedback_file_window',
            formats: [:html] %>           

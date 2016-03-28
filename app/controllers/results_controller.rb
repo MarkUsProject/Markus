@@ -434,6 +434,7 @@ class ResultsController < ApplicationController
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
+    @feedback_files = @submission.feedback_files
     # This is outdated
     #@test_result_files = @submission.test_results
     # ----

@@ -10,7 +10,7 @@ class AssignmentsController < ApplicationController
                               :index,
                               :student_interface,
                               :update_collected_submissions,
-                              :render_test_result]
+                              :render_feedback_file]
 
   before_filter      :authorize_for_student,
                      only: [:student_interface,
@@ -23,7 +23,7 @@ class AssignmentsController < ApplicationController
                             :decline_invitation]
 
   before_filter      :authorize_for_user,
-                     only: [:index, :render_test_result]
+                     only: [:index, :render_feedback_file]
 
   auto_complete_for  :assignment,
                      :name
@@ -59,6 +59,14 @@ class AssignmentsController < ApplicationController
 
   def render_feedback_file
     @feedback_file = FeedbackFile.find_by_id(params[:feedback_file_id])
+
+    # Students can use this action only, when marks have been released
+    if current_user.student? &&
+        (@feedback_file.submission.grouping.membership_status(current_user).nil? ||
+        @feedback_file.submission.get_latest_result.released_to_students == false)
+      flash_message(:error, t('feedback_file.error.no_access',
+                              feedback_file_id: @feedback_file.id))
+    end
 
     sanitized_content = ERB::Util.html_escape(@feedback_file.file_content)
     render text: sanitized_content, layout: 'sanitized_html'
