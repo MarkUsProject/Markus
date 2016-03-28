@@ -381,6 +381,12 @@
                         data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
                   <%= j raw I18n.t('collect_submissions.collect_section') %>
                 </button>
+                <% if @assignment.can_uncollect_submissions? %>
+                  <button onClick={this.uncollectAllSubmissions}
+                    data-confirm='<%= t('collect_submissions.undo_results_loss_warning')%>' data-remote="true">
+                  <%=j raw I18n.t('collect_submissions.uncollect_all') %>
+                </button>
+                <% end %>
               <% end
             else %>
               <button onClick={this.collectAllSubmissions}
@@ -389,7 +395,7 @@
               </button>
               <% if @assignment.can_uncollect_submissions? %>
                 <button onClick={this.uncollectAllSubmissions}
-                        data-confirm='<%= t('collect_submissions.results_loss_warning')%>'>
+                 data-confirm='<%= t('collect_submissions.undo_results_loss_warning')%>' data-remote="true">
                   <%=j raw I18n.t('collect_submissions.uncollect_all') %>
                 </button>
               <% end %>

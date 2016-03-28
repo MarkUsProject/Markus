@@ -274,18 +274,20 @@ class SubmissionCollector < ActiveRecord::Base
     old_submissions = submissions.where(submission_version_used: true)
     ActiveRecord::Base.transaction do
       old_submissions.each do |submission|
-        version = submission.submission_version
         grouping = submission.grouping
-        if version == 1
-          grouping.assign_attributes(is_collected: false)
-        else
-          prev_rev = submissions.where(submission_version: version - 1,
-                                       grouping_id: grouping.id).first
-          prev_rev.update_attributes(submission_version_used: true)
-        end
-        submission.update_attributes(submission_version_used: false)
-        grouping.update_attributes(grouping_queue_id: nil)
+        grouping.update_attributes(grouping_queue_id: nil, is_collected: false)
+        # version = submission.submission_version
+        # grouping = submission.grouping
+        # if version == 1
+        #   grouping.assign_attributes(is_collected: false)
+        # else
+        #   prev_rev = submissions.where(submission_version: version - 1,
+        #                                grouping_id: grouping.id).first
+        #   prev_rev.update_attributes(submission_version_used: true)
+        # end
+        # grouping.update_attributes(grouping_queue_id: nil)
       end
+      old_submissions.destroy_all
     end
   end
 

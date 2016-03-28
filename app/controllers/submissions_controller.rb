@@ -234,10 +234,10 @@ class SubmissionsController < ApplicationController
 
   def uncollect_all_submissions
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
-    submission_collector = SubmissionCollector.instance
-    submission_collector.uncollect_submissions(assignment)
-    success = I18n.t('collect_submissions.uncollect_all')
-    render json: { success: success }
+    @current_job = UncollectSubmissions.perform_later(assignment)
+    respond_to do |format|
+      format.js {}
+    end
   end
 
   def collect_section_submissions
