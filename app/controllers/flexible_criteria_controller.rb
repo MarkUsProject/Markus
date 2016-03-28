@@ -64,7 +64,12 @@ class FlexibleCriteriaController < ApplicationController
 
   def download
     @assignment = Assignment.find(params[:assignment_id])
-    file_out = FlexibleCriterion.create_csv(@assignment)
+    criteria = FlexibleCriterion.where(assignment_id: @assignment.id)
+                                .order(:position)
+    file_out = MarkusCSV.generate(criteria) do |criterion|
+      [criterion.flexible_criterion_name, criterion.max,
+       criterion.description]
+    end
     send_data(file_out,
               type: 'text/csv',
               filename: "#{@assignment.short_identifier}_flexible_criteria.csv",
