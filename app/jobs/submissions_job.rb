@@ -1,16 +1,13 @@
 class SubmissionsJob < ActiveJob::Base
   queue_as :submissions
 
-  def perform #(ids, all=false)
+  def perform
 
     m_logger = MarkusLogger.instance
 
       begin
         m_logger.log('Submission collection process established database' +
-                     ' connection successfully')
-
-		#if all?
-		  
+                     ' connection successfully')		  
 
         Grouping.find_each do |grouping|
         
@@ -36,7 +33,7 @@ class SubmissionsJob < ActiveJob::Base
 
         end
         m_logger.log('Submission collection process done')
-      self.save
+      end
   end
 
   def apply_penalty_or_add_grace_credits(grouping,

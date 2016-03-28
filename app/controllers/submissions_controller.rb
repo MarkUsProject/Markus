@@ -189,6 +189,7 @@ class SubmissionsController < ApplicationController
   end
 
   def manually_collect_and_begin_grading
+  ## May fail to redirect, depends on other jobs in queue.
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
     apply_late_penalty = params[:apply_late_penalty]
@@ -203,15 +204,12 @@ class SubmissionsController < ApplicationController
   def collect_and_begin_grading
     assignment = Assignment.find(params[:assignment_id])
     grouping = Grouping.find(params[:id])
+    ## I can't figure out why the repo_browser shows no submission before deadline
+    rev_num = grouping.group.repo.get_latest_revision.revision_number
+    
+    submission = Submission.create_by_revision_number(grouping, rev_num)
+	SingleSubmissionJob.perform_later(grouping, rev_num, true, submission)
 
-    if assignment.submission_rule.can_collect_grouping_now?(grouping)
-      grouping.update(is_collected: true)
-      grouping.save
-      flash[:success] = I18n.t('collect_submissions.priority_given')
-    else
-      flash[:error] = I18n.t('browse_submissions.could_not_collect',
-                             group_name: grouping.group.group_name)
-     end
     redirect_to action:   'browse',
                 id:       assignment.id
   end
