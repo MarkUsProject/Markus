@@ -141,7 +141,6 @@ class ResultsController < ApplicationController
                                               'submission',
                                               @current_user,
                                               submission_id)
-      
     rescue => e
       # TODO: really shouldn't be leaking error if student.
       flash_message(:error, e.message)
