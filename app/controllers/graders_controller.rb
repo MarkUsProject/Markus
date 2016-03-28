@@ -53,7 +53,7 @@ class GradersController < ApplicationController
 
   def populate
     @assignment = Assignment.find(params[:assignment_id])
-    @sections = Section.all
+    @sections = Section.order(:name)
 
     assign_to_criteria = @assignment.assign_graders_to_criteria
     if assign_to_criteria
