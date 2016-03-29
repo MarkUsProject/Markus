@@ -193,8 +193,8 @@ class SubmissionsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
     apply_late_penalty = params[:apply_late_penalty]
-    submission = SubmissionCollector.instance.manually_collect_submission(
-      @grouping, @revision_number, apply_late_penalty)
+    submission = Submission.create_by_revision_number(@grouping, @revision_number)
+    SingleSubmissionJob.perform_later(@grouping, @revision_number, apply_late_penalty, submission)
     redirect_to edit_assignment_submission_result_path(
       assignment_id: @grouping.assignment_id,
       submission_id: submission.id,
@@ -217,7 +217,7 @@ class SubmissionsController < ApplicationController
   def collect_all_submissions
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
-     SubmissionCollector.instance.start_collection_process ###
+     SubmissionJob.perform_later
     end
     redirect_to action: 'browse',
                 id: assignment.id

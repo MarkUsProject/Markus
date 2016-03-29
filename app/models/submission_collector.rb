@@ -36,7 +36,6 @@ class SubmissionCollector < ActiveRecord::Base
   def manually_collect_submission(grouping, rev_num,
                                   apply_late_penalty)
 
-       new_submission = Submission.create_by_revision_number(grouping, rev_num)
 		SingleSubmissionJob.perform_later(grouping, rev_num, apply_late_penalty, new_submission)
 		return new_submission
   end
