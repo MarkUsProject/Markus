@@ -159,7 +159,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def get_all_students_in_group
-    student_user_names = student_memberships.collect {|m| m.user.user_name }
+    student_user_names = student_memberships.includes(:user).collect {|m| m.user.user_name }
     return I18n.t('assignment.group.empty') if student_user_names.size == 0
 	  student_user_names.join(', ')
   end
