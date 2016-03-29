@@ -359,7 +359,7 @@
 
       // need to filter for each section
       var section_filters = [];
-      var all = '<%= j raw I18n.t('all') %>';
+      var all = '<%= I18n.t('all') %>';
       section_filters.push({name: all, text: all, func: function(g) { return g; } });
 
       for (var i = 0; i < this.props.sections.length; i++) {
@@ -456,7 +456,7 @@
               </ul>
              <div id='groups-tab'>
                <Table data={groups_data} columns={group_columns} ref="myTable"
-                 filters={section_filters} filter_type={section_filters.length>3}
+                 filters={section_filters} filter_type={section_filters.length > 3}
                  search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
              </div>
              <div id='criteria-tab'>
@@ -558,7 +558,7 @@
 
       // need to filter for each section
       var filters = [];
-      var all = '<%= j raw I18n.t('all') %>';
+      var all = '<%= I18n.t('all') %>';
       filters.push({name: all, text: all, func: function(g) { return g; } });
 
       for (var i = 0; i < this.props.sections.length; i++) {
@@ -597,7 +597,7 @@
       return (
         <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
           <Table data={groups_data} columns={columns} ref="myTable"
-               filters={filters} filter_type={filters.length>3}
+               filters={filters} filter_type={filters.length > 3}
                search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
         </div>
       );

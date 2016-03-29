@@ -100,7 +100,7 @@
     },
     render: function() {
       var section_filters = [];
-      var all = '<%= j raw I18n.t('all') %>';
+      var all = '<%= I18n.t('all') %>';
       section_filters.push({name: all, text: all, func: function(g) { return g; } });
 
       for (var i = 0; i < this.state.sections.length; i++) {
@@ -177,7 +177,7 @@
       return (
         <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
           <Table data={students_data} ref="myTable"
-            filters={section_filters} filter_type={section_filters.length>3}
+            filters={section_filters} filter_type={section_filters.length > 3}
             search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
             onSelectedRowsChange={this.updateSelectedStudents}
             columns={columns} />
