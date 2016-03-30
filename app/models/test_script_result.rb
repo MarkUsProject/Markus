@@ -19,13 +19,12 @@
 #############################################################
 
 class TestScriptResult < ActiveRecord::Base
-  belongs_to :submission
+  belongs_to :submission, required: false
   belongs_to :test_script
   belongs_to :grouping
 
   has_many :test_results
 
-  validates_presence_of :submission # we require an associated submission
   validates_presence_of :grouping   # we require an associated grouping
   validates_associated  :grouping   # grouping need to be valid
 

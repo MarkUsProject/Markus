@@ -262,7 +262,8 @@ class SubmissionCollector < ActiveRecord::Base
                       on grouping: '#{grouping.id}'")
         AutomatedTestsHelper.request_a_test_run(new_submission.grouping.id,
                                                 'collection',
-                                                @current_user)
+                                                @current_user,
+                                                new_submission.id)
       end
     end
 end
