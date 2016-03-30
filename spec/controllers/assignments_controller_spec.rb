@@ -163,7 +163,7 @@ describe AssignmentsController do
     end
 
     # parse header object to check for the right content type
-    it 'returns vnd.ms-excel type' do
+    it 'returns text/csv type' do
       get :download_assignment_list, file_format: 'csv'
       expect(response.content_type).to eq 'text/csv'
     end
