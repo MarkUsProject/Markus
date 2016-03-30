@@ -325,6 +325,24 @@
         }.bind(this)
       });
     },
+    uncollectAllSubmissions: function() {
+      jQuery.ajax({
+        method: 'GET',
+        url: 'uncollect_all_submissions',
+        success: function(data) {
+          if(data.message){
+            this.props.onSuccess(data.message);
+          }
+          if(data.error){
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
     collectSectionSubmissions: function() {
       var dataLoad = {
         sections: this.refs.sectionSelect.state.value.split(',')
@@ -363,12 +381,24 @@
                         data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
                   <%= j raw I18n.t('collect_submissions.collect_section') %>
                 </button>
+                <% if @assignment.can_uncollect_submissions? %>
+                  <button onClick={this.uncollectAllSubmissions}
+                    data-confirm='<%= t('collect_submissions.undo_results_loss_warning')%>' data-remote="true">
+                  <%=j raw I18n.t('collect_submissions.uncollect_all') %>
+                </button>
+                <% end %>
               <% end
             else %>
               <button onClick={this.collectAllSubmissions}
                       data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
                 <%= j raw I18n.t('collect_submissions.collect_all') %>
               </button>
+              <% if @assignment.can_uncollect_submissions? %>
+                <button onClick={this.uncollectAllSubmissions}
+                 data-confirm='<%= t('collect_submissions.undo_results_loss_warning')%>' data-remote="true">
+                  <%=j raw I18n.t('collect_submissions.uncollect_all') %>
+                </button>
+              <% end %>
             <% end
           end %>
           <button onClick={this.releaseMarks}>

@@ -55,7 +55,6 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
 
       end
     rescue => e
-      debugger
       Rails.logger.error e.message
       job_messenger.update_attributes(status: failed, message: e.message)
       PopulateCache.populate_for_job(job_messenger, job_id)
