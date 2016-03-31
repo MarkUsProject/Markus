@@ -443,5 +443,4 @@ module AutomatedTestsHelper
     end
 
   end
-
 end

@@ -7,9 +7,8 @@ module Api
     # Returns a list of TesResults associated with a group's assignment submission
     # Requires: assignment_id, group_id
     def index
-      # get_submission renders appropriate error if the submission isn't found
-      submission = get_submission(params[:assignment_id], params[:group_id])
-      return if submission.nil?
+      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+        params[:group_id], params[:assignment_id])
 
       test_script_results = submission.test_script_results.includes(:test_results)
 
@@ -18,26 +17,22 @@ module Api
           'test_script_results', skip_types: 'true', include: {test_results: {}})}
         format.json{render json: test_script_results.to_json(include: {test_results: {}})}
       end
+      rescue ActiveRecord::RecordNotFound => e
+        # Could not find submission
+        render 'shared/http_status', locals: {code: '404', message:
+          e}, status: 404
     end
 
     # Sends the contents of the specified Test Script Result
     # Requires: assignment_id, group_id, id
     def show
-      # get_submission renders appropriate error if the submission isn't found
-      submission = get_submission(params[:assignment_id], params[:group_id])
-      return if submission.nil?
+      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+        params[:group_id], params[:assignment_id])
 
       test_script_result = submission
                           .test_script_results
                           .includes(:test_results)
-                          .find_by_id(params[:id])
-
-      # Render error if the TestResult does not exist
-      if test_script_result.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'Test script result was not found'}, status: 404
-        return
-      end
+                          .find(params[:id])
 
       respond_to do |format|
         format.xml{render xml: test_script_result.to_xml(root:
@@ -45,6 +40,10 @@ module Api
         format.json{render json: test_script_result
                                  .to_json(include: {test_results: {}})}
       end
+      rescue ActiveRecord::RecordNotFound => e
+        # Could not find submission or test script result
+        render 'shared/http_status', locals: {code: '404', message:
+          e}, status: 404
     end
 
     # Creates a new test result for a group's latest assignment submission
@@ -61,9 +60,8 @@ module Api
         return
       end
 
-      # get_submission renders appropriate error if the submission isn't found
-      submission = get_submission(params[:assignment_id], params[:group_id])
-      return if submission.nil?
+      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+        params[:group_id], params[:assignment_id])
       
       grouping = submission.grouping
       assignment = submission.assignment
@@ -80,25 +78,21 @@ module Api
         render 'shared/http_status', locals: { code: '500', message:
           HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
       end
+      rescue ActiveRecord::RecordNotFound => e
+        # Could not find submission
+        render 'shared/http_status', locals: {code: '404', message:
+          e}, status: 404
     end
 
     # Deletes a Test Script Result instance
     # Requires: assignment_id, group_id, id
     def destroy
-      # get_submission renders appropriate error if the submission isn't found
-      submission = get_submission(params[:assignment_id], params[:group_id])
-      return if submission.nil?
+      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+        params[:group_id], params[:assignment_id])
 
       test_script_result = submission
                            .test_script_results
-                           .find_by_id(params[:id])
-
-      # Render error if the TestResult does not exist
-      if test_script_result.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'Test script result was not found'}, status: 404
-        return
-      end
+                           .find(params[:id])
 
       if test_script_result.destroy
         # Successfully deleted the TestResult; render success
@@ -125,28 +119,20 @@ module Api
         return
       end
 
-      # get_submission renders appropriate error if the submission isn't found
-      submission = get_submission(params[:assignment_id], params[:group_id])
-      return if submission.nil?
+      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+        params[:group_id], params[:assignment_id])
 
-      test_script_result = submission.test_script_results.find_by_id(params[:id])
-
-      # Render error if the Test Script Result does not exist
-      if test_script_result.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'Test script result was not found'}, status: 404
-        return
-      end
+      test_script_result = submission.test_script_results.find(params[:id])
 
       grouping = submission.grouping
       assignment = submission.assignment
 
-      if test_script_result.destroy &&
-       AutomatedTestsHelper.process_result(params[:file_content],
+      if AutomatedTestsHelper.process_result(params[:file_content],
                                           'submission',
                                           assignment,
                                           grouping,
-                                          submission)
+                                          submission) &&
+          test_script_result.destroy
         render 'shared/http_status', locals: {code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
       else
@@ -154,36 +140,6 @@ module Api
         render 'shared/http_status', locals: { code: '500', message:
           HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
       end
-    end
-
-    # Given assignment and group id's, returns the submission if found, or nil
-    # otherwise. Also renders appropriate responses on error.
-    def get_submission(assignment_id, group_id)
-      assignment = Assignment.find_by_id(assignment_id)
-      if assignment.nil?
-        # No assignment with that id
-        render 'shared/http_status', locals: {code: '404', message:
-          'No assignment exists with that id'}, status: 404
-        return nil
-      end
-
-      group = Group.find_by_id(group_id)
-      if group.nil?
-        # No group exists with that id
-        render 'shared/http_status', locals: {code: '404', message:
-          'No group exists with that id'}, status: 404
-        return nil
-      end
-
-      submission = Submission.get_submission_by_group_and_assignment(
-        group[:group_name], assignment[:short_identifier])
-      if submission.nil?
-        # No assignment submission by that group
-        render 'shared/http_status', locals: {code: '404', message:
-          'Submission was not found'}, status: 404
-      end
-
-      submission
     end
 
   end # end TestResultsController

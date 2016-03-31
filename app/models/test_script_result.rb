@@ -23,7 +23,7 @@ class TestScriptResult < ActiveRecord::Base
   belongs_to :test_script
   belongs_to :grouping
 
-  has_many :test_results, :dependent => :destroy
+  has_many :test_results, dependent: :destroy
 
   validates_presence_of :grouping   # we require an associated grouping
   validates_associated  :grouping   # grouping need to be valid
