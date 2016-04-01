@@ -1,7 +1,7 @@
 class SubmissionsJob < ActiveJob::Base
   queue_as :submissions
 
-  def perform
+  def perform(assignment)
 
     m_logger = MarkusLogger.instance
 
@@ -9,10 +9,9 @@ class SubmissionsJob < ActiveJob::Base
         m_logger.log('Submission collection process established database' +
                      ' connection successfully')		  
 
-        Grouping.find_each do |grouping|
+        assignment.groupings.each do |grouping|
         
 			return if grouping.nil?
-			assignment = grouping.assignment
 			m_logger = MarkusLogger.instance
 			m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
 						 "'#{grouping.id}'")
@@ -33,6 +32,7 @@ class SubmissionsJob < ActiveJob::Base
 
         end
         m_logger.log('Submission collection process done')
+        assignment.done!('true')
       end
   end
 

@@ -210,8 +210,12 @@ class SubmissionsController < ApplicationController
 
   def collect_all_submissions
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    assignment.done!('false')
     if assignment.submission_rule.can_collect_now?
-     SubmissionJob.perform_later
+      SubmissionsJob.perform_later(assignment)
+      while assignment.done? == 'false'
+        next
+      end
     end
     redirect_to action: 'browse',
                 id: assignment.id

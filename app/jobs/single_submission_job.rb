@@ -1,6 +1,8 @@
 class SingleSubmissionJob < ActiveJob::Base
   queue_as :submissions
 
+  # after_perform to refresh page? Race condition?
+
   def apply_penalty_or_add_grace_credits(grouping,
                                          apply_late_penalty,
                                          new_submission)

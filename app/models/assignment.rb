@@ -132,6 +132,21 @@ class Assignment < ActiveRecord::Base
       false
     end
   end
+  
+  def done!(res)
+    # res is one of 'true' or 'false'.
+    $redis.multi do
+      $redis.set(self.redis_key, res)
+    end
+  end
+  
+  def done?
+    $redis.get(self.redis_key)
+  end
+  
+  def redis_key
+    "assignment:#{self.id}"
+  end
 
   # Are we past all the due dates for this assignment?
   def past_all_due_dates?
