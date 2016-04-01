@@ -232,42 +232,38 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  def collect_section_submissions
+  def collect_submissions
+    if !params.has_key?(:groupings) || params[:groupings].empty?
+      render text: t('results.must_select_a_group_to_collect'), status: 400
+      return
+    end
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
-    section_ids = params[:sections]
-    errors = Array.new
-    successes = Array.new
-    noSubmissions = Array.new
-    section_ids.each do |id|
-      if id == '0'
-        submission_collector = SubmissionCollector.instance
-        submission_collector.push_groupings_to_queue(
-          assignment.sectionless_groupings)
-        successes.push(t('groups.unassigned_students'))
+    groupings = assignment.groupings.find(params[:groupings])
+    groupings_to_be_collected = Array.new
+    groupings_that_cannot_be_collected = Array.new
+    groupings.each do |grouping|
+      if !grouping.inviter.nil? and grouping.inviter.has_section?
+        section = grouping.inviter.section
       else
-        unless Section.exists?(id)
-          errors.push(I18n.t('collect_submissions.could_not_find_section'))
-          next
-        end
-        if collect_submissions_for_section(id, assignment, errors) > 0
-          successes.push(Section.find(id).name)
-        else
-          noSubmissions.push(Section.find(id).name)
-        end
+        section = nil
+      end
+      if assignment.submission_rule.can_collect_now?(section)
+        groupings_to_be_collected.push(grouping)
+      else
+        groupings_that_cannot_be_collected.push(grouping)
       end
     end
-    if successes.length > 0
-      sections = successes.join(', ')
-      success = I18n.t('collect_submissions.section_collection_job_started',
-                     assignment_identifier: assignment.short_identifier,
-                     section_names: sections)
+    if groupings_to_be_collected.count > 0
+      submission_collector = SubmissionCollector.instance
+      submission_collector.push_groupings_to_queue(groupings_to_be_collected)
+      success = I18n.t('collect_submissions.collection_job_started_for_groups',
+                       assignment_identifier: assignment.short_identifier)
     end
-    if noSubmissions.length > 0
-      sections = noSubmissions.join(', ')
-      errors.push(I18n.t('collect_submissions.no_submission_for_section',
-                       section_names: sections))
+    if groupings_that_cannot_be_collected.count > 0
+      error = I18n.t('collect_submissions.could_not_collect_some',
+                       assignment_identifier: assignment.short_identifier)
     end
-    render json: { success: success, error: errors }
+    render json: { success: success, error: error }
   end
 
   def collect_ta_submissions
@@ -294,6 +290,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                        current_user)
+    @sections = Section.order(:name)
     @available_sections = Hash.new
     if @assignment.submission_rule.can_collect_now?
       @available_sections[t('groups.unassigned_students')] = 0

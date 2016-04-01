@@ -46,7 +46,7 @@
                   <% else %>
                     <strong><%= l(assignment.section_due_date(@section), format: :long_date) %></strong>
                     <p>
-                    <% if assignment.due_date <= Time.zone.now + 2.days %>
+                    <% if assignment.section_due_date(@section) <= Time.zone.now + 2.days %>
                       <%= t(:hours_and_minutes_left, 
                             hours: ((assignment.section_due_date(@section) - Time.zone.now)/(60 * 60) % 48).floor,
                             minutes: ((assignment.section_due_date(@section) - Time.zone.now)/ 60).floor % 60) %>
