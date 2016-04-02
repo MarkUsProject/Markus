@@ -189,9 +189,7 @@ class Submission < ActiveRecord::Base
                                                         assignment_id)
     assignment = Assignment.find(assignment_id)
     grouping = assignment.groupings.find(grouping_id)
-    if !assignment.nil? && !grouping.nil?
-      grouping.current_submission_used
-    end
+    grouping.current_submission_used
   end
 
   def make_remark_result
