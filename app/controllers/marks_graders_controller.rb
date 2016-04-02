@@ -7,8 +7,10 @@ class MarksGradersController < ApplicationController
   def populate
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     @students = students_with_assoc
-    render json: get_marks_graders_student_table_info(@students,
-                                                      @grade_entry_form)
+    @sections = Section.order(:name)
+    mgsti = get_marks_graders_student_table_info(@students,
+                                                 @grade_entry_form)
+    render json: [mgsti, @sections]
   end
 
   def populate_graders

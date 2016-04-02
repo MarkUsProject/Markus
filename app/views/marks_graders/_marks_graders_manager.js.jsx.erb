@@ -44,8 +44,8 @@
         dataType: 'json',
         success: function(data) {
           this.setState({
-            students: data,
-            graders_for_students: [].concat.apply([], data.map(function(student){
+            students: data[0],
+            graders_for_students: [].concat.apply([], data[0].map(function(student){
               return student.graders;
             })),
             error: null
