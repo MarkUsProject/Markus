@@ -574,26 +574,6 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  # Get a simple CSV report of marks for this assignment
-  def get_simple_csv_report
-    students = Student.all
-    out_of = self.total_mark
-    CSV.generate do |csv|
-       students.each do |student|
-         final_result = []
-         final_result.push(student.user_name)
-         grouping = student.accepted_grouping_for(self.id)
-         if grouping.nil? || !grouping.has_submission?
-           final_result.push('')
-         else
-           submission = grouping.current_submission_used
-           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
-         end
-         csv << final_result
-       end
-    end
-  end
-
   # Get a detailed CSV report of marks (includes each criterion)
   # for this assignment. Produces slightly different reports, depending
   # on which criteria type has been used the this assignment.
@@ -618,47 +598,42 @@ class Assignment < ActiveRecord::Base
     out_of = self.total_mark
     students = Student.all
     rubric_criteria = self.rubric_criteria
-    CSV.generate do |csv|
-      students.each do |student|
-        final_result = []
-        final_result.push(student.user_name)
-        grouping = student.accepted_grouping_for(self.id)
-        if grouping.nil? || !grouping.has_submission?
-          # No grouping/no submission
-          final_result.push('')                         # total percentage
-          final_result.push('0')                        # total_grade
-          rubric_criteria.each do |rubric_criterion|
-            final_result.push('')                       # mark
-            final_result.push(rubric_criterion.weight)  # weight
+    MarkusCSV.generate(students) do |student|
+      result = [student.user_name]
+      grouping = student.accepted_grouping_for(self.id)
+      if grouping.nil? || !grouping.has_submission?
+        # No grouping/no submission
+        # total percentage, total_grade
+        result.concat(['','0'])
+        # mark, weight
+        result.concat(rubric_criteria.pluck("''", :weight).flatten())
+        # extra-mark, extra-percentage
+        result.concat(['',''])
+      else
+        submission = grouping.current_submission_used
+        result.concat([submission.get_latest_result.total_mark / out_of * 100,
+                       submission.get_latest_result.total_mark])
+        rubric_criteria.each do |rubric_criterion|
+          mark = submission.get_latest_result
+            .marks
+            .where(markable_id: rubric_criterion.id,
+                   markable_type: 'RubricCriterion')
+            .first
+          if mark.nil?
+            result.push('')
+          else
+            result.push(mark.mark || '')
           end
-          final_result.push('')                         # extra-mark
-          final_result.push('')                         # extra-percentage
-        else
-          submission = grouping.current_submission_used
-          final_result.push(submission.get_latest_result.total_mark / out_of * 100)
-          final_result.push(submission.get_latest_result.total_mark)
-          rubric_criteria.each do |rubric_criterion|
-            mark = submission.get_latest_result
-                             .marks
-                             .where(markable_id: rubric_criterion.id,
-                                    markable_type: 'RubricCriterion')
-                             .first
-            if mark.nil?
-              final_result.push('')
-            else
-              final_result.push(mark.mark || '')
-            end
-            final_result.push(rubric_criterion.weight)
-          end
-          final_result.push(submission.get_latest_result.get_total_extra_points)
-          final_result.push(submission.get_latest_result.get_total_extra_percentage)
+          result.push(rubric_criterion.weight)
         end
-        # push grace credits info
-        grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s
-        final_result.push(grace_credits_data)
-
-        csv << final_result
+        result.concat([submission.get_latest_result.get_total_extra_points,
+                       submission.get_latest_result.get_total_extra_percentage])
       end
+      # push grace credits info
+      grace_credits_data = student.remaining_grace_credits.to_s + '/' +
+        student.grace_credits.to_s
+      result.push(grace_credits_data)
+      result
     end
   end
 
@@ -672,49 +647,43 @@ class Assignment < ActiveRecord::Base
     out_of = self.total_mark
     students = Student.all
     flexible_criteria = self.flexible_criteria
-    CSV.generate do |csv|
-      students.each do |student|
-        final_result = []
-        final_result.push(student.user_name)
-        grouping = student.accepted_grouping_for(self.id)
-        if grouping.nil? || !grouping.has_submission?
-          # No grouping/no submission
-          final_result.push('')                 # total percentage
-          final_result.push('0')                # total_grade
-          flexible_criteria.each do |criterion| ##  empty criteria
-            final_result.push('')               # mark
-            final_result.push(criterion.max)    # out-of
+    MarkusCSV.generate(students) do |student|
+      result = [student.user_name]
+      grouping = student.accepted_grouping_for(self.id)
+      if grouping.nil? || !grouping.has_submission?
+        # No grouping/no submission
+        # total percentage, total_grade
+        result.concat(['','0'])
+        # mark, weight
+        result.concat(flexible_criteria.pluck("''", :max).flatten())
+        # extra-mark, extra-percentage
+        result.concat(['',''])
+      else
+        # Fill in actual values, since we have a grouping
+        # and a submission.
+        submission = grouping.current_submission_used
+        result.concat([submission.get_latest_result.total_mark / out_of * 100,
+                       submission.get_latest_result.total_mark])
+        flexible_criteria.each do |criterion|
+          mark = submission.get_latest_result
+            .marks
+            .where(markable_id: criterion.id,
+                   markable_type: 'FlexibleCriterion')
+            .first
+          if mark.nil?
+            result.push('')
+          else
+            result.push(mark.mark || '')
           end
-          final_result.push('')                 # extra-marks
-          final_result.push('')                 # extra-percentage
-        else
-          # Fill in actual values, since we have a grouping
-          # and a submission.
-          submission = grouping.current_submission_used
-          final_result.push(submission.get_latest_result.total_mark / out_of * 100)
-          final_result.push(submission.get_latest_result.total_mark)
-          flexible_criteria.each do |criterion|
-            mark = submission.get_latest_result
-                             .marks
-                             .where(markable_id: criterion.id,
-                                    markable_type: 'FlexibleCriterion')
-                             .first
-            if mark.nil?
-              final_result.push('')
-            else
-              final_result.push(mark.mark || '')
-            end
-            final_result.push(criterion.max)
-          end
-          final_result.push(submission.get_latest_result.get_total_extra_points)
-          final_result.push(submission.get_latest_result.get_total_extra_percentage)
+          result.push(criterion.max)
         end
-        # push grace credits info
-        grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s
-        final_result.push(grace_credits_data)
-
-        csv << final_result
+        result.concat([submission.get_latest_result.get_total_extra_points,
+                       submission.get_latest_result.get_total_extra_percentage])
       end
+      # push grace credits info
+      grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s
+      result.push(grace_credits_data)
+      result
     end
   end
 
