@@ -103,18 +103,29 @@ class StudentsController < ApplicationController
     #find all the users
     students = Student.order(:user_name)
     case params[:format]
-    when 'csv'
-      output = User.generate_csv_list(students)
-      format = 'text/csv'
-    when 'xml'
-      output = students.to_xml
-      format = 'text/xml'
-    else
-      # Raise exception?
-      output = students.to_xml
-      format = 'text/xml'
+      when 'csv'
+        output = MarkusCSV.generate(students) do |student|
+          if student.section.nil?
+            [student.user_name,student.last_name,student.first_name]
+          else
+            [student.user_name,student.last_name,student.first_name,
+             student.section.name]
+          end
+        end
+
+        format = 'text/csv'
+      when 'xml'
+        output = students.to_xml
+        format = 'text/xml'
+      else
+        # Raise exception?
+        output = students.to_xml
+        format = 'text/xml'
     end
-    send_data(output, type: format, disposition: 'inline')
+    send_data(output,
+              type: format,
+              filename: 'student_list',
+              disposition: 'attachment')
   end
 
   def upload_student_list
