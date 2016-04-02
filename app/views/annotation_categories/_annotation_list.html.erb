@@ -4,7 +4,7 @@
   <h2>
     Annotations
     <% path = add_annotation_text_assignment_annotation_category_path(
-            id: @annotation_category.id) %>
+            id: annotation_category.id) %>
     <%= link_to t('annotations.update.add_annotation'),
                 'javascript:void(0);',
                 onclick: "add_annotation_prompt('#{path}')" %>
@@ -13,11 +13,7 @@
   <div id='add_annotation_text_control'></div>
 
   <ul id='annotation_list'>
-    <% if @annotation_texts %>
-      <% @annotation_texts.each do |annotation_text| %>
-        <%= render partial: 'annotation_text',
-                   locals: { annotation_text: annotation_text } %>
-      <% end %>
-    <% end %>
+    <%= render partial: 'annotation_text',
+               collection: annotation_category.annotation_texts %>
   </ul>
 </div>

@@ -226,8 +226,6 @@ Markus::Application.routes.draw do
 
       resources :annotation_categories do
         member do
-          get 'get_annotations'
-          delete 'delete_annotation_category'
           delete 'delete_annotation_text'
           get 'add_annotation_text'
           post 'add_annotation_text'
@@ -236,13 +234,9 @@ Markus::Application.routes.draw do
 
         collection do
           post 'update_positions'
-          get 'add_annotation_category'
           post 'csv_upload'
-          get 'delete_annotation_category'
           get 'download'
           post 'yml_upload'
-          post 'add_annotation_category'
-          post 'update_annotation_category'
           get 'add_annotation_text'
           post 'delete_annotation_text'
           post 'update_annotation'

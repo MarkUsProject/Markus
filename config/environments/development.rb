@@ -117,7 +117,7 @@ Markus::Application.configure do
   ###################################################################
   # File storage (Repository) settings
   ###################################################################
-  # Options for Repository_type are 'svn' and 'memory' for now
+  # Options for Repository_type are 'svn','git' and 'memory'
   # 'memory' is by design not persistent and only used for testing MarkUs
   REPOSITORY_TYPE = 'svn' # use Subversion as storage backend
 

@@ -8,30 +8,35 @@ class AnnotationCategoriesController < ApplicationController
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories(order: 'position')
+    render layout: 'assignment_content'
   end
 
-  def get_annotations
-    @annotation_category = AnnotationCategory.find(params[:id])
-    @annotation_texts = @annotation_category.annotation_texts
-  end
-
-  def add_annotation_category
+  def new
     @assignment = Assignment.find(params[:assignment_id])
-    if request.post?
-      # Attempt to add Annotation Category
-      @annotation_categories = @assignment.annotation_categories
-      @annotation_category = AnnotationCategory.new
-      @annotation_category.update_attributes(annotation_category_params)
-      @annotation_category.assignment = @assignment
-      unless @annotation_category.save
-        render :new_annotation_category_error
-        return
-      end
+  end
+
+  def create
+    @assignment = Assignment.find(params[:assignment_id])
+    @annotation_category = @assignment.annotation_categories
+                                      .new(annotation_category_params)
+    if @annotation_category.save
       render :insert_new_annotation_category
+    else
+      render :new_annotation_category_error
     end
   end
 
-  def update_annotation_category
+  def show
+    @assignment = Assignment.find(params[:assignment_id])
+    @annotation_category = AnnotationCategory.find(params[:id])
+  end
+
+  def destroy
+    @annotation_category = AnnotationCategory.find(params[:id])
+    @annotation_category.destroy
+  end
+
+  def update
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_category = AnnotationCategory.find(params[:id])
 
@@ -72,11 +77,6 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.destroy
-  end
-
-  def delete_annotation_category
-    @annotation_category = AnnotationCategory.find(params[:id])
-    @annotation_category.destroy
   end
 
   # This method handles the drag/drop Annotations sorting

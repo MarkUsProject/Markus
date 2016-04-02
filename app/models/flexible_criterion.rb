@@ -43,23 +43,6 @@ class FlexibleCriterion < Criterion
     self.assigned_groups_count = result.uniq.length
   end
 
-  # Creates a CSV string from all the flexible criteria related to an assignment.
-  #
-  # ===Returns:
-  #
-  # A string. see new_from_csv_row for format reference.
-  def self.create_csv(assignment)
-    CSV.generate do |csv|
-      # TODO temporary until Assignment gets its criteria method
-      criteria = FlexibleCriterion.where(assignment_id: assignment.id)
-                                  .order(:position)
-      criteria.each do |c|
-        criterion_array = [c.flexible_criterion_name, c.max, c.description]
-        csv << criterion_array
-      end
-    end
-  end
-
   # Instantiate a FlexibleCriterion from a CSV row and attach it to the supplied
   # assignment.
   #
