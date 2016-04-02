@@ -198,8 +198,8 @@ var Table = React.createClass({displayName: 'Table',
       columns = this.props.columns;
     }
     var secondary_filter_div = null;
-    if(this.props.secondary_filters != null){
-      secondary_filter_div= TableFilter({
+    if (this.props.secondary_filters != null) {
+      secondary_filter_div = TableFilter( {
         filters:this.props.secondary_filters,
         current_filter:this.state.secondary_filter,
         onFilterChange:this.synchronizeSecondaryFilter,

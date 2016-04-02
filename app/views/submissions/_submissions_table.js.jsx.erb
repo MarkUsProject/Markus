@@ -197,7 +197,7 @@
 
       // need to filter for each section
       var sections = <%= raw @sections.to_json %>;
-      if(sections.length > 0){
+      if (sections.length > 0) {
         var section_filters = [];
         var all = '<%= I18n.t('browse_submissions.sections.all') %>';
         section_filters.push({name: all, text: all, func: function(g) { return g; } });
@@ -206,7 +206,7 @@
             name: sections[i].name,
             text: sections[i].name,
             func: function(submission) {
-              return (submission.section == this.name);
+              return (submission.section === this.name);
             }.bind(sections[i])
           };
           section_filters.push(filter);
@@ -331,7 +331,7 @@
         groupings: this.props.selected_submissions
       };
       jQuery.ajax({
-        method: 'GET',
+        method: 'POST',
         url: 'collect_submissions',
         data: dataLoad,
         success: function(data) {

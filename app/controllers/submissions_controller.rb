@@ -239,27 +239,17 @@ class SubmissionsController < ApplicationController
     end
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
-    groupings_to_be_collected = Array.new
-    groupings_that_cannot_be_collected = Array.new
-    groupings.each do |grouping|
-      if !grouping.inviter.nil? and grouping.inviter.has_section?
-        section = grouping.inviter.section
-      else
-        section = nil
-      end
-      if assignment.submission_rule.can_collect_now?(section)
-        groupings_to_be_collected.push(grouping)
-      else
-        groupings_that_cannot_be_collected.push(grouping)
-      end
+    partition = groupings.partition do |grouping|
+      section = grouping.inviter.present? ? grouping.inviter.section : nil
+      assignment.submission_rule.can_collect_now?(section)
     end
-    if groupings_to_be_collected.count > 0
+    if partition[0].count > 0
       submission_collector = SubmissionCollector.instance
-      submission_collector.push_groupings_to_queue(groupings_to_be_collected)
+      submission_collector.push_groupings_to_queue(partition[0])
       success = I18n.t('collect_submissions.collection_job_started_for_groups',
                        assignment_identifier: assignment.short_identifier)
     end
-    if groupings_that_cannot_be_collected.count > 0
+    if partition[1].count > 0
       error = I18n.t('collect_submissions.could_not_collect_some',
                        assignment_identifier: assignment.short_identifier)
     end
