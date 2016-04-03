@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151129233225) do
+ActiveRecord::Schema.define(version: 20160303184449) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -97,6 +97,7 @@ ActiveRecord::Schema.define(version: 20151129233225) do
     t.integer  "rubric_criterions_count"
     t.integer  "flexible_criterions_count"
     t.integer  "groupings_count"
+    t.datetime "last_token_regeneration_date"
     t.datetime "tokens_start_of_availability_date"
     t.integer  "tokens_per_day",                    default: 0,        null: false
     t.integer  "regeneration_period",               default: 0,        null: false
@@ -493,7 +494,7 @@ ActiveRecord::Schema.define(version: 20151129233225) do
   create_table "tokens", force: :cascade do |t|
     t.integer "grouping_id"
     t.integer "tokens"
-    t.time    "last_token_used_date"
+    t.date    "last_token_used_date"
   end
 
   create_table "users", force: :cascade do |t|
