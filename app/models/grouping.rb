@@ -580,11 +580,6 @@ class Grouping < ActiveRecord::Base
         else
           txn = repo.get_transaction('markus')
           txn.add_path(assignment_folder)
-          # If it is a git repo, we have to add a keep file so
-          # the assignment folder gets committed.
-          if repo.instance_of?(Repository::GitRepository)
-            txn.add(File.join(assignment_folder, '.gitkeep'), '')
-          end
           return repo.commit(txn)
         end
       end
