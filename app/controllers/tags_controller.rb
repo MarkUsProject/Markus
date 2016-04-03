@@ -69,10 +69,15 @@ class TagsController < ApplicationController
     # Gets all the tags
     tags = Tag.all.order(:name)
 
-    # Gets what type of format.
     case params[:format]
     when 'csv'
-      output = Tag.generate_csv_list(tags)
+      output = MarkusCSV.generate(tags) do |tag|
+        user = User.find(tag.user)
+
+        [tag.name,
+         tag.description,
+         "#{user.first_name} #{user.last_name}"]
+      end
       format = 'text/csv'
     when 'yaml'
       output = export_tags_yaml
@@ -88,7 +93,7 @@ class TagsController < ApplicationController
     send_data(output,
               type: format,
               filename: "tag_list.#{params[:format]}",
-              disposition: 'inline')
+              disposition: 'attachment')
   end
 
   # Export a YAML formatted string.
