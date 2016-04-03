@@ -50,9 +50,8 @@ module AutomatedTestsHelper
     testscripts.each do |file_num, file|
       # If no new_script then form is empty and skip
       next if testscripts[file_num][:seq_num].empty? && new_script.nil?
-      # Seq_num only exists if it is a file being edited
+      # Create new test script file
       if new_script
-        # Create new test script file
         filename = new_script.original_filename
         if TestScript.exists?(script_name: filename, assignment: assignment)
           raise I18n.t('automated_tests.duplicate_filename') + filename
