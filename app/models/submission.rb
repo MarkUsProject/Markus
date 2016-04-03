@@ -14,7 +14,7 @@ class Submission < ActiveRecord::Base
   has_many   :submission_files, dependent: :destroy
   has_many   :annotations, through: :submission_files
   has_many   :test_results, dependent: :destroy
-  has_many   :test_script_results, :dependent => :destroy
+  has_many   :test_script_results, dependent: :destroy
   has_many   :feedback_files, dependent: :destroy
 
 
@@ -184,6 +184,13 @@ class Submission < ActiveRecord::Base
       grouping = group.grouping_for_assignment(assignment.id)
       grouping.current_submission_used if !grouping.nil?
     end
+  end
+
+  def self.get_submission_by_grouping_id_and_assignment_id(grouping_id,
+                                                        assignment_id)
+    assignment = Assignment.find(assignment_id)
+    grouping = assignment.groupings.find(grouping_id)
+    grouping.current_submission_used
   end
 
   def make_remark_result

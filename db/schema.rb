@@ -137,8 +137,9 @@ ActiveRecord::Schema.define(version: 20160327163400) do
   add_index "extra_marks", ["result_id"], name: "index_extra_marks_on_result_id", using: :btree
 
   create_table "feedback_files", force: :cascade do |t|
-    t.string   "filename"
-    t.binary   "file_content"
+    t.string   "filename",      null: false
+    t.binary   "file_content",  null: false
+    t.string   "mime_type",     null: false
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.integer  "submission_id"

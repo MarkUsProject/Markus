@@ -50,7 +50,6 @@ Markus::Application.routes.draw do
         get 'deletegroup'
         get 'decline_invitation'
         post 'disinvite_member'
-        get 'render_test_result'
         get 'render_feedback_file'
         get 'view_summary'
       end

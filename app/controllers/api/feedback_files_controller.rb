@@ -10,9 +10,8 @@ module Api
     # Requires: assignment_id, group_id
     # Optional: filter, fields
     def index
-      # get_submission renders appropriate error if the submission isn't found
-      submission = get_submission(params[:assignment_id], params[:group_id])
-      return if submission.nil?
+      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+        params[:group_id], params[:assignment_id])
 
       collection = submission.feedback_files
 
@@ -24,27 +23,29 @@ module Api
           'feedback_files', skip_types: 'true')}
         format.json{render json: feedback_files.to_json(only: fields)}
       end
+      rescue ActiveRecord::RecordNotFound => e
+        # Could not find submission
+        render 'shared/http_status', locals: {code: '404', message:
+          e}, status: 404
     end
 
     # Sends the contents of the specified Feedback File
     # Requires: assignment_id, group_id, id
     def show
-      # get_submission renders appropriate error if the submission isn't found
-      submission = get_submission(params[:assignment_id], params[:group_id])
-      return if submission.nil?
+      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+        params[:group_id], params[:assignment_id])
 
-      feedback_file = submission.feedback_files.find_by_id(params[:id])
-
-      # Render error if the Feedback file does not exist
-      if feedback_file.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'Feedback file was not found'}, status: 404
-        return
-      end
+      feedback_file = submission.feedback_files.find(params[:id])
 
       # Everything went fine; send file_content
-      send_data feedback_file.file_content, disposition: 'inline',
-                                          filename: feedback_file.filename
+      send_data feedback_file.file_content, 
+                type: feedback_file.mime_type,
+                filename: feedback_file.filename,
+                disposition: 'inline'
+      rescue ActiveRecord::RecordNotFound => e
+        # Could not find submission or feedback file
+        render 'shared/http_status', locals: {code: '404', message:
+          e}, status: 404
     end
 
     # Creates a new feedback file for a group's latest assignment submission
@@ -52,18 +53,18 @@ module Api
     #  - assignment_id
     #  - group_id
     #  - filename: Name of the file to be uploaded
+    #  - mime_type: Mime type of feedback file
     #  - file_content: Contents of the feedback file to be uploaded
     def create
-      if has_missing_params?([:filename, :file_content])
+      if has_missing_params?([:filename, :mime_type, :file_content])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
         return
       end
 
-      # get_submission renders appropriate error if the submission isn't found
-      submission = get_submission(params[:assignment_id], params[:group_id])
-      return if submission.nil?
+      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+        params[:group_id], params[:assignment_id])
 
       # Render error if there's an existing feedback file with that filename
       feedback_file = submission.feedback_files.find_by_filename(params[:filename])
@@ -75,7 +76,9 @@ module Api
 
       # Try creating the Feedback file
       if submission.feedback_files.create(filename: params[:filename],
-         file_content: params[:file_content])
+                                          mime_type: params[:mime_type],
+                                          file_content: params[:file_content])
+                                          .valid?
         # It worked, render success
         render 'shared/http_status', locals: {code: '201', message:
           HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
@@ -89,18 +92,10 @@ module Api
     # Deletes a Feedback File instance
     # Requires: assignment_id, group_id, id
     def destroy
-      # get_submission renders appropriate error if the submission isn't found
-      submission = get_submission(params[:assignment_id], params[:group_id])
-      return if submission.nil?
+      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+        params[:group_id], params[:assignment_id])
 
-      feedback_file = submission.feedback_files.find_by_id(params[:id])
-
-      # Render error if the Feedback File does not exist
-      if feedback_file.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'Feedback file was not found'}, status: 404
-        return
-      end
+      feedback_file = submission.feedback_files.find(params[:id])
 
       if feedback_file.destroy
         # Successfully deleted the Feedback file; render success
@@ -111,6 +106,10 @@ module Api
         render 'shared/http_status', locals: { code: '500', message:
           HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
       end
+      rescue ActiveRecord::RecordNotFound => e
+        # Could not find submission or feedback file
+        render 'shared/http_status', locals: {code: '404', message:
+          e}, status: 404
     end
 
     # Updates a Feedback File instance
@@ -119,18 +118,10 @@ module Api
     #  - filename: New name for the file
     #  - file_content: New contents of the feedback file file
     def update
-      # get_submission renders appropriate error if the submission isn't found
-      submission = get_submission(params[:assignment_id], params[:group_id])
-      return if submission.nil?
+      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+        params[:group_id], params[:assignment_id])
 
-      feedback_file = submission.feedback_files.find_by_id(params[:id])
-
-      # Render error if the Feedback file does not exist
-      if feedback_file.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'Feedback file was not found'}, status: 404
-        return
-      end
+      feedback_file = submission.feedback_files.find(params[:id])
 
       # Render error if the filename is used by another
       # Feedback File for that submission
@@ -153,36 +144,10 @@ module Api
         render 'shared/http_status', locals: { code: '500', message:
           HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
       end
-    end
-
-    # Given assignment and group id's, returns the submission if found, or nil
-    # otherwise. Also renders appropriate responses on error.
-    def get_submission(assignment_id, group_id)
-      assignment = Assignment.find_by_id(assignment_id)
-      if assignment.nil?
-        # No assignment with that id
+      rescue ActiveRecord::RecordNotFound => e
+        # Could not find submission or feedback file
         render 'shared/http_status', locals: {code: '404', message:
-          'No assignment exists with that id'}, status: 404
-        return nil
-      end
-
-      group = Group.find_by_id(group_id)
-      if group.nil?
-        # No group exists with that id
-        render 'shared/http_status', locals: {code: '404', message:
-          'No group exists with that id'}, status: 404
-        return nil
-      end
-
-      submission = Submission.get_submission_by_group_and_assignment(
-        group[:group_name], assignment[:short_identifier])
-      if submission.nil?
-        # No assignment submission by that group
-        render 'shared/http_status', locals: {code: '404', message:
-          'Submission was not found'}, status: 404
-      end
-
-      submission
+          e}, status: 404
     end
 
   end # end FeedbackFilesController

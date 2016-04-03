@@ -1117,9 +1117,9 @@ en:
       build_error: "Unknown error with Ant. Is Ant correctly installed? View '%{logfile}' to investigate."
 
     feedback_file:
-        button:
-            load: "Load Feedback File"
-        no_files_available: "[No feedback file available]"
+      error:
+        no_access: "No access to feedback file with id #%{feedback_file_id}."
+      no_files_available: "[No feedback file available]"
 
     criteria_csv_error:
       incomplete_row: "contains too little information."

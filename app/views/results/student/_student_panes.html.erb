@@ -6,7 +6,7 @@
           <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
           <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
           <% if can_show_feedback_files_tab?(submission) %>
-              <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
+            <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
           <% end %>
           <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
             <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>

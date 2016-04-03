@@ -1003,9 +1003,9 @@ fr:
       build_error: "Erreur inconnue avec Ant. Ant est-il correctement installé sur le serveur ? Voir '%{logfile}' pour plus d'informations."
 
     feedback_file:
-        button:
-            load: "Charger le fichier de support"
-        no_files_available: "[Aucun fichier de support disponible]"
+      error:
+        no_access: "No access to feedback file with id #%{feedback_file_id}."
+      no_files_available: "[Aucun fichier de support disponible]"
 
     criteria_csv_error:
       incomplete_row: "(ligne incomplète) ne contient pas assez d'informations."

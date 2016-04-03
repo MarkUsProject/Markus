@@ -58,7 +58,7 @@ class AssignmentsController < ApplicationController
   end
 
   def render_feedback_file
-    @feedback_file = FeedbackFile.find_by_id(params[:feedback_file_id])
+    @feedback_file = FeedbackFile.find(params[:feedback_file_id])
 
     # Students can use this action only, when marks have been released
     if current_user.student? &&
@@ -68,8 +68,10 @@ class AssignmentsController < ApplicationController
                               feedback_file_id: @feedback_file.id))
     end
 
-    sanitized_content = ERB::Util.html_escape(@feedback_file.file_content)
-    render text: sanitized_content, layout: 'sanitized_html'
+    send_data @feedback_file.file_content, 
+              type: @feedback_file.mime_type,
+              filename: @feedback_file.filename,
+              disposition: 'inline'
   end
 
   def student_interface
