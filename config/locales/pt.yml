@@ -363,6 +363,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     seperate_multiple_with_commas:  "Sepere nomes de usuários com vírgulas"
     csv_valid_format:   "Houve um problema ao interpretar o arquivo CSV enviado. Verifique se é um formato CSV válido, e que cada linha termina com os caracteres carriage-return. Nenhuma alteração realizada. "
     csv_invalid_lines: "As seguintes linhas do arquivo CSV são inválidas: "
+    csv_valid_lines: "carregado com sucesso  %{valid_line_count} entradas"
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
     collect_and_grade_overwrite_warning:  "Coletando e avaliando essa revisão irá sobrescrever coletas/avalições anteriores feitas para esse grupo no projeto. Tem certeza que quer fazer isso?"
     uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
