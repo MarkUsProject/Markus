@@ -25,18 +25,17 @@ class Token < ActiveRecord::Base
   def decrease_tokens
     if self.tokens > 0
       self.tokens = self.tokens - 1
-      self.last_token_used_date = Time.now
+      self.last_token_used_date = Date.today
     end
     self.save
   end
 
   def reassign_tokens_if_after_regen_period(regeneration_period)
-    if self.last_token_used_date
-      if (self.last_token_used_date.to_i + regeneration_period*60*60) <= Time.now.to_i
+    assignment = self.grouping.assignment
+    if assignment.last_token_regeneration_date
+      if (assignment.last_token_regeneration_date.to_time.to_i + regeneration_period*60*60) <= DateTime.now.to_time.to_i
         self.reassign_tokens
       end
-    else
-      self.reassign_tokens
     end
   end
 
@@ -48,6 +47,7 @@ class Token < ActiveRecord::Base
       self.tokens = 0
     else
       self.tokens = assignment.tokens_per_day
+      assignment.last_token_regeneration_date = DateTime.now
     end
     self.save
   end
