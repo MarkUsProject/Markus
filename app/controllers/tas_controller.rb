@@ -66,7 +66,10 @@ class TasController < ApplicationController
     tas = Ta.order(:user_name)
     case params[:format]
     when 'csv'
-      output = User.generate_csv_list(tas)
+      output = MarkusCSV.generate(tas) do |ta|
+        [ta.user_name,ta.last_name,ta.first_name]
+      end
+
       format = 'text/csv'
     when 'xml'
       output = tas.to_xml
@@ -76,7 +79,10 @@ class TasController < ApplicationController
       output = tas.to_xml
       format = 'text/xml'
     end
-    send_data(output, type: format, disposition: 'inline')
+    send_data(output,
+              type: format,
+              filename: "ta_list.#{params[:format]}",
+              disposition: 'attachment')
   end
 
   def upload_ta_list
