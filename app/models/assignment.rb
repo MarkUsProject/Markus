@@ -915,7 +915,11 @@ class Assignment < ActiveRecord::Base
       !grouping.inviter.has_section?
     end
   end
-  
+
+  def can_upload_starter_code?
+    groups.size == 0
+  end
+
   private
 
   # Returns true if we are safe to set the repository name

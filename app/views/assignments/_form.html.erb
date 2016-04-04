@@ -452,12 +452,14 @@
     </div>
   </fieldset>
   <%# Starter Code %>
-  <fieldset>
-    <legend>
-      <span> <%= t('assignment.starter_code.title') %>  </span>
-    </legend>
+  <% if @assignment.can_upload_starter_code? %>
+    <fieldset>
+      <legend>
+        <span> <%= t('assignment.starter_code.title') %>  </span>
+      </legend>
 
-  </fieldset>
+    </fieldset>
+  <% end %>
 
   <%= f.submit t(:submit),
                data: { disable_with: t('working') },
