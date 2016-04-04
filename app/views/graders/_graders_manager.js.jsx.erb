@@ -233,7 +233,8 @@
     groupCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
-        var new_selected_groups = this.props.groups.map(function(x) { return x.id; }).slice();
+        var visible_rows = this.refs.myTable.state.visible_rows;
+        var new_selected_groups = visible_rows.map(function(x) { return x.id; }).slice();
         this.props.onSelectedGroupsChange(new_selected_groups);
       } else {
         this.props.onSelectedGroupsChange([]);
@@ -251,10 +252,11 @@
     gradersInGroupsCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
+        var visible_rows = this.refs.myTable.state.visible_rows;
         var new_selected_graders_in_groups = [];
-        for (var i = 0; i < this.props.groups.length; i++) {
-          for (var j = 0; j < this.props.groups[i].graders.length; j++) {
-            new_selected_graders_in_groups.push(this.props.groups[i].graders[j].membership_id);
+        for (var i = 0; i < visible_rows.length; i++) {
+          for (var j = 0; j < visible_rows[i].graders.length; j++) {
+            new_selected_graders_in_groups.push(visible_rows[i].graders[j].props.key);
           }
         }
         this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
@@ -357,7 +359,8 @@
 
       // need to filter for each section
       var section_filters = [];
-      section_filters.push({name: '-', text: '-', func: function(g) { return g; } });
+      var all = '<%= I18n.t('all') %>';
+      section_filters.push({name: all, text: all, func: function(g) { return g; } });
 
       for (var i = 0; i < this.props.sections.length; i++) {
         var filter = {
@@ -452,8 +455,8 @@
               <li><a id='criteria_table' onClick={this.tableChanged} href='#criteria-tab'><span><%= j raw I18n.t('criteria') %></span></a></li>
               </ul>
              <div id='groups-tab'>
-               <Table data={groups_data} columns={group_columns}
-                 filters={section_filters} filter_type={false}
+               <Table data={groups_data} columns={group_columns} ref="myTable"
+                 filters={section_filters} filter_type={section_filters.length > 3}
                  search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
              </div>
              <div id='criteria-tab'>
@@ -479,7 +482,8 @@
     groupCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
-        var new_selected_groups = this.props.groups.map(function(x) { return x.id; }).slice();
+        var visible_rows = this.refs.myTable.state.visible_rows;
+        var new_selected_groups = visible_rows.map(function(x) { return x.id; }).slice();
         this.props.onSelectedGroupsChange(new_selected_groups);
       } else {
         this.props.onSelectedGroupsChange([]);
@@ -488,10 +492,11 @@
     graderCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
+        var visible_rows = this.refs.myTable.state.visible_rows;
         var new_selected_graders_in_groups = [];
-        for (var i = 0; i < this.props.groups.length; i++) {
-          for (var j = 0; j < this.props.groups[i].graders.length; j++) {
-            new_selected_graders_in_groups.push(this.props.groups[i].graders[j].membership_id);
+        for (var i = 0; i < visible_rows.length; i++) {
+          for (var j = 0; j < visible_rows[i].graders.length; j++) {
+            new_selected_graders_in_groups.push(visible_rows[i].graders[j].props.key);
           }
         }
         this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
@@ -553,7 +558,8 @@
 
       // need to filter for each section
       var filters = [];
-      filters.push({name: '-', text: '-', func: function(g) { return g; } });
+      var all = '<%= I18n.t('all') %>';
+      filters.push({name: all, text: all, func: function(g) { return g; } });
 
       for (var i = 0; i < this.props.sections.length; i++) {
         var filter = {
@@ -589,9 +595,9 @@
       }.bind(this));
 
       return (
-       <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
-        <Table data={groups_data} columns={columns}
-               filters={filters} filter_type={false}
+        <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
+          <Table data={groups_data} columns={columns} ref="myTable"
+               filters={filters} filter_type={filters.length > 3}
                search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
         </div>
       );

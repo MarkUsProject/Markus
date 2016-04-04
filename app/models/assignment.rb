@@ -908,11 +908,14 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  def can_uncollect_submissions?
+    submissions.where(submission_version_used: true).count > 0
+  end
   # Returns the groupings of this assignment that have no associated section
   def sectionless_groupings
     groupings.select do |grouping|
       grouping.inviter.present? &&
-      !grouping.inviter.has_section?
+          !grouping.inviter.has_section?
     end
   end
   

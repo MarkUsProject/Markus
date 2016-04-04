@@ -232,6 +232,14 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  def uncollect_all_submissions
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    @current_job = UncollectSubmissions.perform_later(assignment)
+    respond_to do |format|
+      format.js {}
+    end
+  end
+
   def collect_submissions
     if !params.has_key?(:groupings) || params[:groupings].empty?
       render text: t('results.must_select_a_group_to_collect'), status: 400
