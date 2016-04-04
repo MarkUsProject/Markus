@@ -77,21 +77,4 @@ class Tag < ActiveRecord::Base
 
     tag
   end
-
-  def self.generate_csv_list(tags)
-    # Start generating the CSV file.
-    CSV.generate do |csv|
-      # Go through each of the tags.
-      tags.each do |tag|
-        user = User.find(tag.user)
-
-        tag_column = [tag.name,
-                      tag.description,
-                      "#{user.first_name} #{user.last_name}"]
-
-        # Add it to the CSV file.
-        csv << tag_column
-      end
-    end
-  end
 end
