@@ -369,48 +369,18 @@
     render: function() {
       return (
         <div className='react-release-marks'>
-<<<<<<< HEAD
           <% if @current_user.admin? %>
             <button onClick={this.collectSubmissions}
                     data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
               <%= j raw I18n.t('collect_submissions.collect') %>
             </button>
           <% end %>
-=======
-          <% if @current_user.admin?
-            if Section.all.count > 0              
-              if @available_sections.length > 0 %>
-                <select defaultValue={"<%= @available_sections.values.join(',') %>"} ref="sectionSelect">
-                  <option selected value={"<%=  @available_sections.values.join(',') %>"}><%= t('collect_submissions.all_available') %></option>
-                  <% @available_sections.each do |name, id| %>
-                    <option value={"<%= id %>"}><%= name %></option>
-                  <% end %>
-                </select>
-                <button onClick={this.collectSectionSubmissions}
-                        data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
-                  <%= j raw I18n.t('collect_submissions.collect_section') %>
-                </button>
-                <% if @assignment.can_uncollect_submissions? %>
-                  <button onClick={this.uncollectAllSubmissions}
+          <% if @assignment.can_uncollect_submissions? %>
+            <button onClick={this.uncollectAllSubmissions}
                     data-confirm='<%= t('collect_submissions.undo_results_loss_warning')%>' data-remote="true">
-                  <%=j raw I18n.t('collect_submissions.uncollect_all') %>
-                </button>
-                <% end %>
-              <% end
-            else %>
-              <button onClick={this.collectAllSubmissions}
-                      data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
-                <%= j raw I18n.t('collect_submissions.collect_all') %>
-              </button>
-              <% if @assignment.can_uncollect_submissions? %>
-                <button onClick={this.uncollectAllSubmissions}
-                 data-confirm='<%= t('collect_submissions.undo_results_loss_warning')%>' data-remote="true">
-                  <%=j raw I18n.t('collect_submissions.uncollect_all') %>
-                </button>
-              <% end %>
-            <% end
-          end %>
->>>>>>> master
+              <%=j raw I18n.t('collect_submissions.uncollect_all') %>
+            </button>
+          <% end %>
           <button onClick={this.releaseMarks}>
             <%= j raw I18n.t('browse_submissions.release_marks') %>
           </button>
