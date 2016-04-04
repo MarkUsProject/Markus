@@ -185,6 +185,13 @@ class Submission < ActiveRecord::Base
     end
   end
 
+  def self.get_submission_by_grouping_id_and_assignment_id(grouping_id,
+                                                        assignment_id)
+    assignment = Assignment.find(assignment_id)
+    grouping = assignment.groupings.find(grouping_id)
+    grouping.current_submission_used
+  end
+
   def make_remark_result
     remark = create_remark_result(
       marking_state: Result::MARKING_STATES[:unmarked],
