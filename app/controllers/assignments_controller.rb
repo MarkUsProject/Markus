@@ -518,7 +518,7 @@ class AssignmentsController < ApplicationController
           end
         end
         send_data(file_out,
-                  type: 'text/csv', disposition: 'inline',
+                  type: 'text/csv', disposition: 'attachment',
                   filename: 'assignment_list.csv')
         return
       else
