@@ -232,6 +232,14 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  def uncollect_all_submissions
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    @current_job = UncollectSubmissions.perform_later(assignment)
+    respond_to do |format|
+      format.js {}
+    end
+  end
+
   def collect_section_submissions
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     section_ids = params[:sections]

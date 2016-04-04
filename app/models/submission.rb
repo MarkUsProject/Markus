@@ -41,7 +41,6 @@ class Submission < ActiveRecord::Base
     new_submission.submission_version_used = true
     new_submission.revision_timestamp = revision.timestamp
     new_submission.revision_number = revision.revision_number
-
     new_submission.transaction do
       begin
         new_submission.populate_with_submission_files(revision)

@@ -115,4 +115,53 @@ describe AnnotationCategoriesController do
                                       id: assignment.id)
     end
   end
+
+  context 'CSV_Downloads' do
+    let(:annotation_category) { create(:annotation_category,
+                                       assignment: assignment) }
+    let(:annotation_text) { create(:annotation_text,
+                                   annotation_category: annotation_category) }
+    let(:csv_data) { "#{annotation_category.annotation_category_name}," +
+      "#{annotation_text.content}\n" }
+    let(:csv_options) do
+      {
+        filename: "#{assignment.short_identifier}_annotations.csv",
+        disposition: 'attachment'
+      }
+    end
+
+    it 'responds with appropriate status' do
+      get :download, assignment_id: assignment.id, format: 'csv'
+      expect(response.status).to eq(200)
+    end
+
+    # parse header object to check for the right disposition
+    it 'sets disposition as attachment' do
+      get :download, assignment_id: assignment.id, format: 'csv'
+      d = response.header['Content-Disposition'].split.first
+      expect(d).to eq 'attachment;'
+    end
+
+    it 'expects a call to send_data' do
+      expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
+        # to prevent a 'missing template' error
+        @controller.render nothing: true
+      }
+      get :download, assignment_id: assignment.id, format: 'csv'
+    end
+
+    # parse header object to check for the right content type
+    it 'returns vnd.ms-excel type' do
+      get :download, assignment_id: assignment.id, format: 'csv'
+      expect(response.content_type).to eq 'text/csv'
+    end
+
+    # parse header object to check for the right file naming convention
+    it 'filename passes naming conventions' do
+      get :download, assignment_id: assignment.id, format: 'csv'
+      filename = response.header['Content-Disposition']
+        .split.last.split('"').second
+      expect(filename).to eq "#{assignment.short_identifier}_annotations.csv"
+    end
+  end
 end

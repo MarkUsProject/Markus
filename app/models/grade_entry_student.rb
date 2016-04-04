@@ -116,7 +116,7 @@ class GradeEntryStudent < ActiveRecord::Base
     # Attempt to find the student
     student = Student.where(user_name: user_name).first
     if student.nil?
-      raise I18n.t('grade_entry_forms.csv.invalid_user_name')
+      raise CSVInvalidLineError
     end
 
     # Create the GradeEntryStudent if it doesn't already exist

@@ -102,19 +102,25 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories
     case params[:format]
-    when 'csv'
-      send_data convert_to_csv(@annotation_categories),
-                filename: "#{@assignment.short_identifier}_annotations.csv",
-                disposition: 'attachment'
-    when 'yml'
-      send_data convert_to_yml(@annotation_categories),
-                filename: "#{@assignment.short_identifier}_annotations.yml",
-                disposition: 'attachment'
-    else
-      flash[:error] = I18n.t('annotations.upload.flash_error',
-        format: params[:format])
-      redirect_to action: 'index',
-                  id: params[:id]
+      when 'csv'
+        ac = prepare_for_conversion(@annotation_categories)
+        file_out = MarkusCSV.generate(
+          ac) do |annotation_category_name, annotation_texts|
+          # csv format is annotation_category.name, annotation_text.content
+          annotation_texts.unshift(annotation_category_name)
+        end
+        send_data file_out,
+                  filename: "#{@assignment.short_identifier}_annotations.csv",
+                  disposition: 'attachment'
+      when 'yml'
+        send_data convert_to_yml(@annotation_categories),
+                  filename: "#{@assignment.short_identifier}_annotations.yml",
+                  disposition: 'attachment'
+      else
+        flash[:error] = I18n.t('annotations.upload.flash_error',
+                               format: params[:format])
+        redirect_to action: 'index',
+                    id: params[:id]
     end
   end
 
