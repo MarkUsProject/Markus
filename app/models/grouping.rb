@@ -386,7 +386,10 @@ class Grouping < ActiveRecord::Base
                          tokens: DateTime.now >= self.assignment.tokens_start_of_availability_date ?
                          self.assignment.tokens_per_day : nil) if self.assignment.enable_test
     if !token.tokens.nil?
-      self.assignment.last_token_regeneration_date = DateTime.now
+      num_periods = ((DateTime.now.to_time.to_i - self.assignment.tokens_start_of_availability_date.to_time.to_i)/60/60) /
+          self.assignment.regeneration_period
+      self.assignment.last_token_regeneration_date = self.assignment.tokens_start_of_availability_date +
+          (num_periods.floor * self.assignment.regeneration_period).hours
     end
   end
 
