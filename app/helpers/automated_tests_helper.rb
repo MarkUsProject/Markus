@@ -10,7 +10,7 @@ module AutomatedTestsHelper
     if (@assignment.tokens_start_of_availability_date)
       if token
         if (DateTime.now >= @assignment.tokens_start_of_availability_date)
-          token.reassign_tokens_if_after_regen_period(@assignment.regeneration_period)
+          token.reassign_tokens_if_after_regen_period()
         else
           token=nil
         end
