@@ -2,8 +2,6 @@ class RubricsController < ApplicationController
 
   before_filter :authorize_only_for_admin
 
-  RUBRIC_LEVELS = 5
-
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.rubric_criteria(order: 'position')
@@ -65,10 +63,10 @@ class RubricsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     file_out = MarkusCSV.generate(@assignment.rubric_criteria) do |criterion|
       criterion_array = [criterion.rubric_criterion_name,criterion.weight]
-      (0..RUBRIC_LEVELS - 1).each do |i|
+      (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
         criterion_array.push(criterion['level_' + i.to_s + '_name'])
       end
-      (0..RUBRIC_LEVELS - 1).each do |i|
+      (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
         criterion_array.push(criterion['level_' + i.to_s + '_description'])
       end
       criterion_array
