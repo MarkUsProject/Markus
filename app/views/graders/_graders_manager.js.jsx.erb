@@ -358,20 +358,19 @@
       ];
 
       // need to filter for each section
-      var section_filters = [];
-      var all = '<%= I18n.t('all') %>';
-      section_filters.push({name: all, text: all, func: function(g) { return g; } });
-
-      for (var i = 0; i < this.props.sections.length; i++) {
+      var section_filters = this.props.sections.map(function(section) {
         var filter = {
-          name: this.props.sections[i].name,
-          text: this.props.sections[i].name,
+          name: section.name,
+          text: section.name,
           func: function(group) {
             return (group.section == this.name);
-          }.bind(this.props.sections[i])
+          }.bind(section)
         };
-        section_filters.push(filter);
-      }
+        return filter;
+      });
+      var all = '<%= I18n.t('all') %>';
+      section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
+
 
       // Massage the data so it will fit into the table.
       var groups_data = this.props.groups.map(function(group) {
@@ -557,20 +556,18 @@
       ];
 
       // need to filter for each section
-      var filters = [];
-      var all = '<%= I18n.t('all') %>';
-      filters.push({name: all, text: all, func: function(g) { return g; } });
-
-      for (var i = 0; i < this.props.sections.length; i++) {
+      var filters = this.props.sections.map(function(section) {
         var filter = {
-          name: this.props.sections[i].name,
-          text: this.props.sections[i].name,
+          name: section.name,
+          text: section.name,
           func: function(group) {
             return (group.section == this.name);
-          }.bind(this.props.sections[i])
-        }
-        filters.push(filter);
-      }
+          }.bind(section)
+        };
+        return filter;
+      });;
+      var all = '<%= I18n.t('all') %>';
+      filters.unshift({name: all, text: all, func: function(g) { return g; } });
 
       // Massage the data so it will fit into the table.
       var groups_data = this.props.groups.map(function(group) {

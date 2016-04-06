@@ -99,20 +99,18 @@
       });
     },
     render: function() {
-      var section_filters = [];
-      var all = '<%= I18n.t('all') %>';
-      section_filters.push({name: all, text: all, func: function(g) { return g; } });
-
-      for (var i = 0; i < this.state.sections.length; i++) {
+      var section_filters = this.state.sections.map(function(section) {
         var filter = {
-          name: this.state.sections[i].name,
-          text: this.state.sections[i].name,
+          name: section.name,
+          text: section.name,
           func: function(group) {
             return (group.section == this.name);
-          }.bind(this.state.sections[i])
+          }.bind(section)
         };
-        section_filters.push(filter);
-      }
+        return filter;
+      });;
+      var all = '<%= I18n.t('all') %>';
+      section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
 
       var columns = [
           {

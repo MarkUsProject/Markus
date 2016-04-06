@@ -198,19 +198,18 @@
       // need to filter for each section
       var sections = <%= raw @sections.to_json %>;
       if (sections.length > 0) {
-        var section_filters = [];
-        var all = '<%= I18n.t('browse_submissions.sections.all') %>';
-        section_filters.push({name: all, text: all, func: function(g) { return g; } });
-        for (var i = 0; i < sections.length; i++) {
+        var section_filters = sections.map(function(section) {
           var filter = {
-            name: sections[i].name,
-            text: sections[i].name,
-            func: function(submission) {
-              return (submission.section === this.name);
-            }.bind(sections[i])
+            name: section.name,
+            text: section.name,
+            func: function(group) {
+              return (group.section == this.name);
+            }.bind(section)
           };
-          section_filters.push(filter);
-        }
+          return filter;
+        });
+        var all = '<%= I18n.t('browse_submissions.sections.all') %>';
+        section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
       }
 
       var submissions_data = this.state.submissions.map(function(submission) {
