@@ -574,79 +574,49 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  # Get a detailed CSV report of marks (includes each criterion)
-  # for this assignment. Produces slightly different reports, depending
-  # on which criteria type has been used the this assignment.
-  def get_detailed_csv_report
-    # which marking scheme do we have?
-    if self.marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
-      get_detailed_csv_report_flexible
-    else
-      # default to rubric
-      get_detailed_csv_report_rubric
+  # returns an array of [mark, weight] for the assignment's rubric criterion
+  def get_rubric_marks_list(submission)
+    marks_list = []
+    self.rubric_criteria.each do |rubric_criterion|
+      mark = submission.get_latest_result
+        .marks
+        .where(markable_id: rubric_criterion.id,
+               markable_type: 'RubricCriterion')
+        .first
+      marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
+                       rubric_criterion.weight])
     end
+    marks_list
   end
 
-  # Get a detailed CSV report of rubric based marks
-  # (includes each criterion) for this assignment.
-  # Produces CSV rows such as the following:
-  #   student_name,95.22222,3,4,2,5,5,4,0/2
-  # Criterion values should be read in pairs. I.e. 2,3 means
-  # a student scored 2 for a criterion with weight 3.
-  # Last column are grace-credits.
-  def get_detailed_csv_report_rubric
-    out_of = self.total_mark
-    students = Student.all
-    rubric_criteria = self.rubric_criteria
-    MarkusCSV.generate(students) do |student|
-      result = [student.user_name]
-      grouping = student.accepted_grouping_for(self.id)
-      if grouping.nil? || !grouping.has_submission?
-        # No grouping/no submission
-        # total percentage, total_grade
-        result.concat(['','0'])
-        # mark, weight
-        result.concat(rubric_criteria.pluck("''", :weight).flatten())
-        # extra-mark, extra-percentage
-        result.concat(['',''])
-      else
-        submission = grouping.current_submission_used
-        result.concat([submission.get_latest_result.total_mark / out_of * 100,
-                       submission.get_latest_result.total_mark])
-        rubric_criteria.each do |rubric_criterion|
-          mark = submission.get_latest_result
-            .marks
-            .where(markable_id: rubric_criterion.id,
-                   markable_type: 'RubricCriterion')
-            .first
-          if mark.nil?
-            result.push('')
-          else
-            result.push(mark.mark || '')
-          end
-          result.push(rubric_criterion.weight)
-        end
-        result.concat([submission.get_latest_result.get_total_extra_points,
-                       submission.get_latest_result.get_total_extra_percentage])
-      end
-      # push grace credits info
-      grace_credits_data = student.remaining_grace_credits.to_s + '/' +
-        student.grace_credits.to_s
-      result.push(grace_credits_data)
-      result
+  # returns an array of [mark, max] for the assignment's rubric criterion
+  def get_flexible_marks_list(submission)
+    marks_list = []
+    self.flexible_criteria.each do |flexible_criterion|
+      mark = submission.get_latest_result
+        .marks
+        .where(markable_id: flexible_criterion.id,
+               markable_type: 'FlexibleCriterion')
+        .first
+      marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
+                       flexible_criterion.max])
     end
+    marks_list
   end
 
-  # Get a detailed CSV report of flexible criteria based marks
+  # Get a detailed CSV report of criteria based marks
   # (includes each criterion, with it's out-of value) for this assignment.
   # Produces CSV rows such as the following:
   #   student_name,95.22222,3,4,2,5,5,4,0/2
   # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
   # Last column are grace-credits.
-  def get_detailed_csv_report_flexible
+  # Determines which criterion type to use (flexible vs rubric)
+  def get_detailed_csv_report
     out_of = self.total_mark
     students = Student.all
-    flexible_criteria = self.flexible_criteria
+    # determine whether to use flexible criterion or rubric
+    is_flexible = self.marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
+    criteria = is_flexible ? self.flexible_criteria : self.rubric_criteria
     MarkusCSV.generate(students) do |student|
       result = [student.user_name]
       grouping = student.accepted_grouping_for(self.id)
@@ -655,7 +625,7 @@ class Assignment < ActiveRecord::Base
         # total percentage, total_grade
         result.concat(['','0'])
         # mark, weight
-        result.concat(flexible_criteria.pluck("''", :max).flatten())
+        result.concat(criteria.pluck("''", (is_flexible ? :max : :weight)).flatten())
         # extra-mark, extra-percentage
         result.concat(['',''])
       else
@@ -664,18 +634,11 @@ class Assignment < ActiveRecord::Base
         submission = grouping.current_submission_used
         result.concat([submission.get_latest_result.total_mark / out_of * 100,
                        submission.get_latest_result.total_mark])
-        flexible_criteria.each do |criterion|
-          mark = submission.get_latest_result
-            .marks
-            .where(markable_id: criterion.id,
-                   markable_type: 'FlexibleCriterion')
-            .first
-          if mark.nil?
-            result.push('')
-          else
-            result.push(mark.mark || '')
-          end
-          result.push(criterion.max)
+        marks_list = is_flexible ?
+          get_flexible_marks_list(submission) :
+          get_rubric_marks_list(submission)
+        marks_list.each do |mark|
+          result.concat(mark)
         end
         result.concat([submission.get_latest_result.get_total_extra_points,
                        submission.get_latest_result.get_total_extra_percentage])
@@ -884,7 +847,7 @@ class Assignment < ActiveRecord::Base
       !grouping.inviter.has_section?
     end
   end
-  
+
   private
 
   # Returns true if we are safe to set the repository name
