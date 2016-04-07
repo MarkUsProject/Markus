@@ -15,8 +15,10 @@ Markus::Application.routes.draw do
             get 'group_ids_by_name'
           end
           resources :submission_downloads, except: [:new, :edit]
-          resources :test_results, except: [:new, :edit]
           resources :feedback_files, except: [:new, :edit]
+          resources :test_script_results, except: [:new, :edit] do
+            resources :test_results, except: [:new, :edit]
+          end
           member do
             put 'update_marks'
             put 'update_marking_state'

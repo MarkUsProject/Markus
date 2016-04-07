@@ -67,7 +67,7 @@
                     </div>
                     <div id="test_results" class="sub_block">
                       <%= render partial: 'automated_tests/test_script_result',
-                                 collection: @test_script_results %>
+                                 collection: @test_script_results.where.not(submission_id: nil) %>
                     </div>
                   </div>
                 </div>

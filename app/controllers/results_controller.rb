@@ -136,10 +136,12 @@ class ResultsController < ApplicationController
 
   def run_tests
     grouping_id = params[:grouping_id]
+    submission_id = params[:submission_id]
     begin
       AutomatedTestsHelper.request_a_test_run(grouping_id,
                                               'submission',
-                                              @current_user)
+                                              @current_user,
+                                              submission_id)
     rescue => e
       # TODO: really shouldn't be leaking error if student.
       flash_message(:error, e.message)

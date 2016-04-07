@@ -152,7 +152,7 @@ module AutomatedTestsHelper
     assignment
   end
 
-  def self.request_a_test_run(grouping_id, call_on, current_user)
+  def self.request_a_test_run(grouping_id, call_on, current_user, submission_id = nil)
     @grouping = Grouping.find(grouping_id)
     assignment = @grouping.assignment
     group = @grouping.group
@@ -164,7 +164,7 @@ module AutomatedTestsHelper
 
     if files_available?(assignment) &&
       (call_on == 'collection' || has_permission?(current_user, assignment))
-      Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on)
+      Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on, submission_id)
     end
   end
 
@@ -272,8 +272,10 @@ module AutomatedTestsHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(grouping_id, call_on)
-    #@submission = Submission.find(submission_id)
+  def self.perform(grouping_id, call_on, submission_id = nil)
+    unless submission_id.nil?
+      @submission = Submission.find(submission_id)
+    end
     @grouping = Grouping.find(grouping_id)
     @assignment = @grouping.assignment
     @group = @grouping.group
@@ -311,7 +313,7 @@ module AutomatedTestsHelper
       # TODO: handle this error better
       raise 'error'
     else
-      process_result(result)
+      process_result(result, call_on, @assignment, @grouping, @submission)
     end
 
   end
@@ -380,9 +382,9 @@ module AutomatedTestsHelper
     end
   end
 
-  def self.process_result(raw_result)
+  def self.process_result(raw_result, call_on, assignment, grouping, submission = nil)
     result = Hash.from_xml(raw_result)
-    repo = @grouping.group.repo
+    repo = grouping.group.repo
     revision = repo.get_latest_revision
     revision_number = revision.revision_number
     raw_test_scripts = result['testrun']['test_script']
@@ -401,16 +403,22 @@ module AutomatedTestsHelper
     # array otherwise)
     result['testrun']['test_script'] = test_scripts
 
+    completion_status = 'pass'
+    marks_earned = 0
+    # If ran on collection or submission, associate a submission
+    # to the test script result
+    if(call_on == 'collection' || call_on == 'submission')
+      submission_id = submission.id
+    else
+      submission_id = nil
+    end
+
     test_scripts.each do |script|
       script_name = script['script_name']
-      test_script = TestScript.find_by(assignment_id: @assignment.id,
+      test_script = TestScript.find_by(assignment_id: assignment.id,
                                        script_name: script_name)
-      completion_status = 'pass'
-      marks_earned = 0
-      # TODO: HACK. Do we always need a submission id?
-      submission_id = Submission.last.id
 
-      new_test_script_result = @grouping.test_script_results.create(
+      new_test_script_result = grouping.test_script_results.create!(
         test_script_id: test_script.id,
         submission_id: submission_id,
         marks_earned: 0,
