@@ -337,6 +337,11 @@ describe SubmissionsController do
                            grouping: @grouping)
       @student = @membership.user
       @admin = create(:admin)
+      @csv_options = {
+        type: 'text/csv',
+        disposition: 'attachment',
+        filename: "#{@assignment.short_identifier}_simple_report.csv"
+      }
     end
 
     it 'should be able to access the repository browser' do
@@ -355,12 +360,44 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
     end
 
+    it 'should be able to generate a simple CSV report with appropriate content' do
+      csv_data = ''
+      Student.all.each do |student|
+        fields = []
+        fields.push(student.user_name)
+        grouping = student.accepted_grouping_for(@assignment.id)
+        if grouping.nil? || !grouping.has_submission?
+          fields.push('')
+        else
+          submission = grouping.current_submission_used
+          fields.push(submission.get_latest_result.total_mark / @assignment.total_mark * 100)
+        end
+        csv_data.concat(fields.to_csv)
+      end
+      expect(@controller).to receive(:send_data).with(csv_data, @csv_options) {
+        # to prevent a 'missing template' error
+        @controller.render nothing: true
+      }
+      get_as @admin,
+             :download_simple_csv_report,
+             assignment_id: @assignment.id
+    end
+
     it 'should be able to download the detailed csv report' do
       get_as @admin,
              :download_detailed_csv_report,
              assignment_id: @assignment.id
       is_expected.to respond_with(:success)
     end
+
+    # parse header object to check for the right content type
+    it 'returns text/csv type for detailed csv report' do
+      get_as @admin,
+             :download_simple_csv_report,
+             assignment_id: @assignment.id
+      expect(response.content_type).to eq 'text/csv'
+    end
+
 
     it 'should be able to download the svn checkout commands' do
       get_as @admin,
