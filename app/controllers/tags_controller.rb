@@ -126,8 +126,9 @@ class TagsController < ApplicationController
     if file
       Tag.transaction do
         result = MarkusCSV.parse(file.read, encoding: encoding) do |row|
-          next if CSV.generate_line(row).strip.empty?
-          Tag.create_or_update_from_csv_row(row, @current_user)
+          unless CSV.generate_line(row).strip.empty?
+            Tag.create_or_update_from_csv_row(row, @current_user)
+          end
         end
         unless result[:invalid_lines].empty?
           flash_message(:error, result[:invalid_lines])
