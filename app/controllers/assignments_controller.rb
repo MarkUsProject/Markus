@@ -63,9 +63,11 @@ class AssignmentsController < ApplicationController
     # Students can use this action only, when marks have been released
     if current_user.student? &&
         (@feedback_file.submission.grouping.membership_status(current_user).nil? ||
-        @feedback_file.submission.get_latest_result.released_to_students == false)
+         !@feedback_file.submission.get_latest_result.released_to_students)
       flash_message(:error, t('feedback_file.error.no_access',
                               feedback_file_id: @feedback_file.id))
+      head :forbidden
+      return
     end
 
     send_data @feedback_file.file_content, 

@@ -1,10 +1,13 @@
 <script>
   jQuery(document).ready(function() {
-     jQuery('#select_feedback_file_id').change();
-   });
+    jQuery('#select_feedback_file_id').change();
+  });
 
   function load_feedback_file(feedback_file_id) {
-    jQuery('#select_feedback_file_id').prop( "disabled", true);
+    if (feedback_file_id === '') {
+      return;
+    }
+    jQuery('#select_feedback_file_id').prop('disabled', true);
     jQuery.ajax({
       url: '<%= render_feedback_file_assignment_path(id: @assignment.id) %>',
       type: 'GET',
@@ -23,6 +26,6 @@
         jQuery('#feedback_file_content').html('Error retrieving feedback file');
       }
     });
-    jQuery('#select_feedback_file_id').prop( "disabled", false);
+    jQuery('#select_feedback_file_id').prop('disabled', false);
   }
 </script>
