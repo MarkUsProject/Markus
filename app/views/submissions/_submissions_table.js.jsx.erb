@@ -203,7 +203,7 @@
             name: section.name,
             text: section.name,
             func: function(group) {
-              return (group.section == this.name);
+              return group.section === section.name;
             }.bind(section)
           };
           return filter;
