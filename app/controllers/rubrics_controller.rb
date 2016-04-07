@@ -61,8 +61,20 @@ class RubricsController < ApplicationController
 
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
-    file_out = RubricCriterion.create_csv(@assignment)
-    send_data(file_out, type: 'text/csv', filename: "#{@assignment.short_identifier}_rubric_criteria.csv", disposition: 'inline')
+    file_out = MarkusCSV.generate(@assignment.rubric_criteria) do |criterion|
+      criterion_array = [criterion.rubric_criterion_name,criterion.weight]
+      (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+        criterion_array.push(criterion['level_' + i.to_s + '_name'])
+      end
+      (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+        criterion_array.push(criterion['level_' + i.to_s + '_description'])
+      end
+      criterion_array
+    end
+    send_data(file_out,
+              type: 'text/csv',
+              filename: "#{@assignment.short_identifier}_rubric_criteria.csv",
+              disposition: 'attachment')
   end
 
   def download_yml
