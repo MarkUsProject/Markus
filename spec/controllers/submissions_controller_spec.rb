@@ -337,6 +337,11 @@ describe SubmissionsController do
                            grouping: @grouping)
       @student = @membership.user
       @admin = create(:admin)
+      @csv_options = {
+        type: 'text/csv',
+        disposition: 'attachment',
+        filename: "#{@assignment.short_identifier}_simple_report.csv"
+      }
     end
 
     it 'should be able to access the repository browser' do
@@ -355,12 +360,44 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
     end
 
+    it 'should be able to generate a simple CSV report with appropriate content' do
+      csv_data = ''
+      Student.all.each do |student|
+        fields = []
+        fields.push(student.user_name)
+        grouping = student.accepted_grouping_for(@assignment.id)
+        if grouping.nil? || !grouping.has_submission?
+          fields.push('')
+        else
+          submission = grouping.current_submission_used
+          fields.push(submission.get_latest_result.total_mark / @assignment.total_mark * 100)
+        end
+        csv_data.concat(fields.to_csv)
+      end
+      expect(@controller).to receive(:send_data).with(csv_data, @csv_options) {
+        # to prevent a 'missing template' error
+        @controller.render nothing: true
+      }
+      get_as @admin,
+             :download_simple_csv_report,
+             assignment_id: @assignment.id
+    end
+
     it 'should be able to download the detailed csv report' do
       get_as @admin,
              :download_detailed_csv_report,
              assignment_id: @assignment.id
       is_expected.to respond_with(:success)
     end
+
+    # parse header object to check for the right content type
+    it 'returns text/csv type for detailed csv report' do
+      get_as @admin,
+             :download_simple_csv_report,
+             assignment_id: @assignment.id
+      expect(response.content_type).to eq 'text/csv'
+    end
+
 
     it 'should be able to download the svn checkout commands' do
       get_as @admin,
@@ -444,52 +481,106 @@ describe SubmissionsController do
         is_expected.to respond_with(:success)
       end
 
-      context 'of sections' do
-        before(:each) do
-          @section = create(:section, name: 's1')
-          @student.section = @section
+      context 'of selected groupings' do
+        it 'should get an error if no groupings are selected' do
+          post_as @admin,
+                 :collect_submissions,
+                 assignment_id: 1,
+                 groupings: []
+
+          expect(response.body).to eql(
+            I18n.t('results.must_select_a_group_to_collect'))
+          is_expected.to respond_with(:bad_request)
         end
 
-        it 'should get an error if it is before the section due date' do
-          allow(Assignment).to receive_message_chain(
-            :includes, :find) { @assignment }
-          allow(Section).to receive(:exists?).with('1') { true }
-          expect(Section).to receive(:find).with('1') { @section }
-          expect_any_instance_of(SubmissionsHelper).to receive(
-            :collect_submissions_for_section) { 0 }
+        context 'with a section' do
+          before(:each) do
+            @section = create(:section, name: 's1')
+            @student.section = @section
+            @student.save
+          end
 
-          get_as @admin,
-                 :collect_section_submissions,
-                 assignment_id: 1,
-                 sections: [1]
-          response_body = JSON.parse(response.body)
-          expect(response_body['error']).to include(
-            I18n.t('collect_submissions.no_submission_for_section',
-                   section_names: 's1'))
-          expect(response_body['success']).to be_nil
-          is_expected.to respond_with(:ok)
+          it 'should get an error if it is before the section due date' do
+            allow(Assignment).to receive_message_chain(
+              :includes, :find) { @assignment }
+            expect(@assignment).to receive_message_chain(
+              :submission_rule, :can_collect_now?).with(@section) { false }
+            expect(@assignment).to receive(:short_identifier) { 'a1' }
+
+            post_as @admin,
+                   :collect_submissions,
+                   assignment_id: 1,
+                   groupings: ([] << @assignment.groupings).flatten
+
+            response_body = JSON.parse(response.body)
+            expect(response_body['error']).to eql(
+              I18n.t('collect_submissions.could_not_collect_some',
+                     assignment_identifier: 'a1'))
+            expect(response_body['success']).to be_nil
+            is_expected.to respond_with(:ok)
+          end
+
+          it 'should succeed if it is after the section due date' do
+            allow(Assignment).to receive_message_chain(
+              :includes, :find) { @assignment }
+            expect(@assignment).to receive_message_chain(
+              :submission_rule, :can_collect_now?).with(@section) { true }
+            expect(@assignment).to receive(:short_identifier) { 'a1' }
+
+            post_as @admin,
+                   :collect_submissions,
+                   assignment_id: 1,
+                   groupings: ([] << @assignment.groupings).flatten
+
+            response_body = JSON.parse(response.body)
+            expect(response_body['success']).to eql(
+              I18n.t('collect_submissions.collection_job_started_for_groups',
+                     assignment_identifier: 'a1'))
+            expect(response_body['error']).to be_nil
+            is_expected.to respond_with(:ok)
+          end
         end
 
-        it 'should succeed if it is after the section due date' do
-          allow(Assignment).to receive_message_chain(
-            :includes, :find) { @assignment }
-          allow(Section).to receive(:exists?).with('1') { true }
-          expect(Section).to receive(:find).with('1') { @section }
-          expect(@assignment).to receive(:short_identifier) { 'a1' }
-          expect_any_instance_of(SubmissionsHelper).to receive(
-            :collect_submissions_for_section) { 1 }
+        context 'without a section' do
+          it 'should get an error if it is before the global due date' do
+            allow(Assignment).to receive_message_chain(
+              :includes, :find) { @assignment }
+            expect(@assignment).to receive_message_chain(
+              :submission_rule, :can_collect_now?).with(nil) { false }
+            expect(@assignment).to receive(:short_identifier) { 'a1' }
 
-          get_as @admin,
-                 :collect_section_submissions,
-                 assignment_id: 1,
-                 sections: [1]
-          response_body = JSON.parse(response.body)
-          expect(response_body['success']).to include(
-            I18n.t('collect_submissions.section_collection_job_started',
-                   assignment_identifier: 'a1',
-                   section_names: 's1'))
-          expect(response_body['error']).to be_empty
-          is_expected.to respond_with(:ok)
+            post_as @admin,
+                   :collect_submissions,
+                   assignment_id: 1,
+                   groupings: ([] << @assignment.groupings).flatten
+
+            response_body = JSON.parse(response.body)
+            expect(response_body['error']).to eql(
+              I18n.t('collect_submissions.could_not_collect_some',
+                     assignment_identifier: 'a1'))
+            expect(response_body['success']).to be_nil
+            is_expected.to respond_with(:ok)
+          end
+
+          it 'should succeed if it is after the global due date' do
+            allow(Assignment).to receive_message_chain(
+              :includes, :find) { @assignment }
+            expect(@assignment).to receive_message_chain(
+              :submission_rule, :can_collect_now?).with(nil) { true }
+            expect(@assignment).to receive(:short_identifier) { 'a1' }
+
+            post_as @admin,
+                   :collect_submissions,
+                   assignment_id: 1,
+                   groupings: ([] << @assignment.groupings).flatten
+
+            response_body = JSON.parse(response.body)
+            expect(response_body['success']).to eql(
+              I18n.t('collect_submissions.collection_job_started_for_groups',
+                     assignment_identifier: 'a1'))
+            expect(response_body['error']).to be_nil
+            is_expected.to respond_with(:ok)
+          end
         end
       end
     end

@@ -240,42 +240,28 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  def collect_section_submissions
+  def collect_submissions
+    if !params.has_key?(:groupings) || params[:groupings].empty?
+      render text: t('results.must_select_a_group_to_collect'), status: 400
+      return
+    end
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
-    section_ids = params[:sections]
-    errors = Array.new
-    successes = Array.new
-    noSubmissions = Array.new
-    section_ids.each do |id|
-      if id == '0'
-        submission_collector = SubmissionCollector.instance
-        submission_collector.push_groupings_to_queue(
-          assignment.sectionless_groupings)
-        successes.push(t('groups.unassigned_students'))
-      else
-        unless Section.exists?(id)
-          errors.push(I18n.t('collect_submissions.could_not_find_section'))
-          next
-        end
-        if collect_submissions_for_section(id, assignment, errors) > 0
-          successes.push(Section.find(id).name)
-        else
-          noSubmissions.push(Section.find(id).name)
-        end
-      end
+    groupings = assignment.groupings.find(params[:groupings])
+    partition = groupings.partition do |grouping|
+      section = grouping.inviter.present? ? grouping.inviter.section : nil
+      assignment.submission_rule.can_collect_now?(section)
     end
-    if successes.length > 0
-      sections = successes.join(', ')
-      success = I18n.t('collect_submissions.section_collection_job_started',
-                     assignment_identifier: assignment.short_identifier,
-                     section_names: sections)
+    if partition[0].count > 0
+      submission_collector = SubmissionCollector.instance
+      submission_collector.push_groupings_to_queue(partition[0])
+      success = I18n.t('collect_submissions.collection_job_started_for_groups',
+                       assignment_identifier: assignment.short_identifier)
     end
-    if noSubmissions.length > 0
-      sections = noSubmissions.join(', ')
-      errors.push(I18n.t('collect_submissions.no_submission_for_section',
-                       section_names: sections))
+    if partition[1].count > 0
+      error = I18n.t('collect_submissions.could_not_collect_some',
+                       assignment_identifier: assignment.short_identifier)
     end
-    render json: { success: success, error: errors }
+    render json: { success: success, error: error }
   end
 
   def collect_ta_submissions
@@ -302,6 +288,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                        current_user)
+    @sections = Section.order(:name)
     @available_sections = Hash.new
     if @assignment.submission_rule.can_collect_now?
       @available_sections[t('groups.unassigned_students')] = 0
@@ -816,9 +803,23 @@ class SubmissionsController < ApplicationController
   # See Assignment.get_simple_csv_report for details
   def download_simple_csv_report
     assignment = Assignment.find(params[:assignment_id])
-    send_data assignment.get_simple_csv_report,
+    students = Student.all
+    out_of = assignment.total_mark
+    file_out = MarkusCSV.generate(students) do |student|
+      result = [student.user_name]
+      grouping = student.accepted_grouping_for(assignment.id)
+      if grouping.nil? || !grouping.has_submission?
+        result.push('')
+      else
+        submission = grouping.current_submission_used
+        result.push(submission.get_latest_result.total_mark / out_of * 100)
+      end
+      result
+    end
+
+    send_data file_out,
               disposition: 'attachment',
-              type: 'application/vnd.ms-excel',
+              type: 'text/csv',
               filename: "#{assignment.short_identifier}_simple_report.csv"
   end
 
@@ -827,7 +828,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     send_data assignment.get_detailed_csv_report,
               disposition: 'attachment',
-              type: 'application/vnd.ms-excel',
+              type: 'text/csv',
               filename: "#{assignment.short_identifier}_detailed_report.csv"
   end
 

@@ -95,4 +95,59 @@ describe TasController do
         .to eq([I18n.t('csv.upload.non_text_file_with_csv_extension')])
     end
   end
+
+  context 'download_ta_list' do
+    context 'csv' do
+      let(:csv_options) do
+        {
+          type: 'text/csv',
+          filename: 'ta_list.csv',
+          disposition: 'attachment'
+        }
+      end
+
+      before :each do
+        # create some test tas
+        (0..4).each do
+          create(:ta)
+        end
+        @tas = Ta.order(:user_name)
+      end
+
+      it 'responds with appropriate status' do
+        get :download_ta_list,
+            format: 'csv'
+        expect(response.status).to eq(200)
+      end
+
+      # parse header object to check for the right disposition
+      it 'sets disposition as attachment' do
+        get :download_ta_list,
+            format: 'csv'
+        d = response.header['Content-Disposition'].split.first
+        expect(d).to eq 'attachment;'
+      end
+
+      it 'expects a call to send_data' do
+        csv_data = ''
+        @tas.pluck(:user_name, :last_name, :first_name).each do |ta|
+          csv_data.concat("#{ta.join(',')}\n")
+        end
+        expect(@controller).to receive(:send_data)
+                                 .with(csv_data, csv_options) {
+          # to prevent a 'missing template' error
+          @controller.render nothing: true
+        }
+        get :download_ta_list,
+            format: 'csv'
+      end
+
+      # parse header object to check for the right content type
+      it 'returns text/csv type' do
+        get :download_ta_list,
+            format: 'csv'
+        expect(response.content_type).to eq 'text/csv'
+      end
+    end
+  end
 end

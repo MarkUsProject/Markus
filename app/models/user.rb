@@ -126,24 +126,6 @@ class User < ActiveRecord::Base
     grouping.current_submission_used
   end
 
-  # Classlist parsing --------------------------------------------------------
-  def self.generate_csv_list(user_list)
-     file_out = CSV.generate do |csv|
-       user_list.each do |user|
-         # csv format is user_name,last_name,first_name
-         # We check for user's section
-         # If the user has a section, we had it to the CSV
-         if !user.student? or user.section.nil?
-           user_array = [user.user_name,user.last_name,user.first_name]
-         else
-           user_array = [user.user_name,user.last_name,user.first_name, user.section.name]
-         end
-         csv << user_array
-       end
-     end
-     file_out
-  end
-
   def self.upload_user_list(user_class, user_list, encoding)
     max_invalid_lines = 10
     num_update = 0

@@ -226,23 +226,6 @@ class AssignmentTest < ActiveSupport::TestCase
         @submission = Submission.make(:grouping => @grouping)
       end
 
-      should 'be able to generate a simple CSV report of marks' do
-        expected_string = ''
-        Student.all.each do |student|
-          fields = []
-          fields.push(student.user_name)
-          grouping = student.accepted_grouping_for(@assignment.id)
-          if grouping.nil? || !grouping.has_submission?
-            fields.push('')
-          else
-            submission = grouping.current_submission_used
-            fields.push(submission.get_latest_result.total_mark / @assignment.total_mark * 100)
-          end
-          expected_string += fields.to_csv
-        end
-        assert_equal expected_string, @assignment.get_simple_csv_report, 'Simple CSV report is wrong!'
-      end
-
       should 'be able to get a list of repository access URLs for each group' do
         expected_string = ''
         @assignment.groupings.each do |grouping|

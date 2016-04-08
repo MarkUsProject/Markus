@@ -195,6 +195,24 @@
       // Do student-specific table stuff here.
       // possibly move this to getdefaultprops.
 
+      // need to filter for each section
+      var sections = <%= raw @sections.to_json %>;
+      if (sections.length > 0) {
+        var section_filters = [];
+        var all = '<%= I18n.t('browse_submissions.sections.all') %>';
+        section_filters.push({name: all, text: all, func: function(g) { return g; } });
+        for (var i = 0; i < sections.length; i++) {
+          var filter = {
+            name: sections[i].name,
+            text: sections[i].name,
+            func: function(submission) {
+              return (submission.section === this.name);
+            }.bind(sections[i])
+          };
+          section_filters.push(filter);
+        }
+      }
+
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
         s['id'] = submission.id;
@@ -256,6 +274,7 @@
               columns={this.props.columns}
               selectable={true}
               filters={this.props.filters}
+              secondary_filters={section_filters}
               filter_type={true}
               onSelectedRowsChange={this.updateSelectedSubmissions}
               search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
@@ -307,24 +326,6 @@
         }.bind(this)
       });
     },
-    collectAllSubmissions: function() {
-      jQuery.ajax({
-        method: 'GET',
-        url: 'collect_all_submissions',
-        success: function(data) {
-          if(data.message){
-            this.props.onSuccess(data.message);
-          }
-          if(data.error){
-            this.props.onError(data.error);
-          }
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
-      });
-    },
     uncollectAllSubmissions: function() {
       jQuery.ajax({
         method: 'GET',
@@ -343,13 +344,13 @@
         }.bind(this)
       });
     },
-    collectSectionSubmissions: function() {
+    collectSubmissions: function() {
       var dataLoad = {
-        sections: this.refs.sectionSelect.state.value.split(',')
+        groupings: this.props.selected_submissions
       };
       jQuery.ajax({
-        method: 'GET',
-        url: 'collect_section_submissions',
+        method: 'POST',
+        url: 'collect_submissions',
         data: dataLoad,
         success: function(data) {
           if(data.success){
@@ -368,39 +369,18 @@
     render: function() {
       return (
         <div className='react-release-marks'>
-          <% if @current_user.admin?
-            if Section.all.count > 0              
-              if @available_sections.length > 0 %>
-                <select defaultValue={"<%= @available_sections.values.join(',') %>"} ref="sectionSelect">
-                  <option selected value={"<%=  @available_sections.values.join(',') %>"}><%= t('collect_submissions.all_available') %></option>
-                  <% @available_sections.each do |name, id| %>
-                    <option value={"<%= id %>"}><%= name %></option>
-                  <% end %>
-                </select>
-                <button onClick={this.collectSectionSubmissions}
-                        data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
-                  <%= j raw I18n.t('collect_submissions.collect_section') %>
-                </button>
-                <% if @assignment.can_uncollect_submissions? %>
-                  <button onClick={this.uncollectAllSubmissions}
+          <% if @current_user.admin? %>
+            <button onClick={this.collectSubmissions}
+                    data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
+              <%= j raw I18n.t('collect_submissions.collect') %>
+            </button>
+          <% end %>
+          <% if @assignment.can_uncollect_submissions? %>
+            <button onClick={this.uncollectAllSubmissions}
                     data-confirm='<%= t('collect_submissions.undo_results_loss_warning')%>' data-remote="true">
-                  <%=j raw I18n.t('collect_submissions.uncollect_all') %>
-                </button>
-                <% end %>
-              <% end
-            else %>
-              <button onClick={this.collectAllSubmissions}
-                      data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
-                <%= j raw I18n.t('collect_submissions.collect_all') %>
-              </button>
-              <% if @assignment.can_uncollect_submissions? %>
-                <button onClick={this.uncollectAllSubmissions}
-                 data-confirm='<%= t('collect_submissions.undo_results_loss_warning')%>' data-remote="true">
-                  <%=j raw I18n.t('collect_submissions.uncollect_all') %>
-                </button>
-              <% end %>
-            <% end
-          end %>
+              <%=j raw I18n.t('collect_submissions.uncollect_all') %>
+            </button>
+          <% end %>
           <button onClick={this.releaseMarks}>
             <%= j raw I18n.t('browse_submissions.release_marks') %>
           </button>
