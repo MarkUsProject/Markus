@@ -185,6 +185,23 @@
       });
     },
     render: function() {
+      // need to filter for each section
+      var sections = <%= raw @sections.to_json %>;
+      if (sections.length > 0) {
+        var section_filters = sections.map(function(section) {
+          var filter = {
+            name: section.name,
+            text: section.name,
+            func: function(group) {
+              return group.section === section.name;
+            }
+          }
+          return filter;
+        });
+        var all = '<%= I18n.t('browse_submissions.sections.all') %>';
+        section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
+      }
+
       // Add grades and marking state columns to array of table columns
       var all_columns = this.props.columns.concat(this.state.grade_columns);
 
@@ -236,7 +253,8 @@
             selectable={true} // True if you want checkboxed elements
             onSelectedRowsChange={this.updateSelectedStudents}
             columns={all_columns}
-            filters={null} // Optional: pass null
+            filters={section_filters}
+            filter_type={true}
            />
         </div>
       );
