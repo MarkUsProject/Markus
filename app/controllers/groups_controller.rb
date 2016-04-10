@@ -194,7 +194,7 @@ class GroupsController < ApplicationController
   end
 
   def download_grouplist
-    assignment = Assignment.where(id: params[:assignment_id]).first
+    assignment = Assignment.find(params[:assignment_id])
 
     #get all the groups
     groupings = assignment.groupings #FIXME: optimize with eager loading

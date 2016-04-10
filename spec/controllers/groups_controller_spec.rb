@@ -11,12 +11,15 @@ describe GroupsController do
       allow(controller).to receive(:logged_in?).and_return(true)
       allow(controller).to receive(:current_user).and_return(build(:admin))
 
-      allow(Assignment).to receive(:find).and_return(assignment)
     end
 
     describe '#note_message'
 
     describe 'GET #new' do
+      before :each do
+        allow(Assignment).to receive(:find).and_return(assignment)
+      end
+
       context 'when no group name is specified' do
         it 'adds a new group to assignment' do
           expect(assignment).to receive(:add_group)
@@ -124,6 +127,7 @@ describe GroupsController do
 
     describe 'GET #index' do
       before :each do
+        allow(Assignment).to receive(:find).and_return(assignment)
         get :index, assignment_id: assignment
       end
 
