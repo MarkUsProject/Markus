@@ -82,6 +82,8 @@ class Assignment < ActiveRecord::Base
 
   validate :minimum_number_of_groups
 
+  after_create :build_repoistory
+
   before_save :reset_collection_time
 
   # Call custom validator in order to validate the :due_date attribute
