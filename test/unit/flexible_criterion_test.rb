@@ -43,17 +43,17 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
   context 'With an unexisting criteria' do
 
     should 'raise en error message on an empty row' do
-      e = assert_raise CSV::MalformedCSVError do
+      e = assert_raise CSVInvalidLineError do
         FlexibleCriterion.new_from_csv_row([], Assignment.new)
       end
-      assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
+      assert_equal I18n.t('csv.invalid_row.invalid_format'), e.message
     end
 
     should 'raise an error message on a 1 element row' do
-      e = assert_raise CSV::MalformedCSVError do
+      e = assert_raise CSVInvalidLineError do
         FlexibleCriterion.new_from_csv_row(%w(name), Assignment.new)
       end
-      assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
+      assert_equal I18n.t('csv.invalid_row.invalid_format'), e.message
     end
 
     should 'raise an error message on a invalid maximum value' do
@@ -136,7 +136,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
             ['criterion1', 1.0, 'any description would do'],
             @assignment)
         end
-        assert_equal I18n.t('criteria_csv_error.name_not_unique'), e.message
+        assert_equal I18n.t('csv.invalid_row.duplicate_entry'), e.message
       end
 
     end

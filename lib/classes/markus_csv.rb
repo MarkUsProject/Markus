@@ -33,8 +33,13 @@ class MarkusCSV
         begin
           parse_obj.call(row)
           valid_line_count += 1
-        rescue CSVInvalidLineError
-          invalid_lines << row
+        rescue CSVInvalidLineError => e
+          # append individual error messages to each entry
+          line = row.join(',')
+          unless e.message.blank? || e.message == 'CSVInvalidLineError'
+            line.concat(" (#{e.message})")
+          end
+          invalid_lines << line
         end
       end
       # Return string representation of the erroneous lines.

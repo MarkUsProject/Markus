@@ -398,6 +398,9 @@ en:
       group_to_grader: "You must supply a CSV file for group to grader mapping"
       student_to_grader: "You must supply a CSV file for student to grader mapping"
       invalid_csv: "The format of the CSV file was not recognized"
+      invalid_row:
+        duplicate_entry: "Duplicate Entry"
+        invalid_format: "Invalid Row Format"
       upload:
         malformed_csv: "The selected file was improperly formed. Please ensure the file meets Markus specifications."
         # when a non-text file has a csv extension (ie: user changes extension

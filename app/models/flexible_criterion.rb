@@ -76,7 +76,7 @@ class FlexibleCriterion < Criterion
   #                           supplied name is not unique.
   def self.new_from_csv_row(row, assignment)
     if row.length < 2
-      raise CSV::MalformedCSVError, I18n.t('criteria_csv_error.incomplete_row')
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     criterion = FlexibleCriterion.new
     criterion.assignment = assignment
@@ -84,13 +84,12 @@ class FlexibleCriterion < Criterion
     # assert that no other criterion uses the same name for the same assignment.
     unless FlexibleCriterion.where(assignment_id: assignment.id,
                                    flexible_criterion_name: row[0]).size.zero?
-      message = I18n.t('criteria_csv_error.name_not_unique')
-      raise CSVInvalidLineError, message
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.duplicate_entry')
     end
 
     criterion.max = row[1]
     if criterion.max.nil? or criterion.max.zero?
-      raise CSVInvalidLineError
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
 
     criterion.description = row[2] if !row[2].nil?
