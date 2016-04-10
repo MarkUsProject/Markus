@@ -75,6 +75,7 @@ class GradeEntryFormsController < ApplicationController
 
   # View/modify the grades for this grade entry form
   def grades
+    @sections = Section.order(:name)
     @grade_entry_form = GradeEntryForm.find(params[:id])
     render layout: 'assignment_content'
   end
