@@ -805,16 +805,15 @@ module Repository
 
     # Removes a file from a transaction and eventually from repository
     def remove_file(path, author, _expected_revision_number = 0)
-      repo = @repos
       @repos.index.remove(path);
-      File.unlink File.join(repo.workdir, path)
-      @repos.index.write_tree repo
+      File.unlink(File.join(@repos_path, path))
+      @repos.index.write_tree(@repos)
       @repos.index.write
       Rugged::Commit.create(@repos, commit_options(@repos, author,
                                                    'Removing file'))
 
       # todo: quick fix to make gitolite sync on file upload
-      g = Git.open(repo.workdir)
+      g = Git.open(@repos.workdir)
       g.push
     end
 
@@ -828,10 +827,11 @@ module Repository
 
       # Get directory path of file (one level higher)
       dir = File.dirname(path)
+      abs_path = File.join(@repos_path, dir)
 
       # Create the folder (if not present), creating parents folders if necessary.
       # This will not overwrite the folder if it's already present.
-      FileUtils.mkdir_p(dir)
+      FileUtils.mkdir_p(abs_path)
 
       # Create and commit the file
       make_file(path, file_data, author)
@@ -841,21 +841,20 @@ module Repository
     # file on disk if it already exists, but will only make a
     # new commit if the file contents have changed.
     def make_file(path, file_data, author)
-      repo = @repos
       # Get the file path to write to using the ruby File module.
-      file_path = File.join(repo.workdir, path)
+      abs_path = File.join(@repos_path, path)
       # Actually create the file.
-      File.open(file_path, 'w+') do |file|
+      File.open(abs_path, 'w+') do |file|
         file.write file_data.force_encoding('UTF-8')
       end
 
       # Get the hash of the file we just created and added
-      oid = Rugged::Blob.from_workdir(repo, path)
-      index = repo.index
+      oid = Rugged::Blob.from_workdir(@repos, path)
+      index = @repos.index
       index.add(path: path, oid: oid, mode: 0100644)
       index.write
-      Rugged::Commit.create(repo, commit_options(repo, author, 'Add file'))
-      g = Git.open(repo.workdir)
+      Rugged::Commit.create(@repos, commit_options(@repos, author, 'Add file'))
+      g = Git.open(@repos.workdir)
       g.push
     end
 
