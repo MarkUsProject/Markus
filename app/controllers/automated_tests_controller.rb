@@ -31,20 +31,20 @@ class AutomatedTestsController < ApplicationController
         flash[:success] = I18n.t("assignment.update_success")
         unless new_script.nil?
           assignment_tests_path = File.join(
-            MarkusConfigurator.markus_config_automated_tests_repository,
-            @assignment.repository_folder,
-            new_script.original_filename)
+              MarkusConfigurator.markus_config_automated_tests_repository,
+              @assignment.repository_folder,
+              new_script.original_filename)
           File.open(
-            assignment_tests_path, 'w') { |f| f.write new_script.read }
+              assignment_tests_path, 'w') { |f| f.write new_script.read }
         end
 
         unless new_support_file.nil?
           assignment_tests_path = File.join(
-            MarkusConfigurator.markus_config_automated_tests_repository,
-            @assignment.repository_folder,
-            new_support_file.original_filename)
+              MarkusConfigurator.markus_config_automated_tests_repository,
+              @assignment.repository_folder,
+              new_support_file.original_filename)
           File.open(
-            assignment_tests_path, 'w') { |f| f.write new_support_file.read }
+              assignment_tests_path, 'w') { |f| f.write new_support_file.read }
         end
 
         redirect_to :action => 'manage',
@@ -70,18 +70,18 @@ class AutomatedTestsController < ApplicationController
 
     unless @grouping.nil?
       @test_script_results = TestScriptResult.where(grouping: @grouping)
-                                       .order(created_at: :desc)
+                                 .order(created_at: :desc)
       @token = fetch_latest_tokens_for_grouping(@grouping)
     end
   end
 
   def execute_test_run
-    assignment = Assignment.find(params[:id])
-    grouping = current_user.accepted_grouping_for(assignment.id)
+    @assignment = Assignment.find(params[:id])
+    grouping = current_user.accepted_grouping_for(@assignment.id)
     token = fetch_latest_tokens_for_grouping(grouping)
 
     # For running tests
-    if (token && token.tokens > 0) || assignment.unlimited_tokens
+    if (token && token.tokens > 0) || @assignment.unlimited_tokens
       test_errors = run_tests(grouping.id)
       if test_errors.nil?
         flash_message(:notice, I18n.t('automated_tests.tests_running'))
@@ -89,6 +89,7 @@ class AutomatedTestsController < ApplicationController
         flash_message(:error, test_errors)
       end
     end
+
     redirect_to action: :student_interface
   end
 
@@ -136,7 +137,7 @@ class AutomatedTestsController < ApplicationController
                   :type => ( SubmissionFile.is_binary?(file_contents) ? 'application/octet-stream':'text/plain' ),
                   :x_sendfile => true
 
-     # print flash error messages
+        # print flash error messages
       else
         flash[:error] = I18n.t('automated_tests.download_wrong_place_or_unreadable');
         redirect_to :action => 'manage'
@@ -154,6 +155,9 @@ class AutomatedTestsController < ApplicationController
         .permit(:enable_test,
                 :assignment_id,
                 :tokens_per_day,
+                :regeneration_period,
+                :last_token_regeneration_date,
+                :tokens_start_of_availability_date,
                 :unlimited_tokens,
                 test_files_attributes:
                     [:id, :filename, :filetype, :is_private, :_destroy],
@@ -163,7 +167,7 @@ class AutomatedTestsController < ApplicationController
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,
                      :display_expected_output, :display_actual_output,
-                     :_destroy],
+                     :associated_criterion, :_destroy],
                 test_support_files_attributes:
                     [:id, :file_name, :assignment_id, :description, :_destroy])
   end

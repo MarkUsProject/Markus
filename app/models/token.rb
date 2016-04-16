@@ -30,13 +30,16 @@ class Token < ActiveRecord::Base
     self.save
   end
 
-  def reassign_tokens_if_new_day
-    if self.last_token_used_date and self.last_token_used_date < Date.today
-      self.reassign_tokens
+  def reassign_tokens_if_after_regen_period()
+    assignment = self.grouping.assignment
+    if assignment.last_token_regeneration_date
+      if (assignment.last_token_regeneration_date.to_time.to_i + assignment.regeneration_period*60*60) <= DateTime.now.to_time.to_i
+        self.reassign_tokens
+      end
     end
   end
 
-  # Re-assign to the student the nomber of tokens
+  # Re-assign to the student the number of tokens
   # allowed for this assignment
   def reassign_tokens
     assignment = self.grouping.assignment
@@ -44,6 +47,9 @@ class Token < ActiveRecord::Base
       self.tokens = 0
     else
       self.tokens = assignment.tokens_per_day
+      num_periods = ((DateTime.now.to_time.to_i - assignment.tokens_start_of_availability_date.to_time.to_i)/60/60) / assignment.regeneration_period
+      assignment.last_token_regeneration_date = assignment.tokens_start_of_availability_date +
+          (num_periods.floor * assignment.regeneration_period).hours
     end
     self.save
   end

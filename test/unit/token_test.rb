@@ -19,7 +19,7 @@ class TokenTest < ActiveSupport::TestCase
 
   context 'valid Token' do
     setup do
-       @token = Token.make(:tokens => '0')
+      @token = Token.make(:tokens => '0')
     end
 
     should 'be valid (tokens can be equal to 0)' do
@@ -30,8 +30,8 @@ class TokenTest < ActiveSupport::TestCase
   context 'function decrease_tokens' do
     context 'when number of tokens is greater than 0' do
       setup do
-         @token = Token.make
-         @token.decrease_tokens
+        @token = Token.make
+        @token.decrease_tokens
       end
 
       should 'decrease number of tokens' do
@@ -39,14 +39,14 @@ class TokenTest < ActiveSupport::TestCase
       end
 
       should 'update the token used date' do
-        assert_equal(@token.last_token_used_date, Date.today)
+        assert_equal(Time.now.strftime('%Y-%m-%d %H:%M'), @token.last_token_used_date.strftime('%Y-%m-%d %H:%M'))
       end
     end
 
     context 'when number of tokens is equal to 0' do
       setup do
-         @token = Token.make(:tokens => '0')
-         @token.decrease_tokens
+        @token = Token.make(:tokens => '0')
+        @token.decrease_tokens
       end
 
       should 'not decrease numbre of tokens (not enough tokens)' do
@@ -61,8 +61,8 @@ class TokenTest < ActiveSupport::TestCase
 
   context 'function reassign_tokens' do
     setup do
-       @token = Token.make(:tokens => '0')
-       @token.reassign_tokens
+      @token = Token.make(:tokens => '0')
+      @token.reassign_tokens
     end
     should 'reassign assignment tokens' do
       assert_equal(10, @token.tokens)
@@ -100,21 +100,23 @@ class TokenTest < ActiveSupport::TestCase
     end
   end
 
-  context 'reassign_tokens_if_new_day' do
+  context 'reassign_tokens_if_after_regen_period' do
     setup do
       @token = Token.make(:tokens => '3')
       a = @token.grouping.assignment
+      a.tokens_start_of_availability_date = DateTime.now
       a.tokens_per_day = 5
+      a.regeneration_period = 4
       a.save
     end
-    should 'reassign tokens if it is a new day' do
-      @token.last_token_used_date = 5.days.ago
-      @token.reassign_tokens_if_new_day()
+    should 'reassign token if it is after regeneration period' do
+      @token.last_token_used_date = 5.hours.ago
+      @token.reassign_tokens_if_after_regen_period()
       assert_equal(5, @token.tokens)
     end
     should 'not reassign tokens if it is not a new day' do
-      @token.last_token_used_date = Date.today
-      @token.reassign_tokens_if_new_day()
+      @token.last_token_used_date = 2.hours.ago
+      @token.reassign_tokens_if_after_regen_period()
       assert_equal(3, @token.tokens)
     end
   end

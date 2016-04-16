@@ -97,8 +97,11 @@ ActiveRecord::Schema.define(version: 20160327163400) do
     t.integer  "rubric_criterions_count"
     t.integer  "flexible_criterions_count"
     t.integer  "groupings_count"
-    t.integer  "tokens_per_day",                   default: 0,        null: false
-    t.boolean  "allow_remarks",                    default: true,     null: false
+    t.datetime "last_token_regeneration_date"
+    t.datetime "tokens_start_of_availability_date"
+    t.integer  "tokens_per_day",                    default: 0,        null: false
+    t.integer  "regeneration_period",               default: 0,        null: false
+    t.boolean  "allow_remarks",                     default: true,     null: false
     t.datetime "remark_due_date"
     t.text     "remark_message"
     t.float    "results_median"
@@ -486,6 +489,7 @@ ActiveRecord::Schema.define(version: 20160327163400) do
     t.string  "display_input",           null: false
     t.string  "display_expected_output", null: false
     t.string  "display_actual_output",   null: false
+    t.string  "associated_criterion",    null: false
   end
 
   add_index "test_scripts", ["assignment_id", "seq_num"], name: "index_test_scripts_on_assignment_id_and_seq_num", using: :btree
