@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160327163400) do
+ActiveRecord::Schema.define(version: 20160417214303) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,17 +90,14 @@ ActiveRecord::Schema.define(version: 20160327163400) do
     t.boolean  "allow_web_submits",                 default: true
     t.boolean  "section_groups_only"
     t.boolean  "section_due_dates_type",            default: false
-    t.boolean  "display_grader_names_to_students"
+    t.boolean  "display_grader_names_to_students",  default: false
     t.boolean  "enable_test",                       default: false,    null: false
     t.integer  "notes_count",                       default: 0
     t.boolean  "assign_graders_to_criteria",        default: false
     t.integer  "rubric_criterions_count"
     t.integer  "flexible_criterions_count"
     t.integer  "groupings_count"
-    t.datetime "last_token_regeneration_date"
-    t.datetime "tokens_start_of_availability_date"
     t.integer  "tokens_per_day",                    default: 0,        null: false
-    t.integer  "regeneration_period",               default: 0,        null: false
     t.boolean  "allow_remarks",                     default: true,     null: false
     t.datetime "remark_due_date"
     t.text     "remark_message"
@@ -110,8 +107,11 @@ ActiveRecord::Schema.define(version: 20160327163400) do
     t.integer  "outstanding_remark_request_count"
     t.boolean  "is_hidden",                         default: false
     t.boolean  "only_required_files"
-    t.boolean  "vcs_submit"
+    t.boolean  "vcs_submit",                        default: false
     t.boolean  "unlimited_tokens",                  default: false
+    t.datetime "last_token_regeneration_date"
+    t.datetime "tokens_start_of_availability_date"
+    t.float    "regeneration_period"
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
@@ -257,7 +257,7 @@ ActiveRecord::Schema.define(version: 20160327163400) do
   end
 
   add_index "groups", ["group_name"], name: "groups_name_unique", unique: true, using: :btree
-  
+
   create_table "job_messengers", force: :cascade do |t|
     t.string   "job_id"
     t.string   "status"
@@ -344,8 +344,9 @@ ActiveRecord::Schema.define(version: 20160327163400) do
     t.text     "overall_comment"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "released_to_students", default: false, null: false
-    t.float    "total_mark",           default: 0.0
+    t.boolean  "released_to_students",        default: false, null: false
+    t.float    "total_mark",                  default: 0.0
+    t.datetime "remark_request_submitted_at"
   end
 
   create_table "rubric_criteria", force: :cascade do |t|
@@ -425,7 +426,6 @@ ActiveRecord::Schema.define(version: 20160327163400) do
     t.boolean  "submission_version_used"
     t.integer  "revision_number",          null: false
     t.datetime "revision_timestamp",       null: false
-    t.integer  "remark_result_id"
     t.text     "remark_request"
     t.datetime "remark_request_timestamp"
   end
@@ -439,17 +439,6 @@ ActiveRecord::Schema.define(version: 20160327163400) do
   end
 
   add_index "tags", ["user_id"], name: "index_tags_on_user_id", using: :btree
-
-  create_table "test_files", force: :cascade do |t|
-    t.string   "filename"
-    t.integer  "assignment_id"
-    t.string   "filetype"
-    t.boolean  "is_private"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "test_files", ["assignment_id", "filename"], name: "index_test_files_on_assignment_id_and_filename", unique: true, using: :btree
 
   create_table "test_results", force: :cascade do |t|
     t.integer  "test_script_result_id"
@@ -489,7 +478,6 @@ ActiveRecord::Schema.define(version: 20160327163400) do
     t.string  "display_input",           null: false
     t.string  "display_expected_output", null: false
     t.string  "display_actual_output",   null: false
-    t.string  "associated_criterion",    null: false
   end
 
   add_index "test_scripts", ["assignment_id", "seq_num"], name: "index_test_scripts_on_assignment_id_and_seq_num", using: :btree
