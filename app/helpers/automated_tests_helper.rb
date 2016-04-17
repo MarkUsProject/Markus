@@ -7,12 +7,12 @@ module AutomatedTestsHelper
 
   def fetch_latest_tokens_for_grouping(grouping)
     token = Token.find_by(grouping: grouping)
-    if (@assignment.tokens_start_of_availability_date)
+    if @assignment.tokens_start_of_availability_date
       if token
-        if (DateTime.now >= @assignment.tokens_start_of_availability_date)
-          token.reassign_tokens_if_after_regen_period()
+        if DateTime.now >= @assignment.tokens_start_of_availability_date
+          token.reassign_tokens_if_after_regen_period
         else
-          token=nil
+          token = nil
         end
       else
         grouping.give_tokens
@@ -155,17 +155,11 @@ module AutomatedTestsHelper
     assignment.enable_test = assignment_params[:enable_test]
     assignment.unlimited_tokens = assignment_params[:unlimited_tokens]
     assignment.tokens_start_of_availability_date = assignment_params[:tokens_start_of_availability_date]
+    assignment.regeneration_period = assignment_params[:regeneration_period]
+    assignment.last_token_regeneration_date = assignment_params[:last_token_regeneration_date]
     num_tokens = assignment_params[:tokens_per_day]
-    regen_period = assignment_params[:regeneration_period]
-    last_regen_date = assignment_params[:last_token_regeneration_date]
-    if last_regen_date
-      assignment.last_token_regeneration_date = last_regen_date
-    end
     if num_tokens
       assignment.tokens_per_day = num_tokens
-    end
-    if regen_period
-      assignment.regeneration_period = regen_period
     end
 
     assignment

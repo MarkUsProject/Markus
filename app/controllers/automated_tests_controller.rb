@@ -76,12 +76,12 @@ class AutomatedTestsController < ApplicationController
   end
 
   def execute_test_run
-    @assignment = Assignment.find(params[:id])
-    grouping = current_user.accepted_grouping_for(@assignment.id)
+    assignment = Assignment.find(params[:id])
+    grouping = current_user.accepted_grouping_for(assignment.id)
     token = fetch_latest_tokens_for_grouping(grouping)
 
     # For running tests
-    if (token && token.tokens > 0) || @assignment.unlimited_tokens
+    if (token && token.tokens > 0) || assignment.unlimited_tokens
       test_errors = run_tests(grouping.id)
       if test_errors.nil?
         flash_message(:notice, I18n.t('automated_tests.tests_running'))
@@ -89,7 +89,7 @@ class AutomatedTestsController < ApplicationController
         flash_message(:error, test_errors)
       end
     end
-    redirect_to action: :student_interface
+    redirect_to action: :student_interface, id: params[:id]
   end
 
   def run_tests(grouping_id)

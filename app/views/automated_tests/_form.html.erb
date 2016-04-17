@@ -1,16 +1,18 @@
 <% content_for :head do %>
-    <%= stylesheet_link_tag 'common/jquery-ui', 'common/jquery-ui-timepicker-addon' %>
-    <%= javascript_include_tag 'jquery-ui-timepicker-addon',
-                               'PeriodDeltaChain/PeriodDeltaChain',
-                               'moment-with-langs.min',
-                               'localize_date' %>
+  <%= stylesheet_link_tag 'common/jquery-ui', 'common/jquery-ui-timepicker-addon' %>
+  <%= javascript_include_tag 'jquery-ui-timepicker-addon',
+                             'PeriodDeltaChain/PeriodDeltaChain',
+                             'moment-with-langs.min',
+                             'localize_date' %>
 
+  <script>
     <%= render partial: 'boot',
                formats: [:js],
                handlers: [:erb] %>
-    <%= render partial: 'shared/navigation_warning',
-               formats: [:js],
-               handlers: [:erb] %>
+  </script>
+  <%= render partial: 'shared/navigation_warning',
+             formats: [:js],
+             handlers: [:erb] %>
 <% end %>
 
 <div class="wrapLeft">
@@ -25,68 +27,74 @@
 <% end %>
 
 <%= form_for @assignment,
-      as: :assignment,
-      url: manage_assignment_automated_tests_path(),
-      html: {multipart: true} do |f| %>
-<%= f.error_messages%>
-  <p id="testing_framework_style">
-    <%= f.check_box :enable_test, id: "is_testing_framework_enabled", onchange: "toggle_automated_tests(jQuery('#is_testing_framework_enabled').is(':checked'))" %>
-    <%= label_tag "is_testing_framework_enabled", I18n.t("automated_tests.enable_test"), class: "checkbox_label" %>
-  </p>
+             as: :assignment,
+             url: manage_assignment_automated_tests_path,
+             html: {multipart: true} do |f| %>
+  <%= f.error_messages%>
+    <p id="testing_framework_style">
+      <%= f.check_box :enable_test, id: "is_testing_framework_enabled", onchange: "toggle_automated_tests(jQuery('#is_testing_framework_enabled').is(':checked'))" %>
+      <%= label_tag "is_testing_framework_enabled", I18n.t("automated_tests.enable_test"), class: "checkbox_label" %>
+    </p>
 
-      <div id="testing_framework_tokens">
-        <p id="tokens">
-          <%= label_tag :tokens_per_day, I18n.t("automated_tests.token.tokens_form"), class: "inline_label" %>
-          <%= f.text_field :tokens_per_day, id: "tokens_per_day", size: 5, maxlength: 3 %>
-          <%= label_tag :tokens_start_of_availability_date,
+    <div id='testing_framework_tokens'>
+      <p id='tokens'>
+        <%= label_tag :tokens_per_day,
+                      t('automated_tests.token.tokens_form'),
+                      class: 'inline_label' %>
+        <%= f.text_field :tokens_per_day, id: 'tokens_per_day',
+                         size: 5, maxlength: 3 %>
+        <%= label_tag :tokens_start_of_availability_date,
                       t('automated_tests.tokens_available_on'),
-                      style: "margin-left: 20px"%>
-          <%= f.text_field :tokens_start_of_availability_date,
-                           onchange: 'set_onbeforeunload(true);',
-                           value: @assignment.tokens_start_of_availability_date.nil? ? '' :
-                               @assignment.tokens_start_of_availability_date.strftime(
-                                   '%Y-%m-%d %l:%M %p'),
-                           size: 35,
-                           placeholder: t('date.formats.datetime_placeholder')%>
-          <%= label_tag :regeneration_period, I18n.t("automated_tests.token.tokens_regenerate"), class: "inline_label" %>
-          <%= f.text_field :regeneration_period, id: "regeneration_period", size: 5, maxlength: 3, style: "margin-left: -25px" %>
-          <%= I18n.t("automated_tests.token.hours")%>
-          <%= label_tag :unlimited_tokens, I18n.t("automated_tests.token.unlimited"), class: "checkbox_label", style: "text-align: right;" %>
-          <%= f.check_box :unlimited_tokens, id: "unlimited_tokens", onchange: "toggle_tests_tokens(jQuery('#unlimited_tokens').is(':checked'))" %>
-        </p>
+                      style: 'margin-left: 20px' %>
+        <%= f.text_field :tokens_start_of_availability_date,
+                         onchange: 'set_onbeforeunload(true);',
+                         value: @assignment.tokens_start_of_availability_date.nil? ? '' :
+                             @assignment.tokens_start_of_availability_date.strftime(
+                                 '%Y-%m-%d %l:%M %p'),
+                         size: 35,
+                         placeholder: t('date.formats.datetime_placeholder')%>
+        <%= label_tag :regeneration_period, I18n.t("automated_tests.token.tokens_regenerate"),
+                      class: 'inline_label' %>
+        <%= f.text_field :regeneration_period, id: 'regeneration_period',
+                         size: 5, maxlength: 3,
+                         style: "margin-left: -25px" %>
+        <%= I18n.t("automated_tests.token.hours")%>
+        <%= label_tag :unlimited_tokens, t('automated_tests.token.unlimited'),
+                      class: 'checkbox_label', style: 'text-align: right;' %>
+        <%= f.check_box :unlimited_tokens, id: 'unlimited_tokens',
+                        onchange: "toggle_tests_tokens(jQuery('#unlimited_tokens').is(':checked'))" %>
+      </p>
+    </div>
+
+    <fieldset>
+      <legend><%= t("automated_tests.assignment_test_script_files") %></legend>
+      <p>
+        <%= button_tag t('marker.marks.expand_all'), type: 'button',
+                       onclick: "change_all('expand');" %>
+        <%= button_tag t('marker.marks.collapse_all'), type: 'button',
+                       onclick: "change_all('collapse');" %>
+      </p>
+      <p><%= raw t("assignment.required_fields") %><span class='required_field'>*</span></p>
+
+      <div id="test_scripts">
+        <% @assignment.test_scripts.each do |ts| %>
+            <%= render partial: 'test_script_upload', locals: {test_script: ts, form: f} %>
+        <% end %>
       </div>
+    </fieldset>
 
-
-
-      <fieldset>
-        <legend><%= t("automated_tests.assignment_test_script_files") %></legend>
-        <p>
-          <%= button_tag t('marker.marks.expand_all'), type: 'button',
-                         onclick: "change_all('expand');" %>
-          <%= button_tag t('marker.marks.collapse_all'), type: 'button',
-                         onclick: "change_all('collapse');" %>
-        </p>
-        <p><%= raw t("assignment.required_fields") %><span class='required_field'>*</span></p>
-
-        <div id="test_scripts">
-          <% @assignment.test_scripts.each do |ts| %>
-              <%= render partial: 'test_script_upload', locals: {test_script: ts, form: f} %>
+    <fieldset>
+      <legend><%= t("automated_tests.assignment_test_support_files") %></legend>
+      <p><%= raw t("assignment.required_fields") %><span class='required_field'>*</span></p>
+      <div class="wrapLeft">
+        <div id="test_support_files">
+          <% @assignment.test_support_files.each do |tsf| %>
+              <%= render partial: 'test_support_file_upload', locals: {test_support_file: tsf, form: f} %>
           <% end %>
         </div>
-      </fieldset>
+      </div>
+    </fieldset>
 
-      <fieldset>
-        <legend><%= t("automated_tests.assignment_test_support_files") %></legend>
-        <p><%= raw t("assignment.required_fields") %><span class='required_field'>*</span></p>
-        <div class="wrapLeft">
-          <div id="test_support_files">
-            <% @assignment.test_support_files.each do |tsf| %>
-                <%= render partial: 'test_support_file_upload', locals: {test_support_file: tsf, form: f} %>
-            <% end %>
-          </div>
-        </div>
-      </fieldset>
-
-      <%= f.submit t(:submit) , disable_with: I18n.t('working'), onclick: 'set_onbeforeunload(false);'%>
+    <%= f.submit t(:submit) , disable_with: I18n.t('working'), onclick: 'set_onbeforeunload(false);'%>
   <% end %>
 </div>

@@ -151,10 +151,10 @@ function toggle_automated_tests(is_testing_framework_enabled) {
 
   jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
 
-  if(is_testing_framework_enabled) {
-    if(!jQuery('#unlimited_tokens').is(':checked')){
-        jQuery('#tokens_per_day').attr('disabled', false);
-        jQuery('#regeneration_period').attr('disabled', false);
+  if (is_testing_framework_enabled) {
+    if (!jQuery('#unlimited_tokens').is(':checked')) {
+      jQuery('#tokens_per_day').attr('disabled', false);
+      jQuery('#regeneration_period').attr('disabled', false);
     }
     jQuery('#unlimited_tokens').attr('disabled', false);
     jQuery('#assignment_tokens_start_of_availability_date').attr('disabled', false);
@@ -170,11 +170,13 @@ function toggle_tests_tokens(is_unlimited) {
 
   jQuery('#unlimited_tokens').val(is_unlimited);
 
-  if(is_unlimited) {
+  if (is_unlimited) {
     jQuery('#tokens_per_day').attr('disabled', true);
     jQuery('#regeneration_period').attr('disabled', true);
+    jQuery('#assignment_tokens_start_of_availability_date').attr('disabled', true);
   } else {
     jQuery('#tokens_per_day').attr('disabled', false);
     jQuery('#regeneration_period').attr('disabled', false);
+    jQuery('#assignment_tokens_start_of_availability_date').attr('disabled', false);
   }
 }
