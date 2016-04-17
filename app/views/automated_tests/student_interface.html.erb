@@ -14,12 +14,21 @@
       <div class='sub_block'>
         <% if @assignment.unlimited_tokens %>
           <div class='sub_block'>
+            <%= raw t('automated_tests.token.tokens_start_of_availability_date',
+                      date: l(@assignment.tokens_start_of_availability_date, format: :long_date)) %>
+          </div>
+          <div class='sub_block'>
             <%= raw t('automated_tests.token.unlimited_tokens') %>
           </div>
         <% else %>
           <div class='sub_block'>
+             <%= raw t('automated_tests.token.tokens_start_of_availability_date',
+                       date: l(@assignment.tokens_start_of_availability_date, format: :long_date))%>
+          </div>
+          <div class='sub_block'>
             <%= raw t('automated_tests.token.tokens_per_day',
-                      tokens: @assignment.tokens_per_day) %>
+                      tokens: @assignment.tokens_per_day,
+                      regeneration_period: @assignment.regeneration_period) %>
           </div>
           <div class='sub_block'>
             <% if @token.nil? %>

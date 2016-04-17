@@ -7,8 +7,17 @@ module AutomatedTestsHelper
 
   def fetch_latest_tokens_for_grouping(grouping)
     token = Token.find_by(grouping: grouping)
-    if token
-      token.reassign_tokens_if_new_day
+    if (@assignment.tokens_start_of_availability_date)
+      if token
+        if (DateTime.now >= @assignment.tokens_start_of_availability_date)
+          token.reassign_tokens_if_after_regen_period()
+        else
+          token=nil
+        end
+      else
+        grouping.give_tokens
+        token = Token.find_by(grouping: grouping)
+      end
     end
     token
   end
@@ -44,9 +53,8 @@ module AutomatedTestsHelper
     testscripts.each do |file_num, file|
       # If no new_script then form is empty and skip
       next if testscripts[file_num][:seq_num].empty? && new_script.nil?
-      # Seq_num only exists if it is a file being edited
-      if testscripts[file_num][:seq_num].empty?
-        # Create new test script file
+      # Create new test script file
+      if new_script
         filename = new_script.original_filename
         if TestScript.exists?(script_name: filename, assignment: assignment)
           raise I18n.t('automated_tests.duplicate_filename') + filename
@@ -141,12 +149,23 @@ module AutomatedTestsHelper
     assignment.test_scripts_attributes = updated_script_files
     assignment.test_support_files_attributes = updated_support_files
 
-    # Update assignment enable_test and tokens_per_day attributes
+    # Update assignment enable_test, unlimited_tokens
+    # tokens_per_day, regeneration_period, tokens_start_of_availability_date and
+    # last_token_regeneration_date attributes
     assignment.enable_test = assignment_params[:enable_test]
     assignment.unlimited_tokens = assignment_params[:unlimited_tokens]
+    assignment.tokens_start_of_availability_date = assignment_params[:tokens_start_of_availability_date]
     num_tokens = assignment_params[:tokens_per_day]
+    regen_period = assignment_params[:regeneration_period]
+    last_regen_date = assignment_params[:last_token_regeneration_date]
+    if last_regen_date
+      assignment.last_token_regeneration_date = last_regen_date
+    end
     if num_tokens
       assignment.tokens_per_day = num_tokens
+    end
+    if regen_period
+      assignment.regeneration_period = regen_period
     end
 
     assignment

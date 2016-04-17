@@ -5,6 +5,12 @@
   I18n.t("automated_tests.script_option.display_option.do_not_display") => "do_not_display"
 } # this is defined and used to validate input in test_script.rb
 %>
+<% criterion_options = {}
+  @assignment.rubric_criteria(order: 'position').each do |criterion|
+      criterion_options[criterion.rubric_criterion_name] = criterion.rubric_criterion_name
+  end
+%>
+
 
 <%= form.fields_for :test_scripts, test_script do |f| %>
 <% saved = !f.object.new_record? %>
@@ -98,6 +104,7 @@
       <% if saved %>
         <%= f.label :_destroy, t('automated_tests.remove_file') %>
         <%= f.check_box :_destroy, class: "remove_test_script_file" %>
+        <br/><br/>
       <% end %>
 
       <br/><br/>
