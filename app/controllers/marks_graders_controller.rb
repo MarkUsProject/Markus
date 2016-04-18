@@ -57,29 +57,24 @@ class MarksGradersController < ApplicationController
     redirect_to action: 'index', grade_entry_form_id: params[:grade_entry_form_id]
   end
 
-  #Download grader/student mappings in CSV format.
+  # Download grader/student mappings in CSV format.
   def download_grader_students_mapping
     grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     students = students_with_assoc
 
-    file_out = CSV.generate do |csv|
-      students.each do |student|
-        # csv format is student_name, ta1_name, ta2_name, ... etc
-        student_array = [student.user_name]
-        grade_entry_student = student.grade_entry_students.find do |entry|
-          entry.grade_entry_form_id == grade_entry_form.id
-        end
-        unless grade_entry_student.nil?
-          grade_entry_student.tas.order(:user_name).each do |ta|
-            student_array.push(ta.user_name)
-          end
-        end
-
-        csv << student_array
+    file_out = MarkusCSV.generate(students) do |student|
+      # csv format is student_name, ta1_name, ta2_name, ... etc
+      student_array = [student.user_name]
+      grade_entry_student = student.grade_entry_students.find_by(
+        grade_entry_form_id: grade_entry_form.id)
+      unless grade_entry_student.nil?
+        student_array.concat(grade_entry_student
+                               .tas.order(:user_name).pluck(:user_name))
       end
+      student_array
     end
 
-    send_data(file_out, type: 'text/csv', disposition: 'inline')
+    send_data(file_out, type: 'text/csv', disposition: 'attachment')
   end
 
   # These actions act on all currently selected graders & students
