@@ -194,18 +194,16 @@ class SubmissionsController < ApplicationController
     @revision_number = params[:current_revision_number].to_i
     apply_late_penalty = params[:apply_late_penalty]
     submission = Submission.create_by_revision_number(@grouping, @revision_number)
-    SingleSubmissionJob.perform_later(@grouping, @revision_number, apply_late_penalty, submission)
-    redirect_to edit_assignment_submission_result_path(
-      assignment_id: @grouping.assignment_id,
-      submission_id: submission.id,
-      id: submission.get_latest_result.id)
+    submission.collect_single(@grouping, @revision_number, apply_late_penalty)
+    redirect_to action: 'browse',
+                id: @grouping.assignment_id
   end
 
   def collect_and_begin_grading
     assignment = Assignment.find(params[:assignment_id])
     grouping = Grouping.find(params[:id])
-    redirect_to action:   'browse',
-                id:       assignment.id
+    redirect_to action: 'browse',
+                id: assignment.id
   end
 
   def collect_all_submissions
@@ -213,9 +211,6 @@ class SubmissionsController < ApplicationController
     assignment.done!('false')
     if assignment.submission_rule.can_collect_now?
       SubmissionsJob.perform_later(assignment)
-      while assignment.done? == 'false'
-        next
-      end
     end
     redirect_to action: 'browse',
                 id: assignment.id
