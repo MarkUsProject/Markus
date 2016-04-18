@@ -195,17 +195,16 @@ class GroupsController < ApplicationController
 
   def download_grouplist
     assignment = Assignment.find(params[:assignment_id])
-
-    #get all the groups
-    groupings = assignment.groupings #FIXME: optimize with eager loading
+    groupings = assignment.groupings.includes(:group,
+                                              student_memberships: [:user])
 
     file_out = MarkusCSV.generate(groupings) do |grouping|
-      group_array = [grouping.group.group_name, grouping.group.repo_name]
       # csv format is group_name, repo_name, user1_name, user2_name, ... etc
-      grouping.student_memberships.includes(:user).each do |member|
-        group_array.push(member.user.user_name)
-      end
-      group_array
+      [grouping.group.group_name, grouping.group.repo_name].concat(
+        grouping.student_memberships.map do |member|
+          member.user.user_name
+        end
+      )
     end
 
     send_data(file_out,
