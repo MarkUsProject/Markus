@@ -19,7 +19,7 @@ class TokenTest < ActiveSupport::TestCase
 
   context 'valid Token' do
     setup do
-       @token = Token.make(remaining: '0')
+      @token = Token.make(remaining: '0')
     end
 
     should 'be valid (tokens can be equal to 0)' do
@@ -30,8 +30,8 @@ class TokenTest < ActiveSupport::TestCase
   context 'function decrease_tokens' do
     context 'when number of tokens is greater than 0' do
       setup do
-         @token = Token.make
-         @token.decrease_tokens
+        @token = Token.make
+        @token.decrease_tokens
       end
 
       should 'decrease number of tokens' do
@@ -45,8 +45,8 @@ class TokenTest < ActiveSupport::TestCase
 
     context 'when number of tokens is equal to 0' do
       setup do
-         @token = Token.make(remaining: '0')
-         @token.decrease_tokens
+        @token = Token.make(remaining: '0')
+        @token.decrease_tokens
       end
 
       should 'not decrease number of tokens (not enough tokens)' do
@@ -61,16 +61,16 @@ class TokenTest < ActiveSupport::TestCase
 
   context 'function reassign_tokens' do
     setup do
-       @token = Token.make(remaining: '0')
-       @token.grouping.assignment.token_start_date = 1.day.ago
-       StudentMembership.make(
-         grouping: @token.grouping,
-         membership_status: StudentMembership::STATUSES[:inviter])
-       StudentMembership.make(
-         grouping: @token.grouping,
-         membership_status: StudentMembership::STATUSES[:accepted])
+      @token = Token.make(remaining: '0')
+      @token.grouping.assignment.token_start_date = 1.day.ago
+      StudentMembership.make(
+        grouping: @token.grouping,
+        membership_status: StudentMembership::STATUSES[:inviter])
+      StudentMembership.make(
+        grouping: @token.grouping,
+        membership_status: StudentMembership::STATUSES[:accepted])
 
-       @token.reassign_tokens
+      @token.reassign_tokens
     end
     should 'reassign assignment tokens' do
       assert_equal(10, @token.remaining)

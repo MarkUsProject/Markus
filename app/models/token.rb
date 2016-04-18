@@ -35,7 +35,6 @@ class Token < ActiveRecord::Base
 
   def reassign_tokens
     assignment = grouping.assignment
-    #debugger
     if DateTime.now < assignment.token_start_date || !grouping.is_valid?
       self.remaining = 0
     elsif assignment.unlimited_tokens

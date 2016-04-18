@@ -439,5 +439,9 @@ module AutomatedTestsHelper
       new_test_script_result.save!
     end
 
+    if (call_on == 'collection' || call_on == 'submission')
+      grouping.current_submission_used.set_mark_by_criteria(grouping, assignment.id)
+    end
+
   end
 end

@@ -83,6 +83,35 @@ class Submission < ActiveRecord::Base
     end
   end
 
+  # Sets marks for associated criteria
+  def set_mark_by_criteria(grouping, assignment_id)
+    result = grouping.group.grouping_for_assignment(assignment_id)
+                 .current_submission_used
+                 .get_latest_result
+
+    test_scripts = TestScript.where(assignment_id: assignment_id)
+
+    test_scripts.each do |test_script|
+
+      matched_criteria = RubricCriterion
+                             .where(rubric_criterion_name: test_script.associated_criterion,
+                                    assignment_id: assignment_id)
+      matched_criteria.concat(FlexibleCriterion
+                                  .where(flexible_criterion_name: test_script.associated_criterion,
+                                         assignment_id: assignment_id))
+
+      test_result = TestScriptResult.where(:test_script_id => test_script.id, :grouping_id => grouping.id).last
+
+      matched_criteria.each do |crit|
+        mark_to_change = result.marks.find_or_create_by(
+            markable_id: crit.id,
+            markable_type: crit.class.name)
+        mark_to_change.mark = test_result.marks_earned
+        mark_to_change.save
+      end
+    end
+  end
+
   # For group submissions, actions here must only be accessible to members
   # that has inviter or accepted status. This check is done when fetching
   # the user or group submission from an assignment (see controller).

@@ -477,6 +477,7 @@ ActiveRecord::Schema.define(version: 20160417225941) do
     t.string  "display_input",           null: false
     t.string  "display_expected_output", null: false
     t.string  "display_actual_output",   null: false
+    t.string  "associated_criterion",    null: false
   end
 
   add_index "test_scripts", ["assignment_id", "seq_num"], name: "index_test_scripts_on_assignment_id_and_seq_num", using: :btree
