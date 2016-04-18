@@ -405,7 +405,6 @@ class AssignmentTest < ActiveSupport::TestCase
         end
       end
     end
-<<<<<<< HEAD
 
     should 'not add csv group with empty row' do
       assert !@assignment.add_csv_group([])

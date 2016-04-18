@@ -71,8 +71,10 @@ Assignment.blueprint do
   display_grader_names_to_students {false}
   section_due_dates_type(false)
   enable_test {true}
-  tokens_per_day {10}
-  regeneration_period {24}
+  tokens_per_period {10}
+  token_period {24}
+  token_start_date {1.days.from_now}
+  unlimited_tokens {false}
   assign_graders_to_criteria {false}
   assignment_stat
 end
@@ -344,5 +346,6 @@ end
 
 Token.blueprint do
   grouping_id {Grouping.make.id}
-  tokens {5}
+  remaining {5}
+  last_used {nil}
 end

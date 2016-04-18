@@ -10,7 +10,7 @@ class TokenTest < ActiveSupport::TestCase
     setup do
       @token = Token.make
     end
-    should validate_presence_of :tokens
+    should validate_presence_of :remaining
     should validate_presence_of :grouping_id
     should 'be valid' do
       assert @token.valid?
@@ -19,7 +19,7 @@ class TokenTest < ActiveSupport::TestCase
 
   context 'valid Token' do
     setup do
-       @token = Token.make(:tokens => '0')
+       @token = Token.make(remaining: '0')
     end
 
     should 'be valid (tokens can be equal to 0)' do
@@ -35,89 +35,76 @@ class TokenTest < ActiveSupport::TestCase
       end
 
       should 'decrease number of tokens' do
-        assert_equal(4, @token.tokens)
+        assert_equal(4, @token.remaining)
       end
 
       should 'update the token used date' do
-        assert_equal(Time.now.strftime('%Y-%m-%d %H:%M'), @token.last_token_used_date.strftime('%Y-%m-%d %H:%M'))
+        assert_equal(Time.now.strftime('%Y-%m-%d %H:%M'), @token.last_used.strftime('%Y-%m-%d %H:%M'))
       end
     end
 
     context 'when number of tokens is equal to 0' do
       setup do
-         @token = Token.make(:tokens => '0')
+         @token = Token.make(remaining: '0')
          @token.decrease_tokens
       end
 
-      should 'not decrease numbre of tokens (not enough tokens)' do
-        assert_equal(0, @token.tokens)
+      should 'not decrease number of tokens (not enough tokens)' do
+        assert_equal(0, @token.remaining)
       end
 
       should 'not update the token used date' do
-        assert_nil(@token.last_token_used_date)
+        assert_nil(@token.last_used)
       end
     end
   end
 
   context 'function reassign_tokens' do
     setup do
-       @token = Token.make(:tokens => '0')
+       @token = Token.make(remaining: '0')
+       @token.grouping.assignment.token_start_date = 1.day.ago
+       StudentMembership.make(
+         grouping: @token.grouping,
+         membership_status: StudentMembership::STATUSES[:inviter])
+       StudentMembership.make(
+         grouping: @token.grouping,
+         membership_status: StudentMembership::STATUSES[:accepted])
+
        @token.reassign_tokens
     end
     should 'reassign assignment tokens' do
-      assert_equal(10, @token.tokens)
+      assert_equal(10, @token.remaining)
     end
   end
 
   context 'function reassign_tokens' do
     setup do
-      @token = Token.make(:tokens => '2')
+      @token = Token.make(remaining: '2')
       a = @token.grouping.assignment
-      a.tokens_per_day = nil
+      a.tokens_per_period = nil
       a.save
       @token.reassign_tokens
     end
     should 'reassign assignment tokens (even if assignment.tokens is nil)' do
-      assert_equal(0, @token.tokens)
+      assert_equal(0, @token.remaining)
     end
   end
 
   context 'update_tokens' do
     setup do
-      @token = Token.make(:tokens => '5')
+      @token = Token.make(remaining: '5')
     end
     should 'update token count properly when it is being increased' do
       @token.update_tokens(6, 9)
-      assert_equal(8, @token.tokens)
+      assert_equal(8, @token.remaining)
     end
     should 'update token count properly when it is being decreased' do
       @token.update_tokens(6, 3)
-      assert_equal(2, @token.tokens)
+      assert_equal(2, @token.remaining)
     end
     should 'not allow token count to go below 0' do
       @token.update_tokens(6, 0)
-      assert_equal(0, @token.tokens)
-    end
-  end
-
-  context 'reassign_tokens_if_after_regen_period' do
-    setup do
-      @token = Token.make(:tokens => '3')
-      a = @token.grouping.assignment
-      a.tokens_start_of_availability_date = DateTime.now
-      a.tokens_per_day = 5
-      a.regeneration_period = 4
-      a.save
-    end
-    should 'reassign token if it is after regeneration period' do
-      @token.last_token_used_date = 5.hours.ago
-      @token.reassign_tokens_if_after_regen_period(@token.grouping.assignment.regeneration_period)
-      assert_equal(5, @token.tokens)
-    end
-    should 'not reassign tokens if it is not a new day' do
-      @token.last_token_used_date = 2.hours.ago
-      @token.reassign_tokens_if_after_regen_period(@token.grouping.assignment.regeneration_period)
-      assert_equal(3, @token.tokens)
+      assert_equal(0, @token.remaining)
     end
   end
 

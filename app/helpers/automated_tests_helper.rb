@@ -6,20 +6,8 @@ module AutomatedTestsHelper
   @queue = :test_waiting_list
 
   def fetch_latest_tokens_for_grouping(grouping)
-    token = Token.find_by(grouping: grouping)
-    if @assignment.tokens_start_of_availability_date
-      if token
-        if DateTime.now >= @assignment.tokens_start_of_availability_date
-          token.reassign_tokens_if_after_regen_period
-        else
-          token = nil
-        end
-      else
-        grouping.give_tokens
-        token = Token.find_by(grouping: grouping)
-      end
-    end
-    token
+    grouping.token.reassign_tokens
+    grouping.token
   end
 
   def create_test_repo(assignment)
@@ -149,17 +137,13 @@ module AutomatedTestsHelper
     assignment.test_scripts_attributes = updated_script_files
     assignment.test_support_files_attributes = updated_support_files
 
-    # Update assignment enable_test, unlimited_tokens
-    # tokens_per_day, regeneration_period, tokens_start_of_availability_date and
-    # last_token_regeneration_date attributes
     assignment.enable_test = assignment_params[:enable_test]
     assignment.unlimited_tokens = assignment_params[:unlimited_tokens]
-    assignment.tokens_start_of_availability_date = assignment_params[:tokens_start_of_availability_date]
-    assignment.regeneration_period = assignment_params[:regeneration_period]
-    assignment.last_token_regeneration_date = assignment_params[:last_token_regeneration_date]
-    num_tokens = assignment_params[:tokens_per_day]
+    assignment.token_start_date = assignment_params[:token_start_date]
+    assignment.token_period = assignment_params[:token_period]
+    num_tokens = assignment_params[:tokens_per_period]
     if num_tokens
-      assignment.tokens_per_day = num_tokens
+      assignment.tokens_per_period = num_tokens
     end
 
     assignment

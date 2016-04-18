@@ -69,7 +69,6 @@ class Assignment < ActiveRecord::Base
   validates_uniqueness_of :short_identifier, case_sensitive: true
   validates_numericality_of :group_min, only_integer: true, greater_than: 0
   validates_numericality_of :group_max, only_integer: true, greater_than: 0
-  validates_numericality_of :tokens_per_day, only_integer: true, greater_than_or_equal_to: 0
 
   has_one :submission_rule, dependent: :destroy, inverse_of: :assignment
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
@@ -98,6 +97,18 @@ class Assignment < ActiveRecord::Base
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates :assignment_stat, :presence => true
 
+  with_options unless: :unlimited_tokens do |assignment|
+    assignment.validates :tokens_per_period,
+                         presence: true,
+                         numericality: { only_integer: true,
+                                         greater_than_or_equal_to: 0 }
+    assignment.validates :token_start_date,
+                         presence: true
+    assignment.validates :token_period,
+                         presence: true,
+                         numericality: { greater_than: 0 }
+  end
+
   # since allow_web_submits is a boolean, validates_presence_of does not work:
   # see the Rails API documentation for validates_presence_of (Model
   # validations)
@@ -108,7 +119,6 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :unlimited_tokens, :in => [true, false]
 
   validate :minimum_number_of_groups
-
 
   before_save :reset_collection_time
 
@@ -895,7 +905,7 @@ class Assignment < ActiveRecord::Base
 
   def update_assigned_tokens
     self.tokens.each do |t|
-      t.update_tokens(tokens_per_day_was, tokens_per_day)
+      t.update_tokens(tokens_per_period_was, tokens_per_period)
     end
   end
 end

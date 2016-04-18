@@ -132,7 +132,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @student = Student.make
       @token = Token.make
       @token.grouping_id = 2
-      @token.tokens = 3
+      @token.remaining = 3
       @token.save
       @grouping = Grouping.make(:id => '2')
       @grouping.add_member(@student)
@@ -148,7 +148,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @student = Student.make
       @token = Token.make
       @token.grouping_id = 2
-      @token.tokens = 0
+      @token.remaining = 0
       @token.save
       @grouping = Grouping.make(:id => '2')
       @grouping.add_member(@student)
@@ -166,7 +166,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @student = Student.make
       @token = Token.make
       @token.grouping_id = 2
-      @token.tokens = nil
+      @token.remaining = nil
       @token.save
       @grouping = Grouping.make(:id => '2')
       @grouping.add_member(@student)
@@ -184,7 +184,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @student = Student.make
       @token = Token.make
       @token.grouping_id = 2
-      @token.tokens = nil
+      @token.remaining = nil
       @token.save
       @current_user = @student
     end

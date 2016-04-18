@@ -81,7 +81,7 @@ class AutomatedTestsController < ApplicationController
     token = fetch_latest_tokens_for_grouping(grouping)
 
     # For running tests
-    if (token && token.tokens > 0) || assignment.unlimited_tokens
+    if assignment.unlimited_tokens || token.remaining > 0
       test_errors = run_tests(grouping.id)
       if test_errors.nil?
         flash_message(:notice, I18n.t('automated_tests.tests_running'))
@@ -153,10 +153,9 @@ class AutomatedTestsController < ApplicationController
     params.require(:assignment)
         .permit(:enable_test,
                 :assignment_id,
-                :tokens_per_day,
-                :last_token_regeneration_date,
-                :regeneration_period,
-                :tokens_start_of_availability_date,
+                :tokens_per_period,
+                :token_period,
+                :token_start_date,
                 :unlimited_tokens,
                 test_files_attributes:
                     [:id, :filename, :filetype, :is_private, :_destroy],

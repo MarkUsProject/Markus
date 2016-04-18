@@ -14,37 +14,35 @@
       <div class='sub_block'>
         <% if @assignment.unlimited_tokens %>
           <div class='sub_block'>
-            <%= raw t('automated_tests.token.tokens_start_of_availability_date',
-                      date: l(@assignment.tokens_start_of_availability_date, format: :long_date)) %>
+            <%= raw t('automated_tests.token.token_start_date',
+                      date: l(@assignment.token_start_date, format: :long_date)) %>
           </div>
           <div class='sub_block'>
             <%= raw t('automated_tests.token.unlimited_tokens') %>
           </div>
         <% else %>
           <div class='sub_block'>
-             <%= raw t('automated_tests.token.tokens_start_of_availability_date',
-                       date: l(@assignment.tokens_start_of_availability_date, format: :long_date)) %>
+             <%= raw t('automated_tests.token.token_start_date',
+                       date: l(@assignment.token_start_date, format: :long_date)) %>
           </div>
           <div class='sub_block'>
-            <%= raw t('automated_tests.token.tokens_per_day',
-                      tokens: @assignment.tokens_per_day,
-                      regeneration_period: @assignment.regeneration_period) %>
+            <%= raw t('automated_tests.token.tokens_per_period',
+                      tokens: @assignment.tokens_per_period,
+                      regeneration_period: @assignment.token_period) %>
           </div>
           <div class='sub_block'>
-            <% if @token.nil? %>
+            <% if DateTime.now < @assignment.token_start_date %>
               <%= raw t('automated_tests.token.tokens_not_given_yet') %>
+            <% elsif @token.remaining == 0 %>
+              <%= raw t('automated_tests.token.tokens_no_more_available') %>
             <% else %>
-              <% if @token.tokens == 0 %>
-                <%= raw t('automated_tests.token.tokens_no_more_available') %>
-              <% else %>
-                  <%= raw t('automated_tests.token.tokens_available',
-                            tokens: @token.tokens) %>
-              <% end %>
+              <%= raw t('automated_tests.token.tokens_available',
+                        tokens: @token.remaining) %>
             <% end %>
           </div>
         <% end %>
 
-        <% if @assignment.unlimited_tokens || (!@token.nil? && @token.tokens > 0) %>
+        <% if @assignment.unlimited_tokens || @token.remaining > 0 %>
           <h3><%= t('automated_tests.run_tests') %></h3>
           <% if @grouping.assignment.submission_rule.can_collect_now? %>
             <p><%= t('automated_tests.due_date_is_passed') %></p>
