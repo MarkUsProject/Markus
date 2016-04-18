@@ -11,12 +11,15 @@ describe GroupsController do
       allow(controller).to receive(:logged_in?).and_return(true)
       allow(controller).to receive(:current_user).and_return(build(:admin))
 
-      allow(Assignment).to receive(:find).and_return(assignment)
     end
 
     describe '#note_message'
 
     describe 'GET #new' do
+      before :each do
+        allow(Assignment).to receive(:find).and_return(assignment)
+      end
+
       context 'when no group name is specified' do
         it 'adds a new group to assignment' do
           expect(assignment).to receive(:add_group)
@@ -124,6 +127,7 @@ describe GroupsController do
 
     describe 'GET #index' do
       before :each do
+        allow(Assignment).to receive(:find).and_return(assignment)
         get :index, assignment_id: assignment
       end
 
@@ -137,7 +141,81 @@ describe GroupsController do
     end
 
     describe '#csv_upload'
-    describe '#download_grouplist'
+    describe '#download_grouplist' do
+      before :each do
+        # Setup for SubversionRepository
+        allow(MarkusConfigurator)
+          .to receive(:markus_config_repository_type).and_return('svn')
+
+        @assignment = FactoryGirl.create(:assignment,
+                                         allow_web_submits: true,
+                                         group_max: 1,
+                                         group_min: 1)
+        #@grouping = FactoryGirl.create(:grouping, assignment: @assignment)
+
+        @group = FactoryGirl.create(:group)
+
+        @student1 = create(:student, user_name: 'c8shosta')
+        @student2 = create(:student, user_name: 'c5bennet')
+
+        grouping = Grouping.new(assignment: @assignment, group: @group)
+        grouping.save
+
+        grouping.add_member(@student1, StudentMembership::STATUSES[:inviter])
+        grouping.add_member(@student2, StudentMembership::STATUSES[:accepted])
+
+        @ta_name = 'c8shacd'
+        @ta = create(:ta, user_name: @ta_name)
+        # For each grouping for Assignment 1, assign 2 TAs
+        @assignment.groupings.each do |grouping|
+          grouping.add_tas([@ta])
+        end
+      end
+      let(:csv_options) do
+        {
+          type: 'text/csv',
+          filename: "#{@assignment.short_identifier}_group_list.csv",
+          disposition: 'attachment'
+        }
+      end
+
+      it 'responds with appropriate status' do
+        get :download_grouplist, assignment_id: @assignment.id, format: 'csv'
+        expect(response.status).to eq(200)
+      end
+
+      # parse header object to check for the right disposition
+      it 'sets disposition as attachment' do
+        get :download_grouplist, assignment_id: @assignment.id, format: 'csv'
+        d = response.header['Content-Disposition'].split.first
+        expect(d).to eq 'attachment;'
+      end
+
+      it 'expects a call to send_data' do
+        csv_data = "#{@group.group_name},#{@group.repo_name}," +
+          "#{@student1.user_name},#{@student2.user_name}\n"
+        expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
+          # to prevent a 'missing template' error
+          @controller.render nothing: true
+        }
+        get :download_grouplist, assignment_id: @assignment.id, format: 'csv'
+      end
+
+      # parse header object to check for the right content type
+      it 'returns text/csv type' do
+        get :download_grouplist, assignment_id: @assignment.id, format: 'csv'
+        expect(response.content_type).to eq 'text/csv'
+      end
+
+      # parse header object to check for the right file naming convention
+      it 'filename passes naming conventions' do
+        get :download_grouplist, assignment_id: @assignment.id, format: 'csv'
+        filename = response.header['Content-Disposition']
+          .split.last.split('"').second
+        expect(filename).to eq "#{@assignment.short_identifier}_group_list.csv"
+      end
+    end
+
     describe '#use_another_assignment_groups'
     describe '#global_actions'
     describe '#invalidate_groupings'
