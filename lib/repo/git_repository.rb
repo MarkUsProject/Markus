@@ -804,7 +804,14 @@ module Repository
     end
 
     # Removes a file from a transaction and eventually from repository
-    def remove_file(path, author, _expected_revision_number = 0)
+    def remove_file(path, author, expected_revision_number = 0)
+      if latest_revision_number != expected_revision_number
+        raise Repository::FileOutOfSyncConflict.new(path)
+      end
+      if !path_exists_for_latest_revision?(path)
+        raise Repository::FileDoesNotExist.new(path)
+      end
+
       @repos.index.remove(path);
       File.unlink(File.join(@repos_path, path))
       @repos.index.write_tree(@repos)
@@ -813,12 +820,18 @@ module Repository
                                                    'Removing file'))
 
       # todo: quick fix to make gitolite sync on file upload
-      g = Git.open(@repos.workdir)
+      g = Git.open(@repos_path)
       g.push
     end
 
     # Replaces file at provided path with file_data
-    def replace_file(path, file_data, author, _expected_revision_number = 0)
+    def replace_file(path, file_data, author, expected_revision_number = 0)
+      if latest_revision_number != expected_revision_number
+        raise Repository::FileOutOfSyncConflict.new(path)
+      end
+      if !path_exists_for_latest_revision?(path)
+        raise Repository::FileDoesNotExist.new(path)
+      end
       write_file(path, file_data, author) if path_exists_for_latest_revision?(path)
     end
 
