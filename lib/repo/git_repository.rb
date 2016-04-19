@@ -803,7 +803,7 @@ module Repository
       write_file(path, file_data, author)
     end
 
-    # Removes a file from a transaction and eventually from repository
+    # Removes a file from the repository
     def remove_file(path, author, expected_revision_number = 0)
       if latest_revision_number != expected_revision_number
         raise Repository::FileOutOfSyncConflict.new(path)
@@ -832,7 +832,7 @@ module Repository
       if !path_exists_for_latest_revision?(path)
         raise Repository::FileDoesNotExist.new(path)
       end
-      write_file(path, file_data, author) if path_exists_for_latest_revision?(path)
+      write_file(path, file_data, author)
     end
 
     # Writes to file using path, file_data, and author
