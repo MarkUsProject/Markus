@@ -1,40 +1,47 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'Assignments/index' %>
+    <%= javascript_include_tag 'Assignments/index' %>
 <% end %>
 
-<div class='title_bar'>
-  <h1><%= t(:manage_course_work) %></h1>
+<% content_for :title do %>
+    <%= t(:manage_course_work) %>
+<% end%>
 
-  <div class='heading_buttons'>
-    <%= link_to t(:upload), '#', onclick: 'modal_upload.open()' %>
-    <span class='menu_bar'></span>
-    <%= link_to t(:download), '#',  onclick: 'modal_download.open()' %>
-  </div>
-</div>
+<% @heading_buttons =
+       [
+           {
+               link_text: t('download'),
+               link_path: '#',
+               html_options: { onclick: 'modal_download.open()' }
+           },
+           {
+               link_text: t('upload'),
+               link_path: '#',
+               html_options: { onclick: 'modal_upload.open()' }
+           }
+       ] %>
 
-<div class='wrapper'>
-  <%= render 'shared/flash_message' %>
+<% content_for :wrap_left_content do %>
 
-  <%= link_to t(:create_new_assignment),
-              { controller: 'assignments',
-                action: 'new' },
-              class: 'button' %>
-  <%= link_to t(:create_new_grade_entry_form),
-              { controller: 'grade_entry_forms',
-                action: 'new' },
-              class: 'button' %>
+    <%= link_to t(:create_new_assignment),
+                { controller: 'assignments',
+                  action: 'new' },
+                class: 'button' %>
+    <%= link_to t(:create_new_grade_entry_form),
+                { controller: 'grade_entry_forms',
+                  action: 'new' },
+                class: 'button' %>
 
-  <%= render partial: 'assignments/list_manage',
-             locals: { controller: 'assignments',
-                       action: 'edit' } -%>
-</div>
+    <%= render partial: 'assignments/list_manage',
+               locals: { controller: 'assignments',
+                         action: 'edit' } -%>
+<% end %>
 
 <% # For now, only allow instructors to manage grade entry forms %>
 <% if @current_user.admin? %>
-  <div class='wrapper'>
-    <%= render partial: 'grade_entry_forms/list_manage',
-               locals: { action: 'edit' } %>
-  </div>
+    <% content_for :wrap_left_content do %>
+        <%= render partial: 'grade_entry_forms/list_manage',
+                   locals: { action: 'edit' } %>
+    <% end %>
 <% end %>
 
 
@@ -42,15 +49,15 @@
   <h2><%= t('download') %></h2>
   <p>
     <%= link_to t(:assignment_format, file: 'CSV'),
-                  download_assignment_list_assignments_path(
-                          file_format: 'csv'),
-                  class: 'button' if @current_user.admin? %>
+                download_assignment_list_assignments_path(
+                    file_format: 'csv'),
+                class: 'button' if @current_user.admin? %>
     <br>
     <br>
     <%= link_to t(:assignment_format, file: 'YML'),
-                  download_assignment_list_assignments_path(
-                          file_format: 'yml'),
-                  class: 'button' if @current_user.admin? %>
+                download_assignment_list_assignments_path(
+                    file_format: 'yml'),
+                class: 'button' if @current_user.admin? %>
   </p>
 
   <section class='dialog-actions'>
@@ -80,25 +87,25 @@
 
   <%= form_tag upload_assignment_list_assignments_path,
                { multipart: true } do %>
-    <p>
-      <%= t('encoding') %>
-      <%= select_tag(:encoding, options_for_select(@encodings)) %>
-    </p>
+      <p>
+        <%= t('encoding') %>
+        <%= select_tag(:encoding, options_for_select(@encodings)) %>
+      </p>
 
-    <input type='file' name='assignment_list' id='assignment_list'>
+      <input type='file' name='assignment_list' id='assignment_list'>
 
-    <section class='dialog-actions'>
-      <%= hidden_field_tag :file_format, '', id: 'file_format' %>
-      <% if @current_user.admin? %>
-        <%= submit_tag t(:upload_assignment_format, file: 'YML'),
-                       disabled: true,
-                       id: 'yml_upload',
-                       onclick: 'choose_upload("yml")' %>
-        <%= submit_tag t(:upload_assignment_format, file: 'CSV'),
-                       disabled: true,
-                       id: 'csv_upload',
-                       onclick: 'choose_upload("csv")' %>
-      <% end %>
-    </section>
+      <section class='dialog-actions'>
+        <%= hidden_field_tag :file_format, '', id: 'file_format' %>
+        <% if @current_user.admin? %>
+            <%= submit_tag t(:upload_assignment_format, file: 'YML'),
+                           disabled: true,
+                           id: 'yml_upload',
+                           onclick: 'choose_upload("yml")' %>
+            <%= submit_tag t(:upload_assignment_format, file: 'CSV'),
+                           disabled: true,
+                           id: 'csv_upload',
+                           onclick: 'choose_upload("csv")' %>
+        <% end %>
+      </section>
   <% end %>
 </aside>

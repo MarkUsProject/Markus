@@ -27,27 +27,27 @@ module Repository
 
     # Constructor: Connects to an existing Git
     # repository, using Ruby bindings; Note: A repository has to be
-    # created using GitRespository.create(), it it is not yet existent
+    # created using GitRespository.create(), if it is not yet existent
     def initialize(connect_string)
       # Check if configuration is in order
-      if Repository.conf[:IS_REPOSITORY_ADMIN].nil?
+      if MarkusConfigurator.markus_config_repository_admin?.nil?
         raise ConfigurationError.new(
-                "Required config 'IS_REPOSITORY_ADMIN' not set")
+                "Required config 'MarkusConfigurator.markus_config_repository_admin?' not set")
       end
-      if Repository.conf[:REPOSITORY_STORAGE].nil?
+      if MarkusConfigurator.markus_config_repository_storage.nil?
         raise ConfigurationError.new(
-                "Required config 'REPOSITORY_STORAGE' not set")
+                "Required config 'MarkusConfigurator.markus_config_repository_storage' not set")
       end
-      if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
+      if MarkusConfigurator.markus_config_repository_permission_file.nil?
         raise ConfigurationError.new(
-                "Required config 'REPOSITORY_PERMISSION_FILE' not set")
+                "Required config 'MarkusConfigurator.markus_config_repository_permission_file' not set")
       end
       begin
         super(connect_string) # dummy call to super
       rescue NotImplementedError; end
       @repos_path = connect_string
       @closed = false
-      @repos_admin = Repository.conf[:IS_REPOSITORY_ADMIN]
+      @repos_admin = MarkusConfigurator.markus_config_repository_admin?
       if GitRepository.repository_exists?(@repos_path)
 
         # make sure working directory is up-to-date
@@ -73,7 +73,7 @@ module Repository
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(
-        Repository.conf[:REPOSITORY_STORAGE] +
+        MarkusConfigurator.markus_config_repository_storage +
           '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Bring the repo up to date
@@ -108,28 +108,13 @@ module Repository
       # Repo is created by gitolite, proceed to clone it in
       # the repository storage location
       cloned_repo = Git.clone(
-        'git@localhost:' + repo_name, REPOSITORY_STORAGE + '/' + repo_name)
-
-      repo = Rugged::Repository.discover(REPOSITORY_STORAGE + '/' + repo_name)
+        'git@localhost:' + repo_name, MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
 
       # Lets make some sample files and the new master branch
       cloned_repo.reset
       cloned_repo.branch('master')
 
-      # Create the README.md on the filesystem
-      file_path_for_readme = File.join(repo.workdir, 'README.md')
-      File.open(file_path_for_readme, 'w+') do |readme|
-        readme.write('Initial commit.')
-      end
-
-      cloned_repo.add(all: true)
-
-      cloned_repo.commit_all('Initial commit.')
-      cloned_repo.push
-
-      # Finished cloning repo
-
-      repo = Rugged::Repository.discover(REPOSITORY_STORAGE + '/' + repo_name)
+      repo = Rugged::Repository.discover(MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
 
       # Do an initial commit with a README to create index.
       file_path_for_readme = File.join(repo.workdir, 'README.md')
@@ -394,7 +379,7 @@ module Repository
 
       if @repos_admin # Are we admin?
         ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_STORAGE] +
+          MarkusConfigurator.markus_config_repository_storage +
             '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync the gitolite admin repo
@@ -445,7 +430,7 @@ module Repository
 
       # Access the gitolite admin repo
       ga_repo = Gitolite::GitoliteAdmin.new(
-        Repository.conf[:REPOSITORY_STORAGE] +
+        MarkusConfigurator.markus_config_repository_storage +
           '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Sync the repo
@@ -475,7 +460,7 @@ module Repository
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_STORAGE] +
+          MarkusConfigurator.markus_config_repository_storage +
             '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync the admin repo
@@ -505,7 +490,7 @@ module Repository
 
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_STORAGE] +
+          MarkusConfigurator.markus_config_repository_storage +
             '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
@@ -549,7 +534,7 @@ module Repository
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_STORAGE] +
+          MarkusConfigurator.markus_config_repository_storage +
             '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
@@ -613,13 +598,13 @@ module Repository
     def self.add_user(user_id, permissions, repo_name)
 
       # Adds a user with given permissions to the repository
-      if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
+      unless File.exist?(MarkusConfigurator.markus_config_repository_permission_file)
         # create file if not existent
-        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], 'w').close
+        File.open(MarkusConfigurator.markus_config_repository_permission_file, 'w').close
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(
-        Repository.conf[:REPOSITORY_STORAGE] +
+        MarkusConfigurator.markus_config_repository_storage +
           '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Sync repo
@@ -656,18 +641,18 @@ module Repository
     # permissions on a single repository.
     def self.set_bulk_permissions(repo_names, user_id_permissions_map)
       # Check if configuration is in order
-      if Repository.conf[:IS_REPOSITORY_ADMIN].nil?
+      if MarkusConfigurator.markus_config_repository_admin?.nil?
         raise ConfigurationError.new(
-          "Required config 'IS_REPOSITORY_ADMIN' not set")
+          "Required config 'MarkusConfigurator.markus_config_repository_admin?' not set")
       end
       # If we're not in authoritative mode, bail out
-      if !Repository.conf[:IS_REPOSITORY_ADMIN] # Are we admin?
+      unless MarkusConfigurator.markus_config_repository_admin? # Are we admin?
         raise NotAuthorityError.new(
           'Unable to set bulk permissions: Not in authoritative mode!')
       end
 
       ga_repo = Gitolite::GitoliteAdmin.new(
-        Repository.conf[:REPOSITORY_STORAGE] +
+        MarkusConfigurator.markus_config_repository_storage +
           '/gitolite-admin', GITOLITE_SETTINGS)
 
       # Sync admin repo
@@ -712,7 +697,7 @@ module Repository
       if @repos_admin # Are we admin?
         # Adds a user with given permissions to the repository
         ga_repo = Gitolite::GitoliteAdmin.new(
-          Repository.conf[:REPOSITORY_STORAGE] +
+          MarkusConfigurator.markus_config_repository_storage +
             '/gitolite-admin', GITOLITE_SETTINGS)
 
         # Sync gitolite admin repo
@@ -945,7 +930,7 @@ module Repository
       # current_tree is now at the path we were looking for
       objects = []
       current_tree.each do |obj|
-        file_path = path + obj[:name]
+        file_path = File.join(path, obj[:name])
         @last_modified_date_author = find_last_modified_date_author(file_path)
         if obj[:type] == :blob
           # This object is a file
@@ -1074,12 +1059,13 @@ module Repository
 
       # Follow the 'tree-path' and return false if we cannot find
       # each part along the way
-      parts.each { |path_part|
+      parts.each do |path_part|
         found = false
         tree_ptr.each do |current_tree|
           # For each object in this tree check for our part
           if current_tree[:name] == path_part
             # Move to next part of path (next tree / subdirectory)
+            tree_ptr = @repo.lookup(current_tree[:oid])
             found = true
             break
           end
@@ -1087,14 +1073,18 @@ module Repository
         if !found
           return found
         end
-      }
+      end
       # If we made it this far, the path was traversed successfully
       true
     end
 
-    # Return changed files at 'path' (recursively)
+    # Return changed files at 'path'
     def changed_files_at_path(path)
-      return files_at_path_helper(path, true)
+      files = files_at_path(path)
+
+      files.select do |_name, file|
+        file.changed
+      end
     end
 
     def last_modified_date()
@@ -1103,37 +1093,14 @@ module Repository
 
     private
 
-    def files_at_path_helper(path = '/', only_changed = false)
-      if path.nil?
-        path = '/'
-      end
-      result = Hash.new(nil)
-      raw_contents = self.__get_files(path, @revision_number)
-      raw_contents.each do |file_name, type|
-        if type == :file
-          last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_number)
-          last_modified_revision = @repo.__get_history(File.join(path, file_name), nil, @revision_number).last
-
-          if(!only_changed || (last_modified_revision == @revision_number))
-            new_file = Repository::RevisionFile.new(@revision_number, {
-                                                      :name => file_name,
-                                                      :path => path,
-                                                      :last_modified_revision => last_modified_revision,
-                                                      :changed => (last_modified_revision == @revision_number),
-                                                      :user_id => @repo.__get_property(:author, last_modified_revision),
-                                                      :mime_type => @repo.__get_file_property(:mime_type, File.join(path, file_name), last_modified_revision),
-                                                      :last_modified_date => last_modified_date
-                                                    })
-            result[file_name] = new_file
-          end
-        end
-      end
-      return result
-    end
-
     # Returns the last modified date and author in an array given
-    # the relative path to file as a string
-    def find_last_modified_date_author(relative_path_to_file)
+    # the path to the file as a string
+    def find_last_modified_date_author(path_to_file)
+      # Remove starting forward slash, if present
+      if path_to_file[0] == '/'
+        path_to_file = path_to_file[1..-1]
+      end
+
       # Create a walker to start looking the commit tree.
       walker = Rugged::Walker.new(@repo)
       # Since we are concerned with finding the last modified time,
@@ -1142,7 +1109,7 @@ module Repository
       walker.push(@repo.head.target)
       commit = walker.find do |current_commit|
         current_commit.parents.size == 1 && current_commit.diff(paths:
-            [relative_path_to_file]).size > 0
+            [path_to_file]).size > 0
       end
 
       # Return the date of the last commit that affected this file

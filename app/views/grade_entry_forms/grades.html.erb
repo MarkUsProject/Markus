@@ -3,26 +3,31 @@
   <%= javascript_include_tag 'GradeEntryForms/grades' %>
 <% end %>
 
-<div class='title_bar'>
-  <h1>
-    <%= t('grade_entry_forms.grades.title') + ' ' + @grade_entry_form.short_identifier %>
-  </h1>
-  <div class='heading_buttons'>
-    <%= link_to t(:upload), 'javascript:void(0);', onclick: 'modal_upload.open();' %>
-    <span class='menu_bar'></span>
-    <%= link_to t(:download), csv_download_grade_entry_form_path(@grade_entry_form) %>
-  </div>
-</div>
+<% content_for :title do %>
+  <%= t('grade_entry_forms.grades.title') + ' ' + @grade_entry_form.short_identifier %>
+<% end%>
 
-<div class='wrapper'>
-  <%= render 'shared/flash_message' %>
+<% @heading_buttons =
+[
+  {
+    link_text: t('upload'),
+    link_path: 'javascript:void(0);',
+    html_options: { onclick: 'modal_upload.open();' }
+  },
+  {
+    link_text: t('download'),
+    link_path: csv_download_grade_entry_form_path(@grade_entry_form)
+  }
+] %>
+
+<% content_for :wrap_left_content do %>
   <% if @grade_entry_form.grade_entry_items.empty? %>
     <p><%= t('grade_entry_forms.grades.no_grade_entry_items_message') %></p>
   <% else %>
     <%= render partial: 'react_grades_table', formats: [:'js.jsx'], handlers: [:erb] %>
     <div id="react_grades_table"></div>
   <% end %>
-</div>
+<% end %>
 
 <aside class='dialog' id='upload_dialog'>
   <h1><%= t('grade_entry_forms.csv.upload_title') %></h1>

@@ -38,7 +38,6 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
   if (end == -1){
     end = this.getLineNode().textContent.length;
   }
-
   // Loop prep, for tracking nodes and character counts
   var startNode = null;
   var startNodeOffset = 0;
@@ -61,7 +60,7 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
         // Save reference to span node, create span wrapper if blank space
         if (textNodes[i].parentNode.parentNode === node) {
           startNode = document.createElement("span");
-          startNode.innerHTML = textNodes[i].textContent;
+          startNode.textContent = textNodes[i].textContent;
           textNodes[i].parentNode.replaceChild(startNode, textNodes[i]);
           textNodes[i] = startNode.childNodes[0];
         }
@@ -167,13 +166,13 @@ SourceCodeLine.prototype.splitAndGlowSpan= function(spanNode, nodeOffset,
 
 
   if (glowEnd){
-    spanGlow.innerHTML = spanNode.textContent.substr(nodeOffset);
-    spanNode.innerHTML = spanNode.textContent.substr(0, nodeOffset);
+    spanGlow.textContent = spanNode.textContent.substr(nodeOffset);
+    spanNode.textContent = spanNode.textContent.substr(0, nodeOffset);
     spanNode.parentNode.insertBefore(spanGlow, spanNode.nextSibling);
   }
   else {
-    spanGlow.innerHTML = spanNode.textContent.substr(0, nodeOffset);
-    spanNode.innerHTML = spanNode.textContent.substr(nodeOffset);
+    spanGlow.textContent = spanNode.textContent.substr(0, nodeOffset);
+    spanNode.textContent = spanNode.textContent.substr(nodeOffset);
     spanNode.parentNode.insertBefore(spanGlow, spanNode);
   }
 }

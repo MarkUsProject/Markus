@@ -168,10 +168,11 @@ class SubmissionCollector < ActiveRecord::Base
     m_logger = MarkusLogger.instance
     m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                  "'#{grouping.id}'")
-    time = assignment.submission_rule.calculate_collection_time.localtime
+    time = assignment.submission_rule.calculate_collection_time(grouping.inviter.section).localtime
     # Create a new Submission by timestamp.
     # A Result is automatically attached to this Submission, thanks to some
     # callback logic inside the Submission model
+
     new_submission = Submission.create_by_timestamp(grouping, time)
     # Apply the SubmissionRule
     new_submission = assignment.submission_rule.apply_submission_rule(
@@ -188,10 +189,24 @@ class SubmissionCollector < ActiveRecord::Base
     request_a_test_run(grouping, new_submission)
   end
 
+  def apply_penalty_or_add_grace_credits(grouping,
+                                         apply_late_penalty,
+                                         new_submission)
+    if grouping.assignment.submission_rule.is_a? GracePeriodSubmissionRule
+      # Return any grace credits previously deducted for this grouping.
+      grouping.assignment.submission_rule.remove_deductions(new_submission)
+    end
+    if apply_late_penalty
+      grouping.assignment.submission_rule.apply_submission_rule(new_submission)
+    end
+
+  end
+
   #Use the database to communicate to the child to stop, and restart itself
   #and manually collect the submission
   #The third parameter enables or disables the forking.
-  def manually_collect_submission(grouping, rev_num, async=true)
+  def manually_collect_submission(grouping, rev_num,
+                                  apply_late_penalty, async = true)
 
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
@@ -200,6 +215,9 @@ class SubmissionCollector < ActiveRecord::Base
       remove_grouping_from_queue(grouping)
       grouping.save
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
+      apply_penalty_or_add_grace_credits(grouping,
+                                         apply_late_penalty,
+                                         new_submission)
       grouping.is_collected = true
       grouping.save
       request_a_test_run(grouping, new_submission)
@@ -217,6 +235,9 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.save
 
     new_submission = Submission.create_by_revision_number(grouping, rev_num)
+    apply_penalty_or_add_grace_credits(grouping,
+                                       apply_late_penalty,
+                                       new_submission)
 
     #This is to help determine the progress of the method.
     self.safely_stop_child_exited = true
@@ -225,17 +246,13 @@ class SubmissionCollector < ActiveRecord::Base
     #Let the child process handle conversion, as things go wrong when both
     #parent and child do this.
     start_collection_process do
-      if MarkusConfigurator.markus_config_pdf_support
         grouping.is_collected = true
         grouping.save
-      end
     end
     #setting is_collected here will prevent an sqlite lockout error when pdfs
     #aren't supported
-    unless MarkusConfigurator.markus_config_pdf_support
       grouping.is_collected = true
       grouping.save
-    end
 
   end
 
@@ -255,15 +272,38 @@ class SubmissionCollector < ActiveRecord::Base
     end
   end
 
-    def request_a_test_run(grouping, new_submission)
-      m_logger = MarkusLogger.instance
-      if grouping.assignment.enable_test
-        m_logger.log("Now requesting test run for #{grouping.assignment.short_identifier} \
-                      on grouping: '#{grouping.id}'")
-        AutomatedTestsHelper.request_a_test_run(new_submission.grouping.id,
-                                                'collection',
-                                                @current_user,
-                                                new_submission.id)
-      end
+  def request_a_test_run(grouping, new_submission)
+    m_logger = MarkusLogger.instance
+    if grouping.assignment.enable_test
+      m_logger.log("Now requesting test run for #{grouping.assignment.short_identifier} \
+                    on grouping: '#{grouping.id}'")
+      AutomatedTestsHelper.request_a_test_run(new_submission.grouping.id,
+                                              'collection',
+                                              @current_user,
+                                              new_submission.id)
     end
+  end
+
+  # Undo one level of submissions
+  def uncollect_submissions(assignment)
+    submissions = assignment.submissions
+    old_submissions = submissions.where(submission_version_used: true)
+    ActiveRecord::Base.transaction do
+      old_submissions.each do |submission|
+        grouping = submission.grouping
+        grouping.update_attributes(grouping_queue_id: nil, is_collected: false)
+        # version = submission.submission_version
+        # grouping = submission.grouping
+        # if version == 1
+        #   grouping.assign_attributes(is_collected: false)
+        # else
+        #   prev_rev = submissions.where(submission_version: version - 1,
+        #                                grouping_id: grouping.id).first
+        #   prev_rev.update_attributes(submission_version_used: true)
+        # end
+        # grouping.update_attributes(grouping_queue_id: nil)
+      end
+      old_submissions.destroy_all
+    end
+  end
 end

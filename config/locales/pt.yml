@@ -7,6 +7,7 @@ pt:
     password:           "Senha"
     all:                "Todos"
     none:               "Nenhum"
+    and:                " e "
     search:             "Pesquisar:"
     issues:             "GitHub lista de problemas"
     actions:            "Ações"
@@ -122,20 +123,29 @@ pt:
       no_submission: "%{group_name} não tem submissões"
       result_not_saved: "O resultado da submissão de %{group_name} não pode ser salvo"
     collect_submissions:
+      apply_late_penalty: "
+Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa desmarcada , a apresentação não será penalizado , independentemente do tempo de apresentação . )"
       collect_all: "Coletar todas as submissões"
+      collect_section: "Coletar as submissões"
+      all_available: "Todas as submissões disponíveis"
       collect_ta: "Coletar todas as submissões atribuidos à você"
       disable_collect: "Coleta de submissões desabilitada, já existe um monitor avaliando as submissões exibidas."
       could_not_collect: "Não foi possível coletar todas as submissões para o projeto %{assignment_identifier} - a data da coleta não foi atingida"
       collection_job_started: "Coleta das submissões para o projeto %{assignment_identifier} começou. O processo pode demorar, você poderá acessar as submissões assim que elas tornarem-se disponíveis."
+      collection_job_started_for_groups: "Coleta das submissões para grupos selecionados para o projeto %{assignment_identifier} começou. O processo pode demorar, você poderá acessar as submissões assim que elas tornarem-se disponíveis."
+      section_collection_job_started: "Coleta das submissões para seções %{section_name} para o projeto %{assignment_identifier} começou. O processo pode demorar, você poderá acessar as submissões assim que elas tornarem-se disponíveis."
       priority_given: "A submissão foi dada prioridade de coleta. Ela estará pronta em breve."
       errors:               "Erros"
       results_loss_warning: "Nota: Isso apagará qualquer avaliação e anotações que já foram feitas.\n\n Tem certeza que deseja continuar?"
       must_select_a_section: "Você deve selecionar uma sessão para coletar as submissões dos grupos."
       could_not_find_section: "A sessão desejada não foi encontrada."
       could_not_collect_section: "Coleta de submissões para sessão %{section_name} e projeto %{assignment_identifier} não foi possível - a data de coleta não foi atingida."
-      no_submission_for_section: "Não há submissões da sessão %{section_name} para coletar."
+      could_not_collect_some: "Não foi possível recolher inscrições para alguns grupos e projecto %{assignment_identifier} - a data de coleta não foi alcançado por estes agrupamentos."
+      no_submission_for_section: "Não existem quaisquer submissões de recolher para seções: {%section_names}"
       successfully_collected: " %{collected} submissões coletadas com sucesso."
       marking_incomplete_warning: "Nota: Isso só vai baixar os submissões que foram recolhidos.\n\nTem certeza que deseja continuar?"
+      collection_incomplete_warning: "Coleção ainda está em andamento. Você ainda deseja continuar? Algumas apresentações podem estar ausentes."
+      check_collection_status_error: "Houve um erro ao verificar o status da conexão."
     assignment:
         hidden: "%{assignment_text} (oculto)"
         assignment: "Projetos %{short_identifier}"
@@ -165,6 +175,7 @@ pt:
             select_a_group: "Selecione um grupo"
             select_a_student: "Selecione um aluno"
             select_a_grader: "Selecione um avaliador"
+            group_submission_no_files: "Um ou mais dos grupos selecionados não possui arquivos em sua apresentação. Grader não atribuído."
             select_only_one_group: "Você pode indicar cada estudante a somente um grupo."
             deleted: "Grupo foi apagado"
             work_in_groups:  "Alunos podem trabalhar em grupos"
@@ -259,6 +270,7 @@ pt:
 
     marks_released_notice:  "As notas foram liberadas. Você não pode alterá-las."
     commit_after_due_date: "O envio foi fora do prazo."
+    no_files_submitted: "Esta apresentação não tem arquivos."
     past_due_date_edit_warning:  "Alerta:  O data selecionada está no passado."
     past_due_date_edit_result_warning: "O %{href} desse grupo está depois do prazo."
     last_commit: "Último envio"
@@ -355,6 +367,7 @@ pt:
     seperate_multiple_with_commas:  "Sepere nomes de usuários com vírgulas"
     csv_valid_format:   "Houve um problema ao interpretar o arquivo CSV enviado. Verifique se é um formato CSV válido, e que cada linha termina com os caracteres carriage-return. Nenhuma alteração realizada. "
     csv_invalid_lines: "As seguintes linhas do arquivo CSV são inválidas: "
+    csv_valid_lines: "carregado com sucesso  %{valid_line_count} entradas"
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
     collect_and_grade_overwrite_warning:  "Coletando e avaliando essa revisão irá sobrescrever coletas/avalições anteriores feitas para esse grupo no projeto. Tem certeza que quer fazer isso?"
     uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
@@ -411,6 +424,8 @@ pt:
       show_assigned_to_me:  "Mostrar atribuidos à você"
       grading_can_begin:    "Avaliação pode começar"
       grading_can_begin_after: "Avaliação pode começar depois %{time}"
+      grading_can_begin_for_sections:    "Avaliação pode começar para o seções: %{sections}"
+      grading_can_begin_after_for_sections: "Avaliação pode começar depois %{time} para o seções: %{sections}"
       submissions: 	    "Submissões: %{short_identifier}"
       csv_report:           "Relatório CSV"
       detailed_csv_report: "Relatório detalhado CSV"
@@ -430,6 +445,8 @@ pt:
       collect_work_for_section: "Coletar submissões para a sessão:"
       download_groupings_files: "Baixar todas as submissões"
       sections:             "Sessão:"
+      sections:
+        all:                "Todas as Sessões"
       revision_history:     "%{num}: "
       search_submissions:   "Pesquisa Submissões"
       how_many_marked:      "%{num_marked}/%{num_assigned} submissões são corrigidos"
@@ -586,12 +603,15 @@ pt:
       csv:
         could_not_find_source: "O projeto fonte de onde os grupos serão copiados não foi encontrado"
         could_not_find_target: "O projeto alvo para o qual os grupos serão copiados não foi encontrado"
+      add_all_groups: "Adicionar todos os grupos"
+      creating_groups_for_all_students: "A criação de grupos para todos os alunos. (Tarefa de fundo. Atualize a página para ver quando todos os grupos criados.)"
 
     results:
       title:  "Projeto %{assignment_name} : %{group_name}"
       results_name:  "Resultados"
       successfully_changed: "%{changed} resultados atualizados"
       must_select_a_group:  "Você deve selecionar pelo menos um grupo para atualizar"
+      must_select_a_group_to_collect:  "Você deve selecionar pelo menos um grupo para recolher"
       editing_after_release_fail: "As notas já foram publicadas. Você não pode alterá-las."
       could_not_find_file: "Não foi possível encontrar %{filename} no repositório %{repository_name}"
 
@@ -745,6 +765,7 @@ pt:
       search_criteria:    "Pesquisar os critérios"
       assign_to_criteria: "Atribuir avaliador aos critérios"
       lines_not_processed: "As linhas a seguir não puderam ser processadas:"
+      skip_empty_submissions: "Não atribua Graders a grupos com apresentações vazias (requer que as candidaturas são recolhidas)"
       upload:
         select_csv_file: "Selecione um arquivo CSV no seguinte formato: <code>user_name,last_name,first_name</code>"
         grader_same_user: "Se existir um avaliador com o mesmo user_name, suas informações serão atualizadas."
@@ -1098,6 +1119,13 @@ pt:
       copy_paste_key:         "Copie e Cole a Sua Chave Pública"
       create_key_pair:         "Criar Par de Chaves"
       back:         "De Volta"
+      create:
+        success: "Par de Chaves foi criado com sucesso"
+        invalid_key: "Par de Chaves não foi criado: Chave inválida"
+      update:
+        success: "Par de Chaves foi atualizado com sucesso"
+      delete:
+        success: "Par de Chaves foi removido com sucesso"
 
     course_summaries:
       title: "Sumário"

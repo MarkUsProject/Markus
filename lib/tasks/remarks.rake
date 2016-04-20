@@ -13,8 +13,7 @@ namespace :db do
     end
 
     # Create remark requests for assignments that allow them
-    Assignment.where("allow_remarks").each do |assignment|
-
+    Assignment.where(allow_remarks: true).each do |assignment|
       # Create remark request for first two groups in each assignment
       Grouping.where(assignment_id: assignment.id).first(2).each do |grouping|
         submission = Submission.find_by_grouping_id(grouping.id)
@@ -26,12 +25,12 @@ namespace :db do
         # Create new entry in results table for the remark
         remark = Result.new(
           marking_state: Result::MARKING_STATES[:unmarked],
-          submission_id: submission.id)
+          submission_id: submission.id,
+          remark_request_submitted_at: Time.zone.now)
         remark.save
 
         # Update subission
         submission.update(
-          remark_result_id: remark.id,
           remark_request: 'Please remark my assignment.',
           remark_request_timestamp: Time.zone.now)
 
@@ -42,8 +41,7 @@ namespace :db do
 
     # Remark one of the remark requests and release it to students
 
-
-    remark_submission = Submission.where.not(remark_result_id: nil).first
+    remark_submission = Result.where.not(remark_request_submitted_at: nil).first.submission
     remark_group = Grouping.find_by_group_id(remark_submission.grouping_id)
     result = remark_submission.results.first
 
@@ -72,5 +70,5 @@ namespace :db do
     remark_submission.remark_result.update_attributes(
       marking_state: Result::MARKING_STATES[:complete],
       released_to_students: true)
-  end 
+  end
 end

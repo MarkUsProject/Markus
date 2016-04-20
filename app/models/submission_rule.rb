@@ -20,9 +20,16 @@ class SubmissionRule < ActiveRecord::Base
      GracePeriodSubmissionRule]
   end
 
-  def can_collect_now?
-    return @can_collect_now if !@can_collect_now.nil?
-    @can_collect_now = Time.zone.now >= get_collection_time
+  def can_collect_now?(section = nil)
+    reset_collection_time if @can_collect_now.nil?
+    section_id = section.nil? ? 0 : section.id
+    return @can_collect_now[section_id] unless @can_collect_now[section_id].nil?
+    @can_collect_now[section_id] = Time.zone.now >= get_collection_time(section)
+  end
+
+  def can_collect_all_now?
+    return @can_collect_all_now unless @can_collect_all_now.nil?
+    @can_collect_all_now = Time.zone.now >= assignment.latest_due_date
   end
 
   def can_collect_grouping_now?(grouping)
@@ -30,13 +37,21 @@ class SubmissionRule < ActiveRecord::Base
   end
 
   # Cache that allows us to quickly get collection time
-  def get_collection_time
-    return @get_collection_time if !@get_collection_time.nil?
-    @get_collection_time = calculate_collection_time
+  def get_collection_time(section=nil)
+    if section.nil?
+      return @get_global_collection_time unless @get_global_collection_time.nil?
+      @get_global_collection_time = calculate_collection_time
+    else
+      reset_collection_time if @get_collection_time.nil?
+      unless @get_collection_time[section.id].nil?
+        return @get_collection_time[section.id]
+      end
+      @get_collection_time[section.id] = calculate_collection_time(section)
+    end
   end
   
-  def calculate_collection_time
-    assignment.latest_due_date + hours_sum.hours
+  def calculate_collection_time(section=nil)
+    assignment.section_due_date(section) + hours_sum.hours
   end
 
   def calculate_grouping_collection_time(grouping)
@@ -92,15 +107,17 @@ class SubmissionRule < ActiveRecord::Base
   end
 
   def reset_collection_time
-    @get_collection_time = nil
-    @can_collect_now = nil
+    @get_collection_time = Array.new
+    @get_global_collection_time = nil
+    @can_collect_now = Array.new
+    @can_collect_all_now = nil
   end
 
   private
 
   # Over time hours could be a fraction. This is mostly used for testing
-  def calculate_overtime_hours_from(from_time)
-    overtime_hours = (from_time - assignment.due_date) / 1.hour
+  def calculate_overtime_hours_from(from_time, section)
+    overtime_hours = (from_time - assignment.section_due_date(section)) / 1.hour
     # If the overtime is less than 0, that means it was submitted early, so
     # just return 0 - otherwise, return overtime_hours.
     [0, overtime_hours].max

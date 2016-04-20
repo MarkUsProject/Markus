@@ -7,8 +7,10 @@ class MarksGradersController < ApplicationController
   def populate
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     @students = students_with_assoc
-    render json: get_marks_graders_student_table_info(@students,
-                                                      @grade_entry_form)
+    @sections = Section.order(:name)
+    mgsti = get_marks_graders_student_table_info(@students,
+                                                 @grade_entry_form)
+    render json: [mgsti, @sections]
   end
 
   def populate_graders
@@ -29,55 +31,50 @@ class MarksGradersController < ApplicationController
 
   # Assign TAs to Students via a csv file
   def csv_upload_grader_groups_mapping
-    if !request.post? || params[:grader_mapping].nil?
+    if params[:grader_mapping].nil?
       flash[:error] = I18n.t('csv.student_to_grader')
-      redirect_to action: 'index',
-                  grade_entry_form_id: params[:grade_entry_form_id]
-      return
-    end
-
-    begin
-      invalid_lines =
-        GradeEntryStudent.assign_tas_by_csv(params[:grader_mapping].read,
-                                            params[:grade_entry_form_id],
-                                            params[:encoding])
-
-      if invalid_lines.size > 0
-        flash[:error] =
-          I18n.t('graders.lines_not_processed') + invalid_lines.join(', ')
+    else
+      result = MarkusCSV.parse(
+          params[:grader_mapping].read,
+          encoding: params[:encoding]) do |row|
+        raise CSVInvalidLineError if row.empty?
+        grade_entry_student =
+            GradeEntryStudent.joins(:user)
+                             .find_by(
+                               users: { user_name: row.first },
+                               grade_entry_form_id:
+                                 params[:grade_entry_form_id])
+        raise CSVInvalidLineError if grade_entry_student.nil?
+        grade_entry_student.add_tas_by_user_name_array(row.drop(1))
       end
-    rescue CSV::MalformedCSVError
-      flash[:error] = t('csv.upload.malformed_csv')
-    rescue ArgumentError
-      flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+      unless result[:invalid_lines].empty?
+        flash_message(:error, result[:invalid_lines])
+      end
+      unless result[:valid_lines].empty?
+        flash_message(:success, result[:valid_lines])
+      end
     end
-
     redirect_to action: 'index', grade_entry_form_id: params[:grade_entry_form_id]
   end
 
-  #Download grader/student mappings in CSV format.
+  # Download grader/student mappings in CSV format.
   def download_grader_students_mapping
     grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     students = students_with_assoc
 
-    file_out = CSV.generate do |csv|
-      students.each do |student|
-        # csv format is student_name, ta1_name, ta2_name, ... etc
-        student_array = [student.user_name]
-        grade_entry_student = student.grade_entry_students.find do |entry|
-          entry.grade_entry_form_id == grade_entry_form.id
-        end
-        unless grade_entry_student.nil?
-          grade_entry_student.tas.order(:user_name).each do |ta|
-            student_array.push(ta.user_name)
-          end
-        end
-
-        csv << student_array
+    file_out = MarkusCSV.generate(students) do |student|
+      # csv format is student_name, ta1_name, ta2_name, ... etc
+      student_array = [student.user_name]
+      grade_entry_student = student.grade_entry_students.find_by(
+        grade_entry_form_id: grade_entry_form.id)
+      unless grade_entry_student.nil?
+        student_array.concat(grade_entry_student
+                               .tas.order(:user_name).pluck(:user_name))
       end
+      student_array
     end
 
-    send_data(file_out, type: 'text/csv', disposition: 'inline')
+    send_data(file_out, type: 'text/csv', disposition: 'attachment')
   end
 
   # These actions act on all currently selected graders & students

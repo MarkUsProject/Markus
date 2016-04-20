@@ -15,6 +15,7 @@ class SubmissionsController < ApplicationController
                          :downloads,
                          :collect_and_begin_grading,
                          :download_groupings_files,
+                         :check_collect_status,
                          :manually_collect_and_begin_grading,
                          :collect_ta_submissions,
                          :repo_browser,
@@ -27,6 +28,7 @@ class SubmissionsController < ApplicationController
                        :collect_ta_submissions,
                        :repo_browser,
                        :download_groupings_files,
+                       :check_collect_status,
                        :update_submissions,
                        :populate_submissions_table]
   before_filter :authorize_for_student,
@@ -182,15 +184,16 @@ class SubmissionsController < ApplicationController
                                               @path, @grouping.id)
       render json: files_info + directories_info
     else
-      return []
+      render json: []
     end
   end
 
   def manually_collect_and_begin_grading
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
+    apply_late_penalty = params[:apply_late_penalty]
     submission = SubmissionCollector.instance.manually_collect_submission(
-      @grouping, @revision_number, false)
+      @grouping, @revision_number, apply_late_penalty, false)
     redirect_to edit_assignment_submission_result_path(
       assignment_id: @grouping.assignment_id,
       submission_id: submission.id,
@@ -215,23 +218,55 @@ class SubmissionsController < ApplicationController
 
   def collect_all_submissions
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
-    if assignment.submission_rule.can_collect_now?
+    if assignment.submission_rule.can_collect_all_now?
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(assignment.groupings)
-      flash[:success] =
+      success =
           I18n.t('collect_submissions.collection_job_started',
                  assignment_identifier: assignment.short_identifier)
+      render json: { success: success }
     else
-      flash[:error] = I18n.t('collect_submissions.could_not_collect',
+      error = I18n.t('collect_submissions.could_not_collect',
                              assignment_identifier: assignment.short_identifier)
+      render json: { error: error }
     end
-    redirect_to action: 'browse',
-                id: assignment.id
+  end
+
+  def uncollect_all_submissions
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    @current_job = UncollectSubmissions.perform_later(assignment)
+    respond_to do |format|
+      format.js {}
+    end
+  end
+
+  def collect_submissions
+    if !params.has_key?(:groupings) || params[:groupings].empty?
+      render text: t('results.must_select_a_group_to_collect'), status: 400
+      return
+    end
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    groupings = assignment.groupings.find(params[:groupings])
+    partition = groupings.partition do |grouping|
+      section = grouping.inviter.present? ? grouping.inviter.section : nil
+      assignment.submission_rule.can_collect_now?(section)
+    end
+    if partition[0].count > 0
+      submission_collector = SubmissionCollector.instance
+      submission_collector.push_groupings_to_queue(partition[0])
+      success = I18n.t('collect_submissions.collection_job_started_for_groups',
+                       assignment_identifier: assignment.short_identifier)
+    end
+    if partition[1].count > 0
+      error = I18n.t('collect_submissions.could_not_collect_some',
+                       assignment_identifier: assignment.short_identifier)
+    end
+    render json: { success: success, error: error }
   end
 
   def collect_ta_submissions
     assignment = Assignment.find(params[:assignment_id])
-    if assignment.submission_rule.can_collect_now?
+    if assignment.submission_rule.can_collect_all_now?
       groupings = assignment.groupings
                             .joins(:tas)
                             .where(users: { id: current_user.id })
@@ -253,12 +288,22 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                        current_user)
+    @sections = Section.order(:name)
+    @available_sections = Hash.new
+    if @assignment.submission_rule.can_collect_now?
+      @available_sections[t('groups.unassigned_students')] = 0
+    end
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
         content: '#{t(:'browse_submissions.section')}',
         sortable: true
       },"
+      Section.all.each do |section|
+        if @assignment.submission_rule.can_collect_now?(section)
+          @available_sections[section.name] = section.id
+        end
+      end 
     else
       @section_column = ''
     end
@@ -275,15 +320,38 @@ class SubmissionsController < ApplicationController
       @grace_credit_column = ''
     end
 
-    if @assignment.past_collection_date?
-      notice_text = t('browse_submissions.grading_can_begin')
+    if @assignment.past_all_collection_dates?
+      flash_now(:notice, t('browse_submissions.grading_can_begin'))
     else
-      collection_time = @assignment.submission_rule.calculate_collection_time
-      notice_text = t('browse_submissions.grading_can_begin_after',
-                      time: I18n.l(collection_time, format: :long_date))
+      if @assignment.section_due_dates_type
+        section_due_dates = Hash.new
+        now = Time.zone.now
+        Section.all.each do |section|
+          collection_time = @assignment.submission_rule
+                                       .calculate_collection_time(section)
+          collection_time = now if now >= collection_time
+          if section_due_dates[collection_time].nil?
+            section_due_dates[collection_time] = Array.new
+          end
+          section_due_dates[collection_time].push(section.name)
+        end
+        section_due_dates.each do |collection_time, sections|
+          sections = sections.join(', ')
+          if(collection_time == now)
+            flash_now(:notice, t('browse_submissions.grading_can_begin_for_sections',
+                                 sections: sections))
+          else
+            flash_now(:notice, t('browse_submissions.grading_can_begin_after_for_sections',
+                                 time: I18n.l(collection_time, format: :long_date),
+                                 sections: sections))
+          end
+        end
+      else
+        collection_time = @assignment.submission_rule.calculate_collection_time
+        flash_now(:notice, t('browse_submissions.grading_can_begin_after',
+                             time: I18n.l(collection_time, format: :long_date)))
+      end
     end
-
-    flash_now(:notice, notice_text)
     render layout: 'assignment_content'
   end
 
@@ -450,7 +518,7 @@ class SubmissionsController < ApplicationController
         end
 
         # Are we past collection time?
-        if @assignment.submission_rule.can_collect_now?
+        if @assignment.submission_rule.can_collect_now?(current_user.section)
           flash[:commit_notice] =
               @assignment.submission_rule.commit_after_collection_message
         end
@@ -574,6 +642,31 @@ class SubmissionsController < ApplicationController
 
     ## Send the Zip file
     send_file zip_path, disposition: 'inline', filename: zip_name
+  end
+
+  ##
+  # Check the status of collection for all groupings
+  ##
+  def check_collect_status
+    grouping_ids = params[:groupings]
+
+    ## if there is no grouping, render a message
+    if grouping_ids.blank?
+      render text: t('student.submission.no_groupings_available')
+      return
+    end
+
+    groupings = Grouping.where(id: grouping_ids)
+                        .includes(:group,
+                                  current_submission_used: {
+                                    submission_files: {
+                                      submission: { grouping: :group }
+                                    }
+                                  })
+
+    ## check collection is completed for all groupings
+    all_groupings_collected = groupings.all?(&:is_collected?)
+    render json: { collect_status: all_groupings_collected }
   end
 
   ##
@@ -738,9 +831,23 @@ class SubmissionsController < ApplicationController
   # See Assignment.get_simple_csv_report for details
   def download_simple_csv_report
     assignment = Assignment.find(params[:assignment_id])
-    send_data assignment.get_simple_csv_report,
+    students = Student.all
+    out_of = assignment.total_mark
+    file_out = MarkusCSV.generate(students) do |student|
+      result = [student.user_name]
+      grouping = student.accepted_grouping_for(assignment.id)
+      if grouping.nil? || !grouping.has_submission?
+        result.push('')
+      else
+        submission = grouping.current_submission_used
+        result.push(submission.get_latest_result.total_mark / out_of * 100)
+      end
+      result
+    end
+
+    send_data file_out,
               disposition: 'attachment',
-              type: 'application/vnd.ms-excel',
+              type: 'text/csv',
               filename: "#{assignment.short_identifier}_simple_report.csv"
   end
 
@@ -749,7 +856,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     send_data assignment.get_detailed_csv_report,
               disposition: 'attachment',
-              type: 'application/vnd.ms-excel',
+              type: 'text/csv',
               filename: "#{assignment.short_identifier}_detailed_report.csv"
   end
 

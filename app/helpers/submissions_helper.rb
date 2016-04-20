@@ -79,12 +79,13 @@ module SubmissionsHelper
             r.id == submission.remark_result_id
           end).first
         end
-        final_due_date = assignment.submission_rule.get_collection_time
+        final_due_date = assignment.submission_rule.get_collection_time(grouping.inviter.section)
         g[:name] = grouping.get_group_name
         g[:id] = grouping.id
         g[:section] = grouping.section
         g[:tags] = grouping.tags
         g[:commit_date] = grouping.last_commit_date
+        g[:has_files] = grouping.has_files_in_submission?
         g[:late_commit] = grouping.past_due_date?
         g[:name_url] = get_grouping_name_url(grouping, final_due_date, result)
         g[:class_name] = get_tr_class(grouping)
@@ -139,42 +140,29 @@ module SubmissionsHelper
   # Collects submissions for all the groupings of the given section and assignment
   # Return the number of actually collected submissions
   def collect_submissions_for_section(section_id, assignment, errors)
-
     collected = 0
-
     begin
-
       raise I18n.t('collect_submissions.could_not_find_section') if !Section.exists?(section_id)
       section = Section.find(section_id)
 
       # Check collection date
-      if Time.zone.now < SectionDueDate.due_date_for(section, assignment)
+      unless assignment.submission_rule.can_collect_now?(section)
         raise I18n.t('collect_submissions.could_not_collect_section',
           assignment_identifier: assignment.short_identifier,
           section_name: section.name)
       end
 
       # Collect and count submissions for all groupings of this section
-      groupings = Grouping.where(assignment_id: assignment.id)
+      section_groupings = assignment.section_groupings(section)
       submission_collector = SubmissionCollector.instance
-      groupings.each do |grouping|
-        if grouping.section == section.name
-          submission_collector.push_grouping_to_priority_queue(grouping)
-          collected += 1
-        end
+      section_groupings.each do |grouping|
+        submission_collector.push_grouping_to_priority_queue(grouping)
+        collected += 1
       end
-
-      if collected == 0
-        raise I18n.t('collect_submissions.no_submission_for_section',
-          section_name: section.name)
-      end
-
     rescue Exception => e
       errors.push(e.message)
     end
-
     collected
-
   end
 
 # <<<<<<< HEAD
@@ -234,15 +222,19 @@ module SubmissionsHelper
 
   def get_exit_directory(previous_path, grouping_id, revision_number,
                          revision, folder)
-    directories = revision.directories_at_path(previous_path)
+    full_previous_path = File.join('/', folder, previous_path)
+    parent_path_of_prev_dir, prev_dir = File.split(full_previous_path)
+
+    directories = revision.directories_at_path(parent_path_of_prev_dir)
 
     e = {}
     e[:id] = nil
     e[:filename] = view_context.link_to '../', action: 'repo_browser',
                                         id: grouping_id, path: previous_path,
                                         revision_number: revision_number
-    e[:last_revised_date] = directories[folder].last_modified_date
-    e[:revision_by] = directories[folder].user_id
+    e[:last_revised_date] = I18n.l(directories[prev_dir].last_modified_date,
+                                   format: :long_date)
+    e[:revision_by] = directories[prev_dir].user_id
     [e]
   end
 

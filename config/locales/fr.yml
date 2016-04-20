@@ -7,6 +7,7 @@ fr:
     password:           "Mot de passe"
     all:                "Tous"
     none:               "Aucun"
+    and:                " et "
     search:             "Recherche:"
     issues:             "GitHub liste des problèmes"
     actions:            "Actes"
@@ -125,20 +126,28 @@ fr:
       no_submission: "%{group_name} n'a pas d'envoi"
       result_not_saved: "Le résultat du groupe %{group_name} n'a pas pu être sauvegardé."
     collect_submissions:
+      apply_late_penalty: "Appliquer pénalité de retard / Déduire jetons de grâce ( Laissant cette case cochée signifie la soumission ne sera pas pénalisé , indépendamment du moment de la soumission . )"
       collect_all: "Récupérer tous les envois"
+      collect: "Récupérer les envois"
+      all_available: "Tous les envois à disposition"
       collect_ta: "Récupérer tous les envois qui me sont assignés"
       disable_collect: "Récupération des envois n'est pas disponible, il y a déjà un correcteur assigné aux envois."
       could_not_collect: "Les envois du projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération n'est pas encore passée."
       collection_job_started: "La récupération des envois pour le projet %{assignment_identifier} a débuté. Cela peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
+      collection_job_started_for_groups: "La récupération des envois pour les groupements sélectionnés pour le projet %{assignment_identifier} a débuté. Cela peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
+      section_collection_job_started: "La récupération des envois pour les sections %{section_names} pour le projet %{assignment_identifier} a débuté. Cela peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
       priority_given: "Une priorité importante a été donné à cet envoi. Il va bientot être prêt."
       errors:               "Erreurs"
       results_loss_warning: "Attention : cette action effacera vos annotations et évaluations.\n\n!Êtes-vous sûr de vouloir continuer ?"
       must_select_a_section: "Vous devez sélectionner une section pour récupérer les envois de ses groupes."
       could_not_find_section: "La section demandée n'a pas été trouvée."
       could_not_collect_section: "Les envois de la section %{section_name} pour le projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération pour cette section n'est pas encore passée."
-      no_submission_for_section: "Il n'y a ancun envoi à récupérer pour la section %{section_name}."
+      could_not_collect_some: "Impossible de recueillir des soumissions pour certains groupements et projet %{assignment_identifier} - la date de collecte n'a pas été atteint pour ces groupes."
+      no_submission_for_section: "Il n'y a ancun envoi à récupérer pour les sections %{section_names}."
       successfully_collected: "Récupération de %{collected} envoi(s)."
       marking_incomplete_warning: "Attention: Cela ne fera que télécharger les envois qui ont été recuillis.\n\nÊtes-vous sûr de vouloir continuer?"
+      collection_incomplete_warning: "La récuperation des envois est en cours. Certains envois seront manquants. Désirez-vous tout de même continuer?"
+      check_collection_status_error: "Une erreur s'est produite lors de la vérification de l'état de la récuperation."
     assignment:
         hidden: "%{assignment_text} (masqué)"
         assignment: "Projet %{short_identifier}"
@@ -168,6 +177,7 @@ fr:
             select_a_group: "Sélectionner un groupe"
             select_a_student: "Sélectionner un(e) étudiant(e)"
             select_a_grader: "Sélectionner un correcteur"
+            group_submission_no_files: "Un ou plusieurs des groupes sélectionnés ne contient aucun fichier dans leur soumission. Grader pas affecté."
             select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
             deleted: "Le groupe a été supprimé"
             work_in_groups:  "Les étudiants peuvent travailler en groupe"
@@ -262,6 +272,7 @@ fr:
 
     marks_released_notice:  "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
     commit_after_due_date: "Ce commit est postérieur à la date de rendu."
+    no_files_submitted: "Cette présentation n'a pas de fichiers."
     past_due_date_edit_warning:  "ATTENTION ! La date de retour que vous avez choisie est antérieure à la date actuelle."
     past_due_date_edit_result_warning: "La date du %{href} de ce groupe est postérieure à la date de retour."
     last_commit: "dernier rendu"
@@ -284,7 +295,14 @@ fr:
       or:         "OU"
       copy_paste_key:         "Copiez et Collez Votre clé Publique"
       create_key_pair:         "Créer une Paire de Clés"
-      back:         "Dos"
+      back:         "Retourner"
+      create:
+        success: "Paire de Clés créé avec succès"
+        invalid_key: "Une Paire de Clés n'a pas été créé: Clé non valide"
+      update:
+        success: "Paire de Clés mis à jour avec succès"
+      delete:
+        success: "Paire de Clés supprimé avec succès"
 
     #app/views/resluts/marker/_marker_panes.html.erb
     marker:
@@ -373,6 +391,7 @@ fr:
     seperate_multiple_with_commas:  "Séparer les noms d'utilisateur par des virgules."
     csv_valid_format:   "Erreur durant la lecture du fichier CSV que vous venez d'envoyer. Assurez-vous que le fichier soit bien un fichier CSV valide et que chaque ligne finisse par un retour chariot. Aucun changement effectué."
     csv_invalid_lines: "Les lignes suivantes du fichier CSV sont invalides : "
+    csv_valid_lines: "Avec succès téléchargé %{valid_line_count} entrées"
     csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit) : %{user_name}"
     collect_and_grade_overwrite_warning:  "Récupérer et noter cette révision effacera les précédentes récupération et évaluations de ce groupe sur ce projet. Êtes-vous sûr de vouloir faire cela ?"
     uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?"
@@ -430,6 +449,8 @@ fr:
       show_assigned_to_me:  "Montrer les groupes qui me sont assignés"
       grading_can_begin:    "L'évaluation peut commencer"
       grading_can_begin_after: "L'évaluation commencera à partir du %{time}"
+      grading_can_begin_for_sections:    "L'évaluation peut commencer pour les sections: %{sections}"
+      grading_can_begin_after_for_sections: "L'évaluation commencera à partir du %{time} pour les sections: %{sections}"
       submissions:	    "Soumissions: %{short_identifier}"
       csv_report:           "Rapport CSV"
       detailed_csv_report: "Rappost CSV détaillé"
@@ -449,6 +470,8 @@ fr:
       collect_work_for_section: "Récupérer les envois pour la section :"
       download_groupings_files: "Télécharger tous les envois"
       sections:             "Section :"
+      sections:
+        all:                "Tous les Sections"
       revision_history:     "%{num} : "
       search_submissions:   "Rechercher Soumissions"
       how_many_marked:      "%{num_marked}/%{num_assigned} soumissions sont corrigés"
@@ -619,12 +642,15 @@ fr:
       csv:
         could_not_find_source: "Le projet source pour la copie des groupes n'a pas été trouvé."
         could_not_find_target: "Le projet cible pour la copie des groupes n'a pas été trouvé."
+      add_all_groups: "Ajouter tous les groupes"
+      creating_groups_for_all_students: "Création de groupes pour tous les élèves."
 
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
       results_name:  "Résultats"
       successfully_changed: "Les %{changed} résultats ont été mis à jour."
       must_select_a_group:  "Vous devez sélectionner au moins un groupe à mettre à jour."
+      must_select_a_group_to_collect:  "Vous devez sélectionner au moins un groupe pour recueillir."
       editing_after_release_fail: "Les notes ont été dévoilées, vous ne pouvez plus changer l'évaluation."
       could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
 
@@ -772,6 +798,7 @@ fr:
       search_criteria:    "Rechercher les critères"
       assign_to_criteria: "Attribuer les correcteurs aux critères"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
+      skip_empty_submissions: "Ne pas attribuer trieurs à des groupes dont les demandes sont vides (exige que les soumissions sont collectées)"
       upload:
         select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name</code>"
         grader_same_user: "Si un correcteur avec le même nom d'utilisateur existe, ses informations seront mises à jour."
@@ -1301,6 +1328,12 @@ fr:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
+
+    #app/views/job_messages/_job_poller.js.erb
+    job_poller:
+      processing_message: "Processus en cours d`éxécution:"
+      processing_message_finished: "Processus terminé. En rechargement..."
+      processing_message_error: "Une erreur c`est produite:"
 
     #app/helpers/submissions_helper.rb
     assign_folder_missing:      "Oh non! Affectation dossier manquant."

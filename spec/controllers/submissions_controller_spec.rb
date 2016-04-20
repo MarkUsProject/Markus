@@ -289,7 +289,7 @@ describe SubmissionsController do
         allow(Assignment).to receive(:find) { @assignment }
         expect(@assignment).to receive(:short_identifier) { 'a1' }
         expect(@assignment.submission_rule).to receive(
-          :can_collect_now?) { false }
+          :can_collect_all_now?) { false }
 
         get_as @ta_membership.user,
                :collect_ta_submissions,
@@ -308,7 +308,7 @@ describe SubmissionsController do
           :instance) { @submission_collector }
         expect(@assignment).to receive(:short_identifier) { 'a1' }
         expect(@assignment.submission_rule).to receive(
-          :can_collect_now?) { true }
+          :can_collect_all_now?) { true }
         expect(@submission_collector).to receive(:push_groupings_to_queue)
 
         get_as @ta_membership.user,
@@ -337,6 +337,11 @@ describe SubmissionsController do
                            grouping: @grouping)
       @student = @membership.user
       @admin = create(:admin)
+      @csv_options = {
+        type: 'text/csv',
+        disposition: 'attachment',
+        filename: "#{@assignment.short_identifier}_simple_report.csv"
+      }
     end
 
     it 'should be able to access the repository browser' do
@@ -355,12 +360,44 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
     end
 
+    it 'should be able to generate a simple CSV report with appropriate content' do
+      csv_data = ''
+      Student.all.each do |student|
+        fields = []
+        fields.push(student.user_name)
+        grouping = student.accepted_grouping_for(@assignment.id)
+        if grouping.nil? || !grouping.has_submission?
+          fields.push('')
+        else
+          submission = grouping.current_submission_used
+          fields.push(submission.get_latest_result.total_mark / @assignment.total_mark * 100)
+        end
+        csv_data.concat(fields.to_csv)
+      end
+      expect(@controller).to receive(:send_data).with(csv_data, @csv_options) {
+        # to prevent a 'missing template' error
+        @controller.render nothing: true
+      }
+      get_as @admin,
+             :download_simple_csv_report,
+             assignment_id: @assignment.id
+    end
+
     it 'should be able to download the detailed csv report' do
       get_as @admin,
              :download_detailed_csv_report,
              assignment_id: @assignment.id
       is_expected.to respond_with(:success)
     end
+
+    # parse header object to check for the right content type
+    it 'returns text/csv type for detailed csv report' do
+      get_as @admin,
+             :download_simple_csv_report,
+             assignment_id: @assignment.id
+      expect(response.content_type).to eq 'text/csv'
+    end
+
 
     it 'should be able to download the svn checkout commands' do
       get_as @admin,
@@ -376,21 +413,8 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
     end
 
-    describe 'attempting to collect all submissions at once ' do
+    describe 'attempting to collect submissions' do
       before(:each) do
-        @group = create(:group)
-        @assignment = create(:assignment,
-                             allow_web_submits: true,
-                             group_min: 1)
-        @grouping = create(:grouping,
-                           group: @group,
-                           assignment: @assignment)
-        @membership = create(:student_membership,
-                             membership_status: 'inviter',
-                             grouping: @grouping)
-        @student = @membership.user
-        @admin = create(:admin)
-
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('test')
           path = File.join(@assignment.repository_folder, 'file1_name')
@@ -408,41 +432,43 @@ describe SubmissionsController do
         end
       end
 
-      it 'should get an error if it is before assignment due date' do
-        allow(Assignment).to receive_message_chain(
-          :includes, :find) { @assignment }
-        expect(@assignment).to receive(:short_identifier) { 'a1' }
-        expect(@assignment.submission_rule).to receive(
-          :can_collect_now?) { false }
+      context 'all at once' do
+        it 'should get an error if it is before assignment due date' do
+          allow(Assignment).to receive_message_chain(
+            :includes, :find) { @assignment }
+          expect(@assignment).to receive(:short_identifier) { 'a1' }
+          expect(@assignment.submission_rule).to receive(
+            :can_collect_all_now?) { false }
 
-        get_as @admin,
-               :collect_all_submissions,
-               assignment_id: 1
-        expect(flash[:error]).to eq(
-          I18n.t('collect_submissions.could_not_collect',
-                 assignment_identifier: 'a1'))
-        is_expected.to respond_with(:redirect)
-      end
+          get_as @admin,
+                 :collect_all_submissions,
+                 assignment_id: 1
+          expect(response.body).to include(
+            I18n.t('collect_submissions.could_not_collect',
+                   assignment_identifier: 'a1'))
+          is_expected.to respond_with(:ok)
+        end
 
-      it 'should succeed if it is after assignment due date' do
-        @submission_collector = SubmissionCollector.instance
-        allow(Assignment).to receive_message_chain(
-          :includes, :find) { @assignment }
-        expect(SubmissionCollector).to receive(
-          :instance) { @submission_collector }
-        expect(@assignment).to receive(:short_identifier) { 'a1' }
-        expect(@assignment.submission_rule).to receive(
-          :can_collect_now?) { true }
-        expect(@submission_collector).to receive(:push_groupings_to_queue)
+        it 'should succeed if it is after assignment due date' do
+          @submission_collector = SubmissionCollector.instance
+          allow(Assignment).to receive_message_chain(
+            :includes, :find) { @assignment }
+          expect(SubmissionCollector).to receive(
+            :instance) { @submission_collector }
+          expect(@assignment).to receive(:short_identifier) { 'a1' }
+          expect(@assignment.submission_rule).to receive(
+            :can_collect_all_now?) { true }
+          expect(@submission_collector).to receive(:push_groupings_to_queue)
 
-        get_as @admin,
-               :collect_all_submissions,
-               assignment_id: 1,
-               id: 1
-        expect(flash[:success]).to eq(
-          I18n.t('collect_submissions.collection_job_started',
-                 assignment_identifier: 'a1'))
-        is_expected.to respond_with(:redirect)
+          get_as @admin,
+                 :collect_all_submissions,
+                 assignment_id: 1,
+                 id: 1
+          expect(response.body).to include(
+            I18n.t('collect_submissions.collection_job_started',
+                   assignment_identifier: 'a1'))
+          is_expected.to respond_with(:ok)
+        end
       end
 
       it 'should be able to release submissions' do
@@ -453,6 +479,109 @@ describe SubmissionsController do
                 groupings: ([] << @assignment.groupings).flatten,
                 release_results: 'true'
         is_expected.to respond_with(:success)
+      end
+
+      context 'of selected groupings' do
+        it 'should get an error if no groupings are selected' do
+          post_as @admin,
+                 :collect_submissions,
+                 assignment_id: 1,
+                 groupings: []
+
+          expect(response.body).to eql(
+            I18n.t('results.must_select_a_group_to_collect'))
+          is_expected.to respond_with(:bad_request)
+        end
+
+        context 'with a section' do
+          before(:each) do
+            @section = create(:section, name: 's1')
+            @student.section = @section
+            @student.save
+          end
+
+          it 'should get an error if it is before the section due date' do
+            allow(Assignment).to receive_message_chain(
+              :includes, :find) { @assignment }
+            expect(@assignment).to receive_message_chain(
+              :submission_rule, :can_collect_now?).with(@section) { false }
+            expect(@assignment).to receive(:short_identifier) { 'a1' }
+
+            post_as @admin,
+                   :collect_submissions,
+                   assignment_id: 1,
+                   groupings: ([] << @assignment.groupings).flatten
+
+            response_body = JSON.parse(response.body)
+            expect(response_body['error']).to eql(
+              I18n.t('collect_submissions.could_not_collect_some',
+                     assignment_identifier: 'a1'))
+            expect(response_body['success']).to be_nil
+            is_expected.to respond_with(:ok)
+          end
+
+          it 'should succeed if it is after the section due date' do
+            allow(Assignment).to receive_message_chain(
+              :includes, :find) { @assignment }
+            expect(@assignment).to receive_message_chain(
+              :submission_rule, :can_collect_now?).with(@section) { true }
+            expect(@assignment).to receive(:short_identifier) { 'a1' }
+
+            post_as @admin,
+                   :collect_submissions,
+                   assignment_id: 1,
+                   groupings: ([] << @assignment.groupings).flatten
+
+            response_body = JSON.parse(response.body)
+            expect(response_body['success']).to eql(
+              I18n.t('collect_submissions.collection_job_started_for_groups',
+                     assignment_identifier: 'a1'))
+            expect(response_body['error']).to be_nil
+            is_expected.to respond_with(:ok)
+          end
+        end
+
+        context 'without a section' do
+          it 'should get an error if it is before the global due date' do
+            allow(Assignment).to receive_message_chain(
+              :includes, :find) { @assignment }
+            expect(@assignment).to receive_message_chain(
+              :submission_rule, :can_collect_now?).with(nil) { false }
+            expect(@assignment).to receive(:short_identifier) { 'a1' }
+
+            post_as @admin,
+                   :collect_submissions,
+                   assignment_id: 1,
+                   groupings: ([] << @assignment.groupings).flatten
+
+            response_body = JSON.parse(response.body)
+            expect(response_body['error']).to eql(
+              I18n.t('collect_submissions.could_not_collect_some',
+                     assignment_identifier: 'a1'))
+            expect(response_body['success']).to be_nil
+            is_expected.to respond_with(:ok)
+          end
+
+          it 'should succeed if it is after the global due date' do
+            allow(Assignment).to receive_message_chain(
+              :includes, :find) { @assignment }
+            expect(@assignment).to receive_message_chain(
+              :submission_rule, :can_collect_now?).with(nil) { true }
+            expect(@assignment).to receive(:short_identifier) { 'a1' }
+
+            post_as @admin,
+                   :collect_submissions,
+                   assignment_id: 1,
+                   groupings: ([] << @assignment.groupings).flatten
+
+            response_body = JSON.parse(response.body)
+            expect(response_body['success']).to eql(
+              I18n.t('collect_submissions.collection_job_started_for_groups',
+                     assignment_identifier: 'a1'))
+            expect(response_body['error']).to be_nil
+            is_expected.to respond_with(:ok)
+          end
+        end
       end
     end
 

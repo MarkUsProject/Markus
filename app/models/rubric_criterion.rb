@@ -93,27 +93,6 @@ class RubricCriterion < Criterion
     save
   end
 
-  # Create a CSV string from all the rubric criteria related to an assignment.
-  #
-  # ===Returns:
-  #
-  # A string. See create_or_update_from_csv_row for format reference.
-  def self.create_csv(assignment)
-    csv_string = CSV.generate do |csv|
-      assignment.rubric_criteria.each do |criterion|
-        criterion_array = [criterion.rubric_criterion_name,criterion.weight]
-        (0..RUBRIC_LEVELS - 1).each do |i|
-          criterion_array.push(criterion['level_' + i.to_s + '_name'])
-        end
-        (0..RUBRIC_LEVELS - 1).each do |i|
-          criterion_array.push(criterion['level_' + i.to_s + '_description'])
-        end
-        csv << criterion_array
-      end
-    end
-    csv_string
-  end
-
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
   # assignment.
   #
@@ -311,24 +290,6 @@ class RubricCriterion < Criterion
       Ta.where(user_name: ta_user_name).first
     end.compact
     add_tas(result)
-  end
-
-  # Returns an array containing the criterion names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
-    failures = []
-    csv_file_contents = csv_file_contents.utf8_encode encoding
-    CSV.parse(csv_file_contents) do |row|
-      criterion_name = row.shift # Knocks the first item from array
-      criterion = RubricCriterion.where(assignment_id: assignment_id,
-                                        rubric_criterion_name: criterion_name)
-                                 .first
-      if criterion.nil?
-        failures.push(criterion_name)
-      else
-        criterion.add_tas_by_user_name_array(row) # The rest of the array
-      end
-    end
-    return failures
   end
 
   # Updates results already entered with new criteria

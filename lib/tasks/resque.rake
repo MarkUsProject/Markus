@@ -1,2 +1,3 @@
-#require for creating resque workers
+# To create resque workers
 require 'resque/tasks'
+task 'resque:setup' => :environment

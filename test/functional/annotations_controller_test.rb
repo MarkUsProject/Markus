@@ -32,12 +32,6 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       get :update_annotation, :id => 1
       assert_response :redirect
     end
-
-    should 'on :update_comment' do
-      get :update_comment, :id => 1
-      assert_response :redirect
-    end
-
   end # end context unauthenticated/unauthorized user GET
 
   context 'An unauthenticated and unauthorized user doing a POST' do
@@ -64,12 +58,6 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       post :update_annotation, :id => 1
       assert_response :redirect
     end
-
-    should 'on :update_comment' do
-      post :update_comment, :id => 1
-      assert_response :redirect
-    end
-
   end # end context unauthenticated/unauthorized user POST
 
   context 'An authenticated and authorized admin doing a POST' do
@@ -151,12 +139,6 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       assert_response :success
       assert render_template 'update_annotation'
     end # End context :update_annotation
-
-    should 'on :update_comment' do
-      post_as @user, :update_comment, {:result_id => @result.id,
-        :overall_comment => 'comment'}
-      assert_response :success
-    end # End context :update_comment
   end #End context admin POST
 
   context 'An authenticated and authorized TA doing a POST' do
@@ -237,12 +219,6 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       assert_response :success
       assert render_template 'update_annotation'
     end # End context :update_annotation
-
-    should 'on :update_comment' do
-      post_as @user, :update_comment, {:result_id => @result.id,
-           :overall_comment => 'comment'}
-      assert_response :success
-    end # End context :update_comment
   end # End context TA POST
 
   context 'An authenticated and authorized Student doing a POST' do
@@ -299,17 +275,13 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :submission_file_id =>@submission_file.id}
       assert_response :not_found
     end # End context :update_annotation
-
-    should 'on :update_comment' do
-      post_as @user, :update_comment, {:result_id => @result.id,
-          :overall_comment => 'comment'}
-      assert_response :not_found
-    end # End context :update_comment
   end # End context Student POST
 
   should 'recognize action to update_annotation' do
-    assert_recognizes( {:action => 'update_annotation', :controller => 'annotations'},
-                       {:path => 'annotations/update_annotation', :method => 'put'} )
+    assert_recognizes(
+      { action: 'update_annotation', controller: 'annotations' },
+      path: 'annotations/update_annotation',
+      method: 'patch')
   end
 
   should 'recognize action to destroy' do

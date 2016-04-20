@@ -8,6 +8,7 @@
 //= require jquery-ui
 //= require jquery_ujs
 //= require jquery.easyModal
+//= require smart_poll
 //= require_tree ./ReactComponents
 
 

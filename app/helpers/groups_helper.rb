@@ -5,12 +5,13 @@ module GroupsHelper
   def get_students_table_info
     students = Student.all
     student_memberships = StudentMembership
-                          .where(grouping_id: @assignment.groupings,
-                                 user_id: students)
                           .includes(:user)
+                          .where(grouping_id: @assignment.groupings)
+
     students_in_assignment = student_memberships.map do |membership|
       membership.user
     end
+
     students.map do |student|
       s = student.attributes
       s['assigned'] = students_in_assignment.include?(student)
@@ -23,6 +24,9 @@ module GroupsHelper
   # such as validation, renaming, showing notes, etc.
   def get_groupings_table_info
     groupings = @assignment.groupings
+                           .includes(:group,
+                                     :non_rejected_student_memberships,
+                                     :students)
     groupings.map do |grouping|
       g = grouping.attributes
       g[:name] = grouping.group.group_name

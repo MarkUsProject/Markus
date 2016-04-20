@@ -159,25 +159,6 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
                            :weight => 2.7)
 
     end
-
-    should 'be able to get a CSV string' do
-      s = RubricCriterion.create_csv(@assignment)
-      assert_equal @csv_string, s
-    end
-
-    should 'be able to use a generated string for parsing' do
-      csv_string = RubricCriterion.create_csv(@assignment)
-      tempfile = Tempfile.new('rubric_csv')
-      tempfile << csv_string
-      tempfile.rewind
-      invalid_lines = []
-      dst_assignment =  Assignment.make(:marking_scheme_type => 'rubric')
-      nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines, nil)
-      assert_equal 2, nb_updates
-      assert_equal 0, invalid_lines.size
-      dst_assignment.reload
-      assert_equal 2, dst_assignment.rubric_criteria.size
-    end
   end
 
   context 'from an assignment composed of rubric criteria with commas and quotes in the descriptions' do
@@ -194,35 +175,11 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
                            :level_4_description => 'Makes, the TA scream: "at last, it was about time"'
                            )
     end
-
-    should 'be able to get a CSV string' do
-      s = RubricCriterion.create_csv(@assignment)
-      assert_equal @csv_string, s
-    end
-
-    should 'be able to use a generated string for parsing' do
-      csv_string = RubricCriterion.create_csv(@assignment)
-      tempfile = Tempfile.new('rubric_csv')
-      tempfile << csv_string
-      tempfile.rewind
-      invalid_lines = []
-      dst_assignment = Assignment.make
-      nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines, nil)
-      assert_equal 1, nb_updates
-      assert_equal 0, invalid_lines.size
-      dst_assignment.reload
-      assert_equal 1, dst_assignment.rubric_criteria.size
-    end
   end
 
   context 'from an assignment without criteria' do
     setup do
       @assignment = Assignment.make
-    end
-
-    should 'be able to get an empty CSV string' do
-      csv_string = RubricCriterion.create_csv(@assignment)
-      assert_equal '', csv_string
     end
 
     context 'when parsing a CSV file' do

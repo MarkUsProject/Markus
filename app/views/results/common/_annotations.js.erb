@@ -65,6 +65,7 @@
     annotation_type = ANNOTATION_TYPES.PDF;
 
     annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId);
+    annotation_manager.resetAngle();
   }
 
   /**
@@ -90,7 +91,6 @@
 
   function add_pdf_annotation(annotation_text_id, content, extracted_coords) {
     var coords = (typeof extracted_coords === 'string' ? JSON.parse(extracted_coords) : extracted_coords);
-
     annotation_manager.addAnnotation(annotation_text_id, content, coords);
   }
 
@@ -248,6 +248,16 @@
     return { x1: x1, x2: x2, y1: y1, y2: y2 };
   }
 
+
+  function rotate() {
+    annotation_manager.hideSelectionBox();
+
+    if (annotation_type === ANNOTATION_TYPES.PDF) {
+      annotation_manager.rotateClockwise90();
+      PDFView.rotatePages(90);
+    }
+  }
+
   function make_new_annotation() {
     // Check if image is shown, and call the appropriate function if so
     // Set global variable 'positions' to current mouse positions
@@ -268,7 +278,6 @@
 
     // Manually reset the modal dialog values
     set_dialog_values('', '', '', '', '', '');
-
     return false;
   }
 
@@ -361,7 +370,6 @@
     });
 
     document.getElementById('working').style.display = '';
-    document.getElementById('select_file_id').disabled = true;
 
     positions = null;
     annotation_manager = null;
@@ -374,7 +382,6 @@
             '&authenticity_token=' + AUTH_TOKEN
     }).always(function() {
       document.getElementById('working').style.display = 'none';
-      document.getElementById('select_file_id').disabled = false;
     });
   }
 
@@ -445,6 +452,31 @@
       });
     } else if (annotation_type === ANNOTATION_TYPES.PDF) {
       // PDF Annotation
+
+      // Get the unrotated coordinates of the new annotation.
+      // e.g. If the angle is 90 degrees, since getRotateCoords applies clockwise-rotations,
+      // we need to rotate it 3 times to get back to 0 degrees.
+
+      var oldCoords = {}
+      oldCoords.x1 = x1;
+      oldCoords.x2 = x2;
+      oldCoords.y1 = y1;
+      oldCoords.y2 = y2;
+
+      var angle = annotation_manager.getAngle();
+      var newCoords = oldCoords;
+      switch (angle) {
+        case 90:
+          newCoords = annotation_manager.getRotatedCoords(oldCoords, 3);
+          break;
+        case 180:
+          newCoords = annotation_manager.getRotatedCoords(oldCoords, 2);
+          break;
+        case 270:
+          newCoords = annotation_manager.getRotatedCoords(oldCoords, 1);
+          break;
+      }
+
       jQuery.ajax({
         url:  '<%= annotations_path %>',
         type: 'POST',
@@ -452,10 +484,10 @@
               '&submission_file_id=' + document.getElementById('select_file_id').value +
               '&content=' + encodeURIComponent(content) +
               '&category_id=' + category_id +
-              '&x1=' + x1 +
-              '&x2=' + x2 +
-              '&y1=' + y1 +
-              '&y2=' + y2 +
+              '&x1=' + newCoords.x1 +
+              '&x2=' + newCoords.x2 +
+              '&y1=' + newCoords.y1 +
+              '&y2=' + newCoords.y2 +
               '&page=' + page +
               '&authenticity_token=' + AUTH_TOKEN
       });

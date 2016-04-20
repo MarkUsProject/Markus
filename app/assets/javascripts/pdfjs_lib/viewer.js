@@ -164,7 +164,6 @@ var PDFView = {
 
   getPage: function pdfViewGetPage(n) {
     var page = this.pdfDocument.getPage(n);
-
     this.onPageRendered(page, n);
 
     return page;

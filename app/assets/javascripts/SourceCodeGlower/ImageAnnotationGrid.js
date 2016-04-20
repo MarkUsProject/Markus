@@ -66,10 +66,10 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
   for (var i = 0; i < annot_grid.length; i++) {
     var grid_element = annot_grid[i];
 
-    annot_text_id = grid_element.id;
+    annot_id = grid_element.annot_id;
     horiz_range   = grid_element.x_range;
     vert_range    = grid_element.y_range;
-    holder = document.getElementById('annotation_holder_' + annot_text_id);
+    holder = document.getElementById('annotation_holder_' + annot_id);
 
     // Left offset of the holder
     holder_left = image_preview.offsetLeft + parseInt(horiz_range.start, 10);
@@ -105,7 +105,7 @@ ImageAnnotationGrid.prototype.add_to_grid = function(extracted_coords) {
   this.share_grid_with_event_handler();
 
   var new_holder = document.createElement('div');
-  new_holder.id = 'annotation_holder_' + extracted_coords.id;
+  new_holder.id = 'annotation_holder_' + extracted_coords.annot_id;
   new_holder.addClass('annotation_holder');
   new_holder.onmousemove = this.getImageEventHandler().check_for_annotations.bind(this.getImageEventHandler());
   new_holder.onmousedown = this.getImageEventHandler().start_select_box.bind(this.getImageEventHandler());
@@ -116,21 +116,25 @@ ImageAnnotationGrid.prototype.add_to_grid = function(extracted_coords) {
   this.draw_holders();
 }
 
-ImageAnnotationGrid.prototype.remove_annotation = function(unused_param1, unused_param2, annotation_text_id) {
+ImageAnnotationGrid.prototype.remove_annotation = function(annotation_id, unused_param2, annotation_text_id) {
   if (this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
-    this.getAnnotationTextManager().removeAnnotationText(annotation_text_id);
-    var holder = document.getElementById('annotation_holder_' + annotation_text_id);
+    var holder = document.getElementById('annotation_holder_' + annotation_id);
     if (holder != null) {
       holder.parentElement.removeChild(holder);
     }
   }
 
   var annot_grid = this.get_annotation_grid();
+  var otherAnnotationsWithText = false;
   for (var i = 0; i < annot_grid.length; i++) {
-    if (annot_grid[i].id == annotation_text_id) {
+    if (annot_grid[i].annot_id === annotation_id) {
       annot_grid.splice(i, 1);
-      break;
+    } else if (annot_grid[i].id === annotation_text_id) {
+      otherAnnotationsWithText = true;
     }
+  }
+  if (!otherAnnotationsWithText) {
+    this.getAnnotationTextManager().removeAnnotationText(annotation_text_id);
   }
   this.share_grid_with_event_handler();
 }

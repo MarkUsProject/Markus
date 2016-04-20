@@ -20,4 +20,35 @@
       <% end %>
     <% end %>
   };
+  jQuery(document).ready(function () {
+    jQuery('#overall_remark_comment_edit form').on('ajax:success', function (data) {
+        if (jQuery('.success').length > 0) {
+            jQuery('.success').text = '<%= t("marker.overall_comments_success") %>';
+            jQuery('.success').show();
+            } else {
+            jQuery('.wrapLeft').prepend(
+                '<div class="success">' +
+                    '<%= t("marker.overall_comments_success") %>' +
+                    '</div>');
+            }
+        jQuery('#overall_remark_comment_submit').prop('disabled',true);
+        }).on('ajax:before', function () {
+        jQuery('.success').hide();
+        });
+      });
+  jQuery(document).ready(function () {
+    jQuery('#overall_comment_edit form').on('ajax:success', function (data) {
+        if (jQuery('.success').length > 0) {
+            jQuery('.success').text = '<%= t("marker.overall_comments_success") %>';
+            jQuery('.success').show();
+            } else {
+            jQuery('.wrapLeft').prepend(
+                '<div class="success">' +
+                    '<%= t("marker.overall_comments_success") %>' +
+                    '</div>');
+            }
+        }).on('ajax:before', function () {
+        jQuery('.success').hide();
+        });
+    });
 </script>

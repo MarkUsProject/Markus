@@ -114,6 +114,7 @@ var PageView = function pageView(container, id, scale,
   };
 
   this.update = function pageViewUpdate(scale, rotation) {
+      var prevScale = this.scale
     this.scale = scale || this.scale;
 
     if (typeof rotation !== 'undefined') {
@@ -151,6 +152,7 @@ var PageView = function pageView(container, id, scale,
     if (this.zoomLayer) {
       this.cssTransform(this.zoomLayer.firstChild);
     }
+
     this.reset(true);
   };
 

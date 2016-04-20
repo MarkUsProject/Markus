@@ -140,6 +140,8 @@ Markus::Application.routes.draw do
           get 'browse'
           post 'populate_file_manager'
           get 'collect_all_submissions'
+          post 'collect_submissions'
+          get 'uncollect_all_submissions'
           get 'download_simple_csv_report'
           get 'download_detailed_csv_report'
           get 'download_svn_export_list'
@@ -154,6 +156,7 @@ Markus::Application.routes.draw do
           get 'server_time'
           get 'download'
           get 'download_groupings_files'
+          get 'check_collect_status'
         end
 
         member do
@@ -228,8 +231,6 @@ Markus::Application.routes.draw do
 
       resources :annotation_categories do
         member do
-          get 'get_annotations'
-          delete 'delete_annotation_category'
           delete 'delete_annotation_text'
           get 'add_annotation_text'
           post 'add_annotation_text'
@@ -238,13 +239,9 @@ Markus::Application.routes.draw do
 
         collection do
           post 'update_positions'
-          get 'add_annotation_category'
           post 'csv_upload'
-          get 'delete_annotation_category'
           get 'download'
           post 'yml_upload'
-          post 'add_annotation_category'
-          post 'update_annotation_category'
           get 'add_annotation_text'
           post 'delete_annotation_text'
           post 'update_annotation'
@@ -334,7 +331,6 @@ Markus::Application.routes.draw do
       collection do
         post 'add_existing_annotation'
         patch 'update_annotation'
-        post 'update_comment'
         delete '/' => 'annotations#destroy'
       end
     end
@@ -385,6 +381,8 @@ Markus::Application.routes.draw do
       post 'execute_test_run'
     end
   end
+
+  resources :job_messages, only: %w(show), param: :job_id
 
   match 'main', controller: 'main', action: 'index', via: :post
   match 'main/about', controller: 'main', action: 'about', via: :post

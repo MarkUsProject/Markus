@@ -16,7 +16,7 @@ module GradersHelper
       g = grouping.attributes
       g[:name] = grouping.group.group_name
       g[:students] = grouping.students
-      g[:section] = grouping.section
+      g[:section] = grouping.section || '-'
       g[:graders] = grouping.ta_memberships.map do |membership|
         m = {}
         m[:user_name] = membership.user.user_name

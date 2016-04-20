@@ -969,6 +969,10 @@ html[dir="rtl"] .secondaryToolbarButton > span {
   content: url(secondaryToolbarButton-rotateCw.png);
 }
 
+.toolbarButton.rotateMarkus::before {
+  content: url(secondaryToolbarButton-rotateCw.png);
+}
+
 .secondaryToolbarButton.handTool::before {
   content: url(secondaryToolbarButton-handTool.png);
 }
@@ -1749,6 +1753,10 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
   }
 
   .secondaryToolbarButton.rotateCw::before {
+    content: url(secondaryToolbarButton-rotateCw@2x.png);
+  }
+
+  .toolbarButton.rotateMarkus::before {
     content: url(secondaryToolbarButton-rotateCw@2x.png);
   }
 

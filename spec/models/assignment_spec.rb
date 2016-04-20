@@ -518,9 +518,11 @@ describe Assignment do
     before :each do
       @assignment = create(:assignment)
       @submission_collector = SubmissionCollector.instance
-      @grouping = create(:grouping, assignment: @assignment)
+      @student = create(:student)
+      @grouping = create(:grouping, assignment: @assignment, inviter: @student)
       @submission = create(:version_used_submission, grouping: @grouping)
-      @other_grouping = create(:grouping, assignment: @assignment)
+      @other_student = create(:student)
+      @other_grouping = create(:grouping, assignment: @assignment, inviter: @other_student)
       @other_submission =
         create(:version_used_submission, grouping: @other_grouping)
     end
@@ -562,7 +564,7 @@ describe Assignment do
       it 'does calculate submission results properly' do
         @assignment.due_date = (Time.now - 1.minute)
         @assignment.save
-        expect(@assignment.submission_rule.can_collect_now?).to eq true
+        expect(@assignment.submission_rule.can_collect_all_now?).to eq true
         @submission_collector.push_groupings_to_queue(@assignment.groupings)
         expect(@assignment.graded_submission_results.size).to_not be_nil
         first_result = @submission.assignment.graded_submission_results.size
@@ -597,6 +599,7 @@ describe Assignment do
 
       context 'and the group does not exist' do
         it 'adds a Group and an associated Grouping' do
+          @row[1] = 'repo_name_1'
           @assignment.add_csv_group(@row)
           group = Group.where(group_name: @row[0])
           grouping = group ? group.first.groupings : nil
@@ -608,7 +611,6 @@ describe Assignment do
         it 'adds the StudentMemberships for the students' do
           @assignment.add_csv_group(@row)
           memberships = StudentMembership.where(user_id: @students)
-
           expect(memberships.size).to eq 2
         end
       end
@@ -624,6 +626,7 @@ describe Assignment do
         end
 
         it 'adds a Grouping to the existing Group' do
+          @row[1] = @existing_group.repo_name
           @assignment.add_csv_group(@row)
           expect(Grouping.first.group).to eq @existing_group
         end
@@ -781,9 +784,10 @@ describe Assignment do
       context 'and there are SectionDueDates past due' do
         before :each do
           @assignment.update_attributes(section_due_dates_type: true)
-          SectionDueDate.create(section: create(:section),
+          @section_due_date = SectionDueDate.create(section: create(:section),
                                 assignment: @assignment,
                                 due_date: 1.days.ago)
+          puts @section_due_date.inspect
         end
 
         it 'returns false' do
@@ -1026,7 +1030,12 @@ describe Assignment do
           result = s.get_latest_result
           result.total_mark = total_mark
           result.marking_state = Result::MARKING_STATES[:complete]
-          result.save
+          @assignment.rubric_criteria.each do |cri|
+            result.marks.create!(markable_id: cri.id,
+                                 markable_type: RubricCriterion,
+                                 mark: (total_mark * 4.0 / 20).round)
+          end
+          result.save!
         end
       end
 
@@ -1037,7 +1046,7 @@ describe Assignment do
 
         it 'returns the correct distribution' do
           expect(@assignment.grade_distribution_as_percentage)
-            .to eq [1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+            .to eq [1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
         end
       end
 
@@ -1058,7 +1067,8 @@ describe Assignment do
     context 'when rubric marking was used' do
       before :each do
         @assignment = create(:rubric_assignment)
-        2.times { create(:assignment_file, assignment: @assignment) }
+        create(:assignment_file, filename: 'test1', assignment: @assignment)
+        create(:assignment_file, filename: 'test2', assignment: @assignment)
         criteria =
           Array.new(4) { create(:rubric_criterion, assignment: @assignment) }
 
@@ -1085,6 +1095,7 @@ describe Assignment do
           if grouping && grouping.has_submission?
             result = grouping.current_submission_used.get_latest_result
             fields.push(result.total_mark / @assignment.total_mark * 100)
+            fields.push(result.total_mark)
             @assignment.rubric_criteria.each do |criterion|
               mark = result.marks
                 .find_by_markable_id_and_markable_type(criterion.id,
@@ -1119,7 +1130,8 @@ describe Assignment do
     context 'when flexible marking was used' do
       before :each do
         @assignment = create(:flexible_assignment)
-        2.times { create(:assignment_file, assignment: @assignment) }
+        create(:assignment_file, filename: 'test3', assignment: @assignment)
+        create(:assignment_file, filename: 'test4', assignment: @assignment)
         criteria =
           Array.new(4) { create(:flexible_criterion, assignment: @assignment) }
 
@@ -1146,6 +1158,7 @@ describe Assignment do
           if grouping && grouping.has_submission?
             result = grouping.current_submission_used.get_latest_result
             fields.push(result.total_mark / @assignment.total_mark * 100)
+            fields.push(result.total_mark)
             @assignment.flexible_criteria.each do |criterion|
               mark = result.marks
                 .find_by_markable_id_and_markable_type(criterion.id,

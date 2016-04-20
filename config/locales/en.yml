@@ -7,6 +7,7 @@ en:
     password:           "Password"
     all:                "All"
     none:               "None"
+    and:                " and "
     search:             "Search:"
     issues:             "GitHub issues list"
     actions:            "Actions"
@@ -122,20 +123,39 @@ en:
       no_submission: "%{group_name} has no submissions"
       result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
+      apply_late_penalty: "Apply late penalty/Deduct grace tokens (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)"
       collect_all: "Collect All Submissions"
+      collect: "Collect Submissions"
+      uncollect_all: "Undo Previous Collection"
+      collect_section: "Collect Section Submissions"
+      all_available: "All Available Submissions"
       collect_ta: "Collect all your assigned submissions"
       disable_collect: "Collection disabled, more than one TA marking displayed submissions."
       could_not_collect: "Could not collect submissions for assignment %{assignment_identifier} - the collection date has not been reached"
       collection_job_started: "Submission collection for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
+      collection_job_started_for_groups: "Submission collection for selected groupings for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
+      uncollection_started: "Starting uncollection of assignments"
+      section_collection_job_started: "Submission collection for sections %{section_names} for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
       priority_given: "The submission has been given collection priority. It will be ready soon."
       errors:               "Errors"
-      results_loss_warning: "Note: This will erase any marking and annotations already done.\n\nAre you sure you want to proceed?"
+      results_loss_warning: "This operation: \n
+                             Identifies the file version for each submission that meets the due date and/or late penalty set for this assignment.\n
+                             Creates the views for annotating and grading each submission. \n
+                             Warning: If this operation is carried out after grading has begun, this grading work will be overwritten. This work can be recovered using the Undo Collection button."
+
+      undo_results_loss_warning: "This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error.
+
+                                  WARNING: All grading work done since the previous Collect All Submissions operation will be lost."
       must_select_a_section: "You must select a section to collect the submissions of its groups."
       could_not_find_section: "Could not find requested section."
       could_not_collect_section: "Could not collect submissions for section %{section_name} and assignment %{assignment_identifier} - the section collection date has not been reached."
-      no_submission_for_section: "There isn't any submission to collect for section %{section_name}."
+      could_not_collect_some: "Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings."
+      no_submission_for_section: "There aren't any submissions to collect for sections: %{section_names}."
       successfully_collected: "Successfully collected %{collected} submissions."
       marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
+      collection_incomplete_warning: "Collection is still in progress or has not started. Do you still want to proceed? Some submissions might be missing."
+      check_collection_status_error: "There was an error checking collection status."
+      uncollection_processing_message: "Undoing previous collection operation..."
     assignment:
         hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
@@ -165,6 +185,7 @@ en:
             select_a_group: "Select a group"
             select_a_student: "Select a student"
             select_a_grader: "Select a grader"
+            group_submission_no_files: "One or more of the groups selected has no files in their submission. Grader not assigned."
             select_only_one_group: "You may only assign each student to one group."
             deleted: "Group has been deleted"
             work_in_groups:  "Students can work in groups"
@@ -271,6 +292,7 @@ en:
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     commit_after_due_date: "This commit is after the due date."
+    no_files_submitted: "This submission has no files."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
     past_start_date_edit_warning:  "WARNING:  The start date you have selected is in the past."
     past_due_date_edit_result_warning: "The %{href} of this group is after the due date."
@@ -376,6 +398,7 @@ en:
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_invalid_lines: "The following CSV lines were invalid: "
+    csv_valid_lines: "Successfully uploaded %{valid_line_count} entries"
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     collect_and_grade_overwrite_warning:  "Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
@@ -396,6 +419,14 @@ en:
         # when a non-text file has a csv extension (ie: user changes extension
         # from .pdf to .csv on a pdf file)
         non_text_file_with_csv_extension: "The selected file is not a csv file (even though it may have a csv extension)."
+      group_with_different_repo: "Error: Group %{group_name} cannot be created since a group with the same name and a different repository already exists"
+      group_with_different_membership_current_assignment: "Error: Group %{group_name} cannot be created since a group with the same name but with different memberships already exists for the current assignment"
+      group_with_different_membership_different_assignment: "Error: Group %{group_name} cannot be created since a group with the same name but with different memberships already exists for a different assignment"
+      memberships_not_unique: "Error: Group %{group_name} cannot be created since student '%{student_user_name}' already belongs to a different group for the current assignment"
+      repository_already_exists: "Error: Group %{group_name} cannot be created since a repository with path '%{repo_path}' already exists"
+      member_does_not_exist: "Error: Group %{group_name} cannot be created since a student with username '%{student_user_name}' does not exist"
+      groups_unrecoverable_error: "Error: unrecovable"
+      groups_added_msg: "Groups successfully added: %{number_groups}, Groups unsuccessful: %{number_lines}"
 
     selects:
       all_on_page: "All %{page_items} items on this page are selected."
@@ -435,6 +466,8 @@ en:
       show_assigned_to_me:  "Show Assigned to Me"
       grading_can_begin:    "Grading can begin"
       grading_can_begin_after: "Grading can begin after %{time}"
+      grading_can_begin_for_sections:   "Grading can begin for sections: %{sections}"
+      grading_can_begin_after_for_sections: "Grading can begin after %{time} for sections: %{sections}"
       submissions:	    "Submissions: %{short_identifier}"
       csv_report:           "CSV Report"
       detailed_csv_report: "Detailed CSV Report"
@@ -454,6 +487,8 @@ en:
       collect_work_for_section: "Collect work for section:"
       download_groupings_files: "Download all submissions"
       sections:             "Section:"
+      sections:
+        all:                "All Sections"
       revision_history:     "%{num}: "
       tags_used:            "Tags Used"
       tags_search:          "Search for Tags:"
@@ -625,12 +660,15 @@ en:
       csv:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"
+      add_all_groups: "Add all groups"
+      creating_groups_for_all_students: "Creating groups for all students."
 
     results:
       title:  "Assignment %{assignment_name} : %{group_name}"
       results_name:  "Results"
       successfully_changed: "Successfully updated %{changed} results"
       must_select_a_group:  "You must select at least one group to update"
+      must_select_a_group_to_collect:  "You must select at least one group to collect"
       editing_after_release_fail: "The marks have been released. You cannot change the grades."
       could_not_find_file: "Could not find %{filename} in repository %{repository_name}"
 
@@ -795,6 +833,7 @@ en:
       search_criteria:    "Search Criteria"
       assign_to_criteria: "Assign Graders to Criteria"
       lines_not_processed: "The following lines could not be processed:"
+      skip_empty_submissions: "Do not assign Graders to groups with empty submissions (requires that submissions are collected)"
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
@@ -1244,6 +1283,13 @@ en:
       copy_paste_key:         "Copy and paste your public key"
       create_key_pair:         "Create Key Pair"
       back:         "Back"
+      create:
+        success: "Key Pair was created successfully"
+        invalid_key: "Key Pair was not created: Invalid key"
+      update:
+        success: "Key Pair was updated successfully"
+      delete:
+        success: "Key Pair was removed successfully"
 
     course_summaries:
       title: "Summary"
@@ -1440,6 +1486,12 @@ en:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
+
+    #app/views/job_messages/_job_poller.js.erb
+    job_poller:
+      processing_message: "Processing:"
+      processing_message_finished: "Finished Processing. Reloading..."
+      processing_message_error: "Processing Failed:"
 
     #app/helpers/submissions_helper.rb
     assign_folder_missing:      "Uh oh! Assignment folder missing."

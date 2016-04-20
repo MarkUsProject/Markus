@@ -12,27 +12,69 @@
                        true,
                        id: 'download_include_annotations' %>
   <div class='file_selector'>
-    <input type='button'
-           onclick='bump_select("select_file_id", -1, "back_button", "next_button"); return false;'
-           value='←'
-           id='back_button'
-           disabled>
-    <select id='select_file_id'
-            name='select_file_id'
-            onchange='bump_select("select_file_id", 0, "back_button", "next_button");'>
+    <!-- so jQuery knows which file to autoload when the page loads -->
+    <script>
+      var first_file_id;
+      var first_file_path;
       <% if files.empty? %>
-        <option value=''><%= t('common.no_file_in_repository') %></option>
+        first_file_id = null;
+        first_file_path = null;
+      <% else %>
+        first_file_id = <%= files[0].id %>;
+        first_file_path = '<%= files[0].path %>/<%= files[0].filename %>';
       <% end %>
-      <% files.each do |file| %>
-        <option value='<%= file.id %>'>
-          <%= File.join(file.path, file.filename) %>
-        </option>
+    </script>
+
+
+    <!-- arrange the files list into a nested hashtable for displaying in a recursive menu -->
+     <% outermost_dir = Hash.new %> 
+     <% files.each do |file| %>
+       <% innermost_dir = outermost_dir %>
+       <% innermost_dir["files"] = Array.new %>
+       <% folders = file.path.split('/') %>
+       <% folders.each do |folder_name| %>
+         <% if !innermost_dir.key?(folder_name) %>
+           <% innermost_dir[folder_name] = Hash.new %>
+           <% innermost_dir[folder_name]["files"] = Array.new %>
+         <% end %>
+         <% innermost_dir = innermost_dir[folder_name] %>
+       <% end %>
+       <% innermost_dir["files"].push(file) %>
+     <% end %>
+
+     <% def show_folder_recursive(dir) %>
+      <% dir.each do |name, contents|  %>
+        <% if name != "files" %>
+          <li class="nested-submenu">
+          <a onmouseenter='open_submenu(this)'>
+            <b><%= name %></b>
+          </a>
+          <ul class="nested-folder" style="display: none;"><% show_folder_recursive(contents) %></ul>
+          </li>
+        <% end %>
       <% end %>
-    </select>
-    <input type='button'
-           onclick='bump_select("select_file_id", 1, "back_button", "next_button"); return false;'
-           value='→'
-           id='next_button'>
+      <% if dir["files"] != nil %>
+        <% dir["files"].each do |file| %>
+          <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
+                 onmouseover='close_submenu_recursive(
+                     this.parentNode.parentNode, null)'>
+            <option value='<%= file.id %>'><%=file.filename%></option>
+          </a></li>
+        <% end %>
+      <% end %>
+     <% end %>
+
+     <div class="dropdown" id="select_file_id">
+       <a id="file_selector_dropdown_text">Files</a>
+       <span class="caret"></span>
+       <ul class="nested-folder">
+          <% outermost_dir.each do |key, value| %>
+            <% if key != "files" %>
+              <% show_folder_recursive(outermost_dir[key]) %>
+            <% end %>
+          <% end %>
+       </ul>
+     </div>
   </div>
 
   <div class='download_file'>

@@ -25,11 +25,13 @@
     this.pdfView = pdfView;
     this.annotationTextManager = new AnnotationTextManager();
     this.pageParentId = pageParentId;
+    this.angle = 0; //current orientation of the PDF
 
     /** @type {<page> : {[id]: {annotation: AnnotationText, coords: Object}} */
-    this.annotations = {};        // Lookup of annotations by page number
-    this.annotationsById = {};    // Lookup of annotations by annotation id
-    this.annotationControls = {}; // DOM elements added for annotations
+    this.annotationsByPageNumber = {};       // Lookup of annotations by page number
+    this.annotationsById = {};               // Lookup of annotations by annotation id
+    this.annotationsByAnnotationTextId = {}; // Lookup of annotations by annotation text id
+    this.annotationControls = {};            // DOM elements added for annotations
 
     /** @type {{page: int, $control: jQuery}} */
     this.selectionBox = {};
@@ -75,8 +77,7 @@
    * @return {{annotation: AnnotationText, coords: Object}[]} Annotation data.
    */
   PdfAnnotationManager.prototype.getPageAnnotations = function(pageNumber) {
-    var pageData = this.annotations[pageNumber];
-
+    var pageData = this.annotationsByPageNumber[pageNumber];
     if (!pageData) {
       return []; // No annotations on page
     } else {
@@ -296,22 +297,99 @@
   }
 
   /**
+   * The following four functions are used to keep track of the orientation of 
+   * the PDF so we know how to render the annotations. 
+   */
+
+  PdfAnnotationManager.prototype.rotateClockwise90 = function() {
+    this.angle += 90;
+    if (this.angle == 360) this.angle = 0;
+  }
+
+  PdfAnnotationManager.prototype.resetAngle = function() {
+    this.angle = 0;
+  }
+
+  PdfAnnotationManager.prototype.getAngle = function() {
+    return this.angle;
+  }
+
+
+  /**
+   * Returns the rotated coordinates of the annotation after applying 
+   * 0, 1, 2, or 3 90-degree clockwise rotations.
+   *
+   * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
+   * @param {num_rotations} in
+   */
+  PdfAnnotationManager.prototype.getRotatedCoords = function(coords, num_rotations) {
+
+    var newCoords = {};
+    newCoords.x1 = coords.x1;
+    newCoords.x2 = coords.x2;
+    newCoords.y1 = coords.y1;
+    newCoords.y2 = coords.y2;
+
+    // If num_rotations is not 1, 2, or 3, return original coordinates.
+    switch (num_rotations) {
+      case 1:
+        newCoords.x1 = COORDINATE_MULTIPLIER - coords.y2;
+        newCoords.x2 = COORDINATE_MULTIPLIER - coords.y1;
+        newCoords.y1 = coords.x1;
+        newCoords.y2 = coords.x2;
+        break;
+      case 2: 
+        newCoords.x1 = COORDINATE_MULTIPLIER - coords.x2;
+        newCoords.x2 = COORDINATE_MULTIPLIER - coords.x1;
+        newCoords.y1 = COORDINATE_MULTIPLIER - coords.y2;
+        newCoords.y2 = COORDINATE_MULTIPLIER - coords.y1;
+        break;
+      case 3: 
+        newCoords.x1 = coords.y1;
+        newCoords.x2 = coords.y2;
+        newCoords.y1 = COORDINATE_MULTIPLIER - coords.x2;
+        newCoords.y2 = COORDINATE_MULTIPLIER - coords.x1;
+        break;
+    }
+    return newCoords;
+  }
+
+  /**
    * Draw the annotation on the screen.
    *
    * @param {AnnotationText} annotation
    * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
    */
   PdfAnnotationManager.prototype.renderAnnotation = function(annotation, coords) {
-    if (this.annotationControls[annotation.getId()]) {
-      this.annotationControls[annotation.getId()].remove(); // Remove old controls
+    if (this.annotationControls[coords.annot_id]) {
+      this.annotationControls[coords.annot_id].remove(); // Remove old controls
+    }
+
+    // The coords are in the unrotated form, but the PDF may be in a different 
+    // orientation.
+    var newCoords;
+    switch (this.angle) {
+      case 90: 
+        newCoords = this.getRotatedCoords(coords, 1);
+        break;
+      case 180:
+        newCoords = this.getRotatedCoords(coords, 2);
+        break;
+      case 270:
+        newCoords = this.getRotatedCoords(coords, 3);
+        break;
+      default:
+        newCoords = this.getRotatedCoords(coords, 0);
+        break;
     }
 
     var $control = $("<div />").addClass("annotation_holder").css({
-      top: ((coords.y1 / COORDINATE_MULTIPLIER) * 100) + "%",
-      left: ((coords.x1 / COORDINATE_MULTIPLIER) * 100) + "%",
-      width: (((coords.x2 - coords.x1) / COORDINATE_MULTIPLIER) * 100) + "%",
-      height: (((coords.y2 - coords.y1) / COORDINATE_MULTIPLIER) * 100) + "%"
+      top: ((newCoords.y1 / COORDINATE_MULTIPLIER) * 100) + "%",
+      left: ((newCoords.x1 / COORDINATE_MULTIPLIER) * 100) + "%",
+      width: (((newCoords.x2 - newCoords.x1) / COORDINATE_MULTIPLIER) * 100) + "%",
+      height: (((newCoords.y2 - newCoords.y1) / COORDINATE_MULTIPLIER) * 100) + "%"
     });
+
 
     var $page = this.getPageContainer(coords.page);
 
@@ -348,7 +426,7 @@
       }
     });
 
-    this.annotationControls[annotation.getId()] = $control;
+    this.annotationControls[coords.annot_id] = $control;
 
     $page.append($control);
   }
@@ -361,13 +439,13 @@
    * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
    */
   PdfAnnotationManager.prototype.addAnnotation = function(annotation_text_id, content, coords) {
-    var annotation_text = new AnnotationText(annotation_text_id, 0, content);
-
-    if (this.getAnnotationTextManager().annotationTextExists(annotation_text.getId())) {
-      return;
+    var annotation_text;
+    if (this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
+      annotation_text = this.getAnnotationTextManager().getAnnotationText(annotation_text_id);
+    } else {
+      annotation_text = new AnnotationText(annotation_text_id, 0, content);
+      this.getAnnotationTextManager().addAnnotationText(annotation_text);
     }
-
-    this.getAnnotationTextManager().addAnnotationText(annotation_text);
 
     this.renderAnnotation(annotation_text, coords);
 
@@ -379,31 +457,44 @@
 
     // Stored using multiple lookups so that there is fast rendering
     // and fast deletion.
-    this.annotations[coords.page] = this.annotations[coords.page] || {};
-    this.annotations[coords.page][annotation_text.getId()] = annotationData;
-    this.annotationsById[annotation_text.getId()] = annotationData;
+    this.annotationsByPageNumber[coords.page] = this.annotationsByPageNumber[coords.page] || {};
+    this.annotationsByPageNumber[coords.page][coords.annot_id] = annotationData;
+    this.annotationsById[coords.annot_id] = annotationData;
+    this.annotationsByAnnotationTextId[annotation_text.getId()] = this.annotationsByAnnotationTextId[annotation_text.getId()] || {};
+    this.annotationsByAnnotationTextId[annotation_text.getId()][coords.annot_id] = annotationData;
 
     this.hideSelectionBox();
   }
 
   /**
    * Remove an annotation
-   * @param  {string} annotation_id      Ignored
+   * @param  {string} annotation_id      Annotation ID
    * @param  {Object} range              Ignored
    * @param  {string} annotation_text_id Annotation text id.
    */
   PdfAnnotationManager.prototype.remove_annotation = function(annotation_id, range, annotation_text_id) {
-    var annotationData = this.annotationsById[annotation_text_id];
+    var annotationData = this.annotationsById[annotation_id];
 
     // Remove from rendering lookups
-    delete this.annotations[annotationData.coords.page][annotation_text_id];
-    delete this.annotationsById[annotation_text_id];
+    if (annotationData!=undefined) {
+      delete this.annotationsByPageNumber[annotationData.coords.page][annotation_id];
+      delete this.annotationsById[annotation_id];
+      delete this.annotationsByAnnotationTextId[annotation_text_id][annotation_id];
+      this.annotationControls[annotation_id].remove(); // Delete DOM node
+    }
 
-    this.annotationControls[annotation_text_id].remove(); // Delete DOM node
 
-    if (this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
+    if (this.isObjectEmpty(this.annotationsByAnnotationTextId[annotation_text_id])
+        && this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
       this.getAnnotationTextManager().removeAnnotationText(annotation_text_id);
     }
+  }
+
+  PdfAnnotationManager.prototype.isObjectEmpty = function(obj) {
+    for (var prop in obj) {
+      return false;
+    }
+    return true;
   }
 
   // Exports

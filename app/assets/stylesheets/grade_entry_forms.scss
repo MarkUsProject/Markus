@@ -43,6 +43,14 @@ fieldset {
   }
 }
 
+.react-release-marks {
+  float: right;
+
+  button {
+    margin-left: 1em;
+  }
+}
+
 label {
   display: inline-block;
   min-width: 12em;

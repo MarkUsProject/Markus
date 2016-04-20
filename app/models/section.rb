@@ -2,6 +2,7 @@ class Section < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
   has_many :students
+  has_many :section_due_dates
 
   # Returns true when students are part of this section
   def has_students?

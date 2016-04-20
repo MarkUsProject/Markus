@@ -6,6 +6,12 @@ describe GradeEntryFormsController do
     allow(controller).to receive(:session_expired?).and_return(false)
     allow(controller).to receive(:logged_in?).and_return(true)
     allow(controller).to receive(:current_user).and_return(build(:admin))
+
+    # initialize student DB entries
+    user = create(:user, user_name: 'c8shosta', type: 'Student')
+    create(:grade_entry_student,
+           user: user,
+           grade_entry_form: grade_entry_form_with_data)
   end
 
   let(:grade_entry_form) { create(:grade_entry_form) }
@@ -14,14 +20,13 @@ describe GradeEntryFormsController do
   context 'CSV_Uploads' do
     before :each do
       @file_without_extension =
-        fixture_file_upload('files/grade_entry_upload_empty_file',
-                            'text/xml')
+        fixture_file_upload('files/empty_file', 'text/xml')
       @file_wrong_format =
         fixture_file_upload(
-          'files/grade_entry_upload_wrong_format.xls', 'text/xls')
+          'files/wrong_csv_format.xls', 'text/xls')
       @file_bad_csv =
         fixture_file_upload(
-          'files/grade_entry_upload_bad_csv.csv', 'text/xls')
+          'files/bad_csv.csv', 'text/xls')
       @file_bad_endofline =
         fixture_file_upload(
           'files/grade_entry_upload_file_bad_endofline.csv',
@@ -108,12 +113,11 @@ describe GradeEntryFormsController do
         grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end
 
-    it 'does not accept a file with no extension' do
+    it 'does not break on a file with no extension' do
       post :csv_upload,
            id: grade_entry_form,
            upload: { grades_file: @file_without_extension }
       expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end

@@ -116,6 +116,7 @@
     getInitialState: function() {
       return {
         error: [],
+        success: [],
         submissions: [],
         selected_submissions: [],
       };
@@ -161,6 +162,9 @@
     onError: function(error) {
       this.setState({error: error});
     },
+    onSuccess: function(success) {
+      this.setState({success: success});
+    },
     renderMarkingState: function(state) {
       if (state === 'unmarked') {
         return (<%= image_tag('icons/shape_square.png',
@@ -191,6 +195,23 @@
       // Do student-specific table stuff here.
       // possibly move this to getdefaultprops.
 
+      // need to filter for each section
+      var sections = <%= raw @sections.to_json %>;
+      if (sections.length > 0) {
+        var section_filters = sections.map(function(section) {
+          var filter = {
+            name: section.name,
+            text: section.name,
+            func: function(group) {
+              return group.section === section.name;
+            }
+          };
+          return filter;
+        });
+        var all = '<%= I18n.t('browse_submissions.sections.all') %>';
+        section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
+      }
+
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
         s['id'] = submission.id;
@@ -208,7 +229,15 @@
           }
 
           s['class_name'] = submission.class_name;
-          s['repository'] = <a href={submission.repo_url}>{submission.repo_name}</a>;
+          if (!submission.has_files) {
+            s['repository'] = (<span>
+              <%= image_tag('icons/error.png',
+                            title: t(:no_files_submitted)) %>
+              <a href={submission.repo_url}>{submission.repo_name}</a>
+            </span>);
+          } else {
+            s['repository'] = <a href={submission.repo_url}>{submission.repo_name}</a>;
+          }
           if (submission.late_commit) {
             s['commit_date'] = (<span>
               <%= image_tag('icons/error.png',
@@ -225,6 +254,7 @@
           s['tags'] = <div className='tag_list'>{tag_list}</div>;
           s['final_grade'] = submission.final_grade;
           s['section'] = submission.section;
+          s['has_files'] = submission.has_files;
         }
         return s;
       }.bind(this));
@@ -232,15 +262,18 @@
         return (
           <div>
             <ErrorDiv error={this.state.error} />
+            <SuccessDiv success={this.state.success} />
             <SubmissionsActionBox
               selected_submissions={this.state.selected_submissions}
               onError={this.onError}
+              onSuccess={this.onSuccess}
               refresh={this.refresh}
             />
             <Table data={submissions_data}
               columns={this.props.columns}
               selectable={true}
               filters={this.props.filters}
+              secondary_filters={section_filters}
               filter_type={true}
               onSelectedRowsChange={this.updateSelectedSubmissions}
               search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
@@ -292,9 +325,61 @@
         }.bind(this)
       });
     },
+    uncollectAllSubmissions: function() {
+      jQuery.ajax({
+        method: 'GET',
+        url: 'uncollect_all_submissions',
+        success: function(data) {
+          if(data.message){
+            this.props.onSuccess(data.message);
+          }
+          if(data.error){
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    collectSubmissions: function() {
+      var dataLoad = {
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'collect_submissions',
+        data: dataLoad,
+        success: function(data) {
+          if(data.success){
+            this.props.onSuccess(data.success);
+          }
+          if(data.error){
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
     render: function() {
       return (
         <div className='react-release-marks'>
+          <% if @current_user.admin? %>
+            <button onClick={this.collectSubmissions}
+                    data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
+              <%= j raw I18n.t('collect_submissions.collect') %>
+            </button>
+          <% end %>
+          <% if @assignment.can_uncollect_submissions? %>
+            <button onClick={this.uncollectAllSubmissions}
+                    data-confirm='<%= t('collect_submissions.undo_results_loss_warning')%>' data-remote="true">
+              <%=j raw I18n.t('collect_submissions.uncollect_all') %>
+            </button>
+          <% end %>
           <button onClick={this.releaseMarks}>
             <%= j raw I18n.t('browse_submissions.release_marks') %>
           </button>

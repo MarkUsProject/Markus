@@ -6,7 +6,7 @@
   } # this is defined and used to validate input in test_script.rb
   %>
   <% criterion_options = { '-' => nil }
-    if !@assignment.rubric_criterions_count.nil?
+    if !@assignment.rubric_criteria_count.nil?
        @assignment.rubric_criteria(order: 'position').each do |criterion|
          criterion_options[criterion.rubric_criterion_name] = criterion.id
        end

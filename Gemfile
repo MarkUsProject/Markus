@@ -9,7 +9,6 @@
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem "resque"
 gem 'rails', '~> 4.2.0'
 gem 'rubyzip'
 gem 'ya2yaml'
@@ -41,6 +40,7 @@ gem 'therubyracer', '>= 0.11.1'
 gem 'json'
 gem 'minitest'
 gem 'autoprefixer-rails'
+gem 'resque'
 
 gem 'actionpack-action_caching'
 gem 'actionpack-page_caching', '~>1.0.0'
@@ -49,6 +49,8 @@ gem 'actionview-encoded_mail_to', '~>1.0.4'
 gem 'activerecord-session_store', '~>0.1.0'
 gem 'rails-observers', '~>0.1.1'
 gem 'rails-perftest', '~>0.0.2'
+gem 'arel', '~>6.0.2'
+gem 'jbuilder', '~> 2.0'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
@@ -83,6 +85,7 @@ group :development do
   gem 'spring'
   gem 'debugger', :platforms => :mri_19
   gem 'quiet_assets'
+  gem 'bullet'
 end
 
 group :test do
@@ -93,6 +96,7 @@ group :test do
   gem 'shoulda'
   gem 'simplecov'
   gem 'time-warp'
+  gem 'database_cleaner'
 end
 
 # Gems needed (wanted) for both development and test can be

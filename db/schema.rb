@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160418231321) do
+ActiveRecord::Schema.define(version: 20160421002312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,8 +94,8 @@ ActiveRecord::Schema.define(version: 20160418231321) do
     t.boolean  "enable_test",                      default: false,    null: false
     t.integer  "notes_count",                      default: 0
     t.boolean  "assign_graders_to_criteria",       default: false
-    t.integer  "rubric_criterions_count"
-    t.integer  "flexible_criterions_count"
+    t.integer  "rubric_criteria_count"
+    t.integer  "flexible_criteria_count"
     t.integer  "groupings_count"
     t.integer  "tokens_per_period",                default: 0,        null: false
     t.boolean  "allow_remarks",                    default: true,     null: false
@@ -105,10 +105,10 @@ ActiveRecord::Schema.define(version: 20160418231321) do
     t.integer  "results_fails"
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
+    t.boolean  "unlimited_tokens",                 default: false
     t.boolean  "is_hidden",                        default: false
     t.boolean  "only_required_files"
     t.boolean  "vcs_submit",                       default: false
-    t.boolean  "unlimited_tokens",                 default: false
     t.datetime "token_start_date"
     t.float    "token_period"
   end

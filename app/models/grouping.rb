@@ -163,7 +163,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def get_all_students_in_group
-    student_user_names = student_memberships.collect {|m| m.user.user_name }
+    student_user_names = student_memberships.includes(:user).collect {|m| m.user.user_name }
     return I18n.t('assignment.group.empty') if student_user_names.size == 0
 	  student_user_names.join(', ')
   end
@@ -298,7 +298,7 @@ class Grouping < ActiveRecord::Base
 
 
       end
-      if self.assignment.past_collection_date?
+      if self.assignment.past_collection_date?(self.inviter.section)
         errors.add(:base, I18n.t('invite_student.fail.due_date_passed',
                                   user_name: user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Current time past " +
@@ -489,7 +489,7 @@ class Grouping < ActiveRecord::Base
     (!self.is_valid?) || (self.is_valid? &&
                           accepted_students.size == 1 &&
                           self.assignment.group_assignment? &&
-                          !assignment.past_collection_date?)
+                          !assignment.past_collection_date?(self.inviter.section))
   end
 
   # Returns the number of files submitted by this grouping for a
@@ -560,27 +560,6 @@ class Grouping < ActiveRecord::Base
     end
     self.criteria_coverage_count = self.all_assigned_criteria(grouping_tas).length
     self.save
-  end
-
-  # Returns an array containing the group names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
-    failures = []
-    csv_file_contents = csv_file_contents.utf8_encode(encoding)
-    CSV.parse(csv_file_contents) do |row|
-      group_name = row.shift # Knocks the first item from array
-      group = Group.where(group_name: group_name).first
-      if group.nil?
-        failures.push(group_name)
-      else
-        grouping = group.grouping_for_assignment(assignment_id)
-        if grouping.nil?
-          failures.push(group_name)
-        else
-          grouping.add_tas_by_user_name_array(row) # The rest of the array
-        end
-      end
-    end
-    return failures
   end
 
   # Update repository permissions for students, if we allow external commits
@@ -684,15 +663,20 @@ class Grouping < ActiveRecord::Base
                 .select { |m| m.grouping.is_valid? }
                 .map &:grouping
     else
-      assignment.groupings
-                .includes(:assignment,
-                          :group,
-                          :grace_period_deductions,
-                          { current_submission_used: [:results] },
-                          { accepted_student_memberships: :user },
-                          { inviter: :section },
-                          :tags)
-                .select { |g| g.non_rejected_student_memberships.size > 0 }
+      Grouping.joins(:memberships)
+              .includes(:assignment,
+                        :group,
+                        :grace_period_deductions,
+                        { current_submission_used: [:results] },
+                        { accepted_student_memberships: :user },
+                        { inviter: :section },
+                        :tags)
+              .where(assignment_id: assignment.id)
+              .where(memberships: { membership_status:
+                                   [StudentMembership::STATUSES[:inviter],
+                                    StudentMembership::STATUSES[:pending],
+                                    StudentMembership::STATUSES[:accepted]] })
+              .distinct
     end
   end
 
@@ -705,6 +689,13 @@ class Grouping < ActiveRecord::Base
     else
       '-'
     end
+  end
+
+  # Helper for populate_submission_table
+  # Returns boolean value based on if the submission has files or not
+  def has_files_in_submission?
+    !has_submission? ||
+    SubmissionFile.where(submission_id: current_submission_used.id).exists?
   end
 
   # Helper for populate_submissions_table.

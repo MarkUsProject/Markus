@@ -333,6 +333,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             SubmissionFile.make(:submission => @submission)
             @submission_file = @result.submission.submission_files.first
+            @request.env['HTTP_REFERER'] = '/assignments'
           end
 
           should 'and the student has no access to that file' do
@@ -352,15 +353,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_nil assigns :file_contents
             assert_nil assigns :annots
             assert_nil assigns :all_annots
-            assert render_template 'shared/_handle_error.js.erb'
-            assert_response :success
-
-            # Workaround to assert that the error message made its way to
-            # the response
-            r = Regexp.new(I18n.t(
-                    'submission_file.error.no_access',
-                    :submission_file_id => @no_access_submission_file.id))
-            assert_match r, @response.body
+            assert_response :found
           end
 
           should 'with file reading error' do
@@ -566,8 +559,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
               submission = original_result.submission
 
               # Create a remark result associated with the created submission.
-              remark_result = Result.make(:submission => submission)
-              submission.remark_result_id = remark_result.id
+              remark_result = Result.make(
+                submission: submission,
+                remark_request_submitted_at: Time.zone.now
+              )
               submission.save!
 
               get_as @admin,

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%= render partial: 'layouts/head' %>
+  <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
+  <%# React stuff (compressed version + JSX transformer) %>
+  <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
+                             'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/JSXTransformer.js' %>
+  <%= javascript_include_tag 'application' %>
+  <% # UI LIBRARIES %>
+  <%= javascript_include_tag 'menu',
+                             'layouts',
+                             'help-system' %>
+  <%= yield :head %>
+</head>
+<body>
+  <div id='<%= controller.action_name == "login" ? "loggedOut" : "loggedIn" %>'>
+    <div id='mobile_menu'>
+      <a id='menu_icon'></a>
+    </div>
+    <nav id='menus'>
+      <div id='menus_child'>
+        <%= render partial: 'layouts/header' %>
+        <%= render partial: 'layouts/menu' %>
+        <%= render partial: 'layouts/sub_menu' %>
+        <%= render partial: 'layouts/sub_sub_menu' %>
+        <%= render partial: 'layouts/footer' %>
+      </div>
+    </nav>
+
+    <%= render partial: 'layouts/about' %>
+    <%= render partial: 'layouts/role_switch' %>
+    <%= render partial: 'layouts/redirect' %>
+
+    <section id='content'>
+      <%= render partial: 'layouts/noscript'%>
+      <%= content_for?(:content) ? yield(:content) : yield %>
+
+      <div class='title_bar'>
+        <h1>
+          <%= yield(:title) %>
+        </h1>
+        <div class='heading_buttons'>
+            <%= render partial: "layouts/heading_buttons",
+                    collection: @heading_buttons,
+                            as: :heading_button,
+               spacer_template: "layouts/heading_buttons_spacer" %>
+          <%= yield(:additional_headings) %>
+        </div>
+      </div>
+
+      <div class='wrapLeft'>
+        <%= render partial: 'shared/flash_message' %>
+        <%= yield(:wrap_left_content) %>
+      </div>
+    </section>
+
+    <%= render partial: 'layouts/footer' %>
+  </div>
+
+  <%= render partial: 'layouts/redirect', formats: [:js], handlers: [:erb] %>
+
+  <%# Toggle jQuery's noConflict mode so it does not conflict with Prototype %>
+  <script>
+    jQuery.noConflict();
+    jQuery(document).ready(
+      function($){
+        setInterval(function(){
+          jQuery.get('<%= check_timeout_main_index_path %>');
+        }, 120000);
+      });
+  </script>
+</body>
+</html>

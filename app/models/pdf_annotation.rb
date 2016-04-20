@@ -18,6 +18,7 @@ class PdfAnnotation < Annotation
 
     {
       id: annotation_text_id,
+      annot_id: self.id,
       x1: horiz_range[:start], y1: vert_range[:start],
       x2: horiz_range[:end], y2: vert_range[:end],
       page: page

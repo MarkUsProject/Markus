@@ -336,6 +336,7 @@ class ResultsController < ApplicationController
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
+        return
       end
     end
 
@@ -346,23 +347,10 @@ class ResultsController < ApplicationController
       @file_contents = @file.retrieve_file
     rescue Exception => e
       flash_message(:error, e.message)
+      render partial: 'shared/handle_error', locals: { error: e.message }
+      return
     end
     @code_type = @file.get_file_type
-
-    # if dealing with a pdf file, get the number of images to display
-    if @file.is_pdf?
-      i = 1
-      storage_path = File.join(MarkusConfigurator.markus_config_pdf_storage,
-        @file.submission.grouping.group.repository_name,
-        @file.path)
-      filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf('%04d' % i.to_s()) + '.jpg')
-      while File.exists?(filePathToCheck)
-        i += 1
-        filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf('%04d' % i.to_s()) + '.jpg')
-      end
-      i -= 1
-      @nb_pdf_files_to_download = i
-    end
 
     render template: 'results/common/codeviewer'
   end
@@ -534,7 +522,6 @@ class ResultsController < ApplicationController
     submission = Submission.find(params[:submission_id])
 
     submission.remark_result.destroy
-    submission.update_attributes(remark_result_id: nil)
     submission.get_original_result.update_attributes(
       released_to_students: true)
 

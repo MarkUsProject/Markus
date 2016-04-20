@@ -1,6 +1,6 @@
 # Files ignored by git
-# Ignore nncessary mac files
-*.DS_Store
+# Ignore unnecessary mac files
+.DS_Store
 
 /config/database.yml
 /config/local_environment_override.rb
@@ -51,5 +51,5 @@
 #Ignore files for Vagrant instance
 .vagrant
 
-# Ignore redis db dump file
-dump.rdb
+# Ignore redis dump file
+.dump.rdb

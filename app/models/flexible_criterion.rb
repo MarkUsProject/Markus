@@ -45,23 +45,6 @@ class FlexibleCriterion < Criterion
     self.assigned_groups_count = result.uniq.length
   end
 
-  # Creates a CSV string from all the flexible criteria related to an assignment.
-  #
-  # ===Returns:
-  #
-  # A string. see new_from_csv_row for format reference.
-  def self.create_csv(assignment)
-    CSV.generate do |csv|
-      # TODO temporary until Assignment gets its criteria method
-      criteria = FlexibleCriterion.where(assignment_id: assignment.id)
-                                  .order(:position)
-      criteria.each do |c|
-        criterion_array = [c.flexible_criterion_name, c.max, c.description]
-        csv << criterion_array
-      end
-    end
-  end
-
   # Instantiate a FlexibleCriterion from a CSV row and attach it to the supplied
   # assignment.
   #
@@ -210,27 +193,6 @@ class FlexibleCriterion < Criterion
       Ta.where(user_name: ta_user_name).first
     end.compact
     add_tas(result)
-  end
-
-  # Returns an array containing the criterion names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
-    failures = []
-
-    csv_file_contents = csv_file_contents.utf8_encode(encoding)
-    CSV.parse(csv_file_contents) do |row|
-      criterion_name = row.shift # Knocks the first item from array
-      criterion =
-        FlexibleCriterion.where(assignment_id: assignment_id,
-                                flexible_criterion_name: criterion_name)
-                         .first
-      if criterion.nil?
-        failures.push(criterion_name)
-      else
-        criterion.add_tas_by_user_name_array(row) # The rest of the array
-      end
-    end
-
-    failures
   end
 
 end

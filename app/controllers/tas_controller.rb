@@ -66,7 +66,10 @@ class TasController < ApplicationController
     tas = Ta.order(:user_name)
     case params[:format]
     when 'csv'
-      output = User.generate_csv_list(tas)
+      output = MarkusCSV.generate(tas) do |ta|
+        [ta.user_name,ta.last_name,ta.first_name]
+      end
+
       format = 'text/csv'
     when 'xml'
       output = tas.to_xml
@@ -76,27 +79,34 @@ class TasController < ApplicationController
       output = tas.to_xml
       format = 'text/xml'
     end
-    send_data(output, type: format, disposition: 'inline')
+    send_data(output,
+              type: format,
+              filename: "ta_list.#{params[:format]}",
+              disposition: 'attachment')
   end
 
   def upload_ta_list
-    if request.post? && !params[:userlist].blank?
-      begin
-        result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
-        if !result
-          flash[:notice] = I18n.t('csv.invalid_csv')
-          redirect_to action: 'index'
-          return
+    if params[:userlist]
+      User.transaction do
+        processed_users = []
+        result = MarkusCSV.parse(params[:userlist],
+                                 skip_blanks: true,
+                                 row_sep: :auto,
+                                 encoding: params[:encoding]) do |row|
+          next if CSV.generate_line(row).strip.empty?
+          raise CSVInvalidLineError if processed_users.include?(row[0])
+          raise CSVInvalidLineError if User.add_user(Ta, row).nil?
+          processed_users.push(row[0])
         end
-        if result[:invalid_lines].length > 0
-          flash[:invalid_lines] = result[:invalid_lines]
+        unless result[:invalid_lines].empty?
+          flash_message(:error, result[:invalid_lines])
         end
-        flash[:notice] = result[:upload_notice]
-      rescue CSV::MalformedCSVError
-        flash[:error] = t('csv.upload.malformed_csv')
-      rescue ArgumentError
-        flash[:error] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+        unless result[:valid_lines].empty?
+          flash_message(:success, result[:valid_lines])
+        end
       end
+    else
+      flash_message(:error, I18n.t('csv.invalid_csv'))
     end
     redirect_to action: 'index'
   end
