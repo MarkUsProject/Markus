@@ -136,7 +136,9 @@ class ResultsController < ApplicationController
 
   def run_tests
     grouping_id = params[:grouping_id]
-    submission_id = params[:submission_id]
+    # TODO: The submission id is set incorrectly as the grouping_id
+    submission_id = Result.find(params[:id]).submission.id
+
     begin
       AutomatedTestsHelper.request_a_test_run(grouping_id,
                                               'submission',

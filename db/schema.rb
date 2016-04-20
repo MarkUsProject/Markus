@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160417225941) do
+ActiveRecord::Schema.define(version: 20160418231321) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -477,10 +477,12 @@ ActiveRecord::Schema.define(version: 20160417225941) do
     t.string  "display_input",           null: false
     t.string  "display_expected_output", null: false
     t.string  "display_actual_output",   null: false
-    t.string  "associated_criterion",    null: false
+    t.integer "criterion_id"
+    t.string  "criterion_type"
   end
 
   add_index "test_scripts", ["assignment_id", "seq_num"], name: "index_test_scripts_on_assignment_id_and_seq_num", using: :btree
+  add_index "test_scripts", ["criterion_type", "criterion_id"], name: "index_test_scripts_on_criterion_type_and_criterion_id", using: :btree
 
   create_table "test_support_files", force: :cascade do |t|
     t.string  "file_name",     null: false

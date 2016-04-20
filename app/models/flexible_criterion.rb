@@ -33,6 +33,8 @@ class FlexibleCriterion < Criterion
                             message: 'must be a number greater than 0.0',
                             greater_than: 0.0
 
+  has_many :test_scripts, as: :criterion
+
   DEFAULT_MAX = 1
 
   def update_assigned_groups_count

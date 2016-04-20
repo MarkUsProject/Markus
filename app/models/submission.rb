@@ -83,31 +83,26 @@ class Submission < ActiveRecord::Base
     end
   end
 
-  # Sets marks for associated criteria
-  def set_mark_by_criteria(grouping, assignment_id)
-    result = grouping.group.grouping_for_assignment(assignment_id)
-                 .current_submission_used
-                 .get_latest_result
+  # Sets marks when automated tests are run
+  def set_marks_for_tests
+    return if test_script_results.empty?
 
-    test_scripts = TestScript.where(assignment_id: assignment_id)
-
-    test_scripts.each do |test_script|
-
-      matched_criteria = RubricCriterion
-                             .where(rubric_criterion_name: test_script.associated_criterion,
-                                    assignment_id: assignment_id)
-      matched_criteria.concat(FlexibleCriterion
-                                  .where(flexible_criterion_name: test_script.associated_criterion,
-                                         assignment_id: assignment_id))
-
-      test_result = TestScriptResult.where(:test_script_id => test_script.id, :grouping_id => grouping.id).last
-
-      matched_criteria.each do |crit|
-        mark_to_change = result.marks.find_or_create_by(
-            markable_id: crit.id,
-            markable_type: crit.class.name)
-        mark_to_change.mark = test_result.marks_earned
-        mark_to_change.save
+    # Assumes marks already exist
+    get_latest_result.marks.each do |mark|
+      marks_earned = 0
+      mark_total = 0
+      mark.markable.test_scripts.each do |test_script|
+        res = test_script_results.where(test_script_id: test_script.id).last
+        marks_earned += res.marks_earned
+        mark_total += test_script.max_marks
+      end
+      if mark_total > 0
+        if mark.markable_type == 'RubricCriterion'
+          mark.mark = (marks_earned.to_f / mark_total.to_f * 4).round()
+        else
+          mark.mark = (marks_earned.to_f / mark_total.to_f * mark.markable.max).round(2)
+        end
+        mark.save
       end
     end
   end

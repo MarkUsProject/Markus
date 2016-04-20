@@ -81,6 +81,11 @@ module AutomatedTestsHelper
         end
         updated_script_files[file_num] = file.clone
       end
+      # always make sure the criterion type is correct
+      updated_script_files[file_num][:criterion_type] =
+        @assignment.marking_scheme_type == 'rubric' ?
+          'RubricCriterion' :
+          'FlexibleCriterion'
     end
 
     # Create/Update test support files
@@ -440,7 +445,7 @@ module AutomatedTestsHelper
     end
 
     if (call_on == 'collection' || call_on == 'submission')
-      grouping.current_submission_used.set_mark_by_criteria(grouping, assignment.id)
+      grouping.current_submission_used.set_marks_for_tests
     end
 
   end

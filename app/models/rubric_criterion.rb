@@ -34,6 +34,8 @@ class RubricCriterion < Criterion
   validates_numericality_of :assigned_groups_count
   before_validation :update_assigned_groups_count
 
+  has_many :test_scripts, as: :criterion
+
   def update_assigned_groups_count
     result = []
     criterion_ta_associations.each do |cta|
