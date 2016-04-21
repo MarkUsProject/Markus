@@ -97,13 +97,12 @@ class Assignment < ActiveRecord::Base
                          presence: true,
                          numericality: { only_integer: true,
                                          greater_than_or_equal_to: 0 }
-    assignment.validates :token_start_date,
-                         presence: true
     assignment.validates :token_period,
                          presence: true,
                          numericality: { greater_than: 0 }
   end
 
+  validates_presence_of :token_start_date, if: :enable_test
   validate :minimum_number_of_groups
 
   before_save :reset_collection_time

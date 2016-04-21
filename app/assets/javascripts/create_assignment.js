@@ -171,10 +171,8 @@ function toggle_tests_tokens(is_unlimited) {
   if (is_unlimited) {
     jQuery('#assignment_tokens_per_period').attr('disabled', true);
     jQuery('#assignment_token_period').attr('disabled', true);
-    jQuery('#assignment_token_start_date').attr('disabled', true);
   } else {
     jQuery('#assignment_tokens_per_period').attr('disabled', false);
     jQuery('#assignment_token_period').attr('disabled', false);
-    jQuery('#assignment_token_start_date').attr('disabled', false);
   }
 }

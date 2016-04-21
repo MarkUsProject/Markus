@@ -46,7 +46,9 @@ class Grouping < ActiveRecord::Base
   has_one :token
 
   has_many :test_results, dependent: :destroy
-  has_many :test_script_results, dependent: :destroy
+  has_many :test_script_results,
+           -> { order 'created_at DESC' },
+           dependent: :destroy
 
   has_one :inviter_membership,
           -> { where membership_status: StudentMembership::STATUSES[:inviter] },
@@ -719,14 +721,14 @@ class Grouping < ActiveRecord::Base
     total = 0
 
     #find the unique test scripts for this submission
-    test_script_ids = self.assignment.test_script_results.pluck(:id).uniq
+    test_script_ids = test_script_results.pluck(:id).uniq
 
     #add the latest result from each of our test scripts
     test_script_ids.sum do |test_script_id|
-      self.test_script_results
-          .where(test_script_id: test_script_id)
-          .last
-          .marks_earned
+      last_mark = self.test_script_results
+                      .where(test_script_id: test_script_id)
+                      .last
+      last_mark.nil? ? 0 : last_mark.marks_earned
     end
   end
 

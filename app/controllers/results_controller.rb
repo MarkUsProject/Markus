@@ -47,8 +47,6 @@ class ResultsController < ApplicationController
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
-    @test_script_results = @grouping.test_script_results
-                                    .order(created_at: :desc)
     @feedback_files = @submission.feedback_files
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points

@@ -6,6 +6,9 @@ module AutomatedTestsHelper
   @queue = :test_waiting_list
 
   def fetch_latest_tokens_for_grouping(grouping)
+    if grouping.token.nil?
+      grouping.create_token(remaining: nil, last_used: nil)
+    end
     grouping.token.reassign_tokens
     grouping.token
   end

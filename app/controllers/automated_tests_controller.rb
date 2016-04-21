@@ -69,8 +69,9 @@ class AutomatedTestsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
-      @test_script_results = TestScriptResult.where(grouping: @grouping)
-                                 .order(created_at: :desc)
+      @test_script_results = TestScriptResult.where(grouping: @grouping,
+                                                    submission_id: nil)
+                                             .order(created_at: :desc)
       @token = fetch_latest_tokens_for_grouping(@grouping)
     end
   end
@@ -81,7 +82,7 @@ class AutomatedTestsController < ApplicationController
     token = fetch_latest_tokens_for_grouping(grouping)
 
     # For running tests
-    if assignment.unlimited_tokens || token.remaining > 0
+    if @assignment.unlimited_tokens || token.remaining > 0
       test_errors = run_tests(grouping.id)
       if test_errors.nil?
         flash_message(:notice, I18n.t('automated_tests.tests_running'))

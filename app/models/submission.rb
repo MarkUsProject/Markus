@@ -14,7 +14,9 @@ class Submission < ActiveRecord::Base
   has_many   :submission_files, dependent: :destroy
   has_many   :annotations, through: :submission_files
   has_many   :test_results, dependent: :destroy
-  has_many   :test_script_results, dependent: :destroy
+  has_many   :test_script_results,
+             -> { order 'created_at DESC' },
+             dependent: :destroy
   has_many   :feedback_files, dependent: :destroy
 
 
