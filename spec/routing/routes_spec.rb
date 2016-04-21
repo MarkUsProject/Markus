@@ -181,15 +181,6 @@ describe 'An Assignment' do
           id: assignment.id.to_s,
           locale: 'en')
     end
-
-    it 'routes GET render_test_result properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/render_test_result')
-        .to route_to(
-          controller: ctrl,
-          action: 'render_test_result',
-          id: assignment.id.to_s,
-          locale: 'en')
-    end
   end
   # end Assignment member route tests
 

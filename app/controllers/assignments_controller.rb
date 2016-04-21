@@ -40,24 +40,6 @@ class AssignmentsController < ApplicationController
 
   # Publicly accessible actions ---------------------------------------
 
-  #=== Description
-  # Action called via Rails' remote_function from the test_result_window partial
-  # Prepares test result and updates content in window.
-  def render_test_result
-    @assignment = Assignment.find(params[:aid])
-    @test_result = TestResult.find(params[:test_result_id])
-
-    # Students can use this action only, when marks have been released
-    if current_user.student? &&
-        (@test_result.submission.grouping.membership_status(current_user).nil? ||
-        @test_result.submission.get_latest_result.released_to_students == false)
-      flash_message(:error, t('test_result.error.no_access',
-                              test_result_id: @test_result.id))
-    end
-
-    render text: @test_result.file_content
-  end
-
   def render_feedback_file
     @feedback_file = FeedbackFile.find(params[:feedback_file_id])
 

@@ -45,8 +45,8 @@ class Grouping < ActiveRecord::Base
 
   has_one :token
 
-  has_many :test_results, :dependent => :destroy
-  has_many :test_script_results, :dependent => :destroy
+  has_many :test_results, dependent: :destroy
+  has_many :test_script_results, dependent: :destroy
 
   has_one :inviter_membership,
           -> { where membership_status: StudentMembership::STATUSES[:inviter] },
@@ -378,20 +378,6 @@ class Grouping < ActiveRecord::Base
     self.save
     # update repository permissions
     update_repository_permissions
-  end
-
-  # Token Credit Query
-  def give_tokens
-    token = Token.create(grouping_id: self.id,
-                         remaining: DateTime.now >= self.assignment.token_start_date ?
-                         self.assignment.tokens_per_period : nil,
-                         last_used: nil) if self.assignment.enable_test
-    unless token.remaining.nil?
-      num_periods = ((DateTime.now.to_time.to_i - self.assignment.token_start_date.to_time.to_i)/60/60) /
-          self.assignment.token_period
-      self.assignment.last_token_regeneration_date = self.assignment.token_start_date +
-          (num_periods.floor * self.assignment.token_period).hours
-    end
   end
 
   # Grace Credit Query
@@ -733,23 +719,15 @@ class Grouping < ActiveRecord::Base
     total = 0
 
     #find the unique test scripts for this submission
-    test_script_ids = TestScriptResult.select(:test_script_id)
-                                      .where(grouping_id: id)
-
-    #pull out the actual ids from the ActiveRecord objects
-    test_script_ids = test_script_ids.map { |script_id_obj| script_id_obj.test_script_id }
-
-    #take only the unique ids so we don't add marks from the same script twice
-    test_script_ids = test_script_ids.uniq
+    test_script_ids = self.assignment.test_script_results.pluck(:id).uniq
 
     #add the latest result from each of our test scripts
-    test_script_ids.each do |test_script_id|
-      test_result = TestScriptResult.where(
-        test_script_id: test_script_id,
-        grouping_id: id).last
-      total = total + test_result.marks_earned
+    test_script_ids.sum do |test_script_id|
+      self.test_script_results
+          .where(test_script_id: test_script_id)
+          .last
+          .marks_earned
     end
-    total
   end
 
   private

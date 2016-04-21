@@ -7,7 +7,6 @@ class Group < ActiveRecord::Base
 
   after_create :set_repo_name, :build_repository
 
-  has_many :automated_tests
   has_many :groupings
   has_many :submissions, through: :groupings
   has_many :student_memberships, through: :groupings

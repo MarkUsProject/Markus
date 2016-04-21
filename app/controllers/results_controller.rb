@@ -13,7 +13,7 @@ class ResultsController < ApplicationController
                        :next_grouping, :update_overall_comment,
                        :remove_extra_mark, :update_marking_state, :note_message]
   before_filter :authorize_for_user,
-                only: [:codeviewer, :download, :download_zip]
+                only: [:codeviewer, :download, :download_zip, :run_tests]
   before_filter :authorize_for_student,
                 only: [:view_marks, :update_remark_request,
                        :cancel_remark_request]
@@ -47,8 +47,8 @@ class ResultsController < ApplicationController
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
-    @test_script_results = TestScriptResult.where(grouping:
-      @grouping).order(created_at: :desc)
+    @test_script_results = @grouping.test_script_results
+                                    .order(created_at: :desc)
     @feedback_files = @submission.feedback_files
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
@@ -146,7 +146,12 @@ class ResultsController < ApplicationController
                                               submission_id)
     rescue => e
       # TODO: really shouldn't be leaking error if student.
-      flash_message(:error, e.message)
+      if current_user.admin?
+        flash_message(:error, e.message)
+      else
+        # TODO: Better error handling for students
+        flash_message(:error, 'Error running tests')
+      end
     end
     redirect_to :back
   end
@@ -427,9 +432,6 @@ class ResultsController < ApplicationController
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
     @feedback_files = @submission.feedback_files
-    # This is outdated
-    #@test_result_files = @submission.test_results
-    # ----
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage

@@ -7,7 +7,6 @@ class Assignment < ActiveRecord::Base
     rubric: 'rubric'
   }
 
-  has_many :automated_tests
   has_many :rubric_criteria,
            -> { order(:position) },
            class_name: 'RubricCriterion',
@@ -24,10 +23,10 @@ class Assignment < ActiveRecord::Base
   accepts_nested_attributes_for :test_scripts, allow_destroy: true
 
 
-  # has_many :annotation_categories
-  #          -> { order(:position) },
-  #          class_name: 'FlexibleCriterion',
-		#    dependent: :destroy
+  has_many :annotation_categories,
+           -> { order(:position) },
+           class_name: 'AnnotationCategory',
+           dependent: :destroy
 
   has_many :criterion_ta_associations,
 		   dependent: :destroy
@@ -83,6 +82,7 @@ class Assignment < ActiveRecord::Base
   validates_presence_of :group_min
   validates_presence_of :group_max
   validates_presence_of :notes_count
+  validates_presence_of :assignment_stat
   # "validates_presence_of" for boolean values.
   validates_inclusion_of :allow_web_submits, in: [true, false]
   validates_inclusion_of :vcs_submit, in: [true, false]
@@ -90,13 +90,7 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :enable_test, in: [true, false]
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
-
-
-  # For those, please refer to issue #1126
-  # Because of app/views/assignments/_list_manage.html.erb line:13
-  validates :description, :presence => true
-  # Because of app/views/main/_grade_distribution_graph.html.erb:25
-  validates :assignment_stat, :presence => true
+  validates_inclusion_of :unlimited_tokens, in: [true, false]
 
   with_options unless: :unlimited_tokens do |assignment|
     assignment.validates :tokens_per_period,
@@ -109,15 +103,6 @@ class Assignment < ActiveRecord::Base
                          presence: true,
                          numericality: { greater_than: 0 }
   end
-
-  # since allow_web_submits is a boolean, validates_presence_of does not work:
-  # see the Rails API documentation for validates_presence_of (Model
-  # validations)
-  validates_inclusion_of :allow_web_submits, :in => [true, false]
-  validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
-  validates_inclusion_of :enable_test, :in => [true, false]
-  validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
-  validates_inclusion_of :unlimited_tokens, :in => [true, false]
 
   validate :minimum_number_of_groups
 
@@ -276,8 +261,6 @@ class Assignment < ActiveRecord::Base
 
   def total_mark
     total = 0
-
-    #add the marks from the criteria
     if self.marking_scheme_type == 'rubric'
       rubric_criteria.each do |criterion|
         total = total + criterion.weight * 4
@@ -285,12 +268,6 @@ class Assignment < ActiveRecord::Base
     else
       total = flexible_criteria.sum('max')
     end
-# <<<<<<< HEAD
-
-#     #separately add marks for test scripts
-#     total = total + total_test_script_marks
-
-# =======
     total.round(2)
   end
 
@@ -371,10 +348,6 @@ class Assignment < ActiveRecord::Base
   #total marks for scripts that are run on request
   def total_ror_script_marks
     return test_scripts.where("run_on_request" => true).sum("max_marks")
-  end
-
-  def has_test_scripts?
-    return TestScript.exists?(:assignment_id => self.id)
   end
 
   def add_group(new_group_name=nil)
@@ -667,7 +640,7 @@ class Assignment < ActiveRecord::Base
   # Get a detailed CSV report of criteria based marks
   # (includes each criterion, with it's out-of value) for this assignment.
   # Produces CSV rows such as the following:
-  #   student_name,95.22222,3,4,2,5,5,4,1,0/2
+  #   student_name,95.22222,3,4,2,5,5,4,0/2
   # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
   # Last column are grace-credits.
   # Determines which criterion type to use (flexible vs rubric)

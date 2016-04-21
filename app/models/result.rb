@@ -49,13 +49,6 @@ class Result < ActiveRecord::Base
       .order(:total_mark).pluck(:total_mark)
   end
 
-
-
-  #returns the sum of all the POSITIVE extra marks
-  def get_positive_extra_points
-    extra_marks.positive.points.sum('extra_mark')
-  end
-
   # Calculate the total mark for this submission
   def update_total_mark
     update_attributes(total_mark:
@@ -67,19 +60,6 @@ class Result < ActiveRecord::Base
   def get_subtotal
     marks.includes(:markable).map(&:get_mark).reduce(0, :+)
   end
-
-# <<<<<<< HEAD
-#   #returns the sum of the marks not including bonuses/deductions
-#   def get_subtotal
-#     total = 0.0
-#     self.marks.all(:include => [:markable]).each do |m|
-#       total = total + m.get_mark
-#     end
-#     total = total + get_total_test_script_marks
-
-#     total
-#   end
-# =========
 
   # The sum of the bonuses and deductions, other than late penalty
   def get_total_extra_points

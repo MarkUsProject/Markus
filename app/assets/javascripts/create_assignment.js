@@ -148,7 +148,6 @@ function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme
 }
 
 function toggle_automated_tests(is_testing_framework_enabled) {
-
   jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
 
   if (is_testing_framework_enabled) {

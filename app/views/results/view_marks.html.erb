@@ -53,7 +53,7 @@
              locals: { files: @files,
                        can_download: true,
                        test_result_files: @test_result_files } %>
-     <% if can_show_feedback_files_tab?(@submission) %>
+    <% if can_show_feedback_files_tab?(@submission) %>
       <div id='feedback_files_controls'>
         <%= render partial: 'results/common/feedback_file_selector',
                    locals: { feedback_files: @feedback_files,
