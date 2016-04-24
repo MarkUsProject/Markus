@@ -1060,35 +1060,74 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @grade_entry_student.grades.make(:grade_entry_item => @grade_entry_item, :grade => @old_grade)
       end
 
-      should 'delete unused columns' do
-        post_as @admin,
-                :csv_upload,
-                :id => @grade_entry_form.id,
-                :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
-                :encoding => 'UTF-8'
-        assert_response :redirect
+      context 'when overwriting existing grades ' do
+        should 'delete unused columns' do
+          post_as @admin,
+                  :csv_upload,
+                  :id => @grade_entry_form.id,
+                  :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+                  :encoding => 'UTF-8',
+                  :overwrite => true
+          assert_response :redirect
 
-        grade_entry_item = GradeEntryItem.find_by_id(@grade_entry_item.id)
-        assert_nil grade_entry_item
+          grade_entry_item = GradeEntryItem.find_by_id(@grade_entry_item.id)
+          assert_nil grade_entry_item
+        end
+
+        should 'delete unused grades' do
+          post_as @admin,
+                  :csv_upload,
+                  :id => @grade_entry_form.id,
+                  :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+                  :encoding => 'UTF-8',
+                  :overwrite => true
+          assert_response :redirect
+          old_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+              @grade_entry_student.id, @grade_entry_item.id
+          )
+          assert_nil old_grade
+          new_grade_entry_item = GradeEntryItem.find_by_name('something')
+          assert_not_nil new_grade_entry_item
+          new_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+              @grade_entry_student.id, new_grade_entry_item.id
+          )
+          assert_not_nil new_grade
+        end
       end
 
-      should 'delete unused grades' do
-        post_as @admin,
-                :csv_upload,
-                :id => @grade_entry_form.id,
-                :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
-                :encoding => 'UTF-8'
-        assert_response :redirect
-        old_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+      context 'when not overwriting existing grades ' do
+        should 'not delete unused columns' do
+          post_as @admin,
+                  :csv_upload,
+                  :id => @grade_entry_form.id,
+                  :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+                  :encoding => 'UTF-8',
+                  :overwrite => false
+          assert_response :redirect
+
+          grade_entry_item = GradeEntryItem.find_by_id(@grade_entry_item.id)
+          assert_not_nil grade_entry_item
+        end
+
+        should 'not delete unused grades' do
+          post_as @admin,
+                  :csv_upload,
+                  :id => @grade_entry_form.id,
+                  :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+                  :encoding => 'UTF-8',
+                  :overwrite => false
+          assert_response :redirect
+          old_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id
-        )
-        assert_nil old_grade
-        new_grade_entry_item = GradeEntryItem.find_by_name('something')
-        assert_not_nil new_grade_entry_item
-        new_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+          )
+          assert_not_nil old_grade
+          new_grade_entry_item = GradeEntryItem.find_by_name('something')
+          assert_not_nil new_grade_entry_item
+          new_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, new_grade_entry_item.id
-        )
-        assert_not_nil new_grade
+          )
+          assert_not_nil new_grade
+        end
       end
 
       should 'add new columns' do
