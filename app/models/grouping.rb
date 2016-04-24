@@ -45,7 +45,6 @@ class Grouping < ActiveRecord::Base
 
   has_one :token
 
-  has_many :test_results, dependent: :destroy
   has_many :test_script_results,
            -> { order 'created_at DESC' },
            dependent: :destroy

@@ -29,11 +29,6 @@ describe Assignment do
       is_expected.to accept_nested_attributes_for(:assignment_files)
         .allow_destroy(true)
     end
-    it { is_expected.to have_many(:test_files).dependent(:destroy) }
-    it do
-      is_expected.to accept_nested_attributes_for(:test_files)
-        .allow_destroy(true)
-    end
     it do
       is_expected.to have_many(:criterion_ta_associations).dependent(:destroy)
     end
@@ -63,7 +58,7 @@ describe Assignment do
       is_expected.to validate_numericality_of(:group_max).is_greater_than(0)
     end
     it do
-      is_expected.to validate_numericality_of(:tokens_per_day)
+      is_expected.to validate_numericality_of(:tokens_per_period)
         .is_greater_than_or_equal_to(0)
     end
 

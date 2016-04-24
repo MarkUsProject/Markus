@@ -36,9 +36,6 @@ class Assignment < ActiveRecord::Base
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
-  has_many :test_files, dependent: :destroy
-  accepts_nested_attributes_for :test_files, allow_destroy: true
-
   has_one :assignment_stat, dependent: :destroy
   accepts_nested_attributes_for :assignment_stat, allow_destroy: true
   validates_associated :assignment_stat

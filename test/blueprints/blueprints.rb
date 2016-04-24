@@ -312,6 +312,7 @@ TestScriptResult.blueprint do
   submission {Submission.make}
   test_script {TestScript.make}
   marks_earned {0}
+  repo_revision {1}
 end
 
 TestFile.blueprint do
@@ -320,12 +321,11 @@ TestFile.blueprint do
 end
 
 TestResult.blueprint do
-  submission {Submission.make}
-  test_script {TestScript.make}
+  test_script_result {TestScriptResult.make}
   name {Sham.filename}
   completion_status {'pass'}
   marks_earned {0}
-  input_description {Sham.message}
+  input {Sham.message}
   actual_output {Sham.message}
   expected_output {Sham.message}
 end

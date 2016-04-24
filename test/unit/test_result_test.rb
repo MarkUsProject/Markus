@@ -3,12 +3,9 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 require 'shoulda'
 
 class TestResultTest < ActiveSupport::TestCase
-  should belong_to :submission
-  should belong_to :test_script
+  should belong_to :test_script_result
 
-  should validate_presence_of :submission
-
-  should validate_presence_of :test_script
+  should validate_presence_of :test_script_result
   should validate_presence_of :name
   should validate_presence_of :completion_status
   should validate_presence_of :marks_earned
@@ -21,16 +18,17 @@ class TestResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testresult = TestResult.make(:submission        => @sub,
-                                    :grouping          => @sub.grouping,
-                                    :repo_revision     => @sub.grouping.group.repo.get_latest_revision,
-                                    :test_script       => @script,
-                                    :name              => 'unit test 1',
-                                    :completion_status => 'pass',
-                                    :marks_earned      => 5,
-                                    :input_description => '',
-                                    :actual_output     => '   ',
-                                    :expected_output   => 'This is the expected output')
+      @testscriptresult = TestScriptResult.make(
+        submission:    @sub,
+        grouping:      @sub.grouping,
+      )
+      @testresult = TestResult.make(
+        test_script_result: @testscriptresult,
+        name:               'unit test 1',
+        completion_status:  'pass',
+        input:              '',
+        actual_output:      '   ',
+        expected_output:    'This is the expected output')
     end
 
     should 'return true when a valid test result is created' do
@@ -38,14 +36,8 @@ class TestResultTest < ActiveSupport::TestCase
       assert @testresult.save
     end
 
-    should 'return true when a valid test result is created even if the marks_earned is zero' do
-      @testresult.marks_earned = 0
-      assert @testresult.valid?
-      assert @testresult.save
-    end
-
-    should 'return true when a valid test result is created even if the input_description is empty' do
-      @testresult.input_description = ''
+    should 'return true when a valid test result is created even if the input is empty' do
+      @testresult.input = ''
       assert @testresult.valid?
       assert @testresult.save
     end
@@ -70,43 +62,28 @@ class TestResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testresult = TestResult.make(:submission        => @sub,
-                                    :grouping          => @sub.grouping,
-                                    :repo_revision     => @sub.grouping.group.repo.get_latest_revision,
-                                    :test_script       => @script,
-                                    :name              => 'unit test 1',
-                                    :completion_status => 'pass',
-                                    :marks_earned      => 5,
-                                    :input_description => '',
-                                    :actual_output     => '   ',
-                                    :expected_output   => 'This is the expected output')
+      @testscriptresult = TestScriptResult.make(
+        submission:    @sub,
+        grouping:      @sub.grouping,
+      )
+      @testresult = TestResult.make(
+        test_script_result: @testscriptresult,
+        name:               'unit test 1',
+        completion_status:  'pass',
+        input:              '',
+        actual_output:      '   ',
+        expected_output:    'This is the expected output')
     end
 
-    should 'return false when there is no submission associated' do
-      @testresult.submission = nil
-      @testresult.save
-      assert !@testresult.valid?, 'test result expected to be invalid when there is no submission associated'
-    end
-
-    should 'return false when test script is nil' do
-      @testresult.test_script = nil
+    should 'return false when test script result is nil' do
+      @testresult.test_script_result = nil
       @testresult.save
       assert !@testresult.valid?, 'test result expected to be invalid when test script is nil'
     end
 
-    should 'return false when the marks_earned is negative' do
-      @testresult.marks_earned = -1
-      assert !@testresult.valid?, 'test result expected to be invalid when the marks_earned is negative'
-    end
-
-    should 'return false when the marks_earned is not an integer' do
-      @testresult.marks_earned = 0.5
-      assert !@testresult.valid?, 'test result expected to be invalid when the marks_earned is not an integer'
-    end
-
-    should 'return false when the input_description is nil' do
-      @testresult.input_description = nil
-      assert !@testresult.valid?, 'test result expected to be invalid when the input_description is nil'
+    should 'return false when the input is nil' do
+      @testresult.input = nil
+      assert !@testresult.valid?, 'test result expected to be invalid when the input is nil'
     end
 
     should 'return false when the actual_output is nil' do
@@ -118,7 +95,6 @@ class TestResultTest < ActiveSupport::TestCase
       @testresult.expected_output = nil
       assert !@testresult.valid?, 'test result expected to be invalid when the expected_output is nil'
     end
-
   end
 
   #delete
@@ -126,23 +102,22 @@ class TestResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testresult = TestResult.make(:submission        => @sub,
-                                    :grouping          => @sub.grouping,
-                                    :repo_revision     => @sub.grouping.group.repo.get_latest_revision,
-                                    :test_script       => @script,
-                                    :name              => 'unit test 1',
-                                    :completion_status => 'pass',
-                                    :marks_earned      => 5,
-                                    :input_description => '',
-                                    :actual_output     => '   ',
-                                    :expected_output   => 'This is the expected output')
+      @testscriptresult = TestScriptResult.make(
+        submission:    @sub,
+        grouping:      @sub.grouping,
+      )
+      @testresult = TestResult.make(
+        test_script_result: @testscriptresult,
+        name:               'unit test 1',
+        completion_status:  'pass',
+        input:              '',
+        actual_output:      '   ',
+        expected_output:    'This is the expected output')
     end
 
     should 'be able to delete a test result' do
       assert @testresult.valid?
       assert @testresult.destroy
     end
-
   end
-
 end

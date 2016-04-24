@@ -31,7 +31,7 @@ class AssignmentsController < ApplicationController
   # Copy of API::AssignmentController without the id and order changed
   # to put first the 4 required fields
   DEFAULT_FIELDS = [:short_identifier, :description, :repository_folder,
-                    :due_date, :message, :group_min, :group_max, :tokens_per_day,
+                    :due_date, :message, :group_min, :group_max, :tokens_per_period,
                     :allow_web_submits, :student_form_groups, :remark_due_date,
                     :remark_message, :assign_graders_to_criteria, :enable_test,
                     :allow_remarks, :display_grader_names_to_students,
@@ -541,6 +541,8 @@ class AssignmentsController < ApplicationController
           if assignment.new_record?
             assignment.submission_rule = NoLateSubmissionRule.new
             assignment.assignment_stat = AssignmentStat.new
+            assignment.token_period = 1
+            assignment.unlimited_tokens = false
           end
           assignment.update(attrs)
           raise CSVInvalidLineError unless assignment.valid?
@@ -555,6 +557,10 @@ class AssignmentsController < ApplicationController
         begin
           map = YAML::load(assignment_list)
           map[:assignments].map do |row|
+            row[:submission_rule] = NoLateSubmissionRule.new
+            row[:assignment_stat] = AssignmentStat.new
+            row[:token_period] = 1
+            row[:unlimited_tokens] = false
             update_assignment!(row)
           end
         rescue ActiveRecord::ActiveRecordError, ArgumentError => e
@@ -730,7 +736,6 @@ class AssignmentsController < ApplicationController
         :section_groups_only,
         :enable_test,
         :assign_graders_to_criteria,
-        :tokens_per_day,
         :group_name_displayed,
         :invalid_override,
         :section_groups_only,

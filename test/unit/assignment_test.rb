@@ -32,7 +32,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
   should validate_numericality_of :group_min
   should validate_numericality_of :group_max
-  should validate_numericality_of :tokens_per_day
+  should validate_numericality_of :tokens_per_period
 
   should validate_presence_of :submission_rule
 
@@ -91,9 +91,9 @@ class AssignmentTest < ActiveSupport::TestCase
     assert !a.valid?
   end
 
-  should 'catch a negative tokens_per_day value' do
-    a = Assignment.new(:tokens_per_day => '-10')
-    assert !a.valid?, 'assignment expected to be invalid when tokens_per_day is < 0'
+  should 'catch a negative tokens_per_period value' do
+    a = Assignment.new(tokens_per_period: '-10')
+    assert !a.valid?, 'assignment expected to be invalid when tokens_per_period is < 0'
   end
 
   context 'A past due assignment w/ No Late submission rule' do
@@ -102,19 +102,12 @@ class AssignmentTest < ActiveSupport::TestCase
         @assignment = Assignment.make(:due_date => 2.days.ago)
       end
 
-      should 'return true on past_due_date? call' do
-        assert @assignment.past_due_date?
-      end
       should 'return the last due date' do
         assert_equal 2.days.ago.day(), @assignment.latest_due_date.day()
       end
 
       should 'return true on past_collection_date? call' do
         assert @assignment.past_collection_date?
-      end
-
-      should 'return an array with only "Due Date"' do
-        assert_equal @assignment.what_past_due_date, ['Due Date']
       end
     end
 
@@ -135,14 +128,6 @@ class AssignmentTest < ActiveSupport::TestCase
         assert @assignment.section_due_date(@section)
       end
 
-      should 'return true on section_past_due_date? call' do
-        assert @assignment.section_past_due_date?(@grouping)
-      end
-
-      should 'return an array with the section name past' do
-        assert_equal @assignment.what_past_due_date, %w(section_name)
-      end
-
       context 'and another' do
         setup do
           @section = Section.make(:name => 'section_name2')
@@ -154,10 +139,6 @@ class AssignmentTest < ActiveSupport::TestCase
                                  :user => student,
                                  :membership_status => StudentMembership::STATUSES[:inviter])
         end
-
-        should 'return an array with the sections name past' do
-          assert_equal @assignment.what_past_due_date, %w(section_name section_name2)
-        end
       end
     end
   end
@@ -167,18 +148,9 @@ class AssignmentTest < ActiveSupport::TestCase
       @assignment = Assignment.make({:due_date => 2.days.from_now})
     end
 
-    should 'return false on past_due_date? call' do
-      assert !@assignment.past_due_date?
-    end
-
     should 'return false on past_collection_date? call' do
       assert !@assignment.past_collection_date?
     end
-
-    should 'return an array with nothing inside' do
-      assert_equal @assignment.what_past_due_date, []
-    end
-
   end
 
   context 'after remarks are due assignment' do
@@ -421,15 +393,6 @@ class AssignmentTest < ActiveSupport::TestCase
         @assignment.reload
         assert_equal old_groupings_count + 1, @assignment.groupings.length
       end
-
-      should 'be able to add a group by CSV row with existing group name' do
-        Group.make(:group_name => 'groupname')
-        group = ['groupname', 'CaptainSparrow' , @student1.user_name, @student2.user_name]
-        old_group_count = Group.all.length
-        assert_nil @assignment.add_csv_group(group)
-        assert_equal old_group_count, Group.all.length
-      end
-
     end
 
     context 'with a students in groupings setup with marking complete (rubric marking)' do
@@ -481,6 +444,7 @@ class AssignmentTest < ActiveSupport::TestCase
           else
             submission = grouping.current_submission_used
             fields.push(submission.get_latest_result.total_mark / out_of * 100)
+            fields.push(submission.get_latest_result.total_mark)
             rubric_criteria.each do |rubric_criterion|
               mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, 'RubricCriterion')
               if mark.nil?
@@ -492,7 +456,6 @@ class AssignmentTest < ActiveSupport::TestCase
             end
             fields.push(submission.get_latest_result.get_total_extra_points)
             fields.push(submission.get_latest_result.get_total_extra_percentage)
-            fields.push(submission.get_latest_result.get_total_test_script_marks)
           end
           # push grace credits info
           grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s
@@ -556,6 +519,7 @@ class AssignmentTest < ActiveSupport::TestCase
           else
             submission = grouping.current_submission_used
             fields.push(submission.get_latest_result.total_mark / out_of * 100)
+            fields.push(submission.get_latest_result.total_mark)
             flexible_criteria.each do |criterion|
               mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(criterion.id, 'FlexibleCriterion')
               if mark.nil?
@@ -567,7 +531,6 @@ class AssignmentTest < ActiveSupport::TestCase
             end
             fields.push(submission.get_latest_result.get_total_extra_points)
             fields.push(submission.get_latest_result.get_total_extra_percentage)
-            fields.push(submission.get_latest_result.get_total_test_script_marks)
           end
           # push grace credits info
           grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s
@@ -583,7 +546,7 @@ class AssignmentTest < ActiveSupport::TestCase
       setup do
         totals = [16.5, 10, 19.5, 27.0, 0]
 
-        # create rubric creteria
+        # create rubric criteria
         rubric_criteria = [{:rubric_criterion_name => 'Uses Conditionals', :weight => 1},
           {:rubric_criterion_name => 'Code Clarity', :weight => 2},
           {:rubric_criterion_name => 'Code Is Documented', :weight => 3},
@@ -616,18 +579,6 @@ class AssignmentTest < ActiveSupport::TestCase
           r.marking_state = Result::MARKING_STATES[:complete]
           r.save
         end
-      end
-
-      should 'generate a correct grade distribution as percentage' do
-        a = @assignment
-        expected_distribution = [1,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,1]
-        expected_distribution_ten_intervals = [1, 0, 0, 1, 0, 1, 1, 0, 0, 1]
-        assert_equal expected_distribution,
-                     a.grade_distribution_as_percentage,
-                     'Default grade distribution is wrong!'
-        assert_equal expected_distribution_ten_intervals,
-                     a.grade_distribution_as_percentage(10),
-                     'Grade distribution for ten intervals is wrong!'
       end
     end
 
@@ -668,15 +619,6 @@ class AssignmentTest < ActiveSupport::TestCase
           r.marking_state = Result::MARKING_STATES[:complete]
           r.save
         end
-      end
-
-      should 'generate a correct grade distribution as percentage' do
-        a = @assignment
-        expected_distribution = [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
-                                 0, 0, 0, 0, 0, 1]
-        expected_distribution_ten_intervals = [1, 1, 0, 0, 0, 2, 0, 0, 0, 1]
-        assert_equal expected_distribution, a.grade_distribution_as_percentage, 'Default grade distribution is wrong!'
-        assert_equal expected_distribution_ten_intervals, a.grade_distribution_as_percentage(10), 'Grade distribution for ten intervals is wrong!'
       end
     end
   end

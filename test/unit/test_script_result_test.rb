@@ -6,8 +6,6 @@ class TestScriptResultTest < ActiveSupport::TestCase
   should belong_to :submission
   should belong_to :test_script
 
-  should validate_presence_of :submission
-
   should validate_presence_of :test_script
   should validate_presence_of :marks_earned
 
@@ -21,7 +19,6 @@ class TestScriptResultTest < ActiveSupport::TestCase
       @script = TestScript.make
       @testscriptresult = TestScriptResult.make(:submission    => @sub,
                                                 :grouping      => @sub.grouping,
-                                                :repo_revision => @sub.grouping.group.repo.get_latest_revision,
                                                 :test_script   => @script,
                                                 :marks_earned  => 5)
     end
@@ -47,14 +44,8 @@ class TestScriptResultTest < ActiveSupport::TestCase
       @script = TestScript.make
       @testscriptresult = TestScriptResult.make(:submission    => @sub,
                                                 :grouping      => @sub.grouping,
-                                                :repo_revision => @sub.grouping.group.repo.get_latest_revision,
                                                 :test_script   => @script,
                                                 :marks_earned  => 5)
-    end
-
-    should "return false when there is no submission associated" do
-      @testscriptresult.submission = nil
-      assert !@testscriptresult.valid?, "test script result expected to be invalid when there is no submission associated"
     end
 
     should "return false when test script is nil" do
@@ -82,7 +73,6 @@ class TestScriptResultTest < ActiveSupport::TestCase
       @script = TestScript.make
       @testscriptresult = TestScriptResult.make(:submission    => @sub,
                                                 :grouping      => @sub.grouping,
-                                                :repo_revision => @sub.grouping.group.repo.get_latest_revision,
                                                 :test_script   => @script,
                                                 :marks_earned  => 5)
     end

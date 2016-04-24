@@ -24,7 +24,6 @@ class TestResult < ActiveRecord::Base
   validates_presence_of :name
   validates_presence_of :completion_status
   validates_presence_of :marks_earned
-  validates_presence_of :repo_revision
 
   validates_inclusion_of :completion_status,
                          in: %w(pass fail error),

@@ -43,7 +43,6 @@
 
 class TestScript < ActiveRecord::Base
   belongs_to :assignment
-  has_many :test_results, :dependent => :delete_all
   has_many :test_script_results, :dependent => :delete_all
   belongs_to :criterion, polymorphic: true
 
