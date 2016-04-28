@@ -4,6 +4,7 @@ namespace :db do
   task :rubric => :environment do
     puts 'Add Rubric To Assignments'
     require 'faker'
+    I18n.reload!
 
     def pos_rand(range)
       rand(range) + 1
