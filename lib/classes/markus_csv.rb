@@ -48,7 +48,7 @@ class MarkusCSV
       end
     rescue CSV::MalformedCSVError
       result[:invalid_lines] = t('csv.upload.malformed_csv')
-    rescue ArgumentError
+    rescue ArgumentError => e
       result[:invalid_lines] = t('csv.upload.non_text_file_with_csv_extension')
     end
     result
