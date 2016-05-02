@@ -120,7 +120,7 @@ describe FlexibleCriteriaController do
   end
 
   describe 'An authenticated and authorized admin doing a GET' do
-    before(:all) do
+    before(:each) do
       @admin = create(:admin)
       @assignment = create(:assignment)
       @criterion = create(:flexible_criterion,
