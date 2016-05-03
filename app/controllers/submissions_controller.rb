@@ -189,12 +189,11 @@ class SubmissionsController < ApplicationController
   end
 
   def manually_collect_and_begin_grading
-  ## May fail to redirect, depends on other jobs in queue. -- race condition
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
     apply_late_penalty = params[:apply_late_penalty]
     submission = Submission.create_by_revision_number(@grouping, @revision_number)
-    submission.collect_single(@grouping, @revision_number, apply_late_penalty)
+     submission.collect_single(@grouping, @revision_number, apply_late_penalty)
     redirect_to action: 'browse',
                 id: @grouping.assignment_id
   end
@@ -207,13 +206,16 @@ class SubmissionsController < ApplicationController
   end
 
   def collect_all_submissions
-    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
-    assignment.done!('false')
-    if assignment.submission_rule.can_collect_now?
-      SubmissionsJob.perform_later(assignment)
+    @assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    @assignment.done!('false')
+    if @assignment.submission_rule.can_collect_now?
+      @current_job = SubmissionsJob.perform_later(@assignment)
+#       respond_to do |format|
+#         format.js {}
+#       end
     end
     redirect_to action: 'browse',
-                id: assignment.id
+	id: @assignment.id
   end
 
   def collect_ta_submissions

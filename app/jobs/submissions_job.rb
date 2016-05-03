@@ -1,11 +1,20 @@
 class SubmissionsJob < ActiveJob::Base
   queue_as :submissions
 
+   before_enqueue do |_job|
+      job_messenger = JobMessenger.create(job_id: job_id, status: :queued)
+      PopulateCache.populate_for_job(job_messenger, job_id)
+    end
+
   def perform(assignment)
 
     m_logger = MarkusLogger.instance
 
       begin
+      
+        job_messenger = JobMessenger.where(job_id: job_id).first
+        job_messenger.update_attributes(status: :running)
+        PopulateCache.populate_for_job(job_messenger, job_id)
         m_logger.log('Submission collection process established database' +
                      ' connection successfully')		  
 
@@ -33,6 +42,15 @@ class SubmissionsJob < ActiveJob::Base
         end
         m_logger.log('Submission collection process done')
         assignment.done!('true')
+        
+	  rescue => e
+		Rails.logger.error e.message
+		job_messenger.update_attributes(status: failed, message: e.message)
+		PopulateCache.populate_for_job(job_messenger, job_id)
+		raise e
+        
+       job_messenger.update_attributes(status: :succeeded)
+       PopulateCache.populate_for_job(job_messenger, job_id)
       end
   end
 
