@@ -330,7 +330,6 @@ DEPENDENCIES
   git
   gitolite
   gitolite-rugged
-  hike
   i18n
   jbuilder (~> 2.0)
   jquery-rails
