@@ -284,9 +284,58 @@ class GradeEntryFormsController < ApplicationController
   # Download the grades for this grade entry form as a CSV file
   def csv_download
     grade_entry_form = GradeEntryForm.find(params[:id])
-    send_data grade_entry_form.get_csv_grades_report,
+    students = Student.where(hidden: false).order(:user_name)
+    grade_entry_items = grade_entry_form.grade_entry_items
+    csv_rows = []
+    # prepare first two csv rows
+    # The first row in the CSV file will contain the question names
+    row = ['']
+    grade_entry_items.each do |grade_entry_item|
+      row.push(grade_entry_item.name)
+    end
+    csv_rows.push(row)
+    # The second row in the CSV file will contain the question totals
+    row = ['']
+    grade_entry_items.each do |grade_entry_item|
+      row.push(grade_entry_item.out_of)
+    end
+    csv_rows.push(row)
+    # The rest of the rows in the CSV file will contain the students' grades
+    form_data = MarkusCSV.generate(students, csv_rows) do |student|
+      row = []
+      row.push(student.user_name)
+      grade_entry_student = grade_entry_form.grade_entry_students
+        .where(user_id: student.id)
+        .first
+      # Check whether or not we have grades recorded for this student
+      if grade_entry_student.nil?
+        grade_entry_items.each do |grade_entry_item|
+          # Blank marks for each question
+          row.push('')
+        end
+        # Blank total percent
+        row.push('')
+      else
+        grade_entry_items.each do |grade_entry_item|
+          grade = grade_entry_student
+            .grades
+            .where(grade_entry_item_id: grade_entry_item.id)
+            .first
+          if grade.nil?
+            row.push('')
+          else
+            row.push(grade.grade || '')
+          end
+        end
+        total_percent = grade_entry_form
+          .calculate_total_percent(grade_entry_student)
+        row.push(total_percent)
+      end
+      row
+    end
+    send_data form_data,
               disposition: 'attachment',
-              type: 'application/vnd.ms-excel',
+              type: 'text/csv',
               filename: "#{grade_entry_form.short_identifier}_grades_report.csv"
   end
 

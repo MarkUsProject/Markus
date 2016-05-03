@@ -151,13 +151,17 @@ describe GradeEntryFormsController do
   end
 
   context 'CSV_Downloads' do
-    let(:csv_data) { grade_entry_form.get_csv_grades_report }
     let(:csv_options) do
       {
-        filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
+        filename:
+          "#{grade_entry_form_with_data.short_identifier}_grades_report.csv",
         disposition: 'attachment',
-        type: 'application/vnd.ms-excel'
+        type: 'text/csv'
       }
+    end
+
+    before :each do
+      @user = User.where(user_name: 'c8shosta').first
     end
 
     it 'tests that action csv_downloads returns OK' do
@@ -166,11 +170,19 @@ describe GradeEntryFormsController do
     end
 
     it 'expects a call to send_data' do
+      csv_array = [
+        ['', grade_entry_form_with_data.grade_entry_items[0].name],
+        ['', String(grade_entry_form_with_data.grade_entry_items[0].out_of)],
+        [@user.user_name, '', ''],
+      ]
+      csv_data = MarkusCSV.generate(csv_array) do |data|
+        data
+      end
       expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
         # to prevent a 'missing template' error
         @controller.render nothing: true
       }
-      get :csv_download, id: grade_entry_form
+      get :csv_download, id: grade_entry_form_with_data
     end
 
     # parse header object to check for the right disposition
@@ -181,9 +193,9 @@ describe GradeEntryFormsController do
     end
 
     # parse header object to check for the right content type
-    it 'returns vnd.ms-excel type' do
+    it 'returns text/csv type' do
       get :csv_download, id: grade_entry_form
-      expect(response.content_type).to eq 'application/vnd.ms-excel'
+      expect(response.content_type).to eq 'text/csv'
     end
 
     # parse header object to check for the right file naming convention
