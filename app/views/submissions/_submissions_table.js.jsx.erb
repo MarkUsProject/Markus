@@ -240,7 +240,7 @@
           }
           if (submission.late_commit) {
             s['commit_date'] = (<span>
-              <%= image_tag('icons/error.png',
+              <%= image_tag('icons/clock_error.png',
                             title: t(:past_due_date_edit_result_warning,
                             href: t(:last_commit))) %>
               {submission.commit_date}
