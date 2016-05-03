@@ -104,6 +104,13 @@ end
 # listed here
 group :development, :test do
   gem 'byebug', :platforms => [:mri_20, :mri_21]
+end
+
+# Gems needed (wanted) for development, test and production_test
+# can be listed here
+# production_test is for testing a production-like deployment,
+# but using a seeded database
+group :development, :test, :production_test do
   gem 'faker' # required for database seeding
 end
 
