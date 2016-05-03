@@ -401,10 +401,10 @@ class Assignment < ActiveRecord::Base
 
     unless group.nil?
       if group.repo_name != row[1]
-        # CASE: Group already exits but the repo name is different
+        # CASE: Group already exists but the repo name is different
         duplicate_group_error = I18n.t('csv.group_with_different_repo',
                                        group_name: row[0])
-        return duplicate_group_error
+        raise CSVInvalidLineError, duplicate_group_error
       else
         any_grouping = Grouping.find_by group_id: group.id
         if any_grouping.nil?
@@ -433,7 +433,7 @@ class Assignment < ActiveRecord::Base
               duplicate_group_error = I18n.t(
                 'csv.group_with_different_membership_different_assignment',
                 group_name: row[0])
-              return duplicate_group_error
+              raise CSVInvalidLineError, duplicate_group_error
             end
           else
             if same_membership_as_csv_row?(row,
@@ -453,7 +453,7 @@ class Assignment < ActiveRecord::Base
               duplicate_group_error = I18n.t(
                 'csv.group_with_different_membership_current_assignment',
                 group_name: row[0])
-              return duplicate_group_error
+              raise CSVInvalidLineError, duplicate_group_error
             end
           end
         end
