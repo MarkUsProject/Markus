@@ -391,7 +391,11 @@ class Assignment < ActiveRecord::Base
   def add_csv_group(row)
     return if row.length.zero?
 
-    row.map! { |item| item.strip }
+    begin
+      row.map! { |item| item.strip }
+    rescue NoMethodError
+      raise CSVInvalidLineError
+    end
 
     group = Group.where(group_name: row.first).first
 
@@ -489,12 +493,16 @@ class Assignment < ActiveRecord::Base
 
     # If a repository already exists with the same repo name as the one given
     #  in the csv file, error is returned and the group is not created
-    if repository_already_exists?(repo_name)
-      repository_error = I18n.t('csv.repository_already_exists',
-                                group_name: row[0],
-                                repo_path: errors.get(:repo_name).last)
-      errors.delete(:repo_name)
-      return repository_error
+    begin
+      if repository_already_exists?(repo_name)
+        repository_error = I18n.t('csv.repository_already_exists',
+                                  group_name: row[0],
+                                  repo_path: errors.get(:repo_name).last)
+        errors.delete(:repo_name)
+        return repository_error
+      end
+    rescue TypeError
+      raise CSV::MalformedCSVError
     end
 
     # At this point we can be sure that the group_name, memberships and

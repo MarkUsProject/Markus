@@ -175,7 +175,7 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
                        group: { grouplist: tempfile }
 
         assert_response :redirect
-        assert_equal flash[:error], I18n.t('csv.upload.malformed_csv')
+        assert_equal flash[:error], [I18n.t('csv.upload.malformed_csv')]
       end
 
       should 'gracefully handle a non csv file with a csv extension' do
@@ -192,7 +192,7 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert_equal flash[:error],
-                     I18n.t('csv.upload.non_text_file_with_csv_extension')
+                     [I18n.t('csv.upload.non_text_file_with_csv_extension')]
       end
     end
   end
