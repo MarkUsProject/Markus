@@ -381,6 +381,9 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       group_to_grader: "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
       student_to_grader: "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
       invalid_csv: "O formato do arquivo CSV não foi reconhecido"
+      invalid_row:
+              duplicate_entry: "Entrada duplicada"
+              invalid_format: "Formato de linha inválida"
       upload:
         malformed_csv: "O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus."
         non_text_file_with_csv_extension: "O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV)."

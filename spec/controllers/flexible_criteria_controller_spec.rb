@@ -120,7 +120,7 @@ describe FlexibleCriteriaController do
   end
 
   describe 'An authenticated and authorized admin doing a GET' do
-    before(:all) do
+    before(:each) do
       @admin = create(:admin)
       @assignment = create(:assignment)
       @criterion = create(:flexible_criterion,
@@ -533,7 +533,7 @@ describe FlexibleCriteriaController do
 
         it 'should set the flash' do
           expect(flash[:error]).to(
-            eql(I18n.t('csv.upload.malformed_csv')))
+            eql([I18n.t('csv.upload.malformed_csv')]))
         end
 
         it 'should respond with redirect' do
@@ -555,7 +555,7 @@ describe FlexibleCriteriaController do
 
         it 'should set the flash' do
           expect(flash[:error]).to(
-            eql(I18n.t('csv.upload.malformed_csv')))
+            eql([I18n.t('csv.upload.malformed_csv')]))
         end
 
         it 'should respond with redirect' do

@@ -80,22 +80,17 @@ class FlexibleCriteriaController < ApplicationController
     file = params[:upload][:flexible]
     @assignment = Assignment.find(params[:assignment_id])
     if request.post? && !file.blank?
-      begin
-        FlexibleCriterion.transaction do
-          invalid_lines = []
-          nb_updates = FlexibleCriterion.parse_csv(file,
-                                                   @assignment,
-                                                   invalid_lines)
-          unless invalid_lines.empty?
-            flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
-          end
-          if nb_updates > 0
-            flash[:notice] = I18n.t('flexible_criteria.upload.success',
-              nb_updates: nb_updates)
-          end
+      FlexibleCriterion.transaction do
+        result = MarkusCSV.parse(file.read) do |row|
+          next if CSV.generate_line(row).strip.empty?
+          FlexibleCriterion.new_from_csv_row(row, @assignment)
         end
-      rescue CSV::MalformedCSVError
-        flash[:error] = I18n.t('csv.upload.malformed_csv')
+        unless result[:invalid_lines].empty?
+          flash_message(:error, result[:invalid_lines])
+        end
+        unless result[:valid_lines].empty?
+          flash_message(:success, result[:valid_lines])
+        end
       end
     end
     redirect_to action: 'index', assignment_id: @assignment.id
