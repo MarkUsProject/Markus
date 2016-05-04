@@ -584,25 +584,18 @@ class AssignmentsController < ApplicationController
 
 
   def populate_file_manager
-    @assignment = Assignment.find(params[:id])
-    revision_number= params[:revision_number]
-    @path = params[:path] || '/'
-    @previous_path = File.split(@path).first
+    assignment = Assignment.find(params[:id])
+    path = '/'
+    revision = assignment.repo.get_latest_revision
+    revision_number = revision.revision_number
 
-    repo = @assignment.repo
-    if revision_number.nil?
-      @revision = repo.get_latest_revision
-    else
-      @revision = repo.get_revision(revision_number.to_i)
-    end
-
-    full_path = File.join(@assignment.repository_folder, @path)
-    if @revision.path_exists?(full_path)
-      files = @revision.files_at_path(full_path)
-      files_info = get_files_info(files, @assignment.id, revision_number, @path)
-      directories = @revision.directories_at_path(full_path)
+    full_path = File.join(assignment.repository_folder, path)
+    if revision.path_exists?(full_path)
+      files = revision.files_at_path(full_path)
+      files_info = get_files_info(files, assignment.id, revision_number, path)
+      directories = revision.directories_at_path(full_path)
       directories_info = get_directories_info(directories, revision_number,
-                                              @path, @assignment.id)
+                                              path, assignment.id)
       render json: files_info + directories_info
     else
       render json: []
@@ -636,8 +629,8 @@ class AssignmentsController < ApplicationController
         end
       end
     end
-    @assignment.access_repo do |repo|
 
+    @assignment.access_repo do |repo|
       assignment_folder = File.join(@assignment.repository_folder, @path)
 
       # Get the revision numbers for the files that we've seen - these
@@ -666,9 +659,8 @@ class AssignmentsController < ApplicationController
           delete_files.each do |filename|
             txn.remove(File.join(assignment_folder, filename),
                        file_revisions[filename])
-            log_messages.push("Student '#{current_user.user_name}'" +
-                                  " deleted file '#{filename}' for assignment" +
-                                  " '#{@assignment.short_identifier}'.")
+            log_messages.push("Deleted file '#{filename}' for assignment" +
+                              " '#{@assignment.short_identifier}' starter code.")
           end
         end
 
@@ -691,10 +683,9 @@ class AssignmentsController < ApplicationController
             file_object.rewind
             txn.replace(File.join(assignment_folder, filename), file_object.read,
                         file_object.content_type, revision.revision_number)
-            log_messages.push("Student '#{current_user.user_name}'" +
-                                  " replaced content of file '#{filename}'" +
-                                  ' for assignment' +
-                                  " '#{@assignment.short_identifier}'.")
+            log_messages.push("Replaced content of file '#{filename}'" +
+                              ' for assignment' +
+                              " '#{@assignment.short_identifier}' starter code.")
           else
             students_filename << filename
             # Sometimes the file pointer of file_object is at the end of the file.
@@ -703,11 +694,9 @@ class AssignmentsController < ApplicationController
             txn.add(File.join(assignment_folder,
                               sanitize_file_name(filename)),
                     file_object.read, file_object.content_type)
-            log_messages.push("Student '#{current_user.user_name}'" +
-                                  ' submitted file' +
-                                  " '#{filename}'" +
-                                  ' for assignment ' +
-                                  "'#{@assignment.short_identifier}'.")
+            log_messages.push("Submitted file '#{filename}'" +
+                              " for assignment '#{@assignment.short_identifier}'" +
+                              " starter code.")
           end
         end
 

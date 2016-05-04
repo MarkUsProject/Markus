@@ -38,9 +38,6 @@ Markus::Application.routes.draw do
         post 'update_collected_submissions'
         get 'download_assignment_list'
         post 'upload_assignment_list'
-        get 'populate_file_manager'
-        post 'update_files'
-        get 'download'
       end
 
       member do
@@ -54,6 +51,9 @@ Markus::Application.routes.draw do
         post 'disinvite_member'
         get 'render_test_result'
         get 'view_summary'
+        get 'populate_file_manager'
+        post 'update_files'
+        get 'download'
       end
 
       resources :tags do

@@ -451,8 +451,8 @@
       </p>
     </div>
   </fieldset>
-  <%# Starter Code %>
 
+  <%# Starter Code %>
 
   <%= f.submit t(:submit),
                data: { disable_with: t('working') },
@@ -461,7 +461,7 @@
 <% if @assignment.can_upload_starter_code? && @assignment.id %>
     <fieldset>
       <legend>
-        <span> <%= t('assignment.starter_code.title') %>  </span>
+        <span><%= t('assignment.starter_code.title') %></span>
       </legend>
       <%= render 'file_manager' %>
     </fieldset>
