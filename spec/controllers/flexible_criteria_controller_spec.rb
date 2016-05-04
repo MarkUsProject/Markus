@@ -126,17 +126,17 @@ describe FlexibleCriteriaController do
       @criterion = create(:flexible_criterion,
                           assignment: @assignment,
                           position: 1,
-                          flexible_criterion_name: 'criterion1',
+                          name: 'criterion1',
                           description: 'description1, for criterion 1')
       @criterion2 = create(:flexible_criterion,
                            assignment: @assignment,
                            position: 2,
-                           flexible_criterion_name: 'criterion2',
+                           name: 'criterion2',
                            description: 'description2, "with quotes"')
       @criterion3 = create(:flexible_criterion,
                            assignment: @assignment,
                            position: 3,
-                           flexible_criterion_name: 'criterion3',
+                           name: 'criterion3',
                            description: 'description3!',
                            max: 1.6)
     end
@@ -192,7 +192,7 @@ describe FlexibleCriteriaController do
                  format: :js,
                  assignment_id: 1,
                  id: @criterion.id,
-                 flexible_criterion: { flexible_criterion_name: 'one', max: 10 }
+                 flexible_criterion: { name: 'one', max: 10 }
         end
 
         it 'should respond with appropriate content' do
@@ -215,7 +215,7 @@ describe FlexibleCriteriaController do
                  format: :js,
                  assignment_id: 1,
                  id: @criterion.id,
-                 flexible_criterion: { flexible_criterion_name: 'one', max: 10 }
+                 flexible_criterion: { name: 'one', max: 10 }
           assert flash[:success], I18n.t('criterion_saved_success')
         end
 
@@ -297,17 +297,17 @@ describe FlexibleCriteriaController do
       @criterion = create(:flexible_criterion,
                           assignment: @assignment,
                           position: 1,
-                          flexible_criterion_name: 'criterion1',
+                          name: 'criterion1',
                           description: 'description1, for criterion 1')
       @criterion2 = create(:flexible_criterion,
                            assignment: @assignment,
                            position: 2,
-                           flexible_criterion_name: 'criterion2',
+                           name: 'criterion2',
                            description: 'description2, "with quotes"')
       @criterion3 = create(:flexible_criterion,
                            assignment: @assignment,
                            position: 3,
-                           flexible_criterion_name: 'criterion3',
+                           name: 'criterion3',
                            description: 'description3!',
                            max: 1.6)
     end
@@ -363,7 +363,7 @@ describe FlexibleCriteriaController do
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,
-                  flexible_criterion: { flexible_criterion_name: 'first',
+                  flexible_criterion: { name: 'first',
                                         max: 10 }
         end
         it 'should respond with appropriate content' do
@@ -387,7 +387,7 @@ describe FlexibleCriteriaController do
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,
-                  flexible_criterion: { flexible_criterion_name: 'first',
+                  flexible_criterion: { name: 'first',
                                         max: 10 }
         end
         it 'should respond with appropriate content' do
@@ -408,7 +408,7 @@ describe FlexibleCriteriaController do
           post_as @admin, :create,
                   format: :js,
                   assignment_id: @assignment.id,
-                  flexible_criterion: { flexible_criterion_name: 'first',
+                  flexible_criterion: { name: 'first',
                                         max: 10 }
         end
         it 'should respond with appropriate content' do
@@ -509,9 +509,9 @@ describe FlexibleCriteriaController do
           expect(@assignment.flexible_criteria.size).to eql(2)
         end
         it 'should keep ordering of uploaded criteria' do
-          expect(@flexible_criteria[0].flexible_criterion_name)
+          expect(@flexible_criteria[0].name)
             .to eql('criterion3')
-          expect(@flexible_criteria[1].flexible_criterion_name)
+          expect(@flexible_criteria[1].name)
             .to eql('criterion4')
 
           expect(@flexible_criteria[0].position).to eql(1)

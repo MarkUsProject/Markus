@@ -12,7 +12,7 @@
 
 <h2>
   <span id='selected_criterion_name'>
-    <%= criterion.rubric_criterion_name %>
+    <%= criterion.name %>
   </span>
 </h2>
 
@@ -25,8 +25,8 @@
 
   <div class='main_rubric_criteria_edit'>
     <span id="<%= "criterion_inputs_#{criterion.id}" %>">
-     <%= f.label :rubric_criterion_name, t(:criterion), class: 'bold_inline_label' %>
-     <%= f.text_field :rubric_criterion_name %>
+     <%= f.label :name, t(:criterion), class: 'bold_inline_label' %>
+     <%= f.text_field :name %>
     </span>
     <br>
     <span id='criterion_weight_edit_<%= criterion.id %>' class='criterion_weight_edit'>

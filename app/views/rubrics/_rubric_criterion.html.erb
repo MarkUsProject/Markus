@@ -1,6 +1,6 @@
 <li id='criterion_<%= (criterion.id) %>'>
   <span>
-    <%= link_to truncate(criterion.rubric_criterion_name,
+    <%= link_to truncate(criterion.name,
                          length: 30,
                          omission: '...'),
                          edit_assignment_rubric_path(@assignment, criterion),

@@ -15,10 +15,10 @@ class RubricCriterionTest < ActiveSupport::TestCase
     should validate_numericality_of :weight
     should validate_presence_of :weight
 
-    should validate_presence_of :rubric_criterion_name
+    should validate_presence_of :name
 
     should validate_uniqueness_of(
-                         :rubric_criterion_name).scoped_to(
+                         :name).scoped_to(
                                :assignment_id).with_message(
                                      'Criterion name already used.')
 
@@ -152,10 +152,10 @@ class RubricCriterionTest < ActiveSupport::TestCase
 Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @assignment = Assignment.make(:marking_scheme_type => 'rubric')
       RubricCriterion.make(:assignment => @assignment,
-                           :rubric_criterion_name => 'Algorithm Design',
+                           :name => 'Algorithm Design',
                            :weight => 2.0)
       RubricCriterion.make(:assignment => @assignment,
-                           :rubric_criterion_name => 'Documentation',
+                           :name => 'Documentation',
                            :weight => 2.7)
 
     end
@@ -166,7 +166,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @csv_string = "Part 1 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,\"Makes the TA \"\"Shivers\"\"\",\"Leaves the TA \"\"calm\"\"\",\"Makes the TA \"\"grin\"\"\",\"Makes the TA \"\"smile\"\"\",\"Makes, the TA scream: \"\"at last, it was about time\"\"\"\n"
       @assignment = Assignment.make
       RubricCriterion.make(:assignment => @assignment,
-                           :rubric_criterion_name => 'Part 1 Programming',
+                           :name => 'Part 1 Programming',
                            :weight => 2.0,
                            :level_0_description => 'Makes the TA "Shivers"',
                            :level_1_description => 'Leaves the TA "calm"',
@@ -267,7 +267,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
             # in @csv_base_row - but they use different level names/descriptions.
             # I'll use the defaults here, and see if I can overwrite with
             # @csv_base_row.
-            criterion.rubric_criterion_name = 'criterion 5'
+            criterion.name = 'criterion 5'
             criterion.assignment = @assignment
             criterion.position = @assignment.next_criterion_position
             criterion.weight = 5.0
@@ -335,7 +335,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
   # the specified attribute. if attr == nil then all attributes are included
   def create_no_attr(attr)
     new_rubric_criteria = {
-      :rubric_criterion_name => 'somecriteria',
+      :name => 'somecriteria',
       :assignment_id => Assignment.make,
       :weight => 0.25,
       :level_0_name => 'Horrible',

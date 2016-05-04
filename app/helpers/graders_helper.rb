@@ -93,11 +93,7 @@ module GradersHelper
     criteria = criteria_with_assoc(assignment)
     criteria_table_info = criteria.map do |criterion|
       c = criterion.attributes
-      if assignment.marking_scheme_type == "rubric"
-        c[:name] = criterion.rubric_criterion_name
-      else
-        c[:name] = criterion.flexible_criterion_name
-      end
+      c[:name] = criterion.name
       c[:graders] = criterion.criterion_ta_associations.map do |association|
         m = association.attributes
         m[:user_name] = association.ta.user_name

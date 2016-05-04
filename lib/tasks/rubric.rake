@@ -23,7 +23,7 @@ namespace :db do
         if assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
           RubricCriterion.create(
             id:                    index + assignment.id * 8,
-            rubric_criterion_name: random_sentences(1),
+            name: random_sentences(1),
             assignment_id:         assignment.id,
             position:              1,
             weight:                pos_rand(3),
@@ -41,7 +41,7 @@ namespace :db do
         elsif assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
           FlexibleCriterion.create(
             id:                      index + assignment.id * 8,
-            flexible_criterion_name: random_sentences(1),
+            name: random_sentences(1),
             assignment_id:           assignment.id,
             description:             random_sentences(5),
             position:                1,

@@ -97,13 +97,13 @@ class RubricsControllerTest < AuthenticatedControllerTest
       assert_response :redirect
       assert_equal 4, @assignment.rubric_criteria.size
 
-      assert_equal 'Algorithm Design', rubric_criteria[0].rubric_criterion_name
+      assert_equal 'Algorithm Design', rubric_criteria[0].name
       assert_equal 1, rubric_criteria[0].position
-      assert_equal 'Documentation', rubric_criteria[1].rubric_criterion_name
+      assert_equal 'Documentation', rubric_criteria[1].name
       assert_equal 2, rubric_criteria[1].position
-      assert_equal 'Testing', rubric_criteria[2].rubric_criterion_name
+      assert_equal 'Testing', rubric_criteria[2].name
       assert_equal 3, rubric_criteria[2].position
-      assert_equal 'Correctness', rubric_criteria[3].rubric_criterion_name
+      assert_equal 'Correctness', rubric_criteria[3].name
       assert_equal 4, rubric_criteria[3].position
     end
 
@@ -270,7 +270,7 @@ END
 
     context 'with a criterion' do
       setup do
-        @criterion = RubricCriterion.make(:rubric_criterion_name => 'Algorithm',
+        @criterion = RubricCriterion.make(:name => 'Algorithm',
                                           :assignment => @assignment)
       end
 
@@ -298,7 +298,7 @@ END
                format: :js,
                assignment_id: @assignment.id,
                id: @criterion.id,
-               rubric_criterion: { rubric_criterion_name: 'one',
+               rubric_criterion: { name: 'one',
                                    weight: 10 }
         assert assigns :criterion
         assert render_template 'errors'
@@ -311,7 +311,7 @@ END
                format: :js,
                assignment_id: @assignment.id,
                id: @criterion.id,
-               rubric_criterion: { rubric_criterion_name: 'one',
+               rubric_criterion: { name: 'one',
                                    weight: 10 }
         assert assigns :criterion
         assert_equal I18n.t('criterion_saved_success'), flash[:success]
@@ -330,7 +330,7 @@ END
         post_as @admin,
                 :create,
                 :assignment_id => @assignment.id,
-                :rubric_criterion => {:rubric_criterion_name => 'first',
+                :rubric_criterion => {:name => 'first',
                                       :weight => 10}
         assert assigns :assignment
         assert assigns :criterion
@@ -346,7 +346,7 @@ END
                 :create,
                 format: :js,
                 :assignment_id => assignment.id,
-                :rubric_criterion => {:rubric_criterion_name => 'first',
+                :rubric_criterion => {:name => 'first',
                                       :weight => 10}
         assert assigns :assignment
         assert assigns :criterion
@@ -359,7 +359,7 @@ END
                 :create,
                 format: :js,
                 :assignment_id => @assignment.id,
-                :rubric_criterion => {:rubric_criterion_name => 'first',
+                :rubric_criterion => {:name => 'first',
                                       :weight => 10}
         assert assigns :assignment
         assert assigns :criterion
