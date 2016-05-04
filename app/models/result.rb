@@ -10,6 +10,7 @@ class Result < ActiveRecord::Base
   has_many :marks
   has_many :extra_marks
 
+  after_create :create_marks
   validates_presence_of :marking_state
   validates_inclusion_of :marking_state, in: MARKING_STATES.values
 
@@ -119,5 +120,17 @@ class Result < ActiveRecord::Base
       return false
     end
     true
+  end
+
+  def create_marks
+    @assignment = self.submission.assignment
+    @marks_map = Hash.new
+    @assignment.get_criteria.each do |criterion|
+      mark = criterion.marks.find_or_create_by(result_id: self.id)
+      @marks_map[criterion.id] = mark
+
+      mark.save(validate: false)
+      self.update_total_mark
+    end
   end
 end
