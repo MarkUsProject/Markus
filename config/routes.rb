@@ -38,6 +38,9 @@ Markus::Application.routes.draw do
         post 'update_collected_submissions'
         get 'download_assignment_list'
         post 'upload_assignment_list'
+        get 'populate_file_manager'
+        post 'update_files'
+        get 'download'
       end
 
       member do
