@@ -621,7 +621,7 @@ describe Assignment do
         end
 
         it 'does not add a new Group' do
-          @assignment.add_csv_group(@row)
+          expect { @assignment.add_csv_group(@row) }.to raise_error(CSVInvalidLineError)
           expect(Group.all.size).to eq 1
         end
 
