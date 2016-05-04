@@ -120,7 +120,7 @@ class Assignment < ActiveRecord::Base
         'name' =>  criterion['level_4_name'] ,
         'description' => criterion['level_4_description']
       }
-      criteria_yml = { "#{criterion['rubric_criterion_name']}" => inner }
+      criteria_yml = { "#{criterion.name}" => inner }
       final = final.merge(criteria_yml)
     end
     final.to_yaml
