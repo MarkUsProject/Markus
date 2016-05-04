@@ -67,7 +67,7 @@ class FlexibleCriteriaController < ApplicationController
     criteria = FlexibleCriterion.where(assignment_id: @assignment.id)
                                 .order(:position)
     file_out = MarkusCSV.generate(criteria) do |criterion|
-      [criterion.flexible_criterion_name, criterion.max,
+      [criterion.name, criterion.max,
        criterion.description]
     end
     send_data(file_out,
@@ -120,7 +120,7 @@ class FlexibleCriteriaController < ApplicationController
   private
 
   def flexible_criterion_params
-    params.require(:flexible_criterion).permit(:flexible_criterion_name,
+    params.require(:flexible_criterion).permit(:name,
                                                :description,
                                                :position,
                                                :max)

@@ -62,7 +62,7 @@ class RubricsController < ApplicationController
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
     file_out = MarkusCSV.generate(@assignment.rubric_criteria) do |criterion|
-      criterion_array = [criterion.rubric_criterion_name,criterion.weight]
+      criterion_array = [criterion.name,criterion.weight]
       (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
         criterion_array.push(criterion['level_' + i.to_s + '_name'])
       end
@@ -189,7 +189,7 @@ class RubricsController < ApplicationController
   private
 
   def rubric_criterion_params
-    params.require(:rubric_criterion).permit(:rubric_criterion_name,
+    params.require(:rubric_criterion).permit(:name,
                                              :assignment,
                                              :position,
                                              :level_0_name,

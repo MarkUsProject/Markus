@@ -12,7 +12,7 @@
 
 <h2>
   <span id='selected_criterion_name'>
-    <%= criterion.flexible_criterion_name %>
+    <%= criterion.name %>
   </span>
 </h2>
 
@@ -26,8 +26,8 @@
   <div class='main_flexible_criteria_edit'>
 
     <span id="<%= "criterion_inputs_#{criterion.id}" %>">
-      <%= f.label :flexible_criterion_name, t(:criterion)%>
-      <%= f.text_field :flexible_criterion_name %>
+      <%= f.label :name, t(:criterion)%>
+      <%= f.text_field :name %>
     </span>
     <br>
     <span id='criterion_max_edit_<%= criterion.id %>' class='criterion_max_edit'>

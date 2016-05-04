@@ -228,9 +228,9 @@ class GradersControllerTest < AuthenticatedControllerTest
           @ta1 = Ta.make(:user_name => 'g9browni')
           @ta2 = Ta.make(:user_name => 'g9younas')
           @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'correctness')
-          @criterion2 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'style')
-          @criterion3 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'class design')
+          @criterion1 = RubricCriterion.make(:assignment => @assignment, :name => 'correctness')
+          @criterion2 = RubricCriterion.make(:assignment => @assignment, :name => 'style')
+          @criterion3 = RubricCriterion.make(:assignment => @assignment, :name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -251,9 +251,9 @@ class GradersControllerTest < AuthenticatedControllerTest
           @ta1 = Ta.make(:user_name => 'g9browni')
           @ta2 = Ta.make(:user_name => 'reid')
           @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'correctness')
-          @criterion2 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'style')
-          @criterion3 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'class design')
+          @criterion1 = RubricCriterion.make(:assignment => @assignment, :name => 'correctness')
+          @criterion2 = RubricCriterion.make(:assignment => @assignment, :name => 'style')
+          @criterion3 = RubricCriterion.make(:assignment => @assignment, :name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -270,9 +270,9 @@ class GradersControllerTest < AuthenticatedControllerTest
           @ta1 = Ta.make(:user_name => 'g9browni')
           @ta2 = Ta.make(:user_name => 'g9younas')
           @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'correctness')
-          @criterion2 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => "professor's whim")
-          @criterion3 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'class design')
+          @criterion1 = RubricCriterion.make(:assignment => @assignment, :name => 'correctness')
+          @criterion2 = RubricCriterion.make(:assignment => @assignment, :name => "professor's whim")
+          @criterion3 = RubricCriterion.make(:assignment => @assignment, :name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -295,9 +295,9 @@ class GradersControllerTest < AuthenticatedControllerTest
           @ta1 = Ta.make(:user_name => 'g9browni')
           @ta2 = Ta.make(:user_name => 'g9younas')
           @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'correctness')
-          @criterion2 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'style')
-          @criterion3 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'class design')
+          @criterion1 = FlexibleCriterion.make(:assignment => @assignment, :name => 'correctness')
+          @criterion2 = FlexibleCriterion.make(:assignment => @assignment, :name => 'style')
+          @criterion3 = FlexibleCriterion.make(:assignment => @assignment, :name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -316,9 +316,9 @@ class GradersControllerTest < AuthenticatedControllerTest
           @ta1 = Ta.make(:user_name => 'g9browni')
           @ta2 = Ta.make(:user_name => 'reid')
           @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'correctness')
-          @criterion2 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'style')
-          @criterion3 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'class design')
+          @criterion1 = FlexibleCriterion.make(:assignment => @assignment, :name => 'correctness')
+          @criterion2 = FlexibleCriterion.make(:assignment => @assignment, :name => 'style')
+          @criterion3 = FlexibleCriterion.make(:assignment => @assignment, :name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -335,9 +335,9 @@ class GradersControllerTest < AuthenticatedControllerTest
           @ta1 = Ta.make(:user_name => 'g9browni')
           @ta2 = Ta.make(:user_name => 'g9younas')
           @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'correctness')
-          @criterion2 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => "professor's whim")
-          @criterion3 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'class design')
+          @criterion1 = FlexibleCriterion.make(:assignment => @assignment, :name => 'correctness')
+          @criterion2 = FlexibleCriterion.make(:assignment => @assignment, :name => "professor's whim")
+          @criterion3 = FlexibleCriterion.make(:assignment => @assignment, :name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}

@@ -14,8 +14,8 @@ class FlexibleCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  validates_presence_of :flexible_criterion_name
-  validates_uniqueness_of :flexible_criterion_name,
+  validates_presence_of :name
+  validates_uniqueness_of :name,
                           scope: :assignment_id,
                           message: I18n.t('flexible_criteria.errors.messages.name_taken')
 
@@ -63,10 +63,10 @@ class FlexibleCriterion < Criterion
     end
     criterion = FlexibleCriterion.new
     criterion.assignment = assignment
-    criterion.flexible_criterion_name = row[0]
+    criterion.name = row[0]
     # assert that no other criterion uses the same name for the same assignment.
     unless FlexibleCriterion.where(assignment_id: assignment.id,
-                                   flexible_criterion_name: row[0]).size.zero?
+                                   name: row[0]).size.zero?
       raise CSVInvalidLineError, I18n.t('csv.invalid_row.duplicate_entry')
     end
 
@@ -122,10 +122,6 @@ class FlexibleCriterion < Criterion
                                          assignment: self.assignment)
       end
     end
-  end
-
-  def get_name
-    flexible_criterion_name
   end
 
   def remove_tas(ta_array)

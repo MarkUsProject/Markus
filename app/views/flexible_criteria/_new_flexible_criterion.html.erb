@@ -4,7 +4,7 @@
     <div id="new_flexible_criterion_errors" style="display:none;" class="error"></div>
     <%= label_tag 'new_flexible_criterion_prompt',
 		  t("flexible_criteria.name") %><br>
-    <%= f.text_field :flexible_criterion_name,
+    <%= f.text_field :name,
 		     size: 15,
 		     id: 'new_flexible_criterion_prompt' %><br>
     <%= f.submit t("flexible_criteria.save"), :'data-disable-with' => I18n.t('working')%>

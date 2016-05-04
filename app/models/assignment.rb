@@ -822,10 +822,10 @@ class Assignment < ActiveRecord::Base
   def add_graders_to_criterion(criterion_name, graders)
     if marking_scheme_type == 'rubric'
       criterion = rubric_criteria.find_by(
-        rubric_criterion_name: criterion_name)
+        name: criterion_name)
     else
       criterion = flexible_criteria.find_by(
-        flexible_criterion_name: criterion_name)
+        name: criterion_name)
     end
 
     if criterion.nil?
