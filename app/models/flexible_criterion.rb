@@ -124,10 +124,6 @@ class FlexibleCriterion < Criterion
     end
   end
 
-  def get_name
-    name
-  end
-
   def remove_tas(ta_array)
     ta_array = Array(ta_array)
     associations_for_criteria = criterion_ta_associations.where(ta_id: ta_array)

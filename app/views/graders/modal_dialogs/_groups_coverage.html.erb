@@ -6,7 +6,7 @@
   <% if assigned.include?(criterion) %>
     <%=  image_tag("icons/tick.png", alt: I18n.t('graders.covered'),
       title: I18n.t('graders.covered')) %>
-    <b> <%= criterion.get_name %> </b>
+    <b> <%= criterion.name %> </b>
     <br>
     <%= I18n.t('graders.assigned_graders') %>:
     <% @grouping.assigned_tas_for_criterion(criterion).each do |ta|%>
@@ -15,7 +15,7 @@
   <% else %>
     <%=  image_tag("icons/cross.png", alt: I18n.t('graders.not_covered'),
       title: I18n.t('graders.not_covered')) %>
-    <b> <%= criterion.get_name %> </b>
+    <b> <%= criterion.name %> </b>
     <% if criterion.tas.count > 0 %>
       <br>
       <%= I18n.t('graders.possible_graders') %>:
