@@ -208,14 +208,10 @@ class SubmissionsController < ApplicationController
   def collect_all_submissions
     @assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     @assignment.done!('false')
-    if @assignment.submission_rule.can_collect_now?
-      @current_job = SubmissionsJob.perform_later(@assignment)
-#       respond_to do |format|
-#         format.js {}
-#       end
+    @current_job = SubmissionsJob.perform_later(@assignment)
+    respond_to do |format|
+      format.json {}
     end
-    redirect_to action: 'browse',
-	id: @assignment.id
   end
 
   def collect_ta_submissions

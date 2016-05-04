@@ -1448,6 +1448,12 @@ en:
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
 
+    #app/views/job_messages/_job_poller.js.erb
+    job_poller:
+      processing_message: "Processing:"
+      processing_message_finished: "Finished Processing. Reloading..."
+      processing_message_error: "Processing Failed:"
+
     #app/helpers/submissions_helper.rb
     assign_folder_missing:      "Uh oh! Assignment folder missing."
     group_repo_missing:         "Uh oh! No repo found for this group."
