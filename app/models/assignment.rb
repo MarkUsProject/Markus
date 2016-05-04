@@ -420,16 +420,20 @@ class Assignment < ActiveRecord::Base
   def add_csv_group(row)
     return if row.length.zero?
 
-    row.map! { |item| item.strip }
+    begin
+      row.map! { |item| item.strip }
+    rescue NoMethodError
+      raise CSVInvalidLineError
+    end
 
     group = Group.where(group_name: row.first).first
 
     unless group.nil?
       if group.repo_name != row[1]
-        # CASE: Group already exits but the repo name is different
+        # CASE: Group already exists but the repo name is different
         duplicate_group_error = I18n.t('csv.group_with_different_repo',
                                        group_name: row[0])
-        return duplicate_group_error
+        raise CSVInvalidLineError, duplicate_group_error
       else
         any_grouping = Grouping.find_by group_id: group.id
         if any_grouping.nil?
@@ -458,7 +462,7 @@ class Assignment < ActiveRecord::Base
               duplicate_group_error = I18n.t(
                 'csv.group_with_different_membership_different_assignment',
                 group_name: row[0])
-              return duplicate_group_error
+              raise CSVInvalidLineError, duplicate_group_error
             end
           else
             if same_membership_as_csv_row?(row,
@@ -478,7 +482,7 @@ class Assignment < ActiveRecord::Base
               duplicate_group_error = I18n.t(
                 'csv.group_with_different_membership_current_assignment',
                 group_name: row[0])
-              return duplicate_group_error
+              raise CSVInvalidLineError, duplicate_group_error
             end
           end
         end
@@ -518,12 +522,16 @@ class Assignment < ActiveRecord::Base
 
     # If a repository already exists with the same repo name as the one given
     #  in the csv file, error is returned and the group is not created
-    if repository_already_exists?(repo_name)
-      repository_error = I18n.t('csv.repository_already_exists',
-                                group_name: row[0],
-                                repo_path: errors.get(:repo_name).last)
-      errors.delete(:repo_name)
-      return repository_error
+    begin
+      if repository_already_exists?(repo_name)
+        repository_error = I18n.t('csv.repository_already_exists',
+                                  group_name: row[0],
+                                  repo_path: errors.get(:repo_name).last)
+        errors.delete(:repo_name)
+        return repository_error
+      end
+    rescue TypeError
+      raise CSV::MalformedCSVError
     end
 
     # At this point we can be sure that the group_name, memberships and

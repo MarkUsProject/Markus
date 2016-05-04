@@ -4,6 +4,7 @@ namespace :db do
   task :rubric => :environment do
     puts 'Add Rubric To Assignments'
     require 'faker'
+    I18n.reload!
 
     def pos_rand(range)
       rand(range) + 1
@@ -22,7 +23,6 @@ namespace :db do
       8.times do |index|
         if assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
           RubricCriterion.create(
-            id:                    index + assignment.id * 8,
             rubric_criterion_name: random_sentences(1),
             assignment_id:         assignment.id,
             position:              1,
@@ -40,7 +40,6 @@ namespace :db do
           )
         elsif assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
           FlexibleCriterion.create(
-            id:                      index + assignment.id * 8,
             flexible_criterion_name: random_sentences(1),
             assignment_id:           assignment.id,
             description:             random_sentences(5),

@@ -2,10 +2,14 @@ Aaron Lee
 Abdelhamid Benmouffok
 Adam Goucher
 Aimen Khan
-Alex Grenier
-Alex Krassikov
+Alessio Di Sandro
 Alexander Kittelberger
 Alexandre Lissy
+Alexandre Vaillancourt
+Alex Clarke
+Alex Grenier
+Alex Inman
+Alex Krassikov
 Alysha Kwok
 Amanda Manarin
 Andrew Hernandez
@@ -21,6 +25,7 @@ Augustin Doury
 Benjamin Thorent
 Benjamin Vialle
 Bertan Guven
+Binuri Walpitagamage
 Brian Bo
 Brian Xu
 Bryan Muscedere
@@ -28,10 +33,13 @@ Bryan Shen
 Camille Guérin
 Catherine Fawcett
 Chris Kellendonk
+Christian Garcia Salguero
 Christian Jacques
 Christian Millar
+Christine Murad
 Christine Yu
 Christopher Jonathan
+Christopher Koehler
 Claire Mayer
 Clément Delafargue
 Clément Schiano
@@ -44,6 +52,7 @@ David Liu
 Derek Dowling
 Diane Tam
 Dina Sabie
+Dmitry Khabarov
 Dylan Runkel
 Ealona Shmoel
 Egor Philippov
@@ -65,12 +74,16 @@ Horatiu Halmaghi
 Ian Smith
 Ibrahim Shahin
 Irene Fung
+Isabelle Chan
 Ishan Thukral
 Jakub Subczynski
 Jay Parekh
 Jeffrey Ling
+Jeremy Goh
 Jeremy Merkur
 Jeremy Winter
+Jérôme Gazel
+Jesse Cordeiro
 Jiahui Xu
 Joel Burford
 Joey Perry
@@ -78,11 +91,12 @@ Jordan Saleh
 Joseph Mate
 Joseph Maté
 Joshua Dyck
+Joshua Smith
 Julien Starozinski
 Junghwan Tom Choi
 Justin Foong
-Jérôme Gazel
 Karel Kahula
+Kevin MacPhee
 Kira McCoan
 Kitiya Srisukvatananan
 Kristian Lejao
@@ -95,6 +109,8 @@ Marc Palermo
 Mark Kazakevich
 Mark Rada
 Maryna Moskalenko
+Mélanie Gaudet
+Melissa Neubert
 Michael Ing
 Michael Lumbroso
 Michael Margel
@@ -104,7 +120,6 @@ Mike Stewart
 Mike Wu
 Mina Almasry
 Misa Sakamoto
-Mélanie Gaudet
 Nathan ChowNeha Kumar
 Neha Kumar
 Nelle Varoquaux
@@ -120,11 +135,13 @@ Paymahn Moghadasian
 Peter Guanjie Zhao
 Rafael Padilha
 Razvan Vlaicu
+Rebecca Frailich
 Robert Burke
 Ryan Spring
 Samuel Gougeon
 Sean Budning
 Severin Gehwolf
+Shaughn Finnerty
 Shenglong Gao
 Shion Kashimura
 Simon Lavigne-Giroux
@@ -135,11 +152,13 @@ Tiago Chedraoui Silva
 Tianhai Hu
 Valentin Roger
 Veronica Wong
-Victor Ivri
 Victoria Mui
 Victoria Verlysdonk
+Victor Ivri
 Vivien Suen
+William Kwan
 William Roy
+Wilson Chiang
 Xiang Yu
 Yansong Zang
 Yusi Fan

@@ -152,27 +152,28 @@ class GradeEntryFormsController < ApplicationController
   end
 
   def populate_grades_table
-    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @grade_entry_form = GradeEntryForm.includes(grade_entry_students:
+                                                  [:grades, { user: :section }])
+                                      .find(params[:id])
     if current_user.admin?
       @students = Student.all
     elsif current_user.ta?
       @students = current_user.grade_entry_students.map(&:user)
     end
 
-    @student_grades = @students.map do |student|
+    # TODO: Remove this hack by putting a computed column for the total_grade attribute
+    totals = Grade.where(grade_entry_student_id:
+                           @grade_entry_form.grade_entry_students.pluck(:id))
+                  .group(:grade_entry_student_id)
+                  .sum(:grade)
+
+    @student_grades = @grade_entry_form.grade_entry_students.map do |student_grade_entry|
+      student = student_grade_entry.user
       s = student.attributes
-      student_grade_entry = @grade_entry_form.grade_entry_students
-                                             .find_by_user_id(student.id)
       s[:section] = student.section.try(:name) || '-'
       unless student_grade_entry.nil?
-        # Populate grades
-        @grade_entry_form.grade_entry_items.each do |grade_entry_item|
-          s[:grade_entry_form] = @grade_entry_form.id
-          @mark = student_grade_entry.grades
-                  .find_by_grade_entry_item_id(grade_entry_item.id)
-          if !@mark.nil? && !@mark.grade.nil?
-            s[grade_entry_item.id] = @mark.grade
-          end
+        student_grade_entry.grades.each do |grade|
+          s[grade.grade_entry_item_id] = grade.grade
         end
         # Populate marking state
         if student_grade_entry.released_to_student
@@ -181,7 +182,7 @@ class GradeEntryFormsController < ApplicationController
         end
         # Populate grade total
         if @grade_entry_form.show_total
-          total = student_grade_entry.total_grade
+          total = totals[student_grade_entry.id]
           if !total.nil?
             s[:total_marks] = total
           else
@@ -283,15 +284,65 @@ class GradeEntryFormsController < ApplicationController
   # Download the grades for this grade entry form as a CSV file
   def csv_download
     grade_entry_form = GradeEntryForm.find(params[:id])
-    send_data grade_entry_form.get_csv_grades_report,
+    students = Student.where(hidden: false).order(:user_name)
+    grade_entry_items = grade_entry_form.grade_entry_items
+    csv_rows = []
+    # prepare first two csv rows
+    # The first row in the CSV file will contain the question names
+    row = ['']
+    grade_entry_items.each do |grade_entry_item|
+      row.push(grade_entry_item.name)
+    end
+    csv_rows.push(row)
+    # The second row in the CSV file will contain the question totals
+    row = ['']
+    grade_entry_items.each do |grade_entry_item|
+      row.push(grade_entry_item.out_of)
+    end
+    csv_rows.push(row)
+    # The rest of the rows in the CSV file will contain the students' grades
+    form_data = MarkusCSV.generate(students, csv_rows) do |student|
+      row = []
+      row.push(student.user_name)
+      grade_entry_student = grade_entry_form.grade_entry_students
+        .where(user_id: student.id)
+        .first
+      # Check whether or not we have grades recorded for this student
+      if grade_entry_student.nil?
+        grade_entry_items.each do |grade_entry_item|
+          # Blank marks for each question
+          row.push('')
+        end
+        # Blank total percent
+        row.push('')
+      else
+        grade_entry_items.each do |grade_entry_item|
+          grade = grade_entry_student
+            .grades
+            .where(grade_entry_item_id: grade_entry_item.id)
+            .first
+          if grade.nil?
+            row.push('')
+          else
+            row.push(grade.grade || '')
+          end
+        end
+        total_percent = grade_entry_form
+          .calculate_total_percent(grade_entry_student)
+        row.push(total_percent)
+      end
+      row
+    end
+    send_data form_data,
               disposition: 'attachment',
-              type: 'application/vnd.ms-excel',
+              type: 'text/csv',
               filename: "#{grade_entry_form.short_identifier}_grades_report.csv"
   end
 
   # Upload the grades for this grade entry form using a CSV file
   def csv_upload
-    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @grade_entry_form = GradeEntryForm.includes(grade_entry_students: [:grades, :user])
+                                      .find(params[:id])
 
     # If the request is a post type and the abort flag is down
     # (operation can continue)
@@ -301,28 +352,50 @@ class GradeEntryFormsController < ApplicationController
       overwrite = params[:overwrite]
       names = ''
       totals = ''
-      result = []
-      GradeEntryForm.transaction do
-        # Parse the grades
-        result = MarkusCSV.parse(grades_file.read, encoding: encoding) do |row|
-          next if CSV.generate_line(row).strip.empty?
-          # grab names and totals from the first two rows
-          if names.empty?
-            names = row
-            next
+      columns = []
+
+      # Parse the grades
+      result = MarkusCSV.parse(grades_file.read, encoding: encoding) do |row|
+        next if CSV.generate_line(row).strip.empty?
+        # grab names and totals from the first two rows
+        if names.empty?
+          names = row
+          next
+        end
+        if totals.empty?
+          totals = row
+          # Create/update the grade entry items
+          GradeEntryItem.create_or_update_from_csv_rows(
+            names,
+            totals,
+            @grade_entry_form,
+            overwrite)
+          next
+        end
+        columns = @grade_entry_form.grade_entry_items.reload
+        grade_list = @grade_entry_form.grades.map do |g|
+          [[g.grade_entry_student_id, g.grade_entry_item_id], g.grade]
+        end
+        all_grades = Hash[grade_list]
+        Upsert.batch(ActiveRecord::Base.connection, Grade.table_name) do |upsert|
+
+          s = @grade_entry_form.grade_entry_students
+                               .joins(:user)
+                               .find_by('users.user_name' => row[0].encode('UTF-8'))
+          raise CSVInvalidLineError if s.nil?
+
+          row.shift
+          row.zip(columns.take(row.size)).each do |grade, c|
+            new_grade = grade.blank? ? nil : Float(grade)
+            selector = { grade_entry_student_id: s.id,
+                         grade_entry_item_id: c.id }
+            if s.nil? || overwrite
+              setter = { grade: new_grade }
+            else
+              setter = { grade: all_grades[[s.id, c.id]] || new_grade }
+            end
+            upsert.row(selector, setter)
           end
-          if totals.empty?
-            totals = row
-            # Create/update the grade entry items
-            GradeEntryItem
-              .create_or_update_from_csv_rows(names, totals, @grade_entry_form)
-            next
-          end
-          GradeEntryStudent
-            .create_or_update_from_csv_row(row,
-                                           @grade_entry_form,
-                                           @grade_entry_form.grade_entry_items,
-                                           names, overwrite)
         end
       end
       unless result[:invalid_lines].empty?
