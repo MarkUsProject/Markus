@@ -82,6 +82,8 @@ class Assignment < ActiveRecord::Base
 
   validate :minimum_number_of_groups
 
+  after_create :build_repoistory
+
   before_save :reset_collection_time
 
   # Call custom validator in order to validate the :due_date attribute
@@ -192,7 +194,6 @@ class Assignment < ActiveRecord::Base
   # Calculate the latest due date among all sections for the assignment.
   def latest_due_date
     return due_date unless section_due_dates_type
-
     due_dates = section_due_dates.map(&:due_date) << due_date
     due_dates.compact.max
   end
@@ -858,6 +859,86 @@ class Assignment < ActiveRecord::Base
           !grouping.inviter.has_section?
     end
   end
+
+  def can_upload_starter_code?
+    groups.size == 0
+  end
+
+  ### REPO ###
+
+  def repository_name
+    "#{short_identifier}_starter_code"
+  end
+
+  def build_repository
+    # create repositories if and only if we are admin
+    return true unless MarkusConfigurator.markus_config_repository_admin?
+    # only create if we can add starter code
+    return true unless can_upload_starter_code?
+    # This might cause repository collision errors, because when the group
+    # maximum for an assignment is set to be one, the student's username
+    # will be used as the repository name. This will raise a RepositoryCollision
+    # if an instructor uses a csv file with a student appearing as the only member of
+    # two different groups (remember: uploading via csv purges old groupings).
+    #
+    # Because we use the group id as part of the repository name in all other cases,
+    # a repo collision *should* never occur then.
+    #
+    # For more info about the exception
+    # See 'self.create' of lib/repo/subversion_repository.rb.
+    begin
+      Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
+    rescue Repository::RepositoryCollision => e
+      # log the collision
+      errors.add(:base, self.repo_name)
+      m_logger = MarkusLogger.instance
+      m_logger.log("Creating group '#{self.group_name}' caused repository collision " +
+                       "(Repository name was: '#{self.repo_name}'). Error message: '#{e.message}'",
+                   MarkusLogger::ERROR)
+      puts 'error'
+    end
+    true
+  end
+
+  def repository_config
+    conf = Hash.new
+    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
+    conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
+    conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
+    conf
+  end
+
+  # Set the default repo permissions.
+  def set_repo_permissions
+    return true if !MarkusConfigurator.markus_config_repository_admin?
+    # Each admin user will have read and write permissions on each repo
+    user_permissions = {}
+    Admin.all.each do |admin|
+      user_permissions[admin.user_name] = Repository::Permission::READ_WRITE
+    end
+    group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config)
+    group_repo.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)], user_permissions)
+    true
+  end
+
+  # Return a repository object, if possible
+  def repo
+    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)
+    if Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).repository_exists?(repo_loc)
+      Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).open(repo_loc)
+    else
+      raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
+    end
+  end
+
+  #Yields a repository object, if possible, and closes it after it is finished
+  def access_repo
+    repository = self.repo
+    yield repository
+    repository.close()
+  end
+
+  ### /REPO ###
 
   private
 

@@ -14,7 +14,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @assignments.each do |assignment| %>
+          <% @assignments.includes(:section_due_dates).each do |assignment| %>
             <tr>
               <td>
                 <% if controller == 'assignments' %>
