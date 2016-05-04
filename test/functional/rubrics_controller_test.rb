@@ -151,7 +151,7 @@ class RubricsControllerTest < AuthenticatedControllerTest
               :csv_upload => {:rubric => fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
               :encoding => 'UTF-8'
       assert_response :redirect
-      test_criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(@assignment.id, 'RubricCriteriaÈrÉØrr')
+      test_criterion = RubricCriterion.find_by(assignment_id: @assignment.id, name: 'RubricCriteriaÈrÉØrr')
       assert_not_nil test_criterion # rubric criterion should exist
     end
 
@@ -162,7 +162,7 @@ class RubricsControllerTest < AuthenticatedControllerTest
               :csv_upload => {:rubric => fixture_file_upload('files/test_rubric_criteria_ISO-8859-1.csv')},
               :encoding => 'ISO-8859-1'
       assert_response :redirect
-      test_criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(@assignment.id, 'RubricCriteriaÈrÉØrr')
+      test_criterion = RubricCriterion.find_by(assignment_id: @assignment.id, name: 'RubricCriteriaÈrÉØrr')
       assert_not_nil test_criterion # rubric criterion should exist
     end
 
@@ -173,7 +173,7 @@ class RubricsControllerTest < AuthenticatedControllerTest
               :csv_upload => {:rubric => fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
               :encoding => 'ISO-8859-1'
       assert_response :redirect
-      test_criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(@assignment.id, 'RubricCriteriaÈrÉØrr')
+      test_criterion = RubricCriterion.find_by(assignment_id: @assignment.id, name: 'RubricCriteriaÈrÉØrr')
       assert_nil test_criterion # rubric criterion should not exist, despite being in file
     end
 
@@ -208,8 +208,8 @@ END
       assert_not_nil set_flash.to(t('rubric_criteria.upload.success',
                                     nb_updates: 2))
       @assignment.reload
-      cr1 = @assignment.rubric_criteria.find_by_rubric_criterion_name('cr1')
-      cr2 = @assignment.rubric_criteria.find_by_rubric_criterion_name('cr2')
+      cr1 = @assignment.rubric_criteria.find_by(name: 'cr1')
+      cr2 = @assignment.rubric_criteria.find_by(name: 'cr2')
       assert_equal(@assignment.rubric_criteria.length, 2)
       assert_equal(2, cr2.weight)
       assert_equal(5, cr1.weight)

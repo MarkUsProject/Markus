@@ -116,13 +116,13 @@ describe RubricsController do
       rubric_criteria = assignment.rubric_criteria
       expect(4).to eq(rubric_criteria.size)
       expect('Algorithm Design')
-        .to eq(rubric_criteria[0].rubric_criterion_name)
+        .to eq(rubric_criteria[0].name)
       expect(1).to eq(rubric_criteria[0].position)
-      expect('Documentation').to eq(rubric_criteria[1].rubric_criterion_name)
+      expect('Documentation').to eq(rubric_criteria[1].name)
       expect(2).to eq(rubric_criteria[1].position)
-      expect('Testing').to eq(rubric_criteria[2].rubric_criterion_name)
+      expect('Testing').to eq(rubric_criteria[2].name)
       expect(3).to eq(rubric_criteria[2].position)
-      expect('Correctness').to eq(rubric_criteria[3].rubric_criterion_name)
+      expect('Correctness').to eq(rubric_criteria[3].name)
       expect(4).to eq(rubric_criteria[3].position)
 
       expect(flash[:error]).to be_nil
