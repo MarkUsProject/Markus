@@ -82,6 +82,8 @@ class Assignment < ActiveRecord::Base
 
   validate :minimum_number_of_groups
 
+  after_create :build_repository
+
   before_save :reset_collection_time
 
   # Call custom validator in order to validate the :due_date attribute
@@ -192,7 +194,6 @@ class Assignment < ActiveRecord::Base
   # Calculate the latest due date among all sections for the assignment.
   def latest_due_date
     return due_date unless section_due_dates_type
-
     due_dates = section_due_dates.map(&:due_date) << due_date
     due_dates.compact.max
   end
@@ -858,6 +859,66 @@ class Assignment < ActiveRecord::Base
           !grouping.inviter.has_section?
     end
   end
+
+  # TODO: This is currently disabled until starter code is automatically added
+  # to groups.
+  def can_upload_starter_code?
+    #groups.size == 0
+    false
+  end
+
+  ### REPO ###
+
+  def repository_name
+    "#{short_identifier}_starter_code"
+  end
+
+  def build_repository
+    # create repositories if and only if we are admin
+    return true unless MarkusConfigurator.markus_config_repository_admin?
+    # only create if we can add starter code
+    return true unless can_upload_starter_code?
+    begin
+      Repository.get_class(MarkusConfigurator.markus_config_repository_type,
+                           repository_config)
+                .create(File.join(MarkusConfigurator.markus_config_repository_storage,
+                                  repository_name))
+    rescue Repository::RepositoryCollision => e
+      # log the collision
+      errors.add(:base, self.repo_name)
+      m_logger = MarkusLogger.instance
+      m_logger.log("Creating repository '#{repository_name}' caused repository collision. " +
+                     "Error message: '#{e.message}'",
+                   MarkusLogger::ERROR)
+    end
+    true
+  end
+
+  def repository_config
+    conf = Hash.new
+    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
+    conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
+    conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
+    conf
+  end
+
+  # Return a repository object, if possible
+  def repo
+    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
+    if Repository.get_class(MarkusConfigurator.markus_config_repository_type, repository_config).repository_exists?(repo_loc)
+      Repository.get_class(MarkusConfigurator.markus_config_repository_type, repository_config).open(repo_loc)
+    else
+      raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
+    end
+  end
+
+  #Yields a repository object, if possible, and closes it after it is finished
+  def access_repo
+    yield repo
+    repo.close()
+  end
+
+  ### /REPO ###
 
   private
 
