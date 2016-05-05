@@ -1261,8 +1261,8 @@ en:
       title: "Title"
       max_value: "Maximum value"
       grade: "Grade"
-      mark: "Mark"
-      x_weight: "x Weight"
+      mark: "Level"
+      weight: "Weight"
 
     key_pairs:
       title: "Key Pairs"
