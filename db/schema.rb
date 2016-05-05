@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160219001523) do
+ActiveRecord::Schema.define(version: 20160504175156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 20160219001523) do
     t.integer "line_end"
     t.integer "annotation_text_id"
     t.integer "submission_file_id"
+    t.integer "creator_id"
     t.integer "x1"
     t.integer "x2"
     t.integer "y1"
@@ -52,6 +53,7 @@ ActiveRecord::Schema.define(version: 20160219001523) do
     t.integer "page"
     t.integer "column_start"
     t.integer "column_end"
+    t.string  "creator_type",       null: false
   end
 
   add_index "annotations", ["submission_file_id"], name: "index_annotations_on_submission_file_id", using: :btree
@@ -474,6 +476,7 @@ ActiveRecord::Schema.define(version: 20160219001523) do
   add_foreign_key "annotation_texts", "annotation_categories", name: "fk_annotation_labels_annotation_categories", on_delete: :cascade
   add_foreign_key "annotations", "annotation_texts", name: "fk_annotations_annotation_texts"
   add_foreign_key "annotations", "submission_files", name: "fk_annotations_submission_files"
+  add_foreign_key "annotations", "users", column: "creator_id"
   add_foreign_key "assignment_files", "assignments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_stats", "assignments", name: "fk_assignment_stats_assignments", on_delete: :cascade
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
