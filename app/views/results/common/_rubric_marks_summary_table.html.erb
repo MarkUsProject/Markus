@@ -18,7 +18,7 @@
 
   %>
     <tr id="<%= "mark_#{mark.id}_summary" %>">
-      <td><%= criterion.rubric_criterion_name %></td>
+      <td><%= criterion.name %></td>
       <td><%= criterion.weight %></td>
       <td><span id="mark_<%= mark.id %>_summary_mark"><%= mark_value %></span></td>
       <td><span id="mark_<%= mark.id %>_summary_mark_after_weight"><%= (mark_value * criterion.weight) %></span> / <%= criterion.weight * 4 %></td>

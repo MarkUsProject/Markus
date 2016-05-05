@@ -133,7 +133,7 @@ class GradersController < ApplicationController
                                    includes: [criterion_ta_associations: :ta])
 
     file_out = MarkusCSV.generate(criteria) do |criterion|
-      [criterion.get_name] + criterion.tas.map(&:user_name)
+      [criterion.name] + criterion.tas.map(&:user_name)
     end
 
     send_data(file_out,

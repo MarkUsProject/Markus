@@ -19,12 +19,12 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
     # Not yet functional
     # should have_many :marks
 
-    should validate_presence_of :flexible_criterion_name
+    should validate_presence_of :name
     should validate_presence_of :assignment_id
     should validate_presence_of :max
 
     should validate_uniqueness_of(
-                          :flexible_criterion_name).scoped_to(
+                          :name).scoped_to(
                                 :assignment_id).with_message(
                                       'Criterion name already used.')
 
@@ -105,16 +105,16 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
     context 'with three flexible criteria' do
       setup do
         FlexibleCriterion.make(:assignment => @assignment,
-                              :flexible_criterion_name => 'criterion1',
+                              :name => 'criterion1',
                               :description => 'description1, for criterion 1',
                               :max => 10)
         FlexibleCriterion.make(:assignment => @assignment,
-                              :flexible_criterion_name => 'criterion2',
+                              :name => 'criterion2',
                               :description => 'description2, "with quotes"',
                               :max => 10,
                               :position => 2)
         FlexibleCriterion.make(:assignment => @assignment,
-                              :flexible_criterion_name => 'criterion3',
+                              :name => 'criterion3',
                               :description => 'description3!',
                               :max => 1.6,
                               :position => 3)

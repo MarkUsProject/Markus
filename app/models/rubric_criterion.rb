@@ -25,8 +25,8 @@ class RubricCriterion < Criterion
                             only_integer: true,
                             greater_than: 0
 
-  validates_presence_of :rubric_criterion_name
-  validates_uniqueness_of :rubric_criterion_name,
+  validates_presence_of :name
+  validates_uniqueness_of :name,
                           scope: :assignment_id,
                           message: I18n.t('rubric_criteria.errors.messages.name_taken')
 
@@ -108,11 +108,11 @@ class RubricCriterion < Criterion
       raise CSVInvalidLineError
     end
     working_row = row.clone
-    rubric_criterion_name = working_row.shift
+    name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
     criterion = assignment.rubric_criteria.find_or_create_by(
-      rubric_criterion_name: rubric_criterion_name)
+      name: name)
     #Check that the weight is not a string.
     begin
       criterion.weight = Float(working_row.shift)
@@ -157,11 +157,11 @@ class RubricCriterion < Criterion
   # RuntimeError If there is not enough information, if the weight value
   #                           is zero (or doesn't evaluate to a float)
   def self.create_or_update_from_yml_key(key, assignment)
-    rubric_criterion_name = key[0]
+    name = key[0]
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
     criterion = assignment.rubric_criteria.find_or_create_by(
-      rubric_criterion_name: rubric_criterion_name)
+      name: name)
     #Check that the weight is not a string.
     begin
       criterion.weight = Float(key[1]['weight'])
@@ -216,11 +216,6 @@ class RubricCriterion < Criterion
         criterion_ta_associations.create(ta: ta, criterion: self, assignment: self.assignment)
       end
     end
-  end
-
-
-  def get_name
-    rubric_criterion_name
   end
 
   def remove_tas(ta_array)

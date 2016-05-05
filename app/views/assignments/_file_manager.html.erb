@@ -1,0 +1,65 @@
+<% content_for :head do %>
+    <%= javascript_include_tag 'file_manager' %>
+
+    <%= render partial: 'shared/navigation_warning',
+               formats: [:js],
+               handlers: [:erb] %>
+
+    <%= render partial: 'react_file_manager_boot_table',
+               formats: [:'js.jsx'],
+               handlers: [:erb] %>
+<% end %>
+
+<div class='wrapper'>
+  <% if flash[:submit_notice] -%>
+      <p class='success'><%= flash[:submit_notice] %></p>
+  <% end %>
+
+  <% if !@file_manager_errors.nil? && @file_manager_errors[:update_conflicts] %>
+      <div class='error'>
+        <h2><%= I18n.t('student.submission.conflicts') %></h2>
+        <p><%= I18n.t('student.submission.file_conflicts') %></p>
+        <ul>
+          <% @file_manager_errors[:update_conflicts].each do |conflict| %>
+              <li><%= conflict.to_s %></li>
+          <% end %>
+        </ul>
+      </div>
+  <% end %>
+
+  <% if flash[:commit_notice] %>
+      <div class='warning'>
+        <%= flash[:commit_notice] %>
+      </div>
+  <% end %>
+
+  <% if !@file_manager_errors.nil? && @file_manager_errors[:commit_error] %>
+      <div class='warning'>
+        <%= @file_manager_errors[:commit_error] %>
+      </div>
+  <% end %>
+
+  <% if !@file_manager_errors.nil? && @file_manager_errors[:size_conflict] %>
+      <div class='error'>
+        <%= @file_manager_errors[:size_conflict] %>
+      </div>
+  <% end %>
+
+
+  <div id='file_table'></div>
+</div>
+
+<aside class='dialog' id='addnew_dialog'>
+  <h2><%= t('add_new') %></h2>
+
+  <%= form_tag update_files_assignment_path(id: @assignment.id),
+               { multipart: true, id: 'file_form' } do %>
+      <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
+
+      <section class='dialog-actions'>
+        <%= submit_tag t(:submit),
+                       onclick: 'set_onbeforeunload(false); submitFile(event)' %>
+        <%= button_tag t(:close), onclick: 'modal_addnew.close();' %>
+      </section>
+  <% end %>
+</aside>
