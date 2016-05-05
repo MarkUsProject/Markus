@@ -1030,10 +1030,9 @@ describe Assignment do
           result = s.get_latest_result
           result.total_mark = total_mark
           result.marking_state = Result::MARKING_STATES[:complete]
-          @assignment.rubric_criteria.each do |cri|
-            result.marks.create!(markable_id: cri.id,
-                                 markable_type: RubricCriterion,
-                                 mark: (total_mark * 4.0 / 20).round)
+          result.marks.each do |m|
+            m.mark = (total_mark * 4.0 / 20).round
+            m.save!
           end
           result.save!
         end
@@ -1077,9 +1076,6 @@ describe Assignment do
           3.times { create(:accepted_student_membership, grouping: grouping) }
           submission = create(:version_used_submission, grouping: grouping)
           r = submission.get_latest_result
-          criteria.each do |criterion|
-            create(:mark, result: r, markable: criterion)
-          end
           r.reload
           r.update_attributes(marking_state: Result::MARKING_STATES[:complete])
         end
@@ -1140,9 +1136,6 @@ describe Assignment do
           3.times { create(:accepted_student_membership, grouping: grouping) }
           submission = create(:version_used_submission, grouping: grouping)
           r = submission.get_latest_result
-          criteria.each do |criterion|
-            create(:mark, result: r, markable: criterion)
-          end
           r.reload
           r.update_attributes(marking_state: Result::MARKING_STATES[:complete])
         end
