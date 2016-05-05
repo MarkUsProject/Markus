@@ -31,7 +31,7 @@ class ResultTest < ActiveSupport::TestCase
 
     should 'mark as partial' do
       @result.mark_as_partial
-      assert_equal(Result::MARKING_STATES[:partial],
+      assert_equal(Result::MARKING_STATES[:incomplete],
                    @result.marking_state,
                    'marking state should be partial')
     end

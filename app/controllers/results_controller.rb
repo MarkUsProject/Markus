@@ -5,13 +5,16 @@ class ResultsController < ApplicationController
                 except: [:codeviewer, :edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
                          :update_overall_comment, :remove_extra_mark,
-                         :update_marking_state, :download, :download_zip,
+                         :toggle_marking_state,
+                         :download, :download_zip,
                          :note_message,
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
                 only: [:edit, :update_mark, :create, :add_extra_mark,
                        :next_grouping, :update_overall_comment,
-                       :remove_extra_mark, :update_marking_state, :note_message]
+                       :remove_extra_mark,
+                       :toggle_marking_state,
+                       :note_message]
   before_filter :authorize_for_user,
                 only: [:codeviewer, :download, :download_zip]
   before_filter :authorize_for_student,
@@ -167,7 +170,7 @@ class ResultsController < ApplicationController
 
   def set_released_to_students
     @result = Result.find(params[:id])
-    released_to_students = (params[:value] == 'true')
+    released_to_students = !@result.released_to_students
     if params[:old_id]
       @old_result = Result.find(params[:old_id])
       @old_result.released_to_students = released_to_students
@@ -187,20 +190,26 @@ class ResultsController < ApplicationController
   end
 
   #Updates the marking state
-  def update_marking_state
+  def toggle_marking_state
     @result = Result.find(params[:id])
     @old_marking_state = @result.marking_state
-    @result.marking_state = params[:value]
+
+    if @result.marking_state == Result::MARKING_STATES[:complete]
+      @result.marking_state = Result::MARKING_STATES[:incomplete]
+    else
+      @result.marking_state = Result::MARKING_STATES[:complete]
+    end
+
     if @result.save
       # If marking_state is complete, update the cached distribution
-      if params[:value] == Result::MARKING_STATES[:complete]
+      if @result.marking_state == Result::MARKING_STATES[:complete]
         @result.submission.assignment.assignment_stat.refresh_grade_distribution
         @result.submission.assignment.update_results_stats
       end
-      render template: 'results/update_marking_state'
+      render 'results/toggle_marking_state'
     else # Failed to pass validations
       # Show error message
-      render template: 'results/marker/show_result_error'
+      render 'results/marker/show_result_error'
     end
   end
 
@@ -391,7 +400,7 @@ class ResultsController < ApplicationController
       @result = @submission.remark_result
       # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
-      if @result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students
+      if @result.marking_state == Result::MARKING_STATES[:complete] && !@result.released_to_students
         render 'results/student/no_remark_result'
         return
       end
@@ -485,7 +494,7 @@ class ResultsController < ApplicationController
           @submission.make_remark_result
         end
         @submission.remark_result.update_attributes(
-          marking_state: Result::MARKING_STATES[:partial])
+          marking_state: Result::MARKING_STATES[:incomplete])
         @submission.get_original_result.update_attributes(
           released_to_students: false)
         render js: 'location.reload();'

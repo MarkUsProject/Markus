@@ -149,7 +149,7 @@ class Submission < ActiveRecord::Base
   # submitted to instructors or TAs.
   def remark_submitted?
     results.where.not(remark_request_submitted_at: nil)
-           .where.not(marking_state: Result::MARKING_STATES[:unmarked]).size > 0
+           .where.not(marking_state: Result::MARKING_STATES[:incomplete]).size > 0
   end
 
   # Helper methods
@@ -191,7 +191,7 @@ class Submission < ActiveRecord::Base
 
   def make_remark_result
     remark = Result.create(
-      marking_state: Result::MARKING_STATES[:unmarked],
+      marking_state: Result::MARKING_STATES[:incomplete],
       submission: self,
       remark_request_submitted_at: Time.zone.now)
 
@@ -220,7 +220,7 @@ class Submission < ActiveRecord::Base
   def create_result
     result = Result.new
     results << result
-    result.marking_state = Result::MARKING_STATES[:unmarked]
+    result.marking_state = Result::MARKING_STATES[:incomplete]
     result.save
   end
 
