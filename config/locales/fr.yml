@@ -1131,8 +1131,8 @@ fr:
       title: "Titre"
       max_value: "Valeur maximale"
       grade: "Note intermédiaire"
-      x_mark: "x Note"
-      weight: "Coefficient"
+      mark: "Note"
+      x_weight: "x Coefficient"
 
     course_summaries:
       title: "Sommaire"

@@ -1098,8 +1098,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       title: "Título"
       max_value: "Valor máximo"
       grade: "Nota"
-      x_mark: "x Mark"
-      weight: "Peso"
+      mark: "Mark"
+      x_weight: "x Peso"
 
     key_pairs:
       title: "Os Pares de Chaves"
