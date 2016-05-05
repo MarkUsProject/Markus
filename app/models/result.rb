@@ -123,14 +123,10 @@ class Result < ActiveRecord::Base
   end
 
   def create_marks
-    @assignment = self.submission.assignment
-    @marks_map = Hash.new
-    @assignment.get_criteria.each do |criterion|
-      mark = criterion.marks.find_or_create_by(result_id: self.id)
-      @marks_map[criterion.id] = mark
-
-      mark.save(validate: false)
-      self.update_total_mark
+    assignment = self.submission.assignment
+    assignment.get_criteria.each do |criterion|
+      mark = criterion.marks.create(result_id: id)
     end
+    self.update_total_mark
   end
 end

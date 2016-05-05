@@ -129,7 +129,6 @@ describe Result do
                 let!(:results) do
                   Array.new(3) do |i|
                     create(:result,
-                           # total_mark: marks[i],
                            submission: submissions[i],
                            marking_state: Result::MARKING_STATES[:partial])
                   end
@@ -137,8 +136,7 @@ describe Result do
                 before do
                   results.each_with_index do |result, i|
                     result.marks.each do |m|
-                      m.mark = 0.0
-                      m.save
+                      m.update(:mark => 0.0)
                     end
                     result.total_mark = marks[i]
                     result.marking_state = Result::MARKING_STATES[:complete]
