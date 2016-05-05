@@ -860,8 +860,11 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  # TODO: This is currently disabled until starter code is automatically added
+  # to groups.
   def can_upload_starter_code?
-    groups.size == 0
+    #groups.size == 0
+    false
   end
 
   ### REPO ###
