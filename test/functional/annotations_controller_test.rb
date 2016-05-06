@@ -64,7 +64,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
      setup do
       @user = Admin.make
       @assignment = Assignment.make
-      @text_annotation = TextAnnotation.make
+      @text_annotation = TextAnnotation.make({:creator => @user})
       @category = AnnotationCategory.make
       @annotation_text = AnnotationText.make
       @submission_file = SubmissionFile.make
@@ -145,7 +145,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
      setup do
       @user = Ta.make
       @assignment = Assignment.make
-      @text_annotation = TextAnnotation.make
+      @text_annotation = TextAnnotation.make({:creator => @user})
       @category = AnnotationCategory.make
       @annotation_text = AnnotationText.make
       @submission_file = SubmissionFile.make
@@ -226,7 +226,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
      setup do
       @user = Student.make
       @assignment = Assignment.make
-      @text_annotation = TextAnnotation.make
+      @text_annotation = TextAnnotation.make({:creator => @user})
       @category = AnnotationCategory.make
       @annotation_text = AnnotationText.make
       @submission_file = SubmissionFile.make

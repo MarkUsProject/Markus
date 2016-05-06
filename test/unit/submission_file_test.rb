@@ -236,12 +236,15 @@ require 'shoulda'
       end
       context 'with valid annotations' do
         setup do
+          @ta = Ta.make
           @annot1 = ImageAnnotation.make({:submission_file => @submissionfile,
             :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10, :id => 3,
-            :annotation_text => AnnotationText.make({:id => 1})})
+            :annotation_text => AnnotationText.make({:id => 1}),
+            :creator => @ta})
           @annot2 = ImageAnnotation.make({:submission_file => @submissionfile,
             :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100, :id => 4,
-            :annotation_text => AnnotationText.make({:id => 2})})
+            :annotation_text => AnnotationText.make({:id => 2}),
+            :creator => @ta})
         end
         should 'return a corresponding array' do
           @submissionfile.annotations.push(@annot1)
@@ -267,12 +270,15 @@ require 'shoulda'
       end
       context 'with valid annotations' do
         setup do
+          @ta = Ta.make
           @annot1 = ImageAnnotation.make({:submission_file => @submissionfile,
             :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10, :id => 3,
-            :annotation_text => AnnotationText.make({:id => 1})})
+            :annotation_text => AnnotationText.make({:id => 1}),
+            :creator => @ta})
           @annot2 = ImageAnnotation.make({:submission_file => @submissionfile,
             :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100, :id => 4,
-            :annotation_text => AnnotationText.make({:id => 2})})
+            :annotation_text => AnnotationText.make({:id => 2}),
+            :creator => @ta})
         end
         should 'return a corresponding array' do
           @submissionfile.annotations.push(@annot1)
