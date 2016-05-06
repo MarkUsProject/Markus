@@ -23,7 +23,8 @@ class TextAnnotationTest < ActiveSupport::TestCase
   context 'JavaScript functions' do
 
     setup do
-      @textannotation = TextAnnotation.make
+      @ta = Ta.make
+      @textannotation = TextAnnotation.make({:creator => @ta})
     end
 
     should 'render annotation_list_link_partial' do

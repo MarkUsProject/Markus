@@ -164,6 +164,7 @@ ImageAnnotation.blueprint do
   annotation_text_id {annotation_text.id}
   submission_file_id {submission_file.id}
   annotation_number {rand(1000)+1}
+  creator {Admin.make}
 end
 
 Mark.blueprint do
@@ -307,6 +308,7 @@ TextAnnotation.blueprint do
           annotation_category: AnnotationCategory.make(
               assignment: submission_file.submission.grouping.assignment))
   annotation_number { rand(1000) + 1 }
+  creator { Admin.make }
 end
 
 Token.blueprint do
