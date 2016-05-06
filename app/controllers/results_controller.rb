@@ -57,7 +57,6 @@ class ResultsController < ApplicationController
     @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       @marks_map[criterion.id] = mark
-
       # Loading up previous results for the case of a remark
       if @old_result
         oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
@@ -66,9 +65,9 @@ class ResultsController < ApplicationController
       end
 
       mark.save(validate: false)
-      @result.update_total_mark
     end
 
+    @result.update_total_mark
     groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                       current_user)
     # We sort by group name by default
