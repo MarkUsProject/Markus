@@ -58,7 +58,11 @@ class Submission < ActiveRecord::Base
   end
 
   def remark_result
-    results.where.not(remark_request_submitted_at: nil).first
+    if remark_request_timestamp.nil? || results.length < 2
+      nil
+    else
+      results.order(:created_at).last
+    end
   end
 
   def remark_result_id
@@ -148,8 +152,7 @@ class Submission < ActiveRecord::Base
   # Returns whether this submission has a remark request that has been
   # submitted to instructors or TAs.
   def remark_submitted?
-    results.where.not(remark_request_submitted_at: nil)
-           .where.not(marking_state: Result::MARKING_STATES[:unmarked]).size > 0
+    results.where.not(remark_request_submitted_at: nil).size > 0
   end
 
   # Helper methods
@@ -190,9 +193,8 @@ class Submission < ActiveRecord::Base
   end
 
   def make_remark_result
-    remark = Result.create(
-      marking_state: Result::MARKING_STATES[:unmarked],
-      submission: self,
+    remark = results.create(
+      marking_state: Result::MARKING_STATES[:incomplete],
       remark_request_submitted_at: Time.zone.now)
 
     # populate remark result with old marks
@@ -207,11 +209,11 @@ class Submission < ActiveRecord::Base
     end
 
     original_result.marks.each do |mark|
-      remark_result.marks.create(result: remark,
-                                 created_at: Time.zone.now,
-                                 markable_id: mark.markable_id,
-                                 mark: mark.mark,
-                                 markable_type: mark.markable_type)
+      remark.marks.create(result: remark,
+                          created_at: Time.zone.now,
+                          markable_id: mark.markable_id,
+                          mark: mark.mark,
+                          markable_type: mark.markable_type)
     end
   end
 
@@ -220,7 +222,7 @@ class Submission < ActiveRecord::Base
   def create_result
     result = Result.new
     results << result
-    result.marking_state = Result::MARKING_STATES[:unmarked]
+    result.marking_state = Result::MARKING_STATES[:incomplete]
     result.save
   end
 

@@ -77,10 +77,6 @@ jQuery(document).ready(function() {
     });
   });
 
-  // Update server status
-  var state = document.getElementById('marking_state');
-  update_status(state, state.value);
-
   // Handle indenting in the new annotation textarea (2 spaces)
   jQuery('#new_annotation_content').keydown(function(e) {
     var keyCode = e.keyCode || e.which;
@@ -186,15 +182,4 @@ function update_rubric_mark(elem, mark_id, value) {
 function update_total_mark(total_mark) {
   document.getElementById('current_mark_div').innerHTML       = total_mark;
   document.getElementById('current_total_mark_div').innerHTML = total_mark;
-}
-
-function update_marking_state_selected(current_marking_state, new_marking_state) {
-  document.getElementById('marking_state').value = new_marking_state;
-
-  /* Update server state if error displayed or new state is different from server state */
-  var error_message = document.getElementById('criterion_incomplete_error');
-  if (error_message.style.display != 'none' || current_marking_state != new_marking_state) {
-    error_message.style.display = 'none';
-    jQuery.ready();
-  }
 }
