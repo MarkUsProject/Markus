@@ -45,9 +45,7 @@
       <% for criterion in @criteria %>
         columns.push({
           id: 'criterion_' + <%= criterion.id %>,
-          content: '<%= criterion.has_attribute?('flexible_criterion_name') ?
-                       criterion.flexible_criterion_name :
-                       criterion.rubric_criterion_name %>',
+          content: '<%= criterion.name %>',
           sortable: true,
           compare: compare_numeric_values,
           searchable: false

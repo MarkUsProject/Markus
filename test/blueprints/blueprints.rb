@@ -25,8 +25,8 @@ Sham.notes_message {Faker::Lorem.paragraphs}
 
 Sham.overall_comment {Faker::Lorem.sentence(3)}
 
-Sham.flexible_criterion_name {|i| "machinist_flexible_criterion_#{i}"}
-Sham.rubric_criterion_name {|i| "machinist_rubric_criterion_#{i}"}
+Sham.name {|i| "machinist_flexible_criterion_#{i}"}
+Sham.name {|i| "machinist_rubric_criterion_#{i}"}
 
 Sham.date {rand(50).days.from_now}
 Sham.name {Faker::Name.name}
@@ -101,7 +101,7 @@ end
 
 FlexibleCriterion.blueprint do
   assignment {Assignment.make(:marking_scheme_type => 'flexible')}
-  flexible_criterion_name
+  name
   description
   position {1} # override if many for the same assignment
   max{10}
@@ -167,6 +167,7 @@ ImageAnnotation.blueprint do
   annotation_text_id {annotation_text.id}
   submission_file_id {submission_file.id}
   annotation_number {rand(1000)+1}
+  creator {Admin.make}
 end
 
 Mark.blueprint do
@@ -198,13 +199,13 @@ end
 
 Result.blueprint do
   submission {Submission.make}
-  marking_state {Result::MARKING_STATES[:partial]}
+  marking_state {Result::MARKING_STATES[:incomplete]}
   total_mark {0}
 end
 
 RubricCriterion.blueprint do
   assignment {Assignment.make(:marking_scheme_type => 'rubric')}
-  rubric_criterion_name {Sham.rubric_criterion_name}
+  name {Sham.name}
   position {1}  # override if many for the same assignment
   weight {1}
   assigned_groups_count {0}
@@ -342,6 +343,7 @@ TextAnnotation.blueprint do
           annotation_category: AnnotationCategory.make(
               assignment: submission_file.submission.grouping.assignment))
   annotation_number { rand(1000) + 1 }
+  creator { Admin.make }
 end
 
 Token.blueprint do

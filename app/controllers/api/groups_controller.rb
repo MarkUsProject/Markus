@@ -114,10 +114,10 @@ module Api
       end
 
       matched_criteria = RubricCriterion
-                           .where(rubric_criterion_name: params.keys,
+                           .where(name: params.keys,
                                   assignment_id: params[:assignment_id])
       matched_criteria.concat(FlexibleCriterion
-                                .where(flexible_criterion_name: params.keys,
+                                .where(name: params.keys,
                                        assignment_id: params[:assignment_id]))
       if matched_criteria.empty?
         render 'shared/http_status', locals: { code: '404', message:
@@ -142,16 +142,16 @@ module Api
 
     def set_mark_by_criteria(criteria, mark_to_change)
       if criteria.is_a?(FlexibleCriterion)
-        if params[criteria.flexible_criterion_name] == 'nil'
+        if params[criteria.name] == 'nil'
           mark_to_change.mark = nil
         else
-          mark_to_change.mark = params[criteria.flexible_criterion_name].to_f
+          mark_to_change.mark = params[criteria.name].to_f
         end
       else
-        if params[criteria.rubric_criterion_name] == 'nil'
+        if params[criteria.name] == 'nil'
           mark_to_change.mark = nil
         else
-          mark_to_change.mark = params[criteria.rubric_criterion_name]
+          mark_to_change.mark = params[criteria.name]
         end
       end
       mark_to_change.save

@@ -2,8 +2,7 @@ class Result < ActiveRecord::Base
 
   MARKING_STATES = {
     complete: 'complete',
-    partial: 'partial',
-    unmarked: 'unmarked'
+    incomplete: 'incomplete'
   }
 
   belongs_to :submission
@@ -18,14 +17,9 @@ class Result < ActiveRecord::Base
   before_update :unrelease_partial_results
   before_save :check_for_nil_marks
 
-  scope :submitted_results, lambda {
-    where.not(marking_state: MARKING_STATES[:unmarked])
-  }
-
   scope :submitted_remarks_and_all_non_remarks, lambda {
     results = Result.arel_table
-    where(results[:remark_request_submitted_at].eq(nil)
-        .or(results[:marking_state].not_eq(MARKING_STATES[:unmarked])))
+    where(results[:remark_request_submitted_at].eq(nil))
   }
 
   # Returns a list of total marks for each student whose submissions are graded
@@ -63,22 +57,22 @@ class Result < ActiveRecord::Base
 
   # The sum of the bonuses and deductions, other than late penalty
   def get_total_extra_points
-    extra_marks.points.map(&:extra_mark).reduce(0, :+)
+    extra_marks.points.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # The sum of all the positive extra marks
   def get_positive_extra_points
-    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+)
+    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # The sum of all the negative extra marks
   def get_negative_extra_points
-    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+)
+    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # Percentage deduction for late penalty
   def get_total_extra_percentage
-    extra_marks.percentage.map(&:extra_mark).reduce(0, :+)
+    extra_marks.percentage.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # Point deduction for late penalty
@@ -114,7 +108,7 @@ class Result < ActiveRecord::Base
 
   def mark_as_partial
     return if self.released_to_students
-    self.marking_state = Result::MARKING_STATES[:partial]
+    self.marking_state = Result::MARKING_STATES[:incomplete]
     self.save
   end
 

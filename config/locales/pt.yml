@@ -304,6 +304,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       previous_submission:  "Submissão anterior"
       next_submission:      "Próxima submissão"
       marking_status:       "Status de avaliação:"
+      set_to_complete:      "Conjunto para completar"
+      revert_to_incomplete: "Reverter para incompleta"
       notes:                "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Incluir anotações:"
       include_annotations_warning: "Aviso! Anotações sobre PDFs não são presentemente descarregado."
@@ -311,6 +313,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       marks:
         total_mark: "Nota total:"
         released:   "Liberar:"
+        release:    "Lançamento"
+        unrelease:  "Pegue de volta"
         comment: "Comentário"
         percentage: "Porcentagem"
         invalid_mark: "Nota inválida!"
@@ -1105,7 +1109,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       title: "Título"
       max_value: "Valor máximo"
       grade: "Nota"
-      x_mark: "x Mark"
+      mark: "Mark"
       weight: "Peso"
 
     key_pairs:

@@ -18,6 +18,8 @@ class User < ActiveRecord::Base
   has_many :accepted_memberships,
            -> { where membership_status: [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'Membership'
+  has_many :annotations, as: :creator
+
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
 

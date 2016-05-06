@@ -54,6 +54,9 @@ Markus::Application.routes.draw do
         post 'disinvite_member'
         get 'render_feedback_file'
         get 'view_summary'
+        get 'populate_file_manager'
+        post 'update_files'
+        get 'download'
       end
 
       resources :tags do
@@ -189,7 +192,7 @@ Markus::Application.routes.draw do
             post 'remove_extra_mark'
             post 'set_released_to_students'
             post 'update_overall_comment'
-            post 'update_marking_state'
+            post 'toggle_marking_state'
             patch 'update_remark_request'
             get 'update_positions'
             post 'update_mark'

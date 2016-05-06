@@ -8,9 +8,9 @@ class ResultTest < ActiveSupport::TestCase
   should have_many :extra_marks
   should validate_presence_of :marking_state
 
-  context 'A result with partial state' do
+  context 'A result with an incomplete state' do
     setup do
-      @result = Result.make(:marking_state => 'partial')
+      @result = Result.make(marking_state: 'incomplete')
     end
 
     should 'get subtotal' do
@@ -19,7 +19,7 @@ class ResultTest < ActiveSupport::TestCase
       assert_equal(2, @result.get_subtotal, 'Subtotal should be equal to 2')
     end
 
-    should 'catch a valid result (for partial marking state)' do
+    should 'catch a valid result (for incomplete marking state)' do
       assert @result.valid?
     end
   end
@@ -29,11 +29,11 @@ class ResultTest < ActiveSupport::TestCase
       @result = Result.make(:marking_state => 'complete')
     end
 
-    should 'mark as partial' do
+    should 'mark as incomplete' do
       @result.mark_as_partial
-      assert_equal(Result::MARKING_STATES[:partial],
+      assert_equal(Result::MARKING_STATES[:incomplete],
                    @result.marking_state,
-                   'marking state should be partial')
+                   'marking state should be incomplete')
     end
   end
 
@@ -54,18 +54,8 @@ class ResultTest < ActiveSupport::TestCase
     end
   end
 
-#  def test_mark_as_partial2
-#    # ???
-#    result = Result.make(:marking_state => 'complete',
-#                         :released_to_students => true)
-#
-#    # result.mark_as_complete
-#    assert_equal(Result::MARKING_STATES[:complete], result.marking_state, "marking state should
-#    be complete")
-#  end
-
   should 'catch a valid result (for unmarked marking state)' do
-      result = Result.make(:marking_state => 'unmarked')
+      result = Result.make(marking_state: 'incomplete')
       assert result.valid?
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160421002312) do
+ActiveRecord::Schema.define(version: 20160504175156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,8 +52,11 @@ ActiveRecord::Schema.define(version: 20160421002312) do
     t.integer "page"
     t.integer "column_start"
     t.integer "column_end"
+    t.integer "creator_id"
+    t.string  "creator_type"
   end
 
+  add_index "annotations", ["creator_type", "creator_id"], name: "index_annotations_on_creator_type_and_creator_id", using: :btree
   add_index "annotations", ["submission_file_id"], name: "index_annotations_on_submission_file_id", using: :btree
 
   create_table "assignment_files", force: :cascade do |t|
@@ -150,17 +153,17 @@ ActiveRecord::Schema.define(version: 20160421002312) do
   add_index "feedback_files", ["submission_id"], name: "index_feedback_files_on_submission_id", using: :btree
 
   create_table "flexible_criteria", force: :cascade do |t|
-    t.string   "flexible_criterion_name",                                      null: false
+    t.string   "name",                                                       null: false
     t.text     "description"
     t.integer  "position"
-    t.integer  "assignment_id",                                                null: false
-    t.decimal  "max",                     precision: 10, scale: 1,             null: false
+    t.integer  "assignment_id",                                              null: false
+    t.decimal  "max",                   precision: 10, scale: 1,             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "assigned_groups_count",                            default: 0
+    t.integer  "assigned_groups_count",                          default: 0
   end
 
-  add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], name: "index_flexible_criteria_on_assignment_id_and_name", unique: true, using: :btree
+  add_index "flexible_criteria", ["assignment_id", "name"], name: "index_flexible_criteria_on_assignment_id_and_name", unique: true, using: :btree
   add_index "flexible_criteria", ["assignment_id"], name: "index_flexible_criteria_on_assignment_id", using: :btree
 
   create_table "grace_period_deductions", force: :cascade do |t|
@@ -349,7 +352,7 @@ ActiveRecord::Schema.define(version: 20160421002312) do
   end
 
   create_table "rubric_criteria", force: :cascade do |t|
-    t.string   "rubric_criterion_name",             null: false
+    t.string   "name",                              null: false
     t.integer  "assignment_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -368,7 +371,7 @@ ActiveRecord::Schema.define(version: 20160421002312) do
     t.integer  "assigned_groups_count", default: 0
   end
 
-  add_index "rubric_criteria", ["assignment_id", "rubric_criterion_name"], name: "rubric_critera_index_1", unique: true, using: :btree
+  add_index "rubric_criteria", ["assignment_id", "name"], name: "rubric_critera_index_1", unique: true, using: :btree
 
   create_table "section_due_dates", force: :cascade do |t|
     t.datetime "due_date"

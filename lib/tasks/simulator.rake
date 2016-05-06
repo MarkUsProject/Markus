@@ -86,13 +86,13 @@ namespace :markus do
         weight_3 = rand(5) + 5
         weight_4 = rand(5) + 5
         rubric_criterias = [{
-            rubric_criterion_name: "Uses Conditionals",
+            name: "Uses Conditionals",
             weight: weight_1},
-          {rubric_criterion_name: "Code Clarity",
+          {name: "Code Clarity",
             weight: weight_2}, {
-            rubric_criterion_name: "Code Is Documented",
+            name: "Code Is Documented",
             weight: weight_3},
-          {rubric_criterion_name: "Uses For Loop",
+          {name: "Uses For Loop",
             weight: weight_4}]
         default_levels = {level_0_name: "Quite Poor", level_0_description: "This criterion was not satisifed whatsoever", level_1_name: "Satisfactory", level_1_description: "This criterion was satisfied", level_2_name: "Good", level_2_description: "This criterion was satisfied well", level_3_name: "Great", level_3_description: "This criterion was satisfied really well!", level_4_name: "Excellent", level_4_description: "This criterion was satisfied excellently"}
         rubric_criterias.each do |rubric_criteria|
@@ -203,7 +203,7 @@ namespace :markus do
             marked = rand(3)
             if (marked == 1 and !submission.nil?)
               @result = submission.get_latest_result
-              @result.marking_state = Result::MARKING_STATES[:partial]
+              @result.marking_state = Result::MARKING_STATES[:incomplete]
               @result.save!
               submission.save!
             elsif (marked == 2 and  !submission.nil?)

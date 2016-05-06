@@ -69,6 +69,8 @@ class AnnotationsController < ApplicationController
         column_end: params[:column_end],
         annotation_text_id: @text.id,
         submission_file_id: @submission_file_id,
+        creator_id: current_user.id,
+        creator_type: current_user.type,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
       )
@@ -80,6 +82,8 @@ class AnnotationsController < ApplicationController
         x2: Integer(params[:x2]),
         y1: Integer(params[:y1]),
         y2: Integer(params[:y2]),
+        creator_id: current_user.id,
+        creator_type: current_user.type,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
       )
@@ -92,6 +96,8 @@ class AnnotationsController < ApplicationController
         y1: Integer(params[:y1]),
         y2: Integer(params[:y2]),
         page: Integer(params[:page]),
+        creator_id: current_user.id,
+        creator_type: current_user.type,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1
       )
