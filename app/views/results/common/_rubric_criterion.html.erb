@@ -14,7 +14,7 @@
   <div id="<%= "mark_criterion_title_#{mark.id}_oldmark" %>" class="padding_left_old">
     <strong>
       <%= t('marker.marks.old').html_safe %>
-      <%= old_mark.mark %>: <%= mark_criterion['level_' + old_mark.mark.to_i.to_s + '_name'] %>&nbsp;
+      <%= old_mark.mark.round %>: <%= mark_criterion['level_' + old_mark.mark.to_i.to_s + '_name'] %>&nbsp;
     </strong>
     <%= mark_criterion['level_' + old_mark.mark.to_i.to_s + '_description'] %>
   </div>
@@ -25,7 +25,7 @@
      data-id='<%= mark_criterion.id %>'>
   <% if !mark.mark.nil? -%>
     <strong>
-      <%= mark.mark %>: <%= mark_criterion['level_' + mark.mark.to_i.to_s + '_name'] %>&nbsp;
+      <%= mark.mark.round %>: <%= mark_criterion['level_' + mark.mark.to_i.to_s + '_name'] %>&nbsp;
     </strong>
     <%= mark_criterion['level_' + mark.mark.to_i.to_s + '_description'] %>
   <% end -%>
