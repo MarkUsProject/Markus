@@ -16,7 +16,7 @@ class SubmissionTest < ActiveSupport::TestCase
 
   should 'create a new remark result' do
     s = Submission.make
-    s.save
+    s.update(remark_request_timestamp: Time.zone.now)
     s.make_remark_result
     assert_not_nil s.remark_result, 'Remark result was supposed to be created'
     assert_equal s.remark_result.marking_state,
@@ -28,11 +28,8 @@ class SubmissionTest < ActiveSupport::TestCase
   context 'A submission with a remark result submitted' do
     setup do
       @submission = Submission.make
-      @submission.save
+      @submission.update(remark_request_timestamp: Time.zone.now)
       @submission.make_remark_result
-      @result = @submission.remark_result
-      @result.marking_state = Result::MARKING_STATES[:incomplete]
-      @result.save
     end
 
     should 'return true on has_remark? call' do
@@ -44,11 +41,13 @@ class SubmissionTest < ActiveSupport::TestCase
     end
   end
 
-  context 'A submission with a remark result not submitted' do
+  context 'A submission with a remark result created but not submitted' do
     setup do
       @submission = Submission.make
-      @submission.save
+      @result = Result.make(submission: @submission)
+      @submission.update(remark_request_timestamp: Time.zone.now)
       @submission.make_remark_result
+      @submission.remark_result.update(remark_request_submitted_at: nil)
     end
 
     should 'return true on has_remark? call' do
@@ -97,6 +96,7 @@ class SubmissionTest < ActiveSupport::TestCase
 
   should 'create a remark result' do
     s = Submission.make
+    s.update(remark_request_timestamp: Time.zone.now)
     s.make_remark_result
     assert_not_nil s.remark_result, 'Remark result was supposed to be created'
     assert_equal s.remark_result.marking_state,

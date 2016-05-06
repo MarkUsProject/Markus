@@ -189,7 +189,7 @@ class ResultsController < ApplicationController
     end
   end
 
-  #Updates the marking state
+  # Toggles the marking state
   def toggle_marking_state
     @result = Result.find(params[:id])
     @old_marking_state = @result.marking_state
@@ -201,11 +201,8 @@ class ResultsController < ApplicationController
     end
 
     if @result.save
-      # If marking_state is complete, update the cached distribution
-      if @result.marking_state == Result::MARKING_STATES[:complete]
-        @result.submission.assignment.assignment_stat.refresh_grade_distribution
-        @result.submission.assignment.update_results_stats
-      end
+      @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      @result.submission.assignment.update_results_stats
       render 'results/toggle_marking_state'
     else # Failed to pass validations
       # Show error message
@@ -398,9 +395,8 @@ class ResultsController < ApplicationController
     if @submission.remark_submitted?
       @old_result = @result
       @result = @submission.remark_result
-      # if remark result's marking state is 'unmarked' then the student has
-      # saved a remark request but not submitted it yet, therefore, still editable
-      if @result.marking_state == Result::MARKING_STATES[:complete] && !@result.released_to_students
+      # Check if remark request has been submitted but not released yet
+      if !@result.remark_request_submitted_at.nil? && !@result.released_to_students
         render 'results/student/no_remark_result'
         return
       end
