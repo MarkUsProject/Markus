@@ -265,7 +265,7 @@ module AutomatedTestsHelper
       if t.nil?
         raise I18n.t('automated_tests.missing_tokens')
       end
-      if t.tokens > 0
+      if t.remaining > 0
         t.decrease_tokens
         true
       else
@@ -429,7 +429,8 @@ module AutomatedTestsHelper
         marks_earned: 0,
         repo_revision: revision_number)
 
-      tests = script['test']
+      tests = script['test'] || []  # there may not be any test results
+
       tests.each do |test|
         marks_earned += test['marks_earned'].to_i
         # if any of the tests fail, we consider the completion status to be fail
