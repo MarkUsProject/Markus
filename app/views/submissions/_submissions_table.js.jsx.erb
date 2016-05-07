@@ -326,6 +326,8 @@
       });
     },
     uncollectAllSubmissions: function() {
+      var confirm = window.confirm("<%= t('collect_submissions.undo_results_loss_warning') %>");
+      if (!confirm) { return; }
       jQuery.ajax({
         method: 'GET',
         url: 'uncollect_all_submissions',
@@ -344,6 +346,9 @@
       });
     },
     collectSubmissions: function() {
+      var confirm = window.confirm("<%= t('collect_submissions.results_loss_warning') %>");
+      if (!confirm) { return; }
+
       var dataLoad = {
         groupings: this.props.selected_submissions
       };
@@ -369,14 +374,13 @@
       return (
         <div className='react-release-marks'>
           <% if @current_user.admin? %>
-            <button onClick={this.collectSubmissions}
-                    data-confirm='<%= t('collect_submissions.results_loss_warning') %>'>
+            <button onClick={this.collectSubmissions}>
               <%= j raw I18n.t('collect_submissions.collect') %>
             </button>
           <% end %>
           <% if @assignment.can_uncollect_submissions? %>
             <button onClick={this.uncollectAllSubmissions}
-                    data-confirm='<%= t('collect_submissions.undo_results_loss_warning')%>' data-remote="true">
+                    data-remote="true">
               <%=j raw I18n.t('collect_submissions.uncollect_all') %>
             </button>
           <% end %>

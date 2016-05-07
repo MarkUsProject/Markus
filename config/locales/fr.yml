@@ -138,7 +138,7 @@ fr:
       section_collection_job_started: "La récupération des envois pour les sections %{section_names} pour le projet %{assignment_identifier} a débuté. Cela peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
       priority_given: "Une priorité importante a été donné à cet envoi. Il va bientot être prêt."
       errors:               "Erreurs"
-      results_loss_warning: "Attention : cette action effacera vos annotations et évaluations.\n\n!Êtes-vous sûr de vouloir continuer ?"
+      results_loss_warning: "Attention : cette action effacera vos annotations et évaluations. Êtes-vous sûr de vouloir continuer ?"
       must_select_a_section: "Vous devez sélectionner une section pour récupérer les envois de ses groupes."
       could_not_find_section: "La section demandée n'a pas été trouvée."
       could_not_collect_section: "Les envois de la section %{section_name} pour le projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération pour cette section n'est pas encore passée."

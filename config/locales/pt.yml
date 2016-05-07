@@ -136,7 +136,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       section_collection_job_started: "Coleta das submissões para seções %{section_name} para o projeto %{assignment_identifier} começou. O processo pode demorar, você poderá acessar as submissões assim que elas tornarem-se disponíveis."
       priority_given: "A submissão foi dada prioridade de coleta. Ela estará pronta em breve."
       errors:               "Erros"
-      results_loss_warning: "Nota: Isso apagará qualquer avaliação e anotações que já foram feitas.\n\n Tem certeza que deseja continuar?"
+      results_loss_warning: "Nota: Isso apagará qualquer avaliação e anotações que já foram feitas. Tem certeza que deseja continuar?"
       must_select_a_section: "Você deve selecionar uma sessão para coletar as submissões dos grupos."
       could_not_find_section: "A sessão desejada não foi encontrada."
       could_not_collect_section: "Coleta de submissões para sessão %{section_name} e projeto %{assignment_identifier} não foi possível - a data de coleta não foi atingida."
