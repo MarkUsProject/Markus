@@ -8,6 +8,7 @@ class AnnotationsController < ApplicationController
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
     submission= @submission_file.submission
+    result = submission.result
     is_remark = submission.has_remark?
 
     if params[:annotation_type] == 'image'
@@ -17,7 +18,8 @@ class AnnotationsController < ApplicationController
         y1: Integer(params[:y1]), y2: Integer(params[:y2]),
         submission_file_id: @submission_file_id,
         is_remark: is_remark,
-        annotation_number: submission.annotations.count + 1
+        annotation_number: submission.annotations.count + 1,
+        result: result
       })
     elsif params[:annotation_type] == 'pdf'
       @annotation = PdfAnnotation.new
@@ -29,7 +31,8 @@ class AnnotationsController < ApplicationController
                                     submission_file_id: @submission_file_id,
                                     is_remark: is_remark,
                                     annotation_number: submission.annotations
-                                                                 .count + 1
+                                                                 .count + 1,
+                                    result: result
                                    )
     else
       @annotation = TextAnnotation.new
@@ -40,7 +43,8 @@ class AnnotationsController < ApplicationController
         column_end: params[:column_end],
         submission_file_id: @submission_file_id,
         is_remark: is_remark,
-        annotation_number: submission.annotations.count + 1
+        annotation_number: submission.annotations.count + 1,
+        result: result
       })
     end
     @annotation.annotation_text = @text
@@ -59,6 +63,7 @@ class AnnotationsController < ApplicationController
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
     submission= @submission_file.submission
+    result = submission.result
     is_remark = submission.has_remark?
     case params[:annotation_type]
     when 'text'
@@ -72,7 +77,8 @@ class AnnotationsController < ApplicationController
         creator_id: current_user.id,
         creator_type: current_user.type,
         is_remark: is_remark,
-        annotation_number: submission.annotations.count + 1
+        annotation_number: submission.annotations.count + 1,
+        result: result
       )
     when 'image'
       @annotation = ImageAnnotation.create(
@@ -85,7 +91,8 @@ class AnnotationsController < ApplicationController
         creator_id: current_user.id,
         creator_type: current_user.type,
         is_remark: is_remark,
-        annotation_number: submission.annotations.count + 1
+        annotation_number: submission.annotations.count + 1,
+        result: result
       )
     when 'pdf'
       @annotation = PdfAnnotation.create(
@@ -99,7 +106,8 @@ class AnnotationsController < ApplicationController
         creator_id: current_user.id,
         creator_type: current_user.type,
         is_remark: is_remark,
-        annotation_number: submission.annotations.count + 1
+        annotation_number: submission.annotations.count + 1,
+        result: result
       )
     end
 
