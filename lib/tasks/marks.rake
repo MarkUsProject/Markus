@@ -47,7 +47,7 @@ namespace :db do
       result.save
     end
 
-    Assignment.find([1, 2]).each { |a| a.update_results_stats }
+    Assignment.where(short_identifier: %w(A1 A2)).each &:update_results_stats
 
     puts 'Assign Marks for Spreadsheets'
     grade_entry_form = GradeEntryForm.find(1)

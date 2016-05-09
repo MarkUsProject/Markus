@@ -136,7 +136,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       section_collection_job_started: "Coleta das submissões para seções %{section_name} para o projeto %{assignment_identifier} começou. O processo pode demorar, você poderá acessar as submissões assim que elas tornarem-se disponíveis."
       priority_given: "A submissão foi dada prioridade de coleta. Ela estará pronta em breve."
       errors:               "Erros"
-      results_loss_warning: "Nota: Isso apagará qualquer avaliação e anotações que já foram feitas.\n\n Tem certeza que deseja continuar?"
+      results_loss_warning: "Nota: Isso apagará qualquer avaliação e anotações que já foram feitas. Tem certeza que deseja continuar?"
       must_select_a_section: "Você deve selecionar uma sessão para coletar as submissões dos grupos."
       could_not_find_section: "A sessão desejada não foi encontrada."
       could_not_collect_section: "Coleta de submissões para sessão %{section_name} e projeto %{assignment_identifier} não foi possível - a data de coleta não foi atingida."
@@ -289,7 +289,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
       annot_summary: "Resumo de anot."
       source_code: "código fonte"
-      test_reuslts: "Resultado dos testes"
+      test_results: "Resultado dos testes"
+      feedback_files: "Arquivos de comentários"
       remark_request: "Pedido de revisão"
       remark_submitted_on: "Pedido de revisão enviado"
       remark_instructions: "Instruções para pedidos de revisão"
@@ -359,6 +360,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     common:
       submission_file: "Arquivo enviado:"
       test_results: "Resultado dos testes:"
+      feedback_files: "Arquivos de comentários"
       no_file_in_repository: "[Nenhum arquivo no respositório]"
       cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
       image_downloading: "Baixando pdf, por favor espere."
@@ -995,10 +997,15 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         load: "Carregar"
       no_files_available: "[Nenhum resultado disponíveis dos testes]"
       loading_results: "Carregando resultados..."
-      running_tests: "Executando testes..."
+      running_tests: "Executando testes. Por favor, atualize esta página para visualizar os resultados."
       build_successful: "Testes Completados. Veja '%{logfile}' para detalhes."
       build_failed: "Falha de compilação. Veja '%{logfile}' para investigar."
       build_error: "Erro desconhecido com Ant. O Ant foi corretamente instalado? Veja '%{logfile}' para investigar."
+
+    feedback_file:
+      error:
+        no_access: "Não há accesso para resultado do teste com id #%{feedback_file_id}."
+      no_files_available: "[No arquivo de feedback disponíveis]"
 
     criteria_csv_error:
       incomplete_row: "contém poucas informações."
@@ -1335,6 +1342,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       due_date_is_passed: "Você não pode executar o teste pois a sua entrega está fora do prazo "
       information: "Informação"
       run_tests: "Executar testes"
+      test_run: "Execução de Teste"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br>
                       Se você já enviou um arquivo e que executar os testes nele, use o botao \"Coletar e preparar testes\" abaixo."
       collect_and_test: "Colete e prepare os testes"
@@ -1359,11 +1367,20 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       missing_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
       dir_not_exist: "O diretório %{dir} necessario para o Ant não existe"
       token:
-        tokens_form: "Tokens disponíveis por grupo"
+        tokens_form: "Tokens disponíveis por grupo por dia"
         tokens_per_day: "<span class=\"prop_label\">Tokens por dia:</span> %{tokens}"
         tokens_not_given_yet: "<span class=\"prop_label\">Tokens disponíveis:</span> Nenhum tokens dado"
         tokens_no_more_available: "<span class=\"prop_label\">Tokens disponíveis:</span > Mais nenhum token disponível "
         tokens_available: "<span class=\"prop_label\">Tokens disponíveis:</span> %{tokens}"
+      test_results_table:
+        test_name: "Nome do Teste"
+        input: "Entrada"
+        output: "Saída"
+        expected: "Esperado"
+        marks_earned: "Marcas Ganhou"
+        status: "Estado"
+        passed: "Passou"
+        failed: "Fracassado"
 
 #Missing Activerecord Translations for english
     datetime:

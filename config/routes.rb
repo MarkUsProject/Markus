@@ -15,7 +15,10 @@ Markus::Application.routes.draw do
             get 'group_ids_by_name'
           end
           resources :submission_downloads, except: [:new, :edit]
-          resources :test_results, except: [:new, :edit]
+          resources :feedback_files, except: [:new, :edit]
+          resources :test_script_results, except: [:new, :edit] do
+            resources :test_results, except: [:new, :edit]
+          end
           member do
             put 'update_marks'
             put 'update_marking_state'
@@ -49,7 +52,7 @@ Markus::Application.routes.draw do
         get 'deletegroup'
         get 'decline_invitation'
         post 'disinvite_member'
-        get 'render_test_result'
+        get 'render_feedback_file'
         get 'view_summary'
         get 'populate_file_manager'
         post 'update_files'
@@ -196,6 +199,7 @@ Markus::Application.routes.draw do
             get 'view_marks'
             post 'add_tag'
             post 'remove_tag'
+            get 'run_tests'
           end
         end
       end
@@ -371,6 +375,13 @@ Markus::Application.routes.draw do
         post 'reset_api_key'
         get 'check_timeout'
       end
+    end
+  end
+
+  resources :automated_tests do
+    member do
+      get 'student_interface'
+      post 'execute_test_run'
     end
   end
 

@@ -136,7 +136,8 @@
 #submission_rule_viewer,
 #codeviewer,
 #testviewer,
-#annotations_summary {
+#annotations_summary,
+#feedback_file_content {
   border-radius: 0 0 $radius $radius;
   overflow: auto;
 }
@@ -147,7 +148,8 @@
 #summary_viewer,
 #submission_rule_viewer,
 #annotations_summary,
-#remark_request_tab {
+#remark_request_tab,
+#feedback_file_content {
   height: 650px;
 }
 

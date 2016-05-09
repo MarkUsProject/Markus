@@ -1,0 +1,56 @@
+<testrun>
+<test_script>
+<script_name>rb_suite_1.rb</script_name>
+<test>
+<name>Normal Hello</name>
+<input>Bob</input>
+<expected>Hello Bob</expected>
+<actual>Hello Bob</actual>
+<marks_earned>1</marks_earned>
+<status>pass</status>
+</test>
+<test>
+<name>Empty Hello</name>
+<input></input>
+<expected>Hello </expected>
+<actual>Hello </actual>
+<marks_earned>1</marks_earned>
+<status>pass</status>
+</test>
+<test>
+<name>Wrong Answer</name>
+<input>Bob</input>
+<expected>Hello Bob</expected>
+<actual>This-is-rigged</actual>
+<marks_earned>0</marks_earned>
+<status>fail</status>
+</test>
+</test_script>
+<test_script>
+<script_name>rb_suite_2.rb</script_name>
+<test>
+<name>Normal Hello</name>
+<input>Bob</input>
+<status>Pass</status>
+</test>
+<test>
+<name>Empty Hello</name>
+<input></input>
+<status>Pass</status>
+</test>
+<test>
+<name>Wrong Answer</name>
+<input>Bob</input>
+<status>Fail</status>
+</test>
+<marks_earned>0</marks_earned>
+</test_script>
+<test_script>
+<script_name>rb_suite_3.rb</script_name>
+<test>
+<name>Question 3</name>
+<status>fail</status>
+</test>
+<marks_earned>0</marks_earned>
+</test_script>
+</testrun>

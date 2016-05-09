@@ -3,57 +3,121 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 require 'shoulda'
 
 class TestResultTest < ActiveSupport::TestCase
-  # Basic testing: create, delete, update
+  should belong_to :test_script_result
 
-  context 'MarkUs' do
-    should 'be able to create and save a TestResult instance' do
-      sub = Submission.make
-      test_r = TestResult.new
-      test_r.filename = 'this is my filename.txt'
-      test_r.file_content = 'Some test content.'
-      assert(!test_r.valid?, 'No submission associated, should be invalid!')
-      test_r.submission = sub
-      assert(test_r.valid?, 'Submission associated, TestResult instance should be valid, now!')
-      assert(test_r.save, 'Since Submission and TestResult is valid, it should save!')
+  should validate_presence_of :test_script_result
+  should validate_presence_of :name
+  should validate_presence_of :completion_status
+  should validate_presence_of :marks_earned
+
+  should validate_numericality_of :marks_earned
+
+  # create
+  context 'A valid test result' do
+
+    setup do
+      @sub = Submission.make
+      @script = TestScript.make
+      @testscriptresult = TestScriptResult.make(
+        submission:    @sub,
+        grouping:      @sub.grouping,
+      )
+      @testresult = TestResult.make(
+        test_script_result: @testscriptresult,
+        name:               'unit test 1',
+        completion_status:  'pass',
+        input:              '',
+        actual_output:      '   ',
+        expected_output:    'This is the expected output')
     end
 
-    should 'be able to delete a TestResult instance' do
-      test_res = TestResult.make
-      assert(test_res.valid?, 'Test result instance should be valid!')
-      assert(test_res.destroy, 'should be able to delete a TestResult instance')
+    should 'return true when a valid test result is created' do
+      assert @testresult.valid?
+      assert @testresult.save
     end
 
-    should 'be able to update a TestResult instance' do
-      FILENAME = 'some value with_some text.txt'
-      FILE_CONTENT = "a aba asdkalfdjl adklajf dadflkaj fafjla fda\nalkdafl a\n print\t\nslfjd \n"
+    should 'return true when a valid test result is created even if the input is empty' do
+      @testresult.input = ''
+      assert @testresult.valid?
+      assert @testresult.save
+    end
 
-      test_res = TestResult.make
-      # pre-update sanity checks
-      # update some values
-      test_res.filename = FILENAME
-      test_res.file_content = FILE_CONTENT
-      assert_equal(test_res.file_content, FILE_CONTENT, 'File content should be updated')
-      assert_equal(test_res.filename, FILENAME, 'Filename should be updated')
-      assert(test_res.save)
-      # check again after saving
-      assert_equal(test_res.file_content, FILE_CONTENT, 'File content should be updated')
-      assert_equal(test_res.filename, FILENAME, 'Filename should be updated')
-      sub2 = Submission.make
-      test_res.submission = sub2
-      assert(test_res.save)
-      assert_equal(test_res.submission, sub2, 'Should be the same submission instance!')
-      assert(test_res.valid?, 'TestResult should be valid!')
+    should 'return true when a valid test result is created even if the actual_output is empty' do
+      @testresult.actual_output = ''
+      assert @testresult.valid?
+      assert @testresult.save
+    end
+
+    should 'return true when a valid test result is created even if the expected_output is empty' do
+      @testresult.expected_output = ''
+      assert @testresult.valid?
+      assert @testresult.save
+    end
+
+  end
+
+  # update
+  context 'An invalid test result' do
+
+    setup do
+      @sub = Submission.make
+      @script = TestScript.make
+      @testscriptresult = TestScriptResult.make(
+        submission:    @sub,
+        grouping:      @sub.grouping,
+      )
+      @testresult = TestResult.make(
+        test_script_result: @testscriptresult,
+        name:               'unit test 1',
+        completion_status:  'pass',
+        input:              '',
+        actual_output:      '   ',
+        expected_output:    'This is the expected output')
+    end
+
+    should 'return false when test script result is nil' do
+      @testresult.test_script_result = nil
+      @testresult.save
+      assert !@testresult.valid?, 'test result expected to be invalid when test script is nil'
+    end
+
+    should 'return false when the input is nil' do
+      @testresult.input = nil
+      assert !@testresult.valid?, 'test result expected to be invalid when the input is nil'
+    end
+
+    should 'return false when the actual_output is nil' do
+      @testresult.actual_output = nil
+      assert !@testresult.valid?, 'test result expected to be invalid when the actual_output is nil'
+    end
+
+    should 'return false when the expected_output is nil' do
+      @testresult.expected_output = nil
+      assert !@testresult.valid?, 'test result expected to be invalid when the expected_output is nil'
     end
   end
 
-  context 'A TestResult object' do
-    should 'be able to update the file_content attribute' do
-      test_result = TestResult.make
-      new_content = "this is the new content\t\n"
-      assert(test_result.update_file_content(new_content), 'Should have saved successfully')
-      assert_equal(new_content, test_result.file_content)
-      # invalid content
-      assert(!test_result.update_file_content(nil))
+  #delete
+  context 'MarkUs' do
+    setup do
+      @sub = Submission.make
+      @script = TestScript.make
+      @testscriptresult = TestScriptResult.make(
+        submission:    @sub,
+        grouping:      @sub.grouping,
+      )
+      @testresult = TestResult.make(
+        test_script_result: @testscriptresult,
+        name:               'unit test 1',
+        completion_status:  'pass',
+        input:              '',
+        actual_output:      '   ',
+        expected_output:    'This is the expected output')
+    end
+
+    should 'be able to delete a test result' do
+      assert @testresult.valid?
+      assert @testresult.destroy
     end
   end
 end

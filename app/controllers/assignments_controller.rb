@@ -10,7 +10,7 @@ class AssignmentsController < ApplicationController
                               :index,
                               :student_interface,
                               :update_collected_submissions,
-                              :render_test_result]
+                              :render_feedback_file]
 
   before_filter      :authorize_for_student,
                      only: [:student_interface,
@@ -23,7 +23,7 @@ class AssignmentsController < ApplicationController
                             :decline_invitation]
 
   before_filter      :authorize_for_user,
-                     only: [:index, :render_test_result]
+                     only: [:index, :render_feedback_file]
 
   auto_complete_for  :assignment,
                      :name
@@ -31,7 +31,7 @@ class AssignmentsController < ApplicationController
   # Copy of API::AssignmentController without the id and order changed
   # to put first the 4 required fields
   DEFAULT_FIELDS = [:short_identifier, :description, :repository_folder,
-                    :due_date, :message, :group_min, :group_max, :tokens_per_day,
+                    :due_date, :message, :group_min, :group_max, :tokens_per_period,
                     :allow_web_submits, :student_form_groups, :remark_due_date,
                     :remark_message, :assign_graders_to_criteria, :enable_test,
                     :allow_remarks, :display_grader_names_to_students,
@@ -40,22 +40,23 @@ class AssignmentsController < ApplicationController
 
   # Publicly accessible actions ---------------------------------------
 
-  #=== Description
-  # Action called via Rails' remote_function from the test_result_window partial
-  # Prepares test result and updates content in window.
-  def render_test_result
-    @assignment = Assignment.find(params[:aid])
-    @test_result = TestResult.find(params[:test_result_id])
+  def render_feedback_file
+    @feedback_file = FeedbackFile.find(params[:feedback_file_id])
 
     # Students can use this action only, when marks have been released
     if current_user.student? &&
-        (@test_result.submission.grouping.membership_status(current_user).nil? ||
-        @test_result.submission.get_latest_result.released_to_students == false)
-      flash_message(:error, t('test_result.error.no_access',
-                              test_result_id: @test_result.id))
+        (@feedback_file.submission.grouping.membership_status(current_user).nil? ||
+         !@feedback_file.submission.get_latest_result.released_to_students)
+      flash_message(:error, t('feedback_file.error.no_access',
+                              feedback_file_id: @feedback_file.id))
+      head :forbidden
+      return
     end
 
-    render text: @test_result.file_content
+    send_data @feedback_file.file_content, 
+              type: @feedback_file.mime_type,
+              filename: @feedback_file.filename,
+              disposition: 'inline'
   end
 
   def student_interface
@@ -121,22 +122,6 @@ class AssignmentsController < ApplicationController
       @revision  = repo.get_latest_revision
       @revision_number = @revision.revision_number
 
-      # For running tests
-      if params[:collect]
-        @result = manually_collect_and_prepare_test(@grouping, @revision.revision_number)
-      else
-        @result = automatically_collect_and_prepare_test(@grouping, @revision.revision_number)
-      end
-      #submission = @grouping.submissions.find_by_submission_version_used(true)
-      if @result
-        @test_result_files = @result.submission.test_results
-      else
-        @test_result_files = nil
-      end
-      @token = Token.find_by_grouping_id(@grouping.id)
-      if @token
-        @token.reassign_tokens_if_new_day()
-      end
       @last_modified_date = @grouping.assignment_folder_last_modified_date
       @num_submitted_files = @grouping.number_of_submitted_files
       @num_missing_assignment_files = @grouping.missing_assignment_files.length
@@ -287,6 +272,8 @@ class AssignmentsController < ApplicationController
     @assignment.transaction do
       begin
         @assignment = process_assignment_form(@assignment)
+        @assignment.token_start_date = @assignment.due_date
+        @assignment.token_period = 1
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, e.message)
       end
@@ -554,6 +541,8 @@ class AssignmentsController < ApplicationController
           if assignment.new_record?
             assignment.submission_rule = NoLateSubmissionRule.new
             assignment.assignment_stat = AssignmentStat.new
+            assignment.token_period = 1
+            assignment.unlimited_tokens = false
           end
           assignment.update(attrs)
           raise CSVInvalidLineError unless assignment.valid?
@@ -568,6 +557,10 @@ class AssignmentsController < ApplicationController
         begin
           map = YAML::load(assignment_list)
           map[:assignments].map do |row|
+            row[:submission_rule] = NoLateSubmissionRule.new
+            row[:assignment_stat] = AssignmentStat.new
+            row[:token_period] = 1
+            row[:unlimited_tokens] = false
             update_assignment!(row)
           end
         rescue ActiveRecord::ActiveRecordError, ArgumentError => e
@@ -997,7 +990,6 @@ class AssignmentsController < ApplicationController
         :section_groups_only,
         :enable_test,
         :assign_graders_to_criteria,
-        :tokens_per_day,
         :group_name_displayed,
         :invalid_override,
         :section_groups_only,

@@ -530,7 +530,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         context 'GET on :edit' do
-          context 'with 2 partial and 1 released/completed results' do
+          context 'with 2 incomplete and 1 released/completed results' do
             setup do
               3.times do |time|
                 g = Grouping.make(:assignment => @assignment)
@@ -1333,13 +1333,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end  # -- GET on :view_marks
 
         should 'GET on :add_extra_mark' do
-          unmarked_result = Result.make
+          incomplete_result = Result.make
           get_as @ta,
                  :add_extra_mark,
                  format: :js,
                  :assignment_id => 1,
                  :submission_id => 1,
-                 :id => unmarked_result.id
+                 :id => incomplete_result.id
           assert_not_nil assigns :result
           assert render_template 'results/marker/add_extra_mark'
           assert_response :success
@@ -1347,7 +1347,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'POST on :add_extra_mark' do
           setup do
-            @unmarked_result = Result.make
+            @incomplete_result = Result.make
           end
 
           should 'with save error' do
@@ -1359,7 +1359,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     format: :js,
                     :assignment_id => 1,
                     :submission_id => 1,
-                    :id => @unmarked_result.id,
+                    :id => @incomplete_result.id,
                     :extra_mark => {:extra_mark => 1}
             assert_not_nil assigns :result
             assert_not_nil assigns :extra_mark
@@ -1368,22 +1368,22 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end  # -- with save error
 
           should 'without save error' do
-            @unmarked_result.update_total_mark
-            @old_total_mark = @unmarked_result.total_mark
+            @incomplete_result.update_total_mark
+            @old_total_mark = @incomplete_result.total_mark
             post_as @ta,
                     :add_extra_mark,
                     format: :js,
                     :assignment_id => 1,
                     :submission_id => 1,
-                    :id => @unmarked_result.id,
+                    :id => @incomplete_result.id,
                     :extra_mark => {:extra_mark => 1}
             assert_not_nil assigns :result
             assert_not_nil assigns :extra_mark
             assert render_template 'results/marker/insert_extra_mark'
             assert_response :success
 
-            @unmarked_result.reload
-            assert_equal @old_total_mark + 1, @unmarked_result.total_mark
+            @incomplete_result.reload
+            assert_equal @old_total_mark + 1, @incomplete_result.total_mark
           end
         end
 

@@ -10,6 +10,7 @@ class Result < ActiveRecord::Base
   has_many :extra_marks
   has_many :annotations
 
+  after_create :create_marks
   validates_presence_of :marking_state
   validates_inclusion_of :marking_state, in: MARKING_STATES.values
 
@@ -81,6 +82,26 @@ class Result < ActiveRecord::Base
     get_total_extra_percentage * submission.assignment.total_mark / 100
   end
 
+  def get_total_test_script_marks
+    total = 0
+
+    #find the unique test scripts for this submission
+    test_script_ids = TestScriptResult.select(:test_script_id).where(:grouping_id => submission.grouping_id)
+
+    #pull out the actual ids from the ActiveRecord objects
+    test_script_ids = test_script_ids.map { |script_id_obj| script_id_obj.test_script_id }
+
+    #take only the unique ids so we don't add marks from the same script twice
+    test_script_ids = test_script_ids.uniq
+
+    #add the latest result from each of our test scripts
+    test_script_ids.each do |test_script_id|
+      test_result = TestScriptResult.where(:test_script_id => test_script_id, :grouping_id => submission.grouping_id).last
+      total = total + test_result.marks_earned
+    end
+    return total
+  end
+
   # un-releases the result
   def unrelease_results
     self.released_to_students = false
@@ -114,5 +135,13 @@ class Result < ActiveRecord::Base
       return false
     end
     true
+  end
+
+  def create_marks
+    assignment = self.submission.assignment
+    assignment.get_criteria.each do |criterion|
+      mark = criterion.marks.create(result_id: id)
+    end
+    self.update_total_mark
   end
 end

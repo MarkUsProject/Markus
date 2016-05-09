@@ -5,8 +5,8 @@
         <ul>
           <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
           <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
-          <% if can_show_test_results_tab?(assignment, submission) %>
-            <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
+          <% if can_show_feedback_files_tab?(submission) %>
+            <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
           <% end %>
           <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
             <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
@@ -34,10 +34,9 @@
           <ul id='annotation_summary_list'></ul>
         </div>
 
-        <% if can_show_test_results_tab?(assignment, submission) %>
-          <div id='test_result_tab' style='display:none;'>
-            <div id='testviewer'>
-              <pre id='test_result_content' cols='80' rows='50'><%= t('marker.select_a_test') %></pre>
+         <% if can_show_feedback_files_tab?(submission) %>
+          <div id='feedback_file_tab' style='display:none;'>
+            <div id='feedback_file_content'>
             </div>
           </div>
         <% end %>

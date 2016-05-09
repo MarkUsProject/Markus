@@ -6,8 +6,12 @@
            <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
            <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
 
-          <% if can_show_test_results_tab?(assignment, submission) %>
+          <% if can_show_test_results_tab?(assignment) %>
               <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
+          <% end %>
+
+          <% if can_show_feedback_files_tab?(submission) %>
+              <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
           <% end %>
 
            <% if can_show_remark_request_tab_in_marker_pane(submission) %>
@@ -45,10 +49,36 @@
           <ul id='annotation_summary_list'></ul>
         </div>
 
-        <% if can_show_test_results_tab?(assignment, submission) %>
+        <% if can_show_test_results_tab?(assignment) %>
           <div id='test_result_tab' style='display:none;'>
             <div id='testviewer'>
-              <pre id='test_result_content' cols='80' rows='50'><%= t('marker.select_a_test') %></pre>
+              <%= link_to t("automated_tests.run_tests"),
+                          run_tests_assignment_submission_result_path(grouping_id: @grouping.id),
+                          class: 'button' %>  
+              <% unless submission.test_script_results.empty? %>
+                <div class="block">
+                  <h2><%= t("automated_tests.test_results") %></h2>
+                  <div class="block_content">
+                  <br />
+                    <div class="sub_block">
+                      <%= raw (t("automated_tests.marks_obtained",
+                                    :marking => "#{@grouping.get_total_test_script_marks *
+                                    1.0} / #{@assignment.total_ror_script_marks * 1.0}" )) %>
+                    </div>
+                    <div id="test_results" class="sub_block">
+                      <%= render partial: 'automated_tests/test_script_result',
+                                 collection: submission.test_script_results %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <% if can_show_feedback_files_tab?(submission) %>
+          <div id='feedback_file_tab' style='display:none;'>
+            <div id='feedback_file_content'>
             </div>
           </div>
         <% end %>
