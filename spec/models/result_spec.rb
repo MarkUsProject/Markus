@@ -136,7 +136,7 @@ describe Result do
                 before do
                   results.each_with_index do |result, i|
                     result.marks.each do |m|
-                      m.update(:mark => 0.0)
+                      m.update(mark: 0.0)
                     end
                     result.total_mark = marks[i]
                     result.marking_state = Result::MARKING_STATES[:complete]

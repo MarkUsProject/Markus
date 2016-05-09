@@ -1031,7 +1031,7 @@ describe Assignment do
           result.total_mark = total_mark
           result.marking_state = Result::MARKING_STATES[:complete]
           result.marks.each do |m|
-            m.update!(:mark => (total_mark * 4.0 / 20).round)
+            m.update!(mark: (total_mark * 4.0 / 20).round)
           end
           result.save!
         end
