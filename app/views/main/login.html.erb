@@ -14,13 +14,16 @@
 
   <div class='login-form'>
     <%= form_tag({ action: 'login' }) do %>
+      <% unless defined? user_login
+           user_login = ''
+         end %>
       <%= text_field_tag 'user_login',
                          nil,
                          tabindex: 1,
                          placeholder: t(:login),
                          autocorrect: 'off',
                          autofocus: true,
-                         value: session[:user_login] %>
+                         value: user_login %>
       <%= password_field_tag 'user_password',
                              nil,
                              tabindex: 2,

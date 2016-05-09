@@ -85,14 +85,12 @@ class MainController < ApplicationController
     # authentication is valid
     validation_result = validate_user(params[:user_login], params[:user_login], params[:user_password])
     unless validation_result[:error].nil?
-      session[:user_login] = params[:user_login]
       flash_message(:error, validation_result[:error])
-      redirect_to action: 'login'
-      return
+      #redirect_to action: 'login'
+      render :login, locals: {user_login: params[:user_login]} and return
     end
     # validation worked
     found_user = validation_result[:user]
-    session.delete(:user_login)
     if found_user.nil?
       return
     end
