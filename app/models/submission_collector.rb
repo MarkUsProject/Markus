@@ -184,6 +184,9 @@ class SubmissionCollector < ActiveRecord::Base
 
     remove_grouping_from_queue(grouping)
     grouping.save
+
+    # Request a test run for the grouping
+    request_a_test_run(grouping, new_submission)
   end
 
   def apply_penalty_or_add_grace_credits(grouping,
@@ -217,6 +220,7 @@ class SubmissionCollector < ActiveRecord::Base
                                          new_submission)
       grouping.is_collected = true
       grouping.save
+      request_a_test_run(grouping, new_submission)
       return new_submission
     end
 
@@ -268,6 +272,18 @@ class SubmissionCollector < ActiveRecord::Base
     end
   end
 
+  def request_a_test_run(grouping, new_submission)
+    m_logger = MarkusLogger.instance
+    if grouping.assignment.enable_test
+      m_logger.log("Now requesting test run for #{grouping.assignment.short_identifier} \
+                    on grouping: '#{grouping.id}'")
+      AutomatedTestsHelper.request_a_test_run(new_submission.grouping.id,
+                                              'collection',
+                                              @current_user,
+                                              new_submission.id)
+    end
+  end
+
   # Undo one level of submissions
   def uncollect_submissions(assignment)
     submissions = assignment.submissions
@@ -290,5 +306,4 @@ class SubmissionCollector < ActiveRecord::Base
       old_submissions.destroy_all
     end
   end
-
 end

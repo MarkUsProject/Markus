@@ -1,0 +1,4 @@
+There is an issue with the sample code where it does not run correctly unless the test runner is copied to the same directory as the test scipts and "student" code.
+
+This code can be run by copying testrunner.rb to this directory and executing
+	./testrunner.rb < args.in

@@ -13,8 +13,7 @@ namespace :db do
     end
 
     # Create remark requests for assignments that allow them
-    Assignment.where("allow_remarks").each do |assignment|
-
+    Assignment.where(allow_remarks: true).each do |assignment|
       # Create remark request for first two groups in each assignment
       Grouping.where(assignment_id: assignment.id).first(2).each do |grouping|
         submission = Submission.find_by_grouping_id(grouping.id)
@@ -71,5 +70,5 @@ namespace :db do
     remark_submission.remark_result.update_attributes(
       marking_state: Result::MARKING_STATES[:complete],
       released_to_students: true)
-  end 
+  end
 end

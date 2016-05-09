@@ -1,4 +1,6 @@
 module SubmissionsHelper
+  include AutomatedTestsHelper
+
   def find_appropriate_grouping(assignment_id, params)
     if current_user.admin? || current_user.ta?
       Grouping.find(params[:grouping_id])
@@ -253,5 +255,4 @@ module SubmissionsHelper
               .find(params[:assignment_id])
               .groupings.all?(&:marking_completed?)
   end
-
 end

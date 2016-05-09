@@ -17,6 +17,10 @@ FactoryGirl.define do
     display_grader_names_to_students false
     submission_rule { NoLateSubmissionRule.new }
     assignment_stat { AssignmentStat.new }
+    token_period 1
+    tokens_per_period 0
+    unlimited_tokens false
+    enable_test false
 
     factory :flexible_assignment do
       marking_scheme_type Assignment::MARKING_SCHEME_TYPE[:flexible]

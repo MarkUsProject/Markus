@@ -15,7 +15,18 @@ class Assignment < ActiveRecord::Base
   has_many :flexible_criteria,
            -> { order(:position) },
            class_name: 'FlexibleCriterion',
-		   dependent: :destroy
+       dependent: :destroy
+
+  has_many :test_support_files, :dependent => :destroy
+  accepts_nested_attributes_for :test_support_files, allow_destroy: true
+  has_many :test_scripts, :dependent => :destroy
+  accepts_nested_attributes_for :test_scripts, allow_destroy: true
+
+
+  has_many :annotation_categories,
+           -> { order(:position) },
+           class_name: 'AnnotationCategory',
+           dependent: :destroy
 
   has_many :criterion_ta_associations,
 		   dependent: :destroy
@@ -24,9 +35,6 @@ class Assignment < ActiveRecord::Base
 		   dependent: :destroy
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
-
-  has_many :test_files, dependent: :destroy
-  accepts_nested_attributes_for :test_files, allow_destroy: true
 
   has_one :assignment_stat, dependent: :destroy
   accepts_nested_attributes_for :assignment_stat, allow_destroy: true
@@ -57,7 +65,6 @@ class Assignment < ActiveRecord::Base
   validates_uniqueness_of :short_identifier, case_sensitive: true
   validates_numericality_of :group_min, only_integer: true, greater_than: 0
   validates_numericality_of :group_max, only_integer: true, greater_than: 0
-  validates_numericality_of :tokens_per_day, only_integer: true, greater_than_or_equal_to: 0
 
   has_one :submission_rule, dependent: :destroy, inverse_of: :assignment
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
@@ -72,6 +79,7 @@ class Assignment < ActiveRecord::Base
   validates_presence_of :group_min
   validates_presence_of :group_max
   validates_presence_of :notes_count
+  validates_presence_of :assignment_stat
   # "validates_presence_of" for boolean values.
   validates_inclusion_of :allow_web_submits, in: [true, false]
   validates_inclusion_of :vcs_submit, in: [true, false]
@@ -79,7 +87,19 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :enable_test, in: [true, false]
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
+  validates_inclusion_of :unlimited_tokens, in: [true, false]
 
+  with_options unless: :unlimited_tokens do |assignment|
+    assignment.validates :tokens_per_period,
+                         presence: true,
+                         numericality: { only_integer: true,
+                                         greater_than_or_equal_to: 0 }
+    assignment.validates :token_period,
+                         presence: true,
+                         numericality: { greater_than: 0 }
+  end
+
+  validates_presence_of :token_start_date, if: :enable_test
   validate :minimum_number_of_groups
 
   after_create :build_repository
@@ -316,6 +336,15 @@ class Assignment < ActiveRecord::Base
   def total_criteria_weight
     factor = 10.0 ** 2
     (rubric_criteria.sum('weight') * factor).floor / factor
+  end
+
+  def total_test_script_marks
+    return test_scripts.sum("max_marks")
+  end
+
+  #total marks for scripts that are run on request
+  def total_ror_script_marks
+    return test_scripts.where("run_on_request" => true).sum("max_marks")
   end
 
   def add_group(new_group_name=nil)
@@ -946,7 +975,7 @@ class Assignment < ActiveRecord::Base
 
   def update_assigned_tokens
     self.tokens.each do |t|
-      t.update_tokens(tokens_per_day_was, tokens_per_day)
+      t.update_tokens(tokens_per_period_was, tokens_per_period)
     end
   end
 

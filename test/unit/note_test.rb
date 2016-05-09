@@ -15,6 +15,9 @@ class NoteTest < ActiveSupport::TestCase
   context 'noteables_exist?'  do
 
     should 'return false when no noteables exist' do
+      Assignment.destroy_all
+      Grouping.destroy_all
+      Student.destroy_all
       assert !Note.noteables_exist?
     end
 

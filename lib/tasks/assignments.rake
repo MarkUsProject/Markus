@@ -23,7 +23,11 @@ namespace :db do
         submission_rule: rule,
         assignment_stat: assignment_stat,
         allow_remarks: true,
-        remark_due_date: 7.days.from_now
+        remark_due_date: 7.days.from_now,
+        enable_test: false,
+        tokens_per_period: 0,
+        token_start_date: DateTime.now,
+        token_period: 1
     )
 
     rule = NoLateSubmissionRule.new
@@ -49,7 +53,11 @@ namespace :db do
         display_grader_names_to_students: false,
         submission_rule: rule,
         assignment_stat: assignment_stat,
-        allow_remarks: false
+        allow_remarks: false,
+        enable_test: false,
+        tokens_per_period: 0,
+        token_start_date: DateTime.now,
+        token_period: 1
     )
 
     assignment_stat = AssignmentStat.new
@@ -71,7 +79,11 @@ namespace :db do
         display_grader_names_to_students: false,
         submission_rule: rule,
         assignment_stat: assignment_stat,
-        allow_remarks: false
+        allow_remarks: false,
+        enable_test: false,
+        tokens_per_period: 0,
+        token_start_date: DateTime.now,
+        token_period: 1
     )
 
     rule = NoLateSubmissionRule.new
@@ -93,7 +105,11 @@ namespace :db do
         display_grader_names_to_students: false,
         submission_rule: rule,
         assignment_stat: assignment_stat,
-        allow_remarks: false
+        allow_remarks: false,
+        enable_test: false,
+        tokens_per_period: 0,
+        token_start_date: DateTime.now,
+        token_period: 1
     )
   end
 end

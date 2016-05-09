@@ -1,0 +1,17 @@
+<%= label_tag 'select_feedback_file_id',
+              t('common.feedback_files'),
+              class: 'inline_label' %>
+
+<select id='select_feedback_file_id'
+        onchange='load_feedback_file(jQuery(this).val());'>
+  <% if feedback_files.where(submission_id: submission_id).empty? %>
+    <option value=''><%= t('feedback_file.no_files_available') %></option>
+  <% else %>
+    <% feedback_files.where(submission_id: submission_id)
+                     .order(created_at: :desc).each do |file| %>
+      <option value='<%= file.id %>'>
+        <%= file.filename %>
+      </option>
+    <% end %>
+  <% end %>
+</select>

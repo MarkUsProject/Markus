@@ -1,0 +1,91 @@
+<div class='title_bar'>
+  <h1>
+    <%= t('automated_tests.title') %>
+  </h1>
+</div>
+
+
+<%= render partial: 'shared/flash_message' %>
+
+<% if @assignment.enable_test && !@grouping.nil? %>
+  <div class='block'>
+    <div class='block_content'>
+      <h3><%= t('automated_tests.information') %></h3>
+      <div class='sub_block'>
+        <% if @assignment.unlimited_tokens %>
+          <div class='sub_block'>
+            <%= raw t('automated_tests.token.token_start_date',
+                      date: l(@assignment.token_start_date, format: :long_date)) %>
+          </div>
+          <div class='sub_block'>
+            <%= raw t('automated_tests.token.unlimited_tokens') %>
+          </div>
+        <% else %>
+          <div class='sub_block'>
+             <%= raw t('automated_tests.token.token_start_date',
+                       date: l(@assignment.token_start_date, format: :long_date)) %>
+          </div>
+          <div class='sub_block'>
+            <%= raw t('automated_tests.token.tokens_per_period',
+                      tokens: @assignment.tokens_per_period,
+                      regeneration_period: @assignment.token_period) %>
+          </div>
+          <div class='sub_block'>
+            <% if DateTime.now < @assignment.token_start_date %>
+              <%= raw t('automated_tests.token.tokens_not_given_yet') %>
+            <% elsif @token.remaining == 0 %>
+              <%= raw t('automated_tests.token.tokens_no_more_available') %>
+            <% else %>
+              <%= raw t('automated_tests.token.tokens_available',
+                        tokens: @token.remaining) %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @assignment.unlimited_tokens || @token.remaining > 0 %>
+          <h3><%= t('automated_tests.run_tests') %></h3>
+          <% if @grouping.assignment.submission_rule.can_collect_now? %>
+            <p><%= t('automated_tests.due_date_is_passed') %></p>
+          <% else %>
+            <p><%= raw t('automated_tests.need_one_file') %></p>
+
+            <%= link_to t('automated_tests.run_tests'),
+                        execute_test_run_automated_test_path(
+                          id: @assignment.id,
+                          grouping_id: @grouping.id),
+                        method: :post,
+                        class: 'button' %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <% unless @test_script_results.nil? %>
+    <div class='block'>
+      <h2><%= t('automated_tests.test_results') %></h2>
+      <div class='block_content'>
+        <div class='sub_block'>
+          <%= raw t('automated_tests.marks_obtained',
+                    marking: "#{@grouping.get_total_test_script_marks * 1.0} /
+                              #{@assignment.total_ror_script_marks * 1.0}" ) %>
+        </div>
+        <div id='test_results' class='sub_block'>
+          <%= render partial: 'test_script_result',
+                     collection: @test_script_results.where(submission_id: nil) %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% elsif @grouping.nil? %>
+  <div class='block'>
+      <%= t('automated_tests.need_group_for_test') %>
+  </div>
+<% else %>
+  <div class='block'>
+    <h3><%= t('automated_tests.information') %></h3>
+    <div class='sub_block'>
+      <%= t('automated_tests.testing_disabled') %>
+    </div>
+  </div>
+<% end %>

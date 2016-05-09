@@ -22,8 +22,9 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     @priority_queue = @submission_collector.grouping_queues.find_by_priority_queue(true).groupings
     @regular_queue = @submission_collector.grouping_queues.find_by_priority_queue(false).groupings
     @groupings = []
+    assignment = Assignment.make(enable_test: false)
     (1..3).each do |i|
-      @groupings.push(Grouping.make)
+      @groupings.push(Grouping.make(assignment: assignment))
     end
   end
 

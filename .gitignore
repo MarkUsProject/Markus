@@ -51,5 +51,5 @@
 #Ignore files for Vagrant instance
 .vagrant
 
-#Ignore redis dump file
+# Ignore redis dump file
 .dump.rdb

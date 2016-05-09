@@ -1,0 +1,6 @@
+This is the explanation for the sample files included with the test runner.
+
+The folder x_sample contains the sample code for writing a test suite in language x.
+
+To execute the test runner on the sample code, simply execute
+	./testrunner < sample_files/x_sample/args.in
