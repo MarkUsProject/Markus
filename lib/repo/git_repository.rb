@@ -225,14 +225,14 @@ module Repository
     end
 
     def get_repos_workdir
-      # Get work directory from GitRepository
+      # Get working directory of the repository
       # workdir = path/to/my/repository/
       return @repos.workdir
     end
 
     def get_repos_path
-      # Get Rugged repository from GitRepository
-      # workdir = path/to/my/repository/.git
+      # Get the repository's .git folder
+      # path = path/to/my/repository/.git
       return @repos.path
     end
 
@@ -351,17 +351,15 @@ module Repository
           end
         when :remove
           begin
-            remove_file(transaction,
-                            job[:path], transaction.user_id,
-                            job[:expected_revision_number])
+            remove_file(job[:path], transaction.user_id,
+                        job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :replace
           begin
-            replace_file(transaction,
-                               job[:path], job[:file_data], job[:mime_type],
-                               job[:expected_revision_number])
+            replace_file(job[:path], job[:file_data], transaction.user_id,
+                         job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -797,7 +795,7 @@ module Repository
       get_latest_revision.path_exists?(path)
     end
 
-    # adds a file to a transaction and eventually to repository
+    # Creates and commits a file to the repository
     def add_file(path, file_data = nil, author)
       if path_exists_for_latest_revision?(path)
         raise Repository::FileExistsConflict.new(path)
@@ -805,78 +803,80 @@ module Repository
       write_file(path, file_data, author)
     end
 
-    # removes a file from a transaction and eventually from repository
-    def remove_file(txn, path, author, _expected_revision_number = 0)
-      repo = @repos
+    # Removes a file from the repository
+    def remove_file(path, author, expected_revision_number = 0)
+      if latest_revision_number != expected_revision_number
+        raise Repository::FileOutOfSyncConflict.new(path)
+      end
+      if !path_exists_for_latest_revision?(path)
+        raise Repository::FileDoesNotExist.new(path)
+      end
+
       @repos.index.remove(path);
-      File.unlink File.join(repo.workdir, path)
-      @repos.index.write_tree repo
+      File.unlink(File.join(@repos_path, path))
+      @repos.index.write_tree(@repos)
       @repos.index.write
       Rugged::Commit.create(@repos, commit_options(@repos, author,
                                                    'Removing file'))
 
       # todo: quick fix to make gitolite sync on file upload
-      g = Git.open(repo.workdir)
+      g = Git.open(@repos_path)
       g.push
-
-      return txn
     end
 
-    # replaces file at provided path with file_data
-    def replace_file(txn, path, file_data = nil,
-                     mime_type = nil, _expected_revision_number = 0)
-      txn = write_file(path, file_data, mime_type)
-      return txn
+    # Replaces file at provided path with file_data
+    def replace_file(path, file_data, author, expected_revision_number = 0)
+      if latest_revision_number != expected_revision_number
+        raise Repository::FileOutOfSyncConflict.new(path)
+      end
+      if !path_exists_for_latest_revision?(path)
+        raise Repository::FileDoesNotExist.new(path)
+      end
+      write_file(path, file_data, author)
     end
 
+    # Writes to file using path, file_data, and author
     def write_file(path, file_data = nil, author)
-      # writes to file using transaction, path, data, and mime
-      # refer to Subversion_repo for implementation
+
       # Get directory path of file (one level higher)
-      dir = path.split('/')[0..-2].join('/')
-      # make_directory to path, if it already exists make_directory
-      # won't do anything so no harm no foul.
-      make_directory(dir)
+      dir = File.dirname(path)
+      abs_path = File.join(@repos_path, dir)
+
+      # Create the folder (if not present), creating parents folders if necessary.
+      # This will not overwrite the folder if it's already present.
+      FileUtils.mkdir_p(abs_path)
+
+      # Create and commit the file
       make_file(path, file_data, author)
     end
 
-    # Make a file if it's not already present.
+    # Make a file and commit it. This will overwrite the
+    # file on disk if it already exists, but will only make a
+    # new commit if the file contents have changed.
     def make_file(path, file_data, author)
-      repo = @repos
       # Get the file path to write to using the ruby File module.
-      file_path = File.join(repo.workdir, path)
+      abs_path = File.join(@repos_path, path)
       # Actually create the file.
-      File.open(file_path, 'w+') do |file|
+      File.open(abs_path, 'w+') do |file|
         file.write file_data.force_encoding('UTF-8')
       end
 
       # Get the hash of the file we just created and added
-      oid = Rugged::Blob.from_workdir(repo, path)
-      index = repo.index
+      oid = Rugged::Blob.from_workdir(@repos, path)
+      index = @repos.index
       index.add(path: path, oid: oid, mode: 0100644)
       index.write
-      Rugged::Commit.create(repo, commit_options(repo, author, 'Add file'))
-      g = Git.open(repo.workdir)
+      Rugged::Commit.create(@repos, commit_options(@repos, author, 'Add file'))
+      g = Git.open(@repos.workdir)
       g.push
     end
 
-    # Make a directory if it's not already present.
-    # If we want the directory creation to have its own commit,
-    # we have to add a dummy file in that directory to do it.
+    # Create and commit an empty directory, if it's not already present.
+    # The dummy file is required so the directory gets committed.
+    # path should be a directory
     def make_directory(path)
-      # Turn "path" into absolute path for repo
-      path = File.expand_path(path, @repos_path)
-
-      # Do nothing if folder already exists
-      return if File.exist?(path)
-
-      # Recursively create parent folders (if doesn't exist)
-      parent_path = File.dirname(path)
-      make_directory(parent_path)
-
-      # Now that the parent folder has been created,
-      # create the current folder
-      FileUtils.mkdir_p(path)
+      gitkeep_filename = File.join(path, '.gitkeep')
+      add_file(gitkeep_filename, '', 'markus')
     end
 
     # Helper method to check file permissions of git auth file

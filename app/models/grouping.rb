@@ -578,9 +578,9 @@ class Grouping < ActiveRecord::Base
         if revision.path_exists?(assignment_folder)
           return true
         else
-          txn = self.group.repo.get_transaction('markus')
+          txn = repo.get_transaction('markus')
           txn.add_path(assignment_folder)
-          return self.group.repo.commit(txn)
+          return repo.commit(txn)
         end
       end
     end
