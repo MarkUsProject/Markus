@@ -327,6 +327,8 @@ en:
       previous_submission:  "Previous Submission"
       next_submission:      "Next Submission"
       marking_status:       "Marking Status:"
+      set_to_complete:      "Set to Complete"
+      revert_to_incomplete: "Revert to Incomplete"
       notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Include Annotations:"
       include_annotations_warning: "Warning! Annotations on PDFs are not currently downloaded."
@@ -334,6 +336,8 @@ en:
       marks:
         total_mark: "Total Mark:"
         released:   "Released:"
+        release:    "Release"
+        unrelease:  "Unrelease"
         comment: "Comment"
         percentage: "Percentage"
         invalid_mark: "Invalid Mark!"
@@ -1261,7 +1265,7 @@ en:
       title: "Title"
       max_value: "Maximum value"
       grade: "Grade"
-      x_mark: "x Mark"
+      mark: "Level"
       weight: "Weight"
 
     key_pairs:

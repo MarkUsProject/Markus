@@ -2,9 +2,9 @@
   <thead>
     <tr>
       <th><%=t("summary_table.title")%></th>
+      <th><%=t("summary_table.mark")%></th>
       <th><%=t("summary_table.weight")%></th>
-      <th><%=t("summary_table.x_mark")%></th>
-      <th>=&nbsp;<%=t("summary_table.grade")%></th>
+      <th><%=t("summary_table.grade")%></th>
     </tr>
   </thead>
   <% @mark_criteria.each do |criterion| -%>
@@ -19,8 +19,8 @@
   %>
     <tr id="<%= "mark_#{mark.id}_summary" %>">
       <td><%= criterion.name %></td>
+      <td><span id="mark_<%= mark.id %>_summary_mark"><%= mark_value.round %></span></td>
       <td><%= criterion.weight %></td>
-      <td><span id="mark_<%= mark.id %>_summary_mark"><%= mark_value %></span></td>
       <td><span id="mark_<%= mark.id %>_summary_mark_after_weight"><%= (mark_value * criterion.weight) %></span> / <%= criterion.weight * 4 %></td>
     </tr>
   <% end -%>

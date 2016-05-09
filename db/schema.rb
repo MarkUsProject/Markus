@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160503175401) do
+ActiveRecord::Schema.define(version: 20160504175156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,8 +52,11 @@ ActiveRecord::Schema.define(version: 20160503175401) do
     t.integer "page"
     t.integer "column_start"
     t.integer "column_end"
+    t.integer "creator_id"
+    t.string  "creator_type"
   end
 
+  add_index "annotations", ["creator_type", "creator_id"], name: "index_annotations_on_creator_type_and_creator_id", using: :btree
   add_index "annotations", ["submission_file_id"], name: "index_annotations_on_submission_file_id", using: :btree
 
   create_table "assignment_files", force: :cascade do |t|

@@ -58,7 +58,7 @@
           <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
                  onmouseover='close_submenu_recursive(
                      this.parentNode.parentNode, null)'>
-            <option value='<%= file.id %>'><%=file.filename%></option>
+            <%= file.filename %>
           </a></li>
         <% end %>
       <% end %>
