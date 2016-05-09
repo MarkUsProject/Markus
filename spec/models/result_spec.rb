@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Result do
   describe '.student_marks_by_assignment' do
     let(:assignment) { create(:assignment) }
+    let!(:criteria) { Array.new(2) { create(:rubric_criterion, assignment: assignment) } }
 
     shared_examples 'empty' do
       it 'returns an empty array' do
@@ -62,13 +63,27 @@ describe Result do
                 create(:submission, grouping: groupings.first)
               end
 
+              context 'when a new result is created' do
+                let!(:new_result) { submission.results.first }
+
+                it 'has same amount of marks as criteria associated with the result' do
+                  expect(new_result.marks.length).to eq(criteria.length)
+                end
+
+                it 'has a mark associated with each criterion' do
+                  criteria.each do |criterion|
+                    expect(criterion.marks.length).to be >= 1
+                  end
+                end
+              end
+
               context 'when no results are found' do
                 it_returns 'empty'
               end
 
               context 'when results are found' do
                 let!(:results) do
-                  create(:complete_result, submission: submission)
+                  create(:incomplete_result, submission: submission)
                 end
 
                 it_returns 'empty'
@@ -82,14 +97,28 @@ describe Result do
                 end
               end
 
+              context 'when a new result is created' do
+                let!(:new_result) { submissions.first.results.first }
+
+                it 'has same amount of marks as criteria associated with the result' do
+                  expect(new_result.marks.length).to eq(criteria.length)
+                end
+
+                it 'has a mark associated with each criterion' do
+                 criteria.each do |criterion|
+                    expect(criterion.marks.length).to be >= 1
+                 end
+                end
+              end
+
               context 'when no results are found' do
                 it_returns 'empty'
               end
 
-              context 'when only unmarked and partial results are found' do
+              context 'when only incomplete results are found' do
                 let!(:result) do
-                  create(:partial_result, submission: submissions.first)
-                  create(:unmarked_result, submission: submissions.second)
+                  create(:incomplete_result, submission: submissions.first)
+                  create(:incomplete_result, submission: submissions.second)
                 end
 
                 it_returns 'empty'
@@ -99,9 +128,19 @@ describe Result do
                 let(:marks) { [3, 0, 9] }
                 let!(:results) do
                   Array.new(3) do |i|
-                    create(:complete_result,
-                           total_mark: marks[i],
-                           submission: submissions[i])
+                    create(:result,
+                           submission: submissions[i],
+                           marking_state: Result::MARKING_STATES[:incomplete])
+                  end
+                end
+                before do
+                  results.each_with_index do |result, i|
+                    result.marks.each do |m|
+                      m.update(mark: 0.0)
+                    end
+                    result.total_mark = marks[i]
+                    result.marking_state = Result::MARKING_STATES[:complete]
+                    result.save
                   end
                 end
 
@@ -129,9 +168,18 @@ describe Result do
                 context 'when remarked results are found' do
                   let!(:remarked_result) do
                     # Create a new result for the second submission.
-                    create(:complete_result,
-                           total_mark: 5,
-                           submission: submissions.second)
+                    create(:result,
+                           submission: submissions.second,
+                           marking_state: Result::MARKING_STATES[:incomplete])
+                  end
+                  before do
+                    remarked_result.marks.each do |m|
+                      m.mark = 0.0
+                      m.save
+                    end
+                    remarked_result.total_mark = 5
+                    remarked_result.marking_state = Result::MARKING_STATES[:complete]
+                    remarked_result.save
                   end
 
                   it 'returns student marks without old results' do
