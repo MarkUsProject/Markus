@@ -14,6 +14,7 @@ class Annotation < ActiveRecord::Base
 
   validates_associated      :submission_file
   validates_associated      :annotation_text
+  validates_associated      :result
 
   validates_numericality_of :annotation_text_id,
                             only_integer: true,
@@ -22,6 +23,9 @@ class Annotation < ActiveRecord::Base
                             only_integer: true,
                             greater_than: 0
   validates_numericality_of :annotation_number,
+                            only_integer: true,
+                            greater_than: 0
+  validates_numericality_of :result_id,
                             only_integer: true,
                             greater_than: 0
 
