@@ -19,8 +19,8 @@
 <% @heading_buttons = [] %>
 
 <% if @current_user.admin? %>
-  <% @heading_buttons +=
-  [
+  <% if @assignment.submission_rule.can_collect_now? %>
+    <% @heading_buttons.push(
     {
       link_text: t('browse_submissions.csv_report'),
       link_path: download_simple_csv_report_assignment_submissions_path(@assignment)
@@ -70,10 +70,10 @@
 <% end %>
 
 <% content_for :wrap_left_content do %>
-    <div id="notice">
-      <div id="job-messenger"></div>
-    </div>
-    <div id='submissions_table'></div>
+  <div id='notice'>
+    <div id='job-messenger'></div>
+  </div>
+  <div id='submissions_table'></div>
 <% end %>
 <script>
   jQuery(document).ready(function() {

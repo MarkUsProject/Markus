@@ -192,33 +192,23 @@ class SubmissionsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
     apply_late_penalty = params[:apply_late_penalty]
-    submission = SubmissionCollector.instance.manually_collect_submission(
-      @grouping, @revision_number, apply_late_penalty, false)
-    redirect_to edit_assignment_submission_result_path(
-      assignment_id: @grouping.assignment_id,
-      submission_id: submission.id,
-      id: submission.get_latest_result.id)
+    submission = Submission.create_by_revision_number(@grouping, @revision_number)
+     submission.collect_single(@grouping, @revision_number, apply_late_penalty)
+    redirect_to action: 'browse',
+                id: @grouping.assignment_id
   end
 
   def collect_and_begin_grading
     assignment = Assignment.find(params[:assignment_id])
     grouping = Grouping.find(params[:id])
-
-    if assignment.submission_rule.can_collect_grouping_now?(grouping)
-      # Push grouping to the priority queue
-      SubmissionCollector.instance.push_grouping_to_priority_queue(grouping)
-      flash[:success] = I18n.t('collect_submissions.priority_given')
-    else
-      flash[:error] = I18n.t('browse_submissions.could_not_collect',
-                             group_name: grouping.group.group_name)
-    end
-    redirect_to action:   'browse',
-                id:       assignment.id
+    redirect_to action: 'browse',
+                id: assignment.id
   end
 
   def collect_all_submissions
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     if assignment.submission_rule.can_collect_all_now?
+
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(assignment.groupings)
       success =
@@ -252,6 +242,8 @@ class SubmissionsController < ApplicationController
       assignment.submission_rule.can_collect_now?(section)
     end
     if partition[0].count > 0
+      assignment.done!('false')
+      @current_job = SubmissionsJob.perform_later(assignment)
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(partition[0])
       success = I18n.t('collect_submissions.collection_job_started_for_groups',
@@ -271,7 +263,6 @@ class SubmissionsController < ApplicationController
                             .joins(:tas)
                             .where(users: { id: current_user.id })
       submission_collector = SubmissionCollector.instance
-      submission_collector.push_groupings_to_queue(groupings)
       flash[:success] =
           I18n.t('collect_submissions.collection_job_started',
                  assignment_identifier: assignment.short_identifier)

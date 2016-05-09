@@ -155,6 +155,7 @@ en:
       collection_incomplete_warning: "Collection is still in progress or has not started. Do you still want to proceed? Some submissions might be missing."
       check_collection_status_error: "There was an error checking collection status."
       uncollection_processing_message: "Undoing previous collection operation..."
+      collection_processing_message: "Collecting submissions..."
     assignment:
         hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
