@@ -43,8 +43,7 @@ class Submission < ActiveRecord::Base
   end
   
   def collect_single(grouping, rev_num, apply_late_penalty)
-    grouping.is_collected = false
-    grouping.save
+    grouping.update(is_collected: false)
       
     self.apply_penalty_or_add_grace_credits(grouping,
                                       apply_late_penalty)

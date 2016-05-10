@@ -526,14 +526,6 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET collect_all_submissions properly' do
-        expect(get: sub_path + '/collect_all_submissions').to route_to(
-          controller: sub_ctrl,
-          action: 'collect_all_submissions',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
       it 'routes GET download_simple_csv_report properly' do
         expect(get: sub_path + '/download_simple_csv_report').to route_to(
           controller: sub_ctrl,

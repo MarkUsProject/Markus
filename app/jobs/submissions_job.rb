@@ -1,63 +1,59 @@
 class SubmissionsJob < ActiveJob::Base
   queue_as :submissions
 
-   before_enqueue do |_job|
-      job_messenger = JobMessenger.create(job_id: job_id, status: :queued)
-      PopulateCache.populate_for_job(job_messenger, job_id)
-    end
+  before_enqueue do |_job|
+    job_messenger = JobMessenger.create(job_id: job_id, status: :queued)
+    PopulateCache.populate_for_job(job_messenger, job_id)
+  end
 
-  def perform(assignment, apply_late_penalty=true)
+  def perform(groupings, options)
+    return if groupings.empty?
 
     m_logger = MarkusLogger.instance
+    assignment = groupings.first.assignment
 
-      begin
-      
-        job_messenger = JobMessenger.where(job_id: job_id).first
-        job_messenger.update_attributes(status: :running)
-        PopulateCache.populate_for_job(job_messenger, job_id)
-        m_logger.log('Submission collection process established database' +
-                     ' connection successfully')		  
+    begin
+      job_messenger = JobMessenger.where(job_id: job_id).first
+      job_messenger.update(status: :running)
+      PopulateCache.populate_for_job(job_messenger, job_id)
+      m_logger.log('Submission collection process established database' +
+                   ' connection successfully')
 
-        assignment.groupings.each do |grouping|
-        
-			return if grouping.nil?
-			m_logger = MarkusLogger.instance
-			m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
-						 "'#{grouping.id}'")
-			time = assignment.submission_rule.calculate_collection_time.localtime
-			# Create a new Submission by timestamp.
-			# A Result is automatically attached to this Submission, thanks to some
-			# callback logic inside the Submission model
-			new_submission = Submission.create_by_timestamp(grouping, time)
+      groupings.each do |grouping|
+			  m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
+                     "#{grouping.id}")
 
-      # Apply the SubmissionRule
-      if apply_late_penalty
-			  new_submission = assignment.submission_rule.apply_submission_rule(
-			    new_submission)
-      end
-
-			unless grouping.error_collecting
-			  grouping.is_collected = true
-			end
-
-			grouping.save
-
+        if options[:revision_number].nil?
+          time = assignment.submission_rule.calculate_collection_time.localtime
+          new_submission = Submission.create_by_timestamp(grouping, time)
+        else
+          new_submission = Submission.create_by_revision_number(grouping, options[:revision_number])
         end
-        m_logger.log('Submission collection process done')
-        assignment.done!('true')
+
+        if options[:apply_late_penalty].nil? || options[:apply_late_penalty]
+          new_submission = assignment.submission_rule.apply_submission_rule(
+            new_submission)
+        end
+
+        unless grouping.error_collecting
+          grouping.is_collected = true
+        end
+
+			  grouping.save
 
         # Request a test run for the grouping
         request_a_test_run(grouping, new_submission)
-        
-	  rescue => e
-		Rails.logger.error e.message
-		job_messenger.update_attributes(status: failed, message: e.message)
-		PopulateCache.populate_for_job(job_messenger, job_id)
-		raise e
-        
-       job_messenger.update_attributes(status: :succeeded)
-       PopulateCache.populate_for_job(job_messenger, job_id)
       end
+      m_logger.log('Submission collection process done')
+      assignment.done!('true')
+	  rescue => e
+		  Rails.logger.error e.message
+		  job_messenger.update(status: :failed, message: e.message)
+		  PopulateCache.populate_for_job(job_messenger, job_id)
+		  raise e
+    end
+    job_messenger.update(status: :succeeded)
+    PopulateCache.populate_for_job(job_messenger, job_id)
   end
 
   def apply_penalty_or_add_grace_credits(grouping,
@@ -84,5 +80,4 @@ class SubmissionsJob < ActiveJob::Base
                                               new_submission.id)
     end
   end
-
 end
