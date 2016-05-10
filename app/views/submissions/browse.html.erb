@@ -24,7 +24,7 @@
     {
       link_text: t('collect_submissions.collect_all'),
       link_path: collect_all_submissions_assignment_submissions_path(@assignment.id),
-      html_options: { data: { confirm: t('collect_submissions.results_loss_warning') } }
+      html_options: { data: { confirm: t('collect_submissions.results_loss_warning'), remote: true } }
     }) %>
   <% end %>
   <% @heading_buttons +=

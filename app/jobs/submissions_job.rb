@@ -38,20 +38,19 @@ class SubmissionsJob < ActiveJob::Base
 			end
 
 			grouping.save
-
         end
         m_logger.log('Submission collection process done')
-        assignment.done!('true')
-        
+
 	  rescue => e
 		Rails.logger.error e.message
 		job_messenger.update_attributes(status: failed, message: e.message)
 		PopulateCache.populate_for_job(job_messenger, job_id)
 		raise e
-        
-       job_messenger.update_attributes(status: :succeeded)
        PopulateCache.populate_for_job(job_messenger, job_id)
+
       end
+      job_messenger.update_attributes(status: :succeeded)
+      PopulateCache.populate_for_job(job_messenger, job_id)
   end
 
   def apply_penalty_or_add_grace_credits(grouping,

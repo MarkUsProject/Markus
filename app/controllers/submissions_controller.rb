@@ -207,10 +207,9 @@ class SubmissionsController < ApplicationController
 
   def collect_all_submissions
     @assignment = Assignment.includes(:groupings).find(params[:assignment_id])
-    @assignment.done!('false')
     @current_job = SubmissionsJob.perform_later(@assignment)
     respond_to do |format|
-      format.json {}
+      format.js {}
     end
   end
 
