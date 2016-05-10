@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Peer Reviews</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Reviewier</th>
+      <th>Reviewee</th>
+      <th>Result</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @peer_reviews.each do |peer_review| %>
+      <tr>
+        <td><%= peer_review.reviewier_id %></td>
+        <td><%= peer_review.reviewee_id %></td>
+        <td><%= peer_review.result_id %></td>
+        <td><%= link_to 'Show', peer_review %></td>
+        <td><%= link_to 'Edit', edit_peer_review_path(peer_review) %></td>
+        <td><%= link_to 'Destroy', peer_review, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Peer review', new_peer_review_path %>

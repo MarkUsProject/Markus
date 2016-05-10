@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160504175156) do
+ActiveRecord::Schema.define(version: 20160510173147) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -327,6 +327,18 @@ ActiveRecord::Schema.define(version: 20160504175156) do
   end
 
   add_index "notes", ["creator_id"], name: "index_notes_on_creator_id", using: :btree
+
+  create_table "peer_reviews", force: :cascade do |t|
+    t.integer  "reviewer_id"
+    t.integer  "reviewee_id"
+    t.integer  "result_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "peer_reviews", ["result_id"], name: "index_peer_reviews_on_result_id", using: :btree
+  add_index "peer_reviews", ["reviewee_id"], name: "index_peer_reviews_on_reviewee_id", using: :btree
+  add_index "peer_reviews", ["reviewier_id"], name: "index_peer_reviews_on_reviewier_id", using: :btree
 
   create_table "periods", force: :cascade do |t|
     t.integer  "submission_rule_id"

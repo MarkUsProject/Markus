@@ -1,0 +1,29 @@
+<%= form_for(@peer_review) do |f| %>
+  <% if @peer_review.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@peer_review.errors.count, "error") %> prohibited this peer_review from being saved:</h2>
+
+      <ul>
+      <% @peer_review.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :reviewier_id %><br>
+    <%= f.number_field :reviewier_id %>
+  </div>
+  <div class="field">
+    <%= f.label :reviewee_id %><br>
+    <%= f.number_field :reviewee_id %>
+  </div>
+  <div class="field">
+    <%= f.label :result_id %><br>
+    <%= f.number_field :result_id %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
