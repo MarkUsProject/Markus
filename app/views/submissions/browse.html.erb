@@ -19,8 +19,8 @@
 <% @heading_buttons = [] %>
 
 <% if @current_user.admin? %>
-  <% if @assignment.submission_rule.can_collect_now? %>
-    <% @heading_buttons.push(
+  <% @heading_buttons +=
+  [
     {
       link_text: t('browse_submissions.csv_report'),
       link_path: download_simple_csv_report_assignment_submissions_path(@assignment)
