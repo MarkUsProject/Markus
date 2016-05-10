@@ -338,7 +338,7 @@ ActiveRecord::Schema.define(version: 20160510173147) do
 
   add_index "peer_reviews", ["result_id"], name: "index_peer_reviews_on_result_id", using: :btree
   add_index "peer_reviews", ["reviewee_id"], name: "index_peer_reviews_on_reviewee_id", using: :btree
-  add_index "peer_reviews", ["reviewier_id"], name: "index_peer_reviews_on_reviewier_id", using: :btree
+  add_index "peer_reviews", ["reviewer_id"], name: "index_peer_reviews_on_reviewer_id", using: :btree
 
   create_table "periods", force: :cascade do |t|
     t.integer  "submission_rule_id"

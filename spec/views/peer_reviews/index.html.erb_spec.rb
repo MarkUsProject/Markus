@@ -4,12 +4,12 @@ RSpec.describe "peer_reviews/index", type: :view do
   before(:each) do
     assign(:peer_reviews, [
       PeerReview.create!(
-        :reviewier_id => 1,
+        :reviewer_id => 1,
         :reviewee_id => 2,
         :result_id => 3
       ),
       PeerReview.create!(
-        :reviewier_id => 1,
+        :reviewer_id => 1,
         :reviewee_id => 2,
         :result_id => 3
       )

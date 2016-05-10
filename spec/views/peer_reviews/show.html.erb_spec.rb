@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "peer_reviews/show", type: :view do
   before(:each) do
     @peer_review = assign(:peer_review, PeerReview.create!(
-      :reviewier_id => 1,
+      :reviewer_id => 1,
       :reviewee_id => 2,
       :result_id => 3
     ))
