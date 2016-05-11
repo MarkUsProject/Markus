@@ -646,7 +646,7 @@ class Grouping < ActiveRecord::Base
 
   def self.get_groupings_for_assignment(assignment, user)
     if user.ta?
-      assignment.ta_memberships.where(user: user)
+      assignment.ta_memberships.includes(grouping: [:group, :assignment]).where(user: user)
                 .select { |m| m.grouping.is_valid? }
                 .map &:grouping
     else

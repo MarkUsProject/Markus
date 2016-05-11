@@ -64,7 +64,9 @@ class ResultsController < ApplicationController
         @old_marks_map[criterion.id] = oldmark
       end
 
+      Mark.skip_callback(:save, :after, :update_result_mark)
       mark.save(validate: false)
+      Mark.set_callback(:save, :after, :update_result_mark)
     end
 
     @result.update_total_mark
