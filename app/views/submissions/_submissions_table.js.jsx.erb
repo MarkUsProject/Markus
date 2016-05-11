@@ -359,6 +359,7 @@
         success: function(data) {
           if (data.success) {
             this.props.onSuccess(data.success);
+            window.setInterval(this.props.refresh, 30000);
           }
           if (data.error) {
             this.props.onError(data.error);
