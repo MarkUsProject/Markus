@@ -7,6 +7,7 @@ class AnnotationsController < ApplicationController
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
+    @annotation = Annotation.where(annotation_text_id: @text.id)
 
     submission = @submission_file.submission
     result_id = @annotation.result_id
