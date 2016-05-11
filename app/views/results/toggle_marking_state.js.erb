@@ -1,0 +1,12 @@
+<%# Hide error message (if any) %>
+document.getElementById('criterion_incomplete_error').style.display = 'none';
+
+<% if @result.marking_state == Result::MARKING_STATES[:complete] %>
+  var revert = "<%= t('marker.revert_to_incomplete') %>";
+  document.getElementById('toggle_marking_state').firstChild.value = revert;
+  document.getElementById('toggle_released').firstChild.disabled = false;
+<% else %>
+  var set = "<%= t('marker.set_to_complete') %>";
+  document.getElementById('toggle_marking_state').firstChild.value = set;
+  document.getElementById('toggle_released').firstChild.disabled = true;
+<% end %>

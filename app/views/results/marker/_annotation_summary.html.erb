@@ -1,7 +1,8 @@
 <% annots.each do |annot| %>
   <li>
     <p class='lineNumber'>
-      #<%= annot.annotation_number %> - <%= render partial: annot.annotation_list_link_partial, locals: {annot: annot} %>
+      #<%= annot.annotation_number %> - <b><%= annot.creator.first_name %> <%= annot.creator.last_name %> (<%= annot.creator.user_name %>)</b>
+      <%= render partial: annot.annotation_list_link_partial, locals: {annot: annot} %>
       <%= t('marker.annotation.remark_flag') if (annot.is_remark) %>
     </p>
     <div class='annotationContent' id='annotation_text_content_display_<%= annot.annotation_text.id %>'>

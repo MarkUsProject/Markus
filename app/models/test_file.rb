@@ -17,6 +17,9 @@ class TestFile < ActiveRecord::Base
   validates_presence_of :filename
   validates_presence_of :filetype
 
+  # Filenames must be unique for their file type
+  validates_uniqueness_of :filename, scope: [:filetype]
+
   # Filename Validation
   validates_each :filename do |record, attr, value|
 

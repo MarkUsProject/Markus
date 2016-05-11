@@ -1,4 +1,6 @@
 module SubmissionsHelper
+  include AutomatedTestsHelper
+
   def find_appropriate_grouping(assignment_id, params)
     if current_user.admin? || current_user.ta?
       Grouping.find(params[:grouping_id])
@@ -237,7 +239,7 @@ module SubmissionsHelper
   # Helper methods to determine remark request status on a submission
   def remark_in_progress(submission)
     submission.remark_result &&
-      submission.remark_result.marking_state == Result::MARKING_STATES[:partial]
+      submission.remark_result.marking_state == Result::MARKING_STATES[:incomplete]
   end
 
   def remark_complete_but_unreleased(submission)
@@ -253,5 +255,4 @@ module SubmissionsHelper
               .find(params[:assignment_id])
               .groupings.all?(&:marking_completed?)
   end
-
 end

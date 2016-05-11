@@ -1,0 +1,40 @@
+<div class='test-result'>
+  <% test_script_name = test_script_result.test_script.script_name %>
+
+  <h3><%= "#{t('automated_tests.test_run')} - #{test_script_name}" %>
+    <span class='right'>
+      <%= l(test_script_result.created_at, format: :long) %>
+    </span>
+  </h3>
+
+  <div class='table'>
+    <table>
+      <thead>
+        <tr>
+          <th><%= t('automated_tests.test_results_table.test_name') %></th>
+          <th><%= t('automated_tests.test_results_table.input') %></th>
+          <th><%= t('automated_tests.test_results_table.output') %></th>
+          <th><%= t('automated_tests.test_results_table.expected') %></th>
+          <th><%= t('automated_tests.test_results_table.marks_earned') %></th>
+          <th><%= t('automated_tests.test_results_table.status') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% test_script_result.test_results.each do |test| %>
+          <tr class="<%= test.completion_status == 'pass' ?
+          'test-result-success' : 'test-result-failure' %>">
+            <td><%= test.name %></td>
+            <td><%= test.input %></td>
+            <td><%= test.actual_output %></td>
+            <td><%= test.expected_output %></td>
+            <td><%= test.marks_earned %></td>
+            <td><%= test.completion_status == 'pass' ?
+                    t('automated_tests.test_results_table.passed') :
+                    t('automated_tests.test_results_table.failed') %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

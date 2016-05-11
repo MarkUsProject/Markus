@@ -50,11 +50,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
     end
 
     should 'not be able to update marking state' do
-      get :update_marking_state,
+      get :toggle_marking_state,
           :assignment_id => 1,
           :submission_id => 1,
-          :id => 1,
-          :value => 1
+          :id => 1
       assert_response :redirect
     end
 
@@ -184,14 +183,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert render_template 404
         end
 
-        should 'GET on :update_marking_state' do
+        should 'GET on :toggle_marking_state' do
           get_as @student,
-                 :update_marking_state,
+                 :toggle_marking_state,
                  format: :js,
                  assignment_id: 1,
                  submission_id: 1,
-                 id: @result.id,
-                 value: 1
+                 id: @result.id
           assert_response :missing
           assert render_template 404
         end
@@ -532,7 +530,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         context 'GET on :edit' do
-          context 'with 2 partial and 1 released/completed results' do
+          context 'with 2 incomplete and 1 released/completed results' do
             setup do
               3.times do |time|
                 g = Grouping.make(:assignment => @assignment)
@@ -552,32 +550,24 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @groupings = @assignment.groupings.order(:id)
             end
 
-            should 'have two separate edit forms with correct actions for' +
-                   'overall comment and overall remark comment respectively' do
+            should 'have an edit forms with correct actions for' +
+                   'overall comment' do
               # Use a released result as the original result.
               original_result = @result
               submission = original_result.submission
-
-              # Create a remark result associated with the created submission.
-              remark_result = Result.make(
-                submission: submission,
-                remark_request_submitted_at: Time.zone.now
-              )
-              submission.save!
+              submission.make_remark_result
+              submission.update(remark_request_timestamp: Time.zone.now)
 
               get_as @admin,
                      :edit,
                      :assignment_id => @assignment.id,
                      :submission_id => submission.id,
-                     :id => remark_result.id
+                     :id => submission.remark_result.id
 
               path_prefix = "/en/assignments/#{@assignment.id}" +
                             "/submissions/#{submission.id}/results"
               assert_select '#overall_comment_edit form[action=' +
                             "'#{path_prefix}/#{original_result.id}" +
-                            "/update_overall_comment']"
-              assert_select '#overall_remark_comment_edit form[action=' +
-                            "'#{path_prefix}/#{remark_result.id}" +
                             "/update_overall_comment']"
             end
 
@@ -694,7 +684,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert_not_nil assigns :result
         end
 
-        context 'GET on :update_marking_state' do
+        context 'GET on :toggle_marking_state' do
           setup do
             # refresh the grade distribution - there's already a completed mark so far
             # for each rubric type, in the following grade range:
@@ -726,12 +716,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
             end
 
             get_as @admin,
-                   :update_marking_state,
+                   :toggle_marking_state,
                    format: :js,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: @result.id,
-                   value: 'complete'
+                   id: @result.id
           end
 
           should 'refresh the cached grade distribution data when the marking state is set to complete' do
@@ -1169,15 +1158,14 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert render_template 404
         end
 
-        should 'GET on :update_marking_state' do
+        should 'GET on :toggle_marking_state' do
           result = Result.make
           get_as @ta,
-                 :update_marking_state,
+                 :toggle_marking_state,
                  format: :js,
                  assignment_id: 1,
                  submission_id: 1,
-                 id: result.id,
-                 marking_state: 'complete'
+                 id: result.id
           assert_response :success
           assert_not_nil assigns :result
         end
@@ -1345,13 +1333,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end  # -- GET on :view_marks
 
         should 'GET on :add_extra_mark' do
-          unmarked_result = Result.make
+          incomplete_result = Result.make
           get_as @ta,
                  :add_extra_mark,
                  format: :js,
                  :assignment_id => 1,
                  :submission_id => 1,
-                 :id => unmarked_result.id
+                 :id => incomplete_result.id
           assert_not_nil assigns :result
           assert render_template 'results/marker/add_extra_mark'
           assert_response :success
@@ -1359,7 +1347,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'POST on :add_extra_mark' do
           setup do
-            @unmarked_result = Result.make
+            @incomplete_result = Result.make
           end
 
           should 'with save error' do
@@ -1371,7 +1359,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     format: :js,
                     :assignment_id => 1,
                     :submission_id => 1,
-                    :id => @unmarked_result.id,
+                    :id => @incomplete_result.id,
                     :extra_mark => {:extra_mark => 1}
             assert_not_nil assigns :result
             assert_not_nil assigns :extra_mark
@@ -1380,22 +1368,22 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end  # -- with save error
 
           should 'without save error' do
-            @unmarked_result.update_total_mark
-            @old_total_mark = @unmarked_result.total_mark
+            @incomplete_result.update_total_mark
+            @old_total_mark = @incomplete_result.total_mark
             post_as @ta,
                     :add_extra_mark,
                     format: :js,
                     :assignment_id => 1,
                     :submission_id => 1,
-                    :id => @unmarked_result.id,
+                    :id => @incomplete_result.id,
                     :extra_mark => {:extra_mark => 1}
             assert_not_nil assigns :result
             assert_not_nil assigns :extra_mark
             assert render_template 'results/marker/insert_extra_mark'
             assert_response :success
 
-            @unmarked_result.reload
-            assert_equal @old_total_mark + 1, @unmarked_result.total_mark
+            @incomplete_result.reload
+            assert_equal @old_total_mark + 1, @incomplete_result.total_mark
           end
         end
 

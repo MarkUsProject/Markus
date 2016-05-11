@@ -29,11 +29,6 @@ describe Assignment do
       is_expected.to accept_nested_attributes_for(:assignment_files)
         .allow_destroy(true)
     end
-    it { is_expected.to have_many(:test_files).dependent(:destroy) }
-    it do
-      is_expected.to accept_nested_attributes_for(:test_files)
-        .allow_destroy(true)
-    end
     it do
       is_expected.to have_many(:criterion_ta_associations).dependent(:destroy)
     end
@@ -63,7 +58,7 @@ describe Assignment do
       is_expected.to validate_numericality_of(:group_max).is_greater_than(0)
     end
     it do
-      is_expected.to validate_numericality_of(:tokens_per_day)
+      is_expected.to validate_numericality_of(:tokens_per_period)
         .is_greater_than_or_equal_to(0)
     end
 
@@ -1030,10 +1025,8 @@ describe Assignment do
           result = s.get_latest_result
           result.total_mark = total_mark
           result.marking_state = Result::MARKING_STATES[:complete]
-          @assignment.rubric_criteria.each do |cri|
-            result.marks.create!(markable_id: cri.id,
-                                 markable_type: RubricCriterion,
-                                 mark: (total_mark * 4.0 / 20).round)
+          result.marks.each do |m|
+            m.update!(mark: (total_mark * 4.0 / 20).round)
           end
           result.save!
         end
@@ -1077,9 +1070,6 @@ describe Assignment do
           3.times { create(:accepted_student_membership, grouping: grouping) }
           submission = create(:version_used_submission, grouping: grouping)
           r = submission.get_latest_result
-          criteria.each do |criterion|
-            create(:mark, result: r, markable: criterion)
-          end
           r.reload
           r.update_attributes(marking_state: Result::MARKING_STATES[:complete])
         end
@@ -1140,9 +1130,6 @@ describe Assignment do
           3.times { create(:accepted_student_membership, grouping: grouping) }
           submission = create(:version_used_submission, grouping: grouping)
           r = submission.get_latest_result
-          criteria.each do |criterion|
-            create(:mark, result: r, markable: criterion)
-          end
           r.reload
           r.update_attributes(marking_state: Result::MARKING_STATES[:complete])
         end

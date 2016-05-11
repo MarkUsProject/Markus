@@ -48,14 +48,13 @@
     // If the mark_description div is empty, that means it isn't marked
     // Hide the criterion that AREN'T empty (i.e. are marked)
     // Check if the marks are released, if they are there is nothing to hide
-    if (document.getElementById('released') === null ||
-        !document.getElementById('released').checked) {
+    <% unless @result.released_to_students %>
       jQuery('.mark_description').each(function() {
         if (this.innerHTML.trim()) {
           hide_criterion(parseInt(this.getAttribute('data-id'), 10));
         }
       });
-    }
+    <% end %>
   });
 
   function check_working() {
@@ -67,10 +66,9 @@
 <%= render partial: 'results/common/old_marks_view_functions',
            formats: [:html] %>
 
-<% # Javascript for test result window %>
-<%= render partial: 'assignments/test_result_window',
-           formats: [:html],
-           locals: { aid: @assignment.id } %>
+<% # Javascript for feedback file window %>
+<%= render partial: 'assignments/feedback_file_window',
+           formats: [:js] %>           
 
 <%= render partial: 'results/common/annotations',
            formats: [:js] %>
@@ -175,11 +173,10 @@
     <%= render partial: 'results/common/file_selector',
                locals: { files: @files,
                          can_download: true } %>
-    <% if @assignment.enable_test %>
-      <div id='test_results_controls'>
-        <%= render partial: 'results/common/test_selector',
-                   locals: { test_result_files: @test_result_files,
-                             result: @result,
+    <% if can_show_feedback_files_tab?(@submission) %>
+      <div id='feedback_files_controls'>
+        <%= render partial: 'results/common/feedback_file_selector',
+                   locals: { feedback_files: @feedback_files,
                              submission_id: @submission.id } %>
       </div>
     <% end %>
@@ -196,7 +193,8 @@
                          marks_map: @marks_map,
                          mark_criteria:@mark_criteria,
                          submission: @submission,
-                         old_result: @old_result } %>
+                         old_result: @old_result,
+                         test_results: @test_results } %>
   <% else %>
     <%= render partial: 'results/result_summary',
                formats: [:html],

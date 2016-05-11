@@ -2,14 +2,14 @@ class Result < ActiveRecord::Base
 
   MARKING_STATES = {
     complete: 'complete',
-    partial: 'partial',
-    unmarked: 'unmarked'
+    incomplete: 'incomplete'
   }
 
   belongs_to :submission
   has_many :marks
   has_many :extra_marks
 
+  after_create :create_marks
   validates_presence_of :marking_state
   validates_inclusion_of :marking_state, in: MARKING_STATES.values
 
@@ -18,14 +18,9 @@ class Result < ActiveRecord::Base
   before_update :unrelease_partial_results
   before_save :check_for_nil_marks
 
-  scope :submitted_results, lambda {
-    where.not(marking_state: MARKING_STATES[:unmarked])
-  }
-
   scope :submitted_remarks_and_all_non_remarks, lambda {
     results = Result.arel_table
-    where(results[:remark_request_submitted_at].eq(nil)
-        .or(results[:marking_state].not_eq(MARKING_STATES[:unmarked])))
+    where(results[:remark_request_submitted_at].eq(nil))
   }
 
   # Returns a list of total marks for each student whose submissions are graded
@@ -63,27 +58,47 @@ class Result < ActiveRecord::Base
 
   # The sum of the bonuses and deductions, other than late penalty
   def get_total_extra_points
-    extra_marks.points.map(&:extra_mark).reduce(0, :+)
+    extra_marks.points.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # The sum of all the positive extra marks
   def get_positive_extra_points
-    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+)
+    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # The sum of all the negative extra marks
   def get_negative_extra_points
-    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+)
+    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # Percentage deduction for late penalty
   def get_total_extra_percentage
-    extra_marks.percentage.map(&:extra_mark).reduce(0, :+)
+    extra_marks.percentage.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # Point deduction for late penalty
   def get_total_extra_percentage_as_points
     get_total_extra_percentage * submission.assignment.total_mark / 100
+  end
+
+  def get_total_test_script_marks
+    total = 0
+
+    #find the unique test scripts for this submission
+    test_script_ids = TestScriptResult.select(:test_script_id).where(:grouping_id => submission.grouping_id)
+
+    #pull out the actual ids from the ActiveRecord objects
+    test_script_ids = test_script_ids.map { |script_id_obj| script_id_obj.test_script_id }
+
+    #take only the unique ids so we don't add marks from the same script twice
+    test_script_ids = test_script_ids.uniq
+
+    #add the latest result from each of our test scripts
+    test_script_ids.each do |test_script_id|
+      test_result = TestScriptResult.where(:test_script_id => test_script_id, :grouping_id => submission.grouping_id).last
+      total = total + test_result.marks_earned
+    end
+    return total
   end
 
   # un-releases the result
@@ -94,7 +109,7 @@ class Result < ActiveRecord::Base
 
   def mark_as_partial
     return if self.released_to_students
-    self.marking_state = Result::MARKING_STATES[:partial]
+    self.marking_state = Result::MARKING_STATES[:incomplete]
     self.save
   end
 
@@ -119,5 +134,13 @@ class Result < ActiveRecord::Base
       return false
     end
     true
+  end
+
+  def create_marks
+    assignment = self.submission.assignment
+    assignment.get_criteria.each do |criterion|
+      mark = criterion.marks.create(result_id: id)
+    end
+    self.update_total_mark
   end
 end

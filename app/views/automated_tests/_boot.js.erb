@@ -1,7 +1,33 @@
-<script>
-  jQuery(document).ready(function() {
-    <% if @assignment %>
-      toggle_automated_tests(<%= @assignment.enable_test %>);
-    <% end %>
+function check_start_of_availability_date(new_start_date) {
+  if (moment(new_start_date, '<%= t('date.formats.js_old_date') %>').isBefore(
+      moment())) {
+    alert('<%= t(:past_start_date_edit_warning) %>');
+  }
+}
+
+jQuery(window).load(function() {
+  <% if @assignment %>
+    toggle_tests_tokens(<%= @assignment.unlimited_tokens %>);
+    toggle_automated_tests(<%= @assignment.enable_test %>);
+  <% end %>
+
+  jQuery('#assignment_token_start_date').datetimepicker({
+    controlType:      'select',
+    showTime:         false,
+    numberOfMonths:   2,
+    secondMax:        0,
+    onClose:          check_start_of_availability_date,
+    dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
+    timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
+    showTimezone:     false,
+    monthNames:       <%= raw I18n.t('date.months') %>,
+    dayNames:         <%= raw I18n.t('date.weekdays') %>,
+    dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+    hourText:         "<%= I18n.t('time.hour') %>",
+    minuteText:       "<%= I18n.t('time.minute') %>",
+    timeText:         "<%= I18n.t('time.time') %>",
+    prevText:         "<%= I18n.t('time.prev') %>",
+    nextText:         "<%= I18n.t('time.next') %>",
+    closeText:        "<%= I18n.t('time.close') %>"
   });
-</script>
+});

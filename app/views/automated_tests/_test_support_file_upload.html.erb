@@ -1,0 +1,55 @@
+<div class="test_support_file">
+<%= form.fields_for :test_support_files, test_support_file do |f| %>
+    <% saved = !f.object.new_record? %>
+    <% if saved %>
+      <%# Test Support File already exists %>
+      <fieldset>
+        <legend>
+          <span class='file_name'>
+          <div class="file_link">
+          <%= link_to(f.object.file_name,
+                      action: 'download',
+                      assignment_id: @assignment.id,
+                      type: 'support',
+                      filename: f.object.file_name) %>
+          </div>
+          </span>
+        </legend>
+        </br>
+        <%= f.hidden_field :file_name, value: f.object.file_name %>
+        <div class="settings_left_side">
+          <%= f.label :description, t('automated_tests.script_option.description'), style: 'vertical-align:top;' %>
+          <%= f.text_area :description, value: f.object.description, cols: 30, rows: 1 %>
+        </div>
+        <div>
+          <%= f.label :file_name, t('automated_tests.replace') %>
+          <%= file_field_tag (saved ? ("new_update_file_"+f.object.file_name).to_sym : :new_support_file), size: "30", class: 'upload_file' %><br/>
+          <%= f.label :_destroy, t('automated_tests.remove_file') %>
+          <%= f.check_box :_destroy, class: "remove_test_script_file" %>
+        </div>
+      </fieldset>
+    <% else %>
+      <%# Test Support File does not exist -- it is new %>
+        <fieldset>  
+        <legend>
+        <span class='file_name'>
+        <%= t('automated_tests.new_test_support_file') %>
+        </span>
+        </legend>
+        <br>
+        <div class="settings_left_side">
+        <div class="desc">
+        <%= f.label :description, t('automated_tests.script_option.description'), style: 'vertical-align:top;' %>
+        <%= f.text_area :description,
+                         cols: 30, rows: 2,
+                         style: "vertical-align:middle;" %>
+        </div>
+        </div>
+        <div class="settings_right_side">
+        <%= t('automated_tests.upload_required').html_safe %>
+        <%= file_field_tag :new_support_file, size: "30", class: 'upload_file' %><br/>
+        </div>
+        </fieldset>
+    <% end %>
+<% end %>
+</div>

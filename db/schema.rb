@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160503175401) do
+ActiveRecord::Schema.define(version: 20160504175156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,8 +52,11 @@ ActiveRecord::Schema.define(version: 20160503175401) do
     t.integer "page"
     t.integer "column_start"
     t.integer "column_end"
+    t.integer "creator_id"
+    t.string  "creator_type"
   end
 
+  add_index "annotations", ["creator_type", "creator_id"], name: "index_annotations_on_creator_type_and_creator_id", using: :btree
   add_index "annotations", ["submission_file_id"], name: "index_annotations_on_submission_file_id", using: :btree
 
   create_table "assignment_files", force: :cascade do |t|
@@ -94,10 +97,10 @@ ActiveRecord::Schema.define(version: 20160503175401) do
     t.boolean  "enable_test",                      default: false,    null: false
     t.integer  "notes_count",                      default: 0
     t.boolean  "assign_graders_to_criteria",       default: false
-    t.integer  "rubric_criterions_count"
-    t.integer  "flexible_criterions_count"
+    t.integer  "rubric_criteria_count"
+    t.integer  "flexible_criteria_count"
     t.integer  "groupings_count"
-    t.integer  "tokens_per_day",                   default: 0,        null: false
+    t.integer  "tokens_per_period",                default: 0,        null: false
     t.boolean  "allow_remarks",                    default: true,     null: false
     t.datetime "remark_due_date"
     t.text     "remark_message"
@@ -105,9 +108,12 @@ ActiveRecord::Schema.define(version: 20160503175401) do
     t.integer  "results_fails"
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
+    t.boolean  "unlimited_tokens",                 default: false
     t.boolean  "is_hidden",                        default: false
     t.boolean  "only_required_files"
     t.boolean  "vcs_submit",                       default: false
+    t.datetime "token_start_date"
+    t.float    "token_period"
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
@@ -134,6 +140,17 @@ ActiveRecord::Schema.define(version: 20160503175401) do
   end
 
   add_index "extra_marks", ["result_id"], name: "index_extra_marks_on_result_id", using: :btree
+
+  create_table "feedback_files", force: :cascade do |t|
+    t.string   "filename",      null: false
+    t.binary   "file_content",  null: false
+    t.string   "mime_type",     null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.integer  "submission_id"
+  end
+
+  add_index "feedback_files", ["submission_id"], name: "index_feedback_files_on_submission_id", using: :btree
 
   create_table "flexible_criteria", force: :cascade do |t|
     t.string   "name",                                                       null: false
@@ -425,34 +442,63 @@ ActiveRecord::Schema.define(version: 20160503175401) do
 
   add_index "tags", ["user_id"], name: "index_tags_on_user_id", using: :btree
 
-  create_table "test_files", force: :cascade do |t|
-    t.string   "filename"
-    t.integer  "assignment_id"
-    t.string   "filetype"
-    t.boolean  "is_private"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "test_files", ["assignment_id", "filename"], name: "index_test_files_on_assignment_id_and_filename", unique: true, using: :btree
-
   create_table "test_results", force: :cascade do |t|
-    t.string   "filename"
-    t.text     "file_content"
-    t.integer  "submission_id"
+    t.integer  "test_script_result_id"
+    t.string   "name"
+    t.string   "completion_status",                  null: false
+    t.integer  "marks_earned",                       null: false
+    t.integer  "repo_revision"
+    t.text     "input",                 default: "", null: false
+    t.text     "actual_output",         default: "", null: false
+    t.text     "expected_output",       default: "", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "status"
-    t.integer  "user_id"
   end
 
-  add_index "test_results", ["filename"], name: "index_test_results_on_filename", using: :btree
-  add_index "test_results", ["submission_id"], name: "index_test_results_on_submission_id", using: :btree
+  create_table "test_script_results", force: :cascade do |t|
+    t.integer  "grouping_id"
+    t.integer  "test_script_id"
+    t.integer  "marks_earned"
+    t.integer  "repo_revision"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "submission_id"
+  end
+
+  create_table "test_scripts", force: :cascade do |t|
+    t.integer "assignment_id",           null: false
+    t.float   "seq_num",                 null: false
+    t.string  "script_name",             null: false
+    t.text    "description",             null: false
+    t.integer "max_marks",               null: false
+    t.boolean "run_on_submission"
+    t.boolean "run_on_request"
+    t.boolean "halts_testing"
+    t.string  "display_description",     null: false
+    t.string  "display_run_status",      null: false
+    t.string  "display_marks_earned",    null: false
+    t.string  "display_input",           null: false
+    t.string  "display_expected_output", null: false
+    t.string  "display_actual_output",   null: false
+    t.integer "criterion_id"
+    t.string  "criterion_type"
+  end
+
+  add_index "test_scripts", ["assignment_id", "seq_num"], name: "index_test_scripts_on_assignment_id_and_seq_num", using: :btree
+  add_index "test_scripts", ["criterion_type", "criterion_id"], name: "index_test_scripts_on_criterion_type_and_criterion_id", using: :btree
+
+  create_table "test_support_files", force: :cascade do |t|
+    t.string  "file_name",     null: false
+    t.integer "assignment_id", null: false
+    t.text    "description",   null: false
+  end
+
+  add_index "test_support_files", ["assignment_id"], name: "index_test_files_on_assignment_id", using: :btree
 
   create_table "tokens", force: :cascade do |t|
-    t.integer "grouping_id"
-    t.integer "tokens"
-    t.date    "last_token_used_date"
+    t.integer  "grouping_id"
+    t.integer  "remaining"
+    t.datetime "last_used"
   end
 
   create_table "users", force: :cascade do |t|
@@ -477,6 +523,7 @@ ActiveRecord::Schema.define(version: 20160503175401) do
   add_foreign_key "assignment_files", "assignments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_stats", "assignments", name: "fk_assignment_stats_assignments", on_delete: :cascade
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
+  add_foreign_key "feedback_files", "submissions"
   add_foreign_key "groupings", "assignments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
@@ -486,4 +533,5 @@ ActiveRecord::Schema.define(version: 20160503175401) do
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "users"
+  add_foreign_key "tokens", "groupings"
 end

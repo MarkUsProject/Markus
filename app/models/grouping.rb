@@ -44,6 +44,11 @@ class Grouping < ActiveRecord::Base
            through: :non_rejected_student_memberships
 
   has_one :token
+
+  has_many :test_script_results,
+           -> { order 'created_at DESC' },
+           dependent: :destroy
+
   has_one :inviter_membership,
           -> { where membership_status: StudentMembership::STATUSES[:inviter] },
           class_name: 'StudentMembership'
@@ -376,11 +381,6 @@ class Grouping < ActiveRecord::Base
     update_repository_permissions
   end
 
-  # Token Credit Query
-  def give_tokens
-    Token.create(grouping_id: self.id, tokens: self.assignment.tokens_per_day) if self.assignment.enable_test
-  end
-
   # Grace Credit Query
   def available_grace_credits
     total = []
@@ -578,9 +578,9 @@ class Grouping < ActiveRecord::Base
         if revision.path_exists?(assignment_folder)
           return true
         else
-          txn = self.group.repo.get_transaction('markus')
+          txn = repo.get_transaction('markus')
           txn.add_path(assignment_folder)
-          return self.group.repo.commit(txn)
+          return repo.commit(txn)
         end
       end
     end
@@ -713,6 +713,21 @@ class Grouping < ActiveRecord::Base
       'released'
     else
       'completed'
+    end
+  end
+
+  def get_total_test_script_marks
+    total = 0
+
+    #find the unique test scripts for this submission
+    test_script_ids = test_script_results.pluck(:id).uniq
+
+    #add the latest result from each of our test scripts
+    test_script_ids.sum do |test_script_id|
+      last_mark = self.test_script_results
+                      .where(test_script_id: test_script_id)
+                      .last
+      last_mark.nil? ? 0 : last_mark.marks_earned
     end
   end
 

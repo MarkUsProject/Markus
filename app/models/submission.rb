@@ -9,10 +9,15 @@ class Submission < ActiveRecord::Base
   validates_numericality_of :submission_version, only_integer: true
   validate :max_number_of_results
   belongs_to :grouping
+
   has_many   :results, dependent: :destroy
   has_many   :submission_files, dependent: :destroy
   has_many   :annotations, through: :submission_files
-  has_many   :test_results, dependent: :destroy
+  has_many   :test_script_results,
+             -> { order 'created_at DESC' },
+             dependent: :destroy
+  has_many   :feedback_files, dependent: :destroy
+
 
   def self.create_by_timestamp(grouping, timestamp)
      unless timestamp.kind_of? Time
@@ -58,7 +63,11 @@ class Submission < ActiveRecord::Base
   end
 
   def remark_result
-    results.where.not(remark_request_submitted_at: nil).first
+    if remark_request_timestamp.nil? || results.length < 2
+      nil
+    else
+      results.order(:created_at).last
+    end
   end
 
   def remark_result_id
@@ -83,6 +92,30 @@ class Submission < ActiveRecord::Base
       get_original_result
     else
       nil
+    end
+  end
+
+  # Sets marks when automated tests are run
+  def set_marks_for_tests
+    return if test_script_results.empty?
+
+    # Assumes marks already exist
+    get_latest_result.marks.each do |mark|
+      marks_earned = 0
+      mark_total = 0
+      mark.markable.test_scripts.each do |test_script|
+        res = test_script_results.where(test_script_id: test_script.id).last
+        marks_earned += res.marks_earned
+        mark_total += test_script.max_marks
+      end
+      if mark_total > 0
+        if mark.markable_type == 'RubricCriterion'
+          mark.mark = (marks_earned.to_f / mark_total.to_f * 4).round()
+        else
+          mark.mark = (marks_earned.to_f / mark_total.to_f * mark.markable.max).round(2)
+        end
+        mark.save
+      end
     end
   end
 
@@ -148,8 +181,7 @@ class Submission < ActiveRecord::Base
   # Returns whether this submission has a remark request that has been
   # submitted to instructors or TAs.
   def remark_submitted?
-    results.where.not(remark_request_submitted_at: nil)
-           .where.not(marking_state: Result::MARKING_STATES[:unmarked]).size > 0
+    results.where.not(remark_request_submitted_at: nil).size > 0
   end
 
   # Helper methods
@@ -189,10 +221,16 @@ class Submission < ActiveRecord::Base
     end
   end
 
+  def self.get_submission_by_grouping_id_and_assignment_id(grouping_id,
+                                                        assignment_id)
+    assignment = Assignment.find(assignment_id)
+    grouping = assignment.groupings.find(grouping_id)
+    grouping.current_submission_used
+  end
+
   def make_remark_result
-    remark = Result.create(
-      marking_state: Result::MARKING_STATES[:unmarked],
-      submission: self,
+    remark = results.create(
+      marking_state: Result::MARKING_STATES[:incomplete],
       remark_request_submitted_at: Time.zone.now)
 
     # populate remark result with old marks
@@ -207,11 +245,11 @@ class Submission < ActiveRecord::Base
     end
 
     original_result.marks.each do |mark|
-      remark_result.marks.create(result: remark,
-                                 created_at: Time.zone.now,
-                                 markable_id: mark.markable_id,
-                                 mark: mark.mark,
-                                 markable_type: mark.markable_type)
+      remark.marks.create(result: remark,
+                          created_at: Time.zone.now,
+                          markable_id: mark.markable_id,
+                          mark: mark.mark,
+                          markable_type: mark.markable_type)
     end
   end
 
@@ -220,7 +258,7 @@ class Submission < ActiveRecord::Base
   def create_result
     result = Result.new
     results << result
-    result.marking_state = Result::MARKING_STATES[:unmarked]
+    result.marking_state = Result::MARKING_STATES[:incomplete]
     result.save
   end
 

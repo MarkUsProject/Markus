@@ -2,12 +2,8 @@ FactoryGirl.define do
   factory :result do
     association :submission
 
-    factory :unmarked_result do
-      marking_state Result::MARKING_STATES[:unmarked]
-    end
-
-    factory :partial_result do
-      marking_state Result::MARKING_STATES[:partial]
+    factory :incomplete_result do
+      marking_state Result::MARKING_STATES[:incomplete]
     end
 
     factory :complete_result do

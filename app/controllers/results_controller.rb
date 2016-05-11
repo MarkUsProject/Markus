@@ -5,15 +5,18 @@ class ResultsController < ApplicationController
                 except: [:codeviewer, :edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
                          :update_overall_comment, :remove_extra_mark,
-                         :update_marking_state, :download, :download_zip,
+                         :toggle_marking_state,
+                         :download, :download_zip,
                          :note_message,
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
                 only: [:edit, :update_mark, :create, :add_extra_mark,
                        :next_grouping, :update_overall_comment,
-                       :remove_extra_mark, :update_marking_state, :note_message]
+                       :remove_extra_mark,
+                       :toggle_marking_state,
+                       :note_message]
   before_filter :authorize_for_user,
-                only: [:codeviewer, :download, :download_zip]
+                only: [:codeviewer, :download, :download_zip, :run_tests]
   before_filter :authorize_for_student,
                 only: [:view_marks, :update_remark_request,
                        :cancel_remark_request]
@@ -47,7 +50,7 @@ class ResultsController < ApplicationController
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
-    @test_result_files = @submission.test_results
+    @feedback_files = @submission.feedback_files
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
@@ -133,6 +136,28 @@ class ResultsController < ApplicationController
     end
   end
 
+  def run_tests
+    grouping_id = params[:grouping_id]
+    # TODO: The submission id is set incorrectly as the grouping_id
+    submission_id = Result.find(params[:id]).submission.id
+
+    begin
+      AutomatedTestsHelper.request_a_test_run(grouping_id,
+                                              'submission',
+                                              @current_user,
+                                              submission_id)
+    rescue => e
+      # TODO: really shouldn't be leaking error if student.
+      if current_user.admin?
+        flash_message(:error, e.message)
+      else
+        # TODO: Better error handling for students
+        flash_message(:error, 'Error running tests')
+      end
+    end
+    redirect_to :back
+  end
+
   ##  Tag Methods  ##
 
   def add_tag
@@ -168,7 +193,7 @@ class ResultsController < ApplicationController
 
   def set_released_to_students
     @result = Result.find(params[:id])
-    released_to_students = (params[:value] == 'true')
+    released_to_students = !@result.released_to_students
     if params[:old_id]
       @old_result = Result.find(params[:old_id])
       @old_result.released_to_students = released_to_students
@@ -187,21 +212,24 @@ class ResultsController < ApplicationController
     end
   end
 
-  #Updates the marking state
-  def update_marking_state
+  # Toggles the marking state
+  def toggle_marking_state
     @result = Result.find(params[:id])
     @old_marking_state = @result.marking_state
-    @result.marking_state = params[:value]
+
+    if @result.marking_state == Result::MARKING_STATES[:complete]
+      @result.marking_state = Result::MARKING_STATES[:incomplete]
+    else
+      @result.marking_state = Result::MARKING_STATES[:complete]
+    end
+
     if @result.save
-      # If marking_state is complete, update the cached distribution
-      if params[:value] == Result::MARKING_STATES[:complete]
-        @result.submission.assignment.assignment_stat.refresh_grade_distribution
-        @result.submission.assignment.update_results_stats
-      end
-      render template: 'results/update_marking_state'
+      @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      @result.submission.assignment.update_results_stats
+      render 'results/toggle_marking_state'
     else # Failed to pass validations
       # Show error message
-      render template: 'results/marker/show_result_error'
+      render 'results/marker/show_result_error'
     end
   end
 
@@ -390,9 +418,8 @@ class ResultsController < ApplicationController
     if @submission.remark_submitted?
       @old_result = @result
       @result = @submission.remark_result
-      # if remark result's marking state is 'unmarked' then the student has
-      # saved a remark request but not submitted it yet, therefore, still editable
-      if @result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students
+      # Check if remark request has been submitted but not released yet
+      if !@result.remark_request_submitted_at.nil? && !@result.released_to_students
         render 'results/student/no_remark_result'
         return
       end
@@ -408,7 +435,7 @@ class ResultsController < ApplicationController
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
-    @test_result_files = @submission.test_results
+    @feedback_files = @submission.feedback_files
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
@@ -486,7 +513,7 @@ class ResultsController < ApplicationController
           @submission.make_remark_result
         end
         @submission.remark_result.update_attributes(
-          marking_state: Result::MARKING_STATES[:partial])
+          marking_state: Result::MARKING_STATES[:incomplete])
         @submission.get_original_result.update_attributes(
           released_to_students: false)
         render js: 'location.reload();'

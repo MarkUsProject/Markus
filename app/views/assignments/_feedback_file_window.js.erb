@@ -1,0 +1,31 @@
+<script>
+  jQuery(document).ready(function() {
+    jQuery('#select_feedback_file_id').change();
+  });
+
+  function load_feedback_file(feedback_file_id) {
+    if (feedback_file_id === '') {
+      return;
+    }
+    jQuery('#select_feedback_file_id').prop('disabled', true);
+    jQuery.ajax({
+      url: '<%= render_feedback_file_assignment_path(id: @assignment.id) %>',
+      type: 'GET',
+      data: {feedback_file_id: feedback_file_id},
+      dataType: 'text',
+      beforeSend: function() {
+        document.getElementById('working').style.display = '';
+      },
+      complete: function() {
+        document.getElementById('working').style.display = 'none';
+      },
+      success: function (data) {
+        jQuery('#feedback_file_content').text(data);
+      },
+      error: function () {
+        jQuery('#feedback_file_content').html('Error retrieving feedback file');
+      }
+    });
+    jQuery('#select_feedback_file_id').prop('disabled', false);
+  }
+</script>

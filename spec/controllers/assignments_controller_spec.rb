@@ -142,7 +142,7 @@ describe AssignmentsController do
       # copied from the controller
       DEFAULT_FIELDS = [:short_identifier, :description, :repository_folder,
                         :due_date, :message, :group_min, :group_max,
-                        :tokens_per_day, :allow_web_submits,
+                        :tokens_per_period, :allow_web_submits,
                         :student_form_groups, :remark_due_date,
                         :remark_message, :assign_graders_to_criteria,
                         :enable_test, :allow_remarks,
