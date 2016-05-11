@@ -7,8 +7,9 @@ class AnnotationsController < ApplicationController
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
-    submission= @submission_file.submission
-    result = submission.result
+
+    submission = @submission_file.submission
+    result_id = @annotation.result_id
     is_remark = submission.has_remark?
 
     if params[:annotation_type] == 'image'
@@ -19,11 +20,11 @@ class AnnotationsController < ApplicationController
         submission_file_id: @submission_file_id,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1,
-        result: result
+        result_id: result_id
       })
     elsif params[:annotation_type] == 'pdf'
       @annotation = PdfAnnotation.new
-      @annotation.update_attributes(x1: Integer(params[:x1]),
+      @annotation.update_attributes!(x1: Integer(params[:x1]),
                                     x2: Integer(params[:x2]),
                                     y1: Integer(params[:y1]),
                                     y2: Integer(params[:y2]),
@@ -32,11 +33,11 @@ class AnnotationsController < ApplicationController
                                     is_remark: is_remark,
                                     annotation_number: submission.annotations
                                                                  .count + 1,
-                                    result: result
+                                    result_id: result_id
                                    )
     else
       @annotation = TextAnnotation.new
-      @annotation.update_attributes({
+      @annotation.update_attributes!({
         line_start: params[:line_start],
         line_end: params[:line_end],
         column_start: params[:column_start],
@@ -44,7 +45,7 @@ class AnnotationsController < ApplicationController
         submission_file_id: @submission_file_id,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1,
-        result: result
+        result_id: result_id
       })
     end
     @annotation.annotation_text = @text
@@ -63,11 +64,11 @@ class AnnotationsController < ApplicationController
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
     submission= @submission_file.submission
-    result = submission.result
+    result_id = params[:result_id]
     is_remark = submission.has_remark?
     case params[:annotation_type]
     when 'text'
-      @annotation = TextAnnotation.create(
+      @annotation = TextAnnotation.create!(
         line_start: params[:line_start],
         line_end: params[:line_end],
         column_start: params[:column_start],
@@ -78,10 +79,10 @@ class AnnotationsController < ApplicationController
         creator_type: current_user.type,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1,
-        result: result
+        result_id: result_id
       )
     when 'image'
-      @annotation = ImageAnnotation.create(
+      @annotation = ImageAnnotation.create!(
         annotation_text_id: @text.id,
         submission_file_id: @submission_file_id,
         x1: Integer(params[:x1]),
@@ -92,10 +93,10 @@ class AnnotationsController < ApplicationController
         creator_type: current_user.type,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1,
-        result: result
+        result_id: result_id
       )
     when 'pdf'
-      @annotation = PdfAnnotation.create(
+      @annotation = PdfAnnotation.create!(
         annotation_text_id: @text.id,
         submission_file_id: @submission_file_id,
         x1: Integer(params[:x1]),
@@ -107,7 +108,7 @@ class AnnotationsController < ApplicationController
         creator_type: current_user.type,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1,
-        result: result
+        result_id: result_id
       )
     end
 
