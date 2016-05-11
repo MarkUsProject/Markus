@@ -187,14 +187,15 @@ class SubmissionsController < ApplicationController
   def manually_collect_and_begin_grading
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
-    #apply_late_penalty = params[:apply_late_penalty]
-    SubmissionsJob.perform_later([@grouping],
-                                 apply_late_penalty: params[:apply_late_penalty],
-                                 revision_number: @revision_number)
-    #submission = Submission.create_by_revision_number(@grouping, @revision_number)
-    #submission.collect_single(@grouping, @revision_number, apply_late_penalty)
-    redirect_to action: 'browse',
-                id: @grouping.assignment_id
+    SubmissionsJob.perform_now([@grouping],
+                               apply_late_penalty: params[:apply_late_penalty],
+                               revision_number: @revision_number)
+
+    submission = @grouping.reload.current_submission_used
+    redirect_to edit_assignment_submission_result_path(
+      assignment_id: @grouping.assignment_id,
+      submission_id: submission.id,
+      id: submission.get_latest_result.id)
   end
 
   def uncollect_all_submissions

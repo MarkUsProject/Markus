@@ -14,8 +14,11 @@ class SubmissionsJob < ActiveJob::Base
 
     begin
       job_messenger = JobMessenger.where(job_id: job_id).first
-      job_messenger.update(status: :running)
-      PopulateCache.populate_for_job(job_messenger, job_id)
+      unless job_messenger.nil?
+        job_messenger.update(status: :running)
+        PopulateCache.populate_for_job(job_messenger, job_id)
+      end
+
       m_logger.log('Submission collection process established database' +
                    ' connection successfully')
 
@@ -51,8 +54,10 @@ class SubmissionsJob < ActiveJob::Base
 		  PopulateCache.populate_for_job(job_messenger, job_id)
 		  raise e
     end
-    job_messenger.update(status: :succeeded)
-    PopulateCache.populate_for_job(job_messenger, job_id)
+    unless job_messenger.nil?
+      job_messenger.update(status: :succeeded)
+      PopulateCache.populate_for_job(job_messenger, job_id)
+    end
   end
 
   def apply_penalty_or_add_grace_credits(grouping,
