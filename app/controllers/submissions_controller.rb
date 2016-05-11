@@ -13,18 +13,15 @@ class SubmissionsController < ApplicationController
                          :update_files,
                          :download,
                          :downloads,
-                         :collect_and_begin_grading,
                          :download_groupings_files,
                          :check_collect_status,
                          :manually_collect_and_begin_grading,
-                         :collect_ta_submissions,
                          :repo_browser,
                          :update_submissions,
                          :populate_submissions_table]
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
                        :manually_collect_and_begin_grading,
-                       :collect_ta_submissions,
                        :repo_browser,
                        :download_groupings_files,
                        :check_collect_status,
@@ -200,13 +197,6 @@ class SubmissionsController < ApplicationController
                 id: @grouping.assignment_id
   end
 
-  def collect_and_begin_grading
-    assignment = Assignment.find(params[:assignment_id])
-    grouping = Grouping.find(params[:id])
-    redirect_to action: 'browse',
-                id: assignment.id
-  end
-
   def uncollect_all_submissions
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     @current_job = UncollectSubmissions.perform_later(assignment)
@@ -227,7 +217,6 @@ class SubmissionsController < ApplicationController
       assignment.submission_rule.can_collect_now?(section)
     end
     if partition[0].count > 0
-      assignment.done!('false')
       @current_job = SubmissionsJob.perform_later(partition[0])
       success = I18n.t('collect_submissions.collection_job_started_for_groups',
                        assignment_identifier: assignment.short_identifier)
@@ -237,24 +226,6 @@ class SubmissionsController < ApplicationController
                      assignment_identifier: assignment.short_identifier)
     end
     render json: { success: success, error: error }
-  end
-
-  def collect_ta_submissions
-    assignment = Assignment.find(params[:assignment_id])
-    if assignment.submission_rule.can_collect_all_now?
-      groupings = assignment.groupings
-                            .joins(:tas)
-                            .where(users: { id: current_user.id })
-      submission_collector = SubmissionCollector.instance
-      flash[:success] =
-          I18n.t('collect_submissions.collection_job_started',
-                 assignment_identifier: assignment.short_identifier)
-    else
-      flash[:error] = I18n.t('collect_submissions.could_not_collect',
-                             assignment_identifier: assignment.short_identifier)
-    end
-    redirect_to action: 'browse',
-                id: assignment.id
   end
 
   # The table of submissions for an assignment and related actions and links.

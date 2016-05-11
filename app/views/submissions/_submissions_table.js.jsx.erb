@@ -357,10 +357,10 @@
         url: 'collect_submissions',
         data: dataLoad,
         success: function(data) {
-          if(data.success){
+          if (data.success) {
             this.props.onSuccess(data.success);
           }
-          if(data.error){
+          if (data.error) {
             this.props.onError(data.error);
           }
         }.bind(this),

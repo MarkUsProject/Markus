@@ -558,14 +558,6 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET collect_ta_submissions properly' do
-        expect(get: sub_path + '/collect_ta_submissions').to route_to(
-          controller: sub_ctrl,
-          action: 'collect_ta_submissions',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
       it 'routes GET update_submissions properly' do
         expect(get: sub_path + '/update_submissions').to route_to(
           controller: sub_ctrl,

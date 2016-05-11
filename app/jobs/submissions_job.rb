@@ -6,7 +6,7 @@ class SubmissionsJob < ActiveJob::Base
     PopulateCache.populate_for_job(job_messenger, job_id)
   end
 
-  def perform(groupings, options)
+  def perform(groupings, options = {})
     return if groupings.empty?
 
     m_logger = MarkusLogger.instance
@@ -45,7 +45,6 @@ class SubmissionsJob < ActiveJob::Base
         request_a_test_run(grouping, new_submission)
       end
       m_logger.log('Submission collection process done')
-      assignment.done!('true')
 	  rescue => e
 		  Rails.logger.error e.message
 		  job_messenger.update(status: :failed, message: e.message)

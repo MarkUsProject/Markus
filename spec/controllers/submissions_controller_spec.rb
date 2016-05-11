@@ -283,44 +283,6 @@ describe SubmissionsController do
              assignment_id: 1
       is_expected.to respond_with(:missing)
     end
-
-    describe 'attempting to collect all submissions at once ' do
-      it 'should get an error if it is before assignment due date' do
-        allow(Assignment).to receive(:find) { @assignment }
-        expect(@assignment).to receive(:short_identifier) { 'a1' }
-        expect(@assignment.submission_rule).to receive(
-          :can_collect_all_now?) { false }
-
-        get_as @ta_membership.user,
-               :collect_ta_submissions,
-               assignment_id: 1,
-               id: 1
-        expect(flash[:error]).to eq(
-          I18n.t('collect_submissions.could_not_collect',
-                 assignment_identifier: 'a1'))
-        is_expected.to respond_with(:redirect)
-      end
-
-      it 'should succeed if it is after assignment due date' do
-        @submission_collector = SubmissionCollector.instance
-        allow(Assignment).to receive(:find) { @assignment }
-        expect(SubmissionCollector).to receive(
-          :instance) { @submission_collector }
-        expect(@assignment).to receive(:short_identifier) { 'a1' }
-        expect(@assignment.submission_rule).to receive(
-          :can_collect_all_now?) { true }
-        expect(@submission_collector).to receive(:push_groupings_to_queue)
-
-        get_as @ta_membership.user,
-               :collect_ta_submissions,
-               assignment_id: 1,
-               id: 1
-        expect(flash[:success]).to eq(
-          I18n.t('collect_submissions.collection_job_started',
-                 assignment_identifier: 'a1'))
-        is_expected.to respond_with(:redirect)
-      end
-    end
   end
 
   describe 'An administrator' do
