@@ -76,7 +76,9 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
               { format: :js,
                 annotation_text_id: @annotation_text.id,
                 submission_file_id: @submission_file.id,
-                line_start: 1, line_end: 1 }
+                line_start: 1, line_end: 1,
+                column_start: 1, column_end: 1,
+                result_id: @result.id}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -91,6 +93,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
                 category_id: @category.id,
                 submission_file_id: @submission_file.id,
                 line_start: 1, line_end: 1,
+                column_start: 1, column_end: 1,
                 annotation_type: 'text',
                 result_id: @result.id}
       assert_response :success
@@ -160,7 +163,9 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
               { format: :js,
                 annotation_text_id: @annotation_text.id,
                 submission_file_id: @submission_file.id,
-                line_start: 1, line_end: 1 }
+                line_start: 1, line_end: 1,
+                column_start: 1, column_end: 1,
+                result_id: @result.id }
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -174,8 +179,9 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
                 category_id: @category.id,
                 submission_file_id: @submission_file.id,
                 line_start: 1, line_end: 1,
+                column_start: 1, column_end: 1,
                 annotation_type: 'text',
-                result_id: @result.id}
+                result_id: @result.id }
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation

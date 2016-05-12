@@ -29,7 +29,8 @@
             </button>
 
             <%= render partial: 'annotations/annotation_categories',
-                       locals: { annotation_categories: annotation_categories } %>
+                       locals: { annotation_categories: annotation_categories,
+                                 result_id: result.id } %>
           </div>
 
           <div id='codeviewer'></div>

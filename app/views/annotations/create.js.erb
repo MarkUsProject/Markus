@@ -6,7 +6,8 @@ document.getElementById('annotation_summary_list').innerHTML =
 <% if @text.annotation_category_id != nil %>
   document.getElementById('annotation_text_list_<%= @text.annotation_category_id %>').innerHTML =
     '<%= escape_javascript(render partial: "annotation_list",
-                                  locals: { annotation_category: @text.annotation_category }) %>';
+                                  locals: { annotation_category: @text.annotation_category,
+                                            result_id: @annotation.result_id }) %>';
 <% end %>
 
 <% if @annotation.is_a?(TextAnnotation) %>

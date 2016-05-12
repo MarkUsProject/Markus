@@ -5,7 +5,7 @@
 
   <% annotation_category.annotation_texts.each do |annotation_text| %>
     <li id='annotation_text_<%= annotation_text.id %>'
-        onclick='add_existing_annotation(<%= annotation_text.id %>); return false;'
+        onclick='add_existing_annotation(<%= annotation_text.id %>, <%= result_id %>); return false;'
         onMouseDown='return false;'
         title='<%= annotation_text.content %>'>
       <%= truncate(annotation_text.content, length: 40) %>

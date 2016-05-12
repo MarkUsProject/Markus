@@ -7,10 +7,8 @@ class AnnotationsController < ApplicationController
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
-    @annotation = Annotation.where(annotation_text_id: @text.id)
-
     submission = @submission_file.submission
-    result_id = @annotation.result_id
+    result_id = params[:result_id]
     is_remark = submission.has_remark?
 
     if params[:annotation_type] == 'image'
@@ -30,7 +28,10 @@ class AnnotationsController < ApplicationController
                                     y1: Integer(params[:y1]),
                                     y2: Integer(params[:y2]),
                                     page: Integer(params[:page]),
+                                    annotation_text_id: params[:annotation_text_id],
                                     submission_file_id: @submission_file_id,
+                                    creator_id: current_user.id,
+                                    creator_type: current_user.type,
                                     is_remark: is_remark,
                                     annotation_number: submission.annotations
                                                                  .count + 1,
@@ -45,7 +46,10 @@ class AnnotationsController < ApplicationController
         column_end: params[:column_end],
         submission_file_id: @submission_file_id,
         is_remark: is_remark,
+        annotation_text_id: params[:annotation_text_id],
         annotation_number: submission.annotations.count + 1,
+        creator_id: current_user.id,
+        creator_type: current_user.type,
         result_id: result_id
       })
     end
@@ -144,5 +148,6 @@ class AnnotationsController < ApplicationController
     @submission_file = SubmissionFile.find(@submission_file_id)
     @submission = @submission_file.submission
     @annotations = @submission.annotations
+    @result_id = params[:annotation_text][:result_id]
   end
 end
