@@ -42,6 +42,10 @@ class Assignment < ActiveRecord::Base
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
 
+  # Assignments can now refer to themselves, where this is null if there
+  # is no parent (the same holds for the child peer reviews)
+  belongs_to :parent_assignment, :class_name => "Assignment"
+
   has_many :annotation_categories,
            -> { order(:position) },
            class_name: 'AnnotationCategory',
@@ -1078,5 +1082,18 @@ class Assignment < ActiveRecord::Base
         return true
       end
     end
+  end
+
+  # Returns true if this is a peer review, meaning it has a parent assignment,
+  # false otherwise
+  def is_peer_review?
+    self.parent_assignment_id.nil?
+  end
+
+  # Returns true if this assignment is a parent assignment with at least one
+  # peer review child
+  def has_peer_review_children?
+    # TODO - more effective practically to just find one and exit if found?
+    not Assignment.where(:parent_assignment_id => self.parent_assignment_id).empty?
   end
 end
