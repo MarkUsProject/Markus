@@ -415,8 +415,8 @@ class AssignmentTest < ActiveSupport::TestCase
           end
           s = Submission.make(:grouping => g)
           r = s.get_latest_result
-          (0..3).each do |index|
-            Mark.make({:result => r, :markable => criteria[index] })
+          r.marks.each do |mark|
+            mark.mark = 0
           end
           r.reload
           r.marking_state = Result::MARKING_STATES[:complete]
@@ -490,8 +490,8 @@ class AssignmentTest < ActiveSupport::TestCase
           end
           s = Submission.make(:grouping => g)
           r = s.get_latest_result
-          (0..3).each do |index|
-            Mark.make({:result => r, :markable => criteria[index] })
+          r.marks.each do |mark|
+            mark.mark = 0
           end
           r.reload
           r.marking_state = Result::MARKING_STATES[:complete]
