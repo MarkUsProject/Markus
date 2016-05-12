@@ -646,7 +646,19 @@ class Grouping < ActiveRecord::Base
 
   def self.get_groupings_for_assignment(assignment, user)
     if user.ta?
-      assignment.ta_memberships.includes(grouping: [:group, :assignment]).where(user: user)
+      assignment.ta_memberships.includes(grouping: [:group,
+                                                    :assignment,
+                                                    :tags,
+                                                    :inviter,
+                                                    :grace_period_deductions,
+                                                    current_submission_used:
+                                                      [:submission_files,
+                                                       :submitted_remark,
+                                                       :results],
+                                                    accepted_student_memberships:
+                                                      [:grace_period_deductions,
+                                                       :user]])
+                .where(user: user)
                 .select { |m| m.grouping.is_valid? }
                 .map &:grouping
     else
@@ -654,7 +666,9 @@ class Grouping < ActiveRecord::Base
               .includes(:assignment,
                         :group,
                         :grace_period_deductions,
-                        { current_submission_used: [:results] },
+                        { current_submission_used: [:results,
+                                                    :submission_files,
+                                                    :submitted_remark] },
                         { accepted_student_memberships: :user },
                         { inviter: :section },
                         :tags)
@@ -682,13 +696,13 @@ class Grouping < ActiveRecord::Base
   # Returns boolean value based on if the submission has files or not
   def has_files_in_submission?
     !has_submission? ||
-    SubmissionFile.where(submission_id: current_submission_used.id).exists?
+    !current_submission_used.submission_files.empty?
   end
 
   # Helper for populate_submissions_table.
   # Returns the final grade for this grouping.
   def final_grade(result)
-    if has_submission? && result.marking_state == Result::MARKING_STATES[:complete]
+    if !result.nil? && result.marking_state == Result::MARKING_STATES[:complete]
       result.total_mark
     else
       '-'
