@@ -65,6 +65,30 @@ describe Assignment do
     it 'should require case sensitive unique value for short_identifier' do
       assignment = create(:assignment)
       expect(assignment).to validate_uniqueness_of(:short_identifier)
+      end
+    it 'should have a nil parent_assignment_id by default' do
+      assignment = build(:assignment)
+      expect(assignment.parent_assignment_id).to be_nil
+    end
+    it 'should not be a peer review if there is no parrent_assignment_id' do
+      assignment = build(:assignment)
+      expect(assignment.parent_assignment_id).to be_nil
+      expect(assignment.is_peer_review?).to be false
+    end
+    it 'should be a peer review if it has a parent_assignement_id' do
+      assignment = build(:assignment)
+      assignment.parent_assignment_id = 1  # Arbitrary number
+      expect(assignment.is_peer_review?).to be true
+    end
+    it 'should no assignment children since the test database has none yet' do
+      assignment_nil = build(:assignment)
+      expect(assignment_nil.get_peer_review_assignments).to be_empty
+    end
+    it 'should find children assignments when they reference the parent' do
+      parent_assignment = create(:assignment)
+      assignment = build(:assignment, parent_assignment: parent_assignment)
+      expect(parent_assignment.has_peer_review_assignments?).to be true
+      expect(parent_assignment.get_peer_review_assignments).not_to be_empty
     end
   end
 

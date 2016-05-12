@@ -900,6 +900,24 @@ class Assignment < ActiveRecord::Base
     false
   end
 
+  # Returns true if this is a peer review, meaning it has a parent assignment,
+  # false otherwise.
+  def is_peer_review?
+    not self.parent_assignment_id.nil?
+  end
+
+  # Checks if this assignment has any children which reference this assignment
+  def has_peer_review_assignments?
+    not Assignment.where(:parent_assignment_id => self.parent_assignment_id).empty?
+  end
+
+  # Gets a relation object that contains all of the child assignments that
+  # are to be peer reviews for this assignment (which means .empty? may be
+  # true)
+  def get_peer_review_assignments
+    Assignment.where(:parent_assignment_id => self.parent_assignment_id)
+  end
+
   ### REPO ###
 
   def repository_name
@@ -1082,18 +1100,5 @@ class Assignment < ActiveRecord::Base
         return true
       end
     end
-  end
-
-  # Returns true if this is a peer review, meaning it has a parent assignment,
-  # false otherwise
-  def is_peer_review?
-    self.parent_assignment_id.nil?
-  end
-
-  # Returns true if this assignment is a parent assignment with at least one
-  # peer review child
-  def has_peer_review_children?
-    # TODO - more effective practically to just find one and exit if found?
-    not Assignment.where(:parent_assignment_id => self.parent_assignment_id).empty?
   end
 end
