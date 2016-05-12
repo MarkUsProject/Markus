@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160504175156) do
+ActiveRecord::Schema.define(version: 20160509144712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(version: 20160504175156) do
     t.integer "column_end"
     t.integer "creator_id"
     t.string  "creator_type"
+    t.integer "result_id"
   end
 
   add_index "annotations", ["creator_type", "creator_id"], name: "index_annotations_on_creator_type_and_creator_id", using: :btree

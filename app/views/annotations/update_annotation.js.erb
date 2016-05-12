@@ -6,7 +6,8 @@ document.getElementById('annotation_summary_list').innerHTML =
 <% if @annotation_text.annotation_category_id != nil %>
   document.getElementById('annotation_text_list_<%= @annotation_text.annotation_category_id %>').innerHTML =
     '<%= escape_javascript(render partial: "annotation_list",
-                                  locals: { annotation_category: @annotation_text.annotation_category }) %>';
+                                  locals: { annotation_category: @annotation_text.annotation_category,
+                                            result_id: @result_id }) %>';
 <% end %>
 
 update_annotation_text('<%= @annotation_text.id %>', '<%= escape_javascript(markdown(@annotation_text.content)) %>');

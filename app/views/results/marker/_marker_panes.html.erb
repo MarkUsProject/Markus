@@ -29,7 +29,8 @@
             </button>
 
             <%= render partial: 'annotations/annotation_categories',
-                       locals: { annotation_categories: annotation_categories } %>
+                       locals: { annotation_categories: annotation_categories,
+                                 result_id: result.id } %>
           </div>
 
           <div id='codeviewer'></div>
@@ -193,7 +194,8 @@
                             jQuery('#x2').val(),
                             jQuery('#y1').val(),
                             jQuery('#y2').val(),
-                            jQuery('#annot_dialog_page').val());">
+                            jQuery('#annot_dialog_page').val(),
+                            <%= result.id %>);">
                   <%= I18n.t('marker.annotation.new_annotation') %>
                 </button>
                 <%= button_tag t('cancel'), onclick: 'modal.close(); hideAnnotationPreview();' %>

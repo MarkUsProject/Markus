@@ -29,6 +29,7 @@
                    remote: true do |f| %>
 
         <%= f.hidden_field :id %>
+        <input type='hidden' name='annotation_text[result_id]' value='<%= annot.result_id %>'>
         <input type='hidden' name='annotation_text[submission_file_id]' value='<%= @submission_file_id %>'>
 
         <p class='manageAnnotations'><%= f.text_area :content, cols: 60, rows: 5 %></p>
