@@ -11,7 +11,8 @@
            onclick='return false;'
            onmousedown='return false;'>
           <%= render partial: 'annotations/annotation_list',
-                     locals: { annotation_category: annotation_category } %>
+                     locals: { annotation_category: annotation_category,
+                               result_id: result_id } %>
       </div>
     </li>
   <% end %>
