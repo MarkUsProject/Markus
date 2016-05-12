@@ -438,8 +438,7 @@
               '&content=' + encodeURIComponent(content) +
               '&category_id=' + category_id +
               '&result_id=' + result_id +
-              '&authenticity_token=' + AUTH_TOKEN 
-
+              '&authenticity_token=' + AUTH_TOKEN
       });
     } else if (annotation_type === ANNOTATION_TYPES.IMAGE) {
       // Image annotation
@@ -456,7 +455,6 @@
               '&y2=' + y2 +
               '&result_id=' + result_id +
               '&authenticity_token=' + AUTH_TOKEN
-
       });
     } else if (annotation_type === ANNOTATION_TYPES.PDF) {
       // PDF Annotation
