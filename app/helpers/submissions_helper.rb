@@ -54,14 +54,12 @@ module SubmissionsHelper
         submission = grouping.current_submission_used
         if submission.nil?
           result = nil
-        elsif !submission.remark_submitted?
+        elsif submission.submitted_remark.nil?
           result = (results.select do |r|
             r.submission_id == submission.id
           end).first
         else
-          result = (results.select do |r|
-            r.id == submission.remark_result_id
-          end).first
+          result = submission.remark_result
         end
         final_due_date = assignment.submission_rule.get_collection_time(grouping.inviter.section)
         g[:name] = grouping.get_group_name
@@ -247,12 +245,5 @@ module SubmissionsHelper
       (submission.remark_result.marking_state ==
          Result::MARKING_STATES[:complete]) &&
         !submission.remark_result.released_to_students
-  end
-
-  # Checks if all the assignments for the current submission are marked.
-  def all_assignments_marked?
-    Assignment.includes(groupings: [:current_submission_used])
-              .find(params[:assignment_id])
-              .groupings.all?(&:marking_completed?)
   end
 end
