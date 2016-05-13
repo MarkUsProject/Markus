@@ -387,7 +387,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         students_id = [@student1.id, @student2.id]
         student_memberships_id = [@grouping.student_memberships.at(0).user_id,
                                   @grouping.student_memberships.at(1).user_id]
-        expect(students_id).to contain_exactly(student_memberships_id)
+        assert_same_elements(students_id, student_memberships_id)
       end
 
       should 'with two valid users, with assignment past collection date' do
@@ -406,7 +406,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         students_id = [@student1.id, @student2.id]
         student_memberships_id = [@grouping.student_memberships.at(0).user_id,
                                   @grouping.student_memberships.at(1).user_id]
-        expect(students_id).to contain_exactly(student_memberships_id)
+        assert_same_elements(students_id, student_memberships_id)
       end
 
       should 'be able to add members' do
@@ -426,7 +426,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         students_id = [@student1.id, @student2.id]
         student_memberships_id = [@grouping.student_memberships.at(0).user_id,
                                   @grouping.student_memberships.at(1).user_id]
-        expect(students_id).to contain_exactly(student_memberships_id)
+        assert_same_elements(students_id, student_memberships_id)
       end
 
       should 'with 1 valid user, 1 already assigned user' do
@@ -461,7 +461,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         student_memberships_id = [@grouping.student_memberships.at(0).user_id,
                                   @grouping.student_memberships.at(1).user_id,
                                   @grouping.student_memberships.at(2).user_id]
-        expect(students_id).to contain_exactly(student_memberships_id)
+        assert_same_elements(students_id, student_memberships_id)
       end
 
       should 'with valid,valid,invalid users' do
@@ -482,7 +482,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         students_id = [@student1.id, @student2.id]
         student_memberships_id = [@grouping.student_memberships.at(0).user_id,
                                   @grouping.student_memberships.at(1).user_id]
-        expect(students_id).to contain_exactly(student_memberships_id)
+        assert_same_elements(students_id, student_memberships_id)
       end
 
     end #POST on global_actions on assign
