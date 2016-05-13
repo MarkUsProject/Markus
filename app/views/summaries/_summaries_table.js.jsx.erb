@@ -161,7 +161,7 @@
         if (summary.name_url === '') {
           s['group_name'] = <span>{summary.name}</span>;
         } else {
-          s['group_name'] = <span><a href={summary.name_url}>{summary.name}</a></span>;
+          s['group_name'] = <a href={summary.name_url}>{summary.name}</a>;
         };
         if (summary.late_commit) {
           s['commit_date'] = (<span>
