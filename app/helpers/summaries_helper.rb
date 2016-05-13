@@ -40,9 +40,11 @@ module SummariesHelper
                     r.id == submission.remark_result_id
                   end).first
       end
+      final_due_date = assignment.submission_rule.get_collection_time(grouping.inviter.section)
       g = grouping.attributes
       g[:class_name] = get_tr_class(grouping)
       g[:name] = grouping.get_group_name
+      g[:name_url] = get_grouping_name_url(grouping, final_due_date, result)
       g[:section] = grouping.section
       g[:repo_name] = grouping.group.repository_name
       g[:repo_url] = repo_browser_assignment_submission_path(assignment,
