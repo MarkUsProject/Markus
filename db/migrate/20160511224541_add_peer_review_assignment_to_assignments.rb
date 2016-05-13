@@ -1,5 +1,6 @@
 class AddPeerReviewAssignmentToAssignments < ActiveRecord::Migration
   def change
-    add_column :assignments, :parent_assignment_id, :integer, default: nil
+    add_reference :assignments, :parent_assignment
+    add_reference :assignments, :peer_review
   end
 end

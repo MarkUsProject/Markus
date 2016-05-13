@@ -44,7 +44,8 @@ class Assignment < ActiveRecord::Base
 
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
-  belongs_to :parent_assignment, :class_name => "Assignment"
+  belongs_to :parent_assignment, class_name: 'Assignment', inverse_of: :peer_review
+  has_one :peer_review, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
 
   has_many :annotation_categories,
            -> { order(:position) },
@@ -903,19 +904,13 @@ class Assignment < ActiveRecord::Base
   # Returns true if this is a peer review, meaning it has a parent assignment,
   # false otherwise.
   def is_peer_review?
-    not self.parent_assignment_id.nil?
+    not parent_assignment_id.nil?
   end
 
-  # Checks if this assignment has any children which reference this assignment
-  def has_peer_review_assignments?
-    not Assignment.where(:parent_assignment_id => self.parent_assignment_id).empty?
-  end
-
-  # Gets a relation object that contains all of the child assignments that
-  # are to be peer reviews for this assignment (which means .empty? may be
-  # true)
-  def get_peer_review_assignments
-    Assignment.where(:parent_assignment_id => self.parent_assignment_id)
+  # Returns true if this is a parent assignment that has a child peer review
+  # assignment.
+  def has_peer_review_assignment?
+    not peer_review.nil?
   end
 
   ### REPO ###
