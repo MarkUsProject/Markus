@@ -8,6 +8,7 @@ class Result < ActiveRecord::Base
   belongs_to :submission
   has_many :marks
   has_many :extra_marks
+  has_many :annotations
 
   after_create :create_marks
   validates_presence_of :marking_state

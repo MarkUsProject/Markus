@@ -10,7 +10,12 @@ class Submission < ActiveRecord::Base
   validate :max_number_of_results
   belongs_to :grouping
 
-  has_many   :results, dependent: :destroy
+  has_many   :results, -> { order :created_at },
+             dependent: :destroy
+
+  has_one    :submitted_remark, -> { where.not remark_request_submitted_at: nil },
+             class_name: 'Result'
+
   has_many   :submission_files, dependent: :destroy
   has_many   :annotations, through: :submission_files
   has_many   :test_script_results,
@@ -59,14 +64,14 @@ class Submission < ActiveRecord::Base
 
   # Returns the original result.
   def get_original_result
-    Result.where(submission_id: id).order(:created_at).first
+    results.first
   end
 
   def remark_result
     if remark_request_timestamp.nil? || results.length < 2
       nil
     else
-      results.order(:created_at).last
+      results.last
     end
   end
 
@@ -76,7 +81,7 @@ class Submission < ActiveRecord::Base
 
   # Returns the latest result.
   def get_latest_result
-    if remark_submitted?
+    if !submitted_remark.nil?
       remark_result
     else
       get_original_result
@@ -181,7 +186,7 @@ class Submission < ActiveRecord::Base
   # Returns whether this submission has a remark request that has been
   # submitted to instructors or TAs.
   def remark_submitted?
-    results.where.not(remark_request_submitted_at: nil).size > 0
+    !submitted_remark.nil?
   end
 
   # Helper methods

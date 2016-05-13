@@ -3,8 +3,6 @@ require 'zip'
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
 
-  helper_method :all_assignments_marked?
-
   before_filter :authorize_only_for_admin,
                 except: [:server_time,
                          :populate_file_manager_react,

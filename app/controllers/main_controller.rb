@@ -86,7 +86,7 @@ class MainController < ApplicationController
     validation_result = validate_user(params[:user_login], params[:user_login], params[:user_password])
     unless validation_result[:error].nil?
       flash_message(:error, validation_result[:error])
-      redirect_to action: 'login'
+      render :login, locals: { user_login: params[:user_login] }
       return
     end
     # validation worked
