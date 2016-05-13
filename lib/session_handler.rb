@@ -166,7 +166,7 @@ module SessionHandler
           return true
         end
         # Otherwise, expire only if the session timed out.
-        session[:timeout] < Time.now
+        return session[:timeout] < Time.now
       end
       # Expire session if remote user does not match the session's uid.
       # We cannot have switched roles at this point.
