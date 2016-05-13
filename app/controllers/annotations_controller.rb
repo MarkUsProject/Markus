@@ -135,4 +135,14 @@ class AnnotationsController < ApplicationController
     @submission = @submission_file.submission
     @annotations = @submission.annotations
   end
+
+  def find_annotation_text
+    string = params[:string]
+    @annotation_texts = AnnotationText.where("content LIKE ?", "#{string}%")
+    if @annotation_texts.size == 1
+      render html: "#{@annotation_texts.first.content}".html_safe
+    else
+      render html: "".html_safe
+    end
+  end
 end

@@ -335,6 +335,7 @@ Markus::Application.routes.draw do
         post 'add_existing_annotation'
         patch 'update_annotation'
         delete '/' => 'annotations#destroy'
+        get 'find_annotation_text'
       end
     end
 
