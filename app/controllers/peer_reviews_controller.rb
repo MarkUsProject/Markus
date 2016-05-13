@@ -1,5 +1,6 @@
 class PeerReviewsController < ApplicationController
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
+  before_filter :authorize_only_for_admin
 
   # GET /peer_reviews
   # GET /peer_reviews.json

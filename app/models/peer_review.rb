@@ -1,7 +1,7 @@
 class PeerReview < ActiveRecord::Base
-  belongs_to :reviewer, :class_name => "Student", :foreign_key => "reviewer_id"
-  belongs_to :reviewee, :class_name => "Student", :foreign_key => "reviewee_id"
-  has_one :result
+  belongs_to :reviewer, class_name: "Student", foreign_key: "reviewer_id"
+  belongs_to :reviewee, class_name: "Student", foreign_key: "reviewee_id"
+  belongs_to :result
 
   validates_associated :reviewer
   validates_associated :reviewee
