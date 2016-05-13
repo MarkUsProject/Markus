@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(version: 20160511224541) do
     t.integer "column_end"
     t.integer "creator_id"
     t.string  "creator_type"
+    t.integer "result_id"
   end
 
   add_index "annotations", ["creator_type", "creator_id"], name: "index_annotations_on_creator_type_and_creator_id", using: :btree
