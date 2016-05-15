@@ -59,7 +59,8 @@
       this.setState({ selected_files: [] });
 
       jQuery.ajax({
-        url: '<%= populate_file_manager_react_assignment_submissions_path %>',
+        url: '<%= populate_file_manager_react_assignment_submissions_path(
+          path: @path) %>',
         method: 'GET',
         dataType: 'json',
         success: function(data) {

@@ -161,7 +161,7 @@ module SubmissionsHelper
 
       directories = revision.directories_at_path(full_path)
       directories_info = get_directories_info(directories, revision_number,
-                                              path, grouping_id)
+                                              path, grouping_id, 'repo_browser')
       return exit_directory + files_info + directories_info
     else
       return exit_directory
@@ -205,7 +205,7 @@ module SubmissionsHelper
     end
   end
 
-  def get_directories_info(directories, revision_number, path, grouping_id)
+  def get_directories_info(directories, revision_number, path, grouping_id, action)
     directories.map do |directory_name, directory|
       d = {}
       d[:id] = directory.object_id
@@ -214,7 +214,7 @@ module SubmissionsHelper
           # id: assignment_id and grouping_id: grouping_id
           # like the files info?
           view_context.link_to(" #{directory_name}/",
-                               action: 'repo_browser',
+                               action: action,
                                id: grouping_id,
                                revision_number: revision_number,
                                path: File.join(path, directory_name))
