@@ -238,6 +238,7 @@ Markus::Application.routes.draw do
           get 'add_annotation_text'
           post 'add_annotation_text'
           put 'update_annotation'
+          get 'find_annotation_text'
         end
 
         collection do
