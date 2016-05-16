@@ -52,7 +52,7 @@ describe Assignment do
     it { is_expected.to validate_presence_of(:group_max) }
     it { is_expected.to validate_presence_of(:notes_count) }
     it { should belong_to(:parent_assignment).class_name('Assignment') }
-    it { should have_one(:peer_review).class_name('Assignment') }
+    it { should have_one(:pr_assignment).class_name('Assignment') }
     it do
       is_expected.to validate_numericality_of(:group_min).is_greater_than(0)
     end
@@ -74,7 +74,7 @@ describe Assignment do
     end
     it 'should have a nil peer_review by default' do
       assignment = create(:assignment)
-      expect(assignment.peer_review).to be_nil
+      expect(assignment.pr_assignment).to be_nil
     end
     it 'should not be a peer review if there is no parent_assignment_id' do
       assignment = create(:assignment)
@@ -94,10 +94,10 @@ describe Assignment do
       expect(assignment.has_peer_review_assignment?).to be false
     end
     it 'should find children assignments when they reference the parent' do
-      parent_assignment = create(:assignment, id: 1)
-      assignment = create(:assignment, id: 2, parent_assignment: parent_assignment)
-      expect(parent_assignment.peer_review.id).to be 2
-      expect(assignment.parent_assignment.id).to be 1
+      parent_assignment = create(:assignment)
+      assignment = create(:assignment, parent_assignment: parent_assignment)
+      expect(parent_assignment.pr_assignment.id).to be assignment.id
+      expect(assignment.parent_assignment.id).to be parent_assignment.id
     end
   end
 
