@@ -61,7 +61,9 @@ class Ta < User
     distribution = Array.new(intervals, 0)
     assignment.groupings.joins(:tas)
       .where(memberships: { user_id: id }).find_each do |grouping|
-      result = grouping.current_submission_used.get_latest_completed_result
+      submission = grouping.current_submission_used
+      next if submission.nil?
+      result = submission.get_latest_completed_result
       next if result.nil?
       distribution = update_distribution(distribution, result,
                                          assignment.total_mark, intervals)
