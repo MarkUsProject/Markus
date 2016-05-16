@@ -151,7 +151,8 @@ module SubmissionsHelper
                                   previous_path, grouping_id)
     exit_directory = get_exit_directory(previous_path, grouping_id,
                                         revision_number, revision,
-                                        assignment.repository_folder)
+                                        assignment.repository_folder,
+                                        'repo_browser')
 
     full_path = File.join(assignment.repository_folder, path)
     if revision.path_exists?(full_path)
@@ -169,7 +170,7 @@ module SubmissionsHelper
   end
 
   def get_exit_directory(previous_path, grouping_id, revision_number,
-                         revision, folder)
+                         revision, folder, action)
     full_previous_path = File.join('/', folder, previous_path)
     parent_path_of_prev_dir, prev_dir = File.split(full_previous_path)
 
@@ -177,7 +178,7 @@ module SubmissionsHelper
 
     e = {}
     e[:id] = nil
-    e[:filename] = view_context.link_to '../', action: 'repo_browser',
+    e[:filename] = view_context.link_to '../', action: action,
                                         id: grouping_id, path: previous_path,
                                         revision_number: revision_number
     e[:last_revised_date] = I18n.l(directories[prev_dir].last_modified_date,
