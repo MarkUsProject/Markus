@@ -178,9 +178,10 @@ module SubmissionsHelper
 
     e = {}
     e[:id] = nil
-    e[:filename] = view_context.link_to '../', action: action,
+    e[:filename] = view_context.image_tag('icons/folder.png') +
+        view_context.link_to( ' ../', action: action,
                                         id: grouping_id, path: previous_path,
-                                        revision_number: revision_number
+                                        revision_number: revision_number)
     e[:last_revised_date] = I18n.l(directories[prev_dir].last_modified_date,
                                    format: :long_date)
     e[:revision_by] = directories[prev_dir].user_id
