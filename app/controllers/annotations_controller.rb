@@ -135,5 +135,4 @@ class AnnotationsController < ApplicationController
     @submission = @submission_file.submission
     @annotations = @submission.annotations
   end
-
 end
