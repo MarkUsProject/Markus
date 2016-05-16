@@ -22,8 +22,6 @@ class Student < User
 
   has_many :grace_period_deductions, through: :memberships
 
-  has_many :peer_reviews
-
   belongs_to :section
   accepts_nested_attributes_for :section
 

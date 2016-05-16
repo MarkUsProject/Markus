@@ -55,6 +55,8 @@ class Grouping < ActiveRecord::Base
 
   has_one :inviter, source: :user, through: :inviter_membership
 
+  has_many :peer_reviews
+
   scope :approved_groupings, -> { where admin_approved: true }
 
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0

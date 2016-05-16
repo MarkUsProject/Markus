@@ -8,5 +8,7 @@ class CreatePeerReviews < ActiveRecord::Migration
     end
     add_index :peer_reviews, :reviewer_id
     add_index :peer_reviews, :reviewee_id
+    add_foreign_key :peer_reviews, :groupings, column: :reviewer_id
+    add_foreign_key :peer_reviews, :groupings, column: :reviewee_id
   end
 end
