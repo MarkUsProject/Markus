@@ -55,7 +55,9 @@ class Grouping < ActiveRecord::Base
 
   has_one :inviter, source: :user, through: :inviter_membership
 
-  has_many :peer_reviews
+  # The following are chained
+  has_many :results, through: :submissions
+  has_many :peer_reviews, through: :results
 
   scope :approved_groupings, -> { where admin_approved: true }
 

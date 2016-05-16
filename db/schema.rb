@@ -542,7 +542,6 @@ ActiveRecord::Schema.define(version: 20160510173147) do
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
   add_foreign_key "memberships", "groupings", name: "fk_memberships_groupings"
   add_foreign_key "memberships", "users", name: "fk_memberships_users"
-  add_foreign_key "peer_reviews", "groupings", column: "reviewee_id"
   add_foreign_key "peer_reviews", "groupings", column: "reviewer_id"
   add_foreign_key "peer_reviews", "results"
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
