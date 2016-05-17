@@ -8,6 +8,9 @@ describe Result do
   it { is_expected.to validate_presence_of(:marking_state) }
   it { is_expected.to validate_inclusion_of(:marking_state).in_array(['complete', 'incomplete']) }
   it { is_expected.to validate_numericality_of(:total_mark).is_greater_than_or_equal_to(0) }
+  it { is_expected.to callback(:create_marks).after(:create) }
+  it { is_expected.to callback(:unrelease_partial_results).before(:update) }
+  it { is_expected.to callback(:check_for_nil_marks).before(:save) }
 
   describe '.student_marks_by_assignment' do
     let(:assignment) { create(:assignment) }
