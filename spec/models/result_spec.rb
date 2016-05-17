@@ -115,6 +115,17 @@ describe Result do
                 it_returns 'empty'
               end
 
+              context 'when an invalid marking state is found' do
+                let!(:invalid_result) { create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
+                before do
+                  invalid_result.marking_state = 'wrong'
+                end
+
+                it 'catches an invalid result' do
+                  expect(invalid_result.invalid?).to be true
+                end
+              end
+
               context 'when only incomplete results are found' do
                 let!(:result) do
                   create(:incomplete_result, submission: submissions.first)
@@ -148,6 +159,48 @@ describe Result do
                   # There are 2 students in one grouping with a mark of 3.
                   expect(Result.student_marks_by_assignment(assignment.id))
                     .to eq [0, 3, 3, 9]
+                end
+
+                context 'when a result is released' do
+                  before do
+                    results[1].update(released_to_students: true)
+                  end
+
+                  it 'catches a valid result' do
+                    expect(results[1].valid?).to be true
+                  end
+
+                  it 'unreleases results' do
+                    results[1].unrelease_results
+                    expect(results[1].released_to_students).to be false
+                  end
+                end
+
+                context 'when a result is marked as partial' do
+                  before do
+                    results[2].mark_as_partial
+                  end
+
+                  it 'is marked as incomplete' do
+                    expect(results[2].marking_state).to eq(Result::MARKING_STATES[:incomplete])
+                  end
+
+                  context 'when marks are created for this incomplete result' do
+                    let!(:incomp_result) { results[2] }
+                    let!(:prev_subtotal) { incomp_result.get_subtotal }
+                    before do
+                      create(:flexible_mark, result: incomp_result, mark: 1)
+                      create(:flexible_mark, result: incomp_result, mark: 1)
+                    end
+
+                    it 'gets a subtotal' do
+                      expect(incomp_result.get_subtotal).to eq(prev_subtotal + 2)
+                    end
+
+                    it 'catches a valid result' do
+                      expect(incomp_result.valid?).to be true
+                    end
+                  end
                 end
 
                 context 'when the first and third student become inactive' do
