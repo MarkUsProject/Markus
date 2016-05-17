@@ -382,10 +382,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
                      @grouping.student_memberships.size
         assert_equal 'inviter',
                      @grouping.student_memberships.at(0).membership_status
-        assert_equal @student1.id, @grouping.student_memberships.at(0).user_id
         assert_equal 'accepted',
                      @grouping.student_memberships.at(1).membership_status
-        assert_equal @student2.id, @grouping.student_memberships.at(1).user_id
+        students_id = [@student1.id, @student2.id]
+        student_memberships_id = [@grouping.student_memberships.at(0).user_id,
+                                  @grouping.student_memberships.at(1).user_id]
+        assert_same_elements(students_id, student_memberships_id)
       end
 
       should 'with two valid users, with assignment past collection date' do
@@ -399,10 +401,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
         assert_equal 2, @grouping.student_memberships.size
         assert_equal 'inviter',
                      @grouping.student_memberships.at(0).membership_status
-        assert_equal @student1.id, @grouping.student_memberships.at(0).user_id
         assert_equal 'accepted',
                      @grouping.student_memberships.at(1).membership_status
-        assert_equal @student2.id, @grouping.student_memberships.at(1).user_id
+        students_id = [@student1.id, @student2.id]
+        student_memberships_id = [@grouping.student_memberships.at(0).user_id,
+                                  @grouping.student_memberships.at(1).user_id]
+        assert_same_elements(students_id, student_memberships_id)
       end
 
       should 'be able to add members' do
@@ -419,8 +423,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
                      @grouping.student_memberships.at(0).membership_status
         assert_equal 'accepted',
                      @grouping.student_memberships.at(1).membership_status
-        assert_equal @student1.id, @grouping.student_memberships.at(0).user_id
-        assert_equal @student2.id, @grouping.student_memberships.at(1).user_id
+        students_id = [@student1.id, @student2.id]
+        student_memberships_id = [@grouping.student_memberships.at(0).user_id,
+                                  @grouping.student_memberships.at(1).user_id]
+        assert_same_elements(students_id, student_memberships_id)
       end
 
       should 'with 1 valid user, 1 already assigned user' do
@@ -447,14 +453,15 @@ class GroupsControllerTest < AuthenticatedControllerTest
         assert_equal 3, @grouping.student_memberships.size
         assert_equal 'inviter',
                      @grouping.student_memberships.at(0).membership_status
-        assert_equal @student1.id,
-                     @grouping.student_memberships.at(0).user_id
         assert_equal 'accepted',
                      @grouping.student_memberships.at(1).membership_status
         assert_equal 'accepted',
                      @grouping.student_memberships.at(2).membership_status
-        assert_equal @student2.id, @grouping.student_memberships.at(1).user_id
-        assert_equal @student3.id, @grouping.student_memberships.at(2).user_id
+        students_id = [@student1.id, @student2.id, @student3.id]
+        student_memberships_id = [@grouping.student_memberships.at(0).user_id,
+                                  @grouping.student_memberships.at(1).user_id,
+                                  @grouping.student_memberships.at(2).user_id]
+        assert_same_elements(students_id, student_memberships_id)
       end
 
       should 'with valid,valid,invalid users' do
@@ -470,11 +477,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
         assert_equal 2, @grouping.student_memberships.size
         assert_equal 'inviter',
                      @grouping.student_memberships.at(0).membership_status
-        assert_equal @student1.id,
-                     @grouping.student_memberships.at(0).user_id
         assert_equal 'accepted',
                      @grouping.student_memberships.at(1).membership_status
-        assert_equal @student2.id, @grouping.student_memberships.at(1).user_id
+        students_id = [@student1.id, @student2.id]
+        student_memberships_id = [@grouping.student_memberships.at(0).user_id,
+                                  @grouping.student_memberships.at(1).user_id]
+        assert_same_elements(students_id, student_memberships_id)
       end
 
     end #POST on global_actions on assign
