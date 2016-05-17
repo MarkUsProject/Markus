@@ -81,11 +81,11 @@ class AnnotationCategoriesController < ApplicationController
 
   def find_annotation_text
     string = params[:string]
-    @annotation_texts = AnnotationText.where("content LIKE ?", "#{string}%")
-    if @annotation_texts.size == 1
-      render json: "#{@annotation_texts.first.content}".html_safe
+    annotation_texts = AnnotationText.where("content LIKE ?", "#{string}%")
+    if annotation_texts.size == 1
+      render json: "#{annotation_texts.first.content}".html_safe
     else
-      render json: "".html_safe
+      render json: ''.html_safe
     end
   end
 
