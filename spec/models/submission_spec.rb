@@ -38,8 +38,8 @@ describe Submission do
 
   describe 'submission with a remark result created but not submitted' do
     before :each do
-      @submission = create(:submission)
-      @result = create(:result, submission: @submission)
+      @result = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
+      @submission = @result.submission
       @submission.update(remark_request_timestamp: Time.zone.now)
       @submission.make_remark_result
       @submission.remark_result.update(remark_request_submitted_at: nil)
@@ -51,55 +51,48 @@ describe Submission do
       end
     end
 
-    # TODO
-    # it 'should return false on remark_submitted? call' do
-    #   expect(@submission.remark_submitted?).to be false
-    # end
+    it 'should return false on remark_submitted? call' do
+      expect(@submission.remark_submitted?).to be false
+    end
   end
 
-  # context 'A submission with no remark results' do
-  #   setup do
-  #     @submission = Submission.make
-  #     @submission.save
-  #   end
-  #   should 'return false on has_remark? call' do
-  #     assert !@submission.has_remark?
-  #   end
-  #   should 'return false on remark_submitted? call' do
-  #     assert !@submission.remark_submitted?
-  #   end
-  # end
-  #
-  # context 'The Submission class' do
-  #   should 'be able to find a submission object by group name and assignment short identifier' do
-  #     # existing submission
-  #     assignment = Assignment.make
-  #     group = Group.make
-  #     grouping = Grouping.make(:assignment => assignment,
-  #                              :group => group)
-  #     submission = Submission.make(:grouping => grouping)
-  #
-  #     sub2 = Submission.get_submission_by_group_and_assignment(group.group_name,
-  #                                                              assignment.short_identifier)
-  #     assert_not_nil(sub2)
-  #     assert_instance_of(Submission, sub2)
-  #     assert_equal(submission, sub2)
-  #     # non existing test results
-  #     assert_nil(
-  #         Submission.get_submission_by_group_and_assignment(
-  #             'group_name_not_there',
-  #             'A_not_there'))
-  #   end
-  # end
-  #
-  # should 'create a remark result' do
-  #   s = Submission.make
-  #   s.update(remark_request_timestamp: Time.zone.now)
-  #   s.make_remark_result
-  #   assert_not_nil s.remark_result, 'Remark result was supposed to be created'
-  #   assert_equal s.remark_result.marking_state,
-  #                Result::MARKING_STATES[:incomplete],
-  #                'Remark result marking_state should have been ' +
-  #                    'automatically set to incomplete'
-  # end
+  describe 'A submission with no remark results' do
+    before :each do
+      @submission = create(:submission)
+      @submission.save
+    end
+
+    it 'return false on has_remark? call' do
+      expect(@submission.has_remark?).to be false
+    end
+
+    it 'return false on remark_submitted? call' do
+      expect(@submission.remark_submitted?).to be false
+    end
+  end
+
+  describe 'The Submission class' do
+    it 'should be able to find a submission object by group name and assignment short identifier' do
+      assignment = create(:assignment)
+      group = create(:group)
+      grouping = create(:grouping, :assignment => assignment, :group => group)
+      submission = create(:version_used_submission, :grouping => grouping)
+      sub2 = Submission.get_submission_by_group_and_assignment(group.group_name,
+                                                               assignment.short_identifier)
+      expect(sub2).to_not be_nil
+      expect(sub2).to be_a Submission
+      expect(sub2).to eq submission
+      expect(Submission.get_submission_by_group_and_assignment(
+              'group_name_not_there',
+              'A_not_there')).to be_nil
+    end
+
+    it 'create a remark result' do
+      s = create(:submission)
+      s.update(remark_request_timestamp: Time.zone.now)
+      s.make_remark_result
+      expect(s.remark_result).to_not be_nil
+      expect(s.remark_result.marking_state).to eq Result::MARKING_STATES[:incomplete]
+    end
+  end
 end
