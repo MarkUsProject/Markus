@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160510173147) do
+ActiveRecord::Schema.define(version: 20160511224541) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,6 +115,8 @@ ActiveRecord::Schema.define(version: 20160510173147) do
     t.boolean  "vcs_submit",                       default: false
     t.datetime "token_start_date"
     t.float    "token_period"
+    t.integer  "parent_assignment_id"
+    t.integer  "pr_assignment_id"
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
@@ -332,13 +334,11 @@ ActiveRecord::Schema.define(version: 20160510173147) do
   create_table "peer_reviews", force: :cascade do |t|
     t.integer  "result_id",   null: false
     t.integer  "reviewer_id", null: false
-    t.integer  "reviewee_id", null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
 
   add_index "peer_reviews", ["result_id"], name: "index_peer_reviews_on_result_id", using: :btree
-  add_index "peer_reviews", ["reviewee_id"], name: "index_peer_reviews_on_reviewee_id", using: :btree
   add_index "peer_reviews", ["reviewer_id"], name: "index_peer_reviews_on_reviewer_id", using: :btree
 
   create_table "periods", force: :cascade do |t|
