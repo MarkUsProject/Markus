@@ -132,7 +132,7 @@ describe Result do
                   invalid_result.marking_state = 'wrong'
                 end
 
-                it 'catches an invalid result' do
+                it 'considers the result invalid' do
                   expect(invalid_result.invalid?).to be true
                 end
               end
@@ -177,7 +177,7 @@ describe Result do
                     results[1].update(released_to_students: true)
                   end
 
-                  it 'catches a valid result' do
+                  it 'considers the result valid' do
                     expect(results[1].valid?).to be true
                   end
 
@@ -208,7 +208,7 @@ describe Result do
                       expect(incomp_result.get_subtotal).to eq(prev_subtotal + 2)
                     end
 
-                    it 'catches a valid result' do
+                    it 'considers the result valid' do
                       expect(incomp_result.valid?).to be true
                     end
                   end
