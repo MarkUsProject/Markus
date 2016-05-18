@@ -42,6 +42,11 @@ class Assignment < ActiveRecord::Base
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
 
+  # Assignments can now refer to themselves, where this is null if there
+  # is no parent (the same holds for the child peer reviews)
+  belongs_to :parent_assignment, class_name: 'Assignment', inverse_of: :pr_assignment
+  has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
+
   has_many :annotation_categories,
            -> { order(:position) },
            class_name: 'AnnotationCategory',
@@ -894,6 +899,18 @@ class Assignment < ActiveRecord::Base
   def can_upload_starter_code?
     #groups.size == 0
     false
+  end
+
+  # Returns true if this is a peer review, meaning it has a parent assignment,
+  # false otherwise.
+  def is_peer_review?
+    not parent_assignment_id.nil?
+  end
+
+  # Returns true if this is a parent assignment that has a child peer review
+  # assignment.
+  def has_peer_review_assignment?
+    not pr_assignment.nil?
   end
 
   ### REPO ###
