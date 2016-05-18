@@ -51,6 +51,8 @@ describe Assignment do
     it { is_expected.to validate_presence_of(:group_min) }
     it { is_expected.to validate_presence_of(:group_max) }
     it { is_expected.to validate_presence_of(:notes_count) }
+    it { should belong_to(:parent_assignment).class_name('Assignment') }
+    it { should have_one(:pr_assignment).class_name('Assignment') }
     it do
       is_expected.to validate_numericality_of(:group_min).is_greater_than(0)
     end
@@ -65,6 +67,37 @@ describe Assignment do
     it 'should require case sensitive unique value for short_identifier' do
       assignment = create(:assignment)
       expect(assignment).to validate_uniqueness_of(:short_identifier)
+      end
+    it 'should have a nil parent_assignment by default' do
+      assignment = create(:assignment)
+      expect(assignment.parent_assignment).to be_nil
+    end
+    it 'should have a nil peer_review by default' do
+      assignment = create(:assignment)
+      expect(assignment.pr_assignment).to be_nil
+    end
+    it 'should not be a peer review if there is no parent_assignment_id' do
+      assignment = create(:assignment)
+      expect(assignment.parent_assignment_id).to be_nil
+      expect(assignment.is_peer_review?).to be false
+    end
+    it 'should be a peer review if it has a parent_assignement_id' do
+      parent_assignment = create(:assignment)
+      assignment = create(:assignment, parent_assignment: parent_assignment)
+      expect(assignment.is_peer_review?).to be true
+      expect(parent_assignment.is_peer_review?).to be false
+    end
+    it 'should give a true has_peer_review_assignment result if it does' do
+      parent_assignment = create(:assignment)
+      assignment = create(:assignment, parent_assignment: parent_assignment)
+      expect(parent_assignment.has_peer_review_assignment?).to be true
+      expect(assignment.has_peer_review_assignment?).to be false
+    end
+    it 'should find children assignments when they reference the parent' do
+      parent_assignment = create(:assignment)
+      assignment = create(:assignment, parent_assignment: parent_assignment)
+      expect(parent_assignment.pr_assignment.id).to be assignment.id
+      expect(assignment.parent_assignment.id).to be parent_assignment.id
     end
   end
 
