@@ -588,7 +588,7 @@ class AssignmentsController < ApplicationController
       files_info = get_files_info(files, assignment.id, revision_number, path)
       directories = revision.directories_at_path(full_path)
       directories_info = get_directories_info(directories, revision_number,
-                                              path, assignment.id)
+                                              path, assignment.id, 'populate_file_manager')
       render json: files_info + directories_info
     else
       render json: []
@@ -812,7 +812,7 @@ class AssignmentsController < ApplicationController
       end
     end
 
-    def get_directories_info(directories, revision_number, path, assignment_id)
+    def get_directories_info(directories, revision_number, path, assignment_id, action)
       directories.map do |directory_name, directory|
         d = {}
         d[:id] = directory.object_id
@@ -821,7 +821,7 @@ class AssignmentsController < ApplicationController
             # id: assignment_id and grouping_id: grouping_id
             # like the files info?
             view_context.link_to(" #{directory_name}/",
-                                 action: 'repo_browser',
+                                 action: action,
                                  id: assignment_id,
                                  revision_number: revision_number,
                                  path: File.join(path, directory_name))

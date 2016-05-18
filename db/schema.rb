@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(version: 20160517142117) do
     t.boolean  "vcs_submit",                       default: false
     t.datetime "token_start_date"
     t.float    "token_period"
+    t.integer  "parent_assignment_id"
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree

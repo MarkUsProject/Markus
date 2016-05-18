@@ -61,6 +61,7 @@
       jQuery.ajax({
         url: '<%= populate_file_manager_react_assignment_submissions_path %>',
         method: 'GET',
+        data: { path: '<%= @path  %>'},
         dataType: 'json',
         success: function(data) {
           this.setState({

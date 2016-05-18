@@ -170,7 +170,10 @@ class SubmissionsController < ApplicationController
     else
       @revision = repo.get_revision(revision_number.to_i)
     end
-
+    exit_directory = get_exit_directory(@previous_path, @grouping.id,
+                                        revision_number, @revision,
+                                        @assignment.repository_folder,
+                                        'file_manager')
     full_path = File.join(@assignment.repository_folder, @path)
     if @revision.path_exists?(full_path)
       files = @revision.files_at_path(full_path)
@@ -179,10 +182,10 @@ class SubmissionsController < ApplicationController
 
       directories = @revision.directories_at_path(full_path)
       directories_info = get_directories_info(directories, revision_number,
-                                              @path, @grouping.id)
-      render json: files_info + directories_info
+                                              @path, @grouping.id, 'file_manager')
+      render json: exit_directory + files_info + directories_info
     else
-      render json: []
+      render json: exit_directory
     end
   end
 
