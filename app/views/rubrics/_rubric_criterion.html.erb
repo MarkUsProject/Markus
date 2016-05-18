@@ -12,11 +12,12 @@
   </span>
   <span class='right' id='visibility_indicator_<%= criterion.id %>'>
     <% if criterion.ta_visible && criterion.peer_visible %>
-      <%= image_tag "icons/award_star_gold_2.png" %>
+      <%= image_tag "icons/user_suit.png" %>
+      <%= image_tag "icons/user_green.png" %>
     <% elsif criterion.ta_visible %>
-      <%= image_tag "icons/award_star_silver_3.png" %>
+      <%= image_tag "icons/user_suit.png" %>
     <% else %>
-      <%= image_tag "icons/award_star_bronze_1.png" %>
+      <%= image_tag "icons/user_green.png" %>
     <% end %>
   </span>
 
