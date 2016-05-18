@@ -75,8 +75,8 @@ describe Submission do
     it 'should be able to find a submission object by group name and assignment short identifier' do
       assignment = create(:assignment)
       group = create(:group)
-      grouping = create(:grouping, :assignment => assignment, :group => group)
-      submission = create(:version_used_submission, :grouping => grouping)
+      grouping = create(:grouping, assignment: assignment, group: group)
+      submission = create(:version_used_submission, grouping: grouping)
       sub2 = Submission.get_submission_by_group_and_assignment(group.group_name,
                                                                assignment.short_identifier)
       expect(sub2).to_not be_nil
