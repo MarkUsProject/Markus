@@ -9,6 +9,7 @@ class Result < ActiveRecord::Base
   has_many :marks
   has_many :extra_marks
   has_many :annotations
+  has_many :peer_reviews
 
   after_create :create_marks
   validates_presence_of :marking_state

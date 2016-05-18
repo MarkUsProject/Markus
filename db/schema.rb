@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160509144712) do
+ActiveRecord::Schema.define(version: 20160517142117) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -154,14 +154,16 @@ ActiveRecord::Schema.define(version: 20160509144712) do
   add_index "feedback_files", ["submission_id"], name: "index_feedback_files_on_submission_id", using: :btree
 
   create_table "flexible_criteria", force: :cascade do |t|
-    t.string   "name",                                                       null: false
+    t.string   "name",                                                           null: false
     t.text     "description"
     t.integer  "position"
-    t.integer  "assignment_id",                                              null: false
-    t.decimal  "max",                   precision: 10, scale: 1,             null: false
+    t.integer  "assignment_id",                                                  null: false
+    t.decimal  "max",                   precision: 10, scale: 1,                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "assigned_groups_count",                          default: 0
+    t.boolean  "ta_visible",                                     default: true,  null: false
+    t.boolean  "peer_visible",                                   default: false, null: false
   end
 
   add_index "flexible_criteria", ["assignment_id", "name"], name: "index_flexible_criteria_on_assignment_id_and_name", unique: true, using: :btree
@@ -329,6 +331,16 @@ ActiveRecord::Schema.define(version: 20160509144712) do
 
   add_index "notes", ["creator_id"], name: "index_notes_on_creator_id", using: :btree
 
+  create_table "peer_reviews", force: :cascade do |t|
+    t.integer  "result_id",   null: false
+    t.integer  "reviewer_id", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "peer_reviews", ["result_id"], name: "index_peer_reviews_on_result_id", using: :btree
+  add_index "peer_reviews", ["reviewer_id"], name: "index_peer_reviews_on_reviewer_id", using: :btree
+
   create_table "periods", force: :cascade do |t|
     t.integer  "submission_rule_id"
     t.float    "deduction"
@@ -353,8 +365,8 @@ ActiveRecord::Schema.define(version: 20160509144712) do
   end
 
   create_table "rubric_criteria", force: :cascade do |t|
-    t.string   "name",                              null: false
-    t.integer  "assignment_id",                     null: false
+    t.string   "name",                                  null: false
+    t.integer  "assignment_id",                         null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "position"
@@ -368,8 +380,10 @@ ActiveRecord::Schema.define(version: 20160509144712) do
     t.text     "level_3_description"
     t.text     "level_4_name"
     t.text     "level_4_description"
-    t.float    "weight",                            null: false
+    t.float    "weight",                                null: false
     t.integer  "assigned_groups_count", default: 0
+    t.boolean  "ta_visible",            default: true,  null: false
+    t.boolean  "peer_visible",          default: false, null: false
   end
 
   add_index "rubric_criteria", ["assignment_id", "name"], name: "rubric_critera_index_1", unique: true, using: :btree
@@ -530,6 +544,8 @@ ActiveRecord::Schema.define(version: 20160509144712) do
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
   add_foreign_key "memberships", "groupings", name: "fk_memberships_groupings"
   add_foreign_key "memberships", "users", name: "fk_memberships_users"
+  add_foreign_key "peer_reviews", "groupings", column: "reviewer_id"
+  add_foreign_key "peer_reviews", "results"
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
