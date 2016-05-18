@@ -26,13 +26,13 @@
           <div id='annotation_menu'>
 
             <%= render partial: 'results/common/file_selector_dropdown',
-                       locals: { files: @files,
+                       locals: { files: files,
                                  can_download: true } %>
-            <% if can_show_feedback_files_tab?(@submission) %>
+            <% if can_show_feedback_files_tab?(submission) %>
                 <div id='feedback_files_controls'>
                   <%= render partial: 'results/common/feedback_file_selector',
-                             locals: { feedback_files: @feedback_files,
-                                       submission_id: @submission.id } %>
+                             locals: { feedback_files: feedback_files,
+                                       submission_id: submission.id } %>
                 </div>
             <% end %>
 

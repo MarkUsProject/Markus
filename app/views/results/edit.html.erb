@@ -169,19 +169,6 @@
 
   <%= render partial: 'results/common/errors' %>
 
-  <div id='file_selector'>
-    <%= render partial: 'results/common/file_selector',
-               locals: { files: @files,
-                         can_download: true } %>
-    <% if can_show_feedback_files_tab?(@submission) %>
-      <div id='feedback_files_controls'>
-        <%= render partial: 'results/common/feedback_file_selector',
-                   locals: { feedback_files: @feedback_files,
-                             submission_id: @submission.id } %>
-      </div>
-    <% end %>
-  </div>
-
   <% if !@result.released_to_students %>
     <%= render partial: 'results/marker/marker_panes',
                locals: { extra_marks_points: @extra_marks_points,
@@ -194,7 +181,9 @@
                          mark_criteria:@mark_criteria,
                          submission: @submission,
                          old_result: @old_result,
-                         test_results: @test_results } %>
+                         test_results: @test_results,
+                         files: @files,
+                         feedback_files: @feedback_files} %>
   <% else %>
     <%= render partial: 'results/result_summary',
                formats: [:html],
