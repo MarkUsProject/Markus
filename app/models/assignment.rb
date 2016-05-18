@@ -91,6 +91,7 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :display_grader_names_to_students, in: [true, false]
   validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :enable_test, in: [true, false]
+  validates_inclusion_of :has_peer_review, in: [true, false]
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
   validates_inclusion_of :unlimited_tokens, in: [true, false]
 
