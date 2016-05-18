@@ -55,6 +55,13 @@ class Grouping < ActiveRecord::Base
 
   has_one :inviter, source: :user, through: :inviter_membership
 
+  # The following are chained
+  # 'peer_reviews' is the peer reviews given for this group via some result
+  # 'peer_reviews_to_others' is all the peer reviews this grouping gave to others
+  has_many :results, through: :current_submission_used
+  has_many :peer_reviews, through: :results
+  has_many :peer_reviews_to_others, class_name: 'PeerReview', foreign_key: 'reviewer_id'
+
   scope :approved_groupings, -> { where admin_approved: true }
 
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0

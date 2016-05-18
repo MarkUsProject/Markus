@@ -803,7 +803,7 @@ class Assignment < ActiveRecord::Base
       groupings.count(marking_completed: true)
     else
       n = 0
-      ta_memberships.includes(grouping: :current_submission_used).where(user_id: ta_id).find_each do |x|
+      ta_memberships.includes(grouping: [{current_submission_used: [:submitted_remark, :results]}]).where(user_id: ta_id).find_each do |x|
         x.grouping.marking_completed? && n += 1
       end
       n
