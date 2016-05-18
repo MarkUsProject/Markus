@@ -661,7 +661,8 @@ class Grouping < ActiveRecord::Base
                                                     current_submission_used:
                                                       [:submission_files,
                                                        :submitted_remark,
-                                                       :results],
+                                                       :results,
+                                                       grouping: :group],
                                                     accepted_student_memberships:
                                                       [:grace_period_deductions,
                                                        :user]])
@@ -669,17 +670,18 @@ class Grouping < ActiveRecord::Base
                 .select { |m| m.grouping.is_valid? }
                 .map &:grouping
     else
-      Grouping.joins(:memberships)
+      assignment.groupings.joins(:memberships)
               .includes(:assignment,
                         :group,
                         :grace_period_deductions,
+                        :tags,
                         { current_submission_used: [:results,
                                                     :submission_files,
-                                                    :submitted_remark] },
+                                                    :submitted_remark,
+                                                    grouping: :group] },
                         { accepted_student_memberships: :user },
-                        { inviter: :section },
-                        :tags)
-              .where(assignment_id: assignment.id)
+                        { inviter: :section }
+                        )
               .where(memberships: { membership_status:
                                    [StudentMembership::STATUSES[:inviter],
                                     StudentMembership::STATUSES[:pending],
