@@ -569,7 +569,9 @@ module Repository
       result = Hash.new(nil)
       @files.each do |object|
         alt_path = ""
-        if object.path != '/'
+        if object.path == '.'
+          alt_path = '/'
+        elsif object.path != '/'
           alt_path = '/' + object.path
         end
         git_path = object.path + '/'
