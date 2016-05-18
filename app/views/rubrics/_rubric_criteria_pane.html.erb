@@ -1,10 +1,11 @@
-<div class='sortable'>
+<div class='sortable_criteria'>
   <header>
-    <span><%= t('criteria') %></span>
-    <span class='right'>
+    <span class='left'><%= t('criteria') %></span>
+    <span class='center'>
       <%= t('weight') %>
       (<span id='rubric_total_weight'><%= @assignment.total_criteria_weight %></span>)
     </span>
+    <span class='right'><%= t('visible') %></span>
   </header>
   <ul id='rubric_criteria_pane_list'>
     <% @criteria.each do |criterion| -%>

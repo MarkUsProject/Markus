@@ -1,5 +1,5 @@
 <li id='criterion_<%= (criterion.id) %>'>
-  <span>
+  <span class='left'>
     <%= link_to truncate(criterion.name,
                          length: 30,
                          omission: '...'),
@@ -7,7 +7,17 @@
                          id: "criterion_title_#{criterion.id}",
                          remote: true %>
   </span>
-  <span class='right' id='criterion_weight_<%= criterion.id %>'>
+  <span class='center' id='criterion_weight_<%= criterion.id %>' >
     <%= criterion.weight %>
   </span>
+  <span class='right' id='visibility_indicator_<%= criterion.id %>'>
+    <% if criterion.ta_visible && criterion.peer_visible %>
+      <%= image_tag "icons/award_star_gold_2.png" %>
+    <% elsif criterion.ta_visible %>
+      <%= image_tag "icons/award_star_silver_3.png" %>
+    <% else %>
+      <%= image_tag "icons/award_star_bronze_1.png" %>
+    <% end %>
+  </span>
+
 </li>
