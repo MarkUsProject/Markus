@@ -73,5 +73,4 @@ class ApplicationController < ActionController::Base
   def get_file_encodings
     @encodings = [%w(Unicode UTF-8), %w(ISO-8859-1 ISO-8859-1)]
   end
-
 end

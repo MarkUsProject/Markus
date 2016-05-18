@@ -164,4 +164,40 @@ describe AnnotationCategoriesController do
       expect(filename).to eq "#{assignment.short_identifier}_annotations.csv"
     end
   end
+
+  context 'When searching for an annotation text' do
+    before(:each) do
+      @annotation_text_one = create(:annotation_text,
+                                    annotation_category: annotation_category,
+                                    content: "This is an annotation text.")
+
+    end
+
+    it 'should render an annotation context, where first part of its content matches given string' do
+      string = "This is an"
+
+      get :find_annotation_text, assignment_id: assignment.id,
+          string: string
+      expect(response.body).to eq("This is an annotation text.")
+    end
+
+    it 'should render an empty string if string does not match first part of any annotation text' do
+      string = "Hello"
+
+      get :find_annotation_text, assignment_id: assignment.id,
+          string: string
+      expect(response.body).to eq("")
+    end
+
+    it 'should render an empty string if string matches first part of more than one annotation text' do
+      annotation_text_two = create(:annotation_text,
+                                   annotation_category: annotation_category,
+                                   content: "This is another annotation text.")
+      string = "This is an"
+
+      get :find_annotation_text, assignment_id: assignment.id,
+          string: string
+      expect(response.body).to eq("")
+    end
+  end
 end
