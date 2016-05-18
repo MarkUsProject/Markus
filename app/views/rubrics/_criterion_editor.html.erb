@@ -38,6 +38,20 @@
      <%= t('criteria_edit_total_mark', criterion_total_mark: criterion.weight*4) %>
     </span>
     <br>
+      <h2><span><%= t('visibility') %></span></h2>
+    <div>
+      <%= f.check_box :ta_visible,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :ta_visible,
+                  t('rubrics.ta_visible') %>
+    </div>
+    <div>
+      <%= f.check_box :peer_visible,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :peer_visible,
+                  t('rubrics.peer_visible') %>
+    </div>
+    <br>
     <br>
     <%= f.submit t('rubric_criteria.save'), data: { disable_with: t('working') } %>
   </div>

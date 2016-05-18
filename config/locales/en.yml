@@ -304,7 +304,7 @@ en:
     #app/views/assignments/grader_index.html
     grade_assignments: "Grade Assignments"
 
-    #app/views/resluts/marker/
+    #app/views/results/marker/
     marker:
       new_annot: "New Annot."
       overall_comments: "Overall Comments"
@@ -890,6 +890,8 @@ en:
     rubrics:
       move_criterion:
         error: "Failed to move rubric."
+      ta_visible: "Make visible to teaching assistants"
+      peer_visible: "Make visible to peer reviewers"
 
     flexible_criteria:
       move_criterion:
@@ -1372,10 +1374,9 @@ en:
       Graders will see the criteria in the order that they are displayed to
       left.  To change the order, drag a criterion to the desired location
       in the list."
-    help_modifying_visibility_message: "The icons on the leftmost column under visibility represent the following:"
-    help_ta_visibility_message: "Only teaching assistants will be able to see the criterion."
-    help_peer_visibility_message: "Only peer reviewers will be able to see the criterion."
-    help_all_visibility_message: "Both teaching assistants and peer reviewers will be able to see the criterion."
+    help_modifying_visibility_message: "The icons on the rightmost column under visibility represent the following:"
+    help_ta_visibility_message: "Teaching assistants will be able to see the criterion."
+    help_peer_visibility_message: "Peer reviewers will be able to see the criterion."
     help_editing_flexible_criteria_message: "
       Select a criterion on the left to edit it.  Criteria names, descriptions and
       maximum values can be modified."
