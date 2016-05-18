@@ -698,8 +698,7 @@ describe SubmissionsController do
       it 'should be able to download all groups\' submissions' do
         get_as @admin,
                :download_groupings_files,
-               assignment_id: @assignment.id,
-               groupings: [@grouping1.id, @grouping2.id, @grouping3.id]
+               assignment_id: @assignment.id
         is_expected.to respond_with(:success)
         zip_path = "tmp/#{@assignment.short_identifier}_" +
                    "#{@admin.user_name}.zip"
@@ -717,12 +716,11 @@ describe SubmissionsController do
           end
         end
       end
-      it 'should - as Ta - be able to download all groups\' submissions' do
+      it 'should - as Ta - be not able to download all groups\' submissions when unassigned' do
         @ta = create(:ta)
         get_as @ta,
                :download_groupings_files,
-               assignment_id: @assignment.id,
-               groupings: [@grouping1.id, @grouping2.id, @grouping3.id]
+               assignment_id: @assignment.id
         is_expected.to respond_with(:success)
         zip_path = "tmp/#{@assignment.short_identifier}_" +
                    "#{@ta.user_name}.zip"
@@ -734,7 +732,30 @@ describe SubmissionsController do
                 "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
                 "file#{i}"))
             expect(zip_file.find_entry(
-                     instance_variable_get(:"@file#{i}_path"))).to_not be_nil
+                     instance_variable_get(:"@file#{i}_path"))).to be_nil
+          end
+        end
+      end
+      it 'should - as Ta - be able to download all groups\' submissions when assigned' do
+        @ta = create(:ta)
+        @assignment.groupings.each do |grouping|
+          create(:ta_membership, user: @ta, grouping: grouping)
+        end
+        get_as @ta,
+               :download_groupings_files,
+               assignment_id: @assignment.id
+        is_expected.to respond_with(:success)
+        zip_path = "tmp/#{@assignment.short_identifier}_" +
+          "#{@ta.user_name}.zip"
+        Zip::File.open(zip_path) do |zip_file|
+          (1..3).to_a.each do |i|
+            instance_variable_set(
+              :"@file#{i}_path",
+              File.join(
+                "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
+                "file#{i}"))
+            expect(zip_file.find_entry(
+              instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
               zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
