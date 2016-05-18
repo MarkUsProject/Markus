@@ -1,5 +1,5 @@
 class AddPeerReviewToAssignments < ActiveRecord::Migration
   def change
-    add_column :assignments, :peer_review, :boolean, default: false
+    add_column :assignments, :has_peer_review, :boolean, null: false, default: false
   end
 end
