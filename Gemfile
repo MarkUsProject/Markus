@@ -93,17 +93,18 @@ group :test do
   gem 'factory_girl_rails'
   gem 'machinist', '< 2'
   gem 'mocha', require: false
-  gem 'rspec-rails', '~> 3.0'
   gem 'shoulda'
   gem 'simplecov'
   gem 'time-warp'
   gem 'database_cleaner'
+  gem 'shoulda-callback-matchers', '~> 1.1.1'
 end
 
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
   gem 'byebug', :platforms => [:mri_20, :mri_21]
+  gem "rspec-rails", '~> 3.0'
 end
 
 # Gems needed (wanted) for development, test and production_test
