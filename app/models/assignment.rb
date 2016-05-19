@@ -42,6 +42,11 @@ class Assignment < ActiveRecord::Base
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
 
+  # Assignments can now refer to themselves, where this is null if there
+  # is no parent (the same holds for the child peer reviews)
+  belongs_to :parent_assignment, class_name: 'Assignment', inverse_of: :pr_assignment
+  has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
+
   has_many :annotation_categories,
            -> { order(:position) },
            class_name: 'AnnotationCategory',
@@ -86,6 +91,7 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :display_grader_names_to_students, in: [true, false]
   validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :enable_test, in: [true, false]
+  validates_inclusion_of :has_peer_review, in: [true, false]
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
   validates_inclusion_of :unlimited_tokens, in: [true, false]
 
@@ -802,7 +808,7 @@ class Assignment < ActiveRecord::Base
       groupings.count(marking_completed: true)
     else
       n = 0
-      ta_memberships.includes(grouping: :current_submission_used).where(user_id: ta_id).find_each do |x|
+      ta_memberships.includes(grouping: [{current_submission_used: [:submitted_remark, :results]}]).where(user_id: ta_id).find_each do |x|
         x.grouping.marking_completed? && n += 1
       end
       n
@@ -894,6 +900,18 @@ class Assignment < ActiveRecord::Base
   def can_upload_starter_code?
     #groups.size == 0
     false
+  end
+
+  # Returns true if this is a peer review, meaning it has a parent assignment,
+  # false otherwise.
+  def is_peer_review?
+    not parent_assignment_id.nil?
+  end
+
+  # Returns true if this is a parent assignment that has a child peer review
+  # assignment.
+  def has_peer_review_assignment?
+    not pr_assignment.nil?
   end
 
   ### REPO ###

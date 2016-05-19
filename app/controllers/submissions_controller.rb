@@ -170,7 +170,10 @@ class SubmissionsController < ApplicationController
     else
       @revision = repo.get_revision(revision_number.to_i)
     end
-
+    exit_directory = get_exit_directory(@previous_path, @grouping.id,
+                                        revision_number, @revision,
+                                        @assignment.repository_folder,
+                                        'file_manager')
     full_path = File.join(@assignment.repository_folder, @path)
     if @revision.path_exists?(full_path)
       files = @revision.files_at_path(full_path)
@@ -179,10 +182,10 @@ class SubmissionsController < ApplicationController
 
       directories = @revision.directories_at_path(full_path)
       directories_info = get_directories_info(directories, revision_number,
-                                              @path, @grouping.id)
-      render json: files_info + directories_info
+                                              @path, @grouping.id, 'file_manager')
+      render json: exit_directory + files_info + directories_info
     else
-      render json: []
+      render json: exit_directory
     end
   end
 
@@ -588,25 +591,11 @@ class SubmissionsController < ApplicationController
     ## delete the old file if it exists
     File.delete(zip_path) if File.exist?(zip_path)
 
-    grouping_ids = params[:groupings]
-
-    ## if there is no grouping, render a message
-    if grouping_ids.blank?
-      render text: t('student.submission.no_groupings_available')
-      return
-    end
-
-    groupings = Grouping.where(id: grouping_ids)
-      .includes(:group,
-                current_submission_used: {
-                  submission_files: {
-                    submission: { grouping: :group }
-                  }
-                })
+    groupings = Grouping.get_groupings_for_assignment(assignment,
+                                                      current_user)
 
     ## build the zip file
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-
       groupings.each do |grouping|
         ## retrieve the submitted files
         submission = grouping.current_submission_used
@@ -618,7 +607,6 @@ class SubmissionsController < ApplicationController
         zip_file.mkdir(sub_folder) unless zip_file.find_entry(sub_folder)
 
         files.each do |file|
-
           ## retrieve the file and print an error on redirect back if there is
           begin
             file_content = file.retrieve_file
@@ -646,21 +634,9 @@ class SubmissionsController < ApplicationController
   # Check the status of collection for all groupings
   ##
   def check_collect_status
-    grouping_ids = params[:groupings]
-
-    ## if there is no grouping, render a message
-    if grouping_ids.blank?
-      render text: t('student.submission.no_groupings_available')
-      return
-    end
-
-    groupings = Grouping.where(id: grouping_ids)
-                        .includes(:group,
-                                  current_submission_used: {
-                                    submission_files: {
-                                      submission: { grouping: :group }
-                                    }
-                                  })
+    assignment = Assignment.find(params[:assignment_id])
+    groupings = Grouping.get_groupings_for_assignment(assignment,
+                                                      current_user)
 
     ## check collection is completed for all groupings
     all_groupings_collected = groupings.all?(&:is_collected?)

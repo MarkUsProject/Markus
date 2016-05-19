@@ -205,6 +205,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         display_grader_names_to_students: "Mostrar nome de avaliador para alunos"
         section_due_date_option:  "Se a opção de prazo de entrega por sessão foi selecionada, alunos só podem formar grupos dentro da sua sessão."
         section_due_dates_info:  "<b>Importante</b>: o prazo de entrega final deve ser preenchido. Se a sessão não possui uma data específica, o prazo global será usado no lugar. Alunos que não foram atribuídos a uma sessão só poderão formar grupos com alunos que também não estão atribuídos."
+        has_peer_review: "Ativar aluno-aluno de revisão por pares"
     your_mark:  "Sua nota:"
 
     members:            "Membros"
