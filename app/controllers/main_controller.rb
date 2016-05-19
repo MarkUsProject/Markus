@@ -85,7 +85,7 @@ class MainController < ApplicationController
     # authentication is valid
     validation_result = validate_user(params[:user_login], params[:user_login], params[:user_password])
     unless validation_result[:error].nil?
-      flash_message(:error, validation_result[:error])
+      flash_now(:error, validation_result[:error])
       render :login, locals: { user_login: params[:user_login] }
       return
     end
@@ -97,7 +97,7 @@ class MainController < ApplicationController
 
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash_message(:error, I18n.t('account_disabled'))
+      flash_now(:error, I18n.t('account_disabled'))
       redirect_to(action: 'login') && return
     end
 
@@ -111,7 +111,7 @@ class MainController < ApplicationController
       # redirect to last visited page or to main page
       redirect_to( uri || { action: 'index' } )
     else
-      flash_message(:error, I18n.t(:login_failed))
+      flash_now(:error, I18n.t(:login_failed))
     end
   end
 
