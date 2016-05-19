@@ -2,6 +2,13 @@ require 'encoding'
 
 class RubricCriterion < Criterion
   self.table_name = 'rubric_criteria' # set table name correctly
+  include ActiveModel::Validations
+
+  VISIBILITY_STATES = {
+      both: [true, true],
+      ta: [true, false],
+      peer: [false, true]
+  }
 
   validates_presence_of :weight
   validates_numericality_of :weight
@@ -35,6 +42,10 @@ class RubricCriterion < Criterion
   before_validation :update_assigned_groups_count
 
   has_many :test_scripts, as: :criterion
+
+  #validates :peer_visible, presence: true, if: :visible?
+  validate :visible?
+  #validates unless :ta_visible, unless :peer_visible
 
   def update_assigned_groups_count
     result = []
@@ -255,6 +266,17 @@ class RubricCriterion < Criterion
   # Updates results already entered with new criteria
   def update_existing_results
     self.assignment.submissions.each { |submission| submission.get_latest_result.update_total_mark }
+  end
+
+  # Checks if the criterion is visible to either the ta or the peer reviewer
+  def visible?
+    unless ta_visible
+      unless peer_visible
+        errors.add(:ta_visible, "Select at least one box in the visibility section")
+        false
+      end
+    end
+    true
   end
 
 end

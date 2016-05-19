@@ -1353,6 +1353,7 @@ en:
     add_criterion:                "Add Criterion"
     criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
     criterion_saved_success:   "Criterion was successfully saved"
+    criterion_saved_failure:   "Criterion failed to be saved"
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
     criteria:           "Criteria"
     criterion:          "Criterion"
@@ -1377,6 +1378,7 @@ en:
     help_modifying_visibility_message: "The icons on the rightmost column under visibility represent the following:"
     help_ta_visibility_message: "Teaching assistants will be able to see the criterion."
     help_peer_visibility_message: "Peer reviewers will be able to see the criterion."
+    help_no_visibility_message: "Criterion is hidden."
     help_editing_flexible_criteria_message: "
       Select a criterion on the left to edit it.  Criteria names, descriptions and
       maximum values can be modified."

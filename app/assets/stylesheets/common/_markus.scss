@@ -407,18 +407,20 @@ fieldset {
   }
 
   .right {
-    float: right;
-    width: 16%;
+    min-width: 16%;
+    min-height: 33%;
   }
 
   .left{
     float: left;
-    width: 66%;
+    min-width: 58%;
+    min-height: 33%;
   }
 
   .center{
     display: inline-block;
-    width: 17%;
+    min-width: 23%;
+    min-height: 33%;
   }
 
   ul {
@@ -431,6 +433,7 @@ fieldset {
       border-top: 1px solid $grey;
       list-style: none;
       min-height: 2.5em;
+      min-width: 4.5em;
       padding: 0.5em 0.5em 0.5em 2em;
       transition: background-color $time-quick;
 
