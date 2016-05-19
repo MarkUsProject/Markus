@@ -35,6 +35,7 @@
 
   jQuery(document).ready(function() {
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
+    window.modalDownloadFiles = new ModalMarkus('#download_files_dialog');
 
     // Set up the 'working' notices
     jQuery('#working').ajaxStart(function() {
@@ -83,6 +84,7 @@
 
 <!-- Dialogs -->
 <aside class='dialog' id='notes_dialog'></aside>
+<aside class='dialog' id='download_files_dialog'></aside>
 <% if @current_user.admin? %>
   <aside class='dialog' id='create_new_tag'>
     <%= javascript_include_tag 'Tags/text_updater.js',
@@ -140,6 +142,12 @@
           { assignment_name: @assignment.short_identifier,
             group_name: @grouping.get_group_name }) %>
   </h1>
+
+  <div class='heading_buttons'>
+    <%= link_to t(:download),
+                'javascript:void(0);',
+                onclick:'modalDownloadFiles.open();' %>
+  </div>
 </div>
 
 <div class='wrapLeft'>
