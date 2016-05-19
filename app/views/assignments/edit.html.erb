@@ -2,5 +2,8 @@
   <h1><%= t('assignment.edit') %> <%= @assignment.short_identifier %></h1>
 </div>
 
-<%= render partial: 'form', formats: [:html], handlers: [:erb] %>
-
+<% if @assignment.is_peer_review? %>
+  <%= render partial: 'peer_revieW_form' %>
+<% else %>
+  <%= render partial: 'form', formats: [:html], handlers: [:erb] %>
+<% end %>
