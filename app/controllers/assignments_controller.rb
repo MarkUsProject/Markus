@@ -235,9 +235,6 @@ class AssignmentsController < ApplicationController
     end
 
     if @assignment.save
-      if @assignment.is_peer_review?
-        # We need to create a whole new assignment if it does not exist.
-      end
       flash[:success] = I18n.t('assignment.update_success')
       redirect_to action: 'edit', id: params[:id]
     else

@@ -210,7 +210,6 @@ Markus::Application.routes.draw do
         end
       end
 
-      # [CK]
       resources :peer_reviews, only: :index do
         collection do
           get 'populate'

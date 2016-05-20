@@ -932,7 +932,6 @@ class Assignment < ActiveRecord::Base
       # We do not want to have the database in an inconsistent state, so we
       # need to have the database rollback the 'has_peer_review' column to
       # be false
-      debugger
       if not peerreview_assignment.save
         raise ActiveRecord::Rollback
       end
