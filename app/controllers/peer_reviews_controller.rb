@@ -1,6 +1,5 @@
 class PeerReviewsController < ApplicationController
-  #before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
-  #before_filter :authorize_only_for_admin
+  before_filter :authorize_only_for_admin
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
