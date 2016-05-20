@@ -160,6 +160,19 @@
                       onclick: 'set_onbeforeunload(true);' %>
       <%= f.label :has_peer_review,
                   t('assignment.has_peer_review') %>
+      <% if @assignment.has_peer_review %>
+          <% peer_review_assignment = Assignment.where(parent_assignment_id: @assignment.id).first %>
+          <% if peer_review_assignment.nil? %>
+            <% m_logger = MarkusLogger.instance
+               a_short_id = @assignment.short_identifier
+               a_id = @assignment.id
+               m_logger.log("Assignment #{a_short_id} (id: #{a_id}) has no peer review assignment.",
+                           MarkusLogger::ERROR) %>
+            <div class="info red">[<%= t('assignment.peer_review_record_missing') %>]</div>
+          <% else %>
+            <%= link_to t('assignment.configure_peer_review'), edit_assignment_path(peer_review_assignment) %>
+          <% end %>
+      <% end %>
     </div>
   </fieldset>
 
