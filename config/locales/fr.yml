@@ -851,14 +851,6 @@ fr:
         success: "Mise à jour de l'administrateur %{user_name}"
         error: "Erreur dans la mise à jour de l'administrateur"
 
-    rubrics:
-      move_criterion:
-        error: "Erreur: impossible de déplacer cette rubric."
-
-    flexible_criteria:
-      move_criterion:
-        error: "Erreur: impossible de déplacer ce critère (flexible)."
-
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
       fail:
@@ -1083,6 +1075,11 @@ fr:
       errors:
         messages:
           name_taken: "Nom du critère déjà utilisé."
+      move_criterion:
+        error: "Erreur: impossible de déplacer ce critère (flexible)."
+      ta_visible: "Rendre visible aux assistants d'enseignement"
+      peer_visible: "Rendre visible à leurs auteurs pairs"
+      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
     rubric_criteria:
       criteria_management: "Édition du barème pour le projet %{identifier}"
@@ -1138,6 +1135,11 @@ fr:
       errors:
         messages:
           name_taken: "Nom du critère déjà utilisé."
+      move_criterion:
+        error: "Erreur: impossible de déplacer cette rubric."
+      ta_visible: "Rendre visible aux assistants d'enseignement"
+      peer_visible: "Rendre visible à leurs auteurs pairs"
+      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
 
     summary_table:
@@ -1203,9 +1205,11 @@ fr:
     criteria:           "Critères"
     criterion:          "Critère"
     total_mark:         "Note totale"
+    visibility:         "Visibilité"
     weight:             "Coefficient"
     editing_criteria:   "Édition des critères"
     ordering_criteria:  "Ordonner les critères"
+    modifying_visibility: "Visibilité Modification"
     remove_criteria_title:  "Supprimer ce critère"
     remove_criteria_message:  "Êtes-vous sûr de vouloir supprimer ce critère ?"
     help_editing_rubric_criteria_message: "
@@ -1219,6 +1223,9 @@ fr:
   Les correcteurs verront les critères dans l'ordre où ils sont affichés sur la colonne à gauche.
   Pour changer l'ordre, glissez-déposez les critères à votre convenance
   dans la liste."
+    help_modifying_visibility_message: "Les icônes sur la colonne de droite sous la visibilité représentent ce qui suit:"
+    help_ta_visibility_message: "Assistants d'enseignement seront en mesure de voir le critère."
+    help_peer_visibility_message: "Les examinateurs seront en mesure de voir le critère."
     help_editing_flexible_criteria_message: "
     Sélectionner un critère sur la gauche pour l'éditer. Les nom des critères, leurs descriptions
     et les notes maximales peuvent être modifiés."

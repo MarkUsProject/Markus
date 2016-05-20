@@ -35,6 +35,8 @@ class FlexibleCriterion < Criterion
 
   has_many :test_scripts, as: :criterion
 
+  validate :visible?
+
   DEFAULT_MAX = 1
 
   def update_assigned_groups_count
@@ -153,6 +155,17 @@ class FlexibleCriterion < Criterion
       Ta.where(user_name: ta_user_name).first
     end.compact
     add_tas(result)
+  end
+
+  # Checks if the criterion is visible to either the ta or the peer reviewer
+  def visible?
+    unless ta_visible
+      unless peer_visible
+        errors.add(:ta_visible, I18n.t('flexible_criteria.visibility_error'))
+        false
+      end
+    end
+    true
   end
 
 end

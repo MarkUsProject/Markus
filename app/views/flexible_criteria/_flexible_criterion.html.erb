@@ -1,5 +1,5 @@
 <li id='criterion_<%= criterion.id %>'>
-  <span>
+  <span class='left'>
     <%= link_to truncate(criterion.name,
                                   length: 30,
                                   omission: '...'),
@@ -7,7 +7,17 @@
         id: "criterion_title_#{criterion.id}",
         remote: true %>
   </span>
-  <span class='right' id='criterion_max_<%= criterion.id %>'>
+  <span class='center' id='criterion_max_<%= criterion.id %>'>
     <%= criterion.max %>
+  </span>
+  <span class='right' id='visibility_indicator_<%= criterion.id %>'>
+    <% if criterion.ta_visible && criterion.peer_visible %>
+      <%= image_tag "icons/user_suit.png" %>
+        <%= image_tag "icons/group.png" %>
+    <% elsif criterion.ta_visible %>
+      <%= image_tag "icons/user_suit.png" %>
+    <% else %>
+      <%= image_tag "icons/empty.png" %><%= image_tag "icons/group.png" %>
+    <% end %>
   </span>
 </li>

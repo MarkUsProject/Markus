@@ -4,12 +4,6 @@ class RubricCriterion < Criterion
   self.table_name = 'rubric_criteria' # set table name correctly
   include ActiveModel::Validations
 
-  VISIBILITY_STATES = {
-      both: [true, true],
-      ta: [true, false],
-      peer: [false, true]
-  }
-
   validates_presence_of :weight
   validates_numericality_of :weight
   before_save :round_weight
@@ -43,9 +37,7 @@ class RubricCriterion < Criterion
 
   has_many :test_scripts, as: :criterion
 
-  #validates :peer_visible, presence: true, if: :visible?
   validate :visible?
-  #validates unless :ta_visible, unless :peer_visible
 
   def update_assigned_groups_count
     result = []
@@ -272,7 +264,7 @@ class RubricCriterion < Criterion
   def visible?
     unless ta_visible
       unless peer_visible
-        errors.add(:ta_visible, "Select at least one box in the visibility section")
+        errors.add(:ta_visible, I18n.t('rubric_criteria.visibility_error'))
         false
       end
     end

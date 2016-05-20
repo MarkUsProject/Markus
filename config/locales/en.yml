@@ -888,16 +888,6 @@ en:
       help:
         manage_admins: "Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks."
 
-    rubrics:
-      move_criterion:
-        error: "Failed to move rubric."
-      ta_visible: "Make visible to teaching assistants"
-      peer_visible: "Make visible to peer reviewers"
-
-    flexible_criteria:
-      move_criterion:
-        error: "Failed to move flexible criteria."
-
     add_student:
       success: "Student %{user_name} added."
       fail:
@@ -1213,6 +1203,11 @@ en:
       errors:
         messages:
           name_taken: "Criterion name already used."
+      move_criterion:
+        error: "Failed to move flexible criteria."
+      ta_visible: "Make visible to teaching assistants"
+      peer_visible: "Make visible to peer reviewers"
+      visibility_error: "Select at least one box in the visibility section"
 
     rubric_criteria:
       criteria_management:         "Rubric Management: %{identifier}"
@@ -1271,6 +1266,11 @@ en:
       errors:
         messages:
           name_taken: "Criterion name already used."
+      move_criterion:
+        error: "Failed to move rubric."
+      ta_visible: "Make visible to teaching assistants"
+      peer_visible: "Make visible to peer reviewers"
+      visibility_error: "Select at least one box in the visibility section"
 
     summary_table:
       title: "Title"
@@ -1359,6 +1359,7 @@ en:
     criteria:           "Criteria"
     criterion:          "Criterion"
     total_mark:         "Total mark"
+    visibility:         "Visibility"
     weight:             "Weight"
     editing_criteria:   "Editing criteria"
     ordering_criteria:  "Ordering criteria"
@@ -1379,7 +1380,6 @@ en:
     help_modifying_visibility_message: "The icons on the rightmost column under visibility represent the following:"
     help_ta_visibility_message: "Teaching assistants will be able to see the criterion."
     help_peer_visibility_message: "Peer reviewers will be able to see the criterion."
-    help_no_visibility_message: "Criterion is hidden."
     help_editing_flexible_criteria_message: "
       Select a criterion on the left to edit it.  Criteria names, descriptions and
       maximum values can be modified."
