@@ -3,7 +3,7 @@
 </div>
 
 <% if @assignment.is_peer_review? %>
-  <%= render partial: 'peer_revieW_form' %>
+  <%= render partial: 'peer_review_form' %>
 <% else %>
   <%= render partial: 'form', formats: [:html], handlers: [:erb] %>
 <% end %>
