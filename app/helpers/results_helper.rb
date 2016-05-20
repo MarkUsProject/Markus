@@ -37,4 +37,23 @@ module ResultsHelper
   def can_show_feedback_files_tab?(submission)
     not submission.feedback_files.empty?
   end
+
+  def create_nested_files_hash_table(files)
+    # arrange the files list into a nested hashtable for displaying in a recursive menu
+    outermost_dir = Hash.new
+    files.each do |file|
+      innermost_dir = outermost_dir
+      innermost_dir["files"] = Array.new
+      folders = file.path.split('/')
+      folders.each do |folder_name|
+        if !innermost_dir.key?(folder_name)
+          innermost_dir[folder_name] = Hash.new
+          innermost_dir[folder_name]["files"] = Array.new
+        end
+        innermost_dir = innermost_dir[folder_name]
+      end
+      innermost_dir["files"].push(file)
+    end
+    outermost_dir
+  end
 end
