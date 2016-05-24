@@ -39,7 +39,8 @@
                        onchange: 'set_onbeforeunload(true);',
                        size: 35,
                        maxlength: 30,
-                       required: true %>
+                       required: true,
+                       readonly: @assignment.is_peer_review? %>
     </div>
     
     <div>
@@ -124,24 +125,30 @@
     </div>
 
     <div>
-      <%= f.check_box :allow_web_submits,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :allow_web_submits,
-                  t('assignment.allow_web_submits') %>
+      <% if not @assignment.is_peer_review? %>
+        <%= f.check_box :allow_web_submits,
+                        onclick: 'set_onbeforeunload(true);' %>
+        <%= f.label :allow_web_submits,
+                    t('assignment.allow_web_submits') %>
+      <% end %>
     </div>
 
     <div>
-      <%= f.check_box :vcs_submit,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :vcs_submit,
-                  t('assignment.vcs_submit') %>
+      <% if not @assignment.is_peer_review? %>
+        <%= f.check_box :vcs_submit,
+                        onclick: 'set_onbeforeunload(true);' %>
+        <%= f.label :vcs_submit,
+                    t('assignment.vcs_submit') %>
+      <% end %>
     </div>
 
     <div>
-      <%= f.check_box :display_grader_names_to_students,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :display_grader_names_to_students,
-                  t('assignment.display_grader_names_to_students') %>
+      <% if not @assignment.is_peer_review? %>
+        <%= f.check_box :display_grader_names_to_students,
+                        onclick: 'set_onbeforeunload(true);' %>
+        <%= f.label :display_grader_names_to_students,
+                    t('assignment.display_grader_names_to_students') %>
+      <% end %>
     </div>
 
     <div>
@@ -156,10 +163,12 @@
                     t('automated_tests.enable_test') %>
     </div>
     <div>
-      <%= f.check_box :has_peer_review,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :has_peer_review,
-                  t('assignment.has_peer_review') %>
+      <% if not @assignment.is_peer_review? %>
+        <%= f.check_box :has_peer_review,
+                        onclick: 'set_onbeforeunload(true);' %>
+        <%= f.label :has_peer_review,
+                    t('assignment.has_peer_review') %>
+      <% end %>
     </div>
   </fieldset>
 
@@ -190,6 +199,7 @@
   </fieldset>
 
   <%# Required files %>
+  <% if @assignment.is_peer_review? %>
   <fieldset>
     <legend>
       <span><%= t('assignment.required_files') %></span>
@@ -223,8 +233,10 @@
       <%= f.label :only_required_files, t('required_file_warning') %>
     </p>
   </fieldset>
+  <% end %>
 
   <%# Group properties %>
+  <% if @assignment.is_peer_review? %>
   <fieldset>
     <legend>
       <span><%= t('assignment.group.properties') %></span>
@@ -296,6 +308,7 @@
       </div>
     </fieldset>
   </fieldset>
+  <% end %>
 
   <%# Submission rules %>
   <fieldset id='submission_rule_fields'>
