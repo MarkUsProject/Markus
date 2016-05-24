@@ -63,13 +63,13 @@ class PeerReviewsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_peer_review
-      @peer_review = PeerReview.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_peer_review
+    @peer_review = PeerReview.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def peer_review_params
-      params.require(:peer_review).permit(:reviewer_id, :result_id)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def peer_review_params
+    params.require(:peer_review).permit(:reviewer_id, :result_id)
+  end
 end
