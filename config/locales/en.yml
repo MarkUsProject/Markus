@@ -270,6 +270,7 @@ en:
     grades:             "Grades"
     submissions:        "Submissions"
     summaries:          "Summaries"
+    peer_reviews:       "Peer reviews"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
