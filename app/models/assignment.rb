@@ -924,7 +924,7 @@ class Assignment < ActiveRecord::Base
       peerreview_assignment.token_period = 1
       peerreview_assignment.unlimited_tokens = false
       peerreview_assignment.short_identifier = short_identifier + '_pr'
-      peerreview_assignment.description = ''
+      peerreview_assignment.description = description
       peerreview_assignment.repository_folder = repository_folder
       peerreview_assignment.due_date = due_date
 

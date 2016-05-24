@@ -162,10 +162,8 @@
                   t('assignment.has_peer_review') %>
       <% if @assignment.has_peer_review %>
           <% peer_review_assignment = @assignment.pr_assignment %>
-          <% if peer_review_assignment.nil? %>
-              <% flash_now(:error, t('assignment.peer_review_record_missing')) %>
-          <% else %>
-            <%= link_to t('assignment.configure_peer_review'), edit_assignment_path(peer_review_assignment) %>
+          <% if not peer_review_assignment.nil? %>
+             (<%= t('assignment.configure_peer_review') %>)
           <% end %>
       <% end %>
     </div>
