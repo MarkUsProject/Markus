@@ -126,8 +126,9 @@ class Result < ActiveRecord::Base
   end
 
   def check_for_nil_marks
-    num_criteria = submission.assignment.rubric_criteria.count +
-                   submission.assignment.flexible_criteria.count
+    peer_review = submission.assignment.is_peer_review?
+    num_criteria = filter_criteria(submission.assignment.rubric_criteria, peer_review).count +
+        filter_criteria(submission.assignment.flexible_criteria, peer_review).count
     # Check that the marking state is incomplete or all marks are entered
     if (marks.find_by(mark: nil) || marks.count != num_criteria) &&
        marking_state == Result::MARKING_STATES[:complete]
@@ -136,6 +137,10 @@ class Result < ActiveRecord::Base
       return false
     end
     true
+  end
+
+  def filter_criteria(criteria, peer_review)
+    peer_review ? criteria.select(&:peer_visible) : criteria.select(&:ta_visible)
   end
 
   def create_marks

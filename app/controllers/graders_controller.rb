@@ -280,7 +280,7 @@ class GradersController < ApplicationController
     criterion_ids = options[:criterion_ids]
     includes = options[:includes] || CRITERION_ASSOC
 
-    criteria = assignment.get_criteria.includes(includes)
+    criteria = assignment.get_criteria.empty? ? assignment.get_criteria : assignment.get_criteria.includes(includes)
     criterion_ids ? criteria.where(id: criterion_ids) : criteria
   end
 

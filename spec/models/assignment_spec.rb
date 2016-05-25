@@ -136,6 +136,71 @@ describe Assignment do
         it 'returns the TA' do
           expect(@assignment.tas).to eq [@ta]
         end
+
+        context 'when no criteria are found' do
+          it 'returns an empty list of criteria' do
+            expect(@assignment.get_criteria).to be_empty
+          end
+
+          context 'a submission and result are created' do
+            before do
+              @submission = create(:submission, grouping: @grouping)
+              @result = create(:incomplete_result, submission: @submission)
+            end
+
+            it 'has no marks' do
+              expect(@result.marks.length).to eq(0)
+            end
+
+            it 'gets a subtotal' do
+              expect(@result.get_subtotal).to eq(0)
+            end
+          end
+        end
+
+        context 'when rubric criteria are found' do
+          before do
+            @ta_criteria = Array.new(2) { create(:rubric_criterion, assignment: @assignment) }
+            @peer_criteria = Array.new(2) { create(:rubric_criterion,
+                                                   assignment: @assignment,
+                                                   ta_visible: false,
+                                                   peer_visible: true) }
+            @ta_and_peer_criteria = Array.new(2) { create(:rubric_criterion,
+                                                          assignment: @assignment,
+                                                          peer_visible: true) }
+            end
+
+          it 'shows the criteria visible to tas only' do
+            expect(@assignment.get_criteria.length).to eq 4
+          end
+
+          context 'a submission and a result are created' do
+            before do
+              @submission = create(:submission, grouping: @grouping)
+              @result = create(:incomplete_result, submission: @submission)
+            end
+
+            it 'creates marks for visible criteria only' do
+              expect(@result.marks.length).to eq(4)
+            end
+
+            context 'when marks are entered' do
+              before do
+                result_mark = @result.marks.first
+                result_mark.mark = 2.0
+                result_mark.save
+              end
+
+              it 'gets a subtotal' do
+                expect(@result.get_subtotal).to eq(2)
+              end
+
+              it 'gets a relative total_mark' do
+                expect(@assignment.total_mark).to eq(16)
+              end
+            end
+          end
+        end
       end
 
       describe 'more than one TA' do
@@ -1035,7 +1100,7 @@ describe Assignment do
   describe '#grade_distribution_as_percentage' do
     before :each do
       @assignment = create(:assignment)
-      5.times { create(:rubric_criterion, assignment: @assignment) }
+      5.times { create(:rubric_criterion, assignment: @assignment, peer_visible: true) }
     end
 
     context 'when there are no submitted marks' do
