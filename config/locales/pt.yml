@@ -307,7 +307,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       set_to_complete:      "Conjunto para completar"
       revert_to_incomplete: "Reverter para incompleta"
       notes:                "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
-      include_annotations: "Incluir anotações:"
+      include_annotations: "Incluir anotações"
       include_annotations_warning: "Aviso! Anotações sobre PDFs não são presentemente descarregado."
       select_a_test: "Por favor seleccione um teste"
       marks:
