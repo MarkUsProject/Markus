@@ -1,6 +1,8 @@
 function open_file(id, path) {
   load_submitted_file(id);
   document.getElementById('select_file_id').value = id;
+  document.getElementById('file_id').value = id;
+  document.getElementById('select_file_dropdown_id').value = id;
   document.getElementById('file_selector_dropdown_text').innerHTML = path;
 }
 
