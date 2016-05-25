@@ -1,9 +1,12 @@
-function open_file(id, path) {
-  load_submitted_file(id);
-  document.getElementById('select_file_id').value = id;
-  document.getElementById('file_id').value = id;
-  document.getElementById('select_file_dropdown_id').value = id;
-  document.getElementById('file_selector_dropdown_text').innerHTML = path;
+function open_file(id, path, downloading) {
+    if (downloading) {
+        document.getElementById('file_id').value = id;
+        document.getElementById('download_file_selector_dropdown_text').innerHTML = path;
+    } else {
+        load_submitted_file(id);
+        document.getElementById('select_file_id').value = id;
+        document.getElementById('file_selector_dropdown_text').innerHTML = path;
+    }
 }
 
 function open_submenu(dir_element) {

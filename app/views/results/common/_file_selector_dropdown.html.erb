@@ -31,7 +31,7 @@
           <% end %>
           <% if dir["files"] != nil %>
               <% dir["files"].each do |file| %>
-                  <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
+                  <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>", false)'
                          onmouseover='close_submenu_recursive(
                              this.parentNode.parentNode, null)'>
                     <%= file.filename %>
@@ -40,7 +40,7 @@
           <% end %>
       <% end %>
 
-      <div class="dropdown" id="select_file_dropdown_id">
+      <div class="dropdown" id="select_file_id">
         <% outermost_dir = create_nested_files_hash_table(files) %>
         <a id="file_selector_dropdown_text">Files</a>
         <span class="caret"></span>
