@@ -1,0 +1,92 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  // Table of students, on the left.
+  var GradersTable = React.createClass({
+    propTypes: {
+      graders: React.PropTypes.array,
+      selected_graders: React.PropTypes.array,
+      onSelectedGradersChange: React.PropTypes.func
+    },
+    checkboxClicked: function(event) {
+      var value = event.currentTarget.checked;
+      var grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_graders = this.props.selected_graders.slice();
+      if (value) {
+        new_selected_graders.push(grader_id);
+      } else {
+        new_selected_graders.splice(new_selected_graders.indexOf(grader_id), 1);
+      }
+      this.props.onSelectedGradersChange(new_selected_graders);
+    },
+    checkboxAllClicked: function(event) {
+      var value = event.currentTarget.checked;
+      if (value) {
+        var new_selected_graders = this.props.graders.map(function(x) { return x.id; }).slice();
+        this.props.onSelectedGradersChange(new_selected_graders);
+      } else {
+        this.props.onSelectedGradersChange([]);
+      }
+    },
+    render: function() {
+      var columns = [
+      {
+        id: 'checkbox',
+        content: <div>
+          <input type='checkbox'
+            onChange={this.checkboxAllClicked.bind(this)} />
+        </div>,
+        sortable: false,
+        searchable: false
+      },
+      {
+        id: 'user_name',
+        content: '<%= j raw I18n.t('user.user_name') %>',
+        sortable: true,
+        searchable: true
+      },
+      {
+        id: 'full_name',
+        content: '<%= j raw I18n.t('user.full_name') %>',
+        sortable: true,
+        searchable: true,
+      },
+      {
+        id: 'groups',
+        content: '<%= j raw I18n.t('groups.groups') %>',
+        sortable: false,
+        searchable: false
+      },
+      {
+        id: 'criteria',
+        content: '<%= j raw I18n.t('criteria') %>',
+        sortable: false,
+        searchable: false
+      }
+      ];
+
+      var graders_data = this.props.graders.map(function(grader) {
+        var g = {};
+        g['id'] = grader.id;
+        g['checkbox'] = <input id={grader.id} type='checkbox'
+          checked={this.props.selected_graders.indexOf(grader.id) !== -1}
+          onChange={this.checkboxClicked} />
+        g['user_name'] = grader.user_name;
+        g['full_name'] = grader.full_name;
+        g['groups'] = grader.groups;
+        g['criteria'] = <span dangerouslySetInnerHTML={{__html: grader.criteria}} />
+        return g;
+      }.bind(this));
+
+      return (
+        <div className={'col-left'} >
+          <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
+            <Table data={graders_data}
+            columns={columns}
+            search_placeholder={'<%= j raw I18n.t('search_graders') %>'} />
+          </div>
+        </div>
+      );
+    }
+  });
+</script>

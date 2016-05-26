@@ -1,0 +1,78 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+
+  // The buttons for random_assign, assigning and unsassigning
+  var GradersActionsColumn = React.createClass({
+    propTypes: {
+      selected_graders: React.PropTypes.array,
+      selected_groups: React.PropTypes.array,
+      selected_criteria: React.PropTypes.array,
+      selected_graders_in_groups: React.PropTypes.array,
+      selected_graders_in_criteria: React.PropTypes.array,
+      current_table: React.PropTypes.string
+    },
+    // Sends a request to the server to perform some action
+    // such as assigning or removing a member to/from a group
+    // should probably be moved to actionsbox
+    performAction: function(event) {
+      var action = event.currentTarget.getAttribute('id');
+      var dataLoad = {
+        submit_type: 'global_action',
+        current_table: this.props.current_table,
+        global_actions: action,
+        graders: this.props.selected_graders,
+        groupings: this.props.selected_groups,
+        grader_memberships: this.props.selected_graders_in_groups,
+        criteria: this.props.selected_criteria,
+        criterion_associations: this.props.selected_graders_in_criteria,
+        skip_empty_submissions: this.props.skip_empty_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'graders/global_actions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.updateSelectedGraders([]);
+          this.props.updateSelectedGroups([]);
+          this.props.updateSelectedCriteria([]);
+          this.props.updateSelectedGradersInGroups([]);
+          this.props.setError(data);
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.setError(error);
+        }.bind(this)
+      });
+    },
+    render: function() {
+      return (
+        <div className={'col-center'}>
+          <div id='icons'>
+            <input id='random_assign'
+              className='image_input'
+              src='<%= image_path 'random_arrow.png' %>'
+              alt='<%= j raw I18n.t('groups.randomly_assign_graders') %>'
+              onClick={this.performAction}
+              type='image'
+            />
+            <img id='assign'
+              className='image_input'
+              src='<%= image_path 'add_arrow.png' %>'
+              alt='<%= j raw I18n.t('add_graders') %>'
+              onClick={this.performAction}
+              type='image'
+            />
+            <img id='unassign'
+              className='image_input'
+              src='<%= image_path 'remove_arrow.png' %>'
+              alt='<%= j raw I18n.t('remove_graders') %>'
+              onClick={this.performAction}
+              type='image'
+            />
+          </div>
+        </div>
+      );
+    }
+  });
+</script>

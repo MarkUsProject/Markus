@@ -1,0 +1,32 @@
+@import 'common/core';
+
+@import 'common/columns';
+
+
+.col-left {
+  width: 40%;
+}
+
+.col-right {
+  width: 50%;
+}
+
+.col-center #icons {
+  left: 45%;
+}
+
+.new_group {
+  float: right;
+}
+
+.graders-to-criteria {
+  padding-bottom: 5px;
+}
+
+.grader-summary-graph {
+  display: inline-block;
+}
+
+.grader-summary-content {
+  text-align: center;
+}
