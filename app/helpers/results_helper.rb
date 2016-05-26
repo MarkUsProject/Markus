@@ -43,16 +43,16 @@ module ResultsHelper
     outermost_dir = Hash.new
     files.each do |file|
       innermost_dir = outermost_dir
-      innermost_dir["files"] = Array.new
+      innermost_dir[:files] = Array.new
       folders = file.path.split('/')
       folders.each do |folder_name|
         if !innermost_dir.key?(folder_name)
           innermost_dir[folder_name] = Hash.new
-          innermost_dir[folder_name]["files"] = Array.new
+          innermost_dir[folder_name][:files] = Array.new
         end
         innermost_dir = innermost_dir[folder_name]
       end
-      innermost_dir["files"].push(file)
+      innermost_dir[:files].push(file)
     end
     outermost_dir
   end
