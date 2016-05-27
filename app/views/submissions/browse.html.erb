@@ -46,7 +46,6 @@
     html_options: { id: 'download_all_submissions_link' }
   }) %>
 
-
 <% content_for :additional_headings do %>
   <% if @current_user.ta? %>
     <span class='menu_bar'></span>
@@ -57,10 +56,10 @@
 <% end %>
 
 <% content_for :wrap_left_content do %>
-    <div id="notice">
-      <div id="job-messenger"></div>
-    </div>
-    <div id='submissions_table'></div>
+  <div id='notice'>
+    <div id='job-messenger'></div>
+  </div>
+  <div id='submissions_table'></div>
 <% end %>
 <script>
   jQuery(document).ready(function() {

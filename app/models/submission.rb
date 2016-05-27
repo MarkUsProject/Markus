@@ -35,6 +35,27 @@ class Submission < ActiveRecord::Base
      repo.close
      submission
   end
+  
+  def apply_penalty_or_add_grace_credits(grouping,
+                                         apply_late_penalty)
+    if grouping.assignment.submission_rule.is_a? GracePeriodSubmissionRule
+      # Return any grace credits previously deducted for this grouping.
+      grouping.assignment.submission_rule.remove_deductions(self)
+    end
+    if apply_late_penalty
+      grouping.assignment.submission_rule.apply_submission_rule(self)
+    end
+  end
+  
+  def collect_single(grouping, rev_num, apply_late_penalty)
+    grouping.update(is_collected: false)
+      
+    self.apply_penalty_or_add_grace_credits(grouping,
+                                      apply_late_penalty)
+    grouping.is_collected = true
+    grouping.save
+
+  end
 
   def self.create_by_revision_number(grouping, revision_number)
     repo = grouping.group.repo
