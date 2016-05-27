@@ -11,40 +11,40 @@
                locals: {mark_criterion: mark_criterion,
                         mark: mark,
                         old_mark: old_mark} %>
+    <div id="<%="criterion_info_#{mark_criterion.id}"%>">
+      <div id="<%="mark_criterion_inputs_#{mark_criterion.id}"%>" class="mark_criterion_level_container">
+        <div class="float_left cursor_hand">
+          <table id="mark_<%=mark.id%>_table">
+           <%
+             (0...RubricCriterion::RUBRIC_LEVELS).each do |num_levels|
+              if (!old_mark.nil? && num_levels == old_mark.mark)
+                td_class = "rubric_criterion_level_old_mark"
+              elsif (num_levels == mark.mark)
+                td_class = "rubric_criterion_level_selected"
+              else
+                td_class = "rubric_criterion_level"
+              end
 
-    <div id="<%="mark_criterion_inputs_#{mark_criterion.id}"%>" class="mark_criterion_level_container">
+              level_name = mark_criterion["level_" + num_levels.to_s + "_name"]
+              level_desc = mark_criterion["level_" + num_levels.to_s + "_description"]
 
-      <div class="float_left cursor_hand">
-        <table id="mark_<%=mark.id%>_table">
-	       <%
-           (0...RubricCriterion::RUBRIC_LEVELS).each do |num_levels|
-            if (!old_mark.nil? && num_levels == old_mark.mark)
-              td_class = "rubric_criterion_level_old_mark"
-            elsif (num_levels == mark.mark)
-              td_class = "rubric_criterion_level_selected"
-            else
-              td_class = "rubric_criterion_level"
-            end
-
-            level_name = mark_criterion["level_" + num_levels.to_s + "_name"]
-            level_desc = mark_criterion["level_" + num_levels.to_s + "_description"]
-
-            if level_desc && !level_desc.empty? -%>
-              <tr>
-                <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
-                    data-action="
-                      <%= update_mark_assignment_submission_results_path(
-                            mark_id: mark.id, mark: num_levels) %>"
-                    onclick="update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)">
-                   <strong><%=num_levels%>: <%= level_name %></strong>
-                   &nbsp;<%=level_desc%>
-                 </td>
-              </tr>
+              if level_desc && !level_desc.empty? -%>
+                <tr>
+                  <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
+                      data-action="
+                        <%= update_mark_assignment_submission_results_path(
+                              mark_id: mark.id, mark: num_levels) %>"
+                      onclick="update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)">
+                     <strong><%=num_levels%>: <%= level_name %></strong>
+                     &nbsp;<%=level_desc%>
+                   </td>
+                </tr>
+              <% end -%>
             <% end -%>
-          <% end -%>
-		    </table>
-      </div>
-      <div class="clear"></div>
+          </table>
+        </div>
+        <div class="clear"></div>
+      </div
     </div>
   </div>
 </li>
