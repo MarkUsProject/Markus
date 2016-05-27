@@ -92,13 +92,6 @@
   <%= render partial: 'results/common/download_file_selector',
              locals: { files: @files,
                        can_download: true } %>
-  <% if can_show_feedback_files_tab?(@submission) %>
-      <div id='feedback_files_controls'>
-        <%= render partial: 'results/common/feedback_file_selector',
-                   locals: { feedback_files: @feedback_files,
-                             submission_id: @submission.id } %>
-      </div>
-  <% end %>
 
 </aside>
 <% if @current_user.admin? %>
