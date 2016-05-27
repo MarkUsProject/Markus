@@ -487,6 +487,11 @@ ul.annotation_text_list {
 
 .flexible_criterion_info {
   padding-left: 10px;
+  border: 1px solid darkgrey;
+  border-radius: $radius;
+  margin: 5px 5px 5px 5px;
+  padding-bottom: 2px;
+  background: lightgrey;
 }
 
 
