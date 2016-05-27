@@ -430,8 +430,8 @@ ul.annotation_text_list {
 }
 
 .mark_criterion_level_container {
-  margin-left: 20px;
-  margin-top: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 
   table {
     background: #fff;
@@ -470,6 +470,23 @@ ul.annotation_text_list {
 
 #selected_criterion_name {
   font-weight: bold;
+}
+
+.mark_criterion_title_div_level {
+  padding-top: 2px;
+  font-size: 12px;
+  padding-bottom: 4px;
+  font-weight: bold;
+}
+
+.flexible_criterion_expand {
+  font-size: 14px;
+  float: left;
+  cursor: pointer;
+}
+
+.flexible_criterion_info {
+  padding-left: 10px;
 }
 
 

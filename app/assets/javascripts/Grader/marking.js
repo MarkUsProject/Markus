@@ -129,7 +129,7 @@ function focus_mark_criterion(id) {
 }
 
 function hide_criterion(id) {
-  document.getElementById('mark_criterion_inputs_' + id).style.display = 'none';
+  document.getElementById('flexible_criterion_info_' + id).style.display = 'none';
   document.getElementById('mark_criterion_title_' + id).style.display = '';
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
   document.getElementById('mark_criterion_title_' + id + '_expand').removeClass('expanded');
@@ -137,7 +137,7 @@ function hide_criterion(id) {
 
 function show_criterion(id) {
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
-  document.getElementById('mark_criterion_inputs_' + id).style.display = '';
+  document.getElementById('flexible_criterion_info_' + id).style.display = '';
   document.getElementById('mark_criterion_title_' + id + '_expand').addClass('expanded');
 }
 
