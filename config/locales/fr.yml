@@ -208,6 +208,8 @@ fr:
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
         section_due_dates_info:  "<b>Important</b> La date de retour « globale » doit être indiquée. Si une section n'a pas de date de retour spécifique, la date « globale » sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date « globale » qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
         has_peer_review: "Activer élèves-étudiants d'examen par les pairs"
+        configure_peer_review: "Configurer examen par les pairs"
+        peer_review_record_missing: "Erreur: Examen par les pairs cession manquant dans la base de données"
     your_mark:  "Votre note : "
 
     members:            "Membres"
@@ -247,6 +249,7 @@ fr:
     grades:             "Notes"
     submissions:        "Envois"
     summaries:          "Récapitulatif"
+    peer_reviews:       "Examens par le pairs"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"
     join:               "Rejoindre"

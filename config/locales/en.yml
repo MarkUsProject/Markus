@@ -229,6 +229,8 @@ en:
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
         has_peer_review: "Enable student-to-student peer review"
+        configure_peer_review: "Configure peer review"
+        peer_review_record_missing: "Error: Peer review assignment missing from database"
     your_mark:  "Your mark:"
 
     members:            "Members"
@@ -268,6 +270,7 @@ en:
     grades:             "Grades"
     submissions:        "Submissions"
     summaries:          "Summaries"
+    peer_reviews:       "Peer reviews"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
