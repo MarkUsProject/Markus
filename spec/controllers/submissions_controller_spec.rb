@@ -429,6 +429,7 @@ describe SubmissionsController do
             expect(@assignment).to receive_message_chain(
               :submission_rule, :can_collect_now?).with(@section) { false }
             expect(@assignment).to receive(:short_identifier) { 'a1' }
+            allow(SubmissionsJob).to receive(:perform_later) { true }
 
             post_as @admin,
                    :collect_submissions,
@@ -449,6 +450,7 @@ describe SubmissionsController do
             expect(@assignment).to receive_message_chain(
               :submission_rule, :can_collect_now?).with(@section) { true }
             expect(@assignment).to receive(:short_identifier) { 'a1' }
+            allow(SubmissionsJob).to receive(:perform_later) { true }
 
             post_as @admin,
                    :collect_submissions,
@@ -471,6 +473,7 @@ describe SubmissionsController do
             expect(@assignment).to receive_message_chain(
               :submission_rule, :can_collect_now?).with(nil) { false }
             expect(@assignment).to receive(:short_identifier) { 'a1' }
+            allow(SubmissionsJob).to receive(:perform_later) { true }
 
             post_as @admin,
                    :collect_submissions,
@@ -491,6 +494,7 @@ describe SubmissionsController do
             expect(@assignment).to receive_message_chain(
               :submission_rule, :can_collect_now?).with(nil) { true }
             expect(@assignment).to receive(:short_identifier) { 'a1' }
+            allow(SubmissionsJob).to receive(:perform_later) { true }
 
             post_as @admin,
                    :collect_submissions,

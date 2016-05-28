@@ -23,7 +23,7 @@ class SubmissionsJob < ActiveJob::Base
                    ' connection successfully')
 
       groupings.each do |grouping|
-			  m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
+        m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                      "#{grouping.id}")
 
         if options[:revision_number].nil?
@@ -31,6 +31,11 @@ class SubmissionsJob < ActiveJob::Base
           new_submission = Submission.create_by_timestamp(grouping, time)
         else
           new_submission = Submission.create_by_revision_number(grouping, options[:revision_number])
+        end
+
+        if assignment.submission_rule.is_a? GracePeriodSubmissionRule
+          # Return any grace credits previously deducted for this grouping.
+          assignment.submission_rule.remove_deductions(grouping)
         end
 
         if options[:apply_late_penalty].nil? || options[:apply_late_penalty]
@@ -42,35 +47,24 @@ class SubmissionsJob < ActiveJob::Base
           grouping.is_collected = true
         end
 
-			  grouping.save
+        grouping.save
 
         # Request a test run for the grouping
         request_a_test_run(grouping, new_submission)
       end
       m_logger.log('Submission collection process done')
-	  rescue => e
-		  Rails.logger.error e.message
-		  job_messenger.update(status: :failed, message: e.message)
-		  PopulateCache.populate_for_job(job_messenger, job_id)
-		  raise e
+    rescue => e
+      Rails.logger.error e.message
+      unless job_messenger.nil?
+        job_messenger.update(status: :failed, message: e.message)
+        PopulateCache.populate_for_job(job_messenger, job_id)
+      end
+      raise e
     end
     unless job_messenger.nil?
       job_messenger.update(status: :succeeded)
       PopulateCache.populate_for_job(job_messenger, job_id)
     end
-  end
-
-  def apply_penalty_or_add_grace_credits(grouping,
-                                         apply_late_penalty,
-                                         new_submission)
-    if grouping.assignment.submission_rule.is_a? GracePeriodSubmissionRule
-      # Return any grace credits previously deducted for this grouping.
-      grouping.assignment.submission_rule.remove_deductions(new_submission)
-    end
-    if apply_late_penalty
-      grouping.assignment.submission_rule.apply_submission_rule(new_submission)
-    end
-
   end
 
   def request_a_test_run(grouping, new_submission)

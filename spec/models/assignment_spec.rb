@@ -545,7 +545,6 @@ describe Assignment do
   describe '#graded_submission_results' do
     before :each do
       @assignment = create(:assignment)
-      @submission_collector = SubmissionCollector.instance
       @student = create(:student)
       @grouping = create(:grouping, assignment: @assignment, inviter: @student)
       @submission = create(:version_used_submission, grouping: @grouping)
