@@ -36,6 +36,9 @@ function close_submenu_recursive(dir_element, orig_dir_element) {
 
 jQuery(document).ready(function() {
   if (first_file_id !== null && first_file_path !== null) {
-    open_file(first_file_id, first_file_path);
+    // for code viewer
+    open_file(first_file_id, first_file_path, false);
+    // for download modal
+    open_file(first_file_id, first_file_path, true);
   }
 });
