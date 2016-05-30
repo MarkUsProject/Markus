@@ -92,33 +92,46 @@
     margin-right: -10px;
 }
 
-#download_button {
+
+/* Download Files Modal */
+
+#download_file_selector {
+  border-radius: $radius;
+  display: inline-block;
   text-align: center;
-  float: left;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  line-height: 16.25px;
+}
+
+#download_button {
+  display: inline-block;
+  float: right;
+  margin-top: 8px;
+  margin-left: 10px;
 }
 
 #download_all_files_button {
-  margin-top: 10px;
+  display: block;
+  margin: auto;
 }
 
 .download_file {
   .inline_label {
     margin-left: 0.5em;
   }
+}
 
-  #include_annotations {
-    margin-right: 0.5em;
-    float: left;
-  }
+#include_annotations {
+  margin-right: 0.5em;
+  float: left;
+}
 
-  #annotations_options {
-    display: block;
-    float: right;
-    margin-top: 20px;
-    margin-bottom: 8px;
-    padding-top: 10px;
-    margin-left: 10px;
-  }
+#annotations_options {
+  display: block;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  margin-left: 120px;
 }
 
 
@@ -246,15 +259,6 @@
   display: table-cell;
   vertical-align: top;
   float: left;
-  line-height: 16.25px;
-}
-
-#download_file_selector {
-  border-radius: $radius;
-  display: block;
-  text-align: center;
-  margin-bottom: 10px;
-  margin-top: 10px;
   line-height: 16.25px;
 }
 

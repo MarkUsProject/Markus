@@ -15,6 +15,20 @@
                        0,
                        id: 'file_id' %>
 
+  <div id='annotations_options'>
+    <%= check_box_tag('include_annotations',
+                      true,
+                      false,
+                      id: 'include_annotations',
+                      onclick: 'annotations_included();',
+                      class: 'inline_checkbox') if can_download && !files.empty? %>
+
+    <%= label_tag('include_annotations',
+                  t('marker.include_annotations'),
+                  id: 'include_annotations_label',
+                  class: 'inline_label') if can_download && !files.empty? %>
+  </div>
+
   <div id='download_file_selector'>
     <!-- so jQuery knows which file to autoload when the page loads -->
     <script>
@@ -85,26 +99,10 @@
                  id: 'download_button',
                  onclick: 'with_annotations();' if can_download && !files.empty? %>
 
-  <div class='download_file'>
 
-    <div id='annotations_options'>
-      <%= check_box_tag('include_annotations',
-                        true,
-                        false,
-                        id: 'include_annotations',
-                        onclick: 'annotations_included();',
-                        class: 'inline_checkbox') if can_download && !files.empty? %>
-
-      <%= label_tag('include_annotations',
-                    t('marker.include_annotations'),
-                    id: 'include_annotations_label',
-                    class: 'inline_label') if can_download && !files.empty? %>
-    </div>
-
-    <%= submit_tag t('browse_submissions.download_all_files'),
-                   name: 'download_zip_button',
-                   id: 'download_all_files_button',
-                   onclick: 'with_annotations();' unless files.empty? %>
-  </div>
+  <%= submit_tag t('browse_submissions.download_all_files'),
+                 name: 'download_zip_button',
+                 id: 'download_all_files_button',
+                 onclick: 'with_annotations();' unless files.empty? %>
 <% end %>
 
