@@ -71,32 +71,6 @@
   }
 }
 
-.file_selector,
-.download_file {
-  background: $light-grey;
-  border: 1px solid #ddd;
-  border-radius: $radius;
-  display: inline-block;
-  padding: 0.5em;
-}
-
-.file_selector {
-  margin-right: 1em;
-
-  @include breakpoint(mobile) {
-    margin-bottom: 1em;
-  }
-
-  select {
-    background: $white;
-  }
-
-  #next_button,
-  #back_button {
-    min-width: 0;
-  }
-}
-
 .nested-submenu > .nested-folder {
     top: 0;
     left: 100%;
@@ -223,7 +197,7 @@
 
 /* Annotations menus */
 
-#annotation_menu {
+#annotation_menu, #file_selector_menu, #feedback_file_selector_menu {
   background: #b7d3ec;
   border-radius: $radius $radius 0 0;
   display: table;
@@ -235,14 +209,43 @@
 #new_annotation_button {
   display: table-cell;
   font-weight: 300;
-  margin: 0 0.25em 0 0;
+  margin: 0 2.0em 0 0;
   min-width: 0;
   vertical-align: top;
+  float: left;
 }
 
 #annotation_categories {
   display: table-cell;
+  float: left;
+  padding-top: 7px;
+}
+
+.file_selector,
+.download_file {
+  background: $light-grey;
+  border-radius: $radius;
+  display: table-cell;
   vertical-align: top;
+  float: left;
+  line-height: 16.25px;
+}
+
+.file_selector {
+  margin-right: 1em;
+
+  @include breakpoint(mobile) {
+    margin-bottom: 1em;
+  }
+
+  select {
+    background: $white;
+  }
+
+  #next_button,
+  #back_button {
+    min-width: 0;
+  }
 }
 
 li.annotation_category {

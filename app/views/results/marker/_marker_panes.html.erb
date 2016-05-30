@@ -24,6 +24,11 @@
           <div id='sel_box'></div>
 
           <div id='annotation_menu'>
+
+            <%= render partial: 'results/common/file_selector_dropdown',
+                       locals: { files: files,
+                                 can_download: true } %>
+
             <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
               <%= t('marker.new_annot')%>
             </button>
@@ -79,6 +84,15 @@
 
         <% if can_show_feedback_files_tab?(submission) %>
           <div id='feedback_file_tab' style='display:none;'>
+
+            <div id='feedback_file_selector_menu'>
+              <div id='feedback_files_controls'>
+                <%= render partial: 'results/common/feedback_file_selector',
+                           locals: { feedback_files: feedback_files,
+                                     submission_id: submission.id } %>
+              </div>
+            </div>
+
             <div id='feedback_file_content'>
             </div>
           </div>
