@@ -10,16 +10,10 @@
   <div class="criterion_title" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>" onclick="<%="focus_mark_criterion(#{mark_criterion.id})"%>">
     <div id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>"
       class="float_left flexible_criterion_expand expanded" >- &nbsp;</div>
-    <div id="<%="mark_criterion_title_#{mark_criterion.id}_name"%>"
-      class="mark_criterion_title_div_level float_left">
-      <%=(mark_criterion.name)%>
-    </div>
-    <div id="<%="mark_criterion_title_#{mark_criterion.id}_old_mark"%>"
-         class="mark_criterion_old_mark float_left">
-      <strong><%= if(!old_mark.nil? && !old_mark.mark.nil?) then
-                    "#{I18n.t('marker.marks.old')}#{old_mark.mark.to_s}"
-                  else "" end %></strong>
-    </div>
+    <%= render partial: 'results/common/flexible_criterion',
+               locals: {mark_criterion: mark_criterion,
+                        mark: mark,
+                        old_mark: old_mark} %>
     <div id="<%="criterion_info_#{mark_criterion.id}"%>" class="flexible_criterion_info">
       <div id="<%="mark_criterion_inputs_#{mark_criterion.id}"%>" class="mark_criterion_level_container">
         <%=mark_criterion.description %>

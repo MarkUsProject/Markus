@@ -1,11 +1,18 @@
-<div id="<%= 'mark_criterion_title_#{mark_criterion.id}_name' %>"
+<div id="<%= "mark_criterion_title_#{mark_criterion.id}_name" %>"
      class='mark_criterion_title_div_level float_left'>
   <strong><%= (mark_criterion.name) %></strong>
 </div>
 
 <div class='clear'></div>
 
-<div id="<%= 'mark_criterion_title_#{mark.id}_mark' %>"
+<div id="<%="mark_criterion_title_#{mark_criterion.id}_old_mark"%>"
+     class="mark_criterion_old_mark float_left">
+  <strong><%= if(!old_mark.nil? && !old_mark.mark.nil?) then
+                "#{I18n.t('marker.marks.old')}#{old_mark.mark.to_s}"
+              else "" end %></strong>
+</div>
+
+<div id="<%= "mark_criterion_title_#{mark.id}_mark" %>"
      class='padding_left mark_description'
      data-id='<%= mark_criterion.id %>'>
   <% if !mark.mark.nil? -%>
