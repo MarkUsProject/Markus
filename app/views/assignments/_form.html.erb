@@ -155,6 +155,18 @@
       <%= f.label :enable_test,
                     t('automated_tests.enable_test') %>
     </div>
+    <div>
+      <%= f.check_box :has_peer_review,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :has_peer_review,
+                  t('assignment.has_peer_review') %>
+      <% if @assignment.has_peer_review %>
+          <% peer_review_assignment = @assignment.pr_assignment %>
+          <% if not peer_review_assignment.nil? %>
+             (<%= t('assignment.configure_peer_review') %>)
+          <% end %>
+      <% end %>
+    </div>
   </fieldset>
 
   <%# Marking scheme %>

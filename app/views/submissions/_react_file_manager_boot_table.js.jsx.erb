@@ -17,8 +17,8 @@
             id: 'file_name',
             content: '<%= j raw I18n.t(:'browse_submissions.filename') %>',
             sortable: true,
-            searchable: true
-            //compare: compare_anchor_text
+            searchable: true,
+            compare: compare_anchor_text
           },
           {
             id: 'last_modified_date',
@@ -61,6 +61,7 @@
       jQuery.ajax({
         url: '<%= populate_file_manager_react_assignment_submissions_path %>',
         method: 'GET',
+        data: { path: '<%= @path  %>'},
         dataType: 'json',
         success: function(data) {
           this.setState({

@@ -20,7 +20,7 @@
 
       <% def show_folder_recursive(dir) %>
           <% dir.each do |name, contents|  %>
-              <% if name != "files" %>
+              <% if name != :files %>
                   <li class="nested-submenu">
                     <a onmouseenter='open_submenu(this)'>
                       <b><%= name %></b>
@@ -29,9 +29,9 @@
                   </li>
               <% end %>
           <% end %>
-          <% if dir["files"] != nil %>
-              <% dir["files"].each do |file| %>
-                  <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>", false)'
+          <% if dir[:files] != nil %>
+              <% dir[:files].each do |file| %>
+                  <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
                          onmouseover='close_submenu_recursive(
                              this.parentNode.parentNode, null)'>
                     <%= file.filename %>
@@ -46,7 +46,7 @@
         <span class="caret"></span>
         <ul class="nested-folder">
           <% outermost_dir.each do |key, value| %>
-              <% if key != "files" %>
+              <% if key != :files %>
                   <% show_folder_recursive(outermost_dir[key]) %>
               <% end %>
           <% end %>

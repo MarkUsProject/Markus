@@ -142,7 +142,6 @@ Markus::Application.routes.draw do
           get 'file_manager'
           get 'browse'
           post 'populate_file_manager'
-          get 'collect_all_submissions'
           post 'collect_submissions'
           get 'uncollect_all_submissions'
           get 'download_simple_csv_report'
@@ -150,7 +149,6 @@ Markus::Application.routes.draw do
           get 'download_svn_export_list'
           get 'download_svn_checkout_commands'
           get 'download_svn_repo_list'
-          get 'collect_ta_submissions'
           post 'update_submissions'
           get 'updated_files'
           get 'replace_files'
@@ -248,6 +246,7 @@ Markus::Application.routes.draw do
           get 'add_annotation_text'
           post 'delete_annotation_text'
           post 'update_annotation'
+          get 'find_annotation_text'
         end
       end
     end

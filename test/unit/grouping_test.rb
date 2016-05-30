@@ -213,8 +213,7 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
       should 'get ta names' do
-        assert_equal @tas[0].user_name,
-                     @grouping.get_ta_names[0]
+        assert_same_elements(@tas.map(&:user_name), @grouping.get_ta_names)
       end
 
       should 'not be able to assign same TAs twice' do

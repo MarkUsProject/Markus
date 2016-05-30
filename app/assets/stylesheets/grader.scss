@@ -216,7 +216,7 @@
 
 /* Annotations menus */
 
-#annotation_menu, #file_selector_menu {
+#annotation_menu, #file_selector_menu, #feedback_file_selector_menu {
   background: #b7d3ec;
   border-radius: $radius $radius 0 0;
   display: table;
@@ -256,14 +256,6 @@
   margin-bottom: 10px;
   margin-top: 10px;
   line-height: 16.25px;
-}
-
-#file_selector_seperator {
-  float: left;
-  display: table-cell;
-  vertical-align: top;
-  border-left: solid;
-  min-width: 0;
 }
 
 .file_selector {

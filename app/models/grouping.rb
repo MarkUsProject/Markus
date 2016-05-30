@@ -55,6 +55,13 @@ class Grouping < ActiveRecord::Base
 
   has_one :inviter, source: :user, through: :inviter_membership
 
+  # The following are chained
+  # 'peer_reviews' is the peer reviews given for this group via some result
+  # 'peer_reviews_to_others' is all the peer reviews this grouping gave to others
+  has_many :results, through: :current_submission_used
+  has_many :peer_reviews, through: :results
+  has_many :peer_reviews_to_others, class_name: 'PeerReview', foreign_key: 'reviewer_id'
+
   scope :approved_groupings, -> { where admin_approved: true }
 
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
@@ -654,7 +661,8 @@ class Grouping < ActiveRecord::Base
                                                     current_submission_used:
                                                       [:submission_files,
                                                        :submitted_remark,
-                                                       :results],
+                                                       :results,
+                                                       grouping: :group],
                                                     accepted_student_memberships:
                                                       [:grace_period_deductions,
                                                        :user]])
@@ -662,17 +670,18 @@ class Grouping < ActiveRecord::Base
                 .select { |m| m.grouping.is_valid? }
                 .map &:grouping
     else
-      Grouping.joins(:memberships)
+      assignment.groupings.joins(:memberships)
               .includes(:assignment,
                         :group,
                         :grace_period_deductions,
+                        :tags,
                         { current_submission_used: [:results,
                                                     :submission_files,
-                                                    :submitted_remark] },
+                                                    :submitted_remark,
+                                                    grouping: :group] },
                         { accepted_student_memberships: :user },
-                        { inviter: :section },
-                        :tags)
-              .where(assignment_id: assignment.id)
+                        { inviter: :section }
+                        )
               .where(memberships: { membership_status:
                                    [StudentMembership::STATUSES[:inviter],
                                     StudentMembership::STATUSES[:pending],

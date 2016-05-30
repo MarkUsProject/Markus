@@ -51,7 +51,7 @@ class GracePeriodSubmissionRule < SubmissionRule
 
     #Get rid of any previous deductions for this assignment, so as not to
     #give duplicate deductions upon multiple calls to this method
-    remove_deductions(submission)
+    remove_deductions(submission.grouping)
 
     # And how many grace credits are available to this grouping
     available_grace_credits = submission.grouping.available_grace_credits
@@ -99,9 +99,9 @@ class GracePeriodSubmissionRule < SubmissionRule
   end
 
   #Remove all deductions for this assignment from all accepted members of
-  #submission, so that any new deductions for the assignemnt will not be duplicates
-  def remove_deductions(submission)
-    student_memberships = submission.grouping.accepted_student_memberships
+  #grouping, so that any new deductions for the assignemnt will not be duplicates
+  def remove_deductions(grouping)
+    student_memberships = grouping.accepted_student_memberships
 
     student_memberships.each do |student_membership|
       deductions = student_membership.user.grace_period_deductions

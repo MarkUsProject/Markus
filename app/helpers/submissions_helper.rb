@@ -61,7 +61,6 @@ module SubmissionsHelper
         else
           result = submission.remark_result
         end
-        final_due_date = assignment.submission_rule.get_collection_time(grouping.inviter.section)
         g[:name] = grouping.get_group_name
         g[:id] = grouping.id
         g[:section] = grouping.section
@@ -69,7 +68,7 @@ module SubmissionsHelper
         g[:commit_date] = grouping.last_commit_date
         g[:has_files] = grouping.has_files_in_submission?
         g[:late_commit] = grouping.past_due_date?
-        g[:name_url] = get_grouping_name_url(grouping, final_due_date, result)
+        g[:name_url] = get_grouping_name_url(grouping, result)
         g[:class_name] = get_tr_class(grouping)
         g[:grace_credits_used] = grouping.grace_period_deduction_single
         g[:repo_name] = grouping.group.repository_name
@@ -104,54 +103,21 @@ module SubmissionsHelper
     end
   end
 
-  def get_grouping_name_url(grouping, final_due_date, result)
-    assignment = grouping.assignment
+  def get_grouping_name_url(grouping, result)
     if grouping.is_collected?
       url_for(edit_assignment_submission_result_path(
-                assignment, grouping, result))
-    elsif grouping.has_submission? ||
-          (grouping.inviter.section.nil? && Time.zone.now > final_due_date) ||
-          assignment.submission_rule.can_collect_grouping_now?(grouping)
-      url_for(collect_and_begin_grading_assignment_submission_path(
-                assignment, grouping))
+                grouping.assignment, grouping, result))
     else
       ''
     end
-  end
-
-  # Collects submissions for all the groupings of the given section and assignment
-  # Return the number of actually collected submissions
-  def collect_submissions_for_section(section_id, assignment, errors)
-    collected = 0
-    begin
-      raise I18n.t('collect_submissions.could_not_find_section') if !Section.exists?(section_id)
-      section = Section.find(section_id)
-
-      # Check collection date
-      unless assignment.submission_rule.can_collect_now?(section)
-        raise I18n.t('collect_submissions.could_not_collect_section',
-          assignment_identifier: assignment.short_identifier,
-          section_name: section.name)
-      end
-
-      # Collect and count submissions for all groupings of this section
-      section_groupings = assignment.section_groupings(section)
-      submission_collector = SubmissionCollector.instance
-      section_groupings.each do |grouping|
-        submission_collector.push_grouping_to_priority_queue(grouping)
-        collected += 1
-      end
-    rescue Exception => e
-      errors.push(e.message)
-    end
-    collected
   end
 
   def get_repo_browser_table_info(assignment, revision, revision_number, path,
                                   previous_path, grouping_id)
     exit_directory = get_exit_directory(previous_path, grouping_id,
                                         revision_number, revision,
-                                        assignment.repository_folder)
+                                        assignment.repository_folder,
+                                        'repo_browser')
 
     full_path = File.join(assignment.repository_folder, path)
     if revision.path_exists?(full_path)
@@ -161,7 +127,7 @@ module SubmissionsHelper
 
       directories = revision.directories_at_path(full_path)
       directories_info = get_directories_info(directories, revision_number,
-                                              path, grouping_id)
+                                              path, grouping_id, 'repo_browser')
       return exit_directory + files_info + directories_info
     else
       return exit_directory
@@ -169,7 +135,7 @@ module SubmissionsHelper
   end
 
   def get_exit_directory(previous_path, grouping_id, revision_number,
-                         revision, folder)
+                         revision, folder, action)
     full_previous_path = File.join('/', folder, previous_path)
     parent_path_of_prev_dir, prev_dir = File.split(full_previous_path)
 
@@ -177,9 +143,10 @@ module SubmissionsHelper
 
     e = {}
     e[:id] = nil
-    e[:filename] = view_context.link_to '../', action: 'repo_browser',
+    e[:filename] = view_context.image_tag('icons/folder.png') +
+        view_context.link_to( ' ../', action: action,
                                         id: grouping_id, path: previous_path,
-                                        revision_number: revision_number
+                                        revision_number: revision_number)
     e[:last_revised_date] = I18n.l(directories[prev_dir].last_modified_date,
                                    format: :long_date)
     e[:revision_by] = directories[prev_dir].user_id
@@ -205,7 +172,7 @@ module SubmissionsHelper
     end
   end
 
-  def get_directories_info(directories, revision_number, path, grouping_id)
+  def get_directories_info(directories, revision_number, path, grouping_id, action)
     directories.map do |directory_name, directory|
       d = {}
       d[:id] = directory.object_id
@@ -214,7 +181,7 @@ module SubmissionsHelper
           # id: assignment_id and grouping_id: grouping_id
           # like the files info?
           view_context.link_to(" #{directory_name}/",
-                               action: 'repo_browser',
+                               action: action,
                                id: grouping_id,
                                revision_number: revision_number,
                                path: File.join(path, directory_name))
