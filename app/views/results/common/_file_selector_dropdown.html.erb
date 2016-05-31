@@ -1,0 +1,56 @@
+<%= form_tag(download_assignment_submission_result_path(
+                 @assignment.id, @grouping.current_submission_used.id,
+                 @grouping.current_submission_used.get_latest_result.id)) do %>
+    <%= hidden_field_tag :include_annotations,
+                         true,
+                         id: 'download_include_annotations' %>
+    <div class='file_selector'>
+      <!-- so jQuery knows which file to autoload when the page loads -->
+      <script>
+        var first_file_id;
+        var first_file_path;
+        <% if files.empty? %>
+        first_file_id = null;
+        first_file_path = null;
+        <% else %>
+        first_file_id = <%= files[0].id %>;
+        first_file_path = '<%= files[0].path %>/<%= files[0].filename %>';
+        <% end %>
+      </script>
+
+      <% def show_folder_recursive(dir) %>
+          <% dir.each do |name, contents|  %>
+              <% if name != :files %>
+                  <li class="nested-submenu">
+                    <a onmouseenter='open_submenu(this)'>
+                      <b><%= name %></b>
+                    </a>
+                    <ul class="nested-folder" style="display: none;"><% show_folder_recursive(contents) %></ul>
+                  </li>
+              <% end %>
+          <% end %>
+          <% if dir[:files] != nil %>
+              <% dir[:files].each do |file| %>
+                  <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
+                         onmouseover='close_submenu_recursive(
+                             this.parentNode.parentNode, null)'>
+                    <%= file.filename %>
+                  </a></li>
+              <% end %>
+          <% end %>
+      <% end %>
+
+      <div class="dropdown" id="select_file_id">
+        <% outermost_dir = create_nested_files_hash_table(files) %>
+        <a id="file_selector_dropdown_text">Files</a>
+        <span class="caret"></span>
+        <ul class="nested-folder">
+          <% outermost_dir.each do |key, value| %>
+              <% if key != :files %>
+                  <% show_folder_recursive(outermost_dir[key]) %>
+              <% end %>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+<% end %>

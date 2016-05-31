@@ -46,6 +46,7 @@ class Assignment < ActiveRecord::Base
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment, class_name: 'Assignment', inverse_of: :pr_assignment
   has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
+  after_save :create_peer_review_assignment_if_not_exist
 
   has_many :annotation_categories,
            -> { order(:position) },
@@ -938,6 +939,28 @@ class Assignment < ActiveRecord::Base
   # assignment.
   def has_peer_review_assignment?
     not pr_assignment.nil?
+  end
+
+  def create_peer_review_assignment_if_not_exist
+    if has_peer_review and Assignment.where(parent_assignment_id: id).empty?
+      peerreview_assignment = Assignment.new
+      peerreview_assignment.parent_assignment = self
+      peerreview_assignment.submission_rule = NoLateSubmissionRule.new
+      peerreview_assignment.assignment_stat = AssignmentStat.new
+      peerreview_assignment.token_period = 1
+      peerreview_assignment.unlimited_tokens = false
+      peerreview_assignment.short_identifier = short_identifier + '_pr'
+      peerreview_assignment.description = description
+      peerreview_assignment.repository_folder = repository_folder
+      peerreview_assignment.due_date = due_date
+
+      # We do not want to have the database in an inconsistent state, so we
+      # need to have the database rollback the 'has_peer_review' column to
+      # be false
+      if not peerreview_assignment.save
+        raise ActiveRecord::Rollback
+      end
+    end
   end
 
   ### REPO ###
