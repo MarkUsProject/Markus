@@ -12,13 +12,14 @@
               else "" end %></strong>
 </div>
 
-<div id="<%= "mark_criterion_title_#{mark.id}_mark" %>"
-     class='padding_left mark_description'
-     data-id='<%= mark_criterion.id %>'>
-  <% if !mark.mark.nil? -%>
-    <strong><%= mark.mark %>&nbsp;/ <%= mark_criterion.max %></strong>
-    <p><%= mark_criterion.description %></p>
-  <% end -%>
-</div>
+<% if !mark.mark.nil? -%>
+  <div id="<%= "mark_criterion_title_#{mark.id}_mark" %>"
+       class='flexible_criterion_description mark_description '
+       data-id='<%= mark_criterion.id %>'>
 
-<div class='clear'></div>
+      <p><%= mark_criterion.description %></p>
+      <strong><%= mark.mark %> / <%= mark_criterion.max %></strong>
+  </div>
+<% end -%>
+
+<!--<div class='clear'></div>-->

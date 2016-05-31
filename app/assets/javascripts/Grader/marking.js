@@ -129,6 +129,7 @@ function focus_mark_criterion(id) {
 }
 
 function hide_criterion(id) {
+  jQuery('#mark_criterion_title_' + id + '_mark').removeClass('mark_description');
   document.getElementById('criterion_info_' + id).style.display = 'none';
   document.getElementById('mark_criterion_title_' + id).style.display = '';
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
@@ -136,6 +137,7 @@ function hide_criterion(id) {
 }
 
 function show_criterion(id) {
+  jQuery('#mark_criterion_title_' + id + '_mark').addClass('mark_description');
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
   document.getElementById('criterion_info_' + id).style.display = '';
   document.getElementById('mark_criterion_title_' + id + '_expand').addClass('expanded');

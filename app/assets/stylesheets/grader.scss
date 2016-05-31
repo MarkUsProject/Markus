@@ -494,6 +494,15 @@ ul.annotation_text_list {
   background: lightgrey;
 }
 
+.flexible_criterion_description {
+  border: 1px solid darkgrey;
+  border-radius: $radius;
+  margin: 5px 5px 5px 5px;
+  margin-left: 5px !important;
+  padding-bottom: 5px;
+  padding-left: 10px;
+}
+
 
 /* Extra Mark holder */
 
