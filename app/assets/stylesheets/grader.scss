@@ -475,32 +475,35 @@ ul.annotation_text_list {
 .mark_criterion_title_div_level {
   padding-top: 2px;
   font-size: 12px;
-  padding-bottom: 4px;
   font-weight: bold;
+  float: left;
+  padding-right: 10px;
+  cursor: pointer;
 }
 
 .flexible_criterion_expand {
-  font-size: 14px;
   float: left;
   cursor: pointer;
+  font-size: 1.2em;
+  width: 1em;
 }
 
 .flexible_criterion_info {
   padding-left: 10px;
-  border: 1px solid darkgrey;
-  border-radius: $radius;
-  margin: 5px 5px 5px 5px;
   padding-bottom: 2px;
-  background: lightgrey;
+  margin-left: 5px;
 }
 
 .flexible_criterion_description {
-  border: 1px solid darkgrey;
-  border-radius: $radius;
   margin: 5px 5px 5px 5px;
   margin-left: 5px !important;
   padding-bottom: 5px;
   padding-left: 10px;
+}
+
+.mark_flexible {
+  font-weight: bold;
+  font-size: 11px;
 }
 
 
