@@ -358,18 +358,11 @@ ul.annotation_text_list {
   width: 100%;
 
   li {
-    border-bottom: 1px solid #dadada;
+    border-bottom: 1px solid lightgrey;
     border-radius: 0;
     padding: 5px;
     width: 100%;
-
-    &:nth-child(odd) {
-      background: $light-grey;
-    }
-
-    &:nth-child(even) {
-      background: $white;
-    }
+    background: $white;
 
     .mark_criterion_expand {
       float: left;
