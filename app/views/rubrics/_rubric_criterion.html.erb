@@ -12,8 +12,7 @@
   </span>
   <span class='right' id='visibility_indicator_<%= criterion.id %>'>
     <% if criterion.ta_visible && criterion.peer_visible %>
-      <%= image_tag "icons/user_suit.png" %>
-      <%= image_tag "icons/group.png" %>
+      <%= image_tag "icons/user_suit.png" %><%= image_tag "icons/group.png" %>
     <% elsif criterion.ta_visible %>
       <%= image_tag "icons/user_suit.png" %>
     <% else %>

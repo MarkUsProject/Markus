@@ -171,7 +171,8 @@ describe Assignment do
             end
 
           it 'shows the criteria visible to tas only' do
-            expect(@assignment.get_criteria.length).to eq 4
+            expect(@assignment.get_criteria(:ta).select(&:id)).to match_array(@ta_criteria.select(&:id) +
+                                                                                  @ta_and_peer_criteria.select(&:id))
           end
 
           context 'a submission and a result are created' do
@@ -1100,7 +1101,7 @@ describe Assignment do
   describe '#grade_distribution_as_percentage' do
     before :each do
       @assignment = create(:assignment)
-      5.times { create(:rubric_criterion, assignment: @assignment, peer_visible: true) }
+      5.times { create(:rubric_criterion, assignment: @assignment) }
     end
 
     context 'when there are no submitted marks' do

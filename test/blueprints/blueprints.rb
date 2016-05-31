@@ -107,6 +107,8 @@ FlexibleCriterion.blueprint do
   position {1} # override if many for the same assignment
   max{10}
   assigned_groups_count {0}
+  ta_visible {true}
+  peer_visible {false}
 end
 
 Grade.blueprint do
@@ -216,6 +218,8 @@ RubricCriterion.blueprint do
   level_2_name {'Satisfactory'}
   level_3_name {'Good'}
   level_4_name {'Excellent'}
+  ta_visible {true}
+  peer_visible {false}
 end
 
 Section.blueprint do

@@ -265,11 +265,11 @@ class Assignment < ActiveRecord::Base
   def total_mark
     total = 0
     if self.marking_scheme_type == 'rubric'
-      get_criteria.each do |criterion|
+      get_criteria(:ta).each do |criterion|
         total = total + criterion.weight * 4
       end
     else
-      total = get_criteria.map(&:max).sum()
+      total = get_criteria(:ta).map(&:max).sum()
     end
     total.round(2)
   end
@@ -722,23 +722,37 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  def get_criteria
-    is_peer_review? ? get_peer_visible_criteria : get_ta_visible_criteria
+  def get_criteria(user_visibility = :all)
+    if user_visibility == :all
+      get_all_criteria
+    elsif user_visibility == :ta
+      get_ta_visible_criteria
+    elsif user_visibility == :peer
+     get_peer_visible_criteria
+    end
+  end
+
+  def get_all_criteria
+    if self.marking_scheme_type == 'rubric'
+      self.rubric_criteria
+    else
+      self.flexible_criteria
+    end
   end
 
   def get_ta_visible_criteria
     if self.marking_scheme_type == 'rubric'
-      self.rubric_criteria.select(&:ta_visible)
+      self.rubric_criteria.where(ta_visible: true)
     else
-      self.flexible_criteria.select(&:ta_visible)
+      self.flexible_criteria.where(ta_visible: true)
     end
   end
 
   def get_peer_visible_criteria
     if self.marking_scheme_type == 'rubric'
-      self.rubric_criteria.select(&:peer_visible)
+      self.rubric_criteria.where(peer_visible: true)
     else
-      self.flexible_criteria.select(&:peer_visible)
+      self.flexible_criteria.where(peer_visible: true)
     end
   end
 

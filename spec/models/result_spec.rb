@@ -14,7 +14,7 @@ describe Result do
 
   describe '.student_marks_by_assignment' do
     let(:assignment) { create(:assignment) }
-    let!(:criteria) { Array.new(2) { create(:rubric_criterion, assignment: assignment, peer_visible: true) } }
+    let!(:criteria) { Array.new(2) { create(:rubric_criterion, assignment: assignment) } }
 
     shared_examples 'empty' do
       it 'returns an empty array' do

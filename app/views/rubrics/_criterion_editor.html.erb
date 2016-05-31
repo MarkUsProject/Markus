@@ -38,7 +38,7 @@
      <%= t('criteria_edit_total_mark', criterion_total_mark: criterion.weight*4) %>
     </span>
     <br>
-      <h4><span><%= I18n.t(:visibility) %></span></h4>
+      <h4><span><%= t('visibility') %></span></h4>
     <div>
       <%= f.check_box :ta_visible,
                       onclick: 'set_onbeforeunload(true);' %>
