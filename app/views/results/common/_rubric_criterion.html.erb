@@ -6,9 +6,14 @@
                 onclick: 'return false;',
                 class: 'rubric_criterion_link' %>
   </strong>
-</div>
 
-<div class='clear'></div>
+  <strong id="<%= "mark_criterion_title_#{mark.id}_level" %>" class="mark_criterion_title_level">
+    <% if !mark.mark.nil? -%>
+      <%= mark.mark.round %>: <%= mark_criterion['level_' + mark.mark.to_i.to_s + '_name'] %>&nbsp;
+    <% end -%>
+  </strong>
+
+</div>
 
 <% if old_mark and !old_mark.mark.nil? %>
   <div id="<%= "mark_criterion_title_#{mark.id}_oldmark" %>" class="padding_left_old">
@@ -21,14 +26,8 @@
 <% end %>
 
 <div id="<%="mark_criterion_title_#{mark.id}_mark"%>"
-     class='padding_left mark_description'
+     class='rubric_criterion_description mark_description'
      data-id='<%= mark_criterion.id %>'>
-  <% if !mark.mark.nil? -%>
-    <strong>
-      <%= mark.mark.round %>: <%= mark_criterion['level_' + mark.mark.to_i.to_s + '_name'] %>&nbsp;
-    </strong>
-    <%= mark_criterion['level_' + mark.mark.to_i.to_s + '_description'] %>
-  <% end -%>
 </div>
 
 <div class='clear'></div>

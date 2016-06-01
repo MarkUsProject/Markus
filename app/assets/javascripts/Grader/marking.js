@@ -169,9 +169,13 @@ function update_rubric_mark(elem, mark_id, value) {
       var subtotal = items[1];
       var total = items[2];
       select_mark(mark_id, value);
-      document.getElementById('mark_criterion_title_' + mark_id + '_mark')
-              .innerHTML = elem.innerHTML;
       update_total_mark(total);
+        
+      var div = document.createElement('div');
+      div.innerHTML = elem.innerHTML
+      var titleLevel = jQuery(div).find('strong').text();
+      document.getElementById('mark_criterion_title_' + mark_id + '_level')
+          .innerHTML = titleLevel;
       document.getElementById('mark_' + mark_id + '_summary_mark')
               .innerHTML = value;
       document.getElementById('mark_' + mark_id + '_summary_mark_after_weight')
