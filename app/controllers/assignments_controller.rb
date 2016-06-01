@@ -10,7 +10,8 @@ class AssignmentsController < ApplicationController
                               :index,
                               :student_interface,
                               :update_collected_submissions,
-                              :render_feedback_file]
+                              :render_feedback_file,
+                              :peer_review]
 
   before_filter      :authorize_for_student,
                      only: [:student_interface,
@@ -20,7 +21,8 @@ class AssignmentsController < ApplicationController
                             :invite_member,
                             :creategroup,
                             :join_group,
-                            :decline_invitation]
+                            :decline_invitation,
+                            :peer_review]
 
   before_filter      :authorize_for_user,
                      only: [:index, :render_feedback_file]
@@ -82,6 +84,76 @@ class AssignmentsController < ApplicationController
        !@student.section.section_due_date_for(@assignment.id).nil?
       @due_date =
         @student.section.section_due_date_for(@assignment.id).due_date
+    end
+    if @due_date.nil?
+      @due_date = @assignment.due_date
+    end
+    if @student.has_pending_groupings_for?(@assignment.id)
+      @pending_grouping = @student.pending_groupings_for(@assignment.id)
+    end
+    if @grouping.nil?
+      if @assignment.group_max == 1
+        begin
+          # fix for issue #627
+          # currently create_group_for_working_alone_student only returns false
+          # when saving a grouping throws an exception
+          unless @student.create_group_for_working_alone_student(@assignment.id)
+            # if create_group_for_working_alone_student returned false then the student
+            # must have an ( empty ) existing grouping that he is not a member of.
+            # we must delete this grouping for the transaction to succeed.
+            Grouping.find_by_group_id_and_assignment_id( Group.find_by_group_name(@student.user_name), @assignment.id).destroy
+          end
+        rescue RuntimeError => @error
+          flash_message(:error, 'Error')
+        end
+        redirect_to action: 'student_interface', id: @assignment.id
+      else
+        render :student_interface
+      end
+    else
+      # We look for the information on this group...
+      # The members
+      @studentmemberships =  @grouping.student_memberships
+      # The group name
+      @group = @grouping.group
+      # The inviter
+      @inviter = @grouping.inviter
+
+      # Look up submission information
+      repo = @grouping.group.repo
+      @revision  = repo.get_latest_revision
+      @revision_number = @revision.revision_number
+
+      @last_modified_date = @grouping.assignment_folder_last_modified_date
+      @num_submitted_files = @grouping.number_of_submitted_files
+      @num_missing_assignment_files = @grouping.missing_assignment_files.length
+      repo.close
+    end
+  end
+
+  def peer_review
+    @assignment = Assignment.find(params[:id])
+    if @assignment.is_hidden
+      render 'shared/http_status',
+             formats: [:html],
+             locals: {
+                 code: '404',
+                 message: HttpStatusHelper::ERROR_CODE['message']['404']
+             },
+             status: 404,
+             layout: false
+      return
+    end
+
+    @student = current_user
+    @grouping = @student.accepted_grouping_for(@assignment.id)
+    @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
+    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
+
+    if @student.section &&
+        !@student.section.section_due_date_for(@assignment.id).nil?
+      @due_date =
+          @student.section.section_due_date_for(@assignment.id).due_date
     end
     if @due_date.nil?
       @due_date = @assignment.due_date

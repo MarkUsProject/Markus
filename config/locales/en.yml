@@ -232,6 +232,8 @@ en:
         has_peer_review: "Enable student-to-student peer review"
         configure_peer_review: "Configure peer review"
         peer_review_record_missing: "Error: Peer review assignment missing from database"
+        start_peer_review: "Peer-review"
+        peer_review_results: "Peer Review Results"
     your_mark:  "Your mark:"
 
     members:            "Members"
@@ -743,6 +745,7 @@ en:
         error:   "Failed to update student."
 
       assignment: "Assignment %{short_identifier}"
+      peer_assignment: "Peer Review Assignment %{short_identifier}"
       group_information: "Group Information"
       group_not_valid: "Your group is not valid. You can't submit anything."
       overview: "Overview"
