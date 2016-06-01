@@ -545,7 +545,6 @@ describe Assignment do
   describe '#graded_submission_results' do
     before :each do
       @assignment = create(:assignment)
-      @submission_collector = SubmissionCollector.instance
       @student = create(:student)
       @grouping = create(:grouping, assignment: @assignment, inviter: @student)
       @submission = create(:version_used_submission, grouping: @grouping)
@@ -585,23 +584,6 @@ describe Assignment do
           expect(@assignment.graded_submission_results)
             .to match_array [@result, @other_result]
         end
-      end
-    end
-
-    context 'assignment re-collection' do
-      it 'does calculate submission results properly' do
-        @assignment.due_date = (Time.now - 1.minute)
-        @assignment.save
-        expect(@assignment.submission_rule.can_collect_all_now?).to eq true
-        @submission_collector.push_groupings_to_queue(@assignment.groupings)
-        expect(@assignment.graded_submission_results.size).to_not be_nil
-        first_result = @submission.assignment.graded_submission_results.size
-        # make call to collect_all_submissions again
-        @submission_collector.push_groupings_to_queue(@assignment.groupings)
-        expect(@assignment.graded_submission_results.size).to_not be_nil
-        second_result = @submission.assignment.graded_submission_results.size
-        # first_result should be equal to second_result
-        expect(first_result).to eq(second_result)
       end
     end
   end

@@ -155,6 +155,7 @@ en:
       collection_incomplete_warning: "Collection is still in progress or has not started. Do you still want to proceed? Some submissions might be missing."
       check_collection_status_error: "There was an error checking collection status."
       uncollection_processing_message: "Undoing previous collection operation..."
+      collection_processing_message: "Collecting submissions..."
     assignment:
         hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
@@ -229,6 +230,8 @@ en:
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
         has_peer_review: "Enable student-to-student peer review"
+        configure_peer_review: "Configure peer review"
+        peer_review_record_missing: "Error: Peer review assignment missing from database"
         peer_review:
           peer_reviews_header: "Peer Reviews"
     your_mark:  "Your mark:"
@@ -270,6 +273,7 @@ en:
     grades:             "Grades"
     submissions:        "Submissions"
     summaries:          "Summaries"
+    peer_reviews:       "Peer reviews"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
@@ -334,7 +338,7 @@ en:
       set_to_complete:      "Set to Complete"
       revert_to_incomplete: "Revert to Incomplete"
       notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
-      include_annotations: "Include Annotations:"
+      include_annotations: "Include Annotations"
       include_annotations_warning: "Warning! Annotations on PDFs are not currently downloaded."
       select_a_test: "Please select a test"
       marks:

@@ -1,7 +1,12 @@
-function open_file(id, path) {
-  load_submitted_file(id);
-  document.getElementById('select_file_id').value = id;
-  document.getElementById('file_selector_dropdown_text').innerHTML = path;
+function open_file(id, path, downloading) {
+    if (downloading) {
+        document.getElementById('file_id').value = id;
+        document.getElementById('download_file_selector_dropdown_text').innerHTML = path;
+    } else {
+        load_submitted_file(id);
+        document.getElementById('select_file_id').value = id;
+        document.getElementById('file_selector_dropdown_text').innerHTML = path;
+    }
 }
 
 function open_submenu(dir_element) {
@@ -31,6 +36,9 @@ function close_submenu_recursive(dir_element, orig_dir_element) {
 
 jQuery(document).ready(function() {
   if (first_file_id !== null && first_file_path !== null) {
-    open_file(first_file_id, first_file_path);
+    // for code viewer
+    open_file(first_file_id, first_file_path, false);
+    // for download modal
+    open_file(first_file_id, first_file_path, true);
   }
 });
