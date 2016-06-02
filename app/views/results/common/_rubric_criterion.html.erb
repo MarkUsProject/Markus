@@ -7,7 +7,9 @@
                 class: 'rubric_criterion_link' %>
   </strong>
 
-  <strong id="<%= "mark_criterion_title_#{mark.id}_level" %>" class="mark_criterion_title_level">
+  <strong id="<%= "mark_criterion_title_#{mark.id}_level" %>"
+          class="mark_criterion_title_level mark_description"
+          data-id='<%= mark_criterion.id %>'>
     <% if !mark.mark.nil? -%>
       <%= mark.mark.round %>: <%= mark_criterion['level_' + mark.mark.to_i.to_s + '_name'] %>&nbsp;
     <% end -%>
@@ -26,7 +28,7 @@
 <% end %>
 
 <div id="<%="mark_criterion_title_#{mark.id}_mark"%>"
-     class='rubric_criterion_description mark_description'
+     class='rubric_criterion_description'
      data-id='<%= mark_criterion.id %>'>
 </div>
 
