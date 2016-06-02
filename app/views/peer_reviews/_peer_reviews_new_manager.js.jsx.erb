@@ -3,7 +3,7 @@
 
   // The master component that manages both tables and
   // the add/remove actions
-  var GroupsManager = React.createClass({
+  var PeerReviewsManager = React.createClass({
     getInitialState: function() {
       return {
         students: [],
@@ -88,9 +88,23 @@
       });
     },
     render: function() {
+      var graders_to_criteria = [];
+      var skip_empty_submissions = [];
+      graders_to_criteria.push(<input type='checkbox'
+        checked={this.state.assign_to_criteria}
+        onChange={this.criteriaCheckboxClicked}> <%= j raw I18n.t('graders.assign_to_criteria') %></input>);
+      skip_empty_submissions.push(<input type='checkbox'
+        checked={this.state.skip_empty_submissions}
+        onChange={this.skipEmptySubmissionsClicked}> <%= j raw I18n.t('graders.skip_empty_submissions') %></input>);
       return (
         <div>
           <ErrorDiv error={this.state.error} />
+          <div className='graders-to-criteria'>
+            {graders_to_criteria}
+          </div>
+          <div className='skip-empty-submissions'>
+            {skip_empty_submissions}
+          </div>
           <div className='columns'>
             <GroupsGraderTable ref="groupsTable"
               groups={this.state.groups}
@@ -156,7 +170,7 @@
             name: 'not_valid',
             text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
             func: function(group) {
-            return !group.valid;
+              return !group.valid;
             }
           },
         ]
@@ -178,27 +192,27 @@
     },
     render: function() {
       var filters = [
-      {
-        name: 'all',
-        text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
-        func: function(group) {
-          return true;
-        }
-      },
-      {
-        name: 'valid',
-        text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
-        func: function(group) {
-          return group.valid;
-        }
-      },
-      {
-        name: 'not_valid',
-        text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
-        func: function(group) {
-        return !group.valid;
-        }
-      },
+        {
+          name: 'all',
+          text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
+          func: function(group) {
+            return true;
+          }
+        },
+        {
+          name: 'valid',
+          text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
+          func: function(group) {
+            return group.valid;
+          }
+        },
+        {
+          name: 'not_valid',
+          text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
+          func: function(group) {
+            return !group.valid;
+          }
+        },
       ];
 
       // Massage the data so it will fit into the table.
@@ -233,7 +247,7 @@
       }.bind(this));
 
       return (
-        <div className={'col-right'}>
+        <div className={'col-left'}>
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
             <AddGroupButton refresh={this.props.refresh} />
             <% if @assignment.group_max == 1 %>
@@ -431,6 +445,13 @@
       return (
         <div className={'col-center'}>
           <div id='icons'>
+            <input id='random_assign'
+              className='image_input'
+              src='<%= image_path 'random_arrow.png' %>'
+              alt='<%= j raw I18n.t('groups.randomly_assign_graders') %>'
+              onClick={this.performAction}
+              type='image'
+            />
             <input id='assign'
               className='image_input'
               src='<%= image_path('add_arrow.png') %>'
@@ -451,5 +472,5 @@
     }
   });
 
-  React.renderComponent(<GroupsManager />, document.getElementById('peer_reviews_manager'));
+  React.renderComponent(<PeerReviewsManager />, document.getElementById('peer_reviews_manager'));
 </script>
