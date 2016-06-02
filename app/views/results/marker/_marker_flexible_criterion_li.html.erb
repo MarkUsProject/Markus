@@ -14,7 +14,6 @@
       onclick="<%="focus_mark_criterion(#{mark_criterion.id})"%>">- &nbsp;</div>
 
     <div id="flexible_criterion">
-
       <div id="<%= "mark_criterion_title_#{mark_criterion.id}_name" %>"
            class='flexible_criterion_title_div_level float_left'
            onclick="<%="focus_mark_criterion(#{mark_criterion.id})"%>">
@@ -24,21 +23,23 @@
       <div id="mark_flexible_<%=mark.id%>" class="mark_flexible">
         <%= text_field_tag('mark_' + mark.id.to_s, mark.mark,
                            size: 4,
-                           class: 'mark_grade_input mark_description',
+                           class: 'mark_grade_input',
                            data: {:id => mark_criterion.id},
                            'data-action' => url_for(action: :update_mark,
                                                     mark_id: mark.id)) %>
         /&nbsp; <span id="mark_flexible_max_<%=mark.id%>"><%= mark_criterion.max.to_s%> </span>
       </div>
 
-      <div id="<%="criterion_info_#{mark_criterion.id}"%>" class="flexible_criterion_info"
-           data-id='<%= mark_criterion.id %>'>
+      <div class="mark_description" style="display: none;" data-id='<%= mark_criterion.id %>'>
+        <%= mark.mark %>
+      </div>
+
+      <div id="<%="criterion_info_#{mark_criterion.id}"%>" class="flexible_criterion_info">
         <div id="<%="mark_criterion_inputs_#{mark_criterion.id}"%>">
           <%=mark_criterion.description %>
         </div>
 
       </div>
-
     </div>
   </div>
 </li>
