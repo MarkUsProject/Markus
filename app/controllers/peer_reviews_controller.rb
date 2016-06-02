@@ -30,22 +30,6 @@ class PeerReviewsController < ApplicationController
     end
   end
 
-  def populate
-    @assignment = Assignment.find(params[:assignment_id])
-    @sections = Section.order(:name)
-
-    assign_to_criteria = @assignment.assign_graders_to_criteria
-    if assign_to_criteria
-      graders_table_info = get_graders_table_info_with_criteria(@assignment)
-      groups_table_info = get_groups_table_info_with_criteria(@assignment)
-    else
-      graders_table_info = get_graders_table_info_no_criteria(@assignment)
-      groups_table_info = get_groups_table_info_no_criteria(@assignment)
-    end
-    # better to use a hash?
-    render json: [assign_to_criteria, @sections, graders_table_info, groups_table_info]
-  end
-
   def groupings_with_assoc(assignment, options = {})
     grouping_ids = options[:grouping_ids]
     includes = options[:includes] || GROUPING_ASSOC
