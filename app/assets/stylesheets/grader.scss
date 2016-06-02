@@ -146,7 +146,6 @@
 #testviewer,
 #mark_viewer,
 #summary_viewer,
-#submission_rule_viewer,
 #annotations_summary,
 #remark_request_tab,
 #feedback_file_content {
@@ -518,6 +517,22 @@ ul.annotation_text_list {
   font-size: 11px;
 }
 
+/* Submission Rule Pane */
+
+.submission_rule_pane {
+  border: 1px solid #dadada;
+  margin-top: 1.5em;
+  margin-bottom: 2em;
+}
+
+.submission_rule_label {
+  background-color: #cee3ea;
+  padding: 3px 3px 3px 3px;
+}
+
+#submission_rule_viewer {
+  padding: 3px 3px 3px 3px;
+}
 
 /* Extra Mark holder */
 
