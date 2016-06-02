@@ -48,8 +48,11 @@
 # RubyMine generated project folder
 .idea
 
-#Ignore files for Vagrant instance
+# Ignore files for Vagrant instance
 .vagrant
 
 # Ignore redis dump file
 .dump.rdb
+
+# Automated test files
+/automated-tests-files/test_runner/test/

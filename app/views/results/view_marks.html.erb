@@ -42,24 +42,40 @@
 <%= render partial: 'results/student/enable_remark_request_buttons',
            formats: [:js] %>
 
-<div class='title_bar'>
-  <h1>Results for <%= sanitize(@assignment.short_identifier) %></h1>
-</div>
+<script>
+  jQuery(document).ready(function() {
+    window.modalDownloadFiles = new ModalMarkus('#download_files_dialog');
+  });
+</script>
 
-<div class='wrapLeft'>
-  <%= render partial: 'results/common/errors' %>
+<!-- Dialogs -->
+<aside class='dialog' id='download_files_dialog'>
+  <h1><%= 'Download Files' %></h1>
 
-  <%= render partial: 'results/common/file_selector',
+  <%= render partial: 'results/common/download_file_selector',
              locals: { files: @files,
-                       can_download: true,
-                       test_result_files: @test_result_files } %>
-    <% if can_show_feedback_files_tab?(@submission) %>
+                       can_download: true } %>
+  <% if can_show_feedback_files_tab?(@submission) %>
       <div id='feedback_files_controls'>
         <%= render partial: 'results/common/feedback_file_selector',
                    locals: { feedback_files: @feedback_files,
                              submission_id: @submission.id } %>
       </div>
-    <% end %>
+  <% end %>
+</aside>
+
+<div class='title_bar'>
+  <h1>Results for <%= sanitize(@assignment.short_identifier) %></h1>
+
+  <div class='heading_buttons'>
+    <%= link_to t(:download),
+                'javascript:void(0);',
+                onclick:'modalDownloadFiles.open();' %>
+  </div>
+</div>
+
+<div class='wrapLeft'>
+  <%= render partial: 'results/common/errors' %>
 
   <%= render partial: 'results/student/student_panes',
              locals: { extra_marks_points: @extra_marks_points,
@@ -69,5 +85,7 @@
                        marks_map: @marks_map,
                        assignment: @assignment,
                        submission: @submission,
-                       old_result: @old_result } %>
+                       old_result: @old_result,
+                       files: @files,
+                       feedback_files: @feedback_files} %>
 </div>

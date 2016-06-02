@@ -206,6 +206,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         section_due_date_option:  "Se a opção de prazo de entrega por sessão foi selecionada, alunos só podem formar grupos dentro da sua sessão."
         section_due_dates_info:  "<b>Importante</b>: o prazo de entrega final deve ser preenchido. Se a sessão não possui uma data específica, o prazo global será usado no lugar. Alunos que não foram atribuídos a uma sessão só poderão formar grupos com alunos que também não estão atribuídos."
         has_peer_review: "Ativar aluno-aluno de revisão por pares"
+        configure_peer_review: "Configurar revisão por pares"
+        peer_review_record_missing: "Erro: Par atribuição de avaliação em falta a partir do banco de dados"
     your_mark:  "Sua nota:"
 
     members:            "Membros"
@@ -245,6 +247,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     grades:             "Notas"
     submissions:        "Submissões"
     summaries:          "Resumos"
+    peer_reviews:       "Avaliações pelos pares"
     rubrics:            "Rúbricas"
     marking_scheme:     "Esquema de avalição"
     join:               "Juntar"
@@ -308,7 +311,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       set_to_complete:      "Conjunto para completar"
       revert_to_incomplete: "Reverter para incompleta"
       notes:                "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
-      include_annotations: "Incluir anotações:"
+      include_annotations: "Incluir anotações"
       include_annotations_warning: "Aviso! Anotações sobre PDFs não são presentemente descarregado."
       select_a_test: "Por favor seleccione um teste"
       marks:
