@@ -1,7 +1,9 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
+  // The buttons for random_assign, assigning and unassigning.
+  // NOTE: This has been copied from the Graders jsx code and
+  // reworked for peer reviews.
 
-  // The buttons for random_assign, assigning and unsassigning
   var GradersActionsColumn = React.createClass({
     propTypes: {
       selected_graders: React.PropTypes.array,
@@ -11,11 +13,13 @@
       selected_graders_in_criteria: React.PropTypes.array,
       current_table: React.PropTypes.string
     },
+	
     // Sends a request to the server to perform some action
     // such as assigning or removing a member to/from a group
     // should probably be moved to actionsbox
     performAction: function(event) {
       var action = event.currentTarget.getAttribute('id');
+
       var dataLoad = {
         submit_type: 'global_action',
         current_table: this.props.current_table,
@@ -27,10 +31,12 @@
         criterion_associations: this.props.selected_graders_in_criteria,
         skip_empty_submissions: this.props.skip_empty_submissions
       };
+
       jQuery.ajax({
         method: 'POST',
         url: 'graders/global_actions',
         data: dataLoad,
+
         success: function(data) {
           this.props.updateSelectedGraders([]);
           this.props.updateSelectedGroups([]);
@@ -39,12 +45,14 @@
           this.props.setError(data);
           this.props.refresh();
         }.bind(this),
+
         error: function(xhr, status, text) {
           var error = text + ': ' + xhr.responseText;
           this.props.setError(error);
         }.bind(this)
       });
     },
+	
     render: function() {
       return (
         <div className={'col-center'}>

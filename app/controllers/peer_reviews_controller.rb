@@ -1,6 +1,16 @@
 class PeerReviewsController < ApplicationController
-  before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
-  before_filter :authorize_only_for_admin
+  include GradersHelper  # TODO - Temporary and only for populate()
+  #before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
+  #before_filter :authorize_only_for_admin
+
+  # TODO - Copy pasted from graders_controller, this is temporary/bad...
+  # The names of the associations of groupings required by the view, which
+  # should be eagerly loaded.
+  GROUPING_ASSOC = [:group, :students,
+                    ta_memberships: :user, inviter: :section]
+  # The names of the associations of criteria required by the view, which
+  # should be eagerly loaded.
+  CRITERION_ASSOC = [criterion_ta_associations: :ta]
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
@@ -22,13 +32,26 @@ class PeerReviewsController < ApplicationController
 
   def populate
     @assignment = Assignment.find(params[:assignment_id])
+    @sections = Section.order(:name)
 
-    if @current_user.ta?
-      render json: get_summaries_table_info(@assignment,
-                                            @current_user.id)
+    assign_to_criteria = @assignment.assign_graders_to_criteria
+    if assign_to_criteria
+      graders_table_info = get_graders_table_info_with_criteria(@assignment)
+      groups_table_info = get_groups_table_info_with_criteria(@assignment)
     else
-      render json: get_summaries_table_info(@assignment)
+      graders_table_info = get_graders_table_info_no_criteria(@assignment)
+      groups_table_info = get_groups_table_info_no_criteria(@assignment)
     end
+    # better to use a hash?
+    render json: [assign_to_criteria, @sections, graders_table_info, groups_table_info]
+  end
+
+  def groupings_with_assoc(assignment, options = {})
+    grouping_ids = options[:grouping_ids]
+    includes = options[:includes] || GROUPING_ASSOC
+
+    groupings = assignment.groupings.includes(includes)
+    grouping_ids ? groupings.where(id: grouping_ids) : groupings
   end
 
   private

@@ -1,11 +1,12 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
-  // This file contains the main GradersManager component
+  // This file contains the main PeerReviewsManager component
   // as well as the manager and tables for the groups + criteria
   // tables, which is on the right.
+  // NOTE: This has been copied from the Graders jsx code and
+  // reworked for peer reviews.
 
-
-  var GradersManager = React.createClass({
+  var PeerReviewsManager = React.createClass({
     getInitialState: function() {
       return {
         assign_to_criteria: false,
@@ -22,27 +23,35 @@
         selected_graders_in_criteria: []
       }
     },
+	
     updateCurrentTable: function(table) {
       this.setState({current_table: table});
     },
+	
     updateSelectedGraders: function(graders) {
       this.setState({selected_graders: graders});
     },
+	
     updateSelectedGroups: function(groups) {
       this.setState({selected_groups: groups});
     },
+	
     updateSelectedGradersInGroups: function(graders) {
       this.setState({selected_graders_in_groups: graders});
     },
+	
     updateSelectedCriteria: function(criteria) {
       this.setState({selected_criteria: criteria});
     },
+	
     updateSelectedGradersInCriteria: function(graders) {
       this.setState({selected_graders_in_criteria: graders});
     },
+	
     setError: function(error_msg) {
       this.setState({error: error_msg});
     },
+	
     criteriaCheckboxClicked: function(event) {
       var dataLoad = {value: event.currentTarget.checked};
       jQuery.ajax({
@@ -54,12 +63,15 @@
         }.bind(this)
       });
     },
+	
     skipEmptySubmissionsClicked: function(event) {
      this.setState({skip_empty_submissions: event.currentTarget.checked});
     },
+	
     componentWillMount: function() {
       this.refresh();
     },
+	
     refresh: function() {
       document.getElementById('working').style.display = '';
       // Collects data as an array from the server to populate the tables
@@ -70,7 +82,7 @@
       // 4rd element: Info for groups table + criteria (if we are using crit.)
       //              this is actually a hash.
       jQuery.ajax({
-        url: 'graders/populate',
+        url: 'peer_reviews/populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -89,19 +101,24 @@
         }.bind(this)
       });
     },
+	
     render: function() {
       var to_render = [];
       var graders_to_criteria = [];
       var skip_empty_submissions = [];
+	  
       graders_to_criteria.push(<input type='checkbox'
         checked={this.state.assign_to_criteria}
         onChange={this.criteriaCheckboxClicked}> <%= j raw I18n.t('graders.assign_to_criteria') %></input>);
+		
       skip_empty_submissions.push(<input type='checkbox'
         checked={this.state.skip_empty_submissions}
         onChange={this.skipEmptySubmissionsClicked}> <%= j raw I18n.t('graders.skip_empty_submissions') %></input>);
-      to_render.push(<GradersTable graders={this.state.graders}
+		
+      to_render.push(<PeerReviewGroupAssignTable graders={this.state.graders}
         selected_graders={this.state.selected_graders}
         onSelectedGradersChange={this.updateSelectedGraders} />);
+		
       to_render.push(<GradersActionsColumn
         refresh={this.refresh}
         current_table={this.state.current_table}
@@ -118,6 +135,7 @@
         skip_empty_submissions={this.state.skip_empty_submissions}
         setError={this.setError}
       />);
+	  
       to_render.push(<GroupsTableManager
         assign_to_criteria={this.state.assign_to_criteria} 
         groups_and_criteria={this.state.groups_and_criteria}
@@ -134,6 +152,7 @@
         current_table={this.state.current_table}
         onTableChange={this.updateCurrentTable}
       />);
+	  
       return (
         <div>
           <ErrorDiv error={this.state.error} />
@@ -147,8 +166,6 @@
             {to_render}
           </div>
         </div>
-        
-        
       );
     }
   });
@@ -171,7 +188,8 @@
       current_table: React.PropTypes.string,
       onTableChange: React.PropTypes.func
     },
-     render: function() {
+	
+    render: function() {
       if (this.props.assign_to_criteria) {
         return (
           <div className={'col-right'}>
@@ -223,13 +241,16 @@
       sections: React.PropTypes.array,
       refresh: React.PropTypes.func
     },
+	
     componentDidMount: function() {
       jQuery('#group-tabs').tabs();
     },
+	
     tableChanged: function(event) {
       var table = event.currentTarget.getAttribute('id');
       this.props.onTableChange(table);
     },
+	
     groupCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
@@ -240,6 +261,7 @@
         this.props.onSelectedGroupsChange([]);
       }
     },
+	
     criteriaCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
@@ -249,6 +271,7 @@
         this.props.onSelectedCriteriaChange([]);
       }
     },
+	
     gradersInGroupsCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
@@ -264,7 +287,8 @@
         this.props.onSelectedGradersInGroupsChange([]);
       }
     },
-     gradersInCriteriaCheckboxAllClicked: function(event) {
+	
+    gradersInCriteriaCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
         var new_selected_graders_in_criteria = [];
@@ -278,6 +302,7 @@
         this.props.onSelectedGradersInCriteriaChange([]);
       }
     },
+	
     groupCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_id = parseInt(event.currentTarget.getAttribute('id'), 10);
@@ -289,6 +314,7 @@
       }
       this.props.onSelectedGroupsChange(new_selected_groups);
     },
+	
     criteriaCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var criteria_id = parseInt(event.currentTarget.getAttribute('id'), 10);
@@ -300,6 +326,7 @@
       }
       this.props.onSelectedCriteriaChange(new_selected_criteria);
     },
+	
     graderInGroupCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
@@ -311,6 +338,7 @@
       }
       this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
     },
+	
     graderInCriteriaCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var criterion_grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
@@ -322,6 +350,7 @@
       }
       this.props.onSelectedGradersInCriteriaChange(new_selected_graders_in_criteria);
     },
+	
     render: function() {
       var group_columns = [
       {
@@ -478,6 +507,7 @@
       sections: React.PropTypes.array,
       refresh: React.PropTypes.func
     },
+	
     groupCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
@@ -488,6 +518,7 @@
         this.props.onSelectedGroupsChange([]);
       }
     },
+	
     graderCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
@@ -503,6 +534,7 @@
         this.props.onSelectedGradersInGroupsChange([]);
       }
     },
+	
     groupCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_id = parseInt(event.currentTarget.getAttribute('id'), 10);
@@ -514,6 +546,7 @@
       }
       this.props.onSelectedGroupsChange(new_selected_groups);
     },
+	
     graderCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_grader_id = parseInt(event.currentTarget.getAttribute('id'), 10);
@@ -525,9 +558,11 @@
       }
       this.props.onSelectedGradersInGroupsChange(new_selected_graders_in_groups);
     },
+	
     refresh: function() {
       this.props.refresh();
     },
+	
     render: function() {
       var columns = [
       {
@@ -601,5 +636,5 @@
     }
   });
 
-  React.renderComponent(<GradersManager/>, document.getElementById('graders_manager'));
+  React.renderComponent(<PeerReviewsManager/>, document.getElementById('peer_reviews_manager'));
 </script>

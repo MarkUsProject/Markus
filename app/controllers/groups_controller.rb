@@ -114,6 +114,13 @@ class GroupsController < ApplicationController
 
   def populate
     @assignment = Assignment.find(params[:assignment_id])
+
+    # Since peer review assignments are shallow clones of an assignment, any
+    # data for the groups/students must be pulled from the parent assignment.
+    if @assignment.is_peer_review?
+      @assignment = @assignment.parent_assignment
+    end
+
     students_table_info = get_students_table_info
     groupings_table_info = get_groupings_table_info
     render json: [students_table_info, groupings_table_info]

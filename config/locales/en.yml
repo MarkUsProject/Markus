@@ -233,7 +233,9 @@ en:
         configure_peer_review: "Configure peer review"
         peer_review_record_missing: "Error: Peer review assignment missing from database"
         peer_review:
+          problem: "An unexpected problem occured"
           peer_reviews_header: "Peer Reviews"
+          group: "Group"
     your_mark:  "Your mark:"
 
     members:            "Members"
