@@ -1,27 +1,17 @@
 <%= content_for :head do %>
-    <!-- TODO - Temporarily including graders, to remove in the future -->
     <%= javascript_include_tag 'PeerReviews/index' %>
 
     <%= render partial: 'peer_reviews_new_manager', formats: [:'js.jsx'], handlers: [:erb] %>
-    <% #render partial: 'peer_review_action_column', formats: [:'js.jsx'], handlers: [:erb] %>
-    <% #render partial: 'peer_review_table', formats: [:'js.jsx'], handlers: [:erb] %>
-    <% #render partial: 'peer_review_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
 <div class='title_bar'>
   <h1><%= t('assignments.peer_review.peer_review') %></h1>
 
-  <!-- TODO - Disabled for now
   <div class='heading_buttons'>
-    <% if false %>
     <%= link_to t('download'), '#', onclick:'modal_download.open();' %>
-    <% end %>
     <span class='menu_bar'></span>
-    <% if false %>
     <%= link_to t('upload'), '#', onclick:'modal_upload.open();' %>
-    <% end %>
   </div>
-  -->
 </div>
 
 <div class="wrapLeft"></div>
