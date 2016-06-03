@@ -33,6 +33,10 @@
   text-align: center;
 }
 
+.skip-empty-submissions {
+  padding-bottom: 12px;
+}
+
 // This is for the JSX main table. These numbers are required to compress the
 // tables and to conform to the 'floating' hack used by the assigning/dice
 // center column (which is why the right side is not equal to the left).
