@@ -20,7 +20,7 @@
     <span> /<%= assignment.total_mark %></span>
   </div>
 
-  <div id='submission_rule_pane' class='submission_rule_pane'>
+  <div class='submission_rule_pane'>
     <div class='submission_rule_label'>
       <strong><%= t('marker.marks.submission_rule') %>:</strong>
     </div>
@@ -30,7 +30,7 @@
     </div>
   </div>
 
-  <div id='extra_marks_pane' class='extra_marks_pane'>
+  <div class='extra_marks_pane'>
     <div class='bonus_deduction'>
       <strong><%= t('marker.marks.bonus_deductions') %></strong>
     </div>
@@ -48,7 +48,7 @@
     </span>
   </div>
 
-  <div id='extra_percentage_pane' class='extra_percentage_pane'>
+  <div class='extra_percentage_pane'>
     <%= render partial: 'results/marker/extra_percentage_table',
                locals: { extra_marks_percentage: extra_marks_percentage,
                          result_id: result.id } %>
@@ -75,7 +75,7 @@
       <span> /<%= assignment.total_mark %></span>
     </div>
 
-    <div id='submission_rule_pane' class='submission_rule_pane'>
+    <div class='submission_rule_pane'>
       <div class='submission_rule_label'>
         <strong><%= t('marker.marks.submission_rule') %>:</strong>
       </div>
@@ -86,7 +86,7 @@
     </div>
 
 
-    <div id='extra_marks_pane' class='extra_marks_pane'>
+    <div class='extra_marks_pane'>
       <div class='bonus_deduction'><strong><%= t('marker.marks.bonus_deductions') %></strong></div>
       <%= render partial: 'results/student/extra_marks_table',
                  locals: { extra_marks_points: old_result.extra_marks.points,
@@ -99,7 +99,7 @@
       </strong>
       <span id='total_extra_points'><%= old_result.get_total_extra_points %></span>
     </div>
-    <div id='extra_percentage_pane' class='extra_percentage_pane'>
+    <div class='extra_percentage_pane'>
       <%= render partial: 'results/student/extra_percentage_table',
                  locals: { extra_marks_percentage: old_result.extra_marks.percentage,
                            result_id: old_result.id } %>
