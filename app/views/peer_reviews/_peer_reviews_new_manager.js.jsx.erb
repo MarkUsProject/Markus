@@ -109,16 +109,16 @@
             {skip_empty_submissions}
           </div>
           <div className='columns'>
-            <GroupsGraderTable ref="groupsTable"
+            <ReviewerTable ref="groupsTable"
               groups={this.state.reviewer_groups}
               selected_groups={this.state.selected_groups}
               onSelectedGroupsChange={this.updateSelectedGroups}
               selected_students_in_groups={this.state.selected_students_in_groups}
               onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
               refresh={this.refresh} />
-            <GroupsActionsColumn refresh={this.refresh}
+            <CenterActionsColumn refresh={this.refresh}
               performAction={this.performAction} />
-            <GroupsGradingTable ref="groupsTable"
+            <RevieweeTable ref="groupsTable"
               groups={this.state.reviewee_groups}
               selected_groups={this.state.selected_groups}
               onSelectedGroupsChange={this.updateSelectedGroups}
@@ -132,7 +132,7 @@
   });
   
   // The table of groups to be graders on the left.
-  var GroupsGraderTable = React.createClass({
+  var ReviewerTable = React.createClass({
     getDefaultProps: function() {
       return {
         columns: [
@@ -237,7 +237,7 @@
   });
 
   // The table of groups on the right.
-  var GroupsGradingTable = React.createClass({
+  var RevieweeTable = React.createClass({
     getDefaultProps: function() {
       return {
         columns: [
@@ -372,7 +372,7 @@
     }
   });
 
-  var GroupsActionsColumn = React.createClass({
+  var CenterActionsColumn = React.createClass({
     performAction: function(event) {
       var action = event.currentTarget.getAttribute('id');
       this.props.performAction(action);
