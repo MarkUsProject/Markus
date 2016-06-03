@@ -5,14 +5,18 @@
   var PeerReviewsManager = React.createClass({
     getInitialState: function() {
       return {
+        reviewer_groups: [],
+        reviewee_groups: [],
+        selected_reviewer_groups: [],
+        selected_reviewee_groups: [],
+        error: null,
+
+        // Ones to be removed below:
         students: [],
         selected_students: [],
         groups: [],
-        reviewer_groups: [],
-        reviewee_groups: [],
         selected_groups: [],
-        selected_students_in_groups: [],
-        error: null
+        selected_students_in_groups: []
       };
     },
 
@@ -20,17 +24,28 @@
       this.refresh();
     },
 
+    updateSelectedReviewerGroups: function(reviewerGroups) {
+      this.setState({selected_reviewer_groups: reviewerGroups});
+    },
+
+    updateSelectedRevieweeGroups: function(revieweeGroups) {
+      this.setState({selected_reviewee_groups: revieweeGroups});
+    },
+
+    // TODO - FUNCTIONS TO REMOVE AT SOME POINT
+    // =================================
     updateSelectedStudents: function(students) {
-      this.setState({selected_students: students});
+      //this.setState({selected_students: students});
     },
 
     updateSelectedGroups: function(groups) {
-      this.setState({selected_groups: groups});
+      //this.setState({selected_groups: groups});
     },
 
     updateSelectedStudentsInGroups: function(students) {
-      this.setState({selected_students_in_groups: students});
+      //this.setState({selected_students_in_groups: students});
     },
+    // =================================
 
     // Sends a request to the server to perform some action
     // such as assigning or removing a member to/from a group
@@ -82,6 +97,7 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
 
+      // TODO - optimization: if both lists are identical, only return one list.
       jQuery.ajax({
         url: 'peer_reviews/populate',
         method: 'GET',
@@ -100,14 +116,13 @@
       var skip_empty_submissions = [];
       skip_empty_submissions.push(<input type='checkbox'
         checked={this.state.skip_empty_submissions}
-        onChange={this.skipEmptySubmissionsClicked}> <%= j raw I18n.t('graders.skip_empty_submissions') %></input>);
+        onChange={this.skipEmptySubmissionsClicked}> <%= j raw t('graders.skip_empty_submissions') %>
+        </input>);
       
       return (
         <div>
           <ErrorDiv error={this.state.error} />
-          <div className='skip-empty-submissions'>
-            {skip_empty_submissions}
-          </div>
+          <div className='skip-empty-submissions'>{skip_empty_submissions}</div>
           <div className='columns'>
             <ReviewerTable ref="groupsTable"
               groups={this.state.reviewer_groups}
@@ -138,13 +153,13 @@
         columns: [
           {
             id: 'name',
-            content: '<%= j raw I18n.t('groups.group_name') %>',
+            content: '<%= j raw t('groups.group_name') %>',
             sortable: true,
             searchable: true
           },
           {
             id: 'groups',
-            content: '<%= j raw I18n.t('assignment.peer_review.number_of_reviews_header') %>',
+            content: '<%= j raw t('assignment.peer_review.number_of_reviews_header') %>',
             sortable: false,
             searchable: false
           },
@@ -153,15 +168,15 @@
     },
 
     studentCheckboxClicked: function(event) {
-      var value = event.currentTarget.checked;
-      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
-      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
-      if (value) {
-        new_selected_students_in_groups.push(group_student_id);
-      } else {
-        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
-      }
-      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
+//      var value = event.currentTarget.checked;
+//      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+//      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
+//      if (value) {
+//        new_selected_students_in_groups.push(group_student_id);
+//      } else {
+//        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
+//      }
+//      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
     },
 
     clearCheckboxes: function() {
@@ -177,46 +192,21 @@
             return true;
           }
         },
-        {
-          name: 'valid',
-          text: '<%= j raw t('groups.valid_grouping_counts') %>',
-          func: function(group) {
-            return group.valid;
-          }
-        },
-        {
-          name: 'not_valid',
-          text: '<%= j raw t('groups.not_valid_grouping_counts') %>',
-          func: function(group) {
-            return !group.valid;
-          }
-        },
       ];
 
       // Massage the data so it will fit into the table.
       var groups_data = this.props.groups.map(function(group) {
         var g = {};
-        g['id'] = group.id;
-        g['name'] = group.name;
-        var links = [];
-        if (group.valid) {
-          links.push(group.invalidate_link);
-        } else {
-          links.push(group.validate_link);
-        }
-        links.push(group.rename_link);
-        links.push(group.note_link);
-        links.push(group.delete_link);
-
         var members = [];
         for (var i = 0; i < group.members.length; i++) {
           members.push(<div key={group.members[i].id}>{group.members[i].user_name}</div>);
         }
+        g['id'] = group.id;
+        g['name'] = group.name;
         g['members'] = members;
         g['valid'] = group.valid;
         g['links'] = group.id;
         g['groups'] = <b>0</b>;
-
         return g;
       }.bind(this));
 
@@ -258,18 +248,19 @@
     },
 
     studentCheckboxClicked: function(event) {
-      var value = event.currentTarget.checked;
-      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
-      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
-      if (value) {
-        new_selected_students_in_groups.push(group_student_id);
-      } else {
-        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
-      }
-      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
+//      var value = event.currentTarget.checked;
+//      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+//      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
+//      if (value) {
+//        new_selected_students_in_groups.push(group_student_id);
+//      } else {
+//        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
+//      }
+//      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
     },
 
     clearCheckboxes: function() {
+      console.log('yes');
       this.refs.table.clearCheckboxes();
     },
 
@@ -282,27 +273,11 @@
             return true;
           }
         },
-        {
-          name: 'valid',
-          text: '<%= j raw t('groups.valid_grouping_counts') %>',
-          func: function(group) {
-            return group.valid;
-          }
-        },
-        {
-          name: 'not_valid',
-          text: '<%= j raw t('groups.not_valid_grouping_counts') %>',
-          func: function(group) {
-          return !group.valid;
-          }
-        },
       ];
 
       // Massage the data so it will fit into the table.
       var groups_data = this.props.groups.map(function(group) {
         var g = {};
-        g['id'] = group.id;
-        g['name'] = group.name;
         var links = [];
         if (group.valid) {
           links.push(group.invalidate_link);
@@ -312,17 +287,17 @@
         links.push(group.rename_link);
         links.push(group.note_link);
         links.push(group.delete_link);
-        g['links'] = <span onClick={this.props.refresh} dangerouslySetInnerHTML={{__html: links.join(' ')}} ></span>
-
         var members = [];
         for (var i = 0; i < group.members.length; i++) {
           members.push(<div key={group.members[i].id}>
-            <input id={group.members[i].id}
-              type='checkbox'
-              checked={this.props.selected_students_in_groups.indexOf(group.members[i].id) !== -1}
-              onChange={this.studentCheckboxClicked} /> {group.members[i].user_name}</div>);
+          <input id={group.members[i].id}
+            type='checkbox'
+            checked={this.props.selected_students_in_groups.indexOf(group.members[i].id) !== -1}
+            onChange={this.studentCheckboxClicked} /> {group.members[i].user_name}</div>);
         }
-        //g['members'] = members;
+        g['id'] = group.id;
+        g['name'] = group.name;
+        g['links'] = <span onClick={this.props.refresh} dangerouslySetInnerHTML={{__html: links.join(' ')}} ></span>
         g['members'] = <b>None</b>
         g['valid'] = group.valid;
 
@@ -335,39 +310,12 @@
             <Table ref="table"
               data={groups_data}
               columns={this.props.columns}
-              filters={this.props.filters} 
+              filters={this.props.filters}
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
               search_placeholder={'<%= j raw t('groups.search_groups') %>'} />
           </div>
         </div>
-      );
-    }
-  });
-
-  var AddGroupButton = React.createClass({
-    <% if @assignment.group_name_autogenerated %>
-      createGroup: function() {
-        jQuery.ajax({
-          method: 'GET',
-          url: '<%= new_assignment_group_path(@assignment) %>',
-          success: function(data) {
-            this.props.refresh();
-          }.bind(this)
-        });
-      },
-    <% else %>
-      createGroup: function() {
-        modalCreate.open();
-        jQuery('#new_group_name').val('');
-        return false;
-      },
-    <% end %>
-    render: function() {
-      return (
-        <button className='floatRight' onClick={this.createGroup} >
-          <%= t('groups.add_new') %>
-        </button>
       );
     }
   });
