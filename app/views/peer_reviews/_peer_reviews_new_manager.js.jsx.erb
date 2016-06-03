@@ -8,6 +8,8 @@
         students: [],
         selected_students: [],
         groups: [],
+        reviewer_groups: [],
+        reviewee_groups: [],
         selected_groups: [],
         selected_students_in_groups: [],
         error: null
@@ -81,14 +83,15 @@
       document.getElementById('working').style.display = '';
 
       jQuery.ajax({
-        url: 'groups/populate',
+        url: 'peer_reviews/populate',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
           document.getElementById('working').style.display = 'none';
           this.setState({
-            students: data[0],
-            groups: data[1]
+            //groups: data[0]
+            reviewer_groups: data[0],
+            reviewee_groups: data[1]
           });
         }.bind(this)
       });
@@ -99,6 +102,7 @@
       skip_empty_submissions.push(<input type='checkbox'
         checked={this.state.skip_empty_submissions}
         onChange={this.skipEmptySubmissionsClicked}> <%= j raw I18n.t('graders.skip_empty_submissions') %></input>);
+      
       return (
         <div>
           <ErrorDiv error={this.state.error} />
@@ -107,15 +111,16 @@
           </div>
           <div className='columns'>
             <GroupsGraderTable ref="groupsTable"
-              groups={this.state.groups}
+              groups={this.state.reviewer_groups}
               selected_groups={this.state.selected_groups}
               onSelectedGroupsChange={this.updateSelectedGroups}
               selected_students_in_groups={this.state.selected_students_in_groups}
               onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
               refresh={this.refresh} />
-            <GroupsActionsColumn refresh={this.refresh} performAction={this.performAction} />
+            <GroupsActionsColumn refresh={this.refresh}
+              performAction={this.performAction} />
             <GroupsGradingTable ref="groupsTable"
-              groups={this.state.groups} 
+              groups={this.state.reviewee_groups}
               selected_groups={this.state.selected_groups}
               onSelectedGroupsChange={this.updateSelectedGroups}
               selected_students_in_groups={this.state.selected_students_in_groups}
@@ -137,12 +142,6 @@
             content: '<%= j raw I18n.t('groups.group_name') %>',
             sortable: true,
             searchable: true
-          },
-          {
-            id: 'members',
-            content: '<%= j raw I18n.t('members') %>',
-            sortable: false,
-            searchable: false
           },
           {
             id: 'groups',
@@ -379,6 +378,7 @@
       var action = event.currentTarget.getAttribute('id');
       this.props.performAction(action);
     },
+
     render: function() {
       return (
         <div className={'col-center'}>

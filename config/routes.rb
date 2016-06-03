@@ -208,7 +208,11 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :peer_reviews, only: :index
+      resources :peer_reviews, only: :index do
+        collection do
+          get 'populate'
+        end
+      end
 
       resources :graders do
         collection do

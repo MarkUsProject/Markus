@@ -1,16 +1,8 @@
 class PeerReviewsController < ApplicationController
-  include GradersHelper  # TODO - Temporary and only for populate()
-  #before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
-  #before_filter :authorize_only_for_admin
+  include GroupsHelper
 
-  # TODO - Copy pasted from graders_controller, this is temporary/bad...
-  # The names of the associations of groupings required by the view, which
-  # should be eagerly loaded.
-  GROUPING_ASSOC = [:group, :students,
-                    ta_memberships: :user, inviter: :section]
-  # The names of the associations of criteria required by the view, which
-  # should be eagerly loaded.
-  CRITERION_ASSOC = [criterion_ta_associations: :ta]
+  before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
+  before_filter :authorize_only_for_admin
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
@@ -28,6 +20,13 @@ class PeerReviewsController < ApplicationController
     else
       @criteria = @assignment.flexible_criteria
     end
+  end
+
+  def populate
+    @assignment = Assignment.find(params[:assignment_id])
+    reviewer_groups = get_groupings_table_info
+    reviewee_groups = get_groupings_table_info(@assignment.parent_assignment)
+    render json: [reviewer_groups, reviewee_groups]
   end
 
   def groupings_with_assoc(assignment, options = {})
