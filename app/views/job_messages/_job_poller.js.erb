@@ -1,19 +1,25 @@
 jQuery('#notice').find('#job-messenger').html("<div class='warning'> <%= "#{I18n.t('job_poller.processing_message')} #{processing_message}" %> </div> ");
-jQuery.poll(function(retry) {
-  jQuery.getJSON("<%= job_message_path(@current_job.job_id) %>", function(data) {
-    if (data) {
-      if (data.status === "succeeded") {
-        jQuery('#notice').find('#job-messenger').html("<div class='success'> <%= I18n.t('job_poller.processing_message_finished') %>  </div>");
-        setTimeout((function() {
-          window.location.reload()
-        }), 1500);
-      } else if (data.status === "failed") {
-        jQuery('#notice').find('#job-messenger').html("<div class='error'> <%= I18n.t('job_poller.processing_message_error') %> " + data.message + "</div>");
+
+function poll() {
+	jQuery.ajax({
+		dataType: 'json',
+		url: "<%= job_message_path(@current_job.job_id) %>",
+    success: function(data) {
+      if (data) {
+			  if (data.status === 'succeeded') {
+			    document.location.reload();
+			  } else if (data.status === 'failed') {
+			    jQuery('#notice').find('#job-messenger').html("<div class='error'> <%= I18n.t('job_poller.processing_message_error') %> " + data.message + "</div>");
+        } else {
+			    poll();
+        }
       } else {
-        retry();
+        poll();
       }
-    } else {
-        retry();
-    }
+		}
+	}).fail( function(d, textStatus, error) {
+    console.error("getJSON failed, status: " + textStatus + ", error: " + error)
   });
-});
+}
+
+poll();

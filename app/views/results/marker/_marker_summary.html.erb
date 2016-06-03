@@ -20,6 +20,16 @@
     <span> /<%= assignment.total_mark %></span>
   </div>
 
+  <div id='submission_rule_pane' class='submission_rule_pane'>
+    <div class='submission_rule_label'>
+      <strong><%= t('marker.marks.submission_rule') %>:</strong>
+    </div>
+    <div id="submission_rule_viewer">
+      <%= render partial: assignment.submission_rule.grader_tab_partial,
+                 locals: { grouping: result.submission.grouping } %>
+    </div>
+  </div>
+
   <div id='extra_marks_pane' class='extra_marks_pane'>
     <div class='bonus_deduction'>
       <strong><%= t('marker.marks.bonus_deductions') %></strong>
@@ -64,6 +74,17 @@
       <span id='old_subtotal_div'> <%= old_result.get_subtotal %></span>
       <span> /<%= assignment.total_mark %></span>
     </div>
+
+    <div id='submission_rule_pane' class='submission_rule_pane'>
+      <div class='submission_rule_label'>
+        <strong><%= t('marker.marks.submission_rule') %>:</strong>
+      </div>
+      <div id="submission_rule_viewer">
+      <%= render partial: assignment.submission_rule.grader_tab_partial,
+                 locals: { grouping: result.submission.grouping } %>
+      </div>
+    </div>
+
 
     <div id='extra_marks_pane' class='extra_marks_pane'>
       <div class='bonus_deduction'><strong><%= t('marker.marks.bonus_deductions') %></strong></div>

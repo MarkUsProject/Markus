@@ -24,6 +24,11 @@
           <div id='sel_box'></div>
 
           <div id='annotation_menu'>
+
+            <%= render partial: 'results/common/file_selector_dropdown',
+                       locals: { files: files,
+                                 can_download: true } %>
+
             <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
               <%= t('marker.new_annot')%>
             </button>
@@ -79,6 +84,15 @@
 
         <% if can_show_feedback_files_tab?(submission) %>
           <div id='feedback_file_tab' style='display:none;'>
+
+            <div id='feedback_file_selector_menu'>
+              <div id='feedback_files_controls'>
+                <%= render partial: 'results/common/feedback_file_selector',
+                           locals: { feedback_files: feedback_files,
+                                     submission_id: submission.id } %>
+              </div>
+            </div>
+
             <div id='feedback_file_content'>
             </div>
           </div>
@@ -102,7 +116,6 @@
         <ul id='mark_tabs' class='subsection_tabs'>
           <li><a href='#mark_viewer'><%= t('marker.marks.marks') %></a></li>
           <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
-          <li><a href='#submission_rule_viewer'><%= t('marker.marks.submission_rule') %></a></li>
           <li><a href='#tag_viewer'><%= t('marker.marks.tags') %></a></li>
         </ul>
 
@@ -143,11 +156,6 @@
                                result: result,
                                extra_marks_points: extra_marks_points,
                                extra_marks_percentage: extra_marks_percentage } %>
-        </div>
-
-        <div id='submission_rule_viewer'>
-          <%= render partial: assignment.submission_rule.grader_tab_partial,
-                     locals: { grouping: result.submission.grouping } %>
         </div>
 
         <!-- Tag insertion pane. -->
