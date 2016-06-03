@@ -61,6 +61,7 @@
         }.bind(this)
       });
     },
+
     componentDidMount: function () {
       var me = this;
       jQuery(document).ready(function () {
@@ -70,6 +71,7 @@
         });
       });
     },
+
     // Asks for new info from backend and sets state accordingly.
     refresh: function() {
       document.getElementById('working').style.display = '';
@@ -87,21 +89,15 @@
         }.bind(this)
       });
     },
+
     render: function() {
-      var graders_to_criteria = [];
       var skip_empty_submissions = [];
-      graders_to_criteria.push(<input type='checkbox'
-        checked={this.state.assign_to_criteria}
-        onChange={this.criteriaCheckboxClicked}> <%= j raw I18n.t('graders.assign_to_criteria') %></input>);
       skip_empty_submissions.push(<input type='checkbox'
         checked={this.state.skip_empty_submissions}
         onChange={this.skipEmptySubmissionsClicked}> <%= j raw I18n.t('graders.skip_empty_submissions') %></input>);
       return (
         <div>
           <ErrorDiv error={this.state.error} />
-          <div className='graders-to-criteria'>
-            {graders_to_criteria}
-          </div>
           <div className='skip-empty-submissions'>
             {skip_empty_submissions}
           </div>
@@ -146,36 +142,14 @@
           },
           {
             id: 'groups',
-            content: '<%= j raw I18n.t('groups.groups') %>',
+            content: '<%= j raw I18n.t('assignment.peer_review.number_of_reviews_header') %>',
             sortable: false,
             searchable: false
           },
         ],
-        filters: [
-          {
-            name: 'all',
-            text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
-            func: function(group) {
-              return true;
-            }
-          },
-          {
-            name: 'valid',
-            text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
-            func: function(group) {
-              return group.valid;
-            }
-          },
-          {
-            name: 'not_valid',
-            text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
-            func: function(group) {
-              return !group.valid;
-            }
-          },
-        ]
       };
     },
+
     studentCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
@@ -187,9 +161,11 @@
       }
       this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
     },
+
     clearCheckboxes: function() {
       this.refs.table.clearCheckboxes();
     },
+
     render: function() {
       var filters = [
         {
@@ -232,11 +208,7 @@
 
         var members = [];
         for (var i = 0; i < group.members.length; i++) {
-          members.push(<div key={group.members[i].id}>
-            <input id={group.members[i].id}
-              type='checkbox'
-              checked={this.props.selected_students_in_groups.indexOf(group.members[i].id) !== -1}
-              onChange={this.studentCheckboxClicked} /> {group.members[i].user_name}</div>);
+          members.push(<div key={group.members[i].id}>{group.members[i].user_name}</div>);
         }
         g['members'] = members;
         g['valid'] = group.valid;
@@ -249,15 +221,6 @@
       return (
         <div className={'col-left'}>
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
-            <AddGroupButton refresh={this.props.refresh} />
-            <% if @assignment.group_max == 1 %>
-              <% if false %> # TODO - Remove later
-                <%= button_to t('groups.add_all_groups'),
-                              { action: 'create_groups_when_students_work_alone',
-                                id: @assignment.id },
-                              method: :get, remote: true %>
-              <% end %>
-            <% end %>
             <Table ref="table"
               data={groups_data}
               columns={this.props.columns}
@@ -284,36 +247,14 @@
           },
           {
              id: 'members',
-             content: '<%= j raw 'Assigned Groups' %>',
+             content: '<%= j raw I18n.t('assignment.peer_review.assigned_reviewers_header') %>',
              sortable: false,
              searchable: false
           },
         ],
-        filters: [
-          {
-            name: 'all',
-            text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
-            func: function(group) {
-              return true;
-            }
-          },
-          {
-            name: 'valid',
-            text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
-            func: function(group) {
-              return group.valid;
-            }
-          },
-          {
-            name: 'not_valid',
-            text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
-            func: function(group) {
-            return !group.valid;
-            }
-          },
-        ]
       };
     },
+
     studentCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
       var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
@@ -325,32 +266,34 @@
       }
       this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
     },
+
     clearCheckboxes: function() {
       this.refs.table.clearCheckboxes();
     },
+
     render: function() {
       var filters = [
-      {
-        name: 'all',
-        text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
-        func: function(group) {
-          return true;
-        }
-      },
-      {
-        name: 'valid',
-        text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
-        func: function(group) {
-          return group.valid;
-        }
-      },
-      {
-        name: 'not_valid',
-        text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
-        func: function(group) {
-        return !group.valid;
-        }
-      },
+        {
+          name: 'all',
+          text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
+          func: function(group) {
+            return true;
+          }
+        },
+        {
+          name: 'valid',
+          text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
+          func: function(group) {
+            return group.valid;
+          }
+        },
+        {
+          name: 'not_valid',
+          text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
+          func: function(group) {
+          return !group.valid;
+          }
+        },
       ];
 
       // Massage the data so it will fit into the table.
@@ -387,15 +330,15 @@
       return (
         <div className={'col-right'}>
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
+<% if false %>
             <AddGroupButton refresh={this.props.refresh} />
             <% if @assignment.group_max == 1 %>
-              <% if false %> # TODO - Remove later
                 <%= button_to t('groups.add_all_groups'),
                               { action: 'create_groups_when_students_work_alone',
                                 id: @assignment.id },
                               method: :get, remote: true %>
-              <% end %>
             <% end %>
+<% end %>
             <Table ref="table"
               data={groups_data}
               columns={this.props.columns}

@@ -208,6 +208,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         has_peer_review: "Ativar aluno-aluno de revisão por pares"
         configure_peer_review: "Configurar revisão por pares"
         peer_review_record_missing: "Erro: Par atribuição de avaliação em falta a partir do banco de dados"
+        # TODO - Add the missing definitions (not done yet!)
     your_mark:  "Sua nota:"
 
     members:            "Membros"

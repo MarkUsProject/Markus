@@ -210,6 +210,7 @@ fr:
         has_peer_review: "Activer élèves-étudiants d'examen par les pairs"
         configure_peer_review: "Configurer examen par les pairs"
         peer_review_record_missing: "Erreur: Examen par les pairs cession manquant dans la base de données"
+        # TODO - Add the missing definitions (not done yet!)
     your_mark:  "Votre note : "
 
     members:            "Membres"
