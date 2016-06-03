@@ -89,7 +89,6 @@
         success: function(data) {
           document.getElementById('working').style.display = 'none';
           this.setState({
-            //groups: data[0]
             reviewer_groups: data[0],
             reviewee_groups: data[1]
           });
@@ -173,21 +172,21 @@
       var filters = [
         {
           name: 'all',
-          text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
+          text: '<%= j raw t('groups.all_grouping_counts') %>',
           func: function(group) {
             return true;
           }
         },
         {
           name: 'valid',
-          text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
+          text: '<%= j raw t('groups.valid_grouping_counts') %>',
           func: function(group) {
             return group.valid;
           }
         },
         {
           name: 'not_valid',
-          text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
+          text: '<%= j raw t('groups.not_valid_grouping_counts') %>',
           func: function(group) {
             return !group.valid;
           }
@@ -230,7 +229,7 @@
               filters={this.props.filters} 
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
-              search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
+              search_placeholder={'<%= j raw t('groups.search_groups') %>'} />
           </div>
         </div>
       );
@@ -244,13 +243,13 @@
         columns: [
           {
             id: 'name',
-            content: '<%= j raw I18n.t('groups.group_name') %>',
+            content: '<%= j raw t('groups.group_name') %>',
             sortable: true,
             searchable: true
           },
           {
              id: 'members',
-             content: '<%= j raw I18n.t('assignment.peer_review.assigned_reviewers_header') %>',
+             content: '<%= j raw t('assignment.peer_review.assigned_reviewers_header') %>',
              sortable: false,
              searchable: false
           },
@@ -278,21 +277,21 @@
       var filters = [
         {
           name: 'all',
-          text: '<%= j raw I18n.t('groups.all_grouping_counts') %>',
+          text: '<%= j raw t('groups.all_grouping_counts') %>',
           func: function(group) {
             return true;
           }
         },
         {
           name: 'valid',
-          text: '<%= j raw I18n.t('groups.valid_grouping_counts') %>',
+          text: '<%= j raw t('groups.valid_grouping_counts') %>',
           func: function(group) {
             return group.valid;
           }
         },
         {
           name: 'not_valid',
-          text: '<%= j raw I18n.t('groups.not_valid_grouping_counts') %>',
+          text: '<%= j raw t('groups.not_valid_grouping_counts') %>',
           func: function(group) {
           return !group.valid;
           }
@@ -339,7 +338,7 @@
               filters={this.props.filters} 
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
-              search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
+              search_placeholder={'<%= j raw t('groups.search_groups') %>'} />
           </div>
         </div>
       );
@@ -386,21 +385,21 @@
             <input id='random_assign'
               className='image_input'
               src='<%= image_path 'random_arrow.png' %>'
-              alt='<%= j raw I18n.t('groups.randomly_assign_graders') %>'
+              alt='<%= j raw t('groups.randomly_assign_graders') %>'
               onClick={this.performAction}
               type='image'
             />
             <input id='assign'
               className='image_input'
               src='<%= image_path('add_arrow.png') %>'
-              alt='<%= j raw I18n.t('add_members') %>'
+              alt='<%= j raw t('add_members') %>'
               onClick={this.performAction}
               type='image'
             />
             <input id='unassign'
               className='image_input'
               src='<%= image_path('remove_arrow.png') %>'
-              alt='<%= j raw I18n.t('remove_members') %>'
+              alt='<%= j raw t('remove_members') %>'
               onClick={this.performAction}
               type='image'
             />
