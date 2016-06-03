@@ -8,9 +8,9 @@
   <h1><%= t('assignments.peer_review.peer_review') %></h1>
 
   <div class='heading_buttons'>
-    <%= link_to t('download'), '#', onclick:'modal_download.open();' %>
+    <%= link_to t('download'), '#', onclick: 'modal_download.open();' %>
     <span class='menu_bar'></span>
-    <%= link_to t('upload'), '#', onclick:'modal_upload.open();' %>
+    <%= link_to t('upload'), '#', onclick: 'modal_upload.open();' %>
   </div>
 </div>
 
@@ -55,7 +55,7 @@
   </ul>
 
   <section class='dialog-actions'>
-    <input type='reset' value='<%= I18n.t(:cancel) %>' onclick='modal_download.close();' />
+    <input type='reset' value='<%= t(:cancel) %>' onclick='modal_download.close();' />
   </section>
 </aside>
 
@@ -68,7 +68,7 @@
 
   <h2><%= t("groups.upload.upload_grader_map") %></h2>
   <%= raw(t("groups.upload.description_grader_map")) %>
-  <%= form_tag({controller:"graders",
+  <%= form_tag({controller: "graders",
                 action: 'csv_upload_grader_groups_mapping',id: @assignment.id},
                {multipart: true}) do %>
       <p>
@@ -89,7 +89,7 @@
   <% if @assignment.assign_graders_to_criteria %>
       <h2><%= t("groups.upload.upload_grader_criteria_map") %></h2>
       <%= raw(t("groups.upload.description_grader_criteria_map")) %>
-      <%= form_tag({controller:"graders",
+      <%= form_tag({controller: "graders",
                     action: 'csv_upload_grader_criteria_mapping',id: @assignment.id},
                    {multipart: true}) do %>
           <p>
