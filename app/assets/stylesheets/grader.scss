@@ -523,10 +523,10 @@ ul.annotation_text_list {
 .flexible_criterion_title_div_level {
   padding-top: 2px;
   font-size: 12px;
-  font-weight: bold;
   float: left;
   padding-right: 10px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .flexible_criterion_expand {
@@ -540,7 +540,9 @@ ul.annotation_text_list {
   padding-left: 10px;
   padding-bottom: 5px;
   margin-left: 5px;
-  margin-top: 3px
+  margin-top: 3px;
+  float: left;
+  clear: both;
 }
 
 .flexible_criterion_description {
@@ -553,6 +555,7 @@ ul.annotation_text_list {
 .mark_flexible {
   font-weight: bold;
   font-size: 11px;
+  float: right;
 }
 
 /* Submission Rule Pane */

@@ -1,19 +1,14 @@
-<div class='clear'></div>
-
-<div class='mark_criterion_old_mark'>
-  <strong>
-    <%= if !old_mark.nil? && !old_mark.mark.nil? then
-          "#{I18n.t('marker.marks.old')}#{old_mark.mark.to_s}"
-        else '' end %>
-  </strong>
+<div class='flexible_criterion_title_div_level'
+     onclick="<%="focus_mark_criterion(#{mark_criterion.id})"%>">
+  <%= (mark_criterion.name) %>
 </div>
 
-<% if !mark.mark.nil? -%>
-  <div id="<%= "mark_criterion_title_#{mark.id}_mark" %>"
-       class='flexible_criterion_description mark_description'
-       data-id='<%= mark_criterion.id %>'>
-      <p><%= mark_criterion.description %></p>
-      <strong><%= mark.mark %> / <%= mark_criterion.max %></strong>
-  </div>
-<% end -%>
-
+<div class='mark_flexible'>
+  <%= text_field_tag('mark_' + mark.id.to_s, mark.mark,
+                     size: 4,
+                     class: 'mark_grade_input',
+                     data: {id: mark_criterion.id},
+                     'data-action' => url_for(action: :update_mark,
+                                              mark_id: mark.id)) %>
+  /&nbsp; <%= mark_criterion.max.to_s%>
+</div>
