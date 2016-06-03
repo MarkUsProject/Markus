@@ -236,7 +236,7 @@ en:
           problem: "An unexpected problem occured"
           peer_reviews_header: "Peer Reviews"
           group: "Group"
-          number_of_reviews_header: "Number of reviews"
+          number_of_reviews_header: "Num reviews"
           assigned_reviewers_header: "Assigned reviewers"
     your_mark:  "Your mark:"
 
