@@ -466,9 +466,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should 'and the result is available' do
             SubmissionFile.make(:submission => @submission)
             if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-              Mark.make(:rubric, :result => @result)
+              Mark.make(:rubric, result: @result)
             else
-              Mark.make(:flexible, :result => @result)
+              Mark.make(:flexible,  result: @result)
             end
             AnnotationCategory.make(:assignment => @assignment)
             @submission_file = @result.submission.submission_files.first
@@ -698,9 +698,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             s = Submission.make(:grouping => g)
             @result = s.get_latest_result
             if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-              Mark.make(:rubric, :result => @result)
+              Mark.make(:rubric, result: @result)
             else
-              Mark.make(:flexible, :result => @result)
+              Mark.make(:flexible, result: @result)
             end
 
             @assignment.assignment_stat.refresh_grade_distribution
@@ -952,9 +952,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @submission = Submission.make(:grouping => g)
 
             if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-              @mark = Mark.make(:rubric, :result => @submission.get_latest_result)
+              @mark = Mark.make(:rubric, result: @submission.get_latest_result)
             else
-              @mark = Mark.make(:flexible, :result => @submission.get_latest_result)
+              @mark = Mark.make(:flexible, result: @submission.get_latest_result)
             end
           end
 

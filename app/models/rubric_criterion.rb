@@ -2,7 +2,6 @@ require 'encoding'
 
 class RubricCriterion < Criterion
   self.table_name = 'rubric_criteria' # set table name correctly
-  include ActiveModel::Validations
 
   validates_presence_of :weight
   validates_numericality_of :weight

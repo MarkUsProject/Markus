@@ -128,7 +128,8 @@ class Result < ActiveRecord::Base
   def check_for_nil_marks
     num_criteria = submission.assignment.get_criteria(:ta).count
     # Check that the marking state is incomplete or all marks are entered
-    if (marks.find_by(mark: nil) || marks.count != num_criteria) &&
+    # Count can be greater if criteria with previously filled in mark is switched to be not ta_visible
+    if (marks.find_by(mark: nil) || marks.count < num_criteria) &&
        marking_state == Result::MARKING_STATES[:complete]
 
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))
