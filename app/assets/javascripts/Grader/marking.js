@@ -175,7 +175,7 @@ function update_rubric_mark(elem, mark_id, value) {
       div.innerHTML = elem.innerHTML
       var titleLevel = jQuery(div).find('strong').text();
       document.getElementById('mark_criterion_title_' + mark_id + '_level')
-          .innerHTML = titleLevel;
+              .innerHTML = titleLevel;
       document.getElementById('mark_' + mark_id + '_summary_mark')
               .innerHTML = value;
       document.getElementById('mark_' + mark_id + '_summary_mark_after_weight')

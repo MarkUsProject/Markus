@@ -4,37 +4,37 @@
 
 <li id="<%= "flexible_criterion_#{mark_criterion.id}" %>">
   <!--Mark update info -->
-  <div id="mark_verify_result_<%=mark.id%>" class="error" style="display:none;">
+  <div id="mark_verify_result_<%=mark.id%>" class='error' style='display:none;'>
     <%= I18n.t("marker.marks.invalid_mark") %>
   </div>
-  <div class="criterion_title" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>">
+  <div class='criterion_title' id="<%= "mark_criterion_title_#{mark_criterion.id}"%>">
 
     <div id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>"
-      class="float_left flexible_criterion_expand expanded"
+      class='flexible_criterion_expand expanded'
       onclick="<%="focus_mark_criterion(#{mark_criterion.id})"%>">- &nbsp;</div>
 
     <div>
-      <div class='flexible_criterion_title_div_level float_left'
+      <div class='flexible_criterion_title_div_level'
            onclick="<%="focus_mark_criterion(#{mark_criterion.id})"%>">
         <%= (mark_criterion.name) %>
       </div>
 
-      <div class="mark_flexible">
+      <div class='mark_flexible'>
         <%= text_field_tag('mark_' + mark.id.to_s, mark.mark,
                            size: 4,
                            class: 'mark_grade_input',
-                           data: {:id => mark_criterion.id},
+                           data: {id: mark_criterion.id},
                            'data-action' => url_for(action: :update_mark,
                                                     mark_id: mark.id)) %>
         /&nbsp; <%= mark_criterion.max.to_s%>
       </div>
 
-      <div class="mark_description" style="display: none;" data-id='<%= mark_criterion.id %>'>
+      <div class='mark_description' style='display: none;' data-id='<%= mark_criterion.id %>'>
         <%= mark.mark %>
       </div>
 
-      <div id="<%="criterion_info_#{mark_criterion.id}"%>" class="flexible_criterion_info">
-          <%=mark_criterion.description %>
+      <div id="<%="criterion_info_#{mark_criterion.id}"%>" class='flexible_criterion_info'>
+          <%= mark_criterion.description %>
       </div>
     </div>
 

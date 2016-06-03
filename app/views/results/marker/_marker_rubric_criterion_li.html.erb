@@ -5,7 +5,7 @@
 <li id="<%= "mark_criterion_#{mark_criterion.id}" %>">
   <div class="criterion_title" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>" onclick="<%="focus_mark_criterion(#{mark_criterion.id})"%>">
     <div id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>"
-      class="float_left mark_criterion_expand expanded" >
+      class="mark_criterion_expand expanded" >
       - &nbsp;
     </div>
     <%= render partial: 'results/common/rubric_criterion',
@@ -14,7 +14,7 @@
                         old_mark: old_mark} %>
     <div id="<%="criterion_info_#{mark_criterion.id}"%>">
       <div class="mark_criterion_level_container">
-        <div class="float_left cursor_hand">
+        <div class="cursor_hand">
           <table id="mark_<%=mark.id%>_table">
            <%
              (0...RubricCriterion::RUBRIC_LEVELS).each do |num_levels|
