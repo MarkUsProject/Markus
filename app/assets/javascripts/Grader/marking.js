@@ -174,13 +174,17 @@ function update_rubric_mark(elem, mark_id, value) {
       var div = document.createElement('div');
       div.innerHTML = elem.innerHTML
       var titleLevel = jQuery(div).find('strong').text();
-      document.getElementById('mark_criterion_title_' + mark_id + '_level')
-              .innerHTML = titleLevel;
+      document.getElementById('rubric_mark_' + mark_id)
+              .innerHTML = parseInt(mark);
+      document.getElementById('rubric_mark_' + mark_id + '_level')
+              .innerHTML = '(' + titleLevel.substring(3, titleLevel.length) + ')';
       document.getElementById('mark_' + mark_id + '_summary_mark')
               .innerHTML = value;
       document.getElementById('mark_' + mark_id + '_summary_mark_after_weight')
               .innerHTML = mark;
       document.getElementById('current_subtotal_div').innerHTML = subtotal;
+      document.getElementById('mark_criterion_title_' + mark_id + '_level')
+              .innerHTML = mark;
     }
   });
 }

@@ -1,17 +1,31 @@
-<div class="mark_criterion_title_div_level">
-    <%= link_to mark_criterion.name,
-                'javascript:void(0);',
-                onclick: 'return false;',
-                class: 'rubric_criterion_link' %>
+<strong class="mark_criterion_title_div_level">
+  <%= link_to mark_criterion.name,
+              'javascript:void(0);',
+              onclick: 'return false;',
+              class: 'rubric_criterion_link' %>
+
+  <strong id="<%= "rubric_mark_#{mark.id}_level" %>" class='rubric_mark_level'>
+    <% if !mark.mark.nil? -%>
+      (<%= mark_criterion['level_' + mark.mark.to_i.to_s + '_name'] %>&nbsp;)
+    <% end -%>
+  </strong>
+  <div id="<%= "rubric_mark_#{mark.id}" %>" class='rubric_mark'>
+    <% if !mark.mark.nil? -%>
+      <%= mark.mark.round %>
+    <% end -%>
+  </div>
+
 
   <strong id="<%= "mark_criterion_title_#{mark.id}_level" %>"
           class="mark_criterion_title_level mark_description"
-          data-id='<%= mark_criterion.id %>'>
+          data-id='<%= mark_criterion.id %>'
+          style="display: none;">
     <% if !mark.mark.nil? -%>
-      <%= mark.mark.round %>: <%= mark_criterion['level_' + mark.mark.to_i.to_s + '_name'] %>&nbsp;
+        <%= mark.mark.round %>
     <% end -%>
   </strong>
-</div>
+</strong>
+
 
 <% if old_mark and !old_mark.mark.nil? %>
   <div class="padding_left_old">
