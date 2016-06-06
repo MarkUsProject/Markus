@@ -54,8 +54,20 @@ class Result < ActiveRecord::Base
   end
 
   # The sum of the marks not including bonuses/deductions
-  def get_subtotal
-    marks.includes(:markable).map(&:get_mark).reduce(0, :+)
+  def get_subtotal(user_visibility = :ta)
+    new_marks = 0
+    if !marks.first.nil?
+      assignment = Assignment.find_by_id(
+          Grouping.find_by_id(
+              Submission.find_by_id(
+                  Result.find_by_id(marks.first.result_id).submission_id).grouping_id).assignment_id)
+      assignment.get_criteria(user_visibility).each do |criterion|
+        if !marks.find_by_markable_id(criterion.id).nil?
+          new_marks += marks.find_by_markable_id(criterion.id).get_mark
+        end
+      end
+    end
+    new_marks
   end
 
   # The sum of the bonuses and deductions, other than late penalty
@@ -125,13 +137,17 @@ class Result < ActiveRecord::Base
     true
   end
 
-  def check_for_nil_marks
-    num_criteria = submission.assignment.get_criteria(:ta).count
+  def check_for_nil_marks(user_visibility = :ta)
+    nil_marks = false
+    criteria = submission.assignment.get_criteria(user_visibility)
+    criteria.each do |criterion|
+      if !marks.where(markable_id: criterion.id, mark: nil).empty?
+        nil_marks = true
+      end
+    end
     # Check that the marking state is incomplete or all marks are entered
     # Count can be greater if criteria with previously filled in mark is switched to be not ta_visible
-    if (marks.find_by(mark: nil) || marks.count < num_criteria) &&
-       marking_state == Result::MARKING_STATES[:complete]
-
+    if (nil_marks || marks.count < criteria.count) && marking_state == Result::MARKING_STATES[:complete]
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))
       return false
     end
