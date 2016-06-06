@@ -29,6 +29,11 @@ class PeerReviewsController < ApplicationController
     render json: [reviewer_groups, reviewee_groups]
   end
 
+  def assign_groups
+    @assignment = Assignment.find(params[:assignment_id])
+    render json: ['test']
+  end
+
   def groupings_with_assoc(assignment, options = {})
     grouping_ids = options[:grouping_ids]
     includes = options[:includes] || GROUPING_ASSOC

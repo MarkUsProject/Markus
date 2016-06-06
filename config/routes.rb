@@ -211,6 +211,7 @@ Markus::Application.routes.draw do
       resources :peer_reviews, only: :index do
         collection do
           get 'populate'
+          post 'assign_groups'
         end
       end
 

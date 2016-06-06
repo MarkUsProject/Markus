@@ -34,6 +34,8 @@
 
     // TODO - FUNCTIONS TO REMOVE AT SOME POINT
     // =================================
+    // =================================
+    // =================================
     updateSelectedStudents: function(students) {
       //this.setState({selected_students: students});
     },
@@ -45,7 +47,6 @@
     updateSelectedStudentsInGroups: function(students) {
       //this.setState({selected_students_in_groups: students});
     },
-    // =================================
 
     // Sends a request to the server to perform some action
     // such as assigning or removing a member to/from a group
@@ -65,6 +66,7 @@
         data: dataLoad,
         success: function(data) {
           this.refresh();
+          // The two below are broken due to reworking, but this function isn't used anyways.
           this.refs.groupsStudentsTable.clearCheckboxes();
           this.refs.groupsTable.clearCheckboxes();
           this.setState({
@@ -82,6 +84,9 @@
         }.bind(this)
       });
     },
+    // =================================
+    // =================================
+    // =================================
 
     componentDidMount: function () {
       var me = this;
@@ -95,9 +100,17 @@
 
     // Asks for new info from backend and sets state accordingly.
     refresh: function() {
+      // Since these will not be present at the beginning, we only want to
+      // invoke them when React populates the refs with the values.
+      // Also, hasOwnProperty() works in all browsers the best out of all the
+      // property checking options, and thus was chosen.
+      if (this.refs.hasOwnProperty('reviewerTable'))
+        this.refs.reviewerTable.clearCheckboxes();
+      if (this.refs.hasOwnProperty('revieweeTable'))
+        this.refs.revieweeTable.clearCheckboxes();
+
       document.getElementById('working').style.display = '';
 
-      // TODO - optimization: if both lists are identical, only return one list.
       jQuery.ajax({
         url: 'peer_reviews/populate',
         method: 'GET',
@@ -115,8 +128,8 @@
     render: function() {
       var skip_empty_submissions = [];
       skip_empty_submissions.push(<input type='checkbox'
-        checked={this.state.skip_empty_submissions}
-        onChange={this.skipEmptySubmissionsClicked}> <%= j raw t('graders.skip_empty_submissions') %>
+          checked={this.state.skip_empty_submissions}
+          onChange={this.skipEmptySubmissionsClicked}> <%= j raw t('graders.skip_empty_submissions') %>
         </input>);
       
       return (
@@ -124,19 +137,21 @@
           <ErrorDiv error={this.state.error} />
           <div className='skip-empty-submissions'>{skip_empty_submissions}</div>
           <div className='columns'>
-            <ReviewerTable ref="groupsTable"
+            <ReviewerTable ref="reviewerTable"
               groups={this.state.reviewer_groups}
               selected_groups={this.state.selected_groups}
-              onSelectedGroupsChange={this.updateSelectedGroups}
+              onSelectedGroupsChange={this.updateSelectedReviewerGroups}
               selected_students_in_groups={this.state.selected_students_in_groups}
               onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
               refresh={this.refresh} />
-            <CenterActionsColumn refresh={this.refresh}
-              performAction={this.performAction} />
-            <RevieweeTable ref="groupsTable"
+            <ActionsColumn refresh={this.refresh}
+              performAction={this.performAction}
+              selectedReviewerGroups={this.state.selected_reviewer_groups}
+              selectedRevieweeGroups={this.state.selected_reviewee_groups} />
+            <RevieweeTable ref="revieweeTable"
               groups={this.state.reviewee_groups}
               selected_groups={this.state.selected_groups}
-              onSelectedGroupsChange={this.updateSelectedGroups}
+              onSelectedGroupsChange={this.updateSelectedRevieweeGroups}
               selected_students_in_groups={this.state.selected_students_in_groups}
               onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
               refresh={this.refresh} />
@@ -168,15 +183,15 @@
     },
 
     studentCheckboxClicked: function(event) {
-//      var value = event.currentTarget.checked;
-//      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
-//      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
-//      if (value) {
-//        new_selected_students_in_groups.push(group_student_id);
-//      } else {
-//        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
-//      }
-//      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
+      var value = event.currentTarget.checked;
+      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
+      if (value) {
+        new_selected_students_in_groups.push(group_student_id);
+      } else {
+        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
+      }
+      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
     },
 
     clearCheckboxes: function() {
@@ -248,19 +263,18 @@
     },
 
     studentCheckboxClicked: function(event) {
-//      var value = event.currentTarget.checked;
-//      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
-//      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
-//      if (value) {
-//        new_selected_students_in_groups.push(group_student_id);
-//      } else {
-//        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
-//      }
-//      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
+      var value = event.currentTarget.checked;
+      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
+      if (value) {
+        new_selected_students_in_groups.push(group_student_id);
+      } else {
+        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
+      }
+      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
     },
 
     clearCheckboxes: function() {
-      console.log('yes');
       this.refs.table.clearCheckboxes();
     },
 
@@ -320,10 +334,39 @@
     }
   });
 
-  var CenterActionsColumn = React.createClass({
-    performAction: function(event) {
-      var action = event.currentTarget.getAttribute('id');
-      this.props.performAction(action);
+  var ActionsColumn = React.createClass({
+    performButtonAction: function(event) {
+      var dataToSend = {
+        actionString: event.currentTarget.getAttribute('id'),
+        selectedReviewerGroupIds: this.props.selectedReviewerGroups,
+        selectedRevieweeGroupIds: this.props.selectedRevieweeGroups
+      };
+
+      jQuery.ajax({
+        method: 'POST',
+        url: 'peer_reviews/assign_groups',
+        data: dataToSend,
+
+        success: function(data) {
+          this.props.refresh();
+          //this.refs.reviewerTable.clearCheckboxes();
+          //this.refs.revieweeTable.clearCheckboxes();
+          //this.refs.groupsTable.clearCheckboxes();
+          this.setState({
+            //selected_students: [],
+            //selected_groups: [],
+            //selected_students_in_groups: [],
+            error: null
+          });
+        }.bind(this),
+
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this)
+      });
     },
 
     render: function() {
@@ -334,21 +377,21 @@
               className='image_input'
               src='<%= image_path 'random_arrow.png' %>'
               alt='<%= j raw t('groups.randomly_assign_graders') %>'
-              onClick={this.performAction}
+              onClick={this.performButtonAction}
               type='image'
             />
             <input id='assign'
               className='image_input'
               src='<%= image_path('add_arrow.png') %>'
               alt='<%= j raw t('add_members') %>'
-              onClick={this.performAction}
+              onClick={this.performButtonAction}
               type='image'
             />
             <input id='unassign'
               className='image_input'
               src='<%= image_path('remove_arrow.png') %>'
               alt='<%= j raw t('remove_members') %>'
-              onClick={this.performAction}
+              onClick={this.performButtonAction}
               type='image'
             />
           </div>
