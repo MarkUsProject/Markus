@@ -24,15 +24,17 @@ class PeerReviewsController < ApplicationController
 
   def populate
     @assignment = Assignment.find(params[:assignment_id])  # Needed for the following functions.
-    reviewer_groups = get_groupings_table_info
+    reviewer_groups = get_groupings_table_info()
     reviewee_groups = get_groupings_table_info(@assignment.parent_assignment)
-    peer_review_map = populate_peer_reviews(reviewer_groups, reviewee_groups)
-    id_to_group_names_map = populate_all_group_names(reviewer_groups, reviewee_groups)
-    render json: [reviewer_groups, reviewee_groups, peer_review_map, id_to_group_names_map]
+    reviewee_to_reviewers_map = create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
+    id_to_group_names_map = create_map_group_id_to_name(reviewer_groups, reviewee_groups)
+    num_reviews_map = create_map_number_of_reviews_for_reviewer(reviewee_to_reviewers_map)
+    render json: [reviewer_groups, reviewee_groups, reviewee_to_reviewers_map,
+                  id_to_group_names_map, num_reviews_map]
   end
 
-  # Should return a dict of: reviewee_id => [list of reviewers].
-  def populate_peer_reviews(reviewer_groups, reviewee_groups)
+  # Returns a dict of: reviewee_id => [list of reviewers].
+  def create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
     reviewer_ids = []
     reviewer_groups.each { |reviewer| reviewer_ids.push(reviewer['id']) }
 
@@ -51,14 +53,16 @@ class PeerReviewsController < ApplicationController
     return peer_review_map
   end
 
-  def populate_all_group_names(reviewer_groups, reviewee_groups)
+  # Returns a map of group id => names.
+  def create_map_group_id_to_name(reviewer_groups, reviewee_groups)
     # We need to get every possible group so we have a big map of everyone that
-    # is present in both tables.
+    # is present in both tables. This means ids from both the reviewers and the
+    # reviewees group, since this data is eligible for use in both tables.
     unique_group_ids = {}
     reviewer_groups.each { |reviewer| unique_group_ids[reviewer['id']] = 0 }
     reviewee_groups.each { |reviewee| unique_group_ids[reviewee['id']] = 0 }
 
-    # Compress them into a single list so we can pass it off as a query.
+    # Compress into a single list so we can pass it off as a query.
     id_to_group_name_list = []
     unique_group_ids.each do |key, val|
       id_to_group_name_list.push(key)
@@ -72,6 +76,23 @@ class PeerReviewsController < ApplicationController
     end
 
     return id_to_group_name_map
+  end
+
+  # TODO - should this go in the view logic instead of here? (may needed for random assign though)
+  # Returns a map of reviewer_id => num_of_reviews
+  def create_map_number_of_reviews_for_reviewer(reviewee_to_reviewers_map)
+    number_of_reviews_for_reviewer = {}
+
+    reviewee_to_reviewers_map.each do |reviewee_id_key, list_reviewers_id_array|
+      list_reviewers_id_array.each do |reviewer_id|
+        unless number_of_reviews_for_reviewer.key?(reviewer_id)
+          number_of_reviews_for_reviewer[reviewer_id] = 0
+        end
+        number_of_reviews_for_reviewer[reviewer_id] += 1
+      end
+    end
+
+    return number_of_reviews_for_reviewer
   end
 
   def assign_groups

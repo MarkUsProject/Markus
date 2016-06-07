@@ -10,6 +10,7 @@
         selectedReviewerGroups: [],
         selectedRevieweeGroups: [],
         revieweeToReviewers: {},
+        reviewerToNumReviews: {},
         groupIdToName: {},
         error: null
       };
@@ -58,7 +59,8 @@
             reviewerGroups: data[0],
             revieweeGroups: data[1],
             revieweeToReviewers: data[2],
-            groupIdToName: data[3]
+            groupIdToName: data[3],
+            reviewerToNumReviews: data[4]
           });
         }.bind(this)
       });
@@ -78,6 +80,7 @@
           <div className='columns'>
             <ReviewerTable ref="reviewerTable"
               groups={this.state.reviewerGroups}
+              reviewerToNumReviews={this.state.reviewerToNumReviews}
               onSelectedGroupsChange={this.updateSelectedReviewerGroups}
               refresh={this.refresh} />
             <ActionsColumn refresh={this.refresh}
@@ -132,18 +135,15 @@
       ];
 
       // Massage the data so it will fit into the table.
+      var hashmap = this.props.reviewerToNumReviews;
       var groups_data = this.props.groups.map(function(group) {
+        var numReviews = 0;
+        if (hashmap.hasOwnProperty(group.id))
+          numReviews = hashmap[group.id];
         var g = {};
-        var members = [];
-        for (var i = 0; i < group.members.length; i++) {
-          members.push(<div key={group.members[i].id}>{group.members[i].user_name}</div>);
-        }
         g['id'] = group.id;
         g['name'] = group.name;
-        g['members'] = members;
-        g['valid'] = group.valid;
-        g['links'] = group.id;
-        g['groups'] = <b>0</b>;
+        g['groups'] = numReviews;
         return g;
       }.bind(this));
 
@@ -163,7 +163,7 @@
     }
   });
 
-  // The table of groups on the right.
+  // The table of peer reviewees and assigned reviewers on the right.
   var RevieweeTable = React.createClass({
     getDefaultProps: function() {
       return {
