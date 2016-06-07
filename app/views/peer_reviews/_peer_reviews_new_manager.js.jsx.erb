@@ -9,6 +9,8 @@
         reviewee_groups: [],
         selected_reviewer_groups: [],
         selected_reviewee_groups: [],
+        reviewee_to_reviewers: {},
+        id_to_group_name: {},
         error: null,
 
         // Ones to be removed below:
@@ -47,43 +49,6 @@
     updateSelectedStudentsInGroups: function(students) {
       //this.setState({selected_students_in_groups: students});
     },
-
-    // Sends a request to the server to perform some action
-    // such as assigning or removing a member to/from a group
-    // todo: function should be moved to actions column (separation of concerns)
-    performAction: function(action) {
-      var dataLoad = {
-        submit_type: 'global_action',
-        global_actions: action,
-        students: this.state.selected_students,
-        students_to_remove: this.state.selected_students_in_groups,
-        groupings: this.state.selected_groups
-      };
-
-      jQuery.ajax({
-        method: 'POST',
-        url: 'groups/global_actions',
-        data: dataLoad,
-        success: function(data) {
-          this.refresh();
-          // The two below are broken due to reworking, but this function isn't used anyways.
-          this.refs.groupsStudentsTable.clearCheckboxes();
-          this.refs.groupsTable.clearCheckboxes();
-          this.setState({
-            selected_students: [],
-            selected_groups: [],
-            selected_students_in_groups: [],
-            error: null
-          });
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        }.bind(this)
-      });
-    },
     // =================================
     // =================================
     // =================================
@@ -119,7 +84,9 @@
           document.getElementById('working').style.display = 'none';
           this.setState({
             reviewer_groups: data[0],
-            reviewee_groups: data[1]
+            reviewee_groups: data[1],
+            reviewee_to_reviewers: data[2],
+            id_to_group_name: data[3]
           });
         }.bind(this)
       });
@@ -131,7 +98,8 @@
           checked={this.state.skip_empty_submissions}
           onChange={this.skipEmptySubmissionsClicked}> <%= j raw t('graders.skip_empty_submissions') %>
         </input>);
-      
+
+      // TODO - remove pointless methods/props we don't use anymore.
       return (
         <div>
           <ErrorDiv error={this.state.error} />
@@ -145,7 +113,6 @@
               onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
               refresh={this.refresh} />
             <ActionsColumn refresh={this.refresh}
-              performAction={this.performAction}
               selectedReviewerGroups={this.state.selected_reviewer_groups}
               selectedRevieweeGroups={this.state.selected_reviewee_groups} />
             <RevieweeTable ref="revieweeTable"
@@ -154,6 +121,8 @@
               onSelectedGroupsChange={this.updateSelectedRevieweeGroups}
               selected_students_in_groups={this.state.selected_students_in_groups}
               onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
+              revieweeToReviewersMap={this.state.reviewee_to_reviewers}
+              idToGroupName={this.state.id_to_group_name}
               refresh={this.refresh} />
           </div>
         </div>
@@ -180,18 +149,6 @@
           },
         ],
       };
-    },
-
-    studentCheckboxClicked: function(event) {
-      var value = event.currentTarget.checked;
-      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
-      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
-      if (value) {
-        new_selected_students_in_groups.push(group_student_id);
-      } else {
-        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
-      }
-      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
     },
 
     clearCheckboxes: function() {
@@ -262,18 +219,6 @@
       };
     },
 
-    studentCheckboxClicked: function(event) {
-      var value = event.currentTarget.checked;
-      var group_student_id = parseInt(event.currentTarget.getAttribute('id'), 10);
-      var new_selected_students_in_groups = this.props.selected_students_in_groups.slice();
-      if (value) {
-        new_selected_students_in_groups.push(group_student_id);
-      } else {
-        new_selected_students_in_groups.splice(new_selected_students_in_groups.indexOf(group_student_id), 1);
-      }
-      this.props.onSelectedStudentsInGroupsChange(new_selected_students_in_groups);
-    },
-
     clearCheckboxes: function() {
       this.refs.table.clearCheckboxes();
     },
@@ -291,30 +236,21 @@
 
       // Massage the data so it will fit into the table.
       var groups_data = this.props.groups.map(function(group) {
+        var reviewerGroups = [];
+        var reviewee_group_id = group.group_id;
+        var reviewer_ids = this.props.revieweeToReviewersMap[reviewee_group_id];
+        for (var j = 0; j < reviewer_ids.length; j++) {
+          var reviewer_group_id = reviewer_ids[j];
+          var reviewer_group_name = this.props.idToGroupName[reviewer_group_id];
+          // TODO - Need to maintain a list of checked people and updated checked="..."
+          reviewerGroups.push(<div key={reviewer_group_id}>
+            <input id={reviewer_group_id} type='checkbox' checked={false}/> {reviewer_group_name}</div>);
+        }
+
         var g = {};
-        var links = [];
-        if (group.valid) {
-          links.push(group.invalidate_link);
-        } else {
-          links.push(group.validate_link);
-        }
-        links.push(group.rename_link);
-        links.push(group.note_link);
-        links.push(group.delete_link);
-        var members = [];
-        for (var i = 0; i < group.members.length; i++) {
-          members.push(<div key={group.members[i].id}>
-          <input id={group.members[i].id}
-            type='checkbox'
-            checked={this.props.selected_students_in_groups.indexOf(group.members[i].id) !== -1}
-            onChange={this.studentCheckboxClicked} /> {group.members[i].user_name}</div>);
-        }
         g['id'] = group.id;
         g['name'] = group.name;
-        g['links'] = <span onClick={this.props.refresh} dangerouslySetInnerHTML={{__html: links.join(' ')}} ></span>
-        g['members'] = <b>None</b>
-        g['valid'] = group.valid;
-
+        g['members'] = reviewerGroups;
         return g;
       }.bind(this));
 
@@ -349,22 +285,12 @@
 
         success: function(data) {
           this.props.refresh();
-          //this.refs.reviewerTable.clearCheckboxes();
-          //this.refs.revieweeTable.clearCheckboxes();
-          //this.refs.groupsTable.clearCheckboxes();
-          this.setState({
-            //selected_students: [],
-            //selected_groups: [],
-            //selected_students_in_groups: [],
-            error: null
-          });
+          this.setState({ error: null });
         }.bind(this),
 
         error: function(xhr, status, text) {
           var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
+          this.setState({ error: error });
         }.bind(this)
       });
     },
