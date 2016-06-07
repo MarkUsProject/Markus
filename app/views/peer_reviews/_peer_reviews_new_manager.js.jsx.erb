@@ -5,20 +5,13 @@
   var PeerReviewsManager = React.createClass({
     getInitialState: function() {
       return {
-        reviewer_groups: [],
-        reviewee_groups: [],
-        selected_reviewer_groups: [],
-        selected_reviewee_groups: [],
-        reviewee_to_reviewers: {},
-        id_to_group_name: {},
-        error: null,
-
-        // Ones to be removed below:
-        students: [],
-        selected_students: [],
-        groups: [],
-        selected_groups: [],
-        selected_students_in_groups: []
+        reviewerGroups: [],
+        revieweeGroups: [],
+        selectedReviewerGroups: [],
+        selectedRevieweeGroups: [],
+        revieweeToReviewers: {},
+        groupIdToName: {},
+        error: null
       };
     },
 
@@ -27,31 +20,12 @@
     },
 
     updateSelectedReviewerGroups: function(reviewerGroups) {
-      this.setState({selected_reviewer_groups: reviewerGroups});
+      this.setState({selectedReviewerGroups: reviewerGroups});
     },
 
     updateSelectedRevieweeGroups: function(revieweeGroups) {
-      this.setState({selected_reviewee_groups: revieweeGroups});
+      this.setState({selectedRevieweeGroups: revieweeGroups});
     },
-
-    // TODO - FUNCTIONS TO REMOVE AT SOME POINT
-    // =================================
-    // =================================
-    // =================================
-    updateSelectedStudents: function(students) {
-      //this.setState({selected_students: students});
-    },
-
-    updateSelectedGroups: function(groups) {
-      //this.setState({selected_groups: groups});
-    },
-
-    updateSelectedStudentsInGroups: function(students) {
-      //this.setState({selected_students_in_groups: students});
-    },
-    // =================================
-    // =================================
-    // =================================
 
     componentDidMount: function () {
       var me = this;
@@ -66,9 +40,7 @@
     // Asks for new info from backend and sets state accordingly.
     refresh: function() {
       // Since these will not be present at the beginning, we only want to
-      // invoke them when React populates the refs with the values.
-      // Also, hasOwnProperty() works in all browsers the best out of all the
-      // property checking options, and thus was chosen.
+      // invoke them when React populates the refs with the values..
       if (this.refs.hasOwnProperty('reviewerTable'))
         this.refs.reviewerTable.clearCheckboxes();
       if (this.refs.hasOwnProperty('revieweeTable'))
@@ -83,10 +55,10 @@
         success: function(data) {
           document.getElementById('working').style.display = 'none';
           this.setState({
-            reviewer_groups: data[0],
-            reviewee_groups: data[1],
-            reviewee_to_reviewers: data[2],
-            id_to_group_name: data[3]
+            reviewerGroups: data[0],
+            revieweeGroups: data[1],
+            revieweeToReviewers: data[2],
+            groupIdToName: data[3]
           });
         }.bind(this)
       });
@@ -99,30 +71,23 @@
           onChange={this.skipEmptySubmissionsClicked}> <%= j raw t('graders.skip_empty_submissions') %>
         </input>);
 
-      // TODO - remove pointless methods/props we don't use anymore.
       return (
         <div>
           <ErrorDiv error={this.state.error} />
           <div className='skip-empty-submissions'>{skip_empty_submissions}</div>
           <div className='columns'>
             <ReviewerTable ref="reviewerTable"
-              groups={this.state.reviewer_groups}
-              selected_groups={this.state.selected_groups}
+              groups={this.state.reviewerGroups}
               onSelectedGroupsChange={this.updateSelectedReviewerGroups}
-              selected_students_in_groups={this.state.selected_students_in_groups}
-              onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
               refresh={this.refresh} />
             <ActionsColumn refresh={this.refresh}
-              selectedReviewerGroups={this.state.selected_reviewer_groups}
-              selectedRevieweeGroups={this.state.selected_reviewee_groups} />
+              selectedReviewerGroups={this.state.selectedReviewerGroups}
+              selectedRevieweeGroups={this.state.selectedRevieweeGroups} />
             <RevieweeTable ref="revieweeTable"
-              groups={this.state.reviewee_groups}
-              selected_groups={this.state.selected_groups}
+              groups={this.state.revieweeGroups}
+              revieweeToReviewersMap={this.state.revieweeToReviewers}
+              groupIdToName={this.state.groupIdToName}
               onSelectedGroupsChange={this.updateSelectedRevieweeGroups}
-              selected_students_in_groups={this.state.selected_students_in_groups}
-              onSelectedStudentsInGroupsChange={this.updateSelectedStudentsInGroups}
-              revieweeToReviewersMap={this.state.reviewee_to_reviewers}
-              idToGroupName={this.state.id_to_group_name}
               refresh={this.refresh} />
           </div>
         </div>
@@ -241,7 +206,7 @@
         var reviewer_ids = this.props.revieweeToReviewersMap[reviewee_group_id];
         for (var j = 0; j < reviewer_ids.length; j++) {
           var reviewer_group_id = reviewer_ids[j];
-          var reviewer_group_name = this.props.idToGroupName[reviewer_group_id];
+          var reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
           // TODO - Need to maintain a list of checked people and updated checked="..."
           reviewerGroups.push(<div key={reviewer_group_id}>
             <input id={reviewer_group_id} type='checkbox' checked={false}/> {reviewer_group_name}</div>);
