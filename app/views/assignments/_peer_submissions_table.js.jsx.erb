@@ -1,0 +1,399 @@
+<script type='text/jsx'>
+  /** @jsx React.DOM */
+  var MAX_TAGS = 5;
+
+  var SubmissionsTable = React.createClass({
+    getDefaultProps: function() {
+      // Defines the columns used for the table and whether they
+      // are sortable searchable. The default initially sorted
+      // column is the first sortable column in the array.
+      return {
+        columns: [
+          {
+            id: 'group_name',
+            content: '<%= j raw I18n.t(:'browse_submissions.group_name') %>',
+            sortable: true,
+            compare: compare_anchor_text,
+            searchable: true
+          },
+          {
+            id: 'repository',
+            content: '<%= j raw I18n.t(:'browse_submissions.repository') %>',
+            sortable: true,
+            compare: compare_anchor_text,
+            searchable: true
+          },
+          <%= raw @section_column  %>
+          {
+            id: 'commit_date',
+            content: '<%= j raw I18n.t(:'browse_submissions.commit_date') %>',
+            sortable: true,
+            compare: compare_dates,
+            searchable: false
+          },
+          {
+            id: 'marking_state',
+            content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
+            sortable: true,
+            searchable: false
+          },
+          <%= raw @grace_credit_column %>
+          {
+            id: 'tags',
+            content: <ul className='tag_list' dangerouslySetInnerHTML={{__html: '<li>' +
+                  '<%= j raw I18n.t(:'browse_submissions.tags_used') %>' +
+                  /* TODO: Use this code to complete a tag search feature
+                     in the table.
+                    '<ul class="tag_dropdown">' +
+                    '<li class="tag_list_title">' +
+                      '<%= j raw I18n.t(:'browse_submissions.tags_search') %>' +
+                    '</li>' +
+                    '<li class="tag_list_search">' +
+                      '<%= text_field_tag 'name' %>' +
+                    '</li>' +
+                    '<li class="tag_list_title">' +
+                      '<%= j raw I18n.t(:'browse_submissions.tags_list') %>' +
+                    '</li>'
+                  '</ul>' +*/
+                '</li>'}} />,
+            sortable: false,
+            searchable: false
+          },
+          {
+            id: 'final_grade',
+            content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
+            sortable: true,
+            compare: compare_numeric_values,
+            searchable: false
+          }
+        ],
+        filters: [
+          {
+            name: 'all',
+            text: '<%= j raw t(:'browse_submissions.show_all') %>',
+            func: function(submission) {
+              return true;
+            }
+          },
+          {
+            name: 'unmarked',
+            text: '<%= j raw t(:'browse_submissions.show_unmarked') %>',
+            func: function(submission) {
+              return submission.state == 'unmarked';
+            }
+          },
+          {
+            name: 'partial',
+            text: '<%= j raw t(:'browse_submissions.show_partial') %>',
+            func: function(submission) {
+              return submission.state == 'partial';
+            }
+          },
+          {
+            name: 'complete',
+            text: '<%= j raw t(:'browse_submissions.show_complete') %>',
+            func: function(submission) {
+              return submission.state == 'completed';
+            }
+          },
+          {
+            name: 'released',
+            text: '<%= j raw t(:'browse_submissions.show_released') %>',
+            func: function(submission) {
+              return submission.state == 'released';
+            }
+          },
+          {
+            name: 'remark_requested',
+            text: '<%= j raw t(:'browse_submissions.show_remark_request') %>',
+            func: function(submission) {
+              return submission.state == 'remark';
+            }
+          }
+        ]
+      };
+    },
+    getInitialState: function() {
+      return {
+        error: [],
+        success: [],
+        submissions: [],
+        selected_submissions: [],
+      };
+    },
+    componentWillMount: function() {
+      this.refresh();
+    },
+    updateSelectedSubmissions: function(submissions) {
+      this.setState({selected_submissions: submissions});
+    },
+    // Asks for new info from backend and sets props accordingly.
+    refresh: function() {
+      // Show working indicator.
+      document.getElementById('working').style.display = '';
+
+      jQuery.ajax({
+        url: 'submissions/populate_peer_submissions_table',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          this.setState({error: []});
+          jQuery.each(data, function (submission) {
+            if (submission.error !== undefined && submission.error !== '') {
+              this.setState({error: this.state.error.concat([submission.error])});
+            }
+          }.bind(this));
+          this.setState({
+            submissions: data,
+          });
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.setState({
+            error: error
+          });
+        }.bind(this),
+        // Close working indicator.
+        complete: function() {
+          document.getElementById('working').style.display = 'none';
+        }
+      });
+    },
+    onError: function(error) {
+      this.setState({error: error});
+    },
+    onSuccess: function(success) {
+      this.setState({success: success});
+    },
+    renderMarkingState: function(state) {
+      if (state === 'unmarked') {
+        return (<%= image_tag('icons/shape_square.png',
+                              alt: t('marking_state.not_collected'),
+                              title: t('marking_state.not_collected')) %>);
+      } else if (state === 'partial') {
+        return (<%= image_tag('icons/pencil.png',
+                              alt: t('marking_state.in_progress'),
+                              title: t('marking_state.in_progress')) %>);
+      } else if (state === 'completed') {
+        return (<%= image_tag('icons/accept.png',
+                              alt: t('marking_state.completed'),
+                              title: t('marking_state.completed')) %>);
+      } else if (state === 'released') {
+        return (<%= image_tag('icons/email_go.png',
+                              alt: t('marking_state.released'),
+                              title: t('marking_state.released')) %>);
+      } else if (state === 'remark') {
+        return (<%= image_tag('icons/double_exclamation.png',
+                              alt: t('marking_state.remark_requested'),
+                              title: t('marking_state.remark_requested')) %>);
+      } else {
+        return 'Invalid marking state';
+      }
+    },
+
+    render: function() {
+      // Do student-specific table stuff here.
+      // possibly move this to getdefaultprops.
+
+      // need to filter for each section
+      var sections = <%= raw @sections.to_json %>;
+      if (sections.length > 0) {
+        var section_filters = sections.map(function(section) {
+          var filter = {
+            name: section.name,
+            text: section.name,
+            func: function(group) {
+              return group.section === section.name;
+            }
+          };
+          return filter;
+        });
+        var all = '<%= I18n.t('browse_submissions.sections.all') %>';
+        section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
+      }
+
+      var submissions_data = this.state.submissions.map(function(submission) {
+        var s = {};
+        s['id'] = submission.id;
+        if (submission.name_url === '') {
+          s['group_name'] = <span>{submission.name}</span>;
+        } else {
+          s['group_name'] = <a href={submission.name_url}>{submission.name}</a>;
+        }
+        if (submission.error !== '') {
+          s['class_name'] = "submission_error";
+        } else {
+          var tag_list = []
+          for (var i = 0; i < MAX_TAGS && i < submission.tags.length; i++) {
+            tag_list.push(<span className='tag_element'>{submission.tags[i].name}</span>);
+          }
+
+          s['class_name'] = submission.class_name;
+          if (!submission.has_files) {
+            s['repository'] = (<span>
+              <%= image_tag('icons/folder_error.png',
+                            title: t(:no_files_submitted)) %>
+              <a href={submission.repo_url}>{submission.repo_name}</a>
+            </span>);
+          } else {
+            s['repository'] = <a href={submission.repo_url}>{submission.repo_name}</a>;
+          }
+          if (submission.late_commit) {
+            s['commit_date'] = (<span>
+              <%= image_tag('icons/clock_error.png',
+                            title: t(:past_due_date_edit_result_warning,
+                            href: t(:last_commit))) %>
+              {submission.commit_date}
+            </span>);
+          } else {
+            s['commit_date'] = submission.commit_date;
+          }
+          s['state'] = submission.state;
+          s['marking_state'] = this.renderMarkingState(submission.state);
+          s['grace_credits_used'] = submission.grace_credits_used;
+          s['tags'] = <div className='tag_list'>{tag_list}</div>;
+          s['final_grade'] = submission.final_grade;
+          s['section'] = submission.section;
+          s['has_files'] = submission.has_files;
+        }
+        return s;
+      }.bind(this));
+
+        return (
+          <div>
+            <ErrorDiv error={this.state.error} />
+            <SuccessDiv success={this.state.success} />
+            <SubmissionsActionBox
+              selected_submissions={this.state.selected_submissions}
+              onError={this.onError}
+              onSuccess={this.onSuccess}
+              refresh={this.refresh}
+            />
+            <Table data={submissions_data}
+              columns={this.props.columns}
+              selectable={true}
+              filters={this.props.filters}
+              secondary_filters={section_filters}
+              filter_type={true}
+              onSelectedRowsChange={this.updateSelectedSubmissions}
+              search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
+            />
+          </div>
+        );
+    }
+  });
+
+  var SubmissionsActionBox = React.createClass({
+    propTypes: {
+      selected_submissions: React.PropTypes.array
+    },
+    releaseMarks: function() {
+      var dataLoad = {
+        release_results: true,
+        filter: 'none',
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_submissions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    unreleaseMarks: function() {
+      var dataLoad = {
+        release_results: false,
+        filter: 'none',
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_submissions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    uncollectAllSubmissions: function() {
+      var confirm = window.confirm("<%= t('collect_submissions.undo_results_loss_warning') %>");
+      if (!confirm) { return; }
+      jQuery.ajax({
+        method: 'GET',
+        url: 'uncollect_all_submissions',
+        success: function(data) {
+          if(data.message){
+            this.props.onSuccess(data.message);
+          }
+          if(data.error){
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    collectSubmissions: function() {
+      var confirm = window.confirm("<%= t('collect_submissions.results_loss_warning') %>");
+      if (!confirm) { return; }
+
+      var dataLoad = {
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'collect_submissions',
+        data: dataLoad,
+        success: function(data) {
+          if (data.success) {
+            this.props.onSuccess(data.success);
+            window.setInterval(this.props.refresh, 30000);
+          }
+          if (data.error) {
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    render: function() {
+      return (
+        <div className='react-release-marks'>
+          <% if @current_user.admin? %>
+            <button onClick={this.collectSubmissions}>
+              <%= j raw I18n.t('collect_submissions.collect') %>
+            </button>
+          <% end %>
+          <% if @assignment.can_uncollect_submissions? %>
+            <button onClick={this.uncollectAllSubmissions}
+                    data-remote="true">
+              <%=j raw I18n.t('collect_submissions.uncollect_all') %>
+            </button>
+          <% end %>
+          <button onClick={this.releaseMarks}>
+            <%= j raw I18n.t('browse_submissions.release_marks') %>
+          </button>
+          <button onClick={this.unreleaseMarks}>
+            <%= j raw I18n.t('browse_submissions.unrelease_marks') %>
+          </button>
+        </div>
+      );
+    }
+  });
+  React.renderComponent(<SubmissionsTable />, document.getElementById('peer_submissions_table'));
+</script>

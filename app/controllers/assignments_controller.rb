@@ -132,7 +132,8 @@ class AssignmentsController < ApplicationController
   end
 
   def peer_review
-    @assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:id])
+    @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
     if @assignment.is_hidden
       render 'shared/http_status',
              formats: [:html],
@@ -176,9 +177,9 @@ class AssignmentsController < ApplicationController
         rescue RuntimeError => @error
           flash_message(:error, 'Error')
         end
-        redirect_to action: 'student_interface', id: @assignment.id
+        redirect_to action: 'peer_review', id: @assignment.id
       else
-        render :student_interface
+        render :peer_review
       end
     else
       # We look for the information on this group...
@@ -188,17 +189,75 @@ class AssignmentsController < ApplicationController
       @group = @grouping.group
       # The inviter
       @inviter = @grouping.inviter
-
-      # Look up submission information
-      repo = @grouping.group.repo
-      @revision  = repo.get_latest_revision
-      @revision_number = @revision.revision_number
-
-      @last_modified_date = @grouping.assignment_folder_last_modified_date
-      @num_submitted_files = @grouping.number_of_submitted_files
-      @num_missing_assignment_files = @grouping.missing_assignment_files.length
-      repo.close
     end
+
+    @groupings = Grouping.get_groupings_for_assignment(@assignment,
+                                                       current_user)
+    @sections = Section.order(:name)
+    @available_sections = Hash.new
+    if @assignment.submission_rule.can_collect_now?
+      @available_sections[t('groups.unassigned_students')] = 0
+    end
+    if Section.all.size > 0
+      @section_column = "{
+        id: 'section',
+        content: '#{t(:'browse_submissions.section')}',
+        sortable: true
+      },"
+      Section.all.each do |section|
+        if @assignment.submission_rule.can_collect_now?(section)
+          @available_sections[section.name] = section.id
+        end
+      end
+    else
+      @section_column = ''
+    end
+
+    if @assignment.submission_rule.type == 'GracePeriodSubmissionRule'
+      @grace_credit_column = "{
+        id: 'grace_credits_used',
+        content: '#{t(:'browse_submissions.grace_credits_used')}',
+        sortable: true,
+        compare: compare_numeric_values,
+        searchable: false
+      },"
+    else
+      @grace_credit_column = ''
+    end
+
+    if @assignment.past_all_collection_dates?
+      flash_now(:notice, t('browse_submissions.grading_can_begin'))
+    else
+      if @assignment.section_due_dates_type
+        section_due_dates = Hash.new
+        now = Time.zone.now
+        Section.all.each do |section|
+          collection_time = @assignment.submission_rule
+                                .calculate_collection_time(section)
+          collection_time = now if now >= collection_time
+          if section_due_dates[collection_time].nil?
+            section_due_dates[collection_time] = Array.new
+          end
+          section_due_dates[collection_time].push(section.name)
+        end
+        section_due_dates.each do |collection_time, sections|
+          sections = sections.join(', ')
+          if(collection_time == now)
+            flash_now(:notice, t('browse_submissions.grading_can_begin_for_sections',
+                                 sections: sections))
+          else
+            flash_now(:notice, t('browse_submissions.grading_can_begin_after_for_sections',
+                                 time: I18n.l(collection_time, format: :long_date),
+                                 sections: sections))
+          end
+        end
+      else
+        collection_time = @assignment.submission_rule.calculate_collection_time
+        flash_now(:notice, t('browse_submissions.grading_can_begin_after',
+                             time: I18n.l(collection_time, format: :long_date)))
+      end
+    end
+    render layout: 'assignment_content'
   end
 
   # Displays "Manage Assignments" page for creating and editing

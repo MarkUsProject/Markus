@@ -16,7 +16,8 @@ class SubmissionsController < ApplicationController
                          :manually_collect_and_begin_grading,
                          :repo_browser,
                          :update_submissions,
-                         :populate_submissions_table]
+                         :populate_submissions_table,
+                         :populate_peer_submissions_table]
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
                        :manually_collect_and_begin_grading,
@@ -28,7 +29,8 @@ class SubmissionsController < ApplicationController
   before_filter :authorize_for_student,
                 only: [:file_manager,
                        :update_files,
-                       :populate_file_manager_react]
+                       :populate_file_manager_react,
+                       :populate_peer_submissions_table]
   before_filter :authorize_for_user, only: [:download, :downloads]
 
   def repo_browser
@@ -306,6 +308,15 @@ class SubmissionsController < ApplicationController
 
   def populate_submissions_table
     assignment = Assignment.find(params[:assignment_id])
+    groupings = Grouping.get_groupings_for_assignment(assignment,
+                                                      current_user)
+
+    render json: get_submissions_table_info(assignment, groupings)
+  end
+
+  def populate_peer_submissions_table
+    assignment_in = Assignment.find(params[:assignment_id])
+    assignment = assignment_in.is_peer_review? ? assignment_in : assignment_in.pr_assignment
     groupings = Grouping.get_groupings_for_assignment(assignment,
                                                       current_user)
 
