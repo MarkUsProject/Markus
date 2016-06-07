@@ -2,17 +2,15 @@
 @import 'common/columns';
 
 .col-left {
-  width: 8%;
-}
-
-// Pseudo-arbitrary number to accomodate the 'floating images' hack that should
-// be fixed in the future.
-.col-right {
-  width: 14%;
+  width: 30%;
 }
 
 .col-center #icons {
   left: 45%;
+}
+
+.col-right {
+  width: 30%;
 }
 
 .new_group {
@@ -40,6 +38,6 @@
 // center column (which is why the right side is not equal to the left).
 // TODO: Change the CSS for the floating middle column instead.
 #peer_reviews_manager {
-  padding-right: 25em;
-  padding-left: 19em;
+  padding-left: 22em;
+  padding-right: 35em;
 }
