@@ -3,7 +3,7 @@
 %>
 
 <li id="<%= "mark_criterion_#{mark_criterion.id}" %>">
-  <div class="criterion_title" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>" onclick="<%="focus_mark_criterion(#{mark_criterion.id})"%>">
+  <div class="criterion_title" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>" onclick="<%="focus_rubric_mark_criterion(#{mark_criterion.id})"%>">
     <div id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>"
       class="mark_criterion_expand expanded" >
       - &nbsp;
@@ -14,7 +14,8 @@
                         old_mark: old_mark} %>
 
     <div id="<%="criterion_info_#{mark_criterion.id}"%>">
-      <div class="mark_criterion_level_container">
+      <div class="mark_criterion_level_container" data-id="<%=mark_criterion.id%>"
+           data-scheme="<%= marking_scheme %>">
         <div class="cursor_hand">
           <table id="mark_<%=mark.id%>_table">
            <%
@@ -36,7 +37,8 @@
                       data-action="
                         <%= update_mark_assignment_submission_results_path(
                               mark_id: mark.id, mark: num_levels) %>"
-                      onclick="update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)">
+                      onclick="update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)"
+                      data-id="<%=mark_criterion.id%>" >
                      <strong><%=num_levels%>: <%= level_name %></strong>
                      &nbsp;<%=level_desc%>
                    </td>

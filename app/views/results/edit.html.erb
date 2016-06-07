@@ -52,11 +52,15 @@
     // Hide the criterion that AREN'T empty (i.e. are marked)
     // Check if the marks are released, if they are there is nothing to hide
     <% unless @result.released_to_students %>
-      jQuery('.mark_description').each(function() {
-        if (this.innerHTML.trim()) {
-          hide_criterion(parseInt(this.getAttribute('data-id'), 10));
-        }
-      });
+      <% if @assignment.marking_scheme_type == 'rubric' %>
+        jQuery('.mark_criterion_level_container').each(function() {
+          expand_rubric_unmarked(this);
+        });
+      <% else %>
+        jQuery('.mark_grade_input').each(function() {
+          expand_flexible_unmarked(this);
+        });
+      <% end %>
     <% end %>
   });
 
