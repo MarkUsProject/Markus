@@ -30,7 +30,7 @@
       <h2><%= t('submissions') %></h2>
 
       <div class='block_content'>
-        <% if !Assignment.find_by_id(@assignment.parent_assignment_id).past_all_due_dates? %>
+        <% if Assignment.find_by_id(@assignment.parent_assignment_id).past_all_collection_dates? %>
           <div id='peer_submissions_table'></div>
         <% else %>
           <p class='notice'><%= t('student.no_peer_submission_yet') %></p>

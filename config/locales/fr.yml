@@ -450,6 +450,7 @@ fr:
       repository_name:      "Répertoire : %{repository}"
       commit_date:          "Date d'envoi (commit)"
       marking_state:        "Affichage de la note"
+      review_state:         "Avis Etat"
       grace_credits_used:   "Utilisation des \"grace credits\""
       final_grade:          "Note finale"
       class_average:        "Moyenne : %{results_average}"

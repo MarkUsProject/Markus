@@ -62,7 +62,8 @@ class AssignmentsController < ApplicationController
   end
 
   def student_interface
-    @assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:id])
+    @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
     if @assignment.is_hidden
       render 'shared/http_status',
              formats: [:html],
@@ -191,40 +192,6 @@ class AssignmentsController < ApplicationController
       @inviter = @grouping.inviter
     end
 
-    @groupings = Grouping.get_groupings_for_assignment(@assignment,
-                                                       current_user)
-    @sections = Section.order(:name)
-    @available_sections = Hash.new
-    if @assignment.submission_rule.can_collect_now?
-      @available_sections[t('groups.unassigned_students')] = 0
-    end
-    if Section.all.size > 0
-      @section_column = "{
-        id: 'section',
-        content: '#{t(:'browse_submissions.section')}',
-        sortable: true
-      },"
-      Section.all.each do |section|
-        if @assignment.submission_rule.can_collect_now?(section)
-          @available_sections[section.name] = section.id
-        end
-      end
-    else
-      @section_column = ''
-    end
-
-    if @assignment.submission_rule.type == 'GracePeriodSubmissionRule'
-      @grace_credit_column = "{
-        id: 'grace_credits_used',
-        content: '#{t(:'browse_submissions.grace_credits_used')}',
-        sortable: true,
-        compare: compare_numeric_values,
-        searchable: false
-      },"
-    else
-      @grace_credit_column = ''
-    end
-
     if @assignment.past_all_collection_dates?
       flash_now(:notice, t('browse_submissions.grading_can_begin'))
     else
@@ -257,7 +224,6 @@ class AssignmentsController < ApplicationController
                              time: I18n.l(collection_time, format: :long_date)))
       end
     end
-    render layout: 'assignment_content'
   end
 
   # Displays "Manage Assignments" page for creating and editing

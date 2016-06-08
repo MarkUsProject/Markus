@@ -59,6 +59,12 @@ var Table = React.createClass({displayName: 'Table',
     selectable: React.PropTypes.bool, // True if you want checkboxed elements
     onSelectedRowsChange: React.PropTypes.func // function to call when selected rows change
   },
+  getDefaultProps: function() {
+      return {
+          search: true,
+          footer: true
+      }
+  },
   getInitialState: function() {
     var first_sortable_column = this.props.columns.filter(function(col) {
       return col.sortable == true;
@@ -207,6 +213,17 @@ var Table = React.createClass({displayName: 'Table',
         filter_type:this.props.filter_type
       });
     }
+    var footer_div = TableFooter( {columns:columns,
+      sort_column:this.state.sort_column,
+      sort_direction:this.state.sort_direction } );
+    if (!this.props.footer) {
+      footer_div = null;
+    }
+    var search_div = TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
+      placeholder:this.props.search_placeholder} )
+    if (!this.props.search) {
+      search_div = null;
+    }
     return (
       React.DOM.div( {className:"react-table"},
         TableFilter( {filters:this.props.filters,
@@ -215,8 +232,7 @@ var Table = React.createClass({displayName: 'Table',
           data:this.props.data,
           filter_type:this.props.filter_type} ),
         secondary_filter_div,
-        TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
-          placeholder:this.props.search_placeholder} ),
+        search_div,
         React.DOM.div( {className:"table"},
           React.DOM.table( {},
             TableHeader( {columns:columns,
@@ -228,9 +244,7 @@ var Table = React.createClass({displayName: 'Table',
               selectable:this.props.selectable,
               getVisibleRows:this.updateVisibleRows,
               state:this.state} ),
-            TableFooter( {columns:columns,
-              sort_column:this.state.sort_column,
-              sort_direction:this.state.sort_direction } )
+            footer_div
           )
         )
       )

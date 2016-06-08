@@ -425,6 +425,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       repository:           "Repositório"
       commit_date:          "Data de envio"
       marking_state:        "Status de avalição"
+      review_state:         "Estado de revisão"
       grace_credits_used:   "Créditos de tolerância usados"
       final_grade:          "Nota final"
       class_average:        "Média da classe: %{results_average}"

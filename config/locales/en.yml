@@ -469,6 +469,7 @@ en:
       repository:           "Repository"
       commit_date:          "Commit Date"
       marking_state:        "Marking State"
+      review_state:         "Review State"
       grace_credits_used:   "Grace Credits Used"
       final_grade:          "Final Grade"
       class_average:        "Class Average: %{results_average}"
