@@ -3,7 +3,7 @@
     <%= link_to truncate(criterion.name,
                                   length: 30,
                                   omission: '...'),
-            edit_assignment_flexible_criterium_path(@assignment.id, criterion.id),
+            edit_assignment_flexible_criterion_path(@assignment.id, criterion.id),
         id: "criterion_title_#{criterion.id}",
         remote: true %>
   </span>

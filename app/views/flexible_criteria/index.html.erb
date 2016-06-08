@@ -15,7 +15,7 @@
           document.getElementById('new_flexible_criterion_prompt').focus();
         } else {
           jQuery.ajax({
-            url: '" +new_assignment_flexible_criterium_path(@assignment.id) + "',
+            url: '" +new_assignment_flexible_criterion_path(@assignment.id) + "',
             type: 'GET'
           });
         }"%>
