@@ -17,10 +17,12 @@
                locals: {mark_criterion: mark_criterion,
                         mark: mark} %>
 
-    <div id="<%="criterion_info_#{mark_criterion.id}"%>"
-         class='flexible_criterion_info mark_criterion_level_container'
-         data-id="<%=mark_criterion.id%>" >
-      <%= mark_criterion.description %>
-    </div>
+    <% if mark_criterion.description != '' %>
+      <div id="<%="criterion_info_#{mark_criterion.id}"%>"
+           class='flexible_criterion_info mark_criterion_level_container'
+           data-id="<%=mark_criterion.id%>" >
+        <%= mark_criterion.description %>
+      </div>
+    <% end %>
   </div>
 </li>
