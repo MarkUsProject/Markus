@@ -480,13 +480,36 @@ ul.annotation_text_list {
   }
 }
 
+.expanded {
+
+  .rubric_criterion_level {
+    display: inline-block;
+  }
+
+  .flexible_criterion_info {
+    display: block;
+  }
+
+}
+
+.not_expanded {
+
+  .rubric_criterion_level {
+    display: none;
+  }
+
+  .flexible_criterion_info {
+    display: none;
+  }
+
+}
+
 .rubric_criterion_link {
   padding: 0.25em 0em !important;
 }
 
 .rubric_criterion_level {
   background: $white;
-  font-weight: bold;
 }
 
 .rubric_criterion_level_old_mark {
