@@ -148,8 +148,6 @@ class PeerReviewsController < ApplicationController
       reviewer_id_to_bool.each do |reviewer_id, dummy_value|
         reviewee_group = Grouping.find_by_id(reviewee_id)
         result_id = reviewee_group.current_submission_used.get_latest_result.id
-
-        #debugger
         pr = PeerReview.where(result_id: result_id, reviewer_id: reviewer_id).first
         pr.destroy
       end
