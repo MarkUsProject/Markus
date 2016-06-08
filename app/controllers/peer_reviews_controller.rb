@@ -22,6 +22,7 @@ class PeerReviewsController < ApplicationController
     end
   end
 
+  # TODO - Calls the groups table WAY too much... needs fixing
   def populate
     @assignment = Assignment.find(params[:assignment_id])  # Needed for the following functions.
     reviewer_groups = get_groupings_table_info()
@@ -99,26 +100,25 @@ class PeerReviewsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     selected_reviewer_group_ids = params[:selectedReviewerGroupIds]
     selected_reviewee_group_ids = params[:selectedRevieweeGroupIds]
+    reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups]
     action_string = params[:actionString]
-
-    if selected_reviewer_group_ids.size == 0
-      render text: 'Cannot have an empty list of reviewers', status: 400
-      return
-    elsif selected_reviewee_group_ids.size == 0
-      render text: 'Cannot have an empty list of reviewees', status: 400
-      return
-    end
-
-    reviewer_groups = Grouping.where(id: selected_reviewer_group_ids)
-    reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
 
     case action_string
       when 'random_assign'
-        randomly_assign(reviewer_groups, reviewee_groups)
+        randomly_assign
       when 'assign'
+        if selected_reviewer_group_ids.size == 0
+          render text: 'Cannot have an empty list of reviewers', status: 400
+          return
+        elsif selected_reviewee_group_ids.size == 0
+          render text: 'Cannot have an empty list of reviewees', status: 400
+          return
+        end
+        reviewer_groups = Grouping.where(id: selected_reviewer_group_ids)
+        reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
         assign(reviewer_groups, reviewee_groups)
       when 'unassign'
-        unassign(reviewer_groups, reviewee_groups)
+        unassign(reviewers_to_remove_from_reviewees_map)
       else
         render text: 'Unexpected action type', status: 400
         return
@@ -127,12 +127,12 @@ class PeerReviewsController < ApplicationController
     head :ok
   end
 
-  def randomly_assign(reviewer_groups, reviewee_groups)
+  def randomly_assign
     # TODO
   end
 
   def assign(reviewer_groups, reviewee_groups)
-    # TODO - Do not allow assigning if the user is already assigned
+    # TODO - Do not allow assigning if the user is already assigned (maybe put unique constraints on the table instead?)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
         # TODO - is this okay to do? should the result be cached? or does rails do this for us transparently?
@@ -142,8 +142,18 @@ class PeerReviewsController < ApplicationController
     end
   end
 
-  def unassign(reviewer_groups, reviewee_groups)
-    # TODO
+  # TODO - Can this be optimized... without going to raw SQL?
+  def unassign(reviewers_to_remove_from_reviewees_map)
+    reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
+      reviewer_id_to_bool.each do |reviewer_id, dummy_value|
+        reviewee_group = Grouping.find_by_id(reviewee_id)
+        result_id = reviewee_group.current_submission_used.get_latest_result.id
+
+        #debugger
+        pr = PeerReview.where(result_id: result_id, reviewer_id: reviewer_id).first
+        pr.destroy
+      end
+    end
   end
 
   def groupings_with_assoc(assignment, options = {})

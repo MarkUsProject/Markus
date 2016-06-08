@@ -9,6 +9,7 @@
         revieweeGroups: [],
         selectedReviewerGroups: [],
         selectedRevieweeGroups: [],
+        selectedReviewerInRevieweeGroups: {},  // [reviewee][reviewer]
         revieweeToReviewers: {},
         reviewerToNumReviews: {},
         groupIdToName: {},
@@ -26,6 +27,27 @@
 
     updateSelectedRevieweeGroups: function(revieweeGroups) {
       this.setState({selectedRevieweeGroups: revieweeGroups});
+    },
+
+    updatedSelectedReviewersInRevieweesTable: function(reviewerGroupId, revieweeGroupId, isChecked) {
+      // TODO - make into a clearer function...
+      if (!(revieweeGroupId in this.state.selectedReviewerInRevieweeGroups))
+        this.state.selectedReviewerInRevieweeGroups[revieweeGroupId] = {};
+
+      // TODO - also clean up...
+      if (isChecked) {
+        if (!(reviewerGroupId in this.state.selectedReviewerInRevieweeGroups[revieweeGroupId])) {
+          this.state.selectedReviewerInRevieweeGroups[revieweeGroupId][reviewerGroupId] = true;
+        }
+      } else {
+        if (reviewerGroupId in this.state.selectedReviewerInRevieweeGroups[revieweeGroupId]) {
+          delete this.state.selectedReviewerInRevieweeGroups[revieweeGroupId][reviewerGroupId];
+        }
+      }
+
+      // While this is technically pointless, some kind of command is needed
+      // to get react to re-issue a re-rendering of its components.
+      this.setState({selectedReviewerInRevieweeGroups: this.state.selectedReviewerInRevieweeGroups});
     },
 
     componentDidMount: function () {
@@ -56,6 +78,7 @@
         success: function(data) {
           document.getElementById('working').style.display = 'none';
           this.setState({
+            selectedReviewerInRevieweeGroups: {},
             reviewerGroups: data[0],
             revieweeGroups: data[1],
             revieweeToReviewers: data[2],
@@ -85,11 +108,14 @@
               refresh={this.refresh} />
             <ActionsColumn refresh={this.refresh}
               selectedReviewerGroups={this.state.selectedReviewerGroups}
-              selectedRevieweeGroups={this.state.selectedRevieweeGroups} />
+              selectedRevieweeGroups={this.state.selectedRevieweeGroups}
+              selectedReviewerInRevieweeGroups={this.state.selectedReviewerInRevieweeGroups} />
             <RevieweeTable ref="revieweeTable"
               groups={this.state.revieweeGroups}
               revieweeToReviewersMap={this.state.revieweeToReviewers}
               groupIdToName={this.state.groupIdToName}
+              onReviewerChangeInRevieweeTable={this.updatedSelectedReviewersInRevieweesTable}
+              selectedReviewerInRevieweeGroups={this.state.selectedReviewerInRevieweeGroups}
               onSelectedGroupsChange={this.updateSelectedRevieweeGroups}
               refresh={this.refresh} />
           </div>
@@ -188,6 +214,22 @@
       this.refs.table.clearCheckboxes();
     },
 
+    reviewerInRevieweeChange: function(event) {
+      var isChecked = event.currentTarget.checked;
+      var id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var reviewerGroupId = parseInt(event.currentTarget.getAttribute('data-reviewer-group-id'), 10);
+      var revieweeGroupId = parseInt(event.currentTarget.getAttribute('data-reviewee-group-id'), 10);
+      this.props.onReviewerChangeInRevieweeTable(reviewerGroupId, revieweeGroupId, isChecked);
+    },
+
+    // Required because of Javascript's variable hoisting.
+    checkboxShouldBeChecked: function(reviewee_group_id, reviewer_group_id) {
+      var returnVal = false;
+      if (reviewee_group_id in this.props.selectedReviewerInRevieweeGroups)
+        returnVal = reviewer_group_id in this.props.selectedReviewerInRevieweeGroups[reviewee_group_id];
+      return returnVal;
+    },
+
     render: function() {
       var filters = [
         {
@@ -207,9 +249,13 @@
         for (var j = 0; j < reviewer_ids.length; j++) {
           var reviewer_group_id = reviewer_ids[j];
           var reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
-          // TODO - Need to maintain a list of checked people and updated checked="..."
           reviewerGroups.push(<div key={reviewer_group_id}>
-            <input id={reviewer_group_id} type='checkbox' checked={false}/> {reviewer_group_name}</div>);
+            <input id={reviewer_group_id}
+              type='checkbox'
+              data-reviewer-group-id={reviewer_group_id}
+              data-reviewee-group-id={reviewee_group_id}
+              checked={this.checkboxShouldBeChecked(reviewee_group_id, reviewer_group_id)}
+              onChange={this.reviewerInRevieweeChange}/> {reviewer_group_name}</div>);
         }
 
         var g = {};
@@ -240,7 +286,8 @@
       var dataToSend = {
         actionString: event.currentTarget.getAttribute('id'),
         selectedReviewerGroupIds: this.props.selectedReviewerGroups,
-        selectedRevieweeGroupIds: this.props.selectedRevieweeGroups
+        selectedRevieweeGroupIds: this.props.selectedRevieweeGroups,
+        selectedReviewerInRevieweeGroups: this.props.selectedReviewerInRevieweeGroups
       };
 
       jQuery.ajax({
