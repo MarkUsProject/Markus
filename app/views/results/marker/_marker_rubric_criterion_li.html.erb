@@ -3,7 +3,7 @@
 %>
 
 <li id="<%= "mark_criterion_#{mark_criterion.id}" %>" class="expanded">
-  <div class="criterion_title" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>" onclick="<%="focus_rubric_mark_criterion(#{mark_criterion.id})"%>">
+  <div class="criterion_title" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>" onclick="<%="focus_mark_criterion(#{mark_criterion.id}, 'rubric')"%>">
     <div id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>"
       class="mark_criterion_expand" >
       - &nbsp;

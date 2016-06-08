@@ -100,9 +100,9 @@ jQuery(document).ready(function() {
   jQuery('#expand_all').click(function() {
     jQuery('.mark_criterion_level_container').each(function() {
       if (jQuery(this).attr('data-scheme') == 'rubric') {
-        show_rubric_criterion(parseInt(this.getAttribute('data-id'), 10));
+        show_criterion(parseInt(this.getAttribute('data-id'), 10), 'rubric');
       } else {
-        show_flexible_criterion(parseInt(this.getAttribute('data-id'), 10));
+        show_criterion(parseInt(this.getAttribute('data-id'), 10), 'flexible');
       }
     });
   });
@@ -110,9 +110,9 @@ jQuery(document).ready(function() {
   jQuery('#collapse_all').click(function() {
     jQuery('.mark_criterion_level_container').each(function() {
       if (jQuery(this).attr('data-scheme') == 'rubric') {
-          hide_rubric_criterion(parseInt(this.getAttribute('data-id'), 10));
+          hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'rubric');
       } else {
-          hide_flexible_criterion(parseInt(this.getAttribute('data-id'), 10));
+          hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'flexible');
       }
     });
   });
@@ -120,70 +120,68 @@ jQuery(document).ready(function() {
   jQuery('#expand_unmarked').click(function() {
     jQuery('.mark_criterion_level_container').each(function () {
       if (jQuery(this).attr('data-scheme') == 'rubric') {
-        expand_rubric_unmarked(this);
+        expand_unmarked(this, 'rubric');
       } else {
         jQuery('.mark_grade_input').each(function () {
-          expand_flexible_unmarked(this);
+          expand_unmarked(this, 'flexible');
         });
       }
     });
   });
 });
 
-function expand_rubric_unmarked(elem) {
-  if (jQuery(elem).find('.rubric_criterion_level_selected').length == 0) {
-    show_rubric_criterion(parseInt(elem.getAttribute('data-id'), 10));
+function expand_unmarked(elem, marking_scheme) {
+  if (marking_scheme == 'rubric') {
+    if (jQuery(elem).find('.rubric_criterion_level_selected').length == 0) {
+      show_criterion(parseInt(elem.getAttribute('data-id'), 10), 'rubric');
+    } else {
+      hide_criterion(parseInt(elem.getAttribute('data-id'), 10), 'rubric');
+    }
   } else {
-    hide_rubric_criterion(parseInt(elem.getAttribute('data-id'), 10));
+    if (elem.value == '') {
+      show_criterion(parseInt(elem.getAttribute('data-id'), 10), 'flexible');
+    } else {
+      hide_criterion(parseInt(elem.getAttribute('data-id'), 10), 'flexible');
+    }
   }
 };
 
-function expand_flexible_unmarked(elem) {
-  if (elem.value == '') {
-    show_flexible_criterion(parseInt(elem.getAttribute('data-id'), 10));
-  } else {
-    hide_flexible_criterion(parseInt(elem.getAttribute('data-id'), 10));
+function focus_mark_criterion(id, marking_scheme) {
+  if (marking_scheme == 'rubric')
+    if (jQuery('#mark_criterion_' + id).hasClass('expanded')) {
+      hide_criterion(id, 'rubric');
+    } else {
+      show_criterion(id, 'rubric');
+    }
+  else {
+    if (jQuery('#flexible_criterion_' + id).hasClass('expanded')) {
+      hide_criterion(id, 'flexible');
+    } else {
+      show_criterion(id, 'flexible');
+    }
   }
 };
 
-function focus_rubric_mark_criterion(id) {
-  if (jQuery('#mark_criterion_' + id).hasClass('expanded')) {
-    hide_rubric_criterion(id);
-  } else {
-    show_rubric_criterion(id);
-  }
-};
-
-function focus_flexible_mark_criterion(id) {
-  if (jQuery('#flexible_criterion_' + id).hasClass('expanded')) {
-    hide_flexible_criterion(id);
-  } else {
-    show_flexible_criterion(id);
-  }
-};
-
-function hide_rubric_criterion(id) {
+function hide_criterion(id, marking_scheme) {
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
-  document.getElementById('mark_criterion_' + id).removeClass('expanded');
-  document.getElementById('mark_criterion_' + id).addClass('not_expanded');
+  if (marking_scheme == 'rubric') {
+      document.getElementById('mark_criterion_' + id).removeClass('expanded');
+      document.getElementById('mark_criterion_' + id).addClass('not_expanded');
+  } else {
+      document.getElementById('flexible_criterion_' + id).removeClass('expanded');
+      document.getElementById('flexible_criterion_' + id).addClass('not_expanded');
+  }
 };
 
-function show_rubric_criterion(id) {
+function show_criterion(id, marking_scheme) {
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
-  document.getElementById('mark_criterion_' + id).removeClass('not_expanded');
-  document.getElementById('mark_criterion_' + id).addClass('expanded');
-};
-
-function hide_flexible_criterion(id) {
-  document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
-  document.getElementById('flexible_criterion_' + id).removeClass('expanded');
-  document.getElementById('flexible_criterion_' + id).addClass('not_expanded');
-};
-
-function show_flexible_criterion(id) {
-  document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
-  document.getElementById('flexible_criterion_' + id).removeClass('not_expanded');
-  document.getElementById('flexible_criterion_' + id).addClass('expanded');
+  if (marking_scheme == 'rubric') {
+    document.getElementById('mark_criterion_' + id).removeClass('not_expanded');
+    document.getElementById('mark_criterion_' + id).addClass('expanded');
+  } else {
+    document.getElementById('flexible_criterion_' + id).removeClass('not_expanded');
+    document.getElementById('flexible_criterion_' + id).addClass('expanded');
+  }
 };
 
 function select_mark(mark_id, mark) {
