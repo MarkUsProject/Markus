@@ -520,21 +520,15 @@ ul.annotation_text_list {
 }
 
 .rubric_description {
-  display: table-cell;
+  width: 82%;
   float: left;
 }
 
 .rubric_mark {
-  display: table-cell;
   float: right;
   font-weight: bold;
-  margin-left: 10px;
-}
-
-.rubric_mark_level {
-  //float: left;
-  padding: 3px 5px 5px 5px;
-  //display: inline-block;
+  margin-left: 15px;
+  margin-right: 10px;
 }
 
 .mark_grade_input{
