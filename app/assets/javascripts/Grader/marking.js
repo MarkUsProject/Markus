@@ -191,13 +191,13 @@ function select_mark(mark_id, mark) {
 
   if (typeof(original_mark) !== 'undefined') {
     original_mark.removeClass('rubric_criterion_level_selected');
+    original_mark.addClass('rubric_criterion_level');
   }
 
   if (mark !== null) {
     var rubric_div = document.getElementById('mark_' + mark_id + '_' + mark);
     rubric_div.addClass('rubric_criterion_level_selected');
     rubric_div.removeClass('rubric_criterion_level');
-    jQuery(rubric_div).show();
   }
 }
 
