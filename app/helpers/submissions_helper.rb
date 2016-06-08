@@ -48,7 +48,8 @@ module SubmissionsHelper
     results = Result.where(submission_id:
                              parts.map(&:current_submission_used))
                     .order(:id)
-    groupings.map do |grouping|
+    ids = (1 .. groupings.count).to_a
+    groupings.map.with_index{ |grouping, i|
       g = Hash.new
       begin # if anything raises an error, catch it and log in the object.
         submission = grouping.current_submission_used
@@ -62,20 +63,29 @@ module SubmissionsHelper
           result = submission.remark_result
         end
         g[:name] = grouping.get_group_name
-        g[:id] = grouping.id
+        if current_user.student?
+          g[:id] = nil
+          g[:name_url] = nil
+          g[:repo_name] = nil
+          g[:repo_url] = nil
+          g[:final_grade] = nil
+        else
+          g[:id] = grouping.id
+          g[:name_url] = get_grouping_name_url(grouping, result)
+          g[:repo_name] = grouping.group.repository_name
+          g[:repo_url] = repo_browser_assignment_submission_path(assignment,
+                                                                 grouping)
+          g[:final_grade] = grouping.final_grade(result)
+        end
         g[:section] = grouping.section
         g[:tags] = grouping.tags
         g[:commit_date] = grouping.last_commit_date
         g[:has_files] = grouping.has_files_in_submission?
         g[:late_commit] = grouping.past_due_date?
-        g[:name_url] = get_grouping_name_url(grouping, result)
         g[:class_name] = get_tr_class(grouping)
         g[:grace_credits_used] = grouping.grace_period_deduction_single
-        g[:repo_name] = grouping.group.repository_name
-        g[:repo_url] = repo_browser_assignment_submission_path(assignment,
-                                                               grouping)
-        g[:final_grade] = grouping.final_grade(result)
         g[:state] = grouping.marking_state(result)
+        g[:anonymous_id] = ids[i]
         g[:error] = ''
       rescue => e
         m_logger = MarkusLogger.instance
@@ -86,7 +96,7 @@ module SubmissionsHelper
         g[:error] = e.message
       end
       g
-    end
+    }
   end
 
   # If the grouping is collected or has an error,
@@ -107,6 +117,14 @@ module SubmissionsHelper
     if grouping.is_collected?
       url_for(edit_assignment_submission_result_path(
                 grouping.assignment, grouping, result))
+    else
+      ''
+    end
+  end
+
+  def get_url_peer(grouping, id)
+    if grouping.is_collected?
+      url_for(controller: 'peer_reviews', action: 'mark_peer_review', submission_id:id)
     else
       ''
     end

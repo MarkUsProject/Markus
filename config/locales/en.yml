@@ -234,6 +234,7 @@ en:
         peer_review_record_missing: "Error: Peer review assignment missing from database"
         start_peer_review: "Peer-review"
         peer_review_results: "Peer Review Results"
+        review: "Review"
     your_mark:  "Your mark:"
 
     members:            "Members"

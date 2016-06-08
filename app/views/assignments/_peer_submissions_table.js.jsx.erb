@@ -101,9 +101,9 @@
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
         if (submission.name_url === '') {
-          s['group_name'] = <span>{submission.name}</span>;
+          s['group_name'] = <span><%= j raw I18n.t(:'assignment.review') %> {submission.anonymous_id}</span>;
         } else {
-          s['group_name'] = <a href={submission.name_url}>{submission.name}</a>;
+          s['group_name'] = <a href={submission.name_url}> <%= j raw I18n.t(:'assignment.review') %> {submission.anonymous_id}</a>;
         }
         if (submission.error !== '') {
           s['class_name'] = "submission_error";
