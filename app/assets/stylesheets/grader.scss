@@ -406,6 +406,7 @@ ul.annotation_text_list {
       font-size: 1.2em;
       width: 1em;
       cursor: pointer;
+      padding-top: 3px;
     }
 
     .mark_description {
@@ -510,18 +511,24 @@ ul.annotation_text_list {
 
 .rubric_criterion_level {
   background: $white;
+  width: 100%
 }
 
 .rubric_criterion_level_old_mark {
   background: #fdfebc;
+  width: 100%;
 }
 
-.rubric_criterion_description {
-  margin-left: 3em !important;
+.rubric_description {
+  display: table-cell;
+  float: left;
 }
 
 .rubric_mark {
+  display: table-cell;
   float: right;
+  font-weight: bold;
+  margin-left: 10px;
 }
 
 .rubric_mark_level {
@@ -569,6 +576,7 @@ ul.annotation_text_list {
   cursor: pointer;
   font-size: 1.2em;
   width: 1em;
+  padding-top: 2px;
 }
 
 .flexible_criterion_info {

@@ -39,8 +39,11 @@
                               mark_id: mark.id, mark: num_levels) %>"
                       onclick="update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)"
                       data-id="<%=mark_criterion.id%>" >
-                     <strong><%=num_levels%>: <%= level_name %></strong>
-                     &nbsp;<%=level_desc%>
+                    <div class='rubric_description'>
+                       <strong> <%= level_name %></strong>
+                       &nbsp;<%=level_desc%>
+                    </div>
+                    <div class='rubric_mark'><%=num_levels%></div>
                    </td>
                 </tr>
               <% end -%>
