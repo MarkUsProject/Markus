@@ -33,7 +33,7 @@ describe Repository::GitRevision do
 
         expect(files).to include 'test'
       end
-      it ' retrieves an object of type Repository::RevisionFile' do
+      it 'retrieves an object of type Repository::RevisionFile' do
         revision = repo.get_latest_revision
         files = revision.files_at_path('')
         test_file = files['test']
