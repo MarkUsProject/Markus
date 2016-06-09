@@ -481,6 +481,27 @@ ul.annotation_text_list {
   }
 }
 
+.mark_criterion_level_released_container {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 20px;
+
+  table {
+    background: #fff;
+    border: 1px solid #dadada;
+    border-collapse: collapse;
+    padding: 4px;
+    width: 100%
+  }
+
+  td {
+    border-bottom:1px solid #dadada;
+    border-top:1px solid #dadada;
+    font-size: 1.1em;
+    padding: 4px;
+  }
+}
+
 .expanded {
 
   .rubric_criterion_level {
@@ -501,6 +522,10 @@ ul.annotation_text_list {
 
   .flexible_criterion_info {
     display: none;
+  }
+
+  .rubric_criterion_level_old_mark {
+    display: inline-block;
   }
 
 }
