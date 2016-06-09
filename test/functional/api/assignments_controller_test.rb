@@ -26,7 +26,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
 
     context '/show' do
       setup do
-        get 'show', :id => 1
+        get 'show', id: 1
       end
 
       should 'fail to authenticate the GET request' do
@@ -46,7 +46,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
 
     context '/update' do
       setup do
-        put 'update', :id => 1
+        put 'update', id: 1
       end
 
       should 'fail to authenticate the GET request' do
@@ -56,7 +56,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
 
     context '/destroy' do
       setup do
-        delete 'destroy', :id => 1
+        delete 'destroy', id: 1
       end
 
       should 'fail to authenticate the GET request' do
@@ -93,14 +93,14 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'be successful' do
-        get 'show', :id => 'garbage'
+        get 'show', id: 'garbage'
         assert_template 'shared/http_status'
         assert_equal @response.content_type, 'application/json'
       end
 
       should 'not use the ActiveRecord class name as the root' do
         assignment = Assignment.make
-        get 'show', :id => assignment.id.to_s
+        get 'show', id: assignment.id.to_s
         assert !@response.body.include?('{"assignment":')
       end
     end
@@ -109,7 +109,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     context 'getting an xml response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/xml'
-        get 'show', :id => 'garbage'
+        get 'show', id: 'garbage'
       end
 
       should 'be successful' do
@@ -122,7 +122,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     context 'getting an rss response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/rss'
-        get 'show', :id => 'garbage'
+        get 'show', id: 'garbage'
       end
 
       should 'not be successful' do
@@ -134,12 +134,12 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     context 'testing index function' do
       # Create three test assignments
       setup do
-        @assignment1 = Assignment.make(:short_identifier => 'A1',
-          :due_date => '2012-03-20 23:59:00', :group_min => 1)
-        @assignment2 = Assignment.make(:short_identifier => 'A2',
-          :due_date => '2012-03-21 23:59:00', :group_min => 2, :message => 'test')
-        @assignment3 = Assignment.make(:short_identifier => 'A3',
-          :due_date => '2012-03-22 23:59:00', :group_min => 2)
+        @assignment1 = Assignment.make(short_identifier: 'A1',
+          due_date: '2012-03-20 23:59:00', group_min: 1)
+        @assignment2 = Assignment.make(short_identifier: 'A2',
+          due_date: '2012-03-21 23:59:00', group_min: 2, message: 'test')
+        @assignment3 = Assignment.make(short_identifier: 'A3',
+          due_date: '2012-03-22 23:59:00', group_min: 2)
       end
 
       should 'get all assignments in the collection if no options are used' do
@@ -149,7 +149,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'get only first 2 assignments if a limit of 2 is provided' do
-        get 'index', :limit => '2'
+        get 'index', limit: '2'
         assert_response :success
         assert_select 'assignment', 2
         assert @response.body.include?(@assignment1.short_identifier)
@@ -157,7 +157,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'get 2 later assignments if a limit of 2 and offset of 1 is used' do
-        get 'index', :limit => '2', :offset => '1'
+        get 'index', limit: '2', offset: '1'
         assert_response :success
         assert_select 'assignment', 2
         assert @response.body.include?(@assignment2.short_identifier)
@@ -165,7 +165,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'get only matching assignments if a valid filter is used' do
-        get 'index', :filter => 'group_min:2'
+        get 'index', filter: 'group_min:2'
         assert_response :success
         assert_select 'assignment', 2
         assert @response.body.include?(@assignment2.short_identifier)
@@ -173,14 +173,14 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'get only matching assignments if multiple valid filters are used' do
-        get 'index', :filter => 'group_min:2,message:test'
+        get 'index', filter: 'group_min:2,message:test'
         assert_response :success
         assert_select 'assignment', 1
         assert @response.body.include?(@assignment2.short_identifier)
       end
 
       should 'ignore invalid filters' do
-        get 'index', :filter => 'group_min:2,badfilter:invalid'
+        get 'index', filter: 'group_min:2,badfilter:invalid'
         assert_response :success
         assert_select 'assignment', 2
         assert @response.body.include?(@assignment2.short_identifier)
@@ -188,14 +188,14 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'use case-insensitive matching with filters' do
-        get 'index', :filter => 'message:TEst'
+        get 'index', filter: 'message:TEst'
         assert_response :success
         assert_select 'assignment', 1
         assert @response.body.include?(@assignment2.short_identifier)
       end
 
       should 'apply limit/offset after the filter' do
-        get 'index', :filter => 'group_min:2', :limit => '1', :offset => '1'
+        get 'index', filter: 'group_min:2', limit: '1', offset: '1'
         assert_response :success
         assert_select 'assignment', 1
         assert @response.body.include?(@assignment3.short_identifier)
@@ -205,15 +205,15 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
         get 'index'
         assert_response :success
         @default_xml.each do |element|
-          assert_select element, {:minimum => 1}
+          assert_select element, {minimum: 1}
         end
       end
 
       should 'only display specified fields if the fields parameter is used' do
-        get 'index', :fields => 'short_identifier,due_date'
+        get 'index', fields: 'short_identifier,due_date'
         assert_response :success
-        assert_select 'short-identifier', {:minimum => 1}
-        assert_select 'due-date', {:minimum => 1}
+        assert_select 'short-identifier', {minimum: 1}
+        assert_select 'due-date', {minimum: 1}
         elements = Array.new(@default_xml)
         elements.delete('short-identifier')
         elements.delete('due-date')
@@ -223,9 +223,9 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'ignore invalid fields provided in the fields parameter' do
-        get 'index', :fields => 'short_identifier,invalid_field_name'
+        get 'index', fields: 'short_identifier,invalid_field_name'
         assert_response :success
-        assert_select 'short-identifier', {:minimum => 1}
+        assert_select 'short-identifier', {minimum: 1}
         elements = Array.new(@default_xml)
         elements.delete('short-identifier')
         elements.each do |element|
@@ -237,12 +237,12 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     # Testing GET api/assignments/:id
     context 'testing show function' do
       setup do
-        @assignment = Assignment.make(:short_identifier => 'A1',
-          :due_date => '2012-03-20 23:59:00', :group_min => 1)
+        @assignment = Assignment.make(short_identifier: 'A1',
+          due_date: '2012-03-20 23:59:00', group_min: 1)
       end
 
       should 'return only that assignment and default attributes if valid id' do
-        get 'show', :id => @assignment.id.to_s
+        get 'show', id: @assignment.id.to_s
         assert_response :success
         assert @response.body.include?(@assignment.short_identifier)
         @default_xml.each do |element|
@@ -251,7 +251,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'return only that assignment and specified fields if provided' do
-        get 'show', :id => @assignment.id.to_s, :fields => 'id,due_date'
+        get 'show', id: @assignment.id.to_s, fields: 'id,due_date'
         assert_response :success
         assert @response.body.include?(@assignment.id.to_s)
         assert_select 'id', 1
@@ -265,7 +265,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should "return a 404 if an assignment with a numeric id doesn't exist" do
-        get 'show', :id => '9999'
+        get 'show', id: '9999'
         assert_response 404
       end
     end
@@ -281,8 +281,8 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       testData.each do |missing_attr, short_identifier, description, due_date|
         setup do
           # Create parameters for request and send
-          post 'create', :short_identifier => short_identifier,
-            :description => description, :due_date => due_date
+          post 'create', short_identifier: short_identifier,
+            description: description, due_date: due_date
         end
 
         should "fail in creating the assignment with a missing #{missing_attr}" do
@@ -296,9 +296,9 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     context 'testing the create function with minimal valid attributes' do
       setup do
         # Create parameters for request and send
-        post 'create', :short_identifier => 'test1', :description => 'sample',
-          :message => 'sample2', :due_date => '2013-04-07 23:00:01',
-          :token_period => 1.0
+        post 'create', short_identifier: 'test1', description: 'sample',
+          message: 'sample2', due_date: '2013-04-07 23:00:01',
+          token_period: 1.0
       end
 
       should 'create the specified assignment' do
@@ -357,8 +357,8 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     context 'testing create with a taken short_identifier' do
       setup do
         @assignment = Assignment.make
-        post 'create', :short_identifier => @assignment.short_identifier,
-          :description => 'sample', :due_date => '2013-04-07 23:00:01'
+        post 'create', short_identifier: @assignment.short_identifier,
+          description: 'sample', due_date: '2013-04-07 23:00:01'
       end
 
       should 'find an existing assignment and cause conflict' do
@@ -369,8 +369,8 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
 
     context 'testing the create function with an invalid due_date' do
       setup do
-        post 'create', :short_identifier => 'RandomAs',
-          :description => 'sample2', :due_date => 'garbage'
+        post 'create', short_identifier: 'RandomAs',
+          description: 'sample2', due_date: 'garbage'
       end
 
       should 'not be able to process the date' do
@@ -380,10 +380,10 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
 
     context 'testing create with an invalid submission rule' do
       setup do
-        post 'create', :short_identifier => 'RandomAs', :description => 'sample2',
-          :due_date => '2012-03-26 18:04:39', :message => 'Test Message',
-          :submission_rule_type => 'PenaltyDecayPeriod', :enable_test => true,
-          :submission_rule_deduction => 10, :submission_rule_interval => 'A'
+        post 'create', short_identifier: 'RandomAs', description: 'sample2',
+          due_date: '2012-03-26 18:04:39', message: 'Test Message',
+          submission_rule_type: 'PenaltyDecayPeriod', enable_test: true,
+          submission_rule_deduction: 10, submission_rule_interval: 'A'
       end
 
       should 'not be able to create the rule or assignment' do
@@ -399,17 +399,17 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'update those attributes that are supplied' do
-        put 'update', :id => @assignment.id.to_s, :short_identifier => 'TestAs'
+        put 'update', id: @assignment.id.to_s, short_identifier: 'TestAs'
         assert_response 200
         updated_assignment = Assignment.find_by_id(@assignment.id)
         assert_equal(updated_assignment.short_identifier, 'TestAs')
       end
 
       should 'update the submission rules if provided' do
-        put 'update', :id => @assignment.id.to_s, :allow_remarks => false,
-        :group_mind => '5', :submission_rule_type => 'PenaltyDecayPeriod',
-        :submission_rule_interval => '12', :submission_rule_deduction => '5',
-        :submission_rule_hours => '8'
+        put 'update', id: @assignment.id.to_s, allow_remarks: false,
+        group_mind: '5', submission_rule_type: 'PenaltyDecayPeriod',
+        submission_rule_interval: '12', submission_rule_deduction: '5',
+        submission_rule_hours: '8'
 
         updated_assignment = Assignment.find_by_id(@assignment.id)
         assert_equal(updated_assignment.submission_rule.type,
@@ -420,13 +420,13 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'not be able to use a short_identifier that already exists' do
-        put 'update', :id => @assignment.id.to_s, :description => 'Testing',
-          :short_identifier => @second_assignment.short_identifier
+        put 'update', id: @assignment.id.to_s, description: 'Testing',
+          short_identifier: @second_assignment.short_identifier
         assert_response 409
       end
 
       should 'not be able to update an assignment that does not exist' do
-        put 'update', :id => '9999', :message => 'TestingMessage'
+        put 'update', id: '9999', message: 'TestingMessage'
         assert Assignment.find_by_message('TestingMessage').nil?
         assert_response 404
       end
@@ -434,7 +434,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
 
     context 'testing that the destroy function is disabled' do
       setup do
-        delete 'destroy', :id => 1
+        delete 'destroy', id: 1
       end
 
       should "pretend the function doesn't exist" do

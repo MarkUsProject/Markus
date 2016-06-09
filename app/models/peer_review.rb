@@ -11,6 +11,6 @@ class PeerReview < ActiveRecord::Base
 
   def reviewee
     # TODO - Research optimizing or see if rails can do better
-    Grouping.joins({ :submissions => { :results => :peer_reviews }}).where('peer_reviews.id = ?', self.id).first
+    Grouping.joins({ submissions: { results: :peer_reviews }}).where('peer_reviews.id = ?', self.id).first
   end
 end

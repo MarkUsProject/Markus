@@ -37,7 +37,7 @@ class GroupingTest < ActiveSupport::TestCase
     end
 
     should "can't invite nor add hidden students" do
-      hidden = Student.make(:hidden => true)
+      hidden = Student.make(hidden: true)
       @grouping.invite(hidden.user_name)
       assert_equal 0, @grouping.memberships.count
 
@@ -79,13 +79,13 @@ class GroupingTest < ActiveSupport::TestCase
     context 'with two student members' do
       setup do
         # should consist of inviter and another student
-        @membership = StudentMembership.make(:user => Student.make(:user_name => 'student1'),
-          :grouping => @grouping,
-          :membership_status => StudentMembership::STATUSES[:accepted])
+        @membership = StudentMembership.make(user: Student.make(user_name: 'student1'),
+          grouping: @grouping,
+          membership_status: StudentMembership::STATUSES[:accepted])
 
-        @inviter_membership = StudentMembership.make(:user => Student.make(:user_name => 'student2'),
-          :grouping => @grouping,
-          :membership_status => StudentMembership::STATUSES[:inviter])
+        @inviter_membership = StudentMembership.make(user: Student.make(user_name: 'student2'),
+          grouping: @grouping,
+          membership_status: StudentMembership::STATUSES[:inviter])
         @inviter = @inviter_membership.user
 
       end
@@ -164,8 +164,8 @@ class GroupingTest < ActiveSupport::TestCase
     context 'with a pending membership' do
       setup do
         @student = StudentMembership.make(
-          :grouping => @grouping,
-          :membership_status => StudentMembership::STATUSES[:pending]).user
+          grouping: @grouping,
+          membership_status: StudentMembership::STATUSES[:pending]).user
       end
 
      should 'detect pending members' do
@@ -185,8 +185,8 @@ class GroupingTest < ActiveSupport::TestCase
     context 'with a rejected membership' do
       setup do
         @membership = StudentMembership.make(
-          :grouping => @grouping,
-          :membership_status => StudentMembership::STATUSES[:rejected])
+          grouping: @grouping,
+          membership_status: StudentMembership::STATUSES[:rejected])
         @student = @membership.user
       end
 
@@ -236,8 +236,8 @@ class GroupingTest < ActiveSupport::TestCase
       # submit files
       setup do
         @assignment = Assignment.make
-        @file = AssignmentFile.make(:assignment => @assignment)
-        @grouping = Grouping.make(:assignment => @assignment)
+        @file = AssignmentFile.make(assignment: @assignment)
+        @grouping = Grouping.make(assignment: @assignment)
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           assignment_folder = File.join(@assignment.repository_folder, File::SEPARATOR)
@@ -265,11 +265,11 @@ class GroupingTest < ActiveSupport::TestCase
 
       should 'report that grouping is not deleteable' do
         StudentMembership.make(
-            :grouping => @grouping,
-            :membership_status => StudentMembership::STATUSES[:inviter])
+            grouping: @grouping,
+            membership_status: StudentMembership::STATUSES[:inviter])
         StudentMembership.make(
-            :grouping => @grouping,
-            :membership_status => StudentMembership::STATUSES[:accepted])
+            grouping: @grouping,
+            membership_status: StudentMembership::STATUSES[:accepted])
 
         assert !@grouping.deletable_by?(@grouping.inviter)
       end
@@ -304,12 +304,12 @@ class GroupingTest < ActiveSupport::TestCase
     context 'calling has_submission? with many submissions, all with submission_version_used == false' do
       setup do
         @grouping = Grouping.make
-        @submission1 = Submission.make(:submission_version_used => false,
-                                       :grouping => @grouping)
-        @submission2 = Submission.make(:submission_version_used => false,
-                                       :grouping => @grouping)
-        @submission3 = Submission.make(:submission_version_used => false,
-                                       :grouping => @grouping)
+        @submission1 = Submission.make(submission_version_used: false,
+                                       grouping: @grouping)
+        @submission2 = Submission.make(submission_version_used: false,
+                                       grouping: @grouping)
+        @submission3 = Submission.make(submission_version_used: false,
+                                       grouping: @grouping)
         @grouping.reload
       end
 
@@ -328,10 +328,10 @@ class GroupingTest < ActiveSupport::TestCase
     context 'calling has_submission? with many submissions, with the last submission added to the grouping having submission_version_used == false' do
       setup do
         @grouping = Grouping.make
-        @submission1 = Submission.make(:submission_version_used => true, :grouping => @grouping)
-        @submission2 = Submission.make(:submission_version_used => false, :grouping => @grouping)
-        @submission3 = Submission.make(:submission_version_used => true, :grouping => @grouping)
-        @submission4 = Submission.make(:submission_version_used => false, :grouping => @grouping)
+        @submission1 = Submission.make(submission_version_used: true, grouping: @grouping)
+        @submission2 = Submission.make(submission_version_used: false, grouping: @grouping)
+        @submission3 = Submission.make(submission_version_used: true, grouping: @grouping)
+        @submission4 = Submission.make(submission_version_used: false, grouping: @grouping)
         @grouping.reload
       end
       should 'behave like there is no submission' do
@@ -346,9 +346,9 @@ class GroupingTest < ActiveSupport::TestCase
     context 'calling has_submission? with many submissions, with the last submission added to the grouping having submission_version_used == true' do
       setup do
         @grouping = Grouping.make
-        @submission1 = Submission.make(:submission_version_used => false, :grouping => @grouping)
-        @submission2 = Submission.make(:submission_version_used => true, :grouping => @grouping)
-        @submission3 = Submission.make(:submission_version_used => true, :grouping => @grouping)
+        @submission1 = Submission.make(submission_version_used: false, grouping: @grouping)
+        @submission2 = Submission.make(submission_version_used: true, grouping: @grouping)
+        @submission3 = Submission.make(submission_version_used: true, grouping: @grouping)
         @grouping.reload
       end
 
@@ -366,15 +366,15 @@ class GroupingTest < ActiveSupport::TestCase
       setup do
         @grouping = Grouping.make
         #Dont use machinist in order to bypass validation
-        @submission1 = @grouping.submissions.build(:submission_version_used => false,
-          :revision_number => 1, :revision_timestamp => 1.days.ago, :submission_version => 1)
-        @submission1.save(:validate => false)
-        @submission2 = @grouping.submissions.build(:submission_version_used => true,
-          :revision_number => 1, :revision_timestamp => 1.days.ago, :submission_version => 2)
-        @submission2.save(:validate => false)
-        @submission3 = @grouping.submissions.build(:submission_version_used => true,
-          :revision_number => 1, :revision_timestamp => 1.days.ago, :submission_version => 3)
-        @submission3.save(:validate => false)
+        @submission1 = @grouping.submissions.build(submission_version_used: false,
+          revision_number: 1, revision_timestamp: 1.days.ago, submission_version: 1)
+        @submission1.save(validate: false)
+        @submission2 = @grouping.submissions.build(submission_version_used: true,
+          revision_number: 1, revision_timestamp: 1.days.ago, submission_version: 2)
+        @submission2.save(validate: false)
+        @submission3 = @grouping.submissions.build(submission_version_used: true,
+          revision_number: 1, revision_timestamp: 1.days.ago, submission_version: 3)
+        @submission3.save(validate: false)
         @grouping.reload
       end
 
@@ -385,11 +385,11 @@ class GroupingTest < ActiveSupport::TestCase
         assert @grouping.has_submission?
         #Make sure current_submission_used returns a single Submission, not an array
         assert @grouping.current_submission_used.is_a?(Submission)
-        @submission4 = Submission.make(:submission_version_used => false, :grouping => @grouping)
+        @submission4 = Submission.make(submission_version_used: false, grouping: @grouping)
         @grouping.reload
         assert !@grouping.has_submission?
         assert_equal 4, @submission4.submission_version
-        @submission5 = Submission.make(:submission_version_used => true, :grouping => @grouping)
+        @submission5 = Submission.make(submission_version_used: true, grouping: @grouping)
         @grouping.reload
         assert @grouping.has_submission?
         assert_equal @submission5, @grouping.current_submission_used
@@ -416,11 +416,11 @@ class GroupingTest < ActiveSupport::TestCase
   context 'A grouping without students (ie created by an admin) for a assignment with section restriction' do
     setup do
       @assignment = Assignment.make(:section_due_dates_true)
-      @grouping = Grouping.make(:assignment => @assignment)
+      @grouping = Grouping.make(assignment: @assignment)
       section_01 = Section.make
       section_02 = Section.make
-      @student_01 = Student.make(:section => section_01)
-      @student_02 = Student.make(:section => section_02)
+      @student_01 = Student.make(section: section_01)
+      @student_02 = Student.make(section: section_02)
     end
 
     should 'accept to add students to groups without checking their sections' do
@@ -435,15 +435,15 @@ class GroupingTest < ActiveSupport::TestCase
   context 'A grouping with students in section' do
     setup do
       @section = Section.make
-      student  = Student.make(:section => @section)
-      @student_can_invite = Student.make(:section => @section)
+      student  = Student.make(section: @section)
+      @student_can_invite = Student.make(section: @section)
       @student_cannot_invite = Student.make
 
-      assignment = Assignment.make(:section_groups_only => true)
-      @grouping = Grouping.make(:assignment => assignment)
-      StudentMembership.make(:user => student,
-              :grouping => @grouping,
-              :membership_status => StudentMembership::STATUSES[:inviter])
+      assignment = Assignment.make(section_groups_only: true)
+      @grouping = Grouping.make(assignment: assignment)
+      StudentMembership.make(user: student,
+              grouping: @grouping,
+              membership_status: StudentMembership::STATUSES[:inviter])
     end
 
     should 'return true to can invite for students of same section' do
@@ -486,10 +486,10 @@ class GroupingTest < ActiveSupport::TestCase
     context 'A grouping of one student submitting an assignment' do
       setup do
         # grouping of only one student
-        @grouping = Grouping.make(:assignment => @assignment, :group => @group)
-        @inviter_membership = StudentMembership.make(:user => Student.make(:user_name => 'student1'),
-          :grouping => @grouping,
-          :membership_status => StudentMembership::STATUSES[:inviter])
+        @grouping = Grouping.make(assignment: @assignment, group: @group)
+        @inviter_membership = StudentMembership.make(user: Student.make(user_name: 'student1'),
+          grouping: @grouping,
+          membership_status: StudentMembership::STATUSES[:inviter])
         @inviter = @inviter_membership.user
 
         # On July 15, the Student logs in, triggering repository folder creation
@@ -541,15 +541,15 @@ class GroupingTest < ActiveSupport::TestCase
     context 'A grouping of two students submitting an assignment' do
       setup do
         # grouping of two students
-        @grouping = Grouping.make(:assignment => @assignment, :group => @group)
+        @grouping = Grouping.make(assignment: @assignment, group: @group)
         # should consist of inviter and another student
-        @membership = StudentMembership.make(:user => Student.make(:user_name => 'student1'),
-          :grouping => @grouping,
-          :membership_status => StudentMembership::STATUSES[:accepted])
+        @membership = StudentMembership.make(user: Student.make(user_name: 'student1'),
+          grouping: @grouping,
+          membership_status: StudentMembership::STATUSES[:accepted])
 
-        @inviter_membership = StudentMembership.make(:user => Student.make(:user_name => 'student2'),
-          :grouping => @grouping,
-          :membership_status => StudentMembership::STATUSES[:inviter])
+        @inviter_membership = StudentMembership.make(user: Student.make(user_name: 'student2'),
+          grouping: @grouping,
+          membership_status: StudentMembership::STATUSES[:inviter])
         @inviter = @inviter_membership.user
 
         # On July 15, the Student logs in, triggering repository folder creation
@@ -602,7 +602,7 @@ class GroupingTest < ActiveSupport::TestCase
 
   context 'submit file with testing past_due_date?' do
     setup do
-      @assignment = Assignment.make(:due_date => Time.parse('July 22 2009 5:00PM'))
+      @assignment = Assignment.make(due_date: Time.parse('July 22 2009 5:00PM'))
       @group = Group.make
       pretend_now_is(Time.parse('July 21 2009 5:00PM')) do
         @grouping = Grouping.make(assignment: @assignment, group: @group)
@@ -628,21 +628,21 @@ class GroupingTest < ActiveSupport::TestCase
         @assignment.section_due_dates_type = true
         @assignment.save
         @section = Section.make
-        StudentMembership.make(:user => Student.make(:section => @section),
-                               :grouping => @grouping,
-                               :membership_status => StudentMembership::STATUSES[:inviter])
+        StudentMembership.make(user: Student.make(section: @section),
+                               grouping: @grouping,
+                               membership_status: StudentMembership::STATUSES[:inviter])
       end
 
       should 'before due_date and before section due_date' do
-        SectionDueDate.make(:section => @section, :assignment => @assignment,
-                            :due_date => Time.parse('July 24 2009 5:00PM'))
+        SectionDueDate.make(section: @section, assignment: @assignment,
+                            due_date: Time.parse('July 24 2009 5:00PM'))
         submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
         assert !@grouping.past_due_date?
       end
 
       should 'before due_date and after section due_date' do
-        SectionDueDate.make(:section => @section, :assignment => @assignment,
-                            :due_date => Time.parse('July 18 2009 5:00PM'))
+        SectionDueDate.make(section: @section, assignment: @assignment,
+                            due_date: Time.parse('July 18 2009 5:00PM'))
         submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
         assert @grouping.past_due_date?
       end
@@ -674,15 +674,15 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
       should 'after due_date and before section due_date' do
-        SectionDueDate.make(:section => @section, :assignment => @assignment,
-                            :due_date => Time.parse('July 30 2009 5:00PM'))
+        SectionDueDate.make(section: @section, assignment: @assignment,
+                            due_date: Time.parse('July 30 2009 5:00PM'))
         submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
         assert !@grouping.past_due_date?
       end
 
       should 'after due_date and after section due_date' do
-        SectionDueDate.make(:section => @section, :assignment => @assignment,
-                            :due_date => Time.parse('July 20 2009 5:00PM'))
+        SectionDueDate.make(section: @section, assignment: @assignment,
+                            due_date: Time.parse('July 20 2009 5:00PM'))
         submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
         assert @grouping.past_due_date?
       end

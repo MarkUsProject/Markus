@@ -101,7 +101,7 @@ ExtraMark.blueprint do
 end
 
 FlexibleCriterion.blueprint do
-  assignment {Assignment.make(:marking_scheme_type => 'flexible')}
+  assignment {Assignment.make(marking_scheme_type: 'flexible')}
   name
   description
   position {1} # override if many for the same assignment
@@ -176,18 +176,18 @@ end
 
 Mark.blueprint do
   result {Result.make}
-  markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
+  markable {RubricCriterion.make(assignment: result.submission.grouping.assignment)}
   mark {1}
 end
 
 Mark.blueprint(:rubric) do
   result {Result.make}
-  markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
+  markable {RubricCriterion.make(assignment: result.submission.grouping.assignment)}
 end
 
 Mark.blueprint(:flexible) do
   result {Result.make}
-  markable {FlexibleCriterion.make(:assignment => result.submission.grouping.assignment)}
+  markable {FlexibleCriterion.make(assignment: result.submission.grouping.assignment)}
 end
 
 Note.blueprint do
@@ -208,7 +208,7 @@ Result.blueprint do
 end
 
 RubricCriterion.blueprint do
-  assignment {Assignment.make(:marking_scheme_type => 'rubric')}
+  assignment {Assignment.make(marking_scheme_type: 'rubric')}
   name {Sham.name}
   position {1}  # override if many for the same assignment
   weight {1}

@@ -26,13 +26,13 @@ class StudentMembershipTest < ActiveSupport::TestCase
 
   should 'be able to spot an inviter' do
     membership = StudentMembership.make(
-                  :membership_status => StudentMembership::STATUSES[:inviter])
+                  membership_status: StudentMembership::STATUSES[:inviter])
     assert membership.inviter?
   end
 
   should 'be able to spot an non inviter' do
     membership = StudentMembership.make(
-                  :membership_status => StudentMembership::STATUSES[:accepted])
+                  membership_status: StudentMembership::STATUSES[:accepted])
     assert !membership.inviter?
   end
 end

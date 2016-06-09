@@ -24,7 +24,7 @@ class TextAnnotationTest < ActiveSupport::TestCase
 
     setup do
       @ta = Ta.make
-      @textannotation = TextAnnotation.make({:creator => @ta})
+      @textannotation = TextAnnotation.make({creator: @ta})
     end
 
     should 'render annotation_list_link_partial' do

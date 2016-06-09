@@ -7,7 +7,7 @@ class TasControllerTest < AuthenticatedControllerTest
   context 'No user' do
     should 'redirect to the index' do
       get :index
-      assert_redirected_to :action => 'login', :controller => 'main'
+      assert_redirected_to action: 'login', controller: 'main'
     end
   end # -- No user
 
@@ -23,12 +23,12 @@ class TasControllerTest < AuthenticatedControllerTest
     end
 
     should 'not be able to :edit' do
-      get_as @ta, :edit, :id => @ta.id
+      get_as @ta, :edit, id: @ta.id
       assert_response :missing
     end
 
     should 'not be able to :update' do
-      put_as @ta, :update, :id => @ta.id
+      put_as @ta, :update, id: @ta.id
       assert_response :missing
     end
 
@@ -63,30 +63,30 @@ class TasControllerTest < AuthenticatedControllerTest
       should 'be able to edit a TA' do
         get_as @admin,
                :edit,
-               :id => @ta.id
+               id: @ta.id
         assert_response :success
       end
 
       should 'be able to upload a TA CSV file' do
         post_as @admin,
                 :upload_ta_list,
-                :userlist => fixture_file_upload('classlist-csvs/new_students.csv')
+                userlist: fixture_file_upload('classlist-csvs/new_students.csv')
         assert_response :redirect
-        assert_redirected_to(:controller => 'tas', :action => 'index')
+        assert_redirected_to(controller: 'tas', action: 'index')
         c8mahler = Ta.find_by_user_name('c8mahlernew')
         assert_not_nil c8mahler
-        assert_generates '/tas/upload_ta_list', :controller => 'tas', :action => 'upload_ta_list'
-        assert_recognizes({:controller => 'tas', :action => 'upload_ta_list' },
-          {:path => 'tas/upload_ta_list', :method => :post})
+        assert_generates '/tas/upload_ta_list', controller: 'tas', action: 'upload_ta_list'
+        assert_recognizes({controller: 'tas', action: 'upload_ta_list' },
+          {path: 'tas/upload_ta_list', method: :post})
       end
 
       should 'have valid values in database after an upload of a ISO-8859-1 encoded TAs file parsed as ISO-8859-1' do
         post_as @admin,
                 :upload_ta_list,
-                :userlist => fixture_file_upload('files/test-students-iso-8859-1.csv'),
-                :encoding => 'ISO-8859-1'
+                userlist: fixture_file_upload('files/test-students-iso-8859-1.csv'),
+                encoding: 'ISO-8859-1'
         assert_response :redirect
-        assert_redirected_to(:controller => 'tas', :action => 'index')
+        assert_redirected_to(controller: 'tas', action: 'index')
         test_student = Ta.find_by_user_name('c2ÈrÉØrr')
         assert_not_nil test_student # student should exist
       end
@@ -94,10 +94,10 @@ class TasControllerTest < AuthenticatedControllerTest
       should 'have valid values in database after an upload of a UTF-8 encoded TAs file parsed as UTF-8' do
         post_as @admin,
                 :upload_ta_list,
-                :userlist => fixture_file_upload('files/test-students-utf8.csv'),
-                :encoding => 'UTF-8'
+                userlist: fixture_file_upload('files/test-students-utf8.csv'),
+                encoding: 'UTF-8'
         assert_response :redirect
-        assert_redirected_to(:controller => 'tas', :action => 'index')
+        assert_redirected_to(controller: 'tas', action: 'index')
         test_student = Ta.find_by_user_name('c2ÈrÉØrr')
         assert_not_nil test_student # student should exist
       end
@@ -105,10 +105,10 @@ class TasControllerTest < AuthenticatedControllerTest
       should 'have invalid values in database after an upload of a UTF-8 encoded TAs file parsed as ISO-8859-1' do
         post_as @admin,
                 :upload_ta_list,
-                :userlist => fixture_file_upload('files/test-students-utf8.csv'),
-                :encoding => 'ISO-8859-1'
+                userlist: fixture_file_upload('files/test-students-utf8.csv'),
+                encoding: 'ISO-8859-1'
         assert_response :redirect
-        assert_redirected_to(:controller => 'tas', :action => 'index')
+        assert_redirected_to(controller: 'tas', action: 'index')
         test_student = Ta.find_by_user_name('c2ÈrÉØrr')
         assert_nil test_student # student should not be found, despite existing in the CSV file
       end

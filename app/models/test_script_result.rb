@@ -32,6 +32,6 @@ class TestScriptResult < ActiveRecord::Base
   validates_presence_of :marks_earned
   validates_presence_of :repo_revision
 
-  validates_numericality_of :marks_earned, :only_integer => true, :greater_than_or_equal_to => 0
+  validates_numericality_of :marks_earned, only_integer: true, greater_than_or_equal_to: 0
 
 end

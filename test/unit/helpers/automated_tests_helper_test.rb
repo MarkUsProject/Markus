@@ -20,48 +20,48 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @asst = Assignment.make
       @asst.short_identifier = 'Tmp'
 
-      @scriptfile  = TestScript.make(:assignment_id           => @asst.id,
-                                     :seq_num                 => 2,
-                                     :script_name             => 'test1.rb',
-                                     :description             => 'This is an easy test',
-                                     :max_marks               => 2,
-                                     :run_on_submission       => false,
-                                     :run_on_request          => true,
-                                     :halts_testing           => false,
-                                     :display_description     => 'display_after_submission',
-                                     :display_run_status      => 'display_after_submission',
-                                     :display_marks_earned    => 'do_not_display',
-                                     :display_input           => 'do_not_display',
-                                     :display_expected_output => 'do_not_display',
-                                     :display_actual_output   => 'do_not_display')
-      @scriptfile2 = TestScript.make(:assignment_id           => @asst.id,
-                                     :seq_num                 => 1,
-                                     :script_name             => 'pretest.rb',
-                                     :description             => 'This is a test with no mark, can be a pretest, compile test etc.',
-                                     :max_marks               => 0,
-                                     :run_on_submission       => true,
-                                     :run_on_request          => true,
-                                     :halts_testing           => false,
-                                     :display_description     => 'display_after_submission',
-                                     :display_run_status      => 'display_after_submission',
-                                     :display_marks_earned    => 'display_after_submission',
-                                     :display_input           => 'do_not_display',
-                                     :display_expected_output => 'do_not_display',
-                                     :display_actual_output   => 'do_not_display')
-      @scriptfile3 = TestScript.make(:assignment_id           => @asst.id,
-                                     :seq_num                 => 3,
-                                     :script_name             => 'test2.rb',
-                                     :description             => 'This is a hard test',
-                                     :max_marks               => 10,
-                                     :run_on_submission       => false,
-                                     :run_on_request          => false,
-                                     :halts_testing           => false,
-                                     :display_description     => 'do_not_display',
-                                     :display_run_status      => 'do_not_display',
-                                     :display_marks_earned    => 'do_not_display',
-                                     :display_input           => 'do_not_display',
-                                     :display_expected_output => 'do_not_display',
-                                     :display_actual_output   => 'do_not_display')
+      @scriptfile  = TestScript.make(assignment_id: @asst.id,
+                                     seq_num: 2,
+                                     script_name: 'test1.rb',
+                                     description: 'This is an easy test',
+                                     max_marks: 2,
+                                     run_on_submission: false,
+                                     run_on_request: true,
+                                     halts_testing: false,
+                                     display_description: 'display_after_submission',
+                                     display_run_status: 'display_after_submission',
+                                     display_marks_earned: 'do_not_display',
+                                     display_input: 'do_not_display',
+                                     display_expected_output: 'do_not_display',
+                                     display_actual_output: 'do_not_display')
+      @scriptfile2 = TestScript.make(assignment_id: @asst.id,
+                                     seq_num: 1,
+                                     script_name: 'pretest.rb',
+                                     description: 'This is a test with no mark, can be a pretest, compile test etc.',
+                                     max_marks: 0,
+                                     run_on_submission: true,
+                                     run_on_request: true,
+                                     halts_testing: false,
+                                     display_description: 'display_after_submission',
+                                     display_run_status: 'display_after_submission',
+                                     display_marks_earned: 'display_after_submission',
+                                     display_input: 'do_not_display',
+                                     display_expected_output: 'do_not_display',
+                                     display_actual_output: 'do_not_display')
+      @scriptfile3 = TestScript.make(assignment_id: @asst.id,
+                                     seq_num: 3,
+                                     script_name: 'test2.rb',
+                                     description: 'This is a hard test',
+                                     max_marks: 10,
+                                     run_on_submission: false,
+                                     run_on_request: false,
+                                     halts_testing: false,
+                                     display_description: 'do_not_display',
+                                     display_run_status: 'do_not_display',
+                                     display_marks_earned: 'do_not_display',
+                                     display_input: 'do_not_display',
+                                     display_expected_output: 'do_not_display',
+                                     display_actual_output: 'do_not_display')
 
     end
 
@@ -134,7 +134,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @token.grouping_id = 2
       @token.remaining = 3
       @token.save
-      @grouping = Grouping.make(:id => '2')
+      @grouping = Grouping.make(id: '2')
       @grouping.add_member(@student)
       @current_user = @student
     end
@@ -150,7 +150,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @token.grouping_id = 2
       @token.remaining = 0
       @token.save
-      @grouping = Grouping.make(:id => '2')
+      @grouping = Grouping.make(id: '2')
       @grouping.add_member(@student)
       @current_user = @student
     end
@@ -168,7 +168,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @token.grouping_id = 2
       @token.remaining = nil
       @token.save
-      @grouping = Grouping.make(:id => '2')
+      @grouping = Grouping.make(id: '2')
       @grouping.add_member(@student)
       @current_user = @student
     end

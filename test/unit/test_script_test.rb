@@ -39,20 +39,20 @@ class TestScriptTest < ActiveSupport::TestCase
     
     setup do
       @asst = Assignment.make
-      @scriptfile = TestScript.make(:assignment_id           => @asst.id,
-                                    :seq_num                 => 1,
-                                    :script_name             => 'script.sh',
-                                    :description             => 'This is a bash script file',
-                                    :max_marks               => 5,
-                                    :run_on_submission       => true,
-                                    :run_on_request          => true,
-                                    :halts_testing           => false,
-                                    :display_description     => 'do_not_display',
-                                    :display_run_status      => 'do_not_display',
-                                    :display_marks_earned    => 'do_not_display',
-                                    :display_input           => 'do_not_display',
-                                    :display_expected_output => 'do_not_display',
-                                    :display_actual_output   => 'do_not_display')
+      @scriptfile = TestScript.make(assignment_id:              @asst.id,
+                                    seq_num:                    1,
+                                    script_name:                'script.sh',
+                                    description:                'This is a bash script file',
+                                    max_marks:                  5,
+                                    run_on_submission:          true,
+                                    run_on_request:             true,
+                                    halts_testing:              false,
+                                    display_description:        'do_not_display',
+                                    display_run_status:         'do_not_display',
+                                    display_marks_earned:       'do_not_display',
+                                    display_input:              'do_not_display',
+                                    display_expected_output:    'do_not_display',
+                                    display_actual_output:      'do_not_display')
     end
     
     should "return true when a valid file is created" do
@@ -81,35 +81,35 @@ class TestScriptTest < ActiveSupport::TestCase
       @asst = Assignment.make
       display_option = %w(do_not_display display_after_submission display_after_collection)
       
-      @validscriptfile = TestScript.make(:assignment_id           => @asst.id,
-                                         :seq_num                 => 1,
-                                         :script_name             => 'validscript.sh',
-                                         :description             => 'This is a bash script file',
-                                         :max_marks               => 5,
-                                         :run_on_submission       => true,
-                                         :run_on_request          => true,
-                                         :halts_testing           => false,
-                                         :display_description     => display_option[0],
-                                         :display_run_status      => display_option[1],
-                                         :display_marks_earned    => display_option[2],
-                                         :display_input           => display_option[0],
-                                         :display_expected_output => display_option[1],
-                                         :display_actual_output   => display_option[2])
+      @validscriptfile = TestScript.make(assignment_id:               @asst.id,
+                                         seq_num:                     1,
+                                         script_name:                 'validscript.sh',
+                                         description:                 'This is a bash script file',
+                                         max_marks:                   5,
+                                         run_on_submission:           true,
+                                         run_on_request:              true,
+                                         halts_testing:               false,
+                                         display_description:         display_option[0],
+                                         display_run_status:          display_option[1],
+                                         display_marks_earned:        display_option[2],
+                                         display_input:               display_option[0],
+                                         display_expected_output:     display_option[1],
+                                         display_actual_output:       display_option[2])
                                          
-      @invalidscriptfile = TestScript.make(:assignment_id           => @asst.id,
-                                           :seq_num                 => 2,
-                                           :script_name             => 'invalidscript.sh',
-                                           :description             => 'This is a bash script file',
-                                           :max_marks               => 5,
-                                           :run_on_submission       => true,
-                                           :run_on_request          => true,
-                                           :halts_testing           => false,
-                                           :display_description     => display_option[2],
-                                           :display_run_status      => display_option[1],
-                                           :display_marks_earned    => display_option[0],
-                                           :display_input           => display_option[2],
-                                           :display_expected_output => display_option[1],
-                                           :display_actual_output   => display_option[0])
+      @invalidscriptfile = TestScript.make(assignment_id:             @asst.id,
+                                           seq_num:                   2,
+                                           script_name:               'invalidscript.sh',
+                                           description:               'This is a bash script file',
+                                           max_marks:                 5,
+                                           run_on_submission:         true,
+                                           run_on_request:            true,
+                                           halts_testing:             false,
+                                           display_description:       display_option[2],
+                                           display_run_status:        display_option[1],
+                                           display_marks_earned:      display_option[0],
+                                           display_input:             display_option[2],
+                                           display_expected_output:   display_option[1],
+                                           display_actual_output:     display_option[0])
     end
     
     should "return false when assignment is nil" do
@@ -179,20 +179,20 @@ class TestScriptTest < ActiveSupport::TestCase
     
     setup do
       @asst = Assignment.make
-      @scriptfile = TestScript.make(:assignment_id           => @asst.id,
-                                    :seq_num                 => 1,
-                                    :script_name             => 'script.sh',
-                                    :description             => 'This is a bash script file',
-                                    :max_marks               => 5,
-                                    :run_on_submission       => true,
-                                    :run_on_request          => true,
-                                    :halts_testing           => false,
-                                    :display_description     => 'do_not_display',
-                                    :display_run_status      => 'do_not_display',
-                                    :display_marks_earned    => 'do_not_display',
-                                    :display_input           => 'do_not_display',
-                                    :display_expected_output => 'do_not_display',
-                                    :display_actual_output   => 'do_not_display')
+      @scriptfile = TestScript.make(assignment_id:               @asst.id,
+                                    seq_num:                     1,
+                                    script_name:                 'script.sh',
+                                    description:                 'This is a bash script file',
+                                    max_marks:                   5,
+                                    run_on_submission:           true,
+                                    run_on_request:              true,
+                                    halts_testing:               false,
+                                    display_description:         'do_not_display',
+                                    display_run_status:          'do_not_display',
+                                    display_marks_earned:        'do_not_display',
+                                    display_input:               'do_not_display',
+                                    display_expected_output:     'do_not_display',
+                                    display_actual_output:       'do_not_display')
     end
     
     should "be able to delete a script file" do

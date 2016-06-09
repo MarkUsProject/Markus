@@ -10,10 +10,10 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
     setup do
       @assignment = Assignment.make
       @group = Group.make
-      @grouping = Grouping.make(:assignment => @assignment,
-                                :group => @group)
-      StudentMembership.make(:grouping => @grouping,
-                             :membership_status => 'inviter')
+      @grouping = Grouping.make(assignment: @assignment,
+                                group: @group)
+      StudentMembership.make(grouping: @grouping,
+                             membership_status: 'inviter')
       penalty_period_submission_rule = PenaltyPeriodSubmissionRule.new
       @assignment.replace_submission_rule(penalty_period_submission_rule)
       penalty_period_submission_rule.save

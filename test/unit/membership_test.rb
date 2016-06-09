@@ -13,7 +13,7 @@ class MembershipTest < ActiveSupport::TestCase
 
   context 'StudentMembership is inviter' do
     setup do
-      @membership = StudentMembership.make(:membership_status => StudentMembership::STATUSES[:inviter])
+      @membership = StudentMembership.make(membership_status: StudentMembership::STATUSES[:inviter])
     end
 
     should 'be inviter' do
@@ -24,7 +24,7 @@ class MembershipTest < ActiveSupport::TestCase
 
   context 'StudentMembership is not inviter' do
     setup do
-      @membership = StudentMembership.make(:membership_status => StudentMembership::STATUSES[:accepted])
+      @membership = StudentMembership.make(membership_status: StudentMembership::STATUSES[:accepted])
     end
 
     should 'not be inviter' do
