@@ -99,7 +99,6 @@
       return (
         <div>
           <ErrorDiv error={this.state.error} />
-          <div className='skip-empty-submissions'>{skip_empty_submissions}</div>
           <div className='columns'>
             <ReviewerTable ref="reviewerTable"
               groups={this.state.reviewerGroups}
@@ -131,7 +130,7 @@
         columns: [
           {
             id: 'name',
-            content: '<%= j raw t('groups.group_name') %>',
+            content: '<%= j raw t('assignment.peer_review.reviewer_group') %>',
             sortable: true,
             searchable: true
           },
@@ -196,7 +195,7 @@
         columns: [
           {
             id: 'name',
-            content: '<%= j raw t('groups.group_name') %>',
+            content: '<%= j raw t('assignment.peer_review.reviewee_group') %>',
             sortable: true,
             searchable: true
           },
