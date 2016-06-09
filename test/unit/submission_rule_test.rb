@@ -44,16 +44,16 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 	  # Randomly create five periods for this SubmissionRule (ids unsorted):
 
 	  # Create the first period
-	  @period = Period.make(:submission_rule_id => sub_rule_id)
+	  @period = Period.make(submission_rule_id: sub_rule_id)
 	  first_period_id = @period.id
 
 	  # Create two other periods
-	  @period = Period.make(:id => first_period_id + 2, :submission_rule_id => sub_rule_id)
-	  @period = Period.make(:id => first_period_id + 4, :submission_rule_id => sub_rule_id)
+	  @period = Period.make(id: first_period_id + 2, submission_rule_id: sub_rule_id)
+	  @period = Period.make(id: first_period_id + 4, submission_rule_id: sub_rule_id)
 
 	  # Create two other periods
-	  @period = Period.make(:id => first_period_id + 1, :submission_rule_id => sub_rule_id)
-	  @period = Period.make(:id => first_period_id + 3, :submission_rule_id => sub_rule_id)
+	  @period = Period.make(id: first_period_id + 1, submission_rule_id: sub_rule_id)
+	  @period = Period.make(id: first_period_id + 3, submission_rule_id: sub_rule_id)
     end
 
     should 'sort in ascending order' do
@@ -77,16 +77,16 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 	  # Randomly create five periods for this SubmissionRule (ids unsorted):
 
 	  # Create the first period
-	  @period = Period.make(:submission_rule_id => sub_rule_id)
+	  @period = Period.make(submission_rule_id: sub_rule_id)
 	  first_period_id = @period.id
 
 	  # Create two other periods
-	  @period = Period.make(:id => first_period_id + 2, :submission_rule_id => sub_rule_id)
-	  @period = Period.make(:id => first_period_id + 4, :submission_rule_id => sub_rule_id)
+	  @period = Period.make(id: first_period_id + 2, submission_rule_id: sub_rule_id)
+	  @period = Period.make(id: first_period_id + 4, submission_rule_id: sub_rule_id)
 
 	  # Create two other periods
-	  @period = Period.make(:id => first_period_id + 1, :submission_rule_id => sub_rule_id)
-	  @period = Period.make(:id => first_period_id + 3, :submission_rule_id => sub_rule_id)
+	  @period = Period.make(id: first_period_id + 1, submission_rule_id: sub_rule_id)
+	  @period = Period.make(id: first_period_id + 3, submission_rule_id: sub_rule_id)
     end
 
     should 'sort in ascending order' do
@@ -123,19 +123,19 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     setup do
 
       # the assignment due date is to come...
-      @assignment = Assignment.make(:section_due_dates_type => true,
-        :due_date => 2.days.from_now, :group_min => 1)
+      @assignment = Assignment.make(section_due_dates_type: true,
+                                    due_date: 2.days.from_now, group_min: 1)
 
       # ... but the section due date is in the past
-      @section = Section.make(:name => 'section1')
-      @sectionDueDate = SectionDueDate.make(:section => @section,
-        :assignment => @assignment, :due_date => 2.days.ago)
+      @section = Section.make(name: 'section1')
+      @sectionDueDate = SectionDueDate.make(section:    @section,
+                                            assignment: @assignment, due_date: 2.days.ago)
 
       # create a group of one student from this section, for this assignment
-      @student = Student.make(:section => @section)
-      @grouping = Grouping.make(:assignment => @assignment)
-      @studentMembership = StudentMembership.make(:user => @student, :grouping => @grouping,
-          :membership_status => StudentMembership::STATUSES[:inviter])
+      @student = Student.make(section: @section)
+      @grouping = Grouping.make(assignment: @assignment)
+      @studentMembership = StudentMembership.make(user:               @student, grouping: @grouping,
+                                                  membership_status:  StudentMembership::STATUSES[:inviter])
 
     end
 
@@ -149,7 +149,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 
   context 'Assignment with a past due date' do
     setup do
-      @assignment = Assignment.make(:due_date => 2.days.ago)
+      @assignment = Assignment.make(due_date: 2.days.ago)
     end
 
     should 'be able to collect' do

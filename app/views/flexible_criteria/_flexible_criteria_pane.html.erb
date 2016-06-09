@@ -1,10 +1,11 @@
-<div class='sortable'>
+<div class='sortable_criteria'>
   <header>
-    <span><%= t('criteria') %></span>
-    <span class='right'>
+    <span class='left'><%= t('criteria') %></span>
+    <span class='center'>
       <%= t('total_mark') %>
       (<span id='criteria_total_mark'><%= @assignment.total_mark %></span>)
     </span>
+    <span class='right'><%= t('visibility') %></span>
   </header>
 
   <ul id='flexible_criteria_pane_list'>

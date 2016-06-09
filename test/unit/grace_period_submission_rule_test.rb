@@ -12,12 +12,12 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
       @assignment = Assignment.make
       @group = Group.make
       @student = Student.make
-      @grouping = Grouping.make(:assignment => @assignment,
-                                :group => @group)
+      @grouping = Grouping.make(assignment: @assignment,
+                                group: @group)
 
-      StudentMembership.make(:grouping => @grouping,
-                             :membership_status => 'inviter',
-                             :user => @student)
+      StudentMembership.make(grouping: @grouping,
+                             membership_status: 'inviter',
+                             user: @student)
       grace_period_submission_rule = GracePeriodSubmissionRule.new
       @assignment.replace_submission_rule(grace_period_submission_rule)
       GracePeriodDeduction.destroy_all
@@ -330,12 +330,12 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     context 'submit assignment 1 on time and submit assignment 2 before assignment 1 collection time' do
       setup do
         @assignment2 = Assignment.make
-        @grouping2 = Grouping.make(:assignment => @assignment2,
-                                  :group => @group)
+        @grouping2 = Grouping.make(assignment: @assignment2,
+                                   group: @group)
 
-        StudentMembership.make(:grouping => @grouping2,
-                               :membership_status => 'inviter',
-                               :user => @student)
+        StudentMembership.make(grouping: @grouping2,
+                               membership_status: 'inviter',
+                               user: @student)
         grace_period_submission_rule = GracePeriodSubmissionRule.new
         @assignment2.replace_submission_rule(grace_period_submission_rule)
         GracePeriodDeduction.destroy_all

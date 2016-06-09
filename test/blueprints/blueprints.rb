@@ -101,12 +101,14 @@ ExtraMark.blueprint do
 end
 
 FlexibleCriterion.blueprint do
-  assignment {Assignment.make(:marking_scheme_type => 'flexible')}
+  assignment {Assignment.make(marking_scheme_type: 'flexible')}
   name
   description
   position {1} # override if many for the same assignment
   max{10}
   assigned_groups_count {0}
+  ta_visible {true}
+  peer_visible {false}
 end
 
 Grade.blueprint do
@@ -174,18 +176,18 @@ end
 
 Mark.blueprint do
   result {Result.make}
-  markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
+  markable {RubricCriterion.make(assignment: result.submission.grouping.assignment)}
   mark {1}
 end
 
 Mark.blueprint(:rubric) do
   result {Result.make}
-  markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
+  markable {RubricCriterion.make(assignment: result.submission.grouping.assignment)}
 end
 
 Mark.blueprint(:flexible) do
   result {Result.make}
-  markable {FlexibleCriterion.make(:assignment => result.submission.grouping.assignment)}
+  markable {FlexibleCriterion.make(assignment: result.submission.grouping.assignment)}
 end
 
 Note.blueprint do
@@ -206,7 +208,7 @@ Result.blueprint do
 end
 
 RubricCriterion.blueprint do
-  assignment {Assignment.make(:marking_scheme_type => 'rubric')}
+  assignment {Assignment.make(marking_scheme_type: 'rubric')}
   name {Sham.name}
   position {1}  # override if many for the same assignment
   weight {1}
@@ -216,6 +218,8 @@ RubricCriterion.blueprint do
   level_2_name {'Satisfactory'}
   level_3_name {'Good'}
   level_4_name {'Excellent'}
+  ta_visible {true}
+  peer_visible {false}
 end
 
 Section.blueprint do
