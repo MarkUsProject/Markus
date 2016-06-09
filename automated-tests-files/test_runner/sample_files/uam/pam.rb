@@ -1,20 +1,63 @@
 #!/usr/bin/env ruby
 
 require 'open3'
+require 'json'
+
+def print_result(name, input, expected, actual, marks, status)
+  print <<-EOF
+    <test>
+      <name>#{name}</name>
+      <input>#{input}</input>
+      <expected>#{expected}</expected>
+      <actual>#{actual}</actual>
+      <marks_earned>#{marks}</marks_earned>
+      <status>#{status}</status>
+    </test>
+  EOF
+end
+
+def print_results(result_filename, timeout_filename)
+
+  begin
+    File.open(result_filename, 'r') do |result_file|
+      result = JSON.parse(result_file.read)
+      result['results'].each do |test_class|
+        test_class['passes'].each do |test_name, test_desc|
+          print_result(test_name, test_desc, '', '', 1, 'pass')
+        end
+        test_class['failures'].each do |test_name, test_stack|
+          print_result(test_name, test_stack['description'], '', test_stack['message'], 0, 'fail')
+        end
+        test_class['errors'].each do |test_name, test_stack|
+          print_result(test_name, test_stack['description'], '', test_stack['message'], 0, 'fail')
+        end
+      end
+    end
+  rescue Errno::ENOENT
+    if File.exist?(timeout_filename)
+      print_result('All tests', '', '', 'Timeout', 0, 'fail')
+    else
+      print_result('All tests', '', '', 'The test framework failed, please contact your instructor', 0, 'fail')
+    end
+  end
+end
 
 if __FILE__ == $0 then
 
   path_to_virtualenv = '/home/adisandro/Code/uam-virtualenv'
   path_to_uam = '/home/adisandro/Desktop/uam'
   path_to_pam = path_to_uam + '/pam/pam.py'
+  result_filename = 'result.json'
+  timeout_filename = 'timedout'
   output, status = Open3.capture2e("
     . #{path_to_virtualenv}/bin/activate;
-    PYTHONPATH=#{path_to_uam} #{path_to_pam} result.json test.py
+    PYTHONPATH=#{path_to_uam} #{path_to_pam} #{result_filename} test.py
   ")
   unless status.success?
     abort "PAM failed: #{output}"
   end
-
+  print_results(result_filename, timeout_filename)
+  # TODO Get test.py filename from markus
 
   # # TODO Get the assignment name from MarkUs
   # assignment = 'A1'
@@ -51,23 +94,5 @@ if __FILE__ == $0 then
   # unless status.success?
   #   abort "Templator failed: #{output}"
   # end
-
-  # TODO Read result.json and produce this
-  print "<test>\n" \
-          "<name>uam</name>\n" \
-          "<input>test</input>\n" \
-          "<expected>ok</expected>\n" \
-          "<actual>ok</actual>\n" \
-          "<marks_earned>1</marks_earned>\n" \
-          "<status>pass</status>\n" \
-        "</test>\n" \
-        "<test>\n" \
-          "<name>uam</name>\n" \
-          "<input>test</input>\n" \
-          "<expected>ok</expected>\n" \
-          "<actual>no</actual>\n" \
-          "<marks_earned>0</marks_earned>\n" \
-          "<status>fail</status>\n" \
-        "</test>"
 
 end
