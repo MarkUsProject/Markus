@@ -10,13 +10,13 @@ class SubmissionHelperTest < ActiveSupport::TestCase
   context 'A new file when submitted' do
     context "containing characters outside what's allowed in a filename" do
       setup do
-        @filenames_to_be_sanitized = [ { :expected => 'llll_', :orig => 'llllé' },
-                                       { :expected => '________', :orig => 'öä*?`ßÜÄ' },
-                                       { :expected => '', :orig => nil },
-                                       { :expected => 'garbage-__.txt', :orig => 'garbage-éæ.txt' },
-                                       { :expected => 'space_space.txt', :orig => 'space space.txt' },
-                                       { :expected => '______.txt', :orig => '      .txt' },
-                                       { :expected => 'garbage-__.txt', :orig => 'garbage-éæ.txt' } ]
+        @filenames_to_be_sanitized = [ { expected: 'llll_', orig: 'llllé' },
+                                       { expected: '________', orig: 'öä*?`ßÜÄ' },
+                                       { expected: '', orig: nil },
+                                       { expected: 'garbage-__.txt', orig: 'garbage-éæ.txt' },
+                                       { expected: 'space_space.txt', orig: 'space space.txt' },
+                                       { expected: '______.txt', orig: '      .txt' },
+                                       { expected: 'garbage-__.txt', orig: 'garbage-éæ.txt' } ]
       end
 
       should 'have sanitized them properly' do

@@ -14,7 +14,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     # to the login page
 
     should 'on :index (get)' do
-      get :index, :assignment_id => 1
+      get :index, assignment_id: 1
       assert_response :redirect
     end
 
@@ -29,7 +29,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     end
 
     should 'on :add_annotation_text (get)' do
-      get :add_annotation_text, :assignment_id => 1, :id => 1
+      get :add_annotation_text, assignment_id: 1, id: 1
       assert_response :redirect
     end
 
@@ -39,17 +39,17 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     end
 
     should 'on :download (get)' do
-      get :download, :assignment_id => 1
+      get :download, assignment_id: 1
       assert_response :redirect
     end
 
     should 'on :csv_upload (get)' do
-      get :csv_upload, :assignment_id => 1
+      get :csv_upload, assignment_id: 1
       assert_response :redirect
     end
 
     should 'on :index (post)' do
-      post :index, :assignment_id => 1
+      post :index, assignment_id: 1
       assert_response :redirect
     end
 
@@ -64,37 +64,37 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     end
 
     should 'on :update_annotation (post)' do
-      post :update_annotation, :assignment_id => 1, :id => 1
+      post :update_annotation, assignment_id: 1, id: 1
       assert_response :redirect
     end
 
     should 'on :add_annotation_text (post)' do
-      post :add_annotation_text, :assignment_id => 1, :id => 1
+      post :add_annotation_text, assignment_id: 1, id: 1
       assert_response :redirect
     end
 
     should 'on :delete_annotation_text (post)' do
-      post :delete_annotation_text, :assignment_id => 1, :id => 1
+      post :delete_annotation_text, assignment_id: 1, id: 1
       assert_response :redirect
     end
 
     should 'on :download (post)' do
-      post :download, :assignment_id => 1
+      post :download, assignment_id: 1
       assert_response :redirect
     end
 
     should 'on :csv_upload (post)' do
-      post :csv_upload, :assignment_id => 1
+      post :csv_upload, assignment_id: 1
       assert_response :redirect
     end
 
     should 'on :update_annotation' do
-      put :update_annotation, :assignment_id => 1, :id => 1
+      put :update_annotation, assignment_id: 1, id: 1
       assert_response :redirect
     end
 
     should 'on :delete_annotation_text' do
-      delete :delete_annotation_text, :assignment_id => 1, :id => 1
+      delete :delete_annotation_text, assignment_id: 1, id: 1
       assert_response :redirect
     end
 
@@ -120,7 +120,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     end
 
     should 'on :index' do
-      get_as @admin, :index, :assignment_id => @assignment.id
+      get_as @admin, :index, assignment_id: @assignment.id
       assert_equal true, flash.empty?
       assert render_with_layout :content
       assert render_template :index
@@ -132,9 +132,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     should 'on :show' do
       get_as @admin,
             :show,
-            :assignment_id => @assignment.id,
-            :id => @category.id,
-            :format => :js
+            assignment_id: @assignment.id,
+            id: @category.id,
+            format: :js
       assert_equal true, flash.empty?
       assert_response :success
       assert_not_nil assigns :annotation_category
@@ -143,8 +143,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     should 'on :new' do
       get_as @admin,
               :new,
-              :assignment_id => @assignment.id,
-              :format => :js
+              assignment_id: @assignment.id,
+              format: :js
       assert_response :success
       assert render_template :new #this makes sure it didn't call another action
       assert_not_nil assigns :assignment
@@ -210,12 +210,12 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     end
 
     should 'on :add_annotation_text' do
-      @annotation_text = AnnotationText.make(:creator_id => @admin.id)
+      @annotation_text = AnnotationText.make(creator_id: @admin.id)
       get_as @admin,
              :add_annotation_text,
-             :assignment_id => 1,
-             :id => @category.id,
-             :format => :js
+             assignment_id: 1,
+             id: @category.id,
+             format: :js
       @annotation_text = AnnotationText.find(@annotation_text.id)
       assert_response :success
       assert_not_nil assigns :annotation_category
@@ -227,18 +227,18 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       AnnotationText.any_instance.expects(:destroy).once
       get_as @admin,
              :delete_annotation_text,
-             :assignment_id => @assignment.id,
-             :id => @annotation_text.id,
-             :format => :js
+             assignment_id: @assignment.id,
+             id: @annotation_text.id,
+             format: :js
       assert_response :success
     end
 
     should 'on :destroy' do
       AnnotationCategory.any_instance.expects(:destroy).once
       get_as @admin, :destroy,
-             :assignment_id => 1,
-             :id => @category.id,
-             :format => :js
+             assignment_id: 1,
+             id: @category.id,
+             format: :js
       assert_response :success
     end
 
@@ -247,14 +247,14 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       should 'in csv' do
         get_as @admin,
                 :download,
-                :assignment_id => @assignment.id,
-                :format => 'csv'
+                assignment_id: @assignment.id,
+                format: 'csv'
         assert_response :success
         assert_equal 'text/csv', response.header['Content-Type']
       end
 
       should 'in yml' do
-        get_as @admin, :download, :assignment_id => @assignment.id, :format => 'yml'
+        get_as @admin, :download, assignment_id: @assignment.id, format: 'yml'
         assert_response :success
         assert_equal  'application/octet-stream', response.header['Content-Type']
       end
@@ -262,7 +262,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       should 'in error' do
         get_as @admin,
                :download,
-               :assignment_id => @assignment.id, :format => 'xml'
+               assignment_id: @assignment.id, format: 'xml'
         assert_response :redirect
         assert set_flash.to(t('annotations.upload.flash_error',
                               format: 'xml'))
@@ -270,7 +270,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     end
 
     should 'on :csv_upload (get)' do
-      get_as @admin, :csv_upload, :assignment_id => @assignment.id
+      get_as @admin, :csv_upload, assignment_id: @assignment.id
       assert_response :redirect
     end
 
@@ -308,9 +308,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         AnnotationText.any_instance.stubs(:save).returns(true)
         get_as @admin,
                :add_annotation_text,
-               :assignment_id => 1,
-               :id => @category.id,
-               :format => :js
+               assignment_id: 1,
+               id: @category.id,
+               format: :js
         assert_response :success
         assert_not_nil assigns :annotation_category
         assert render_template 'insert_new_annotation_text'
@@ -333,8 +333,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     should 'on :csv_upload (post)' do
       post_as @admin,
               :csv_upload,
-              :assignment_id => @assignment.id,
-              :annotation_category_list_csv => StringIO.new('name, text')
+              assignment_id: @assignment.id,
+              annotation_category_list_csv: StringIO.new('name, text')
       assert_response :redirect
       assert set_flash.to(t('annotations.upload.success',
                             annotation_category_number: 1))
@@ -342,16 +342,16 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     end
 
     should 'on :csv_upload route properly' do
-      assert_recognizes({:controller => 'annotation_categories', :assignment_id => '1', :action => 'csv_upload' },
-        {:path => 'assignments/1/annotation_categories/csv_upload',  :method => :post})
+      assert_recognizes({controller: 'annotation_categories', assignment_id: '1', action: 'csv_upload' },
+        {path: 'assignments/1/annotation_categories/csv_upload',  method: :post})
     end
 
     should 'on :csv_upload have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8' do
       post_as @admin,
               :csv_upload,
-              :assignment_id => @assignment.id,
-              :annotation_category_list_csv => fixture_file_upload('files/test_annotations_UTF-8.csv'),
-              :encoding => 'UTF-8'
+              assignment_id: @assignment.id,
+              annotation_category_list_csv: fixture_file_upload('files/test_annotations_UTF-8.csv'),
+              encoding: 'UTF-8'
       assert_response :redirect
       test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
       assert_not_nil test_annotation # annotation should exist
@@ -360,9 +360,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     should 'on :csv_upload have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1' do
       post_as @admin,
               :csv_upload,
-              :assignment_id => @assignment.id,
-              :annotation_category_list_csv => fixture_file_upload('files/test_annotations_ISO-8859-1.csv'),
-              :encoding => 'ISO-8859-1'
+              assignment_id: @assignment.id,
+              annotation_category_list_csv: fixture_file_upload('files/test_annotations_ISO-8859-1.csv'),
+              encoding: 'ISO-8859-1'
       assert_response :redirect
       test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
       assert_not_nil test_annotation # annotation should exist
@@ -371,9 +371,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     should 'on :csv_upload have valid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1' do
       post_as @admin,
               :csv_upload,
-              :assignment_id => @assignment.id,
-              :annotation_category_list_csv => fixture_file_upload('files/test_annotations_UTF-8.csv'),
-              :encoding => 'ISO-8859-1'
+              assignment_id: @assignment.id,
+              annotation_category_list_csv: fixture_file_upload('files/test_annotations_UTF-8.csv'),
+              encoding: 'ISO-8859-1'
       assert_response :redirect
       test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
       assert_nil test_annotation # annotation should not exist, despite being in file
@@ -384,7 +384,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         @old_annotation_categories =  @assignment.annotation_categories
         # Needed, otherwise the test fail
         @old_annotation_categories.length
-        post_as @admin, :yml_upload, :assignment_id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
+        post_as @admin, :yml_upload, assignment_id: @assignment.id, annotation_category_list_yml: "--- \n A:\n - A1\n - A2\n"
 
         assert_response :redirect
         assert set_flash.to(t('annotations.upload.success',
@@ -399,8 +399,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         @old_annotation_categories = @assignment.annotation_categories
         post_as @admin,
                 :yml_upload,
-                :assignment_id => @assignment.id,
-                :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
+                assignment_id: @assignment.id,
+                annotation_category_list_yml: "--- \n A:\n - A1\n A2\n"
 
         assert_response :redirect
         assert set_flash.to(t('annotations.upload.syntax_error',
@@ -425,16 +425,16 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       end
 
       should 'on :yml_upload route properly' do
-        assert_recognizes({:controller => 'annotation_categories', :assignment_id => '1', :action => 'yml_upload' },
-          {:path => 'assignments/1/annotation_categories/yml_upload',  :method => :post})
+        assert_recognizes({controller: 'annotation_categories', assignment_id: '1', action: 'yml_upload' },
+          {path: 'assignments/1/annotation_categories/yml_upload',  method: :post})
       end
 
       should 'on :yml_upload have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8' do
         post_as @admin,
                 :yml_upload,
-                :assignment_id => @assignment.id,
-                :annotation_category_list_yml => fixture_file_upload('files/test_annotations_UTF-8.yml'),
-                :encoding => 'UTF-8'
+                assignment_id: @assignment.id,
+                annotation_category_list_yml: fixture_file_upload('files/test_annotations_UTF-8.yml'),
+                encoding: 'UTF-8'
         assert_response :redirect
         test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
         assert_not_nil test_annotation # annotation should exist
@@ -443,9 +443,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       should 'on :yml_upload have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1' do
         post_as @admin,
                 :yml_upload,
-                :assignment_id => @assignment.id,
-                :annotation_category_list_yml => fixture_file_upload('files/test_annotations_ISO-8859-1.yml'),
-                :encoding => 'ISO-8859-1'
+                assignment_id: @assignment.id,
+                annotation_category_list_yml: fixture_file_upload('files/test_annotations_ISO-8859-1.yml'),
+                encoding: 'ISO-8859-1'
         assert_response :redirect
         test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
         assert_not_nil test_annotation # annotation should exist
@@ -454,9 +454,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       should 'on :yml_upload have valid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1' do
         post_as @admin,
                 :yml_upload,
-                :assignment_id => @assignment.id,
-                :annotcation_category_list_yml => fixture_file_upload('files/test_annotations_UTF-8.yml'),
-                :encoding => 'ISO-8859-1'
+                assignment_id: @assignment.id,
+                annotcation_category_list_yml: fixture_file_upload('files/test_annotations_UTF-8.yml'),
+                encoding: 'ISO-8859-1'
         assert_response :redirect
         test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
         assert_nil test_annotation # annotation should not exist, despite being in file

@@ -19,7 +19,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       @controller = MainController.new
       @admin = Admin.make
       @student = Student.make
-      post :login, :user_login => @admin.user_name, :user_password => 'asfd'
+      post :login, user_login: @admin.user_name, user_password: 'asfd'
     end
 
     should 'be able to log in and the session uid is correctly set' do
@@ -29,8 +29,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
     context 'and providing empty data for effective user' do
       setup do
         assert_equal @admin.id, session[:uid]
-        post_as @admin, :login_as, :effective_user_login => '',
-          :user_login => @admin.user_name, :admin_password => 'adfadsf'
+        post_as @admin, :login_as, effective_user_login: '',
+          user_login: @admin.user_name, admin_password: 'adfadsf'
       end
 
       should 'NOT switch role' do
@@ -41,8 +41,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
     context 'and providing empty data for the password' do
       setup do
         assert_equal @admin.id, session[:uid]
-        post_as @admin, :login_as, :effective_user_login => @student.user_name,
-          :user_login => @admin.user_name, :admin_password => ""
+        post_as @admin, :login_as, effective_user_login: @student.user_name,
+          user_login: @admin.user_name, admin_password: ""
       end
 
       should 'NOT switch role' do
@@ -53,8 +53,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
     context 'and attempting to switch to another admin' do
       setup do
         assert_equal @admin.id, session[:uid]
-        post_as @admin, :login_as, :effective_user_login => @admin.user_name,
-          :user_login => @admin.user_name, :admin_password => 'lasdfj'
+        post_as @admin, :login_as, effective_user_login: @admin.user_name,
+          user_login: @admin.user_name, admin_password: 'lasdfj'
       end
 
       should 'NOT switch role' do
@@ -65,8 +65,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
     context 'when logged in' do
       setup do
         assert_equal @admin.id, session[:uid]
-        @response = post_as @admin, :login_as, :effective_user_login => @student.user_name,
-          :user_login => @admin.user_name, :admin_password => 'adfadsf'
+        @response = post_as @admin, :login_as, effective_user_login: @student.user_name,
+          user_login: @admin.user_name, admin_password: 'adfadsf'
       end
 
       should render_template '_role_switch_handler'
@@ -74,7 +74,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       should 'be able to switch to a role with lesser privileges' do
         # redirect is done by JS, so match that we get a response
         # window.location.href = <index_url>
-        assert redirect_to :action => 'index'
+        assert redirect_to action: 'index'
         # should have set real_uid in the session
         assert_equal @admin.id , session[:real_uid]
         assert_not_equal session[:uid], session[:real_uid]
@@ -86,7 +86,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
           get_as @admin, :logout
         end
 
-        should redirect_to :action => 'login'
+        should redirect_to action: 'login'
 
         should 'be able to log out and session info is discarded' do
           assert_nil session[:real_uid]
@@ -104,8 +104,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       @controller = MainController.new
       @admin = Admin.make
       @student = Student.make
-      post_as @student, :login_as, :effective_user_login => @student.user_name,
-          :user_login => @admin.user_name, :admin_password => 'adfadsf'
+      post_as @student, :login_as, effective_user_login: @student.user_name,
+          user_login: @admin.user_name, admin_password: 'adfadsf'
     end
 
     should respond_with 404
@@ -123,8 +123,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       @controller = MainController.new
       @admin = Admin.make
       @ta = Ta.make
-      post_as @ta, :login_as, :effective_user_login => @ta.user_name,
-          :user_login => @admin.user_name, :admin_password => 'adfadsf'
+      post_as @ta, :login_as, effective_user_login: @ta.user_name,
+          user_login: @admin.user_name, admin_password: 'adfadsf'
     end
 
     should respond_with 404
@@ -152,7 +152,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       mock_request_env['HTTP_X_FORWARDED_USER'] = @admin.user_name
       ActionController::TestRequest.any_instance.stubs(:env).returns(mock_request_env)
       @student = Student.make
-      post :login, :user_login => @admin.user_name, :user_password => 'asfd'
+      post :login, user_login: @admin.user_name, user_password: 'asfd'
     end
 
     should 'be able to log in and the session uid is correctly set' do
@@ -161,8 +161,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
 
     context 'and providing empty data for effective user' do
       setup do
-        post_as @admin, :login_as, :effective_user_login => '',
-                                   :user_login => @admin.user_name
+        post_as @admin, :login_as, effective_user_login: '',
+                                   user_login: @admin.user_name
       end
 
       should 'NOT switch role' do
@@ -172,8 +172,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
 
     context 'and attempting to switch to another admin' do
       setup do
-        post_as @admin, :login_as, :effective_user_login => @admin.user_name,
-          :user_login => @admin.user_name
+        post_as @admin, :login_as, effective_user_login: @admin.user_name,
+          user_login: @admin.user_name
       end
 
       should 'NOT switch role' do
@@ -183,8 +183,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
 
     context 'when logged in' do
       setup do
-        @response = post_as @admin, :login_as, :effective_user_login => @student.user_name,
-          :user_login => @admin.user_name
+        @response = post_as @admin, :login_as, effective_user_login: @student.user_name,
+          user_login: @admin.user_name
       end
 
       should render_template '_role_switch_handler'
@@ -192,7 +192,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       should 'be able to switch to a role with lesser privileges' do
         # redirect is done by JS, so match that we get a response
         # window.location.href = <index_url>
-        assert redirect_to :action => 'index'
+        assert redirect_to action: 'index'
         # should have set real_uid in the session
         assert_equal @admin.id , session[:real_uid]
         assert_not_equal session[:uid], session[:real_uid]
@@ -207,7 +207,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
           get_as @admin, :clear_role_switch_session
         end
 
-        should redirect_to :action => 'login'
+        should redirect_to action: 'login'
 
         should 'be able to cancel the role switch' do
           assert_nil session[:real_uid]
@@ -232,8 +232,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       mock_request_env = Hash.new
       mock_request_env['HTTP_X_FORWARDED_USER'] = @student.user_name
       ActionController::TestRequest.any_instance.stubs(:env).returns(mock_request_env)
-      post_as @student, :login_as, :effective_user_login => @student.user_name,
-          :user_login => @admin.user_name
+      post_as @student, :login_as, effective_user_login: @student.user_name,
+          user_login: @admin.user_name
     end
 
     should respond_with 404
@@ -258,8 +258,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       mock_request_env = Hash.new
       mock_request_env['HTTP_X_FORWARDED_USER'] = @ta.user_name
       ActionController::TestRequest.any_instance.stubs(:env).returns(mock_request_env)
-      post_as @ta, :login_as, :effective_user_login => @ta.user_name,
-          :user_login => @admin.user_name
+      post_as @ta, :login_as, effective_user_login: @ta.user_name,
+          user_login: @admin.user_name
     end
 
     should respond_with 404

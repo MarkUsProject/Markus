@@ -43,7 +43,7 @@
 
 class TestScript < ActiveRecord::Base
   belongs_to :assignment
-  has_many :test_script_results, :dependent => :delete_all
+  has_many :test_script_results, dependent: :delete_all
   belongs_to :criterion, polymorphic: true
 
   # Run sanitize_filename before saving to the database
@@ -64,7 +64,7 @@ class TestScript < ActiveRecord::Base
   validates_presence_of :seq_num
   validates_presence_of :script_name
   validates_presence_of :max_marks
-  validates_presence_of :description, :if => "description.nil?"
+  validates_presence_of :description, if: "description.nil?"
   
   # validates the uniqueness of script_name for the same assignment
   validates_each :script_name do |record, attr, value|
@@ -94,7 +94,7 @@ class TestScript < ActiveRecord::Base
   end
   
   validates_numericality_of :seq_num
-  validates_numericality_of :max_marks, :only_integer => true, :greater_than_or_equal_to => 0
+  validates_numericality_of :max_marks, only_integer: true, greater_than_or_equal_to: 0
 
   validates_presence_of :display_description
   validates_presence_of :display_run_status
@@ -104,12 +104,12 @@ class TestScript < ActiveRecord::Base
   validates_presence_of :display_actual_output
   
   display_option = %w(do_not_display display_after_submission display_after_collection)
-  validates_inclusion_of :display_description, :in => display_option
-  validates_inclusion_of :display_run_status, :in => display_option
-  validates_inclusion_of :display_input, :in => display_option
-  validates_inclusion_of :display_marks_earned, :in => display_option
-  validates_inclusion_of :display_expected_output, :in => display_option
-  validates_inclusion_of :display_actual_output, :in => display_option
+  validates_inclusion_of :display_description, in: display_option
+  validates_inclusion_of :display_run_status, in: display_option
+  validates_inclusion_of :display_input, in: display_option
+  validates_inclusion_of :display_marks_earned, in: display_option
+  validates_inclusion_of :display_expected_output, in: display_option
+  validates_inclusion_of :display_actual_output, in: display_option
   
   # All callback methods are protected methods
   protected

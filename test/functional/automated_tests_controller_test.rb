@@ -25,7 +25,7 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
 
     # context 'on manage' do
     #   setup do
-    #     get_as @admin, :manage, {:assignment_id => @assignment.id}
+    #     get_as @admin, :manage, {assignment_id: @assignment.id}
     #   end
     #
     #   should respond_with :success
@@ -34,14 +34,14 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
     context 'creating a test file' do
       setup do
         post_as @admin,
-                :update, {:assignment_id => @assignment.id,
-                          :assignment => {
-                                :enable_test => '1',
-                                 :test_files_attributes => {
+                :update, {assignment_id: @assignment.id,
+                          assignment: {
+                                enable_test: '1',
+                                 test_files_attributes: {
                                     '1' => {
-                                          :id => nil,
-                                          :filename => 'validtestfile',
-                                          :filetype => 'test', :is_private => '0'}}}}
+                                          id: nil,
+                                          filename: 'validtestfile',
+                                          filetype: 'test', is_private: '0'}}}}
       end
 
       should 'respond with appropriate content' do
@@ -61,14 +61,14 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
     #   setup do
     #     post_as @admin,
     #             :update,
-    #             {:assignment_id => @assignment.id,
-    #              :assignment => {
-    #                   :enable_test => '1',
-    #                   :test_files_attributes => {
-    #                         '1' => {:id => nil,
-    #                                 :filename => 'build.xml',
-    #                                 :filetype => 'test',
-    #                                 :is_private => '0'}}}}
+    #             {assignment_id: @assignment.id,
+    #              assignment: {
+    #                   enable_test: '1',
+    #                   test_files_attributes: {
+    #                         '1' => {id: nil,
+    #                                 filename: 'build.xml',
+    #                                 filetype: 'test',
+    #                                 is_private: '0'}}}}
     #   end
     #
     #   should render_template 'manage'
@@ -82,14 +82,14 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
       setup do
         post_as @admin,
                 :update,
-                {:assignment_id => @assignment.id,
-                 :assignment => {
-                      :enable_test => '1',
-                      :test_files_attributes => {
-                          '1' => {:assignment_id => nil,
-                                  :filename => 'validtestfile',
-                                  :filetype => 'test',
-                                  :is_private => '0'}}}}
+                {assignment_id: @assignment.id,
+                 assignment: {
+                      enable_test: '1',
+                      test_files_attributes: {
+                          '1' => {assignment_id: nil,
+                                  filename: 'validtestfile',
+                                  filetype: 'test',
+                                  is_private: '0'}}}}
       end
 
       should respond_with :redirect
@@ -101,12 +101,12 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
                     'validtestfile')
         post_as @admin,
                 :update,
-                {:assignment_id => @assignment.id,
-                 :assignment => {
-                      :enable_test => '1',
-                      :test_files_attributes => {
-                          '1' => {:id => "#{tfile.id}",
-                                  :filename => 'newvalidtestfile'}}}}
+                {assignment_id: @assignment.id,
+                 assignment: {
+                      enable_test: '1',
+                      test_files_attributes: {
+                          '1' => {id: "#{tfile.id}",
+                                  filename: 'newvalidtestfile'}}}}
         assert TestFile.find_by_id_and_filename("#{tfile.id}", 'newvalidtestfile')
         assert !TestFile.find_by_id_and_filename("#{tfile.id}", 'validtestfile')
       end
@@ -116,14 +116,14 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
       setup do
         post_as @admin,
                 :update,
-                {:assignment_id => @assignment.id,
-                 :assignment => {
-                      :enable_test => '1',
-                      :test_files_attributes => {
-                            '1' => {:id => nil,
-                                    :filename => 'validtestfile',
-                                    :filetype => 'test',
-                                    :is_private => '0'}}}}
+                {assignment_id: @assignment.id,
+                 assignment: {
+                      enable_test: '1',
+                      test_files_attributes: {
+                            '1' => {id: nil,
+                                    filename: 'validtestfile',
+                                    filetype: 'test',
+                                    is_private: '0'}}}}
       end
 
       should respond_with :redirect
@@ -133,11 +133,11 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
         tfile = TestFile.find_by_assignment_id_and_filename("#{@assignment.id}", 'validtestfile')
         post_as @admin,
                 :update,
-                {:assignment_id => @assignment.id,
-                 :assignment => {:enable_test => '1',
-                                 :test_files_attributes => {
-                                    '1' => {:id => "#{tfile.id}",
-                                            :_destroy => '1'}}}}
+                {assignment_id: @assignment.id,
+                 assignment: {enable_test: '1',
+                                 test_files_attributes: {
+                                    '1' => {id: "#{tfile.id}",
+                                            _destroy: '1'}}}}
         assert !TestFile.find_by_id_and_filename("#{tfile.id}", 'validtestfile')
 
       end

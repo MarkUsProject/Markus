@@ -16,8 +16,8 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
 
     setup do
       @group = Group.make
-      @grouping = Grouping.make(:group => @group)
-      @membership = StudentMembership.make(:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:inviter])
+      @grouping = Grouping.make(group: @group)
+      @membership = StudentMembership.make(grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
       @assignment = @grouping.assignment
       @rule = PenaltyDecayPeriodSubmissionRule.new
       @assignment.replace_submission_rule(@rule)

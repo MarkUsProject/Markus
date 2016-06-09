@@ -39,7 +39,7 @@ before_install:
 install:
   - travis_wait bundle install --path=~/.bundle --jobs=3 --retry=3 --without development production console
   - sudo apt-get install -y libaprutil1-dev swig
-  - wget http://apache.mirror.iweb.ca/subversion/subversion-1.9.4.tar.gz
+  - wget http://apachemirror.ovidiudan.com/subversion/subversion-1.9.4.tar.gz
   - tar xzf subversion-1.9.4.tar.gz
   - wget http://www.sqlite.org/sqlite-amalgamation-3071501.zip
   - unzip sqlite-amalgamation-3071501.zip

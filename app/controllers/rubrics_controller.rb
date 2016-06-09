@@ -202,6 +202,8 @@ class RubricsController < ApplicationController
                                              :level_3_description,
                                              :level_4_name,
                                              :level_4_description,
-                                             :weight)
+                                             :weight,
+                                             :ta_visible,
+                                             :peer_visible)
   end
 end

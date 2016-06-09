@@ -41,7 +41,7 @@ class MarkusLoggerTest < ActiveSupport::TestCase
       begin
         if File.directory?(@baddir)
           FileUtils.chmod 0777 , @baddir # Return writing permissions
-          FileUtils.remove_dir @baddir, :force => false
+          FileUtils.remove_dir @baddir, force: false
         end
      rescue Exception => ex
         $stderr.puts "Error while trying to remove the directory #{@baddir}: " + ex
@@ -49,7 +49,7 @@ class MarkusLoggerTest < ActiveSupport::TestCase
       begin
         if File.directory?(@baddir_w_pid)
           FileUtils.chmod 0777 , @baddir_w_pid # Return writing permissions
-          FileUtils.remove_dir @baddir_w_pid, :force => false
+          FileUtils.remove_dir @baddir_w_pid, force: false
         end
      rescue Exception => ex
         $stderr.puts "Error while trying to remove the directory #{@baddir_w_pid}: " + ex
@@ -57,21 +57,21 @@ class MarkusLoggerTest < ActiveSupport::TestCase
       begin
         if File.exists?(@badfile_w_pid)
           FileUtils.chmod 0777 , @badfile_w_pid # Return writing permissions
-          FileUtils.remove @badfile_w_pid, :force => false
+          FileUtils.remove @badfile_w_pid, force: false
         end
       rescue Exception => ex
         $stderr.puts "Error while trying to remove the file #{@badfile_w_pid}: " + ex
       end
       begin
         if File.exists?(@infolog)
-          FileUtils.remove @infolog, :force => false
+          FileUtils.remove @infolog, force: false
         end
       rescue Exception => ex
         puts "Error while trying to remove the file #{@infolog}: " + ex
       end
       begin
         if File.exists?(@errorlog)
-          FileUtils.remove @errorlog, :force => false
+          FileUtils.remove @errorlog, force: false
         end
       rescue Exception => ex
         puts "Error while trying to remove the file #{@errorlog}: " + ex

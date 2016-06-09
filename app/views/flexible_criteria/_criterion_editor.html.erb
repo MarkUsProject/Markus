@@ -2,7 +2,7 @@
 
 <div class='float_right'>
   <%= button_to t(:delete),
-      assignment_flexible_criterium_path(id: criterion.id),
+      assignment_flexible_criterion_path(id: criterion.id),
       data: { confirm: t(:remove_criteria_message) },
       method: :delete,
       class: 'delete',
@@ -41,9 +41,22 @@
     </span>
     <br>
     <span><%= t('flexible_criteria.description_hint') %></span>
+    <br>
+    <br>
+    <h4><span><%= t('visibility') %></span></h4>
+    <h5>
+      <%= f.check_box :ta_visible,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :ta_visible,
+                  t('flexible_criteria.ta_visible') %>
+      <br>
+      <%= f.check_box :peer_visible,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :peer_visible,
+                  t('flexible_criteria.peer_visible') %>
+    </h5>
+    <%= f.submit t('flexible_criteria.save'), data: { disable_with: t('working') } %>
   </div>
-
-  <%= f.submit t('flexible_criteria.save'), data: { disable_with: t('working') } %>
 <% end %>
 
 <% if !criterion.description.nil? && !criterion.description.empty? %>

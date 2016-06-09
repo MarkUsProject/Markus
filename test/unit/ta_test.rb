@@ -37,9 +37,9 @@ class TATest < ActiveSupport::TestCase
   end
 
   should 'ignore duplicates in the CSV file' do
-    new_user = Ta.new({:user_name => 'exist_user',
-                       :first_name => 'Nelle',
-                       :last_name => 'Varoquaux'})
+    new_user = Ta.new({user_name: 'exist_user',
+                       first_name: 'Nelle',
+                       last_name: 'Varoquaux'})
 
     assert new_user.save, 'Could not create a new User'
 
@@ -61,9 +61,9 @@ class TATest < ActiveSupport::TestCase
     setup do
       @assignment = Assignment.make
       @ta = Ta.make
-      @grouping = Grouping.make(:assignment => @assignment)
-      TaMembership.make(:grouping => @grouping,
-                        :user => @ta)
+      @grouping = Grouping.make(assignment: @assignment)
+      TaMembership.make(grouping: @grouping,
+                        user: @ta)
     end
 
 

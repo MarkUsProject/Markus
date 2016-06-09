@@ -56,8 +56,8 @@ class ResultsController < ApplicationController
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
     @old_marks_map = Hash.new
-    @mark_criteria = @assignment.get_criteria
-    @assignment.get_criteria.each do |criterion|
+    @mark_criteria = @assignment.get_criteria(:ta)
+    @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       @marks_map[criterion.id] = mark
       # Loading up previous results for the case of a remark
@@ -441,8 +441,8 @@ class ResultsController < ApplicationController
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
     @old_marks_map = Hash.new
-    @mark_criteria = @assignment.get_criteria
-    @assignment.get_criteria.each do |criterion|
+    @mark_criteria = @assignment.get_criteria(:ta)
+    @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       mark.save(validate: false)
       @marks_map[criterion.id] = mark

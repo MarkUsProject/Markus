@@ -32,7 +32,7 @@ class GradeEntryItemTest < ActiveSupport::TestCase
 
   context 'A good Grade Entry Item model' do
     setup do
-      GradeEntryItem.make(:position => 1)
+      GradeEntryItem.make(position: 1)
     end
 
     should validate_uniqueness_of(:name).scoped_to(
@@ -45,7 +45,7 @@ class GradeEntryItemTest < ActiveSupport::TestCase
   should 'allow same column name for different grade entry forms' do
     grade_entry_form_1 = GradeEntryForm.make
     grade_entry_form_2 = GradeEntryForm.make
-    column = grade_entry_form_1.grade_entry_items.make(:name => 'Q1', :position => 1)
+    column = grade_entry_form_1.grade_entry_items.make(name: 'Q1', position: 1)
 
     # Re-use the column name for a different grade entry form
     dup_column = GradeEntryItem.new
