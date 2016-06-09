@@ -56,14 +56,12 @@ class Result < ActiveRecord::Base
   # The sum of the marks not including bonuses/deductions
   def get_subtotal(user_visibility = :ta)
     new_marks = 0
-    if !marks.first.nil?
-      assignment = Assignment.find_by_id(
-          Grouping.find_by_id(
-              Submission.find_by_id(
-                  Result.find_by_id(marks.first.result_id).submission_id).grouping_id).assignment_id)
+    unless marks.empty?
+      assignment = submission.grouping.assignment
       assignment.get_criteria(user_visibility).each do |criterion|
-        if !marks.find_by_markable_id(criterion.id).nil?
-          new_marks += marks.find_by_markable_id(criterion.id).get_mark
+        mark = marks.find_by(markable_id: criterion.id)
+        unless mark.nil?
+          new_marks += mark.get_mark
         end
       end
     end
@@ -141,7 +139,7 @@ class Result < ActiveRecord::Base
     nil_marks = false
     criteria = submission.assignment.get_criteria(user_visibility)
     criteria.each do |criterion|
-      if !marks.where(markable_id: criterion.id, mark: nil).empty?
+      unless marks.where(markable_id: criterion.id, mark: nil).empty?
         nil_marks = true
       end
     end

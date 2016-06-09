@@ -729,31 +729,31 @@ class Assignment < ActiveRecord::Base
     elsif user_visibility == :ta
       get_ta_visible_criteria
     elsif user_visibility == :peer
-     get_peer_visible_criteria
+      get_peer_visible_criteria
     end
   end
 
   def get_all_criteria
-    if self.marking_scheme_type == 'rubric'
-      self.rubric_criteria
+    if marking_scheme_type == 'rubric'
+      rubric_criteria
     else
-      self.flexible_criteria
+      flexible_criteria
     end
   end
 
   def get_ta_visible_criteria
-    if self.marking_scheme_type == 'rubric'
-      self.rubric_criteria.where(ta_visible: true)
+    if marking_scheme_type == 'rubric'
+      rubric_criteria.where(ta_visible: true)
     else
-      self.flexible_criteria.where(ta_visible: true)
+      flexible_criteria.where(ta_visible: true)
     end
   end
 
   def get_peer_visible_criteria
-    if self.marking_scheme_type == 'rubric'
-      self.rubric_criteria.where(peer_visible: true)
+    if marking_scheme_type == 'rubric'
+      rubric_criteria.where(peer_visible: true)
     else
-      self.flexible_criteria.where(peer_visible: true)
+      flexible_criteria.where(peer_visible: true)
     end
   end
 
