@@ -80,7 +80,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
 
   context 'An assignment, of type flexible criteria' do
     setup do
-      @assignment = Assignment.make(:marking_scheme_type => 'flexible')
+      @assignment = Assignment.make(marking_scheme_type: 'flexible')
     end
 
 
@@ -104,20 +104,20 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
 
     context 'with three flexible criteria' do
       setup do
-        FlexibleCriterion.make(:assignment => @assignment,
-                              :name => 'criterion1',
-                              :description => 'description1, for criterion 1',
-                              :max => 10)
-        FlexibleCriterion.make(:assignment => @assignment,
-                              :name => 'criterion2',
-                              :description => 'description2, "with quotes"',
-                              :max => 10,
-                              :position => 2)
-        FlexibleCriterion.make(:assignment => @assignment,
-                              :name => 'criterion3',
-                              :description => 'description3!',
-                              :max => 1.6,
-                              :position => 3)
+        FlexibleCriterion.make(assignment: @assignment,
+                               name: 'criterion1',
+                               description: 'description1, for criterion 1',
+                               max: 10)
+        FlexibleCriterion.make(assignment: @assignment,
+                               name: 'criterion2',
+                               description: 'description2, "with quotes"',
+                               max: 10,
+                               position: 2)
+        FlexibleCriterion.make(assignment: @assignment,
+                               name: 'criterion3',
+                               description: 'description3!',
+                               max: 1.6,
+                               position: 3)
       end
 
       should 'fail with corresponding error message if the name is already in use' do

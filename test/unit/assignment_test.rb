@@ -67,27 +67,27 @@ class AssignmentTest < ActiveSupport::TestCase
 
 
   should 'catch max group size less than min group size' do
-    a = Assignment.new(:group_min => 3,:group_max=> 2)
+    a = Assignment.new(group_min: 3,group_max: 2)
     assert !a.valid?
   end
 
   should 'catch an invalid date' do
-    a = Assignment.new(:due_date => '2020/02/31')  #31st day of february
+    a = Assignment.new(due_date: '2020/02/31')  #31st day of february
     assert !a.valid?
   end
 
   should 'catch a zero group_min' do
-    a = Assignment.new(:group_min => 0)
+    a = Assignment.new(group_min: 0)
     assert !a.valid?
   end
 
   should 'catch a negative group_min' do
-    a = Assignment.new(:group_min => -5)
+    a = Assignment.new(group_min: -5)
     assert !a.valid?
   end
 
   should 'catch a nil group_min' do
-    a = Assignment.new(:group_min => nil)
+    a = Assignment.new(group_min: nil)
     assert !a.valid?
   end
 
@@ -99,7 +99,7 @@ class AssignmentTest < ActiveSupport::TestCase
   context 'A past due assignment w/ No Late submission rule' do
     context 'without sections' do
       setup do
-        @assignment = Assignment.make(:due_date => 2.days.ago)
+        @assignment = Assignment.make(due_date: 2.days.ago)
       end
 
       should 'return the last due date' do
@@ -113,15 +113,15 @@ class AssignmentTest < ActiveSupport::TestCase
 
     context 'with a section' do
       setup do
-        @assignment = Assignment.make(:due_date => 2.days.ago, :section_due_dates_type => true)
-        @section = Section.make(:name => 'section_name')
-        SectionDueDate.make(:section => @section, :assignment => @assignment,
-                            :due_date => 1.day.ago)
-        student = Student.make(:section => @section)
-        @grouping = Grouping.make(:assignment => @assignment)
-        StudentMembership.make(:grouping => @grouping,
-                  :user => student,
-                  :membership_status => StudentMembership::STATUSES[:inviter])
+        @assignment = Assignment.make(due_date: 2.days.ago, section_due_dates_type: true)
+        @section = Section.make(name: 'section_name')
+        SectionDueDate.make(section: @section, assignment: @assignment,
+                            due_date: 1.day.ago)
+        student = Student.make(section: @section)
+        @grouping = Grouping.make(assignment: @assignment)
+        StudentMembership.make(grouping: @grouping,
+                  user: student,
+                  membership_status: StudentMembership::STATUSES[:inviter])
       end
 
       should 'return the normal due date for section due date' do
@@ -130,14 +130,14 @@ class AssignmentTest < ActiveSupport::TestCase
 
       context 'and another' do
         setup do
-          @section = Section.make(:name => 'section_name2')
-          SectionDueDate.make(:section => @section, :assignment => @assignment,
-                              :due_date => 1.day.ago)
-          student = Student.make(:section => @section)
-          @grouping = Grouping.make(:assignment => @assignment)
-          StudentMembership.make(:grouping => @grouping,
-                                 :user => student,
-                                 :membership_status => StudentMembership::STATUSES[:inviter])
+          @section = Section.make(name: 'section_name2')
+          SectionDueDate.make(section: @section, assignment: @assignment,
+                              due_date: 1.day.ago)
+          student = Student.make(section: @section)
+          @grouping = Grouping.make(assignment: @assignment)
+          StudentMembership.make(grouping: @grouping,
+                                 user: student,
+                                 membership_status: StudentMembership::STATUSES[:inviter])
         end
       end
     end
@@ -145,7 +145,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
   context 'A before due assignment w/ No Late submission rule' do
     setup do
-      @assignment = Assignment.make({:due_date => 2.days.from_now})
+      @assignment = Assignment.make({due_date: 2.days.from_now})
     end
 
     should 'return false on past_collection_date? call' do
@@ -155,7 +155,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
   context 'after remarks are due assignment' do
     setup do
-      @assignment = Assignment.make({:remark_due_date => 2.days.ago})
+      @assignment = Assignment.make({remark_due_date: 2.days.ago})
     end
 
     should 'return true on past_remark_due_date? call' do
@@ -165,7 +165,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
   context 'before remarks are due assignment' do
     setup do
-      @assignment = Assignment.make({:remark_due_date => 2.days.from_now})
+      @assignment = Assignment.make({remark_due_date: 2.days.from_now})
     end
 
     should 'return false on past_remark_due_date? call' do
@@ -175,7 +175,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
   context 'An Assignment' do
     setup do
-      @assignment = Assignment.make(:group_name_autogenerated => false)
+      @assignment = Assignment.make(group_name_autogenerated: false)
     end
 
     context 'as a noteable' do
@@ -189,13 +189,13 @@ class AssignmentTest < ActiveSupport::TestCase
 
     context 'with a student in a group with a marked submission' do
       setup do
-        @membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
-        sub = Submission.make(:grouping => @membership.grouping)
+        @membership = StudentMembership.make(grouping: Grouping.make(assignment: @assignment),membership_status: StudentMembership::STATUSES[:accepted])
+        sub = Submission.make(grouping: @membership.grouping)
         @result = sub.get_latest_result
 
         @sum = 0
         [2,2.7,2.2,2].each do |weight|
-          Mark.make({:mark => 4, :result => @result, :markable => RubricCriterion.make({:assignment => @assignment,:weight => weight})})
+          Mark.make({mark: 4, result: @result, markable: RubricCriterion.make({assignment: @assignment,weight: weight})})
           @sum += weight
         end
         @total = @sum * 4
@@ -218,16 +218,16 @@ class AssignmentTest < ActiveSupport::TestCase
     context "with some groupings with students and ta's assigned " do
       setup do
         (1..5).each do
-          grouping = Grouping.make(:assignment => @assignment)
+          grouping = Grouping.make(assignment: @assignment)
           (1..3).each do
-            StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+            StudentMembership.make({grouping: grouping, membership_status: StudentMembership::STATUSES[:accepted]})
           end
-          TaMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+          TaMembership.make({grouping: grouping, membership_status: StudentMembership::STATUSES[:accepted]})
         end
       end
 
       should "be able to have it's groupings cloned correctly" do
-        clone = Assignment.make({:group_min => 1, :group_max => 1})
+        clone = Assignment.make({group_min: 1, group_max: 1})
         number = StudentMembership.all.size + TaMembership.all.size
         clone.clone_groupings_from(@assignment.id)
         assert_equal(@assignment.group_min, clone.group_min)
@@ -242,10 +242,10 @@ class AssignmentTest < ActiveSupport::TestCase
     # not be cloned
     context 'with a group with 3 accepted students' do
       setup do
-        @grouping = Grouping.make(:assignment => @assignment)
+        @grouping = Grouping.make(assignment: @assignment)
         @members = []
         (1..3).each do
-          @members.push StudentMembership.make({:membership_status => StudentMembership::STATUSES[:accepted],:grouping => @grouping})
+          @members.push StudentMembership.make({membership_status: StudentMembership::STATUSES[:accepted],grouping: @grouping})
         end
         @source = @assignment
         @group =  @grouping.group
@@ -253,7 +253,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
       context 'with another fresh assignment' do
         setup do
-          @target = Assignment.make({:group_min => 1, :group_max => 1})
+          @target = Assignment.make({group_min: 1, group_max: 1})
         end
 
         should 'clone all three members if none are hidden' do
@@ -327,7 +327,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
       context 'with an assignment with other groupings' do
         setup do
-          @target = Assignment.make({:group_min => 1, :group_max => 1})
+          @target = Assignment.make({group_min: 1, group_max: 1})
           3.times do
             target_grouping = Grouping.make(assignment: @target)
             StudentMembership.make(
@@ -349,7 +349,7 @@ class AssignmentTest < ActiveSupport::TestCase
         setup do
           @assignment.allow_web_submits = false
           @assignment.save
-          @target = Assignment.make({:allow_web_submits => false, :group_min => 1, :group_max => 1})
+          @target = Assignment.make({allow_web_submits: false, group_min: 1, group_max: 1})
           # And for this test, let's make sure all groupings cloned have admin approval
           3.times do
             target_grouping = Grouping.make(
@@ -398,22 +398,22 @@ class AssignmentTest < ActiveSupport::TestCase
     context 'with a students in groupings setup with marking complete (rubric marking)' do
       setup do
         # create the required files for the assignment
-        AssignmentFile.make(:assignment => @assignment)
-        AssignmentFile.make(:assignment => @assignment)
+        AssignmentFile.make(assignment: @assignment)
+        AssignmentFile.make(assignment: @assignment)
 
         # create the marking criteria
         criteria = []
         (1..4).each do |index|
-          criteria.push RubricCriterion.make({:assignment => @assignment, :position => index})
+          criteria.push RubricCriterion.make({assignment: @assignment, position: index})
         end
 
         # create the groupings and associated marks
         (1..4).each do
-          g = Grouping.make(:assignment => @assignment)
+          g = Grouping.make(assignment: @assignment)
           (1..3).each do
-            StudentMembership.make({:grouping => g, :membership_status => StudentMembership::STATUSES[:accepted]})
+            StudentMembership.make({grouping: g, membership_status: StudentMembership::STATUSES[:accepted]})
           end
-          s = Submission.make(:grouping => g)
+          s = Submission.make(grouping: g)
           r = s.get_latest_result
           r.marks.each do |mark|
             mark.mark = 0
@@ -470,25 +470,25 @@ class AssignmentTest < ActiveSupport::TestCase
     context 'with a students in groupings setup with marking complete (flexible marking)' do
       setup do
         # Want an assignment with flexible criteria as marking scheme.
-        @flexible_assignment = Assignment.make(:marking_scheme_type =>
+        @flexible_assignment = Assignment.make(marking_scheme_type:
                                                Assignment::MARKING_SCHEME_TYPE[:flexible])
         # create the required files for the assignment
-        AssignmentFile.make(:assignment => @flexible_assignment)
-        AssignmentFile.make(:assignment => @flexible_assignment)
+        AssignmentFile.make(assignment: @flexible_assignment)
+        AssignmentFile.make(assignment: @flexible_assignment)
 
         # create 4 flexible marking criteria
         criteria = []
         (1..4).each do |index|
-          criteria.push FlexibleCriterion.make({:assignment => @flexible_assignment, :position => index})
+          criteria.push FlexibleCriterion.make({assignment: @flexible_assignment, position: index})
         end
 
         # create the groupings and associated marks
         (1..4).each do
-          g = Grouping.make(:assignment => @flexible_assignment)
+          g = Grouping.make(assignment: @flexible_assignment)
           (1..3).each do
-            StudentMembership.make({:grouping => g, :membership_status => StudentMembership::STATUSES[:accepted]})
+            StudentMembership.make({grouping: g, membership_status: StudentMembership::STATUSES[:accepted]})
           end
-          s = Submission.make(:grouping => g)
+          s = Submission.make(grouping: g)
           r = s.get_latest_result
           r.marks.each do |mark|
             mark.mark = 0
@@ -545,20 +545,20 @@ class AssignmentTest < ActiveSupport::TestCase
 
   context 'An assignment instance' do
     setup do
-      @assignment = Assignment.make({:group_min => 1,
-                                     :group_max => 1,
-                                     :student_form_groups => false,
-                                     :invalid_override => true,
-                                     :due_date => 2.days.ago,
-                                     :created_at => 42.days.ago })
+      @assignment = Assignment.make({group_min: 1,
+                                     group_max: 1,
+                                     student_form_groups: false,
+                                     invalid_override: true,
+                                     due_date: 2.days.ago,
+                                     created_at: 42.days.ago })
     end
 
     context 'with a grouping that has a submission and a TA assigned ' do
       setup do
-        @grouping = Grouping.make(:assignment => @assignment)
-        @tamembership = TaMembership.make(:grouping => @grouping)
-        @studentmembership = StudentMembership.make(:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:inviter])
-        @submission = Submission.make(:grouping => @grouping)
+        @grouping = Grouping.make(assignment: @assignment)
+        @tamembership = TaMembership.make(grouping: @grouping)
+        @studentmembership = StudentMembership.make(grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
+        @submission = Submission.make(grouping: @grouping)
       end
 
       should 'be able to get a list of repository access URLs for each group' do
@@ -573,12 +573,12 @@ class AssignmentTest < ActiveSupport::TestCase
       context 'with two groups of a single student each' do
         setup do
           (1..2).each do
-            g = Grouping.make(:assignment => @assignment)
-            # StudentMembership.make({:grouping => g,:membership_status => StudentMembership::STATUSES[:inviter] } )
-            s = Submission.make(:grouping => g)
+            g = Grouping.make(assignment: @assignment)
+            # StudentMembership.make({grouping: g,membership_status: StudentMembership::STATUSES[:inviter] } )
+            s = Submission.make(grouping: g)
             r = s.get_latest_result
             (1..2).each do
-              Mark.make(:result => r)
+              Mark.make(result: r)
             end
             r.reload
             r.marking_state = Result::MARKING_STATES[:complete]
@@ -620,13 +620,13 @@ class AssignmentTest < ActiveSupport::TestCase
       context 'with two groups of a single student each with multiple submission' do
         setup do
           (1..2).each do
-            g = Grouping.make(:assignment => @assignment)
+            g = Grouping.make(assignment: @assignment)
             # create 2 submission for each group
             (1..2).each do
-              s = Submission.make(:grouping => g)
+              s = Submission.make(grouping: g)
               r = s.get_latest_result
               (1..2).each do
-                Mark.make(:result => r)
+                Mark.make(result: r)
               end
               r.reload
               r.marking_state = Result::MARKING_STATES[:complete]

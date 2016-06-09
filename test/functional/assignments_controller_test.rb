@@ -170,7 +170,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'get edit form if not post' do
         get_as @admin,
               :edit,
-              :id => @assignment.id
+              id: @assignment.id
         assert_response :success
         assert assigns :assignment
       end
@@ -178,7 +178,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'be able to edit a new assignment form with submission rules HTML present' do
         get_as @admin,
               :edit,
-              :id => @assignment.id
+              id: @assignment.id
         assert_not_nil response.body.to_s.match('NoLateSubmissionRule')
         assert_not_nil response.body.to_s.match('GracePeriodSubmissionRule')
         assert_not_nil response.body.to_s.match('PenaltyDecayPeriodSubmissionRule')
@@ -188,22 +188,22 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'bounced off from student interface' do
         get_as @admin,
                :student_interface,
-               :id => @assignment.id
+               id: @assignment.id
         assert_response :missing
       end
 
       should 'edit basic paramaters' do
         put_as @admin,
                 :update,
-                :id => @assignment.id,
-                :assignment => {
-                  :short_identifier => 'New SI',
-                  :description => 'New Description',
-                  :message => 'New Message',
-                  :due_date => 3.days.from_now,
-                  :submission_rule_attributes => {
-                    :type => @assignment.submission_rule.type.to_s,
-                    :id => @assignment.submission_rule.id
+                id: @assignment.id,
+                assignment: {
+                  short_identifier: 'New SI',
+                  description: 'New Description',
+                  message: 'New Message',
+                  due_date: 3.days.from_now,
+                  submission_rule_attributes: {
+                    type: @assignment.submission_rule.type.to_s,
+                    id: @assignment.submission_rule.id
                   }
                 }
         @assignment.reload
@@ -216,15 +216,15 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'not be able to edit with invalid assignment' do
         put_as @admin,
                :update,
-               :id => @assignment.id,
-               :assignment => {
-                  :short_identifier => '',
-                  :description => 'New Description',
-                  :message => 'New Message',
-                  :due_date => 3.days.from_now,
-                  :submission_rule_attributes => {
-                    :type => @assignment.submission_rule.type.to_s,
-                    :id => @assignment.submission_rule.id}}
+               id: @assignment.id,
+               assignment: {
+                  short_identifier: '',
+                  description: 'New Description',
+                  message: 'New Message',
+                  due_date: 3.days.from_now,
+                  submission_rule_attributes: {
+                    type: @assignment.submission_rule.type.to_s,
+                    id: @assignment.submission_rule.id}}
         a = Assignment.find(@assignment.id)
         assert_equal @assignment.short_identifier, a.short_identifier
         assert_equal @assignment.description, a.description
@@ -237,15 +237,15 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'not be able to edit with invalid submission rules' do
         put_as @admin,
                 :update,
-                :id => @assignment.id,
-                :assignment => {
-                  :short_identifier => 'New SI',
-                  :description => 'New Description',
-                  :message => 'New Message',
-                  :due_date => 3.days.from_now,
-                  :submission_rule_attributes => {
-                    :type => 'UnknownClass',
-                    :id => @assignment.submission_rule.id}}
+                id: @assignment.id,
+                assignment: {
+                  short_identifier: 'New SI',
+                  description: 'New Description',
+                  message: 'New Message',
+                  due_date: 3.days.from_now,
+                  submission_rule_attributes: {
+                    type: 'UnknownClass',
+                    id: @assignment.submission_rule.id}}
         a = Assignment.find(@assignment.id)
         assert_equal @assignment.short_identifier, a.short_identifier
         assert_equal @assignment.description, a.description
@@ -260,18 +260,18 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'be able to add periods to submission rule class' do
         put_as @admin,
                 :update,
-                {:id => @assignment.id,
-                 :assignment => {
-                   :short_identifier => 'New SI',
-                   :description => 'New Description',
-                   :message => 'New Message',
-                   :due_date => 3.days.from_now,
-                   :submission_rule_attributes => {
-                     :type => 'PenaltyPeriodSubmissionRule',
-                     :id => @assignment.submission_rule.id,
-                     :periods_attributes => [
-                       {:deduction => '10', :hours => '24'},
-                       {:deduction => '20', :hours => '24'}
+                {id: @assignment.id,
+                 assignment: {
+                   short_identifier: 'New SI',
+                   description: 'New Description',
+                   message: 'New Message',
+                   due_date: 3.days.from_now,
+                   submission_rule_attributes: {
+                     type: 'PenaltyPeriodSubmissionRule',
+                     id: @assignment.submission_rule.id,
+                     periods_attributes: [
+                       {deduction: '10', hours: '24'},
+                       {deduction: '20', hours: '24'}
                      ]}}}
         @assignment.reload
         assert_equal 'New SI', @assignment.short_identifier
@@ -295,13 +295,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'receieve errors when providing invalid period attributes for a submission rule' do
         put_as @admin,
                 :update,
-                {:id => @assignment.id,
-                 :assignment => {
-                   :submission_rule_attributes => {
-                     :type => 'PenaltyPeriodSubmissionRule',
-                     :periods_attributes => {
-                        '1' => { :hours => nil, :deduction => nil} },
-                     :id => @assignment.submission_rule.id,
+                {id: @assignment.id,
+                 assignment: {
+                   submission_rule_attributes: {
+                     type: 'PenaltyPeriodSubmissionRule',
+                     periods_attributes: {
+                        '1' => { hours: nil, deduction: nil} },
+                     id: @assignment.submission_rule.id,
                      }}}
 
         @assignment.reload
@@ -318,7 +318,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         period.submission_rule = rule
         assert period.save
         assert rule.periods.length > 0
-        @assignment = Assignment.make( :submission_rule => rule )
+        @assignment = Assignment.make( submission_rule: rule )
         assert @assignment.submission_rule.is_a?(GracePeriodSubmissionRule)
 
         put_as @admin,
@@ -344,20 +344,20 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should 'be able to set instructor forms groups' do
-        @assignment = Assignment.make( :student_form_groups => true )
+        @assignment = Assignment.make( student_form_groups: true )
         assert @assignment.student_form_groups
         put_as @admin,
                 :update,
-                {:id => @assignment.id,
-                 :assignment => {
-                   :description => 'New Description',
-                   :message => 'New Message',
-                   :due_date => 3.days.from_now,
-                   :student_form_groups => '0',
-                   :submission_rule_attributes => {
-                     :type => 'NoLateSubmissionRule',
-                     :id => @assignment.submission_rule.id}},
-                   :is_group_assignment => 'true'}
+                {id: @assignment.id,
+                 assignment: {
+                   description: 'New Description',
+                   message: 'New Message',
+                   due_date: 3.days.from_now,
+                   student_form_groups: '0',
+                   submission_rule_attributes: {
+                     type: 'NoLateSubmissionRule',
+                     id: @assignment.submission_rule.id}},
+                   is_group_assignment: 'true'}
 
         a = Assignment.find(@assignment.id)
         assert_equal 'New Description', a.description
@@ -370,17 +370,17 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should 'be able to set students to form groups' do
-        @assignment = Assignment.make( :student_form_groups => false )
+        @assignment = Assignment.make( student_form_groups: false )
         assert !@assignment.student_form_groups
         put_as @admin,
                 :update,
-                { :id => @assignment.id,
-                  :is_group_assignment => 'true',
-                  :assignment => {
-                    :student_form_groups => '1',
-                    :submission_rule_attributes => {
-                      :type => 'NoLateSubmissionRule',
-                      :id => @assignment.submission_rule.id
+                { id: @assignment.id,
+                  is_group_assignment: 'true',
+                  assignment: {
+                    student_form_groups: '1',
+                    submission_rule_attributes: {
+                      type: 'NoLateSubmissionRule',
+                      id: @assignment.submission_rule.id
                     }
                   }
                 }
@@ -407,29 +407,29 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context 'with required files' do
         setup do
-          @file_1 = AssignmentFile.make(:assignment => @assignment)
-          @file_2 = AssignmentFile.make(:assignment => @assignment)
+          @file_1 = AssignmentFile.make(assignment: @assignment)
+          @file_2 = AssignmentFile.make(assignment: @assignment)
         end
 
         should 'be able to remove required files' do
           put_as @admin,
                   :update,
-                  :id => @assignment.id,
-                  :assignment => {
-                      :short_identifier => @assignment.short_identifier,
-                      :description => @assignment.description,
-                      :message => @assignment.message,
-                      :due_date => @assignment.due_date,
-                      :assignment_files_attributes => {
-                        '1' => { :id => @file_1.id,
-                                :filename => @file_1.filename,
-                                :_destroy => '0' },
-                        '2' => { :id => @file_2.id,
-                                :filename => @file_2.filename,
-                                :_destroy => '1' }},
-                      :submission_rule_attributes => {
-                        :type => @assignment.submission_rule.type.to_s,
-                        :id => @assignment.submission_rule.id}}
+                  id: @assignment.id,
+                  assignment: {
+                      short_identifier: @assignment.short_identifier,
+                      description: @assignment.description,
+                      message: @assignment.message,
+                      due_date: @assignment.due_date,
+                      assignment_files_attributes: {
+                        '1' => { id: @file_1.id,
+                                filename: @file_1.filename,
+                                _destroy: '0' },
+                        '2' => { id: @file_2.id,
+                                filename: @file_2.filename,
+                                _destroy: '1' }},
+                      submission_rule_attributes: {
+                        type: @assignment.submission_rule.type.to_s,
+                        id: @assignment.submission_rule.id}}
           @assignment.reload
           assert_equal 1, @assignment.assignment_files.count
           assert_equal @file_1, @assignment.assignment_files.first
@@ -439,18 +439,18 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'be able to add section due dates' do
         put_as @admin,
                   :update,
-                  :id => @assignment.id,
-                  :assignment => {
-                    :short_identifier => @assignment.short_identifier,
-                    :description => @assignment.description,
-                    :message => @assignment.message,
-                    :due_date => @assignment.due_date,
-                    :submission_rule_attributes => {
-                      :type => @assignment.submission_rule.type.to_s,
-                      :id => @assignment.submission_rule.id
+                  id: @assignment.id,
+                  assignment: {
+                    short_identifier: @assignment.short_identifier,
+                    description: @assignment.description,
+                    message: @assignment.message,
+                    due_date: @assignment.due_date,
+                    submission_rule_attributes: {
+                      type: @assignment.submission_rule.type.to_s,
+                      id: @assignment.submission_rule.id
                     },
-                    :section_due_dates_type => '1',
-                    :section_due_dates_attributes => {
+                    section_due_dates_type: '1',
+                    section_due_dates_attributes: {
                       '0' => { 'section_id' => '2', 'due_date' => '2011-10-27 00:00' },
                       '1' => { 'section_id' => '3', 'due_date' => '2011-10-27 00:00' }
                     }
@@ -463,36 +463,36 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'be able to remove section due dates after adding them' do
         put_as @admin,
                   :update,
-                  :id => @assignment.id,
-                  :assignment => {
-                    :short_identifier => @assignment.short_identifier,
-                    :description => @assignment.description,
-                    :message => @assignment.message,
-                    :due_date => @assignment.due_date,
-                    :submission_rule_attributes => {
-                      :type => @assignment.submission_rule.type.to_s,
-                      :id => @assignment.submission_rule.id
+                  id: @assignment.id,
+                  assignment: {
+                    short_identifier: @assignment.short_identifier,
+                    description: @assignment.description,
+                    message: @assignment.message,
+                    due_date: @assignment.due_date,
+                    submission_rule_attributes: {
+                      type: @assignment.submission_rule.type.to_s,
+                      id: @assignment.submission_rule.id
                     },
-                    :section_due_dates_type => '1',
-                    :section_due_dates_attributes => {
+                    section_due_dates_type: '1',
+                    section_due_dates_attributes: {
                       '0' => { 'section_id' => '2', 'due_date' => '2011-10-27 00:00' },
                       '1' => { 'section_id' => '3', 'due_date' => '2011-10-27 00:00' }
                     }
                   }
         put_as @admin,
           :update,
-          :id => @assignment.id,
-          :assignment => {
-            :short_identifier => @assignment.short_identifier,
-            :description => @assignment.description,
-            :message => @assignment.message,
-            :due_date => @assignment.due_date,
-            :submission_rule_attributes => {
-              :type => @assignment.submission_rule.type.to_s,
-              :id => @assignment.submission_rule.id
+          id: @assignment.id,
+          assignment: {
+            short_identifier: @assignment.short_identifier,
+            description: @assignment.description,
+            message: @assignment.message,
+            due_date: @assignment.due_date,
+            submission_rule_attributes: {
+              type: @assignment.submission_rule.type.to_s,
+              id: @assignment.submission_rule.id
             },
-            :section_due_dates_type => '0',
-            :section_due_dates_attributes => {
+            section_due_dates_type: '0',
+            section_due_dates_attributes: {
               '0' => { 'section_id' => '2', 'due_date' => '2011-10-27 00:00' },
               '1' => { 'section_id' => '3', 'due_date' => '2011-10-27 00:00' }
             }
@@ -507,7 +507,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context 'with a hidden assignment' do
       setup do
-        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+        @assignment = Assignment.make(short_identifier: 'AHidden',is_hidden: true)
       end
 
       should 'be able to view it' do
@@ -519,19 +519,19 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     context ', on :download_assignment_list,' do
 
       should 'be able to download a csv file' do
-        get_as @admin, :download_assignment_list, :file_format => 'csv'
+        get_as @admin, :download_assignment_list, file_format: 'csv'
         assert_response :success
         assert_equal 'text/csv', response.header['Content-Type']
       end
 
       should 'be able to download a yml file' do
-        get_as @admin, :download_assignment_list, :file_format => 'yml'
+        get_as @admin, :download_assignment_list, file_format: 'yml'
         assert_response :success
         assert_equal 'text/yml', response.header['Content-Type']
       end
 
       should 'not be able to download an xml file' do
-        get_as @admin, :download_assignment_list, :file_format => 'xml'
+        get_as @admin, :download_assignment_list, file_format: 'xml'
         assert_response :redirect
         assert set_flash.to(t(:incorrect_format))
       end
@@ -542,10 +542,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'be able to upload a csv file' do
         post_as @admin,
                 :upload_assignment_list,
-                :assignment_list => fixture_file_upload('../files/new_assignments.csv'),
-                :file_format => 'csv'
+                assignment_list: fixture_file_upload('../files/new_assignments.csv'),
+                file_format: 'csv'
         assert_response :redirect
-        assert_redirected_to(:controller => 'assignments', :action => 'index')
+        assert_redirected_to(controller: 'assignments', action: 'index')
         assert_equal flash[:success], [I18n.t('csv_valid_lines',
                                              valid_line_count: 2)]
         assert_equal flash[:error], nil
@@ -553,36 +553,36 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_not_nil test1
         test2 = Assignment.find_by_short_identifier('ATest2')
         assert_not_nil test2
-        assert_generates '/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
-        assert_recognizes({:controller => 'assignments', :action => 'upload_assignment_list' },
-                          {:path => 'assignments/upload_assignment_list', :method => :post})
+        assert_generates '/assignments/upload_assignment_list', controller: 'assignments', action: 'upload_assignment_list'
+        assert_recognizes({controller: 'assignments', action: 'upload_assignment_list' },
+                          {path: 'assignments/upload_assignment_list', method: :post})
       end
 
       should 'be able to upload a yml file' do
         post_as @admin,
                 :upload_assignment_list,
-                :assignment_list => fixture_file_upload('../files/new_assignments.yml'),
-                :file_format => 'yml', :encoding => 'UTF-8'
+                assignment_list: fixture_file_upload('../files/new_assignments.yml'),
+                file_format: 'yml', encoding: 'UTF-8'
         assert_response :redirect
-        assert_redirected_to(:controller => 'assignments', :action => 'index')
+        assert_redirected_to(controller: 'assignments', action: 'index')
         assert_equal flash[:success], I18n.t('assignment.create_success')
         assert_equal flash[:error], nil
         test1 = Assignment.find_by_short_identifier('ATest3')
         assert_not_nil test1
         test2 = Assignment.find_by_short_identifier('ATest4')
         assert_not_nil test2
-        assert_generates '/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
-        assert_recognizes({:controller => 'assignments', :action => 'upload_assignment_list' },
-                          {:path => 'assignments/upload_assignment_list', :method => :post})
+        assert_generates '/assignments/upload_assignment_list', controller: 'assignments', action: 'upload_assignment_list'
+        assert_recognizes({controller: 'assignments', action: 'upload_assignment_list' },
+                          {path: 'assignments/upload_assignment_list', method: :post})
       end
 
       should 'not be able to upload a file without require fields' do
         post_as @admin,
                 :upload_assignment_list,
-                :assignment_list => fixture_file_upload('../files/new_assignments.yml'),
-                :file_format => 'csv'
+                assignment_list: fixture_file_upload('../files/new_assignments.yml'),
+                file_format: 'csv'
         assert_response :redirect
-        assert_redirected_to(:controller => 'assignments', :action => 'index')
+        assert_redirected_to(controller: 'assignments', action: 'index')
         assert_equal flash[:success], nil
         assert_not_equal flash[:error], nil
         test1 = Assignment.find_by_short_identifier('ATest5')
@@ -618,14 +618,14 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'not be able to edit' do
           get_as @grader,
                  :edit,
-                 :id => @assignment.id
+                 id: @assignment.id
           assert_response :missing
       end
 
       should 'bounced from student interface' do
         get_as @grader,
                :student_interface,
-               :id => @assignment.id
+               id: @assignment.id
         assert_response :missing
       end
 
@@ -643,7 +643,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context 'with a hidden assignment' do
       setup do
-        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+        @assignment = Assignment.make(short_identifier: 'AHidden',is_hidden: true)
       end
 
       should 'be able to view it' do
@@ -660,7 +660,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context 'with an assignment' do
       setup do
-        @assignment = Assignment.make(:group_min => 2)
+        @assignment = Assignment.make(group_min: 2)
       end
 
       should "get assignment's index" do
@@ -671,23 +671,23 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should 'not be able to edit assignment' do
-        get_as @student, :edit, :id => @assignment.id
+        get_as @student, :edit, id: @assignment.id
         assert_response :missing
       end
 
       should 'be able to get the student interface' do
         get_as @student,
                :student_interface,
-               :id => @assignment.id
+               id: @assignment.id
         assert assigns(:assignment)
         assert assigns(:pending_grouping).nil?
         assert_response :success
       end
 
       should 'be able to create a group' do
-        post_as(@student, :creategroup, {:id => @assignment.id})
-        assert_redirected_to :action => 'student_interface',
-                             :id => @assignment.id
+        post_as(@student, :creategroup, {id: @assignment.id})
+        assert_redirected_to action: 'student_interface',
+                             id: @assignment.id
         assert @student.has_accepted_grouping_for?(@assignment.id)
       end
 
@@ -699,57 +699,57 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_raise RuntimeError do
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id,
-                   :invite_member => user_names})
+                  {id: @assignment.id,
+                   invite_member: user_names})
         end
       end
 
       should 'not be able to work alone' do
         post_as @student,
                 :creategroup,
-                {:id => @assignment.id, :workalone => 'true'}
+                {id: @assignment.id, workalone: 'true'}
 
-        assert_redirected_to :action => 'student_interface',
-                             :id => @assignment.id
+        assert_redirected_to action: 'student_interface',
+                             id: @assignment.id
         assert_equal I18n.t('create_group.fail.can_not_work_alone',
-                            :group_min => @assignment.group_min),
+                            group_min: @assignment.group_min),
                      flash[:fail_notice]
         assert !@student.has_accepted_grouping_for?(@assignment.id)
       end
 
       context 'invited in several group' do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
+          @grouping = Grouping.make(assignment: @assignment)
           StudentMembership.make(
-              :grouping => @grouping,
-              :user => @student,
-              :membership_status => StudentMembership::STATUSES[:pending])
+              grouping: @grouping,
+              user: @student,
+              membership_status: StudentMembership::STATUSES[:pending])
           StudentMembership.make(
-              :grouping => @grouping,
-              :membership_status => StudentMembership::STATUSES[:inviter])
+              grouping: @grouping,
+              membership_status: StudentMembership::STATUSES[:inviter])
 
-          g = Grouping.make(:assignment => @assignment)
+          g = Grouping.make(assignment: @assignment)
           StudentMembership.make(
-              :grouping => g,
-              :user => @student,
-              :membership_status => StudentMembership::STATUSES[:pending])
+              grouping: g,
+              user: @student,
+              membership_status: StudentMembership::STATUSES[:pending])
           StudentMembership.make(
-              :grouping => g,
-              :membership_status => StudentMembership::STATUSES[:inviter])
+              grouping: g,
+              membership_status: StudentMembership::STATUSES[:inviter])
 
         end
 
         should 'be able to join a group' do
-          post_as @student, :join_group, {:id => @assignment.id,
-                                          :grouping_id => @grouping.id}
+          post_as @student, :join_group, {id: @assignment.id,
+                                          grouping_id: @grouping.id}
           assert @student.has_accepted_grouping_for?(@assignment.id),
                 'should have accepted grouping for this assignment'
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
         end
 
         should 'see all the pending invitations' do
-          get_as @student, :student_interface, :id => @assignment.id
+          get_as @student, :student_interface, id: @assignment.id
           assert_response :success
           assert assigns(:pending_grouping)
           assert_equal 2, assigns(:pending_grouping).length
@@ -758,8 +758,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         should 'be able to decline an invitation' do
           post_as(@student,
                   :decline_invitation,
-                  {:id => @assignment.id,
-                   :grouping_id => @grouping.id} )
+                  {id: @assignment.id,
+                   grouping_id: @grouping.id} )
           assert !@student.has_accepted_grouping_for?(@assignment.id),
                  'should not have accepted groupings for this assignment'
         end
@@ -767,59 +767,59 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context ', inviter of a group' do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
+          @grouping = Grouping.make(assignment: @assignment)
           StudentMembership.make(
-              :user => @student,
-              :grouping => @grouping,
-              :membership_status => StudentMembership::STATUSES[:inviter])
+              user: @student,
+              grouping: @grouping,
+              membership_status: StudentMembership::STATUSES[:inviter])
         end
 
         should 'be able to invite a student' do
           student = Student.make
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id,
-                   :invite_member => student.user_name})
+                  {id: @assignment.id,
+                   invite_member: student.user_name})
           assert_equal(I18n.t('invite_student.success'), flash[:success])
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
         end
 
         should "not be able to invite a student that doesn't exist" do
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id,
-                   :invite_member => 'zhfbdjhzkyfg'})
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+                  {id: @assignment.id,
+                   invite_member: 'zhfbdjhzkyfg'})
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
           assert_equal(I18n.t('invite_student.fail.dne',
-                              :user_name => 'zhfbdjhzkyfg'),
+                              user_name: 'zhfbdjhzkyfg'),
                        flash[:fail_notice].first)
         end
 
         should 'not be able to invite a hidden student' do
-          student = Student.make(:hidden => true)
+          student = Student.make(hidden: true)
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id,
-                   :invite_member => student.user_name})
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+                  {id: @assignment.id,
+                   invite_member: student.user_name})
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
           assert_equal(I18n.t('invite_student.fail.hidden',
-                              :user_name => student.user_name),
+                              user_name: student.user_name),
                        flash[:fail_notice].first)
         end
 
         should 'not be able to invite an already invited student' do
-          sm = StudentMembership.make(:grouping => @grouping)
+          sm = StudentMembership.make(grouping: @grouping)
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id,
-                  :invite_member => sm.user.user_name})
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+                  {id: @assignment.id,
+                  invite_member: sm.user.user_name})
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
           assert_equal(I18n.t('invite_student.fail.already_pending',
-                              :user_name => sm.user.user_name),
+                              user_name: sm.user.user_name),
                        flash[:fail_notice].first)
         end
 
@@ -830,9 +830,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
               }.join(',')
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id, :invite_member => user_names})
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+                  {id: @assignment.id, invite_member: user_names})
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
           assert_equal 2, @grouping.pending_students.size
         end
 
@@ -846,10 +846,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                          }) + invalid_users).join(',')
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id,
-                   :invite_member => user_names})
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+                  {id: @assignment.id,
+                   invite_member: user_names})
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
           assert_equal 2, @grouping.pending_students.size
         end
 
@@ -860,18 +860,18 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                         }.join(' ,  ')
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id,
-                   :invite_member => user_names})
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+                  {id: @assignment.id,
+                   invite_member: user_names})
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
           assert_equal 2, @grouping.pending_students.size
         end
 
         should 'not be able to invite self to a group' do
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id,
-                   :invite_member => @student.user_name})
+                  {id: @assignment.id,
+                   invite_member: @student.user_name})
           assert_equal(I18n.t('invite_student.fail.inviting_self'),
                        flash[:fail_notice].first)
         end
@@ -880,13 +880,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           admin = Admin.make
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id,
-                   :invite_member => admin.user_name})
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+                  {id: @assignment.id,
+                   invite_member: admin.user_name})
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
           assert_equal 0, @grouping.pending_students.size
           assert_equal(I18n.t('invite_student.fail.dne',
-                              :user_name => admin.user_name),
+                              user_name: admin.user_name),
                       flash[:fail_notice].first)
         end
 
@@ -894,22 +894,22 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           grader = Ta.make
           post_as(@student,
                   :invite_member,
-                  {:id => @assignment.id,
-                   :invite_member => grader.user_name})
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+                  {id: @assignment.id,
+                   invite_member: grader.user_name})
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
           assert_equal 0, @grouping.pending_students.size
           assert_equal(I18n.t('invite_student.fail.dne',
-                              :user_name => grader.user_name),
+                              user_name: grader.user_name),
                        flash[:fail_notice].first)
         end
 
         should 'not be able to create another group' do
           post_as(@student,
                   :creategroup,
-                  {:id => @assignment.id})
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+                  {id: @assignment.id})
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
           assert_equal I18n.t('create_group.fail.already_have_a_group'),
                        flash[:fail_notice]
           assert @student.has_accepted_grouping_for?(@assignment.id)
@@ -919,33 +919,33 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         should 'be able to delete rejected membership' do
           sm = StudentMembership.make(
-                  :grouping => @grouping,
-                  :membership_status => StudentMembership::STATUSES[:pending])
+                  grouping: @grouping,
+                  membership_status: StudentMembership::STATUSES[:pending])
 
           assert_nothing_raised do
             post_as(@student,
                     :delete_rejected,
-                    {:id => @assignment.id,
-                     :membership => sm.id})
+                    {id: @assignment.id,
+                     membership: sm.id})
           end
 
           assert_raise ActiveRecord::RecordNotFound do
             StudentMembership.find(sm.id)
           end
-          assert_redirected_to :controller => 'assignments',
-                               :action => 'student_interface',
-                               :id => @assignment.id
+          assert_redirected_to controller: 'assignments',
+                               action: 'student_interface',
+                               id: @assignment.id
           assert_response :redirect
         end
 
         should 'be able to disinvite someone' do
           sm = StudentMembership.make(
-                  :grouping => @grouping,
-                  :membership_status => StudentMembership::STATUSES[:rejected])
+                  grouping: @grouping,
+                  membership_status: StudentMembership::STATUSES[:rejected])
           post_as @student,
                   :disinvite_member,
-                  {:id => @assignment.id,
-                   :membership => sm.id}
+                  {id: @assignment.id,
+                   membership: sm.id}
 
           assert_response :found
           assert_equal I18n.t('student.member_disinvited'),
@@ -958,10 +958,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert !@grouping.is_valid?
           post_as @student,
                   :deletegroup,
-                  {:id => @assignment.id, :grouping_id => @grouping.id}
+                  {id: @assignment.id, grouping_id: @grouping.id}
 
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
 
           assert_equal(I18n.t('assignment.group.deleted'), flash[:success])
           assert !@student.has_accepted_grouping_for?(@assignment.id)
@@ -971,33 +971,33 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           setup do
             @invited = Student.make
             sm = StudentMembership.make(
-                  :grouping => @grouping,
-                  :membership_status => StudentMembership::STATUSES[:pending],
-                  :user => @invited)
+                  grouping: @grouping,
+                  membership_status: StudentMembership::STATUSES[:pending],
+                  user: @invited)
 
           end
 
           should 'not be able to invite someone already invited' do
             post_as @student,
                     :invite_member,
-                    {:id => @assignment.id,
-                     :invite_member => @invited.user_name}
-            assert_redirected_to :action => 'student_interface',
-                                 :id => @assignment.id
+                    {id: @assignment.id,
+                     invite_member: @invited.user_name}
+            assert_redirected_to action: 'student_interface',
+                                 id: @assignment.id
             assert flash[:fail_notice].include?(
                       I18n.t('invite_student.fail.already_pending',
-                             :user_name => @invited.user_name))
+                             user_name: @invited.user_name))
           end
         end  # -- with pending invitations
 
         context 'which is valid' do
           setup do
              sm = StudentMembership.make(
-                :grouping => @grouping,
-                :membership_status => StudentMembership::STATUSES[:accepted])
+                grouping: @grouping,
+                membership_status: StudentMembership::STATUSES[:accepted])
              sm = StudentMembership.make(
-                :grouping => @grouping,
-                :membership_status => StudentMembership::STATUSES[:accepted])
+                grouping: @grouping,
+                membership_status: StudentMembership::STATUSES[:accepted])
 
           end
 
@@ -1005,10 +1005,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
             assert @grouping.is_valid?
             post_as @student,
                     :deletegroup,
-                    {:id => @assignment.id,
-                     :grouping_id => @grouping.id}
-            assert_redirected_to :action => 'student_interface',
-                                 :id => @assignment.id
+                    {id: @assignment.id,
+                     grouping_id: @grouping.id}
+            assert_redirected_to action: 'student_interface',
+                                 id: @assignment.id
             assert_equal I18n.t('groups.cant_delete'), flash[:fail_notice]
             assert @student.has_accepted_grouping_for?(@assignment.id)
 
@@ -1017,13 +1017,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         context 'with a submission' do
           setup do
-            submission = Submission.make(:grouping => @grouping)
+            submission = Submission.make(grouping: @grouping)
           end
 
           should 'not be able to delete a group' do
             post_as @student,
                     :deletegroup,
-                    {:id => @assignment.id}
+                    {id: @assignment.id}
             assert_equal I18n.t('groups.cant_delete_already_submitted'),
                         flash[:fail_notice]
             assert @student.has_accepted_grouping_for?(@assignment.id)
@@ -1033,19 +1033,19 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context 'in a group' do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
+          @grouping = Grouping.make(assignment: @assignment)
           @sm = StudentMembership.make(
-                 :grouping => @grouping,
-                 :membership_status => StudentMembership::STATUSES[:accepted],
-                 :user => @student)
+                 grouping: @grouping,
+                 membership_status: StudentMembership::STATUSES[:accepted],
+                 user: @student)
         end
 
         should 'not be able to delete rejected membership' do
           assert_raise RuntimeError do
             post_as @student,
                     :delete_rejected,
-                    :id => @assignment.id,
-                    :membership => @sm.id
+                    id: @assignment.id,
+                    membership: @sm.id
           end
           assert_nothing_raised do
             membership = StudentMembership.find(@sm.id)
@@ -1056,7 +1056,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         should 'not be able to delete group' do
           post_as @student,
-                  :deletegroup, {:id => @assignment.id}
+                  :deletegroup, {id: @assignment.id}
           assert_equal I18n.t('groups.cant_delete'), flash[:fail_notice]
           assert @student.has_accepted_grouping_for?(@assignment.id)
         end
@@ -1065,16 +1065,16 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context 'with an assignment with group = 1' do
       setup do
-        @assignment = Assignment.make(:group_min => 1)
+        @assignment = Assignment.make(group_min: 1)
       end
 
       should 'be able to work alone' do
         post_as @student,
                 :creategroup,
-                {:id => @assignment.id,
-                 :workalone => 'true'}
-        assert_redirected_to :action => 'student_interface',
-                             :id => @assignment.id
+                {id: @assignment.id,
+                 workalone: 'true'}
+        assert_redirected_to action: 'student_interface',
+                             id: @assignment.id
         assert @student.has_accepted_grouping_for?(@assignment.id)
         grouping = @student.accepted_grouping_for(@assignment.id)
         assert grouping.is_valid?
@@ -1083,13 +1083,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context 'with an assignment where instructors creates groups' do
       setup do
-        @assignment = Assignment.make(:student_form_groups => false)
+        @assignment = Assignment.make(student_form_groups: false)
       end
 
       should 'not be able to allow to form groups' do
         post_as @student,
                 :creategroup,
-                {:id => @assignment.id}
+                {id: @assignment.id}
 
         assert_equal I18n.t('create_group.fail.not_allow_to_form_groups'),
                     flash[:fail_notice]
@@ -1097,21 +1097,21 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context 'with a group' do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
+          @grouping = Grouping.make(assignment: @assignment)
           StudentMembership.make(
-              :grouping => @grouping,
-              :membership_status => StudentMembership::STATUSES[:accepted],
-              :user => @student)
+              grouping: @grouping,
+              membership_status: StudentMembership::STATUSES[:accepted],
+              user: @student)
 
         end
 
         should 'not be able to delete grouping' do
           post_as @student,
                   :deletegroup,
-                  {:id => @assignment.id,
-                   :grouping_id => @grouping.id}
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+                  {id: @assignment.id,
+                   grouping_id: @grouping.id}
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
           assert_equal(I18n.t('groups.cant_delete'), flash[:fail_notice])
           assert @student.has_accepted_grouping_for?(@assignment.id)
 
@@ -1121,45 +1121,45 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context 'with an assignment where students have to work alone' do
       setup do
-        @assignment = Assignment.make(:group_min => 1,
-                                      :group_max => 1)
+        @assignment = Assignment.make(group_min: 1,
+                                      group_max: 1)
       end
 
       should 'create group automatically' do
-        get_as @student, :student_interface, :id => @assignment.id
+        get_as @student, :student_interface, id: @assignment.id
         assert @student.has_accepted_grouping_for?(@assignment.id)
         assert_not_nil @student.accepted_grouping_for(@assignment.id)
         assert_equal @student,
                      @student.accepted_grouping_for(@assignment.id).inviter
-        assert_redirected_to :action => 'student_interface',
-                             :id => @assignment.id
+        assert_redirected_to action: 'student_interface',
+                             id: @assignment.id
       end
     end  # -- with an assignment where students have to work alone
 
     context 'with an assignment, with a past due date' do
       setup do
-        @assignment = Assignment.make(:due_date => 3.days.ago)
+        @assignment = Assignment.make(due_date: 3.days.ago)
       end
 
       context 'inviter of a group' do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
+          @grouping = Grouping.make(assignment: @assignment)
           sm = StudentMembership.make(
-                 :grouping => @grouping,
-                 :membership_status => StudentMembership::STATUSES[:inviter],
-                 :user => @student)
+                 grouping: @grouping,
+                 membership_status: StudentMembership::STATUSES[:inviter],
+                 user: @student)
         end
 
         should 'not be able to invite' do
           student = Student.make
           post_as @student,
                   :invite_member,
-                  {:id => @assignment.id,
-                  :invite_member => student.user_name}
-          assert_redirected_to :action => 'student_interface',
-                              :id => @assignment.id
+                  {id: @assignment.id,
+                  invite_member: student.user_name}
+          assert_redirected_to action: 'student_interface',
+                              id: @assignment.id
           assert_equal I18n.t('invite_student.fail.due_date_passed',
-                              :user_name => student.user_name),
+                              user_name: student.user_name),
                       flash[:fail_notice].first
         end
       end
@@ -1167,35 +1167,35 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context 'with an assignmt, with past due date but collection in future' do
       setup do
-        @assignment = Assignment.make(:due_date => 1.days.ago)
+        @assignment = Assignment.make(due_date: 1.days.ago)
         grace_period_submission_rule = GracePeriodSubmissionRule.new
         @assignment.replace_submission_rule(grace_period_submission_rule)
         @assignment.save
-        Period.make(:submission_rule_id => @assignment.submission_rule.id,
-                    :hours => 62)
+        Period.make(submission_rule_id: @assignment.submission_rule.id,
+                    hours: 62)
       end
 
       should 'have the create group link available' do
         get_as @student,
                :student_interface,
-               :id => @assignment.id
+               id: @assignment.id
         assert_not_nil (response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
       end
 
       should 'be able to create a group' do
-        post_as @student, :creategroup, :id => @assignment.id
-        assert_redirected_to :action => 'student_interface',
-                             :id => @assignment.id
+        post_as @student, :creategroup, id: @assignment.id
+        assert_redirected_to action: 'student_interface',
+                             id: @assignment.id
         assert @student.has_accepted_grouping_for?(@assignment.id)
       end
 
       context 'with a grouping' do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
+          @grouping = Grouping.make(assignment: @assignment)
           StudentMembership.make(
-              :grouping => @grouping,
-              :membership_status => StudentMembership::STATUSES[:inviter],
-              :user => @student)
+              grouping: @grouping,
+              membership_status: StudentMembership::STATUSES[:inviter],
+              user: @student)
 
         end
 
@@ -1203,11 +1203,11 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           student = Student.make
           post_as @student,
                   :invite_member,
-                  {:id => @assignment.id,
-                   :invite_member => student.user_name}
+                  {id: @assignment.id,
+                   invite_member: student.user_name}
           assert_equal(I18n.t('invite_student.success'), flash[:success])
-          assert_redirected_to :action => 'student_interface',
-                               :id => @assignment.id
+          assert_redirected_to action: 'student_interface',
+                               id: @assignment.id
 
         end
       end
@@ -1215,7 +1215,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context 'with a hidden assignment' do
       setup do
-        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+        @assignment = Assignment.make(short_identifier: 'AHidden',is_hidden: true)
       end
 
       should 'not be able to view it' do

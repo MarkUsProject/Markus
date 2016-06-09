@@ -15,17 +15,17 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
       end
 
       should "fail to GET :index as a #{user_type}" do
-        get_as @user, :index, :grade_entry_form_id => @grade_entry_form.id
+        get_as @user, :index, grade_entry_form_id: @grade_entry_form.id
         assert_response :missing
       end
 
       should "fail to GET :populate as a #{user_type}" do
-        get_as @user, :populate, :grade_entry_form_id => @grade_entry_form.id
+        get_as @user, :populate, grade_entry_form_id: @grade_entry_form.id
         assert_response :missing
       end
 
       should "fail to POST to :global_actions as a #{user_type}" do
-        post_as @user, :global_actions, :grade_entry_form_id => @grade_entry_form.id
+        post_as @user, :global_actions, grade_entry_form_id: @grade_entry_form.id
         assert_response :missing
       end
     end
@@ -48,7 +48,7 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
     end
 
     should 'see the "Manage Graders" page on GET :index' do
-      get_as @admin, :index, :grade_entry_form_id => @grade_entry_form.id
+      get_as @admin, :index, grade_entry_form_id: @grade_entry_form.id
       assert_response :success
       assert @response.body.include?('Manage Graders')
       assert @response.body.include?('Download')
@@ -56,23 +56,23 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
     end
 
     should 'receive a list of students on POST :populate' do
-      get_as @admin, :populate, :grade_entry_form_id => @grade_entry_form.id
+      get_as @admin, :populate, grade_entry_form_id: @grade_entry_form.id
       assert_response :success
       @students.each { |student| assert @response.body.include?(student.user_name) }
     end
 
     should 'redirect to :index on POST :csv_upload_grader_groups_mapping' do
       post_as @admin, :csv_upload_grader_groups_mapping,
-        :grade_entry_form_id => @grade_entry_form.id
+        grade_entry_form_id: @grade_entry_form.id
       assert_response 302
-      assert_redirected_to(:action => 'index')
+      assert_redirected_to(action: 'index')
     end
 
     should 'see an error on POST :csv_upload_grader_groups_mapping with no file' do
       post_as @admin, :csv_upload_grader_groups_mapping,
-        :grade_entry_form_id => @grade_entry_form.id
+        grade_entry_form_id: @grade_entry_form.id
       assert_response 302
-      assert_redirected_to(:action => 'index')
+      assert_redirected_to(action: 'index')
       assert_equal I18n.t('csv.student_to_grader'), flash[:error]
     end
 
@@ -88,10 +88,10 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
       file.rewind
 
       post_as @admin, :csv_upload_grader_groups_mapping,
-        :grade_entry_form_id => @grade_entry_form.id,
-        :grader_mapping => Rack::Test::UploadedFile.new(file.path, 'text/csv')
+        grade_entry_form_id: @grade_entry_form.id,
+        grader_mapping: Rack::Test::UploadedFile.new(file.path, 'text/csv')
       assert_nil flash[:error]
-      assert_redirected_to(:action => 'index')
+      assert_redirected_to(action: 'index')
 
       [0, 1].each do |i|
         assert_equal 1, @graders[i].get_membership_count_by_grade_entry_form(@grade_entry_form)
@@ -111,16 +111,16 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
       end
 
       get_as @admin, :download_grader_students_mapping,
-        :grade_entry_form_id => @grade_entry_form.id
+        grade_entry_form_id: @grade_entry_form.id
       assert_response :success
       assert_equal CSV.parse(csv).to_set, CSV.parse(@response.body).to_set
     end
 
     should 'be able to assign a grader to a student on POST :global_actions' do
-      post_as @admin, :global_actions, { :grade_entry_form_id => @grade_entry_form.id,
-        :global_actions => 'assign', :students => [@students[0]],
-        :graders => [@graders[0]], :submit_type => 'global_action',
-        :current_table => 'groups_table' }
+      post_as @admin, :global_actions, { grade_entry_form_id: @grade_entry_form.id,
+        global_actions: 'assign', students: [@students[0]],
+        graders: [@graders[0]], submit_type: 'global_action',
+        current_table: 'groups_table' }
 
       assert_nil flash[:error]
       assert_equal 1, @graders[0].get_membership_count_by_grade_entry_form(@grade_entry_form)
@@ -128,10 +128,10 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
     end
 
     should 'be able to assign multiple graders to students on POST :global_actions' do
-      post_as @admin, :global_actions, { :grade_entry_form_id => @grade_entry_form.id,
-        :global_actions => 'assign', :students => [@students[0], @students[1]],
-        :graders => [@graders[0], @graders[1]], :submit_type => 'global_action',
-        :current_table => 'groups_table' }
+      post_as @admin, :global_actions, { grade_entry_form_id: @grade_entry_form.id,
+        global_actions: 'assign', students: [@students[0], @students[1]],
+        graders: [@graders[0], @graders[1]], submit_type: 'global_action',
+        current_table: 'groups_table' }
 
       entry_students = @grade_entry_form.grade_entry_students
 
@@ -143,10 +143,10 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
     end
 
     should 'be able to randomly and evenly assign graders to students on POST :global_actions' do
-      post_as @admin, :global_actions, { :grade_entry_form_id => @grade_entry_form.id,
-        :global_actions => 'random_assign', :students => [@students[0], @students[1]],
-        :graders => [@graders[0], @graders[1]], :submit_type => 'global_action',
-        :current_table => 'groups_table' }
+      post_as @admin, :global_actions, { grade_entry_form_id: @grade_entry_form.id,
+        global_actions: 'random_assign', students: [@students[0], @students[1]],
+        graders: [@graders[0], @graders[1]], submit_type: 'global_action',
+        current_table: 'groups_table' }
 
       entry_students = @grade_entry_form.grade_entry_students
 
