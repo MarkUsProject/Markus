@@ -123,6 +123,8 @@ class FlexibleCriteriaController < ApplicationController
     params.require(:flexible_criterion).permit(:name,
                                                :description,
                                                :position,
-                                               :max)
+                                               :max,
+                                               :ta_visible,
+                                               :peer_visible)
   end
 end

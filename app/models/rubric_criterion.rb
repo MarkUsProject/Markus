@@ -36,6 +36,8 @@ class RubricCriterion < Criterion
 
   has_many :test_scripts, as: :criterion
 
+  validate :visible?
+
   def update_assigned_groups_count
     result = []
     criterion_ta_associations.each do |cta|
@@ -255,6 +257,15 @@ class RubricCriterion < Criterion
   # Updates results already entered with new criteria
   def update_existing_results
     self.assignment.submissions.each { |submission| submission.get_latest_result.update_total_mark }
+  end
+
+  # Checks if the criterion is visible to either the ta or the peer reviewer
+  def visible?
+    unless ta_visible || peer_visible
+        errors.add(:ta_visible, I18n.t('rubric_criteria.visibility_error'))
+        false
+    end
+    true
   end
 
 end

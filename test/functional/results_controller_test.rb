@@ -465,7 +465,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           should 'and the result is available' do
             SubmissionFile.make(submission: @submission)
-            Mark.make(result: @result)
+            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
+              Mark.make(:rubric, result: @result)
+            else
+              Mark.make(:flexible,  result: @result)
+            end
             AnnotationCategory.make(assignment: @assignment)
             @submission_file = @result.submission.submission_files.first
             @result.marking_state = Result::MARKING_STATES[:complete]
@@ -946,8 +950,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             g = Grouping.make(assignment: @assignment)
             @submission = Submission.make(grouping: g)
-
-            @mark = Mark.make(result: @submission.get_latest_result)
+            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
+              @mark = Mark.make(:rubric, result: @submission.get_latest_result)
+            else
+              @mark = Mark.make(:flexible, result: @submission.get_latest_result)
+            end
           end
 
           should 'fails validation' do

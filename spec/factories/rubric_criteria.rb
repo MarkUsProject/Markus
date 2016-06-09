@@ -3,6 +3,8 @@ FactoryGirl.define do
     sequence(:name) { |n| "Rubric criterion #{n}" }
     association :assignment, factory: :rubric_assignment
     weight 1.0
+    ta_visible true
+    peer_visible false
     level_0_name 'Poor'
     level_0_description 'This criterion was not satisifed whatsoever.'
     level_1_name 'Satisfactory'
