@@ -421,7 +421,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       FileUtils.remove_dir(GIT_TEST_REPOS_DIR + "/Testrepo1", true)
       FileUtils.remove_dir(GIT_TEST_REPOS_DIR + "/Repository2", true)
       FileUtils.remove_dir(TEST_REPO, true)
-      FileUtils.rm(GIT_AUTH_FILE, :force => true)
+      FileUtils.rm(GIT_AUTH_FILE, force: true)
 
       ga_repo =  Gitolite::GitoliteAdmin.bootstrap(GIT_AUTH_FOLDER)
       # have a clean auth file
@@ -461,7 +461,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       GitRepository.delete(GIT_TEST_REPOS_DIR + "/Testrepo1")
       GitRepository.delete(GIT_TEST_REPOS_DIR + "/Repository2")
       GitRepository.delete(TEST_REPO)
-      FileUtils.rm(GIT_AUTH_FILE, :force => true)
+      FileUtils.rm(GIT_AUTH_FILE, force: true)
     end
 
     should "be able to get permissions for a user" do
@@ -802,8 +802,8 @@ class GitRepositoryTest < ActiveSupport::TestCase
     options = {}
     options[:tree] = repo.get_repos.index.write_tree(repo.get_repos)
 
-    options[:author] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
-    options[:committer] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
+    options[:author] = { email: "testuser@github.com", name: 'Test Author', time: Time.now }
+    options[:committer] = { email: "testuser@github.com", name: 'Test Author', time: Time.now }
     options[:message] ||= "Adding File with add_file_helper"
     options[:parents] = repo.get_repos.empty? ? [] : [ repo.get_repos.head.target ].compact
     options[:update_ref] = 'HEAD'

@@ -15,49 +15,49 @@ class GroupsControllerTest < AuthenticatedControllerTest
     end
 
     should 'GET on :new' do
-      get_as @student, :new, :assignment_id => @assignment.id
+      get_as @student, :new, assignment_id: @assignment.id
       assert_response :missing
     end
 
     should 'GET on :remove_group' do
-      get_as @student, :remove_group, :assignment_id => @assignment.id
+      get_as @student, :remove_group, assignment_id: @assignment.id
       assert_response :missing
     end
 
     should 'GET on :rename_group' do
-      get_as @student, :rename_group, :assignment_id => @assignment.id
+      get_as @student, :rename_group, assignment_id: @assignment.id
       assert_response :missing
     end
 
     should 'GET on :valid_grouping' do
-      get_as @student, :valid_grouping, :assignment_id => @assignment.id
+      get_as @student, :valid_grouping, assignment_id: @assignment.id
       assert_response :missing
     end
 
     should 'GET on :invalid_grouping' do
-      get_as @student, :invalid_grouping, :assignment_id => @assignment.id
+      get_as @student, :invalid_grouping, assignment_id: @assignment.id
       assert_response :missing
     end
 
     should 'GET on :index' do
-      get_as @student, :index, :assignment_id => @assignment.id
+      get_as @student, :index, assignment_id: @assignment.id
       assert_response :missing
     end
 
     should 'GET on :csv_upload' do
-      get_as @student, :csv_upload, :assignment_id => @assignment.id
+      get_as @student, :csv_upload, assignment_id: @assignment.id
       assert_response :missing
     end
 
     should 'GET on :download_grouplist' do
-      get_as @student, :download_grouplist, :assignment_id => @assignment.id
+      get_as @student, :download_grouplist, assignment_id: @assignment.id
       assert_response :missing
     end
 
     should 'POST on :use_another_assignment_groups' do
       post_as @student,
              :use_another_assignment_groups,
-             :assignment_id => @assignment.id
+             assignment_id: @assignment.id
       assert_response :missing
     end
 
@@ -68,20 +68,20 @@ class GroupsControllerTest < AuthenticatedControllerTest
     setup do
       @admin = Admin.make
       @grouping = Grouping.make
-      @assignment = Assignment.make(:groupings => [@grouping])
+      @assignment = Assignment.make(groupings: [@grouping])
     end
 
     should 'GET on :index(groups_controller)' do
       get_as @admin,
              :index,
-             :assignment_id => @assignment.id
+             assignment_id: @assignment.id
       assert_response :success
     end
 
     should 'GET on :index' do
       get_as @admin,
              :index,
-             :assignment_id => @assignment.id
+             assignment_id: @assignment.id
       assert_response :success
     end
 
@@ -90,13 +90,13 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'be able to add group without groupname' do
         @assignment = Assignment.make
         Assignment.any_instance.stubs(:add_group).returns(Grouping.make)
-        get_as @admin, :new, :assignment_id => @assignment.id
+        get_as @admin, :new, assignment_id: @assignment.id
         assert_response :success
       end
 
       should 'be able to create with groupname' do
         get_as @admin, :new,
-          { :assignment_id => @assignment.id, :new_group_name => 'test' }
+          { assignment_id: @assignment.id, new_group_name: 'test' }
         assert_response :success
       end
     end #:add_group
@@ -106,8 +106,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'on group without a submission' do
         delete_as @admin,
                  :remove_group,
-                 {:assignment_id => @assignment.id,
-                  :grouping_id => @grouping.id}
+                 {assignment_id: @assignment.id,
+                  grouping_id: @grouping.id}
         assert_response :success
         assert_not_nil assigns(:assignment) { @assignment }
         assert_not_nil assigns(:errors) { [] }
@@ -118,8 +118,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @grouping_with_submission = Grouping.make
         delete_as @admin,
                   :remove_group,
-                  {:assignment_id => @assignment.id,
-                   :grouping_id => @grouping_with_submission.id}
+                  {assignment_id: @assignment.id,
+                   grouping_id: @grouping_with_submission.id}
         assert_response :success
         assert_not_nil assigns(:assignment) { Assignment.make }
         assert_not_nil assigns(:errors) { [@grouping_with_submission.group.group_name] }
@@ -133,8 +133,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'with unique, new name' do
         @new_name = 'NeW'
         post_as @admin,
-                :rename_group, {:assignment_id => @assignment.id,
-          :id => @grouping.id, :new_groupname => @new_name, :format => 'js'}
+                :rename_group, {assignment_id: @assignment.id,
+          id: @grouping.id, new_groupname: @new_name, format: 'js'}
         assert_not_nil assigns :assignment
         assert_not_nil assigns :grouping
         assert_not_nil assigns :group
@@ -144,22 +144,22 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
       should 'with existing name' do
         @new_name = Grouping.make.group.group_name
-        post_as @admin, :rename_group, {:assignment_id => @assignment.id,
-          :id => @grouping.id, :new_groupname => @new_name, :format => 'js'}
+        post_as @admin, :rename_group, {assignment_id: @assignment.id,
+          id: @grouping.id, new_groupname: @new_name, format: 'js'}
         assert_response :success
         assert_equal @grouping.group.group_name, assigns(:group).group_name
       end
     end #:rename_group
 
     should 'POST on :valid_grouping' do
-      post_as @admin, :valid_grouping, {:assignment_id => @assignment.id,
-        :grouping_id => @grouping.id}
+      post_as @admin, :valid_grouping, {assignment_id: @assignment.id,
+        grouping_id: @grouping.id}
       assert_response :success
     end
 
     should 'POST on :invalid_grouping' do
-      post_as @admin, :invalid_grouping, {:assignment_id => @assignment.id,
-        :grouping_id => @grouping.id}
+      post_as @admin, :invalid_grouping, {assignment_id: @assignment.id,
+        grouping_id: @grouping.id}
       assert_response :success
     end
 
@@ -176,41 +176,41 @@ class GroupsControllerTest < AuthenticatedControllerTest
     end
 
     should 'should be able to delete without groupings' do
-      post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-        :global_actions => 'delete'}
+      post_as @admin, :global_actions, {assignment_id: @assignment.id,
+        global_actions: 'delete'}
       # check error: must select grouping
       assert_response 400
     end
 
     should 'be able to delete a grouping' do
-      post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-          :global_actions => 'delete', :groupings => [@grouping.id]}
+      post_as @admin, :global_actions, {assignment_id: @assignment.id,
+          global_actions: 'delete', groupings: [@grouping.id]}
       assert_response :success
     end
 
     should 'should not be able to do invalid any students' do
-      post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-        :global_actions => 'invalid'}
+      post_as @admin, :global_actions, {assignment_id: @assignment.id,
+        global_actions: 'invalid'}
       # check error: must select students
       assert_response 400
     end
 
     should 'should be able to invalide a selected grouping' do
-      post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-        :global_actions => 'invalid', :groupings => [@grouping.id]}
+      post_as @admin, :global_actions, {assignment_id: @assignment.id,
+        global_actions: 'invalid', groupings: [@grouping.id]}
       assert_response :success
     end
 
     should 'be able to validate' do
-      post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-        :global_actions => 'valid'}
+      post_as @admin, :global_actions, {assignment_id: @assignment.id,
+        global_actions: 'valid'}
       # should raise error: select a group
       assert_response 400
     end
 
     should 'and one is selected' do
-      post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-        :global_actions => 'valid', :groupings => [@grouping.id]}
+      post_as @admin, :global_actions, {assignment_id: @assignment.id,
+        global_actions: 'valid', groupings: [@grouping.id]}
       assert_response :success
     end
 
@@ -338,15 +338,15 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
       should 'and no group selected' do
         @student =  Student.make
-        post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-          :global_actions => 'assign', :students => [@student.id]}
+        post_as @admin, :global_actions, {assignment_id: @assignment.id,
+          global_actions: 'assign', students: [@student.id]}
         assert_response 400
       end
 
       should 'and no students selected' do
         @grouping = Grouping.make
-        post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-          :global_actions => 'assign', :groupings => [@grouping.id]}
+        post_as @admin, :global_actions, {assignment_id: @assignment.id,
+          global_actions: 'assign', groupings: [@grouping.id]}
         assert_equal 0, @grouping.student_memberships.size
         assert_response 400
       end
@@ -412,7 +412,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'be able to add members' do
         @student1 =  Student.make
         @student2 =  Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
+        @grouping = Grouping.make(assignment: @assignment)
         @grouping.add_member(@student1)
         post_add [@student2]
 
@@ -432,8 +432,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'with 1 valid user, 1 already assigned user' do
         @student1 =  Student.make
         @student2 =  Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
+        @grouping = Grouping.make(assignment: @assignment)
+        @grouping2 = Grouping.make(assignment: @assignment)
         @grouping2.add_member(@student2)
         post_add [@student1, @student2]
         # should also get error message we return is 'student already assigned'
@@ -468,8 +468,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @student1 =  Student.make
         @student2 =  Student.make
         @student3 =  Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
+        @grouping = Grouping.make(assignment: @assignment)
+        @grouping2 = Grouping.make(assignment: @assignment)
         @grouping2.add_member(@student3)
         post_add [@student1.id, @student2.id, @student3.id]
         # should return error: already assigned
@@ -496,13 +496,13 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'be able to unassign a member' do
         @student1 = Student.make
         @student2 = Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
+        @grouping = Grouping.make(assignment: @assignment)
         @grouping.add_member(@student1)
         @grouping.add_member(@student2)
         post_as @admin, :global_actions, {
-          :assignment_id => @assignment.id,
-          :global_actions => 'unassign',
-          :students_to_remove => [@student1.id]}
+          assignment_id: @assignment.id,
+          global_actions: 'unassign',
+          students_to_remove: [@student1.id]}
         assert_response :success
         @grouping.reload
         assert_equal 1, @grouping.student_memberships.size
@@ -511,13 +511,13 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'be able to unassign all group members' do
         @student1 = Student.make
         @student2 = Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
+        @grouping = Grouping.make(assignment: @assignment)
         @grouping.add_member(@student1)
         @grouping.add_member(@student2)
         post_as @admin, :global_actions, {
-          :assignment_id => @assignment.id,
-          :global_actions => 'unassign',
-          :students_to_remove => [@student1.id, @student2.id]}
+          assignment_id: @assignment.id,
+          global_actions: 'unassign',
+          students_to_remove: [@student1.id, @student2.id]}
         assert_response :success
         @grouping.reload
         assert_equal 0, @grouping.student_memberships.size
@@ -533,15 +533,15 @@ class GroupsControllerTest < AuthenticatedControllerTest
       context 'with no groups' do
         setup do
           @assignment.groupings.destroy_all
-          @response = get_as @admin, :download_grouplist, {:assignment_id => @assignment.id}
+          @response = get_as @admin, :download_grouplist, {assignment_id: @assignment.id}
         end
         should respond_with :success
         should 'be an empty file returned' do
           assert @response.body.empty?
         end
         should 'route properly' do
-          assert_recognizes({:controller => 'groups', :assignment_id => '1', :action => 'download_grouplist' },
-            {:path => 'assignments/1/groups/download_grouplist', :method => :get})
+          assert_recognizes({controller: 'groups', assignment_id: '1', action: 'download_grouplist' },
+            {path: 'assignments/1/groups/download_grouplist', method: :get})
         end
       end # with no groups
 
@@ -549,9 +549,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
         setup do
           # Construct the array that a parse of the returned CSV
           # *should* return
-          @assignment = Assignment.make(:groupings => [Grouping.make])
+          @assignment = Assignment.make(groupings: [Grouping.make])
           @match_array = construct_group_list_array(@assignment.groupings)
-          @response = get_as @admin, :download_grouplist, {:assignment_id => @assignment.id}
+          @response = get_as @admin, :download_grouplist, {assignment_id: @assignment.id}
         end
         should respond_with :success
         should 'not be an empty file returned' do
@@ -561,14 +561,14 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert_equal @match_array, CSV.parse(@response.body)
         end
         should 'route properly' do
-          assert_recognizes({:controller => 'groups', :assignment_id => '1', :action => 'download_grouplist' },
-            {:path => 'assignments/1/groups/download_grouplist', :method => :get})
+          assert_recognizes({controller: 'groups', assignment_id: '1', action: 'download_grouplist' },
+            {path: 'assignments/1/groups/download_grouplist', method: :get})
         end
       end # with groups, but no TAs assigned
 
       context 'with groups, with TAs assigned' do
         setup do
-          @assignment = Assignment.make(:groupings => [Grouping.make])
+          @assignment = Assignment.make(groupings: [Grouping.make])
           @ta1 = Ta.make
           @ta2 = Ta.make
           # For each grouping for Assignment 1, assign 2 TAs
@@ -577,7 +577,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           end
           @assignment.groupings.reload
           @match_array = construct_group_list_array(@assignment.groupings)
-          @response = get_as @admin, :download_grouplist, {:assignment_id => @assignment.id}
+          @response = get_as @admin, :download_grouplist, {assignment_id: @assignment.id}
         end
         should respond_with :success
         should 'not be an empty file returned' do
@@ -587,8 +587,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert_equal @match_array, CSV.parse(@response.body)
         end
         should 'route properly' do
-          assert_recognizes({:controller => 'groups', :assignment_id => '1', :action => 'download_grouplist' },
-            {:path => 'assignments/1/groups/download_grouplist', :method => :get})
+          assert_recognizes({controller: 'groups', assignment_id: '1', action: 'download_grouplist' },
+            {path: 'assignments/1/groups/download_grouplist', method: :get})
         end
 
       end # with groups, with TAs assigned
@@ -598,9 +598,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
   end #admin context
 
   def post_add(students)
-    post_as @admin, :global_actions, {:assignment_id => @assignment.id,
-      :global_actions => 'assign',
-      :groupings => [@grouping.id], :students => students}
+    post_as @admin, :global_actions, {assignment_id: @assignment.id,
+      global_actions: 'assign',
+      groupings: [@grouping.id], students: students}
   end
 
   def construct_group_list_array(groupings)

@@ -18,56 +18,56 @@ class RubricsControllerTest < AuthenticatedControllerTest
       end
 
       should 'be redirected on index' do
-        get :index, :assignment_id => @assignment.id
+        get :index, assignment_id: @assignment.id
         assert_response :redirect
       end
 
       should 'be redirected on new' do
-        get :new, :assignment_id => @assignment.id
+        get :new, assignment_id: @assignment.id
         assert_response :redirect
       end
 
       should 'be redirected on :download_csv' do
-        get :download_csv, :assignment_id => @assignment.id
+        get :download_csv, assignment_id: @assignment.id
         assert_response :redirect
       end
 
       should 'be redirected on :download_yml' do
-        get :download_yml, :assignment_id => @assignment.id
+        get :download_yml, assignment_id: @assignment.id
         assert_response :redirect
       end
 
       should 'be redirected on :csv_upload' do
-        get :csv_upload, :assignment_id => @assignment.id
+        get :csv_upload, assignment_id: @assignment.id
         assert_response :redirect
       end
 
      should 'be redirected on :update_positions' do
-        get :update_positions, :assignment_id => @assignment.id
+        get :update_positions, assignment_id: @assignment.id
         assert_response :redirect
       end
 
       context 'and a submission' do
         setup do
-          @submission = Submission.make(:grouping => @grouping)
+          @submission = Submission.make(grouping: @grouping)
         end
 
         should 'be redirect on edit' do
           get :edit,
-              :assignment_id => @assignment.id,
-              :submission_id => @submission.id,
-              :id => 1
+              assignment_id: @assignment.id,
+              submission_id: @submission.id,
+              id: 1
               #FIXME
           assert_response :redirect
         end
 
         should 'be redirected on update' do
-          put :update, :assignment_id => @assignment.id, :id => 1
+          put :update, assignment_id: @assignment.id, id: 1
           assert_response :redirect
         end
 
         should 'be redirect on delete' do
-          delete :destroy, :assignment_id => @assignment.id, :id => 1
+          delete :destroy, assignment_id: @assignment.id, id: 1
           assert_response :redirect
         end
       end
@@ -86,8 +86,8 @@ class RubricsControllerTest < AuthenticatedControllerTest
       tempfile = fixture_file_upload('files/rubric.csv')
       post_as @admin,
              :csv_upload,
-             :assignment_id => @assignment.id,
-             :csv_upload => {:rubric => tempfile}
+             assignment_id: @assignment.id,
+             csv_upload: {rubric: tempfile}
       @assignment.reload
 
       rubric_criteria = @assignment.rubric_criteria
@@ -111,8 +111,8 @@ class RubricsControllerTest < AuthenticatedControllerTest
       tempfile = fixture_file_upload('files/rubric_incomplete.csv')
       post_as @admin,
               :csv_upload,
-              :assignment_id => @assignment.id,
-              :csv_upload => {:rubric => tempfile}
+              assignment_id: @assignment.id,
+              csv_upload: {rubric: tempfile}
       assert_not_nil assigns :assignment
       assert_not_empty flash[:error]
       assert_response :redirect
@@ -147,9 +147,9 @@ class RubricsControllerTest < AuthenticatedControllerTest
     should 'have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8' do
       post_as @admin,
               :csv_upload,
-              :assignment_id => @assignment.id,
-              :csv_upload => {:rubric => fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
-              :encoding => 'UTF-8'
+              assignment_id: @assignment.id,
+              csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
+              encoding: 'UTF-8'
       assert_response :redirect
       test_criterion = RubricCriterion.find_by(assignment_id: @assignment.id, name: 'RubricCriteriaÈrÉØrr')
       assert_not_nil test_criterion # rubric criterion should exist
@@ -158,9 +158,9 @@ class RubricsControllerTest < AuthenticatedControllerTest
     should 'have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1' do
       post_as @admin,
               :csv_upload,
-              :assignment_id => @assignment.id,
-              :csv_upload => {:rubric => fixture_file_upload('files/test_rubric_criteria_ISO-8859-1.csv')},
-              :encoding => 'ISO-8859-1'
+              assignment_id: @assignment.id,
+              csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_ISO-8859-1.csv')},
+              encoding: 'ISO-8859-1'
       assert_response :redirect
       test_criterion = RubricCriterion.find_by(assignment_id: @assignment.id, name: 'RubricCriteriaÈrÉØrr')
       assert_not_nil test_criterion # rubric criterion should exist
@@ -169,9 +169,9 @@ class RubricsControllerTest < AuthenticatedControllerTest
     should 'have valid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1' do
       post_as @admin,
               :csv_upload,
-              :assignment_id => @assignment.id,
-              :csv_upload => {:rubric => fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
-              :encoding => 'ISO-8859-1'
+              assignment_id: @assignment.id,
+              csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
+              encoding: 'ISO-8859-1'
       assert_response :redirect
       test_criterion = RubricCriterion.find_by(assignment_id: @assignment.id, name: 'RubricCriteriaÈrÉØrr')
       assert_nil test_criterion # rubric criterion should not exist, despite being in file
@@ -201,8 +201,8 @@ cr2:
 END
       post_as @admin,
               :yml_upload,
-              :assignment_id => @assignment.id,
-              :yml_upload => {:rubric => yml_string}
+              assignment_id: @assignment.id,
+              yml_upload: {rubric: yml_string}
 
       assert_response :redirect
       assert_not_nil set_flash.to(t('rubric_criteria.upload.success',
@@ -228,8 +228,8 @@ END
     should 'deal with bad weight on yaml file' do
       post_as @admin,
               :yml_upload,
-              :assignment_id => @assignment.id,
-              :yml_upload => {:rubric =>
+              assignment_id: @assignment.id,
+              yml_upload: {rubric:
                 "cr1:\n  weight: monstrously heavy\n"}
 
       assert_response  :redirect
@@ -244,8 +244,8 @@ END
     should 'deal properly with yml syntax error' do
      post_as @admin,
              :yml_upload,
-             :assignment_id => @assignment.id,
-             :yml_upload => {:rubric => "cr1:\n  weight: 5\na"}
+             assignment_id: @assignment.id,
+             yml_upload: {rubric: "cr1:\n  weight: 5\na"}
 
       assert_response :redirect
       assert_not_nil set_flash.to(t('rubric_criteria.upload.error') + '  ' +
@@ -259,8 +259,8 @@ END
     should 'deal properly with empty yml file' do
       post_as @admin,
               :yml_upload,
-              :assignment_id => @assignment.id,
-              :yml_upload => {:rubric => ''}
+              assignment_id: @assignment.id,
+              yml_upload: {rubric: ''}
       assert_response :redirect
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
@@ -270,12 +270,12 @@ END
 
     context 'with a criterion' do
       setup do
-        @criterion = RubricCriterion.make(:name => 'Algorithm',
-                                          :assignment => @assignment)
+        @criterion = RubricCriterion.make(name: 'Algorithm',
+                                          assignment: @assignment)
       end
 
       should 'see index' do
-        get_as @admin, :index, :assignment_id => @assignment.id
+        get_as @admin, :index, assignment_id: @assignment.id
         assert assigns :assignment
         assert assigns :criteria
         assert render_template :index
@@ -283,7 +283,7 @@ END
       end
 
       should 'be able to get on :edit' do
-        get_as @admin, :edit, :assignment_id => 1, :id => @criterion.id
+        get_as @admin, :edit, assignment_id: 1, id: @criterion.id
         assert assigns :criterion
         assert render_template :edit
         assert_response :success
@@ -319,7 +319,7 @@ END
       end
 
       should 'be able to get the form for new rubric' do
-        get_as @admin, :new, :assignment_id => @assignment.id
+        get_as @admin, :new, assignment_id: @assignment.id
         assert assigns :assignment
         assert render_template :new
         assert_response :success
@@ -329,9 +329,9 @@ END
         RubricCriterion.any_instance.expects(:save).once.returns(false)
         post_as @admin,
                 :create,
-                :assignment_id => @assignment.id,
-                :rubric_criterion => {:name => 'first',
-                                      :weight => 10}
+                assignment_id: @assignment.id,
+                rubric_criterion: {name: 'first',
+                                   weight: 10}
         assert assigns :assignment
         assert assigns :criterion
         assert assigns :errors
@@ -345,9 +345,9 @@ END
         post_as @admin,
                 :create,
                 format: :js,
-                :assignment_id => assignment.id,
-                :rubric_criterion => {:name => 'first',
-                                      :weight => 10}
+                assignment_id: assignment.id,
+                rubric_criterion: {name: 'first',
+                                   weight: 10}
         assert assigns :assignment
         assert assigns :criterion
         assert render_template 'rubrics/create_and_edit'
@@ -358,9 +358,9 @@ END
         post_as @admin,
                 :create,
                 format: :js,
-                :assignment_id => @assignment.id,
-                :rubric_criterion => {:name => 'first',
-                                      :weight => 10}
+                assignment_id: @assignment.id,
+                rubric_criterion: {name: 'first',
+                                   weight: 10}
         assert assigns :assignment
         assert assigns :criterion
         assert render_template 'rubrics/create_and_edit'
@@ -368,7 +368,7 @@ END
       end
 
       should 'delete criterion' do
-        delete_as @admin, :destroy, :assignment_id => 1, :id => @criterion.id
+        delete_as @admin, :destroy, assignment_id: 1, id: @criterion.id
 
         assert assigns :criterion
         assert_equal flash[:success], I18n.t('criterion_deleted_success')
@@ -381,7 +381,7 @@ END
 
 
       should 'download rubrics as CSV' do
-        get_as @admin, :download_csv, :assignment_id => @assignment.id
+        get_as @admin, :download_csv, assignment_id: @assignment.id
         assert assigns :assignment
         assert_equal response.header['Content-Type'], 'text/csv'
         assert_response :success
@@ -392,8 +392,8 @@ END
       should 'upload yml file without deleting preexisting criteria' do
         post_as @admin,
                 :yml_upload,
-                :assignment_id => @assignment.id,
-                :yml_upload => {:rubric => "cr1:\n  weight: 5\ncr2:\n  weight: 2\n"}
+                assignment_id: @assignment.id,
+                yml_upload: {rubric: "cr1:\n  weight: 5\ncr2:\n  weight: 2\n"}
 
 
         assert_response :redirect
@@ -407,8 +407,8 @@ END
 
       context 'with another criterion' do
         setup do
-          @criterion2 = RubricCriterion.make(:assignment => @assignment,
-                                            :position => 2)
+          @criterion2 = RubricCriterion.make(assignment: @assignment,
+                                             position: 2)
         end
 
         should 'be able to update_positions' do

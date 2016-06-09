@@ -21,8 +21,8 @@ class SectionTest < ActiveSupport::TestCase
     context 'With a section due date for an assignment' do
       setup do
         @assignment = Assignment.make
-        @section_due_date = SectionDueDate.make(:section => @section,
-                                                :assignment => @assignment)
+        @section_due_date = SectionDueDate.make(section: @section,
+                                                assignment: @assignment)
       end
 
       should 'return the section due date for an assignment' do

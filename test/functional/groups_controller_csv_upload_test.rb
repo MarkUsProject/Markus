@@ -59,16 +59,16 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
                                           'username_repos_groups.csv'))
 
         # Make students appearing in the csvs
-        Student.make(:user_name => 'c6scriab')
-        Student.make(:user_name => 'c5berkel')
-        Student.make(:user_name => 'c5anthei')
-        Student.make(:user_name => 'c5charpe')
-        Student.make(:user_name => 'c5cagejo')
-        Student.make(:user_name => 'c5gliere')
+        Student.make(user_name: 'c6scriab')
+        Student.make(user_name: 'c5berkel')
+        Student.make(user_name: 'c5anthei')
+        Student.make(user_name: 'c5charpe')
+        Student.make(user_name: 'c5cagejo')
+        Student.make(user_name: 'c5gliere')
       end
 
       teardown do
-        FileUtils.rm_r(@repository_storage, :force => true)
+        FileUtils.rm_r(@repository_storage, force: true)
         FileUtils.cd(@pwd)
       end
 
@@ -76,9 +76,9 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
         setup do
           # We want to be repo admin
           MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
-          @assignment = Assignment.make(:allow_web_submits => false,
-                                        :group_max => 1, :group_min => 1)
-          @res = post_as @admin, :csv_upload, { :assignment_id => @assignment.id, :group => { :grouplist=> @username_repos_csv_file } }
+          @assignment = Assignment.make(allow_web_submits: false,
+                                        group_max: 1, group_min: 1)
+          @res = post_as @admin, :csv_upload, { assignment_id: @assignment.id, group: { grouplist: @username_repos_csv_file } }
         end
 
         should 'be named after student usernames only' do
@@ -87,8 +87,8 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
                        %w(c5anthei c5cagejo c5charpe c6scriab))
         end
         should 'route properly' do
-          assert_recognizes({:controller => 'groups', :assignment_id => '1', :action => 'csv_upload' },
-            {:path => 'assignments/1/groups/csv_upload', :method => :post})
+          assert_recognizes({controller: 'groups', assignment_id: '1', action: 'csv_upload' },
+            {path: 'assignments/1/groups/csv_upload', method: :post})
         end
       end
 
@@ -97,9 +97,9 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
         setup do
           # We want to be repo admin
           MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
-          @assignment = Assignment.make(:allow_web_submits => true,
-                                        :group_max => 1, :group_min => 1)
-          @res = post_as @admin, :csv_upload, {:assignment_id => @assignment.id, :group => { :grouplist=> @username_repos_csv_file } }
+          @assignment = Assignment.make(allow_web_submits: true,
+                                        group_max: 1, group_min: 1)
+          @res = post_as @admin, :csv_upload, {assignment_id: @assignment.id, group: { grouplist: @username_repos_csv_file } }
         end
 
         should 'have the specified group names' do
@@ -121,9 +121,9 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
         setup do
           # We want to be repo admin
           MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
-          @assignment = Assignment.make(:allow_web_submits => false,
-                                        :group_max => 1, :group_min => 1)
-          @res = post_as @admin, :csv_upload, { :assignment_id => @assignment.id, :group => { :grouplist=> @autogen_repos_csv_file } }
+          @assignment = Assignment.make(allow_web_submits: false,
+                                        group_max: 1, group_min: 1)
+          @res = post_as @admin, :csv_upload, { assignment_id: @assignment.id, group: { grouplist: @autogen_repos_csv_file } }
         end
 
         should 'have the specified group names' do
@@ -143,10 +143,10 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
         setup do
           # We do *not* want to be admin
           MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(false)
-          @assignment = Assignment.make(:invalid_override => true,
-                                        :group_min => 1, :group_max => 3,
-                                        :student_form_groups => false)
-          @res = post_as @admin, :csv_upload, { :assignment_id => @assignment.id, :group => { :grouplist=> @non_admin_repos_csv_file } }
+          @assignment = Assignment.make(invalid_override: true,
+                                        group_min: 1, group_max: 3,
+                                        student_form_groups: false)
+          @res = post_as @admin, :csv_upload, { assignment_id: @assignment.id, group: { grouplist: @non_admin_repos_csv_file } }
         end
 
         should 'have the names as provided in the csv file' do

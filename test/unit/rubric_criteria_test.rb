@@ -43,14 +43,14 @@ class RubricCriterionTest < ActiveSupport::TestCase
 
   should 'find a mark for a specific rubric and result' do
     assignment = Assignment.make
-    grouping = Grouping.make(:assignment => assignment)
-    submission = Submission.make(:grouping => grouping)
-    result = Result.make(:submission => submission)
+    grouping = Grouping.make(assignment: assignment)
+    submission = Submission.make(grouping: grouping)
+    result = Result.make(submission: submission)
 
-    rubric = RubricCriterion.make(:assignment => assignment)
+    rubric = RubricCriterion.make(assignment: assignment)
 
-    mark = Mark.make(:result => result,
-                    :markable => rubric)
+    mark = Mark.make(result: result,
+                    markable: rubric)
     assert_not_nil rubric.mark_for(result.id)
   end
 
@@ -137,8 +137,8 @@ class RubricCriterionTest < ActiveSupport::TestCase
     end
 
     should 'get the names of TAs assigned to it' do
-      @ta1 = Ta.make(:user_name => 'g9browni')
-      @ta2 = Ta.make(:user_name => 'c7benjam')
+      @ta1 = Ta.make(user_name: 'g9browni')
+      @ta2 = Ta.make(user_name: 'c7benjam')
       @criterion.add_tas(@ta1)
       @criterion.add_tas(@ta2)
       assert_contains @criterion.get_ta_names, 'g9browni'
@@ -150,13 +150,13 @@ class RubricCriterionTest < ActiveSupport::TestCase
     setup do
       @csv_string = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
-      @assignment = Assignment.make(:marking_scheme_type => 'rubric')
-      RubricCriterion.make(:assignment => @assignment,
-                           :name => 'Algorithm Design',
-                           :weight => 2.0)
-      RubricCriterion.make(:assignment => @assignment,
-                           :name => 'Documentation',
-                           :weight => 2.7)
+      @assignment = Assignment.make(marking_scheme_type: 'rubric')
+      RubricCriterion.make(assignment: @assignment,
+                           name: 'Algorithm Design',
+                           weight: 2.0)
+      RubricCriterion.make(assignment: @assignment,
+                           name: 'Documentation',
+                           weight: 2.7)
 
     end
   end
@@ -165,14 +165,14 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     setup do
       @csv_string = "Part 1 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,\"Makes the TA \"\"Shivers\"\"\",\"Leaves the TA \"\"calm\"\"\",\"Makes the TA \"\"grin\"\"\",\"Makes the TA \"\"smile\"\"\",\"Makes, the TA scream: \"\"at last, it was about time\"\"\"\n"
       @assignment = Assignment.make
-      RubricCriterion.make(:assignment => @assignment,
-                           :name => 'Part 1 Programming',
-                           :weight => 2.0,
-                           :level_0_description => 'Makes the TA "Shivers"',
-                           :level_1_description => 'Leaves the TA "calm"',
-                           :level_2_description => 'Makes the TA "grin"',
-                           :level_3_description => 'Makes the TA "smile"',
-                           :level_4_description => 'Makes, the TA scream: "at last, it was about time"'
+      RubricCriterion.make(assignment: @assignment,
+                           name: 'Part 1 Programming',
+                           weight: 2.0,
+                           level_0_description: 'Makes the TA "Shivers"',
+                           level_1_description: 'Leaves the TA "calm"',
+                           level_2_description: 'Makes the TA "grin"',
+                           level_3_description: 'Makes the TA "smile"',
+                           level_4_description: 'Makes, the TA scream: "at last, it was about time"'
                            )
     end
   end
@@ -307,14 +307,14 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
   # the specified attribute. if attr == nil then all attributes are included
   def create_no_attr(attr)
     new_rubric_criteria = {
-      :name => 'somecriteria',
-      :assignment_id => Assignment.make,
-      :weight => 0.25,
-      :level_0_name => 'Horrible',
-      :level_1_name => 'Poor',
-      :level_2_name => 'Satisfactory',
-      :level_3_name => 'Good',
-      :level_4_name => 'Excellent'
+      name: 'somecriteria',
+      assignment_id: Assignment.make,
+      weight: 0.25,
+      level_0_name: 'Horrible',
+      level_1_name: 'Poor',
+      level_2_name: 'Satisfactory',
+      level_3_name: 'Good',
+      level_4_name: 'Excellent'
     }
 
     new_rubric_criteria.delete(attr) if attr
