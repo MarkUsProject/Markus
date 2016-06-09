@@ -97,6 +97,22 @@
     },
 
     render: function() {
+      // need to filter for each section
+      var sections = <%= raw @sections.to_json %>;
+      if (sections.length > 0) {
+        var section_filters = sections.map(function(section) {
+          var filter = {
+            name: section.name,
+            text: section.name,
+            func: function(group) {
+              return group.section === section.name;
+            }
+          };
+          return filter;
+        });
+        var all = '<%= I18n.t('browse_submissions.sections.all') %>';
+        section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
+      }
 
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
@@ -121,6 +137,8 @@
             {/* This table and its attributes are defined in table.js */}
             <Table data={submissions_data}
               columns={this.props.columns}
+              secondary_filters={section_filters}
+              filter_type={true}
               footer={false}
               search={false}
             />

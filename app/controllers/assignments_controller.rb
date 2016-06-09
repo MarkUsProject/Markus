@@ -191,7 +191,7 @@ class AssignmentsController < ApplicationController
       # The inviter
       @inviter = @grouping.inviter
     end
-
+    @sections = Section.order(:name)
     if @assignment.past_all_collection_dates?
       flash_now(:notice, t('browse_submissions.grading_can_begin'))
     else

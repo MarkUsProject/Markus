@@ -192,7 +192,7 @@
 
             <%# For each member of this group, display name and status %>
             <ul>
-              <% @studentmemberships.each do |member|%>
+              <% @studentmemberships.includes(:user).each do |member|%>
                   <%= render partial: 'assignments/member',
                              locals: { member: member,
                                        grouping: @grouping } %>
@@ -273,8 +273,6 @@
               </li>
           <% elsif @assignment.invalid_override %>
               <li><%= t('student.invalid_override') %></li>
-          <% else %>
-              <li><%= t('student.student_work_alone') %></li>
           <% end %>
         </ul>
       </div>
