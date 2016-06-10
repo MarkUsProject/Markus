@@ -216,6 +216,8 @@ fr:
         assigned_reviewers_header: "Assigned examinateurs"
         reviewer_group: "Groupe avis"
         reviewee_group: "Groupe pays examin"
+        empty_list_reviewers: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
+        empty_list_reviewees: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
     your_mark:  "Votre note : "
 
     members:            "Membres"

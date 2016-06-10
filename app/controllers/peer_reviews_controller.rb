@@ -10,48 +10,39 @@ class PeerReviewsController < ApplicationController
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
-        content: '" + I18n.t(:'summaries_index.section') + "',
+        content: '" + t(:'summaries_index.section') + "',
         sortable: true
       },"
     end
-
-    if @assignment.marking_scheme_type == 'rubric'
-      @criteria = @assignment.rubric_criteria
-    else
-      @criteria = @assignment.flexible_criteria
-    end
   end
 
-  # TODO - Calls the groups table WAY too much... needs fixing
   def populate
-    @assignment = Assignment.find(params[:assignment_id])  # Needed for the following functions.
+    @assignment = Assignment.find(params[:assignment_id])
+
     reviewer_groups = get_groupings_table_info()
     reviewee_groups = get_groupings_table_info(@assignment.parent_assignment)
+
     reviewee_to_reviewers_map = create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
     id_to_group_names_map = create_map_group_id_to_name(reviewer_groups, reviewee_groups)
-    num_reviews_map = create_map_number_of_reviews_for_reviewer(reviewee_to_reviewers_map)
+    num_reviews_map = create_map_number_of_reviews_for_reviewer(reviewer_groups)
+
     render json: [reviewer_groups, reviewee_groups, reviewee_to_reviewers_map,
                   id_to_group_names_map, num_reviews_map]
   end
 
   # Returns a dict of: reviewee_id => [list of reviewers].
   def create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
-    reviewer_ids = []
-    reviewer_groups.each { |reviewer| reviewer_ids.push(reviewer['id']) }
+    reviewer_ids = reviewer_groups.map { |reviewer| reviewer['id'] }
+    peer_review_map = Hash.new { |hash, key| hash[key] = [] }
+    reviewee_groups.each { |reviewee| peer_review_map[reviewee['id']] }
 
-    peer_review_map = {}
-    reviewee_groups.each { |reviewee| peer_review_map[reviewee['id']] = [] }
-
-    # Populate a dictionary where each key is the reviewee, and the value is
-    # a list of all the reviewers. This may leave some entries empty, which
-    # means they have no reviewers.
     peer_reviews = PeerReview.where(reviewer_id: reviewer_ids)
     peer_reviews.each do |peer_review|
       reviewee_group_id = peer_review.result.submission.grouping.id
       peer_review_map[reviewee_group_id].push(peer_review.reviewer.id)
     end
 
-    return peer_review_map
+    peer_review_map
   end
 
   # Returns a map of group id => names.
@@ -79,21 +70,14 @@ class PeerReviewsController < ApplicationController
     return id_to_group_name_map
   end
 
-  # TODO - should this go in the view logic instead of here? (may needed for random assign though)
   # Returns a map of reviewer_id => num_of_reviews
-  def create_map_number_of_reviews_for_reviewer(reviewee_to_reviewers_map)
+  def create_map_number_of_reviews_for_reviewer(reviewer_groups)
     number_of_reviews_for_reviewer = {}
-
-    reviewee_to_reviewers_map.each do |reviewee_id_key, list_reviewers_id_array|
-      list_reviewers_id_array.each do |reviewer_id|
-        unless number_of_reviews_for_reviewer.key?(reviewer_id)
-          number_of_reviews_for_reviewer[reviewer_id] = 0
-        end
-        number_of_reviews_for_reviewer[reviewer_id] += 1
-      end
+    reviewer_groups.each do |reviewer|
+      count = PeerReview.where(reviewer_id: reviewer['id']).count
+      number_of_reviews_for_reviewer[reviewer['id']] = count
     end
-
-    return number_of_reviews_for_reviewer
+    number_of_reviews_for_reviewer
   end
 
   def assign_groups
@@ -103,24 +87,27 @@ class PeerReviewsController < ApplicationController
     reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups]
     action_string = params[:actionString]
 
+    if action_string == 'random_assign' or action_string == 'assign'
+      if selected_reviewer_group_ids.empty?
+        render text: t('peer_review.empty_list_reviewers'), status: 400
+        return
+      elsif selected_reviewee_group_ids.empty?
+        render text: t('peer_review.empty_list_reviewees'), status: 400
+        return
+      end
+    end
+
     case action_string
       when 'random_assign'
         randomly_assign
       when 'assign'
-        if selected_reviewer_group_ids.size == 0
-          render text: 'Cannot have an empty list of reviewers', status: 400
-          return
-        elsif selected_reviewee_group_ids.size == 0
-          render text: 'Cannot have an empty list of reviewees', status: 400
-          return
-        end
         reviewer_groups = Grouping.where(id: selected_reviewer_group_ids)
         reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
         assign(reviewer_groups, reviewee_groups)
       when 'unassign'
         unassign(reviewers_to_remove_from_reviewees_map)
       else
-        render text: 'Unexpected action type', status: 400
+        render text: t('peer_review.problem'), status: 400
         return
     end
 
@@ -135,33 +122,26 @@ class PeerReviewsController < ApplicationController
     # TODO - Do not allow assigning if the user is already assigned (maybe put unique constraints on the table instead?)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
-        # TODO - is this okay to do? should the result be cached? or does rails do this for us transparently?
         result = reviewee_group.current_submission_used.get_latest_result
-        PeerReview.create(reviewer: reviewer_group, result: result)
+        unless PeerReview.exists?(reviewer: reviewer_group, result: result)
+          PeerReview.create(reviewer: reviewer_group, result: result)
+        end
       end
     end
   end
 
-  # TODO - Can this be optimized... without going to raw SQL?
   def unassign(reviewers_to_remove_from_reviewees_map)
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each do |reviewer_id, dummy_value|
         reviewee_group = Grouping.find_by_id(reviewee_id)
         result_id = reviewee_group.current_submission_used.get_latest_result.id
-        pr = PeerReview.where(result_id: result_id, reviewer_id: reviewer_id).first
+        pr = PeerReview.find_by(result_id: result_id, reviewer_id: reviewer_id)
         pr.destroy
       end
     end
   end
 
-  def groupings_with_assoc(assignment, options = {})
-    grouping_ids = options[:grouping_ids]
-    includes = options[:includes] || GROUPING_ASSOC
-
-    groupings = assignment.groupings.includes(includes)
-    grouping_ids ? groupings.where(id: grouping_ids) : groupings
-  end
-
+  # TODO - are these needed?
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_peer_review

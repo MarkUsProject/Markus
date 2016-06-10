@@ -238,6 +238,8 @@ en:
         assigned_reviewers_header: "Assigned reviewers"
         reviewer_group: "Reviewer group"
         reviewee_group: "Reviewee group"
+        empty_list_reviewers: "Cannot have an empty list of reviewers"
+        empty_list_reviewees: "Cannot have an empty list of reviewers"
     your_mark:  "Your mark:"
 
     members:            "Members"

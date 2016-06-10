@@ -85,23 +85,4 @@
         <input type='reset' value='<%= I18n.t(:cancel) %>' onclick='modal_upload.close();' />
       </section>
   <% end %>
-
-  <% if @assignment.assign_graders_to_criteria %>
-      <h2><%= t("groups.upload.upload_grader_criteria_map") %></h2>
-      <%= raw(t("groups.upload.description_grader_criteria_map")) %>
-      <%= form_tag({controller: "graders",
-                    action: 'csv_upload_grader_criteria_mapping',id: @assignment.id},
-                   {multipart: true}) do %>
-          <p>
-            <%= t("encoding") %>
-            <%= select_tag(:encoding, options_for_select(@encodings)) %>
-          </p>
-          <%= file_field_tag :grader_criteria_mapping, size: 2 %>
-
-          <section class='dialog-actions'>
-            <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-            <%= button_tag t('cancel'), onclick:'modal_upload.close();' %>
-          </section>
-      <% end %>
-  <% end %>
 </aside>

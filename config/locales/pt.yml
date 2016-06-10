@@ -214,6 +214,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         assigned_reviewers_header: "Atribuído usuários"
         reviewer_group: "Grupo de Viajante"
         reviewee_group: "Grupo de ser revistos"
+        empty_list_reviewers: "Não é possível ter uma lista vazia de revisores"
+        empty_list_reviewees: "Não é possível ter uma lista vazia de revisores"
     your_mark:  "Sua nota:"
 
     members:            "Membros"
