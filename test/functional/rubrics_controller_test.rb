@@ -90,12 +90,12 @@ class RubricsControllerTest < AuthenticatedControllerTest
              csv_upload: {rubric: tempfile}
       @assignment.reload
 
-      rubric_criteria = @assignment.rubric_criteria
+      rubric_criteria = @assignment.get_criteria
       assert_not_nil assigns :assignment
       assert_response :redirect
       assert set_flash.to(t('rubric_criteria.upload.success', nb_updates: 4))
       assert_response :redirect
-      assert_equal 4, @assignment.rubric_criteria.size
+      assert_equal 4, @assignment.get_criteria.size
 
       assert_equal 'Algorithm Design', rubric_criteria[0].name
       assert_equal 1, rubric_criteria[0].position
@@ -208,9 +208,9 @@ END
       assert_not_nil set_flash.to(t('rubric_criteria.upload.success',
                                     nb_updates: 2))
       @assignment.reload
-      cr1 = @assignment.rubric_criteria.find_by(name: 'cr1')
-      cr2 = @assignment.rubric_criteria.find_by(name: 'cr2')
-      assert_equal(@assignment.rubric_criteria.length, 2)
+      cr1 = @assignment.get_criteria.find_by(name: 'cr1')
+      cr2 = @assignment.get_criteria.find_by(name: 'cr2')
+      assert_equal(@assignment.get_criteria.length, 2)
       assert_equal(2, cr2.weight)
       assert_equal(5, cr1.weight)
       assert_equal('what?', cr1.level_0_name)
@@ -237,7 +237,7 @@ END
         t('rubric_criteria.upload.error') + ' cr1')
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
-      assert_equal [], @assignment.rubric_criteria
+      assert_equal [], @assignment.get_criteria
 
     end
 
@@ -253,7 +253,7 @@ END
                                     error: "syntax error on line 2, col 1: `'"))
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
-      assert_equal(@assignment.rubric_criteria.length, 0)
+      assert_equal(@assignment.get_criteria.length, 0)
     end
 
     should 'deal properly with empty yml file' do
@@ -264,7 +264,7 @@ END
       assert_response :redirect
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
-      assert_equal(@assignment.rubric_criteria.length, 0)
+      assert_equal(@assignment.get_criteria.length, 0)
 
     end
 
@@ -400,8 +400,8 @@ END
         assert set_flash.to(t('rubric_criteria.upload.success',
                               nb_updates: 2))
         @assignment.reload
-        assert_equal(@assignment.rubric_criteria.length, 3)
-        assert_equal(@assignment.rubric_criteria[0].weight, 1.0)
+        assert_equal(@assignment.get_criteria.length, 3)
+        assert_equal(@assignment.get_criteria[0].weight, 1.0)
       end
 
 

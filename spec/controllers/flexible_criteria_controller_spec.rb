@@ -293,7 +293,7 @@ describe FlexibleCriteriaController do
   describe 'An authenticated and authorized admin doing a POST' do
     before(:each) do
       @admin = create(:admin, user_name: 'olm_admin')
-      @assignment = create(:assignment)
+      @assignment = create(:flexible_assignment)
       @criterion = create(:flexible_criterion,
                           assignment: @assignment,
                           position: 1,
@@ -492,7 +492,7 @@ describe FlexibleCriteriaController do
                   assignment_id: @assignment.id,
                   upload: { flexible: tempfile }
           @assignment.reload
-          @flexible_criteria = @assignment.flexible_criteria
+          @flexible_criteria = @assignment.get_criteria
         end
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
@@ -506,7 +506,7 @@ describe FlexibleCriteriaController do
         end
 
         it 'should have successfully uploaded criteria' do
-          expect(@assignment.flexible_criteria.size).to eql(2)
+          expect(@assignment.get_criteria.size).to eql(2)
         end
         it 'should keep ordering of uploaded criteria' do
           expect(@flexible_criteria[0].name)
