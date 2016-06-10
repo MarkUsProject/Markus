@@ -391,7 +391,7 @@ ul.annotation_text_list {
   font-size: 10px;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding-top: 10px;
   width: 100%;
 
   li {
@@ -563,10 +563,10 @@ ul.annotation_text_list {
   padding: 2px;
 }
 
-  .editing {
-    background: #f9ffb1;
-    border: 1px dashed #d6de78;
-  }
+.editing {
+  background: #f9ffb1;
+  border: 1px dashed #d6de78;
+}
 
 #selected_criterion_name {
   font-weight: bold;
@@ -588,6 +588,11 @@ ul.annotation_text_list {
   padding-right: 10px;
   cursor: pointer;
   font-weight: bold;
+  padding-bottom: 6px;
+}
+
+.flexible_criterion_released {
+  padding-left: 15px;
 }
 
 .flexible_criterion_expand {
@@ -603,7 +608,6 @@ ul.annotation_text_list {
   padding-left: 10px;
   padding-bottom: 5px;
   margin-left: 5px;
-  margin-top: 3px;
   float: left;
   clear: both;
 }
@@ -619,6 +623,25 @@ ul.annotation_text_list {
   font-weight: bold;
   font-size: 11px;
   float: right;
+}
+
+.flexible_old_mark {
+  font-weight: bold;
+  font-size: 11px;
+  float: right;
+  padding-right: 10px;
+}
+
+.remarked {
+  background-color: #81d881;
+}
+
+.not_remarked {
+  background-color: white;
+}
+
+.unreleased {
+  padding-top: 3px;
 }
 
 /* Submission Rule Pane */

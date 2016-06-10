@@ -99,21 +99,13 @@ jQuery(document).ready(function() {
   // Handle the expand/collapse buttons
   jQuery('#expand_all').click(function() {
     jQuery('.mark_criterion_level_container').each(function() {
-      if (jQuery(this).attr('data-scheme') == 'rubric') {
-        show_criterion(parseInt(this.getAttribute('data-id'), 10), 'rubric');
-      } else {
-        show_criterion(parseInt(this.getAttribute('data-id'), 10), 'flexible');
-      }
+      show_criterion(parseInt(this.getAttribute('data-id'), 10), jQuery(this).attr('data-scheme'));
     });
   });
 
   jQuery('#collapse_all').click(function() {
     jQuery('.mark_criterion_level_container').each(function() {
-      if (jQuery(this).attr('data-scheme') == 'rubric') {
-          hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'rubric');
-      } else {
-          hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'flexible');
-      }
+      hide_criterion(parseInt(this.getAttribute('data-id'), 10), jQuery(this).attr('data-scheme'));
     });
   });
 
@@ -127,6 +119,21 @@ jQuery(document).ready(function() {
         });
       }
     });
+  });
+
+  // Handle showing old mark when mark is updated in remark
+  jQuery('.mark_grade_input').keypress(function() {
+    var criterion_id = parseInt(this.getAttribute('data-id'), 10);
+    var mark_id = parseInt(this.getAttribute('data-mark'), 10);
+    var old_mark_elem = document.getElementById('flexible_' + criterion_id + '_old_mark');
+    var mark_elem =  document.getElementById('mark_' + mark_id);
+    var old_mark = this.getAttribute('data-oldmark');
+
+    if (old_mark != 'none') {
+      old_mark_elem.innerHTML = '(Old Mark: ' + old_mark + ')';
+      mark_elem.removeClass('not_remarked');
+      mark_elem.addClass('remarked');
+    }
   });
 });
 

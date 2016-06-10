@@ -15,7 +15,9 @@
 
     <%= render partial: 'results/common/flexible_criterion',
                locals: {mark_criterion: mark_criterion,
-                        mark: mark} %>
+                        mark: mark,
+                        old_mark: old_mark,
+                        view: 'marker'} %>
 
     <% if mark_criterion.description != '' %>
       <div id="<%="criterion_info_#{mark_criterion.id}"%>"
