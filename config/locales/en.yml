@@ -755,7 +755,7 @@ en:
       files: "files"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> missing required file(s)</span>"
       no_submission_yet: "You have not made any submissions yet"
-      no_peer_submission_yet: "You have no submissions to review yet"
+      no_peer_submission_yet: "You have no submissions to review yet."
       no_group_yet: "You don't have a group yet"
       grace_date_passed: "and the grace period for this assignment has passed"
       not_allowed_to_form_group: "You are not allowed to form groups yourself for this assignment.

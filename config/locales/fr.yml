@@ -721,7 +721,7 @@ fr:
       files: "Fichiers"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> fichier(s) requis sont manquants</span>"
       no_submission_yet: "Vous n'avez encore rien envoyé"
-      no_peer_submission_yet: "Vous avez aucune observation à révision"
+      no_peer_submission_yet: "Vous avez aucune observation à révision."
       no_group_yet: "Vous ne faites pas encore partie d'un groupe"
       grace_date_passed: "et la période de grâce pour ce projet est terminée"
       not_allowed_to_form_group: "Vous n'êtes pas autorisé à former vous-même des groupes pour ce projet.

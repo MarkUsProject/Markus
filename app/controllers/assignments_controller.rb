@@ -160,9 +160,6 @@ class AssignmentsController < ApplicationController
     if @due_date.nil?
       @due_date = @assignment.due_date
     end
-    if @student.has_pending_groupings_for?(@assignment.id)
-      @pending_grouping = @student.pending_groupings_for(@assignment.id)
-    end
     if @grouping.nil?
       if @assignment.group_max == 1
         begin
@@ -178,18 +175,10 @@ class AssignmentsController < ApplicationController
         rescue RuntimeError => @error
           flash_message(:error, 'Error')
         end
-        redirect_to action: 'peer_review', id: @assignment.id
-      else
-        render :peer_review
       end
     else
-      # We look for the information on this group...
-      # The members
-      @studentmemberships =  @grouping.student_memberships
-      # The group name
-      @group = @grouping.group
-      # The inviter
-      @inviter = @grouping.inviter
+      # We look for the current members of the group
+      @studentmemberships = @grouping.student_memberships
     end
     @sections = Section.order(:name)
     if @assignment.past_all_collection_dates?

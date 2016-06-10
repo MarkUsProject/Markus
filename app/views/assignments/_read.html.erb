@@ -11,7 +11,7 @@
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('message') %>:</span>
-    <span class="prop_paragraph"><%= @assignment.message %></span><br>
+    <span class="prop_paragraph"><%= @assignment.message %></span>
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('due_date') %>:</span>
@@ -103,5 +103,18 @@
         <%= t(:no_grader_assigned) %>
       <% end -%>
     </div>
+  <% end %>
+
+  <% unless peer_review %>
+    <h3><%= t('assignment.required_files_read') %></h3>
+    <% if @assignment.assignment_files.length == 0 %>
+      <p class='notice'> <%= t('assignment.no_required_files_read') %> </p>
+    <% else %>
+      <ul>
+        <% @assignment.assignment_files.each do |assignment_file| %>
+          <li><%= assignment_file.filename %></li>
+        <% end %>
+      </ul>
+    <% end %>
   <% end %>
 </div>
