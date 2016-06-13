@@ -57,7 +57,7 @@ namespace :db do
                                        position: 1,
                                        annotation_category_name: random_words(3))
 
-        3.times do
+        (rand(10) + 3).times do
           AnnotationText.create(annotation_category: ac, content: random_sentences(3))
         end
       end
