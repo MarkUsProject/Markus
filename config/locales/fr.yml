@@ -218,6 +218,7 @@ fr:
         reviewee_group: "Groupe pays examin"
         empty_list_reviewers: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
         empty_list_reviewees: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
+        cannot_allow_reviewer_to_be_reviewee: "Un étudiant ne peut pas être un réviseur et pays examiné"
     your_mark:  "Votre note : "
 
     members:            "Membres"
