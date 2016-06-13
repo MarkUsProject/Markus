@@ -44,7 +44,7 @@ def print_results(result_filename, timeout_filename)
     if File.exist?(timeout_filename)
       print_result('All tests', '', '', 'Timeout', 0, 'fail')
     else
-      print_result('All tests', '', '', 'The test framework failed, please contact your instructor', 0, 'fail')
+      print_result('All tests', '', '', 'The test framework failed', 0, 'fail')
     end
   end
 end
