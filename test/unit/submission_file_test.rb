@@ -41,8 +41,8 @@ require 'shoulda'
 
   context 'A SubmissionFile without filename' do
     setup do
-      @submissionfile = SubmissionFile.new(:filename => '',
-                                           :path     => 'path')
+      @submissionfile = SubmissionFile.new(filename: '',
+                                           path:     'path')
       @submissionfile.submission_id = 1
     end
 
@@ -54,8 +54,8 @@ require 'shoulda'
 
   context 'A SubmissionFile without path' do
     setup do
-      @submissionfile = SubmissionFile.new(:filename => 'filaname',
-                                           :path     => '')
+      @submissionfile = SubmissionFile.new(filename: 'filaname',
+                                           path:     '')
       @submissionfile.submission_id = 1
     end
 
@@ -67,8 +67,8 @@ require 'shoulda'
 
   context 'A SubmissionFile with filename and path, but without id' do
     setup do
-      @submissionfile = SubmissionFile.new(:filename => 'filaname',
-                                           :path     => 'path')
+      @submissionfile = SubmissionFile.new(filename: 'filaname',
+                                           path:     'path')
     end
 
     should 'be invalid and should not be saved' do
@@ -79,8 +79,8 @@ require 'shoulda'
 
   context 'A .java Submission file' do
     setup do
-      @submissionfile = SubmissionFile.new(:filename   => 'filename.java',
-                                           :path       => 'path')
+      @submissionfile = SubmissionFile.new(filename: 'filename.java',
+                                           path:     'path')
       @submissionfile.submission_id = 1
     end
 
@@ -94,8 +94,8 @@ require 'shoulda'
 
   context 'A .rb Submission file' do
     setup do
-      @submissionfile = SubmissionFile.new(:filename   => 'filename.rb',
-                                           :path       => 'path')
+      @submissionfile = SubmissionFile.new(filename: 'filename.rb',
+                                           path:     'path')
       @submissionfile.submission_id = 1
     end
 
@@ -109,8 +109,8 @@ require 'shoulda'
 
   context 'A .py Submission file' do
     setup do
-      @submissionfile = SubmissionFile.new(:filename   => 'filename.py',
-                                           :path       => 'path')
+      @submissionfile = SubmissionFile.new(filename: 'filename.py',
+                                           path:     'path')
       @submissionfile.submission_id = 1
     end
 
@@ -124,8 +124,8 @@ require 'shoulda'
 
   context 'A .js Submission file' do
     setup do
-      @submissionfile = SubmissionFile.new(:filename   => 'filename.js',
-                                           :path       => 'path')
+      @submissionfile = SubmissionFile.new(filename: 'filename.js',
+                                           path:     'path')
       @submissionfile.submission_id = 1
     end
 
@@ -139,8 +139,8 @@ require 'shoulda'
 
   context 'A .c Submission file' do
     setup do
-      @submissionfile = SubmissionFile.new(:filename   => 'filename.c',
-                                           :path       => 'path')
+      @submissionfile = SubmissionFile.new(filename: 'filename.c',
+                                           path:     'path')
       @submissionfile.submission_id = 1
     end
 
@@ -154,8 +154,8 @@ require 'shoulda'
 
   context 'A no extension Submission file' do
     setup do
-      @submissionfile = SubmissionFile.new(:filename   => 'filename',
-                                           :path       => 'path')
+      @submissionfile = SubmissionFile.new(filename: 'filename',
+                                           path:     'path')
       @submissionfile.submission_id = 1
     end
 
@@ -169,8 +169,8 @@ require 'shoulda'
 
   context 'An unknown Submission file' do
     setup do
-      @submissionfile = SubmissionFile.new(:filename   => 'filename.toto',
-                                           :path       => 'path')
+      @submissionfile = SubmissionFile.new(filename: 'filename.toto',
+                                           path:     'path')
       @submissionfile.submission_id = 1
     end
 
@@ -185,19 +185,19 @@ require 'shoulda'
   context 'A supported image' do
     setup do
       # currently supported formats: ['.jpeg', '.jpg', '.gif', '.png']
-      @jpegfile = SubmissionFile.new(:filename => 'filename.jpeg', :path => 'path')
+      @jpegfile = SubmissionFile.new(filename: 'filename.jpeg', path: 'path')
       @jpegfile.submission_id = 1
 
-      @jpgfile = SubmissionFile.new(:filename => 'filename.jpg', :path => 'path')
+      @jpgfile = SubmissionFile.new(filename: 'filename.jpg', path: 'path')
       @jpgfile.submission_id = 2
 
-      @giffile = SubmissionFile.new(:filename => 'filename.gif', :path => 'path')
+      @giffile = SubmissionFile.new(filename: 'filename.gif', path: 'path')
       @giffile.submission_id = 3
 
-      @pngfile = SubmissionFile.new(:filename => 'filename.png', :path => 'path')
+      @pngfile = SubmissionFile.new(filename: 'filename.png', path: 'path')
       @pngfile.submission_id = 4
 
-      @unsupportedfile = SubmissionFile.new(:filename => 'filename.bmp', :path => 'path')
+      @unsupportedfile = SubmissionFile.new(filename: 'filename.bmp', path: 'path')
       @unsupportedfile.submission_id = 5
     end
 
@@ -216,8 +216,8 @@ require 'shoulda'
   context 'Calling the get_annotation_grid method' do
     context 'from a text file' do
       setup do
-        @submissionfile = SubmissionFile.make(:filename => 'filename',
-          :path => 'path')
+        @submissionfile = SubmissionFile.make(filename: 'filename',
+          path: 'path')
       end
       should 'Return nil' do
         assert_nil @submissionfile.get_annotation_grid
@@ -226,8 +226,8 @@ require 'shoulda'
 
     context 'from an image file' do
       setup do
-        @submissionfile = SubmissionFile.make(:filename => 'filename.jpeg',
-          :path => 'path')
+        @submissionfile = SubmissionFile.make(filename: 'filename.jpeg',
+          path: 'path')
       end
       context 'with no annotations' do
         should 'return []' do
@@ -237,22 +237,22 @@ require 'shoulda'
       context 'with valid annotations' do
         setup do
           @ta = Ta.make
-          @annot1 = ImageAnnotation.make({:submission_file => @submissionfile,
-            :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10, :id => 3,
-            :annotation_text => AnnotationText.make({:id => 1}),
-            :creator => @ta})
-          @annot2 = ImageAnnotation.make({:submission_file => @submissionfile,
-            :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100, :id => 4,
-            :annotation_text => AnnotationText.make({:id => 2}),
-            :creator => @ta})
+          @annot1 = ImageAnnotation.make({submission_file: @submissionfile,
+            x1: 0, x2: 10, y1: 0, y2: 10, id: 3,
+            annotation_text: AnnotationText.make({id: 1}),
+            creator: @ta})
+          @annot2 = ImageAnnotation.make({submission_file: @submissionfile,
+            x1: 57, x2: 73, y1: 2, y2: 100, id: 4,
+            annotation_text: AnnotationText.make({id: 2}),
+            creator: @ta})
         end
         should 'return a corresponding array' do
           @submissionfile.annotations.push(@annot1)
           @submissionfile.annotations.push(@annot2)
-          assert_equal [{:id => 1, :annot_id => 3, :x_range => {:start => 0, :end => 10},
-              :y_range => {:start => 0, :end => 10}},
-            {:id => 2, :annot_id => 4, :x_range => {:start => 57, :end => 73},
-              :y_range => {:start => 2, :end => 100}}],
+          assert_equal [{id: 1, annot_id: 3, x_range: {start: 0, end: 10},
+              y_range: {start: 0, end: 10}},
+            {id: 2, annot_id: 4, x_range: {start: 57, end: 73},
+              y_range: {start: 2, end: 100}}],
             @submissionfile.get_annotation_grid.sort { |x,y| x[:id] <=> y[:id]}
         end
       end
@@ -260,8 +260,8 @@ require 'shoulda'
 
     context 'from a pdf file' do
       setup do
-        @submissionfile = SubmissionFile.make(:filename => 'filename.jpeg',
-          :path => 'path')
+        @submissionfile = SubmissionFile.make(filename: 'filename.jpeg',
+                                              path:     'path')
       end
       context 'with no annotations' do
         should 'return []' do
@@ -271,22 +271,22 @@ require 'shoulda'
       context 'with valid annotations' do
         setup do
           @ta = Ta.make
-          @annot1 = ImageAnnotation.make({:submission_file => @submissionfile,
-            :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10, :id => 3,
-            :annotation_text => AnnotationText.make({:id => 1}),
-            :creator => @ta})
-          @annot2 = ImageAnnotation.make({:submission_file => @submissionfile,
-            :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100, :id => 4,
-            :annotation_text => AnnotationText.make({:id => 2}),
-            :creator => @ta})
+          @annot1 = ImageAnnotation.make({submission_file: @submissionfile,
+            x1: 0, x2: 10, y1: 0, y2: 10, id: 3,
+            annotation_text: AnnotationText.make({id: 1}),
+            creator: @ta})
+          @annot2 = ImageAnnotation.make({submission_file: @submissionfile,
+            x1: 57, x2: 73, y1: 2, y2: 100, id: 4,
+            annotation_text: AnnotationText.make({id: 2}),
+            creator: @ta})
         end
         should 'return a corresponding array' do
           @submissionfile.annotations.push(@annot1)
           @submissionfile.annotations.push(@annot2)
-          assert_equal [{:id => 1, :annot_id => 3, :x_range => {:start => 0, :end => 10},
-              :y_range => {:start => 0, :end => 10}},
-            {:id => 2, :annot_id => 4, :x_range => {:start => 57, :end => 73},
-              :y_range => {:start => 2, :end => 100}}],
+          assert_equal [{id: 1, annot_id: 3, x_range: {start: 0, end: 10},
+              y_range: {start: 0, end: 10}},
+            {id: 2, annot_id: 4, x_range: {start: 57, end: 73},
+              y_range: {start: 2, end: 100}}],
             @submissionfile.get_annotation_grid.sort { |x,y| x[:id] <=> y[:id]}
         end
       end

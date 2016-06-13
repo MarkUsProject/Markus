@@ -240,6 +240,7 @@ class Submission < ActiveRecord::Base
 
     # populate remark result with old marks
     original_result = get_original_result
+    original_marks = original_result.marks
 
     original_result.extra_marks.each do |extra_mark|
       remark.extra_marks.create(result: remark,
@@ -249,13 +250,12 @@ class Submission < ActiveRecord::Base
                                 markable_type: extra_mark.markable_type)
     end
 
-    original_result.marks.each do |mark|
-      remark.marks.create(result: remark,
-                          created_at: Time.zone.now,
-                          markable_id: mark.markable_id,
-                          mark: mark.mark,
-                          markable_type: mark.markable_type)
+    remark.marks.each_with_index do |mark, index|
+      mark.mark = original_marks[index].mark
+      mark.save
     end
+
+    remark.save
   end
 
   private

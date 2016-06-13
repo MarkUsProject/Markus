@@ -5,7 +5,7 @@ class AutomatedTestsController < ApplicationController
   include AutomatedTestsHelper
 
   before_filter      :authorize_only_for_admin,
-                     :only => [:manage, :update, :download]
+                     only: [:manage, :update, :download]
   before_filter      :authorize_for_student,
                      only: [:student_interface]
 
@@ -47,8 +47,8 @@ class AutomatedTestsController < ApplicationController
               assignment_tests_path, 'w') { |f| f.write new_support_file.read }
         end
 
-        redirect_to :action => 'manage',
-                    :assignment_id => params[:assignment_id]
+        redirect_to action: 'manage',
+                    assignment_id: params[:assignment_id]
       else
         @assignment.test_support_files.build
         render :manage
@@ -134,17 +134,17 @@ class AutomatedTestsController < ApplicationController
         # Everything looks OK. Send the file over to the client.
         file_contents = IO.read(filename)
         send_file filename,
-                  :type => ( SubmissionFile.is_binary?(file_contents) ? 'application/octet-stream':'text/plain' ),
-                  :x_sendfile => true
+                  type: ( SubmissionFile.is_binary?(file_contents) ? 'application/octet-stream':'text/plain' ),
+                  x_sendfile: true
 
         # print flash error messages
       else
         flash[:error] = I18n.t('automated_tests.download_wrong_place_or_unreadable');
-        redirect_to :action => 'manage'
+        redirect_to action: 'manage'
       end
     else
       flash[:error] = I18n.t('automated_tests.download_not_in_db');
-      redirect_to :action => 'manage'
+      redirect_to action: 'manage'
     end
   end
 

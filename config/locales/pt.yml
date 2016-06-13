@@ -820,14 +820,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         success: "Administrador %{user_name} atualizado com sucesso."
         error:   "Impossível  atualizar o administrador."
 
-    rubrics:
-      move_criterion:
-        error: "Impossível mover rúbrica."
-
-    flexible_criteria:
-      move_criterion:
-        error: "Impossível mover critério (flexível)."
-
     add_student:
       success: "Aluno %{user_name} adicionado."
       fail:
@@ -1051,6 +1043,11 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       errors:
         messages:
           name_taken: "Nome de critério já utilizado."
+      move_criterion:
+        error: "Impossível mover critério (flexível)."
+      ta_visible: "Tornar visível para assistentes de ensino"
+      peer_visible: "Tornar visível a perscrutar revisores"
+      visibility_error: "Selecione pelo menos uma caixa na seção visibilidade"
 
     rubric_criteria:
       criteria_management:         "Gerenciamento de rúbrica : %{identifier}"
@@ -1108,6 +1105,11 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       errors:
         messages:
           name_taken: "Nome de critério já utilizado."
+      move_criterion:
+        error: "Impossível mover rúbrica."
+      ta_visible: "Tornar visível para assistentes de ensino"
+      peer_visible: "Tornar visível a perscrutar revisores"
+      visibility_error: "Selecione pelo menos uma caixa na seção visibilidade"
 
     summary_table:
       title: "Título"
@@ -1193,9 +1195,11 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     criteria:           "Critério"
     criterion:          "Critério"
     total_mark:         "Nota total"
+    visibility:         "Visibilidade"
     weight:             "Peso"
     editing_criteria:   "Editando critério"
     ordering_criteria:  "Ordenar critério"
+    modifying_visibility: "Modificando a visibilidade"
     remove_criteria_title:  "Apagar esse critério"
     remove_criteria_message:  "Você tem certeza que quer apagar esse critério?"
     help_editing_rubric_criteria_message: "
@@ -1204,6 +1208,9 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       Note que o número de níveis não pode ser alterado. Mas se não há descrição para um nível, ele não pode ser usado."
     help_ordering_criteria_message: "
       Avaliadores verão o critério na ordem que são mostrados na esquerda. Para alterar a ordem, arraste o critério para a posição desejada na lista."
+    help_modifying_visibility_message: "Os ícones na coluna mais à direita sob a visibilidade representam o seguinte:"
+    help_ta_visibility_message: "assistentes de ensino será capaz de ver o critério."
+    help_peer_visibility_message: "revisores será capaz de ver o critério."
     help_editing_flexible_criteria_message: "
       Selecione um critério na esquerda para editá-lo.  Nome do critério, descrição e valores máximos podem ser modificados."
     past_due_date_warning: "Já se passou do prazo de entrega do projeto."

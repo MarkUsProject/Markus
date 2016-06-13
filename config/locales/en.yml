@@ -309,7 +309,7 @@ en:
     #app/views/assignments/grader_index.html
     grade_assignments: "Grade Assignments"
 
-    #app/views/resluts/marker/
+    #app/views/results/marker/
     marker:
       new_annot: "New Annot."
       overall_comments: "Overall Comments"
@@ -892,14 +892,6 @@ en:
       help:
         manage_admins: "Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks."
 
-    rubrics:
-      move_criterion:
-        error: "Failed to move rubric."
-
-    flexible_criteria:
-      move_criterion:
-        error: "Failed to move flexible criteria."
-
     add_student:
       success: "Student %{user_name} added."
       fail:
@@ -1215,6 +1207,11 @@ en:
       errors:
         messages:
           name_taken: "Criterion name already used."
+      move_criterion:
+        error: "Failed to move flexible criteria."
+      ta_visible: "Make visible to teaching assistants"
+      peer_visible: "Make visible to peer reviewers"
+      visibility_error: "Select at least one box in the visibility section"
 
     rubric_criteria:
       criteria_management:         "Rubric Management: %{identifier}"
@@ -1273,6 +1270,11 @@ en:
       errors:
         messages:
           name_taken: "Criterion name already used."
+      move_criterion:
+        error: "Failed to move rubric."
+      ta_visible: "Make visible to teaching assistants"
+      peer_visible: "Make visible to peer reviewers"
+      visibility_error: "Select at least one box in the visibility section"
 
     summary_table:
       title: "Title"
@@ -1356,13 +1358,16 @@ en:
     add_criterion:                "Add Criterion"
     criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
     criterion_saved_success:   "Criterion was successfully saved"
+    criterion_saved_failure:   "Criterion failed to be saved"
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
     criteria:           "Criteria"
     criterion:          "Criterion"
     total_mark:         "Total mark"
+    visibility:         "Visibility"
     weight:             "Weight"
     editing_criteria:   "Editing criteria"
     ordering_criteria:  "Ordering criteria"
+    modifying_visibility: "Modifying visibility"
     remove_criteria_title:  "Delete this criterion"
     remove_criteria_message:  "Are you sure you want to delete this criterion?"
     help_editing_rubric_criteria_message: "
@@ -1376,6 +1381,9 @@ en:
       Graders will see the criteria in the order that they are displayed to
       left.  To change the order, drag a criterion to the desired location
       in the list."
+    help_modifying_visibility_message: "The icons on the rightmost column under visibility represent the following:"
+    help_ta_visibility_message: "Teaching assistants will be able to see the criterion."
+    help_peer_visibility_message: "Peer reviewers will be able to see the criterion."
     help_editing_flexible_criteria_message: "
       Select a criterion on the left to edit it.  Criteria names, descriptions and
       maximum values can be modified."

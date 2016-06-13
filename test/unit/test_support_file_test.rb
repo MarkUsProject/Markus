@@ -14,13 +14,13 @@ class TestSupportFileTest < ActiveSupport::TestCase
   context "A valid test support file" do
 
     should "return true when a valid file is created" do
-      @supportfile = TestSupportFile.make(:file_name => 'input.txt', :description => 'This is an input file')
+      @supportfile = TestSupportFile.make(file_name: 'input.txt', description: 'This is an input file')
       assert @supportfile.valid?
       assert @supportfile.save
     end
     
     should "return true when a valid file is created even if the description is empty" do
-      @supportfile = TestSupportFile.make(:file_name => 'actual_output.txt', :description => '')
+      @supportfile = TestSupportFile.make(file_name: 'actual_output.txt', description: '')
       assert @supportfile.valid?
       assert @supportfile.save
     end
@@ -31,8 +31,8 @@ class TestSupportFileTest < ActiveSupport::TestCase
   context "An invalid test support file" do
     
     setup do
-      @validsupportfile = TestSupportFile.make(:file_name => 'valid', :description => 'This is a valid support file')
-      @invalidsupportfile = TestSupportFile.make(:file_name => 'invalid', :description => 'This is an invalid support file')
+      @validsupportfile = TestSupportFile.make(file_name: 'valid', description: 'This is a valid support file')
+      @invalidsupportfile = TestSupportFile.make(file_name: 'invalid', description: 'This is an invalid support file')
     end
     
     should "return false when the file_name is blank" do
@@ -58,7 +58,7 @@ class TestSupportFileTest < ActiveSupport::TestCase
   context "MarkUs" do
     
     should "be able to delete a test support file" do
-      @supportfile = TestSupportFile.make(:file_name => 'input.txt', :description => 'This is an input file')
+      @supportfile = TestSupportFile.make(file_name: 'input.txt', description: 'This is an input file')
       assert @supportfile.valid?
       assert @supportfile.destroy
     end
