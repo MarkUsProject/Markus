@@ -740,17 +740,16 @@ class Grouping < ActiveRecord::Base
   end
 
   def get_total_test_script_marks
-    total = 0
 
     #find the unique test scripts for this submission
-    test_script_ids = test_script_results.pluck(:id).uniq
+    test_script_ids = test_script_results.pluck(:test_script_id).uniq
 
     #add the latest result from each of our test scripts
     test_script_ids.sum do |test_script_id|
-      last_mark = self.test_script_results
-                      .where(test_script_id: test_script_id)
-                      .last
-      last_mark.nil? ? 0 : last_mark.marks_earned
+      last_result = self.test_script_results
+                        .where(test_script_id: test_script_id)
+                        .last
+      last_result.marks_earned
     end
   end
 
