@@ -51,6 +51,14 @@
       this.setState({selectedReviewerInRevieweeGroups: this.state.selectedReviewerInRevieweeGroups});
     },
 
+    clearSelectedFields: function() {
+      this.setState({
+        selectedReviewerGroups: [],
+        selectedRevieweeGroups: [],
+        selectedReviewerInRevieweeGroups: {}
+      });
+    },
+
     // Asks for new info from backend and sets state accordingly.
     refresh: function() {
       // Since these will not be present at the beginning, we only want to
@@ -70,8 +78,8 @@
         dataType: 'json',
         success: function(data) {
           document.getElementById('working').style.display = 'none';
+          this.clearSelectedFields();
           this.setState({
-            selectedReviewerInRevieweeGroups: {},
             reviewerGroups: data[0],
             revieweeGroups: data[1],
             revieweeToReviewers: data[2],
@@ -101,7 +109,8 @@
             <ActionsColumn refresh={this.refresh}
               selectedReviewerGroups={this.state.selectedReviewerGroups}
               selectedRevieweeGroups={this.state.selectedRevieweeGroups}
-              selectedReviewerInRevieweeGroups={this.state.selectedReviewerInRevieweeGroups} />
+              selectedReviewerInRevieweeGroups={this.state.selectedReviewerInRevieweeGroups}
+              clearSelectedFields={this.clearSelectedFields} />
             <RevieweeTable ref="revieweeTable"
               groups={this.state.revieweeGroups}
               revieweeToReviewersMap={this.state.revieweeToReviewers}
@@ -289,6 +298,7 @@
         data: dataToSend,
 
         success: function(data) {
+          this.props.clearSelectedFields();
           this.props.refresh();
           this.setState({ error: null });
         }.bind(this),

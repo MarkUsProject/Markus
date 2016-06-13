@@ -88,10 +88,10 @@ class PeerReviewsController < ApplicationController
     action_string = params[:actionString]
 
     if action_string == 'random_assign' or action_string == 'assign'
-      if selected_reviewer_group_ids.empty?
+      if selected_reviewer_group_ids.nil? or selected_reviewer_group_ids.empty?
         render text: t('peer_review.empty_list_reviewers'), status: 400
         return
-      elsif selected_reviewee_group_ids.empty?
+      elsif selected_reviewee_group_ids.nil? or selected_reviewee_group_ids.empty?
         render text: t('peer_review.empty_list_reviewees'), status: 400
         return
       end
@@ -119,7 +119,6 @@ class PeerReviewsController < ApplicationController
   end
 
   def assign(reviewer_groups, reviewee_groups)
-    # TODO - Do not allow assigning if the user is already assigned (maybe put unique constraints on the table instead?)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
         result = reviewee_group.current_submission_used.get_latest_result
@@ -141,7 +140,6 @@ class PeerReviewsController < ApplicationController
     end
   end
 
-  # TODO - are these needed?
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_peer_review
