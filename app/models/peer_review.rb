@@ -18,12 +18,14 @@ class PeerReview < ActiveRecord::Base
   end
 
   def no_students_should_be_reviewer_and_reviewee
-    student_id_set = Set.new
-    reviewer.students.each { |student| student_id_set.add(student.id) }
-    result.submission.grouping.students.each do |student|
-      if student_id_set.include?(student.id)
-        errors.add(:reviewer_id, I18n.t('peer_reviews.cannot_allow_reviewer_to_be_reviewee'))
-        break
+    if result and reviewer
+      student_id_set = Set.new
+      reviewer.students.each { |student| student_id_set.add(student.id) }
+      result.submission.grouping.students.each do |student|
+        if student_id_set.include?(student.id)
+          errors.add(:reviewer_id, I18n.t('peer_reviews.cannot_allow_reviewer_to_be_reviewee'))
+          break
+        end
       end
     end
   end
