@@ -69,8 +69,7 @@ class FlexibleCriterion < Criterion
     criterion.assignment = assignment
     criterion.name = row[0]
     # assert that no other criterion uses the same name for the same assignment.
-    unless FlexibleCriterion.where(assignment_id: assignment.id,
-                                   name: row[0]).size.zero?
+    unless assignment.get_criteria.select{|criterion| criterion.name == row[0]}.size.zero?
       raise CSVInvalidLineError, I18n.t('csv.invalid_row.duplicate_entry')
     end
 
@@ -94,9 +93,7 @@ class FlexibleCriterion < Criterion
   def self.next_criterion_position(assignment)
     # TODO temporary, until Assignment gets its criteria method
     #      nevermind the fact that this computation should really belong in assignment
-    last_criterion = FlexibleCriterion.where(assignment_id: assignment.id)
-                                      .order(:position)
-                                      .last
+    last_criterion = assignment.get_criteria.order(:position).last
     if last_criterion.nil?
       1
     else

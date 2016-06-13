@@ -151,8 +151,8 @@ class RubricsControllerTest < AuthenticatedControllerTest
               csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
               encoding: 'UTF-8'
       assert_response :redirect
-      test_criterion = RubricCriterion.find_by(assignment_id: @assignment.id, name: 'RubricCriteriaÈrÉØrr')
-      assert_not_nil test_criterion # rubric criterion should exist
+      test_criterion = @assignment.get_criteria.select{|criterion| criterion.name == 'RubricCriteriaÈrÉØrr'}
+      assert_not_empty test_criterion # rubric criterion should exist
     end
 
     should 'have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1' do
@@ -162,8 +162,8 @@ class RubricsControllerTest < AuthenticatedControllerTest
               csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_ISO-8859-1.csv')},
               encoding: 'ISO-8859-1'
       assert_response :redirect
-      test_criterion = RubricCriterion.find_by(assignment_id: @assignment.id, name: 'RubricCriteriaÈrÉØrr')
-      assert_not_nil test_criterion # rubric criterion should exist
+      test_criterion = @assignment.get_criteria.select{|criterion| criterion.name == 'RubricCriteriaÈrÉØrr'}
+      assert_not_empty test_criterion # rubric criterion should exist
     end
 
     should 'have valid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1' do
@@ -173,8 +173,8 @@ class RubricsControllerTest < AuthenticatedControllerTest
               csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
               encoding: 'ISO-8859-1'
       assert_response :redirect
-      test_criterion = RubricCriterion.find_by(assignment_id: @assignment.id, name: 'RubricCriteriaÈrÉØrr')
-      assert_nil test_criterion # rubric criterion should not exist, despite being in file
+      test_criterion = @assignment.get_criteria.select{|criterion| criterion.name == 'RubricCriteriaÈrÉØrr'}
+      assert_empty test_criterion # rubric criterion should not exist, despite being in file
     end
 
     should 'upload successfully well formatted yml criteria' do

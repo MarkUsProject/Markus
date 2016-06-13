@@ -77,13 +77,16 @@ module CourseSummariesHelper
 
   # Get max mark for assignment with id a_id
   def get_max_mark_for_assignment(a_id)
+    assignment = Assignment.find_by_id(a_id)
     max_mark = 0
-    RubricCriterion.where(assignment_id: a_id).each do |rc|
-      max_mark += rc.weight * 4
-    end
-
-    FlexibleCriterion.where(assignment_id: a_id).each do |fc|
-      max_mark += fc.max
+    if assignment.marking_scheme_type == 'rubric'
+      assignment.get_criteria.each do |rc|
+       max_mark += rc.weight * 4
+      end
+    else
+      assignment.get_criteria.each do |fc|
+        max_mark += fc.max
+      end
     end
     max_mark
   end
