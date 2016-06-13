@@ -1,18 +1,21 @@
 <%
   if view == 'marker'
     onclick = "focus_mark_criterion(#{mark_criterion.id}, 'flexible')"
-    className = 'flexible_criterion_title_div_level flexible_criterion_unreleased'
+    criterion_name_class = 'title_div_level unreleased'
+    old_mark_class = 'old_mark old_mark_unreleased'
   else
     onclick = ''
-    className = 'flexible_criterion_title_div_level flexible_criterion_released' -%>
+    criterion_name_class = 'title_div_level released'
+    old_mark_class = 'old_mark old_mark_released' -%>
 <% end -%>
 
-<div class="<%= className %>" onclick="<%= onclick %>">
+<div class="<%= criterion_name_class %>" onclick="<%= onclick %>">
   <%= (mark_criterion.name) %>
 </div>
 
 <div class='mark_flexible'>
   <% if view == 'marker' %>
+      <%= debugger %>
     <%= text_field_tag('mark_' + mark.id.to_s, !mark.mark.nil? ? mark.mark : (!old_mark.nil? ? old_mark.mark : ''),
                        size: 4,
                        class: 'mark_grade_input' + (!mark.mark.nil? ? ' remarked' : ' not_remarked'),
@@ -26,14 +29,6 @@
     <%= mark.mark %> /&nbsp; <%= mark_criterion.max.to_s%>
   <% end %>
 </div>
-
-<%
-  if view == 'marker'
-    old_mark_class = 'flexible_old_mark unreleased'
-  else
-    old_mark_class = 'flexible_old_mark released'
-  end
-%>
 
 <div id="<%="flexible_#{mark_criterion.id}_old_mark"%>" class="<%= old_mark_class %>">
   <% if !old_mark.nil? and !mark.mark.nil? %>

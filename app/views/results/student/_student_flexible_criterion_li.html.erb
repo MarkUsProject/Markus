@@ -1,4 +1,4 @@
-<li id="<%= "flexible_criterion_#{mark_criterion.id}" %>">
+<li id="<%= "flexible_criterion_#{mark_criterion.id}" %>" class='flexible_criterion'>
   <%= render partial: 'results/common/flexible_criterion',
              locals: { mark_criterion: mark_criterion,
                        mark: mark,
@@ -7,7 +7,7 @@
 
   <% if mark_criterion.description != '' %>
       <div id="<%="criterion_info_#{mark_criterion.id}"%>"
-           class='flexible_criterion_info mark_criterion_level_container'
+           class='criterion_info mark_criterion_level_container'
            data-id="<%=mark_criterion.id%>" >
         <%= mark_criterion.description %>
       </div>
