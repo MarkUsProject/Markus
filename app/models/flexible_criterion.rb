@@ -69,7 +69,7 @@ class FlexibleCriterion < Criterion
     criterion.assignment = assignment
     criterion.name = row[0]
     # assert that no other criterion uses the same name for the same assignment.
-    unless assignment.get_criteria.select{|criterion| criterion.name == row[0]}.size.zero?
+    unless assignment.get_criteria.select{ |criterion| criterion.name == row[0] }.empty?
       raise CSVInvalidLineError, I18n.t('csv.invalid_row.duplicate_entry')
     end
 

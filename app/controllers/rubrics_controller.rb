@@ -4,7 +4,7 @@ class RubricsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria.order(:'position')
+    @criteria = @assignment.get_criteria.order(:position)
   end
 
   def edit

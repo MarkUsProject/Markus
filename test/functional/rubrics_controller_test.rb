@@ -151,7 +151,7 @@ class RubricsControllerTest < AuthenticatedControllerTest
               csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
               encoding: 'UTF-8'
       assert_response :redirect
-      test_criterion = @assignment.get_criteria.select{|criterion| criterion.name == 'RubricCriteriaÈrÉØrr'}
+      test_criterion = @assignment.get_criteria.select{ |criterion| criterion.name == 'RubricCriteriaÈrÉØrr' }
       assert_not_empty test_criterion # rubric criterion should exist
     end
 
@@ -162,7 +162,7 @@ class RubricsControllerTest < AuthenticatedControllerTest
               csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_ISO-8859-1.csv')},
               encoding: 'ISO-8859-1'
       assert_response :redirect
-      test_criterion = @assignment.get_criteria.select{|criterion| criterion.name == 'RubricCriteriaÈrÉØrr'}
+      test_criterion = @assignment.get_criteria.select{ |criterion| criterion.name == 'RubricCriteriaÈrÉØrr' }
       assert_not_empty test_criterion # rubric criterion should exist
     end
 
@@ -173,7 +173,7 @@ class RubricsControllerTest < AuthenticatedControllerTest
               csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
               encoding: 'ISO-8859-1'
       assert_response :redirect
-      test_criterion = @assignment.get_criteria.select{|criterion| criterion.name == 'RubricCriteriaÈrÉØrr'}
+      test_criterion = @assignment.get_criteria.select{ |criterion| criterion.name == 'RubricCriteriaÈrÉØrr' }
       assert_empty test_criterion # rubric criterion should not exist, despite being in file
     end
 

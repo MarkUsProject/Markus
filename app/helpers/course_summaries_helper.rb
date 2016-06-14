@@ -77,7 +77,7 @@ module CourseSummariesHelper
 
   # Get max mark for assignment with id a_id
   def get_max_mark_for_assignment(a_id)
-    assignment = Assignment.find_by_id(a_id)
+    assignment = Assignment.find(a_id)
     max_mark = 0
     if assignment.marking_scheme_type == 'rubric'
       assignment.get_criteria.each do |rc|
