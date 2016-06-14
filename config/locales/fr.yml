@@ -217,8 +217,13 @@ fr:
         reviewer_group: "Groupe avis"
         reviewee_group: "Groupe pays examin"
         empty_list_reviewers: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
-        empty_list_reviewees: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
         cannot_allow_reviewer_to_be_reviewee: "Un étudiant ne peut pas être un réviseur et pays examiné"
+        download:
+            assigned_reviewers_header: "Télécharger Peer Review missions"
+            assigned_reviewers_csv: "Auteur groupe groupe CSV pays examiné"
+        upload:
+            header: "Télécharger Peer Review CSV"
+            description: "Format de fichier CSV: Portugais<code>result_id,group_name</code> Objet"
     your_mark:  "Votre note : "
 
     members:            "Membres"

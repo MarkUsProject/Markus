@@ -40,16 +40,12 @@
 
 <!-- Modal Windows -->
 <aside class='dialog' id="download_dialog">
-  <h2><%= t('groups.download.download_grader_maps') %></h2>
+  <h2><%= t('peer_review.download.assigned_reviewers_header') %></h2>
   <ul>
     <li>
-      <%= link_to t('groups.download.download_grader_groups_csv'),
-                  download_grader_groupings_mapping_assignment_graders_path(@assignment),
-                  onclick: 'modal_download.close();' %>
-    </li>
-    <li>
-      <%= link_to t('groups.download.download_grader_criteria_csv'),
-                  download_grader_criteria_mapping_assignment_graders_path(@assignment),
+      <%= link_to t('peer_review.download.assigned_reviewers_csv'),
+                  # TODO - isn't the object overkill? Why would the previous person do that...???
+                  download_reviewer_reviewee_mapping_assignment_peer_reviews_path(@assignment),
                   onclick: 'modal_download.close();' %>
     </li>
   </ul>
@@ -63,19 +59,19 @@
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script',
-                             upload_id: 'grader_mapping',
+                             upload_id: 'peer_review_mapping',
                              button_id: 'upload' %>
 
-  <h2><%= t("groups.upload.upload_grader_map") %></h2>
-  <%= raw(t("groups.upload.description_grader_map")) %>
-  <%= form_tag({controller: "graders",
-                action: 'csv_upload_grader_groups_mapping',id: @assignment.id},
-               {multipart: true}) do %>
+  <h2><%= t("peer_review.upload.header") %></h2>
+  <%= raw(t("peer_review.upload.description")) %>
+  <%= form_tag({ controller: "peer_reviews",
+                 action: 'csv_upload_handler', id: @assignment.id},
+                 { multipart: true }) do %>
       <p>
         <%= t("encoding") %>
         <%= select_tag(:encoding, options_for_select(@encodings)) %>
       </p>
-      <%= file_field_tag :grader_mapping, size: 2 %>
+      <%= file_field_tag :peer_review_mapping, size: 2 %>
 
       <section class='dialog-actions'>
         <%= submit_tag t(:upload),

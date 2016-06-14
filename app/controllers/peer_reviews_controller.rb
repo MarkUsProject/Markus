@@ -30,7 +30,7 @@ class PeerReviewsController < ApplicationController
                   id_to_group_names_map, num_reviews_map]
   end
 
-  # Returns a dict of: reviewee_id => [list of reviewers].
+  # Returns a dict of: reviewee_id => [list of reviewer_id's].
   def create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
     reviewer_ids = reviewer_groups.map { |reviewer| reviewer['id'] }
     peer_review_map = Hash.new { |hash, key| hash[key] = [] }
@@ -138,6 +138,46 @@ class PeerReviewsController < ApplicationController
         pr.destroy
       end
     end
+  end
+
+  def download_reviewer_reviewee_mapping
+    @assignment = Assignment.find(params[:assignment_id])
+    reviewer_groups = get_groupings_table_info()
+    reviewer_ids = reviewer_groups.map { |reviewer| reviewer['id'] }
+    peer_reviews = PeerReview.where(reviewer_id: reviewer_ids)
+
+    file_out = MarkusCSV.generate(peer_reviews) do |peer_review|
+      [peer_review.result.id, peer_review.reviewer.group.group_name]
+    end
+
+    send_data(file_out, type: 'text/csv', disposition: 'inline',
+              filename: 'peer_review_group_to_group_mapping.csv')
+  end
+
+  def csv_upload_handler
+    assignment_id = params[:assignment_id]
+
+    if params[:peer_review_mapping].nil?
+      flash_message(flash[:error], I18n.t('csv.group_to_grader'))
+    else
+      result = MarkusCSV.parse(params[:peer_review_mapping].read,
+                               encoding: params[:encoding]) do |row|
+        raise CSVInvalidLineError if row.empty?
+        result = Result.find(row.first)
+        reviewer = Grouping.joins(:group).find_by(
+                                groups: { group_name: row.second },
+                                assignment_id: assignment_id)
+        PeerReview.create(result: result, reviewer: reviewer)
+      end
+      unless result[:invalid_lines].empty?
+        flash_message(:error, result[:invalid_lines])
+      end
+      unless result[:valid_lines].empty?
+        flash_message(:success, result[:valid_lines])
+      end
+    end
+
+    redirect_to action: 'index', assignment_id: assignment_id
   end
 
   private

@@ -215,8 +215,13 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         reviewer_group: "Grupo de Viajante"
         reviewee_group: "Grupo de ser revistos"
         empty_list_reviewers: "Não é possível ter uma lista vazia de revisores"
-        empty_list_reviewees: "Não é possível ter uma lista vazia de revisores"
         cannot_allow_reviewer_to_be_reviewee: "Um estudante não pode ser um revisor e reviewee"
+        download:
+            assigned_reviewers_header: "Download de Avaliação pelos Pares Atribuições"
+            assigned_reviewers_csv: "Revisor grupo reviewee ao grupo CSV"
+        upload:
+            header: "Carregar CSV Peer Review"
+            description: "Formato de arquivo CSV: Vídeos <code>result_id,group_name</code><br>"
     your_mark:  "Sua nota:"
 
     members:            "Membros"
