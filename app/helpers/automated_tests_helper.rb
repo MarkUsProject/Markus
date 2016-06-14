@@ -430,8 +430,6 @@ module AutomatedTestsHelper
 
       tests.each do |test|
         marks_earned += test['marks_earned'].to_i
-        # if any of the tests fail, we consider the completion status to be fail
-        completion_status = 'fail' if test['status'] != 'pass'
         new_test_script_result.test_results.create(
           name: test['name'],
           repo_revision: revision_number,
@@ -439,7 +437,7 @@ module AutomatedTestsHelper
           actual_output: (test['actual'].nil? ? '' : test['actual']),
           expected_output: (test['expected'].nil? ? '' : test['expected']),         
           marks_earned: test['marks_earned'].to_i,
-          completion_status: completion_status)
+          completion_status: test['status'])
       end
       new_test_script_result.marks_earned = marks_earned
       new_test_script_result.save!
