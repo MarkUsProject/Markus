@@ -401,15 +401,8 @@ module AutomatedTestsHelper
       test_scripts = [raw_test_scripts]
     end
 
-    completion_status = 'pass'
     marks_earned = 0
-    # If ran on collection or submission, associate a submission
-    # to the test script result
-    if(call_on == 'collection' || call_on == 'submission')
-      submission_id = submission.id
-    else
-      submission_id = nil
-    end
+    submission_id = submission ? submission.id : nil
 
     test_scripts.each do |script|
       script_name = script['script_name']
