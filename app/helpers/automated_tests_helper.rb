@@ -401,10 +401,6 @@ module AutomatedTestsHelper
       test_scripts = [raw_test_scripts]
     end
 
-    # workaround for same reason (hash for one test script
-    # array otherwise)
-    result['testrun']['test_script'] = test_scripts
-
     completion_status = 'pass'
     marks_earned = 0
     # If ran on collection or submission, associate a submission
@@ -427,6 +423,10 @@ module AutomatedTestsHelper
         repo_revision: revision_number)
 
       tests = script['test'] || []  # there may not be any test results
+      # same workaround as above, Hash.from_xml produces a hash if it's a single test
+      unless tests.is_a?(Array)
+        tests = [tests]
+      end
 
       tests.each do |test|
         marks_earned += test['marks_earned'].to_i

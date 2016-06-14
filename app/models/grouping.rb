@@ -763,7 +763,7 @@ class Grouping < ActiveRecord::Base
     test_script_ids.sum do |test_script_id|
       last_result = self.test_script_results
                         .where(test_script_id: test_script_id)
-                        .last
+                        .first
       last_result.marks_earned
     end
   end
