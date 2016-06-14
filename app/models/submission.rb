@@ -240,7 +240,7 @@ class Submission < ActiveRecord::Base
 
     # populate remark result with old marks
     original_result = get_original_result
-    original_marks = original_result.marks
+    remark_assignment = remark.submission.grouping.assignment
 
     original_result.extra_marks.each do |extra_mark|
       remark.extra_marks.create(result: remark,
@@ -250,9 +250,10 @@ class Submission < ActiveRecord::Base
                                 markable_type: extra_mark.markable_type)
     end
 
-    remark.marks.each_with_index do |mark, index|
-      mark.mark = original_marks[index].mark
-      mark.save
+    remark_assignment.get_criteria(:ta).each do |criterion|
+      remark_mark = Mark.where(markable_id: criterion.id, result_id: remark.id)
+      original_mark = Mark.where(markable_id: criterion.id, result_id: original_result.id)
+      remark_mark.first.update!(mark: original_mark.first.mark)
     end
 
     remark.save
