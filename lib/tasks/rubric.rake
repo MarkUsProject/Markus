@@ -51,15 +51,14 @@ namespace :db do
           )
         end
       end
+
       5.times do |index|
-        AnnotationCategory.create(id: index + assignment.id * 5,
-                                  assignment_id: assignment.id,
-                                  position: 1,
-                                  annotation_category_name: random_words(3))
+        ac = AnnotationCategory.create(assignment: assignment,
+                                       position: 1,
+                                       annotation_category_name: random_words(3))
 
         (rand(10) + 3).times do
-          AnnotationText.create(annotation_category_id: index + assignment.id * 5,
-                                content: random_sentences(3))
+          AnnotationText.create(annotation_category: ac, content: random_sentences(3))
         end
       end
     end

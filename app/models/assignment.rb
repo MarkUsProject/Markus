@@ -46,7 +46,6 @@ class Assignment < ActiveRecord::Base
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment, class_name: 'Assignment', inverse_of: :pr_assignment
   has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
-  after_save :create_peer_review_assignment_if_not_exist
 
   has_many :annotation_categories,
            -> { order(:position) },
@@ -118,6 +117,7 @@ class Assignment < ActiveRecord::Base
   # Look in lib/validators/* for more info
   validates :due_date, date: true
   after_save :update_assigned_tokens
+  after_save :create_peer_review_assignment_if_not_exist
 
   # Set the default order of assignments: in ascending order of due_date
   default_scope { order('due_date ASC') }
