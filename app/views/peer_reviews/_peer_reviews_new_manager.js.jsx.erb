@@ -9,7 +9,7 @@
         revieweeGroups: [],
         selectedReviewerGroups: [],
         selectedRevieweeGroups: [],
-        selectedReviewerInRevieweeGroups: {},  // Indices to use: [reviewee][reviewer]
+        selectedReviewerInRevieweeGroups: {},  // Dict of [reviewee][reviewer]
         revieweeToReviewers: {},
         reviewerToNumReviews: {},
         groupIdToName: {},
@@ -30,17 +30,19 @@
     },
 
     updatedSelectedReviewersInRevieweesTable: function(reviewerGroupId, revieweeGroupId, isChecked) {
-      // TODO - make into a clearer function...
+      // If the reviewee is not in the dictionary, add a dictionary for the reviewee id.
       if (!(revieweeGroupId in this.state.selectedReviewerInRevieweeGroups)) {
         this.state.selectedReviewerInRevieweeGroups[revieweeGroupId] = {};
       }
 
-      // TODO - also clean up...
+      // Now add or remove the reviewee to the inner dictionary based on `isChecked`.
       if (isChecked) {
+        // If the reviewer isn't in the reviewe's dictionary, put it in with a temp placeholder.
         if (!(reviewerGroupId in this.state.selectedReviewerInRevieweeGroups[revieweeGroupId])) {
           this.state.selectedReviewerInRevieweeGroups[revieweeGroupId][reviewerGroupId] = true;
         }
       } else {
+        // Since we're removing by unchecking, if the key exists from the inner dictionary, delete it.
         if (reviewerGroupId in this.state.selectedReviewerInRevieweeGroups[revieweeGroupId]) {
           delete this.state.selectedReviewerInRevieweeGroups[revieweeGroupId][reviewerGroupId];
         }
@@ -61,8 +63,8 @@
 
     // Asks for new info from backend and sets state accordingly.
     refresh: function() {
-      // Since these will not be present at the beginning, we only want to
-      // invoke them when React populates the refs with the values..
+      // Since these will not be present at the beginning, we only want to invoke them when
+      //  React populates the refs with the values.
       if (this.refs.hasOwnProperty('reviewerTable')) {
         this.refs.reviewerTable.clearCheckboxes();
       }
@@ -91,12 +93,6 @@
     },
 
     render: function() {
-      var skip_empty_submissions = [];
-      skip_empty_submissions.push(<input type='checkbox'
-          checked={this.state.skip_empty_submissions}
-          onChange={this.skipEmptySubmissionsClicked}> <%= j raw t('graders.skip_empty_submissions') %>
-        </input>);
-
       return (
         <div>
           <ErrorDiv error={this.state.error} />
@@ -161,19 +157,17 @@
         },
       ];
 
-      // Massage the data so it will fit into the table.
       var hashmap = this.props.reviewerToNumReviews;
       var groups_data = this.props.groups.map(function(group) {
         var numReviews = 0;
         if (hashmap.hasOwnProperty(group.id)) {
           numReviews = hashmap[group.id];
         }
-        var g = {
+        return {
           id: group.id,
           name: group.name,
           groups: numReviews
         };
-        return g;
       }.bind(this));
 
       return (
@@ -225,11 +219,12 @@
       this.props.onReviewerChangeInRevieweeTable(reviewerGroupId, revieweeGroupId, isChecked);
     },
 
-    // Required because of Javascript's variable hoisting.
+    // Required because of JavaScript's variable hoisting.
     checkboxShouldBeChecked: function(reviewee_group_id, reviewer_group_id) {
       var returnVal = false;
-      if (reviewee_group_id in this.props.selectedReviewerInRevieweeGroups)
+      if (reviewee_group_id in this.props.selectedReviewerInRevieweeGroups) {
         returnVal = reviewer_group_id in this.props.selectedReviewerInRevieweeGroups[reviewee_group_id];
+      }
       return returnVal;
     },
 
@@ -252,19 +247,18 @@
           var reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
           reviewerGroups.push(<div key={reviewer_group_id}>
             <input id={reviewer_group_id}
-            type='checkbox'
-            data-reviewer-group-id={reviewer_group_id}
-            data-reviewee-group-id={reviewee_group_id}
-            checked={this.checkboxShouldBeChecked(reviewee_group_id, reviewer_group_id)}
-            onChange={this.reviewerInRevieweeChange}/> {reviewer_group_name}</div>);
+              type='checkbox'
+              data-reviewer-group-id={reviewer_group_id}
+              data-reviewee-group-id={reviewee_group_id}
+              checked={this.checkboxShouldBeChecked(reviewee_group_id, reviewer_group_id)}
+              onChange={this.reviewerInRevieweeChange} /> {reviewer_group_name}</div>);
         }.bind(this));
 
-        var g = {
+        return {
           id: group.id,
           name: group.name,
           members: reviewerGroups
         };
-        return g;
       }.bind(this));
 
       return (
