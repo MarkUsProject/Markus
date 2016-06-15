@@ -44,7 +44,7 @@ module SummariesHelper
       g = grouping.attributes
       g[:class_name] = get_tr_class(grouping)
       g[:name] = grouping.get_group_name
-      g[:name_url] = get_grouping_name_url(grouping, final_due_date, result)
+      g[:name_url] = get_grouping_name_url(grouping, result)
       g[:section] = grouping.section
       g[:repo_name] = grouping.group.repository_name
       g[:repo_url] = repo_browser_assignment_submission_path(assignment,
