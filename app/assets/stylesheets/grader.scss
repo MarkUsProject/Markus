@@ -592,6 +592,17 @@ ul.annotation_text_list {
     }
   }
 
+  .unexpandable {
+    .criterion_expand {
+      visibility: hidden;
+      cursor: auto !important;
+    }
+
+    .title_div_level {
+      cursor: auto !important;
+    }
+  }
+
   .criterion_info {
     padding-left: 10px;
     padding-bottom: 5px;

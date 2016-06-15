@@ -2,6 +2,13 @@
 # Erb template for display flexible criterion in the grader view
 %>
 
+<%
+  if mark_criterion.description != ''
+    title_class = 'criterion_title expandable'
+  else
+    title_class = 'criterion_title unexpandable' -%>
+<% end -%>
+
 <li id="<%= "flexible_criterion_#{mark_criterion.id}" %>" class="flexible_criterion expanded">
 
   <!--Mark update info -->
@@ -9,7 +16,7 @@
     <%= I18n.t("marker.marks.invalid_mark") %>
   </div>
 
-  <div class='criterion_title' id="<%= "mark_criterion_title_#{mark_criterion.id}"%>">
+  <div class="<%= title_class %>" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>">
 
     <div id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>"
       class='criterion_expand'
