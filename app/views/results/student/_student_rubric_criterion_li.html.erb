@@ -1,4 +1,4 @@
-<li id="<%= "rubric_criterion_#{mark_criterion.id}" %>">
+<li id="<%= "rubric_criterion_#{mark_criterion.id}" %>" class='rubric_criterion'>
   <%= render partial: 'results/common/rubric_criterion',
              locals: { mark_criterion: mark_criterion,
                        mark: mark,
@@ -23,11 +23,11 @@
                   td_class == "rubric_criterion_level_selected") -%>
                   <tr>
                     <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>">
-                      <div class='rubric_description'>
+                      <div class='description'>
                         <strong> <%= level_name %></strong>
                         &nbsp;<%=level_desc%>
                       </div>
-                      <div class='rubric_mark'><%=num_levels%></div>
+                      <div class='mark'><%=num_levels%></div>
                     </td>
                   </tr>
               <% end -%>
