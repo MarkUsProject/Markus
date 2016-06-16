@@ -34,15 +34,10 @@ class FlexibleCriteriaController < ApplicationController
   def create
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.flexible_criteria
-    if @criteria.length > 0
-      new_position = @criteria.last.position + 1
-    else
-      new_position = 1
-    end
     @criterion = FlexibleCriterion.new
     @criterion.assignment = @assignment
     @criterion.max = FlexibleCriterion::DEFAULT_MAX
-    @criterion.position = new_position
+    @criterion.position = @assignment.next_criterion_position
     unless @criterion.update_attributes(flexible_criterion_params)
       @errors = @criterion.errors
       render :add_criterion_error

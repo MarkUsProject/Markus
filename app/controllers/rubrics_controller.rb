@@ -30,16 +30,11 @@ class RubricsController < ApplicationController
   def create
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.rubric_criteria
-    if @criteria.length > 0
-      new_position = @criteria.last.position + 1
-    else
-      new_position = 1
-    end
     @criterion = RubricCriterion.new
     @criterion.assignment = @assignment
     @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
     @criterion.set_default_levels
-    @criterion.position = new_position
+    @criterion.position = @assignment.next_criterion_position
     unless @criterion.update_attributes(rubric_criterion_params)
       @errors = @criterion.errors
       render 'add_criterion_error', formats: [:js]

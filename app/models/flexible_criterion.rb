@@ -80,28 +80,12 @@ class FlexibleCriterion < Criterion
     end
 
     criterion.description = row[2] if !row[2].nil?
-    criterion.position = next_criterion_position(assignment)
+    criterion.position = assignment.next_criterion_position
 
     unless criterion.save
       raise CSV::MalformedCSVError, criterion.errors
     end
     criterion
-  end
-
-  # ===Returns:
-  #
-  # The position that should receive the next criterion for an assignment.
-  def self.next_criterion_position(assignment)
-    # TODO temporary, until Assignment gets its criteria method
-    #      nevermind the fact that this computation should really belong in assignment
-    last_criterion = FlexibleCriterion.where(assignment_id: assignment.id)
-                                      .order(:position)
-                                      .last
-    if last_criterion.nil?
-      1
-    else
-      last_criterion.position + 1
-    end
   end
 
   def get_weight
@@ -164,6 +148,44 @@ class FlexibleCriterion < Criterion
       false
     end
     true
+  end
+
+  def set_mark_by_criteria(mark_to_change, criterion_name)
+    if criterion_name == 'nil'
+      mark_to_change.mark = nil
+    else
+      mark_to_change.mark = criterion_name.to_f
+    end
+    mark_to_change.save
+  end
+
+  # Calculates the maximum mark that could be achieved considering all criteria marked
+  def total_mark
+    self.assignment.get_criteria(:ta).map(&:max).sum().round(2)
+  end
+
+  # Returns an array of arrays of the form [mark, weight] for the assignment's criteria
+  def get_marks_list(submission)
+    marks_list = []
+    self.assignment.get_criteria.each do |criterion|
+      mark = submission.get_latest_result
+                 .marks
+                 .where(markable_id: criterion.id)
+                 .first
+      marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
+                       criterion.max])
+    end
+    marks_list
+  end
+
+  # Calculates the maximum possible mark for a particular assignment
+  def get_max_mark
+    total_mark
+  end
+
+  # Returns an array of the form ['', max1, '', max2, ...].
+  def get_max_mark_for_criteria
+    self.assignment.get_criteria.pluck("''", :max).flatten
   end
 
 end

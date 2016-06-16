@@ -25,7 +25,7 @@ module CourseSummariesHelper
     @gef_weights = get_gef_marking_weights_for_all_marking_schemes
 
     @max_marks = Hash[Assignment.all.map do |a|
-      [a.id, get_max_mark_for_assignment(a.id)]
+      [a.id, a.get_max_mark]
     end
     ]
     @gef_max_marks = Hash[GradeEntryForm.all.map do |gef|
@@ -73,19 +73,6 @@ module CourseSummariesHelper
     end
 
     marks
-  end
-
-  # Get max mark for assignment with id a_id
-  def get_max_mark_for_assignment(a_id)
-    max_mark = 0
-    RubricCriterion.where(assignment_id: a_id).each do |rc|
-      max_mark += rc.weight * 4
-    end
-
-    FlexibleCriterion.where(assignment_id: a_id).each do |fc|
-      max_mark += fc.max
-    end
-    max_mark
   end
 
   def get_mark_for_all_gef_for_student(student, gefs)

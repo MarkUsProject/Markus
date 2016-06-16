@@ -293,7 +293,7 @@ describe FlexibleCriteriaController do
   describe 'An authenticated and authorized admin doing a POST' do
     before(:each) do
       @admin = create(:admin, user_name: 'olm_admin')
-      @assignment = create(:assignment)
+      @assignment = create(:flexible_assignment)
       @criterion = create(:flexible_criterion,
                           assignment: @assignment,
                           position: 1,

@@ -47,7 +47,7 @@ class RubricCriterion < Criterion
   end
 
   def validate_total_weight
-    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if self.assignment.total_mark + (4 * (self.weight - self.weight_was)) <= 0
+    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if total_mark + (4 * (self.weight - self.weight_was)) <= 0
   end
 
   # Just a small effort here to remove magic numbers...
@@ -266,6 +266,45 @@ class RubricCriterion < Criterion
         false
     end
     true
+  end
+
+
+  def set_mark_by_criteria(mark_to_change, criterion_name)
+    if criterion_name == 'nil'
+      mark_to_change.mark = nil
+    else
+      mark_to_change.mark = criterion_name
+    end
+    mark_to_change.save
+  end
+
+  # Calculates the maximum mark that could be achieved considering all criteria marked
+  def total_mark
+    self.assignment.get_criteria(:ta).map{ |criterion| criterion.weight * 4 }.sum().round(2)
+  end
+
+  # Returns an array of arrays of the form [mark, weight] for the assignment's criteria
+  def get_marks_list(submission)
+    marks_list = []
+    self.assignment.get_criteria.each do |criterion|
+      mark = submission.get_latest_result
+                 .marks
+                 .where(markable_id: criterion.id)
+                 .first
+      marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
+                       criterion.weight])
+    end
+    marks_list
+  end
+
+  # Calculates the maximum possible mark for a particular assignment
+  def get_max_mark
+    total_mark
+  end
+
+  # Returns an array of the form ['', weight1, '', weight2, ...].
+  def get_max_mark_for_criteria
+    self.assignment.get_criteria.pluck("''", :weight).flatten
   end
 
 end
