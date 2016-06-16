@@ -963,6 +963,10 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  def get_peer_reviews
+    PeerReview.where(reviewer: groupings)
+  end
+
   ### REPO ###
 
   def repository_name
