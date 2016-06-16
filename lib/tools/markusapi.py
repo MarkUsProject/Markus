@@ -15,14 +15,17 @@
 # (c) by the authors, 2008 - 2015.
 #
 
-import http.client, sys, socket, os
-from urllib.parse import urlparse, urlencode
+import http.client
 import json
+import mimetypes
+import sys
+from urllib.parse import urlparse, urlencode
+
 
 class Markus:
     """A class for interfacing with the MarkUs API."""
 
-    def __init__(self, api_key, url, protocol='https'):
+    def __init__(self, api_key, url, cookie=None, protocol='https'):
         """ (str, str, str) -> Markus
         Initialize an instance of the Markus class.
 
@@ -36,6 +39,7 @@ class Markus:
         """
         self.api_key = api_key
         self.parsed_url = urlparse(url.strip())
+        self.cookie = cookie
         self.protocol = protocol
 
     def get_all_users(self):
@@ -97,26 +101,27 @@ class Markus:
         response = self.submit_request(params, path, 'GET')
         return Markus.decode_response(response)
 
-    def upload_test_results(self, assignment_id, group_name, title, contents):
+    def upload_feedback_file(self, assignment_id, group_id, title, contents):
         """ (Markus, int, str, str, str) -> list of str
-        Upload test results to Markus.
+        Upload a feedback file to Markus.
 
         Keyword arguments:
         assignment_id -- the assignment's id
-        group_name    -- the name of the group to which we are uploading
+        group_id      -- the id of the group to which we are uploading
         title         -- the file name that will be displayed
         contents      -- what will be in the file
         """
-        groupname_id_map = self.get_groups_by_name(assignment_id)
-        group_id = groupname_id_map[group_name]
-        params = {}
-        params['filename'] = title
-        params['file_content'] = contents
-        path = self.get_path(assignment_id, group_id) + 'test_results.xml'
+        params = {
+            'assignment_id': assignment_id,
+            'group_id': group_id,
+            'filename': title,
+            'file_content': contents,
+            'mime_type': mimetypes.guess_type(title)[0]
+        }
+        path = self.get_path(assignment_id, group_id) + 'feedback_files'
         return self.submit_request(params, path, 'POST')
 
-    def update_marks_single_group(self, criteria_mark_map,
-                                  assignment_id, group_name):
+    def update_marks_single_group(self, criteria_mark_map, assignment_id, group_id):
         """ (Markus, dict, int, int) -> list of str
         Update the marks of a single group. 
         Only the marks specified in criteria_mark_map will be changed.
@@ -128,10 +133,8 @@ class Markus:
         Keyword arguments:
         criteria_mark_map -- maps criteria to the desired grade
         assignment_id     -- the assignment's id
-        group_name        -- the name of the group whose marks we are updating
+        group_id          -- the id of the group whose marks we are updating
         """
-        groupname_id_map = self.get_groups_by_name(assignment_id)
-        group_id = groupname_id_map[group_name]
         params = criteria_mark_map
         path = self.get_path(assignment_id, group_id) + 'update_marks'
         return self.submit_request(params, path, 'PUT')
@@ -148,9 +151,11 @@ class Markus:
         """
         auth_header = 'MarkUsAuth {}'.format(self.api_key)
         print(auth_header)
-        headers = { 'Authorization': auth_header,
-                    'Content-type': 'application/x-www-form-urlencoded' }
-        if request_type == 'GET': # we only want this for GET requests
+        headers = {'Authorization': auth_header,
+                   'Content-type': 'application/x-www-form-urlencoded'}
+        if self.cookie:
+            headers['Cookie'] = self.cookie
+        if request_type == 'GET':  # we only want this for GET requests
             headers['Accept'] = 'text/plain'
         if params != None:
             params = urlencode(params)
@@ -182,7 +187,7 @@ class Markus:
     def get_path(self, assignment_id, group_id=None):
         """Return a path to an assignment's groups, or a single group."""
         path = '/api/assignments/' + str(assignment_id) + '/groups'
-        if group_id != None:
+        if group_id is not None:
             path += '/' + str(group_id) + '/'
         return path
 

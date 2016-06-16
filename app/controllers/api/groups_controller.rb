@@ -4,7 +4,7 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class GroupsController < MainApiController
     # Define default fields to display for index and show methods
-    @@default_fields = [:id, :group_name, :created_at, :updated_at, :first_name,
+    @@default_fields = [:id, :group_name, :repo_name, :created_at, :updated_at, :first_name,
                         :last_name, :user_name, :membership_status,
                         :student_memberships]
 
