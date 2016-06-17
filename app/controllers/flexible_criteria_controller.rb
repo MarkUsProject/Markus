@@ -74,11 +74,12 @@ class FlexibleCriteriaController < ApplicationController
   def upload
     file = params[:upload][:flexible]
     @assignment = Assignment.find(params[:assignment_id])
+    encoding = params[:encoding]
     if request.post? && !file.blank?
       FlexibleCriterion.transaction do
-        result = MarkusCSV.parse(file.read) do |row|
+        result = MarkusCSV.parse(file.read, encoding: encoding) do |row|
           next if CSV.generate_line(row).strip.empty?
-          FlexibleCriterion.new_from_csv_row(row, @assignment)
+          FlexibleCriterion.create_or_update_from_csv_row(row, @assignment)
         end
         unless result[:invalid_lines].empty?
           flash_message(:error, result[:invalid_lines])

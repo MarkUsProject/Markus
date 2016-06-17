@@ -58,32 +58,36 @@ class FlexibleCriterion < Criterion
   #
   # ===Raises:
   #
-  # CSV::MalformedCSVError::  If the row does not contains enough information, if the max value
-  #                           is zero (or doesn't evaluate to a float) or if the
-  #                           supplied name is not unique.
-  def self.new_from_csv_row(row, assignment)
+  # CSVInvalidLineError  If the row does not contain enough information,
+  #                      if the max value is zero, nil or does not evaluate to a
+  #                      float, or if the criterion is not successfully saved.
+  def self.create_or_update_from_csv_row(row, assignment)
     if row.length < 2
       raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
-    criterion = FlexibleCriterion.new
-    criterion.assignment = assignment
-    criterion.name = row[0]
-    # assert that no other criterion uses the same name for the same assignment.
-    unless FlexibleCriterion.where(assignment_id: assignment.id,
-                                   name: row[0]).size.zero?
-      raise CSVInvalidLineError, I18n.t('csv.invalid_row.duplicate_entry')
+    working_row = row.clone
+    name = working_row.shift
+    # If a FlexibleCriterion with the same name exits, load it up.  Otherwise,
+    # create a new one.
+    criterion = assignment.get_criteria.find_or_create_by(name: name)
+    # Check that max is not a string.
+    begin
+      criterion.max = Float(working_row.shift)
+    rescue ArgumentError
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
-
-    criterion.max = row[1]
+    # Check that max is a valid number
     if criterion.max.nil? or criterion.max.zero?
       raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
-
-    criterion.description = row[2] if !row[2].nil?
-    criterion.position = assignment.next_criterion_position
-
+    # Only set the position if this is a new record.
+    if criterion.new_record?
+      criterion.position = assignment.next_criterion_position
+    end
+    # Set description to the one cloned only if the original description is valid
+    criterion.description = working_row.shift if !row[2].nil?
     unless criterion.save
-      raise CSV::MalformedCSVError, criterion.errors
+      raise CSVInvalidLineError
     end
     criterion
   end

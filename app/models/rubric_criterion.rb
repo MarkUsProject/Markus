@@ -107,21 +107,25 @@ class RubricCriterion < Criterion
   #               RUBRIC_LEVELS description (one for each level).
   # assignment::  The assignment to which the newly created criterion should belong.
   #
+  # ===Raises:
+  #
+  # CSVInvalidLineError  If the row does not contain enough information, if the weight
+  #                      does not evaluate to a float, or if the criterion is not
+  #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
-      raise CSVInvalidLineError
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     working_row = row.clone
     name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.rubric_criteria.find_or_create_by(
-      name: name)
-    #Check that the weight is not a string.
+    criterion = assignment.get_criteria.find_or_create_by(name: name)
+    # Check that the weight is not a string.
     begin
       criterion.weight = Float(working_row.shift)
     rescue ArgumentError
-      raise CSVInvalidLineError
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
