@@ -4,7 +4,7 @@ class RubricsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.rubric_criteria(order: 'position')
+    @criteria = @assignment.get_criteria.order(:position)
   end
 
   def edit
@@ -29,7 +29,7 @@ class RubricsController < ApplicationController
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.rubric_criteria
+    @criteria = @assignment.get_criteria
     if @criteria.length > 0
       new_position = @criteria.last.position + 1
     else
@@ -52,7 +52,7 @@ class RubricsController < ApplicationController
   def destroy
     @criterion = RubricCriterion.find(params[:id])
     @assignment = @criterion.assignment
-    @criteria = @assignment.rubric_criteria
+    @criteria = @assignment.get_criteria
     #delete all marks associated with this criterion
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
@@ -61,7 +61,7 @@ class RubricsController < ApplicationController
 
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
-    file_out = MarkusCSV.generate(@assignment.rubric_criteria) do |criterion|
+    file_out = MarkusCSV.generate(@assignment.get_criteria) do |criterion|
       criterion_array = [criterion.name,criterion.weight]
       (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
         criterion_array.push(criterion['level_' + i.to_s + '_name'])
@@ -175,7 +175,7 @@ class RubricsController < ApplicationController
     end
 
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.rubric_criteria
+    @criteria = @assignment.get_criteria
     position = 0
 
     params[:criterion].each do |id|
