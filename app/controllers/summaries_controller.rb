@@ -12,11 +12,7 @@ class SummariesController < ApplicationController
       },"
     end
 
-    if @assignment.marking_scheme_type == 'rubric'
-      @criteria = @assignment.rubric_criteria
-    else
-      @criteria = @assignment.flexible_criteria
-    end
+    @criteria = @assignment.get_criteria
   end
 
   def populate

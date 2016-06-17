@@ -168,7 +168,7 @@ class RubricCriterion < Criterion
     name = key[0]
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.rubric_criteria.find_or_create_by(
+    criterion = assignment.get_criteria.find_or_create_by(
       name: name)
     #Check that the weight is not a string.
     begin

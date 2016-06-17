@@ -46,7 +46,6 @@ class Assignment < ActiveRecord::Base
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment, class_name: 'Assignment', inverse_of: :pr_assignment
   has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
-  after_save :create_peer_review_assignment_if_not_exist
 
   has_many :annotation_categories,
            -> { order(:position) },
@@ -118,13 +117,14 @@ class Assignment < ActiveRecord::Base
   # Look in lib/validators/* for more info
   validates :due_date, date: true
   after_save :update_assigned_tokens
+  after_save :create_peer_review_assignment_if_not_exist
 
   # Set the default order of assignments: in ascending order of due_date
   default_scope { order('due_date ASC') }
 
   # Export a YAML formatted string created from the assignment rubric criteria.
   def export_rubric_criteria_yml
-    criteria = self.rubric_criteria
+    criteria = get_criteria
     final = ActiveSupport::OrderedHash.new
     criteria.each do |criterion|
       inner = ActiveSupport::OrderedHash.new
@@ -339,7 +339,7 @@ class Assignment < ActiveRecord::Base
 
   def total_criteria_weight
     factor = 10.0 ** 2
-    (rubric_criteria.sum('weight') * factor).floor / factor
+    (get_criteria.sum('weight') * factor).floor / factor
   end
 
   def total_test_script_marks
@@ -719,11 +719,7 @@ class Assignment < ActiveRecord::Base
   end
 
   def criteria_count
-    if self.marking_scheme_type == 'rubric'
-      self.rubric_criteria.size
-    else
-      self.flexible_criteria.size
-    end
+    get_criteria.size
   end
 
   # Returns an array with the number of groupings who scored between
@@ -844,13 +840,7 @@ class Assignment < ActiveRecord::Base
   # Assign graders to a criterion for this assignment.
   # Raise a CSVInvalidLineError if the criterion or a grader doesn't exist.
   def add_graders_to_criterion(criterion_name, graders)
-    if marking_scheme_type == 'rubric'
-      criterion = rubric_criteria.find_by(
-        name: criterion_name)
-    else
-      criterion = flexible_criteria.find_by(
-        name: criterion_name)
-    end
+    criterion = get_criteria.find_by(name: criterion_name)
 
     if criterion.nil?
       raise CSVInvalidLineError

@@ -23,7 +23,7 @@ namespace :db do
 
       #Automate marks for assignment using flexible criteria
       if grouping.assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
-        grouping.assignment.flexible_criteria.each do |flexible|
+        grouping.assignment.get_criteria.each do |flexible|
           mark = create_mark(result.id, grouping.assignment.marking_scheme_type, flexible)
           result.marks.push(mark)
           result.save
@@ -32,7 +32,7 @@ namespace :db do
 
       #Automate marks for assignment using rubric criteria
       if grouping.assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-        grouping.assignment.rubric_criteria.each do |rubric|
+        grouping.assignment.get_criteria.each do |rubric|
           mark = create_mark(result.id, grouping.assignment.marking_scheme_type, rubric)
           result.marks.push(mark)
           result.save
