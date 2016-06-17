@@ -70,6 +70,7 @@ Assignment.blueprint do
   allow_web_submits {true}
   vcs_submit { false }
   has_peer_review { false }
+  number_of_peer_reviews_per_group { 3 }
   display_grader_names_to_students {false}
   section_due_dates_type(false)
   enable_test {true}

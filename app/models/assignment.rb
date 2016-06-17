@@ -7,6 +7,8 @@ class Assignment < ActiveRecord::Base
     rubric: 'rubric'
   }
 
+  MAX_PEER_REVIEWS_PER_PERSON = 5
+
   has_many :rubric_criteria,
            -> { order(:position) },
            class_name: 'RubricCriterion',
@@ -70,6 +72,7 @@ class Assignment < ActiveRecord::Base
   validates_uniqueness_of :short_identifier, case_sensitive: true
   validates_numericality_of :group_min, only_integer: true, greater_than: 0
   validates_numericality_of :group_max, only_integer: true, greater_than: 0
+  validates_numericality_of :number_of_peer_reviews_per_group, only_integer: true, greater_than: 0
 
   has_one :submission_rule, dependent: :destroy, inverse_of: :assignment
   accepts_nested_attributes_for :submission_rule, allow_destroy: true

@@ -69,7 +69,7 @@ class PeerReviewsController < ApplicationController
     reviewer_groups = get_groupings_table_info(assignment)
     reviewee_groups = get_groupings_table_info(assignment.parent_assignment)
 
-    assigner = PeerReviewRandomAssigner.new(assignment, reviewer_groups, reviewee_groups, num_groups_min)
+    assigner = PeerReviewRandomAssigner.new(assignment, reviewer_groups, reviewee_groups)
     begin
       assigner.randomly_assign_groups()
       head :ok

@@ -10,15 +10,15 @@ class NotEnoughGroupsToAssignTo < RandomAssignmentException
 end
 
 class PeerReviewRandomAssigner
-  def initialize(pr_assignment, reviewer_groupings_map, reviewee_groupings_map, num_groups_min)
-    if num_groups_min < 1
+  def initialize(pr_assignment, reviewer_groupings_map, reviewee_groupings_map)
+    if pr_assignment.number_of_peer_reviews_per_group < 1
       raise InvalidMinimumGroupSize
     end
 
     @pr_assignment = pr_assignment
     @reviewer_groupings_map = reviewer_groupings_map
     @reviewee_groupings_map = reviewee_groupings_map
-    @num_groups_min = num_groups_min
+    @num_groups_min = pr_assignment.number_of_peer_reviews_per_group
   end
 
   # Assigns everyone from a peer review assignment to have at least the
