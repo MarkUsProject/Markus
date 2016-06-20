@@ -74,7 +74,7 @@ class PeerReviewsController < ApplicationController
       reviewee_groups.each do |reviewee_group|
         result = reviewee_group.current_submission_used.get_latest_result
         unless PeerReview.exists?(reviewer: reviewer_group, result: result)
-          PeerReview.create(reviewer: reviewer_group, result: result)
+          PeerReview.create!(reviewer: reviewer_group, result: result)
         end
       end
     end
@@ -118,7 +118,7 @@ class PeerReviewsController < ApplicationController
         reviewer = Grouping.joins(:group).find_by(
                                 groups: { group_name: row.second },
                                 assignment_id: assignment_id)
-        PeerReview.create(result: result, reviewer: reviewer)
+        PeerReview.create!(result: result, reviewer: reviewer)
       end
       unless result[:invalid_lines].empty?
         flash_message(:error, result[:invalid_lines])
