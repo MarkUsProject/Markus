@@ -38,7 +38,7 @@ class PeerReviewsController < ApplicationController
     reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups]
     action_string = params[:actionString]
 
-    if action_string == 'assign'
+    if action_string == 'random_assign' or action_string == 'assign'
       if selected_reviewer_group_ids.nil? or selected_reviewer_group_ids.empty?
         render text: t('peer_review.empty_list_reviewers'), status: 400
         return
@@ -50,7 +50,7 @@ class PeerReviewsController < ApplicationController
 
     case action_string
       when 'random_assign'
-        random_assign(@assignment, 3)  # TODO - Remove hardcoded 3 in the future.
+        randomly_assign
       when 'assign'
         reviewer_groups = Grouping.where(id: selected_reviewer_group_ids)
         reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
@@ -65,18 +65,8 @@ class PeerReviewsController < ApplicationController
     head :ok
   end
 
-  def random_assign(assignment, num_groups_min)
-    reviewer_groups = get_groupings_table_info(assignment)
-    reviewee_groups = get_groupings_table_info(assignment.parent_assignment)
-
-    assigner = PeerReviewRandomAssigner.new(assignment, reviewer_groups, reviewee_groups, num_groups_min)
-    begin
-      assigner.randomly_assign_groups()
-      head :ok
-    rescue NotEnoughGroupsToAssignTo, InvalidMinimumGroupSize
-      # TODO - Isn't rendered to the view, needs investigating...
-      render text: t('peer_review.problem'), status: 400
-    end
+  def randomly_assign
+    # TODO
   end
 
   def assign(reviewer_groups, reviewee_groups)
