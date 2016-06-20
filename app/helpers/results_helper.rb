@@ -27,7 +27,7 @@ module ResultsHelper
   end
 
   def can_show_remark_request_tab_in_marker_pane(submission)
-    !student_can_edit_remark_request(submission)
+    submission.remark_submitted?
   end
 
   def can_show_test_results_tab?(assignment)
