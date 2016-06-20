@@ -208,6 +208,15 @@ Markus::Application.routes.draw do
         end
       end
 
+      resources :peer_reviews, only: :index do
+        collection do
+          get 'populate'
+          post 'assign_groups'
+          get 'download_reviewer_reviewee_mapping'
+          post 'csv_upload_handler'
+        end
+      end
+
       resources :graders do
         collection do
           get 'populate'
