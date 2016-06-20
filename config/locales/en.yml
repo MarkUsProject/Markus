@@ -232,6 +232,20 @@ en:
         has_peer_review: "Enable student-to-student peer review"
         configure_peer_review: "Configure peer review"
         peer_review_record_missing: "Error: Peer review assignment missing from database"
+    peer_review:
+        problem: "An unexpected problem occured"
+        number_of_reviews_header: "Num reviews"
+        assigned_reviewers_header: "Assigned reviewers"
+        reviewer_group: "Reviewer group"
+        reviewee_group: "Reviewee group"
+        empty_list_reviewers: "Cannot have an empty list of reviewers"
+        cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
+        download:
+            assigned_reviewers_header: "Download Peer Review Assignments"
+            assigned_reviewers_csv: "Reviewer group to reviewee group CSV"
+        upload:
+            header: "Upload Peer Review CSV"
+            description: "CSV file format:<br><code>result_id,group_name</code><br>"
     your_mark:  "Your mark:"
 
     members:            "Members"

@@ -1,5 +1,84 @@
-<div class='wrapper'>
-  <div id='peer_reviews_table'>
-    <!-- To be filled out in the future -->
+<%= content_for :head do %>
+    <%= javascript_include_tag 'PeerReviews/index' %>
+
+    <%= render partial: 'peer_reviews_new_manager', formats: [:'js.jsx'], handlers: [:erb] %>
+<% end %>
+
+<div class='title_bar'>
+  <h1><%= t('peer_reviews') %></h1>
+
+  <div class='heading_buttons'>
+    <%= link_to t('download'), '#', onclick: 'modal_download.open();' %>
+    <span class='menu_bar'></span>
+    <%= link_to t('upload'), '#', onclick: 'modal_upload.open();' %>
   </div>
 </div>
+
+<div class="wrapLeft"></div>
+<div class="clear"></div>
+
+<div id='notice'>
+  <div class='success' id='add_success' style='display: none;'></div>
+
+  <%# This is for error display injected by JavaScript %>
+  <div class='error' id='errors' style='display: none; '>
+    <h3><%= t('peer_review.problem') %></h3>
+    <div id='errors_title'></div>
+    <div id='errors_contents'></div>
+  </div>
+
+  <div class='warning' id='global_action_warning' style='display: none;'>
+    <h3><%= t('groups.warning') %></h3> <!-- TODO - This string should be moved out of 'groups' as it is very generic -->
+    <div id='global_action_warning_msg'></div>
+  </div>
+
+  <%# All other flash messages %>
+  <%= render 'shared/flash_message' %>
+</div>
+
+<div id='peer_reviews_manager'></div>
+
+<!-- Modal Windows -->
+<aside class='dialog' id="download_dialog">
+  <h2><%= t('peer_review.download.assigned_reviewers_header') %></h2>
+  <ul>
+    <li>
+      <%= link_to t('peer_review.download.assigned_reviewers_csv'),
+                  # TODO - isn't the object overkill? Why would the previous person do that...???
+                  download_reviewer_reviewee_mapping_assignment_peer_reviews_path(@assignment),
+                  onclick: 'modal_download.close();' %>
+    </li>
+  </ul>
+
+  <section class='dialog-actions'>
+    <input type='reset' value='<%= t(:cancel) %>' onclick='modal_download.close();' />
+  </section>
+</aside>
+
+<aside class='dialog' id="upload_dialog">
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: 'upload_script',
+                             upload_id: 'peer_review_mapping',
+                             button_id: 'upload' %>
+
+  <h2><%= t("peer_review.upload.header") %></h2>
+  <%= raw(t("peer_review.upload.description")) %>
+  <%= form_tag({ controller: "peer_reviews",
+                 action: 'csv_upload_handler', id: @assignment.id},
+                 { multipart: true }) do %>
+      <p>
+        <%= t("encoding") %>
+        <%= select_tag(:encoding, options_for_select(@encodings)) %>
+      </p>
+      <%= file_field_tag :peer_review_mapping, size: 2 %>
+
+      <section class='dialog-actions'>
+        <%= submit_tag t(:upload),
+                       data: { disable_with: t(:uploading_please_wait) },
+                       disabled: true,
+                       id: 'upload'  %>
+        <input type='reset' value='<%= I18n.t(:cancel) %>' onclick='modal_upload.close();' />
+      </section>
+  <% end %>
+</aside>
