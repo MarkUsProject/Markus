@@ -18,7 +18,7 @@
         <% if current_user_criteria.include?(criterion) %>
           document.getElementById('#mark_criterion_' + <%= criterion.id %>).addClass('assigned');
         <% elsif @current_user.type == "Ta" %>
-          hide_criterion(<%= criterion.id %>);
+          hide_criterion(<%= criterion.id %>, <%= @assignment.marking_scheme_type %>);
         <% end %>
       <% end %>
     <% end %>

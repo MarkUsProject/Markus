@@ -116,7 +116,6 @@
         <ul id='mark_tabs' class='subsection_tabs'>
           <li><a href='#mark_viewer'><%= t('marker.marks.marks') %></a></li>
           <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
-          <li><a href='#submission_rule_viewer'><%= t('marker.marks.submission_rule') %></a></li>
           <li><a href='#tag_viewer'><%= t('marker.marks.tags') %></a></li>
         </ul>
 
@@ -141,7 +140,8 @@
                          locals: { mark_criterion: mark_criterion,
                                    result: result,
                                    mark: marks_map[mark_criterion.id],
-                                   old_mark: @old_marks_map[mark_criterion.id] } %>
+                                   old_mark: @old_marks_map[mark_criterion.id],
+                                   marking_scheme: @assignment.marking_scheme_type} %>
               <% end -%>
             </ul>
           </div>
@@ -157,11 +157,6 @@
                                result: result,
                                extra_marks_points: extra_marks_points,
                                extra_marks_percentage: extra_marks_percentage } %>
-        </div>
-
-        <div id='submission_rule_viewer'>
-          <%= render partial: assignment.submission_rule.grader_tab_partial,
-                     locals: { grouping: result.submission.grouping } %>
         </div>
 
         <!-- Tag insertion pane. -->
