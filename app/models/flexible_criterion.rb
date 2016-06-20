@@ -39,6 +39,10 @@ class FlexibleCriterion < Criterion
 
   DEFAULT_MAX = 1
 
+  def self.symbol
+    :flexible
+  end
+
   def update_assigned_groups_count
     result = []
     tas.each do |ta|

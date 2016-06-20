@@ -707,7 +707,7 @@ class Assignment < ActiveRecord::Base
   end
 
   def get_all_criteria
-    criterion_class.where(assignment_id: self.id)
+    criterion_class.where(assignment_id: self.id).order(:position)
   end
 
   def get_ta_visible_criteria

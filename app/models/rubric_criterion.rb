@@ -38,6 +38,10 @@ class RubricCriterion < Criterion
 
   validate :visible?
 
+  def self.symbol
+    :rubric
+  end
+
   def update_assigned_groups_count
     result = []
     criterion_ta_associations.each do |cta|
@@ -271,7 +275,6 @@ class RubricCriterion < Criterion
     end
     true
   end
-
 
   def set_mark_by_criteria(mark_to_change, criterion_name)
     if criterion_name == 'nil'

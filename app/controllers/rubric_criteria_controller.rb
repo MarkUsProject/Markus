@@ -1,4 +1,4 @@
-class RubricsController < ApplicationController
+class RubricCriteriaController < ApplicationController
 
   before_filter :authorize_only_for_admin
 
@@ -112,14 +112,14 @@ class RubricsController < ApplicationController
     file = params[:yml_upload][:rubric]
     unless file.blank?
       begin
-        rubrics = YAML::load(file.utf8_encode(encoding))
+        rubric_criteria = YAML::load(file.utf8_encode(encoding))
       rescue Psych::SyntaxError => e
         flash[:error] = I18n.t('rubric_criteria.upload.error') + '  ' +
            I18n.t('rubric_criteria.upload.syntax_error', error: "#{e}")
         redirect_to action: 'index', id: assignment.id
         return
       end
-      unless rubrics
+      unless rubric_criteria
         flash[:error] = I18n.t('rubric_criteria.upload.error') +
           '  ' + I18n.t('rubric_criteria.upload.empty_error')
         redirect_to action: 'index', id: assignment.id
@@ -127,7 +127,7 @@ class RubricsController < ApplicationController
       end
       successes = 0
       i = 1
-      rubrics.each do |key|
+      rubric_criteria.each do |key|
         begin
           RubricCriterion.create_or_update_from_yml_key(key, assignment)
           successes += 1
@@ -151,7 +151,7 @@ class RubricsController < ApplicationController
         end
       end
 
-      if successes < rubrics.length
+      if successes < rubric_criteria.length
         flash[:error] = I18n.t('rubric_criteria.upload.error') + ' ' + bad_criteria_names
       end
 

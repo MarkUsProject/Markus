@@ -21,22 +21,11 @@ namespace :db do
       grouping.is_collected = true
       grouping.save
 
-      #Automate marks for assignment using flexible criteria
-      if grouping.assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
-        grouping.assignment.get_criteria.each do |flexible|
-          mark = create_mark(result.id, grouping.assignment.marking_scheme_type, flexible)
-          result.marks.push(mark)
-          result.save
-        end
-      end
-
-      #Automate marks for assignment using rubric criteria
-      if grouping.assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-        grouping.assignment.get_criteria.each do |rubric|
-          mark = create_mark(result.id, grouping.assignment.marking_scheme_type, rubric)
-          result.marks.push(mark)
-          result.save
-        end
+      #Automate marks for assignment using appropriate criteria
+      grouping.assignment.get_criteria.each do |criterion|
+        mark = create_mark(result.id, grouping.assignment.marking_scheme_type, criterion)
+        result.marks.push(mark)
+        result.save
       end
     end
 
