@@ -21,7 +21,6 @@ FactoryGirl.define do
     tokens_per_period 0
     unlimited_tokens false
     enable_test false
-    number_of_peer_reviews_per_group 3
 
     factory :flexible_assignment do
       marking_scheme_type Assignment::MARKING_SCHEME_TYPE[:flexible]

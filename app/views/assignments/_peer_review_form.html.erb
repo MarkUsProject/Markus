@@ -123,12 +123,6 @@
                         onclick: 'set_onbeforeunload(true);' %>
         <%= f.label :is_hidden, t('assignment.is_hidden') %>
       </div>
-
-      <div>
-        <%= f.label :number_of_peer_reviews_per_group, t('assignment.number_of_peer_reviews_per_group') %>
-        <%= f.number_field :number_of_peer_reviews_per_group, min: 1, max: Assignment::MAX_PEER_REVIEWS_PER_PERSON,
-                           onchange: 'set_onbeforeunload(true);' %>
-      </div>
     </fieldset>
 
     <%# Marking scheme %>

@@ -232,7 +232,6 @@ en:
         has_peer_review: "Enable student-to-student peer review"
         configure_peer_review: "Configure peer review"
         peer_review_record_missing: "Error: Peer review assignment missing from database"
-        number_of_peer_reviews_per_group: "Number of peer reviews per group"
     peer_review:
         problem: "An unexpected problem occured"
         number_of_reviews_header: "Num reviews"
