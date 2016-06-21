@@ -149,7 +149,7 @@ class AssignmentsController < ApplicationController
 
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
-    @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
+    @penalty = @assignment.submission_rule
     @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
 
     if @student.section &&
@@ -160,27 +160,6 @@ class AssignmentsController < ApplicationController
     if @due_date.nil?
       @due_date = @assignment.due_date
     end
-    if @grouping.nil?
-      if @assignment.group_max == 1
-        begin
-          # fix for issue #627
-          # currently create_group_for_working_alone_student only returns false
-          # when saving a grouping throws an exception
-          unless @student.create_group_for_working_alone_student(@assignment.id)
-            # if create_group_for_working_alone_student returned false then the student
-            # must have an ( empty ) existing grouping that he is not a member of.
-            # we must delete this grouping for the transaction to succeed.
-            Grouping.find_by_group_id_and_assignment_id( Group.find_by_group_name(@student.user_name), @assignment.id).destroy
-          end
-        rescue RuntimeError => @error
-          flash_message(:error, 'Error')
-        end
-      end
-    else
-      # We look for the current members of the group
-      @studentmemberships = @grouping.student_memberships
-    end
-    @sections = Section.order(:name)
     if @assignment.past_all_collection_dates?
       flash_now(:notice, t('browse_submissions.grading_can_begin'))
     else
@@ -203,14 +182,14 @@ class AssignmentsController < ApplicationController
                                  sections: sections))
           else
             flash_now(:notice, t('browse_submissions.grading_can_begin_after_for_sections',
-                                 time: I18n.l(collection_time, format: :long_date),
+                                 time: l(collection_time, format: :long_date),
                                  sections: sections))
           end
         end
       else
         collection_time = @assignment.submission_rule.calculate_collection_time
         flash_now(:notice, t('browse_submissions.grading_can_begin_after',
-                             time: I18n.l(collection_time, format: :long_date)))
+                             time: l(collection_time, format: :long_date)))
       end
     end
   end

@@ -10,13 +10,13 @@
         columns: [
           {
             id: 'group_name',
-            content: '<%= j raw I18n.t(:'browse_submissions.group_name') %>',
+            content: '<%= j raw t('browse_submissions.group_name') %>',
             sortable: true,
             compare: compare_anchor_text
           },
           {
             id: 'review_state',
-            content: '<%= j raw I18n.t(:'browse_submissions.review_state') %>',
+            content: '<%= j raw t('browse_submissions.review_state') %>',
             sortable: true
           },
         ]
@@ -36,33 +36,31 @@
     refresh: function() {
       // Show working indicator.
       document.getElementById('working').style.display = '';
-
-      jQuery.ajax({
-        url: 'submissions/populate_peer_submissions_table',
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-          this.setState({error: []});
-          jQuery.each(data, function (submission) {
-            if (submission.error !== undefined && submission.error !== '') {
-              this.setState({error: this.state.error.concat([submission.error])});
-            }
-          }.bind(this));
-          this.setState({
-            submissions: data,
-          });
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        }.bind(this),
-        // Close working indicator.
-        complete: function() {
-          document.getElementById('working').style.display = 'none';
-        }
-      });
+      jQuery.ajax('<%= populate_peer_submissions_table_assignment_submissions_path(assignment_id) %>',
+                  { method: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                      this.setState({error: []});
+                      jQuery.each(data, function (submission) {
+                        if (submission.error !== undefined && submission.error !== '') {
+                          this.setState({error: this.state.error.concat([submission.error])});
+                        }
+                      }.bind(this));
+                      this.setState({
+                        submissions: data,
+                      });
+                    }.bind(this),
+                    error: function(xhr, status, text) {
+                      var error = text + ': ' + xhr.responseText;
+                      this.setState({
+                        error: error
+                      });
+                    }.bind(this),
+                    // Close working indicator.
+                    complete: function() {
+                      document.getElementById('working').style.display = 'none';
+                    }
+                  });
     },
     onError: function(error) {
       this.setState({error: error});
@@ -97,27 +95,10 @@
     },
 
     render: function() {
-      // need to filter for each section
-      var sections = <%= raw @sections.to_json %>;
-      if (sections.length > 0) {
-        var section_filters = sections.map(function(section) {
-          var filter = {
-            name: section.name,
-            text: section.name,
-            func: function(group) {
-              return group.section === section.name;
-            }
-          };
-          return filter;
-        });
-        var all = '<%= I18n.t('browse_submissions.sections.all') %>';
-        section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
-      }
-
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
         if (submission.name_url === '') {
-          s['group_name'] = <span><%= j raw I18n.t(:'assignment.review') %> {submission.anonymous_id}</span>;
+          s['group_name'] = <span><%= j raw t('assignment.review') %> {submission.anonymous_id}</span>;
         } else {
           s['group_name'] = <a href={submission.name_url}> <%= j raw t('assignment.review') %> {submission.anonymous_id}</a>;
         }
@@ -137,8 +118,6 @@
             {/* This table and its attributes are defined in table.js */}
             <Table data={submissions_data}
               columns={this.props.columns}
-              secondary_filters={section_filters}
-              filter_type={true}
               footer={false}
               search={false}
             />

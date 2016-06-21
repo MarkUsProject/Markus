@@ -1,5 +1,3 @@
-<%= render partial: 'peer_submissions_table', formats: [:'js.jsx'], handlers: [:erb] %>
-
 <div class='title_bar'>
   <h1>
     <%= t('student.peer_assignment',
@@ -17,7 +15,10 @@
       <h2><%= t('submissions') %></h2>
 
       <div class='block_content'>
-        <% unless PeerReview.find_by_reviewer_id(@student.id).nil? %>
+        <% unless PeerReview.find_by(reviewer_id: @student.id).nil? %>
+          <%= render partial: 'peer_submissions_table',
+                     locals: { assignment_id: @assignment.id },
+                     formats: [:'js.jsx'], handlers: [:erb] %>
           <div id='peer_submissions_table'></div>
         <% else %>
           <p class='notice'><%= t('student.no_peer_submission_yet') %></p>
@@ -75,7 +76,7 @@
 
             <%# For each member of this group, display name %>
             <ul>
-              <% @studentmemberships.includes(:user).each do |member|%>
+              <% @grouping.student_memberships.includes(:user).each do |member|%>
                   <li>
                     <span class="last_name"><%= member.user.first_name %> </span> <%= member.user.last_name %>
                   </li>

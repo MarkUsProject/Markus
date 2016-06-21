@@ -25,7 +25,7 @@
                 <% else %>
                   <%=
                     # assignment name
-                    link_to sanitize(assignment.short_identifier) + ': ' + assignment.description,
+                    link_to assignment.short_identifier + ': ' + assignment.description,
                     controller: controller,
                     action: action,
                     id: assignment.id %>
