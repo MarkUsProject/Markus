@@ -19,7 +19,7 @@ Usage:
 Macros:
 API_KEY       -- an Admin API key. It can be found on the admin dashboard page.
 ROOT_URL      -- the root domain of the MarkUs instance.
-ROOT_DIR      -- the directory containing the submission repos.
+ROOT_DIR      -- the directory containing the group repos.
 ASSIGMENT_ID  -- the ID of the assignment.
 FILE_NAME     -- the name of the test results file.
 process_marks -- function for converting test results into a map from criteria
@@ -32,7 +32,7 @@ from markusapi import Markus
 # Required macros
 API_KEY = 'MjA5MDdkMjlmZzTlmMXTc5NmZEjNTgE0ODIa0Mm1UQ='
 ROOT_URL = 'http://localhost:3000/'
-ROOT_DIR = 'submissions'
+ROOT_DIR = 'repos'
 ASSIGNMENT_ID = 1
 FILE_NAME = 'report.txt'
 
@@ -61,25 +61,25 @@ print('Initialized Markus object successfully.')
 groups = api.get_groups(ASSIGNMENT_ID)
 
 for group in groups:
-    group_repo = group['repo_name']
+    group_name = group['group_name']
     group_id = group['id']
     try:
-        with open(ROOT_DIR + '/' + group_repo + '/' + FILE_NAME) as open_file:
+        with open(ROOT_DIR + '/' + group_name + '/' + FILE_NAME) as open_file:
             file_contents = open_file.read()
             # Upload the feedback file
             try:
                 response = api.upload_feedback_file(ASSIGNMENT_ID, group_id, FILE_NAME, file_contents)
-                print('Uploaded feedback file for {}, Markus responded: {}'.format(group_repo, response))
+                print('Uploaded feedback file for {}, Markus responded: {}'.format(group_name, response))
             except:
-                print('Error: uploading feedback file for {} failed'.format(group_repo))
+                print('Error: uploading feedback file for {} failed'.format(group_name))
             # Extract and upload marks from the feedback file
             try:
                 results = process_marks(file_contents)
                 response = api.update_marks_single_group(results, ASSIGNMENT_ID, group_id)
-                print('Uploaded marks for {}, Markus responded: {}'.format(group_repo, response))
+                print('Uploaded marks for {}, Markus responded: {}'.format(group_name, response))
             except:
-                print('Error: uploading marks for {} failed'.format(group_repo))
+                print('Error: uploading marks for {} failed'.format(group_name))
     except:
-        print('Error: accessing repository {} failed.'.format(group_repo))
+        print('Error: accessing repository {} failed.'.format(group_name))
 
 print('Finished')

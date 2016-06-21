@@ -150,7 +150,6 @@ class Markus:
         request_type -- the desired HTTP method (usually 'GET' or 'POST')
         """
         auth_header = 'MarkUsAuth {}'.format(self.api_key)
-        print(auth_header)
         headers = {'Authorization': auth_header,
                    'Content-type': 'application/x-www-form-urlencoded'}
         if self.cookie:
