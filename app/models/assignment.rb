@@ -46,7 +46,6 @@ class Assignment < ActiveRecord::Base
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment, class_name: 'Assignment', inverse_of: :pr_assignment
   has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
-  after_save :create_peer_review_assignment_if_not_exist
 
   has_many :annotation_categories,
            -> { order(:position) },
@@ -118,13 +117,14 @@ class Assignment < ActiveRecord::Base
   # Look in lib/validators/* for more info
   validates :due_date, date: true
   after_save :update_assigned_tokens
+  after_save :create_peer_review_assignment_if_not_exist
 
   # Set the default order of assignments: in ascending order of due_date
   default_scope { order('due_date ASC') }
 
   # Export a YAML formatted string created from the assignment rubric criteria.
   def export_rubric_criteria_yml
-    criteria = self.rubric_criteria
+    criteria = get_criteria
     final = ActiveSupport::OrderedHash.new
     criteria.each do |criterion|
       inner = ActiveSupport::OrderedHash.new
@@ -342,7 +342,7 @@ class Assignment < ActiveRecord::Base
 
   def total_criteria_weight
     factor = 10.0 ** 2
-    (rubric_criteria.sum('weight') * factor).floor / factor
+    (get_criteria.sum('weight') * factor).floor / factor
   end
 
   def total_test_script_marks
@@ -622,7 +622,7 @@ class Assignment < ActiveRecord::Base
   # returns an array of [mark, weight] for the assignment's rubric criterion
   def get_rubric_marks_list(submission)
     marks_list = []
-    self.rubric_criteria.each do |rubric_criterion|
+    get_criteria.each do |rubric_criterion|
       mark = submission.get_latest_result
         .marks
         .where(markable_id: rubric_criterion.id,
@@ -637,7 +637,7 @@ class Assignment < ActiveRecord::Base
   # returns an array of [mark, max] for the assignment's rubric criterion
   def get_flexible_marks_list(submission)
     marks_list = []
-    self.flexible_criteria.each do |flexible_criterion|
+    get_criteria.each do |flexible_criterion|
       mark = submission.get_latest_result
         .marks
         .where(markable_id: flexible_criterion.id,
@@ -661,7 +661,7 @@ class Assignment < ActiveRecord::Base
     students = Student.all
     # determine whether to use flexible criterion or rubric
     is_flexible = self.marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
-    criteria = is_flexible ? self.flexible_criteria : self.rubric_criteria
+    criteria = get_criteria
     MarkusCSV.generate(students) do |student|
       result = [student.user_name]
       grouping = student.accepted_grouping_for(self.id)
@@ -709,7 +709,7 @@ class Assignment < ActiveRecord::Base
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the rubric criteria.
-    self.rubric_criteria.count + 1
+    get_criteria.count + 1
   end
 
   # Returns the class of the criteria that belong to this assignment.
@@ -758,11 +758,7 @@ class Assignment < ActiveRecord::Base
   end
 
   def criteria_count
-    if self.marking_scheme_type == 'rubric'
-      self.rubric_criteria.size
-    else
-      self.flexible_criteria.size
-    end
+    get_criteria.size
   end
 
   # Returns an array with the number of groupings who scored between
@@ -883,13 +879,7 @@ class Assignment < ActiveRecord::Base
   # Assign graders to a criterion for this assignment.
   # Raise a CSVInvalidLineError if the criterion or a grader doesn't exist.
   def add_graders_to_criterion(criterion_name, graders)
-    if marking_scheme_type == 'rubric'
-      criterion = rubric_criteria.find_by(
-        name: criterion_name)
-    else
-      criterion = flexible_criteria.find_by(
-        name: criterion_name)
-    end
+    criterion = get_criteria.find_by(name: criterion_name)
 
     if criterion.nil?
       raise CSVInvalidLineError

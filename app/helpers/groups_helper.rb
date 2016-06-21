@@ -22,8 +22,12 @@ module GroupsHelper
   # Gets information needed to display group info
   # on the front-end. Attributes include URLs for actions
   # such as validation, renaming, showing notes, etc.
-  def get_groupings_table_info
-    groupings = @assignment.groupings
+  def get_groupings_table_info(target_assignment=nil)
+    if target_assignment.nil?
+      target_assignment = @assignment
+    end
+
+    groupings = target_assignment.groupings
                            .includes(:group,
                                      :non_rejected_student_memberships,
                                      :students)
@@ -52,7 +56,7 @@ module GroupsHelper
           confirm:  I18n.t('groups.invalidate_confirm'),
         remote: true)
 
-      rename_link = rename_group_assignment_group_path(@assignment, grouping)
+      rename_link = rename_group_assignment_group_path(target_assignment, grouping)
       g[:rename_link] = view_context.link_to(
         view_context.image_tag(
           'icons/pencil.png',
@@ -68,7 +72,7 @@ module GroupsHelper
           alt: I18n.t('notes.title'),
           title: I18n.t('notes.title')),
         notes_dialog_note_path(
-          id: @assignment.id,
+          id: target_assignment.id,
           noteable_id: grouping.id,
           noteable_type: 'Grouping',
           action_to: 'note_message',

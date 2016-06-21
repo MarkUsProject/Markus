@@ -7,9 +7,7 @@ class FlexibleCriteriaController < ApplicationController
     if @assignment.past_all_due_dates?
       flash[:notice] = t('past_due_date_warning')
     end
-    # TODO until Assignment gets its criteria method
-    @criteria =
-      FlexibleCriterion.where(assignment_id: @assignment.id).order(:position)
+    @criteria = @assignment.get_criteria.order(:position)
   end
 
   def edit
@@ -33,7 +31,7 @@ class FlexibleCriteriaController < ApplicationController
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.flexible_criteria
+    @criteria = @assignment.get_criteria
     if @criteria.length > 0
       new_position = @criteria.last.position + 1
     else
@@ -55,7 +53,7 @@ class FlexibleCriteriaController < ApplicationController
   def destroy
     @criterion = FlexibleCriterion.find(params[:id])
     @assignment = @criterion.assignment
-    @criteria = @assignment.flexible_criteria
+    @criteria = @assignment.get_criteria
     # TODO delete all marks associated with this criterion
     # Will be possible when Mark gets its association with FlexibleCriterion.
     @criterion.destroy
@@ -64,8 +62,7 @@ class FlexibleCriteriaController < ApplicationController
 
   def download
     @assignment = Assignment.find(params[:assignment_id])
-    criteria = FlexibleCriterion.where(assignment_id: @assignment.id)
-                                .order(:position)
+    criteria = @assignment.get_criteria.order(:position)
     file_out = MarkusCSV.generate(criteria) do |criterion|
       [criterion.name, criterion.max,
        criterion.description]
@@ -104,7 +101,7 @@ class FlexibleCriteriaController < ApplicationController
     end
 
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.flexible_criteria
+    @criteria = @assignment.get_criteria
     position = 0
 
     # if params[:criterion]
