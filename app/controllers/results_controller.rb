@@ -10,7 +10,7 @@ class ResultsController < ApplicationController
                          :note_message,
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
-                only: [:edit, :update_mark, :create, :add_extra_mark,
+                only: [:update_mark, :create, :add_extra_mark,
                        :next_grouping, :update_overall_comment,
                        :remove_extra_mark,
                        :toggle_marking_state,
@@ -35,7 +35,7 @@ class ResultsController < ApplicationController
 
   def edit
     @result = Result.find(params[:id])
-    @assignment = @result.submission.assignment
+    @assignment = Assignment.find(params[:assignment_id])
     @submission = @result.submission
 
     if @submission.remark_submitted?
