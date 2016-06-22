@@ -206,8 +206,8 @@ class RubricCriterion < Criterion
     weight
   end
 
-  # Returns the value entered when the criterion is set up.
-  def mark_set_up_value
+  # TODO: Get rid of this method once unification of flexible and rubric is finished
+  def mark_max
     get_weight
   end
 

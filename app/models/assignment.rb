@@ -630,7 +630,7 @@ class Assignment < ActiveRecord::Base
         # total percentage, total_grade
         result.concat(['','0'])
         # mark, weight
-        result.concat(get_set_up_value_for_criteria)
+        result.concat(get_max_mark_for_criteria)
         # extra-mark, extra-percentage
         result.concat(['',''])
       else
@@ -654,23 +654,18 @@ class Assignment < ActiveRecord::Base
 
   # Returns an array of either [mark, max] or [mark, weight].
   def get_marks_list(submission)
-    marks_list = []
-    get_criteria.each do |criterion|
-      mark = submission.get_latest_result
-                 .marks
-                 .where(markable_id: criterion.id)
-                 .first
-      marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
-                       criterion.mark_set_up_value])
+    get_criteria.map do |criterion|
+      mark = submission.get_latest_result.marks.find_by(markable_id: criterion.id)
+      [(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
+       criterion.mark_max]
     end
-    marks_list
   end
 
   # Returns an array of the form ['', max] or ['', weight] depending on the criteria.
   # This may not be a good name to account for the fact that we either return weight or max.
   # TODO This may change when unifying flexible and rubric.
-  def get_set_up_value_for_criteria
-    ([""] * get_criteria.count).zip(get_criteria.map(&:mark_set_up_value)).flatten
+  def get_max_mark_for_criteria
+    ([""] * get_criteria.count).zip(get_criteria.map(&:mark_max)).flatten
   end
 
   def replace_submission_rule(new_submission_rule)
