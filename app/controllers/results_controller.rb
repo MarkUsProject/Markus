@@ -35,7 +35,9 @@ class ResultsController < ApplicationController
 
   def edit
     @result = Result.find(params[:id])
+    @pr = PeerReview.find_by(result_id: @result.id)
     @assignment = Assignment.find(params[:assignment_id])
+    @original_assignment = @result.submission.grouping.assignment
     @submission = @result.submission
 
     if @submission.remark_submitted?
