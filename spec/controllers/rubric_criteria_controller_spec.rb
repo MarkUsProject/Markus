@@ -126,8 +126,7 @@ describe RubricCriteriaController do
       expect(4).to eq(rubric_criteria[3].position)
 
       expect(flash[:error]).to be_nil
-      expect(flash[:success]).to eq([I18n.t('csv_valid_lines',
-                                            valid_line_count: 4)])
+      expect(flash[:success]).to eq([t('csv_valid_lines', valid_line_count: 4)])
       expect(response).to redirect_to(action: 'index',
                                       controller: 'rubric_criteria',
                                       id: assignment.id)

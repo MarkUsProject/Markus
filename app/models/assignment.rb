@@ -263,13 +263,10 @@ class Assignment < ActiveRecord::Base
     short_identifier
   end
 
-  def total_mark
-    get_criteria.first.nil? ? 0.round(2) : get_criteria.first.total_mark
-  end
-
   # Returns the maximum possible mark for a particular assignment
-  def get_max_mark
-    get_criteria.first.nil? ? 0.round(2) : get_criteria.first.get_max_mark
+  # TODO: Change name to max_mark
+  def total_mark
+    get_criteria(:ta).map(&:max_mark).sum().round(2)
   end
 
   # calculates summary statistics of released results for this assignment
@@ -633,7 +630,7 @@ class Assignment < ActiveRecord::Base
         # total percentage, total_grade
         result.concat(['','0'])
         # mark, weight
-        result.concat(get_max_mark_for_criteria)
+        result.concat(get_set_up_value_for_criteria)
         # extra-mark, extra-percentage
         result.concat(['',''])
       else
@@ -655,16 +652,25 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  # Returns an array of arrays of the form [mark, max] for the corresponding criteria
+  # Returns an array of either [mark, max] or [mark, weight].
   def get_marks_list(submission)
-    get_criteria.first.nil? ? [] : get_criteria.first.get_marks_list(submission)
+    marks_list = []
+    get_criteria.each do |criterion|
+      mark = submission.get_latest_result
+                 .marks
+                 .where(markable_id: criterion.id)
+                 .first
+      marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
+                       criterion.mark_set_up_value])
+    end
+    marks_list
   end
 
-  # Returns an array of the form ['', max] or ['', weight] depending on the criteria
-  # This is not a good name right now because we either return weight or max
-  # TODO This may change when unifying flexible and rubric
-  def get_max_mark_for_criteria
-    get_criteria.first.nil? ? ['', 0] : get_criteria.first.get_max_mark_for_criteria
+  # Returns an array of the form ['', max] or ['', weight] depending on the criteria.
+  # This may not be a good name to account for the fact that we either return weight or max.
+  # TODO This may change when unifying flexible and rubric.
+  def get_set_up_value_for_criteria
+    ([""] * get_criteria.count).zip(get_criteria.map(&:mark_set_up_value)).flatten
   end
 
   def replace_submission_rule(new_submission_rule)
@@ -681,7 +687,7 @@ class Assignment < ActiveRecord::Base
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the rubric criteria.
-    get_criteria.count + 1
+    get_criteria.count > 0 ? get_criteria.last.position + 1 : 1
   end
 
   # Returns the class of the criteria that belong to this assignment.
@@ -695,7 +701,7 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  # Returns a filtered list of criteria
+  # Returns a filtered list of criteria.
   def get_criteria(user_visibility = :all)
     if user_visibility == :all
       get_all_criteria
@@ -707,11 +713,11 @@ class Assignment < ActiveRecord::Base
   end
 
   def get_all_criteria
-    criterion_class.where(assignment_id: self.id).order(:position)
+    criterion_class.where(assignment_id: id).order(:position)
   end
 
   def get_ta_visible_criteria
-    get_all_criteria.where(ta_visible:true)
+    get_all_criteria.where(ta_visible: true)
   end
 
   def get_peer_visible_criteria

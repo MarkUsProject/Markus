@@ -25,7 +25,7 @@ module CourseSummariesHelper
     @gef_weights = get_gef_marking_weights_for_all_marking_schemes
 
     @max_marks = Hash[Assignment.all.map do |a|
-      [a.id, a.get_max_mark]
+      [a.id, a.total_mark]
     end
     ]
     @gef_max_marks = Hash[GradeEntryForm.all.map do |gef|

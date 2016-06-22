@@ -49,14 +49,14 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       e = assert_raise CSVInvalidLineError do
         FlexibleCriterion.create_or_update_from_csv_row([], @assignment)
       end
-      assert_equal I18n.t('csv.invalid_row.invalid_format'), e.message
+      assert_equal t('csv.invalid_row.invalid_format'), e.message
     end
 
     should 'raise an error message on a 1 element row' do
       e = assert_raise CSVInvalidLineError do
         FlexibleCriterion.create_or_update_from_csv_row(%w(name), @assignment)
       end
-      assert_equal I18n.t('csv.invalid_row.invalid_format'), e.message
+      assert_equal t('csv.invalid_row.invalid_format'), e.message
     end
 
     should 'raise an error message on an invalid maximum value' do

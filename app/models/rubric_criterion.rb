@@ -51,7 +51,7 @@ class RubricCriterion < Criterion
   end
 
   def validate_total_weight
-    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if total_mark + (4 * (self.weight - self.weight_was)) <= 0
+    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if assignment.total_mark + (4 * (self.weight - self.weight_was)) <= 0
   end
 
   # Just a small effort here to remove magic numbers...
@@ -118,7 +118,7 @@ class RubricCriterion < Criterion
   #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
-      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
     end
     working_row = row.clone
     name = working_row.shift
@@ -129,7 +129,7 @@ class RubricCriterion < Criterion
     begin
       criterion.weight = Float(working_row.shift)
     rescue ArgumentError
-      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -203,7 +203,17 @@ class RubricCriterion < Criterion
   end
 
   def get_weight
-    self.weight
+    weight
+  end
+
+  # Returns the value entered when the criterion is set up.
+  def mark_set_up_value
+    get_weight
+  end
+
+  # Returns the maximum mark for a particular criterion.
+  def max_mark
+    weight * 4
   end
 
   def round_weight
@@ -267,7 +277,7 @@ class RubricCriterion < Criterion
     self.assignment.submissions.each { |submission| submission.get_latest_result.update_total_mark }
   end
 
-  # Checks if the criterion is visible to either the ta or the peer reviewer
+  # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
         errors.add(:ta_visible, I18n.t('rubric_criteria.visibility_error'))
@@ -283,35 +293,6 @@ class RubricCriterion < Criterion
       mark_to_change.mark = criterion_name
     end
     mark_to_change.save
-  end
-
-  # Calculates the maximum mark that could be achieved considering all criteria marked
-  def total_mark
-    self.assignment.get_criteria(:ta).map{ |criterion| criterion.weight * 4 }.sum().round(2)
-  end
-
-  # Returns an array of arrays of the form [mark, weight] for the assignment's criteria
-  def get_marks_list(submission)
-    marks_list = []
-    self.assignment.get_criteria.each do |criterion|
-      mark = submission.get_latest_result
-                 .marks
-                 .where(markable_id: criterion.id)
-                 .first
-      marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
-                       criterion.weight])
-    end
-    marks_list
-  end
-
-  # Calculates the maximum possible mark for a particular assignment
-  def get_max_mark
-    total_mark
-  end
-
-  # Returns an array of the form ['', weight1, '', weight2, ...].
-  def get_max_mark_for_criteria
-    self.assignment.get_criteria.pluck("''", :weight).flatten
   end
 
 end
