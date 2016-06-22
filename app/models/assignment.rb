@@ -7,6 +7,9 @@ class Assignment < ActiveRecord::Base
     rubric: 'rubric'
   }
 
+  MIN_PEER_REVIEWS_PER_PERSON = 1
+  MAX_PEER_REVIEWS_PER_PERSON = 5
+
   has_many :rubric_criteria,
            -> { order(:position) },
            class_name: 'RubricCriterion',
