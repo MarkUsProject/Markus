@@ -128,6 +128,10 @@ class User < ActiveRecord::Base
     grouping.current_submission_used
   end
 
+  def grouping_for(aid)
+    groupings.find {|g| g.assignment_id == aid}
+  end
+
   def self.upload_user_list(user_class, user_list, encoding)
     max_invalid_lines = 10
     num_update = 0

@@ -336,13 +336,22 @@ class ResultsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @submission_file_id = params[:submission_file_id]
     @focus_line = params[:focus_line]
-
+    @grouping = @current_user.grouping_for(Integer(params[:assignment_id]))
     @file = SubmissionFile.find(@submission_file_id)
     @result = @file.submission.get_latest_result
-    # Is the current user a student?
+
+    if @assignment.is_peer_review?
+      prs = PeerReview.where(reviewer_id: @grouping.id)
+      pr = prs.find {|p| Result.find(p.result_id).submission.id == @file.submission.id}
+    end
+
+    #Is the current user a student?
     if current_user.student?
-      # The Student does not have access to this file. Display an error.
-      if @file.submission.grouping.membership_status(current_user).nil?
+      # If the files are not from the student's own grouping for the assignment,
+      # or if this is a peer review assignment and the student is not a reviewer of this
+      # submission, then student does not have access to this file. Display an error.
+      if @file.submission.grouping.membership_status(current_user).nil? &&
+        (@assignment.is_peer_review? && pr.nil?)
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
