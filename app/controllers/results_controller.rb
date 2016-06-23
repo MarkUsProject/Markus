@@ -10,16 +10,18 @@ class ResultsController < ApplicationController
                          :note_message,
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
-                only: [:update_mark, :create, :add_extra_mark,
+                only: [:create, :add_extra_mark,
                        :next_grouping, :update_overall_comment,
                        :remove_extra_mark,
-                       :toggle_marking_state,
                        :note_message]
   before_filter :authorize_for_user,
                 only: [:codeviewer, :download, :download_zip, :run_tests]
   before_filter :authorize_for_student,
                 only: [:view_marks, :update_remark_request,
                        :cancel_remark_request]
+  before_filter only: [:edit, :update_mark, :toggle_marking_state] do |c|
+                  c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:id])
+                end
   after_filter  :update_remark_request_count,
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]

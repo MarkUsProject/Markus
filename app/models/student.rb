@@ -313,4 +313,19 @@ class Student < User
     end
   end
 
+  def is_reviewer_for?(aid, result_id)
+    # aid is the peer review assignment id, and result_id
+    # is the peer review result
+    group =  grouping_for(Integer(aid))
+    if group.nil?
+      return false
+    end
+    prs = PeerReview.where(reviewer_id: group.id)
+    if prs.first.nil?
+      return false
+    end
+    pr = prs.find {|p| p.result_id == Integer(result_id)}
+    !pr.nil?
+  end
+
 end
