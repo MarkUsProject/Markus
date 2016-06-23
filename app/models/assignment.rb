@@ -953,6 +953,11 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  # TODO - Convert to a :through association
+  def get_peer_reviews
+    PeerReview.where(reviewer: groupings)
+  end
+
   ### REPO ###
 
   def repository_name

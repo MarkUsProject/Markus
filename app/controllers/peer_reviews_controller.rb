@@ -1,6 +1,7 @@
 class PeerReviewsController < ApplicationController
   include GroupsHelper
   include PeerReviewHelper
+  include RandomAssignHelper
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
   before_filter :authorize_only_for_admin
@@ -37,8 +38,9 @@ class PeerReviewsController < ApplicationController
     selected_reviewee_group_ids = params[:selectedRevieweeGroupIds]
     reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups]
     action_string = params[:actionString]
+    num_groups_for_reviewers = params[:numGroupsForReviewers]
 
-    if action_string == 'random_assign' or action_string == 'assign'
+    if action_string == 'assign'
       if selected_reviewer_group_ids.nil? or selected_reviewer_group_ids.empty?
         render text: t('peer_review.empty_list_reviewers'), status: 400
         return
@@ -50,7 +52,7 @@ class PeerReviewsController < ApplicationController
 
     case action_string
       when 'random_assign'
-        randomly_assign
+        perform_random_assignment(@assignment, 3)  # TODO - Hardcoding to be fixed in another branch
       when 'assign'
         reviewer_groups = Grouping.where(id: selected_reviewer_group_ids)
         reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
@@ -63,10 +65,6 @@ class PeerReviewsController < ApplicationController
     end
 
     head :ok
-  end
-
-  def randomly_assign
-    # TODO
   end
 
   def assign(reviewer_groups, reviewee_groups)
