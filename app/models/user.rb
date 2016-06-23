@@ -132,6 +132,23 @@ class User < ActiveRecord::Base
     groupings.find {|g| g.assignment_id == aid}
   end
 
+  def is_reviewer_for?(aid, result_id)
+    # aid is the peer review assignment id, and result_id
+    # is the peer review result
+
+    group =  grouping_for(Integer(aid))
+    if group.nil?
+      return false
+    end
+    prs = PeerReview.where(reviewer_id: group.id)
+    if prs.first.nil?
+      return false
+    end
+    pr = prs.find {|p| p.result_id == Integer(result_id)}
+
+    is_a?(Student) && !pr.nil?
+  end
+
   def self.upload_user_list(user_class, user_list, encoding)
     max_invalid_lines = 10
     num_update = 0

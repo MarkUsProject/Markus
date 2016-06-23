@@ -38,8 +38,12 @@ class ResultsController < ApplicationController
   def edit
     @result = Result.find(params[:id])
     @pr = PeerReview.find_by(result_id: @result.id)
+
     @assignment = Assignment.find(params[:assignment_id])
     @original_assignment = @result.submission.grouping.assignment
+    @assignment_for_criteria = @current_user.is_reviewer_for?(@assignment.id, @result.id) ?
+        @original_assignment : @assignment
+
     @submission = @result.submission
 
     if @submission.remark_submitted?
@@ -60,8 +64,13 @@ class ResultsController < ApplicationController
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
     @old_marks_map = Hash.new
+
+    @reviewer_mark_criteria = @original_assignment.get_criteria(:peer)
     @mark_criteria = @assignment.get_criteria(:ta)
-    @mark_criteria.each do |criterion|
+    @criteria = @current_user.is_reviewer_for?(@assignment.id, @result.id) ?
+         @reviewer_mark_criteria : @mark_criteria
+
+    @criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       @marks_map[criterion.id] = mark
       # Loading up previous results for the case of a remark
