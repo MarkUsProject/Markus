@@ -98,8 +98,8 @@
           <ErrorDiv error={this.state.error} />
           <div className="peer-review-scrollbar-div">
             <%= j raw t('peer_review.number_per_group') %>: <input type="number"
-                   min="<%= Assignment::MIN_PEER_REVIEWS_PER_PERSON %>"
-                   max="<%= Assignment::MAX_PEER_REVIEWS_PER_PERSON %>" />
+                   name="peerReviewScrollbar"
+                   min="<%= Assignment::MIN_PEER_REVIEWS_PER_GROUP %>" />
           </div>
           <div className='columns'>
             <ReviewerTable ref="reviewerTable"
