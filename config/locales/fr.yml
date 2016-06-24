@@ -210,6 +210,9 @@ fr:
         has_peer_review: "Activer élèves-étudiants d'examen par les pairs"
         configure_peer_review: "Configurer examen par les pairs"
         peer_review_record_missing: "Erreur: Examen par les pairs cession manquant dans la base de données"
+        start_peer_review: "Examen par les pairs"
+        peer_review_results: "Examen par les pairs Résultats"
+        review: "Avis"
     peer_review:
         problem: "Un problème inattendu est survenue"
         number_of_reviews_header: "Nombre d'avis"
@@ -463,6 +466,7 @@ fr:
       repository_name:      "Répertoire : %{repository}"
       commit_date:          "Date d'envoi (commit)"
       marking_state:        "Affichage de la note"
+      review_state:         "Avis Etat"
       grace_credits_used:   "Utilisation des \"grace credits\""
       final_grade:          "Note finale"
       class_average:        "Moyenne : %{results_average}"
@@ -724,6 +728,7 @@ fr:
     #Sutdent's View (student)
     student:
       assignment: "Projet %{short_identifier}"
+      peer_assignment: "Projet d'examen par les pairs %{short_identifier}"
       group_information: "Informations sur le groupe"
       group_not_valid: "Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment."
       overview: "Vue d'ensemble"
@@ -731,6 +736,7 @@ fr:
       files: "Fichiers"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> fichier(s) requis sont manquants</span>"
       no_submission_yet: "Vous n'avez encore rien envoyé"
+      no_peer_submission_yet: "Vous avez aucune observation à révision."
       no_group_yet: "Vous ne faites pas encore partie d'un groupe"
       grace_date_passed: "et la période de grâce pour ce projet est terminée"
       not_allowed_to_form_group: "Vous n'êtes pas autorisé à former vous-même des groupes pour ce projet.
