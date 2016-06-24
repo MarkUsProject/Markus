@@ -232,6 +232,9 @@ en:
         has_peer_review: "Enable student-to-student peer review"
         configure_peer_review: "Configure peer review"
         peer_review_record_missing: "Error: Peer review assignment missing from database"
+        start_peer_review: "Peer-review"
+        peer_review_results: "Peer Review Results"
+        review: "Review"
     peer_review:
         problem: "An unexpected problem occured"
         number_of_reviews_header: "Num reviews"
@@ -481,6 +484,7 @@ en:
       repository:           "Repository"
       commit_date:          "Commit Date"
       marking_state:        "Marking State"
+      review_state:         "Review State"
       grace_credits_used:   "Grace Credits Used"
       final_grade:          "Final Grade"
       class_average:        "Class Average: %{results_average}"
@@ -757,6 +761,7 @@ en:
         error:   "Failed to update student."
 
       assignment: "Assignment %{short_identifier}"
+      peer_assignment: "Peer Review Assignment %{short_identifier}"
       group_information: "Group Information"
       group_not_valid: "Your group is not valid. You can't submit anything."
       overview: "Overview"
@@ -764,6 +769,7 @@ en:
       files: "files"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> missing required file(s)</span>"
       no_submission_yet: "You have not made any submissions yet"
+      no_peer_submission_yet: "You have no submissions to review yet."
       no_group_yet: "You don't have a group yet"
       grace_date_passed: "and the grace period for this assignment has passed"
       not_allowed_to_form_group: "You are not allowed to form groups yourself for this assignment.
