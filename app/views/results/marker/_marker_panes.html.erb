@@ -140,7 +140,8 @@
                          locals: { mark_criterion: mark_criterion,
                                    result: result,
                                    mark: marks_map[mark_criterion.id],
-                                   old_mark: @old_marks_map[mark_criterion.id] } %>
+                                   old_mark: @old_marks_map[mark_criterion.id],
+                                   marking_scheme: @assignment.marking_scheme_type} %>
               <% end -%>
             </ul>
           </div>

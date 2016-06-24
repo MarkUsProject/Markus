@@ -2,7 +2,6 @@ require 'encoding'
 
 class RubricCriterion < Criterion
   self.table_name = 'rubric_criteria' # set table name correctly
-  include ActiveModel::Validations
 
   validates_presence_of :weight
   validates_numericality_of :weight
@@ -116,7 +115,7 @@ class RubricCriterion < Criterion
     name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.rubric_criteria.find_or_create_by(
+    criterion = assignment.get_criteria.find_or_create_by(
       name: name)
     #Check that the weight is not a string.
     begin
@@ -165,7 +164,7 @@ class RubricCriterion < Criterion
     name = key[0]
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.rubric_criteria.find_or_create_by(
+    criterion = assignment.get_criteria.find_or_create_by(
       name: name)
     #Check that the weight is not a string.
     begin
@@ -262,11 +261,9 @@ class RubricCriterion < Criterion
 
   # Checks if the criterion is visible to either the ta or the peer reviewer
   def visible?
-    unless ta_visible
-      unless peer_visible
+    unless ta_visible || peer_visible
         errors.add(:ta_visible, I18n.t('rubric_criteria.visibility_error'))
         false
-      end
     end
     true
   end

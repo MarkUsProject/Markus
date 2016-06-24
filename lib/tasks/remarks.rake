@@ -47,7 +47,7 @@ namespace :db do
 
     #Automate remarks for assignment using flexible criteria
     if remark_group.assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
-      remark_group.assignment.flexible_criteria.each do |flexible|
+      remark_group.assignment.get_criteria.each do |flexible|
         mark = create_mark(remark_submission.remark_result.id,
                             remark_group.assignment.marking_scheme_type,
                             flexible)
@@ -58,7 +58,7 @@ namespace :db do
 
     #Automate remarks for assignment using rubric criteria
     if remark_group.assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-      remark_group.assignment.rubric_criteria.each do |rubric|
+      remark_group.assignment.get_criteria.each do |rubric|
         mark = create_mark(remark_submission.remark_result.id,
                             remark_group.assignment.marking_scheme_type,
                             rubric)

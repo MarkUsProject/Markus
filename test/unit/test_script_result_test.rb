@@ -17,10 +17,10 @@ class TestScriptResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testscriptresult = TestScriptResult.make(:submission    => @sub,
-                                                :grouping      => @sub.grouping,
-                                                :test_script   => @script,
-                                                :marks_earned  => 5)
+      @testscriptresult = TestScriptResult.make(submission: @sub,
+                                                grouping: @sub.grouping,
+                                                test_script: @script,
+                                                marks_earned: 5)
     end
 
     should "return true when a valid test script result is created" do
@@ -42,10 +42,10 @@ class TestScriptResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testscriptresult = TestScriptResult.make(:submission    => @sub,
-                                                :grouping      => @sub.grouping,
-                                                :test_script   => @script,
-                                                :marks_earned  => 5)
+      @testscriptresult = TestScriptResult.make(submission: @sub,
+                                                grouping: @sub.grouping,
+                                                test_script: @script,
+                                                marks_earned: 5)
     end
 
     should "return false when test script is nil" do
@@ -71,10 +71,10 @@ class TestScriptResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testscriptresult = TestScriptResult.make(:submission    => @sub,
-                                                :grouping      => @sub.grouping,
-                                                :test_script   => @script,
-                                                :marks_earned  => 5)
+      @testscriptresult = TestScriptResult.make(submission: @sub,
+                                                grouping: @sub.grouping,
+                                                test_script: @script,
+                                                marks_earned: 5)
     end
 
     should "be able to delete a test script result" do

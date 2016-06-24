@@ -7,11 +7,11 @@
   %>
   <% criterion_options = { '-' => nil }
     if !@assignment.rubric_criteria_count.nil?
-       @assignment.rubric_criteria(order: 'position').each do |criterion|
+       @assignment.get_criteria.order(:position).each do |criterion|
          criterion_options[criterion.name] = criterion.id
        end
      else
-       @assignment.flexible_criteria(order: 'position').each do |criterion|
+       @assignment.get_criteria.order(:position).each do |criterion|
          criterion_options[criterion.name] = criterion.id
        end
      end

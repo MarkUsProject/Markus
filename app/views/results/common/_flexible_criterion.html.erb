@@ -1,19 +1,36 @@
-<div class='clear'></div>
-
-<div id="<%="mark_criterion_title_#{mark_criterion.id}_old_mark"%>"
-     class="mark_criterion_old_mark float_left">
-  <strong><%= if(!old_mark.nil? && !old_mark.mark.nil?) then
-                "#{I18n.t('marker.marks.old')}#{old_mark.mark.to_s}"
-              else "" end %></strong>
-</div>
-
-<% if !mark.mark.nil? -%>
-  <div id="<%= "mark_criterion_title_#{mark.id}_mark" %>"
-       class='flexible_criterion_description mark_description '
-       data-id='<%= mark_criterion.id %>'>
-
-      <p><%= mark_criterion.description %></p>
-      <strong><%= mark.mark %> / <%= mark_criterion.max %></strong>
-  </div>
+<%
+  if view == 'marker'
+    onclick = "focus_mark_criterion(#{mark_criterion.id}, 'flexible')"
+    criterion_name_class = 'title_div_level unreleased'
+    old_mark_class = 'old_mark old_mark_unreleased'
+  else
+    onclick = ''
+    criterion_name_class = 'title_div_level released'
+    old_mark_class = 'old_mark old_mark_released' -%>
 <% end -%>
 
+<div class="<%= criterion_name_class %>" onclick="<%= onclick %>">
+  <%= (mark_criterion.name) %>
+</div>
+
+<div class='mark_flexible'>
+  <% if view == 'marker' %>
+    <%= text_field_tag('mark_' + mark.id.to_s, mark.mark,
+                       size: 4,
+                       class: 'mark_grade_input' + (!old_mark.nil? && (mark.mark != old_mark.mark) ? ' remarked' : ' not_remarked'),
+                       data: {id: mark_criterion.id,
+                              oldmark: old_mark.nil? ? 'none' : old_mark.mark,
+                              mark: mark.id.to_s},
+                       'data-action' => url_for(action: :update_mark,
+                                                mark_id: mark.id)) %>
+    /&nbsp; <%= mark_criterion.max.to_s%>
+  <% else %>
+    <%= mark.mark %> /&nbsp; <%= mark_criterion.max.to_s%>
+  <% end %>
+</div>
+
+<div id="<%="flexible_#{mark_criterion.id}_old_mark"%>" class="<%= old_mark_class %>">
+  <% if !old_mark.nil? && (mark.mark != old_mark.mark) %>
+      (Old Mark: <%= old_mark.mark %>)
+  <% end %>
+</div>

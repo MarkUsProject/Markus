@@ -101,7 +101,7 @@ namespace :markus do
           rc.update_attributes(default_levels)
           rc.assignment = assignment
           rc.save!
-          assignment.rubric_criteria << rc
+          assignment.get_criteria << rc
         end
         assignment.save
 
@@ -210,7 +210,7 @@ namespace :markus do
               result = submission.get_latest_result
               # Create a mark for each criterion and attach to result
               puts "Generating mark ..."
-              assignment.rubric_criteria.each do |criterion|
+              assignment.get_criteria.each do |criterion|
                 # Save a mark for each criterion
                 m = Mark.new()
                 m.markable_type = "RubricCriterion"

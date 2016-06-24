@@ -391,7 +391,7 @@ ul.annotation_text_list {
   font-size: 10px;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding-top: 10px;
   width: 100%;
 
   li {
@@ -401,15 +401,6 @@ ul.annotation_text_list {
     width: 100%;
     background: $white;
 
-    .mark_criterion_expand {
-      float: left;
-      font-size: 1.2em;
-      width: 1em;
-      cursor: pointer;
-    }
-
-    .mark_description {
-    }
   }
 
   table tr {
@@ -469,6 +460,29 @@ ul.annotation_text_list {
     border: 1px solid #dadada;
     border-collapse: collapse;
     padding: 4px;
+    width: 100%
+  }
+
+  td {
+    border-bottom:1px solid #dadada;
+    border-top:1px solid #dadada;
+    font-size: 1.1em;
+    padding: 4px;
+  }
+
+}
+
+.mark_criterion_level_released_container {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 20px;
+
+  table {
+    background: #fff;
+    border: 1px solid #dadada;
+    border-collapse: collapse;
+    padding: 4px;
+    width: 100%
   }
 
   td {
@@ -479,80 +493,174 @@ ul.annotation_text_list {
   }
 }
 
-.rubric_criterion_link {
-  padding: 0.25em 0em !important;
+.editing {
+  background: #f9ffb1;
+  border: 1px dashed #d6de78;
 }
-
-.rubric_criterion_level {
-  background: $white;
-}
-
-.rubric_criterion_level_old_mark {
-  background: #fdfebc;
-}
-
-.rubric_criterion_description {
-  margin-left: 3em !important;
-}
-
-.mark_grade_input{
-  font-size: 1em;
-  margin: 1px 1px 4px;
-  min-width: 0;
-  padding: 2px;
-}
-
-  .editing {
-    background: #f9ffb1;
-    border: 1px dashed #d6de78;
-  }
 
 #selected_criterion_name {
   font-weight: bold;
 }
 
-.mark_criterion_title_div_level {
-  padding-top: 2px;
-  font-size: 12px;
-  font-weight: bold;
-  padding-bottom: 5px;
-  padding-left: 30px;
-  cursor: pointer;
+/* Rubric Criterion Styles */
+
+.rubric_criterion {
+
+  &.expanded {
+    .rubric_criterion_level {
+      display: inline-block;
+    }
+  }
+
+  &.not_expanded {
+    .rubric_criterion_level {
+      display: none;
+    }
+
+    .rubric_criterion_level_old_mark {
+      display: inline-block;
+    }
+  }
+
+  .description {
+    width: 82%;
+    float: left;
+  }
+
+  .mark {
+    float: right;
+    font-weight: bold;
+    margin-left: 15px;
+    margin-right: 10px;
+  }
+
+  .rubric_criterion_level {
+    background: $white;
+    width: 100%;
+  }
+
+  .rubric_criterion_level_old_mark {
+    background: #fdfebc;
+    width: 100%;
+  }
+
+  .title_div_level {
+    padding-top: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    cursor: pointer;
+  }
+
+  .criterion_expand {
+    float: left;
+    font-size: 1.2em;
+    width: 1em;
+    cursor: pointer;
+    padding-top: 3px;
+  }
+
+  .criterion_link {
+    padding: 0.25em 0em !important;
+  }
+
 }
 
-.flexible_criterion_title_div_level {
-  padding-top: 2px;
-  font-size: 12px;
-  font-weight: bold;
-  float: left;
-  padding-right: 10px;
-  cursor: pointer;
-}
+/* Flexible Criterion Styles */
 
-.flexible_criterion_expand {
-  float: left;
-  cursor: pointer;
-  font-size: 1.2em;
-  width: 1em;
-}
+.flexible_criterion {
 
-.flexible_criterion_info {
-  padding-left: 10px;
-  padding-bottom: 5px;
-  margin-left: 5px;
-  margin-top: 3px
-}
+  .criterion_expand {
+    float: left;
+    cursor: pointer;
+    font-size: 1.2em;
+    width: 1em;
+    padding-top: 2px;
+    height: 20px;
+  }
 
-.flexible_criterion_description {
-  margin: 5px 5px 5px 5px;
-  margin-left: 5px !important;
-  padding-bottom: 5px;
-  padding-left: 10px;
-}
+  &.expanded {
+    .criterion_info {
+      display: block;
+    }
+  }
 
-.mark_flexible {
-  font-weight: bold;
-  font-size: 11px;
+  &.not_expanded {
+    .criterion_info {
+      display: none;
+    }
+  }
+
+  .unexpandable {
+    .criterion_expand {
+      visibility: hidden;
+      cursor: auto !important;
+    }
+
+    .title_div_level {
+      cursor: auto !important;
+    }
+  }
+
+  .criterion_info {
+    padding-left: 10px;
+    padding-bottom: 5px;
+    margin-left: 5px;
+    float: left;
+    clear: both;
+  }
+
+  .title_div_level {
+    padding-top: 2px;
+    font-size: 12px;
+    float: left;
+    padding-right: 10px;
+    font-weight: bold;
+    padding-bottom: 6px;
+
+    &.released {
+      padding-left: 15px;
+    }
+
+    &.unreleased {
+      cursor: pointer;
+    }
+  }
+
+  .mark_flexible {
+    font-weight: bold;
+    font-size: 11px;
+    float: right;
+
+    .mark_grade_input{
+      font-size: 1em;
+      margin: 1px 1px 4px;
+      min-width: 0;
+      padding: 2px;
+    }
+  }
+
+  .old_mark {
+    font-size: 11px;
+    float: right;
+    padding-right: 10px;
+
+    &.old_mark_unreleased {
+      padding-top: 4px;
+    }
+  }
+
+  .mark_grade_input {
+    &.remarked {
+      background-color: #81d881;
+    }
+
+    &.not_remarked {
+      background-color: white;
+    }
+  }
+
 }
 
 /* Submission Rule Pane */

@@ -43,12 +43,13 @@
     <span><%= t('flexible_criteria.description_hint') %></span>
     <br>
     <br>
-    <h4><span><%= I18n.t(:visibility) %></span></h4>
+    <h4><span><%= t('visibility') %></span></h4>
     <h5>
       <%= f.check_box :ta_visible,
                       onclick: 'set_onbeforeunload(true);' %>
       <%= f.label :ta_visible,
                   t('flexible_criteria.ta_visible') %>
+      <br>
       <%= f.check_box :peer_visible,
                       onclick: 'set_onbeforeunload(true);' %>
       <%= f.label :peer_visible,

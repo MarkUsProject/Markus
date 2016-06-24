@@ -44,7 +44,7 @@ module SummariesHelper
       g = grouping.attributes
       g[:class_name] = get_tr_class(grouping)
       g[:name] = grouping.get_group_name
-      g[:name_url] = get_grouping_name_url(grouping, final_due_date, result)
+      g[:name_url] = get_grouping_name_url(grouping, result)
       g[:section] = grouping.section
       g[:repo_name] = grouping.group.repository_name
       g[:repo_url] = repo_browser_assignment_submission_path(assignment,
@@ -62,12 +62,7 @@ module SummariesHelper
   def get_grouping_criteria(assignment, grouping)
     # put all criteria in a hash for retrieval
     criteria_hash = Hash.new
-    if (assignment.marking_scheme_type ==
-        Assignment::MARKING_SCHEME_TYPE[:flexible])
-      criteria = assignment.flexible_criteria
-    else
-      criteria = assignment.rubric_criteria
-    end
+    criteria = assignment.get_criteria
     criteria.each do |criterion|
       key = 'criterion_' + criterion.id.to_s
       if grouping.has_submission?

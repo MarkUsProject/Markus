@@ -15,7 +15,7 @@ class AdminsControllerTest < AuthenticatedControllerTest
   context 'No user' do
     should 'redirect to the index' do
       get :index
-      assert_redirected_to :action => 'login', :controller => 'main'
+      assert_redirected_to action: 'login', controller: 'main'
     end
   end
 
@@ -37,11 +37,11 @@ class AdminsControllerTest < AuthenticatedControllerTest
     should 'be able to create Admin' do
        post_as @admin,
                :create,
-               :user => {:user_name => 'jdoe',
-                         :last_name => 'Doe',
-                         :first_name => 'Jane'}
+               user: {user_name: 'jdoe',
+                      last_name: 'Doe',
+                      first_name: 'Jane'}
        a = Admin.find_by_user_name('jdoe')
-       assert_redirected_to :action => 'index'
+       assert_redirected_to action: 'index'
     end
 
     context 'with a second user' do
@@ -52,18 +52,18 @@ class AdminsControllerTest < AuthenticatedControllerTest
       should 'be able to update' do
         put_as @admin,
                :update,
-               :id => @admin2.id,
-               :user => {:last_name => 'John',
-                         :first_name => 'Doe'}
+               id: @admin2.id,
+               user: {last_name: 'John',
+                      first_name: 'Doe'}
 
-        assert_redirected_to :action => 'index'
+        assert_redirected_to action: 'index'
         assert_equal I18n.t('admins.update.success',
-                            :user_name => @admin2.user_name),
+                            user_name: @admin2.user_name),
                      flash[:success]
       end
 
       should 'be able to edit' do
-        get_as @admin, :edit, :id => @admin2.id
+        get_as @admin, :edit, id: @admin2.id
         assert_response :success
         assert_not_nil assigns(:user)
       end

@@ -25,18 +25,18 @@ class SectionsControllerTest < AuthenticatedControllerTest
     end
 
     should 'on edit section' do
-      get_as @student, :edit, :id => Section.make.id
+      get_as @student, :edit, id: Section.make.id
       assert respond_with :missing
     end
 
     should 'on update new section' do
-      put_as @student, :update, :id => Section.make.id
+      put_as @student, :update, id: Section.make.id
       assert_response :missing
     end
 
     should 'not be able to delete a section' do
       section = Section.make
-      delete_as @student, :destroy, :id => section
+      delete_as @student, :destroy, id: section
       assert respond_with :missing
       assert_not_nil Section.find(section.id)
     end
@@ -53,16 +53,16 @@ class SectionsControllerTest < AuthenticatedControllerTest
     end
 
     should 'creating a section' do
-      post_as @admin, :create, {:section => {:name => 'section_01'}}
+      post_as @admin, :create, {section: {name: 'section_01'}}
 
       assert_response :redirect
-      assert_equal flash[:success], I18n.t('section.create.success', :name => 'section_01')
+      assert_equal flash[:success], I18n.t('section.create.success', name: 'section_01')
       assert Section.find_by_name('section_01')
     end
 
    should 'not be able to create a section with the same name as a existing one' do
       section = Section.make
-      post_as @admin, :create, {:section => {:name => section.name}}
+      post_as @admin, :create, {section: {name: section.name}}
       assert_response :success
       assert_equal flash[:error],
                    I18n.t('section.create.error')
@@ -70,7 +70,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
 
     should 'not be able to create a section with a blank name' do
       section = Section.make
-      post_as @admin, :create, {:section => {:name => ''}}
+      post_as @admin, :create, {section: {name: ''}}
       assert respond_with :success
       assert_nil Section.find_by_name('')
       assert_response :success
@@ -80,7 +80,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
 
     should 'be able to edit a section' do
       section = Section.make
-      get_as @admin, :edit, :id => section.id
+      get_as @admin, :edit, id: section.id
       assert_response :success
     end
 
@@ -88,18 +88,18 @@ class SectionsControllerTest < AuthenticatedControllerTest
       @section = Section.make
       put_as @admin,
               :update,
-              :id => @section.id,
-              :section => {:name => 'no section'}
+              id: @section.id,
+              section: {name: 'no section'}
 
       assert_response :redirect
-      assert_equal flash[:success], I18n.t('section.update.success', :name => 'no section')
+      assert_equal flash[:success], I18n.t('section.update.success', name: 'no section')
 
       assert_not_nil Section.find_by_name('no section')
     end
 
     should 'not see a table if no students in this section' do
       section = Section.make
-      get_as @admin, :edit, :id => section.id
+      get_as @admin, :edit, id: section.id
       assert_nil response.body.to_s.match('section_students')
     end
 
@@ -107,7 +107,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
       section = Section.make
       student = Student.make
       section.students << student
-      get_as @admin, :edit, :id => section.id
+      get_as @admin, :edit, id: section.id
       assert_not_nil response.body.to_s.match('section_students')
     end
 
@@ -116,8 +116,8 @@ class SectionsControllerTest < AuthenticatedControllerTest
       @section2 = Section.make
       put_as @admin,
               :update,
-              :id => @section.id,
-              :section => {:name => @section2.name}
+              id: @section.id,
+              section: {name: @section2.name}
       assert_response :success
       assert_equal I18n.t('section.update.error'), flash[:error]
     end
@@ -129,7 +129,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
 
       should 'be able to delete a section with no students' do
         assert_difference('Section.count', -1) do
-          delete_as @admin, :destroy, :id => @section.id
+          delete_as @admin, :destroy, id: @section.id
         end
         assert_equal I18n.t('section.delete.success'), flash[:success]
       end
@@ -137,7 +137,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
       should 'not be able to delete a section with students in it' do
         @student = Student.make
         @section.students << @student
-        delete_as @admin, :destroy, :id => @section.id
+        delete_as @admin, :destroy, id: @section.id
         assert_equal I18n.t('section.delete.not_empty'), flash[:error]
         assert_not_nil Section.find(@section.id)
       end
