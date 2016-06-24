@@ -10,7 +10,8 @@ class AssignmentsController < ApplicationController
                               :index,
                               :student_interface,
                               :update_collected_submissions,
-                              :render_feedback_file]
+                              :render_feedback_file,
+                              :peer_review]
 
   before_filter      :authorize_for_student,
                      only: [:student_interface,
@@ -20,7 +21,8 @@ class AssignmentsController < ApplicationController
                             :invite_member,
                             :creategroup,
                             :join_group,
-                            :decline_invitation]
+                            :decline_invitation,
+                            :peer_review]
 
   before_filter      :authorize_for_user,
                      only: [:index, :render_feedback_file]
@@ -60,7 +62,8 @@ class AssignmentsController < ApplicationController
   end
 
   def student_interface
-    @assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:id])
+    @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
     if @assignment.is_hidden
       render 'shared/http_status',
              formats: [:html],
@@ -126,6 +129,68 @@ class AssignmentsController < ApplicationController
       @num_submitted_files = @grouping.number_of_submitted_files
       @num_missing_assignment_files = @grouping.missing_assignment_files.length
       repo.close
+    end
+  end
+
+  def peer_review
+    assignment = Assignment.find(params[:id])
+    @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
+    if @assignment.is_hidden
+      render 'shared/http_status',
+             formats: [:html],
+             locals: {
+                 code: '404',
+                 message: HttpStatusHelper::ERROR_CODE['message']['404']
+             },
+             status: 404,
+             layout: false
+      return
+    end
+
+    @student = current_user
+    @grouping = @student.accepted_grouping_for(@assignment.id)
+    @penalty = @assignment.submission_rule
+    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
+
+    if @student.section &&
+        !@student.section.section_due_date_for(@assignment.id).nil?
+      @due_date =
+          @student.section.section_due_date_for(@assignment.id).due_date
+    end
+    if @due_date.nil?
+      @due_date = @assignment.due_date
+    end
+    if @assignment.past_all_collection_dates?
+      flash_now(:notice, t('browse_submissions.grading_can_begin'))
+    else
+      if @assignment.section_due_dates_type
+        section_due_dates = Hash.new
+        now = Time.zone.now
+        Section.all.each do |section|
+          collection_time = @assignment.submission_rule
+                                .calculate_collection_time(section)
+          collection_time = now if now >= collection_time
+          if section_due_dates[collection_time].nil?
+            section_due_dates[collection_time] = Array.new
+          end
+          section_due_dates[collection_time].push(section.name)
+        end
+        section_due_dates.each do |collection_time, sections|
+          sections = sections.join(', ')
+          if(collection_time == now)
+            flash_now(:notice, t('browse_submissions.grading_can_begin_for_sections',
+                                 sections: sections))
+          else
+            flash_now(:notice, t('browse_submissions.grading_can_begin_after_for_sections',
+                                 time: l(collection_time, format: :long_date),
+                                 sections: sections))
+          end
+        end
+      else
+        collection_time = @assignment.submission_rule.calculate_collection_time
+        flash_now(:notice, t('browse_submissions.grading_can_begin_after',
+                             time: l(collection_time, format: :long_date)))
+      end
     end
   end
 

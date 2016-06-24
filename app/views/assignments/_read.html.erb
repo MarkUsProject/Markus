@@ -105,14 +105,16 @@
     </div>
   <% end %>
 
-  <h3><%= t('assignment.required_files_read') %></h3>
-  <% if @assignment.assignment_files.length == 0 %>
-    <p class='notice'> <%= t('assignment.no_required_files_read') %> </p>
-  <% else %>
-    <ul>
-      <% @assignment.assignment_files.each do |assignment_file| %>
-        <li><%= assignment_file.filename %></li>
-      <% end %>
-    </ul>
+  <% unless peer_review %>
+    <h3><%= t('assignment.required_files_read') %></h3>
+    <% if @assignment.assignment_files.length == 0 %>
+      <p class='notice'> <%= t('assignment.no_required_files_read') %> </p>
+    <% else %>
+      <ul>
+        <% @assignment.assignment_files.each do |assignment_file| %>
+          <li><%= assignment_file.filename %></li>
+        <% end %>
+      </ul>
+    <% end %>
   <% end %>
 </div>

@@ -22,6 +22,10 @@
 <div class='student_columns'>
   <div id='student_column_left'>
     <div class='block'>
+      <%= render partial: 'read', locals:{ peer_review: false } %>
+    </div>
+
+    <div class='block'>
       <h2><%= t('submissions') %></h2>
 
       <div class='block_content'>
@@ -50,10 +54,6 @@
           <p class='notice'><%= t('student.no_submission_yet') %></p>
         <% end %>
       </div>
-    </div>
-
-    <div class='block'>
-      <%= render partial: 'read' %>
     </div>
   </div>
 

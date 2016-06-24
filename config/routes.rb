@@ -57,6 +57,7 @@ Markus::Application.routes.draw do
         get 'populate_file_manager'
         post 'update_files'
         get 'download'
+        get 'peer_review'
       end
 
       resources :tags do
@@ -139,6 +140,7 @@ Markus::Application.routes.draw do
         collection do
           get 'populate_file_manager_react'
           get 'populate_submissions_table'
+          get 'populate_peer_submissions_table'
           get 'file_manager'
           get 'browse'
           post 'populate_file_manager'

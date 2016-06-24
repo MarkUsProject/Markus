@@ -59,6 +59,12 @@ var Table = React.createClass({displayName: 'Table',
     selectable: React.PropTypes.bool, // True if you want checkboxed elements
     onSelectedRowsChange: React.PropTypes.func // function to call when selected rows change
   },
+  getDefaultProps: function() {
+      return {
+          search: true,
+          footer: true
+      }
+  },
   getInitialState: function() {
     var first_sortable_column = this.props.columns.filter(function(col) {
       return col.sortable == true;
@@ -200,37 +206,50 @@ var Table = React.createClass({displayName: 'Table',
     var secondary_filter_div = null;
     if (this.props.secondary_filters != null) {
       secondary_filter_div = TableFilter( {
-        filters:this.props.secondary_filters,
-        current_filter:this.state.secondary_filter,
-        onFilterChange:this.synchronizeSecondaryFilter,
-        data:this.props.data,
-        filter_type:this.props.filter_type
+        filters:        this.props.secondary_filters,
+        current_filter: this.state.secondary_filter,
+        onFilterChange: this.synchronizeSecondaryFilter,
+        data:           this.props.data,
+        filter_type:    this.props.filter_type
       });
+    }
+    var footer_div = TableFooter( {
+      columns:        columns,
+      sort_column:    this.state.sort_column,
+      sort_direction: this.state.sort_direction } );
+    if (!this.props.footer) {
+      footer_div = null;
+    }
+    var search_div = TableSearch( {
+      onSearchInputChange: this.synchronizeSearchInput,
+      placeholder:         this.props.search_placeholder} );
+    if (!this.props.search) {
+      search_div = null;
     }
     return (
       React.DOM.div( {className:"react-table"},
-        TableFilter( {filters:this.props.filters,
-          current_filter:this.state.filter,
-          onFilterChange:this.synchronizeFilter,
-          data:this.props.data,
-          filter_type:this.props.filter_type} ),
+        TableFilter( {
+          filters:          this.props.filters,
+          current_filter:   this.state.filter,
+          onFilterChange:   this.synchronizeFilter,
+          data:             this.props.data,
+          filter_type:      this.props.filter_type} ),
         secondary_filter_div,
-        TableSearch( {onSearchInputChange:this.synchronizeSearchInput,
-          placeholder:this.props.search_placeholder} ),
+        search_div,
         React.DOM.div( {className:"table"},
           React.DOM.table( {},
-            TableHeader( {columns:columns,
-              sort_column:this.state.sort_column,
-              sort_direction:this.state.sort_direction,
-              onHeaderColumnChange:this.synchronizeHeaderColumn} ),
-            TableRows( {columns:columns,
-              rowCheckboxClicked:this.rowCheckboxClicked,
-              selectable:this.props.selectable,
-              getVisibleRows:this.updateVisibleRows,
-              state:this.state} ),
-            TableFooter( {columns:columns,
-              sort_column:this.state.sort_column,
-              sort_direction:this.state.sort_direction } )
+            TableHeader( {
+              columns:              columns,
+              sort_column:          this.state.sort_column,
+              sort_direction:       this.state.sort_direction,
+              onHeaderColumnChange: this.synchronizeHeaderColumn} ),
+            TableRows( {
+              columns:              columns,
+              rowCheckboxClicked:   this.rowCheckboxClicked,
+              selectable:           this.props.selectable,
+              getVisibleRows:       this.updateVisibleRows,
+              state:                this.state} ),
+            footer_div
           )
         )
       )
