@@ -46,6 +46,7 @@ class Assignment < ActiveRecord::Base
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment, class_name: 'Assignment', inverse_of: :pr_assignment
   has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
+  has_many :peer_reviews, through: :groupings
 
   has_many :annotation_categories,
            -> { order(:position) },
@@ -951,11 +952,6 @@ class Assignment < ActiveRecord::Base
         raise ActiveRecord::Rollback
       end
     end
-  end
-
-  # TODO - Convert to a :through association
-  def get_peer_reviews
-    PeerReview.where(reviewer: groupings)
   end
 
   ### REPO ###

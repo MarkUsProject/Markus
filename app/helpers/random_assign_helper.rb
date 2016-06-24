@@ -38,7 +38,9 @@ module RandomAssignHelper
   # We need to get all the existing peer reviews for assignments so we can
   # skip some assignments if they exist.
   def populate_from_existing_peer_reviews(pr_assignment)
-    pr_assignment.get_peer_reviews().each do |peer_review|
+    # TODO : Remove? --- pr_assignment.get_peer_reviews().each do |peer_review|
+    # TODO - Is this okay? the 'peer reviews' forces us to go through the parent... doesn't seem right (do we have a choice?)
+    pr_assignment.parent_assignment.peer_reviews.each do |peer_review|
       @reviewer_ids_assigned_reviewee_ids_map[peer_review.reviewer.id].add(peer_review.reviewee.id)
     end
   end
@@ -114,7 +116,7 @@ module RandomAssignHelper
     PeerReview.create!(reviewer: reviewer, result: result)
 
     @reviewer_ids_assigned_reviewee_ids_map[reviewer.id].add(reviewee.id)
-    @shuffled_reviewees_assigned_reviewers[shuffle_index] = reviewer.id
+    @shuffled_reviewees_assigned_reviewers[shuffle_index] = reviewer
   end
 
   def assign_backwards_or_throw(reviewer, shuffle_index)
@@ -148,7 +150,7 @@ module RandomAssignHelper
   end
 
   def unlink_and_delete_previous_peer_review_assignment(reviewer, reviewee)
-    result = reviewee.current_submission_used.result
+    result = reviewee.current_submission_used.get_latest_result
     PeerReview.where(reviewer: reviewer, result: result).destroy_all
 
     @reviewer_ids_assigned_reviewee_ids_map[reviewer.id].delete(reviewee.id)
