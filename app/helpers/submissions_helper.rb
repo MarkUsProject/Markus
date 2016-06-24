@@ -44,27 +44,41 @@ module SubmissionsHelper
   end
 
   def get_submissions_table_info(assignment, groupings)
-    parts = groupings.select &:has_submission?
-    results = Result.where(submission_id:
-                             parts.map(&:current_submission_used))
+    if current_user.is_a_reviewer?(assignment)
+      prs = groupings.map {|g| PeerReview.where(reviewer_id: g.id)}
+      results = prs.map {|p| Result.find(p.first.result_id)}
+    else
+      parts = groupings.select &:has_submission?
+      results = Result.where(submission_id:
+                                 parts.map(&:current_submission_used))
                     .order(:id)
+    end
+
     groupings.map.with_index do |grouping, i|
       g = Hash.new
       begin # if anything raises an error, catch it and log in the object.
-        submission = grouping.current_submission_used
-        if submission.nil?
-          result = nil
-        elsif submission.submitted_remark.nil?
-          result = (results.select do |r|
-            r.submission_id == submission.id
-          end).first
+        if current_user.is_a_reviewer?(assignment)
+          # get the reviewee's result
+          peer_reviews = results.map {|r| PeerReview.where(result_id: r.id)}
+          pr_for_grouping = peer_reviews.select {|p| p.first.reviewer_id == grouping.id}.first
+          result = Result.find(pr_for_grouping.first.result_id)
         else
-          result = submission.remark_result
+          submission = grouping.current_submission_used
+          if submission.nil?
+            result = nil
+          elsif submission.submitted_remark.nil?
+            result = (results.select do |r|
+              r.submission_id == submission.id
+            end).first
+          else
+            result = submission.remark_result
+          end
         end
+
         g[:name] = grouping.get_group_name
-        unless current_user.student?
+        unless !current_user.is_a_reviewer?(assignment)
           g[:id] = grouping.id
-          g[:name_url] = get_grouping_name_url(grouping, result)
+          g[:name_url] = get_grouping_name_url(grouping, result, assignment)
           g[:repo_name] = grouping.group.repository_name
           g[:repo_url] = repo_browser_assignment_submission_path(assignment,
                                                                  grouping)
@@ -106,10 +120,13 @@ module SubmissionsHelper
     end
   end
 
-  def get_grouping_name_url(grouping, result)
+  def get_grouping_name_url(grouping, result, assignment)
     if grouping.is_collected?
       url_for(edit_assignment_submission_result_path(
                 grouping.assignment, grouping, result))
+    elsif current_user.is_a_reviewer?(assignment)
+      url_for(edit_assignment_submission_result_path(
+                 assignment, result.submission, result))
     else
       ''
     end

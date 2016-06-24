@@ -669,24 +669,31 @@ class Grouping < ActiveRecord::Base
                 .where(user: user)
                 .select { |m| m.grouping.is_valid? }
                 .map &:grouping
+    elsif user.is_a_reviewer?(assignment)
+      # grab only the groupings of reviewiees that this reviewer
+      # is responsible for
+      user_group = user.grouping_for(assignment.id)
+      groupings = PeerReview.where(reviewer_id: user_group.id)
+      groupings.map {|p| Grouping.find(p.reviewer_id)}
     else
-      assignment.groupings.joins(:memberships)
-              .includes(:assignment,
-                        :group,
-                        :grace_period_deductions,
-                        :tags,
-                        { current_submission_used: [:results,
-                                                    :submission_files,
-                                                    :submitted_remark,
-                                                    grouping: :group] },
-                        { accepted_student_memberships: :user },
-                        { inviter: :section }
-                        )
-              .where(memberships: { membership_status:
-                                   [StudentMembership::STATUSES[:inviter],
-                                    StudentMembership::STATUSES[:pending],
-                                    StudentMembership::STATUSES[:accepted]] })
-              .distinct
+      groupings = assignment.groupings
+      groupings.joins(:memberships)
+          .includes(:assignment,
+                    :group,
+                    :grace_period_deductions,
+                    :tags,
+                    { current_submission_used: [:results,
+                                                :submission_files,
+                                                :submitted_remark,
+                                                grouping: :group] },
+                    { accepted_student_memberships: :user },
+                    { inviter: :section }
+          )
+          .where(memberships: { membership_status:
+                                    [StudentMembership::STATUSES[:inviter],
+                                     StudentMembership::STATUSES[:pending],
+                                     StudentMembership::STATUSES[:accepted]] })
+          .distinct
     end
   end
 

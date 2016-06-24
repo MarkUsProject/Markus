@@ -132,6 +132,10 @@ class User < ActiveRecord::Base
     groupings.find {|g| g.assignment_id == aid}
   end
 
+  def is_a_reviewer?(assignment)
+    is_a?(Student) && assignment.is_peer_review?
+  end
+
   def is_reviewer_for?(aid, result_id)
     # aid is the peer review assignment id, and result_id
     # is the peer review result
