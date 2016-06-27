@@ -630,7 +630,7 @@ class Assignment < ActiveRecord::Base
         # total percentage, total_grade
         result.concat(['','0'])
         # mark, weight
-        result.concat(get_max_mark_for_criteria)
+        result.concat(get_max_marks_for_criteria)
         # extra-mark, extra-percentage
         result.concat(['',''])
       else
@@ -664,7 +664,7 @@ class Assignment < ActiveRecord::Base
   # Returns an array of the form ['', max] or ['', weight] depending on the criteria.
   # This may not be a good name to account for the fact that we either return weight or max.
   # TODO This may change when unifying flexible and rubric.
-  def get_max_mark_for_criteria
+  def get_max_marks_for_criteria
     ([""] * get_criteria.count).zip(get_criteria.map(&:mark_max)).flatten
   end
 
