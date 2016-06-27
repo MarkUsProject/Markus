@@ -52,7 +52,7 @@ class PeerReviewsController < ApplicationController
 
     case action_string
       when 'random_assign'
-        perform_random_assignment(@assignment, 3)  # TODO - Hardcoding to be fixed in another branch
+        perform_random_assignment(@assignment, 2)  # TODO - Hardcoding to be fixed in another branch
       when 'assign'
         reviewer_groups = Grouping.where(id: selected_reviewer_group_ids)
         reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
