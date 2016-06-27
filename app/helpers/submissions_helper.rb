@@ -75,7 +75,7 @@ module SubmissionsHelper
         end
 
         g[:name] = grouping.get_group_name
-        unless !current_user.is_a_reviewer?(assignment)
+        unless (current_user.is_a?(Student) && !current_user.is_a_reviewer?(assignment))
           g[:id] = grouping.id
           g[:name_url] = get_grouping_name_url(grouping, result, assignment)
           g[:repo_name] = grouping.group.repository_name
