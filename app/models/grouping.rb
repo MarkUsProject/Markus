@@ -670,11 +670,11 @@ class Grouping < ActiveRecord::Base
                 .select { |m| m.grouping.is_valid? }
                 .map &:grouping
     elsif user.is_a_reviewer?(assignment)
-      # grab only the groupings of reviewiees that this reviewer
+      # grab only the groupings of reviewees that this reviewer
       # is responsible for
       user_group = user.grouping_for(assignment.id)
-      groupings = PeerReview.where(reviewer_id: user_group.id)
-      groupings.map {|p| Grouping.find(p.reviewer_id)}
+      groupings = user_group.peer_reviews_to_others
+      groupings.map {|p| Result.find(p.result_id).submission.grouping}
     else
       groupings = assignment.groupings
       groupings.joins(:memberships)
@@ -759,6 +759,11 @@ class Grouping < ActiveRecord::Base
                       .last
       last_mark.nil? ? 0 : last_mark.marks_earned
     end
+  end
+
+  def review_for(reviewee_group)
+    prs = reviewee_group.peer_reviews
+    prs.find {|p| p.reviewer_id == id}
   end
 
   private
@@ -855,4 +860,5 @@ class Grouping < ActiveRecord::Base
       end
     end
   end
+
 end # end class Grouping

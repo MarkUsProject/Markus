@@ -45,8 +45,7 @@ module SubmissionsHelper
 
   def get_submissions_table_info(assignment, groupings)
     if current_user.is_a_reviewer?(assignment)
-      prs = groupings.map {|g| PeerReview.where(reviewer_id: g.id)}
-      results = prs.map {|p| Result.find(p.first.result_id)}
+      
     else
       parts = groupings.select &:has_submission?
       results = Result.where(submission_id:
@@ -58,10 +57,10 @@ module SubmissionsHelper
       g = Hash.new
       begin # if anything raises an error, catch it and log in the object.
         if current_user.is_a_reviewer?(assignment)
-          # get the reviewee's result
-          peer_reviews = results.map {|r| PeerReview.where(result_id: r.id)}
-          pr_for_grouping = peer_reviews.select {|p| p.first.reviewer_id == grouping.id}.first
-          result = Result.find(pr_for_grouping.first.result_id)
+          # "groupings" are the reviewee groupings.
+          # Get the respective reviewee's result from grouping
+          result_pr = current_user.grouping_for(assignment.id).review_for(grouping)
+          result = Result.find(result_pr.result_id)
         else
           submission = grouping.current_submission_used
           if submission.nil?
@@ -121,12 +120,12 @@ module SubmissionsHelper
   end
 
   def get_grouping_name_url(grouping, result, assignment)
-    if grouping.is_collected?
-      url_for(edit_assignment_submission_result_path(
-                grouping.assignment, grouping, result))
-    elsif current_user.is_a_reviewer?(assignment)
+    if current_user.is_a_reviewer?(assignment)
       url_for(edit_assignment_submission_result_path(
                  assignment, result.submission, result))
+    elsif grouping.is_collected?
+      url_for(edit_assignment_submission_result_path(
+                  grouping.assignment, grouping, result))
     else
       ''
     end
