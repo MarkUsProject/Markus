@@ -205,7 +205,7 @@
 
       <% if !@assignment.nil? &&
             @current_user.has_accepted_grouping_for?(@assignment) %>
-        <li class='<%= "active" if controller.controller_name == 'assignments' %>'>
+        <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name != 'peer_review' %>'>
           <%= link_to t('assignments'),
                       controller: 'assignments',
                       action: 'student_interface',
@@ -222,12 +222,23 @@
                                                                    1,
                                                                    1) %>
         </li>
-        <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
-          <%= link_to t('automated_tests.title'),
-                      controller: 'automated_tests',
-                      action:'student_interface',
-                      id: @assignment.id %>
-        </li>
+        <% if @assignment.enable_test && (@assignment.unlimited_tokens ||
+                                          @assignment.tokens_per_period > 0) %>
+          <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
+            <%= link_to t('automated_tests.title'),
+                        controller: 'automated_tests',
+                        action:'student_interface',
+                        id: @assignment.id %>
+          </li>
+        <% end %>
+        <% if @assignment.has_peer_review? || @assignment.is_peer_review? %>
+          <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'peer_review'%>'>
+            <%= link_to t('assignment.start_peer_review'),
+                        controller: 'assignments',
+                        action: 'peer_review',
+                        id: @assignment.id %>
+          </li>
+        <% end %>
       <% end %>
     </ul>
   <% end %>
