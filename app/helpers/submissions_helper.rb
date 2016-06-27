@@ -119,11 +119,8 @@ module SubmissionsHelper
     end
   end
 
-  def get_grouping_name_url(grouping, result, assignment)
-    if current_user.is_a_reviewer?(assignment)
-      url_for(edit_assignment_submission_result_path(
-                 assignment, result.submission, result))
-    elsif grouping.is_collected?
+  def get_grouping_name_url(grouping, result)
+    if grouping.is_collected?
       url_for(edit_assignment_submission_result_path(
                   grouping.assignment, grouping, result))
     else
