@@ -353,7 +353,7 @@ class ResultsController < ApplicationController
     @file = SubmissionFile.find(@submission_file_id)
     @result = @file.submission.get_latest_result
 
-    if @assignment.is_peer_review?
+    if @current_user.is_a_reviewer?(@assignment)
       prs = PeerReview.where(reviewer_id: @grouping.id)
       pr = prs.find {|p| Result.find(p.result_id).submission.id == @file.submission.id}
     end
@@ -364,7 +364,7 @@ class ResultsController < ApplicationController
       # or if this is a peer review assignment and the student is not a reviewer of this
       # submission, then student does not have access to this file. Display an error.
       if @file.submission.grouping.membership_status(current_user).nil? &&
-        (@assignment.is_peer_review? && pr.nil?)
+        (@current_user.is_a_reviewer?(@assignment) && pr.nil?)
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
