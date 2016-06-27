@@ -212,14 +212,11 @@
                       id: @assignment.id %>
         </li>
 
-        <% if @assignment.is_peer_review? %>
 
-        <% else %>
-          <li class='<%= "active" if controller.controller_name == 'submissions' %>'>
-            <%= link_to t('submissions'),
-                        file_manager_assignment_submissions_path(@assignment) %>
-          </li>
-        <% end %>
+        <li class='<%= "active" if controller.controller_name == 'submissions' %>'>
+          <%= link_to t('submissions'),
+                      file_manager_assignment_submissions_path(@assignment) %>
+        </li>
 
 
         <li class='<%= "active" if controller.controller_name == 'results' &&

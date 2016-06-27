@@ -38,11 +38,7 @@ class ResultsController < ApplicationController
   def edit
     @result = Result.find(params[:id])
     @pr = PeerReview.find_by(result_id: @result.id)
-
-    @assignment = Assignment.find(params[:assignment_id])
-    @original_assignment = @result.submission.grouping.assignment
-    @assignment_for_criteria = @current_user.is_reviewer_for?(@assignment.id, @result.id) ?
-        @original_assignment : @assignment
+    @assignment = @result.submission.grouping.assignment
 
     @submission = @result.submission
 
@@ -65,10 +61,8 @@ class ResultsController < ApplicationController
     @marks_map = Hash.new
     @old_marks_map = Hash.new
 
-    @reviewer_mark_criteria = @original_assignment.get_criteria(:peer)
-    @mark_criteria = @assignment.get_criteria(:ta)
-    @criteria = @current_user.is_reviewer_for?(@assignment.id, @result.id) ?
-         @reviewer_mark_criteria : @mark_criteria
+    @criteria = @current_user.is_reviewer_for?(@assignment.pr_assignment.id, @result.id) ?
+         @assignment.get_criteria(:peer) : @assignment.pr_assignment.get_criteria(:ta)
 
     @criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
