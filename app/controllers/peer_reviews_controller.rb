@@ -38,7 +38,7 @@ class PeerReviewsController < ApplicationController
     selected_reviewee_group_ids = params[:selectedRevieweeGroupIds]
     reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups]
     action_string = params[:actionString]
-    num_groups_for_reviewers = params[:numGroupsForReviewers]
+    num_groups_for_reviewers = params[:numGroupsToAssign].to_i
 
     if action_string == 'assign'
       if selected_reviewer_group_ids.nil? or selected_reviewer_group_ids.empty?
@@ -52,11 +52,21 @@ class PeerReviewsController < ApplicationController
 
     case action_string
       when 'random_assign'
-        perform_random_assignment(@assignment, 2)  # TODO - Hardcoding to be fixed in another branch
+        begin
+          perform_random_assignment(@assignment, num_groups_for_reviewers)
+        rescue UnableToRandomlyAssignGroupException
+          render text: t('peer_review.problem'), status: 400
+          return
+        end
       when 'assign'
         reviewer_groups = Grouping.where(id: selected_reviewer_group_ids)
         reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
-        assign(reviewer_groups, reviewee_groups)
+        begin
+          assign(reviewer_groups, reviewee_groups)
+        rescue RecordInvalid
+          render text: t('peer_review.problem'), status: 400
+          return
+        end
       when 'unassign'
         unassign(reviewers_to_remove_from_reviewees_map)
       else
