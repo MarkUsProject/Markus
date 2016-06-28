@@ -39,7 +39,7 @@ describe RubricsController do
     end
 
     it 'expects a call to send_data' do
-      csv_data = "#{@criterion.name},#{@criterion.weight},"
+      csv_data = "#{@criterion.name},#{@criterion.max_mark},"
       criterion_array = []
       (0..4).each do |i|
         criterion_array.push(@criterion['level_' + i.to_s + '_name'])

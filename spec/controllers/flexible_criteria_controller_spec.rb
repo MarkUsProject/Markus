@@ -138,7 +138,7 @@ describe FlexibleCriteriaController do
                            position: 3,
                            name: 'criterion3',
                            description: 'description3!',
-                           max: 1.6)
+                           max_mark: 1.6)
     end
 
     context '#index' do
@@ -192,7 +192,7 @@ describe FlexibleCriteriaController do
                  format: :js,
                  assignment_id: 1,
                  id: @criterion.id,
-                 flexible_criterion: { name: 'one', max: 10 }
+                 flexible_criterion: { name: 'one', max_mark: 10 }
         end
 
         it 'should respond with appropriate content' do
@@ -215,7 +215,7 @@ describe FlexibleCriteriaController do
                  format: :js,
                  assignment_id: 1,
                  id: @criterion.id,
-                 flexible_criterion: { name: 'one', max: 10 }
+                 flexible_criterion: { name: 'one', max_mark: 10 }
           assert flash[:success], I18n.t('criterion_saved_success')
         end
 
@@ -309,7 +309,7 @@ describe FlexibleCriteriaController do
                            position: 3,
                            name: 'criterion3',
                            description: 'description3!',
-                           max: 1.6)
+                           max_mark: 1.6)
     end
 
     context '#index' do
@@ -364,7 +364,7 @@ describe FlexibleCriteriaController do
                   format: :js,
                   assignment_id: @assignment.id,
                   flexible_criterion: { name: 'first',
-                                        max: 10 }
+                                        max_mark: 10 }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy
@@ -388,7 +388,7 @@ describe FlexibleCriteriaController do
                   format: :js,
                   assignment_id: @assignment.id,
                   flexible_criterion: { name: 'first',
-                                        max: 10 }
+                                        max_mark: 10 }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy
@@ -409,7 +409,7 @@ describe FlexibleCriteriaController do
                   format: :js,
                   assignment_id: @assignment.id,
                   flexible_criterion: { name: 'first',
-                                        max: 10 }
+                                        max_mark: 10 }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy

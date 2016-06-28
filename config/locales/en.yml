@@ -705,8 +705,7 @@ en:
 
     mark:
       error:
-        validate_flexible: "must be between 0 and the maximum mark of the criterion"
-        validate_rubric: "must be an integer between 0 and 4"
+        validate_criteria: "must be between 0 and the maximum mark of the criterion"
 
     # Student's View (admin)
     students:
@@ -1207,7 +1206,7 @@ en:
       move_up: "Move up"
       move_down: "Move down"
       name: "Flexible criterion name"
-      max: "Maximum mark"
+      max_mark: "Maximum mark"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
       download:
@@ -1379,6 +1378,7 @@ en:
     criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
     criterion_saved_success:   "Criterion was successfully saved"
     criterion_saved_failure:   "Criterion failed to be saved"
+    weight_not_number: "weight is not a number."
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
     criteria:           "Criteria"
     criterion:          "Criterion"

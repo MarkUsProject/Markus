@@ -13,12 +13,19 @@ class RubricsController < ApplicationController
   end
 
   def update
-    @criterion = RubricCriterion.find(params[:id])
-    unless @criterion.update_attributes(rubric_criterion_params)
-      render :errors
+    begin
+      @criterion = RubricCriterion.find(params[:id])
+      unless @criterion.update_attributes(rubric_criterion_params.deep_merge(params.require(:rubric_criterion)
+                                                                                 .permit(:max_mark)
+                                                                                 .transform_values { |x|  (Float(x) * 4).to_s }))
+        render :errors
+        return
+      end
+    rescue ArgumentError
+      flash.now[:error] = t('weight_not_number')
       return
     end
-    flash.now[:success] = I18n.t('criterion_saved_success')
+    flash.now[:success] = t('criterion_saved_success')
   end
 
   def new
@@ -37,7 +44,7 @@ class RubricsController < ApplicationController
     end
     @criterion = RubricCriterion.new
     @criterion.assignment = @assignment
-    @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
+    @criterion.max_mark = RubricCriterion::DEFAULT_MAX_MARK
     @criterion.set_default_levels
     @criterion.position = new_position
     unless @criterion.update_attributes(rubric_criterion_params)
@@ -46,7 +53,7 @@ class RubricsController < ApplicationController
       return
     end
     @criteria.reload
-    render :create_and_edit
+     render :create_and_edit
   end
 
   def destroy
@@ -62,7 +69,7 @@ class RubricsController < ApplicationController
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
     file_out = MarkusCSV.generate(@assignment.get_criteria) do |criterion|
-      criterion_array = [criterion.name,criterion.weight]
+      criterion_array = [criterion.name, criterion.max_mark]
       (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
         criterion_array.push(criterion['level_' + i.to_s + '_name'])
       end
@@ -202,7 +209,6 @@ class RubricsController < ApplicationController
                                              :level_3_description,
                                              :level_4_name,
                                              :level_4_description,
-                                             :weight,
                                              :ta_visible,
                                              :peer_visible)
   end

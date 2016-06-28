@@ -39,7 +39,7 @@ class FlexibleCriteriaController < ApplicationController
     end
     @criterion = FlexibleCriterion.new
     @criterion.assignment = @assignment
-    @criterion.max = FlexibleCriterion::DEFAULT_MAX
+    @criterion.max_mark = FlexibleCriterion::DEFAULT_MAX_MARK
     @criterion.position = new_position
     unless @criterion.update_attributes(flexible_criterion_params)
       @errors = @criterion.errors
@@ -64,8 +64,7 @@ class FlexibleCriteriaController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     criteria = @assignment.get_criteria.order(:position)
     file_out = MarkusCSV.generate(criteria) do |criterion|
-      [criterion.name, criterion.max,
-       criterion.description]
+      [criterion.name, criterion.max_mark, criterion.description]
     end
     send_data(file_out,
               type: 'text/csv',
@@ -120,7 +119,7 @@ class FlexibleCriteriaController < ApplicationController
     params.require(:flexible_criterion).permit(:name,
                                                :description,
                                                :position,
-                                               :max,
+                                               :max_mark,
                                                :ta_visible,
                                                :peer_visible)
   end

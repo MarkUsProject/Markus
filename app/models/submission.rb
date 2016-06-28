@@ -114,11 +114,7 @@ class Submission < ActiveRecord::Base
         mark_total += test_script.max_marks
       end
       if mark_total > 0
-        if mark.markable_type == 'RubricCriterion'
-          mark.mark = (marks_earned.to_f / mark_total.to_f * 4).round()
-        else
-          mark.mark = (marks_earned.to_f / mark_total.to_f * mark.markable.max).round(2)
-        end
+        mark.mark = (marks_earned.to_f / mark_total.to_f * mark.markable.max_mark).round(2)
         mark.save
       end
     end

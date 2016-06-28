@@ -3,9 +3,9 @@ require 'encoding'
 class RubricCriterion < Criterion
   self.table_name = 'rubric_criteria' # set table name correctly
 
-  validates_presence_of :weight
-  validates_numericality_of :weight
-  before_save :round_weight
+  validates_presence_of :max_mark
+  validates_numericality_of :max_mark
+  before_save :round_max_mark
   validate :validate_total_weight, on: :update
 
   after_save :update_existing_results
@@ -47,12 +47,12 @@ class RubricCriterion < Criterion
   end
 
   def validate_total_weight
-    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if self.assignment.total_mark + (4 * (self.weight - self.weight_was)) <= 0
+    errors.add(:assignment, t('rubric_criteria.error_total')) if assignment.total_mark + ((max_mark - max_mark_was) / 4) <= 0
   end
 
   # Just a small effort here to remove magic numbers...
   RUBRIC_LEVELS = 5
-  DEFAULT_WEIGHT = 1.0
+  DEFAULT_MAX_MARK = 4
   DEFAULT_LEVELS = [
     {'name' => I18n.t('rubric_criteria.defaults.level_0'),
      'description' => I18n.t('rubric_criteria.defaults.description_0')},
@@ -119,7 +119,7 @@ class RubricCriterion < Criterion
       name: name)
     #Check that the weight is not a string.
     begin
-      criterion.weight = Float(working_row.shift)
+      criterion.max_mark = Float(working_row.shift) * 4
     rescue ArgumentError
       raise CSVInvalidLineError
     end
@@ -168,7 +168,7 @@ class RubricCriterion < Criterion
       name: name)
     #Check that the weight is not a string.
     begin
-      criterion.weight = Float(key[1]['weight'])
+      criterion.max_mark = Float(key[1]['max_mark']) * 4
     rescue ArgumentError
       raise I18n.t('criteria_csv_error.weight_not_number')
     rescue TypeError
@@ -194,13 +194,13 @@ class RubricCriterion < Criterion
     criterion
   end
 
-  def get_weight
-    self.weight
+  def weight
+    max_mark / 4
   end
 
-  def round_weight
+  def round_max_mark
     factor = 10.0 ** 3
-    self.weight = (self.weight * factor).round.to_f / factor
+    self.max_mark = (max_mark * factor).round.to_f / factor
   end
 
   def all_assigned_groups

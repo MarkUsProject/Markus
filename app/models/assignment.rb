@@ -128,7 +128,7 @@ class Assignment < ActiveRecord::Base
     final = ActiveSupport::OrderedHash.new
     criteria.each do |criterion|
       inner = ActiveSupport::OrderedHash.new
-      inner['weight'] =  criterion['weight']
+      inner['max_mark'] =  criterion['max_mark']
       inner['level_0'] = {
         'name' =>  criterion['level_0_name'] ,
         'description' =>  criterion['level_0_description']
@@ -264,15 +264,7 @@ class Assignment < ActiveRecord::Base
   end
 
   def total_mark
-    total = 0
-    if self.marking_scheme_type == 'rubric'
-      get_criteria(:ta).each do |criterion|
-        total = total + criterion.weight * 4
-      end
-    else
-      total = get_criteria(:ta).map(&:max).sum()
-    end
-    total.round(2)
+    get_criteria(:ta).sum('max_mark').round(2)
   end
 
   # calculates summary statistics of released results for this assignment
@@ -342,7 +334,7 @@ class Assignment < ActiveRecord::Base
 
   def total_criteria_weight
     factor = 10.0 ** 2
-    (get_criteria.sum('weight') * factor).floor / factor
+    (get_criteria.map(&:weight).sum() * factor).floor / factor
   end
 
   def total_test_script_marks
@@ -629,12 +621,12 @@ class Assignment < ActiveRecord::Base
                markable_type: 'RubricCriterion')
         .first
       marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
-                       rubric_criterion.weight])
+                       rubric_criterion.max_mark])
     end
     marks_list
   end
 
-  # returns an array of [mark, max] for the assignment's rubric criterion
+  # returns an array of [mark, max_mark] for the assignment's rubric criterion
   def get_flexible_marks_list(submission)
     marks_list = []
     get_criteria.each do |flexible_criterion|
@@ -644,7 +636,7 @@ class Assignment < ActiveRecord::Base
                markable_type: 'FlexibleCriterion')
         .first
       marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
-                       flexible_criterion.max])
+                       flexible_criterion.max_mark])
     end
     marks_list
   end
@@ -661,7 +653,6 @@ class Assignment < ActiveRecord::Base
     students = Student.all
     # determine whether to use flexible criterion or rubric
     is_flexible = self.marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
-    criteria = get_criteria
     MarkusCSV.generate(students) do |student|
       result = [student.user_name]
       grouping = student.accepted_grouping_for(self.id)
@@ -670,7 +661,7 @@ class Assignment < ActiveRecord::Base
         # total percentage, total_grade
         result.concat(['','0'])
         # mark, weight
-        result.concat(criteria.pluck("''", (is_flexible ? :max : :weight)).flatten())
+        result.concat(get_criteria.pluck("''", :max_mark).flatten)
         # extra-mark, extra-percentage
         result.concat(['',''])
       else

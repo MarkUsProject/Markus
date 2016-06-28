@@ -28,8 +28,8 @@ class FlexibleCriterion < Criterion
                             greater_than: 0,
                             message: 'can only be whole number greater than 0'
 
-  validates_presence_of :max
-  validates_numericality_of :max,
+  validates_presence_of :max_mark
+  validates_numericality_of :max_mark,
                             message: 'must be a number greater than 0.0',
                             greater_than: 0.0
 
@@ -37,7 +37,7 @@ class FlexibleCriterion < Criterion
 
   validate :visible?
 
-  DEFAULT_MAX = 1
+  DEFAULT_MAX_MARK = 1
 
   def update_assigned_groups_count
     result = []
@@ -53,7 +53,7 @@ class FlexibleCriterion < Criterion
   # ===Params:
   #
   # row::         An array representing one CSV file row. Should be in the following
-  #               format: [name, max, description] where description is optional.
+  #               format: [name, max_mark, description] where description is optional.
   # assignment::  The assignment to which the newly created criterion should belong.
   #
   # ===Raises:
@@ -73,8 +73,8 @@ class FlexibleCriterion < Criterion
       raise CSVInvalidLineError, I18n.t('csv.invalid_row.duplicate_entry')
     end
 
-    criterion.max = row[1]
-    if criterion.max.nil? or criterion.max.zero?
+    criterion.max_mark = row[1]
+    if criterion.max_mark.nil? or criterion.max_mark.zero?
       raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
 
@@ -101,7 +101,7 @@ class FlexibleCriterion < Criterion
     end
   end
 
-  def get_weight
+  def weight
     1
   end
 

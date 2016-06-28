@@ -1176,14 +1176,14 @@ describe Assignment do
               else
                 fields.push('')
               end
-              fields.push(criterion.weight)
+              fields.push(criterion.max_mark)
             end
             fields.push(result.get_total_extra_points)
             fields.push(result.get_total_extra_percentage)
           else
             fields.push('')
             @assignment.get_criteria.each do |criterion|
-              fields.push('', criterion.weight)
+              fields.push('', criterion.max_mark)
             end
             fields.push('', '')
           end
@@ -1236,14 +1236,14 @@ describe Assignment do
               else
                 fields.push('')
               end
-              fields.push(criterion.max)
+              fields.push(criterion.max_mark)
             end
             fields.push(result.get_total_extra_points)
             fields.push(result.get_total_extra_percentage)
           else
             fields.push('')
             @assignment.get_criteria.each do |criterion|
-              fields.push('', criterion.max)
+              fields.push('', criterion.max_mark)
             end
             fields.push('', '')
           end

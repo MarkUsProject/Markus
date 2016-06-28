@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160610202949) do
+ActiveRecord::Schema.define(version: 20160623140952) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -160,7 +160,7 @@ ActiveRecord::Schema.define(version: 20160610202949) do
     t.text     "description"
     t.integer  "position"
     t.integer  "assignment_id",                                                  null: false
-    t.decimal  "max",                   precision: 10, scale: 1,                 null: false
+    t.decimal  "max_mark",              precision: 10, scale: 1,                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "assigned_groups_count",                          default: 0
@@ -368,8 +368,8 @@ ActiveRecord::Schema.define(version: 20160610202949) do
   end
 
   create_table "rubric_criteria", force: :cascade do |t|
-    t.string   "name",                                  null: false
-    t.integer  "assignment_id",                         null: false
+    t.string   "name",                                                           null: false
+    t.integer  "assignment_id",                                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "position"
@@ -383,10 +383,10 @@ ActiveRecord::Schema.define(version: 20160610202949) do
     t.text     "level_3_description"
     t.text     "level_4_name"
     t.text     "level_4_description"
-    t.float    "weight",                                null: false
-    t.integer  "assigned_groups_count", default: 0
-    t.boolean  "ta_visible",            default: true,  null: false
-    t.boolean  "peer_visible",          default: false, null: false
+    t.decimal  "max_mark",              precision: 10, scale: 1,                 null: false
+    t.integer  "assigned_groups_count",                          default: 0
+    t.boolean  "ta_visible",                                     default: true,  null: false
+    t.boolean  "peer_visible",                                   default: false, null: false
   end
 
   add_index "rubric_criteria", ["assignment_id", "name"], name: "rubric_critera_index_1", unique: true, using: :btree

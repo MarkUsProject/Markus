@@ -685,8 +685,7 @@ fr:
 
     mark:
       error:
-        validate_flexible: "La note doit être comprise entre 0 et la note maximale du critère."
-        validate_rubric: "La note doit être comprise entre 0 et 4." #TODO: Why 4?
+        validate_criteria: "La note doit être comprise entre 0 et la note maximale du critère."
 
     # Student's View
     students:
@@ -1078,7 +1077,7 @@ fr:
       move_up: "Monter"
       move_down: "Descendre"
       name: "Nom du critère"
-      max: "Note maximale"
+      max_mark: "Note maximale"
       description: "Description"
       description_hint: "Vous avez la possibilité d'utiliser des tags HTML simples dans ce champ. Pour un aperçu, sauvegardez."
       download:
@@ -1224,6 +1223,7 @@ fr:
     add_criterion:                "Ajouter un critère"
     criteria_edit_total_mark:     "Ce critère sera noté sur %{criterion_total_mark}."
     criterion_saved_success:   "Le critète a été sauvegardé."
+    weight_not_number: "le coefficient n'est pas un nombre."
     criterion_deleted_success:  "Le critère et toutes les notes associées ont été supprimés."
     criteria:           "Critères"
     criterion:          "Critère"

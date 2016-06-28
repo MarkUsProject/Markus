@@ -30,12 +30,12 @@
     </span>
     <br>
     <span id='criterion_weight_edit_<%= criterion.id %>' class='criterion_weight_edit'>
-     <%= f.label :weight, t(:weight), class: 'bold_inline_label' %>
-     <%= f.text_field :weight %>
+     <%= f.label :max_mark, t(:weight), class: 'bold_inline_label' %>
+     <%= f.text_field :max_mark, value: "#{criterion.weight}" %>
     </span>
     <br>
     <span class='criteria_edit_total_mark'>
-     <%= t('criteria_edit_total_mark', criterion_total_mark: criterion.weight*4) %>
+     <%= t('criteria_edit_total_mark', criterion_total_mark: criterion.max_mark) %>
     </span>
     <br>
     <h4><span><%= t('visibility') %></span></h4>

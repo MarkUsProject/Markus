@@ -12,8 +12,8 @@ class RubricCriterionTest < ActiveSupport::TestCase
 
     should validate_presence_of :assignment_id
     should validate_numericality_of :assignment_id
-    should validate_numericality_of :weight
-    should validate_presence_of :weight
+    should validate_numericality_of :max_mark
+    should validate_presence_of :max_mark
 
     should validate_presence_of :name
 
@@ -36,9 +36,9 @@ class RubricCriterionTest < ActiveSupport::TestCase
     RubricCriterion.make
     assert RubricCriterion.count > 0
     criterion = RubricCriterion.first
-    criterion.weight = 0.5555555555
+    criterion.max_mark = 0.5555555555
     criterion.save
-    assert_equal 0.556, criterion.weight
+    assert_equal 0.556, criterion.max_mark
   end
 
   should 'find a mark for a specific rubric and result' do
@@ -153,10 +153,10 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @assignment = Assignment.make(marking_scheme_type: 'rubric')
       RubricCriterion.make(assignment: @assignment,
                            name: 'Algorithm Design',
-                           weight: 2.0)
+                           max_mark: 2.0)
       RubricCriterion.make(assignment: @assignment,
                            name: 'Documentation',
-                           weight: 2.7)
+                           max_mark: 2.7)
 
     end
   end
@@ -167,7 +167,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @assignment = Assignment.make
       RubricCriterion.make(assignment: @assignment,
                            name: 'Part 1 Programming',
-                           weight: 2.0,
+                           max_mark: 2.0,
                            level_0_description: 'Makes the TA "Shivers"',
                            level_1_description: 'Leaves the TA "calm"',
                            level_2_description: 'Makes the TA "grin"',
@@ -213,7 +213,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
 
       should 'raise an error message on a row with an invalid weight' do
-        row = %w(name weight l0 l1 l2 l3 l4)
+        row = %w(name max_mark l0 l1 l2 l3 l4)
         e = assert_raise ActiveRecord::RecordNotSaved do
           RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
         end
@@ -266,7 +266,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
             criterion.name = 'criterion 5'
             criterion.assignment = @assignment
             criterion.position = @assignment.next_criterion_position
-            criterion.weight = 5.0
+            criterion.max_mark = 5.0
             assert criterion.save
           end
           should 'allow a criterion with the same name to overwrite' do
@@ -275,7 +275,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
               (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
                 assert_equal 'name' + i.to_s, criterion['level_' + i.to_s + '_name']
               end
-              assert_equal 1.0, criterion.weight
+              assert_equal 4.0, criterion.max_mark
             end
 
           end
@@ -309,7 +309,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     new_rubric_criteria = {
       name: 'somecriteria',
       assignment_id: Assignment.make,
-      weight: 0.25,
+      max_mark: 0.25,
       level_0_name: 'Horrible',
       level_1_name: 'Poor',
       level_2_name: 'Satisfactory',
