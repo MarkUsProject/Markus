@@ -9,7 +9,7 @@
   </header>
   <ul id='rubric_criteria_pane_list'>
     <% @criteria.each do |criterion| -%>
-      <%= render partial: 'rubrics/rubric_criterion',
+      <%= render partial: 'rubric_criteria/rubric_criterion',
                  locals: { criterion: criterion } %>
     <% end %>
   </ul>

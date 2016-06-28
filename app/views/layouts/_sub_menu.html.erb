@@ -1,6 +1,6 @@
 <% if @current_user.admin? %>
   <% if controller.controller_name == 'assignments' ||
-        controller.controller_name == 'rubrics' ||
+        controller.controller_name == 'rubric_criteria' ||
         controller.controller_name == 'flexible_criteria' ||
         controller.controller_name == 'submissions' ||
         controller.controller_name == 'summaries' ||
@@ -76,7 +76,7 @@
                controller.action_name != 'new' &&
                controller.action_name != 'create') %>
           <li <% if ['assignments',
-                     'rubrics',
+                     'rubric_criteria',
                      'flexible_criteria',
                      'annotation_categories',
                      'automated_tests'].include?(controller.controller_name) %>
@@ -222,12 +222,15 @@
                                                                    1,
                                                                    1) %>
         </li>
-        <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
-          <%= link_to t('automated_tests.title'),
-                      controller: 'automated_tests',
-                      action:'student_interface',
-                      id: @assignment.id %>
-        </li>
+        <% if @assignment.enable_test && (@assignment.unlimited_tokens ||
+                                          @assignment.tokens_per_period > 0) %>
+          <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
+            <%= link_to t('automated_tests.title'),
+                        controller: 'automated_tests',
+                        action:'student_interface',
+                        id: @assignment.id %>
+          </li>
+        <% end %>
         <% if @assignment.has_peer_review? || @assignment.is_peer_review? %>
           <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'peer_review'%>'>
             <%= link_to t('assignment.start_peer_review'),

@@ -42,7 +42,7 @@ class Criterion < ActiveRecord::Base
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
-    criterion_ids = criterion_class.where(id: criterion_ids).pluck(:id)
+    criterion_ids = assignment.get_criteria.where(id: criterion_ids).pluck(:id)
 
     columns = [:criterion_id, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique

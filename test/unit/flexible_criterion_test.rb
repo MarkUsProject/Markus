@@ -9,7 +9,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
   UPLOAD_CSV_STRING = "criterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
   INVALID_CSV_STRING = "criterion3\n"
 
-  context 'A good FlexiableCriterion model' do
+  context 'A good FlexibleCriterion model' do
     setup do
       FlexibleCriterion.make
     end
@@ -40,40 +40,38 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
     should_not allow_value(-100.0).for(:max_mark)
   end
 
-  context 'With an unexisting criteria' do
+  context 'With non-existent criteria' do
+    setup do
+      @assignment = Assignment.make(marking_scheme_type: 'flexible')
+    end
 
     should 'raise en error message on an empty row' do
       e = assert_raise CSVInvalidLineError do
-        FlexibleCriterion.new_from_csv_row([], Assignment.new)
+        FlexibleCriterion.create_or_update_from_csv_row([], @assignment)
       end
-      assert_equal I18n.t('csv.invalid_row.invalid_format'), e.message
+      assert_equal t('csv.invalid_row.invalid_format'), e.message
     end
 
     should 'raise an error message on a 1 element row' do
       e = assert_raise CSVInvalidLineError do
-        FlexibleCriterion.new_from_csv_row(%w(name), Assignment.new)
+        FlexibleCriterion.create_or_update_from_csv_row(%w(name), @assignment)
       end
-      assert_equal I18n.t('csv.invalid_row.invalid_format'), e.message
+      assert_equal t('csv.invalid_row.invalid_format'), e.message
     end
 
-    should 'raise an error message on a invalid maximum value' do
+    should 'raise an error message on an invalid maximum value' do
       e = assert_raise CSVInvalidLineError do
-        FlexibleCriterion.new_from_csv_row(%w(name max_value), Assignment.new)
+        FlexibleCriterion.create_or_update_from_csv_row(%w(name max_value), @assignment)
       end
     end
 
     should 'raise exceptions in case of an unpredicted error' do
       # Capture exception in variable 'e'
-      e = assert_raise CSV::MalformedCSVError do
+      e = assert_raise CSVInvalidLineError do
         # That should fail because the assignment doesn't yet exists (in the DB)
-        FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
+        FlexibleCriterion.create_or_update_from_csv_row(['name', 10], Assignment.new(marking_scheme_type: 'flexible'))
       end
-      assert_instance_of CSV::MalformedCSVError, e
-      if RUBY_VERSION > '1.9'
-        assert_not_nil(e.message =~ /ActiveModel::Errors/)
-      else
-        assert_instance_of ActiveModel::Errors, e.message
-      end
+      assert_instance_of CSVInvalidLineError, e
     end
 
   end
@@ -84,22 +82,21 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
     end
 
 
-    should 'create a new instance from a 2 element row' do
-      criterion = FlexibleCriterion.new_from_csv_row(['name', 10.0],
-                                                     @assignment)
+    should 'overwrite criterion from a 2 element row with no description' do
+      criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0], @assignment)
       assert_not_nil criterion
-      assert_instance_of FlexibleCriterion, criterion
-      assert_equal criterion.assignment, @assignment
+      assert_equal 'name', criterion.name
+      assert_equal 10.0, criterion.max_mark
+      assert_equal @assignment, criterion.assignment
     end
 
-    should 'create a new instance from a 3 elements row' do
-      criterion = FlexibleCriterion.new_from_csv_row(['name',
-                                                      10.0,
-                                                      'description'],
-                                                     @assignment)
+    should 'overwrite criterion from a 3 elements row that includes a description' do
+      criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0, 'description'], @assignment)
       assert_not_nil criterion
-      assert_instance_of FlexibleCriterion, criterion
-      assert_equal criterion.assignment, @assignment
+      assert_equal 'name', criterion.name
+      assert_equal 10.0, criterion.max_mark
+      assert_equal 'description', criterion.description
+      assert_equal @assignment, criterion.assignment
     end
 
     context 'with three flexible criteria' do
@@ -118,15 +115,17 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
                                description: 'description3!',
                                max_mark: 1.6,
                                position: 3)
+        @csv_base_row = ['criterion2', '10', 'description2, "with quotes"']
       end
 
-      should 'fail with corresponding error message if the name is already in use' do
-        e = assert_raise CSVInvalidLineError do
-          FlexibleCriterion.new_from_csv_row(
-            ['criterion1', 1.0, 'any description would do'],
-            @assignment)
+      should 'allow a criterion with the same name to overwrite' do
+        assert_nothing_raised do
+          criterion = FlexibleCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+          assert_equal 'criterion2', criterion.name
+          assert_equal 10, criterion.max_mark
+          assert_equal 'description2, "with quotes"', criterion.description
+          assert_equal 2, criterion.position
         end
-        assert_equal I18n.t('csv.invalid_row.duplicate_entry'), e.message
       end
 
     end

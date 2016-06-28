@@ -2,7 +2,7 @@
 
 <div class='float_right'>
   <%= button_to t(:delete),
-       assignment_rubric_path(id: criterion.id),
+       assignment_rubric_criterion_path(id: criterion.id),
        data: { confirm: t(:remove_criteria_message) },
        method: :delete,
        class: 'delete',

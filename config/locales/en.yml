@@ -243,6 +243,7 @@ en:
         reviewee_group: "Reviewee group"
         empty_list_reviewers: "Cannot have an empty list of reviewers"
         cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
+        number_per_group: "Number of peer reviews per group"
         download:
             assigned_reviewers_header: "Download Peer Review Assignments"
             assigned_reviewers_csv: "Reviewer group to reviewee group CSV"

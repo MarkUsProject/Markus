@@ -184,25 +184,25 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context 'when parsing a CSV file' do
 
-      should 'raise an error message on an empty row' do
+      should 'raise csv line error on an empty row' do
         assert_raise CSVInvalidLineError do
           RubricCriterion.create_or_update_from_csv_row([], Assignment.new)
         end
       end
 
-      should 'raise an error message on a 1 element row' do
+      should 'raise csv line error on a 1 element row' do
         assert_raise CSVInvalidLineError do
           RubricCriterion.create_or_update_from_csv_row(%w(name), Assignment.new)
         end
       end
 
-      should 'raise an error message on a 2 element row' do
+      should 'raise csv line error on a 2 element row' do
         assert_raise CSVInvalidLineError do
           RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), Assignment.new)
         end
       end
 
-      should 'raise an error message on a row with any number of elements that does not include a name for every criterion' do
+      should 'raise csv line error on a row with any number of elements that does not include a name for every criterion' do
         row = %w(name 1.0)
         (0..RubricCriterion::RUBRIC_LEVELS - 2).each do |i|
           row << 'name' + i.to_s
@@ -212,20 +212,21 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         end
       end
 
-      should 'raise an error message on a row with an invalid weight' do
+      should 'raise csv line error on a row with an invalid weight' do
         row = %w(name max_mark l0 l1 l2 l3 l4)
-        e = assert_raise ActiveRecord::RecordNotSaved do
+        e = assert_raise CSVInvalidLineError do
           RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
         end
-        assert_instance_of ActiveRecord::RecordNotSaved, e
+        assert_instance_of CSVInvalidLineError, e
+        assert_equal t('csv.invalid_row.invalid_format'), e.message
       end
 
-      should 'raise the errors hash in case of an unpredicted error' do
-        e = assert_raise ActiveRecord::RecordNotSaved do
+      should 'raise csv line error in case of an unpredicted error' do
+        e = assert_raise CSVInvalidLineError do
           # That should fail because the assignment doesn't yet exists (in the DB)
           RubricCriterion.create_or_update_from_csv_row(%w(name 10 l0 l1 l2 l3 l4), Assignment.new)
         end
-        assert_instance_of ActiveRecord::RecordNotSaved, e
+        assert_instance_of CSVInvalidLineError, e
       end
 
       context 'and the row is valid' do

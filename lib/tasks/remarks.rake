@@ -45,26 +45,13 @@ namespace :db do
     remark_group = Grouping.find_by_group_id(remark_submission.grouping_id)
     result = remark_submission.results.first
 
-    #Automate remarks for assignment using flexible criteria
-    if remark_group.assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
-      remark_group.assignment.get_criteria.each do |flexible|
-        mark = create_mark(remark_submission.remark_result.id,
-                            remark_group.assignment.marking_scheme_type,
-                            flexible)
-        result.marks.push(mark)
-        result.save
-      end
-    end
-
-    #Automate remarks for assignment using rubric criteria
-    if remark_group.assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-      remark_group.assignment.get_criteria.each do |rubric|
-        mark = create_mark(remark_submission.remark_result.id,
-                            remark_group.assignment.marking_scheme_type,
-                            rubric)
-        result.marks.push(mark)
-        result.save
-      end
+    #Automate remarks for assignment using appropriate criteria
+    remark_group.assignment.get_criteria.each do |criterion|
+      mark = create_mark(remark_submission.remark_result.id,
+                         remark_group.assignment.marking_scheme_type,
+                         criterion)
+      result.marks.push(mark)
+      result.save
     end
 
     remark_submission.remark_result.update_attributes(
