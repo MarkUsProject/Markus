@@ -135,7 +135,7 @@ class AssignmentsController < ApplicationController
   def peer_review
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
-    if @assignment.is_hidden
+    if @assignment.nil?
       render 'shared/http_status',
              formats: [:html],
              locals: {

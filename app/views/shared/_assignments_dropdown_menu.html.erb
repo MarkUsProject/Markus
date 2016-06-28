@@ -117,7 +117,7 @@
           <% if !assignment.is_hidden %>
             <%= link_to h(assignment.short_identifier),
                         { controller: 'assignments',
-                          action: 'student_interface',
+                          action: assignment.is_peer_review? ? 'peer_review' : 'student_interface',
                           id: assignment.id },
                         title: assignment.description %>
           <% end %>
