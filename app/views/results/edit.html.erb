@@ -152,8 +152,7 @@
 <div class='title_bar'>
   <h1>
     <%= t('results.title',
-          { assignment_name: @pr.nil? ? @assignment.short_identifier :
-                             @assignment.pr_assignment.short_identifier,
+          { assignment_name: @assignment.short_identifier,
             group_name: @grouping.get_group_name }) %>
   </h1>
 

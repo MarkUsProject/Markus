@@ -20,7 +20,9 @@
     <li class='section'><%= t('assignments') %></li>
   <% end %>
 
-  <% if assignment != @assignment
+  <% if assignment.is_peer_review? %>
+
+  <% elsif assignment != @assignment
     if (controller.controller_name == 'assignments' &&
         (controller.action_name == 'index' ||
          controller.action_name == 'new') ||
@@ -117,7 +119,7 @@
           <% if !assignment.is_hidden %>
             <%= link_to h(assignment.short_identifier),
                         { controller: 'assignments',
-                          action: assignment.is_peer_review? ? 'peer_review' : 'student_interface',
+                          action: 'student_interface',
                           id: assignment.id },
                         title: assignment.description %>
           <% end %>
