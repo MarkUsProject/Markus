@@ -32,15 +32,10 @@ class FlexibleCriteriaController < ApplicationController
   def create
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.get_criteria
-    if @criteria.length > 0
-      new_position = @criteria.last.position + 1
-    else
-      new_position = 1
-    end
     @criterion = FlexibleCriterion.new
     @criterion.assignment = @assignment
     @criterion.max = FlexibleCriterion::DEFAULT_MAX
-    @criterion.position = new_position
+    @criterion.position = @assignment.next_criterion_position
     unless @criterion.update_attributes(flexible_criterion_params)
       @errors = @criterion.errors
       render :add_criterion_error
@@ -76,11 +71,12 @@ class FlexibleCriteriaController < ApplicationController
   def upload
     file = params[:upload][:flexible]
     @assignment = Assignment.find(params[:assignment_id])
+    encoding = params[:encoding]
     if request.post? && !file.blank?
       FlexibleCriterion.transaction do
-        result = MarkusCSV.parse(file.read) do |row|
+        result = MarkusCSV.parse(file.read, encoding: encoding) do |row|
           next if CSV.generate_line(row).strip.empty?
-          FlexibleCriterion.new_from_csv_row(row, @assignment)
+          FlexibleCriterion.create_or_update_from_csv_row(row, @assignment)
         end
         unless result[:invalid_lines].empty?
           flash_message(:error, result[:invalid_lines])
