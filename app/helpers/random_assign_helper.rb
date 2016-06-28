@@ -32,17 +32,24 @@ module RandomAssignHelper
     num_times_to_add_reviewee.times { @shuffled_reviewees += reviewee_groups }
     @shuffled_reviewees.shuffle()
 
-    @shuffled_reviewees_assigned_reviewers = @shuffled_reviewees.map { |dummy| nil }
+    @shuffled_reviewees_assigned_reviewers = @shuffled_reviewees.map { nil }
   end
 
   # We need to get all the existing peer reviews for assignments so we can
   # skip some assignments if they exist.
   def populate_from_existing_peer_reviews(pr_assignment)
-    # TODO : Remove? --- pr_assignment.get_peer_reviews().each do |peer_review|
-    # TODO - Is this okay? the 'peer reviews' forces us to go through the parent... doesn't seem right (do we have a choice?)
     pr_assignment.parent_assignment.peer_reviews.each do |peer_review|
-      @reviewer_ids_assigned_reviewee_ids_map[peer_review.reviewer.id].add(peer_review.reviewee.id)
+      reviewee = peer_review.reviewee
+      @reviewer_ids_assigned_reviewee_ids_map[peer_review.reviewer.id].add(reviewee.id)
+      remove_reviewee_once_from_shuffled_list(reviewee)
     end
+  end
+
+  # Required so that existing reviews don't cause a lopsided distribution.
+  def remove_reviewee_once_from_shuffled_list(reviewee)
+    index = @shuffled_reviewees.find_index(reviewee)
+    @shuffled_reviewees.delete_at(index)
+    @shuffled_reviewees_assigned_reviewers.pop()
   end
 
   def perform_assignments
@@ -58,7 +65,7 @@ module RandomAssignHelper
         if not reviewee.nil?
           add_peer_review_to_db_and_remember_assignment(reviewer, reviewee, shuffle_index)
         else
-          assign_backwards_or_throw(reviewer, shuffle_index)
+          find_and_swap_with_group_or_throw(reviewer, shuffle_index)
         end
 
         shuffle_index += 1
@@ -119,21 +126,26 @@ module RandomAssignHelper
     @shuffled_reviewees_assigned_reviewers[shuffle_index] = reviewer
   end
 
-  def assign_backwards_or_throw(reviewer, shuffle_index)
+  # Goes forward from shuffle_index + 1 constantly ahead and either swaps on
+  # finding an eligible reviewee from wrap-around (uses modulus) or throws
+  # an UnableToRandomlyAssignGroupException.
+  def find_and_swap_with_group_or_throw(reviewer, shuffle_index)
+    next_index = 0
     reviewee_at_shuffle_index = @shuffled_reviewees[shuffle_index]
-    (shuffle_index - 1).downto(0).each do |previous_shuffle_index|
-      reviewee_at_previous_index = @shuffled_reviewees[previous_shuffle_index]
-      reviewer_assigned_to_previous_reviewee = @shuffled_reviewees_assigned_reviewers[previous_shuffle_index]
+    while next_index < shuffle_index
+      reviewee_at_previous_index = @shuffled_reviewees[next_index]
+      reviewer_assigned_to_previous_reviewee = @shuffled_reviewees_assigned_reviewers[next_index]
+
       unless eligible_to_be_assigned(reviewer, reviewee_at_previous_index) and
              eligible_to_be_assigned(reviewer_assigned_to_previous_reviewee, reviewee_at_shuffle_index)
+        next_index = (next_index + 1) % @shuffled_reviewees.size
         next
       end
 
-      perform_group_exchange(reviewer, shuffle_index, previous_shuffle_index)
+      perform_group_exchange(reviewer, shuffle_index, next_index)
       return
     end
 
-    # If we cannot assign after all that, something is very wrong...
     raise UnableToRandomlyAssignGroupException
   end
 
