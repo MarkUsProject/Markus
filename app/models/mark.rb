@@ -32,7 +32,7 @@ class Mark < ActiveRecord::Base
   def valid_mark
     unless mark.nil?
       if mark > markable.max_mark
-        errors.add(:mark, I18n.t('mark.error.validate_criteria'))
+        errors.add(:mark, t('mark.error.validate_criteria'))
       end
     end
   end

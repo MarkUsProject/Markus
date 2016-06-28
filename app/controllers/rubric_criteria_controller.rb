@@ -15,9 +15,9 @@ class RubricCriteriaController < ApplicationController
   def update
     begin
       @criterion = RubricCriterion.find(params[:id])
-      unless @criterion.update_attributes(rubric_criterion_params.deep_merge(params.require(:rubric_criterion)
-                                                                                 .permit(:max_mark)
-                                                                                 .transform_values { |x|  (Float(x) * 4).to_s }))
+      unless @criterion.update(rubric_criterion_params.deep_merge(params.require(:rubric_criterion)
+                                                                      .permit(:max_mark)
+                                                                      .transform_values { |x|  (Float(x) * 4).to_s }))
         render :errors
         return
       end

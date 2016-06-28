@@ -63,7 +63,7 @@ class FlexibleCriterion < Criterion
   # ===Raises:
   #
   # CSVInvalidLineError  If the row does not contain enough information,
-  #                      if the max value is zero, nil or does not evaluate to a
+  #                      if the maximum mark is zero, nil or does not evaluate to a
   #                      float, or if the criterion is not successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < 2
@@ -80,7 +80,7 @@ class FlexibleCriterion < Criterion
     rescue ArgumentError
       raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
     end
-    # Check that max is a valid number.
+    # Check that the maximum mark given is a valid number.
     if criterion.max_mark.nil? or criterion.max_mark.zero?
       raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
     end

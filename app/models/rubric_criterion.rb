@@ -6,7 +6,7 @@ class RubricCriterion < Criterion
   validates_presence_of :max_mark
   validates_numericality_of :max_mark
   before_save :round_max_mark
-  validate :validate_total_weight, on: :update
+  validate :validate_max_mark, on: :update
 
   after_save :update_existing_results
 
@@ -50,8 +50,8 @@ class RubricCriterion < Criterion
     self.assigned_groups_count = result.uniq.length
   end
 
-  def validate_total_weight
-    errors.add(:assignment, t('rubric_criteria.error_total')) if assignment.total_mark + ((max_mark - max_mark_was) / 4) <= 0
+  def validate_max_mark
+    errors.add(:assignment, t('rubric_criteria.error_total')) if assignment.total_mark + max_mark - max_mark_was <= 0
   end
 
   # Just a small effort here to remove magic numbers...
@@ -125,7 +125,7 @@ class RubricCriterion < Criterion
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
     criterion = assignment.get_criteria.find_or_create_by(name: name)
-    # Check that the weight is not a string.
+    # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
       criterion.max_mark = Float(working_row.shift) * 4
     rescue ArgumentError
@@ -174,7 +174,7 @@ class RubricCriterion < Criterion
     # create a new one.
     criterion = assignment.get_criteria.find_or_create_by(
       name: name)
-    #Check that the weight is not a string.
+    #Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
       criterion.max_mark = Float(key[1]['max_mark']) * 4
     rescue ArgumentError
