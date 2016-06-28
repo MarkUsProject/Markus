@@ -125,6 +125,10 @@ class Result < ActiveRecord::Base
     self.save
   end
 
+  def is_a_review?
+    PeerReview.exists?(result_id: id)
+  end
+
   private
   # If this record is marked as "partial", ensure that its
   # "released_to_students" value is set to false.
