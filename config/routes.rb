@@ -74,7 +74,7 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :rubrics do
+      resources :rubric_criteria do
         member do
           delete 'destroy'
         end

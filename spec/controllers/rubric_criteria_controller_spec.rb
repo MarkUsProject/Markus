@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe RubricsController do
+describe RubricCriteriaController do
   before :each do
     # Authenticate user is not timed out, and has administrator rights.
     allow(controller).to receive(:session_expired?).and_return(false)
@@ -82,17 +82,17 @@ describe RubricsController do
       # the '.read' method is called to simulate the behaviour of
       # the http uploaded file
       @file_good = fixture_file_upload(
-        'files/rubrics/form_good.csv', 'text/csv')
+        'files/rubric_criteria/form_good.csv', 'text/csv')
       allow(@file_good).to receive(:read).and_return(
         File.read(fixture_file_upload(
-                    'files/rubrics/form_good.csv',
+                    'files/rubric_criteria/form_good.csv',
                     'text/csv')))
 
       @file_invalid_column = fixture_file_upload(
-        'files/rubrics/form_invalid_column.csv', 'text/csv')
+        'files/rubric_criteria/form_invalid_column.csv', 'text/csv')
       allow(@file_invalid_column).to receive(:read).and_return(
         File.read(fixture_file_upload(
-                    'files/rubrics/form_invalid_column.csv',
+                    'files/rubric_criteria/form_invalid_column.csv',
                     'text/csv')))
 
       @file_bad_csv = fixture_file_upload(
@@ -126,10 +126,9 @@ describe RubricsController do
       expect(4).to eq(rubric_criteria[3].position)
 
       expect(flash[:error]).to be_nil
-      expect(flash[:success]).to eq([I18n.t('csv_valid_lines',
-                                            valid_line_count: 4)])
+      expect(flash[:success]).to eq([t('csv_valid_lines', valid_line_count: 4)])
       expect(response).to redirect_to(action: 'index',
-                                      controller: 'rubrics',
+                                      controller: 'rubric_criteria',
                                       id: assignment.id)
     end
 
@@ -141,7 +140,7 @@ describe RubricsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(action: 'index',
-                                      controller: 'rubrics',
+                                      controller: 'rubric_criteria',
                                       id: assignment.id)
     end
 
@@ -151,7 +150,7 @@ describe RubricsController do
 
       expect(response.status).to eq(302)
       expect(response).to redirect_to(action: 'index',
-                                      controller: 'rubrics',
+                                      controller: 'rubric_criteria',
                                       id: assignment.id)
     end
 
@@ -163,7 +162,7 @@ describe RubricsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(action: 'index',
-                                      controller: 'rubrics',
+                                      controller: 'rubric_criteria',
                                       id: assignment.id)
     end
 
@@ -175,7 +174,7 @@ describe RubricsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(action: 'index',
-                                      controller: 'rubrics',
+                                      controller: 'rubric_criteria',
                                       id: assignment.id)
     end
   end

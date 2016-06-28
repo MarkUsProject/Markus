@@ -123,7 +123,7 @@ module Api
         mark_to_change = result.marks.find_or_create_by(
           markable_id: crit.id,
           markable_type: crit.class.name)
-        unless set_mark_by_criteria(crit, mark_to_change)
+        unless crit.set_mark_by_criteria(mark_to_change, params[criteria.name])
           # Some error occurred (including invalid mark)
           render 'shared/http_status', locals: { code: '500', message:
             mark_to_change.errors.full_messages.first }, status: 500
@@ -132,23 +132,6 @@ module Api
       end
       render 'shared/http_status', locals: { code: '200', message:
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
-    end
-
-    def set_mark_by_criteria(criteria, mark_to_change)
-      if criteria.is_a?(FlexibleCriterion)
-        if params[criteria.name] == 'nil'
-          mark_to_change.mark = nil
-        else
-          mark_to_change.mark = params[criteria.name].to_f
-        end
-      else
-        if params[criteria.name] == 'nil'
-          mark_to_change.mark = nil
-        else
-          mark_to_change.mark = params[criteria.name]
-        end
-      end
-      mark_to_change.save
     end
 
     # Return key:value pairs of group_name:group_id

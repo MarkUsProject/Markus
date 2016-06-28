@@ -184,10 +184,10 @@ describe 'An Assignment' do
   end
   # end Assignment member route tests
 
-  # start Assignment's rubrics route tests
-  context 's rubrics' do
-    let(:rubric_path) { path + '/' + assignment.id.to_s + '/rubrics' }
-    let(:rubric_ctrl) { 'rubrics' }
+  # start Assignment's rubric_criteria route tests
+  context 's rubric_criteria' do
+    let(:rubric_path) { path + '/' + assignment.id.to_s + '/rubric_criteria' }
+    let(:rubric_ctrl) { 'rubric_criteria' }
 
     # start assignment rubric member route tests
     context 'member' do
@@ -241,7 +241,7 @@ describe 'An Assignment' do
       end
     end
   end
-  # end Assignment's rubrics route tests
+  # end Assignment's rubric_criteria route tests
 
   # start assignment flexible criteria route tests
   context 's flexible_criteria' do

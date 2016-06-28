@@ -266,16 +266,10 @@ class Assignment < ActiveRecord::Base
     short_identifier
   end
 
+  # Returns the maximum possible mark for a particular assignment
+  # TODO: Change name to max_mark
   def total_mark
-    total = 0
-    if self.marking_scheme_type == 'rubric'
-      get_criteria(:ta).each do |criterion|
-        total = total + criterion.weight * 4
-      end
-    else
-      total = get_criteria(:ta).map(&:max).sum()
-    end
-    total.round(2)
+    get_criteria(:ta).map(&:max_mark).sum().round(2)
   end
 
   # calculates summary statistics of released results for this assignment
@@ -622,49 +616,15 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  # returns an array of [mark, weight] for the assignment's rubric criterion
-  def get_rubric_marks_list(submission)
-    marks_list = []
-    get_criteria.each do |rubric_criterion|
-      mark = submission.get_latest_result
-        .marks
-        .where(markable_id: rubric_criterion.id,
-               markable_type: 'RubricCriterion')
-        .first
-      marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
-                       rubric_criterion.weight])
-    end
-    marks_list
-  end
-
-  # returns an array of [mark, max] for the assignment's rubric criterion
-  def get_flexible_marks_list(submission)
-    marks_list = []
-    get_criteria.each do |flexible_criterion|
-      mark = submission.get_latest_result
-        .marks
-        .where(markable_id: flexible_criterion.id,
-               markable_type: 'FlexibleCriterion')
-        .first
-      marks_list.push([(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
-                       flexible_criterion.max])
-    end
-    marks_list
-  end
-
   # Get a detailed CSV report of criteria based marks
   # (includes each criterion, with it's out-of value) for this assignment.
   # Produces CSV rows such as the following:
   #   student_name,95.22222,3,4,2,5,5,4,0/2
   # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
   # Last column are grace-credits.
-  # Determines which criterion type to use (flexible vs rubric)
   def get_detailed_csv_report
-    out_of = self.total_mark
+    out_of = total_mark
     students = Student.all
-    # determine whether to use flexible criterion or rubric
-    is_flexible = self.marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
-    criteria = get_criteria
     MarkusCSV.generate(students) do |student|
       result = [student.user_name]
       grouping = student.accepted_grouping_for(self.id)
@@ -673,7 +633,7 @@ class Assignment < ActiveRecord::Base
         # total percentage, total_grade
         result.concat(['','0'])
         # mark, weight
-        result.concat(criteria.pluck("''", (is_flexible ? :max : :weight)).flatten())
+        result.concat(get_max_marks_for_criteria)
         # extra-mark, extra-percentage
         result.concat(['',''])
       else
@@ -682,10 +642,7 @@ class Assignment < ActiveRecord::Base
         submission = grouping.current_submission_used
         result.concat([submission.get_latest_result.total_mark / out_of * 100,
                        submission.get_latest_result.total_mark])
-        marks_list = is_flexible ?
-          get_flexible_marks_list(submission) :
-          get_rubric_marks_list(submission)
-        marks_list.each do |mark|
+        get_marks_list(submission).each do |mark|
           result.concat(mark)
         end
         result.concat([submission.get_latest_result.get_total_extra_points,
@@ -696,6 +653,22 @@ class Assignment < ActiveRecord::Base
       result.push(grace_credits_data)
       result
     end
+  end
+
+  # Returns an array of either [mark, max] or [mark, weight].
+  def get_marks_list(submission)
+    get_criteria.map do |criterion|
+      mark = submission.get_latest_result.marks.find_by(markable_id: criterion.id)
+      [(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
+       criterion.mark_max]
+    end
+  end
+
+  # Returns an array of the form ['', max] or ['', weight] depending on the criteria.
+  # This may not be a good name to account for the fact that we either return weight or max.
+  # TODO This may change when unifying flexible and rubric.
+  def get_max_marks_for_criteria
+    ([""] * get_criteria.count).zip(get_criteria.map(&:mark_max)).flatten
   end
 
   def replace_submission_rule(new_submission_rule)
@@ -712,7 +685,7 @@ class Assignment < ActiveRecord::Base
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the rubric criteria.
-    get_criteria.count + 1
+    get_criteria.count > 0 ? get_criteria.last.position + 1 : 1
   end
 
   # Returns the class of the criteria that belong to this assignment.
@@ -726,6 +699,7 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  # Returns a filtered list of criteria.
   def get_criteria(user_visibility = :all)
     if user_visibility == :all
       get_all_criteria
@@ -737,27 +711,15 @@ class Assignment < ActiveRecord::Base
   end
 
   def get_all_criteria
-    if marking_scheme_type == 'rubric'
-      rubric_criteria
-    else
-      flexible_criteria
-    end
+    criterion_class.where(assignment_id: id).order(:position)
   end
 
   def get_ta_visible_criteria
-    if marking_scheme_type == 'rubric'
-      rubric_criteria.where(ta_visible: true)
-    else
-      flexible_criteria.where(ta_visible: true)
-    end
+    get_all_criteria.where(ta_visible: true)
   end
 
   def get_peer_visible_criteria
-    if marking_scheme_type == 'rubric'
-      rubric_criteria.where(peer_visible: true)
-    else
-      flexible_criteria.where(peer_visible: true)
-    end
+    get_all_criteria.where(peer_visible: true)
   end
 
   def criteria_count
@@ -769,7 +731,7 @@ class Assignment < ActiveRecord::Base
   # intervals defaults to 20
   def grade_distribution_as_percentage(intervals=20)
     distribution = Array.new(intervals, 0)
-    out_of = self.total_mark
+    out_of = total_mark
 
     if out_of == 0
       return distribution

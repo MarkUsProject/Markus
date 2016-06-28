@@ -7,7 +7,7 @@ require File.expand_path(File.join(File.dirname(__FILE__),'..', 'test_helper'))
 require 'shoulda'
 require 'machinist'
 
-class RubricsControllerTest < AuthenticatedControllerTest
+class RubricCriteriaControllerTest < AuthenticatedControllerTest
 
   context 'An unauthenticated and unauthorized user' do
 
@@ -335,7 +335,7 @@ END
         assert assigns :assignment
         assert assigns :criterion
         assert assigns :errors
-        assert render_template 'rubrics/add_criterion_error'
+        assert render_template 'rubric_criteria/add_criterion_error'
         assert_response :success
       end
 
@@ -350,7 +350,7 @@ END
                                    weight: 10}
         assert assigns :assignment
         assert assigns :criterion
-        assert render_template 'rubrics/create_and_edit'
+        assert render_template 'rubric_criteria/create_and_edit'
         assert respond_with :success
       end
 
@@ -363,7 +363,7 @@ END
                                    weight: 10}
         assert assigns :assignment
         assert assigns :criterion
-        assert render_template 'rubrics/create_and_edit'
+        assert render_template 'rubric_criteria/create_and_edit'
         assert_response :success
       end
 
@@ -380,7 +380,7 @@ END
       end
 
 
-      should 'download rubrics as CSV' do
+      should 'download rubric_criteria as CSV' do
         get_as @admin, :download_csv, assignment_id: @assignment.id
         assert assigns :assignment
         assert_equal response.header['Content-Type'], 'text/csv'

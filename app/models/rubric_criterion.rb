@@ -38,6 +38,10 @@ class RubricCriterion < Criterion
 
   validate :visible?
 
+  def self.symbol
+    :rubric
+  end
+
   def update_assigned_groups_count
     result = []
     criterion_ta_associations.each do |cta|
@@ -47,7 +51,7 @@ class RubricCriterion < Criterion
   end
 
   def validate_total_weight
-    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if self.assignment.total_mark + (4 * (self.weight - self.weight_was)) <= 0
+    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if assignment.total_mark + (4 * (self.weight - self.weight_was)) <= 0
   end
 
   # Just a small effort here to remove magic numbers...
@@ -107,21 +111,25 @@ class RubricCriterion < Criterion
   #               RUBRIC_LEVELS description (one for each level).
   # assignment::  The assignment to which the newly created criterion should belong.
   #
+  # ===Raises:
+  #
+  # CSVInvalidLineError  If the row does not contain enough information, if the weight
+  #                      does not evaluate to a float, or if the criterion is not
+  #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
-      raise CSVInvalidLineError
+      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
     end
     working_row = row.clone
     name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria.find_or_create_by(
-      name: name)
-    #Check that the weight is not a string.
+    criterion = assignment.get_criteria.find_or_create_by(name: name)
+    # Check that the weight is not a string.
     begin
       criterion.weight = Float(working_row.shift)
     rescue ArgumentError
-      raise CSVInvalidLineError
+      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -195,7 +203,17 @@ class RubricCriterion < Criterion
   end
 
   def get_weight
-    self.weight
+    weight
+  end
+
+  # TODO: Get rid of this method once unification of flexible and rubric is finished
+  def mark_max
+    get_weight
+  end
+
+  # Returns the maximum mark for a particular criterion.
+  def max_mark
+    weight * 4
   end
 
   def round_weight
@@ -259,13 +277,22 @@ class RubricCriterion < Criterion
     self.assignment.submissions.each { |submission| submission.get_latest_result.update_total_mark }
   end
 
-  # Checks if the criterion is visible to either the ta or the peer reviewer
+  # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
         errors.add(:ta_visible, I18n.t('rubric_criteria.visibility_error'))
         false
     end
     true
+  end
+
+  def set_mark_by_criteria(mark_to_change, criterion_name)
+    if criterion_name == 'nil'
+      mark_to_change.mark = nil
+    else
+      mark_to_change.mark = criterion_name
+    end
+    mark_to_change.save
   end
 
 end

@@ -18,11 +18,21 @@ namespace :db do
       Faker::Lorem.sentence(pos_rand(range))
     end
 
-
     Assignment.all.each do |assignment|
+      5.times do |index|
+        ac = AnnotationCategory.create(assignment: assignment,
+                                       position: 1,
+                                       annotation_category_name: random_words(3))
+
+        (rand(10) + 3).times do
+          AnnotationText.create(annotation_category: ac, content: random_sentences(3))
+        end
+      end
+    end
+
+    Assignment.where(marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:rubric]).each do |assignment|
       8.times do |index|
-        if assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-          RubricCriterion.create(
+        RubricCriterion.create(
             name: random_sentences(1),
             assignment_id:         assignment.id,
             position:              1,
@@ -37,9 +47,13 @@ namespace :db do
             level_3_description:   random_sentences(5),
             level_4_name:          random_words(5),
             level_4_description:   random_sentences(5)
-          )
-        elsif assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
-          FlexibleCriterion.create(
+        )
+      end
+    end
+
+    Assignment.where(marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:flexible]).each do |assignment|
+      8.times do |index|
+        FlexibleCriterion.create(
             name: random_sentences(1),
             assignment_id:           assignment.id,
             description:             random_sentences(5),
@@ -48,18 +62,7 @@ namespace :db do
             created_at:              nil,
             updated_at:              nil,
             assigned_groups_count:   nil
-          )
-        end
-      end
-
-      5.times do |index|
-        ac = AnnotationCategory.create(assignment: assignment,
-                                       position: 1,
-                                       annotation_category_name: random_words(3))
-
-        (rand(10) + 3).times do
-          AnnotationText.create(annotation_category: ac, content: random_sentences(3))
-        end
+        )
       end
     end
   end

@@ -85,10 +85,7 @@ module AutomatedTestsHelper
         updated_script_files[file_num] = file.clone
       end
       # always make sure the criterion type is correct
-      updated_script_files[file_num][:criterion_type] =
-        @assignment.marking_scheme_type == 'rubric' ?
-          'RubricCriterion' :
-          'FlexibleCriterion'
+      updated_script_files[file_num][:criterion_type] = @assignment.criterion_class
     end
 
     # Create/Update test support files
