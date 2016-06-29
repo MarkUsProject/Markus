@@ -1,6 +1,8 @@
 require 'encoding'
 
 class RubricCriterion < Criterion
+  extend ActionView::Helpers
+  include ActionView::Helpers
   self.table_name = 'rubric_criteria' # set table name correctly
 
   validates_presence_of :max_mark
@@ -28,7 +30,7 @@ class RubricCriterion < Criterion
   validates_presence_of :name
   validates_uniqueness_of :name,
                           scope: :assignment_id,
-                          message: I18n.t('rubric_criteria.errors.messages.name_taken')
+                          message: t('rubric_criteria.errors.messages.name_taken')
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count
@@ -58,16 +60,16 @@ class RubricCriterion < Criterion
   RUBRIC_LEVELS = 5
   DEFAULT_MAX_MARK = 4
   DEFAULT_LEVELS = [
-    {'name' => I18n.t('rubric_criteria.defaults.level_0'),
-     'description' => I18n.t('rubric_criteria.defaults.description_0')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_1'),
-     'description' => I18n.t('rubric_criteria.defaults.description_1')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_2'),
-     'description' => I18n.t('rubric_criteria.defaults.description_2')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_3'),
-     'description' => I18n.t('rubric_criteria.defaults.description_3')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_4'),
-     'description' => I18n.t('rubric_criteria.defaults.description_4')}
+    {'name' => t('rubric_criteria.defaults.level_0'),
+     'description' => t('rubric_criteria.defaults.description_0')},
+    {'name' => t('rubric_criteria.defaults.level_1'),
+     'description' => t('rubric_criteria.defaults.description_1')},
+    {'name' => t('rubric_criteria.defaults.level_2'),
+     'description' => t('rubric_criteria.defaults.description_2')},
+    {'name' => t('rubric_criteria.defaults.level_3'),
+     'description' => t('rubric_criteria.defaults.description_3')},
+    {'name' => t('rubric_criteria.defaults.level_4'),
+     'description' => t('rubric_criteria.defaults.description_4')}
   ]
 
   def mark_for(result_id)
@@ -178,11 +180,11 @@ class RubricCriterion < Criterion
     begin
       criterion.max_mark = Float(key[1]['max_mark']) * 4
     rescue ArgumentError
-      raise I18n.t('criteria_csv_error.weight_not_number')
+      raise t('criteria_csv_error.weight_not_number')
     rescue TypeError
-      raise I18n.t('criteria_csv_error.weight_not_number')
+      raise t('criteria_csv_error.weight_not_number')
     rescue NoMethodError
-      raise I18n.t('rubric_criteria.upload.empty_error')
+      raise t('rubric_criteria.upload.empty_error')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -270,7 +272,7 @@ class RubricCriterion < Criterion
   # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
-        errors.add(:ta_visible, I18n.t('rubric_criteria.visibility_error'))
+        errors.add(:ta_visible, t('rubric_criteria.visibility_error'))
         false
     end
     true

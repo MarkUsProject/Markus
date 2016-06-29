@@ -3,7 +3,8 @@ require 'encoding'
 # Represents a flexible criterion used to mark an assignment that
 # has the marking_scheme_type attribute set to 'flexible'.
 class FlexibleCriterion < Criterion
-
+  extend ActionView::Helpers
+  include ActionView::Helpers
   self.table_name = 'flexible_criteria' # set table name correctly
 
   has_many :marks, as: :markable, dependent: :destroy
@@ -17,7 +18,7 @@ class FlexibleCriterion < Criterion
   validates_presence_of :name
   validates_uniqueness_of :name,
                           scope: :assignment_id,
-                          message: I18n.t('flexible_criteria.errors.messages.name_taken')
+                          message: t('flexible_criteria.errors.messages.name_taken')
 
   belongs_to :assignment, counter_cache: true
   validates_presence_of :assignment_id
@@ -152,7 +153,7 @@ class FlexibleCriterion < Criterion
   # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
-      errors.add(:ta_visible, I18n.t('flexible_criteria.visibility_error'))
+      errors.add(:ta_visible, t('flexible_criteria.visibility_error'))
       false
     end
     true
