@@ -159,11 +159,11 @@ class FlexibleCriterion < Criterion
     true
   end
 
-  def set_mark_by_criteria(mark_to_change, criterion_name)
-    if criterion_name == 'nil'
+  def set_mark_by_criterion(mark_to_change, mark_value)
+    if mark_value == 'nil'
       mark_to_change.mark = nil
     else
-      mark_to_change.mark = criterion_name.to_f
+      mark_to_change.mark = mark_value.to_f * weight
     end
     mark_to_change.save
   end

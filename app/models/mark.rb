@@ -39,13 +39,6 @@ class Mark < ActiveRecord::Base
     end
   end
 
-  #return the current mark for this criterion
-  def get_mark
-    criterion = self.markable
-    weight = criterion.weight
-    mark.to_f * weight
-  end
-
   private
 
   def ensure_not_released_to_students

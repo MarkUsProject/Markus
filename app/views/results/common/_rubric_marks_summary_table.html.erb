@@ -13,7 +13,7 @@
      if mark.nil? or mark.mark.nil?
        mark_value = 0
      else
-       mark_value = mark.mark
+       mark_value = mark.mark / criterion.weight
      end
   %>
     <tr id="<%= "mark_#{mark.id}_summary" %>">

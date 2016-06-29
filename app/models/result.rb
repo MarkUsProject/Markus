@@ -61,7 +61,7 @@ class Result < ActiveRecord::Base
       assignment.get_criteria(user_visibility).each do |criterion|
         mark = marks.find_by(markable_id: criterion.id)
         unless mark.nil?
-          new_marks += mark.get_mark
+          new_marks += mark.mark.to_f
         end
       end
     end

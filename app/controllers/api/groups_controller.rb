@@ -112,7 +112,7 @@ module Api
           'Marking for that submission is already completed' }, status: 404
         return
       end
-      matched_criteria = assignment.get_criteria.select{ |criterion| criterion.name == param.keys }
+      matched_criteria = assignment.get_criteria.select{ |criterion| params.keys.include?(criterion.name) }
       if matched_criteria.empty?
         render 'shared/http_status', locals: { code: '404', message:
           'No criteria were found that match that request.' }, status: 404
@@ -123,7 +123,7 @@ module Api
         mark_to_change = result.marks.find_or_create_by(
           markable_id: crit.id,
           markable_type: crit.class.name)
-        unless crit.set_mark_by_criteria(mark_to_change, params[criteria.name])
+        unless crit.set_mark_by_criterion(mark_to_change, params[crit.name])
           # Some error occurred (including invalid mark)
           render 'shared/http_status', locals: { code: '500', message:
             mark_to_change.errors.full_messages.first }, status: 500

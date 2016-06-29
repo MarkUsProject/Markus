@@ -367,11 +367,14 @@ class ResultsController < ApplicationController
 
   def update_mark
     result_mark = Mark.find(params[:mark_id])
-    result_mark.mark = params[:mark]
     submission = result_mark.result.submission  # get submission for logging
     group = submission.grouping.group           # get group for logging
     assignment = submission.grouping.assignment # get assignment for logging
     m_logger = MarkusLogger.instance
+
+    # Update mark attribute in marks table with a weighted mark
+    weight_criterion = result_mark.markable.weight
+    result_mark.mark = params[:mark].to_f * weight_criterion
 
     if result_mark.save
       m_logger.log("User '#{current_user.user_name}' updated mark for " +
@@ -379,7 +382,7 @@ class ResultsController < ApplicationController
                    "assignment #{assignment.short_identifier} for " +
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
-      render text: "#{result_mark.get_mark}," +
+      render text: "#{result_mark.mark.to_f}," +
                    "#{result_mark.result.get_subtotal}," +
                    "#{result_mark.result.total_mark}"
     else
