@@ -10,14 +10,14 @@ module RandomAssignHelper
   def perform_random_assignment(pr_assignment, num_groups_for_reviewers)
     @eligible_reviewers = pr_assignment.valid_groupings
     @shuffled_reviewees = []
-    @shuffled_reviewees_assigned_peer_review = []
+    @shuffled_reviewees_pr = []  # A list of peer reviews that match the indices for @shuffled_reviewees
     @num_groups_for_reviewers = num_groups_for_reviewers
-    @reviewer_ids_assigned_reviewee_ids_map = Hash.new { |h, k| h[k] = Set.new }
+    @reviewers_assigned_to = Hash.new { |h, k| h[k] = Set.new }  # reviewer_id => set(reviewee_ids)
 
     reviewer_groups_relation = pr_assignment.valid_groupings
     reviewee_groups_relation = pr_assignment.parent_assignment.valid_groupings
 
-    @eligible_reviewers.each { |reviewer|  @reviewer_ids_assigned_reviewee_ids_map[reviewer.id] = Set.new }
+    @eligible_reviewers.each { |reviewer|  @reviewers_assigned_to[reviewer.id] = Set.new }
 
     generate_shuffled_reviewees(reviewer_groups_relation, reviewee_groups_relation)
     remove_groups_from_shuffle_having_peer_review(pr_assignment)
@@ -31,9 +31,9 @@ module RandomAssignHelper
   def generate_shuffled_reviewees(reviewer_groups, reviewee_groups)
     num_times_to_add_reviewee = (reviewer_groups.size.to_f * @num_groups_for_reviewers / reviewer_groups.size).ceil
     num_times_to_add_reviewee.times { @shuffled_reviewees += reviewee_groups }
-    @shuffled_reviewees.shuffle()
+    @shuffled_reviewees.shuffle
 
-    @shuffled_reviewees_assigned_peer_review = @shuffled_reviewees.map { nil }
+    @shuffled_reviewees_pr = @shuffled_reviewees.map { nil }
   end
 
   # We need to get all the existing peer reviews for assignments so we can
@@ -41,7 +41,7 @@ module RandomAssignHelper
   def remove_groups_from_shuffle_having_peer_review(pr_assignment)
     pr_assignment.pr_peer_reviews.each do |peer_review|
       reviewee = peer_review.reviewee
-      @reviewer_ids_assigned_reviewee_ids_map[peer_review.reviewer.id].add(reviewee.id)
+      @reviewers_assigned_to[peer_review.reviewer.id].add(reviewee.id)
       remove_reviewee_once_from_shuffled_list(reviewee)
     end
   end
@@ -54,7 +54,7 @@ module RandomAssignHelper
     # are not in the list. Since we've removed all occurences, ignoring is okay.
     unless index.nil?
       @shuffled_reviewees.delete_at(index)
-      @shuffled_reviewees_assigned_peer_review.pop()
+      @shuffled_reviewees_pr.pop()
     end
   end
 
@@ -83,7 +83,7 @@ module RandomAssignHelper
 
   def remove_ineligible_reviewers
     @eligible_reviewers.delete_if do |reviewer|
-      @reviewer_ids_assigned_reviewee_ids_map[reviewer.id].size >= @num_groups_for_reviewers
+      @reviewers_assigned_to[reviewer.id].size >= @num_groups_for_reviewers
     end
   end
 
@@ -110,7 +110,7 @@ module RandomAssignHelper
 
   def eligible_to_be_assigned(reviewer, reviewee)
     # If they already have an assignment to the group, it's not viable.
-    if @reviewer_ids_assigned_reviewee_ids_map[reviewer.id].member?(reviewee.id)
+    if @reviewers_assigned_to[reviewer.id].member?(reviewee.id)
       return false
     end
 
@@ -127,8 +127,8 @@ module RandomAssignHelper
     result = reviewee.current_submission_used.get_latest_result
     peer_review = PeerReview.create!(reviewer: reviewer, result: result)
 
-    @reviewer_ids_assigned_reviewee_ids_map[reviewer.id].add(reviewee.id)
-    @shuffled_reviewees_assigned_peer_review[shuffle_index] = peer_review
+    @reviewers_assigned_to[reviewer.id].add(reviewee.id)
+    @shuffled_reviewees_pr[shuffle_index] = peer_review
   end
 
   # Goes forward from shuffle_index + 1 constantly ahead and either swaps on
@@ -139,7 +139,7 @@ module RandomAssignHelper
     reviewee_at_shuffle_index = @shuffled_reviewees[shuffle_index]
     while next_index < shuffle_index
       reviewee_at_previous_index = @shuffled_reviewees[next_index]
-      reviewer_assigned_to_previous_reviewee = @shuffled_reviewees_assigned_peer_review[next_index].reviewer
+      reviewer_assigned_to_previous_reviewee = @shuffled_reviewees_pr[next_index].reviewer
 
       unless eligible_to_be_assigned(reviewer, reviewee_at_previous_index) and
              eligible_to_be_assigned(reviewer_assigned_to_previous_reviewee, reviewee_at_shuffle_index)
@@ -157,7 +157,7 @@ module RandomAssignHelper
   def perform_group_exchange(reviewer, shuffle_index, prev_shuffle_index)
     reviewee_at_shuffle_index = @shuffled_reviewees[shuffle_index]
     reviewee_at_previous_index = @shuffled_reviewees[prev_shuffle_index]
-    peer_review = @shuffled_reviewees_assigned_peer_review[prev_shuffle_index]
+    peer_review = @shuffled_reviewees_pr[prev_shuffle_index]
     reviewer_for_prev_reviewee = peer_review.reviewer
 
     unlink_and_delete_previous_peer_review_assignment(peer_review, reviewee_at_previous_index)
@@ -168,7 +168,7 @@ module RandomAssignHelper
   end
 
   def unlink_and_delete_previous_peer_review_assignment(peer_review, reviewee)
-    @reviewer_ids_assigned_reviewee_ids_map[peer_review.reviewer.id].delete(reviewee.id)
+    @reviewers_assigned_to[peer_review.reviewer.id].delete(reviewee.id)
     peer_review.destroy
   end
 end
