@@ -61,8 +61,12 @@ class ResultsController < ApplicationController
     @marks_map = Hash.new
     @old_marks_map = Hash.new
 
-    @criteria = @current_user.is_reviewer_for?(@assignment.pr_assignment.id, @result.id) ?
-         @assignment.get_criteria(:peer) : @assignment.pr_assignment.get_criteria(:ta)
+    if !@assignment.pr_assignment.nil?
+      @criteria = @current_user.is_reviewer_for?(@assignment.pr_assignment.id, @result.id) ?
+          @assignment.get_criteria(:peer) : @assignment.pr_assignment.get_criteria(:ta)
+    else
+      @criteria = @assignment.get_criteria(:ta)
+    end
 
     @criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
