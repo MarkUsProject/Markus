@@ -7,7 +7,7 @@
       <th><%=t("summary_table.grade")%></th>
     </tr>
   </thead>
-  <% @criteria.each do |criterion| -%>
+  <% @mark_criteria.each do |criterion| -%>
   <%
      mark = marks_map[criterion.id]
      if mark.nil? or mark.mark.nil?

@@ -137,7 +137,7 @@
           <div id='mark_criteria'>
             <ul id='mark_criteria_pane_list'>
               <%# Also need to render the mark per criteria (if exist) %>
-              <% @criteria.each do |mark_criterion| -%>
+              <% @mark_criteria.each do |mark_criterion| -%>
                 <%= render partial: "results/marker/marker_#{@assignment.marking_scheme_type}_criterion_li",
                            locals: { mark_criterion: mark_criterion,
                                      result: result,

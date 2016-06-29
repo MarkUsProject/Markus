@@ -62,13 +62,13 @@ class ResultsController < ApplicationController
     @old_marks_map = Hash.new
 
     if !@assignment.pr_assignment.nil?
-      @criteria = @current_user.is_reviewer_for?(@assignment.pr_assignment.id, @result.id) ?
+      @mark_criteria = @current_user.is_reviewer_for?(@assignment.pr_assignment.id, @result.id) ?
           @assignment.get_criteria(:peer) : @assignment.pr_assignment.get_criteria(:ta)
     else
-      @criteria = @assignment.get_criteria(:ta)
+      @mark_criteria = @assignment.get_criteria(:ta)
     end
 
-    @criteria.each do |criterion|
+    @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       @marks_map[criterion.id] = mark
       # Loading up previous results for the case of a remark
