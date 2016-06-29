@@ -424,7 +424,7 @@ class AssignmentTest < ActiveSupport::TestCase
         end
       end
 
-      should 'be able to generate a detailed CSV report of rubrics based marks (including criteria)' do
+      should 'be able to generate a detailed CSV report of rubric_criteria based marks (including criteria)' do
         a = @assignment
         out_of = a.total_mark
         rubric_criteria = a.get_criteria

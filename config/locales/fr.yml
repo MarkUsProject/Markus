@@ -221,6 +221,7 @@ fr:
         reviewee_group: "Groupe pays examin"
         empty_list_reviewers: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
         cannot_allow_reviewer_to_be_reviewee: "Un étudiant ne peut pas être un réviseur et pays examiné"
+        number_per_group: "Nombre d'examens par les pairs par groupe"
         download:
             assigned_reviewers_header: "Télécharger Peer Review missions"
             assigned_reviewers_csv: "Auteur groupe groupe CSV pays examiné"

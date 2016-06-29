@@ -74,14 +74,10 @@
       <% end %>
     <% else %>
       <li>
-        <% # If the current controller is rubrics or flexible_criteria, we have to choose
+        <% # If the current controller is rubric_criteria or flexible_criteria, we have to choose
            # the appropriate controller according to the selected assignment's marking scheme type.
-           if controller.controller_name == 'rubrics' || controller.controller_name == 'flexible_criteria'
-          if assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-            target_controller = 'rubrics'
-          else
-            target_controller = 'flexible_criteria'
-          end
+           if controller.controller_name == 'rubric_criteria' || controller.controller_name == 'flexible_criteria'
+          target_controller = "#{@assignment.marking_scheme_type}_criteria"
         else
           target_controller = controller.controller_name == 'assignments' ||
                   controller.controller_name == 'automated_tests' ? nil :

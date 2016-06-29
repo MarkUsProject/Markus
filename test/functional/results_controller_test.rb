@@ -465,11 +465,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           should 'and the result is available' do
             SubmissionFile.make(submission: @submission)
-            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-              Mark.make(:rubric, result: @result)
-            else
-              Mark.make(:flexible,  result: @result)
-            end
+            Mark.make(@assignment.criterion_class.symbol, result: @result)
             AnnotationCategory.make(assignment: @assignment)
             @submission_file = @result.submission.submission_files.first
             @result.marking_state = Result::MARKING_STATES[:complete]
@@ -697,11 +693,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             g = Grouping.make(assignment: @assignment)
             s = Submission.make(grouping: g)
             @result = s.get_latest_result
-            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-              Mark.make(:rubric, result: @result)
-            else
-              Mark.make(:flexible, result: @result)
-            end
+            Mark.make(@assignment.criterion_class.symbol, result: @result)
 
             @assignment.assignment_stat.refresh_grade_distribution
             @grade_distribution = @assignment.assignment_stat.grade_distribution_percentage
@@ -950,11 +942,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             g = Grouping.make(assignment: @assignment)
             @submission = Submission.make(grouping: g)
-            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-              @mark = Mark.make(:rubric, result: @submission.get_latest_result)
-            else
-              @mark = Mark.make(:flexible, result: @submission.get_latest_result)
-            end
+            @mark =  Mark.make(@assignment.criterion_class.symbol, result: @submission.get_latest_result)
           end
 
           should 'fails validation' do
