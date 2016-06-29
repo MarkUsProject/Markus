@@ -263,14 +263,14 @@ class Assignment < ActiveRecord::Base
     short_identifier
   end
 
-  def total_mark
+  def total_mark(user_visibility = :ta)
     total = 0
     if self.marking_scheme_type == 'rubric'
-      get_criteria(:ta).each do |criterion|
+      get_criteria(user_visibility).each do |criterion|
         total = total + criterion.weight * 4
       end
     else
-      total = get_criteria(:ta).map(&:max).sum()
+      total = get_criteria(user_visibility).map(&:max).sum()
     end
     total.round(2)
   end
