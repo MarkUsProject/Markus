@@ -23,7 +23,7 @@ class PeerReview < ActiveRecord::Base
       reviewer.students.each { |student| student_id_set.add(student.id) }
       result.submission.grouping.students.each do |student|
         if student_id_set.include?(student.id)
-          errors.add(:reviewer_id, I18n.t('peer_reviews.cannot_allow_reviewer_to_be_reviewee'))
+          errors.add(:reviewer_id, I18n.t('peer_review.cannot_allow_reviewer_to_be_reviewee'))
           break
         end
       end
