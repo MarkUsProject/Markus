@@ -141,7 +141,18 @@ class Result < ActiveRecord::Base
 
   def check_for_nil_marks(user_visibility = :ta)
     nil_marks = false
-    criteria = submission.assignment.get_criteria(user_visibility)
+
+    # find true visibility (mostly for before_save filter, when not passing
+    # in a user_visibility parameter)
+    pr = PeerReview.find(id)
+
+    # peer review result is a special case because when saving a pr result
+    # we can't pass in a parameter to the before_save filter, so we need
+    # to manually determine the visibility. If it's a pr result, we know we
+    # want the peer-visible criteria
+    visibility = !pr.nil? ? :peer : user_visibility
+
+    criteria = submission.assignment.get_criteria(visibility)
     criteria.each do |criterion|
       unless marks.where(markable_id: criterion.id, mark: nil).empty?
         nil_marks = true
