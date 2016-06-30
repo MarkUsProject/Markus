@@ -19,7 +19,8 @@ module RandomAssignHelper
 
     generate_shuffled_reviewees(reviewer_groups_relation, reviewee_groups_relation)
     remove_groups_from_shuffle_having_peer_review(pr_assignment)
-    perform_assignments()
+    remove_ineligible_reviewers
+    perform_assignments
   end
 
   private
@@ -30,8 +31,6 @@ module RandomAssignHelper
     num_times_to_add_reviewee = (reviewer_groups.size.to_f * @num_groups_for_reviewers / reviewer_groups.size).ceil
     num_times_to_add_reviewee.times { @shuffled_reviewees += reviewee_groups }
     @shuffled_reviewees.shuffle
-
-    @shuffled_reviewees_pr = @shuffled_reviewees.map { nil }
   end
 
   # We need to get all the existing peer reviews for assignments so we can
@@ -52,14 +51,13 @@ module RandomAssignHelper
     # are not in the list. Since we've removed all occurences, ignoring is okay.
     unless index.nil?
       @shuffled_reviewees.delete_at(index)
-      @shuffled_reviewees_pr.pop()
     end
   end
 
   def perform_assignments
-    shuffle_index = 0
-    remove_ineligible_reviewers()
+    @shuffled_reviewees_pr = @shuffled_reviewees.map { nil }
 
+    shuffle_index = 0
     while @eligible_reviewers.any?
       @eligible_reviewers.each do |reviewer|
         reviewee = get_next_reviewee_from_forward_search(reviewer, shuffle_index)
@@ -75,7 +73,7 @@ module RandomAssignHelper
         shuffle_index += 1
       end
 
-      remove_ineligible_reviewers()
+      remove_ineligible_reviewers
     end
   end
 
