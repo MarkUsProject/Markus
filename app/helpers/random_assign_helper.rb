@@ -7,15 +7,15 @@ module RandomAssignHelper
   # Performs the random assignment, and stores them in the database.
   # - pr_assignment: The peer review assignment.
   # - num_groups_for_reviewers: How many PR's each group in reviewer_groups should have.
-  def perform_random_assignment(pr_assignment, num_groups_for_reviewers)
-    @eligible_reviewers = pr_assignment.valid_groupings
+  def perform_random_assignment(pr_assignment, num_groups_for_reviewers,
+                                selected_reviewer_group_ids, selected_reviewee_group_ids)
+    reviewer_groups_relation = Grouping.where(id: selected_reviewer_group_ids)
+    reviewee_groups_relation = Grouping.where(id: selected_reviewee_group_ids)
+    @eligible_reviewers = reviewer_groups_relation.to_a
     @shuffled_reviewees = []
     @shuffled_reviewees_pr = []  # A list of peer reviews that match the indices for @shuffled_reviewees
     @num_groups_for_reviewers = num_groups_for_reviewers
     @reviewers_assigned_to = Hash.new { |h, k| h[k] = Set.new }  # reviewer_id => set(reviewee_ids)
-
-    reviewer_groups_relation = pr_assignment.valid_groupings
-    reviewee_groups_relation = pr_assignment.parent_assignment.valid_groupings
 
     generate_shuffled_reviewees(reviewer_groups_relation, reviewee_groups_relation)
     remove_groups_from_shuffle_having_peer_review(pr_assignment)

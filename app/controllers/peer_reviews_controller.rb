@@ -40,11 +40,11 @@ class PeerReviewsController < ApplicationController
     action_string = params[:actionString]
     num_groups_for_reviewers = params[:numGroupsToAssign].to_i
 
-    if action_string == 'assign'
-      if selected_reviewer_group_ids.nil? or selected_reviewer_group_ids.empty?
+    if action_string == 'assign' || action_string == 'random_assign'
+      if selected_reviewer_group_ids.empty?
         render text: t('peer_review.empty_list_reviewers'), status: 400
         return
-      elsif selected_reviewee_group_ids.nil? or selected_reviewee_group_ids.empty?
+      elsif selected_reviewee_group_ids.empty?
         render text: t('peer_review.empty_list_reviewees'), status: 400
         return
       end
@@ -53,7 +53,8 @@ class PeerReviewsController < ApplicationController
     case action_string
       when 'random_assign'
         begin
-          perform_random_assignment(@assignment, num_groups_for_reviewers)
+          perform_random_assignment(@assignment, num_groups_for_reviewers,
+                                    selected_reviewer_group_ids, selected_reviewee_group_ids)
         rescue UnableToRandomlyAssignGroupException
           render text: t('peer_review.problem'), status: 400
           return
