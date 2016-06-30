@@ -215,6 +215,7 @@ fr:
         review: "Avis"
     peer_review:
         problem: "Un problème inattendu est survenue"
+        random_assign_failure: "Impossible d'attribuer au hasard, trop de commentaires demandés par évaluateur / CONTRÔLER sélectionnés"
         number_of_reviews_header: "Nombre d'avis"
         assigned_reviewers_header: "Assigned examinateurs"
         reviewer_group: "Groupe avis"
