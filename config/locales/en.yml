@@ -242,6 +242,7 @@ en:
         reviewer_group: "Reviewer group"
         reviewee_group: "Reviewee group"
         empty_list_reviewers: "Cannot have an empty list of reviewers"
+        empty_list_reviewees: "Cannot have an empty list of reviewees"
         cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
         number_per_group: "Number of peer reviews per group"
         download:

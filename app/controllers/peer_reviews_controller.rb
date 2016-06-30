@@ -11,7 +11,7 @@ class PeerReviewsController < ApplicationController
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
-        content: '" + t(:'summaries_index.section') + "',
+        content: '#{t('summaries_index.section')}',
         sortable: true
       },"
     end
