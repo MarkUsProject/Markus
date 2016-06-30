@@ -201,8 +201,8 @@ class AssignmentTest < ActiveSupport::TestCase
         @total = @sum * 4
       end
 
-      should 'return the correct total mark for rubric criteria' do
-        assert_equal(@total, @assignment.total_mark)
+      should 'return the correct maximum mark for rubric criteria' do
+        assert_equal(@total, @assignment.max_mark)
       end
 
       should 'return the correct total criteria weight' do
@@ -426,7 +426,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
       should 'be able to generate a detailed CSV report of rubric_criteria based marks (including criteria)' do
         a = @assignment
-        out_of = a.total_mark
+        out_of = a.max_mark
         rubric_criteria = a.get_criteria
         expected_string = ''
         Student.all.each do |student|
@@ -501,7 +501,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
       should 'be able to generate a detailed CSV report of flexible based marks (including criteria)' do
         a = @flexible_assignment
-        out_of = a.total_mark
+        out_of = a.max_mark
         flexible_criteria = a.get_criteria
         expected_string = ''
         Student.all.each do |student|

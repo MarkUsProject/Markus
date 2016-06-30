@@ -53,7 +53,7 @@ class RubricCriterion < Criterion
   end
 
   def validate_max_mark
-    errors.add(:assignment, t('rubric_criteria.error_total')) if assignment.total_mark + max_mark - max_mark_was <= 0
+    errors.add(:assignment, t('rubric_criteria.error_total')) if assignment.max_mark + max_mark - max_mark_was <= 0
   end
 
   # Just a small effort here to remove magic numbers...

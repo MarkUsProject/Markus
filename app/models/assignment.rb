@@ -266,8 +266,7 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns the maximum possible mark for a particular assignment
-  # TODO: Change name to max_mark
-  def total_mark
+  def max_mark
     get_criteria(:ta).sum('max_mark').round(2)
   end
 
@@ -277,17 +276,17 @@ class Assignment < ActiveRecord::Base
     # No marks released for this assignment.
     return false if marks.empty?
 
-    self.results_fails = marks.count { |mark| mark < total_mark / 2.0 }
+    self.results_fails = marks.count { |mark| mark < max_mark / 2.0 }
     self.results_zeros = marks.count(&:zero?)
 
     # Avoid division by 0.
     self.results_average, self.results_median =
-      if total_mark.zero?
+      if max_mark.zero?
         [0, 0]
       else
         # Calculates average and median in percentage.
         [average(marks), median(marks)].map do |stat|
-          (stat * 100 / total_mark).round(2)
+          (stat * 100 / max_mark).round(2)
         end
       end
     self.save
@@ -622,7 +621,7 @@ class Assignment < ActiveRecord::Base
   # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
   # Last column are grace-credits.
   def get_detailed_csv_report
-    out_of = total_mark
+    out_of = max_mark
     students = Student.all
     MarkusCSV.generate(students) do |student|
       result = [student.user_name]
@@ -723,7 +722,7 @@ class Assignment < ActiveRecord::Base
   # intervals defaults to 20
   def grade_distribution_as_percentage(intervals=20)
     distribution = Array.new(intervals, 0)
-    out_of = total_mark
+    out_of = max_mark
 
     if out_of == 0
       return distribution

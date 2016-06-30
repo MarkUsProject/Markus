@@ -105,7 +105,7 @@ namespace :markus do
         end
         assignment.save
 
-        puts assignment_short_identifier + " mark is " + assignment.total_mark.to_s
+        puts assignment_short_identifier + " mark is " + assignment.max_mark.to_s
         puts "Finish creating assignment" + assignment_short_identifier + "."
 
         puts "Generating TAs ..."

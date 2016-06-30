@@ -196,8 +196,8 @@ describe Assignment do
                 expect(@result.get_subtotal).to eq(2)
               end
 
-              it 'gets a relative total_mark' do
-                expect(@assignment.total_mark).to eq(16)
+              it 'gets a relative max_mark' do
+                expect(@assignment.max_mark).to eq(16)
               end
             end
           end
@@ -1165,7 +1165,7 @@ describe Assignment do
           grouping = student.accepted_grouping_for(@assignment.id)
           if grouping && grouping.has_submission?
             result = grouping.current_submission_used.get_latest_result
-            fields.push(result.total_mark / @assignment.total_mark * 100)
+            fields.push(result.total_mark / @assignment.max_mark * 100)
             fields.push(result.total_mark)
             @assignment.get_criteria.each do |criterion|
               mark = result.marks
@@ -1225,7 +1225,7 @@ describe Assignment do
           grouping = student.accepted_grouping_for(@assignment.id)
           if grouping && grouping.has_submission?
             result = grouping.current_submission_used.get_latest_result
-            fields.push(result.total_mark / @assignment.total_mark * 100)
+            fields.push(result.total_mark / @assignment.max_mark * 100)
             fields.push(result.total_mark)
             @assignment.get_criteria.each do |criterion|
               mark = result.marks
@@ -1283,7 +1283,7 @@ describe Assignment do
 
   describe '#update_results_stats' do
     before :each do
-      allow(assignment).to receive(:total_mark).and_return(10)
+      allow(assignment).to receive(:max_mark).and_return(10)
     end
 
     context 'when no marks are found' do
@@ -1319,9 +1319,9 @@ describe Assignment do
         expect(assignment.results_median).to eq 25
       end
 
-      context 'when total_mark is 0' do
+      context 'when max_mark is 0' do
         before :each do
-          allow(assignment).to receive(:total_mark).and_return(0)
+          allow(assignment).to receive(:max_mark).and_return(0)
           assignment.update_results_stats
         end
 
