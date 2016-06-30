@@ -59,6 +59,7 @@ class RubricCriterion < Criterion
   # Just a small effort here to remove magic numbers...
   RUBRIC_LEVELS = 5
   DEFAULT_MAX_MARK = 4
+  MAX_LEVEL = 4
   DEFAULT_LEVELS = [
     {'name' => t('rubric_criteria.defaults.level_0'),
      'description' => t('rubric_criteria.defaults.description_0')},
@@ -129,7 +130,7 @@ class RubricCriterion < Criterion
     criterion = assignment.get_criteria.find_or_create_by(name: name)
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
-      criterion.max_mark = Float(working_row.shift) * 4
+      criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
     rescue ArgumentError
       raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
     end
@@ -178,7 +179,7 @@ class RubricCriterion < Criterion
       name: name)
     #Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
-      criterion.max_mark = Float(key[1]['max_mark']) * 4
+      criterion.max_mark = Float(key[1]['max_mark']) * MAX_LEVEL
     rescue ArgumentError
       raise t('criteria_csv_error.weight_not_number')
     rescue TypeError

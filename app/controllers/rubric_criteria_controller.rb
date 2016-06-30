@@ -48,7 +48,7 @@ class RubricCriteriaController < ApplicationController
       return
     end
     @criteria.reload
-     render :create_and_edit
+    render :create_and_edit
   end
 
   def destroy
