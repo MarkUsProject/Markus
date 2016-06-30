@@ -33,9 +33,9 @@ class PeerReviewsController < ApplicationController
 
   def assign_groups
     @assignment = Assignment.find(params[:assignment_id])
-    selected_reviewer_group_ids = params[:selectedReviewerGroupIds]
-    selected_reviewee_group_ids = params[:selectedRevieweeGroupIds]
-    reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups]
+    selected_reviewer_group_ids = params[:selectedReviewerGroupIds] || []
+    selected_reviewee_group_ids = params[:selectedRevieweeGroupIds] || []
+    reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups] || {}
     action_string = params[:actionString]
 
     if action_string == 'random_assign' or action_string == 'assign'
@@ -56,7 +56,7 @@ class PeerReviewsController < ApplicationController
         reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
         assign(reviewer_groups, reviewee_groups)
       when 'unassign'
-        unassign(reviewers_to_remove_from_reviewees_map)
+        unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
       else
         render text: t('peer_review.problem'), status: 400
         return
@@ -80,7 +80,8 @@ class PeerReviewsController < ApplicationController
     end
   end
 
-  def unassign(reviewers_to_remove_from_reviewees_map)
+  def unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+    # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each do |reviewer_id, dummy_value|
         reviewee_group = Grouping.find_by_id(reviewee_id)
@@ -89,6 +90,8 @@ class PeerReviewsController < ApplicationController
         pr.destroy
       end
     end
+
+    selected_reviewee_group_ids.each { |reviewee_id| Grouping.find(reviewee_id).peer_reviews.map(&:destroy) }
   end
 
   def download_reviewer_reviewee_mapping
