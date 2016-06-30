@@ -29,6 +29,10 @@
       this.setState({selectedRevieweeGroups: revieweeGroups});
     },
 
+    setErrorMessage: function(msg) {
+      this.setState({error: msg});
+    },
+
     updatedSelectedReviewersInRevieweesTable: function(reviewerGroupId, revieweeGroupId, isChecked) {
       // If the reviewee is not in the dictionary, add a dictionary for the reviewee id.
       if (!(revieweeGroupId in this.state.selectedReviewerInRevieweeGroups)) {
@@ -110,7 +114,8 @@
               selectedReviewerGroups={this.state.selectedReviewerGroups}
               selectedRevieweeGroups={this.state.selectedRevieweeGroups}
               selectedReviewerInRevieweeGroups={this.state.selectedReviewerInRevieweeGroups}
-              clearSelectedFields={this.clearSelectedFields} />
+              clearSelectedFields={this.clearSelectedFields}
+              setErrorMessage={this.setErrorMessage} />
             <RevieweeTable ref="revieweeTable"
               groups={this.state.revieweeGroups}
               revieweeToReviewersMap={this.state.revieweeToReviewers}
@@ -283,12 +288,20 @@
 
   var ActionsColumn = React.createClass({
     performButtonAction: function(event) {
+      var numGroupsToAssignVal = jQuery('#peer-review-spinner').val();
+
       var dataToSend = {
         actionString: event.currentTarget.getAttribute('id'),
         selectedReviewerGroupIds: this.props.selectedReviewerGroups,
         selectedRevieweeGroupIds: this.props.selectedRevieweeGroups,
-        selectedReviewerInRevieweeGroups: this.props.selectedReviewerInRevieweeGroups
+        selectedReviewerInRevieweeGroups: this.props.selectedReviewerInRevieweeGroups,
+        numGroupsToAssign: numGroupsToAssignVal
       };
+
+      if ((numGroupsToAssignVal == null || numGroupsToAssignVal == '') && dataToSend.actionString == 'random_assign') {
+        this.props.setErrorMessage('Did not set the number of peer reviews (spinner is blank).');
+        return;
+      }
 
       jQuery.ajax({
         method: 'POST',
@@ -299,11 +312,12 @@
           this.props.clearSelectedFields();
           this.props.refresh();
           this.setState({ error: null });
+          this.props.setErrorMessage(null);
         }.bind(this),
 
         error: function(xhr, status, text) {
           var error = text + ': ' + xhr.responseText;
-          this.setState({ error: error });
+          this.props.setErrorMessage(error);
         }.bind(this)
       });
     },
