@@ -91,12 +91,7 @@ class PeerReviewsController < ApplicationController
       end
     end
 
-    # Mass unassigning comes last, reason being that the above code does not
-    # have to worry about find failing and returning nil.
-    selected_reviewee_group_ids.each do |reviewee_id|
-      result = Grouping.find(reviewee_id).current_submission_used.get_latest_result()
-      PeerReview.where(result: result).map(&:destroy)
-    end
+    selected_reviewee_group_ids.each { |reviewee_id| Grouping.find(reviewee_id).peer_reviews.map(&:destroy) }
   end
 
   def download_reviewer_reviewee_mapping
