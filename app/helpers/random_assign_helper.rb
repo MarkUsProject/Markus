@@ -60,14 +60,13 @@ module RandomAssignHelper
     shuffle_index = 0
     while @eligible_reviewers.any?
       @eligible_reviewers.each do |reviewer|
-        reviewee = get_next_reviewee_from_forward_search(reviewer, shuffle_index)
+        # If we can't forwards or backwards assign, this will throw an exception.
+        reviewee = get_next_available_reviewee(reviewer, shuffle_index)
 
-        # A nil reviewee means we could not find one going forwards, and if so,
-        # then try going backwards through assignments (failure will throw).
-        if not reviewee.nil?
+        # If reviewee is nil, that means we had to do a backwards swap, and don't
+        # need to do anything else.
+        unless reviewee.nil?
           add_peer_review_to_db_and_remember_assignment(reviewer, reviewee, shuffle_index)
-        else
-          find_and_swap_with_group_or_throw(reviewer, shuffle_index)
         end
 
         shuffle_index += 1
@@ -83,25 +82,48 @@ module RandomAssignHelper
     end
   end
 
-  # Note: This returns nil if forward searching failed (signal to the caller).
-  def get_next_reviewee_from_forward_search(reviewer, shuffle_index)
-    # First, check if the current index provided works.
-    potential_reviewee = @shuffled_reviewees[shuffle_index]
-    if eligible_to_be_assigned(reviewer, potential_reviewee)
-      return potential_reviewee
-    end
-
-    # Since the index doesnt work, look at the next element until the end of
-    # the list, and swap if we find a working group.
-    ((shuffle_index + 1)...@shuffled_reviewees.size).each do |new_shuffle_index|
-      potential_reviewee = @shuffled_reviewees[new_shuffle_index]
-      if eligible_to_be_assigned(reviewer, potential_reviewee)
-        swap_shuffled_indices(shuffle_index, new_shuffle_index)
-        return potential_reviewee
+  # Gets the next available reviewer from forward searching, or returns nil if
+  # it had to do a backward swap. Throws UnableToRandomlyAssignGroupException
+  # if assignment is impossbile forwards and backwards.
+  def get_next_available_reviewee(reviewer, shuffle_index)
+    @shuffled_reviewees.size.times do |i|
+      new_shuffle_index = (shuffle_index + i) % @shuffled_reviewees.size
+      if new_shuffle_index < shuffle_index &&
+          attempt_swap_with_previous(reviewer, shuffle_index, new_shuffle_index)
+        return nil
+      elsif new_shuffle_index == shuffle_index
+        potential_reviewee = @shuffled_reviewees[shuffle_index]
+        if eligible_to_be_assigned(reviewer, potential_reviewee)
+          return potential_reviewee
+        end
+      else
+        potential_reviewee = @shuffled_reviewees[new_shuffle_index]
+        if eligible_to_be_assigned(reviewer, potential_reviewee)
+          swap_shuffled_indices(shuffle_index, new_shuffle_index)
+          return potential_reviewee
+        end
       end
     end
 
-    nil
+    # Cannot assign forwards, nor backwards, so something is very wrong.
+    raise UnableToRandomlyAssignGroupException
+  end
+
+  # Will go back to the prev_index and see if swapping the current group in for
+  # an already assigned one at that previous index would work, and if so... do it.
+  # Returns a boolean of whether it did a swap (true) or not (false).
+  def attempt_swap_with_previous(reviewer, current_index, prev_index)
+    reviewee_at_shuffle_index = @shuffled_reviewees[current_index]
+    reviewee_at_previous_index = @shuffled_reviewees[prev_index]
+    reviewer_assigned_to_previous_reviewee = @shuffled_reviewees_pr[prev_index].reviewer
+
+    if eligible_to_be_assigned(reviewer, reviewee_at_previous_index) and
+        eligible_to_be_assigned(reviewer_assigned_to_previous_reviewee, reviewee_at_shuffle_index)
+      perform_group_exchange(reviewer, current_index, prev_index)
+      return true
+    end
+
+    false
   end
 
   def eligible_to_be_assigned(reviewer, reviewee)
