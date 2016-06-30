@@ -17,8 +17,6 @@ module RandomAssignHelper
     reviewer_groups_relation = pr_assignment.valid_groupings
     reviewee_groups_relation = pr_assignment.parent_assignment.valid_groupings
 
-    @eligible_reviewers.each { |reviewer|  @reviewers_assigned_to[reviewer.id] = Set.new }
-
     generate_shuffled_reviewees(reviewer_groups_relation, reviewee_groups_relation)
     remove_groups_from_shuffle_having_peer_review(pr_assignment)
     perform_assignments()
