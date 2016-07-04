@@ -122,13 +122,13 @@ class RubricCriteriaController < ApplicationController
         rubric_criteria = YAML::load(file.utf8_encode(encoding))
       rescue Psych::SyntaxError => e
         flash[:error] = t('rubric_criteria.upload.error') + '  ' +
-            t('rubric_criteria.upload.syntax_error', error: "#{e}")
+            I18n.t('rubric_criteria.upload.syntax_error', error: "#{e}")
         redirect_to action: 'index', id: assignment.id
         return
       end
       unless rubric_criteria
         flash[:error] = t('rubric_criteria.upload.error') +
-          '  ' + t('rubric_criteria.upload.empty_error')
+          '  ' + I18n.t('rubric_criteria.upload.empty_error')
         redirect_to action: 'index', id: assignment.id
         return
       end

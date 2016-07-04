@@ -90,7 +90,7 @@ class Result < ActiveRecord::Base
 
   # Point deduction for late penalty
   def get_total_extra_percentage_as_points
-    get_total_extra_percentage * submission.assignment.max_mark / 100
+    (get_total_extra_percentage * submission.assignment.max_mark / 100).round(1)
   end
 
   def get_total_test_script_marks

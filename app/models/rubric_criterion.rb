@@ -1,8 +1,6 @@
 require 'encoding'
 
 class RubricCriterion < Criterion
-  extend ActionView::Helpers
-  include ActionView::Helpers
   self.table_name = 'rubric_criteria' # set table name correctly
 
   validates_presence_of :max_mark
@@ -30,7 +28,7 @@ class RubricCriterion < Criterion
   validates_presence_of :name
   validates_uniqueness_of :name,
                           scope: :assignment_id,
-                          message: t('rubric_criteria.errors.messages.name_taken')
+                          message: I18n.t('rubric_criteria.errors.messages.name_taken')
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count
@@ -53,7 +51,7 @@ class RubricCriterion < Criterion
   end
 
   def validate_max_mark
-    errors.add(:assignment, t('rubric_criteria.error_total')) if assignment.max_mark + max_mark - max_mark_was <= 0
+    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if assignment.max_mark + max_mark - max_mark_was <= 0
   end
 
   # Just a small effort here to remove magic numbers...
@@ -61,16 +59,16 @@ class RubricCriterion < Criterion
   DEFAULT_MAX_MARK = 4
   MAX_LEVEL = 4
   DEFAULT_LEVELS = [
-    {'name' => t('rubric_criteria.defaults.level_0'),
-     'description' => t('rubric_criteria.defaults.description_0')},
-    {'name' => t('rubric_criteria.defaults.level_1'),
-     'description' => t('rubric_criteria.defaults.description_1')},
-    {'name' => t('rubric_criteria.defaults.level_2'),
-     'description' => t('rubric_criteria.defaults.description_2')},
-    {'name' => t('rubric_criteria.defaults.level_3'),
-     'description' => t('rubric_criteria.defaults.description_3')},
-    {'name' => t('rubric_criteria.defaults.level_4'),
-     'description' => t('rubric_criteria.defaults.description_4')}
+    {'name' => I18n.t('rubric_criteria.defaults.level_0'),
+     'description' => I18n.t('rubric_criteria.defaults.description_0')},
+    {'name' => I18n.t('rubric_criteria.defaults.level_1'),
+     'description' => I18n.t('rubric_criteria.defaults.description_1')},
+    {'name' => I18n.t('rubric_criteria.defaults.level_2'),
+     'description' => I18n.t('rubric_criteria.defaults.description_2')},
+    {'name' => I18n.t('rubric_criteria.defaults.level_3'),
+     'description' => I18n.t('rubric_criteria.defaults.description_3')},
+    {'name' => I18n.t('rubric_criteria.defaults.level_4'),
+     'description' => I18n.t('rubric_criteria.defaults.description_4')}
   ]
 
   def mark_for(result_id)
@@ -121,7 +119,7 @@ class RubricCriterion < Criterion
   #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
-      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     working_row = row.clone
     name = working_row.shift
@@ -132,7 +130,7 @@ class RubricCriterion < Criterion
     begin
       criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
     rescue ArgumentError
-      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -181,11 +179,11 @@ class RubricCriterion < Criterion
     begin
       criterion.max_mark = Float(key[1]['max_mark']) * MAX_LEVEL
     rescue ArgumentError
-      raise t('criteria_csv_error.weight_not_number')
+      raise I18n.t('criteria_csv_error.weight_not_number')
     rescue TypeError
-      raise t('criteria_csv_error.weight_not_number')
+      raise I18n.t('criteria_csv_error.weight_not_number')
     rescue NoMethodError
-      raise t('rubric_criteria.upload.empty_error')
+      raise I18n.t('rubric_criteria.upload.empty_error')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -273,7 +271,7 @@ class RubricCriterion < Criterion
   # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
-        errors.add(:ta_visible, t('rubric_criteria.visibility_error'))
+        errors.add(:ta_visible, I18n.t('rubric_criteria.visibility_error'))
         false
     end
     true

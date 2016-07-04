@@ -3,8 +3,6 @@ require 'encoding'
 # Represents a flexible criterion used to mark an assignment that
 # has the marking_scheme_type attribute set to 'flexible'.
 class FlexibleCriterion < Criterion
-  extend ActionView::Helpers
-  include ActionView::Helpers
   self.table_name = 'flexible_criteria' # set table name correctly
 
   has_many :marks, as: :markable, dependent: :destroy
@@ -18,7 +16,7 @@ class FlexibleCriterion < Criterion
   validates_presence_of :name
   validates_uniqueness_of :name,
                           scope: :assignment_id,
-                          message: t('flexible_criteria.errors.messages.name_taken')
+                          message: I18n.t('flexible_criteria.errors.messages.name_taken')
 
   belongs_to :assignment, counter_cache: true
   validates_presence_of :assignment_id
@@ -68,7 +66,7 @@ class FlexibleCriterion < Criterion
   #                      float, or if the criterion is not successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < 2
-      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     working_row = row.clone
     name = working_row.shift
@@ -79,11 +77,11 @@ class FlexibleCriterion < Criterion
     begin
       criterion.max_mark = Float(working_row.shift)
     rescue ArgumentError
-      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     # Check that the maximum mark given is a valid number.
     if criterion.max_mark.nil? or criterion.max_mark.zero?
-      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -153,7 +151,7 @@ class FlexibleCriterion < Criterion
   # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
-      errors.add(:ta_visible, t('flexible_criteria.visibility_error'))
+      errors.add(:ta_visible, I18n.t('flexible_criteria.visibility_error'))
       false
     end
     true
@@ -163,7 +161,7 @@ class FlexibleCriterion < Criterion
     if mark_value == 'nil'
       mark_to_change.mark = nil
     else
-      mark_to_change.mark = mark_value.to_f * weight
+      mark_to_change.mark = mark_value.to_f
     end
     mark_to_change.save
   end

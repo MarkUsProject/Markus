@@ -1,6 +1,4 @@
 class Mark < ActiveRecord::Base
-  extend ActionView::Helpers
-  include ActionView::Helpers
   # When a mark is created, or updated, we need to make sure that that
   # Result has not been released to students
   before_save :ensure_not_released_to_students
@@ -18,7 +16,7 @@ class Mark < ActiveRecord::Base
   validates_numericality_of :mark,
                             allow_nil: true,
                             greater_than_or_equal_to: 0,
-                            message: t('marker.marks.invalid_mark')
+                            message: I18n.t('marker.marks.invalid_mark')
   validate :valid_mark
 
   belongs_to :markable, polymorphic: true
@@ -34,7 +32,7 @@ class Mark < ActiveRecord::Base
   def valid_mark
     unless mark.nil?
       if mark > markable.max_mark
-        errors.add(:mark, t('mark.error.validate_criteria'))
+        errors.add(:mark, I18n.t('mark.error.validate_criteria'))
       end
     end
   end

@@ -24,8 +24,8 @@
     |
     (
     <em><%= t('marker.marks.total_mark') %></em>
-    <span id='current_mark_div'><%= result.total_mark %></span>
-    <span> / <%= assignment.max_mark %></span>
+    <span id='current_mark_div'><%= result.total_mark %></span>/
+    <span id='total_mark_div'><%= assignment.max_mark %></span>
     )
     |
     <% if @result.marking_state == Result::MARKING_STATES[:complete] %>
