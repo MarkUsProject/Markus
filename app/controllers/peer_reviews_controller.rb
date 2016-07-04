@@ -55,7 +55,7 @@ class PeerReviewsController < ApplicationController
         begin
           perform_random_assignment(@assignment, num_groups_for_reviewers)
         rescue UnableToRandomlyAssignGroupException
-          render text: t('peer_review.problem'), status: 400
+          render text: t('peer_review.random_assign_failure'), status: 400
           return
         end
       when 'assign'

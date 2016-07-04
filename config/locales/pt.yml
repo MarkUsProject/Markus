@@ -213,6 +213,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         review: "Avaliação"
     peer_review:
         problem: "Um problema inesperado ocorreu"
+        random_assign_failure: "Não é possível atribuir ao acaso , muitas revisões solicitadas por colaborador / reviewees selecionados"
         number_of_reviews_header: "Número de comentários"
         assigned_reviewers_header: "Atribuído usuários"
         reviewer_group: "Grupo de Viajante"
