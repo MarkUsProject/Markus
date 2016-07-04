@@ -1232,7 +1232,6 @@ fr:
     criterion:          "Critère"
     total_mark:         "Note totale"
     visibility:         "Visibilité"
-    weight:             "Coefficient"
     editing_criteria:   "Édition des critères"
     ordering_criteria:  "Ordonner les critères"
     modifying_visibility: "Visibilité Modification"

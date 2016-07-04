@@ -1,14 +1,17 @@
-<li id='criterion_<%= (criterion.id) %>'>
-  <span class='left'>
+<li id='criterion_<%= criterion.id %>'>
+  <span id class='left'>
     <%= link_to truncate(criterion.name,
                          length: 30,
                          omission: '...'),
-                         edit_assignment_rubric_criterion_path(@assignment, criterion),
-                         id: "criterion_title_#{criterion.id}",
-                         remote: true %>
+                { controller: "#{@assignment.marking_scheme_type}_criteria",
+                  action:'edit',
+                  assignment_id: @assignment.id,
+                  id: criterion.id },
+                id: "criterion_title_#{criterion.id}",
+                remote: true %>
   </span>
-  <span class='center' id='criterion_weight_<%= criterion.id %>' >
-    <%= criterion.weight %>
+  <span class='center' id='criterion_max_mark_<%= criterion.id %>'>
+    <%= criterion.max_mark %>
   </span>
   <span class='right' id='visibility_indicator_<%= criterion.id %>'>
     <% if criterion.ta_visible && criterion.peer_visible %>
@@ -19,5 +22,4 @@
       <%= image_tag "icons/empty.png" %><%= image_tag "icons/group.png" %>
     <% end %>
   </span>
-
 </li>

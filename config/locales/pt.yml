@@ -1219,7 +1219,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     criterion:          "Critério"
     total_mark:         "Nota total"
     visibility:         "Visibilidade"
-    weight:             "Peso"
     editing_criteria:   "Editando critério"
     ordering_criteria:  "Ordenar critério"
     modifying_visibility: "Modificando a visibilidade"

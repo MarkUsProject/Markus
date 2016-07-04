@@ -8,10 +8,10 @@
     <span class='right'><%= t('visibility') %></span>
   </header>
 
-  <ul id='flexible_criteria_pane_list'>
+  <ul id='criteria_pane_list'>
     <% @criteria.each do |criterion| %>
-      <%= render partial: 'flexible_criteria/flexible_criterion',
-                 locals: { criterion: criterion } %>
+        <%= render partial: 'criteria/criterion',
+                   locals: { criterion: criterion } %>
     <% end %>
   </ul>
 </div>

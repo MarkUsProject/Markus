@@ -1,4 +1,4 @@
-jQuery('#rubric_criteria_pane_list').append("<%= escape_javascript(render partial: 'rubric_criterion',
+jQuery('#criteria_pane_list').append("<%= escape_javascript(render partial: 'criteria/criterion',
                                                                           locals: { criterion: @criterion }) %>");
 
 jQuery('#new_rubric_criterion').remove();
@@ -7,4 +7,4 @@ document.getElementById('rubric_levels_pane').innerHTML =
   "<%= escape_javascript(render partial: 'criterion_editor',
                                 locals: { criterion: @criterion }) %>";
 
-document.getElementById('rubric_total_weight').innerHTML = "<%= @criterion.assignment.total_criteria_weight %>";
+document.getElementById('criteria_total_max_mark').innerHTML = "<%= @criterion.assignment.max_mark %>";

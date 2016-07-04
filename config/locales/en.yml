@@ -1387,7 +1387,6 @@ en:
     criterion:          "Criterion"
     total_mark:         "Total mark"
     visibility:         "Visibility"
-    weight:             "Weight"
     editing_criteria:   "Editing criteria"
     ordering_criteria:  "Ordering criteria"
     modifying_visibility: "Modifying visibility"
