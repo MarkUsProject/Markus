@@ -45,13 +45,11 @@
     <br>
     <h4><span><%= t('visibility') %></span></h4>
     <h5>
-      <%= f.check_box :ta_visible,
-                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.check_box :ta_visible %>
       <%= f.label :ta_visible,
                   t('flexible_criteria.ta_visible') %>
       <br>
-      <%= f.check_box :peer_visible,
-                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.check_box :peer_visible %>
       <%= f.label :peer_visible,
                   t('flexible_criteria.peer_visible') %>
     </h5>
