@@ -1,4 +1,4 @@
 document.getElementById('new_criterion_error').innerHTML =
-  "<%= escape_javascript(render partial: 'criteria/new_criterion_errors', locals: { errors: @errors }) %>";
+  "<%= escape_javascript(render partial: 'criteria/errors_list', locals: { errors: @errors }) %>";
 
 document.getElementById('new_criterion_error').style.display = '';

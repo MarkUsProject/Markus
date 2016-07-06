@@ -1209,7 +1209,6 @@ en:
 
     flexible_criteria:
       title: "Flexible Criteria"
-      save: "Save changes"
       move_up: "Move up"
       move_down: "Move down"
       max_mark: "Maximum mark"
@@ -1240,7 +1239,6 @@ en:
 
     rubric_criteria:
       title: "Rubric Criteria"
-      save: "Save changes"
       move_up: "Move up"
       move_down: "Move down"
       level:

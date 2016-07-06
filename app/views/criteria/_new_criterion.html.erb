@@ -1,15 +1,15 @@
-<li id="new_criterion">
+<li id='new_criterion'>
 	<%= form_for @criterion,
     url: { controller: "#{assignment.marking_scheme_type}_criteria",
            action: 'index',
            assignment_id: assignment.id },
     remote: true do |f| %>
-    <div id="new_criterion_errors" style="display:none;" class="error"></div>
+    <div id='new_criterion_error' style='display:none;' class='error'></div>
     <%= label_tag 'new_criterion_prompt',
-		  t("criteria.name") %><br>
+		  t('criteria.name') %><br>
     <%= f.text_field :name,
 		     size: 15,
 		     id: 'new_criterion_prompt' %><br>
-    <%= f.submit t("criteria.save"), :'data-disable-with' => I18n.t('working')%>
+    <%= f.submit t('criteria.save'), data: { disable_with: t('working') }%>
   <% end %>
 </li>

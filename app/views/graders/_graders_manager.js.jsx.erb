@@ -450,8 +450,8 @@
         <div>
             <div id='group-tabs' className='tab-pane'>
               <ul>
-              <li><a id='groups_table' onClick={this.tableChanged} href='#groups-tab'><span><%= j raw I18n.t('groups.groups') %></span></a></li>
-              <li><a id='criteria_table' onClick={this.tableChanged} href='#criteria-tab'><span><%= j raw I18n.t('criteria.title') %></span></a></li>
+              <li><a id='groups_table' onClick={this.tableChanged} href='#groups-tab'><span><%= j raw t('groups.groups') %></span></a></li>
+              <li><a id='criteria_table' onClick={this.tableChanged} href='#criteria-tab'><span><%= j raw t('criteria.title') %></span></a></li>
               </ul>
              <div id='groups-tab'>
                <Table data={groups_data} columns={group_columns} ref="myTable"

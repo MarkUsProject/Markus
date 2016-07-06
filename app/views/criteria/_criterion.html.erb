@@ -1,5 +1,5 @@
 <li id='criterion_<%= criterion.id %>'>
-  <span id class='left'>
+  <span class='left'>
     <%= link_to truncate(criterion.name,
                          length: 30,
                          omission: '...'),
@@ -15,11 +15,11 @@
   </span>
   <span class='right' id='visibility_indicator_<%= criterion.id %>'>
     <% if criterion.ta_visible && criterion.peer_visible %>
-      <%= image_tag "icons/user_suit.png" %><%= image_tag "icons/group.png" %>
+      <%= image_tag 'icons/user_suit.png' %><%= image_tag 'icons/group.png' %>
     <% elsif criterion.ta_visible %>
-      <%= image_tag "icons/user_suit.png" %>
+      <%= image_tag 'icons/user_suit.png' %>
     <% else %>
-      <%= image_tag "icons/empty.png" %><%= image_tag "icons/group.png" %>
+      <%= image_tag 'icons/empty.png' %><%= image_tag 'icons/group.png' %>
     <% end %>
   </span>
 </li>
