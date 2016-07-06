@@ -956,9 +956,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    id: 1,
                    mark_id: @mark.id,
                    mark: 'something'
-
-            assert_response :bad_request
-            assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
+            assert_match "0.0,0.0,0.0", @response.body
           end
 
           should 'with save error' do
@@ -1299,8 +1297,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    id: 1,
                    mark_id: @mark.id,
                    mark: 'something'
-            assert_response :bad_request
-            assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
+            assert_match "0.0,0.0,0.0", @response.body
           end
 
           should 'without save error' do

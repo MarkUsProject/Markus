@@ -13,7 +13,7 @@
 
     <div class='summary_block'>
       <strong><%= t('marker.marks.old_subtotal') %></strong>
-      <span><%= old_result.get_subtotal %> / <%= assignment.total_mark %></span>
+      <span><%= old_result.get_subtotal %> / <%= assignment.max_mark %></span>
     </div>
 
     <div class='submission_rule_pane'>
@@ -79,7 +79,7 @@
 
   <div class='summary_block'>
       <strong><%= t('marker.marks.subtotal') %></strong>
-      <span><%= result.get_subtotal %> / <%= assignment.total_mark %></span>
+      <span><%= result.get_subtotal %> / <%= assignment.max_mark %></span>
   </div>
 
   <div class='submission_rule_pane'>
@@ -152,7 +152,7 @@
   <div class='mark_total'>
     <span class='final_mark'>
       <span id='old_total_mark_div'><%= old_result.total_mark %> </span>
-      <span> / <%= assignment.total_mark %></span>
+      <span> / <%= assignment.max_mark %></span>
     </span>
     <span><%= t('marker.marks.previous_mark').html_safe %></span>
   </div>
@@ -161,7 +161,7 @@
 <div class='mark_total'>
   <span class='final_mark'>
     <span id='current_total_mark_div'><%= result.total_mark %> </span>
-    <span> / <%= assignment.total_mark %></span>
+    <span> / <%= assignment.max_mark %></span>
   </span>
   <span><%= t('marker.marks.final_mark').html_safe %></span>
 </div>

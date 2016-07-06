@@ -7,8 +7,8 @@
         id: "criterion_title_#{criterion.id}",
         remote: true %>
   </span>
-  <span class='center' id='criterion_max_<%= criterion.id %>'>
-    <%= criterion.max %>
+  <span class='center' id='criterion_max_mark_<%= criterion.id %>'>
+    <%= criterion.max_mark %>
   </span>
   <span class='right' id='visibility_indicator_<%= criterion.id %>'>
     <% if criterion.ta_visible && criterion.peer_visible %>

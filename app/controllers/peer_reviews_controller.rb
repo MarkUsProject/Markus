@@ -1,6 +1,7 @@
 class PeerReviewsController < ApplicationController
   include GroupsHelper
   include PeerReviewHelper
+  include RandomAssignHelper
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
   before_filter :authorize_only_for_admin
@@ -11,7 +12,7 @@ class PeerReviewsController < ApplicationController
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
-        content: '" + t(:'summaries_index.section') + "',
+        content: '#{t('summaries_index.section')}',
         sortable: true
       },"
     end
@@ -33,12 +34,13 @@ class PeerReviewsController < ApplicationController
 
   def assign_groups
     @assignment = Assignment.find(params[:assignment_id])
-    selected_reviewer_group_ids = params[:selectedReviewerGroupIds]
-    selected_reviewee_group_ids = params[:selectedRevieweeGroupIds]
-    reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups]
+    selected_reviewer_group_ids = params[:selectedReviewerGroupIds] || []
+    selected_reviewee_group_ids = params[:selectedRevieweeGroupIds] || []
+    reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups] || {}
     action_string = params[:actionString]
+    num_groups_for_reviewers = params[:numGroupsToAssign].to_i
 
-    if action_string == 'random_assign' or action_string == 'assign'
+    if action_string == 'assign'
       if selected_reviewer_group_ids.nil? or selected_reviewer_group_ids.empty?
         render text: t('peer_review.empty_list_reviewers'), status: 400
         return
@@ -50,23 +52,29 @@ class PeerReviewsController < ApplicationController
 
     case action_string
       when 'random_assign'
-        randomly_assign
+        begin
+          perform_random_assignment(@assignment, num_groups_for_reviewers)
+        rescue UnableToRandomlyAssignGroupException
+          render text: t('peer_review.random_assign_failure'), status: 400
+          return
+        end
       when 'assign'
         reviewer_groups = Grouping.where(id: selected_reviewer_group_ids)
         reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
-        assign(reviewer_groups, reviewee_groups)
+        begin
+          assign(reviewer_groups, reviewee_groups)
+        rescue RecordInvalid
+          render text: t('peer_review.problem'), status: 400
+          return
+        end
       when 'unassign'
-        unassign(reviewers_to_remove_from_reviewees_map)
+        unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
       else
         render text: t('peer_review.problem'), status: 400
         return
     end
 
     head :ok
-  end
-
-  def randomly_assign
-    # TODO
   end
 
   def assign(reviewer_groups, reviewee_groups)
@@ -82,7 +90,8 @@ class PeerReviewsController < ApplicationController
     end
   end
 
-  def unassign(reviewers_to_remove_from_reviewees_map)
+  def unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+    # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each do |reviewer_id, dummy_value|
         # find the PR that this reviewer made on this reviewee's submission
@@ -91,6 +100,8 @@ class PeerReviewsController < ApplicationController
         pr.destroy
       end
     end
+
+    selected_reviewee_group_ids.each { |reviewee_id| Grouping.find(reviewee_id).peer_reviews.map(&:destroy) }
   end
 
   def download_reviewer_reviewee_mapping

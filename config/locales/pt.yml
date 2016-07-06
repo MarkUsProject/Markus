@@ -213,11 +213,13 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         review: "Avaliação"
     peer_review:
         problem: "Um problema inesperado ocorreu"
+        random_assign_failure: "Não é possível atribuir ao acaso , muitas revisões solicitadas por colaborador / reviewees selecionados"
         number_of_reviews_header: "Número de comentários"
         assigned_reviewers_header: "Atribuído usuários"
         reviewer_group: "Grupo de Viajante"
         reviewee_group: "Grupo de ser revistos"
         empty_list_reviewers: "Não é possível ter uma lista vazia de revisores"
+        empty_list_reviewees: "Não pode ter uma lista vazia de reviewees"
         cannot_allow_reviewer_to_be_reviewee: "Um estudante não pode ser um revisor e reviewee"
         number_per_group: "Número de avaliações pelos pares por grupo"
         download:
@@ -647,8 +649,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     mark:
       error:
-        validate_flexible: "deve ser entre 0 e a nota máxima do critério"
-        validate_rubric: "deve ser um inteiro entre 0 e 4"
+        validate_criteria: "deve ser entre 0 e a nota máxima do critério"
 
     # Student's View (admin)
     students:
@@ -1045,7 +1046,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       move_up: "Mover para cima"
       move_down: "Mover para baixo"
       name: "Nome do critério flexível"
-      max: "Nota máxima"
+      max_mark: "Nota máxima"
       description: "Descrição"
       description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
       download:
@@ -1212,6 +1213,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     add_criterion:                "Adicionar critério"
     criteria_edit_total_mark:     "Esse critério será classificado de %{criterion_total_mark}"
     criterion_saved_success:   "Critério salvo com sucesso"
+    weight_not_number: "peso não é um número."
     criterion_deleted_success:  "Critério, e todas notas associadas foram apagas com sucesso"
     criteria:           "Critério"
     criterion:          "Critério"

@@ -1,4 +1,5 @@
 require 'encoding'
+require 'set'
 
 # we need repository permission constants
 require File.join(File.dirname(__FILE__),'..', '..', 'lib', 'repo', 'repository')
@@ -174,6 +175,14 @@ class Grouping < ActiveRecord::Base
     student_user_names = student_memberships.includes(:user).collect {|m| m.user.user_name }
     return I18n.t('assignment.group.empty') if student_user_names.size == 0
 	  student_user_names.join(', ')
+  end
+
+  def does_not_share_any_students?(grouping)
+    current_student_ids = Set.new
+    other_group_student_ids = Set.new
+    students.each { |student| current_student_ids.add(student.id) }
+    grouping.students.each { |student| other_group_student_ids.add(student.id) }
+    not current_student_ids.intersect?(other_group_student_ids)
   end
 
   def get_group_name

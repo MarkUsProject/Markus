@@ -237,11 +237,13 @@ en:
         review: "Review"
     peer_review:
         problem: "An unexpected problem occured"
+        random_assign_failure: "Unable to randomly assign, too many reviews requested per selected reviewer/reviewees"
         number_of_reviews_header: "Num reviews"
         assigned_reviewers_header: "Assigned reviewers"
         reviewer_group: "Reviewer group"
         reviewee_group: "Reviewee group"
         empty_list_reviewers: "Cannot have an empty list of reviewers"
+        empty_list_reviewees: "Cannot have an empty list of reviewees"
         cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
         number_per_group: "Number of peer reviews per group"
         download:
@@ -706,8 +708,7 @@ en:
 
     mark:
       error:
-        validate_flexible: "must be between 0 and the maximum mark of the criterion"
-        validate_rubric: "must be an integer between 0 and 4"
+        validate_criteria: "must be between 0 and the maximum mark of the criterion"
 
     # Student's View (admin)
     students:
@@ -1208,7 +1209,7 @@ en:
       move_up: "Move up"
       move_down: "Move down"
       name: "Flexible criterion name"
-      max: "Maximum mark"
+      max_mark: "Maximum mark"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
       download:
@@ -1380,6 +1381,7 @@ en:
     criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
     criterion_saved_success:   "Criterion was successfully saved"
     criterion_saved_failure:   "Criterion failed to be saved"
+    weight_not_number: "weight is not a number."
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
     criteria:           "Criteria"
     criterion:          "Criterion"

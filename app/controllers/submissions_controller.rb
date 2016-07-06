@@ -737,7 +737,7 @@ class SubmissionsController < ApplicationController
   def download_simple_csv_report
     assignment = Assignment.find(params[:assignment_id])
     students = Student.all
-    out_of = assignment.total_mark
+    out_of = assignment.max_mark
     file_out = MarkusCSV.generate(students) do |student|
       result = [student.user_name]
       grouping = student.accepted_grouping_for(assignment.id)

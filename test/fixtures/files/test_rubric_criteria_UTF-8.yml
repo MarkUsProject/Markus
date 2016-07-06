@@ -1,6 +1,6 @@
 ---
 RubricCriteriaÈrÉØrr: !omap
-  - weight: 1.0
+  - max_mark: 1.0
   - level_0:
       name: et
       description: A
