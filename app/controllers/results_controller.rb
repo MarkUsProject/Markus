@@ -61,9 +61,12 @@ class ResultsController < ApplicationController
     @marks_map = Hash.new
     @old_marks_map = Hash.new
 
-    if !@assignment.pr_assignment.nil?
-      @mark_criteria = @current_user.is_reviewer_for?(@assignment.pr_assignment.id, @result.id) ?
-          @assignment.get_criteria(:peer) : @assignment.pr_assignment.get_criteria(:ta)
+    if !@assignment.has_peer_review_assignment?
+      if @current_user.is_reviewer_for?(@assignment.pr_assignment.id, @result.id)
+        @mark_criteria = @assignment.get_criteria(:peer)
+      else
+        @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
+      end
     else
       @mark_criteria = @assignment.get_criteria(:ta)
     end
@@ -347,12 +350,12 @@ class ResultsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @submission_file_id = params[:submission_file_id]
     @focus_line = params[:focus_line]
-    @grouping = @current_user.grouping_for(Integer(params[:assignment_id]))
+    @grouping = @current_user.grouping_for(params[:assignment_id])
     @file = SubmissionFile.find(@submission_file_id)
     @result = @file.submission.get_latest_result
 
     if @current_user.is_a_reviewer?(@assignment)
-      prs = PeerReview.where(reviewer_id: @grouping.id)
+      prs = @grouping.peer_reviews
       pr = prs.find {|p| Result.find(p.result_id).submission.id == @file.submission.id}
     end
 

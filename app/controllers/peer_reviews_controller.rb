@@ -87,8 +87,7 @@ class PeerReviewsController < ApplicationController
       reviewer_id_to_bool.each do |reviewer_id, dummy_value|
         # find the PR that this reviewer made on this reviewee's submission
         reviewee_group = Grouping.find_by_id(reviewee_id)
-        reviewee_prs = reviewee_group.peer_reviews
-        pr = reviewee_prs.find {|p| p.reviewer_id == Integer(reviewer_id)}
+        pr = reviewee_group.peer_reviews.find(reviewer_id: reviewer_id)
         pr.destroy
       end
     end

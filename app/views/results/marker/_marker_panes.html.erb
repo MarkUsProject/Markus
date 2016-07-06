@@ -29,15 +29,15 @@
                        locals: { files: files,
                                  can_download: true } %>
 
-            <% if !@result.is_a_review? %>
               <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
                 <%= t('marker.new_annot')%>
               </button>
 
-              <%= render partial: 'annotations/annotation_categories',
-                         locals: { annotation_categories: annotation_categories,
-                                   result_id: result.id } %>
-            <% end %>
+              <% unless @result.is_a_review? %>
+                <%= render partial: 'annotations/annotation_categories',
+                           locals: { annotation_categories: annotation_categories,
+                                     result_id: result.id } %>
+              <% end %>
           </div>
 
           <div id='codeviewer'></div>

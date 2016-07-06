@@ -676,8 +676,7 @@ class Grouping < ActiveRecord::Base
       groupings = user_group.peer_reviews_to_others
       groupings.map {|p| Result.find(p.result_id).submission.grouping}
     else
-      groupings = assignment.groupings
-      groupings.joins(:memberships)
+      assignment.groupings.joins(:memberships)
           .includes(:assignment,
                     :group,
                     :grace_period_deductions,
@@ -762,8 +761,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def review_for(reviewee_group)
-    prs = reviewee_group.peer_reviews
-    prs.find {|p| p.reviewer_id == id}
+    reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end
 
   private

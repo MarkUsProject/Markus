@@ -44,9 +44,7 @@ module SubmissionsHelper
   end
 
   def get_submissions_table_info(assignment, groupings)
-    if current_user.is_a_reviewer?(assignment)
-      
-    else
+    if !current_user.is_a_reviewer?(assignment)
       parts = groupings.select &:has_submission?
       results = Result.where(submission_id:
                                  parts.map(&:current_submission_used))
@@ -75,9 +73,8 @@ module SubmissionsHelper
         end
 
         g[:name] = grouping.get_group_name
-        unless (current_user.is_a?(Student) && !current_user.is_a_reviewer?(assignment))
+        unless current_user.student?
           g[:id] = grouping.id
-          g[:name_url] = get_grouping_name_url(grouping, result)
           g[:repo_name] = grouping.group.repository_name
           g[:repo_url] = repo_browser_assignment_submission_path(assignment,
                                                                  grouping)
@@ -89,6 +86,7 @@ module SubmissionsHelper
           g[:grace_credits_used] = grouping.grace_period_deduction_single
           g[:section] = grouping.section
         end
+        g[:name_url] = get_grouping_name_url(grouping, result)
         g[:class_name] = get_tr_class(grouping)
         g[:state] = grouping.marking_state(result)
         g[:anonymous_id] = i + 1
