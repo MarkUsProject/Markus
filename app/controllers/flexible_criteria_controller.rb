@@ -12,13 +12,14 @@ class FlexibleCriteriaController < ApplicationController
 
   def edit
     @criterion = FlexibleCriterion.find(params[:id])
+    render 'criteria/edit', formats: [:js], handlers: [:erb]
   end
 
   def update
     @criterion = FlexibleCriterion.find(params[:id])
     unless @criterion.update_attributes(flexible_criterion_params)
       @errors = @criterion.errors
-      render :errors
+      render 'criteria/errors', formats: [:js], handlers: [:erb]
       return
     end
     flash.now[:success] = I18n.t('criterion_saved_success')
@@ -27,6 +28,7 @@ class FlexibleCriteriaController < ApplicationController
   def new
     @assignment = Assignment.find(params[:assignment_id])
     @criterion = FlexibleCriterion.new
+    render 'criteria/new', formats: [:js], handlers: [:erb]
   end
 
   def create
@@ -38,11 +40,11 @@ class FlexibleCriteriaController < ApplicationController
     @criterion.position = @assignment.next_criterion_position
     unless @criterion.update_attributes(flexible_criterion_params)
       @errors = @criterion.errors
-      render :add_criterion_error
+      render 'criteria/add_criterion_error', formats: [:js], handlers: [:erb]
       return
     end
     @criteria.reload
-    render :create_and_edit
+    render 'criteria/create_and_edit', formats: [:js], handlers: [:erb]
   end
 
   def destroy
@@ -53,6 +55,7 @@ class FlexibleCriteriaController < ApplicationController
     # Will be possible when Mark gets its association with FlexibleCriterion.
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
+    render 'criteria/destroy', formats: [:js], handlers: [:erb]
   end
 
   def download

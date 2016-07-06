@@ -194,7 +194,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
             due_date:  "Prazo de entrega da revisão"
             message:   "Mensagem da revisão"
         marking_scheme:
-            title: "Escala de avalição"
+            title: "Esquema de avalição"
             rubric: "Rúbrica (pré-definido)"
             flexible: "Flexível (à definir pelo avaliador)"
         notice:
@@ -1040,10 +1040,14 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     criterion_name: "Nome do critério"
 
+    criteria:
+      title: "Critério"
+      name: "Nome do critério"
+      marking_scheme: "Esquema de avalição: %{identifier}"
+      save: "Salvar alterções"
+
     flexible_criteria:
       title: "Critérios flexíveis"
-      criteria_management:         "Gerenciamento de critério: %{identifier}"
-      save: "Salvar alterções"
       move_up: "Mover para cima"
       move_down: "Mover para baixo"
       name: "Nome do critério flexível"
@@ -1074,8 +1078,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     rubric_criteria:
       title: "Critérios rubrica"
-      criteria_management:         "Gerenciamento de rúbrica : %{identifier}"
-      save: "Salvar alterações"
       name: "Nome de critério de rúbrica"
       move_up: "Mover para cima"
       move_down: "Mover para baixo"
@@ -1217,7 +1219,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     criterion_saved_success:   "Critério salvo com sucesso"
     weight_not_number: "peso não é um número."
     criterion_deleted_success:  "Critério, e todas notas associadas foram apagas com sucesso"
-    criteria:           "Critério"
     criterion:          "Critério"
     total_mark:         "Nota total"
     visibility:         "Visibilidade"

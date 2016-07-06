@@ -9,7 +9,7 @@ class RubricCriteriaController < ApplicationController
 
   def edit
     @criterion = RubricCriterion.find(params[:id])
-    render 'edit', formats: [:js]
+    render 'criteria/edit', formats: [:js], handlers: [:erb]
   end
 
   def update
@@ -18,7 +18,8 @@ class RubricCriteriaController < ApplicationController
       unless @criterion.update(rubric_criterion_params.deep_merge(params.require(:rubric_criterion)
                                                                       .permit(:max_mark)
                                                                       .transform_values { |x|  (Float(x) * 4).to_s }))
-        render :errors
+        @errors = @criterion.errors
+        render 'criteria/errors', formats: [:js], handlers: [:erb]
         return
       end
     rescue ArgumentError
@@ -31,7 +32,7 @@ class RubricCriteriaController < ApplicationController
   def new
     @assignment = Assignment.find(params[:assignment_id])
     @criterion = RubricCriterion.new
-    render 'new', formats: [:js]
+    render 'criteria/new', formats: [:js], handlers: [:erb]
   end
 
   def create
@@ -44,11 +45,11 @@ class RubricCriteriaController < ApplicationController
     @criterion.position = @assignment.next_criterion_position
     unless @criterion.update_attributes(rubric_criterion_params)
       @errors = @criterion.errors
-      render 'add_criterion_error', formats: [:js]
+      render 'criteria/add_criterion_error', formats: [:js], handlers: [:erb]
       return
     end
     @criteria.reload
-    render :create_and_edit
+    render 'criteria/create_and_edit', formats: [:js], handlers: [:erb]
   end
 
   def destroy
@@ -57,8 +58,8 @@ class RubricCriteriaController < ApplicationController
     @criteria = @assignment.get_criteria
     #delete all marks associated with this criterion
     @criterion.destroy
-    flash.now[:success] = I18n.t('criterion_deleted_success')
-    render 'destroy', formats: [:js]
+    flash[:success] = I18n.t('criterion_deleted_success')
+    render 'criteria/destroy', formats: [:js], handlers: [:erb]
   end
 
   def download_csv

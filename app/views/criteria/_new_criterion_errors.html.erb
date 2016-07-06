@@ -2,7 +2,7 @@
   <!-- @errors an ActiveModel.errors } -->
   <% @errors.each do |error_key| %>
       <% @errors.messages[error_key].each do |error_message| %>
-          <!-- If there is exactly one error message then don't display the message as a list item -->
+          <!-- Do not display the message as a list item if there is exactly one error message. -->
           <% if @errors.size == 1 and @errors.messages[error_key].size == 1 %>
               <p><%= error_message %></p>
           <% else %>

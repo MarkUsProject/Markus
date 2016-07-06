@@ -6,13 +6,13 @@
 
 <div class='title_bar'>
   <h1>
-    <%= t('flexible_criteria.criteria_management', identifier: @assignment.short_identifier) %>
+    <%= t('criteria.marking_scheme', identifier: @assignment.short_identifier) %>
   </h1>
   <div class='heading_buttons'>
     <%= link_to t('add_criterion'), 
           'javascript:void(0);',
-          onclick: "if(document.getElementById('new_flexible_criterion') != null) {
-          document.getElementById('new_flexible_criterion_prompt').focus();
+          onclick: "if(document.getElementById('new_criterion') != null) {
+          document.getElementById('new_criterion_prompt').focus();
         } else {
           jQuery.ajax({
             url: '" +new_assignment_flexible_criterion_path(@assignment.id) + "',
@@ -37,12 +37,12 @@
 </div>
 
 <div class='pane_wrapper'>
-  <div id='flexible_criteria_pane'>
+  <div id='criteria_pane'>
     <%= render partial: 'criteria/criteria_pane' %>
   </div>
 
-  <div id='flexible_edition_pane'>
-    <div id='flexible_edition_pane_menu'>
+  <div id='editing_pane'>
+    <div id='editing_pane_menu'>
       <%= render partial: 'criteria/manager_help' %>
     </div>
   </div>

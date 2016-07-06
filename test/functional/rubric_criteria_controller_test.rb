@@ -335,7 +335,7 @@ END
         assert assigns :assignment
         assert assigns :criterion
         assert assigns :errors
-        assert render_template 'rubric_criteria/add_criterion_error'
+        assert render_template 'criteria/add_criterion_error'
         assert_response :success
       end
 
@@ -350,7 +350,7 @@ END
                                    max_mark: 10}
         assert assigns :assignment
         assert assigns :criterion
-        assert render_template 'rubric_criteria/create_and_edit'
+        assert render_template 'criteria/create_and_edit'
         assert respond_with :success
       end
 
@@ -363,7 +363,7 @@ END
                                    max_mark: 10}
         assert assigns :assignment
         assert assigns :criterion
-        assert render_template 'rubric_criteria/create_and_edit'
+        assert render_template 'criteria/create_and_edit'
         assert_response :success
       end
 

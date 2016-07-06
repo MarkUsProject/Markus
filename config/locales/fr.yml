@@ -1072,12 +1072,14 @@ fr:
     <p>Voici un exemple d'un champ CSV contenant des virgules et des doubles quotes :</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
-    criterion_name: "Nom du critère"
+    criteria:
+      title: "Critères"
+      name: "Nom du critère"
+      marking_scheme: "Barème: %{identifier}"
+      save: "Sauvegarder les modifications"
 
     flexible_criteria:
       title: "Critères souples"
-      criteria_management: "Édition du barème pour le projet %{identifier}"
-      save: "Sauvegarder"
       move_up: "Monter"
       move_down: "Descendre"
       name: "Nom du critère"
@@ -1109,8 +1111,6 @@ fr:
 
     rubric_criteria:
       title: "Critères rubrique"
-      criteria_management: "Édition du barème pour le projet %{identifier}"
-      save: "Sauvegarder"
       name: "Nom du critère"
       move_up: "Monter"
       move_down: "Descendre"
@@ -1230,7 +1230,6 @@ fr:
     criterion_saved_success:   "Le critète a été sauvegardé."
     weight_not_number: "le coefficient n'est pas un nombre."
     criterion_deleted_success:  "Le critère et toutes les notes associées ont été supprimés."
-    criteria:           "Critères"
     criterion:          "Critère"
     total_mark:         "Note totale"
     visibility:         "Visibilité"

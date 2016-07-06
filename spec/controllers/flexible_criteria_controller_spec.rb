@@ -374,7 +374,7 @@ describe FlexibleCriteriaController do
 
         it 'should render the add_criterion_error template' do
           is_expected
-            .to render_template(:'flexible_criteria/add_criterion_error')
+            .to render_template(:'criteria/add_criterion_error')
         end
 
         it 'should respond with success' do
@@ -395,7 +395,7 @@ describe FlexibleCriteriaController do
           expect(assigns(:assignment)).to be_truthy
         end
         it 'should render the create_and_edit template' do
-          is_expected.to render_template(:'flexible_criteria/create_and_edit')
+          is_expected.to render_template(:'criteria/create_and_edit')
         end
 
         it 'should respond with success' do
@@ -416,7 +416,7 @@ describe FlexibleCriteriaController do
           expect(assigns(:assignment)).to be_truthy
         end
         it 'should render the create_and_edit template' do
-          is_expected.to render_template(:'flexible_criteria/create_and_edit')
+          is_expected.to render_template(:'criteria/create_and_edit')
         end
 
         it 'should respond with success' do

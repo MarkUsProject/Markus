@@ -1201,15 +1201,17 @@ en:
     <p>Here's an example of a CSV field containing commas and double quotes:</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
-    criterion_name: "Criterion Name"
+    criteria:
+      title: "Criteria"
+      name: "Criterion name"
+      marking_scheme: "Marking Scheme: %{identifier}"
+      save: "Save changes"
 
     flexible_criteria:
       title: "Flexible Criteria"
-      criteria_management: "Criteria Management: %{identifier}"
       save: "Save changes"
       move_up: "Move up"
       move_down: "Move down"
-      name: "Flexible criterion name"
       max_mark: "Maximum mark"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
@@ -1238,9 +1240,7 @@ en:
 
     rubric_criteria:
       title: "Rubric Criteria"
-      criteria_management: "Rubric Management: %{identifier}"
       save: "Save changes"
-      name: "Rubric criterion name"
       move_up: "Move up"
       move_down: "Move down"
       level:
@@ -1385,7 +1385,6 @@ en:
     criterion_saved_failure:   "Criterion failed to be saved"
     weight_not_number: "weight is not a number."
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
-    criteria:           "Criteria"
     criterion:          "Criterion"
     total_mark:         "Total mark"
     visibility:         "Visibility"
