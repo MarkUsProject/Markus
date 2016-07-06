@@ -33,10 +33,10 @@ namespace :db do
     Assignment.where(marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:rubric]).each do |assignment|
       8.times do |index|
         RubricCriterion.create(
-            name: random_sentences(1),
+            name:                  random_sentences(1),
             assignment_id:         assignment.id,
             position:              1,
-            weight:                pos_rand(3),
+            max_mark:              pos_rand(3),
             level_0_name:          random_words(5),
             level_0_description:   random_sentences(5),
             level_1_name:          random_words(5),
@@ -54,11 +54,11 @@ namespace :db do
     Assignment.where(marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:flexible]).each do |assignment|
       8.times do |index|
         FlexibleCriterion.create(
-            name: random_sentences(1),
+            name:                    random_sentences(1),
             assignment_id:           assignment.id,
             description:             random_sentences(5),
             position:                1,
-            max:                     pos_rand(3),
+            max_mark:                pos_rand(3),
             created_at:              nil,
             updated_at:              nil,
             assigned_groups_count:   nil

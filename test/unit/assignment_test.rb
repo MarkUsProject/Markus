@@ -195,14 +195,14 @@ class AssignmentTest < ActiveSupport::TestCase
 
         @sum = 0
         [2,2.7,2.2,2].each do |weight|
-          Mark.make({mark: 4, result: @result, markable: RubricCriterion.make({assignment: @assignment,weight: weight})})
+          Mark.make({mark: 4, result: @result, markable: RubricCriterion.make({assignment: @assignment, max_mark: weight * 4})})
           @sum += weight
         end
         @total = @sum * 4
       end
 
-      should 'return the correct total mark for rubric criteria' do
-        assert_equal(@total, @assignment.total_mark)
+      should 'return the correct maximum mark for rubric criteria' do
+        assert_equal(@total, @assignment.max_mark)
       end
 
       should 'return the correct total criteria weight' do
@@ -426,7 +426,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
       should 'be able to generate a detailed CSV report of rubric_criteria based marks (including criteria)' do
         a = @assignment
-        out_of = a.total_mark
+        out_of = a.max_mark
         rubric_criteria = a.get_criteria
         expected_string = ''
         Student.all.each do |student|
@@ -437,7 +437,7 @@ class AssignmentTest < ActiveSupport::TestCase
             fields.push('')
             rubric_criteria.each do |rubric_criterion|
               fields.push('')
-              fields.push(rubric_criterion.weight)
+              fields.push(rubric_criterion.max_mark)
             end
             fields.push('')
             fields.push('')
@@ -452,7 +452,7 @@ class AssignmentTest < ActiveSupport::TestCase
               else
                 fields.push(mark.mark || '')
               end
-              fields.push(rubric_criterion.weight)
+              fields.push(rubric_criterion.max_mark)
             end
             fields.push(submission.get_latest_result.get_total_extra_points)
             fields.push(submission.get_latest_result.get_total_extra_percentage)
@@ -501,7 +501,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
       should 'be able to generate a detailed CSV report of flexible based marks (including criteria)' do
         a = @flexible_assignment
-        out_of = a.total_mark
+        out_of = a.max_mark
         flexible_criteria = a.get_criteria
         expected_string = ''
         Student.all.each do |student|
@@ -512,7 +512,7 @@ class AssignmentTest < ActiveSupport::TestCase
             fields.push('')
             flexible_criteria.each do |criterion|
               fields.push('')
-              fields.push(criterion.max)
+              fields.push(criterion.max_mark)
             end
             fields.push('')
             fields.push('')
@@ -527,7 +527,7 @@ class AssignmentTest < ActiveSupport::TestCase
               else
                 fields.push(mark.mark || '')
               end
-              fields.push(criterion.max)
+              fields.push(criterion.max_mark)
             end
             fields.push(submission.get_latest_result.get_total_extra_points)
             fields.push(submission.get_latest_result.get_total_extra_percentage)

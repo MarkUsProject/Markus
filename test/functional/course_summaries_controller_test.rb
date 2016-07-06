@@ -42,10 +42,10 @@ class CourseSummariesControllerTest < AuthenticatedControllerTest
               if student.has_accepted_grouping_for?(assignments[index])
                 grouping = student.accepted_grouping_for(assignments[index])
                 assert (!grouping.has_submission? ||
-                           assignments[index].total_mark == 0)
+                           assignments[index].max_mark == 0)
               end
             else
-              out_of = assignments[index].total_mark
+              out_of = assignments[index].max_mark
               grouping = student.accepted_grouping_for(assignments[index])
               assert_not_nil grouping
               assert grouping.has_submission?

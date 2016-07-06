@@ -3,7 +3,6 @@ require 'encoding'
 # Represents a flexible criterion used to mark an assignment that
 # has the marking_scheme_type attribute set to 'flexible'.
 class FlexibleCriterion < Criterion
-
   self.table_name = 'flexible_criteria' # set table name correctly
 
   has_many :marks, as: :markable, dependent: :destroy
@@ -28,8 +27,8 @@ class FlexibleCriterion < Criterion
                             greater_than: 0,
                             message: 'can only be whole number greater than 0'
 
-  validates_presence_of :max
-  validates_numericality_of :max,
+  validates_presence_of :max_mark
+  validates_numericality_of :max_mark,
                             message: 'must be a number greater than 0.0',
                             greater_than: 0.0
 
@@ -37,7 +36,7 @@ class FlexibleCriterion < Criterion
 
   validate :visible?
 
-  DEFAULT_MAX = 1
+  DEFAULT_MAX_MARK = 1
 
   def self.symbol
     :flexible
@@ -57,17 +56,17 @@ class FlexibleCriterion < Criterion
   # ===Params:
   #
   # row::         An array representing one CSV file row. Should be in the following
-  #               format: [name, max, description] where description is optional.
+  #               format: [name, max_mark, description] where description is optional.
   # assignment::  The assignment to which the newly created criterion should belong.
   #
   # ===Raises:
   #
   # CSVInvalidLineError  If the row does not contain enough information,
-  #                      if the max value is zero, nil or does not evaluate to a
+  #                      if the maximum mark is zero, nil or does not evaluate to a
   #                      float, or if the criterion is not successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < 2
-      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     working_row = row.clone
     name = working_row.shift
@@ -76,13 +75,13 @@ class FlexibleCriterion < Criterion
     criterion = assignment.get_criteria.find_or_create_by(name: name)
     # Check that max is not a string.
     begin
-      criterion.max = Float(working_row.shift)
+      criterion.max_mark = Float(working_row.shift)
     rescue ArgumentError
-      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
-    # Check that max is a valid number.
-    if criterion.max.nil? or criterion.max.zero?
-      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
+    # Check that the maximum mark given is a valid number.
+    if criterion.max_mark.nil? or criterion.max_mark.zero?
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -96,18 +95,8 @@ class FlexibleCriterion < Criterion
     criterion
   end
 
-  def get_weight
+  def weight
     1
-  end
-
-  # TODO: Get rid of this method once unification of flexible and rubric is finished
-  def mark_max
-    max_mark
-  end
-
-  # Returns the maximum mark for a particular criterion.
-  def max_mark
-    max
   end
 
   def all_assigned_groups
@@ -168,11 +157,11 @@ class FlexibleCriterion < Criterion
     true
   end
 
-  def set_mark_by_criteria(mark_to_change, criterion_name)
-    if criterion_name == 'nil'
+  def set_mark_by_criterion(mark_to_change, mark_value)
+    if mark_value == 'nil'
       mark_to_change.mark = nil
     else
-      mark_to_change.mark = criterion_name.to_f
+      mark_to_change.mark = mark_value.to_f
     end
     mark_to_change.save
   end
