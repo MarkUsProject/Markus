@@ -156,7 +156,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         should 'not be able to get edit' do
           get_as @student,
                  :edit,
-                 assignment_id: 1,
+                 assignment_id: @assignment.id,
                  submission_id: 1,
                  id: @result.id
           assert_response :missing
@@ -187,7 +187,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           get_as @student,
                  :toggle_marking_state,
                  format: :js,
-                 assignment_id: 1,
+                 assignment_id: @assignment.id,
                  submission_id: 1,
                  id: @result.id
           assert_response :missing
@@ -344,7 +344,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    id: 1,
                    submission_file_id: @no_access_submission_file.id,
                    focus_line: 1
-
             assert_not_nil assigns :assignment
             assert_not_nil assigns :submission_file_id
             assert_not_nil assigns :focus_line
@@ -411,7 +410,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         should 'GET on :update_mark' do
           get_as @student,
                  :update_mark,
-                 assignment_id: 1,
+                 assignment_id: @assignment.id,
                  submission_id: 1,
                  mark_id: 1,
                  mark: 0
@@ -576,7 +575,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @result = @groupings[0].current_submission_used.get_latest_result
               get_as @admin,
                      :edit,
-                     assignment_id: 1,
+                     assignment_id: @assignment.id,
                      submission_id: 1,
                      id: @result.id
               assert_not_nil assigns(:next_grouping)
@@ -596,7 +595,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @result = @groupings[1].current_submission_used.get_latest_result
               get_as @admin,
                      :edit,
-                     assignment_id: 1,
+                     assignment_id: @assignment.id,
                      submission_id: 1,
                      id: @result.id
 
@@ -625,7 +624,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @result = @groupings[2].current_submission_used.get_latest_result
               get_as @admin,
                      :edit,
-                     assignment_id: 1,
+                     assignment_id: @assignment.id,
                      submission_id: 1,
                      id: @result.id
 
@@ -952,7 +951,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             get_as @admin,
                    :update_mark,
                    format: :js,
-                   assignment_id: 1,
+                   assignment_id: @assignment.id,
                    submission_id: 1,
                    id: 1,
                    mark_id: @mark.id,
@@ -969,7 +968,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
             get_as @admin,
                    :update_mark,
-                   assignment_id: 1,
+                   assignment_id: @assignment.id,
                    submission_id: 1,
                    id: 1,
                    mark_id: 1,
@@ -982,7 +981,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             get_as @admin,
                    :update_mark,
                    format: :js,
-                   assignment_id: 1,
+                   assignment_id: @assignment.id,
                    submission_id: 1,
                    id: 1,
                    mark_id: @mark.id,
@@ -1108,7 +1107,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           result = Result.make
           get_as @ta,
                  :edit,
-                 assignment_id: 1,
+                 assignment_id: @assignment.id,
                  submission_id: 1,
                  id: result.id
 
@@ -1158,7 +1157,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           get_as @ta,
                  :toggle_marking_state,
                  format: :js,
-                 assignment_id: 1,
+                 assignment_id: @assignment.id,
                  submission_id: 1,
                  id: result.id
           assert_response :success
@@ -1295,7 +1294,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             get_as @ta,
                    :update_mark,
                    format: :js,
-                   assignment_id: 1,
+                   assignment_id: @assignment.id,
                    submission_id: 1,
                    id: 1,
                    mark_id: @mark.id,
@@ -1308,7 +1307,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             get_as @ta,
                    :update_mark,
                    format: :js,
-                   assignment_id: 1,
+                   assignment_id: @assignment.id,
                    submission_id: 1,
                    mark_id: @mark.id,
                    mark: 1

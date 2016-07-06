@@ -91,9 +91,10 @@ module SessionHandler
   end
 
   def authorize_for_ta_admin_and_reviewer(aid, result_id)
+    assignment = Assignment.find(aid)
     unless authorized?(Admin) || authorized?(Ta) ||
-        (authorized?(Student) &&
-            current_user.is_reviewer_for?(Assignment.find(aid).pr_assignment.id, Integer(result_id)))
+        (authorized?(Student) && assignment.has_peer_review_assignment? &&
+            current_user.is_reviewer_for?(assignment.pr_assignment.id, Integer(result_id)))
       render 'shared/http_status', formats: [:html],
              locals:
                  { code: '404',

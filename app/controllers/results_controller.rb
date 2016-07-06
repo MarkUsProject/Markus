@@ -361,10 +361,10 @@ class ResultsController < ApplicationController
 
     #Is the current user a student?
     if current_user.student?
-      # If the files are not from the student's own grouping for the assignment,
+      # If user doesn't have membership status for the grouping this file belongs to,
       # or if this is a peer review assignment and the student is not a reviewer of this
       # submission, then student does not have access to this file. Display an error.
-      if @file.submission.grouping.membership_status(current_user).nil? &&
+      if @file.submission.grouping.membership_status(current_user).nil? ||
         (@current_user.is_a_reviewer?(@assignment) && pr.nil?)
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
