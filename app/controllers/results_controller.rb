@@ -357,10 +357,9 @@ class ResultsController < ApplicationController
 
     #Is the current user a student?
     if current_user.student?
-      # If user doesn't have membership status for the grouping this file belongs to,
-      # or if this assignment has a peer review assignment and the student is not a reviewer of this
-      # submission, then student does not have access to this file. Display an error.
-      # debugger
+      # If result is a review and user doesn't have membership status for the grouping
+      # this file belongs to, or if result is a review and the student is not a reviewer of this
+      # result, then student does not have access to this file. Display an error.
 
       if (!@result.is_a_review? && @file.submission.grouping.membership_status(current_user).nil?) ||
           (@result.is_a_review? &&
