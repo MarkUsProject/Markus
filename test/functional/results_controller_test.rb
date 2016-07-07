@@ -198,7 +198,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @new_comment = 'a changed overall comment!'
           get_as @student,
                   :update_overall_comment,
-                  assignment_id: 1,
+                  assignment_id: @assignment.id,
                   submission_id: 1,
                   id: @result.id,
                   result: {overall_comment: @new_comment}
@@ -212,7 +212,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @new_comment = 'a changed overall comment!'
           post_as @student,
                   :update_overall_comment,
-                  assignment_id: 1,
+                  assignment_id: @assignment.id,
                   submission_id: 1,
                   id: @result.id,
                   result: {overall_comment: @new_comment}
@@ -1079,7 +1079,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @overall_comment = 'A new overall comment!'
           post_as @admin,
                   :update_overall_comment,
-                  assignment_id: 1,
+                  assignment_id: @assignment.id,
                   submission_id: 1,
                   id: @result.id,
                   result: {overall_comment: @overall_comment}
@@ -1411,7 +1411,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result = Result.make
           post_as @ta,
                   :update_overall_comment,
-                  assignment_id: 1,
+                  assignment_id: @assignment.id,
                   submission_id: 1,
                   id: @result.id,
                   result: {overall_comment: @overall_comment}
