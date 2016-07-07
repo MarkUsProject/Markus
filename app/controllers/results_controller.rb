@@ -354,18 +354,16 @@ class ResultsController < ApplicationController
     @file = SubmissionFile.find(@submission_file_id)
     @result = @file.submission.get_latest_result
 
-    if @current_user.is_a_reviewer?(@assignment)
-      prs = @grouping.peer_reviews
-      pr = prs.find {|p| Result.find(p.result_id).submission.id == @file.submission.id}
-    end
-
     #Is the current user a student?
     if current_user.student?
       # If user doesn't have membership status for the grouping this file belongs to,
-      # or if this is a peer review assignment and the student is not a reviewer of this
+      # or if this assignment has a peer review assignment and the student is not a reviewer of this
       # submission, then student does not have access to this file. Display an error.
-      if @file.submission.grouping.membership_status(current_user).nil? ||
-        (@current_user.is_a_reviewer?(@assignment) && pr.nil?)
+      # debugger
+
+      if (!@result.is_a_review? && @file.submission.grouping.membership_status(current_user).nil?) ||
+          (@result.is_a_review? &&
+              !current_user.is_reviewer_for?(@assignment.pr_assignment.id, @result.id))
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
