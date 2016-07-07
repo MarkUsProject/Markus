@@ -339,11 +339,6 @@ class Assignment < ActiveRecord::Base
     self.save
   end
 
-  def total_criteria_weight
-    factor = 10.0 ** 2
-    (get_criteria.map(&:weight).sum() * factor).floor / factor
-  end
-
   def total_test_script_marks
     return test_scripts.sum("max_marks")
   end

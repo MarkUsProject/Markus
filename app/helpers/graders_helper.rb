@@ -38,8 +38,8 @@ module GradersHelper
       g[:criteria] += view_context.link_to(
         view_context.image_tag(
           'icons/comment.png',
-          alt: I18n.t('criteria'),
-          title: I18n.t('criteria')),
+          alt: I18n.t('criteria.title'),
+          title: I18n.t('criteria.title')),
         grader_criteria_dialog_assignment_graders_path(
           id: @assignment.id,
           grader: grader.id),

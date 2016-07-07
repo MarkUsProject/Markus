@@ -1,0 +1,3 @@
+document.getElementById('editing_pane_menu').innerHTML =
+  "<%= escape_javascript(render partial: "#{@criterion.assignment.marking_scheme_type}_criteria/criterion_editor",
+                                locals: { criterion: @criterion }) %>";

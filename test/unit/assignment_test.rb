@@ -205,10 +205,6 @@ class AssignmentTest < ActiveSupport::TestCase
         assert_equal(@total, @assignment.max_mark)
       end
 
-      should 'return the correct total criteria weight' do
-        assert_equal(@sum, @assignment.total_criteria_weight)
-      end
-
       # Test if assignments can fetch the group for a user
       should 'return the correct group for a given student' do
         assert_equal @membership.grouping.group, @assignment.group_by(@membership.user).group
