@@ -205,8 +205,8 @@ describe 'An Assignment' do
     # start assignment rubric collection route tests
     context 'collection' do
       it 'routes POST update_positions properly' do
-        expect(post: rubric_path + '/update_positions').to route_to(
-          controller: rubric_ctrl,
+        expect(post: path + '/' + assignment.id.to_s + '/criteria/update_positions').to route_to(
+          controller: 'criteria',
           action: 'update_positions',
           assignment_id: assignment.id.to_s,
           locale: 'en')
@@ -258,8 +258,8 @@ describe 'An Assignment' do
       end
 
       it 'routes GET show id: update_positions' do
-        expect(get: criter_path + '/update_positions').to route_to(
-          controller: criter_ctrl,
+        expect(get: path + '/' + assignment.id.to_s + '/criteria/update_positions').to route_to(
+          controller: 'criteria',
           action: 'show',
           id: 'update_positions',
           assignment_id: assignment.id.to_s,

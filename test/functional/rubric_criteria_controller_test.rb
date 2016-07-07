@@ -42,11 +42,6 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
         assert_response :redirect
       end
 
-     should 'be redirected on :update_positions' do
-        get :update_positions, assignment_id: @assignment.id
-        assert_response :redirect
-      end
-
       context 'and a submission' do
         setup do
           @submission = Submission.make(grouping: @grouping)
@@ -402,29 +397,6 @@ END
         @assignment.reload
         assert_equal(@assignment.get_criteria.length, 3)
         assert_equal(@assignment.get_criteria[0].max_mark, 4.0)
-      end
-
-
-      context 'with another criterion' do
-        setup do
-          @criterion2 = RubricCriterion.make(assignment: @assignment,
-                                             position: 2)
-        end
-
-        should 'be able to update_positions' do
-          get_as @admin,
-                :update_positions,
-                criterion: [@criterion2.id,
-                            @criterion.id],
-                assignment_id: @assignment.id
-          assert render_template ''
-          assert_response :success
-
-          c1 = RubricCriterion.find(@criterion.id)
-          assert_equal 1, c1.position
-          c2 = RubricCriterion.find(@criterion2.id)
-          assert_equal 2, c2.position
-        end
       end
 
     end

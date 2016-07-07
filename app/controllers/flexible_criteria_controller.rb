@@ -91,27 +91,6 @@ class FlexibleCriteriaController < ApplicationController
     redirect_to action: 'index', assignment_id: @assignment.id
   end
 
-  # This method handles the drag/drop criteria sorting
-  def update_positions
-    unless request.post?
-      render nothing: true
-      return
-    end
-
-    @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
-    position = 0
-
-    # if params[:criterion]
-      params[:criterion].each do |id|
-        if id != ''
-          position += 1
-          FlexibleCriterion.update(id, position: position)
-        end
-      end
-    # end
-  end
-
   private
 
   def flexible_criterion_params
