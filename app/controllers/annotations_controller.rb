@@ -1,6 +1,8 @@
 class AnnotationsController < ApplicationController
 
-  before_filter      :authorize_for_ta_and_admin
+  before_filter do |c|
+                  c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:result_id])
+                end
 
   def add_existing_annotation
     return unless request.post?
@@ -141,13 +143,13 @@ class AnnotationsController < ApplicationController
   def update_annotation
     @content = params[:annotation_text][:content]
     @id = params[:annotation_text][:id]
-    @submission_file_id = params[:annotation_text][:submission_file_id]
+    @submission_file_id = params[:submission_file_id]
     @annotation_text = AnnotationText.find(@id)
     @annotation_text.content = @content
     @annotation_text.save
     @submission_file = SubmissionFile.find(@submission_file_id)
     @submission = @submission_file.submission
     @annotations = @submission.annotations
-    @result_id = params[:annotation_text][:result_id]
+    @result_id = params[:result_id]
   end
 end
