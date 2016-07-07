@@ -232,7 +232,7 @@ en:
         has_peer_review: "Enable student-to-student peer review"
         configure_peer_review: "Configure peer review"
         peer_review_record_missing: "Error: Peer review assignment missing from database"
-        start_peer_review: "Peer-review"
+        start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
         review: "Review"
     peer_review:
