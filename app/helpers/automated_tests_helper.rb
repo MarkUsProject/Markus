@@ -57,7 +57,9 @@ module AutomatedTestsHelper
         updated_script_files[file_num][:seq_num] = file_num
       else
         # Edit existing test script file
-        unless params[('new_update_script_' + testscripts[file_num][:script_name]).to_sym].nil?
+        if params[('new_update_script_' + testscripts[file_num][:script_name]).to_sym].nil?
+          updated_script_files[file_num] = file.clone
+        else
           new_update_script = params[('new_update_script_' + testscripts[file_num][:script_name]).to_sym]
           new_script_name = new_update_script.original_filename
           old_script_name = file[:script_name]
@@ -84,7 +86,6 @@ module AutomatedTestsHelper
             File.delete(old_script_path)
           end
         end
-        updated_script_files[file_num] = file.clone
       end
       # always make sure the criterion type is correct
       updated_script_files[file_num][:criterion_type] = @assignment.criterion_class
@@ -107,7 +108,9 @@ module AutomatedTestsHelper
         updated_support_files[file_num][:file_name] = filename
       else
         # Edit existing test support file
-        unless params[('new_update_file_' + testsupporters[file_num][:file_name]).to_sym].nil?
+        if params[('new_update_file_' + testsupporters[file_num][:file_name]).to_sym].nil?
+          updated_support_files[file_num] = file.clone
+        else
           new_update_file = params[('new_update_file_' + testsupporters[file_num][:file_name]).to_sym]
           new_file_name = new_update_file.original_filename
           old_file_name = file[:file_name]
@@ -134,7 +137,6 @@ module AutomatedTestsHelper
             File.delete(old_file_path)
           end
         end
-        updated_support_files[file_num] = file.clone
       end
     end
 
