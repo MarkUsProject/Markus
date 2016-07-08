@@ -131,7 +131,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
               { format: :js,
                 id: anno.id,
                 submission_file_id: @submission_file.id,
-                assignment_id: @assignment.id}
+                assignment_id: @assignment.id,
+                result_id: @result.id}
       assert_response :success
       assert render_template 'destroy'
     end # End context :destroy
@@ -145,6 +146,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
              format: :js,
              assignment_id: @assignment.id,
              submission_file_id: @submission_file.id,
+             result_id: @result.id,
              annotation_text: { id: @annotation_text.id,
                                 content: @annotation_text.content}
       assert_response :success
@@ -222,7 +224,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
               { format: :js,
                 id: anno.id,
                 submission_file_id: @submission_file.id,
-                assignment_id: @assignment.id}
+                assignment_id: @assignment.id,
+                result_id: @result.id}
       assert_response :success
       assert render_template 'destroy'
     end # End context :destroy
@@ -236,6 +239,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
              format: :js,
              assignment_id: @assignment.id,
              submission_file_id: @submission_file.id,
+             result_id: @result.id,
              annotation_text: { id: @annotation_text.id,
                                 content: @annotation_text.content}
       assert_response :success
@@ -290,7 +294,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
                 :destroy,
                 id: 67,
                 submission_file_id: @submission_file.id,
-                assignment_id: @assignment.id
+                assignment_id: @assignment.id,
+                result_id: @result.id
       assert_response :not_found
     end # End context :destroy
 
@@ -300,6 +305,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         annotation_text_id: @annotation_text.id,
         submission_file_id:  @submission_file.id})
       post_as @user, :update_annotation,  assignment_id: @assignment.id,
+              result_id: @result.id,
               annotation_text: { id: @annotation_text.id,
                                  content: @annotation_text.content,
                                  submission_file_id:@submission_file.id }

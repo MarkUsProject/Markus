@@ -363,7 +363,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    assignment_id: @assignment.id,
                    submission_id: 1,
                    submission_file_id: @submission_file.id,
-                   id: 1,
+                   id: @result.id,
                    focus_line: 1
             assert_not_nil assigns :assignment
             assert_not_nil assigns :submission_file_id
@@ -391,7 +391,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    assignment_id: @assignment.id,
                    submission_id: 1,
                    submission_file_id: @submission_file.id,
-                   id: 1,
+                   id: @result.id,
                    focus_line: 1
             assert_not_nil assigns :assignment
             assert_not_nil assigns :submission_file_id
@@ -412,6 +412,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :update_mark,
                  assignment_id: @assignment.id,
                  submission_id: 1,
+                 id: @result.id,
                  mark_id: 1,
                  mark: 0
           assert_response :missing
@@ -953,7 +954,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    format: :js,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: 1,
+                   id: @mark.result.id,
                    mark_id: @mark.id,
                    mark: 'something'
             assert_match "0.0,0.0,0.0", @response.body
@@ -968,7 +969,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :update_mark,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: 1,
+                   id: @mark.result.id,
                    mark_id: 1,
                    mark: 1
             assert_response :bad_request
@@ -981,7 +982,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    format: :js,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: 1,
+                   id: @mark.result.id,
                    mark_id: @mark.id,
                    mark: 1
             assert_response :success
@@ -1294,7 +1295,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    format: :js,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: 1,
+                   id: @mark.result.id,
                    mark_id: @mark.id,
                    mark: 'something'
             assert_match "0.0,0.0,0.0", @response.body
@@ -1306,6 +1307,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    format: :js,
                    assignment_id: @assignment.id,
                    submission_id: 1,
+                   id: @mark.result.id,
                    mark_id: @mark.id,
                    mark: 1
             assert render_template 'results/marker/_update_mark.rjs'

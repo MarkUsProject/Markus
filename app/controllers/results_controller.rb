@@ -362,7 +362,7 @@ class ResultsController < ApplicationController
       # result, then student does not have access to this file. Display an error.
 
       if (!@result.is_a_review? && @file.submission.grouping.membership_status(current_user).nil?) ||
-          (!current_user.is_reviewer_for?(@assignment.pr_assignment, @result))
+          (@result.is_a_review? && !current_user.is_reviewer_for?(@assignment.pr_assignment, @result))
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
