@@ -62,7 +62,7 @@ class ResultsController < ApplicationController
     @marks_map = Hash.new
     @old_marks_map = Hash.new
 
-    if @assignment.has_peer_review_assignment?
+    if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
         @mark_criteria = @assignment.get_criteria(:peer)
       else
