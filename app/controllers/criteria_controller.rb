@@ -22,9 +22,9 @@ class CriteriaController < ApplicationController
 
   # Returns the class of the criterion.
   def get_class(criterion_type)
-    if criterion_type == "flexible"
+    if criterion_type == 'flexible'
       FlexibleCriterion
-    elsif criterion_type == "rubric"
+    elsif criterion_type == 'rubric'
       RubricCriterion
     end
   end

@@ -168,7 +168,7 @@ class FlexibleCriterion < Criterion
 
   # Returns the criterion type.
   def type
-    "flexible"
+    'flexible'
   end
 
 end

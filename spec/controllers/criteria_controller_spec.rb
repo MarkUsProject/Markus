@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe CriteriaController, type: :controller do
 
-  describe "Using Flexible criteria" do
+  describe 'Using Flexible criteria' do
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#new' do
@@ -56,7 +56,7 @@ RSpec.describe CriteriaController, type: :controller do
           get_as @admin, :new,
                  format: :js,
                  assignment_id: @assignment.id,
-                 criterion_type: "flexible"
+                 criterion_type: 'flexible'
         end
 
         it 'should respond with appropriate content' do
@@ -114,7 +114,7 @@ RSpec.describe CriteriaController, type: :controller do
     end
   end
 
-  describe "Using Rubric criteria" do
+  describe 'Using Rubric criteria' do
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#new' do
@@ -165,7 +165,7 @@ RSpec.describe CriteriaController, type: :controller do
           get_as @admin, :new,
                  format: :js,
                  assignment_id: @assignment.id,
-                 criterion_type: "rubric"
+                 criterion_type: 'rubric'
         end
 
         it 'should respond with appropriate content' do

@@ -288,7 +288,7 @@ class RubricCriterion < Criterion
 
   # Returns the criterion type.
   def type
-    "rubric"
+    'rubric'
   end
 
 end
