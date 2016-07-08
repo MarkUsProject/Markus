@@ -6,6 +6,11 @@ class CriteriaController < ApplicationController
     @criterion = get_class(@criterion_type).new
   end
 
+  def edit
+    @criterion_type = params[:criterion_type]
+    @criterion = get_class(@criterion_type).find(params[:id])
+  end
+
   # This method handles the drag/drop criteria sorting
   def update_positions
     @assignment = Assignment.find(params[:assignment_id])

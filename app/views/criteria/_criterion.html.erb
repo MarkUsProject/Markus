@@ -3,10 +3,11 @@
     <%= link_to truncate(criterion.name,
                          length: 30,
                          omission: '...'),
-                { controller: "#{criterion.type}_criteria",
-                  action:'edit',
+                { controller: 'criteria',
+                  action: 'edit',
                   assignment_id: @assignment.id,
-                  id: criterion.id },
+                  id: criterion.id,
+                  criterion_type: criterion.type },
                 id: "criterion_title_#{criterion.id}",
                 remote: true %>
   </span>

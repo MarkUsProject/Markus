@@ -10,11 +10,6 @@ class FlexibleCriteriaController < ApplicationController
     @criteria = @assignment.get_criteria.order(:position)
   end
 
-  def edit
-    @criterion = FlexibleCriterion.find(params[:id])
-    render 'criteria/edit', formats: [:js], handlers: [:erb]
-  end
-
   def update
     @criterion = FlexibleCriterion.find(params[:id])
     unless @criterion.update_attributes(flexible_criterion_params)
