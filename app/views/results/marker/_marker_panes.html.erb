@@ -33,7 +33,7 @@
                 <%= t('marker.new_annot')%>
               </button>
 
-              <% unless @result.is_a_review? %>
+              <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
                 <%= render partial: 'annotations/annotation_categories',
                            locals: { annotation_categories: annotation_categories,
                                      result_id: result.id } %>
@@ -189,7 +189,7 @@
                 <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
                 <select id='new_annotation_category'>
                   <option value=''><%= t('annotations.one_time_only') %></option>
-                  <% unless @result.is_a_review? && @current_user.is_a_reviewer?(@assignment.pr_assignment) %>
+                  <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
                     <% annotation_categories.each do |annotation_category| %>
                         <option value='<%= annotation_category.id %>'>
                           <%= annotation_category.annotation_category_name %>

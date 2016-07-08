@@ -136,11 +136,13 @@ class User < ActiveRecord::Base
     is_a?(Student) && assignment.is_peer_review?
   end
 
-  def is_reviewer_for?(aid, result_id)
+  def is_reviewer_for?(assignment, result)
     # aid is the peer review assignment id, and result_id
     # is the peer review result
-
-    group =  grouping_for(Integer(aid))
+    if assignment.nil?
+      return false
+    end
+    group =  grouping_for(Integer(assignment.id))
     if group.nil?
       return false
     end
@@ -148,7 +150,7 @@ class User < ActiveRecord::Base
     if prs.first.nil?
       return false
     end
-    pr = prs.find {|p| p.result_id == Integer(result_id)}
+    pr = prs.find {|p| p.result_id == Integer(result.id)}
 
     is_a?(Student) && !pr.nil?
   end

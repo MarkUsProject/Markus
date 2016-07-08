@@ -63,7 +63,7 @@ class ResultsController < ApplicationController
     @old_marks_map = Hash.new
 
     if @assignment.has_peer_review_assignment?
-      if @current_user.is_reviewer_for?(@assignment.pr_assignment.id, @result.id)
+      if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
         @mark_criteria = @assignment.get_criteria(:peer)
       else
         @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
@@ -362,8 +362,7 @@ class ResultsController < ApplicationController
       # result, then student does not have access to this file. Display an error.
 
       if (!@result.is_a_review? && @file.submission.grouping.membership_status(current_user).nil?) ||
-          (@result.is_a_review? &&
-              !current_user.is_reviewer_for?(@assignment.pr_assignment.id, @result.id))
+          (!current_user.is_reviewer_for?(@assignment.pr_assignment, @result))
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
