@@ -403,10 +403,10 @@ module AutomatedTestsHelper
       test_scripts = [raw_test_scripts]
     end
 
-    marks_earned = 0
     submission_id = submission ? submission.id : nil
 
     test_scripts.each do |script|
+      marks_earned = 0
       script_name = script['script_name']
       test_script = TestScript.find_by(assignment_id: assignment.id,
                                        script_name: script_name)
