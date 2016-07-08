@@ -29,12 +29,6 @@ class RubricCriteriaController < ApplicationController
     flash.now[:success] = t('criterion_saved_success')
   end
 
-  def new
-    @assignment = Assignment.find(params[:assignment_id])
-    @criterion = RubricCriterion.new
-    render 'criteria/new', formats: [:js], handlers: [:erb]
-  end
-
   def create
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.get_criteria

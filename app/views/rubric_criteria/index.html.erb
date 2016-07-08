@@ -16,28 +16,29 @@
     <%= t('criteria.marking_scheme', identifier: @assignment.short_identifier) %>
   </h1>
   <div class='heading_buttons'>
-  <%= link_to t('add_criterion'),
+    <%= link_to t('criteria.add_criterion'),
       'javascript:void(0);',
       onclick: "if(document.getElementById('new_criterion') != null) {
         document.getElementById('new_criterion_prompt').focus();
       } else {
         jQuery.ajax({
-          url: '" + new_assignment_rubric_criterion_path(@assignment) + "',
+          url: '" + new_assignment_criterion_path(@assignment) + "',
+          data: 'criterion_type=rubric',
           type: 'GET'
         });
       } "%>
-  <span class='menu_bar'></span>
-  <%= link_to t(:download),
-              'javascript:void(0);',
-              onclick: 'modal_download.open()' %>
-  <span class='menu_bar'></span>
-  <%= link_to t('rubric_criteria.upload.csv'),
-              'javascript:void(0);',
-              onclick: 'modal_upload_csv.open()' %>
-  <span class='menu_bar'></span>
-  <%= link_to t('rubric_criteria.upload.yml'),
-              'javascript:void(0);',
-              onclick: 'modal_upload_yml.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to t(:download),
+                'javascript:void(0);',
+                onclick: 'modal_download.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to t('rubric_criteria.upload.csv'),
+                'javascript:void(0);',
+                onclick: 'modal_upload_csv.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to t('rubric_criteria.upload.yml'),
+                'javascript:void(0);',
+                onclick: 'modal_upload_yml.open()' %>
   </div>
 </div>
 

@@ -166,4 +166,9 @@ class FlexibleCriterion < Criterion
     mark_to_change.save
   end
 
+  # Returns the criterion type.
+  def type
+    "flexible"
+  end
+
 end

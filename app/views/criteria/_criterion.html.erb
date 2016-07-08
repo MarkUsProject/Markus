@@ -3,7 +3,7 @@
     <%= link_to truncate(criterion.name,
                          length: 30,
                          omission: '...'),
-                { controller: "#{@assignment.marking_scheme_type}_criteria",
+                { controller: "#{criterion.type}_criteria",
                   action:'edit',
                   assignment_id: @assignment.id,
                   id: criterion.id },

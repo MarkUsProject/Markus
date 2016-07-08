@@ -1045,6 +1045,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       name: "Nome do critério"
       marking_scheme: "Esquema de avalição: %{identifier}"
       save: "Salvar alterções"
+      add_criterion: "Adicionar Critério"
 
     flexible_criteria:
       title: "Critérios flexíveis"
@@ -1214,7 +1215,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         update:
             success: "Anotação foi atualizada com sucesso."
 
-    add_criterion:                "Adicionar critério"
     criteria_edit_total_mark:     "Esse critério será classificado de %{criterion_total_mark}"
     criterion_saved_success:   "Critério salvo com sucesso"
     weight_not_number: "peso não é um número."

@@ -25,12 +25,6 @@ class FlexibleCriteriaController < ApplicationController
     flash.now[:success] = I18n.t('criterion_saved_success')
   end
 
-  def new
-    @assignment = Assignment.find(params[:assignment_id])
-    @criterion = FlexibleCriterion.new
-    render 'criteria/new', formats: [:js], handlers: [:erb]
-  end
-
   def create
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.get_criteria

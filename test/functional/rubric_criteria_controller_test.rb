@@ -22,11 +22,6 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
         assert_response :redirect
       end
 
-      should 'be redirected on new' do
-        get :new, assignment_id: @assignment.id
-        assert_response :redirect
-      end
-
       should 'be redirected on :download_csv' do
         get :download_csv, assignment_id: @assignment.id
         assert_response :redirect
@@ -311,13 +306,6 @@ END
         assert assigns :criterion
         assert_equal I18n.t('criterion_saved_success'), flash[:success]
         assert render_template :update
-      end
-
-      should 'be able to get the form for new rubric' do
-        get_as @admin, :new, assignment_id: @assignment.id
-        assert assigns :assignment
-        assert render_template :new
-        assert_response :success
       end
 
       should 'be able to save with error' do
