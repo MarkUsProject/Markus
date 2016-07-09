@@ -29,13 +29,15 @@
                        locals: { files: files,
                                  can_download: true } %>
 
-            <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
-              <%= t('marker.new_annot')%>
-            </button>
+              <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
+                <%= t('marker.new_annot')%>
+              </button>
 
-            <%= render partial: 'annotations/annotation_categories',
-                       locals: { annotation_categories: annotation_categories,
-                                 result_id: result.id } %>
+              <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+                <%= render partial: 'annotations/annotation_categories',
+                           locals: { annotation_categories: annotation_categories,
+                                     result_id: result.id } %>
+              <% end %>
           </div>
 
           <div id='codeviewer'></div>
@@ -136,12 +138,12 @@
             <ul id='mark_criteria_pane_list'>
               <%# Also need to render the mark per criteria (if exist) %>
               <% @mark_criteria.each do |mark_criterion| -%>
-              <%= render partial: "results/marker/marker_#{@assignment.marking_scheme_type}_criterion_li",
-                         locals: { mark_criterion: mark_criterion,
-                                   result: result,
-                                   mark: marks_map[mark_criterion.id],
-                                   old_mark: @old_marks_map[mark_criterion.id],
-                                   marking_scheme: @assignment.marking_scheme_type} %>
+                <%= render partial: "results/marker/marker_#{@assignment.marking_scheme_type}_criterion_li",
+                           locals: { mark_criterion: mark_criterion,
+                                     result: result,
+                                     mark: marks_map[mark_criterion.id],
+                                     old_mark: @old_marks_map[mark_criterion.id],
+                                     marking_scheme: @assignment.marking_scheme_type} %>
               <% end -%>
             </ul>
           </div>
@@ -184,15 +186,17 @@
               </p>
               <button onclick="updateAnnotationPreview()"><%= t('marker.annotation.preview') %></button>
 
-              <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
-              <select id='new_annotation_category'>
-                <option value=''><%= t('annotations.one_time_only') %></option>
-                <% annotation_categories.each do |annotation_category| %>
-                    <option value='<%= annotation_category.id %>'>
-                      <%= annotation_category.annotation_category_name %>
-                    </option>
-                <% end %>
-              </select>
+                <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
+                <select id='new_annotation_category'>
+                  <option value=''><%= t('annotations.one_time_only') %></option>
+                  <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+                    <% annotation_categories.each do |annotation_category| %>
+                        <option value='<%= annotation_category.id %>'>
+                          <%= annotation_category.annotation_category_name %>
+                        </option>
+                    <% end %>
+                  <% end %>
+                </select>
 
               <section class='dialog-actions'>
                 <button id='new_annotation_modal_button' onclick="hideAnnotationPreview();
@@ -204,7 +208,8 @@
                             jQuery('#y1').val(),
                             jQuery('#y2').val(),
                             jQuery('#annot_dialog_page').val(),
-                            <%= result.id %>);">
+                            <%= result.id %>,
+                            <%= assignment.id %>);">
                   <%= I18n.t('marker.annotation.new_annotation') %>
                 </button>
                 <%= button_tag t('cancel'), onclick: 'modal.close(); hideAnnotationPreview();' %>

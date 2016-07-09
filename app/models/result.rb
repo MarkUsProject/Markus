@@ -125,6 +125,10 @@ class Result < ActiveRecord::Base
     self.save
   end
 
+  def is_a_review?
+    PeerReview.exists?(result_id: id)
+  end
+
   private
   # If this record is marked as "partial", ensure that its
   # "released_to_students" value is set to false.
@@ -137,7 +141,15 @@ class Result < ActiveRecord::Base
 
   def check_for_nil_marks(user_visibility = :ta)
     nil_marks = false
-    criteria = submission.assignment.get_criteria(user_visibility)
+
+    # peer review result is a special case because when saving a pr result
+    # we can't pass in a parameter to the before_save filter, so we need
+    # to manually determine the visibility. If it's a pr result, we know we
+    # want the peer-visible criteria
+    visibility = is_a_review? ? :peer : user_visibility
+
+    criteria = submission.assignment.get_criteria(visibility)
+    # criteria = submission.assignment.get_criteria(user_visibility)
     criteria.each do |criterion|
       unless marks.where(markable_id: criterion.id, mark: nil).empty?
         nil_marks = true

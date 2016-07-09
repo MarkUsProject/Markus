@@ -80,7 +80,9 @@ class PeerReviewsController < ApplicationController
   def assign(reviewer_groups, reviewee_groups)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
-        result = reviewee_group.current_submission_used.get_latest_result
+        result = Result.create!(submission: reviewee_group.current_submission_used,
+                                marking_state: Result::MARKING_STATES[:incomplete])
+        #TODO this check needs to be edited - it will always pass
         unless PeerReview.exists?(reviewer: reviewer_group, result: result)
           PeerReview.create!(reviewer: reviewer_group, result: result)
         end
@@ -92,9 +94,9 @@ class PeerReviewsController < ApplicationController
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each do |reviewer_id, dummy_value|
+        # find the PR that this reviewer made on this reviewee's submission
         reviewee_group = Grouping.find_by_id(reviewee_id)
-        result_id = reviewee_group.current_submission_used.get_latest_result.id
-        pr = PeerReview.find_by(result_id: result_id, reviewer_id: reviewer_id)
+        pr = reviewee_group.peer_reviews.find(reviewer_id: reviewer_id)
         pr.destroy
       end
     end

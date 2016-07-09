@@ -15,7 +15,7 @@
       <h2><%= t('submissions') %></h2>
 
       <div class='block_content'>
-        <% unless PeerReview.find_by(reviewer_id: @student.id).nil? %>
+        <% unless PeerReview.find_by(reviewer_id: @grouping.id).nil? %>
           <%= render partial: 'peer_submissions_table',
                      locals: { assignment_id: @assignment.id },
                      formats: [:'js.jsx'], handlers: [:erb] %>

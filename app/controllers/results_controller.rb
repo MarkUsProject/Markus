@@ -10,16 +10,19 @@ class ResultsController < ApplicationController
                          :note_message,
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
-                only: [:edit, :update_mark, :create, :add_extra_mark,
-                       :next_grouping, :update_overall_comment,
+                only: [:create, :add_extra_mark,
+                       :next_grouping, 
                        :remove_extra_mark,
-                       :toggle_marking_state,
                        :note_message]
   before_filter :authorize_for_user,
                 only: [:codeviewer, :download, :download_zip, :run_tests]
   before_filter :authorize_for_student,
                 only: [:view_marks, :update_remark_request,
                        :cancel_remark_request]
+  before_filter only: [:edit, :update_mark, :toggle_marking_state,
+                       :update_overall_comment] do |c|
+                  c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:id])
+                end
   after_filter  :update_remark_request_count,
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
@@ -35,7 +38,9 @@ class ResultsController < ApplicationController
 
   def edit
     @result = Result.find(params[:id])
-    @assignment = @result.submission.assignment
+    @pr = PeerReview.find_by(result_id: @result.id)
+    @assignment = @result.submission.grouping.assignment
+
     @submission = @result.submission
 
     if @submission.remark_submitted?
@@ -56,7 +61,17 @@ class ResultsController < ApplicationController
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
     @old_marks_map = Hash.new
-    @mark_criteria = @assignment.get_criteria(:ta)
+
+    if @result.is_a_review?
+      if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
+        @mark_criteria = @assignment.get_criteria(:peer)
+      else
+        @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
+      end
+    else
+      @mark_criteria = @assignment.get_criteria(:ta)
+    end
+
     @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       @marks_map[criterion.id] = mark
@@ -336,13 +351,18 @@ class ResultsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @submission_file_id = params[:submission_file_id]
     @focus_line = params[:focus_line]
-
+    @grouping = @current_user.grouping_for(params[:assignment_id])
     @file = SubmissionFile.find(@submission_file_id)
     @result = @file.submission.get_latest_result
-    # Is the current user a student?
+
+    #Is the current user a student?
     if current_user.student?
-      # The Student does not have access to this file. Display an error.
-      if @file.submission.grouping.membership_status(current_user).nil?
+      # If result is a review and user doesn't have membership status for the grouping
+      # this file belongs to, or if result is a review and the student is not a reviewer of this
+      # result, then student does not have access to this file. Display an error.
+
+      if (!@result.is_a_review? && @file.submission.grouping.membership_status(current_user).nil?) ||
+          (@result.is_a_review? && !current_user.is_reviewer_for?(@assignment.pr_assignment, @result))
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
