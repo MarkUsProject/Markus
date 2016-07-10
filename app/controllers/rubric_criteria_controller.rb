@@ -171,25 +171,6 @@ class RubricCriteriaController < ApplicationController
     redirect_to action: 'index', assignment_id: assignment.id
   end
 
-  # This method handles the drag/drop RubricCriteria sorting
-  def update_positions
-    unless request.post?
-      render nothing: true
-      return
-    end
-
-    @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
-    position = 0
-
-    params[:criterion].each do |id|
-      if id != ''
-        position += 1
-        RubricCriterion.update(id, position: position)
-      end
-    end
-  end
-
   private
 
   def rubric_criterion_params
