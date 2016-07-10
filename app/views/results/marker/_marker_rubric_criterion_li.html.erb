@@ -36,7 +36,7 @@
                   <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
                       data-action="
                         <%= update_mark_assignment_submission_results_path(
-                              mark_id: mark.id, mark: num_levels) %>"
+                              mark_id: mark.id, mark: num_levels, id: result.id) %>"
                       onclick="update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)"
                       data-id="<%=mark_criterion.id%>" >
                     <div class='description'>

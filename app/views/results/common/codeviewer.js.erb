@@ -42,7 +42,8 @@ document.getElementById('codeviewer').onmousemove = null;
 <% end %>
 
 <%# Also update the annotation_summary_list %>
-<% if @current_user.ta? || @current_user.admin? %>
+<% if @current_user.ta? || @current_user.admin? ||
+   @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
   jQuery('#annotation_summary_list').html(
     "<%= escape_javascript(render partial: 'results/marker/annotation_summary',
                                   locals: { annots: @all_annots,

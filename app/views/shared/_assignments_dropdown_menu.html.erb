@@ -20,7 +20,9 @@
     <li class='section'><%= t('assignments') %></li>
   <% end %>
 
-  <% if assignment != @assignment
+  <% if assignment.is_peer_review? %>
+
+  <% elsif assignment != @assignment
     if (controller.controller_name == 'assignments' &&
         (controller.action_name == 'index' ||
          controller.action_name == 'new') ||

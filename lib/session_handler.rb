@@ -90,6 +90,20 @@ module SessionHandler
     end
   end
 
+  def authorize_for_ta_admin_and_reviewer(aid, result_id)
+    assignment = Assignment.find(aid)
+    result = Result.find(result_id)
+    unless authorized?(Admin) || authorized?(Ta) ||
+        (authorized?(Student) && assignment.has_peer_review_assignment? &&
+            current_user.is_reviewer_for?(assignment.pr_assignment, result))
+      render 'shared/http_status', formats: [:html],
+             locals:
+                 { code: '404',
+                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: 404, layout: false
+    end
+  end
+
   def authorize_for_ta_and_admin
     unless authorized?(Admin) || authorized?(Ta)
       render 'shared/http_status', formats: [:html],

@@ -678,24 +678,30 @@ class Grouping < ActiveRecord::Base
                 .where(user: user)
                 .select { |m| m.grouping.is_valid? }
                 .map &:grouping
+    elsif user.is_a_reviewer?(assignment)
+      # grab only the groupings of reviewees that this reviewer
+      # is responsible for
+      user_group = user.grouping_for(assignment.id)
+      groupings = user_group.peer_reviews_to_others
+      groupings.map {|p| Result.find(p.result_id).submission.grouping}
     else
       assignment.groupings.joins(:memberships)
-              .includes(:assignment,
-                        :group,
-                        :grace_period_deductions,
-                        :tags,
-                        { current_submission_used: [:results,
-                                                    :submission_files,
-                                                    :submitted_remark,
-                                                    grouping: :group] },
-                        { accepted_student_memberships: :user },
-                        { inviter: :section }
-                        )
-              .where(memberships: { membership_status:
-                                   [StudentMembership::STATUSES[:inviter],
-                                    StudentMembership::STATUSES[:pending],
-                                    StudentMembership::STATUSES[:accepted]] })
-              .distinct
+          .includes(:assignment,
+                    :group,
+                    :grace_period_deductions,
+                    :tags,
+                    { current_submission_used: [:results,
+                                                :submission_files,
+                                                :submitted_remark,
+                                                grouping: :group] },
+                    { accepted_student_memberships: :user },
+                    { inviter: :section }
+          )
+          .where(memberships: { membership_status:
+                                    [StudentMembership::STATUSES[:inviter],
+                                     StudentMembership::STATUSES[:pending],
+                                     StudentMembership::STATUSES[:accepted]] })
+          .distinct
     end
   end
 
@@ -761,6 +767,10 @@ class Grouping < ActiveRecord::Base
                       .last
       last_mark.nil? ? 0 : last_mark.marks_earned
     end
+  end
+
+  def review_for(reviewee_group)
+    reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end
 
   private
@@ -857,4 +867,5 @@ class Grouping < ActiveRecord::Base
       end
     end
   end
+
 end # end class Grouping
