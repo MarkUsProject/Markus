@@ -15,11 +15,15 @@
     window.onload = function() {
       <% current_user_criteria = @current_user.get_criterion_associations_by_assignment(@assignment)
                                               .map &:criterion %>
+      var id_prefix = '<%= @assignment.marking_scheme_type == 'rubric' ? 'mark' : 'flexible' %>';
       <% @mark_criteria.each do |criterion| %>
+        var criterion_li = document.getElementById(
+          id_prefix + '<%= "_criterion_#{criterion.id}" %>');
         <% if current_user_criteria.include?(criterion) %>
-          document.getElementById('<%= "#{@assignment.marking_scheme_type}_criterion_#{criterion.id}" %>')
-                  .addClass('assigned');
+          criterion_li.addClass('assigned');
         <% else %>
+          criterion_li.addClass('unassigned');
+          jQuery(criterion_li).find('input').prop('disabled', true);
           hide_criterion(<%= criterion.id %>,
                          '<%= @assignment.marking_scheme_type %>');
         <% end %>
