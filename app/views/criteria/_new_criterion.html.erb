@@ -1,6 +1,6 @@
 <li id='new_criterion'>
 	<%= form_for @criterion,
-    url: { controller: "#{assignment.marking_scheme_type}_criteria",
+    url: { controller: "#{criterion_type.to_s.tableize}",
            action: 'index',
            assignment_id: assignment.id },
     remote: true do |f| %>

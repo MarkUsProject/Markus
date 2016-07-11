@@ -1077,6 +1077,7 @@ fr:
       name: "Nom du critère"
       marking_scheme: "Barème: %{identifier}"
       save: "Sauvegarder les modifications"
+      add_criterion: "Ajouter Critère"
 
     flexible_criteria:
       title: "Critères souples"
@@ -1225,7 +1226,6 @@ fr:
         update:
             success: "Remarque mise à jour."
 
-    add_criterion:                "Ajouter un critère"
     criteria_edit_total_mark:     "Ce critère sera noté sur %{criterion_total_mark}."
     criterion_saved_success:   "Le critète a été sauvegardé."
     weight_not_number: "le coefficient n'est pas un nombre."

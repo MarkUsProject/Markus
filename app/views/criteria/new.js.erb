@@ -1,4 +1,5 @@
 jQuery('#criteria_pane_list').prepend(
-    "<%= escape_javascript(render partial: 'criteria/new_criterion', locals: { assignment: @assignment }) %>");
+    "<%= escape_javascript(render partial: 'criteria/new_criterion',
+                                  locals: { assignment: @assignment, criterion_type: @criterion_type }) %>");
 
 document.getElementById('new_criterion_prompt').focus();

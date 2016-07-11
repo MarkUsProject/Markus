@@ -1206,6 +1206,7 @@ en:
       name: "Criterion name"
       marking_scheme: "Marking Scheme: %{identifier}"
       save: "Save changes"
+      add_criterion: "Add Criterion"
 
     flexible_criteria:
       title: "Flexible Criteria"
@@ -1377,7 +1378,6 @@ en:
             success: "Note was successfully updated."
         help: "Notes can be created for students, groups, or assignments. They are visible to admins and graders, but not students."
 
-    add_criterion:                "Add Criterion"
     criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
     criterion_saved_success:   "Criterion was successfully saved"
     criterion_saved_failure:   "Criterion failed to be saved"

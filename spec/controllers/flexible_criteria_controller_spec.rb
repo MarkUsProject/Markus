@@ -25,13 +25,6 @@ describe FlexibleCriteriaController do
       end
     end
 
-    context '#new' do
-      it 'should respond with redirect' do
-        get :new, assignment_id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
-
     context '#destroy' do
       it 'should respond with redirect' do
         delete :destroy, assignment_id: 1, id: 1
@@ -72,13 +65,6 @@ describe FlexibleCriteriaController do
     context '#update' do
       it 'should respond with redirect' do
         put :update, assignment_id: 1, id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
-
-    context '#new' do
-      it 'should respond with redirect' do
-        post :new, assignment_id: 1
         is_expected.to respond_with :redirect
       end
     end
@@ -212,26 +198,6 @@ describe FlexibleCriteriaController do
         it 'should render the update template' do
           is_expected.to render_template(:update)
         end
-      end
-    end
-
-    context '#new' do
-      before(:each) do
-        get_as @admin, :new,
-               format: :js,
-               assignment_id: @assignment.id
-      end
-
-      it 'should respond with appropriate content' do
-        expect(assigns(:assignment)).to be_truthy
-      end
-
-      it 'should render the new template' do
-        is_expected.to render_template(:new)
-      end
-
-      it 'should respond with success' do
-        is_expected.to respond_with(:success)
       end
     end
 
