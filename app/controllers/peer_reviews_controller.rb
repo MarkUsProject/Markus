@@ -123,6 +123,7 @@ class PeerReviewsController < ApplicationController
 
   def csv_upload_handler
     assignment_id = params[:assignment_id]
+    parent_assignment_id = Assignment.find(assignment_id).parent_assignment.id
     pr_mapping = params[:peer_review_mapping]
     encoding = params[:encoding]
 
@@ -131,10 +132,10 @@ class PeerReviewsController < ApplicationController
     else
       result = MarkusCSV.parse(pr_mapping.read, encoding: encoding) do |row|
         raise CSVInvalidLineError if row.size < 2
-        reviewer = Grouping.joins(:group).find_by(groups: { group_name: row.first })
-        row.shift()  # Drop the reviewer, the rest are reviewees and makes iteration easier.
+        reviewer = Group.find_by(group_name: row.first).grouping_for_assignment(assignment_id)
+        row.shift  # Drop the reviewer, the rest are reviewees and makes iteration easier.
         row.each do |reviewee_group_name|
-          reviewee = Grouping.joins(:group).find_by(groups: { group_name: reviewee_group_name })
+          reviewee = Group.find_by(group_name: row.first).grouping_for_assignment(parent_assignment_id)
           result = reviewee.current_submission_used.get_latest_result()
           PeerReview.create!(result: result, reviewer: reviewer)
         end
