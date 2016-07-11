@@ -78,7 +78,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
                 submission_file_id: @submission_file.id,
                 line_start: 1, line_end: 1,
                 column_start: 1, column_end: 1,
-                result_id: @result.id}
+                result_id: @result.id,
+                assignment_id: @assignment.id}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -95,7 +96,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
                 line_start: 1, line_end: 1,
                 column_start: 1, column_end: 1,
                 annotation_type: 'text',
-                result_id: @result.id}
+                result_id: @result.id,
+                assignment_id: @assignment.id}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -110,7 +112,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
                 submission_file_id: @submission_file.id,
                 x1: 0, x2: 1, y1: 0, y2: 1,
                 annotation_type: 'image',
-                result_id: @result.id }
+                result_id: @result.id,
+                assignment_id: @assignment.id}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -127,7 +130,9 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       post_as @user, :destroy,
               { format: :js,
                 id: anno.id,
-                submission_file_id: @submission_file.id }
+                submission_file_id: @submission_file.id,
+                assignment_id: @assignment.id,
+                result_id: @result.id}
       assert_response :success
       assert render_template 'destroy'
     end # End context :destroy
@@ -139,9 +144,11 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         submission_file_id:  @submission_file.id})
       put_as @user, :update_annotation,
              format: :js,
+             assignment_id: @assignment.id,
+             submission_file_id: @submission_file.id,
+             result_id: @result.id,
              annotation_text: { id: @annotation_text.id,
-                                content: @annotation_text.content,
-                                submission_file_id: @submission_file.id }
+                                content: @annotation_text.content}
       assert_response :success
       assert render_template 'update_annotation'
     end # End context :update_annotation
@@ -165,7 +172,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
                 submission_file_id: @submission_file.id,
                 line_start: 1, line_end: 1,
                 column_start: 1, column_end: 1,
-                result_id: @result.id }
+                result_id: @result.id,
+                assignment_id: @assignment.id}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -181,7 +189,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
                 line_start: 1, line_end: 1,
                 column_start: 1, column_end: 1,
                 annotation_type: 'text',
-                result_id: @result.id }
+                result_id: @result.id,
+                assignment_id: @assignment.id}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -196,7 +205,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
                 submission_file_id: @submission_file.id,
                 x1: 0, x2: 1, y1: 0, y2: 1,
                 annotation_type: 'image',
-                result_id: @result.id}
+                result_id: @result.id,
+                assignment_id: @assignment.id}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -209,11 +219,13 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         annotation_text_id: @annotation_text.id,
         submission_file_id:  @submission_file.id,
         annotation_number: 1,
-        result_id: @result.id })
+        result_id: @result.id})
       post_as @user, :destroy,
               { format: :js,
                 id: anno.id,
-                submission_file_id: @submission_file.id }
+                submission_file_id: @submission_file.id,
+                assignment_id: @assignment.id,
+                result_id: @result.id}
       assert_response :success
       assert render_template 'destroy'
     end # End context :destroy
@@ -225,9 +237,11 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         submission_file_id:  @submission_file.id})
       put_as @user, :update_annotation,
              format: :js,
+             assignment_id: @assignment.id,
+             submission_file_id: @submission_file.id,
+             result_id: @result.id,
              annotation_text: { id: @annotation_text.id,
-                                content: @annotation_text.content,
-                                submission_file_id: @submission_file.id }
+                                content: @annotation_text.content}
       assert_response :success
       assert render_template 'update_annotation'
     end # End context :update_annotation
@@ -249,6 +263,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       post_as @user, :add_existing_annotation, {
         annotation_text_id: @annotation_text.id,
         submission_file_id: @submission_file.id,
+        assignment_id: @assignment.id,
+        result_id: @result.id,
         line_start: 1, line_end: 1}
       assert_response :not_found
     end # End context :add_existing_annotation
@@ -258,7 +274,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         category_id: @category.id,
         submission_file_id: @submission_file.id,
         line_start: 1, line_end: 1, annotation_type: 'text',
-        result_id: @result.id }
+        result_id: @result.id,
+        assignment_id: @assignment.id}
       assert_response :not_found
     end # End context :create
 
@@ -267,7 +284,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         category_id: @category.id,
         submission_file_id: @submission_file.id,
         coords: '0,0,1,1', annotation_type: 'image',
-        result_id: @result.id }
+        result_id: @result.id,
+        assignment_id: @assignment.id}
       assert_response :not_found
     end # End context :create
 
@@ -275,7 +293,9 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       delete_as @user,
                 :destroy,
                 id: 67,
-                submission_file_id: @submission_file.id
+                submission_file_id: @submission_file.id,
+                assignment_id: @assignment.id,
+                result_id: @result.id
       assert_response :not_found
     end # End context :destroy
 
@@ -284,9 +304,11 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         line_start: 1, line_end: 1,
         annotation_text_id: @annotation_text.id,
         submission_file_id:  @submission_file.id})
-      post_as @user, :update_annotation, annotation_text: {
-        id: @annotation_text.id, content: @annotation_text.content,
-          submission_file_id:@submission_file.id}
+      post_as @user, :update_annotation,  assignment_id: @assignment.id,
+              result_id: @result.id,
+              annotation_text: { id: @annotation_text.id,
+                                 content: @annotation_text.content,
+                                 submission_file_id:@submission_file.id }
       assert_response :not_found
     end # End context :update_annotation
   end # End context Student POST

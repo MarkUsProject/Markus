@@ -286,9 +286,4 @@ class RubricCriterion < Criterion
     mark_to_change.save
   end
 
-  # Returns the criterion type.
-  def type
-    'rubric'
-  end
-
 end

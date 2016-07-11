@@ -91,7 +91,7 @@ RSpec.describe CriteriaController, type: :controller do
                  :new,
                  format:         :js,
                  assignment_id:  @assignment.id,
-                 criterion_type: 'rubric'
+                 criterion_type: 'RubricCriterion'
         end
 
         it 'should respond with appropriate content' do
@@ -285,7 +285,7 @@ RSpec.describe CriteriaController, type: :controller do
                  :new,
                  format:         :js,
                  assignment_id:  @assignment.id,
-                 criterion_type: 'flexible'
+                 criterion_type: 'FlexibleCriterion'
         end
 
         it 'should respond with appropriate content' do

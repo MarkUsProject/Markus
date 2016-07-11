@@ -40,11 +40,11 @@ class PeerReviewsController < ApplicationController
     action_string = params[:actionString]
     num_groups_for_reviewers = params[:numGroupsToAssign].to_i
 
-    if action_string == 'assign'
-      if selected_reviewer_group_ids.nil? or selected_reviewer_group_ids.empty?
+    if action_string == 'assign' || action_string == 'random_assign'
+      if selected_reviewer_group_ids.empty?
         render text: t('peer_review.empty_list_reviewers'), status: 400
         return
-      elsif selected_reviewee_group_ids.nil? or selected_reviewee_group_ids.empty?
+      elsif selected_reviewee_group_ids.empty?
         render text: t('peer_review.empty_list_reviewees'), status: 400
         return
       end
@@ -53,7 +53,8 @@ class PeerReviewsController < ApplicationController
     case action_string
       when 'random_assign'
         begin
-          perform_random_assignment(@assignment, num_groups_for_reviewers)
+          perform_random_assignment(@assignment, num_groups_for_reviewers,
+                                    selected_reviewer_group_ids, selected_reviewee_group_ids)
         rescue UnableToRandomlyAssignGroupException
           render text: t('peer_review.random_assign_failure'), status: 400
           return
@@ -80,7 +81,9 @@ class PeerReviewsController < ApplicationController
   def assign(reviewer_groups, reviewee_groups)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
-        result = reviewee_group.current_submission_used.get_latest_result
+        result = Result.create!(submission: reviewee_group.current_submission_used,
+                                marking_state: Result::MARKING_STATES[:incomplete])
+        #TODO this check needs to be edited - it will always pass
         unless PeerReview.exists?(reviewer: reviewer_group, result: result)
           PeerReview.create!(reviewer: reviewer_group, result: result)
         end
@@ -92,9 +95,9 @@ class PeerReviewsController < ApplicationController
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each do |reviewer_id, dummy_value|
+        # find the PR that this reviewer made on this reviewee's submission
         reviewee_group = Grouping.find_by_id(reviewee_id)
-        result_id = reviewee_group.current_submission_used.get_latest_result.id
-        pr = PeerReview.find_by(result_id: result_id, reviewer_id: reviewer_id)
+        pr = reviewee_group.peer_reviews.find(reviewer_id: reviewer_id)
         pr.destroy
       end
     end
@@ -102,14 +105,22 @@ class PeerReviewsController < ApplicationController
     selected_reviewee_group_ids.each { |reviewee_id| Grouping.find(reviewee_id).peer_reviews.map(&:destroy) }
   end
 
+  # Create a mapping of reviewer grouping -> set(reviewee groupings)
+  def generate_csv_naming_map(peer_reviews)
+    naming_map = Hash.new { |h, k| h[k] = Set.new }
+    peer_reviews.each do |peer_review|
+      naming_map[peer_review.reviewer].add(peer_review.reviewee)
+    end
+    naming_map
+  end
+
   def download_reviewer_reviewee_mapping
     @assignment = Assignment.find(params[:assignment_id])
-    reviewer_groups = get_groupings_table_info()
-    reviewer_ids = reviewer_groups.map { |reviewer| reviewer['id'] }
-    peer_reviews = PeerReview.where(reviewer_id: reviewer_ids)
+    naming_map = generate_csv_naming_map(@assignment.pr_peer_reviews)
 
-    file_out = MarkusCSV.generate(peer_reviews) do |peer_review|
-      [peer_review.result.id, peer_review.reviewer.group.group_name]
+    file_out = MarkusCSV.generate(naming_map) do |reviewer, reviewee_set|
+      data = reviewee_set.map { |reviewee| reviewee.group.group_name }
+      data.unshift(reviewer.group.group_name)
     end
 
     send_data(file_out, type: 'text/csv', disposition: 'inline',
@@ -118,18 +129,22 @@ class PeerReviewsController < ApplicationController
 
   def csv_upload_handler
     assignment_id = params[:assignment_id]
+    parent_assignment_id = Assignment.find(assignment_id).parent_assignment.id
+    pr_mapping = params[:peer_review_mapping]
+    encoding = params[:encoding]
 
     if params[:peer_review_mapping].nil?
       flash_message(flash[:error], I18n.t('csv.group_to_grader'))
     else
-      result = MarkusCSV.parse(params[:peer_review_mapping].read,
-                               encoding: params[:encoding]) do |row|
-        raise CSVInvalidLineError if row.empty?
-        result = Result.find(row.first)
-        reviewer = Grouping.joins(:group).find_by(
-                                groups: { group_name: row.second },
-                                assignment_id: assignment_id)
-        PeerReview.create!(result: result, reviewer: reviewer)
+      result = MarkusCSV.parse(pr_mapping.read, encoding: encoding) do |row|
+        raise CSVInvalidLineError if row.size < 2
+        reviewer = Group.find_by(group_name: row.first).grouping_for_assignment(assignment_id)
+        row.shift  # Drop the reviewer, the rest are reviewees and makes iteration easier.
+        row.each do |reviewee_group_name|
+          reviewee = Group.find_by(group_name: row.first).grouping_for_assignment(parent_assignment_id)
+          result = reviewee.current_submission_used.get_latest_result()
+          PeerReview.create!(result: result, reviewer: reviewer)
+        end
       end
       unless result[:invalid_lines].empty?
         flash_message(:error, result[:invalid_lines])
