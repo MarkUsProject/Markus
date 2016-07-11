@@ -44,27 +44,37 @@ module SubmissionsHelper
   end
 
   def get_submissions_table_info(assignment, groupings)
-    parts = groupings.select &:has_submission?
-    results = Result.where(submission_id:
-                             parts.map(&:current_submission_used))
+    if !current_user.is_a_reviewer?(assignment)
+      parts = groupings.select &:has_submission?
+      results = Result.where(submission_id:
+                                 parts.map(&:current_submission_used))
                     .order(:id)
+    end
+
     groupings.map.with_index do |grouping, i|
       g = Hash.new
       begin # if anything raises an error, catch it and log in the object.
-        submission = grouping.current_submission_used
-        if submission.nil?
-          result = nil
-        elsif submission.submitted_remark.nil?
-          result = (results.select do |r|
-            r.submission_id == submission.id
-          end).first
+        if current_user.is_a_reviewer?(assignment)
+          # "groupings" are the reviewee groupings.
+          # Get the respective reviewee's result from grouping
+          result_pr = current_user.grouping_for(assignment.id).review_for(grouping)
+          result = Result.find(result_pr.result_id)
         else
-          result = submission.remark_result
+          submission = grouping.current_submission_used
+          if submission.nil?
+            result = nil
+          elsif submission.submitted_remark.nil?
+            result = (results.select do |r|
+              r.submission_id == submission.id
+            end).first
+          else
+            result = submission.remark_result
+          end
         end
+
         g[:name] = grouping.get_group_name
         unless current_user.student?
           g[:id] = grouping.id
-          g[:name_url] = get_grouping_name_url(grouping, result)
           g[:repo_name] = grouping.group.repository_name
           g[:repo_url] = repo_browser_assignment_submission_path(assignment,
                                                                  grouping)
@@ -76,6 +86,7 @@ module SubmissionsHelper
           g[:grace_credits_used] = grouping.grace_period_deduction_single
           g[:section] = grouping.section
         end
+        g[:name_url] = get_grouping_name_url(grouping, result)
         g[:class_name] = get_tr_class(grouping)
         g[:state] = grouping.marking_state(result)
         g[:anonymous_id] = i + 1
@@ -109,7 +120,7 @@ module SubmissionsHelper
   def get_grouping_name_url(grouping, result)
     if grouping.is_collected?
       url_for(edit_assignment_submission_result_path(
-                grouping.assignment, grouping, result))
+                  grouping.assignment, grouping, result))
     else
       ''
     end

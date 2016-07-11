@@ -15,7 +15,7 @@
       <h2><%= t('submissions') %></h2>
 
       <div class='block_content'>
-        <% unless PeerReview.find_by(reviewer_id: @student.id).nil? %>
+        <% unless PeerReview.find_by(reviewer_id: @grouping.id).nil? %>
           <%= render partial: 'peer_submissions_table',
                      locals: { assignment_id: @assignment.id },
                      formats: [:'js.jsx'], handlers: [:erb] %>
@@ -92,7 +92,7 @@
           <h3><%= t('total_mark') %>: </h3>
           <span class="sub_block">
             <span class='prop_paragraph'>
-              <%= @grouping.current_submission_used.get_original_result.total_mark %> / <%= @assignment.total_mark %>
+              <%= @grouping.current_submission_used.get_original_result.total_mark %> / <%= @assignment.max_mark %>
             </span>
           </span>
           <h3><%= t('assignment.overall_comment') %>: </h3>

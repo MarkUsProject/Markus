@@ -50,13 +50,13 @@ describe Mark do
     end
   end
 
-  describe '#get_mark' do
+  describe 'mark (column in marks table)' do
     let(:rubric_mark) do
       FactoryGirl.create(:rubric_mark, mark: 4)
     end
     it 'equals to mark times weight' do
       markable = RubricCriterion.find(rubric_mark.markable_id)
-      expect(rubric_mark.get_mark).to eq(rubric_mark.mark * markable.weight)
+      expect(rubric_mark.mark).to eq(4 * markable.weight)
     end
   end
 

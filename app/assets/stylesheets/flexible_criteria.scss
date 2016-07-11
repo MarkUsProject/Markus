@@ -6,27 +6,27 @@
   width: 100%;
 }
 
-#new_flexible_criterion {
+#new_criterion {
   background: none;
   padding-right: 1em;
 
-  #new_flexible_criterion_prompt {
+  #new_criterion_prompt {
     margin: 1em 0;
     width: 100%;
   }
 }
 
-#flexible_criteria_pane,
-#flexible_edition_pane {
+#criteria_pane,
+#editing_pane {
   display: table-cell;
   vertical-align: top;
 }
 
-#flexible_criteria_pane {
+#criteria_pane {
   width: 37%;
 }
 
-#flexible_edition_pane {
+#editing_pane {
   border: 1px solid $grey;
   border-radius: $radius;
   display: table;

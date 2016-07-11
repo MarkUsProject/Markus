@@ -30,30 +30,28 @@
     </span>
     <br>
     <span id='criterion_weight_edit_<%= criterion.id %>' class='criterion_weight_edit'>
-     <%= f.label :weight, t(:weight), class: 'bold_inline_label' %>
-     <%= f.text_field :weight %>
+     <%= f.label :max_mark, t(:weight), class: 'bold_inline_label' %>
+     <%= f.text_field :max_mark, value: "#{criterion.weight}" %>
     </span>
     <br>
     <span class='criteria_edit_total_mark'>
-     <%= t('criteria_edit_total_mark', criterion_total_mark: criterion.weight*4) %>
+     <%= t('criteria_edit_total_mark', criterion_total_mark: criterion.max_mark) %>
     </span>
     <br>
     <h4><span><%= t('visibility') %></span></h4>
     <div>
-      <%= f.check_box :ta_visible,
-                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.check_box :ta_visible %>
       <%= f.label :ta_visible,
                   t('rubric_criteria.ta_visible') %>
     </div>
     <div>
-      <%= f.check_box :peer_visible,
-                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.check_box :peer_visible %>
       <%= f.label :peer_visible,
                   t('rubric_criteria.peer_visible') %>
     </div>
     <br>
     <br>
-    <%= f.submit t('rubric_criteria.save'), data: { disable_with: t('working') } %>
+    <%= f.submit t('criteria.save'), data: { disable_with: t('working') } %>
   </div>
 
   <div class='rubric_criteria_levels'>

@@ -332,7 +332,7 @@ describe SubmissionsController do
           fields.push('')
         else
           submission = grouping.current_submission_used
-          fields.push(submission.get_latest_result.total_mark / @assignment.total_mark * 100)
+          fields.push(submission.get_latest_result.total_mark / @assignment.max_mark * 100)
         end
         csv_data.concat(fields.to_csv)
       end

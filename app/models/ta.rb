@@ -66,7 +66,7 @@ class Ta < User
       result = submission.get_latest_completed_result
       next if result.nil?
       distribution = update_distribution(distribution, result,
-                                         assignment.total_mark, intervals)
+                                         assignment.max_mark, intervals)
     end # end of groupings loop
     distribution.to_json
   end

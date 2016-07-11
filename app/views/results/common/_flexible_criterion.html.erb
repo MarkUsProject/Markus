@@ -23,9 +23,9 @@
                               mark: mark.id.to_s},
                        'data-action' => url_for(action: :update_mark,
                                                 mark_id: mark.id)) %>
-    /&nbsp; <%= mark_criterion.max.to_s%>
+    /&nbsp; <%= mark_criterion.max_mark.to_s%>
   <% else %>
-    <%= mark.mark %> /&nbsp; <%= mark_criterion.max.to_s%>
+    <%= mark.mark %> /&nbsp; <%= mark_criterion.max_mark.to_s%>
   <% end %>
 </div>
 

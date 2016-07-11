@@ -49,7 +49,7 @@ namespace :markus do
       end
 
       # create rubric criteria for a1
-      rubric_criteria = [{name: "Uses Conditionals", weight: 1}, {name: "Code Clarity", weight: 2}, {name: "Code Is Documented", weight: 3}, {name: "Uses For Loop", weight: 1}]
+      rubric_criteria = [{name: "Uses Conditionals", max_mark: 4}, {name: "Code Clarity", max_mark: 8}, {name: "Code Is Documented", max_mark: 12}, {name: "Uses For Loop", max_mark: 4}]
       default_levels = {level_0_name: "Quite Poor", level_0_description: "This criterion was not satisifed whatsoever", level_1_name: "Satisfactory", level_1_description: "This criterion was satisfied", level_2_name: "Good", level_2_description: "This criterion was satisfied well", level_3_name: "Great", level_3_description: "This criterion was satisfied really well!", level_4_name: "Excellent", level_4_description: "This criterion was satisfied excellently"}
       rubric_criteria.each do |rubric_criteria|
         rc = RubricCriterion.new

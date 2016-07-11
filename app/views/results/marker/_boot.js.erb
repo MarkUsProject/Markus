@@ -11,18 +11,26 @@
     window.modal_delete_tags  = new ModalMarkus('#delete_tags');
   });
 
-  window.onload = function() {
-    <% if @assignment.assign_graders_to_criteria %>
-      current_user_criteria = @current_user.get_criterion_associations_by_assignment(@assignment).map{|c| c.criterion}
+  <% if @assignment.assign_graders_to_criteria && @current_user.ta? %>
+    window.onload = function() {
+      <% current_user_criteria = @current_user.get_criterion_associations_by_assignment(@assignment)
+                                              .map &:criterion %>
+      var id_prefix = '<%= @assignment.marking_scheme_type == 'rubric' ? 'mark' : 'flexible' %>';
       <% @mark_criteria.each do |criterion| %>
+        var criterion_li = document.getElementById(
+          id_prefix + '<%= "_criterion_#{criterion.id}" %>');
         <% if current_user_criteria.include?(criterion) %>
-          document.getElementById('#mark_criterion_' + <%= criterion.id %>).addClass('assigned');
-        <% elsif @current_user.type == "Ta" %>
-          hide_criterion(<%= criterion.id %>, <%= @assignment.marking_scheme_type %>);
+          criterion_li.addClass('assigned');
+        <% else %>
+          criterion_li.addClass('unassigned');
+          jQuery(criterion_li).find('input').prop('disabled', true);
+          hide_criterion(<%= criterion.id %>,
+                         '<%= @assignment.marking_scheme_type %>');
         <% end %>
       <% end %>
-    <% end %>
-  };
+    };
+  <% end %>
+
   jQuery(document).ready(function () {
     jQuery('#overall_remark_comment_edit form').on('ajax:success', function (data) {
         if (jQuery('.success').length > 0) {

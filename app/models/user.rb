@@ -128,6 +128,33 @@ class User < ActiveRecord::Base
     grouping.current_submission_used
   end
 
+  def grouping_for(aid)
+    groupings.find {|g| g.assignment_id == aid}
+  end
+
+  def is_a_reviewer?(assignment)
+    is_a?(Student) && assignment.is_peer_review?
+  end
+
+  def is_reviewer_for?(assignment, result)
+    # aid is the peer review assignment id, and result_id
+    # is the peer review result
+    if assignment.nil?
+      return false
+    end
+    group =  grouping_for(Integer(assignment.id))
+    if group.nil?
+      return false
+    end
+    prs = PeerReview.where(reviewer_id: group.id)
+    if prs.first.nil?
+      return false
+    end
+    pr = prs.find {|p| p.result_id == Integer(result.id)}
+
+    is_a?(Student) && !pr.nil?
+  end
+
   def self.upload_user_list(user_class, user_list, encoding)
     max_invalid_lines = 10
     num_update = 0

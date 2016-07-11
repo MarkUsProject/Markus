@@ -12,7 +12,7 @@ class PeerReviewsController < ApplicationController
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
-        content: '" + t(:'summaries_index.section') + "',
+        content: '#{t('summaries_index.section')}',
         sortable: true
       },"
     end
@@ -34,9 +34,9 @@ class PeerReviewsController < ApplicationController
 
   def assign_groups
     @assignment = Assignment.find(params[:assignment_id])
-    selected_reviewer_group_ids = params[:selectedReviewerGroupIds]
-    selected_reviewee_group_ids = params[:selectedRevieweeGroupIds]
-    reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups]
+    selected_reviewer_group_ids = params[:selectedReviewerGroupIds] || []
+    selected_reviewee_group_ids = params[:selectedRevieweeGroupIds] || []
+    reviewers_to_remove_from_reviewees_map = params[:selectedReviewerInRevieweeGroups] || {}
     action_string = params[:actionString]
     num_groups_for_reviewers = params[:numGroupsToAssign].to_i
 
@@ -55,7 +55,7 @@ class PeerReviewsController < ApplicationController
         begin
           perform_random_assignment(@assignment, num_groups_for_reviewers)
         rescue UnableToRandomlyAssignGroupException
-          render text: t('peer_review.problem'), status: 400
+          render text: t('peer_review.random_assign_failure'), status: 400
           return
         end
       when 'assign'
@@ -68,7 +68,7 @@ class PeerReviewsController < ApplicationController
           return
         end
       when 'unassign'
-        unassign(reviewers_to_remove_from_reviewees_map)
+        unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
       else
         render text: t('peer_review.problem'), status: 400
         return
@@ -80,7 +80,9 @@ class PeerReviewsController < ApplicationController
   def assign(reviewer_groups, reviewee_groups)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
-        result = reviewee_group.current_submission_used.get_latest_result
+        result = Result.create!(submission: reviewee_group.current_submission_used,
+                                marking_state: Result::MARKING_STATES[:incomplete])
+        #TODO this check needs to be edited - it will always pass
         unless PeerReview.exists?(reviewer: reviewer_group, result: result)
           PeerReview.create!(reviewer: reviewer_group, result: result)
         end
@@ -88,15 +90,18 @@ class PeerReviewsController < ApplicationController
     end
   end
 
-  def unassign(reviewers_to_remove_from_reviewees_map)
+  def unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+    # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each do |reviewer_id, dummy_value|
+        # find the PR that this reviewer made on this reviewee's submission
         reviewee_group = Grouping.find_by_id(reviewee_id)
-        result_id = reviewee_group.current_submission_used.get_latest_result.id
-        pr = PeerReview.find_by(result_id: result_id, reviewer_id: reviewer_id)
+        pr = reviewee_group.peer_reviews.find(reviewer_id: reviewer_id)
         pr.destroy
       end
     end
+
+    selected_reviewee_group_ids.each { |reviewee_id| Grouping.find(reviewee_id).peer_reviews.map(&:destroy) }
   end
 
   # Create a mapping of reviewer grouping -> set(reviewee groupings)

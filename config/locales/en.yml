@@ -232,16 +232,18 @@ en:
         has_peer_review: "Enable student-to-student peer review"
         configure_peer_review: "Configure peer review"
         peer_review_record_missing: "Error: Peer review assignment missing from database"
-        start_peer_review: "Peer-review"
+        start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
         review: "Review"
     peer_review:
         problem: "An unexpected problem occured"
+        random_assign_failure: "Unable to randomly assign, too many reviews requested per selected reviewer/reviewees"
         number_of_reviews_header: "Num reviews"
         assigned_reviewers_header: "Assigned reviewers"
         reviewer_group: "Reviewer group"
         reviewee_group: "Reviewee group"
         empty_list_reviewers: "Cannot have an empty list of reviewers"
+        empty_list_reviewees: "Cannot have an empty list of reviewees"
         cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
         number_per_group: "Number of peer reviews per group"
         download:
@@ -706,8 +708,7 @@ en:
 
     mark:
       error:
-        validate_flexible: "must be between 0 and the maximum mark of the criterion"
-        validate_rubric: "must be an integer between 0 and 4"
+        validate_criteria: "must be between 0 and the maximum mark of the criterion"
 
     # Student's View (admin)
     students:
@@ -1200,15 +1201,17 @@ en:
     <p>Here's an example of a CSV field containing commas and double quotes:</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
-    criterion_name: "Criterion Name"
+    criteria:
+      title: "Criteria"
+      name: "Criterion name"
+      marking_scheme: "Marking Scheme: %{identifier}"
+      save: "Save changes"
 
     flexible_criteria:
-      criteria_management:         "Criteria Management: %{identifier}"
-      save: "Save changes"
+      title: "Flexible Criteria"
       move_up: "Move up"
       move_down: "Move down"
-      name: "Flexible criterion name"
-      max: "Maximum mark"
+      max_mark: "Maximum mark"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
       download:
@@ -1235,9 +1238,7 @@ en:
       visibility_error: "Select at least one box in the visibility section"
 
     rubric_criteria:
-      criteria_management:         "Rubric Management: %{identifier}"
-      save: "Save changes"
-      name: "Rubric criterion name"
+      title: "Rubric Criteria"
       move_up: "Move up"
       move_down: "Move down"
       level:
@@ -1380,24 +1381,25 @@ en:
     criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
     criterion_saved_success:   "Criterion was successfully saved"
     criterion_saved_failure:   "Criterion failed to be saved"
+    weight_not_number: "weight is not a number."
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
-    criteria:           "Criteria"
     criterion:          "Criterion"
     total_mark:         "Total mark"
     visibility:         "Visibility"
-    weight:             "Weight"
     editing_criteria:   "Editing criteria"
     ordering_criteria:  "Ordering criteria"
     modifying_visibility: "Modifying visibility"
     remove_criteria_title:  "Delete this criterion"
     remove_criteria_message:  "Are you sure you want to delete this criterion?"
+    help_editing_criteria_message: "
+    Select a criterion on the left to edit it. Changes for the different criteria can be made as follows:"
     help_editing_rubric_criteria_message: "
-      Select a criterion on the left to edit it.  Criteria descriptions, Level
-      headings and descriptions can be modified.  The weight of each criterion
-      can also be changed. To change the weight to a fractional number simply
-      type in a decimal number into the text box.
-      Note that the number of levels cannot be changed.  However if no
-      description is set for a level, that level will not be used."
+      Criteria names, level headings, descriptions and visibility can be modified.
+      The weight that matches the maximum mark shown for each criterion can also
+      be changed. To change the weight to a fractional number simply type in a
+      decimal number into the text box. Note that the number of levels cannot be
+      changed. However if no description is set for a level, that level will not
+      be used."
     help_ordering_criteria_message: "
       Graders will see the criteria in the order that they are displayed to
       left.  To change the order, drag a criterion to the desired location
@@ -1406,8 +1408,7 @@ en:
     help_ta_visibility_message: "Teaching assistants will be able to see the criterion."
     help_peer_visibility_message: "Peer reviewers will be able to see the criterion."
     help_editing_flexible_criteria_message: "
-      Select a criterion on the left to edit it.  Criteria names, descriptions and
-      maximum values can be modified."
+      Criteria names, descriptions, maximum values and visibility can be modified."
     past_due_date_warning: "Due date for this assignment is in the past."
     past_due_date_notice: "Due date for this assignment is in the past for: "
 

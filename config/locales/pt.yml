@@ -194,7 +194,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
             due_date:  "Prazo de entrega da revisão"
             message:   "Mensagem da revisão"
         marking_scheme:
-            title: "Escala de avalição"
+            title: "Esquema de avalição"
             rubric: "Rúbrica (pré-definido)"
             flexible: "Flexível (à definir pelo avaliador)"
         notice:
@@ -213,11 +213,13 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         review: "Avaliação"
     peer_review:
         problem: "Um problema inesperado ocorreu"
+        random_assign_failure: "Não é possível atribuir ao acaso , muitas revisões solicitadas por colaborador / reviewees selecionados"
         number_of_reviews_header: "Número de comentários"
         assigned_reviewers_header: "Atribuído usuários"
         reviewer_group: "Grupo de Viajante"
         reviewee_group: "Grupo de ser revistos"
         empty_list_reviewers: "Não é possível ter uma lista vazia de revisores"
+        empty_list_reviewees: "Não pode ter uma lista vazia de reviewees"
         cannot_allow_reviewer_to_be_reviewee: "Um estudante não pode ser um revisor e reviewee"
         number_per_group: "Número de avaliações pelos pares por grupo"
         download:
@@ -647,8 +649,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     mark:
       error:
-        validate_flexible: "deve ser entre 0 e a nota máxima do critério"
-        validate_rubric: "deve ser um inteiro entre 0 e 4"
+        validate_criteria: "deve ser entre 0 e a nota máxima do critério"
 
     # Student's View (admin)
     students:
@@ -1039,13 +1040,18 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     criterion_name: "Nome do critério"
 
-    flexible_criteria:
-      criteria_management:         "Gerenciamento de critério: %{identifier}"
+    criteria:
+      title: "Critério"
+      name: "Nome do critério"
+      marking_scheme: "Esquema de avalição: %{identifier}"
       save: "Salvar alterções"
+
+    flexible_criteria:
+      title: "Critérios flexíveis"
       move_up: "Mover para cima"
       move_down: "Mover para baixo"
       name: "Nome do critério flexível"
-      max: "Nota máxima"
+      max_mark: "Nota máxima"
       description: "Descrição"
       description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
       download:
@@ -1071,8 +1077,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       visibility_error: "Selecione pelo menos uma caixa na seção visibilidade"
 
     rubric_criteria:
-      criteria_management:         "Gerenciamento de rúbrica : %{identifier}"
-      save: "Salvar alterações"
+      title: "Critérios rubrica"
       name: "Nome de critério de rúbrica"
       move_up: "Mover para cima"
       move_down: "Mover para baixo"
@@ -1212,28 +1217,32 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     add_criterion:                "Adicionar critério"
     criteria_edit_total_mark:     "Esse critério será classificado de %{criterion_total_mark}"
     criterion_saved_success:   "Critério salvo com sucesso"
+    weight_not_number: "peso não é um número."
     criterion_deleted_success:  "Critério, e todas notas associadas foram apagas com sucesso"
-    criteria:           "Critério"
     criterion:          "Critério"
     total_mark:         "Nota total"
     visibility:         "Visibilidade"
-    weight:             "Peso"
     editing_criteria:   "Editando critério"
     ordering_criteria:  "Ordenar critério"
     modifying_visibility: "Modificando a visibilidade"
     remove_criteria_title:  "Apagar esse critério"
     remove_criteria_message:  "Você tem certeza que quer apagar esse critério?"
+    help_editing_criteria_message: "
+      Selecione um critério na esquerda para editá-lo. Alterações para os diferentes
+      critérios podem ser feitos como se segue:"
     help_editing_rubric_criteria_message: "
-      Selecione um critério na esquerda para editá-lo. Descrição do critério, nível de cabeçalhos e descrições podem ser modificados. O peso para cada critério
-      também pode ser alterado. Para alterar o peso para um número fracionário digite um número decimal na caixa de texto.
-      Note que o número de níveis não pode ser alterado. Mas se não há descrição para um nível, ele não pode ser usado."
+      Descrição do critério, nível de cabeçalhos, descrições e visibilidade podem ser modificados.
+      O peso que corresponde a marca máxima indicada para cada critério, também pode ser alterado.
+      Para alterar o peso para um número fracionário digite um número decimal na caixa de texto.
+      Note que o número de níveis não pode ser alterado. Mas se não há descrição para um nível,
+      ele não pode ser usado."
     help_ordering_criteria_message: "
       Avaliadores verão o critério na ordem que são mostrados na esquerda. Para alterar a ordem, arraste o critério para a posição desejada na lista."
     help_modifying_visibility_message: "Os ícones na coluna mais à direita sob a visibilidade representam o seguinte:"
     help_ta_visibility_message: "assistentes de ensino será capaz de ver o critério."
     help_peer_visibility_message: "revisores será capaz de ver o critério."
     help_editing_flexible_criteria_message: "
-      Selecione um critério na esquerda para editá-lo.  Nome do critério, descrição e valores máximos podem ser modificados."
+      Nome do critério, descrição, valores máximos e visibilidade podem ser modificados."
     past_due_date_warning: "Já se passou do prazo de entrega do projeto."
     past_due_date_notice: "Já se passou do prazo de entrega do projeto: "
 

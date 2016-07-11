@@ -3,10 +3,10 @@ require 'encoding'
 class RubricCriterion < Criterion
   self.table_name = 'rubric_criteria' # set table name correctly
 
-  validates_presence_of :weight
-  validates_numericality_of :weight
-  before_save :round_weight
-  validate :validate_total_weight, on: :update
+  validates_presence_of :max_mark
+  validates_numericality_of :max_mark
+  before_save :round_max_mark
+  validate :validate_max_mark, on: :update
 
   after_save :update_existing_results
 
@@ -50,13 +50,14 @@ class RubricCriterion < Criterion
     self.assigned_groups_count = result.uniq.length
   end
 
-  def validate_total_weight
-    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if assignment.total_mark + (4 * (self.weight - self.weight_was)) <= 0
+  def validate_max_mark
+    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if assignment.max_mark + max_mark - max_mark_was <= 0
   end
 
   # Just a small effort here to remove magic numbers...
   RUBRIC_LEVELS = 5
-  DEFAULT_WEIGHT = 1.0
+  DEFAULT_MAX_MARK = 4
+  MAX_LEVEL = 4
   DEFAULT_LEVELS = [
     {'name' => I18n.t('rubric_criteria.defaults.level_0'),
      'description' => I18n.t('rubric_criteria.defaults.description_0')},
@@ -118,18 +119,18 @@ class RubricCriterion < Criterion
   #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
-      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     working_row = row.clone
     name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
     criterion = assignment.get_criteria.find_or_create_by(name: name)
-    # Check that the weight is not a string.
+    # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
-      criterion.weight = Float(working_row.shift)
+      criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
     rescue ArgumentError
-      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -174,9 +175,9 @@ class RubricCriterion < Criterion
     # create a new one.
     criterion = assignment.get_criteria.find_or_create_by(
       name: name)
-    #Check that the weight is not a string.
+    #Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
-      criterion.weight = Float(key[1]['weight'])
+      criterion.max_mark = Float(key[1]['max_mark']) * MAX_LEVEL
     rescue ArgumentError
       raise I18n.t('criteria_csv_error.weight_not_number')
     rescue TypeError
@@ -202,23 +203,13 @@ class RubricCriterion < Criterion
     criterion
   end
 
-  def get_weight
-    weight
+  def weight
+    max_mark / 4
   end
 
-  # TODO: Get rid of this method once unification of flexible and rubric is finished
-  def mark_max
-    get_weight
-  end
-
-  # Returns the maximum mark for a particular criterion.
-  def max_mark
-    weight * 4
-  end
-
-  def round_weight
+  def round_max_mark
     factor = 10.0 ** 3
-    self.weight = (self.weight * factor).round.to_f / factor
+    self.max_mark = (max_mark * factor).round.to_f / factor
   end
 
   def all_assigned_groups
@@ -286,11 +277,11 @@ class RubricCriterion < Criterion
     true
   end
 
-  def set_mark_by_criteria(mark_to_change, criterion_name)
-    if criterion_name == 'nil'
+  def set_mark_by_criterion(mark_to_change, mark_value)
+    if mark_value == 'nil'
       mark_to_change.mark = nil
     else
-      mark_to_change.mark = criterion_name
+      mark_to_change.mark = mark_value.to_f * weight
     end
     mark_to_change.save
   end

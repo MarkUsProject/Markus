@@ -20,9 +20,9 @@
           <table id="mark_<%=mark.id%>_table">
            <%
              (0...RubricCriterion::RUBRIC_LEVELS).each do |num_levels|
-              if (!old_mark.nil? && num_levels == old_mark.mark)
+              if (!old_mark.nil? && num_levels == (old_mark.mark.nil? ? old_mark.mark : old_mark.mark / mark_criterion.weight))
                 td_class = "rubric_criterion_level_old_mark"
-              elsif (num_levels == mark.mark)
+              elsif (num_levels == (mark.mark.nil? ? mark.mark : mark.mark / mark_criterion.weight))
                 td_class = "rubric_criterion_level_selected"
               else
                 td_class = "rubric_criterion_level"
@@ -36,7 +36,7 @@
                   <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
                       data-action="
                         <%= update_mark_assignment_submission_results_path(
-                              mark_id: mark.id, mark: num_levels) %>"
+                              mark_id: mark.id, mark: num_levels, id: result.id) %>"
                       onclick="update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)"
                       data-id="<%=mark_criterion.id%>" >
                     <div class='description'>
