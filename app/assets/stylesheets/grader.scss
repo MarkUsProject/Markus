@@ -406,6 +406,14 @@ ul.annotation_text_list {
   table tr {
     cursor: pointer;
   }
+
+  .assigned {
+    border: 3px solid $green;
+  }
+
+  .unassigned {
+    background: $light-grey;
+  }
 }
 
 .mark_tools {
@@ -416,10 +424,6 @@ ul.annotation_text_list {
 // /* ================ CRITERION STYLES ============== */
 // #old_summary_criteria_pane {
 //   display: none;
-// }
-
-// .assigned {
-//   border: 4px solid #b7d3ec;
 // }
 
 //   .mark_criterion_title {
@@ -564,12 +568,16 @@ ul.annotation_text_list {
   .criterion_link {
     padding: 0.25em 0em !important;
   }
+}
 
+.rubric_criterion.assigned + .rubric_criterion.assigned {
+  margin-top: -2px;
 }
 
 /* Flexible Criterion Styles */
 
 .flexible_criterion {
+  margin-top: -4px;  /* Remove space between elements */
 
   .criterion_expand {
     float: left;
@@ -656,7 +664,7 @@ ul.annotation_text_list {
       background-color: #81d881;
     }
 
-    &.not_remarked {
+    &.not_remarked:not([disabled]) {
       background-color: white;
     }
   }

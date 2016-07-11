@@ -23,6 +23,7 @@ class FlexibleCriteriaController < ApplicationController
       return
     end
     flash.now[:success] = I18n.t('criterion_saved_success')
+    render 'criteria/update', formats: [:js], handlers: [:erb]
   end
 
   def create

@@ -270,8 +270,8 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns the maximum possible mark for a particular assignment
-  def max_mark
-    get_criteria(:ta).sum('max_mark').round(2)
+  def max_mark(user_visibility = :ta)
+    get_criteria(user_visibility).sum('max_mark').round(2)
   end
 
   # calculates summary statistics of released results for this assignment
