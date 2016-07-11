@@ -63,7 +63,7 @@ class PeerReviewsController < ApplicationController
         reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
         begin
           assign(reviewer_groups, reviewee_groups)
-        rescue RecordInvalid
+        rescue ActiveRecord::RecordInvalid
           render text: t('peer_review.problem'), status: 400
           return
         end
