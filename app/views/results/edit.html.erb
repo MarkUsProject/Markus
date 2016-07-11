@@ -157,9 +157,11 @@
   </h1>
 
   <div class='heading_buttons'>
-    <%= link_to t(:download),
-                'javascript:void(0);',
-                onclick:'modalDownloadFiles.open();' %>
+    <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+      <%= link_to t(:download),
+                  'javascript:void(0);',
+                  onclick:'modalDownloadFiles.open();' %>
+    <% end %>
   </div>
 </div>
 

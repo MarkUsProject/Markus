@@ -9,22 +9,31 @@ class RubricCriteriaController < ApplicationController
 
   def edit
     @criterion = RubricCriterion.find(params[:id])
-    render 'edit', formats: [:js]
+    render 'criteria/edit', formats: [:js], handlers: [:erb]
   end
 
   def update
-    @criterion = RubricCriterion.find(params[:id])
-    unless @criterion.update_attributes(rubric_criterion_params)
-      render :errors
+    begin
+      @criterion = RubricCriterion.find(params[:id])
+      unless @criterion.update(rubric_criterion_params.deep_merge(params.require(:rubric_criterion)
+                                                                      .permit(:max_mark)
+                                                                      .transform_values { |x|  (Float(x) * 4).to_s }))
+        @errors = @criterion.errors
+        render 'criteria/errors', formats: [:js], handlers: [:erb]
+        return
+      end
+    rescue ArgumentError
+      flash.now[:error] = t('weight_not_number')
       return
     end
-    flash.now[:success] = I18n.t('criterion_saved_success')
+    flash.now[:success] = t('criterion_saved_success')
+    render 'criteria/update', formats: [:js], handlers: [:erb]
   end
 
   def new
     @assignment = Assignment.find(params[:assignment_id])
     @criterion = RubricCriterion.new
-    render 'new', formats: [:js]
+    render 'criteria/new', formats: [:js], handlers: [:erb]
   end
 
   def create
@@ -32,16 +41,16 @@ class RubricCriteriaController < ApplicationController
     @criteria = @assignment.get_criteria
     @criterion = RubricCriterion.new
     @criterion.assignment = @assignment
-    @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
+    @criterion.max_mark = RubricCriterion::DEFAULT_MAX_MARK
     @criterion.set_default_levels
     @criterion.position = @assignment.next_criterion_position
     unless @criterion.update_attributes(rubric_criterion_params)
       @errors = @criterion.errors
-      render 'add_criterion_error', formats: [:js]
+      render 'criteria/add_criterion_error', formats: [:js], handlers: [:erb]
       return
     end
     @criteria.reload
-    render :create_and_edit
+    render 'criteria/create_and_edit', formats: [:js], handlers: [:erb]
   end
 
   def destroy
@@ -50,14 +59,14 @@ class RubricCriteriaController < ApplicationController
     @criteria = @assignment.get_criteria
     #delete all marks associated with this criterion
     @criterion.destroy
-    flash.now[:success] = I18n.t('criterion_deleted_success')
-    render 'destroy', formats: [:js]
+    flash[:success] = I18n.t('criterion_deleted_success')
+    render 'criteria/destroy', formats: [:js], handlers: [:erb]
   end
 
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
     file_out = MarkusCSV.generate(@assignment.get_criteria) do |criterion|
-      criterion_array = [criterion.name,criterion.weight]
+      criterion_array = [criterion.name, criterion.max_mark]
       (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
         criterion_array.push(criterion['level_' + i.to_s + '_name'])
       end
@@ -115,7 +124,7 @@ class RubricCriteriaController < ApplicationController
         rubric_criteria = YAML::load(file.utf8_encode(encoding))
       rescue Psych::SyntaxError => e
         flash[:error] = t('rubric_criteria.upload.error') + '  ' +
-           I18n.t('rubric_criteria.upload.syntax_error', error: "#{e}")
+            I18n.t('rubric_criteria.upload.syntax_error', error: "#{e}")
         redirect_to action: 'index', id: assignment.id
         return
       end
@@ -162,25 +171,6 @@ class RubricCriteriaController < ApplicationController
     redirect_to action: 'index', assignment_id: assignment.id
   end
 
-  # This method handles the drag/drop RubricCriteria sorting
-  def update_positions
-    unless request.post?
-      render nothing: true
-      return
-    end
-
-    @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
-    position = 0
-
-    params[:criterion].each do |id|
-      if id != ''
-        position += 1
-        RubricCriterion.update(id, position: position)
-      end
-    end
-  end
-
   private
 
   def rubric_criterion_params
@@ -197,7 +187,6 @@ class RubricCriteriaController < ApplicationController
                                              :level_3_description,
                                              :level_4_name,
                                              :level_4_description,
-                                             :weight,
                                              :ta_visible,
                                              :peer_visible)
   end

@@ -1,6 +1,6 @@
 <h2><%= @grader.user_name %></h2>
 <% assigned = @grader.get_criterion_associations_by_assignment(@assignment)%>
-<b><%= I18n.t('criteria') %>:</b>
+<b><%= t('criteria.title') %>:</b>
 <br>
 <% assigned.each do |association| %>
   <%= association.criterion.name %>

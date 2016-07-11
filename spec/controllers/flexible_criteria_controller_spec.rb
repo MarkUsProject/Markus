@@ -52,13 +52,6 @@ describe FlexibleCriteriaController do
         is_expected.to respond_with :redirect
       end
     end
-
-    context '#update_positions' do
-      it 'should respond with redirect' do
-        get :update_positions, assignment_id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
   end
 
   describe 'An unauthenticated and unauthorized user doing a POST' do
@@ -110,13 +103,6 @@ describe FlexibleCriteriaController do
         is_expected.to respond_with :redirect
       end
     end
-
-    context '#update_positions' do
-      it 'should respond with redirect' do
-        post :update_positions, assignment_id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
   end
 
   describe 'An authenticated and authorized admin doing a GET' do
@@ -138,7 +124,7 @@ describe FlexibleCriteriaController do
                            position: 3,
                            name: 'criterion3',
                            description: 'description3!',
-                           max: 1.6)
+                           max_mark: 1.6)
     end
 
     context '#index' do
@@ -192,7 +178,7 @@ describe FlexibleCriteriaController do
                  format: :js,
                  assignment_id: 1,
                  id: @criterion.id,
-                 flexible_criterion: { name: 'one', max: 10 }
+                 flexible_criterion: { name: 'one', max_mark: 10 }
         end
 
         it 'should respond with appropriate content' do
@@ -215,7 +201,7 @@ describe FlexibleCriteriaController do
                  format: :js,
                  assignment_id: 1,
                  id: @criterion.id,
-                 flexible_criterion: { name: 'one', max: 10 }
+                 flexible_criterion: { name: 'one', max_mark: 10 }
           assert flash[:success], I18n.t('criterion_saved_success')
         end
 
@@ -309,7 +295,7 @@ describe FlexibleCriteriaController do
                            position: 3,
                            name: 'criterion3',
                            description: 'description3!',
-                           max: 1.6)
+                           max_mark: 1.6)
     end
 
     context '#index' do
@@ -364,7 +350,7 @@ describe FlexibleCriteriaController do
                   format: :js,
                   assignment_id: @assignment.id,
                   flexible_criterion: { name: 'first',
-                                        max: 10 }
+                                        max_mark: 10 }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy
@@ -374,7 +360,7 @@ describe FlexibleCriteriaController do
 
         it 'should render the add_criterion_error template' do
           is_expected
-            .to render_template(:'flexible_criteria/add_criterion_error')
+            .to render_template(:'criteria/add_criterion_error')
         end
 
         it 'should respond with success' do
@@ -388,14 +374,14 @@ describe FlexibleCriteriaController do
                   format: :js,
                   assignment_id: @assignment.id,
                   flexible_criterion: { name: 'first',
-                                        max: 10 }
+                                        max_mark: 10 }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy
           expect(assigns(:assignment)).to be_truthy
         end
         it 'should render the create_and_edit template' do
-          is_expected.to render_template(:'flexible_criteria/create_and_edit')
+          is_expected.to render_template(:'criteria/create_and_edit')
         end
 
         it 'should respond with success' do
@@ -409,14 +395,14 @@ describe FlexibleCriteriaController do
                   format: :js,
                   assignment_id: @assignment.id,
                   flexible_criterion: { name: 'first',
-                                        max: 10 }
+                                        max_mark: 10 }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:criterion)).to be_truthy
           expect(assigns(:assignment)).to be_truthy
         end
         it 'should render the create_and_edit template' do
-          is_expected.to render_template(:'flexible_criteria/create_and_edit')
+          is_expected.to render_template(:'criteria/create_and_edit')
         end
 
         it 'should respond with success' do
@@ -562,22 +548,6 @@ describe FlexibleCriteriaController do
           is_expected.to respond_with(:redirect)
         end
       end
-    end
-
-    it 'should be able to update_positions' do
-      post_as @admin,
-              :update_positions,
-              format: :js,
-              criterion: [@criterion2.id,
-                          @criterion.id],
-              assignment_id: @assignment.id
-      is_expected.to render_template('flexible_criteria/update_positions')
-      is_expected.to respond_with(:success)
-
-      c1 = FlexibleCriterion.find(@criterion.id)
-      expect(c1.position).to eql(2)
-      c2 = FlexibleCriterion.find(@criterion2.id)
-      expect(c2.position).to eql(1)
     end
   end # An authenticated and authorized admin doing a POST
 

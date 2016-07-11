@@ -310,7 +310,7 @@
 
   // Takes the ID of an existing annotation (from the database), adds the new
   // annotation link to the currently selected text, then highlights the lines.
-  function add_existing_annotation(annotation_text_id, result_id) {
+  function add_existing_annotation(annotation_text_id, result_id, assignment_id) {
     if (annotation_type === ANNOTATION_TYPES.IMAGE) {
       var box = get_selection_box();
       if (!box) { return; }
@@ -326,6 +326,7 @@
               '&y1=' + box.y1 +
               '&y2=' + box.y2 +
               '&result_id=' + result_id +
+              '&assignment_id=' + assignment_id +
               '&authenticity_token=' + AUTH_TOKEN
       });
     } else if (annotation_type === ANNOTATION_TYPES.PDF) {
@@ -343,6 +344,7 @@
               '&y1=' + box.y1 +
               '&y2=' + box.y2 +
               '&result_id=' + result_id +
+              '&assignment_id=' + assignment_id +
               '&page=' + box.page +
               '&authenticity_token=' + AUTH_TOKEN
       });
@@ -360,6 +362,7 @@
               '&column_end=' + positions.column_end +
               '&annotation_text_id=' + annotation_text_id +
               '&result_id=' + result_id +
+              '&assignment_id=' + assignment_id +
               '&authenticity_token=' + AUTH_TOKEN
       });
     }
@@ -413,7 +416,8 @@
    * @param  {[type]} result_id   [description]
    * @return {[type]}             [description]
    */
-  function submit_new_annotation(content, category_id, x1, x2, y1, y2, page, result_id) {
+  function submit_new_annotation(content, category_id, x1, x2, y1, y2, page, result_id,
+                                 assignment_id) {
     // Was any annotation text content provided?
     if (content == '') {
       alert("<%= I18n.t('marker.annotation.provide_text') %>");
@@ -438,6 +442,7 @@
               '&content=' + encodeURIComponent(content) +
               '&category_id=' + category_id +
               '&result_id=' + result_id +
+              '&assignment_id=' + assignment_id +
               '&authenticity_token=' + AUTH_TOKEN
       });
     } else if (annotation_type === ANNOTATION_TYPES.IMAGE) {
@@ -454,6 +459,7 @@
               '&y1=' + y1 +
               '&y2=' + y2 +
               '&result_id=' + result_id +
+              '&assignment_id=' + assignment_id +
               '&authenticity_token=' + AUTH_TOKEN
       });
     } else if (annotation_type === ANNOTATION_TYPES.PDF) {
@@ -496,6 +502,7 @@
               '&y2=' + newCoords.y2 +
               '&page=' + page +
               '&result_id=' + result_id +
+              '&assignment_id=' + assignment_id +
               '&authenticity_token=' + AUTH_TOKEN
       });
     }

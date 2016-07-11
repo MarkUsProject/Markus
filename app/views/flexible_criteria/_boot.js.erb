@@ -16,7 +16,7 @@
           }
 
           ajaxRequest = jQuery.ajax({
-            url:  '<%= update_positions_assignment_flexible_criteria_path(@assignment) %>',
+            url:  '<%= update_positions_assignment_criteria_path(@assignment) %>',
             type: 'POST',
             data: jQuery('.sortable ul').sortable('serialize'),
             dataType: 'script',
@@ -26,7 +26,7 @@
             }
           });
         },
-        cancel: '#new_flexible_criterion'
+        cancel: '#new_criterion'
       });
     }
   });

@@ -1,5 +1,5 @@
 document.getElementById('criterion_<%= @criterion.id %>_error').innerHTML =
-  "<%= escape_javascript(render partial: 'errors_list',
-                                locals: { errors: @criterion.errors }) %>";
+  "<%= escape_javascript(render partial: 'criteria/errors_list',
+                                locals: { errors: @errors }) %>";
 
 document.getElementById('criterion_<%= @criterion.id %>_error').style.display = '';

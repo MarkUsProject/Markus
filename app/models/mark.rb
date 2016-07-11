@@ -31,20 +31,10 @@ class Mark < ActiveRecord::Base
   # Custom validator for checking the upper range of a mark
   def valid_mark
     unless mark.nil?
-      if markable_type == 'RubricCriterion' &&
-        (mark > 4 || (mark % 1 != 0))
-        errors.add(:mark, I18n.t('mark.error.validate_rubric'))
-      elsif markable_type == 'FlexibleCriterion' && mark > markable.max
-        errors.add(:mark, I18n.t('mark.error.validate_flexible'))
+      if mark > markable.max_mark
+        errors.add(:mark, I18n.t('mark.error.validate_criteria'))
       end
     end
-  end
-
-  #return the current mark for this criterion
-  def get_mark
-    criterion = self.markable
-    weight = criterion.get_weight
-    mark.to_f * weight
   end
 
   private

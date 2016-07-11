@@ -74,13 +74,18 @@ Markus::Application.routes.draw do
         end
       end
 
+      resources :criteria do
+        collection do
+          post 'update_positions'
+        end
+      end
+
       resources :rubric_criteria do
         member do
           delete 'destroy'
         end
 
         collection do
-          post 'update_positions'
           post 'csv_upload'
           post 'yml_upload'
           get 'download_csv'
@@ -95,7 +100,6 @@ Markus::Application.routes.draw do
 
         collection do
           post 'upload'
-          post 'update_positions'
           get 'download'
         end
       end

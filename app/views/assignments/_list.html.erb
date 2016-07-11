@@ -72,7 +72,7 @@
                 <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>
                   <strong><%= t(:your_mark) %></strong>
                   <%= # show results
-                      ("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.total_mark)).to_s + "% (Class Average: " + ("%.2f" % (assignment.results_average)).to_s + "%)" %>
+                      ("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.max_mark)).to_s + "% (Class Average: " + ("%.2f" % (assignment.results_average)).to_s + "%)" %>
                   <p>
                     <strong><%= t('assignment.overall_comment') %></strong>
                   </p>

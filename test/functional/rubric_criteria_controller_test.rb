@@ -42,11 +42,6 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
         assert_response :redirect
       end
 
-     should 'be redirected on :update_positions' do
-        get :update_positions, assignment_id: @assignment.id
-        assert_response :redirect
-      end
-
       context 'and a submission' do
         setup do
           @submission = Submission.make(grouping: @grouping)
@@ -180,7 +175,7 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
     should 'upload successfully well formatted yml criteria' do
       yml_string = <<END
 cr1:
-  weight: 5
+  max_mark: 5
   level_0:
     name: what?
     description: fail
@@ -197,7 +192,7 @@ cr1:
     name: poor
     description: I expected more
 cr2:
-  weight: 2
+  max_mark: 2
 END
       post_as @admin,
               :yml_upload,
@@ -211,8 +206,8 @@ END
       cr1 = @assignment.get_criteria.find_by(name: 'cr1')
       cr2 = @assignment.get_criteria.find_by(name: 'cr2')
       assert_equal(@assignment.get_criteria.length, 2)
-      assert_equal(2, cr2.weight)
-      assert_equal(5, cr1.weight)
+      assert_equal(8, cr2.max_mark) # We get four times what we entered because we entered the weight
+      assert_equal(20, cr1.max_mark)
       assert_equal('what?', cr1.level_0_name)
       assert_equal('fail', cr1.level_0_description)
       assert_equal('hmm', cr1.level_1_name)
@@ -230,7 +225,7 @@ END
               :yml_upload,
               assignment_id: @assignment.id,
               yml_upload: {rubric:
-                "cr1:\n  weight: monstrously heavy\n"}
+                "cr1:\n  max_mark: monstrously heavy\n"}
 
       assert_response  :redirect
       assert_not_nil set_flash.to(
@@ -245,7 +240,7 @@ END
      post_as @admin,
              :yml_upload,
              assignment_id: @assignment.id,
-             yml_upload: {rubric: "cr1:\n  weight: 5\na"}
+             yml_upload: {rubric: "cr1:\n  max_mark: 5\na"}
 
       assert_response :redirect
       assert_not_nil set_flash.to(t('rubric_criteria.upload.error') + '  ' +
@@ -299,7 +294,7 @@ END
                assignment_id: @assignment.id,
                id: @criterion.id,
                rubric_criterion: { name: 'one',
-                                   weight: 10 }
+                                   max_mark: 10 }
         assert assigns :criterion
         assert render_template 'errors'
         assert_response :success
@@ -312,7 +307,7 @@ END
                assignment_id: @assignment.id,
                id: @criterion.id,
                rubric_criterion: { name: 'one',
-                                   weight: 10 }
+                                   max_mark: 10 }
         assert assigns :criterion
         assert_equal I18n.t('criterion_saved_success'), flash[:success]
         assert render_template :update
@@ -331,11 +326,11 @@ END
                 :create,
                 assignment_id: @assignment.id,
                 rubric_criterion: {name: 'first',
-                                   weight: 10}
+                                   max_mark: 10}
         assert assigns :assignment
         assert assigns :criterion
         assert assigns :errors
-        assert render_template 'rubric_criteria/add_criterion_error'
+        assert render_template 'criteria/add_criterion_error'
         assert_response :success
       end
 
@@ -347,10 +342,10 @@ END
                 format: :js,
                 assignment_id: assignment.id,
                 rubric_criterion: {name: 'first',
-                                   weight: 10}
+                                   max_mark: 10}
         assert assigns :assignment
         assert assigns :criterion
-        assert render_template 'rubric_criteria/create_and_edit'
+        assert render_template 'criteria/create_and_edit'
         assert respond_with :success
       end
 
@@ -360,10 +355,10 @@ END
                 format: :js,
                 assignment_id: @assignment.id,
                 rubric_criterion: {name: 'first',
-                                   weight: 10}
+                                   max_mark: 10}
         assert assigns :assignment
         assert assigns :criterion
-        assert render_template 'rubric_criteria/create_and_edit'
+        assert render_template 'criteria/create_and_edit'
         assert_response :success
       end
 
@@ -385,7 +380,7 @@ END
         assert assigns :assignment
         assert_equal response.header['Content-Type'], 'text/csv'
         assert_response :success
-        assert_equal "Algorithm,1.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n",
+        assert_equal "Algorithm,4.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n",
                       @response.body
       end
 
@@ -393,7 +388,7 @@ END
         post_as @admin,
                 :yml_upload,
                 assignment_id: @assignment.id,
-                yml_upload: {rubric: "cr1:\n  weight: 5\ncr2:\n  weight: 2\n"}
+                yml_upload: {rubric: "cr1:\n  max_mark: 5\ncr2:\n  max_mark: 2\n"}
 
 
         assert_response :redirect
@@ -401,30 +396,7 @@ END
                               nb_updates: 2))
         @assignment.reload
         assert_equal(@assignment.get_criteria.length, 3)
-        assert_equal(@assignment.get_criteria[0].weight, 1.0)
-      end
-
-
-      context 'with another criterion' do
-        setup do
-          @criterion2 = RubricCriterion.make(assignment: @assignment,
-                                             position: 2)
-        end
-
-        should 'be able to update_positions' do
-          get_as @admin,
-                :update_positions,
-                criterion: [@criterion2.id,
-                            @criterion.id],
-                assignment_id: @assignment.id
-          assert render_template ''
-          assert_response :success
-
-          c1 = RubricCriterion.find(@criterion.id)
-          assert_equal 1, c1.position
-          c2 = RubricCriterion.find(@criterion2.id)
-          assert_equal 2, c2.position
-        end
+        assert_equal(@assignment.get_criteria[0].max_mark, 4.0)
       end
 
     end

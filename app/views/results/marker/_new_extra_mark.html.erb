@@ -9,7 +9,7 @@
   <%= f.text_field :extra_mark, size: 3 %> <br>
   <div class="error" style="display:none;" id="new_extra_mark_error">
   </div>
-  <%= f.submit I18n.t("save") , :'data-disable-with' => I18n.t('working')%>
+  <%= f.submit t('save'), data: { disable_with: t('working') }%>
 <% end %>
 </td>
 </tr>

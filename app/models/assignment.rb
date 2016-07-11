@@ -134,7 +134,7 @@ class Assignment < ActiveRecord::Base
     final = ActiveSupport::OrderedHash.new
     criteria.each do |criterion|
       inner = ActiveSupport::OrderedHash.new
-      inner['weight'] =  criterion['weight']
+      inner['max_mark'] =  criterion['max_mark']
       inner['level_0'] = {
         'name' =>  criterion['level_0_name'] ,
         'description' =>  criterion['level_0_description']
@@ -270,9 +270,8 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns the maximum possible mark for a particular assignment
-  # TODO: Change name to max_mark
-  def total_mark
-    get_criteria(:ta).map(&:max_mark).sum().round(2)
+  def max_mark(user_visibility = :ta)
+    get_criteria(user_visibility).sum('max_mark').round(2)
   end
 
   # calculates summary statistics of released results for this assignment
@@ -281,17 +280,17 @@ class Assignment < ActiveRecord::Base
     # No marks released for this assignment.
     return false if marks.empty?
 
-    self.results_fails = marks.count { |mark| mark < total_mark / 2.0 }
+    self.results_fails = marks.count { |mark| mark < max_mark / 2.0 }
     self.results_zeros = marks.count(&:zero?)
 
     # Avoid division by 0.
     self.results_average, self.results_median =
-      if total_mark.zero?
+      if max_mark.zero?
         [0, 0]
       else
         # Calculates average and median in percentage.
         [average(marks), median(marks)].map do |stat|
-          (stat * 100 / total_mark).round(2)
+          (stat * 100 / max_mark).round(2)
         end
       end
     self.save
@@ -338,11 +337,6 @@ class Assignment < ActiveRecord::Base
     end
     self.outstanding_remark_request_count = outstanding_count
     self.save
-  end
-
-  def total_criteria_weight
-    factor = 10.0 ** 2
-    (get_criteria.sum('weight') * factor).floor / factor
   end
 
   def total_test_script_marks
@@ -626,7 +620,7 @@ class Assignment < ActiveRecord::Base
   # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
   # Last column are grace-credits.
   def get_detailed_csv_report
-    out_of = total_mark
+    out_of = max_mark
     students = Student.all
     MarkusCSV.generate(students) do |student|
       result = [student.user_name]
@@ -635,8 +629,8 @@ class Assignment < ActiveRecord::Base
         # No grouping/no submission
         # total percentage, total_grade
         result.concat(['','0'])
-        # mark, weight
-        result.concat(get_max_marks_for_criteria)
+        # mark, max_mark
+        result.concat(get_criteria.pluck("''", :max_mark).flatten)
         # extra-mark, extra-percentage
         result.concat(['',''])
       else
@@ -658,20 +652,13 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  # Returns an array of either [mark, max] or [mark, weight].
+  # Returns an array of [mark, max_mark].
   def get_marks_list(submission)
     get_criteria.map do |criterion|
       mark = submission.get_latest_result.marks.find_by(markable_id: criterion.id)
       [(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
-       criterion.mark_max]
+       criterion.max_mark]
     end
-  end
-
-  # Returns an array of the form ['', max] or ['', weight] depending on the criteria.
-  # This may not be a good name to account for the fact that we either return weight or max.
-  # TODO This may change when unifying flexible and rubric.
-  def get_max_marks_for_criteria
-    ([""] * get_criteria.count).zip(get_criteria.map(&:mark_max)).flatten
   end
 
   def replace_submission_rule(new_submission_rule)
@@ -734,7 +721,7 @@ class Assignment < ActiveRecord::Base
   # intervals defaults to 20
   def grade_distribution_as_percentage(intervals=20)
     distribution = Array.new(intervals, 0)
-    out_of = total_mark
+    out_of = max_mark
 
     if out_of == 0
       return distribution

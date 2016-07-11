@@ -1,0 +1,17 @@
+<div class='sortable'>
+  <header>
+    <span class='left'><%= t('criteria.title') %></span>
+    <span class='center'>
+      <%= t('total_mark') %>
+      (<span id='criteria_total_max_mark'><%= @assignment.max_mark %></span>)
+    </span>
+    <span class='right'><%= t('visibility') %></span>
+  </header>
+
+  <ul id='criteria_pane_list'>
+    <% @criteria.each do |criterion| %>
+      <%= render partial: 'criteria/criterion',
+                 locals: { criterion: criterion } %>
+    <% end %>
+  </ul>
+</div>

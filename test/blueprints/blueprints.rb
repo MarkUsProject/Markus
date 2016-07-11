@@ -105,7 +105,7 @@ FlexibleCriterion.blueprint do
   name
   description
   position {1} # override if many for the same assignment
-  max{10}
+  max_mark {10}
   assigned_groups_count {0}
   ta_visible {true}
   peer_visible {false}
@@ -211,7 +211,7 @@ RubricCriterion.blueprint do
   assignment {Assignment.make(marking_scheme_type: 'rubric')}
   name {Sham.name}
   position {1}  # override if many for the same assignment
-  weight {1}
+  max_mark {4}
   assigned_groups_count {0}
   level_0_name {'Horrible'}
   level_1_name {'Poor'}
