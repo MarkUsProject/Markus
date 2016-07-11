@@ -764,7 +764,7 @@ class Grouping < ActiveRecord::Base
       last_result = self.test_script_results
                         .where(test_script_id: test_script_id)
                         .first
-      last_result.marks_earned
+      last_result.nil? ? 0 : last_result.marks_earned
     end
   end
 

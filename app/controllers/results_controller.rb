@@ -157,7 +157,7 @@ class ResultsController < ApplicationController
 
     begin
       AutomatedTestsHelper.request_a_test_run(grouping_id,
-                                              'request',
+                                              'submission',
                                               @current_user,
                                               submission_id)
     rescue => e
