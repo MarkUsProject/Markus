@@ -186,6 +186,7 @@ describe 'An Assignment' do
 
   # start Assignment's rubric_criteria route tests
   context 's rubric_criteria' do
+    let(:criteria_path) { path + '/' + assignment.id.to_s + '/criteria' }
     let(:rubric_path) { path + '/' + assignment.id.to_s + '/rubric_criteria' }
     let(:rubric_ctrl) { 'rubric_criteria' }
 
@@ -205,7 +206,7 @@ describe 'An Assignment' do
     # start assignment rubric collection route tests
     context 'collection' do
       it 'routes POST update_positions properly' do
-        expect(post: path + '/' + assignment.id.to_s + '/criteria/update_positions').to route_to(
+        expect(post: criteria_path + '/update_positions').to route_to(
           controller: 'criteria',
           action: 'update_positions',
           assignment_id: assignment.id.to_s,
