@@ -76,14 +76,14 @@
         this.refs.revieweeTable.clearCheckboxes();
       }
 
-      document.getElementById('working').style.display = '';
+      jQuery('#working').css('display', '');
 
       jQuery.ajax({
         url: '<%= populate_assignment_peer_reviews_path %>',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
-          document.getElementById('working').style.display = 'none';
+          jQuery('#working').css('display', 'none');
           this.clearSelectedFields();
           this.setState({
             reviewerGroups: data[0],
@@ -303,12 +303,15 @@
         return;
       }
 
+      jQuery('#working').css('display', '');
+
       jQuery.ajax({
         method: 'POST',
         url: '<%= assign_groups_assignment_peer_reviews_path %>',
         data: dataToSend,
 
         success: function(data) {
+          jQuery('#working').css('display', 'none');
           this.props.clearSelectedFields();
           this.props.refresh();
           this.setState({ error: null });
@@ -316,6 +319,7 @@
         }.bind(this),
 
         error: function(xhr, status, text) {
+          jQuery('#working').css('display', 'none');
           var error = text + ': ' + xhr.responseText;
           this.props.setErrorMessage(error);
         }.bind(this)
