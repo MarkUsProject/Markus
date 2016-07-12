@@ -15,7 +15,8 @@ namespace :db do
       reviewer_id = pr_grouping.id
       random_group = a1.groupings[Random.rand(a1.groupings.size)]
       if reviewer_id != random_group.id
-        reviewee_result = random_group.current_submission_used.get_latest_result
+        reviewee_result = Result.create!(submission: random_group.current_submission_used,
+                                         marking_state: Result::MARKING_STATES[:incomplete])
         PeerReview.create(reviewer: pr_grouping, result: reviewee_result)
       end
     end
