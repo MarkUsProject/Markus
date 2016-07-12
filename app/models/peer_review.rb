@@ -30,29 +30,21 @@ class PeerReview < ActiveRecord::Base
     end
   end
 
-  # Gets the peer review between the groups, or returns nill if not found.
-  def self.get_peer_review_for(reviewer, reviewee)
-    results = Result.where(submission: reviewee.current_submission_used)
-    PeerReview.where(result: results, reviewer: reviewer).first
+  def self.review_exists_between?(reviewer, reviewee)
+    !reviewer.review_for(reviewee).nil?
   end
 
-  def self.does_review_exist_between?(reviewer, reviewee)
-    not PeerReview.get_peer_review_for(reviewer, reviewee).nil?
+  def self.can_assign_peer_review_to?(reviewer, reviewee)
+    !review_exists_between?(reviewer, reviewee) && reviewer.does_not_share_any_students?(reviewee)
   end
 
-  def self.able_to_assign_peer_review_to?(reviewer, reviewee)
-    return (not PeerReview.does_review_exist_between?(reviewer, reviewee)) &&
-        reviewer.does_not_share_any_students?(reviewee)
-  end
-
-  # Creates a new peer review between the reviewer and reviewee, otherwise if
-  # one exists it returns nil
+  # Creates a new peer review between the reviewer and reviewee groupings,
+  # otherwise if one exists it returns nil
   def self.create_peer_review_between(reviewer, reviewee)
-    if PeerReview.able_to_assign_peer_review_to?(reviewer, reviewee)
+    if can_assign_peer_review_to?(reviewer, reviewee)
       result = Result.create!(submission: reviewee.current_submission_used,
                               marking_state: Result::MARKING_STATES[:incomplete])
       return PeerReview.create!(reviewer: reviewer, result: result)
     end
-    nil
   end
 end

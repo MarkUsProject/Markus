@@ -98,7 +98,7 @@ class PeerReviewsController < ApplicationController
       reviewer_id_to_bool.each do |reviewer_id, dummy_value|
         reviewee_group = Grouping.find_by_id(reviewee_id)
         reviewer_group = Grouping.find_by_id(reviewer_id)
-        peer_review = PeerReview.get_peer_review_for(reviewer_group, reviewee_group)
+        peer_review = reviewer_group.review_for(reviewee_group)
         peer_review.destroy
       end
     end
