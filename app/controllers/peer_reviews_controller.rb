@@ -67,6 +67,9 @@ class PeerReviewsController < ApplicationController
         rescue ActiveRecord::RecordInvalid
           render text: t('peer_review.problem'), status: 400
           return
+        rescue SubmissionsNotCollectedException
+          render text: t('peer_review.submission_nil_failure'), status: 400
+          return
         end
       when 'unassign'
         unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
@@ -81,6 +84,9 @@ class PeerReviewsController < ApplicationController
   def assign(reviewer_groups, reviewee_groups)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
+        if reviewee_group.current_submission_used.nil?
+          raise SubmissionsNotCollectedException
+        end
         PeerReview.create_peer_review_between(reviewer_group, reviewee_group)
       end
     end

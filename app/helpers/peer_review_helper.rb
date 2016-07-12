@@ -1,3 +1,6 @@
+class SubmissionsNotCollectedException < Exception
+end
+
 module PeerReviewHelper
   # Returns a dict of: reviewee_id => [list of reviewer_id's].
   def create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
