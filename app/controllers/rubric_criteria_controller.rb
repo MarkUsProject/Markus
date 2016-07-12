@@ -30,23 +30,6 @@ class RubricCriteriaController < ApplicationController
     render 'criteria/update', formats: [:js], handlers: [:erb]
   end
 
-  def create
-    @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
-    @criterion = RubricCriterion.new
-    @criterion.assignment = @assignment
-    @criterion.max_mark = RubricCriterion::DEFAULT_MAX_MARK
-    @criterion.set_default_levels
-    @criterion.position = @assignment.next_criterion_position
-    unless @criterion.update_attributes(rubric_criterion_params)
-      @errors = @criterion.errors
-      render 'criteria/add_criterion_error', formats: [:js], handlers: [:erb]
-      return
-    end
-    @criteria.reload
-    render 'criteria/create_and_edit', formats: [:js], handlers: [:erb]
-  end
-
   def destroy
     @criterion = RubricCriterion.find(params[:id])
     @assignment = @criterion.assignment

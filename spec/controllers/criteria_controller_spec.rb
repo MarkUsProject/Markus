@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe CriteriaController, type: :controller do
 
-  describe 'Using Flexible criteria' do
+  describe 'Using Flexible Criteria' do
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#new' do
@@ -96,13 +96,95 @@ RSpec.describe CriteriaController, type: :controller do
                              max_mark: 1.6)
       end
 
+      context '#create' do
+        context 'with save error' do
+          before(:each) do
+            @errors = ActiveModel::Errors.new(self)
+            @errors['message'] = 'error message'
+            expect_any_instance_of(FlexibleCriterion)
+                .to receive(:save).and_return(false)
+            expect_any_instance_of(FlexibleCriterion)
+                .to receive(:errors).and_return(@errors)
+            post_as @admin,
+                    :create,
+                    format:             :js,
+                    assignment_id:      @assignment.id,
+                    flexible_criterion: { name: 'first',
+                                          max_mark: 10 },
+                    criterion_type:     'FlexibleCriterion'
+          end
+          it 'should respond with appropriate content' do
+            expect(assigns(:criterion_type)).to be_truthy
+            expect(assigns(:criterion)).to be_truthy
+            expect(assigns(:errors)).to be_truthy
+            expect(assigns(:assignment)).to be_truthy
+          end
+
+          it 'should render the add_criterion_error template' do
+            is_expected
+                .to render_template(:'criteria/add_criterion_error')
+          end
+
+          it 'should respond with success' do
+            is_expected.to respond_with(:success)
+          end
+        end
+
+        context 'without error on an assignment as the first criterion' do
+          before(:each) do
+            post_as @admin,
+                    :create,
+                    format:             :js,
+                    assignment_id:      @assignment.id,
+                    flexible_criterion: { name: 'first',
+                                          max_mark: 10 },
+                    criterion_type:     'FlexibleCriterion'
+          end
+          it 'should respond with appropriate content' do
+            expect(assigns(:criterion_type)).to be_truthy
+            expect(assigns(:criterion)).to be_truthy
+            expect(assigns(:assignment)).to be_truthy
+          end
+          it 'should render the create_and_edit template' do
+            is_expected.to render_template(:'criteria/create_and_edit')
+          end
+
+          it 'should respond with success' do
+            is_expected.to respond_with(:success)
+          end
+        end
+
+        context 'without error on an assignment that already has criteria' do
+          before(:each) do
+            post_as @admin,
+                    :create,
+                    format:             :js,
+                    assignment_id:      @assignment.id,
+                    flexible_criterion: { name: 'first',
+                                          max_mark: 10 },
+                    criterion_type:     'FlexibleCriterion'
+          end
+          it 'should respond with appropriate content' do
+            expect(assigns(:criterion_type)).to be_truthy
+            expect(assigns(:criterion)).to be_truthy
+            expect(assigns(:assignment)).to be_truthy
+          end
+          it 'should render the create_and_edit template' do
+            is_expected.to render_template(:'criteria/create_and_edit')
+          end
+
+          it 'should respond with success' do
+            is_expected.to respond_with(:success)
+          end
+        end
+      end
+
       it 'should be able to update_positions' do
         post_as @admin,
                 :update_positions,
-                format: :js,
-                criterion: [@criterion2.id,
-                            @criterion.id],
-                assignment_id: @assignment.id
+                format:             :js,
+                criterion:          [@criterion2.id, @criterion.id],
+                assignment_id:      @assignment.id
         is_expected.to render_template('criteria/update_positions')
         is_expected.to respond_with(:success)
 
@@ -112,9 +194,9 @@ RSpec.describe CriteriaController, type: :controller do
         expect(c2.position).to eql(1)
       end
     end
-  end
+  end # Tests using Flexile Criteria
 
-  describe 'Using Rubric criteria' do
+  describe 'Using Rubric Criteria' do
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#new' do
@@ -202,13 +284,95 @@ RSpec.describe CriteriaController, type: :controller do
                              max_mark: 1.6)
       end
 
+      context '#create' do
+        context 'with save error' do
+          before(:each) do
+            @errors = ActiveModel::Errors.new(self)
+            @errors['message'] = 'error message'
+            expect_any_instance_of(RubricCriterion)
+                .to receive(:save).and_return(false)
+            expect_any_instance_of(RubricCriterion)
+                .to receive(:errors).and_return(@errors)
+            post_as @admin,
+                    :create,
+                    format:           :js,
+                    assignment_id:    @assignment.id,
+                    rubric_criterion: { name: 'first',
+                                        max_mark: 10 },
+                    criterion_type:   'RubricCriterion'
+          end
+          it 'should respond with appropriate content' do
+            expect(assigns(:criterion_type)).to be_truthy
+            expect(assigns(:criterion)).to be_truthy
+            expect(assigns(:errors)).to be_truthy
+            expect(assigns(:assignment)).to be_truthy
+          end
+
+          it 'should render the add_criterion_error template' do
+            is_expected
+                .to render_template(:'criteria/add_criterion_error')
+          end
+
+          it 'should respond with success' do
+            is_expected.to respond_with(:success)
+          end
+        end
+
+        context 'without error on an assignment as the first criterion' do
+          before(:each) do
+            post_as @admin,
+                    :create,
+                    format:           :js,
+                    assignment_id:    @assignment.id,
+                    rubric_criterion: { name: 'first',
+                                        max_mark: 10 },
+                    criterion_type:   'RubricCriterion'
+          end
+          it 'should respond with appropriate content' do
+            expect(assigns(:criterion_type)).to be_truthy
+            expect(assigns(:criterion)).to be_truthy
+            expect(assigns(:assignment)).to be_truthy
+          end
+          it 'should render the create_and_edit template' do
+            is_expected.to render_template(:'criteria/create_and_edit')
+          end
+
+          it 'should respond with success' do
+            is_expected.to respond_with(:success)
+          end
+        end
+
+        context 'without error on an assignment that already has criteria' do
+          before(:each) do
+            post_as @admin,
+                    :create,
+                    format:             :js,
+                    assignment_id:      @assignment.id,
+                    rubric_criterion: { name: 'first',
+                                        max_mark: 10 },
+                    criterion_type:     'RubricCriterion'
+          end
+          it 'should respond with appropriate content' do
+            expect(assigns(:criterion_type)).to be_truthy
+            expect(assigns(:criterion)).to be_truthy
+            expect(assigns(:assignment)).to be_truthy
+          end
+          it 'should render the create_and_edit template' do
+            is_expected.to render_template(:'criteria/create_and_edit')
+          end
+
+          it 'should respond with success' do
+            is_expected.to respond_with(:success)
+          end
+        end
+      end
+
       it 'should be able to update_positions' do
         post_as @admin,
                 :update_positions,
-                format: :js,
-                criterion: [@criterion2.id,
-                            @criterion.id],
-                assignment_id: @assignment.id
+                format:             :js,
+                criterion:          [@criterion2.id, @criterion.id],
+                assignment_id:      @assignment.id
         is_expected.to render_template('criteria/update_positions')
         is_expected.to respond_with(:success)
 
@@ -218,6 +382,6 @@ RSpec.describe CriteriaController, type: :controller do
         expect(c2.position).to eql(1)
       end
     end
-  end
+  end # Tests using Rubric Criteria
 end
 
