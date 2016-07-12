@@ -237,6 +237,7 @@ en:
         review: "Review"
     peer_review:
         problem: "An unexpected problem occured"
+        submission_nil_failure: "Submissions for original assignment need to be collected first"
         random_assign_failure: "Unable to randomly assign, too many reviews requested per selected reviewer/reviewees"
         number_of_reviews_header: "Num reviews"
         assigned_reviewers_header: "Assigned reviewers"
