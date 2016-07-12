@@ -250,7 +250,7 @@
 
       var groups_data = this.props.groups.map(function(group) {
         var reviewerGroups = [];
-        var reviewee_group_id = group.group_id;
+        var reviewee_group_id = group.id;
         var reviewer_ids = this.props.revieweeToReviewersMap[reviewee_group_id];
         reviewer_ids.forEach(function(reviewer_group_id) {
           var reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
