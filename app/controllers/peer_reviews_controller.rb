@@ -83,6 +83,11 @@ class PeerReviewsController < ApplicationController
   def assign(reviewer_groups, reviewee_groups)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
+
+        if reviewee_group.current_submission_used.nil?
+          raise SubmissionsNotCollectedException
+        end
+
         result = Result.create!(submission: reviewee_group.current_submission_used,
                                 marking_state: Result::MARKING_STATES[:incomplete])
         #TODO this check needs to be edited - it will always pass
