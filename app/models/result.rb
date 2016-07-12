@@ -148,6 +148,11 @@ class Result < ActiveRecord::Base
     # want the peer-visible criteria
     visibility = is_a_review? ? :peer : user_visibility
 
+    if submission == nil
+      errors.add(:base, I18n.t('peer_review.submission_nil_failure'))
+      raise SubmissionsNotCollectedException
+    end
+
     criteria = submission.assignment.get_criteria(visibility)
     # criteria = submission.assignment.get_criteria(user_visibility)
     criteria.each do |criterion|

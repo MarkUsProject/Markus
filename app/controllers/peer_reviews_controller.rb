@@ -66,6 +66,9 @@ class PeerReviewsController < ApplicationController
         rescue ActiveRecord::RecordInvalid
           render text: t('peer_review.problem'), status: 400
           return
+        rescue SubmissionsNotCollectedException
+          render text: t('peer_review.submission_nil_failure'), status: 400
+          return
         end
       when 'unassign'
         unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
