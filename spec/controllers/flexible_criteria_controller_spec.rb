@@ -25,13 +25,6 @@ describe FlexibleCriteriaController do
       end
     end
 
-    context '#destroy' do
-      it 'should respond with redirect' do
-        delete :destroy, assignment_id: 1, id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
-
     context '#download' do
       it 'should respond with redirect' do
         get :download, assignment_id: 1
@@ -65,13 +58,6 @@ describe FlexibleCriteriaController do
     context '#update' do
       it 'should respond with redirect' do
         put :update, assignment_id: 1, id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
-
-    context '#destroy' do
-      it 'should respond with redirect' do
-        delete :destroy, assignment_id: 1, id: 1
         is_expected.to respond_with :redirect
       end
     end
@@ -516,26 +502,4 @@ describe FlexibleCriteriaController do
       end
     end
   end # An authenticated and authorized admin doing a POST
-
-  describe 'An authenticated and authorized admin doing a DELETE' do
-    before(:each) do
-      @admin = create(:admin)
-      @assignment = create(:flexible_assignment)
-      @criterion = create(:flexible_criterion,
-                          assignment: @assignment)
-    end
-
-    it ' should be able to delete the criterion' do
-      delete_as @admin, :destroy,
-                format: :js,
-                assignment_id: 1,
-                id: @criterion.id
-      expect(assigns(:criterion)).to be_truthy
-      expect(I18n.t('criterion_deleted_success')).to eql(flash[:success])
-      is_expected.to respond_with(:success)
-
-      expect { FlexibleCriterion.find(@criterion.id) }
-        .to raise_error(ActiveRecord::RecordNotFound)
-    end
-  end
 end

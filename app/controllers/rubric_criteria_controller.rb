@@ -47,16 +47,6 @@ class RubricCriteriaController < ApplicationController
     render 'criteria/create_and_edit', formats: [:js], handlers: [:erb]
   end
 
-  def destroy
-    @criterion = RubricCriterion.find(params[:id])
-    @assignment = @criterion.assignment
-    @criteria = @assignment.get_criteria
-    #delete all marks associated with this criterion
-    @criterion.destroy
-    flash[:success] = I18n.t('criterion_deleted_success')
-    render 'criteria/destroy', formats: [:js], handlers: [:erb]
-  end
-
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
     file_out = MarkusCSV.generate(@assignment.get_criteria) do |criterion|

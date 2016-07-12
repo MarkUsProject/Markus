@@ -55,11 +55,6 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
           put :update, assignment_id: @assignment.id, id: 1
           assert_response :redirect
         end
-
-        should 'be redirect on delete' do
-          delete :destroy, assignment_id: @assignment.id, id: 1
-          assert_response :redirect
-        end
       end
     end
   end # An unauthenticated and unauthorized user doing a GET
@@ -348,18 +343,6 @@ END
         assert assigns :criterion
         assert render_template 'criteria/create_and_edit'
         assert_response :success
-      end
-
-      should 'delete criterion' do
-        delete_as @admin, :destroy, assignment_id: 1, id: @criterion.id
-
-        assert assigns :criterion
-        assert_equal flash[:success], I18n.t('criterion_deleted_success')
-        assert_response :success
-
-        assert_raise ActiveRecord::RecordNotFound do
-          RubricCriterion.find(@criterion.id)
-        end
       end
 
 

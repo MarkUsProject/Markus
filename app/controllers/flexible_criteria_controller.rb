@@ -42,17 +42,6 @@ class FlexibleCriteriaController < ApplicationController
     render 'criteria/create_and_edit', formats: [:js], handlers: [:erb]
   end
 
-  def destroy
-    @criterion = FlexibleCriterion.find(params[:id])
-    @assignment = @criterion.assignment
-    @criteria = @assignment.get_criteria
-    # TODO delete all marks associated with this criterion
-    # Will be possible when Mark gets its association with FlexibleCriterion.
-    @criterion.destroy
-    flash.now[:success] = I18n.t('criterion_deleted_success')
-    render 'criteria/destroy', formats: [:js], handlers: [:erb]
-  end
-
   def download
     @assignment = Assignment.find(params[:assignment_id])
     criteria = @assignment.get_criteria.order(:position)

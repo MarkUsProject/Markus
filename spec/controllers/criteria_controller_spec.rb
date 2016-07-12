@@ -12,6 +12,13 @@ RSpec.describe CriteriaController, type: :controller do
         end
       end
 
+      context '#destroy' do
+        it 'should respond with redirect' do
+          delete :destroy, assignment_id: 1, id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
       context '#update_positions' do
         it 'should respond with redirect' do
           get :update_positions, assignment_id: 1
@@ -24,6 +31,13 @@ RSpec.describe CriteriaController, type: :controller do
       context '#new' do
         it 'should respond with redirect' do
           post :new, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
+      context '#destroy' do
+        it 'should respond with redirect' do
+          delete :destroy, assignment_id: 1, id: 1
           is_expected.to respond_with :redirect
         end
       end
@@ -112,14 +126,45 @@ RSpec.describe CriteriaController, type: :controller do
         expect(c2.position).to eql(1)
       end
     end
+
+    describe 'An authenticated and authorized admin doing a DELETE' do
+      before(:each) do
+        @admin = create(:admin)
+        @assignment = create(:flexible_assignment)
+        @criterion = create(:flexible_criterion,
+                            assignment: @assignment)
+      end
+
+      it ' should be able to delete the criterion' do
+        delete_as @admin,
+                  :destroy,
+                  format:         :js,
+                  assignment_id:  1,
+                  id:             @criterion.id,
+                  criterion_type: @criterion.class.to_s
+        expect(assigns(:criterion)).to be_truthy
+        expect(I18n.t('criterion_deleted_success')).to eql(flash[:success])
+        is_expected.to respond_with(:success)
+
+        expect { FlexibleCriterion.find(@criterion.id) }
+            .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
-  describe 'Using Rubric criteria' do
+  describe 'Using Rubric Criteria' do
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#new' do
         it 'should respond with redirect' do
           get :new, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
+      context '#destroy' do
+        it 'should respond with redirect' do
+          delete :destroy, assignment_id: 1, id: 1
           is_expected.to respond_with :redirect
         end
       end
@@ -136,6 +181,13 @@ RSpec.describe CriteriaController, type: :controller do
       context '#new' do
         it 'should respond with redirect' do
           post :new, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
+      context '#destroy' do
+        it 'should respond with redirect' do
+          delete :destroy, assignment_id: 1, id: 1
           is_expected.to respond_with :redirect
         end
       end
@@ -216,6 +268,29 @@ RSpec.describe CriteriaController, type: :controller do
         expect(c1.position).to eql(2)
         c2 = RubricCriterion.find(@criterion2.id)
         expect(c2.position).to eql(1)
+      end
+    end
+
+    describe 'An authenticated and authorized admin doing a DELETE' do
+      before(:each) do
+        @admin = create(:admin)
+        @assignment = create(:rubric_assignment)
+        @criterion = create(:rubric_criterion,
+                            assignment: @assignment)
+      end
+
+      it ' should be able to delete the criterion' do
+        delete_as @admin,         :destroy,
+                  format:         :js,
+                  assignment_id:  1,
+                  id:             @criterion.id,
+                  criterion_type: @criterion.class.to_s
+        expect(assigns(:criterion)).to be_truthy
+        expect(I18n.t('criterion_deleted_success')).to eql(flash[:success])
+        is_expected.to respond_with(:success)
+
+        expect { RubricCriterion.find(@criterion.id) }
+            .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

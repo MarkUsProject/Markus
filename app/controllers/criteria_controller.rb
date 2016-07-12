@@ -6,6 +6,15 @@ class CriteriaController < ApplicationController
     @criterion = @criterion_type.constantize.new
   end
 
+  def destroy
+    @criterion = params[:criterion_type].constantize.find(params[:id])
+    @assignment = @criterion.assignment
+    @criteria = @assignment.get_criteria
+    # Delete all marks associated with this criterion
+    @criterion.destroy
+    flash[:success] = I18n.t('criterion_deleted_success')
+  end
+
   # This method handles the drag/drop criteria sorting.
   def update_positions
     @assignment = Assignment.find(params[:assignment_id])
