@@ -115,7 +115,7 @@ RSpec.describe CriteriaController, type: :controller do
                  format:         :js,
                  assignment_id:  1,
                  id:             @criterion.id,
-                 criterion_type: @criterion.type
+                 criterion_type: @criterion.class.to_s
         end
 
         it 'should respond with appropriate content' do
@@ -159,7 +159,7 @@ RSpec.describe CriteriaController, type: :controller do
                   format:         :js,
                   assignment_id:  1,
                   id:             @criterion.id,
-                  criterion_type: @criterion.type
+                  criterion_type: @criterion.class.to_s
         end
 
         it ' should respond with appropriate content' do
@@ -309,7 +309,7 @@ RSpec.describe CriteriaController, type: :controller do
                  format:         :js,
                  assignment_id:  1,
                  id:             @criterion.id,
-                 criterion_type: @criterion.type
+                 criterion_type: @criterion.class.to_s
         end
 
         it 'should respond with appropriate content' do
@@ -356,7 +356,7 @@ RSpec.describe CriteriaController, type: :controller do
                   format:         :js,
                   assignment_id:  1,
                   id:             @criterion.id,
-                  criterion_type: @criterion.type
+                  criterion_type: @criterion.class.to_s
         end
 
         it ' should respond with appropriate content' do

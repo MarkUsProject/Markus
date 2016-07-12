@@ -8,7 +8,7 @@ class CriteriaController < ApplicationController
 
   def edit
     @criterion_type = params[:criterion_type]
-    @criterion = get_class(@criterion_type).find(params[:id])
+    @criterion = @criterion_type.constantize.find(params[:id])
   end
 
   # This method handles the drag/drop criteria sorting.

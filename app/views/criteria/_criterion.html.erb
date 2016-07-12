@@ -7,7 +7,7 @@
                   action: 'edit',
                   assignment_id: @assignment.id,
                   id: criterion.id,
-                  criterion_type: criterion.type },
+                  criterion_type: criterion.class.to_s },
                 id: "criterion_title_#{criterion.id}",
                 remote: true %>
   </span>

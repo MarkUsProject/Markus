@@ -5,7 +5,7 @@ class FlexibleCriteriaController < ApplicationController
   def index
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.past_all_due_dates?
-      flash[:notice] = t('past_due_date_warning')
+      flash[:notice] = I18n.t('past_due_date_warning')
     end
     @criteria = @assignment.get_criteria.order(:position)
   end
