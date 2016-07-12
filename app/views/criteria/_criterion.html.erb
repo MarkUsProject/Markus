@@ -3,11 +3,9 @@
     <%= link_to truncate(criterion.name,
                          length: 30,
                          omission: '...'),
-                { controller: 'criteria',
-                  action: 'edit',
-                  assignment_id: @assignment.id,
-                  id: criterion.id,
-                  criterion_type: criterion.class.to_s },
+                edit_assignment_criterion_url(assignment_id: @assignment.id,
+                                              id: criterion.id,
+                                              criterion_type: criterion.class.to_s),
                 id: "criterion_title_#{criterion.id}",
                 remote: true %>
   </span>
