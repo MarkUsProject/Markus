@@ -1,9 +1,8 @@
 <li id='new_criterion'>
 	<%= form_for @criterion,
-    url: { controller: 'criteria',
-           action: 'create',
-           assignment_id: assignment.id,
-           criterion_type: @criterion_type },
+    url: assignment_criteria_path(assignment_id: assignment.id,
+                                  criterion_type: @criterion_type),
+    method: :post,
     remote: true do |f| %>
     <div id='new_criterion_error' style='display:none;' class='error'></div>
     <%= label_tag 'new_criterion_prompt',
