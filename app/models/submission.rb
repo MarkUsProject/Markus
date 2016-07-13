@@ -109,7 +109,7 @@ class Submission < ActiveRecord::Base
       marks_earned = 0
       mark_total = 0
       mark.markable.test_scripts.each do |test_script|
-        res = test_script_results.where(test_script_id: test_script.id).last
+        res = test_script_results.where(test_script_id: test_script.id).first
         marks_earned += res.marks_earned
         mark_total += test_script.max_marks
       end
