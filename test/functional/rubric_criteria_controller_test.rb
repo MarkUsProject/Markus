@@ -51,11 +51,6 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
           assert_response :redirect
         end
 
-        should 'be redirected on update' do
-          put :update, assignment_id: @assignment.id, id: 1
-          assert_response :redirect
-        end
-
         should 'be redirect on delete' do
           delete :destroy, assignment_id: @assignment.id, id: 1
           assert_response :redirect
@@ -277,35 +272,6 @@ END
         assert assigns :criterion
         assert render_template :edit
         assert_response :success
-      end
-
-      should 'be able to save with errors' do
-        @errors = ActiveModel::Errors.new(self)
-        RubricCriterion.any_instance.expects(:save).once.returns(false)
-        RubricCriterion.any_instance.expects(:errors).once.returns(@errors)
-        get_as @admin,
-               :update,
-               format: :js,
-               assignment_id: @assignment.id,
-               id: @criterion.id,
-               rubric_criterion: { name: 'one',
-                                   max_mark: 10 }
-        assert assigns :criterion
-        assert render_template 'errors'
-        assert_response :success
-      end
-
-      should 'be able to save without errors' do
-        get_as @admin,
-               :update,
-               format: :js,
-               assignment_id: @assignment.id,
-               id: @criterion.id,
-               rubric_criterion: { name: 'one',
-                                   max_mark: 10 }
-        assert assigns :criterion
-        assert_equal I18n.t('criterion_saved_success'), flash[:success]
-        assert render_template :update
       end
 
       should 'be able to save with error' do

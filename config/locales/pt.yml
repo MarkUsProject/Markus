@@ -1072,6 +1072,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       errors:
         messages:
           name_taken: "Nome de critério já utilizado."
+          input_number: "Deve ser um número maior do que 0.0."
       move_criterion:
         error: "Impossível mover critério (flexível)."
       ta_visible: "Tornar visível para assistentes de ensino"
@@ -1118,7 +1119,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         error: "Alguns critérios de rúbrica eram inválidos:"
         syntax_error: "Existe um erro no arquivo carregado : %{error}"
         empty_error: "Nenhum critério foi encontrado no arquivo fornecido."
-      error_total: "Peso total deve ser positivo"
       defaults:
         level_0: "Insuficiente"
         level_1: "Fraco"
@@ -1133,6 +1133,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       errors:
         messages:
           name_taken: "Nome de critério já utilizado."
+          input_number: "Deve ser um número maior do que 0.0."
       move_criterion:
         error: "Impossível mover rúbrica."
       ta_visible: "Tornar visível para assistentes de ensino"
@@ -1218,7 +1219,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     criteria_edit_total_mark:     "Esse critério será classificado de %{criterion_total_mark}"
     criterion_saved_success:   "Critério salvo com sucesso"
-    weight_not_number: "peso não é um número."
     criterion_deleted_success:  "Critério, e todas notas associadas foram apagas com sucesso"
     criterion:          "Critério"
     total_mark:         "Nota total"

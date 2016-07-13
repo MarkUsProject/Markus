@@ -6,7 +6,6 @@ class RubricCriterion < Criterion
   validates_presence_of :max_mark
   validates_numericality_of :max_mark
   before_save :round_max_mark
-  validate :validate_max_mark, on: :update
 
   after_save :update_existing_results
 
@@ -24,6 +23,11 @@ class RubricCriterion < Criterion
   validates_numericality_of :assignment_id,
                             only_integer: true,
                             greater_than: 0
+
+  validates_presence_of :max_mark
+  validates_numericality_of :max_mark,
+                            message: I18n.t('rubric_criteria.errors.messages.input_number'),
+                            greater_than: 0.0
 
   validates_presence_of :name
   validates_uniqueness_of :name,
@@ -48,10 +52,6 @@ class RubricCriterion < Criterion
       result = result.concat(cta.ta.get_groupings_by_assignment(assignment))
     end
     self.assigned_groups_count = result.uniq.length
-  end
-
-  def validate_max_mark
-    errors.add(:assignment, I18n.t('rubric_criteria.error_total')) if assignment.max_mark + max_mark - max_mark_was <= 0
   end
 
   # Just a small effort here to remove magic numbers...

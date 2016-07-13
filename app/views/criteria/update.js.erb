@@ -13,5 +13,5 @@ document.getElementById('visibility_indicator_<%= @criterion.id %>').innerHTML =
 document.getElementById('criteria_total_max_mark').innerHTML = '<%= @criterion.assignment.max_mark %>';
 // Update editing pane
 document.getElementById('editing_pane_menu').innerHTML =
-  '<%= escape_javascript(render partial: "#{@criterion.assignment.marking_scheme_type}_criteria/criterion_editor",
+  '<%= escape_javascript(render partial: "#{@criterion_type.tableize}/criterion_editor",
                                 locals: { criterion: @criterion }) %>';

@@ -15,17 +15,6 @@ class FlexibleCriteriaController < ApplicationController
     render 'criteria/edit', formats: [:js], handlers: [:erb]
   end
 
-  def update
-    @criterion = FlexibleCriterion.find(params[:id])
-    unless @criterion.update_attributes(flexible_criterion_params)
-      @errors = @criterion.errors
-      render 'criteria/errors', formats: [:js], handlers: [:erb]
-      return
-    end
-    flash.now[:success] = I18n.t('criterion_saved_success')
-    render 'criteria/update', formats: [:js], handlers: [:erb]
-  end
-
   def create
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.get_criteria

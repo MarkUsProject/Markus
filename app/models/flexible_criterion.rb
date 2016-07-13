@@ -29,7 +29,7 @@ class FlexibleCriterion < Criterion
 
   validates_presence_of :max_mark
   validates_numericality_of :max_mark,
-                            message: 'must be a number greater than 0.0',
+                            message: I18n.t('flexible_criteria.errors.messages.input_number'),
                             greater_than: 0.0
 
   has_many :test_scripts, as: :criterion

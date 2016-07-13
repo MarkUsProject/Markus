@@ -1105,6 +1105,7 @@ fr:
       errors:
         messages:
           name_taken: "Nom du critère déjà utilisé."
+          input_number: "Doit être un nombre supérieur à 0.0."
       move_criterion:
         error: "Erreur: impossible de déplacer ce critère (flexible)."
       ta_visible: "Rendre visible aux assistants d'enseignement"
@@ -1149,7 +1150,6 @@ fr:
                     &nbsp;&nbsp;level_1:<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
           </p>"
-      error_total: "total weight must be positive"
       defaults:
         level_0: "Très insuffisant"
         level_1: "Insuffisant"
@@ -1164,6 +1164,7 @@ fr:
       errors:
         messages:
           name_taken: "Nom du critère déjà utilisé."
+          input_number: "Doit être un nombre supérieur à 0.0."
       move_criterion:
         error: "Erreur: impossible de déplacer cette rubric."
       ta_visible: "Rendre visible aux assistants d'enseignement"
@@ -1229,7 +1230,6 @@ fr:
 
     criteria_edit_total_mark:     "Ce critère sera noté sur %{criterion_total_mark}."
     criterion_saved_success:   "Le critète a été sauvegardé."
-    weight_not_number: "le coefficient n'est pas un nombre."
     criterion_deleted_success:  "Le critère et toutes les notes associées ont été supprimés."
     criterion:          "Critère"
     total_mark:         "Note totale"
