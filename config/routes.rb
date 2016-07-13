@@ -6,6 +6,18 @@ Markus::Application.routes.draw do
 
   # optional path scope (denoted by the parentheses)
   scope "(:locale)", locale: /en|fr|pt/  do
+    # Regular routes for rubric criteria
+    get 'assignments/:assignment_id/rubric_criteria' => 'rubric_criteria#index', as: :assignment_rubric_criteria
+    post 'assignments/:assignment_id/rubric_criteria/csv_upload' => 'rubric_criteria#csv_upload', as: :csv_upload_assignment_rubric_criteria
+    post 'assignments/:assignment_id/rubric_criteria/yml_upload' => 'rubric_criteria#yml_upload', as: :yml_upload_assignment_rubric_criteria
+    get 'assignments/:assignment_id/rubric_criteria/download_csv' => 'rubric_criteria#download_csv', as: :download_csv_assignment_rubric_criteria
+    get 'assignments/:assignment_id/rubric_criteria/download_yml' => 'rubric_criteria#download_yml', as: :download_yml_assignment_rubric_criteria
+
+    # Regular routes for flexible criteria
+    get 'assignments/:assignment_id/flexible_criteria' => 'flexible_criteria#index', as: :assignment_flexible_criteria
+    post 'assignments/:assignment_id/flexible_criteria/upload' => 'flexible_criteria#upload', as: :upload_assignment_flexible_criteria
+    get 'assignments/:assignment_id/flexible_criteria/download' => 'flexible_criteria#download', as: :download_assignment_flexible_criteria
+
     # API routes
     namespace :api do
       resources :users, except: [:new, :edit]
@@ -74,33 +86,9 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :criteria do
+      resources :criteria, except: [:index] do
         collection do
           post 'update_positions'
-        end
-      end
-
-      resources :rubric_criteria do
-        member do
-          delete 'destroy'
-        end
-
-        collection do
-          post 'csv_upload'
-          post 'yml_upload'
-          get 'download_csv'
-          get 'download_yml'
-        end
-      end
-
-      resources :flexible_criteria do
-        member do
-          delete 'destroy'
-        end
-
-        collection do
-          post 'upload'
-          get 'download'
         end
       end
 
