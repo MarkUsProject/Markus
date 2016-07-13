@@ -21,7 +21,7 @@ API_KEY       -- an Admin API key. It can be found on the admin dashboard page.
 ROOT_URL      -- the root domain of the MarkUs instance.
 ROOT_DIR      -- the directory containing the group repos.
 ASSIGMENT_ID  -- the ID of the assignment.
-FILE_NAME     -- the name of the test results file .
+FILE_NAME     -- the name of the test results file.
 process_marks -- function for converting test results into a map from criteria
                  to grade. See process_marks docstring below.
 
@@ -32,9 +32,10 @@ from markusapi import Markus
 # Required macros
 API_KEY = 'MjA5MDdkMjlmZzTlmMXTc5NmZEjNTgE0ODIa0Mm1UQ='
 ROOT_URL = 'http://localhost:3000/'
-ROOT_DIR = 'root/repos'
+ROOT_DIR = 'repos'
 ASSIGNMENT_ID = 1
-FILE_NAME = 'test_results.txt'
+FILE_NAME = 'report.txt'
+
 
 def process_marks(file_contents):
     """ (str) -> dict of str:float
@@ -45,41 +46,40 @@ def process_marks(file_contents):
     in the assignment's rubric (punctuation included).
     Marks need to be valid numerics, or 'nil'.
     """
-    d = {}
-    d['My Criteria 1.'] = 1.0
-    d['My Criteria 2.'] = 'nil'
+    d = {'My Criterion 1.': 1.0, 'My Criterion 2.': 'nil'}
     return d
-
 
 """ --------Ideally, nothing below need be touched-------- """
 
 # Initialize an instance of the API class
 api = Markus(API_KEY, ROOT_URL)
+# If Markus uses UTORid authentication, the instance should be initialized with your session cookie too
+# Open Markus in your browser, authenticate, then copy your cookie that starts with '_shibsession_' and don't log out
+# COOKIE = '_shibsession_64656661756c7468747470733a2f2f6d61726b75732e6364662e746f726f6e746f2e656475'
+# api = Markus(API_KEY, ROOT_URL, COOKIE)
 print('Initialized Markus object successfully.')
-group_names = api.get_groups(ASSIGNMENT_ID).keys()
+groups = api.get_groups(ASSIGNMENT_ID)
 
-# Upload the test results.
-for group in group_names:
-    with open(ROOT_DIR + '/' + group + '/' + FILE_NAME) as open_file:
-        try:
+for group in groups:
+    group_name = group['group_name']
+    group_id = group['id']
+    try:
+        with open(ROOT_DIR + '/' + group_name + '/' + FILE_NAME) as open_file:
             file_contents = open_file.read()
-            api.upload_test_results(ASSIGNMENT_ID, group,
-                                    FILE_NAME, file_contents)
-        except:
-            print('Error: uploading results for {} failed.'.format(locals()))
-print('Done uploading results.')
-        
-# All test results files are now uploaded.
-# We now want to extract marks from each file.
-for group in group_names:
-    with open(ROOT_DIR + '/' + group + '/' + FILE_NAME) as open_file:
-        try:
-            file_contents = open_file.read()
-            results = process_marks(file_contents)
-            api.update_marks_single_group(results, ASSIGNMENT_ID, group)
-        except:
-            print('Error: updating marks for {} failed.'.format(locals()))
-print('Done updating marks.')
+            # Upload the feedback file
+            try:
+                response = api.upload_feedback_file(ASSIGNMENT_ID, group_id, FILE_NAME, file_contents)
+                print('Uploaded feedback file for {}, Markus responded: {}'.format(group_name, response))
+            except:
+                print('Error: uploading feedback file for {} failed'.format(group_name))
+            # Extract and upload marks from the feedback file
+            try:
+                results = process_marks(file_contents)
+                response = api.update_marks_single_group(results, ASSIGNMENT_ID, group_id)
+                print('Uploaded marks for {}, Markus responded: {}'.format(group_name, response))
+            except:
+                print('Error: uploading marks for {} failed'.format(group_name))
+    except:
+        print('Error: accessing repository {} failed.'.format(group_name))
+
 print('Finished')
-
-
