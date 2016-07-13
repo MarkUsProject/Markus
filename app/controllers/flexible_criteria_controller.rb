@@ -85,15 +85,4 @@ class FlexibleCriteriaController < ApplicationController
     end
     redirect_to action: 'index', assignment_id: @assignment.id
   end
-
-  private
-
-  def flexible_criterion_params
-    params.require(:flexible_criterion).permit(:name,
-                                               :description,
-                                               :position,
-                                               :max_mark,
-                                               :ta_visible,
-                                               :peer_visible)
-  end
 end
