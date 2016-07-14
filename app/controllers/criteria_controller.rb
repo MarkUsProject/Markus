@@ -15,7 +15,7 @@ class CriteriaController < ApplicationController
     @criterion = params[:criterion_type].constantize.find(params[:id])
     @assignment = @criterion.assignment
     @criteria = @assignment.get_criteria
-    # Delete all marks associated with this criterion
+    # Delete all marks associated with this criterion.
     @criterion.destroy
     flash[:success] = I18n.t('criterion_deleted_success')
   end
