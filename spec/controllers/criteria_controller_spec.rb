@@ -99,7 +99,6 @@ RSpec.describe CriteriaController, type: :controller do
 
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
-          expect(assigns(:criterion_type)).to be_truthy
         end
 
         it 'should render the new template' do
@@ -122,7 +121,6 @@ RSpec.describe CriteriaController, type: :controller do
         end
 
         it 'should respond with appropriate content' do
-          expect(assigns(:criterion_type)).to be_truthy
           expect(assigns(:criterion)).to be_truthy
         end
 
@@ -176,7 +174,6 @@ RSpec.describe CriteriaController, type: :controller do
                     criterion_type:     'FlexibleCriterion'
           end
           it 'should respond with appropriate content' do
-            expect(assigns(:criterion_type)).to be_truthy
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:errors)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
@@ -203,7 +200,6 @@ RSpec.describe CriteriaController, type: :controller do
                     criterion_type:     'FlexibleCriterion'
           end
           it 'should respond with appropriate content' do
-            expect(assigns(:criterion_type)).to be_truthy
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
@@ -227,7 +223,6 @@ RSpec.describe CriteriaController, type: :controller do
                     criterion_type:     'FlexibleCriterion'
           end
           it 'should respond with appropriate content' do
-            expect(assigns(:criterion_type)).to be_truthy
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
@@ -252,7 +247,6 @@ RSpec.describe CriteriaController, type: :controller do
         end
 
         it ' should respond with appropriate content' do
-          expect(assigns(:criterion_type)).to be_truthy
           expect(assigns(:criterion)).to be_truthy
         end
 
@@ -375,7 +369,6 @@ RSpec.describe CriteriaController, type: :controller do
 
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
-          expect(assigns(:criterion_type)).to be_truthy
         end
 
         it 'should render the new template' do
@@ -398,7 +391,6 @@ RSpec.describe CriteriaController, type: :controller do
         end
 
         it 'should respond with appropriate content' do
-          expect(assigns(:criterion_type)).to be_truthy
           expect(assigns(:criterion)).to be_truthy
         end
 
@@ -449,7 +441,6 @@ RSpec.describe CriteriaController, type: :controller do
                     criterion_type:   'RubricCriterion'
           end
           it 'should respond with appropriate content' do
-            expect(assigns(:criterion_type)).to be_truthy
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:errors)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
@@ -476,7 +467,6 @@ RSpec.describe CriteriaController, type: :controller do
                     criterion_type:   'RubricCriterion'
           end
           it 'should respond with appropriate content' do
-            expect(assigns(:criterion_type)).to be_truthy
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
@@ -500,7 +490,6 @@ RSpec.describe CriteriaController, type: :controller do
                     criterion_type:     'RubricCriterion'
           end
           it 'should respond with appropriate content' do
-            expect(assigns(:criterion_type)).to be_truthy
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
@@ -525,7 +514,6 @@ RSpec.describe CriteriaController, type: :controller do
         end
 
         it ' should respond with appropriate content' do
-          expect(assigns(:criterion_type)).to be_truthy
           expect(assigns(:criterion)).to be_truthy
         end
 

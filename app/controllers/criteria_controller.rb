@@ -2,34 +2,34 @@ class CriteriaController < ApplicationController
 
   def new
     @assignment = Assignment.find(params[:assignment_id])
-    @criterion_type = params[:criterion_type]
-    @criterion = @criterion_type.constantize.new
+    @criterion = params[:criterion_type].constantize.new
   end
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
-    @criterion_type = params[:criterion_type]
     @criteria = @assignment.get_criteria
-    @criterion = @criterion_type.constantize.new
+    criteria_class = params[:criterion_type].constantize
+    @criterion = criteria_class.new
     @criterion.assignment = @assignment
-    @criterion.max_mark = @criterion_type.constantize::DEFAULT_MAX_MARK
+    @criterion.max_mark = criteria_class::DEFAULT_MAX_MARK
     @criterion.position = @assignment.next_criterion_position
-    rubric = @criterion_type == 'RubricCriterion'
-    @criterion.set_default_levels if rubric
-    unless rubric ?
-      @criterion.update(rubric_criterion_params.deep_merge(params.require(:rubric_criterion).permit(:max_mark)))
-      : @criterion.update(flexible_criterion_params)
+    if params[:criterion_type] == 'RubricCriterion'
+      @criterion.set_default_levels
+      properly_updated = @criterion.update(rubric_criterion_params)
+    else
+      properly_updated = @criterion.update(flexible_criterion_params)
+    end
+    unless properly_updated
       @errors = @criterion.errors
-      render 'add_criterion_error', formats: [:js], handlers: [:erb]
+      render :add_criterion_error
       return
     end
     @criteria.reload
-    render 'create_and_edit', formats: [:js], handlers: [:erb]
+    render :create_and_edit
   end
 
   def edit
-    @criterion_type = params[:criterion_type]
-    @criterion = @criterion_type.constantize.find(params[:id])
+    @criterion = params[:criterion_type].constantize.find(params[:id])
   end
 
   # This method handles the drag/drop criteria sorting.
@@ -69,7 +69,9 @@ class CriteriaController < ApplicationController
                                              :level_4_name,
                                              :level_4_description,
                                              :ta_visible,
-                                             :peer_visible)
+                                             :peer_visible).deep_merge(params.require(:rubric_criterion)
+                                                                           .permit(:max_mark)
+                                                                           .transform_values { |x|  (x.to_f * 4).to_s })
   end
 
 end
