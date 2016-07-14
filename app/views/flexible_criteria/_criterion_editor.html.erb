@@ -18,7 +18,9 @@
 
 <%= form_for criterion,
              as: :flexible_criterion,
-             url: { action: 'update', id: criterion.id },
+             url: { controller: 'flexible_criteria',
+                    action: 'update',
+                    id: criterion.id },
              html: { remote: true } do |f| %>
 
   <div class='error' id='criterion_<%= criterion.id %>_error' style='display:none;'></div>

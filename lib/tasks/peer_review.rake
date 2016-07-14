@@ -12,12 +12,9 @@ namespace :db do
     a1pr.clone_groupings_from(a1.id)
 
     a1pr.groupings.each do |pr_grouping|
-      reviewer_id = pr_grouping.id
       random_group = a1.groupings[Random.rand(a1.groupings.size)]
-      if reviewer_id != random_group.id
-        reviewee_result = Result.create!(submission: random_group.current_submission_used,
-                                         marking_state: Result::MARKING_STATES[:incomplete])
-        PeerReview.create(reviewer: pr_grouping, result: reviewee_result)
+      if pr_grouping.does_not_share_any_students?(random_group)
+        PeerReview.create_peer_review_between(pr_grouping, random_group)
       end
     end
   end
