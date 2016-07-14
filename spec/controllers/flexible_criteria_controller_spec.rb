@@ -11,13 +11,6 @@ describe FlexibleCriteriaController do
       end
     end
 
-    context '#edit' do
-      it 'should respond with redirect' do
-        get :edit, assignment_id: 1, id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
-
     context '#update' do
       it 'should respond with redirect' do
         put :update, assignment_id: 1, id: 1
@@ -44,13 +37,6 @@ describe FlexibleCriteriaController do
     context '#index' do
       it 'should respond with redirect' do
         post :index, assignment_id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
-
-    context '#edit' do
-      it 'should respond with redirect' do
-        post :edit, assignment_id: 1, id: 1
         is_expected.to respond_with :redirect
       end
     end
@@ -110,27 +96,6 @@ describe FlexibleCriteriaController do
 
       it 'should render the edit template' do
         is_expected.to render_template(:index)
-      end
-
-      it 'should respond with success' do
-        is_expected.to respond_with(:success)
-      end
-    end
-
-    context '#edit' do
-      before(:each) do
-        get_as @admin, :edit,
-               format: :js,
-               assignment_id: 1,
-               id: @criterion.id
-      end
-
-      it 'should respond with appropriate content' do
-        expect(assigns(:criterion)).to be_truthy
-      end
-
-      it 'should render edit template' do
-        is_expected.to render_template(:edit)
       end
 
       it 'should respond with success' do
@@ -261,27 +226,6 @@ describe FlexibleCriteriaController do
 
       it 'should render the index template' do
         is_expected.to render_template(:index)
-      end
-
-      it 'should respond with success' do
-        is_expected.to respond_with(:success)
-      end
-    end
-
-    context '#edit' do
-      before(:each) do
-        post_as @admin, :edit,
-                format: :js,
-                assignment_id: 1,
-                id: @criterion.id
-      end
-
-      it ' should respond with appropriate content' do
-        expect(assigns(:criterion)).to be_truthy
-      end
-
-      it 'should render the edit template' do
-        is_expected.to render_template(:edit)
       end
 
       it 'should respond with success' do

@@ -6,6 +6,11 @@ class CriteriaController < ApplicationController
     @criterion = @criterion_type.constantize.new
   end
 
+  def edit
+    @criterion_type = params[:criterion_type]
+    @criterion = @criterion_type.constantize.find(params[:id])
+  end
+
   def destroy
     @criterion = params[:criterion_type].constantize.find(params[:id])
     @assignment = @criterion.assignment
