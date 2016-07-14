@@ -7,33 +7,6 @@ class RubricCriteriaController < ApplicationController
     @criteria = @assignment.get_criteria.order(:position)
   end
 
-  def create
-    @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
-    @criterion = RubricCriterion.new
-    @criterion.assignment = @assignment
-    @criterion.max_mark = RubricCriterion::DEFAULT_MAX_MARK
-    @criterion.set_default_levels
-    @criterion.position = @assignment.next_criterion_position
-    unless @criterion.update_attributes(rubric_criterion_params)
-      @errors = @criterion.errors
-      render 'criteria/add_criterion_error', formats: [:js], handlers: [:erb]
-      return
-    end
-    @criteria.reload
-    render 'criteria/create_and_edit', formats: [:js], handlers: [:erb]
-  end
-
-  def destroy
-    @criterion = RubricCriterion.find(params[:id])
-    @assignment = @criterion.assignment
-    @criteria = @assignment.get_criteria
-    #delete all marks associated with this criterion
-    @criterion.destroy
-    flash[:success] = I18n.t('criterion_deleted_success')
-    render 'criteria/destroy', formats: [:js], handlers: [:erb]
-  end
-
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
     file_out = MarkusCSV.generate(@assignment.get_criteria) do |criterion|

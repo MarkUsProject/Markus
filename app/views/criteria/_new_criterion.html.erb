@@ -1,9 +1,9 @@
 <li id='new_criterion'>
-	<%= form_for @criterion,
-    url: { controller: "#{criterion_type.to_s.tableize}",
-           action: 'create',
-           assignment_id: assignment.id },
-    remote: true do |f| %>
+  <%= form_for criterion,
+               url: assignment_criteria_path(assignment_id: assignment.id,
+                                             criterion_type: criterion.class.to_s),
+               method: :post,
+               remote: true do |f| %>
     <div id='new_criterion_error' style='display:none;' class='error'></div>
     <%= label_tag 'new_criterion_prompt',
 		  t('criteria.name') %><br>

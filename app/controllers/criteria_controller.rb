@@ -2,13 +2,43 @@ class CriteriaController < ApplicationController
 
   def new
     @assignment = Assignment.find(params[:assignment_id])
-    @criterion_type = params[:criterion_type]
-    @criterion = @criterion_type.constantize.new
+    @criterion = params[:criterion_type].constantize.new
+  end
+
+  def create
+    @assignment = Assignment.find(params[:assignment_id])
+    @criteria = @assignment.get_criteria
+    criteria_class = params[:criterion_type].constantize
+    @criterion = criteria_class.new
+    @criterion.assignment = @assignment
+    @criterion.max_mark = criteria_class::DEFAULT_MAX_MARK
+    @criterion.position = @assignment.next_criterion_position
+    if params[:criterion_type] == 'RubricCriterion'
+      @criterion.set_default_levels
+      properly_updated = @criterion.update(rubric_criterion_params)
+    else
+      properly_updated = @criterion.update(flexible_criterion_params)
+    end
+    unless properly_updated
+      @errors = @criterion.errors
+      render :add_criterion_error
+      return
+    end
+    @criteria.reload
+    render :create_and_edit
   end
 
   def edit
-    @criterion_type = params[:criterion_type]
-    @criterion = @criterion_type.constantize.find(params[:id])
+    @criterion = params[:criterion_type].constantize.find(params[:id])
+  end
+
+  def destroy
+    @criterion = params[:criterion_type].constantize.find(params[:id])
+    @assignment = @criterion.assignment
+    @criteria = @assignment.get_criteria
+    # Delete all marks associated with this criterion.
+    @criterion.destroy
+    flash[:success] = I18n.t('criterion_deleted_success')
   end
 
   def update
