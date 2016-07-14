@@ -1,6 +1,9 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
+  // A constant that represents all sections
+  var ALL_SECTIONS = '';
+
   // The main manager that controls all the components.
   var PeerReviewsManager = React.createClass({
     getInitialState: function() {
@@ -132,6 +135,10 @@
   
   // The table of groups to be graders on the left.
   var ReviewerTable = React.createClass({
+    getInitialState: function() {
+      return { sectionName: ALL_SECTIONS };
+    },
+
     getDefaultProps: function() {
       return {
         columns: [
@@ -147,12 +154,17 @@
             sortable: false,
             searchable: false
           },
-        ],
+        ]
       };
     },
 
     clearCheckboxes: function() {
       this.refs.table.clearCheckboxes();
+    },
+
+    changeSection: function(event) {
+      // TODO - Need to unselect people who don't fit into this group
+      this.setState({ sectionName: event.target.value });
     },
 
     render: function() {
@@ -161,8 +173,10 @@
           name: 'all',
           text: '<%= j raw t('groups.all_grouping_counts') %>',
           func: function(group) {
-            return true;
-          }
+            if (this.state.sectionName == ALL_SECTIONS)
+              return true;
+            return this.state.sectionName == group.section;
+          }.bind(this)
         },
       ];
 
@@ -182,10 +196,21 @@
       return (
         <div className={'col-left'}>
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
+            <% if Section.any? %>
+            <span>Section:
+              <select id="peer-review-reviewer-section" className="white-background" onChange={this.changeSection}>
+                <option value=""><%= j raw t('browse_submissions.sections.all') %></option>
+                <% Section.all.order(:name).each do |section| %>
+                  <option value="<%= j raw section.name %>"><%= j raw section.name %></option>
+                <% end %>
+              </select>
+            </span>
+            <% end %>
+
             <Table ref="table"
               data={groups_data}
               columns={this.props.columns}
-              filters={this.props.filters} 
+              filters={filters}
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
               search_placeholder={'<%= j raw t('groups.search_groups') %>'} />
