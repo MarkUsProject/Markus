@@ -1079,6 +1079,12 @@ fr:
       marking_scheme: "Barème: %{identifier}"
       save: "Sauvegarder les modifications"
       add_criterion: "Ajouter Critère"
+      errors:
+        messages:
+          name_taken: "Nom du critère déjà utilisé."
+          assignment_association: "Association est pas forte avec une mission."
+          assignment_id: "Ne peut être un nombre entier supérieur à 0."
+          input_number: "Doit être un nombre supérieur à 0.0."
 
     flexible_criteria:
       title: "Critères souples"
@@ -1102,10 +1108,6 @@ fr:
         <p>La description est facultative. NB : Si aucune description n'est présente, la seconde virgule ne doit
         pas apparaître.</p>"
         success: "Le fichier contenant le barème (flexible) a bien été envoyé : %{nb_updates} mise(s) à jour."
-      errors:
-        messages:
-          name_taken: "Nom du critère déjà utilisé."
-          input_number: "Doit être un nombre supérieur à 0.0."
       move_criterion:
         error: "Erreur: impossible de déplacer ce critère (flexible)."
       ta_visible: "Rendre visible aux assistants d'enseignement"
@@ -1161,10 +1163,6 @@ fr:
         description_2: "Ce critère a été partiellement compris."
         description_3: "Ce critère a été compris."
         description_4: "Ce critère a été parfaitement compris."
-      errors:
-        messages:
-          name_taken: "Nom du critère déjà utilisé."
-          input_number: "Doit être un nombre supérieur à 0.0."
       move_criterion:
         error: "Erreur: impossible de déplacer cette rubric."
       ta_visible: "Rendre visible aux assistants d'enseignement"

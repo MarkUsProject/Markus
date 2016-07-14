@@ -112,7 +112,6 @@ RSpec.describe CriteriaController, type: :controller do
 
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
-          expect(assigns(:criterion_type)).to be_truthy
         end
 
         it 'should render the new template' do
@@ -135,7 +134,6 @@ RSpec.describe CriteriaController, type: :controller do
         end
 
         it 'should respond with appropriate content' do
-          expect(assigns(:criterion_type)).to be_truthy
           expect(assigns(:criterion)).to be_truthy
         end
 
@@ -167,7 +165,6 @@ RSpec.describe CriteriaController, type: :controller do
 
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
-            expect(assigns(:criterion_type)).to be_truthy
           end
 
           it 'should render the errors template' do
@@ -193,7 +190,6 @@ RSpec.describe CriteriaController, type: :controller do
 
           it 'successfully assign criterion' do
             expect(assigns(:criterion)).to be_truthy
-            expect(assigns(:criterion_type)).to be_truthy
           end
 
           it 'should render the update template' do
@@ -236,7 +232,6 @@ RSpec.describe CriteriaController, type: :controller do
         end
 
         it ' should respond with appropriate content' do
-          expect(assigns(:criterion_type)).to be_truthy
           expect(assigns(:criterion)).to be_truthy
         end
 
@@ -373,7 +368,6 @@ RSpec.describe CriteriaController, type: :controller do
 
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
-          expect(assigns(:criterion_type)).to be_truthy
         end
 
         it 'should render the new template' do
@@ -396,7 +390,6 @@ RSpec.describe CriteriaController, type: :controller do
         end
 
         it 'should respond with appropriate content' do
-          expect(assigns(:criterion_type)).to be_truthy
           expect(assigns(:criterion)).to be_truthy
         end
 
@@ -428,7 +421,6 @@ RSpec.describe CriteriaController, type: :controller do
 
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
-            expect(assigns(:criterion_type)).to be_truthy
           end
 
           it 'should render the errors template' do
@@ -454,7 +446,6 @@ RSpec.describe CriteriaController, type: :controller do
 
           it 'successfully assign criterion' do
             expect(assigns(:criterion)).to be_truthy
-            expect(assigns(:criterion_type)).to be_truthy
           end
 
           it 'should render the update template' do
@@ -494,7 +485,6 @@ RSpec.describe CriteriaController, type: :controller do
         end
 
         it ' should respond with appropriate content' do
-          expect(assigns(:criterion_type)).to be_truthy
           expect(assigns(:criterion)).to be_truthy
         end
 

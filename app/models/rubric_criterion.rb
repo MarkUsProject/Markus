@@ -26,13 +26,13 @@ class RubricCriterion < Criterion
 
   validates_presence_of :max_mark
   validates_numericality_of :max_mark,
-                            message: I18n.t('rubric_criteria.errors.messages.input_number'),
+                            message: I18n.t('criteria.errors.messages.input_number'),
                             greater_than: 0.0
 
   validates_presence_of :name
   validates_uniqueness_of :name,
                           scope: :assignment_id,
-                          message: I18n.t('rubric_criteria.errors.messages.name_taken')
+                          message: I18n.t('criteria.errors.messages.name_taken')
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count

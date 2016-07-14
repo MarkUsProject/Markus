@@ -12,13 +12,14 @@ class CriteriaController < ApplicationController
   end
 
   def update
-    @criterion_type = params[:criterion_type]
-    @criterion = @criterion_type.constantize.find(params[:id])
-    rubric = @criterion_type == 'RubricCriterion'
-    unless rubric ? @criterion.update(rubric_criterion_params.deep_merge(params.require(:rubric_criterion)
-                                                                           .permit(:max_mark)
-                                                                           .transform_values { |x|  (x.to_f * 4).to_s }))
-      : @criterion.update(flexible_criterion_params)
+    criterion_type = params[:criterion_type]
+    @criterion = criterion_type.constantize.find(params[:id])
+    if criterion_type == 'RubricCriterion'
+      properly_updated = @criterion.update(rubric_criterion_params)
+    else
+      properly_updated = @criterion.update(flexible_criterion_params)
+    end
+    unless properly_updated
       @errors = @criterion.errors
       render :errors
       return
@@ -63,7 +64,9 @@ class CriteriaController < ApplicationController
                                              :level_4_name,
                                              :level_4_description,
                                              :ta_visible,
-                                             :peer_visible)
+                                             :peer_visible).deep_merge(params.require(:rubric_criterion)
+                                                                           .permit(:max_mark)
+                                                                           .transform_values { |x|  (x.to_f * 4).to_s })
   end
 
 end
