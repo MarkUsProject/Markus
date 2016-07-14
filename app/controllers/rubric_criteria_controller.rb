@@ -7,11 +7,6 @@ class RubricCriteriaController < ApplicationController
     @criteria = @assignment.get_criteria.order(:position)
   end
 
-  def edit
-    @criterion = RubricCriterion.find(params[:id])
-    render 'criteria/edit', formats: [:js], handlers: [:erb]
-  end
-
   def update
     begin
       @criterion = RubricCriterion.find(params[:id])
