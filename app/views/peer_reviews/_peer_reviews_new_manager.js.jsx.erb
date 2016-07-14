@@ -28,6 +28,10 @@
       this.setState({selectedReviewerGroups: reviewerGroups});
     },
 
+    clearReviewerToRevieweeCheckboxData: function() {
+      this.setState({selectedReviewerInRevieweeGroups: {}});
+    },
+
     updateSelectedRevieweeGroups: function(revieweeGroups) {
       this.setState({selectedRevieweeGroups: revieweeGroups});
     },
@@ -126,9 +130,31 @@
               onReviewerChangeInRevieweeTable={this.updatedSelectedReviewersInRevieweesTable}
               selectedReviewerInRevieweeGroups={this.state.selectedReviewerInRevieweeGroups}
               onSelectedGroupsChange={this.updateSelectedRevieweeGroups}
+              clearReviewerToRevieweeCheckboxData={this.clearReviewerToRevieweeCheckboxData}
               refresh={this.refresh} />
           </div>
         </div>
+      );
+    }
+  });
+
+  //
+  var SectionSelectionMenu = React.createClass({
+    render: function() {
+      // Note: Apparently render has to return something, so the 'if' has to go
+      // inside (otherwise errors happen).
+      return (
+        <span>
+        <% if Section.any? %>
+          <%= j raw t('browse_submissions.section') %>:
+          <select id={this.props.selectId} className="white-background" onChange={this.props.changeSection}>
+            <option value=""><%= j raw t('browse_submissions.sections.all') %></option>
+            <% Section.all.order(:name).each do |section| %>
+              <option value="<%= j raw section.name %>"><%= j raw section.name %></option>
+            <% end %>
+          </select>
+        <% end %>
+        </span>
       );
     }
   });
@@ -163,8 +189,9 @@
     },
 
     changeSection: function(event) {
-      // TODO - Need to unselect people who don't fit into this group
+      this.clearCheckboxes();
       this.setState({ sectionName: event.target.value });
+      this.props.refresh();
     },
 
     render: function() {
@@ -173,8 +200,9 @@
           name: 'all',
           text: '<%= j raw t('groups.all_grouping_counts') %>',
           func: function(group) {
-            if (this.state.sectionName == ALL_SECTIONS)
+            if (this.state.sectionName == ALL_SECTIONS) {
               return true;
+            }
             return this.state.sectionName == group.section;
           }.bind(this)
         },
@@ -189,24 +217,17 @@
         return {
           id: group.id,
           name: group.name,
-          groups: numReviews
+          groups: numReviews,
+          section: group.section
         };
       }.bind(this));
 
       return (
         <div className={'col-left'}>
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
-            <% if Section.any? %>
-            <span>Section:
-              <select id="peer-review-reviewer-section" className="white-background" onChange={this.changeSection}>
-                <option value=""><%= j raw t('browse_submissions.sections.all') %></option>
-                <% Section.all.order(:name).each do |section| %>
-                  <option value="<%= j raw section.name %>"><%= j raw section.name %></option>
-                <% end %>
-              </select>
-            </span>
-            <% end %>
-
+            <SectionSelectionMenu
+              changeSection={this.changeSection}
+              selectId={"peer-review-reviewer-section"} />
             <Table ref="table"
               data={groups_data}
               columns={this.props.columns}
@@ -222,6 +243,10 @@
 
   // The table of peer reviewees and assigned reviewers on the right.
   var RevieweeTable = React.createClass({
+    getInitialState: function() {
+      return { sectionName: ALL_SECTIONS };
+    },
+
     getDefaultProps: function() {
       return {
         columns: [
@@ -243,6 +268,13 @@
 
     clearCheckboxes: function() {
       this.refs.table.clearCheckboxes();
+      this.props.clearReviewerToRevieweeCheckboxData();
+    },
+
+    changeSection: function(event) {
+      this.clearCheckboxes();
+      this.setState({ sectionName: event.target.value });
+      this.props.refresh();
     },
 
     reviewerInRevieweeChange: function(event) {
@@ -268,8 +300,11 @@
           name: 'all',
           text: '<%= j raw t('groups.all_grouping_counts') %>',
           func: function(group) {
-            return true;
-          }
+            if (this.state.sectionName == ALL_SECTIONS) {
+              return true;
+            }
+            return this.state.sectionName == group.section;
+          }.bind(this)
         },
       ];
 
@@ -291,17 +326,21 @@
         return {
           id: group.id,
           name: group.name,
-          members: reviewerGroups
+          members: reviewerGroups,
+          section: group.section
         };
       }.bind(this));
 
       return (
         <div className={'col-right'}>
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
+            <SectionSelectionMenu
+              changeSection={this.changeSection}
+              selectId={"peer-review-reviewee-section"} />
             <Table ref="table"
               data={groups_data}
               columns={this.props.columns}
-              filters={this.props.filters}
+              filters={filters}
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
               search_placeholder={'<%= j raw t('groups.search_groups') %>'} />

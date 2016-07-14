@@ -35,6 +35,7 @@ module GroupsHelper
       g = grouping.attributes
       g[:name] = grouping.group.group_name
       g[:members] = grouping.students
+      g[:section] = grouping.section
       g[:valid] = grouping.is_valid?
       g[:validate_link] = view_context.link_to(
         view_context.image_tag(
