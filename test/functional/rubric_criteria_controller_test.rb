@@ -42,15 +42,6 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
           @submission = Submission.make(grouping: @grouping)
         end
 
-        should 'be redirect on edit' do
-          get :edit,
-              assignment_id: @assignment.id,
-              submission_id: @submission.id,
-              id: 1
-              #FIXME
-          assert_response :redirect
-        end
-
         should 'be redirected on update' do
           put :update, assignment_id: @assignment.id, id: 1
           assert_response :redirect
@@ -269,13 +260,6 @@ END
         assert assigns :assignment
         assert assigns :criteria
         assert render_template :index
-        assert_response :success
-      end
-
-      should 'be able to get on :edit' do
-        get_as @admin, :edit, assignment_id: 1, id: @criterion.id
-        assert assigns :criterion
-        assert render_template :edit
         assert_response :success
       end
 

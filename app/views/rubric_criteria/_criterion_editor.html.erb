@@ -18,7 +18,9 @@
 
 <%= form_for criterion,
              as: :rubric_criterion,
-             url: { action: 'update', id: criterion.id },
+             url: { controller: 'rubric_criteria',
+                    action: 'update',
+                    id: criterion.id },
              html: {  remote: true} do |f| %>
 
   <div class='error' id='criterion_<%= criterion.id %>_error' style='display:none;'></div>
@@ -55,7 +57,7 @@
   </div>
 
   <div class='rubric_criteria_levels'>
-    <%= render partial: 'rubric_criterion_levels',
+    <%= render partial: 'rubric_criteria/rubric_criterion_levels',
                locals: { criterion: criterion,
                          f: f } %>
   </div>
