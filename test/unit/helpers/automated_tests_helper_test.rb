@@ -228,29 +228,6 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       assert AutomatedTestsHelper.files_available?
     end
   end
-
-  context 'MarkUs' do
-    should 'return 0, the index of the first available test server.' do
-      # @last_server is not yet defined here
-      assert_equal AutomatedTestsHelper.choose_test_server, 0
-    end
-
-    should 'return the index of an available test server, if there is at least one available' do
-      @last_server = 0
-      server_id = AutomatedTestsHelper.choose_test_server
-      assert server_id >= 0
-      assert server_id < MarkusConfigurator.markus_ate_num_test_servers
-    end
-
-    should 'return 0, if last_server is the last test server in the list' do
-      @last_server = MarkusConfigurator.markus_ate_num_test_servers - 1
-      assert_equal AutomatedTestsHelper.choose_test_server, 0
-    end
-
-    #should 'return -1 if there is no available test server' do
-    #  #TODO: this fails because no implementation checking the max num of tests running on a server yet
-    #  assert_equal choose_test_server, -1
-    #end
   end
 =end
 end

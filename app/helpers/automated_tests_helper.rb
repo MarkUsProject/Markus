@@ -1,4 +1,7 @@
 require 'json'
+require 'net/ssh'
+require 'net/scp'
+
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
   # This is the waiting list for automated testing. Once a test is requested,
@@ -341,36 +344,32 @@ module AutomatedTestsHelper
   def self.launch_test(assignment, repo_path, call_on)
     submission_path = File.join(repo_path, assignment.repository_folder)
     assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
-
     test_harness_path = MarkusConfigurator.markus_ate_test_runner_script_name
-
-    # Where to run the tests
     test_box_path = MarkusConfigurator.markus_ate_test_run_directory
+    test_server_host = MarkusConfigurator.markus_ate_test_server_host
 
-    # Create clean folder to execute tests
-    stdout, stderr, status = Open3.capture3("rm -rf #{test_box_path} && "\
-      "mkdir #{test_box_path}")
-    unless status.success?
-      return [stderr, stdout, status]
-    end
-
-    # Securely copy student's submission, test files and test harness script to test_box_path
-    stdout, stderr, status = Open3.capture3("cp -r '#{submission_path}'/* "\
-      "#{test_box_path}")
-    unless status.success?
-      return [stderr, stdout, status]
-    end
-
-    stdout, stderr, status = Open3.capture3(
-      "cp -r '#{assignment_tests_path}'/* #{test_box_path}")
-    unless status.success?
-      return [stderr, stdout, status]
-    end
-
-    stdout, stderr, status = Open3.capture3("cp -r #{test_harness_path} "\
-      "#{test_box_path}")
-    unless status.success?
-      return [stderr, stdout, status]
+    if test_server_host == 'localhost'
+      # create a clean folder to execute tests locally, copying the student's submission and all necessary test files
+      stdout, stderr, status = Open3.capture3("
+        rm -rf '#{test_box_path}' &&
+        mkdir '#{test_box_path}' &&
+        cp -r '#{submission_path}'/* '#{test_box_path}' &&
+        cp -r '#{assignment_tests_path}'/* '#{test_box_path}' &&
+        cp -r '#{test_harness_path}' '#{test_box_path}'
+      ")
+      unless status.success?
+        return [stderr, stdout, status]
+      end
+    else
+      test_server_username = MarkusConfigurator.markus_ate_test_server_username
+      # TODO make it non-blocking? (needs something on the worker side to wait if the job is enqueued before the transfer is completed)
+      # TODO Use ssh.forward here to enqueue rather than a permanent ssh tunnel to Redis?
+      Net::SSH::start(test_server_host, test_server_username) do |ssh|
+        test_box_path = ssh.exec!('mktemp -d')
+        ssh.scp.upload!(test_server_host, test_server_username, submission_path, test_box_path, :recursive => true)
+        ssh.scp.upload!(test_server_host, test_server_username, assignment_tests_path, test_box_path, :recursive => true)
+        ssh.scp.upload!(test_server_host, test_server_username, test_harness_path, test_box_path)
+      end
     end
 
     # Find the test scripts for this test run, and parse the argument list
