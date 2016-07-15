@@ -20,10 +20,10 @@
 
 <%= form_for criterion,
              as: :rubric_criterion,
-             url: { controller: 'rubric_criteria',
-                    action: 'update',
-                    id: criterion.id },
-             html: {  remote: true} do |f| %>
+             url: assignment_criterion_path(id: criterion.id,
+                                            criterion_type: criterion.class.to_s),
+             method: :patch,
+             remote: true do |f| %>
 
   <div class='error' id='criterion_<%= criterion.id %>_error' style='display:none;'></div>
 

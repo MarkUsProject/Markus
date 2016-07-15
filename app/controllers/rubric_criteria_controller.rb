@@ -7,24 +7,6 @@ class RubricCriteriaController < ApplicationController
     @criteria = @assignment.get_criteria.order(:position)
   end
 
-  def update
-    begin
-      @criterion = RubricCriterion.find(params[:id])
-      unless @criterion.update(rubric_criterion_params.deep_merge(params.require(:rubric_criterion)
-                                                                      .permit(:max_mark)
-                                                                      .transform_values { |x|  (Float(x) * 4).to_s }))
-        @errors = @criterion.errors
-        render 'criteria/errors', formats: [:js], handlers: [:erb]
-        return
-      end
-    rescue ArgumentError
-      flash.now[:error] = t('weight_not_number')
-      return
-    end
-    flash.now[:success] = t('criterion_saved_success')
-    render 'criteria/update', formats: [:js], handlers: [:erb]
-  end
-
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
     file_out = MarkusCSV.generate(@assignment.get_criteria) do |criterion|
