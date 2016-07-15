@@ -84,17 +84,10 @@ class PeerReviewsController < ApplicationController
   def assign(reviewer_groups, reviewee_groups)
     reviewer_groups.each do |reviewer_group|
       reviewee_groups.each do |reviewee_group|
-
         if reviewee_group.current_submission_used.nil?
           raise SubmissionsNotCollectedException
         end
-
-        result = Result.create!(submission: reviewee_group.current_submission_used,
-                                marking_state: Result::MARKING_STATES[:incomplete])
-        #TODO this check needs to be edited - it will always pass
-        unless PeerReview.exists?(reviewer: reviewer_group, result: result)
-          PeerReview.create!(reviewer: reviewer_group, result: result)
-        end
+        PeerReview.create_peer_review_between(reviewer_group, reviewee_group)
       end
     end
   end
@@ -103,10 +96,10 @@ class PeerReviewsController < ApplicationController
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
       reviewer_id_to_bool.each do |reviewer_id, dummy_value|
-        # find the PR that this reviewer made on this reviewee's submission
         reviewee_group = Grouping.find_by_id(reviewee_id)
-        pr = reviewee_group.peer_reviews.find(reviewer_id: reviewer_id)
-        pr.destroy
+        reviewer_group = Grouping.find_by_id(reviewer_id)
+        peer_review = reviewer_group.review_for(reviewee_group)
+        peer_review.destroy
       end
     end
 
@@ -149,9 +142,8 @@ class PeerReviewsController < ApplicationController
         reviewer = Group.find_by(group_name: row.first).grouping_for_assignment(assignment_id)
         row.shift  # Drop the reviewer, the rest are reviewees and makes iteration easier.
         row.each do |reviewee_group_name|
-          reviewee = Group.find_by(group_name: row.first).grouping_for_assignment(parent_assignment_id)
-          result = reviewee.current_submission_used.get_latest_result()
-          PeerReview.create!(result: result, reviewer: reviewer)
+          reviewee = Group.find_by(group_name: reviewee_group_name).grouping_for_assignment(parent_assignment_id)
+          PeerReview.create_peer_review_between(reviewer, reviewee)
         end
       end
       unless result[:invalid_lines].empty?
