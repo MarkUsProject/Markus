@@ -41,6 +41,22 @@ class CriteriaController < ApplicationController
     flash[:success] = I18n.t('criterion_deleted_success')
   end
 
+  def update
+    criterion_type = params[:criterion_type]
+    @criterion = criterion_type.constantize.find(params[:id])
+    if criterion_type == 'RubricCriterion'
+      properly_updated = @criterion.update(rubric_criterion_params)
+    else
+      properly_updated = @criterion.update(flexible_criterion_params)
+    end
+    unless properly_updated
+      @errors = @criterion.errors
+      render :errors
+      return
+    end
+    flash.now[:success] = t('criterion_saved_success')
+  end
+
   # This method handles the drag/drop criteria sorting.
   def update_positions
     @assignment = Assignment.find(params[:assignment_id])
