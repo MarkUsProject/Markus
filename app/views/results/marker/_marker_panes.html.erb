@@ -189,18 +189,19 @@
                 <textarea id="new_annotation_content"></textarea>
               </p>
               <button onclick="updateAnnotationPreview()"><%= t('marker.annotation.preview') %></button>
-
+              <% if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+                <%= hidden_field_tag 'new_annotation_category', value: t('annotations.one_time_only') %>
+              <% else %>
                 <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
                 <select id='new_annotation_category'>
                   <option value=''><%= t('annotations.one_time_only') %></option>
-                  <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
-                    <% annotation_categories.each do |annotation_category| %>
-                        <option value='<%= annotation_category.id %>'>
-                          <%= annotation_category.annotation_category_name %>
-                        </option>
-                    <% end %>
+                  <% annotation_categories.each do |annotation_category| %>
+                      <option value='<%= annotation_category.id %>'>
+                        <%= annotation_category.annotation_category_name %>
+                      </option>
                   <% end %>
                 </select>
+              <% end %>
 
               <section class='dialog-actions'>
                 <button id='new_annotation_modal_button' onclick="hideAnnotationPreview();
