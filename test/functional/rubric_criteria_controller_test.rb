@@ -42,22 +42,8 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
           @submission = Submission.make(grouping: @grouping)
         end
 
-        should 'be redirect on edit' do
-          get :edit,
-              assignment_id: @assignment.id,
-              submission_id: @submission.id,
-              id: 1
-              #FIXME
-          assert_response :redirect
-        end
-
         should 'be redirected on update' do
           put :update, assignment_id: @assignment.id, id: 1
-          assert_response :redirect
-        end
-
-        should 'be redirect on delete' do
-          delete :destroy, assignment_id: @assignment.id, id: 1
           assert_response :redirect
         end
       end
@@ -272,13 +258,6 @@ END
         assert_response :success
       end
 
-      should 'be able to get on :edit' do
-        get_as @admin, :edit, assignment_id: 1, id: @criterion.id
-        assert assigns :criterion
-        assert render_template :edit
-        assert_response :success
-      end
-
       should 'be able to save with errors' do
         @errors = ActiveModel::Errors.new(self)
         RubricCriterion.any_instance.expects(:save).once.returns(false)
@@ -307,61 +286,6 @@ END
         assert_equal I18n.t('criterion_saved_success'), flash[:success]
         assert render_template :update
       end
-
-      should 'be able to save with error' do
-        RubricCriterion.any_instance.expects(:save).once.returns(false)
-        post_as @admin,
-                :create,
-                assignment_id: @assignment.id,
-                rubric_criterion: {name: 'first',
-                                   max_mark: 10}
-        assert assigns :assignment
-        assert assigns :criterion
-        assert assigns :errors
-        assert render_template 'criteria/add_criterion_error'
-        assert_response :success
-      end
-
-      should 'save without error on an assignment as the first criterion' do
-        assignment = Assignment.make
-        # XXX move elsewhere -> does not need this context
-        post_as @admin,
-                :create,
-                format: :js,
-                assignment_id: assignment.id,
-                rubric_criterion: {name: 'first',
-                                   max_mark: 10}
-        assert assigns :assignment
-        assert assigns :criterion
-        assert render_template 'criteria/create_and_edit'
-        assert respond_with :success
-      end
-
-      should 'save without errors' do
-        post_as @admin,
-                :create,
-                format: :js,
-                assignment_id: @assignment.id,
-                rubric_criterion: {name: 'first',
-                                   max_mark: 10}
-        assert assigns :assignment
-        assert assigns :criterion
-        assert render_template 'criteria/create_and_edit'
-        assert_response :success
-      end
-
-      should 'delete criterion' do
-        delete_as @admin, :destroy, assignment_id: 1, id: @criterion.id
-
-        assert assigns :criterion
-        assert_equal flash[:success], I18n.t('criterion_deleted_success')
-        assert_response :success
-
-        assert_raise ActiveRecord::RecordNotFound do
-          RubricCriterion.find(@criterion.id)
-        end
-      end
-
 
       should 'download rubric_criteria as CSV' do
         get_as @admin, :download_csv, assignment_id: @assignment.id
