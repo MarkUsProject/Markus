@@ -164,12 +164,14 @@
         </div>
 
         <!-- Tag insertion pane. -->
-        <div id='tag_viewer'>
-          <%= render partial: 'results/marker/tag_summary',
-                     locals: { assignment: assignment,
-                               old_result: @old_result,
-                               result: result } %>
-        </div>
+        <% unless @result.is_a_review? %>
+          <div id='tag_viewer'>
+            <%= render partial: 'results/marker/tag_summary',
+                       locals: { assignment: assignment,
+                                 old_result: @old_result,
+                                 result: result } %>
+          </div>
+        <% end %>
 
         <!-- Annotation pane-->
         <div id='annotation_holder'></div>
