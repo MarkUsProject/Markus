@@ -253,7 +253,11 @@ class ResultsController < ApplicationController
       return
     end
     #Ensure student doesn't download a file not submitted by his own grouping
-    unless authorized_to_download?(file_id: params[:select_file_id])
+
+    unless authorized_to_download?(file_id: params[:select_file_id],
+                                   assignment_id: params[:assignment_id],
+                                   result_id: params[:id],
+                                   from_codeviewer: params[:from_codeviewer])
       render 'shared/http_status', formats: [:html],
              locals: { code: '404',
                           message: HttpStatusHelper::ERROR_CODE[
@@ -290,7 +294,10 @@ class ResultsController < ApplicationController
   def download_zip
 
     #Ensure student doesn't download files not submitted by his own grouping
-    unless authorized_to_download?(submission_id: params[:submission_id])
+    unless authorized_to_download?(submission_id: params[:submission_id],
+                                   assignment_id: params[:assignment_id],
+                                   result_id: params[:id],
+                                   from_codeviewer: params[:from_codeviewer])
       render 'shared/http_status', formats: [:html],
              locals: { code: '404',
                           message: HttpStatusHelper::ERROR_CODE[
@@ -574,6 +581,15 @@ class ResultsController < ApplicationController
     if current_user.admin? || current_user.ta?
       return true
     end
+
+    assignment = Assignment.find(map[:assignment_id])
+    result = Result.find(map[:result_id])
+
+    if current_user.is_reviewer_for?(assignment.pr_assignment, result) &&
+        map[:from_codeviewer] != nil
+      return true
+    end
+
     submission = if map[:file_id]
                    sub_file = SubmissionFile.find_by_id(map[:file_id])
                    sub_file.submission unless sub_file.nil?

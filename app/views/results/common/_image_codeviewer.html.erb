@@ -6,7 +6,9 @@
 
   <img id='image_preview'
        src='<%= download_assignment_submission_results_path(select_file_id: submission_file_id,
-                                                            show_in_browser: true ) -%>'
+                                                            show_in_browser: true,
+                                                            id: @result.id,
+                                                            from_codeviewer: true) -%>'
        alt='<%= I18n.t('common.cant_display_image') %>'>
 
   <% # Keep track of all annotations associated with file %>
