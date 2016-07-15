@@ -341,7 +341,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    format: :js,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: 1,
+                   id: @result.id,
                    submission_file_id: @no_access_submission_file.id,
                    focus_line: 1
             assert_not_nil assigns :assignment
@@ -882,6 +882,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             annotation = Annotation.new
             @file.expects(:annotations).once.returns(annotation)
             SubmissionFile.stubs(:find).returns(@file)
+            @result = Result.make
           end
 
           should 'without file error' do
@@ -892,7 +893,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    format: :js,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: 1,
+                   id: @result.id,
                    focus_line: 1,
                    submission_file_id: @file.id
 
@@ -917,7 +918,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    format: :js,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: 1,
+                   id: @result.id,
                    focus_line: 1,
                    submission_file_id: @file.id
 
@@ -1228,6 +1229,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         context 'GET on :codeviewer' do
           setup do
             @submission_file = SubmissionFile.make
+            @result = Result.make
           end
 
           should 'be able to codeviewer with file reading error' do
@@ -1240,7 +1242,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    assignment_id: @assignment.id,
                    submission_id: 1,
                    submission_file_id: @submission_file.id,
-                   id: 1,
+                   id: @result.id,
                    focus_line: 1
             assert_not_nil assigns :assignment
             assert_not_nil assigns :submission_file_id
@@ -1268,7 +1270,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    assignment_id: @assignment.id,
                    submission_id: 1,
                    submission_file_id: @submission_file.id,
-                   id: 1,
+                   id: @result.id,
                    focus_line: 1
 
             assert_not_nil assigns :assignment
