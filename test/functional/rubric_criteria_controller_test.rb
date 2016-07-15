@@ -41,11 +41,6 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
         setup do
           @submission = Submission.make(grouping: @grouping)
         end
-
-        should 'be redirected on update' do
-          put :update, assignment_id: @assignment.id, id: 1
-          assert_response :redirect
-        end
       end
     end
   end # An unauthenticated and unauthorized user doing a GET
@@ -256,35 +251,6 @@ END
         assert assigns :criteria
         assert render_template :index
         assert_response :success
-      end
-
-      should 'be able to save with errors' do
-        @errors = ActiveModel::Errors.new(self)
-        RubricCriterion.any_instance.expects(:save).once.returns(false)
-        RubricCriterion.any_instance.expects(:errors).once.returns(@errors)
-        get_as @admin,
-               :update,
-               format: :js,
-               assignment_id: @assignment.id,
-               id: @criterion.id,
-               rubric_criterion: { name: 'one',
-                                   max_mark: 10 }
-        assert assigns :criterion
-        assert render_template 'errors'
-        assert_response :success
-      end
-
-      should 'be able to save without errors' do
-        get_as @admin,
-               :update,
-               format: :js,
-               assignment_id: @assignment.id,
-               id: @criterion.id,
-               rubric_criterion: { name: 'one',
-                                   max_mark: 10 }
-        assert assigns :criterion
-        assert_equal I18n.t('criterion_saved_success'), flash[:success]
-        assert render_template :update
       end
 
       should 'download rubric_criteria as CSV' do

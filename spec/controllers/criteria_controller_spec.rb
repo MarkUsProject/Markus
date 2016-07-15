@@ -19,6 +19,13 @@ RSpec.describe CriteriaController, type: :controller do
         end
       end
 
+      context '#update' do
+        it 'should respond with redirect' do
+          put :update, assignment_id: 1, id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
       context '#destroy' do
         it 'should respond with redirect' do
           delete :destroy, assignment_id: 1, id: 1
@@ -61,6 +68,13 @@ RSpec.describe CriteriaController, type: :controller do
       context '#new' do
         it 'should respond with redirect' do
           post :new, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
+      context '#update' do
+        it 'should respond with redirect' do
+          put :update, assignment_id: 1, id: 1
           is_expected.to respond_with :redirect
         end
       end
@@ -144,6 +158,58 @@ RSpec.describe CriteriaController, type: :controller do
 
         it 'should respond with success' do
           is_expected.to respond_with(:success)
+        end
+      end
+
+      context '#update' do
+        context 'with errors' do
+          before(:each) do
+            expect_any_instance_of(FlexibleCriterion)
+                .to receive(:save).and_return(false)
+            expect_any_instance_of(FlexibleCriterion)
+                .to receive(:errors).and_return('')
+
+            get_as @admin,
+                   :update,
+                   format:             :js,
+                   assignment_id:      1,
+                   id:                 @criterion.id,
+                   flexible_criterion: { name: 'one', max_mark: 10 },
+                   criterion_type:     'FlexibleCriterion'
+          end
+
+          it 'should respond with appropriate content' do
+            expect(assigns(:criterion)).to be_truthy
+          end
+
+          it 'should render the errors template' do
+            is_expected.to render_template('errors')
+          end
+
+          it 'should respond with success' do
+            is_expected.to respond_with(:success)
+          end
+        end
+
+        context 'without errors' do
+          before(:each) do
+            get_as @admin,
+                   :update,
+                   format:             :js,
+                   assignment_id:      1,
+                   id:                 @criterion.id,
+                   flexible_criterion: { name: 'one', max_mark: 10 },
+                   criterion_type:     'FlexibleCriterion'
+            assert flash[:success], I18n.t('criterion_saved_success')
+          end
+
+          it 'successfully assign criterion' do
+            expect(assigns(:criterion)).to be_truthy
+          end
+
+          it 'should render the update template' do
+            is_expected.to render_template(:update)
+          end
         end
       end
     end
@@ -315,6 +381,7 @@ RSpec.describe CriteriaController, type: :controller do
   end # Tests using Flexible Criteria
 
   describe 'Using Rubric Criteria' do
+
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#new' do
         it 'should respond with redirect' do
@@ -328,6 +395,29 @@ RSpec.describe CriteriaController, type: :controller do
           get :edit, assignment_id: 1, id: 1
           is_expected.to respond_with :redirect
         end
+
+        context 'with an assignment' do
+          before :each do
+            @grouping = FactoryGirl.create(:grouping)
+            @assignment = @grouping.assignment
+          end
+
+          context 'and a submission' do
+            before :each do
+              @submission = create(:submission, grouping: @grouping)
+            end
+
+            context '#edit' do
+              it 'should respond with redirect' do
+                get :edit,
+                    assignment_id: @assignment.id,
+                    submission_id: @submission.id,
+                    id:            1
+                is_expected.to respond_with :redirect
+              end
+            end
+          end
+        end
       end
 
       context '#destroy' do
@@ -337,26 +427,10 @@ RSpec.describe CriteriaController, type: :controller do
         end
       end
 
-      context 'with an assignment' do
-        before :each do
-          @grouping = FactoryGirl.create(:grouping)
-          @assignment = @grouping.assignment
-        end
-
-        context 'and a submission' do
-          before :each do
-            @submission = create(:submission, grouping: @grouping)
-          end
-
-          context '#edit' do
-            it 'should respond with redirect' do
-              get :edit,
-                  assignment_id: @assignment.id,
-                  submission_id: @submission.id,
-                  id:            1
-              is_expected.to respond_with :redirect
-            end
-          end
+      context '#update' do
+        it 'should respond with redirect' do
+          put :update, assignment_id: 1, id: 1
+          is_expected.to respond_with :redirect
         end
       end
 
@@ -379,6 +453,13 @@ RSpec.describe CriteriaController, type: :controller do
       context '#edit' do
         it 'should respond with redirect' do
           post :edit, assignment_id: 1, id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
+      context '#update' do
+        it 'should respond with redirect' do
+          put :update, assignment_id: 1, id: 1
           is_expected.to respond_with :redirect
         end
       end
@@ -452,6 +533,58 @@ RSpec.describe CriteriaController, type: :controller do
 
         it 'should respond with success' do
           is_expected.to respond_with(:success)
+        end
+      end
+
+      context '#update' do
+        context 'with errors' do
+          before(:each) do
+            expect_any_instance_of(RubricCriterion)
+                .to receive(:save).and_return(false)
+            expect_any_instance_of(RubricCriterion)
+                .to receive(:errors).and_return('')
+
+            get_as @admin,
+                   :update,
+                   format:           :js,
+                   assignment_id:    1,
+                   id:               @criterion.id,
+                   rubric_criterion: { name: 'one', max_mark: 10 },
+                   criterion_type:   'RubricCriterion'
+          end
+
+          it 'should respond with appropriate content' do
+            expect(assigns(:criterion)).to be_truthy
+          end
+
+          it 'should render the errors template' do
+            is_expected.to render_template('errors')
+          end
+
+          it 'should respond with success' do
+            is_expected.to respond_with(:success)
+          end
+        end
+
+        context 'without errors' do
+          before(:each) do
+            get_as @admin,
+                   :update,
+                   format:           :js,
+                   assignment_id:    1,
+                   id:               @criterion.id,
+                   rubric_criterion: { name: 'one', max_mark: 10 },
+                   criterion_type:   'RubricCriterion'
+            assert flash[:success], I18n.t('criterion_saved_success')
+          end
+
+          it 'successfully assign criterion' do
+            expect(assigns(:criterion)).to be_truthy
+          end
+
+          it 'should render the update template' do
+            is_expected.to render_template(:update)
+          end
         end
       end
     end
