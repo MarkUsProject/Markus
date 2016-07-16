@@ -75,7 +75,9 @@ module AutomatedTestsHelper
                     MarkusConfigurator.markus_config_automated_tests_repository,
                     @assignment.repository_folder,
                     new_script_name)
-          File.open(assignment_tests_path, 'w') { |f| f.write new_update_script.read }
+          # Replace bad line endings from windows
+          contents = new_update_script.read.tr("\r", '')
+          File.open(assignment_tests_path, 'w') { |f| f.write contents }
 
           # Deleting old script
           old_script_path = File.join(
