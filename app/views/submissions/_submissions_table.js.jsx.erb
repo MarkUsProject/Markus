@@ -372,7 +372,24 @@
       });
     },
     runTests: function () {
-      return;
+      jQuery.ajax({
+        method: 'POST',
+        url: 'run_tests',
+        data: {groupings: this.props.selected_submissions},
+        success: function(data) {
+          if (data.success) {
+            this.props.onSuccess(data.success);
+            window.setInterval(this.props.refresh, 30000);
+          }
+          if (data.error) {
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      })
     },
     render: function() {
       return (

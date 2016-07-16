@@ -1410,6 +1410,7 @@ fr:
       test_run: "L'exécution du test"
       tests_running: "Tests en cours. S'il vous plaît rafraîchir la page pour afficher les résultats."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test. Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
+      need_submission: "Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les groupes sélectionnés avaient non tests exécutés."
       collect_and_test: "Récupérer et préparer test"
       date_run: "Lancement des tests le :"
       revision_used: "Révision utilisée :"

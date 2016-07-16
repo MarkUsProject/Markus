@@ -143,6 +143,7 @@ Markus::Application.routes.draw do
           post 'populate_file_manager'
           post 'collect_submissions'
           get 'uncollect_all_submissions'
+          post 'run_tests'
           get 'download_simple_csv_report'
           get 'download_detailed_csv_report'
           get 'download_svn_export_list'
