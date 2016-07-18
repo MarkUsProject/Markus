@@ -64,18 +64,18 @@ class Submission < ActiveRecord::Base
 
   # Returns the original result.
   def get_original_result
-    get_non_pr_results.first
+    non_pr_results.first
   end
 
   def remark_result
     if remark_request_timestamp.nil? || results.length < 2
       nil
     else
-     get_non_pr_results.last
+      non_pr_results.last
     end
   end
 
-  def get_non_pr_results
+  def non_pr_results
     results.find_all {|r| !r.is_a_review?}
   end
 
