@@ -7,20 +7,21 @@
     </tr>
   </thead>
   <% @mark_criteria.each do |criterion| -%>
-  <%
-     mark = marks_map[criterion.id]
-     if mark.nil? or mark.mark.nil?
-       mark_value = 0
-     else
-       mark_value = mark.mark
-     end
-  %>
-    <tr id="<%= "mark_#{mark.id}_summary" %>">
-      <td><%= criterion.name %></td>
-      <td><%= criterion.max_mark %></td>
-      <td><span id="mark_<%= mark.id %>_summary_mark"><%= mark_value %></span> / <%=  criterion.max_mark %></td>
-    </tr>
-
+    <% if criterion.class == FlexibleCriterion %>
+      <%
+        mark = marks_map[criterion.id]
+        if mark.nil? or mark.mark.nil?
+          mark_value = 0
+        else
+          mark_value = mark.mark
+        end
+      %>
+      <tr id="<%= "mark_#{mark.id}_summary" %>">
+        <td><%= criterion.name %></td>
+        <td><%= criterion.max_mark %></td>
+        <td><span id="mark_<%= mark.id %>_summary_mark"><%= mark_value %></span> / <%=  criterion.max_mark %></td>
+      </tr>
+    <% end %>
   <% end -%>
 </table>  <!-- Summary Criteria Pane List -->
 

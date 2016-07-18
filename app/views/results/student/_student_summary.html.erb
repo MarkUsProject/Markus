@@ -7,9 +7,13 @@
 
   <div id='old_summary_criteria_pane'>
 
-    <%= render partial: "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
+    <%= render partial: 'results/common/rubric_marks_summary_table',
                locals: { mark_criteria: mark_criteria,
-                         marks_map: old_marks_map } %>
+                         marks_map: old_rubric_marks_map } unless old_rubric_marks_map.empty? %>
+
+    <%= render partial: 'results/common/flexible_marks_summary_table',
+               locals: { mark_criteria: mark_criteria,
+                         marks_map: old_flexible_marks_map } unless old_flexible_marks_map.empty? %>
 
     <div class='summary_block'>
       <strong><%= t('marker.marks.old_subtotal') %></strong>
@@ -71,9 +75,13 @@
 <% end %>
 
 <div id='summary_criteria_pane'>
-  <%= render partial: "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
+  <%= render partial: 'results/common/rubric_marks_summary_table',
              locals: { mark_criteria: mark_criteria,
-                       marks_map: marks_map } %>
+                       marks_map: rubric_marks_map }  unless rubric_marks_map.empty? %>
+
+  <%= render partial: 'results/common/flexible_marks_summary_table',
+             locals: { mark_criteria: mark_criteria,
+                       marks_map: flexible_marks_map } unless flexible_marks_map.empty? %>
 
   <!-- Summary Criteria Pane -->
 
