@@ -11,7 +11,6 @@ class ResultsController < ApplicationController
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
-                       :next_grouping, 
                        :remove_extra_mark,
                        :note_message]
   before_filter :authorize_for_user,
@@ -20,7 +19,7 @@ class ResultsController < ApplicationController
                 only: [:view_marks, :update_remark_request,
                        :cancel_remark_request]
   before_filter only: [:edit, :update_mark, :toggle_marking_state,
-                       :update_overall_comment] do |c|
+                       :update_overall_comment, :next_grouping] do |c|
                   c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:id])
                 end
   after_filter  :update_remark_request_count,
@@ -88,11 +87,21 @@ class ResultsController < ApplicationController
     end
 
     @result.update_total_mark
-    groupings = Grouping.get_groupings_for_assignment(@assignment,
+
+    if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
+      assignment = @assignment.pr_assignment
+    else
+      assignment = @assignment
+    end
+
+    groupings = Grouping.get_groupings_for_assignment(assignment,
                                                       current_user)
-    # We sort by group name by default
-    groupings = groupings.sort do |a, b|
-      a.group.group_name <=> b.group.group_name
+
+    unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
+      # We sort by group name by default
+      groupings = groupings.sort do |a, b|
+        a.group.group_name <=> b.group.group_name
+      end
     end
 
     current_grouping_index = groupings.index(@grouping)
@@ -195,10 +204,22 @@ class ResultsController < ApplicationController
   end
 
   def next_grouping
-    grouping = Grouping.find(params[:id])
+    grouping = Grouping.find(params[:grouping_id])
+    assignment = Assignment.find(params[:assignment_id])
+    result = Result.find(params[:result_id])
+
     if grouping.has_submission? && grouping.is_collected?
+      if @current_user.is_reviewer_for?(assignment.pr_assignment, result)
+        reviewer = @current_user.grouping_for(assignment.pr_assignment.id)
+        next_pr = reviewer.review_for(grouping)
+        next_result = Result.find(next_pr.result_id)
+
+        redirect_to action: 'edit',
+                    id: next_result.id
+      else
         redirect_to action: 'edit',
                     id: grouping.current_submission_used.get_latest_result.id
+      end
     else
       redirect_to controller: 'submissions',
                   action: 'browse'

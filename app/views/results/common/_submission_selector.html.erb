@@ -3,7 +3,9 @@
 <div id='student_selector'>
   <span class='left'>
     <% if !previous_grouping.nil?%>
-      <%= link_to t('marker.previous_submission'), action: 'next_grouping', id: previous_grouping.id %>
+      <%= link_to t('marker.previous_submission'), action: 'next_grouping',
+                  assignment_id: @assignment.id, result_id: @result.id,
+                  grouping_id: previous_grouping.id %>
     <% else %>
       <span class='disable'><%= t('marker.previous_submission') %></span>
     <% end %>
@@ -63,7 +65,9 @@
 
   <span class='right'>
     <% if !next_grouping.nil? %>
-      <%= link_to t('marker.next_submission'), action: 'next_grouping', id: @next_grouping.id%>
+      <%= link_to t('marker.next_submission'), action: 'next_grouping',
+                  assignment_id: @assignment.id, result_id: @result.id,
+                  grouping_id: @next_grouping.id%>
     <% else %>
       <span class='disable'><%= t('marker.next_submission') %></span>
     <% end %>
