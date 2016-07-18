@@ -397,8 +397,15 @@ class ResultsController < ApplicationController
       end
     end
 
-    @annots = @file.annotations
-    @all_annots = @file.submission.annotations
+    # if we are viewing an original result, we don't want
+    # to view annotations from any peer reviewers on those files
+    if !@result.is_a_review?
+      @annots = @file.annotations.select{|a| !User.find(a.creator_id).student?}
+      @all_annots = @file.submission.annotations.select{|a| !User.find(a.creator_id).student?}
+    else
+      @annots = @file.annotations
+      @all_annots = @file.submission.annotations
+    end
 
     begin
       @file_contents = @file.retrieve_file
