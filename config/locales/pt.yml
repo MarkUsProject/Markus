@@ -1047,6 +1047,12 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       marking_scheme: "Esquema de avalição: %{identifier}"
       save: "Salvar alterções"
       add_criterion: "Adicionar Critério"
+      errors:
+        messages:
+          name_taken: "Nome de critério já utilizado."
+          assignment_association: "Associação não é forte com uma atribuição."
+          assignment_id: "Só pode ser o número inteiro maior que 0."
+          input_number: "Deve ser um número maior do que 0.0."
 
     flexible_criteria:
       title: "Critérios flexíveis"
@@ -1069,9 +1075,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         <code>criteria_name,max_value,description</code>
         <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
         success: "Critério flexível carregado com sucesso: %{nb_updates} atualizado(s)."
-      errors:
-        messages:
-          name_taken: "Nome de critério já utilizado."
       move_criterion:
         error: "Impossível mover critério (flexível)."
       ta_visible: "Tornar visível para assistentes de ensino"
@@ -1118,7 +1121,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         error: "Alguns critérios de rúbrica eram inválidos:"
         syntax_error: "Existe um erro no arquivo carregado : %{error}"
         empty_error: "Nenhum critério foi encontrado no arquivo fornecido."
-      error_total: "Peso total deve ser positivo"
       defaults:
         level_0: "Insuficiente"
         level_1: "Fraco"
@@ -1130,9 +1132,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         description_2: "Esse critério foi satisfeito."
         description_3: "Esse critério foi bem satisfeito."
         description_4: "Esse critério foi quase perfeitamente ou perfeitamente satisfeito."
-      errors:
-        messages:
-          name_taken: "Nome de critério já utilizado."
       move_criterion:
         error: "Impossível mover rúbrica."
       ta_visible: "Tornar visível para assistentes de ensino"
@@ -1218,7 +1217,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     criteria_edit_total_mark:     "Esse critério será classificado de %{criterion_total_mark}"
     criterion_saved_success:   "Critério salvo com sucesso"
-    weight_not_number: "peso não é um número."
     criterion_deleted_success:  "Critério, e todas notas associadas foram apagas com sucesso"
     criterion:          "Critério"
     total_mark:         "Nota total"

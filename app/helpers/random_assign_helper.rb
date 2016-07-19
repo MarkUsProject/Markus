@@ -142,9 +142,7 @@ module RandomAssignHelper
   end
 
   def add_peer_review_to_db_and_remember_assignment(reviewer, reviewee, shuffle_index)
-    result = reviewee.current_submission_used.get_latest_result
-    peer_review = PeerReview.create!(reviewer: reviewer, result: result)
-
+    peer_review = PeerReview.create_peer_review_between(reviewer, reviewee)
     @reviewers_assigned_to[reviewer.id].add(reviewee.id)
     @shuffled_reviewees_pr[shuffle_index] = peer_review
   end
