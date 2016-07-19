@@ -8,8 +8,7 @@ module PeerReviewHelper
     peer_review_map = Hash.new { |hash, key| hash[key] = [] }
     reviewee_groups.each { |reviewee| peer_review_map[reviewee['id']] }
 
-    peer_reviews = PeerReview.where(reviewer_id: reviewer_ids)
-    peer_reviews.each do |peer_review|
+    PeerReview.preload(:result).where(reviewer_id: reviewer_ids).each do |peer_review|
       reviewee_group_id = peer_review.result.submission.grouping.id
       peer_review_map[reviewee_group_id].push(peer_review.reviewer.id)
     end
@@ -34,8 +33,7 @@ module PeerReviewHelper
 
     # Retrieve all the groups with the unique id list, and map the id => name.
     id_to_group_name_map = {}
-    groupings = Grouping.where(id: id_to_group_name_list)
-    groupings.each do |grouping|
+    Grouping.preload(:group).where(id: id_to_group_name_list).each do |grouping|
       id_to_group_name_map[grouping.id] = grouping.group.group_name
     end
 
@@ -45,10 +43,13 @@ module PeerReviewHelper
   # Returns a map of reviewer_id => num_of_reviews
   def create_map_number_of_reviews_for_reviewer(reviewer_groups)
     number_of_reviews_for_reviewer = {}
+
+    # TODO - [N+1 query] Optimize with: SELECT reviewer_id, COUNT(reviewer_id) FROM peer_reviews GROUP BY reviewer_id
     reviewer_groups.each do |reviewer|
       count = PeerReview.where(reviewer_id: reviewer['id']).count
       number_of_reviews_for_reviewer[reviewer['id']] = count
     end
+
     number_of_reviews_for_reviewer
   end
 end
