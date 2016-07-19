@@ -4,7 +4,8 @@ class PeerReviewsController < ApplicationController
   include RandomAssignHelper
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
-  before_filter :authorize_only_for_admin
+
+  before_filter :authorize_only_for_admin, except: [:show_reviews, :show_result]
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
@@ -30,6 +31,25 @@ class PeerReviewsController < ApplicationController
 
     render json: [reviewer_groups, reviewee_groups, reviewee_to_reviewers_map,
                   id_to_group_names_map, num_reviews_map]
+  end
+
+  def show_reviews
+    # debugger
+    aid = Integer(params[:assignment_id])
+    pr = @current_user.grouping_for(aid).peer_reviews_to_others.first
+    redirect_to action: 'show_result',
+                assignment_id: aid,
+                id: pr.id
+  end
+
+  def show_result
+    @pr = PeerReview.find(params[:id])
+    @result = Result.find(@pr.result_id)
+    @submission = @result.submission
+
+    # redirect_to show_review_result_assignments_submissions_results_path(params[:assignment_id],
+    #                                                                     submission.id,
+    #                                                                     result.id)
   end
 
   def assign_groups

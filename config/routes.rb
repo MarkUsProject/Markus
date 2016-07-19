@@ -204,6 +204,7 @@ Markus::Application.routes.draw do
             post 'add_tag'
             post 'remove_tag'
             get 'run_tests'
+            get 'show_review_result'
           end
         end
       end
@@ -220,6 +221,11 @@ Markus::Application.routes.draw do
           post 'assign_groups'
           get 'download_reviewer_reviewee_mapping'
           post 'csv_upload_handler'
+          get 'show_reviews'
+        end
+
+        member do
+          get 'show_result'
         end
       end
 
