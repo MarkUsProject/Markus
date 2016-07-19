@@ -28,7 +28,7 @@
     <div class='submission_rule_label'>
       <strong><%= t('marker.marks.submission_rule') %>:</strong>
     </div>
-    <div id="submission_rule_viewer">
+    <div id='submission_rule_viewer'>
       <%= render partial: assignment.submission_rule.grader_tab_partial,
                  locals: { grouping: result.submission.grouping } %>
     </div>
@@ -38,9 +38,10 @@
     <div class='bonus_deduction'>
       <strong><%= t('marker.marks.bonus_deductions') %></strong>
     </div>
-    <%= render partial: 'results/marker/extra_marks_table',
+    <%= render partial: 'results/common/extra_marks_table',
                locals: { extra_marks_points: extra_marks_points,
-                         result_id: result.id } %>
+                         result_id: result.id,
+                         marker: true } %>
   </div>
 
   <div class='summary_block'>
@@ -96,9 +97,10 @@
 
     <div class='extra_marks_pane'>
       <div class='bonus_deduction'><strong><%= t('marker.marks.bonus_deductions') %></strong></div>
-      <%= render partial: 'results/student/extra_marks_table',
+      <%= render partial: 'results/common/extra_marks_table',
                  locals: { extra_marks_points: old_result.extra_marks.points,
-                           result_id: old_result.id } %>
+                           result_id: old_result.id,
+                           marker: false } %>
     </div>
 
     <div class='summary_block'>

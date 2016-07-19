@@ -35,9 +35,10 @@
         <strong><%= t('marker.marks.bonus_deductions') %></strong>
       </div>
 
-      <%= render partial: 'results/student/extra_marks_table',
+      <%= render partial: 'results/common/extra_marks_table',
                  locals: { extra_marks_points: old_result.extra_marks.points,
-                           result_id: old_result.id } %>
+                           result_id: old_result.id,
+                           marker: false } %>
 
       <table>
         <tr>
@@ -105,9 +106,10 @@
       <strong><%= t('marker.marks.bonus_deductions') %></strong>
     </div>
 
-    <%= render partial: 'results/student/extra_marks_table',
+    <%= render partial: 'results/common/extra_marks_table',
                locals: { extra_marks_points: extra_marks_points,
-                         result_id: result.id } %>
+                         result_id: result.id,
+                         marker: false } %>
 
     <table>
       <tr>
