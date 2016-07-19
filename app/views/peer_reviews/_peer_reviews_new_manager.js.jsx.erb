@@ -76,14 +76,14 @@
         this.refs.revieweeTable.clearCheckboxes();
       }
 
-      jQuery('#working').css('display', '');
+      document.getElementById('working').style.display = '';
 
       jQuery.ajax({
         url: '<%= populate_assignment_peer_reviews_path %>',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
-          jQuery('#working').css('display', 'none');
+          document.getElementById('working').style.display = 'none';
           this.clearSelectedFields();
           this.setState({
             reviewerGroups: data[0],
@@ -303,7 +303,7 @@
         return;
       }
 
-      jQuery('#working').css('display', '');
+      document.getElementById('working').style.display = '';
 
       jQuery.ajax({
         method: 'POST',
@@ -311,7 +311,7 @@
         data: dataToSend,
 
         success: function(data) {
-          jQuery('#working').css('display', 'none');
+          document.getElementById('working').style.display = 'none';
           this.props.clearSelectedFields();
           this.props.refresh();
           this.setState({ error: null });
@@ -319,7 +319,7 @@
         }.bind(this),
 
         error: function(xhr, status, text) {
-          jQuery('#working').css('display', 'none');
+          document.getElementById('working').style.display = 'none';
           var error = text + ': ' + xhr.responseText;
           this.props.setErrorMessage(error);
         }.bind(this)
