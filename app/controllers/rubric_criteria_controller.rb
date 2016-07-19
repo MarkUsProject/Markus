@@ -7,56 +7,6 @@ class RubricCriteriaController < ApplicationController
     @criteria = @assignment.get_criteria.order(:position)
   end
 
-  def edit
-    @criterion = RubricCriterion.find(params[:id])
-    render 'criteria/edit', formats: [:js], handlers: [:erb]
-  end
-
-  def update
-    begin
-      @criterion = RubricCriterion.find(params[:id])
-      unless @criterion.update(rubric_criterion_params.deep_merge(params.require(:rubric_criterion)
-                                                                      .permit(:max_mark)
-                                                                      .transform_values { |x|  (Float(x) * 4).to_s }))
-        @errors = @criterion.errors
-        render 'criteria/errors', formats: [:js], handlers: [:erb]
-        return
-      end
-    rescue ArgumentError
-      flash.now[:error] = t('weight_not_number')
-      return
-    end
-    flash.now[:success] = t('criterion_saved_success')
-    render 'criteria/update', formats: [:js], handlers: [:erb]
-  end
-
-  def create
-    @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
-    @criterion = RubricCriterion.new
-    @criterion.assignment = @assignment
-    @criterion.max_mark = RubricCriterion::DEFAULT_MAX_MARK
-    @criterion.set_default_levels
-    @criterion.position = @assignment.next_criterion_position
-    unless @criterion.update_attributes(rubric_criterion_params)
-      @errors = @criterion.errors
-      render 'criteria/add_criterion_error', formats: [:js], handlers: [:erb]
-      return
-    end
-    @criteria.reload
-    render 'criteria/create_and_edit', formats: [:js], handlers: [:erb]
-  end
-
-  def destroy
-    @criterion = RubricCriterion.find(params[:id])
-    @assignment = @criterion.assignment
-    @criteria = @assignment.get_criteria
-    #delete all marks associated with this criterion
-    @criterion.destroy
-    flash[:success] = I18n.t('criterion_deleted_success')
-    render 'criteria/destroy', formats: [:js], handlers: [:erb]
-  end
-
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
     file_out = MarkusCSV.generate(@assignment.get_criteria) do |criterion|
@@ -163,25 +113,5 @@ class RubricCriteriaController < ApplicationController
       end
     end
     redirect_to action: 'index', assignment_id: assignment.id
-  end
-
-  private
-
-  def rubric_criterion_params
-    params.require(:rubric_criterion).permit(:name,
-                                             :assignment,
-                                             :position,
-                                             :level_0_name,
-                                             :level_0_description,
-                                             :level_1_name,
-                                             :level_1_description,
-                                             :level_2_name,
-                                             :level_2_description,
-                                             :level_3_name,
-                                             :level_3_description,
-                                             :level_4_name,
-                                             :level_4_description,
-                                             :ta_visible,
-                                             :peer_visible)
   end
 end

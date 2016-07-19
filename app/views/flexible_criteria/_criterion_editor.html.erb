@@ -2,12 +2,14 @@
 
 <div class='float_right'>
   <%= button_to t(:delete),
-      assignment_flexible_criterion_path(id: criterion.id),
-      data: { confirm: t(:remove_criteria_message) },
-      method: :delete,
-      class: 'delete',
-      title: t(:remove_criteria_title),
-      remote: true %>
+                assignment_criterion_path(assignment_id: criterion.assignment.id,
+                                          id: criterion.id,
+                                          criterion_type: criterion.class.to_s),
+                data: { confirm: t(:remove_criteria_message) },
+                method: :delete,
+                class: 'delete',
+                title: t(:remove_criteria_title),
+                remote: true %>
 </div>
 
 <h2>
@@ -18,8 +20,10 @@
 
 <%= form_for criterion,
              as: :flexible_criterion,
-             url: { action: 'update', id: criterion.id },
-             html: { remote: true } do |f| %>
+             url: assignment_criterion_path(id: criterion.id,
+                                            criterion_type: criterion.class.to_s),
+             method: :patch,
+             remote: true do |f| %>
 
   <div class='error' id='criterion_<%= criterion.id %>_error' style='display:none;'></div>
 
