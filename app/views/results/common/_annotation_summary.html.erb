@@ -1,0 +1,53 @@
+<% annots.each do |annot| %>
+  <li>
+    <p class='lineNumber'>
+      #<%= annot.annotation_number %> - <b><%= annot.creator.first_name %> <%= annot.creator.last_name %> (<%= annot.creator.user_name %>)</b>
+      <%= render partial: annot.annotation_list_link_partial, locals: {annot: annot} %>
+      <%= t('marker.annotation.remark_flag') if (annot.is_remark) %>
+    </p>
+    <div class='annotationContent' id='annotation_text_content_display_<%= annot.annotation_text.id %>'>
+      <%= markdown(annot.annotation_text.content) %>
+    </div>
+
+    <% if marker %>
+      <%= button_tag t('edit'),
+                     onclick: "jQuery('#annotation_text_content_edit_#{annot.annotation_text.id}').show();
+                        jQuery('#annotation_text_content_display_#{annot.annotation_text.id}').hide();",
+                     class: 'edit_remove_annotation_button' %>
+
+      <%= button_to t('remove'),
+                    annotations_path(id: annot.id, submission_file_id: submission_file_id,
+                                     assignment_id: annot.result.submission.grouping.assignment.id, result_id: annot.result_id),
+                    method: :delete,
+                    class: 'edit_remove_annotation_button',
+                    data: { confirm: t('marker.annotation.sure_to_remove') },
+                    remote: true %>
+
+      <div id='annotation_text_content_edit_<%= annot.annotation_text.id %>' class='annotation_text_content_editor'>
+        <%= form_for annot.annotation_text,
+                     as: :annotation_text,
+                     url: { action: 'update_annotation',
+                            controller: 'annotations' },
+                     remote: true do |f| %>
+
+            <%= f.hidden_field :id %>
+            <input type='hidden' name='result_id' value='<%= annot.result_id %>'>
+            <input type='hidden' name='submission_file_id' value='<%= submission_file_id %>'>
+            <input type='hidden' name='assignment_id'
+                   value='<%= annot.result.submission.grouping.assignment.id %>'>
+
+            <p class='manageAnnotations'><%= f.text_area :content, cols: 60, rows: 5 %></p>
+
+            <p class='manageAnnotations'>
+              <%= submit_tag t('marker.annotation.submit_edit'),
+                             data: { confirm: t('marker.annotation.change_across_submissions') } %>
+              <input type='reset'
+                     value='<%= t('cancel') %>'
+                     onclick="jQuery('#annotation_text_content_edit_<%= annot.annotation_text.id %>').hide();
+                         jQuery('#annotation_text_content_display_<%= annot.annotation_text.id %>').show();">
+            </p>
+        <% end %>
+      </div>
+    <% end %>
+  </li>
+<% end %>

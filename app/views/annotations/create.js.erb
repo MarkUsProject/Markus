@@ -1,7 +1,8 @@
 document.getElementById('annotation_summary_list').innerHTML =
-  '<%= escape_javascript(render partial: "results/marker/annotation_summary",
+  '<%= escape_javascript(render partial: "results/common/annotation_summary",
                                 locals: { annots: @annotations,
-                                          submission_file_id: @submission_file_id }) %>';
+                                          submission_file_id: @submission_file_id,
+                                          marker: true }) %>';
 
 <% if @text.annotation_category_id != nil %>
   document.getElementById('annotation_text_list_<%= @text.annotation_category_id %>').innerHTML =

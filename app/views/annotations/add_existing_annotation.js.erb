@@ -16,9 +16,10 @@
 <% end %>
 
 document.getElementById('annotation_summary_list').innerHTML =
-  '<%= escape_javascript(render partial: "results/marker/annotation_summary",
+  '<%= escape_javascript(render partial: "results/common/annotation_summary",
                                 locals: { annots: @annotations,
-                                          submission_file_id: @submission_file_id }) %>';
+                                          submission_file_id: @submission_file_id,
+                                          marker: true }) %>';
 
 hide_all_annotation_content_editors();
 reloadDOM();
