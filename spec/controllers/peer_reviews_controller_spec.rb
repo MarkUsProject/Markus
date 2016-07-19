@@ -1,8 +1,9 @@
 require 'spec_helper'
 require 'set'
-require 'tempfile'
 
 describe PeerReviewsController do
+  TEMP_CSV_FILE_PATH = 'files/_temp_peer_review.csv'
+
   before :each do
     allow(controller).to receive(:session_expired?).and_return(false)
     allow(controller).to receive(:logged_in?).and_return(true)
@@ -60,13 +61,15 @@ describe PeerReviewsController do
       # Now allow uploading by placing the data in a temporary file and reading
       # the data back through 'uploading' (requires a clean database)
       PeerReview.all.destroy_all
-      path = File.join(self.class.fixture_path, 'files/peer_reviews/temp_peer_review.csv')
+      path = File.join(self.class.fixture_path, TEMP_CSV_FILE_PATH)
       File.open(path, 'w') do |f|
         f.write(downloaded_text)
       end
 
-      csv_upload = fixture_file_upload('files/peer_reviews/temp_peer_review.csv', 'text/csv')
-      fixture_upload = fixture_file_upload('files/peer_reviews/temp_peer_review.csv', 'text/csv')
+      expect(File.exist?(path)).to be_truthy
+
+      csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
+      fixture_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
       allow(csv_upload).to receive(:read).and_return(File.read(fixture_upload))
 
       post :csv_upload_handler, assignment_id: @pr_id, peer_review_mapping: csv_upload, encoding: 'UTF-8'
@@ -74,6 +77,9 @@ describe PeerReviewsController do
       expect(Grouping.all.size).to eq 6
       expect(PeerReview.all.size).to eq 3
       expect(PeerReview.where(result: Result.all).size).to eq 3
+
+      File.delete(path)
+      expect(File.exist?(path)).to be_falsey
     end
   end
 end
