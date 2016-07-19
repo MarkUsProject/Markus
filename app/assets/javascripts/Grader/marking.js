@@ -99,13 +99,13 @@ jQuery(document).ready(function() {
   // Handle the expand/collapse buttons
   jQuery('#expand_all').click(function() {
     jQuery('.mark_criterion_level_container').each(function() {
-      show_criterion(parseInt(this.getAttribute('data-id'), 10), jQuery(this).attr('criterion-class'));
+      show_criterion(parseInt(this.getAttribute('data-id'), 10));
     });
   });
 
   jQuery('#collapse_all').click(function() {
     jQuery('.mark_criterion_level_container').each(function() {
-      hide_criterion(parseInt(this.getAttribute('data-id'), 10), jQuery(this).attr('criterion-class'));
+      hide_criterion(parseInt(this.getAttribute('data-id'), 10));
     });
   });
 
@@ -140,55 +140,37 @@ jQuery(document).ready(function() {
 function expand_unmarked(elem, criterion_class) {
   if (criterion_class == 'RubricCriterion') {
     if (jQuery(elem).find('.rubric_criterion_level_selected').length == 0) {
-      show_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
+      show_criterion(parseInt(elem.getAttribute('data-id'), 10));
     } else {
-      hide_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
+      hide_criterion(parseInt(elem.getAttribute('data-id'), 10));
     }
   } else {
     if (elem.value == '') {
-      show_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
+      show_criterion(parseInt(elem.getAttribute('data-id'), 10));
     } else {
-      hide_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
+      hide_criterion(parseInt(elem.getAttribute('data-id'), 10));
     }
   }
 };
 
-function focus_mark_criterion(id, criterion_class) {
-  if (criterion_class == 'RubricCriterion')
-    if (jQuery('#mark_criterion_' + id).hasClass('expanded')) {
-      hide_criterion(id, criterion_class);
-    } else {
-      show_criterion(id, criterion_class);
-    }
-  else {
-    if (jQuery('#flexible_criterion_' + id).hasClass('expanded')) {
-      hide_criterion(id, criterion_class);
-    } else {
-      show_criterion(id, criterion_class);
-    }
+function focus_mark_criterion(id) {
+  if (jQuery('#mark_criterion_' + id).hasClass('expanded')) {
+    hide_criterion(id);
+  } else {
+    show_criterion(id);
   }
 };
 
-function hide_criterion(id, criterion_class) {
+function hide_criterion(id) {
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
-  if (criterion_class == 'RubricCriterion') {
-      document.getElementById('mark_criterion_' + id).removeClass('expanded');
-      document.getElementById('mark_criterion_' + id).addClass('not_expanded');
-  } else {
-      document.getElementById('flexible_criterion_' + id).removeClass('expanded');
-      document.getElementById('flexible_criterion_' + id).addClass('not_expanded');
-  }
+  document.getElementById('mark_criterion_' + id).removeClass('expanded');
+  document.getElementById('mark_criterion_' + id).addClass('not_expanded');
 };
 
-function show_criterion(id, criterion_class) {
+function show_criterion(id) {
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
-  if (criterion_class == 'RubricCriterion') {
-    document.getElementById('mark_criterion_' + id).removeClass('not_expanded');
-    document.getElementById('mark_criterion_' + id).addClass('expanded');
-  } else {
-    document.getElementById('flexible_criterion_' + id).removeClass('not_expanded');
-    document.getElementById('flexible_criterion_' + id).addClass('expanded');
-  }
+  document.getElementById('mark_criterion_' + id).removeClass('not_expanded');
+  document.getElementById('mark_criterion_' + id).addClass('expanded');
 };
 
 function select_mark(mark_id, mark) {

@@ -71,7 +71,7 @@ class ResultsController < ApplicationController
         @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
       end
     else
-      @mark_criteria = RubricCriterion.where(assignment_id: @assignment.id, ta_visible: true) + FlexibleCriterion.where(assignment_id: @assignment.id, ta_visible: true)
+      @mark_criteria = @assignment.get_criteria(:ta)
     end
 
     @mark_criteria.each do |criterion|
