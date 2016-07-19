@@ -147,7 +147,7 @@
         <span>
         <% if Section.any? %>
           <%= j raw t('browse_submissions.section') %>:
-          <select id={this.props.selectId} className="white-background" onChange={this.props.changeSection}>
+          <select id={this.props.selectId} className="white" onChange={this.props.changeSection}>
             <option value=""><%= j raw t('browse_submissions.sections.all') %></option>
             <% Section.all.order(:name).each do |section| %>
               <option value="<%= j raw section.name %>"><%= j raw section.name %></option>
@@ -200,7 +200,7 @@
           name: 'all',
           text: '<%= j raw t('groups.all_grouping_counts') %>',
           func: function(group) {
-            if (this.state.sectionName == ALL_SECTIONS) {
+            if (this.state.sectionName === ALL_SECTIONS) {
               return true;
             }
             return this.state.sectionName == group.section;
@@ -274,7 +274,6 @@
     changeSection: function(event) {
       this.clearCheckboxes();
       this.setState({ sectionName: event.target.value });
-      this.props.refresh();
     },
 
     reviewerInRevieweeChange: function(event) {
@@ -336,7 +335,7 @@
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
             <SectionSelectionMenu
               changeSection={this.changeSection}
-              selectId={"peer-review-reviewee-section"} />
+              selectId="peer-review-reviewee-section" />
             <Table ref="table"
               data={groups_data}
               columns={this.props.columns}
