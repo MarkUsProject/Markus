@@ -6,7 +6,7 @@ require 'net/scp'
 module AutomatedTestsHelper
   # This is the waiting list for automated testing. Once a test is requested,
   # it is enqueued and it is waiting for execution. Resque manages this queue.
-  @queue = :test_waiting_list
+  @queue = MarkusConfigurator.markus_ate_test_queue_name
 
   def fetch_latest_tokens_for_grouping(grouping)
     if grouping.token.nil?

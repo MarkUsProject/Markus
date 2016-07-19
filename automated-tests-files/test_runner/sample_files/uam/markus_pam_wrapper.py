@@ -103,6 +103,8 @@ class PAMWrapper:
             env['PYTHONPATH'] = self.path_to_uam  # some needed libs are here
             subprocess.run(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=shell,
                            env=env)
+            # use the following if you have Python < 3.5
+            # subprocess.check_call(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell, env=env)
             results = self.collect_results()
             self.print_results(results)
         except subprocess.CalledProcessError as e:

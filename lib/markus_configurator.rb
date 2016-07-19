@@ -101,16 +101,6 @@ module MarkusConfigurator
     end
   end
 
-  #Repository for the test framework
-  #Students file will be copied into this repository before sending to the test server
-  def markus_config_automated_tests_repository
-    if defined? AUTOMATED_TESTS_REPOSITORY
-      return AUTOMATED_TESTS_REPOSITORY
-    else
-      return File.join(::Rails.root.to_s, "test-framework")
-    end
-  end
-
   ###########################################
   # Markus Session cookie configuration
   ###########################################
@@ -234,6 +224,16 @@ module MarkusConfigurator
   # Automated Testing Engine Configuration
   ##########################################
 
+  #Repository for the test framework
+  #Students file will be copied into this repository before sending to the test server
+  def markus_config_automated_tests_repository
+    if defined? AUTOMATED_TESTS_REPOSITORY
+      return AUTOMATED_TESTS_REPOSITORY
+    else
+      return File.join(::Rails.root.to_s, 'automated_tests')
+    end
+  end
+
   def automated_testing_engine_on?
     return ( (defined? AUTOMATED_TESTING_ENGINE_ON) && AUTOMATED_TESTING_ENGINE_ON == true )
   end
@@ -242,7 +242,7 @@ module MarkusConfigurator
     if automated_testing_engine_on? && (defined? ATE_MAX_NUMBER_OF_RUNNING_TESTS)
       return ATE_MAX_NUMBER_OF_RUNNING_TESTS
     else
-      return 0
+      return 1
     end
   end
 
@@ -266,7 +266,7 @@ module MarkusConfigurator
     if automated_testing_engine_on? && (defined? ATE_TEST_RUNNER_NAME)
       return ATE_TEST_RUNNER_NAME
     else
-      return '~/testrunner/testrunner.rb'
+      return File.join(::Rails.root.to_s, 'automated_tests', 'testrunner.rb')
     end
   end
 
@@ -274,7 +274,15 @@ module MarkusConfigurator
     if automated_testing_engine_on? && (defined? ATE_TEST_RUN_DIRECTORY)
       return ATE_TEST_RUN_DIRECTORY
     else
-      return '~/testrunner/test/'
+      return File.join(::Rails.root.to_s, 'automated_tests', 'test')
+    end
+  end
+
+  def markus_ate_test_queue_name
+    if automated_testing_engine_on? && (defined? ATE_TEST_QUEUE_NAME)
+      return ATE_TEST_QUEUE_NAME
+    else
+      return 'test_queue'
     end
   end
 end

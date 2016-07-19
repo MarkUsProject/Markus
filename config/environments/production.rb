@@ -282,23 +282,24 @@ Markus::Application.configure do
   # The maximum number of tests running in parallel on one test machine
   ATE_MAX_NUMBER_OF_RUNNING_TESTS = 1
 
-  ###################################################################
   # The test server host and username.
   # SSH Login must be set up before running MarkUs, so that MarkUs
   # can connect to the test dispatcher without a password.
   ATE_TEST_SERVER_HOST = 'localhost'
   ATE_TEST_SERVER_USERNAME = 'localhost'
-  
+
+  # The name of the queue on the test server where tests wait to be executed.
+  ATE_TEST_QUEUE_NAME = 'test_queue-CSC108'
+
   # The name and the path of the test runner script on the test server.
-  ATE_TEST_RUNNER_NAME = 'testrunner/testrunner.rb'
+  ATE_TEST_RUNNER_NAME = 'automated_tests/testrunner.rb'
   
-  ###################################################################
   # The name and the path of the directory where the test runs.
   # This directory will be destroyed and recreated in every test run.
   # Then the test runner script along with all test files and source
   # files will be copied to this directory, and the test runner
   # script is executed.
-  ATE_TEST_RUN_DIRECTORY = 'testrunner/test/'
+  ATE_TEST_RUN_DIRECTORY = 'automated_tests/test'
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
