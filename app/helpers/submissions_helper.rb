@@ -59,7 +59,7 @@ module SubmissionsHelper
           # Get the respective reviewee's result from grouping
           result_pr = current_user.grouping_for(assignment.id).review_for(grouping)
           result = Result.find(result_pr.result_id)
-          g[:name_url] = test_assignment_peer_review_path(assignment.id, result_pr.id)
+          g[:name_url] = edit_assignment_result_path(assignment.parent_assignment.id, result_pr.result_id)
         else
           submission = grouping.current_submission_used
           if submission.nil?

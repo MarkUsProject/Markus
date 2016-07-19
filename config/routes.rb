@@ -207,11 +207,17 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :peer_reviews do
+      resources :results, only: [:edit], path: '/peer_reviews' do
         member do
-          get 'test'
+          get 'edit'
+          get 'next_grouping'
+          post 'toggle_marking_state'
+          post 'update_overall_comment'
+          post 'add_extra_mark'
         end
+      end
 
+      resources :peer_reviews do
         collection do
           get 'populate'
           post 'assign_groups'

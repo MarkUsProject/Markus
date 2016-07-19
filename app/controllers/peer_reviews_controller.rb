@@ -4,8 +4,6 @@ class PeerReviewsController < ApplicationController
   include RandomAssignHelper
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
-  before_filter :authorize_only_for_admin, except: [:test]
-  before_filter :authorize_for_student, only: [:test]
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
@@ -156,43 +154,6 @@ class PeerReviewsController < ApplicationController
     end
 
     redirect_to action: 'index', assignment_id: assignment_id
-  end
-
-  # ===========================================================================
-  # Forwarders
-  # ===========================================================================
-
-  def test
-    assignment = Assignment.find(params[:assignment_id])
-    parent_assignment = assignment.parent_assignment
-    pr = PeerReview.find(params[:id])
-    path = edit_assignment_submission_result_path(parent_assignment, pr.reviewee, pr.result)
-
-    #redirect_to path
-
-    #render 'results/edit'
-
-    # render template: 'results/edit', :locals => {
-    #     result: pr.result,
-    #     assignment: parent_assignment
-    # }
-
-    #render :template => 'results/view_marks', :locals => { assignment: assignment, result: pr.result }
-
-    # controller_you_want = ResultsController.new
-    # controller_you_want.request = request
-    #
-    # debugger
-    #
-    # controller_you_want.request.params["controller"] = "results"
-    # controller_you_want.request.params["action"] = "edit"
-    # controller_you_want.request.params["assignment_id"] = parent_assignment.id.to_s
-    # controller_you_want.request.params["submission_id"] = params[:submission_id].to_s
-    # controller_you_want.request.params["id"] = pr.result.id.to_s
-    #
-    # controller_you_want.response = response
-    #
-    # controller_you_want.edit
   end
 
   private
