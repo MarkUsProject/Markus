@@ -214,7 +214,11 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :peer_reviews, only: :index do
+      resources :peer_reviews do
+        member do
+          get 'test'
+        end
+
         collection do
           get 'populate'
           post 'assign_groups'

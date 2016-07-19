@@ -59,6 +59,7 @@ module SubmissionsHelper
           # Get the respective reviewee's result from grouping
           result_pr = current_user.grouping_for(assignment.id).review_for(grouping)
           result = Result.find(result_pr.result_id)
+          g[:name_url] = test_assignment_peer_review_path(assignment.id, result_pr.id)
         else
           submission = grouping.current_submission_used
           if submission.nil?
@@ -86,7 +87,9 @@ module SubmissionsHelper
           g[:grace_credits_used] = grouping.grace_period_deduction_single
           g[:section] = grouping.section
         end
-        g[:name_url] = get_grouping_name_url(grouping, result)
+        unless assignment.is_peer_review?
+          g[:name_url] = get_grouping_name_url(grouping, result)
+        end
         g[:class_name] = get_tr_class(grouping)
         g[:state] = grouping.marking_state(result)
         g[:anonymous_id] = i + 1

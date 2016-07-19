@@ -93,6 +93,16 @@
         return 'Invalid marking state';
       }
     },
+    yes: function(event) {
+      console.log("test");
+      jQuery.ajax({
+        url: '/en/assignments/1/submissions/8/results/44/edit',
+        data: '',
+        type: 'GET'
+      });
+//      event.preventDefault();
+//      return false;
+    },
 
     render: function() {
       var submissions_data = this.state.submissions.map(function(submission) {
@@ -100,7 +110,7 @@
         if (submission.name_url === '') {
           s['group_name'] = <span><%= j raw t('assignment.review') %> {submission.anonymous_id}</span>;
         } else {
-          s['group_name'] = <a href={submission.name_url}> <%= j raw t('assignment.review') %> {submission.anonymous_id}</a>;
+          s['group_name'] = <a href={submission.name_url} onClick={this.yes}> <%= j raw t('assignment.review') %> {submission.anonymous_id}</a>;
         }
         if (submission.error !== '') {
           s['class_name'] = "submission_error";
