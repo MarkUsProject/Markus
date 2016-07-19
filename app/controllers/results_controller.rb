@@ -153,7 +153,6 @@ class ResultsController < ApplicationController
 
   def run_tests
     grouping_id = params[:grouping_id]
-    # TODO: The submission id is set incorrectly as the grouping_id
     submission_id = Result.find(params[:id]).submission.id
 
     begin
@@ -353,7 +352,7 @@ class ResultsController < ApplicationController
     @focus_line = params[:focus_line]
     @grouping = @current_user.grouping_for(params[:assignment_id])
     @file = SubmissionFile.find(@submission_file_id)
-    @result = @file.submission.get_latest_result
+    @result = Result.find(params[:id])
 
     #Is the current user a student?
     if current_user.student?
