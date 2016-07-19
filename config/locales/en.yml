@@ -1208,6 +1208,12 @@ en:
       marking_scheme: "Marking Scheme: %{identifier}"
       save: "Save changes"
       add_criterion: "Add Criterion"
+      errors:
+        messages:
+          name_taken: "Criterion name already used."
+          assignment_association: "Association is not strong with an assignment."
+          assignment_id: "Can only be whole number greater than 0."
+          input_number: "Must be a number greater than 0.0."
 
     flexible_criteria:
       title: "Flexible Criteria"
@@ -1230,9 +1236,6 @@ en:
         <p>The description is optional. Note that if it is not present, the second
         comma should not appear.</p>"
         success: "Flexible criteria successfully uploaded: %{nb_updates} update(s)."
-      errors:
-        messages:
-          name_taken: "Criterion name already used."
       move_criterion:
         error: "Failed to move flexible criteria."
       ta_visible: "Make visible to teaching assistants"
@@ -1279,7 +1282,6 @@ en:
         error: "Some rubric criteria were invalid:"
         syntax_error: "There is an error in the file you uploaded: %{error}"
         empty_error: "No criteria were found in the provided file."
-      error_total: "total weight must be positive"
       defaults:
         level_0: "Very Poor"
         level_1: "Weak"
@@ -1291,9 +1293,6 @@ en:
         description_2: "This criterion was satisfied."
         description_3: "This criterion was satisfied well."
         description_4: "This criterion was satisfied perfectly or nearly perfectly."
-      errors:
-        messages:
-          name_taken: "Criterion name already used."
       move_criterion:
         error: "Failed to move rubric."
       ta_visible: "Make visible to teaching assistants"
@@ -1382,7 +1381,6 @@ en:
     criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
     criterion_saved_success:   "Criterion was successfully saved"
     criterion_saved_failure:   "Criterion failed to be saved"
-    weight_not_number: "weight is not a number."
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
     criterion:          "Criterion"
     total_mark:         "Total mark"

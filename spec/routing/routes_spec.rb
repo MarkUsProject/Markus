@@ -184,34 +184,48 @@ describe 'An Assignment' do
   end
   # end Assignment member route tests
 
-  # start Assignment's rubric_criteria route tests
-  context 's rubric_criteria' do
-    let(:criteria_path) { path + '/' + assignment.id.to_s + '/criteria' }
-    let(:rubric_path) { path + '/' + assignment.id.to_s + '/rubric_criteria' }
-    let(:rubric_ctrl) { 'rubric_criteria' }
-
-    # start assignment rubric member route tests
-    context 'member' do
-      it 'routes DELETE destroy properly' do
-        expect(delete: rubric_path + '/1').to route_to(
-          controller: rubric_ctrl,
-          action: 'destroy',
-          id: '1',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-    end
-    # end assignment rubric member route tests
-
-    # start assignment rubric collection route tests
+  # start assignment criteria route tests
+  context 's criteria' do
     context 'collection' do
+      let(:criteria_path) { path + '/' + assignment.id.to_s + '/criteria' }
+      let(:criteria_ctrl) { 'criteria' }
+
       it 'routes POST update_positions properly' do
         expect(post: criteria_path + '/update_positions').to route_to(
-          controller: 'criteria',
+          controller: criteria_ctrl,
           action: 'update_positions',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
+
+      it 'routes GET show id: update_positions' do
+        expect(get: criteria_path + '/update_positions').to route_to(
+          controller: criteria_ctrl,
+          action: 'show',
+          id: 'update_positions',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
+      end
+
+      it 'routes GET show id: move_criterion' do
+        expect(get: criteria_path + '/move_criterion').to route_to(
+          controller: criteria_ctrl,
+          action: 'show',
+          id: 'move_criterion',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
+      end
+    end
+  end
+  # end assignment criteria route tests
+
+  # start assignment rubric_criteria route tests
+  context 's rubric_criteria' do
+    let(:rubric_path) { path + '/' + assignment.id.to_s + '/rubric_criteria' }
+    let(:rubric_ctrl) { 'rubric_criteria' }
+
+    # start assignment rubric route tests
+    context 'collection like' do
       it 'routes POST csv_upload properly' do
         expect(post: rubric_path + '/csv_upload').to route_to(
           controller: rubric_ctrl,
@@ -242,7 +256,7 @@ describe 'An Assignment' do
       end
     end
   end
-  # end Assignment's rubric_criteria route tests
+  # end assignment rubric_criteria route tests
 
   # start assignment flexible criteria route tests
   context 's flexible_criteria' do
@@ -254,24 +268,6 @@ describe 'An Assignment' do
         expect(post: criter_path + '/upload').to route_to(
           controller: criter_ctrl,
           action: 'upload',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET show id: update_positions' do
-        expect(get: path + '/' + assignment.id.to_s + '/criteria/update_positions').to route_to(
-          controller: 'criteria',
-          action: 'show',
-          id: 'update_positions',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET show id: move_criterion' do
-        expect(get: criter_path + '/move_criterion').to route_to(
-          controller: criter_ctrl,
-          action: 'show',
-          id: 'move_criterion',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
