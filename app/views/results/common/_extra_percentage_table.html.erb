@@ -5,11 +5,12 @@
     <th></th>
   </thead>
   <tbody id='extra_percentage_list' >
-    <% extra_marks_percentage.each do |extra_percentage| %>
+    <% extra_marks_percentage.each do |extra_percentage| -%>
       <%= render partial: 'results/common/extra_percentage',
                  locals: { extra_percentage: extra_percentage,
-                           result_id: result_id,
-                           marker: false } %>
-    <% end %>
+                           result_id:result_id,
+                           marker: marker } %>
+    <% end -%>
    </tbody>
 </table>
+
