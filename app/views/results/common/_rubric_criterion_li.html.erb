@@ -1,0 +1,15 @@
+<%
+# Erb template for displaying a rubric criterion
+%>
+
+<% item_class = marker ? 'rubric_criterion expanded' : 'rubric_criterion' %>
+<li id='<%= "mark_criterion_#{mark_criterion.id}" %>' class=<%= item_class %>>
+  <div class='criterion_title' id='<%= "mark_criterion_title_#{mark_criterion.id}"%>' onclick='<%="focus_mark_criterion(#{mark_criterion.id})"%>'>
+    <%= render partial: 'results/common/rubric_criterion',
+               locals: { mark_criterion: mark_criterion,
+                         result: result,
+                         mark: mark,
+                         old_mark: old_mark,
+                         marker: marker } %>
+  </div>
+</li>

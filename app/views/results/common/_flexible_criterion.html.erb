@@ -1,5 +1,5 @@
 <%
-  if view == 'marker'
+  if marker
     onclick = "focus_mark_criterion(#{mark_criterion.id})"
     criterion_name_class = 'title_div_level unreleased'
     old_mark_class = 'old_mark old_mark_unreleased'
@@ -14,7 +14,7 @@
 </div>
 
 <div class='mark_flexible'>
-  <% if view == 'marker' %>
+  <% if marker %>
     <%= text_field_tag('mark_' + mark.id.to_s, mark.mark,
                        size: 4,
                        class: 'mark_grade_input' + (!old_mark.nil? && (mark.mark != old_mark.mark) ? ' remarked' : ' not_remarked'),
