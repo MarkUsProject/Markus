@@ -21,7 +21,7 @@ namespace :db do
     Assignment.all.each do |assignment|
       5.times do |index|
         ac = AnnotationCategory.create(assignment: assignment,
-                                       position: 1,
+                                       position: index + 1,
                                        annotation_category_name: random_words(3))
 
         (rand(10) + 3).times do
@@ -35,7 +35,7 @@ namespace :db do
         RubricCriterion.create(
             name:                  random_sentences(1),
             assignment_id:         assignment.id,
-            position:              1,
+            position:              index + 1,
             max_mark:              pos_rand(3),
             level_0_name:          random_words(5),
             level_0_description:   random_sentences(5),
@@ -57,7 +57,7 @@ namespace :db do
             name:                    random_sentences(1),
             assignment_id:           assignment.id,
             description:             random_sentences(5),
-            position:                1,
+            position:                index + 1,
             max_mark:                pos_rand(3),
             created_at:              nil,
             updated_at:              nil,
