@@ -12,14 +12,15 @@
    <tbody>
      <tr>
        <td colspan="3">
-         <!-- TODO - Need to check if the submission_id breaks any other view? -->
          <%= link_to I18n.t("marker.marks.add_extra_mark"),
                'javascript:void(0);',
                onclick: "if (document.getElementById('add_extra_mark_prompt') != null) {
                  document.getElementById('add_extra_mark_prompt').down('input').focus();
                } else {
                  jQuery.ajax({
-                   url: '" + add_extra_mark_assignment_submission_result_path(submission_id: @submission.id) + "',
+                   url: '" + (@current_user.student? ?
+                                add_extra_mark_assignment_result_path :
+                                add_extra_mark_assignment_submission_result_path) + "',
                    type: 'GET'
                  });
                }"%>

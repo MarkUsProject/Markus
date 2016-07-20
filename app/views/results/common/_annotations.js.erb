@@ -380,9 +380,9 @@
     positions = null;
     annotation_manager = null;
 
-    // TODO - Need to see if submission_id is required here, or if it breaks something unexpectedly?
     jQuery.ajax({
-      url:  '<%= codeviewer_assignment_submission_result_path(uid: @uid, submission_id: @submission.id) %>',
+      url: '<%= @current_user.student? ? codeviewer_assignment_result_path(uid: @uid) :
+                                         codeviewer_assignment_submission_result_path(uid: @uid) %>',
       type: 'POST',
       data: 'submission_file_id=' + submission_file_id +
             '&focus_line=' + focus_line +
