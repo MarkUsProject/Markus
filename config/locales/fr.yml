@@ -1075,18 +1075,20 @@ fr:
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     criteria:
-      title: "Critères"
-      name: "Nom du critère"
-      type: "Type de critère."
+      title:          "Critères"
+      name:           "Nom du critère"
+      type:           "Type de critère."
+      rubric:         "Rubrique"
+      flexible:       "Flexible"
       marking_scheme: "Barème: %{identifier}"
-      save: "Sauvegarder les modifications"
-      add_criterion: "Ajouter Critère"
+      save:           "Sauvegarder les modifications"
+      add_criterion:  "Ajouter Critère"
       errors:
         messages:
-          name_taken: "Nom du critère déjà utilisé."
+          name_taken:             "Nom du critère déjà utilisé."
           assignment_association: "Association est pas forte avec une mission."
-          assignment_id: "Ne peut être un nombre entier supérieur à 0."
-          input_number: "Doit être un nombre supérieur à 0.0."
+          assignment_id:          "Ne peut être un nombre entier supérieur à 0."
+          input_number:           "Doit être un nombre supérieur à 0.0."
 
     flexible_criteria:
       title: "Critères souples"

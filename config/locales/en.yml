@@ -1204,18 +1204,20 @@ en:
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     criteria:
-      title: "Criteria"
-      name: "Criterion name"
-      type: "Criterion type"
+      title:          "Criteria"
+      name:           "Criterion name"
+      type:           "Criterion type"
+      rubric:         "Rubric"
+      flexible:       "Flexible"
       marking_scheme: "Marking Scheme: %{identifier}"
-      save: "Save changes"
-      add_criterion: "Add Criterion"
+      save:           "Save changes"
+      add_criterion:  "Add Criterion"
       errors:
         messages:
-          name_taken: "Criterion name already used."
+          name_taken:              "Criterion name already used."
           assignment_association: "Association is not strong with an assignment."
-          assignment_id: "Can only be whole number greater than 0."
-          input_number: "Must be a number greater than 0.0."
+          assignment_id:          "Can only be whole number greater than 0."
+          input_number:           "Must be a number greater than 0.0."
 
     flexible_criteria:
       title: "Flexible Criteria"
