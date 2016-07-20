@@ -2,44 +2,15 @@
 @import 'common/columns';
 
 .col-left {
-  width: 30%;
+  width: 40%;
+}
+
+.col-right {
+  width: 50%;
 }
 
 .col-center #icons {
   left: 45%;
-}
-
-.col-right {
-  width: 30%;
-}
-
-.new_group {
-  float: right;
-}
-
-.graders-to-criteria {
-  padding-bottom: 5px;
-}
-
-.grader-summary-graph {
-  display: inline-block;
-}
-
-.grader-summary-content {
-  text-align: center;
-}
-
-.skip-empty-submissions {
-  padding-bottom: 12px;
-}
-
-// This is for the JSX main table. These numbers are required to compress the
-// tables and to conform to the 'floating' hack used by the assigning/dice
-// center column (which is why the right side is not equal to the left).
-// TODO: Change the CSS for the floating middle column instead.
-#peer_reviews_manager {
-  padding-left: 19em;
-  padding-right: 33em;
 }
 
 .peer-review-amount-spinner {
