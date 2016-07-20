@@ -303,12 +303,15 @@
         return;
       }
 
+      document.getElementById('working').style.display = '';
+
       jQuery.ajax({
         method: 'POST',
         url: '<%= assign_groups_assignment_peer_reviews_path %>',
         data: dataToSend,
 
         success: function(data) {
+          document.getElementById('working').style.display = 'none';
           this.props.clearSelectedFields();
           this.props.refresh();
           this.setState({ error: null });
@@ -316,6 +319,7 @@
         }.bind(this),
 
         error: function(xhr, status, text) {
+          document.getElementById('working').style.display = 'none';
           var error = text + ': ' + xhr.responseText;
           this.props.setErrorMessage(error);
         }.bind(this)
