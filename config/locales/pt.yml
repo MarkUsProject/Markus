@@ -1045,6 +1045,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     criteria:
       title: "Critério"
       name: "Nome do critério"
+      type: "Tipo de critério"
       marking_scheme: "Esquema de avalição: %{identifier}"
       save: "Salvar alterções"
       add_criterion: "Adicionar Critério"

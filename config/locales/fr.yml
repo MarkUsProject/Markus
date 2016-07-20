@@ -1077,6 +1077,7 @@ fr:
     criteria:
       title: "Critères"
       name: "Nom du critère"
+      type: "Type de critère."
       marking_scheme: "Barème: %{identifier}"
       save: "Sauvegarder les modifications"
       add_criterion: "Ajouter Critère"

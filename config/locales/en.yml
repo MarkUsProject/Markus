@@ -1206,6 +1206,7 @@ en:
     criteria:
       title: "Criteria"
       name: "Criterion name"
+      type: "Criterion type"
       marking_scheme: "Marking Scheme: %{identifier}"
       save: "Save changes"
       add_criterion: "Add Criterion"
