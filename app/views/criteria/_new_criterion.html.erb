@@ -1,6 +1,5 @@
 <li id='new_criterion'>
   <%= form_tag(assignment_criteria_path(assignment_id: assignment.id),
-               as: :rubric_criterion,
                method: :post,
                remote: true) do %>
     <div id='new_criterion_error' style='display:none;' class='error'></div>
