@@ -18,15 +18,23 @@
   <div class='heading_buttons'>
     <%= link_to t('criteria.add_criterion'),
       'javascript:void(0);',
-      onclick: "if(document.getElementById('new_criterion') != null) {
+      onclick: "var criteriaSelectionText = jQuery('#marking-scheme-criteria-dropdown :selected').val();
+      if (criteriaSelectionText !== 'RubricCriterion' && criteriaSelectionText !== 'FlexibleCriterion') {
+        alert('Please select a criterion from the dropdown menu.');
+      } else if (document.getElementById('new_criterion') != null) {
         document.getElementById('new_criterion_prompt').focus();
       } else {
         jQuery.ajax({
           url: '" + new_assignment_criterion_path(@assignment) + "',
-          data: 'criterion_type=RubricCriterion',
+          data: 'criterion_type=' + criteriaSelectionText,
           type: 'GET'
         });
       } "%>
+    <select id="marking-scheme-criteria-dropdown">
+      <option value="">Select type:</option>
+      <option value="RubricCriterion">Rubric</option>
+      <option value="FlexibleCriterion">Flexible</option>
+    </select>
     <span class='menu_bar'></span>
     <%= link_to t(:download),
                 'javascript:void(0);',
