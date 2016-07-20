@@ -114,24 +114,4 @@ class RubricCriteriaController < ApplicationController
     end
     redirect_to action: 'index', assignment_id: assignment.id
   end
-
-  private
-
-  def rubric_criterion_params
-    params.require(:rubric_criterion).permit(:name,
-                                             :assignment,
-                                             :position,
-                                             :level_0_name,
-                                             :level_0_description,
-                                             :level_1_name,
-                                             :level_1_description,
-                                             :level_2_name,
-                                             :level_2_description,
-                                             :level_3_name,
-                                             :level_3_description,
-                                             :level_4_name,
-                                             :level_4_description,
-                                             :ta_visible,
-                                             :peer_visible)
-  end
 end
