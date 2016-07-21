@@ -1,6 +1,9 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
+  // A constant that represents all sections
+  var ALL_SECTIONS = '';
+
   // The main manager that controls all the components.
   var PeerReviewsManager = React.createClass({
     getInitialState: function() {
@@ -23,6 +26,10 @@
 
     updateSelectedReviewerGroups: function(reviewerGroups) {
       this.setState({selectedReviewerGroups: reviewerGroups});
+    },
+
+    clearReviewerToRevieweeCheckboxData: function() {
+      this.setState({selectedReviewerInRevieweeGroups: {}});
     },
 
     updateSelectedRevieweeGroups: function(revieweeGroups) {
@@ -123,15 +130,41 @@
               onReviewerChangeInRevieweeTable={this.updatedSelectedReviewersInRevieweesTable}
               selectedReviewerInRevieweeGroups={this.state.selectedReviewerInRevieweeGroups}
               onSelectedGroupsChange={this.updateSelectedRevieweeGroups}
+              clearReviewerToRevieweeCheckboxData={this.clearReviewerToRevieweeCheckboxData}
               refresh={this.refresh} />
           </div>
         </div>
       );
     }
   });
+
+  // Renders the dropdown menu for sections.
+  var SectionSelectionMenu = React.createClass({
+    render: function() {
+      // Note: Apparently render has to return something, so the 'if' has to go
+      // inside (otherwise errors happen).
+      return (
+        <span>
+        <% if Section.any? %>
+          <%= j raw t('browse_submissions.section') %>:
+          <select id={this.props.selectId} className="white" onChange={this.props.changeSection}>
+            <option value=""><%= j raw t('browse_submissions.sections.all') %></option>
+            <% Section.all.order(:name).each do |section| %>
+              <option value="<%= j raw section.name %>"><%= j raw section.name %></option>
+            <% end %>
+          </select>
+        <% end %>
+        </span>
+      );
+    }
+  });
   
   // The table of groups to be graders on the left.
   var ReviewerTable = React.createClass({
+    getInitialState: function() {
+      return { sectionName: ALL_SECTIONS };
+    },
+
     getDefaultProps: function() {
       return {
         columns: [
@@ -147,12 +180,18 @@
             sortable: false,
             searchable: false
           },
-        ],
+        ]
       };
     },
 
     clearCheckboxes: function() {
       this.refs.table.clearCheckboxes();
+    },
+
+    changeSection: function(event) {
+      this.clearCheckboxes();
+      this.setState({ sectionName: event.target.value });
+      this.props.refresh();
     },
 
     render: function() {
@@ -161,8 +200,11 @@
           name: 'all',
           text: '<%= j raw t('groups.all_grouping_counts') %>',
           func: function(group) {
-            return true;
-          }
+            if (this.state.sectionName === ALL_SECTIONS) {
+              return true;
+            }
+            return this.state.sectionName == group.section;
+          }.bind(this)
         },
       ];
 
@@ -175,17 +217,21 @@
         return {
           id: group.id,
           name: group.name,
-          groups: numReviews
+          groups: numReviews,
+          section: group.section
         };
       }.bind(this));
 
       return (
         <div className={'col-left'}>
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
+            <SectionSelectionMenu
+              changeSection={this.changeSection}
+              selectId={"peer-review-reviewer-section"} />
             <Table ref="table"
               data={groups_data}
               columns={this.props.columns}
-              filters={this.props.filters} 
+              filters={filters}
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
               search_placeholder={'<%= j raw t('groups.search_groups') %>'} />
@@ -197,6 +243,10 @@
 
   // The table of peer reviewees and assigned reviewers on the right.
   var RevieweeTable = React.createClass({
+    getInitialState: function() {
+      return { sectionName: ALL_SECTIONS };
+    },
+
     getDefaultProps: function() {
       return {
         columns: [
@@ -218,6 +268,12 @@
 
     clearCheckboxes: function() {
       this.refs.table.clearCheckboxes();
+      this.props.clearReviewerToRevieweeCheckboxData();
+    },
+
+    changeSection: function(event) {
+      this.clearCheckboxes();
+      this.setState({ sectionName: event.target.value });
     },
 
     reviewerInRevieweeChange: function(event) {
@@ -243,8 +299,11 @@
           name: 'all',
           text: '<%= j raw t('groups.all_grouping_counts') %>',
           func: function(group) {
-            return true;
-          }
+            if (this.state.sectionName == ALL_SECTIONS) {
+              return true;
+            }
+            return this.state.sectionName == group.section;
+          }.bind(this)
         },
       ];
 
@@ -266,17 +325,21 @@
         return {
           id: group.id,
           name: group.name,
-          members: reviewerGroups
+          members: reviewerGroups,
+          section: group.section
         };
       }.bind(this));
 
       return (
         <div className={'col-right'}>
           <div className={'tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all'} id='groups-tabs'>
+            <SectionSelectionMenu
+              changeSection={this.changeSection}
+              selectId="peer-review-reviewee-section" />
             <Table ref="table"
               data={groups_data}
               columns={this.props.columns}
-              filters={this.props.filters}
+              filters={filters}
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
               search_placeholder={'<%= j raw t('groups.search_groups') %>'} />
@@ -303,12 +366,15 @@
         return;
       }
 
+      document.getElementById('working').style.display = '';
+
       jQuery.ajax({
         method: 'POST',
         url: '<%= assign_groups_assignment_peer_reviews_path %>',
         data: dataToSend,
 
         success: function(data) {
+          document.getElementById('working').style.display = 'none';
           this.props.clearSelectedFields();
           this.props.refresh();
           this.setState({ error: null });
@@ -316,6 +382,7 @@
         }.bind(this),
 
         error: function(xhr, status, text) {
+          document.getElementById('working').style.display = 'none';
           var error = text + ': ' + xhr.responseText;
           this.props.setErrorMessage(error);
         }.bind(this)

@@ -65,7 +65,7 @@ module SubmissionsHelper
             result = nil
           elsif submission.submitted_remark.nil?
             result = (results.select do |r|
-              r.submission_id == submission.id
+              r.submission_id == submission.id && !r.is_a_review?
             end).first
           else
             result = submission.remark_result

@@ -829,6 +829,7 @@ fr:
       not_covered:        "Pas couvert"
       covered:            "Couvert"
       coverage:           "Couverture"
+      problem:            "Il y avait un problème..."
       search_criteria:    "Rechercher les critères"
       assign_to_criteria: "Attribuer les correcteurs aux critères"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
