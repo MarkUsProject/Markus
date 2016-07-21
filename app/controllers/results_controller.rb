@@ -206,7 +206,7 @@ class ResultsController < ApplicationController
   def next_grouping
     grouping = Grouping.find(params[:grouping_id])
     assignment = Assignment.find(params[:assignment_id])
-    result = Result.find(params[:result_id])
+    result = Result.find(params[:id])
 
     if grouping.has_submission? && grouping.is_collected?
       if @current_user.is_reviewer_for?(assignment.pr_assignment, result)
