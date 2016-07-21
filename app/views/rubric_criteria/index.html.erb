@@ -26,14 +26,14 @@
       } else {
         jQuery.ajax({
           url: '" + new_assignment_criterion_path(@assignment) + "',
-          data: 'criterion_type=' + criteriaSelectionText,
+          data: { criterion_type: criteriaSelectionText },
           type: 'GET'
         });
       } "%>
     <select id="marking-scheme-criteria-dropdown">
-      <option value="">Select type:</option>
-      <option value="RubricCriterion">Rubric</option>
-      <option value="FlexibleCriterion">Flexible</option>
+      <option value=""><%= t('select_type') %>:</option>
+      <option value="RubricCriterion"><%= t('assignment.marking_scheme.rubric') %></option>
+      <option value="FlexibleCriterion"><%= t('assignment.marking_scheme.flexible') %></option>
     </select>
     <span class='menu_bar'></span>
     <%= link_to t(:download),
