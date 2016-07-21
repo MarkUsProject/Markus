@@ -112,6 +112,7 @@ en:
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder"
     incorrect_format:   "Incorrect format"
+    select_type:        "Select type"
     marking_state:
       not_collected: "Not Collected"
       in_progress: "In Progress"

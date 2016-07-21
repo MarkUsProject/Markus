@@ -114,6 +114,7 @@ fr:
     manage_course_work: "Gestion du cours"
     repository_folder:  "Dossier du projet"
     incorrect_format:   "Le format est incorrect"
+    select_type:        "Sélectionner le genre"
     marking_state:
       not_collected: "Pas récupéré"
       in_progress: "En cours"

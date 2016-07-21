@@ -111,6 +111,7 @@ pt:
     manage_course_work: "Gerenciar trabalho do curso"
     repository_folder:  "Pasta do repositório"
     incorrect_format:   "Formato incorreto"
+    select_type:        "Selecione o tipo de"
     marking_state:
       not_collected: "Não coletado"
       in_progress: "Em progresso"
