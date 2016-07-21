@@ -8,11 +8,10 @@ module PeerReviewHelper
     peer_review_map = Hash.new { |hash, key| hash[key] = [] }
     reviewee_groups.each { |reviewee| peer_review_map[reviewee['id']] }
 
-    PeerReview.includes(:reviewer)
-              .includes(result: [submission: [grouping: :group]])
+    PeerReview.includes(result: [submission: [grouping: :group]])
               .where(reviewer_id: reviewer_ids).each do |peer_review|
       reviewee_group_id = peer_review.result.submission.grouping.id
-      peer_review_map[reviewee_group_id].push(peer_review.reviewer.id)
+      peer_review_map[reviewee_group_id].push(peer_review.reviewer_id)
     end
 
     peer_review_map
