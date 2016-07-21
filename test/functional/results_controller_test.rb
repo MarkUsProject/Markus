@@ -166,9 +166,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
         should 'not be able to get next_grouping' do
           get_as @student,
                  :next_grouping,
-                 assignment_id: 1,
+                 assignment_id: @assignment.id,
                  submission_id: 1,
-                 id: @grouping.id
+                 grouping_id: @grouping.id,
+                 id: @result.id
           assert_response :missing
           assert render_template 404
         end
@@ -176,7 +177,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         should 'GET on :set_released_to_student' do
           get_as @student,
                  :set_released_to_students,
-                 assignment_id: 1,
+                 assignment_id: @assignment.id,
                  submission_id: 1,
                  id: @result.id
           assert_response :missing
@@ -648,23 +649,27 @@ class ResultsControllerTest < AuthenticatedControllerTest
         context 'GET on :next_grouping' do
           should 'when current grouping has submission' do
             grouping = Grouping.make
+            result = Result.make
             Grouping.any_instance.stubs(:has_submission).returns(true)
             get_as @admin,
                    :next_grouping,
-                   assignment_id: 1,
+                   assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: grouping.id
+                   grouping_id: grouping.id,
+                   id: result.id
             assert_response :redirect
           end
 
           should 'when current grouping has no submission' do
             grouping = Grouping.make
+            result = Result.make
             Grouping.any_instance.stubs(:has_submission).returns(false)
             get_as @admin,
                    :next_grouping,
-                   assignment_id: 1,
+                   assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: grouping.id
+                   grouping_id: grouping.id,
+                   id: result.id
             assert_response :redirect
           end
         end
@@ -676,7 +681,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           get_as @admin,
                  :set_released_to_students,
                  format: :js,
-                 assignment_id: @assignment,
+                 assignment_id: @assignment.id,
                  submission_id: 1,
                  id: @result.id,
                  value: 'true'
@@ -879,8 +884,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             g = Grouping.make(assignment: @assignment)
             @submission = Submission.make(grouping: g)
             @file = SubmissionFile.make(submission: @submission)
-            annotation = Annotation.new
-            @file.expects(:annotations).once.returns(annotation)
+            annotation = TextAnnotation.make(submission_file_id: @file.id)
             SubmissionFile.stubs(:find).returns(@file)
             @result = Result.make
           end
@@ -1118,35 +1122,41 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :next_grouping' do
           should 'when current grouping has submission' do
+            result = Result.make
             grouping = Grouping.make
             Grouping.any_instance.stubs(:has_submission).returns(true)
             get_as @ta,
                    :next_grouping,
-                   assignment_id: 1,
+                   assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: grouping.id
+                   grouping_id: grouping.id,
+                   id: result.id
 
             assert_response :redirect
           end
 
           should 'when current grouping has no submission' do
+            result = Result.make
             grouping = Grouping.make
             Grouping.any_instance.stubs(:has_submission).returns(false)
             get_as @ta,
                    :next_grouping,
-                   assignment_id: 1,
+                   assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: grouping.id
+                   grouping_id: grouping.id,
+                   id: result.id
             assert_response :redirect
           end
         end
 
         should 'GET on :set_released_to_students' do
           result = Result.make
+          grouping = Grouping.make
           get_as @ta,
                  :set_released_to_students,
                  assignment_id: 1,
                  submission_id: 1,
+                 grouping_id: grouping.id,
                  id: result.id
           assert_response :missing
           assert render_template 404
@@ -1154,11 +1164,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         should 'GET on :toggle_marking_state' do
           result = Result.make
+          grouping = Grouping.make
           get_as @ta,
                  :toggle_marking_state,
                  format: :js,
                  assignment_id: @assignment.id,
                  submission_id: 1,
+                 grouping_id: grouping.id,
                  id: result.id
           assert_response :success
           assert_not_nil assigns :result
