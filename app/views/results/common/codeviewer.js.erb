@@ -45,17 +45,15 @@ document.getElementById('codeviewer').onmousemove = null;
 <% if @current_user.ta? || @current_user.admin? ||
    @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
   jQuery('#annotation_summary_list').html(
-    "<%= escape_javascript(render partial: 'results/common/annotation_summary',
+    "<%= escape_javascript(render partial: 'results/marker/annotation_summary',
                                   locals: { annots: @all_annots,
-                                            submission_file_id: @submission_file_id,
-                                            marker: true }) %>");
+                                            submission_file_id: @submission_file_id }) %>");
 
   hide_all_annotation_content_editors();
 <% else %>
   jQuery('#annotation_summary_list').html(
-    "<%= escape_javascript(render partial: 'results/common/annotation_summary',
+    "<%= escape_javascript(render partial: 'results/student/annotation_summary',
                                   locals: { annots: @all_annots,
-                                            submission_file_id: @submission_file_id,
-                                            marker: false }) %>");
+                                            submission_file_id: @submission_file_id }) %>");
 <% end %>
 reloadDOM();
