@@ -1,6 +1,7 @@
 <%= form_tag(download_assignment_submission_result_path(
-                 @assignment.id, @grouping.current_submission_used.id,
-                 @grouping.current_submission_used.get_latest_result.id)) do %>
+                 assignment_id: @assignment.id,
+                 submission_id: @grouping.current_submission_used.id,
+                 id: @grouping.current_submission_used.get_latest_result.id)) do %>
     <%= hidden_field_tag :include_annotations,
                          true,
                          id: 'download_include_annotations' %>
