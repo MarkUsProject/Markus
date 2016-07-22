@@ -20,46 +20,48 @@
     <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
   </div>
 
-  <div class='submission_rule_pane'>
-    <div class='submission_rule_label'>
-      <strong><%= t('marker.marks.submission_rule') %>:</strong>
+  <% unless @result.is_a_review? %>
+    <div class='submission_rule_pane'>
+      <div class='submission_rule_label'>
+        <strong><%= t('marker.marks.submission_rule') %>:</strong>
+      </div>
+      <div id="submission_rule_viewer">
+        <%= render partial: assignment.submission_rule.grader_tab_partial,
+                   locals: { grouping: result.submission.grouping } %>
+      </div>
     </div>
-    <div id='submission_rule_viewer'>
-      <%= render partial: assignment.submission_rule.grader_tab_partial,
-                 locals: { grouping: result.submission.grouping } %>
+
+    <div class='extra_marks_pane'>
+      <div class='bonus_deduction'>
+        <strong><%= t('marker.marks.bonus_deductions') %></strong>
+      </div>
+      <%= render partial: 'results/marker/extra_marks_table',
+                 locals: { extra_marks_points: extra_marks_points,
+                           result_id: result.id } %>
     </div>
-  </div>
 
-  <div class='extra_marks_pane'>
-    <div class='bonus_deduction'>
-      <strong><%= t('marker.marks.bonus_deductions') %></strong>
+    <div class='summary_block'>
+      <strong class='total_extra_points_label'>
+        <%= t('marker.marks.total_extra_marks').html_safe %>
+      </strong>
+      <span id='total_extra_points'>
+        <%= result.get_total_extra_points %>
+      </span>
     </div>
-    <%= render partial: 'results/marker/extra_marks_table',
-               locals: { extra_marks_points: extra_marks_points,
-                         result_id: result.id } %>
-  </div>
 
-  <div class='summary_block'>
-    <strong class='total_extra_points_label'>
-      <%= t('marker.marks.total_extra_marks').html_safe %>
-    </strong>
-    <span id='total_extra_points'>
-      <%= result.get_total_extra_points %>
-    </span>
-  </div>
+    <div class='extra_percentage_pane'>
+      <%= render partial: 'results/marker/extra_percentage_table',
+                 locals: { extra_marks_percentage: extra_marks_percentage,
+                           result_id: result.id } %>
+    </div>
 
-  <div class='extra_percentage_pane'>
-    <%= render partial: 'results/marker/extra_percentage_table',
-               locals: { extra_marks_percentage: extra_marks_percentage,
-                         result_id: result.id } %>
-  </div>
-
-  <div class='summary_block'>
-    <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
-    <span id='total_extra_percentage'><%= result.get_total_extra_percentage %></span><br>
-    <strong><%= t('marker.marks.translated_to_points') %></strong>
-    <span id='total_extra_percentage_as_points'><%= result.get_total_extra_percentage_as_points %></span>
-  </div>
+    <div class='summary_block'>
+      <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
+      <span id='total_extra_percentage'><%= result.get_total_extra_percentage %></span><br>
+      <strong><%= t('marker.marks.translated_to_points') %></strong>
+      <span id='total_extra_percentage_as_points'><%= result.get_total_extra_percentage_as_points %></span>
+    </div>
+  <% end %>
 </div>
 
 <% if old_result %>
@@ -75,42 +77,44 @@
       <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
     </div>
 
-    <div class='submission_rule_pane'>
-      <div class='submission_rule_label'>
-        <strong><%= t('marker.marks.submission_rule') %>:</strong>
+    <% unless @result.is_a_review? %>
+      <div class='submission_rule_pane'>
+        <div class='submission_rule_label'>
+          <strong><%= t('marker.marks.submission_rule') %>:</strong>
+        </div>
+        <div id="submission_rule_viewer">
+        <%= render partial: assignment.submission_rule.grader_tab_partial,
+                   locals: { grouping: result.submission.grouping } %>
+        </div>
       </div>
-      <div id='submission_rule_viewer'>
-      <%= render partial: assignment.submission_rule.grader_tab_partial,
-                 locals: { grouping: result.submission.grouping } %>
+
+
+      <div class='extra_marks_pane'>
+        <div class='bonus_deduction'><strong><%= t('marker.marks.bonus_deductions') %></strong></div>
+        <%= render partial: 'results/student/extra_marks_table',
+                   locals: { extra_marks_points: old_result.extra_marks.points,
+                             result_id: old_result.id } %>
       </div>
-    </div>
 
+      <div class='summary_block'>
+        <strong class='total_extra_points_label'>
+          <%= t('marker.marks.total_extra_marks').html_safe %>
+        </strong>
+        <span id='total_extra_points'><%= old_result.get_total_extra_points %></span>
+      </div>
+      <div class='extra_percentage_pane'>
+        <%= render partial: 'results/student/extra_percentage_table',
+                   locals: { extra_marks_percentage: old_result.extra_marks.percentage,
+                             result_id: old_result.id } %>
+      </div>
 
-    <div class='extra_marks_pane'>
-      <div class='bonus_deduction'><strong><%= t('marker.marks.bonus_deductions') %></strong></div>
-      <%= render partial: 'results/student/extra_marks_table',
-                 locals: { extra_marks_points: old_result.extra_marks.points,
-                           result_id: old_result.id } %>
-    </div>
-
-    <div class='summary_block'>
-      <strong class='total_extra_points_label'>
-        <%= t('marker.marks.total_extra_marks').html_safe %>
-      </strong>
-      <span id='total_extra_points'><%= old_result.get_total_extra_points %></span>
-    </div>
-    <div class='extra_percentage_pane'>
-      <%= render partial: 'results/student/extra_percentage_table',
-                 locals: { extra_marks_percentage: old_result.extra_marks.percentage,
-                           result_id: old_result.id } %>
-    </div>
-
-    <div class='summary_block'>
-      <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
-      <span id='total_extra_percentage'><%= old_result.get_total_extra_percentage %></span><br />
-      <strong><%= t('marker.marks.translated_to_points') %></strong>
-      <span id='total_extra_percentage_as_points'><%= old_result.get_total_extra_percentage_as_points %></span> <br />
-    </div>
+      <div class='summary_block'>
+        <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
+        <span id='total_extra_percentage'><%= old_result.get_total_extra_percentage %></span><br />
+        <strong><%= t('marker.marks.translated_to_points') %></strong>
+        <span id='total_extra_percentage_as_points'><%= old_result.get_total_extra_percentage_as_points %></span> <br />
+      </div>
+    <% end %>
   </div>
   <script>
     hide_old_marks();
