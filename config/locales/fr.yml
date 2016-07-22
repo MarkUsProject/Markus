@@ -1176,6 +1176,7 @@ fr:
       max_value: "Valeur maximale"
       grade: "Note intermédiaire"
       mark: "Note"
+      score: "Score"
       weight: "Coefficient"
       test_script_title: "Scripts de test"
 

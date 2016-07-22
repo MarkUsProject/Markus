@@ -70,7 +70,9 @@ jQuery(document).ready(function() {
           var total = items[2];
           update_total_mark(total);
           document.getElementById('mark_' + mark_id + '_summary_mark')
-                  .innerHTML = mark;
+            .innerHTML = mark;
+          document.getElementById('mark_' + mark_id + '_summary_mark_after_weight')
+            .innerHTML = mark;
           document.getElementById('current_subtotal_div').innerHTML = subtotal;
         }
       });
@@ -203,9 +205,9 @@ function update_rubric_mark(elem, mark_id, value) {
       update_total_mark(total);
 
       document.getElementById('mark_' + mark_id + '_summary_mark')
-              .innerHTML = value;
+        .innerHTML = value;
       document.getElementById('mark_' + mark_id + '_summary_mark_after_weight')
-              .innerHTML = mark;
+        .innerHTML = mark;
       document.getElementById('current_subtotal_div').innerHTML = subtotal;
     }
   });

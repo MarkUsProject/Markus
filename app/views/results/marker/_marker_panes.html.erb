@@ -151,10 +151,8 @@
         <div id='summary_viewer' class='marks_summary_pane'>
           <%= render partial: 'results/marker/marker_summary',
                      locals: { mark_criteria: mark_criteria,
-                               rubric_marks_map: rubric_marks_map,
-                               flexible_marks_map: flexible_marks_map,
-                               old_rubric_marks_map: old_rubric_marks_map,
-                               old_flexible_marks_map: old_flexible_marks_map,
+                               marks_map: marks_map,
+                               old_marks_map: old_marks_map,
                                assignment: assignment,
                                old_result: @old_result,
                                result: result,

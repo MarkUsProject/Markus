@@ -59,10 +59,8 @@ class ResultsController < ApplicationController
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
-    @flexible_marks_map = Hash.new
-    @rubric_marks_map = Hash.new
-    @old_flexible_marks_map = Hash.new
-    @old_rubric_marks_map = Hash.new
+    @marks_map = Hash.new
+    @old_marks_map = Hash.new
 
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
@@ -76,22 +74,18 @@ class ResultsController < ApplicationController
 
     @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
-      criterion.class == RubricCriterion ? @rubric_marks_map[criterion.id] = mark
-                                         : @flexible_marks_map[criterion.id] = mark
+      @marks_map[criterion.id] = mark
       # Loading up previous results for the case of a remark
       if @old_result
         oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
         oldmark.save(validate: false)
-        criterion.class == RubricCriterion ? @old_rubric_marks_map[criterion.id] = oldmark
-                                           : @old_flexible_marks_map[criterion.id] = oldmark
+        @old_marks_map[criterion.id] = oldmark
       end
 
       Mark.skip_callback(:save, :after, :update_result_mark)
       mark.save(validate: false)
       Mark.set_callback(:save, :after, :update_result_mark)
     end
-    @marks_map = @rubric_marks_map.merge(@flexible_marks_map)
-    @old_marks_map = @old_rubric_marks_map.merge(@old_flexible_marks_map)
 
     @result.update_total_mark
     groupings = Grouping.get_groupings_for_assignment(@assignment,
@@ -467,26 +461,20 @@ class ResultsController < ApplicationController
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
-    @flexible_marks_map = Hash.new
-    @rubric_marks_map = Hash.new
-    @old_flexible_marks_map = Hash.new
-    @old_rubric_marks_map = Hash.new
+    @marks_map = Hash.new
+    @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria(:ta)
     @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       mark.save(validate: false)
-      criterion.class == RubricCriterion ? @rubric_marks_map[criterion.id] = mark
-                                         : @flexible_marks_map[criterion.id] = mark
+      @marks_map[criterion.id] = mark
 
       if @old_result
         oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
         oldmark.save(validate: false)
-        criterion.class == RubricCriterion ? @old_rubric_marks_map[criterion.id] = oldmark
-                                           : @old_flexible_marks_map[criterion.id] = oldmark
+        @old_marks_map[criterion.id] = oldmark
       end
     end
-    @marks_map = @rubric_marks_map.merge(@flexible_marks_map)
-    @old_marks_map = @old_rubric_marks_map.merge(@old_flexible_marks_map)
     @host = Rails.application.config.action_controller.relative_url_root
 
     m_logger = MarkusLogger.instance
