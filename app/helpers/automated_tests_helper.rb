@@ -319,7 +319,8 @@ module AutomatedTestsHelper
       # TODO: handle this error better
       raise 'error'
     else
-      process_result(result, call_on, @assignment, @grouping, @submission)
+      # Test scripts must now use calls to the MarkUs API to process results.
+      # process_result(result, call_on, @assignment, @grouping, @submission)
     end
 
   end
