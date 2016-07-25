@@ -416,9 +416,9 @@ class ResultsController < ApplicationController
   end
 
   def view_marks
-    @assignment = Assignment.find(params[:assignment_id])
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
     @result = Result.find(params[:id])
+    @assignment = @result.submission.grouping.assignment
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
       redirect_to controller: 'assignments',
@@ -432,13 +432,15 @@ class ResultsController < ApplicationController
     end
     @submission = @grouping.current_submission_used
 
-    unless @submission.has_result?
-      render 'results/student/no_result'
-      return
+    is_review = @result.is_review_for?(@current_user, @assignment)
+
+    if is_review
+      @prs = @current_user.grouping_for(@assignment.id).peer_reviews
     end
 
-    if @result.is_review_for?(@current_user, @assignment)
-      @prs = @current_user.grouping_for(@assignment.id).peer_reviews
+    unless @submission.has_result? || is_review
+      render 'results/student/no_result'
+      return
     end
 
     @old_result = nil
@@ -452,7 +454,7 @@ class ResultsController < ApplicationController
       end
     end
 
-    unless @result.released_to_students
+    unless @result.released_to_students || is_review
       render 'results/student/no_result'
       return
     end
@@ -468,7 +470,17 @@ class ResultsController < ApplicationController
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
     @old_marks_map = Hash.new
-    @mark_criteria = @assignment.get_criteria(:ta)
+
+    if @result.is_a_review?
+      if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
+        @mark_criteria = @assignment.get_criteria(:peer)
+      else
+        @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
+      end
+    else
+      @mark_criteria = @assignment.get_criteria(:ta)
+    end
+
     @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       mark.save(validate: false)
