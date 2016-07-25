@@ -308,7 +308,7 @@ DEPENDENCIES
   actionpack-page_caching (~> 1.0.0)
   actionpack-xml_parser (~> 1.0.0)
   actionview-encoded_mail_to (~> 1.0.4)
-  activerecord-import
+  activerecord-import (>= 0.2.0)
   activerecord-session_store (~> 0.1.0)
   arel (~> 6.0.2)
   auto_complete

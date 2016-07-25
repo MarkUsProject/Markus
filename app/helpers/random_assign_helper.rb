@@ -6,6 +6,8 @@ end
 module RandomAssignHelper
   # Performs the random assignment, and stores them in the database.
   def perform_random_assignment(pr_assignment, num_groups_for_reviewers, reviewer_ids, reviewee_ids)
+    @pr_assignment = pr_assignment
+
     # TODO - need to change away from that function which returns IDs as strings... (database returns ints)
     reviewer_ids = reviewer_ids.map(&:to_i)
     reviewee_ids = reviewee_ids.map(&:to_i)
@@ -193,6 +195,13 @@ module RandomAssignHelper
   end
 
   def create_peer_reviews_in_database
+    peer_reviews_reviewer_result = []
+    peer_reviews = []
+    results = []
+    marks = []
+
+    assignment_criteria = @pr_assignment.parent_assignment.get_criteria(:ta)
+
     # TODO - Mixing existing reviews causes nil elements in the list due to only needing to assign to a subset...
     (0...@assigned_reviewer_to_shuffled_reviewee.size).each do |i|
       reviewer_id = @assigned_reviewer_to_shuffled_reviewee[i]
@@ -208,8 +217,22 @@ module RandomAssignHelper
       reviewer = Grouping.find(reviewer_id)
       reviewee = Grouping.find(reviewee_id)
 
-      # Debugging:
-      PeerReview.create_peer_review_between(reviewer, reviewee)
+      result = Result.new(submission: reviewee.current_submission_used,
+                          marking_state: Result::MARKING_STATES[:incomplete])
+      results << result
+      assignment_criteria.each { |criterion| marks << criterion.marks.new(result: result) }
+      peer_reviews_reviewer_result << [reviewer, result]
     end
+
+    Result.import results, :validate => false
+    Mark.import marks, :validate => false
+
+    # Peer reviews require IDs to have been made, so they come last.
+    peer_reviews_reviewer_result.each do |prdata|
+      peer_review = PeerReview.new(reviewer: prdata[0], result: prdata[1])
+      peer_reviews << peer_review
+    end
+
+    PeerReview.import peer_reviews, :validate => false
   end
 end
