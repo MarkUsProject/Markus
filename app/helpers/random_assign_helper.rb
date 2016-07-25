@@ -96,9 +96,9 @@ module RandomAssignHelper
       reviewer_id = @eligible_reviewer_groups.pop
 
       unless attempt_assign_at_index(reviewer_id, shuffle_index) ||
-          attempt_assign_forward(reviewer_id, shuffle_index) ||
-          attempt_assign_backwards(reviewer_id, shuffle_index)
-        raise UnableToRandomlyAssignGroupOptimizedException
+             attempt_assign_forward(reviewer_id, shuffle_index) ||
+             attempt_assign_backwards(reviewer_id, shuffle_index)
+        raise UnableToRandomlyAssignGroupException
       end
 
       shuffle_index += 1
