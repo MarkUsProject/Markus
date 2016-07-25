@@ -204,7 +204,6 @@ Markus::Application.routes.draw do
             post 'add_tag'
             post 'remove_tag'
             get 'run_tests'
-            get 'show_review_result'
           end
         end
       end

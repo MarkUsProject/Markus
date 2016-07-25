@@ -34,22 +34,30 @@ class PeerReviewsController < ApplicationController
   end
 
   def show_reviews
-    # debugger
-    aid = Integer(params[:assignment_id])
-    pr = @current_user.grouping_for(aid).peer_reviews_to_others.first
-    redirect_to action: 'show_result',
-                assignment_id: aid,
-                id: pr.id
+    assignment = Assignment.find(params[:assignment_id])
+    # grab the first peer review of the reviewee group
+    pr = @current_user.grouping_for(assignment.id).peer_reviews.first
+
+    if !pr.nil?
+      redirect_to action: 'show_result',
+                  assignment_id: assignment.id,
+                  id: pr.id
+    else
+      redirect_to action: 'index', assignment_id: assignment.id
+    end
+
   end
 
   def show_result
-    @pr = PeerReview.find(params[:id])
-    @result = Result.find(@pr.result_id)
-    @submission = @result.submission
+    pr = PeerReview.find(params[:id])
+    result = Result.find(pr.result_id)
+    submission = result.submission
 
-    # redirect_to show_review_result_assignments_submissions_results_path(params[:assignment_id],
-    #                                                                     submission.id,
-    #                                                                     result.id)
+    redirect_to controller: 'results',
+                action: 'view_marks',
+                assignment_id: params[:assignment_id],
+                submission_id: submission.id,
+                id: result.id
   end
 
   def assign_groups
