@@ -77,6 +77,10 @@ class SubmissionFile < ActiveRecord::Base
     File.extname(filename).casecmp('.pdf') == 0
   end
 
+  def belongs_to?(user)
+    !submission.grouping.membership_status(user).nil?
+  end
+
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
   def self.is_binary?(file_contents)
     return file_contents.size == 0 ||

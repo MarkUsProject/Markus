@@ -384,12 +384,10 @@ class ResultsController < ApplicationController
 
     #Is the current user a student?
     if current_user.student?
-      # If result is a review and user doesn't have membership status for the grouping
-      # this file belongs to, or if result is a review and the student is not a reviewer of this
-      # result, then student does not have access to this file. Display an error.
-
-      if (!@result.is_a_review? && @file.submission.grouping.membership_status(current_user).nil?) ||
-          (@result.is_a_review? && !current_user.is_reviewer_for?(@assignment.pr_assignment, @result))
+      # Unless this file belongs to this user or this user is a reviewer of this result,
+      # this student isn't authorized to view these files. Display an error
+      unless @file.belongs_to?(current_user) ||
+          current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
