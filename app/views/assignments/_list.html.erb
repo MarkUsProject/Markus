@@ -13,6 +13,10 @@
         </thead>
         <tbody>
           <% @assignments.each do |assignment| %>
+            <% # makes sure assignment ID of peer review action is the
+               # original assignment ID
+               original_aid = assignment.is_peer_review? ?
+                assignment.parent_assignment.id : assignment.id %>
             <tr>
               <td>
                 <% if assignment.is_peer_review? %>
@@ -21,14 +25,14 @@
                     link_to assignment.short_identifier + ': ' + assignment.description,
                             controller: controller,
                             action: 'peer_review',
-                            id: assignment.id %>
+                            id: original_aid %>
                 <% else %>
                   <%=
                     # assignment name
                     link_to assignment.short_identifier + ': ' + assignment.description,
                     controller: controller,
                     action: action,
-                    id: assignment.id %>
+                    id: original_aid %>
                   <% end %>
               </td>
               <td>

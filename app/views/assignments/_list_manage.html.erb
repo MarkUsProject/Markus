@@ -15,6 +15,10 @@
         </thead>
         <tbody>
           <% @assignments.includes(:section_due_dates).each do |assignment| %>
+            <% # makes sure assignment ID of peer review action is the
+               # original assignment ID
+               original_aid = assignment.is_peer_review? ?
+                   assignment.parent_assignment.id : assignment.id %>
             <tr>
               <td>
                 <% if controller == 'assignments' %>
@@ -24,13 +28,13 @@
                                      "#{h(assignment.short_identifier)}: #{h(assignment.description)}" ),
                                 { controller: controller,
                                   action: action,
-                                  id: assignment },
+                                  id: original_aid },
                                 class: 'assignment_list' %>
                   <% else %>
                     <%= link_to assignment.short_identifier + ': ' + assignment.description,
                                 { controller: controller,
                                    action: action,
-                                   id: assignment },
+                                   id: original_aid },
                                 class: 'assignment_list' %>
                   <% end %>
                 <% else %>
@@ -40,13 +44,13 @@
                                      "#{h(assignment.short_identifier)}: #{h(assignment.description)}" ),
                                 { controller: controller,
                                   action: action,
-                                  assignment_id: assignment },
+                                  assignment_id: original_aid },
                                 class: 'assignment_list' %>
                   <% else %>
                     <%= link_to assignment.short_identifier + ': ' + assignment.description,
                                 { controller: controller,
                                   action: action,
-                                  assignment_id: assignment },
+                                  assignment_id: original_aid },
                                 class: 'assignment_list'%>
                   <% end %>
                 <% end %>
