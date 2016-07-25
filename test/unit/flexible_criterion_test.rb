@@ -29,8 +29,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
                                       'Criterion name already used.')
 
     should validate_numericality_of(
-                          :max_mark).with_message(
-                                'must be a number greater than 0.0')
+                          :max_mark).with_message(I18n.t('criteria.errors.messages.input_number'))
 
     should allow_value(0.1).for(:max_mark)
     should allow_value(1.0).for(:max_mark)

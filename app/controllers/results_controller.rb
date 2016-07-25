@@ -11,7 +11,6 @@ class ResultsController < ApplicationController
                          :update_remark_request, :cancel_remark_request]
   before_filter :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
-                       :next_grouping, 
                        :remove_extra_mark,
                        :note_message]
   before_filter :authorize_for_user,
@@ -20,7 +19,7 @@ class ResultsController < ApplicationController
                 only: [:view_marks, :update_remark_request,
                        :cancel_remark_request]
   before_filter only: [:edit, :update_mark, :toggle_marking_state,
-                       :update_overall_comment] do |c|
+                       :update_overall_comment, :next_grouping] do |c|
                   c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:id])
                 end
   after_filter  :update_remark_request_count,
@@ -88,11 +87,21 @@ class ResultsController < ApplicationController
     end
 
     @result.update_total_mark
-    groupings = Grouping.get_groupings_for_assignment(@assignment,
+
+    if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
+      assignment = @assignment.pr_assignment
+    else
+      assignment = @assignment
+    end
+
+    groupings = Grouping.get_groupings_for_assignment(assignment,
                                                       current_user)
-    # We sort by group name by default
-    groupings = groupings.sort do |a, b|
-      a.group.group_name <=> b.group.group_name
+
+    unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
+      # We sort by group name by default
+      groupings = groupings.sort do |a, b|
+        a.group.group_name <=> b.group.group_name
+      end
     end
 
     current_grouping_index = groupings.index(@grouping)
@@ -195,10 +204,22 @@ class ResultsController < ApplicationController
   end
 
   def next_grouping
-    grouping = Grouping.find(params[:id])
+    grouping = Grouping.find(params[:grouping_id])
+    assignment = Assignment.find(params[:assignment_id])
+    result = Result.find(params[:id])
+
     if grouping.has_submission? && grouping.is_collected?
+      if @current_user.is_reviewer_for?(assignment.pr_assignment, result)
+        reviewer = @current_user.grouping_for(assignment.pr_assignment.id)
+        next_pr = reviewer.review_for(grouping)
+        next_result = Result.find(next_pr.result_id)
+
+        redirect_to action: 'edit',
+                    id: next_result.id
+      else
         redirect_to action: 'edit',
                     id: grouping.current_submission_used.get_latest_result.id
+      end
     else
       redirect_to controller: 'submissions',
                   action: 'browse'
@@ -253,7 +274,11 @@ class ResultsController < ApplicationController
       return
     end
     #Ensure student doesn't download a file not submitted by his own grouping
-    unless authorized_to_download?(file_id: params[:select_file_id])
+
+    unless authorized_to_download?(file_id: params[:select_file_id],
+                                   assignment_id: params[:assignment_id],
+                                   result_id: params[:id],
+                                   from_codeviewer: params[:from_codeviewer])
       render 'shared/http_status', formats: [:html],
              locals: { code: '404',
                           message: HttpStatusHelper::ERROR_CODE[
@@ -290,7 +315,10 @@ class ResultsController < ApplicationController
   def download_zip
 
     #Ensure student doesn't download files not submitted by his own grouping
-    unless authorized_to_download?(submission_id: params[:submission_id])
+    unless authorized_to_download?(submission_id: params[:submission_id],
+                                   assignment_id: params[:assignment_id],
+                                   result_id: params[:id],
+                                   from_codeviewer: params[:from_codeviewer])
       render 'shared/http_status', formats: [:html],
              locals: { code: '404',
                           message: HttpStatusHelper::ERROR_CODE[
@@ -352,7 +380,7 @@ class ResultsController < ApplicationController
     @focus_line = params[:focus_line]
     @grouping = @current_user.grouping_for(params[:assignment_id])
     @file = SubmissionFile.find(@submission_file_id)
-    @result = @file.submission.get_latest_result
+    @result = Result.find(params[:id])
 
     #Is the current user a student?
     if current_user.student?
@@ -369,9 +397,9 @@ class ResultsController < ApplicationController
       end
     end
 
-    @annots = @file.annotations
-    @all_annots = @file.submission.annotations
-
+    @annots = @file.annotations.select{|a| a.result_id == @result.id}
+    @all_annots = @file.submission.annotations.select{|a| a.result_id == @result.id}
+    
     begin
       @file_contents = @file.retrieve_file
     rescue Exception => e
@@ -591,6 +619,15 @@ class ResultsController < ApplicationController
     if current_user.admin? || current_user.ta?
       return true
     end
+
+    assignment = Assignment.find(map[:assignment_id])
+    result = Result.find(map[:result_id])
+
+    if current_user.is_reviewer_for?(assignment.pr_assignment, result) &&
+        map[:from_codeviewer] != nil
+      return true
+    end
+
     submission = if map[:file_id]
                    sub_file = SubmissionFile.find_by_id(map[:file_id])
                    sub_file.submission unless sub_file.nil?

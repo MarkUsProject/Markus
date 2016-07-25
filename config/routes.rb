@@ -6,6 +6,7 @@ Markus::Application.routes.draw do
 
   # optional path scope (denoted by the parentheses)
   scope "(:locale)", locale: /en|fr|pt/  do
+
     # API routes
     namespace :api do
       resources :users, except: [:new, :edit]
@@ -74,17 +75,13 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :criteria do
+      resources :criteria, except: [:index] do
         collection do
           post 'update_positions'
         end
       end
 
-      resources :rubric_criteria do
-        member do
-          delete 'destroy'
-        end
-
+      resources :rubric_criteria, only: [:index] do
         collection do
           post 'csv_upload'
           post 'yml_upload'
@@ -93,11 +90,7 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :flexible_criteria do
-        member do
-          delete 'destroy'
-        end
-
+      resources :flexible_criteria, only: [:index] do
         collection do
           post 'upload'
           get 'download'

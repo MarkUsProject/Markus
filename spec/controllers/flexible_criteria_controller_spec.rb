@@ -11,20 +11,6 @@ describe FlexibleCriteriaController do
       end
     end
 
-    context '#update' do
-      it 'should respond with redirect' do
-        put :update, assignment_id: 1, id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
-
-    context '#destroy' do
-      it 'should respond with redirect' do
-        delete :destroy, assignment_id: 1, id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
-
     context '#download' do
       it 'should respond with redirect' do
         get :download, assignment_id: 1
@@ -44,20 +30,6 @@ describe FlexibleCriteriaController do
     context '#index' do
       it 'should respond with redirect' do
         post :index, assignment_id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
-
-    context '#update' do
-      it 'should respond with redirect' do
-        put :update, assignment_id: 1, id: 1
-        is_expected.to respond_with :redirect
-      end
-    end
-
-    context '#destroy' do
-      it 'should respond with redirect' do
-        delete :destroy, assignment_id: 1, id: 1
         is_expected.to respond_with :redirect
       end
     end
@@ -114,55 +86,6 @@ describe FlexibleCriteriaController do
 
       it 'should respond with success' do
         is_expected.to respond_with(:success)
-      end
-    end
-
-    context '#update' do
-      context 'with save errors' do
-        before(:each) do
-          expect_any_instance_of(FlexibleCriterion)
-            .to receive(:save).and_return(false)
-          expect_any_instance_of(FlexibleCriterion)
-            .to receive(:errors).and_return('')
-
-          get_as @admin, :update,
-                 format: :js,
-                 assignment_id: 1,
-                 id: @criterion.id,
-                 flexible_criterion: { name: 'one', max_mark: 10 }
-        end
-
-        it 'should respond with appropriate content' do
-          expect(assigns(:criterion)).to be_truthy
-        end
-
-        it 'should render the errors template' do
-          is_expected.to render_template('errors')
-        end
-
-        it 'should respond with success' do
-          is_expected.to respond_with(:success)
-        end
-      end
-
-      context 'without save errors' do
-        before(:each) do
-          get_as @admin,
-                 :update,
-                 format: :js,
-                 assignment_id: 1,
-                 id: @criterion.id,
-                 flexible_criterion: { name: 'one', max_mark: 10 }
-          assert flash[:success], I18n.t('criterion_saved_success')
-        end
-
-        it 'successfully assign criterion' do
-          expect(assigns(:criterion)).to be_truthy
-        end
-
-        it 'should render the update template' do
-          is_expected.to render_template(:update)
-        end
       end
     end
 
@@ -244,80 +167,6 @@ describe FlexibleCriteriaController do
 
       it 'should respond with success' do
         is_expected.to respond_with(:success)
-      end
-    end
-
-    context '#create' do
-      context 'with save error' do
-        before(:each) do
-          @errors = ActiveModel::Errors.new(self)
-          @errors['message'] = 'error message'
-          expect_any_instance_of(FlexibleCriterion)
-            .to receive(:save).and_return(false)
-          expect_any_instance_of(FlexibleCriterion)
-            .to receive(:errors).and_return(@errors)
-          post_as @admin, :create,
-                  format: :js,
-                  assignment_id: @assignment.id,
-                  flexible_criterion: { name: 'first',
-                                        max_mark: 10 }
-        end
-        it 'should respond with appropriate content' do
-          expect(assigns(:criterion)).to be_truthy
-          expect(assigns(:errors)).to be_truthy
-          expect(assigns(:assignment)).to be_truthy
-        end
-
-        it 'should render the add_criterion_error template' do
-          is_expected
-            .to render_template(:'criteria/add_criterion_error')
-        end
-
-        it 'should respond with success' do
-          is_expected.to respond_with(:success)
-        end
-      end
-
-      context 'without error on an assignment as the first criterion' do
-        before(:each) do
-          post_as @admin, :create,
-                  format: :js,
-                  assignment_id: @assignment.id,
-                  flexible_criterion: { name: 'first',
-                                        max_mark: 10 }
-        end
-        it 'should respond with appropriate content' do
-          expect(assigns(:criterion)).to be_truthy
-          expect(assigns(:assignment)).to be_truthy
-        end
-        it 'should render the create_and_edit template' do
-          is_expected.to render_template(:'criteria/create_and_edit')
-        end
-
-        it 'should respond with success' do
-          is_expected.to respond_with(:success)
-        end
-      end
-
-      context 'without error on an assignment that already has criteria' do
-        before(:each) do
-          post_as @admin, :create,
-                  format: :js,
-                  assignment_id: @assignment.id,
-                  flexible_criterion: { name: 'first',
-                                        max_mark: 10 }
-        end
-        it 'should respond with appropriate content' do
-          expect(assigns(:criterion)).to be_truthy
-          expect(assigns(:assignment)).to be_truthy
-        end
-        it 'should render the create_and_edit template' do
-          is_expected.to render_template(:'criteria/create_and_edit')
-        end
-
-        it 'should respond with success' do
-          is_expected.to respond_with(:success)
-        end
       end
     end
 
@@ -460,26 +309,4 @@ describe FlexibleCriteriaController do
       end
     end
   end # An authenticated and authorized admin doing a POST
-
-  describe 'An authenticated and authorized admin doing a DELETE' do
-    before(:each) do
-      @admin = create(:admin)
-      @assignment = create(:flexible_assignment)
-      @criterion = create(:flexible_criterion,
-                          assignment: @assignment)
-    end
-
-    it ' should be able to delete the criterion' do
-      delete_as @admin, :destroy,
-                format: :js,
-                assignment_id: 1,
-                id: @criterion.id
-      expect(assigns(:criterion)).to be_truthy
-      expect(I18n.t('criterion_deleted_success')).to eql(flash[:success])
-      is_expected.to respond_with(:success)
-
-      expect { FlexibleCriterion.find(@criterion.id) }
-        .to raise_error(ActiveRecord::RecordNotFound)
-    end
-  end
 end
