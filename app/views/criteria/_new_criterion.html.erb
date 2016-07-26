@@ -13,12 +13,12 @@
     <%= radio_button_tag(:criterion_type,
                          'RubricCriterion',
                          checked = true) %>
-    <%= label_tag(:rubric_criterion,
+    <%= label_tag('criterion_type_RubricCriterion',
                   t('criteria.rubric')) %>
     <%= radio_button_tag(:criterion_type,
                          'FlexibleCriterion',
                          checked = false) %>
-    <%= label_tag(:flexible_criterion,
+    <%= label_tag('criterion_type_FlexibleCriterion',
                   t('criteria.flexible')) %><br><br>
     <%= submit_tag(t('criteria.save'), data: { disable_with: t('working') }) %>
   <% end %>
