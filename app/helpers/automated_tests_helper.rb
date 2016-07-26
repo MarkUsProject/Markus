@@ -75,7 +75,9 @@ module AutomatedTestsHelper
                     MarkusConfigurator.markus_config_automated_tests_repository,
                     @assignment.repository_folder,
                     new_script_name)
-          File.open(assignment_tests_path, 'w') { |f| f.write new_update_script.read }
+          # Replace bad line endings from windows
+          contents = new_update_script.read.tr("\r", '')
+          File.open(assignment_tests_path, 'w') { |f| f.write contents }
 
           # Deleting old script
           old_script_path = File.join(
@@ -317,7 +319,8 @@ module AutomatedTestsHelper
       # TODO: handle this error better
       raise 'error'
     else
-      process_result(result, call_on, @assignment, @grouping, @submission)
+      # Test scripts must now use calls to the MarkUs API to process results.
+      # process_result(result, call_on, @assignment, @grouping, @submission)
     end
 
   end

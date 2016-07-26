@@ -234,6 +234,31 @@ class SubmissionsController < ApplicationController
     render json: { success: success, error: error }
   end
 
+  def run_tests
+    if !params.has_key?(:groupings) || params[:groupings].empty?
+      render text: t('results.must_select_a_group'), status: 400
+      return
+    end
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    groupings = assignment.groupings.find(params[:groupings])
+    partition = groupings.partition &:has_submission?
+    if partition[0].count > 0
+      success = I18n.t('automated_tests.tests_running',
+                       assignment_identifier: assignment.short_identifier)
+      partition[0].each do |g|
+        AutomatedTestsHelper.request_a_test_run(
+          g.id,
+          'submission',
+          current_user,
+          g.current_submission_used.id)
+      end
+    end
+    if partition[1].count > 0
+      error = I18n.t('automated_tests.need_submission')
+    end
+    render json: { success: success, error: error }
+  end
+
   # The table of submissions for an assignment and related actions and links.
   def browse
     @assignment = Assignment.find(params[:assignment_id])

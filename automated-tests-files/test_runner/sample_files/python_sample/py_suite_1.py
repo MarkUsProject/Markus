@@ -1,6 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import hello
+import markusapi
 
 def printResults(name, input, exp, act, marks, status):
   return "<test>\n \
@@ -62,6 +63,11 @@ def test_3():
   return printResults(name, input, expected, actual, marks, status)
   
 if __name__ == "__main__":
-    print test_1()
-    print test_2()
-    print test_3()
+    # Note: currently this data is hard-coded, but should be passed in
+    API_KEY = 'ZTEwY2VlNmM4Nzk3NjM2N2QxYjk0YWM0MjU0M2NlMDQ='
+    ROOT_URL = 'http://localhost:3000/'
+    api = markusapi.Markus(API_KEY, ROOT_URL, protocol='http')
+    api.upload_test_script_result(6, '77',
+        '<testrun><test_script><script_name>py_suite_1.py</script_name>' +
+        test_1() + test_2() + test_3() +
+        '</test_script></testrun>')
