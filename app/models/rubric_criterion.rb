@@ -125,7 +125,7 @@ class RubricCriterion < Criterion
     name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria.find_or_create_by(name: name)
+    criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
       criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
@@ -173,7 +173,7 @@ class RubricCriterion < Criterion
     name = key[0]
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria.find_or_create_by(
+    criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(
       name: name)
     #Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin

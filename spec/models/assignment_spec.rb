@@ -1167,7 +1167,7 @@ describe Assignment do
             result = grouping.current_submission_used.get_latest_result
             fields.push(result.total_mark / @assignment.max_mark * 100)
             fields.push(result.total_mark)
-            @assignment.get_criteria.each do |criterion|
+            @assignment.get_criteria(:all, :rubric).each do |criterion|
               mark = result.marks
                 .find_by_markable_id_and_markable_type(criterion.id,
                                                        'RubricCriterion')
@@ -1182,7 +1182,7 @@ describe Assignment do
             fields.push(result.get_total_extra_percentage)
           else
             fields.push('')
-            @assignment.get_criteria.each do |criterion|
+            @assignment.get_criteria(:all, :rubric).each do |criterion|
               fields.push('', criterion.max_mark)
             end
             fields.push('', '')
@@ -1227,7 +1227,7 @@ describe Assignment do
             result = grouping.current_submission_used.get_latest_result
             fields.push(result.total_mark / @assignment.max_mark * 100)
             fields.push(result.total_mark)
-            @assignment.get_criteria.each do |criterion|
+            @assignment.get_criteria(:all, :flexible).each do |criterion|
               mark = result.marks
                 .find_by_markable_id_and_markable_type(criterion.id,
                                                        'FlexibleCriterion')
@@ -1242,7 +1242,7 @@ describe Assignment do
             fields.push(result.get_total_extra_percentage)
           else
             fields.push('')
-            @assignment.get_criteria.each do |criterion|
+            @assignment.get_criteria(:all, :flexible).each do |criterion|
               fields.push('', criterion.max_mark)
             end
             fields.push('', '')

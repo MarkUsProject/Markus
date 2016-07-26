@@ -128,7 +128,7 @@ class Assignment < ActiveRecord::Base
 
   # Export a YAML formatted string created from the assignment rubric criteria.
   def export_rubric_criteria_yml
-    criteria = get_criteria
+    criteria = get_criteria(:all, :rubric)
     final = ActiveSupport::OrderedHash.new
     criteria.each do |criterion|
       inner = ActiveSupport::OrderedHash.new
@@ -269,7 +269,7 @@ class Assignment < ActiveRecord::Base
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta)
-    get_criteria(user_visibility).sum('max_mark').round(2)
+    get_criteria(user_visibility).map(&:max_mark).sum.round(2)
   end
 
   # calculates summary statistics of released results for this assignment
@@ -628,7 +628,8 @@ class Assignment < ActiveRecord::Base
         # total percentage, total_grade
         result.concat(['','0'])
         # mark, max_mark
-        result.concat(get_criteria.pluck("''", :max_mark).flatten)
+        result.concat(Array.new(criteria_count, '').
+          zip(get_criteria(:all, :rubric).pluck(:max_mark) + get_criteria(:all, :flexible).pluck(:max_mark)).flatten)
         # extra-mark, extra-percentage
         result.concat(['',''])
       else
@@ -672,7 +673,7 @@ class Assignment < ActiveRecord::Base
 
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
-    # grabbing the most up-to-date count of the rubric criteria.
+    # grabbing the most up-to-date count of the criteria.
     get_criteria.count > 0 ? get_criteria.last.position + 1 : 1
   end
 
@@ -688,26 +689,32 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns a filtered list of criteria.
-  def get_criteria(user_visibility = :all)
+  def get_criteria(user_visibility = :all, type = :all)
     if user_visibility == :all
-      get_all_criteria
+      get_all_criteria(type)
     elsif user_visibility == :ta
-      get_ta_visible_criteria
+      get_ta_visible_criteria(type)
     elsif user_visibility == :peer
-      get_peer_visible_criteria
+      get_peer_visible_criteria(type)
     end
   end
 
-  def get_all_criteria
-    criterion_class.where(assignment_id: id).order(:position)
+  def get_all_criteria(type)
+    if type == :all
+      (RubricCriterion.where(assignment_id: id) + FlexibleCriterion.where(assignment_id: id)).sort_by(&:position)
+    elsif type == :rubric
+      RubricCriterion.where(assignment_id: id).order(:position)
+    elsif type == :flexible
+      FlexibleCriterion.where(assignment_id: id).order(:position)
+    end
   end
 
-  def get_ta_visible_criteria
-    get_all_criteria.where(ta_visible: true)
+  def get_ta_visible_criteria(type)
+    get_all_criteria(type).empty? ? [] : get_all_criteria(type).select(&:ta_visible)
   end
 
-  def get_peer_visible_criteria
-    get_all_criteria.where(peer_visible: true)
+  def get_peer_visible_criteria(type)
+    get_all_criteria(type).empty? ? [] : get_all_criteria(type).select(&:peer_visible)
   end
 
   def criteria_count
@@ -832,7 +839,13 @@ class Assignment < ActiveRecord::Base
   # Assign graders to a criterion for this assignment.
   # Raise a CSVInvalidLineError if the criterion or a grader doesn't exist.
   def add_graders_to_criterion(criterion_name, graders)
-    criterion = get_criteria.find_by(name: criterion_name)
+    if !get_criteria(:all, :rubric).empty?
+      criterion = get_criteria(:all, :rubric).find_by(name: criterion_name)
+    elsif !get_criteria(:all, :flexible).empty?
+      criterion = get_criteria(:all, :flexible).find_by(name: criterion_name)
+    else
+      criterion = nil
+    end
 
     if criterion.nil?
       raise CSVInvalidLineError
