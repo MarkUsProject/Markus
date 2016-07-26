@@ -371,6 +371,26 @@
         }.bind(this)
       });
     },
+    runTests: function () {
+      jQuery.ajax({
+        method: 'POST',
+        url: 'run_tests',
+        data: {groupings: this.props.selected_submissions},
+        success: function(data) {
+          if (data.success) {
+            this.props.onSuccess(data.success);
+            window.setInterval(this.props.refresh, 30000);
+          }
+          if (data.error) {
+            this.props.onError(data.error);
+          }
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      })
+    },
     render: function() {
       return (
         <div className='react-release-marks'>
@@ -378,19 +398,25 @@
             <button onClick={this.collectSubmissions}>
               <%= j raw I18n.t('collect_submissions.collect') %>
             </button>
+            <% if @assignment.has_a_collected_submission? %>
+              <button onClick={this.uncollectAllSubmissions}
+                      data-remote='true'>
+                <%= j raw I18n.t('collect_submissions.uncollect_all') %>
+              </button>
+              <button onClick={this.runTests}
+                      data-remote='true'>
+                <%= j raw t('browse_submissions.run_tests') %>
+              </button>
+            <% end %>
           <% end %>
-          <% if @assignment.can_uncollect_submissions? %>
-            <button onClick={this.uncollectAllSubmissions}
-                    data-remote="true">
-              <%=j raw I18n.t('collect_submissions.uncollect_all') %>
+          <% if @assignment.has_a_collected_submission? %>
+            <button onClick={this.releaseMarks}>
+              <%= j raw t('browse_submissions.release_marks') %>
+            </button>
+            <button onClick={this.unreleaseMarks}>
+              <%= j raw t('browse_submissions.unrelease_marks') %>
             </button>
           <% end %>
-          <button onClick={this.releaseMarks}>
-            <%= j raw I18n.t('browse_submissions.release_marks') %>
-          </button>
-          <button onClick={this.unreleaseMarks}>
-            <%= j raw I18n.t('browse_submissions.unrelease_marks') %>
-          </button>
         </div>
       );
     }

@@ -143,6 +143,7 @@ Markus::Application.routes.draw do
           post 'populate_file_manager'
           post 'collect_submissions'
           get 'uncollect_all_submissions'
+          post 'run_tests'
           get 'download_simple_csv_report'
           get 'download_detailed_csv_report'
           get 'download_svn_export_list'
@@ -204,6 +205,21 @@ Markus::Application.routes.draw do
       resources :summaries, only: :index do
         collection do
           get 'populate'
+        end
+      end
+
+      resources :results, only: [:edit], path: '/peer_reviews' do
+        collection do
+          get 'download'
+        end
+
+        member do
+          post 'add_extra_mark'
+          get 'codeviewer'
+          post 'codeviewer'
+          get 'next_grouping'
+          post 'toggle_marking_state'
+          post 'update_overall_comment'
         end
       end
 

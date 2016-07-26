@@ -86,7 +86,9 @@ module SubmissionsHelper
           g[:grace_credits_used] = grouping.grace_period_deduction_single
           g[:section] = grouping.section
         end
-        g[:name_url] = get_grouping_name_url(grouping, result)
+        g[:name_url] = assignment.is_peer_review? && current_user.is_a_reviewer?(assignment) ?
+            edit_assignment_result_path(assignment.parent_assignment.id, result_pr.result_id) :
+            get_grouping_name_url(grouping, result)
         g[:class_name] = get_tr_class(grouping)
         g[:state] = grouping.marking_state(result)
         g[:anonymous_id] = i + 1
