@@ -262,6 +262,12 @@
              sortable: false,
              searchable: false
           },
+          {
+            id: 'count',
+            content: '<%= j raw t('peer_review.assigned_reviewers_header') %>',
+            sortable: true,
+            searchable: false
+          },
         ],
       };
     },
@@ -326,7 +332,8 @@
           id: group.id,
           name: group.name,
           members: reviewerGroups,
-          section: group.section
+          section: group.section,
+          count: reviewer_ids.length
         };
       }.bind(this));
 
