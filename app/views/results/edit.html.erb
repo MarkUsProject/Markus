@@ -52,15 +52,16 @@
     // Hide the criterion that AREN'T empty (i.e. are marked)
     // Check if the marks are released, if they are there is nothing to hide
     <% unless @result.released_to_students %>
-      <% if @assignment.marking_scheme_type == 'rubric' %>
+      if (jQuery('.mark_criterion_level_container') != null) {
         jQuery('.mark_criterion_level_container').each(function() {
-          expand_unmarked(this, 'rubric');
+          expand_unmarked(this, 'RubricCriterion');
         });
-      <% else %>
+      }
+      if (jQuery('.mark_grade_input') != null) {
         jQuery('.mark_grade_input').each(function() {
-          expand_unmarked(this, 'flexible');
+          expand_unmarked(this, 'FlexibleCriterion');
         });
-      <% end %>
+      }
     <% end %>
   });
 
@@ -201,6 +202,7 @@
                          result: @result,
                          assignment: @assignment,
                          marks_map: @marks_map,
+                         old_marks_map: @old_marks_map,
                          mark_criteria:@mark_criteria,
                          submission: @submission,
                          old_result: @old_result,
