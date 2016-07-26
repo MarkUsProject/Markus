@@ -211,6 +211,7 @@ Markus::Application.routes.draw do
       resources :results, only: [:edit], path: '/peer_reviews' do
         collection do
           get 'download'
+          post 'update_mark'
         end
 
         member do
