@@ -43,7 +43,12 @@ class PeerReviewsController < ApplicationController
                   assignment_id: assignment.id,
                   id: pr.id
     else
-      redirect_to action: 'index', assignment_id: assignment.id
+      render 'shared/http_status', formats: [:html],
+             locals: { code: '404',
+                       message: HttpStatusHelper::ERROR_CODE[
+                           'message']['404'] }, status: 404,
+             layout: false
+      return
     end
 
   end
