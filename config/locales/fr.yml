@@ -1075,17 +1075,20 @@ fr:
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     criteria:
-      title: "Critères"
-      name: "Nom du critère"
+      title:          "Critères"
+      name:           "Nom du critère"
+      type:           "Type de critère."
+      rubric:         "Rubrique"
+      flexible:       "Flexible"
       marking_scheme: "Barème: %{identifier}"
-      save: "Sauvegarder les modifications"
-      add_criterion: "Ajouter Critère"
+      save:           "Sauvegarder les modifications"
+      add_criterion:  "Ajouter Critère"
       errors:
         messages:
-          name_taken: "Nom du critère déjà utilisé."
+          name_taken:             "Nom du critère déjà utilisé."
           assignment_association: "Association est pas forte avec une mission."
-          assignment_id: "Ne peut être un nombre entier supérieur à 0."
-          input_number: "Doit être un nombre supérieur à 0.0."
+          assignment_id:          "Ne peut être un nombre entier supérieur à 0."
+          input_number:           "Doit être un nombre supérieur à 0.0."
 
     flexible_criteria:
       title: "Critères souples"
@@ -1411,6 +1414,7 @@ fr:
       test_run: "L'exécution du test"
       tests_running: "Tests en cours. S'il vous plaît rafraîchir la page pour afficher les résultats."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test. Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
+      need_submission: "Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les groupes sélectionnés avaient non tests exécutés."
       collect_and_test: "Récupérer et préparer test"
       date_run: "Lancement des tests le :"
       revision_used: "Révision utilisée :"

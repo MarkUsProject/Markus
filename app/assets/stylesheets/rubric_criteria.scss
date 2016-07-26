@@ -82,4 +82,29 @@
       width: 100%;
     }
   }
+
+  #flexible_criteria_preview {
+    border-top: 1px solid $grey;
+    margin-top: 1.5em;
+    padding-top: 1.5em;
+  }
+
+  label {
+    display: inline-block;
+    font-weight: 600;
+    min-width: 8em;
+
+    & + input {
+      margin-top: 0.5em;
+    }
+  }
+
+  .criterion_description_edit {
+    display: block;
+    margin: 0.5em 0 1em;
+  }
+
+  input[type='submit'] {
+    margin-top: 1em;
+  }
 }
