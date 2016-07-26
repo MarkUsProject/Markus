@@ -3,7 +3,6 @@
     <%= link_to("Review " + pr.id.to_s, {controller: 'results',
                                          action: 'view_marks',
                                          assignment_id: assignment.id,
-                                         submission_id: submission.id,
                                          id: pr.result_id}) %>
   <% end %>
 </div>

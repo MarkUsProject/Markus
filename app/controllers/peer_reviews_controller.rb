@@ -51,12 +51,10 @@ class PeerReviewsController < ApplicationController
   def show_result
     pr = PeerReview.find(params[:id])
     result = Result.find(pr.result_id)
-    submission = result.submission
 
     redirect_to controller: 'results',
                 action: 'view_marks',
                 assignment_id: params[:assignment_id],
-                submission_id: submission.id,
                 id: result.id
   end
 
