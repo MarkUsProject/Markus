@@ -1043,17 +1043,20 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     criterion_name: "Nome do critério"
 
     criteria:
-      title: "Critério"
-      name: "Nome do critério"
+      title:          "Critério"
+      name:           "Nome do critério"
+      type:           "Tipo de critério"
+      rubric:         "Rubrica"
+      flexible:       "Flexível"
       marking_scheme: "Esquema de avalição: %{identifier}"
-      save: "Salvar alterções"
-      add_criterion: "Adicionar Critério"
+      save:           "Salvar alterções"
+      add_criterion:  "Adicionar Critério"
       errors:
         messages:
-          name_taken: "Nome de critério já utilizado."
+          name_taken:             "Nome de critério já utilizado."
           assignment_association: "Associação não é forte com uma atribuição."
-          assignment_id: "Só pode ser o número inteiro maior que 0."
-          input_number: "Deve ser um número maior do que 0.0."
+          assignment_id:          "Só pode ser o número inteiro maior que 0."
+          input_number:           "Deve ser um número maior do que 0.0."
 
     flexible_criteria:
       title: "Critérios flexíveis"
@@ -1386,6 +1389,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       test_run: "Execução de Teste"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br>
                       Se você já enviou um arquivo e que executar os testes nele, use o botao \"Coletar e preparar testes\" abaixo."
+      need_submission: "As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados."
       collect_and_test: "Colete e prepare os testes"
       build_xml: "build.xml"
       build_prop: "build.properties"

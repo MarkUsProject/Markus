@@ -34,8 +34,10 @@ class AutomatedTestsController < ApplicationController
               MarkusConfigurator.markus_config_automated_tests_repository,
               @assignment.repository_folder,
               new_script.original_filename)
+          # Replace bad line endings from windows
+          contents = new_script.read.tr("\r", '')
           File.open(
-              assignment_tests_path, 'w') { |f| f.write new_script.read }
+              assignment_tests_path, 'w') { |f| f.write contents }
         end
 
         unless new_support_file.nil?
@@ -43,8 +45,10 @@ class AutomatedTestsController < ApplicationController
               MarkusConfigurator.markus_config_automated_tests_repository,
               @assignment.repository_folder,
               new_support_file.original_filename)
+          # Replace bad line endings from windows
+          contents = new_support_file.read.tr("\r", '')
           File.open(
-              assignment_tests_path, 'w') { |f| f.write new_support_file.read }
+              assignment_tests_path, 'w') { |f| f.write contents }
         end
 
         redirect_to action: 'manage',

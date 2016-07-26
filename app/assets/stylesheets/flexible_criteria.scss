@@ -66,4 +66,35 @@
     margin-top: 1.5em;
     padding-top: 1.5em;
   }
+
+  .main_rubric_criteria_edit {
+    display: table-cell;
+    padding-right: 1em;
+    width: 250px;
+
+    span {
+      display: block;
+      margin-bottom: 0.25em;
+    }
+  }
+
+  .rubric_criteria_levels {
+    border-left: 1px solid $grey;
+    display: table-cell;
+    padding-left: 1em;
+
+    .rubric_level_header {
+      margin-bottom: 0.5em;
+    }
+
+    input {
+      margin-bottom: 0.5em;
+    }
+
+    textarea {
+      height: 150px;
+      margin-bottom: 1.5em;
+      width: 100%;
+    }
+  }
 }
