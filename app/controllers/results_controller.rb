@@ -498,7 +498,8 @@ class ResultsController < ApplicationController
     @old_marks_map = Hash.new
 
     if @result.is_a_review?
-      if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
+      if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
+        @first_file.belongs_to?(@current_user)
         @mark_criteria = @assignment.get_criteria(:peer)
       else
         @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
