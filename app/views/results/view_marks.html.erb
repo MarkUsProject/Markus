@@ -78,7 +78,7 @@
   <%= render partial: 'results/common/errors' %>
 
   <% unless !@result.is_review_for?(@current_user, @assignment) %>
-    <%= render partial: 'results/student/completed_peer_reviews',
+    <%= render partial: 'results/student/peer_reviews',
                locals: { current_user: @current_user,
                          assignment: @assignment,
                          result: @result,
