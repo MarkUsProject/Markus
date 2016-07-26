@@ -1,8 +1,15 @@
 <div id="peer_reviews">
-  <% prs.each do |pr| %>
-    <%= link_to("Review " + pr.id.to_s, {controller: 'results',
-                                         action: 'view_marks',
-                                         assignment_id: assignment.id,
-                                         id: pr.result_id}) %>
-  <% end %>
+  <p id='peer_review_selector_label'> Select a Peer Review:</p>
+  <div id='peer_review_selector' class='dropdown'>
+    <a><%= "Review " + current_pr.id.to_s %></a>
+    <ul>
+      <% prs.each do |pr| %>
+        <li>
+          <%= link_to("Review " + pr.id.to_s,
+                      {controller: 'results', action: 'view_marks', assignment_id: assignment.id,
+                       id: pr.result_id}) %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
 </div>

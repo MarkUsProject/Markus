@@ -462,6 +462,7 @@ class ResultsController < ApplicationController
 
     if is_review
       @prs = @current_user.grouping_for(@assignment.id).peer_reviews
+      @current_pr = PeerReview.find_by(result_id: @result.id)
     end
 
     unless @submission.has_result? || is_review

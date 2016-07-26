@@ -29,6 +29,24 @@
   word-wrap: break-word;
 }
 
+/* Peer Review Styles */
+
+#peer_reviews {
+  display: block;
+  width: 100%;
+  padding-bottom: 10px;
+}
+
+#peer_review_selector_label {
+  float: left;
+  font-size: 14px;
+}
+
+#peer_review_selector {
+  margin-top: 5px;
+  margin-left: 20px;
+}
+
 
 /* Top toolbars: student selector/file selector/download buttons */
 
