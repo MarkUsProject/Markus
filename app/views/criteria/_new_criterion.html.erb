@@ -1,15 +1,25 @@
 <li id='new_criterion'>
-  <%= form_for criterion,
-               url: assignment_criteria_path(assignment_id: assignment.id,
-                                             criterion_type: criterion.class.to_s),
+  <%= form_tag assignment_criteria_path(assignment_id: assignment.id),
                method: :post,
-               remote: true do |f| %>
+               remote: true do %>
     <div id='new_criterion_error' style='display:none;' class='error'></div>
     <%= label_tag 'new_criterion_prompt',
-		  t('criteria.name') %><br>
-    <%= f.text_field :name,
-		     size: 15,
-		     id: 'new_criterion_prompt' %><br>
-    <%= f.submit t('criteria.save'), data: { disable_with: t('working') }%>
+		              t('criteria.name') %><br>
+    <%= text_field_tag(:new_criterion_prompt,
+                       '',
+                       size: 15) %><br>
+    <%= label_tag 'new_criterion_type_prompt',
+                  t('criteria.type') %><br><br>
+    <%= radio_button_tag(:criterion_type,
+                         'RubricCriterion',
+                         checked = true) %>
+    <%= label_tag(:rubric_criterion,
+                  t('criteria.rubric')) %>
+    <%= radio_button_tag(:criterion_type,
+                         'FlexibleCriterion',
+                         checked = false) %>
+    <%= label_tag(:flexible_criterion,
+                  t('criteria.flexible')) %><br><br>
+    <%= submit_tag(t('criteria.save'), data: { disable_with: t('working') }) %>
   <% end %>
 </li>

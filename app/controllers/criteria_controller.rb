@@ -2,24 +2,18 @@ class CriteriaController < ApplicationController
 
   def new
     @assignment = Assignment.find(params[:assignment_id])
-    @criterion = params[:criterion_type].constantize.new
   end
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.get_criteria
-    criteria_class = params[:criterion_type].constantize
-    @criterion = criteria_class.new
-    @criterion.assignment = @assignment
-    @criterion.max_mark = criteria_class::DEFAULT_MAX_MARK
-    @criterion.position = @assignment.next_criterion_position
-    if params[:criterion_type] == 'RubricCriterion'
-      @criterion.set_default_levels
-      properly_updated = @criterion.update(rubric_criterion_params)
-    else
-      properly_updated = @criterion.update(flexible_criterion_params)
-    end
-    unless properly_updated
+    criterion_class = params[:criterion_type].constantize
+    @criterion = criterion_class.new
+    @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
+    unless @criterion.update(name: params[:new_criterion_prompt],
+                             assignment_id: @assignment.id,
+                             max_mark: criterion_class::DEFAULT_MAX_MARK,
+                             position: @assignment.next_criterion_position)
       @errors = @criterion.errors
       render :add_criterion_error
       return

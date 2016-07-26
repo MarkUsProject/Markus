@@ -19,7 +19,6 @@
 </h2>
 
 <%= form_for criterion,
-             as: :rubric_criterion,
              url: assignment_criterion_path(id: criterion.id,
                                             criterion_type: criterion.class.to_s),
              method: :patch,
