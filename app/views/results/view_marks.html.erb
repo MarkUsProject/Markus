@@ -65,7 +65,13 @@
 </aside>
 
 <div class='title_bar'>
-  <h1>Results for <%= sanitize(@assignment.short_identifier) %></h1>
+  <h1>
+    <% if @result.is_a_review? %>
+      Review for <%= sanitize(@assignment.short_identifier) %>
+    <% else %>
+      Results for <%= sanitize(@assignment.short_identifier) %>
+    <% end %>
+  </h1>
 
   <div class='heading_buttons'>
     <%= link_to t(:download),

@@ -1,5 +1,7 @@
 <div id="peer_reviews">
-  <p id='peer_review_selector_label'> Select a Peer Review:</p>
+  <p id='peer_review_selector_label'>
+    <%= @current_user.student? ? "Reviews made on your submission:" : "This reviewer's reviews: " %>
+  </p>
   <div id='peer_review_selector' class='dropdown'>
     <a><%= "Review " + current_pr.id.to_s %></a>
     <ul>
