@@ -1,9 +1,7 @@
-<table id='summary_criteria_pane_list' class='marks_summary_pane_list'>
+<table id='summary_criteria_pane_list'>
   <thead>
     <tr>
       <th><%=t('summary_table.title')%></th>
-      <th><%=t('summary_table.score')%></th>
-      <th><%=t('summary_table.weight')%></th>
       <th><%=t('summary_table.grade')%></th>
     </tr>
   </thead>
@@ -17,10 +15,8 @@
       end
     %>
     <tr id='mark_<%= mark.id %>_summary'>
-      <td><%= criterion.name %></td>
-      <td><span id='mark_<%= mark.id %>_summary_mark'><%= criterion.class == RubricCriterion ? mark_value.round : mark_value.round(2) %></span></td>
-      <td><%= criterion.weight.to_f %></td>
-      <td><span id='mark_<%= mark.id %>_summary_mark_after_weight'><%= (mark_value * criterion.weight) %></span> / <%= criterion.max_mark %></td>
+      <td class='left'><%= criterion.name %></td>
+      <td class='right'><span id='mark_<%= mark.id %>_summary_mark_after_weight'><%= (mark_value * criterion.weight) %></span> / <%= criterion.max_mark %></td>
     </tr>
   <% end -%>
 </table>  <!-- Summary Criteria Pane List -->
