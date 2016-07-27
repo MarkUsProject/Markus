@@ -93,4 +93,12 @@ class CriteriaController < ApplicationController
                                                                            .transform_values { |x|  (x.to_f * 4).to_s })
   end
 
+  def checkbox_criterion_params
+    params.require(:flexible_criterion).permit(:name,
+                                               :description,
+                                               :position,
+                                               :max_mark,
+                                               :ta_visible,
+                                               :peer_visible)
+  end
 end

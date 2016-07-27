@@ -97,6 +97,13 @@ Markus::Application.routes.draw do
         end
       end
 
+      resources :checkbox_criteria, only: [:index] do
+        collection do
+          post 'upload'
+          get 'download'
+        end
+      end
+
       resources :automated_tests do
         collection do
           get 'manage'
