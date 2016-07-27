@@ -2,6 +2,7 @@
   <p id='peer_review_selector_label'>
     <%= @current_user.student? ? "Reviews made on your submission:" : "This reviewer's reviews: " %>
   </p>
+
   <div id='peer_review_selector' class='dropdown'>
     <a><%= "Review " + current_pr.id.to_s %></a>
     <ul>
@@ -14,4 +15,9 @@
       <% end %>
     </ul>
   </div>
+
+  <%= link_to("View TA Result",
+              view_marks_assignment_submission_result_path(assignment.id, submission.id,
+                                                              submission.get_latest_result.id),
+               id: 'original_result_link') %>
 </div>
