@@ -4,13 +4,11 @@
   </p>
 
   <div id='peer_review_selector' class='dropdown'>
-    <a><%= "Review " + current_pr.id.to_s %></a>
+    <a><%= "Review " + (prs.index(current_pr) + 1).to_s %></a>
     <ul>
-      <% prs.each do |pr| %>
-        <li>
-          <%= link_to("Review " + pr.id.to_s,
-                      view_marks_assignment_result_path(assignment.id, pr.result_id)) %>
-        </li>
+      <% prs.each_with_index do |pr, i| %>
+        <li> <%= link_to("Review " + (i + 1).to_s,
+                      view_marks_assignment_result_path(assignment.id, pr.result_id)) %> </li>
       <% end %>
     </ul>
   </div>

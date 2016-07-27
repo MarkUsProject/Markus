@@ -90,8 +90,8 @@
       <div id='peer_review_results' class='block_content'>
         <h3> <%= t('assignment.your_reviews') %> </h3>
         <ul>
-        <% @prs.each do |pr| %>
-            <li><%= link_to("Review " + pr.id.to_s,
+        <% @prs.each_with_index do |pr, i| %>
+            <li><%= link_to("Review " + (i + 1).to_s,
                         view_marks_assignment_result_path(@assignment.parent_assignment.id, pr.result_id)) %> </li>
          <% end %>
         <ul>
