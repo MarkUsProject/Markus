@@ -39,9 +39,8 @@ class PeerReviewsController < ApplicationController
     pr = @current_user.grouping_for(assignment.id).peer_reviews.first
 
     if !pr.nil?
-      redirect_to action: 'show_result',
-                  assignment_id: assignment.id,
-                  id: pr.id
+      redirect_to show_result_assignment_peer_review_path(assignment.id, id: pr.id)
+
     else
       render 'shared/http_status', formats: [:html],
              locals: { code: '404',
@@ -56,10 +55,7 @@ class PeerReviewsController < ApplicationController
   def show_result
     pr = PeerReview.find(params[:id])
 
-    redirect_to controller: 'results',
-                action: 'view_marks',
-                assignment_id: params[:assignment_id],
-                id: pr.result_id
+    redirect_to view_marks_assignment_result_path(params[:assignment_id], pr.result_id)
   end
 
   def assign_groups

@@ -9,8 +9,7 @@
       <% prs.each do |pr| %>
         <li>
           <%= link_to("Review " + pr.id.to_s,
-                      {controller: 'results', action: 'view_marks', assignment_id: assignment.id,
-                       id: pr.result_id}) %>
+                      view_marks_assignment_result_path(assignment.id, pr.result_id)) %>
         </li>
       <% end %>
     </ul>
