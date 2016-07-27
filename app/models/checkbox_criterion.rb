@@ -13,11 +13,11 @@ class CheckboxCriterion < Criterion
   validates_presence_of :name
   validates_presence_of :max_mark
   validates_presence_of :assignment_id
-  validates_associated :assignment, message: I18n.t('criteria.errors.messages.assignment_association')
-  validates_uniqueness_of :name, scope: :assignment_id, message: I18n.t('criteria.errors.messages.name_taken')
-  validates_numericality_of :max_mark, greater_than: 0.0, message: I18n.t('criteria.errors.messages.input_number')
+  validates_associated :assignment, message: t('criteria.errors.messages.assignment_association')
+  validates_uniqueness_of :name, scope: :assignment_id, message: t('criteria.errors.messages.name_taken')
+  validates_numericality_of :max_mark, greater_than: 0.0, message: t('criteria.errors.messages.input_number')
   validates_numericality_of :assignment_id, only_integer: true,
-                            greater_than: 0, message: I18n.t('criteria.errors.messages.assignment_id')
+                            greater_than: 0, message: t('criteria.errors.messages.assignment_id')
   validate :visible?
 
   DEFAULT_MAX_MARK = 1
@@ -88,7 +88,7 @@ class CheckboxCriterion < Criterion
   # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
-      errors.add(:ta_visible, I18n.t('flexible_criteria.visibility_error'))  # TODO - Make own I18n
+      errors.add(:ta_visible, t('checkbox_criteria.visibility_error'))
       false
     end
     true
@@ -114,7 +114,7 @@ class CheckboxCriterion < Criterion
   # criterion is not successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < 2
-      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
     end
     working_row = row.clone
     name = working_row.shift
@@ -127,12 +127,12 @@ class CheckboxCriterion < Criterion
     begin
       criterion.max_mark = Float(working_row.shift)
     rescue ArgumentError
-      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
     end
 
     # Check that the maximum mark given is a valid number.
     if criterion.max_mark.nil? or criterion.max_mark.zero?
-      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, t('csv.invalid_row.invalid_format')
     end
 
     # Only set the position if this is a new record.
