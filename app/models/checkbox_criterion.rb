@@ -9,7 +9,6 @@ class CheckboxCriterion < Criterion
   has_many :tas, through: :criterion_ta_associations
   has_many :test_scripts, as: :criterion
 
-  # TODO - Remove I18n if it allows it
   validates_presence_of :name
   validates_presence_of :max_mark
   validates_presence_of :assignment_id
@@ -103,7 +102,7 @@ class CheckboxCriterion < Criterion
     mark_to_change.save
   end
 
-  # Instantiate a FlexibleCriterion from a CSV row and attach it to the supplied
+  # Instantiate a CheckboxCriterion from a CSV row and attach it to the supplied
   # assignment.
   # row: An array representing one CSV file row. Should be in the following
   #      (format = [name, max_mark, description] where description is optional)

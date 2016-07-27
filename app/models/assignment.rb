@@ -688,8 +688,6 @@ class Assignment < ActiveRecord::Base
       FlexibleCriterion
     elsif marking_scheme_type == MARKING_SCHEME_TYPE[:rubric]
       RubricCriterion
-    elsif marking_scheme_type == MARKING_SCHEME_TYPE[:checkbox]
-      CheckboxCriterion
     else
       nil
     end

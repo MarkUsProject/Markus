@@ -40,8 +40,10 @@ class CriteriaController < ApplicationController
     @criterion = criterion_type.constantize.find(params[:id])
     if criterion_type == 'RubricCriterion'
       properly_updated = @criterion.update(rubric_criterion_params)
-    else
+    elsif criterion_type == 'FlexibleCriterion'
       properly_updated = @criterion.update(flexible_criterion_params)
+    else
+      properly_updated = @criterion.update(checkbox_criterion_params)
     end
     unless properly_updated
       @errors = @criterion.errors
