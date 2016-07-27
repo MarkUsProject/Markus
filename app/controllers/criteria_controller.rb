@@ -53,15 +53,12 @@ class CriteriaController < ApplicationController
   # Handles the drag/drop criteria sorting.
   def update_positions
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
 
     ActiveRecord::Base.transaction do
-      params[:criterion].each_with_index do |id, index|
-        begin
-          criterion_to_update = FlexibleCriterion.find(id)
-        rescue ActiveRecord::RecordNotFound
-          criterion_to_update = RubricCriterion.find(id)
-        end
+      params[:criterion].each_with_index do |type_id, index|
+        type = type_id.split(' ')[0]
+        id = type_id.split(' ')[1]
+        criterion_to_update = type == 'RubricCriterion' ? RubricCriterion.find(id) : FlexibleCriterion.find(id)
         criterion_to_update.class.update(id, position: index + 1) if id != ''
       end
     end
