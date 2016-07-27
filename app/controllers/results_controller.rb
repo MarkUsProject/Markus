@@ -442,9 +442,16 @@ class ResultsController < ApplicationController
   end
 
   def view_marks
-    @result = Result.find(params[:id])
-    @assignment = @result.submission.grouping.assignment
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
+    @submission = @grouping.current_submission_used
+
+    result_from_id = Result.find(params[:id])
+    if result_from_id.is_a_review?
+      @result = result_from_id
+    else
+      @result = @submission.get_original_result
+    end
 
     if @grouping.nil?
       redirect_to controller: 'assignments',
@@ -456,7 +463,6 @@ class ResultsController < ApplicationController
       render 'results/student/no_submission'
       return
     end
-    @submission = @grouping.current_submission_used
 
     is_review = @result.is_review_for?(@current_user, @assignment)
 
