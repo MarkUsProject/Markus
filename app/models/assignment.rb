@@ -629,7 +629,7 @@ class Assignment < ActiveRecord::Base
         result.concat(['','0'])
         # mark, max_mark
         result.concat(Array.new(criteria_count, '').
-          zip(get_criteria(:all, :rubric).pluck(:max_mark) + get_criteria(:all, :flexible).pluck(:max_mark)).flatten)
+          zip(get_criteria(:all, :all).map(&:max_mark)).flatten)
         # extra-mark, extra-percentage
         result.concat(['',''])
       else
@@ -689,32 +689,33 @@ class Assignment < ActiveRecord::Base
   end
 
   # Returns a filtered list of criteria.
-  def get_criteria(user_visibility = :all, type = :all)
+  def get_criteria(user_visibility = :all, type = :all, options = {})
+    include_opt = options[:includes]
     if user_visibility == :all
-      get_all_criteria(type)
+      get_all_criteria(type, include_opt)
     elsif user_visibility == :ta
-      get_ta_visible_criteria(type)
+      get_ta_visible_criteria(type, include_opt)
     elsif user_visibility == :peer
-      get_peer_visible_criteria(type)
+      get_peer_visible_criteria(type, include_opt)
     end
   end
 
-  def get_all_criteria(type)
+  def get_all_criteria(type, include_opt)
     if type == :all
-      (RubricCriterion.where(assignment_id: id) + FlexibleCriterion.where(assignment_id: id)).sort_by(&:position)
+      (rubric_criteria.includes(include_opt) + flexible_criteria.includes(include_opt)).sort_by(&:position)
     elsif type == :rubric
-      RubricCriterion.where(assignment_id: id).order(:position)
+      rubric_criteria.includes(include_opt).order(:position)
     elsif type == :flexible
-      FlexibleCriterion.where(assignment_id: id).order(:position)
+      flexible_criteria.includes(include_opt).order(:position)
     end
   end
 
-  def get_ta_visible_criteria(type)
-    get_all_criteria(type).empty? ? [] : get_all_criteria(type).select(&:ta_visible)
+  def get_ta_visible_criteria(type, include_opt)
+    get_all_criteria(type, include_opt).empty? ? [] : get_all_criteria(type, include_opt).select(&:ta_visible)
   end
 
-  def get_peer_visible_criteria(type)
-    get_all_criteria(type).empty? ? [] : get_all_criteria(type).select(&:peer_visible)
+  def get_peer_visible_criteria(type, include_opt)
+    get_all_criteria(type, include_opt).empty? ? [] : get_all_criteria(type, include_opt).select(&:peer_visible)
   end
 
   def criteria_count
