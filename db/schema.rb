@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160727173308) do
+ActiveRecord::Schema.define(version: 20160727181814) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(version: 20160727173308) do
     t.float    "token_period"
     t.integer  "parent_assignment_id"
     t.boolean  "has_peer_review",                  default: false,    null: false
+    t.integer  "checkbox_criteria_count"
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
