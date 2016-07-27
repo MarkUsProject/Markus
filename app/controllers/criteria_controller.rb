@@ -96,7 +96,7 @@ class CriteriaController < ApplicationController
   end
 
   def checkbox_criterion_params
-    params.require(:flexible_criterion).permit(:name,
+    params.require(:checkbox_criterion).permit(:name,
                                                :description,
                                                :position,
                                                :max_mark,
