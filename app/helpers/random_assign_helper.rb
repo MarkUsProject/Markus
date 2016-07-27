@@ -106,10 +106,30 @@ module RandomAssignHelper
     while @eligible_reviewer_groups.any?
       reviewer_id = @eligible_reviewer_groups.pop
 
-      unless attempt_assign_at_index(reviewer_id, shuffle_index) ||
-             attempt_assign_forward_swap(reviewer_id, shuffle_index) ||
-             attempt_assign_backward_swap(reviewer_id, shuffle_index)
-        raise UnableToRandomlyAssignGroupException
+      # Attempt to assign at shuffle index.
+      was_assigned = attempt_assign_at_index(reviewer_id, shuffle_index)
+
+      # Can't assign to the current index, so we need to advance ahead and wrap
+      # around to see if we can do so with others.
+      unless was_assigned
+        advanced_shuffle_index = (shuffle_index + 1) % @assigned_reviewer_to_shuffled_reviewee.size
+
+        # Keep look forward and backwards until we assign, or run out of reviewees.
+        while !was_assigned && advanced_shuffle_index != shuffle_index
+          if advanced_shuffle_index > shuffle_index
+            was_assigned = attempt_assign_forward_swap(reviewer_id, shuffle_index, advanced_shuffle_index)
+          elsif advanced_shuffle_index < shuffle_index
+            was_assigned = attempt_assign_backward_swap(reviewer_id, shuffle_index, advanced_shuffle_index)
+          end
+
+          advanced_shuffle_index = (advanced_shuffle_index + 1) % @assigned_reviewer_to_shuffled_reviewee.size
+        end
+
+        # We checked every possibility and no-one previous could swap, and no
+        # other matches existed from the shuffle index onward (if it's true).
+        unless was_assigned
+          raise UnableToRandomlyAssignGroupException
+        end
       end
 
       shuffle_index += 1
@@ -149,13 +169,12 @@ module RandomAssignHelper
     mark_reviewer_assigned_to(reviewer_id, reviewee_id, shuffle_index)
   end
 
-  def attempt_assign_forward_swap(reviewer_id, shuffle_index)
-    ((shuffle_index + 1)...@shuffled_reviewees.size).each do |swap_index|
-      reviewee_id = @shuffled_reviewees[swap_index]
-      if can_assign?(reviewer_id, reviewee_id)
-        do_forward_assign_swap_and_mark(reviewer_id, reviewee_id, shuffle_index, swap_index)
-        return true
-      end
+  def attempt_assign_forward_swap(reviewer_id, shuffle_index, advanced_shuffle_index)
+    reviewee_id = @shuffled_reviewees[advanced_shuffle_index]
+
+    if can_assign?(reviewer_id, reviewee_id)
+      do_forward_assign_swap_and_mark(reviewer_id, reviewee_id, shuffle_index, advanced_shuffle_index)
+      return true
     end
 
     false
@@ -181,12 +200,10 @@ module RandomAssignHelper
     mark_reviewer_assigned_to(reviewer_id, @shuffled_reviewees[shuffle_index], shuffle_index)
   end
 
-  def attempt_assign_backward_swap(reviewer_id, shuffle_index)
-    (0...shuffle_index).each do |prev_index|
-      if can_assign_to_prev_index?(reviewer_id, prev_index, shuffle_index)
-        swap_previous_with_current_and_assign(reviewer_id, prev_index, shuffle_index)
-        return true
-      end
+  def attempt_assign_backward_swap(reviewer_id, shuffle_index, advanced_shuffle_index)
+    if can_assign_to_prev_index?(reviewer_id, advanced_shuffle_index, shuffle_index)
+      swap_previous_with_current_and_assign(reviewer_id, advanced_shuffle_index, shuffle_index)
+      return true
     end
 
     false
