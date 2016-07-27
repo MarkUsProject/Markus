@@ -210,6 +210,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         peer_review_record_missing: "Erro: Par atribuição de avaliação em falta a partir do banco de dados"
         start_peer_review: "Revisão de pares"
         peer_review_results: "Resultados de Avaliação pelos Pares"
+        your_reviews: "Os seus comentários"
         review: "Avaliação"
     peer_review:
         problem: "Um problema inesperado ocorreu"

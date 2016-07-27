@@ -212,6 +212,7 @@ fr:
         peer_review_record_missing: "Erreur: Examen par les pairs cession manquant dans la base de données"
         start_peer_review: "Examen par les pairs"
         peer_review_results: "Examen par les pairs Résultats"
+        your_reviews: "Vos avis"
         review: "Avis"
     peer_review:
         problem: "Un problème inattendu est survenue"
