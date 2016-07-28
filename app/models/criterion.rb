@@ -37,28 +37,37 @@ class Criterion < ActiveRecord::Base
   def self.assign_tas(criterion_ids, ta_ids, assignment)
     criterion_ids   = Array(criterion_ids)
     ta_ids          = Array(ta_ids)
-    criterion_class = assignment.criterion_class
-    criterion_type  = criterion_class.name
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
-    criterion_ids = assignment.get_criteria.where(id: criterion_ids).pluck(:id)
+    criterion_ids = assignment.get_criteria(:all, :rubric).where(id: criterion_ids).pluck(:id) +
+      assignment.get_criteria(:all, :flexible).where(id: criterion_ids).pluck(:id)
 
     columns = [:criterion_id, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
                       .where(criterion_id: criterion_ids,
-                             ta_id: ta_ids,
-                             criterion_type: criterion_type)
+                             ta_id: ta_ids)
                       .pluck(:criterion_id, :ta_id)
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
     values = yield(criterion_ids, ta_ids) - existing_values
+    # Obtain the appropriate criteria types by looking up the criterion by id.
+    # The criteria ids are the first values of each array in the values array
+    criteria_types = []
+    values.each do |ids_pair|
+      begin
+        criterion = FlexibleCriterion.find(ids_pair[0])
+      rescue ActiveRecord::RecordNotFound
+        criterion = RubricCriterion.find(ids_pair[0])
+      end
+      criteria_types << criterion.class.to_s
+    end
     # Add columns that are common to all rows. They are not included above so
     # that the set operation is faster.
     columns << :criterion_type << :assignment_id
-    values.map { |value| value << criterion_type << assignment.id }
+    values.map.with_index { |value, index| value << criteria_types[index] << assignment.id }
     # TODO replace CriterionTaAssociation.import with
     # CriterionTaAssociation.create when the PG driver supports bulk create,
     # then remove the activerecord-import gem.
@@ -86,11 +95,10 @@ class Criterion < ActiveRecord::Base
     criterion_ids_str = Array(criterion_ids)
       .map { |criterion_id| connection.quote(criterion_id) }
       .join(',')
-    criterion_class = assignment.criterion_class
-    # TODO replace this raw SQL with dynamic SET clause with Active Record
+    # TODO replace these raw SQL with dynamic SET clause with Active Record
     # language when the latter supports subquery in the SET clause.
-    criterion_class.connection.execute(<<-UPDATE_SQL)
-      UPDATE #{criterion_class.table_name} AS c SET assigned_groups_count =
+    FlexibleCriterion.connection.execute(<<-UPDATE_SQL)
+      UPDATE #{FlexibleCriterion.table_name} AS c SET assigned_groups_count =
         (SELECT count(DISTINCT g.id) FROM memberships AS m
           INNER JOIN groupings AS g ON m.grouping_id = g.id
           INNER JOIN criterion_ta_associations AS ct ON m.user_id = ct.ta_id
@@ -99,6 +107,17 @@ class Criterion < ActiveRecord::Base
             AND m.type = 'TaMembership')
         WHERE assignment_id = #{assignment.id}
           #{"AND id IN (#{criterion_ids_str})" unless criterion_ids_str.empty?}
+    UPDATE_SQL
+    RubricCriterion.connection.execute(<<-UPDATE_SQL)
+      UPDATE #{RubricCriterion.table_name} AS c SET assigned_groups_count =
+        (SELECT count(DISTINCT g.id) FROM memberships AS m
+          INNER JOIN groupings AS g ON m.grouping_id = g.id
+          INNER JOIN criterion_ta_associations AS ct ON m.user_id = ct.ta_id
+          WHERE g.assignment_id = #{assignment.id}
+            AND ct.criterion_id = c.id AND ct.assignment_id = c.assignment_id
+            AND m.type = 'TaMembership')
+        WHERE assignment_id = #{assignment.id}
+    #{"AND id IN (#{criterion_ids_str})" unless criterion_ids_str.empty?}
     UPDATE_SQL
   end
 end

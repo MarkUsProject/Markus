@@ -8,7 +8,7 @@
 
 <div id='summary_criteria_pane'>
 
-  <%= render partial: "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
+  <%= render partial: 'results/common/marks_summary_table',
              locals: { mark_criteria: mark_criteria,
                        marks_map: marks_map } %>
 
@@ -67,7 +67,7 @@
 <% if old_result %>
   <div id='old_summary_criteria_pane'>
 
-    <%= render partial: "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
+    <%= render partial: 'results/common/marks_summary_table',
                locals: { mark_criteria: mark_criteria,
                          marks_map: old_marks_map } %>
 

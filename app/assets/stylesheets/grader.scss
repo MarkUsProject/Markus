@@ -752,7 +752,7 @@ ul.annotation_text_list {
 
 .extra_marks_pane_list,
 .extra_percentage_pane_list,
-.marks_summary_pane_list {
+.summary_criteria_pane_list {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -761,6 +761,10 @@ ul.annotation_text_list {
     background-color: $light-blue;
     padding: 0.25em;
     text-align: left;
+    width: 83%;
+  }
+  th+th {
+    width: auto;
   }
 
   tr {
@@ -774,6 +778,10 @@ ul.annotation_text_list {
 
     td {
       padding: 0.25em;
+      width: 83%;
+    }
+    td+td {
+      width: auto;
     }
   }
 }

@@ -280,8 +280,8 @@ class GradersController < ApplicationController
     criterion_ids = options[:criterion_ids]
     includes = options[:includes] || CRITERION_ASSOC
 
-    criteria = assignment.get_criteria.includes(includes)
-    criterion_ids ? criteria.where(id: criterion_ids) : criteria
+    criteria = assignment.get_criteria(:all, :all, includes: includes)
+    criterion_ids ? criteria.select{ |criterion| criterion_ids.include?(criterion.id) } : criteria
   end
 
   def randomly_assign_graders_to_criteria(criterion_ids, grader_ids)

@@ -72,7 +72,11 @@ class FlexibleCriterion < Criterion
     name = working_row.shift
     # If a FlexibleCriterion with the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria.find_or_create_by(name: name)
+    begin
+      criterion = assignment.get_criteria(:all, :flexible).find_or_create_by(name: name)
+    rescue ActiveRecord::RecordNotSaved # Triggered if the assignment does not exist yet
+      raise CSVInvalidLineError, I18n.t('csv.no_assignment')
+    end
     # Check that max is not a string.
     begin
       criterion.max_mark = Float(working_row.shift)

@@ -186,19 +186,19 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
       should 'raise csv line error on an empty row' do
         assert_raise CSVInvalidLineError do
-          RubricCriterion.create_or_update_from_csv_row([], Assignment.new)
+          RubricCriterion.create_or_update_from_csv_row([], @assignment)
         end
       end
 
       should 'raise csv line error on a 1 element row' do
         assert_raise CSVInvalidLineError do
-          RubricCriterion.create_or_update_from_csv_row(%w(name), Assignment.new)
+          RubricCriterion.create_or_update_from_csv_row(%w(name), @assignment)
         end
       end
 
       should 'raise csv line error on a 2 element row' do
         assert_raise CSVInvalidLineError do
-          RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), Assignment.new)
+          RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), @assignment)
         end
       end
 
@@ -207,7 +207,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         (0..RubricCriterion::RUBRIC_LEVELS - 2).each do |i|
           row << 'name' + i.to_s
             assert_raise CSVInvalidLineError do
-              RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
+              RubricCriterion.create_or_update_from_csv_row(row, @assignment)
             end
         end
       end
@@ -215,7 +215,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should 'raise csv line error on a row with an invalid weight' do
         row = %w(name max_mark l0 l1 l2 l3 l4)
         e = assert_raise CSVInvalidLineError do
-          RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
+          RubricCriterion.create_or_update_from_csv_row(row, @assignment)
         end
         assert_instance_of CSVInvalidLineError, e
         assert_equal t('csv.invalid_row.invalid_format'), e.message
