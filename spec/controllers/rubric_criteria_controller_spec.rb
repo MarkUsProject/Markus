@@ -113,7 +113,7 @@ describe RubricCriteriaController do
            csv_upload: { rubric: @file_good }
 
       assignment.reload
-      rubric_criteria = assignment.get_criteria
+      rubric_criteria = assignment.get_criteria(:all, :rubric)
       expect(4).to eq(rubric_criteria.size)
       expect('Algorithm Design')
         .to eq(rubric_criteria[0].name)

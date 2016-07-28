@@ -441,11 +441,12 @@ en:
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
-      repo_collision_warning: "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
+      repo_collision_warning:  "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
       line_nr_csv_file_prefix: "Line %{line_number} of CSV file:"
-      group_to_grader: "You must supply a CSV file for group to grader mapping"
-      student_to_grader: "You must supply a CSV file for student to grader mapping"
-      invalid_csv: "The format of the CSV file was not recognized"
+      group_to_grader:         "You must supply a CSV file for group to grader mapping"
+      student_to_grader:       "You must supply a CSV file for student to grader mapping"
+      invalid_csv:             "The format of the CSV file was not recognized"
+      no_assignment:           "The assignment you are trying to create criteria for does not exist yet"
       invalid_row:
         duplicate_entry: "Duplicate Entry"
         invalid_format: "Invalid Row Format"

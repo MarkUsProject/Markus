@@ -214,7 +214,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         # Contents: correctness,g9browni,g9younas
         #           style,g9browni
         #           class design,c7benjam
-        @ctieria_grader_map_file = fixture_file_upload(
+        @criteria_grader_map_file = fixture_file_upload(
                                       File.join('group_csvs',
                                                 'criteria_grader_map.csv'))
       end
@@ -233,7 +233,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           @criterion3 = RubricCriterion.make(assignment: @assignment, name: 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               assignment_id: @assignment.id,
-              grader_criteria_mapping: @ctieria_grader_map_file}
+              grader_criteria_mapping: @criteria_grader_map_file}
 
           assert_response :redirect
           assert @criterion1.tas.count == 2
@@ -256,7 +256,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           @criterion3 = RubricCriterion.make(assignment: @assignment, name: 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               assignment_id: @assignment.id,
-              grader_criteria_mapping: @ctieria_grader_map_file}
+              grader_criteria_mapping: @criteria_grader_map_file}
 
           assert_response :redirect
           assert @criterion1.tas.count == 0 # entire row is ignored
@@ -275,7 +275,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           @criterion3 = RubricCriterion.make(assignment: @assignment, name: 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               assignment_id: @assignment.id,
-              grader_criteria_mapping: @ctieria_grader_map_file}
+              grader_criteria_mapping: @criteria_grader_map_file}
 
           assert_response :redirect
           assert @criterion1.tas.count == 2
@@ -300,7 +300,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           @criterion3 = FlexibleCriterion.make(assignment: @assignment, name: 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               assignment_id: @assignment.id,
-              grader_criteria_mapping: @ctieria_grader_map_file}
+              grader_criteria_mapping: @criteria_grader_map_file}
 
           assert_response :redirect
           assert @criterion1.tas.count == 2
@@ -321,7 +321,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           @criterion3 = FlexibleCriterion.make(assignment: @assignment, name: 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               assignment_id: @assignment.id,
-              grader_criteria_mapping: @ctieria_grader_map_file}
+              grader_criteria_mapping: @criteria_grader_map_file}
 
           assert_response :redirect
           assert @criterion1.tas.count == 0 # entire row is ignored
@@ -340,7 +340,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           @criterion3 = FlexibleCriterion.make(assignment: @assignment, name: 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               assignment_id: @assignment.id,
-              grader_criteria_mapping: @ctieria_grader_map_file}
+              grader_criteria_mapping: @criteria_grader_map_file}
 
           assert_response :redirect
           assert @criterion1.tas.count == 2

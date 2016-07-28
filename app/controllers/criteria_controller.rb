@@ -6,7 +6,6 @@ class CriteriaController < ApplicationController
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
     criterion_class = params[:criterion_type].constantize
     @criterion = criterion_class.new
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
@@ -18,7 +17,7 @@ class CriteriaController < ApplicationController
       render :add_criterion_error
       return
     end
-    @criteria.reload
+    @criteria = @assignment.get_criteria
     render :create_and_edit
   end
 
@@ -51,14 +50,17 @@ class CriteriaController < ApplicationController
     flash.now[:success] = t('criterion_saved_success')
   end
 
-  # This method handles the drag/drop criteria sorting.
+  # Handles the drag/drop criteria sorting.
   def update_positions
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
 
     ActiveRecord::Base.transaction do
-      params[:criterion].
-        each_with_index { |id, index| @assignment.criterion_class.update(id, position: index + 1) if id != '' }
+      params[:criterion].each_with_index do |type_id, index|
+        type = type_id.split(' ')[0]
+        id = type_id.split(' ')[1]
+        criterion_to_update = type == 'RubricCriterion' ? RubricCriterion.find(id) : FlexibleCriterion.find(id)
+        criterion_to_update.class.update(id, position: index + 1) if id != ''
+      end
     end
   end
 
