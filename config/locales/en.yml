@@ -1306,12 +1306,7 @@ en:
 
     summary_table:
       title: "Title"
-      max_value: "Maximum value"
       grade: "Grade"
-      mark: "Level"
-      score: "Score"
-      weight: "Weight"
-      test_script_title: "Test scripts"
 
     key_pairs:
       title: "Key Pairs"

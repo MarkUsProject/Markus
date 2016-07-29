@@ -1,13 +1,13 @@
-<li id='<%= "mark_criterion_#{mark_criterion.id}" %>' class='flexible_criterion'>
+<li id='<%= "flexible_criterion_#{mark_criterion.id}" %>' class='flexible_criterion'>
   <%= render partial: 'results/common/flexible_criterion',
              locals: { mark_criterion: mark_criterion,
                        mark: mark,
                        old_mark: old_mark,
                        view: 'student'} %>
 
-  <% if mark_criterion.description != '' %>
+  <% unless mark_criterion.description == '' or mark_criterion.description == nil  %>
       <div id='<%="criterion_info_#{mark_criterion.id}"%>'
-           class='criterion_info mark_flexible'
+           class='criterion_info mark-flexible'
            data-id='<%=mark_criterion.id%>' >
         <%= mark_criterion.description %>
       </div>
