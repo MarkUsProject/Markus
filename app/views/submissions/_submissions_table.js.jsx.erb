@@ -16,49 +16,52 @@
             compare: compare_anchor_text,
             searchable: true
           },
-          {
-            id: 'repository',
-            content: '<%= j raw I18n.t(:'browse_submissions.repository') %>',
-            sortable: true,
-            compare: compare_anchor_text,
-            searchable: true
-          },
-          <%= raw @section_column  %>
-          {
-            id: 'commit_date',
-            content: '<%= j raw I18n.t(:'browse_submissions.commit_date') %>',
-            sortable: true,
-            compare: compare_dates,
-            searchable: false
-          },
-          {
-            id: 'marking_state',
-            content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
-            sortable: true,
-            searchable: false
-          },
-          <%= raw @grace_credit_column %>
-          {
-            id: 'tags',
-            content: <ul className='tag_list' dangerouslySetInnerHTML={{__html: '<li>' +
-                  '<%= j raw I18n.t(:'browse_submissions.tags_used') %>' +
-                  /* TODO: Use this code to complete a tag search feature
-                     in the table.
-                    '<ul class="tag_dropdown">' +
-                    '<li class="tag_list_title">' +
-                      '<%= j raw I18n.t(:'browse_submissions.tags_search') %>' +
-                    '</li>' +
-                    '<li class="tag_list_search">' +
-                      '<%= text_field_tag 'name' %>' +
-                    '</li>' +
-                    '<li class="tag_list_title">' +
-                      '<%= j raw I18n.t(:'browse_submissions.tags_list') %>' +
-                    '</li>'
-                  '</ul>' +*/
-                '</li>'}} />,
-            sortable: false,
-            searchable: false
-          },
+          <% unless @assignment.is_peer_review? %>
+            {
+              id: 'repository',
+              content: '<%= j raw I18n.t(:'browse_submissions.repository') %>',
+              sortable: true,
+              compare: compare_anchor_text,
+              searchable: true
+            },
+
+            <%= raw @section_column  %>
+            {
+              id: 'commit_date',
+              content: '<%= j raw I18n.t(:'browse_submissions.commit_date') %>',
+              sortable: true,
+              compare: compare_dates,
+              searchable: false
+            },
+            {
+              id: 'marking_state',
+              content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
+              sortable: true,
+              searchable: false
+            },
+            <%= raw @grace_credit_column %>
+            {
+              id: 'tags',
+              content: <ul className='tag_list' dangerouslySetInnerHTML={{__html: '<li>' +
+                    '<%= j raw I18n.t(:'browse_submissions.tags_used') %>' +
+                    /* TODO: Use this code to complete a tag search feature
+                       in the table.
+                      '<ul class="tag_dropdown">' +
+                      '<li class="tag_list_title">' +
+                        '<%= j raw I18n.t(:'browse_submissions.tags_search') %>' +
+                      '</li>' +
+                      '<li class="tag_list_search">' +
+                        '<%= text_field_tag 'name' %>' +
+                      '</li>' +
+                      '<li class="tag_list_title">' +
+                        '<%= j raw I18n.t(:'browse_submissions.tags_list') %>' +
+                      '</li>'
+                    '</ul>' +*/
+                  '</li>'}} />,
+              sortable: false,
+              searchable: false
+            },
+          <% end %>
           {
             id: 'final_grade',
             content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
