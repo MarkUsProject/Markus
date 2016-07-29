@@ -14,9 +14,10 @@ class ResultsController < ApplicationController
                        :remove_extra_mark,
                        :note_message]
   before_filter :authorize_for_user,
-                only: [:codeviewer, :download, :download_zip, :run_tests]
+                only: [:codeviewer, :download, :download_zip, :run_tests,
+                       :view_marks]
   before_filter :authorize_for_student,
-                only: [:view_marks, :update_remark_request,
+                only: [:update_remark_request,
                        :cancel_remark_request]
   before_filter only: [:edit, :update_mark, :toggle_marking_state,
                        :update_overall_comment, :next_grouping] do |c|
@@ -442,9 +443,16 @@ class ResultsController < ApplicationController
   end
 
   def view_marks
+    #debugger
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
-    @submission = @grouping.current_submission_used
+
+    if !current_user.student?
+      @submission = Submission.find(params[:submission_id])
+      @grouping = @submission.grouping
+    else
+      @grouping = current_user.accepted_grouping_for(@assignment.id)
+      @submission = @grouping.current_submission_used
+    end
 
     result_from_id = Result.find(params[:id])
     if result_from_id.is_a_review?
@@ -453,25 +461,33 @@ class ResultsController < ApplicationController
       @result = @submission.get_original_result
     end
 
+    is_review = @result.is_review_for?(@current_user, @assignment) ||
+        (@result.is_a_review? && !@current_user.student?)
+
     if @grouping.nil?
       redirect_to controller: 'assignments',
                   action: 'student_interface',
                   id: params[:id]
       return
     end
-    unless @grouping.has_submission?
+    
+    unless is_review || @grouping.has_submission?
       render 'results/student/no_submission'
       return
     end
 
-    is_review = @result.is_review_for?(@current_user, @assignment)
-
     if is_review
-      @prs = @current_user.grouping_for(@assignment.id).peer_reviews
+      @reviewer = Grouping.find(params[:reviewer_grouping_id])
+      if @current_user.student?
+        @prs = @grouping.peer_reviews
+      else
+        @prs = @reviewer.peer_reviews_to_others
+      end
+
       @current_pr = PeerReview.find_by(result_id: @result.id)
     end
 
-    unless @submission.has_result? || is_review
+    unless is_review || @submission.has_result?
       render 'results/student/no_result'
       return
     end

@@ -82,13 +82,15 @@
 
 <div class='wrapLeft'>
   <%= render partial: 'results/common/errors' %>
-
-  <% unless !@result.is_review_for?(@current_user, @assignment) %>
-    <%= render partial: 'results/student/peer_reviews',
+  <% if @result.is_review_for?(@current_user, @assignment) ||
+      (@result.is_a_review? && !@current_user.student?) %>
+    <%= render partial: 'results/common/peer_reviews',
                locals: { current_user: @current_user,
                          assignment: @assignment,
                          result: @result,
                          submission: @submission,
+                         grouping: @grouping,
+                         reviewer: @reviewer,
                          prs: @prs,
                          current_pr: @current_pr} %>
   <% end %>
