@@ -30,7 +30,7 @@
                         old_mark: old_mark,
                         view: 'marker'} %>
 
-    <% if mark_criterion.description != '' %>
+    <% unless mark_criterion.description == '' or mark_criterion.description == nil %>
       <div id="<%="criterion_info_#{mark_criterion.id}"%>"
            class='criterion_info mark-flexible'
            data-id="<%=mark_criterion.id%>" >
