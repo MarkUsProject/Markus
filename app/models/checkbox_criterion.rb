@@ -118,7 +118,7 @@ class CheckboxCriterion < Criterion
     working_row = row.clone
     name = working_row.shift
 
-    # If a FlexibleCriterion with the same name exits, load it up. Otherwise,
+    # If a CheckboxCriterion with the same name exists, load it up. Otherwise,
     # create a new one.
     criterion = assignment.get_criteria.find_or_create_by(name: name)
 
