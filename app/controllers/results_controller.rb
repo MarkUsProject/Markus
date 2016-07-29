@@ -73,12 +73,22 @@ class ResultsController < ApplicationController
 
     @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
-      @marks_map[criterion.id] = mark
+      # NOTE: Due to the way marks were set up, they originally assumed that
+      # there only would ever be unique criterion IDs. Now that we mix them
+      # together, multiple criteria could end up using the same ID due to the
+      # polymorphic nature of criteria. This led to old values getting written
+      # over by other ones with the same criteria ID, so the class String is
+      # used to allow the viewers to differentiate between them.
+      # TODO - An even better idea: create a 'table', or rather hash[key][key]
+      @marks_map[[criterion.class.to_s, criterion.id]] = mark
+
       # Loading up previous results for the case of a remark
       if @old_result
         oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
         oldmark.save(validate: false)
-        @old_marks_map[criterion.id] = oldmark
+
+        # See above for reasoning on why two elements are used.
+        @old_marks_map[[criterion.class.to_s, criterion.id]] = oldmark
       end
 
       Mark.skip_callback(:save, :after, :update_result_mark)
@@ -421,7 +431,15 @@ class ResultsController < ApplicationController
 
     # Update mark attribute in marks table with a weighted mark
     weight_criterion = result_mark.markable.weight
-    result_mark.mark = params[:mark].to_f * weight_criterion
+    mark_value = params[:mark].to_f
+
+    # If it's a checkbox then we will flip the value since the user requested
+    # it to be toggled.
+    if result_mark.markable.is_a?(CheckboxCriterion)
+      mark_value = result_mark.mark == 0.0 ? 1.0 : 0.0
+    end
+
+    result_mark.mark = mark_value * weight_criterion
 
     if result_mark.save
       m_logger.log("User '#{current_user.user_name}' updated mark for " +
@@ -495,12 +513,16 @@ class ResultsController < ApplicationController
     @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       mark.save(validate: false)
-      @marks_map[criterion.id] = mark
+
+      # See the 'edit' method documentation for reasoning on why two elements are used.
+      @marks_map[[criterion.class.to_s, criterion.id]] = mark
 
       if @old_result
         oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
         oldmark.save(validate: false)
-        @old_marks_map[criterion.id] = oldmark
+
+        # See the 'edit' method documentation for reasoning on why two elements are used.
+        @old_marks_map[[criterion.class.to_s, criterion.id]] = oldmark
       end
     end
 

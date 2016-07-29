@@ -77,6 +77,48 @@ jQuery(document).ready(function() {
     });
   });
 
+  // Event handlers for the checkbox criteria
+  // TODO - Refactor with the code above?
+  jQuery('.mark_grade_input_checkbox').each(function(index, input) {
+      var mark_id = input.id.substr(5);
+
+      // Prevent clicks from hiding the grade
+      jQuery(this).click(function(event) {
+          event.preventDefault();
+          return false;
+      });
+
+      jQuery(this).change(function() {
+          var params = {
+              'mark': this.value || '',
+              'authenticity_token': AUTH_TOKEN
+          };
+
+          jQuery.ajax({
+              url:  this.getAttribute('data-action'),
+              type: 'POST',
+              data: params,
+              beforeSend: function() {
+                  document.getElementById('mark_verify_result_' + mark_id).style.display = 'none';
+              },
+              error: function(err) {
+                  var error_div = document.getElementById('mark_verify_result_' + mark_id);
+                  error_div.style.display = '';
+                  error_div.innerHTML = err.responseText;
+              },
+              success: function(data) {
+                  var items = data.split(',');
+                  var mark = items[0];
+                  var subtotal = items[1];
+                  var total = items[2];
+                  update_total_mark(total);
+                  document.getElementById('mark_' + mark_id + '_summary_mark_after_weight').innerHTML = mark;
+                  document.getElementById('current_subtotal_div').innerHTML = subtotal;
+              }
+          });
+      });
+  });
+
   // Handle indenting in the new annotation textarea (2 spaces)
   jQuery('#new_annotation_content').keydown(function(e) {
     var keyCode = e.keyCode || e.which;
@@ -163,8 +205,7 @@ function focus_mark_criterion(id) {
     } else {
       show_criterion(id, 'RubricCriterion');
     }
-  }
-  else {
+  } else {
     if (jQuery('#flexible_criterion_' + id).hasClass('expanded')) {
       hide_criterion(id, 'FlexibleCriterion');
     } else {
@@ -178,9 +219,12 @@ function hide_criterion(id, criterion_class) {
   if (criterion_class == 'RubricCriterion') {
     document.getElementById('mark_criterion_' + id).removeClass('expanded');
     document.getElementById('mark_criterion_' + id).addClass('not_expanded');
-  } else {
+  } else if (criterion_class == 'FlexibleCriterion') {
     document.getElementById('flexible_criterion_' + id).removeClass('expanded');
     document.getElementById('flexible_criterion_' + id).addClass('not_expanded');
+  } else {
+    document.getElementById('checkbox_criterion_' + id).removeClass('expanded');
+    document.getElementById('checkbox_criterion_' + id).addClass('not_expanded');
   }
 };
 
@@ -189,9 +233,12 @@ function show_criterion(id, criterion_class) {
   if (criterion_class == 'RubricCriterion') {
     document.getElementById('mark_criterion_' + id).removeClass('not_expanded');
     document.getElementById('mark_criterion_' + id).addClass('expanded');
-  } else {
+  } else if (criterion_class == 'FlexibleCriterion') {
     document.getElementById('flexible_criterion_' + id).removeClass('not_expanded');
     document.getElementById('flexible_criterion_' + id).addClass('expanded');
+  } else {
+      document.getElementById('checkbox_criterion_' + id).removeClass('not_expanded');
+      document.getElementById('checkbox_criterion_' + id).addClass('expanded');
   }
 };
 
