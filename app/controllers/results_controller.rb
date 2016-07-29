@@ -470,17 +470,17 @@ class ResultsController < ApplicationController
                   id: params[:id]
       return
     end
-    
+
     unless is_review || @grouping.has_submission?
       render 'results/student/no_submission'
       return
     end
 
     if is_review
-      @reviewer = Grouping.find(params[:reviewer_grouping_id])
       if @current_user.student?
         @prs = @grouping.peer_reviews
       else
+        @reviewer = Grouping.find(params[:reviewer_grouping_id])
         @prs = @reviewer.peer_reviews_to_others
       end
 
