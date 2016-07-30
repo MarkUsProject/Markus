@@ -20,14 +20,14 @@ module RandomAssignHelper
 
     initialize_data_structures(num_groups, reviewer_ids, reviewee_ids)
     create_peer_review_assignments
-    create_peer_reviews(pr_assignment)
+    save_peer_reviews(pr_assignment)
   end
 
   private
 
   def initialize_data_structures(num_groups, reviewer_ids, reviewee_ids)
     # A dictionary mapping reviewer id to a set of reviewee ids.
-    @reviewer_to_reviewee_sets = Hash.new { |h, k| h[k] = Set.new }
+    @reviewer_to_reviewee_sets = Hash.new { Set.new }
 
     # A list of reviewers ids, containing num_groups occurrences for each one.
     @reviewers = reviewer_ids * num_groups
@@ -36,10 +36,14 @@ module RandomAssignHelper
     @reviewees = reviewee_ids * (@reviewers.size.to_f / reviewee_ids.size).ceil
 
     # A dictionary mapping grouping id to a set of student ids.
-    groupings = Grouping.where(id: reviewer_ids + reviewee_ids)
-    @group_to_students = Hash[groupings.map do |grouping|
-      [grouping.id, grouping.students.pluck(:id).to_set]
-    end]
+    @group_to_students = Hash.new { Set.new }
+    groupings = Grouping.joins(:memberships)
+                  .where(id: reviewer_ids + reviewee_ids,
+                         memberships: { type: 'StudentMembership' })
+                  .pluck(:id, :user_id)
+    groupings.each do |grouping_id, student_id|
+      @group_to_students[grouping_id].add(student_id)
+    end
 
     # Remove reviewer ids if there are existing peer reviews already assigned
     process_existing_peer_reviews(reviewer_ids)
@@ -64,17 +68,6 @@ module RandomAssignHelper
       unless index.nil?
         @reviewers.delete_at(index)
       end
-    end
-  end
-
-  # Takes the list of group IDs (which should be both reviewers and reviewees)
-  # and creates the @group_to_students mapping for quick lookup of students in
-  # the group ID.
-  def generate_group_to_students_map(group_id_list)
-    @group_to_students = Hash.new
-    Grouping.includes(:students).where(id: group_id_list).each do |grouping|
-      @group_to_students[grouping.id] =
-        Set.new grouping.students.map(&:id)
     end
   end
 
@@ -155,7 +148,7 @@ module RandomAssignHelper
     arr[i], arr[j] = arr[j], arr[i]
   end
 
-  def create_peer_reviews(pr_assignment)
+  def save_peer_reviews(pr_assignment)
     peer_reviews_reviewer_result = []
     peer_reviews = []
     results = []
@@ -163,12 +156,17 @@ module RandomAssignHelper
 
     assignment_criteria = pr_assignment.parent_assignment.get_criteria(:ta)
 
+    groupings = Grouping.includes(:current_submission_used)
+                        .where(id: @reviewees)
+
+    submission_map = Hash[groupings.map do |g|
+      [g.id, g.current_submission_used.id]
+    end]
+
     # Generate the objects to be added before we start doing mass commits, and
     # also remember them so we can attach them to a new peer review.
     @reviewers.zip(@reviewees).each do |reviewer_id, reviewee_id|
-      reviewee = Grouping.includes(:current_submission_used).find(reviewee_id)
-
-      result = Result.new(submission: reviewee.current_submission_used,
+      result = Result.new(submission_id: submission_map[reviewee_id],
                           marking_state: Result::MARKING_STATES[:incomplete])
       results << result
       assignment_criteria.each { |criterion| marks << criterion.marks.new(result: result) }
