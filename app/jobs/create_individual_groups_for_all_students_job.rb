@@ -46,8 +46,9 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
           end
         end
 
+        Repository::GitRepository.set_assignment_permissions(assignment)
         # Generate the permissions file for all valid groups
-        Repository::SubversionRepository.__generate_authz_file
+        #Repository::SubversionRepository.__generate_authz_file
         m_logger = MarkusLogger.instance
         m_logger.log('Creating all individual groups completed',
                      MarkusLogger::INFO)
@@ -56,7 +57,7 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
       end
     rescue => e
       Rails.logger.error e.message
-      job_messenger.update_attributes(status: failed, message: e.message)
+      job_messenger.update_attributes(status: :failed, message: e.message)
       PopulateCache.populate_for_job(job_messenger, job_id)
       raise e
     end
