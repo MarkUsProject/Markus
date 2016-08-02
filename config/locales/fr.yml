@@ -1083,6 +1083,7 @@ fr:
       type:           "Type de critère."
       rubric:         "Rubrique"
       flexible:       "Flexible"
+      checkbox:       "Checkbox"
       marking_scheme: "Barème: %{identifier}"
       save:           "Sauvegarder les modifications"
       add_criterion:  "Ajouter Critère"
@@ -1117,6 +1118,34 @@ fr:
         success: "Le fichier contenant le barème (flexible) a bien été envoyé : %{nb_updates} mise(s) à jour."
       move_criterion:
         error: "Erreur: impossible de déplacer ce critère (flexible)."
+      ta_visible: "Rendre visible aux assistants d'enseignement"
+      peer_visible: "Rendre visible à leurs auteurs pairs"
+      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
+
+    checkbox_criteria:
+      title: "Critères d' Checkbox"
+      move_up: "Monter"
+      move_down: "Descendre"
+      name: "Nom du critère"
+      max_mark: "Note maximale"
+      description: "Description"
+      description_hint: "Vous avez la possibilité d'utiliser des tags HTML simples dans ce champ. Pour un aperçu, sauvegardez."
+      download:
+        title: "Télécharger le fichier de barème"
+        prompt: "Critères de Checkbox sont actuellement disponibles au format CSV"
+        link: "Télécharger critères Checkbox au format CSV"
+      upload:
+        title: "Télécharger Checkbox Critères Fichier"
+        prompt: "Choisissez un fichier CSV à envoyer"
+        format_html: "
+        <p>Le fichier devra être au format suivant : </p>
+        <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
+        <code>criteria_name,max_value,description</code>
+        <p>La description est facultative. NB : Si aucune description n'est présente, la seconde virgule ne doit
+        pas apparaître.</p>"
+        success: "critères de Checkbox téléchargés avec succès: %{nb_updates} mise à jour."
+      move_criterion:
+        error: "Impossible de déplacer les critères de case à cocher."
       ta_visible: "Rendre visible aux assistants d'enseignement"
       peer_visible: "Rendre visible à leurs auteurs pairs"
       visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
@@ -1179,11 +1208,7 @@ fr:
 
     summary_table:
       title: "Titre"
-      max_value: "Valeur maximale"
       grade: "Note intermédiaire"
-      mark: "Note"
-      weight: "Coefficient"
-      test_script_title: "Scripts de test"
 
     course_summaries:
       title: "Sommaire"

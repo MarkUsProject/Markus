@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160623140952) do
+ActiveRecord::Schema.define(version: 20160727181814) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,9 +117,25 @@ ActiveRecord::Schema.define(version: 20160623140952) do
     t.float    "token_period"
     t.integer  "parent_assignment_id"
     t.boolean  "has_peer_review",                  default: false,    null: false
+    t.integer  "checkbox_criteria_count"
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
+
+  create_table "checkbox_criteria", force: :cascade do |t|
+    t.string   "name",                                                           null: false
+    t.string   "description"
+    t.integer  "position"
+    t.integer  "assignment_id",                                                  null: false
+    t.decimal  "max_mark",              precision: 10, scale: 1
+    t.integer  "assigned_groups_count",                          default: 0
+    t.boolean  "ta_visible",                                     default: true,  null: false
+    t.boolean  "peer_visible",                                   default: false, null: false
+    t.datetime "created_at",                                                     null: false
+    t.datetime "updated_at",                                                     null: false
+  end
+
+  add_index "checkbox_criteria", ["assignment_id", "name"], name: "index_checkbox_criteria_on_assignment_id_and_name", unique: true, using: :btree
 
   create_table "criterion_ta_associations", force: :cascade do |t|
     t.integer  "ta_id"
@@ -540,6 +556,7 @@ ActiveRecord::Schema.define(version: 20160623140952) do
   add_foreign_key "annotations", "submission_files", name: "fk_annotations_submission_files"
   add_foreign_key "assignment_files", "assignments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_stats", "assignments", name: "fk_assignment_stats_assignments", on_delete: :cascade
+  add_foreign_key "checkbox_criteria", "assignments"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
   add_foreign_key "groupings", "assignments", name: "fk_groupings_assignments"

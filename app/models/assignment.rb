@@ -4,7 +4,8 @@ class Assignment < ActiveRecord::Base
   include RepositoryHelper
   MARKING_SCHEME_TYPE = {
     flexible: 'flexible',
-    rubric: 'rubric'
+    rubric: 'rubric',
+    checkbox: 'checkbox'
   }
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
@@ -17,6 +18,11 @@ class Assignment < ActiveRecord::Base
   has_many :flexible_criteria,
            -> { order(:position) },
            class_name: 'FlexibleCriterion',
+       dependent: :destroy
+
+  has_many :checkbox_criteria,
+           -> { order(:position) },
+           class_name: 'CheckboxCriterion',
        dependent: :destroy
 
   has_many :test_support_files, dependent: :destroy
