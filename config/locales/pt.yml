@@ -1053,6 +1053,13 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       marking_scheme: "Esquema de avalição: %{identifier}"
       save:           "Salvar alterções"
       add_criterion:  "Adicionar Critério"
+      download:
+        title:    "Baixar Arquivo de Critérios"
+        prompt:   "Todos os tipos de critérios serão baixados no formato YAML."
+        link_yml: "Baixar Critérios em Formato YAML"
+        yml:      "Baixar YML"
+      upload:
+        yml: "Carregar YML"
       errors:
         messages:
           name_taken:             "Nome de critério já utilizado."

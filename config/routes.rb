@@ -75,7 +75,7 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :criteria, except: [:index] do
+      resources :criteria do
         collection do
           post 'update_positions'
         end

@@ -1214,6 +1214,13 @@ en:
       marking_scheme: "Marking Scheme: %{identifier}"
       save:           "Save changes"
       add_criterion:  "Add Criterion"
+      download:
+        title:    "Download Criteria File"
+        prompt:   "All types of criteria will be downloaded in YAML format."
+        link_yml: "Download Criteria in YAML Format"
+        yml:      "Download YML"
+      upload:
+        yml: "Upload YML"
       errors:
         messages:
           name_taken:              "Criterion name already used."

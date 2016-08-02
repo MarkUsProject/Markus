@@ -1085,6 +1085,13 @@ fr:
       marking_scheme: "Barème: %{identifier}"
       save:           "Sauvegarder les modifications"
       add_criterion:  "Ajouter Critère"
+      download:
+        title:    "Télécharger le fichier de Critères"
+        prompt:   "Tous les types de critères seront téléchargés au format YAML."
+        link_yml: "Télécharger critères au format YAML"
+        yml:      "Télécharger YML"
+      upload:
+        yml: "Envoyer YML"
       errors:
         messages:
           name_taken:             "Nom du critère déjà utilisé."
