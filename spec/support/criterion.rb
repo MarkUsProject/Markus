@@ -19,6 +19,7 @@ shared_examples 'a criterion' do
       criterion_ids_by_type = {}
       criterion_ids_by_type['RubricCriterion'] = []
       criterion_ids_by_type['FlexibleCriterion'] = []
+      criterion_ids_by_type['CheckboxCriterion'] = []
       criterion_ids_types.each_value { |id_type| criterion_ids_by_type[id_type[1]] << id_type[0] }
       criterion_ids_by_type
     end
