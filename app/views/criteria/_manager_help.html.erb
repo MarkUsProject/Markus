@@ -5,7 +5,7 @@
   <ul>
     <li><h4><%= t('rubric_criteria.title')%></h4></li>
     <p><%= t(:help_editing_rubric_criteria_message)%></p>
-    <li><h4><%= t('flexible_criteria.title')%></h4></li>
+    <li><h4><%= "#{t('flexible_criteria.title')}, #{t('checkbox_criteria.title')}" %></h4></li>
     <p><%= t(:help_editing_flexible_criteria_message)%></p>
   </ul>
   <h3><%= t(:ordering_criteria) %></h3>
@@ -16,5 +16,4 @@
   <%= t(:help_ta_visibility_message)%><br>
   <%= image_tag 'icons/group.png' %>
   <%= t(:help_peer_visibility_message)%><br>
-
 </div>
