@@ -23,7 +23,8 @@ namespace :db do
 
       #Automate marks for assignment using appropriate criteria
       grouping.assignment.get_criteria.each do |criterion|
-        mark = create_mark(result.id, grouping.assignment.marking_scheme_type, criterion)
+        criterion_class = criterion.class == RubricCriterion ? 'rubric' : 'flexible'
+        mark = create_mark(result.id, criterion_class, criterion)
         result.marks.push(mark)
         result.save
       end

@@ -187,7 +187,7 @@ describe FlexibleCriteriaController do
                   assignment_id: @assignment.id,
                   upload: { flexible: tempfile }
           @assignment.reload
-          @flexible_criteria = @assignment.get_criteria
+          @flexible_criteria = @assignment.get_criteria(:all, :flexible)
         end
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
@@ -201,7 +201,7 @@ describe FlexibleCriteriaController do
         end
 
         it 'should have successfully uploaded criteria' do
-          expect(@assignment.get_criteria.size).to eql(2)
+          expect(@assignment.flexible_criteria.size).to eql(2)
         end
         it 'should keep ordering of uploaded criteria' do
           expect(@flexible_criteria[0].name)

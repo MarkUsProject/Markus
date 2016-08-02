@@ -125,7 +125,11 @@ class RubricCriterion < Criterion
     name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria.find_or_create_by(name: name)
+    begin
+    criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
+    rescue ActiveRecord::RecordNotSaved # Triggered if the assignment does not exist yet
+      raise CSVInvalidLineError, I18n.t('csv.no_assignment')
+    end
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
       criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
@@ -173,7 +177,7 @@ class RubricCriterion < Criterion
     name = key[0]
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria.find_or_create_by(
+    criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(
       name: name)
     #Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
@@ -258,7 +262,7 @@ class RubricCriterion < Criterion
 
   def add_tas_by_user_name_array(ta_user_name_array)
     result = ta_user_name_array.map do |ta_user_name|
-      Ta.where(user_name: ta_user_name).first
+      Ta.find_by(user_name: ta_user_name)
     end.compact
     add_tas(result)
   end

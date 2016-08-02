@@ -396,7 +396,7 @@ RSpec.describe CriteriaController, type: :controller do
         post_as @admin,
                 :update_positions,
                 format:            :js,
-                criterion:         [@criterion2.id, @criterion.id],
+                criterion:         ["#{@criterion2.class} #{@criterion2.id}", "#{@criterion.class} #{@criterion.id}"],
                 assignment_id:     @assignment.id
         is_expected.to render_template('criteria/update_positions')
         is_expected.to respond_with(:success)
@@ -821,7 +821,7 @@ RSpec.describe CriteriaController, type: :controller do
         post_as @admin,
                 :update_positions,
                 format:            :js,
-                criterion:         [@criterion2.id, @criterion.id],
+                criterion:         ["#{@criterion2.class} #{@criterion2.id}", "#{@criterion.class} #{@criterion.id}"],
                 assignment_id:     @assignment.id
         is_expected.to render_template('criteria/update_positions')
         is_expected.to respond_with(:success)

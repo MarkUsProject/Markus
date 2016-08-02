@@ -175,6 +175,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
             select_a_group: "Selecione um grupo"
             select_a_student: "Selecione um aluno"
             select_a_grader: "Selecione um avaliador"
+            select_a_criterion: "Selecione pelo menos um critério"
             group_submission_no_files: "Um ou mais dos grupos selecionados não possui arquivos em sua apresentação. Grader não atribuído."
             select_only_one_group: "Você pode indicar cada estudante a somente um grupo."
             deleted: "Grupo foi apagado"
@@ -408,14 +409,15 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     still_working_warning: "Existem trabalhos não terminados sendo processados. Eles podem não ser salvos se você sair agora."
 
     csv:
-      repo_collision_warning: "Aviso: Repositório '%{repo_name}' já existe. Nome do grupo era: '%{group_name}'."
+      repo_collision_warning:  "Aviso: Repositório '%{repo_name}' já existe. Nome do grupo era: '%{group_name}'."
       line_nr_csv_file_prefix: "Linha %{line_number} do arquivo CSV:"
-      group_to_grader: "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
-      student_to_grader: "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
-      invalid_csv: "O formato do arquivo CSV não foi reconhecido"
+      group_to_grader:         "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
+      student_to_grader:       "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
+      invalid_csv:             "O formato do arquivo CSV não foi reconhecido"
+      no_assignment:           "A tarefa que você está tentando criar critérios para ainda não existe"
       invalid_row:
               duplicate_entry: "Entrada duplicada"
-              invalid_format: "Formato de linha inválida"
+              invalid_format:  "Formato de linha inválida"
       upload:
         malformed_csv: "O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus."
         non_text_file_with_csv_extension: "O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV)."

@@ -61,12 +61,12 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
              csv_upload: {rubric: tempfile}
       @assignment.reload
 
-      rubric_criteria = @assignment.get_criteria
+      rubric_criteria = @assignment.get_criteria(:all, :rubric)
       assert_not_nil assigns :assignment
       assert_response :redirect
       assert set_flash.to(t('rubric_criteria.upload.success', nb_updates: 4))
       assert_response :redirect
-      assert_equal 4, @assignment.get_criteria.size
+      assert_equal 4, @assignment.get_criteria(:all, :rubric).size
 
       assert_equal 'Algorithm Design', rubric_criteria[0].name
       assert_equal 1, rubric_criteria[0].position
@@ -122,7 +122,7 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
               csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
               encoding: 'UTF-8'
       assert_response :redirect
-      test_criterion = @assignment.get_criteria.select{ |criterion| criterion.name == 'RubricCriteriaÈrÉØrr' }
+      test_criterion = @assignment.get_criteria(:all, :rubric).select{ |criterion| criterion.name == 'RubricCriteriaÈrÉØrr' }
       assert_not_empty test_criterion # rubric criterion should exist
     end
 
@@ -133,7 +133,7 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
               csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_ISO-8859-1.csv')},
               encoding: 'ISO-8859-1'
       assert_response :redirect
-      test_criterion = @assignment.get_criteria.select{ |criterion| criterion.name == 'RubricCriteriaÈrÉØrr' }
+      test_criterion = @assignment.get_criteria(:all, :rubric).select{ |criterion| criterion.name == 'RubricCriteriaÈrÉØrr' }
       assert_not_empty test_criterion # rubric criterion should exist
     end
 
@@ -144,7 +144,7 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
               csv_upload: {rubric: fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
               encoding: 'ISO-8859-1'
       assert_response :redirect
-      test_criterion = @assignment.get_criteria.select{ |criterion| criterion.name == 'RubricCriteriaÈrÉØrr' }
+      test_criterion = @assignment.get_criteria(:all, :rubric).select{ |criterion| criterion.name == 'RubricCriteriaÈrÉØrr' }
       assert_empty test_criterion # rubric criterion should not exist, despite being in file
     end
 
@@ -179,9 +179,9 @@ END
       assert_not_nil set_flash.to(t('rubric_criteria.upload.success',
                                     nb_updates: 2))
       @assignment.reload
-      cr1 = @assignment.get_criteria.find_by(name: 'cr1')
-      cr2 = @assignment.get_criteria.find_by(name: 'cr2')
-      assert_equal(@assignment.get_criteria.length, 2)
+      cr1 = @assignment.get_criteria(:all, :rubric).find_by(name: 'cr1')
+      cr2 = @assignment.get_criteria(:all, :rubric).find_by(name: 'cr2')
+      assert_equal(@assignment.get_criteria(:all, :rubric).size, 2)
       assert_equal(8, cr2.max_mark) # We get four times what we entered because we entered the weight
       assert_equal(20, cr1.max_mark)
       assert_equal('what?', cr1.level_0_name)
@@ -208,7 +208,7 @@ END
         t('rubric_criteria.upload.error') + ' cr1')
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
-      assert_equal [], @assignment.get_criteria
+      assert_equal [], @assignment.get_criteria(:all, :rubric)
 
     end
 
@@ -224,7 +224,7 @@ END
                                     error: "syntax error on line 2, col 1: `'"))
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
-      assert_equal(@assignment.get_criteria.length, 0)
+      assert_equal(@assignment.get_criteria(:all, :rubric).size, 0)
     end
 
     should 'deal properly with empty yml file' do
@@ -235,7 +235,7 @@ END
       assert_response :redirect
       @assignment.reload
       new_categories_list = @assignment.annotation_categories
-      assert_equal(@assignment.get_criteria.length, 0)
+      assert_equal(@assignment.get_criteria(:all, :rubric).size, 0)
 
     end
 
@@ -265,7 +265,7 @@ END
         assert set_flash.to(t('rubric_criteria.upload.success',
                               nb_updates: 2))
         @assignment.reload
-        assert_equal(@assignment.get_criteria.length, 3)
+        assert_equal(@assignment.get_criteria(:all, :rubric).size, 3)
         assert_equal(@assignment.get_criteria[0].max_mark, 4.0)
       end
 
