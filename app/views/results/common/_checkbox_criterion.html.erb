@@ -15,7 +15,9 @@
 
 <div class='mark_checkbox'>
   <% if view == 'marker' %>
-      <%= check_box_tag('mark_' + mark.id.to_s, mark.mark,
+      <%# NOTE: The checkbox must have a value for the 2nd arg, or else the class isn't added. %>
+      <%# Functionality breaks if it's missing since the class is used by jQuery to attach the ajax call. %>
+      <%= check_box_tag('mark_' + mark.id.to_s, mark.mark, !(mark.mark.nil? || mark.mark == 0.0),
                         class: 'mark_grade_input_checkbox' + (!old_mark.nil? && (mark.mark != old_mark.mark) ? ' remarked' : ' not_remarked'),
                         data: { id: mark_criterion.id,
                                 oldmark: old_mark.nil? ? 'none' : old_mark.mark,

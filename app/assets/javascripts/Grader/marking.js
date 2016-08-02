@@ -77,18 +77,12 @@ jQuery(document).ready(function() {
     });
   });
 
-  // Event handlers for the checkbox criteria
-  // TODO - Refactor with the code above?
+  // Event handlers for the checkbox criteria.
   jQuery('.mark_grade_input_checkbox').each(function(index, input) {
       var mark_id = input.id.substr(5);
 
-      // Prevent clicks from hiding the grade
-      jQuery(this).click(function(event) {
-          event.preventDefault();
-          return false;
-      });
-
-      jQuery(this).change(function() {
+      var checkboxElement = jQuery(this);
+      checkboxElement.click(function(event) {
           var params = {
               'mark': this.value || '',
               'authenticity_token': AUTH_TOKEN
@@ -114,8 +108,12 @@ jQuery(document).ready(function() {
                   update_total_mark(total);
                   document.getElementById('mark_' + mark_id + '_summary_mark_after_weight').innerHTML = mark;
                   document.getElementById('current_subtotal_div').innerHTML = subtotal;
+                  checkboxElement.prop('checked', parseFloat(mark) > 0.0);
               }
           });
+
+          event.preventDefault();
+          return false;
       });
   });
 
