@@ -139,8 +139,10 @@ class Result < ActiveRecord::Base
   # If this record is marked as "partial", ensure that its
   # "released_to_students" value is set to false.
   def unrelease_partial_results
-    if marking_state != MARKING_STATES[:complete]
-      self.released_to_students = false
+    unless is_a_review?
+      if marking_state != MARKING_STATES[:complete]
+        self.released_to_students = false
+      end
     end
     true
   end

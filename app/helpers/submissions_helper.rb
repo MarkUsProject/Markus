@@ -9,6 +9,27 @@ module SubmissionsHelper
     end
   end
 
+  def set_pr_release_on_results(groupings, release)
+    changed = 0
+    groupings.each do |grouping|
+      name = grouping.group.group_name
+
+      result_prs = grouping.peer_reviews_to_others
+      results = result_prs.map {|pr| Result.find(pr.result_id)}
+      results.each do |result|
+        result.released_to_students = release
+        unless result.save!
+          raise t('marking_state.result_not_saved', group_name: name)
+        end
+
+        #TODO: no error is thrown, but result.released_to_students is suddenly false
+
+        changed += 1
+      end
+    end
+    changed
+  end
+
   # Release or unrelease the submissions of a set of groupings.
   # TODO: Note that this terminates the first time an error is encountered,
   # and displays an error message to the user, even though some groupings

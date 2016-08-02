@@ -33,12 +33,14 @@
               compare: compare_dates,
               searchable: false
             },
-            {
-              id: 'marking_state',
-              content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
-              sortable: true,
-              searchable: false
-            },
+          <% end %>
+          {
+            id: 'marking_state',
+            content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
+            sortable: true,
+            searchable: false
+          },
+          <% unless @assignment.is_peer_review? %>
             <%= raw @grace_credit_column %>
             {
               id: 'tags',
@@ -397,7 +399,7 @@
     render: function() {
       return (
         <div className='react-release-marks'>
-          <% if @current_user.admin? %>
+          <% if @current_user.admin? && !@assignment.is_peer_review? %>
             <button onClick={this.collectSubmissions}>
               <%= j raw I18n.t('collect_submissions.collect') %>
             </button>
@@ -412,7 +414,7 @@
               </button>
             <% end %>
           <% end %>
-          <% if @assignment.has_a_collected_submission? %>
+          <% if @assignment.has_a_collected_submission? || @assignment.is_peer_review? %>
             <button onClick={this.releaseMarks}>
               <%= j raw t('browse_submissions.release_marks') %>
             </button>
