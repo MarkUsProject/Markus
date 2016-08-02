@@ -15,10 +15,8 @@
 
 <div class='mark_checkbox'>
   <% if view == 'marker' %>
-      <%# NOTE: The checkbox must have a value for the 2nd arg, or else the class isn't added. %>
-      <%# Functionality breaks if it's missing since the class is used by jQuery to attach the ajax call. %>
-      <%# TODO - Internationalize Yes/No strings... %>
-      Yes <%= radio_button_tag('mark_' + mark.id.to_s,
+      <%= t('answer_yes') %>
+      <%= radio_button_tag('mark_' + mark.id.to_s,
                                'yes',
                                !mark.mark.nil? && mark.mark > 0.0,
                                class: 'mark_grade_input_checkbox' + (!old_mark.nil? && (mark.mark != old_mark.mark) ? ' remarked' : ' not_remarked'),
@@ -26,7 +24,8 @@
                                        oldmark: old_mark.nil? ? 'none' : old_mark.mark,
                                        mark: mark.id.to_s },
                                'data-action' => url_for(action: :update_mark, mark_id: mark.id, radio_type: 'yes')) %>
-      No <%= radio_button_tag('mark_' + mark.id.to_s,
+      <%= t('answer_no') %>
+      <%= radio_button_tag('mark_' + mark.id.to_s,
                               'no',
                               !mark.mark.nil? && mark.mark == 0.0,
                               class: 'mark_grade_input_checkbox' + (!old_mark.nil? && (mark.mark != old_mark.mark) ? ' remarked' : ' not_remarked'),
