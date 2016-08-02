@@ -292,6 +292,45 @@
     propTypes: {
       selected_submissions: React.PropTypes.array
     },
+    // TODO: releasePeerReviews and unreleasePeerReviews will make POST calls to their own methods
+    releasePeerReviews: function() {
+      var dataLoad = {
+        release_results: true,
+        filter: 'none',
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_submissions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    unreleasePeerReviews: function() {
+      var dataLoad = {
+        release_results: false,
+        filter: 'none',
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_submissions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+          error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
     releaseMarks: function() {
       var dataLoad = {
         release_results: true,
@@ -399,6 +438,14 @@
     render: function() {
       return (
         <div className='react-release-marks'>
+          <% if @assignment.is_peer_review? %>
+            <button onClick={this.releasePeerReviews}>
+            <%= j raw I18n.t('browse_submissions.release_prs') %>
+            </button>
+            <button onClick={this.unreleasePeerReviews}>
+            <%= j raw t('browse_submissions.unrelease_prs') %>
+            </button>
+          <% end %>
           <% if @current_user.admin? && !@assignment.is_peer_review? %>
             <button onClick={this.collectSubmissions}>
               <%= j raw I18n.t('collect_submissions.collect') %>
@@ -414,7 +461,7 @@
               </button>
             <% end %>
           <% end %>
-          <% if @assignment.has_a_collected_submission? || @assignment.is_peer_review? %>
+          <% if @assignment.has_a_collected_submission? %>
             <button onClick={this.releaseMarks}>
               <%= j raw t('browse_submissions.release_marks') %>
             </button>

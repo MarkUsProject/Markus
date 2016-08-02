@@ -465,6 +465,8 @@ fr:
       could_not_collect:    "N'a pas pu récupérer cette révision pour le groupe %{group_name}. — La date de de récupération n'a pas encore été atteinte."
       release_marks:        "Montrer les notes"
       unrelease_marks:      "Cacher les notes"
+      release_prs:          "Examens par les pairs de sortie"
+      unrelease_prs:        "Un libération examens par les pairs"
       run_tests:            "UPDATE ME"
       group_name:           "Nom du groupe"
       repository:           "Répertoire"

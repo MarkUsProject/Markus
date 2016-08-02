@@ -441,6 +441,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       could_not_collect:    "Não foi possível coletar a submissão do grupo %{group_name} - a data de coleta ainda não chegou."
       release_marks:        "Mostrar notas"
       unrelease_marks:      "Esconder notas"
+      release_prs:          "Comentários liberação de pares"
+      unrelease_prs:        "Avaliações pelos pares Un - lançamento"
       group_name:           "Nome do grupo"
       repository_name:      "Repositório: %{repository}"
       repository:           "Repositório"

@@ -484,6 +484,8 @@ en:
       could_not_collect:    "Could not collect submission for group %{group_name} - the collection date has not been reached yet."
       release_marks:        "Release Marks"
       unrelease_marks:      "Unrelease Marks"
+      release_prs:          "Release Peer Reviews"
+      unrelease_prs:        "Unrelease Peer Reviews"
       run_tests:            "Run Tests"
       group_name:           "Group Name"
       repository_name:      "Repository: %{repository}"
