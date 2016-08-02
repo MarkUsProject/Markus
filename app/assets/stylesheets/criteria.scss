@@ -89,16 +89,6 @@
     padding-top: 1.5em;
   }
 
-  label {
-    display: inline-block;
-    font-weight: 600;
-    min-width: 8em;
-
-    & + input {
-      margin-top: 0.5em;
-    }
-  }
-
   .criterion_description_edit {
     display: block;
     margin: 0.5em 0 1em;
