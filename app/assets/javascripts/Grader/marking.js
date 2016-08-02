@@ -77,44 +77,45 @@ jQuery(document).ready(function() {
     });
   });
 
-  // Event handlers for the checkbox criteria.
   jQuery('.mark_grade_input_checkbox').each(function(index, input) {
-      var mark_id = input.id.substr(5);
+    var tokens = input.id.split('_');
+    var mark_id = tokens[1];
+    var yes_or_no_type = tokens[2];
 
-      var checkboxElement = jQuery(this);
-      checkboxElement.click(function(event) {
-          var params = {
-              'mark': this.value || '',
-              'authenticity_token': AUTH_TOKEN
-          };
+    jQuery(this).click(function(event) {
+      var params = {
+        'mark': this.value || '',
+        'authenticity_token': AUTH_TOKEN
+      };
 
-          jQuery.ajax({
-              url:  this.getAttribute('data-action'),
-              type: 'POST',
-              data: params,
-              beforeSend: function() {
-                  document.getElementById('mark_verify_result_' + mark_id).style.display = 'none';
-              },
-              error: function(err) {
-                  var error_div = document.getElementById('mark_verify_result_' + mark_id);
-                  error_div.style.display = '';
-                  error_div.innerHTML = err.responseText;
-              },
-              success: function(data) {
-                  var items = data.split(',');
-                  var mark = items[0];
-                  var subtotal = items[1];
-                  var total = items[2];
-                  update_total_mark(total);
-                  document.getElementById('mark_' + mark_id + '_summary_mark_after_weight').innerHTML = mark;
-                  document.getElementById('current_subtotal_div').innerHTML = subtotal;
-                  checkboxElement.prop('checked', parseFloat(mark) > 0.0);
-              }
-          });
-
-          event.preventDefault();
-          return false;
+      jQuery.ajax({
+        url: this.getAttribute('data-action'),
+        type: 'POST',
+        data: params,
+        beforeSend: function() {
+          document.getElementById('mark_verify_result_' + mark_id).style.display = 'none';
+        },
+        error: function(err) {
+          var error_div = document.getElementById('mark_verify_result_' + mark_id);
+          error_div.style.display = '';
+          error_div.innerHTML = err.responseText;
+        },
+        success: function(data) {
+          var items = data.split(',');
+          var mark = items[0];
+          var subtotal = items[1];
+          var total = items[2];
+          update_total_mark(total);
+          document.getElementById('mark_' + mark_id + '_summary_mark_after_weight').innerHTML = mark;
+          document.getElementById('current_subtotal_div').innerHTML = subtotal;
+          jQuery('#mark_' + mark_id + '_' + yes_or_no_type).prop('checked', true);
+          jQuery('#mark_' + mark_id + '_' + (yes_or_no_type === 'yes' ? 'no' : 'yes')).prop('checked', false);
+        }
       });
+
+      event.preventDefault();
+      return false;
+    });
   });
 
   // Handle indenting in the new annotation textarea (2 spaces)
@@ -214,15 +215,23 @@ function focus_mark_criterion(id) {
 
 function hide_criterion(id, criterion_class) {
   document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
-  if (criterion_class == 'RubricCriterion') {
-    document.getElementById('mark_criterion_' + id).removeClass('expanded');
-    document.getElementById('mark_criterion_' + id).addClass('not_expanded');
-  } else if (criterion_class == 'FlexibleCriterion') {
-    document.getElementById('flexible_criterion_' + id).removeClass('expanded');
-    document.getElementById('flexible_criterion_' + id).addClass('not_expanded');
-  } else {
-    document.getElementById('checkbox_criterion_' + id).removeClass('expanded');
-    document.getElementById('checkbox_criterion_' + id).addClass('not_expanded');
+
+  var nodeToHide = null;
+  switch (criterion_class) {
+      case 'RubricCriterion':
+          nodeToHide = document.getElementById('mark_criterion_' + id);
+          break;
+      case 'FlexibleCriterion':
+          nodeToHide = document.getElementById('flexible_criterion_' + id);
+          break;
+      default:
+          nodeToHide = document.getElementById('checkbox_criterion_' + id);
+          break;
+  }
+
+  if (nodeToHide !== null) {
+    nodeToHide.removeClass('expanded');
+    nodeToHide.addClass('not_expanded');
   }
 };
 

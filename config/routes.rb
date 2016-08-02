@@ -211,6 +211,7 @@ Markus::Application.routes.draw do
       resources :results, only: [:edit], path: '/peer_reviews' do
         collection do
           get 'download'
+          post 'update_mark'
         end
 
         member do
@@ -219,6 +220,7 @@ Markus::Application.routes.draw do
           post 'codeviewer'
           get 'next_grouping'
           post 'toggle_marking_state'
+          post 'update_mark'
           post 'update_overall_comment'
         end
       end

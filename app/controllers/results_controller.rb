@@ -436,7 +436,7 @@ class ResultsController < ApplicationController
     # If it's a checkbox then we will flip the value since the user requested
     # it to be toggled.
     if result_mark.markable.is_a?(CheckboxCriterion)
-      mark_value = result_mark.mark == 0.0 ? 1.0 : 0.0
+      mark_value = params[:radio_type] == 'yes' ? 1.0 : 0.0
     end
 
     result_mark.mark = mark_value * weight_criterion
