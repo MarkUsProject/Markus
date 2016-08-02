@@ -224,6 +224,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         empty_list_reviewees: "Não pode ter uma lista vazia de reviewees"
         cannot_allow_reviewer_to_be_reviewee: "Um estudante não pode ser um revisor e reviewee"
         number_per_group: "Número de avaliações pelos pares por grupo"
+        number_assigned_reviewers: "Número atribuído revisores"
         download:
             assigned_reviewers_header: "Download de Avaliação pelos Pares Atribuições"
             assigned_reviewers_csv: "Revisor grupo reviewee ao grupo CSV"
@@ -1050,6 +1051,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       type:           "Tipo de critério"
       rubric:         "Rubrica"
       flexible:       "Flexível"
+      checkbox:       "Caixa de seleção"
       marking_scheme: "Esquema de avalição: %{identifier}"
       save:           "Salvar alterções"
       add_criterion:  "Adicionar Critério"
@@ -1081,6 +1083,33 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         <code>criteria_name,max_value,description</code>
         <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
         success: "Critério flexível carregado com sucesso: %{nb_updates} atualizado(s)."
+      move_criterion:
+        error: "Impossível mover critério (flexível)."
+      ta_visible: "Tornar visível para assistentes de ensino"
+      peer_visible: "Tornar visível a perscrutar revisores"
+      visibility_error: "Selecione pelo menos uma caixa na seção visibilidade"
+
+    flexible_criteria:
+      title: "Critérios flexíveis"
+      move_up: "Mover para cima"
+      move_down: "Mover para baixo"
+      name: "Nome do critério flexível"
+      max_mark: "Nota máxima"
+      description: "Descrição"
+      description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
+      download:
+        title: "Baixar Caixa de seleção Critérios de Arquivo"
+        prompt: " critérios de caixa de seleção estão disponíveis em CSV."
+        link: "Baixar critérios caixa de seleção no formato CSV"
+      upload:
+        title: "Publique as Caixa de seleção Critérios Arquivo"
+        prompt: "Selecione um arquivo CSV para carrregar"
+        format_html: "
+        <p>O arquivo deve possuir o seguinte formato:</p>
+        <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
+        <code>criteria_name,max_value,description</code>
+        <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
+        success: "Critérios de caixa de seleção carregado com sucesso: %{nb_updates} update(s)."
       move_criterion:
         error: "Impossível mover critério (flexível)."
       ta_visible: "Tornar visível para assistentes de ensino"
@@ -1146,10 +1175,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     summary_table:
       title: "Título"
-      max_value: "Valor máximo"
       grade: "Nota"
-      mark: "Mark"
-      weight: "Peso"
 
     key_pairs:
       title: "Os Pares de Chaves"

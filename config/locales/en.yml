@@ -248,6 +248,7 @@ en:
         empty_list_reviewees: "Cannot have an empty list of reviewees"
         cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
         number_per_group: "Number of peer reviews per group"
+        number_assigned_reviewers: "Num Assigned Reviewers"
         download:
             assigned_reviewers_header: "Download Peer Review Assignments"
             assigned_reviewers_csv: "Reviewer group to reviewee group CSV"
@@ -1211,6 +1212,7 @@ en:
       type:           "Criterion type"
       rubric:         "Rubric"
       flexible:       "Flexible"
+      checkbox:       "Checkbox"
       marking_scheme: "Marking Scheme: %{identifier}"
       save:           "Save changes"
       add_criterion:  "Add Criterion"
@@ -1244,6 +1246,33 @@ en:
         success: "Flexible criteria successfully uploaded: %{nb_updates} update(s)."
       move_criterion:
         error: "Failed to move flexible criteria."
+      ta_visible: "Make visible to teaching assistants"
+      peer_visible: "Make visible to peer reviewers"
+      visibility_error: "Select at least one box in the visibility section"
+
+    checkbox_criteria:
+      title: "Checkbox Criteria"
+      move_up: "Move up"
+      move_down: "Move down"
+      max_mark: "Maximum mark"
+      description: "Description"
+      description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
+      download:
+        title: "Download Checkbox Criteria File"
+        prompt: "Checkbox criteria are currently available in CSV."
+        link: "Download Checkbox criteria in CSV format"
+      upload:
+        title: "Upload Checkbox Criteria File"
+        prompt: "Select a CSV file to upload"
+        format_html: "
+        <p>The file should have the following format:</p>
+        <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
+        <code>criteria_name,max_value,description</code>
+        <p>The description is optional. Note that if it is not present, the second
+        comma should not appear.</p>"
+        success: "Checkbox criteria successfully uploaded: %{nb_updates} update(s)."
+      move_criterion:
+        error: "Failed to move checkbox criteria."
       ta_visible: "Make visible to teaching assistants"
       peer_visible: "Make visible to peer reviewers"
       visibility_error: "Select at least one box in the visibility section"
@@ -1307,11 +1336,7 @@ en:
 
     summary_table:
       title: "Title"
-      max_value: "Maximum value"
       grade: "Grade"
-      mark: "Level"
-      weight: "Weight"
-      test_script_title: "Test scripts"
 
     key_pairs:
       title: "Key Pairs"

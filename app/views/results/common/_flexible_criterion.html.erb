@@ -1,6 +1,6 @@
 <%
   if view == 'marker'
-    onclick = "focus_mark_criterion(#{mark_criterion.id}, 'flexible')"
+    onclick = "focus_mark_criterion(#{mark_criterion.id})"
     criterion_name_class = 'title_div_level unreleased'
     old_mark_class = 'old_mark old_mark_unreleased'
   else
@@ -29,7 +29,7 @@
   <% end %>
 </div>
 
-<div id="<%="flexible_#{mark_criterion.id}_old_mark"%>" class="<%= old_mark_class %>">
+<div id='<%="flexible_#{mark_criterion.id}_old_mark"%>' class='<%= old_mark_class %>'>
   <% if !old_mark.nil? && (mark.mark != old_mark.mark) %>
       (Old Mark: <%= old_mark.mark %>)
   <% end %>

@@ -19,7 +19,13 @@
                          'FlexibleCriterion',
                          checked = false) %>
     <%= label_tag('criterion_type_FlexibleCriterion',
-                  t('criteria.flexible')) %><br><br>
+                  t('criteria.flexible')) %>
+    <%= radio_button_tag(:criterion_type,
+                         'CheckboxCriterion',
+                         checked = false) %>
+    <%= label_tag('criterion_type_CheckboxCriterion',
+                  t('criteria.checkbox')) %>
+    <br><br>
     <%= submit_tag(t('criteria.save'), data: { disable_with: t('working') }) %>
   <% end %>
 </li>
