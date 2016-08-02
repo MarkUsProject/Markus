@@ -15,7 +15,6 @@
 
 <div class='mark_checkbox'>
   <% if view == 'marker' %>
-      <% debugger %>
       <%= check_box_tag('mark_' + mark.id.to_s, mark.mark,
                         class: 'mark_grade_input_checkbox' + (!old_mark.nil? && (mark.mark != old_mark.mark) ? ' remarked' : ' not_remarked'),
                         data: { id: mark_criterion.id,
