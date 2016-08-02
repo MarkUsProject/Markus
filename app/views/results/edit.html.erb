@@ -52,21 +52,15 @@
     // Hide the criterion that AREN'T empty (i.e. are marked)
     // Check if the marks are released, if they are there is nothing to hide
     <% unless @result.released_to_students %>
-      if (jQuery('.mark_criterion_level_container').length != 0) {
-        jQuery('.mark_criterion_level_container').each(function() {
-          expand_unmarked(this, 'RubricCriterion');
-        });
-      }
-      if (jQuery('.mark_grade_input').length != 0) {
-        jQuery('.mark_grade_input').each(function() {
-          expand_unmarked(this, 'FlexibleCriterion');
-        });
-      }
-    if (jQuery('.mark_grade_input_checkbox').length != 0) {
+      jQuery('.mark_criterion_level_container').each(function() {
+        expand_unmarked(this, 'RubricCriterion');
+      });
+      jQuery('.mark_grade_input').each(function() {
+        expand_unmarked(this, 'FlexibleCriterion');
+      });
       jQuery('.mark_grade_input_checkbox').each(function() {
         expand_unmarked(this, 'CheckboxCriterion');
       });
-    }
     <% end %>
   });
 
