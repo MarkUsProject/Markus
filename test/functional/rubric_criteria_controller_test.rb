@@ -245,14 +245,6 @@ END
                                           assignment: @assignment)
       end
 
-      should 'see index' do
-        get_as @admin, :index, assignment_id: @assignment.id
-        assert assigns :assignment
-        assert assigns :criteria
-        assert render_template :index
-        assert_response :success
-      end
-
       should 'download rubric_criteria as CSV' do
         get_as @admin, :download_csv, assignment_id: @assignment.id
         assert assigns :assignment

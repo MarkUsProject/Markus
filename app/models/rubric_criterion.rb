@@ -271,7 +271,7 @@ class RubricCriterion < Criterion
   # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
-        errors.add(:ta_visible, I18n.t('rubric_criteria.visibility_error'))
+        errors.add(:ta_visible, I18n.t('criteria.visibility_error'))
         false
     end
     true

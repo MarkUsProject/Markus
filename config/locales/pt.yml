@@ -1053,24 +1053,44 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       marking_scheme: "Esquema de avalição: %{identifier}"
       save:           "Salvar alterções"
       add_criterion:  "Adicionar Critério"
+      move_up:        "Mover para cima"
+      move_down:      "Mover para baixo"
       download:
         title:    "Baixar Arquivo de Critérios"
         prompt:   "Todos os tipos de critérios serão baixados no formato YAML."
         link_yml: "Baixar Critérios em Formato YAML"
         yml:      "Baixar YML"
       upload:
-        yml: "Carregar YML"
+        yml:        "Carregar YML"
+        yml_title:  "Carregar arquivo YML"
+        yml_prompt: "Selecionar um arquivo YML para carregar"
+        format_yml_html: "
+          <p>O arquivo deve ter o seguinte formato para um critério Rubrica:<br>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;weight: weight<br>
+              &nbsp;&nbsp;level_0:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+              &nbsp;&nbsp;level_1:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
+          </p>
+          <p>e o seguinte para um critério flexível ou caixa de seleção:</p>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;max_value: max_value<br>
+              &nbsp;&nbsp;description: description<br></code>
+          <p>A descrição é opcional.</p>"
       errors:
         messages:
           name_taken:             "Nome de critério já utilizado."
           assignment_association: "Associação não é forte com uma atribuição."
           assignment_id:          "Só pode ser o número inteiro maior que 0."
           input_number:           "Deve ser um número maior do que 0.0."
+      ta_visible:       "Tornar visível para assistentes de ensino"
+      peer_visible:     "Tornar visível a perscrutar revisores"
+      visibility_error: "Selecione pelo menos uma caixa na seção visibilidade"
 
     flexible_criteria:
       title: "Critérios flexíveis"
-      move_up: "Mover para cima"
-      move_down: "Mover para baixo"
       name: "Nome do critério flexível"
       max_mark: "Nota máxima"
       description: "Descrição"
@@ -1090,24 +1110,19 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         success: "Critério flexível carregado com sucesso: %{nb_updates} atualizado(s)."
       move_criterion:
         error: "Impossível mover critério (flexível)."
-      ta_visible: "Tornar visível para assistentes de ensino"
-      peer_visible: "Tornar visível a perscrutar revisores"
-      visibility_error: "Selecione pelo menos uma caixa na seção visibilidade"
 
-    flexible_criteria:
-      title: "Critérios flexíveis"
-      move_up: "Mover para cima"
-      move_down: "Mover para baixo"
-      name: "Nome do critério flexível"
-      max_mark: "Nota máxima"
-      description: "Descrição"
+    checkbox_criteria:
+      title:            "Critérios de caixa de seleção"
+      name:             "Nome do critério flexível"
+      max_mark:         "Nota máxima"
+      description:      "Descrição"
       description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
       download:
-        title: "Baixar Caixa de seleção Critérios de Arquivo"
+        title:  "Baixar Caixa de seleção Critérios de Arquivo"
         prompt: " critérios de caixa de seleção estão disponíveis em CSV."
-        link: "Baixar critérios caixa de seleção no formato CSV"
+        link:   "Baixar critérios caixa de seleção no formato CSV"
       upload:
-        title: "Publique as Caixa de seleção Critérios Arquivo"
+        title:  "Publique as Caixa de seleção Critérios Arquivo"
         prompt: "Selecione um arquivo CSV para carrregar"
         format_html: "
         <p>O arquivo deve possuir o seguinte formato:</p>
@@ -1117,15 +1132,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         success: "Critérios de caixa de seleção carregado com sucesso: %{nb_updates} update(s)."
       move_criterion:
         error: "Impossível mover critério (flexível)."
-      ta_visible: "Tornar visível para assistentes de ensino"
-      peer_visible: "Tornar visível a perscrutar revisores"
-      visibility_error: "Selecione pelo menos uma caixa na seção visibilidade"
 
     rubric_criteria:
       title: "Critérios rubrica"
       name: "Nome de critério de rúbrica"
-      move_up: "Mover para cima"
-      move_down: "Mover para baixo"
       level:
         levels: "Níveis"
         level_index: "Nível %{index}"
@@ -1138,26 +1148,13 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         success: "Critério de rúbrica carregado com sucesso: %{nb_updates} atualizada(s)."
         csv:       "Carregar CSV"
         csv_title: "Carregar arquivo CSV"
-        yml:       "Carregar YML"
-        yml_title: "Carregar arquivo YML File"
         csv_prompt: "Selecionar um arquivo CSV para carregar"
-        yml_prompt: "Selecionar um arquivo YML para carregar"
         format_csv_html: "
         <p>O arquivo deve possuir o seguinte formato:</p>
         <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
         <p>onde <em>level_names</em> deve conter o nome de cada nível (separado por vírgulas)<br>
         e <em>level_descriptions</em> deve conter a descrição de cada nível (opcional, também separado por vírgulas)."
-        format_yml_html: "
-          <p>O aruivo deve possuir o seguinte formato:<br>
-              <code>criterion_name:<br>
-                    &nbsp;&nbsp;weight: weight<br>
-                    &nbsp;&nbsp;level_0:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-                    &nbsp;&nbsp;level_1:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
-          </p>"
         error: "Alguns critérios de rúbrica eram inválidos:"
         syntax_error: "Existe um erro no arquivo carregado : %{error}"
         empty_error: "Nenhum critério foi encontrado no arquivo fornecido."
@@ -1174,9 +1171,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         description_4: "Esse critério foi quase perfeitamente ou perfeitamente satisfeito."
       move_criterion:
         error: "Impossível mover rúbrica."
-      ta_visible: "Tornar visível para assistentes de ensino"
-      peer_visible: "Tornar visível a perscrutar revisores"
-      visibility_error: "Selecione pelo menos uma caixa na seção visibilidade"
 
     summary_table:
       title: "Título"

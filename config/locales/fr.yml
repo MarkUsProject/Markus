@@ -1085,24 +1085,44 @@ fr:
       marking_scheme: "Barème: %{identifier}"
       save:           "Sauvegarder les modifications"
       add_criterion:  "Ajouter Critère"
+      move_up:        "Monter"
+      move_down:      "Descendre"
       download:
         title:    "Télécharger le fichier de Critères"
         prompt:   "Tous les types de critères seront téléchargés au format YAML."
         link_yml: "Télécharger critères au format YAML"
         yml:      "Télécharger YML"
       upload:
-        yml: "Envoyer YML"
+        yml:        "Envoyer YML"
+        yml_title:  "Envoyer le fichier XML"
+        yml_prompt: "Choisissez un fichier YML à envoyer"
+        format_yml_html: "
+          <p>Le fichier doit avoir le format suivant pour un critère rubrique: <br>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;weight: weight<br>
+              &nbsp;&nbsp;level_0:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+              &nbsp;&nbsp;level_1:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
+          </p>
+          <p>Et pour un critère flexible ou case suivante:</p>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;max_value: max_value<br>
+              &nbsp;&nbsp;description: description<br></code>
+            <p>La description est facultative.</p>"
       errors:
         messages:
           name_taken:             "Nom du critère déjà utilisé."
           assignment_association: "Association est pas forte avec une mission."
           assignment_id:          "Ne peut être un nombre entier supérieur à 0."
           input_number:           "Doit être un nombre supérieur à 0.0."
+      ta_visible:       "Rendre visible aux assistants d'enseignement"
+      peer_visible:     "Rendre visible à leurs auteurs pairs"
+      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
     flexible_criteria:
       title: "Critères souples"
-      move_up: "Monter"
-      move_down: "Descendre"
       name: "Nom du critère"
       max_mark: "Note maximale"
       description: "Description"
@@ -1123,14 +1143,9 @@ fr:
         success: "Le fichier contenant le barème (flexible) a bien été envoyé : %{nb_updates} mise(s) à jour."
       move_criterion:
         error: "Erreur: impossible de déplacer ce critère (flexible)."
-      ta_visible: "Rendre visible aux assistants d'enseignement"
-      peer_visible: "Rendre visible à leurs auteurs pairs"
-      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
     checkbox_criteria:
       title: "Critères d' Checkbox"
-      move_up: "Monter"
-      move_down: "Descendre"
       name: "Nom du critère"
       max_mark: "Note maximale"
       description: "Description"
@@ -1151,15 +1166,10 @@ fr:
         success: "critères de Checkbox téléchargés avec succès: %{nb_updates} mise à jour."
       move_criterion:
         error: "Impossible de déplacer les critères de case à cocher."
-      ta_visible: "Rendre visible aux assistants d'enseignement"
-      peer_visible: "Rendre visible à leurs auteurs pairs"
-      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
     rubric_criteria:
       title: "Critères rubrique"
       name: "Nom du critère"
-      move_up: "Monter"
-      move_down: "Descendre"
       level:
         levels: "Niveaux"
         level_index: "Niveau %{index}"
@@ -1171,10 +1181,7 @@ fr:
       upload:
         csv:       "Envoyer CSV"
         csv_title: "Envoyer un fichier de barème (rubrique) CSV"
-        yml:       "Envoyer YML"
-        yml_title: "Envoyer un fichier de barème (rubrique) YML"
         csv_prompt: "Choisissez un fichier CSV à envoyer"
-        yml_prompt: "Choisissez un fichier YML à envoyer"
         success: "Le fichier contenant le barème (rubrique) a bien été envoyé : %{nb_updates} mise(s) à jour."
         format_csv_html: "
         <p>Le fichier devra être au format suivant : </p>
@@ -1183,16 +1190,6 @@ fr:
         <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br>
         et <em>level_descriptions</em> doi contenir la description de chaque niveau (optionnel,
         séparé aussi par les virgules)."
-        format_yml_html: "
-          <p>Le fichier devra être au format suivant : br>
-              <code>criterion_name:<br>
-                    &nbsp;&nbsp;weight: weight<br>
-                    &nbsp;&nbsp;level_0:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-                    &nbsp;&nbsp;level_1:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
-          </p>"
       defaults:
         level_0: "Très insuffisant"
         level_1: "Insuffisant"
@@ -1206,9 +1203,6 @@ fr:
         description_4: "Ce critère a été parfaitement compris."
       move_criterion:
         error: "Erreur: impossible de déplacer cette rubric."
-      ta_visible: "Rendre visible aux assistants d'enseignement"
-      peer_visible: "Rendre visible à leurs auteurs pairs"
-      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
 
     summary_table:
