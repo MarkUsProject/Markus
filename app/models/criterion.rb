@@ -136,5 +136,16 @@ class Criterion < ActiveRecord::Base
         WHERE assignment_id = #{assignment.id}
     #{"AND id IN (#{flexible_criterion_ids_str})" unless flexible_criterion_ids_str.empty?}
     UPDATE_SQL
+    CheckboxCriterion.connection.execute(<<-UPDATE_SQL)
+      UPDATE #{CheckboxCriterion.table_name} AS c SET assigned_groups_count =
+        (SELECT count(DISTINCT g.id) FROM memberships AS m
+          INNER JOIN groupings AS g ON m.grouping_id = g.id
+          INNER JOIN criterion_ta_associations AS ct ON m.user_id = ct.ta_id
+          WHERE g.assignment_id = #{assignment.id}
+            AND ct.criterion_id = c.id AND ct.assignment_id = c.assignment_id
+            AND m.type = 'TaMembership')
+        WHERE assignment_id = #{assignment.id}
+    #{"AND id IN (#{criterion_ids_str})" unless criterion_ids_str.empty?}
+    UPDATE_SQL
   end
 end
