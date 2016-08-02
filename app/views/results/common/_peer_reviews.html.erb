@@ -7,9 +7,12 @@
     <a><%= "Review " + (prs.index(current_pr) + 1).to_s %></a>
     <ul>
       <% prs.each_with_index do |pr, i| %>
+        <% result = Result.find(pr.result_id) %>
         <% if @current_user.student? %>
-          <li> <%= link_to("Review " + (i + 1).to_s,
-                        view_marks_assignment_result_path(assignment.id, pr.result_id)) %> </li>
+          <% unless !result.released_to_students %>
+            <li> <%= link_to("Review " + (i + 1).to_s,
+                          view_marks_assignment_result_path(assignment.id, pr.result_id)) %> </li>
+          <% end %>
         <% else %>
             <li> <%= link_to("Review " + (i + 1).to_s,
                              view_marks_assignment_submission_result_path( assignment_id: assignment.id,

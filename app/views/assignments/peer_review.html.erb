@@ -94,8 +94,11 @@
         <% else %>
           <ul>
           <% @prs.each_with_index do |pr, i| %>
-              <li><%= link_to("Review " + (i + 1).to_s,
-                          view_marks_assignment_result_path(@assignment.parent_assignment.id, pr.result_id)) %> </li>
+              <% result = Result.find(pr.result_id) %>
+              <% unless !result.released_to_students %>
+                <li><%= link_to("Review " + (i + 1).to_s,
+                            view_marks_assignment_result_path(@assignment.parent_assignment.id, pr.result_id)) %> </li>
+              <% end %>
            <% end %>
           <ul>
         <% end %>
