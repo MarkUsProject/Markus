@@ -95,10 +95,10 @@
       var skip_empty_submissions = [];
       graders_to_criteria.push(<input type='checkbox'
         checked={this.state.assign_to_criteria}
-        onChange={this.criteriaCheckboxClicked}> <%= j raw I18n.t('graders.assign_to_criteria') %></input>);
+        onChange={this.criteriaCheckboxClicked}> <%= j raw t('graders.assign_to_criteria') %></input>);
       skip_empty_submissions.push(<input type='checkbox'
         checked={this.state.skip_empty_submissions}
-        onChange={this.skipEmptySubmissionsClicked}> <%= j raw I18n.t('graders.skip_empty_submissions') %></input>);
+        onChange={this.skipEmptySubmissionsClicked}> <%= j raw t('graders.skip_empty_submissions') %></input>);
       to_render.push(<GradersTable graders={this.state.graders}
         selected_graders={this.state.selected_graders}
         onSelectedGradersChange={this.updateSelectedGraders} />);
@@ -243,7 +243,7 @@
     criteriaCheckboxAllClicked: function(event) {
       var value = event.currentTarget.checked;
       if (value) {
-        var new_selected_criteria = this.props.criteria.map(function(x) { return x.id; }).slice();
+        var new_selected_criteria = this.props.criteria.map(function(x) { return [x.id, x.class]; }).slice();
         this.props.onSelectedCriteriaChange(new_selected_criteria);
       } else {
         this.props.onSelectedCriteriaChange([]);
@@ -291,12 +291,13 @@
     },
     criteriaCheckboxClicked: function(event) {
       var value = event.currentTarget.checked;
-      var criteria_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var criterion_id = parseInt(event.currentTarget.getAttribute('id'), 10);
+      var criterion_class = event.currentTarget.getAttribute('value');
       var new_selected_criteria = this.props.selected_criteria.slice();
       if (value) {
-        new_selected_criteria.push(criteria_id);
-      } else {
-        new_selected_criteria.splice(new_selected_criteria.indexOf(criteria_id), 1);
+        new_selected_criteria.push([criterion_id, criterion_class]);
+      } else { // Delete array of criterion not checked
+        new_selected_criteria.splice(([].concat.apply([], new_selected_criteria).indexOf(criterion_id)) / 2, 1);
       }
       this.props.onSelectedCriteriaChange(new_selected_criteria);
     },
@@ -335,7 +336,7 @@
       },
       {
         id: 'name',
-        content: '<%= j raw I18n.t('groups.group_name') %>',
+        content: '<%= j raw t('groups.group_name') %>',
         sortable: true,
         searchable: true
       },
@@ -344,14 +345,14 @@
         id: 'graders',
         content:
           <input type='checkbox'
-          onChange={this.gradersInGroupsCheckboxAllClicked}> <%= j raw I18n.t('graders.graders') %>
+          onChange={this.gradersInGroupsCheckboxAllClicked}> <%= j raw t('graders.graders') %>
         </input>,
         sortable: true,
         searchable: false
       },
       {
         id: 'coverage',
-        content: '<%= j raw I18n.t('graders.coverage') %>',
+        content: '<%= j raw t('graders.coverage') %>',
         sortable: true,
         searchable: false
       }
@@ -368,7 +369,7 @@
         };
         return filter;
       });
-      var all = '<%= I18n.t('all') %>';
+      var all = '<%= t('all') %>';
       section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
 
 
@@ -406,20 +407,20 @@
       },
        {
         id: 'name',
-        content: '<%= j raw I18n.t('criterion_name') %>',
+        content: '<%= j raw t('criteria.name') %>',
         sortable: true,
         searchable: true
       },
       {
         id: 'graders',
         content:<input type='checkbox'
-          onChange={this.gradersInCriteriaCheckboxAllClicked}> <%= j raw I18n.t('graders.graders') %></input>,
+          onChange={this.gradersInCriteriaCheckboxAllClicked}> <%= j raw t('graders.graders') %></input>,
         sortable: true,
         searchable: false
       },
       {
         id: 'coverage',
-        content: '<%= j raw I18n.t('graders.coverage') %>',
+        content: '<%= j raw t('graders.coverage') %>',
         sortable: true,
         searchable: false
       }
@@ -429,8 +430,10 @@
       var criteria_data = this.props.criteria.map(function(criterion) {
         var c = {};
         c['id'] = criterion.id;
-        c['checkbox'] = <input id={criterion.id} type='checkbox'
-          checked={this.props.selected_criteria.indexOf(criterion.id) !== -1}
+        c['value'] = criterion.class
+        var criteria_selected = this.props.selected_criteria.slice();
+        c['checkbox'] = <input id={criterion.id} value={criterion.class} type='checkbox'
+          checked={([].concat.apply([], criteria_selected)).indexOf(criterion.id) !== -1}
           onChange={this.criteriaCheckboxClicked} />
         c['name'] = criterion.name;
         var graders = [];
@@ -456,12 +459,12 @@
              <div id='groups-tab'>
                <Table data={groups_data} columns={group_columns} ref="myTable"
                  filters={section_filters} filter_type={section_filters.length > 3}
-                 search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
+                 search_placeholder={'<%= j raw t('groups.search_groups') %>'} />
              </div>
              <div id='criteria-tab'>
                <Table data={criteria_data} columns={criteria_columns}
                  filters={null} filter_type={false}
-                 search_placeholder={'<%= j raw I18n.t('graders.search_criteria') %>'} />
+                 search_placeholder={'<%= j raw t('graders.search_criteria') %>'} />
             </div>
           </div>
         </div>);
@@ -541,7 +544,7 @@
       },
       {
         id: 'name',
-        content: '<%= j raw I18n.t('groups.group_name') %>',
+        content: '<%= j raw t('groups.group_name') %>',
         sortable: true,
         searchable: true
       },
@@ -549,7 +552,7 @@
       {
         id: 'graders',
         content:<input type='checkbox'
-        onChange={this.graderCheckboxAllClicked}> <%= j raw I18n.t('graders.graders') %></input>,
+        onChange={this.graderCheckboxAllClicked}> <%= j raw t('graders.graders') %></input>,
         sortable: true,
         searchable: false
       },
@@ -566,7 +569,7 @@
         };
         return filter;
       });;
-      var all = '<%= I18n.t('all') %>';
+      var all = '<%= t('all') %>';
       filters.unshift({name: all, text: all, func: function(g) { return g; } });
 
       // Massage the data so it will fit into the table.
@@ -595,7 +598,7 @@
         <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
           <Table data={groups_data} columns={columns} ref="myTable"
                filters={filters} filter_type={filters.length > 3}
-               search_placeholder={'<%= j raw I18n.t('groups.search_groups') %>'} />
+               search_placeholder={'<%= j raw t('groups.search_groups') %>'} />
         </div>
       );
     }

@@ -840,12 +840,18 @@ class Assignment < ActiveRecord::Base
   # Assign graders to a criterion for this assignment.
   # Raise a CSVInvalidLineError if the criterion or a grader doesn't exist.
   def add_graders_to_criterion(criterion_name, graders)
-    if !get_criteria(:all, :rubric).empty?
-      criterion = get_criteria(:all, :rubric).find_by(name: criterion_name)
-    elsif !get_criteria(:all, :flexible).empty?
-      criterion = get_criteria(:all, :flexible).find_by(name: criterion_name)
-    else
+    if get_criteria(:all, :all).empty?
       criterion = nil
+    else
+      begin
+        criterion = get_criteria(:all, :rubric).find_by!(name: criterion_name)
+      rescue ActiveRecord::RecordNotFound
+        begin
+         criterion = get_criteria(:all, :flexible).find_by!(name: criterion_name)
+        rescue ActiveRecord::RecordNotFound
+          criterion = nil
+        end
+      end
     end
 
     if criterion.nil?

@@ -177,6 +177,7 @@ fr:
             select_a_group: "Sélectionner un groupe"
             select_a_student: "Sélectionner un(e) étudiant(e)"
             select_a_grader: "Sélectionner un correcteur"
+            select_a_criterion: "Sélectionnez au moins un critère"
             group_submission_no_files: "Un ou plusieurs des groupes sélectionnés ne contient aucun fichier dans leur soumission. Grader pas affecté."
             select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
             deleted: "Le groupe a été supprimé"

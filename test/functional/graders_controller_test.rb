@@ -786,7 +786,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no criteria selected, at least one grader' do
             post_as @admin, :global_actions, {assignment_id: @assignment.id,
               global_actions: 'random_assign', graders: [@ta1], current_table: 'criteria_table'}
-            assert_response :success
+            assert_response 400, 'select a criterion'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
@@ -802,9 +802,13 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and one grader and one criterion is selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign', criteria: [@criterion1],
-              graders: [@ta1], current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class]],
+                      graders:        [@ta1.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas[0].id == @ta1.id
             assert @criterion2.tas == []
@@ -812,11 +816,14 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and one grader and multiple criteria are selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign',
-              criteria: [@criterion1, @criterion2],
-              graders: [@ta1],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class]],
+                      graders:        [@ta1.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas[0].id == @ta1.id
             assert @criterion2.tas[0].id == @ta1.id
@@ -824,11 +831,13 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and two graders and one criterion is selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign',
-              criteria: [@criterion1],
-              graders: [@ta1, @ta2],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class]],
+                      graders:        [@ta1.id, @ta2.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert((@criterion1.tas[0].id == @ta1.id or @criterion1.tas[0].id == @ta2.id))
             assert @criterion2.tas == []
@@ -836,11 +845,14 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and two graders and two criteria are selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign',
-              criteria: [@criterion1, @criterion2],
-              graders: [@ta1, @ta2],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class]],
+                      graders:        [@ta1.id, @ta2.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert((@criterion1.tas[0].id == @ta1.id or @criterion1.tas[0].id == @ta2.id))
             assert ((@criterion2.tas[0].id == @ta1.id or @criterion2.tas[0].id == @ta2.id))
@@ -850,11 +862,15 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           should 'and multiple graders and multiple criteria are selected' do
             @ta3 = Ta.make
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign',
-              criteria: [@criterion1, @criterion2, @criterion3],
-              graders: [@ta1, @ta2, @ta3],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class],
+                                           "2", [@criterion3.id, @criterion3.class]],
+                      graders:        [@ta1.id, @ta2.id, @ta3.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas.size == 1
             assert @criterion2.tas.size == 1
@@ -891,8 +907,12 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and no graders are selected, at least one criterion' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign', criteria: [@criterion1], current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class]],
+                      current_table:  'criteria_table' }
             assert_response 400, 'select a grader'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
@@ -900,9 +920,13 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and one grader and one criterion is selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign', criteria: [@criterion1],
-              graders: [@ta1], current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class]],
+                      graders:        [@ta1.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas[0].id == @ta1.id
             assert @criterion2.tas == []
@@ -910,11 +934,14 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and one grader and two criteria are selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign',
-              criteria: [@criterion1, @criterion2],
-              graders: [@ta1],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class]],
+                      graders:        [@ta1.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas[0].id == @ta1.id
             assert @criterion2.tas[0].id == @ta1.id
@@ -922,11 +949,13 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and two graders and one criterion is selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign',
-              criteria: [@criterion1],
-              graders: [@ta1, @ta2],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class]],
+                      graders:        [@ta1.id, @ta2.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas.length == 2
             assert @criterion1.tas.include?(@ta1)
@@ -936,11 +965,14 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and two graders and two criteria are selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign',
-              criteria: [@criterion1, @criterion2],
-              graders: [@ta1, @ta2],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class]],
+                      graders:        [@ta1.id, @ta2.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas.length == 2
             assert @criterion1.tas.include?(@ta1)
@@ -953,11 +985,15 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           should 'and multiple graders and multiple criteria are selected' do
             @ta3 = Ta.make
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign',
-              criteria: [@criterion1, @criterion2, @criterion3],
-              graders: [@ta1, @ta2, @ta3],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class],
+                                           "2", [@criterion3.id, @criterion3.class]],
+                      graders:        [@ta1.id, @ta2.id, @ta3.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas.length == 3
             assert @criterion1.tas.include?(@ta1)
@@ -972,11 +1008,14 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and some graders are already assigned to some criteria' do
             CriterionTaAssociation.make(ta: @ta1, criterion: @criterion2)
             CriterionTaAssociation.make(ta: @ta2, criterion: @criterion1)
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign',
-              criteria: [@criterion1, @criterion2],
-              graders: [@ta1, @ta2],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class]],
+                      graders:        [@ta1.id, @ta2.id],
+                      current_table:  'criteria_table' }
 
             assert_response :success
             @criterion1.reload
@@ -1147,15 +1186,19 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no criteria selected, at least one grader' do
             post_as @admin, :global_actions, {assignment_id: @assignment.id,
               global_actions: 'random_assign', graders: [@ta1], current_table: 'criteria_table'}
-            assert_response :success
+            assert_response 400, 'select a criterion'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
           end
 
           should 'and no graders are selected, at least one criterion' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign', criteria: [@criterion1], current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class]],
+                      current_table:  'criteria_table' }
             assert_response 400, 'select a grader'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
@@ -1163,9 +1206,13 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and one grader and one criterion is selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign', criteria: [@criterion1],
-              graders: [@ta1], current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class]],
+                      graders:        [@ta1.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas[0].id == @ta1.id
             assert @criterion2.tas == []
@@ -1173,11 +1220,14 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and one grader and multiple criteria are selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign',
-              criteria: [@criterion1, @criterion2],
-              graders: [@ta1],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class]],
+                      graders:        [@ta1.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas[0].id == @ta1.id
             assert @criterion2.tas[0].id == @ta1.id
@@ -1185,11 +1235,13 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and two graders and one criterion is selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign',
-              criteria: [@criterion1],
-              graders: [@ta1, @ta2],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class]],
+                      graders:        [@ta1.id, @ta2.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert((@criterion1.tas[0].id == @ta1.id or @criterion1.tas[0].id == @ta2.id))
             assert @criterion2.tas == []
@@ -1197,11 +1249,14 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and two graders and two criteria are selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign',
-              criteria: [@criterion1, @criterion2],
-              graders: [@ta1, @ta2],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class]],
+                      graders:        [@ta1.id, @ta2.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert((@criterion1.tas[0].id == @ta1.id or @criterion1.tas[0].id == @ta2.id))
             assert((@criterion2.tas[0].id == @ta1.id or @criterion2.tas[0].id == @ta2.id))
@@ -1211,11 +1266,15 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           should 'and multiple graders and multiple criteria are selected' do
             @ta3 = Ta.make
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'random_assign',
-              criteria: [@criterion1, @criterion2, @criterion3],
-              graders: [@ta1, @ta2, @ta3],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'random_assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class],
+                                           "2", [@criterion3.id, @criterion3.class]],
+                      graders:        [@ta1.id, @ta2.id, @ta3.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas.size == 1
             assert @criterion2.tas.size == 1
@@ -1261,9 +1320,13 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and one grader and one criterion is selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign', criteria: [@criterion1],
-              graders: [@ta1], current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class]],
+                      graders:        [@ta1.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas[0].id == @ta1.id
             assert @criterion2.tas == []
@@ -1271,11 +1334,14 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and one grader and two criteria are selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign',
-              criteria: [@criterion1, @criterion2],
-              graders: [@ta1],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class]],
+                      graders:        [@ta1.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas[0].id == @ta1.id
             assert @criterion2.tas[0].id == @ta1.id
@@ -1283,11 +1349,13 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and two graders and one criterion is selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign',
-              criteria: [@criterion1],
-              graders: [@ta1, @ta2],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class]],
+                      graders:        [@ta1.id, @ta2.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas.length == 2
             assert @criterion1.tas.include?(@ta1)
@@ -1297,11 +1365,14 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and two graders and two criteria are selected' do
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign',
-              criteria: [@criterion1, @criterion2],
-              graders: [@ta1, @ta2],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class]],
+                      graders:        [@ta1.id, @ta2.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas.length == 2
             assert @criterion1.tas.include?(@ta1)
@@ -1314,11 +1385,15 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           should 'and multiple graders and multiple criteria are selected' do
             @ta3 = Ta.make
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign',
-              criteria: [@criterion1, @criterion2, @criterion3],
-              graders: [@ta1, @ta2, @ta3],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class],
+                                           "2", [@criterion3.id, @criterion3.class]],
+                      graders:        [@ta1.id, @ta2.id, @ta3.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             assert @criterion1.tas.length == 3
             assert @criterion1.tas.include?(@ta1)
@@ -1333,11 +1408,14 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and some graders are already assigned to some criteria' do
             CriterionTaAssociation.make(ta: @ta1, criterion: @criterion2)
             CriterionTaAssociation.make(ta: @ta2, criterion: @criterion1)
-            post_as @admin, :global_actions, {assignment_id: @assignment.id,
-              global_actions: 'assign',
-              criteria: [@criterion1, @criterion2],
-              graders: [@ta1, @ta2],
-              current_table: 'criteria_table'}
+            post_as @admin,
+                    :global_actions,
+                    { assignment_id:  @assignment.id,
+                      global_actions: 'assign',
+                      criteria:       Hash["0", [@criterion1.id, @criterion1.class],
+                                           "1", [@criterion2.id, @criterion2.class]],
+                      graders:        [@ta1.id, @ta2.id],
+                      current_table:  'criteria_table' }
             assert_response :success
             @criterion1.reload
             @criterion2.reload

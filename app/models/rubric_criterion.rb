@@ -262,7 +262,7 @@ class RubricCriterion < Criterion
 
   def add_tas_by_user_name_array(ta_user_name_array)
     result = ta_user_name_array.map do |ta_user_name|
-      Ta.where(user_name: ta_user_name).first
+      Ta.find_by(user_name: ta_user_name)
     end.compact
     add_tas(result)
   end
