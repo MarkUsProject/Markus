@@ -58,10 +58,8 @@ class CriteriaController < ApplicationController
 
     ActiveRecord::Base.transaction do
       params[:criterion].each_with_index do |type_id, index|
-        type = type_id.split(' ')[0]
-        id = type_id.split(' ')[1]
-        criterion_to_update = type == 'RubricCriterion' ? RubricCriterion.find(id) : FlexibleCriterion.find(id)
-        criterion_to_update.class.update(id, position: index + 1) if id != ''
+        type, id = type_id.split(' ')
+        type.constantize.update(id, position: index + 1) unless id.blank?
       end
     end
   end

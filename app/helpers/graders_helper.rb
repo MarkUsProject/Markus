@@ -97,6 +97,7 @@ module GradersHelper
     criteria_table_info = criteria.map do |criterion|
       c = criterion.attributes
       c[:name] = criterion.name
+      c[:class] = criterion.class.to_s
       c[:graders] = criterion.criterion_ta_associations.map do |association|
         m = association.attributes
         m[:user_name] = association.ta.user_name

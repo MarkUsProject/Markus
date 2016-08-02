@@ -185,6 +185,7 @@ en:
             select_a_group: "Select a group"
             select_a_student: "Select a student"
             select_a_grader: "Select a grader"
+            select_a_criterion: "Select at least one criterion"
             group_submission_no_files: "One or more of the groups selected has no files in their submission. Grader not assigned."
             select_only_one_group: "You may only assign each student to one group."
             deleted: "Group has been deleted"

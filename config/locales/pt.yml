@@ -175,6 +175,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
             select_a_group: "Selecione um grupo"
             select_a_student: "Selecione um aluno"
             select_a_grader: "Selecione um avaliador"
+            select_a_criterion: "Selecione pelo menos um critério"
             group_submission_no_files: "Um ou mais dos grupos selecionados não possui arquivos em sua apresentação. Grader não atribuído."
             select_only_one_group: "Você pode indicar cada estudante a somente um grupo."
             deleted: "Grupo foi apagado"
