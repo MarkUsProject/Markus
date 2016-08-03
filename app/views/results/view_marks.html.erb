@@ -67,9 +67,9 @@
 <div class='title_bar'>
   <h1>
     <% if @result.is_a_review? %>
-      Review for <%= sanitize(@assignment.short_identifier) %>
+      <%= t('results.review_for') + sanitize(@assignment.short_identifier) %>
     <% else %>
-      Results for <%= sanitize(@assignment.short_identifier) %>
+      <%= t('results.results_for') + sanitize(@assignment.short_identifier) %>
     <% end %>
   </h1>
 
