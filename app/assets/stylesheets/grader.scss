@@ -648,40 +648,6 @@ ul.annotation_text_list {
       padding: 2px;
     }
   }
-
-  .mark_checkbox {
-    font-weight: bold;
-    font-size: 11px;
-    float: right;
-
-    .mark_grade_input_checkbox {
-      font-size: 1em;
-      margin: 1px 1px 4px;
-      min-width: 0;
-      padding: 2px;
-    }
-  }
-
-  .old_mark {
-    font-size: 11px;
-    float: right;
-    padding-right: 10px;
-
-    &.old_mark_unreleased {
-      padding-top: 4px;
-    }
-  }
-
-  .mark_grade_input {
-    &.remarked {
-      background-color: #81d881;
-    }
-
-    &.not_remarked:not([disabled]) {
-      background-color: white;
-    }
-  }
-
 }
 
 /* ============= */
@@ -689,101 +655,70 @@ ul.annotation_text_list {
 /* Checkbox Criterion Styles */
 
 .checkbox_criterion {
-  margin-top: -4px;
-
-  .criterion_expand {
-    float: left;
-    cursor: pointer;
-    font-size: 1.2em;
-    width: 1em;
-    padding-top: 2px;
-    height: 20px;
-  }
 
   &.expanded {
-    .criterion_info {
-      display: block;
+    .checkbox_criterion_level {
+      display: inline-block;
     }
   }
 
   &.not_expanded {
-    .criterion_info {
+    .checkbox_criterion_level {
       display: none;
     }
-  }
 
-  .unexpandable {
-    .criterion_expand {
-      visibility: hidden;
-      cursor: auto !important;
-    }
-
-    .title_div_level {
-      cursor: auto !important;
+    .checkbox_criterion_level_old_mark {
+      display: inline-block;
     }
   }
 
-  .criterion_info {
-    padding-left: 10px;
-    padding-bottom: 5px;
-    margin-left: 5px;
+  .description {
+    width: 82%;
     float: left;
-    clear: both;
+  }
+
+  .mark {
+    float: right;
+    font-weight: bold;
+    margin-left: 15px;
+    margin-right: 10px;
+  }
+
+  .checkbox_criterion_level {
+    background: $white;
+    width: 100%;
+  }
+
+  .checkbox_criterion_level_old_mark {
+    background: #fdfebc;
+    width: 100%;
   }
 
   .title_div_level {
     padding-top: 2px;
     font-size: 12px;
+    font-weight: bold;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    cursor: pointer;
+  }
+
+  .criterion_expand {
     float: left;
-    padding-right: 10px;
-    font-weight: bold;
-    padding-bottom: 6px;
-
-    &.released {
-      padding-left: 15px;
-    }
-
-    &.unreleased {
-      cursor: pointer;
-    }
+    font-size: 1.2em;
+    width: 1em;
+    cursor: pointer;
+    padding-top: 3px;
   }
 
-  .mark_checkbox {
-    font-weight: bold;
-    font-size: 11px;
-    float: right;
-
-    .mark_grade_input{
-      font-size: 1em;
-      margin: 1px 1px 4px;
-      min-width: 0;
-      padding: 2px;
-    }
+  .criterion_link {
+    padding: 0.25em 0em !important;
   }
-
-  .old_mark {
-    font-size: 11px;
-    float: right;
-    padding-right: 10px;
-
-    &.old_mark_unreleased {
-      padding-top: 4px;
-    }
-  }
-
-  .mark_grade_input {
-    &.remarked {
-      background-color: #81d881;
-    }
-
-    &.not_remarked:not([disabled]) {
-      background-color: white;
-    }
-  }
-
 }
 
-/* ============= */
+.checkbox_criterion.assigned + .checkbox_criterion.assigned {
+  margin-top: -2px;
+}
 
 /* Submission Rule Pane */
 
