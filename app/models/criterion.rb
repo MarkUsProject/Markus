@@ -152,7 +152,7 @@ class Criterion < ActiveRecord::Base
             AND ct.criterion_id = c.id AND ct.assignment_id = c.assignment_id
             AND m.type = 'TaMembership')
         WHERE assignment_id = #{assignment.id}
-    #{"AND id IN (#{checkbox_criterion_ids_str})" unless criterion_ids_str.empty?}
+    #{"AND id IN (#{checkbox_criterion_ids_str})" unless checkbox_criterion_ids_str.empty?}
     UPDATE_SQL
   end
 end
