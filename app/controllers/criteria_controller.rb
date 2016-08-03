@@ -74,6 +74,16 @@ class CriteriaController < ApplicationController
     end
   end
 
+  def download_yml
+    assignment = Assignment.find(params[:assignment_id])
+    rubric_file_out = assignment.export_rubric_criteria_yml
+    flex_checkbox_file_out = assignment.export_flexible_checkbox_criteria_yml
+    send_data(rubric_file_out + flex_checkbox_file_out,
+              type: 'text/plain',
+              filename: "#{assignment.short_identifier}_criteria.yml",
+              disposition: 'inline')
+  end
+
   private
 
   def flexible_criterion_params

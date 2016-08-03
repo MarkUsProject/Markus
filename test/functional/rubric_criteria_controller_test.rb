@@ -27,11 +27,6 @@ class RubricCriteriaControllerTest < AuthenticatedControllerTest
         assert_response :redirect
       end
 
-      should 'be redirected on :download_yml' do
-        get :download_yml, assignment_id: @assignment.id
-        assert_response :redirect
-      end
-
       should 'be redirected on :csv_upload' do
         get :csv_upload, assignment_id: @assignment.id
         assert_response :redirect

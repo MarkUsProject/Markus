@@ -215,6 +215,14 @@ describe 'An Assignment' do
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
+
+      it 'routes GET download_yml properly' do
+        expect(get: criteria_path + '/download_yml').to route_to(
+          controller: criteria_ctrl,
+          action: 'download_yml',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
+      end
     end
   end
   # end assignment criteria route tests
@@ -244,13 +252,6 @@ describe 'An Assignment' do
         expect(get: rubric_path + '/download_csv').to route_to(
           controller: rubric_ctrl,
           action: 'download_csv',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-      it 'routes GET download_yml properly' do
-        expect(get: rubric_path + '/download_yml').to route_to(
-          controller: rubric_ctrl,
-          action: 'download_yml',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end

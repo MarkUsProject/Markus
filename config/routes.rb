@@ -88,7 +88,6 @@ Markus::Application.routes.draw do
           post 'csv_upload'
           post 'yml_upload'
           get 'download_csv'
-          get 'download_yml'
         end
       end
 

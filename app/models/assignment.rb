@@ -132,13 +132,13 @@ class Assignment < ActiveRecord::Base
   # Set the default order of assignments: in ascending order of due_date
   default_scope { order('due_date ASC') }
 
-  # Export a YAML formatted string created from the assignment rubric criteria.
+  # Export a YAML formatted string of all rubric criteria for an assignment.
   def export_rubric_criteria_yml
     criteria = get_criteria(:all, :rubric)
     final = ActiveSupport::OrderedHash.new
     criteria.each do |criterion|
       inner = ActiveSupport::OrderedHash.new
-      inner['max_mark'] =  criterion['max_mark']
+      inner['max_mark'] =  criterion['max_mark'].to_f
       inner['level_0'] = {
         'name' =>  criterion['level_0_name'] ,
         'description' =>  criterion['level_0_description']
@@ -159,6 +159,20 @@ class Assignment < ActiveRecord::Base
         'name' =>  criterion['level_4_name'] ,
         'description' => criterion['level_4_description']
       }
+      criteria_yml = { "#{criterion.name}" => inner }
+      final = final.merge(criteria_yml)
+    end
+    final.to_yaml
+  end
+
+  # Export a YAML formatted string of all flexible and checkbox criteria for an assignment.
+  def export_flexible_checkbox_criteria_yml
+    criteria = get_criteria(:all, :flexible) + get_criteria(:all, :checkbox)
+    final = ActiveSupport::OrderedHash.new
+    criteria.each do |criterion|
+      inner = ActiveSupport::OrderedHash.new
+      inner['max_mark'] =  criterion['max_mark'].to_f
+      inner['description'] = criterion.description.blank? ? '' : criterion['description']
       criteria_yml = { "#{criterion.name}" => inner }
       final = final.merge(criteria_yml)
     end

@@ -25,12 +25,6 @@ class RubricCriteriaController < ApplicationController
               disposition: 'attachment')
   end
 
-  def download_yml
-     assignment = Assignment.find(params[:assignment_id])
-     file_out = assignment.export_rubric_criteria_yml
-     send_data(file_out, type: 'text/plain', filename: "#{assignment.short_identifier}_rubric_criteria.yml", disposition: 'inline')
-  end
-
   def csv_upload
     @assignment = Assignment.find(params[:assignment_id])
     encoding = params[:encoding]

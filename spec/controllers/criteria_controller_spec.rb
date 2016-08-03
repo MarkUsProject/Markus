@@ -69,6 +69,13 @@ RSpec.describe CriteriaController, type: :controller do
           end
         end
       end
+
+      context '#download_yml' do
+        it 'should respond with redirect' do
+          get :download_yml, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
     end
 
     describe 'An unauthenticated and unauthorized user doing a POST' do
@@ -497,6 +504,13 @@ RSpec.describe CriteriaController, type: :controller do
       context '#update_positions' do
         it 'should respond with redirect' do
           get :update_positions, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
+      context '#download_yml' do
+        it 'should respond with redirect' do
+          get :download_yml, assignment_id: 1
           is_expected.to respond_with :redirect
         end
       end

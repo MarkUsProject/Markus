@@ -86,7 +86,7 @@
   <h2><%= t('criteria.download.file') %></h2>
   <p><%= t('criteria.download.prompt') %></p>
   <section class='dialog-actions'>
-    <form action='<%= download_yml_assignment_rubric_criteria_path(@assignment) %>' method='get'>
+    <form action='<%= download_yml_assignment_criteria_path(@assignment) %>' method='get'>
       <button type='submit'
               onclick='modal_download_yml.close();'>
         <%= t('criteria.download.title') %>

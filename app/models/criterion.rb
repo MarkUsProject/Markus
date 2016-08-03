@@ -112,6 +112,14 @@ class Criterion < ActiveRecord::Base
         .join(',')
     end
 
+    if criterion_ids_by_type.nil?  or criterion_ids_by_type['CheckboxCriterion'].nil?
+      checkbox_criterion_ids_str = ''
+    else
+      checkbox_criterion_ids_str = Array(criterion_ids_by_type['CheckboxCriterion'])
+        .map { |criterion_id| connection.quote(criterion_id) }
+        .join(',')
+    end
+
     # TODO replace these raw SQL with dynamic SET clause with Active Record
     # language when the latter supports subquery in the SET clause.
     RubricCriterion.connection.execute(<<-UPDATE_SQL)
@@ -145,7 +153,7 @@ class Criterion < ActiveRecord::Base
             AND ct.criterion_id = c.id AND ct.assignment_id = c.assignment_id
             AND m.type = 'TaMembership')
         WHERE assignment_id = #{assignment.id}
-    #{"AND id IN (#{criterion_ids_str})" unless criterion_ids_str.empty?}
+    #{"AND id IN (#{checkbox_criterion_ids_str})" unless checkbox_criterion_ids_str.empty?}
     UPDATE_SQL
   end
 end
