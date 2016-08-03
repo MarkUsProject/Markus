@@ -341,7 +341,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :codeviewer,
                    format: :js,
                    assignment_id: @assignment.id,
-                   submission_id: 1,
+                   submission_id: @submission.id,
                    id: @result.id,
                    submission_file_id: @no_access_submission_file.id,
                    focus_line: 1
@@ -362,7 +362,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :codeviewer,
                    format: :js,
                    assignment_id: @assignment.id,
-                   submission_id: 1,
+                   submission_id: @submission.id,
                    submission_file_id: @submission_file.id,
                    id: @result.id,
                    focus_line: 1
@@ -390,7 +390,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :codeviewer,
                    format: :js,
                    assignment_id: @assignment.id,
-                   submission_id: 1,
+                   submission_id: @submission.id,
                    submission_file_id: @submission_file.id,
                    id: @result.id,
                    focus_line: 1
@@ -427,7 +427,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :view_marks,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: 1
+                   id: @result.id
             assert_not_nil assigns :assignment
             assert_not_nil assigns :grouping
             assert render_template 'results/student/no_submission'
@@ -440,7 +440,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :view_marks,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: 1
+                   id: @result.id
             assert_not_nil assigns :assignment
             assert_not_nil assigns :grouping
             assert_not_nil assigns :submission
@@ -454,8 +454,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
             get_as @student,
                    :view_marks,
                    assignment_id: @assignment.id,
-                   submission_id: 1,
-                   id: 1
+                   submission_id: @submission.id,
+                   id: @result.id
             assert_not_nil assigns :assignment
             assert_not_nil assigns :grouping
             assert_not_nil assigns :submission
@@ -477,7 +477,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :view_marks,
                    assignment_id: @assignment.id,
                    submission_id: 1,
-                   id: 1
+                   id: @result.id
             assert_not_nil assigns :assignment
             assert_not_nil assigns :grouping
             assert_not_nil assigns :submission
@@ -948,6 +948,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             g = Grouping.make(assignment: @assignment)
             @submission = Submission.make(grouping: g)
             @mark =  Mark.make(@assignment.criterion_class.symbol, result: @submission.get_latest_result)
+            @result = @mark.result
           end
 
           should 'fails validation' do
@@ -997,10 +998,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             get_as @admin,
                    :view_marks,
                    assignment_id: @assignment.id,
-                   submission_id: 1,
-                   id: 1
-            assert render_template '404'
-            assert_response 404
+                   submission_id: @submission.id,
+                   id: @result.id
+            assert_response 200
           end
 
           should 'GET on :add_extra_mark' do
@@ -1105,6 +1105,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
         setup do
           @ta = Ta.make
           @assignment = Assignment.make(marking_scheme_type: scheme_type)
+          @grouping = Grouping.make(assignment: @assignment)
+          @submission = Submission.make(grouping: @grouping)
+          @result = @grouping.submissions.first.get_latest_result
         end
 
         should 'GET on :edit' do
@@ -1333,10 +1336,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
           get_as @ta,
                  :view_marks,
                  assignment_id: @assignment.id,
-                 submission_id: 1,
-                 id: 1
-          assert render_template '404'
-          assert_response 404
+                 submission_id: @submission.id,
+                 id: @result.id
+          assert_response 200
         end  # -- GET on :view_marks
 
         should 'GET on :add_extra_mark' do
