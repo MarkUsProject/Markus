@@ -19,7 +19,7 @@ shared_examples 'a criterion' do
       criterion_ids_by_type = {}
       %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
         criterion_ids_by_type[type] =
-            criterion_ids_types.values.select{ |id_type| id_type[1] == type }.map(&:first)
+          criterion_ids_types.values.select{ |id_type| id_type[1] == type }.map(&:first)
       end
       criterion_ids_by_type
     end

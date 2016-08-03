@@ -9,11 +9,8 @@ class Criterion < ActiveRecord::Base
   def self.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
     assign_tas(criterion_ids_types, ta_ids, assignment) do |criterion_ids, criterion_types, ta_ids|
       # Assign TAs in a round-robin fashion to a list of random criteria.
-      ids_types = criterion_ids.zip(criterion_types).shuffle
-      criterion_ids, criterion_types = ids_types.transpose
-      # Add criterion types to the arrays of values to be compared against the data in the database
-      criterion_ta_ids = criterion_ids.blank? ? [] : criterion_ids.zip(ta_ids.cycle)
-      criterion_ta_ids.map.with_index{ |cr_ta, index| cr_ta << criterion_types[index] }
+      crit_ids_and_types = criterion_ids.zip(criterion_types).shuffle
+      crit_ids_and_types.zip(ta_ids.cycle).map &:flatten
     end
   end
 
@@ -22,11 +19,10 @@ class Criterion < ActiveRecord::Base
   # to the given assignment +assignment+.
   def self.assign_all_tas(criterion_ids_types, ta_ids, assignment)
     assign_tas(criterion_ids_types, ta_ids, assignment) do |criterion_ids, criterion_types, ta_ids|
-      # Get the Cartesian product of criterion IDs and TA IDs and of criterion types and TA IDs.
-      criterion_ids_ta_ids = criterion_ids.product(ta_ids)
-      criterion_types_ta_ids = criterion_types.product(ta_ids)
-      # Add criterion types to the arrays of values to be compared against the data in the database
-      criterion_ids_ta_ids.map.with_index{ |cr_ta, index| cr_ta << criterion_types_ta_ids[index][0] }
+      crit_ids_and_types = criterion_ids.zip(criterion_types)
+      # Need to call Array#flatten because after the second product each element has
+      # the form [[id, type], ta_id].
+      crit_ids_and_types.product(ta_ids).map &:flatten
     end
   end
 
@@ -49,16 +45,17 @@ class Criterion < ActiveRecord::Base
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
-    criterion_ids = assignment.get_criteria(:all, :rubric).where(id: criterion_ids_in).pluck(:id) +
-      assignment.get_criteria(:all, :flexible).where(id: criterion_ids_in).pluck(:id)
+    criterion_ids = assignment.get_criteria(:ta)
+                              .select { |crit| criterion_ids_in.include? crit.id }
+                              .map &:id
 
-    columns = [:criterion_id, :ta_id, :criterion_type]
+    columns = [:criterion_id, :criterion_type, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
                       .where(criterion_id: criterion_ids,
                              ta_id: ta_ids)
-                      .pluck(:criterion_id, :ta_id, :criterion_type)
+                      .pluck(:criterion_id, :criterion_type, :ta_id)
 
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
@@ -138,6 +135,17 @@ class Criterion < ActiveRecord::Base
             AND m.type = 'TaMembership')
         WHERE assignment_id = #{assignment.id}
     #{"AND id IN (#{flexible_criterion_ids_str})" unless flexible_criterion_ids_str.empty?}
+    UPDATE_SQL
+    CheckboxCriterion.connection.execute(<<-UPDATE_SQL)
+      UPDATE #{CheckboxCriterion.table_name} AS c SET assigned_groups_count =
+        (SELECT count(DISTINCT g.id) FROM memberships AS m
+          INNER JOIN groupings AS g ON m.grouping_id = g.id
+          INNER JOIN criterion_ta_associations AS ct ON m.user_id = ct.ta_id
+          WHERE g.assignment_id = #{assignment.id}
+            AND ct.criterion_id = c.id AND ct.assignment_id = c.assignment_id
+            AND m.type = 'TaMembership')
+        WHERE assignment_id = #{assignment.id}
+    #{"AND id IN (#{criterion_ids_str})" unless criterion_ids_str.empty?}
     UPDATE_SQL
   end
 end

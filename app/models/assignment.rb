@@ -634,7 +634,8 @@ class Assignment < ActiveRecord::Base
         # total percentage, total_grade
         result.concat(['','0'])
         # mark, max_mark
-        result.concat(Array.new(criteria_count, '').zip(get_criteria.map(&:max_mark)).flatten)
+        result.concat(Array.new(criteria_count, '').
+          zip(get_criteria.map(&:max_mark)).flatten)
         # extra-mark, extra-percentage
         result.concat(['',''])
       else
@@ -707,11 +708,16 @@ class Assignment < ActiveRecord::Base
 
   def get_all_criteria(type, include_opt)
     if type == :all
-      (rubric_criteria.includes(include_opt) + flexible_criteria.includes(include_opt)).sort_by(&:position)
+      all_criteria = rubric_criteria.includes(include_opt) +
+                     flexible_criteria.includes(include_opt) +
+                     checkbox_criteria.includes(include_opt)
+      all_criteria.sort_by(&:position)
     elsif type == :rubric
       rubric_criteria.includes(include_opt).order(:position)
     elsif type == :flexible
       flexible_criteria.includes(include_opt).order(:position)
+    elsif type == :checkbox
+      checkbox_criteria.includes(include_opt).order(:position)
     end
   end
 
