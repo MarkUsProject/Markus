@@ -60,7 +60,7 @@ module SubmissionsHelper
           result_pr = current_user.grouping_for(assignment.id).review_for(grouping)
           result = Result.find(result_pr.result_id)
 
-        elsif (assignment.is_peer_review? and !current_user.student?)
+        elsif assignment.is_peer_review? && !current_user.student?
           # if an admin is viewing reviews a grouping made
           result_pr = grouping.peer_reviews_to_others.first
           if !result_pr.nil?

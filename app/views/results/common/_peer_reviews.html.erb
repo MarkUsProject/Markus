@@ -1,8 +1,7 @@
-<div id="peer_reviews">
+<div id='peer_reviews'>
   <p id='peer_review_selector_label'>
     <%= @current_user.student? ? "Reviews made on your submission: " : "This reviewer's reviews: " %>
   </p>
-
   <div id='peer_review_selector' class='dropdown'>
     <a><%= "Review " + (prs.index(current_pr) + 1).to_s %></a>
     <ul>
@@ -12,14 +11,13 @@
                         view_marks_assignment_result_path(assignment.id, pr.result_id)) %> </li>
         <% else %>
             <li> <%= link_to("Review " + (i + 1).to_s,
-                             view_marks_assignment_submission_result_path( assignment_id: assignment.id,
-                                                                           submission_id: submission.id,
-                                                                           id: pr.result_id,
-                                                                           reviewer_grouping_id: reviewer.id)) %> </li>
+                             view_marks_assignment_submission_result_path(assignment_id: assignment.id,
+                                                                          submission_id: submission.id,
+                                                                          id: pr.result_id,
+                                                                          reviewer_grouping_id: reviewer.id)) %> </li>
         <% end %>
       <% end %>
     </ul>
-
     <div class='arrow_down'></div>
   </div>
 

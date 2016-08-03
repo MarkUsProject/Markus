@@ -443,7 +443,6 @@ class ResultsController < ApplicationController
   end
 
   def view_marks
-    #debugger
     @assignment = Assignment.find(params[:assignment_id])
 
     if !current_user.student?

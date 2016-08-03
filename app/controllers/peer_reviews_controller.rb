@@ -40,16 +40,13 @@ class PeerReviewsController < ApplicationController
 
     if !pr.nil?
       redirect_to show_result_assignment_peer_review_path(assignment.id, id: pr.id)
-
     else
       render 'shared/http_status', formats: [:html],
              locals: { code: '404',
                        message: HttpStatusHelper::ERROR_CODE[
                            'message']['404'] }, status: 404,
              layout: false
-      return
     end
-
   end
 
   def show_result
