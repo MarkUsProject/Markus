@@ -222,6 +222,9 @@ fr:
         assigned_reviewers_header: "Assigned examinateurs"
         reviewer_group: "Groupe avis"
         reviewee_group: "Groupe pays examin"
+        reviews_made_on_submission: "Avis faites sur votre soumission: "
+        reviewers_reviews: "Les avis de ce réviseur: "
+        view_ta_result: "Voir TA Résultat"
         empty_list_reviewers: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
         empty_list_reviewees: "Vous ne pouvez pas avoir une liste vide de CONTRÔLER"
         cannot_allow_reviewer_to_be_reviewee: "Un étudiant ne peut pas être un réviseur et pays examiné"
@@ -690,6 +693,8 @@ fr:
       must_select_a_group_to_collect:  "Vous devez sélectionner au moins un groupe pour recueillir."
       editing_after_release_fail: "Les notes ont été dévoilées, vous ne pouvez plus changer l'évaluation."
       could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
+      results_for: "Résultats pour "
+      review_for: "Avis pour "
 
     mark:
       error:

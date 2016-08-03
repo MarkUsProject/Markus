@@ -220,6 +220,9 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         assigned_reviewers_header: "Atribuído usuários"
         reviewer_group: "Grupo de Viajante"
         reviewee_group: "Grupo de ser revistos"
+        reviews_made_on_submission: "Avaliações feitas em sua submissão: "
+        reviewers_reviews: "As avaliações deste colaborador: "
+        view_ta_result: "Resultado vista TA"
         empty_list_reviewers: "Não é possível ter uma lista vazia de revisores"
         empty_list_reviewees: "Não pode ter uma lista vazia de reviewees"
         cannot_allow_reviewer_to_be_reviewee: "Um estudante não pode ser um revisor e reviewee"
@@ -651,6 +654,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       must_select_a_group_to_collect:  "Você deve selecionar pelo menos um grupo para recolher"
       editing_after_release_fail: "As notas já foram publicadas. Você não pode alterá-las."
       could_not_find_file: "Não foi possível encontrar %{filename} no repositório %{repository_name}"
+      results_for: "Resultados para"
+      review_for: "Revisão para "
 
     mark:
       error:

@@ -96,7 +96,7 @@
           <% @prs.each_with_index do |pr, i| %>
               <% result = Result.find(pr.result_id) %>
               <% unless !result.released_to_students %>
-                <li><%= link_to("Review " + (i + 1).to_s,
+                <li><%= link_to(t('assignment.peer_review') + (i + 1).to_s,
                             view_marks_assignment_result_path(@assignment.parent_assignment.id, pr.result_id)) %> </li>
               <% end %>
            <% end %>

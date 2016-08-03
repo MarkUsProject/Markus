@@ -39,13 +39,13 @@
                                   mark_id: mark.id, mark: num_levels, id: result.id) :
                               update_mark_assignment_submission_results_path(
                                   mark_id: mark.id, mark: num_levels, id: result.id) %>'
-                      onclick='update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)'
+                      onclick='update_rubric_mark(this, <%=mark.id%>, <%=num_levels%>)'
                       data-id='<%=mark_criterion.id%>' >
                     <div class='description'>
                        <strong> <%= level_name %></strong>
                        &nbsp;<%= level_desc %>
                     </div>
-                    <div class='mark'><%= num_levels * mark_criterion.weight %> / <%= mark_criterion.max_mark %></div>
+                    <div class='mark'><%=num_levels * mark_criterion.weight%> / <%=mark_criterion.max_mark%></div>
                    </td>
                 </tr>
               <% end -%>

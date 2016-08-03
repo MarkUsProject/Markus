@@ -379,7 +379,7 @@ class ResultsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @submission_file_id = params[:submission_file_id]
     @focus_line = params[:focus_line]
-    @grouping = @current_user.grouping_for(params[:assignment_id])
+    @grouping = @current_user.grouping_for(Integer(params[:assignment_id]))
     @file = SubmissionFile.find(@submission_file_id)
     @result = Result.find(params[:id])
 
@@ -387,7 +387,7 @@ class ResultsController < ApplicationController
     if current_user.student?
       # Unless this file belongs to this user or this user is a reviewer of this result,
       # this student isn't authorized to view these files. Display an error
-      unless @file.belongs_to?(current_user) ||
+      unless (!@grouping.membership_status(current_user).nil?) ||
           current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
@@ -443,15 +443,14 @@ class ResultsController < ApplicationController
   end
 
   def view_marks
-    #debugger
     @assignment = Assignment.find(params[:assignment_id])
 
-    if !current_user.student?
-      @submission = Submission.find(params[:submission_id])
-      @grouping = @submission.grouping
-    else
+    if current_user.student?
       @grouping = current_user.accepted_grouping_for(@assignment.id)
       @submission = @grouping.current_submission_used
+    else
+      @submission = Submission.find(params[:submission_id])
+      @grouping = @submission.grouping
     end
 
     result_from_id = Result.find(params[:id])
@@ -522,10 +521,8 @@ class ResultsController < ApplicationController
 
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
-        @first_file.belongs_to?(@current_user)
+          @grouping.membership_status(current_user).nil? || !@current_user.student?
         @mark_criteria = @assignment.get_criteria(:peer)
-      else
-        @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
       end
     else
       @mark_criteria = @assignment.get_criteria(:ta)
