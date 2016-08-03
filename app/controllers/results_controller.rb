@@ -379,7 +379,7 @@ class ResultsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @submission_file_id = params[:submission_file_id]
     @focus_line = params[:focus_line]
-    @grouping = @current_user.grouping_for(params[:assignment_id])
+    @grouping = @current_user.grouping_for(Integer(params[:assignment_id]))
     @file = SubmissionFile.find(@submission_file_id)
     @result = Result.find(params[:id])
 

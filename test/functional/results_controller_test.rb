@@ -349,9 +349,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :submission_file_id
             assert_not_nil assigns :focus_line
             assert_nil assigns :file_contents
-            assert_nil assigns :annots
-            assert_nil assigns :all_annots
-            assert_response :found
+            assert_empty assigns :annots
+            assert_empty assigns :all_annots
+            assert_response 200
           end
 
           should 'with file reading error' do
