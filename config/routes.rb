@@ -78,6 +78,8 @@ Markus::Application.routes.draw do
       resources :criteria do
         collection do
           post 'update_positions'
+          post 'upload_yml'
+          get  'download_yml'
         end
       end
 

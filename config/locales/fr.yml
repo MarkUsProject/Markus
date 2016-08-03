@@ -1090,7 +1090,8 @@ fr:
       move_up:        "Monter"
       move_down:      "Descendre"
       download:
-        title:    "Télécharger le fichier de Critères"
+        title:    "Télécharger"
+        file:     "Télécharger le fichier de Critères"
         prompt:   "Tous les types de critères seront téléchargés au format YAML."
         link_yml: "Télécharger critères au format YAML"
         yml:      "Télécharger YML"

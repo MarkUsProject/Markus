@@ -83,20 +83,17 @@
 </aside>
 
 <aside class='dialog' id='download_yml_dialog'>
-  <h2><%= t('criteria.download.title') %></h2>
+  <h2><%= t('criteria.download.file') %></h2>
   <p><%= t('criteria.download.prompt') %></p>
-
-  <ul>
-    <li>
-      <%= link_to t('criteria.download.link_yml'),
-                  download_yml_assignment_rubric_criteria_path(@assignment),
-                  onclick: 'modal_download_yml.close();' %>
-    </li>
-  </ul>
-
   <section class='dialog-actions'>
-    <input type='reset'
-           value='<%= t('cancel') %>'
-           onclick='modal_download_yml.close();'>
+    <form action='<%= download_yml_assignment_rubric_criteria_path(@assignment) %>' method='get'>
+      <button type='submit'
+              onclick='modal_download_yml.close();'>
+        <%= t('criteria.download.title') %>
+      </button>
+      <input type='reset'
+             value='<%= t('cancel') %>'
+             onclick='modal_download_yml.close();'>
+    </form>
   </section>
 </aside>

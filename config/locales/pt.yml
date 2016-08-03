@@ -1058,7 +1058,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       move_up:        "Mover para cima"
       move_down:      "Mover para baixo"
       download:
-        title:    "Baixar Arquivo de Critérios"
+        title:    "Baixar"
+        file:     "Baixar Arquivo de Critérios"
         prompt:   "Todos os tipos de critérios serão baixados no formato YAML."
         link_yml: "Baixar Critérios em Formato YAML"
         yml:      "Baixar YML"

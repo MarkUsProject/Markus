@@ -1219,7 +1219,8 @@ en:
       move_up:        "Move up"
       move_down:      "Move down"
       download:
-        title:    "Download Criteria File"
+        title:    "Download"
+        file:     "Download Criteria File"
         prompt:   "All types of criteria will be downloaded in YAML format."
         link_yml: "Download Criteria in YAML Format"
         yml:      "Download YML"
