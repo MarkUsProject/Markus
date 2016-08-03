@@ -387,7 +387,7 @@ class ResultsController < ApplicationController
     if current_user.student?
       # Unless this file belongs to this user or this user is a reviewer of this result,
       # this student isn't authorized to view these files. Display an error
-      unless @file.belongs_to?(current_user) ||
+      unless @grouping.membership_status(current_user).nil? ||
           current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
@@ -521,7 +521,7 @@ class ResultsController < ApplicationController
 
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
-        @first_file.belongs_to?(@current_user) || !@current_user.student?
+          @grouping.membership_status(current_user).nil? || !@current_user.student?
         @mark_criteria = @assignment.get_criteria(:peer)
       end
     else
