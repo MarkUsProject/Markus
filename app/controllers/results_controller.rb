@@ -445,12 +445,12 @@ class ResultsController < ApplicationController
   def view_marks
     @assignment = Assignment.find(params[:assignment_id])
 
-    if !current_user.student?
-      @submission = Submission.find(params[:submission_id])
-      @grouping = @submission.grouping
-    else
+    if current_user.student?
       @grouping = current_user.accepted_grouping_for(@assignment.id)
       @submission = @grouping.current_submission_used
+    else
+      @submission = Submission.find(params[:submission_id])
+      @grouping = @submission.grouping
     end
 
     result_from_id = Result.find(params[:id])
@@ -521,10 +521,8 @@ class ResultsController < ApplicationController
 
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
-        @first_file.belongs_to?(@current_user)
+        @first_file.belongs_to?(@current_user) || !@current_user.student?
         @mark_criteria = @assignment.get_criteria(:peer)
-      else
-        @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
       end
     else
       @mark_criteria = @assignment.get_criteria(:ta)
