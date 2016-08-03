@@ -217,6 +217,8 @@ class GradersController < ApplicationController
       when 'assign'
         if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
+        elsif criterion_ids_types.blank?
+          render text: I18n.t('assignment.group.select_a_criterion'), status: 400
         else
           assign_all_graders_to_criteria(criterion_ids_types, grader_ids)
           head :ok
@@ -235,9 +237,10 @@ class GradersController < ApplicationController
             criterion_assoc.criterion
           end.uniq
           criterion_ids_by_type = {}
-          criterion_ids_by_type['RubricCriterion'] = []
-          criterion_ids_by_type['FlexibleCriterion'] = []
-          criteria.each { |criterion| criterion_ids_by_type[criterion.class.to_s] << criterion.id }
+          %w[RubricCriterion FlexibleCriterion CheckboxCriterion].each do |type|
+            criterion_ids_by_type[type] =
+              criteria.select { |crit| crit.class.to_s == type }
+          end
           unassign_graders_from_criteria(criterion_associations, criterion_ids_by_type)
           head :ok
         end

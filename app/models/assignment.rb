@@ -634,8 +634,7 @@ class Assignment < ActiveRecord::Base
         # total percentage, total_grade
         result.concat(['','0'])
         # mark, max_mark
-        result.concat(Array.new(criteria_count, '').
-          zip(get_criteria(:all, :all).map(&:max_mark)).flatten)
+        result.concat(Array.new(criteria_count, '').zip(get_criteria.map(&:max_mark)).flatten)
         # extra-mark, extra-percentage
         result.concat(['',''])
       else
@@ -717,11 +716,11 @@ class Assignment < ActiveRecord::Base
   end
 
   def get_ta_visible_criteria(type, include_opt)
-    get_all_criteria(type, include_opt).empty? ? [] : get_all_criteria(type, include_opt).select(&:ta_visible)
+    get_all_criteria(type, include_opt).select(&:ta_visible)
   end
 
   def get_peer_visible_criteria(type, include_opt)
-    get_all_criteria(type, include_opt).empty? ? [] : get_all_criteria(type, include_opt).select(&:peer_visible)
+    get_all_criteria(type, include_opt).select(&:peer_visible)
   end
 
   def criteria_count
@@ -846,19 +845,7 @@ class Assignment < ActiveRecord::Base
   # Assign graders to a criterion for this assignment.
   # Raise a CSVInvalidLineError if the criterion or a grader doesn't exist.
   def add_graders_to_criterion(criterion_name, graders)
-    if get_criteria(:all, :all).empty?
-      criterion = nil
-    else
-      begin
-        criterion = get_criteria(:all, :rubric).find_by!(name: criterion_name)
-      rescue ActiveRecord::RecordNotFound
-        begin
-         criterion = get_criteria(:all, :flexible).find_by!(name: criterion_name)
-        rescue ActiveRecord::RecordNotFound
-          criterion = nil
-        end
-      end
-    end
+    criterion = get_criteria.find{ |crit| crit.name == criterion_name }
 
     if criterion.nil?
       raise CSVInvalidLineError

@@ -76,9 +76,12 @@ class Criterion < ActiveRecord::Base
 
     Grouping.update_criteria_coverage_counts(assignment)
     criterion_ids_by_type = {}
-    criterion_ids_by_type['RubricCriterion'] = []
-    criterion_ids_by_type['FlexibleCriterion'] = []
-    criterion_types.each_with_index { |type, index| criterion_ids_by_type[type] << criterion_ids_in[index] }
+    %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
+      criterion_ids_by_type[type] =
+        criterion_ids_in.zip(criterion_types)
+                        .select { |_, crit_type| crit_type == type}
+                        .map { |crit_id, _| crit_id }
+    end
     update_assigned_groups_counts(assignment, criterion_ids_by_type)
   end
 

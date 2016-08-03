@@ -900,7 +900,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no criteria selected, at least one grader' do
             post_as @admin, :global_actions, {assignment_id: @assignment.id,
               global_actions: 'assign', graders: [@ta1], current_table: 'criteria_table'}
-            assert_response :success
+            assert_response 400, 'select a criterion'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
@@ -1304,7 +1304,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           should 'and no criteria selected, at least one grader' do
             post_as @admin, :global_actions, {assignment_id: @assignment.id,
               global_actions: 'assign', graders: [@ta1], current_table: 'criteria_table'}
-            assert_response :success
+            assert_response 400, 'select a criterion'
             @assignment.get_criteria do |criterion|
               assert criterion.tas == []
             end
