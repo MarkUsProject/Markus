@@ -75,9 +75,9 @@ class Criterion < ActiveRecord::Base
     criterion_ids_by_type = {}
     %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
       criterion_ids_by_type[type] =
-          criterion_ids_in.zip(criterion_types)
-                          .select { |_, crit_type| crit_type == type}
-                          .map { |crit_id, _| crit_id }
+        criterion_ids_in.zip(criterion_types)
+                        .select { |_, crit_type| crit_type == type}
+                        .map { |crit_id, _| crit_id }
     end
     update_assigned_groups_counts(assignment, criterion_ids_by_type)
   end
@@ -108,6 +108,14 @@ class Criterion < ActiveRecord::Base
       flexible_criterion_ids_str = ''
     else
       flexible_criterion_ids_str = Array(criterion_ids_by_type['FlexibleCriterion'])
+        .map { |criterion_id| connection.quote(criterion_id) }
+        .join(',')
+    end
+
+    if criterion_ids_by_type.nil?  or criterion_ids_by_type['CheckboxCriterion'].nil?
+      checkbox_criterion_ids_str = ''
+    else
+      checkbox_criterion_ids_str = Array(criterion_ids_by_type['CheckboxCriterion'])
         .map { |criterion_id| connection.quote(criterion_id) }
         .join(',')
     end
@@ -145,7 +153,7 @@ class Criterion < ActiveRecord::Base
             AND ct.criterion_id = c.id AND ct.assignment_id = c.assignment_id
             AND m.type = 'TaMembership')
         WHERE assignment_id = #{assignment.id}
-    #{"AND id IN (#{criterion_ids_str})" unless criterion_ids_str.empty?}
+    #{"AND id IN (#{checkbox_criterion_ids_str})" unless checkbox_criterion_ids_str.empty?}
     UPDATE_SQL
   end
 end
