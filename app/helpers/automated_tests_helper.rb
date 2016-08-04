@@ -168,18 +168,50 @@ module AutomatedTestsHelper
     assignment
   end
 
-  def self.request_a_test_run(grouping_id, call_on, current_user, submission_id = nil)
-    @grouping = Grouping.find(grouping_id)
-    assignment = @grouping.assignment
-    group = @grouping.group
+  def self.copy_test_files(assignment, repo_path)
+    submission_path = File.join(repo_path, assignment.repository_folder)
+    assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
+    test_harness_path = MarkusConfigurator.markus_ate_test_runner_script_name
+    test_box_path = MarkusConfigurator.markus_ate_test_run_directory
+    test_server_host = MarkusConfigurator.markus_ate_test_server_host
 
-    @repo_dir = File.join(
+    if test_server_host == 'localhost'
+      # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
+      stdout, stderr, status = Open3.capture3("
+        rm -rf '#{test_box_path}' &&
+        mkdir '#{test_box_path}' &&
+        cp -r '#{submission_path}'/* '#{test_box_path}' &&
+        cp -r '#{assignment_tests_path}'/* '#{test_box_path}' &&
+        cp -r '#{test_harness_path}' '#{test_box_path}' &&
+      ")
+      return [stdout, stderr, status]
+    else
+      # tests executed on a test server: copy the student's submission and all necessary files through ssh
+      test_server_username = MarkusConfigurator.markus_ate_test_server_username
+      # TODO make it non-blocking? (needs something on the worker side to wait if the job is enqueued before the transfer is completed)
+      # TODO Use ssh.forward here to enqueue rather than a permanent ssh tunnel to Redis?
+      Net::SSH::start(test_server_host, test_server_username) do |ssh|
+        test_box_path = ssh.exec!('mktemp -d')
+        ssh.scp.upload!(test_server_host, test_server_username, submission_path, test_box_path, :recursive => true)
+        ssh.scp.upload!(test_server_host, test_server_username, assignment_tests_path, test_box_path, :recursive => true)
+        ssh.scp.upload!(test_server_host, test_server_username, test_harness_path, test_box_path)
+      end
+    end
+  end
+
+  def self.request_a_test_run(grouping_id, call_on, current_user, submission_id = nil)
+    grouping = Grouping.find(grouping_id)
+    assignment = grouping.assignment
+    group = grouping.group
+
+    repo_dir = File.join(
         MarkusConfigurator.markus_config_automated_tests_repository,
         group.repo_name)
-    export_group_repo(group, @repo_dir)
+    export_group_repo(group, repo_dir)
 
-    if files_available?(assignment) &&
-      (call_on == 'collection' || has_permission?(current_user, assignment))
+    if files_available?(assignment) && (call_on == 'collection' || has_permission?(current_user, assignment))
+      # TODO handle errors
+      copy_test_files(assignment, repo_dir)
       Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on, submission_id)
     end
   end
@@ -290,87 +322,11 @@ module AutomatedTestsHelper
   # the Resque workers - it should not be called from other functions.
   def self.perform(grouping_id, call_on, submission_id = nil)
     unless submission_id.nil?
-      @submission = Submission.find(submission_id)
+      submission = Submission.find(submission_id)
     end
-    @grouping = Grouping.find(grouping_id)
-    @assignment = @grouping.assignment
-    @group = @grouping.group
-    @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
-
-    stderr, result, status = launch_test(@assignment, @repo_dir, call_on)
-
-    if !status
-      #for debugging any errors in launch_test
-      assignment = @assignment
-      repo_dir = @repo_dir
-      m_logger = MarkusLogger.instance
-
-
-      src_dir = File.join(repo_dir, assignment.repository_folder)
-
-      # Get test_dir
-      test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
-
-      # Get the name of the test server
-      server = 'localhost'
-
-      # Get the directory and name of the test runner script
-      test_runner = MarkusConfigurator.markus_ate_test_runner_script_name
-
-      # Get the test run directory of the files
-      run_dir = MarkusConfigurator.markus_ate_test_run_directory
-
-
-      m_logger.log("error with launching test, error: #{stderr} and status:
-      #{status}\n src_dir: #{src_dir}\ntest_dir: #{test_dir}\nserver:
-      #{server}\ntest_runner:
-      #{test_runner}\nrun_dir: #{run_dir}", MarkusLogger::ERROR)
-
-      # TODO: handle this error better
-      raise 'error'
-    else
-      # Test scripts must now use calls to the MarkUs API to process results.
-      # process_result(result, call_on, @assignment, @grouping, @submission)
-    end
-
-  end
-
-  # Launch the test on the test server by scp files to the server
-  # and run the script.
-  # This function returns three values:
-  # stderr
-  # stdout
-  # boolean indicating whether execution suceeeded
-  def self.launch_test(assignment, repo_path, call_on)
-    submission_path = File.join(repo_path, assignment.repository_folder)
-    assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
-    test_harness_path = MarkusConfigurator.markus_ate_test_runner_script_name
-    test_box_path = MarkusConfigurator.markus_ate_test_run_directory
-    test_server_host = MarkusConfigurator.markus_ate_test_server_host
-
-    if test_server_host == 'localhost'
-      # create a clean folder to execute tests locally, copying the student's submission and all necessary test files
-      stdout, stderr, status = Open3.capture3("
-        rm -rf '#{test_box_path}' &&
-        mkdir '#{test_box_path}' &&
-        cp -r '#{submission_path}'/* '#{test_box_path}' &&
-        cp -r '#{assignment_tests_path}'/* '#{test_box_path}' &&
-        cp -r '#{test_harness_path}' '#{test_box_path}'
-      ")
-      unless status.success?
-        return [stderr, stdout, status]
-      end
-    else
-      test_server_username = MarkusConfigurator.markus_ate_test_server_username
-      # TODO make it non-blocking? (needs something on the worker side to wait if the job is enqueued before the transfer is completed)
-      # TODO Use ssh.forward here to enqueue rather than a permanent ssh tunnel to Redis?
-      Net::SSH::start(test_server_host, test_server_username) do |ssh|
-        test_box_path = ssh.exec!('mktemp -d')
-        ssh.scp.upload!(test_server_host, test_server_username, submission_path, test_box_path, :recursive => true)
-        ssh.scp.upload!(test_server_host, test_server_username, assignment_tests_path, test_box_path, :recursive => true)
-        ssh.scp.upload!(test_server_host, test_server_username, test_harness_path, test_box_path)
-      end
-    end
+    grouping = Grouping.find(grouping_id)
+    assignment = grouping.assignment
+    group = grouping.group
 
     # Find the test scripts for this test run, and parse the argument list
     list_run_scripts = scripts_to_run(assignment, call_on)
@@ -379,19 +335,35 @@ module AutomatedTestsHelper
       arg_list = arg_list + "#{script.script_name.gsub(/\s/, "\\ ")} #{script.halts_testing} "
     end
 
-    # Run script
+    # run tests and create result files
+    test_harness_path = MarkusConfigurator.markus_ate_test_runner_script_name
+    test_box_path = MarkusConfigurator.markus_ate_test_run_directory
     test_harness_name = File.basename(test_harness_path)
-    stdout, stderr, status = Open3.capture3("cd #{test_box_path}; "\
-      "ruby #{test_harness_name} #{arg_list}")
-
-    if !(status.success?)
-      return [stderr, stdout, false]
-    else
-      test_results_path = "#{AUTOMATED_TESTS_REPOSITORY}/test_runs/test_run_#{Time.now.to_i}"
+    stdout, stderr, status = Open3.capture3("
+      cd '#{test_box_path}' &&
+      ruby '#{test_harness_name}' #{arg_list}
+    ")
+    if status.success?
+      test_results_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository,
+                                    'test_runs',
+                                    "test_run_#{Time.now.to_i}")
       FileUtils.mkdir_p(test_results_path)
       File.write("#{test_results_path}/output.txt", stdout)
       File.write("#{test_results_path}/error.txt", stderr)
-      return [stdout, stdout, true]
+      # Test scripts must now use calls to the MarkUs API to process results.
+      # process_result(result, call_on, assignment, grouping, submission)
+    else
+      m_logger = MarkusLogger.instance
+      src_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository,
+                          group.repo_name,
+                          assignment.repository_folder)
+      m_logger.log("
+        Error launching test in directory #{src_dir}.\n
+        stdout:\n#{stdout};\n
+        stderr:\n#{stderr}
+      ", MarkusLogger::ERROR)
+      # TODO: handle this error better
+      raise 'error'
     end
   end
 
