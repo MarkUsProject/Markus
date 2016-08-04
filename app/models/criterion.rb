@@ -75,9 +75,9 @@ class Criterion < ActiveRecord::Base
     criterion_ids_by_type = {}
     %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
       criterion_ids_by_type[type] =
-          criterion_ids_in.zip(criterion_types)
-                          .select { |_, crit_type| crit_type == type}
-                          .map { |crit_id, _| crit_id }
+        criterion_ids_in.zip(criterion_types)
+                        .select { |_, crit_type| crit_type == type}
+                        .map { |crit_id, _| crit_id }
     end
     update_assigned_groups_counts(assignment, criterion_ids_by_type)
   end
@@ -117,6 +117,14 @@ class Criterion < ActiveRecord::Base
       checkbox_criterion_ids_str = Array(criterion_ids_by_type['CheckboxCriterion'])
           .map { |criterion_id| connection.quote(criterion_id) }
           .join(',')
+    end
+
+    if criterion_ids_by_type.nil?  or criterion_ids_by_type['CheckboxCriterion'].nil?
+      checkbox_criterion_ids_str = ''
+    else
+      checkbox_criterion_ids_str = Array(criterion_ids_by_type['CheckboxCriterion'])
+        .map { |criterion_id| connection.quote(criterion_id) }
+        .join(',')
     end
 
     # TODO replace these raw SQL with dynamic SET clause with Active Record
