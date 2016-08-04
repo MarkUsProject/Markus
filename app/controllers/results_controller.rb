@@ -477,7 +477,7 @@ class ResultsController < ApplicationController
 
     if is_review
       if @current_user.student?
-        @prs = @grouping.peer_reviews
+        @prs = @grouping.peer_reviews.find_all {|pr| Result.find(pr.result_id).released_to_students}
       else
         @reviewer = Grouping.find(params[:reviewer_grouping_id])
         @prs = @reviewer.peer_reviews_to_others
