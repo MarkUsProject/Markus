@@ -47,7 +47,7 @@ jQuery(document).ready(function() {
       var params = {
         'mark': this.value || '',
         'authenticity_token': AUTH_TOKEN
-      }
+      };
 
       jQuery.ajax({
         url:  this.getAttribute('data-action'),
@@ -169,7 +169,7 @@ jQuery(document).ready(function() {
     jQuery('.mark_grade_input').each(function () {
       expand_unmarked(this, 'FlexibleCriterion');
     });
-    jQuery('.mark_grade_input_checkbox').each(function () {
+    jQuery('.mark_grade_input_checkbox_container').each(function () {
       expand_unmarked(this, 'CheckboxCriterion');
     });
   });
@@ -197,15 +197,28 @@ function expand_unmarked(elem, criterion_class) {
     } else {
       hide_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
     }
-  } else {
+  } else if (criterion_class == 'FlexibleCriterion') {
     if (elem.value == '') {
       show_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
     } else {
       hide_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
     }
-  }
-};
+  } else {
+    // We have two radio buttons nested in this block that we must evaluate.
+    var anyRadioButtonSet = false;
+    jQuery(elem).find('.mark_grade_input_checkbox').each(function(index, element) {
+      if (element.checked) {
+          anyRadioButtonSet = true;
+      }
+    });
 
+    var hideOrShowCriterionFunc = anyRadioButtonSet ? hide_criterion : show_criterion;
+    hideOrShowCriterionFunc(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
+  }
+}
+
+// NOTE: This function is only called by rubric/flexible, not checkbox.
+// It should be upgraded to focus_mark_criterion_type() in the future.
 function focus_mark_criterion(id) {
   if (jQuery('#mark_criterion_' + id).length != 0) {
     if (jQuery('#mark_criterion_' + id).hasClass('expanded')) {
@@ -240,16 +253,17 @@ function focus_mark_criterion_type(id, class_name) {
 
 function hide_criterion(id, criterion_class) {
     var nodeToHide = null;
+    var criterionPrefix = 'mark';
     if (criterion_class === 'RubricCriterion') {
         nodeToHide = document.getElementById('mark_criterion_' + id);
-        document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;'; // TODO - Refactor
     } else if (criterion_class === 'FlexibleCriterion') {
         nodeToHide = document.getElementById('flexible_criterion_' + id);
-        document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;'; // TODO - Refactor
     } else {
         nodeToHide = document.getElementById('checkbox_criterion_' + id);
-        document.getElementById('checkbox_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;'; // TODO - Refactor
+        criterionPrefix = 'checkbox';
     }
+
+    document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
 
     if (nodeToHide !== null) {
         nodeToHide.removeClass('expanded');
@@ -258,19 +272,20 @@ function hide_criterion(id, criterion_class) {
 }
 
 function show_criterion(id, criterion_class) {
-    if (criterion_class == 'RubricCriterion') {
-        document.getElementById('mark_criterion_' + id).removeClass('not_expanded');
-        document.getElementById('mark_criterion_' + id).addClass('expanded');
-        document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;'; // TODO - Refactor
-    } else if (criterion_class == 'FlexibleCriterion') {
-        document.getElementById('flexible_criterion_' + id).removeClass('not_expanded');
-        document.getElementById('flexible_criterion_' + id).addClass('expanded');
-        document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;'; // TODO - Refactor
-    } else {
-        document.getElementById('checkbox_criterion_' + id).removeClass('not_expanded');
-        document.getElementById('checkbox_criterion_' + id).addClass('expanded');
-        document.getElementById('checkbox_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;'; // TODO - Refactor
+    var criterionPrefix = 'mark';
+    var classAddRemovePrefix = 'mark';
+
+    if (criterion_class == 'FlexibleCriterion') {
+        // TODO - This should also set the criterionPrefix when we refactor the flexible HTML/CSS later.
+        classAddRemovePrefix = 'flexible';
+    } else if (criterion_class == 'CheckboxCriterion') {
+        criterionPrefix = 'checkbox';
+        classAddRemovePrefix = 'checkbox';
     }
+
+    document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
+    document.getElementById(classAddRemovePrefix + '_criterion_' + id).removeClass('not_expanded');
+    document.getElementById(classAddRemovePrefix + '_criterion_' + id).addClass('expanded');
 }
 
 function select_mark(mark_id, mark) {
