@@ -145,6 +145,9 @@ jQuery(document).ready(function() {
     jQuery('.mark_grade_input').each(function () {
       show_criterion(parseInt(this.getAttribute('data-id'), 10), 'FlexibleCriterion');
     });
+    jQuery('.mark_grade_input_checkbox').each(function () {
+      show_criterion(parseInt(this.getAttribute('data-id'), 10), 'CheckboxCriterion');
+    });
   });
 
   jQuery('#collapse_all').click(function() {
@@ -154,6 +157,9 @@ jQuery(document).ready(function() {
     jQuery('.mark_grade_input').each(function () {
       hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'FlexibleCriterion');
     });
+    jQuery('.mark_grade_input_checkbox').each(function () {
+      hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'CheckboxCriterion');
+    });
   });
 
   jQuery('#expand_unmarked').click(function() {
@@ -162,6 +168,9 @@ jQuery(document).ready(function() {
     });
     jQuery('.mark_grade_input').each(function () {
       expand_unmarked(this, 'FlexibleCriterion');
+    });
+    jQuery('.mark_grade_input_checkbox').each(function () {
+      expand_unmarked(this, 'CheckboxCriterion');
     });
   });
 
@@ -211,43 +220,58 @@ function focus_mark_criterion(id) {
       show_criterion(id, 'FlexibleCriterion');
     }
   }
-};
+}
+
+// Handles the class name now instead of assuming it is of a certain type.
+function focus_mark_criterion_type(id, class_name) {
+    var criterionClassPrefix = 'mark';
+    if (class_name == 'FlexibleCriterion') {
+        criterionClassPrefix = 'flexible';
+    } else if (class_name == 'CheckboxCriterion') {
+        criterionClassPrefix = 'checkbox';
+    }
+
+    var node = jQuery('#' + criterionClassPrefix + '_criterion_' + id);
+    if (node.length != 0) {
+        var showOrHideCriterion = node.hasClass('expanded') ? hide_criterion : show_criterion;
+        showOrHideCriterion(id, class_name);
+    }
+}
 
 function hide_criterion(id, criterion_class) {
-  document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
+    var nodeToHide = null;
+    if (criterion_class === 'RubricCriterion') {
+        nodeToHide = document.getElementById('mark_criterion_' + id);
+        document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;'; // TODO - Refactor
+    } else if (criterion_class === 'FlexibleCriterion') {
+        nodeToHide = document.getElementById('flexible_criterion_' + id);
+        document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;'; // TODO - Refactor
+    } else {
+        nodeToHide = document.getElementById('checkbox_criterion_' + id);
+        document.getElementById('checkbox_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;'; // TODO - Refactor
+    }
 
-  var nodeToHide = null;
-  switch (criterion_class) {
-      case 'RubricCriterion':
-          nodeToHide = document.getElementById('mark_criterion_' + id);
-          break;
-      case 'FlexibleCriterion':
-          nodeToHide = document.getElementById('flexible_criterion_' + id);
-          break;
-      default:
-          nodeToHide = document.getElementById('checkbox_criterion_' + id);
-          break;
-  }
-
-  if (nodeToHide !== null) {
-    nodeToHide.removeClass('expanded');
-    nodeToHide.addClass('not_expanded');
-  }
-};
+    if (nodeToHide !== null) {
+        nodeToHide.removeClass('expanded');
+        nodeToHide.addClass('not_expanded');
+    }
+}
 
 function show_criterion(id, criterion_class) {
-  document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
-  if (criterion_class == 'RubricCriterion') {
-    document.getElementById('mark_criterion_' + id).removeClass('not_expanded');
-    document.getElementById('mark_criterion_' + id).addClass('expanded');
-  } else if (criterion_class == 'FlexibleCriterion') {
-    document.getElementById('flexible_criterion_' + id).removeClass('not_expanded');
-    document.getElementById('flexible_criterion_' + id).addClass('expanded');
-  } else {
-      document.getElementById('checkbox_criterion_' + id).removeClass('not_expanded');
-      document.getElementById('checkbox_criterion_' + id).addClass('expanded');
-  }
-};
+    if (criterion_class == 'RubricCriterion') {
+        document.getElementById('mark_criterion_' + id).removeClass('not_expanded');
+        document.getElementById('mark_criterion_' + id).addClass('expanded');
+        document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;'; // TODO - Refactor
+    } else if (criterion_class == 'FlexibleCriterion') {
+        document.getElementById('flexible_criterion_' + id).removeClass('not_expanded');
+        document.getElementById('flexible_criterion_' + id).addClass('expanded');
+        document.getElementById('mark_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;'; // TODO - Refactor
+    } else {
+        document.getElementById('checkbox_criterion_' + id).removeClass('not_expanded');
+        document.getElementById('checkbox_criterion_' + id).addClass('expanded');
+        document.getElementById('checkbox_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;'; // TODO - Refactor
+    }
+}
 
 function select_mark(mark_id, mark) {
   original_mark = jQuery('#mark_' + mark_id + '_table .rubric_criterion_level_selected').first();

@@ -12,11 +12,11 @@
     <%= I18n.t("marker.marks.invalid_mark") %>
   </div>
 
-  <div class="<%= title_class %>" id="<%= "mark_criterion_title_#{mark_criterion.id}"%>">
+  <div class="<%= title_class %>" id="<%= "checkbox_criterion_title_#{mark_criterion.id}"%>">
 
-    <div id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>"
+    <div id="<%="checkbox_criterion_title_#{mark_criterion.id}_expand"%>"
          class='criterion_expand'
-         onclick='<%="focus_mark_criterion(#{mark_criterion.id})"%>'>
+         onclick='<%="focus_mark_criterion_type(#{mark_criterion.id}, '#{mark_criterion.class.to_s}')"%>'>
       - &nbsp;
     </div>
 
@@ -27,8 +27,8 @@
                         view: 'marker'} %>
 
     <% if mark_criterion.description != '' %>
-        <div id="<%="criterion_info_#{mark_criterion.id}"%>"
-             class='criterion_info mark_checkbox'
+        <div id="<%="criterion_info_#{mark_criterion.id}_#{mark_criterion.class.to_s}"%>"
+             class='criterion_info mark-checkbox'
              data-id="<%=mark_criterion.id%>" >
           <%= mark_criterion.description %>
         </div>
