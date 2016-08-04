@@ -204,14 +204,7 @@ function expand_unmarked(elem, criterion_class) {
       hide_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
     }
   } else {
-    // We have two radio buttons nested in this block that we must evaluate.
-    var anyRadioButtonSet = false;
-    jQuery(elem).find('.mark_grade_input_checkbox').each(function(index, element) {
-      if (element.checked) {
-          anyRadioButtonSet = true;
-      }
-    });
-
+    var anyRadioButtonSet = jQuery(elem).find('.mark_grade_input_checkbox').filter('input:checked').length > 0;
     var hideOrShowCriterionFunc = anyRadioButtonSet ? hide_criterion : show_criterion;
     hideOrShowCriterionFunc(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
   }
