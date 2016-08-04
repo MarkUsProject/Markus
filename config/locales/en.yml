@@ -1225,9 +1225,13 @@ en:
         link_yml: "Download Criteria in YAML Format"
         yml:      "Download YML"
       upload:
-        yml:        "Upload YML"
-        yml_title:  "Upload YML File"
-        yml_prompt: "Select a YML file to upload"
+        yml:             "Upload YML"
+        yml_title:       "Upload YML File"
+        yml_prompt:      "Select a YML file to upload"
+        success:         "Criteria successfully uploaded: %{nb_updates} update(s)."
+        error:           "The following criteria had invalid format:"
+        empty_error:     "No criteria were found in the provided file."
+        syntax_error:    "There is an error in the file you uploaded: %{error}"
         format_yml_html: "
           <p>The file should have the following format for a rubric criterion:<br>
             <code>criterion_name:<br>
@@ -1238,11 +1242,18 @@ en:
               &nbsp;&nbsp;level_1:<br>
               &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
           </p>
-          <p>and the following for a flexible or checkbox criterion:</p>
+          <p>The following for a flexible criterion:</p>
             <code>criterion_name:<br>
-              &nbsp;&nbsp;max_value: max_value<br>
+              &nbsp;&nbsp;type: flexible<br>
+              &nbsp;&nbsp;max_mark: max_mark<br>
               &nbsp;&nbsp;description: description<br></code>
-            <p>The description is optional.</p>"
+            <p>The description is optional.</p>
+          <p>And the following for a checkbox criterion:</p>
+            <code>criterion_name:<br>
+            &nbsp;&nbsp;type: checkbox<br>
+            &nbsp;&nbsp;max_mark: max_mark<br>
+            &nbsp;&nbsp;description: description<br></code>
+          <p>The description is optional.</p>"
       errors:
         messages:
           name_taken:             "Criterion name already used."
@@ -1306,7 +1317,6 @@ en:
         link_csv: "Download rubric in CSV Format"
         link_yml: "Download rubric in YAML Format"
       upload:
-        success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
         csv:       "Upload CSV"
         csv_title: "Upload CSV File"
         csv_prompt: "Select a CSV file to upload"
@@ -1317,9 +1327,6 @@ en:
         <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br>
         and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
         by commas)."
-        error: "Some rubric criteria were invalid:"
-        syntax_error: "There is an error in the file you uploaded: %{error}"
-        empty_error: "No criteria were found in the provided file."
       defaults:
         level_0: "Very Poor"
         level_1: "Weak"

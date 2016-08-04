@@ -59,7 +59,7 @@
   <h1><%= t('criteria.upload.yml_title') %></h1>
   <p><%= t('criteria.upload.yml_prompt') %></p>
   <%= form_for :yml_upload,
-               url: yml_upload_assignment_rubric_criteria_path(@assignment),
+               url: upload_yml_assignment_criteria_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
     <div>
       <p><%= f.file_field :rubric %></p>

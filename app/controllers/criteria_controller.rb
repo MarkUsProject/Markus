@@ -84,6 +84,74 @@ class CriteriaController < ApplicationController
               disposition: 'inline')
   end
 
+  def upload_yml
+    crit_format_errors = ActiveSupport::OrderedHash.new
+    assignment = Assignment.find(params[:assignment_id])
+    encoding = params[:encoding]
+    unless request.post?
+      redirect_to action: 'index', id: assignment.id
+      return
+    end
+    file = params[:yml_upload][:rubric]
+    unless file.blank?
+      begin
+        criteria = YAML::load(file.utf8_encode(encoding))
+      rescue Psych::SyntaxError => e
+        flash[:error] = I18n.t('criteria.upload.error') + '  ' +
+            I18n.t('criteria.upload.syntax_error', error: "#{e}")
+        redirect_to action: 'index', id: assignment.id
+        return
+      end
+      unless criteria
+        flash[:error] = I18n.t('criteria.upload.error') +
+          '  ' + I18n.t('criteria.upload.empty_error')
+        redirect_to action: 'index', id: assignment.id
+        return
+      end
+      successes = 0
+      num_format_errors = 1
+      criteria.each do |criterion_yml|
+        begin
+          if criterion_yml[1]['type'].nil?
+            RubricCriterion.create_or_update_from_yml(criterion_yml, assignment)
+          elsif criterion_yml[1]['type'] == 'flexible'
+            FlexibleCriterion.create_or_update_from_yml(criterion_yml, assignment)
+          else
+            CheckboxCriterion.create_or_update_from_yml(criterion_yml, assignment)
+          end
+          successes += 1
+        rescue RuntimeError => e
+          #collect the names of the criterion that contains an error in it.
+          crit_format_errors[num_format_errors] = criterion_yml.at(0)
+          num_format_errors = num_format_errors + 1
+          flash[:error] = I18n.t('criteria.upload.syntax_error', error: "#{e}")
+        end
+      end
+
+      if successes < criteria.length
+        flash[:error] = I18n.t('criteria.upload.error') + ' ' + format_names(crit_format_errors)
+      end
+
+      if successes > 0
+        flash[:notice] = I18n.t('criteria.upload.success', nb_updates: successes)
+      end
+    end
+    redirect_to action: 'index', assignment_id: assignment.id
+  end
+
+  # Create a String separated by commas from the OrderedHash of criteria with format errors.
+  def format_names(criteria_with_errors)
+    cr_names = ''
+    criteria_with_errors.each_value.with_index do |cr_name, index|
+      if index == 0
+        cr_names = cr_names + cr_name
+      else
+        cr_names = cr_names + ', ' + cr_name
+      end
+    end
+    cr_names
+  end
+
   private
 
   def flexible_criterion_params

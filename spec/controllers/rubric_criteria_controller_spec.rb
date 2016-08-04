@@ -127,9 +127,9 @@ describe RubricCriteriaController do
 
       expect(flash[:error]).to be_nil
       expect(flash[:success]).to eq([t('csv_valid_lines', valid_line_count: 4)])
-      expect(response).to redirect_to(action: 'index',
-                                      controller: 'rubric_criteria',
-                                      id: assignment.id)
+      expect(response).to redirect_to(action:     'index',
+                                      controller: 'criteria',
+                                      id:         assignment.id)
     end
 
     it 'does not accept files with invalid columns' do
@@ -139,9 +139,9 @@ describe RubricCriteriaController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to(action: 'index',
-                                      controller: 'rubric_criteria',
-                                      id: assignment.id)
+      expect(response).to redirect_to(action:     'index',
+                                      controller: 'criteria',
+                                      id:         assignment.id)
     end
 
     it 'handles fileless submission' do
@@ -149,9 +149,9 @@ describe RubricCriteriaController do
            assignment_id: assignment.id
 
       expect(response.status).to eq(302)
-      expect(response).to redirect_to(action: 'index',
-                                      controller: 'rubric_criteria',
-                                      id: assignment.id)
+      expect(response).to redirect_to(action:     'index',
+                                      controller: 'criteria',
+                                      id:         assignment.id)
     end
 
     it 'does not accept a non-csv file with .csv extension' do
@@ -161,9 +161,9 @@ describe RubricCriteriaController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to(action: 'index',
-                                      controller: 'rubric_criteria',
-                                      id: assignment.id)
+      expect(response).to redirect_to(action:     'index',
+                                      controller: 'criteria',
+                                      id:         assignment.id)
     end
 
     it 'does not accept a .xls file' do
@@ -173,9 +173,9 @@ describe RubricCriteriaController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to(action: 'index',
-                                      controller: 'rubric_criteria',
-                                      id: assignment.id)
+      expect(response).to redirect_to(action:     'index',
+                                      controller: 'criteria',
+                                      id:         assignment.id)
     end
   end
 end

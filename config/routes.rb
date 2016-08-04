@@ -83,15 +83,16 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :rubric_criteria, only: [:index] do
+      resources :rubric_criteria,
+                except: [:index, :create, :new, :edit, :show, :update, :destroy] do
         collection do
           post 'csv_upload'
-          post 'yml_upload'
           get 'download_csv'
         end
       end
 
-      resources :flexible_criteria, only: [:index] do
+      resources :flexible_criteria, only: [:index],
+                except: [:index, :create, :new, :edit, :show, :update, :destroy] do
         collection do
           post 'upload'
           get 'download'

@@ -99,6 +99,53 @@ class FlexibleCriterion < Criterion
     criterion
   end
 
+  # Instantiate a FlexibleCriterion from a YML entry
+  #
+  # ===Params:
+  #
+  # criterion_yml:: Information corresponding to a single FlexibleCriterion in the
+  #                 following format:
+  #                 criterion_name:
+  #                   type: criterion_type
+  #                   max_mark: #
+  #                   description: level_description
+  #
+  # assignment::    The assignment to which the newly created criterion should belong.
+  #
+  # ===Raises:
+  #
+  # RuntimeError  If there is not enough information, if the criterion cannot be
+  #               saved.
+  def self.create_or_update_from_yml(criterion_yml, assignment)
+    name = criterion_yml[0]
+    # If a FlexibleCriterion of the same name exits, load it up. Otherwise,
+    # create a new one.
+    criterion = assignment.get_criteria(:all, :flexible)
+                          .find_or_create_by(name: name)
+    #Check that the max_mark is not a string.
+    begin
+      criterion.max_mark = Float(criterion_yml[1]['max_mark'])
+    rescue ArgumentError
+      raise I18n.t('criteria_csv_error.max_zero')
+    rescue TypeError
+      raise I18n.t('criteria_csv_error.max_zero')
+    rescue NoMethodError
+      raise I18n.t('criteria.upload.empty_error')
+    end
+    # Only set the position if this is a new record.
+    if criterion.new_record?
+      criterion.position = assignment.next_criterion_position
+    end
+    # set the description to the one given, or to an empty string if
+    # a description is not given.
+    criterion.description =
+      criterion_yml[1]['description'].nil? ? '' : criterion_yml[1]['description']
+    unless criterion.save
+      raise RuntimeError.new(criterion.errors)
+    end
+    criterion
+  end
+
   def weight
     1
   end

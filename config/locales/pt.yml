@@ -1064,9 +1064,13 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         link_yml: "Baixar Critérios em Formato YAML"
         yml:      "Baixar YML"
       upload:
-        yml:        "Carregar YML"
-        yml_title:  "Carregar arquivo YML"
-        yml_prompt: "Selecionar um arquivo YML para carregar"
+        yml:             "Carregar YML"
+        yml_title:       "Carregar arquivo YML"
+        yml_prompt:      "Selecionar um arquivo YML para carregar"
+        success:         "Critério carregado com sucesso: %{nb_updates} atualizada(s)."
+        error:           "Os seguintes critérios deveriam formato inválido:"
+        empty_error:     "Nenhum critério foi encontrado no arquivo fornecido."
+        syntax_error:    "Existe um erro no arquivo carregado : %{error}"
         format_yml_html: "
           <p>O arquivo deve ter o seguinte formato para um critério Rubrica:<br>
             <code>criterion_name:<br>
@@ -1077,10 +1081,17 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
               &nbsp;&nbsp;level_1:<br>
               &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
           </p>
-          <p>e o seguinte para um critério flexível ou caixa de seleção:</p>
+          <p>A seguir um critério flexível:</p>
             <code>criterion_name:<br>
-              &nbsp;&nbsp;max_value: max_value<br>
+              &nbsp;&nbsp;type: flexible<br>
+              &nbsp;&nbsp;max_mark: max_mark<br>
               &nbsp;&nbsp;description: description<br></code>
+            <p>A descrição é opcional.</p>
+          <p>E o seguinte para um critério de seleção:</p>
+            <code>criterion_name:<br>
+            &nbsp;&nbsp;type: checkbox<br>
+            &nbsp;&nbsp;max_mark: max_mark<br>
+            &nbsp;&nbsp;description: description<br></code>
           <p>A descrição é opcional.</p>"
       errors:
         messages:
@@ -1148,7 +1159,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         link_csv: "Baixar rúbrica em formato CSV"
         link_yml: "Baixar rúbrica em formato YAML"
       upload:
-        success: "Critério de rúbrica carregado com sucesso: %{nb_updates} atualizada(s)."
         csv:       "Carregar CSV"
         csv_title: "Carregar arquivo CSV"
         csv_prompt: "Selecionar um arquivo CSV para carregar"
@@ -1158,9 +1168,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
         <p>onde <em>level_names</em> deve conter o nome de cada nível (separado por vírgulas)<br>
         e <em>level_descriptions</em> deve conter a descrição de cada nível (opcional, também separado por vírgulas)."
-        error: "Alguns critérios de rúbrica eram inválidos:"
-        syntax_error: "Existe um erro no arquivo carregado : %{error}"
-        empty_error: "Nenhum critério foi encontrado no arquivo fornecido."
       defaults:
         level_0: "Insuficiente"
         level_1: "Fraco"

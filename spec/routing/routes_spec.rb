@@ -223,6 +223,14 @@ describe 'An Assignment' do
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
+
+      it 'routes POST yml_upload properly' do
+        expect(post: criteria_path + '/upload_yml').to route_to(
+          controller: criteria_ctrl,
+          action: 'upload_yml',
+          assignment_id: assignment.id.to_s,
+          locale: 'en')
+      end
     end
   end
   # end assignment criteria route tests
@@ -238,13 +246,6 @@ describe 'An Assignment' do
         expect(post: rubric_path + '/csv_upload').to route_to(
           controller: rubric_ctrl,
           action: 'csv_upload',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-      it 'routes POST yml_upload properly' do
-        expect(post: rubric_path + '/yml_upload').to route_to(
-          controller: rubric_ctrl,
-          action: 'yml_upload',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
