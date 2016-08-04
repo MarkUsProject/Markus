@@ -83,22 +83,6 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :rubric_criteria,
-                except: [:index, :create, :new, :edit, :show, :update, :destroy] do
-        collection do
-          post 'csv_upload'
-          get 'download_csv'
-        end
-      end
-
-      resources :flexible_criteria, only: [:index],
-                except: [:index, :create, :new, :edit, :show, :update, :destroy] do
-        collection do
-          post 'upload'
-          get 'download'
-        end
-      end
-
       resources :automated_tests do
         collection do
           get 'manage'

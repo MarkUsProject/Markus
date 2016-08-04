@@ -235,56 +235,6 @@ describe 'An Assignment' do
   end
   # end assignment criteria route tests
 
-  # start assignment rubric_criteria route tests
-  context 's rubric_criteria' do
-    let(:rubric_path) { path + '/' + assignment.id.to_s + '/rubric_criteria' }
-    let(:rubric_ctrl) { 'rubric_criteria' }
-
-    # start assignment rubric route tests
-    context 'collection like' do
-      it 'routes POST csv_upload properly' do
-        expect(post: rubric_path + '/csv_upload').to route_to(
-          controller: rubric_ctrl,
-          action: 'csv_upload',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-      it 'routes GET download_csv properly' do
-        expect(get: rubric_path + '/download_csv').to route_to(
-          controller: rubric_ctrl,
-          action: 'download_csv',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-    end
-  end
-  # end assignment rubric_criteria route tests
-
-  # start assignment flexible criteria route tests
-  context 's flexible_criteria' do
-    context 'collection' do
-      let(:criter_path) { path + '/' + assignment.id.to_s + '/flexible_criteria' }
-      let(:criter_ctrl) { 'flexible_criteria' }
-
-      it 'routes POST upload properly' do
-        expect(post: criter_path + '/upload').to route_to(
-          controller: criter_ctrl,
-          action: 'upload',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET download properly' do
-        expect(get: criter_path + '/download').to route_to(
-          controller: criter_ctrl,
-          action: 'download',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-    end
-  end
-  # end assignment flexible criteria route tests
-
   # start assignment automated_tests resource route tests
   context 's automated_tests' do
     let(:autom_path) { path + '/' + assignment.id.to_s + '/automated_tests' }
