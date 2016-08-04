@@ -741,14 +741,14 @@ class Grouping < ActiveRecord::Base
   def marking_state(result)
     if !has_submission?
       'unmarked'
+    elsif result.released_to_students
+      'released'
     elsif result.marking_state != Result::MARKING_STATES[:complete]
       if current_submission_used.has_remark?
         'remark'
       else
         'partial'
       end
-    elsif result.released_to_students
-      'released'
     else
       'completed'
     end
