@@ -123,7 +123,7 @@ module SubmissionsHelper
             edit_assignment_result_path(assignment.parent_assignment.id, result_pr.result_id) :
             get_grouping_name_url(grouping, result)
         g[:class_name] = get_tr_class(grouping)
-        g[:state] = grouping.marking_state(result)
+        g[:state] = grouping.marking_state(result, assignment, current_user)
         g[:anonymous_id] = i + 1
         g[:error] = ''
       rescue => e
