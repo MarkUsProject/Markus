@@ -34,7 +34,7 @@ class CheckboxCriterion < Criterion
   end
 
   def weight
-    1
+    max_mark
   end
 
   def all_assigned_groups
