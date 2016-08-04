@@ -269,6 +269,9 @@ class AssignmentsController < ApplicationController
                                     .sort_by { |s| [SectionDueDate.due_date_for(s.section, @assignment), s.section.name] }
   end
 
+  # TODO: Delete this method once we fully merge the views for
+  # both criteria, probably along with the route and the
+  # marking_scheme_type field.
   # Called when editing assignments form is submitted (PUT).
   def update
     @assignment = Assignment.find_by_id(params[:id])
@@ -282,8 +285,8 @@ class AssignmentsController < ApplicationController
       @oldcriteria = @assignment.marking_scheme_type
       @newcriteria = params[:assignment][:marking_scheme_type]
       if @oldcriteria != @newcriteria and !@assignment.get_criteria.nil?
-        #TODO use @assignment.criteria.destroy_all when the refactor of
-        # criteria structure finished
+        # TODO: use @assignment.criteria.destroy_all when the refactoring of
+        # the criteria structure ends.
         @assignment.get_criteria.each do |criterion|
           criterion.destroy
         end
