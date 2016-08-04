@@ -75,9 +75,9 @@ class Criterion < ActiveRecord::Base
     criterion_ids_by_type = {}
     %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
       criterion_ids_by_type[type] =
-          criterion_ids_in.zip(criterion_types)
-                          .select { |_, crit_type| crit_type == type}
-                          .map { |crit_id, _| crit_id }
+        criterion_ids_in.zip(criterion_types)
+                        .select { |_, crit_type| crit_type == type}
+                        .map { |crit_id, _| crit_id }
     end
     update_assigned_groups_counts(assignment, criterion_ids_by_type)
   end

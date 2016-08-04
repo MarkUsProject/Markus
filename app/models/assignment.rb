@@ -865,7 +865,7 @@ class Assignment < ActiveRecord::Base
   # Assign graders to a criterion for this assignment.
   # Raise a CSVInvalidLineError if the criterion or a grader doesn't exist.
   def add_graders_to_criterion(criterion_name, graders)
-    criterion = get_criteria.find { |crit| crit.name == criterion_name}
+    criterion = get_criteria.find{ |crit| crit.name == criterion_name }
 
     if criterion.nil?
       raise CSVInvalidLineError
