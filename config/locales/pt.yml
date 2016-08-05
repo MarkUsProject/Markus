@@ -447,6 +447,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       release_prs:          "Comentários liberação de pares"
       unrelease_prs:        "Avaliações pelos pares Un - lançamento"
       group_name:           "Nome do grupo"
+      reviewer_name:        "Crítico"
+      reviewee_name:        "Pessoa que está sendo revisado"
       repository_name:      "Repositório: %{repository}"
       repository:           "Repositório"
       commit_date:          "Data de envio"

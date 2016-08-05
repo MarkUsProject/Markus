@@ -11,7 +11,8 @@
         columns: [
           {
             id: 'group_name',
-            content: '<%= j raw I18n.t(:'browse_submissions.group_name') %>',
+            content: '<%= @assignment.is_peer_review? ? I18n.t(:'browse_submissions.reviewer_name') :
+                                                        I18n.t(:'browse_submissions.group_name') %>',
             sortable: true,
             compare: compare_anchor_text,
             searchable: true
@@ -37,7 +38,7 @@
           <% if @assignment.is_peer_review? %>
             {
               id: 'reviewees',
-              content: 'Reviewees',
+              content: '<%= j raw I18n.t(:'browse_submissions.reviewee_name') %>',
               sortable: true,
               searchable: false
             },

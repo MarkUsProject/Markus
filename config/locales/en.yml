@@ -491,6 +491,8 @@ en:
       unrelease_prs:        "Unrelease Peer Reviews"
       run_tests:            "Run Tests"
       group_name:           "Group Name"
+      reviewer_name:        "Reviewer"
+      reviewee_name:        "Reviewee"
       repository_name:      "Repository: %{repository}"
       repository:           "Repository"
       commit_date:          "Commit Date"

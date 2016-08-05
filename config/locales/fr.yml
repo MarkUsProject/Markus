@@ -472,6 +472,8 @@ fr:
       unrelease_prs:        "Un libération examens par les pairs"
       run_tests:            "UPDATE ME"
       group_name:           "Nom du groupe"
+      reviewer_name:        "Critique"
+      reviewee_name:        "Pays examiné"
       repository:           "Répertoire"
       repository_name:      "Répertoire : %{repository}"
       commit_date:          "Date d'envoi (commit)"
