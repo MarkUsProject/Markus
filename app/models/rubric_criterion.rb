@@ -158,8 +158,8 @@ class RubricCriterion < Criterion
   #
   # ===Params:
   #
-  # criterion_yml:: Information corresponding to a single RubricCriterion in the
-  #                 following format:
+  # criterion_yml:: Information corresponding to a single RubricCriterion
+  #                 in the following format:
   #                 criterion_name:
   #                   weight: #
   #                   level_0:
@@ -167,42 +167,35 @@ class RubricCriterion < Criterion
   #                     description: level_description
   #                   level_1:
   #                     [...]
-  # assignment::    The assignment to which the newly created criterion should belong.
-  #
-  # ===Raises:
-  #
-  # RuntimeError If there is not enough information, if the criterion cannot be
-  #              saved.
-  def self.create_or_update_from_yml(criterion_yml, assignment)
+  # assignment::    The assignment to which the newly created criterion
+  #                 should belong.
+  def self.load_from_yml(criterion_yml, assignment)
     name = criterion_yml[0]
-    # If a RubricCriterion of the same name exits, load it up. Otherwise,
-    # create a new one.
-    criterion = assignment.get_criteria(:all, :rubric)
-                          .find_or_create_by(name: name)
-    #Check that the weight is not a string, so that the appropriate max mark can be calculated.
+    # Create a new RubricCriterion
+    criterion = RubricCriterion.new
+    criterion.assignment_id = assignment.id
+    criterion.name = name
+    # Check that the weight is not a string, so that the appropriate
+    # max mark can be calculated.
     begin
       criterion.max_mark = Float(criterion_yml[1]['weight']) * MAX_LEVEL
     rescue ArgumentError
-      raise I18n.t('criteria_csv_error.weight_not_number')
+      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
     rescue TypeError
-      raise I18n.t('criteria_csv_error.weight_not_number')
+      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
     rescue NoMethodError
-      raise I18n.t('criteria.upload.empty_error')
+      raise RuntimeError.new(I18n.t('criteria.upload.empty_error'))
     end
-    # Only set the position if this is a new record.
-    if criterion.new_record?
-      criterion.position = assignment.next_criterion_position
-    end
+    # Set the position since this is a new record.
+    criterion.position = assignment.next_criterion_position
     # next comes the level names.
     (0..RUBRIC_LEVELS-1).each do |i|
       if criterion_yml[1]['level_' + i.to_s]
-        criterion['level_' + i.to_s + '_name'] = criterion_yml[1]['level_' + i.to_s]['name']
+        criterion['level_' + i.to_s + '_name'] =
+          criterion_yml[1]['level_' + i.to_s]['name']
         criterion['level_' + i.to_s + '_description'] =
           criterion_yml[1]['level_' + i.to_s]['description']
       end
-    end
-    unless criterion.save
-      raise RuntimeError.new(criterion.errors)
     end
     criterion
   end

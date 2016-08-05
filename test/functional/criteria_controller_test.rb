@@ -73,9 +73,8 @@ END
 
       assert_response  :redirect
       assert_not_nil set_flash.to(
-        t('criteria.upload.error') + ' cr1')
+        t('criteria.upload.error.invalid_format') + ' cr1')
       @assignment.reload
-      new_categories_list = @assignment.annotation_categories
       assert_equal [], @assignment.get_criteria(:all, :rubric)
 
     end
@@ -87,11 +86,10 @@ END
              yml_upload:    { rubric: "cr1:\n  weight: 5\na" }
 
       assert_response :redirect
-      assert_not_nil set_flash.to(t('criteria.upload.error') + '  ' +
+      assert_not_nil set_flash.to(t('criteria.upload.error.invalid_format') + '  ' +
                                   t('criteria.upload.syntax_error',
                                     error: "syntax error on line 2, col 1: `'"))
       @assignment.reload
-      new_categories_list = @assignment.annotation_categories
       assert_equal(@assignment.get_criteria(:all, :rubric).size, 0)
     end
 

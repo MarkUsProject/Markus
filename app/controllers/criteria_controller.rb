@@ -101,16 +101,17 @@ class CriteriaController < ApplicationController
     file = params[:yml_upload][:rubric]
     unless file.blank?
       begin
+        # This parsing does not output repeated entries.
         criteria = YAML::load(file.utf8_encode(encoding))
       rescue Psych::SyntaxError => e
-        flash[:error] = I18n.t('criteria.upload.error') + '  ' +
-            I18n.t('criteria.upload.syntax_error', error: "#{e}")
+        flash_message(:error, I18n.t('criteria.upload.error.invalid_format') + '  ' +
+                      I18n.t('criteria.upload.syntax_error', error: "#{e}"))
         redirect_to action: 'index', id: assignment.id
         return
       end
       unless criteria
-        flash[:error] = I18n.t('criteria.upload.error') +
-          '  ' + I18n.t('criteria.upload.empty_error')
+        flash_message(:error, I18n.t('criteria.upload.error.invalid_format') +
+                      '  ' + I18n.t('criteria.upload.empty_error'))
         redirect_to action: 'index', id: assignment.id
         return
       end
