@@ -34,6 +34,14 @@
               searchable: false
             },
           <% end %>
+          <% if @assignment.is_peer_review? %>
+            {
+              id: 'reviewees',
+              content: 'Reviewees',
+              sortable: true,
+              searchable: false
+            },
+          <% end %>
           {
             id: 'marking_state',
             content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
@@ -63,14 +71,14 @@
               sortable: false,
               searchable: false
             },
+            {
+              id: 'final_grade',
+              content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
+              sortable: true,
+              compare: compare_numeric_values,
+              searchable: false
+            }
           <% end %>
-          {
-            id: 'final_grade',
-            content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
-            sortable: true,
-            compare: compare_numeric_values,
-            searchable: false
-          }
         ],
         filters: [
           {
@@ -170,6 +178,16 @@
     onSuccess: function(success) {
       this.setState({success: success});
     },
+    renderRevieweeList: function(reviewees) {
+      console.log(reviewees)
+      return (
+        <div>
+          {reviewees.map(function(reviewee) {
+            return  <a href={reviewee.reviewee_url}> {reviewee.reviewee_name} </a>
+          })}
+        </div>
+      );
+    },
     renderMarkingState: function(state) {
       if (state === 'released') {
         return (<%= image_tag('icons/email_go.png',
@@ -260,6 +278,9 @@
           s['final_grade'] = submission.final_grade;
           s['section'] = submission.section;
           s['has_files'] = submission.has_files;
+          <% if @assignment.is_peer_review? %>
+            s['reviewees'] = this.renderRevieweeList(submission.reviewees);
+          <% end %>
         }
         return s;
       }.bind(this));

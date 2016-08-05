@@ -119,6 +119,19 @@ module SubmissionsHelper
           g[:grace_credits_used] = grouping.grace_period_deduction_single
           g[:section] = grouping.section
         end
+        if assignment.is_peer_review?
+          reviewee_array = Array.new
+          prs = grouping.peer_reviews_to_others
+          prs.each_with_index do |pr, i|
+            reviewee_hash = Hash.new
+            reviewee_result = Result.find(pr.result_id)
+            reviewee_grouping = reviewee_result.submission.grouping
+            reviewee_hash[:reviewee_url] = get_grouping_name_url(reviewee_grouping, reviewee_result)
+            reviewee_hash[:reviewee_name] = Group.find(reviewee_grouping.group_id).group_name
+            reviewee_array[i] = reviewee_hash
+          end
+          g[:reviewees] = reviewee_array
+        end
         g[:name_url] = assignment.is_peer_review? && current_user.is_a_reviewer?(assignment) ?
             edit_assignment_result_path(assignment.parent_assignment.id, result_pr.result_id) :
             get_grouping_name_url(grouping, result)
