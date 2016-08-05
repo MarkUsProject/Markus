@@ -110,6 +110,7 @@ jQuery(document).ready(function() {
           document.getElementById('current_subtotal_div').innerHTML = subtotal;
           jQuery('#mark_' + mark_id + '_' + yes_or_no_type).prop('checked', true);
           jQuery('#mark_' + mark_id + '_' + (yes_or_no_type === 'yes' ? 'no' : 'yes')).prop('checked', false);
+          jQuery('#checkbox_radio_button_container_' + mark_id).html(mark);
         }
       });
 

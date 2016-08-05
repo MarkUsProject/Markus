@@ -24,6 +24,7 @@
                                        oldmark: old_mark.nil? ? 'none' : old_mark.mark,
                                        mark: mark.id.to_s },
                                'data-action' => url_for(action: :update_mark, mark_id: mark.id, radio_type: 'yes')) %>
+      &nbsp;
       <%= t('answer_no') %>
       <%= radio_button_tag('mark_' + mark.id.to_s,
                               'no',
@@ -33,7 +34,10 @@
                                       oldmark: old_mark.nil? ? 'none' : old_mark.mark,
                                       mark: mark.id.to_s },
                               'data-action' => url_for(action: :update_mark, mark_id: mark.id, radio_type: 'no')) %>
-      / <%= mark_criterion.max_mark.to_s %>
+      <span class="checkbox_radio_button_container">
+        <span id="checkbox_radio_button_container_<%= mark.id %>"><%= mark.mark.nil? ? '-' : mark.mark %></span>
+        / <%= mark_criterion.max_mark.to_s %>
+      </span>
   <% else %>
       <%= mark.mark %> /&nbsp; <%= mark_criterion.max_mark.to_s %>
   <% end %>
