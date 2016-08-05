@@ -3,7 +3,8 @@
 import json
 import os
 import subprocess
-from enum import Enum
+import markusapi
+import enum
 
 
 class PAMResult:
@@ -11,7 +12,7 @@ class PAMResult:
     A test result from pam.
     """
 
-    class Status(Enum):
+    class Status(enum.Enum):
         PASS = 1
         FAIL = 2
         ERROR = 3
@@ -152,7 +153,17 @@ class MarkusPAMWrapper(PAMWrapper):
 
 if __name__ == '__main__':
     # TODO set pam timeout other than the default?
-    markus_test_files = ['test.py']
-    wrapper = MarkusPAMWrapper(path_to_uam='/home/adisandro/Desktop/uam', test_files=markus_test_files,
-                               path_to_virtualenv='/home/adisandro/Code/uam-virtualenv')
+    # Modify all uppercase variables with your settings
+    API_KEY = 'ZTEwY2VlNmM4Nzk3NjM2N2QxYjk0YWM0MjU0M2NlMDQ='
+    ROOT_URL = 'http://localhost:3000/'
+    MARKUS_TEST_FILES = ['test.py']
+    api = markusapi.Markus(API_KEY, ROOT_URL)
+    wrapper = MarkusPAMWrapper(path_to_uam='/media/Dati/alessio/Lavoro/UofT/Software/uam', test_files=MARKUS_TEST_FILES,
+                               path_to_virtualenv='/home/alessio/Code/Workspaces/uam-virtualenv')
     wrapper.run()
+    # TODO 1) make run return print_results (rename to format_results), then both print them and use them in the api
+    # TODO 2) get assignment_id and group_id from somewhere
+    # api.upload_test_script_result(6, '77',
+    #                               '<testrun><test_script><script_name>py_suite_1.py</script_name>' +
+    #                               test_1() + test_2() + test_3() +
+    #                               '</test_script></testrun>')
