@@ -64,9 +64,9 @@ module SummariesHelper
     criteria_hash = Hash.new
     criteria = assignment.get_criteria
     criteria.each do |criterion|
-      key = 'criterion_' + criterion.id.to_s
+      key = 'criterion_' + criterion.class.to_s + '_' + criterion.id.to_s
       if grouping.has_submission?
-        mark = grouping.current_submission_used.get_latest_result.marks.find_by_markable_id(criterion.id)
+        mark = grouping.current_submission_used.get_latest_result.marks.find_by(markable: criterion)
         if mark.nil? || mark.mark.nil?
           criteria_hash[key] = '-'
         else
