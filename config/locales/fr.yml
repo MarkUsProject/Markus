@@ -1099,7 +1099,7 @@ fr:
         yml:             "Envoyer YML"
         yml_title:       "Envoyer le fichier XML"
         yml_prompt:      "Choisissez un fichier YML à envoyer"
-        success:         "Le fichier contenant le barème a bien été envoyé : %{nb_updates} mise(s) à jour."
+        success:         "Le fichier contenant le barème a bien été envoyé : %{num_loaded}."
         error:           "Les critères suivants a un format non valide:"
         empty_error:     "Aucun critère n'a été trouvé dans le fichier fourni."
         syntax_error:    "Il y a une erreur dans le fichier que vous avez téléchargé: %{error}"

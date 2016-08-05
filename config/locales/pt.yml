@@ -1067,7 +1067,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         yml:             "Carregar YML"
         yml_title:       "Carregar arquivo YML"
         yml_prompt:      "Selecionar um arquivo YML para carregar"
-        success:         "Critério carregado com sucesso: %{nb_updates} atualizada(s)."
+        success:         "Critério carregado com sucesso: %{num_loaded}."
         error:           "Os seguintes critérios deveriam formato inválido:"
         empty_error:     "Nenhum critério foi encontrado no arquivo fornecido."
         syntax_error:    "Existe um erro no arquivo carregado : %{error}"

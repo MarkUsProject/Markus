@@ -46,7 +46,7 @@ END
 
       assert_response :redirect
       assert_not_nil set_flash.to(t('criteria.upload.success',
-                                    nb_updates: 2))
+                                    num_loaded: 2))
       @assignment.reload
       cr1 = @assignment.get_criteria(:all, :rubric).find_by(name: 'cr1')
       cr2 = @assignment.get_criteria(:all, :rubric).find_by(name: 'cr2')
@@ -113,7 +113,7 @@ END
                                           assignment: @assignment)
       end
 
-      should 'upload yml file without deleting preexisting criteria' do
+      should 'upload yml file and delete the preexisting criteria' do
         post_as @admin,
                 :upload_yml,
                 assignment_id: @assignment.id,
@@ -121,11 +121,13 @@ END
 
 
         assert_response :redirect
-        assert set_flash.to(t('criteria.upload.success',
-                              nb_updates: 2))
+        assert set_flash.to(t('criteria.upload.success', num_loaded: 2))
         @assignment.reload
-        assert_equal(@assignment.get_criteria(:all, :rubric).size, 3)
-        assert_equal(@assignment.get_criteria[0].max_mark, 4.0)
+        assert_not_includes(@assignment.get_criteria(:all, :rubric),
+                            @criterion,
+                            'The preexisting criteria should have been deleted.' )
+        assert_equal(@assignment.get_criteria(:all, :rubric).size, 2)
+        assert_equal(@assignment.get_criteria[0].max_mark, 20.0)
       end
 
     end

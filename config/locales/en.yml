@@ -1228,7 +1228,7 @@ en:
         yml:             "Upload YML"
         yml_title:       "Upload YML File"
         yml_prompt:      "Select a YML file to upload"
-        success:         "Criteria successfully uploaded: %{nb_updates} update(s)."
+        success:         "Criteria successfully uploaded: %{num_loaded}."
         error:           "The following criteria had invalid format:"
         empty_error:     "No criteria were found in the provided file."
         syntax_error:    "There is an error in the file you uploaded: %{error}"

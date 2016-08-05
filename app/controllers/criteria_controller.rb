@@ -1,4 +1,5 @@
 class CriteriaController < ApplicationController
+  include CriteriaHelper
 
   before_filter :authorize_only_for_admin
 
@@ -85,8 +86,13 @@ class CriteriaController < ApplicationController
   end
 
   def upload_yml
-    crit_format_errors = ActiveSupport::OrderedHash.new
+    # Delete all current criteria for this assignment.
     assignment = Assignment.find(params[:assignment_id])
+    assignment.rubric_criteria.each(&:destroy) unless assignment.rubric_criteria.blank?
+    assignment.flexible_criteria.each(&:destroy) unless assignment.flexible_criteria.blank?
+    assignment.checkbox_criteria.each(&:destroy) unless assignment.checkbox_criteria.blank?
+
+    # Check for errors in the request or in the file uploaded.
     encoding = params[:encoding]
     unless request.post?
       redirect_to action: 'index', id: assignment.id
@@ -108,48 +114,11 @@ class CriteriaController < ApplicationController
         redirect_to action: 'index', id: assignment.id
         return
       end
-      successes = 0
-      num_format_errors = 1
-      criteria.each do |criterion_yml|
-        begin
-          if criterion_yml[1]['type'].nil?
-            RubricCriterion.create_or_update_from_yml(criterion_yml, assignment)
-          elsif criterion_yml[1]['type'] == 'flexible'
-            FlexibleCriterion.create_or_update_from_yml(criterion_yml, assignment)
-          else
-            CheckboxCriterion.create_or_update_from_yml(criterion_yml, assignment)
-          end
-          successes += 1
-        rescue RuntimeError => e
-          #collect the names of the criterion that contains an error in it.
-          crit_format_errors[num_format_errors] = criterion_yml.at(0)
-          num_format_errors = num_format_errors + 1
-          flash[:error] = I18n.t('criteria.upload.syntax_error', error: "#{e}")
-        end
-      end
 
-      if successes < criteria.length
-        flash[:error] = I18n.t('criteria.upload.error') + ' ' + format_names(crit_format_errors)
-      end
-
-      if successes > 0
-        flash[:notice] = I18n.t('criteria.upload.success', nb_updates: successes)
-      end
+      # Create criteria based on the parsed data.
+      load_criteria(criteria, assignment)
     end
     redirect_to action: 'index', assignment_id: assignment.id
-  end
-
-  # Create a String separated by commas from the OrderedHash of criteria with format errors.
-  def format_names(criteria_with_errors)
-    cr_names = ''
-    criteria_with_errors.each_value.with_index do |cr_name, index|
-      if index == 0
-        cr_names = cr_names + cr_name
-      else
-        cr_names = cr_names + ', ' + cr_name
-      end
-    end
-    cr_names
   end
 
   private
