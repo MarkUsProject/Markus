@@ -6,9 +6,7 @@
                        view: 'student'} %>
 
   <% unless mark_criterion.description.blank? %>
-      <div id='<%="criterion_info_#{mark_criterion.id}"%>'
-           class='criterion_info mark-checkbox'
-           data-id='<%=mark_criterion.id%>' >
+      <div id='<%="criterion_info_#{mark_criterion.id}"%>' class='criterion_info mark-checkbox'>
         <%= mark_criterion.description %>
       </div>
   <% end %>
