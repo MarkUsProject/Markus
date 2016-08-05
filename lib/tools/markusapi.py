@@ -25,7 +25,7 @@ from urllib.parse import urlparse, urlencode
 class Markus:
     """A class for interfacing with the MarkUs API."""
 
-    def __init__(self, api_key, url, cookie=None, protocol='https'):
+    def __init__(self, api_key, url, cookie=None):
         """ (str, str, str) -> Markus
         Initialize an instance of the Markus class.
 
@@ -35,12 +35,11 @@ class Markus:
         Keywork arguments:
         api_key  -- any admin API key for the MarkUs instance.
         url      -- the root domain of the MarkUs instance.
-        protocol -- the protocol requests should use (either http or https).
         """
         self.api_key = api_key
         self.parsed_url = urlparse(url.strip())
         self.cookie = cookie
-        self.protocol = protocol
+        self.protocol = self.parsed_url.scheme
 
     def get_all_users(self):
         """ (Markus, str) -> list of dict
@@ -123,7 +122,6 @@ class Markus:
 
     def upload_test_script_result(self, assignment_id, group_id, results):
         """ (Markus, int, str, dict) -> list of str """
-        print(results)
         params = {
             'assignment_id': assignment_id,
             'group_id': group_id,

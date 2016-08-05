@@ -175,6 +175,11 @@ module AutomatedTestsHelper
     test_box_path = MarkusConfigurator.markus_ate_test_run_directory
     test_server_host = MarkusConfigurator.markus_ate_test_server_host
 
+    # TODO test_box_path must be relative, to construct it in different paths locally and remotely
+    # TODO then, the whole path needs to be passed to perform
+    # TODO perform must always create a directory with the results, even if unsuccessful
+    # TODO it's process_result that possibly logs the error
+    # TODO perform must either invoke the api directly or pass parameters down to the test script (group_id, assignment_id, markus url)
     if test_server_host == 'localhost'
       # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
       stdout, stderr, status = Open3.capture3("
@@ -207,15 +212,16 @@ module AutomatedTestsHelper
     repo_dir = File.join(
         MarkusConfigurator.markus_config_automated_tests_repository,
         group.repo_name)
+    # TODO export the right repo revision using submission_id
     export_group_repo(group, repo_dir)
 
+    # TODO remove files_available?
     if files_available?(assignment) && (call_on == 'collection' || has_permission?(current_user, assignment))
-      # TODO handle errors
+      # TODO handle errors in copy_test_files
       copy_test_files(assignment, repo_dir)
       Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on, submission_id)
     end
   end
-
 
   # Export group repository for testing. Students' submitted files
   # are stored in the group repository. They must be exported
@@ -351,7 +357,7 @@ module AutomatedTestsHelper
       File.write("#{test_results_path}/output.txt", stdout)
       File.write("#{test_results_path}/error.txt", stderr)
       # Test scripts must now use calls to the MarkUs API to process results.
-      # process_result(result, call_on, assignment, grouping, submission)
+      # process_result(stdout, call_on, assignment, grouping, submission)
     else
       m_logger = MarkusLogger.instance
       src_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository,
