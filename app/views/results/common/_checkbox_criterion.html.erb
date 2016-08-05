@@ -10,8 +10,8 @@
 <% end -%>
 
 
-<strong class="title_div_level criterion_link" onclick="<%= onclick %>">
-  <%= mark_criterion.name %>
+<strong class="title_div_level" onclick="<%= onclick %>">
+  <%= link_to mark_criterion.name, 'javascript:void(0);', onclick: 'return false;' %>
 </strong>
 
 <div class='mark_checkbox'>

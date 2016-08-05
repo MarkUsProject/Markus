@@ -611,7 +611,7 @@ ul.annotation_text_list {
   }
 
   .criterion_info {
-    padding-left: 10px;
+    padding-left: 26px;
     padding-bottom: 5px;
     margin-left: 5px;
     float: left;
@@ -619,10 +619,8 @@ ul.annotation_text_list {
   }
 
   .title_div_level {
-    padding-top: 2px;
     font-size: 12px;
     float: left;
-    padding-left: 20px;
     padding-right: 10px;
     font-weight: bold;
     padding-bottom: 6px;
@@ -640,10 +638,12 @@ ul.annotation_text_list {
     font-weight: bold;
     font-size: 11px;
     float: right;
+    padding-right: 14px;
 
     .mark_grade_input{
       font-size: 1em;
       margin: 1px 1px 4px;
+      margin-right: 6px;
       min-width: 0;
       padding: 2px;
     }
@@ -708,7 +708,7 @@ ul.annotation_text_list {
   }
 
   .criterion_info {
-    padding-left: 10px;
+    padding-left: 26px;
     padding-bottom: 5px;
     margin-left: 5px;
     float: left;
@@ -716,10 +716,8 @@ ul.annotation_text_list {
   }
 
   .title_div_level {
-    padding-top: 2px;
     font-size: 12px;
     float: left;
-    padding-left: 20px;
     padding-right: 10px;
     font-weight: bold;
     padding-bottom: 6px;
@@ -737,6 +735,7 @@ ul.annotation_text_list {
     font-weight: bold;
     font-size: 11px;
     float: right;
+    padding-top: 4px;
 
     .mark_grade_input_checkbox {
       font-size: 1em;
