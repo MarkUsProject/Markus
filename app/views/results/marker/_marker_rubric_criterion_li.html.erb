@@ -34,11 +34,11 @@
                 <tr>
                   <td id='mark_<%= mark.id %>_<%= num_levels %>' class='<%= td_class %>'
                       <% if @current_user.student? %>
-                        <% action_path_to_use = update_mark_assignment_submission_results_path(
-                              mark_id: mark.id, mark: num_levels, id: result.id, submission_id: result.submission.id) %>
+                        <% action_path_to_use = update_mark_assignment_results_path(
+                              mark_id: mark.id, mark: num_levels, id: result.id) %>
                       <% else %>
                         <% action_path_to_use = update_mark_assignment_submission_results_path(
-                              mark_id: mark.id, mark: num_levels, id: result.id) %>
+                              mark_id: mark.id, mark: num_levels, id: result.id, submission_id: result.submission.id) %>
                       <% end %>
                       data-action='<%= action_path_to_use %>'
                       onclick='update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)'

@@ -115,14 +115,6 @@ class Criterion < ActiveRecord::Base
       checkbox_criterion_ids_str = ''
     else
       checkbox_criterion_ids_str = Array(criterion_ids_by_type['CheckboxCriterion'])
-          .map { |criterion_id| connection.quote(criterion_id) }
-          .join(',')
-    end
-
-    if criterion_ids_by_type.nil?  or criterion_ids_by_type['CheckboxCriterion'].nil?
-      checkbox_criterion_ids_str = ''
-    else
-      checkbox_criterion_ids_str = Array(criterion_ids_by_type['CheckboxCriterion'])
         .map { |criterion_id| connection.quote(criterion_id) }
         .join(',')
     end
