@@ -5,6 +5,13 @@ RSpec.describe CriteriaController, type: :controller do
   describe 'Using Flexible Criteria' do
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
+      context '#index' do
+        it 'should respond with redirect' do
+          get :index, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
       context '#new' do
         it 'should respond with redirect' do
           get :new, assignment_id: 1
@@ -62,9 +69,23 @@ RSpec.describe CriteriaController, type: :controller do
           end
         end
       end
+
+      context '#download_yml' do
+        it 'should respond with redirect' do
+          get :download_yml, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
     end
 
     describe 'An unauthenticated and unauthorized user doing a POST' do
+      context '#index' do
+        it 'should respond with redirect' do
+          post :index, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
       context '#new' do
         it 'should respond with redirect' do
           post :new, assignment_id: 1
@@ -114,6 +135,24 @@ RSpec.describe CriteriaController, type: :controller do
                              name: 'criterion3',
                              description: 'description3!',
                              max_mark: 1.6)
+      end
+
+      context '#index' do
+        before(:each) do
+          get_as @admin, :index, assignment_id: @assignment.id
+        end
+        it 'should respond assign assignment and criteria' do
+          expect(assigns(:assignment)).to be_truthy
+          expect(assigns(:criteria)).to be_truthy
+        end
+
+        it 'should render the edit template' do
+          is_expected.to render_template(:index)
+        end
+
+        it 'should respond with success' do
+          is_expected.to respond_with(:success)
+        end
       end
 
       context '#new' do
@@ -234,6 +273,24 @@ RSpec.describe CriteriaController, type: :controller do
                              name: 'criterion3',
                              description: 'description3!',
                              max_mark: 1.6)
+      end
+
+      context '#index' do
+        before(:each) do
+          post_as @admin, :index, assignment_id: @assignment.id
+        end
+        it 'should respond with appropriate content' do
+          expect(assigns(:assignment)).to be_truthy
+          expect(assigns(:criteria)).to be_truthy
+        end
+
+        it 'should render the index template' do
+          is_expected.to render_template(:index)
+        end
+
+        it 'should respond with success' do
+          is_expected.to respond_with(:success)
+        end
       end
 
       context '#create' do
@@ -386,6 +443,13 @@ RSpec.describe CriteriaController, type: :controller do
   describe 'Using Rubric Criteria' do
 
     describe 'An unauthenticated and unauthorized user doing a GET' do
+      context '#index' do
+        it 'should respond with redirect' do
+          get :index, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
       context '#new' do
         it 'should respond with redirect' do
           get :new, assignment_id: 1
@@ -443,9 +507,23 @@ RSpec.describe CriteriaController, type: :controller do
           is_expected.to respond_with :redirect
         end
       end
+
+      context '#download_yml' do
+        it 'should respond with redirect' do
+          get :download_yml, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
     end
 
     describe 'An unauthenticated and unauthorized user doing a POST' do
+      context '#index' do
+        it 'should respond with redirect' do
+          post :index, assignment_id: 1
+          is_expected.to respond_with :redirect
+        end
+      end
+
       context '#new' do
         it 'should respond with redirect' do
           post :new, assignment_id: 1
@@ -492,6 +570,24 @@ RSpec.describe CriteriaController, type: :controller do
                              position: 3,
                              name: 'criterion3',
                              max_mark: 1.6)
+      end
+
+      context '#index' do
+        before(:each) do
+          get_as @admin, :index, assignment_id: @assignment.id
+        end
+        it 'should respond assign assignment and criteria' do
+          expect(assigns(:assignment)).to be_truthy
+          expect(assigns(:criteria)).to be_truthy
+        end
+
+        it 'should render the edit template' do
+          is_expected.to render_template(:index)
+        end
+
+        it 'should respond with success' do
+          is_expected.to respond_with(:success)
+        end
       end
 
       context '#new' do
@@ -609,6 +705,24 @@ RSpec.describe CriteriaController, type: :controller do
                              position: 3,
                              name: 'criterion3',
                              max_mark: 1.6)
+      end
+
+      context '#index' do
+        before(:each) do
+          post_as @admin, :index, assignment_id: @assignment.id
+        end
+        it 'should respond with appropriate content' do
+          expect(assigns(:assignment)).to be_truthy
+          expect(assigns(:criteria)).to be_truthy
+        end
+
+        it 'should render the index template' do
+          is_expected.to render_template(:index)
+        end
+
+        it 'should respond with success' do
+          is_expected.to respond_with(:success)
+        end
       end
 
       context '#create' do

@@ -2,14 +2,6 @@ class FlexibleCriteriaController < ApplicationController
 
   before_filter      :authorize_only_for_admin
 
-  def index
-    @assignment = Assignment.find(params[:assignment_id])
-    if @assignment.past_all_due_dates?
-      flash[:notice] = I18n.t('past_due_date_warning')
-    end
-    @criteria = @assignment.get_criteria
-  end
-
   def download
     @assignment = Assignment.find(params[:assignment_id])
     criteria = @assignment.get_criteria(:all, :flexible)
