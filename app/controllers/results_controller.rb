@@ -14,9 +14,10 @@ class ResultsController < ApplicationController
                        :remove_extra_mark,
                        :note_message]
   before_filter :authorize_for_user,
-                only: [:codeviewer, :download, :download_zip, :run_tests]
+                only: [:codeviewer, :download, :download_zip, :run_tests,
+                       :view_marks]
   before_filter :authorize_for_student,
-                only: [:view_marks, :update_remark_request,
+                only: [:update_remark_request,
                        :cancel_remark_request]
   before_filter only: [:edit, :update_mark, :toggle_marking_state,
                        :update_overall_comment, :next_grouping] do |c|
@@ -388,18 +389,16 @@ class ResultsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @submission_file_id = params[:submission_file_id]
     @focus_line = params[:focus_line]
-    @grouping = @current_user.grouping_for(params[:assignment_id])
+    @grouping = @current_user.grouping_for(Integer(params[:assignment_id]))
     @file = SubmissionFile.find(@submission_file_id)
     @result = Result.find(params[:id])
 
     #Is the current user a student?
     if current_user.student?
-      # If result is a review and user doesn't have membership status for the grouping
-      # this file belongs to, or if result is a review and the student is not a reviewer of this
-      # result, then student does not have access to this file. Display an error.
-
-      if (!@result.is_a_review? && @file.submission.grouping.membership_status(current_user).nil?) ||
-          (@result.is_a_review? && !current_user.is_reviewer_for?(@assignment.pr_assignment, @result))
+      # Unless this file belongs to this user or this user is a reviewer of this result,
+      # this student isn't authorized to view these files. Display an error
+      unless (!@grouping.membership_status(current_user).nil?) ||
+          current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
         flash_message(:error, t('submission_file.error.no_access',
                                 submission_file_id: @submission_file_id))
         redirect_to :back
@@ -463,7 +462,24 @@ class ResultsController < ApplicationController
 
   def view_marks
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
+
+    if current_user.student?
+      @grouping = current_user.accepted_grouping_for(@assignment.id)
+      @submission = @grouping.current_submission_used
+    else
+      @submission = Submission.find(params[:submission_id])
+      @grouping = @submission.grouping
+    end
+
+    result_from_id = Result.find(params[:id])
+    if result_from_id.is_a_review?
+      @result = result_from_id
+    else
+      @result = @submission.get_original_result
+    end
+
+    is_review = @result.is_review_for?(@current_user, @assignment) ||
+        (@result.is_a_review? && !@current_user.student?)
 
     if @grouping.nil?
       redirect_to controller: 'assignments',
@@ -471,17 +487,28 @@ class ResultsController < ApplicationController
                   id: params[:id]
       return
     end
-    unless @grouping.has_submission?
+
+    unless is_review || @grouping.has_submission?
       render 'results/student/no_submission'
       return
     end
-    @submission = @grouping.current_submission_used
-    unless @submission.has_result?
+
+    if is_review
+      if @current_user.student?
+        @prs = @grouping.peer_reviews
+      else
+        @reviewer = Grouping.find(params[:reviewer_grouping_id])
+        @prs = @reviewer.peer_reviews_to_others
+      end
+
+      @current_pr = PeerReview.find_by(result_id: @result.id)
+    end
+
+    unless is_review || @submission.has_result?
       render 'results/student/no_result'
       return
     end
 
-    @result = @submission.get_original_result
     @old_result = nil
     if @submission.remark_submitted?
       @old_result = @result
@@ -493,7 +520,7 @@ class ResultsController < ApplicationController
       end
     end
 
-    unless @result.released_to_students
+    unless @result.released_to_students || is_review
       render 'results/student/no_result'
       return
     end
@@ -509,7 +536,16 @@ class ResultsController < ApplicationController
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
     @old_marks_map = Hash.new
-    @mark_criteria = @assignment.get_criteria(:ta)
+
+    if @result.is_a_review?
+      if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
+          @grouping.membership_status(current_user).nil? || !@current_user.student?
+        @mark_criteria = @assignment.get_criteria(:peer)
+      end
+    else
+      @mark_criteria = @assignment.get_criteria(:ta)
+    end
+
     @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       mark.save(validate: false)

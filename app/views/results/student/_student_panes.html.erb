@@ -8,7 +8,7 @@
           <% if can_show_feedback_files_tab?(submission) %>
             <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
           <% end %>
-          <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
+          <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission, result) %>
             <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
           <% end %>
         </ul>
@@ -57,7 +57,7 @@
           </div>
         <% end %>
 
-        <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
+        <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission, result) %>
           <div id='remark_request_tab'>
             <% if @current_user.student? and assignment.allow_remarks%>
               <%= render partial: 'results/student/remark_request',

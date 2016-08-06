@@ -213,6 +213,7 @@ fr:
         peer_review_record_missing: "Erreur: Examen par les pairs cession manquant dans la base de données"
         start_peer_review: "Examen par les pairs"
         peer_review_results: "Examen par les pairs Résultats"
+        your_reviews: "Vos avis"
         review: "Avis"
     peer_review:
         problem: "Un problème inattendu est survenue"
@@ -222,6 +223,9 @@ fr:
         assigned_reviewers_header: "Assigned examinateurs"
         reviewer_group: "Groupe avis"
         reviewee_group: "Groupe pays examin"
+        reviews_made_on_submission: "Avis faites sur votre soumission: "
+        reviewers_reviews: "Les avis de ce réviseur: "
+        view_ta_result: "Voir TA Résultat"
         empty_list_reviewers: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
         empty_list_reviewees: "Vous ne pouvez pas avoir une liste vide de CONTRÔLER"
         cannot_allow_reviewer_to_be_reviewee: "Un étudiant ne peut pas être un réviseur et pays examiné"
@@ -273,6 +277,7 @@ fr:
     submissions:        "Envois"
     summaries:          "Récapitulatif"
     peer_reviews:       "Examens par le pairs"
+    peer_review:        "Examen par le pairs"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"
     join:               "Rejoindre"
@@ -689,6 +694,8 @@ fr:
       must_select_a_group_to_collect:  "Vous devez sélectionner au moins un groupe pour recueillir."
       editing_after_release_fail: "Les notes ont été dévoilées, vous ne pouvez plus changer l'évaluation."
       could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
+      results_for: "Résultats pour "
+      review_for: "Avis pour "
 
     mark:
       error:
@@ -742,6 +749,7 @@ fr:
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> fichier(s) requis sont manquants</span>"
       no_submission_yet: "Vous n'avez encore rien envoyé"
       no_peer_submission_yet: "Vous avez aucune observation à révision."
+      no_reviews: "Personne ne vous a encore de commentaires."
       no_group_yet: "Vous ne faites pas encore partie d'un groupe"
       grace_date_passed: "et la période de grâce pour ce projet est terminée"
       not_allowed_to_form_group: "Vous n'êtes pas autorisé à former vous-même des groupes pour ce projet.

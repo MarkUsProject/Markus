@@ -33,12 +33,12 @@
               if level_desc && !level_desc.empty? -%>
                 <tr>
                   <td id='mark_<%= mark.id %>_<%= num_levels %>' class='<%= td_class %>'
-                      <% if @current_user.student? %>
+                      <% if result.is_a_review? %>
                         <% action_path_to_use = update_mark_assignment_results_path(
                               mark_id: mark.id, mark: num_levels, id: result.id) %>
                       <% else %>
                         <% action_path_to_use = update_mark_assignment_submission_results_path(
-                              mark_id: mark.id, mark: num_levels, id: result.id, submission_id: result.submission.id) %>
+                              mark_id: mark.id, mark: num_levels, id: result.id) %>
                       <% end %>
                       data-action='<%= action_path_to_use %>'
                       onclick='update_rubric_mark(this, <%= mark.id %>, <%= num_levels %>)'

@@ -235,6 +235,7 @@ en:
         peer_review_record_missing: "Error: Peer review assignment missing from database"
         start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
+        your_reviews: "Your Reviews"
         review: "Review"
     peer_review:
         problem: "An unexpected problem occured"
@@ -244,6 +245,9 @@ en:
         assigned_reviewers_header: "Assigned reviewers"
         reviewer_group: "Reviewer group"
         reviewee_group: "Reviewee group"
+        reviews_made_on_submission: "Reviews made on your submission: "
+        reviewers_reviews: "This reviewer's reviews: "
+        view_ta_result: "View TA Result"
         empty_list_reviewers: "Cannot have an empty list of reviewers"
         empty_list_reviewees: "Cannot have an empty list of reviewees"
         cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
@@ -295,6 +299,7 @@ en:
     submissions:        "Submissions"
     summaries:          "Summaries"
     peer_reviews:       "Peer reviews"
+    peer_review:        "Peer Review"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
@@ -709,6 +714,8 @@ en:
       must_select_a_group_to_collect:  "You must select at least one group to collect"
       editing_after_release_fail: "The marks have been released. You cannot change the grades."
       could_not_find_file: "Could not find %{filename} in repository %{repository_name}"
+      results_for: "Results for "
+      review_for: "Review for "
 
     mark:
       error:
@@ -776,6 +783,7 @@ en:
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> missing required file(s)</span>"
       no_submission_yet: "You have not made any submissions yet"
       no_peer_submission_yet: "You have no submissions to review yet."
+      no_reviews: "No one has reviewed you yet."
       no_group_yet: "You don't have a group yet"
       grace_date_passed: "and the grace period for this assignment has passed"
       not_allowed_to_form_group: "You are not allowed to form groups yourself for this assignment.

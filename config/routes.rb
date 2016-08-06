@@ -215,6 +215,7 @@ Markus::Application.routes.draw do
         end
 
         member do
+          get 'view_marks'
           post 'add_extra_mark'
           get 'codeviewer'
           post 'codeviewer'
@@ -222,6 +223,7 @@ Markus::Application.routes.draw do
           post 'toggle_marking_state'
           post 'update_mark'
           post 'update_overall_comment'
+          patch 'update_remark_request'
         end
       end
 
@@ -231,6 +233,11 @@ Markus::Application.routes.draw do
           post 'assign_groups'
           get 'download_reviewer_reviewee_mapping'
           post 'csv_upload_handler'
+          get 'show_reviews'
+        end
+
+        member do
+          get 'show_result'
         end
       end
 

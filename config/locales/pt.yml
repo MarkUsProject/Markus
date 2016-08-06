@@ -211,6 +211,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         peer_review_record_missing: "Erro: Par atribuição de avaliação em falta a partir do banco de dados"
         start_peer_review: "Revisão de pares"
         peer_review_results: "Resultados de Avaliação pelos Pares"
+        your_reviews: "Os seus comentários"
         review: "Avaliação"
     peer_review:
         problem: "Um problema inesperado ocorreu"
@@ -220,6 +221,9 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         assigned_reviewers_header: "Atribuído usuários"
         reviewer_group: "Grupo de Viajante"
         reviewee_group: "Grupo de ser revistos"
+        reviews_made_on_submission: "Avaliações feitas em sua submissão: "
+        reviewers_reviews: "As avaliações deste colaborador: "
+        view_ta_result: "Resultado vista TA"
         empty_list_reviewers: "Não é possível ter uma lista vazia de revisores"
         empty_list_reviewees: "Não pode ter uma lista vazia de reviewees"
         cannot_allow_reviewer_to_be_reviewee: "Um estudante não pode ser um revisor e reviewee"
@@ -271,6 +275,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     submissions:        "Submissões"
     summaries:          "Resumos"
     peer_reviews:       "Avaliações pelos pares"
+    peer_review:        "Avaliaçõ pelos pares"
     rubrics:            "Rúbricas"
     marking_scheme:     "Esquema de avalição"
     join:               "Juntar"
@@ -650,6 +655,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       must_select_a_group_to_collect:  "Você deve selecionar pelo menos um grupo para recolher"
       editing_after_release_fail: "As notas já foram publicadas. Você não pode alterá-las."
       could_not_find_file: "Não foi possível encontrar %{filename} no repositório %{repository_name}"
+      results_for: "Resultados para"
+      review_for: "Revisão para "
 
     mark:
       error:
@@ -710,6 +717,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       missing_required_files: "Faltando <span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> arquivos exigidos</span>"
       no_submission_yet: "Você não tem nenhum envio ainda."
       no_peer_submission_yet: "Você não tem observações a avaliar ainda."
+      no_reviews: "Ninguém comentou você ainda."
       no_group_yet: "Você ainda não está em um grupo"
       grace_date_passed: "e o período de tolerância para este projeto já passou"
       not_allowed_to_form_group: "Você não tem permissão para criar um grupo por si só. Por favor, espere até que um instrutor forme os grupos."

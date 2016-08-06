@@ -59,6 +59,18 @@ module SubmissionsHelper
           # Get the respective reviewee's result from grouping
           result_pr = current_user.grouping_for(assignment.id).review_for(grouping)
           result = Result.find(result_pr.result_id)
+
+        elsif assignment.is_peer_review? && !current_user.student?
+          # if an admin is viewing reviews a grouping made
+          result_pr = grouping.peer_reviews_to_others.first
+          if !result_pr.nil?
+            # this means they have atleast one group to review
+            result = Result.find(result_pr.result_id)
+          else
+            # this grouping is not assigned to do any reviews
+            result = nil
+          end
+
         else
           submission = grouping.current_submission_used
           if submission.nil?
@@ -120,9 +132,13 @@ module SubmissionsHelper
   end
 
   def get_grouping_name_url(grouping, result)
-    if grouping.is_collected?
+    if result.is_a_review? && !grouping.peer_reviews_to_others.empty?
+      url_for(view_marks_assignment_submission_result_path(
+                  assignment_id: grouping.assignment.parent_assignment.id, submission_id: result.submission.id,
+                  id: result.id, reviewer_grouping_id: grouping.id))
+    elsif grouping.is_collected?
       url_for(edit_assignment_submission_result_path(
-                  grouping.assignment, grouping, result))
+                  grouping.assignment, result.submission, result))
     else
       ''
     end

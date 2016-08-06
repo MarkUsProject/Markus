@@ -7,16 +7,21 @@ module ResultsHelper
 
   def can_show_remark_request_tab_in_student_pane(assignment,
                                                   current_user,
-                                                  submission)
-    if assignment.allow_remarks
-      if submission.remark_result &&
-         submission.remark_result.released_to_students
-        return true
-      else
-        return current_user.student?
-      end
+                                                  submission,
+                                                  result)
+    if result.is_a_review?
+      return false
     else
-      false
+      if assignment.allow_remarks
+        if submission.remark_result &&
+           submission.remark_result.released_to_students
+          return true
+        else
+          return current_user.student?
+        end
+      else
+        false
+      end
     end
   end
 

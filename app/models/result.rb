@@ -129,6 +129,12 @@ class Result < ActiveRecord::Base
     PeerReview.exists?(result_id: id)
   end
 
+  def is_review_for?(user, assignment)
+    grouping = user.grouping_for(assignment.id)
+    pr = PeerReview.find_by(result_id: self.id)
+    !pr.nil? && submission.grouping == grouping
+  end
+
   private
   # If this record is marked as "partial", ensure that its
   # "released_to_students" value is set to false.

@@ -29,6 +29,30 @@
   word-wrap: break-word;
 }
 
+/* Peer Review Styles */
+
+#peer_reviews {
+  display: block;
+  width: 100%;
+  padding-bottom: 10px;
+}
+
+#peer_review_selector_label {
+  float: left;
+  font-size: 14px;
+  margin-top: 13px !important;
+}
+
+#peer_review_selector {
+  margin-top: 7px;
+  margin-left: 20px;
+}
+
+#original_result_link {
+  margin-left: 20px;
+  font-size: 14px;
+}
+
 
 /* Top toolbars: student selector/file selector/download buttons */
 
@@ -997,6 +1021,7 @@ ul.annotation_text_list {
   }
 
   #left-pane {
+    width: 60% !important;
     padding-right: 0.5em;
 
     @include breakpoint(small) {
@@ -1006,6 +1031,7 @@ ul.annotation_text_list {
   }
 
   #right-pane {
+    width: 39.5% !important;
     padding-left: 0.5em;
 
     @include breakpoint(small) {

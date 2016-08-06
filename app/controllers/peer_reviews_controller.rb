@@ -4,7 +4,9 @@ class PeerReviewsController < ApplicationController
   include RandomAssignHelper
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
-  before_filter :authorize_only_for_admin
+
+  before_filter :authorize_only_for_admin, except: [:show_reviews, :show_result]
+  before_filter :authorize_for_user, only: [:show_reviews, :show_result]
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
@@ -30,6 +32,28 @@ class PeerReviewsController < ApplicationController
 
     render json: [reviewer_groups, reviewee_groups, reviewee_to_reviewers_map,
                   id_to_group_names_map, num_reviews_map]
+  end
+
+  def show_reviews
+    assignment = Assignment.find(params[:assignment_id])
+    # grab the first peer review of the reviewee group
+    pr = @current_user.grouping_for(assignment.id).peer_reviews.first
+
+    if !pr.nil?
+      redirect_to show_result_assignment_peer_review_path(assignment.id, id: pr.id)
+    else
+      render 'shared/http_status', formats: [:html],
+             locals: { code: '404',
+                       message: HttpStatusHelper::ERROR_CODE[
+                           'message']['404'] }, status: 404,
+             layout: false
+    end
+  end
+
+  def show_result
+    pr = PeerReview.find(params[:id])
+
+    redirect_to view_marks_assignment_result_path(params[:assignment_id], pr.result_id)
   end
 
   def assign_groups
