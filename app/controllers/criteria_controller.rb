@@ -86,22 +86,19 @@ class CriteriaController < ApplicationController
   end
 
   def upload_yml
-    # Delete all current criteria for this assignment.
     assignment = Assignment.find(params[:assignment_id])
-    assignment.rubric_criteria.each(&:destroy) unless assignment.rubric_criteria.blank?
-    assignment.flexible_criteria.each(&:destroy) unless assignment.flexible_criteria.blank?
-    assignment.checkbox_criteria.each(&:destroy) unless assignment.checkbox_criteria.blank?
 
     # Check for errors in the request or in the file uploaded.
-    encoding = params[:encoding]
     unless request.post?
       redirect_to action: 'index', id: assignment.id
       return
     end
+
     file = params[:yml_upload][:rubric]
     unless file.blank?
       begin
-        # This parsing does not output repeated entries.
+        encoding = params[:encoding]
+        # Note: this parsing does not output entries with repeated names.
         criteria = YAML::load(file.utf8_encode(encoding))
       rescue Psych::SyntaxError => e
         flash_message(:error, I18n.t('criteria.upload.error.invalid_format') + '  ' +
@@ -115,6 +112,9 @@ class CriteriaController < ApplicationController
         redirect_to action: 'index', id: assignment.id
         return
       end
+
+      # Delete all current criteria for this assignment.
+      assignment.get_criteria.each(&:destroy)
 
       # Create criteria based on the parsed data.
       load_criteria(criteria, assignment)

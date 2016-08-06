@@ -167,13 +167,10 @@ class RubricCriterion < Criterion
   #                     description: level_description
   #                   level_1:
   #                     [...]
-  # assignment::    The assignment to which the newly created criterion
-  #                 should belong.
-  def self.load_from_yml(criterion_yml, assignment)
+  def self.load_from_yml(criterion_yml)
     name = criterion_yml[0]
     # Create a new RubricCriterion
     criterion = RubricCriterion.new
-    criterion.assignment_id = assignment.id
     criterion.name = name
     # Check that the weight is not a string, so that the appropriate
     # max mark can be calculated.
@@ -186,8 +183,6 @@ class RubricCriterion < Criterion
     rescue NoMethodError
       raise RuntimeError.new(I18n.t('criteria.upload.empty_error'))
     end
-    # Set the position since this is a new record.
-    criterion.position = assignment.next_criterion_position
     # next comes the level names.
     (0..RUBRIC_LEVELS-1).each do |i|
       if criterion_yml[1]['level_' + i.to_s]

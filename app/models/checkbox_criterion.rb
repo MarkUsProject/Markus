@@ -158,14 +158,10 @@ class CheckboxCriterion < Criterion
   #                   type: criterion_type
   #                   max_mark: #
   #                   description: level_description
-  #
-  # assignment::    The assignment to which the newly created criterion
-  #                 should belong.
-  def self.load_from_yml(criterion_yml, assignment)
+  def self.load_from_yml(criterion_yml)
     name = criterion_yml[0]
     # Create a new CheckboxCriterion
     criterion = CheckboxCriterion.new
-    criterion.assignment_id = assignment.id
     criterion.name = name
     # Check that the max_mark is not a string.
     begin
@@ -177,8 +173,6 @@ class CheckboxCriterion < Criterion
     rescue NoMethodError
       raise RuntimeError.new(I18n.t('criteria.upload.empty_error'))
     end
-    # Set the position since this is a new record.
-    criterion.position = assignment.next_criterion_position
     # Set the description to the one given, or to an empty string if
     # a description is not given.
     criterion.description =
