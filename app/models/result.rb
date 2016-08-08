@@ -59,7 +59,7 @@ class Result < ActiveRecord::Base
     unless marks.empty?
       assignment = submission.grouping.assignment
       assignment.get_criteria(user_visibility).each do |criterion|
-        mark = marks.find_by(markable_id: criterion.id)
+        mark = marks.find_by(markable: criterion)
         unless mark.nil?
           new_marks += mark.mark.to_f
         end

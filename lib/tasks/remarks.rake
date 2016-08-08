@@ -47,8 +47,9 @@ namespace :db do
 
     #Automate remarks for assignment using appropriate criteria
     remark_group.assignment.get_criteria.each do |criterion|
+      criterion_class = criterion.class == RubricCriterion ? 'rubric' : 'flexible'
       mark = create_mark(remark_submission.remark_result.id,
-                         remark_group.assignment.marking_scheme_type,
+                         criterion_class,
                          criterion)
       result.marks.push(mark)
       result.save

@@ -21,10 +21,10 @@
     <div class='arrow_down'></div>
   </div>
 
-  <% unless !@current_user.student? %>
-    <%= link_to(t('peer_review.view_ta_result'),
+  <% if @current_user.student? %>
+    <%= link_to t('peer_review.view_ta_result'),
                 view_marks_assignment_submission_result_path(assignment.id, submission.id,
-                                                                submission.get_latest_result.id),
-                 id: 'original_result_link') %>
+                                                             submission.get_latest_result.id),
+                id: 'original_result_link' %>
   <% end %>
 </div>

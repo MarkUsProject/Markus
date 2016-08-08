@@ -111,7 +111,6 @@ class Grouping < ActiveRecord::Base
   # The groupings must belong to the given assignment +assignment+.
   def self.assign_tas(grouping_ids, ta_ids, assignment)
     grouping_ids, ta_ids = Array(grouping_ids), Array(ta_ids)
-
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
     grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)

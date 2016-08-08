@@ -72,7 +72,11 @@ class FlexibleCriterion < Criterion
     name = working_row.shift
     # If a FlexibleCriterion with the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria.find_or_create_by(name: name)
+    begin
+      criterion = assignment.get_criteria(:all, :flexible).find_or_create_by(name: name)
+    rescue ActiveRecord::RecordNotSaved # Triggered if the assignment does not exist yet
+      raise CSVInvalidLineError, I18n.t('csv.no_assignment')
+    end
     # Check that max is not a string.
     begin
       criterion.max_mark = Float(working_row.shift)
@@ -92,6 +96,38 @@ class FlexibleCriterion < Criterion
     unless criterion.save
       raise CSVInvalidLineError
     end
+    criterion
+  end
+
+  # Instantiate a FlexibleCriterion from a YML entry
+  #
+  # ===Params:
+  #
+  # criterion_yml:: Information corresponding to a single FlexibleCriterion
+  #                 in the following format:
+  #                 criterion_name:
+  #                   type: criterion_type
+  #                   max_mark: #
+  #                   description: level_description
+  def self.load_from_yml(criterion_yml)
+    name = criterion_yml[0]
+    # Create a new RubricCriterion
+    criterion = FlexibleCriterion.new
+    criterion.name = name
+    # Check that the max_mark is not a string.
+    begin
+      criterion.max_mark = Float(criterion_yml[1]['max_mark'])
+    rescue ArgumentError
+      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
+    rescue TypeError
+      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
+    rescue NoMethodError
+      raise RuntimeError.new(I18n.t('criteria.upload.empty_error'))
+    end
+    # Set the description to the one given, or to an empty string if
+    # a description is not given.
+    criterion.description =
+      criterion_yml[1]['description'].nil? ? '' : criterion_yml[1]['description']
     criterion
   end
 
@@ -143,7 +179,7 @@ class FlexibleCriterion < Criterion
 
   def add_tas_by_user_name_array(ta_user_name_array)
     result = ta_user_name_array.map do |ta_user_name|
-      Ta.where(user_name: ta_user_name).first
+      Ta.find_by(user_name: ta_user_name)
     end.compact
     add_tas(result)
   end
@@ -151,7 +187,7 @@ class FlexibleCriterion < Criterion
   # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
-      errors.add(:ta_visible, I18n.t('flexible_criteria.visibility_error'))
+      errors.add(:ta_visible, I18n.t('criteria.visibility_error'))
       false
     end
     true

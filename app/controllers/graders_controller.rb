@@ -158,7 +158,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     grouping_ids = params[:groupings]
     grader_ids = params[:graders]
-    criterion_ids = params[:criteria]
+    criterion_ids_types = params[:criteria]
 
     case params[:current_table]
     when 'groups_table'
@@ -217,8 +217,10 @@ class GradersController < ApplicationController
       when 'assign'
         if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
+        elsif criterion_ids_types.blank?
+          render text: I18n.t('assignment.group.select_a_criterion'), status: 400
         else
-          assign_all_graders_to_criteria(criterion_ids, grader_ids)
+          assign_all_graders_to_criteria(criterion_ids_types, grader_ids)
           head :ok
         end
       when 'unassign'
@@ -231,17 +233,24 @@ class GradersController < ApplicationController
           criterion_associations = CriterionTaAssociation.find(
             params[:criterion_associations]
           )
-          criterion_ids = criterion_associations.map do |criterion_assoc|
+          criteria = criterion_associations.map do |criterion_assoc|
             criterion_assoc.criterion
           end.uniq
-          unassign_graders_from_criteria(criterion_associations, criterion_ids)
+          criterion_ids_by_type = {}
+          %w[RubricCriterion FlexibleCriterion CheckboxCriterion].each do |type|
+            criterion_ids_by_type[type] =
+              criteria.select { |crit| crit.class.to_s == type }
+          end
+          unassign_graders_from_criteria(criterion_associations, criterion_ids_by_type)
           head :ok
         end
       when 'random_assign'
         if grader_ids.blank?
           render text: I18n.t('assignment.group.select_a_grader'), status: 400
+        elsif criterion_ids_types.blank?
+          render text: I18n.t('assignment.group.select_a_criterion'), status: 400
         else
-          randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
+          randomly_assign_graders_to_criteria(criterion_ids_types, grader_ids)
           head :ok
         end
       end
@@ -280,8 +289,8 @@ class GradersController < ApplicationController
     criterion_ids = options[:criterion_ids]
     includes = options[:includes] || CRITERION_ASSOC
 
-    criteria = assignment.get_criteria.includes(includes)
-    criterion_ids ? criteria.where(id: criterion_ids) : criteria
+    criteria = assignment.get_criteria(:all, :all, includes: includes)
+    criterion_ids ? criteria.select{ |criterion| criterion_ids.include?(criterion.id) } : criteria
   end
 
   def randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
@@ -300,8 +309,8 @@ class GradersController < ApplicationController
     Criterion.assign_all_tas(criterion_ids, grader_ids, @assignment)
   end
 
-  def unassign_graders_from_criteria(criterion_grader_ids, criterion_ids)
-    Criterion.unassign_tas(criterion_grader_ids, criterion_ids, @assignment)
+  def unassign_graders_from_criteria(criterion_grader_ids, criterion_ids_by_type)
+    Criterion.unassign_tas(criterion_grader_ids, criterion_ids_by_type, @assignment)
   end
 
   def unassign_graders(grader_membership_ids)

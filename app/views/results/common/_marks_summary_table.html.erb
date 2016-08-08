@@ -7,7 +7,7 @@
   </thead>
   <% @mark_criteria.each do |criterion| -%>
     <%
-      mark = marks_map[criterion.id]
+      mark = marks_map[[criterion.class.to_s, criterion.id]]
       if mark.nil? or mark.mark.nil?
         mark_value = 0
       else

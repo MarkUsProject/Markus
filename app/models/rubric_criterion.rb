@@ -125,7 +125,11 @@ class RubricCriterion < Criterion
     name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria.find_or_create_by(name: name)
+    begin
+    criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
+    rescue ActiveRecord::RecordNotSaved # Triggered if the assignment does not exist yet
+      raise CSVInvalidLineError, I18n.t('csv.no_assignment')
+    end
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
       criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
@@ -150,55 +154,43 @@ class RubricCriterion < Criterion
     criterion
   end
 
-  # Instantiate a RubricCriterion from a YML key
+  # Instantiate a RubricCriterion from a YML entry
   #
   # ===Params:
   #
-  # key::      key corresponding to a single RubricCriterion in the
-  #               following format:
-  #               criterion_name:
-  #                 weight: #
-  #                 level_0:
-  #                   name: level_name
-  #                   description: level_description
-  #                 level_1:
-  #                   [...]
-  # assignment::  The assignment to which the newly created criterion should belong.
-  #
-  # ===Raises:
-  #
-  # RuntimeError If there is not enough information, if the weight value
-  #                           is zero (or doesn't evaluate to a float)
-  def self.create_or_update_from_yml_key(key, assignment)
-    name = key[0]
-    # If a RubricCriterion of the same name exits, load it up.  Otherwise,
-    # create a new one.
-    criterion = assignment.get_criteria.find_or_create_by(
-      name: name)
-    #Check that the weight is not a string, so that the appropriate max mark can be calculated.
+  # criterion_yml:: Information corresponding to a single RubricCriterion
+  #                 in the following format:
+  #                 criterion_name:
+  #                   weight: #
+  #                   level_0:
+  #                     name: level_name
+  #                     description: level_description
+  #                   level_1:
+  #                     [...]
+  def self.load_from_yml(criterion_yml)
+    name = criterion_yml[0]
+    # Create a new RubricCriterion
+    criterion = RubricCriterion.new
+    criterion.name = name
+    # Check that the weight is not a string, so that the appropriate
+    # max mark can be calculated.
     begin
-      criterion.max_mark = Float(key[1]['max_mark']) * MAX_LEVEL
+      criterion.max_mark = Float(criterion_yml[1]['weight']) * MAX_LEVEL
     rescue ArgumentError
-      raise I18n.t('criteria_csv_error.weight_not_number')
+      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
     rescue TypeError
-      raise I18n.t('criteria_csv_error.weight_not_number')
+      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
     rescue NoMethodError
-      raise I18n.t('rubric_criteria.upload.empty_error')
-    end
-    # Only set the position if this is a new record.
-    if criterion.new_record?
-      criterion.position = assignment.next_criterion_position
+      raise RuntimeError.new(I18n.t('criteria.upload.empty_error'))
     end
     # next comes the level names.
     (0..RUBRIC_LEVELS-1).each do |i|
-      if key[1]['level_' + i.to_s]
-        criterion['level_' + i.to_s + '_name'] = key[1]['level_' + i.to_s]['name']
+      if criterion_yml[1]['level_' + i.to_s]
+        criterion['level_' + i.to_s + '_name'] =
+          criterion_yml[1]['level_' + i.to_s]['name']
         criterion['level_' + i.to_s + '_description'] =
-          key[1]['level_' + i.to_s]['description']
+          criterion_yml[1]['level_' + i.to_s]['description']
       end
-    end
-    unless criterion.save
-      raise RuntimeError.new(criterion.errors)
     end
     criterion
   end
@@ -258,7 +250,7 @@ class RubricCriterion < Criterion
 
   def add_tas_by_user_name_array(ta_user_name_array)
     result = ta_user_name_array.map do |ta_user_name|
-      Ta.where(user_name: ta_user_name).first
+      Ta.find_by(user_name: ta_user_name)
     end.compact
     add_tas(result)
   end
@@ -271,7 +263,7 @@ class RubricCriterion < Criterion
   # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
-        errors.add(:ta_visible, I18n.t('rubric_criteria.visibility_error'))
+        errors.add(:ta_visible, I18n.t('criteria.visibility_error'))
         false
     end
     true

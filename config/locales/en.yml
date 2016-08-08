@@ -185,6 +185,7 @@ en:
             select_a_group: "Select a group"
             select_a_student: "Select a student"
             select_a_grader: "Select a grader"
+            select_a_criterion: "Select at least one criterion"
             group_submission_no_files: "One or more of the groups selected has no files in their submission. Grader not assigned."
             select_only_one_group: "You may only assign each student to one group."
             deleted: "Group has been deleted"
@@ -298,6 +299,7 @@ en:
     submissions:        "Submissions"
     summaries:          "Summaries"
     peer_reviews:       "Peer reviews"
+    peer_review:        "Peer Review"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
@@ -445,11 +447,12 @@ en:
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
-      repo_collision_warning: "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
+      repo_collision_warning:  "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
       line_nr_csv_file_prefix: "Line %{line_number} of CSV file:"
-      group_to_grader: "You must supply a CSV file for group to grader mapping"
-      student_to_grader: "You must supply a CSV file for student to grader mapping"
-      invalid_csv: "The format of the CSV file was not recognized"
+      group_to_grader:         "You must supply a CSV file for group to grader mapping"
+      student_to_grader:       "You must supply a CSV file for student to grader mapping"
+      invalid_csv:             "The format of the CSV file was not recognized"
+      no_assignment:           "The assignment you are trying to create criteria for does not exist yet"
       invalid_row:
         duplicate_entry: "Duplicate Entry"
         invalid_format: "Invalid Row Format"
@@ -1225,17 +1228,58 @@ en:
       marking_scheme: "Marking Scheme: %{identifier}"
       save:           "Save changes"
       add_criterion:  "Add Criterion"
+      move_up:        "Move up"
+      move_down:      "Move down"
+      download:
+        title:    "Download"
+        file:     "Download Criteria File"
+        prompt:   "All types of criteria will be downloaded in YAML format."
+        link_yml: "Download Criteria in YAML Format"
+        yml:      "Download YML"
+      upload:
+        yml:             "Upload YML"
+        yml_title:       "Upload YML File"
+        yml_prompt:      "Select a YML file to upload"
+        success:         "Criteria successfully uploaded: %{num_loaded}."
+        error:
+          invalid_format: "The following criteria had invalid format:"
+          names_taken:    "The following criteria names are already taken:"
+        empty_error:     "No criteria were found in the provided file."
+        syntax_error:    "There is an error in the file you uploaded: %{error}"
+        format_yml_html: "
+          <p>The file should have the following format for a rubric criterion:<br>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;weight: weight<br>
+              &nbsp;&nbsp;level_0:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+              &nbsp;&nbsp;level_1:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
+          </p>
+          <p>The following for a flexible criterion:</p>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;type: flexible<br>
+              &nbsp;&nbsp;max_mark: max_mark<br>
+              &nbsp;&nbsp;description: description<br></code>
+            <p>The description is optional.</p>
+          <p>And the following for a checkbox criterion:</p>
+            <code>criterion_name:<br>
+            &nbsp;&nbsp;type: checkbox<br>
+            &nbsp;&nbsp;max_mark: max_mark<br>
+            &nbsp;&nbsp;description: description<br></code>
+          <p>The description is optional.</p>"
       errors:
         messages:
-          name_taken:              "Criterion name already used."
+          name_taken:             "Criterion name already used."
           assignment_association: "Association is not strong with an assignment."
           assignment_id:          "Can only be whole number greater than 0."
           input_number:           "Must be a number greater than 0.0."
+      ta_visible:       "Make visible to teaching assistants"
+      peer_visible:     "Make visible to peer reviewers"
+      visibility_error: "Select at least one box in the visibility section"
 
     flexible_criteria:
       title: "Flexible Criteria"
-      move_up: "Move up"
-      move_down: "Move down"
       max_mark: "Maximum mark"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
@@ -1253,16 +1297,9 @@ en:
         <p>The description is optional. Note that if it is not present, the second
         comma should not appear.</p>"
         success: "Flexible criteria successfully uploaded: %{nb_updates} update(s)."
-      move_criterion:
-        error: "Failed to move flexible criteria."
-      ta_visible: "Make visible to teaching assistants"
-      peer_visible: "Make visible to peer reviewers"
-      visibility_error: "Select at least one box in the visibility section"
 
     checkbox_criteria:
       title: "Checkbox Criteria"
-      move_up: "Move up"
-      move_down: "Move down"
       max_mark: "Maximum mark"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
@@ -1282,14 +1319,9 @@ en:
         success: "Checkbox criteria successfully uploaded: %{nb_updates} update(s)."
       move_criterion:
         error: "Failed to move checkbox criteria."
-      ta_visible: "Make visible to teaching assistants"
-      peer_visible: "Make visible to peer reviewers"
-      visibility_error: "Select at least one box in the visibility section"
 
     rubric_criteria:
       title: "Rubric Criteria"
-      move_up: "Move up"
-      move_down: "Move down"
       level:
         levels: "Levels"
         level_index: "Level %{index}"
@@ -1299,13 +1331,9 @@ en:
         link_csv: "Download rubric in CSV Format"
         link_yml: "Download rubric in YAML Format"
       upload:
-        success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
         csv:       "Upload CSV"
         csv_title: "Upload CSV File"
-        yml:       "Upload YML"
-        yml_title: "Upload YML File"
         csv_prompt: "Select a CSV file to upload"
-        yml_prompt: "Select a YML file to upload"
         format_csv_html: "
         <p>The file should have the following format:</p>
         <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
@@ -1313,19 +1341,6 @@ en:
         <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br>
         and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
         by commas)."
-        format_yml_html: "
-          <p>The file should have the following format:<br>
-              <code>criterion_name:<br>
-                    &nbsp;&nbsp;weight: weight<br>
-                    &nbsp;&nbsp;level_0:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-                    &nbsp;&nbsp;level_1:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
-          </p>"
-        error: "Some rubric criteria were invalid:"
-        syntax_error: "There is an error in the file you uploaded: %{error}"
-        empty_error: "No criteria were found in the provided file."
       defaults:
         level_0: "Very Poor"
         level_1: "Weak"
@@ -1339,9 +1354,6 @@ en:
         description_4: "This criterion was satisfied perfectly or nearly perfectly."
       move_criterion:
         error: "Failed to move rubric."
-      ta_visible: "Make visible to teaching assistants"
-      peer_visible: "Make visible to peer reviewers"
-      visibility_error: "Select at least one box in the visibility section"
 
     summary_table:
       title: "Title"

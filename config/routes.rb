@@ -75,25 +75,11 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :criteria, except: [:index] do
+      resources :criteria do
         collection do
           post 'update_positions'
-        end
-      end
-
-      resources :rubric_criteria, only: [:index] do
-        collection do
-          post 'csv_upload'
-          post 'yml_upload'
-          get 'download_csv'
-          get 'download_yml'
-        end
-      end
-
-      resources :flexible_criteria, only: [:index] do
-        collection do
-          post 'upload'
-          get 'download'
+          post 'upload_yml'
+          get  'download_yml'
         end
       end
 
@@ -221,6 +207,7 @@ Markus::Application.routes.draw do
           post 'codeviewer'
           get 'next_grouping'
           post 'toggle_marking_state'
+          post 'update_mark'
           post 'update_overall_comment'
           patch 'update_remark_request'
         end

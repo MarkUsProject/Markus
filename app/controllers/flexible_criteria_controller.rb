@@ -2,17 +2,9 @@ class FlexibleCriteriaController < ApplicationController
 
   before_filter      :authorize_only_for_admin
 
-  def index
-    @assignment = Assignment.find(params[:assignment_id])
-    if @assignment.past_all_due_dates?
-      flash[:notice] = I18n.t('past_due_date_warning')
-    end
-    @criteria = @assignment.get_criteria.order(:position)
-  end
-
   def download
     @assignment = Assignment.find(params[:assignment_id])
-    criteria = @assignment.get_criteria.order(:position)
+    criteria = @assignment.get_criteria(:all, :flexible)
     file_out = MarkusCSV.generate(criteria) do |criterion|
       [criterion.name, criterion.max_mark, criterion.description]
     end

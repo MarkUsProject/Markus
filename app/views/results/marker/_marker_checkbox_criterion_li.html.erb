@@ -1,0 +1,42 @@
+<%
+  if mark_criterion.description != ''
+    title_class = 'criterion_title expandable'
+  else
+    title_class = 'criterion_title unexpandable' -%>
+<% end -%>
+
+<li id="<%= "checkbox_criterion_#{mark_criterion.id}" %>" class="checkbox_criterion expanded">
+
+  <%# Used by the 'expand all' button to determine if it should expand on click. %>
+  <div class="mark_grade_input_checkbox_container" data-id="<%=mark_criterion.id%>">
+
+    <!--Mark update info -->
+    <div id="mark_verify_result_<%=mark.id%>" class='error' style='display:none;'>
+      <%= I18n.t("marker.marks.invalid_mark") %>
+    </div>
+
+    <div class="<%= title_class %>" id="<%= "checkbox_criterion_title_#{mark_criterion.id}"%>">
+
+      <div id="<%="checkbox_criterion_title_#{mark_criterion.id}_expand"%>"
+           class='criterion_expand'
+           onclick='<%="focus_mark_criterion_type(#{mark_criterion.id}, '#{mark_criterion.class.to_s}')"%>'>
+        - &nbsp;
+      </div>
+
+      <%= render partial: 'results/common/checkbox_criterion',
+                 locals: {mark_criterion: mark_criterion,
+                          mark: mark,
+                          old_mark: old_mark,
+                          view: 'marker'} %>
+
+      <% if mark_criterion.description != '' %>
+          <div id="<%="criterion_info_#{mark_criterion.id}_#{mark_criterion.class.to_s}"%>"
+               class='criterion_info mark-checkbox'
+               data-id="<%=mark_criterion.id%>" >
+            <%= mark_criterion.description %>
+          </div>
+      <% end %>
+
+    </div>
+  </div>
+</li>

@@ -1,7 +1,6 @@
 <% if @current_user.admin? %>
   <% if controller.controller_name == 'assignments' ||
-        controller.controller_name == 'rubric_criteria' ||
-        controller.controller_name == 'flexible_criteria' ||
+        controller.controller_name == 'criteria' ||
         controller.controller_name == 'submissions' ||
         controller.controller_name == 'summaries' ||
         controller.controller_name == 'groups' ||
@@ -76,8 +75,7 @@
                controller.action_name != 'new' &&
                controller.action_name != 'create') %>
           <li <% if ['assignments',
-                     'rubric_criteria',
-                     'flexible_criteria',
+                     'criteria',
                      'annotation_categories',
                      'automated_tests'].include?(controller.controller_name) %>
                 class='active'

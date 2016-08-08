@@ -177,6 +177,7 @@ fr:
             select_a_group: "Sélectionner un groupe"
             select_a_student: "Sélectionner un(e) étudiant(e)"
             select_a_grader: "Sélectionner un correcteur"
+            select_a_criterion: "Sélectionnez au moins un critère"
             group_submission_no_files: "Un ou plusieurs des groupes sélectionnés ne contient aucun fichier dans leur soumission. Grader pas affecté."
             select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
             deleted: "Le groupe a été supprimé"
@@ -276,6 +277,7 @@ fr:
     submissions:        "Envois"
     summaries:          "Récapitulatif"
     peer_reviews:       "Examens par le pairs"
+    peer_review:        "Examen par le pairs"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"
     join:               "Rejoindre"
@@ -436,14 +438,15 @@ fr:
     still_working_warning: "Il y a des travaux non terminés. Ils pourraient ne pas être sauvegardés si vous quittez maintenant."
 
     csv:
-      repo_collision_warning: "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
+      repo_collision_warning:  "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
       line_nr_csv_file_prefix: "ligne %{line_number} du fichier CSV :"
-      group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
-      student_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
-      invalid_csv: "Le format du fichier CSV n'a pas été reconnu"
+      group_to_grader:         "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
+      student_to_grader:       "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
+      invalid_csv:             "Le format du fichier CSV n'a pas été reconnu"
+      no_assignment:           "L'affectation que vous essayez de créer des critères pour n'existe pas encore"
       invalid_row:
               duplicate_entry: "Double entrée"
-              invalid_format: "Invalid format de ligne"
+              invalid_format:  "Invalid format de ligne"
       upload:
         malformed_csv: "Le fichier sélectionné a été mal formé. Se il vous plaît vérifier que le fichier est conforme aux spécifications Markus."
         non_text_file_with_csv_extension: "Le fichier sélectionné ne est pas un fichier csv (même si elle peut avoir une extension .csv)."
@@ -1096,17 +1099,58 @@ fr:
       marking_scheme: "Barème: %{identifier}"
       save:           "Sauvegarder les modifications"
       add_criterion:  "Ajouter Critère"
+      move_up:        "Monter"
+      move_down:      "Descendre"
+      download:
+        title:    "Télécharger"
+        file:     "Télécharger le fichier de Critères"
+        prompt:   "Tous les types de critères seront téléchargés au format YAML."
+        link_yml: "Télécharger critères au format YAML"
+        yml:      "Télécharger YML"
+      upload:
+        yml:             "Envoyer YML"
+        yml_title:       "Envoyer le fichier XML"
+        yml_prompt:      "Choisissez un fichier YML à envoyer"
+        success:         "Le fichier contenant le barème a bien été envoyé : %{num_loaded}."
+        error:
+          invalid_format: "Les critères suivants a un format non valide:"
+          names_taken:    "Les noms des critères suivants sont déjà prises:"
+        empty_error:     "Aucun critère n'a été trouvé dans le fichier fourni."
+        syntax_error:    "Il y a une erreur dans le fichier que vous avez téléchargé: %{error}"
+        format_yml_html: "
+          <p>Le fichier doit avoir le format suivant pour un critère rubrique: <br>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;weight: weight<br>
+              &nbsp;&nbsp;level_0:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+              &nbsp;&nbsp;level_1:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
+          </p>
+          <p>Ci-dessous un critère souple:</p>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;type: flexible<br>
+              &nbsp;&nbsp;max_mark: max_mark<br>
+              &nbsp;&nbsp;description: description<br></code>
+            <p>La description est facultative.</p>
+          <p>Pour un critère de case à cocher et ce qui suit:</p>
+            <code>criterion_name:<br>
+            &nbsp;&nbsp;type: checkbox<br>
+            &nbsp;&nbsp;max_mark: max_mark<br>
+            &nbsp;&nbsp;description: description<br></code>
+          <p>La description est facultative.</p>"
       errors:
         messages:
           name_taken:             "Nom du critère déjà utilisé."
           assignment_association: "Association est pas forte avec une mission."
           assignment_id:          "Ne peut être un nombre entier supérieur à 0."
           input_number:           "Doit être un nombre supérieur à 0.0."
+      ta_visible:       "Rendre visible aux assistants d'enseignement"
+      peer_visible:     "Rendre visible à leurs auteurs pairs"
+      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
     flexible_criteria:
       title: "Critères souples"
-      move_up: "Monter"
-      move_down: "Descendre"
       name: "Nom du critère"
       max_mark: "Note maximale"
       description: "Description"
@@ -1127,14 +1171,9 @@ fr:
         success: "Le fichier contenant le barème (flexible) a bien été envoyé : %{nb_updates} mise(s) à jour."
       move_criterion:
         error: "Erreur: impossible de déplacer ce critère (flexible)."
-      ta_visible: "Rendre visible aux assistants d'enseignement"
-      peer_visible: "Rendre visible à leurs auteurs pairs"
-      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
     checkbox_criteria:
       title: "Critères d' Checkbox"
-      move_up: "Monter"
-      move_down: "Descendre"
       name: "Nom du critère"
       max_mark: "Note maximale"
       description: "Description"
@@ -1155,15 +1194,10 @@ fr:
         success: "critères de Checkbox téléchargés avec succès: %{nb_updates} mise à jour."
       move_criterion:
         error: "Impossible de déplacer les critères de case à cocher."
-      ta_visible: "Rendre visible aux assistants d'enseignement"
-      peer_visible: "Rendre visible à leurs auteurs pairs"
-      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
     rubric_criteria:
       title: "Critères rubrique"
       name: "Nom du critère"
-      move_up: "Monter"
-      move_down: "Descendre"
       level:
         levels: "Niveaux"
         level_index: "Niveau %{index}"
@@ -1175,11 +1209,7 @@ fr:
       upload:
         csv:       "Envoyer CSV"
         csv_title: "Envoyer un fichier de barème (rubrique) CSV"
-        yml:       "Envoyer YML"
-        yml_title: "Envoyer un fichier de barème (rubrique) YML"
         csv_prompt: "Choisissez un fichier CSV à envoyer"
-        yml_prompt: "Choisissez un fichier YML à envoyer"
-        success: "Le fichier contenant le barème (rubrique) a bien été envoyé : %{nb_updates} mise(s) à jour."
         format_csv_html: "
         <p>Le fichier devra être au format suivant : </p>
         <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
@@ -1187,16 +1217,6 @@ fr:
         <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br>
         et <em>level_descriptions</em> doi contenir la description de chaque niveau (optionnel,
         séparé aussi par les virgules)."
-        format_yml_html: "
-          <p>Le fichier devra être au format suivant : br>
-              <code>criterion_name:<br>
-                    &nbsp;&nbsp;weight: weight<br>
-                    &nbsp;&nbsp;level_0:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-                    &nbsp;&nbsp;level_1:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
-          </p>"
       defaults:
         level_0: "Très insuffisant"
         level_1: "Insuffisant"
@@ -1210,9 +1230,6 @@ fr:
         description_4: "Ce critère a été parfaitement compris."
       move_criterion:
         error: "Erreur: impossible de déplacer cette rubric."
-      ta_visible: "Rendre visible aux assistants d'enseignement"
-      peer_visible: "Rendre visible à leurs auteurs pairs"
-      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
 
     summary_table:

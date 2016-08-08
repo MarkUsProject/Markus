@@ -601,7 +601,6 @@ ul.annotation_text_list {
 /* Flexible Criterion Styles */
 
 .flexible_criterion {
-  margin-top: -4px;  /* Remove space between elements */
 
   .criterion_expand {
     float: left;
@@ -636,7 +635,7 @@ ul.annotation_text_list {
   }
 
   .criterion_info {
-    padding-left: 10px;
+    padding-left: 26px;
     padding-bottom: 5px;
     margin-left: 5px;
     float: left;
@@ -644,7 +643,6 @@ ul.annotation_text_list {
   }
 
   .title_div_level {
-    padding-top: 2px;
     font-size: 12px;
     float: left;
     padding-right: 10px;
@@ -664,8 +662,106 @@ ul.annotation_text_list {
     font-weight: bold;
     font-size: 11px;
     float: right;
+    padding-right: 14px;
 
     .mark_grade_input{
+      font-size: 1em;
+      margin: 1px 1px 4px;
+      margin-right: 6px;
+      min-width: 0;
+      padding: 2px;
+    }
+  }
+
+  .old_mark {
+    font-size: 11px;
+    float: right;
+    padding-right: 10px;
+
+    &.old_mark_unreleased {
+      padding-top: 4px;
+    }
+  }
+
+  .mark_grade_input {
+    &.remarked {
+      background-color: #81d881;
+    }
+
+    &.not_remarked:not([disabled]) {
+      background-color: white;
+    }
+  }
+
+}
+
+/* Checkbox Criterion Styles */
+
+.checkbox_criterion {
+
+  .criterion_expand {
+    float: left;
+    cursor: pointer;
+    font-size: 1.2em;
+    width: 1em;
+    padding-top: 2px;
+    height: 20px;
+  }
+
+  &.expanded {
+    .criterion_info {
+      display: block;
+    }
+  }
+
+  &.not_expanded {
+    .criterion_info {
+      display: none;
+    }
+  }
+
+  .unexpandable {
+    .criterion_expand {
+      visibility: hidden;
+      cursor: auto !important;
+    }
+
+    .title_div_level {
+      cursor: auto !important;
+    }
+  }
+
+  .criterion_info {
+    padding-left: 26px;
+    padding-bottom: 5px;
+    margin-left: 5px;
+    float: left;
+    clear: both;
+  }
+
+  .title_div_level {
+    font-size: 12px;
+    float: left;
+    padding-right: 10px;
+    font-weight: bold;
+    padding-bottom: 6px;
+
+    &.released {
+      padding-left: 15px;
+    }
+
+    &.unreleased {
+      cursor: pointer;
+    }
+  }
+
+  .mark_checkbox {
+    font-weight: bold;
+    font-size: 11px;
+    float: right;
+    padding-top: 4px;
+
+    .mark_grade_input_checkbox {
       font-size: 1em;
       margin: 1px 1px 4px;
       min-width: 0;
@@ -693,6 +789,10 @@ ul.annotation_text_list {
     }
   }
 
+  .checkbox_radio_button_container {
+    padding-left: 8px;
+    padding-right: 16px;
+  }
 }
 
 /* Submission Rule Pane */

@@ -9,9 +9,9 @@
     old_mark_class = 'old_mark old_mark_released' -%>
 <% end -%>
 
-<div class="<%= criterion_name_class %>" onclick="<%= onclick %>">
-  <%= (mark_criterion.name) %>
-</div>
+<strong class="title_div_level" onclick="<%= onclick %>">
+  <%= link_to mark_criterion.name, 'javascript:void(0);', onclick: 'return false;' %>
+</strong>
 
 <div class='mark_flexible'>
   <% if view == 'marker' %>

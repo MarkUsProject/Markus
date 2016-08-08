@@ -1,4 +1,15 @@
 class CriteriaController < ApplicationController
+  include CriteriaHelper
+
+  before_filter :authorize_only_for_admin
+
+  def index
+    @assignment = Assignment.find(params[:assignment_id])
+    if @assignment.past_all_due_dates?
+      flash_now(:notice, I18n.t('past_due_date_warning'))
+    end
+    @criteria = @assignment.get_criteria
+  end
 
   def new
     @assignment = Assignment.find(params[:assignment_id])
@@ -6,7 +17,6 @@ class CriteriaController < ApplicationController
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
     criterion_class = params[:criterion_type].constantize
     @criterion = criterion_class.new
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
@@ -18,7 +28,7 @@ class CriteriaController < ApplicationController
       render :add_criterion_error
       return
     end
-    @criteria.reload
+    @criteria = @assignment.get_criteria
     render :create_and_edit
   end
 
@@ -53,15 +63,63 @@ class CriteriaController < ApplicationController
     flash.now[:success] = t('criterion_saved_success')
   end
 
-  # This method handles the drag/drop criteria sorting.
+  # Handles the drag/drop criteria sorting.
   def update_positions
     @assignment = Assignment.find(params[:assignment_id])
-    @criteria = @assignment.get_criteria
 
     ActiveRecord::Base.transaction do
-      params[:criterion].
-        each_with_index { |id, index| @assignment.criterion_class.update(id, position: index + 1) if id != '' }
+      params[:criterion].each_with_index do |type_id, index|
+        type, id = type_id.split(' ')
+        type.constantize.update(id, position: index + 1) unless id.blank?
+      end
     end
+  end
+
+  def download_yml
+    assignment = Assignment.find(params[:assignment_id])
+    rubric_file_out = assignment.export_rubric_criteria_yml
+    flex_checkbox_file_out = assignment.export_flexible_checkbox_criteria_yml
+    send_data(rubric_file_out + flex_checkbox_file_out,
+              type: 'text/plain',
+              filename: "#{assignment.short_identifier}_criteria.yml",
+              disposition: 'inline')
+  end
+
+  def upload_yml
+    assignment = Assignment.find(params[:assignment_id])
+
+    # Check for errors in the request or in the file uploaded.
+    unless request.post?
+      redirect_to action: 'index', id: assignment.id
+      return
+    end
+
+    file = params[:yml_upload][:rubric]
+    unless file.blank?
+      begin
+        encoding = params[:encoding]
+        # Note: this parsing does not output entries with repeated names.
+        criteria = YAML::load(file.utf8_encode(encoding))
+      rescue Psych::SyntaxError => e
+        flash_message(:error, I18n.t('criteria.upload.error.invalid_format') + '  ' +
+                      I18n.t('criteria.upload.syntax_error', error: "#{e}"))
+        redirect_to action: 'index', id: assignment.id
+        return
+      end
+      unless criteria
+        flash_message(:error, I18n.t('criteria.upload.error.invalid_format') +
+                      '  ' + I18n.t('criteria.upload.empty_error'))
+        redirect_to action: 'index', id: assignment.id
+        return
+      end
+
+      # Delete all current criteria for this assignment.
+      assignment.get_criteria.each(&:destroy)
+
+      # Create criteria based on the parsed data.
+      load_criteria(criteria, assignment)
+    end
+    redirect_to action: 'index', assignment_id: assignment.id
   end
 
   private

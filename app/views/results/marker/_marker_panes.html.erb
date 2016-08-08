@@ -143,8 +143,8 @@
                 <%= render partial: "results/marker/marker_#{mark_criterion.class.to_s.underscore}_li",
                            locals: { mark_criterion: mark_criterion,
                                      result: result,
-                                     mark: marks_map[mark_criterion.id],
-                                     old_mark: old_marks_map[mark_criterion.id] } %>
+                                     mark: marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
+                                     old_mark: old_marks_map[[mark_criterion.class.to_s, mark_criterion.id]] } %>
               <% end -%>
             </ul>
           </div>

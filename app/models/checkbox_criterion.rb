@@ -34,7 +34,7 @@ class CheckboxCriterion < Criterion
   end
 
   def weight
-    1
+    max_mark
   end
 
   def all_assigned_groups
@@ -87,7 +87,7 @@ class CheckboxCriterion < Criterion
   # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
-      errors.add(:ta_visible, I18n.t('checkbox_criteria.visibility_error'))
+      errors.add(:ta_visible, I18n.t('criteria.visibility_error'))
       false
     end
     true
@@ -145,6 +145,38 @@ class CheckboxCriterion < Criterion
       raise CSVInvalidLineError
     end
 
+    criterion
+  end
+
+  # Instantiate a CheckboxCriterion from a YML entry
+  #
+  # ===Params:
+  #
+  # criterion_yml:: Information corresponding to a single CheckboxCriterion
+  #                 in the following format:
+  #                 criterion_name:
+  #                   type: criterion_type
+  #                   max_mark: #
+  #                   description: level_description
+  def self.load_from_yml(criterion_yml)
+    name = criterion_yml[0]
+    # Create a new CheckboxCriterion
+    criterion = CheckboxCriterion.new
+    criterion.name = name
+    # Check that the max_mark is not a string.
+    begin
+      criterion.max_mark = Float(criterion_yml[1]['max_mark'])
+    rescue ArgumentError
+      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
+    rescue TypeError
+      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
+    rescue NoMethodError
+      raise RuntimeError.new(I18n.t('criteria.upload.empty_error'))
+    end
+    # Set the description to the one given, or to an empty string if
+    # a description is not given.
+    criterion.description =
+      criterion_yml[1]['description'].nil? ? '' : criterion_yml[1]['description']
     criterion
   end
 end

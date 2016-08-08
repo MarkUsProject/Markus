@@ -423,7 +423,7 @@ class AssignmentTest < ActiveSupport::TestCase
       should 'be able to generate a detailed CSV report of rubric_criteria based marks (including criteria)' do
         a = @assignment
         out_of = a.max_mark
-        rubric_criteria = a.get_criteria
+        rubric_criteria = a.get_criteria(:all, :rubric)
         expected_string = ''
         Student.all.each do |student|
           fields = []
@@ -498,7 +498,7 @@ class AssignmentTest < ActiveSupport::TestCase
       should 'be able to generate a detailed CSV report of flexible based marks (including criteria)' do
         a = @flexible_assignment
         out_of = a.max_mark
-        flexible_criteria = a.get_criteria
+        flexible_criteria = a.get_criteria(:all, :flexible)
         expected_string = ''
         Student.all.each do |student|
           fields = []

@@ -44,7 +44,7 @@
 
       <% for criterion in @criteria %>
         columns.push({
-          id: 'criterion_' + <%= criterion.id %>,
+          id: 'criterion_' + '<%= criterion.class.to_s %>' + '_' + <%= criterion.id %>,
           content: '<%= criterion.name %>',
           sortable: true,
           compare: compare_numeric_values,
@@ -179,7 +179,7 @@
         s['section'] = summary.section
         s['state'] = summary.state;
         <% for criterion in @criteria %>
-          var key = 'criterion_' + '<%= criterion.id %>';
+          var key = 'criterion_' + '<%= criterion.class.to_s %>' + '_' + '<%= criterion.id %>';
           s[key] = summary.criteria[key];
         <% end %>
         return s;
